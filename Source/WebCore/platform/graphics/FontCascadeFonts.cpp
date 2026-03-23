@@ -570,6 +570,33 @@ void FontCascadeFonts::pruneSystemFallbacks()
     m_systemFallbackFontSet.clear();
 }
 
+const CachedShapedText* FontCascadeFonts::getOrCreateCachedShapedText(const TextRun& run, const FontCascade& fontCascade)
+{
+    auto hasKerningOrLigatures = fontCascade.enableKerning() || fontCascade.requiresShaping();
+    auto hasWordSpacingOrLetterSpacing = fontCascade.wordSpacing() || fontCascade.letterSpacing();
+    auto hasTextSpacing = !fontCascade.textAutospace().isNoAutospace();
+
+    // FIXME: TextMeasurementCache callers use the pattern of "adding" an empty entry as a way to perform a search with the same constraints that ::add enforces (no letter-spacing, no word-spacing, etc). We should properly encapsulate these requirements in both the ::add method and a dedicated ::find method.
+    CachedShapedText* cacheEntry = m_shapedTextCache.add(run, CachedShapedText { }, hasKerningOrLigatures, hasWordSpacingOrLetterSpacing, hasTextSpacing);
+
+    if (!cacheEntry)
+        return nullptr;
+
+    if (cacheEntry->glyphBuffer)
+        return cacheEntry;
+
+    auto codePath = fontCascade.codePath(run);
+    auto width = 0.f;
+    auto glyphBuffer = fontCascade.layoutText(codePath, run, 0, run.length(), FontCascade::ForTextEmphasisOrNot::NotForTextEmphasis, &width);
+    glyphBuffer.flatten();
+
+    cacheEntry->width = width;
+    if (!glyphBuffer.isEmpty())
+        cacheEntry->glyphBuffer = WTF::makeUnique<GlyphBuffer>(WTF::move(glyphBuffer));
+
+    return cacheEntry;
+}
+
 TextStream& operator<<(TextStream& ts, const FontCascadeFonts& fontCascadeFonts)
 {
     ts << "FontCascadeFonts "_s << &fontCascadeFonts << ' ' << " generation "_s << fontCascadeFonts.generation();

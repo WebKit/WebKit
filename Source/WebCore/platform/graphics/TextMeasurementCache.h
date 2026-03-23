@@ -39,7 +39,19 @@
 
 namespace WebCore {
 
-template <typename CachedType>
+namespace TextMeasurementCacheDefaults {
+static constexpr int minInterval = -3; // A cache hit pays for about 3 cache misses.
+static constexpr int maxInterval = 20; // Sampling at this interval has almost no overhead.
+static constexpr unsigned maxSize = 500000; // Just enough to guard against pathological growth.
+static constexpr unsigned maxTextLength = 16; // Maximum text length for SmallStringKey.
+}
+
+template <typename CachedType,
+    int InitialInterval = TextMeasurementCacheDefaults::maxInterval,
+    int MinInterval = TextMeasurementCacheDefaults::minInterval,
+    int MaxInterval = TextMeasurementCacheDefaults::maxInterval,
+    unsigned MaxSize = TextMeasurementCacheDefaults::maxSize,
+    unsigned MaxTextLength = TextMeasurementCacheDefaults::maxTextLength>
 class TextMeasurementCache {
 private:
     // Used to optimize small strings as hash table keys. Avoids malloc'ing an out-of-line StringImpl.
@@ -77,7 +89,7 @@ private:
         friend bool operator==(const SmallStringKey&, const SmallStringKey&) = default;
 
     private:
-        static constexpr unsigned s_capacity = 16;
+        static constexpr unsigned s_capacity = MaxTextLength;
         static constexpr unsigned s_deletedValueLength = s_capacity + 1;
 
         template<typename CharacterType>
@@ -104,12 +116,12 @@ private:
 
 public:
     TextMeasurementCache()
-        : m_interval(s_maxInterval)
-        , m_countdown(m_interval)
+        : m_interval(InitialInterval)
+        , m_countdown(InitialInterval)
     {
     }
 
-    CachedType* add(StringView text, const CachedType& entry)
+    CachedType* add(StringView text, CachedType&& entry)
     {
         unsigned length = text.length();
 
@@ -117,7 +129,7 @@ public:
         if (!length) [[unlikely]]
             return nullptr;
 
-        if (length > SmallStringKey::capacity())
+        if (length > MaxTextLength)
             return nullptr;
 
         if (m_countdown > 0) {
@@ -125,10 +137,10 @@ public:
             return nullptr;
         }
 
-        return addSlowCase(text, entry);
+        return addSlowCase(text, WTF::move(entry));
     }
 
-    CachedType* add(const TextRun& run, const CachedType& entry, bool hasKerningOrLigatures, bool hasWordSpacingOrLetterSpacing, bool hasTextSpacing)
+    CachedType* add(const TextRun& run, CachedType&& entry, bool hasKerningOrLigatures, bool hasWordSpacingOrLetterSpacing, bool hasTextSpacing)
     {
         // The width cache is not really profitable unless we're doing expensive glyph transformations.
         if (!hasKerningOrLigatures)
@@ -143,7 +155,7 @@ public:
         if (hasTextSpacing && invalidateCacheForTextSpacing(run))
             return nullptr;
 
-        return add(run.text(), entry);
+        return add(run.text(), WTF::move(entry));
     }
 
     void clear()
@@ -154,7 +166,7 @@ public:
 
 private:
 
-    CachedType* addSlowCase(StringView text, const CachedType& entry)
+    CachedType* addSlowCase(StringView text, CachedType&& entry)
     {
         if (MemoryPressureHandler::singleton().isUnderMemoryPressure())
             return nullptr;
@@ -166,27 +178,27 @@ private:
             // The map use 0 for empty key, thus we do +1 here to avoid conflicting against empty key.
             // This is fine since the key is uint32_t while character is char16_t. So +1 never causes overflow.
             uint32_t character = text[0];
-            auto addResult = m_singleCharMap.fastAdd(character + 1, entry);
+            auto addResult = m_singleCharMap.fastAdd(character + 1, WTF::move(entry));
             isNewEntry = addResult.isNewEntry;
             value = &addResult.iterator->value;
         } else {
-            auto addResult = m_map.fastAdd(text, entry);
+            auto addResult = m_map.fastAdd(text, WTF::move(entry));
             isNewEntry = addResult.isNewEntry;
             value = &addResult.iterator->value;
         }
 
         // Cache hit: ramp up by sampling the next few words.
         if (!isNewEntry) {
-            m_interval = s_minInterval;
+            m_interval = MinInterval;
             return value;
         }
 
         // Cache miss: ramp down by increasing our sampling interval.
-        if (m_interval < s_maxInterval)
+        if (m_interval < MaxInterval)
             ++m_interval;
         m_countdown = m_interval;
 
-        if ((m_singleCharMap.size() + m_map.size()) < s_maxSize)
+        if ((m_singleCharMap.size() + m_map.size()) < MaxSize)
             return value;
 
         // No need to be fancy: we're just trying to avoid pathological growth.
@@ -214,10 +226,6 @@ private:
 
     using Map = HashMap<SmallStringKey, CachedType, DefaultHash<SmallStringKey>, SmallStringKeyHashTraits>;
     using SingleCharMap = HashMap<uint32_t, CachedType, DefaultHash<uint32_t>, HashTraits<uint32_t>>;
-
-    static constexpr int s_minInterval = -3; // A cache hit pays for about 3 cache misses.
-    static constexpr int s_maxInterval = 20; // Sampling at this interval has almost no overhead.
-    static constexpr unsigned s_maxSize = 500000; // Just enough to guard against pathological growth.
 
     int m_interval;
     int m_countdown;

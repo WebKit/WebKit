@@ -165,12 +165,12 @@ void FontCascade::update(RefPtr<FontSelector>&& fontSelector) const
     FontCache::forCurrentThread()->updateFontCascade(*this);
 }
 
-GlyphBuffer FontCascade::layoutText(CodePath codePathToUse, const TextRun& run, unsigned from, unsigned to, ForTextEmphasisOrNot forTextEmphasis) const
+GlyphBuffer FontCascade::layoutText(CodePath codePathToUse, const TextRun& run, unsigned from, unsigned to, ForTextEmphasisOrNot forTextEmphasis, float* outWidth) const
 {
     if (shouldUseComplexTextController(codePathToUse))
-        return layoutComplexText(run, from, to, forTextEmphasis);
+        return layoutComplexText(run, from, to, forTextEmphasis, outWidth);
 
-    return layoutSimpleText(run, from, to, forTextEmphasis);
+    return layoutSimpleText(run, from, to, forTextEmphasis, outWidth);
 }
 
 FloatSize FontCascade::drawText(GraphicsContext& context, const TextRun& run, const FloatPoint& point, unsigned from, std::optional<unsigned> to, CustomFontNotReadyAction customFontNotReadyAction) const
@@ -1455,7 +1455,7 @@ float FontCascade::floatEmphasisMarkHeight(const AtomString& mark) const
     return { };
 }
 
-GlyphBuffer FontCascade::layoutSimpleText(const TextRun& run, unsigned from, unsigned to, ForTextEmphasisOrNot forTextEmphasis) const
+GlyphBuffer FontCascade::layoutSimpleText(const TextRun& run, unsigned from, unsigned to, ForTextEmphasisOrNot forTextEmphasis, float* outWidth) const
 {
     GlyphBuffer glyphBuffer;
 
@@ -1471,6 +1471,9 @@ GlyphBuffer FontCascade::layoutSimpleText(const TextRun& run, unsigned from, uns
         return glyphBuffer;
 
     float afterWidth = it.runWidthSoFar();
+
+    if (outWidth)
+        *outWidth = afterWidth - beforeWidth;
 
     float initialAdvance = 0;
     if (run.rtl()) {
@@ -1491,17 +1494,21 @@ GlyphBuffer FontCascade::layoutSimpleText(const TextRun& run, unsigned from, uns
     return glyphBuffer;
 }
 
-GlyphBuffer FontCascade::layoutComplexText(const TextRun& run, unsigned from, unsigned to, ForTextEmphasisOrNot forTextEmphasis) const
+GlyphBuffer FontCascade::layoutComplexText(const TextRun& run, unsigned from, unsigned to, ForTextEmphasisOrNot forTextEmphasis, float* outWidth) const
 {
     GlyphBuffer glyphBuffer;
 
     ComplexTextController controller(*this, run, false, 0, forTextEmphasis == ForTextEmphasisOrNot::ForTextEmphasis);
     GlyphBuffer glyphBufferForStartingIndex;
     controller.advance(from, &glyphBufferForStartingIndex);
+    float widthBeforeSegment = controller.totalAdvance().width();
     controller.advance(to, &glyphBuffer);
 
     if (glyphBuffer.isEmpty())
         return glyphBuffer;
+
+    if (outWidth)
+        *outWidth = controller.totalAdvance().width() - widthBeforeSegment;
 
     if (run.rtl()) {
         // Exploit the fact that the sum of the paint advances is equal to

@@ -55,7 +55,9 @@
 #include "DOMMatrix.h"
 #include "DOMMatrix2DInit.h"
 #include "FloatQuad.h"
+#include "FontCascadeFonts.h"
 #include "GeometryUtilities.h"
+#include "GlyphBuffer.h"
 #include "Gradient.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
@@ -81,6 +83,7 @@
 #include "StyleResolver.h"
 #include "TextMetrics.h"
 #include "TextRun.h"
+#include "TextUtil.h"
 #include "WebCodecsVideoFrame.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/CheckedArithmetic.h>
@@ -2848,16 +2851,33 @@ String CanvasRenderingContext2DBase::normalizeSpaces(const String& text)
     return String::adopt(WTF::move(charVector));
 }
 
+static bool canUseCachedShapedText(const TextRun& textRun)
+{
+#if PLATFORM(COCOA)
+    return textRun.ltr() && !Layout::TextUtil::containsStrongDirectionalityText(textRun.text());
+#else
+    UNUSED_PARAM(textRun);
+    // FIXME: Shaped text caching is currently limited to Apple (COCOA) platforms due to potential
+    // platform-specific differences in text shaping between CoreText and HarfBuzz.
+    // Differences can be seen on the bots but it requires further investigation on GTK/WPE platforms.
+    return false;
+#endif
+}
+
 void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, double x, double y, bool fill, std::optional<double> maxWidth)
 {
-    auto measureTextRun = [&](const TextRun& textRun) -> std::tuple<float, FontMetrics>  {
-        auto& fontProxy = *this->fontProxy();
+    auto& fontCascade = this->fontProxy()->fontCascade();
+    auto& fontMetrics = fontProxy()->metricsOfPrimaryFont();
 
-        // FIXME: Need to turn off font smoothing.
-        return { fontProxy.width(textRun), fontProxy.metricsOfPrimaryFont() };
-    };
+    const CachedShapedText* cachedShapedText = nullptr;
+    if (canUseCachedShapedText(textRun)) {
+        RefPtr fonts = fontCascade.fonts();
+        ASSERT(fonts);
+        cachedShapedText = fonts->getOrCreateCachedShapedText(textRun, fontCascade);
+    }
 
-    auto [fontWidth, fontMetrics] = measureTextRun(textRun);
+    float fontWidth = (cachedShapedText && cachedShapedText->glyphBuffer) ? cachedShapedText->width : fontCascade.width(textRun);
+
     bool useMaxWidth = maxWidth && maxWidth.value() < fontWidth;
     float width = useMaxWidth ? maxWidth.value() : fontWidth;
     FloatPoint location(x, y);
@@ -2875,6 +2895,17 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
     // https://bugs.webkit.org/show_bug.cgi?id=193077.
     auto* c = effectiveDrawingContext();
     auto& fontProxy = *this->fontProxy();
+
+    auto drawText = [&](GraphicsContext& context, const FloatPoint& point) {
+        if (cachedShapedText && cachedShapedText->glyphBuffer) {
+            const auto& glyphBuffer = *cachedShapedText->glyphBuffer;
+            if (!glyphBuffer.isEmpty()) {
+                FloatPoint startPoint = point + WebCore::size(glyphBuffer.initialAdvance());
+                fontCascade.drawGlyphBuffer(context, glyphBuffer, startPoint, FontCascade::CustomFontNotReadyAction::UseFallbackIfFontNotReady);
+            }
+        } else
+            fontProxy.drawBidiText(context, textRun, point, FontCascade::CustomFontNotReadyAction::UseFallbackIfFontNotReady);
+    };
 
 #if USE(CG)
     const CanvasStyle& drawStyle = fill ? state().fillStyle : state().strokeStyle;
@@ -2904,7 +2935,7 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
             else
                 c->setStrokeColor(Color::black);
 
-            fontProxy.drawBidiText(*c, textRun, location + offset, FontCascade::CustomFontNotReadyAction::UseFallbackIfFontNotReady);
+            drawText(*c, location + offset);
         }
 
         auto maskImage = c->createAlignedImageBuffer(maskRect.size());
@@ -2926,10 +2957,10 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
             maskImageContext.translate(location - maskRect.location());
             // We draw when fontWidth is 0 so compositing operations (eg, a "copy" op) still work.
             maskImageContext.scale(FloatSize((fontWidth > 0 ? (width / fontWidth) : 0), 1));
-            fontProxy.drawBidiText(maskImageContext, textRun, FloatPoint(0, 0), FontCascade::CustomFontNotReadyAction::UseFallbackIfFontNotReady);
+            drawText(maskImageContext, FloatPoint(0, 0));
         } else {
             maskImageContext.translate(-maskRect.location());
-            fontProxy.drawBidiText(maskImageContext, textRun, location, FontCascade::CustomFontNotReadyAction::UseFallbackIfFontNotReady);
+            drawText(maskImageContext, location);
         }
 
         GraphicsContextStateSaver stateSaver(*c);
@@ -2957,15 +2988,15 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
     bool repaintEntireCanvas = false;
     if (isFullCanvasCompositeMode(state().globalComposite)) {
         beginCompositeLayer();
-        fontProxy.drawBidiText(*c, textRun, location, FontCascade::CustomFontNotReadyAction::UseFallbackIfFontNotReady);
+        drawText(*c, location);
         endCompositeLayer();
         repaintEntireCanvas = true;
     } else if (state().globalComposite == CompositeOperator::Copy) {
         clearCanvas();
-        fontProxy.drawBidiText(*c, textRun, location, FontCascade::CustomFontNotReadyAction::UseFallbackIfFontNotReady);
+        drawText(*c, location);
         repaintEntireCanvas = true;
     } else
-        fontProxy.drawBidiText(*c, textRun, location, FontCascade::CustomFontNotReadyAction::UseFallbackIfFontNotReady);
+        drawText(*c, location);
 
     didDraw(repaintEntireCanvas, targetSwitcher ? targetSwitcher->expandedBounds() : textRect);
 }

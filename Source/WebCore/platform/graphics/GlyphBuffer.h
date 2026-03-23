@@ -37,6 +37,7 @@
 #include <limits>
 #include <wtf/CheckedRef.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -46,6 +47,7 @@ static const constexpr GlyphBufferGlyph deletedGlyph = 0xFFFF;
 class Font;
 
 class GlyphBuffer {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(GlyphBuffer);
 public:
     bool isEmpty() const { return m_fonts.isEmpty(); }
     unsigned size() const { return m_fonts.size(); }

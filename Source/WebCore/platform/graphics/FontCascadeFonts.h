@@ -24,11 +24,14 @@
 #include <WebCore/FontCascadeDescription.h>
 #include <WebCore/FontRanges.h>
 #include <WebCore/FontSelector.h>
+#include <WebCore/GlyphBuffer.h>
 #include <WebCore/GlyphPage.h>
 #include <WebCore/TextMeasurementCache.h>
+#include <WebCore/TextRun.h>
 #include <wtf/EnumeratedArray.h>
 #include <wtf/Forward.h>
 #include <wtf/HashFunctions.h>
+#include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>
 #include <wtf/MainThread.h>
 #include <wtf/Platform.h>
@@ -49,6 +52,18 @@ class FontSelector;
 class GraphicsContext;
 class IntRect;
 class MixedFontGlyphPage;
+
+struct CachedShapedText {
+    float width { 0.f };
+    std::unique_ptr<GlyphBuffer> glyphBuffer;
+
+    // This is tuned for Canvas text operations (fillText, strokeText)
+    static constexpr int s_shapedTextCacheInitialInterval = -3; // Cache immediately, no countdown
+    static constexpr int s_shapedTextCacheMinInterval = -3; // After a hit, cache the next 3 attempts
+    static constexpr int s_shapedTextCacheMaxInterval = -3; // Never ramp up sampling, stay aggressive
+    static constexpr unsigned s_shapedTextCacheMaxSize = 500000; // Same as default cache size
+    static constexpr unsigned s_shapedTextCacheMaxTextLength = 128; // Matches SmallStringKey::capacity()
+};
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FontCascadeFonts);
 class FontCascadeFonts : public RefCounted<FontCascadeFonts> {
@@ -76,6 +91,19 @@ public:
     using WidthCache = TextMeasurementCache<float>;
     WidthCache& widthCache() { return m_widthCache; }
     const WidthCache& widthCache() const { return m_widthCache; }
+
+    using ShapedTextCache = TextMeasurementCache<
+        CachedShapedText,
+        CachedShapedText::s_shapedTextCacheInitialInterval,
+        CachedShapedText::s_shapedTextCacheMinInterval,
+        CachedShapedText::s_shapedTextCacheMaxInterval,
+        CachedShapedText::s_shapedTextCacheMaxSize,
+        CachedShapedText::s_shapedTextCacheMaxTextLength
+    >;
+    ShapedTextCache& shapedTextCache() { return m_shapedTextCache; }
+    const ShapedTextCache& shapedTextCache() const { return m_shapedTextCache; }
+
+    const CachedShapedText* getOrCreateCachedShapedText(const TextRun&, const FontCascade&);
 
     const Font& primaryFont(const FontCascadeDescription&, FontSelector*);
     WEBCORE_EXPORT const FontRanges& realizeFallbackRangesAt(const FontCascadeDescription&, FontSelector*, unsigned fallbackIndex);
@@ -121,6 +149,7 @@ private:
     SingleThreadWeakPtr<const Font> m_cachedPrimaryFont;
 
     WidthCache m_widthCache;
+    ShapedTextCache m_shapedTextCache;
 
     unsigned short m_generation { 0 };
     Pitch m_pitch { UnknownPitch };
