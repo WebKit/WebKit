@@ -28,6 +28,8 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import <wtf/RetainPtr.h>
+
 @implementation WKExtrinsicButton
 
 - (void)setExtrinsicContentSize:(CGSize)size
