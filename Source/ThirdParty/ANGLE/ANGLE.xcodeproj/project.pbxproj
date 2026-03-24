@@ -667,6 +667,7 @@
 		7BDE1EFC2DED9248007E43DC /* libgtest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BDE1EFA2DED923F007E43DC /* libgtest.a */; };
 		7BE34ADC2E01938A001AD21A /* libWebKitAdditions.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 7BE34ADA2E019371001AD21A /* libWebKitAdditions.a */; };
 		7BE34ADE2E0193AC001AD21A /* libWebKitAdditions.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 7BE34ADA2E019371001AD21A /* libWebKitAdditions.a */; };
+		7BF0DF592F71612100F99E69 /* utilities_unittest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BF0DF582F71612100F99E69 /* utilities_unittest.cpp */; };
 		7BF554C42C81EF29002B101E /* libtranslator.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BF5549B2C81EDE0002B101E /* libtranslator.a */; };
 		7BF554C52C81EF4D002B101E /* TranslatorFuzzer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BF554A02C81EE51002B101E /* TranslatorFuzzer.cpp */; };
 		7BF554CD2C81F028002B101E /* TranslatorFuzzer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BF554A02C81EE51002B101E /* TranslatorFuzzer.cpp */; };
@@ -2208,6 +2209,7 @@
 		7BDE1EFA2DED923F007E43DC /* libgtest.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libgtest.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BE34ADA2E019371001AD21A /* libWebKitAdditions.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWebKitAdditions.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BE4AA542DE4544900A16F7E /* ANGLEEnd2EndTests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ANGLEEnd2EndTests; sourceTree = BUILT_PRODUCTS_DIR; };
+		7BF0DF582F71612100F99E69 /* utilities_unittest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = utilities_unittest.cpp; sourceTree = "<group>"; };
 		7BF5549B2C81EDE0002B101E /* libtranslator.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libtranslator.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BF554A02C81EE51002B101E /* TranslatorFuzzer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = TranslatorFuzzer.cpp; path = WebKit/TranslatorFuzzer.cpp; sourceTree = "<group>"; };
 		7BF554A12C81EE77002B101E /* TranslatorFuzzerCoverage.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = TranslatorFuzzerCoverage.mm; path = WebKit/TranslatorFuzzerCoverage.mm; sourceTree = "<group>"; };
@@ -3608,6 +3610,7 @@
 				7B5B1F0F2F0FC73B00B5D57B /* unsafe_buffers.h */,
 				5CC7D46819102620000B8C1F /* utilities.cpp */,
 				5CC7D46919102620000B8C1F /* utilities.h */,
+				7BF0DF582F71612100F99E69 /* utilities_unittest.cpp */,
 				31A331C51EA5ED5F00FD2203 /* vector_utils.h */,
 				7BFAF8DC2DE6EDE400327F7F /* vector_utils_unittest.cpp */,
 				3A2C66EF29236E7D00FEDF46 /* WorkerThread.cpp */,
@@ -6288,6 +6291,7 @@
 				7BFAF8E32DE6EDE400327F7F /* system_utils_unittest.cpp in Sources */,
 				7BFAF8F32DE6EE4500327F7F /* SystemInfo_unittest.cpp in Sources */,
 				7BFAF8C12DE6ECA700327F7F /* Type_test.cpp in Sources */,
+				7BF0DF592F71612100F99E69 /* utilities_unittest.cpp in Sources */,
 				7BFAF8BB2DE6ECA700327F7F /* VariablePacker_test.cpp in Sources */,
 				7BFAF8E22DE6EDE400327F7F /* vector_utils_unittest.cpp in Sources */,
 				7BFAF8E82DE6EDE400327F7F /* WorkerThread_unittest.cpp in Sources */,
