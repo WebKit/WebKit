@@ -59,7 +59,7 @@
 #include "JSHTMLModelElementCamera.h"
 #include "LayoutRect.h"
 #include "LayoutSize.h"
-#include "LazyLoadModelObserver.h"
+#include "LazyLoadElementObserver.h"
 #include "LegacySchemeRegistry.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
@@ -152,7 +152,7 @@ HTMLModelElement::~HTMLModelElement()
     }
 #endif
 
-    LazyLoadModelObserver::unobserve(*this, protect(document()));
+    LazyLoadElementObserver::unobserve(*this, protect(document()));
 
     m_loadModelTimer = nullptr;
 
@@ -184,7 +184,7 @@ RefPtr<Model> HTMLModelElement::model() const
 {
     if (!m_dataComplete)
         return nullptr;
-    
+
     return m_model;
 }
 
@@ -1619,7 +1619,7 @@ void HTMLModelElement::stop()
 {
     RELEASE_LOG(ModelElement, "%p - HTMLModelElement::stop()", this);
 
-    LazyLoadModelObserver::unobserve(*this, protect(document()));
+    LazyLoadElementObserver::unobserve(*this, protect(document()));
 
     m_loadModelTimer = nullptr;
 
@@ -1707,8 +1707,8 @@ Node::NeedsPostConnectionSteps HTMLModelElement::insertionSteps(InsertionType in
 #if ENABLE(MODEL_PROCESS)
         document->incrementModelElementCount();
 #endif
-        m_modelPlayerProvider = document->page()->modelPlayerProvider();
-        LazyLoadModelObserver::observe(*this);
+        m_modelPlayerProvider = protect(document->page())->modelPlayerProvider();
+        LazyLoadElementObserver::observe(*this);
     }
 
     return insertResult;
@@ -1724,7 +1724,7 @@ void HTMLModelElement::removingSteps(RemovalType removalType, ContainerNode& old
 #if ENABLE(MODEL_PROCESS)
         document->decrementModelElementCount();
 #endif
-        LazyLoadModelObserver::unobserve(*this, document);
+        LazyLoadElementObserver::unobserve(*this, document);
 
         m_loadModelTimer = nullptr;
 
@@ -1791,7 +1791,7 @@ void HTMLModelElement::sourceRequestResource()
     protect(m_resource)->addClient(*this);
 }
 
-void HTMLModelElement::viewportIntersectionChanged(bool isIntersecting)
+void HTMLModelElement::lazyLoadIntersectionCallbackInvoked(bool isIntersecting)
 {
     if (isIntersecting == m_isIntersectingViewport)
         return;

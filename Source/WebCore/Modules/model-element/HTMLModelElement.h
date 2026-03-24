@@ -199,7 +199,7 @@ public:
 #endif
 
     bool isIntersectingViewport() const { return m_isIntersectingViewport; }
-    void viewportIntersectionChanged(bool isIntersecting);
+    void lazyLoadIntersectionCallbackInvoked(bool isIntersecting);
 
     WEBCORE_EXPORT String modelElementStateForTesting() const;
 

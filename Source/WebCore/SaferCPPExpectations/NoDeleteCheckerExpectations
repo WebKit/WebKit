@@ -2,7 +2,6 @@ Modules/notifications/NotificationPayload.cpp
 Modules/streams/ReadableByteStreamController.cpp
 Modules/streams/ReadableStreamBYOBRequest.cpp
 Modules/webauthn/cbor/CBORValue.cpp
-Modules/webtransport/WebTransportDatagramsWritable.cpp
 css/CSSComputedStyleDeclaration.cpp
 css/PropertySetCSSDescriptors.cpp
 css/StyleSheetList.cpp

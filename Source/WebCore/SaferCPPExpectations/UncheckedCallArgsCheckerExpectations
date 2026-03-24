@@ -171,8 +171,6 @@ html/HTMLOptionsCollection.cpp
 html/HTMLPlugInElement.cpp
 html/HTMLTextFormControlElement.cpp
 html/ImageBitmap.cpp
-html/LazyLoadFrameObserver.cpp
-html/LazyLoadImageObserver.cpp
 html/MediaElementSession.cpp
 html/ModelDocument.cpp
 html/ValidatedFormListedElement.cpp

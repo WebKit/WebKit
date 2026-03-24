@@ -299,7 +299,6 @@ Modules/mediastream/UserMediaController.cpp
 Modules/mediastream/UserMediaRequest.cpp
 Modules/mediastream/VideoTrackGenerator.cpp
 Modules/model-element/HTMLModelElement.cpp
-Modules/model-element/LazyLoadModelObserver.cpp
 Modules/model-element/ModelPlayer.cpp
 Modules/model-element/ModelPlayerAnimationState.cpp
 Modules/model-element/ModelPlayerClient.cpp
@@ -1644,8 +1643,7 @@ html/InputMode.cpp
 html/InputType.cpp
 html/InputTypeNames.cpp
 html/LabelsNodeList.cpp
-html/LazyLoadFrameObserver.cpp
-html/LazyLoadImageObserver.cpp
+html/LazyLoadElementObserver.cpp
 html/LinkIconCollector.cpp
 html/LinkRelAttribute.cpp
 html/MediaController.cpp

@@ -192,7 +192,7 @@ class JSViewTransitionUpdateCallback;
 class LargestContentfulPaintData;
 class LayoutPoint;
 class LayoutRect;
-class LazyLoadImageObserver;
+class LazyLoadElementObserver;
 class LiveNodeList;
 class LocalFrame;
 class LocalFrameView;
@@ -362,9 +362,6 @@ enum class EventTrackingRegionsEventType : uint8_t;
 enum class MediaSessionAction : uint8_t;
 #endif
 
-#if ENABLE(MODEL_ELEMENT)
-class LazyLoadModelObserver;
-#endif
 
 using IntDegrees = int32_t;
 using MediaProducerMediaStateFlags = OptionSet<MediaProducerMediaState>;
@@ -1974,10 +1971,7 @@ public:
 
     bool allowsContentJavaScript() const;
 
-    LazyLoadImageObserver& lazyLoadImageObserver();
-#if ENABLE(MODEL_ELEMENT)
-    LazyLoadModelObserver& lazyLoadModelObserver();
-#endif
+    LazyLoadElementObserver& lazyLoadElementObserver();
 
 #if ENABLE(MODEL_PROCESS)
     void incrementModelElementCount();
@@ -2356,10 +2350,7 @@ private:
 
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_cssTarget;
 
-    std::unique_ptr<LazyLoadImageObserver> m_lazyLoadImageObserver;
-#if ENABLE(MODEL_ELEMENT)
-    std::unique_ptr<LazyLoadModelObserver> m_lazyLoadModelObserver;
-#endif
+    std::unique_ptr<LazyLoadElementObserver> m_lazyLoadElementObserver;
 
 #if ENABLE(MODEL_PROCESS)
     unsigned m_modelElementCount { 0 };

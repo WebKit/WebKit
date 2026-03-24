@@ -41,7 +41,7 @@ public:
     ~WebTransportDatagramsWritable();
 
     const RefPtr<WebTransportSendGroup>& NODELETE sendGroup();
-    void NODELETE setSendGroup(WebTransportSendGroup*);
+    void setSendGroup(WebTransportSendGroup*);
 
     int64_t NODELETE sendOrder();
     void NODELETE setSendOrder(int64_t);
