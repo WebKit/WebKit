@@ -93,7 +93,6 @@ namespace JSC {
     macro(promiseReject) \
     macro(performPromiseThen) \
     macro(push) \
-    macro(repeatCharacter) \
     macro(starDefault) \
     macro(starNamespace) \
     macro(then) \
@@ -132,20 +131,15 @@ namespace JSC {
     macro(importInRealm) \
     macro(evalFunction) \
     macro(evalInRealm) \
-    macro(moveFunctionToRealm) \
     macro(newTargetLocal) \
     macro(derivedConstructor) \
     macro(isTypedArrayView) \
-    macro(isSharedTypedArrayView) \
-    macro(isResizableOrGrowableSharedTypedArrayView) \
     macro(isDetached) \
     macro(typedArrayFromFast) \
     macro(isBoundFunction) \
     macro(hasInstanceBoundFunction) \
     macro(instanceOf) \
-    macro(isArraySlow) \
     macro(isArray) \
-    macro(sameValue) \
     macro(regExpCreate) \
     macro(isRegExp) \
     macro(isFinite) \
@@ -180,11 +174,8 @@ namespace JSC {
     macro(regExpProtoUnicodeGetter) \
     macro(regExpProtoUnicodeSetsGetter) \
     macro(regExpPrototypeSymbolMatch) \
-    macro(regExpPrototypeSymbolReplace) \
-    macro(regExpSearchFast) \
     macro(regExpSplitFast) \
     macro(stringIncludesInternal) \
-    macro(stringIndexOfInternal) \
     macro(stringSplitFast) \
     macro(stringSubstring) \
     macro(handleNegativeProxyHasTrapResult) \
@@ -206,7 +197,6 @@ namespace JSC {
     macro(emptyPropertyNameEnumerator) \
     macro(sentinelString) \
     macro(createRemoteFunction) \
-    macro(isRemoteFunction) \
     macro(arrayFromFastWithoutMapFn) \
     macro(jsonParse) \
     macro(jsonStringify) \
@@ -221,7 +211,6 @@ namespace JSC {
     macro(pop) \
     macro(wrapForValidIteratorCreate) \
     macro(asyncFromSyncIteratorCreate) \
-    macro(regExpStringIteratorCreate) \
     macro(iteratorHelperCreate) \
     macro(syncIterator) \
     macro(includes) \

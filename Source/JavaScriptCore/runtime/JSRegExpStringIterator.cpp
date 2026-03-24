@@ -60,22 +60,4 @@ void JSRegExpStringIterator::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN(JSRegExpStringIterator);
 
-JSC_DEFINE_HOST_FUNCTION(regExpStringIteratorPrivateFuncCreate, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    ASSERT(callFrame->argument(0).isCell());
-    ASSERT(callFrame->argument(1).isString());
-    ASSERT(callFrame->argument(2).isBoolean());
-    ASSERT(callFrame->argument(3).isBoolean());
-
-    VM& vm = globalObject->vm();
-
-    auto* regExpStringIterator = JSRegExpStringIterator::createWithInitialValues(vm, globalObject->regExpStringIteratorStructure());
-
-    regExpStringIterator->setRegExp(vm, asObject(callFrame->uncheckedArgument(0)));
-    regExpStringIterator->setString(vm, callFrame->uncheckedArgument(1));
-    regExpStringIterator->setFlags(callFrame->argument(2).asBoolean(), callFrame->argument(3).asBoolean());
-
-    return JSValue::encode(regExpStringIterator);
-}
-
 } // namespace JSC

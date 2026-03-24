@@ -117,6 +117,4 @@ private:
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSRegExpStringIterator);
 
-JSC_DECLARE_HOST_FUNCTION(regExpStringIteratorPrivateFuncCreate);
-
 } // namespace JSC

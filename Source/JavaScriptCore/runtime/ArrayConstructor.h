@@ -58,7 +58,6 @@ JSArray* constructArrayWithSizeQuirk(JSGlobalObject*, ArrayAllocationProfile*, J
 
 JSC_DECLARE_HOST_FUNCTION(arrayConstructorIsArray);
 JSC_DECLARE_HOST_FUNCTION(arrayConstructorPrivateFromFastWithoutMapFn);
-JSC_DECLARE_HOST_FUNCTION(arrayConstructorPrivateFuncIsArraySlow);
 bool isArraySlow(JSGlobalObject*, ProxyObject* argument);
 
 // ES6 7.2.2
