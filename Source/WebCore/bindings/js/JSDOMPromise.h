@@ -53,7 +53,7 @@ public:
     enum class Status { Pending, Fulfilled, Rejected };
     Status status() const;
 
-    static IsCallbackRegistered whenPromiseIsSettled(JSDOMGlobalObject*, JSC::JSPromise*, Function<void()>&&);
+    static IsCallbackRegistered whenPromiseIsSettled(JSDOMGlobalObject*, JSC::JSPromise*, Function<void()>&&, JSC::JSObject* protectedWrapper = nullptr);
 
 private:
     DOMPromise(JSDOMGlobalObject& globalObject, JSC::JSPromise& promise)
