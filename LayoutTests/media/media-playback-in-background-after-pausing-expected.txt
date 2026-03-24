@@ -1,0 +1,21 @@
+
+RUN(internals.consumeTransientActivation())
+EVENT(canplay)
+RUN(video.play())
+Promise resolved OK
+RUN(internals.setMediaElementGracePeriodForResumingPlaybackInBackground(video, 20000))
+RUN(video.pause())
+EVENT(pause)
+Sleep 50ms:
+RUN(internals.setPageVisibility(false))
+RUN(video.play())
+Promise resolved OK
+-
+RUN(internals.setMediaElementGracePeriodForResumingPlaybackInBackground(video, 10))
+RUN(video.pause())
+Sleep 50ms:
+RUN(internals.setPageVisibility(false))
+RUN(video.play())
+Promise rejected correctly OK
+END OF TEST
+

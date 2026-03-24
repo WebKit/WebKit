@@ -122,6 +122,7 @@ static String restrictionNames(MediaElementSession::BehaviorRestrictions restric
     CASE(RequirePlaybackToControlControlsManager)
     CASE(RequireUserGestureForVideoDueToLowPowerMode)
     CASE(RequireUserGestureForVideoDueToAggressiveThermalMitigation)
+    CASE(RequiresUserGestureWhenPausedInBackground)
 
     return restrictionBuilder.toString();
 }
@@ -489,6 +490,17 @@ Expected<void, MediaPlaybackDenialExplanation> MediaElementSession::playbackStat
     if (m_restrictions & RequireUserGestureForAudioRateChange && (!element->isVideo() || element->hasAudio()) && !element->muted() && element->volume() && !document->processingUserGestureForMedia())
         return makeUnexpectedDenial(MediaPlaybackDenialReason::UserGestureRequired, "User gesture required for audio rate change"_s);
 
+    if (m_restrictions & RequiresUserGestureWhenPausedInBackground
+        && state == MediaPlaybackState::Playing
+        && document->hidden()
+        && !document->processingUserGestureForMedia()) {
+        if (!m_mostRecentPlaybackEndedTime)
+            return makeUnexpectedDenial(MediaPlaybackDenialReason::UserGestureRequired, "User gesture required when not visible"_s);
+
+        auto durationSinceMostRecentPlaybackEnded = MonotonicTime::now() - *m_mostRecentPlaybackEndedTime;
+        if (durationSinceMostRecentPlaybackEnded > gracePeriodForResumingPlaybackInBackground())
+            return makeUnexpectedDenial(MediaPlaybackDenialReason::UserGestureRequired, "User gesture required when not visible"_s);
+    }
 
     if (m_restrictions & RequirePageVisibilityToPlayAudio && (!element->isVideo() || element->hasAudio()) && !element->muted() && element->volume() && element->elementIsHidden())
         return makeUnexpectedDenial(MediaPlaybackDenialReason::UserGestureRequired, "Page visibility required for audio rate change"_s);
@@ -1097,6 +1109,13 @@ void MediaElementSession::mediaEngineUpdated()
     client().setShouldPlayToPlaybackTarget(m_shouldPlayToPlaybackTarget);
 #endif
 
+}
+
+void MediaElementSession::setState(State state)
+{
+    if (this->state() == State::Playing && state != State::Playing)
+        m_mostRecentPlaybackEndedTime = MonotonicTime::now();
+    PlatformMediaSession::setState(state);
 }
 
 void MediaElementSession::resetPlaybackSessionState()

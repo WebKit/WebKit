@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>media-playback-in-background-after-pausing</title>
+	<script src="video-test.js"></script>
+	<script src="media-file.js"></script>
+	<script>
+	async function runTest() {
+		findMediaElement();
+		video.loop = true;
+		video.src = findMediaFile('video', 'content/test');
+
+		run('internals.consumeTransientActivation()');
+
+		await waitFor(video, 'canplay');
+		await shouldResolve(run('video.play()'));
+
+		run('internals.setMediaElementGracePeriodForResumingPlaybackInBackground(video, 20000)');
+		run('video.pause()');
+		await waitFor(video, 'pause');
+
+		consoleWrite('Sleep 50ms:')
+		await sleepFor(50);
+		run('internals.setPageVisibility(false)');
+		await shouldResolve(run('video.play()'));
+
+		consoleWrite('-');
+		run('internals.setMediaElementGracePeriodForResumingPlaybackInBackground(video, 10)');
+		run('video.pause()');
+		consoleWrite('Sleep 50ms:')
+		await sleepFor(50);
+		run('internals.setPageVisibility(false)');
+		await shouldReject(run('video.play()'));
+	}
+
+	window.addEventListener('load', event => {
+		runTest().then(endTest).catch(failTest);
+	})
+	</script>
+</head>
+<body>
+	<video></video>
+</body>
+</html>
