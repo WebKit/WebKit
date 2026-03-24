@@ -118,6 +118,8 @@ static String toBidiErrorCode(int errorCode, const String& inspectorInternalMsg)
         return "no such browsing context"_s;
     case Inspector::Protocol::Automation::ErrorMessage::FrameNotFound:
         return "no such frame"_s;
+    case Inspector::Protocol::Automation::ErrorMessage::NoSuchHistoryEntry:
+        return "no such history entry"_s;
     case Inspector::Protocol::Automation::ErrorMessage::NodeNotFound:
         return "stale element reference"_s;
     case Inspector::Protocol::Automation::ErrorMessage::InvalidNodeIdentifier:

@@ -7677,7 +7677,7 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
 
     if (m_controlledByAutomation && willInternallyHandleFailure == WillInternallyHandleFailure::No) {
         if (RefPtr automationSession = process->processPool().automationSession())
-            automationSession->navigationOccurredForFrame(frame);
+            automationSession->navigationOccurredForFrame(frame, navigationID);
     }
 
     // FIXME: We should message check that navigationID is not zero here, but it's currently zero for some navigations through the back/forward cache.
@@ -8200,7 +8200,7 @@ void WebPageProxy::didFinishLoadForFrame(IPC::Connection& connection, FrameIdent
             protectedPageLoadState->didFinishLoad(transaction);
 
         if (RefPtr automationSession = activeAutomationSession()) {
-            automationSession->navigationOccurredForFrame(*frame);
+            automationSession->navigationOccurredForFrame(*frame, navigationID);
             automationSession->loadCompletedForFrame(*frame, navigationID, WallTime::now());
         }
 
@@ -8283,7 +8283,7 @@ void WebPageProxy::didFailLoadForFrame(IPC::Connection& connection, FrameIdentif
 
     if (m_controlledByAutomation) {
         if (RefPtr automationSession = m_configuration->processPool().automationSession())
-            automationSession->navigationOccurredForFrame(*frame);
+            automationSession->navigationOccurredForFrame(*frame, navigationID);
     }
 
     frame->didFailLoad();
@@ -8344,7 +8344,7 @@ void WebPageProxy::didSameDocumentNavigationForFrame(IPC::Connection& connection
 
     if (m_controlledByAutomation) {
         if (RefPtr automationSession = m_configuration->processPool().automationSession())
-            automationSession->navigationOccurredForFrame(*frame);
+            automationSession->navigationOccurredForFrame(*frame, navigationID);
     }
 
     protectedPageLoadState->clearPendingAPIRequest(transaction);
@@ -8395,7 +8395,7 @@ void WebPageProxy::didSameDocumentNavigationForFrameViaJS(IPC::Connection& conne
 
     if (m_controlledByAutomation) {
         if (RefPtr automationSession = m_configuration->processPool().automationSession())
-            automationSession->navigationOccurredForFrame(*frame);
+            automationSession->navigationOccurredForFrame(*frame, navigation ? std::optional { navigation->navigationID() } : std::nullopt);
     }
 
     protectedPageLoadState->clearPendingAPIRequest(transaction);

@@ -157,11 +157,22 @@ Ref<Inspector::Protocol::BidiBrowsingContext::Info> BidiBrowsingContextAgent::ge
 {
     // https://w3c.github.io/webdriver-bidi/#get-the-navigable-info
 
+    // Use URL from UI process (updated synchronously) instead of web process frame tree data
+    // which may be stale after navigation.
+    String url;
+    if (RefPtr frame = WebFrameProxy::webFrame(tree.info.frameID)) {
+        if (frame->isMainFrame()) {
+            if (RefPtr page = frame->page())
+                url = page->currentURL();
+        } else
+            url = frame->url().string();
+    }
+
     // FIXME: Properly support different user contexts, which will likely map to different WebAutomationSessions.
     // https://bugs.webkit.org/show_bug.cgi?id=288104
     auto info = Inspector::Protocol::BidiBrowsingContext::Info::create()
         .setContext(getBrowsingContextID(tree.info.frameID))
-        .setUrl(tree.info.request.url().string())
+        .setUrl(url)
         .setClientWindow("placeholder_window"_s)
         .setUserContext("default"_s)
         .setChildrenIsNull()
@@ -350,12 +361,19 @@ void BidiBrowsingContextAgent::reload(const BrowsingContext& browsingContext, st
     });
 }
 
-void BidiBrowsingContextAgent::traverseHistory(const BrowsingContext& browsingContext, int delta, CommandCallback<void>&& callback)
+void BidiBrowsingContextAgent::traverseHistory(const BrowsingContext& browsingContext, double delta, CommandCallback<void>&& callback)
 {
+    // https://w3c.github.io/webdriver-bidi/#command-browsingContext-traverseHistory
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
-    session->traverseHistoryInBrowsingContext(browsingContext, delta, WTF::move(callback));
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!JSC::isSafeInteger(delta), InvalidParameter);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(browsingContext.startsWith("frame-"_s), InvalidParameter);
+
+    RefPtr webPageProxy = session->webPageProxyForHandle(browsingContext);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!webPageProxy, FrameNotFound);
+
+    session->traverseHistoryInBrowsingContext(browsingContext, static_cast<int64_t>(delta), WTF::move(callback));
 }
 
 } // namespace WebKit

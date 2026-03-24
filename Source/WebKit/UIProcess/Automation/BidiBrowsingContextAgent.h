@@ -58,7 +58,7 @@ public:
     void handleUserPrompt(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, std::optional<bool>&& optionalShouldAccept, const String& userText, Inspector::CommandCallback<void>&&) override;
     void navigate(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, const String& url, const String& /* BidiBrowsingContext.ReadinessState */ optionalWait, Inspector::CommandCallbackOf<String, Inspector::Protocol::BidiBrowsingContext::NavigationID>&&) override;
     void reload(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, std::optional<bool>&& optionalIgnoreCache, std::optional<Inspector::Protocol::BidiBrowsingContext::ReadinessState>&& optionalWait, Inspector::CommandCallbackOf<String, Inspector::Protocol::BidiBrowsingContext::NavigationID>&&) override;
-    void traverseHistory(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, int delta, Inspector::CommandCallback<void>&&) override;
+    void traverseHistory(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&, double delta, Inspector::CommandCallback<void>&&) override;
 
 private:
     enum class IncludeParentID: bool { No, Yes };

@@ -2738,23 +2738,6 @@
     "imported/w3c/webdriver/tests/bidi/browsing_context/traverse_history/delta.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288334"}}
     },
-    "imported/w3c/webdriver/tests/bidi/browsing_context/traverse_history/invalid.py": {
-        "expected": { "all": { "status": ["PASS"], "bug": "webkit.org/b/288334"}},
-        "subtests" : {
-            "test_params_context_invalid_value": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288334"}}
-            },
-            "test_delta_invalid_value[-2]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288334"}}
-            },
-            "test_delta_invalid_value[1]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288334"}}
-            },
-            "test_iframe": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288334"}}
-            }
-        }
-    },
     "imported/w3c/webdriver/tests/bidi/browsing_context/user_prompt_closed/beforeunload.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288343"}}
     },
