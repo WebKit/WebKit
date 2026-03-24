@@ -20,84 +20,40 @@ namespace rx
 namespace
 {
 constexpr size_t kInitialIndexBufferSize = 0xFFFF;  // Initial 64k pool.
-}
-static inline uint primCountForIndexCount(const uint fixIndexBufferKey, const uint indexCount)
-{
-    const uint fixIndexBufferMode =
-        (fixIndexBufferKey >> MtlFixIndexBufferKeyModeShift) & MtlFixIndexBufferKeyModeMask;
 
-    switch (fixIndexBufferMode)
+struct IndexedDrawRewriteInfoMtl {
+    uint32_t primitiveCount;
+    size_t newIndexCount;
+    gl::PrimitiveMode newPrimitiveMode;
+};
+
+// Returns counts for Metal indexed draw for GL indexed draw parameters.
+inline IndexedDrawRewriteInfoMtl resolveIndexedDrawRewriteInfo(gl::PrimitiveMode mode, GLsizei count)
+{
+    uint32_t indexCount = static_cast<uint32_t>(count);
+    switch (mode)
     {
-        case MtlFixIndexBufferKeyPoints:
-            return indexCount;
-        case MtlFixIndexBufferKeyLines:
-            return indexCount / 2;
-        case MtlFixIndexBufferKeyLineStrip:
-            return (uint)MAX(0, (int)indexCount - 1);
-        case MtlFixIndexBufferKeyLineLoop:
-            return (uint)MAX(0, (int)indexCount);
-        case MtlFixIndexBufferKeyTriangles:
-            return indexCount / 3;
-        case MtlFixIndexBufferKeyTriangleStrip:
-            return (uint)MAX(0, (int)indexCount - 2);
-        case MtlFixIndexBufferKeyTriangleFan:
-            return (uint)MAX(0, (int)indexCount - 2);
+        case gl::PrimitiveMode::Points:
+            return {indexCount, indexCount, gl::PrimitiveMode::Points};
+        case gl::PrimitiveMode::Lines:
+            return {indexCount / 2, indexCount - (indexCount % 2), gl::PrimitiveMode::Lines};
+        case gl::PrimitiveMode::LineLoop:
+            return {indexCount, static_cast<size_t>(indexCount) * 2, gl::PrimitiveMode::Lines};
+        case gl::PrimitiveMode::LineStrip:
+            indexCount = indexCount < 1 ? 0 : indexCount - 1;
+            return {indexCount, static_cast<size_t>(indexCount) * 2, gl::PrimitiveMode::Lines};
+        case gl::PrimitiveMode::Triangles:
+            return {indexCount / 3, indexCount - (indexCount % 3), gl::PrimitiveMode::Triangles};
+        case gl::PrimitiveMode::TriangleStrip:
+        case gl::PrimitiveMode::TriangleFan:
+            indexCount = indexCount < 2 ? 0 : indexCount - 2;
+            return {indexCount, static_cast<size_t>(indexCount) * 3, gl::PrimitiveMode::Triangles};
         default:
-            ASSERT(false);
-            return 0;
+            UNREACHABLE();
+            return {0, 0, gl::PrimitiveMode::InvalidEnum};
     }
 }
 
-static inline uint indexCountForPrimCount(const uint fixIndexBufferKey, const uint primCount)
-{
-    const uint fixIndexBufferMode =
-        (fixIndexBufferKey >> MtlFixIndexBufferKeyModeShift) & MtlFixIndexBufferKeyModeMask;
-    switch (fixIndexBufferMode)
-    {
-        case MtlFixIndexBufferKeyPoints:
-            return primCount;
-        case MtlFixIndexBufferKeyLines:
-            return primCount * 2;
-        case MtlFixIndexBufferKeyLineStrip:
-            return primCount * 2;
-        case MtlFixIndexBufferKeyLineLoop:
-            return primCount * 2;
-        case MtlFixIndexBufferKeyTriangles:
-            return primCount * 3;
-        case MtlFixIndexBufferKeyTriangleStrip:
-            return primCount * 3;
-        case MtlFixIndexBufferKeyTriangleFan:
-            return primCount * 3;
-        default:
-            ASSERT(false);
-            return 0;
-    }
-}
-
-static inline gl::PrimitiveMode getNewPrimitiveMode(const uint fixIndexBufferKey)
-{
-    const uint fixIndexBufferMode =
-        (fixIndexBufferKey >> MtlFixIndexBufferKeyModeShift) & MtlFixIndexBufferKeyModeMask;
-    switch (fixIndexBufferMode)
-    {
-        case MtlFixIndexBufferKeyPoints:
-            return gl::PrimitiveMode::Points;
-        case MtlFixIndexBufferKeyLines:
-            return gl::PrimitiveMode::Lines;
-        case MtlFixIndexBufferKeyLineStrip:
-            return gl::PrimitiveMode::Lines;
-        case MtlFixIndexBufferKeyLineLoop:
-            return gl::PrimitiveMode::Lines;
-        case MtlFixIndexBufferKeyTriangles:
-            return gl::PrimitiveMode::Triangles;
-        case MtlFixIndexBufferKeyTriangleStrip:
-            return gl::PrimitiveMode::Triangles;
-        case MtlFixIndexBufferKeyTriangleFan:
-            return gl::PrimitiveMode::Triangles;
-        default:
-            ASSERT(false);
-            return gl::PrimitiveMode::InvalidEnum;
-    }
 }
 
 ProvokingVertexHelper::ProvokingVertexHelper(ContextMtl *context) : mIndexBuffers(false)
@@ -191,14 +147,13 @@ angle::Result ProvokingVertexHelper::preconditionIndexBuffer(ContextMtl *context
     // Upload index buffer
     // dispatch per-primitive?
     uint indexBufferKey = buildIndexBufferKey(elementsType, primitiveRestartEnabled, primitiveMode);
-    uint primCount      = primCountForIndexCount(indexBufferKey, (uint32_t)count);
-    uint newIndexCount = indexCountForPrimCount(indexBufferKey, primCount);
+    auto [primCount, newIndexCount, newPrimitiveMode] = resolveIndexedDrawRewriteInfo(primitiveMode, count);
     // We do not support large buffers at the moment.
     ANGLE_CHECK_GL_MATH(context, newIndexCount <= std::numeric_limits<uint32_t>::max());
-    size_t indexSize   = gl::GetDrawElementsTypeSize(elementsType);
-    size_t newOffset   = 0;
+    size_t newIndexBufferSize = newIndexCount << gl::GetDrawElementsTypeShift(elementsType);
+    size_t newOffset          = 0;
     mtl::BufferRef newBuffer;
-    ANGLE_TRY(mIndexBuffers.allocate(context, newIndexCount * indexSize + indexOffset, nullptr,
+    ANGLE_TRY(mIndexBuffers.allocate(context, newIndexBufferSize + indexOffset, nullptr,
                                      &newBuffer, &newOffset));
     auto threadsPerThreadgroup = MTLSizeMake(MIN(primCount, 64u), 1, 1);
 
@@ -217,7 +172,7 @@ angle::Result ProvokingVertexHelper::preconditionIndexBuffer(ContextMtl *context
         threadsPerThreadgroup);
     outIndexCount    = static_cast<uint32_t>(newIndexCount);
     outIndexOffset   = newOffset;
-    outPrimitiveMode = getNewPrimitiveMode(indexBufferKey);
+    outPrimitiveMode = newPrimitiveMode;
     outNewBuffer     = newBuffer;
     return angle::Result::Continue;
 }
@@ -237,14 +192,13 @@ angle::Result ProvokingVertexHelper::generateIndexBuffer(ContextMtl *context,
     // dispatch per-primitive?
     const bool primitiveRestartEnabled = false;
     uint indexBufferKey = buildIndexBufferKey(elementsType, primitiveRestartEnabled, primitiveMode);
-    uint primCount      = primCountForIndexCount(indexBufferKey, (uint32_t)count);
-    uint newIndexCount    = indexCountForPrimCount(indexBufferKey, primCount);
+    auto [primCount, newIndexCount, newPrimitiveMode] = resolveIndexedDrawRewriteInfo(primitiveMode, count);
     // We do not support large buffers at the moment.
     ANGLE_CHECK_GL_MATH(context, newIndexCount <= std::numeric_limits<uint32_t>::max());
-    size_t indexSize      = gl::GetDrawElementsTypeSize(elementsType);
+    size_t newIndexBufferSize = newIndexCount << gl::GetDrawElementsTypeShift(elementsType);
     size_t newIndexOffset = 0;
     mtl::BufferRef newBuffer;
-    ANGLE_TRY(mIndexBuffers.allocate(context, newIndexCount * indexSize, nullptr, &newBuffer,
+    ANGLE_TRY(mIndexBuffers.allocate(context, newIndexBufferSize, nullptr, &newBuffer,
                                      &newIndexOffset));
     auto threadsPerThreadgroup = MTLSizeMake(MIN(primCount, 64u), 1, 1);
 
@@ -263,7 +217,7 @@ angle::Result ProvokingVertexHelper::generateIndexBuffer(ContextMtl *context,
         threadsPerThreadgroup);
     outIndexCount    = static_cast<uint32_t>(newIndexCount);
     outIndexOffset   = newIndexOffset;
-    outPrimitiveMode = getNewPrimitiveMode(indexBufferKey);
+    outPrimitiveMode = newPrimitiveMode;
     outNewBuffer     = newBuffer;
     return angle::Result::Continue;
 }
