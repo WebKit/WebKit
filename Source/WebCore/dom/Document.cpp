@@ -4527,7 +4527,7 @@ void Document::enqueueEventTimingEntriesIfNeeded()
     if (!window())
         return;
 
-    protectedWindow()->dispatchPendingEventTimingEntries();
+protectedWindow()->finalizeAndQueueEventTimingEntries();
 }
 
 ExceptionOr<void> Document::write(Document* entryDocument, SegmentedString&& text)

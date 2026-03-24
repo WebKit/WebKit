@@ -182,10 +182,10 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
     RefPtr window = document->window();
     std::optional<PerformanceEventTimingCandidate> pendingEventTiming;
     if (typeInfo.isInCategory(EventCategory::EventTimingEligible) && window && document->settings().eventTimingEnabled() && event.isTrusted())
-        pendingEventTiming = window->initializeEventTimingEntry(event, typeInfo.type());
+        pendingEventTiming = window->initializeEventTiming(event, typeInfo.type());
     auto finalizeEntry(WTF::makeScopeExit([&, event = Ref(event)] {
         if (pendingEventTiming)
-            window->finalizeEventTimingEntry(*pendingEventTiming, event, typeInfo.type());
+            window->markEndOfProcessingForEventTiming(*pendingEventTiming, event, typeInfo.type());
     }));
 
     bool targetOrRelatedTargetIsInShadowTree = node.isInShadowTree() || isInShadowTree(event.relatedTarget());
