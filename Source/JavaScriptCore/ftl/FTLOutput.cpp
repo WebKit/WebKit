@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -138,7 +138,7 @@ LValue Output::phi(LType type)
 
 LValue Output::opaque(LValue value)
 {
-    return m_block->appendNew<Value>(m_proc, Opaque, origin(), value);
+    return m_block->appendNew<Value>(m_proc, B3::Opaque, origin(), value);
 }
 
 LValue Output::extract(LValue value, unsigned index)

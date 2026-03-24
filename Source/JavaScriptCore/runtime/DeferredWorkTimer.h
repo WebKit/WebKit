@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #pragma once
 
 #include <JavaScriptCore/JSRunLoopTimer.h>
+#include <JavaScriptCore/Opaque.h>
 #include <JavaScriptCore/WeakInlines.h>
 
 #include <wtf/Deque.h>
@@ -56,13 +57,13 @@ public:
         WTF_MAKE_TZONE_ALLOCATED(TicketData);
         WTF_MAKE_NONCOPYABLE(TicketData);
     public:
-        inline static Ref<TicketData> create(WorkType, JSObject* scriptExecutionOwner, Vector<JSCell*>&& dependencies);
+        inline static Ref<TicketData> create(WorkType, JSObject* scriptExecutionOwner, Vector<Opaque<JSCell*>>&& dependencies);
 
         WorkType type() const { return m_type; }
         inline VM& vm();
         JSObject* target();
         bool isTargetObject();
-        inline const FixedVector<JSCell*>& dependencies(bool mayBeCancelled = false);
+        inline const FixedVector<Opaque<JSCell*>>& dependencies(bool mayBeCancelled = false);
         inline JSObject* scriptExecutionOwner();
 
         inline void cancel();
@@ -71,10 +72,14 @@ public:
         bool isCancelled() const { return m_isCancelled; }
 
     private:
-        inline TicketData(WorkType, JSObject* scriptExecutionOwner, Vector<JSCell*>&& dependencies);
+        inline TicketData(WorkType, JSObject* scriptExecutionOwner, Vector<Opaque<JSCell*>>&& dependencies);
 
         WorkType m_type;
-        FixedVector<JSCell*> m_dependencies;
+        // It is safe to use FixedVector here because:
+        // 1. The dependency cells are protected by the caller while the TicketData is being constructed.
+        // 2. During construction, the TicketData registers itself with the relevant JSGlobalObject as a "WeakTicket".
+        // 3. During GC, the JSGlobalObject will visit all the dependencies in the TicketData that has be registered.
+        FixedVector<Opaque<JSCell*>> m_dependencies;
         JSObject* m_scriptExecutionOwner { nullptr };
         bool m_isCancelled { false };
     };
@@ -83,7 +88,7 @@ public:
 
     void doWork(VM&) final;
 
-    JS_EXPORT_PRIVATE Ticket addPendingWork(WorkType, VM&, JSObject* target, Vector<JSCell*>&& dependencies);
+    JS_EXPORT_PRIVATE Ticket addPendingWork(WorkType, VM&, JSObject* target, Vector<Opaque<JSCell*>>&& dependencies);
     void cancelPendingWork(VM&);
 
     JS_EXPORT_PRIVATE bool hasAnyPendingWork() const;
@@ -125,7 +130,7 @@ inline JSObject* DeferredWorkTimer::TicketData::target()
     return std::bit_cast<JSObject*>(m_dependencies.last());
 }
 
-inline const FixedVector<JSCell*>& DeferredWorkTimer::TicketData::dependencies(bool mayBeCancelled)
+inline const FixedVector<Opaque<JSCell*>>& DeferredWorkTimer::TicketData::dependencies(bool mayBeCancelled)
 {
     ASSERT_UNUSED(mayBeCancelled, mayBeCancelled || !isCancelled());
     return m_dependencies;

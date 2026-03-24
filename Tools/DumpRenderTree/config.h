@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2008 Nuanti Ltd.
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024, 2026 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,6 +32,8 @@
 #undef delete
 #include <wtf/FastMalloc.h>
 #include <wtf/TZoneMalloc.h>
+
+#include <wtf/RequireGCAwareContainer.h>
 #endif
 
 #if PLATFORM(COCOA)

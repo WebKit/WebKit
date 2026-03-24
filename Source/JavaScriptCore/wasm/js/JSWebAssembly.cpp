@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,6 +44,7 @@
 #include "JSWebAssemblyModule.h"
 #include "JSWebAssemblyTag.h"
 #include "ObjectConstructor.h"
+#include "Opaque.h"
 #include "Options.h"
 #include "StrongInlines.h"
 #include "StructureInlines.h"
@@ -177,7 +178,11 @@ void JSWebAssembly::webAssemblyModuleValidateAsync(JSGlobalObject* globalObject,
 {
     VM& vm = globalObject->vm();
 
-    Vector<JSCell*> dependencies;
+    // It is safe to use a Vector here because the dependency cells are kept alive by the caller of this function.
+    // The dependencies vector will eventually be moved into a DeferredWorkTimer::TicketData, where the dependency
+    // cell liveness will be protected by the globalObject that the TicketData is registered with.
+    // See comment in DeferredWorkTimer.h regarding TicketData::m_dependencies.
+    Vector<Opaque<JSCell*>> dependencies;
     dependencies.append(globalObject);
 
     auto ticket = vm.deferredWorkTimer->addPendingWork(DeferredWorkTimer::WorkType::ImminentlyScheduled, vm, promise, WTF::move(dependencies));
@@ -226,7 +231,11 @@ static void instantiate(VM& vm, JSGlobalObject* globalObject, JSPromise* promise
         return;
     }
 
-    Vector<JSCell*> dependencies;
+    // It is safe to use a Vector here because the dependency cells are kept alive by the caller of this function.
+    // The dependencies vector will eventually be moved into a DeferredWorkTimer::TicketData, where the dependency
+    // cell liveness will be protected by the globalObject that the TicketData is registered with.
+    // See comment in DeferredWorkTimer.h regarding TicketData::m_dependencies.
+    Vector<Opaque<JSCell*>> dependencies;
     // The instance keeps the module alive.
     dependencies.append(promise);
 
@@ -286,7 +295,13 @@ static void compileAndInstantiate(VM& vm, JSGlobalObject* globalObject, JSPromis
     }
 
     JSCell* moduleKeyCell = identifierToJSValue(vm, moduleKey).asCell();
-    Vector<JSCell*> dependencies;
+
+    // It is safe to use a Vector here because the dependency cells are kept alive by the caller of this function.
+    // moduleKeyCell is kept alive by this function's stack frame. The dependencies vector will eventually be moved
+    // into a DeferredWorkTimer::TicketData, where the dependency cell liveness will be protected by the globalObject
+    // that the TicketData is registered with.
+    // See comment in DeferredWorkTimer.h regarding TicketData::m_dependencies.
+    Vector<Opaque<JSCell*>> dependencies;
     if (importObject)
         dependencies.append(importObject);
     dependencies.append(moduleKeyCell);

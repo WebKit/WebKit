@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -210,7 +210,10 @@ bool PropertyTable::isFrozen() const
     return result;
 }
 
-PropertyOffset PropertyTable::renumberPropertyOffsets(JSObject* object, unsigned inlineCapacity, Vector<JSValue>& values)
+// It is safe to use a Vector here because the values that this function copies into the vector
+// all came from the PropertyTable, which is kept alive by its owner Structure.
+// See Structure::flattenDictionaryStructure() where this function is used.
+PropertyOffset PropertyTable::renumberPropertyOffsets(JSObject* object, unsigned inlineCapacity, Vector<Opaque<JSValue>>& values)
 {
     ASSERT(values.size() == size());
     unsigned i = 0;

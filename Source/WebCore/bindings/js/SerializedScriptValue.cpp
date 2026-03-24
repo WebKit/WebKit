@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -99,6 +99,7 @@
 #include <JavaScriptCore/JSWebAssemblyModule.h>
 #include <JavaScriptCore/NumberObject.h>
 #include <JavaScriptCore/ObjectConstructor.h>
+#include <JavaScriptCore/Opaque.h>
 #include <JavaScriptCore/Options.h>
 #include <JavaScriptCore/PropertyNameArray.h>
 #include <JavaScriptCore/RegExp.h>
@@ -2912,14 +2913,20 @@ private:
 
 SerializationReturnCode CloneSerializer::serialize(JSValue in)
 {
+    EnsureStillAliveScope ensureStillAliveScope(in);
+
     VM& vm = m_lexicalGlobalObject->vm();
     Vector<uint32_t, 16> indexStack;
     Vector<uint32_t, 16> lengthStack;
     Vector<PropertyNameArrayBuilder, 16> propertyStack;
-    Vector<JSObject*, 32> inputObjectStack;
-    Vector<JSMapIterator*, 4> mapIteratorStack;
-    Vector<JSSetIterator*, 4> setIteratorStack;
-    Vector<JSValue, 4> mapIteratorValueStack;
+
+    // It's fine to use Vector for storing these cell pointers because they all came
+    // from the tree cells that are rooted on in.
+    Vector<Opaque<JSObject*>, 32> inputObjectStack;
+    Vector<Opaque<JSMapIterator*>, 4> mapIteratorStack;
+    Vector<Opaque<JSSetIterator*>, 4> setIteratorStack;
+    Vector<Opaque<JSValue>, 4> mapIteratorValueStack;
+
     Vector<WalkerState, 16> stateStack;
     WalkerState state = StateUnknown;
     JSValue inValue = in;

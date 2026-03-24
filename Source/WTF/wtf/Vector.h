@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005-2024 Apple Inc. All rights reserved.
+ *  Copyright (C) 2005-2024, 2026 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -39,6 +39,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/NotFound.h>
 #include <wtf/RangeAdaptors.h>
+#include <wtf/RequireGCAwareContainer.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/SwiftBridging.h>
 #include <wtf/ValueCheck.h>
@@ -278,11 +279,17 @@ public:
     }
 
 protected:
+    static constexpr void ensureGCAwarenessNotRequired()
+    {
+        static_assert(!WTF::requiresGCAwareContainer<T>());
+    }
+
     VectorBufferBase()
         : m_buffer(nullptr)
         , m_capacity(0)
         , m_size(0)
     {
+        ensureGCAwarenessNotRequired();
     }
 
     VectorBufferBase(T* buffer, size_t capacity, size_t size)
@@ -290,6 +297,7 @@ protected:
         , m_capacity(capacity)
         , m_size(size)
     {
+        ensureGCAwarenessNotRequired();
     }
 
     ~VectorBufferBase()

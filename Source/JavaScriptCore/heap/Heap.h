@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2025 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2026 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -88,7 +88,6 @@ class JSValue;
 class MachineThreads;
 class MarkStackArray;
 class MarkStackMergingConstraint;
-class MarkedJSValueRefArray;
 class BlockDirectory;
 class MarkedVectorBase;
 class MarkingConstraint;
@@ -458,7 +457,6 @@ public:
     JS_EXPORT_PRIVATE TypeCountSet objectTypeCounts();
 
     UncheckedKeyHashSet<MarkedVectorBase*>& markListSet();
-    void addMarkedJSValueRefArray(MarkedJSValueRefArray*);
     
     template<typename Functor> void forEachProtectedCell(const Functor&);
     template<typename Functor> void forEachCodeBlock(NOESCAPE const Functor&);
@@ -856,7 +854,6 @@ private:
 
     ProtectCountSet m_protectedValues;
     UncheckedKeyHashSet<MarkedVectorBase*> m_markListSet;
-    SentinelLinkedList<MarkedJSValueRefArray, BasicRawSentinelNode<MarkedJSValueRefArray>> m_markedJSValueRefArrays;
 
     std::unique_ptr<MachineThreads> m_machineThreads;
     

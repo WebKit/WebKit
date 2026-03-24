@@ -1296,6 +1296,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/ObjectConstructor.h
     runtime/ObjectInitializationScope.h
     runtime/ObjectPrototype.h
+    runtime/Opaque.h
     runtime/Operations.h
     runtime/Options.h
     runtime/OptionsList.h

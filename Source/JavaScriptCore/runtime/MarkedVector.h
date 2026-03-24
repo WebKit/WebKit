@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2023 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2026 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -22,6 +22,7 @@
 #pragma once
 
 #include <JavaScriptCore/JSCast.h>
+#include <JavaScriptCore/VM.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/ForbidHeapAllocation.h>
 #include <wtf/HashSet.h>
@@ -119,16 +120,47 @@ protected:
     unsigned m_capacity;
     EncodedJSValue* m_buffer;
     ListSet* m_markSet;
+
+    // The only reason we need this m_storageForOutOfBoundsAccess field is because the at()
+    // accessors can potentially allow the client to read / write an OOB value when the
+    // OverHandler does not CrashOnOverflow (e.g. RecordOverflow), and hence, be able to
+    // read / write out of bounds. If the client is using RecordOverflow, it is expected to
+    // explicitly check and handle the overflow in that case, and the OOB access should never
+    // occur. However, as a hardening measure, in the event of a bug, to prevent this potential
+    // out of bounds access from corrupting any real data, we'll ensure that at() return a
+    // reference to the singleton m_storageForOutOfBoundsAccess field, and ensure that any junk
+    // data is read from / written there.
+    JS_EXPORT_PRIVATE static EncodedJSValue m_storageForOutOfBoundsAccess;
 };
+
+namespace MarkedVectorHelper {
+
+template<typename T>
+static constexpr bool isJSValueConvertible()
+{
+    return WTF::requiresGCAwareContainer<T>();
+}
+
+template <typename T>
+concept Iterable = requires(T t) {
+    t.begin();
+    t.end();
+    t.size();
+};
+
+} // namespace MarkedVectorHelper
 
 template<typename T, size_t passedInlineCapacity = 8, class OverflowHandler = CrashOnOverflow>
 class MarkedVector : public OverflowHandler, public MarkedVectorBase  {
+    using Base = MarkedVectorBase;
+    static_assert(sizeof(T) == sizeof(EncodedJSValue));
 public:
     static constexpr size_t inlineCapacity = passedInlineCapacity;
 
     MarkedVector()
         : MarkedVectorBase(inlineCapacity)
     {
+        static_assert(MarkedVectorHelper::isJSValueConvertible<T>());
         ASSERT(inlineBuffer() == m_inlineBuffer);
         if constexpr (std::is_same_v<OverflowHandler, CrashOnOverflow>) {
             // CrashOnOverflow handles overflows immediately. So, we do not
@@ -137,27 +169,49 @@ public:
         }
     }
 
-    EncodedJSValue* begin() { return m_buffer; }
-    EncodedJSValue* end() { return m_buffer + m_size; }
-
-    auto at(unsigned i) const -> decltype(auto)
+    MarkedVector(size_t initialCapacity)
+        : MarkedVector()
     {
-        if constexpr (std::is_same_v<T, JSValue>) {
-            if (i >= m_size)
-                return jsUndefined();
-            return JSValue::decode(slotFor(i));
-        } else {
-            if (i >= m_size)
-                return static_cast<T>(nullptr);
-            return jsCast<T>(JSValue::decode(slotFor(i)).asCell());
-        }
+        ensureCapacity(initialCapacity);
     }
+
+    [[nodiscard]] std::span<const T> span() const LIFETIME_BOUND { return { std::bit_cast<T*>(data()), size() }; }
+    [[nodiscard]] std::span<T> mutableSpan() LIFETIME_BOUND { return { std::bit_cast<T*>(data()), size() }; }
+
+    T* begin() { return std::bit_cast<T*>(m_buffer); }
+    T* end() { return std::bit_cast<T*>(m_buffer + m_size); }
+
+    [[nodiscard]] T& at(size_t i) LIFETIME_BOUND
+    {
+        if (i >= size()) { [[unlikely]]
+            OverflowHandler::overflowed();
+            if constexpr (!std::is_same_v<OverflowHandler, CrashOnOverflow>) {
+                m_storageForOutOfBoundsAccess = encodedJSUndefined();
+                return *std::bit_cast<T*>(&m_storageForOutOfBoundsAccess);
+            }
+        }
+        return begin()[i];
+    }
+    [[nodiscard]] const T& at(size_t i) const LIFETIME_BOUND
+    {
+        if (i >= size()) { [[unlikely]]
+            const_cast<MarkedVector*>(this)->OverflowHandler::overflowed();
+            if constexpr (!std::is_same_v<OverflowHandler, CrashOnOverflow>) {
+                m_storageForOutOfBoundsAccess = encodedJSUndefined();
+                return *std::bit_cast<const T*>(&m_storageForOutOfBoundsAccess);
+            }
+        }
+        return const_cast<MarkedVector*>(this)->begin()[i];
+    }
+
+    [[nodiscard]] T& operator[](size_t i) LIFETIME_BOUND { return at(i); }
+    [[nodiscard]] const T& operator[](size_t i) const LIFETIME_BOUND { return at(i); }
 
     void set(unsigned i, T value)
     {
         if (i >= m_size)
             return;
-        slotFor(i) = JSValue::encode(value);
+        slotFor(i) = JSValue::encode(toJSValue(value));
     }
 
     void clear()
@@ -171,12 +225,12 @@ public:
     {
         ASSERT(m_size <= m_capacity);
         if (m_size == m_capacity || mallocBase()) {
-            if (slowAppend(v) == Status::Overflowed)
+            if (slowAppend(toJSValue(v)) == Status::Overflowed)
                 this->overflowed();
             return;
         }
 
-        slotFor(m_size) = JSValue::encode(v);
+        slotFor(m_size) = JSValue::encode(toJSValue(v));
         ++m_size;
     }
 
@@ -187,20 +241,20 @@ public:
             RELEASE_ASSERT(!this->hasOverflowed());
     }
 
-    auto last() const -> decltype(auto)
+    auto last() const -> T
     {
-        if constexpr (std::is_same_v<T, JSValue>) {
+        if constexpr (std::is_same_v<T, JSValue> || isJSCAPIValueType<T>()) {
             ASSERT(m_size);
-            return JSValue::decode(slotFor(m_size - 1));
+            return std::bit_cast<T>(JSValue::decode(slotFor(m_size - 1)));
         } else {
             ASSERT(m_size);
             return jsCast<T>(JSValue::decode(slotFor(m_size - 1)).asCell());
         }
     }
 
-    JSValue takeLast()
+    T takeLast()
     {
-        JSValue result = last();
+        T result = last();
         removeLast();
         return result;
     }
@@ -248,8 +302,16 @@ public:
         func(buffer);
     }
 
+    void fillWith(MarkedVectorHelper::Iterable auto const& iterable, auto&& mapValue)
+    {
+        ensureCapacity(iterable.size());
+        for (const auto it : iterable)
+            append(mapValue(it));
+    }
+
 private:
     bool isUsingInlineBuffer() const { return m_buffer == m_inlineBuffer; }
+    static JSValue toJSValue(T value) { return std::bit_cast<JSValue>(value); }
 
     EncodedJSValue m_inlineBuffer[inlineCapacity] { };
 };

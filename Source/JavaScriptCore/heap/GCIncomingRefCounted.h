@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/Opaque.h>
 #include <wtf/DeferrableRefCounted.h>
 #include <wtf/Forward.h>
 
@@ -96,11 +97,14 @@ private:
         ASSERT(hasSingleton());
         return std::bit_cast<JSCell*>(m_encodedPointer & ~singletonFlag());
     }
-    
-    Vector<JSCell*>* vectorOfCells() const
+
+    // It is safe to use Vector here because GCIncomingRefCounted is a data structure that is specially
+    // tracked and handled by the Heap / GC. See GCIncomingRefCountedSet, Heap::m_arrayBuffers, and
+    // GCIncomingRefCounted<T>::filterIncomingReferences().
+    Vector<Opaque<JSCell*>>* vectorOfCells() const
     {
         ASSERT(hasVectorOfCells());
-        return std::bit_cast<Vector<JSCell*>*>(m_encodedPointer);
+        return std::bit_cast<Vector<Opaque<JSCell*>>*>(m_encodedPointer);
     }
     
     // Singleton flag is set: this is a JSCell*.

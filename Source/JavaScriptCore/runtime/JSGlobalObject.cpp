@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  * Copyright (C) 2024 Sosuke Suzuki <aosukeke@gmail.com>.
  * Copyright (C) 2024 Tetsuharu Ohzeki <tetsuharu.ohzeki@gmail.com>.
@@ -231,6 +231,7 @@
 #include "ObjectPropertyChangeAdaptiveWatchpoint.h"
 #include "ObjectPropertyConditionSet.h"
 #include "ObjectPrototypeInlines.h"
+#include "Opaque.h"
 #include "PinballCompletion.h"
 #include "ProfilerSupport.h"
 #include "ProxyConstructorInlines.h"
@@ -2493,8 +2494,8 @@ enum class BadTimeFinderMode {
 template<BadTimeFinderMode mode>
 class ObjectsWithBrokenIndexingFinder : public MarkedBlock::VoidFunctor {
 public:
-    ObjectsWithBrokenIndexingFinder(Vector<JSObject*>&, JSGlobalObject*);
-    ObjectsWithBrokenIndexingFinder(Vector<JSObject*>&, UncheckedKeyHashSet<JSGlobalObject*>&);
+    ObjectsWithBrokenIndexingFinder(Vector<Opaque<JSObject*>>&, JSGlobalObject*);
+    ObjectsWithBrokenIndexingFinder(Vector<Opaque<JSObject*>>&, UncheckedKeyHashSet<JSGlobalObject*>&);
 
     bool needsMultiGlobalsScan() const { return m_needsMultiGlobalsScan; }
     IterationStatus operator()(HeapCell*, HeapCell::Kind) const;
@@ -2502,21 +2503,23 @@ public:
 private:
     IterationStatus visit(JSObject*);
 
-    Vector<JSObject*>& m_foundObjects;
+    // It is safe to use a Vector here because ObjectsWithBrokenIndexingFinder is only used while
+    // protected by a DeferGC scope. See JSGlobalObject::haveABadTime().
+    Vector<Opaque<JSObject*>>& m_foundObjects;
     JSGlobalObject* const m_globalObject { nullptr }; // Only used for SingleBadTimeGlobal mode.
     UncheckedKeyHashSet<JSGlobalObject*>* m_globalObjects { nullptr }; // Only used for BadTimeGlobalGraph mode;
     bool m_needsMultiGlobalsScan { false };
 };
 
 template<>
-ObjectsWithBrokenIndexingFinder<BadTimeFinderMode::SingleGlobal>::ObjectsWithBrokenIndexingFinder(Vector<JSObject*>& foundObjects, JSGlobalObject* globalObject)
+ObjectsWithBrokenIndexingFinder<BadTimeFinderMode::SingleGlobal>::ObjectsWithBrokenIndexingFinder(Vector<Opaque<JSObject*>>& foundObjects, JSGlobalObject* globalObject)
     : m_foundObjects(foundObjects)
     , m_globalObject(globalObject)
 {
 }
 
 template<>
-ObjectsWithBrokenIndexingFinder<BadTimeFinderMode::MultipleGlobals>::ObjectsWithBrokenIndexingFinder(Vector<JSObject*>& foundObjects, UncheckedKeyHashSet<JSGlobalObject*>& globalObjects)
+ObjectsWithBrokenIndexingFinder<BadTimeFinderMode::MultipleGlobals>::ObjectsWithBrokenIndexingFinder(Vector<Opaque<JSObject*>>& foundObjects, UncheckedKeyHashSet<JSGlobalObject*>& globalObjects)
     : m_foundObjects(foundObjects)
     , m_globalObjects(&globalObjects)
 {
@@ -2771,7 +2774,8 @@ void JSGlobalObject::haveABadTime(VM& vm)
 
     fireWatchpointAndMakeAllArrayStructuresSlowPut(vm); // Step 1 above.
     
-    Vector<JSObject*> foundObjects;
+    // It is safe to use a Vector here because we're protected by a DeferGC scope above.
+    Vector<Opaque<JSObject*>> foundObjects;
     ObjectsWithBrokenIndexingFinder<BadTimeFinderMode::SingleGlobal> finder(foundObjects, this);
     {
         HeapIterationScope iterationScope(vm.heap);
@@ -2789,8 +2793,9 @@ void JSGlobalObject::haveABadTime(VM& vm)
             vm.heap.objectSpace().forEachLiveCell(iterationScope, dependencies);
         }
 
+        // It is safe to use a Deque here because we're protected by a DeferGC scope above.
         UncheckedKeyHashSet<JSGlobalObject*> globalsHavingABadTime;
-        Deque<JSGlobalObject*> globals;
+        Deque<Opaque<JSGlobalObject*>> globals;
 
         globals.append(this);
         while (!globals.isEmpty()) {

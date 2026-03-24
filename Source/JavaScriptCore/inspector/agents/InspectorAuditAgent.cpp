@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -101,7 +101,7 @@ Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::op
     InjectedScript::ExecuteOptions options;
     options.objectGroup = "audit"_s;
     if (m_injectedWebInspectorAuditValue)
-        options.args = { m_injectedWebInspectorAuditValue.get() };
+        options.args.append(m_injectedWebInspectorAuditValue.get());
 
     RefPtr<Protocol::Runtime::RemoteObject> result;
     std::optional<bool> wasThrown;
@@ -112,7 +112,7 @@ Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::op
 
     muteConsole();
 
-    injectedScript.execute(errorString, functionString, WTF::move(options), result, wasThrown, savedResultIndex);
+    injectedScript.execute(errorString, functionString, options, result, wasThrown, savedResultIndex);
 
     unmuteConsole();
 

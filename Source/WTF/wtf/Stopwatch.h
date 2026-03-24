@@ -122,5 +122,3 @@ inline std::optional<Seconds> Stopwatch::fromMonotonicTime(MonotonicTime timeSta
 }
 
 } // namespace WTF
-
-using WTF::Stopwatch;

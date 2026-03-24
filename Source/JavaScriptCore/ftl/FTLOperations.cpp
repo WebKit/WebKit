@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2024, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,6 +54,7 @@
 #include "JSSetIterator.h"
 #include "JSStringIterator.h"
 #include "JSWrapForValidIterator.h"
+#include "Opaque.h"
 #include "RegExpObject.h"
 #include "ResourceExhaustion.h"
 #include "VMTrapsInlines.h"
@@ -800,7 +801,9 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, HeapCell*, (J
         }
 #endif // ASSERT_ENABLED
 
-        Vector<JSValue, 8> arguments;
+        // It is safe to use Vector here because operationMaterializeObjectInOSR() is protected by a DeferGCForAWhile
+        // scope (see top of function), and this arguments vector does not escape this function.
+        Vector<JSC::Opaque<JSValue>, 8> arguments;
         arguments.grow(numProperties);
 
         for (unsigned i = materialization->properties().size(); i--;) {

@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2021 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2021, 2026 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -542,6 +542,8 @@ public:
     // and it won't be equal to null, undefined, true, or false. The isBoolean() predicate
     // will fail because we won't have BoolTag set.
 #endif
+
+    static constexpr bool requiresGCAwareContainer = true;
 
 private:
     template <class T> JSValue(WriteBarrierBase<T, WriteBarrierTraitsSelect<T>>);
@@ -1411,3 +1413,5 @@ inline int32_t JSValue::bigInt32AsInt32() const
 #endif // USE(BIGINT32)
 
 } // namespace JSC
+
+WTF_DECLARE_REQUIRES_GC_AWARE_CONTAINER(JSC::JSValue)

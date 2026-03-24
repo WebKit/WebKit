@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,7 +43,10 @@ bool GCIncomingRefCounted<T>::addIncomingReference(JSCell* cell)
     ASSERT(Heap::heap(incomingReferenceAt(0)) == Heap::heap(cell));
     
     if (hasSingleton()) {
-        Vector<JSCell*>* vector = new Vector<JSCell*>();
+        // It is safe to use Vector here because GCIncomingRefCounted is a data structure that is specially
+        // tracked and handled by the Heap / GC. See GCIncomingRefCountedSet, Heap::m_arrayBuffers, and
+        // GCIncomingRefCounted<T>::filterIncomingReferences().
+        Vector<Opaque<JSCell*>>* vector = new Vector<Opaque<JSCell*>>();
         vector->append(singleton());
         vector->append(cell);
         m_encodedPointer = std::bit_cast<uintptr_t>(vector);

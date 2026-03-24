@@ -279,6 +279,7 @@ set(WTF_PUBLIC_HEADERS
     RefTrackerMixin.h
     RefVector.h
     ReferenceWrapperVector.h
+    RequireGCAwareContainer.h
     ResourceUsage.h
     RetainPtr.h
     RobinHoodHashMap.h

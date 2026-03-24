@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,16 +48,13 @@ EncodedJSValue APICallbackFunction::callImpl(JSGlobalObject* globalObject, CallF
     JSObjectRef functionRef = toRef(callFrame->jsCallee());
     JSObjectRef thisObjRef = toRef(jsCast<JSObject*>(callFrame->thisValue().toThis(globalObject, ECMAMode::sloppy())));
 
-    int argumentCount = static_cast<int>(callFrame->argumentCount());
-    Vector<JSValueRef, 16> arguments(argumentCount, [&](size_t i) {
-        return toRef(globalObject, callFrame->uncheckedArgument(i));
-    });
+    auto argumentsSpan = callFrame->auditedArgumentsSpan<JSValueRef>();
 
     JSValueRef exception = nullptr;
     JSValueRef result;
     {
         JSLock::DropAllLocks dropAllLocks(globalObject);
-        result = jsCast<T*>(toJS(functionRef))->functionCallback()(execRef, functionRef, thisObjRef, argumentCount, arguments.span().data(), &exception);
+        result = jsCast<T*>(toJS(functionRef))->functionCallback()(execRef, functionRef, thisObjRef, argumentsSpan.size(), argumentsSpan.data(), &exception);
     }
     if (exception) {
         throwException(globalObject, scope, toJS(globalObject, exception));
@@ -91,16 +88,13 @@ EncodedJSValue APICallbackFunction::constructImpl(JSGlobalObject* globalObject, 
             RETURN_IF_EXCEPTION(scope, { });
         }
 
-        size_t argumentCount = callFrame->argumentCount();
-        Vector<JSValueRef, 16> arguments(argumentCount, [&](size_t i) {
-            return toRef(globalObject, callFrame->uncheckedArgument(i));
-        });
+        auto argumentsSpan = callFrame->auditedArgumentsSpan<JSValueRef>();
 
         JSValueRef exception = nullptr;
         JSObjectRef result;
         {
             JSLock::DropAllLocks dropAllLocks(globalObject);
-            result = callback(ctx, constructorRef, argumentCount, arguments.span().data(), &exception);
+            result = callback(ctx, constructorRef, argumentsSpan.size(), argumentsSpan.data(), &exception);
         }
 
         if (exception) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,12 +26,24 @@
 #pragma once
 
 #include <JavaScriptCore/CallFrame.h>
+#include <JavaScriptCore/Integrity.h>
 #include <JavaScriptCore/JSCalleeInlines.h>
 #include <JavaScriptCore/RegisterInlines.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
+
+template<typename T>
+std::span<T> CallFrame::auditedArgumentsSpan()
+{
+    auto argumentsSpan = this->argumentsSpan<T>();
+#if ENABLE(EXTRA_INTEGRITY_CHECKS) && USE(JSVALUE64)
+    for (auto it : argumentsSpan)
+        JSC::Integrity::audit(it);
+#endif
+    return argumentsSpan;
+}
 
 inline Register& CallFrame::r(VirtualRegister reg)
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,6 +42,7 @@
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/JSStringRefPrivate.h>
+#include <JavaScriptCore/MarkedVector.h>
 #include <JavaScriptCore/OpaqueJSString.h>
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/AccessibilityObject.h>
@@ -90,10 +91,9 @@ static JSObjectRef toJSArray(JSContextRef context, const Vector<T>& data, JSValu
     if (data.isEmpty())
         return JSObjectMakeArray(context, 0, nullptr, exception);
 
-    auto convertedData = WTF::map<8>(data, [&](auto& originalValue) {
-        JSValueRef convertedValue = converter(context, originalValue);
-        JSValueProtect(context, convertedValue);
-        return convertedValue;
+    JSC::MarkedVector<JSValueRef, 8> convertedData;
+    convertedData.fillWith(data, [&] (auto& originalValue) {
+        return converter(context, originalValue);
     });
 
     JSObjectRef array = JSObjectMakeArray(context, convertedData.size(), convertedData.span().data(), exception);

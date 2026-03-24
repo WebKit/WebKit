@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyModule.h"
+#include "Opaque.h"
 #include "StrongInlines.h"
 #include "WasmIPIntPlan.h"
 #include "WasmStreamingPlan.h"
@@ -51,7 +52,11 @@ StreamingCompiler::StreamingCompiler(VM& vm, CompilerMode compilerMode, JSGlobal
     , m_parser(m_info.get(), *this)
     , m_source(source)
 {
-    Vector<JSCell*> dependencies;
+    // It is safe to use a Vector here because the dependency cells are kept alive by the caller of this function.
+    // The dependencies vector will eventually be moved into a DeferredWorkTimer::TicketData, where the dependency
+    // cell liveness will be protected by the globalObject that the TicketData is registered with.
+    // See comment in DeferredWorkTimer.h regarding TicketData::m_dependencies.
+    Vector<Opaque<JSCell*>> dependencies;
     dependencies.append(globalObject);
     if (importObject)
         dependencies.append(importObject);
@@ -147,7 +152,7 @@ void StreamingCompiler::didComplete()
     case CompilerMode::Validation: {
         m_vm.deferredWorkTimer->scheduleWorkSoon(ticket, [result = WTF::move(result), compileOptions = WTF::move(m_compileOptions)](DeferredWorkTimer::Ticket ticket) mutable {
             JSPromise* promise = jsCast<JSPromise*>(ticket->target());
-            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(ticket->dependencies()[0]);
+            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(ticket->dependencies()[0].get());
             VM& vm = globalObject->vm();
             auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -179,8 +184,8 @@ void StreamingCompiler::didComplete()
         RefPtr<SourceProvider> provider = m_source.provider();
         m_vm.deferredWorkTimer->scheduleWorkSoon(ticket, [result = WTF::move(result), provider = WTF::move(provider), compileOptions = WTF::move(m_compileOptions)](DeferredWorkTimer::Ticket ticket) mutable {
             JSPromise* promise = jsCast<JSPromise*>(ticket->target());
-            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(ticket->dependencies()[0]);
-            JSObject* importObject = jsCast<JSObject*>(ticket->dependencies()[1]);
+            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(ticket->dependencies()[0].get());
+            JSObject* importObject = jsCast<JSObject*>(ticket->dependencies()[1].get());
             VM& vm = globalObject->vm();
             auto scope = DECLARE_THROW_SCOPE(vm);
 

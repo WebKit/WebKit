@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2025 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2026 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -283,6 +283,15 @@ using JSInstruction = BaseInstruction<JSOpcodeTraits>;
         size_t argumentCountIncludingThis() const { return this[static_cast<int>(CallFrameSlot::argumentCountIncludingThis)].payload(); }
         static constexpr int argumentOffset(int argument) { return (CallFrameSlot::firstArgument + argument); }
         static constexpr int argumentOffsetIncludingThis(int argument) { return (CallFrameSlot::thisArgument + argument); }
+
+        template<typename T>
+        std::span<T> argumentsSpan()
+        {
+            static_assert(std::is_same_v<T, JSValue> || std::is_same_v<T, JSValueRef>);
+            return { std::bit_cast<T*>(addressOfArgumentsStart()), argumentCount() };
+        }
+        template<typename T>
+        std::span<T> auditedArgumentsSpan();
 
         // In the following (argument() and setArgument()), the 'argument'
         // parameter is the index of the arguments of the target function of
