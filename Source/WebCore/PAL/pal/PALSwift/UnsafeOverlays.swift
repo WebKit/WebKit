@@ -26,6 +26,8 @@ public import Foundation
 
 public import pal.Core.PALSwift
 
+// FIXME: (rdar://164560176) resolve the many 'unsafe' statements here
+
 enum UnsafeErrors: Error {
     case invalidLength
     case emptySpan

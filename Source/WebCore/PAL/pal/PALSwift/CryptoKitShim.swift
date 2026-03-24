@@ -27,6 +27,8 @@ public import Foundation
 public import pal.Core.PALSwift
 public import pal.Core.crypto.CryptoDigestHashFunction
 
+// FIXME: (rdar://164560176) resolve the many 'unsafe' statements here
+
 // FIXME: PALSwift should have no public symbols.
 // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
 public typealias CryptoOperationReturnValue = Cpp.CryptoOperationReturnValue
