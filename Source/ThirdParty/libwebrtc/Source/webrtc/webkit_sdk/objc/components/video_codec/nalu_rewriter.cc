@@ -748,7 +748,7 @@ std::optional<H264Information> ComputeH264InfoFromAVC(const uint8_t* avcData, si
     offset += 2;
 
     reader.ConsumeBits(8 * (size + H264::kNaluTypeSize));
-    if (!reader.Ok()) {
+    if (!reader.Ok() || size <= H264::kNaluTypeSize) {
       return { };
     }
 
