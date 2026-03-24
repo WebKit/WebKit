@@ -10675,6 +10675,8 @@
 		4138F8561D253EEE001CB61E /* JSDOMIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMIterator.h; sourceTree = "<group>"; };
 		413A1A9F2371A8A8007EF3A5 /* JSDOMSetLike.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSDOMSetLike.h; sourceTree = "<group>"; };
 		413A1AA12371A8A9007EF3A5 /* JSDOMSetLike.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMSetLike.cpp; sourceTree = "<group>"; };
+		413A2DA42F72CD83008415B9 /* WebRTCVideoDecoderVTBVP9.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebRTCVideoDecoderVTBVP9.h; sourceTree = "<group>"; };
+		413A2DA52F72CD83008415B9 /* WebRTCVideoDecoderVTBVP9.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebRTCVideoDecoderVTBVP9.mm; sourceTree = "<group>"; };
 		413BE28C2B30861E000D77A1 /* MediaStreamTrackProcessor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamTrackProcessor.cpp; sourceTree = "<group>"; };
 		413BE28D2B30861E000D77A1 /* MediaStreamTrackProcessor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaStreamTrackProcessor.idl; sourceTree = "<group>"; };
 		413BE28E2B30861F000D77A1 /* MediaStreamTrackProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaStreamTrackProcessor.h; sourceTree = "<group>"; };
@@ -26661,6 +26663,8 @@
 				41FBB09E2F57272B0071B5E3 /* WebRTCVideoDecoderVTB.mm */,
 				41E476502B6CF8A700C30B11 /* WebRTCVideoDecoderVTBAV1.h */,
 				41E476522B6CF8A800C30B11 /* WebRTCVideoDecoderVTBAV1.mm */,
+				413A2DA42F72CD83008415B9 /* WebRTCVideoDecoderVTBVP9.h */,
+				413A2DA52F72CD83008415B9 /* WebRTCVideoDecoderVTBVP9.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";

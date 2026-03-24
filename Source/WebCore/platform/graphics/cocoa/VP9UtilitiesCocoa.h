@@ -30,6 +30,8 @@
 
 #include <WebCore/VP9Utilities.h>
 
+typedef const struct opaqueCMFormatDescription* CMVideoFormatDescriptionRef;
+
 namespace WebCore {
 
 struct PlatformMediaCapabilitiesInfo;
@@ -49,6 +51,7 @@ bool isVPCodecConfigurationRecordSupported(const VPCodecConfigurationRecord&);
 std::optional<PlatformMediaCapabilitiesInfo> validateVPParameters(const VPCodecConfigurationRecord&, const PlatformMediaCapabilitiesVideoConfiguration&);
 std::optional<PlatformMediaCapabilitiesInfo> computeVPParameters(const PlatformMediaCapabilitiesVideoConfiguration&, bool vp9HardwareDecoderAvailable);
 bool NODELETE isVPSoftwareDecoderSmooth(const PlatformMediaCapabilitiesVideoConfiguration&);
+RetainPtr<CMVideoFormatDescriptionRef> createVP9FormatDescriptionFromRecord(const VPCodecConfigurationRecord&);
 
 struct VP8FrameHeader {
     bool keyframe { false };

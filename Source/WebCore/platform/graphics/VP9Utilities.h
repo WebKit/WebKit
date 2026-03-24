@@ -124,6 +124,10 @@ struct VPCodecConfigurationRecord {
     uint8_t colorPrimaries { VPConfigurationColorPrimaries::BT_709_6 };
     uint8_t transferCharacteristics { VPConfigurationTransferCharacteristics::BT_709_6 };
     uint8_t matrixCoefficients { VPConfigurationMatrixCoefficients::BT_709_6 };
+
+    // Additional information parsed from bitstream
+    uint16_t frameWidth { 0 };
+    uint16_t frameHeight { 0 };
 };
 
 WEBCORE_EXPORT std::optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView codecString);

@@ -41,6 +41,7 @@
 #import "VideoDecoder.h"
 #import <JavaScriptCore/DataView.h>
 #import <webm/common/vp9_header_parser.h>
+#import <wtf/cf/VectorCF.h>
 #import <wtf/text/StringToIntegerConversion.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
@@ -675,6 +676,24 @@ Ref<VideoInfo> createVideoInfoFromVP8Header(const VP8FrameHeader& header, const 
     }
 
     return createVideoInfoFromVPCodecConfigurationRecord(record, { static_cast<float>(header.width), static_cast<float>(header.height) }, { static_cast<float>(video.display_width.is_present() ? video.display_width.value() : header.width), static_cast<float>(video.display_height.is_present() ? video.display_height.value() : header.height) });
+}
+
+RetainPtr<CMVideoFormatDescriptionRef> createVP9FormatDescriptionFromRecord(const VPCodecConfigurationRecord& record)
+{
+    ASSERT(record.frameWidth);
+    ASSERT(record.frameHeight);
+
+    auto vpcc = vpcCFromVPCodecConfigurationRecord(record);
+    RetainPtr cfData = toCFData(vpcc.span());
+
+    auto configurationDict = @{ @"vpcC": (__bridge NSData *)cfData.get() };
+    auto extensions = @{ (__bridge NSString *)PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms: configurationDict };
+
+    CMVideoFormatDescriptionRef formatDescription = nullptr;
+    if (PAL::CMVideoFormatDescriptionCreate(kCFAllocatorDefault, kCMVideoCodecType_VP9, record.frameWidth, record.frameHeight, (__bridge CFDictionaryRef)extensions, &formatDescription) != noErr)
+        return { };
+
+    return adoptCF(formatDescription);
 }
 
 }

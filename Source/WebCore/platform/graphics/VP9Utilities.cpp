@@ -593,6 +593,13 @@ std::optional<VPCodecConfigurationRecord> vPCodecConfigurationRecordFromVPXByteS
 
     setConfigurationColorSpaceFromVP9ColorSpace(record, colorSpace);
 
+    auto width = br.read(16);
+    auto height = br.read(16);
+    if (width && height) {
+        record.frameWidth = *width + 1;
+        record.frameHeight = *height + 1;
+    }
+
     return record;
 }
 
