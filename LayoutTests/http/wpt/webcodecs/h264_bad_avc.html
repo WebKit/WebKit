@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<header>
+<script src='/resources/testharness.js'></script>
+<script src='/resources/testharnessreport.js'></script>
+</header>
+<body>
+<script>
+promise_test(async (t) => {
+    for (let i = 0; i < 2; ++i) {
+        const badAvcC = new Uint8Array([
+            0x01, 0x64, 0x00, 0x1f, 0xff,
+            0xe1, 0x00, 0x00, 0x67
+        ]);
+        const decoder = new VideoDecoder({
+            output() { },
+            error: (e) => { }
+        });
+
+        decoder.configure({
+            codec: "avc1.64001f",
+            codedWidth: 16,
+            codedHeight: 16,
+            description: badAvcC,
+            hardwareAcceleration: "prefer-hardware"
+        });
+
+        await new Promise(resolve => setTimeout(() => {
+            resolve();
+            decoder.close()
+        }, 200));
+    }
+}, 'Decoding bad AVC should gracefully fail');
+</script>
+</body>
+</html>
