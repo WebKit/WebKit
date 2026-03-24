@@ -1553,6 +1553,26 @@ ObjectPropertyConditionSet Graph::tryEnsureAbsence(JSGlobalObject* globalObject,
     if (!headStructure)
         return ObjectPropertyConditionSet::invalid();
 
+    auto isAbsenceCacheable = [&](Structure* structure) {
+        if (structure->typeInfo().overridesGetOwnPropertySlot())
+            return false;
+        if (!structure->propertyAccessesAreCacheable())
+            return false;
+        if (!structure->propertyAccessesAreCacheableForAbsence())
+            return false;
+        unsigned attributes;
+        if (isValidOffset(structure->getConcurrently(identifier.uid(), attributes)))
+            return false;
+        if (structure->hasPolyProto())
+            return false;
+        return true;
+    };
+
+    // generateConditionsForPropertyMissConcurrently only walks the prototype chain, so validate
+    // headStructure first.
+    if (!isAbsenceCacheable(headStructure))
+        return ObjectPropertyConditionSet::invalid();
+
     auto result = generateConditionsForPropertyMissConcurrently(globalObject->vm(), globalObject, headStructure, identifier.uid());
     if (!result.isValid())
         return result;
@@ -1562,22 +1582,7 @@ ObjectPropertyConditionSet Graph::tryEnsureAbsence(JSGlobalObject* globalObject,
         if (!object)
             return ObjectPropertyConditionSet::invalid();
 
-        auto* structure = object->structure();
-        if (structure->typeInfo().overridesGetOwnPropertySlot())
-            return ObjectPropertyConditionSet::invalid();
-
-        if (!structure->propertyAccessesAreCacheable())
-            return ObjectPropertyConditionSet::invalid();
-
-        if (!structure->propertyAccessesAreCacheableForAbsence())
-            return ObjectPropertyConditionSet::invalid();
-
-        unsigned attributes;
-        PropertyOffset offset = structure->getConcurrently(identifier.uid(), attributes);
-        if (isValidOffset(offset))
-            return ObjectPropertyConditionSet::invalid();
-
-        if (structure->hasPolyProto())
+        if (!isAbsenceCacheable(object->structure()))
             return ObjectPropertyConditionSet::invalid();
     }
     return result;
