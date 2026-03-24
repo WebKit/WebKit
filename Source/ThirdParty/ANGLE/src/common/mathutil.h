@@ -872,11 +872,11 @@ struct IndexRange
     {};
     IndexRange(Undefined) {}
     IndexRange() = default;
-    IndexRange(uint32_t start_, uint32_t end_) : mStart(start_), mCount(end_ - start_ + 1)
+    IndexRange(uint32_t start_, uint32_t end_) : mStart(start_), mEnd(end_)
     {
         ASSERT(start_ <= end_);
     }
-    bool isEmpty() const { return mCount == 0; }
+    bool isEmpty() const { return mStart > mEnd; }
     uint32_t start() const
     {
         ASSERT(!isEmpty());
@@ -885,22 +885,22 @@ struct IndexRange
     uint32_t end() const
     {
         ASSERT(!isEmpty());
-        return mStart + mCount - 1;
+        return mEnd;
     }
 
     // Number of vertices in the range.
-    uint32_t vertexCount() const { return mCount; }
-
+    // Range: [0, 0] == 1
+    // Range: [0, 0xFFFFFFFF] == 0x100000000 (needs size_t).
+    size_t vertexCount() const
+    {
+        // Note: unsigned underflow ok on isEmpty() == true.
+        return static_cast<size_t>(mEnd) - mStart + 1u;
+    }
   private:
-    uint32_t mStart{0};
-    uint32_t mCount{0};
+    uint32_t mStart{1};
+    uint32_t mEnd{0};
+    friend bool operator==(const IndexRange &a, const IndexRange &b) noexcept = default;
 };
-
-inline bool operator==(const IndexRange &a, const IndexRange &b)
-{
-    return a.vertexCount() == b.vertexCount() &&
-           ((a.vertexCount() == 0) || (a.start() == b.start()));
-}
 
 std::ostream &operator<<(std::ostream &s, const IndexRange &a);
 

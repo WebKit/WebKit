@@ -256,6 +256,34 @@ TEST(Utilities, IndexRanges)
     EXPECT_EQ(ComputeIndexRange(b, vertices2, 2, false), gl::IndexRange(255, 255));
     EXPECT_EQ(ComputeIndexRange(b, vertices2, 3, true), gl::IndexRange(2, 2));
     EXPECT_EQ(ComputeIndexRange(b, vertices2, 3, false), gl::IndexRange(2, 255));
+
+    constexpr auto i     = gl::DrawElementsType::UnsignedInt;
+    uint32_t vertices3[] = {
+        0,
+        0xff,
+        0xffffffff,
+    };
+    EXPECT_EQ(ComputeIndexRange(i, vertices3, 1, true), gl::IndexRange(0, 0));
+    EXPECT_EQ(ComputeIndexRange(i, vertices3, 2, true), gl::IndexRange(0, 255));
+    EXPECT_EQ(ComputeIndexRange(i, vertices3, 2, false), gl::IndexRange(0, 255));
+    EXPECT_EQ(ComputeIndexRange(i, vertices3, 3, true), gl::IndexRange(0, 255));
+    EXPECT_EQ(ComputeIndexRange(i, vertices3, 3, false), gl::IndexRange(0, 0xffffffff));
+    EXPECT_EQ(ComputeIndexRange(i, vertices3 + 1, 2, true), gl::IndexRange(255, 255));
+    EXPECT_EQ(ComputeIndexRange(i, vertices3 + 1, 2, false), gl::IndexRange(255, 0xffffffff));
+
+    EXPECT_TRUE(gl::IndexRange().isEmpty());
+    EXPECT_FALSE(gl::IndexRange(0, 0).isEmpty());
+    EXPECT_FALSE(gl::IndexRange(0xfffffffe, 0xffffffff).isEmpty());
+    EXPECT_FALSE(gl::IndexRange(0xffffffff, 0xffffffff).isEmpty());
+
+    EXPECT_EQ(0u, gl::IndexRange().vertexCount());
+    EXPECT_EQ(1u, gl::IndexRange(0, 0).vertexCount());
+    EXPECT_EQ(1u, gl::IndexRange(255, 255).vertexCount());
+    EXPECT_EQ(255u, gl::IndexRange(1, 255).vertexCount());
+    EXPECT_EQ(256u, gl::IndexRange(0, 255).vertexCount());
+
+    EXPECT_EQ(0xffffffffu, gl::IndexRange(1, 0xffffffff).vertexCount());
+    EXPECT_EQ(static_cast<size_t>(0x100000000ull), gl::IndexRange(0, 0xffffffff).vertexCount());
 }
 
 }  // anonymous namespace
