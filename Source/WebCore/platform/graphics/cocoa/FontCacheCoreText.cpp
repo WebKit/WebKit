@@ -686,21 +686,31 @@ static void registerFontIfNeeded(const String& family) WTF_REQUIRES_LOCK(userIns
     }
 }
 
-std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontCreationContext& fontCreationContext, OptionSet<FontLookupOptions> options)
+static void registerFontsInFamilyIfNeeded(const String& family)
 {
-    {
-        Locker locker(userInstalledFontMapLock());
-        if (!userInstalledFontMap().isEmpty()) {
-            auto fontFamily = family.string().convertToASCIILowercase();
-            registerFontIfNeeded(fontFamily);
-            auto fontNames = userInstalledFontFamilyMap().find(fontFamily);
-            if (fontNames != userInstalledFontFamilyMap().end()) {
-                for (auto& fontName : fontNames->value)
-                    registerFontIfNeeded(fontName);
-                userInstalledFontFamilyMap().remove(fontNames);
-            }
+    Locker locker(userInstalledFontMapLock());
+    if (!userInstalledFontMap().isEmpty()) {
+        auto fontFamily = family.convertToASCIILowercase();
+
+        if (fontFamily == "helvetica"_s) {
+            // Helvetica is a system font with several variants, so we choose not to register additional fonts in this family.
+            // This is because it can affect font matching. See rdar://172261885.
+            return;
+        }
+
+        registerFontIfNeeded(fontFamily);
+        auto fontNames = userInstalledFontFamilyMap().find(fontFamily);
+        if (fontNames != userInstalledFontFamilyMap().end()) {
+            for (auto& fontName : fontNames->value)
+                registerFontIfNeeded(fontName);
+            userInstalledFontFamilyMap().remove(fontNames);
         }
     }
+}
+
+std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomString& family, const FontCreationContext& fontCreationContext, OptionSet<FontLookupOptions> options)
+{
+    registerFontsInFamilyIfNeeded(family);
 
     auto size = fontDescription.adjustedSizeForFontFace(fontCreationContext.sizeAdjust());
     auto& fontDatabase = database(fontDescription.shouldAllowUserInstalledFonts());
