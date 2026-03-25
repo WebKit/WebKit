@@ -2944,25 +2944,27 @@ void WebProcessProxy::unwrapCryptoKey(WrappedCryptoKey&& wrappedKey, CompletionH
 
 }
 
-bool WebProcessProxy::allowsFirstPartyAccess(const WebCore::RegistrableDomain& domain) const
+WebProcessProxy::FirstPartyAccessResult WebProcessProxy::allowsFirstPartyAccess(const WebCore::RegistrableDomain& domain) const
 {
     if (m_site)
-        return domain == m_site->domain();
+        return domain == m_site->domain() ? FirstPartyAccessResult::Pass : FirstPartyAccessResult::HardFailure;
 
     switch (m_site.error()) {
     case SiteState::NotYetSpecified:
-        return true;
+        return FirstPartyAccessResult::Pass;
     case SiteState::MultipleSites:
-        // A web process under the MultipleSites categorization should not be sending badge updates.
-        return false;
+        // A web process under the MultipleSites categorization should not be doing things like
+        // sending badge updates.
+        // This is expected sometimes, like right as a new load is starting, so we can silently ignore.
+        return FirstPartyAccessResult::SilentFailure;
     case SiteState::SharedProcess:
-        return sharedProcessDomains().contains(domain);
+        return sharedProcessDomains().contains(domain) ? FirstPartyAccessResult::Pass : FirstPartyAccessResult::HardFailure;
     }
 }
 
 void WebProcessProxy::setAppBadgeFromWorker(const SecurityOriginData& origin, std::optional<uint64_t> badge)
 {
-    MESSAGE_CHECK(allowsFirstPartyAccess(WebCore::RegistrableDomain { origin }));
+    MESSAGE_CHECK(allowsFirstPartyAccess(WebCore::RegistrableDomain { origin }) == FirstPartyAccessResult::Pass);
     protectedWebsiteDataStore()->workerUpdatedAppBadge(origin, badge);
 }
 

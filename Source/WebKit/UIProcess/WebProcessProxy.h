@@ -608,6 +608,13 @@ public:
     void takeInvalidMessageStringForTesting(CompletionHandler<void(String&&)>&&);
 #endif
 
+    enum class FirstPartyAccessResult {
+        Pass,
+        SilentFailure,
+        HardFailure,
+    };
+    FirstPartyAccessResult allowsFirstPartyAccess(const WebCore::RegistrableDomain&) const;
+
 private:
     Type type() const final { return Type::WebContent; }
 
@@ -749,8 +756,6 @@ private:
     void deleteServiceWorkerDebuggable(WebCore::ServiceWorkerIdentifier);
     void sendMessageToInspector(WebCore::ServiceWorkerIdentifier, String&& message);
 #endif
-
-    bool allowsFirstPartyAccess(const WebCore::RegistrableDomain&) const;
 
     enum class IsWeak : bool { No, Yes };
     template<typename T> class WeakOrStrongPtr {

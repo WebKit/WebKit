@@ -847,6 +847,11 @@ void WebFrameProxy::updateScrollingMode(WebCore::ScrollbarMode scrollingMode)
 
 void WebFrameProxy::setAppBadge(const WebCore::SecurityOriginData& origin, std::optional<uint64_t> badge)
 {
+    auto firstPartyAccessResult = process().allowsFirstPartyAccess(WebCore::RegistrableDomain { origin });
+    if (firstPartyAccessResult == WebProcessProxy::FirstPartyAccessResult::SilentFailure)
+        return;
+    MESSAGE_CHECK(firstPartyAccessResult == WebProcessProxy::FirstPartyAccessResult::Pass);
+
     if (RefPtr webPageProxy = m_page.get())
         webPageProxy->uiClient().updateAppBadge(*webPageProxy, origin, badge);
 }

@@ -458,7 +458,12 @@ window.navigator.setAppBadge(10);
 </script>
 )SWRESOURCE"_s;
 
-TEST(Badging, Origin)
+// This test verifies that a setAppBadge call from a cross origin iframe passes the correct
+// origin to the delegate.
+// When actually that call should've been rejected down at the DOM level because cross-origin
+// iframes cannot call setAppBadge.
+// Fixing that is for a different day, so for this branch we'll just disable this test.
+TEST(Badging, DISABLED_Origin)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
@@ -551,7 +556,7 @@ TEST(Badging, ServiceWorkerOverride)
 
 #if ENABLE(IPC_TESTING_API)
 
-static constexpr auto badgeAttackBytes = R"TESTRESOURCE(
+static constexpr auto badgeAttackFromWorkerBytes = R"TESTRESOURCE(
 <script src="coreipc.js"></script>
 <script>
 async function sendSpoofedBadgeIPC()
@@ -577,13 +582,13 @@ async function sendSpoofedBadgeIPC()
 </script>
 )TESTRESOURCE"_s;
 
-TEST(Badging, SetAppBadgeFromWorkerOriginSpoof)
+static void runAppBadgeSpoofTest(const String& attackerHTML)
 {
     NSURL *coreIPCURL = [NSBundle.test_resourcesBundle URLForResource:@"coreipc" withExtension:@"js"];
     NSData *coreIPCData = [NSData dataWithContentsOfURL:coreIPCURL];
 
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { badgeAttackBytes } },
+        { "/"_s, { attackerHTML } },
         { "/coreipc.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, coreIPCData } },
     });
 
@@ -615,6 +620,42 @@ TEST(Badging, SetAppBadgeFromWorkerOriginSpoof)
     TestWebKitAPI::Util::spinRunLoop(30);
 
     EXPECT_EQ(badgeDelegate.get().appBadgeIndex, 0);
+}
+
+TEST(Badging, SetAppBadgeFromWorkerOriginSpoof)
+{
+    runAppBadgeSpoofTest(badgeAttackFromWorkerBytes);
+}
+
+static constexpr auto badgeAttackFromFrameBytes = R"TESTRESOURCE(
+<script src="coreipc.js"></script>
+<script>
+async function sendSpoofedBadgeIPC()
+{
+    const CoreIPC = new CoreIPCClass();
+
+    CoreIPC.UI.WebFrameProxy.SetAppBadge(IPC.frameID[0], {
+        origin: {
+            data: {
+                variantType: 'WebCore::SecurityOriginData::Tuple',
+                variant: {
+                    protocol: 'https',
+                    host: 'apple.com',
+                    port: { }
+                }
+            }
+        },
+        badge: {
+            optionalValue: 1337
+        }
+    });
+}
+</script>
+)TESTRESOURCE"_s;
+
+TEST(Badging, SetAppBadgeFromFrameOriginSpoof)
+{
+    runAppBadgeSpoofTest(badgeAttackFromFrameBytes);
 }
 
 #endif // ENABLE(IPC_TESTING_API)
