@@ -942,7 +942,8 @@ class TestResultsController
                 testList += ',';
         }
 
-        return 'https://results.webkit.org/?suite=layout-tests&test=' + encodeURIComponent(testList);
+        const dashboardHost = window.location.hostname.endsWith('.apple.com') ? 'results.safari.apple.com' : 'results.webkit.org';
+        return 'https://' + dashboardHost + '/?suite=layout-tests&test=' + encodeURIComponent(testList);
     }
 
     _updatePageTitle()
