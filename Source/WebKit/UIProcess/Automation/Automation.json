@@ -86,7 +86,8 @@
                 "TargetOutOfBounds",
                 "UnableToLoadExtension",
                 "UnableToUnloadExtension",
-                "NoSuchExtension"
+                "NoSuchExtension",
+                "NoSuchUserContext"
             ]
         },
         {

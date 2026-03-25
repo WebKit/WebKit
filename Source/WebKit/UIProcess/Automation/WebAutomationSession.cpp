@@ -461,6 +461,22 @@ static Inspector::Protocol::Automation::BrowsingContextPresentation NODELETE toP
 
 void WebAutomationSession::createBrowsingContext(std::optional<Inspector::Protocol::Automation::BrowsingContextPresentation>&& presentationHint, CommandCallbackOf<String, Inspector::Protocol::Automation::BrowsingContextPresentation>&& callback)
 {
+#if ENABLE(WEBDRIVER_BIDI)
+    createBrowsingContextInternal(WTF::move(presentationHint), defaultUserContextID(), WTF::move(callback));
+#else
+    createBrowsingContextInternal(WTF::move(presentationHint), emptyString(), WTF::move(callback));
+#endif
+}
+
+#if ENABLE(WEBDRIVER_BIDI)
+void WebAutomationSession::createBrowsingContextForUserContext(std::optional<Inspector::Protocol::Automation::BrowsingContextPresentation>&& presentationHint, const String& userContextID, CommandCallbackOf<String, Inspector::Protocol::Automation::BrowsingContextPresentation>&& callback)
+{
+    createBrowsingContextInternal(WTF::move(presentationHint), userContextID, WTF::move(callback));
+}
+#endif
+
+void WebAutomationSession::createBrowsingContextInternal(std::optional<Inspector::Protocol::Automation::BrowsingContextPresentation>&& presentationHint, const String& userContextIDForBidi, CommandCallbackOf<String, Inspector::Protocol::Automation::BrowsingContextPresentation>&& callback)
+{
     ASSERT(m_client);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!m_client, InternalError, "The remote session could not request a new browsing context."_s);
 
@@ -469,11 +485,42 @@ void WebAutomationSession::createBrowsingContext(std::optional<Inspector::Protoc
     if (presentationHint == Inspector::Protocol::Automation::BrowsingContextPresentation::Tab)
         options |= API::AutomationSessionBrowsingContextOptionsPreferNewTab;
 
-    m_client->requestNewPageWithOptions(*this, static_cast<API::AutomationSessionBrowsingContextOptions>(options), [protectedThis = Ref { *this }, callback = WTF::move(callback)](WebPageProxy* page) {
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!page, InternalError, "The remote session failed to create a new browsing context."_s);
+#if ENABLE(WEBDRIVER_BIDI)
+    uint64_t requestIdentifier = m_nextCreateBrowsingContextRequestIdentifier++;
+    auto addResult = m_pendingCreateBrowsingContextRequestIdentifiers.add(requestIdentifier);
+    RELEASE_ASSERT(addResult.isNewEntry);
+#endif
+
+    m_client->requestNewPageWithOptions(*this, static_cast<API::AutomationSessionBrowsingContextOptions>(options), [protectedThis = Ref { *this }, userContextIDForBidi = userContextIDForBidi.isolatedCopy(),
+#if ENABLE(WEBDRIVER_BIDI)
+        requestIdentifier,
+#endif
+        callback = WTF::move(callback)](WebPageProxy* page) {
+#if ENABLE(WEBDRIVER_BIDI)
+        bool removedPendingRequest = protectedThis->m_pendingCreateBrowsingContextRequestIdentifiers.remove(requestIdentifier);
+        RELEASE_ASSERT(removedPendingRequest);
+#endif
+
+        if (!page) {
+#if ENABLE(WEBDRIVER_BIDI)
+            protectedThis->flushDeferredTopLevelContextCreatedEvents();
+#endif
+            callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME_AND_DETAILS(InternalError, "The remote session failed to create a new browsing context."_s)));
+            return;
+        }
 
         // WebDriver allows running commands in a browsing context which has not done any loads yet. Force WebProcess to be created so it can receive messages.
         page->launchInitialProcessIfNecessary();
+#if ENABLE(WEBDRIVER_BIDI)
+        protectedThis->m_deferredTopLevelContextCreatedPageIdentifiers.remove(page->identifier());
+        protectedThis->m_pagesHandledByPendingCreateBrowsingContextRequests.add(page->identifier());
+        protectedThis->m_bidiProcessor->browserAgent().setUserContextIDForPage(*page, userContextIDForBidi);
+        protectedThis->m_bidiProcessor->browserAgent().didCreatePage(*page);
+
+        // Emit before the command callback to satisfy BiDi create/event ordering.
+        protectedThis->emitContextCreatedEvent(*page);
+        protectedThis->flushDeferredTopLevelContextCreatedEvents();
+#endif
         callback({ { protectedThis->handleForWebPageProxy(*page), toProtocol(protectedThis->m_client->currentPresentationOfPage(protectedThis.get(), *page)) } });
     });
 }
@@ -995,6 +1042,52 @@ static String navigationIDToProtocolString(std::optional<WebCore::NavigationIden
     uint64_t id = navigationID->toUInt64();
     return WTF::UUID(id, id).toString();
 }
+
+static void setNullableString(JSON::Object& object, ASCIILiteral key, const String& value)
+{
+    if (value.isNull()) {
+        object.setValue(key, JSON::Value::null());
+        return;
+    }
+
+    object.setString(key, value);
+}
+
+static void setOptionalNullableString(JSON::Object& object, ASCIILiteral key, std::optional<String>&& value)
+{
+    if (!value)
+        return;
+
+    setNullableString(object, key, *value);
+}
+
+static void setNullableBrowsingContextChildren(JSON::Object& object, RefPtr<JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>>&& children)
+{
+    if (!children) {
+        object.setValue("children"_s, JSON::Value::null());
+        return;
+    }
+
+    object.setArray("children"_s, children.releaseNonNull());
+}
+
+static void sendBrowsingContextInfoEvent(WebDriverBidiProcessor& bidiProcessor, ASCIILiteral method, const String& context, const String& url, const String& originalOpener, std::optional<String>&& parent, RefPtr<JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>>&& children, const String& clientWindow, const String& userContext)
+{
+    auto params = JSON::Object::create();
+    params->setString("context"_s, context);
+    params->setString("url"_s, url);
+    setNullableString(params.get(), "originalOpener"_s, originalOpener);
+    setOptionalNullableString(params.get(), "parent"_s, WTF::move(parent));
+    setNullableBrowsingContextChildren(params.get(), WTF::move(children));
+    params->setString("clientWindow"_s, clientWindow);
+    params->setString("userContext"_s, userContext);
+
+    auto message = JSON::Object::create();
+    message->setString("method"_s, method);
+    message->setObject("params"_s, WTF::move(params));
+
+    bidiProcessor.sendBidiMessage(message->toJSONString());
+}
 #endif
 
 void WebAutomationSession::documentLoadedForFrame(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID, WallTime timestamp)
@@ -1066,8 +1159,35 @@ void WebAutomationSession::wheelEventsFlushedForPage(const WebPageProxy& page)
 #if ENABLE(WEBDRIVER_BIDI)
 void WebAutomationSession::didCreatePage(WebPageProxy& page)
 {
+    if (m_pagesHandledByPendingCreateBrowsingContextRequests.remove(page.identifier()))
+        return;
+
+    if (!page.openerFrameIdentifier() && !m_pendingCreateBrowsingContextRequestIdentifiers.isEmpty()) {
+        m_deferredTopLevelContextCreatedPageIdentifiers.add(page.identifier());
+        return;
+    }
+
     m_bidiProcessor->browserAgent().didCreatePage(page);
     emitContextCreatedEvent(page);
+}
+
+void WebAutomationSession::flushDeferredTopLevelContextCreatedEvents()
+{
+    if (!m_pendingCreateBrowsingContextRequestIdentifiers.isEmpty() || m_deferredTopLevelContextCreatedPageIdentifiers.isEmpty())
+        return;
+
+    auto deferredPageIdentifiers = copyToVector(m_deferredTopLevelContextCreatedPageIdentifiers);
+    m_deferredTopLevelContextCreatedPageIdentifiers.clear();
+
+    for (auto pageIdentifier : deferredPageIdentifiers) {
+        if (m_pagesHandledByPendingCreateBrowsingContextRequests.remove(pageIdentifier))
+            continue;
+
+        if (RefPtr page = WebProcessProxy::webPage(pageIdentifier)) {
+            m_bidiProcessor->browserAgent().didCreatePage(*page);
+            emitContextCreatedEvent(*page);
+        }
+    }
 }
 
 void WebAutomationSession::navigationStartedForFrame(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID)
@@ -1097,23 +1217,33 @@ void WebAutomationSession::fragmentNavigatedForFrame(const WebFrameProxy& frame,
 
 void WebAutomationSession::emitContextCreatedEvent(const WebPageProxy& page)
 {
-    if (RefPtr mutablePage = WebProcessProxy::webPage(page.identifier())) {
-        mutablePage->getAllFrameTrees([this, protectedThis = Ref { *this }, pageID = page.identifier()](Vector<FrameTreeNodeData>&& trees) {
-            RefPtr page = WebProcessProxy::webPage(pageID);
-            if (!page)
-                return;
+    if (page.isClosed())
+        return;
 
-            for (auto& tree : trees)
-                recursivelyEmitContextCreatedEvent(tree, std::nullopt);
-        });
-    }
+    if (!m_pagesWithContextCreatedEventEmitted.add(page.identifier()).isNewEntry)
+        return;
+
+    auto contextHandle = handleForWebPageProxy(page);
+
+    String originalOpenerHandle = nullString();
+    if (RefPtr openerPage = getOpenerPage(page))
+        originalOpenerHandle = handleForWebPageProxy(*openerPage);
+
+    String url = page.currentURL();
+    if (url.isEmpty())
+        url = aboutBlankURL().string();
+
+    auto [clientWindow, userContext] = getClientWindowAndUserContext(page);
+
+    sendBrowsingContextInfoEvent(m_bidiProcessor.get(), "browsingContext.contextCreated"_s, contextHandle, url, originalOpenerHandle, std::optional<String> { nullString() }, nullptr, clientWindow, userContext);
 }
 
-static std::pair<String, String> getClientWindowAndUserContext(const WebPageProxy& page)
+std::pair<String, String> WebAutomationSession::getClientWindowAndUserContext(const WebPageProxy& page) const
 {
     String clientWindow = makeString(page.identifier().toUInt64());
-    String userContext = "default"_s;
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=281941 - Add support for reporting user context
+
+    String userContext = getUserContextIDForPage(page);
+
     return { clientWindow, userContext };
 }
 
@@ -1145,13 +1275,13 @@ void WebAutomationSession::contextCreatedForFrame(const WebFrameProxy& frame)
 {
     auto contextHandle = effectiveHandleForWebFrameProxy(frame);
     auto url = frame.url().string();
-    String parentHandle = "null"_s;
+    String parentHandle = nullString();
     if (RefPtr parentFrame = frame.parentFrame())
         parentHandle = effectiveHandleForWebFrameProxy(*parentFrame);
 
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=281941 - Add support for reporting clientWindow for frames
-    String clientWindow = "unknown-window"_s;
-    String userContext = "default"_s;
+    String clientWindow = defaultClientWindowID();
+    String userContext = defaultUserContextID();
 
     if (RefPtr page = frame.page()) {
         auto [windowId, contextId] = getClientWindowAndUserContext(*page);
@@ -1159,39 +1289,7 @@ void WebAutomationSession::contextCreatedForFrame(const WebFrameProxy& frame)
         userContext = contextId;
     }
 
-    m_bidiProcessor->browsingContextDomainNotifier().contextCreated(contextHandle, url, "null"_s, parentHandle, JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create(), clientWindow, userContext);
-}
-
-void WebAutomationSession::recursivelyEmitContextCreatedEvent(const FrameTreeNodeData& tree, std::optional<String>&& parentContext)
-{
-    RefPtr frame = WebFrameProxy::webFrame(tree.info.frameID);
-    if (!frame)
-        return;
-
-    RefPtr page = frame->page();
-    if (!page)
-        return;
-
-    String contextHandle;
-    String originalOpenerHandle = "null"_s;
-
-    if (tree.info.isMainFrame) {
-        contextHandle = handleForWebPageProxy(*page);
-        if (RefPtr openerPage = this->getOpenerPage(*page))
-            originalOpenerHandle = handleForWebPageProxy(*openerPage);
-    } else
-        contextHandle = handleForWebFrameID(tree.info.frameID);
-
-    String url = tree.info.request.url().string();
-    auto [clientWindow, userContext] = getClientWindowAndUserContext(*page);
-    auto children = JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create();
-    // FIXME: Use JSON null instead of string "null" when Inspector::Protocol supports RefPtr<String> or std::optional<String>
-    String parentContextHandle = parentContext.value_or("null"_s);
-
-    m_bidiProcessor->browsingContextDomainNotifier().contextCreated(contextHandle, url, originalOpenerHandle, parentContextHandle, WTF::move(children), clientWindow, userContext);
-
-    for (const auto& child : tree.children)
-        recursivelyEmitContextCreatedEvent(child, contextHandle);
+    sendBrowsingContextInfoEvent(m_bidiProcessor.get(), "browsingContext.contextCreated"_s, contextHandle, url, nullString(), std::optional<String> { WTF::move(parentHandle) }, nullptr, clientWindow, userContext);
 }
 
 void WebAutomationSession::contextDestroyedForPage(const WebPageProxy& page)
@@ -1199,20 +1297,21 @@ void WebAutomationSession::contextDestroyedForPage(const WebPageProxy& page)
     auto contextHandle = handleForWebPageProxy(page);
     auto url = page.currentURL();
 
-    String parentContext = "null"_s;
+    String parentContext = nullString();
     if (RefPtr mainFrame = page.mainFrame()) {
         if (RefPtr parentFrame = mainFrame->parentFrame())
             parentContext = effectiveHandleForWebFrameProxy(*parentFrame);
     }
 
-    String originalOpenerHandle = "null"_s;
+    String originalOpenerHandle = nullString();
     if (RefPtr openerPage = this->getOpenerPage(page))
         originalOpenerHandle = handleForWebPageProxy(*openerPage);
 
     auto [clientWindow, userContext] = getClientWindowAndUserContext(page);
 
-    m_bidiProcessor->browsingContextDomainNotifier().contextDestroyed(contextHandle, url, originalOpenerHandle, parentContext, JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create(), clientWindow, userContext);
+    sendBrowsingContextInfoEvent(m_bidiProcessor.get(), "browsingContext.contextDestroyed"_s, contextHandle, url, originalOpenerHandle, std::optional<String> { WTF::move(parentContext) }, nullptr, clientWindow, userContext);
 
+    m_pagesWithContextCreatedEventEmitted.remove(page.identifier());
     m_handleWebPageMap.remove(contextHandle);
     m_webPageHandleMap.remove(page.identifier());
 }
@@ -1221,12 +1320,12 @@ void WebAutomationSession::contextDestroyedForFrame(const WebFrameProxy& frame)
 {
     auto contextHandle = effectiveHandleForWebFrameProxy(frame);
     auto url = frame.url().string();
-    String parentHandle = "null"_s;
+    String parentHandle = nullString();
     if (RefPtr parentFrame = frame.parentFrame())
         parentHandle = effectiveHandleForWebFrameProxy(*parentFrame);
 
-    String clientWindow = "unknown-window"_s;
-    String userContext = "default"_s;
+    String clientWindow = defaultClientWindowID();
+    String userContext = defaultUserContextID();
 
     if (RefPtr page = frame.page()) {
         auto [windowId, contextId] = getClientWindowAndUserContext(*page);
@@ -1234,9 +1333,19 @@ void WebAutomationSession::contextDestroyedForFrame(const WebFrameProxy& frame)
         userContext = contextId;
     }
 
-    m_bidiProcessor->browsingContextDomainNotifier().contextDestroyed(contextHandle, url, "null"_s, parentHandle, JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create(), clientWindow, userContext);
+    sendBrowsingContextInfoEvent(m_bidiProcessor.get(), "browsingContext.contextDestroyed"_s, contextHandle, url, nullString(), std::optional<String> { WTF::move(parentHandle) }, nullptr, clientWindow, userContext);
 
     // Note: Frame handle cleanup is done by didDestroyFrame(), so we don't duplicate that here
+}
+
+String WebAutomationSession::getUserContextIDForPage(const WebPageProxy& page) const
+{
+    return m_bidiProcessor->browserAgent().getUserContextIDForPage(page);
+}
+
+bool WebAutomationSession::hasUserContextID(const String& userContextID) const
+{
+    return m_bidiProcessor->browserAgent().hasUserContext(userContextID);
 }
 
 #endif
@@ -1248,6 +1357,8 @@ void WebAutomationSession::willClosePage(const WebPageProxy& page)
 
 #if ENABLE(WEBDRIVER_BIDI)
     contextDestroyedForPage(page);
+    m_deferredTopLevelContextCreatedPageIdentifiers.remove(page.identifier());
+    m_pagesHandledByPendingCreateBrowsingContextRequests.remove(page.identifier());
 #endif
 
     // Cancel pending interactions on this page. By providing an error, this will cause subsequent
@@ -2933,8 +3044,6 @@ void WebAutomationSession::logEntryAdded(const JSC::MessageSource& messageSource
     auto type = logEntryTypeForMessage(messageSource);
     auto milliseconds =  timestamp.secondsSinceEpoch().milliseconds();
 
-    // FIXME Get browsing context handle and source info
-    // https://bugs.webkit.org/show_bug.cgi?id=282981
     m_bidiProcessor->logDomainNotifier().entryAdded(level, sourceString, messageText, milliseconds, type, method);
 #else
     UNUSED_PARAM(messageSource);

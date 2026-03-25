@@ -56,13 +56,19 @@ String toUserContextIDProtocolString(const PAL::SessionID& sessionID)
     return builder.toString();
 }
 
+} // namespace
+
+const String& defaultClientWindowID()
+{
+    static NeverDestroyed<const String> clientWindowID(MAKE_STATIC_STRING_IMPL("unknown-window"));
+    return clientWindowID;
+}
+
 const String& defaultUserContextID()
 {
     static NeverDestroyed<const String> contextID(MAKE_STATIC_STRING_IMPL("default"));
     return contextID;
 }
-
-} // namespace
 
 struct BidiBrowserAgent::BidiUserContextDeletionRecord {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(BidiUserContextDeletionRecord);
@@ -90,7 +96,7 @@ BidiBrowserAgent::~BidiBrowserAgent() = default;
 
 void BidiBrowserAgent::didCreatePage(WebPageProxy& page)
 {
-    String userContextID = toUserContextIDProtocolString(page.sessionID());
+    String userContextID = getUserContextIDForPage(page);
     auto it = m_userContextsPendingDeletion.find(userContextID);
     if (it == m_userContextsPendingDeletion.end())
         return;
@@ -101,7 +107,10 @@ void BidiBrowserAgent::didCreatePage(WebPageProxy& page)
 
 void BidiBrowserAgent::willClosePage(const WebPageProxy& page)
 {
-    String userContextID = toUserContextIDProtocolString(page.sessionID());
+    String userContextID = getUserContextIDForPage(page);
+
+    m_pageUserContextOverrides.remove(page.identifier());
+
     auto it = m_userContextsPendingDeletion.find(userContextID);
     if (it == m_userContextsPendingDeletion.end())
         return;
@@ -112,6 +121,39 @@ void BidiBrowserAgent::willClosePage(const WebPageProxy& page)
 
     it->value->callback({ });
     m_userContextsPendingDeletion.remove(it);
+}
+
+bool BidiBrowserAgent::hasUserContext(const String& userContextID) const
+{
+    if (userContextID == defaultUserContextID())
+        return true;
+
+    return m_userContexts.contains(userContextID);
+}
+
+void BidiBrowserAgent::setUserContextIDForPage(const WebPageProxy& page, const String& userContextID)
+{
+    if (userContextID.isEmpty() || userContextID == defaultUserContextID()) {
+        m_pageUserContextOverrides.remove(page.identifier());
+        return;
+    }
+
+    m_pageUserContextOverrides.set(page.identifier(), userContextID);
+}
+
+String BidiBrowserAgent::getUserContextIDForPage(const WebPageProxy& page) const
+{
+    if (auto it = m_pageUserContextOverrides.find(page.identifier()); it != m_pageUserContextOverrides.end())
+        return it->value;
+
+    String userContextID = toUserContextIDProtocolString(page.sessionID());
+
+    // During removeUserContext teardown, contexts are moved from m_userContexts to
+    // m_userContextsPendingDeletion until their pages are closed.
+    if (m_userContexts.contains(userContextID) || m_userContextsPendingDeletion.contains(userContextID))
+        return userContextID;
+
+    return defaultUserContextID();
 }
 
 // MARK: Inspector::BidiBrowserDispatcherHandler methods.
@@ -162,16 +204,20 @@ void BidiBrowserAgent::removeUserContext(const String& userContextID, CommandCal
 
     auto it = m_userContexts.find(userContextID);
     // https://www.w3.org/TR/webdriver-bidi/#command-browser-removeUserContext step 4.
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(it == m_userContexts.end(), InvalidParameter, "no such user context"_s);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(it == m_userContexts.end(), NoSuchUserContext, "no such user context"_s);
 
     auto userContext = m_userContexts.take(it);
-    size_t pageCount = userContext->allPages().size();
+    auto pages = userContext->allPages();
+    size_t pageCount = pages.size();
     if (!pageCount) {
         callback({ });
         return;
     }
 
     m_userContextsPendingDeletion.set(userContextID, makeUnique<BidiUserContextDeletionRecord>(WTF::move(userContext), pageCount, WTF::move(callback)));
+
+    for (Ref page : pages)
+        page->closePage();
 }
 
 #if !USE(GLIB)

@@ -29,7 +29,6 @@
 #include "AutomationBackendDispatchers.h"
 #include "AutomationFrontendDispatchers.h"
 #include "Connection.h"
-#include "FrameTreeNodeData.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "SimulatedInputDispatcher.h"
@@ -42,7 +41,9 @@
 #include <WebCore/ShareableBitmap.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/Deque.h>
 #include <wtf/Forward.h>
+#include <wtf/HashSet.h>
 #include <wtf/RunLoop.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WallTime.h>
@@ -171,6 +172,7 @@ public:
     void wheelEventsFlushedForPage(const WebPageProxy&);
 #if ENABLE(WEBDRIVER_BIDI)
     void didCreatePage(WebPageProxy&);
+    void createBrowsingContextForUserContext(std::optional<Inspector::Protocol::Automation::BrowsingContextPresentation>&&, const String& userContextID, Inspector::CommandCallbackOf<String, Inspector::Protocol::Automation::BrowsingContextPresentation>&&);
     void navigationStartedForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>);
     void navigationCommittedForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>);
     void navigationFailedForFrame(const WebFrameProxy&, std::optional<WebCore::NavigationIdentifier>);
@@ -182,6 +184,10 @@ public:
     void contextCreatedForFrame(const WebFrameProxy&);
     void contextDestroyedForPage(const WebPageProxy&);
     void contextDestroyedForFrame(const WebFrameProxy&);
+    bool hasUserContextID(const String&) const;
+    String getUserContextIDForPage(const WebPageProxy&) const;
+    std::pair<String, String> getClientWindowAndUserContext(const WebPageProxy&) const;
+    void flushDeferredTopLevelContextCreatedEvents();
 #endif
     void willClosePage(const WebPageProxy&);
     void handleRunOpenPanel(const WebPageProxy&, const WebFrameProxy&, const API::OpenPanelParameters&, WebOpenPanelResultListenerProxy&);
@@ -320,6 +326,7 @@ public:
 private:
     Ref<Inspector::Protocol::Automation::BrowsingContext> buildBrowsingContextForPage(WebPageProxy&, WebCore::FloatRect windowFrame);
     void getNextContext(Vector<Ref<WebPageProxy>>&&, Ref<JSON::ArrayOf<Inspector::Protocol::Automation::BrowsingContext>>, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::Automation::BrowsingContext>>>&&);
+    void createBrowsingContextInternal(std::optional<Inspector::Protocol::Automation::BrowsingContextPresentation>&&, const String& userContextIDForBidi, Inspector::CommandCallbackOf<String, Inspector::Protocol::Automation::BrowsingContextPresentation>&&);
 
     std::optional<WebCore::FrameIdentifier> webFrameIDForHandle(const String&, bool& frameNotFound);
 
@@ -335,7 +342,6 @@ private:
     void hideWindowForPage(WebPageProxy&, WTF::CompletionHandler<void()>&&);
 
 #if ENABLE(WEBDRIVER_BIDI)
-    void recursivelyEmitContextCreatedEvent(const FrameTreeNodeData&, std::optional<String>&& parentContext);
     WebPageProxy* getOpenerPage(const WebPageProxy&);
 #endif
 
@@ -394,6 +400,11 @@ private:
 
 #if ENABLE(WEBDRIVER_BIDI)
     const UniqueRef<WebDriverBidiProcessor> m_bidiProcessor;
+    HashSet<WebPageProxyIdentifier> m_pagesWithContextCreatedEventEmitted;
+    HashSet<uint64_t> m_pendingCreateBrowsingContextRequestIdentifiers;
+    HashSet<WebPageProxyIdentifier> m_deferredTopLevelContextCreatedPageIdentifiers;
+    HashSet<WebPageProxyIdentifier> m_pagesHandledByPendingCreateBrowsingContextRequests;
+    uint64_t m_nextCreateBrowsingContextRequestIdentifier { 1 };
 #endif
 
     HashMap<WebPageProxyIdentifier, String> m_webPageHandleMap;
