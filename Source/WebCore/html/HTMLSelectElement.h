@@ -41,7 +41,11 @@ namespace WebCore {
 
 class HTMLOptionsCollection;
 
-class HTMLSelectElement : public HTMLFormControlElement, public PopupMenuClient, private TypeAheadDataSource {
+#if !PLATFORM(IOS_FAMILY)
+class PopupMenu;
+#endif
+
+class HTMLSelectElement final : public HTMLFormControlElement, public PopupMenuClient, private TypeAheadDataSource {
     WTF_MAKE_TZONE_ALLOCATED(HTMLSelectElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLSelectElement);
 public:
@@ -56,8 +60,17 @@ public:
 
     static Ref<HTMLSelectElement> create(const QualifiedName&, Document&, HTMLFormElement*);
     static Ref<HTMLSelectElement> create(Document&);
+    ~HTMLSelectElement();
 
     enum class ExcludeOptGroup : bool { No, Yes };
+
+    enum SelectOptionFlag {
+        DeselectOtherOptions = 1 << 0,
+        DispatchChangeEvent = 1 << 1,
+        UserDriven = 1 << 2,
+    };
+
+    enum SkipDirection { SkipBackwards = -1, SkipForwards = 1 };
     static HTMLSelectElement* findOwnerSelect(ContainerNode*, ExcludeOptGroup);
 
     WEBCORE_EXPORT int selectedIndex() const;
@@ -105,6 +118,16 @@ public:
     ExceptionOr<void> setLength(unsigned);
 
     ExceptionOr<void> showPicker();
+
+    void showPopup();
+#if !PLATFORM(IOS_FAMILY)
+    void hidePopup();
+#endif
+
+    bool popupIsVisible() const { return m_popupIsVisible; }
+    WEBCORE_EXPORT void setPopupIsVisible(bool);
+
+    bool isOpen() const;
 
     // PopupMenuClient methods
     void valueChanged(unsigned listIndex, bool fireOnChange = true) override;
@@ -213,12 +236,6 @@ private:
     bool isRequiredFormControl() const final;
 
     bool hasPlaceholderLabelOption() const;
-
-    enum SelectOptionFlag {
-        DeselectOtherOptions = 1 << 0,
-        DispatchChangeEvent = 1 << 1,
-        UserDriven = 1 << 2,
-    };
     typedef unsigned SelectOptionFlags;
     void selectOption(int optionIndex, SelectOptionFlags = 0);
     void deselectItemsWithoutValidation(HTMLElement* elementToExclude = nullptr);
@@ -230,8 +247,6 @@ private:
     void listBoxDefaultEventHandler(Event&);
     void setOptionsChangedOnRenderer();
     size_t searchOptionsForValue(const String&, size_t listIndexStart, size_t listIndexEnd) const;
-
-    enum SkipDirection { SkipBackwards = -1, SkipForwards = 1 };
     int nextValidIndex(int listIndex, SkipDirection, int skip) const;
     int nextSelectableListIndex(int startIndex) const;
     int previousSelectableListIndex(int startIndex) const;
@@ -240,6 +255,8 @@ private:
     int nextSelectableListIndexPageAway(int startIndex, SkipDirection) const;
 
     void childrenChanged(const ChildChange&) final;
+
+    void didDetachRenderers() final;
 
     // TypeAheadDataSource functions.
     int indexOfSelectedOption() const final;
@@ -261,6 +278,11 @@ private:
     bool m_activeSelectionState;
     bool m_allowsNonContiguousSelection;
     mutable bool m_shouldRecalcListItems;
+
+#if !PLATFORM(IOS_FAMILY)
+    RefPtr<PopupMenu> m_popup;
+#endif
+    bool m_popupIsVisible { false };
 };
 
 } // namespace

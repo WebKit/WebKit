@@ -34,6 +34,7 @@
 #include "HTMLSummaryElement.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
+#include "PseudoClassChangeInvalidation.h"
 #include "ShadowRoot.h"
 #include "ShouldNotFireMutationEventsScope.h"
 #include "SlotAssignment.h"
@@ -164,6 +165,9 @@ void HTMLDetailsElement::attributeChanged(const QualifiedName& name, const AtomS
             RefPtr root = shadowRoot();
             RefPtr defaultSlot = m_defaultSlot;
             ASSERT(root);
+            auto isOpen = !newValue.isNull();
+            Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClass::Open, isOpen);
+            m_isOpen = isOpen;
             if (!newValue.isNull()) {
                 defaultSlot->removeInlineStyleProperty(CSSPropertyContentVisibility);
                 queueDetailsToggleEventTask(ToggleState::Closed, ToggleState::Open);
@@ -221,6 +225,11 @@ void HTMLDetailsElement::ensureDetailsExclusivityAfterMutation()
 void HTMLDetailsElement::toggleOpen()
 {
     setBooleanAttribute(HTMLNames::openAttr, !hasAttributeWithoutSynchronization(HTMLNames::openAttr));
+}
+
+bool HTMLDetailsElement::isOpen() const
+{
+    return m_isOpen;
 }
 
 } // namespace WebCore

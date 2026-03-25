@@ -1,4 +1,4 @@
 
 
-FAIL Hidden options should be skipped when changing focus using the up and down keys. promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
+FAIL Hidden options should be skipped when changing focus using the up and down keys. assert_true: The select should be open after pressing space. expected true got false
 

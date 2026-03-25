@@ -1119,6 +1119,11 @@ void WebPageProxy::setFocusedElementSelectedIndex(const WebCore::ElementContext&
     legacyMainFrameProcess().send(Messages::WebPage::SetFocusedElementSelectedIndex(context, index, allowMultipleSelection), webPageIDInMainFrameProcess());
 }
 
+void WebPageProxy::setSelectElementIsOpen(const WebCore::ElementContext& context, bool isOpen)
+{
+    protect(legacyMainFrameProcess())->send(Messages::WebPage::SetSelectElementIsOpen(context, isOpen), webPageIDInMainFrameProcess());
+}
+
 void WebPageProxy::didPerformDictionaryLookup(const DictionaryPopupInfo& dictionaryPopupInfo)
 {
     if (RefPtr pageClient = this->pageClient())

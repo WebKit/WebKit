@@ -1,4 +1,4 @@
 
 
-FAIL Top layer exit animations should work on ::picker(select) just like a popover. assert_equals: color should transition based on the exit animation. expected "rgb(128, 128, 128)" but got "rgba(0, 0, 0, 0.847)"
+FAIL Top layer exit animations should work on ::picker(select) just like a popover. assert_equals: color should transition based on the exit animation. expected "rgb(128, 128, 128)" but got "rgb(0, 0, 0)"
 

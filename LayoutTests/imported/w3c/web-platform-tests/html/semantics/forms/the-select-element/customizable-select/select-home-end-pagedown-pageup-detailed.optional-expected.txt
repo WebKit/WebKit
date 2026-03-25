@@ -1,7 +1,7 @@
 
 
-FAIL Behavior of Home and End for customizable-<select> promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
-FAIL Behavior of Home and End for customizable-<select>, starting at the top promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
-FAIL Behavior of Home and End for customizable-<select>, starting at the bottom promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
-FAIL Behavior of PageUp and PageDown for customizable-<select> promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
+FAIL Behavior of Home and End for customizable-<select> assert_true: expected true got false
+FAIL Behavior of Home and End for customizable-<select>, starting at the top assert_true: expected true got false
+FAIL Behavior of Home and End for customizable-<select>, starting at the bottom assert_true: expected true got false
+FAIL Behavior of PageUp and PageDown for customizable-<select> assert_true: expected true got false
 

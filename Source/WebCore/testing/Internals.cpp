@@ -204,7 +204,6 @@
 #include "RenderLayerCompositor.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderListBox.h"
-#include "RenderMenuList.h"
 #include "RenderObjectInlines.h"
 #include "RenderSearchField.h"
 #include "RenderTheme.h"
@@ -4794,8 +4793,7 @@ bool Internals::isSelectPopupVisible(HTMLSelectElement& element)
     element.document().updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
 #if !PLATFORM(IOS_FAMILY)
-    auto* renderer = dynamicDowncast<RenderMenuList>(element.renderer());
-    return renderer && renderer->popupIsVisible();
+    return element.popupIsVisible();
 #else
     return false;
 #endif

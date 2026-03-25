@@ -1,5 +1,11 @@
 
 
-FAIL In dialog mode the first focusable element should get focus. promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
-FAIL In dialog mode tab should not close the picker. promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
+FAIL In dialog mode the first focusable element should get focus. assert_equals: The anchor should be focused. expected Element node <a id="interactive1" href="https://www.example.com/">Elep... but got Element node <select id="target">
+  <div></div>
+  <span></span>
+  <a i...
+FAIL In dialog mode tab should not close the picker. assert_equals: The anchor should be focused. expected Element node <a id="interactive1" href="https://www.example.com/">Elep... but got Element node <select id="target">
+  <div></div>
+  <span></span>
+  <a i...
 

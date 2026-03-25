@@ -122,6 +122,7 @@ CSSParserContext::CSSParserContext(const Settings& settings)
     , cssTextTransformMathAutoEnabled { settings.cssTextTransformMathAutoEnabled() }
     , cssInternalAutoBaseParsingEnabled { settings.cssInternalAutoBaseParsingEnabled() }
     , cssMathDepthEnabled { settings.cssMathDepthEnabled() }
+    , openPseudoClassEnabled { settings.openPseudoClassEnabled() }
     , propertySettings { CSSPropertySettings { settings } }
 {
 }
@@ -160,7 +161,8 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.cssTextDecorationLineErrorValues          << 25
         | context.cssTextTransformMathAutoEnabled           << 26
         | context.cssInternalAutoBaseParsingEnabled         << 27
-        | context.cssMathDepthEnabled                       << 28;
+        | context.cssMathDepthEnabled                       << 28
+        | context.openPseudoClassEnabled                    << 29;
     add(hasher, context.baseURL, context.charset, context.propertySettings, context.mode, bits);
 }
 

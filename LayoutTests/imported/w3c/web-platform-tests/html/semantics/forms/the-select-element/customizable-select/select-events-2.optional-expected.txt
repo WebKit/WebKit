@@ -1,10 +1,10 @@
 
 
-FAIL Button controller code should not run if the mousedown event is preventDefaulted. promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
-FAIL Listbox controller code should not run if the mousedown event is preventDefaulted. promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
-FAIL <select> should fire input and change events when new option is selected. promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
-FAIL <select> should not fire input and change events when new selected option has the same value as the old. promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
-FAIL <select> should fire input and change events when option in listbox is clicked promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
-FAIL Check that <Space> opens <select>. promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
-FAIL Check that <Space> opens <select> when <select> specifies tabindex promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
+PASS Button controller code should not run if the mousedown event is preventDefaulted.
+FAIL Listbox controller code should not run if the mousedown event is preventDefaulted. assert_true: expected true got false
+FAIL <select> should fire input and change events when new option is selected. assert_true: expected true got false
+FAIL <select> should not fire input and change events when new selected option has the same value as the old. assert_true: expected true got false
+FAIL <select> should fire input and change events when option in listbox is clicked assert_true: expected true got false
+FAIL Check that <Space> opens <select>. assert_true: <Space> should open select expected true got false
+FAIL Check that <Space> opens <select> when <select> specifies tabindex assert_true: <Space> should open select expected true got false
 

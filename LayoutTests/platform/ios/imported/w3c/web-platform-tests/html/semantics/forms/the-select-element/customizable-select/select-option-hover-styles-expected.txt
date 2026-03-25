@@ -1,0 +1,4 @@
+
+
+FAIL Hover styles should be present for appearance:base-select options. assert_true: dropdown should open after calling showPicker(). expected true got false
+

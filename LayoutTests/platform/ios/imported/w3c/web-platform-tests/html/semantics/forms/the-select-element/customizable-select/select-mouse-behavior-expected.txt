@@ -1,0 +1,12 @@
+light dismiss
+custom button button fallback button
+
+FAIL fallbackbutton: Select with appearance:base-select should open and close when clicking the button. assert_false: Select should be closed after clicking the button a second time. expected false got true
+FAIL fallbackbutton: Clicking an option in an appearance:base-select select should choose the option and close the popover. assert_false: Select should be closed at the start of the test. expected false got true
+FAIL fallbackbutton: Clicking the label should focus the select button without opening the picker. assert_false: select picker should be closed after clicking the label. expected false got true
+FAIL fallbackbutton: Touch input should work the same as mouse input. assert_equals: select.value should be updated after touching another option. expected "two" but got "one"
+FAIL custombutton: Select with appearance:base-select should open and close when clicking the button. assert_false: Select should be closed after clicking the button a second time. expected false got true
+FAIL custombutton: Clicking an option in an appearance:base-select select should choose the option and close the popover. assert_false: Select should be closed at the start of the test. expected false got true
+FAIL custombutton: Clicking the label should focus the select button without opening the picker. assert_false: select picker should be closed after clicking the label. expected false got true
+FAIL custombutton: Touch input should work the same as mouse input. assert_equals: select.value should be updated after touching another option. expected "two" but got "one"
+

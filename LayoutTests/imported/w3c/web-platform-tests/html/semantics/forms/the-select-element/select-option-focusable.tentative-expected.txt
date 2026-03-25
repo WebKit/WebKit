@@ -1,4 +1,4 @@
 
 
-FAIL Validate <option> is focusable when is a descendant of <select> promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
+FAIL Validate <option> is focusable when is a descendant of <select> assert_true: expected true got false
 

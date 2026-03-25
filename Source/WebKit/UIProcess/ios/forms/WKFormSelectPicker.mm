@@ -688,6 +688,10 @@ static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuO
 
 - (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willDisplayMenuForConfiguration:(UIContextMenuConfiguration *)configuration animator:(id <UIContextMenuInteractionAnimating>)animator
 {
+    RetainPtr view = _view;
+    if (RefPtr page = [view page])
+        page->setSelectElementIsOpen([view focusedElementInformation].elementContext, true);
+
     [animator addCompletion:[weakSelf = WeakObjCPtr<WKSelectPicker>(self)] {
         auto strongSelf = weakSelf.get();
         if (strongSelf)
@@ -697,8 +701,13 @@ static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuO
 
 - (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willEndForConfiguration:(UIContextMenuConfiguration *)configuration animator:(id <UIContextMenuInteractionAnimating>)animator
 {
+    RetainPtr view = _view;
+    auto elementContext = [view focusedElementInformation].elementContext;
+    if (RefPtr page = [view page])
+        page->setSelectElementIsOpen(elementContext, false);
+
     _isAnimatingContextMenuDismissal = YES;
-    [animator addCompletion:[weakSelf = WeakObjCPtr<WKSelectPicker>(self), elementContext = _view.focusedElementInformation.elementContext] {
+    [animator addCompletion:[weakSelf = WeakObjCPtr<WKSelectPicker>(self), elementContext] {
         if (RetainPtr strongSelf = weakSelf.get()) {
             RetainPtr view = strongSelf->_view;
             if ([view _isSameAsFocusedElement:elementContext])
@@ -715,7 +724,10 @@ static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuO
         return;
 
     _selectContextMenuPresenter = nullptr;
-    [_view _removeContextMenuHintContainerIfPossible];
+    RetainPtr view = _view;
+    [view _removeContextMenuHintContainerIfPossible];
+    if (RefPtr page = [view page])
+        page->setSelectElementIsOpen([view focusedElementInformation].elementContext, false);
 
     if (!_isAnimatingContextMenuDismissal)
         [_view.webView _didDismissContextMenu];

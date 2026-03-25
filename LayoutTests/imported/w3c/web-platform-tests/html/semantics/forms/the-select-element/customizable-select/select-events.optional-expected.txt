@@ -1,6 +1,6 @@
 
 
 
-FAIL Events, implicit button promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
-FAIL Events, explicit button promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
+FAIL Events, implicit button assert_true: expected true got false
+FAIL Events, explicit button assert_true: expected true got false
 

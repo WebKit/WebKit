@@ -189,6 +189,9 @@
         },
         "only-child": {},
         "only-of-type": {},
+        "open": {
+            "settings-flag": "openPseudoClassEnabled"
+        },
         "optional": {},
         "out-of-range": {},
         "past": {

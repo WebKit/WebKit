@@ -44,6 +44,7 @@ struct CSSSelectorParserContext {
     bool thumbAndTrackPseudoElementsEnabled : 1 { false };
     bool viewTransitionsEnabled : 1 { false };
     bool webkitMediaTextTrackDisplayQuirkEnabled : 1 { false };
+    bool openPseudoClassEnabled : 1 { false };
 
     bool isHashTableDeletedValue : 1 { false };
 

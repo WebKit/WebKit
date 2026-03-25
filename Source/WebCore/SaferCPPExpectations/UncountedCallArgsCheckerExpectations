@@ -383,6 +383,8 @@ html/MediaElementSession.cpp
 html/ModelDocument.cpp
 html/OffscreenCanvas.cpp
 [ iOS ] html/TextFieldInputType.cpp
+[ Mac ] html/RangeInputType.cpp
+[ Mac ] html/ResetInputType.cpp
 html/ValidatedFormListedElement.cpp
 html/ValidationMessage.cpp
 html/canvas/CanvasFilterContextSwitcher.cpp

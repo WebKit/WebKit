@@ -1,0 +1,13 @@
+
+
+FAIL defaultbutton: When the listbox is closed, spacebar should open the listbox. assert_true: The select should be open after pressing space. expected true got false
+FAIL defaultbutton: When the listbox is closed, all arrow keys should open the listbox. assert_true: Arrow left should open the listbox. expected true got false
+FAIL defaultbutton: When the listbox is closed, the enter key should not trigger form submission. assert_true: Enter should open the listbox on non-Mac platforms. expected true got false
+FAIL defaultbutton: When the listbox is open, the enter key should commit the selected option. assert_true: The select should open when clicked. expected true got false
+FAIL defaultbutton: When the listbox is open, the tab key should close the listbox. assert_true: Space should open the listbox. expected true got false
+FAIL custombutton: When the listbox is closed, spacebar should open the listbox. assert_true: The select should be open after pressing space. expected true got false
+FAIL custombutton: When the listbox is closed, all arrow keys should open the listbox. assert_true: Arrow left should open the listbox. expected true got false
+FAIL custombutton: When the listbox is closed, the enter key should not trigger form submission. assert_true: Enter should open the listbox on non-Mac platforms. expected true got false
+FAIL custombutton: When the listbox is open, the enter key should commit the selected option. assert_true: The select should open when clicked. expected true got false
+FAIL custombutton: When the listbox is open, the tab key should close the listbox. assert_true: Space should open the listbox. expected true got false
+

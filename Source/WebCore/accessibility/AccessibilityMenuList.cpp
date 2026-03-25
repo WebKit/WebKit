@@ -32,6 +32,7 @@
 #include "AXObjectCache.h"
 #include "AccessibilityMenuListPopup.h"
 #include "FrameDestructionObserverInlines.h"
+#include "HTMLSelectElement.h"
 #include "RenderMenuList.h"
 #include "RenderObjectDocument.h"
 #include <wtf/Scope.h>
@@ -61,17 +62,17 @@ bool AccessibilityMenuList::press()
         return false;
 
 #if !PLATFORM(IOS_FAMILY)
-    RefPtr element = this->element();
+    RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(element());
     auto notification = AXNotification::PressDidFail;
-    if (CheckedPtr menuList = dynamicDowncast<RenderMenuList>(renderer()); menuList && element && !element->isDisabledFormControl()) {
-        if (menuList->popupIsVisible())
-            menuList->hidePopup();
+    if (selectElement && !selectElement->isDisabledFormControl()) {
+        if (selectElement->popupIsVisible())
+            selectElement->hidePopup();
         else
-            menuList->showPopup();
+            selectElement->showPopup();
         notification = AXNotification::PressDidSucceed;
     }
     if (CheckedPtr cache = axObjectCache())
-        cache->postNotification(element.get(), notification);
+        cache->postNotification(selectElement.get(), notification);
     return true;
 #endif
     return false;
@@ -108,8 +109,8 @@ bool AccessibilityMenuList::isCollapsed() const
         return true;
 
 #if !PLATFORM(IOS_FAMILY)
-    CheckedPtr menuList = dynamicDowncast<RenderMenuList>(renderer());
-    return !(menuList && menuList->popupIsVisible());
+    RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(element());
+    return !(selectElement && selectElement->usesMenuList() && selectElement->popupIsVisible());
 #else
     return true;
 #endif

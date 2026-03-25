@@ -1,0 +1,12 @@
+reset
+
+
+
+PASS CSS :open for <input type=date>
+PASS CSS :open for <input type=datetime-local>
+FAIL CSS :open for <input type=week> assert_true: Should match :open after opening the picker. expected true got false
+FAIL CSS :open for <input type=month> assert_true: Should match :open after opening the picker. expected true got false
+FAIL CSS :open for <input type=time> assert_true: Should match :open after opening the picker. expected true got false
+PASS CSS :open for <input type=color>
+PASS CSS :open for <input type=text list=datalist>
+

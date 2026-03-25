@@ -1,12 +1,12 @@
 light dismiss
 custom button  fallback button
 
-FAIL fallbackbutton: Select with appearance:base-select should open and close when clicking the button. promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
-FAIL fallbackbutton: Clicking an option in an appearance:base-select select should choose the option and close the popover. promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
-FAIL fallbackbutton: Clicking the label should focus the select button without opening the picker. promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
-FAIL fallbackbutton: Touch input should work the same as mouse input. promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
-FAIL custombutton: Select with appearance:base-select should open and close when clicking the button. promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
-FAIL custombutton: Clicking an option in an appearance:base-select select should choose the option and close the popover. promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
-FAIL custombutton: Clicking the label should focus the select button without opening the picker. promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
-FAIL custombutton: Touch input should work the same as mouse input. promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
+FAIL fallbackbutton: Select with appearance:base-select should open and close when clicking the button. assert_true: Select should be open after clicking the button. expected true got false
+FAIL fallbackbutton: Clicking an option in an appearance:base-select select should choose the option and close the popover. assert_true: Select should be open after clicking the button. expected true got false
+PASS fallbackbutton: Clicking the label should focus the select button without opening the picker.
+FAIL fallbackbutton: Touch input should work the same as mouse input. assert_true: Select should open after touching button. expected true got false
+FAIL custombutton: Select with appearance:base-select should open and close when clicking the button. assert_true: Select should be open after clicking the button. expected true got false
+FAIL custombutton: Clicking an option in an appearance:base-select select should choose the option and close the popover. assert_true: Select should be open after clicking the button. expected true got false
+PASS custombutton: Clicking the label should focus the select button without opening the picker.
+FAIL custombutton: Touch input should work the same as mouse input. assert_true: Select should open after touching button. expected true got false
 

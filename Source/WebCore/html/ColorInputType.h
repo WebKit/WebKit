@@ -71,9 +71,9 @@ private:
     std::optional<FrameIdentifier> rootFrameID() const final;
     bool isMouseFocusable() const final;
     bool isKeyboardFocusable(const FocusEventData&) const final;
-    bool isPresentingAttachedView() const final;
+    bool isPresentingAttachedView() const final { return m_popupIsVisible; }
     const AtomString& formControlType() const final;
-    bool supportsRequired() const final;
+    bool supportsRequired() const final { return false; }
     ValueOrReference<String> fallbackValue() const final;
     ValueOrReference<String> sanitizeValue(const String& value LIFETIME_BOUND) const final;
     void createShadowSubtree() final;
@@ -81,16 +81,18 @@ private:
     void attributeChanged(const QualifiedName&) final;
     void handleDOMActivateEvent(Event&) final;
     void showPicker() final;
-    bool allowsShowPickerAcrossFrames() final;
+    bool allowsShowPickerAcrossFrames() final { return true; }
     void elementDidBlur() final;
-    bool shouldRespectListAttribute() final;
-    bool shouldResetOnDocumentActivation() final;
+    bool shouldRespectListAttribute() final { return true; }
+    bool shouldResetOnDocumentActivation() final { return true; }
 
     void endColorChooser();
+    void setPopupIsVisible(bool);
     void updateColorSwatch();
     HTMLElement* shadowColorSwatch() const;
 
     RefPtr<ColorChooser> m_chooser;
+    bool m_popupIsVisible { false };
 };
 
 } // namespace WebCore

@@ -37,6 +37,7 @@
 #include "DocumentInlines.h"
 #include "DocumentPage.h"
 #include "DocumentSecurityOrigin.h"
+#include "DocumentView.h"
 #include "ElementChildIteratorInlines.h"
 #include "ElementTraversal.h"
 #include "EventHandler.h"
@@ -58,6 +59,7 @@
 #include "MouseEvent.h"
 #include "NodeName.h"
 #include "NodeRareData.h"
+#include "PseudoClassChangeInvalidation.h"
 #include "RenderListBox.h"
 #include "RenderMenuList.h"
 #include "RenderScrollbar.h"
@@ -67,6 +69,10 @@
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
+
+#if !PLATFORM(IOS_FAMILY)
+#include <WebCore/PopupMenu.h>
+#endif
 
 namespace WebCore {
 
@@ -104,6 +110,19 @@ Ref<HTMLSelectElement> HTMLSelectElement::create(const QualifiedName& tagName, D
 Ref<HTMLSelectElement> HTMLSelectElement::create(Document& document)
 {
     return adoptRef(*new HTMLSelectElement(selectTag, document, nullptr));
+}
+
+HTMLSelectElement::~HTMLSelectElement() = default;
+
+void HTMLSelectElement::didDetachRenderers()
+{
+#if !PLATFORM(IOS_FAMILY)
+    if (RefPtr popup = m_popup)
+        popup->hide();
+    m_popup = nullptr;
+    setPopupIsVisible(false);
+#endif
+    HTMLFormControlElement::didDetachRenderers();
 }
 
 HTMLSelectElement* HTMLSelectElement::findOwnerSelect(ContainerNode* startNode, ExcludeOptGroup excludeOptGroup)
@@ -787,6 +806,15 @@ void HTMLSelectElement::setOptionsChangedOnRenderer()
         downcast<RenderMenuList>(*renderer).setOptionsChanged(true);
 #endif
     }
+
+
+#if !PLATFORM(IOS_FAMILY)
+    if (!m_popupIsVisible)
+        return;
+
+    if (RefPtr popup = m_popup)
+        popup->updateFromElement();
+#endif
 }
 
 const Vector<WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData>>& HTMLSelectElement::listItems() const
@@ -1203,8 +1231,7 @@ bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
             // Calling focus() may cause us to lose our renderer. Return true so
             // that our caller doesn't process the event further, but don't set
             // the event as handled.
-            WeakPtr renderer = dynamicDowncast<RenderMenuList>(this->renderer());
-            if (!renderer)
+            if (!is<RenderMenuList>(renderer()))
                 return true;
 
             // Save the selection so it can be compared to the new selection
@@ -1212,7 +1239,7 @@ bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
             // gets called from RenderMenuList::valueChanged, which gets called
             // after the user makes a selection from the menu.
             saveLastSelection();
-            renderer->showPopup(); // showPopup() may run JS and cause the renderer to get destroyed.
+            showPopup(); // showPopup() may run JS and cause the renderer to get destroyed.
             event->setDefaultHandled();
         }
         return true;
@@ -1302,8 +1329,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
                 protectedDocument()->updateStyleIfNeeded();
 
                 // Calling focus() may remove the renderer or change the renderer type.
-                WeakPtr renderer = dynamicDowncast<RenderMenuList>(this->renderer());
-                if (!renderer)
+                if (!is<RenderMenuList>(renderer()))
                     return;
 
                 // Save the selection so it can be compared to the new selection
@@ -1311,7 +1337,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
                 // gets called from RenderMenuList::valueChanged, which gets called
                 // after the user makes a selection from the menu.
                 saveLastSelection();
-                renderer->showPopup(); // showPopup() may run JS and cause the renderer to get destroyed.
+                showPopup(); // showPopup() may run JS and cause the renderer to get destroyed.
                 handled = true;
             }
         } else if (RenderTheme::singleton().popsMenuByArrowKeys()) {
@@ -1320,8 +1346,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
                 protectedDocument()->updateStyleIfNeeded();
 
                 // Calling focus() may remove the renderer or change the renderer type.
-                WeakPtr renderer = dynamicDowncast<RenderMenuList>(this->renderer());
-                if (!renderer)
+                if (!is<RenderMenuList>(renderer()))
                     return;
 
                 // Save the selection so it can be compared to the new selection
@@ -1329,7 +1354,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
                 // gets called from RenderMenuList::valueChanged, which gets called
                 // after the user makes a selection from the menu.
                 saveLastSelection();
-                renderer->showPopup(); // showPopup() may run JS and cause the renderer to get destroyed.
+                showPopup(); // showPopup() may run JS and cause the renderer to get destroyed.
                 handled = true;
             } else if (keyCode == '\r') {
                 if (RefPtr form = this->form())
@@ -1348,15 +1373,15 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
 #if !PLATFORM(IOS_FAMILY)
         protectedDocument()->updateStyleIfNeeded();
 
-        if (WeakPtr menuList = dynamicDowncast<RenderMenuList>(renderer())) {
-            ASSERT(!menuList->popupIsVisible());
+        if (is<RenderMenuList>(renderer())) {
+            ASSERT(!m_popupIsVisible);
             // Save the selection so it can be compared to the new
             // selection when we call onChange during selectOption,
             // which gets called from RenderMenuList::valueChanged,
             // which gets called after the user makes a selection from
             // the menu.
             saveLastSelection();
-            menuList->showPopup(); // showPopup() may run JS and cause the renderer to get destroyed.
+            showPopup(); // showPopup() may run JS and cause the renderer to get destroyed.
         }
 #endif
         event.setDefaultHandled();
@@ -1365,8 +1390,8 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
 #if !PLATFORM(IOS_FAMILY)
     if (event.type() == eventNames.blurEvent && !focused()) {
         CheckedRef menuList = downcast<RenderMenuList>(*renderer());
-        if (menuList->popupIsVisible())
-            menuList->hidePopup();
+        if (m_popupIsVisible)
+            hidePopup();
     }
 #endif
 }
@@ -1739,6 +1764,61 @@ unsigned HTMLSelectElement::length() const
     return options;
 }
 
+#if PLATFORM(IOS_FAMILY)
+NO_RETURN_DUE_TO_ASSERT
+void HTMLSelectElement::showPopup()
+{
+    ASSERT_NOT_REACHED();
+}
+#else
+void HTMLSelectElement::showPopup()
+{
+    if (m_popupIsVisible)
+        return;
+
+    CheckedPtr renderer = dynamicDowncast<RenderMenuList>(this->renderer());
+    if (!renderer)
+        return;
+
+    RefPtr frame = document().frame();
+    if (!frame)
+        return;
+
+    RefPtr frameView = frame->view();
+    if (!frameView)
+        return;
+
+    if (!m_popup)
+        m_popup = document().page()->chrome().createPopupMenu(*this);
+    setPopupIsVisible(true);
+
+    // Compute the top left taking transforms into account, but use
+    // the actual width of the element to size the popup.
+    FloatPoint absTopLeft = renderer->localToAbsolute(FloatPoint(), UseTransforms);
+    IntRect absBounds = renderer->absoluteBoundingBoxRectIgnoringTransforms();
+    absBounds.setLocation(roundedIntPoint(absTopLeft));
+
+    RefPtr { m_popup }->show(absBounds, *frameView, optionToListIndex(selectedIndex())); // May run JS.
+}
+
+void HTMLSelectElement::hidePopup()
+{
+    if (RefPtr popup = m_popup)
+        popup->hide();
+}
+#endif
+
+void HTMLSelectElement::setPopupIsVisible(bool visible)
+{
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClass::Open, visible);
+    m_popupIsVisible = visible;
+}
+
+bool HTMLSelectElement::isOpen() const
+{
+    return m_popupIsVisible;
+}
+
 ExceptionOr<void> HTMLSelectElement::showPicker()
 {
     RefPtr frame = document().frame();
@@ -1758,8 +1838,7 @@ ExceptionOr<void> HTMLSelectElement::showPicker()
         return Exception { ExceptionCode::NotAllowedError, "Select showPicker() requires a user gesture."_s };
 
 #if !PLATFORM(IOS_FAMILY)
-    if (WeakPtr renderMenuList = dynamicDowncast<RenderMenuList>(renderer()))
-        renderMenuList->showPopup(); // showPopup() may run JS and cause the renderer to get destroyed.
+    showPopup(); // showPopup() may run JS and cause the renderer to get destroyed.
 #endif
 
     return { };
@@ -1853,8 +1932,8 @@ PopupMenuStyle HTMLSelectElement::itemStyle(unsigned listIndex) const
 
     Color itemBackgroundColor;
     bool itemHasCustomBackgroundColor = false;
-    if (CheckedPtr renderer = this->renderer())
-        downcast<RenderMenuList>(*renderer).getItemBackgroundColor(listIndex, itemBackgroundColor, itemHasCustomBackgroundColor);
+    if (CheckedPtr menuList = dynamicDowncast<RenderMenuList>(renderer()))
+        menuList->getItemBackgroundColor(listIndex, itemBackgroundColor, itemHasCustomBackgroundColor);
 
     CheckedPtr style = element->computedStyleForEditability();
     if (!style)
@@ -1880,6 +1959,8 @@ PopupMenuStyle HTMLSelectElement::menuStyle() const
     CheckedPtr renderer = dynamicDowncast<RenderMenuList>(this->renderer());
     CheckedRef outerStyle = renderer ? renderer->style() : defaultStyle;
     CheckedRef<const RenderStyle> innerStyle = (renderer && renderer->innerRenderer()) ? renderer->innerRenderer()->style() : outerStyle.get();
+    auto bounds = renderer->absoluteBoundingBoxRectIgnoringTransforms();
+    auto popupSize = RenderTheme::singleton().popupMenuSize(outerStyle, bounds);
     return PopupMenuStyle(
         innerStyle->visitedDependentColorApplyingColorFilter(),
         innerStyle->visitedDependentBackgroundColorApplyingColorFilter(),
@@ -1892,7 +1973,7 @@ PopupMenuStyle HTMLSelectElement::menuStyle() const
         isOverride(outerStyle->unicodeBidi()),
         PopupMenuStyle::DefaultBackgroundColor,
         PopupMenuStyle::SelectPopup,
-        renderer ? renderer->popupMenuSize(innerStyle) : PopupMenuStyle::Size::Normal
+        popupSize
     );
 }
 
@@ -1930,8 +2011,9 @@ int HTMLSelectElement::popupSelectedIndex() const
 
 void HTMLSelectElement::popupDidHide()
 {
-    if (CheckedPtr renderer = dynamicDowncast<RenderMenuList>(this->renderer()))
-        renderer->popupDidHide();
+#if !PLATFORM(IOS_FAMILY)
+    setPopupIsVisible(false);
+#endif
 }
 
 bool HTMLSelectElement::itemIsSeparator(unsigned listIndex) const

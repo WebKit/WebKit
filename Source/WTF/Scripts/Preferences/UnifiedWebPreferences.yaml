@@ -5869,6 +5869,20 @@ OffscreenCanvasInWorkersEnabled:
       "PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
 
+OpenPseudoClassEnabled:
+  type: bool
+  status: stable
+  humanReadableName: ":open pseudo-class"
+  humanReadableDescription: "Enable the :open CSS pseudo-class"
+  category: css
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 OpenXRDMABufRelaxedForTesting:
   type: bool
   status: internal
@@ -8439,7 +8453,7 @@ UnifyDamagedRegions:
        default: false
      WebCore:
        default: false
-       
+
 UpdateSceneGeometryEnabled:
   type: bool
   status: internal
