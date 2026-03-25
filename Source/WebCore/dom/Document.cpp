@@ -2915,6 +2915,9 @@ void Document::resolveStyle(ResolveStyleType type)
                 documentElement->invalidateStyleForSubtree();
         }
 
+        // Size media queries are affected by zoom which is read from root style set in resolveForDocument above.
+        styleScope().evaluateMediaQueriesForViewportChange();
+
         {
             Style::TreeResolver resolver(*this, WTF::move(m_pendingRenderTreeUpdate));
             auto styleUpdate = resolver.resolve();

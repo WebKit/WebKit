@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<title>Anchor positioning with media query toggle and viewport units - reference</title>
+<style>
+    body { margin: 0; overflow: hidden; }
+    .box {
+        width: 100px;
+        height: 100px;
+        background: green;
+    }
+</style>
+<body>
+<div class="box"></div>
+</body>
+<script>
+    window.testRunner?.waitUntilDone();
+
+    const raf = () => new Promise(resolve => requestAnimationFrame(resolve));
+
+    (async () => {
+        window.resizeTo(600, 600);
+        await raf();
+        await raf();
+        window.testRunner?.notifyDone();
+    })();
+</script>
