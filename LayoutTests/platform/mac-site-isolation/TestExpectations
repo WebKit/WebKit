@@ -917,3 +917,4 @@ imported/w3c/web-platform-tests/svg/shapes/rect-01.svg [ ImageOnlyFailure ]
 ####################################
 fast/history/page-cache-clearing.html [ Skip ]
 http/tests/navigation/page-cache-video.html [ Skip ]
+http/tests/referrer-policy/no-referrer/cross-origin-pson-bfcache-restoration.html [ Skip ]

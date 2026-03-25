@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+function checkReferrer(referrer) {
+    if (window.opener)
+        window.opener.postMessage({ referrer: referrer }, "*");
+}
+</script>
+<script src="http://localhost:8000/referrer-policy/resources/script.py"></script>
+</body>
+</html>

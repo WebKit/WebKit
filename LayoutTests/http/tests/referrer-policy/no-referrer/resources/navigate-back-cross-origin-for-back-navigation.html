@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+const params = new URLSearchParams(location.search);
+const channel = params.get("channel");
+
+// Navigate back to 127.0.0.1 to complete the second PSON.
+if (history.length > 1)
+    history.back();
+else
+    location.href = "http://127.0.0.1:8000/referrer-policy/no-referrer/resources/navigate-and-go-back.html?channel=" + encodeURIComponent(channel);
+</script>
+</body>
+</html>

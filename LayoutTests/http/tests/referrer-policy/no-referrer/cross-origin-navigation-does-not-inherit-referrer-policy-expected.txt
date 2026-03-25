@@ -1,0 +1,10 @@
+Tests that no-referrer referrer policy does not persist across cross-origin PSON navigations.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS referrer is not ''
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
