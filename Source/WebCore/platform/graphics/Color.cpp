@@ -36,6 +36,7 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Color);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OutOfLineColor);
 
 static constexpr auto lightenedBlack = SRGBA<uint8_t> { 84, 84, 84 };
 static constexpr auto darkenedWhite = SRGBA<uint8_t> { 171, 171, 171 };

@@ -39,6 +39,7 @@
 #include <WebCore/StyleColorOptions.h>
 #include <WebCore/StyleCurrentColor.h>
 #include <WebCore/StyleResolvedColor.h>
+#include <wtf/CompactVariant.h>
 #include <wtf/Markable.h>
 #include <wtf/OptionSet.h>
 #include <wtf/UniqueRef.h>
@@ -68,11 +69,11 @@ private:
     friend struct MarkableTraits<Color>;
     struct EmptyToken { constexpr bool operator==(const EmptyToken&) const = default; };
 
-    // FIXME: Replace Variant with a generic CompactPointerVariant type.
-    using ColorKind = Variant<
+    using ColorKind = CompactVariant<
         EmptyToken,
-        ResolvedColor,
         CurrentColor,
+        InlineResolvedColor,
+        UniqueRef<OutOfLineResolvedColor>,
         UniqueRef<ColorLayers>,
         UniqueRef<ColorMix>,
         UniqueRef<ContrastColor>,
@@ -95,7 +96,6 @@ private:
     >;
 
     Color(EmptyToken);
-    Color(ColorKind&&);
 
 public:
     // The default constructor initializes to Style::CurrentColor to preserve old behavior,
@@ -151,7 +151,7 @@ public:
     bool NODELETE isRelativeColor() const;
 
     bool NODELETE isResolvedColor() const;
-    const WebCore::Color& resolvedColor() const;
+    WebCore::Color resolvedColor() const;
 
     WEBCORE_EXPORT WebCore::Color resolveColor(const WebCore::Color& currentColor) const;
 
@@ -219,17 +219,22 @@ template<> struct Blending<Color> {
 template<typename... F> decltype(auto) Color::switchOn(F&&... f) const
 {
     auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
-    using ResultType = decltype(visitor(std::declval<ResolvedColor>()));
+    using ResultType = decltype(visitor(std::declval<CurrentColor>()));
 
-    return WTF::switchOn(value,
+    return value.switchOn(
         [&](const EmptyToken&) -> ResultType {
             RELEASE_ASSERT_NOT_REACHED();
         },
-        [&](const ResolvedColor& resolvedColor) -> ResultType {
-            return visitor(resolvedColor);
-        },
         [&](const CurrentColor& currentColor) -> ResultType {
             return visitor(currentColor);
+        },
+        [&](const InlineResolvedColor& inlined) -> ResultType {
+            ResolvedColor resolved { inlined.toColor() };
+            return visitor(resolved);
+        },
+        [&](const UniqueRef<OutOfLineResolvedColor>& outOfLine) -> ResultType {
+            ResolvedColor resolved { outOfLine.get().toColor() };
+            return visitor(resolved);
         },
         [&]<typename T>(const UniqueRef<T>& color) -> ResultType {
             return visitor(color.get());
@@ -244,10 +249,8 @@ namespace WTF {
 
 template<>
 struct MarkableTraits<WebCore::Style::Color> {
-    static bool isEmptyValue(const WebCore::Style::Color& color) { return std::holds_alternative<WebCore::Style::Color::EmptyToken>(color.value); }
+    static bool isEmptyValue(const WebCore::Style::Color& color) { return color.value.holdsAlternative<WebCore::Style::Color::EmptyToken>(); }
     static WebCore::Style::Color emptyValue() { return WebCore::Style::Color(WebCore::Style::Color::EmptyToken()); }
 };
 
 }
-
-DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::Color)
