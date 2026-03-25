@@ -33,6 +33,7 @@
 #include "AirInstInlines.h"
 #include "AirTmpInlines.h"
 #include <wtf/CommaPrinter.h>
+#include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
 namespace JSC { namespace B3 { namespace Air {
@@ -59,15 +60,16 @@ public:
         unsigned gpArraySize = AbsoluteTmpMapper<GP>::absoluteIndex(code.numTmps(GP));
         m_gpNumWarmUsesAndDefs = FixedVector<float>(gpArraySize, 0);
         m_gpConstDefs.ensureSize(gpArraySize);
-        BitVector gpNonConstDefs = m_gpConstDefs;
-        m_gpConstants = FixedVector<int64_t>(gpArraySize, 0);
+        m_gpHasMultipleDefs.ensureSize(gpArraySize);
+        BitVector gpHasAnyDef;
+        gpHasAnyDef.ensureSize(gpArraySize);
 
         unsigned fpArraySize = AbsoluteTmpMapper<FP>::absoluteIndex(code.numTmps(FP));
         m_fpNumWarmUsesAndDefs = FixedVector<float>(fpArraySize, 0);
         m_fpConstDefs.ensureSize(fpArraySize);
-        BitVector fpNonConstDefs = m_fpConstDefs;
-        m_fpConstants = FixedVector<v128_t>(fpArraySize, v128_t { });
-        m_fpConstantWidths = FixedVector<Width>(fpArraySize, Width8);
+        m_fpHasMultipleDefs.ensureSize(fpArraySize);
+        BitVector fpHasAnyDef;
+        fpHasAnyDef.ensureSize(fpArraySize);
 
         auto extractGPConstant = [&](Air::Opcode opcode, const Air::Arg& arg) -> int64_t {
             return opcode == Move32 ? static_cast<int64_t>(static_cast<uint64_t>(static_cast<uint32_t>(static_cast<uint64_t>(arg.value())))) : arg.value();
@@ -82,6 +84,10 @@ public:
             return v;
         };
 
+        // Per-tmp state machine: on every def, if hasAnyDef then hasMultipleDefs.
+        // On const-style defs (Move imm, tmp), additionally set hasConstDef and store
+        // the constant (only on first def, since it's only useful if there are no other defs).
+        // At the end: isConstDef = hasConstDef && !hasMultipleDefs.
         for (BasicBlock* block : code) {
             double frequency = block->frequency();
             if (!fastWorklist.saw(block))
@@ -94,11 +100,13 @@ public:
                         Tmp tmp = inst.args[1].as<Tmp>();
                         if (tmp.bank() == GP) {
                             auto index = AbsoluteTmpMapper<GP>::absoluteIndex(tmp);
-                            if (!m_gpConstDefs.quickGet(index)) {
+                            if (gpHasAnyDef.quickGet(index))
+                                m_gpHasMultipleDefs.quickSet(index);
+                            else {
+                                gpHasAnyDef.quickSet(index);
                                 m_gpConstDefs.quickSet(index);
-                                m_gpConstants[index] = extractGPConstant(inst.kind.opcode, inst.args[0]);
-                            } else
-                                gpNonConstDefs.quickSet(index);
+                                m_gpConstants.set(index, extractGPConstant(inst.kind.opcode, inst.args[0]));
+                            }
                             m_gpNumWarmUsesAndDefs[index] += frequency;
                             continue;
                         }
@@ -112,24 +120,26 @@ public:
                         Tmp tmp = inst.args[1].as<Tmp>();
                         if (tmp.bank() == FP) {
                             auto index = AbsoluteTmpMapper<FP>::absoluteIndex(tmp);
-                            if (!m_fpConstDefs.quickGet(index)) {
+                            if (fpHasAnyDef.quickGet(index))
+                                m_fpHasMultipleDefs.quickSet(index);
+                            else {
+                                fpHasAnyDef.quickSet(index);
                                 m_fpConstDefs.quickSet(index);
-                                m_fpConstants[index] = extractFPConstant(inst.kind.opcode, inst.args[0]);
+                                m_fpConstants.set(index, extractFPConstant(inst.kind.opcode, inst.args[0]));
                                 switch (inst.kind.opcode) {
                                 case MoveFloat:
-                                    m_fpConstantWidths[index] = Width32;
+                                    m_fpConstantWidths.set(index, Width32);
                                     break;
                                 case MoveDouble:
-                                    m_fpConstantWidths[index] = Width64;
+                                    m_fpConstantWidths.set(index, Width64);
                                     break;
                                 case MoveVector:
-                                    m_fpConstantWidths[index] = Width128;
+                                    m_fpConstantWidths.set(index, Width128);
                                     break;
                                 default:
                                     RELEASE_ASSERT_NOT_REACHED();
                                 }
-                            } else
-                                fpNonConstDefs.quickSet(index);
+                            }
                             m_fpNumWarmUsesAndDefs[index] += frequency;
                             continue;
                         }
@@ -146,21 +156,29 @@ public:
                             if (bank == GP) {
                                 auto index = AbsoluteTmpMapper<GP>::absoluteIndex(tmp);
                                 m_gpNumWarmUsesAndDefs[index] += frequency;
-                                if (Arg::isAnyDef(role))
-                                    gpNonConstDefs.quickSet(index);
+                                if (Arg::isAnyDef(role)) {
+                                    if (gpHasAnyDef.quickGet(index))
+                                        m_gpHasMultipleDefs.quickSet(index);
+                                    else
+                                        gpHasAnyDef.quickSet(index);
+                                }
                             } else {
                                 auto index = AbsoluteTmpMapper<FP>::absoluteIndex(tmp);
                                 m_fpNumWarmUsesAndDefs[index] += frequency;
-                                if (Arg::isAnyDef(role))
-                                    fpNonConstDefs.quickSet(index);
+                                if (Arg::isAnyDef(role)) {
+                                    if (fpHasAnyDef.quickGet(index))
+                                        m_fpHasMultipleDefs.quickSet(index);
+                                    else
+                                        fpHasAnyDef.quickSet(index);
+                                }
                             }
                         }
                     });
             }
         }
 
-        m_gpConstDefs.exclude(gpNonConstDefs);
-        m_fpConstDefs.exclude(fpNonConstDefs);
+        m_gpConstDefs.exclude(m_gpHasMultipleDefs);
+        m_fpConstDefs.exclude(m_fpHasMultipleDefs);
     }
 
     template<Bank bank>
@@ -175,10 +193,15 @@ public:
     template<Bank bank>
     decltype(auto) constant(unsigned absoluteIndex) const
     {
-        if constexpr (bank == GP)
-            return m_gpConstants[absoluteIndex];
-        else
-            return m_fpConstants[absoluteIndex];
+        if constexpr (bank == GP) {
+            auto it = m_gpConstants.find(absoluteIndex);
+            ASSERT(it != m_gpConstants.end());
+            return it->value;
+        } else {
+            auto it = m_fpConstants.find(absoluteIndex);
+            ASSERT(it != m_fpConstants.end());
+            return it->value;
+        }
     }
 
     template<Bank bank>
@@ -194,16 +217,51 @@ public:
     Width constantWidth(unsigned absoluteIndex) const
     {
         static_assert(bank == FP, "constantWidth only valid for FP bank");
-        return m_fpConstantWidths[absoluteIndex];
+        auto it = m_fpConstantWidths.find(absoluteIndex);
+        ASSERT(it != m_fpConstantWidths.end());
+        return it->value;
+    }
+
+    template<Bank bank>
+    bool isSingleDef(unsigned absoluteIndex) const
+    {
+        if constexpr (bank == GP)
+            return !m_gpHasMultipleDefs.get(absoluteIndex);
+        else
+            return !m_fpHasMultipleDefs.get(absoluteIndex);
+    }
+
+    template<Bank bank>
+    bool isRegisteredConstDef(unsigned absoluteIndex) const
+    {
+        if constexpr (bank == GP)
+            return m_gpRegisteredConstDefs.get(absoluteIndex);
+        else
+            return m_fpRegisteredConstDefs.get(absoluteIndex);
+    }
+
+    void registerGPConstDef(unsigned absoluteIndex, int64_t value)
+    {
+        m_gpConstDefs.set(absoluteIndex);
+        m_gpRegisteredConstDefs.set(absoluteIndex);
+        m_gpConstants.set(absoluteIndex, value);
+    }
+
+    void registerFPConstDef(unsigned absoluteIndex, v128_t value, Width width)
+    {
+        m_fpConstDefs.set(absoluteIndex);
+        m_fpRegisteredConstDefs.set(absoluteIndex);
+        m_fpConstants.set(absoluteIndex, value);
+        m_fpConstantWidths.set(absoluteIndex, width);
     }
 
     void dump(PrintStream& out) const
     {
         CommaPrinter comma(", "_s);
         for (unsigned i = 0; i < m_gpNumWarmUsesAndDefs.size(); ++i)
-            out.print(comma, AbsoluteTmpMapper<GP>::tmpFromAbsoluteIndex(i), "=> {numWarmUsesAndDefs="_s, m_gpNumWarmUsesAndDefs[i], ", isConstDef="_s, m_gpConstDefs.quickGet(i), "}"_s);
+            out.print(comma, AbsoluteTmpMapper<GP>::tmpFromAbsoluteIndex(i), "=> {numWarmUsesAndDefs="_s, m_gpNumWarmUsesAndDefs[i], ", isConstDef="_s, isConstDef<GP>(i), "}"_s);
         for (unsigned i = 0; i < m_fpNumWarmUsesAndDefs.size(); ++i)
-            out.print(comma, AbsoluteTmpMapper<FP>::tmpFromAbsoluteIndex(i), "=> {numWarmUsesAndDefs="_s, m_fpNumWarmUsesAndDefs[i], ", isConstDef="_s, m_fpConstDefs.quickGet(i), "}"_s);
+            out.print(comma, AbsoluteTmpMapper<FP>::tmpFromAbsoluteIndex(i), "=> {numWarmUsesAndDefs="_s, m_fpNumWarmUsesAndDefs[i], ", isConstDef="_s, isConstDef<FP>(i), "}"_s);
     }
 
 private:
@@ -211,9 +269,13 @@ private:
     FixedVector<float> m_fpNumWarmUsesAndDefs;
     BitVector m_gpConstDefs;
     BitVector m_fpConstDefs;
-    FixedVector<int64_t> m_gpConstants;
-    FixedVector<v128_t> m_fpConstants;
-    FixedVector<Width> m_fpConstantWidths;
+    BitVector m_gpHasMultipleDefs;
+    BitVector m_fpHasMultipleDefs;
+    BitVector m_gpRegisteredConstDefs;
+    BitVector m_fpRegisteredConstDefs;
+    HashMap<unsigned, int64_t> m_gpConstants;
+    HashMap<unsigned, v128_t> m_fpConstants;
+    HashMap<unsigned, Width> m_fpConstantWidths;
 };
 
 } } } // namespace JSC::B3::Air

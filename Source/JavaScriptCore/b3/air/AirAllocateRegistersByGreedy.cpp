@@ -1522,18 +1522,21 @@ private:
     class AffinityGroup {
         WTF_MAKE_NONCOPYABLE(AffinityGroup);
     public:
-        AffinityGroup(Tmp tmp0, const LiveRange& range0, Tmp tmp1, const LiveRange& range1)
+        AffinityGroup(Tmp tmp0, const LiveRange& range0, bool isConstDef0, bool isSingleDef0,
+            Tmp tmp1, const LiveRange& range1, bool isConstDef1, bool isSingleDef1)
         {
-            addMember(tmp0, range0);
-            addMember(tmp1, range1);
+            addMember(tmp0, range0, isConstDef0, isSingleDef0);
+            addMember(tmp1, range1, isConstDef1, isSingleDef1);
         }
         AffinityGroup(AffinityGroup&&) = default;
         AffinityGroup& operator=(AffinityGroup&&) = default;
 
-        void addMember(Tmp tmp, const LiveRange& range)
+        void addMember(Tmp tmp, const LiveRange& range, bool isConstDef, bool isSingleDef)
         {
             m_members.append(tmp);
             m_liveness.add(tmp, range);
+            m_hasConstDef |= isConstDef;
+            m_allMembersSingleDef &= isSingleDef;
         }
 
         // Merges the other group into this one.
@@ -1541,8 +1544,12 @@ private:
         {
             m_liveness.merge(WTF::move(other.m_liveness));
             m_members.appendVector(other.m_members);
+            m_hasConstDef |= other.m_hasConstDef;
+            m_allMembersSingleDef &= other.m_allMembersSingleDef;
             other.m_members.clear();
         }
+
+        bool canPropagateConstDef() const { return m_hasConstDef && m_allMembersSingleDef; }
 
         const Vector<Tmp>& members() const { return m_members; }
         size_t size() const { return m_members.size(); }
@@ -1569,6 +1576,8 @@ private:
         }
 
         Tmp m_representative; // Only set for non-empty groups at finalization
+        bool m_hasConstDef { false };
+        bool m_allMembersSingleDef { true };
 
     private:
         Vector<Tmp> m_members;
@@ -1584,8 +1593,20 @@ private:
     void coalesceSingletons(Tmp tmp0, Tmp tmp1, Vector<AffinityGroup<bank>>& groups, TmpGroupMap<bank>& tmpToGroup)
     {
         ASSERT(isInCoalescables<bank>(tmp1, m_map.get<bank>(tmp0).coalescables) && isInCoalescables<bank>(tmp0, m_map.get<bank>(tmp1).coalescables));
+        auto idx0 = AbsoluteTmpMapper<bank>::absoluteIndex(tmp0);
+        auto idx1 = AbsoluteTmpMapper<bank>::absoluteIndex(tmp1);
+        bool isConstDef0 = m_useCounts.isConstDef<bank>(idx0);
+        bool isConstDef1 = m_useCounts.isConstDef<bank>(idx1);
+        bool isSingleDef0 = m_useCounts.isSingleDef<bank>(idx0);
+        bool isSingleDef1 = m_useCounts.isSingleDef<bank>(idx1);
+        if ((isConstDef0 && !isSingleDef1) || (isConstDef1 && !isSingleDef0)) {
+            m_stats[bank].numGroupConstDefPreserved++;
+            dataLogLnIf(verbose(), "Skipping coalesce: const def ", tmp0, " ", tmp1);
+            return;
+        }
         auto newIndex = groups.size();
-        groups.constructAndAppend(tmp0, m_map.get<bank>(tmp0).liveRange, tmp1, m_map.get<bank>(tmp1).liveRange);
+        groups.constructAndAppend(tmp0, m_map.get<bank>(tmp0).liveRange, isConstDef0, isSingleDef0,
+            tmp1, m_map.get<bank>(tmp1).liveRange, isConstDef1, isSingleDef1);
         tmpToGroup[tmp0] = newIndex;
         tmpToGroup[tmp1] = newIndex;
         dataLogLnIf(verbose(), "Created group ", newIndex, ": ", groups[newIndex]);
@@ -1594,8 +1615,18 @@ private:
     template<Bank bank>
     bool tryCoalesceSingletonWithGroup(Tmp singleton, GroupIndex groupIndex, Vector<AffinityGroup<bank>>& groups, TmpGroupMap<bank>& tmpToGroup)
     {
-        const auto& group = groups[groupIndex];
+        auto& group = groups[groupIndex];
         TmpData& singletonData = m_map.get<bank>(singleton);
+        auto singletonIdx = AbsoluteTmpMapper<bank>::absoluteIndex(singleton);
+        bool singletonIsConstDef = m_useCounts.isConstDef<bank>(singletonIdx);
+        bool singletonIsSingleDef = m_useCounts.isSingleDef<bank>(singletonIdx);
+
+        if ((singletonIsConstDef && !group.m_allMembersSingleDef)
+            || (group.m_hasConstDef && !singletonIsSingleDef)) {
+            m_stats[bank].numGroupConstDefPreserved++;
+            dataLogLnIf(verbose(), "Skipping coalesce: const def ", singleton, " with group ", groupIndex);
+            return false;
+        }
 
         bool conflict = false;
         group.forEachOverlap(singletonData.liveRange, [&](const auto& tmpList) {
@@ -1614,7 +1645,7 @@ private:
         if (conflict)
             return false;
 
-        groups[groupIndex].addMember(singleton, singletonData.liveRange);
+        groups[groupIndex].addMember(singleton, singletonData.liveRange, singletonIsConstDef, singletonIsSingleDef);
         tmpToGroup[singleton] = groupIndex;
         dataLogLnIf(verbose(), "Added ", singleton, " to group ", groupIndex);
         return true;
@@ -1623,8 +1654,15 @@ private:
     template<Bank bank>
     bool tryCoalesceGroups(GroupIndex groupIndex0, GroupIndex groupIndex1, Vector<AffinityGroup<bank>>& groups, TmpGroupMap<bank>& tmpToGroup)
     {
-        const auto& group0 = groups[groupIndex0];
-        const auto& group1 = groups[groupIndex1];
+        auto& group0 = groups[groupIndex0];
+        auto& group1 = groups[groupIndex1];
+
+        if ((group0.m_hasConstDef && !group1.m_allMembersSingleDef)
+            || (group1.m_hasConstDef && !group0.m_allMembersSingleDef)) {
+            m_stats[bank].numGroupConstDefPreserved++;
+            dataLogLnIf(verbose(), "Skipping coalesce: const def between groups ", groupIndex0, " and ", groupIndex1);
+            return false;
+        }
 
         bool conflict = false;
         AffinityGroup<bank>::forEachPairwiseOverlap(group0, group1, [&](const auto& tmpListA, const auto& tmpListB) {
@@ -1827,6 +1865,31 @@ private:
                 memberData.stage = Stage::Coalesced;
             }
             m_tmpWidth.setWidths(representative, useWidth, defWidth);
+
+            // Propagate const def property to the representative. When a group has exactly one
+            // const def member and all other members are single-def (their only def is the
+            // coalescable move that gets deleted), the representative's sole remaining def after
+            // move elimination is the const def's Move imm, representative.
+            if (group.canPropagateConstDef()) {
+                auto representativeAbsIdx = AbsoluteTmpMapper<bank>::absoluteIndex(representative);
+                for (Tmp member : group.members()) {
+                    auto memberIdx = AbsoluteTmpMapper<bank>::absoluteIndex(member);
+                    if (m_useCounts.isConstDef<bank>(memberIdx)) {
+                        if constexpr (bank == GP)
+                            m_useCounts.registerGPConstDef(representativeAbsIdx, m_useCounts.constant<GP>(memberIdx));
+                        else
+                            m_useCounts.registerFPConstDef(representativeAbsIdx, m_useCounts.constant<FP>(memberIdx), m_useCounts.constantWidth<FP>(memberIdx));
+                        // Recompute cost with the 0.1x const def multiplier applied to total raw uses.
+                        float rawUses = 0;
+                        for (Tmp m : group.members())
+                            rawUses += m_useCounts.numWarmUsesAndDefs<bank>(AbsoluteTmpMapper<bank>::absoluteIndex(m));
+                        cost = rawUses * 0.1;
+                        m_stats[bank].numGroupConstDefPropagated++;
+                        dataLogLnIf(verbose(), "Propagated const def from ", member, " to representative ", representative);
+                        break;
+                    }
+                }
+            }
 
             m_map.append(representative, TmpData());
             TmpData& representativeData = m_map.get<bank>(representative);
@@ -2685,6 +2748,8 @@ private:
                                 arg = imm;
                                 if (inst.isValidForm()) {
                                     m_stats[bank].numRematerializeConst++;
+                                    if (m_useCounts.isRegisteredConstDef<bank>(tmpIndex))
+                                        m_stats[bank].numGroupConstDefRematerialized++;
                                     dataLogLnIf(verbose(), "Rematerialized (direct imm), BB", *block, " arg=", oldArg, ", inst=", inst);
                                     return;
                                 }
@@ -2781,12 +2846,16 @@ private:
                                 if (Arg::isValidImmForm(value) && isValidForm(Move, Arg::Imm, Arg::Tmp)) {
                                     m_insertionSets[block].insert(instIndex, spillLoad, Move, inst.origin, Arg::imm(value), tmp);
                                     m_stats[bank].numRematerializeConst++;
+                                    if (m_useCounts.isRegisteredConstDef<bank>(tmpIndex))
+                                        m_stats[bank].numGroupConstDefRematerialized++;
                                     dataLogLnIf(verbose(), "Rematerialized (imm) BB", *block, " ", originalTmp, ": ", tmp, " <- ", WTF::RawHex(value));
                                     return true;
                                 }
                                 RELEASE_ASSERT(isValidForm(Move, Arg::BigImm, Arg::Tmp));
                                 m_insertionSets[block].insert(instIndex, spillLoad, Move, inst.origin, Arg::bigImm(value), tmp);
                                 m_stats[bank].numRematerializeConst++;
+                                if (m_useCounts.isRegisteredConstDef<bank>(tmpIndex))
+                                    m_stats[bank].numGroupConstDefRematerialized++;
                                 dataLogLnIf(verbose(), "Rematerialized (bigImm) BB", *block, " ", originalTmp, ": ", tmp, " <- ", WTF::RawHex(value));
                                 return true;
                             } else {
@@ -2817,6 +2886,8 @@ private:
                                 if (imm && isValidForm(constMove, imm.kind(), Arg::Tmp)) {
                                     m_insertionSets[block].insert(instIndex, spillLoad, constMove, inst.origin, imm, tmp);
                                     m_stats[bank].numRematerializeConst++;
+                                    if (m_useCounts.isRegisteredConstDef<bank>(tmpIndex))
+                                        m_stats[bank].numGroupConstDefRematerialized++;
                                     dataLogLnIf(verbose(), "Rematerialized (FP) BB", *block, " ", originalTmp, ": ", tmp);
                                     return true;
                                 }
