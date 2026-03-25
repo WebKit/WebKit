@@ -42,6 +42,7 @@
 #include <WebCore/ResourceResponseBase.h>
 #include <wtf/FileSystem.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)
@@ -162,6 +163,37 @@ void DownloadProxy::decideDestinationWithSuggestedFilename(const WebCore::Resour
     else if (!m_suggestedFilename.isEmpty())
         suggestedFilename = m_suggestedFilename;
     suggestedFilename = MIMETypeRegistry::appendFileExtensionIfNecessary(suggestedFilename, response.mimeType());
+
+    // Correct the file extension if it doesn't match the Content-Type. rdar://147183354
+    auto mimeType = response.mimeType();
+    if (!suggestedFilename.isEmpty() && !mimeType.isEmpty()
+        && mimeType != defaultMIMEType() && mimeType != "text/plain"_s
+        && !response.isAttachmentWithFilename() && m_suggestedFilename.isEmpty()) {
+        auto preferredExtension = MIMETypeRegistry::preferredExtensionForMIMEType(mimeType);
+        if (!preferredExtension.isEmpty()) {
+            auto dotPosition = suggestedFilename.reverseFind('.');
+            if (dotPosition != notFound) {
+                auto currentExtension = suggestedFilename.substring(dotPosition + 1);
+                auto validExtensions = MIMETypeRegistry::extensionsForMIMEType(mimeType);
+                if (!validExtensions.contains(currentExtension))
+                    suggestedFilename = makeString(suggestedFilename.left(dotPosition), '.', preferredExtension);
+                else {
+                    auto basePart = suggestedFilename.left(dotPosition);
+                    auto secondDotPosition = basePart.reverseFind('.');
+                    if (secondDotPosition != notFound) {
+                        auto middleExtension = basePart.substring(secondDotPosition + 1);
+                        // Only strip the middle extension if it belongs to a different major MIME type to preserve compound extensions (eg. ".tar.gz").
+                        auto middleMIMEType = MIMETypeRegistry::mimeTypeForExtension(middleExtension);
+                        auto slashPosition = mimeType.find('/');
+                        auto middleSlashPosition = middleMIMEType.find('/');
+                        if (!middleMIMEType.isEmpty() && slashPosition != notFound && middleSlashPosition != notFound
+                            && mimeType.left(slashPosition) != middleMIMEType.left(middleSlashPosition))
+                            suggestedFilename = makeString(basePart.left(secondDotPosition), '.', preferredExtension);
+                    }
+                }
+            }
+        }
+    }
 
     protect(client())->decideDestinationWithSuggestedFilename(*this, response, ResourceResponseBase::sanitizeSuggestedFilename(suggestedFilename), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (AllowOverwrite allowOverwrite, String destination) mutable {
         SandboxExtension::Handle sandboxExtensionHandle;
