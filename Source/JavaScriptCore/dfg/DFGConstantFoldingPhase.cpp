@@ -759,7 +759,8 @@ private:
                     || (node->child1().useKind() == UntypedUse || (baseValue.m_type & ~SpecCell)))
                     break;
 
-                GetByStatus status = GetByStatus::computeFor(m_graph.globalObjectFor(node->origin.semantic), baseValue.m_structure.toStructureSet(), identifier);
+                GetByStatus::LookupMode lookupMode = node->propertyLookupMode();
+                GetByStatus status = GetByStatus::computeFor(m_graph.globalObjectFor(node->origin.semantic), baseValue.m_structure.toStructureSet(), identifier, lookupMode);
                 if (!status.isSimple())
                     break;
 
