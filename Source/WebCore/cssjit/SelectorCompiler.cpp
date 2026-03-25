@@ -551,6 +551,7 @@ private:
     void generateElementIsActive(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementIsEmpty(Assembler::JumpList& failureCases);
     void generateElementIsFirstChild(Assembler::JumpList& failureCases);
+    void generateElementIsFirstOfType(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementIsHovered(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementMatchesDir(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementIsInLanguage(Assembler::JumpList& failureCases, const SelectorFragment&);
@@ -1292,8 +1293,13 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClass::CornerPresent:
         return FunctionType::CannotMatchAnything;
 
-    // FIXME: Compile these pseudoclasses, too!
     case CSSSelector::PseudoClass::FirstOfType:
+        fragment.pseudoClasses.add(type);
+        if (selectorContext == SelectorContext::QuerySelector)
+            return FunctionType::SimpleSelectorChecker;
+        return FunctionType::SelectorCheckerWithCheckingContext;
+
+    // FIXME: Compile these pseudoclasses, too!
     case CSSSelector::PseudoClass::LastOfType:
     case CSSSelector::PseudoClass::OnlyOfType:
     case CSSSelector::PseudoClass::NthOfType:
@@ -1723,6 +1729,8 @@ static const unsigned minimumRequiredRegisterCountForAttributeFilter = 6;
 // On other architectures, we need 6 registers for style resolution:
 //     Element + elementCounter + previousSibling + checkingContext + lastRelation + nextSiblingElement.
 static const unsigned minimumRequiredRegisterCountForNthChildFilter = 6;
+// Element + currentLocalName + currentNamespace + isFirstOfTypeRegister + previousSibling + siblingImpl + siblingLocalName.
+static const unsigned minimumRequiredRegisterCountForOfTypeFilter = 7;
 
 static unsigned minimumRegisterRequirements(const SelectorFragment& selectorFragment)
 {
@@ -1747,6 +1755,9 @@ static unsigned minimumRegisterRequirements(const SelectorFragment& selectorFrag
 
     if (!selectorFragment.nthChildFilters.isEmpty() || !selectorFragment.nthChildOfFilters.isEmpty() || !selectorFragment.nthLastChildFilters.isEmpty() || !selectorFragment.nthLastChildOfFilters.isEmpty())
         minimum = std::max(minimum, minimumRequiredRegisterCountForNthChildFilter);
+
+    if (selectorFragment.pseudoClasses.contains(CSSSelector::PseudoClass::FirstOfType))
+        minimum = std::max(minimum, minimumRequiredRegisterCountForOfTypeFilter);
 
     // :any pseudo class filters cause some register pressure.
     for (const auto& subFragments : selectorFragment.anyFilters) {
@@ -3218,6 +3229,8 @@ void SelectorCodeGenerator::generateElementMatching(Assembler::JumpList& matchin
         generateElementHasPlaceholderShown(matchingPostTagNameFailureCases);
     if (fragment.pseudoClasses.contains(CSSSelector::PseudoClass::FirstChild))
         generateElementIsFirstChild(matchingPostTagNameFailureCases);
+    if (fragment.pseudoClasses.contains(CSSSelector::PseudoClass::FirstOfType))
+        generateElementIsFirstOfType(matchingPostTagNameFailureCases, fragment);
     if (fragment.pseudoClasses.contains(CSSSelector::PseudoClass::LastChild))
         generateElementIsLastChild(matchingPostTagNameFailureCases);
     if (!fragment.nthChildFilters.isEmpty())
@@ -3859,6 +3872,61 @@ void SelectorCodeGenerator::generateElementIsFirstChild(Assembler::JumpList& fai
     failureCases.append(m_assembler.branchTest32(Assembler::NonZero, isFirstChildRegister));
 
     successCase.link(&m_assembler);
+}
+
+void SelectorCodeGenerator::generateElementIsFirstOfType(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
+{
+    LocalRegister qualifiedNameImpl(m_registerAllocator);
+    m_assembler.loadPtr(Assembler::Address(elementAddressRegister, Element::tagQNameMemoryOffset() + QualifiedName::implMemoryOffset()), qualifiedNameImpl);
+
+    LocalRegister currentLocalName(m_registerAllocator);
+    m_assembler.loadPtr(Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::localNameMemoryOffset()), currentLocalName);
+
+    m_assembler.load8(Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::namespaceMemoryOffset()), qualifiedNameImpl);
+    auto& currentNamespace = qualifiedNameImpl;
+
+    LocalRegister isFirstOfTypeRegister(m_registerAllocator);
+    m_assembler.move(Assembler::TrustedImm32(0), isFirstOfTypeRegister);
+
+    {
+        LocalRegister previousSibling(m_registerAllocator);
+        m_assembler.move(elementAddressRegister, previousSibling);
+
+        Assembler::Label loopStart = m_assembler.label();
+        m_assembler.loadPtr(Assembler::Address(previousSibling, Node::previousSiblingMemoryOffset()), previousSibling);
+        Assembler::Jump noMoreSiblings = m_assembler.branchTestPtr(Assembler::Zero, previousSibling);
+
+        DOMJIT::branchTestIsElementFlagOnNode(m_assembler, Assembler::Zero, previousSibling).linkTo(loopStart, &m_assembler);
+
+        {
+            LocalRegister siblingImpl(m_registerAllocator);
+            m_assembler.loadPtr(Assembler::Address(previousSibling, Element::tagQNameMemoryOffset() + QualifiedName::implMemoryOffset()), siblingImpl);
+
+            LocalRegister siblingLocalName(m_registerAllocator);
+            m_assembler.loadPtr(Assembler::Address(siblingImpl, QualifiedName::QualifiedNameImpl::localNameMemoryOffset()), siblingLocalName);
+            m_assembler.branchPtr(Assembler::NotEqual, siblingLocalName, currentLocalName).linkTo(loopStart, &m_assembler);
+
+            m_assembler.load8(Assembler::Address(siblingImpl, QualifiedName::QualifiedNameImpl::namespaceMemoryOffset()), siblingLocalName);
+            m_assembler.branch32(Assembler::NotEqual, siblingLocalName, currentNamespace).linkTo(loopStart, &m_assembler);
+        }
+
+        m_assembler.move(Assembler::TrustedImm32(1), isFirstOfTypeRegister);
+
+        noMoreSiblings.link(&m_assembler);
+    }
+
+    Assembler::JumpList notElementCases;
+    LocalRegister parentElement(m_registerAllocator);
+    generateWalkToParentElement(notElementCases, parentElement);
+
+    auto relation = fragmentMatchesRightmostOrAdjacentElement(fragment)
+        ? Style::Relation::ChildrenAffectedByForwardPositionalRules
+        : Style::Relation::DescendantsAffectedByForwardPositionalRules;
+    generateAddStyleRelationIfResolvingStyle(parentElement, relation);
+
+    notElementCases.link(&m_assembler);
+
+    failureCases.append(m_assembler.branchTest32(Assembler::NonZero, isFirstOfTypeRegister));
 }
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationElementIsHovered, bool, (const Element* element))
