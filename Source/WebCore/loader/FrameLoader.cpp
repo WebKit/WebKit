@@ -2381,7 +2381,7 @@ void FrameLoader::commitProvisionalLoad()
 
             RefPtr window = document->window();
             auto navigationAPIType = pdl->triggeringAction().navigationAPIType();
-            if (window && navigationAPIType) {
+            if (window && navigationAPIType && document->settings().navigationAPIEnabled()) {
                 // FIXME: The NavigationActivation for pageswap should be created after the global
                 // history update, but before the unload event (which might be delayed). Those steps
                 // are currently intertwined, so this creates a fake/detached new history entry to
