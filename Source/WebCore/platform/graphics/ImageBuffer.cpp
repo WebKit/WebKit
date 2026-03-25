@@ -74,11 +74,8 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SerializedImageBuffer);
 
 static const float MaxClampedLength = 4096;
 static const float MaxClampedArea = MaxClampedLength * MaxClampedLength;
-
 RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferFormat pixelFormat, GraphicsClient* graphicsClient)
 {
-    RefPtr<ImageBuffer> imageBuffer;
-
     if (graphicsClient) {
         if (auto imageBuffer = graphicsClient->createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat))
             return imageBuffer;
@@ -116,6 +113,14 @@ RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingMode ren
 
     ASSERT_NOT_REACHED();
     return nullptr;
+}
+
+RefPtr<ImageBuffer> ImageBuffer::createCompatible(GraphicsClient& graphicsClient, const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, ImageBufferFormat pixelFormat)
+{
+    if (auto imageBuffer = graphicsClient.createCompatibleImageBuffer(size, renderingMode, purpose, resolutionScale, pixelFormat))
+        return imageBuffer;
+
+    return create(size, renderingMode, purpose, resolutionScale, DestinationColorSpace::SRGB(), pixelFormat, &graphicsClient);
 }
 
 ImageBuffer::ImageBuffer(Parameters parameters, const ImageBufferBackend::Info& backendInfo, const WebCore::ImageBufferCreationContext&, std::unique_ptr<ImageBufferBackend>&& backend, RenderingResourceIdentifier renderingResourceIdentifier)

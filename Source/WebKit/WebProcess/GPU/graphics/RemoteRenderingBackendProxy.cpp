@@ -293,6 +293,12 @@ RefPtr<RemoteImageBufferProxy> RemoteRenderingBackendProxy::createImageBuffer(co
     return imageBuffer;
 }
 
+RefPtr<RemoteImageBufferProxy> RemoteRenderingBackendProxy::createCompatibleImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, ImageBufferFormat bufferFormat)
+{
+    auto resolvedColorSpace = m_displayColorSpace.value_or(DestinationColorSpace::SRGB());
+    return createImageBuffer(size, renderingMode, purpose, resolutionScale, resolvedColorSpace, bufferFormat);
+}
+
 void RemoteRenderingBackendProxy::releaseImageBuffer(RemoteImageBufferProxy& imageBuffer)
 {
     auto identifier = imageBuffer.renderingResourceIdentifier();

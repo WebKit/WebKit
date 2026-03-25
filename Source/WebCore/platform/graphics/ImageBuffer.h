@@ -99,6 +99,7 @@ public:
     }
 
     WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingMode, RenderingPurpose, float resolutionScale, const DestinationColorSpace&, ImageBufferFormat, GraphicsClient* = nullptr);
+    WEBCORE_EXPORT static RefPtr<ImageBuffer> createCompatible(GraphicsClient&, const FloatSize&, RenderingMode, RenderingPurpose, float resolutionScale, ImageBufferFormat);
 
     template<typename BackendType, typename ImageBufferType = ImageBuffer, typename... Arguments>
     static RefPtr<ImageBufferType> create(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferFormat bufferFormat, RenderingPurpose purpose, const ImageBufferCreationContext& creationContext, Arguments&&... arguments)

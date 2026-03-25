@@ -56,6 +56,7 @@ public:
     UniqueRef<WorkerClient> createNestedWorkerClient(SerialFunctionDispatcher&) final;
     RefPtr<WebCore::ImageBuffer> sinkIntoImageBuffer(std::unique_ptr<WebCore::SerializedImageBuffer>) final;
     RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::ImageBufferFormat) const final;
+    RefPtr<WebCore::ImageBuffer> createCompatibleImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, WebCore::ImageBufferFormat) const final;
 #if ENABLE(WEBGL)
     RefPtr<WebCore::GraphicsContextGL> createGraphicsContextGL(const WebCore::GraphicsContextGLAttributes&) const final;
 #endif
@@ -103,6 +104,15 @@ RefPtr<ImageBuffer> GPUProcessWebWorkerClient::createImageBuffer(const FloatSize
         assertIsCurrent(*dispatcher);
     if (WebProcess::singleton().shouldUseRemoteRenderingFor(purpose))
         return protect(ensureRenderingBackend())->createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat);
+    return nullptr;
+}
+
+RefPtr<ImageBuffer> GPUProcessWebWorkerClient::createCompatibleImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, ImageBufferFormat pixelFormat) const
+{
+    if (RefPtr dispatcher = this->dispatcher())
+        assertIsCurrent(*dispatcher);
+    if (WebProcess::singleton().shouldUseRemoteRenderingFor(purpose))
+        return protect(ensureRenderingBackend())->createCompatibleImageBuffer(size, renderingMode, purpose, resolutionScale, pixelFormat);
     return nullptr;
 }
 
@@ -173,6 +183,12 @@ RefPtr<ImageBuffer> WebWorkerClient::sinkIntoImageBuffer(std::unique_ptr<Seriali
 }
 
 RefPtr<ImageBuffer> WebWorkerClient::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferFormat pixelFormat) const
+{
+    assertIsCurrent(*dispatcher().get());
+    return nullptr;
+}
+
+RefPtr<ImageBuffer> WebWorkerClient::createCompatibleImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, ImageBufferFormat pixelFormat) const
 {
     assertIsCurrent(*dispatcher().get());
     return nullptr;

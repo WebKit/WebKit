@@ -1138,6 +1138,18 @@ RefPtr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize& size, Re
     return nullptr;
 }
 
+RefPtr<ImageBuffer> WebChromeClient::createCompatibleImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, ImageBufferFormat pixelFormat) const
+{
+    if (WebProcess::singleton().shouldUseRemoteRenderingFor(purpose)) {
+        RefPtr page = m_page.get();
+        if (!page)
+            return nullptr;
+        return protect(page->ensureRemoteRenderingBackendProxy())->createCompatibleImageBuffer(size, renderingMode, purpose, resolutionScale, pixelFormat);
+    }
+
+    return nullptr;
+}
+
 RefPtr<ImageBuffer> WebChromeClient::sinkIntoImageBuffer(std::unique_ptr<SerializedImageBuffer> imageBuffer)
 {
     if (!is<RemoteSerializedImageBufferProxy>(imageBuffer))

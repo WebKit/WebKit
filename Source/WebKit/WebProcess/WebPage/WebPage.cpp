@@ -9388,11 +9388,21 @@ void WebPage::notifyPageOfAppBoundBehavior()
 }
 #endif
 
+void WebPage::colorspaceChanged()
+{
+#if ENABLE(GPU_PROCESS)
+    if (m_remoteRenderingBackendProxy)
+        m_remoteRenderingBackendProxy->setColorSpace(m_drawingArea->displayColorSpace());
+#endif
+}
+
 #if ENABLE(GPU_PROCESS)
 RemoteRenderingBackendProxy& WebPage::ensureRemoteRenderingBackendProxy()
 {
-    if (!m_remoteRenderingBackendProxy)
+    if (!m_remoteRenderingBackendProxy) {
         m_remoteRenderingBackendProxy = RemoteRenderingBackendProxy::create(*this);
+        m_remoteRenderingBackendProxy->setColorSpace(m_drawingArea->displayColorSpace());
+    }
     return *m_remoteRenderingBackendProxy;
 }
 #endif

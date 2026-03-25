@@ -131,6 +131,7 @@ public:
     void setCursorHiddenUntilMouseMoves(bool) override;
 
     RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, RenderingMode, RenderingPurpose, float resolutionScale, const DestinationColorSpace&, ImageBufferFormat) const override;
+    RefPtr<ImageBuffer> createCompatibleImageBuffer(const FloatSize&, RenderingMode, RenderingPurpose, float resolutionScale, ImageBufferFormat) const override;
     RefPtr<WebCore::ImageBuffer> sinkIntoImageBuffer(std::unique_ptr<WebCore::SerializedImageBuffer>) override;
 
 #if ENABLE(WEBGL)

@@ -110,9 +110,15 @@ public:
     std::unique_ptr<RemoteSerializedImageBufferProxy> moveToSerializedBuffer(RemoteImageBufferProxy&);
     Ref<RemoteImageBufferProxy> moveToImageBuffer(RemoteSerializedImageBufferProxy&);
 
+    void setColorSpace(std::optional<WebCore::DestinationColorSpace> colorSpace)
+    {
+        m_displayColorSpace = colorSpace;
+    }
+
     bool isCached(const WebCore::ImageBuffer&) const;
 
     RefPtr<RemoteImageBufferProxy> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::ImageBufferFormat);
+    RefPtr<RemoteImageBufferProxy> createCompatibleImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, WebCore::ImageBufferFormat);
     void releaseImageBuffer(RemoteImageBufferProxy&);
     bool getPixelBufferForImageBuffer(WebCore::RenderingResourceIdentifier, const WebCore::PixelBufferFormat& destinationFormat, const WebCore::IntRect& srcRect, std::span<uint8_t> result);
     // Returns backing store bitmap for the RemoteNativeImageProxy.
@@ -250,6 +256,8 @@ private:
 #if PLATFORM(COCOA)
     Vector<LayerPrepareBuffersData> m_bufferSetsToPrepare;
 #endif
+
+    std::optional<WebCore::DestinationColorSpace> m_displayColorSpace;
 
     RenderingUpdateID m_renderingUpdateID;
     RenderingUpdateID m_didRenderingUpdateID;

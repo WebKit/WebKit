@@ -64,6 +64,8 @@ public:
 private:
     // Called by passing GraphicsClient into ImageBuffer functions.
     virtual RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, RenderingMode, RenderingPurpose, float resolutionScale, const DestinationColorSpace&, ImageBufferFormat) const = 0;
+    // Like createImageBuffer, but uses the display colorspace instead of a caller-specified one.
+    virtual RefPtr<ImageBuffer> createCompatibleImageBuffer(const FloatSize&, RenderingMode, RenderingPurpose, float resolutionScale, ImageBufferFormat) const = 0;
 
     // Called by passing GraphicsClient into SerializedImageBuffer functions.
     virtual RefPtr<WebCore::ImageBuffer> sinkIntoImageBuffer(std::unique_ptr<WebCore::SerializedImageBuffer>) = 0;

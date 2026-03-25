@@ -522,6 +522,11 @@ RefPtr<ImageBuffer> Chrome::createImageBuffer(const FloatSize& size, RenderingMo
     return m_client->createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat);
 }
 
+RefPtr<ImageBuffer> Chrome::createCompatibleImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, ImageBufferFormat pixelFormat) const
+{
+    return m_client->createCompatibleImageBuffer(size, renderingMode, purpose, resolutionScale, pixelFormat);
+}
+
 RefPtr<ImageBuffer> Chrome::sinkIntoImageBuffer(std::unique_ptr<SerializedImageBuffer> imageBuffer)
 {
     return m_client->sinkIntoImageBuffer(WTF::move(imageBuffer));

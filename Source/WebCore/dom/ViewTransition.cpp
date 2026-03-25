@@ -465,7 +465,9 @@ static RefPtr<ImageBuffer> snapshotElementVisualOverflowClippedToViewport(LocalF
         return nullptr;
     auto hostWindow = frameView->root() ? protect(frameView->root())->hostWindow() : nullptr;
 
-    auto buffer = ImageBuffer::create(paintRect.size(), RenderingMode::Accelerated, RenderingPurpose::Snapshot, scaleFactor, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, hostWindow);
+    auto buffer = hostWindow
+        ? ImageBuffer::createCompatible(*hostWindow, paintRect.size(), RenderingMode::Accelerated, RenderingPurpose::Snapshot, scaleFactor, ImageBufferFormat { PixelFormat::BGRA8 })
+        : ImageBuffer::create(paintRect.size(), RenderingMode::Accelerated, RenderingPurpose::Snapshot, scaleFactor, DestinationColorSpace::SRGB(), ImageBufferFormat { PixelFormat::BGRA8 });
     if (!buffer)
         return nullptr;
 
