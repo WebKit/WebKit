@@ -40,6 +40,10 @@ try {
           }
           channels.set(channel.label, channel);
           wireEvents(channel);
+          // The channel may already be open if the connection was established
+          // while it was being transferred to this worker.
+          if (channel.readyState === "open")
+            self.postMessage({type: 'open', label: channel.label});
           self.postMessage({
             type: 'initResponse',
             label: channel.label,

@@ -15,7 +15,10 @@ async function maybeWrapChannel(channel, shim = null) {
     await shim.init(channel);
     channel = shim;
   }
-  await new Promise(r => channel.addEventListener("open", r, {once: true}));
+  // The channel may already be open if the connection was established while
+  // it was being transferred to a worker.
+  if (channel.readyState !== "open")
+    await new Promise(r => channel.addEventListener("open", r, {once: true}));
   if (shim) {
     await shim.updateState();
   }
