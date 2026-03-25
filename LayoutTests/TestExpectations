@@ -6819,7 +6819,6 @@ imported/w3c/web-platform-tests/css/css-tables/fixup-dynamic-anonymous-inline-ta
 imported/w3c/web-platform-tests/css/css-tables/fixup-dynamic-anonymous-table-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-tables/min-max-size-table-content-box.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-tables/rules-groups.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-tables/table-has-box-sizing-border-box-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-tables/tentative/paint/background-image-column-collapsed.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-tables/tentative/paint/background-image-column.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-tables/tentative/paint/background-image-row-collapsed.html [ ImageOnlyFailure ]

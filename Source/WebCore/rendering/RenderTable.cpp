@@ -387,20 +387,30 @@ template<typename SizeType> LayoutUnit RenderTable::convertStyleLogicalHeightToC
     LayoutUnit borderAndPaddingBefore = borderBefore() + (collapseBorders() ? 0_lu : paddingBefore());
     LayoutUnit borderAndPaddingAfter = borderAfter() + (collapseBorders() ? 0_lu : paddingAfter());
     LayoutUnit borderAndPadding = borderAndPaddingBefore + borderAndPaddingAfter;
-    if (auto fixedStyleLogicalHeight =  styleLogicalHeight.tryFixed()) {
-        // HTML tables size as though CSS height includes border/padding, CSS tables do not.
-        LayoutUnit borders;
+
+    // HTML tables' height styles already include borders and padding, but CSS tables' height styles do not.
+    bool isCSSTable = !is<HTMLTableElement>(element());
+
+    LayoutUnit borders;
+
+    if (auto fixedStyleLogicalHeight = styleLogicalHeight.tryFixed()) {
         // FIXME: We cannot apply box-sizing: content-box on <table> which other browsers allow.
-        if (is<HTMLTableElement>(element()) || style().boxSizing() == BoxSizing::BorderBox) {
+        if (!isCSSTable || style().boxSizing() == BoxSizing::BorderBox)
             borders = borderAndPadding;
-        }
-        return LayoutUnit(fixedStyleLogicalHeight->resolveZoom(style().usedZoomForLength()) - borders);
-    } else if (styleLogicalHeight.isPercentOrCalculated())
-        return computePercentageLogicalHeight(styleLogicalHeight).value_or(0);
-    else if (styleLogicalHeight.isIntrinsicOrStretch())
+        return LayoutUnit(fixedStyleLogicalHeight->resolveZoom(style().usedZoomForLength())) - borders;
+    }
+
+    if (styleLogicalHeight.isPercentOrCalculated()) {
+        LayoutUnit computedHeight = computePercentageLogicalHeight(styleLogicalHeight).value_or(0);
+        if (isCSSTable && style().boxSizing() == BoxSizing::ContentBox)
+            borders = borderAndPadding;
+        return computedHeight + borders;
+    }
+
+    if (styleLogicalHeight.isIntrinsicOrStretch())
         return computeSizingKeywordLogicalContentHeightUsing(styleLogicalHeight, logicalHeight() - borderAndPadding, borderAndPadding).value_or(0);
-    else
-        ASSERT_NOT_REACHED();
+
+    ASSERT_NOT_REACHED();
     return 0_lu;
 }
 

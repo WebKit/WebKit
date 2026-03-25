@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Tables: display:table with height:stretch and padding</title>
+<link rel="author" title="Karl Dubost" href="https://otsukare.info/">
+<link rel="help" href="https://drafts.csswg.org/css-tables-3/#mapping">
+<link rel="help" href="https://drafts.csswg.org/css-sizing-4/#stretch-fit-sizing">
+<link rel="match" href="../reference/ref-filled-green-100px-square.xht">
+<meta name="assert" content="A CSS display:table element with height:stretch should stretch to fill its container, accounting for padding">
+
+<style>
+#container {
+  height: 100px;
+}
+
+#table {
+  display: table;
+  width: 100px;
+  height: -webkit-fill-available;
+  height: stretch;
+  background: green;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+#redSquare {
+  height: 100px;
+  width: 100px;
+  background-color: red;
+  position: absolute;
+  z-index: -1;
+}
+</style>
+
+<p>Test passes if there is a filled green square and <strong>no red</strong>.</p>
+<div id="redSquare"></div>
+<div id="container">
+  <div id="table"></div>
+</div>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Tables: display:table with percentage height, padding, and border-box</title>
+<link rel="author" title="Karl Dubost" href="https://otsukare.info/">
+<link rel="help" href="https://drafts.csswg.org/css-tables-3/#mapping">
+<link rel="match" href="../reference/ref-filled-green-100px-square.xht">
+<meta name="assert" content="A CSS display:table element with border-box, percentage height, and padding should size correctly with borders included in the specified height">
+
+<style>
+#table-border-box {
+  display: table;
+  box-sizing: border-box;
+  width: 100px;
+  height: 100%;
+  background: green;
+  border: 10px solid green;
+  padding: 10px;
+}
+
+#redSquare {
+  height: 100px;
+  width: 100px;
+  background-color: red;
+  position: absolute;
+  z-index: -1;
+}
+</style>
+
+<p>Test passes if there is a filled green square and <strong>no red</strong>.</p>
+<div id="redSquare"></div>
+<div style="height: 100px">
+  <div id="table-border-box"></div>
+</div>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Tables: display:table with percentage height and vertical padding (content-box)</title>
+<link rel="author" title="Karl Dubost" href="https://otsukare.info/">
+<link rel="help" href="https://drafts.csswg.org/css-tables-3/#mapping">
+<link rel="help" href="https://bugs.webkit.org/show_bug.cgi?id=155919">
+<link rel="match" href="../reference/ref-filled-green-100px-square.xht">
+<meta name="assert" content="A CSS display:table element with content-box, height:100%, and vertical padding should not ignore the padding">
+
+<style>
+#table-content-box {
+  display: table;
+  box-sizing: content-box;
+  width: 100px;
+  height: 100%;
+  background: green;
+  padding-bottom: 35px;
+}
+
+#redSquare {
+  height: 100px;
+  width: 100px;
+  background-color: red;
+  position: absolute;
+  z-index: -1;
+}
+</style>
+
+<p>Test passes if there is a filled green square and <strong>no red</strong>.</p>
+<div id="redSquare"></div>
+<div style="height: 65px">
+  <div id="table-content-box"></div>
+</div>
