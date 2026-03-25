@@ -1,6 +1,6 @@
 
-FAIL select can be nested inside a popover promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
-FAIL a popover can be nested inside select promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
-FAIL select can be nested inside a modal dialog promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
-FAIL a modal dialog can be nested inside select promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
+FAIL select can be nested inside a popover assert_true: the select should be showing expected true got false
+FAIL a popover can be nested inside select assert_true: the select should be showing expected true got false
+FAIL select can be nested inside a modal dialog assert_true: the select should be showing expected true got false
+FAIL a modal dialog can be nested inside select assert_true: the select should be showing expected true got false
 

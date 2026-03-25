@@ -1,0 +1,52 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <script src="../../../resources/js-test.js"></script>
+        <script src="../../../resources/ui-helper.js"></script>
+        <style>
+            select {
+                color: black;
+            }
+            select:open {
+                color: green;
+            }
+        </style>
+    </head>
+<body>
+<select id="select">
+    <option>January</option>
+    <option>February</option>
+    <option>March</option>
+    <option>April</option>
+    <option>May</option>
+    <option>June</option>
+</select>
+</body>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that the :open pseudo-class matches when a select element's picker is shown.");
+
+    shouldBeEqualToString("getComputedStyle(select).color", "rgb(0, 0, 0)");
+    shouldBeFalse("select.matches(':open')");
+
+    debug("Opening select picker...");
+    await UIHelper.activateElement(select);
+    await UIHelper.waitForContextMenuToShow();
+
+    shouldBeEqualToString("getComputedStyle(select).color", "rgb(0, 128, 0)");
+    shouldBeTrue("select.matches(':open')");
+
+    debug("Closing select picker...");
+    await UIHelper.dismissMenu();
+    await UIHelper.waitForContextMenuToHide();
+
+    shouldBeEqualToString("getComputedStyle(select).color", "rgb(0, 0, 0)");
+    shouldBeFalse("select.matches(':open')");
+
+    finishJSTest();
+});
+</script>
+</html>

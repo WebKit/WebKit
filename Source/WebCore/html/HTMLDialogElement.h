@@ -64,8 +64,11 @@ private:
     void setIsModal(bool newValue);
     bool supportsFocus() const final;
 
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+
     String m_returnValue;
     bool m_isModal { false };
+    bool m_isOpen { false };
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_previouslyFocusedElement;
 
     RefPtr<ToggleEventTask> m_toggleEventTask;

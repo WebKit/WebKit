@@ -1,4 +1,4 @@
   option
 
-FAIL select should not match :open when light dismissed. assert_equals: The select should match :not(:open) at the start of the test. expected "rgb(0, 255, 0)" but got "rgb(0, 0, 255)"
+FAIL select should not match :open when light dismissed. assert_equals: The select should match :open when opened. expected "rgb(255, 0, 0)" but got "rgb(0, 255, 0)"
 

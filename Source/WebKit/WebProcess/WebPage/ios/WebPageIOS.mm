@@ -1685,6 +1685,12 @@ void WebPage::setFocusedElementSelectedIndex(const WebCore::ElementContext& cont
         select->optionSelectedByUser(index, true, allowMultipleSelection);
 }
 
+void WebPage::setSelectElementIsOpen(const WebCore::ElementContext& context, bool isOpen)
+{
+    if (RefPtr select = dynamicDowncast<HTMLSelectElement>(elementForContext(context)))
+        select->setPopupIsVisible(isOpen);
+}
+
 void WebPage::setIsShowingInputViewForFocusedElement(bool showingInputView)
 {
     m_isShowingInputViewForFocusedElement = showingInputView;

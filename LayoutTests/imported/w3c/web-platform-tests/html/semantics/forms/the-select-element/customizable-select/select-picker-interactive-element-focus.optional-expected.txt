@@ -1,4 +1,4 @@
 
 
-FAIL Clicking interactive elements inside the select picker should focus them. promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
+FAIL Clicking interactive elements inside the select picker should focus them. assert_true: select should open after being clicked. expected true got false
 

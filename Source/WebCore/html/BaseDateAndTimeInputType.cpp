@@ -36,6 +36,7 @@
 #include "BaseClickableWithKeyInputType.h"
 #include "Chrome.h"
 #include "ContainerNodeInlines.h"
+#include "CSSSelector.h"
 #include "DateComponents.h"
 #include "DateTimeChooserParameters.h"
 #include "Decimal.h"
@@ -51,6 +52,7 @@
 #include "LocalFrameView.h"
 #include "NodeName.h"
 #include "PlatformLocale.h"
+#include "PseudoClassChangeInvalidation.h"
 #include "RenderElement.h"
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
@@ -269,16 +271,6 @@ ValueOrReference<String> BaseDateAndTimeInputType::sanitizeValue(const String& p
     return proposedValue;
 }
 
-bool BaseDateAndTimeInputType::supportsReadOnly() const
-{
-    return true;
-}
-
-bool BaseDateAndTimeInputType::shouldRespectListAttribute()
-{
-    return false;
-}
-
 bool BaseDateAndTimeInputType::valueMissing(const String& value) const
 {
     ASSERT(element());
@@ -377,8 +369,7 @@ void BaseDateAndTimeInputType::showPicker()
 
     if (auto* chrome = this->chrome()) {
         m_dateTimeChooser = chrome->createDateTimeChooser(*this);
-        if (RefPtr dateTimeChooser = m_dateTimeChooser)
-            dateTimeChooser->showChooser(parameters);
+        showDateTimeChooser(parameters);
     }
 }
 
@@ -496,9 +487,22 @@ void BaseDateAndTimeInputType::detach()
     closeDateTimeChooser();
 }
 
-bool BaseDateAndTimeInputType::isPresentingAttachedView() const
+void BaseDateAndTimeInputType::setPopupIsVisible(bool visible)
 {
-    return !!m_dateTimeChooser;
+    if (m_popupIsVisible == visible || !element())
+        return;
+    Style::PseudoClassChangeInvalidation styleInvalidation(*protect(element()), CSSSelector::PseudoClass::Open, visible);
+    m_popupIsVisible = visible;
+}
+
+void BaseDateAndTimeInputType::showDateTimeChooser(const DateTimeChooserParameters& parameters)
+{
+    RefPtr dateTimeChooser = m_dateTimeChooser;
+    if (!dateTimeChooser)
+        return;
+
+    setPopupIsVisible(true);
+    dateTimeChooser->showChooser(parameters);
 }
 
 auto BaseDateAndTimeInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseEventHandler
@@ -591,8 +595,7 @@ void BaseDateAndTimeInputType::didChangeValueFromControl()
     if (!setupDateTimeChooserParameters(parameters))
         return;
 
-    if (RefPtr dateTimeChooser = m_dateTimeChooser)
-        dateTimeChooser->showChooser(parameters);
+    showDateTimeChooser(parameters);
 }
 
 void BaseDateAndTimeInputType::didReceiveSpaceKeyFromControl()
@@ -605,15 +608,14 @@ void BaseDateAndTimeInputType::didReceiveSpaceKeyFromControl()
     m_pickerWasActivatedByKeyboard = true;
     m_didTransferFocusToPicker = true;
 
-    RefPtr chooser = m_dateTimeChooser;
-    if (!chooser) {
+    if (!m_dateTimeChooser) {
         showPicker();
         return;
     }
 
     DateTimeChooserParameters parameters;
     if (setupDateTimeChooserParameters(parameters))
-        chooser->showChooser(parameters);
+        showDateTimeChooser(parameters);
 }
 
 bool BaseDateAndTimeInputType::isEditControlOwnerDisabled() const
@@ -638,6 +640,12 @@ void BaseDateAndTimeInputType::didChooseValue(StringView value)
 {
     ASSERT(element());
     protectedElement()->setValue(value.toString(), DispatchInputAndChangeEvent);
+}
+
+void BaseDateAndTimeInputType::didEndChooser()
+{
+    m_dateTimeChooser = nullptr;
+    setPopupIsVisible(false);
 }
 
 bool BaseDateAndTimeInputType::setupDateTimeChooserParameters(DateTimeChooserParameters& parameters)
@@ -705,6 +713,7 @@ void BaseDateAndTimeInputType::closeDateTimeChooser()
 {
     if (RefPtr dateTimeChooser = m_dateTimeChooser)
         dateTimeChooser->endChooser();
+    setPopupIsVisible(false);
 
     m_didTransferFocusToPicker = false;
     m_pickerWasActivatedByKeyboard = false;

@@ -1,5 +1,5 @@
 
 
-FAIL defaultbutton: Synthetic events should not trigger behaviors of select element. assert_true: This test requires appearance:base-select in order to run. expected true got false
-FAIL custombutton: Synthetic events should not trigger behaviors of select element. assert_true: This test requires appearance:base-select in order to run. expected true got false
+FAIL defaultbutton: Synthetic events should not trigger behaviors of select element. assert_true: Select should open after a real click occurs. expected true got false
+FAIL custombutton: Synthetic events should not trigger behaviors of select element. assert_false: Synthetic mouse/pointer events should not open the picker. expected false got true
 

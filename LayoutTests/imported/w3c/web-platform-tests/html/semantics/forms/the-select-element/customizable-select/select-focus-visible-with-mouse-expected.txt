@@ -1,4 +1,4 @@
 
 
-FAIL Select should not match :focus-visible when using mouse. promise_test: Unhandled rejection with value: object "SyntaxError: ':open' is not a valid selector."
+FAIL Select should not match :focus-visible when using mouse. assert_true: select should open after clicking it. expected true got false
 

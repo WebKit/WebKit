@@ -41,6 +41,8 @@ public:
 
     void queueDetailsToggleEventTask(ToggleState oldState, ToggleState newState);
 
+    bool isOpen() const;
+
 private:
     HTMLDetailsElement(const QualifiedName&, Document&);
 
@@ -57,6 +59,7 @@ private:
     WeakPtr<HTMLSlotElement, WeakPtrImplWithEventTargetData> m_summarySlot;
     WeakPtr<HTMLSummaryElement, WeakPtrImplWithEventTargetData> m_defaultSummary;
     RefPtr<HTMLSlotElement> m_defaultSlot;
+    bool m_isOpen { false };
 
     RefPtr<ToggleEventTask> m_toggleEventTask;
 };

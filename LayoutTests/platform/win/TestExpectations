@@ -1349,6 +1349,8 @@ fast/shadow-dom/shadow-host-move-to-different-document.html [ Skip ] # ImageOnly
 fast/shadow-dom/shadow-host-transition.html [ Skip ] # ImageOnlyFailure
 fast/shadow-dom/shadow-host-with-before-after.html [ Skip ] # ImageOnlyFailure
 fast/shadow-dom/shadow-layout-after-toggling-display-slot-parent.html [ Skip ] # ImageOnlyFailure
+
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select [ Skip ]
  
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Editing
