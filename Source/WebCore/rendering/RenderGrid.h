@@ -30,8 +30,11 @@
 #include "GridMasonryLayout.h"
 #include "GridTrackSizingAlgorithm.h"
 #include "RenderBlock.h"
+#include "StyleContentAlignmentData.h"
 #include "StyleGridTrackSizingDirection.h"
+#include "StyleSelfAlignmentData.h"
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakHashMap.h>
 
 namespace WTF {
 template<typename T>
@@ -74,8 +77,6 @@ class RenderGrid final : public RenderBlock {
 public:
     RenderGrid(Element&, RenderStyle&&);
     virtual ~RenderGrid();
-
-    Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }
 
     void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;

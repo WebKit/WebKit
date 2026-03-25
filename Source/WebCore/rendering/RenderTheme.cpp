@@ -67,7 +67,6 @@
 #include "RenderMeter.h"
 #include "RenderElementInlines.h"
 #include "RenderProgress.h"
-#include "RenderStyle+GettersInlines.h"
 #include "RenderStyle+SettersInlines.h"
 #include "RenderView.h"
 #include "SearchFieldCancelButtonPart.h"
@@ -2248,5 +2247,10 @@ Color RenderTheme::platformTapHighlightColor() const
 }
 
 #endif
+
+float RenderTheme::usedZoomForComputedStyle(const RenderStyle& renderStyle) const
+{
+    return renderStyle.evaluationTimeZoomEnabled() ? 1.0f : renderStyle.usedZoom();
+}
 
 } // namespace WebCore

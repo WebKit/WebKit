@@ -29,7 +29,7 @@
 #include "Grid.h"
 #include "GridBaselineAlignment.h"
 #include "LayoutSize.h"
-#include "RenderBoxInlines.h"
+#include "RenderBox.h"
 #include "RenderGridLayoutState.h"
 #include "StyleGridTrackSize.h"
 #include "StyleGridTrackSizingDirection.h"

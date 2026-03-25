@@ -34,6 +34,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
+#include "DocumentView.h"
 #include "Page.h"
 #include "UserGestureIndicator.h"
 #include <wtf/TZoneMallocInlines.h>

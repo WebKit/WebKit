@@ -31,6 +31,7 @@
 #include "FontSelector.h"
 #include "Logging.h"
 #include "RenderStyle.h"
+#include "RenderStyle+GettersInlines.h"
 #include "StyleComputedStyle+DifferenceLogging.h"
 #include "StyleCustomProperty.h"
 #include "StylePrimitiveKeyword+Logging.h"

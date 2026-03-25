@@ -69,6 +69,7 @@
 #include "PseudoClassChangeInvalidation.h"
 #include "RenderListBox.h"
 #include "RenderMenuList.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderTheme.h"
 #include "ScriptDisallowedScope.h"
 #include "ScrollIntoViewOptions.h"

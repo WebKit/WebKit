@@ -23,6 +23,7 @@
 #include "config.h"
 #include "SVGAltGlyphElement.h"
 
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderInline.h"
 #include "RenderSVGTSpan.h"
 #include "SVGAltGlyphDefElement.h"

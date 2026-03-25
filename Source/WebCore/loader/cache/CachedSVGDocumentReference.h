@@ -26,7 +26,6 @@
 #pragma once
 
 #include <WebCore/CachedResourceHandle.h>
-#include <WebCore/CachedSVGDocument.h>
 #include <WebCore/CachedSVGDocumentClient.h>
 #include <WebCore/LoaderMalloc.h>
 #include <WebCore/StyleURL.h>
@@ -51,7 +50,7 @@ public:
     void load(CachedResourceLoader&, const ResourceLoaderOptions&);
     bool loadRequested() const { return m_loadRequested; }
 
-    CachedSVGDocument* document() { return m_document.get(); }
+    CachedSVGDocument* document();
 
 private:
     explicit CachedSVGDocumentReference(const Style::URL&);

@@ -58,7 +58,6 @@
 #include "RenderElementStyleInlines.h"
 #include "RenderGrid.h"
 #include "RenderInline.h"
-#include "RenderStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
 #include "StyleExtractorState.h"
 #include "StyleInterpolation.h"

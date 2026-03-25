@@ -40,6 +40,11 @@ Ref<CachedSVGDocumentReference> CachedSVGDocumentReference::create(const Style::
     return adoptRef(*new CachedSVGDocumentReference(location));
 }
 
+CachedSVGDocument* CachedSVGDocumentReference::document()
+{
+    return m_document.get();
+}
+
 CachedSVGDocumentReference::CachedSVGDocumentReference(const Style::URL& location)
     : m_location { location }
 {
