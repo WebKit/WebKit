@@ -50,6 +50,7 @@
 #include "DFGVariableAccessData.h"
 #include "DOMJITSignature.h"
 #include "DeleteByVariant.h"
+#include "GetByStatus.h"
 #include "GetByVariant.h"
 #include "InlineCacheCompiler.h"
 #include "JSCJSValue.h"
@@ -3620,6 +3621,22 @@ public:
     bool hasNumberOfArgumentsToSkip()
     {
         return op() == CreateRest || op() == PhantomCreateRest || op() == GetRestLength || op() == GetMyArgumentByVal || op() == GetMyArgumentByValOutOfBounds;
+    }
+
+    GetByStatus::LookupMode propertyLookupMode()
+    {
+        switch (op()) {
+        case GetByIdDirect:
+        case GetByIdDirectFlush:
+        case GetPrivateNameById:
+            return GetByStatus::LookupMode::Direct;
+        case GetById:
+        case GetByIdFlush:
+        case GetByIdMegamorphic:
+            return GetByStatus::LookupMode::Normal;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
     }
 
     unsigned numberOfArgumentsToSkip()

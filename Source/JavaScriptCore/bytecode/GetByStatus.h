@@ -76,6 +76,13 @@ public:
         ObservedSlowPathAndMakesCalls,
     };
 
+    enum class LookupMode : bool {
+        // Normal property lookups can traverse the prototype chain
+        Normal,
+        // Direct property lookups only work for own properties (see getByIdDirect)
+        Direct
+    };
+
     GetByStatus()
         : m_state(NoInformation)
     {
@@ -97,7 +104,7 @@ public:
     }
 
     static GetByStatus computeFor(CodeBlock* baselineBlock, ICStatusMap& baselineMap, ICStatusContextStack& dfgContextStack, CodeOrigin);
-    static GetByStatus computeFor(JSGlobalObject*, const StructureSet&, CacheableIdentifier);
+    static GetByStatus computeFor(JSGlobalObject*, const StructureSet&, CacheableIdentifier, LookupMode);
 
     State state() const { return m_state; }
     
