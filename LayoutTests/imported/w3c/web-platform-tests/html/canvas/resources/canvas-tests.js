@@ -161,10 +161,10 @@ function forEachCanvasSource(crossOriginUrl, sameOriginUrl, callback) {
       factory: () => {
         return new Promise((resolve, reject) => {
           const video = document.createElement("video");
-          video.oncanplaythrough = () => resolve(video);
+          video.onloadeddata = () => resolve(video);
           video.preload = "auto";
           video.onerror = reject;
-          video.src = getVideoURI(crossOriginUrl + "/media/movie_300");
+          video.src = getVideoURI(crossOriginUrl + "/media/movie_5");
         });
       },
     },
@@ -174,10 +174,10 @@ function forEachCanvasSource(crossOriginUrl, sameOriginUrl, callback) {
       factory: () => {
         return new Promise((resolve, reject) => {
           const video = document.createElement("video");
-          video.oncanplaythrough = () => resolve(video);
+          video.onloadeddata = () => resolve(video);
           video.preload = "auto";
           video.onerror = reject;
-          video.src = "/common/redirect.py?location=" + getVideoURI(crossOriginUrl + "/media/movie_300");
+          video.src = "/common/redirect.py?location=" + getVideoURI(crossOriginUrl + "/media/movie_5");
         });
       },
     },
@@ -187,10 +187,10 @@ function forEachCanvasSource(crossOriginUrl, sameOriginUrl, callback) {
       factory: () => {
         return new Promise((resolve, reject) => {
           const video = document.createElement("video");
-          video.oncanplaythrough = () => resolve(video);
+          video.onloadeddata = () => resolve(video);
           video.preload = "auto";
           video.onerror = reject;
-          video.src = crossOriginUrl + "/common/redirect.py?location=" + getVideoURI(sameOriginUrl + "/media/movie_300");
+          video.src = crossOriginUrl + "/common/redirect.py?location=" + getVideoURI(sameOriginUrl + "/media/movie_5");
         });
       },
     },
