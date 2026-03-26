@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		07AC4F0E2EF5A68600468BCB /* module.modulemap in Headers */ = {isa = PBXBuildFile; fileRef = 07AC4F0D2EF5A62500468BCB /* module.modulemap */; settings = {ATTRIBUTES = (Private, ); }; };
+		07B588172F74609A00E8AF32 /* module.modulemap in Headers */ = {isa = PBXBuildFile; fileRef = 07B588162F74607A00E8AF32 /* module.modulemap */; settings = {ATTRIBUTES = (Private, ); }; };
 		07F5EA6F2EE8A7630085B185 /* generate-tapi-filelist.py in Headers */ = {isa = PBXBuildFile; fileRef = DD28DF2329D368BD00BBB459 /* generate-tapi-filelist.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		07F5EA702EE8A7660085B185 /* GenerateModuleVerifierInputsTask.py in Headers */ = {isa = PBXBuildFile; fileRef = 076382182EE550F300DB47BC /* GenerateModuleVerifierInputsTask.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		07F5EA712EE8A76A0085B185 /* library-modules-verifier.py in Headers */ = {isa = PBXBuildFile; fileRef = 077FEABB2EE007FF0071F92D /* library-modules-verifier.py */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1105,6 +1106,7 @@
 		077CD86B1FD9CFD300828587 /* LoggerHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerHelper.h; sourceTree = "<group>"; };
 		077FEABB2EE007FF0071F92D /* library-modules-verifier.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = "library-modules-verifier.py"; sourceTree = "<group>"; };
 		07AC4F0D2EF5A62500468BCB /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
+		07B588162F74607A00E8AF32 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		0F0C03CF29981BEB0064230A /* EmbeddedFixedVector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EmbeddedFixedVector.cpp; sourceTree = "<group>"; };
 		0F0C03D7299820EB0064230A /* WeakPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakPtr.cpp; sourceTree = "<group>"; };
 		0F0C03E6299828E50064230A /* BloomFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BloomFilter.cpp; sourceTree = "<group>"; };
@@ -3051,6 +3053,7 @@
 			isa = PBXGroup;
 			children = (
 				DDD8BAC127B347C400C109E0 /* unicode */,
+				07B588162F74607A00E8AF32 /* module.modulemap */,
 			);
 			path = icu;
 			sourceTree = "<group>";
@@ -4118,6 +4121,7 @@
 				DDF3089B27C44F08006A526F /* measunit.h in Headers */,
 				DDF308D627C44F08006A526F /* measure.h in Headers */,
 				DDF3084527C44F08006A526F /* messagepattern.h in Headers */,
+				07B588172F74609A00E8AF32 /* module.modulemap in Headers */,
 				DDF3085C27C44F08006A526F /* msgfmt.h in Headers */,
 				DDF3086627C44F08006A526F /* normalizer2.h in Headers */,
 				DDF3085427C44F08006A526F /* normlzr.h in Headers */,

@@ -34,7 +34,6 @@ DECLARE_SYSTEM_HEADER
 #if OS(DARWIN)
 
 #import <mach/message.h>
-#import <sandbox.h>
 #import <unistd.h>
 
 #if USE(APPLE_INTERNAL_SDK)
