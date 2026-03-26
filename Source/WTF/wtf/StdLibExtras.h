@@ -1051,7 +1051,7 @@ size_t find(std::span<T, TExtent> haystack, std::span<U, UExtent> needle)
 }
 
 template<typename T, std::size_t TExtent, typename U, std::size_t UExtent>
-size_t contains(std::span<T, TExtent> haystack, std::span<U, UExtent> needle)
+bool contains(std::span<T, TExtent> haystack, std::span<U, UExtent> needle)
 {
     static_assert(sizeof(T) == 1);
     static_assert(sizeof(T) == sizeof(U));
