@@ -134,7 +134,7 @@ void BitVector::mergeSlow(const BitVector& other)
     
     auto a = outOfLineBits()->wordsSpan();
     auto b = other.outOfLineBits()->wordsSpan();
-    for (size_t i = 0; i < a.size(); ++i)
+    for (size_t i = 0; i < b.size(); ++i)
         a[i] |= b[i];
 }
 

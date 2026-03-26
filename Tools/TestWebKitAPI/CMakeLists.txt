@@ -28,6 +28,7 @@ set(TestWTF_SOURCES
     Tests/WTF/AtomString.cpp
     Tests/WTF/Base64.cpp
     Tests/WTF/BitSet.cpp
+    Tests/WTF/BitVector.cpp
     Tests/WTF/BloomFilter.cpp
     Tests/WTF/BoxPtr.cpp
     Tests/WTF/BumpPointerAllocator.cpp

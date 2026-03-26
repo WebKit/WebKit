@@ -1543,6 +1543,7 @@
 		FF41AC702A79CAA000AC0FA5 /* WYHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF41AC682A79CAA000AC0FA5 /* WYHash.cpp */; };
 		FF5D0CB4283221AD00F3278A /* CompactRefPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF5D0CB3283221AD00F3278A /* CompactRefPtr.cpp */; };
 		FF8CB40C2A88C152004AF498 /* SuperFastHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF8CB4042A88C152004AF498 /* SuperFastHash.cpp */; };
+		8CC128AB2E904F3449BED524 /* BitVector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CC128AA2E904F3449BED524 /* BitVector.cpp */; };
 		FF910EA5297A0D1100D1A24D /* FixedBitVector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF910E9D297A0D1100D1A24D /* FixedBitVector.cpp */; };
 		FFD3FF372AF9BD8F0057C508 /* DragonBoxTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFD3FF2F2AF9BD8F0057C508 /* DragonBoxTest.cpp */; };
 /* End PBXBuildFile section */
@@ -4549,6 +4550,7 @@
 		FF41AC682A79CAA000AC0FA5 /* WYHash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WYHash.cpp; sourceTree = "<group>"; };
 		FF5D0CB3283221AD00F3278A /* CompactRefPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompactRefPtr.cpp; sourceTree = "<group>"; };
 		FF8CB4042A88C152004AF498 /* SuperFastHash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SuperFastHash.cpp; sourceTree = "<group>"; };
+		8CC128AA2E904F3449BED524 /* BitVector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BitVector.cpp; sourceTree = "<group>"; };
 		FF910E9D297A0D1100D1A24D /* FixedBitVector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FixedBitVector.cpp; sourceTree = "<group>"; };
 		FFD3FF2F2AF9BD8F0057C508 /* DragonBoxTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DragonBoxTest.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -6534,6 +6536,7 @@
 				26F1B44215CA434F00D1E4BF /* AtomString.cpp */,
 				919B506E2C177055009FE7B0 /* Base64.cpp */,
 				FE2D9473245EB2DF00E48135 /* BitSet.cpp */,
+				8CC128AA2E904F3449BED524 /* BitVector.cpp */,
 				E40019301ACE9B5C001B0A2A /* BloomFilter.cpp */,
 				93A427AE180DA60F00CD24D7 /* BoxPtr.cpp */,
 				0451A5A6235E438E009DF945 /* BumpPointerAllocator.cpp */,
@@ -7727,6 +7730,7 @@
 				7C83DE991D0A590C00FEBCF3 /* AtomString.cpp in Sources */,
 				919B50762C177055009FE7B0 /* Base64.cpp in Sources */,
 				FE2D9474245EB2F400E48135 /* BitSet.cpp in Sources */,
+				8CC128AB2E904F3449BED524 /* BitVector.cpp in Sources */,
 				1ADAD1501D77A9F600212586 /* BlockPtr.mm in Sources */,
 				7C83DE9C1D0A590C00FEBCF3 /* BloomFilter.cpp in Sources */,
 				7C83DF181D0A590C00FEBCF3 /* BoxPtr.cpp in Sources */,
