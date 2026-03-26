@@ -19,7 +19,9 @@
 #ifndef __UNORM2_H__
 #define __UNORM2_H__
 
-DECLARE_SYSTEM_HEADER
+#if defined(__clang__)
+_Pragma("clang system_header")
+#endif
 
 /**
  * \file

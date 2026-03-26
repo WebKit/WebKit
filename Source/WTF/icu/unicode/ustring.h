@@ -18,7 +18,9 @@
 #ifndef USTRING_H
 #define USTRING_H
 
-DECLARE_SYSTEM_HEADER
+#if defined(__clang__)
+_Pragma("clang system_header")
+#endif
 
 #include "unicode/utypes.h"
 #include "unicode/putil.h"
