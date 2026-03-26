@@ -15,7 +15,14 @@ function test1()
 }
 noInline(test1);
 
+function test2()
+{
+    return "B".at(0);
+}
+noInline(test2);
+
 for (let i = 0; i < testLoopCount; ++i) {
     shouldBe(test0(), "A");
     shouldBe(test1(), 84);
+    shouldBe(test2(), "B");
 }
