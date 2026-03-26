@@ -764,6 +764,19 @@ void RenderLayerModelObject::paintSVGMask(PaintInfo& paintInfo, const LayoutPoin
         referencedMaskerRenderer->applyMask(paintInfo, *this, adjustedPaintOffset);
 }
 
+void RenderLayerModelObject::paintSVGEventRegion(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+{
+    ASSERT(paintInfo.phase == PaintPhase::EventRegion);
+    if (style().usedVisibility() == Visibility::Hidden || objectBoundingBox().isEmpty())
+        return;
+
+    auto adjustedPaintOffset = paintOffset + currentSVGLayoutLocation();
+    auto coordinateSystemOriginTranslation = adjustedPaintOffset - nominalSVGLayoutLocation();
+    auto eventRegionBounds = strokeBoundingBox();
+    eventRegionBounds.move(coordinateSystemOriginTranslation);
+    paintInfo.eventRegionContext()->unite(FloatRoundedRect(eventRegionBounds), *this, style(), false);
+}
+
 bool rendererNeedsPixelSnapping(const RenderLayerModelObject& renderer)
 {
     if (renderer.document().settings().layerBasedSVGEngineEnabled() && renderer.isSVGLayerAwareRenderer() && !renderer.isRenderSVGRoot())

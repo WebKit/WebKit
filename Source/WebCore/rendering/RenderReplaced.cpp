@@ -259,13 +259,9 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     LayoutPoint adjustedPaintOffset = paintOffset + location();
 
     if (paintInfo.phase == PaintPhase::EventRegion) {
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
         if (isRenderOrLegacyRenderSVGRoot() && !isSkippedContentRoot(*this))
             paintReplaced(paintInfo, adjustedPaintOffset);
         else if (visibleToHitTesting()) {
-#else
-        if (visibleToHitTesting()) {
-#endif
             auto borderRect = LayoutRect(adjustedPaintOffset, size());
             auto borderShape = BorderShape::shapeForBorderRect(style(), borderRect);
             paintInfo.eventRegionContext()->unite(borderShape.deprecatedPixelSnappedRoundedRect(document().deviceScaleFactor()), *this, style());

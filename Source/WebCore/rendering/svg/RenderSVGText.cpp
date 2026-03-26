@@ -814,6 +814,11 @@ bool RenderSVGText::requiresLayer() const
 void RenderSVGText::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (document().settings().layerBasedSVGEngineEnabled()) {
+        if (paintInfo.phase == PaintPhase::EventRegion) {
+            paintSVGEventRegion(paintInfo, paintOffset);
+            return;
+        }
+
         OptionSet<PaintPhase> relevantPaintPhases { PaintPhase::Foreground, PaintPhase::ClippingMask, PaintPhase::Mask, PaintPhase::Outline, PaintPhase::SelfOutline };
         if (!shouldPaintSVGRenderer(paintInfo, relevantPaintPhases))
             return;
@@ -841,6 +846,14 @@ void RenderSVGText::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         paintInfo.context().translate(coordinateSystemOriginTranslation.width(), coordinateSystemOriginTranslation.height());
 
         RenderBlock::paint(paintInfo, paintOffset);
+        return;
+    }
+
+    if (paintInfo.phase == PaintPhase::EventRegion) {
+        if (style().usedVisibility() == Visibility::Hidden || m_objectBoundingBox.isEmpty())
+            return;
+
+        paintInfo.eventRegionContext()->unite(FloatRoundedRect(strokeBoundingBox()), *this, style(), false);
         return;
     }
 

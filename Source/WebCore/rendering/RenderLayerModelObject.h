@@ -121,6 +121,7 @@ public:
 
     void paintSVGClippingMask(PaintInfo&, const FloatRect& objectBoundingBox) const;
     void paintSVGMask(PaintInfo&, const LayoutPoint& adjustedPaintOffset) const;
+    void paintSVGEventRegion(PaintInfo&, const LayoutPoint& paintOffset);
 
     TransformationMatrix* layerTransform() const;
 

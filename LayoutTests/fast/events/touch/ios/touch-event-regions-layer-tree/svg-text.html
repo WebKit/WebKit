@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../../../resources/ui-helper.js"></script>
+    <script src="resources/touch-regions-helper.js"></script>
+    <script>
+        prepareForTest();
+        async function runTest() {
+            if (window.internals)
+                await UIHelper.tapAt(90, 80);
+        }
+        window.addEventListener('load', runTest, false);
+    </script>
+</head>
+<body>
+    <svg width="600" height="150" xmlns="http://www.w3.org/2000/svg">
+        <rect width="600" height="150" fill="#f0f0f0" />
+        <text ontouchstart="dumpRegions()" x="300" y="75" 
+            font-family="Arial, sans-serif" 
+            font-size="72" 
+            font-weight="bold" 
+            text-anchor="middle" 
+            dominant-baseline="middle" 
+            fill="#333333">
+            Lorem Ipsum
+        </text>
+    </svg>
+</body>
+</html>
