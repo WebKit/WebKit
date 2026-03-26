@@ -812,8 +812,10 @@ CheckedPtr<RenderBoxModelObject> AnchorPositionEvaluator::findAnchorForAnchorFun
 
     if (auto* state = anchorPositionedStates.get(keyForElementOrPseudoElement(*anchorElement))) {
         // Check if the anchor is itself anchor-positioned but hasn't been positioned yet.
-        if (state->stage < AnchorPositionResolutionStage::Positioned)
+        if (state->stage < AnchorPositionResolutionStage::Positioned) {
+            anchorPositionedState.stage = AnchorPositionResolutionStage::WaitingForAnchorToBePositioned;
             return { };
+        }
     }
 
     anchorPositionedState.stage = AnchorPositionResolutionStage::Resolved;
@@ -1298,11 +1300,13 @@ void AnchorPositionEvaluator::updateAnchorPositioningStatesAfterInterleavedLayou
                     .anchors = WTF::move(anchors)
                 });
             }
-            state.stage = renderer && renderer->style().usesAnchorFunctions() ? AnchorPositionResolutionStage::ResolveAnchorFunctions : AnchorPositionResolutionStage::Resolved;
+            state.stage = AnchorPositionResolutionStage::Resolved;
             break;
         }
 
-        case AnchorPositionResolutionStage::ResolveAnchorFunctions:
+        case AnchorPositionResolutionStage::WaitingForAnchorToBePositioned:
+            break;
+
         case AnchorPositionResolutionStage::Resolved:
             if (CheckedPtr anchored = elementAndState.key.first->renderer()) {
                 if (auto anchoredBox = dynamicDowncast<RenderBox>(anchored.get()))

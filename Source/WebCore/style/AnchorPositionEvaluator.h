@@ -115,9 +115,23 @@ class BuilderState;
 struct BuilderPositionTryFallback;
 
 enum class AnchorPositionResolutionStage : uint8_t {
+    // Initial state, we've found which anchors the element uses, but we haven't
+    // resolved anchor names to the concrete elements.
     FindAnchors,
-    ResolveAnchorFunctions,
+
+    // State when an anchor-positioned element has resolved its anchors,
+    // but its anchor(s) is/are also anchor-positioned. The element waits
+    // here until the its anchor(s) is/are Positioned, in which case it'll
+    // transition to Resolved.
+    WaitingForAnchorToBePositioned,
+
+    // The anchor-positioned element has resolved the anchors it refers to.
+    // If we determine any anchor(s) in itself is/are anchor-positioned,
+    // we kick it back to WaitingForAnchorToBePositioned.
     Resolved,
+
+    // The anchor-positioned element has been laid out and its position determined.
+    // This occurs after a Resolved element went through the layout process.
     Positioned,
 };
 

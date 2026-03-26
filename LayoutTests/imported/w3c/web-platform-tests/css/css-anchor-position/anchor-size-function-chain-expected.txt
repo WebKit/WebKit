@@ -1,0 +1,10 @@
+You should see a row of five rectangles growing in size in order.
+
+12345
+
+PASS .target 1
+PASS .target 2
+PASS .target 3
+PASS .target 4
+PASS .target 5
+
