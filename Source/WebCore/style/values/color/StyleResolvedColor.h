@@ -50,7 +50,6 @@ inline bool operator==(const UniqueRef<ResolvedColor>& a, const UniqueRef<Resolv
 }
 
 using InlineResolvedColor = WebCore::InlineColor;
-using OutOfLineResolvedColor = WebCore::OutOfLineColor;
 
 Color toStyleColor(const CSS::ResolvedColor&, ColorResolutionState&);
 

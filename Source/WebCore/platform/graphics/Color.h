@@ -216,7 +216,6 @@ public:
 
 private:
     friend class InlineColor;
-    friend class OutOfLineColor;
     friend void add(Hasher&, const Color&);
 
     class OutOfLineComponents : public ThreadSafeRefCounted<OutOfLineComponents> {
@@ -296,12 +295,13 @@ private:
     uint64_t m_colorAndFlags { invalidColorAndFlags };
 };
 
-// InlineColor and OutOfLineColor can be used to save space with
-// CompactVariant<InlineColor, UniqueRef<OutOfLineColor>>
-class InlineColor {
+// InlineColor can be put inside CompactVariant<> directly
+class __attribute__((packed)) InlineColor {
 public:
     explicit InlineColor(const Color& color)
-        : m_colorAndFlags(color.m_colorAndFlags)
+        : m_rgba(color.m_colorAndFlags & Color::colorValueMask)
+        , m_flags((color.m_colorAndFlags >> Color::flagsShift) & 0xFF)
+        , m_colorSpace((color.m_colorAndFlags >> Color::colorSpaceShift) & 0xFF)
     {
         ASSERT(!color.isOutOfLine());
     }
@@ -309,75 +309,18 @@ public:
     operator Color() const
     {
         Color result;
-        result.m_colorAndFlags = m_colorAndFlags;
+        result.m_colorAndFlags = (static_cast<uint64_t>(m_colorSpace) << Color::colorSpaceShift) | (static_cast<uint64_t>(m_flags) << Color::flagsShift) | m_rgba;
         return result;
     }
 
     Color toColor() const { return static_cast<Color>(*this); }
-
     bool operator==(const InlineColor&) const = default;
 
-    // For CompactVariantTraits packing into 48 bits.
-    // Inline colors have: bits 0-31 = RGBA, bits 48-55 = flags, bits 56-63 = colorspace.
-    // Bits 32-47 are always zero for inline colors.
-    static_assert(Color::flagsSize + Color::colorSpaceSize + 32 <= 48);
-    uint64_t encodedForCompactVariant() const
-    {
-        uint64_t rgba = m_colorAndFlags & 0xFFFFFFFFULL;
-        uint64_t flags = (m_colorAndFlags >> Color::flagsShift) & 0xFF;
-        uint64_t colorSpace = (m_colorAndFlags >> Color::colorSpaceShift) & 0xFF;
-        return rgba | (flags << 32) | (colorSpace << 40);
-    }
-
-    static InlineColor decodedFromCompactVariant(uint64_t encoded)
-    {
-        uint64_t rgba = encoded & 0xFFFFFFFFULL;
-        uint64_t flags = (encoded >> 32) & 0xFF;
-        uint64_t colorSpace = (encoded >> 40) & 0xFF;
-        uint64_t raw = rgba | (flags << Color::flagsShift) | (colorSpace << Color::colorSpaceShift);
-        return InlineColor(raw);
-    }
-
 private:
-    explicit InlineColor(uint64_t raw)
-        : m_colorAndFlags(raw)
-    {
-    }
-
-    uint64_t m_colorAndFlags;
+    uint32_t m_rgba;
+    uint8_t m_flags;
+    uint8_t m_colorSpace;
 };
-
-class OutOfLineColor {
-    WTF_MAKE_TZONE_ALLOCATED(OutOfLineColor);
-public:
-    explicit OutOfLineColor(const Color& color)
-        : m_colorSpace(color.colorSpace())
-        , m_components(color.asOutOfLine().unresolvedComponents())
-    {
-        ASSERT(color.isOutOfLine());
-        if (color.isSemantic())
-            m_flags.add(Color::Flags::Semantic);
-        if (color.usesColorFunctionSerialization())
-            m_flags.add(Color::Flags::UseColorFunctionSerialization);
-    }
-
-    Color toColor() const
-    {
-        return Color(Color::OutOfLineComponents::create(ColorComponents<float, 4> { m_components }), m_colorSpace, m_flags);
-    }
-
-    bool operator==(const OutOfLineColor&) const = default;
-
-private:
-    ColorSpace m_colorSpace;
-    OptionSet<Color::Flags> m_flags;
-    ColorComponents<float, 4> m_components;
-};
-
-inline bool operator==(const UniqueRef<OutOfLineColor>& a, const UniqueRef<OutOfLineColor>& b)
-{
-    return a.get() == b.get();
-}
 
 inline void add(Hasher& hasher, const Color& color)
 {
@@ -719,20 +662,6 @@ inline void Color::setOutOfLineComponents(Ref<OutOfLineComponents>&& color, Colo
 } // namespace WebCore
 
 namespace WTF {
-
-template<> struct CompactVariantTraits<WebCore::InlineColor> {
-    static constexpr bool hasAlternativeRepresentation = true;
-
-    static uint64_t encode(const WebCore::InlineColor& value)
-    {
-        return value.encodedForCompactVariant();
-    }
-
-    static WebCore::InlineColor decode(uint64_t encoded)
-    {
-        return WebCore::InlineColor::decodedFromCompactVariant(encoded);
-    }
-};
 
 template<> struct HashTraits<WebCore::Color>;
 }

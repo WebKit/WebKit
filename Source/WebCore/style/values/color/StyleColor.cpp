@@ -74,7 +74,7 @@ Color::Color(CSS::Keyword::Currentcolor)
 Color::Color(WebCore::Color color)
     : value { color.tryGetAsPackedInline()
         ? ColorKind { InlineResolvedColor { color } }
-        : ColorKind { makeUniqueRef<OutOfLineResolvedColor>(OutOfLineResolvedColor { color }) } }
+        : ColorKind { makeUniqueRef<ResolvedColor>(color) } }
 {
 }
 
@@ -101,7 +101,7 @@ Color::Color(CSS::Keyword::White)
 Color::Color(ResolvedColor&& color)
     : value { color.color.tryGetAsPackedInline()
         ? ColorKind { InlineResolvedColor { color.color } }
-        : ColorKind { makeUniqueRef<OutOfLineResolvedColor>(OutOfLineResolvedColor { color.color }) } }
+        : ColorKind { makeUniqueRef<ResolvedColor>(color.color) } }
 {
 }
 
@@ -295,24 +295,28 @@ bool Color::isRelativeColor() const
 
 bool Color::isResolvedColor() const
 {
-    return value.holdsAlternative<InlineResolvedColor>() || value.holdsAlternative<UniqueRef<OutOfLineResolvedColor>>();
+    return value.holdsAlternative<InlineResolvedColor>() || value.holdsAlternative<UniqueRef<ResolvedColor>>();
 }
 
 WebCore::Color Color::resolvedColor() const
 {
     ASSERT(isResolvedColor());
-    WebCore::Color result;
-    value.switchOn(
-        [&](const InlineResolvedColor& inlined) { result = inlined.toColor(); },
-        [&](const UniqueRef<OutOfLineResolvedColor>& outOfLine) { result = outOfLine.get().toColor(); },
-        [](const auto&) { RELEASE_ASSERT_NOT_REACHED(); }
+    return value.switchOn(
+        [&](const InlineResolvedColor& inlined) { return inlined.toColor(); },
+        [&](const UniqueRef<ResolvedColor>& color) { return color.get().color; },
+        [](const auto&) {
+            RELEASE_ASSERT_NOT_REACHED();
+            return WebCore::Color { };
+        }
     );
-    return result;
 }
 
 bool Color::isKnownTransparent() const
 {
-    return isResolvedColor() && resolvedColor().isValid() && !resolvedColor().isVisible();
+    if (!isResolvedColor())
+        return false;
+    auto color = resolvedColor();
+    return color.isValid() && !color.isVisible();
 }
 
 template<typename T> Color::ColorKind Color::makeIndirectColor(T&& colorType)

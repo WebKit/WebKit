@@ -69,11 +69,14 @@ private:
     friend struct MarkableTraits<Color>;
     struct EmptyToken { constexpr bool operator==(const EmptyToken&) const = default; };
 
+    // InlineResolvedColor and UniqueRef<ResolvedColor> are separate special
+    // representations for ResolvedColor. The former is a special case to
+    // provide inline access.
     using ColorKind = CompactVariant<
         EmptyToken,
         CurrentColor,
         InlineResolvedColor,
-        UniqueRef<OutOfLineResolvedColor>,
+        UniqueRef<ResolvedColor>,
         UniqueRef<ColorLayers>,
         UniqueRef<ColorMix>,
         UniqueRef<ContrastColor>,
@@ -157,8 +160,8 @@ public:
 
     bool isKnownTransparent() const;
 
-    // This helper allows us to treat all the alternatives in ColorKind
-    // as const references, pretending the UniqueRefs don't exist.
+    // This helper bypasses UniqueRefs, allowing the visitor to use the
+    // underlying type directly.
     template<typename... F> decltype(auto) switchOn(F&&...) const;
 
     String debugDescription() const;
@@ -230,10 +233,6 @@ template<typename... F> decltype(auto) Color::switchOn(F&&... f) const
         },
         [&](const InlineResolvedColor& inlined) -> ResultType {
             ResolvedColor resolved { inlined.toColor() };
-            return visitor(resolved);
-        },
-        [&](const UniqueRef<OutOfLineResolvedColor>& outOfLine) -> ResultType {
-            ResolvedColor resolved { outOfLine.get().toColor() };
             return visitor(resolved);
         },
         [&]<typename T>(const UniqueRef<T>& color) -> ResultType {
