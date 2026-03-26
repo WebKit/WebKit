@@ -270,7 +270,7 @@ const CGFloat toolbarBottomMarginSmall = 2;
 
 - (void)resetDatePicker
 {
-    [_delegate datePickerPopoverControllerDidReset:self];
+    [protect(_delegate) datePickerPopoverControllerDidReset:self];
 }
 
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKDatePickerPopoverControllerAdditions.mm>)
@@ -490,7 +490,7 @@ const CGFloat toolbarBottomMarginSmall = 2;
 - (void)_dispatchPopoverControllerDidDismissIfNeeded
 {
     if (std::exchange(_canSendPopoverControllerDidDismiss, NO))
-        [_delegate datePickerPopoverControllerDidDismiss:self];
+        [protect(_delegate) datePickerPopoverControllerDidDismiss:self];
 }
 
 #pragma mark - UIPopoverPresentationControllerDelegate
