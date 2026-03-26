@@ -69,6 +69,8 @@
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 #import "WindowServerConnection.h"
+#import <bsm/libbsm.h>
+#import <libproc.h>
 #endif
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
@@ -82,6 +84,7 @@
 #endif
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, connection())
+#define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection(), completion)
 #define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(checkURLReceivedFromWebProcess(url), connection())
 
 namespace WebKit {
@@ -194,8 +197,21 @@ void WebProcessProxy::unblockAccessibilityServerIfNeeded()
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 void WebProcessProxy::isAXAuthenticated(CoreIPCAuditToken&& auditToken, CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto authenticated = TCCAccessCheckAuditToken(get_TCC_kTCCServiceAccessibilitySingleton(), auditToken.auditToken(), nullptr);
-    completionHandler(authenticated);
+    auto token = auditToken.auditToken();
+    WebProcessPool::isAXAuthenticated(token, [weakThis = WeakPtr { *this }, token, completionHandler = WTF::move(completionHandler)](std::optional<bool> result) mutable {
+        if (!result) {
+            RELEASE_LOG_FAULT(Process, "WebProcessProxy::isAXAuthenticated: Unexpected audit token, killing WebProcess");
+            ASSERT_NOT_REACHED();
+            completionHandler(false);
+            if (RefPtr protectedThis = weakThis.get()) {
+                // Not using a MESSAGE_CHECK because it doesn't work as intended when called in asynchronous code.
+                protectedThis->terminate();
+            }
+            return;
+        }
+        RELEASE_LOG(Process, "WebProcessProxy::isAXAuthenticated: pid=%d result=%d", audit_token_to_pid(token), *result);
+        completionHandler(*result);
+    });
 }
 #endif
 

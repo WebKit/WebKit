@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,40 +25,12 @@
 
 #pragma once
 
-#include <mach/message.h>
-#include <optional>
-#include <wtf/ExportMacros.h>
-#include <wtf/HashTraits.h>
-#include <wtf/Hasher.h>
-#include <wtf/StdLibExtras.h>
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 
-inline bool operator==(const audit_token_t& a, const audit_token_t& b)
-{
-    return equalSpans(asByteSpan(a), asByteSpan(b));
-}
+#import <pal/spi/mac/HIServicesSPI.h>
 
-namespace WTF {
+#import <wtf/SoftLinking.h>
 
-WTF_EXPORT_PRIVATE std::optional<audit_token_t> auditTokenForSelf();
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(WebKit, HIServices, _AXSetAuditTokenIsAuthenticatedCallback, void, (AXAuditTokenIsAuthenticatedCallback callback), (callback))
 
-inline void add(Hasher& hasher, const audit_token_t& token)
-{
-    add(hasher, asByteSpan(token));
-}
-
-template<> struct HashTraits<audit_token_t> : GenericHashTraits<audit_token_t> {
-    static constexpr bool emptyValueIsZero = true;
-    static audit_token_t emptyValue()
-    {
-        audit_token_t token;
-        zeroBytes(token);
-        return token;
-    }
-    static void constructDeletedValue(audit_token_t& slot) { memsetSpan(asMutableByteSpan(slot), 0xFF); }
-    static bool isDeletedValue(const audit_token_t& value)
-    {
-        return std::ranges::all_of(asByteSpan(value), [](uint8_t byte) { return byte == 0xFF; });
-    }
-};
-
-} // namespace WTF
+#endif

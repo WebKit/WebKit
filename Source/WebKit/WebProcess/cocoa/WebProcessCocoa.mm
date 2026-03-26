@@ -175,7 +175,7 @@
 #endif
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-#import <pal/spi/mac/HIServicesSPI.h>
+#import <bsm/libbsm.h>
 #endif
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
@@ -199,16 +199,15 @@
 #import <pal/cocoa/DataDetectorsCoreSoftLink.h>
 #import <pal/cocoa/MediaToolboxSoftLink.h>
 
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+#import "HIServicesSoftLink.h"
+#endif
+
 #define RELEASE_LOG_SESSION_ID (m_sessionID ? m_sessionID->toUInt64() : 0)
 #define WEBPROCESS_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
 #define WEBPROCESS_RELEASE_LOG_FORWARDABLE(channel, fmt, ...) RELEASE_LOG_FORWARDABLE(channel, fmt, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
 #define WEBPROCESS_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
 #define WEBPROCESS_RELEASE_LOG_ERROR_WITH_THIS(thisPtr, channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, thisPtr, thisPtr->m_sessionID ? thisPtr->m_sessionID->toUInt64() : 0, ##__VA_ARGS__)
-
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-SOFT_LINK_FRAMEWORK_IN_UMBRELLA(ApplicationServices, HIServices)
-SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, HIServices, _AXSetAuditTokenIsAuthenticatedCallback, void, (AXAuditTokenIsAuthenticatedCallback callback), (callback))
-#endif
 
 namespace WebKit {
 using namespace WebCore;
@@ -315,12 +314,12 @@ static void preventAppKitFromContactingLaunchServices(NSApplication*, SEL)
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 static Boolean isAXAuthenticatedCallback(audit_token_t auditToken)
 {
+    RELEASE_LOG(Process, "WebProcess::isAXAuthenticatedCallback: pid=%d will send IPC to UIProcess", audit_token_to_pid(auditToken));
     bool authenticated = false;
-    // IPC must be done on the main runloop, so dispatch it to avoid crashes when the secondary AX thread handles this callback.
-    callOnMainRunLoopAndWait([&authenticated, auditToken] {
-        auto sendResult = WebProcess::singleton().protectedParentProcessConnection()->sendSync(Messages::WebProcessProxy::IsAXAuthenticated(auditToken), 0);
-        std::tie(authenticated) = sendResult.takeReplyOr(false);
-    });
+    // We are on a background thread here so sending a synchronous IPC is acceptable.
+    auto sendResult = WebProcess::singleton().protectedParentProcessConnection()->sendSync(Messages::WebProcessProxy::IsAXAuthenticated(auditToken), 0);
+    std::tie(authenticated) = sendResult.takeReplyOr(false);
+    RELEASE_LOG(Process, "WebProcess::isAXAuthenticatedCallback: pid=%d result=%d", audit_token_to_pid(auditToken), authenticated);
     return authenticated;
 }
 #endif

@@ -590,6 +590,7 @@ public:
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     void hardwareConsoleStateChanged();
+    static void isAXAuthenticated(audit_token_t, CompletionHandler<void(std::optional<bool>)>&&);
 #endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
