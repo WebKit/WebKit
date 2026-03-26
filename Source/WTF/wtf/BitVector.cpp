@@ -142,7 +142,9 @@ void BitVector::filterSlow(const BitVector& other)
 {
     if (other.isInline()) {
         ASSERT(!isInline());
-        outOfLineBits()->wordsSpan().front() &= cleanseInlineBits(other.m_bitsOrPointer);
+        auto words = outOfLineBits()->wordsSpan();
+        words.front() &= cleanseInlineBits(other.m_bitsOrPointer);
+        zeroSpan(words.subspan(1));
         return;
     }
     

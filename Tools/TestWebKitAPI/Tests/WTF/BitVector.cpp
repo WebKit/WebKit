@@ -66,4 +66,32 @@ TEST(WTF_BitVector, MergeLargerIntoSmaller)
     EXPECT_EQ(large.bitCount(), 4u);
 }
 
+TEST(WTF_BitVector, FilterOutOfLineWithInline)
+{
+    // Create an out-of-line BitVector (256 bits = 4 words on 64-bit)
+    // with bits set across multiple words.
+    BitVector large(256);
+    large.quickSet(5);
+    large.quickSet(42);
+    large.quickSet(100); // word 1 (bits 64-127).
+    large.quickSet(200); // word 3 (bits 192-255).
+
+    // Create an inline BitVector (fits in maxInlineBits = 63 bits)
+    // with only bit 5 set.
+    BitVector small;
+    small.set(5);
+
+    // filter is AND: only bits set in both should survive.
+    // Bit 5 is in both, so it survives. Bits 42, 100, 200 are not in
+    // small (which has no bits beyond 62), so they must be cleared.
+    large.filter(small);
+
+    EXPECT_TRUE(large.get(5));
+    EXPECT_FALSE(large.get(42));
+    EXPECT_FALSE(large.get(100));
+    EXPECT_FALSE(large.get(200));
+
+    EXPECT_EQ(large.bitCount(), 1u);
+}
+
 } // namespace TestWebKitAPI
