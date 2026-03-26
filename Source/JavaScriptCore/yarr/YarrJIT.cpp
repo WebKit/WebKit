@@ -4048,6 +4048,7 @@ class YarrGenerator final : public YarrJITInfo {
                 unsigned parenthesesFrameLocation = term->frameLocation;
 
                 storeToFrame(MacroAssembler::TrustedImm32(0), parenthesesFrameLocation + BackTrackInfoParentheses::matchAmountIndex());
+                storeToFrame(MacroAssembler::TrustedImmPtr(nullptr), parenthesesFrameLocation + BackTrackInfoParentheses::returnAddressIndex());
                 storeToFrame(MacroAssembler::TrustedImmPtr(nullptr), parenthesesFrameLocation + BackTrackInfoParentheses::parenContextHeadIndex());
 
                 // Quantifier-specific setup:
@@ -4676,6 +4677,14 @@ class YarrGenerator final : public YarrJITInfo {
                     // For FixedCount multi-alt: returnAddress was stored by NestedAlternativeBegin/Next
                     // For others: returnAddress was stored by NestedAlternativeEnd itself
                     unsigned parenthesesFrameLocation = term->frameLocation;
+                    // Guard: if returnAddress was never set (null from initialization), bail to interpreter.
+                    // This can happen when an enclosing FixedCount group restores frame state from an
+                    // iteration where this group's content never ran (NonGreedy skip with 0 matches).
+                    {
+                        const MacroAssembler::RegisterID tempRetAddr = m_regs.regT0;
+                        loadFromFrame(parenthesesFrameLocation + BackTrackInfoParentheses::returnAddressIndex(), tempRetAddr);
+                        m_abortExecution.append(m_jit.branchTestPtr(MacroAssembler::Zero, tempRetAddr));
+                    }
                     loadFromFrameAndJump(parenthesesFrameLocation + BackTrackInfoParentheses::returnAddressIndex());
 
                     // Link the DataLabelPtr associated with the end of the last alternative to this point.
@@ -5042,6 +5051,12 @@ class YarrGenerator final : public YarrJITInfo {
                 }
 
                 // Greedy/NonGreedy path: restore from context and try fewer iterations
+                // The parenContextHead can be null when this nested group's frame state was
+                // restored by an enclosing FixedCount group's backtracking (restoreParenContext
+                // restores all frame slots, including nested groups' parenContextHead). If the
+                // nested group hadn't saved any context at that point, the restored head is null.
+                MacroAssembler::Jump noContext = m_jit.branchTestPtr(MacroAssembler::Zero, currParenContextReg);
+
                 restoreParenContext(currParenContextReg, m_regs.regT2, term->parentheses.subpatternId, term->parentheses.lastSubpatternId, parenthesesFrameLocation);
 
                 m_jit.loadPtr(MacroAssembler::Address(currParenContextReg, ParenContext::nextOffset()), newParenContextReg);
@@ -5059,6 +5074,7 @@ class YarrGenerator final : public YarrJITInfo {
                 m_jit.jump(m_ops[op.m_nextOp].m_reentry);
 
                 zeroLengthMatch.link(&m_jit);
+                noContext.link(&m_jit);
 
                 // Clear the flag in the stackframe indicating we didn't run through the subpattern.
                 storeToFrame(MacroAssembler::TrustedImm32(-1), parenthesesFrameLocation + BackTrackInfoParentheses::beginIndex());
