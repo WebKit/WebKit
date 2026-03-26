@@ -118,13 +118,16 @@ void JSLock::didAcquireLock()
     // FIXME: What should happen to the per-thread identifier table if we don't have a VM?
     if (!m_vm)
         return;
-    
+
     auto& thread = Thread::currentSingleton();
     ASSERT(!m_entryAtomStringTable);
     m_entryAtomStringTable = thread.setCurrentAtomStringTable(m_vm->atomStringTable());
     ASSERT(m_entryAtomStringTable);
 
     m_vm->setLastStackTop(thread);
+
+    if constexpr (validateDFGDoesGC)
+        m_vm->setDoesGCExpectation(true, DoesGCCheck::Special::Uninitialized);
 
     if (m_vm->heap.hasAccess())
         m_shouldReleaseHeapAccess = false;
