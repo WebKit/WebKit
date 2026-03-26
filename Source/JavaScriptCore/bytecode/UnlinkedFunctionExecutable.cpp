@@ -67,7 +67,7 @@ static UnlinkedFunctionCodeBlock* generateUnlinkedFunctionCodeBlock(
         return nullptr;
     }
 
-    function->finishParsing(executable->name(), executable->functionMode());
+    function->finishParsing(executable->name().impl(), executable->functionMode());
     executable->recordParse(function->features(), function->lexicallyScopedFeatures(), function->hasCapturedVariables());
 
     bool isClassContext = executable->superBinding() == SuperBinding::Needed || executable->parseMode() == SourceParseMode::ClassFieldInitializerMode;
@@ -119,8 +119,8 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM& vm, Structure* struct
     , m_evalContextType(static_cast<unsigned>(evalContextType))
     , m_unlinkedCodeBlockForCall()
     , m_unlinkedCodeBlockForConstruct()
-    , m_name(node->ident())
-    , m_ecmaName(node->ecmaName())
+    , m_name(Identifier::fromUid(vm, node->ident()))
+    , m_ecmaName(Identifier::fromUid(vm, node->ecmaName()))
 {
     // Make sure these bitfields are adequately wide.
     ASSERT(m_implementationVisibility == static_cast<unsigned>(node->implementationVisibility()));

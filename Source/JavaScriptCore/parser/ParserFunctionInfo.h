@@ -25,26 +25,26 @@
 
 #pragma once
 
-#include <JavaScriptCore/Identifier.h>
+#include <wtf/text/UniquedStringImpl.h>
 
 namespace JSC {
 
 template <class TreeBuilder>
 struct ParserFunctionInfo {
-    const Identifier* name = nullptr;
-    typename TreeBuilder::FunctionBody body = 0;
-    unsigned parameterCount = 0;
-    unsigned functionLength = 0;
-    unsigned startOffset = 0;
-    unsigned endOffset = 0;
-    int startLine = 0;
-    int endLine = 0;
-    unsigned parametersStartColumn = 0;
+    SUPPRESS_UNCOUNTED_MEMBER UniquedStringImpl* name { nullptr };
+    typename TreeBuilder::FunctionBody body { 0 };
+    unsigned parameterCount { 0 };
+    unsigned functionLength { 0 };
+    unsigned startOffset { 0 };
+    unsigned endOffset { 0 };
+    int startLine { 0 };
+    int endLine { 0 };
+    unsigned parametersStartColumn { 0 };
 };
 
 template <class TreeBuilder>
 struct ParserClassInfo {
-    const Identifier* className { nullptr };
+    SUPPRESS_UNCOUNTED_MEMBER UniquedStringImpl* className { nullptr };
     unsigned startOffset { 0 };
     unsigned endOffset { 0 };
     int startLine { 0 };

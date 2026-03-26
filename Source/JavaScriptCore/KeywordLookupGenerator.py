@@ -143,7 +143,7 @@ class Trie:
             print(str + "if (cannotBeIdentPartOrEscapeStart(code[%d])) [[likely]] {" % (len(self.fullPrefix)))
             print(str + "    internalShift<%d>();" % len(self.fullPrefix))
             print(str + "    if (shouldCreateIdentifier)")
-            print(str + ("        data->ident = &m_vm.propertyNames->%sKeyword;" % self.fullPrefix))
+            print(str + ("        data->ident = m_vm.propertyNames->%sKeyword.impl();" % self.fullPrefix))
             print(str + "    return " + self.value + ";")
             print(str + "}")
         rootIndex = len(self.fullPrefix)

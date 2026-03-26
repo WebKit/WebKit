@@ -249,10 +249,10 @@ FunctionMetadataNode::FunctionMetadataNode(
     ASSERT(m_constructorKind == static_cast<unsigned>(constructorKind));
 }
 
-void FunctionMetadataNode::finishParsing(const SourceCode& source, const Identifier& ident, FunctionMode functionMode)
+void FunctionMetadataNode::finishParsing(const SourceCode& source, UniquedStringImpl* uid, FunctionMode functionMode)
 {
     m_source = source;
-    m_ident = ident;
+    m_ident = uid;
     m_functionMode = functionMode;
 }
 
@@ -296,8 +296,8 @@ void FunctionMetadataNode::dump(PrintStream& stream) const
     stream.println("m_constructorKind ", m_constructorKind);
     stream.println("m_isArrowFunctionBodyExpression ", m_isArrowFunctionBodyExpression);
     stream.println("m_isSloppyModeHoistedFunction ", m_isSloppyModeHoistedFunction);
-    stream.println("m_ident ", m_ident);
-    stream.println("m_ecmaName ", m_ecmaName);
+    stream.println("m_ident ", m_ident ? protect(m_ident)->utf8() : "<null>"_s);
+    stream.println("m_ecmaName ", m_ecmaName ? protect(m_ecmaName)->utf8() : "<null>"_s);
     stream.println("m_functionMode ", static_cast<uint32_t>(m_functionMode));
     stream.println("m_startColumn ", m_startColumn);
     stream.println("m_endColumn ", m_endColumn);
@@ -323,20 +323,20 @@ FunctionNode::FunctionNode(ParserArena& parserArena, const JSTokenLocation& star
 {
 }
 
-void FunctionNode::finishParsing(const Identifier& ident, FunctionMode functionMode)
+void FunctionNode::finishParsing(UniquedStringImpl* uid, FunctionMode functionMode)
 {
     ASSERT(!source().isNull());
-    m_ident = ident;
+    m_ident = uid;
     m_functionMode = functionMode;
 }
 
-bool PropertyListNode::hasStaticallyNamedProperty(const Identifier& propName)
+bool PropertyListNode::hasStaticallyNamedProperty(UniquedStringImpl* propName)
 {
     PropertyListNode* list = this;
     while (list) {
         if (list->m_node->isStaticClassProperty()) {
-            const Identifier* currentNodeName = list->m_node->name();
-            if (currentNodeName && *currentNodeName == propName)
+            UniquedStringImpl* currentNodeName = list->m_node->name();
+            if (currentNodeName && currentNodeName == propName)
                 return true;
         }
         list = list->m_next;

@@ -29,41 +29,6 @@
 
 namespace JSC {
 
-ALWAYS_INLINE VariableEnvironment::Map::AddResult VariableEnvironment::declarePrivateField(const Identifier& identifier)
-{
-    return declarePrivateField(identifier.impl());
-}
-
-inline bool VariableEnvironment::declarePrivateMethod(const Identifier& identifier)
-{
-    return declarePrivateMethod(identifier.impl());
-}
-
-inline bool VariableEnvironment::declareStaticPrivateMethod(const Identifier& identifier)
-{
-    return declarePrivateMethod(identifier.impl(), static_cast<PrivateNameEntry::Traits>(PrivateNameEntry::Traits::IsMethod | PrivateNameEntry::Traits::IsStatic));
-}
-
-inline VariableEnvironment::PrivateDeclarationResult VariableEnvironment::declarePrivateSetter(const Identifier& identifier)
-{
-    return declarePrivateSetter(identifier.impl());
-}
-
-inline VariableEnvironment::PrivateDeclarationResult VariableEnvironment::declareStaticPrivateSetter(const Identifier& identifier)
-{
-    return declarePrivateSetter(identifier.impl(), PrivateNameEntry::Traits::IsStatic);
-}
-
-inline VariableEnvironment::PrivateDeclarationResult VariableEnvironment::declarePrivateGetter(const Identifier& identifier)
-{
-    return declarePrivateGetter(identifier.impl());
-}
-
-inline VariableEnvironment::PrivateDeclarationResult VariableEnvironment::declareStaticPrivateGetter(const Identifier& identifier)
-{
-    return declarePrivateGetter(identifier.impl(), PrivateNameEntry::Traits::IsStatic);
-}
-
 inline TDZEnvironment& CompactTDZEnvironment::toTDZEnvironment() const
 {
     if (std::holds_alternative<Inflated>(m_variables))
@@ -93,11 +58,6 @@ inline VariableEnvironment::VariableEnvironment(const VariableEnvironment& other
     , m_hasAwaitUsingDeclaration(other.m_hasAwaitUsingDeclaration)
     , m_rareData(other.m_rareData ? WTF::makeUnique<VariableEnvironment::RareData>(*other.m_rareData) : nullptr)
 {
-}
-
-ALWAYS_INLINE PrivateNameEnvironment::AddResult VariableEnvironment::addPrivateName(const Identifier& identifier)
-{
-    return addPrivateName(identifier.impl());
 }
 
 ALWAYS_INLINE PrivateNameEnvironment::AddResult VariableEnvironment::addPrivateName(const RefPtr<UniquedStringImpl>& identifier)

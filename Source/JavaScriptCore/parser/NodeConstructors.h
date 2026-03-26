@@ -90,15 +90,15 @@ namespace JSC {
     {
     }
 
-    inline BigIntNode::BigIntNode(const JSTokenLocation& location, const Identifier& value, uint8_t radix)
+    inline BigIntNode::BigIntNode(const JSTokenLocation& location, UniquedStringImpl* value, uint8_t radix)
         : ConstantNode(location, ResultType::bigIntType())
         , m_value(value)
         , m_radix(radix)
         , m_sign(false)
     {
     }
-    
-    inline BigIntNode::BigIntNode(const JSTokenLocation& location, const Identifier& value, uint8_t radix, bool sign)
+
+    inline BigIntNode::BigIntNode(const JSTokenLocation& location, UniquedStringImpl* value, uint8_t radix, bool sign)
         : ConstantNode(location, ResultType::bigIntType())
         , m_value(value)
         , m_radix(radix)
@@ -106,7 +106,7 @@ namespace JSC {
     {
     }
 
-    inline StringNode::StringNode(const JSTokenLocation& location, const Identifier& value)
+    inline StringNode::StringNode(const JSTokenLocation& location, UniquedStringImpl* value)
         : ConstantNode(location, ResultType::stringType())
         , m_value(value)
     {
@@ -123,7 +123,7 @@ namespace JSC {
         previous->m_next = this;
     }
 
-    inline TemplateStringNode::TemplateStringNode(const JSTokenLocation& location, const Identifier* cooked, const Identifier* raw)
+    inline TemplateStringNode::TemplateStringNode(const JSTokenLocation& location, UniquedStringImpl* cooked, UniquedStringImpl* raw)
         : ExpressionNode(location)
         , m_cooked(cooked)
         , m_raw(raw)
@@ -162,7 +162,7 @@ namespace JSC {
     {
     }
 
-    inline RegExpNode::RegExpNode(const JSTokenLocation& location, const Identifier& pattern, const Identifier& flags)
+    inline RegExpNode::RegExpNode(const JSTokenLocation& location, UniquedStringImpl* pattern, UniquedStringImpl* flags)
         : ExpressionNode(location)
         , m_pattern(pattern)
         , m_flags(flags)
@@ -203,17 +203,17 @@ namespace JSC {
     {
     }
 
-    inline ResolveNode::ResolveNode(const JSTokenLocation& location, const Identifier& ident, const JSTextPosition& start)
+    inline ResolveNode::ResolveNode(const JSTokenLocation& location, UniquedStringImpl* uid, const JSTextPosition& start)
         : ExpressionNode(location)
-        , m_ident(ident)
+        , m_ident(uid)
         , m_start(start)
     {
         ASSERT(m_start.offset >= m_start.lineStartOffset);
     }
 
-    inline PrivateIdentifierNode::PrivateIdentifierNode(const JSTokenLocation& location, const Identifier& ident)
+    inline PrivateIdentifierNode::PrivateIdentifierNode(const JSTokenLocation& location, UniquedStringImpl* uid)
         : ExpressionNode(location)
-        , m_ident(ident)
+        , m_ident(uid)
     {
     }
 
@@ -251,23 +251,23 @@ namespace JSC {
     {
     }
 
-    inline PropertyNode::PropertyNode(const Identifier& name, Type type, SuperBinding superBinding, ClassElementTag tag)
-        : m_name(&name)
+    inline PropertyNode::PropertyNode(UniquedStringImpl* name, Type type, SuperBinding superBinding, ClassElementTag tag)
+        : m_name(name)
         , m_type(type)
         , m_needsSuperBinding(superBinding == SuperBinding::Needed)
         , m_classElementTag(static_cast<unsigned>(tag))
     {
-        ASSERT(name.impl());
+        ASSERT(name);
     }
 
-    inline PropertyNode::PropertyNode(const Identifier& name, ExpressionNode* assign, Type type, SuperBinding superBinding, ClassElementTag tag)
-        : m_name(&name)
+    inline PropertyNode::PropertyNode(UniquedStringImpl* name, ExpressionNode* assign, Type type, SuperBinding superBinding, ClassElementTag tag)
+        : m_name(name)
         , m_assign(assign)
         , m_type(type)
         , m_needsSuperBinding(superBinding == SuperBinding::Needed)
         , m_classElementTag(static_cast<unsigned>(tag))
     {
-        ASSERT(name.impl());
+        ASSERT(name);
     }
     
     inline PropertyNode::PropertyNode(ExpressionNode* assign, Type type, SuperBinding superBinding, ClassElementTag tag)
@@ -287,15 +287,15 @@ namespace JSC {
     {
     }
 
-    inline PropertyNode::PropertyNode(const Identifier& ident, ExpressionNode* name, ExpressionNode* assign, Type type, SuperBinding superBinding, ClassElementTag tag)
-        : m_name(&ident)
+    inline PropertyNode::PropertyNode(UniquedStringImpl* ident, ExpressionNode* name, ExpressionNode* assign, Type type, SuperBinding superBinding, ClassElementTag tag)
+        : m_name(ident)
         , m_expression(name)
         , m_assign(assign)
         , m_type(type)
         , m_needsSuperBinding(superBinding == SuperBinding::Needed)
         , m_classElementTag(static_cast<unsigned>(tag))
     {
-        ASSERT(ident.impl());
+        ASSERT(ident);
     }
 
     inline PropertyListNode::PropertyListNode(const JSTokenLocation& location, PropertyNode* node)
@@ -331,16 +331,16 @@ namespace JSC {
     {
     }
 
-    inline BaseDotNode::BaseDotNode(const JSTokenLocation& location, ExpressionNode* base, const Identifier& ident, DotType type)
+    inline BaseDotNode::BaseDotNode(const JSTokenLocation& location, ExpressionNode* base, UniquedStringImpl* uid, DotType type)
         : ExpressionNode(location)
         , m_base(base)
-        , m_ident(ident)
+        , m_ident(uid)
         , m_type(type)
     {
     }
 
-    inline DotAccessorNode::DotAccessorNode(const JSTokenLocation& location, ExpressionNode* base, const Identifier& ident, DotType type)
-        : BaseDotNode(location, base, ident, type)
+    inline DotAccessorNode::DotAccessorNode(const JSTokenLocation& location, ExpressionNode* base, UniquedStringImpl* uid, DotType type)
+        : BaseDotNode(location, base, uid, type)
     {
     }
     
@@ -420,10 +420,10 @@ namespace JSC {
         ASSERT(divot.offset >= divotStart.offset);
     }
 
-    inline FunctionCallResolveNode::FunctionCallResolveNode(const JSTokenLocation& location, const Identifier& ident, ArgumentsNode* args, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, bool isOptionalCall)
+    inline FunctionCallResolveNode::FunctionCallResolveNode(const JSTokenLocation& location, UniquedStringImpl* uid, ArgumentsNode* args, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, bool isOptionalCall)
         : ExpressionNode(location)
         , ThrowableExpressionData(divot, divotStart, divotEnd)
-        , m_ident(ident)
+        , m_ident(uid)
         , m_args(args)
         , m_isOptionalCall(isOptionalCall)
     {
@@ -440,38 +440,38 @@ namespace JSC {
     {
     }
 
-    inline FunctionCallDotNode::FunctionCallDotNode(const JSTokenLocation& location, ExpressionNode* base, const Identifier& ident, DotType type, ArgumentsNode* args, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, bool isOptionalCall)
-        : BaseDotNode(location, base, ident, type)
+    inline FunctionCallDotNode::FunctionCallDotNode(const JSTokenLocation& location, ExpressionNode* base, UniquedStringImpl* uid, DotType type, ArgumentsNode* args, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, bool isOptionalCall)
+        : BaseDotNode(location, base, uid, type)
         , ThrowableSubExpressionData(divot, divotStart, divotEnd)
         , m_args(args)
         , m_isOptionalCall(isOptionalCall)
     {
     }
 
-    inline BytecodeIntrinsicNode::BytecodeIntrinsicNode(Type type, const JSTokenLocation& location, BytecodeIntrinsicRegistry::Entry entry, const Identifier& ident, ArgumentsNode* args, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
+    inline BytecodeIntrinsicNode::BytecodeIntrinsicNode(Type type, const JSTokenLocation& location, BytecodeIntrinsicRegistry::Entry entry, UniquedStringImpl* uid, ArgumentsNode* args, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
         : ExpressionNode(location)
         , ThrowableExpressionData(divot, divotStart, divotEnd)
         , m_entry(entry)
-        , m_ident(ident)
+        , m_ident(uid)
         , m_args(args)
         , m_type(type)
     {
     }
 
-    inline CallFunctionCallDotNode::CallFunctionCallDotNode(const JSTokenLocation& location, ExpressionNode* base, const Identifier& ident, DotType type, ArgumentsNode* args, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, bool isOptionalCall, size_t distanceToInnermostCallOrApply)
-        : FunctionCallDotNode(location, base, ident, type, args, divot, divotStart, divotEnd, isOptionalCall)
+    inline CallFunctionCallDotNode::CallFunctionCallDotNode(const JSTokenLocation& location, ExpressionNode* base, UniquedStringImpl* uid, DotType type, ArgumentsNode* args, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, bool isOptionalCall, size_t distanceToInnermostCallOrApply)
+        : FunctionCallDotNode(location, base, uid, type, args, divot, divotStart, divotEnd, isOptionalCall)
         , m_distanceToInnermostCallOrApply(distanceToInnermostCallOrApply)
     {
     }
 
-    inline ApplyFunctionCallDotNode::ApplyFunctionCallDotNode(const JSTokenLocation& location, ExpressionNode* base, const Identifier& ident, DotType type, ArgumentsNode* args, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, bool isOptionalCall, size_t distanceToInnermostCallOrApply)
-        : FunctionCallDotNode(location, base, ident, type, args, divot, divotStart, divotEnd, isOptionalCall)
+    inline ApplyFunctionCallDotNode::ApplyFunctionCallDotNode(const JSTokenLocation& location, ExpressionNode* base, UniquedStringImpl* uid, DotType type, ArgumentsNode* args, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, bool isOptionalCall, size_t distanceToInnermostCallOrApply)
+        : FunctionCallDotNode(location, base, uid, type, args, divot, divotStart, divotEnd, isOptionalCall)
         , m_distanceToInnermostCallOrApply(distanceToInnermostCallOrApply)
     {
     }
 
-    inline HasOwnPropertyFunctionCallDotNode::HasOwnPropertyFunctionCallDotNode(const JSTokenLocation& location, ExpressionNode* base, const Identifier& ident, DotType type, ArgumentsNode* args, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, bool isOptionalCall)
-        : FunctionCallDotNode(location, base, ident, type, args, divot, divotStart, divotEnd, isOptionalCall)
+    inline HasOwnPropertyFunctionCallDotNode::HasOwnPropertyFunctionCallDotNode(const JSTokenLocation& location, ExpressionNode* base, UniquedStringImpl* uid, DotType type, ArgumentsNode* args, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, bool isOptionalCall)
+        : FunctionCallDotNode(location, base, uid, type, args, divot, divotStart, divotEnd, isOptionalCall)
     {
     }
 
@@ -480,10 +480,10 @@ namespace JSC {
     {
     }
 
-    inline DeleteResolveNode::DeleteResolveNode(const JSTokenLocation& location, const Identifier& ident, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
+    inline DeleteResolveNode::DeleteResolveNode(const JSTokenLocation& location, UniquedStringImpl* uid, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
         : ExpressionNode(location)
         , ThrowableExpressionData(divot, divotStart, divotEnd)
-        , m_ident(ident)
+        , m_ident(uid)
     {
     }
 
@@ -495,11 +495,11 @@ namespace JSC {
     {
     }
 
-    inline DeleteDotNode::DeleteDotNode(const JSTokenLocation& location, ExpressionNode* base, const Identifier& ident, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
+    inline DeleteDotNode::DeleteDotNode(const JSTokenLocation& location, ExpressionNode* base, UniquedStringImpl* uid, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
         : ExpressionNode(location)
         , ThrowableExpressionData(divot, divotStart, divotEnd)
         , m_base(base)
-        , m_ident(ident)
+        , m_ident(uid)
     {
     }
 
@@ -515,10 +515,10 @@ namespace JSC {
     {
     }
 
-    inline TypeOfResolveNode::TypeOfResolveNode(const JSTokenLocation& location, const Identifier& ident, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
+    inline TypeOfResolveNode::TypeOfResolveNode(const JSTokenLocation& location, UniquedStringImpl* uid, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
         : ExpressionNode(location, ResultType::stringType())
         , ThrowableExpressionData(divot, divotStart, divotEnd)
-        , m_ident(ident)
+        , m_ident(uid)
     {
     }
 
@@ -735,29 +735,29 @@ namespace JSC {
     {
     }
 
-    inline ReadModifyResolveNode::ReadModifyResolveNode(const JSTokenLocation& location, const Identifier& ident, Operator oper, ExpressionNode*  right, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
+    inline ReadModifyResolveNode::ReadModifyResolveNode(const JSTokenLocation& location, UniquedStringImpl* uid, Operator oper, ExpressionNode*  right, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
         : ExpressionNode(location)
         , ThrowableExpressionData(divot, divotStart, divotEnd)
-        , m_ident(ident)
+        , m_ident(uid)
         , m_right(right)
         , m_operator(oper)
         , m_rightHasAssignments(rightHasAssignments)
     {
     }
 
-    inline ShortCircuitReadModifyResolveNode::ShortCircuitReadModifyResolveNode(const JSTokenLocation& location, const Identifier& ident, Operator oper, ExpressionNode* right, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
+    inline ShortCircuitReadModifyResolveNode::ShortCircuitReadModifyResolveNode(const JSTokenLocation& location, UniquedStringImpl* uid, Operator oper, ExpressionNode* right, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
         : ExpressionNode(location)
         , ThrowableExpressionData(divot, divotStart, divotEnd)
-        , m_ident(ident)
+        , m_ident(uid)
         , m_right(right)
         , m_operator(oper)
         , m_rightHasAssignments(rightHasAssignments)
     {
     }
 
-    inline AssignResolveNode::AssignResolveNode(const JSTokenLocation& location, const Identifier& ident, ExpressionNode* right, AssignmentContext assignmentContext)
+    inline AssignResolveNode::AssignResolveNode(const JSTokenLocation& location, UniquedStringImpl* uid, ExpressionNode* right, AssignmentContext assignmentContext)
         : ExpressionNode(location)
-        , m_ident(ident)
+        , m_ident(uid)
         , m_right(right)
         , m_assignmentContext(assignmentContext)
     {
@@ -799,16 +799,16 @@ namespace JSC {
     {
     }
 
-    inline AssignDotNode::AssignDotNode(const JSTokenLocation& location, ExpressionNode* base, const Identifier& ident, DotType type, ExpressionNode* right, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
-        : BaseDotNode(location, base, ident, type)
+    inline AssignDotNode::AssignDotNode(const JSTokenLocation& location, ExpressionNode* base, UniquedStringImpl* uid, DotType type, ExpressionNode* right, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
+        : BaseDotNode(location, base, uid, type)
         , ThrowableExpressionData(divot, divotStart, divotEnd)
         , m_right(right)
         , m_rightHasAssignments(rightHasAssignments)
     {
     }
 
-    inline ReadModifyDotNode::ReadModifyDotNode(const JSTokenLocation& location, ExpressionNode* base, const Identifier& ident, DotType type, Operator oper, ExpressionNode* right, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
-        : BaseDotNode(location, base, ident, type)
+    inline ReadModifyDotNode::ReadModifyDotNode(const JSTokenLocation& location, ExpressionNode* base, UniquedStringImpl* uid, DotType type, Operator oper, ExpressionNode* right, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
+        : BaseDotNode(location, base, uid, type)
         , ThrowableSubExpressionData(divot, divotStart, divotEnd)
         , m_right(right)
         , m_operator(oper)
@@ -816,8 +816,8 @@ namespace JSC {
     {
     }
 
-    inline ShortCircuitReadModifyDotNode::ShortCircuitReadModifyDotNode(const JSTokenLocation& location, ExpressionNode* base, const Identifier& ident, DotType type, Operator oper, ExpressionNode* right, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
-        : BaseDotNode(location, base, ident, type)
+    inline ShortCircuitReadModifyDotNode::ShortCircuitReadModifyDotNode(const JSTokenLocation& location, ExpressionNode* base, UniquedStringImpl* uid, DotType type, Operator oper, ExpressionNode* right, bool rightHasAssignments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
+        : BaseDotNode(location, base, uid, type)
         , ThrowableSubExpressionData(divot, divotStart, divotEnd)
         , m_right(right)
         , m_operator(oper)
@@ -869,13 +869,13 @@ namespace JSC {
     {
     }
 
-    inline ModuleNameNode::ModuleNameNode(const JSTokenLocation& location, const Identifier& moduleName)
+    inline ModuleNameNode::ModuleNameNode(const JSTokenLocation& location, UniquedStringImpl* moduleName)
         : Node(location)
         , m_moduleName(moduleName)
     {
     }
 
-    inline ImportSpecifierNode::ImportSpecifierNode(const JSTokenLocation& location, const Identifier& importedName, const Identifier& localName)
+    inline ImportSpecifierNode::ImportSpecifierNode(const JSTokenLocation& location, UniquedStringImpl* importedName, UniquedStringImpl* localName)
         : Node(location)
         , m_importedName(importedName)
         , m_localName(localName)
@@ -898,7 +898,7 @@ namespace JSC {
     {
     }
 
-    inline ExportDefaultDeclarationNode::ExportDefaultDeclarationNode(const JSTokenLocation& location, StatementNode* declaration, const Identifier& localName)
+    inline ExportDefaultDeclarationNode::ExportDefaultDeclarationNode(const JSTokenLocation& location, StatementNode* declaration, UniquedStringImpl* localName)
         : ModuleDeclarationNode(location)
         , m_declaration(declaration)
         , m_localName(localName)
@@ -919,22 +919,22 @@ namespace JSC {
     {
     }
 
-    inline ExportSpecifierNode::ExportSpecifierNode(const JSTokenLocation& location, const Identifier& localName, const Identifier& exportedName)
+    inline ExportSpecifierNode::ExportSpecifierNode(const JSTokenLocation& location, UniquedStringImpl* localName, UniquedStringImpl* exportedName)
         : Node(location)
         , m_localName(localName)
         , m_exportedName(exportedName)
     {
     }
 
-    inline EmptyVarExpression::EmptyVarExpression(const JSTokenLocation& location, const Identifier& ident)
+    inline EmptyVarExpression::EmptyVarExpression(const JSTokenLocation& location, UniquedStringImpl* uid)
         : ExpressionNode(location)
-        , m_ident(ident)
+        , m_ident(uid)
     {
     }
 
-    inline EmptyLetExpression::EmptyLetExpression(const JSTokenLocation& location, const Identifier& ident)
+    inline EmptyLetExpression::EmptyLetExpression(const JSTokenLocation& location, UniquedStringImpl* uid)
         : ExpressionNode(location)
-        , m_ident(ident)
+        , m_ident(uid)
     {
     }
     
@@ -972,15 +972,15 @@ namespace JSC {
         ASSERT(statement);
     }
 
-    inline ContinueNode::ContinueNode(const JSTokenLocation& location, const Identifier& ident)
+    inline ContinueNode::ContinueNode(const JSTokenLocation& location, UniquedStringImpl* uid)
         : StatementNode(location)
-        , m_ident(ident)
+        , m_ident(uid)
     {
     }
-    
-    inline BreakNode::BreakNode(const JSTokenLocation& location, const Identifier& ident)
+
+    inline BreakNode::BreakNode(const JSTokenLocation& location, UniquedStringImpl* uid)
         : StatementNode(location)
-        , m_ident(ident)
+        , m_ident(uid)
     {
     }
     
@@ -999,7 +999,7 @@ namespace JSC {
     {
     }
 
-    inline LabelNode::LabelNode(const JSTokenLocation& location, const Identifier& name, StatementNode* statement)
+    inline LabelNode::LabelNode(const JSTokenLocation& location, UniquedStringImpl* name, StatementNode* statement)
         : StatementNode(location)
         , m_name(name)
         , m_statement(statement)
@@ -1027,37 +1027,37 @@ namespace JSC {
     }
 
     
-    inline BaseFuncExprNode::BaseFuncExprNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* metadata, const SourceCode& source, FunctionMode functionMode)
+    inline BaseFuncExprNode::BaseFuncExprNode(const JSTokenLocation& location, UniquedStringImpl* uid, FunctionMetadataNode* metadata, const SourceCode& source, FunctionMode functionMode)
         : ExpressionNode(location)
         , m_metadata(metadata)
     {
-        m_metadata->finishParsing(source, ident, functionMode);
+        m_metadata->finishParsing(source, uid, functionMode);
     }
 
-    inline FuncExprNode::FuncExprNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* metadata, const SourceCode& source)
-        : BaseFuncExprNode(location, ident, metadata, source, FunctionMode::FunctionExpression)
+    inline FuncExprNode::FuncExprNode(const JSTokenLocation& location, UniquedStringImpl* uid, FunctionMetadataNode* metadata, const SourceCode& source)
+        : BaseFuncExprNode(location, uid, metadata, source, FunctionMode::FunctionExpression)
     {
     }
 
-    inline FuncExprNode::FuncExprNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* metadata, const SourceCode& source, FunctionMode functionMode)
-        : BaseFuncExprNode(location, ident, metadata, source, functionMode)
+    inline FuncExprNode::FuncExprNode(const JSTokenLocation& location, UniquedStringImpl* uid, FunctionMetadataNode* metadata, const SourceCode& source, FunctionMode functionMode)
+        : BaseFuncExprNode(location, uid, metadata, source, functionMode)
     {
     }
-    
-    inline FuncDeclNode::FuncDeclNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* metadata, const SourceCode& source)
+
+    inline FuncDeclNode::FuncDeclNode(const JSTokenLocation& location, UniquedStringImpl* uid, FunctionMetadataNode* metadata, const SourceCode& source)
         : StatementNode(location)
         , m_metadata(metadata)
     {
-        m_metadata->finishParsing(source, ident, FunctionMode::FunctionDeclaration);
+        m_metadata->finishParsing(source, uid, FunctionMode::FunctionDeclaration);
     }
 
-    inline ArrowFuncExprNode::ArrowFuncExprNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* metadata, const SourceCode& source)
-        : BaseFuncExprNode(location, ident, metadata, source, FunctionMode::FunctionExpression)
+    inline ArrowFuncExprNode::ArrowFuncExprNode(const JSTokenLocation& location, UniquedStringImpl* uid, FunctionMetadataNode* metadata, const SourceCode& source)
+        : BaseFuncExprNode(location, uid, metadata, source, FunctionMode::FunctionExpression)
     {
     }
 
-    inline MethodDefinitionNode::MethodDefinitionNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* metadata, const SourceCode& source)
-        : FuncExprNode(location, ident, metadata, source, FunctionMode::MethodDefinition)
+    inline MethodDefinitionNode::MethodDefinitionNode(const JSTokenLocation& location, UniquedStringImpl* uid, FunctionMetadataNode* metadata, const SourceCode& source)
+        : FuncExprNode(location, uid, metadata, source, FunctionMode::MethodDefinition)
     {
     }
     
@@ -1074,9 +1074,9 @@ namespace JSC {
     {
     }
 
-    inline DefineFieldNode::DefineFieldNode(const JSTokenLocation& location, const Identifier& ident, ExpressionNode* assign, Type type)
+    inline DefineFieldNode::DefineFieldNode(const JSTokenLocation& location, UniquedStringImpl* uid, ExpressionNode* assign, Type type)
         : StatementNode(location)
-        , m_ident(ident)
+        , m_ident(uid)
         , m_assign(assign)
         , m_type(type)
     {
@@ -1088,13 +1088,12 @@ namespace JSC {
     {
     }
 
-    inline ClassExprNode::ClassExprNode(const JSTokenLocation& location, const Identifier& name, const SourceCode& classSource, VariableEnvironment&& classHeadEnvironment, VariableEnvironment&& classEnvironment, ExpressionNode* constructorExpression, ExpressionNode* classHeritage, PropertyListNode* classElements)
+    inline ClassExprNode::ClassExprNode(const JSTokenLocation& location, UniquedStringImpl* name, const SourceCode& classSource, VariableEnvironment&& classHeadEnvironment, VariableEnvironment&& classEnvironment, ExpressionNode* constructorExpression, ExpressionNode* classHeritage, PropertyListNode* classElements)
         : ExpressionNode(location)
         , VariableEnvironmentNode(WTF::move(classEnvironment))
         , m_classHeadEnvironment(WTF::move(classHeadEnvironment))
         , m_classSource(classSource)
         , m_name(name)
-        , m_ecmaName(&name)
         , m_constructorExpression(constructorExpression)
         , m_classHeritage(classHeritage)
         , m_classElements(classElements)
@@ -1176,7 +1175,7 @@ namespace JSC {
     {
     }
     
-    inline BindingNode::BindingNode(const Identifier& boundProperty, const JSTextPosition& start, const JSTextPosition& end, AssignmentContext context)
+    inline BindingNode::BindingNode(UniquedStringImpl* boundProperty, const JSTextPosition& start, const JSTextPosition& end, AssignmentContext context)
         : DestructuringPatternNode()
         , m_divotStart(start)
         , m_divotEnd(end)

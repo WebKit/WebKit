@@ -173,34 +173,34 @@ public:
     ALWAYS_INLINE bool isMetaProperty(ExpressionType type) { return type & MetaPropertyBit; }
     ALWAYS_INLINE bool isNewTarget(ExpressionType type) { return type == NewTargetExpr; }
     ALWAYS_INLINE bool isImportMeta(ExpressionType type) { return type == ImportMetaExpr; }
-    ExpressionType createResolve(const JSTokenLocation&, const Identifier&, int, int, const bool = true) { return ResolveExpr; }
-    ExpressionType createPrivateIdentifierNode(const JSTokenLocation&, const Identifier&) { return PrivateIdentifier; }
+    ExpressionType createResolve(const JSTokenLocation&, UniquedStringImpl*, int, int, const bool = true) { return ResolveExpr; }
+    ExpressionType createPrivateIdentifierNode(const JSTokenLocation&, UniquedStringImpl*) { return PrivateIdentifier; }
     ExpressionType createObjectLiteral(const JSTokenLocation&) { return ObjectLiteralExpr; }
     ExpressionType createObjectLiteral(const JSTokenLocation&, int) { return ObjectLiteralExpr; }
     ExpressionType createArray(const JSTokenLocation&, int) { return ArrayLiteralExpr; }
     ExpressionType createArray(const JSTokenLocation&, int, int) { return ArrayLiteralExpr; }
     ExpressionType createDoubleExpr(const JSTokenLocation&, double) { return DoubleExpr; }
     ExpressionType createIntegerExpr(const JSTokenLocation&, double) { return IntegerExpr; }
-    ExpressionType createBigInt(const JSTokenLocation&, const Identifier*, int) { return BigIntExpr; }
-    ExpressionType createString(const JSTokenLocation&, const Identifier*) { return StringExpr; }
+    ExpressionType createBigInt(const JSTokenLocation&, UniquedStringImpl*, int) { return BigIntExpr; }
+    ExpressionType createString(const JSTokenLocation&, UniquedStringImpl*) { return StringExpr; }
     ExpressionType createBoolean(const JSTokenLocation&, bool) { return BoolExpr; }
     ExpressionType createNull(const JSTokenLocation&) { return NullExpr; }
     ExpressionType createBracketAccess(const JSTokenLocation&, ExpressionType, ExpressionType, bool, int, int, int) { return BracketExpr; }
-    ExpressionType createDotAccess(const JSTokenLocation&, ExpressionType, const Identifier*, DotType type, int, int, int) { return type == DotType::PrivateMember ? PrivateDotExpr : DotExpr; }
-    ExpressionType createRegExp(const JSTokenLocation&, const Identifier& pattern, const Identifier& flags, int, bool skipSyntaxCheck) { return !skipSyntaxCheck && Yarr::hasError(Yarr::checkSyntax(pattern.string(), flags.string())) ? 0 : RegExpExpr; }
+    ExpressionType createDotAccess(const JSTokenLocation&, ExpressionType, UniquedStringImpl*, DotType type, int, int, int) { return type == DotType::PrivateMember ? PrivateDotExpr : DotExpr; }
+    ExpressionType createRegExp(const JSTokenLocation&, UniquedStringImpl* pattern, UniquedStringImpl* flags, int, bool skipSyntaxCheck) { return !skipSyntaxCheck && Yarr::hasError(Yarr::checkSyntax(StringView { pattern }, StringView { flags })) ? 0 : RegExpExpr; }
     ExpressionType createNewExpr(const JSTokenLocation&, ExpressionType, int, int, int, int) { return NewExpr; }
     ExpressionType createNewExpr(const JSTokenLocation&, ExpressionType, int, int, int) { return NewExpr; }
     ExpressionType createOptionalChain(const JSTokenLocation&, ExpressionType, ExpressionType, bool) { return OptionalChain; }
     ExpressionType createConditionalExpr(const JSTokenLocation&, ExpressionType, ExpressionType, ExpressionType) { return ConditionalExpr; }
-    ExpressionType createAssignResolve(const JSTokenLocation&, const Identifier&, ExpressionType, int, int, int, AssignmentContext) { return AssignmentExpr; }
-    ExpressionType createEmptyVarExpression(const JSTokenLocation&, const Identifier&) { return AssignmentExpr; }
-    ExpressionType createEmptyLetExpression(const JSTokenLocation&, const Identifier&) { return AssignmentExpr; }
+    ExpressionType createAssignResolve(const JSTokenLocation&, UniquedStringImpl*, ExpressionType, int, int, int, AssignmentContext) { return AssignmentExpr; }
+    ExpressionType createEmptyVarExpression(const JSTokenLocation&, UniquedStringImpl*) { return AssignmentExpr; }
+    ExpressionType createEmptyLetExpression(const JSTokenLocation&, UniquedStringImpl*) { return AssignmentExpr; }
     ExpressionType createYield(const JSTokenLocation&) { return YieldExpr; }
     ExpressionType createYield(const JSTokenLocation&, ExpressionType, bool, int, int, int) { return YieldExpr; }
     ExpressionType createAwait(const JSTokenLocation&, ExpressionType, int, int, int) { return AwaitExpr; }
     ClassExpression createClassExpr(const JSTokenLocation&, const ParserClassInfo<SyntaxChecker>&, VariableEnvironment&&, VariableEnvironment&&, ExpressionType, ExpressionType, PropertyList, int, int, int) { return ClassExpr; }
     ExpressionType createFunctionExpr(const JSTokenLocation&, const ParserFunctionInfo<SyntaxChecker>&) { return FunctionExpr; }
-    ExpressionType createGeneratorFunctionBody(const JSTokenLocation&, const ParserFunctionInfo<SyntaxChecker>&, const Identifier&) { return FunctionExpr; }
+    ExpressionType createGeneratorFunctionBody(const JSTokenLocation&, const ParserFunctionInfo<SyntaxChecker>&, UniquedStringImpl*) { return FunctionExpr; }
     ExpressionType createAsyncFunctionBody(const JSTokenLocation&, const ParserFunctionInfo<SyntaxChecker>&) { return FunctionExpr; }
     int createFunctionMetadata(const JSTokenLocation&, const JSTokenLocation&, unsigned, unsigned, int, int, int, ImplementationVisibility, LexicallyScopedFeatures, ConstructorKind, SuperBinding, unsigned, SourceParseMode, bool) { return FunctionBodyResult; }
     ExpressionType createArrowFunctionExpr(const JSTokenLocation&, const ParserFunctionInfo<SyntaxChecker>&) { return FunctionExpr; }
@@ -210,7 +210,7 @@ public:
     int createArguments(int, bool) { return ArgumentsResult; }
     ExpressionType createSpreadExpression(const JSTokenLocation&, ExpressionType, int, int, int) { return SpreadExpr; }
     ExpressionType createObjectSpreadExpression(const JSTokenLocation&, ExpressionType, int, int, int) { return ObjectSpreadExpr; }
-    TemplateString createTemplateString(const JSTokenLocation&, const Identifier*, const Identifier*) { return TemplateStringResult; }
+    TemplateString createTemplateString(const JSTokenLocation&, UniquedStringImpl*, UniquedStringImpl*) { return TemplateStringResult; }
     TemplateStringList createTemplateStringList(TemplateString) { return TemplateStringListResult; }
     TemplateStringList createTemplateStringList(TemplateStringList, TemplateString) { return TemplateStringListResult; }
     TemplateExpressionList createTemplateExpressionList(Expression) { return TemplateExpressionListResult; }
@@ -221,7 +221,7 @@ public:
 
     int createArgumentsList(const JSTokenLocation&, int) { return ArgumentsListResult; }
     int createArgumentsList(const JSTokenLocation&, int, int) { return ArgumentsListResult; }
-    Property createProperty(const Identifier* name, int, PropertyNode::Type type, SuperBinding superBinding, InferName, ClassElementTag tag)
+    Property createProperty(UniquedStringImpl* name, int, PropertyNode::Type type, SuperBinding superBinding, InferName, ClassElementTag tag)
     {
         bool needsSuperBinding = superBinding == SuperBinding::Needed;
         bool isClassProperty = tag != ClassElementTag::No;
@@ -239,11 +239,11 @@ public:
     {
         return Property(type);
     }
-    Property createProperty(const Identifier*, int, int, PropertyNode::Type type, SuperBinding, ClassElementTag)
+    Property createProperty(UniquedStringImpl*, int, int, PropertyNode::Type type, SuperBinding, ClassElementTag)
     {
         return Property(type);
     }
-    Property createProperty(const Identifier*, PropertyNode::Type type, SuperBinding, ClassElementTag)
+    Property createProperty(UniquedStringImpl*, PropertyNode::Type type, SuperBinding, ClassElementTag)
     {
         return Property(type);
     }
@@ -258,7 +258,7 @@ public:
     int createClauseList(int) { return ClauseListResult; }
     int createClauseList(int, int) { return ClauseListResult; }
     int createFuncDeclStatement(const JSTokenLocation&, const ParserFunctionInfo<SyntaxChecker>&) { return StatementResult; }
-    int createDefineField(const JSTokenLocation&, const Identifier&, int, DefineFieldNode::Type) { return 0; }
+    int createDefineField(const JSTokenLocation&, UniquedStringImpl*, int, DefineFieldNode::Type) { return 0; }
     int createClassDeclStatement(const JSTokenLocation&, ClassExpression,
         const JSTextPosition&, const JSTextPosition&, int, int) { return StatementResult; }
     int createBlockStatement(const JSTokenLocation&, int, int, int, VariableEnvironment&&, DeclarationStacks::FunctionStack&&) { return StatementResult; }
@@ -272,35 +272,36 @@ public:
     int createDeclarationStatement(const JSTokenLocation&, int, int, int) { return StatementResult; }
     int createReturnStatement(const JSTokenLocation&, int, int, int) { return StatementResult; }
     int createBreakStatement(const JSTokenLocation&, int, int) { return StatementResult; }
-    int createBreakStatement(const JSTokenLocation&, const Identifier*, int, int) { return StatementResult; }
+    int createBreakStatement(const JSTokenLocation&, UniquedStringImpl*, int, int) { return StatementResult; }
     int createContinueStatement(const JSTokenLocation&, int, int) { return StatementResult; }
-    int createContinueStatement(const JSTokenLocation&, const Identifier*, int, int) { return StatementResult; }
+    int createContinueStatement(const JSTokenLocation&, UniquedStringImpl*, int, int) { return StatementResult; }
     int createTryStatement(const JSTokenLocation&, int, int, int, int, int, int, VariableEnvironment&&) { return StatementResult; }
     int createSwitchStatement(const JSTokenLocation&, int, int, int, int, int, int, VariableEnvironment&&, DeclarationStacks::FunctionStack&&) { return StatementResult; }
     int createWhileStatement(const JSTokenLocation&, int, int, int, int) { return StatementResult; }
     int createWithStatement(const JSTokenLocation&, int, int, int, int, int, int) { return StatementResult; }
     int createDoWhileStatement(const JSTokenLocation&, int, int, int, int) { return StatementResult; }
-    int createLabelStatement(const JSTokenLocation&, const Identifier*, int, int, int) { return StatementResult; }
+    int createLabelStatement(const JSTokenLocation&, UniquedStringImpl*, int, int, int) { return StatementResult; }
     int createThrowStatement(const JSTokenLocation&, int, int, int) { return StatementResult; }
     int createDebugger(const JSTokenLocation&, int, int) { return StatementResult; }
     int createConstStatement(const JSTokenLocation&, int, int, int) { return StatementResult; }
-    int createModuleName(const JSTokenLocation&, const Identifier&) { return ModuleNameResult; }
-    ImportSpecifier createImportSpecifier(const JSTokenLocation&, const Identifier&, const Identifier&) { return ImportSpecifierResult; }
+    int createModuleName(const JSTokenLocation&, UniquedStringImpl*) { return ModuleNameResult; }
+    ImportSpecifier createImportSpecifier(const JSTokenLocation&, UniquedStringImpl*, UniquedStringImpl*) { return ImportSpecifierResult; }
     ImportSpecifierList createImportSpecifierList() { return ImportSpecifierListResult; }
     void appendImportSpecifier(ImportSpecifierList, ImportSpecifier) { }
     ImportAttributesList createImportAttributesList() { return ImportAttributesListResult; }
-    void appendImportAssertion(ImportAttributesList, const Identifier&, const Identifier&) { }
+    void appendImportAttribute(ImportAttributesList, UniquedStringImpl*, UniquedStringImpl*) { }
+    void appendImportAssertion(ImportAttributesList, UniquedStringImpl*, UniquedStringImpl*) { }
     int createImportDeclaration(const JSTokenLocation&, ImportSpecifierList, ModuleName, ImportAttributesList) { return StatementResult; }
     int createExportAllDeclaration(const JSTokenLocation&, ModuleName, ImportAttributesList) { return StatementResult; }
-    int createExportDefaultDeclaration(const JSTokenLocation&, int, const Identifier&) { return StatementResult; }
+    int createExportDefaultDeclaration(const JSTokenLocation&, int, UniquedStringImpl*) { return StatementResult; }
     int createExportLocalDeclaration(const JSTokenLocation&, int) { return StatementResult; }
     int createExportNamedDeclaration(const JSTokenLocation&, ExportSpecifierList, ModuleName, ImportAttributesList) { return StatementResult; }
-    ExportSpecifier createExportSpecifier(const JSTokenLocation&, const Identifier&, const Identifier&) { return ExportSpecifierResult; }
+    ExportSpecifier createExportSpecifier(const JSTokenLocation&, UniquedStringImpl*, UniquedStringImpl*) { return ExportSpecifierResult; }
     ExportSpecifierList createExportSpecifierList() { return ExportSpecifierListResult; }
     void appendExportSpecifier(ExportSpecifierList, ExportSpecifier) { }
 
-    int appendConstDecl(const JSTokenLocation&, int, const Identifier*, int) { return StatementResult; }
-    Property createGetterOrSetterProperty(const JSTokenLocation&, PropertyNode::Type type, const Identifier*, const ParserFunctionInfo<SyntaxChecker>&, ClassElementTag)
+    int appendConstDecl(const JSTokenLocation&, int, UniquedStringImpl*, int) { return StatementResult; }
+    Property createGetterOrSetterProperty(const JSTokenLocation&, PropertyNode::Type type, UniquedStringImpl*, const ParserFunctionInfo<SyntaxChecker>&, ClassElementTag)
     {
         return Property(type);
     }
@@ -370,7 +371,7 @@ public:
     {
         return ObjectDestructuring;
     }
-    void appendObjectPatternEntry(ObjectPattern, const JSTokenLocation&, bool, const Identifier&, DestructuringPattern, int)
+    void appendObjectPatternEntry(ObjectPattern, const JSTokenLocation&, bool, UniquedStringImpl*, DestructuringPattern, int)
     {
     }
     void appendObjectPatternEntry(VM&, ObjectPattern, const JSTokenLocation&, Expression, DestructuringPattern, Expression)
@@ -389,7 +390,7 @@ public:
     {
     }
 
-    DestructuringPattern createBindingLocation(const JSTokenLocation&, const Identifier&, const JSTextPosition&, const JSTextPosition&, AssignmentContext)
+    DestructuringPattern createBindingLocation(const JSTokenLocation&, UniquedStringImpl*, const JSTextPosition&, const JSTextPosition&, AssignmentContext)
     {
         return BindingDestructuring;
     }

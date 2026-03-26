@@ -214,8 +214,8 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
         isInStrictContext ? StrictModeLexicallyScopedFeature : NoLexicallyScopedFeatures, constructorKind, constructorKind == ConstructorKind::Extends ? SuperBinding::Needed : SuperBinding::NotNeeded,
         parameterCount, parseMode, isArrowFunctionBodyExpression);
 
-    metadata.finishParsing(newSource, Identifier(), FunctionMode::FunctionExpression);
-    metadata.overrideName(name);
+    metadata.finishParsing(newSource, nullptr, FunctionMode::FunctionExpression);
+    metadata.overrideName(name.impl());
     metadata.setEndPosition(positionBeforeLastNewline);
 
     if (ASSERT_ENABLED || Options::validateBytecode()) [[unlikely]] {
@@ -239,12 +239,12 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
             
             metadataFromParser->setEndPosition(positionBeforeLastNewlineFromParser);
             RELEASE_ASSERT(metadataFromParser);
-            RELEASE_ASSERT(metadataFromParser->ident().isNull());
+            RELEASE_ASSERT(!metadataFromParser->ident());
             
             // This function assumes an input string that would result in a single anonymous function expression.
             metadataFromParser->setEndPosition(positionBeforeLastNewlineFromParser);
             RELEASE_ASSERT(metadataFromParser);
-            metadataFromParser->overrideName(name);
+            metadataFromParser->overrideName(name.impl());
             metadataFromParser->setEndPosition(positionBeforeLastNewlineFromParser);
             if (metadata != *metadataFromParser || positionBeforeLastNewlineFromParser != positionBeforeLastNewline) {
                 dataLogLn("Expected Metadata:\n", metadata);
