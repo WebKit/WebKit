@@ -294,7 +294,13 @@ void ContentSecurityPolicy::applyPolicyToScriptExecutionContext()
     // security origin of its owner document.
     RefPtr securityOrigin = scriptExecutionContext->securityOrigin();
     ASSERT(securityOrigin);
-    updateSourceSelf(*securityOrigin);
+
+    // Skip for opaque origins (e.g. sandboxed iframes) to preserve the self-source
+    // established after CSP inheritance. Per the CSP spec §2.2 note, the self-origin
+    // concept exists to facilitate 'self' checks for opaque-origin documents that
+    // inherited their policy.
+    if (!securityOrigin->isOpaque())
+        updateSourceSelf(*securityOrigin);
 
     bool requiresTrustedTypesForScript = false;
     bool requiresTrustedTypesForScriptEnforced = false;

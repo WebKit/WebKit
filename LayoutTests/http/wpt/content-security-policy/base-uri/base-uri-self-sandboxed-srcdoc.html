@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Security-Policy" content="base-uri 'self'">
+    <title>base-uri 'self' is enforced in sandboxed srcdoc iframes</title>
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+    <div id="log"></div>
+    <script>
+        async_test(function(t) {
+            var i = document.createElement('iframe');
+            i.sandbox = 'allow-scripts';
+            i.srcdoc = "<meta http-equiv='Content-Security-Policy' content='' />"
+                + "<base href='https://evil.com/'/>"
+                + "<sc" + "ript>parent.postMessage(document.baseURI, '*');</sc" + "ript>";
+
+            window.addEventListener('message', t.step_func(function(e) {
+                if (e.source === i.contentWindow) {
+                    assert_false(e.data.indexOf('evil.com') !== -1,
+                        'baseURI should not contain evil.com, got: ' + e.data);
+                    t.done();
+                }
+            }));
+
+            document.body.appendChild(i);
+        }, "base-uri 'self' blocks cross-origin HTTPS base URL in sandboxed srcdoc iframe with empty meta CSP.");
+
+        async_test(function(t) {
+            var i = document.createElement('iframe');
+            i.sandbox = 'allow-scripts';
+            i.srcdoc = '<meta http-equiv="Content-Security-Policy" content="base-uri \'self\'" />'
+                + "<base href='https://evil.com/'/>"
+                + "<sc" + "ript>parent.postMessage(document.baseURI, '*');</sc" + "ript>";
+
+            window.addEventListener('message', t.step_func(function(e) {
+                if (e.source === i.contentWindow) {
+                    assert_false(e.data.indexOf('evil.com') !== -1,
+                        'baseURI should not contain evil.com, got: ' + e.data);
+                    t.done();
+                }
+            }));
+
+            document.body.appendChild(i);
+        }, "base-uri 'self' blocks cross-origin HTTPS base URL in sandboxed srcdoc iframe with base-uri 'self' meta CSP.");
+
+        async_test(function(t) {
+            var i = document.createElement('iframe');
+            i.sandbox = 'allow-scripts allow-same-origin';
+            i.srcdoc = '<meta http-equiv="Content-Security-Policy" content="base-uri \'self\'" />'
+                + "<base href='https://evil.com/'/>"
+                + "<sc" + "ript>parent.postMessage(document.baseURI, '*');</sc" + "ript>";
+
+            window.addEventListener('message', t.step_func(function(e) {
+                if (e.source === i.contentWindow) {
+                    assert_false(e.data.indexOf('evil.com') !== -1,
+                        'baseURI should not contain evil.com, got: ' + e.data);
+                    t.done();
+                }
+            }));
+
+            document.body.appendChild(i);
+        }, "base-uri 'self' blocks cross-origin HTTPS base URL in sandboxed srcdoc iframe with allow-same-origin.");
+    </script>
+</body>
+</html>

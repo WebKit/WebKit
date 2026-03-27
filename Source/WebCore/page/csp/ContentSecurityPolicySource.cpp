@@ -59,6 +59,16 @@ bool ContentSecurityPolicySource::matches(const URL& url, bool didReceiveRedirec
     return hostMatches(url) && portMatches(url) && (didReceiveRedirectResponse || pathMatches(url));
 }
 
+// 'self' sources can upgrade to secure protocols (http->https, ws->wss) and
+// side-grade insecure protocols (http->ws). Requires a non-empty scheme since
+// opaque origins lack scheme/host/port tuple fields and should never match.
+static bool isSelfSourceSchemeUpgrade(const String& scheme, StringView urlScheme)
+{
+    if (scheme.isEmpty())
+        return false;
+    return (urlScheme == "https"_s || urlScheme == "wss"_s) || (scheme == "http"_s && urlScheme == "ws"_s);
+}
+
 bool ContentSecurityPolicySource::schemeMatches(const URL& url) const
 {
     // https://www.w3.org/TR/CSP3/#match-schemes.
@@ -76,9 +86,7 @@ bool ContentSecurityPolicySource::schemeMatches(const URL& url) const
     if (scheme == "wss"_s && urlScheme == "https"_s)
         return true;
 
-    // self-sources can always upgrade to secure protocols and side-grade insecure protocols.
-    if ((m_isSelfSource
-        && ((urlScheme == "https"_s || urlScheme == "wss"_s) || (scheme == "http"_s && urlScheme == "ws"_s))))
+    if (m_isSelfSource && isSelfSourceSchemeUpgrade(scheme, urlScheme))
         return true;
 
     return false;
