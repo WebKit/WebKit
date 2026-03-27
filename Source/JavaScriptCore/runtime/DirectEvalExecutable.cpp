@@ -55,8 +55,7 @@ DirectEvalExecutable* DirectEvalExecutable::create(JSGlobalObject* globalObject,
     // We don't bother with CodeCache here because direct eval uses a specialized DirectEvalCodeCache.
     UnlinkedEvalCodeBlock* unlinkedEvalCode = generateUnlinkedCodeBlockForDirectEval(vm, executable, executable->source(), JSParserScriptMode::Classic, codeGenerationMode, error, evalContextType, variablesUnderTDZ, privateNameEnvironment);
 
-    if (globalObject->hasDebugger())
-        globalObject->debugger()->sourceParsed(globalObject, executable->source().provider(), error.line(), error.message());
+    globalObject->sourceParsed(executable->source().provider(), error.line(), error.message());
 
     if (error.isValid()) {
         throwVMError(globalObject, scope, error.toErrorObject(globalObject, executable->source()));

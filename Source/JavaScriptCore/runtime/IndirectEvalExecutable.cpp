@@ -56,8 +56,7 @@ inline IndirectEvalExecutable* IndirectEvalExecutable::createImpl(JSGlobalObject
     UnlinkedEvalCodeBlock* unlinkedEvalCode = vm.codeCache()->getUnlinkedEvalCodeBlock(
         vm, executable, executable->source(), codeGenerationMode, error, evalContextType);
 
-    if (globalObject->hasDebugger())
-        globalObject->debugger()->sourceParsed(globalObject, executable->source().provider(), error.line(), error.message());
+    globalObject->sourceParsed(executable->source().provider(), error.line(), error.message());
 
     if (error.isValid()) {
         errorHandler(executable->source(), &error);

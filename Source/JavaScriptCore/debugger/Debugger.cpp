@@ -170,25 +170,6 @@ void Debugger::attach(JSGlobalObject* globalObject)
     m_globalObjects.add(globalObject);
 
     m_vm.setShouldBuildPCToCodeOriginMapping();
-
-    // Call `sourceParsed` after iterating because it will execute JavaScript in Web Inspector.
-    UncheckedKeyHashSet<RefPtr<SourceProvider>> sourceProviders;
-    {
-        JSLockHolder locker(m_vm);
-        HeapIterationScope iterationScope(m_vm.heap);
-        m_vm.heap.objectSpace().forEachLiveCell(iterationScope, [&] (HeapCell* heapCell, HeapCell::Kind kind) {
-            if (isJSCellKind(kind)) {
-                auto* cell = static_cast<JSCell*>(heapCell);
-                if (auto* function = jsDynamicCast<JSFunction*>(cell)) {
-                    if (function->scope()->globalObject() == globalObject && function->executable()->isFunctionExecutable() && !function->isHostOrBuiltinFunction())
-                        sourceProviders.add(jsCast<FunctionExecutable*>(function->executable())->source().provider());
-                }
-            }
-            return IterationStatus::Continue;
-        });
-    }
-    for (auto& sourceProvider : sourceProviders)
-        sourceParsed(globalObject, sourceProvider.get(), -1, nullString());
 }
 
 void Debugger::detach(JSGlobalObject* globalObject, ReasonForDetach reason)

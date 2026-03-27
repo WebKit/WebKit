@@ -35,6 +35,7 @@
 #include <JavaScriptCore/WeakGCMap.h>
 #include <JavaScriptCore/WeakGCSet.h>
 #include <wtf/FixedVector.h>
+#include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
 
@@ -122,6 +123,7 @@ class ShadowRealmConstructor;
 class ShadowRealmPrototype;
 class SourceCodeKey;
 class SourceOrigin;
+class SourceProvider;
 class StringConstructor;
 class SymbolTable;
 class WrapperMap;
@@ -698,6 +700,8 @@ public:
 
     std::optional<unsigned> stackTraceLimit() const { return m_stackTraceLimit; }
     void setStackTraceLimit(std::optional<unsigned> value) { m_stackTraceLimit = value; }
+
+    void sourceParsed(RefPtr<SourceProvider>, int errorLine, const String& errorMessage);
 
     JS_EXPORT_PRIVATE void startSignpost(String&&);
     JS_EXPORT_PRIVATE void stopSignpost(String&&);
@@ -1280,6 +1284,8 @@ private:
 #ifdef JSC_GLIB_API_ENABLED
     std::unique_ptr<WrapperMap> m_wrapperMap;
 #endif
+
+    HashSet<RefPtr<SourceProvider>> m_sourceProviders;
 };
 
 inline JSObject* JSScope::globalThis()
