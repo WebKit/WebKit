@@ -27,7 +27,7 @@
 
 [
   EnabledBySetting=NavigationAPIEnabled,
-  GenerateIsReachable=ReachableFromDOMWindow,
+  CustomIsReachable,
   JSCustomMarkFunction,
   Exposed=Window
 ] interface Navigation : EventTarget {

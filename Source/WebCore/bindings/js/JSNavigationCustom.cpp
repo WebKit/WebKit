@@ -28,8 +28,27 @@
 
 #include "JSNavigateEvent.h"
 #include "NavigateEvent.h"
+#include "WebCoreOpaqueRootInlines.h"
 
 namespace WebCore {
+
+bool JSNavigationOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, JSC::AbstractSlotVisitor& visitor, ASCIILiteral* reason)
+{
+    auto& navigation = JSC::jsCast<JSNavigation*>(handle.slot()->asCell())->wrapped();
+    auto* window = navigation.window();
+    if (!window)
+        return false;
+
+    if (navigation.hasPendingActivity()) {
+        if (reason) [[unlikely]]
+            *reason = "Has Pending Activity"_s;
+        return true;
+    }
+
+    if (reason) [[unlikely]]
+        *reason = "Reachable from Window"_s;
+    return containsWebCoreOpaqueRoot(visitor, window);
+}
 
 template<typename Visitor>
 void JSNavigation::visitAdditionalChildrenInGCThread(Visitor& visitor)

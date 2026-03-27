@@ -161,6 +161,7 @@ public:
 
     // EventTarget.
     ScriptExecutionContext* scriptExecutionContext() const final;
+    bool hasPendingActivity() const { return m_ongoingNavigateEvent || m_transition; }
 
     void rejectFinishedPromise(NavigationAPIMethodTracker*);
     NavigationAPIMethodTracker* upcomingTraverseMethodTracker(const String& key) const;

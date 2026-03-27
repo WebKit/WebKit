@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<script>
+navigation.addEventListener("navigate", (e) => {
+    if (e.destination.sameDocument)
+        e.intercept({ handler: () => new Promise(() => { /* never resolves */ }) });
+});
+navigation.navigate("#test");
+parent.postMessage("ready", "*");
+</script>

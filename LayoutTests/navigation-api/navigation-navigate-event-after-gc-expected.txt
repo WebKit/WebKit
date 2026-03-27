@@ -1,0 +1,10 @@
+Tests that the Navigation wrapper is not garbage collected while it has pending navigation activity (regression test for rdar://162816815).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS collected is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
