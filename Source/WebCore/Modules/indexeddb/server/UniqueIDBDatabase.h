@@ -131,6 +131,8 @@ public:
     WEBCORE_EXPORT bool hasDataInMemory() const;
     WEBCORE_EXPORT void handleLowMemoryWarning();
 
+    WEBCORE_EXPORT bool isVersionChangeTransactionFinishingOrFinished(const IDBResourceIdentifier& transactionIdentifier) const;
+
 private:
     void handleDatabaseOperations();
     void handleCurrentOperation();
