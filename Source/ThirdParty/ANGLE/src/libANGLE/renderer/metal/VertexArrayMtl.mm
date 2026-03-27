@@ -15,6 +15,7 @@
 
 #include <TargetConditionals.h>
 
+#include "common/mathutil.h"
 #include "libANGLE/ErrorStrings.h"
 #include "libANGLE/renderer/metal/BufferMtl.h"
 #include "libANGLE/renderer/metal/ContextMtl.h"
@@ -137,20 +138,21 @@ size_t GetVertexCount(BufferMtl *srcBuffer,
                       const gl::VertexBinding &binding,
                       uint32_t srcFormatSize)
 {
-    // Bytes usable for vertex data.
-    GLint64 bytes = srcBuffer->size() - binding.getOffset();
-    if (bytes < srcFormatSize)
+    GLintptr bindingOffset = binding.getOffset();
+    if (bindingOffset < 0)
         return 0;
 
+    // Bytes usable for vertex data.
+    angle::CheckedNumeric<size_t> bytes = srcBuffer->size();
+    bytes -= static_cast<size_t>(bindingOffset);
     // Count the last vertex.  It may occupy less than a full stride.
-    size_t numVertices = 1;
     bytes -= srcFormatSize;
+    if (!bytes.IsValid())
+        return 0;
 
     // Count how many strides fit remaining space.
-    if (bytes > 0)
-        numVertices += static_cast<size_t>(bytes) / binding.getStride();
-
-    return numVertices;
+    size_t effectiveStride = binding.getStride() > 0 ? binding.getStride() : srcFormatSize;
+    return 1 + static_cast<size_t>(bytes.ValueOrDie()) / effectiveStride;
 }
 
 size_t GetVertexCountWithConversion(BufferMtl *srcBuffer,
@@ -158,21 +160,24 @@ size_t GetVertexCountWithConversion(BufferMtl *srcBuffer,
                                     const gl::VertexBinding &binding,
                                     uint32_t srcFormatSize)
 {
+    // Use the smaller of the conversion buffer offset and the binding offset.
+    GLintptr bindingOffset = binding.getOffset();
+    if (bindingOffset < 0)
+        return 0;
+    size_t effectiveOffset =
+        std::min(conversionBuffer->offset, static_cast<size_t>(bindingOffset));
+
     // Bytes usable for vertex data.
-    GLint64 bytes = srcBuffer->size() -
-                    MIN(static_cast<GLintptr>(conversionBuffer->offset), binding.getOffset());
-    if (bytes < srcFormatSize)
+    angle::CheckedNumeric<size_t> bytes = srcBuffer->size();
+    bytes -= effectiveOffset;
+    // Count the last vertex.  It may occupy less than a full stride.
+    bytes -= srcFormatSize;
+    if (!bytes.IsValid())
         return 0;
 
-    // Count the last vertex.  It may occupy less than a full stride.
-    size_t numVertices = 1;
-    bytes -= srcFormatSize;
-
     // Count how many strides fit remaining space.
-    if (bytes > 0)
-        numVertices += static_cast<size_t>(bytes) / binding.getStride();
-
-    return numVertices;
+    size_t effectiveStride = binding.getStride() > 0 ? binding.getStride() : srcFormatSize;
+    return 1 + static_cast<size_t>(bytes.ValueOrDie()) / effectiveStride;
 }
 inline size_t GetIndexCount(BufferMtl *srcBuffer, size_t offset, gl::DrawElementsType indexType)
 {
@@ -666,17 +671,27 @@ angle::Result VertexArrayMtl::syncDirtyAttrib(const gl::Context *glContext,
                 (binding.getStride() < format.actualAngleFormat().pixelBytes) ||
                 (binding.getStride() % mtl::kVertexAttribBufferStrideAlignment) != 0;
 
-            if (needConversion)
+            unsigned srcFormatSize = format.actualAngleFormat().pixelBytes;
+            size_t numVertices = GetVertexCount(bufferMtl, binding, srcFormatSize);
+            if (numVertices == 0)
+            {
+                // Out of bound buffer access, can return any values.
+                // See KHR_robust_buffer_access_behavior.
+                mCurrentArrayBuffers[attribIndex]       = bufferMtl;
+                mCurrentArrayBufferFormats[attribIndex] = &format;
+                mCurrentArrayBufferOffsets[attribIndex] = 0;
+                mCurrentArrayBufferStrides[attribIndex] = 16;
+            }
+            else if (needConversion)
             {
                 ANGLE_TRY(convertVertexBuffer(glContext, bufferMtl, binding, attribIndex, format));
             }
             else
             {
                 mCurrentArrayBuffers[attribIndex]       = bufferMtl;
+                mCurrentArrayBufferFormats[attribIndex] = &format;
                 mCurrentArrayBufferOffsets[attribIndex] = binding.getOffset();
                 mCurrentArrayBufferStrides[attribIndex] = binding.getStride();
-
-                mCurrentArrayBufferFormats[attribIndex] = &format;
             }
         }
         else
@@ -961,18 +976,6 @@ angle::Result VertexArrayMtl::convertVertexBuffer(const gl::Context *glContext,
 {
     unsigned srcFormatSize = srcVertexFormat.intendedAngleFormat().pixelBytes;
 
-    size_t numVertices = GetVertexCount(srcBuffer, binding, srcFormatSize);
-    if (numVertices == 0)
-    {
-        // Out of bound buffer access, can return any values.
-        // See KHR_robust_buffer_access_behavior
-        mCurrentArrayBuffers[attribIndex]       = srcBuffer;
-        mCurrentArrayBufferFormats[attribIndex] = &srcVertexFormat;
-        mCurrentArrayBufferOffsets[attribIndex] = 0;
-        mCurrentArrayBufferStrides[attribIndex] = 16;
-        return angle::Result::Continue;
-    }
-
     ContextMtl *contextMtl = mtl::GetImpl(glContext);
 
     // Convert to tightly packed format
@@ -999,7 +1002,7 @@ angle::Result VertexArrayMtl::convertVertexBuffer(const gl::Context *glContext,
         mCurrentArrayBufferStrides[attribIndex] = stride;
         return angle::Result::Continue;
     }
-    numVertices = GetVertexCountWithConversion(
+    size_t numVertices = GetVertexCountWithConversion(
         srcBuffer, static_cast<VertexConversionBufferMtl *>(conversion), binding, srcFormatSize);
 
     const angle::Format &convertedAngleFormat = convertedFormat.actualAngleFormat();

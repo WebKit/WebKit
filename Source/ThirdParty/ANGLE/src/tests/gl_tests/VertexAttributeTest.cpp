@@ -5901,6 +5901,59 @@ void main()
     EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor::white, 1);
 }
 
+// After a draw with an out-of-bounds vertex attribute offset (undefined behavior in ES),
+// verify that subsequent valid draws still render correctly and the backend state is not
+// corrupted.
+TEST_P(VertexAttributeTest, OutOfBoundsOffsetNoFormatConversion)
+{
+    constexpr char kVS[] =
+        R"(attribute vec4 a_position;
+void main()
+{
+    gl_Position = a_position;
+    gl_PointSize = 1.0;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, essl1_shaders::fs::Red());
+    glUseProgram(program);
+
+    GLint posLoc = glGetAttribLocation(program, "a_position");
+    ASSERT_NE(-1, posLoc);
+
+    const GLfloat vertices[] = {
+        -1.0f, -1.0f,
+         1.0f, -1.0f,
+         1.0f,  1.0f,
+        -1.0f,  1.0f,
+    };
+    GLBuffer buffer;
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(posLoc);
+
+    // Valid draw: prove setup is correct.
+    glVertexAttribPointer(posLoc, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(32, 32, GLColor::red);
+
+    // OOB draw: offset far exceeds buffer. Result is UB in ES — no assertion.
+    glVertexAttribPointer(posLoc, 2, GL_FLOAT, GL_FALSE, 0,
+                          reinterpret_cast<const void *>(1024));
+    glDrawArrays(GL_POINTS, 0, 1);
+
+    // Valid draw again: prove the backend recovered and state is not corrupted.
+    glVertexAttribPointer(posLoc, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(32, 32, GLColor::red);
+}
+
 // VAO emulation fails on Mac but is not used on Mac in the wild. http://anglebug.com/40096758
 #if !defined(__APPLE__)
 #    define EMULATED_VAO_CONFIGS                                          \
