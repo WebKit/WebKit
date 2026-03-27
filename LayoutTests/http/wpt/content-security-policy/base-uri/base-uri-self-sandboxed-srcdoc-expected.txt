@@ -1,0 +1,5 @@
+
+PASS base-uri 'self' blocks cross-origin HTTPS base URL in sandboxed srcdoc iframe with empty meta CSP.
+PASS base-uri 'self' blocks cross-origin HTTPS base URL in sandboxed srcdoc iframe with base-uri 'self' meta CSP.
+PASS base-uri 'self' blocks cross-origin HTTPS base URL in sandboxed srcdoc iframe with allow-same-origin.
+
