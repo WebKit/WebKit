@@ -52,10 +52,10 @@ public:
     WEBCORE_EXPORT ~UniqueIDBDatabaseConnection();
 
     const IDBResourceIdentifier& openRequestIdentifier() { return m_openRequestIdentifier; }
-    UniqueIDBDatabase* database() { return m_database.get(); }
-    CheckedPtr<UniqueIDBDatabase> checkedDatabase();
-    UniqueIDBDatabaseManager* manager();
     IDBConnectionToClient& connectionToClient() { return m_connectionToClient; }
+    UniqueIDBDatabase* database() { return m_database.get(); }
+    WEBCORE_EXPORT CheckedPtr<UniqueIDBDatabase> checkedDatabase();
+    UniqueIDBDatabaseManager* manager();
     Ref<IDBConnectionToClient> protectedConnectionToClient();
 
     WEBCORE_EXPORT void connectionPendingCloseFromClient();

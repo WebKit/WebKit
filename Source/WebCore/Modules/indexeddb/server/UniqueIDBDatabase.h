@@ -93,6 +93,7 @@ public:
         Pass,
         Fail
     };
+    enum class DidCreateIndexInBackingStore : bool { No, Yes };
     void createObjectStore(UniqueIDBDatabaseTransaction&, const IDBObjectStoreInfo&, ErrorCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
     void deleteObjectStore(UniqueIDBDatabaseTransaction&, const String& objectStoreName, ErrorCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
     void renameObjectStore(UniqueIDBDatabaseTransaction&, IDBObjectStoreIdentifier, const String& newName, ErrorCallback&&, SpaceCheckResult = SpaceCheckResult::Unknown);
@@ -131,6 +132,8 @@ public:
     WEBCORE_EXPORT bool hasDataInMemory() const;
     WEBCORE_EXPORT void handleLowMemoryWarning();
 
+    WEBCORE_EXPORT bool isVersionChangeTransactionFinishingOrFinished(const IDBResourceIdentifier& transactionIdentifier) const;
+
 private:
     void handleDatabaseOperations();
     void handleCurrentOperation();
@@ -160,7 +163,6 @@ private:
     void clearStalePendingOpenDBRequests();
     void clearTransactionsOnConnection(UniqueIDBDatabaseConnection&);
     void createIndexAsyncAfterQuotaCheck(UniqueIDBDatabaseTransaction&, const IDBIndexInfo&, SpaceCheckResult);
-    enum class DidCreateIndexInBackingStore : bool { No, Yes };
     void didCreateIndexAsyncForTransaction(UniqueIDBDatabaseTransaction&, const IDBIndexInfo&, const IDBError&, DidCreateIndexInBackingStore = DidCreateIndexInBackingStore::Yes);
 
     CheckedPtr<IDBBackingStore> checkedBackingStore() const;

@@ -84,7 +84,8 @@ IDBDatabaseInfo* UniqueIDBDatabaseTransaction::originalDatabaseInfo() const
 void UniqueIDBDatabaseTransaction::abort()
 {
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::abort");
-    
+
+    setIsFinishingOrFinished();
     CheckedPtr database = this->database();
     if (!database)
         return;
@@ -104,6 +105,7 @@ void UniqueIDBDatabaseTransaction::abortWithoutCallback()
 {
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::abortWithoutCallback");
 
+    setIsFinishingOrFinished();
     if (RefPtr databaseConnection = m_databaseConnection.get())
         databaseConnection->abortTransactionWithoutCallback(*this);
 }
@@ -145,6 +147,7 @@ void UniqueIDBDatabaseTransaction::commit(uint64_t handledRequestResultsCount)
 {
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::commit");
 
+    setIsFinishingOrFinished();
     CheckedPtr database = this->database();
     if (!database)
         return;

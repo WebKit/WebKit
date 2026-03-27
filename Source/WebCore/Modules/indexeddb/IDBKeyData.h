@@ -152,10 +152,12 @@ inline void add(Hasher& hasher, const IDBKeyData& keyData)
     case IndexedDB::KeyType::Min:
         break;
     case IndexedDB::KeyType::Number:
-        add(hasher, keyData.number());
+        // Normalize negative 0.
+        add(hasher, keyData.number() + 0.0);
         break;
     case IndexedDB::KeyType::Date:
-        add(hasher, keyData.date());
+        // Normalize negative 0.
+        add(hasher, keyData.date() + 0.0);
         break;
     case IndexedDB::KeyType::String:
         add(hasher, keyData.string());
