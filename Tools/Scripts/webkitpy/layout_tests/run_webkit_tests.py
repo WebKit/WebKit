@@ -161,6 +161,8 @@ def parse_args(args):
             dest="sample_on_timeout", help="Don't run sample on timeout (OS X only)"),
         optparse.make_option("--no-ref-tests", action="store_true",
             dest="no_ref_tests", help="Skip all ref tests"),
+        optparse.make_option("--prefer-wpt-link-match", action="store_true",
+            default=False, help="Prefer <link rel=\"match\"> references over traditional -expected files for WPT tests"),
         optparse.make_option("--ignore-render-tree-dump-results", action="store_true",
             dest="ignore_render_tree_dump_results",
             help="Don't compare or save results for render tree dump tests (they still run and crashes are reported)"),

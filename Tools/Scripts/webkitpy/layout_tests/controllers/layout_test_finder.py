@@ -25,12 +25,15 @@ import itertools
 import json
 import re
 import urllib
+import logging
 from collections import OrderedDict
 
 from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
 from webkitpy.layout_tests.models.test import Test
 from webkitpy.thirdparty.wpt.manifest.sourcefile import SourceFile
 from webkitpy.w3c.common import TEMPLATED_TEST_HEADER
+
+_log = logging.getLogger(__name__)
 
 supported_test_extensions = (
     ".htm",
@@ -94,7 +97,7 @@ def natsort(string_to_split):
 
 
 class LayoutTestFinder(object):
-    def __init__(self, fs, layout_tests_base_dir, baseline_search_paths):
+    def __init__(self, fs, layout_tests_base_dir, baseline_search_paths, prefer_wpt_link_match=False):
         """Find layout tests.
 
         :param FileSystem fs: the current filesystem object
@@ -102,8 +105,11 @@ class LayoutTestFinder(object):
             (see: Port.layout_tests_dir())
         :param List[str] baseline_search_paths: the baseline search paths, from most to
             least specific (see: Port.baseline_search_path(device_type))
+        :param bool prefer_wpt_link_match: if True, prefer <link rel="match"> references 
+            over traditional -expected files for WPT tests
         """
         self.fs = fs
+        self.prefer_wpt_link_match = prefer_wpt_link_match
 
         layout_tests_base_dir = fs.normpath(fs.realpath(layout_tests_base_dir))
         baseline_search_paths = [
@@ -540,6 +546,80 @@ class LayoutTestFinder(object):
             len(variant) > 1 and variant[0] in ("?", "#") and variant != "?#"
         )
 
+    def _find_wpt_ref_with_link_match(self, dirname, name):
+        from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup as Parser
+
+        filename = self.fs.join(dirname, name)
+        try:
+            with open(filename, 'r', encoding='utf-8') as file:
+                content = Parser(file.read())
+        except (IOError, UnicodeDecodeError) as e:
+            _log.debug("Failed to read or parse {}: {}".format(filename, e))
+            return []
+
+        match_links = content.find_all('link', {'rel': 'match'})
+        if not match_links:
+            return []
+
+        # FIXME: support multiple match files
+        if len(match_links) > 1:
+            return []
+
+        # FIXME: support mismatch files
+        mismatch_links = content.find_all('link', {'rel': 'mismatch'})
+        if len(mismatch_links) > 0:
+            return []
+
+        reference_files = []
+        for link in match_links:
+            href = link.get('href')
+            if href:
+                # Handle absolute paths from web-platform-tests root
+                if href.startswith('/'):
+                    # Find the web-platform-tests root directory
+                    wpt_root = None
+                    current_dir = dirname
+                    while current_dir:
+                        if current_dir.endswith('web-platform-tests'):
+                            wpt_root = current_dir
+                            break
+                        parent = self.fs.dirname(current_dir)
+                        if parent == current_dir:
+                            break
+                        current_dir = parent
+                    
+                    if wpt_root:
+                        ref_path = self.fs.join(wpt_root, href.lstrip('/'))
+                    else:
+                        _log.debug("Could not find web-platform-tests root for: {}".format(href))
+                        continue
+                else:
+                    # Handle relative paths
+                    ref_path = self.fs.join(dirname, href)
+                
+                # Normalize path and check if it exists
+                ref_path = self.fs.normpath(ref_path)
+                if self.fs.exists(ref_path):
+                    reference_files.append(("==", ref_path))
+                else:
+                    _log.debug("Reference file does not exist: {}".format(ref_path))
+    
+        return reference_files
+    
+    def _find_traditional_reference_files(self, dirname, basename_set, match_reference_names, mismatch_reference_names):
+        """Find traditional -expected/-ref reference files."""
+        matches = basename_set & match_reference_names
+        mismatches = basename_set & mismatch_reference_names
+        if matches or mismatches:
+            # For historic reasons, we return matches first, and we sort them by
+            # the filename of the match. This is significant when we currently
+            # only run the first reference
+            # (https://bugs.webkit.org/show_bug.cgi?id=270794).
+            return [
+                ("==", self.fs.join(dirname, m)) for m in sorted(matches)
+            ] + [("!=", self.fs.join(dirname, m)) for m in sorted(mismatches)]
+        return None
+        
     def _expectations_for_test(self, name, non_test_files_by_search_path):
         """Given a test basename, find expectations in non_test_files_by_search_path"""
 
@@ -583,16 +663,33 @@ class LayoutTestFinder(object):
                 expected_audio_path = self.fs.join(dirname, wav_name)
 
             if reference_files is None:
-                matches = basename_set & match_reference_names
-                mismatches = basename_set & mismatch_reference_names
-                if matches or mismatches:
-                    # For historic reasons, we return matches first, and we sort them by
-                    # the filename of the match. This is significant when we currently
-                    # only run the first reference
-                    # (https://bugs.webkit.org/show_bug.cgi?id=270794).
-                    reference_files = [
-                        ("==", self.fs.join(dirname, m)) for m in sorted(matches)
-                    ] + [("!=", self.fs.join(dirname, m)) for m in sorted(mismatches)]
+                #matches = basename_set & match_reference_names
+                #mismatches = basename_set & mismatch_reference_names               
+                is_wpt_test = "web-platform-tests/" in dirname
+                
+                if self.prefer_wpt_link_match and is_wpt_test:
+                    # Try link match first when option is enabled for WPT tests
+                    _log.debug("checking for <link match> for {}".format(name))
+                    ref = self._find_wpt_ref_with_link_match(dirname, name)
+                    if ref:
+                        _log.debug("using <link match> file: {}".format(ref))
+                        reference_files = ref
+                    else:
+                        # Fallback to traditional expected files
+                        _log.debug("no link match found, falling back to traditional expected files for {}".format(name))
+                        reference_files = self._find_traditional_reference_files(dirname, basename_set, match_reference_names, mismatch_reference_names)
+                else:
+                    # Traditional behavior: try expected files first
+                    reference_files = self._find_traditional_reference_files(dirname, basename_set, match_reference_names, mismatch_reference_names)
+                    if reference_files is None:
+                        # No expected files found, try link match as fallback
+                        _log.debug("no -expected file, trying to follow <link rel=match> for {}".format(dirname + name))
+                        ref = self._find_wpt_ref_with_link_match(dirname, name)
+                        if ref:
+                            _log.debug("find ref file: {}".format(ref))
+                            reference_files = ref
+                        else:
+                            _log.debug("no link ref found")
 
         return (
             expected_text_path or expected_webarchive_path,
