@@ -52,7 +52,7 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    void postMessage(JSC::JSGlobalObject&, JSC::JSValue, Ref<DeferredPromise>&&);
+    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue, Ref<DeferredPromise>&&);
     ExceptionOr<JSC::JSValue> postLegacySynchronousMessage(JSC::JSGlobalObject&, JSC::JSValue);
 
     const UserMessageHandlerDescriptor* descriptor() const { return m_descriptor.get(); }
