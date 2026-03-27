@@ -449,29 +449,34 @@ TEST(Badging, ServiceWorker)
 }
 
 static constexpr auto originMainFrameBytes = R"SWRESOURCE(
-<iframe src="origintest2://main.com/"></iframe>
-)SWRESOURCE"_s;
-
-static constexpr auto originIFrameBytes = R"SWRESOURCE(
+<iframe src="origintest2://main.com/iframe.html"></iframe>
 <script>
-window.navigator.setAppBadge(10);
+window.onmessage = (event) => {
+    window.webkit.messageHandlers.testHandler.postMessage(event.data);
+}
 </script>
 )SWRESOURCE"_s;
 
-// This test verifies that a setAppBadge call from a cross origin iframe passes the correct
-// origin to the delegate.
-// When actually that call should've been rejected down at the DOM level because cross-origin
-// iframes cannot call setAppBadge.
-// Fixing that is for a different day, so for this branch we'll just disable this test.
-TEST(Badging, DISABLED_Origin)
+static constexpr auto originIFrameBytes = R"SWRESOURCE(
+<script type="module">
+try {
+    await window.navigator.setAppBadge(10);
+    window.parent.postMessage("BadgeSucceeded", "*");
+} catch (e) {
+    window.parent.postMessage("BadgeFailed: " + e, "*");
+}
+</script>
+)SWRESOURCE"_s;
+
+static void runOriginTest(NSString *mainURL, NSString *expectedMessage)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
     auto handler = adoptNS([[TestURLSchemeHandler alloc] init]);
     handler.get().startURLSchemeTaskHandler = ^(WKWebView *, id<WKURLSchemeTask> task) {
-        if ([task.request.URL.scheme isEqualToString:@"origintest1"])
+        if ([task.request.URL.path hasSuffix:@"index.html"])
             return respond(task, originMainFrameBytes);
-        if ([task.request.URL.scheme isEqualToString:@"origintest2"])
+        if ([task.request.URL.path hasSuffix:@"iframe.html"])
             return respond(task, originIFrameBytes);
 
         ASSERT_NOT_REACHED();
@@ -480,19 +485,42 @@ TEST(Badging, DISABLED_Origin)
     [configuration setURLSchemeHandler:handler.get() forURLScheme:@"origintest2"];
     configuration.get().preferences._appBadgeEnabled = YES;
 
+    auto testMessageHandler = adoptNS([[TestMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:testMessageHandler.get() name:@"testHandler"];
+
+    static bool gotMessage = false;
+    static RetainPtr<NSString> storedMessage;
+    testMessageHandler.get().didReceiveScriptMessage = ^(NSString *message) {
+        storedMessage = message;
+        gotMessage = true;
+    };
+
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
     auto badgeDelegate = adoptNS([BadgeDelegate new]);
 
-    NSURL *url = [NSURL URLWithString:@"origintest1://webkit.org/index.html"];
+    NSURL *url = [NSURL URLWithString:mainURL];
     badgeDelegate.get().serverURL = url;
     badgeDelegate.get().shouldAllowOriginViolations = YES;
     badgeDelegate.get().expectedAppBadgeSequence = @[@10];
     webView.get().UIDelegate = badgeDelegate.get();
 
     [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:url]];
+    TestWebKitAPI::Util::run(&gotMessage);
 
-    // Having synchronously loaded, we should already have received the badging update
-    EXPECT_EQ(badgeDelegate.get().originViolationCount, 1);
+    // For the purposes of this test suite, no origin violations should ever
+    // escape the web content process and reach the UI process delegate.
+    EXPECT_EQ(badgeDelegate.get().originViolationCount, 0);
+    EXPECT_TRUE([storedMessage.get() isEqualToString:expectedMessage]);
+}
+
+TEST(Badging, CrossOrigin)
+{
+    runOriginTest(@"origintest1://webkit.org/index.html", @"BadgeFailed: SecurityError: The operation is insecure.");
+}
+
+TEST(Badging, SameOrigin)
+{
+    runOriginTest(@"origintest2://main.com/index.html", @"BadgeSucceeded");
 }
 
 TEST(Badging, ServiceWorkerOverride)

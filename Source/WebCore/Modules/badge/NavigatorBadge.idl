@@ -26,6 +26,6 @@
 [
     EnabledBySetting=AppBadgeEnabled
 ] interface mixin NavigatorBadge {
-    [SecureContext] Promise<undefined> setAppBadge(optional [EnforceRange] unsigned long long contents);
-    [SecureContext] Promise<undefined> clearAppBadge();
+    [SecureContext, CallWith=CurrentScriptExecutionContext] Promise<undefined> setAppBadge(optional [EnforceRange] unsigned long long contents);
+    [SecureContext, CallWith=CurrentScriptExecutionContext] Promise<undefined> clearAppBadge();
 };

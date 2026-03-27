@@ -422,7 +422,7 @@ RefPtr<Document> Navigator::protectedDocument()
     return document();
 }
 
-void Navigator::setAppBadge(std::optional<unsigned long long> badge, Ref<DeferredPromise>&& promise)
+void Navigator::setAppBadge(ScriptExecutionContext& callingContext, std::optional<unsigned long long> badge, Ref<DeferredPromise>&& promise)
 {
     RefPtr frame = this->frame();
     if (!frame) {
@@ -442,13 +442,25 @@ void Navigator::setAppBadge(std::optional<unsigned long long> badge, Ref<Deferre
         return;
     }
 
+    RefPtr callingOrigin = callingContext.securityOrigin();
+    if (!callingOrigin) {
+        promise->reject(ExceptionCode::InvalidStateError);
+        return;
+    }
+
+    Ref topOrigin = callingContext.topOrigin();
+    if (!callingOrigin->isSameOriginAs(topOrigin.get())) {
+        promise->reject(ExceptionCode::SecurityError);
+        return;
+    }
+
     page->badgeClient().setAppBadge(frame.get(), SecurityOriginData::fromFrame(frame.get()), badge);
     promise->resolve();
 }
 
-void Navigator::clearAppBadge(Ref<DeferredPromise>&& promise)
+void Navigator::clearAppBadge(ScriptExecutionContext& callingContext, Ref<DeferredPromise>&& promise)
 {
-    setAppBadge(0, WTF::move(promise));
+    setAppBadge(callingContext, 0, WTF::move(promise));
 }
 
 int Navigator::maxTouchPoints() const
