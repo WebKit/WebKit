@@ -45,6 +45,7 @@ public:
 protected:
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;
     std::optional<LayoutUnit> firstLineBaseline() const override;
+    RenderMathMLOperator* unembellishedOperator() const override;
 
     void stretchVerticalOperatorsAndLayoutChildren();
     void getContentBoundingBox(LayoutUnit& width, LayoutUnit& ascent, LayoutUnit& descent) const;
@@ -54,6 +55,7 @@ protected:
 
 private:
     ASCIILiteral renderName() const override { return "RenderMathMLRow"_s; }
+    bool isSpaceLike() const override;
 };
 
 } // namespace WebCore

@@ -41,6 +41,7 @@ class MathMLPresentationElement;
 class RenderMathMLBlock : public RenderBlock {
     WTF_MAKE_TZONE_ALLOCATED(RenderMathMLBlock);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMathMLBlock);
+
 public:
     RenderMathMLBlock(Type, MathMLPresentationElement&, RenderStyle&&);
     RenderMathMLBlock(Type, Document&, RenderStyle&&);
@@ -50,14 +51,13 @@ public:
 
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
 
-    // MathML defines an "embellished operator" as roughly an <mo> that may have subscripts,
-    // superscripts, underscripts, overscripts, or a denominator (as in d/dx, where "d" is some
-    // differential operator). The padding, precedence, and stretchiness of the base <mo> should
-    // apply to the embellished operator as a whole. unembellishedOperator() checks for being an
-    // embellished operator, and omits any embellishments.
-    // FIXME: We don't yet handle all the cases in the MathML spec. See
-    // https://bugs.webkit.org/show_bug.cgi?id=78617.
+    // Returns the core operator if this element is an embellished operator per MathML Core spec.
+    // https://w3c.github.io/mathml-core/#dfn-embellished-operator
     virtual RenderMathMLOperator* unembellishedOperator() const { return nullptr; }
+
+    // Returns true if this element is space-like per MathML Core spec.
+    // https://w3c.github.io/mathml-core/#dfn-space-like
+    virtual bool isSpaceLike() const { return false; }
 
 protected:
     void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;

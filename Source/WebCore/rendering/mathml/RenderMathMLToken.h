@@ -43,7 +43,7 @@ public:
     RenderMathMLToken(Type, Document&, RenderStyle&&);
     virtual ~RenderMathMLToken();
 
-    MathMLTokenElement& NODELETE element();
+    MathMLTokenElement& NODELETE element() const;
 
     virtual void updateTokenContent();
     void updateFromElement() override;
@@ -59,6 +59,7 @@ private:
     bool isRenderMathMLToken() const final { return true; }
     ASCIILiteral renderName() const override { return "RenderMathMLToken"_s; }
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const final { return true; };
+    bool isSpaceLike() const final;
     void styleDidChange(Style::Difference, const RenderStyle* oldStyle) override;
     void updateMathVariantGlyph();
     void setMathVariantGlyphDirty();
