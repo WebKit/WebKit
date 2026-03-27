@@ -4631,28 +4631,6 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             return CallOptimizationResult::Inlined;
         }
 
-        case RegExpStringIteratorCreateIntrinsic: {
-            if (argumentCountIncludingThis < 5)
-                return CallOptimizationResult::DidNothing;
-
-            insertChecks();
-            JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
-            Node* regExp = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
-            Node* string = get(virtualRegisterForArgumentIncludingThis(2, registerOffset));
-            Node* global = get(virtualRegisterForArgumentIncludingThis(3, registerOffset));
-            Node* fullUnicode = get(virtualRegisterForArgumentIncludingThis(4, registerOffset));
-            Node* regExpStringIterator = addToGraph(NewInternalFieldObject, OpInfo(m_graph.registerStructure(globalObject->regExpStringIteratorStructure())));
-            addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSRegExpStringIterator::Field::RegExp)), regExpStringIterator, regExp);
-            addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSRegExpStringIterator::Field::String)), regExpStringIterator, string);
-            // Combine global and fullUnicode into a single flags field: flags = global | (fullUnicode << 1)
-            Node* one = addToGraph(JSConstant, OpInfo(m_graph.freeze(jsNumber(1))));
-            Node* fullUnicodeShifted = addToGraph(ArithBitLShift, fullUnicode, one);
-            Node* flags = addToGraph(ArithBitOr, global, fullUnicodeShifted);
-            addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSRegExpStringIterator::Field::Flags)), regExpStringIterator, flags);
-            setResult(regExpStringIterator);
-            return CallOptimizationResult::Inlined;
-        }
-
         case ResolvePromiseWithFirstResolvingFunctionCallCheckIntrinsic: {
             if (argumentCountIncludingThis < 3)
                 return CallOptimizationResult::DidNothing;

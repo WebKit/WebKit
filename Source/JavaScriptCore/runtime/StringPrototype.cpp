@@ -298,39 +298,6 @@ void substituteBackreferences(StringBuilder& result, const String& replacement, 
     return substituteBackreferencesInline(result, replacement, source, ovector, reg);
 }
 
-JSC_DEFINE_HOST_FUNCTION(stringProtoFuncRepeatCharacter, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    // For a string which length is single, instead of creating ropes,
-    // allocating a sequential buffer and fill with the repeated string for efficiency.
-    ASSERT(callFrame->argumentCount() == 2);
-
-    ASSERT(callFrame->uncheckedArgument(0).isString());
-    JSString* string = asString(callFrame->uncheckedArgument(0));
-    ASSERT(string->length() == 1);
-
-    JSValue repeatCountValue = callFrame->uncheckedArgument(1);
-    RELEASE_ASSERT(repeatCountValue.isNumber());
-    int32_t repeatCount;
-    double value = repeatCountValue.asNumber();
-    if (value > JSString::MaxLength)
-        return JSValue::encode(throwOutOfMemoryError(globalObject, scope));
-    repeatCount = static_cast<int32_t>(value);
-    ASSERT(repeatCount >= 0);
-    ASSERT(!repeatCountValue.isDouble() || repeatCountValue.asDouble() == repeatCount);
-
-    auto view = string->view(globalObject);
-    ASSERT(view->length() == 1);
-    scope.assertNoException();
-    char16_t character = view[0];
-    scope.release();
-    if (isLatin1(character))
-        return JSValue::encode(repeatCharacter(globalObject, static_cast<Latin1Character>(character), repeatCount));
-    return JSValue::encode(repeatCharacter(globalObject, character, repeatCount));
-}
-
 // 22.1.3.19 String.prototype.replace ( searchValue, replaceValue )
 // https://tc39.es/ecma262/#sec-string.prototype.replace
 JSC_DEFINE_HOST_FUNCTION(stringProtoFuncReplace, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -616,14 +583,6 @@ static EncodedJSValue stringIndexOfImpl(JSGlobalObject* globalObject, CallFrame*
 
 JSC_DEFINE_HOST_FUNCTION(stringProtoFuncIndexOf, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    return stringIndexOfImpl(globalObject, callFrame);
-}
-
-JSC_DEFINE_HOST_FUNCTION(builtinStringIndexOfInternal, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    ASSERT(callFrame->thisValue().isString());
-    ASSERT(callFrame->argument(0).isString());
-    ASSERT(callFrame->argument(1).isNumber() || callFrame->argument(1).isUndefined());
     return stringIndexOfImpl(globalObject, callFrame);
 }
 

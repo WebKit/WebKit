@@ -37,7 +37,6 @@ namespace JSC {
 
 JSC_DECLARE_HOST_FUNCTION(remoteFunctionCallForJSFunction);
 JSC_DECLARE_HOST_FUNCTION(remoteFunctionCallGeneric);
-JSC_DECLARE_HOST_FUNCTION(isRemoteFunction);
 JSC_DECLARE_HOST_FUNCTION(createRemoteFunction);
 
 // JSRemoteFunction creates a bridge between its native Realm and a remote one.

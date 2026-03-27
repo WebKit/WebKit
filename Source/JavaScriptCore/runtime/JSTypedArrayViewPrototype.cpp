@@ -115,26 +115,6 @@ JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncIsTypedArrayView, (JSGlobalObj
     return JSValue::encode(jsBoolean(value.isCell() && isTypedView(value.asCell()->type())));
 }
 
-JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncIsSharedTypedArrayView, (JSGlobalObject*, CallFrame* callFrame))
-{
-    JSValue value = callFrame->uncheckedArgument(0);
-    if (!value.isCell())
-        return JSValue::encode(jsBoolean(false));
-    if (!isTypedView(value.asCell()->type()))
-        return JSValue::encode(jsBoolean(false));
-    return JSValue::encode(jsBoolean(jsCast<JSArrayBufferView*>(value)->isShared()));
-}
-
-JSC_DEFINE_HOST_FUNCTION(typedArrayViewPrivateFuncIsResizableOrGrowableSharedTypedArrayView, (JSGlobalObject*, CallFrame* callFrame))
-{
-    JSValue value = callFrame->uncheckedArgument(0);
-    if (!value.isCell())
-        return JSValue::encode(jsBoolean(false));
-    if (!isTypedView(value.asCell()->type()))
-        return JSValue::encode(jsBoolean(false));
-    return JSValue::encode(jsBoolean(jsCast<JSArrayBufferView*>(value)->isResizableOrGrowableShared()));
-}
-
 static inline std::optional<JSType> isTypedArrayViewConstructor(JSValue value)
 {
     if (!value.isCell()) [[unlikely]]

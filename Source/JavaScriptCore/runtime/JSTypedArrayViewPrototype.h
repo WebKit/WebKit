@@ -52,8 +52,6 @@ private:
 };
 
 JSC_DECLARE_HOST_FUNCTION(typedArrayViewPrivateFuncIsTypedArrayView);
-JSC_DECLARE_HOST_FUNCTION(typedArrayViewPrivateFuncIsSharedTypedArrayView);
-JSC_DECLARE_HOST_FUNCTION(typedArrayViewPrivateFuncIsResizableOrGrowableSharedTypedArrayView);
 JSC_DECLARE_HOST_FUNCTION(typedArrayViewPrivateFuncTypedArrayFromFast);
 JSC_DECLARE_HOST_FUNCTION(typedArrayViewPrivateFuncIsDetached);
 JSC_DECLARE_HOST_FUNCTION(typedArrayViewPrivateFuncLength);

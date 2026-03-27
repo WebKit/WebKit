@@ -73,13 +73,10 @@ class JSGlobalObject;
     v(promiseReject, nullptr) \
     v(performPromiseThen, nullptr) \
     v(makeTypeError, nullptr) \
-    v(AggregateError, nullptr) \
     v(typedArrayLength, nullptr) \
     v(toIntegerOrInfinity, nullptr) \
     v(toLength, nullptr) \
     v(isTypedArrayView, nullptr) \
-    v(isSharedTypedArrayView, nullptr) \
-    v(isResizableOrGrowableSharedTypedArrayView, nullptr) \
     v(typedArrayFromFast, nullptr) \
     v(isDetached, nullptr) \
     v(isBoundFunction, nullptr) \
@@ -90,21 +87,16 @@ class JSGlobalObject;
     v(BuiltinDescribe, nullptr) \
     v(RegExp, nullptr) \
     v(Iterator, nullptr) \
-    v(min, nullptr) \
     v(Promise, nullptr) \
     v(InternalPromise, nullptr) \
     v(defaultPromiseThen, nullptr) \
-    v(repeatCharacter, nullptr) \
     v(isArray, nullptr) \
-    v(isArraySlow, nullptr) \
     v(Set, nullptr) \
     v(Map, nullptr) \
     v(importInRealm, nullptr) \
     v(evalFunction, nullptr) \
     v(evalInRealm, nullptr) \
-    v(moveFunctionToRealm, nullptr) \
     v(isConstructor, nullptr) \
-    v(sameValue, nullptr) \
     v(regExpProtoFlagsGetter, nullptr) \
     v(regExpProtoGlobalGetter, nullptr) \
     v(regExpProtoHasIndicesGetter, nullptr) \
@@ -119,12 +111,9 @@ class JSGlobalObject;
     v(regExpCreate, nullptr) \
     v(isRegExp, nullptr) \
     v(regExpMatchFast, nullptr) \
-    v(regExpSearchFast, nullptr) \
     v(regExpSplitFast, nullptr) \
     v(regExpPrototypeSymbolMatch, nullptr) \
-    v(regExpPrototypeSymbolReplace, nullptr) \
     v(stringIncludesInternal, nullptr) \
-    v(stringIndexOfInternal, nullptr) \
     v(stringSplitFast, nullptr) \
     v(stringSubstring, nullptr) \
     v(handleNegativeProxyHasTrapResult, nullptr) \
@@ -141,26 +130,12 @@ class JSGlobalObject;
     v(emptyPropertyNameEnumerator, nullptr) \
     v(sentinelString, nullptr) \
     v(createRemoteFunction, nullptr) \
-    v(isRemoteFunction, nullptr) \
     v(arrayFromFastWithoutMapFn, nullptr) \
     v(jsonParse, nullptr) \
     v(jsonStringify, nullptr) \
     v(String, nullptr) \
-    v(Int8Array, nullptr) \
-    v(Uint8Array, nullptr) \
-    v(Uint8ClampedArray, nullptr) \
-    v(Int16Array, nullptr) \
-    v(Uint16Array, nullptr) \
-    v(Int32Array, nullptr) \
-    v(Uint32Array, nullptr) \
-    v(Float16Array, nullptr) \
-    v(Float32Array, nullptr) \
-    v(Float64Array, nullptr) \
-    v(BigInt64Array, nullptr) \
-    v(BigUint64Array, nullptr) \
     v(wrapForValidIteratorCreate, nullptr) \
     v(asyncFromSyncIteratorCreate, nullptr) \
-    v(regExpStringIteratorCreate, nullptr) \
     v(iteratorHelperCreate, nullptr) \
     v(ReferenceError, nullptr) \
     v(SuppressedError, nullptr) \
