@@ -31,7 +31,6 @@
 #include "CoordinatedPlatformLayerBufferRGB.h"
 #include "NativeImage.h"
 #include "TextureMapper.h"
-#include <wtf/MainThread.h>
 
 #if USE(CAIRO)
 #include <cairo.h>
@@ -92,13 +91,19 @@ CoordinatedPlatformLayerBufferNativeImage::CoordinatedPlatformLayerBufferNativeI
 CoordinatedPlatformLayerBufferNativeImage::~CoordinatedPlatformLayerBufferNativeImage()
 {
 #if USE(SKIA)
-    // GPU-backed NativeImages must be destroyed on the main thread where the
-    // Skia GrDirectContext was created, not on the compositor thread. Releasing
-    // GPU resources on the wrong thread corrupts Skia's GrResourceCache.
+    // GPU-backed NativeImages must be destroyed on the thread whose GrDirectContext
+    // created them. Releasing GPU resources on the wrong thread corrupts Skia's
+    // GrResourceCache. Dispatch to the creating thread's RunLoop if we're not on it.
     if (m_image && m_image->platformImage() && m_image->platformImage()->isTextureBacked()) {
-        callOnMainThread([image = WTF::move(m_image)]() mutable {
-            image = nullptr;
-        });
+        if (auto creationRunLoop = m_image->creationRunLoop().get()) {
+            if (creationRunLoop->isCurrent())
+                return;
+            creationRunLoop->dispatch([image = WTF::move(m_image)]() mutable {
+                image = nullptr;
+            });
+        }
+        // If the RunLoop is gone, the GrDirectContext is gone too,
+        // so no GPU cache to corrupt — safe to destroy in place.
     }
 #endif
 }

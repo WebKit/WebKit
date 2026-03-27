@@ -37,6 +37,8 @@
 
 #if USE(SKIA)
 class GrDirectContext;
+#include <wtf/RunLoop.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #endif
 
 namespace WebCore {
@@ -83,6 +85,7 @@ public:
 
 #if USE(SKIA)
     GrDirectContext* grContext() const { return m_grContext; }
+    ThreadSafeWeakPtr<SerialFunctionDispatcher> creationRunLoop() const { return m_creationRunLoop; }
 #endif
 
     void addObserver(WeakRef<RenderingResourceObserver>&& observer) const
@@ -110,6 +113,7 @@ protected:
     RenderingResourceIdentifier m_renderingResourceIdentifier { RenderingResourceIdentifier::generate() };
 #if USE(SKIA)
     GrDirectContext* m_grContext { nullptr };
+    ThreadSafeWeakPtr<SerialFunctionDispatcher> m_creationRunLoop { RunLoop::currentSingleton() };
 #endif
 };
 
