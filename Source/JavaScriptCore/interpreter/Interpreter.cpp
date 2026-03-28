@@ -827,7 +827,8 @@ public:
                     if (wasmCallee->hasExceptionHandlers()) {
                         JSWebAssemblyInstance* instance = m_callFrame->wasmInstance();
                         unsigned exceptionHandlerIndex = visitor->wasmCallSiteIndex().bits();
-                        auto* wasmHandler = wasmCallee->handlerForIndex(*instance, exceptionHandlerIndex, m_wasmTag.get());
+                        bool skipTailCallInlinedFrame = visitor->isOMGTailCallInlinedOrigin();
+                        auto* wasmHandler = wasmCallee->handlerForIndex(*instance, exceptionHandlerIndex, m_wasmTag.get(), skipTailCallInlinedFrame);
                         m_handler = { wasmHandler, wasmCallee };
                         if (m_handler.m_valid) {
                             if (m_wasmTag == &Wasm::Tag::jsExceptionTag())

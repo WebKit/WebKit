@@ -529,7 +529,8 @@ void SamplingProfiler::processUnverifiedStackTraces()
             stackFrame.wasmCompilationMode = unprocessedStackFrame.wasmCompilationMode;
 #if ENABLE(JIT)
             if (pc && unprocessedStackFrame.wasmPCMap) {
-                if (std::optional<CodeOrigin> codeOrigin = unprocessedStackFrame.wasmPCMap->findPC(pc))
+                bool isOMGTailCallInlinedOrigin = false;
+                if (std::optional<CodeOrigin> codeOrigin = unprocessedStackFrame.wasmPCMap->findPC(pc, isOMGTailCallInlinedOrigin))
                     stackFrame.wasmOffset = codeOrigin->bytecodeIndex();
             }
 #else

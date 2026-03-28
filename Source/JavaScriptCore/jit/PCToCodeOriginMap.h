@@ -50,13 +50,15 @@ class WasmOrigin {
 public:
     friend bool operator==(const WasmOrigin&, const WasmOrigin&) = default;
 
-    WasmOrigin(CallSiteIndex callSiteIndex, OpcodeOrigin opcodeOrigin)
+    WasmOrigin(CallSiteIndex callSiteIndex, OpcodeOrigin opcodeOrigin, bool isOMGTailCallInlinedOrigin = false)
         : m_callSiteIndex(callSiteIndex)
         , m_opcodeOrigin(opcodeOrigin)
+        , m_isOMGTailCallInlinedOrigin(isOMGTailCallInlinedOrigin)
     { }
 
     CallSiteIndex m_callSiteIndex { };
     OpcodeOrigin m_opcodeOrigin { };
+    bool m_isOMGTailCallInlinedOrigin;
 };
 
 MAKE_VALIDATED_REINTERPRET_CAST_IMPL("WasmOrigin", WasmOrigin)
@@ -89,23 +91,24 @@ public:
     PCToCodeOriginMapBuilder(WasmTag, const B3::PCToOriginMap&);
 #endif
 
-    void appendItem(MacroAssembler::Label label, const CodeOrigin& origin)
+    void appendItem(MacroAssembler::Label label, const CodeOrigin& origin, bool isOMGTailCallInlinedOrigin = false)
     {
         if (!m_shouldBuildMapping)
             return;
-        appendItemSlow(label, origin);
+        appendItemSlow(label, origin, isOMGTailCallInlinedOrigin);
     }
     static CodeOrigin defaultCodeOrigin() { return CodeOrigin(BytecodeIndex(0)); }
 
     bool didBuildMapping() const { return m_shouldBuildMapping; }
 
 private:
-    void appendItemSlow(MacroAssembler::Label, const CodeOrigin&);
+    void appendItemSlow(MacroAssembler::Label, const CodeOrigin&, bool isOMGTailCallInlinedOrigin = false);
 
     struct CodeRange {
         MacroAssembler::Label start;
         MacroAssembler::Label end;
         CodeOrigin codeOrigin;
+        bool isOMGTailCallInlinedOrigin = false;
     };
 
     Vector<CodeRange> m_codeRanges;
@@ -120,7 +123,7 @@ public:
     PCToCodeOriginMap(PCToCodeOriginMapBuilder&&, LinkBuffer&);
     ~PCToCodeOriginMap();
 
-    std::optional<CodeOrigin> findPC(void* pc) const;
+    std::optional<CodeOrigin> findPC(void* pc, bool& isOMGTailCallInlinedOrigin) const;
 
     double memorySize();
 
@@ -131,6 +134,7 @@ private:
     uint8_t* m_compressedCodeOrigins;
     uintptr_t m_pcRangeStart;
     uintptr_t m_pcRangeEnd;
+    Vector<unsigned> m_OMGTailCallInlinedOriginIndices;
 };
 
 } // namespace JSC

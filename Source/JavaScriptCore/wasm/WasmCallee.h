@@ -76,7 +76,7 @@ public:
     // Used by Wasm's fault signal handler to determine if the fault came from Wasm.
     std::tuple<void*, void*> range() const;
 
-    const HandlerInfo* handlerForIndex(JSWebAssemblyInstance&, unsigned, const Tag*);
+    const HandlerInfo* handlerForIndex(JSWebAssemblyInstance&, unsigned, const Tag*, bool skipTailCallInlinedFrame);
 
     bool hasExceptionHandlers() const { return !m_exceptionHandlers.isEmpty(); }
 
@@ -254,7 +254,7 @@ public:
     const WasmCodeOrigin* getCodeOrigin(unsigned csi, unsigned depth, bool& isInlined) const;
     IndexOrName getOrigin(unsigned csi, unsigned depth, bool& isInlined) const;
     IndexOrName getIndexOrName(const WasmCodeOrigin*) const;
-    std::optional<CallSiteIndex> tryGetCallSiteIndex(const void*) const;
+    std::optional<CallSiteIndex> tryGetCallSiteIndex(const void*, bool& isOMGTailCallInlinedOrigin) const;
 
     Box<PCToCodeOriginMap> materializePCToOriginMap(B3::PCToOriginMap&&, LinkBuffer&);
 

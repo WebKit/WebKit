@@ -131,15 +131,17 @@ PCToCodeOriginMapBuilder::PCToCodeOriginMapBuilder(WasmTag, const B3::PCToOrigin
         B3::Origin b3Origin = originRange.origin;
         if (b3Origin) {
             Wasm::OpcodeOrigin wasmOrigin { b3Origin };
+            bool isOMGTailCallInlinedOrigin = b3Origin.isOMGTailCallInlinedOrigin();
+            CodeOrigin codeOrigin = CodeOrigin(BytecodeIndex(wasmOrigin.location()));
             // We stash the location into a BytecodeIndex.
-            appendItem(originRange.label, CodeOrigin(BytecodeIndex(wasmOrigin.location())));
+            appendItem(originRange.label, codeOrigin, isOMGTailCallInlinedOrigin);
         } else
             appendItem(originRange.label, PCToCodeOriginMapBuilder::defaultCodeOrigin());
     }
 }
 #endif
 
-void PCToCodeOriginMapBuilder::appendItemSlow(MacroAssembler::Label label, const CodeOrigin& codeOrigin)
+void PCToCodeOriginMapBuilder::appendItemSlow(MacroAssembler::Label label, const CodeOrigin& codeOrigin, bool isOMGTailCallInlinedOrigin)
 {
     if (!m_shouldBuildMapping)
         return;
@@ -152,7 +154,7 @@ void PCToCodeOriginMapBuilder::appendItemSlow(MacroAssembler::Label label, const
             return;
     }
 
-    m_codeRanges.append(CodeRange{label, label, codeOrigin});
+    m_codeRanges.append(CodeRange { label, label, codeOrigin, isOMGTailCallInlinedOrigin });
 }
 
 
@@ -222,6 +224,8 @@ PCToCodeOriginMap::PCToCodeOriginMap(PCToCodeOriginMapBuilder&& builder, LinkBuf
 
     for (unsigned i = 0; i < builder.m_codeRanges.size(); i++) {
         PCToCodeOriginMapBuilder::CodeRange& codeRange = builder.m_codeRanges[i];
+        if (builder.m_codeRanges[i].isOMGTailCallInlinedOrigin)
+            m_OMGTailCallInlinedOriginIndices.append(i);
         void* start = linkBuffer.locationOf<NoPtrTag>(codeRange.start).dataLocation();
         void* end = linkBuffer.locationOf<NoPtrTag>(codeRange.end).dataLocation();
         ASSERT(m_pcRangeStart <= std::bit_cast<uintptr_t>(start));
@@ -260,7 +264,7 @@ double PCToCodeOriginMap::memorySize()
     return size;
 }
 
-std::optional<CodeOrigin> PCToCodeOriginMap::findPC(void* pc) const
+std::optional<CodeOrigin> PCToCodeOriginMap::findPC(void* pc, bool& isOMGTailCallInlinedOrigin) const
 {
     uintptr_t pcAsInt = std::bit_cast<uintptr_t>(pc);
     if (!(m_pcRangeStart <= pcAsInt && pcAsInt <= m_pcRangeEnd))
@@ -272,6 +276,7 @@ std::optional<CodeOrigin> PCToCodeOriginMap::findPC(void* pc) const
 
     DeltaCompresseionReader pcReader(m_compressedPCs, m_compressedPCBufferSize);
     DeltaCompresseionReader codeOriginReader(m_compressedCodeOrigins, m_compressedCodeOriginsSize);
+    unsigned i = 0;
     while (true) {
         uintptr_t previousPC = currentPC;
         {
@@ -307,8 +312,12 @@ std::optional<CodeOrigin> PCToCodeOriginMap::findPC(void* pc) const
             uintptr_t startOfRange = previousPC;
             // We subtract 1 because we generate end points inclusively in this table, even though we are interested in ranges of the form: [previousPC, currentPC)
             uintptr_t endOfRange = currentPC - 1;
-            if (startOfRange <= pcAsInt && pcAsInt <= endOfRange)
+            if (startOfRange <= pcAsInt && pcAsInt <= endOfRange) {
+                isOMGTailCallInlinedOrigin = m_OMGTailCallInlinedOriginIndices.contains(i);
                 return std::optional<CodeOrigin>(previousOrigin); // We return previousOrigin here because CodeOrigin's are mapped to the startValue of the range.
+            }
+            // We start incrementing after we have a previous PC.
+            i++;
         }
     }
 

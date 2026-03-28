@@ -200,10 +200,23 @@ void Callee::destroy(Callee* callee)
     });
 }
 
-const HandlerInfo* Callee::handlerForIndex(JSWebAssemblyInstance& instance, unsigned index, const Tag* tag)
+const HandlerInfo* Callee::handlerForIndex(JSWebAssemblyInstance& instance, unsigned index, const Tag* tag, bool skipTailCallInlinedFrame)
 {
     ASSERT(hasExceptionHandlers());
-    return HandlerInfo::handlerForIndex(instance, m_exceptionHandlers, index, tag);
+    unsigned skipFirstInlineCSI = 0;
+    unsigned skipLastInlineCSI = 0;
+    if (skipTailCallInlinedFrame && isAnyOMG(compilationMode())) [[unlikely]] {
+        const auto& omgCallee = uncheckedDowncast<OMGCallee>(this);
+        bool isInlined = false;
+        const WasmCodeOrigin* codeOrigin = omgCallee->getCodeOrigin(index, 0, isInlined);
+        if (isInlined && codeOrigin) {
+            skipFirstInlineCSI = codeOrigin->firstInlineCSI;
+            skipLastInlineCSI = codeOrigin->lastInlineCSI;
+            ASSERT(skipFirstInlineCSI > 0 && skipLastInlineCSI > 0);
+        }
+        }
+
+    return HandlerInfo::handlerForIndex(instance, m_exceptionHandlers, index, tag, skipTailCallInlinedFrame, skipFirstInlineCSI, skipLastInlineCSI);
 }
 
 JITCallee::JITCallee(Wasm::CompilationMode compilationMode)
@@ -408,13 +421,13 @@ IndexOrName OptimizingJITCallee::getOrigin(unsigned csi, unsigned depth, bool& i
     return indexOrName();
 }
 
-std::optional<CallSiteIndex> OptimizingJITCallee::tryGetCallSiteIndex(const void* pc) const
+std::optional<CallSiteIndex> OptimizingJITCallee::tryGetCallSiteIndex(const void* pc , bool& isOMGTailCallInlinedOrigin) const
 {
     constexpr bool verbose = false;
     if (m_callSiteIndexMap) {
         dataLogLnIf(verbose, "Querying ", RawPointer(pc));
-        if (std::optional<CodeOrigin> codeOrigin = m_callSiteIndexMap->findPC(removeCodePtrTag<void*>(pc))) {
-            dataLogLnIf(verbose, "Found ", *codeOrigin);
+        if (std::optional<CodeOrigin> codeOrigin = m_callSiteIndexMap->findPC(removeCodePtrTag<void*>(pc), isOMGTailCallInlinedOrigin)) {
+            dataLogLnIf(verbose, "Found ", *codeOrigin, " with isOMGTailCallInlinedOrigin: ", isOMGTailCallInlinedOrigin);
             return CallSiteIndex { codeOrigin->bytecodeIndex().offset() };
         }
     }
@@ -446,8 +459,12 @@ Box<PCToCodeOriginMap> OptimizingJITCallee::materializePCToOriginMap(B3::PCToOri
     for (const B3::PCToOriginMap::OriginRange& originRange : originMap.ranges()) {
         B3::Origin b3Origin = originRange.origin;
         if (auto* origin = b3Origin.maybeWasmOrigin()) {
+            // We check whether this is a tail call origin to turn on the tail call marker in CodeOrigin.
+            bool isOMGTailCallInlinedOrigin = b3Origin.isOMGTailCallInlinedOrigin();
             // We stash the location into a BytecodeIndex.
-            builder.appendItem(originRange.label, CodeOrigin(BytecodeIndex(origin->m_callSiteIndex.bits())));
+            CodeOrigin codeOrigin = CodeOrigin(BytecodeIndex(origin->m_callSiteIndex.bits()));
+            dataLogLnIf(verbose, "Appending code origin: ", codeOrigin, " with isOMGTailCallInlinedOrigin: ", isOMGTailCallInlinedOrigin);
+            builder.appendItem(originRange.label, codeOrigin, isOMGTailCallInlinedOrigin);
         } else
             builder.appendItem(originRange.label, PCToCodeOriginMapBuilder::defaultCodeOrigin());
     }
@@ -460,8 +477,10 @@ Box<PCToCodeOriginMap> OptimizingJITCallee::materializePCToOriginMap(B3::PCToOri
         for (const B3::PCToOriginMap::OriginRange& originRange : originMap.ranges()) {
             B3::Origin b3Origin = originRange.origin;
             if (auto* origin = b3Origin.maybeWasmOrigin()) {
+                // We check whether this is a tail call origin to turn on the tail call marker in CodeOrigin.
+                bool isOMGTailCallInlinedOrigin = b3Origin.isOMGTailCallInlinedOrigin();
                 // We stash the location into a BytecodeIndex.
-                samplingProfilerBuilder.appendItem(originRange.label, CodeOrigin(BytecodeIndex(origin->m_opcodeOrigin.location())));
+                samplingProfilerBuilder.appendItem(originRange.label, CodeOrigin(BytecodeIndex(origin->m_opcodeOrigin.location())), isOMGTailCallInlinedOrigin);
             } else
                 samplingProfilerBuilder.appendItem(originRange.label, PCToCodeOriginMapBuilder::defaultCodeOrigin());
         }
