@@ -309,7 +309,10 @@ void JSValue::dumpInContextAssumingStructure(
             out.print("BigInt[heap-allocated]: addr=", RawPointer(asCell()), ", length=", jsCast<JSBigInt*>(asCell())->length(), ", sign=", jsCast<JSBigInt*>(asCell())->sign());
         else if (structure->classInfoForCells()->isSubClassOf(JSObject::info())) {
             out.print("Object: ", RawPointer(asCell()));
-            out.print(" with butterfly ", RawPointer(asObject(asCell())->butterfly()), "(base=", RawPointer(asObject(asCell())->butterfly()->base(structure)), ")");
+            auto* butterfly = asObject(asCell())->butterfly();
+            out.print(" with butterfly ", RawPointer(butterfly));
+            if (butterfly)
+                out.print("(base=", RawPointer(butterfly->base(structure)), ")");
             out.print(" (Structure ", inContext(*structure, context), ")");
         } else {
             out.print("Cell: ", RawPointer(asCell()));
