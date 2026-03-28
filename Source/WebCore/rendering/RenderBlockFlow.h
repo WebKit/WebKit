@@ -442,6 +442,7 @@ protected:
 
 private:
     bool recomputeLogicalWidthAndColumnWidth();
+    bool canSkipInlineRelayoutOnWidthChange() const;
     LayoutUnit columnGap() const;
     
     RenderBlockFlow* previousSiblingWithOverhangingFloats(bool& parentHasFloats) const;

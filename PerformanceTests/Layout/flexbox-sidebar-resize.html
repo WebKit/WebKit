@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/runner.js"></script>
+<style>
+    .outer { display: flex; height: 600px; }
+    .right { flex: 1; overflow: hidden; }
+    .line { display: flex; }
+    #left { width: 300px; }
+    #handle { width: 8px; }
+</style>
+</head>
+<body>
+<div class="outer">
+    <div id="left"></div>
+    <div id="handle"></div>
+    <div class="right" id="right"></div>
+</div>
+<script>
+var right = document.getElementById("right");
+for (var i = 0; i < 3000; i++)
+    right.insertAdjacentHTML("beforeend", '<div class="line"><span>' + i + '</span><span>x</span></div>');
+
+// Force initial layout.
+document.body.offsetHeight;
+
+var left = document.getElementById("left");
+var numberOfIterations = 20;
+
+PerfTestRunner.prepareToMeasureValuesAsync({
+    customIterationCount: numberOfIterations,
+    unit: 'ms',
+    done: function () {
+        PerfTestRunner.gc();
+    }
+});
+
+function startIteration() {
+    var startTime = PerfTestRunner.now();
+
+    // Simulate a drag gesture: 50 incremental width changes, like dragging a sidebar handle.
+    for (var x = 200; x <= 400; x += 4) {
+        left.style.width = x + "px";
+        document.body.offsetHeight;
+    }
+
+    // Reset for next iteration.
+    left.style.width = "300px";
+    document.body.offsetHeight;
+
+    if (!PerfTestRunner.measureValueAsync(PerfTestRunner.now() - startTime))
+        return;
+
+    setTimeout(startIteration, 0);
+}
+
+startIteration();
+</script>
+</body>
+</html>

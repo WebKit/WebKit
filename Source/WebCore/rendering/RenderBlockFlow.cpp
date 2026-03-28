@@ -389,6 +389,23 @@ bool RenderBlockFlow::recomputeLogicalWidthAndColumnWidth()
     return changed || oldColumnWidth != computedColumnWidth();
 }
 
+bool RenderBlockFlow::canSkipInlineRelayoutOnWidthChange() const
+{
+    if (!childrenInline())
+        return false;
+
+    if (style().textWrapMode() != TextWrapMode::NoWrap)
+        return false;
+
+    if (containsFloats())
+        return false;
+
+    if (multiColumnFlow())
+        return false;
+
+    return true;
+}
+
 LayoutUnit RenderBlockFlow::columnGap() const
 {
     if (style().columnGap().isNormal())
@@ -543,8 +560,10 @@ void RenderBlockFlow::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit 
 
     LayoutRepainter repainter(*this);
 
-    if (recomputeLogicalWidthAndColumnWidth())
-        relayoutChildren = RelayoutChildren::Yes;
+    if (recomputeLogicalWidthAndColumnWidth()) {
+        if (!canSkipInlineRelayoutOnWidthChange())
+            relayoutChildren = RelayoutChildren::Yes;
+    }
 
     if (auto* layoutState = view().frameView().layoutContext().layoutState(); layoutState && layoutState->legacyLineClamp() && !isFieldset())
         relayoutChildren = RelayoutChildren::Yes;
