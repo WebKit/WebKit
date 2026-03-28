@@ -133,7 +133,7 @@ template<typename CharacterType> bool equal(const StringBuilder&, std::span<cons
 // Inline function implementations.
 
 inline StringBuilder::StringBuilder(OverflowPolicy policy)
-    : m_shouldCrashOnOverflow { policy == OverflowPolicy::CrashOnOverflow }
+    : m_shouldCrashOnOverflow { WTF::shouldCrashOnOverflow(policy) }
 {
 }
 

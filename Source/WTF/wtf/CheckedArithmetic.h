@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Assertions.h>
+#include <wtf/OverflowHandler.h>
 
 #include <limits>
 #include <stdint.h>
@@ -76,67 +77,6 @@ namespace WTF {
 enum class CheckedState {
     DidOverflow,
     DidNotOverflow
-};
-
-class AssertNoOverflow {
-public:
-    static NO_RETURN_DUE_TO_ASSERT void overflowed()
-    {
-        ASSERT_NOT_REACHED();
-    }
-
-    void clearOverflow() { }
-
-    static NO_RETURN_DUE_TO_CRASH void crash()
-    {
-        CRASH();
-    }
-
-public:
-    constexpr bool hasOverflowed() const { return false; }
-};
-
-class CrashOnOverflow {
-public:
-    static NO_RETURN_DUE_TO_CRASH void overflowed()
-    {
-        crash();
-    }
-
-    void clearOverflow() { }
-
-    static NO_RETURN_DUE_TO_CRASH void crash()
-    {
-        CRASH();
-    }
-
-public:
-    bool hasOverflowed() const { return false; }
-};
-
-class RecordOverflow {
-protected:
-    RecordOverflow()
-        : m_overflowed(false)
-    {
-    }
-
-    void clearOverflow()
-    {
-        m_overflowed = false;
-    }
-
-    static NO_RETURN_DUE_TO_CRASH void crash()
-    {
-        CRASH();
-    }
-
-public:
-    bool hasOverflowed() const { return m_overflowed; }
-    void overflowed() { m_overflowed = true; }
-
-private:
-    unsigned char m_overflowed;
 };
 
 template<typename, typename = CrashOnOverflow> class Checked;
@@ -1021,7 +961,6 @@ inline ToType safeCast(FromType value)
 
 }
 
-using WTF::AssertNoOverflow;
 using WTF::Checked;
 using WTF::CheckedState;
 using WTF::CheckedInt8;
@@ -1033,8 +972,6 @@ using WTF::CheckedUint32;
 using WTF::CheckedInt64;
 using WTF::CheckedUint64;
 using WTF::CheckedSize;
-using WTF::CrashOnOverflow;
-using WTF::RecordOverflow;
 using WTF::checkedSum;
 using WTF::checkedDifference;
 using WTF::checkedProduct;

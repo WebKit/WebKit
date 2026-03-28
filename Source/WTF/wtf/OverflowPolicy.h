@@ -29,7 +29,16 @@
 
 namespace WTF {
 
-enum class OverflowPolicy : uint8_t { CrashOnOverflow, RecordOverflow };
+enum class OverflowPolicy : uint8_t { CrashOnOverflow, RecordOverflow, AssertNoOverflow };
+
+static constexpr bool shouldCrashOnOverflow(OverflowPolicy policy)
+{
+#ifdef ASSERT_ENABLED
+    if (policy == OverflowPolicy::AssertNoOverflow)
+        return true;
+#endif
+    return policy == OverflowPolicy::CrashOnOverflow;
+}
 
 } // namespace WTF
 

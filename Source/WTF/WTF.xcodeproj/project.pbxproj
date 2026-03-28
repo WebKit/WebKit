@@ -966,6 +966,7 @@
 		FE1E2C42224187C600F6B729 /* PlatformRegisters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE1E2C41224187C600F6B729 /* PlatformRegisters.cpp */; };
 		FE35D09227DC5ECC009DFA5B /* StackCheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE35D09127DC5ECC009DFA5B /* StackCheck.cpp */; };
 		FE499A6F2CD153B000E34F32 /* OverflowPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = FE499A6E2CD153B000E34F32 /* OverflowPolicy.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE499A712CD153B000E34F32 /* OverflowHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = FE499A702CD153B000E34F32 /* OverflowHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE6997E129D241630078B9C6 /* ReasonSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6997E029D241630078B9C6 /* ReasonSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE7ACFEF285DC2F9007FC8E9 /* RawHex.h in Headers */ = {isa = PBXBuildFile; fileRef = FE7ACFEE285DC2F8007FC8E9 /* RawHex.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE9B8B1A28B1453D0088C6E1 /* CodePtr.h in Headers */ = {isa = PBXBuildFile; fileRef = FE9B8B1928B1453D0088C6E1 /* CodePtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2064,6 +2065,7 @@
 		FE35D09127DC5ECC009DFA5B /* StackCheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackCheck.cpp; sourceTree = "<group>"; };
 		FE3842342325CC80009DD445 /* ResourceUsage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceUsage.h; sourceTree = "<group>"; };
 		FE499A6E2CD153B000E34F32 /* OverflowPolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OverflowPolicy.h; sourceTree = "<group>"; };
+		FE499A702CD153B000E34F32 /* OverflowHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OverflowHandler.h; sourceTree = "<group>"; };
 		FE6997E029D241630078B9C6 /* ReasonSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReasonSPI.h; sourceTree = "<group>"; };
 		FE7497E4208FFCAA0003565B /* PtrTag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PtrTag.h; sourceTree = "<group>"; };
 		FE7ACFEE285DC2F8007FC8E9 /* RawHex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RawHex.h; sourceTree = "<group>"; };
@@ -2591,6 +2593,7 @@
 				7CBBA07319BB7FDC00BBF025 /* OSObjectPtr.h */,
 				A8A472DA151A825B004123FF /* OSRandomSource.cpp */,
 				A8A472DB151A825B004123FF /* OSRandomSource.h */,
+				FE499A702CD153B000E34F32 /* OverflowHandler.h */,
 				FE499A6E2CD153B000E34F32 /* OverflowPolicy.h */,
 				E34CD0D022810A020020D299 /* Packed.h */,
 				E36895CB23A445CD008DD4C8 /* PackedRef.h */,
@@ -3759,6 +3762,7 @@
 				DD3DC87227A4BF8E007E5B61 /* OSObjectPtr.h in Headers */,
 				DD3DC98327A4BF8E007E5B61 /* OSRandomSource.h in Headers */,
 				DDF306E427C08654006A526F /* OSVariantSPI.h in Headers */,
+				FE499A712CD153B000E34F32 /* OverflowHandler.h in Headers */,
 				FE499A6F2CD153B000E34F32 /* OverflowPolicy.h in Headers */,
 				DD3DC86127A4BF8E007E5B61 /* Packed.h in Headers */,
 				DD3DC98D27A4BF8E007E5B61 /* PackedRef.h in Headers */,
