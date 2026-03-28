@@ -6,6 +6,6 @@ PASS The default playbackRate should not affect pitch
 PASS The default playbackRate should not affect pitch, even with preservesPitch=false
 PASS Speed-ups should not change the pitch when preservesPitch=true
 PASS Slow-downs should not change the pitch when preservesPitch=true
-FAIL Speed-ups should change the pitch when preservesPitch=false assert_approx_equals: The actual pitch should be close to the expected pitch. expected 880 +/- 21.55425219941349 but got 452.63929618768327
-FAIL Slow-downs should change the pitch when preservesPitch=false assert_approx_equals: The actual pitch should be close to the expected pitch. expected 220 +/- 21.55425219941349 but got 0
+PASS Speed-ups should change the pitch when preservesPitch=false
+PASS Slow-downs should change the pitch when preservesPitch=false
 

@@ -4377,6 +4377,11 @@ void HTMLMediaElement::setPreservesPitch(bool preservesPitch)
 
     m_preservesPitch = preservesPitch;
 
+#if ENABLE(WEB_AUDIO)
+    if (RefPtr audioSourceNode = m_audioSourceNode)
+        audioSourceNode->setPreservesPitch(preservesPitch);
+#endif
+
     if (!m_player)
         return;
 

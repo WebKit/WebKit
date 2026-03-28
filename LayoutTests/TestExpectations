@@ -6581,7 +6581,6 @@ imported/w3c/web-platform-tests/html/dom/render-blocking/remove-attr-unblocks-re
 imported/w3c/web-platform-tests/html/dom/self-origin.sub.html [ Skip ]
 imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/window-failure.https.html [ Skip ]
 imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/structured-cloning-error-extra.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/preserves-pitch.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_allow_downloads.sub.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/delay-load-event-until-move-to-empty-source.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-move-into-script-disabled-iframe.html [ Skip ]

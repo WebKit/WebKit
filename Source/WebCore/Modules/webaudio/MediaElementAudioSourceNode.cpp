@@ -70,6 +70,7 @@ MediaElementAudioSourceNode::MediaElementAudioSourceNode(BaseAudioContext& conte
     : AudioNode(context, NodeTypeMediaElementAudioSource)
     , m_mediaElement(WTF::move(mediaElement))
     , m_playbackRate { abs(m_mediaElement->reportedPlaybackRate()) }
+    , m_preservesPitch { m_mediaElement->preservesPitch() }
 {
     // Default to stereo. This could change depending on what the media element .src is set to.
     addOutput(2);
@@ -127,10 +128,25 @@ void MediaElementAudioSourceNode::setPlaybackRate(double playbackRate)
     updateResamplerIfNeeded();
 }
 
+void MediaElementAudioSourceNode::setPreservesPitch(bool preservesPitch)
+{
+    if (preservesPitch == m_preservesPitch)
+        return;
+
+    Locker locker { m_processLock };
+    m_preservesPitch = preservesPitch;
+    updateResamplerIfNeeded();
+}
+
 void MediaElementAudioSourceNode::updateResamplerIfNeeded()
 {
-    // Account for both sample rate conversion and playback rate
-    double effectiveSampleRate = m_sourceSampleRate * m_playbackRate;
+    // Only factor in the playback rate when preservesPitch is false.
+    // The MTAudioProcessingTap captures audio before AVFoundation's
+    // time-pitch algorithm, so pitch shifting must be done here.
+    // When preservesPitch is true, the AudioContext should hear the
+    // original pitch regardless of playback rate.
+    double effectiveRate = m_preservesPitch ? 1.0 : m_playbackRate.load();
+    double effectiveSampleRate = m_sourceSampleRate * effectiveRate;
 
     if (effectiveSampleRate != sampleRate()) {
         double scaleFactor = effectiveSampleRate / sampleRate();
