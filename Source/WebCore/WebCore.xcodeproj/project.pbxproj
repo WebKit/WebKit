@@ -16152,6 +16152,8 @@
 		959CED1B279CB82E0017A8FF /* ApplePayPaymentCompleteDetails.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ApplePayPaymentCompleteDetails.idl; sourceTree = "<group>"; };
 		959CED1E279CB88A0017A8FF /* JSApplePayPaymentCompleteDetails.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSApplePayPaymentCompleteDetails.cpp; sourceTree = "<group>"; };
 		959CED1F279CB88B0017A8FF /* JSApplePayPaymentCompleteDetails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSApplePayPaymentCompleteDetails.h; sourceTree = "<group>"; };
+		959E96122E49A2D4000F5BBB /* URLPatternMatchDictionary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = URLPatternMatchDictionary.h; sourceTree = "<group>"; };
+		959E96162E49A34A000F5BBB /* URLPatternMatchDictionary.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = URLPatternMatchDictionary.cpp; sourceTree = "<group>"; };
 		95A1E2E725CC75A800268C8E /* MediaControlsContextMenuItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaControlsContextMenuItem.h; sourceTree = "<group>"; };
 		95AA570D25EEED30004E9283 /* InspectorCanvasCallTracer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorCanvasCallTracer.cpp; sourceTree = "<group>"; };
 		95AA570E25EEED31004E9283 /* InspectorCanvasCallTracer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorCanvasCallTracer.h; sourceTree = "<group>"; };
@@ -31837,6 +31839,8 @@
 				909963CF2D123679008F4FA0 /* URLPatternConstructorStringParser.h */,
 				900C207D2CAF8225002C79C5 /* URLPatternInit.h */,
 				900C207E2CAF8225002C79C5 /* URLPatternInit.idl */,
+				959E96162E49A34A000F5BBB /* URLPatternMatchDictionary.cpp */,
+				959E96122E49A2D4000F5BBB /* URLPatternMatchDictionary.h */,
 				900C207F2CAF8225002C79C5 /* URLPatternOptions.h */,
 				900C20802CAF8225002C79C5 /* URLPatternOptions.idl */,
 				9017C9FC2CD007E3002E1DBC /* URLPatternParser.cpp */,

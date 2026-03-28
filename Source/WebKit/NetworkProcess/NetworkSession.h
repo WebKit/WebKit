@@ -47,6 +47,7 @@
 #include <pal/SessionID.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/Deque.h>
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/LazyUniqueRef.h>
 #include <wtf/Ref.h>
@@ -104,6 +105,18 @@ class Engine;
 
 namespace NetworkCache {
 class Cache;
+class SharedDictionary {
+    std::vector<char> buffer;
+    std::string match;
+    std::string dictID;
+    std::optional<std::string> type;
+    
+
+};
+class SharedDictManager {
+private: //hash or id for the key // or change to string or sha2 struct
+    HashMap<CC_LONG, SharedDictionary> sharedDictionaries;
+};
 }
 
 class NetworkSession : public WebCore::SWServerDelegate, public CanMakeCheckedPtr<NetworkSession> {
