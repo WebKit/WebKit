@@ -67,6 +67,7 @@ private:
     struct DrawingBuffer {
         RefPtr<DMABufBuffer> dmabuf;
         EGLImageKHR image { nullptr };
+        struct gbm_bo* bufferObject { nullptr };
     };
     DrawingBuffer createDrawingBuffer() const;
 

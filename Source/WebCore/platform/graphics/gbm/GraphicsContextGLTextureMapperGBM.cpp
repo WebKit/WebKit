@@ -178,21 +178,28 @@ GraphicsContextGLTextureMapperGBM::DrawingBuffer GraphicsContextGLTextureMapperG
     attributes.append(EGL_NONE);
 
     auto* image = EGL_CreateImageKHR(m_displayObj, EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, nullptr, attributes.span().data());
-    gbm_bo_destroy(bo);
-    if (!image)
+    if (!image) {
+        gbm_bo_destroy(bo);
         return { };
+    }
 
-    return { DMABufBuffer::create(size, format, WTF::move(fds), WTF::move(offsets), WTF::move(strides), modifier), image };
+    // Keep the original GBM BO alive while this drawing buffer is in use.
+    // The BO backs the DMA-BUF allocation; some drivers (e.g. Qualcomm)
+    // require it to remain valid for the lifetime of any imported EGL image.
+    return { DMABufBuffer::create(size, format, WTF::move(fds), WTF::move(offsets), WTF::move(strides), modifier), image, bo };
 }
 
 void GraphicsContextGLTextureMapperGBM::freeDrawingBuffers()
 {
     auto destroyBuffer = [this](DrawingBuffer& buffer) {
-        if (!buffer.image)
-            return;
-
-        EGL_DestroyImageKHR(m_displayObj, buffer.image);
-        buffer.image = nullptr;
+        if (buffer.image) {
+            EGL_DestroyImageKHR(m_displayObj, buffer.image);
+            buffer.image = nullptr;
+        }
+        if (buffer.bufferObject) {
+            gbm_bo_destroy(buffer.bufferObject);
+            buffer.bufferObject = nullptr;
+        }
         buffer.dmabuf = nullptr;
     };
     destroyBuffer(m_drawingBuffer);
