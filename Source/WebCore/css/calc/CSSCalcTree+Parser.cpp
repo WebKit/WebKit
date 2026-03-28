@@ -996,6 +996,40 @@ static std::optional<TypedChild> consumeValueWithoutSimplifyingCalc(CSSParserTok
     return typedValue;
 }
 
+// Parse the fallback value specified in anchor() and anchor-size() as a <length> or
+// <length-percentage>. Additionally, unitless zero is allowed and gets treated as 0px.
+static std::optional<TypedChild> consumeAnchorFallback(CSSParserTokenRange& tokens, int depth, ParserState& state)
+{
+    auto typedFallback = consumeValueWithoutSimplifyingCalc(tokens, depth, state);
+    if (!typedFallback)
+        return { };
+
+    auto category = typedFallback->type.calculationCategory();
+    if (!category)
+        return { };
+
+    switch (*category) {
+    case CSS::Category::Length:
+    case CSS::Category::LengthPercentage:
+        return typedFallback;
+
+    case CSS::Category::Number: {
+        if (state.parserOptions.propertyOptions.unitlessZeroLength != UnitlessZeroQuirk::Allow)
+            return { };
+
+        // Allow unitless 0.
+        auto value = std::get<Number>(typedFallback->child.value);
+        if (value.value)
+            return { };
+
+        return TypedChild { makeNumeric(0, CSSUnitType::CSS_PX), Type::makeLength() };
+    }
+
+    default:
+        return { };
+    }
+}
+
 static std::optional<TypedChild> consumeAnchor(CSSParserTokenRange& tokens, int depth, ParserState& state)
 {
     // <anchor()> = anchor( <anchor-element>? && <anchor-side>, <length-percentage>? )
@@ -1047,17 +1081,15 @@ static std::optional<TypedChild> consumeAnchor(CSSParserTokenRange& tokens, int 
     std::optional<Child> fallback;
 
     if (CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(tokens)) {
-        auto typedFallback = consumeValueWithoutSimplifyingCalc(tokens, depth, state);
-        if (!typedFallback)
+        auto maybeFallback = consumeAnchorFallback(tokens, depth, state);
+        if (!maybeFallback)
             return { };
 
-        auto category = typedFallback->type.calculationCategory();
-        if (!category)
-            return { };
-        if (*category != CSS::Category::Length && *category != CSS::Category::LengthPercentage)
-            return { };
+        fallback = WTF::move(maybeFallback->child);
 
-        fallback = WTF::move(typedFallback->child);
+        auto category = maybeFallback->type.calculationCategory();
+        ASSERT(category && (category == CSS::Category::Length || category == CSS::Category::LengthPercentage));
+
         type.percentHint = Type::determinePercentHint(*category);
     }
 
@@ -1122,7 +1154,7 @@ static std::optional<TypedChild> consumeAnchorSize(CSSParserTokenRange& tokens, 
         // if a comma follows...
         if (CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(tokens)) {
             // it must be followed by the fallback value.
-            fallback = consumeValueWithoutSimplifyingCalc(tokens, depth, state);
+            fallback = consumeAnchorFallback(tokens, depth, state);
             if (!fallback)
                 return { };
         }
@@ -1130,21 +1162,15 @@ static std::optional<TypedChild> consumeAnchorSize(CSSParserTokenRange& tokens, 
     } else {
         // if <anchor-element> and <anchor-size> is not present
         // then an optional fallback value follows
-        fallback = consumeValueWithoutSimplifyingCalc(tokens, depth, state);
+        fallback = consumeAnchorFallback(tokens, depth, state);
     }
 
+    // Return type of this function. It's a <length> if it can be resolved, otherwise the
+    // <length-percentage> fallback is resolved, which could be a percentage.
     auto type = Type::makeLength();
-
-    // anchor-size() resolves to a <length> if it can be resolved, otherwise the fallback
-    // value is resolved, which is of type <length-percentage>. Therefore the overall type
-    // of anchor-size() is <length> or <length-percentage>, depending on the type of the
-    // fallback value.
     if (fallback) {
         auto category = fallback->type.calculationCategory();
-        if (!category)
-            return { };
-        if (*category != CSS::Category::Length && *category != CSS::Category::LengthPercentage)
-            return { };
+        ASSERT(category && (category == CSS::Category::Length || category == CSS::Category::LengthPercentage));
 
         type.percentHint = Type::determinePercentHint(*category);
     }
