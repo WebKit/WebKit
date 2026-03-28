@@ -1009,16 +1009,19 @@ void Connection::processIncomingSyncReply(UniqueRef<Decoder> decoder)
 
             pendingSyncReply.replyDecoder = decoder.moveToUniquePtr();
 
-            // Keep track of the last message (that returns true for shouldDispatchMessageWhenWaitingForSyncReply())
-            // we've received before this sync reply. This is to make sure that we dispatch all messages up to this
-            // one, before the sync reply, to maintain ordering.
-            pendingSyncReply.identifierOfLastMessageToDispatchBeforeSyncReply = protectedSyncState()->identifierOfLastMessageToDispatchWhileWaitingForSyncReply();
+            {
+                Locker locker{ m_incomingMessagesLock };
 
-            // We got a reply to the last send message, wake up the client run loop so it can be processed.
-            if (i == m_pendingSyncReplies.size()) {
-                Locker locker { m_incomingMessagesLock };
-                if (RefPtr syncState = m_syncState)
-                    syncState->wakeUpClientRunLoop();
+                // Keep track of the last message (that returns true for shouldDispatchMessageWhenWaitingForSyncReply())
+                // we've received before this sync reply. This is to make sure that we dispatch all messages up to this
+                // one, before the sync reply, to maintain ordering.
+                pendingSyncReply.identifierOfLastMessageToDispatchBeforeSyncReply = protectedSyncState()->identifierOfLastMessageToDispatchWhileWaitingForSyncReply();
+
+                // We got a reply to the last send message, wake up the client run loop so it can be processed.
+                if (i == m_pendingSyncReplies.size()) {
+                    if (RefPtr syncState = m_syncState)
+                        syncState->wakeUpClientRunLoop();
+                }
             }
             return;
         }
