@@ -64,6 +64,17 @@ template<> struct Blending<LineHeight> {
     auto blend(const LineHeight&, const LineHeight&, const BlendingContext&) -> LineHeight;
 };
 
+// MARK: - Evaluation
+
+struct LineHeightEvaluationContext {
+    float computedFontSize;
+    float lineSpacing;
+};
+
+template<> struct Evaluation<LineHeight, float> {
+    auto operator()(const LineHeight&, LineHeightEvaluationContext, ZoomFactor) -> float;
+};
+
 } // namespace Style
 } // namespace WebCore
 

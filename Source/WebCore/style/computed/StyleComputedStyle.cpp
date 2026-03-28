@@ -29,6 +29,7 @@
 #include "Pagination.h"
 #include "StyleComputedStyleBase+ConstructionInlines.h"
 #include "StyleCustomPropertyRegistry.h"
+#include "StyleLineHeight.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StyleScaleTransformFunction.h"
 #include <wtf/MathExtras.h>
@@ -264,25 +265,7 @@ bool ComputedStyle::equalForTextAutosizing(const ComputedStyle& other) const
 
 float ComputedStyle::computedLineHeight() const
 {
-    return computeLineHeight(lineHeight());
-}
-
-float ComputedStyle::computeLineHeight(const LineHeight& lineHeight) const
-{
-    return WTF::switchOn(lineHeight,
-        [&](const CSS::Keyword::Normal&) -> float {
-            return metricsOfPrimaryFont().lineSpacing();
-        },
-        [&](const LineHeight::Fixed& fixed) -> float {
-            return evaluate<LayoutUnit>(fixed, usedZoomForLength()).toFloat();
-        },
-        [&](const LineHeight::Percentage& percentage) -> float {
-            return evaluate<LayoutUnit>(percentage, LayoutUnit { computedFontSize() }).toFloat();
-        },
-        [&](const LineHeight::Calc& calc) -> float {
-            return evaluate<LayoutUnit>(calc, LayoutUnit { computedFontSize() }, usedZoomForLength()).toFloat();
-        }
-    );
+    return evaluate<float>(lineHeight(), LineHeightEvaluationContext { computedFontSize(), metricsOfPrimaryFont().lineSpacing() }, usedZoomForLength());
 }
 
 void ComputedStyle::setPageScaleTransform(float scale)

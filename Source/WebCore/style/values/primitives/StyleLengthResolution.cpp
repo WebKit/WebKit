@@ -41,6 +41,7 @@
 #include "RenderStyle.h"
 #include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
+#include "StyleLineHeight.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
@@ -330,11 +331,11 @@ double computeNonCalcLengthDouble(double value, CSS::LengthUnit lengthUnit, cons
         break;
 
     case Rlh:
-        if (conversionData.rootStyle()) {
+        if (auto* rootStyle = conversionData.rootStyle()) {
             if (conversionData.computingLineHeight() || conversionData.computingFontSize())
-                value *= conversionData.rootStyle()->computeLineHeight(conversionData.rootStyle()->specifiedLineHeight());
+                value *= Style::evaluate<float>(rootStyle->specifiedLineHeight(), Style::LineHeightEvaluationContext { rootStyle->computedFontSize(), rootStyle->metricsOfPrimaryFont().lineSpacing() }, rootStyle->usedZoomForLength());
             else
-                value *= conversionData.rootStyle()->computedLineHeight();
+                value *= rootStyle->computedLineHeight();
         }
         break;
 

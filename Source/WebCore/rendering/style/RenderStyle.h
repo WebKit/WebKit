@@ -156,7 +156,6 @@ public:
     // MARK: - Derived Values
 
     inline float computedLineHeight() const;
-    inline float computeLineHeight(const Style::LineHeight&) const;
     LayoutBoxExtent imageOutsets(const Style::BorderImage&) const;
     LayoutBoxExtent imageOutsets(const Style::MaskBorder&) const;
     LayoutBoxExtent borderImageOutsets() const;

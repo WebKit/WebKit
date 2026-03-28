@@ -29,6 +29,7 @@
 #include "AnimationUtilities.h"
 
 #include "CSSPropertyParserConsumer+Font.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "RenderStyle+GettersInlines.h"
 #include "StyleBuilderChecking.h"
 #include "StyleLengthWrapper+Blending.h"
@@ -150,6 +151,27 @@ auto Blending<LineHeight>::blend(const LineHeight& a, const LineHeight& b, const
             context
         );
     }
+}
+
+// MARK: - Evaluation
+
+auto Evaluation<LineHeight, float>::operator()(
+    const LineHeight& lineHeight, LineHeightEvaluationContext context, ZoomFactor zoom) -> float
+{
+    return WTF::switchOn(lineHeight,
+        [&](const LineHeight::Fixed& fixed) {
+            return evaluate<LayoutUnit>(fixed, zoom).toFloat();
+        },
+        [&](const LineHeight::Percentage& percentage) {
+            return evaluate<LayoutUnit>(percentage, LayoutUnit { context.computedFontSize }).toFloat();
+        },
+        [&](const LineHeight::Calc& calc) {
+            return evaluate<LayoutUnit>(calc, LayoutUnit { context.computedFontSize }, zoom).toFloat();
+        },
+        [&](const CSS::Keyword::Normal&) {
+            return context.lineSpacing;
+        }
+    );
 }
 
 } // namespace Style
