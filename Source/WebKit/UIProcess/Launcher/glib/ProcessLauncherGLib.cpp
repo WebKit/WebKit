@@ -43,6 +43,8 @@
 #include <wtf/glib/Sandbox.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
+#include <wtf/text/StringToIntegerConversion.h>
+#include <wtf/text/StringView.h>
 
 #if USE(LIBWPE)
 #include "ProcessProviderLibWPE.h"
@@ -189,6 +191,27 @@ void ProcessLauncher::launchProcess()
     GRefPtr<GSubprocessLauncher> launcher = adoptGRef(g_subprocess_launcher_new(G_SUBPROCESS_FLAGS_INHERIT_FDS));
     int webkitClientSocketValue = webkitSocketPair.client.release();
     g_subprocess_launcher_take_fd(launcher.get(), webkitClientSocketValue, webkitClientSocketValue);
+
+    if (m_launchOptions.processType == ProcessLauncher::ProcessType::Web) {
+        if (const char* fdString = getenv("NUTJOB_TAP_FD")) {
+            int fdValue = parseInteger<int>(StringView(unsafeSpan(fdString))).value_or(-1);
+            if (fdValue >= 0) {
+                g_subprocess_launcher_setenv(launcher.get(), "NUTJOB_TAP_FD", fdString, TRUE);
+                g_subprocess_launcher_take_fd(launcher.get(), fdValue, fdValue);
+            }
+        }
+    }
+
+    if (m_launchOptions.processType == ProcessLauncher::ProcessType::Web) {
+        if (const char* fdString = getenv("NUTJOB_TAP_FD")) {
+            char* end = nullptr;
+            long fdValue = strtol(fdString, &end, 10);
+            if (end && !*end && fdValue >= 0) {
+                g_subprocess_launcher_setenv(launcher.get(), "NUTJOB_TAP_FD", fdString, TRUE);
+                g_subprocess_launcher_take_fd(launcher.get(), static_cast<int>(fdValue), static_cast<int>(fdValue));
+            }
+        }
+    }
 
 #if USE(SYSPROF_CAPTURE)
     UnixFileDescriptor sysprofFd;
