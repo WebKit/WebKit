@@ -43,6 +43,7 @@
 #include <wtf/Vector.h>
 #include <wtf/Variant.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/StringView.h>
 #include <algorithm>
@@ -220,6 +221,100 @@ struct FrameCounters {
     uint32_t transparencyEnds { 0 };
 };
 
+enum class AdapterHandlingStrategy : uint8_t {
+    Direct,
+    Lowered,
+    Prerasterized,
+    Placeholder,
+    Lossy,
+    UnsupportedNoOp,
+};
+
+struct AdapterHandlingCounts {
+    uint32_t direct { 0 };
+    uint32_t lowered { 0 };
+    uint32_t prerasterized { 0 };
+    uint32_t placeholder { 0 };
+    uint32_t lossy { 0 };
+    uint32_t unsupportedNoOp { 0 };
+
+    uint32_t observed() const
+    {
+        return direct + lowered + prerasterized + placeholder + lossy + unsupportedNoOp;
+    }
+
+    uint32_t supported() const
+    {
+        return direct + lowered + prerasterized;
+    }
+};
+
+struct AdapterOperationSummary {
+    String operation;
+    AdapterHandlingCounts counts;
+};
+
+struct AdapterReportSnapshot {
+    AdapterHandlingCounts overall;
+    Vector<AdapterOperationSummary, 64> operations;
+};
+
+inline void bumpHandlingCount(AdapterHandlingCounts& counts, AdapterHandlingStrategy strategy)
+{
+    switch (strategy) {
+    case AdapterHandlingStrategy::Direct:
+        ++counts.direct;
+        break;
+    case AdapterHandlingStrategy::Lowered:
+        ++counts.lowered;
+        break;
+    case AdapterHandlingStrategy::Prerasterized:
+        ++counts.prerasterized;
+        break;
+    case AdapterHandlingStrategy::Placeholder:
+        ++counts.placeholder;
+        break;
+    case AdapterHandlingStrategy::Lossy:
+        ++counts.lossy;
+        break;
+    case AdapterHandlingStrategy::UnsupportedNoOp:
+        ++counts.unsupportedNoOp;
+        break;
+    }
+}
+
+class AdapterReport {
+public:
+    void note(const char* operation, AdapterHandlingStrategy strategy)
+    {
+        if (!operation || !*operation)
+            return;
+
+        auto operationString = String::fromLatin1(operation);
+        bumpHandlingCount(m_overall, strategy);
+        for (auto& summary : m_operations) {
+            if (summary.operation == operationString) {
+                bumpHandlingCount(summary.counts, strategy);
+                return;
+            }
+        }
+
+        AdapterOperationSummary summary;
+        summary.operation = operationString;
+        bumpHandlingCount(summary.counts, strategy);
+        m_operations.append(summary);
+    }
+
+    AdapterReportSnapshot snapshot() const
+    {
+        return { m_overall, m_operations };
+    }
+
+private:
+    AdapterHandlingCounts m_overall;
+    Vector<AdapterOperationSummary, 64> m_operations;
+};
+
 struct SerializationState {
     Vector<SerializationFrame, 8> stack;
     uint32_t nextImageID { 1 };
@@ -252,6 +347,12 @@ struct SerializationState {
             stack.removeLast();
     }
 };
+
+inline void noteHandling(AdapterReport* report, const char* operation, AdapterHandlingStrategy strategy)
+{
+    if (report)
+        report->note(operation, strategy);
+}
 
 inline std::mutex& tapMutex()
 {
@@ -601,8 +702,9 @@ inline void emitPlaceholderRect(Writer& writer, const WebCore::FloatRect& rect, 
     writer.writeU32(argb);
 }
 
-inline void emitPlaceholderFallback(Writer& writer, const WebCore::FloatRect& rect, uint32_t argb, const char* feature)
+inline void emitPlaceholderFallback(Writer& writer, const WebCore::FloatRect& rect, uint32_t argb, const char* feature, AdapterReport* report = nullptr, const char* operation = nullptr)
 {
+    noteHandling(report, operation ? operation : feature, AdapterHandlingStrategy::Placeholder);
     strictUnsupported(feature, "placeholder fallback");
     emitPlaceholderRect(writer, rect, argb);
 }
@@ -971,10 +1073,11 @@ inline void emitTemporaryLineWidthRect(Writer& writer, const SerializationState&
 
 class PhaseOneOperationSerializer {
 public:
-    PhaseOneOperationSerializer(Writer& writer, SerializationState& state, FrameCounters* counters = nullptr)
+    PhaseOneOperationSerializer(Writer& writer, SerializationState& state, FrameCounters* counters = nullptr, AdapterReport* report = nullptr)
         : m_writer(writer)
         , m_state(state)
         , m_counters(counters)
+        , m_report(report)
     {
     }
 
@@ -995,12 +1098,14 @@ public:
 
     void applyGraphicsContextStateChange(const WebCore::GraphicsContextState& change)
     {
+        noteStateChanges(change, AdapterHandlingStrategy::Lowered);
         NutjobTap::emitStateChange(m_writer, change);
         NutjobTap::applyStateChange(m_state, change);
     }
 
     void setFillColor(const WebCore::Color& color)
     {
+        note("set-fill-color", AdapterHandlingStrategy::Direct);
         m_state.current().state.setFillColor(color);
         m_state.current().state.didApplyChanges();
         m_writer.writeU8(static_cast<uint8_t>(Command::SetFillColor));
@@ -1009,6 +1114,7 @@ public:
 
     void setStrokeColor(const WebCore::Color& color)
     {
+        note("set-stroke-color", AdapterHandlingStrategy::Direct);
         m_state.current().state.setStrokeColor(color);
         m_state.current().state.didApplyChanges();
         m_writer.writeU8(static_cast<uint8_t>(Command::SetStrokeColor));
@@ -1017,6 +1123,7 @@ public:
 
     void setLineWidth(float thickness)
     {
+        note("set-line-width", AdapterHandlingStrategy::Direct);
         m_state.current().state.setStrokeThickness(thickness);
         m_state.current().state.didApplyChanges();
         m_writer.writeU8(static_cast<uint8_t>(Command::SetLineWidth));
@@ -1025,6 +1132,7 @@ public:
 
     void setAlpha(float alpha)
     {
+        note("set-alpha", AdapterHandlingStrategy::Direct);
         m_state.current().state.setAlpha(alpha);
         m_state.current().state.didApplyChanges();
         m_writer.writeU8(static_cast<uint8_t>(Command::SetAlpha));
@@ -1033,6 +1141,7 @@ public:
 
     void setShouldAntialias(bool shouldAntialias)
     {
+        note("set-antialias", AdapterHandlingStrategy::Direct);
         m_state.current().state.setShouldAntialias(shouldAntialias);
         m_state.current().state.didApplyChanges();
         m_writer.writeU8(static_cast<uint8_t>(Command::SetAntialias));
@@ -1042,6 +1151,7 @@ public:
     void save()
     {
         bump(&FrameCounters::saves);
+        note("save", AdapterHandlingStrategy::Direct);
         m_state.push();
         m_writer.writeU8(static_cast<uint8_t>(Command::Save));
     }
@@ -1049,6 +1159,7 @@ public:
     void restore()
     {
         bump(&FrameCounters::restores);
+        note("restore", AdapterHandlingStrategy::Direct);
         m_state.pop();
         m_writer.writeU8(static_cast<uint8_t>(Command::Restore));
     }
@@ -1057,6 +1168,7 @@ public:
     {
         bump(&FrameCounters::translates);
         bump(&FrameCounters::setCTM);
+        note("translate", AdapterHandlingStrategy::Direct);
         m_state.current().ctm.translate(x, y);
         m_writer.writeU8(static_cast<uint8_t>(Command::Translate));
         m_writer.writeF32(x);
@@ -1067,6 +1179,7 @@ public:
     {
         bump(&FrameCounters::rotates);
         bump(&FrameCounters::setCTM);
+        note("rotate", AdapterHandlingStrategy::Direct);
         m_state.current().ctm.rotateRadians(angleInRadians);
         m_writer.writeU8(static_cast<uint8_t>(Command::Rotate));
         m_writer.writeF32(angleInRadians);
@@ -1076,6 +1189,7 @@ public:
     {
         bump(&FrameCounters::scales);
         bump(&FrameCounters::setCTM);
+        note("scale", AdapterHandlingStrategy::Direct);
         m_state.current().ctm.scale(amount);
         m_writer.writeU8(static_cast<uint8_t>(Command::Scale));
         m_writer.writeF32(amount.width());
@@ -1085,6 +1199,7 @@ public:
     void setCTM(const WebCore::AffineTransform& transform)
     {
         bump(&FrameCounters::setCTM);
+        note("set-ctm", AdapterHandlingStrategy::Direct);
         m_state.current().ctm = transform;
         emitSetCTM(m_writer, m_state.current().ctm);
     }
@@ -1092,6 +1207,7 @@ public:
     void concatCTM(const WebCore::AffineTransform& transform)
     {
         bump(&FrameCounters::setCTM);
+        note("concat-ctm", AdapterHandlingStrategy::Lowered);
         m_state.current().ctm *= transform;
         emitSetCTM(m_writer, m_state.current().ctm);
     }
@@ -1099,24 +1215,28 @@ public:
     void clipRect(const WebCore::FloatRect& rect)
     {
         bump(&FrameCounters::clipRects);
+        note("clip-rect", AdapterHandlingStrategy::Direct);
         emitClipRect(m_writer, rect);
     }
 
     void clipPath(const WebCore::Path& path)
     {
         bump(&FrameCounters::clipPaths);
+        note("clip-path", AdapterHandlingStrategy::Direct);
         emitClipPath(m_writer, path);
     }
 
     void resetClip()
     {
         bump(&FrameCounters::resetClips);
+        note("reset-clip", AdapterHandlingStrategy::Direct);
         m_writer.writeU8(static_cast<uint8_t>(Command::ResetClip));
     }
 
     void beginTransparency(float opacity, WebCore::CompositeOperator compositeOperator = WebCore::CompositeOperator::SourceOver, WebCore::BlendMode blendMode = WebCore::BlendMode::Normal)
     {
         bump(&FrameCounters::transparencyBegins);
+        note("begin-transparency", AdapterHandlingStrategy::Direct);
         m_state.push();
         emitBeginTransparency(m_writer, opacity, compositeOperator, blendMode);
     }
@@ -1124,6 +1244,7 @@ public:
     void endTransparency()
     {
         bump(&FrameCounters::transparencyEnds);
+        note("end-transparency", AdapterHandlingStrategy::Direct);
         m_state.pop();
         m_writer.writeU8(static_cast<uint8_t>(Command::EndTransparency));
     }
@@ -1131,28 +1252,54 @@ public:
     void fillRect(const WebCore::FloatRect& rect)
     {
         bump(&FrameCounters::fillRects);
+        note("fill-rect", AdapterHandlingStrategy::Direct);
         emitFillRect(m_writer, rect);
     }
 
     void fillRectColor(const WebCore::FloatRect& rect, const WebCore::Color& color)
     {
         bump(&FrameCounters::fillRectColors);
+        note("fill-rect-color", AdapterHandlingStrategy::Direct);
         emitFillRectColor(m_writer, rect, color);
     }
 
     void strokeRect(const WebCore::FloatRect& rect, float lineWidth)
     {
         bump(&FrameCounters::strokeRects);
+        note("stroke-rect", AdapterHandlingStrategy::Direct);
         emitTemporaryLineWidthRect(m_writer, m_state, rect, lineWidth);
     }
 
     void clearRect(const WebCore::FloatRect& rect)
     {
         bump(&FrameCounters::clearRects);
+        note("clear-rect", AdapterHandlingStrategy::Direct);
         emitClearRect(m_writer, rect);
     }
 
 private:
+    void note(const char* operation, AdapterHandlingStrategy strategy)
+    {
+        noteHandling(m_report, operation, strategy);
+    }
+
+    void noteStateChanges(const WebCore::GraphicsContextState& change, AdapterHandlingStrategy strategy)
+    {
+        using Change = WebCore::GraphicsContextState::Change;
+        auto changes = change.changes();
+
+        if (changes.contains(Change::FillBrush))
+            note("set-fill-color", strategy);
+        if (changes.contains(Change::StrokeBrush))
+            note("set-stroke-color", strategy);
+        if (changes.contains(Change::StrokeThickness))
+            note("set-line-width", strategy);
+        if (changes.contains(Change::Alpha))
+            note("set-alpha", strategy);
+        if (changes.contains(Change::ShouldAntialias))
+            note("set-antialias", strategy);
+    }
+
     void bump(uint32_t FrameCounters::*member)
     {
         if (!m_counters || !member)
@@ -1163,6 +1310,7 @@ private:
     Writer& m_writer;
     SerializationState& m_state;
     FrameCounters* m_counters { nullptr };
+    AdapterReport* m_report { nullptr };
 };
 
 inline bool serializePhaseOneDisplayListItem(PhaseOneOperationSerializer& serializer, const WebCore::DisplayList::Item& item)
@@ -1685,99 +1833,143 @@ inline void emitDrawPath(Writer& writer, const SerializationState& state, const 
         emitStrokePath(writer, path);
 }
 
-inline void serializeItem(Writer& writer, SerializationState& state, const WebCore::DisplayList::Item& item)
+inline void serializeItem(Writer& writer, SerializationState& state, const WebCore::DisplayList::Item& item, FrameCounters* counters = nullptr, AdapterReport* report = nullptr)
 {
-    PhaseOneOperationSerializer phaseOne(writer, state);
+    PhaseOneOperationSerializer phaseOne(writer, state, counters, report);
     if (serializePhaseOneDisplayListItem(phaseOne, item))
         return;
 
     using namespace WebCore;
     using namespace WebCore::DisplayList;
 
+    auto note = [&](const char* operation, AdapterHandlingStrategy strategy) {
+        noteHandling(report, operation, strategy);
+    };
+
     WTF::switchOn(item, [&]<typename ItemType>(const ItemType& command) {
         if constexpr (std::is_same_v<ItemType, WebCore::DisplayList::ClipRoundedRect>) {
+            note("clip-rounded-rect", AdapterHandlingStrategy::Lowered);
             emitClipPath(writer, makeRoundedRectPath(command.rect()));
         } else if constexpr (std::is_same_v<ItemType, WebCore::DisplayList::ClipPath>) {
+            note("clip-path", AdapterHandlingStrategy::Direct);
             emitClipPath(writer, command.path());
         } else if constexpr (std::is_same_v<ItemType, WebCore::DisplayList::ClipToImageBuffer>) {
             if (!emitClipImageBufferResource(writer, state, command.imageBuffer(), command.destinationRect())) {
+                note("clip-to-image-buffer", AdapterHandlingStrategy::Lossy);
                 strictUnsupported("DisplayList::ClipToImageBuffer", "clip-rect fallback");
                 emitClipRect(writer, command.destinationRect());
-            }
+            } else
+                note("clip-to-image-buffer", AdapterHandlingStrategy::Prerasterized);
         } else if constexpr (std::is_same_v<ItemType, WebCore::DisplayList::DrawRect>) {
-            if (strokeBrushRenderable(state))
+            if (strokeBrushRenderable(state)) {
+                note("draw-rect", AdapterHandlingStrategy::Direct);
                 emitTemporaryLineWidthRect(writer, state, command.rect(), command.borderThickness());
+            }
         } else if constexpr (std::is_same_v<ItemType, WebCore::DisplayList::DrawLine>) {
+            note("draw-line", AdapterHandlingStrategy::Direct);
             writer.writeU8(static_cast<uint8_t>(Command::DrawLine));
             writer.writeF32(command.point1().x());
             writer.writeF32(command.point1().y());
             writer.writeF32(command.point2().x());
             writer.writeF32(command.point2().y());
         } else if constexpr (std::is_same_v<ItemType, WebCore::DisplayList::DrawPath>) {
+            note("draw-path", AdapterHandlingStrategy::Direct);
             emitDrawPath(writer, state, command.path());
         } else if constexpr (std::is_same_v<ItemType, WebCore::DisplayList::DrawGlyphs>) {
             auto fontRef = command.font();
             if (!emitDrawGlyphsResource(writer, state, fontRef.get(), command.glyphs().span(), command.advances().span(), command.localAnchor(), command.fontSmoothingMode())) {
+                note("draw-glyphs", AdapterHandlingStrategy::Placeholder);
                 strictUnsupported("DisplayList::DrawGlyphs", "placeholder fallback");
                 emitDrawGlyphsPlaceholder(writer, state, command);
-            }
+            } else
+                note("draw-glyphs", AdapterHandlingStrategy::Prerasterized);
         } else if constexpr (std::is_same_v<ItemType, WebCore::DisplayList::DrawImageBuffer>) {
             if (!emitImageBufferResource(writer, state, command.imageBuffer(), command.destinationRect(), command.source()))
-                emitPlaceholderFallback(writer, command.destinationRect(), 0xFF9CA3AF, "DisplayList::DrawImageBuffer");
+                emitPlaceholderFallback(writer, command.destinationRect(), 0xFF9CA3AF, "DisplayList::DrawImageBuffer", report, "draw-image-buffer");
+            else
+                note("draw-image-buffer", AdapterHandlingStrategy::Lowered);
         } else if constexpr (std::is_same_v<ItemType, WebCore::DisplayList::DrawFilteredImageBuffer>) {
             WebCore::FilterResults results;
             if (!emitFilteredImageBufferResource(writer, state, command.sourceImage(), command.sourceImageRect(), command.filter(), results))
-                emitPlaceholderFallback(writer, command.sourceImageRect(), 0xFF6B7280, "DisplayList::DrawFilteredImageBuffer");
+                emitPlaceholderFallback(writer, command.sourceImageRect(), 0xFF6B7280, "DisplayList::DrawFilteredImageBuffer", report, "draw-filtered-image-buffer");
+            else
+                note("draw-filtered-image-buffer", AdapterHandlingStrategy::Prerasterized);
         } else if constexpr (std::is_same_v<ItemType, WebCore::DisplayList::DrawNativeImage>) {
             if (!emitNativeImageResource(writer, state, command.nativeImage(), command.destinationRect(), command.source()))
-                emitPlaceholderFallback(writer, command.destinationRect(), 0xFF9CA3AF, "DisplayList::DrawNativeImage");
+                emitPlaceholderFallback(writer, command.destinationRect(), 0xFF9CA3AF, "DisplayList::DrawNativeImage", report, "draw-native-image");
+            else
+                note("draw-native-image", AdapterHandlingStrategy::Lowered);
         } else if constexpr (std::is_same_v<ItemType, WebCore::DisplayList::DrawSystemImage>) {
             if (!emitRasterizedImageResource(writer, state, command.destinationRect(), [&](WebCore::GraphicsContext& context) {
                 context.drawSystemImage(const_cast<WebCore::SystemImage&>(command.systemImage()), command.destinationRect());
             }))
-                emitPlaceholderFallback(writer, command.destinationRect(), 0xFFE5E7EB, "DisplayList::DrawSystemImage");
+                emitPlaceholderFallback(writer, command.destinationRect(), 0xFFE5E7EB, "DisplayList::DrawSystemImage", report, "draw-system-image");
+            else
+                note("draw-system-image", AdapterHandlingStrategy::Prerasterized);
         } else if constexpr (std::is_same_v<ItemType, WebCore::DisplayList::DrawPatternNativeImage>) {
             if (!emitRasterizedImageResource(writer, state, command.destRect(), [&](WebCore::GraphicsContext& context) {
                 context.drawPattern(command.nativeImage(), command.destRect(), command.tileRect(), command.patternTransform(), command.phase(), command.spacing(), command.options());
             }))
-                emitPlaceholderFallback(writer, command.destRect(), 0xFF60A5FA, "DisplayList::DrawPatternNativeImage");
+                emitPlaceholderFallback(writer, command.destRect(), 0xFF60A5FA, "DisplayList::DrawPatternNativeImage", report, "draw-pattern-native-image");
+            else
+                note("draw-pattern-native-image", AdapterHandlingStrategy::Prerasterized);
         } else if constexpr (std::is_same_v<ItemType, WebCore::DisplayList::DrawPatternImageBuffer>) {
             if (!emitRasterizedImageResource(writer, state, command.destRect(), [&](WebCore::GraphicsContext& context) {
                 context.drawPattern(command.imageBuffer(), command.destRect(), command.tileRect(), command.patternTransform(), command.phase(), command.spacing(), command.options());
             }))
-                emitPlaceholderFallback(writer, command.destRect(), 0xFF60A5FA, "DisplayList::DrawPatternImageBuffer");
+                emitPlaceholderFallback(writer, command.destRect(), 0xFF60A5FA, "DisplayList::DrawPatternImageBuffer", report, "draw-pattern-image-buffer");
+            else
+                note("draw-pattern-image-buffer", AdapterHandlingStrategy::Prerasterized);
         } else if constexpr (std::is_same_v<ItemType, WebCore::DisplayList::FillRectWithGradient>) {
             if (!emitGradient(writer, command.gradient(), command.rect()))
-                emitPlaceholderFallback(writer, command.rect(), placeholderFillBrushARGB, "DisplayList::FillRectWithGradient");
+                emitPlaceholderFallback(writer, command.rect(), placeholderFillBrushARGB, "DisplayList::FillRectWithGradient", report, "fill-rect-with-gradient");
+            else
+                note("fill-rect-with-gradient", AdapterHandlingStrategy::Direct);
         } else if constexpr (std::is_same_v<ItemType, WebCore::DisplayList::FillRectWithGradientAndSpaceTransform>) {
-            if (!command.gradientSpaceTransform().isIdentity())
+            if (!command.gradientSpaceTransform().isIdentity()) {
+                note("fill-rect-with-gradient-and-space-transform", AdapterHandlingStrategy::Lossy);
                 strictUnsupported("DisplayList::FillRectWithGradientAndSpaceTransform", "ignored gradient space transform");
+            }
             if (!emitGradient(writer, command.gradient(), command.rect()))
-                emitPlaceholderFallback(writer, command.rect(), placeholderFillBrushARGB, "DisplayList::FillRectWithGradientAndSpaceTransform");
+                emitPlaceholderFallback(writer, command.rect(), placeholderFillBrushARGB, "DisplayList::FillRectWithGradientAndSpaceTransform", report, "fill-rect-with-gradient-and-space-transform");
+            else if (command.gradientSpaceTransform().isIdentity())
+                note("fill-rect-with-gradient-and-space-transform", AdapterHandlingStrategy::Direct);
         } else if constexpr (std::is_same_v<ItemType, WebCore::DisplayList::FillCompositedRect>) {
+            note("fill-composited-rect", AdapterHandlingStrategy::Lowered);
             emitFillRectColor(writer, command.rect(), command.color());
         } else if constexpr (std::is_same_v<ItemType, WebCore::DisplayList::FillRectWithRoundedHole>) {
+            note("fill-rect-with-rounded-hole", AdapterHandlingStrategy::Lossy);
             strictUnsupported("DisplayList::FillRectWithRoundedHole", "lossy fill-rect fallback");
             emitFillRectColor(writer, command.rect(), command.color());
         } else if constexpr (std::is_same_v<ItemType, WebCore::DisplayList::FillRoundedRect>) {
+            note("fill-rounded-rect", AdapterHandlingStrategy::Lowered);
             writer.writeU8(static_cast<uint8_t>(Command::Save));
             writer.writeU8(static_cast<uint8_t>(Command::SetFillColor));
             writer.writeU32(packARGB(command.color()));
             emitFillRoundedRect(writer, command.roundedRect());
             writer.writeU8(static_cast<uint8_t>(Command::Restore));
         } else if constexpr (std::is_same_v<ItemType, WebCore::DisplayList::FillPath>) {
-            if (fillBrushRenderable(state))
+            if (fillBrushRenderable(state)) {
+                note("fill-path", AdapterHandlingStrategy::Direct);
                 emitFillPath(writer, command.path());
+            }
         } else if constexpr (std::is_same_v<ItemType, WebCore::DisplayList::FillEllipse>) {
-            if (fillBrushRenderable(state))
+            if (fillBrushRenderable(state)) {
+                note("fill-ellipse", AdapterHandlingStrategy::Lowered);
                 emitFillPath(writer, makeEllipsePath(command.rect()));
+            }
         } else if constexpr (std::is_same_v<ItemType, WebCore::DisplayList::StrokePath>) {
-            if (strokeBrushRenderable(state))
+            if (strokeBrushRenderable(state)) {
+                note("stroke-path", AdapterHandlingStrategy::Direct);
                 emitStrokePath(writer, command.path());
+            }
         } else if constexpr (std::is_same_v<ItemType, WebCore::DisplayList::StrokeEllipse>) {
-            if (strokeBrushRenderable(state))
+            if (strokeBrushRenderable(state)) {
+                note("stroke-ellipse", AdapterHandlingStrategy::Lowered);
                 emitStrokePath(writer, makeEllipsePath(command.rect()));
+            }
         } else if constexpr (std::is_same_v<ItemType, WebCore::DisplayList::ApplyDeviceScaleFactor>) {
+            note("apply-device-scale-factor", AdapterHandlingStrategy::Lowered);
             // Device scale already stripped from the serializer's initial CTM.
             // Do not emit or update — nutjob always works in CSS pixels.
             return;
@@ -2039,6 +2231,11 @@ public:
         closeFrame();
     }
 
+    AdapterReportSnapshot adapterReportSnapshot() const
+    {
+        return m_adapterReport.snapshot();
+    }
+
     bool hasPlatformContext() const final { return false; }
     PlatformGraphicsContext* platformContext() const final { return nullptr; }
     const WebCore::DestinationColorSpace& colorSpace() const final { return WebCore::DestinationColorSpace::SRGB(); }
@@ -2071,10 +2268,12 @@ public:
     void drawRect(const WebCore::FloatRect& rect, float borderThickness = 1) final
     {
         noteContentCommand();
+        noteHandling("draw-rect", AdapterHandlingStrategy::Direct);
         if (fillBrushRenderable(m_serializationState))
             ++m_counters.fillRects;
-        if (fillBrushRenderable(m_serializationState))
+        if (fillBrushRenderable(m_serializationState)) {
             emitFillRect(m_writer, rect);
+        }
         if (strokeBrushRenderable(m_serializationState)) {
             ++m_counters.strokeRects;
             emitTemporaryLineWidthRect(m_writer, m_serializationState, rect, borderThickness);
@@ -2087,6 +2286,7 @@ public:
         if (!strokeBrushRenderable(m_serializationState))
             return;
         ++m_counters.drawLines;
+        noteHandling("draw-line", AdapterHandlingStrategy::Direct);
         m_writer.writeU8(static_cast<uint8_t>(Command::DrawLine));
         m_writer.writeF32(from.x());
         m_writer.writeF32(from.y());
@@ -2099,6 +2299,7 @@ public:
         noteContentCommand();
         ++m_counters.fillPaths;
         ++m_counters.strokePaths;
+        noteHandling("draw-ellipse", AdapterHandlingStrategy::Lowered);
         emitDrawPath(m_writer, m_serializationState, makeEllipsePath(rect));
     }
 
@@ -2107,6 +2308,7 @@ public:
         noteContentCommand();
         ++m_counters.fillPaths;
         ++m_counters.strokePaths;
+        noteHandling("draw-path", AdapterHandlingStrategy::Direct);
         emitDrawPath(m_writer, m_serializationState, path);
     }
 
@@ -2115,6 +2317,7 @@ public:
         noteContentCommand();
         if (fillBrushRenderable(m_serializationState)) {
             ++m_counters.fillPaths;
+            noteHandling("fill-path", AdapterHandlingStrategy::Direct);
             emitFillPath(m_writer, path);
         }
     }
@@ -2124,6 +2327,7 @@ public:
         noteContentCommand();
         if (strokeBrushRenderable(m_serializationState)) {
             ++m_counters.strokePaths;
+            noteHandling("stroke-path", AdapterHandlingStrategy::Direct);
             emitStrokePath(m_writer, path);
         }
     }
@@ -2153,6 +2357,7 @@ public:
 
     void applyDeviceScaleFactor(float) final
     {
+        noteHandling("apply-device-scale-factor", AdapterHandlingStrategy::Lowered);
         // Nutjob normalizes the mirrored stream to CSS pixels.
     }
 
@@ -2176,8 +2381,9 @@ public:
         ++m_counters.gradients;
         if (!emitGradient(m_writer, gradient, rect)) {
             ++m_counters.fillRectColors;
-            emitPlaceholderFallback("GraphicsContext::fillRect(gradient)", rect, placeholderFillBrushARGB);
-        }
+            emitPlaceholderFallback("fill-rect-with-gradient", "GraphicsContext::fillRect(gradient)", rect, placeholderFillBrushARGB);
+        } else
+            noteHandling("fill-rect-with-gradient", AdapterHandlingStrategy::Direct);
     }
 
     void fillRect(const WebCore::FloatRect& rect, WebCore::Gradient& gradient, const WebCore::AffineTransform& gradientSpaceTransform, WebCore::RequiresClipToRect) final
@@ -2185,17 +2391,19 @@ public:
         noteContentCommand();
         ++m_counters.gradients;
         if (!gradientSpaceTransform.isIdentity())
-            noteLossyFallback("GraphicsContext::fillRect(gradient,transform)", "ignored gradient space transform");
+            noteLossyFallback("fill-rect-with-gradient-and-space-transform", "GraphicsContext::fillRect(gradient,transform)", "ignored gradient space transform");
         if (!emitGradient(m_writer, gradient, rect)) {
             ++m_counters.fillRectColors;
-            emitPlaceholderFallback("GraphicsContext::fillRect(gradient,transform)", rect, placeholderFillBrushARGB);
-        }
+            emitPlaceholderFallback("fill-rect-with-gradient-and-space-transform", "GraphicsContext::fillRect(gradient,transform)", rect, placeholderFillBrushARGB);
+        } else if (gradientSpaceTransform.isIdentity())
+            noteHandling("fill-rect-with-gradient-and-space-transform", AdapterHandlingStrategy::Direct);
     }
 
     void fillRoundedRectImpl(const WebCore::FloatRoundedRect& rect, const WebCore::Color& color) final
     {
         noteContentCommand();
         ++m_counters.fillRoundedRects;
+        noteHandling("fill-rounded-rect", AdapterHandlingStrategy::Lowered);
         m_writer.writeU8(static_cast<uint8_t>(Command::Save));
         m_writer.writeU8(static_cast<uint8_t>(Command::SetFillColor));
         m_writer.writeU32(packARGB(color));
@@ -2207,7 +2415,7 @@ public:
     {
         noteContentCommand();
         ++m_counters.fillRectColors;
-        noteLossyFallback("GraphicsContext::fillRectWithRoundedHole", "fill-rect fallback");
+        noteLossyFallback("fill-rect-with-rounded-hole", "GraphicsContext::fillRectWithRoundedHole", "fill-rect fallback");
         emitFillRectColor(m_writer, rect, color);
     }
 
@@ -2229,6 +2437,7 @@ public:
         noteContentCommand();
         if (fillBrushRenderable(m_serializationState)) {
             ++m_counters.fillPaths;
+            noteHandling("fill-ellipse", AdapterHandlingStrategy::Lowered);
             emitFillPath(m_writer, makeEllipsePath(ellipse));
         }
     }
@@ -2238,6 +2447,7 @@ public:
         noteContentCommand();
         if (strokeBrushRenderable(m_serializationState)) {
             ++m_counters.strokePaths;
+            noteHandling("stroke-ellipse", AdapterHandlingStrategy::Lowered);
             emitStrokePath(m_writer, makeEllipsePath(ellipse));
         }
     }
@@ -2258,6 +2468,7 @@ public:
     {
         noteContentCommand();
         ++m_counters.clipPaths;
+        noteHandling("clip-rounded-rect", AdapterHandlingStrategy::Lowered);
         emitClipPath(m_writer, makeRoundedRectPath(rect));
     }
 
@@ -2267,9 +2478,9 @@ public:
         phaseOneSerializer().clipPath(path);
     }
 
-    void clipOut(const WebCore::FloatRect&) final { noteUnsupportedNoOp("GraphicsContext::clipOut(rect)"); }
-    void clipOutRoundedRect(const WebCore::FloatRoundedRect&) final { noteUnsupportedNoOp("GraphicsContext::clipOutRoundedRect"); }
-    void clipOut(const WebCore::Path&) final { noteUnsupportedNoOp("GraphicsContext::clipOut(path)"); }
+    void clipOut(const WebCore::FloatRect&) final { noteUnsupportedNoOp("clip-out-rect", "GraphicsContext::clipOut(rect)"); }
+    void clipOutRoundedRect(const WebCore::FloatRoundedRect&) final { noteUnsupportedNoOp("clip-out-rounded-rect", "GraphicsContext::clipOutRoundedRect"); }
+    void clipOut(const WebCore::Path&) final { noteUnsupportedNoOp("clip-out-path", "GraphicsContext::clipOut(path)"); }
 
     void clipToImageBuffer(WebCore::ImageBuffer& imageBuffer, const WebCore::FloatRect& rect) final
     {
@@ -2278,9 +2489,10 @@ public:
         // The current tap only receives the live mask buffer in this override.
         // Mirror the alpha mask when possible; fall back to a rect clip otherwise.
         if (!emitClipImageBufferResource(m_writer, m_serializationState, imageBuffer, rect)) {
-            noteLossyFallback("GraphicsContext::clipToImageBuffer", "clip-rect fallback");
+            noteLossyFallback("clip-to-image-buffer", "GraphicsContext::clipToImageBuffer", "clip-rect fallback");
             emitClipRect(m_writer, rect);
-        }
+        } else
+            noteHandling("clip-to-image-buffer", AdapterHandlingStrategy::Prerasterized);
     }
 
     WebCore::IntRect clipBounds() const final
@@ -2288,17 +2500,19 @@ public:
         return { 0, 0, std::max(m_size.width(), 0), std::max(m_size.height(), 0) };
     }
 
-    void setLineCap(WebCore::LineCap) final { noteUnsupportedNoOp("GraphicsContext::setLineCap"); }
-    void setLineDash(const WebCore::DashArray&, float) final { noteUnsupportedNoOp("GraphicsContext::setLineDash"); }
-    void setLineJoin(WebCore::LineJoin) final { noteUnsupportedNoOp("GraphicsContext::setLineJoin"); }
-    void setMiterLimit(float) final { noteUnsupportedNoOp("GraphicsContext::setMiterLimit"); }
+    void setLineCap(WebCore::LineCap) final { noteUnsupportedNoOp("set-line-cap", "GraphicsContext::setLineCap"); }
+    void setLineDash(const WebCore::DashArray&, float) final { noteUnsupportedNoOp("set-line-dash", "GraphicsContext::setLineDash"); }
+    void setLineJoin(WebCore::LineJoin) final { noteUnsupportedNoOp("set-line-join", "GraphicsContext::setLineJoin"); }
+    void setMiterLimit(float) final { noteUnsupportedNoOp("set-miter-limit", "GraphicsContext::setMiterLimit"); }
 
     void drawNativeImage(const WebCore::NativeImage& image, const WebCore::FloatRect& destRect, const WebCore::FloatRect& sourceRect, WebCore::ImagePaintingOptions = { }) final
     {
         noteContentCommand();
         ++m_counters.imagePlaceholders;
         if (!emitNativeImageResource(m_writer, m_serializationState, image, destRect, sourceRect))
-            emitPlaceholderFallback("GraphicsContext::drawNativeImage", destRect, 0xFF9CA3AF);
+            emitPlaceholderFallback("draw-native-image", "GraphicsContext::drawNativeImage", destRect, 0xFF9CA3AF);
+        else
+            noteHandling("draw-native-image", AdapterHandlingStrategy::Lowered);
     }
 
     void drawSystemImage(WebCore::SystemImage& systemImage, const WebCore::FloatRect& destinationRect) final
@@ -2309,7 +2523,9 @@ public:
         if (!emitRasterizedImageResource(m_writer, m_serializationState, destinationRect, [&](WebCore::GraphicsContext& context) {
             context.drawSystemImage(systemImage, destinationRect);
         }))
-            emitPlaceholderFallback("GraphicsContext::drawSystemImage", destinationRect, 0xFFE5E7EB);
+            emitPlaceholderFallback("draw-system-image", "GraphicsContext::drawSystemImage", destinationRect, 0xFFE5E7EB);
+        else
+            noteHandling("draw-system-image", AdapterHandlingStrategy::Prerasterized);
     }
 
     void drawPattern(const WebCore::NativeImage& image, const WebCore::FloatRect& destRect, const WebCore::FloatRect& tileRect, const WebCore::AffineTransform& patternTransform, const WebCore::FloatPoint& phase, const WebCore::FloatSize& spacing, WebCore::ImagePaintingOptions options = { }) final
@@ -2320,7 +2536,9 @@ public:
         if (!emitRasterizedImageResource(m_writer, m_serializationState, destRect, [&](WebCore::GraphicsContext& context) {
             context.drawPattern(image, destRect, tileRect, patternTransform, phase, spacing, options);
         }))
-            emitPlaceholderFallback("GraphicsContext::drawPattern(nativeImage)", destRect, 0xFF60A5FA);
+            emitPlaceholderFallback("draw-pattern-native-image", "GraphicsContext::drawPattern(nativeImage)", destRect, 0xFF60A5FA);
+        else
+            noteHandling("draw-pattern-native-image", AdapterHandlingStrategy::Prerasterized);
     }
 
     WebCore::ImageDrawResult drawImage(WebCore::Image& image, const WebCore::FloatRect& destination, const WebCore::FloatRect& sourceRect, WebCore::ImagePaintingOptions = { WebCore::ImageOrientation::Orientation::FromImage }) final
@@ -2328,7 +2546,9 @@ public:
         noteContentCommand();
         ++m_counters.imagePlaceholders;
         if (!emitImageResource(m_writer, m_serializationState, image, destination, sourceRect))
-            emitPlaceholderFallback("GraphicsContext::drawImage", destination, 0xFF9CA3AF);
+            emitPlaceholderFallback("draw-image", "GraphicsContext::drawImage", destination, 0xFF9CA3AF);
+        else
+            noteHandling("draw-image", AdapterHandlingStrategy::Lowered);
         return WebCore::ImageDrawResult::DidDraw;
     }
 
@@ -2340,7 +2560,9 @@ public:
         if (!emitRasterizedImageResource(m_writer, m_serializationState, destination, [&](WebCore::GraphicsContext& context) {
             context.drawTiledImage(image, destination, source, tileSize, spacing, options);
         }))
-            emitPlaceholderFallback("GraphicsContext::drawTiledImage(point)", destination, 0xFF60A5FA);
+            emitPlaceholderFallback("draw-tiled-image-point", "GraphicsContext::drawTiledImage(point)", destination, 0xFF60A5FA);
+        else
+            noteHandling("draw-tiled-image-point", AdapterHandlingStrategy::Prerasterized);
         return WebCore::ImageDrawResult::DidDraw;
     }
 
@@ -2352,7 +2574,9 @@ public:
         if (!emitRasterizedImageResource(m_writer, m_serializationState, destination, [&](WebCore::GraphicsContext& context) {
             context.drawTiledImage(image, destination, sourceRect, tileScaleFactor, horizontalRule, verticalRule, options);
         }))
-            emitPlaceholderFallback("GraphicsContext::drawTiledImage(rect)", destination, 0xFF60A5FA);
+            emitPlaceholderFallback("draw-tiled-image-rect", "GraphicsContext::drawTiledImage(rect)", destination, 0xFF60A5FA);
+        else
+            noteHandling("draw-tiled-image-rect", AdapterHandlingStrategy::Prerasterized);
         return WebCore::ImageDrawResult::DidDraw;
     }
 
@@ -2361,7 +2585,9 @@ public:
         noteContentCommand();
         ++m_counters.imagePlaceholders;
         if (!emitImageBufferResource(m_writer, m_serializationState, imageBuffer, destination, sourceRect))
-            emitPlaceholderFallback("GraphicsContext::drawImageBuffer", destination, 0xFF9CA3AF);
+            emitPlaceholderFallback("draw-image-buffer", "GraphicsContext::drawImageBuffer", destination, 0xFF9CA3AF);
+        else
+            noteHandling("draw-image-buffer", AdapterHandlingStrategy::Lowered);
     }
 
     void drawConsumingImageBuffer(RefPtr<WebCore::ImageBuffer> imageBuffer, const WebCore::FloatRect& destination, const WebCore::FloatRect& sourceRect, WebCore::ImagePaintingOptions = { }) final
@@ -2369,7 +2595,9 @@ public:
         noteContentCommand();
         ++m_counters.imagePlaceholders;
         if (!imageBuffer || !emitImageBufferResource(m_writer, m_serializationState, *imageBuffer, destination, sourceRect))
-            emitPlaceholderFallback("GraphicsContext::drawConsumingImageBuffer", destination, 0xFF9CA3AF);
+            emitPlaceholderFallback("draw-consuming-image-buffer", "GraphicsContext::drawConsumingImageBuffer", destination, 0xFF9CA3AF);
+        else
+            noteHandling("draw-consuming-image-buffer", AdapterHandlingStrategy::Lowered);
     }
 
     void drawFilteredImageBuffer(WebCore::ImageBuffer* sourceImage, const WebCore::FloatRect& sourceImageRect, WebCore::Filter& filter, WebCore::FilterResults& results) final
@@ -2377,7 +2605,9 @@ public:
         noteContentCommand();
         ++m_counters.imagePlaceholders;
         if (!emitFilteredImageBufferResource(m_writer, m_serializationState, sourceImage, sourceImageRect, filter, results))
-            emitPlaceholderFallback("GraphicsContext::drawFilteredImageBuffer", sourceImageRect, 0xFF6B7280);
+            emitPlaceholderFallback("draw-filtered-image-buffer", "GraphicsContext::drawFilteredImageBuffer", sourceImageRect, 0xFF6B7280);
+        else
+            noteHandling("draw-filtered-image-buffer", AdapterHandlingStrategy::Prerasterized);
     }
 
     void drawPattern(WebCore::ImageBuffer& imageBuffer, const WebCore::FloatRect& destRect, const WebCore::FloatRect& tileRect, const WebCore::AffineTransform& patternTransform, const WebCore::FloatPoint& phase, const WebCore::FloatSize& spacing, WebCore::ImagePaintingOptions options = { }) final
@@ -2388,14 +2618,16 @@ public:
         if (!emitRasterizedImageResource(m_writer, m_serializationState, destRect, [&](WebCore::GraphicsContext& context) {
             context.drawPattern(imageBuffer, destRect, tileRect, patternTransform, phase, spacing, options);
         }))
-            emitPlaceholderFallback("GraphicsContext::drawPattern(imageBuffer)", destRect, 0xFF60A5FA);
+            emitPlaceholderFallback("draw-pattern-image-buffer", "GraphicsContext::drawPattern(imageBuffer)", destRect, 0xFF60A5FA);
+        else
+            noteHandling("draw-pattern-image-buffer", AdapterHandlingStrategy::Prerasterized);
     }
 
     void drawControlPart(WebCore::ControlPart&, const WebCore::FloatRoundedRect& borderRect, float, const WebCore::ControlStyle&) final
     {
         noteContentCommand();
         ++m_counters.controlPlaceholders;
-        emitPlaceholderFallback("GraphicsContext::drawControlPart", borderRect.rect(), 0xFFD1D5DB);
+        emitPlaceholderFallback("draw-control-part", "GraphicsContext::drawControlPart", borderRect.rect(), 0xFFD1D5DB);
     }
 
 #if ENABLE(VIDEO)
@@ -2403,7 +2635,7 @@ public:
     {
         noteContentCommand();
         ++m_counters.imagePlaceholders;
-        emitPlaceholderFallback("GraphicsContext::drawVideoFrame", destination, 0xFF4B5563);
+        emitPlaceholderFallback("draw-video-frame", "GraphicsContext::drawVideoFrame", destination, 0xFF4B5563);
     }
 #endif
 
@@ -2412,8 +2644,10 @@ public:
     {
         if (!m_hasSeenContentCommand && m_suppressedInitialFlipTranslate
             && fabsf(amount.width() - 1.0f) < 0.01f
-            && fabsf(amount.height() + 1.0f) < 0.01f)
+            && fabsf(amount.height() + 1.0f) < 0.01f) {
+            noteHandling("scale", AdapterHandlingStrategy::Lowered);
             return;
+        }
         phaseOneSerializer().scale(amount);
     }
 
@@ -2429,6 +2663,7 @@ public:
             && fabsf(x) < 0.01f
             && fabsf(y - m_size.height()) < 1.0f) {
             m_suppressedInitialFlipTranslate = true;
+            noteHandling("translate", AdapterHandlingStrategy::Lowered);
             return;
         }
         phaseOneSerializer().translate(x, y);
@@ -2453,6 +2688,7 @@ public:
     {
         noteContentCommand();
         ++m_counters.focusRings;
+        noteHandling("draw-focus-ring-path", AdapterHandlingStrategy::Lowered);
         m_writer.writeU8(static_cast<uint8_t>(Command::Save));
         m_writer.writeU8(static_cast<uint8_t>(Command::SetStrokeColor));
         m_writer.writeU32(packARGB(color));
@@ -2466,6 +2702,7 @@ public:
     {
         noteContentCommand();
         ++m_counters.focusRings;
+        noteHandling("draw-focus-ring-rects", AdapterHandlingStrategy::Lowered);
         m_writer.writeU8(static_cast<uint8_t>(Command::Save));
         m_writer.writeU8(static_cast<uint8_t>(Command::SetStrokeColor));
         m_writer.writeU32(packARGB(color));
@@ -2488,9 +2725,10 @@ public:
         noteContentCommand();
         ++m_counters.drawGlyphRuns;
         if (!emitDrawGlyphsResource(m_writer, m_serializationState, font, glyphs, advances, point, smoothingMode)) {
-            notePlaceholderFallback("GraphicsContext::drawGlyphs");
+            notePlaceholderFallback("draw-glyphs", "GraphicsContext::drawGlyphs");
             emitDrawGlyphsPlaceholder(m_writer, m_serializationState, font, glyphs, advances, point);
-        }
+        } else
+            noteHandling("draw-glyphs", AdapterHandlingStrategy::Prerasterized);
     }
 
     void drawDisplayList(const WebCore::DisplayList::DisplayList& displayList, WebCore::ControlFactory& controlFactory) final
@@ -2528,9 +2766,9 @@ public:
         for (const auto& segment : lineSegments) {
             ++m_counters.drawGlyphRuns;
             auto rect = WebCore::FloatRect(origin.x() + segment.begin, origin.y(), segment.length(), height);
-            emitPlaceholderFallback("GraphicsContext::drawLinesForText", rect, *color);
+            emitPlaceholderFallback("draw-lines-for-text", "GraphicsContext::drawLinesForText", rect, *color);
             if (doubleLines)
-                emitPlaceholderFallback("GraphicsContext::drawLinesForText(double)", WebCore::FloatRect(rect.x(), rect.y() + secondLineOffset, rect.width(), rect.height()), *color);
+                emitPlaceholderFallback("draw-lines-for-text-double", "GraphicsContext::drawLinesForText(double)", WebCore::FloatRect(rect.x(), rect.y() + secondLineOffset, rect.width(), rect.height()), *color);
         }
     }
 
@@ -2538,7 +2776,7 @@ public:
     {
         noteContentCommand();
         ++m_counters.controlPlaceholders;
-        emitPlaceholderFallback("GraphicsContext::drawDotsForDocumentMarker", rect, 0xFFF59E0B);
+        emitPlaceholderFallback("draw-dots-for-document-marker", "GraphicsContext::drawDotsForDocumentMarker", rect, 0xFFF59E0B);
     }
 
     void beginPage(const WebCore::FloatRect&) final { }
@@ -2551,7 +2789,7 @@ public:
 private:
     PhaseOneOperationSerializer phaseOneSerializer()
     {
-        return { m_writer, m_serializationState, &m_counters };
+        return { m_writer, m_serializationState, &m_counters, &m_adapterReport };
     }
 
     void noteContentCommand()
@@ -2559,27 +2797,35 @@ private:
         m_hasSeenContentCommand = true;
     }
 
-    void notePlaceholderFallback(const char* feature)
+    void noteHandling(const char* operation, AdapterHandlingStrategy strategy)
+    {
+        m_adapterReport.note(operation, strategy);
+    }
+
+    void notePlaceholderFallback(const char* operation, const char* feature)
     {
         ++m_counters.placeholderFallbacks;
+        noteHandling(operation, AdapterHandlingStrategy::Placeholder);
         strictUnsupported(feature, "placeholder fallback");
     }
 
-    void emitPlaceholderFallback(const char* feature, const WebCore::FloatRect& rect, uint32_t argb)
+    void emitPlaceholderFallback(const char* operation, const char* feature, const WebCore::FloatRect& rect, uint32_t argb)
     {
-        notePlaceholderFallback(feature);
+        notePlaceholderFallback(operation, feature);
         emitPlaceholderRect(m_writer, rect, argb);
     }
 
-    void noteLossyFallback(const char* feature, const char* strategy)
+    void noteLossyFallback(const char* operation, const char* feature, const char* strategy)
     {
         ++m_counters.lossyFallbacks;
+        noteHandling(operation, AdapterHandlingStrategy::Lossy);
         strictUnsupported(feature, strategy);
     }
 
-    void noteUnsupportedNoOp(const char* feature)
+    void noteUnsupportedNoOp(const char* operation, const char* feature)
     {
         ++m_counters.unsupportedNoOps;
+        noteHandling(operation, AdapterHandlingStrategy::UnsupportedNoOp);
         strictUnsupported(feature, "unsupported no-op");
     }
 
@@ -2610,14 +2856,14 @@ private:
     SerializationState m_serializationState;
     FrameMetadata m_metadata;
     FrameCounters m_counters;
+    AdapterReport m_adapterReport;
     bool m_hasSeenContentCommand { false };
     bool m_suppressedInitialFlipTranslate { false };
     bool m_frameClosed { false };
 };
 
-inline void serializeDisplayList(const WebCore::DisplayList::DisplayList& displayList, const WebCore::GraphicsContextState& initialState, const WebCore::AffineTransform& initialCTM, const WebCore::IntSize& size, const WebCore::FloatRect& dirtyRect, const WebCore::PlatformCALayer* layer = nullptr, float backingScale = 1.0f)
+inline void serializeDisplayListToFile(FILE* file, const WebCore::DisplayList::DisplayList& displayList, const WebCore::GraphicsContextState& initialState, const WebCore::AffineTransform& initialCTM, const WebCore::IntSize& size, const WebCore::FloatRect& dirtyRect, const WebCore::PlatformCALayer* layer = nullptr, float backingScale = 1.0f, AdapterReport* report = nullptr)
 {
-    FILE* file = tapFile();
     if (!file)
         return;
 
@@ -2628,13 +2874,18 @@ inline void serializeDisplayList(const WebCore::DisplayList::DisplayList& displa
     emitFrameBegin(writer, metadata);
 
     SerializationState serializationState(initialState, normalizedInitialCTM(initialCTM, backingScale, metadata.origin, size));
-    PhaseOneOperationSerializer(writer, serializationState).emitInitialState();
+    PhaseOneOperationSerializer(writer, serializationState, nullptr, report).emitInitialState();
 
     for (const auto& item : displayList.items())
-        serializeItem(writer, serializationState, item);
+        serializeItem(writer, serializationState, item, nullptr, report);
 
     writer.writeU8(static_cast<uint8_t>(Command::FrameEnd));
     fflush(writer.out);
+}
+
+inline void serializeDisplayList(const WebCore::DisplayList::DisplayList& displayList, const WebCore::GraphicsContextState& initialState, const WebCore::AffineTransform& initialCTM, const WebCore::IntSize& size, const WebCore::FloatRect& dirtyRect, const WebCore::PlatformCALayer* layer = nullptr, float backingScale = 1.0f, AdapterReport* report = nullptr)
+{
+    serializeDisplayListToFile(tapFile(), displayList, initialState, initialCTM, size, dirtyRect, layer, backingScale, report);
 }
 
 } // namespace WebKit::NutjobTap

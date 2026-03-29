@@ -127,6 +127,37 @@ static bool writeStringToPath(const String& path, StringView content)
     return success;
 }
 
+static Ref<JSON::Object> makeHandlingCountsJSON(const WebKit::NutjobTap::AdapterHandlingCounts& counts)
+{
+    auto object = JSON::Object::create();
+    object->setInteger("direct"_s, counts.direct);
+    object->setInteger("lowered"_s, counts.lowered);
+    object->setInteger("prerasterized"_s, counts.prerasterized);
+    object->setInteger("placeholder"_s, counts.placeholder);
+    object->setInteger("lossy"_s, counts.lossy);
+    object->setInteger("unsupportedNoOp"_s, counts.unsupportedNoOp);
+    object->setInteger("observed"_s, counts.observed());
+    object->setInteger("supported"_s, counts.supported());
+    object->setDouble("supportRatio"_s, counts.observed() ? static_cast<double>(counts.supported()) / counts.observed() : 1.0);
+    return object;
+}
+
+static String adapterReportJSONString(const WebKit::NutjobTap::AdapterReportSnapshot& report)
+{
+    auto root = JSON::Object::create();
+    root->setObject("overall"_s, makeHandlingCountsJSON(report.overall));
+
+    auto operations = JSON::Array::create();
+    for (const auto& summary : report.operations) {
+        auto entry = JSON::Object::create();
+        entry->setString("operation"_s, summary.operation);
+        entry->setObject("counts"_s, makeHandlingCountsJSON(summary.counts));
+        operations->pushObject(WTF::move(entry));
+    }
+    root->setArray("operations"_s, WTF::move(operations));
+    return root->toJSONString();
+}
+
 static std::optional<double> jsonNumber(const JSON::Object& object, const String& key)
 {
     auto value = object.getValue(key);
@@ -188,6 +219,79 @@ static Color colorFromARGB(uint32_t argb)
         static_cast<uint8_t>(argb & 0xFF),
         static_cast<uint8_t>((argb >> 24) & 0xFF)
     } };
+}
+
+static Ref<JSON::Object> makeRectJSON(const IntRect& rect)
+{
+    auto object = JSON::Object::create();
+    object->setInteger("x"_s, rect.x());
+    object->setInteger("y"_s, rect.y());
+    object->setInteger("width"_s, rect.width());
+    object->setInteger("height"_s, rect.height());
+    return object;
+}
+
+static Ref<JSON::Object> makeCTMJSON(const AffineTransform& transform)
+{
+    auto object = JSON::Object::create();
+    object->setDouble("a"_s, transform.a());
+    object->setDouble("b"_s, transform.b());
+    object->setDouble("c"_s, transform.c());
+    object->setDouble("d"_s, transform.d());
+    object->setDouble("tx"_s, transform.e());
+    object->setDouble("ty"_s, transform.f());
+    return object;
+}
+
+static void updateWitnessDepths(StringView opName, unsigned& saveDepth, unsigned& transparencyDepth)
+{
+    if (opName == "save"_s) {
+        ++saveDepth;
+        return;
+    }
+    if (opName == "restore"_s) {
+        if (saveDepth)
+            --saveDepth;
+        return;
+    }
+    if (opName == "begin-transparency"_s) {
+        ++transparencyDepth;
+        return;
+    }
+    if (opName == "end-transparency"_s && transparencyDepth)
+        --transparencyDepth;
+}
+
+static Ref<JSON::Object> makeWitnessEntry(const GraphicsContext& context, const JSON::Object& op, size_t index, unsigned saveDepth, unsigned transparencyDepth)
+{
+    auto entry = JSON::Object::create();
+    entry->setInteger("seq"_s, static_cast<int>(index));
+    entry->setString("op"_s, jsonString(op, "op"_s));
+    entry->setObject("ctm"_s, makeCTMJSON(context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale)));
+    entry->setObject("clipBounds"_s, makeRectJSON(context.clipBounds()));
+    entry->setDouble("alpha"_s, context.alpha());
+    entry->setDouble("strokeThickness"_s, context.strokeThickness());
+    entry->setInteger("saveDepth"_s, static_cast<int>(saveDepth));
+    entry->setInteger("transparencyDepth"_s, static_cast<int>(transparencyDepth));
+    return entry;
+}
+
+static String nativeWitnessJSONString(const OracleProgram& program, const Vector<Ref<JSON::Object>>& entries)
+{
+    auto root = JSON::Object::create();
+    auto canvas = JSON::Object::create();
+    canvas->setInteger("width"_s, program.canvasSize.width());
+    canvas->setInteger("height"_s, program.canvasSize.height());
+    canvas->setDouble("deviceScale"_s, program.deviceScale);
+    canvas->setInteger("backgroundARGB"_s, static_cast<int64_t>(program.backgroundARGB));
+    root->setObject("canvas"_s, WTF::move(canvas));
+    root->setInteger("entryCount"_s, entries.size());
+
+    auto items = JSON::Array::create();
+    for (const auto& entry : entries)
+        items->pushObject(entry.copyRef());
+    root->setArray("entries"_s, WTF::move(items));
+    return root->toJSONString();
 }
 
 static std::optional<OracleProgram> parseOracleProgram(const String& programPath, String& error)
@@ -474,10 +578,13 @@ static OracleStatus applyOracleOperation(GraphicsContext& context, const OracleP
     return strictMode ? OracleStatus::UnsupportedOp : OracleStatus::Ok;
 }
 
-static OracleStatus runOracleProgram(const OracleProgram& program, const String& artifactsDirectory, bool strictMode, String& message)
+static OracleStatus runOracleProgram(const OracleProgram& program, const String& artifactsDirectory, StringView adapterLane, bool strictMode, String& message)
 {
     auto adapterPath = FileSystem::pathByAppendingComponent(artifactsDirectory, "adapter.nj"_s);
     auto nativeRawPath = FileSystem::pathByAppendingComponent(artifactsDirectory, "native.raw"_s);
+    auto adapterReportPath = FileSystem::pathByAppendingComponent(artifactsDirectory, "adapter-report.json"_s);
+    auto nativeWitnessPath = FileSystem::pathByAppendingComponent(artifactsDirectory, "native-witness.json"_s);
+    auto canvasRect = FloatRect { 0, 0, static_cast<float>(program.canvasSize.width()), static_cast<float>(program.canvasSize.height()) };
 
     RefPtr imageBuffer = ImageBuffer::create(FloatSize { static_cast<float>(program.canvasSize.width()), static_cast<float>(program.canvasSize.height()) }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, program.deviceScale, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!imageBuffer) {
@@ -493,24 +600,71 @@ static OracleStatus runOracleProgram(const OracleProgram& program, const String&
     }
 
     OracleStatus status = OracleStatus::Ok;
+    WebKit::NutjobTap::AdapterReportSnapshot adapterReport;
+    Vector<Ref<JSON::Object>> nativeWitnessEntries;
+    unsigned witnessSaveDepth = 0;
+    unsigned witnessTransparencyDepth = 0;
     {
         auto& primaryContext = imageBuffer->context();
         auto initialState = primaryContext.state();
         auto initialCTM = primaryContext.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
-        WebKit::NutjobTap::MirroringGraphicsContext recordingContext(adapterFile, initialState, initialCTM, program.canvasSize, FloatRect { 0, 0, static_cast<float>(program.canvasSize.width()), static_cast<float>(program.canvasSize.height()) }, nullptr, program.deviceScale);
-        BifurcatedGraphicsContext context(primaryContext, recordingContext);
+        if (adapterLane == "tee"_s) {
+            WebKit::NutjobTap::MirroringGraphicsContext recordingContext(adapterFile, initialState, initialCTM, program.canvasSize, canvasRect, nullptr, program.deviceScale);
+            BifurcatedGraphicsContext context(primaryContext, recordingContext);
 
-        if (program.backgroundARGB)
-            context.fillRect(FloatRect { 0, 0, static_cast<float>(program.canvasSize.width()), static_cast<float>(program.canvasSize.height()) }, colorFromARGB(program.backgroundARGB));
+            if (program.backgroundARGB)
+                context.fillRect(canvasRect, colorFromARGB(program.backgroundARGB));
 
-        for (auto& op : program.ops) {
-            status = applyOracleOperation(context, program, op.get(), strictMode, message);
-            if (status != OracleStatus::Ok)
-                break;
+            for (auto& op : program.ops) {
+                status = applyOracleOperation(context, program, op.get(), strictMode, message);
+                if (status != OracleStatus::Ok)
+                    break;
+
+                updateWitnessDepths(jsonString(op.get(), "op"_s), witnessSaveDepth, witnessTransparencyDepth);
+                nativeWitnessEntries.append(makeWitnessEntry(primaryContext, op.get(), nativeWitnessEntries.size(), witnessSaveDepth, witnessTransparencyDepth));
+            }
+
+            adapterReport = recordingContext.adapterReportSnapshot();
+        } else if (adapterLane == "display-list"_s) {
+            RecorderImpl recordingContext({ }, canvasRect, { });
+            BifurcatedGraphicsContext context(primaryContext, recordingContext);
+
+            if (program.backgroundARGB)
+                context.fillRect(canvasRect, colorFromARGB(program.backgroundARGB));
+
+            for (auto& op : program.ops) {
+                status = applyOracleOperation(context, program, op.get(), strictMode, message);
+                if (status != OracleStatus::Ok)
+                    break;
+
+                updateWitnessDepths(jsonString(op.get(), "op"_s), witnessSaveDepth, witnessTransparencyDepth);
+                nativeWitnessEntries.append(makeWitnessEntry(primaryContext, op.get(), nativeWitnessEntries.size(), witnessSaveDepth, witnessTransparencyDepth));
+            }
+
+            if (status == OracleStatus::Ok) {
+                Ref displayList = recordingContext.takeDisplayList();
+                WebKit::NutjobTap::AdapterReport serializerReport;
+                WebKit::NutjobTap::serializeDisplayListToFile(adapterFile, displayList.get(), initialState, initialCTM, program.canvasSize, canvasRect, nullptr, program.deviceScale, &serializerReport);
+                adapterReport = serializerReport.snapshot();
+            }
+        } else {
+            fclose(adapterFile);
+            message = makeString("unsupported adapter lane: "_s, adapterLane);
+            return OracleStatus::UnsupportedOp;
         }
     }
 
     fclose(adapterFile);
+
+    if (!writeStringToPath(adapterReportPath, adapterReportJSONString(adapterReport))) {
+        message = makeString("failed to write adapter-report.json: "_s, adapterReportPath);
+        return OracleStatus::Error;
+    }
+
+    if (!writeStringToPath(nativeWitnessPath, nativeWitnessJSONString(program, nativeWitnessEntries))) {
+        message = makeString("failed to write native-witness.json: "_s, nativeWitnessPath);
+        return OracleStatus::Error;
+    }
 
     if (status != OracleStatus::Ok)
         return status;
@@ -816,7 +970,7 @@ TEST(BifurcatedGraphicsContextTests, NutjobAdapterOraclePhaseOne)
         EXPECT_TRUE(writeStringToPath(statusPath, status));
     };
 
-    if (mode != "structural"_s || adapterLane != "tee"_s) {
+    if (mode != "structural"_s) {
         writeStatus("unsupported-op"_s);
         return;
     }
@@ -828,7 +982,7 @@ TEST(BifurcatedGraphicsContextTests, NutjobAdapterOraclePhaseOne)
         FAIL() << error.utf8().data();
     }
 
-    auto status = runOracleProgram(*program, artifactsDirectory, strictMode, error);
+    auto status = runOracleProgram(*program, artifactsDirectory, adapterLane, strictMode, error);
     switch (status) {
     case OracleStatus::Ok:
         writeStatus("ok"_s);
