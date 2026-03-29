@@ -1100,4 +1100,144 @@ TEST(NetworkProcess, BroadcastChannelOriginSpoof)
     EXPECT_FALSE([interceptedMessageName hasPrefix:@"INTERCEPTED:"]);
 }
 
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+
+static constexpr auto pushSpoofSubscribeHTML = R"IPCRESOURCE(
+<!DOCTYPE html><html><body>
+<script src='/coreipc.js'></script>
+<script>
+if (!window.IPC)
+    webkit.messageHandlers.test.postMessage('NO_IPC');
+else {
+    CoreIPC.Networking.NetworkConnectionToWebProcess.NavigatorSubscribeToPushService(0, {
+        scopeURL: { string: 'http://victim.example/' },
+        applicationServerKey: []
+    }, (reply) => {
+        webkit.messageHandlers.test.postMessage('error' in reply.result ? "ERROR: " + reply.result.error.message : 'SUCCESS: ' + reply.result);
+    });
+    webkit.messageHandlers.test.postMessage('ready');
+}
+</script></body></html>
+)IPCRESOURCE"_s;
+
+static constexpr auto pushSpoofUnsubscribeHTML = R"IPCRESOURCE(
+<!DOCTYPE html><html><body>
+<script src='/coreipc.js'></script>
+<script>
+if (!window.IPC)
+    webkit.messageHandlers.test.postMessage('NO_IPC');
+else {
+    CoreIPC.Networking.NetworkConnectionToWebProcess.NavigatorUnsubscribeFromPushService(0, {
+        scopeURL: { string: 'http://victim.example/' },
+        pushSubscriptionIdentifier: 1
+    }, (reply) => {
+        webkit.messageHandlers.test.postMessage('error' in reply.result ? "ERROR: " + reply.result.error.message : 'SUCCESS: ' + reply.result);
+    });
+    webkit.messageHandlers.test.postMessage('ready');
+}
+</script></body></html>
+)IPCRESOURCE"_s;
+
+static constexpr auto pushSpoofGetSubscriptionHTML = R"IPCRESOURCE(
+<!DOCTYPE html><html><body>
+<script src='/coreipc.js'></script>
+<script>
+if (!window.IPC)
+    webkit.messageHandlers.test.postMessage('NO_IPC');
+else {
+    CoreIPC.Networking.NetworkConnectionToWebProcess.NavigatorGetPushSubscription(0, {
+        scopeURL: { string: 'http://victim.example/' }
+    }, (reply) => {
+        webkit.messageHandlers.test.postMessage('error' in reply.result ? "ERROR: " + reply.result.error.message : 'SUCCESS: ' + reply.result);
+    });
+    webkit.messageHandlers.test.postMessage('ready');
+}
+</script></body></html>
+)IPCRESOURCE"_s;
+
+static constexpr auto pushSpoofGetPermissionStateHTML = R"IPCRESOURCE(
+<!DOCTYPE html><html><body>
+<script src='/coreipc.js'></script>
+<script>
+if (!window.IPC)
+    webkit.messageHandlers.test.postMessage('NO_IPC');
+else {
+    CoreIPC.Networking.NetworkConnectionToWebProcess.NavigatorGetPushPermissionState(0, {
+        scopeURL: { string: 'http://victim.example/' }
+    }, (reply) => {
+        webkit.messageHandlers.test.postMessage('error' in reply.result ? "ERROR: " + reply.result.error.message : 'SUCCESS: ' + reply.result);
+    });
+    webkit.messageHandlers.test.postMessage('ready');
+}
+</script></body></html>
+)IPCRESOURCE"_s;
+
+static void runPushOriginSpoofTest(const String& attackerPageHTML)
+{
+    using namespace TestWebKitAPI;
+
+    NSURL *coreIPCURL = [NSBundle.test_resourcesBundle URLForResource:@"coreipc" withExtension:@"js"];
+    if (!coreIPCURL)
+        coreIPCURL = [NSBundle.mainBundle URLForResource:@"coreipc" withExtension:@"js"];
+    ASSERT_TRUE(coreIPCURL);
+    NSString *coreIPCJS = [NSString stringWithContentsOfURL:coreIPCURL encoding:NSUTF8StringEncoding error:nil];
+
+    HTTPServer server({
+        { "/attacker.html"_s, { attackerPageHTML } },
+        { "/coreipc.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, String(coreIPCJS) } },
+    });
+
+    auto configuration = createConfigurationWithIPCTestingAPI();
+
+    auto messageHandler = adoptNS([[TestMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"test"];
+
+    static RetainPtr<NSString> receivedMessage;
+    static bool gotAMessage = false;
+    static bool gotError = false;
+    static bool gotSuccess = false;
+
+    messageHandler.get().didReceiveScriptMessage = ^(NSString *message) {
+        if ([message isEqualToString:@"ready"])
+            return;
+        receivedMessage = message;
+        if ([message hasPrefix:@"ERROR"])
+            gotError = true;
+        else if ([message hasPrefix:@"SUCCESS"])
+            gotSuccess = true;
+        gotAMessage = true;
+    };
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView loadRequest:server.request("/attacker.html"_s)];
+
+    Util::run(&gotAMessage);
+
+    EXPECT_TRUE(gotError);
+    EXPECT_TRUE([receivedMessage isEqualToString:@"ERROR: Invalid scope"]);
+    EXPECT_FALSE(gotSuccess);
+}
+
+TEST(NetworkProcess, PushSubscribeOriginSpoof)
+{
+    runPushOriginSpoofTest(pushSpoofSubscribeHTML);
+}
+
+TEST(NetworkProcess, PushUnsubscribeOriginSpoof)
+{
+    runPushOriginSpoofTest(pushSpoofUnsubscribeHTML);
+}
+
+TEST(NetworkProcess, PushGetSubscriptionOriginSpoof)
+{
+    runPushOriginSpoofTest(pushSpoofGetSubscriptionHTML);
+}
+
+TEST(NetworkProcess, PushGetPermissionStateOriginSpoof)
+{
+    runPushOriginSpoofTest(pushSpoofGetPermissionStateHTML);
+}
+
+#endif // ENABLE(DECLARATIVE_WEB_PUSH)
+
 #endif // ENABLE(IPC_TESTING_API)

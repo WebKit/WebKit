@@ -1783,8 +1783,13 @@ void NetworkConnectionToWebProcess::useRedirectionForCurrentNavigation(WebCore::
 }
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
+
+#define SCOPEURL_MESSAGE_CHECK() { auto allowAccess = m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, scopeURL); MESSAGE_CHECK_COMPLETION_BASE(allowAccess != NetworkProcess::AllowCookieAccess::Terminate, this->connection(), completionHandler(makeUnexpected(ExceptionData { ExceptionCode::SecurityError, "Invalid scope"_s }))); }
+
 void NetworkConnectionToWebProcess::navigatorSubscribeToPushService(URL&& scopeURL, Vector<uint8_t>&& applicationServerKey, CompletionHandler<void(Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&&)>&& completionHandler)
 {
+    SCOPEURL_MESSAGE_CHECK();
+
     CheckedPtr session = networkSession();
     if (!session) {
         completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active network session"_s }));
@@ -1804,6 +1809,8 @@ void NetworkConnectionToWebProcess::navigatorSubscribeToPushService(URL&& scopeU
 
 void NetworkConnectionToWebProcess::navigatorUnsubscribeFromPushService(URL&& scopeURL, const PushSubscriptionIdentifier& subscriptionIdentifier, CompletionHandler<void(Expected<bool, WebCore::ExceptionData>&&)>&& completionHandler)
 {
+    SCOPEURL_MESSAGE_CHECK();
+
     CheckedPtr session = networkSession();
     if (!session) {
         completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active network session"_s }));
@@ -1811,11 +1818,12 @@ void NetworkConnectionToWebProcess::navigatorUnsubscribeFromPushService(URL&& sc
     }
 
     session->notificationManager().unsubscribeFromPushService(WTF::move(scopeURL), subscriptionIdentifier, WTF::move(completionHandler));
-
 }
 
 void NetworkConnectionToWebProcess::navigatorGetPushSubscription(URL&& scopeURL, CompletionHandler<void(Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&&)>&& completionHandler)
 {
+    SCOPEURL_MESSAGE_CHECK();
+
     CheckedPtr session = networkSession();
     if (!session) {
         completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active network session"_s }));
@@ -1827,6 +1835,8 @@ void NetworkConnectionToWebProcess::navigatorGetPushSubscription(URL&& scopeURL,
 
 void NetworkConnectionToWebProcess::navigatorGetPushPermissionState(URL&& scopeURL, CompletionHandler<void(Expected<uint8_t, WebCore::ExceptionData>&&)>&& completionHandler)
 {
+    SCOPEURL_MESSAGE_CHECK();
+
     CheckedPtr session = networkSession();
     if (!session) {
         completionHandler(makeUnexpected(ExceptionData { ExceptionCode::InvalidStateError, "No active network session"_s }));
@@ -1837,6 +1847,9 @@ void NetworkConnectionToWebProcess::navigatorGetPushPermissionState(URL&& scopeU
         completionHandler(static_cast<uint8_t>(state));
     });
 }
+
+#undef SCOPEURL_MESSAGE_CHECK
+
 #endif // ENABLE(DECLARATIVE_WEB_PUSH)
 
 void NetworkConnectionToWebProcess::initializeWebTransportSession(WebTransportSessionIdentifier identifier, URL&& url, WebCore::WebTransportOptions&& options, WebPageProxyIdentifier&& pageID, WebCore::ClientOrigin&& clientOrigin, CompletionHandler<void(std::optional<WebCore::WebTransportConnectionInfo>&&)>&& completionHandler)
