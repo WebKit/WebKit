@@ -415,3 +415,65 @@ def summarize_results(port_obj, expectations_by_type, initial_results, retry_res
         results['revision'] = ""
 
     return results
+
+
+def collect_crash_data(initial_results, retry_results, results_directory, filesystem):
+    """Collects crash data from test run results.
+
+    Args:
+        initial_results: TestRunResults from the initial test run
+        retry_results: TestRunResults from retry run (may be None)
+        results_directory: Path to the results directory where crash logs are written
+        filesystem: Filesystem object for path operations
+
+    Returns:
+        A list of dictionaries, each containing crash information:
+        - test: the test name/path
+        - process_name: name of the process that crashed
+        - pid: process ID (may be None)
+        - crash_log_path: path to crash log file (None if not found)
+    """
+    from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
+
+    crashes = []
+    seen_crashes = set()
+
+    # Process both initial and retry results
+    results_to_check = [initial_results]
+    if retry_results:
+        results_to_check.append(retry_results)
+
+    for run_results in results_to_check:
+        for test_name, result in run_results.results_by_name.items():
+            if result.type != test_expectations.CRASH:
+                continue
+
+            for failure in result.failures:
+                if not isinstance(failure, test_failures.FailureCrash):
+                    continue
+
+                # Deduplicate by (test_name, pid) to avoid duplicate entries
+                # while still capturing crashes from both initial and retry runs
+                crash_key = (test_name, failure.pid)
+                if crash_key in seen_crashes:
+                    continue
+                seen_crashes.add(crash_key)
+
+                # Calculate crash log path using TestResultWriter
+                crash_log_path = None
+                crash_log_filename = TestResultWriter._modified_filename(
+                    test_name, filesystem,
+                    TestResultWriter.FILENAME_SUFFIX_CRASH_LOG + '.txt'
+                )
+                potential_crash_log = filesystem.join(results_directory, crash_log_filename)
+                if filesystem.exists(potential_crash_log):
+                    crash_log_path = potential_crash_log
+
+                crashes.append({
+                    'test': test_name,
+                    'process_name': failure.process_name,
+                    'pid': failure.pid,
+                    'crash_log_path': crash_log_path
+                })
+
+    return crashes

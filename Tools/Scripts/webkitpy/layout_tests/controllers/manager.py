@@ -37,6 +37,7 @@ create a final report.
 """
 
 import csv
+import datetime
 import json
 import logging
 import os
@@ -581,7 +582,7 @@ class Manager(object):
         if not self._options.dry_run:
             self._port.print_leaks_summary()
             self._output_perf_metrics(end_time - start_time, initial_results)
-            self._save_json_files(summarized_results, initial_results)
+            self._save_json_files(summarized_results, initial_results, retry_results)
 
             results_path = self._filesystem.join(self._results_directory, "results.html")
             self._copy_results_html_file("results.html", results_path)
@@ -718,13 +719,14 @@ class Manager(object):
                 ), results_trie)
         return results_trie
 
-    def _save_json_files(self, summarized_results, initial_results):
+    def _save_json_files(self, summarized_results, initial_results, retry_results=None):
         """Writes the results of the test run as JSON files into the results
         dir and upload the files to the appengine server.
 
         Args:
           summarized_results: dict of results
           initial_results: full summary object
+          retry_results: retry summary object (may be None)
         """
         _log.debug("Writing JSON files in %s." % self._results_directory)
 
@@ -735,6 +737,32 @@ class Manager(object):
         full_results_path = self._filesystem.join(self._results_directory, "full_results.json")
         # We write full_results.json out as jsonp because we need to load it from a file url and WebKit doesn't allow that.
         json_results_generator.write_json(self._filesystem, summarized_results, full_results_path, callback="ADD_RESULTS")
+
+        self._save_crash_report(initial_results, retry_results)
+
+    def _save_crash_report(self, initial_results, retry_results=None):
+        """Writes a JSON file containing crash information.
+
+        Args:
+            initial_results: TestRunResults from the initial test run
+            retry_results: TestRunResults from retry run (may be None)
+        """
+        crashes = test_run_results.collect_crash_data(
+            initial_results,
+            retry_results,
+            self._results_directory,
+            self._filesystem
+        )
+
+        crash_report = {
+            'crashes': crashes,
+            'total_crashes': len(crashes),
+            'timestamp': datetime.datetime.now(datetime.timezone.utc).isoformat()
+        }
+
+        crash_report_path = self._filesystem.join(self._results_directory, 'crash_report.json')
+        self._filesystem.write_text_file(crash_report_path, json.dumps(crash_report, indent=2))
+        _log.debug(f'Wrote crash report to {crash_report_path} with {len(crashes)} crashes')
 
     def _copy_results_html_file(self, filename, destination_path):
         base_dir = self._port.path_from_webkit_base('LayoutTests', 'fast', 'harness')
