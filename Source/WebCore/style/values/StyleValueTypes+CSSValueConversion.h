@@ -28,6 +28,8 @@
 #include "CSSValueList.h"
 #include "StyleBuilderChecking.h"
 #include "StyleValueTypes.h"
+#include <WebCore/CSSParserIdioms.h>
+#include <WebCore/CSSPropertyParser.h>
 
 namespace WebCore {
 namespace Style {
@@ -74,6 +76,21 @@ template<> struct CSSValueConversion<AtomString> {
 template<> struct CSSValueConversion<CustomIdent> {
     CustomIdent operator()(BuilderState& state, const CSSPrimitiveValue& value)
     {
+        if (value.isIdent()) {
+            auto computedIdent = value.computedIdentStringValue(state.cssToLengthConversionData());
+            if (!computedIdent) [[unlikely]] {
+                state.setCurrentPropertyInvalidAtComputedValueTime();
+                return CustomIdent { nullAtom() };
+            }
+
+            if (computedIdent->isEmpty() || !isValidCustomIdentifier(cssValueKeywordID(*computedIdent))) [[unlikely]] {
+                state.setCurrentPropertyInvalidAtComputedValueTime();
+                return CustomIdent { nullAtom() };
+            }
+
+            return CustomIdent { AtomString { *computedIdent } };
+        }
+
         if (!value.isCustomIdent()) [[unlikely]] {
             state.setCurrentPropertyInvalidAtComputedValueTime();
             return CustomIdent { nullAtom() };

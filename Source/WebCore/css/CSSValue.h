@@ -73,6 +73,7 @@ public:
     bool isAppleColorFilterValue() const { return m_classType == ClassType::AppleColorFilter; }
     bool isAttrValue() const { return m_classType == ClassType::Attr; }
     bool isBackgroundRepeatValue() const { return m_classType == ClassType::BackgroundRepeat; }
+    bool isIdentValue() const { return m_classType == ClassType::Ident; }
     bool isBasicShape() const { return m_classType == ClassType::BasicShape; }
     bool isBorderImageSliceValue() const { return m_classType == ClassType::BorderImageSlice; }
     bool isBorderImageWidthValue() const { return m_classType == ClassType::BorderImageWidth; }
@@ -218,6 +219,7 @@ protected:
         AppleColorFilter,
         Attr,
         BackgroundRepeat,
+        Ident,
         BasicShape,
         BorderImageSlice,
         BorderImageWidth,

@@ -921,6 +921,7 @@ css/CSSFunctionDescriptors.cpp
 css/CSSFunctionRule.cpp
 css/CSSFunctionValue.cpp
 css/CSSGradientValue.cpp
+css/CSSIdentValue.cpp
 css/CSSGridAutoRepeatValue.cpp
 css/CSSGridIntegerRepeatValue.cpp
 css/CSSGridLineNamesValue.cpp

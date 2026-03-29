@@ -1173,6 +1173,7 @@
 		2F98A2C62AA1407300B98574 /* PointerLockOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F98A2C52AA1407300B98574 /* PointerLockOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3084F8492F643F2600EC9C6E /* CSSCustomIdent.h in Headers */ = {isa = PBXBuildFile; fileRef = 3084F8462F643F2600EC9C6E /* CSSCustomIdent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3084F8532F64404900EC9C6E /* StyleCustomIdent.h in Headers */ = {isa = PBXBuildFile; fileRef = 3084F84E2F64403D00EC9C6E /* StyleCustomIdent.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3084F8632F6443CC00EC9C6E /* CSSIdentValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 3084F8602F6443CC00EC9C6E /* CSSIdentValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3103B7DF1DB01567008BB890 /* ColorHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 3103B7DE1DB01556008BB890 /* ColorHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31078CC81880AABB008099DC /* OESTextureHalfFloatLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = 31078CC31880A6A6008099DC /* OESTextureHalfFloatLinear.h */; };
 		31078CCA1880AACE008099DC /* JSOESTextureHalfFloatLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = 31078CC61880AAAA008099DC /* JSOESTextureHalfFloatLinear.h */; };
@@ -10220,6 +10221,8 @@
 		3084F8472F643F2600EC9C6E /* CSSCustomIdent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSCustomIdent.cpp; sourceTree = "<group>"; };
 		3084F84E2F64403D00EC9C6E /* StyleCustomIdent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleCustomIdent.h; sourceTree = "<group>"; };
 		3084F84F2F64403D00EC9C6E /* StyleCustomIdent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleCustomIdent.cpp; sourceTree = "<group>"; };
+		3084F8602F6443CC00EC9C6E /* CSSIdentValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSIdentValue.h; sourceTree = "<group>"; };
+		3084F8612F6443CC00EC9C6E /* CSSIdentValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSIdentValue.cpp; sourceTree = "<group>"; };
 		3103B7DE1DB01556008BB890 /* ColorHash.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorHash.h; sourceTree = "<group>"; };
 		31055BB81E4FE18900EB604E /* WebKitFontFamilyNames.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitFontFamilyNames.in; sourceTree = "<group>"; };
 		31078CC21880A6A6008099DC /* OESTextureHalfFloatLinear.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OESTextureHalfFloatLinear.cpp; sourceTree = "<group>"; };
@@ -40675,6 +40678,8 @@
 				FBF89044169E9F1F0052D86E /* CSSGroupingRule.cpp */,
 				FB3056C1169E5DAC0096A232 /* CSSGroupingRule.h */,
 				930AAC9B250EC2F30013DA9F /* CSSGroupingRule.idl */,
+				3084F8612F6443CC00EC9C6E /* CSSIdentValue.cpp */,
+				3084F8602F6443CC00EC9C6E /* CSSIdentValue.h */,
 				45517921299A8F8E00D246B2 /* CSSImageSetOptionValue.cpp */,
 				45517922299A8F8E00D246B2 /* CSSImageSetOptionValue.h */,
 				9393E5FD151A99F200066F06 /* CSSImageSetValue.cpp */,
@@ -43668,6 +43673,7 @@
 				CD3E252418046BCD00E27F56 /* CSSGridTemplateAreasValue.h in Headers */,
 				FB3056C2169E5DAC0096A232 /* CSSGroupingRule.h in Headers */,
 				BC4AF41E2CF972BB0037C65C /* CSSHexColor.h in Headers */,
+				3084F8632F6443CC00EC9C6E /* CSSIdentValue.h in Headers */,
 				9393E600151A99F200066F06 /* CSSImageSetValue.h in Headers */,
 				A80E6CFA0A1989CA007FB8C5 /* CSSImageValue.h in Headers */,
 				A80E6CF60A1989CA007FB8C5 /* CSSImportRule.h in Headers */,

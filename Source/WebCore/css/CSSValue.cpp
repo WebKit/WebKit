@@ -60,6 +60,7 @@
 #include "CSSGridLineNamesValue.h"
 #include "CSSGridLineValue.h"
 #include "CSSGridTemplateAreasValue.h"
+#include "CSSIdentValue.h"
 #include "CSSImageSetOptionValue.h"
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
@@ -115,6 +116,8 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSAttrValue>(*this));
     case BackgroundRepeat:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSBackgroundRepeatValue>(*this));
+    case Ident:
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSIdentValue>(*this));
     case BasicShape:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSBasicShapeValue>(*this));
     case BorderImageSlice:

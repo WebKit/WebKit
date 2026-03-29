@@ -73,7 +73,7 @@ static RefPtr<CSSValue> consumeCounterContent(CSSParserTokenRange args, CSS::Pro
     // counter()  =  counter( <counter-name>, <counter-style>? )
     // https://www.w3.org/TR/css-lists-3/#funcdef-counter
 
-    auto identifierValue = consumeCustomIdent(args);
+    auto identifierValue = consumeCustomIdent(args, state);
     if (!identifierValue)
         return nullptr;
     AtomString identifier { identifierValue->customIdent().value };
@@ -98,7 +98,7 @@ static RefPtr<CSSValue> consumeCountersContent(CSSParserTokenRange args, CSS::Pr
     // counters() = counters( <counter-name>, <string>, <counter-style>? )
     // https://www.w3.org/TR/css-lists-3/#funcdef-counters
 
-    auto identifierValue = consumeCustomIdent(args);
+    auto identifierValue = consumeCustomIdent(args, state);
     if (!identifierValue)
         return nullptr;
     AtomString identifier { identifierValue->customIdent().value };

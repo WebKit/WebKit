@@ -27,6 +27,7 @@
 
 #include "CSSPrimitiveValue.h"
 #include "StyleBuilderChecking.h"
+#include "StyleValueTypes+CSSValueConversion.h"
 
 namespace WebCore {
 namespace Style {
@@ -50,7 +51,11 @@ auto CSSValueConversion<ViewTransitionName>::operator()(BuilderState& state, con
         break;
     }
 
-    return { CustomIdentifier { AtomString { primitiveValue->stringValue() } }, state.styleScopeOrdinal() };
+    auto customIdentifier = toStyleFromCSSValue<CustomIdentifier>(state, *primitiveValue);
+    if (customIdentifier.value.isNull())
+        return CSS::Keyword::None { };
+
+    return { WTF::move(customIdentifier), state.styleScopeOrdinal() };
 }
 
 } // namespace Style

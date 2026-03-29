@@ -1362,6 +1362,7 @@ radial
 attr
 counter
 counters
+ident
 
 // clip
 rect

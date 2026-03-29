@@ -1076,6 +1076,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/CSSFontPaletteValuesRule.h
     css/CSSGridIntegerRepeatValue.h
     css/CSSGroupingRule.h
+    css/CSSIdentValue.h
     css/CSSImportRule.h
     css/CSSMediaRule.h
     css/CSSPageDescriptors.h

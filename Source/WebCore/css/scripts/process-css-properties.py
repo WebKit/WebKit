@@ -9419,8 +9419,8 @@ class TermGeneratorReferenceTerm(TermGenerator):
                 return f"consumeImage({range_string}, {state_string}, {{ }})"
             elif isinstance(builtin, BuiltinCustomIdentConsumer):
                 if builtin.excluding:
-                    return f"consumeCustomIdentExcluding({range_string}, {{ { ', '.join(ValueKeywordName(id).id for id in builtin.excluding)} }})"
-                return f"consumeCustomIdent({range_string})"
+                    return f"consumeCustomIdentExcluding({range_string}, {state_string}, {{ {', '.join(ValueKeywordName(id).id for id in builtin.excluding)} }})"
+                return f"consumeCustomIdent({range_string}, {state_string})"
             elif isinstance(builtin, BuiltinURLConsumer):
                 if builtin.allowed_modifiers:
                     return f"consumeURL({range_string}, {state_string}, {{ {builtin.allowed_modifiers} }})"
@@ -9477,7 +9477,7 @@ class TermGeneratorReferenceTerm(TermGenerator):
             elif isinstance(builtin, BuiltinStringConsumer):
                 return False
             elif isinstance(builtin, BuiltinCustomIdentConsumer):
-                return False
+                return True
             elif isinstance(builtin, BuiltinDashedIdentConsumer):
                 return False
             elif isinstance(builtin, BuiltinURLConsumer):

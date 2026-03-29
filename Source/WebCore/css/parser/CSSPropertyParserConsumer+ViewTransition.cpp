@@ -36,7 +36,7 @@
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-RefPtr<CSSValue> consumeViewTransitionTypes(CSSParserTokenRange& range, CSS::PropertyParserState&)
+RefPtr<CSSValue> consumeViewTransitionTypes(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
     // <'types'> = none | <custom-ident>+
     // https://www.w3.org/TR/css-view-transitions-2/#descdef-view-transition-types
@@ -48,7 +48,7 @@ RefPtr<CSSValue> consumeViewTransitionTypes(CSSParserTokenRange& range, CSS::Pro
     do {
         if (range.peek().id() == CSSValueNone)
             return nullptr;
-        auto type = consumeCustomIdent(range);
+        auto type = consumeCustomIdent(range, state);
         if (!type)
             return nullptr;
         if (type->customIdent().value.startsWith("-ua-"_s))

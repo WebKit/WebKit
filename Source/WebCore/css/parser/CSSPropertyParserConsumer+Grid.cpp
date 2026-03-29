@@ -54,11 +54,11 @@ bool isGridBreadthIdent(CSSValueID id)
     return identMatches<CSSValueMinContent, CSSValueWebkitMinContent, CSSValueMaxContent, CSSValueWebkitMaxContent, CSSValueAuto>(id);
 }
 
-static RefPtr<CSSPrimitiveValue> consumeCustomIdentForGridLine(CSSParserTokenRange& range)
+static RefPtr<CSSPrimitiveValue> consumeCustomIdentForGridLine(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
     if (range.peek().id() == CSSValueAuto || range.peek().id() == CSSValueSpan)
         return nullptr;
-    return consumeCustomIdent(range);
+    return consumeCustomIdent(range, state);
 }
 
 std::optional<CSS::GridNamedAreaMapRow> consumeUnresolvedGridTemplateAreasRow(CSSParserTokenRange& range, CSS::PropertyParserState&)
@@ -127,17 +127,17 @@ RefPtr<CSSValue> consumeGridLine(CSSParserTokenRange& range, CSS::PropertyParser
     RefPtr<CSSPrimitiveValue> gridLineName;
     RefPtr<CSSPrimitiveValue> numericValue = CSSPrimitiveValueResolver<CSS::Integer<>>::consumeAndResolve(range, state);
     if (numericValue) {
-        gridLineName = consumeCustomIdentForGridLine(range);
+        gridLineName = consumeCustomIdentForGridLine(range, state);
         spanValue = consumeIdent<CSSValueSpan>(range);
     } else {
         spanValue = consumeIdent<CSSValueSpan>(range);
         if (spanValue) {
             numericValue = CSSPrimitiveValueResolver<CSS::Integer<>>::consumeAndResolve(range, state);
-            gridLineName = consumeCustomIdentForGridLine(range);
+            gridLineName = consumeCustomIdentForGridLine(range, state);
             if (!numericValue)
                 numericValue = CSSPrimitiveValueResolver<CSS::Integer<>>::consumeAndResolve(range, state);
         } else {
-            gridLineName = consumeCustomIdentForGridLine(range);
+            gridLineName = consumeCustomIdentForGridLine(range, state);
             if (gridLineName) {
                 numericValue = CSSPrimitiveValueResolver<CSS::Integer<>>::consumeAndResolve(range, state);
                 spanValue = consumeIdent<CSSValueSpan>(range);
@@ -242,14 +242,14 @@ RefPtr<CSSValue> consumeGridTrackSize(CSSParserTokenRange& range, CSS::PropertyP
     return consumeGridBreadth(range, state);
 }
 
-RefPtr<CSSGridLineNamesValue> consumeGridLineNames(CSSParserTokenRange& range, CSS::PropertyParserState&, AllowEmpty allowEmpty)
+RefPtr<CSSGridLineNamesValue> consumeGridLineNames(CSSParserTokenRange& range, CSS::PropertyParserState& state, AllowEmpty allowEmpty)
 {
     CSSParserTokenRange rangeCopy = range;
     if (rangeCopy.consumeIncludingWhitespace().type() != LeftBracketToken)
         return nullptr;
 
     Vector<String, 4> lineNames;
-    while (auto lineName = consumeCustomIdentForGridLine(rangeCopy))
+    while (auto lineName = consumeCustomIdentForGridLine(rangeCopy, state))
         lineNames.append(lineName->customIdent().value);
     if (rangeCopy.consumeIncludingWhitespace().type() != RightBracketToken)
         return nullptr;

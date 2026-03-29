@@ -36,7 +36,7 @@
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-static RefPtr<CSSValue> consumeSingleTransitionPropertyIdent(CSSParserTokenRange& range, const CSSParserToken& token)
+static RefPtr<CSSValue> consumeSingleTransitionPropertyIdent(CSSParserTokenRange& range, const CSSParserToken& token, CSS::PropertyParserState& state)
 {
     if (token.id() == CSSValueAll)
         return consumeIdent(range);
@@ -44,10 +44,10 @@ static RefPtr<CSSValue> consumeSingleTransitionPropertyIdent(CSSParserTokenRange
         range.consumeIncludingWhitespace();
         return CSSPrimitiveValue::create(property);
     }
-    return consumeCustomIdent(range);
+    return consumeCustomIdent(range, state);
 }
 
-RefPtr<CSSValue> consumeSingleTransitionPropertyOrNone(CSSParserTokenRange& range, CSS::PropertyParserState&)
+RefPtr<CSSValue> consumeSingleTransitionPropertyOrNone(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
     // This variant of consumeSingleTransitionProperty is used for the slightly different
     // parse rules used for the 'transition' shorthand which allows 'none':
@@ -61,10 +61,10 @@ RefPtr<CSSValue> consumeSingleTransitionPropertyOrNone(CSSParserTokenRange& rang
     if (token.id() == CSSValueNone)
         return consumeIdent(range);
 
-    return consumeSingleTransitionPropertyIdent(range, token);
+    return consumeSingleTransitionPropertyIdent(range, token, state);
 }
 
-RefPtr<CSSValue> consumeSingleTransitionProperty(CSSParserTokenRange& range, CSS::PropertyParserState&)
+RefPtr<CSSValue> consumeSingleTransitionProperty(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
     // "The <custom-ident> production in <single-transition-property> also excludes the keyword
     //  none, in addition to the keywords always excluded from <custom-ident>."
@@ -78,7 +78,7 @@ RefPtr<CSSValue> consumeSingleTransitionProperty(CSSParserTokenRange& range, CSS
     if (token.id() == CSSValueNone)
         return nullptr;
 
-    return consumeSingleTransitionPropertyIdent(range, token);
+    return consumeSingleTransitionPropertyIdent(range, token, state);
 }
 
 } // namespace CSSPropertyParserHelpers

@@ -122,7 +122,7 @@ Vector<std::pair<CSSValueID, double>> parseKeyframeKeyList(const String& string,
     return result;
 }
 
-RefPtr<CSSValue> consumeKeyframesName(CSSParserTokenRange& range, CSS::PropertyParserState&)
+RefPtr<CSSValue> consumeKeyframesName(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
     // <keyframes-name> = <custom-ident> | <string>
     // https://drafts.csswg.org/css-animations/#typedef-keyframes-name
@@ -139,7 +139,7 @@ RefPtr<CSSValue> consumeKeyframesName(CSSParserTokenRange& range, CSS::PropertyP
         return CSSPrimitiveValue::create(token.value().toString());
     }
 
-    return consumeCustomIdent(range);
+    return consumeCustomIdent(range, state);
 }
 
 } // namespace CSSPropertyParserHelpers

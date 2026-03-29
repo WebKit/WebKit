@@ -49,7 +49,7 @@ static RefPtr<CSSValue> consumeCounter(CSSParserTokenRange& range, CSS::Property
 
     CSSValueListBuilder list;
     do {
-        auto counterName = consumeCustomIdent(range);
+        auto counterName = consumeCustomIdent(range, state);
         if (!counterName)
             return nullptr;
         if (auto counterValue = CSSPrimitiveValueResolver<CSS::Integer<>>::consumeAndResolve(range, state))
