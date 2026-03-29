@@ -38,6 +38,7 @@ JSArrayIterator* JSArrayIterator::create(VM& vm, Structure* structure, JSObject*
     ASSERT(kind.asUInt32() <= static_cast<uint32_t>(IterationKind::Entries));
     JSArrayIterator* iterator = new (NotNull, allocateCell<JSArrayIterator>(vm)) JSArrayIterator(vm, structure);
     iterator->finishCreation(vm);
+    iterator->putIndex(0);
     iterator->internalField(Field::IteratedObject).set(vm, iterator, iteratedObject);
     iterator->internalField(Field::Kind).set(vm, iterator, kind);
     return iterator;

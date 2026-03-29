@@ -26,8 +26,19 @@
 #include "config.h"
 #include "ArrayIteratorPrototype.h"
 
+#include "ImplementationVisibility.h"
+#include "IterationKind.h"
+#include "IteratorOperations.h"
+#include "JSArray.h"
+#include "JSArrayBufferView.h"
+#include "JSArrayIterator.h"
 #include "JSCBuiltins.h"
 #include "JSCInlines.h"
+#include "JSCJSValue.h"
+#include "JSObject.h"
+#include "JSType.h"
+#include "TypedArrayType.h"
+#include <concepts>
 
 namespace JSC {
 
@@ -37,8 +48,81 @@ void ArrayIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->next, arrayIteratorPrototypeNextCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->next, arrayIteratorProtoNext, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
+}
+
+JSC_DEFINE_HOST_FUNCTION(arrayIteratorProtoNext, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue().toThis(globalObject, ECMAMode::strict());
+    if (!thisValue.isCell() || thisValue.asCell()->type() != JSArrayIteratorType) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "%ArrayIteratorPrototype%.next requires that |this| be an Array Iterator instance"_s);
+
+    JSArrayIterator* iterator = jsCast<JSArrayIterator*>(thisValue);
+    JSObject* array = iterator->iteratedObject();
+    ASSERT(array);
+
+    bool isTypedArray = isTypedView(array->type());
+    if (isTypedArray && jsCast<JSArrayBufferView*>(array)->isDetached()) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "Underlying ArrayBuffer has been detached from the view or out-of-bounds"_s);
+
+    int64_t index = iterator->index();
+
+    // This `unlikely` annotation assumes that the closed iterator's `next()` would not be called frequently.
+    if (index == JSArrayIterator::doneIndex) [[unlikely]] {
+        JSObject* result = createIteratorResultObject(globalObject, jsUndefined(), true);
+        RELEASE_AND_RETURN(scope, JSValue::encode(result));
+    }
+
+    uint64_t length = 0;
+    if (isTypedArray) {
+        auto view = jsCast<JSArrayBufferView*>(array);
+        validateTypedArray(globalObject, view);
+        RETURN_IF_EXCEPTION(scope, { });
+        length = static_cast<uint64_t>(view->length());
+    } else {
+        length = toLength(globalObject, array);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    // This `unlikely` annotation assumes that it's not likely relatively the current seeking is the end of the source for collection.
+    if (static_cast<uint64_t>(index) >= length) [[unlikely]] {
+        iterator->putIndex(JSArrayIterator::doneIndex);
+        JSObject* result = createIteratorResultObject(globalObject, jsUndefined(), true);
+        RELEASE_AND_RETURN(scope, JSValue::encode(result));
+    }
+
+    iterator->putIndex(index + 1);
+
+    switch (iterator->kind()) {
+    case IterationKind::Keys: {
+        JSObject* result = createIteratorResultObject(globalObject, jsNumber(index), false);
+        RELEASE_AND_RETURN(scope, JSValue::encode(result));
+    }
+    case IterationKind::Values: {
+        JSValue value = array->getIndex(globalObject, index);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        JSObject* result = createIteratorResultObject(globalObject, value, false);
+        RELEASE_AND_RETURN(scope, JSValue::encode(result));
+    }
+    case IterationKind::Entries: {
+        JSValue key = jsNumber(index);
+        JSValue value = array->getIndex(globalObject, index);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        JSArray* entry = constructArrayPair(globalObject, key, value);
+        JSObject* result = createIteratorResultObject(globalObject, entry, false);
+        RELEASE_AND_RETURN(scope, JSValue::encode(result));
+    }
+    default: {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+    }
 }
 
 } // namespace JSC
