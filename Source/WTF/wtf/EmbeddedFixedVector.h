@@ -85,6 +85,11 @@ public:
         return UniqueRef { *new (NotNull, Malloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(size, std::move_iterator { container.begin() }, std::move_iterator { container.end() }) };
     }
 
+    static UniqueRef<EmbeddedFixedVector> createFilled(unsigned size, const T& value)
+    {
+        return UniqueRef { *new (NotNull, Malloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(typename Base::FillWith { }, size, value) };
+    }
+
     template<typename... Args>
     static UniqueRef<EmbeddedFixedVector> createWithSizeAndConstructorArguments(unsigned size, Args&&... args)
     {
@@ -148,6 +153,11 @@ private:
     template<typename InputIterator>
     EmbeddedFixedVector(unsigned size, InputIterator first, InputIterator last)
         : Base(size, first, last)
+    {
+    }
+
+    EmbeddedFixedVector(typename Base::FillWith fillWith, unsigned size, const T& value)
+        : Base(fillWith, size, value)
     {
     }
 

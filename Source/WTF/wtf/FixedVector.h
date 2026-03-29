@@ -89,10 +89,8 @@ public:
     { }
 
     FixedVector(size_t size, const T& value)
-        : m_storage(size ? Storage::create(size).moveToUniquePtr() : nullptr)
-    {
-        fill(value);
-    }
+        : m_storage(size ? Storage::createFilled(size, value).moveToUniquePtr() : nullptr)
+    { }
 
     template<size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename VectorMalloc>
     explicit FixedVector(const Vector<T, inlineCapacity, OverflowHandler, minCapacity, VectorMalloc>& other)

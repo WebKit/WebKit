@@ -437,4 +437,35 @@ TEST(WTF_FixedVector, Equal)
     }
 }
 
+TEST(WTF_FixedVector, SizeAndValueConstructorPOD)
+{
+    FixedVector<unsigned> vec(5, 42U);
+    EXPECT_EQ(5U, vec.size());
+    for (unsigned i = 0; i < vec.size(); ++i)
+        EXPECT_EQ(42U, vec[i]);
+}
+
+TEST(WTF_FixedVector, SizeAndValueConstructorNonPOD)
+{
+    String value = "hello"_s;
+    FixedVector<String> vec(3, value);
+    EXPECT_EQ(3U, vec.size());
+    for (unsigned i = 0; i < vec.size(); ++i)
+        EXPECT_STREQ("hello", vec[i].utf8().data());
+}
+
+TEST(WTF_FixedVector, SizeAndValueConstructorZeroSize)
+{
+    FixedVector<unsigned> vec(0, 42U);
+    EXPECT_TRUE(vec.isEmpty());
+    EXPECT_EQ(0U, vec.size());
+}
+
+TEST(WTF_FixedVector, SizeAndValueConstructorSingleElement)
+{
+    FixedVector<unsigned> vec(1, 99U);
+    EXPECT_EQ(1U, vec.size());
+    EXPECT_EQ(99U, vec[0]);
+}
+
 } // namespace TestWebKitAPI

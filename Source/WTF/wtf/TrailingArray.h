@@ -88,6 +88,14 @@ protected:
         std::uninitialized_copy(first, last, begin());
     }
 
+    struct FillWith { };
+    TrailingArray(FillWith, unsigned size, const T& value)
+        : m_size(size)
+    {
+        static_assert(std::is_final_v<Derived>);
+        VectorTypeOperations<T>::uninitializedFill(begin(), end(), value);
+    }
+
     template<typename... Args>
     TrailingArray(unsigned size, Args&&... args) // create with given size and constructor arguments for all elements
         : m_size(size)
