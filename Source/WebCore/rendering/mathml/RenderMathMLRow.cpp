@@ -95,6 +95,24 @@ static RenderMathMLOperator* toVerticalStretchyOperator(RenderBox* box)
     return nullptr;
 }
 
+struct OperatorSpace {
+    LayoutUnit leading;
+    LayoutUnit trailing;
+};
+
+static OperatorSpace unembellishedOperatorSpace(RenderBox& box)
+{
+    if (!box.document().settings().coreMathMLEnabled())
+        return { 0, 0 };
+    auto* block = dynamicDowncast<RenderMathMLBlock>(&box);
+    auto* op = block ? block->unembellishedOperator() : nullptr;
+    auto* parent = block ? dynamicDowncast<RenderMathMLBlock>(block->parentBox()) : nullptr;
+    auto* parentOp = parent ? parent->unembellishedOperator() : nullptr;
+    if (op && (!parentOp || op != parentOp))
+        return { op->leadingSpace(), op->trailingSpace() };
+    return { 0, 0 };
+}
+
 void RenderMathMLRow::stretchVerticalOperatorsAndLayoutChildren()
 {
     // First calculate stretch ascent and descent.
@@ -131,7 +149,10 @@ void RenderMathMLRow::getContentBoundingBox(LayoutUnit& width, LayoutUnit& ascen
     descent = 0;
     width = 0;
     for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
+        auto space = unembellishedOperatorSpace(*child);
+        width += space.leading;
         width += child->marginStart() + child->logicalWidth() + child->marginEnd();
+        width += space.trailing;
         LayoutUnit childAscent = ascentForChild(*child) + child->marginBefore();
         LayoutUnit childDescent = child->logicalHeight() + child->marginLogicalHeight() - childAscent;
         ascent = std::max(ascent, childAscent);
@@ -144,6 +165,8 @@ LayoutUnit RenderMathMLRow::preferredLogicalWidthOfRowItems()
     LayoutUnit preferredWidth = 0;
     for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
         preferredWidth += child->maxPreferredLogicalWidth() + marginIntrinsicLogicalWidthForChild(*child);
+        auto space = unembellishedOperatorSpace(*child);
+        preferredWidth += space.leading + space.trailing;
     }
     return preferredWidth;
 }
@@ -166,6 +189,8 @@ void RenderMathMLRow::layoutRowItems(LayoutUnit width, LayoutUnit ascent)
 {
     LayoutUnit horizontalOffset = 0;
     for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
+        auto space = unembellishedOperatorSpace(*child);
+        horizontalOffset += space.leading;
         horizontalOffset += child->marginStart();
         LayoutUnit childVerticalOffset = ascent - ascentForChild(*child);
         LayoutUnit childWidth = child->logicalWidth();
@@ -177,6 +202,7 @@ void RenderMathMLRow::layoutRowItems(LayoutUnit width, LayoutUnit ascent)
             repaintRectangle(*repaintRect);
         }
         horizontalOffset += childWidth + child->marginEnd();
+        horizontalOffset += space.trailing;
     }
 }
 
