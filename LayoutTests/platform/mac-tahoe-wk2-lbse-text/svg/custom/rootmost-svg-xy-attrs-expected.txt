@@ -42,7 +42,5 @@ layer at (0,0) size 800x302
         RenderText {#text} at (0,0) size 0x0
 layer at (8,184) size 100x100
   RenderSVGRoot {svg} at (0,0) size 100x100
-layer at (8,183.88) size 100x100
-  RenderSVGViewportContainer at (0,0) size 100x100
-layer at (8,183.88) size 100x100
-  RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+    RenderSVGViewportContainer at (0,0) size 100x100
+      RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]

@@ -11,7 +11,9 @@ layer at (0,0) size 800x478
         RenderText {#text} at (0,0) size 0x0
 layer at (9,69) size 400x400
   RenderSVGRoot {svg} at (1,1) size 400x400
-layer at (9,69) size 400x400
-  RenderSVGViewportContainer at (0,0) size 400x400
-layer at (49,109) size 320x320
-  RenderSVGEllipse {circle} at (40,40) size 320x320 [stroke={[type=SOLID] [color=#808080]}] [fill={[type=SOLID] [color=#00000000]}] [cx=200.00] [cy=200.00] [r=160.00]
+    RenderSVGViewportContainer at (0,0) size 400x400
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGResourceRadialGradient {radialGradient} at (0,0) size 0x0
+          RenderSVGGradientStop {stop} [offset=0.00] [color=#000000]
+          RenderSVGGradientStop {stop} [offset=1.00] [color=#FFFFFF]
+      RenderSVGEllipse {circle} at (40,40) size 320x320 [stroke={[type=SOLID] [color=#808080]}] [fill={[type=SOLID] [color=#00000000]}] [cx=200.00] [cy=200.00] [r=160.00]

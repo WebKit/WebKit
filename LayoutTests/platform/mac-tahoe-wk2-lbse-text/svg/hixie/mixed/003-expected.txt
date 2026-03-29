@@ -17,7 +17,5 @@ layer at (15,20) size 352x13 backgroundClip at (15,20) size 351.67x13 clip at (1
       text run at (0,0) width 117: "This test has PASSED."
 layer at (8,87) size 200x200
   RenderSVGRoot {svg} at (0,0) size 200x200
-layer at (8,87) size 200x200
-  RenderSVGViewportContainer at (0,0) size 200x200
-layer at (8,87) size 100x100
-  RenderSVGEllipse {circle} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [cx=50.00] [cy=50.00] [r=50.00]
+    RenderSVGViewportContainer at (0,0) size 200x200
+      RenderSVGEllipse {circle} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [cx=50.00] [cy=50.00] [r=50.00]

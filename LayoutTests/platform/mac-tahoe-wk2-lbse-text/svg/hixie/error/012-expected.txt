@@ -17,9 +17,6 @@ layer at (0,0) size 785x600
       RenderBlock (anonymous) at (0,152.88) size 769x604
 layer at (8,169) size 769x600
   RenderSVGRoot {svg} at (0,0) size 769x600
-layer at (8,168.88) size 769x600
-  RenderSVGViewportContainer at (0,0) size 769x600
-layer at (18,178.88) size 200x200
-  RenderSVGRect {rect} at (10,10) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [x=10.00] [y=10.00] [width=200.00] [height=200.00]
-layer at (18,178.88) size 200x200
-  RenderSVGRect {rect} at (10,10) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [x=10.00] [y=10.00] [width=200.00] [height=200.00]
+    RenderSVGViewportContainer at (0,0) size 769x600
+      RenderSVGRect {rect} at (10,10) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [x=10.00] [y=10.00] [width=200.00] [height=200.00]
+      RenderSVGRect {rect} at (10,10) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [x=10.00] [y=10.00] [width=200.00] [height=200.00]

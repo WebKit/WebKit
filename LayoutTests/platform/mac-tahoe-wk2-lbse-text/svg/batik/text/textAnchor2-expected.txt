@@ -2,84 +2,49 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (0,0) size 450x500
-layer at (0,0) size 450x500
-  RenderSVGViewportContainer at (0,0) size 450x500
-layer at (112.92,15.52) size 224x17
-  RenderSVGText {text} at (112,15) size 226x19 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 225x18
-      chunk 1 (middle anchor) text run 1 at (112.93,30.00) startOffset 0 endOffset 31 width 224.15: "text-anchor on a single <tspan>"
-layer at (-10.67,-14) size 386x204 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (-10.67,-14) size 385.67x204
-layer at (75,50) size 301x140
-  RenderSVGTransformableContainer {g} at (85.67,64) size 300x140
-layer at (75,50) size 300x20
-  RenderSVGRect {rect} at (0,0) size 300x20 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=75.00] [y=50.00] [width=300.00] [height=20.00]
-layer at (75,70) size 300x40
-  RenderSVGRect {rect} at (0,20) size 300x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=75.00] [y=70.00] [width=300.00] [height=40.00]
-layer at (75,110) size 300x40
-  RenderSVGRect {rect} at (0,60) size 300x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=75.00] [y=110.00] [width=300.00] [height=40.00]
-layer at (75,150) size 300x40
-  RenderSVGRect {rect} at (0,100) size 300x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=75.00] [y=150.00] [width=300.00] [height=40.00]
-layer at (90,51.50) size 190x16
-  RenderSVGText {text} at (15,1) size 191x17 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 191x16
-      chunk 1 text run 1 at (90.00,64.00) startOffset 0 endOffset 34 width 190.11: "x attribute define new text chunks"
-layer at (0,0) size 0x0
-  RenderSVGTransformableContainer {g} at (-75,-50) size 0x0
-layer at (145,70) size 0x120
-  RenderSVGPath {line} at (145,70) size 0x120 [stroke={[type=SOLID] [color=#DC143C]}] [x1=145.00] [y1=70.00] [x2=145.00] [y2=190.00]
-layer at (185,70) size 0x120
-  RenderSVGPath {line} at (185,70) size 0x120 [stroke={[type=SOLID] [color=#DC143C]}] [x1=185.00] [y1=70.00] [x2=185.00] [y2=190.00]
-layer at (225,70) size 0x120
-  RenderSVGPath {line} at (225,70) size 0x120 [stroke={[type=SOLID] [color=#DC143C]}] [x1=225.00] [y1=70.00] [x2=225.00] [y2=190.00]
-layer at (265,70) size 0x120
-  RenderSVGPath {line} at (265,70) size 0x120 [stroke={[type=SOLID] [color=#DC143C]}] [x1=265.00] [y1=70.00] [x2=265.00] [y2=190.00]
-layer at (305,70) size 0x120
-  RenderSVGPath {line} at (305,70) size 0x120 [stroke={[type=SOLID] [color=#DC143C]}] [x1=305.00] [y1=70.00] [x2=305.00] [y2=190.00]
-layer at (75,50) size 301x140
-  RenderSVGTransformableContainer {g} at (85.67,64) size 300x140
-layer at (75,50) size 300x20
-  RenderSVGRect {rect} at (0,0) size 300x20 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=75.00] [y=50.00] [width=300.00] [height=20.00]
-layer at (75,70) size 300x40
-  RenderSVGRect {rect} at (0,20) size 300x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=75.00] [y=70.00] [width=300.00] [height=40.00]
-layer at (75,110) size 300x40
-  RenderSVGRect {rect} at (0,60) size 300x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=75.00] [y=110.00] [width=300.00] [height=40.00]
-layer at (75,150) size 300x40
-  RenderSVGRect {rect} at (0,100) size 300x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=75.00] [y=150.00] [width=300.00] [height=40.00]
-layer at (90,51.50) size 235x16
-  RenderSVGText {text} at (15,1) size 236x17 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 236x16
-      chunk 1 text run 1 at (90.00,64.00) startOffset 0 endOffset 42 width 235.21: "y attribute does not define new text chunk"
-layer at (0,0) size 0x0
-  RenderSVGTransformableContainer {g} at (-75,-50) size 0x0
-layer at (225,70) size 0x120
-  RenderSVGPath {line} at (225,70) size 0x120 [stroke={[type=SOLID] [color=#DC143C]}] [x1=225.00] [y1=70.00] [x2=225.00] [y2=190.00]
-layer at (75,50) size 301x140
-  RenderSVGTransformableContainer {g} at (85.67,64) size 300x140
-layer at (75,50) size 300x20
-  RenderSVGRect {rect} at (0,0) size 300x20 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=75.00] [y=50.00] [width=300.00] [height=20.00]
-layer at (75,70) size 300x40
-  RenderSVGRect {rect} at (0,20) size 300x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=75.00] [y=70.00] [width=300.00] [height=40.00]
-layer at (75,110) size 300x40
-  RenderSVGRect {rect} at (0,60) size 300x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=75.00] [y=110.00] [width=300.00] [height=40.00]
-layer at (75,150) size 300x40
-  RenderSVGRect {rect} at (0,100) size 300x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=75.00] [y=150.00] [width=300.00] [height=40.00]
-layer at (90,51.50) size 220x16
-  RenderSVGText {text} at (15,1) size 221x17 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 221x16
-      chunk 1 text run 1 at (90.00,64.00) startOffset 0 endOffset 39 width 220.45: "x & y attributes define new text chunks"
-layer at (0,0) size 0x0
-  RenderSVGTransformableContainer {g} at (-75,-50) size 0x0
-layer at (145,70) size 0x120
-  RenderSVGPath {line} at (145,70) size 0x120 [stroke={[type=SOLID] [color=#DC143C]}] [x1=145.00] [y1=70.00] [x2=145.00] [y2=190.00]
-layer at (185,70) size 0x120
-  RenderSVGPath {line} at (185,70) size 0x120 [stroke={[type=SOLID] [color=#DC143C]}] [x1=185.00] [y1=70.00] [x2=185.00] [y2=190.00]
-layer at (225,70) size 0x120
-  RenderSVGPath {line} at (225,70) size 0x120 [stroke={[type=SOLID] [color=#DC143C]}] [x1=225.00] [y1=70.00] [x2=225.00] [y2=190.00]
-layer at (265,70) size 0x120
-  RenderSVGPath {line} at (265,70) size 0x120 [stroke={[type=SOLID] [color=#DC143C]}] [x1=265.00] [y1=70.00] [x2=265.00] [y2=190.00]
-layer at (305,70) size 0x120
-  RenderSVGPath {line} at (305,70) size 0x120 [stroke={[type=SOLID] [color=#DC143C]}] [x1=305.00] [y1=70.00] [x2=305.00] [y2=190.00]
+    RenderSVGViewportContainer at (0,0) size 450x500
+      RenderSVGText {text} at (112,15) size 226x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 225x18
+          chunk 1 (middle anchor) text run 1 at (112.93,30.00) startOffset 0 endOffset 31 width 224.15: "text-anchor on a single <tspan>"
+      RenderSVGTransformableContainer {g} at (-10.67,-14) size 385.67x204
+        RenderSVGTransformableContainer {g} at (85.67,64) size 300x140
+          RenderSVGRect {rect} at (0,0) size 300x20 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=75.00] [y=50.00] [width=300.00] [height=20.00]
+          RenderSVGRect {rect} at (0,20) size 300x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=75.00] [y=70.00] [width=300.00] [height=40.00]
+          RenderSVGRect {rect} at (0,60) size 300x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=75.00] [y=110.00] [width=300.00] [height=40.00]
+          RenderSVGRect {rect} at (0,100) size 300x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=75.00] [y=150.00] [width=300.00] [height=40.00]
+          RenderSVGText {text} at (15,1) size 191x17 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 191x16
+              chunk 1 text run 1 at (90.00,64.00) startOffset 0 endOffset 34 width 190.11: "x attribute define new text chunks"
+          RenderSVGTransformableContainer {g} at (-75,-50) size 0x0
+            RenderSVGPath {line} at (145,70) size 0x120 [stroke={[type=SOLID] [color=#DC143C]}] [x1=145.00] [y1=70.00] [x2=145.00] [y2=190.00]
+            RenderSVGPath {line} at (185,70) size 0x120 [stroke={[type=SOLID] [color=#DC143C]}] [x1=185.00] [y1=70.00] [x2=185.00] [y2=190.00]
+            RenderSVGPath {line} at (225,70) size 0x120 [stroke={[type=SOLID] [color=#DC143C]}] [x1=225.00] [y1=70.00] [x2=225.00] [y2=190.00]
+            RenderSVGPath {line} at (265,70) size 0x120 [stroke={[type=SOLID] [color=#DC143C]}] [x1=265.00] [y1=70.00] [x2=265.00] [y2=190.00]
+            RenderSVGPath {line} at (305,70) size 0x120 [stroke={[type=SOLID] [color=#DC143C]}] [x1=305.00] [y1=70.00] [x2=305.00] [y2=190.00]
+        RenderSVGTransformableContainer {g} at (85.67,64) size 300x140
+          RenderSVGRect {rect} at (0,0) size 300x20 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=75.00] [y=50.00] [width=300.00] [height=20.00]
+          RenderSVGRect {rect} at (0,20) size 300x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=75.00] [y=70.00] [width=300.00] [height=40.00]
+          RenderSVGRect {rect} at (0,60) size 300x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=75.00] [y=110.00] [width=300.00] [height=40.00]
+          RenderSVGRect {rect} at (0,100) size 300x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=75.00] [y=150.00] [width=300.00] [height=40.00]
+          RenderSVGText {text} at (15,1) size 236x17 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 236x16
+              chunk 1 text run 1 at (90.00,64.00) startOffset 0 endOffset 42 width 235.21: "y attribute does not define new text chunk"
+          RenderSVGTransformableContainer {g} at (-75,-50) size 0x0
+            RenderSVGPath {line} at (225,70) size 0x120 [stroke={[type=SOLID] [color=#DC143C]}] [x1=225.00] [y1=70.00] [x2=225.00] [y2=190.00]
+        RenderSVGTransformableContainer {g} at (85.67,64) size 300x140
+          RenderSVGRect {rect} at (0,0) size 300x20 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=75.00] [y=50.00] [width=300.00] [height=20.00]
+          RenderSVGRect {rect} at (0,20) size 300x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=75.00] [y=70.00] [width=300.00] [height=40.00]
+          RenderSVGRect {rect} at (0,60) size 300x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=75.00] [y=110.00] [width=300.00] [height=40.00]
+          RenderSVGRect {rect} at (0,100) size 300x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=75.00] [y=150.00] [width=300.00] [height=40.00]
+          RenderSVGText {text} at (15,1) size 221x17 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 221x16
+              chunk 1 text run 1 at (90.00,64.00) startOffset 0 endOffset 39 width 220.45: "x & y attributes define new text chunks"
+          RenderSVGTransformableContainer {g} at (-75,-50) size 0x0
+            RenderSVGPath {line} at (145,70) size 0x120 [stroke={[type=SOLID] [color=#DC143C]}] [x1=145.00] [y1=70.00] [x2=145.00] [y2=190.00]
+            RenderSVGPath {line} at (185,70) size 0x120 [stroke={[type=SOLID] [color=#DC143C]}] [x1=185.00] [y1=70.00] [x2=185.00] [y2=190.00]
+            RenderSVGPath {line} at (225,70) size 0x120 [stroke={[type=SOLID] [color=#DC143C]}] [x1=225.00] [y1=70.00] [x2=225.00] [y2=190.00]
+            RenderSVGPath {line} at (265,70) size 0x120 [stroke={[type=SOLID] [color=#DC143C]}] [x1=265.00] [y1=70.00] [x2=265.00] [y2=190.00]
+            RenderSVGPath {line} at (305,70) size 0x120 [stroke={[type=SOLID] [color=#DC143C]}] [x1=305.00] [y1=70.00] [x2=305.00] [y2=190.00]
 layer at (0,-14) size 168x18 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGText {text} at (10,0) size 169x18 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 168x18

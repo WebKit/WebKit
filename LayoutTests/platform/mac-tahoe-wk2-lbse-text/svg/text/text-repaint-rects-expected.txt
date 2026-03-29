@@ -17,14 +17,11 @@ layer at (0,0) size 800x155
           text run at (0,105) width 379: "(correctly) clipping out some of the lineboxes during paint."
 layer at (232,16) size 500x47
   RenderSVGRoot {svg} at (224.39,0) size 500x47
-layer at (232.39,16) size 500x47
-  RenderSVGViewportContainer at (0,0) size 500x47
-layer at (232.39,-29.50) size 45x59 backgroundClip at (232.39,16) size 500x47 clip at (232.39,16) size 500x47
-  RenderSVGTransformableContainer {g} at (0,-45.50) size 44.47x58
-layer at (232.39,-29.50) size 36x58 backgroundClip at (232.39,16) size 500x47 clip at (232.39,16) size 500x47
-  RenderSVGText {text} at (0,0) size 37x58 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 37x58
-      chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 36.11: "A"
+    RenderSVGViewportContainer at (0,0) size 500x47
+      RenderSVGTransformableContainer {g} at (0,-45.50) size 44.47x58
+        RenderSVGText {text} at (0,0) size 37x58 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 37x58
+            chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 36.11: "A"
 layer at (232.39,-29.50) size 33x58 backgroundClip at (232.39,16) size 500x47 clip at (232.39,16) size 500x47
   RenderSVGText {text} at (0,0) size 34x58 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 34x58
