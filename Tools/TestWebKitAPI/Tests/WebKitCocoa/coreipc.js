@@ -339,6 +339,32 @@ class ArgumentSerializer {
         }
     }
 
+    static serializeExpected(innerType, name, argument) {
+        const types = ArgumentSerializer.splitTemplateType(innerType);
+        if (types.length !== 2)
+            throw new SerializationError(`Expected template must have exactly 2 type parameters`);
+        if (Object.hasOwn(argument, 'value')) {
+            try {
+                const serializedValue = ArgumentSerializer.serializeArgument({type: types[0], name: name}, argument.value);
+                return [{value: 1, type: 'bool'}, serializedValue];
+            } catch (error) {
+                if (error instanceof SerializationError)
+                    throw new SerializationError(`when serializing Expected value of type '${ types[0] }': ${ error.message }`);
+                throw error;
+            }
+        } else if (Object.hasOwn(argument, 'error')) {
+            try {
+                const serializedError = ArgumentSerializer.serializeArgument({type: types[1], name: name}, argument.error);
+                return [{value: 0, type: 'bool'}, serializedError];
+            } catch (error) {
+                if (error instanceof SerializationError)
+                    throw new SerializationError(`when serializing Expected error of type '${ types[1] }': ${ error.message }`);
+                throw error;
+            }
+        }
+        throw new SerializationError(`Expected argument must have either 'value' or 'error' field`);
+    }
+
     static serializeMarkable(innerType, argument) {
         if (Object.hasOwn(argument, "optionalValue")) {
             const argumentDefinition = {
@@ -581,6 +607,8 @@ class ArgumentSerializer {
                 case 'HashMap':
                 case 'MemoryCompactRobinHoodHashMap':
                     return ArgumentSerializer.serializeHashMap(innerType, argument);
+                case 'Expected':
+                    return ArgumentSerializer.serializeExpected(innerType, argumentDefinition.name, argument);
                 case 'Ref':
                 case 'UniqueRef':
                     return ArgumentSerializer.serializeArgument({type: innerType, name: argumentDefinition.name}, argument);
@@ -1010,6 +1038,22 @@ class ArgumentParser {
         }
     }
 
+    static parseExpected(buffer, position, innerType) {
+        const types = ArgumentSerializer.splitTemplateType(innerType);
+        if (types.length !== 2)
+            throw new ParserError(`Expected template must have exactly 2 type parameters`);
+        ArgumentParser.checkOutOfBounds(buffer, position, 1);
+        const hasValue = !!buffer.getUint8(position);
+        position += 1;
+        if (hasValue) {
+            const [newPosition, value] = ArgumentParser.parseArgument(buffer, position, {name: 'value', type: types[0]});
+            return [newPosition, {value: value}];
+        } else {
+            const [newPosition, error] = ArgumentParser.parseArgument(buffer, position, {name: 'error', type: types[1]});
+            return [newPosition, {error: error}];
+        }
+    }
+
     static parseMarkable(buffer, position, innerType) {
         ArgumentParser.checkOutOfBounds(buffer, position, 1);
         const isEmpty = !!buffer.getUint8(position);
@@ -1098,6 +1142,10 @@ class ArgumentParser {
                 case 'Markable': {
                     const [newPosition, value] = ArgumentParser.parseMarkable(buffer, position, innerType);
                     return [newPosition, {parsedType: argumentDefinition.type, parsedValue: value}]
+                }
+                case 'Expected': {
+                    const [newPosition, value] = ArgumentParser.parseExpected(buffer, position, innerType);
+                    return [newPosition, {parsedType: argumentDefinition.type, parsedValue: value}];
                 }
                 case 'Ref':
                 case 'UniqueRef': {
