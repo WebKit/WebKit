@@ -1036,6 +1036,14 @@ ExceptionOr<void> LocalDOMWindow::postMessage(JSC::JSGlobalObject& lexicalGlobal
     if (disentangledPorts.hasException())
         return disentangledPorts.releaseException();
 
+    // Serialization can run arbitrary script via getters/proxies, detaching
+    // this window. So in that case, we need to bail. But to conform to the
+    // spec, we can't bail until after port disentangling — because the spec's
+    // StructuredSerializeWithTransfer transfers ports as part of serialization.
+    // https://html.spec.whatwg.org/#window-post-message-steps (step 7).
+    if (!isCurrentlyDisplayedInFrame())
+        return { };
+
     // Capture the source of the message. We need to do this synchronously
     // in order to capture the source of the message correctly.
     Ref sourceOrigin = sourceDocument->securityOrigin();
