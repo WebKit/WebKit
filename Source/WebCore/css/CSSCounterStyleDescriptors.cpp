@@ -209,7 +209,7 @@ CSSCounterStyleDescriptors::SystemData extractSystemDataFromCSSValue(const CSSVa
         Ref secondValue = systemValue->second();
         if (system == CSSCounterStyleDescriptors::System::Extends) {
             ASSERT(secondValue->isCustomIdent());
-            result.first = AtomString { secondValue->isCustomIdent() ? secondValue->customIdent() : "decimal"_s };
+            result.first = AtomString { secondValue->isCustomIdent() ? secondValue->customIdent().value : "decimal"_s };
         } else if (system == CSSCounterStyleDescriptors::System::Fixed) {
             ASSERT(secondValue->isInteger());
             result.second = secondValue->isInteger() ? secondValue->integerDeprecated() : 1;

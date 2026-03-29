@@ -36,7 +36,7 @@
 namespace WebCore {
 namespace CSS {
 
-void serializationForCSSCustomIdentifier(StringBuilder& builder, const SerializationContext&, const CustomIdentifier& value)
+void serializationForCSSCustomIdentifier(StringBuilder& builder, const SerializationContext&, const CustomIdent& value)
 {
     WebCore::serializeIdentifier(value.value, builder);
 }
@@ -61,9 +61,9 @@ Ref<CSSValue> makePrimitiveCSSValue(CSSValueID value)
     return CSSPrimitiveValue::create(value);
 }
 
-Ref<CSSValue> makePrimitiveCSSValue(const CustomIdentifier& value)
+Ref<CSSValue> makePrimitiveCSSValue(const CustomIdent& value)
 {
-    return CSSPrimitiveValue::createCustomIdent(value.value);
+    return CSSPrimitiveValue::createCustomIdent(value);
 }
 
 Ref<CSSValue> makePrimitiveCSSValue(const PropertyIdentifier& value)

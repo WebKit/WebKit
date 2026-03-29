@@ -51,7 +51,7 @@ RefPtr<CSSValue> consumeViewTransitionTypes(CSSParserTokenRange& range, CSS::Pro
         auto type = consumeCustomIdent(range);
         if (!type)
             return nullptr;
-        if (type->customIdent().startsWith("-ua-"_s))
+        if (type->customIdent().value.startsWith("-ua-"_s))
             return nullptr;
         list.append(type.releaseNonNull());
     } while (!range.atEnd());

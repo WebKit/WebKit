@@ -23,6 +23,7 @@
 
 #include <WebCore/CSSAttrValue.h>
 #include <WebCore/CSSCalcValue.h>
+#include <WebCore/CSSCustomIdent.h>
 #include <WebCore/CSSPrimitiveNumericUnits.h>
 #include <WebCore/CSSPropertyNames.h>
 #include <WebCore/CSSValue.h>
@@ -101,9 +102,14 @@ public:
     bool isString() const { return primitiveUnitType() == CSSUnitType::CSS_STRING; }
     static Ref<CSSPrimitiveValue> create(String);
 
+    static Ref<CSSPrimitiveValue> createCustomIdent(const CSS::CustomIdent&);
     static Ref<CSSPrimitiveValue> createCustomIdent(String);
     bool isCustomIdent() const { return primitiveUnitType() == CSSUnitType::CustomIdent; }
-    String customIdent() const { ASSERT(isCustomIdent()); return stringValue(); }
+    CSS::CustomIdent customIdent() const
+    {
+        ASSERT(isCustomIdent());
+        return { m_value.string };
+    }
 
     static Ref<CSSPrimitiveValue> createFontFamily(String);
     bool isFontFamily() const { return primitiveUnitType() == CSSUnitType::CSS_FONT_FAMILY; }
@@ -220,7 +226,11 @@ private:
 
     // MARK: Non-converting
     double doubleValue(const CSSToLengthConversionData&) const;
-    double doubleValueNoConversionDataRequired() const { ASSERT(!isCalculated()); return m_value.number; }
+    double doubleValueNoConversionDataRequired() const
+    {
+        ASSERT(!isCalculated());
+        return m_value.number;
+    }
     double doubleValueDeprecated() const;
     double doubleValueDividingBy100IfPercentage(const CSSToLengthConversionData&) const;
     double doubleValueDividingBy100IfPercentageNoConversionDataRequired() const;
@@ -747,10 +757,10 @@ inline bool CSSValue::isCustomIdent() const
     return value && value->isCustomIdent();
 }
 
-inline String CSSValue::customIdent() const
+inline CSS::CustomIdent CSSValue::customIdent() const
 {
     ASSERT(isCustomIdent());
-    return downcast<CSSPrimitiveValue>(*this).stringValue();
+    return downcast<CSSPrimitiveValue>(*this).customIdent();
 }
 
 inline bool CSSValue::isString() const

@@ -54,7 +54,7 @@ bool CSSCounterValue::equals(const CSSCounterValue& other) const
 
 String CSSCounterValue::customCSSText(const CSS::SerializationContext&) const
 {
-    bool isDecimal = m_counterStyle->valueID() == CSSValueDecimal || (m_counterStyle->isCustomIdent() && m_counterStyle->customIdent() == "decimal"_s);
+    bool isDecimal = m_counterStyle->valueID() == CSSValueDecimal || (m_counterStyle->isCustomIdent() && m_counterStyle->customIdent().value == "decimal"_s);
     auto styleSeparator = isDecimal ? ""_s : ", "_s;
     auto styleLiteral = isDecimal ? ""_s : counterStyleCSSText();
     if (m_separator.isEmpty())
@@ -71,7 +71,7 @@ String CSSCounterValue::counterStyleCSSText() const
     if (m_counterStyle->isValueID())
         return nameString(m_counterStyle->valueID()).string();
     if (m_counterStyle->isCustomIdent())
-        return m_counterStyle->customIdent();
+        return m_counterStyle->customIdent().value;
 
     ASSERT_NOT_REACHED();
     return emptyString();

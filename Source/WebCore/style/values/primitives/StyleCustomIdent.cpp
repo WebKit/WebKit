@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2026 saku
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,51 +24,30 @@
  */
 
 #include "config.h"
-#include "ScopedName.h"
+#include "StyleCustomIdent.h"
 
 #include "CSSPrimitiveValue.h"
-#include "StyleBuilderChecking.h"
-#include "StyleValueTypes+CSSValueConversion.h"
+#include "StyleValueTypes.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace Style {
 
+void add(Hasher& hasher, const CustomIdent& value)
+{
+    add(hasher, value.value);
+}
+
+WTF::TextStream& operator<<(WTF::TextStream& ts, const CustomIdent& value)
+{
+    return ts << value.value;
+}
+
 // MARK: - Conversion
 
-auto CSSValueConversion<ScopedName>::operator()(BuilderState& state, const CSSPrimitiveValue& primitiveValue) -> ScopedName
+auto CSSValueCreation<CustomIdent>::operator()(CSSValuePool&, const RenderStyle&, const CustomIdent& value) -> Ref<CSSValue>
 {
-    auto customIdentifier = toStyleFromCSSValue<CustomIdentifier>(state, primitiveValue);
-    if (customIdentifier.value.isNull())
-        return { };
-
-    return {
-        .name = customIdentifier.value,
-        .scopeOrdinal = state.styleScopeOrdinal()
-    };
-}
-
-auto CSSValueConversion<ScopedName>::operator()(BuilderState& state, const CSSValue& value) -> ScopedName
-{
-    RefPtr primitiveValue = requiredDowncast<CSSPrimitiveValue>(state, value);
-    if (!primitiveValue)
-        return { };
-
-    auto customIdentifier = toStyleFromCSSValue<CustomIdentifier>(state, *primitiveValue);
-    if (customIdentifier.value.isNull())
-        return { };
-
-    return ScopedName {
-        .name = customIdentifier.value,
-        .scopeOrdinal = state.styleScopeOrdinal()
-    };
-}
-
-// MARK: - Logging
-
-WTF::TextStream& operator<<(WTF::TextStream& ts, const ScopedName& scopedName)
-{
-    return ts << scopedName.name;
+    return CSSPrimitiveValue::createCustomIdent(CSS::CustomIdent { value.value });
 }
 
 } // namespace Style

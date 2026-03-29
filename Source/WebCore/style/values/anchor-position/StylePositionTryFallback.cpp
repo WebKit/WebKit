@@ -33,6 +33,7 @@
 #include "StylePrimitiveKeyword+Logging.h"
 #include "StylePrimitiveKeyword+Serialization.h"
 #include "StylePropertiesInlines.h"
+#include "StyleValueTypes+CSSValueConversion.h"
 
 namespace WebCore {
 namespace Style {
@@ -101,9 +102,12 @@ auto CSSValueConversion<PositionTryFallback>::operator()(BuilderState& state, co
                 tactics.value.append(PositionTryFallbackTactic::FlipY);
                 break;
             case CSSValueInvalid:
-                if (item->isCustomIdent() && !rule) {
-                    rule = ScopedName { AtomString { item->customIdent() }, state.styleScopeOrdinal() };
-                    break;
+                if (!rule) {
+                    auto customIdentifier = toStyleFromCSSValue<CustomIdentifier>(state, item.get());
+                    if (!customIdentifier.value.isNull()) {
+                        rule = ScopedName { customIdentifier.value, state.styleScopeOrdinal() };
+                        break;
+                    }
                 }
                 [[fallthrough]];
             default:

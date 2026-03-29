@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2026 saku
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,53 +23,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ScopedName.h"
+#pragma once
 
-#include "CSSPrimitiveValue.h"
-#include "StyleBuilderChecking.h"
-#include "StyleValueTypes+CSSValueConversion.h"
-#include <wtf/text/TextStream.h>
+#include "CSSCustomIdent.h"
+#include <wtf/Forward.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 namespace Style {
 
-// MARK: - Conversion
+// Custom-ident values have dedicated CSS and Style representations.
+struct CustomIdent {
+    AtomString value;
 
-auto CSSValueConversion<ScopedName>::operator()(BuilderState& state, const CSSPrimitiveValue& primitiveValue) -> ScopedName
-{
-    auto customIdentifier = toStyleFromCSSValue<CustomIdentifier>(state, primitiveValue);
-    if (customIdentifier.value.isNull())
-        return { };
+    CustomIdent() = default;
+    CustomIdent(AtomString&& value)
+        : value(WTF::move(value))
+    {
+    }
+    CustomIdent(const AtomString& value)
+        : value(value)
+    {
+    }
+    CustomIdent(const CSS::CustomIdent& value)
+        : value(value.value)
+    {
+    }
 
-    return {
-        .name = customIdentifier.value,
-        .scopeOrdinal = state.styleScopeOrdinal()
-    };
-}
+    operator CSS::CustomIdent() const { return { value }; }
 
-auto CSSValueConversion<ScopedName>::operator()(BuilderState& state, const CSSValue& value) -> ScopedName
-{
-    RefPtr primitiveValue = requiredDowncast<CSSPrimitiveValue>(state, value);
-    if (!primitiveValue)
-        return { };
+    bool operator==(const CustomIdent&) const = default;
+    bool operator==(const AtomString& other) const { return value == other; }
+};
 
-    auto customIdentifier = toStyleFromCSSValue<CustomIdentifier>(state, *primitiveValue);
-    if (customIdentifier.value.isNull())
-        return { };
+// Transitional alias while style code is moved to `CustomIdent`.
+using CustomIdentifier = CustomIdent;
 
-    return ScopedName {
-        .name = customIdentifier.value,
-        .scopeOrdinal = state.styleScopeOrdinal()
-    };
-}
-
-// MARK: - Logging
-
-WTF::TextStream& operator<<(WTF::TextStream& ts, const ScopedName& scopedName)
-{
-    return ts << scopedName.name;
-}
+void NODELETE add(Hasher&, const CustomIdent&);
+WTF::TextStream& operator<<(WTF::TextStream&, const CustomIdent&);
 
 } // namespace Style
 } // namespace WebCore

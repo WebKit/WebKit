@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2026 saku
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -16,29 +16,37 @@
  * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CSSValueAggregates.h"
+#pragma once
 
-#include <wtf/text/TextStream.h>
+#include <wtf/Compiler.h>
+#include <wtf/Forward.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
-// MARK: - PropertyIdentifier
+namespace CSS {
 
-WTF::TextStream& operator<<(WTF::TextStream& ts, const PropertyIdentifier& value)
-{
-    return ts << nameLiteral(value.value);
-}
+// Helper type used to represent an arbitrary constant identifier.
+struct CustomIdent {
+    AtomString value;
 
-void add(Hasher& hasher, const PropertyIdentifier& value)
-{
-    add(hasher, value.value);
-}
+    bool operator==(const CustomIdent&) const = default;
+    bool operator==(const AtomString& other) const { return value == other; }
+};
+
+} // namespace CSS
+
+// Transitional alias while CSS/Style custom-ident representation is being split.
+using CustomIdentifier = CSS::CustomIdent;
+
+WTF::TextStream& operator<<(WTF::TextStream&, const CSS::CustomIdent&);
+void NODELETE add(Hasher&, const CSS::CustomIdent&);
 
 } // namespace WebCore

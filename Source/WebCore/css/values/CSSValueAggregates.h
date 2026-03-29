@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "CSSCustomIdent.h"
 #include <WebCore/CSSPropertyNames.h>
 #include <WebCore/CSSValueConcepts.h>
 #include <WebCore/CSSValueKeywords.h>
@@ -194,17 +195,6 @@ template<typename... Ts> inline constexpr auto TreatAsTupleLike<std::tuple<Ts...
 template<typename... Ts> inline constexpr auto TreatAsVariantLike<Variant<Ts...>> = true;
 
 // MARK: - Standard Leaf Types
-
-// Helper type used to represent an arbitrary constant identifier.
-struct CustomIdentifier {
-    AtomString value;
-
-    bool operator==(const CustomIdentifier&) const = default;
-    bool operator==(const AtomString& other) const { return value == other; }
-};
-TextStream& operator<<(TextStream&, const CustomIdentifier&);
-
-void NODELETE add(Hasher&, const CustomIdentifier&);
 
 // Helper type used to represent an arbitrary property identifier.
 struct PropertyIdentifier {
@@ -2100,9 +2090,9 @@ template<typename T>
 struct supports_text_stream_insertion<WebCore::MinimallySerializingSpaceSeparatedRectCorners<T>> : supports_text_stream_insertion<T> { };
 
 template<>
-struct MarkableTraits<WebCore::CustomIdentifier> {
-    static bool isEmptyValue(const WebCore::CustomIdentifier& value) { return value.value.isNull(); }
-    static WebCore::CustomIdentifier emptyValue() { return WebCore::CustomIdentifier { nullAtom() }; }
+struct MarkableTraits<WebCore::CSS::CustomIdent> {
+    static bool isEmptyValue(const WebCore::CSS::CustomIdent& value) { return value.value.isNull(); }
+    static WebCore::CSS::CustomIdent emptyValue() { return WebCore::CSS::CustomIdent { nullAtom() }; }
 };
 
 } // namespace WTF
