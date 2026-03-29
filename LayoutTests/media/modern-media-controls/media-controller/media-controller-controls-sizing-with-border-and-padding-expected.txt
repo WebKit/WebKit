@@ -3,6 +3,7 @@ Testing media controls are sized correctly when borders and padding are set on t
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS window.internals.shadowRoot(media) became different from null
 PASS mediaControls.style.width became "320px"
 
 PASS successfullyParsed is true

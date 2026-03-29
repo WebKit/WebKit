@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <body>
 <video src="../../content/test.mp4" style="width: 320px; height: 240px;" controls></video>
 <script type="text/javascript">
@@ -9,18 +9,24 @@ window.jsTestIsAsync = true;
 description("Testing placard has 'direction: rtl' set for RTL languages.");
 
 const media = document.querySelector("video");
-const shadowRoot = window.internals.shadowRoot(media);
+var shadowRoot;
 
 media.addEventListener("error", event => {
-    debug("Waiting for placard to appear");
-    shouldBecomeEqual("!!shadowRoot.querySelector('.placard')", "true", () => {
-        debug("");
-        debug("Default layout direction is LTR");
-        shouldBecomeEqualToString("getComputedStyle(shadowRoot.querySelector('.placard')).direction", "ltr", () => {
+    shouldBecomeDifferent("window.internals.shadowRoot(media)", "null", () => {
+        shadowRoot = window.internals.shadowRoot(media);
+        debug("Waiting for placard to appear");
+        shouldBecomeEqual("!!shadowRoot.querySelector('.placard')", "true", () => {
             debug("");
-            debug("Setting layout direction to RTL");
-            window.internals.setUserInterfaceLayoutDirection("RTL");
-            shouldBecomeEqualToString("getComputedStyle(shadowRoot.querySelector('.placard')).direction", "rtl", finishJSTest);
+            debug("Default layout direction is LTR");
+            shouldBecomeEqualToString("getComputedStyle(shadowRoot.querySelector('.placard')).direction", "ltr", () => {
+                debug("");
+                debug("Setting layout direction to RTL");
+                window.internals.setUserInterfaceLayoutDirection("RTL");
+                shouldBecomeEqualToString("getComputedStyle(shadowRoot.querySelector('.placard')).direction", "rtl", () => {
+                    window.internals.setUserInterfaceLayoutDirection("LTR");
+                    finishJSTest();
+                });
+            });
         });
     });
 });
@@ -28,5 +34,4 @@ media.addEventListener("error", event => {
 media.src = "";
 
 </script>
-<script src="../../../resources/js-test-post.js"></script>
 </body>

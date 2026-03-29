@@ -3,6 +3,7 @@ Testing placard has 'direction: rtl' set for RTL languages.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS window.internals.shadowRoot(media) became different from null
 Waiting for placard to appear
 PASS !!shadowRoot.querySelector('.placard') became true
 

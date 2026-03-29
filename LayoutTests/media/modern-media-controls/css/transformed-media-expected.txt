@@ -1,3 +1,4 @@
+PASS window.internals.shadowRoot(media) became different from null
 PASS mediaControls.style.width is "560px"
 PASS mediaControls.style.height is "260px"
 PASS successfullyParsed is true

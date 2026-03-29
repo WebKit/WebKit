@@ -3,6 +3,7 @@ Testing the MediaController resizing behavior.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS window.internals.shadowRoot(media) became different from null
 Checking initial size
 PASS mediaControls.style.width is "320px"
 PASS mediaControls.style.height is "240px"

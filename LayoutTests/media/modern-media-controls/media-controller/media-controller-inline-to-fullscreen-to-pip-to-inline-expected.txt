@@ -3,20 +3,24 @@ Testing that entering fullscreen, then going into picture-in-picture and then go
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS window.internals.shadowRoot(media) became different from null
 
 PASS shadowRoot.querySelector('.media-controls').classList.contains('inline') is true
 Media started playing, we pause it and enter fullscreen by clicking on the matching button.
+PASS window.internals.shadowRoot(media) became different from null
 
 Media received a webkitpresentationmodechanged event, media.webkitPresentationMode = fullscreen.
 PASS internals.isChangingPresentationMode(media) became false
 PASS shadowRoot.querySelector('.media-controls').classList.contains('fullscreen') is true
 
 We enter picture-in-picture by clicking on the matching button.
+PASS window.internals.shadowRoot(media) became different from null
 
 Media received a webkitpresentationmodechanged event, media.webkitPresentationMode = picture-in-picture.
 PASS internals.isChangingPresentationMode(media) became false
 
 We exit picture-in-picture.
+PASS window.internals.shadowRoot(media) became different from null
 
 Media received a webkitpresentationmodechanged event, media.webkitPresentationMode = inline.
 PASS internals.isChangingPresentationMode(media) became false

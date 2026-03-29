@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <body>
 <video src="../../content/test.mp4" style="width: 640px; height: 480px;" controls autoplay></video>
 <script type="text/javascript">
@@ -16,32 +16,36 @@ if (!window.internals) {
 internals.setMockVideoPresentationModeEnabled(true);
 
 const media = document.querySelector("video");
-const shadowRoot = window.internals.shadowRoot(media);
-let mediaControls = shadowRoot.lastElementChild.lastElementChild;
+let shadowRoot;
+let mediaControls;
 
 media.addEventListener("play", () => {
-    media.pause();
+    shouldBecomeDifferent("window.internals.shadowRoot(media)", "null", () => {
+        shadowRoot = window.internals.shadowRoot(media);
+        mediaControls = shadowRoot.lastElementChild.lastElementChild;
+        media.pause();
 
-    window.requestAnimationFrame(() => {
-        debug("We should not fade the controls in when showing them inline the first time");
-        shouldBeFalse("mediaControls.classList.contains('fade-in')");
-        
-        clickOnFullscreenButton();
-        media.addEventListener("webkitfullscreenchange", () => {
-            if (!media.webkitDisplayingFullscreen) {
-                media.remove();
-                finishJSTest();
-            }
+        window.requestAnimationFrame(() => {
+            debug("We should not fade the controls in when showing them inline the first time");
+            shouldBeFalse("mediaControls.classList.contains('fade-in')");
 
-            shouldBecomeEqual("internals.isChangingPresentationMode(media)", "false", () => {
-                mediaControls = shadowRoot.lastElementChild.lastElementChild;
-                debug("Obtained a webkitfullscreenchange event");
-                shouldBeTrue("media.webkitDisplayingFullscreen");
-                debug("We should fade the controls in when showing them fullscreen");
-                shouldBeTrue("mediaControls.classList.contains('fade-in')");
+            clickOnFullscreenButton();
+            media.addEventListener("webkitfullscreenchange", () => {
+                if (!media.webkitDisplayingFullscreen) {
+                    media.remove();
+                    finishJSTest();
+                }
 
-                debug("");
-                media.webkitExitFullscreen();
+                shouldBecomeEqual("internals.isChangingPresentationMode(media)", "false", () => {
+                    mediaControls = shadowRoot.lastElementChild.lastElementChild;
+                    debug("Obtained a webkitfullscreenchange event");
+                    shouldBeTrue("media.webkitDisplayingFullscreen");
+                    debug("We should fade the controls in when showing them fullscreen");
+                    shouldBeTrue("mediaControls.classList.contains('fade-in')");
+
+                    debug("");
+                    media.webkitExitFullscreen();
+                });
             });
         });
     });
@@ -57,5 +61,4 @@ function clickOnFullscreenButton()
 }
 
 </script>
-<script src="../../../resources/js-test-post.js"></script>
 </body>

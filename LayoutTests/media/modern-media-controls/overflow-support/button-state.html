@@ -2,7 +2,7 @@
 <meta name="viewport" content="width=device-width">
 <script src="../resources/media-controls-utils.js"></script>
 <script src="../../../resources/ui-helper.js"></script>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <body>
 <video src="../../content/test.mp4" style="position: absolute; left: 0; top: 0; width: 600px;" controls autoplay></video>
 <script type="text/javascript">
@@ -12,34 +12,36 @@ window.jsTestIsAsync = true;
 description("Testing that the overflow button is properly marked as `on` only when the context menu is showing.");
 
 const media = document.querySelector("video");
-const shadowRoot = window.internals.shadowRoot(media);
+var shadowRoot;
 
-media.addEventListener("play", async function() {
-    media.pause();
+media.addEventListener("play", function() {
+    shouldBecomeDifferent("window.internals.shadowRoot(media)", "null", async () => {
+        shadowRoot = window.internals.shadowRoot(media);
+        media.pause();
 
-    await shouldBecomeDifferent("shadowRoot.querySelector('button.overflow')", "null");
+        await shouldBecomeDifferent("shadowRoot.querySelector('button.overflow')", "null");
 
-    await shouldBecomeDifferent("shadowRoot.querySelector('button.overflow').getBoundingClientRect().width", "0");
+        await shouldBecomeDifferent("shadowRoot.querySelector('button.overflow').getBoundingClientRect().width", "0");
 
-    debug("Tapping overflow button...");
-    await pressOnElement(shadowRoot.querySelector("button.overflow"));
-    await UIHelper.waitForContextMenuToShow();
-    await shouldBecomeEqual("shadowRoot.querySelector('button.overflow').classList.contains('on')", "true");
+        debug("Tapping overflow button...");
+        await pressOnElement(shadowRoot.querySelector("button.overflow"));
+        await UIHelper.waitForContextMenuToShow();
+        await shouldBecomeEqual("shadowRoot.querySelector('button.overflow').classList.contains('on')", "true");
 
-    debug("Dismissing contextmenu...");
-    await new Promise((resolve, reject) => {
-        testRunner.runUIScript(`
-            uiController.dismissMenu();
-            uiController.uiScriptComplete();
-        `, resolve);
+        debug("Dismissing contextmenu...");
+        await new Promise((resolve, reject) => {
+            testRunner.runUIScript(`
+                uiController.dismissMenu();
+                uiController.uiScriptComplete();
+            `, resolve);
+        });
+        await UIHelper.waitForContextMenuToHide();
+        await shouldBecomeEqual("shadowRoot.querySelector('button.overflow').classList.contains('on')", "false");
+
+        media.remove();
+        finishJSTest();
     });
-    await UIHelper.waitForContextMenuToHide();
-    await shouldBecomeEqual("shadowRoot.querySelector('button.overflow').classList.contains('on')", "false");
-
-    media.remove();
-    finishJSTest();
 });
 
 </script>
-<script src="../../../resources/js-test-post.js"></script>
 </body>

@@ -1,4 +1,4 @@
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <script src="../resources/media-controls-utils.js" type="text/javascript"></script>
 <body>
 <video controls style="pointer-events: none"></video>
@@ -8,19 +8,20 @@ window.jsTestIsAsync = true;
 
 description("Testing that settings 'pointer-events: none' on the &lt;video> element is respected in the media controls shadow root.");
 
-const media = document.querySelector("video");
-shouldBeEqualToString("getComputedStyle(window.internals.shadowRoot(media).querySelector('.media-controls-container')).pointerEvents", "none");
-
 let interactive = false;
+const media = document.querySelector("video");
 
-media.addEventListener("click", () => interactive = true);
-media.addEventListener("touchstart", () => interactive = true);
+shouldBecomeDifferent("window.internals.shadowRoot(media)", "null", () => {
+    shouldBeEqualToString("getComputedStyle(window.internals.shadowRoot(media).querySelector('.media-controls-container')).pointerEvents", "none");
 
-pressOnElement(media, () => {
-    shouldBeFalse("interactive");
-    finishJSTest();
+    media.addEventListener("click", () => interactive = true);
+    media.addEventListener("touchstart", () => interactive = true);
+
+    pressOnElement(media, () => {
+        shouldBeFalse("interactive");
+        finishJSTest();
+    });
 });
 
 </script>
-<script src="../../../resources/js-test-post.js"></script>
 </body>

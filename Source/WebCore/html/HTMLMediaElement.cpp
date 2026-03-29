@@ -1134,7 +1134,10 @@ void HTMLMediaElement::postConnectionSteps()
         canProduceAudioChanged();
     }
 
-    configureMediaControls();
+    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [](auto& element) {
+        if (!element.isContextStopped())
+            element.configureMediaControls();
+    });
 }
 
 void HTMLMediaElement::pauseAfterDetachedTask()
