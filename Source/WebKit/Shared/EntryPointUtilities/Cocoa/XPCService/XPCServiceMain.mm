@@ -257,6 +257,13 @@ void XPCServiceEventHandler(xpc_connection_t peer)
             if (fd != -1)
                 dup2(fd, STDERR_FILENO);
 
+            fd = xpc_dictionary_dup_fd(event, "nutjob-tap-fd");
+            if (fd != -1) {
+                char fdString[32];
+                snprintf(fdString, sizeof(fdString), "%d", fd);
+                setenv("NUTJOB_TAP_FD", fdString, 1);
+            }
+
             WorkQueue::mainSingleton().dispatchSync([initializerFunctionPtr, event = OSObjectPtr<xpc_object_t>(event), retainedPeerConnection] {
                 WTF::initializeMainThread();
 

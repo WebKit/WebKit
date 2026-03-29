@@ -53,7 +53,20 @@
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_renderingBackend->streamConnection());
 
+// Nutjob command tap
+#include "webkit_nutjob_tap.h"
+
 namespace WebKit {
+
+// Debug: check if our code is reached on first RemoteGraphicsContext creation
+static void nutjob_loaded_check() {
+    static bool checked = false;
+    if (!checked) {
+        checked = true;
+        FILE* f = fopen("/tmp/nutjob_loaded.txt", "a");
+        if (f) { fprintf(f, "RemoteGraphicsContext created in pid %d\n", getpid()); fclose(f); }
+    }
+}
 using namespace WebCore;
 
 RemoteGraphicsContext::RemoteGraphicsContext(GraphicsContext& context, RemoteRenderingBackend& renderingBackend)
@@ -61,6 +74,7 @@ RemoteGraphicsContext::RemoteGraphicsContext(GraphicsContext& context, RemoteRen
     , m_renderingBackend(renderingBackend)
     , m_sharedResourceCache(renderingBackend.sharedResourceCache())
 {
+    nutjob_loaded_check();
 }
 
 RemoteGraphicsContext::~RemoteGraphicsContext() = default;
@@ -95,26 +109,31 @@ std::optional<SourceImage> RemoteGraphicsContext::sourceImage(RenderingResourceI
 
 void RemoteGraphicsContext::save()
 {
+    njt_save();
     context().save();
 }
 
 void RemoteGraphicsContext::restore()
 {
+    njt_restore();
     context().restore();
 }
 
 void RemoteGraphicsContext::translate(float x, float y)
 {
+    njt_translate(x, y);
     context().translate(x, y);
 }
 
 void RemoteGraphicsContext::rotate(float angle)
 {
+    njt_rotate(angle);
     context().rotate(angle);
 }
 
 void RemoteGraphicsContext::scale(const FloatSize& scale)
 {
+    njt_scale(scale.width(), scale.height());
     context().scale(scale);
 }
 
@@ -301,6 +320,7 @@ void RemoteGraphicsContext::setMiterLimit(float limit)
 
 void RemoteGraphicsContext::clip(const FloatRect& rect)
 {
+    njt_clip_rect(rect.x(), rect.y(), rect.width(), rect.height());
     context().clip(rect);
 }
 
@@ -464,6 +484,7 @@ void RemoteGraphicsContext::drawPatternImageBuffer(RenderingResourceIdentifier i
 
 void RemoteGraphicsContext::beginTransparencyLayer(float opacity)
 {
+    njt_begin_transparency(opacity);
     context().beginTransparencyLayer(opacity);
 }
 
@@ -474,6 +495,7 @@ void RemoteGraphicsContext::beginTransparencyLayerWithCompositeMode(CompositeMod
 
 void RemoteGraphicsContext::endTransparencyLayer()
 {
+    njt_end_transparency();
     context().endTransparencyLayer();
 }
 
@@ -484,6 +506,7 @@ void RemoteGraphicsContext::drawRect(const FloatRect& rect, float borderThicknes
 
 void RemoteGraphicsContext::drawLine(const FloatPoint& point1, const FloatPoint& point2)
 {
+    njt_draw_line(point1.x(), point1.y(), point2.x(), point2.y());
     context().drawLine(point1, point2);
 }
 
@@ -519,11 +542,13 @@ void RemoteGraphicsContext::drawFocusRingRects(const Vector<FloatRect>& rects, f
 
 void RemoteGraphicsContext::fillRect(const FloatRect& rect, GraphicsContext::RequiresClipToRect requiresClipToRect)
 {
+    njt_fill_rect(rect.x(), rect.y(), rect.width(), rect.height());
     context().fillRect(rect, requiresClipToRect);
 }
 
 void RemoteGraphicsContext::fillRectWithColor(const FloatRect& rect, const Color& color)
 {
+    njt_fill_rect_color(rect.x(), rect.y(), rect.width(), rect.height(), NJT_ARGB(color));
     context().fillRect(rect, color);
 }
 
@@ -634,6 +659,8 @@ void RemoteGraphicsContext::setSharedVideoFrameMemory(SharedMemory::Handle&& han
 
 void RemoteGraphicsContext::strokeRect(const FloatRect& rect, float lineWidth)
 {
+    njt_set_line_width(lineWidth);
+    njt_stroke_rect(rect.x(), rect.y(), rect.width(), rect.height());
     context().strokeRect(rect, lineWidth);
 }
 
@@ -699,6 +726,7 @@ void RemoteGraphicsContext::strokeEllipse(const FloatRect& rect)
 
 void RemoteGraphicsContext::clearRect(const FloatRect& rect)
 {
+    njt_clear_rect(rect.x(), rect.y(), rect.width(), rect.height());
     context().clearRect(rect);
 }
 

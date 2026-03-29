@@ -49,6 +49,8 @@
 #import "WebProcessProxy.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/BifurcatedGraphicsContext.h>
+#import <WebCore/DisplayListRecorderImpl.h>
+#import "webkit_remote_layer_nutjob_tap.h"
 #import <WebCore/DynamicContentScalingTypes.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/IOSurface.h>
@@ -408,6 +410,7 @@ void RemoteLayerBackingStore::paintContents()
 
 void RemoteLayerBackingStore::drawInContext(GraphicsContext& context)
 {
+    WTFLogAlways("NUTJOB: drawInContext called, dirtyBounds=%dx%d", m_dirtyRegion.bounds().width(), m_dirtyRegion.bounds().height());
     GraphicsContextStateSaver stateSaver(context);
     IntRect dirtyBounds = m_dirtyRegion.bounds();
 
@@ -424,41 +427,52 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context)
     
     // FIXME: This should be moved to PlatformCALayerRemote for better layering.
     Ref layer = m_layer.get();
-    switch (layer->layerType()) {
-    case PlatformCALayer::LayerType::LayerTypeSimpleLayer:
+    auto paintLayer = [&](GraphicsContext& paintContext) {
+        switch (layer->layerType()) {
+        case PlatformCALayer::LayerType::LayerTypeSimpleLayer:
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-    case PlatformCALayer::LayerType::LayerTypeSeparatedImageLayer:
+        case PlatformCALayer::LayerType::LayerTypeSeparatedImageLayer:
 #endif
-    case PlatformCALayer::LayerType::LayerTypeTiledBackingTileLayer:
-        layer->owner()->platformCALayerPaintContents(layer.ptr(), context, dirtyBounds, paintBehavior);
-        break;
-    case PlatformCALayer::LayerType::LayerTypeWebLayer:
-    case PlatformCALayer::LayerType::LayerTypeBackdropLayer:
+        case PlatformCALayer::LayerType::LayerTypeTiledBackingTileLayer:
+            layer->owner()->platformCALayerPaintContents(layer.ptr(), paintContext, dirtyBounds, paintBehavior);
+            break;
+        case PlatformCALayer::LayerType::LayerTypeWebLayer:
+        case PlatformCALayer::LayerType::LayerTypeBackdropLayer:
 #if HAVE(CORE_MATERIAL)
-    case PlatformCALayer::LayerType::LayerTypeMaterialLayer:
+        case PlatformCALayer::LayerType::LayerTypeMaterialLayer:
 #endif
-        PlatformCALayer::drawLayerContents(context, layer.ptr(), m_paintingRects, paintBehavior);
-        break;
-    case PlatformCALayer::LayerType::LayerTypeLayer:
-    case PlatformCALayer::LayerType::LayerTypeTransformLayer:
-    case PlatformCALayer::LayerType::LayerTypeTiledBackingLayer:
-    case PlatformCALayer::LayerType::LayerTypePageTiledBackingLayer:
-    case PlatformCALayer::LayerType::LayerTypeRootLayer:
-    case PlatformCALayer::LayerType::LayerTypeAVPlayerLayer:
-    case PlatformCALayer::LayerType::LayerTypeContentsProvidedLayer:
-    case PlatformCALayer::LayerType::LayerTypeShapeLayer:
-    case PlatformCALayer::LayerType::LayerTypeScrollContainerLayer:
+            PlatformCALayer::drawLayerContents(paintContext, layer.ptr(), m_paintingRects, paintBehavior);
+            break;
+        case PlatformCALayer::LayerType::LayerTypeLayer:
+        case PlatformCALayer::LayerType::LayerTypeTransformLayer:
+        case PlatformCALayer::LayerType::LayerTypeTiledBackingLayer:
+        case PlatformCALayer::LayerType::LayerTypePageTiledBackingLayer:
+        case PlatformCALayer::LayerType::LayerTypeRootLayer:
+        case PlatformCALayer::LayerType::LayerTypeAVPlayerLayer:
+        case PlatformCALayer::LayerType::LayerTypeContentsProvidedLayer:
+        case PlatformCALayer::LayerType::LayerTypeShapeLayer:
+        case PlatformCALayer::LayerType::LayerTypeScrollContainerLayer:
 #if ENABLE(MODEL_ELEMENT)
-    case PlatformCALayer::LayerType::LayerTypeModelLayer:
+        case PlatformCALayer::LayerType::LayerTypeModelLayer:
 #endif
-    case PlatformCALayer::LayerType::LayerTypeCustom:
-    case PlatformCALayer::LayerType::LayerTypeHost:
+        case PlatformCALayer::LayerType::LayerTypeCustom:
+        case PlatformCALayer::LayerType::LayerTypeHost:
 #if HAVE(MATERIAL_HOSTING)
-    case PlatformCALayer::LayerType::LayerTypeMaterialHostingLayer:
+        case PlatformCALayer::LayerType::LayerTypeMaterialHostingLayer:
 #endif
-        ASSERT_NOT_REACHED();
-        break;
+            ASSERT_NOT_REACHED();
+            break;
+        };
     };
+
+    if (NutjobTap::isActive()) {
+        auto initialState = context.state();
+        auto initialCTM = context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+        NutjobTap::MirroringGraphicsContext recordingContext(initialState, initialCTM, IntSize(size()), FloatRect(dirtyBounds), layer.ptr(), m_parameters.scale);
+        BifurcatedGraphicsContext bifurcatedContext(context, recordingContext);
+        paintLayer(bifurcatedContext);
+    } else
+        paintLayer(context);
 
     stateSaver.restore();
 
@@ -481,7 +495,6 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context)
 #endif
     if (auto flusher = createFlusher())
         m_frontBufferFlushers.append(WTF::move(flusher));
-
 }
 
 void RemoteLayerBackingStore::flush()

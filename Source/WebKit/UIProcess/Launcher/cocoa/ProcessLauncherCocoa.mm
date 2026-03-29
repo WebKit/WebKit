@@ -55,6 +55,8 @@
 #import <wtf/spi/cf/CFBundleSPI.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
+#import <wtf/text/StringToIntegerConversion.h>
+#import <wtf/text/StringView.h>
 
 #if PLATFORM(MAC)
 #import "CodeSigning.h"
@@ -406,6 +408,13 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
     if (!AuxiliaryProcess::isSystemWebKit()) {
         xpc_dictionary_set_fd(bootstrapMessage.get(), "stdout", STDOUT_FILENO);
         xpc_dictionary_set_fd(bootstrapMessage.get(), "stderr", STDERR_FILENO);
+        if (m_launchOptions.processType == ProcessLauncher::ProcessType::Web) {
+            if (const char* fdString = getenv("NUTJOB_TAP_FD")) {
+                int fdValue = parseInteger<int>(StringView(unsafeSpan(fdString))).value_or(-1);
+                if (fdValue >= 0)
+                    xpc_dictionary_set_fd(bootstrapMessage.get(), "nutjob-tap-fd", fdValue);
+            }
+        }
     }
     
     auto sdkBehaviors = sdkAlignedBehaviors();

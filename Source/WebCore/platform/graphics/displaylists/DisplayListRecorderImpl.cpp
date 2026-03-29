@@ -39,6 +39,9 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
+// Nutjob command tap
+#include "webkit_nutjob_tap.h"
+
 namespace WebCore {
 namespace DisplayList {
 
@@ -47,6 +50,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RecorderImpl);
 RecorderImpl::RecorderImpl(const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, const DestinationColorSpace& colorSpace, DrawGlyphsMode drawGlyphsMode)
     : Recorder(state, initialClip, initialCTM, colorSpace, drawGlyphsMode)
 {
+    njt_get(); // Initialize tap on first recorder creation
     LOG_WITH_STREAM(DisplayLists, stream << "\nRecording with clip " << initialClip);
 }
 
@@ -70,6 +74,7 @@ Ref<const DisplayList> RecorderImpl::copyDisplayList()
 
 void RecorderImpl::save(GraphicsContextState::Purpose purpose)
 {
+    njt_save();
     updateStateForSave(purpose);
     m_items.append(Save());
 }
