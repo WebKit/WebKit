@@ -264,6 +264,20 @@ void XPCServiceEventHandler(xpc_connection_t peer)
                 setenv("NUTJOB_TAP_FD", fdString, 1);
             }
 
+            fd = xpc_dictionary_dup_fd(event, "nutjob-tap-report-fd");
+            if (fd != -1) {
+                char fdString[32];
+                snprintf(fdString, sizeof(fdString), "%d", fd);
+                setenv("NUTJOB_TAP_REPORT_FD", fdString, 1);
+            }
+
+            if (const char* reportPath = xpc_dictionary_get_string(event, "nutjob-tap-report-path"))
+                setenv("NUTJOB_TAP_REPORT_PATH", reportPath, 1);
+            if (const char* offsetX = xpc_dictionary_get_string(event, "nutjob-harness-content-offset-x"))
+                setenv("NUTJOB_HARNESS_CONTENT_OFFSET_X", offsetX, 1);
+            if (const char* offsetY = xpc_dictionary_get_string(event, "nutjob-harness-content-offset-y"))
+                setenv("NUTJOB_HARNESS_CONTENT_OFFSET_Y", offsetY, 1);
+
             WorkQueue::mainSingleton().dispatchSync([initializerFunctionPtr, event = OSObjectPtr<xpc_object_t>(event), retainedPeerConnection] {
                 WTF::initializeMainThread();
 

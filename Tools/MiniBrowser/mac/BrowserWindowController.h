@@ -94,6 +94,7 @@
 - (void)didChangeSettings;
 - (BOOL)webViewFillsWindow;
 - (void)setWebViewFillsWindow:(BOOL)fillWindow;
+- (void)updateHarnessContentOffsetEnvironment;
 
 - (NSURL *)currentURL;
 - (NSView *)mainContentView;
@@ -108,4 +109,3 @@
 - (IBAction)toggleEditable:(id)sender;
 
 @end
-
