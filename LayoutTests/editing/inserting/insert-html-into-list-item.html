@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<div id="test" contenteditable>
+<ul><li><br></li></ul>
+</div>
+<script>
+Markup.description('This tests that inserting html into an empty list item produces flat sibling list items, not nested ones');
+
+var listItem = document.querySelector('li');
+setSelectionCommand(listItem, 0, listItem, 0);
+
+Markup.dump('test', 'Before');
+
+insertHTMLCommand('<li>Line one</li><li>Line two</li><li>Line three</li>');
+
+Markup.dump('test', 'After');
+
+</script>
+</body>
+</html>
