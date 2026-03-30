@@ -1,3 +1,4 @@
+//Machine generated, see ThreadSuspend.h. DO NOT EDIT MANUALLY.
 /*
  * Copyright (c) 2018-2024 Apple Inc. All rights reserved.
  *
@@ -23,13 +24,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "pas_config.h"
+#include "pas_fallback_config.h"
 
-#if LIBPAS_ENABLED
+#if !LIBPAS_ENABLED
 
-#include "pas_utils.h"
+#include "pas_fallback_utils.h"
 
-#include "pas_log.h"
+#include "pas_fallback_log.h"
 #include <inttypes.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -284,4 +285,4 @@ void pas_set_reallocation_did_fail_callback(void (*callback)(const char* reason,
     reallocation_did_fail_callback = callback;
 }
 
-#endif /* LIBPAS_ENABLED */
+#endif /* LIBPAS_ENABLED */// End of generated file.

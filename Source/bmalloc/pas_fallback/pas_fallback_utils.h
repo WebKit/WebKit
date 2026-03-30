@@ -1,3 +1,4 @@
+//Machine generated, see ThreadSuspend.h. DO NOT EDIT MANUALLY.
 /*
  * Copyright (c) 2018-2025 Apple Inc. All rights reserved.
  *
@@ -26,10 +27,10 @@
 #ifndef PAS_UTILS_H
 #define PAS_UTILS_H
 
-#include "pas_config.h"
+#include "pas_fallback_config.h"
 
 /* These need to be included first. */
-#include "pas_thread.h"
+#include "pas_fallback_thread.h"
 #if defined(__has_include)
 #if __has_include(<pthread/tsd_private.h>)
 #include <pthread/tsd_private.h>
@@ -52,13 +53,13 @@
 
 PAS_IGNORE_CLANG_WARNINGS_BEGIN("qualifier-requires-header")
 
-#include "pas_utils_prefix.h"
+#include "pas_fallback_utils_prefix.h"
 
 #define PAS_BEGIN_EXTERN_C __PAS_BEGIN_EXTERN_C
 #define PAS_END_EXTERN_C __PAS_END_EXTERN_C
 
 #if defined(PAS_BMALLOC) && PAS_BMALLOC
-#include "pas_mte_config.h"
+#include "pas_fallback_mte_config.h"
 #endif // defined(PAS_BMALLOC) && PAS_BMALLOC
 
 #if defined(PAS_BMALLOC) && PAS_BMALLOC
@@ -1323,4 +1324,4 @@ PAS_END_EXTERN_C;
 
 PAS_IGNORE_CLANG_WARNINGS_END // "qualifier-requires-header"
 
-#endif /* PAS_UTILS_H */
+#endif /* PAS_UTILS_H */// End of generated file.

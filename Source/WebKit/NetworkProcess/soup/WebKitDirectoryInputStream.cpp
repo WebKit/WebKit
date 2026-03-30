@@ -157,7 +157,9 @@ static gssize webkitDirectoryInputStreamRead(GInputStream* input, void* buffer, 
 
         auto sourceSpan = span(stream->priv->buffer);
         unsigned bytesRead = std::min(sourceSpan.size(), count - totalBytesRead);
+        IGNORE_WARNINGS_BEGIN("restrict")
         memcpySpan(destinationSpan.subspan(totalBytesRead, bytesRead), sourceSpan.subspan(0, bytesRead));
+        IGNORE_WARNINGS_END
         if (bytesRead == sourceSpan.size())
             stream->priv->buffer = nullptr;
         else

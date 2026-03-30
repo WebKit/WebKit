@@ -617,6 +617,26 @@
 		FE48BD3B2321E8D700F136D0 /* FailureAction.h in Headers */ = {isa = PBXBuildFile; fileRef = FE48BD3A2321E8CC00F136D0 /* FailureAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEC3A39324846A8100395B54 /* GigacageConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC3A39224846A6D00395B54 /* GigacageConfig.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEC3A395248471FE00395B54 /* GigacageKind.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC3A394248471FE00395B54 /* GigacageKind.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4BCC5D212F67200000676D5F /* pas_fallback_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BCC5D012F67200000676D5F /* pas_fallback_config.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4BCC5D222F67200000676D5F /* pas_fallback_config_prefix.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BCC5D022F67200000676D5F /* pas_fallback_config_prefix.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4BCC5D232F67200000676D5F /* pas_fallback_lock.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BCC5D032F67200000676D5F /* pas_fallback_lock.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4BCC5D242F67200000676D5F /* pas_fallback_log.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BCC5D042F67200000676D5F /* pas_fallback_log.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4BCC5D272F67200000676D5F /* pas_fallback_mte_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BCC5D072F67200000676D5F /* pas_fallback_mte_config.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4BCC5D282F67200000676D5F /* pas_fallback_platform.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BCC5D082F67200000676D5F /* pas_fallback_platform.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4BCC5D292F67200000676D5F /* pas_fallback_race_test_hooks.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BCC5D092F67200000676D5F /* pas_fallback_race_test_hooks.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4BCC5D2A2F67200000676D5F /* pas_fallback_snprintf.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BCC5D0A2F67200000676D5F /* pas_fallback_snprintf.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4BCC5D2B2F67200000676D5F /* pas_fallback_thread.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BCC5D0B2F67200000676D5F /* pas_fallback_thread.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4BCC5D2D2F67200000676D5F /* pas_fallback_thread_suspend_lock.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BCC5D0D2F67200000676D5F /* pas_fallback_thread_suspend_lock.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4BCC5D2F2F67200000676D5F /* pas_fallback_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BCC5D0F2F67200000676D5F /* pas_fallback_utils.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4BCC5D302F67200000676D5F /* pas_fallback_utils_prefix.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BCC5D102F67200000676D5F /* pas_fallback_utils_prefix.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4BCC5D412F67200000676D5F /* pas_fallback_runtime_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BCC5D422F67200000676D5F /* pas_fallback_runtime_config.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4BCC5D312F67200000676D5F /* pas_fallback_zero_memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BCC5D112F67200000676D5F /* pas_fallback_zero_memory.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4BCC5D322F67200000676D5F /* pas_fallback_lock.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BCC5D122F67200000676D5F /* pas_fallback_lock.c */; };
+		4BCC5D332F67200000676D5F /* pas_fallback_log.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BCC5D132F67200000676D5F /* pas_fallback_log.c */; };
+		4BCC5D352F67200000676D5F /* pas_fallback_race_test_hooks.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BCC5D152F67200000676D5F /* pas_fallback_race_test_hooks.c */; };
+		4BCC5D362F67200000676D5F /* pas_fallback_thread.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BCC5D162F67200000676D5F /* pas_fallback_thread.c */; };
+		4BCC5D382F67200000676D5F /* pas_fallback_thread_suspend_lock.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BCC5D182F67200000676D5F /* pas_fallback_thread_suspend_lock.c */; };
+		4BCC5D3A2F67200000676D5F /* pas_fallback_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BCC5D1A2F67200000676D5F /* pas_fallback_utils.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1258,6 +1278,26 @@
 		FE48BD3A2321E8CC00F136D0 /* FailureAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FailureAction.h; path = bmalloc/FailureAction.h; sourceTree = "<group>"; };
 		FEC3A39224846A6D00395B54 /* GigacageConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GigacageConfig.h; path = bmalloc/GigacageConfig.h; sourceTree = "<group>"; };
 		FEC3A394248471FE00395B54 /* GigacageKind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GigacageKind.h; path = bmalloc/GigacageKind.h; sourceTree = "<group>"; };
+		4BCC5D012F67200000676D5F /* pas_fallback_config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pas_fallback_config.h; path = pas_fallback/pas_fallback_config.h; sourceTree = "<group>"; };
+		4BCC5D022F67200000676D5F /* pas_fallback_config_prefix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pas_fallback_config_prefix.h; path = pas_fallback/pas_fallback_config_prefix.h; sourceTree = "<group>"; };
+		4BCC5D032F67200000676D5F /* pas_fallback_lock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pas_fallback_lock.h; path = pas_fallback/pas_fallback_lock.h; sourceTree = "<group>"; };
+		4BCC5D042F67200000676D5F /* pas_fallback_log.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pas_fallback_log.h; path = pas_fallback/pas_fallback_log.h; sourceTree = "<group>"; };
+		4BCC5D072F67200000676D5F /* pas_fallback_mte_config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pas_fallback_mte_config.h; path = pas_fallback/pas_fallback_mte_config.h; sourceTree = "<group>"; };
+		4BCC5D082F67200000676D5F /* pas_fallback_platform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pas_fallback_platform.h; path = pas_fallback/pas_fallback_platform.h; sourceTree = "<group>"; };
+		4BCC5D092F67200000676D5F /* pas_fallback_race_test_hooks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pas_fallback_race_test_hooks.h; path = pas_fallback/pas_fallback_race_test_hooks.h; sourceTree = "<group>"; };
+		4BCC5D0A2F67200000676D5F /* pas_fallback_snprintf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pas_fallback_snprintf.h; path = pas_fallback/pas_fallback_snprintf.h; sourceTree = "<group>"; };
+		4BCC5D0B2F67200000676D5F /* pas_fallback_thread.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pas_fallback_thread.h; path = pas_fallback/pas_fallback_thread.h; sourceTree = "<group>"; };
+		4BCC5D0D2F67200000676D5F /* pas_fallback_thread_suspend_lock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pas_fallback_thread_suspend_lock.h; path = pas_fallback/pas_fallback_thread_suspend_lock.h; sourceTree = "<group>"; };
+		4BCC5D0F2F67200000676D5F /* pas_fallback_utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pas_fallback_utils.h; path = pas_fallback/pas_fallback_utils.h; sourceTree = "<group>"; };
+		4BCC5D102F67200000676D5F /* pas_fallback_utils_prefix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pas_fallback_utils_prefix.h; path = pas_fallback/pas_fallback_utils_prefix.h; sourceTree = "<group>"; };
+		4BCC5D422F67200000676D5F /* pas_fallback_runtime_config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pas_fallback_runtime_config.h; path = pas_fallback/pas_fallback_runtime_config.h; sourceTree = "<group>"; };
+		4BCC5D112F67200000676D5F /* pas_fallback_zero_memory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pas_fallback_zero_memory.h; path = pas_fallback/pas_fallback_zero_memory.h; sourceTree = "<group>"; };
+		4BCC5D122F67200000676D5F /* pas_fallback_lock.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pas_fallback_lock.c; path = pas_fallback/pas_fallback_lock.c; sourceTree = "<group>"; };
+		4BCC5D132F67200000676D5F /* pas_fallback_log.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pas_fallback_log.c; path = pas_fallback/pas_fallback_log.c; sourceTree = "<group>"; };
+		4BCC5D152F67200000676D5F /* pas_fallback_race_test_hooks.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pas_fallback_race_test_hooks.c; path = pas_fallback/pas_fallback_race_test_hooks.c; sourceTree = "<group>"; };
+		4BCC5D162F67200000676D5F /* pas_fallback_thread.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pas_fallback_thread.c; path = pas_fallback/pas_fallback_thread.c; sourceTree = "<group>"; };
+		4BCC5D182F67200000676D5F /* pas_fallback_thread_suspend_lock.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pas_fallback_thread_suspend_lock.c; path = pas_fallback/pas_fallback_thread_suspend_lock.c; sourceTree = "<group>"; };
+		4BCC5D1A2F67200000676D5F /* pas_fallback_utils.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pas_fallback_utils.c; path = pas_fallback/pas_fallback_utils.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1810,6 +1850,7 @@
 				0FC40A952451498D00876DA0 /* pas_string_stream.c */,
 				0FC40A3F2451498700876DA0 /* pas_string_stream.h */,
 				0F373E532659EA700034BA96 /* pas_system_heap.h */,
+				4BCC5BF42F67153A00676D5F /* pas_thread.c */,
 				F15AF5182D791B4B001AE01E /* pas_thread.h */,
 				0FC40A7C2451498B00876DA0 /* pas_thread_local_cache.c */,
 				0FC40AC72451499000876DA0 /* pas_thread_local_cache.h */,
@@ -1853,6 +1894,7 @@
 				0F8700CD25B0CB02000E1ABF /* thingy_heap_config.c */,
 				0F8700CC25B0CB02000E1ABF /* thingy_heap_config.h */,
 				0F8700CB25B0CB02000E1ABF /* thingy_heap_prefix.h */,
+				4BCC5BFE2F67157300676D5F /* ThreadSuspend.h */,
 			);
 			name = libpas;
 			sourceTree = "<group>";
@@ -1878,9 +1920,37 @@
 				14D9DB4E17F2866E00EAAB79 /* heap */,
 				0F7EB7FB1F95416900F1ABCB /* iso */,
 				F3D6990D2E1EFCD0006B54BD /* mar */,
+				4BCC5D402F67200000676D5F /* pas_fallback */,
 				145F6840179DC45F00D65598 /* Products */,
 				14D9DB4F17F2868900EAAB79 /* stdlib */,
 			);
+			sourceTree = "<group>";
+		};
+		4BCC5D402F67200000676D5F /* pas_fallback */ = {
+			isa = PBXGroup;
+			children = (
+				4BCC5D012F67200000676D5F /* pas_fallback_config.h */,
+				4BCC5D022F67200000676D5F /* pas_fallback_config_prefix.h */,
+				4BCC5D122F67200000676D5F /* pas_fallback_lock.c */,
+				4BCC5D032F67200000676D5F /* pas_fallback_lock.h */,
+				4BCC5D132F67200000676D5F /* pas_fallback_log.c */,
+				4BCC5D042F67200000676D5F /* pas_fallback_log.h */,
+				4BCC5D072F67200000676D5F /* pas_fallback_mte_config.h */,
+				4BCC5D082F67200000676D5F /* pas_fallback_platform.h */,
+				4BCC5D152F67200000676D5F /* pas_fallback_race_test_hooks.c */,
+				4BCC5D092F67200000676D5F /* pas_fallback_race_test_hooks.h */,
+				4BCC5D422F67200000676D5F /* pas_fallback_runtime_config.h */,
+				4BCC5D0A2F67200000676D5F /* pas_fallback_snprintf.h */,
+				4BCC5D162F67200000676D5F /* pas_fallback_thread.c */,
+				4BCC5D0B2F67200000676D5F /* pas_fallback_thread.h */,
+				4BCC5D182F67200000676D5F /* pas_fallback_thread_suspend_lock.c */,
+				4BCC5D0D2F67200000676D5F /* pas_fallback_thread_suspend_lock.h */,
+				4BCC5D1A2F67200000676D5F /* pas_fallback_utils.c */,
+				4BCC5D0F2F67200000676D5F /* pas_fallback_utils.h */,
+				4BCC5D102F67200000676D5F /* pas_fallback_utils_prefix.h */,
+				4BCC5D112F67200000676D5F /* pas_fallback_zero_memory.h */,
+			);
+			name = pas_fallback;
 			sourceTree = "<group>";
 		};
 		145F6840179DC45F00D65598 /* Products */ = {
@@ -2002,6 +2072,20 @@
 				14C8992B1CC485E70027A057 /* Map.h in Headers */,
 				5C3986CA2E0D89A600C450A4 /* module.modulemap in Headers */,
 				143CB81D19022BC900B16A45 /* Mutex.h in Headers */,
+				4BCC5D212F67200000676D5F /* pas_fallback_config.h in Headers */,
+				4BCC5D222F67200000676D5F /* pas_fallback_config_prefix.h in Headers */,
+				4BCC5D232F67200000676D5F /* pas_fallback_lock.h in Headers */,
+				4BCC5D242F67200000676D5F /* pas_fallback_log.h in Headers */,
+				4BCC5D272F67200000676D5F /* pas_fallback_mte_config.h in Headers */,
+				4BCC5D282F67200000676D5F /* pas_fallback_platform.h in Headers */,
+				4BCC5D292F67200000676D5F /* pas_fallback_race_test_hooks.h in Headers */,
+				4BCC5D412F67200000676D5F /* pas_fallback_runtime_config.h in Headers */,
+				4BCC5D2A2F67200000676D5F /* pas_fallback_snprintf.h in Headers */,
+				4BCC5D2B2F67200000676D5F /* pas_fallback_thread.h in Headers */,
+				4BCC5D2D2F67200000676D5F /* pas_fallback_thread_suspend_lock.h in Headers */,
+				4BCC5D2F2F67200000676D5F /* pas_fallback_utils.h in Headers */,
+				4BCC5D302F67200000676D5F /* pas_fallback_utils_prefix.h in Headers */,
+				4BCC5D312F67200000676D5F /* pas_fallback_zero_memory.h in Headers */,
 				AD14AD29202529C400890E3B /* ProcessCheck.h in Headers */,
 				148EFAE81D6B953B008E721E /* ScopeExit.h in Headers */,
 				14DD789018F48CEB00950702 /* Sizes.h in Headers */,
@@ -2576,6 +2660,12 @@
 				0FD557331F7EDB7B00B1F0A3 /* HeapKind.cpp in Sources */,
 				4426E2801C838EE0008EB042 /* Logging.cpp in Sources */,
 				143CB81C19022BC900B16A45 /* Mutex.cpp in Sources */,
+				4BCC5D322F67200000676D5F /* pas_fallback_lock.c in Sources */,
+				4BCC5D332F67200000676D5F /* pas_fallback_log.c in Sources */,
+				4BCC5D352F67200000676D5F /* pas_fallback_race_test_hooks.c in Sources */,
+				4BCC5D362F67200000676D5F /* pas_fallback_thread.c in Sources */,
+				4BCC5D382F67200000676D5F /* pas_fallback_thread_suspend_lock.c in Sources */,
+				4BCC5D3A2F67200000676D5F /* pas_fallback_utils.c in Sources */,
 				AD14AD2A202529C700890E3B /* ProcessCheck.mm in Sources */,
 				142B44361E2839E7001DA6E9 /* SystemHeap.cpp in Sources */,
 				FE0383212ABC0E9F00A576A2 /* TZoneHeap.cpp in Sources */,
@@ -2733,6 +2823,7 @@
 				DD4BEC7A29CBA49700398E35 /* pas_status_reporter.c in Sources */,
 				DD4BED2329CBA49700398E35 /* pas_stream.c in Sources */,
 				DD4BEE0729CBA49700398E35 /* pas_string_stream.c in Sources */,
+				4BCC5BFB2F67153A00676D5F /* pas_thread.c in Sources */,
 				DD4BEE0029CBA49700398E35 /* pas_thread_local_cache.c in Sources */,
 				DD4BECFB29CBA49700398E35 /* pas_thread_local_cache_layout.c in Sources */,
 				DD4BED4E29CBA49700398E35 /* pas_thread_local_cache_layout_node.c in Sources */,

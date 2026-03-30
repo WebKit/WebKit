@@ -8,6 +8,7 @@ set(bmalloc_PRIVATE_INCLUDE_DIRECTORIES
     "${BMALLOC_DIR}"
     "${BMALLOC_DIR}/bmalloc"
     "${BMALLOC_DIR}/libpas/src/libpas"
+    "${BMALLOC_DIR}/pas_fallback"
 )
 
 if (USE_MIMALLOC)
@@ -27,6 +28,13 @@ set(bmalloc_SOURCES
     bmalloc/TZoneHeap.cpp
     bmalloc/TZoneHeapManager.cpp
     bmalloc/bmalloc.cpp
+
+    pas_fallback/pas_fallback_thread_suspend_lock.c
+    pas_fallback/pas_fallback_lock.c
+    pas_fallback/pas_fallback_log.c
+    pas_fallback/pas_fallback_race_test_hooks.c
+    pas_fallback/pas_fallback_utils.c
+    pas_fallback/pas_fallback_thread.c
 
     libpas/src/libpas/bmalloc_heap.c
     libpas/src/libpas/bmalloc_heap_config.c
@@ -226,14 +234,28 @@ set(bmalloc_PUBLIC_HEADERS
     bmalloc/ProcessCheck.h
     bmalloc/ScopeExit.h
     bmalloc/Sizes.h
+    bmalloc/bmalloc.h
     bmalloc/StaticPerProcess.h
     bmalloc/TZoneHeap.h
     bmalloc/TZoneHeapInlines.h
     bmalloc/TZoneHeapManager.h
     bmalloc/VMAllocate.h
     bmalloc/Vector.h
-    bmalloc/bmalloc.h
     bmalloc/valgrind.h
+
+    pas_fallback/pas_fallback_thread_suspend_lock.h
+    pas_fallback/pas_fallback_lock.h
+    pas_fallback/pas_fallback_log.h
+    pas_fallback/pas_fallback_race_test_hooks.h
+    pas_fallback/pas_fallback_zero_memory.h
+    pas_fallback/pas_fallback_utils.h
+    pas_fallback/pas_fallback_config.h
+    pas_fallback/pas_fallback_config_prefix.h
+    pas_fallback/pas_fallback_utils_prefix.h
+    pas_fallback/pas_fallback_mte_config.h
+    pas_fallback/pas_fallback_thread.h
+    pas_fallback/pas_fallback_platform.h
+    pas_fallback/pas_fallback_snprintf.h
 
     libpas/src/libpas/bmalloc_heap_config.h
     libpas/src/libpas/bmalloc_heap.h

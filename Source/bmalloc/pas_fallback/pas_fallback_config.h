@@ -1,0 +1,144 @@
+//Machine generated, see ThreadSuspend.h. DO NOT EDIT MANUALLY.
+/*
+ * Copyright (c) 2018-2025 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+#ifndef PAS_CONFIG_H
+#define PAS_CONFIG_H
+
+#include "pas_fallback_config_prefix.h"
+#include "pas_fallback_platform.h"
+
+#include "stdbool.h"
+
+#if defined(PAS_BMALLOC) && PAS_BMALLOC
+#if defined(__has_include)
+#if __has_include(<WebKitAdditions/pas_mte_additions.h>)
+// FIXME: Properly support using WKA in modules.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnon-modular-include-in-module"
+#include <WebKitAdditions/pas_mte_additions.h>
+#pragma clang diagnostic pop
+#endif // __has_include(<WebKitAdditions/pas_mte_additions.h>) && !PAS_ENABLE_TESTING
+#endif // defined(__has_include)
+#endif // defined(PAS_BMALLOC) && PAS_BMALLOC
+
+#define PAS_LOG_NONE (0)
+#define PAS_LOG_HEAP_INFRASTRUCTURE (1 << 0)
+#define PAS_LOG_BOOTSTRAP_HEAPS (1 << 1)
+#define PAS_LOG_IMMORTAL_HEAPS (1 << 2)
+#define PAS_LOG_SEGREGATED_HEAPS (1 << 3)
+#define PAS_LOG_BITFIT_HEAPS (1 << 4)
+#define PAS_LOG_LARGE_HEAPS (1 << 5)
+#define PAS_LOG_JIT_HEAPS (1 << 6)
+#define PAS_LOG_OTHER (1 << 7)  /* Heap-type agnostic */
+
+#define PAS_LOG_LEVEL (PAS_LOG_NONE)
+#define PAS_SHOULD_LOG(level) (PAS_LOG_LEVEL & level)
+
+#if PAS_CPU(ADDRESS64)
+#define LIBPAS_ENABLED 1
+#else
+#define LIBPAS_ENABLED 0
+#endif
+
+#if defined(PAS_BMALLOC)
+#include "BPlatform.h"
+#if !BENABLE(LIBPAS)
+#undef LIBPAS_ENABLED
+#define LIBPAS_ENABLED 0
+#endif
+#endif
+
+#if ((PAS_OS(DARWIN) && __PAS_ARM64 && !__PAS_ARM64E) || PAS_PLATFORM(PLAYSTATION)) && defined(NDEBUG)
+#define PAS_ENABLE_ASSERT 0
+#else
+#define PAS_ENABLE_ASSERT 1
+#endif
+#define PAS_ENABLE_TESTING __PAS_ENABLE_TESTING
+
+#ifndef PAS_ENABLE_STATS
+#define PAS_ENABLE_STATS 0
+#endif
+
+#define PAS_ARM64 __PAS_ARM64
+#define PAS_ARM32 __PAS_ARM32
+
+#define PAS_ARM __PAS_ARM
+
+#ifndef PAS_ENABLE_MTE
+#define PAS_ENABLE_MTE (PAS_USE_APPLE_INTERNAL_SDK && __PAS_ARM64E && !PAS_ASAN_ENABLED)
+#endif /* PAS_ENABLE_MTE */
+
+#define PAS_RISCV __PAS_RISCV
+
+#define PAS_ADDRESS_BITS                 48
+
+#if PAS_ARM || PAS_PLATFORM(PLAYSTATION)
+#define PAS_MAX_GRANULES                 256
+#else
+#define PAS_MAX_GRANULES                 1024
+#endif
+
+#define PAS_INTERNAL_MIN_ALIGN_SHIFT     3
+#define PAS_INTERNAL_MIN_ALIGN           ((size_t)1 << PAS_INTERNAL_MIN_ALIGN_SHIFT)
+
+#if defined(PAS_BMALLOC)
+#define PAS_ENABLE_THINGY                0
+#define PAS_ENABLE_ISO                   0
+#define PAS_ENABLE_ISO_TEST              0
+#define PAS_ENABLE_MINALIGN32            0
+#define PAS_ENABLE_PAGESIZE64K           0
+#define PAS_ENABLE_BMALLOC               1
+#define PAS_ENABLE_HOTBIT                0
+#define PAS_ENABLE_JIT                   1
+#elif defined(PAS_LIBMALLOC)
+#define PAS_ENABLE_THINGY                0
+#define PAS_ENABLE_ISO                   1
+#define PAS_ENABLE_ISO_TEST              0
+#define PAS_ENABLE_MINALIGN32            0
+#define PAS_ENABLE_PAGESIZE64K           0
+#define PAS_ENABLE_BMALLOC               0
+#define PAS_ENABLE_HOTBIT                0
+#define PAS_ENABLE_JIT                   0
+#else /* PAS_LIBMALLOC -> so !defined(PAS_BMALLOC) && !defined(PAS_LIBMALLOC) */
+#define PAS_ENABLE_THINGY                1
+#define PAS_ENABLE_ISO                   1
+#define PAS_ENABLE_ISO_TEST              1
+#define PAS_ENABLE_MINALIGN32            1
+#define PAS_ENABLE_PAGESIZE64K           1
+#define PAS_ENABLE_BMALLOC               1
+#define PAS_ENABLE_HOTBIT                1
+#define PAS_ENABLE_JIT                   1
+#endif /* PAS_LIBMALLOC -> so end of !defined(PAS_BMALLOC) && !defined(PAS_LIBMALLOC) */
+
+#define PAS_COMPACT_PTR_SIZE             3llu
+#define PAS_COMPACT_PTR_BITS             (PAS_COMPACT_PTR_SIZE << 3)
+#define PAS_COMPACT_PTR_MASK             ((uintptr_t)(((uint64_t)1 \
+                                                       << (PAS_COMPACT_PTR_BITS & 63)) - 1))
+
+#define PAS_ALLOCATOR_INDEX_BYTES        4
+
+#endif /* PAS_CONFIG_H */
+// End of generated file.
