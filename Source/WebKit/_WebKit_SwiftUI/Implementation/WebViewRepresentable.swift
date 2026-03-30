@@ -153,6 +153,11 @@ struct WebViewRepresentable {
     }
 
     static func dismantlePlatformView(_ platformView: CocoaWebViewAdapter, coordinator: WebViewCoordinator) {
+        #if os(macOS)
+        // This is needed to avoid a crash when dismissing a WebView with a find navigator still active,
+        // since NSTextFinder deallocation engages AutoLayout on an invalidated view hierarchy.
+        platformView.findInteraction = nil
+        #endif
         coordinator.configuration.page.isBoundToWebView = false
     }
 }
