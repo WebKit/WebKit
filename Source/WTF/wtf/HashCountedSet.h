@@ -239,6 +239,7 @@ inline auto HashCountedSet<Value, HashFunctions, Traits>::add(ValueType&& value)
 template<typename Value, typename HashFunctions, typename Traits>
 inline auto HashCountedSet<Value, HashFunctions, Traits>::add(const ValueType& value, unsigned count) LIFETIME_BOUND -> AddResult
 {
+    ASSERT(count);
     auto result = m_impl.add(value, 0);
     result.iterator->value += count;
     return result;
@@ -247,6 +248,7 @@ inline auto HashCountedSet<Value, HashFunctions, Traits>::add(const ValueType& v
 template<typename Value, typename HashFunctions, typename Traits>
 inline auto HashCountedSet<Value, HashFunctions, Traits>::add(ValueType&& value, unsigned count) LIFETIME_BOUND -> AddResult
 {
+    ASSERT(count);
     auto result = m_impl.add(std::forward<Value>(value), 0);
     result.iterator->value += count;
     return result;
