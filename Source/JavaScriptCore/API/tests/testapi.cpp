@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,7 @@
 
 #include "APICast.h"
 #include "JSGlobalObjectInlines.h"
-#include "MarkedJSValueRefArray.h"
+#include "MarkedVector.h"
 #include <JavaScriptCore/JSContextRefPrivate.h>
 #include <JavaScriptCore/JSObjectRefPrivate.h>
 #include <JavaScriptCore/JavaScript.h>
@@ -108,37 +108,8 @@ private:
     JSGlobalContextRef m_context;
 };
 
-template<typename T>
-class APIVector : protected Vector<T> {
-    using Base = Vector<T>;
-public:
-    APIVector(APIContext& context)
-        : Base()
-        , m_context(context)
-    {
-    }
-
-    ~APIVector()
-    {
-        for (auto& value : *this)
-            JSValueUnprotect(m_context, value);
-    }
-
-    using Vector<T>::operator[];
-    using Vector<T>::size;
-    using Vector<T>::begin;
-    using Vector<T>::end;
-    using typename Vector<T>::iterator;
-
-    void append(T value)
-    {
-        JSValueProtect(m_context, value);
-        Base::append(WTF::move(value));
-    }
-
-private:
-    APIContext& m_context;
-};
+template<typename T, size_t passedInlineCapacity = 8, class OverflowHandler = WTF::CrashOnOverflow>
+using MarkedVector = JSC::MarkedVector<T, passedInlineCapacity, OverflowHandler>;
 
 class TestAPI {
 public:
@@ -189,8 +160,8 @@ private:
     bool scriptResultIs(ScriptResult, JSValueRef);
 
     // Ways to make sets of interesting things.
-    APIVector<JSObjectRef> interestingObjects();
-    APIVector<JSValueRef> interestingKeys();
+    MarkedVector<JSObjectRef> interestingObjects();
+    MarkedVector<JSValueRef> interestingKeys();
 
     int m_failed { 0 };
     APIContext context;
@@ -274,9 +245,9 @@ void TestAPI::checkJSAndAPIMatch(const JSFunctor& jsFunctor, const APIFunctor& a
     }
 }
 
-APIVector<JSObjectRef> TestAPI::interestingObjects()
+MarkedVector<JSObjectRef> TestAPI::interestingObjects()
 {
-    APIVector<JSObjectRef> result(context);
+    MarkedVector<JSObjectRef> result;
     JSObjectRef array = JSValueToObject(context, evaluateScript(
         "[{}, [], { [Symbol.iterator]: 1 }, new Date(), new String('str'), new Map(), new Set(), new WeakMap(), new WeakSet(), new Error(), new Number(42), new Boolean(), { get length() { throw new Error(); } }];").value(), nullptr);
 
@@ -291,9 +262,9 @@ APIVector<JSObjectRef> TestAPI::interestingObjects()
     return result;
 }
 
-APIVector<JSValueRef> TestAPI::interestingKeys()
+MarkedVector<JSValueRef> TestAPI::interestingKeys()
 {
-    APIVector<JSValueRef> result(context);
+    MarkedVector<JSValueRef> result;
     JSObjectRef array = JSValueToObject(context, evaluateScript("[{}, [], 1, Symbol.iterator, 'length']").value(), nullptr);
 
     APIString lengthString("length");
@@ -658,10 +629,10 @@ void TestAPI::markedJSValueArrayAndGC()
     auto testMarkedJSValueArray = [&] (unsigned count) {
         auto* globalObject = toJS(context);
         JSC::JSLockHolder locker(globalObject->vm());
-        JSC::MarkedJSValueRefArray values(context, count);
+        JSC::MarkedVector<JSValueRef> values(count);
         for (unsigned index = 0; index < count; ++index) {
             JSValueRef string = JSValueMakeString(context, APIString(makeString("Prefix"_s, index)));
-            values[index] = string;
+            values.append(string);
         }
         JSSynchronousGarbageCollectForDebugging(context);
         bool ok = true;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,7 @@
 #import "JSValueInternal.h"
 #import "JSValuePrivate.h"
 #import "JSWrapperMap.h"
-#import "MarkedJSValueRefArray.h"
+#import "MarkedVector.h"
 #import "ObjcRuntimeExtras.h"
 #import "JSCInlines.h"
 #import "JSCJSValue.h"
@@ -632,16 +632,17 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
     JSC::JSLockHolder locker(vm);
 
     NSUInteger argumentCount = [argumentArray count];
-    JSC::MarkedJSValueRefArray arguments([_context JSGlobalContextRef], argumentCount);
-    for (unsigned i = 0; i < argumentCount; ++i)
-        arguments[i] = objectToValue(_context, [argumentArray objectAtIndex:i]);
+    JSC::MarkedVector<JSValueRef> arguments;
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE arguments.fillWith(vm, std::views::iota(0uz, argumentCount), [self, argumentArray] (size_t i) ALWAYS_INLINE_LAMBDA {
+        return objectToValue(_context, [argumentArray objectAtIndex:i]);
+    });
 
     JSValueRef exception = 0;
     JSObjectRef object = JSValueToObject([_context JSGlobalContextRef], m_value, &exception);
     if (exception)
         return [_context valueFromNotifyException:exception];
 
-    JSValueRef result = JSObjectCallAsFunction([_context JSGlobalContextRef], object, 0, argumentCount, arguments.data(), &exception);
+    JSValueRef result = JSObjectCallAsFunction([_context JSGlobalContextRef], object, 0, argumentCount, arguments.span().data(), &exception);
     if (exception)
         return [_context valueFromNotifyException:exception];
 
@@ -655,16 +656,17 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
     JSC::JSLockHolder locker(vm);
 
     NSUInteger argumentCount = [argumentArray count];
-    JSC::MarkedJSValueRefArray arguments([_context JSGlobalContextRef], argumentCount);
-    for (unsigned i = 0; i < argumentCount; ++i)
-        arguments[i] = objectToValue(_context, [argumentArray objectAtIndex:i]);
+    JSC::MarkedVector<JSValueRef> arguments;
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE arguments.fillWith(vm, std::views::iota(0uz, argumentCount), [self, argumentArray] (size_t i) ALWAYS_INLINE_LAMBDA {
+        return objectToValue(_context, [argumentArray objectAtIndex:i]);
+    });
 
     JSValueRef exception = 0;
     JSObjectRef object = JSValueToObject([_context JSGlobalContextRef], m_value, &exception);
     if (exception)
         return [_context valueFromNotifyException:exception];
 
-    JSObjectRef result = JSObjectCallAsConstructor([_context JSGlobalContextRef], object, argumentCount, arguments.data(), &exception);
+    JSObjectRef result = JSObjectCallAsConstructor([_context JSGlobalContextRef], object, argumentCount, arguments.span().data(), &exception);
     if (exception)
         return [_context valueFromNotifyException:exception];
 
@@ -678,9 +680,10 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
     JSC::JSLockHolder locker(vm);
 
     NSUInteger argumentCount = [arguments count];
-    JSC::MarkedJSValueRefArray argumentArray([_context JSGlobalContextRef], argumentCount);
-    for (unsigned i = 0; i < argumentCount; ++i)
-        argumentArray[i] = objectToValue(_context, [arguments objectAtIndex:i]);
+    JSC::MarkedVector<JSValueRef> argumentArray;
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE argumentArray.fillWith(vm, std::views::iota(0uz, argumentCount), [self, arguments] (size_t i) ALWAYS_INLINE_LAMBDA {
+        return objectToValue(_context, [arguments objectAtIndex:i]);
+    });
 
     JSValueRef exception = 0;
     JSObjectRef thisObject = JSValueToObject([_context JSGlobalContextRef], m_value, &exception);
@@ -696,7 +699,7 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
     if (exception)
         return [_context valueFromNotifyException:exception];
 
-    JSValueRef result = JSObjectCallAsFunction([_context JSGlobalContextRef], object, thisObject, argumentCount, argumentArray.data(), &exception);
+    JSValueRef result = JSObjectCallAsFunction([_context JSGlobalContextRef], object, thisObject, argumentCount, argumentArray.span().data(), &exception);
     if (exception)
         return [_context valueFromNotifyException:exception];
 

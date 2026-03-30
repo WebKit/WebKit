@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003-2023 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2023, 2026 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -21,9 +21,12 @@
 #include "config.h"
 #include "MarkedVector.h"
 
+#include "APICast.h"
 #include "JSCJSValueInlines.h"
 
 namespace JSC {
+
+EncodedJSValue MarkedVectorBase::m_storageForOutOfBoundsAccess;
 
 void MarkedVectorBase::addMarkSet(JSValue v)
 {
@@ -38,14 +41,84 @@ void MarkedVectorBase::addMarkSet(JSValue v)
     m_markSet->add(this);
 }
 
+#if CPU(ADDRESS32)
+JSCell* MarkedVectorBase::toCell(const void* pointer, MarkedVectorBase::StorageType type)
+{
+    switch (type) {
+    case StorageType::JSValue:
+        RELEASE_ASSERT_NOT_REACHED();
+    case StorageType::JSCell:
+        return std::bit_cast<JSCell*>(pointer);
+    case StorageType::JSContextRef:
+        return toJS(std::bit_cast<JSContextRef>(pointer));
+    case StorageType::JSGlobalContextRef:
+        return toJS(std::bit_cast<JSGlobalContextRef>(pointer));
+    case StorageType::JSValueRef: {
+        JSValue value = toJS(std::bit_cast<JSValueRef>(pointer));
+        if (value.isCell())
+            return value.asCell();
+        return nullptr;
+    }
+    case StorageType::JSObjectRef:
+        return toJS(std::bit_cast<JSObjectRef>(pointer));
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+JSCell* MarkedVectorBase::toCellForGC(const void* pointer, MarkedVectorBase::StorageType type)
+{
+    switch (type) {
+    case StorageType::JSValue:
+        RELEASE_ASSERT_NOT_REACHED();
+    case StorageType::JSCell:
+        return std::bit_cast<JSCell*>(pointer);
+    case StorageType::JSContextRef:
+        return toJS(std::bit_cast<JSContextRef>(pointer));
+    case StorageType::JSGlobalContextRef:
+        return toJS(std::bit_cast<JSGlobalContextRef>(pointer));
+    case StorageType::JSValueRef: {
+        JSValue value = toJSForGC(std::bit_cast<JSValueRef>(pointer));
+        if (value.isCell())
+            return value.asCell();
+        return nullptr;
+    }
+    case StorageType::JSObjectRef:
+        return toJS(std::bit_cast<JSObjectRef>(pointer));
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+void MarkedVectorBase::addMarkSet(const void* pointer)
+{
+    if (m_markSet)
+        return;
+
+    Heap* heap = Heap::heap(toCell(pointer, m_storageType));
+    if (!heap)
+        return;
+
+    m_markSet = &heap->markListSet();
+    m_markSet->add(this);
+}
+#endif
+
 template<typename Visitor>
 void MarkedVectorBase::markLists(Visitor& visitor, ListSet& markSet)
 {
     ListSet::iterator end = markSet.end();
     for (ListSet::iterator it = markSet.begin(); it != end; ++it) {
         MarkedVectorBase* list = *it;
+#if CPU(ADDRESS32)
+        if (list->m_storageType != StorageType::JSValue) {
+            for (unsigned i = 0; i < list->m_size; ++i)
+                visitor.appendUnbarriered(JSValue(toCellForGC(list->pointerSlotFor(i), list->m_storageType)));
+            continue;
+        }
+#endif
         for (unsigned i = 0; i < list->m_size; ++i)
-            visitor.appendUnbarriered(JSValue::decode(list->slotFor(i)));
+            visitor.appendUnbarriered(JSValue::decode(list->jsValueSlotFor(i)));
     }
 }
 
@@ -61,6 +134,12 @@ auto MarkedVectorBase::slowEnsureCapacity(size_t requestedCapacity) -> Status
     return expandCapacity(checkedNewCapacity);
 }
 
+void MarkedVectorBase::slowEnsureCapacityAndCrashOnOverflow(size_t requestedCapacity)
+{
+    auto status = slowEnsureCapacity(requestedCapacity);
+    RELEASE_ASSERT(status != Status::Overflowed);
+}
+
 auto MarkedVectorBase::expandCapacity() -> Status
 {
     setNeedsOverflowCheck();
@@ -74,15 +153,34 @@ auto MarkedVectorBase::expandCapacity(unsigned newCapacity) -> Status
 {
     setNeedsOverflowCheck();
     ASSERT(m_capacity < newCapacity);
-    auto checkedSize = CheckedSize(newCapacity) * sizeof(EncodedJSValue);
+    unsigned elementSize = sizeof(EncodedJSValue);
+#if CPU(ADDRESS32)
+    if (m_storageType != StorageType::JSValue)
+        elementSize = sizeof(uintptr_t);
+#endif
+    auto checkedSize = CheckedSize(newCapacity) * elementSize;
     if (checkedSize.hasOverflowed()) [[unlikely]]
         return Status::Overflowed;
-    EncodedJSValue* newBuffer = static_cast<EncodedJSValue*>(FastMalloc::tryMalloc(checkedSize));
+    void* newBuffer = FastMalloc::tryMalloc(checkedSize);
     if (!newBuffer)
         return Status::Overflowed;
-    for (unsigned i = 0; i < m_size; ++i) {
-        newBuffer[i] = m_buffer[i];
-        addMarkSet(JSValue::decode(m_buffer[i]));
+#if CPU(ADDRESS32)
+    if (m_storageType != StorageType::JSValue) {
+        auto* newPointerBuffer = std::bit_cast<void**>(newBuffer);
+        const auto* oldPointerBuffer = std::bit_cast<void**>(m_buffer);
+        for (unsigned i = 0; i < m_size; ++i) {
+            newPointerBuffer[i] = oldPointerBuffer[i];
+            addMarkSet(oldPointerBuffer[i]);
+        }
+    } else
+#endif
+    {
+        auto* newJSValueBuffer = std::bit_cast<EncodedJSValue*>(newBuffer);
+        const auto* oldJSValueBuffer = std::bit_cast<EncodedJSValue*>(m_buffer);
+        for (unsigned i = 0; i < m_size; ++i) {
+            newJSValueBuffer[i] = oldJSValueBuffer[i];
+            addMarkSet(JSValue::decode(oldJSValueBuffer[i]));
+        }
     }
 
     if (EncodedJSValue* base = mallocBase())
@@ -103,10 +201,28 @@ auto MarkedVectorBase::slowAppend(JSValue v) -> Status
             return status;
         }
     }
-    slotFor(m_size) = JSValue::encode(v);
+    jsValueSlotFor(m_size) = JSValue::encode(v);
     ++m_size;
     addMarkSet(v);
     return Status::Success;
 }
+
+#if CPU(ADDRESS32)
+auto MarkedVectorBase::slowAppend(const void* pointer) -> Status
+{
+    ASSERT(m_size <= m_capacity);
+    if (m_size == m_capacity) {
+        auto status = expandCapacity();
+        if (status == Status::Overflowed) {
+            ASSERT(m_needsOverflowCheck);
+            return status;
+        }
+    }
+    pointerSlotFor(m_size) = const_cast<void*>(pointer);
+    ++m_size;
+    addMarkSet(const_cast<void*>(pointer));
+    return Status::Success;
+}
+#endif
 
 } // namespace JSC

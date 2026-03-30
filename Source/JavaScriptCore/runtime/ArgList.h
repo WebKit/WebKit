@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2023 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2023, 2026 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -51,7 +51,7 @@ public:
 
     template<size_t inlineCapacity>
     ArgList(const MarkedVector<JSValue, inlineCapacity, RecordOverflow>& args)
-        : m_args(args.m_buffer)
+        : m_args(std::bit_cast<EncodedJSValue*>(args.m_buffer))
         , m_argCount(args.size())
     {
     }

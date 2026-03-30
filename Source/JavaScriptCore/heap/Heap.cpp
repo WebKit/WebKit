@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003-2025 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2026 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
@@ -64,7 +64,6 @@
 #include "JSWeakSet.h"
 #include "MachineStackMarker.h"
 #include "MarkStackMergingConstraint.h"
-#include "MarkedJSValueRefArray.h"
 #include "MarkedSpaceInlines.h"
 #include "MarkingConstraintSet.h"
 #include "MegamorphicCache.h"
@@ -3088,13 +3087,6 @@ void Heap::addCoreConstraints()
             }
 
             {
-                SetRootMarkReasonScope rootScope(visitor, RootMarkReason::MarkedJSValueRefArray);
-                m_markedJSValueRefArrays.forEach([&] (MarkedJSValueRefArray* array) {
-                    array->visitAggregate(visitor);
-                });
-            }
-
-            {
                 SetRootMarkReasonScope rootScope(visitor, RootMarkReason::VMExceptions);
                 visitor.appendUnbarriered(vm.exception());
                 visitor.appendUnbarriered(vm.lastException());
@@ -3357,11 +3349,6 @@ void Heap::setBonusVisitorTask(RefPtr<SharedTask<void(SlotVisitor&)>> task)
     m_markingConditionVariable.notifyAll();
 }
 
-
-void Heap::addMarkedJSValueRefArray(MarkedJSValueRefArray* array)
-{
-    m_markedJSValueRefArrays.append(array);
-}
 
 void Heap::runTaskInParallel(RefPtr<SharedTask<void(SlotVisitor&)>> task)
 {
