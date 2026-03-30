@@ -567,7 +567,7 @@ void IconDatabase::loadIconForPageURL(const String& pageURL, AllowDatabaseWrite 
                 updateIconTimestamp(iconID.value(), timestamp.secondsAs<int64_t>());
         }
         startPruneTimer();
-        RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }, iconURL = WTFMove(iconURL), iconData = WTFMove(iconData), completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::mainSingleton().dispatch([this, protectedThis = WTFMove(protectedThis), iconURL = WTFMove(iconURL), iconData = WTFMove(iconData), completionHandler = WTFMove(completionHandler)]() mutable {
             if (iconURL.isEmpty()) {
                 completionHandler(nullptr);
                 return;
