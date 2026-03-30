@@ -259,7 +259,7 @@ cairo_surface_t* webkit_favicon_database_get_favicon_finish(WebKitFaviconDatabas
     auto image = adoptRef(static_cast<cairo_surface_t*>(g_task_propagate_pointer(G_TASK(result), error)));
     auto texture = image ? cairoSurfaceToGdkTexture(image.get()) : nullptr;
 #elif USE(SKIA)
-    auto* image = static_cast<SkImage*>(g_task_propagate_pointer(G_TASK(result), error));
+    sk_sp image { static_cast<SkImage*>(g_task_propagate_pointer(G_TASK(result), error)) };
     auto texture = image ? skiaImageToGdkTexture(*image) : nullptr;
 #endif
 
@@ -271,7 +271,7 @@ cairo_surface_t* webkit_favicon_database_get_favicon_finish(WebKitFaviconDatabas
     return nullptr;
 #else
 #if USE(SKIA)
-    auto* image = static_cast<SkImage*>(g_task_propagate_pointer(G_TASK(result), error));
+    sk_sp image { static_cast<SkImage*>(g_task_propagate_pointer(G_TASK(result), error)) };
     return image ? skiaImageToCairoSurface(*image).leakRef() : nullptr;
 #else
     return static_cast<cairo_surface_t*>(g_task_propagate_pointer(G_TASK(result), error));
