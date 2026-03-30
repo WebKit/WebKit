@@ -168,6 +168,8 @@ void TrackDataHolder::setPad(GRefPtr<GstPad>&& pad)
     if (m_bestUpstreamPad && m_eventProbe)
         gst_pad_remove_probe(m_bestUpstreamPad.get(), m_eventProbe);
 
+    g_clear_signal_handler(&m_padTagsNotifyHandlerId, m_pad.get());
+    g_clear_signal_handler(&m_padCapsNotifyHandlerId, m_pad.get());
     m_pad = WTF::move(pad);
     m_bestUpstreamPad = findBestUpstreamPad(m_pad);
     m_gstStreamId = byteCast<Latin1Character>(unsafeSpan(gst_pad_get_stream_id(m_pad.get())));
@@ -217,14 +219,8 @@ void TrackDataHolder::setPad(GRefPtr<GstPad>&& pad)
 
 void TrackDataHolder::setStream(GRefPtr<GstStream>&& stream)
 {
-    if (m_streamTagsNotifyHandlerId) {
-        g_signal_handler_disconnect(m_stream.get(), m_streamTagsNotifyHandlerId);
-        m_streamTagsNotifyHandlerId = 0;
-    }
-    if (m_streamCapsNotifyHandlerId) {
-        g_signal_handler_disconnect(m_stream.get(), m_streamCapsNotifyHandlerId);
-        m_streamCapsNotifyHandlerId = 0;
-    }
+    g_clear_signal_handler(&m_streamTagsNotifyHandlerId, m_stream.get());
+    g_clear_signal_handler(&m_streamCapsNotifyHandlerId, m_stream.get());
     m_stream = WTF::move(stream);
     m_streamTagsNotifyHandlerId = g_signal_connect_data(m_stream.get(), "notify::tags", G_CALLBACK(+[](GstStream*, GParamSpec*, gpointer userData) {
         RefPtr holder = reinterpret_cast<ThreadSafeWeakPtr<TrackDataHolder>*>(userData)->get();
@@ -301,8 +297,8 @@ void TrackDataHolder::disconnect()
     m_taskQueue.startAborting();
 
     if (m_stream) {
-        g_signal_handler_disconnect(m_stream.get(), m_streamTagsNotifyHandlerId);
-        g_signal_handler_disconnect(m_stream.get(), m_streamCapsNotifyHandlerId);
+        g_clear_signal_handler(&m_streamTagsNotifyHandlerId, m_stream.get());
+        g_clear_signal_handler(&m_streamCapsNotifyHandlerId, m_stream.get());
         m_stream.clear();
     }
 
@@ -317,8 +313,8 @@ void TrackDataHolder::disconnect()
     }
 
     if (m_pad) {
-        g_signal_handler_disconnect(m_pad.get(), m_padTagsNotifyHandlerId);
-        g_signal_handler_disconnect(m_pad.get(), m_padCapsNotifyHandlerId);
+        g_clear_signal_handler(&m_padTagsNotifyHandlerId, m_pad.get());
+        g_clear_signal_handler(&m_padCapsNotifyHandlerId, m_pad.get());
         m_pad.clear();
     }
 
