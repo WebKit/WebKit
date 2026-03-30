@@ -60,7 +60,7 @@ RefPtr<cairo_surface_t> skiaImageToCairoSurface(SkImage& image)
     if (!image.peekPixels(&pixmap))
         return { };
 
-    RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create_for_data(pixmap.writable_addr8(0, 0), CAIRO_FORMAT_ARGB32, pixmap.width(), pixmap.height(), pixmap.rowBytes()));
+    RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create_for_data(static_cast<uint8_t*>(pixmap.writable_addr(0, 0)), CAIRO_FORMAT_ARGB32, pixmap.width(), pixmap.height(), pixmap.rowBytes()));
     if (cairo_surface_status(surface.get()) != CAIRO_STATUS_SUCCESS)
         return { };
 

@@ -48,7 +48,7 @@ static std::string computeSHA1HashStringForPixmap(const SkPixmap& pixmap)
     size_t bytesPerRow = pixmap.info().minRowBytes();
 
     SHA1 sha1;
-    const auto* bitmapData = reinterpret_cast<const uint8_t*>(pixmap.addr32());
+    const auto* bitmapData = reinterpret_cast<const uint8_t*>(pixmap.addr());
     for (size_t row = 0; row < pixelsHeight; ++row) {
         sha1.addBytes(std::span { bitmapData, 4 * pixelsWidth });
         bitmapData += bytesPerRow;
