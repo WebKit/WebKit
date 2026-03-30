@@ -79,13 +79,13 @@ TemporalInstant* TemporalInstant::tryCreateIfValid(JSGlobalObject* globalObject,
     return create(vm, structure ? structure : globalObject->instantStructure(), exactTime);
 }
 
-TemporalInstant* TemporalInstant::tryCreateIfValid(JSGlobalObject* globalObject, JSValue value, Structure* structure)
+ISO8601::ExactTime TemporalInstant::exactTimeFromJSValue(JSGlobalObject* globalObject, JSValue value)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue epochNanoseconds = value.toBigInt(globalObject);
-    RETURN_IF_EXCEPTION(scope, nullptr);
+    RETURN_IF_EXCEPTION(scope, { });
 
 #if USE(BIGINT32)
     if (epochNanoseconds.isBigInt32()) {
@@ -124,13 +124,24 @@ TemporalInstant* TemporalInstant::tryCreateIfValid(JSGlobalObject* globalObject,
     if (bigIntTooLong || !exactTime.isValid()) {
         String argAsString = bigint->toString(globalObject, 10);
         if (scope.exception()) {
-            TRY_CLEAR_EXCEPTION(scope, nullptr);
+            TRY_CLEAR_EXCEPTION(scope, { });
             argAsString = "The given number of"_s;
         }
 
         throwRangeError(globalObject, scope, makeString(ellipsizeAt(100, argAsString), " epoch nanoseconds is outside of the supported range for Temporal.Instant"_s));
-        return nullptr;
+        return { };
     }
+
+    return exactTime;
+}
+
+TemporalInstant* TemporalInstant::tryCreateIfValid(JSGlobalObject* globalObject, JSValue value, Structure* structure)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ISO8601::ExactTime exactTime = exactTimeFromJSValue(globalObject, value);
+    RETURN_IF_EXCEPTION(scope, nullptr);
 
     return create(vm, structure ? structure : globalObject->instantStructure(), exactTime);
 }

@@ -111,7 +111,7 @@ ISO8601::PlainYearMonth TemporalPlainYearMonth::addDurationToYearMonth(JSGlobalO
         int32_t y = nextMonth.year();
         uint8_t m = nextMonth.month();
         uint8_t d = nextMonth.day() - 1;
-        date = TemporalCalendar::balanceISODate(globalObject, y, m, d);
+        date = TemporalCalendar::balanceISODate(globalObject, static_cast<Int128>(y), static_cast<Int128>(m), static_cast<Int128>(d));
     } else
         date = intermediateDate;
     auto durationToAdd = TemporalDuration::toDateDurationRecordWithoutTime(globalObject, duration);

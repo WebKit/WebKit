@@ -27,8 +27,9 @@
 #include "config.h"
 #include "TemporalCalendar.h"
 
-#include "DateConstructor.h"
+#include "FractionToDouble.h"
 #include "JSObjectInlines.h"
+#include "LazyPropertyInlines.h"
 #include "StructureInlines.h"
 #include "TemporalDuration.h"
 #include "TemporalPlainDate.h"
@@ -55,6 +56,42 @@ TemporalCalendar::TemporalCalendar(VM& vm, Structure* structure, CalendarID iden
     : Base(vm, structure)
     , m_identifier(identifier)
 {
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-parsetemporalcalendarstring
+static std::optional<CalendarID> parseTemporalCalendarString(JSGlobalObject* globalObject, StringView string)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto parseResult = ISO8601::parseCalendarDateTime(string, TemporalDateFormat::Date);
+    std::optional<ISO8601::CalendarID> calendarParseResult;
+    if (parseResult)
+        calendarParseResult = std::get<3>(parseResult.value());
+    else {
+        parseResult = ISO8601::parseCalendarDateTime(string, TemporalDateFormat::YearMonth);
+        if (parseResult)
+            calendarParseResult = std::get<3>(parseResult.value());
+        else {
+            parseResult = ISO8601::parseCalendarDateTime(string, TemporalDateFormat::MonthDay);
+            if (parseResult)
+                calendarParseResult = std::get<3>(parseResult.value());
+            else {
+                calendarParseResult = ISO8601::parseCalendar(string);
+                if (!calendarParseResult) [[unlikely]] {
+                    throwRangeError(globalObject, scope, "invalid calendar ID"_s);
+                    return std::nullopt;
+                }
+            }
+        }
+    }
+    if (!calendarParseResult)
+        return iso8601CalendarID();
+    if (WTF::String(calendarParseResult.value()).convertToASCIILowercase() == "iso8601"_s)
+        return iso8601CalendarID();
+
+    throwRangeError(globalObject, scope, "calendar ID not supported yet"_s);
+    return std::nullopt;
 }
 
 JSObject* TemporalCalendar::toTemporalCalendarWithISODefault(JSGlobalObject* globalObject, JSValue temporalCalendarLike)
@@ -93,14 +130,64 @@ std::optional<CalendarID> TemporalCalendar::isBuiltinCalendar(StringView string)
     return std::nullopt;
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal-parsetemporalcalendarstring
-static std::optional<CalendarID> parseTemporalCalendarString(JSGlobalObject* globalObject, StringView)
+// https://tc39.es/ecma262/#sec-hourfromtime
+static unsigned hourFromTime(Int128 t)
 {
-    // FIXME: Implement parsing temporal calendar string, which requires full ISO 8601 parser.
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    throwRangeError(globalObject, scope, "invalid calendar ID"_s);
-    return std::nullopt;
+    Int128 result = ISO8601::floorDiv(t, ISO8601::msPerHour) % ISO8601::hoursPerDay;
+    if (result < 0)
+        result += ISO8601::hoursPerDay;
+    return static_cast<unsigned>(result);
+}
+
+// https://tc39.es/ecma262/#sec-minfromtime
+static unsigned minFromTime(Int128 t)
+{
+    Int128 result = ISO8601::floorDiv(t, ISO8601::msPerMinute) % ISO8601::minutesPerHour;
+    if (result < 0)
+        result += ISO8601::minutesPerHour;
+    return static_cast<unsigned>(result);
+}
+
+// https://tc39.es/ecma262/#sec-secfromtime
+static unsigned secFromTime(Int128 t)
+{
+    Int128 result = ISO8601::floorDiv(t, ISO8601::msPerSecond) % ISO8601::secondsPerMinute;
+    if (result < 0)
+        result += ISO8601::secondsPerMinute;
+    return static_cast<unsigned>(result);
+}
+
+// https://tc39.es/ecma262/#sec-msfromtime
+static unsigned msFromTime(Int128 t)
+{
+    Int128 result = t % ISO8601::msPerSecond;
+    if (result < 0)
+        result += ISO8601::msPerSecond;
+    return static_cast<unsigned>(result);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-getisopartsfromepoch
+ISO8601::PlainDateTime TemporalCalendar::getISOPartsFromEpoch(ISO8601::ExactTime epochNanoseconds)
+{
+    ASSERT(epochNanoseconds.isValid());
+    Int128 remainderNs = epochNanoseconds.epochNanoseconds() % 1000000;
+    if (remainderNs < 0)
+        remainderNs += 1000000;
+    Int128 epochMilliseconds = (epochNanoseconds.epochNanoseconds() - remainderNs) / 1000000;
+    int year = TemporalCalendar::epochTimeToEpochYear(epochMilliseconds);
+    int32_t month = TemporalCalendar::epochTimeToMonthInYear(epochMilliseconds) + 1;
+    int32_t day = TemporalCalendar::epochTimeToDate(epochMilliseconds);
+    unsigned hour = hourFromTime(epochMilliseconds);
+    unsigned minute = minFromTime(epochMilliseconds);
+    unsigned second = secFromTime(epochMilliseconds);
+    unsigned millisecond = msFromTime(epochMilliseconds);
+    unsigned microsecond = static_cast<unsigned>(remainderNs) / 1000;
+    ASSERT(microsecond < 1000);
+    unsigned nanosecond = static_cast<unsigned>(remainderNs) % 1000;
+    auto isoDate = ISO8601::PlainDate(year, month, day);
+    auto time = ISO8601::PlainTime(hour, minute, second, millisecond,
+        static_cast<unsigned>(microsecond), static_cast<unsigned>(nanosecond));
+    return ISO8601::PlainDateTime(WTF::move(isoDate), WTF::move(time));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-totemporalcalendar
@@ -378,16 +465,36 @@ ISO8601::PlainDate TemporalCalendar::monthDayFromFields(JSGlobalObject* globalOb
     return ISO8601::PlainDate(1972, result->month(), result->day());
 }
 
+// There are two overloads of this function, one that takes doubles and one that takes Int128.
+ISO8601::PlainDate TemporalCalendar::balanceISODate(JSGlobalObject* globalObject, Int128 year, Int128 month, Int128 day)
+{
+    Int128 epochDays = ISO8601::makeDay(year, month - 1, day);
+    Int128 ms = ISO8601::makeDate(epochDays, 0);
+    Int128 daysToUse = ISO8601::msToDays(ms);
+    // Need the check here because yearMonthFromDays() takes an int32_t
+    if (!isInBounds<int32_t>(daysToUse)) [[unlikely]] {
+        // It doesn't matter what month and day we return, as this
+        // date will be flagged as an error later on anyway.
+        return ISO8601::PlainDate { ISO8601::outOfRangeYear, 1, 1 };
+    }
+    auto [ y, m, d ] = globalObject->vm().dateCache.yearMonthDayFromDaysWithCache(static_cast<int32_t>(daysToUse));
+    if (!ISO8601::isYearWithinLimits(y)) [[unlikely]]
+        return ISO8601::PlainDate { ISO8601::outOfRangeYear, static_cast<unsigned>(m + 1), static_cast<unsigned>(d) };
+    return ISO8601::PlainDate { y, static_cast<unsigned>(m + 1), static_cast<unsigned>(d) };
+}
+
 // https://tc39.es/proposal-temporal/#sec-temporal-balanceisodate
+// This overload should be used when it's unknown whether the year/month/day values
+// are in range for int32.
 ISO8601::PlainDate TemporalCalendar::balanceISODate(JSGlobalObject* globalObject, double year, double month, double day)
 {
     // Avoid turning an out-of-range date into an in-range date
     ASSERT(std::isfinite(year));
     if (static_cast<int32_t>(year) == ISO8601::outOfRangeYear) [[unlikely]]
         return ISO8601::PlainDate { ISO8601::outOfRangeYear, 1, 1 };
-    auto epochDays = makeDay(year, month - 1, day);
-    double ms = makeDate(epochDays, 0);
-    double daysToUse = msToDays(ms);
+    Int128 epochDays = ISO8601::makeDay(static_cast<Int128>(year), static_cast<Int128>(month - 1), static_cast<Int128>(day));
+    Int128 ms = ISO8601::makeDate(epochDays, 0);
+    Int128 daysToUse = ISO8601::msToDays(ms);
     // Need the check here because yearMonthFromDays() takes an int32_t
     if (!isInBounds<int32_t>(daysToUse)) [[unlikely]] {
         // It doesn't matter what month and day we return, as this
@@ -511,18 +618,19 @@ ISO8601::Duration TemporalCalendar::calendarDateUntil(const ISO8601::PlainDate& 
     auto constrained = TemporalDuration::regulateISODate(intermediate.year(), intermediate.month(), one.day(), TemporalOverflow::Constrain);
     ASSERT(constrained); // regulateISODate() should succeed, because the overflow mode is Constrain
 
-    double weeks = 0;
-    double days = makeDay(two.year(), two.month() - 1, two.day()) -
-        makeDay(constrained->year(), constrained->month() - 1, constrained->day());
+    Int128 weeks = 0;
+    Int128 days = ISO8601::makeDay(static_cast<Int128>(two.year()), static_cast<Int128>(two.month()) - 1, static_cast<Int128>(two.day())) -
+        ISO8601::makeDay(static_cast<Int128>(constrained->year()), static_cast<Int128>(constrained->month()) - 1, static_cast<Int128>(constrained->day()));
 
     if (largestUnit == TemporalUnit::Week) {
-        weeks = std::trunc(std::abs(days) / 7.0);
-        days = std::trunc((double) (((Int128) std::trunc(days)) % 7));
+        weeks = ISO8601::floorDiv(absInt128(days), 7);
+        days = days % 7;
         if (weeks)
             weeks *= sign; // Avoid -0
     }
 
-    return dateDuration(years, months, weeks, days);
+    // Need to cast to double because duration fields are doubles
+    return dateDuration(static_cast<double>(years), static_cast<double>(months), static_cast<double>(weeks), static_cast<double>(days));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-differencetemporalplainyearmonth

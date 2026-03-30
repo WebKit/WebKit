@@ -144,45 +144,44 @@ TemporalPlainTime* TemporalPlainTime::tryCreateIfValid(JSGlobalObject* globalObj
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-balancetime
-static ISO8601::Duration balanceTime(Int128 hour, Int128 minute, Int128 second, Int128 millisecond, Int128 microsecond, Int128 nanosecond)
+ISO8601::Duration TemporalPlainTime::balanceTime(Int128 hour, Int128 minute, Int128 second, Int128 millisecond, Int128 microsecond, Int128 nanosecond)
 {
     // https://github.com/tc39/proposal-temporal/issues/1804
     // Use non-negative modulo operation.
+
+    // Can't call nonNegativeModulo here because the check
+    // (nanosecond < 0) (etc.) has to be done before the
+    // nanosecond += 1000 operation. Instead, inline it.
     microsecond += nanosecond / 1000;
     nanosecond = nanosecond % 1000;
     if (nanosecond < 0) {
         microsecond -= 1;
         nanosecond += 1000;
     }
-
     millisecond += microsecond / 1000;
     microsecond = microsecond % 1000;
     if (microsecond < 0) {
         millisecond -= 1;
         microsecond += 1000;
     }
-
     second += millisecond / 1000;
     millisecond = millisecond % 1000;
     if (millisecond < 0) {
         second -= 1;
         millisecond += 1000;
     }
-
     minute += second / 60;
     second = second % 60;
     if (second < 0) {
         minute -= 1;
         second += 60;
     }
-
     hour += minute / 60;
     minute = minute % 60;
     if (minute < 0) {
         hour -= 1;
         minute += 60;
     }
-
     Int128 days = hour / 24;
     hour = hour % 24;
     if (hour < 0) {

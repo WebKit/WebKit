@@ -61,9 +61,11 @@ public:
     static ISO8601::PlainDate addDurationToDate(JSGlobalObject*, const ISO8601::PlainDate&, const ISO8601::Duration&, TemporalOverflow);
     static ISO8601::PlainDate isoDateAdd(JSGlobalObject*, const ISO8601::PlainDate&, const ISO8601::Duration&, TemporalOverflow);
     static ISO8601::PlainYearMonth balanceISOYearMonth(double, double);
+    static ISO8601::PlainDate balanceISODate(JSGlobalObject*, Int128, Int128, Int128);
     static ISO8601::PlainDate balanceISODate(JSGlobalObject*, double, double, double);
     static ISO8601::Duration calendarDateUntil(const ISO8601::PlainDate&, const ISO8601::PlainDate&, TemporalUnit);
     static int32_t isoDateCompare(const ISO8601::PlainDate&, const ISO8601::PlainDate&);
+    static ISO8601::PlainDateTime getISOPartsFromEpoch(ISO8601::ExactTime);
 
     CalendarID identifier() const { return m_identifier; }
     bool isISO8601() const { return m_identifier == iso8601CalendarID(); }
@@ -73,6 +75,26 @@ public:
     static JSObject* from(JSGlobalObject*, JSValue);
 
     bool equals(JSGlobalObject*, TemporalCalendar*);
+
+
+    static inline int epochTimeToEpochYear(Int128 t)
+    {
+        return msToYear(static_cast<double>(t));
+    }
+
+    static inline int32_t epochTimeToMonthInYear(Int128 t)
+    {
+        Int128 days = ISO8601::msToDays(t);
+        ASSERT(isInBounds<int32_t>(days));
+        return std::get<1>(WTF::yearMonthDayFromDays(static_cast<int32_t>(days)));
+    }
+
+    static inline int32_t epochTimeToDate(Int128 t)
+    {
+        Int128 days = ISO8601::msToDays(t);
+        ASSERT(isInBounds<int32_t>(days));
+        return std::get<2>(WTF::yearMonthDayFromDays(static_cast<int32_t>(days)));
+    }
 
 private:
     TemporalCalendar(VM&, Structure*, CalendarID);

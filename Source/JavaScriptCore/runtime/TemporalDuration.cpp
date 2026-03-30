@@ -633,13 +633,12 @@ Int128 getUTCEpochNanoseconds(std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>
 {
     auto isoDate = std::get<0>(isoDateTime);
     auto isoTime = std::get<1>(isoDateTime);
-    auto date = makeDay(isoDate.year(), isoDate.month() - 1, isoDate.day());
+    Int128 date = ISO8601::makeDay(static_cast<Int128>(isoDate.year()), static_cast<Int128>(isoDate.month()) - 1, static_cast<Int128>(isoDate.day()));
     auto time = makeTime(isoTime.hour(), isoTime.minute(), isoTime.second(), isoTime.millisecond());
-    auto ms = makeDate(date, time);
-    ASSERT(isInteger(ms));
-    return (((Int128) ms) * 1000000
-        + ((Int128) isoTime.microsecond()) * 1000
-        + ((Int128) isoTime.nanosecond()));
+    Int128 ms = ISO8601::makeDate(date, static_cast<Int128>(time));
+    return (ms * 1000000
+        + (static_cast<Int128>(isoTime.microsecond()) * 1000)
+        + (static_cast<Int128>(isoTime.nanosecond())));
 }
 
 static Int128 getEpochNanosecondsFor(std::tuple<ISO8601::PlainDate, ISO8601::PlainTime> isoDateTime, TemporalDisambiguation disambiguation)

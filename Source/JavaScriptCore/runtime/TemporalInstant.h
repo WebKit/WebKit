@@ -49,6 +49,7 @@ public:
     static TemporalInstant* tryCreateIfValid(JSGlobalObject*, ISO8601::ExactTime, Structure* = nullptr);
     static TemporalInstant* tryCreateIfValid(JSGlobalObject*, JSValue, Structure* = nullptr);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
+    static ISO8601::ExactTime exactTimeFromJSValue(JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 

@@ -133,6 +133,8 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/TemporalPlainYearMonthPrototype.cpp
     runtime/TemporalTimeZoneConstructor.cpp
     runtime/TemporalTimeZonePrototype.cpp
+    runtime/TemporalZonedDateTimeConstructor.cpp
+    runtime/TemporalZonedDateTimePrototype.cpp
 
     wasm/js/JSWebAssembly.cpp
     wasm/js/WebAssemblyArrayConstructor.cpp
