@@ -27,6 +27,30 @@
 
 #import "AppDelegate.h"
 #import "SettingsController.h"
+#import <dispatch/dispatch.h>
+
+static NSSize harnessContentSizeFromEnvironment(void)
+{
+    NSDictionary<NSString *, NSString *> *environment = NSProcessInfo.processInfo.environment;
+    NSString *widthString = environment[@"NUTJOB_HARNESS_CONTENT_WIDTH"];
+    NSString *heightString = environment[@"NUTJOB_HARNESS_CONTENT_HEIGHT"];
+    if (!widthString.length || !heightString.length)
+        return NSZeroSize;
+
+    CGFloat width = widthString.doubleValue;
+    CGFloat height = heightString.doubleValue;
+    if (width <= 0 || height <= 0)
+        return NSZeroSize;
+
+    return NSMakeSize(width, height);
+}
+
+static void setHarnessCGFloatEnvironment(NSString *name, CGFloat value)
+{
+    char buffer[64];
+    snprintf(buffer, sizeof(buffer), "%.4f", value);
+    setenv(name.UTF8String, buffer, 1);
+}
 
 @interface BrowserWindowController () <NSSharingServicePickerDelegate, NSSharingServiceDelegate> {
     NSTimer *_mainThreadStallTimer;
@@ -61,6 +85,42 @@
 
     [share sendActionOn:NSEventMaskLeftMouseDown];
     [super windowDidLoad];
+
+    NSSize harnessContentSize = harnessContentSizeFromEnvironment();
+    if (!NSEqualSizes(harnessContentSize, NSZeroSize)) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            // In MiniBrowser's unified-toolbar layout, the visible page viewport is the
+            // window's contentLayoutRect, not the raw contentView/container bounds.
+            // The harness size should mean "DOM viewport size" so native snapshot and
+            // live MiniBrowser runs compare the same page area.
+            NSSize currentViewportSize = self.window.contentLayoutRect.size;
+            CGFloat deltaWidth = harnessContentSize.width - currentViewportSize.width;
+            CGFloat deltaHeight = harnessContentSize.height - currentViewportSize.height;
+            NSRect windowFrame = self.window.frame;
+            windowFrame.origin.y -= deltaHeight;
+            windowFrame.size.width += deltaWidth;
+            windowFrame.size.height += deltaHeight;
+            [self.window setFrame:windowFrame display:NO];
+            [self setWebViewFillsWindow:YES];
+            [self.window.contentView layoutSubtreeIfNeeded];
+            [self updateHarnessContentOffsetEnvironment];
+        });
+    }
+}
+
+- (void)updateHarnessContentOffsetEnvironment
+{
+    NSSize harnessContentSize = harnessContentSizeFromEnvironment();
+    if (NSEqualSizes(harnessContentSize, NSZeroSize))
+        return;
+
+    [self.window.contentView layoutSubtreeIfNeeded];
+    NSRect contentBounds = self.window.contentView.bounds;
+    NSRect contentLayoutRect = self.window.contentLayoutRect;
+    CGFloat offsetX = contentLayoutRect.origin.x;
+    CGFloat offsetY = NSMaxY(contentBounds) - NSMaxY(contentLayoutRect);
+    setHarnessCGFloatEnvironment(@"NUTJOB_HARNESS_CONTENT_OFFSET_X", offsetX);
+    setHarnessCGFloatEnvironment(@"NUTJOB_HARNESS_CONTENT_OFFSET_Y", offsetY);
 }
 
 - (void)newWindowForTab:(id)sender

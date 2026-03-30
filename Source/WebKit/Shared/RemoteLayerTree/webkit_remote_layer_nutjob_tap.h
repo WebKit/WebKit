@@ -315,6 +315,176 @@ private:
     Vector<AdapterOperationSummary, 64> m_operations;
 };
 
+inline const char* adapterReportPath()
+{
+    const char* path = getenv("NUTJOB_TAP_REPORT_PATH");
+    return (path && *path) ? path : nullptr;
+}
+
+inline int adapterReportFD()
+{
+    const char* fdString = getenv("NUTJOB_TAP_REPORT_FD");
+    if (!fdString || !*fdString)
+        return -1;
+    return parseInteger<int>(StringView(unsafeSpan(fdString))).value_or(-1);
+}
+
+inline bool hasAdapterReportOutput()
+{
+    return adapterReportFD() >= 0 || adapterReportPath();
+}
+
+inline float envFloatValue(const char* name)
+{
+    const char* value = getenv(name);
+    if (!value || !*value)
+        return 0.0f;
+    bool isValid = false;
+    float parsed = StringView(unsafeSpan(value)).toFloat(isValid);
+    return isValid ? parsed : 0.0f;
+}
+
+inline WebCore::FloatPoint harnessContentOffset()
+{
+    static std::once_flag once;
+    static WebCore::FloatPoint offset;
+
+    std::call_once(once, [] {
+        offset = { envFloatValue("NUTJOB_HARNESS_CONTENT_OFFSET_X"), envFloatValue("NUTJOB_HARNESS_CONTENT_OFFSET_Y") };
+    });
+
+    return offset;
+}
+
+inline FILE* adapterReportFile()
+{
+    static std::once_flag once;
+    static FILE* file = nullptr;
+
+    std::call_once(once, [] {
+        int fdValue = adapterReportFD();
+        if (fdValue >= 0) {
+            int duplicate = dup(fdValue);
+            if (duplicate >= 0)
+                file = fdopen(duplicate, "wb");
+        }
+
+        if (!file) {
+            const char* path = adapterReportPath();
+            if (path && *path)
+                file = fopen(path, "ab");
+        }
+
+        if (file)
+            setvbuf(file, nullptr, _IOLBF, 0);
+    });
+
+    return file;
+}
+
+inline void writeJSONString(FILE* file, StringView value)
+{
+    fputc('"', file);
+    auto utf8 = value.toString().utf8();
+    for (auto ch : utf8.span()) {
+        switch (ch) {
+        case '"':
+        case '\\':
+            fputc('\\', file);
+            fputc(ch, file);
+            break;
+        case '\n':
+            fputc('\\', file);
+            fputc('n', file);
+            break;
+        case '\r':
+            fputc('\\', file);
+            fputc('r', file);
+            break;
+        case '\t':
+            fputc('\\', file);
+            fputc('t', file);
+            break;
+        default:
+            fputc(ch, file);
+            break;
+        }
+    }
+    fputc('"', file);
+}
+
+inline void writeHandlingCountsJSON(FILE* file, const AdapterHandlingCounts& counts)
+{
+    fprintf(file,
+        "{\"direct\":%u,\"lowered\":%u,\"prerasterized\":%u,\"placeholder\":%u,\"lossy\":%u,\"unsupportedNoOp\":%u,\"observed\":%u,\"supported\":%u,\"supportRatio\":%.6f}",
+        counts.direct, counts.lowered, counts.prerasterized, counts.placeholder, counts.lossy, counts.unsupportedNoOp,
+        counts.observed(), counts.supported(), counts.observed() ? static_cast<double>(counts.supported()) / counts.observed() : 1.0);
+}
+
+inline void appendAdapterReportLine(const FrameMetadata& metadata, const AdapterReportSnapshot& report)
+{
+    FILE* file = adapterReportFile();
+    if (!file)
+        return;
+
+    fprintf(file, "{\"surfaceID\":%llu,\"width\":%d,\"height\":%d,\"origin\":{\"x\":%.4f,\"y\":%.4f},\"dirtyRect\":{\"x\":%.4f,\"y\":%.4f,\"width\":%.4f,\"height\":%.4f},\"backgroundARGB\":%u,\"paintOrder\":%u,\"overall\":",
+        static_cast<unsigned long long>(metadata.surfaceID),
+        metadata.size.width(), metadata.size.height(),
+        metadata.origin.x(), metadata.origin.y(),
+        metadata.dirtyRect.x(), metadata.dirtyRect.y(), metadata.dirtyRect.width(), metadata.dirtyRect.height(),
+        metadata.backgroundColorARGB, metadata.paintOrder);
+    writeHandlingCountsJSON(file, report.overall);
+    fputc(',', file);
+    fputc('"', file);
+    fputc('o', file);
+    fputc('p', file);
+    fputc('e', file);
+    fputc('r', file);
+    fputc('a', file);
+    fputc('t', file);
+    fputc('i', file);
+    fputc('o', file);
+    fputc('n', file);
+    fputc('s', file);
+    fputc('"', file);
+    fputc(':', file);
+    fputc('[', file);
+    for (size_t index = 0; index < report.operations.size(); ++index) {
+        if (index)
+            fputc(',', file);
+        fputc('{', file);
+        fputc('"', file);
+        fputc('o', file);
+        fputc('p', file);
+        fputc('e', file);
+        fputc('r', file);
+        fputc('a', file);
+        fputc('t', file);
+        fputc('i', file);
+        fputc('o', file);
+        fputc('n', file);
+        fputc('"', file);
+        fputc(':', file);
+        writeJSONString(file, report.operations[index].operation);
+        fputc(',', file);
+        fputc('"', file);
+        fputc('c', file);
+        fputc('o', file);
+        fputc('u', file);
+        fputc('n', file);
+        fputc('t', file);
+        fputc('s', file);
+        fputc('"', file);
+        fputc(':', file);
+        writeHandlingCountsJSON(file, report.operations[index].counts);
+        fputc('}', file);
+    }
+    fputc(']', file);
+    fputc('}', file);
+    fputc('\n', file);
+    fflush(file);
+}
+
 struct SerializationState {
     Vector<SerializationFrame, 8> stack;
     uint32_t nextImageID { 1 };
@@ -972,6 +1142,28 @@ inline bool emitClipImageBufferResource(Writer& writer, SerializationState& stat
     emitDefineImage(writer, imageID, *pixelBuffer);
     emitClipImageMask(writer, imageID, destinationRect);
     return true;
+}
+
+inline bool emitClipOutPathResource(Writer& writer, SerializationState& state, const WebCore::IntSize& surfaceSize, const WebCore::Path& path)
+{
+    if (surfaceSize.isEmpty() || path.isEmpty())
+        return false;
+
+    WebCore::FloatRect surfaceRect(0, 0, surfaceSize.width(), surfaceSize.height());
+    auto imageBuffer = WebCore::ImageBuffer::create(surfaceSize, WebCore::RenderingMode::Unaccelerated, WebCore::RenderingPurpose::Unspecified, 1, WebCore::DestinationColorSpace::SRGB(), WebCore::PixelFormat::BGRA8);
+    if (!imageBuffer)
+        return false;
+
+    auto& context = imageBuffer->context();
+    context.clearRect(surfaceRect);
+    context.save();
+    context.setShouldAntialias(state.current().state.shouldAntialias());
+    context.setCTM(state.current().ctm);
+    context.clipOut(path);
+    context.setCTM(WebCore::AffineTransform());
+    context.fillRect(surfaceRect, WebCore::Color::black);
+    context.restore();
+    return emitClipImageBufferResource(writer, state, *imageBuffer, surfaceRect);
 }
 
 inline bool emitNativeImageResource(Writer& writer, SerializationState& state, const WebCore::NativeImage& nativeImage, const WebCore::FloatRect& destinationRect, const WebCore::FloatRect& sourceRect)
@@ -1833,7 +2025,7 @@ inline void emitDrawPath(Writer& writer, const SerializationState& state, const 
         emitStrokePath(writer, path);
 }
 
-inline void serializeItem(Writer& writer, SerializationState& state, const WebCore::DisplayList::Item& item, FrameCounters* counters = nullptr, AdapterReport* report = nullptr)
+inline void serializeItem(Writer& writer, SerializationState& state, const WebCore::IntSize& surfaceSize, const WebCore::DisplayList::Item& item, FrameCounters* counters = nullptr, AdapterReport* report = nullptr)
 {
     PhaseOneOperationSerializer phaseOne(writer, state, counters, report);
     if (serializePhaseOneDisplayListItem(phaseOne, item))
@@ -1850,6 +2042,13 @@ inline void serializeItem(Writer& writer, SerializationState& state, const WebCo
         if constexpr (std::is_same_v<ItemType, WebCore::DisplayList::ClipRoundedRect>) {
             note("clip-rounded-rect", AdapterHandlingStrategy::Lowered);
             emitClipPath(writer, makeRoundedRectPath(command.rect()));
+        } else if constexpr (std::is_same_v<ItemType, WebCore::DisplayList::ClipOutRoundedRect>) {
+            if (emitClipOutPathResource(writer, state, surfaceSize, makeRoundedRectPath(command.rect())))
+                note("clip-out-rounded-rect", AdapterHandlingStrategy::Prerasterized);
+            else {
+                note("clip-out-rounded-rect", AdapterHandlingStrategy::UnsupportedNoOp);
+                strictUnsupported("DisplayList::ClipOutRoundedRect", "inverse clip mask fallback unavailable");
+            }
         } else if constexpr (std::is_same_v<ItemType, WebCore::DisplayList::ClipPath>) {
             note("clip-path", AdapterHandlingStrategy::Direct);
             emitClipPath(writer, command.path());
@@ -2164,6 +2363,9 @@ inline FrameMetadata computeFrameMetadata(const WebCore::IntSize& size, const We
     metadata.blendMode = static_cast<uint8_t>(computeSurfaceBlendMode(layer));
     metadata.surfaceFlags = computeSurfaceFlags(layer);
 #endif
+    auto contentOffset = harnessContentOffset();
+    metadata.origin.move(-contentOffset.x(), -contentOffset.y());
+    metadata.compositeClipRect.move(-contentOffset.x(), -contentOffset.y());
     metadata.dirtyRect = dirtyRect;
     if (metadata.dirtyRect.isEmpty())
         metadata.dirtyRect = WebCore::FloatRect(0, 0, size.width(), size.height());
@@ -2479,7 +2681,15 @@ public:
     }
 
     void clipOut(const WebCore::FloatRect&) final { noteUnsupportedNoOp("clip-out-rect", "GraphicsContext::clipOut(rect)"); }
-    void clipOutRoundedRect(const WebCore::FloatRoundedRect&) final { noteUnsupportedNoOp("clip-out-rounded-rect", "GraphicsContext::clipOutRoundedRect"); }
+    void clipOutRoundedRect(const WebCore::FloatRoundedRect& rect) final
+    {
+        noteContentCommand();
+        ++m_counters.clipPaths;
+        if (emitClipOutPathResource(m_writer, m_serializationState, m_size, makeRoundedRectPath(rect)))
+            noteHandling("clip-out-rounded-rect", AdapterHandlingStrategy::Prerasterized);
+        else
+            noteUnsupportedNoOp("clip-out-rounded-rect", "GraphicsContext::clipOutRoundedRect");
+    }
     void clipOut(const WebCore::Path&) final { noteUnsupportedNoOp("clip-out-path", "GraphicsContext::clipOut(path)"); }
 
     void clipToImageBuffer(WebCore::ImageBuffer& imageBuffer, const WebCore::FloatRect& rect) final
@@ -2752,23 +2962,98 @@ public:
         WebCore::GraphicsContext::drawBidiText(cascade, run, point, customFontNotReadyAction);
     }
 
-    void drawLinesForText(const WebCore::FloatPoint& origin, float thickness, std::span<const WebCore::FloatSegment> lineSegments, bool, bool doubleLines, WebCore::StrokeStyle) final
+    void drawLinesForText(const WebCore::FloatPoint& origin, float thickness, std::span<const WebCore::FloatSegment> lineSegments, bool isPrinting, bool doubleLines, WebCore::StrokeStyle strokeStyle) final
     {
         noteContentCommand();
-        auto color = glyphPlaceholderColor(m_serializationState);
-        if (!color)
-            color = strokeBrushRenderable(m_serializationState) ? std::optional<uint32_t>(encodeBrushColorOrPlaceholder(m_serializationState.current().state.strokeBrush(), placeholderStrokeBrushARGB, "text stroke brush")) : std::nullopt;
-        if (!color)
+        if (lineSegments.empty())
             return;
 
-        float height = std::max(thickness, 1.0f);
-        float secondLineOffset = height * 2.0f;
-        for (const auto& segment : lineSegments) {
+        auto color = strokeColor();
+        auto computeLineBounds = [&](const WebCore::FloatRect& rect) {
+            auto adjustedOrigin = rect.location();
+            auto adjustedThickness = std::max(rect.height(), 0.5f);
+            if (isPrinting)
+                return WebCore::FloatRect(adjustedOrigin, WebCore::FloatSize(rect.width(), adjustedThickness));
+
+            auto transform = getCTM(WebCore::GraphicsContext::DefinitelyIncludeDeviceScale);
+            float scale = transform.b() ? std::hypot(transform.a(), transform.b()) : transform.a();
+            if (scale < 1.0f) {
+                static constexpr float minimumUnderlineAlpha = 0.4f;
+                float shade = scale > minimumUnderlineAlpha ? scale : minimumUnderlineAlpha;
+                color = color.colorWithAlphaMultipliedBy(shade);
+            }
+
+            auto devicePoint = transform.mapPoint(rect.location());
+            auto deviceOrigin = WebCore::FloatPoint(roundf(devicePoint.x()), ceilf(devicePoint.y()));
+            if (auto inverse = transform.inverse())
+                adjustedOrigin = inverse.value().mapPoint(deviceOrigin);
+            return WebCore::FloatRect(adjustedOrigin, WebCore::FloatSize(rect.width(), adjustedThickness));
+        };
+
+        WTF::Vector<WebCore::FloatRect, 4> rects;
+        auto bounds = computeLineBounds(WebCore::FloatRect { origin, WebCore::FloatSize { lineSegments.back().end, thickness } });
+        if (bounds.isEmpty() || !color.isValid())
+            return;
+
+        rects.reserveInitialCapacity((doubleLines ? 2 : 1) * lineSegments.size());
+
+        float dashWidth = 0.0f;
+        switch (strokeStyle) {
+        case WebCore::StrokeStyle::DottedStroke:
+            dashWidth = bounds.height();
+            break;
+        case WebCore::StrokeStyle::DashedStroke:
+            dashWidth = 2.0f * bounds.height();
+            break;
+        case WebCore::StrokeStyle::SolidStroke:
+        default:
+            break;
+        }
+
+        if (dashWidth) {
+            for (const auto& lineSegment : lineSegments) {
+                auto left = lineSegment.begin;
+                auto width = lineSegment.length();
+                auto doubleWidth = 2.0f * dashWidth;
+                auto quotient = WTF::truncateDoubleToInt32(left / doubleWidth);
+                auto startOffset = left - quotient * doubleWidth;
+                auto effectiveLeft = left + startOffset;
+                auto startParticle = WTF::truncateDoubleToInt32(std::floor(effectiveLeft / doubleWidth));
+                auto endParticle = WTF::truncateDoubleToInt32(std::ceil((left + width) / doubleWidth));
+
+                for (auto j = startParticle; j < endParticle; ++j) {
+                    auto actualDashWidth = dashWidth;
+                    auto dashStart = bounds.x() + j * doubleWidth;
+
+                    if (j == startParticle && startOffset > 0 && startOffset < dashWidth) {
+                        actualDashWidth -= startOffset;
+                        dashStart += startOffset;
+                    }
+
+                    if (j == endParticle - 1) {
+                        auto remainingWidth = left + width - (j * doubleWidth);
+                        if (remainingWidth < dashWidth)
+                            actualDashWidth = remainingWidth;
+                    }
+
+                    rects.append(WebCore::FloatRect(dashStart, bounds.y(), actualDashWidth, bounds.height()));
+                }
+            }
+        } else {
+            for (const auto& lineSegment : lineSegments)
+                rects.append(WebCore::FloatRect(bounds.x() + lineSegment.begin, bounds.y(), lineSegment.length(), bounds.height()));
+        }
+
+        if (doubleLines) {
+            auto secondLineY = bounds.y() + 2.0f * bounds.height();
+            for (const auto& lineSegment : lineSegments)
+                rects.append(WebCore::FloatRect(bounds.x() + lineSegment.begin, secondLineY, lineSegment.length(), bounds.height()));
+        }
+
+        noteHandling("draw-lines-for-text", AdapterHandlingStrategy::Lowered);
+        for (const auto& rect : rects) {
             ++m_counters.drawGlyphRuns;
-            auto rect = WebCore::FloatRect(origin.x() + segment.begin, origin.y(), segment.length(), height);
-            emitPlaceholderFallback("draw-lines-for-text", "GraphicsContext::drawLinesForText", rect, *color);
-            if (doubleLines)
-                emitPlaceholderFallback("draw-lines-for-text-double", "GraphicsContext::drawLinesForText(double)", WebCore::FloatRect(rect.x(), rect.y() + secondLineOffset, rect.width(), rect.height()), *color);
+            emitFillRectColor(m_writer, rect, color);
         }
     }
 
@@ -2845,6 +3130,7 @@ private:
             m_counters.imagePlaceholders, m_counters.prerasterizedFallbacks, m_counters.placeholderFallbacks, m_counters.lossyFallbacks, m_counters.unsupportedNoOps,
             m_counters.controlPlaceholders, m_counters.focusRings, m_counters.textRuns, m_counters.bidiTextRuns,
             m_counters.displayLists, m_counters.transparencyBegins, m_counters.transparencyEnds);
+        appendAdapterReportLine(m_metadata, m_adapterReport.snapshot());
         m_writer.writeU8(static_cast<uint8_t>(Command::FrameEnd));
         fflush(m_writer.out);
         m_frameClosed = true;
@@ -2874,11 +3160,18 @@ inline void serializeDisplayListToFile(FILE* file, const WebCore::DisplayList::D
     emitFrameBegin(writer, metadata);
 
     SerializationState serializationState(initialState, normalizedInitialCTM(initialCTM, backingScale, metadata.origin, size));
-    PhaseOneOperationSerializer(writer, serializationState, nullptr, report).emitInitialState();
+    AdapterReport localReport;
+    AdapterReport* activeReport = report;
+    if (!activeReport && hasAdapterReportOutput())
+        activeReport = &localReport;
+
+    PhaseOneOperationSerializer(writer, serializationState, nullptr, activeReport).emitInitialState();
 
     for (const auto& item : displayList.items())
-        serializeItem(writer, serializationState, item, nullptr, report);
+        serializeItem(writer, serializationState, size, item, nullptr, activeReport);
 
+    if (activeReport)
+        appendAdapterReportLine(metadata, activeReport->snapshot());
     writer.writeU8(static_cast<uint8_t>(Command::FrameEnd));
     fflush(writer.out);
 }

@@ -414,6 +414,23 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
                 if (fdValue >= 0)
                     xpc_dictionary_set_fd(bootstrapMessage.get(), "nutjob-tap-fd", fdValue);
             }
+            if (const char* fdString = getenv("NUTJOB_TAP_REPORT_FD")) {
+                int fdValue = parseInteger<int>(StringView(unsafeSpan(fdString))).value_or(-1);
+                if (fdValue >= 0)
+                    xpc_dictionary_set_fd(bootstrapMessage.get(), "nutjob-tap-report-fd", fdValue);
+            }
+            if (const char* reportPath = getenv("NUTJOB_TAP_REPORT_PATH")) {
+                if (*reportPath)
+                    xpc_dictionary_set_string(bootstrapMessage.get(), "nutjob-tap-report-path", reportPath);
+            }
+            if (const char* offsetX = getenv("NUTJOB_HARNESS_CONTENT_OFFSET_X")) {
+                if (*offsetX)
+                    xpc_dictionary_set_string(bootstrapMessage.get(), "nutjob-harness-content-offset-x", offsetX);
+            }
+            if (const char* offsetY = getenv("NUTJOB_HARNESS_CONTENT_OFFSET_Y")) {
+                if (*offsetY)
+                    xpc_dictionary_set_string(bootstrapMessage.get(), "nutjob-harness-content-offset-y", offsetY);
+            }
         }
     }
     
