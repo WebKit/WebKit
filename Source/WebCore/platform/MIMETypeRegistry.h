@@ -140,6 +140,7 @@ public:
     WEBCORE_EXPORT static FixedVector<ASCIILiteral> gltfMIMETypes();
 
     WEBCORE_EXPORT static String appendFileExtensionIfNecessary(const String& filename, const String& mimeType);
+    WEBCORE_EXPORT static String correctExtensionForMIMEType(const String& filename, const String& mimeType);
 
     WEBCORE_EXPORT static String preferredImageMIMETypeForEncoding(const Vector<String>& mimeTypes, const Vector<String>& extensions);
     WEBCORE_EXPORT static bool containsImageMIMETypeForEncoding(const Vector<String>& mimeTypes, const Vector<String>& extensions);

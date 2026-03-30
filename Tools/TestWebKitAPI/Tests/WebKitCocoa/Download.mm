@@ -3416,4 +3416,49 @@ TEST(WKDownload, OriginatingFrameHostWhenDownloadComesFromClientInputNavigation)
     Util::run(&downloadDestinationDecided);
 }
 
+// rdar://147183354
+TEST(WKDownload, SuggestedFilenameCorrectedByContentType)
+{
+    using namespace TestWebKitAPI;
+
+    HTTPServer server([](Connection connection) {
+        connection.receiveHTTPRequest([connection](Vector<char>&&) {
+            connection.send(makeString(
+                "HTTP/1.1 200 OK\r\n"
+                "Content-Type: video/mp4\r\n"
+                "Content-Length: 5000\r\n"
+                "\r\n"_s, longString<5000>('a')
+            ));
+        });
+    });
+
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    auto downloadDelegate = adoptNS([TestDownloadDelegate new]);
+
+    __block bool downloadDestinationDecided = false;
+    __block RetainPtr<NSString> receivedSuggestedFilename;
+
+    navigationDelegate.get().decidePolicyForNavigationResponse = ^(WKNavigationResponse *, void (^completionHandler)(WKNavigationResponsePolicy)) {
+        completionHandler(WKNavigationResponsePolicyDownload);
+    };
+
+    navigationDelegate.get().navigationResponseDidBecomeDownload = ^(WKNavigationResponse *, WKDownload *download) {
+        download.delegate = downloadDelegate.get();
+    };
+
+    downloadDelegate.get().decideDestinationUsingResponse = ^(WKDownload *, NSURLResponse *, NSString *suggestedFilename, void (^completionHandler)(NSURL *)) {
+        receivedSuggestedFilename = suggestedFilename;
+        downloadDestinationDecided = true;
+        completionHandler(nil);
+    };
+
+    auto requestURL = makeString("http://127.0.0.1:"_s, server.port(), "/video.gif"_s);
+    auto webView = adoptNS([WKWebView new]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:requestURL.createNSString().get()]]];
+    Util::run(&downloadDestinationDecided);
+
+    EXPECT_WK_STREQ("video.mp4", receivedSuggestedFilename.get());
+}
+
 }

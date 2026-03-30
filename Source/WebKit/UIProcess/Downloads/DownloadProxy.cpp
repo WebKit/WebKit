@@ -151,17 +151,36 @@ void DownloadProxy::didReceiveData(uint64_t bytesWritten, uint64_t totalBytesWri
     protectedClient()->didReceiveData(*this, bytesWritten, totalBytesWritten, totalBytesExpectedToWrite);
 }
 
+// https://html.spec.whatwg.org/#getting-the-suggested-filename
+enum class FilenameSource : uint8_t {
+    ContentDisposition, // Content-Disposition header with filename
+    DownloadAttribute, // <a download="name.ext">
+    URLDerived, // Derived from the response URL
+    UserAgent, // UA fallback
+};
+
 void DownloadProxy::decideDestinationWithSuggestedFilename(const WebCore::ResourceResponse& response, String&& suggestedFilename, DecideDestinationCallback&& completionHandler)
 {
     RELEASE_LOG_INFO_IF(!response.expectedContentLength(), Network, "DownloadProxy::decideDestinationWithSuggestedFilename expectedContentLength is null");
 
-    // As per https://html.spec.whatwg.org/#as-a-download (step 2), the filename from the Content-Disposition header
-    // should override the suggested filename from the download attribute.
-    if (response.isAttachmentWithFilename() || (suggestedFilename.isEmpty() && m_suggestedFilename.isEmpty()))
+    // As per https://html.spec.whatwg.org/#getting-the-suggested-filename, the filename from the
+    // Content-Disposition header should override the suggested filename from the download attribute.
+    auto filenameSource = FilenameSource::URLDerived;
+    if (response.isAttachmentWithFilename()) {
         suggestedFilename = response.suggestedFilename();
-    else if (!m_suggestedFilename.isEmpty())
+        filenameSource = FilenameSource::ContentDisposition;
+    } else if (!m_suggestedFilename.isEmpty()) {
         suggestedFilename = m_suggestedFilename;
-    suggestedFilename = MIMETypeRegistry::appendFileExtensionIfNecessary(suggestedFilename, response.mimeType());
+        filenameSource = FilenameSource::DownloadAttribute;
+    } else if (suggestedFilename.isEmpty())
+        suggestedFilename = response.suggestedFilename();
+
+    // Correct the file extension to match the Content-Type for URL-derived filenames (rdar://147183354),
+    // or append an extension if the filename doesn't have one.
+    if (filenameSource == FilenameSource::URLDerived)
+        suggestedFilename = MIMETypeRegistry::correctExtensionForMIMEType(suggestedFilename, response.mimeType());
+    else
+        suggestedFilename = MIMETypeRegistry::appendFileExtensionIfNecessary(suggestedFilename, response.mimeType());
 
     protectedClient()->decideDestinationWithSuggestedFilename(*this, response, ResourceResponseBase::sanitizeSuggestedFilename(suggestedFilename), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (AllowOverwrite allowOverwrite, String destination) mutable {
         SandboxExtension::Handle sandboxExtensionHandle;
