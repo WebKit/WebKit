@@ -310,13 +310,11 @@ double computeNonCalcLengthDouble(double value, CSS::LengthUnit lengthUnit, cons
         if (conversionData.computingLineHeight() || conversionData.computingFontSize()) {
             // Try to get the parent's computed line-height, or fall back to the initial line-height of this element's font spacing.
             value *= conversionData.parentStyle() ? conversionData.parentStyle()->computedLineHeight() : conversionData.fontCascadeForFontUnits().metricsOfPrimaryFont().intLineSpacing();
-        } else if (auto fixedLineHeight = conversionData.style()->lineHeight().tryFixed()) {
-            // We can't use computedLineHeightForFontUnits if the line height is fixed since
-            // that will apply the usedZoomFactor. We probably should refactor it so that
-            // does not happen and we don't have to special case this scenario.
-            value *= Style::evaluate<LayoutUnit>(*fixedLineHeight, Style::ZoomFactor { conversionData.zoom() }).toFloat();
-        } else
-            value *= conversionData.computedLineHeightForFontUnits();
+        } else {
+            auto* style = conversionData.style();
+            Style::LineHeightEvaluationContext context { style->computedFontSize(), style->metricsOfPrimaryFont().lineSpacing() };
+            value *= Style::evaluate<float>(style->lineHeight(), context, Style::ZoomFactor { conversionData.zoom() });
+        }
         break;
 
     // MARK: "root font dependent" resolution
