@@ -297,10 +297,11 @@ public:
     {
         std::apply([&](const StringTypes&... strings) {
             unsigned offset = 0;
-            (..., (
-                StringTypeAdapter<StringTypes>(strings).writeTo(destination.subspan(offset)),
-                offset += StringTypeAdapter<StringTypes>(strings).length()
-            ));
+            (..., [&] {
+                StringTypeAdapter<StringTypes> adapter(strings);
+                adapter.writeTo(destination.subspan(offset));
+                offset += adapter.length();
+            }());
         }, m_tuple);
     }
 
