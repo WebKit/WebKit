@@ -136,6 +136,20 @@ void View::close()
     m_pageProxy->close();
 }
 
+void View::addState(WebCore::ActivityState state)
+{
+    m_viewStateFlags.add(state);
+    OptionSet<WebCore::ActivityState> flags = { state };
+    m_pageProxy->activityStateDidChange(flags);
+}
+
+void View::removeState(WebCore::ActivityState state)
+{
+    m_viewStateFlags.remove(state);
+    OptionSet<WebCore::ActivityState> flags = { state };
+    m_pageProxy->activityStateDidChange(flags);
+}
+
 #if ENABLE(FULLSCREEN_API)
 bool View::isFullScreen() const
 {

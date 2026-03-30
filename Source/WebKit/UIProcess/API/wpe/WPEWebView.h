@@ -89,6 +89,9 @@ public:
     const WebCore::IntSize& size() const LIFETIME_BOUND { return m_size; }
     OptionSet<WebCore::ActivityState> viewState() const { return m_viewStateFlags; }
 
+    void addState(WebCore::ActivityState);
+    void removeState(WebCore::ActivityState);
+
     virtual struct wpe_view_backend* backend() const { return nullptr; }
 #if ENABLE(WPE_PLATFORM)
     virtual WPEView* wpeView() const { return nullptr; }

@@ -5357,6 +5357,38 @@ WebKitEditorState* webkit_web_view_get_editor_state(WebKitWebView *webView)
     return webView->priv->editorState.get();
 }
 
+#if PLATFORM(WPE)
+/**
+ * webkit_web_view_set_focus:
+ * @web_view: a #WebKitWebView
+ * @focus: focus state which should be set
+ *
+ * Set focus state for the view.
+ */
+void webkit_web_view_set_focus(WebKitWebView *webView, gboolean focus)
+{
+    if (focus)
+        webView->priv->view->addState(WebCore::ActivityState::IsFocused);
+    else
+        webView->priv->view->removeState(WebCore::ActivityState::IsFocused);
+}
+
+/**
+ * webkit_web_view_set_active:
+ * @web_view: a #WebKitWebView
+ * @active: activity state, which should be set
+ *
+ * Set activity state for the view.
+ */
+void webkit_web_view_set_active(WebKitWebView *webView, gboolean active)
+{
+    if (active)
+        webView->priv->view->addState(WebCore::ActivityState::WindowIsActive);
+    else
+        webView->priv->view->removeState(WebCore::ActivityState::WindowIsActive);
+}
+#endif
+
 /**
  * webkit_web_view_get_session_state:
  * @web_view: a #WebKitWebView

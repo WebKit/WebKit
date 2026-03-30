@@ -586,10 +586,31 @@ void WPEQtView::keyReleaseEvent(QKeyEvent* event)
 void WPEQtView::touchEvent(QTouchEvent* event)
 {
     Q_D(WPEQtView);
+    forceActiveFocus();
     if (!d->m_webView)
         return;
     auto* wpeView = webkit_web_view_get_wpe_view(d->m_webView.get());
     wpe_view_dispatch_touch_event(WPE_VIEW_QTQUICK(wpeView), event);
+}
+
+void WPEQtView::focusInEvent(QFocusEvent *e)
+{
+    webkit_web_view_set_focus(webView(), true);
+    webkit_web_view_set_active(webView(), true);
+
+    setFocus(true);
+
+    e->accept();
+}
+
+void WPEQtView::focusOutEvent(QFocusEvent *e)
+{
+    webkit_web_view_set_focus(webView(), false);
+    webkit_web_view_set_active(webView(), false);
+
+    setFocus(false);
+
+    e->accept();
 }
 
 WebKitWebView* WPEQtView::webView() const

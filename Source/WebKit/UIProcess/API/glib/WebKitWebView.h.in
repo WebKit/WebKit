@@ -842,6 +842,16 @@ webkit_web_view_set_editable                         (WebKitWebView             
 WEBKIT_API WebKitEditorState *
 webkit_web_view_get_editor_state                     (WebKitWebView             *web_view);
 
+#if PLATFORM(WPE)
+WEBKIT_API void
+webkit_web_view_set_focus                            (WebKitWebView             *web_view,
+                                                      gboolean                  focus);
+
+WEBKIT_API void
+webkit_web_view_set_active                           (WebKitWebView             *web_view,
+                                                      gboolean                  active);
+#endif
+
 WEBKIT_API WebKitWebViewSessionState *
 webkit_web_view_get_session_state                    (WebKitWebView             *web_view);
 
