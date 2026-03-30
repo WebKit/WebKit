@@ -349,7 +349,7 @@ namespace JSC { namespace DFG {
     \
     /* Optimizations for regular expression matching. */\
     macro(RegExpExec, NodeResultJS | NodeMustGenerate) \
-    macro(RegExpExecNonGlobalOrSticky, NodeResultJS) \
+    macro(RegExpExecNonGlobalOrSticky, NodeResultJS | NodeMustGenerate) \
     macro(RegExpTest, NodeResultJS | NodeMustGenerate) \
     macro(RegExpTestInline, NodeResultJS | NodeMustGenerate) \
     macro(RegExpMatchFast, NodeResultJS | NodeMustGenerate) \
