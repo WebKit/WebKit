@@ -84,19 +84,6 @@
 namespace WebCore {
 namespace Style {
 
-// MARK: - ComputedStyleBase::NonInheritedFlags
-
-inline bool ComputedStyleBase::NonInheritedFlags::hasPseudoStyle(PseudoElementType pseudo) const
-{
-    ASSERT(allPublicPseudoElementTypes.contains(pseudo));
-    return EnumSet<PseudoElementType>::fromRaw(pseudoBits).contains(pseudo);
-}
-
-inline bool ComputedStyleBase::NonInheritedFlags::hasAnyPublicPseudoStyles() const
-{
-    return !!pseudoBits;
-}
-
 // MARK: - Non-property getters
 
 inline bool ComputedStyleBase::usesViewportUnits() const
@@ -275,12 +262,13 @@ inline const AtomString& ComputedStyleBase::pseudoElementNameArgument() const
 
 inline bool ComputedStyleBase::hasPseudoStyle(PseudoElementType pseudo) const
 {
-    return m_nonInheritedFlags.hasPseudoStyle(pseudo);
+    ASSERT(allPublicPseudoElementTypes.contains(pseudo));
+    return EnumSet<PseudoElementType>::fromRaw(m_nonInheritedFlags.pseudoBits).contains(pseudo);
 }
 
 inline bool ComputedStyleBase::hasAnyPublicPseudoStyles() const
 {
-    return m_nonInheritedFlags.hasAnyPublicPseudoStyles();
+    return !!m_nonInheritedFlags.pseudoBits;
 }
 
 // MARK: - Custom properties

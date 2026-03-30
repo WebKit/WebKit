@@ -47,15 +47,6 @@ template<typename T, typename U> inline bool compareEqual(const T& a, const U& b
      return a == b;
 }
 
-// MARK: - ComputedStyleBase::NonInheritedFlags
-
-inline void ComputedStyleBase::NonInheritedFlags::setHasPseudoStyles(EnumSet<PseudoElementType> pseudoElementSet)
-{
-    ASSERT(pseudoElementSet);
-    ASSERT(pseudoElementSet.containsOnly(allPublicPseudoElementTypes));
-    pseudoBits = pseudoElementSet.toRaw();
-}
-
 // MARK: - Non-property setters
 
 inline void ComputedStyleBase::setUsesViewportUnits()
@@ -221,7 +212,9 @@ inline void ComputedStyleBase::setUsedAppleVisualEffectForSubtree(AppleVisualEff
 
 inline void ComputedStyleBase::setHasPseudoStyles(EnumSet<PseudoElementType> set)
 {
-    m_nonInheritedFlags.setHasPseudoStyles(set);
+    ASSERT(set);
+    ASSERT(set.containsOnly(allPublicPseudoElementTypes));
+    m_nonInheritedFlags.pseudoBits = set.toRaw();
 }
 
 inline void ComputedStyleBase::setPseudoElementIdentifier(std::optional<PseudoElementIdentifier>&& identifier)

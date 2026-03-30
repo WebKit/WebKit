@@ -38,6 +38,7 @@
 #include "StylePathFunction.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
+#include "TransformOperationData.h"
 
 namespace WebCore {
 namespace Style {
