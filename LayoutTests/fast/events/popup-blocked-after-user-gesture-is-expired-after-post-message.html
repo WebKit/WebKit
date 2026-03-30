@@ -1,0 +1,47 @@
+<html><!-- webkit-test-runner [ JavaScriptCanOpenWindowsAutomatically=false ] -->
+<head>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function start()
+{
+    if (!window.testRunner)
+        return;
+    UIHelper.activateElement(target);
+}
+
+window.didOpenWindow = false;
+function runTest(target)
+{
+    postMessageLoop(() => {
+        const newWindow = window.open('about:blank', '_blank');
+        if (newWindow && newWindow.document) {
+            newWindow.document.open();
+            newWindow.document.write('<!DOCTYPE html><body><script>opener.didOpenWindow = true;</' + 'script>');
+        }
+        result.textContent = didOpenWindow ? 'FAIL - window did open' : 'PASS';
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+}
+
+function postMessageLoop(callback)
+{
+    const start = Date.now();
+    window.onmessage = function () {
+        if (Date.now() > start + 2000)
+            return callback();
+        postMessage({}, '*');
+    };
+    postMessage({}, '*');
+}
+
+</script>
+<body onload="start()">
+<p>This tests opening a window after a series of postMessage with a delay. WebKit should prevent a popup window from being opened after 1s.</p>
+<a id="target" href="#" onclick="runTest(event.target); event.preventDefault();">Start test</a>
+<div id="result"></div>
