@@ -119,7 +119,7 @@ protected:
         return std::bit_cast<LeadingType*>(static_cast<Derived*>(this)) - m_leadingSize;
     }
 
-    const LeadingType leadingData() const
+    const LeadingType* leadingData() const
     {
         return std::bit_cast<const LeadingType*>(static_cast<const Derived*>(this)) - m_leadingSize;
     }
