@@ -826,7 +826,22 @@
 
 /* This controls whether B3 is built. B3 is needed for FTL JIT and WebAssembly */
 #if ENABLE(FTL_JIT)
-#define ENABLE_B3_JIT 1
+#define ENABLE_B3_JIT 0
+#endif
+
+#if !ENABLE(B3_JIT)
+#if ENABLE(FTL_JIT)
+#undef ENABLE_FTL_JIT
+#define ENABLE_FTL_JIT 0
+#endif
+#if ENABLE(WEBASSEMBLY_OMGJIT)
+#undef ENABLE_WEBASSEMBLY_OMGJIT
+#define ENABLE_WEBASSEMBLY_OMGJIT 0
+#endif
+#if ENABLE(WEBASSEMBLY_BBQJIT)
+#undef ENABLE_WEBASSEMBLY_BBQJIT
+#define ENABLE_WEBASSEMBLY_BBQJIT 0
+#endif
 #endif
 
 #if CPU(ARM)

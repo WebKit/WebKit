@@ -283,6 +283,9 @@ static int systemMemoryUsedAsPercentage(FILE* memInfoFile, FILE* zoneInfoFile, C
 
     if (memoryAvailable > memoryTotal)
         return -1;
+    
+    if (memoryAvailable > 300 * MB)
+        memoryAvailable = 300 * MB;
 
     int memoryUsagePercentage = ((memoryTotal - memoryAvailable) * 100) / memoryTotal;
     LOG(MemoryPressure, "MemoryPressureMonitor::memory: real (total: %zu kB) (available: %zu kB) (usage: %d%%)", memoryTotal, memoryAvailable, memoryUsagePercentage);

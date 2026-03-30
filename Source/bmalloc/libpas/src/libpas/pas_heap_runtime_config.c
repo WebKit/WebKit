@@ -55,7 +55,7 @@ size_t pas_heap_runtime_config_zero_view_cache_capacity(
 size_t pas_heap_runtime_config_aggressive_view_cache_capacity(
     size_t object_size, const pas_segregated_page_config* page_config)
 {
-    static const size_t cache_size = 1638400;
+    static const size_t cache_size = 1638400 / 2;
 
     PAS_UNUSED_PARAM(object_size);
 

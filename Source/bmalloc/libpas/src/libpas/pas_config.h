@@ -99,7 +99,7 @@
 #define PAS_ADDRESS_BITS                 48
 
 #if PAS_ARM || PAS_PLATFORM(PLAYSTATION)
-#define PAS_MAX_GRANULES                 256
+#define PAS_MAX_GRANULES                 1024
 #else
 #define PAS_MAX_GRANULES                 1024
 #endif

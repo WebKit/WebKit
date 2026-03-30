@@ -1104,6 +1104,7 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
 
     registerDisplayConfigurationCallback();
     registerHighDynamicRangeChangeCallback();
+    startMemorySampler(0);
 }
 
 void WebProcessPool::prewarmProcess()

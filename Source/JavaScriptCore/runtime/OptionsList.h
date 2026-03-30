@@ -86,8 +86,8 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, useJIT, jitEnabledByDefault(), Normal, "allows the executable pages to be allocated for JIT and thunks if true"_s) \
     v(Bool, useBaselineJIT, true, Normal, "allows the baseline JIT to be used if true"_s) \
     v(Bool, useDFGJIT, is64Bit(), Normal, "allows the DFG JIT to be used if true"_s) \
-    v(Bool, useRegExpJIT, jitEnabledByDefault() && is64Bit(), Normal, "allows the RegExp JIT to be used if true"_s) \
-    v(Bool, useDOMJIT, is64Bit(), Normal, "allows the DOMJIT to be used if true"_s) \
+    v(Bool, useRegExpJIT, false, Normal, "allows the RegExp JIT to be used if true"_s) \
+    v(Bool, useDOMJIT, false, Normal, "allows the DOMJIT to be used if true"_s) \
     \
     v(Bool, reportMustSucceedExecutableAllocations, false, Normal, nullptr) \
     \
@@ -98,7 +98,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, crashOnDisallowedVMEntry, ASSERT_ENABLED, Normal, "Forces a crash if we attempt to enter the VM when disallowed"_s) \
     v(Bool, crashIfCantAllocateJITMemory, false, Normal, nullptr) \
     v(Unsigned, structureHeapSizeInKB, 0, Normal, "Override for Structure Heap size (in KBs) if non-zero"_s) \
-    v(Unsigned, jitMemoryReservationSize, 0, Normal, "Set this number to change the executable allocation size in ExecutableAllocatorFixedVMPool. (In bytes.)"_s) \
+    v(Unsigned, jitMemoryReservationSize, 10*MB, Normal, "Set this number to change the executable allocation size in ExecutableAllocatorFixedVMPool. (In bytes.)"_s) \
     v(Size, jitMemoryReservationAddress, 0, Restricted, "If non-zero, we will attempt to allocate JIT memory at the address provided and crash if we cannot.") \
     \
     v(Bool, forceCodeBlockLiveness, false, Normal, nullptr) \
@@ -222,10 +222,10 @@ bool hasCapacityToUseLargeGigacage();
     v(Double, mediumHeapRAMFraction, 0.5, Normal, nullptr) \
     v(Double, mediumHeapGrowthFactor, 1.5, Normal, nullptr) \
     v(Double, largeHeapGrowthFactor, 1.24, Normal, nullptr) \
-    v(Double, miniVMHeapGrowthFactor, 1.20, Normal, nullptr) \
+    v(Double, miniVMHeapGrowthFactor, 1.05, Normal, nullptr) \
     v(Double, heapGrowthSteepnessFactor, 2.00, Normal, nullptr) \
     v(Double, heapGrowthMaxIncrease, 3.00, Normal, nullptr) \
-    v(Unsigned, aggressiveHeapThresholdInMB, 16 * 1024, Normal, nullptr) \
+    v(Unsigned, aggressiveHeapThresholdInMB, 128 * 1024, Normal, nullptr) \
     v(Double, maxEdenSizeForRateLimitingMultiplier, 8.0, Normal, nullptr) \
     v(Double, gcRateLimitingHalfLifeInMS, 1000.00, Normal, nullptr) \
     v(Double, criticalGCMemoryThreshold, 0.80, Normal, "percent memory in use the GC considers critical.  The collector is much more aggressive above this threshold"_s) \
@@ -242,7 +242,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Double, gcIncrementMaxBytes, 100000, Normal, nullptr) \
     v(Double, gcIncrementScale, 0, Normal, nullptr) \
     v(Bool, scribbleFreeCells, false, Normal, nullptr) \
-    v(Double, sizeClassProgression, 1.4, Normal, nullptr) \
+    v(Double, sizeClassProgression, 1.4 /**/, Normal, nullptr) \
     v(Unsigned, preciseAllocationCutoff, 100000, Normal, nullptr) \
     v(Bool, dumpSizeClasses, false, Normal, nullptr) \
     v(Bool, stealEmptyBlocksFromOtherAllocators, true, Normal, nullptr) \
@@ -324,12 +324,12 @@ bool hasCapacityToUseLargeGigacage();
     v(Double, ratioFTLNodesToBytecodeCost, 1.9, Normal, "Ratio converting FTL # of DFG nodes to approx bytecode cost") \
     \
     /* Depth of inline stack, so 1 = no inlining, 2 = one level, etc. */ \
-    v(Unsigned, maximumInliningDepth, 5, Normal, "maximum allowed inlining depth.  Depth of 1 means no inlining"_s) \
-    v(Unsigned, maximumInliningRecursion, 2, Normal, nullptr) \
+    v(Unsigned, maximumInliningDepth, 0, Normal, "maximum allowed inlining depth.  Depth of 1 means no inlining"_s) \
+    v(Unsigned, maximumInliningRecursion, 0, Normal, nullptr) \
     \
     /* Maximum size of a caller for enabling inlining. This is purely to protect us */\
     /* from super long compiles that take a lot of memory. */\
-    v(Unsigned, maximumInliningCallerBytecodeCost, 10000, Normal, nullptr) \
+    v(Unsigned, maximumInliningCallerBytecodeCost, 0, Normal, nullptr) \
     \
     v(Unsigned, maximumVarargsForInlining, 100, Normal, nullptr) \
     \
@@ -548,8 +548,8 @@ bool hasCapacityToUseLargeGigacage();
     \
     v(Bool, useSuperSampler, false, Normal, nullptr) \
     \
-    v(Bool, useSourceProviderCache, true, Normal, "If false, the parser will not use the source provider cache. It's good to verify everything works when this is false. Because the cache is so successful, it can mask bugs."_s) \
-    v(Bool, useCodeCache, true, Normal, "If false, the unlinked byte code cache will not be used."_s) \
+    v(Bool, useSourceProviderCache, false, Normal, "If false, the parser will not use the source provider cache. It's good to verify everything works when this is false. Because the cache is so successful, it can mask bugs."_s) \
+    v(Bool, useCodeCache, false, Normal, "If false, the unlinked byte code cache will not be used."_s) \
     \
     v(Bool, useWasm, canUseWasm(), Normal, "Expose the Wasm global object."_s) \
     \
@@ -582,7 +582,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, useEagerWasmModuleHashing, false, Normal, "Unnamed Wasm modules are identified in backtraces through their hash, if available."_s) \
     v(Bool, useArrayAllocationProfiling, true, Normal, "If true, we will use our normal array allocation profiling. If false, the allocation profile will always claim to be undecided."_s) \
     v(Bool, forcePolyProto, false, Normal, "If true, create_this will always create an object with a poly proto structure."_s) \
-    v(Bool, forceMiniVMMode, false, Normal, "If true, it will force mini VM mode on."_s) \
+    v(Bool, forceMiniVMMode, true, Normal, "If true, it will force mini VM mode on."_s) \
     v(Bool, useTracePoints, false, Normal, nullptr) \
     v(Bool, useCompilerSignpost, false, Normal, nullptr) \
     v(Bool, useGCSignpost, false, Normal, nullptr) \

@@ -339,6 +339,24 @@ WASM_IPINT_EXTERN_CPP_DECL(epilogue_osr, CallFrame* callFrame)
     jitCompileAndSetHeuristics(*callee, instance, OSRFor::Epilogue);
     WASM_RETURN_TWO(nullptr, nullptr);
 }
+#else // !ENABLE(WEBASSEMBLY_BBQJIT)
+WASM_IPINT_EXTERN_CPP_DECL(prologue_osr, CallFrame*)
+{
+    UNUSED_PARAM(instance);
+    WASM_RETURN_TWO(nullptr, nullptr);
+}
+
+WASM_IPINT_EXTERN_CPP_DECL(loop_osr, CallFrame*, uint8_t*, IPIntLocal*)
+{
+    UNUSED_PARAM(instance);
+    WASM_RETURN_TWO(nullptr, nullptr);
+}
+
+WASM_IPINT_EXTERN_CPP_DECL(epilogue_osr, CallFrame*)
+{
+    UNUSED_PARAM(instance);
+    WASM_RETURN_TWO(nullptr, nullptr);
+}
 #endif
 
 static void NODELETE copyExceptionStackToPayload(const Wasm::FunctionSignature& tagType, const IPIntStackEntry* stackPointer, FixedVector<uint64_t>& payload)

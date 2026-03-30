@@ -440,97 +440,9 @@ static Expected<CandidateAddress, ExceptionData> getCandidateAddress(StringView 
     return result;
 }
 
-static void webkitGstWebRTCIceAgentAddCandidate(GstWebRTCICE* ice, GstWebRTCICEStream* iceStream, const gchar* candidateSdp, GstPromise* promise)
+static void webkitGstWebRTCIceAgentAddCandidate(GstWebRTCICE*, GstWebRTCICEStream*, const gchar*, GstPromise*)
 {
-    GRefPtr riceStream = webkitGstWebRTCIceStreamGetRiceStream(WEBKIT_GST_WEBRTC_ICE_STREAM(iceStream));
-    if (!riceStream) [[unlikely]] {
-        GST_DEBUG_OBJECT(ice, "ICE stream not found");
-        if (promise)
-            gst_promise_reply(promise, nullptr);
-        return;
-    }
-    if (!candidateSdp) {
-        GST_DEBUG_OBJECT(ice, "Signaling end-of-candidates");
-        rice_stream_end_of_remote_candidates(riceStream.get());
-        if (promise)
-            gst_promise_reply(promise, nullptr);
-        return;
-    }
-
-    GST_DEBUG_OBJECT(ice, "Processing SDP ICE candidate: %s", candidateSdp);
-    auto backend = WEBKIT_GST_WEBRTC_ICE_BACKEND(ice);
-    GUniquePtr<RiceCandidate> candidate(rice_candidate_new_from_sdp_string(candidateSdp));
-    if (candidate) {
-        GST_DEBUG_OBJECT(ice, "Adding remote candidate: %s", candidateSdp);
-        rice_stream_add_remote_candidate(riceStream.get(), candidate.get());
-        g_main_context_wakeup(backend->priv->runLoop->mainContext());
-        if (promise)
-            gst_promise_reply(promise, nullptr);
-        return;
-    }
-
-    GST_DEBUG_OBJECT(ice, "Failed to build RiceCandidate from SDP, it might contain a FQDN. Attempting address resolution");
-    auto localAddressResult = getCandidateAddress(StringView::fromLatin1(candidateSdp));
-    if (!localAddressResult.has_value()) {
-        auto errorMessage = makeString("Failed to retrieve address from candidate: "_s, localAddressResult.error().message);
-        auto errorMessageString = errorMessage.utf8();
-        GST_ERROR_OBJECT(ice, "%s", errorMessageString.data());
-        if (promise) {
-            GUniquePtr<GError> error(g_error_new(GST_WEBRTC_ERROR, GST_WEBRTC_ERROR_INTERNAL_FAILURE, "%s", errorMessageString.data()));
-            gst_promise_reply(promise, gst_structure_new("application/x-gst-promise", "error", G_TYPE_ERROR, error.get(), nullptr));
-        }
-        return;
-    }
-
-    auto localAddress = localAddressResult.value();
-    if (!localAddress.address.endsWith(".local"_s)) {
-        auto errorMessage = makeString("Candidate address \""_s, localAddress.address, "\" does not end with '.local'"_s);
-        auto errorMessageString = errorMessage.utf8();
-        GST_ERROR_OBJECT(ice, "%s", errorMessageString.data());
-        if (promise) {
-            GUniquePtr<GError> error(g_error_new(GST_WEBRTC_ERROR, GST_WEBRTC_ERROR_INTERNAL_FAILURE, "%s", errorMessageString.data()));
-            gst_promise_reply(promise, gst_structure_new("application/x-gst-promise", "error", G_TYPE_ERROR, error.get(), nullptr));
-        }
-        return;
-    }
-
-    auto iceBackend = backend->priv->iceBackend;
-    if (!iceBackend) [[unlikely]] {
-        if (promise)
-            gst_promise_reply(promise, nullptr);
-        return;
-    }
-
-    iceBackend->resolveAddress(WTF::move(localAddress.address), [promise = GRefPtr(promise), riceStream = WTF::move(riceStream), prefix = WTF::move(localAddress.prefix), suffix = WTF::move(localAddress.suffix), backend](auto&& result) mutable {
-        if (result.hasException()) {
-            auto& errorMessage = result.exception().message();
-            auto errorMessageString = errorMessage.utf8();
-            GST_ERROR("%s", errorMessageString.data());
-            if (promise) {
-                GUniquePtr<GError> error(g_error_new(GST_WEBRTC_ERROR, GST_WEBRTC_ERROR_INTERNAL_FAILURE, "%s", errorMessageString.data()));
-                gst_promise_reply(promise.get(), gst_structure_new("application/x-gst-promise", "error", G_TYPE_ERROR, error.get(), nullptr));
-            }
-            return;
-        }
-
-        auto newCandidateSdp = makeString(prefix, ' ', result.returnValue(), ' ', suffix);
-        auto newCandidateSdpString = newCandidateSdp.utf8();
-        GST_DEBUG("SDP for resolved address: %s", newCandidateSdpString.data());
-        GUniquePtr<RiceCandidate> newCandidate(rice_candidate_new_from_sdp_string(newCandidateSdpString.data()));
-        if (newCandidate) {
-            rice_stream_add_remote_candidate(riceStream.get(), newCandidate.get());
-            g_main_context_wakeup(backend->priv->runLoop->mainContext());
-            if (promise)
-                gst_promise_reply(promise.get(), nullptr);
-        } else {
-            auto errorMessage = "Unable to create Rice candidate from SDP"_s;
-            GST_ERROR("%s", errorMessage.characters());
-            if (promise) {
-                GUniquePtr<GError> error(g_error_new(GST_WEBRTC_ERROR, GST_WEBRTC_ERROR_INTERNAL_FAILURE, "%s", errorMessage.characters()));
-                gst_promise_reply(promise.get(), gst_structure_new("application/x-gst-promise", "error", G_TYPE_ERROR, error.get(), nullptr));
-            }
-        }
-    });
+    
 }
 
 static GstWebRTCICETransport* webkitGstWebRTCIceAgentFindTransport(GstWebRTCICE*, GstWebRTCICEStream* stream, GstWebRTCICEComponent component)
