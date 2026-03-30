@@ -152,9 +152,8 @@ inline bool IndexSparseSet<EntryType, EntryTypeTraits, OverflowHandler>::remove(
         return false;
 
     if (EntryTypeTraits::key(m_values[position]) == value) {
-        EntryType lastValue = m_values.last();
-        m_values[position] = WTFMove(lastValue);
-        m_map[EntryTypeTraits::key(lastValue)] = position;
+        m_map[EntryTypeTraits::key(m_values.last())] = position;
+        m_values[position] = WTFMove(m_values.last());
         m_values.removeLast();
         return true;
     }
