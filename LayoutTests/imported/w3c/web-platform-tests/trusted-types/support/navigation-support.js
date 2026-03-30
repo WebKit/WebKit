@@ -63,6 +63,11 @@ async function setLocationToJavaScriptURL(defaultpolicy) {
         } else {
           await new Promise(resolve => requestAnimationFrame(_ => requestAnimationFrame(resolve)));
         }
+        // Extra event-loop turns so the asynchronously-scheduled navigation
+        // fires and the resulting violation event is dispatched before the
+        // connect-src marker in trusted_type_violations_and_exception_for.
+        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise(resolve => setTimeout(resolve, 0));
       });
 
   return {
