@@ -186,12 +186,6 @@ ExceptionOr<void> HTMLScriptElement::setInnerText(Variant<Ref<TrustedScript>, St
     return { };
 }
 
-void HTMLScriptElement::setAsync(bool async)
-{
-    setBooleanAttribute(asyncAttr, async);
-    handleAsyncAttribute();
-}
-
 bool HTMLScriptElement::async() const
 {
     return hasAttributeWithoutSynchronization(asyncAttr) || forceAsync();

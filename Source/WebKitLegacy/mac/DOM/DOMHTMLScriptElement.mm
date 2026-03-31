@@ -97,7 +97,7 @@
 - (void)setAsync:(BOOL)newAsync
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setAsync(newAsync);
+    IMPL->setBooleanAttribute(WebCore::HTMLNames::asyncAttr, newAsync);
 }
 
 - (BOOL)defer

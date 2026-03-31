@@ -53,7 +53,6 @@ public:
     String src() const;
     ExceptionOr<void> setSrc(Variant<Ref<TrustedScriptURL>, String>&&);
 
-    WEBCORE_EXPORT void setAsync(bool);
     WEBCORE_EXPORT bool NODELETE async() const;
 
     WEBCORE_EXPORT String crossOrigin() const;

@@ -28,7 +28,7 @@
     [CEReactions=NotNeeded, Reflect="for"] attribute DOMString htmlFor;
     [CEReactions=NotNeeded, Reflect] attribute DOMString event;
     [CEReactions=NotNeeded, Reflect] attribute DOMString charset;
-    [CEReactions=NotNeeded] attribute boolean async;
+    [CEReactions=NotNeeded, ReflectSetter] attribute boolean async;
     [CEReactions=NotNeeded, Reflect] attribute boolean defer;
     [CEReactions=NotNeeded] attribute (TrustedScriptURL or USVString) src;
     [CEReactions=NotNeeded, Reflect] attribute DOMString type;
