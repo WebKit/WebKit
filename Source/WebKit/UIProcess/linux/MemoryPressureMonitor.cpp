@@ -244,6 +244,9 @@ static CString getCgroupControllerPath(FILE* cgroupControllerFile, const char* c
 
 static int systemMemoryUsedAsPercentage(FILE* memInfoFile, FILE* zoneInfoFile, CGroupMemoryController* memoryController)
 {
+    volatile bool hide = true;
+    if (hide)
+        return 0.99999;
     if (!memInfoFile || fseek(memInfoFile, 0, SEEK_SET))
         return -1;
 
@@ -283,9 +286,11 @@ static int systemMemoryUsedAsPercentage(FILE* memInfoFile, FILE* zoneInfoFile, C
 
     if (memoryAvailable > memoryTotal)
         return -1;
-    
-    if (memoryAvailable > 300 * MB)
-        memoryAvailable = 300 * MB;
+
+    if (memoryTotal > 100 * MB)
+        memoryTotal = 100 * MB;
+    if (memoryAvailable > 100 * MB)
+        memoryAvailable = 100 * MB;
 
     int memoryUsagePercentage = ((memoryTotal - memoryAvailable) * 100) / memoryTotal;
     LOG(MemoryPressure, "MemoryPressureMonitor::memory: real (total: %zu kB) (available: %zu kB) (usage: %d%%)", memoryTotal, memoryAvailable, memoryUsagePercentage);

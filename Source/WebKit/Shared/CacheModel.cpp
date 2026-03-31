@@ -35,94 +35,14 @@ namespace WebKit {
 
 void calculateMemoryCacheSizes(CacheModel cacheModel, unsigned& cacheTotalCapacity, unsigned& cacheMinDeadCapacity, unsigned& cacheMaxDeadCapacity, Seconds& deadDecodedDataDeletionInterval, unsigned& backForwardCacheCapacity)
 {
-    uint64_t memorySize = ramSize() / MB;
-
-    switch (cacheModel) {
-    case CacheModel::DocumentViewer: {
         // back/forward cache capacity (in pages)
         backForwardCacheCapacity = 0;
-
-        // Object cache capacities (in bytes)
-        if (memorySize >= 2048)
-            cacheTotalCapacity = 96 * MB;
-        else if (memorySize >= 1536)
-            cacheTotalCapacity = 64 * MB;
-        else if (memorySize >= 1024)
-            cacheTotalCapacity = 32 * MB;
-        else if (memorySize >= 512)
-            cacheTotalCapacity = 16 * MB;
-        else
-            cacheTotalCapacity = 8 * MB;
-
+        cacheTotalCapacity = 0 * MB;
         cacheMinDeadCapacity = 0;
         cacheMaxDeadCapacity = 0;
+        cacheMaxDeadCapacity = 0;
+        deadDecodedDataDeletionInterval = 1_s;
 
-        break;
-    }
-    case CacheModel::DocumentBrowser: {
-        // back/forward cache capacity (in pages)
-        if (memorySize >= 512)
-            backForwardCacheCapacity = 2;
-        else if (memorySize >= 256)
-            backForwardCacheCapacity = 1;
-        else
-            backForwardCacheCapacity = 0;
-
-        // Object cache capacities (in bytes)
-        if (memorySize >= 2048)
-            cacheTotalCapacity = 96 * MB;
-        else if (memorySize >= 1536)
-            cacheTotalCapacity = 64 * MB;
-        else if (memorySize >= 1024)
-            cacheTotalCapacity = 32 * MB;
-        else if (memorySize >= 512)
-            cacheTotalCapacity = 16 * MB;
-        else
-            cacheTotalCapacity = 8 * MB;
-
-        cacheMinDeadCapacity = cacheTotalCapacity / 8;
-        cacheMaxDeadCapacity = cacheTotalCapacity / 4;
-
-        break;
-    }
-    case CacheModel::PrimaryWebBrowser: {
-        // back/forward cache capacity (in pages)
-        if (memorySize >= 512)
-            backForwardCacheCapacity = 2;
-        else if (memorySize >= 256)
-            backForwardCacheCapacity = 1;
-        else
-            backForwardCacheCapacity = 0;
-
-        // Object cache capacities (in bytes)
-        // (Testing indicates that value / MB depends heavily on content and
-        // browsing pattern. Even growth above 128MB can have substantial
-        // value / MB for some content / browsing patterns.)
-        if (memorySize >= 2048)
-            cacheTotalCapacity = 128 * MB;
-        else if (memorySize >= 1536)
-            cacheTotalCapacity = 96 * MB;
-        else if (memorySize >= 1024)
-            cacheTotalCapacity = 64 * MB;
-        else if (memorySize >= 512)
-            cacheTotalCapacity = 32 * MB;
-        else
-            cacheTotalCapacity = 16 * MB;
-
-        cacheMinDeadCapacity = cacheTotalCapacity / 4;
-        cacheMaxDeadCapacity = cacheTotalCapacity / 2;
-
-        // This code is here to avoid a PLT regression. We can remove it if we
-        // can prove that the overall system gain would justify the regression.
-        cacheMaxDeadCapacity = std::max(24u, cacheMaxDeadCapacity);
-
-        deadDecodedDataDeletionInterval = 60_s;
-
-        break;
-    }
-    default:
-        ASSERT_NOT_REACHED();
-    };
 }
 
 uint64_t calculateURLCacheDiskCapacity(CacheModel cacheModel, uint64_t diskFreeSize)

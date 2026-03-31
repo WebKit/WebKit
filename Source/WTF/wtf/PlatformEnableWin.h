@@ -57,5 +57,5 @@
 #endif
 
 #if !defined(ENABLE_WEBPROCESS_CACHE)
-#define ENABLE_WEBPROCESS_CACHE 1
+#define ENABLE_WEBPROCESS_CACHE 0
 #endif
