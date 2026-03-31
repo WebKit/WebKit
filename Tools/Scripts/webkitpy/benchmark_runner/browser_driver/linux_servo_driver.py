@@ -31,5 +31,5 @@ class ServoBrowserDriver(LinuxBrowserDriver):
     browser_name = 'servo'
     process_search_list = ['servo']
 
-    def launch_driver(self, url, options, browser_build_path):
+    def launch_driver(self, url, options, browser_build_path, browser_path):
         raise ValueError("Browser {browser} is not available with webdriver".format(browser=self.browser_name))

@@ -44,7 +44,7 @@ class WPEMiniBrowserBaseDriver(LinuxBrowserDriver):
         self._default_browser_arguments.append(url)
         super().launch_url(url, options, browser_build_path, browser_path)
 
-    def launch_driver(self, url, options, browser_build_path):
+    def launch_driver(self, url, options, browser_build_path, browser_path):
         raise ValueError("Browser {browser} is not available with webdriver".format(browser=self.browser_name))
 
     def prepare_env(self, config):

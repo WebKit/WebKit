@@ -34,13 +34,18 @@ class OSXFirefoxDriverBase(OSXBrowserDriver):
         args_with_url.append(url)
         self._launch_process(build_dir=browser_build_path, app_name=self.app_name, url=url, args=args_with_url)
 
-    def launch_driver(self, url, options, browser_build_path):
+    def launch_driver(self, url, options, browser_build_path, browser_path):
         from selenium import webdriver
         from selenium.webdriver.firefox.options import Options
+        from selenium.webdriver.firefox.service import Service
         firefox_options = Options()
-        self._set_firefox_binary_location(options, browser_build_path)
+        if browser_build_path:
+            self._set_firefox_binary_location(firefox_options, browser_build_path)
+        elif browser_path:
+            firefox_options.binary_location = browser_path
         driver_executable = self.webdriver_binary_path
-        driver = webdriver.Firefox(firefox_options=firefox_options, executable_path=driver_executable)
+        service = Service(executable_path=driver_executable, service_args=["--profile-root", self._profile_directory])
+        driver = webdriver.Firefox(service=service, options=firefox_options)
         self._launch_webdriver(url=url, driver=driver)
         return driver
 
