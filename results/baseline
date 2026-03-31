@@ -1,0 +1,3152 @@
+Process: WebKitWebProces Pid: 2086244
+	
+	Timestamp                          1774292941
+	Total Program Bytes                80570818560
+	Resident Set Bytes                 515158016
+	Resident Shared Bytes              212439040
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 74634067968
+	Dirty Bytes                        0
+	Fast Malloc In Use                 510115840
+	Fast Malloc Committed Memory       510115840
+	JavaScript Heap In Use             7229686
+	JavaScript Heap Committed Memory   13764166
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                517347294
+	Total Committed Memory             523881774
+	System Total Bytes                 134347096064
+	Available Bytes                    86296158208
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006399488
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292942
+	Total Program Bytes                80758599680
+	Resident Set Bytes                 653426688
+	Resident Shared Bytes              217255936
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 74770243584
+	Dirty Bytes                        0
+	Fast Malloc In Use                 648310784
+	Fast Malloc Committed Memory       648310784
+	JavaScript Heap In Use             7877784
+	JavaScript Heap Committed Memory   12119992
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                656190336
+	Total Committed Memory             660432544
+	System Total Bytes                 134347096064
+	Available Bytes                    86148730880
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006399488
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292944
+	Total Program Bytes                80798920704
+	Resident Set Bytes                 705609728
+	Resident Shared Bytes              219832320
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 74818498560
+	Dirty Bytes                        0
+	Fast Malloc In Use                 701685760
+	Fast Malloc Committed Memory       701685760
+	JavaScript Heap In Use             1888905
+	JavaScript Heap Committed Memory   4823113
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                703576433
+	Total Committed Memory             706510641
+	System Total Bytes                 134347096064
+	Available Bytes                    86143586304
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006399488
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292945
+	Total Program Bytes                80898867200
+	Resident Set Bytes                 740474880
+	Resident Shared Bytes              220340224
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 74922274816
+	Dirty Bytes                        0
+	Fast Malloc In Use                 765284352
+	Fast Malloc Committed Memory       765284352
+	JavaScript Heap In Use             5108535
+	JavaScript Heap Committed Memory   18846471
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                770394655
+	Total Committed Memory             784132591
+	System Total Bytes                 134347096064
+	Available Bytes                    86123950080
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006399488
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292946
+	Total Program Bytes                80938487808
+	Resident Set Bytes                 769757184
+	Resident Shared Bytes              223383552
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 74966130688
+	Dirty Bytes                        0
+	Fast Malloc In Use                 765317120
+	Fast Malloc Committed Memory       765317120
+	JavaScript Heap In Use             4875874
+	JavaScript Heap Committed Memory   17764722
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                770194762
+	Total Committed Memory             783083610
+	System Total Bytes                 134347096064
+	Available Bytes                    86110093312
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006399488
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292947
+	Total Program Bytes                80938917888
+	Resident Set Bytes                 790687744
+	Resident Shared Bytes              223764480
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 74966716416
+	Dirty Bytes                        0
+	Fast Malloc In Use                 785043456
+	Fast Malloc Committed Memory       785043456
+	JavaScript Heap In Use             17461556
+	JavaScript Heap Committed Memory   34383636
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                802506780
+	Total Committed Memory             819428860
+	System Total Bytes                 134347096064
+	Available Bytes                    86115450880
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006407680
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292948
+	Total Program Bytes                81008697344
+	Resident Set Bytes                 835330048
+	Resident Shared Bytes              224817152
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75039870976
+	Dirty Bytes                        0
+	Fast Malloc In Use                 854278144
+	Fast Malloc Committed Memory       854278144
+	JavaScript Heap In Use             7399759
+	JavaScript Heap Committed Memory   31700847
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                861679671
+	Total Committed Memory             885980759
+	System Total Bytes                 134347096064
+	Available Bytes                    86076776448
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006407680
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292949
+	Total Program Bytes                81049772032
+	Resident Set Bytes                 819896320
+	Resident Shared Bytes              227262464
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75084914688
+	Dirty Bytes                        0
+	Fast Malloc In Use                 854278144
+	Fast Malloc Committed Memory       854278144
+	JavaScript Heap In Use             8504260
+	JavaScript Heap Committed Memory   31619044
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                862784172
+	Total Committed Memory             885898956
+	System Total Bytes                 134347096064
+	Available Bytes                    86102704128
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006407680
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292950
+	Total Program Bytes                81435201536
+	Resident Set Bytes                 981360640
+	Resident Shared Bytes              231444480
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75246178304
+	Dirty Bytes                        0
+	Fast Malloc In Use                 976740352
+	Fast Malloc Committed Memory       976740352
+	JavaScript Heap In Use             8228742
+	JavaScript Heap Committed Memory   33089542
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                984970862
+	Total Committed Memory             1009831662
+	System Total Bytes                 134347096064
+	Available Bytes                    85953044480
+	Shared Bytes                       956063744
+	Buffer Bytes                       1006407680
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292951
+	Total Program Bytes                81515876352
+	Resident Set Bytes                 1009385472
+	Resident Shared Bytes              232390656
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75260420096
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1009135616
+	Fast Malloc Committed Memory       1009135616
+	JavaScript Heap In Use             37062045
+	JavaScript Heap Committed Memory   54433021
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1046199429
+	Total Committed Memory             1063570405
+	System Total Bytes                 134347096064
+	Available Bytes                    85966954496
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006407680
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292952
+	Total Program Bytes                81496612864
+	Resident Set Bytes                 1022976000
+	Resident Shared Bytes              237518848
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75256766464
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1058672640
+	Fast Malloc Committed Memory       1058672640
+	JavaScript Heap In Use             19762451
+	JavaScript Heap Committed Memory   36153827
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1078436859
+	Total Committed Memory             1094828235
+	System Total Bytes                 134347096064
+	Available Bytes                    85893595136
+	Shared Bytes                       956063744
+	Buffer Bytes                       1006415872
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292954
+	Total Program Bytes                81629843456
+	Resident Set Bytes                 1172381696
+	Resident Shared Bytes              241266688
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75393564672
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1167425536
+	Fast Malloc Committed Memory       1167425536
+	JavaScript Heap In Use             44547336
+	JavaScript Heap Committed Memory   76139720
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1211974640
+	Total Committed Memory             1243567024
+	System Total Bytes                 134347096064
+	Available Bytes                    85783367680
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006415872
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292955
+	Total Program Bytes                81579593728
+	Resident Set Bytes                 1150005248
+	Resident Shared Bytes              243343360
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75354681344
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1183383552
+	Fast Malloc Committed Memory       1183383552
+	JavaScript Heap In Use             22765301
+	JavaScript Heap Committed Memory   67653589
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1206150621
+	Total Committed Memory             1251038909
+	System Total Bytes                 134347096064
+	Available Bytes                    85779374080
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006415872
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292956
+	Total Program Bytes                81568538624
+	Resident Set Bytes                 1154011136
+	Resident Shared Bytes              243470336
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75344216064
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1183383552
+	Fast Malloc Committed Memory       1183383552
+	JavaScript Heap In Use             45627562
+	JavaScript Heap Committed Memory   86468234
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1229012882
+	Total Committed Memory             1269853554
+	System Total Bytes                 134347096064
+	Available Bytes                    85809389568
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006415872
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292957
+	Total Program Bytes                81602093056
+	Resident Set Bytes                 1171988480
+	Resident Shared Bytes              243470336
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75377770496
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1183383552
+	Fast Malloc Committed Memory       1183383552
+	JavaScript Heap In Use             16102700
+	JavaScript Heap Committed Memory   41687836
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1199488020
+	Total Committed Memory             1225073156
+	System Total Bytes                 134347096064
+	Available Bytes                    85815582720
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006424064
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292958
+	Total Program Bytes                81602093056
+	Resident Set Bytes                 1140322304
+	Resident Shared Bytes              243470336
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75377770496
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1183383552
+	Fast Malloc Committed Memory       1183383552
+	JavaScript Heap In Use             18763636
+	JavaScript Heap Committed Memory   44507892
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1202148956
+	Total Committed Memory             1227893212
+	System Total Bytes                 134347096064
+	Available Bytes                    85840191488
+	Shared Bytes                       956022784
+	Buffer Bytes                       1006424064
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292959
+	Total Program Bytes                81590706176
+	Resident Set Bytes                 1128976384
+	Resident Shared Bytes              243470336
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75367796736
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1183383552
+	Fast Malloc Committed Memory       1183383552
+	JavaScript Heap In Use             17884891
+	JavaScript Heap Committed Memory   42064475
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1201270211
+	Total Committed Memory             1225449795
+	System Total Bytes                 134347096064
+	Available Bytes                    85861826560
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006424064
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292960
+	Total Program Bytes                81590706176
+	Resident Set Bytes                 1121423360
+	Resident Shared Bytes              243470336
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75368321024
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1183383552
+	Fast Malloc Committed Memory       1183383552
+	JavaScript Heap In Use             23079147
+	JavaScript Heap Committed Memory   47504347
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1206464467
+	Total Committed Memory             1230889667
+	System Total Bytes                 134347096064
+	Available Bytes                    85858332672
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006424064
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292961
+	Total Program Bytes                81624260608
+	Resident Set Bytes                 1191559168
+	Resident Shared Bytes              243470336
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75401875456
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1207660544
+	Fast Malloc Committed Memory       1207660544
+	JavaScript Heap In Use             28164128
+	JavaScript Heap Committed Memory   40973040
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1235826440
+	Total Committed Memory             1248635352
+	System Total Bytes                 134347096064
+	Available Bytes                    85805707264
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006424064
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292962
+	Total Program Bytes                81621753856
+	Resident Set Bytes                 1137475584
+	Resident Shared Bytes              243470336
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75399630848
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1207660544
+	Fast Malloc Committed Memory       1207660544
+	JavaScript Heap In Use             15923525
+	JavaScript Heap Committed Memory   29822645
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1223585837
+	Total Committed Memory             1237484957
+	System Total Bytes                 134347096064
+	Available Bytes                    85855576064
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006432256
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292963
+	Total Program Bytes                81740849152
+	Resident Set Bytes                 1208729600
+	Resident Shared Bytes              243470336
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75499057152
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1207660544
+	Fast Malloc Committed Memory       1207660544
+	JavaScript Heap In Use             21124532
+	JavaScript Heap Committed Memory   40920564
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1228786844
+	Total Committed Memory             1248582876
+	System Total Bytes                 134347096064
+	Available Bytes                    85791375360
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006440448
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292964
+	Total Program Bytes                81778900992
+	Resident Set Bytes                 1284829184
+	Resident Shared Bytes              243535872
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75548069888
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1278644224
+	Fast Malloc Committed Memory       1278644224
+	JavaScript Heap In Use             30951484
+	JavaScript Heap Committed Memory   53682556
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1309597476
+	Total Committed Memory             1332328548
+	System Total Bytes                 134347096064
+	Available Bytes                    85705863168
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006440448
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292965
+	Total Program Bytes                81820856320
+	Resident Set Bytes                 1340489728
+	Resident Shared Bytes              243535872
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75592167424
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1334943744
+	Fast Malloc Committed Memory       1334943744
+	JavaScript Heap In Use             31122556
+	JavaScript Heap Committed Memory   78560588
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1366068068
+	Total Committed Memory             1413506100
+	System Total Bytes                 134347096064
+	Available Bytes                    85641515008
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006440448
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292966
+	Total Program Bytes                81888866304
+	Resident Set Bytes                 1381449728
+	Resident Shared Bytes              243535872
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75666296832
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1390260224
+	Fast Malloc Committed Memory       1390260224
+	JavaScript Heap In Use             23671683
+	JavaScript Heap Committed Memory   108016403
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1413933675
+	Total Committed Memory             1498278395
+	System Total Bytes                 134347096064
+	Available Bytes                    85601755136
+	Shared Bytes                       956112896
+	Buffer Bytes                       1006440448
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292967
+	Total Program Bytes                81888866304
+	Resident Set Bytes                 1385512960
+	Resident Shared Bytes              243535872
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75666296832
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1390260224
+	Fast Malloc Committed Memory       1390260224
+	JavaScript Heap In Use             46038529
+	JavaScript Heap Committed Memory   125490673
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1436300521
+	Total Committed Memory             1515752665
+	System Total Bytes                 134347096064
+	Available Bytes                    85594267648
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006440448
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292968
+	Total Program Bytes                81888866304
+	Resident Set Bytes                 1336074240
+	Resident Shared Bytes              243535872
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75666296832
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1390260224
+	Fast Malloc Committed Memory       1390260224
+	JavaScript Heap In Use             16226366
+	JavaScript Heap Committed Memory   74453982
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1406488358
+	Total Committed Memory             1464715974
+	System Total Bytes                 134347096064
+	Available Bytes                    85628002304
+	Shared Bytes                       956145664
+	Buffer Bytes                       1006452736
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292970
+	Total Program Bytes                81888899072
+	Resident Set Bytes                 1352794112
+	Resident Shared Bytes              243535872
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75666300928
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1390260224
+	Fast Malloc Committed Memory       1390260224
+	JavaScript Heap In Use             23278782
+	JavaScript Heap Committed Memory   80571214
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1413540774
+	Total Committed Memory             1470833206
+	System Total Bytes                 134347096064
+	Available Bytes                    85616205824
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006452736
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292971
+	Total Program Bytes                81881968640
+	Resident Set Bytes                 1114591232
+	Resident Shared Bytes              238161920
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75664809984
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1390260224
+	Fast Malloc Committed Memory       1390260224
+	JavaScript Heap In Use             25173356
+	JavaScript Heap Committed Memory   63022140
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1415435348
+	Total Committed Memory             1453284132
+	System Total Bytes                 134347096064
+	Available Bytes                    85706563584
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006452736
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292972
+	Total Program Bytes                81882836992
+	Resident Set Bytes                 1122562048
+	Resident Shared Bytes              238608384
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75664809984
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1390260224
+	Fast Malloc Committed Memory       1390260224
+	JavaScript Heap In Use             31862324
+	JavaScript Heap Committed Memory   66914084
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1422124316
+	Total Committed Memory             1457176076
+	System Total Bytes                 134347096064
+	Available Bytes                    85728714752
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006452736
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292973
+	Total Program Bytes                81883869184
+	Resident Set Bytes                 1141170176
+	Resident Shared Bytes              239640576
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75664809984
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1390260224
+	Fast Malloc Committed Memory       1390260224
+	JavaScript Heap In Use             32555735
+	JavaScript Heap Committed Memory   62658151
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1422817727
+	Total Committed Memory             1452920143
+	System Total Bytes                 134347096064
+	Available Bytes                    85739560960
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006452736
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292974
+	Total Program Bytes                81885921280
+	Resident Set Bytes                 1154805760
+	Resident Shared Bytes              241692672
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75664809984
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1390260224
+	Fast Malloc Committed Memory       1390260224
+	JavaScript Heap In Use             18447778
+	JavaScript Heap Committed Memory   53503474
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1408709770
+	Total Committed Memory             1443765466
+	System Total Bytes                 134347096064
+	Available Bytes                    85754482688
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006460928
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292975
+	Total Program Bytes                81897267200
+	Resident Set Bytes                 1232805888
+	Resident Shared Bytes              242028544
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75664809984
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1390260224
+	Fast Malloc Committed Memory       1390260224
+	JavaScript Heap In Use             21844354
+	JavaScript Heap Committed Memory   38859938
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1412106346
+	Total Committed Memory             1429121930
+	System Total Bytes                 134347096064
+	Available Bytes                    85723291648
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006460928
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292976
+	Total Program Bytes                81901240320
+	Resident Set Bytes                 1287847936
+	Resident Shared Bytes              242114560
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75668697088
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1390260224
+	Fast Malloc Committed Memory       1390260224
+	JavaScript Heap In Use             32729638
+	JavaScript Heap Committed Memory   61678870
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1422991630
+	Total Committed Memory             1451940862
+	System Total Bytes                 134347096064
+	Available Bytes                    85650964480
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006460928
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292977
+	Total Program Bytes                81910738944
+	Resident Set Bytes                 1320878080
+	Resident Shared Bytes              242122752
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75678187520
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1390260224
+	Fast Malloc Committed Memory       1390260224
+	JavaScript Heap In Use             32900710
+	JavaScript Heap Committed Memory   62640054
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1423162702
+	Total Committed Memory             1452902046
+	System Total Bytes                 134347096064
+	Available Bytes                    85619073024
+	Shared Bytes                       956555264
+	Buffer Bytes                       1006460928
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292978
+	Total Program Bytes                81918599168
+	Resident Set Bytes                 1394896896
+	Resident Shared Bytes              242135040
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75689623552
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1393278976
+	Fast Malloc Committed Memory       1393278976
+	JavaScript Heap In Use             23814287
+	JavaScript Heap Committed Memory   102402255
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1417095031
+	Total Committed Memory             1495682999
+	System Total Bytes                 134347096064
+	Available Bytes                    85547237376
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006460928
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292979
+	Total Program Bytes                81922641920
+	Resident Set Bytes                 1388740608
+	Resident Shared Bytes              244482048
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75689623552
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1393278976
+	Fast Malloc Committed Memory       1393278976
+	JavaScript Heap In Use             45983140
+	JavaScript Heap Committed Memory   120251380
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1439263884
+	Total Committed Memory             1513532124
+	System Total Bytes                 134347096064
+	Available Bytes                    85549338624
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006469120
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292980
+	Total Program Bytes                81856565248
+	Resident Set Bytes                 1373462528
+	Resident Shared Bytes              245514240
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75668131840
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1394987008
+	Fast Malloc Committed Memory       1394987008
+	JavaScript Heap In Use             47318150
+	JavaScript Heap Committed Memory   118073686
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1442306926
+	Total Committed Memory             1513062462
+	System Total Bytes                 134347096064
+	Available Bytes                    85552427008
+	Shared Bytes                       956137472
+	Buffer Bytes                       1006469120
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292981
+	Total Program Bytes                81846521856
+	Resident Set Bytes                 1302872064
+	Resident Shared Bytes              246546432
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75657056256
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1394987008
+	Fast Malloc Committed Memory       1394987008
+	JavaScript Heap In Use             16305099
+	JavaScript Heap Committed Memory   48073595
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1411293875
+	Total Committed Memory             1443062371
+	System Total Bytes                 134347096064
+	Available Bytes                    85621223424
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006469120
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292982
+	Total Program Bytes                81846521856
+	Resident Set Bytes                 1321594880
+	Resident Shared Bytes              246546432
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75657056256
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1394987008
+	Fast Malloc Committed Memory       1394987008
+	JavaScript Heap In Use             18924776
+	JavaScript Heap Committed Memory   61967928
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1413913552
+	Total Committed Memory             1456956704
+	System Total Bytes                 134347096064
+	Available Bytes                    85644402688
+	Shared Bytes                       956153856
+	Buffer Bytes                       1006469120
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292983
+	Total Program Bytes                81846521856
+	Resident Set Bytes                 1326686208
+	Resident Shared Bytes              246546432
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75657056256
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1394987008
+	Fast Malloc Committed Memory       1394987008
+	JavaScript Heap In Use             18934286
+	JavaScript Heap Committed Memory   64853470
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1413923062
+	Total Committed Memory             1459842246
+	System Total Bytes                 134347096064
+	Available Bytes                    85604810752
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006469120
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292984
+	Total Program Bytes                81846521856
+	Resident Set Bytes                 1360306176
+	Resident Shared Bytes              246546432
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75657056256
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1394987008
+	Fast Malloc Committed Memory       1394987008
+	JavaScript Heap In Use             23945116
+	JavaScript Heap Committed Memory   72504604
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1418933892
+	Total Committed Memory             1467493380
+	System Total Bytes                 134347096064
+	Available Bytes                    85569093632
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006501888
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292985
+	Total Program Bytes                81846521856
+	Resident Set Bytes                 1300877312
+	Resident Shared Bytes              246546432
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75657056256
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1394987008
+	Fast Malloc Committed Memory       1394987008
+	JavaScript Heap In Use             24400892
+	JavaScript Heap Committed Memory   44029948
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1419389668
+	Total Committed Memory             1439018724
+	System Total Bytes                 134347096064
+	Available Bytes                    85655449600
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006501888
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292986
+	Total Program Bytes                81846521856
+	Resident Set Bytes                 1294508032
+	Resident Shared Bytes              246546432
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75657056256
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1394987008
+	Fast Malloc Committed Memory       1394987008
+	JavaScript Heap In Use             18150058
+	JavaScript Heap Committed Memory   37320202
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1413138834
+	Total Committed Memory             1432308978
+	System Total Bytes                 134347096064
+	Available Bytes                    85655658496
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006501888
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292987
+	Total Program Bytes                81937637376
+	Resident Set Bytes                 1347022848
+	Resident Shared Bytes              246546432
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75689959424
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1394987008
+	Fast Malloc Committed Memory       1394987008
+	JavaScript Heap In Use             46442029
+	JavaScript Heap Committed Memory   74148477
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1441430805
+	Total Committed Memory             1469137253
+	System Total Bytes                 134347096064
+	Available Bytes                    85616242688
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006501888
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292988
+	Total Program Bytes                81948684288
+	Resident Set Bytes                 1379196928
+	Resident Shared Bytes              246546432
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75709800448
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1394987008
+	Fast Malloc Committed Memory       1394987008
+	JavaScript Heap In Use             18910698
+	JavaScript Heap Committed Memory   53798298
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1413899474
+	Total Committed Memory             1448787074
+	System Total Bytes                 134347096064
+	Available Bytes                    85573140480
+	Shared Bytes                       955924480
+	Buffer Bytes                       1006501888
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292989
+	Total Program Bytes                81969467392
+	Resident Set Bytes                 1430577152
+	Resident Shared Bytes              246546432
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75734093824
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1423765504
+	Fast Malloc Committed Memory       1423765504
+	JavaScript Heap In Use             24216885
+	JavaScript Heap Committed Memory   89930629
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1447984157
+	Total Committed Memory             1513697901
+	System Total Bytes                 134347096064
+	Available Bytes                    85514244096
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006510080
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292990
+	Total Program Bytes                81968410624
+	Resident Set Bytes                 1421123584
+	Resident Shared Bytes              246546432
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75733037056
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1423765504
+	Fast Malloc Committed Memory       1423765504
+	JavaScript Heap In Use             29792341
+	JavaScript Heap Committed Memory   97841765
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1453559613
+	Total Committed Memory             1521609037
+	System Total Bytes                 134347096064
+	Available Bytes                    85522034688
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006510080
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292991
+	Total Program Bytes                81968410624
+	Resident Set Bytes                 1415241728
+	Resident Shared Bytes              246546432
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75733037056
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1423765504
+	Fast Malloc Committed Memory       1423765504
+	JavaScript Heap In Use             16247370
+	JavaScript Heap Committed Memory   80984522
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1440014642
+	Total Committed Memory             1504751794
+	System Total Bytes                 134347096064
+	Available Bytes                    85524639744
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006510080
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292992
+	Total Program Bytes                81968410624
+	Resident Set Bytes                 1389490176
+	Resident Shared Bytes              246546432
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75733037056
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1423765504
+	Fast Malloc Committed Memory       1423765504
+	JavaScript Heap In Use             18902339
+	JavaScript Heap Committed Memory   67410307
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1442669611
+	Total Committed Memory             1491177579
+	System Total Bytes                 134347096064
+	Available Bytes                    85573423104
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006510080
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292993
+	Total Program Bytes                81952653312
+	Resident Set Bytes                 1388687360
+	Resident Shared Bytes              246546432
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75717279744
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1423765504
+	Fast Malloc Committed Memory       1423765504
+	JavaScript Heap In Use             23261548
+	JavaScript Heap Committed Memory   63886428
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1447028820
+	Total Committed Memory             1487653700
+	System Total Bytes                 134347096064
+	Available Bytes                    85544824832
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006510080
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292994
+	Total Program Bytes                81952653312
+	Resident Set Bytes                 1387692032
+	Resident Shared Bytes              246546432
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75717279744
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1423765504
+	Fast Malloc Committed Memory       1423765504
+	JavaScript Heap In Use             29807560
+	JavaScript Heap Committed Memory   73327064
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1453574832
+	Total Committed Memory             1497094336
+	System Total Bytes                 134347096064
+	Available Bytes                    85554876416
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006510080
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292995
+	Total Program Bytes                81952653312
+	Resident Set Bytes                 1433829376
+	Resident Shared Bytes              246546432
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75717279744
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1427873792
+	Fast Malloc Committed Memory       1427873792
+	JavaScript Heap In Use             19649711
+	JavaScript Heap Committed Memory   77638399
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1447525271
+	Total Committed Memory             1505513959
+	System Total Bytes                 134347096064
+	Available Bytes                    85523042304
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006518272
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292996
+	Total Program Bytes                81952653312
+	Resident Set Bytes                 1441886208
+	Resident Shared Bytes              246546432
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75717279744
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1436921856
+	Fast Malloc Committed Memory       1436921856
+	JavaScript Heap In Use             24211852
+	JavaScript Heap Committed Memory   47437500
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1461135476
+	Total Committed Memory             1484361124
+	System Total Bytes                 134347096064
+	Available Bytes                    85529260032
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006518272
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292997
+	Total Program Bytes                81952653312
+	Resident Set Bytes                 1373773824
+	Resident Shared Bytes              246546432
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75717279744
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1436921856
+	Fast Malloc Committed Memory       1436921856
+	JavaScript Heap In Use             26025793
+	JavaScript Heap Committed Memory   49295313
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1462949417
+	Total Committed Memory             1486218937
+	System Total Bytes                 134347096064
+	Available Bytes                    85583925248
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006526464
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292998
+	Total Program Bytes                81963790336
+	Resident Set Bytes                 1382322176
+	Resident Shared Bytes              246546432
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75728416768
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1436921856
+	Fast Malloc Committed Memory       1436921856
+	JavaScript Heap In Use             27076424
+	JavaScript Heap Committed Memory   47152104
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1464000048
+	Total Committed Memory             1484075728
+	System Total Bytes                 134347096064
+	Available Bytes                    85599100928
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006526464
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774292999
+	Total Program Bytes                81965989888
+	Resident Set Bytes                 1410068480
+	Resident Shared Bytes              246546432
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75732815872
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1436921856
+	Fast Malloc Committed Memory       1436921856
+	JavaScript Heap In Use             55647741
+	JavaScript Heap Committed Memory   77545517
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1492571365
+	Total Committed Memory             1514469141
+	System Total Bytes                 134347096064
+	Available Bytes                    85548449792
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006526464
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293000
+	Total Program Bytes                81985085440
+	Resident Set Bytes                 1432637440
+	Resident Shared Bytes              246546432
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75752042496
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1436921856
+	Fast Malloc Committed Memory       1436921856
+	JavaScript Heap In Use             26810069
+	JavaScript Heap Committed Memory   74628405
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1463733693
+	Total Committed Memory             1511552029
+	System Total Bytes                 134347096064
+	Available Bytes                    85523873792
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006526464
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293001
+	Total Program Bytes                81983270912
+	Resident Set Bytes                 1287053312
+	Resident Shared Bytes              242896896
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75751911424
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1436921856
+	Fast Malloc Committed Memory       1436921856
+	JavaScript Heap In Use             22914752
+	JavaScript Heap Committed Memory   35344720
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1459838376
+	Total Committed Memory             1472268344
+	System Total Bytes                 134347096064
+	Available Bytes                    85561892864
+	Shared Bytes                       956112896
+	Buffer Bytes                       1006526464
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293002
+	Total Program Bytes                81984303104
+	Resident Set Bytes                 1322319872
+	Resident Shared Bytes              243929088
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75751911424
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1436921856
+	Fast Malloc Committed Memory       1436921856
+	JavaScript Heap In Use             23162028
+	JavaScript Heap Committed Memory   47716156
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1460085652
+	Total Committed Memory             1484639780
+	System Total Bytes                 134347096064
+	Available Bytes                    85555675136
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006534656
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293003
+	Total Program Bytes                81985335296
+	Resident Set Bytes                 1344663552
+	Resident Shared Bytes              244961280
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75751911424
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1436921856
+	Fast Malloc Committed Memory       1436921856
+	JavaScript Heap In Use             26651134
+	JavaScript Heap Committed Memory   58999694
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1463574758
+	Total Committed Memory             1495923318
+	System Total Bytes                 134347096064
+	Available Bytes                    85557436416
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006534656
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293004
+	Total Program Bytes                81985351680
+	Resident Set Bytes                 1321394176
+	Resident Shared Bytes              244977664
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75751911424
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1436921856
+	Fast Malloc Committed Memory       1436921856
+	JavaScript Heap In Use             27962661
+	JavaScript Heap Committed Memory   53283861
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1464886285
+	Total Committed Memory             1490207485
+	System Total Bytes                 134347096064
+	Available Bytes                    85593006080
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006534656
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293005
+	Total Program Bytes                81986392064
+	Resident Set Bytes                 1332965376
+	Resident Shared Bytes              246018048
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75751911424
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1436921856
+	Fast Malloc Committed Memory       1436921856
+	JavaScript Heap In Use             34221949
+	JavaScript Heap Committed Memory   59408989
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1471145573
+	Total Committed Memory             1496332613
+	System Total Bytes                 134347096064
+	Available Bytes                    85594193920
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006534656
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293006
+	Total Program Bytes                81986490368
+	Resident Set Bytes                 1389056000
+	Resident Shared Bytes              246116352
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75751911424
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1436921856
+	Fast Malloc Committed Memory       1436921856
+	JavaScript Heap In Use             40008452
+	JavaScript Heap Committed Memory   75595028
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1476932076
+	Total Committed Memory             1512518652
+	System Total Bytes                 134347096064
+	Available Bytes                    85557792768
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006534656
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293007
+	Total Program Bytes                81988554752
+	Resident Set Bytes                 1349066752
+	Resident Shared Bytes              248180736
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75751911424
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1436921856
+	Fast Malloc Committed Memory       1436921856
+	JavaScript Heap In Use             21342200
+	JavaScript Heap Committed Memory   37411432
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1458265824
+	Total Committed Memory             1474335056
+	System Total Bytes                 134347096064
+	Available Bytes                    85592997888
+	Shared Bytes                       956096512
+	Buffer Bytes                       1006542848
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293008
+	Total Program Bytes                81989574656
+	Resident Set Bytes                 1346670592
+	Resident Shared Bytes              249200640
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75751911424
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1436921856
+	Fast Malloc Committed Memory       1436921856
+	JavaScript Heap In Use             21351710
+	JavaScript Heap Committed Memory   38497006
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1458275334
+	Total Committed Memory             1475420630
+	System Total Bytes                 134347096064
+	Available Bytes                    85591883776
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006542848
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293009
+	Total Program Bytes                82000998400
+	Resident Set Bytes                 1369636864
+	Resident Shared Bytes              249614336
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75751911424
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1436921856
+	Fast Malloc Committed Memory       1436921856
+	JavaScript Heap In Use             25640421
+	JavaScript Heap Committed Memory   39758821
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1462564045
+	Total Committed Memory             1476682445
+	System Total Bytes                 134347096064
+	Available Bytes                    85576433664
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006542848
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293011
+	Total Program Bytes                82004901888
+	Resident Set Bytes                 1411600384
+	Resident Shared Bytes              249761792
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75755798528
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1436921856
+	Fast Malloc Committed Memory       1436921856
+	JavaScript Heap In Use             31154024
+	JavaScript Heap Committed Memory   64243448
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1468077648
+	Total Committed Memory             1501167072
+	System Total Bytes                 134347096064
+	Available Bytes                    85535526912
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006542848
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293012
+	Total Program Bytes                82007609344
+	Resident Set Bytes                 1438158848
+	Resident Shared Bytes              249761792
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75758505984
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1436921856
+	Fast Malloc Committed Memory       1436921856
+	JavaScript Heap In Use             59111468
+	JavaScript Heap Committed Memory   97984508
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1496035092
+	Total Committed Memory             1534908132
+	System Total Bytes                 134347096064
+	Available Bytes                    85496139776
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006542848
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293013
+	Total Program Bytes                82007609344
+	Resident Set Bytes                 1433554944
+	Resident Shared Bytes              249761792
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75761041408
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1440104448
+	Fast Malloc Committed Memory       1440104448
+	JavaScript Heap In Use             51234174
+	JavaScript Heap Committed Memory   96672782
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1491340390
+	Total Committed Memory             1536778998
+	System Total Bytes                 134347096064
+	Available Bytes                    85502767104
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006551040
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293014
+	Total Program Bytes                82006581248
+	Resident Set Bytes                 1406091264
+	Resident Shared Bytes              249827328
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75760013312
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1440104448
+	Fast Malloc Committed Memory       1440104448
+	JavaScript Heap In Use             21889992
+	JavaScript Heap Committed Memory   39878744
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1461996208
+	Total Committed Memory             1479984960
+	System Total Bytes                 134347096064
+	Available Bytes                    85531578368
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006551040
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293015
+	Total Program Bytes                82006581248
+	Resident Set Bytes                 1383100416
+	Resident Shared Bytes              249827328
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75760013312
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1440104448
+	Fast Malloc Committed Memory       1440104448
+	JavaScript Heap In Use             16557282
+	JavaScript Heap Committed Memory   27454386
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1456663498
+	Total Committed Memory             1467560602
+	System Total Bytes                 134347096064
+	Available Bytes                    85546708992
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006551040
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293016
+	Total Program Bytes                82006581248
+	Resident Set Bytes                 1411612672
+	Resident Shared Bytes              249827328
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75760013312
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1440104448
+	Fast Malloc Committed Memory       1440104448
+	JavaScript Heap In Use             19444566
+	JavaScript Heap Committed Memory   40203430
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1459550782
+	Total Committed Memory             1480309646
+	System Total Bytes                 134347096064
+	Available Bytes                    85521723392
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006559232
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293017
+	Total Program Bytes                82006581248
+	Resident Set Bytes                 1412030464
+	Resident Shared Bytes              249827328
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75760013312
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1440104448
+	Fast Malloc Committed Memory       1440104448
+	JavaScript Heap In Use             31887313
+	JavaScript Heap Committed Memory   46436321
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1471993529
+	Total Committed Memory             1486542537
+	System Total Bytes                 134347096064
+	Available Bytes                    85542866944
+	Shared Bytes                       956096512
+	Buffer Bytes                       1006559232
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293018
+	Total Program Bytes                82006581248
+	Resident Set Bytes                 1471610880
+	Resident Shared Bytes              249827328
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75760013312
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1468125184
+	Fast Malloc Committed Memory       1468125184
+	JavaScript Heap In Use             37216195
+	JavaScript Heap Committed Memory   70581587
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1505343147
+	Total Committed Memory             1538708539
+	System Total Bytes                 134347096064
+	Available Bytes                    85461979136
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006559232
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293019
+	Total Program Bytes                82006581248
+	Resident Set Bytes                 1444839424
+	Resident Shared Bytes              249827328
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75760013312
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1497538560
+	Fast Malloc Committed Memory       1497538560
+	JavaScript Heap In Use             19356356
+	JavaScript Heap Committed Memory   28568388
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1516896684
+	Total Committed Memory             1526108716
+	System Total Bytes                 134347096064
+	Available Bytes                    85503422464
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006559232
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293020
+	Total Program Bytes                82007351296
+	Resident Set Bytes                 1402138624
+	Resident Shared Bytes              249827328
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75760783360
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1497538560
+	Fast Malloc Committed Memory       1497538560
+	JavaScript Heap In Use             19365866
+	JavaScript Heap Committed Memory   29372858
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1516906194
+	Total Committed Memory             1526913186
+	System Total Bytes                 134347096064
+	Available Bytes                    85528150016
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006559232
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293021
+	Total Program Bytes                82027397120
+	Resident Set Bytes                 1435553792
+	Resident Shared Bytes              249827328
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75780829184
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1497538560
+	Fast Malloc Committed Memory       1497538560
+	JavaScript Heap In Use             26018123
+	JavaScript Heap Committed Memory   42891099
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1523558451
+	Total Committed Memory             1540431427
+	System Total Bytes                 134347096064
+	Available Bytes                    85501693952
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006559232
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293022
+	Total Program Bytes                82027397120
+	Resident Set Bytes                 1468223488
+	Resident Shared Bytes              249827328
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75785228288
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1497538560
+	Fast Malloc Committed Memory       1497538560
+	JavaScript Heap In Use             59153759
+	JavaScript Heap Committed Memory   78366287
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1556694087
+	Total Committed Memory             1575906615
+	System Total Bytes                 134347096064
+	Available Bytes                    85454671872
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006567424
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293023
+	Total Program Bytes                82037039104
+	Resident Set Bytes                 1481834496
+	Resident Shared Bytes              249827328
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75797438464
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1497538560
+	Fast Malloc Committed Memory       1497538560
+	JavaScript Heap In Use             27142830
+	JavaScript Heap Committed Memory   69165550
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1524683158
+	Total Committed Memory             1566705878
+	System Total Bytes                 134347096064
+	Available Bytes                    85442404352
+	Shared Bytes                       956096512
+	Buffer Bytes                       1006567424
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293024
+	Total Program Bytes                82037039104
+	Resident Set Bytes                 1477206016
+	Resident Shared Bytes              249827328
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75797438464
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1497538560
+	Fast Malloc Committed Memory       1497538560
+	JavaScript Heap In Use             30091914
+	JavaScript Heap Committed Memory   74121786
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1527632242
+	Total Committed Memory             1571662114
+	System Total Bytes                 134347096064
+	Available Bytes                    85425020928
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006567424
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293025
+	Total Program Bytes                82037039104
+	Resident Set Bytes                 1475485696
+	Resident Shared Bytes              249827328
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75797438464
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1497538560
+	Fast Malloc Committed Memory       1497538560
+	JavaScript Heap In Use             48292186
+	JavaScript Heap Committed Memory   82015322
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1545832514
+	Total Committed Memory             1579555650
+	System Total Bytes                 134347096064
+	Available Bytes                    85426884608
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006567424
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293026
+	Total Program Bytes                82037039104
+	Resident Set Bytes                 1446998016
+	Resident Shared Bytes              249827328
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75797438464
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1497538560
+	Fast Malloc Committed Memory       1497538560
+	JavaScript Heap In Use             16589431
+	JavaScript Heap Committed Memory   43180759
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1514129759
+	Total Committed Memory             1540721087
+	System Total Bytes                 134347096064
+	Available Bytes                    85458800640
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006567424
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293027
+	Total Program Bytes                82037039104
+	Resident Set Bytes                 1472925696
+	Resident Shared Bytes              249827328
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75797438464
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1497538560
+	Fast Malloc Committed Memory       1497538560
+	JavaScript Heap In Use             16590167
+	JavaScript Heap Committed Memory   58821575
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1514130495
+	Total Committed Memory             1556361903
+	System Total Bytes                 134347096064
+	Available Bytes                    85422223360
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006575616
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293028
+	Total Program Bytes                82037039104
+	Resident Set Bytes                 1473441792
+	Resident Shared Bytes              249827328
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75797438464
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1497538560
+	Fast Malloc Committed Memory       1497538560
+	JavaScript Heap In Use             18255485
+	JavaScript Heap Committed Memory   62729485
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1515795813
+	Total Committed Memory             1560269813
+	System Total Bytes                 134347096064
+	Available Bytes                    85436989440
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006575616
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293029
+	Total Program Bytes                82037039104
+	Resident Set Bytes                 1505026048
+	Resident Shared Bytes              249827328
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75797438464
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1498181632
+	Fast Malloc Committed Memory       1498181632
+	JavaScript Heap In Use             29371781
+	JavaScript Heap Committed Memory   74085749
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1527555181
+	Total Committed Memory             1572269149
+	System Total Bytes                 134347096064
+	Available Bytes                    85406277632
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006583808
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293030
+	Total Program Bytes                82037039104
+	Resident Set Bytes                 1450659840
+	Resident Shared Bytes              249827328
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75797438464
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1499500544
+	Fast Malloc Committed Memory       1499500544
+	JavaScript Heap In Use             19653484
+	JavaScript Heap Committed Memory   39202604
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1519155796
+	Total Committed Memory             1538704916
+	System Total Bytes                 134347096064
+	Available Bytes                    85463744512
+	Shared Bytes                       956014592
+	Buffer Bytes                       1006583808
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293031
+	Total Program Bytes                82034409472
+	Resident Set Bytes                 1288945664
+	Resident Shared Bytes              246910976
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75797307392
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1499500544
+	Fast Malloc Committed Memory       1499500544
+	JavaScript Heap In Use             19663703
+	JavaScript Heap Committed Memory   39240311
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1519166015
+	Total Committed Memory             1538742623
+	System Total Bytes                 134347096064
+	Available Bytes                    85530898432
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006583808
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293032
+	Total Program Bytes                82045083648
+	Resident Set Bytes                 1352671232
+	Resident Shared Bytes              246575104
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75797307392
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1499500544
+	Fast Malloc Committed Memory       1499500544
+	JavaScript Heap In Use             25931378
+	JavaScript Heap Committed Memory   41135698
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1525433690
+	Total Committed Memory             1540638010
+	System Total Bytes                 134347096064
+	Available Bytes                    85527793664
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006583808
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293033
+	Total Program Bytes                82045100032
+	Resident Set Bytes                 1427652608
+	Resident Shared Bytes              246591488
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75797307392
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1499500544
+	Fast Malloc Committed Memory       1499500544
+	JavaScript Heap In Use             31444981
+	JavaScript Heap Committed Memory   64702773
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1530947293
+	Total Committed Memory             1564205085
+	System Total Bytes                 134347096064
+	Available Bytes                    85482598400
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006583808
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293034
+	Total Program Bytes                82045100032
+	Resident Set Bytes                 1471066112
+	Resident Shared Bytes              246591488
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75797307392
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1499500544
+	Fast Malloc Committed Memory       1499500544
+	JavaScript Heap In Use             59218493
+	JavaScript Heap Committed Memory   99638765
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1558720805
+	Total Committed Memory             1599141077
+	System Total Bytes                 134347096064
+	Available Bytes                    85447544832
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006592000
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293036
+	Total Program Bytes                82044055552
+	Resident Set Bytes                 1446379520
+	Resident Shared Bytes              246603776
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75796250624
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1499500544
+	Fast Malloc Committed Memory       1499500544
+	JavaScript Heap In Use             52760395
+	JavaScript Heap Committed Memory   98848891
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1552262707
+	Total Committed Memory             1598351203
+	System Total Bytes                 134347096064
+	Available Bytes                    85456252928
+	Shared Bytes                       956129280
+	Buffer Bytes                       1006592000
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293037
+	Total Program Bytes                81982021632
+	Resident Set Bytes                 1426116608
+	Resident Shared Bytes              249982976
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75771944960
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1499500544
+	Fast Malloc Committed Memory       1499500544
+	JavaScript Heap In Use             21794157
+	JavaScript Heap Committed Memory   49239341
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1521296469
+	Total Committed Memory             1548741653
+	System Total Bytes                 134347096064
+	Available Bytes                    85470498816
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006592000
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293038
+	Total Program Bytes                81983053824
+	Resident Set Bytes                 1412079616
+	Resident Shared Bytes              251015168
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75771944960
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1499500544
+	Fast Malloc Committed Memory       1499500544
+	JavaScript Heap In Use             16632113
+	JavaScript Heap Committed Memory   39898337
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1516134425
+	Total Committed Memory             1539400649
+	System Total Bytes                 134347096064
+	Available Bytes                    85492658176
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006592000
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293039
+	Total Program Bytes                81983070208
+	Resident Set Bytes                 1431355392
+	Resident Shared Bytes              251031552
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75771944960
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1499500544
+	Fast Malloc Committed Memory       1499500544
+	JavaScript Heap In Use             23587026
+	JavaScript Heap Committed Memory   53487954
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1523089338
+	Total Committed Memory             1552990266
+	System Total Bytes                 134347096064
+	Available Bytes                    85462847488
+	Shared Bytes                       955957248
+	Buffer Bytes                       1006592000
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293040
+	Total Program Bytes                81984102400
+	Resident Set Bytes                 1439076352
+	Resident Shared Bytes              252063744
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75771944960
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1499500544
+	Fast Malloc Committed Memory       1499500544
+	JavaScript Heap In Use             30223452
+	JavaScript Heap Committed Memory   58290508
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1529725764
+	Total Committed Memory             1557792820
+	System Total Bytes                 134347096064
+	Available Bytes                    85460410368
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006600192
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293041
+	Total Program Bytes                81984110592
+	Resident Set Bytes                 1469026304
+	Resident Shared Bytes              252071936
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75771944960
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1499500544
+	Fast Malloc Committed Memory       1499500544
+	JavaScript Heap In Use             19969164
+	JavaScript Heap Committed Memory   61570876
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1519471476
+	Total Committed Memory             1561073188
+	System Total Bytes                 134347096064
+	Available Bytes                    85442891776
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006600192
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293042
+	Total Program Bytes                81984815104
+	Resident Set Bytes                 1445978112
+	Resident Shared Bytes              252776448
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75771944960
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1499500544
+	Fast Malloc Committed Memory       1499500544
+	JavaScript Heap In Use             23274565
+	JavaScript Heap Committed Memory   42260341
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1522776877
+	Total Committed Memory             1541762653
+	System Total Bytes                 134347096064
+	Available Bytes                    85464219648
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006600192
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293043
+	Total Program Bytes                81984815104
+	Resident Set Bytes                 1424351232
+	Resident Shared Bytes              252776448
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75771944960
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1499500544
+	Fast Malloc Committed Memory       1499500544
+	JavaScript Heap In Use             23873139
+	JavaScript Heap Committed Memory   42513251
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1523375451
+	Total Committed Memory             1542015563
+	System Total Bytes                 134347096064
+	Available Bytes                    85486084096
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006600192
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293044
+	Total Program Bytes                82009444352
+	Resident Set Bytes                 1471811584
+	Resident Shared Bytes              252776448
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75796574208
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1499500544
+	Fast Malloc Committed Memory       1499500544
+	JavaScript Heap In Use             34587384
+	JavaScript Heap Committed Memory   62443560
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1534089696
+	Total Committed Memory             1561945872
+	System Total Bytes                 134347096064
+	Available Bytes                    85439664128
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006608384
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293045
+	Total Program Bytes                82011643904
+	Resident Set Bytes                 1482321920
+	Resident Shared Bytes              252776448
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75798773760
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1499500544
+	Fast Malloc Committed Memory       1499500544
+	JavaScript Heap In Use             32142998
+	JavaScript Heap Committed Memory   51728070
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1531645310
+	Total Committed Memory             1551230382
+	System Total Bytes                 134347096064
+	Available Bytes                    85427261440
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006608384
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293046
+	Total Program Bytes                82011643904
+	Resident Set Bytes                 1553190912
+	Resident Shared Bytes              252776448
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75799715840
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1546874880
+	Fast Malloc Committed Memory       1546874880
+	JavaScript Heap In Use             32142998
+	JavaScript Heap Committed Memory   114432134
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1579019646
+	Total Committed Memory             1661308782
+	System Total Bytes                 134347096064
+	Available Bytes                    85358878720
+	Shared Bytes                       956096512
+	Buffer Bytes                       1006608384
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293047
+	Total Program Bytes                82017345536
+	Resident Set Bytes                 1503633408
+	Resident Shared Bytes              252776448
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75805417472
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1548840960
+	Fast Malloc Committed Memory       1548840960
+	JavaScript Heap In Use             29782922
+	JavaScript Heap Committed Memory   85317386
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1578625650
+	Total Committed Memory             1634160114
+	System Total Bytes                 134347096064
+	Available Bytes                    85415796736
+	Shared Bytes                       955998208
+	Buffer Bytes                       1006608384
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293048
+	Total Program Bytes                82022600704
+	Resident Set Bytes                 1525059584
+	Resident Shared Bytes              252776448
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75810672640
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1548840960
+	Fast Malloc Committed Memory       1548840960
+	JavaScript Heap In Use             16362567
+	JavaScript Heap Committed Memory   76927127
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1565205295
+	Total Committed Memory             1625769855
+	System Total Bytes                 134347096064
+	Available Bytes                    85393776640
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006608384
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293049
+	Total Program Bytes                82022600704
+	Resident Set Bytes                 1476038656
+	Resident Shared Bytes              252776448
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75810672640
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1548840960
+	Fast Malloc Committed Memory       1548840960
+	JavaScript Heap In Use             16372077
+	JavaScript Heap Committed Memory   54242909
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1565214805
+	Total Committed Memory             1603085637
+	System Total Bytes                 134347096064
+	Available Bytes                    85446496256
+	Shared Bytes                       956055552
+	Buffer Bytes                       1006616576
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293050
+	Total Program Bytes                82022600704
+	Resident Set Bytes                 1504657408
+	Resident Shared Bytes              252776448
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75810672640
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1548840960
+	Fast Malloc Committed Memory       1548840960
+	JavaScript Heap In Use             16372813
+	JavaScript Heap Committed Memory   69916493
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1565215541
+	Total Committed Memory             1618759221
+	System Total Bytes                 134347096064
+	Available Bytes                    85405396992
+	Shared Bytes                       956096512
+	Buffer Bytes                       1006616576
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293051
+	Total Program Bytes                82022600704
+	Resident Set Bytes                 1498337280
+	Resident Shared Bytes              252776448
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75810672640
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1548840960
+	Fast Malloc Committed Memory       1548840960
+	JavaScript Heap In Use             18308676
+	JavaScript Heap Committed Memory   71528356
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1567151404
+	Total Committed Memory             1620371084
+	System Total Bytes                 134347096064
+	Available Bytes                    85427834880
+	Shared Bytes                       956317696
+	Buffer Bytes                       1006616576
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293052
+	Total Program Bytes                82022600704
+	Resident Set Bytes                 1533378560
+	Resident Shared Bytes              252776448
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75810672640
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1548840960
+	Fast Malloc Committed Memory       1548840960
+	JavaScript Heap In Use             18678244
+	JavaScript Heap Committed Memory   56785140
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1567520972
+	Total Committed Memory             1605627868
+	System Total Bytes                 134347096064
+	Available Bytes                    85392162816
+	Shared Bytes                       956317696
+	Buffer Bytes                       1006616576
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293053
+	Total Program Bytes                82022600704
+	Resident Set Bytes                 1469480960
+	Resident Shared Bytes              252776448
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75810672640
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1548840960
+	Fast Malloc Committed Memory       1548840960
+	JavaScript Heap In Use             19414693
+	JavaScript Heap Committed Memory   41901285
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1568257421
+	Total Committed Memory             1590744013
+	System Total Bytes                 134347096064
+	Available Bytes                    85454282752
+	Shared Bytes                       956317696
+	Buffer Bytes                       1006616576
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293054
+	Total Program Bytes                82025275392
+	Resident Set Bytes                 1480839168
+	Resident Shared Bytes              252776448
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75813347328
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1548840960
+	Fast Malloc Committed Memory       1548840960
+	JavaScript Heap In Use             21228634
+	JavaScript Heap Committed Memory   44905978
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1570071362
+	Total Committed Memory             1593748706
+	System Total Bytes                 134347096064
+	Available Bytes                    85438230528
+	Shared Bytes                       956317696
+	Buffer Bytes                       1006616576
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293055
+	Total Program Bytes                82107973632
+	Resident Set Bytes                 1507733504
+	Resident Shared Bytes              252776448
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75837665280
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1548840960
+	Fast Malloc Committed Memory       1548840960
+	JavaScript Heap In Use             29638838
+	JavaScript Heap Committed Memory   54195206
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1578481566
+	Total Committed Memory             1603037934
+	System Total Bytes                 134347096064
+	Available Bytes                    85412237312
+	Shared Bytes                       956325888
+	Buffer Bytes                       1006624768
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293056
+	Total Program Bytes                82107973632
+	Resident Set Bytes                 1544450048
+	Resident Shared Bytes              252776448
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75846463488
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1548840960
+	Fast Malloc Committed Memory       1548840960
+	JavaScript Heap In Use             59833416
+	JavaScript Heap Committed Memory   78295208
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1608676144
+	Total Committed Memory             1627137936
+	System Total Bytes                 134347096064
+	Available Bytes                    85365940224
+	Shared Bytes                       956317696
+	Buffer Bytes                       1006624768
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293057
+	Total Program Bytes                82107973632
+	Resident Set Bytes                 1560715264
+	Resident Shared Bytes              252776448
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75846807552
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1560305664
+	Fast Malloc Committed Memory       1560305664
+	JavaScript Heap In Use             27259600
+	JavaScript Heap Committed Memory   76702640
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1587567032
+	Total Committed Memory             1637010072
+	System Total Bytes                 134347096064
+	Available Bytes                    85355552768
+	Shared Bytes                       956399616
+	Buffer Bytes                       1006624768
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293058
+	Total Program Bytes                82108059648
+	Resident Set Bytes                 1574952960
+	Resident Shared Bytes              252944384
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75846815744
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1569013760
+	Fast Malloc Committed Memory       1569013760
+	JavaScript Heap In Use             15931350
+	JavaScript Heap Committed Memory   72528982
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1584946878
+	Total Committed Memory             1641544510
+	System Total Bytes                 134347096064
+	Available Bytes                    85324967936
+	Shared Bytes                       956317696
+	Buffer Bytes                       1006624768
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293059
+	Total Program Bytes                82108059648
+	Resident Set Bytes                 1554030592
+	Resident Shared Bytes              252944384
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75846815744
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1569013760
+	Fast Malloc Committed Memory       1569013760
+	JavaScript Heap In Use             15931350
+	JavaScript Heap Committed Memory   72528982
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1584946878
+	Total Committed Memory             1641544510
+	System Total Bytes                 134347096064
+	Available Bytes                    85348306944
+	Shared Bytes                       956317696
+	Buffer Bytes                       1006632960
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293060
+	Total Program Bytes                82108059648
+	Resident Set Bytes                 1553543168
+	Resident Shared Bytes              252944384
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75846815744
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1569013760
+	Fast Malloc Committed Memory       1569013760
+	JavaScript Heap In Use             15931350
+	JavaScript Heap Committed Memory   72528982
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1584946878
+	Total Committed Memory             1641544510
+	System Total Bytes                 134347096064
+	Available Bytes                    85350084608
+	Shared Bytes                       956317696
+	Buffer Bytes                       1006632960
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293061
+	Total Program Bytes                82091728896
+	Resident Set Bytes                 1261772800
+	Resident Shared Bytes              246456320
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75836973056
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1569013760
+	Fast Malloc Committed Memory       1569013760
+	JavaScript Heap In Use             15931350
+	JavaScript Heap Committed Memory   72528982
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1584946878
+	Total Committed Memory             1641544510
+	System Total Bytes                 134347096064
+	Available Bytes                    85501325312
+	Shared Bytes                       956317696
+	Buffer Bytes                       1006632960
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293062
+	Total Program Bytes                82091728896
+	Resident Set Bytes                 1260888064
+	Resident Shared Bytes              246456320
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75836973056
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1569013760
+	Fast Malloc Committed Memory       1569013760
+	JavaScript Heap In Use             15931350
+	JavaScript Heap Committed Memory   72528982
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1584946878
+	Total Committed Memory             1641544510
+	System Total Bytes                 134347096064
+	Available Bytes                    85502885888
+	Shared Bytes                       956317696
+	Buffer Bytes                       1006632960
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293063
+	Total Program Bytes                82091728896
+	Resident Set Bytes                 1260888064
+	Resident Shared Bytes              246456320
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75836973056
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1569013760
+	Fast Malloc Committed Memory       1569013760
+	JavaScript Heap In Use             15931350
+	JavaScript Heap Committed Memory   72528982
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1584946878
+	Total Committed Memory             1641544510
+	System Total Bytes                 134347096064
+	Available Bytes                    85512839168
+	Shared Bytes                       956317696
+	Buffer Bytes                       1006632960
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293064
+	Total Program Bytes                82091728896
+	Resident Set Bytes                 1260806144
+	Resident Shared Bytes              246456320
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75836973056
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1569013760
+	Fast Malloc Committed Memory       1569013760
+	JavaScript Heap In Use             15931350
+	JavaScript Heap Committed Memory   72528982
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1584946878
+	Total Committed Memory             1641544510
+	System Total Bytes                 134347096064
+	Available Bytes                    85513068544
+	Shared Bytes                       956317696
+	Buffer Bytes                       1006632960
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293065
+	Total Program Bytes                82091728896
+	Resident Set Bytes                 1258651648
+	Resident Shared Bytes              246456320
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75836973056
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1569013760
+	Fast Malloc Committed Memory       1569013760
+	JavaScript Heap In Use             15931350
+	JavaScript Heap Committed Memory   72528982
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1584946878
+	Total Committed Memory             1641544510
+	System Total Bytes                 134347096064
+	Available Bytes                    85517295616
+	Shared Bytes                       956317696
+	Buffer Bytes                       1006641152
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293066
+	Total Program Bytes                82091728896
+	Resident Set Bytes                 1253097472
+	Resident Shared Bytes              246456320
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75836973056
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1569013760
+	Fast Malloc Committed Memory       1569013760
+	JavaScript Heap In Use             15931350
+	JavaScript Heap Committed Memory   72528982
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1584946878
+	Total Committed Memory             1641544510
+	System Total Bytes                 134347096064
+	Available Bytes                    85530832896
+	Shared Bytes                       956317696
+	Buffer Bytes                       1006641152
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293067
+	Total Program Bytes                82091728896
+	Resident Set Bytes                 1251364864
+	Resident Shared Bytes              246456320
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75836973056
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1569013760
+	Fast Malloc Committed Memory       1569013760
+	JavaScript Heap In Use             15931350
+	JavaScript Heap Committed Memory   72528982
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1584946878
+	Total Committed Memory             1641544510
+	System Total Bytes                 134347096064
+	Available Bytes                    85532917760
+	Shared Bytes                       956317696
+	Buffer Bytes                       1006641152
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293068
+	Total Program Bytes                81998733312
+	Resident Set Bytes                 1249939456
+	Resident Shared Bytes              246456320
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75744698368
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1569013760
+	Fast Malloc Committed Memory       1569013760
+	JavaScript Heap In Use             15931350
+	JavaScript Heap Committed Memory   72528982
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1584946878
+	Total Committed Memory             1641544510
+	System Total Bytes                 134347096064
+	Available Bytes                    85546270720
+	Shared Bytes                       956317696
+	Buffer Bytes                       1006641152
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293069
+	Total Program Bytes                81998733312
+	Resident Set Bytes                 1241026560
+	Resident Shared Bytes              246456320
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75744698368
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1569013760
+	Fast Malloc Committed Memory       1569013760
+	JavaScript Heap In Use             15931350
+	JavaScript Heap Committed Memory   72528982
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1584946878
+	Total Committed Memory             1641544510
+	System Total Bytes                 134347096064
+	Available Bytes                    85573165056
+	Shared Bytes                       956317696
+	Buffer Bytes                       1006641152
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293070
+	Total Program Bytes                81998733312
+	Resident Set Bytes                 1241026560
+	Resident Shared Bytes              246456320
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75744698368
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1569013760
+	Fast Malloc Committed Memory       1569013760
+	JavaScript Heap In Use             15931350
+	JavaScript Heap Committed Memory   72528982
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1584946878
+	Total Committed Memory             1641544510
+	System Total Bytes                 134347096064
+	Available Bytes                    85582680064
+	Shared Bytes                       956317696
+	Buffer Bytes                       1006649344
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293071
+	Total Program Bytes                81998733312
+	Resident Set Bytes                 1241026560
+	Resident Shared Bytes              246456320
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75744698368
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1569013760
+	Fast Malloc Committed Memory       1569013760
+	JavaScript Heap In Use             15931350
+	JavaScript Heap Committed Memory   72528982
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1584946878
+	Total Committed Memory             1641544510
+	System Total Bytes                 134347096064
+	Available Bytes                    85583650816
+	Shared Bytes                       956317696
+	Buffer Bytes                       1006649344
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293072
+	Total Program Bytes                81998733312
+	Resident Set Bytes                 1241026560
+	Resident Shared Bytes              246456320
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75744698368
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1569013760
+	Fast Malloc Committed Memory       1569013760
+	JavaScript Heap In Use             15931350
+	JavaScript Heap Committed Memory   72528982
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1584946878
+	Total Committed Memory             1641544510
+	System Total Bytes                 134347096064
+	Available Bytes                    85601112064
+	Shared Bytes                       956317696
+	Buffer Bytes                       1006649344
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293073
+	Total Program Bytes                81998733312
+	Resident Set Bytes                 1241026560
+	Resident Shared Bytes              246456320
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75744698368
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1569013760
+	Fast Malloc Committed Memory       1569013760
+	JavaScript Heap In Use             15931350
+	JavaScript Heap Committed Memory   72528982
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1584946878
+	Total Committed Memory             1641544510
+	System Total Bytes                 134347096064
+	Available Bytes                    85610110976
+	Shared Bytes                       956317696
+	Buffer Bytes                       1006649344
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293074
+	Total Program Bytes                81998733312
+	Resident Set Bytes                 1241026560
+	Resident Shared Bytes              246456320
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75744698368
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1569013760
+	Fast Malloc Committed Memory       1569013760
+	JavaScript Heap In Use             15931350
+	JavaScript Heap Committed Memory   72528982
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1584946878
+	Total Committed Memory             1641544510
+	System Total Bytes                 134347096064
+	Available Bytes                    85618155520
+	Shared Bytes                       956317696
+	Buffer Bytes                       1006649344
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293075
+	Total Program Bytes                81998733312
+	Resident Set Bytes                 1241026560
+	Resident Shared Bytes              246456320
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75744698368
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1569013760
+	Fast Malloc Committed Memory       1569013760
+	JavaScript Heap In Use             15931350
+	JavaScript Heap Committed Memory   72528982
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1584946878
+	Total Committed Memory             1641544510
+	System Total Bytes                 134347096064
+	Available Bytes                    85626474496
+	Shared Bytes                       956350464
+	Buffer Bytes                       1006657536
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293076
+	Total Program Bytes                81998733312
+	Resident Set Bytes                 1241026560
+	Resident Shared Bytes              246456320
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75744698368
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1569013760
+	Fast Malloc Committed Memory       1569013760
+	JavaScript Heap In Use             15931350
+	JavaScript Heap Committed Memory   72528982
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1584946878
+	Total Committed Memory             1641544510
+	System Total Bytes                 134347096064
+	Available Bytes                    85632131072
+	Shared Bytes                       956350464
+	Buffer Bytes                       1006657536
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293077
+	Total Program Bytes                81998733312
+	Resident Set Bytes                 1241026560
+	Resident Shared Bytes              246456320
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75744698368
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1569013760
+	Fast Malloc Committed Memory       1569013760
+	JavaScript Heap In Use             15931350
+	JavaScript Heap Committed Memory   72528982
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1584946878
+	Total Committed Memory             1641544510
+	System Total Bytes                 134347096064
+	Available Bytes                    85631868928
+	Shared Bytes                       956350464
+	Buffer Bytes                       1006657536
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293078
+	Total Program Bytes                81998733312
+	Resident Set Bytes                 1241026560
+	Resident Shared Bytes              246456320
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75744698368
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1569013760
+	Fast Malloc Committed Memory       1569013760
+	JavaScript Heap In Use             15931350
+	JavaScript Heap Committed Memory   72528982
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1584946878
+	Total Committed Memory             1641544510
+	System Total Bytes                 134347096064
+	Available Bytes                    85632475136
+	Shared Bytes                       956317696
+	Buffer Bytes                       1006657536
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293079
+	Total Program Bytes                81998733312
+	Resident Set Bytes                 1241026560
+	Resident Shared Bytes              246456320
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75744698368
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1569013760
+	Fast Malloc Committed Memory       1569013760
+	JavaScript Heap In Use             15931350
+	JavaScript Heap Committed Memory   72528982
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1584946878
+	Total Committed Memory             1641544510
+	System Total Bytes                 134347096064
+	Available Bytes                    85632475136
+	Shared Bytes                       956317696
+	Buffer Bytes                       1006657536
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293080
+	Total Program Bytes                81998733312
+	Resident Set Bytes                 1241026560
+	Resident Shared Bytes              246456320
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75744698368
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1569013760
+	Fast Malloc Committed Memory       1569013760
+	JavaScript Heap In Use             15931350
+	JavaScript Heap Committed Memory   72528982
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1584946878
+	Total Committed Memory             1641544510
+	System Total Bytes                 134347096064
+	Available Bytes                    85633073152
+	Shared Bytes                       956317696
+	Buffer Bytes                       1006682112
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293081
+	Total Program Bytes                81998733312
+	Resident Set Bytes                 1241026560
+	Resident Shared Bytes              246456320
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75744698368
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1569013760
+	Fast Malloc Committed Memory       1569013760
+	JavaScript Heap In Use             15931350
+	JavaScript Heap Committed Memory   72528982
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1584946878
+	Total Committed Memory             1641544510
+	System Total Bytes                 134347096064
+	Available Bytes                    85643169792
+	Shared Bytes                       956317696
+	Buffer Bytes                       1006682112
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
+	
+	Timestamp                          1774293082
+	Total Program Bytes                81998733312
+	Resident Set Bytes                 1241006080
+	Resident Shared Bytes              246456320
+	Text Bytes                         4096
+	Library Bytes                      0
+	Data + Stack Bytes                 75744698368
+	Dirty Bytes                        0
+	Fast Malloc In Use                 1569013760
+	Fast Malloc Committed Memory       1569013760
+	JavaScript Heap In Use             15931350
+	JavaScript Heap Committed Memory   72528982
+	JavaScript Stack Bytes             1768
+	JavaScript JIT Bytes               0
+	Total Memory In Use                1584946878
+	Total Committed Memory             1641544510
+	System Total Bytes                 134347096064
+	Available Bytes                    85648646144
+	Shared Bytes                       956317696
+	Buffer Bytes                       1006682112
+	Total Swap Bytes                   52802088960
+	Available Swap Bytes               50016796672
