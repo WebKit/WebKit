@@ -312,7 +312,8 @@ double computeNonCalcLengthDouble(double value, CSS::LengthUnit lengthUnit, cons
             value *= conversionData.parentStyle() ? conversionData.parentStyle()->computedLineHeight() : conversionData.fontCascadeForFontUnits().metricsOfPrimaryFont().intLineSpacing();
         } else {
             auto* style = conversionData.style();
-            Style::LineHeightEvaluationContext context { style->computedFontSize(), style->metricsOfPrimaryFont().lineSpacing() };
+            auto computedFontSize = style->fontDescription().computedSizeForRangeZoomOption(conversionData.rangeZoomOption());
+            Style::LineHeightEvaluationContext context { computedFontSize, style->metricsOfPrimaryFont().lineSpacing() };
             value *= Style::evaluate<float>(style->lineHeight(), context, Style::ZoomFactor { conversionData.zoom() });
         }
         break;
@@ -333,7 +334,8 @@ double computeNonCalcLengthDouble(double value, CSS::LengthUnit lengthUnit, cons
             if (conversionData.computingLineHeight() || conversionData.computingFontSize())
                 value *= Style::evaluate<float>(rootStyle->specifiedLineHeight(), Style::LineHeightEvaluationContext { rootStyle->computedFontSize(), rootStyle->metricsOfPrimaryFont().lineSpacing() }, rootStyle->usedZoomForLength());
             else {
-                Style::LineHeightEvaluationContext context { rootStyle->computedFontSize(), rootStyle->metricsOfPrimaryFont().lineSpacing() };
+                auto computedFontSize = rootStyle->fontDescription().computedSizeForRangeZoomOption(conversionData.rangeZoomOption());
+                Style::LineHeightEvaluationContext context { computedFontSize, rootStyle->metricsOfPrimaryFont().lineSpacing() };
                 value *= Style::evaluate<float>(rootStyle->lineHeight(), context, Style::ZoomFactor { conversionData.zoom() });
             }
         }
