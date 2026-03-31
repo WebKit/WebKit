@@ -21,17 +21,18 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 webkit_platform_header: "TransferString.h"
+webkit_platform_header: <wtf/RuntimeApplicationChecks.h>
 
-[Nested, RValue] struct IPC::TransferString::SharedSpan8 {
+[Nested, RValue, WebKitPlatform] struct IPC::TransferString::SharedSpan8 {
     WebCore::SharedMemoryHandle dataHandle;
 };
 
-[Nested, RValue] struct IPC::TransferString::SharedSpan16 {
+[Nested, RValue, WebKitPlatform] struct IPC::TransferString::SharedSpan16 {
     WebCore::SharedMemoryHandle dataHandle;
 };
 
 using IPC::TransferString::IPCData = Variant<std::monostate, std::span<const uint8_t>, std::span<const char16_t>, IPC::TransferString::SharedSpan8, IPC::TransferString::SharedSpan16>;
 
-[CustomHeader] class IPC::TransferString {
+[CustomHeader, WebKitPlatform] class IPC::TransferString {
     IPC::TransferString::IPCData toIPCData();
 };

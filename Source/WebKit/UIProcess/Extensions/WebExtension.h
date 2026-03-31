@@ -63,6 +63,8 @@ public:
     using IconCacheEntry = Variant<RefPtr<WebCore::Icon>, Vector<double>>;
     using IconsCache = HashMap<String, IconCacheEntry>;
     using Resources = HashMap<String, Variant<String, Ref<API::Data>>>;
+    using DataResources = HashMap<String, Ref<API::Data>>;
+    using StringResources = HashMap<String, String>;
 
     template<typename... Args>
     static Ref<WebExtension> create(Args&&... args)
@@ -357,6 +359,9 @@ public:
 #endif
 
 private:
+    static DataResources toDataResources(const Resources&);
+    static StringResources toStringResources(const Resources&);
+
     static String processFileAndExtractZipArchive(const String&);
 
     bool parseManifest(StringView);
@@ -407,7 +412,8 @@ private:
     URL m_resourceBaseURL;
     bool m_resourcesAreTemporary { false };
     Ref<const JSON::Value> m_manifestJSON;
-    Resources m_resources;
+    DataResources m_dataResources;
+    StringResources m_stringResources;
 
     String m_defaultLocale;
     Vector<String> m_supportedLocales;

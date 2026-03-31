@@ -60,6 +60,25 @@ TEST(WebKit, EvaluateJavaScriptThatThrowsAnException)
     Util::run(&testDone);
 }
 
+static void didRunEmptyJavaScript(WKTypeRef result, WKErrorRef error, void* context)
+{
+    EXPECT_EQ(reinterpret_cast<void*>(0x1234578), context);
+    EXPECT_NULL(result);
+    EXPECT_NULL(error);
+    testDone = true;
+}
+
+TEST(WebKit, EvaluateEmptyJavaScript)
+{
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
+    PlatformWebView webView(context.get());
+
+    WKRetainPtr<WKStringRef> javaScriptString = adoptWK(WKStringCreateWithUTF8CString(""));
+    WKPageEvaluateJavaScriptInMainFrame(webView.page(), javaScriptString.get(), reinterpret_cast<void*>(0x1234578), didRunEmptyJavaScript);
+
+    Util::run(&testDone);
+}
+
 static void didCreateBlob(WKTypeRef result, WKErrorRef error, void* context)
 {
     EXPECT_NULL(result);

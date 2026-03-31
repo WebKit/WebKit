@@ -27,6 +27,8 @@
 #include "config.h"
 #include "UserStyleSheet.h"
 
+#include <wtf/HashCountedSet.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
@@ -40,8 +42,20 @@ static WTF::URL generateUserStyleUniqueURL()
     return { { }, makeString("user-style:"_s, ++identifier) };
 }
 
+static HashCountedSet<String>& styleStrings()
+{
+    static NeverDestroyed<HashCountedSet<String>> set;
+    return set;
+}
+
+static String internedStyleString(const String& string)
+{
+    auto result = styleStrings().add(string);
+    return result.iterator->key;
+}
+
 UserStyleSheet::UserStyleSheet(const String& source, const URL& url, Vector<String>&& allowlist, Vector<String>&& blocklist, UserContentInjectedFrames injectedFrames, UserContentMatchParentFrame matchParentFrame, UserStyleLevel level, std::optional<PageIdentifier> pageID)
-    : m_source(source)
+    : m_source(internedStyleString(source))
     , m_url(url.isEmpty() ? generateUserStyleUniqueURL() : url)
     , m_allowlist(WTF::move(allowlist))
     , m_blocklist(WTF::move(blocklist))
@@ -50,6 +64,11 @@ UserStyleSheet::UserStyleSheet(const String& source, const URL& url, Vector<Stri
     , m_level(level)
     , m_pageID(pageID)
 {
+}
+
+UserStyleSheet::~UserStyleSheet()
+{
+    styleStrings().remove(m_source);
 }
 
 } // namespace WebCore

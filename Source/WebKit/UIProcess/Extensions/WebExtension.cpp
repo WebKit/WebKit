@@ -160,9 +160,30 @@ static constexpr auto sidePanelPathManifestKey = "default_path"_s;
 
 static const size_t maximumNumberOfShortcutCommands = 4;
 
+WebExtension::DataResources WebExtension::toDataResources(const WebExtension::Resources& resources)
+{
+    DataResources result;
+    for (auto& [key, value] : resources) {
+        if (auto* data = std::get_if<Ref<API::Data>>(&value))
+            result.set(key, *data);
+    }
+    return result;
+}
+
+WebExtension::StringResources WebExtension::toStringResources(const WebExtension::Resources& resources)
+{
+    StringResources result;
+    for (auto& [key, value] : resources) {
+        if (auto* string = std::get_if<String>(&value))
+            result.set(key, *string);
+    }
+    return result;
+}
+
 WebExtension::WebExtension(Resources&& resources)
     : m_manifestJSON(JSON::Value::null())
-    , m_resources(WTF::move(resources))
+    , m_dataResources(toDataResources(resources))
+    , m_stringResources(toStringResources(resources))
 {
 }
 
@@ -548,14 +569,13 @@ Expected<String, RefPtr<API::Error>> WebExtension::resourceStringForPath(const S
     if (path == generatedBackgroundPageFilename || path == generatedBackgroundServiceWorkerFilename)
         return generatedBackgroundContent();
 
-    if (auto entry = m_resources.find(path); entry != m_resources.end()) {
-        return WTF::switchOn(entry->value,
-            [](const Ref<API::Data>& data) {
-                return String::fromUTF8(data->span());
-            },
-            [](const String& string) {
-                return string;
-            });
+    if (auto maybeString = m_stringResources.getOptional(path))
+        return *maybeString;
+
+    if (auto maybeData = m_dataResources.getOptional(path)) {
+        auto string = String::fromUTF8(maybeData->get().span());
+        m_stringResources.set(path, string);
+        return string;
     }
 
     auto dataResult = resourceDataForPath(path, cacheResult, suppressErrors);
@@ -572,7 +592,7 @@ Expected<String, RefPtr<API::Error>> WebExtension::resourceStringForPath(const S
 
     auto result = decoder->decode(data->span());
     if (cacheResult == CacheResult::Yes)
-        m_resources.set(path, result);
+        m_stringResources.set(path, result);
 
     return result;
 }
@@ -793,19 +813,24 @@ const Vector<String>& WebExtension::supportedLocales()
 
     // For tests that don't have a file system location, check the resource cache.
     auto prefixLength = localesString.length();
-    for (const auto& resourceEntry : m_resources) {
-        auto path = resourceEntry.key;
+    auto pathFunctor = [&](const String& path) {
         if (!path.startsWith(localesString))
-            continue;
+            return;
 
         auto localeEnd = path.find('/', prefixLength);
         if (localeEnd == notFound)
-            continue;
+            return;
 
         auto locale = path.substring(prefixLength, localeEnd - prefixLength);
         if (!m_supportedLocales.contains(locale))
             m_supportedLocales.append(locale);
-    }
+    };
+
+    for (auto& path : m_dataResources.keys())
+        pathFunctor(path);
+
+    for (auto& path : m_stringResources.keys())
+        pathFunctor(path);
 
     return m_supportedLocales;
 }

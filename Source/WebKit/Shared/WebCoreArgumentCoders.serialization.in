@@ -2591,7 +2591,7 @@ headers: <wtf/unix/UnixFileDescriptor.h> "ArgumentCodersUnix.h"
 header: <wtf/MachSendRight.h>
 #endif
 
-[CustomHeader, RValue] class WebCore::SharedMemoryHandle {
+[CustomHeader, RValue, WebKitPlatform] class WebCore::SharedMemoryHandle {
 #if USE(UNIX_DOMAIN_SOCKETS)
     [Validator='!!m_handle && *m_handle'] UnixFileDescriptor m_handle;
 #endif

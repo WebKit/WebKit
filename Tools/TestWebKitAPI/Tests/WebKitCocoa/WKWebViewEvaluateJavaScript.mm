@@ -50,6 +50,25 @@
 #import <wtf/Vector.h>
 #import <wtf/text/MakeString.h>
 
+TEST(WKWebView, EvaluateEmptyJavaScript)
+{
+    __block bool isDone = false;
+    __block RetainPtr<id> result;
+    __block RetainPtr<NSError> error;
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:@"<p>Hello world!</p>"];
+    [webView evaluateJavaScript:@"" completionHandler:^(id myResult, NSError *myError) {
+        isDone = true;
+        result = myResult;
+        error = myError;
+    }];
+    TestWebKitAPI::Util::run(&isDone);
+
+    EXPECT_NULL(result);
+    EXPECT_NULL(error);
+}
+
 TEST(WKWebView, EvaluateJavaScriptBlockCrash)
 {
     @autoreleasepool {

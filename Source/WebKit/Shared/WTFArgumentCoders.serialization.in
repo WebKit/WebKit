@@ -259,10 +259,6 @@ header: <wtf/MemoryPressureHandler.h>
     Critical,
 }
 
-header: <wtf/Variant.h>
-[AdditionalEncoder=StreamConnectionEncoder, Nested] struct std::monostate {
-}
-
 enum class WTFLogLevel : uint8_t {
     Always,
     Error,

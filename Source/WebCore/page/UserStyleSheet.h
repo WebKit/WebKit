@@ -44,6 +44,7 @@ public:
     }
 
     WEBCORE_EXPORT UserStyleSheet(const String&, const URL&, Vector<String>&& = { }, Vector<String>&& = { }, UserContentInjectedFrames = UserContentInjectedFrames::InjectInAllFrames, UserContentMatchParentFrame = UserContentMatchParentFrame::Never, UserStyleLevel = UserStyleLevel::User, std::optional<PageIdentifier> = std::nullopt);
+    WEBCORE_EXPORT ~UserStyleSheet();
 
     const String& source() const { return m_source; }
     const URL& url() const { return m_url; }

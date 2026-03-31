@@ -64,6 +64,8 @@ public:
     TransferString(SharedSpan16&&);
 
     TransferString(IPCData&&);
+    TransferString(const TransferString&);
+    TransferString& operator=(const TransferString&);
     TransferString(TransferString&&) = default;
     TransferString& operator=(TransferString&&) = default;
 
@@ -79,6 +81,9 @@ public:
     std::optional<String> releaseToCopy() && { return WTF::move(*this).release(std::numeric_limits<size_t>::max()); };
 
     IPCData toIPCData() const LIFETIME_BOUND;
+
+    // Caching only makes sense if we can re-send a previously created shared memory handle.
+    bool shouldCache() const;
 
 private:
     static std::optional<TransferString> createCopy(std::span<const Latin1Character>);
@@ -145,10 +150,10 @@ inline TransferString::TransferString(IPCData&& data)
             m_storage = String { };
         },
         [&](std::span<const Latin1Character> characters) {
-            m_storage = String { characters };
+            m_storage = characters.data() ? String { characters } : emptyString();
         },
         [&](std::span<const char16_t> characters) {
-            m_storage = String { characters };
+            m_storage = characters.data() ? String { characters } : emptyString();
         },
         [&](SharedSpan8 handle) {
             m_storage = WTF::move(handle);

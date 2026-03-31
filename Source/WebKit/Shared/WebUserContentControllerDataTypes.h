@@ -28,6 +28,7 @@
 #include "ContentWorldData.h"
 #include "ContentWorldShared.h"
 #include "ScriptMessageHandlerIdentifier.h"
+#include "TransferString.h"
 #include "UserScriptIdentifier.h"
 #include "UserStyleSheetIdentifier.h"
 #include <WebCore/UserScript.h>
@@ -40,16 +41,37 @@ class SharedMemoryHandle;
 
 namespace WebKit {
 
+struct WebCoreUserScriptData {
+    IPC::TransferString source;
+    URL url;
+    Vector<String> allowlist;
+    Vector<String> blocklist;
+    WebCore::UserScriptInjectionTime injectionTime;
+    WebCore::UserContentInjectedFrames injectedFrames;
+    WebCore::UserContentMatchParentFrame matchParentFrame;
+};
+
 struct WebUserScriptData {
     UserScriptIdentifier identifier;
     ContentWorldData worldData;
-    WebCore::UserScript userScript;
+    WebCoreUserScriptData userScript;
+};
+
+struct WebCoreUserStyleSheetData {
+    IPC::TransferString source;
+    URL url;
+    Vector<String> allowlist;
+    Vector<String> blocklist;
+    WebCore::UserContentInjectedFrames injectedFrames;
+    WebCore::UserContentMatchParentFrame matchParentFrame;
+    WebCore::UserStyleLevel level;
+    std::optional<WebCore::PageIdentifier> pageID;
 };
 
 struct WebUserStyleSheetData {
     UserStyleSheetIdentifier identifier;
     ContentWorldData worldData;
-    WebCore::UserStyleSheet userStyleSheet;
+    WebCoreUserStyleSheetData userStyleSheet;
 };
 
 struct WebScriptMessageHandlerData {

@@ -37,6 +37,7 @@ class UserScript {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(UserScript, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT UserScript(String&& source, URL&& = { }, Vector<String>&& allowlist = { }, Vector<String>&& blocklist = { }, UserScriptInjectionTime = UserScriptInjectionTime::DocumentStart, UserContentInjectedFrames = UserContentInjectedFrames::InjectInAllFrames, UserContentMatchParentFrame = UserContentMatchParentFrame::Never);
+    WEBCORE_EXPORT ~UserScript();
 
     const String& source() const { return m_source; }
     const URL& url() const { return m_url; }

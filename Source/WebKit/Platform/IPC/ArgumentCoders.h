@@ -30,6 +30,7 @@
 #include "Encoder.h"
 #include "GeneratedSerializers.h"
 #include <utility>
+#include <variant>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Box.h>
 #include <wtf/CheckedArithmetic.h>
@@ -40,6 +41,7 @@
 #include <wtf/SHA1.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Unexpected.h>
+#include <wtf/Variant.h>
 #include <wtf/WallTime.h>
 
 #if OS(ANDROID)
@@ -845,6 +847,12 @@ template<> struct ArgumentCoder<std::nullptr_t> {
     template<typename Encoder>
     static void encode(Encoder&, const std::nullptr_t&) { }
     static std::optional<std::nullptr_t> decode(Decoder&) { return nullptr; }
+};
+
+template<> struct ArgumentCoder<std::monostate> {
+    template<typename Encoder>
+    static void encode(Encoder&, const std::monostate&) { }
+    static std::optional<std::monostate> decode(Decoder&) { return std::monostate { }; }
 };
 
 template<typename T, typename Traits> struct ArgumentCoder<WTF::Markable<T, Traits>> {

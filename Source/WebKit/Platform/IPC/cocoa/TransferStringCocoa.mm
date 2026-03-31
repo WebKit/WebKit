@@ -68,21 +68,14 @@ std::optional<TransferString> TransferString::createCached(NSString *string)
         if (!result)
             return std::nullopt;
 
-        // Caching only makes sense if we can re-send a previously created shared memory handle.
-        bool shouldCache = WTF::switchOn(result->m_storage,
-            [](const String&) { return false; },
-            [](const RetainPtr<CFStringRef>& string) { return false; },
-            [](const SharedSpan8& handle) { return true; },
-            [](const SharedSpan16& handle) { return true; }
-        );
-        if (!shouldCache)
+        if (!result->shouldCache())
             return result;
 
         wrapper = adoptNS([[_WKTransferStringWrapper alloc] initWithString:WTF::move(*result)]);
         objc_setAssociatedObject(string, transferStringWrapperKey, wrapper.get(), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
 
-    return TransferString { [wrapper string].toIPCData() };
+    return [wrapper string];
 }
 
 }

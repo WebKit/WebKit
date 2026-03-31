@@ -30,6 +30,7 @@
 #import "HTTPServer.h"
 #import "TestNavigationDelegate.h"
 #import "WebExtensionUtilities.h"
+#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 
 namespace TestWebKitAPI {
@@ -1960,6 +1961,63 @@ TEST(WKWebExtensionAPIScripting, ContentScriptsRespectDeniedMatchPatterns)
     }];
 
     TestWebKitAPI::Util::run(&doneCheckingLoopback);
+}
+
+TEST(WKWebExtensionAPIScripting, ContentScriptsAndStyleSheetsWithManyMatchPatterns)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<div id='test'>Test</div>"_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    NSMutableArray *matchPatterns = [NSMutableArray arrayWithObject:@"*://localhost/*"];
+    for (unsigned i = 1; i <= 50; ++i)
+        [matchPatterns addObject:[NSString stringWithFormat:@"*://foo%u/*", i]];
+
+    auto *contentScriptsManifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Scripting Test",
+        @"description": @"Scripting Test",
+        @"version": @"1.0",
+
+        @"content_scripts": @[ @{
+            @"matches": matchPatterns,
+            @"css": @[ @"content.css" ],
+            @"js": @[ @"content.js" ]
+        } ]
+    };
+
+    NSString *userStyle = @"#test { color: red; font-size: 555px; }";
+    NSString *userScript = Util::constructScript(@[
+        @"const testElement = document.getElementById('test')",
+        @"const style = window.getComputedStyle(testElement)",
+        @"browser.test.assertEq(style.color, 'rgb(255, 0, 0)', 'CSS should apply')",
+        @"browser.test.assertEq(style.fontSize, '555px', 'Font size should apply')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto *oneMB = [@"" stringByPaddingToLength:(1 << 20) withString:@" " startingAtIndex:0];
+    auto *resources = @{
+        @"content.css": [userStyle stringByAppendingString:oneMB],
+        @"content.js": [userScript stringByAppendingString:oneMB]
+    };
+
+    auto manager = Util::loadExtension(contentScriptsManifest, resources);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+
+    size_t totalFootprint = 0;
+    for (_WKWebContentProcessInfo *info in [WKProcessPool _webContentProcessInfo])
+        totalFootprint += [info physicalFootprint];
+
+    constexpr size_t maxExpectedFootprint = 100 * 1024 * 1024;
+    EXPECT_LT(totalFootprint, maxExpectedFootprint);
 }
 
 } // namespace TestWebKitAPI

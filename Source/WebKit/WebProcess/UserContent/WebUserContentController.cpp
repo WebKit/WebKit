@@ -77,6 +77,20 @@ static WorldMap& worldMap()
     return map;
 }
 
+static WebCore::UserScript userScriptFromData(WebCoreUserScriptData&& data)
+{
+    auto maybeSource = WTF::move(data.source).release();
+    RELEASE_ASSERT(maybeSource);
+    return { WTF::move(*maybeSource), WTF::move(data.url), WTF::move(data.allowlist), WTF::move(data.blocklist), data.injectionTime, data.injectedFrames, data.matchParentFrame };
+}
+
+static WebCore::UserStyleSheet userStyleSheetFromData(WebCoreUserStyleSheetData&& data)
+{
+    auto maybeSource = WTF::move(data.source).release();
+    RELEASE_ASSERT(maybeSource);
+    return { WTF::move(*maybeSource), WTF::move(data.url), WTF::move(data.allowlist), WTF::move(data.blocklist), data.injectedFrames, data.matchParentFrame, data.level, data.pageID };
+}
+
 Ref<WebUserContentController> WebUserContentController::getOrCreate(UserContentControllerParameters&& parameters)
 {
     auto identifier = parameters.identifier;
@@ -190,7 +204,7 @@ void WebUserContentController::removeContentWorld(ContentWorldIdentifier worldId
 
 void WebUserContentController::addUserScripts(Vector<WebUserScriptData>&& userScripts, InjectUserScriptImmediately immediately)
 {
-    for (const auto& userScriptData : userScripts) {
+    for (auto& userScriptData : userScripts) {
         addContentWorldIfNecessary(userScriptData.worldData);
         RefPtr world = worldMap().get(userScriptData.worldData.identifier);
         if (!world) {
@@ -198,7 +212,7 @@ void WebUserContentController::addUserScripts(Vector<WebUserScriptData>&& userSc
             continue;
         }
 
-        UserScript script = userScriptData.userScript;
+        UserScript script = userScriptFromData(WTF::move(userScriptData.userScript));
         addUserScriptInternal(*world, userScriptData.identifier, WTF::move(script), immediately);
     }
 }
@@ -229,7 +243,7 @@ void WebUserContentController::removeAllUserScripts(const Vector<ContentWorldIde
 
 void WebUserContentController::addUserStyleSheets(Vector<WebUserStyleSheetData>&& userStyleSheets)
 {
-    for (const auto& userStyleSheetData : userStyleSheets) {
+    for (auto& userStyleSheetData : userStyleSheets) {
         addContentWorldIfNecessary(userStyleSheetData.worldData);
         RefPtr world = worldMap().get(userStyleSheetData.worldData.identifier);
         if (!world) {
@@ -237,7 +251,7 @@ void WebUserContentController::addUserStyleSheets(Vector<WebUserStyleSheetData>&
             continue;
         }
         
-        UserStyleSheet sheet = userStyleSheetData.userStyleSheet;
+        UserStyleSheet sheet = userStyleSheetFromData(WTF::move(userStyleSheetData.userStyleSheet));
         addUserStyleSheetInternal(*world, userStyleSheetData.identifier, WTF::move(sheet));
     }
 

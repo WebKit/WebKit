@@ -21,16 +21,37 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 header: "WebUserContentControllerDataTypes.h"
+[CustomHeader, DebugDecodingFailure] struct WebKit::WebCoreUserScriptData {
+    IPC::TransferString source;
+    URL url;
+    Vector<String> allowlist;
+    Vector<String> blocklist;
+    WebCore::UserScriptInjectionTime injectionTime;
+    WebCore::UserContentInjectedFrames injectedFrames;
+    WebCore::UserContentMatchParentFrame matchParentFrame;
+}
+
 [CustomHeader, DebugDecodingFailure] struct WebKit::WebUserScriptData {
     WebKit::UserScriptIdentifier identifier;
     WebKit::ContentWorldData worldData;
-    WebCore::UserScript userScript;
+    WebKit::WebCoreUserScriptData userScript;
+}
+
+[CustomHeader, DebugDecodingFailure] struct WebKit::WebCoreUserStyleSheetData {
+    IPC::TransferString source;
+    URL url;
+    Vector<String> allowlist;
+    Vector<String> blocklist;
+    WebCore::UserContentInjectedFrames injectedFrames;
+    WebCore::UserContentMatchParentFrame matchParentFrame;
+    WebCore::UserStyleLevel level;
+    std::optional<WebCore::PageIdentifier> pageID;
 }
 
 [CustomHeader, DebugDecodingFailure] struct WebKit::WebUserStyleSheetData {
     WebKit::UserStyleSheetIdentifier identifier;
     WebKit::ContentWorldData worldData;
-    WebCore::UserStyleSheet userStyleSheet;
+    WebKit::WebCoreUserStyleSheetData userStyleSheet;
 }
 
 [CustomHeader, DebugDecodingFailure] struct WebKit::WebScriptMessageHandlerData {
