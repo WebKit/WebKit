@@ -494,8 +494,8 @@ Inspector::Protocol::ErrorStringOr<std::tuple<RefPtr<JSON::ArrayOf<Inspector::Pr
     }
 
     // Matched rules.
-    auto& styleResolver = element->styleResolver();
-    auto matchedRules = styleResolver.pseudoStyleRulesForElement(element, elementPseudoId, Style::Resolver::AllCSSRules);
+    Ref styleResolver = element->styleResolver();
+    auto matchedRules = styleResolver->pseudoStyleRulesForElement(element, elementPseudoId, Style::Resolver::AllCSSRules);
     auto matchedCSSRules = buildArrayForMatchedRuleList(matchedRules, styleResolver, *element, elementPseudoId);
     RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::PseudoIdMatches>> pseudoElements;
     RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::InheritedStyleEntry>> inherited;
@@ -521,7 +521,8 @@ Inspector::Protocol::ErrorStringOr<std::tuple<RefPtr<JSON::ArrayOf<Inspector::Pr
                     continue;
 
                 if (auto protocolPseudoId = protocolValueForPseudoElementType(pseudoElementType)) {
-                    auto matchedRules = styleResolver.pseudoStyleRulesForElement(element, pseudoElementType, Style::Resolver::AllCSSRules);
+                    Ref styleResolver = element->styleResolver();
+                    auto matchedRules = styleResolver->pseudoStyleRulesForElement(element, pseudoElementType, Style::Resolver::AllCSSRules);
                     if (!matchedRules.isEmpty()) {
                         auto matches = Inspector::Protocol::CSS::PseudoIdMatches::create()
                             .setPseudoId(protocolPseudoId.value())
@@ -535,9 +536,10 @@ Inspector::Protocol::ErrorStringOr<std::tuple<RefPtr<JSON::ArrayOf<Inspector::Pr
 
         if (!includeInherited || *includeInherited) {
             inherited = JSON::ArrayOf<Inspector::Protocol::CSS::InheritedStyleEntry>::create();
-            for (auto& ancestor : ancestorsOfType<Element>(*element)) {
-                auto& parentStyleResolver = ancestor.styleResolver();
-                auto parentMatchedRules = parentStyleResolver.styleRulesForElement(&ancestor, Style::Resolver::AllCSSRules);
+            for (Ref ancestor : ancestorsOfType<Element>(*element)) {
+                Ref parentStyleResolver = ancestor->styleResolver();
+                auto parentMatchedRules = parentStyleResolver->styleRulesForElement(ancestor.ptr(), Style::Resolver::AllCSSRules);
+                Ref styleResolver = element->styleResolver();
                 auto entry = Inspector::Protocol::CSS::InheritedStyleEntry::create()
                     .setMatchedCSSRules(buildArrayForMatchedRuleList(parentMatchedRules, styleResolver, ancestor, { }))
                     .release();
