@@ -332,8 +332,10 @@ double computeNonCalcLengthDouble(double value, CSS::LengthUnit lengthUnit, cons
         if (auto* rootStyle = conversionData.rootStyle()) {
             if (conversionData.computingLineHeight() || conversionData.computingFontSize())
                 value *= Style::evaluate<float>(rootStyle->specifiedLineHeight(), Style::LineHeightEvaluationContext { rootStyle->computedFontSize(), rootStyle->metricsOfPrimaryFont().lineSpacing() }, rootStyle->usedZoomForLength());
-            else
-                value *= rootStyle->computedLineHeight();
+            else {
+                Style::LineHeightEvaluationContext context { rootStyle->computedFontSize(), rootStyle->metricsOfPrimaryFont().lineSpacing() };
+                value *= Style::evaluate<float>(rootStyle->lineHeight(), context, Style::ZoomFactor { conversionData.zoom() });
+            }
         }
         break;
 

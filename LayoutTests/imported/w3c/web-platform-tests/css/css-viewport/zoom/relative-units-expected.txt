@@ -2,7 +2,7 @@
 PASS relative-units
 PASS relative-units 1
 PASS relative-units 2
-FAIL relative-units 3 assert_approx_equals: rlh in outside expected 20 +/- 1 but got 40
+PASS relative-units 3
 PASS relative-units 4
 PASS relative-units 5
 
