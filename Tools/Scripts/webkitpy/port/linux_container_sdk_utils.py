@@ -167,13 +167,18 @@ def _get_at_spi_bus_socket_or_dir_and_var(xdg):
         if m:
             path = _socket_or_none(m.group(1))
             if path:
-                return path, None
+                os.environ['AT_SPI_BUS_ADDRESS'] = 'unix:path={}'.format(path)
+                return path, 'AT_SPI_BUS_ADDRESS'
     except (FileNotFoundError, subprocess.TimeoutExpired, OSError):
         pass
 
     # 3 Fallback to usual directory
     xdg_dir = os.path.join(xdg, 'at-spi')
     if os.path.isdir(xdg_dir):
+        bus_socket = os.path.join(xdg_dir, 'bus')
+        if _socket_or_none(bus_socket):
+            os.environ['AT_SPI_BUS_ADDRESS'] = 'unix:path={}'.format(bus_socket)
+            return bus_socket, 'AT_SPI_BUS_ADDRESS'
         return xdg_dir, None
 
     return None, None

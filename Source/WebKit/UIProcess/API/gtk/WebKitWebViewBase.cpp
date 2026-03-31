@@ -3481,6 +3481,17 @@ void webkitWebViewBaseSetPlugID(WebKitWebViewBase* webViewBase, const String& pl
     UNUSED_PARAM(plugID);
 #endif // GTK_ACCESSIBILITY_ATSPI
 }
+
+GtkAtSpiSocket* webkitWebViewBaseGetAccessibilitySocketForTesting(WebKitWebViewBase* webViewBase)
+{
+#ifdef GTK_ACCESSIBILITY_ATSPI
+    auto* accessible = webViewBase->priv->socketAccessible.get();
+    return accessible ? GTK_AT_SPI_SOCKET(accessible) : nullptr;
+#else
+    UNUSED_PARAM(webViewBase);
+    return nullptr;
+#endif
+}
 #endif
 
 RendererBufferDescription webkitWebViewBaseGetRendererBufferDescription(WebKitWebViewBase* webViewBase)

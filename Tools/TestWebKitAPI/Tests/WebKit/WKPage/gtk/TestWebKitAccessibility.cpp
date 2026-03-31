@@ -25,7 +25,11 @@
 // The libatspi headers don't use G_BEGIN_DECLS
 extern "C" {
 #include <atspi/atspi.h>
+// Private libatspi function to construct an AtspiAccessible from a known bus name and object path.
+AtspiAccessible* _atspi_ref_accessible(const gchar* app, const gchar* path);
 }
+
+#include <webkit/WebKitWebViewBaseInternal.h>
 
 struct AtspiEventDeleter {
     void operator()(AtspiEvent* event) const
@@ -48,23 +52,19 @@ class AccessibilityTest : public WebViewTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(AccessibilityTest);
 
-    GRefPtr<AtspiAccessible> findTestApplication()
+    void findWebProcessRootObject()
     {
-        // Only one desktop is supported by ATSPI at the moment.
-        GRefPtr<AtspiAccessible> desktop = adoptGRef(atspi_get_desktop(0));
+#if USE(GTK4) && defined(GTK_ACCESSIBILITY_ATSPI)
+        auto* socket = webkitWebViewBaseGetAccessibilitySocketForTesting(WEBKIT_WEB_VIEW_BASE(m_webView.get()));
+        g_assert_nonnull(socket);
 
-        // We can get warnings from atspi when trying to connect to applications.
-        Test::removeLogFatalFlag(G_LOG_LEVEL_WARNING);
-        int childCount = atspi_accessible_get_child_count(desktop.get(), nullptr);
-        Test::addLogFatalFlag(G_LOG_LEVEL_WARNING);
-        for (int i = childCount - 1; i >= 0; --i)  {
-            GRefPtr<AtspiAccessible> current = adoptGRef(atspi_accessible_get_child_at_index(desktop.get(), i, nullptr));
-            GUniquePtr<char> name(atspi_accessible_get_name(current.get(), nullptr));
-            if (!g_strcmp0(name.get(), "TestWebKitAccessibility"))
-                return current;
-        }
+        const char* busName = gtk_at_spi_socket_get_bus_name(socket);
+        const char* objectPath = gtk_at_spi_socket_get_object_path(socket);
 
-        return nullptr;
+        rootObject = adoptGRef(_atspi_ref_accessible(busName, objectPath));
+#endif
+        g_assert_true(ATSPI_IS_ACCESSIBLE(rootObject.get()));
+        g_assert_cmpint(atspi_accessible_get_role(rootObject.get(), nullptr), ==, ATSPI_ROLE_FILLER);
     }
 
     GRefPtr<AtspiAccessible> findDocumentWeb(AtspiAccessible* accessible)
@@ -81,37 +81,24 @@ public:
         return nullptr;
     }
 
-    GRefPtr<AtspiAccessible> findRootObject(AtspiAccessible* application)
-    {
-        // Find the document web, its parent is the scroll view (WebCore root object) and its parent is
-        // the GtkPlug (WebProcess root element).
-        auto documentWeb = findDocumentWeb(application);
-        if (!documentWeb)
-            return nullptr;
-
-        auto parent = adoptGRef(atspi_accessible_get_parent(documentWeb.get(), nullptr));
-        return parent ? adoptGRef(atspi_accessible_get_parent(parent.get(), nullptr)) : nullptr;
-    }
-
     void waitUntilChildrenRemoved(AtspiAccessible* accessible)
     {
         m_eventSource = accessible;
         GRefPtr<AtspiEventListener> listener = adoptGRef(atspi_event_listener_new(
             [](AtspiEvent* event, gpointer userData) {
                 auto* test = static_cast<AccessibilityTest*>(userData);
-                if (event->source == test->m_eventSource)
+                if (atspi_accessible_get_process_id(event->source, nullptr) == atspi_accessible_get_process_id(test->m_eventSource, nullptr))
                     g_main_loop_quit(test->m_mainLoop);
         }, this, nullptr));
         atspi_event_listener_register(listener.get(), "object:children-changed:remove", nullptr);
         g_main_loop_run(m_mainLoop);
+        atspi_event_listener_deregister(listener.get(), "object:children-changed:remove", nullptr);
         m_eventSource = nullptr;
     }
 
-    static bool accessibleApplicationIsTestProgram(AtspiAccessible* accessible)
+    bool accessibleIsFromWebProcess(AtspiAccessible* accessible)
     {
-        GRefPtr<AtspiAccessible> application = adoptGRef(atspi_accessible_get_application(accessible, nullptr));
-        GUniquePtr<char> applicationName(atspi_accessible_get_name(application.get(), nullptr));
-        return !g_strcmp0(applicationName.get(), "TestWebKitAccessibility");
+        return atspi_accessible_get_process_id(accessible, nullptr) == atspi_accessible_get_process_id(rootObject.get(), nullptr);
     }
 
     bool shouldProcessEvent(AtspiEvent* event)
@@ -122,7 +109,7 @@ public:
 
         // source = nullptr -> filter by application.
         if (!m_eventMonitor.source.value())
-            return accessibleApplicationIsTestProgram(event->source);
+            return accessibleIsFromWebProcess(event->source);
 
         // source != nullptr -> filter by accessible.
         return m_eventMonitor.source.value() == event->source;
@@ -180,9 +167,9 @@ public:
         return atspi_state_set_contains(set.get(), ATSPI_STATE_SELECTED);
     }
 
+    GRefPtr<AtspiAccessible> rootObject;
 private:
     AtspiAccessible* m_eventSource { nullptr };
-
     struct {
         GRefPtr<AtspiEventListener> listener;
         Vector<CString> eventTypes;
@@ -205,17 +192,9 @@ static void testAccessibleBasicHierarchy(AccessibilityTest* test, gconstpointer)
         nullptr);
     test->waitUntilLoadFinished();
 
-    auto testApp = test->findTestApplication();
-    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
-    GUniquePtr<char> name(atspi_accessible_get_name(testApp.get(), nullptr));
-    g_assert_cmpstr(name.get(), ==, "TestWebKitAccessibility");
-    g_assert_cmpint(atspi_accessible_get_role(testApp.get(), nullptr), ==, ATSPI_ROLE_APPLICATION);
+    test->findWebProcessRootObject();
 
-    auto rootObject = test->findRootObject(testApp.get());
-    g_assert_true(ATSPI_IS_ACCESSIBLE(rootObject.get()));
-    g_assert_cmpint(atspi_accessible_get_role(rootObject.get(), nullptr), ==, ATSPI_ROLE_FILLER);
-
-    auto scrollView = adoptGRef(atspi_accessible_get_child_at_index(rootObject.get(), 0, nullptr));
+    auto scrollView = adoptGRef(atspi_accessible_get_child_at_index(test->rootObject.get(), 0, nullptr));
     g_assert_true(ATSPI_IS_ACCESSIBLE(scrollView.get()));
     g_assert_cmpint(atspi_accessible_get_role(scrollView.get(), nullptr), ==, ATSPI_ROLE_SCROLL_PANE);
 
@@ -225,7 +204,7 @@ static void testAccessibleBasicHierarchy(AccessibilityTest* test, gconstpointer)
 
     auto h1 = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
     g_assert_true(ATSPI_IS_ACCESSIBLE(h1.get()));
-    name.reset(atspi_accessible_get_name(h1.get(), nullptr));
+    GUniquePtr<char> name(atspi_accessible_get_name(h1.get(), nullptr));
     g_assert_cmpstr(name.get(), ==, "This is a test");
     g_assert_cmpint(atspi_accessible_get_role(h1.get(), nullptr), ==, ATSPI_ROLE_HEADING);
     name.reset(atspi_accessible_get_localized_role_name(h1.get(), nullptr));
@@ -261,9 +240,9 @@ static void testAccessibleBasicHierarchy(AccessibilityTest* test, gconstpointer)
         nullptr);
     // Check that children-changed::remove is emitted on the root object on navigation,
     // and the a11y hierarchy is updated.
-    test->waitUntilChildrenRemoved(rootObject.get());
+    test->waitUntilChildrenRemoved(test->rootObject.get());
 
-    documentWeb = test->findDocumentWeb(testApp.get());
+    documentWeb = test->findDocumentWeb(test->rootObject.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_role(documentWeb.get(), nullptr), ==, ATSPI_ROLE_DOCUMENT_WEB);
 
@@ -296,10 +275,9 @@ static void testAccessibleIgnoredObjects(AccessibilityTest* test, gconstpointer)
         nullptr);
     test->waitUntilLoadFinished();
 
-    auto testApp = test->findTestApplication();
-    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
+    test->findWebProcessRootObject();
 
-    auto documentWeb = test->findDocumentWeb(testApp.get());
+    auto documentWeb = test->findDocumentWeb(test->rootObject.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
 
@@ -324,11 +302,9 @@ static void testAccessibleChildrenChanged(AccessibilityTest* test, gconstpointer
         "</html>",
         nullptr);
     test->waitUntilLoadFinished();
+    test->findWebProcessRootObject();
 
-    auto testApp = test->findTestApplication();
-    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
-
-    auto documentWeb = test->findDocumentWeb(testApp.get());
+    auto documentWeb = test->findDocumentWeb(test->rootObject.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     // The divs are not exposed to ATs.
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 2);
@@ -432,10 +408,9 @@ static void testAccessibleAttributes(AccessibilityTest* test, gconstpointer)
 
     static const char* toolkitName = "WebKitGTK";
 
-    auto testApp = test->findTestApplication();
-    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
+    test->findWebProcessRootObject();
 
-    auto documentWeb = test->findDocumentWeb(testApp.get());
+    auto documentWeb = test->findDocumentWeb(test->rootObject.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 2);
     auto attributes = adoptGRef(atspi_accessible_get_attributes(documentWeb.get(), nullptr));
@@ -489,10 +464,9 @@ static void testAccessibleState(AccessibilityTest* test, gconstpointer)
         nullptr);
     test->waitUntilLoadFinished();
 
-    auto testApp = test->findTestApplication();
-    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
+    test->findWebProcessRootObject();
 
-    auto documentWeb = test->findDocumentWeb(testApp.get());
+    auto documentWeb = test->findDocumentWeb(test->rootObject.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 3);
 
@@ -653,10 +627,8 @@ static void testAccessibleStateChangedFocus(AccessibilityTest* test, gconstpoint
         nullptr);
     test->waitUntilLoadFinished();
 
-    auto testApp = test->findTestApplication();
-    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
-
-    auto documentWeb = test->findDocumentWeb(testApp.get());
+    test->findWebProcessRootObject();
+    auto documentWeb = test->findDocumentWeb(test->rootObject.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
 
     test->startEventMonitor(nullptr, { "object:state-changed" });
@@ -691,10 +663,8 @@ static void testAccessibleStateChanged(AccessibilityTest* test, gconstpointer)
         nullptr);
     test->waitUntilLoadFinished();
 
-    auto testApp = test->findTestApplication();
-    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
-
-    auto documentWeb = test->findDocumentWeb(testApp.get());
+    test->findWebProcessRootObject();
+    auto documentWeb = test->findDocumentWeb(test->rootObject.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
 
@@ -804,7 +774,6 @@ static void testAccessibleStateChanged(AccessibilityTest* test, gconstpointer)
 
 static void testAccessibleEventListener(AccessibilityTest* test, gconstpointer)
 {
-    test->startEventMonitor(nullptr, { "object:state-changed:focused" });
     test->showInWindow();
     test->loadHtml(
         "<html>"
@@ -815,6 +784,9 @@ static void testAccessibleEventListener(AccessibilityTest* test, gconstpointer)
         nullptr);
     test->waitUntilLoadFinished();
 
+    test->findWebProcessRootObject();
+
+    test->startEventMonitor(nullptr, { "object:state-changed:focused" });
     test->runJavaScriptAndWaitUntilFinished("document.getElementById('entry').focus();", nullptr);
 
     auto events = test->stopEventMonitor(1);
@@ -824,11 +796,11 @@ static void testAccessibleEventListener(AccessibilityTest* test, gconstpointer)
     g_assert_true(ATSPI_IS_ACCESSIBLE(entry));
     g_assert_cmpint(atspi_accessible_get_role(entry, nullptr), ==, ATSPI_ROLE_ENTRY);
 
-    auto panel = adoptGRef(atspi_accessible_get_parent(entry, nullptr));
-    g_assert_true(ATSPI_IS_ACCESSIBLE(panel.get()));
-    g_assert_cmpint(atspi_accessible_get_role(panel.get(), nullptr), ==, ATSPI_ROLE_PANEL);
+    auto section = adoptGRef(atspi_accessible_get_parent(entry, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(section.get()));
+    g_assert_cmpint(atspi_accessible_get_role(section.get(), nullptr), ==, ATSPI_ROLE_SECTION);
 
-    auto documentWeb = adoptGRef(atspi_accessible_get_parent(panel.get(), nullptr));
+    auto documentWeb = adoptGRef(atspi_accessible_get_parent(section.get(), nullptr));
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_role(documentWeb.get(), nullptr), ==, ATSPI_ROLE_DOCUMENT_WEB);
 
@@ -837,8 +809,8 @@ static void testAccessibleEventListener(AccessibilityTest* test, gconstpointer)
     g_assert_cmpint(atspi_accessible_get_role(scrollView.get(), nullptr), ==, ATSPI_ROLE_SCROLL_PANE);
 
     auto rootObject = adoptGRef(atspi_accessible_get_parent(scrollView.get(), nullptr));
-    g_assert_true(ATSPI_IS_ACCESSIBLE(rootObject.get()));
-    g_assert_cmpint(atspi_accessible_get_role(rootObject.get(), nullptr), ==, ATSPI_ROLE_FILLER);
+    g_assert_true(ATSPI_IS_ACCESSIBLE(test->rootObject.get()));
+    g_assert_cmpint(atspi_accessible_get_role(test->rootObject.get(), nullptr), ==, ATSPI_ROLE_FILLER);
 }
 
 static void testAccessibleListMarkers(AccessibilityTest* test, gconstpointer)
@@ -864,10 +836,8 @@ static void testAccessibleListMarkers(AccessibilityTest* test, gconstpointer)
         baseDir.get());
     test->waitUntilLoadFinished();
 
-    auto testApp = test->findTestApplication();
-    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
-
-    auto documentWeb = test->findDocumentWeb(testApp.get());
+    test->findWebProcessRootObject();
+    auto documentWeb = test->findDocumentWeb(test->rootObject.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 2);
 
@@ -923,10 +893,8 @@ static void testComponentHitTest(AccessibilityTest* test, gconstpointer)
         baseDir.get());
     test->waitUntilLoadFinished();
 
-    auto testApp = test->findTestApplication();
-    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
-
-    auto documentWeb = test->findDocumentWeb(testApp.get());
+    test->findWebProcessRootObject();
+    auto documentWeb = test->findDocumentWeb(test->rootObject.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
 
@@ -970,10 +938,8 @@ static void testComponentScrollTo(AccessibilityTest* test, gconstpointer)
         baseDir.get());
     test->waitUntilLoadFinished();
 
-    auto testApp = test->findTestApplication();
-    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
-
-    auto documentWeb = test->findDocumentWeb(testApp.get());
+    test->findWebProcessRootObject();
+    auto documentWeb = test->findDocumentWeb(test->rootObject.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 3);
 
@@ -1014,10 +980,8 @@ static void testTextBasic(AccessibilityTest* test, gconstpointer)
         nullptr);
     test->waitUntilLoadFinished();
 
-    auto testApp = test->findTestApplication();
-    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
-
-    auto documentWeb = test->findDocumentWeb(testApp.get());
+    test->findWebProcessRootObject();
+    auto documentWeb = test->findDocumentWeb(test->rootObject.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
 
@@ -1050,10 +1014,8 @@ static void testTextSurrogatePair(AccessibilityTest* test, gconstpointer)
         nullptr);
     test->waitUntilLoadFinished();
 
-    auto testApp = test->findTestApplication();
-    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
-
-    auto documentWeb = test->findDocumentWeb(testApp.get());
+    test->findWebProcessRootObject();
+    auto documentWeb = test->findDocumentWeb(test->rootObject.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 2);
 
@@ -1091,10 +1053,8 @@ static void testTextIterator(AccessibilityTest* test, gconstpointer)
         nullptr);
     test->waitUntilLoadFinished();
 
-    auto testApp = test->findTestApplication();
-    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
-
-    auto documentWeb = test->findDocumentWeb(testApp.get());
+    test->findWebProcessRootObject();
+    auto documentWeb = test->findDocumentWeb(test->rootObject.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
 
@@ -1217,7 +1177,7 @@ static void testTextIterator(AccessibilityTest* test, gconstpointer)
         nullptr);
     test->waitUntilLoadFinished();
 
-    documentWeb = test->findDocumentWeb(testApp.get());
+    documentWeb = test->findDocumentWeb(test->rootObject.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
 
@@ -1259,7 +1219,7 @@ static void testTextIterator(AccessibilityTest* test, gconstpointer)
         nullptr);
     test->waitUntilLoadFinished();
 
-    documentWeb = test->findDocumentWeb(testApp.get());
+    documentWeb = test->findDocumentWeb(test->rootObject.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
 
@@ -1300,10 +1260,8 @@ static void testTextExtents(AccessibilityTest* test, gconstpointer)
         nullptr);
     test->waitUntilLoadFinished();
 
-    auto testApp = test->findTestApplication();
-    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
-
-    auto documentWeb = test->findDocumentWeb(testApp.get());
+    test->findWebProcessRootObject();
+    auto documentWeb = test->findDocumentWeb(test->rootObject.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
 
@@ -1352,10 +1310,9 @@ static void testTextSelections(AccessibilityTest* test, gconstpointer)
         nullptr);
     test->waitUntilLoadFinished();
 
-    auto testApp = test->findTestApplication();
-    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
+    test->findWebProcessRootObject();
+    auto documentWeb = test->findDocumentWeb(test->rootObject.get());
 
-    auto documentWeb = test->findDocumentWeb(testApp.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 2);
 
@@ -1443,10 +1400,8 @@ static void testTextAttributes(AccessibilityTest* test, gconstpointer)
         nullptr);
     test->waitUntilLoadFinished();
 
-    auto testApp = test->findTestApplication();
-    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
-
-    auto documentWeb = test->findDocumentWeb(testApp.get());
+    test->findWebProcessRootObject();
+    auto documentWeb = test->findDocumentWeb(test->rootObject.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
 
@@ -1514,7 +1469,7 @@ static void testTextAttributes(AccessibilityTest* test, gconstpointer)
         nullptr);
     test->waitUntilLoadFinished();
 
-    documentWeb = test->findDocumentWeb(testApp.get());
+    documentWeb = test->findDocumentWeb(test->rootObject.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
 
@@ -1558,10 +1513,8 @@ static void testTextStateChanged(AccessibilityTest* test, gconstpointer)
         nullptr);
     test->waitUntilLoadFinished();
 
-    auto testApp = test->findTestApplication();
-    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
-
-    auto documentWeb = test->findDocumentWeb(testApp.get());
+    test->findWebProcessRootObject();
+    auto documentWeb = test->findDocumentWeb(test->rootObject.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 4);
 
@@ -1796,10 +1749,8 @@ static void testTextReplacedObjects(AccessibilityTest* test, gconstpointer)
         nullptr);
     test->waitUntilLoadFinished();
 
-    auto testApp = test->findTestApplication();
-    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
-
-    auto documentWeb = test->findDocumentWeb(testApp.get());
+    test->findWebProcessRootObject();
+    auto documentWeb = test->findDocumentWeb(test->rootObject.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 2);
 
@@ -1906,10 +1857,8 @@ static void testTextListMarkers(AccessibilityTest* test, gconstpointer)
         nullptr);
     test->waitUntilLoadFinished();
 
-    auto testApp = test->findTestApplication();
-    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
-
-    auto documentWeb = test->findDocumentWeb(testApp.get());
+    test->findWebProcessRootObject();
+    auto documentWeb = test->findDocumentWeb(test->rootObject.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 2);
 
@@ -2011,18 +1960,16 @@ static void testValueBasic(AccessibilityTest* test, gconstpointer)
         nullptr);
     test->waitUntilLoadFinished();
 
-    auto testApp = test->findTestApplication();
-    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
-
-    auto documentWeb = test->findDocumentWeb(testApp.get());
+    test->findWebProcessRootObject();
+    auto documentWeb = test->findDocumentWeb(test->rootObject.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
 
-    auto panel = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
-    g_assert_true(ATSPI_IS_ACCESSIBLE(panel.get()));
-    g_assert_cmpint(atspi_accessible_get_role(panel.get(), nullptr), ==, ATSPI_ROLE_PANEL);
+    auto section = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(section.get()));
+    g_assert_cmpint(atspi_accessible_get_role(section.get(), nullptr), ==, ATSPI_ROLE_SECTION);
 
-    auto slider = adoptGRef(atspi_accessible_get_child_at_index(panel.get(), 0, nullptr));
+    auto slider = adoptGRef(atspi_accessible_get_child_at_index(section.get(), 0, nullptr));
     g_assert_true(ATSPI_IS_VALUE(slider.get()));
     g_assert_cmpfloat(atspi_value_get_current_value(ATSPI_VALUE(slider.get()), nullptr), ==, 50);
     g_assert_cmpfloat(atspi_value_get_minimum_value(ATSPI_VALUE(slider.get()), nullptr), ==, 0);
@@ -2066,10 +2013,8 @@ static void testHyperlinkBasic(AccessibilityTest* test, gconstpointer)
         nullptr);
     test->waitUntilLoadFinished();
 
-    auto testApp = test->findTestApplication();
-    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
-
-    auto documentWeb = test->findDocumentWeb(testApp.get());
+    test->findWebProcessRootObject();
+    auto documentWeb = test->findDocumentWeb(test->rootObject.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 5);
 
@@ -2188,10 +2133,8 @@ static void testHypertextBasic(AccessibilityTest* test, gconstpointer)
         nullptr);
     test->waitUntilLoadFinished();
 
-    auto testApp = test->findTestApplication();
-    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
-
-    auto documentWeb = test->findDocumentWeb(testApp.get());
+    test->findWebProcessRootObject();
+    auto documentWeb = test->findDocumentWeb(test->rootObject.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 2);
 
@@ -2272,10 +2215,8 @@ static void testActionBasic(AccessibilityTest* test, gconstpointer)
         nullptr);
     test->waitUntilLoadFinished();
 
-    auto testApp = test->findTestApplication();
-    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
-
-    auto documentWeb = test->findDocumentWeb(testApp.get());
+    test->findWebProcessRootObject();
+    auto documentWeb = test->findDocumentWeb(test->rootObject.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
 
@@ -2330,10 +2271,8 @@ static void testDocumentBasic(AccessibilityTest* test, gconstpointer)
         "http://example.org");
     test->waitUntilLoadFinished();
 
-    auto testApp = test->findTestApplication();
-    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
-
-    auto documentWeb = test->findDocumentWeb(testApp.get());
+    test->findWebProcessRootObject();
+    auto documentWeb = test->findDocumentWeb(test->rootObject.get());
     g_assert_true(ATSPI_IS_DOCUMENT(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 2);
 
@@ -2427,10 +2366,8 @@ static void testImageBasic(AccessibilityTest* test, gconstpointer)
         baseDir.get());
     test->waitUntilLoadFinished();
 
-    auto testApp = test->findTestApplication();
-    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
-
-    auto documentWeb = test->findDocumentWeb(testApp.get());
+    test->findWebProcessRootObject();
+    auto documentWeb = test->findDocumentWeb(test->rootObject.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
 
@@ -2478,21 +2415,19 @@ static void testSelectionListBox(AccessibilityTest* test, gconstpointer)
         nullptr);
     test->waitUntilLoadFinished();
 
-    auto testApp = test->findTestApplication();
-    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
-
-    auto documentWeb = test->findDocumentWeb(testApp.get());
+    test->findWebProcessRootObject();
+    auto documentWeb = test->findDocumentWeb(test->rootObject.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
 
-    auto panel = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
-    g_assert_true(ATSPI_IS_ACCESSIBLE(panel.get()));
-    g_assert_cmpint(atspi_accessible_get_role(panel.get(), nullptr), ==, ATSPI_ROLE_PANEL);
-    g_assert_cmpint(atspi_accessible_get_child_count(panel.get(), nullptr), ==, 2);
+    auto section = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(section.get()));
+    g_assert_cmpint(atspi_accessible_get_role(section.get(), nullptr), ==, ATSPI_ROLE_SECTION);
+    g_assert_cmpint(atspi_accessible_get_child_count(section.get(), nullptr), ==, 2);
 
     test->runJavaScriptAndWaitUntilFinished("document.getElementById('single').focus();", nullptr);
 
-    auto listBox = adoptGRef(atspi_accessible_get_child_at_index(panel.get(), 0, nullptr));
+    auto listBox = adoptGRef(atspi_accessible_get_child_at_index(section.get(), 0, nullptr));
     g_assert_true(ATSPI_IS_SELECTION(listBox.get()));
     g_assert_cmpint(atspi_accessible_get_role(listBox.get(), nullptr), ==, ATSPI_ROLE_LIST_BOX);
     g_assert_cmpint(atspi_accessible_get_child_count(listBox.get(), nullptr), ==, 3);
@@ -2552,7 +2487,7 @@ static void testSelectionListBox(AccessibilityTest* test, gconstpointer)
 
     test->runJavaScriptAndWaitUntilFinished("document.getElementById('multiple').focus();", nullptr);
 
-    listBox = adoptGRef(atspi_accessible_get_child_at_index(panel.get(), 1, nullptr));
+    listBox = adoptGRef(atspi_accessible_get_child_at_index(section.get(), 1, nullptr));
     g_assert_true(ATSPI_IS_SELECTION(listBox.get()));
     g_assert_cmpint(atspi_accessible_get_role(listBox.get(), nullptr), ==, ATSPI_ROLE_LIST_BOX);
     g_assert_cmpint(atspi_accessible_get_child_count(listBox.get(), nullptr), ==, 3);
@@ -2615,21 +2550,19 @@ static void testSelectionMenuList(AccessibilityTest* test, gconstpointer)
         nullptr);
     test->waitUntilLoadFinished();
 
-    auto testApp = test->findTestApplication();
-    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
-
-    auto documentWeb = test->findDocumentWeb(testApp.get());
+    test->findWebProcessRootObject();
+    auto documentWeb = test->findDocumentWeb(test->rootObject.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
 
-    auto panel = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
-    g_assert_true(ATSPI_IS_ACCESSIBLE(panel.get()));
-    g_assert_cmpint(atspi_accessible_get_role(panel.get(), nullptr), ==, ATSPI_ROLE_PANEL);
-    g_assert_cmpint(atspi_accessible_get_child_count(panel.get(), nullptr), ==, 1);
+    auto section = adoptGRef(atspi_accessible_get_child_at_index(documentWeb.get(), 0, nullptr));
+    g_assert_true(ATSPI_IS_ACCESSIBLE(section.get()));
+    g_assert_cmpint(atspi_accessible_get_role(section.get(), nullptr), ==, ATSPI_ROLE_SECTION);
+    g_assert_cmpint(atspi_accessible_get_child_count(section.get(), nullptr), ==, 1);
 
     test->runJavaScriptAndWaitUntilFinished("document.getElementById('combo').focus();", nullptr);
 
-    auto combo = adoptGRef(atspi_accessible_get_child_at_index(panel.get(), 0, nullptr));
+    auto combo = adoptGRef(atspi_accessible_get_child_at_index(section.get(), 0, nullptr));
     g_assert_true(ATSPI_IS_ACCESSIBLE(combo.get()));
     g_assert_cmpint(atspi_accessible_get_role(combo.get(), nullptr), ==, ATSPI_ROLE_COMBO_BOX);
     g_assert_cmpint(atspi_accessible_get_child_count(combo.get(), nullptr), ==, 1);
@@ -2689,10 +2622,8 @@ static void testTableBasic(AccessibilityTest* test, gconstpointer)
         nullptr);
     test->waitUntilLoadFinished();
 
-    auto testApp = test->findTestApplication();
-    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
-
-    auto documentWeb = test->findDocumentWeb(testApp.get());
+    test->findWebProcessRootObject();
+    auto documentWeb = test->findDocumentWeb(test->rootObject.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 1);
 
@@ -3098,10 +3029,8 @@ static void testCollectionGetMatches(AccessibilityTest* test, gconstpointer)
         nullptr);
     test->waitUntilLoadFinished();
 
-    auto testApp = test->findTestApplication();
-    g_assert_true(ATSPI_IS_ACCESSIBLE(testApp.get()));
-
-    auto documentWeb = test->findDocumentWeb(testApp.get());
+    test->findWebProcessRootObject();
+    auto documentWeb = test->findDocumentWeb(test->rootObject.get());
     g_assert_true(ATSPI_IS_ACCESSIBLE(documentWeb.get()));
     g_assert_true(ATSPI_IS_COLLECTION(documentWeb.get()));
     g_assert_cmpint(atspi_accessible_get_child_count(documentWeb.get(), nullptr), ==, 2);
@@ -3423,6 +3352,8 @@ static void testCollectionGetMatches(AccessibilityTest* test, gconstpointer)
 
 void beforeAll()
 {
+    // ATSPI can generate FATAL WARNINGS from other applications
+    Test::removeLogFatalFlag(G_LOG_LEVEL_WARNING);
     AccessibilityTest::add("WebKitAccessibility", "accessible/basic-hierarchy", testAccessibleBasicHierarchy);
     AccessibilityTest::add("WebKitAccessibility", "accessible/ignored-objects", testAccessibleIgnoredObjects);
     AccessibilityTest::add("WebKitAccessibility", "accessible/children-changed", testAccessibleChildrenChanged);
