@@ -41,6 +41,8 @@
 #include <wtf/glib/GRefPtr.h>
 typedef struct _SoupServer SoupServer;
 typedef struct _SoupWebsocketConnection SoupWebsocketConnection;
+#elif PLATFORM(COCOA)
+#include <wtf/darwin/DispatchOSObject.h>
 #endif
 
 namespace WebDriver {
@@ -83,9 +85,13 @@ private:
 
 class WebSocketMessageHandler {
 public:
+    virtual ~WebSocketMessageHandler() = default;
 
 #if USE(SOUP)
     using Connection = GRefPtr<SoupWebsocketConnection>;
+#elif PLATFORM(COCOA)
+    // On Cocoa, connections are tracked by integer file descriptor.
+    using Connection = int;
 #endif
 
     struct Message {
@@ -152,6 +158,12 @@ private:
 #if USE(SOUP)
     GRefPtr<SoupServer> m_soupServer;
     std::vector<GRefPtr<SoupWebsocketConnection>> m_staticConnections;
+#elif PLATFORM(COCOA)
+    int m_listenSocket { -1 };
+    OSObjectPtr<dispatch_source_t> m_listenSource;
+    HashMap<int, OSObjectPtr<dispatch_source_t>> m_clientSources; // fd -> dispatch read source
+    HashMap<int, Vector<uint8_t>> m_clientBuffers; // fd -> partial read buffer
+    std::vector<int> m_staticConnections;
 #endif
 };
 

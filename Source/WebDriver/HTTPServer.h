@@ -39,6 +39,8 @@ typedef struct _SoupServer SoupServer;
 using Inspector::ConnectionID;
 using Inspector::PlatformSocketType;
 using Inspector::RemoteInspectorSocketEndpoint;
+#elif PLATFORM(COCOA)
+#include <wtf/darwin/DispatchOSObject.h>
 #endif
 
 namespace WebDriver {
@@ -49,6 +51,8 @@ class HTTPRequestHandler
 #endif
 {
 public:
+    virtual ~HTTPRequestHandler() = default;
+
     struct Request {
         String method;
         String path;
@@ -109,6 +113,11 @@ private:
 
 #if USE(INSPECTOR_SOCKET_SERVER)
     std::optional<ConnectionID> m_server;
+#endif
+
+#if PLATFORM(COCOA)
+    int m_listenSocket { -1 };
+    OSObjectPtr<dispatch_source_t> m_listenSource;
 #endif
 };
 

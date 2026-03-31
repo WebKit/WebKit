@@ -43,6 +43,11 @@ typedef struct _GSubprocess GSubprocess;
 #if PLATFORM(WIN)
 #include <wtf/win/Win32Handle.h>
 #endif
+#elif PLATFORM(COCOA)
+#include <wtf/OSObjectPtr.h>
+#include <wtf/RetainPtr.h>
+
+OBJC_CLASS NSTask;
 #endif
 
 namespace WebDriver {
@@ -142,6 +147,15 @@ private:
 
     std::optional<Vector<Target>> parseTargetList(const struct Event&);
     void setTargetList(uint64_t connectionID, Vector<Target>&&);
+#elif PLATFORM(COCOA)
+    void launchBrowser(Function<void(std::optional<String> error)>&&);
+    void connectViaSocket(Function<void(std::optional<String> error)>&&);
+    void connectViaSocketWithRetry(int attempt, Function<void(std::optional<String> error)>&&);
+    void setupSocketReadHandler();
+    void readFromSocket();
+    void sendSocketMessage(const JSON::Object&);
+    void receivedMessage(RefPtr<JSON::Object>);
+    void socketConnectionClosed();
 #endif
 
     Capabilities m_capabilities;
@@ -171,6 +185,13 @@ private:
 #if PLATFORM(WIN)
     WTF::Win32Handle m_browserHandle;
 #endif
+#elif PLATFORM(COCOA)
+    Function<void(bool, std::optional<String>)> m_startSessionCompletionHandler;
+    RetainPtr<NSTask> m_browserTask;
+    int m_socketFd { -1 };
+    uint16_t m_automationPort { 0 };
+    OSObjectPtr<dispatch_source_t> m_readSource;
+    Vector<uint8_t> m_readBuffer;
 #endif
 };
 

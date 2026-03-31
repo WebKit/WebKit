@@ -161,6 +161,8 @@ _unit_test_config = {}
 _NO_CONFIG_H_PATH_PATTERNS = [
     '^Source/bmalloc/',
     '^Source/WebKitLegacy/',
+    '^Tools/MiniBrowser/',
+    '^Tools/MobileMiniBrowser/',
 ]
 
 _EXPORT_MACRO_SPEC = {

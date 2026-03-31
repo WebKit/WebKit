@@ -32,12 +32,41 @@
 #import "WebAutomationSession.h"
 #import "_WKAutomationSessionConfiguration.h"
 #import "_WKAutomationSessionDelegate.h"
+#import <JavaScriptCore/InspectorFrontendChannel.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/WeakObjCPtr.h>
+
+// FrontendChannel implementation that forwards messages to an Obj-C block.
+// Used by _connectWithMessageHandler: to bridge the C++ FrontendChannel interface
+// to a block-based API suitable for tools like MiniBrowser.
+class BlockFrontendChannel final : public Inspector::FrontendChannel {
+public:
+    explicit BlockFrontendChannel(void (^handler)(NSString *))
+        : m_handler(Block_copy(handler))
+    {
+    }
+
+    ~BlockFrontendChannel()
+    {
+        Block_release(m_handler);
+    }
+
+    ConnectionType connectionType() const override { return ConnectionType::Remote; }
+
+    void sendMessageToFrontend(const String& message) override
+    {
+        if (m_handler)
+            m_handler(message.createNSString().autorelease());
+    }
+
+private:
+    void (^m_handler)(NSString *);
+};
 
 @implementation _WKAutomationSession {
     RetainPtr<_WKAutomationSessionConfiguration> _configuration;
     WeakObjCPtr<id <_WKAutomationSessionDelegate>> _delegate;
+    std::unique_ptr<BlockFrontendChannel> _blockFrontendChannel;
 }
 
 - (instancetype)init
@@ -125,6 +154,17 @@
     protect(*_session)->markEventAsSynthesizedForAutomation(event);
 }
 #endif
+
+- (void)_connectWithMessageHandler:(void (^)(NSString *message))messageHandler
+{
+    _blockFrontendChannel = std::make_unique<BlockFrontendChannel>(messageHandler); // NOLINT(runtime/wtf_make_unique)
+    protect(*_session)->connect(*_blockFrontendChannel);
+}
+
+- (void)_dispatchMessageFromRemote:(NSString *)message
+{
+    protect(*_session)->dispatchMessageFromRemote(String(message));
+}
 
 #pragma mark WKObject protocol implementation
 

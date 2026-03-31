@@ -160,7 +160,7 @@ WebSocketMessageHandler::Message WebSocketMessageHandler::Message::fail(CommandR
     reply->setString("error"_s, CommandResult::errorCodeToString(errorCode));
     reply->setString("type"_s, "error"_s);
 
-    return { (connection ? (*connection) : nullptr), reply->toJSONString().utf8() };
+    return { (connection ? (*connection) : Connection { }), reply->toJSONString().utf8() };
 }
 
 WebSocketMessageHandler::Message WebSocketMessageHandler::Message::reply(const String& type, unsigned id, Ref<JSON::Value>&& result)
@@ -175,7 +175,7 @@ WebSocketMessageHandler::Message WebSocketMessageHandler::Message::reply(const S
         reply->setObject("result"_s, JSON::Object::create());
 
     // Connection will be set when sending the message back to the client, from the incoming message.
-    return { nullptr, reply->toJSONString().utf8() };
+    return { Connection { }, reply->toJSONString().utf8() };
 }
 
 std::optional<Command> Command::fromData(const char* data, size_t dataLength)

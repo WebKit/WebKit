@@ -52,7 +52,9 @@
 #include <wtf/JSONValues.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UUID.h>
+#if USE(GLIB)
 #include <wtf/glib/GTypedefs.h>
+#endif
 #endif
 
 namespace WebDriver {

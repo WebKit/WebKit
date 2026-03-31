@@ -1,0 +1,297 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 55;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		6C7BA524337E809C0F52095F /* CommandResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6177877E61F434A1E6E25D6 /* CommandResult.cpp */; };
+		CAEFBC486800223C33F1BC93 /* HTTPServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9549FB7E843FB400D85BD52B /* HTTPServer.cpp */; };
+		864C54E07A487F293136BF6E /* LogInitialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F9FAC69DA9C5A55ADED3422 /* LogInitialization.cpp */; };
+		83528F2FC2CADE8F3B821545 /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D3CE40F261A4626C814B4DC /* Logging.cpp */; };
+		419FB103F3BD764FA35AFEA8 /* Session.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F408C3C25884A911F221418E /* Session.cpp */; };
+		645278EA2CC8172FE5BDA91C /* SessionHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BE0645B63FA4D1CBB45D8395 /* SessionHost.cpp */; };
+		8876D90E7096714ECD2BC978 /* WebDriverMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC631A9C2040CD421320BF05 /* WebDriverMain.cpp */; };
+		91CED2A2C66BBFB4C1342D40 /* WebDriverService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4072134F604E871BCAA3344 /* WebDriverService.cpp */; };
+		5900FD415C5F7172BC09C512 /* WebSocketServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15A54F8A6693478B32A00926 /* WebSocketServer.cpp */; };
+		8D335AA0D7DBD063D48A87F0 /* SessionHostCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 58597BE42F4B0F7C211C7391 /* SessionHostCocoa.mm */; };
+		C1921D17EFACBD743DE0F34F /* HTTPServerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 24111099B98438A10E747DFE /* HTTPServerCocoa.mm */; };
+		B1D992FDBF37F031EA30E19C /* WebSocketServerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4AB4D8080CED781BF9ABDF37 /* WebSocketServerCocoa.mm */; };
+		0C5B7117318FCA314BCBD4D9 /* WebDriverServiceCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = AA313965788945CE08E1AA67 /* WebDriverServiceCocoa.mm */; };
+		DE58230A28CF681F3C4E205C /* LoggingCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = FA5B19BA464CEC784E0025CD /* LoggingCocoa.mm */; };
+		F32541F692FD26D432D24291 /* WebDriverAtoms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C47FF24F5E0D1465E0FAE2A6 /* WebDriverAtoms.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		E6177877E61F434A1E6E25D6 /* CommandResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandResult.cpp; sourceTree = "<group>"; };
+		9549FB7E843FB400D85BD52B /* HTTPServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPServer.cpp; sourceTree = "<group>"; };
+		9F9FAC69DA9C5A55ADED3422 /* LogInitialization.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LogInitialization.cpp; sourceTree = "<group>"; };
+		9D3CE40F261A4626C814B4DC /* Logging.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Logging.cpp; sourceTree = "<group>"; };
+		F408C3C25884A911F221418E /* Session.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Session.cpp; sourceTree = "<group>"; };
+		BE0645B63FA4D1CBB45D8395 /* SessionHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SessionHost.cpp; sourceTree = "<group>"; };
+		FC631A9C2040CD421320BF05 /* WebDriverMain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebDriverMain.cpp; sourceTree = "<group>"; };
+		F4072134F604E871BCAA3344 /* WebDriverService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebDriverService.cpp; sourceTree = "<group>"; };
+		15A54F8A6693478B32A00926 /* WebSocketServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSocketServer.cpp; sourceTree = "<group>"; };
+		58597BE42F4B0F7C211C7391 /* SessionHostCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SessionHostCocoa.mm; sourceTree = "<group>"; };
+		24111099B98438A10E747DFE /* HTTPServerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HTTPServerCocoa.mm; sourceTree = "<group>"; };
+		4AB4D8080CED781BF9ABDF37 /* WebSocketServerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSocketServerCocoa.mm; sourceTree = "<group>"; };
+		AA313965788945CE08E1AA67 /* WebDriverServiceCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDriverServiceCocoa.mm; sourceTree = "<group>"; };
+		FA5B19BA464CEC784E0025CD /* LoggingCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LoggingCocoa.mm; sourceTree = "<group>"; };
+		C47FF24F5E0D1465E0FAE2A6 /* WebDriverAtoms.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebDriverAtoms.cpp; path = "DerivedSources/WebDriver/WebDriverAtoms.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		41BF5CB820DAA0F7B3451A76 /* Actions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Actions.h; sourceTree = "<group>"; };
+		E1B8D1658C6F3D827A9E8373 /* Capabilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Capabilities.h; sourceTree = "<group>"; };
+		8BE31AF6F0B086D6423B81B8 /* CommandResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandResult.h; sourceTree = "<group>"; };
+		A7D4EDD0BA68DF2A677A7D7E /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
+		0DFE4473053B64CD71935BF3 /* HTTPServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPServer.h; sourceTree = "<group>"; };
+		10129D2DD1AABEF13065E0A0 /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logging.h; sourceTree = "<group>"; };
+		51D71082C80B578C9D160001 /* LogInitialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogInitialization.h; sourceTree = "<group>"; };
+		EB3D918DF080E03F6032151C /* Session.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Session.h; sourceTree = "<group>"; };
+		7DA0539042E4E2356F07F22D /* SessionHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SessionHost.h; sourceTree = "<group>"; };
+		7AA96FC190A42D4C0AB1E217 /* WebDriverService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDriverService.h; sourceTree = "<group>"; };
+		9031650CAE69BEAAE601AF97 /* WebSocketServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketServer.h; sourceTree = "<group>"; };
+		187B18B7F6A6F5236C0AD761 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
+		DC765E5714F404081F1232EE /* DebugRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
+		C5D20840E659364EC0E1B2F9 /* WebKitWebDriver.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebKitWebDriver.xcconfig; sourceTree = "<group>"; };
+		A97C29AD63741CF438998CE6 /* WebKitWebDriver */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = WebKitWebDriver; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		29B2D46AA747A59804D46E1F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5928955287B8089ED2177128 = {
+			isa = PBXGroup;
+			children = (
+				E6177877E61F434A1E6E25D6 /* CommandResult.cpp */,
+				9549FB7E843FB400D85BD52B /* HTTPServer.cpp */,
+				9F9FAC69DA9C5A55ADED3422 /* LogInitialization.cpp */,
+				9D3CE40F261A4626C814B4DC /* Logging.cpp */,
+				F408C3C25884A911F221418E /* Session.cpp */,
+				BE0645B63FA4D1CBB45D8395 /* SessionHost.cpp */,
+				FC631A9C2040CD421320BF05 /* WebDriverMain.cpp */,
+				F4072134F604E871BCAA3344 /* WebDriverService.cpp */,
+				15A54F8A6693478B32A00926 /* WebSocketServer.cpp */,
+				41BF5CB820DAA0F7B3451A76 /* Actions.h */,
+				E1B8D1658C6F3D827A9E8373 /* Capabilities.h */,
+				8BE31AF6F0B086D6423B81B8 /* CommandResult.h */,
+				A7D4EDD0BA68DF2A677A7D7E /* config.h */,
+				0DFE4473053B64CD71935BF3 /* HTTPServer.h */,
+				10129D2DD1AABEF13065E0A0 /* Logging.h */,
+				51D71082C80B578C9D160001 /* LogInitialization.h */,
+				EB3D918DF080E03F6032151C /* Session.h */,
+				7DA0539042E4E2356F07F22D /* SessionHost.h */,
+				7AA96FC190A42D4C0AB1E217 /* WebDriverService.h */,
+				9031650CAE69BEAAE601AF97 /* WebSocketServer.h */,
+				C47FF24F5E0D1465E0FAE2A6 /* WebDriverAtoms.cpp */,
+				52266608751BC04C65329B8F /* cocoa */,
+				6CC639B45892D4DB72603DD9 /* Configurations */,
+				BF7A2D27A78D590BDEF15AF2 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		52266608751BC04C65329B8F /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				24111099B98438A10E747DFE /* HTTPServerCocoa.mm */,
+				FA5B19BA464CEC784E0025CD /* LoggingCocoa.mm */,
+				58597BE42F4B0F7C211C7391 /* SessionHostCocoa.mm */,
+				AA313965788945CE08E1AA67 /* WebDriverServiceCocoa.mm */,
+				4AB4D8080CED781BF9ABDF37 /* WebSocketServerCocoa.mm */,
+			);
+			path = cocoa;
+			sourceTree = "<group>";
+		};
+		6CC639B45892D4DB72603DD9 /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				187B18B7F6A6F5236C0AD761 /* Base.xcconfig */,
+				DC765E5714F404081F1232EE /* DebugRelease.xcconfig */,
+				C5D20840E659364EC0E1B2F9 /* WebKitWebDriver.xcconfig */,
+			);
+			name = Configurations;
+			path = Configurations;
+			sourceTree = "<group>";
+		};
+		BF7A2D27A78D590BDEF15AF2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A97C29AD63741CF438998CE6 /* WebKitWebDriver */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		6772EC0E5D0CA05E04DDDB49 /* WebKitWebDriver */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F707ED8CFBC457F7F618ECA6 /* Build configuration list for PBXNativeTarget "WebKitWebDriver" */;
+			buildPhases = (
+				6C61891398CB815C8FAF4259 /* Generate WebDriverAtoms */,
+				E7209FB05162B7572F88D05E /* Sources */,
+				29B2D46AA747A59804D46E1F /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WebKitWebDriver;
+			productName = WebKitWebDriver;
+			productReference = A97C29AD63741CF438998CE6 /* WebKitWebDriver */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5299AC4324DC18342A8CCD96 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					6772EC0E5D0CA05E04DDDB49 = {
+						CreatedOnToolsVersion = 16.0;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = CB7CBE0C3B42E7D081FECC31 /* Build configuration list for PBXProject "WebKitWebDriver" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 5928955287B8089ED2177128;
+			productRefGroup = BF7A2D27A78D590BDEF15AF2 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				6772EC0E5D0CA05E04DDDB49 /* WebKitWebDriver */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		6C61891398CB815C8FAF4259 /* Generate WebDriverAtoms */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Generate WebDriverAtoms";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			shellPath = /bin/sh;
+			shellScript = "DERIVED_SOURCES_DIR=\"${BUILT_PRODUCTS_DIR}/DerivedSources/WebDriver\"\nmkdir -p \"${DERIVED_SOURCES_DIR}\"\n\nWEBKIT_DIR=\"${SRCROOT}/../WebKit\"\nJSC_DIR=\"${SRCROOT}/../JavaScriptCore\"\nATOMS_DIR=\"${WEBKIT_DIR}/UIProcess/Automation/atoms\"\n\nATOMS=(ElementAttribute ElementDisplayed ElementEnabled ElementText EnterFullscreen FindNodes FormElementClear FormSubmit)\n\n# Generate each atom\nfor ATOM in \"${ATOMS[@]}\"; do\n    python3 \"${WEBKIT_DIR}/Scripts/generate-automation-atom.py\" \\\n        \"${ATOMS_DIR}/${ATOM}.js\" \\\n        \"${DERIVED_SOURCES_DIR}/${ATOM}.js\"\ndone\n\n# Combine into WebDriverAtoms.cpp/h\npython3 \"${JSC_DIR}/Scripts/make-js-file-arrays.py\" \\\n    --fail-if-non-ascii -n WebDriver \\\n    \"${DERIVED_SOURCES_DIR}/WebDriverAtoms.h\" \\\n    \"${DERIVED_SOURCES_DIR}/WebDriverAtoms.cpp\" \\\n    \"${DERIVED_SOURCES_DIR}/ElementAttribute.js\" \\\n    \"${DERIVED_SOURCES_DIR}/ElementDisplayed.js\" \\\n    \"${DERIVED_SOURCES_DIR}/ElementEnabled.js\" \\\n    \"${DERIVED_SOURCES_DIR}/ElementText.js\" \\\n    \"${DERIVED_SOURCES_DIR}/EnterFullscreen.js\" \\\n    \"${DERIVED_SOURCES_DIR}/FindNodes.js\" \\\n    \"${DERIVED_SOURCES_DIR}/FormElementClear.js\" \\\n    \"${DERIVED_SOURCES_DIR}/FormSubmit.js\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		E7209FB05162B7572F88D05E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6C7BA524337E809C0F52095F /* CommandResult.cpp in Sources */,
+				CAEFBC486800223C33F1BC93 /* HTTPServer.cpp in Sources */,
+				C1921D17EFACBD743DE0F34F /* HTTPServerCocoa.mm in Sources */,
+				83528F2FC2CADE8F3B821545 /* Logging.cpp in Sources */,
+				DE58230A28CF681F3C4E205C /* LoggingCocoa.mm in Sources */,
+				864C54E07A487F293136BF6E /* LogInitialization.cpp in Sources */,
+				419FB103F3BD764FA35AFEA8 /* Session.cpp in Sources */,
+				645278EA2CC8172FE5BDA91C /* SessionHost.cpp in Sources */,
+				8D335AA0D7DBD063D48A87F0 /* SessionHostCocoa.mm in Sources */,
+				F32541F692FD26D432D24291 /* WebDriverAtoms.cpp in Sources */,
+				8876D90E7096714ECD2BC978 /* WebDriverMain.cpp in Sources */,
+				91CED2A2C66BBFB4C1342D40 /* WebDriverService.cpp in Sources */,
+				0C5B7117318FCA314BCBD4D9 /* WebDriverServiceCocoa.mm in Sources */,
+				5900FD415C5F7172BC09C512 /* WebSocketServer.cpp in Sources */,
+				B1D992FDBF37F031EA30E19C /* WebSocketServerCocoa.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		EC86DC4F4B4C60C3EC031655 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = DC765E5714F404081F1232EE /* DebugRelease.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		7BF40F069D95C38DE60AA602 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = DC765E5714F404081F1232EE /* DebugRelease.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		E23B43008A07508E5D07801B /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 187B18B7F6A6F5236C0AD761 /* Base.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
+		339F2120A275E8028CC42767 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C5D20840E659364EC0E1B2F9 /* WebKitWebDriver.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		17234DA728CB8FFFA593E13A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C5D20840E659364EC0E1B2F9 /* WebKitWebDriver.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		B2E2808EC68535A3EEF95119 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C5D20840E659364EC0E1B2F9 /* WebKitWebDriver.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CB7CBE0C3B42E7D081FECC31 /* Build configuration list for PBXProject "WebKitWebDriver" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EC86DC4F4B4C60C3EC031655 /* Debug */,
+				7BF40F069D95C38DE60AA602 /* Release */,
+				E23B43008A07508E5D07801B /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F707ED8CFBC457F7F618ECA6 /* Build configuration list for PBXNativeTarget "WebKitWebDriver" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				339F2120A275E8028CC42767 /* Debug */,
+				17234DA728CB8FFFA593E13A /* Release */,
+				B2E2808EC68535A3EEF95119 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5299AC4324DC18342A8CCD96 /* Project object */;
+}
