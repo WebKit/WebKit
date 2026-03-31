@@ -71,9 +71,22 @@ inline LayoutSize AnchorScrollSnapshot::adjustmentForCurrentScrollPosition() con
     return { };
 }
 
+AnchorStickySnapshot::AnchorStickySnapshot(const RenderBoxModelObject& sticky, LayoutSize snapshot)
+    : m_sticky(sticky)
+    , m_stickySnapshot(snapshot)
+{ }
+
+inline LayoutSize AnchorStickySnapshot::adjustmentForCurrentScrollPosition() const
+{
+    if (m_sticky && m_sticky->isStickilyPositioned())
+        return m_sticky->stickyPositionOffset() - m_stickySnapshot;
+    // If the box is no longer sticky positioned, just compensate for the snapshotted value against zero.
+    return -m_stickySnapshot;
+}
+
 inline bool AnchorScrollAdjuster::isEmpty() const
 {
-    return !m_scrollSnapshots.size() && !(m_hasChainedAnchor | m_hasStickyAnchor);
+    return !m_scrollSnapshots.size() && !m_hasChainedAnchor && !m_stickySnapshots.size();
 }
 
 AnchorScrollAdjuster::AnchorScrollAdjuster(RenderBox& anchored, const RenderBoxModelObject& defaultAnchor)
@@ -124,9 +137,6 @@ AnchorScrollAdjuster::AnchorScrollAdjuster(RenderBox& anchored, const RenderBoxM
 
     m_isHidden = style.isForceHidden();
 
-    if ((m_hasStickyAnchor = defaultAnchor.isStickilyPositioned()))
-        m_stickySnapshot = defaultAnchor.stickyPositionOffset();
-
     if (auto anchorBox = dynamicDowncast<RenderBox>(defaultAnchor)) {
         if (CheckedPtr chainedAnchor = Style::AnchorPositionEvaluator::defaultAnchorForBox(*anchorBox))
             m_hasChainedAnchor = true;
@@ -142,11 +152,11 @@ bool AnchorScrollAdjuster::recaptureDiffers(const AnchorScrollAdjuster& other) c
 {
     bool same = m_anchored.ptr() == other.m_anchored.ptr()
         && m_scrollSnapshots == other.m_scrollSnapshots
-        && m_stickySnapshot == other.m_stickySnapshot;
+        && m_stickySnapshots == other.m_stickySnapshots;
     return !same;
 }
 
-void AnchorScrollAdjuster::addSnapshot(const RenderBox& scroller)
+void AnchorScrollAdjuster::addScrollSnapshot(const RenderBox& scroller)
 {
     ASSERT(scroller.hasPotentiallyScrollableOverflow() && !is<RenderView>(scroller));
     m_scrollSnapshots.constructAndAppend(scroller, scroller.constrainedScrollPosition());
@@ -172,12 +182,18 @@ LayoutSize AnchorScrollAdjuster::adjustmentForViewport(const RenderView& renderV
     return { };
 }
 
+void AnchorScrollAdjuster::addStickySnapshot(const RenderBoxModelObject& sticky)
+{
+    ASSERT(sticky.isStickilyPositioned());
+    m_stickySnapshots.constructAndAppend(sticky, sticky.stickyPositionOffset());
+}
+
 LayoutSize AnchorScrollAdjuster::accumulateAdjustments(const RenderView& renderView, const RenderBox& anchored) const
 {
     ASSERT(m_anchored.ptr() == &anchored);
     LayoutSize scrollAdjustment;
 
-    if (m_hasChainedAnchor || m_hasStickyAnchor) {
+    if (m_hasChainedAnchor) {
         if (CheckedPtr defaultAnchor = Style::AnchorPositionEvaluator::defaultAnchorForBox(anchored)) {
             auto defaultAnchorBox = dynamicDowncast<RenderBox>(defaultAnchor.get());
             ASSERT(defaultAnchorBox); // We shouldn't exist if there's no default anchor.
@@ -185,9 +201,6 @@ LayoutSize AnchorScrollAdjuster::accumulateAdjustments(const RenderView& renderV
                 // The anchor may itself be scroll-compensated. Recurse if needed.
                 if (auto chainedAdjuster = renderView.layoutContext().anchorScrollAdjusterFor(*defaultAnchorBox))
                     scrollAdjustment += chainedAdjuster->accumulateAdjustments(renderView, *defaultAnchorBox);
-                // Compensate for sticky adjustments.
-                if (m_hasStickyAnchor)
-                    scrollAdjustment += defaultAnchorBox->stickyPositionOffset() - m_stickySnapshot;
             }
         }
     }
@@ -195,6 +208,9 @@ LayoutSize AnchorScrollAdjuster::accumulateAdjustments(const RenderView& renderV
     for (auto snapshot : m_scrollSnapshots)
         scrollAdjustment += snapshot.adjustmentForCurrentScrollPosition();
     scrollAdjustment += adjustmentForViewport(renderView);
+
+    for (auto snapshot : m_stickySnapshots)
+        scrollAdjustment += snapshot.adjustmentForCurrentScrollPosition();
 
     if (!m_needsXAdjustment)
         scrollAdjustment.setWidth(0);
@@ -249,6 +265,11 @@ static inline void clearAnchorScrollSnapshots(RenderBox& anchored)
     anchored.layoutContext().unregisterAnchorScrollAdjusterFor(anchored);
 }
 
+static inline bool isFixed(const RenderBoxModelObject& box)
+{
+    return box.layer() && box.layer()->behavesAsFixed();
+}
+
 void AnchorPositionEvaluator::captureScrollSnapshots(RenderBox& anchored, bool invalidateStyleForScrollPositionChanges)
 {
     if (!anchored.layer())
@@ -265,17 +286,21 @@ void AnchorPositionEvaluator::captureScrollSnapshots(RenderBox& anchored, bool i
     CheckedPtr containingBlock = anchored.containingBlock();
     ASSERT(defaultAnchor->isDescendantOf(containingBlock.get()));
 
-    bool isFixedAnchor = defaultAnchor->layer() && defaultAnchor->layer()->behavesAsFixed();
+    bool isFixedAnchor = isFixed(*defaultAnchor);
+    if (defaultAnchor->isStickilyPositioned())
+        adjuster.addStickySnapshot(*defaultAnchor);
     for (auto* ancestor = defaultAnchor->container(); ancestor && ancestor != containingBlock; ancestor = ancestor->container()) {
         if (auto* box = dynamicDowncast<RenderBox>(ancestor)) {
             if (box->hasPotentiallyScrollableOverflow())
-                adjuster.addSnapshot(*box);
-            if (box->layer() && box->layer()->behavesAsFixed())
+                adjuster.addScrollSnapshot(*box);
+            if (isFixed(*box))
                 isFixedAnchor = true;
+            if (box->isStickilyPositioned())
+                adjuster.addStickySnapshot(*box);
         }
     }
 
-    if (anchored.layer() && anchored.layer()->behavesAsFixed() && !isFixedAnchor)
+    if (isFixed(anchored) && !isFixedAnchor && !isFixed(*containingBlock))
         adjuster.addViewportSnapshot(anchored.view());
 
     if (adjuster.isEmpty())

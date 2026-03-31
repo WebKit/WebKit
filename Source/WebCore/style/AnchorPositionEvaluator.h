@@ -66,6 +66,15 @@ struct AnchorScrollSnapshot {
     bool operator==(const AnchorScrollSnapshot&) const = default;
 };
 
+class AnchorStickySnapshot {
+    SingleThreadWeakPtr<const RenderBoxModelObject> m_sticky;
+    LayoutSize m_stickySnapshot { };
+public:
+    inline LayoutSize adjustmentForCurrentScrollPosition() const;
+    AnchorStickySnapshot(const RenderBoxModelObject& sticky, LayoutSize snapshot);
+    bool operator==(const AnchorStickySnapshot&) const = default;
+};
+
 class AnchorScrollAdjuster {
 public:
     AnchorScrollAdjuster(RenderBox& anchored, const RenderBoxModelObject& defaultAnchor);
@@ -79,9 +88,11 @@ public:
     bool isHidden() const { return m_isHidden; }
     void setHidden(bool hide) { m_isHidden = hide; }
 
-    inline void addSnapshot(const RenderBox& scroller);
+    inline void addScrollSnapshot(const RenderBox& scroller);
     inline void addViewportSnapshot(const RenderView&);
     bool hasViewportSnapshot() const { return m_adjustForViewport; }
+
+    inline void addStickySnapshot(const RenderBoxModelObject& sticky);
 
     enum Diff : uint8_t { New, SnapshotsDiffer, SnapshotsMatch };
     bool recaptureDiffers(const AnchorScrollAdjuster&) const; // Snapshot differences can require invalidation.
@@ -98,14 +109,13 @@ private:
 
     CheckedRef<RenderBox> m_anchored;
     Vector<AnchorScrollSnapshot, 1> m_scrollSnapshots;
+    Vector<AnchorStickySnapshot> m_stickySnapshots;
     bool m_needsXAdjustment : 1 { false };
     bool m_needsYAdjustment : 1 { false };
     bool m_adjustForViewport : 1 { false };
     bool m_hasChainedAnchor : 1 { false };
-    bool m_hasStickyAnchor : 1 { false };
     bool m_isHidden : 1 { false };
     bool m_hasFallback : 1 { false };
-    LayoutSize m_stickySnapshot;
     LayoutSizeLimits m_fallbackLimits;
 };
 
