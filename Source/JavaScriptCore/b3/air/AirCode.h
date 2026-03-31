@@ -310,7 +310,7 @@ public:
     const SparseCollection<Special>& specials() const LIFETIME_BOUND { return m_specials; }
     SparseCollection<Special>& specials() LIFETIME_BOUND { return m_specials; }
 
-    void addFastTmp(Tmp);
+    JS_EXPORT_PRIVATE void addFastTmp(Tmp);
 
     template<typename Functor>
     void forEachFastTmp(const Functor& functor) const
