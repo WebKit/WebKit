@@ -143,9 +143,22 @@ Ref<SuspendedPageProxy> WebBackForwardCache::takeSuspendedPage(WebBackForwardLis
 
 void WebBackForwardCache::removeEntriesForProcess(WebProcessProxy& process)
 {
-    removeEntriesMatching([processIdentifier = process.coreProcessIdentifier()](auto& entry) {
+    auto processIdentifier = process.coreProcessIdentifier();
+    removeEntriesMatching([&](auto& entry) {
         ASSERT(entry.backForwardCacheEntry());
-        return entry.backForwardCacheEntry()->processIdentifier() == processIdentifier;
+
+        // Check main process (existing behavior).
+        if (entry.backForwardCacheEntry()->processIdentifier() == processIdentifier)
+            return true;
+
+        // Check iframe processes (multi-process BFCache).
+        if (RefPtr suspendedPage = entry.suspendedPage()) {
+            if (suspendedPage->hasIframeInProcess(processIdentifier)) {
+                RELEASE_LOG(ProcessSwapping, "WebBackForwardCache::removeEntriesForProcess: iframe process terminated while in BFCache, invalidating cache entry");
+                return true;
+            }
+        }
+        return false;
     });
 }
 

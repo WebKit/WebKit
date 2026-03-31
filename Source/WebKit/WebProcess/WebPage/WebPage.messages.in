@@ -718,6 +718,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
     URLSchemeTaskDidComplete(WebKit::WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, WebCore::ResourceError error)
 
     SetIsSuspended(bool suspended) -> (std::optional<bool> didSuspend)
+    SetIsSuspendedWithFrameItem(bool suspended, WebCore::BackForwardFrameItemIdentifier frameItemID) -> (std::optional<bool> didSuspend)
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     InsertAttachment(String identifier, std::optional<uint64_t> fileSize, String fileName, String contentType) -> ()

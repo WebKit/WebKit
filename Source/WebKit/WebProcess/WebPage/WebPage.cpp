@@ -8554,6 +8554,54 @@ void WebPage::setIsSuspended(bool suspended, CompletionHandler<void(std::optiona
     suspendForProcessSwap(WTF::move(completionHandler));
 }
 
+RefPtr<HistoryItem> WebPage::findHistoryItemByFrameItemID(BackForwardFrameItemIdentifier frameItemID)
+{
+    for (RefPtr frame = &corePage()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            continue;
+        if (RefPtr item = localFrame->loader().history().currentItem()) {
+            if (item->frameItemID() == frameItemID)
+                return item;
+        }
+    }
+    return nullptr;
+}
+
+void WebPage::suspendForProcessSwapWithFrameItem(BackForwardFrameItemIdentifier frameItemID, CompletionHandler<void(std::optional<bool>)>&& completionHandler)
+{
+    flushDeferredDidReceiveMouseEvent();
+    RefPtr historyItem = findHistoryItemByFrameItemID(frameItemID);
+    if (!historyItem) {
+        WEBPAGE_RELEASE_LOG_ERROR(ProcessSwapping, "suspendForProcessSwapWithFrameItem: Failed to find history item for frameItemID %s", frameItemID.toString().utf8().data());
+        return completionHandler(false);
+    }
+    if (!BackForwardCache::singleton().addIfCacheable(*historyItem, protect(corePage()).get())) {
+        WEBPAGE_RELEASE_LOG_ERROR(ProcessSwapping, "suspendForProcessSwapWithFrameItem: BackForwardCache::addIfCacheable failed for frameItemID %s", frameItemID.toString().utf8().data());
+        return completionHandler(false);
+    }
+    WEBPAGE_RELEASE_LOG(ProcessSwapping, "suspendForProcessSwapWithFrameItem: Successfully cached page for frameItemID %s", frameItemID.toString().utf8().data());
+    completionHandler(true);
+}
+
+void WebPage::setIsSuspendedWithFrameItem(bool suspended, BackForwardFrameItemIdentifier frameItemID, CompletionHandler<void(std::optional<bool>)>&& completionHandler)
+{
+    if (m_isSuspended == suspended)
+        return completionHandler({ });
+    m_isSuspended = suspended;
+
+    if (!suspended) {
+        // FIXME: Restore path (implemented in a follow-up patch).
+        return completionHandler({ });
+    }
+
+    freezeLayerTree(LayerTreeFreezeReason::PageSuspended);
+    // Unlike the main-frame path in setIsSuspended, sendPrewarmInformation is
+    // intentionally omitted here because prewarming is a main-frame optimization.
+    unfreezeLayerTree(LayerTreeFreezeReason::BackgroundApplication);
+    suspendForProcessSwapWithFrameItem(frameItemID, WTF::move(completionHandler));
+}
+
 void WebPage::hasStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, WebFrame& frame, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (hasPageLevelStorageAccess(topFrameDomain, subFrameDomain)) {

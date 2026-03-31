@@ -8501,4 +8501,75 @@ TEST(SiteIsolation, OpenEmptySiteFromProcessWithNonEmptySite)
     Util::run(&openedFinishedLoading);
 }
 
+TEST(SiteIsolation, MultiProcessBFCacheIframeProcessSurvival)
+{
+    HTTPServer server({
+        { "/a"_s, { "<iframe src='https://b.com/frame'></iframe>"_s } },
+        { "/frame"_s, { "iframe content"_s } },
+        { "/c"_s, { "page c"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto *configuration = server.httpsProxyConfiguration();
+    enableFeature(configuration, @"MultiProcessBackForwardCacheEnabled");
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/a"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://a.com"_s, { { RemoteFrame } } },
+        { RemoteFrame, { { "https://b.com"_s } } },
+    });
+
+    pid_t iframePID = findFramePID(frameTrees(webView.get()).get(), FrameType::Remote);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://c.com/c"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    // Iframe process must survive. Without multi-process suspension,
+    // removeChildFrames() sends WebPage::Close() and kills it.
+    EXPECT_TRUE(processStillRunning(iframePID));
+}
+
+// FIXME: Use openerAndOpenedViews() once MultiProcessBackForwardCacheEnabled is on by default.
+TEST(SiteIsolation, MultiProcessBFCacheOpenerSkipsBFCache)
+{
+    HTTPServer server({
+        { "/a"_s, { "<script>window.open('https://a.com/child');</script>"_s } },
+        { "/child"_s, { "child page"_s } },
+        { "/b"_s, { "page b"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto *configuration = server.httpsProxyConfiguration();
+    enableFeature(configuration, @"MultiProcessBackForwardCacheEnabled");
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration);
+
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    [webView setUIDelegate:uiDelegate.get()];
+    webView.get().configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+
+    __block RetainPtr<WKWebView> openedWebView;
+    uiDelegate.get().createWebViewWithConfiguration = ^WKWebView *(WKWebViewConfiguration *config, WKNavigationAction *action, WKWindowFeatures *windowFeatures) {
+        openedWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:config]);
+        return openedWebView.get();
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/a"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    // Set a BFCache marker on the opener page.
+    [webView objectByEvaluatingJavaScript:@"window.__bfcacheMarker = true"];
+
+    // Navigate to a different site to trigger PSON.
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://b.com/b"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    // Go back.
+    [webView goBack];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    // Verify the marker is gone (full reload, not BFCache restore).
+    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"window.__bfcacheMarker ? true : false"] boolValue]);
+}
+
 }

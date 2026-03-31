@@ -49,6 +49,7 @@ namespace WebKit {
 class FrameProcess;
 class ProvisionalPageProxy;
 class RemotePageProxy;
+class WebFrameProxy;
 class WebPageProxy;
 class WebPreferences;
 class WebProcessPool;
@@ -74,7 +75,10 @@ public:
     void addPage(WebPageProxy&);
     void addRemotePage(WebPageProxy&, Ref<RemotePageProxy>&&);
     void removePage(WebPageProxy&);
+    void closeRemotePagesForPage(WebPageProxy&);
+    bool NODELETE hasMultiplePages() const;
     void forEachRemotePage(const WebPageProxy&, Function<void(RemotePageProxy&)>&&);
+    void forEachFrameInRemotePage(WebPageProxy&, WebFrameProxy& mainFrame, NOESCAPE const Function<void(RemotePageProxy&, WebFrameProxy&)>&) const;
 
     RefPtr<RemotePageProxy> remotePageInProcess(const WebPageProxy&, const WebProcessProxy&);
 

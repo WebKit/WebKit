@@ -2632,6 +2632,9 @@ private:
     void setNeedsDOMWindowResizeEvent();
 
     void setIsSuspended(bool, CompletionHandler<void(std::optional<bool>)>&&);
+    void setIsSuspendedWithFrameItem(bool suspended, WebCore::BackForwardFrameItemIdentifier, CompletionHandler<void(std::optional<bool>)>&&);
+    void suspendForProcessSwapWithFrameItem(WebCore::BackForwardFrameItemIdentifier, CompletionHandler<void(std::optional<bool>)>&&);
+    RefPtr<WebCore::HistoryItem> findHistoryItemByFrameItemID(WebCore::BackForwardFrameItemIdentifier);
 
     RefPtr<WebImage> snapshotAtSize(const WebCore::IntRect&, const WebCore::IntSize& bitmapSize, SnapshotOptions, WebCore::LocalFrame&, WebCore::LocalFrameView&);
     RefPtr<WebImage> snapshotNode(WebCore::Node&, SnapshotOptions, unsigned maximumPixelCount = std::numeric_limits<unsigned>::max());

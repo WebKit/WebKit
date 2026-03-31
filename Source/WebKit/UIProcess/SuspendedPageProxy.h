@@ -73,7 +73,8 @@ public:
     WebCore::PageIdentifier webPageID() const { return m_webPageID; }
     WebProcessProxy& process() const { return m_process.get(); }
     WebFrameProxy& mainFrame() { return m_mainFrame.get(); }
-    const BrowsingContextGroup& browsingContextGroup() { return m_browsingContextGroup.get(); }
+    const BrowsingContextGroup& browsingContextGroup() const { return m_browsingContextGroup.get(); }
+    BrowsingContextGroup& browsingContextGroup() { return m_browsingContextGroup.get(); }
 
     WebBackForwardCache& NODELETE backForwardCache() const;
 
@@ -81,8 +82,11 @@ public:
 
     bool NODELETE pageIsClosedOrClosing() const;
 
+    bool startSuspension(WebBackForwardListItem* fromItem);
     void waitUntilReadyToUnsuspend(CompletionHandler<void(SuspendedPageProxy*)>&&);
     void unsuspend();
+
+    bool hasIframeInProcess(WebCore::ProcessIdentifier) const;
 
     void pageDidFirstLayerFlush();
     void closeWithoutFlashing();
@@ -104,8 +108,12 @@ private:
     enum class SuspensionState : uint8_t { Suspending, FailedToSuspend, Suspended, Resumed };
     void didProcessRequestToSuspend(SuspensionState);
     void suspensionTimedOut();
+    bool suspendIframeProcesses(WebBackForwardListItem&);
+    void didIframeSuspensionComplete(bool success);
+    void maybeCompleteSuspension();
 
     void close();
+    void teardown();
     void didDestroyNavigation(WebCore::NavigationIdentifier);
 
     // IPC::MessageReceiver
@@ -128,6 +136,10 @@ private:
     SuspensionState m_suspensionState { SuspensionState::Suspending };
     CompletionHandler<void(SuspendedPageProxy*)> m_readyToUnsuspendHandler;
     RunLoop::Timer m_suspensionTimeoutTimer;
+    bool m_mainFrameSuspended { false };
+    unsigned m_expectedIframeSuspensions { 0 };
+    unsigned m_completedIframeSuspensions { 0 };
+    bool m_anyIframeSuspensionFailed { false };
 #if USE(RUNNINGBOARD)
     RefPtr<ProcessThrottler::BackgroundActivity> m_suspensionActivity;
 #endif

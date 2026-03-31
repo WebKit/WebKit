@@ -246,8 +246,18 @@ void BrowsingContextGroup::addRemotePage(WebPageProxy& page, Ref<RemotePageProxy
 void BrowsingContextGroup::removePage(WebPageProxy& page)
 {
     m_pages.remove(page);
+    closeRemotePagesForPage(page);
+}
+
+void BrowsingContextGroup::closeRemotePagesForPage(WebPageProxy& page)
+{
     for (auto& remotePage : m_remotePages.take(page))
-        remotePage->disconnect();
+        protect(remotePage)->disconnect();
+}
+
+bool BrowsingContextGroup::hasMultiplePages() const
+{
+    return m_pages.computeSize() > 1;
 }
 
 void BrowsingContextGroup::forEachRemotePage(const WebPageProxy& page, Function<void(RemotePageProxy&)>&& function)
@@ -257,6 +267,20 @@ void BrowsingContextGroup::forEachRemotePage(const WebPageProxy& page, Function<
         return;
     for (Ref remotePage : it->value)
         function(remotePage);
+}
+
+void BrowsingContextGroup::forEachFrameInRemotePage(WebPageProxy& page, WebFrameProxy& mainFrame, NOESCAPE const Function<void(RemotePageProxy&, WebFrameProxy&)>& callback) const
+{
+    auto it = m_remotePages.find(page);
+    if (it == m_remotePages.end())
+        return;
+    for (Ref remotePage : it->value) {
+        Ref process = remotePage->siteIsolatedProcess();
+        for (RefPtr frame = mainFrame.traverseNext().frame; frame; frame = frame->traverseNext().frame) {
+            if (&frame->process() == process.ptr())
+                callback(remotePage, *frame);
+        }
+    }
 }
 
 RefPtr<RemotePageProxy> BrowsingContextGroup::remotePageInProcess(const WebPageProxy& page, const WebProcessProxy& process)

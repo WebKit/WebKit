@@ -33,8 +33,11 @@
 #include "HandleMessage.h"
 #include "Logging.h"
 #include "MessageSenderInlines.h"
+#include "RemotePageProxy.h"
 #include "WebBackForwardCache.h"
 #include "WebBackForwardList.h"
+#include "WebBackForwardListFrameItem.h"
+#include "WebBackForwardListItem.h"
 #include "WebBackForwardListMessages.h"
 #include "WebFrameProxy.h"
 #include "WebPageMessages.h"
@@ -134,16 +137,6 @@ SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&
 #endif
 #endif
 {
-    allSuspendedPages().add(*this);
-    m_process->addSuspendedPageProxy(*this);
-    m_messageReceiverRegistration.startReceivingMessages(m_process, m_webPageID, *this, *this);
-    m_suspensionTimeoutTimer.startOneShot(suspensionTimeout);
-    sendWithAsyncReply(Messages::WebPage::SetIsSuspended(true), [weakThis = WeakPtr { *this }](std::optional<bool> didSuspend) {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis || !didSuspend)
-            return;
-        protectedThis->didProcessRequestToSuspend(*didSuspend ? SuspensionState::Suspended : SuspensionState::FailedToSuspend);
-    });
 }
 
 template<typename M>
@@ -158,21 +151,57 @@ void SuspendedPageProxy::sendWithAsyncReply(M&& message, C&& completionHandler)
     m_process->sendWithAsyncReply(std::forward<M>(message), std::forward<C>(completionHandler), m_webPageID);
 }
 
+bool SuspendedPageProxy::startSuspension(WebBackForwardListItem* fromItem)
+{
+    ASSERT(!m_browsingContextGroup->hasMultiplePages());
+
+    RefPtr page = m_page.get();
+    if (page && protect(page->preferences())->multiProcessBackForwardCacheEnabled()) {
+        // Iframe suspension is only needed when the page is being added to the
+        // back/forward cache (fromItem is non-null). When fromItem is null, the
+        // page is only kept temporarily to prevent a white flash during navigation.
+        if (fromItem && !suspendIframeProcesses(*fromItem))
+            return false;
+    }
+
+    m_messageReceiverRegistration.startReceivingMessages(m_process, m_webPageID, *this, *this);
+    m_suspensionTimeoutTimer.startOneShot(suspensionTimeout);
+    sendWithAsyncReply(Messages::WebPage::SetIsSuspended(true), [weakThis = WeakPtr { *this }](std::optional<bool> didSuspend) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis || !didSuspend)
+            return;
+        protectedThis->didProcessRequestToSuspend(*didSuspend ? SuspensionState::Suspended : SuspensionState::FailedToSuspend);
+    });
+
+    allSuspendedPages().add(*this);
+    m_process->addSuspendedPageProxy(*this);
+    return true;
+}
+
 SuspendedPageProxy::~SuspendedPageProxy()
+{
+    if (auto handler = std::exchange(m_readyToUnsuspendHandler, nullptr)) {
+        RunLoop::mainSingleton().dispatch([handler = WTF::move(handler)]() mutable {
+            handler(nullptr);
+        });
+    }
+    teardown();
+}
+
+void SuspendedPageProxy::teardown()
 {
     allSuspendedPages().remove(*this);
 
-    if (m_readyToUnsuspendHandler) {
-        RunLoop::mainSingleton().dispatch([readyToUnsuspendHandler = WTF::move(m_readyToUnsuspendHandler)]() mutable {
-            readyToUnsuspendHandler(nullptr);
+    if (RefPtr page = m_page.get()) {
+        m_browsingContextGroup->forEachRemotePage(*page, [suspendedPage = Ref { *this }](auto& remotePage) {
+            protect(remotePage.siteIsolatedProcess())->removeSuspendedPageProxy(suspendedPage);
         });
+        if (m_suspensionState != SuspensionState::Resumed)
+            m_browsingContextGroup->closeRemotePagesForPage(*page);
     }
 
-    if (m_suspensionState != SuspensionState::Resumed) {
-        // If the suspended page was not consumed before getting destroyed, then close the corresponding page
-        // on the WebProcess side.
+    if (m_suspensionState != SuspensionState::Resumed)
         close();
-    }
 
     m_process->removeSuspendedPageProxy(*this);
 }
@@ -198,6 +227,8 @@ void SuspendedPageProxy::waitUntilReadyToUnsuspend(CompletionHandler<void(Suspen
         m_readyToUnsuspendHandler = WTF::move(completionHandler);
         break;
     case SuspensionState::FailedToSuspend:
+        completionHandler(this);
+        break;
     case SuspensionState::Suspended:
         completionHandler(this);
         break;
@@ -263,27 +294,121 @@ void SuspendedPageProxy::didProcessRequestToSuspend(SuspensionState newSuspensio
     ASSERT(m_suspensionState == SuspensionState::Suspending);
     ASSERT(newSuspensionState == SuspensionState::Suspended || newSuspensionState == SuspensionState::FailedToSuspend);
 
-    m_suspensionState = newSuspensionState;
-
-    m_suspensionTimeoutTimer.stop();
-
 #if USE(RUNNINGBOARD)
     m_suspensionActivity = nullptr;
 #endif
 
     m_messageReceiverRegistration.stopReceivingMessages();
 
-    if (m_suspensionState == SuspensionState::FailedToSuspend)
+    if (newSuspensionState == SuspensionState::FailedToSuspend) {
+        m_suspensionState = SuspensionState::FailedToSuspend;
+        m_suspensionTimeoutTimer.stop();
         closeWithoutFlashing();
+        if (auto handler = std::exchange(m_readyToUnsuspendHandler, nullptr))
+            handler(this);
+        return;
+    }
 
-    if (m_readyToUnsuspendHandler)
-        m_readyToUnsuspendHandler(this);
+    m_mainFrameSuspended = true;
+    maybeCompleteSuspension();
 }
 
 void SuspendedPageProxy::suspensionTimedOut()
 {
     RELEASE_LOG_ERROR(ProcessSwapping, "%p - SuspendedPageProxy::suspensionTimedOut() destroying the suspended page because it failed to suspend in time", this);
     protect(backForwardCache())->removeEntry(*this); // Will destroy |this|.
+}
+
+bool SuspendedPageProxy::suspendIframeProcesses(WebBackForwardListItem& fromItem)
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return false;
+
+    Ref rootFrameItem = fromItem.mainFrameItem();
+
+    // Phase 1: Validate all frame items exist before sending any IPCs.
+    using SuspensionTarget = std::tuple<WebCore::BackForwardFrameItemIdentifier, Ref<WebProcessProxy>, WebCore::PageIdentifier>;
+    Vector<SuspensionTarget> targets;
+    bool missingFrameItem = false;
+
+    m_browsingContextGroup->forEachFrameInRemotePage(*page, m_mainFrame, [&](auto& remotePage, auto& frame) {
+        if (missingFrameItem)
+            return;
+        RefPtr frameItem = rootFrameItem->childItemForFrameID(frame.frameID());
+        if (!frameItem) {
+            RELEASE_LOG_ERROR(ProcessSwapping, "%p - SuspendedPageProxy::suspendIframeProcesses: No frame item found for frame %" PRIu64 " in process pid %i, skipping iframe suspension", this, frame.frameID().toUInt64(), remotePage.siteIsolatedProcess().processID());
+            missingFrameItem = true;
+            return;
+        }
+        targets.append({ frameItem->identifier(), remotePage.siteIsolatedProcess(), remotePage.identifierInSiteIsolatedProcess() });
+    });
+
+    if (missingFrameItem)
+        return false;
+
+    // Phase 2: Register with each iframe process and send suspension IPCs.
+    m_browsingContextGroup->forEachRemotePage(*page, [suspendedPage = Ref { *this }](auto& remotePage) {
+        protect(remotePage.siteIsolatedProcess())->addSuspendedPageProxy(suspendedPage);
+    });
+
+    m_expectedIframeSuspensions = targets.size();
+    for (auto& [frameItemIdentifier, process, remotePageIdentifier] : targets) {
+        RELEASE_LOG(ProcessSwapping, "%p - SuspendedPageProxy::suspendIframeProcesses: Sending SetIsSuspendedWithFrameItem to iframe process pid %i for frameItem %s", this, process->processID(), frameItemIdentifier.toString().utf8().data());
+
+        process->sendWithAsyncReply(Messages::WebPage::SetIsSuspendedWithFrameItem(true, frameItemIdentifier), [weakThis = WeakPtr { *this }](std::optional<bool> didSuspend) {
+            RefPtr protectedThis = weakThis.get();
+            if (protectedThis)
+                protectedThis->didIframeSuspensionComplete(didSuspend.value_or(false));
+        }, remotePageIdentifier);
+    }
+    return true;
+}
+
+bool SuspendedPageProxy::hasIframeInProcess(WebCore::ProcessIdentifier processIdentifier) const
+{
+    // FIXME: Add WebFrameProxy::forEachDescendant() to avoid manual traverseNext() loops.
+    for (RefPtr frame = m_mainFrame->traverseNext().frame; frame; frame = frame->traverseNext().frame) {
+        if (protect(frame->process())->coreProcessIdentifier() == processIdentifier)
+            return true;
+    }
+    return false;
+}
+
+void SuspendedPageProxy::didIframeSuspensionComplete(bool success)
+{
+    if (m_suspensionState == SuspensionState::Resumed || m_anyIframeSuspensionFailed)
+        return;
+
+    ++m_completedIframeSuspensions;
+    if (!success) {
+        m_anyIframeSuspensionFailed = true;
+        RELEASE_LOG_ERROR(ProcessSwapping, "%p - SuspendedPageProxy::didIframeSuspensionComplete: iframe suspension failed, invalidating cache entry", this);
+        protect(backForwardCache())->removeEntry(*this); // Will destroy |this|.
+        return;
+    }
+
+    if (m_completedIframeSuspensions < m_expectedIframeSuspensions)
+        return;
+
+    RELEASE_LOG(ProcessSwapping, "%p - SuspendedPageProxy::didIframeSuspensionComplete: All %u iframe suspensions completed", this, m_expectedIframeSuspensions);
+
+    maybeCompleteSuspension();
+}
+
+void SuspendedPageProxy::maybeCompleteSuspension()
+{
+    if (!m_mainFrameSuspended)
+        return;
+
+    if (m_completedIframeSuspensions < m_expectedIframeSuspensions)
+        return;
+
+    m_suspensionTimeoutTimer.stop();
+    m_suspensionState = SuspensionState::Suspended;
+
+    if (auto handler = std::exchange(m_readyToUnsuspendHandler, nullptr))
+        handler(this);
 }
 
 WebPageProxy* SuspendedPageProxy::page() const
