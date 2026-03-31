@@ -228,6 +228,88 @@ static void writeHarnessJSON(NSString *path, NSDictionary *object)
     // Private windows get separate identifier so they can't merge with regular windows
     if (_isPrivateBrowsingWindow)
         self.window.tabbingIdentifier = @"MiniBrowserPrivateWindow";
+
+    // Start nutjob input pipe reader if configured
+    NSString *inputPipePath = NSProcessInfo.processInfo.environment[@"NUTJOB_INPUT_PIPE"];
+    if (inputPipePath.length > 0)
+        [self startNutjobInputReader:inputPipePath];
+}
+
+- (void)startNutjobInputReader:(NSString *)pipePath
+{
+    __weak WK2BrowserWindowController *weakSelf = self;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        FILE *inputFile = fopen(pipePath.UTF8String, "r");
+        if (!inputFile) {
+            NSLog(@"nutjob: failed to open input pipe %@", pipePath);
+            return;
+        }
+        NSLog(@"nutjob: input reader connected to %@", pipePath);
+
+        char line[4096];
+        while (fgets(line, sizeof(line), inputFile)) {
+            NSString *jsonLine = [[NSString alloc] initWithUTF8String:line];
+            jsonLine = [jsonLine stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
+            if (jsonLine.length == 0)
+                continue;
+
+            NSData *data = [jsonLine dataUsingEncoding:NSUTF8StringEncoding];
+            NSDictionary *event = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+            if (!event)
+                continue;
+
+            NSString *type = event[@"type"];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                WK2BrowserWindowController *self = weakSelf;
+                if (!self || !self->_webView)
+                    return;
+
+                if ([type isEqualToString:@"keydown"]) {
+                    NSString *key = event[@"key"];
+                    NSString *js = nil;
+                    if ([key isEqualToString:@"ArrowDown"])
+                        js = @"window.scrollBy(0, 60)";
+                    else if ([key isEqualToString:@"ArrowUp"])
+                        js = @"window.scrollBy(0, -60)";
+                    else if ([key isEqualToString:@"PageDown"])
+                        js = @"window.scrollBy(0, window.innerHeight * 0.9)";
+                    else if ([key isEqualToString:@"PageUp"])
+                        js = @"window.scrollBy(0, -window.innerHeight * 0.9)";
+                    else if ([key isEqualToString:@"Home"])
+                        js = @"window.scrollTo(0, 0)";
+                    else if ([key isEqualToString:@"End"])
+                        js = @"window.scrollTo(0, document.body.scrollHeight)";
+                    else if ([key isEqualToString:@"Tab"]) {
+                        // Tab through focusable elements
+                        js = @"(function(){var f=document.querySelectorAll('a,button,input,select,textarea,[tabindex]');"
+                              "var c=document.activeElement;var i=Array.from(f).indexOf(c);"
+                              "if(i<f.length-1)f[i+1].focus();else if(f.length)f[0].focus()})()";
+                    }
+                    if (js)
+                        [self->_webView evaluateJavaScript:js completionHandler:nil];
+
+                } else if ([type isEqualToString:@"click"]) {
+                    int x = [event[@"x"] intValue];
+                    int y = [event[@"y"] intValue];
+                    NSString *js = [NSString stringWithFormat:
+                        @"(function(){var e=document.elementFromPoint(%d,%d);"
+                         "if(e){e.click();return e.tagName+'#'+e.id}return null})()", x, y];
+                    [self->_webView evaluateJavaScript:js completionHandler:^(id result, NSError *error) {
+                        if (result)
+                            NSLog(@"nutjob: clicked %@", result);
+                    }];
+
+                } else if ([type isEqualToString:@"scroll"]) {
+                    int deltaX = [event[@"deltaX"] intValue];
+                    int deltaY = [event[@"deltaY"] intValue];
+                    NSString *js = [NSString stringWithFormat:@"window.scrollBy(%d,%d)", deltaX, deltaY];
+                    [self->_webView evaluateJavaScript:js completionHandler:nil];
+                }
+            });
+        }
+        fclose(inputFile);
+        NSLog(@"nutjob: input reader disconnected");
+    });
 }
 
 - (void)userAgentDidChange:(NSNotification *)notification
