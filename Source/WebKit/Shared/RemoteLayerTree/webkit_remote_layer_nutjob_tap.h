@@ -40,6 +40,7 @@
 #include <WebCore/SourceBrush.h>
 #include <WebCore/TextFlags.h>
 #include <wtf/DataLog.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/Variant.h>
 #include <wtf/NeverDestroyed.h>
@@ -108,6 +109,9 @@ enum class Command : uint8_t {
     FillMask = 0x54,
 
     DrawGlyphs = 0x60,
+    DrawTextRun = 0x61,
+    DefineFont = 0x62,
+    DefineFontData = 0x63,
 
     FillLinearGradient = 0x70,
     FillRadialGradient = 0x71,
@@ -133,6 +137,13 @@ enum class ImagePixelFormat : uint8_t {
 
 enum class MaskPixelFormat : uint8_t {
     A8 = 1,
+};
+
+enum class DrawGlyphsEmissionPath : uint8_t {
+    None,
+    Font,
+    Mask,
+    Image,
 };
 
 struct Writer {
@@ -486,9 +497,22 @@ inline void appendAdapterReportLine(const FrameMetadata& metadata, const Adapter
 }
 
 struct SerializationState {
+#if USE(CORE_TEXT)
+    struct FontEntry {
+        RetainPtr<CTFontRef> font;
+        uint16_t fontId { 0 };
+    };
+#endif
+
     Vector<SerializationFrame, 8> stack;
+#if USE(CORE_TEXT)
+    Vector<FontEntry, 4> definedFonts;
+#endif
     uint32_t nextImageID { 1 };
     uint32_t nextMaskID { 1 };
+#if USE(CORE_TEXT)
+    uint16_t nextFontId { 1 };
+#endif
 
     SerializationState(const WebCore::GraphicsContextState& initialState, const WebCore::AffineTransform& initialCTM)
     {
@@ -516,6 +540,74 @@ struct SerializationState {
         if (stack.size() > 1)
             stack.removeLast();
     }
+
+#if USE(CORE_TEXT)
+    uint16_t fontIdFor(CTFontRef font) const
+    {
+        if (!font)
+            return 0;
+
+        for (const auto& entry : definedFonts) {
+            if (entry.font && CFEqual(entry.font.get(), font))
+                return entry.fontId;
+        }
+        return 0;
+    }
+
+    uint16_t defineFontId(CTFontRef font)
+    {
+        if (!font || !nextFontId)
+            return 0;
+
+        uint16_t fontId = nextFontId++;
+        definedFonts.append({ font, fontId });
+        return fontId;
+    }
+
+    // Cached reverse glyph→codepoint map per CTFont.
+    // Built by scanning common Unicode ranges (BMP).
+    struct GlyphCodepointMap {
+        RetainPtr<CTFontRef> font;
+        HashMap<uint16_t, uint32_t> map;
+    };
+    Vector<GlyphCodepointMap, 4> glyphCodepointMaps;
+
+    HashMap<uint16_t, uint32_t>& glyphToCodepointMap(CTFontRef font)
+    {
+        // Check cache
+        for (auto& entry : glyphCodepointMaps) {
+            if (entry.font && CFEqual(entry.font.get(), font))
+                return entry.map;
+        }
+
+        // Build reverse map by scanning common Unicode ranges
+        GlyphCodepointMap newMap;
+        newMap.font = font;
+
+        // Scan BMP in chunks
+        constexpr size_t chunkSize = 256;
+        UniChar chars[chunkSize];
+        CGGlyph glyphs[chunkSize];
+
+        for (uint32_t base = 32; base < 0x2000; base += chunkSize) {
+            size_t count = std::min(static_cast<size_t>(0x2000 - base), chunkSize);
+            for (size_t i = 0; i < count; ++i)
+                chars[i] = static_cast<UniChar>(base + i);
+
+            // CTFontGetGlyphsForCharacters returns false if ANY char is unmapped,
+            // but still fills in glyphs for chars it CAN map. Always check results.
+            memset(glyphs, 0, sizeof(glyphs));
+            CTFontGetGlyphsForCharacters(font, chars, glyphs, count);
+            for (size_t i = 0; i < count; ++i) {
+                if (glyphs[i] != 0)
+                    newMap.map.add(glyphs[i], base + static_cast<uint32_t>(i));
+            }
+        }
+
+        glyphCodepointMaps.append(WTFMove(newMap));
+        return glyphCodepointMaps.last().map;
+    }
+#endif
 };
 
 inline void noteHandling(AdapterReport* report, const char* operation, AdapterHandlingStrategy strategy)
@@ -2010,11 +2102,118 @@ inline bool emitDrawGlyphsMaskResource(Writer& writer, SerializationState& state
     return emitTrimmedMaskResource(writer, state, *pixelBuffer, rasterBounds);
 }
 
-inline bool emitDrawGlyphsResource(Writer& writer, SerializationState& state, const WebCore::Font& font, std::span<const WebCore::GlyphBufferGlyph> glyphs, std::span<const WebCore::GlyphBufferAdvance> advances, const WebCore::FloatPoint& anchor, WebCore::FontSmoothingMode smoothingMode)
+inline bool emitDrawGlyphsFontResource(Writer& writer, SerializationState& state, const WebCore::Font& font, std::span<const WebCore::GlyphBufferGlyph> glyphs, std::span<const WebCore::GlyphBufferAdvance> advances, const WebCore::FloatPoint& anchor, WebCore::FontSmoothingMode)
 {
+#if !USE(CORE_TEXT)
+    UNUSED_PARAM(writer);
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(font);
+    UNUSED_PARAM(glyphs);
+    UNUSED_PARAM(advances);
+    UNUSED_PARAM(anchor);
+    return false;
+#else
+    auto glyphCount = std::min(glyphs.size(), advances.size());
+    if (!glyphCount || glyphCount > UINT16_MAX)
+        return false;
+
+    const auto& graphicsState = state.current().state;
+    auto drawingMode = graphicsState.textDrawingMode();
+    if (!drawingMode || !drawingMode.contains(WebCore::TextDrawingMode::Fill) || drawingMode.contains(WebCore::TextDrawingMode::Stroke))
+        return false;
+    if (!fillBrushRenderable(state) || !hasSolidColor(graphicsState.fillBrush()))
+        return false;
+
+    auto ctFont = font.platformData().ctFont();
+    if (!ctFont)
+        return false;
+
+    uint16_t fontId = state.fontIdFor(ctFont);
+    if (!fontId) {
+        auto familyName = adoptCF(CTFontCopyFamilyName(ctFont));
+        if (!familyName)
+            return false;
+
+        auto utf8Name = String(familyName.get()).utf8();
+        if (utf8Name.length() > UINT16_MAX)
+            return false;
+
+        fontId = state.defineFontId(ctFont);
+        if (!fontId)
+            return false;
+
+        writer.writeU8(static_cast<uint8_t>(Command::DefineFont));
+        writer.writeU16(fontId);
+        writer.writeU16(static_cast<uint16_t>(utf8Name.length()));
+        for (auto byte : utf8Name.span())
+            writer.writeU8(static_cast<uint8_t>(byte));
+        writer.writeU16(0);
+    }
+
+    Vector<uint16_t, 256> glyphIds;
+    Vector<float, 256> offsetsX;
+    Vector<float, 256> offsetsY;
+    Vector<uint32_t, 256> codepoints;
+    glyphIds.reserveInitialCapacity(glyphCount);
+    offsetsX.reserveInitialCapacity(glyphCount);
+    offsetsY.reserveInitialCapacity(glyphCount);
+    codepoints.reserveInitialCapacity(glyphCount);
+
+    // Reverse-map glyph IDs to Unicode codepoints using CoreText.
+    // This allows nutjob to look up the correct glyphs in its own
+    // substitute font (e.g., Noto Serif instead of Georgia).
+    {
+        Vector<CGGlyph, 256> cgGlyphs;
+        cgGlyphs.reserveInitialCapacity(glyphCount);
+        for (size_t i = 0; i < glyphCount; ++i)
+            cgGlyphs.append(static_cast<CGGlyph>(glyphs[i]));
+
+        // CTFontGetStringEncoding doesn't do reverse mapping.
+        // Instead, scan common Unicode ranges to build a reverse map.
+        // This is cached per CTFont via the SerializationState.
+        auto& reverseMap = state.glyphToCodepointMap(ctFont);
+        for (size_t i = 0; i < glyphCount; ++i) {
+            auto it = reverseMap.find(static_cast<uint16_t>(glyphs[i]));
+            codepoints.append(it != reverseMap.end() ? it->second : 0);
+        }
+    }
+
+    float penX = 0;
+    float penY = 0;
+    for (size_t i = 0; i < glyphCount; ++i) {
+        glyphIds.append(static_cast<uint16_t>(glyphs[i]));
+        offsetsX.append(penX);
+        offsetsY.append(penY);
+        penX += WebCore::width(advances[i]);
+        penY += WebCore::height(advances[i]);
+    }
+
+    writer.writeU8(static_cast<uint8_t>(Command::DrawTextRun));
+    writer.writeU32(packARGB(graphicsState.fillBrush().color()));
+    writer.writeU16(fontId);
+    writer.writeF32(font.platformData().size());
+    writer.writeF32(anchor.x());
+    writer.writeF32(anchor.y());
+    writer.writeU16(static_cast<uint16_t>(glyphCount));
+    for (size_t i = 0; i < glyphCount; ++i) {
+        writer.writeU16(glyphIds[i]);
+        writer.writeF32(offsetsX[i]);
+        writer.writeF32(offsetsY[i]);
+        writer.writeU32(codepoints[i]);  // Unicode codepoint for nutjob remapping
+    }
+    return true;
+#endif
+}
+
+inline DrawGlyphsEmissionPath emitDrawGlyphsResource(Writer& writer, SerializationState& state, const WebCore::Font& font, std::span<const WebCore::GlyphBufferGlyph> glyphs, std::span<const WebCore::GlyphBufferAdvance> advances, const WebCore::FloatPoint& anchor, WebCore::FontSmoothingMode smoothingMode)
+{
+    if (emitDrawGlyphsFontResource(writer, state, font, glyphs, advances, anchor, smoothingMode))
+        return DrawGlyphsEmissionPath::Font;
     if (emitDrawGlyphsMaskResource(writer, state, font, glyphs, advances, anchor, smoothingMode))
-        return true;
-    return emitDrawGlyphsImageResource(writer, state, font, glyphs, advances, anchor, smoothingMode);
+        return DrawGlyphsEmissionPath::Mask;
+    if (emitDrawGlyphsImageResource(writer, state, font, glyphs, advances, anchor, smoothingMode))
+        return DrawGlyphsEmissionPath::Image;
+    return DrawGlyphsEmissionPath::None;
 }
 
 inline void emitDrawPath(Writer& writer, const SerializationState& state, const WebCore::Path& path)
@@ -2076,11 +2275,14 @@ inline void serializeItem(Writer& writer, SerializationState& state, const WebCo
             emitDrawPath(writer, state, command.path());
         } else if constexpr (std::is_same_v<ItemType, WebCore::DisplayList::DrawGlyphs>) {
             auto fontRef = command.font();
-            if (!emitDrawGlyphsResource(writer, state, fontRef.get(), command.glyphs().span(), command.advances().span(), command.localAnchor(), command.fontSmoothingMode())) {
+            auto emissionPath = emitDrawGlyphsResource(writer, state, fontRef.get(), command.glyphs().span(), command.advances().span(), command.localAnchor(), command.fontSmoothingMode());
+            if (emissionPath == DrawGlyphsEmissionPath::None) {
                 note("draw-glyphs", AdapterHandlingStrategy::Placeholder);
                 strictUnsupported("DisplayList::DrawGlyphs", "placeholder fallback");
                 emitDrawGlyphsPlaceholder(writer, state, command);
-            } else
+            } else if (emissionPath == DrawGlyphsEmissionPath::Font)
+                note("draw-glyphs", AdapterHandlingStrategy::Direct);
+            else
                 note("draw-glyphs", AdapterHandlingStrategy::Prerasterized);
         } else if constexpr (std::is_same_v<ItemType, WebCore::DisplayList::DrawImageBuffer>) {
             if (!emitImageBufferResource(writer, state, command.imageBuffer(), command.destinationRect(), command.source()))
@@ -2934,10 +3136,13 @@ public:
     {
         noteContentCommand();
         ++m_counters.drawGlyphRuns;
-        if (!emitDrawGlyphsResource(m_writer, m_serializationState, font, glyphs, advances, point, smoothingMode)) {
+        auto emissionPath = emitDrawGlyphsResource(m_writer, m_serializationState, font, glyphs, advances, point, smoothingMode);
+        if (emissionPath == DrawGlyphsEmissionPath::None) {
             notePlaceholderFallback("draw-glyphs", "GraphicsContext::drawGlyphs");
             emitDrawGlyphsPlaceholder(m_writer, m_serializationState, font, glyphs, advances, point);
-        } else
+        } else if (emissionPath == DrawGlyphsEmissionPath::Font)
+            noteHandling("draw-glyphs", AdapterHandlingStrategy::Direct);
+        else
             noteHandling("draw-glyphs", AdapterHandlingStrategy::Prerasterized);
     }
 
