@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Invalid @property syntax falls back for leading and trailing bars (reference)</title>
+  <style>
+    .squares {
+      font-size: 0;
+    }
+
+    .square {
+      display: inline-block;
+      width: 100px;
+      height: 100px;
+      background-color: green;
+    }
+
+    .square + .square {
+      margin-left: 8px;
+    }
+  </style>
+</head>
+<body>
+  <p>Test passes if there are two filled green squares below.</p>
+  <div class="squares">
+    <div class="square"></div><div class="square"></div>
+  </div>
+</body>
+</html>

@@ -151,7 +151,17 @@ PASS syntax:'<length> | *', initialValue:'10px' is invalid
 PASS syntax:'<length>+', initialValue:'2px,7px,calc(8px)' is invalid
 PASS syntax:'<length>#', initialValue:'2px 7px calc(8px)' is invalid
 PASS syntax:'*|banana', initialValue:'banana' is invalid
+PASS syntax:'|<length>', initialValue:'10px' is invalid
+PASS syntax:'| <length>', initialValue:'10px' is invalid
+PASS syntax:'||<length>', initialValue:'10px' is invalid
+PASS syntax:'|| <length>', initialValue:'10px' is invalid
+PASS syntax:'<length>|', initialValue:'10px' is invalid
+PASS syntax:'<length> |', initialValue:'10px' is invalid
+PASS syntax:'<length>||', initialValue:'10px' is invalid
+PASS syntax:'<length> ||', initialValue:'10px' is invalid
 PASS syntax:'|banana', initialValue:'banana' is invalid
+PASS syntax:'| banana', initialValue:'banana' is invalid
+PASS syntax:'banana |', initialValue:'banana' is invalid
 PASS syntax:'*+', initialValue:'banana' is invalid
 PASS syntax:'|', initialValue:'banana' is invalid
 PASS syntax:' |', initialValue:'banana' is invalid
