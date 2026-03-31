@@ -2804,7 +2804,7 @@ bool Element::hasDisplayNone() const
 
 void Element::storeDisplayContentsOrNoneStyle(std::unique_ptr<RenderStyle> style)
 {
-    // This is used by RenderTreeBuilder to store the style for Elements with display:{contents|none}.
+    // This is used by RenderTreeUpdater to store the style for Elements with display:{contents|none}.
     // Normally style is held in renderers but display:contents doesn't generate one.
     // This is kept distinct from ElementRareData::computedStyle() which can update outside style resolution.
     // This way renderOrDisplayContentsStyle() always returns consistent styles matching the rendering state.

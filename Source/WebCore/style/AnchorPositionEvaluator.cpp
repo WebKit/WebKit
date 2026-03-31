@@ -1065,7 +1065,7 @@ static CheckedPtr<const Element> anchorScopeForAnchorName(const RenderBoxModelOb
     CheckedPtr<const Element> anchorElement = renderer.element();
     ASSERT(anchorElement);
     for (CheckedPtr<const Element> currentAncestor = anchorElement; currentAncestor; currentAncestor = currentAncestor->parentElementInComposedTree()) {
-        CheckedPtr currentAncestorStyle = currentAncestor->renderStyle();
+        CheckedPtr currentAncestorStyle = currentAncestor->renderOrDisplayContentsStyle();
         if (!currentAncestorStyle)
             continue;
         const auto& currentAncestorAnchorScope = currentAncestorStyle->anchorScope();
