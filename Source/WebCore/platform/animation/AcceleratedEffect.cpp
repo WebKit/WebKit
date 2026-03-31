@@ -317,6 +317,23 @@ AcceleratedEffect::AcceleratedEffect(const AcceleratedEffect& source, OptionSet<
     }
 }
 
+static RefPtr<TransformOperation> blend(const RefPtr<TransformOperation>& base, const RefPtr<TransformOperation>& from, const RefPtr<TransformOperation>& to, const BlendingContext& blendingContext, NOESCAPE const Function<Ref<TransformOperation>(const TransformOperation&)>& identity)
+{
+    if (to) {
+        // Explicit "from" and "to" values.
+        if (from)
+            return to->blend(from.get(), blendingContext);
+        // Implicit "from" value.
+        return to->blend(base.get(), blendingContext);
+    }
+
+    // Implicit "to" value.
+    ASSERT(from);
+    if (base)
+        return base->blend(from.get(), blendingContext);
+    return identity(*from)->blend(from.get(), blendingContext);
+}
+
 static void blend(AcceleratedEffectProperty property, AcceleratedEffectValues& output, const AcceleratedEffectValues& from, const AcceleratedEffectValues& to, BlendingContext& blendingContext)
 {
     switch (property) {
@@ -327,16 +344,19 @@ static void blend(AcceleratedEffectProperty property, AcceleratedEffectValues& o
         output.transform = blend(from.transform, to.transform, blendingContext);
         break;
     case AcceleratedEffectProperty::Translate:
-        if (auto& toTranslate = to.translate)
-            output.translate = toTranslate->blend(from.translate.get(), blendingContext);
+        output.translate = blend(output.translate, from.translate, to.translate, blendingContext, [](auto& translate) {
+            return TranslateTransformOperation::create(0.0f, 0.0f, 0.0f, translate.type());
+        });
         break;
     case AcceleratedEffectProperty::Rotate:
-        if (auto& toRotate = to.rotate)
-            output.rotate = toRotate->blend(from.rotate.get(), blendingContext);
+        output.rotate = blend(output.rotate, from.rotate, to.rotate, blendingContext, [](auto& rotate) {
+            return RotateTransformOperation::create(0, rotate.type());
+        });
         break;
     case AcceleratedEffectProperty::Scale:
-        if (auto& toScale = to.scale)
-            output.scale = toScale->blend(from.scale.get(), blendingContext);
+        output.scale = blend(output.scale, from.scale, to.scale, blendingContext, [](auto& scale) {
+            return ScaleTransformOperation::create(1, 1, 1, scale.type());
+        });
         break;
     case AcceleratedEffectProperty::OffsetAnchor:
         if (!canBlend(from.offsetAnchor, to.offsetAnchor)) {

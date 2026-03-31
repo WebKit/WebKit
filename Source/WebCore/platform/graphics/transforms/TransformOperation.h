@@ -61,7 +61,7 @@ enum class TransformOperationType : uint8_t {
     None
 };
 
-class TransformOperation : public RefCounted<TransformOperation> {
+class TransformOperation : public ThreadSafeRefCounted<TransformOperation> {
 public:
     using Type = TransformOperationType;
 
