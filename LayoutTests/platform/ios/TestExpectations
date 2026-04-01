@@ -8613,3 +8613,5 @@ webgl/2.0.y/conformance/textures/image_bitmap_from_image_bitmap/tex-2d-rgba-rgba
 webgl/2.0.y/conformance/textures/image_bitmap_from_image_bitmap/tex-2d-rgba-rgba-unsigned_short_5_5_5_1.html [ Pass Failure ]
 
 webkit.org/b/311207 imported/w3c/web-platform-tests/workers/semantics/structured-clone/shared.html [ Pass Failure ]
+
+webkit.org/b/311222 [ Release ] imported/w3c/web-platform-tests/navigation-api/navigate-event/signal-abort-window-stop-after-intercept.html [ Skip ]
