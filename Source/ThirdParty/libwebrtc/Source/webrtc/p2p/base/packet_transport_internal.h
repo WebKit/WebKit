@@ -91,6 +91,11 @@ class RTC_EXPORT PacketTransportInternal : public sigslot::has_slots<> {
   // Emitted when receiving state changes to true.
   void SubscribeReceivingState(
       absl::AnyInvocable<void(PacketTransportInternal*)> callback);
+#if WEBRTC_WEBKIT_BUILD
+  void SubscribeReceivingState(void* tag,
+      absl::AnyInvocable<void(PacketTransportInternal*)> callback);
+  void UnsubscribeReceivingState(void* tag);
+#endif
   void NotifyReceivingState(PacketTransportInternal* packet_transport);
 
   // Callback is invoked each time a packet is received on this channel.

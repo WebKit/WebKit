@@ -237,6 +237,10 @@ DtlsTransportInternalImpl::~DtlsTransportInternalImpl() {
   if (ice_transport_) {
     ice_transport_->ResetDtlsStunPiggybackCallbacks();
     ice_transport_->DeregisterReceivedPacketCallback(this);
+#if WEBRTC_WEBKIT_BUILD
+    ice_transport_->UnsubscribeReceivingState(this);
+    ice_transport_->UnsubscribeWritableState(this);
+#endif
   }
 }
 
@@ -669,6 +673,9 @@ void DtlsTransportInternalImpl::ConnectToIceTransport() {
       this,
       [this](PacketTransportInternal* transport) { OnReadyToSend(transport); });
   ice_transport_->SubscribeReceivingState(
+#if WEBRTC_WEBKIT_BUILD
+      this,
+#endif
       [this](PacketTransportInternal* transport) {
         OnReceivingState(transport);
       });

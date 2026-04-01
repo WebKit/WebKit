@@ -111,6 +111,17 @@ void PacketTransportInternal::SubscribeReceivingState(
   RTC_DCHECK_RUN_ON(&network_checker_);
   receiving_state_trampoline_.Subscribe(std::move(callback));
 }
+#if WEBRTC_WEBKIT_BUILD
+void PacketTransportInternal::SubscribeReceivingState(void* tag,
+    absl::AnyInvocable<void(PacketTransportInternal*)> callback)
+{
+  receiving_state_trampoline_.Subscribe(tag, std::move(callback));
+}
+void PacketTransportInternal::UnsubscribeReceivingState(void* tag)
+{
+  receiving_state_trampoline_.Unsubscribe(tag);
+}
+#endif
 void PacketTransportInternal::NotifyReceivingState(
     PacketTransportInternal* packet_transport) {
   RTC_DCHECK_RUN_ON(&network_checker_);
