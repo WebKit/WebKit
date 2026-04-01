@@ -30,51 +30,53 @@
 #pragma once
 
 #include "CSSParserTokenRange.h"
-#include "CSSPrimitiveValue.h"
-#include "MediaQuery.h"
-#include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class CSSValue;
 class Document;
 
-struct CSSParserContext;
+struct SizesCalcValue {
+    double value;
+    bool isLength;
+    char16_t operation;
 
-namespace CSS {
-enum class LengthUnit : uint8_t;
-}
+    SizesCalcValue()
+        : value(0)
+        , isLength(false)
+        , operation(0)
+    {
+    }
 
-class SizesAttributeParser {
+    SizesCalcValue(double numericValue, bool length)
+        : value(numericValue)
+        , isLength(length)
+        , operation(0)
+    {
+    }
+};
+
+class SizesCalcParser {
 public:
-    SizesAttributeParser(const String&, const Document&);
+    SizesCalcParser(CSSParserTokenRange, const Document&);
 
-    bool isAuto() const { return m_isAuto; }
-
-    const Vector<MQ::MediaQueryResult>& dynamicMediaQueryResults() const LIFETIME_BOUND { return m_dynamicMediaQueryResults; }
-    float length();
-
-    static float defaultLength(const Document&);
-    static float computeLength(double value, CSS::LengthUnit, const Document&);
-
+    float result() const;
+    bool isValid() const { return m_isValid; }
 
 private:
-    bool parse(CSSParserTokenRange, const CSSParserContext&);
-    float effectiveSize();
-    std::optional<float> calculateLengthInPixels(CSSParserTokenRange);
-    bool mediaConditionMatches(const MQ::MediaQuery&);
-    unsigned effectiveSizeDefaultValue();
+    bool calcToReversePolishNotation(CSSParserTokenRange);
+    bool calculate();
+    void appendNumber(const CSSParserToken&);
+    bool appendLength(const CSSParserToken&);
+    bool handleOperator(Vector<CSSParserToken>& stack, const CSSParserToken&);
+    bool handleRightParenthesis(Vector<CSSParserToken>& stack);
+    bool handleComma(Vector<CSSParserToken>& stack, const CSSParserToken&);
+    void appendOperator(const CSSParserToken&);
 
-    const Document& document() const { return m_document.get(); }
-
-    WeakRef<const Document, WeakPtrImplWithEventTargetData> m_document;
-    Vector<MQ::MediaQueryResult> m_dynamicMediaQueryResults;
-    bool m_isAuto { false };
-
-    float m_length { 0 };
-    bool m_lengthWasSet { false };
-    bool m_isValid { false };
+    Vector<SizesCalcValue> m_valueList;
+    bool m_isValid;
+    float m_result;
+    Ref<const Document> m_document;
 };
 
 } // namespace WebCore

@@ -319,9 +319,9 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
             if (auto layoutWidth = autoSizesLayoutWidth())
                 sourceSize = *layoutWidth;
             else
-                sourceSize = sizesParser.effectiveSize();
+                sourceSize = sizesParser.length();
         } else
-            sourceSize = sizesParser.effectiveSize();
+            sourceSize = sizesParser.length();
 
         candidate = bestFitSourceForImageAttributes(document->deviceScaleFactor(), nullAtom(), srcset, sourceSize, [&](auto& candidate) {
             return m_imageLoader->shouldIgnoreCandidateWhenLoadingFromArchive(candidate);
@@ -382,14 +382,15 @@ void HTMLImageElement::selectImageSource(RelevantMutation relevantMutation)
             // If we don't have a <picture> or didn't find a source, then we use our own attributes.
             SizesAttributeParser sizesParser(attributeWithoutSynchronization(sizesAttr).string(), document.get());
             m_dynamicMediaQueryResults.appendVector(sizesParser.dynamicMediaQueryResults());
+
             float sourceSize;
             if (sizesParser.isAuto() && isLazyLoadable()) {
                 if (auto layoutWidth = autoSizesLayoutWidth())
                     sourceSize = *layoutWidth;
                 else
-                    sourceSize = sizesParser.effectiveSize();
+                    sourceSize = sizesParser.length();
             } else
-                sourceSize = sizesParser.effectiveSize();
+                sourceSize = sizesParser.length();
             candidate = bestFitSourceForImageAttributes(document->deviceScaleFactor(), srcAttribute, srcsetAttribute, sourceSize, [&](auto& candidate) {
                 return m_imageLoader->shouldIgnoreCandidateWhenLoadingFromArchive(candidate);
             });

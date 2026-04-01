@@ -19449,6 +19449,8 @@
 		BC7C5E952BE2A8FB00AE645C /* MutableCSSSelector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MutableCSSSelector.h; sourceTree = "<group>"; };
 		BC7C5E962BE2A8FB00AE645C /* SizesAttributeParser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SizesAttributeParser.cpp; sourceTree = "<group>"; };
 		BC7C5E972BE2A8FB00AE645C /* SizesAttributeParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SizesAttributeParser.h; sourceTree = "<group>"; };
+		BC7C5E982BE2A8FB00AE645C /* SizesCalcParser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SizesCalcParser.cpp; sourceTree = "<group>"; };
+		BC7C5E992BE2A8FB00AE645C /* SizesCalcParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SizesCalcParser.h; sourceTree = "<group>"; };
 		BC7C5E9A2BE2A9F500AE645C /* CSSPropertyParserConsumer+MetaConsumerDefinitions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"; sourceTree = "<group>"; };
 		BC7C5E9B2BE2B54E00AE645C /* CSSFontVariantLigaturesParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSFontVariantLigaturesParser.h; sourceTree = "<group>"; };
 		BC7C5E9C2BE2B54E00AE645C /* CSSFontVariantNumericParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSFontVariantNumericParser.h; sourceTree = "<group>"; };
@@ -32912,6 +32914,8 @@
 				BC7C5E952BE2A8FB00AE645C /* MutableCSSSelector.h */,
 				BC7C5E962BE2A8FB00AE645C /* SizesAttributeParser.cpp */,
 				BC7C5E972BE2A8FB00AE645C /* SizesAttributeParser.h */,
+				BC7C5E982BE2A8FB00AE645C /* SizesCalcParser.cpp */,
+				BC7C5E992BE2A8FB00AE645C /* SizesCalcParser.h */,
 			);
 			path = parser;
 			sourceTree = "<group>";
