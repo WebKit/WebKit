@@ -152,8 +152,10 @@ pas_enumerator* pas_enumerator_create(pas_root* remote_root_address,
 
     if (!compact_heap_base)
         goto fail;
-
-    PAS_ASSERT(compact_heap_reservation_bump >= compact_heap_guard_size);
+    if (compact_heap_reservation_bump < compact_heap_guard_size)
+        goto fail;
+    if (compact_heap_reservation_bump > compact_heap_size)
+        goto fail;
 
     compact_heap_copy_base = pas_enumerator_allocate(result, compact_heap_size);
     if (!pas_enumerator_copy_remote(
