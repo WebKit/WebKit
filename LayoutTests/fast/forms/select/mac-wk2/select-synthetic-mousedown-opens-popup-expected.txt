@@ -1,0 +1,5 @@
+Tests that a synthetic mousedown event opens an auto appearance select popup.
+
+
+PASS - popup opened via synthetic mousedown
+

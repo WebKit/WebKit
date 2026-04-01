@@ -1551,12 +1551,15 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
     ASSERT(renderer());
     ASSERT(usesMenuList());
 
-    if (!event.isTrusted())
-        return;
-
     auto& eventNames = WebCore::eventNames();
 
     bool isBaseSelectPicker = usesBaseAppearancePicker();
+
+    // FIXME: Eventually we should remove the isBaseSelectPicker conditional here, but that requires
+    // Web Inspector changes.
+    if (!event.isTrusted() && isBaseSelectPicker)
+        return;
+
     bool popoverOpen = isBaseSelectPicker && m_popover && m_popover->isPopoverShowing();
 
     if (event.type() == eventNames.keydownEvent) {

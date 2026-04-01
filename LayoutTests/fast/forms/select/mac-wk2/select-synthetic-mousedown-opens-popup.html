@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<body>
+<p>Tests that a synthetic mousedown event opens an auto appearance select popup.</p>
+<select>
+  <option>one</option>
+  <option>two</option>
+</select>
+<pre id="result"></pre>
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const select = document.querySelector('select');
+
+function log(text) {
+    document.getElementById('result').textContent += text + '\n';
+}
+
+window.onload = () => {
+    if (!window.testRunner)
+        return;
+
+    select.dispatchEvent(new MouseEvent('mousedown', {button: 0}));
+    log(internals.isSelectPopupVisible(select) ? 'PASS - popup opened via synthetic mousedown' : 'FAIL - popup did not open');
+
+    testRunner.notifyDone();
+};
+
+</script>
+</body>
