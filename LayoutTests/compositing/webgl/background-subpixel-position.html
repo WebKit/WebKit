@@ -1,0 +1,17 @@
+<style>
+canvas {
+    position: absolute;
+    top: 10.5px;
+    left: 10.5px;
+    background-color: red;
+}
+</style>
+<body>
+<canvas id="canvas" width="20" height="20"></canvas>
+<script>
+const canvas = document.getElementById("canvas");
+const gl = canvas.getContext("webgl");
+gl.clearColor(0, 1, 0, 1);
+gl.clear(gl.COLOR_BUFFER_BIT);
+</script>
+</body>
