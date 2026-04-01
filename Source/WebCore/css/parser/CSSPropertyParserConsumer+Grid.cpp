@@ -37,14 +37,11 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+Ident.h"
-#include "CSSPropertyParserConsumer+IntegerDefinitions.h"
-#include "CSSPropertyParserConsumer+LengthPercentageDefinitions.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSPropertyParserState.h"
 #include "CSSSubgridValue.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
-#include "GridArea.h"
 #include "StyleGridPosition.h"
 #include <wtf/Vector.h>
 #include <wtf/text/StringView.h>
@@ -253,7 +250,7 @@ RefPtr<CSSGridLineNamesValue> consumeGridLineNames(CSSParserTokenRange& range, C
 
     Vector<String, 4> lineNames;
     while (auto lineName = consumeCustomIdentForGridLine(rangeCopy))
-        lineNames.append(lineName->customIdent());
+        lineNames.append(lineName->customIdent().value);
     if (rangeCopy.consumeIncludingWhitespace().type() != RightBracketToken)
         return nullptr;
     range = rangeCopy;

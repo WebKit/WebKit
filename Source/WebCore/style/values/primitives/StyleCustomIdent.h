@@ -1,0 +1,138 @@
+/*
+ * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2026 saku <saku@email.sakupi01.com>
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "CSSCustomIdent.h"
+#include <wtf/Forward.h>
+#include <wtf/Markable.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/text/AtomString.h>
+
+namespace WebCore {
+
+class CSSValue;
+class CSSValuePool;
+class RenderStyle;
+
+namespace Style {
+
+// Custom-ident values have dedicated CSS and Style representations.
+struct CustomIdent {
+    AtomString value;
+
+    CustomIdent() = default;
+    CustomIdent(AtomString&& value)
+        : value(WTF::move(value))
+    {
+    }
+    CustomIdent(const AtomString& value)
+        : value(value)
+    {
+    }
+    CustomIdent(const CSS::CustomIdent& value)
+        : value(value.value)
+    {
+    }
+
+    operator CSS::CustomIdent() const { return { value }; }
+
+    bool operator==(const CustomIdent&) const = default;
+    bool operator==(const AtomString& other) const { return value == other; }
+};
+
+// Transitional alias while style code is moved to `CustomIdent`.
+using CustomIdentifier = CustomIdent;
+
+void NODELETE add(Hasher&, const CustomIdent&);
+WTF::TextStream& operator<<(WTF::TextStream&, const CustomIdent&);
+
+// MARK: Common Types.
+
+template<typename StyleType> struct ToCSS;
+template<typename CSSType> struct ToStyle;
+
+template<> struct ToCSS<CustomIdent> {
+    template<typename... Rest> CSS::CustomIdent operator()(const CustomIdent& value, Rest&&...) const
+    {
+        return { value.value };
+    }
+};
+
+template<> struct ToStyle<CSS::CustomIdent> {
+    template<typename... Rest> CustomIdent operator()(const CSS::CustomIdent& value, Rest&&...) const
+    {
+        return { value.value };
+    }
+};
+
+// Types that are treated as "tuple-like" can have their conversion operations defined
+// automatically by just defining their type mapping.
+template<typename> struct ToStyleMapping;
+template<typename> struct ToCSSMapping;
+
+// Two-way mapping between `CSS::CustomIdent` and `CustomIdent`. This is only needed
+// for "tuple-like" types, in lieu of explicit ToCSS/ToStyle specializations.
+template<> struct ToStyleMapping<CSS::CustomIdent> {
+    using type = CustomIdent;
+};
+template<> struct ToCSSMapping<CustomIdent> {
+    using type = CSS::CustomIdent;
+};
+
+// MARK: - Conversion directly from "Style to "Ref<CSSValue>"
+
+template<typename StyleType> struct CSSValueCreation;
+
+// Specialization for `CustomIdent`.
+template<> struct CSSValueCreation<CustomIdent> {
+    Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const CustomIdent&);
+};
+
+// MARK: - Serialization
+
+template<typename StyleType> struct Serialize;
+
+// Specialization for `CustomIdent`.
+template<> struct Serialize<CustomIdent> {
+    template<typename... Rest> void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle&, const CustomIdent& value, Rest&&...)
+    {
+        CSS::serializationForCSSCustomIdentifier(builder, context, CSS::CustomIdent { value.value });
+    }
+};
+
+} // namespace Style
+} // namespace WebCore
+
+namespace WTF {
+
+template<>
+struct MarkableTraits<WebCore::Style::CustomIdent> {
+    static bool isEmptyValue(const WebCore::Style::CustomIdent& value) { return value.value.isNull(); }
+    static WebCore::Style::CustomIdent emptyValue() { return WebCore::Style::CustomIdent { nullAtom() }; }
+};
+
+} // namespace WTF

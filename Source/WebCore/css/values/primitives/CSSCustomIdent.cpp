@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2026 saku <saku@email.sakupi01.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,52 +25,40 @@
  */
 
 #include "config.h"
-#include "ScopedName.h"
+#include "CSSCustomIdent.h"
 
+#include "CSSMarkup.h"
 #include "CSSPrimitiveValue.h"
-#include "StyleBuilderChecking.h"
-#include "StyleValueTypes+CSSValueConversion.h"
+#include <wtf/Hasher.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
-namespace Style {
 
-// MARK: - Conversion
-
-auto CSSValueConversion<ScopedName>::operator()(BuilderState& state, const CSSPrimitiveValue& primitiveValue) -> ScopedName
+WTF::TextStream& operator<<(WTF::TextStream& ts, const CSS::CustomIdent& value)
 {
-    auto customIdentifier = toStyleFromCSSValue<CustomIdentifier>(state, primitiveValue);
-    if (customIdentifier.value.isNull())
-        return { };
-
-    return {
-        .name = customIdentifier.value,
-        .scopeOrdinal = state.styleScopeOrdinal()
-    };
+    return ts << value.value;
 }
 
-auto CSSValueConversion<ScopedName>::operator()(BuilderState& state, const CSSValue& value) -> ScopedName
+void add(Hasher& hasher, const CSS::CustomIdent& value)
 {
-    RefPtr primitiveValue = requiredDowncast<CSSPrimitiveValue>(state, value);
-    if (!primitiveValue)
-        return { };
-
-    auto customIdentifier = toStyleFromCSSValue<CustomIdentifier>(state, *primitiveValue);
-    if (customIdentifier.value.isNull())
-        return { };
-
-    return ScopedName {
-        .name = customIdentifier.value,
-        .scopeOrdinal = state.styleScopeOrdinal()
-    };
+    add(hasher, value.value);
 }
 
-// MARK: - Logging
+namespace CSS {
 
-WTF::TextStream& operator<<(WTF::TextStream& ts, const ScopedName& scopedName)
+// MARK: - Serialization
+
+void serializationForCSSCustomIdentifier(StringBuilder& builder, const SerializationContext&, const CustomIdent& value)
 {
-    return ts << scopedName.name;
+    WebCore::serializeIdentifier(value.value, builder);
 }
 
-} // namespace Style
+// MARK: - CSSValue Creation
+
+Ref<CSSValue> makePrimitiveCSSValue(const CustomIdent& value)
+{
+    return CSSPrimitiveValue::createCustomIdent(value);
+}
+
+} // namespace CSS
 } // namespace WebCore

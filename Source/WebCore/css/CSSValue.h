@@ -48,6 +48,7 @@ enum CSSPropertyID : uint16_t;
 enum CSSValueID : uint16_t;
 
 namespace CSS {
+struct CustomIdent;
 struct SerializationContext;
 }
 
@@ -172,7 +173,7 @@ public:
     enum ValueSeparator : uint8_t { SpaceSeparator, CommaSeparator, SlashSeparator };
 
     inline bool isCustomIdent() const;
-    inline String customIdent() const;
+    inline CSS::CustomIdent customIdent() const;
 
     inline bool isString() const;
     inline String string() const;

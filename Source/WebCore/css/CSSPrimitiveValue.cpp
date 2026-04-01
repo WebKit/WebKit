@@ -482,6 +482,11 @@ Ref<CSSPrimitiveValue> CSSPrimitiveValue::createCustomIdent(String value)
     return adoptRef(*new CSSPrimitiveValue(WTF::move(value), CSSUnitType::CustomIdent));
 }
 
+Ref<CSSPrimitiveValue> CSSPrimitiveValue::createCustomIdent(const CSS::CustomIdent& value)
+{
+    return createCustomIdent(value.value);
+}
+
 Ref<CSSPrimitiveValue> CSSPrimitiveValue::createFontFamily(String value)
 {
     return adoptRef(*new CSSPrimitiveValue(WTF::move(value), CSSUnitType::CSS_FONT_FAMILY));
@@ -1252,7 +1257,6 @@ bool CSSPrimitiveValue::addDerivedHash(Hasher& hasher) const
         break;
     case CSSUnitType::CSS_CALC:
         add(hasher, m_value.calc);
-        break;
         break;
     case CSSUnitType::CSS_IDENT:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_ANGLE:
