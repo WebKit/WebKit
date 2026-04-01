@@ -10,4 +10,8 @@ PASS Check data after write
 PASS Check modified data after write
 PASS Check data getter
 PASS Check metadata getter
+PASS Try writing receiver audio data on audio sender
+PASS Try writing receiver video data on video sender
+PASS Try writing video data on audio sender
+PASS Try writing audio data on video sender
 
