@@ -1,4 +1,4 @@
----
+--
 name: find-webkit-commit
 description: Convert between commit hashes and WebKit identifiers using git-webkit. Use when working with git commits, commit hashes, or commit references in the WebKit repository.
 user-invocable: false
