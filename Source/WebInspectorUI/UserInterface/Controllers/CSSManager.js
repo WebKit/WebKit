@@ -646,7 +646,7 @@ WI.CSSManager = class CSSManager extends WI.Object
         this._styleSheetFrameURLMap.clear();
         this._modifiedStyles.clear();
 
-        // COMPATIBILITY (macOS 14.0, iOS 17.0): the `PrefersColorScheme` override used to be cleared on main frame navigation
+        // COMPATIBILITY (macOS 13.3, iOS 16.4): the `PrefersColorScheme` override used to be cleared on main frame navigation
         // Since support can't be tested directly, check for the `reason` parameter of `Console.messagesCleared` as that change shipped in the same release.
         // FIXME: Use explicit version checking once <https://webkit.org/b/148680> is fixed.
         if (!InspectorBackend.hasEvent("Console.messagesCleared", "reason")) {

@@ -1345,7 +1345,7 @@ WI.DOMNode = class DOMNode extends WI.Object
             this.showLayoutOverlay();
     }
 
-    // COMPATIBILITY (iOS 18.0, macOS 15.0): `DOM.getMediaStats` did not exist yet.
+    // COMPATIBILITY (macOS 14.4, iOS 17.4): `DOM.getMediaStats` did not exist yet.
     async getMediaStats()
     {
         let target = WI.assumingMainTarget();

@@ -75,7 +75,7 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
         gridSettingsGroup.addSetting(WI.settings.gridOverlayShowAreaNames, WI.UIString("Area Names", "Area names @ Layout Panel Overlay Options", "Label for option to toggle the area names setting for CSS grid overlays"));
         gridSettingsGroup.addSetting(WI.settings.gridOverlayShowExtendedGridLines, WI.UIString("Extended Grid Lines", "Show extended lines @ Layout Panel Overlay Options", "Label for option to toggle the extended lines setting for CSS grid overlays"));
 
-        // COMPATIBILITY (macOS X.Y, iOS X.Y): `DOM.GridOverlayConfig.showOrderNumbers` did not exist yet.
+        // COMPATIBILITY (macOS 26.2, iOS 26.2): `DOM.GridOverlayConfig.showOrderNumbers` did not exist yet.
         // Since support can't be tested directly, check for if the `Page.navigate` command has been removed.
         // FIXME: Use explicit version checking once https://webkit.org/b/148680 is fixed.
         if (!InspectorBackend.hasCommand("Page.navigate"))
