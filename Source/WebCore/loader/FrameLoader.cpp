@@ -1773,7 +1773,8 @@ void FrameLoader::load(FrameLoadRequest&& request, std::optional<NavigationReque
 
     if (auto advancedPrivacyProtections = request.advancedPrivacyProtections())
         loader->setOriginatorAdvancedPrivacyProtections(*advancedPrivacyProtections);
-    addSameSiteInfoToRequestIfNeeded(loader->request());
+    Ref initiator = request.requester();
+    addSameSiteInfoToRequestIfNeeded(loader->request(), SecurityPolicy::shouldInheritSecurityOriginFromOwner(initiator->url()) ? nullptr : initiator.ptr());
     applyShouldOpenExternalURLsPolicyToNewDocumentLoader(protectedFrame(), loader, request);
     loader->setIsHandledByAboutSchemeHandler(request.isHandledByAboutSchemeHandler());
 

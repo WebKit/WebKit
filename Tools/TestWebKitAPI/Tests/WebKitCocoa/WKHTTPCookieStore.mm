@@ -1217,3 +1217,62 @@ TEST(WKHTTPCookieStore, PartitionedCookieShouldNotHavePartitionProperty)
     Util::run(&gotCookieCallback);
 }
 #endif
+
+TEST(WKHTTPCookieStore, SameSiteStrictCookieNotSentOnCrossSiteNavigation)
+{
+    using namespace TestWebKitAPI;
+    bool receivedSameSiteCheck { false };
+    bool sameSiteCheckHasCookie { false };
+    bool receivedCrossSiteCheck { false };
+    bool crossSiteCheckHasCookie { false };
+    HTTPServer server(HTTPServer::UseCoroutines::Yes, [&](Connection connection) -> ConnectionTask {
+        while (true) {
+            auto request = co_await connection.awaitableReceiveHTTPRequest();
+            auto path = HTTPServer::parsePath(request);
+            request.append(0);
+
+            if (path.endsWith("/setcookie"_s)) {
+                co_await connection.awaitableSend(
+                    "HTTP/1.1 200 OK\r\n"
+                    "Content-Length: 4\r\n"
+                    "Set-Cookie: id=secret; Path=/; SameSite=Strict\r\n"
+                    "\r\n"
+                    "Done"_s);
+            } else if (path.endsWith("/attacker"_s)) {
+                co_await connection.awaitableSend(HTTPResponse("<html><body>attacker page</body></html>"_s).serialize());
+            } else if (path.endsWith("/same-site-check"_s)) {
+                sameSiteCheckHasCookie = contains(request.span(), "id=secret"_span);
+                co_await connection.awaitableSend(HTTPResponse("checked"_s).serialize());
+                receivedSameSiteCheck = true;
+            } else if (path.endsWith("/cross-site-check"_s)) {
+                crossSiteCheckHasCookie = contains(request.span(), "id=secret"_span);
+                co_await connection.awaitableSend(HTTPResponse("checked"_s).serialize());
+                receivedCrossSiteCheck = true;
+            }
+        }
+    });
+
+    RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setProxyConfiguration:@{
+        (NSString *)kCFStreamPropertyHTTPProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPProxyPort: @(server.port()),
+    }];
+    RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setWebsiteDataStore:dataStore.get()];
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://victim.example:%d/setcookie", server.port()]]]];
+    [webView _test_waitForDidFinishNavigation];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://victim.example:%d/same-site-check", server.port()]]]];
+    Util::run(&receivedSameSiteCheck);
+    EXPECT_TRUE(sameSiteCheckHasCookie);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://attacker.example:%d/attacker", server.port()]]]];
+    [webView _test_waitForDidFinishNavigation];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://victim.example:%d/cross-site-check", server.port()]]]];
+    Util::run(&receivedCrossSiteCheck);
+    EXPECT_FALSE(crossSiteCheckHasCookie);
+}
