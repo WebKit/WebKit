@@ -78,13 +78,17 @@ public:
 
     void didEvaluateJavaScriptFunction(WebCore::FrameIdentifier, JSCallbackIdentifier, const String& result, const String& errorType);
 
+    bool isKnownReference(WebCore::FrameIdentifier, const String& nodeHandle);
+    void addKnownReference(WebCore::FrameIdentifier, const String&);
+
 private:
     explicit WebAutomationSessionProxy(const String& sessionIdentifier);
     JSObjectRef scriptObject(JSGlobalContextRef);
     void setScriptObject(JSGlobalContextRef, JSObjectRef);
     JSObjectRef scriptObjectForFrame(WebFrame&);
-    WebCore::Element* elementForNodeHandle(WebFrame&, const String&);
+    Expected<Ref<WebCore::Element>, String> elementForNodeHandle(WebFrame&, const String&);
     WebCore::AccessibilityObject* getAccessibilityObjectForNode(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, String& error);
+    static String errorTypeFromJavaScriptExceptionName(const String& exceptionName);
 
     void ensureObserverForFrame(WebFrame&);
 
@@ -118,6 +122,7 @@ private:
 
     HashMap<WebCore::FrameIdentifier, HashMap<JSCallbackIdentifier, CompletionHandler<void(String&&, String&&)>>> m_webFramePendingEvaluateJavaScriptCallbacksMap;
     HashMap<WebCore::FrameIdentifier, Ref<WebAutomationDOMWindowObserver>> m_frameObservers;
+    HashMap<WebCore::FrameIdentifier, HashSet<String>> m_knownReferences;
 };
 
 } // namespace WebKit

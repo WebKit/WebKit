@@ -25,7 +25,7 @@
 
 //# sourceURL=__InjectedScript_WebAutomationSessionProxy.js
 
-(function (sessionIdentifier, evaluate, createUUID, isValidNodeIdentifier) {
+(function (sessionIdentifier, currentFrameIdentifier, evaluate, createUUID, isValidNodeIdentifier, isKnownReference, addKnownReference) {
 
 const sessionNodePropertyName = "session-node-" + sessionIdentifier;
 
@@ -56,11 +56,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
     nodeForIdentifier(identifier)
     {
         this._clearStaleNodes();
-        try {
-            return this._nodeForIdentifier(identifier);
-        } catch (error) {
-            return null;
-        }
+        return this._nodeForIdentifier(identifier);
     }
 
     // Private
@@ -300,7 +296,11 @@ let AutomationSessionProxy = class AutomationSessionProxy
         let node = this._idToNodeMap.get(identifier);
         if (node)
             return node;
-        throw {name: "NodeNotFound", message: "Node with identifier '" + identifier + "' was not found"};
+
+        if (isKnownReference(currentFrameIdentifier, identifier))
+            throw {name: "NodeNotFound", message: "Stale element reference '" + identifier + "'"};
+
+        throw {name: "InvalidNodeIdentifier", message: "No such element with identifier '" + identifier + "'"};
     }
 
     _identifierForNode(node)
@@ -313,6 +313,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
 
         this._nodeToIdMap.set(node, identifier);
         this._idToNodeMap.set(identifier, node);
+        addKnownReference(currentFrameIdentifier, identifier);
 
         return identifier;
     }
