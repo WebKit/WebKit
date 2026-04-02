@@ -39,9 +39,15 @@
 #include "TextNodeTraversal.h"
 #include "TreeScopeInlines.h"
 #include "TrustedType.h"
+#include "WebCoreOpaqueRootInlines.h"
 #include "XMLNSNames.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/AtomString.h>
+
+namespace JSC {
+class AbstractSlotVisitor;
+class SlotVisitor;
+}
 
 namespace WebCore {
 
@@ -170,16 +176,33 @@ void Attr::detachFromElementWithValue(const AtomString& value)
     ASSERT(m_element);
     ASSERT(m_standaloneValue.isNull());
     m_standaloneValue = value;
-    m_element = nullptr;
+    {
+        Locker locker { m_elementLockForGC };
+        m_element = nullptr;
+    }
     setTreeScopeRecursively(Ref<Document> { document() });
 }
 
 void Attr::attachToElement(Element& element)
 {
     ASSERT(!m_element);
-    m_element = element;
+    {
+        Locker locker { m_elementLockForGC };
+        m_element = &element;
+    }
     m_standaloneValue = nullAtom();
     setTreeScopeRecursively(element.treeScope());
 }
+
+template<typename Visitor>
+void Attr::visitOwnerElementInGCThread(Visitor& visitor)
+{
+    Locker locker { m_elementLockForGC };
+    if (m_element)
+        addWebCoreOpaqueRoot(visitor, *m_element);
+}
+
+template void Attr::visitOwnerElementInGCThread(JSC::AbstractSlotVisitor&);
+template void Attr::visitOwnerElementInGCThread(JSC::SlotVisitor&);
 
 }
