@@ -2026,6 +2026,337 @@ def generate_webkit_secure_coding_header(serialized_types):
     return '\n'.join(result)
 
 
+# --- CoreIPC.js TypeScript Definition Generation ---
+# Generates a .d.ts file describing the JavaScript parameter shapes
+# accepted by ArgumentSerializer in coreipc.js for IPC testing.
+
+_coreipc_js_type_aliases = {
+    'int': 'uint32_t', 'unsigned': 'uint32_t', 'char': 'uint8_t',
+    'pid_t': 'uint32_t', 'unsigned short': 'uint16_t', 'unsigned char': 'uint8_t',
+    'long long': 'int64_t', 'unsigned long long': 'uint64_t', 'short': 'int16_t',
+    'WebCore::ContextMenuAction': 'uint32_t', 'CGBitmapInfo': 'uint32_t',
+    'UInt32': 'uint32_t', 'CTFontDescriptorOptions': 'uint32_t',
+    'SystemMemoryPressureStatus': 'WTF::SystemMemoryPressureStatus',
+    'GCGLenum': 'uint32_t', 'GCGLint': 'int32_t',
+    'GCGLErrorCodeSet': 'OptionSet<GCGLErrorCode>',
+    'CFTypeRef': 'WebKit::CoreIPCCFType', 'CFDataRef': 'WebKit::CoreIPCData',
+    'CFStringRef': 'String', 'CFArrayRef': 'WebKit::CoreIPCCFArray',
+    'CFDictionaryRef': 'WebKit::CoreIPCCFDictionary', 'CFBooleanRef': 'WebKit::CoreIPCBoolean',
+    'CFNumberRef': 'WebKit::CoreIPCNumber', 'CFDateRef': 'WebKit::CoreIPCDate',
+    'CFURLRef': 'WebKit::CoreIPCCFURL', 'CFNullRef': 'WebKit::CoreIPCNull',
+    'SecAccessControlRef': 'WebKit::CoreIPCSecAccessControl',
+    'SecCertificateRef': 'WebKit::CoreIPCSecCertificate',
+    'SecKeychainItemRef': 'WebKit::CoreIPCSecKeychainItem',
+    'CVPixelBufferRef': 'WebKit::CoreIPCCVPixelBufferRef',
+    'SecTrustRef': 'WebKit::CoreIPCSecTrust',
+    'CFCharacterSetRef': 'WebKit::CoreIPCCFCharacterSet',
+    'CGColorRef': 'WebCore::Color', 'CGColorSpaceRef': 'WebKit::CoreIPCCGColorSpace',
+    'size_t': 'uint64_t', 'CGFloat': 'double',
+}
+
+
+def _dts_resolve_alias(t):
+    if t in _coreipc_js_type_aliases:
+        return _dts_resolve_alias(_coreipc_js_type_aliases[t])
+    return t[len('const '):] if t.startswith('const ') else t
+
+
+def _dts_simplify_name(name):
+    name = name.replace('()', '')
+    while '.' in name:
+        p = name.index('.')
+        name = name[:p] + (name[p + 1].upper() + name[p + 2:] if p + 1 < len(name) else '')
+    return name
+
+
+def _dts_sanitize(name):
+    return name.replace('::', '_').replace('<', '_').replace('>', '').replace(' ', '_').replace(',', '_')
+
+
+def _dts_split_template(s):
+    result, cur, depth = [], '', 0
+    for ch in s:
+        if ch == '>':
+            depth -= 1
+        if ch == '<':
+            depth += 1
+        if depth == 0 and ch == ',':
+            result.append(cur.strip())
+            cur = ''
+        else:
+            cur += ch
+    result.append(cur.strip())
+    return result
+
+
+def _dts_parse_template(name):
+    name = name.strip()
+    if not name.endswith('>'):
+        return None, None
+    start = name.index('<')
+    return (name[:start], name[start + 1:-1]) if start != -1 else (None, None)
+
+
+class _DtsTypeResolver:
+    def __init__(self, type_info, enum_info, identifiers):
+        self.type_info = type_info
+        self.enum_info = enum_info
+        self.identifiers = identifiers
+
+    def resolve(self, cpp_type):
+        cpp_type = _dts_resolve_alias(cpp_type)
+        ts = self._template(cpp_type)
+        if ts is not None:
+            return ts
+        if cpp_type in self.identifiers:
+            return 'number | bigint'
+        if cpp_type in self.enum_info:
+            return 'number'
+        ts = self._primitive(cpp_type)
+        if ts is not None:
+            return ts
+        if cpp_type in self.type_info:
+            return _dts_sanitize(cpp_type)
+        return 'any'
+
+    def _template(self, t):
+        if '<' not in t:
+            return None
+        tpl, inner = _dts_parse_template(t)
+        if tpl is None:
+            return None
+        if tpl in ('RefPtr', 'std::unique_ptr', 'RetainPtr', 'std::optional', 'Optional', 'WTF::Markable', 'Markable'):
+            return f'{{ optionalValue: {self.resolve(inner)} }} | {{}}'
+        if tpl in ('Vector', 'std::vector', 'ArrayReference', 'Span', 'std::span', 'std::array', 'HashSet'):
+            return f'Array<{self.resolve(_dts_split_template(inner)[0])}>'
+        if tpl in ('std::variant', 'Variant'):
+            parts = [f"{{ variantType: '{vt}'; variant: {self.resolve(vt)} }}" for vt in _dts_split_template(inner)]
+            parts.append('{ variantIndex: number; variant: any }')
+            return ' | '.join(parts)
+        if tpl == 'std::pair':
+            ps = _dts_split_template(inner)
+            return f'[{self.resolve(ps[0])}, {self.resolve(ps[1])}]' if len(ps) == 2 else None
+        if tpl == 'OptionSet':
+            return 'number'
+        if tpl in ('HashMap', 'MemoryCompactRobinHoodHashMap'):
+            ps = _dts_split_template(inner)
+            if len(ps) >= 2:
+                k, v = self.resolve(ps[0]), self.resolve(ps[1])
+                return f'Array<{{ key: {k}; value: {v} }} | [{k}, {v}]>'
+        if tpl == 'KeyValuePair':
+            ps = _dts_split_template(inner)
+            if len(ps) == 2:
+                k, v = self.resolve(ps[0]), self.resolve(ps[1])
+                return f'{{ key: {k}; value: {v} }} | [{k}, {v}]'
+        if tpl == 'IPC::ArrayReferenceTuple':
+            return f'[{", ".join(f"Array<{self.resolve(p)}>" for p in _dts_split_template(inner))}]'
+        if tpl == 'OptionalTuple':
+            return 'any'
+        if tpl in ('Ref', 'UniqueRef'):
+            return self.resolve(inner)
+        return None
+
+    @staticmethod
+    def _primitive(t):
+        m = {'uint8_t': 'number', 'int8_t': 'number', 'uint16_t': 'number', 'int16_t': 'number',
+             'uint32_t': 'number', 'int32_t': 'number', 'uint64_t': 'number | bigint', 'int64_t': 'number | bigint',
+             'float': 'number | bigint', 'double': 'number | bigint',
+             'bool': 'boolean', 'String': 'string', 'std::nullptr_t': 'null',
+             'IPC::ConnectionHandle': 'StreamConnection | { open: Function }',
+             'IPC::StreamServerConnectionHandle': 'StreamConnection | { open: Function }',
+             'IPC::Semaphore': '{ signal: Function }'}
+        if t in m:
+            return m[t]
+        if t in ('WebCore::SharedMemory::Handle', 'WebCore::SharedMemoryHandle', 'MachSendRight'):
+            return "{ protection: 'ReadOnly' | 'ReadWrite'; handle: any }"
+        return None
+
+
+def generate_coreipc_dts(serialized_types, serialized_enums, using_statements, output_dir, source_root):
+    from webkit import parser as msg_parser, model as msg_model
+    from webkit.messages import serialized_identifiers
+
+    # Build using alias map
+    using_alias_map = {}
+    for us in using_statements:
+        parts = [line.strip() for line in us.alias_lines if not line.strip().startswith('#')]
+        target = ' '.join(parts).strip().rstrip(';').strip()
+        if target:
+            using_alias_map[us.name] = target
+
+    # Build type_info
+    type_info = {}
+    for st in serialized_types:
+        name = st.name_declaration_for_serialized_type_info()
+        members = []
+        sm = st.members_for_serialized_type_info()
+        parent = st.parent_class
+        while parent is not None:
+            sm = parent.members_for_serialized_type_info() + sm
+            parent = parent.parent_class
+        for m in sm:
+            if m.optional_tuple_bits() or m.optional_tuple_bit():
+                continue
+            members.append((m.type, _dts_simplify_name(m.name)))
+        ot_types, ot_names = [], []
+        for m in sm:
+            if m.optional_tuple_bit():
+                ot_types.append(m.type)
+                ot_names.append(m.name)
+        if ot_types:
+            members.append(('OptionalTuple<' + ', '.join(ot_types) + '>', _dts_simplify_name('OptionalTuple<' + ', '.join(ot_names) + '>')))
+        for m in sm:
+            if 'EncodeRequestBody' in m.attributes:
+                members.append(('IPC::FormDataReference', 'requestBody'))
+        if st.members_are_subclasses:
+            members = [(f'Variant<{", ".join(f"{m.namespace}::{m.name}" for m in st.members)}>', 'subclasses')]
+        if st.cf_type is not None:
+            members = [(st.namespace_if_not_wtf_and_name(), 'wrapper')]
+        type_info[name] = members
+    for us_name, us_target in using_alias_map.items():
+        if us_name not in type_info:
+            type_info[us_name] = [(us_target, 'alias')]
+
+    # Build resolver
+    identifiers = set(serialized_identifiers())
+    identifiers.update(['WebKit::WebPageProxyIdentifier', 'WebCore::ProcessIdentifier', 'WebKit::RemoteCDMIdentifier'])
+    enum_info = {se.namespace_and_name(): se for se in serialized_enums}
+    resolver = _DtsTypeResolver(type_info, enum_info, identifiers)
+
+    # Parse messages
+    receivers = []
+    webkit_dir = os.path.join(source_root, 'Source', 'WebKit')
+    for root, _dirs, files in os.walk(webkit_dir):
+        for f in sorted(files):
+            if f.endswith('.messages.in'):
+                try:
+                    with open(os.path.join(root, f)) as fh:
+                        receivers.append(msg_parser.parse(fh))
+                except Exception:
+                    pass
+    try:
+        receivers = msg_model.generate_global_model(receivers)
+    except Exception:
+        pass
+
+    # Emit
+    L = []
+    L.append('// Auto-generated by generate-serializers.py — do not edit.')
+    L.append('// Describes the JavaScript parameter shapes accepted by ArgumentSerializer in coreipc.js.')
+    L.append('//\n// Usage: Reference for LLMs and developers writing CoreIPC.js layout tests.')
+    L.append('// Messages are accessible as: CoreIPC.<Process>.<ReceiverClass>.<MessageName>(connectionId, params)\n')
+    L.append('// --- Helper Types ---\n')
+    L.append('/** A StreamConnection object created by CoreIPC.newStreamConnection() */')
+    L.append('interface StreamConnection {\n    handle: any;\n    connection: any;')
+    L.append('    newInterface(interfaceName: string, connectionIdentifier: number | bigint): StreamConnectionInterface;\n}\n')
+    L.append('interface StreamConnectionInterface {\n    interfaceName: string;\n    connection: any;\n    [messageName: string]: any;\n}\n')
+
+    L.append('// --- Enum Types ---\n')
+    for se in sorted(serialized_enums, key=lambda e: e.namespace_and_name()):
+        ts = _dts_sanitize(se.namespace_and_name())
+        if se.is_option_set():
+            L.append(f'/** OptionSet */\ntype {ts} = number;\n')
+        elif se.underlying_type == 'bool':
+            L.append(f'type {ts} = 0 | 1;\n')
+        else:
+            names = [vv.name for vv in se.valid_values]
+            if names:
+                L.append(f'/** Valid values: {", ".join(names)} */')
+            L.append(f'type {ts} = number;\n')
+
+    L.append('// --- Struct/Class Interfaces ---\n')
+    for st in sorted(serialized_types, key=lambda t: t.name_declaration_for_serialized_type_info()):
+        name = st.name_declaration_for_serialized_type_info()
+        ts = _dts_sanitize(name)
+        members = type_info.get(name, [])
+        if not members:
+            L.append(f'// {name} — opaque\ntype {ts} = any;\n')
+            continue
+        L.append(f'/** C++ type: {name} */\ninterface {ts} {{')
+        for mt, mn in members:
+            if mt.startswith('OptionalTuple<'):
+                pt, pn = _dts_parse_template(mt), _dts_parse_template(mn)
+                if pt[0] == 'OptionalTuple' and pn[0] == 'OptionalTuple':
+                    tt, tn = _dts_split_template(pt[1]), _dts_split_template(pn[1])
+                    L.append(f'    /** OptionalTuple — each field is independently optional */')
+                    L.append(f'    \'{mn}\': {{')
+                    for i in range(min(len(tt), len(tn))):
+                        L.append(f'        \'{tn[i].strip()}\'?: {resolver.resolve(tt[i])};')
+                    L.append(f'    }};')
+                else:
+                    L.append(f'    \'{mn}\': any;')
+            else:
+                L.append(f'    {mn}: {resolver.resolve(mt)};')
+        L.append('}\n')
+
+    stn = set(st.name_declaration_for_serialized_type_info() for st in serialized_types)
+    for un in sorted(using_alias_map.keys()):
+        if un in stn:
+            continue
+        ms = type_info.get(un, [])
+        if not ms:
+            continue
+        L.append(f'/** C++ using alias: {un} = {using_alias_map[un]} */\ninterface {_dts_sanitize(un)} {{')
+        for mt, mn in ms:
+            L.append(f'    {mn}: {resolver.resolve(mt)};')
+        L.append('}\n')
+
+    L.append('// --- Message Parameter Interfaces ---\n')
+    pm = {'UI': {}, 'GPU': {}, 'Networking': {}}
+    for recv in receivers:
+        if recv.name == 'IPC':
+            continue
+        dt = recv.receiver_dispatched_to
+        if dt not in pm:
+            continue
+        methods = []
+        for msg in recv.messages:
+            if msg.is_async_reply:
+                continue
+            pn = f'{_dts_sanitize(recv.name)}_{msg.name}_Params'
+            hp, hr = len(msg.parameters) > 0, msg.reply_parameters is not None
+            if hp:
+                L.append(f'interface {pn} {{')
+                for p in msg.parameters:
+                    L.append(f'    {p.name}: {resolver.resolve(p.type)};')
+                L.append('}\n')
+            rh = ', replyHandler?: Function' if hr else ''
+            if hp:
+                methods.append(f'    {msg.name}(connectionId: number | bigint, params: {pn}{rh}): void;')
+            else:
+                methods.append(f'    {msg.name}(connectionId: number | bigint, params: {{}}{rh}): void;')
+        if methods:
+            pm[dt][recv.name] = methods
+
+    L.append('// --- Receiver Interfaces ---\n')
+    for proc in ('UI', 'GPU', 'Networking'):
+        for rn in sorted(pm[proc].keys()):
+            L.append(f'interface {_dts_sanitize(rn)}Messages {{')
+            L.extend(pm[proc][rn])
+            L.append('}\n')
+
+    L.append('// --- Process Namespace Interfaces ---\n')
+    for proc in ('UI', 'GPU', 'Networking'):
+        L.append(f'interface {proc}ProcessMessages {{')
+        for rn in sorted(pm[proc].keys()):
+            L.append(f'    {rn}: {_dts_sanitize(rn)}Messages;')
+        L.append('}\n')
+
+    L.append('// --- CoreIPC Top-Level Interface ---\n')
+    L.append('interface CoreIPCType {')
+    L.append('    UI: UIProcessMessages;\n    GPU: GPUProcessMessages;\n    Networking: NetworkingProcessMessages;')
+    L.append('    newStreamConnection(): StreamConnection;\n    messages: Record<string, any>;')
+    L.append('    typeInfo: Record<string, any>;\n    enumInfo: Record<string, any>;')
+    L.append('    objectIdentifiers: string[];\n    messageByName: Record<string, any>;')
+    L.append('    default_timeout: number;\n}\n')
+    L.append('export declare const CoreIPC: CoreIPCType;\nexport { StreamConnection, StreamConnectionInterface };\n')
+
+    output_path = os.path.join(output_dir, 'coreipc.d.ts') if output_dir else 'coreipc.d.ts'
+    with open(output_path, 'w') as f:
+        f.write('\n'.join(L))
+    return output_path
+
+
 def main(argv):
     parser = argparse.ArgumentParser(description='Generate serializers from input files')
     parser.add_argument('file_extension', help='File extension for output files')
@@ -2088,6 +2419,21 @@ def main(argv):
         output.write(generate_webkit_secure_coding_header(serialized_types))
     with open(output_path('GeneratedWebKitSecureCoding.%s' % file_extension), "w+") as output:
         output.write(generate_webkit_secure_coding_impl(serialized_types, headers))
+
+    # Generate CoreIPC.js TypeScript definitions into the output (DerivedSources) directory
+    source_root = None
+    for input_file in input_files:
+        abs_path = os.path.abspath(input_file)
+        idx = abs_path.find(os.sep + 'Source' + os.sep + 'WebKit' + os.sep)
+        if idx != -1:
+            source_root = abs_path[:idx]
+            break
+    if source_root:
+        try:
+            dts_path = generate_coreipc_dts(serialized_types, serialized_enums, using_statements, output_dir, source_root)
+        except Exception as e:
+            sys.stderr.write(f'Warning: Failed to generate CoreIPC.js type definitions: {e}\n')
+
     return 0
 
 

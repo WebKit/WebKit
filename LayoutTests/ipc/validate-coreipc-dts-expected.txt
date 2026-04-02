@@ -1,0 +1,25 @@
+CONSOLE MESSAGE: === Primitives: string, boolean, number ===
+CONSOLE MESSAGE: PASS NetworkConnectionToWebProcess.DeleteCookie
+CONSOLE MESSAGE: === Nested structs, enums, ObjectIdentifiers ===
+CONSOLE MESSAGE: PASS NetworkConnectionToWebProcess.CookiesForDOM
+CONSOLE MESSAGE: === Optionals: present and absent ===
+CONSOLE MESSAGE: PASS struct WebCore::SecurityOriginData
+CONSOLE MESSAGE: PASS struct WebCore::SecurityOriginData
+CONSOLE MESSAGE: === Vectors and nested struct arrays ===
+CONSOLE MESSAGE: PASS struct WebCore::WebTransportOptions
+CONSOLE MESSAGE: === Variant with variantIndex ===
+CONSOLE MESSAGE: PASS struct WebCore::SecurityOriginData
+CONSOLE MESSAGE: === Using alias with ObjectIdentifier target ===
+CONSOLE MESSAGE: PASS struct WebKit::PageData
+CONSOLE MESSAGE: PASS struct WebKit::PageData
+CONSOLE MESSAGE: === Using alias with std::pair target (struct elements) ===
+CONSOLE MESSAGE: PASS struct WebCore::TargetedElementIdentifiers
+CONSOLE MESSAGE: === Using alias with std::pair structure verification ===
+CONSOLE MESSAGE: PASS RootFrameData alias shape: { name: "alias", type: "std::pair<...>" }
+CONSOLE MESSAGE: === Full message: nested variants, structs, optionals ===
+CONSOLE MESSAGE: PASS NetworkConnectionToWebProcess.InitializeWebTransportSession
+CONSOLE MESSAGE: === HashMap via using alias ===
+CONSOLE MESSAGE: PASS struct WebCore::IndexIDToIndexKeyMap
+CONSOLE MESSAGE: PASS struct WebCore::IndexIDToIndexKeyMap
+CONSOLE MESSAGE: === Summary: 13 passed, 0 failed ===
+

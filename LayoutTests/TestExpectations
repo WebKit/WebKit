@@ -6210,6 +6210,8 @@ imported/w3c/web-platform-tests/css/motion/offset-path-url-011.html [ ImageOnlyF
 # mac-only IPC test
 ipc/webpageproxy-correctionpanel-no-crash.html [ Skip ]
 
+ipc/validate-coreipc-dts.html
+
 # WebGPU settings need to be exposed through the test runner.
 ipc/restrictedendpoints/allow-access-webGPU.html [ Pass Failure ]
 

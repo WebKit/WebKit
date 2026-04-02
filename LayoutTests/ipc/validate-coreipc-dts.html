@@ -1,0 +1,229 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.setTimeout(async () => {
+    if (!window.IPC)
+        return window.testRunner?.notifyDone();
+
+    const { CoreIPC, ArgumentSerializer } = await import('./coreipc.js');
+    let passed = 0;
+    let failed = 0;
+
+    // Helper: try serializing message arguments using the runtime definition
+    function testMessage(process, receiver, message, params) {
+        const key = `${receiver}_${message}`;
+        const def = CoreIPC.messages[key];
+        if (!def) {
+            console.log(`SKIP ${receiver}.${message} — not found in runtime messages`);
+            return;
+        }
+        try {
+            ArgumentSerializer.serializeArguments(def.arguments, params);
+            console.log(`PASS ${receiver}.${message}`);
+            passed++;
+        } catch (e) {
+            console.log(`FAIL ${receiver}.${message}: ${e.message}`);
+            failed++;
+        }
+    }
+
+    // Helper: try serializing a struct value against its typeInfo definition
+    function testStruct(typeName, value) {
+        const def = CoreIPC.typeInfo[typeName];
+        if (!def) {
+            console.log(`SKIP struct ${typeName} — not found in runtime typeInfo`);
+            return;
+        }
+        try {
+            ArgumentSerializer.serializeArguments(def, value);
+            console.log(`PASS struct ${typeName}`);
+            passed++;
+        } catch (e) {
+            console.log(`FAIL struct ${typeName}: ${e.message}`);
+            failed++;
+        }
+    }
+
+    // ---------------------------------------------------------------
+    console.log('=== Primitives: string, boolean, number ===');
+    // .d.ts: DeleteCookie_Params { firstParty: URL; url: URL; cookieName: string; }
+    // .d.ts: URL { string: string; }
+    testMessage('Networking', 'NetworkConnectionToWebProcess', 'DeleteCookie', {
+        firstParty: { string: 'https://example.com' },
+        url: { string: 'https://example.com/page' },
+        cookieName: 'session_id'
+    });
+
+    // ---------------------------------------------------------------
+    console.log('=== Nested structs, enums, ObjectIdentifiers ===');
+    // .d.ts: CookiesForDOM_Params {
+    //   firstParty: URL; sameSiteInfo: WebCore_SameSiteInfo; url: URL;
+    //   frameID: number | bigint; pageID: number | bigint;
+    //   includeSecureCookies: number; webPageProxyID: number | bigint;
+    // }
+    // .d.ts: WebCore_SameSiteInfo { isSameSite: boolean; isTopSite: boolean; isSafeHTTPMethod: boolean; }
+    testMessage('Networking', 'NetworkConnectionToWebProcess', 'CookiesForDOM', {
+        firstParty: { string: 'https://example.com' },
+        sameSiteInfo: { isSameSite: true, isTopSite: true, isSafeHTTPMethod: true },
+        url: { string: 'https://example.com' },
+        frameID: 1,
+        pageID: 1,
+        includeSecureCookies: 0,
+        webPageProxyID: 1
+    });
+
+    // ---------------------------------------------------------------
+    console.log('=== Optionals: present and absent ===');
+    // .d.ts: WebCore_SecurityOriginData { data: variant... }
+    // .d.ts: WebCore_SecurityOriginData_Tuple { protocol: string; host: string; port: { optionalValue: number } | {}; }
+    testStruct('WebCore::SecurityOriginData', {
+        data: {
+            variantType: 'WebCore::SecurityOriginData::Tuple',
+            variant: { protocol: 'https', host: 'example.com', port: { optionalValue: 443 } }
+        }
+    });
+    testStruct('WebCore::SecurityOriginData', {
+        data: {
+            variantType: 'WebCore::SecurityOriginData::Tuple',
+            variant: { protocol: 'https', host: 'example.com', port: {} }
+        }
+    });
+
+    // ---------------------------------------------------------------
+    console.log('=== Vectors and nested struct arrays ===');
+    // .d.ts: WebCore_WebTransportOptions {
+    //   allowPooling: boolean; requireUnreliable: boolean;
+    //   serverCertificateHashes: Array<WebCore_WebTransportHash>;
+    //   congestionControl: number; ...optionals...  protocols: Array<string>; ...
+    // }
+    // .d.ts: WebCore_WebTransportHash { algorithm: string; value: WebCore_BufferSource; }
+    // .d.ts: WebCore_BufferSource { span: Array<number>; }
+    testStruct('WebCore::WebTransportOptions', {
+        allowPooling: false,
+        requireUnreliable: true,
+        serverCertificateHashes: [
+            { algorithm: 'sha-256', value: { span: [1, 2, 3, 4, 5] } },
+            { algorithm: 'sha-256', value: { span: [10, 20, 30] } }
+        ],
+        congestionControl: 0,
+        anticipatedConcurrentIncomingUnidirectionalStreams: { optionalValue: 4 },
+        anticipatedConcurrentIncomingBidirectionalStreams: {},
+        protocols: ['h3'],
+        datagramsReadableMode: {}
+    });
+
+    // ---------------------------------------------------------------
+    console.log('=== Variant with variantIndex ===');
+    testStruct('WebCore::SecurityOriginData', {
+        data: {
+            variantIndex: 0,
+            variant: { protocol: 'http', host: 'localhost', port: { optionalValue: 8080 } }
+        }
+    });
+
+    // ---------------------------------------------------------------
+    console.log('=== Using alias with ObjectIdentifier target ===');
+    // .d.ts: WebKit_PageData { callbackIDs: Array<WebKit_PageData_TransactionCallbackID>; renderTreeSize: number | bigint; }
+    // .d.ts: WebKit_PageData_TransactionCallbackID { alias: number | bigint; }
+    testStruct('WebKit::PageData', {
+        callbackIDs: [{ alias: 100 }, { alias: 200 }],
+        renderTreeSize: 0
+    });
+    testStruct('WebKit::PageData', {
+        callbackIDs: [],
+        renderTreeSize: 42
+    });
+
+    // ---------------------------------------------------------------
+    console.log('=== Using alias with std::pair target (struct elements) ===');
+    // .d.ts: WebCore_TargetedElementIdentifiers {
+    //   alias: [number | bigint, WebCore_ScriptExecutionContextIdentifier];
+    // }
+    // .d.ts: WebCore_ScriptExecutionContextIdentifier {
+    //   object: WTF_UUID;
+    //   processIdentifier: number | bigint;
+    // }
+    // .d.ts: WTF_UUID { high: number | bigint; low: number | bigint; }
+    testStruct('WebCore::TargetedElementIdentifiers', {
+        alias: [
+            1,
+            { object: { high: 0, low: 1 }, processIdentifier: 1 }
+        ]
+    });
+
+    // ---------------------------------------------------------------
+    console.log('=== Using alias with std::pair structure verification ===');
+    const rootFrameDataDef = CoreIPC.typeInfo['WebKit::RemoteLayerTreeCommitBundle::RootFrameData'];
+    if (rootFrameDataDef) {
+        const memberName = rootFrameDataDef[0].name;
+        const memberType = rootFrameDataDef[0].type;
+        if (memberName === 'alias' && memberType.startsWith('std::pair<')) {
+            console.log('PASS RootFrameData alias shape: { name: "alias", type: "std::pair<...>" }');
+            passed++;
+        } else {
+            console.log(`FAIL RootFrameData unexpected shape: ${JSON.stringify(rootFrameDataDef[0])}`);
+            failed++;
+        }
+    } else {
+        console.log('SKIP RootFrameData — not in typeInfo');
+    }
+
+    // ---------------------------------------------------------------
+    console.log('=== Full message: nested variants, structs, optionals ===');
+    // .d.ts: InitializeWebTransportSession_Params {
+    //   identifier: number | bigint; url: URL;
+    //   options: WebCore_WebTransportOptions;
+    //   pageID: number | bigint; clientOrigin: WebCore_ClientOrigin;
+    // }
+    // .d.ts: WebCore_ClientOrigin { topOrigin: WebCore_SecurityOriginData; clientOrigin: WebCore_SecurityOriginData; }
+    testMessage('Networking', 'NetworkConnectionToWebProcess', 'InitializeWebTransportSession', {
+        identifier: 1,
+        url: { string: 'https://example.com:4443/webtransport' },
+        options: {
+            allowPooling: false, requireUnreliable: false,
+            serverCertificateHashes: [],
+            congestionControl: 0,
+            anticipatedConcurrentIncomingUnidirectionalStreams: {},
+            anticipatedConcurrentIncomingBidirectionalStreams: {},
+            protocols: [],
+            datagramsReadableMode: {}
+        },
+        pageID: IPC.pageID,
+        clientOrigin: {
+            topOrigin: {
+                data: { variantType: 'WebCore::SecurityOriginData::Tuple',
+                        variant: { protocol: 'https', host: 'example.com', port: { optionalValue: 4443 } } }
+            },
+            clientOrigin: {
+                data: { variantType: 'WebCore::SecurityOriginData::Tuple',
+                        variant: { protocol: 'https', host: 'example.com', port: { optionalValue: 4443 } } }
+            }
+        }
+    });
+
+    // ---------------------------------------------------------------
+    console.log('=== HashMap via using alias ===');
+    // .d.ts: WebCore_IndexIDToIndexKeyMap {
+    //   alias: Array<{ key: number | bigint; value: WebCore_IndexKey } | [number | bigint, WebCore_IndexKey]>;
+    // }
+    // .d.ts: WebCore_IndexKey {
+    //   data: { variantType: 'std::nullptr_t'; variant: null } | ...
+    // }
+    testStruct('WebCore::IndexIDToIndexKeyMap', {
+        alias: [
+            { key: 1, value: { data: { variantType: 'std::nullptr_t', variant: null } } },
+            [2, { data: { variantType: 'std::nullptr_t', variant: null } }]
+        ]
+    });
+    testStruct('WebCore::IndexIDToIndexKeyMap', { alias: [] });
+
+    // ---------------------------------------------------------------
+    console.log(`=== Summary: ${passed} passed, ${failed} failed ===`);
+
+    globalThis.testRunner?.notifyDone();
+}, 10);
+</script>
