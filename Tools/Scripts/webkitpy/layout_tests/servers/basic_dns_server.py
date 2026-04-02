@@ -37,7 +37,6 @@ class Resolver(BaseResolver):
     def resolve(self, request, handler):
         question = request.q
         reply = request.reply()
-        _log.debug("Received request for {}".format(question.qname))
         if question.qtype == QTYPE.A and (question.qname in self.hosts or question.qname.matchSuffix("localhost")):
             reply.add_answer(*RR.fromZone("{} 3600 A 127.0.0.1".format(question.qname)))
         else:
