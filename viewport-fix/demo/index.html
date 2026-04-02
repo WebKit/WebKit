@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Modular Viewport Fix — Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --color-bg: #0a0a0f;
+      --color-surface: #13131a;
+      --color-card: #1a1a26;
+      --color-border: #2a2a3d;
+      --color-primary: #7c6dfa;
+      --color-accent: #fa6d8f;
+      --color-success: #4ade80;
+      --color-warning: #fbbf24;
+      --color-text: #e4e4f0;
+      --color-muted: #7a7a9a;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --font-sans: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-bg);
+      color: var(--color-text);
+      margin: 0;
+      padding: 2rem 1.5rem;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    h1 { font-size: 2rem; margin-bottom: 2rem; text-align: center; }
+
+    /* Debug Panel */
+    .debug-panel {
+      background: var(--color-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+    .debug-panel__header {
+      padding: 1rem 1.5rem;
+      background: rgba(124,109,250,0.05);
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .debug-panel__title { font-weight: 600; font-size: 0.9rem; }
+    .badge--ok { color: var(--color-success); font-size: 0.75rem; font-weight: 600; }
+    .badge--warn { color: var(--color-warning); font-size: 0.75rem; font-weight: 600; }
+    table { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 0.8rem; }
+    td { padding: 0.75rem 1.5rem; border-bottom: 1px solid var(--color-border); }
+    td:first-child { color: var(--color-muted); }
+    td:last-child { color: var(--color-primary); font-weight: 600; text-align: right; }
+
+    /* Demo Grid */
+    .demo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+    }
+    .demo-card {
+      background: var(--color-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+    .demo-card__label {
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid var(--color-border);
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--color-muted);
+      text-transform: uppercase;
+    }
+    .demo-card__box {
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      position: relative;
+    }
+    .tick-bar {
+      position: absolute;
+      right: 8px;
+      top: 10px;
+      bottom: 10px;
+      width: 3px;
+      background: var(--color-border);
+      border-radius: 4px;
+    }
+    .tick-fill {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      border-radius: 4px;
+      background: linear-gradient(to top, var(--color-primary), var(--color-accent));
+      transition: height 0.3s;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Modular Viewport Fix</h1>
+    <div id="debug-panel-root"></div>
+    <div id="demo-boxes-root"></div>
+  </div>
+
+  <script type="module">
+    import { initViewportFix } from '../src/index.js';
+    import { DebugPanel } from '../src/components/DebugPanel.js';
+    import { DemoBoxes } from '../src/components/DemoBoxes.js';
+
+    const debugPanel = new DebugPanel(document.getElementById('debug-panel-root'));
+    const demoBoxes = new DemoBoxes(document.getElementById('demo-boxes-root'));
+
+    initViewportFix({
+      onMeasure: (m) => {
+        debugPanel.update(m);
+        demoBoxes.update(m);
+      }
+    });
+
+    console.info('[ViewportFix] ✅ Initialized modular version.');
+  </script>
+</body>
+</html>

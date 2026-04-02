@@ -1,0 +1,22 @@
+{
+  "name": "viewport-fix",
+  "version": "1.0.0",
+  "description": "Production-ready iOS Safari viewport height solution",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "dev": "python -m http.server 7846"
+  },
+  "keywords": [
+    "viewport",
+    "ios",
+    "safari",
+    "vh",
+    "100vh",
+    "dvh",
+    "svh"
+  ],
+  "author": "Antigravity",
+  "license": "MIT"
+}
