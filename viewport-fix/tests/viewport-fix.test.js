@@ -1,19 +1,11 @@
-/**
- * tests/viewport-fix.test.js
- * ─────────────────────────────────────────────────────────────
- * Unit tests for core modules.
- * Run with: npx vitest run
- */
 
 import { snapshot, clearUnitCache }       from '../src/core/measure.js';
 import { writeCSSVars, clearCSSVars }    from '../src/core/cssVars.js';
 import { createRAFScheduler, attachListeners } from '../src/utils/scheduler.js';
 import { initViewportFix }               from '../src/index.js';
 
-// ─── Mock browser globals ──────────────────────────────────────────────────
 
 beforeEach(() => {
-  // jsdom doesn't implement these — provide minimal stubs
   global.screen = { height: 844 };
 
   global.CSS = {
@@ -26,7 +18,6 @@ beforeEach(() => {
     value: 750,
   });
 
-  // Simulate visualViewport API
   global.window.visualViewport = {
     height:    740,
     offsetTop: 0,
@@ -34,7 +25,6 @@ beforeEach(() => {
     removeEventListener: vi.fn(),
   };
 
-  // RAF stub: execute callback asynchronously by default
   let rafId = 0;
   let pendingRAFs = new Map();
   global.requestAnimationFrame  = (cb) => { 
@@ -60,7 +50,6 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-// ─── snapshot() ────────────────────────────────────────────────────────────
 
 describe('snapshot()', () => {
   test('uses visualViewport.height for visual when API is present', () => {
@@ -93,7 +82,6 @@ describe('snapshot()', () => {
   });
 });
 
-// ─── writeCSSVars() ────────────────────────────────────────────────────────
 
 describe('writeCSSVars()', () => {
   test('sets --vh to visual / 100 as px string', () => {
@@ -115,7 +103,6 @@ describe('writeCSSVars()', () => {
   });
 });
 
-// ─── clearCSSVars() ────────────────────────────────────────────────────────
 
 describe('clearCSSVars()', () => {
   test('removes --vh and --svh from :root', () => {
@@ -126,7 +113,6 @@ describe('clearCSSVars()', () => {
   });
 });
 
-// ─── createRAFScheduler() ──────────────────────────────────────────────────
 
 describe('createRAFScheduler()', () => {
   test('calls callback after schedule() and runPendingRAF()', () => {
@@ -155,7 +141,6 @@ describe('createRAFScheduler()', () => {
   });
 });
 
-// ─── attachListeners() ─────────────────────────────────────────────────────
 
 describe('attachListeners()', () => {
   test('attaches listeners to window and visualViewport', () => {
@@ -188,7 +173,6 @@ describe('attachListeners()', () => {
   });
 });
 
-// ─── initViewportFix() ─────────────────────────────────────────────────────
 
 describe('initViewportFix()', () => {
   test('takes an immediate measurement and writes vars', () => {
