@@ -1,23 +1,8 @@
-/**
- * src/components/DebugPanel.js
- * ─────────────────────────────────────────────────────────────
- * Renders live viewport metrics into a <tbody> element.
- * Completely optional — import only in development / demo builds.
- *
- * Usage:
- *   import { DebugPanel } from './components/DebugPanel.js';
- *   const panel = new DebugPanel(document.getElementById('debug-output'));
- *   // then pass measurements to it:
- *   panel.update(measurement);
- */
-
 export class DebugPanel {
-  /**
-   * @param {HTMLElement} container - the element to render the panel into
-   */
   constructor(container) {
     if (!container) throw new Error('[DebugPanel] container is required');
-    
+    this._container = container;
+
     container.innerHTML = `
       <div class="debug-panel">
         <div class="debug-panel__header">
@@ -32,44 +17,62 @@ export class DebugPanel {
 
     this._tbody = container.querySelector('.output-target');
     this._badge = container.querySelector('.badge-target');
+
+    this._valNodes = {};
+    const pairs = [
+      'window.innerHeight',
+      'visualViewport.height',
+      'visualViewport.offsetTop',
+      'screen.height',
+      '--vh resolved (1%)',
+      '--svh resolved (1%)',
+      'CSS svh support',
+      'CSS dvh support',
+      'visualViewport API',
+      'Last updated'
+    ];
+
+    for (const label of pairs) {
+      const tr = document.createElement('tr');
+      const td1 = document.createElement('td');
+      const td2 = document.createElement('td');
+      td1.textContent = label;
+      td2.textContent = '';
+      tr.appendChild(td1);
+      tr.appendChild(td2);
+      this._tbody.appendChild(tr);
+      this._valNodes[label] = td2;
+    }
+
+    this._badgeSpan = document.createElement('span');
+    if (this._badge) this._badge.appendChild(this._badgeSpan);
   }
 
-  /**
-   * Re-render the panel with the latest measurement.
-   * @param {import('../core/measure.js').ViewportMeasurement} m
-   */
   update(m) {
-    const vvp = window.visualViewport;
+    if (!this._container) return;
 
-    this._tbody.innerHTML = rows([
-      ['window.innerHeight',       `${window.innerHeight}px`],
-      ['visualViewport.height',    vvp ? `${vvp.height.toFixed(2)}px` : 'N/A'],
-      ['visualViewport.offsetTop', vvp ? `${vvp.offsetTop.toFixed(2)}px` : 'N/A'],
-      ['screen.height',            `${screen.height}px`],
-      ['--vh resolved (1%)',        `${(m.visual  / 100).toFixed(4)}px`],
-      ['--svh resolved (1%)',       `${(m.stable / 100).toFixed(4)}px`],
-      ['CSS svh support',          m.supportsSVH ? '✅ Yes' : '❌ No'],
-      ['CSS dvh support',          m.supportsDVH ? '✅ Yes' : '❌ No'],
-      ['visualViewport API',       m.hasVisualViewportAPI ? '✅ Yes' : '❌ No'],
-      ['Last updated',             new Date().toLocaleTimeString()],
-    ]);
+    this._valNodes['window.innerHeight'].textContent = `${m.stable}px`;
+    this._valNodes['visualViewport.height'].textContent = m.hasVisualViewportAPI ? `${m.visual.toFixed(2)}px` : 'N/A';
+    this._valNodes['visualViewport.offsetTop'].textContent = m.hasVisualViewportAPI ? `${m.offsetTop.toFixed(2)}px` : 'N/A';
+    this._valNodes['screen.height'].textContent = `${m.screen}px`;
+    this._valNodes['--vh resolved (1%)'].textContent = `${(m.visual / 100).toFixed(4)}px`;
+    this._valNodes['--svh resolved (1%)'].textContent = `${(m.stable / 100).toFixed(4)}px`;
+    this._valNodes['CSS svh support'].textContent = m.supportsSVH ? '✅ Yes' : '❌ No';
+    this._valNodes['CSS dvh support'].textContent = m.supportsDVH ? '✅ Yes' : '❌ No';
+    this._valNodes['visualViewport API'].textContent = m.hasVisualViewportAPI ? '✅ Yes' : '❌ No';
+    this._valNodes['Last updated'].textContent = new Date().toLocaleTimeString();
 
     if (this._badge) {
       const allGood = m.supportsSVH && m.supportsDVH && m.hasVisualViewportAPI;
-      this._badge.innerHTML = allGood
-        ? '<span class="badge badge--ok">Full Support</span>'
-        : '<span class="badge badge--warn">Partial — JS active</span>';
+      this._badgeSpan.className = allGood ? 'badge badge--ok' : 'badge badge--warn';
+      this._badgeSpan.textContent = allGood ? 'Full Support' : 'Partial — JS active';
     }
   }
-}
 
-// ─── helpers ────────────────────────────────────────────────
-
-function rows(pairs) {
-  return pairs.map(([label, value]) => `
-    <tr>
-      <td>${label}</td>
-      <td>${value}</td>
-    </tr>
-  `).join('');
+  destroy() {
+    if (this._container) this._container.innerHTML = '';
+    this._valNodes = {};
+    this._badgeSpan = null;
+    this._container = null;
+  }
 }

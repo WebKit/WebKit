@@ -2,13 +2,13 @@
  * tests/viewport-fix.test.js
  * ─────────────────────────────────────────────────────────────
  * Unit tests for core modules.
- * Run with: node --experimental-vm-modules node_modules/.bin/jest
- * Or:       npx vitest run
+ * Run with: npx vitest run
  */
 
-import { snapshot }                  from '../src/core/measure.js';
-import { writeCSSVars, clearCSSVars } from '../src/core/cssVars.js';
-import { createRAFScheduler }         from '../src/utils/scheduler.js';
+import { snapshot, clearUnitCache }       from '../src/core/measure.js';
+import { writeCSSVars, clearCSSVars }    from '../src/core/cssVars.js';
+import { createRAFScheduler, attachListeners } from '../src/utils/scheduler.js';
+import { initViewportFix }               from '../src/index.js';
 
 // ─── Mock browser globals ──────────────────────────────────────────────────
 
@@ -17,7 +17,7 @@ beforeEach(() => {
   global.screen = { height: 844 };
 
   global.CSS = {
-    supports: (prop, val) => ['1svh', '1dvh', '1lvh'].includes(val),
+    supports: (prop, val) => prop === 'height' && ['1svh', '1dvh', '1lvh'].includes(val),
   };
 
   Object.defineProperty(window, 'innerHeight', {
@@ -30,19 +30,34 @@ beforeEach(() => {
   global.window.visualViewport = {
     height:    740,
     offsetTop: 0,
-    addEventListener:    jest.fn(),
-    removeEventListener: jest.fn(),
+    addEventListener:    vi.fn(),
+    removeEventListener: vi.fn(),
   };
 
-  // RAF stub: execute callback synchronously
-  global.requestAnimationFrame  = (cb) => { cb(); return 1; };
-  global.cancelAnimationFrame   = jest.fn();
+  // RAF stub: execute callback asynchronously by default
+  let rafId = 0;
+  let pendingRAFs = new Map();
+  global.requestAnimationFrame  = (cb) => { 
+    const id = ++rafId;
+    pendingRAFs.set(id, cb);
+    return id; 
+  };
+  global.cancelAnimationFrame   = vi.fn((id) => {
+    pendingRAFs.delete(id);
+  });
+  global.runPendingRAF = () => {
+    const queue = Array.from(pendingRAFs.values());
+    pendingRAFs.clear();
+    queue.forEach(cb => cb());
+  };
 });
 
 afterEach(() => {
   document.documentElement.style.removeProperty('--vh');
   document.documentElement.style.removeProperty('--svh');
   delete global.window.visualViewport;
+  clearUnitCache();
+  vi.restoreAllMocks();
 });
 
 // ─── snapshot() ────────────────────────────────────────────────────────────
@@ -114,35 +129,90 @@ describe('clearCSSVars()', () => {
 // ─── createRAFScheduler() ──────────────────────────────────────────────────
 
 describe('createRAFScheduler()', () => {
-  test('calls callback after schedule()', () => {
-    const cb = jest.fn();
+  test('calls callback after schedule() and runPendingRAF()', () => {
+    const cb = vi.fn();
     const { schedule } = createRAFScheduler(cb);
     schedule();
+    expect(cb).not.toHaveBeenCalled();
+    global.runPendingRAF();
     expect(cb).toHaveBeenCalledTimes(1);
   });
 
   test('cancel() prevents pending callback', () => {
-    // Override rAF to NOT execute synchronously this time
-    let pending = null;
-    global.requestAnimationFrame  = (cb) => { pending = cb; return 42; };
-    global.cancelAnimationFrame   = jest.fn((id) => { if (id === 42) pending = null; });
-
-    const cb = jest.fn();
+    const cb = vi.fn();
     const { schedule, cancel } = createRAFScheduler(cb);
     schedule();
     cancel();
-    pending?.(); // if not cancelled, this would call cb
+    global.runPendingRAF();
     expect(cb).not.toHaveBeenCalled();
   });
 
   test('scheduling twice cancels the first frame', () => {
-    const calls = [];
-    global.requestAnimationFrame = (cb) => { calls.push(cb); return calls.length; };
-    global.cancelAnimationFrame  = jest.fn();
+    const { schedule } = createRAFScheduler(vi.fn());
+    schedule(); // returns 1
+    schedule(); // returns 2, should cancel 1
+    expect(global.cancelAnimationFrame).toHaveBeenCalledWith(1);
+  });
+});
 
-    const { schedule } = createRAFScheduler(jest.fn());
-    schedule();
-    schedule();
-    expect(global.cancelAnimationFrame).toHaveBeenCalledTimes(1);
+// ─── attachListeners() ─────────────────────────────────────────────────────
+
+describe('attachListeners()', () => {
+  test('attaches listeners to window and visualViewport', () => {
+    const handler = vi.fn();
+    const cleanup = attachListeners(handler);
+
+    // Initial listeners
+    expect(window.visualViewport.addEventListener).toHaveBeenCalledWith('resize', handler, expect.any(Object));
+    expect(window.visualViewport.addEventListener).toHaveBeenCalledWith('scroll', handler, expect.any(Object));
+
+    cleanup();
+    expect(window.visualViewport.removeEventListener).toHaveBeenCalledWith('resize', handler);
+    expect(window.visualViewport.removeEventListener).toHaveBeenCalledWith('scroll', handler);
+  });
+
+  test('orientationchange uses a timeout', () => {
+    vi.useFakeTimers();
+    const handler = vi.fn();
+    const cleanup = attachListeners(handler);
+
+    // Simulate event
+    const event = new Event('orientationchange');
+    window.dispatchEvent(event);
+
+    expect(handler).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(200);
+    expect(handler).toHaveBeenCalled();
+    vi.useRealTimers();
+    cleanup();
+  });
+});
+
+// ─── initViewportFix() ─────────────────────────────────────────────────────
+
+describe('initViewportFix()', () => {
+  test('takes an immediate measurement and writes vars', () => {
+    const cleanup = initViewportFix();
+    expect(document.documentElement.style.getPropertyValue('--vh')).toBe('7.4000px');
+    cleanup();
+  });
+
+  test('is idempotent with a warning', () => {
+    const spyWarn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const spyAdd = vi.spyOn(window, 'addEventListener');
+    const c1 = initViewportFix();
+    const c2 = initViewportFix();
+    expect(spyWarn).toHaveBeenCalledWith(expect.stringContaining('already initialised'));
+    expect(spyAdd).toHaveBeenCalledTimes(2); // resize, orientationchange
+    c1();
+    c2();
+    spyWarn.mockRestore();
+    spyAdd.mockRestore();
+  });
+
+  test('cleanup removes vars and listeners', () => {
+    const cleanup = initViewportFix();
+    cleanup();
+    expect(document.documentElement.style.getPropertyValue('--vh')).toBe('');
   });
 });
