@@ -30,8 +30,10 @@
 #include "WebDriverBidiBackendDispatchers.h"
 #include "WebDriverBidiFrontendDispatchers.h"
 #include <JavaScriptCore/InspectorFrontendChannel.h>
+#include <cmath>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WallTime.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -43,6 +45,11 @@ class BidiScriptAgent;
 class BidiStorageAgent;
 class WebAutomationSession;
 class WebPageProxy;
+
+inline double bidiTimestampMilliseconds(WallTime timestamp)
+{
+    return std::trunc(timestamp.secondsSinceEpoch().milliseconds());
+}
 
 class WebDriverBidiProcessor final : public Inspector::FrontendChannel {
     WTF_MAKE_TZONE_ALLOCATED(WebDriverBidiProcessor);
