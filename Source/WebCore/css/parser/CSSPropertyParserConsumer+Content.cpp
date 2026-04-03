@@ -27,7 +27,6 @@
 #include "CSSPropertyParserConsumer+Content.h"
 
 #include "CSSCounterValue.h"
-#include "CSSParserContext.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParserConsumer+Attr.h"
@@ -74,9 +73,10 @@ static RefPtr<CSSValue> consumeCounterContent(CSSParserTokenRange args, CSS::Pro
     // counter()  =  counter( <counter-name>, <counter-style>? )
     // https://www.w3.org/TR/css-lists-3/#funcdef-counter
 
-    AtomString identifier { consumeCustomIdentRaw(args) };
-    if (identifier.isNull())
+    auto identifierValue = consumeCustomIdent(args, state);
+    if (!identifierValue)
         return nullptr;
+    AtomString identifier { identifierValue->customIdent().value };
 
     RefPtr<CSSValue> counterStyle;
     if (consumeCommaIncludingWhitespace(args)) {
@@ -98,9 +98,10 @@ static RefPtr<CSSValue> consumeCountersContent(CSSParserTokenRange args, CSS::Pr
     // counters() = counters( <counter-name>, <string>, <counter-style>? )
     // https://www.w3.org/TR/css-lists-3/#funcdef-counters
 
-    AtomString identifier { consumeCustomIdentRaw(args) };
-    if (identifier.isNull())
+    auto identifierValue = consumeCustomIdent(args, state);
+    if (!identifierValue)
         return nullptr;
+    AtomString identifier { identifierValue->customIdent().value };
 
     if (!consumeCommaIncludingWhitespace(args) || args.peek().type() != StringToken)
         return nullptr;

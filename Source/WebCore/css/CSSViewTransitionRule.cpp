@@ -59,7 +59,7 @@ StyleRuleViewTransition::StyleRuleViewTransition(Ref<StyleProperties>&& properti
     if (auto value = properties->getPropertyCSSValue(CSSPropertyTypes)) {
         auto processSingleValue = [&](const CSSValue& currentValue) {
             if (currentValue.isCustomIdent())
-                m_types.append(currentValue.customIdent());
+                m_types.append(currentValue.customIdent().value);
         };
         if (auto* list = dynamicDowncast<CSSValueList>(*value)) {
             for (Ref currentValue : *list)

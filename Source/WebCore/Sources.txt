@@ -923,6 +923,7 @@ css/CSSFunctionDescriptors.cpp
 css/CSSFunctionRule.cpp
 css/CSSFunctionValue.cpp
 css/CSSGradientValue.cpp
+css/CSSIdentValue.cpp
 css/CSSGridAutoRepeatValue.cpp
 css/CSSGridIntegerRepeatValue.cpp
 css/CSSGridLineNamesValue.cpp
@@ -1176,6 +1177,7 @@ css/values/color/CSSResolvedColor.cpp
 css/values/grid/CSSGridNamedAreaMap.cpp
 css/values/images/CSSGradient.cpp
 css/values/motion/CSSRayFunction.cpp
+css/values/primitives/CSSCustomIdent.cpp
 css/values/primitives/CSSPosition.cpp
 css/values/primitives/CSSPrimitiveNumericCategory.cpp
 css/values/primitives/CSSPrimitiveNumericTypes+Canonicalization.cpp
@@ -3370,6 +3372,7 @@ style/values/overflow/StyleScrollbarGutter.cpp
 style/values/overflow/StyleOverflowClipMargin.cpp
 style/values/page/StylePageSize.cpp
 style/values/pointerevents/StyleTouchAction.cpp
+style/values/primitives/StyleCustomIdent.cpp
 style/values/primitives/StyleLengthResolution.cpp
 style/values/primitives/StyleLengthWrapper+DeprecatedCSSValueConversion.cpp
 style/values/primitives/StyleLengthWrapperData.cpp

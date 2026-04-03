@@ -23,6 +23,7 @@
 
 #include "CSSCalcSymbolTable.h"
 #include "CSSCalcValue.h"
+#include "CSSIdentValue.h"
 #include "CSSMarkup.h"
 #include "CSSParserIdioms.h"
 #include "CSSPrimitiveNumericCategory.h"
@@ -129,13 +130,12 @@ static inline bool NODELETE isValidCSSUnitTypeForDoubleConversion(CSSUnitType un
     case CSSUnitType::CSS_ATTR:
     case CSSUnitType::CSS_FONT_FAMILY:
     case CSSUnitType::CustomIdent:
+    case CSSUnitType::CSS_IDENT:
     case CSSUnitType::CSS_PROPERTY_ID:
     case CSSUnitType::CSS_STRING:
     case CSSUnitType::CSS_UNKNOWN:
     case CSSUnitType::CSS_VALUE_ID:
         return false;
-    case CSSUnitType::CSS_IDENT:
-        break;
     }
 
     ASSERT_NOT_REACHED();
@@ -318,6 +318,13 @@ CSSPrimitiveValue::CSSPrimitiveValue(Ref<CSSAttrValue> value)
     m_value.attr = &value.leakRef();
 }
 
+CSSPrimitiveValue::CSSPrimitiveValue(Ref<CSSIdentValue> value)
+    : CSSValue(ClassType::Primitive)
+{
+    setPrimitiveUnitType(CSSUnitType::CSS_IDENT);
+    m_value.ident = &value.leakRef();
+}
+
 CSSPrimitiveValue::~CSSPrimitiveValue()
 {
     auto type = primitiveUnitType();
@@ -330,6 +337,9 @@ CSSPrimitiveValue::~CSSPrimitiveValue()
         break;
     case CSSUnitType::CSS_ATTR:
         m_value.attr->deref();
+        break;
+    case CSSUnitType::CSS_IDENT:
+        m_value.ident->deref();
         break;
     case CSSUnitType::CSS_CALC:
         m_value.calc->deref();
@@ -399,7 +409,6 @@ CSSPrimitiveValue::~CSSPrimitiveValue()
     case CSSUnitType::CSS_Q:
     case CSSUnitType::CSS_LH:
     case CSSUnitType::CSS_RLH:
-    case CSSUnitType::CSS_IDENT:
     case CSSUnitType::CSS_UNKNOWN:
     case CSSUnitType::CSS_PROPERTY_ID:
     case CSSUnitType::CSS_VALUE_ID:
@@ -477,9 +486,19 @@ Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(Ref<CSSAttrValue> value)
     return adoptRef(*new CSSPrimitiveValue(WTF::move(value)));
 }
 
+Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(Ref<CSSIdentValue> value)
+{
+    return adoptRef(*new CSSPrimitiveValue(WTF::move(value)));
+}
+
 Ref<CSSPrimitiveValue> CSSPrimitiveValue::createCustomIdent(String value)
 {
     return adoptRef(*new CSSPrimitiveValue(WTF::move(value), CSSUnitType::CustomIdent));
+}
+
+Ref<CSSPrimitiveValue> CSSPrimitiveValue::createCustomIdent(const CSS::CustomIdent& value)
+{
+    return createCustomIdent(value.value);
 }
 
 Ref<CSSPrimitiveValue> CSSPrimitiveValue::createFontFamily(String value)
@@ -834,9 +853,23 @@ String CSSPrimitiveValue::stringValue() const
         return nameString(m_value.propertyID);
     case CSSUnitType::CSS_ATTR:
         return protect(cssAttrValue())->cssText(CSS::defaultSerializationContext());
+    case CSSUnitType::CSS_IDENT:
+        return protect(cssIdentValue())->stringValue();
     default:
         return String();
     }
+}
+
+std::optional<String> CSSPrimitiveValue::computedIdentStringValue(const CSSToLengthConversionData& conversionData) const
+{
+    if (!isIdent())
+        return std::nullopt;
+
+    RefPtr identValue = cssIdentValue();
+    if (!identValue) [[unlikely]]
+        return std::nullopt;
+
+    return identValue->computedStringValue(conversionData);
 }
 
 NEVER_INLINE String CSSPrimitiveValue::formatNumberValue(ASCIILiteral suffix) const
@@ -1017,6 +1050,8 @@ ALWAYS_INLINE String CSSPrimitiveValue::serializeInternal(const CSS::Serializati
         return formatNumberValue(""_s);
     case CSSUnitType::CSS_FONT_FAMILY:
         return serializeFontFamily(m_value.string);
+    case CSSUnitType::CSS_IDENT:
+        return protect(cssIdentValue())->cssText(context);
     case CSSUnitType::CSS_INTEGER:
         return formatIntegerValue(""_s);
     case CSSUnitType::CSS_QUIRKY_EM:
@@ -1031,7 +1066,6 @@ ALWAYS_INLINE String CSSPrimitiveValue::serializeInternal(const CSS::Serializati
 
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_ANGLE:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
-    case CSSUnitType::CSS_IDENT:
     case CSSUnitType::CSS_PROPERTY_ID:
     case CSSUnitType::CSS_UNKNOWN:
     case CSSUnitType::CSS_VALUE_ID:
@@ -1151,6 +1185,7 @@ bool CSSPrimitiveValue::equals(const CSSPrimitiveValue& other) const
     case CSSUnitType::CSS_CALC:
         return protect(cssCalcValue())->equals(*protect(other.cssCalcValue()));
     case CSSUnitType::CSS_IDENT:
+        return protect(cssIdentValue())->equals(*protect(other.cssIdentValue()));
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_ANGLE:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
         // FIXME: seems like these should be handled.
@@ -1250,11 +1285,12 @@ bool CSSPrimitiveValue::addDerivedHash(Hasher& hasher) const
     case CSSUnitType::CSS_ATTR:
         add(hasher, m_value.attr);
         break;
+    case CSSUnitType::CSS_IDENT:
+        add(hasher, m_value.ident);
+        break;
     case CSSUnitType::CSS_CALC:
         add(hasher, m_value.calc);
         break;
-        break;
-    case CSSUnitType::CSS_IDENT:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_ANGLE:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
         ASSERT_NOT_REACHED();

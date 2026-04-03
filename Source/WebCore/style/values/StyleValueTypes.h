@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "StyleCustomIdent.h"
 #include <WebCore/CSSCalcSymbolTable.h>
 #include <WebCore/CSSNoConversionDataRequiredToken.h>
 #include <WebCore/CSSValueTypes.h>
@@ -106,8 +107,21 @@ template<typename> struct ToStyle;
 // Specialize `TreatAsNonConverting` for `Constant<C>`, to indicate that its type does not change from the CSS representation.
 template<CSSValueID C> inline constexpr bool TreatAsNonConverting<Constant<C>> = true;
 
-// Specialize `TreatAsNonConverting` for `CustomIdentifier`, to indicate that its type does not change from the CSS representation.
-template<> inline constexpr bool TreatAsNonConverting<CustomIdentifier> = true;
+template<> struct ToCSS<CustomIdent> {
+    template<typename... Rest> CSS::CustomIdent operator()(const CustomIdent& value, Rest&&...) const
+    {
+        return { value.value };
+    }
+};
+
+template<> struct ToStyle<CSS::CustomIdent> {
+    template<typename... Rest> CustomIdent operator()(const CSS::CustomIdent& value, Rest&&...) const
+    {
+        return { value.value };
+    }
+};
+
+DEFINE_TYPE_MAPPING(CSS::CustomIdent, CustomIdent)
 
 // Specialize `TreatAsNonConverting` for `PropertyIdentifier`, to indicate that its type does not change from the CSS representation.
 template<> inline constexpr bool TreatAsNonConverting<PropertyIdentifier> = true;
@@ -462,6 +476,11 @@ template<NonConverting StyleType> struct CSSValueCreation<StyleType> {
     }
 };
 
+// Specialization for `CustomIdent`.
+template<> struct CSSValueCreation<CustomIdent> {
+    Ref<CSSValue> operator()(CSSValuePool&, const RenderStyle&, const CustomIdent&);
+};
+
 // Specialization for `FunctionNotation`.
 template<CSSValueID Name, typename StyleType> struct CSSValueCreation<FunctionNotation<Name, StyleType>> {
     template<typename... Rest> Ref<CSSValue> operator()(CSSValuePool& pool, const RenderStyle& style, const FunctionNotation<Name, StyleType>& value, Rest&&... rest)
@@ -701,6 +720,13 @@ template<NonConverting StyleType> struct Serialize<StyleType> {
     template<typename... Rest> void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle&, const StyleType& value, Rest&&... rest)
     {
         CSS::serializationForCSS(builder, context, value, std::forward<Rest>(rest)...);
+    }
+};
+
+template<> struct Serialize<CustomIdent> {
+    template<typename... Rest> void operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle&, const CustomIdent& value, Rest&&...)
+    {
+        CSS::serializationForCSS(builder, context, CSS::CustomIdent { value.value });
     }
 };
 
@@ -1637,3 +1663,14 @@ template<VariantLike T> TextStream& operator<<(TextStream& ts, const T& value)
 
 } // namespace Style
 } // namespace WebCore
+
+
+namespace WTF {
+
+template<>
+struct MarkableTraits<WebCore::Style::CustomIdent> {
+    static bool isEmptyValue(const WebCore::Style::CustomIdent& value) { return value.value.isNull(); }
+    static WebCore::Style::CustomIdent emptyValue() { return WebCore::Style::CustomIdent { nullAtom() }; }
+};
+
+} // namespace WTF

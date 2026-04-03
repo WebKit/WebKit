@@ -28,6 +28,7 @@
 
 #include "CSSPrimitiveValue.h"
 #include "StyleBuilderChecking.h"
+#include "StyleValueTypes+CSSValueConversion.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -37,13 +38,12 @@ namespace Style {
 
 auto CSSValueConversion<ScopedName>::operator()(BuilderState& state, const CSSPrimitiveValue& primitiveValue) -> ScopedName
 {
-    if (!primitiveValue.isCustomIdent()) {
-        state.setCurrentPropertyInvalidAtComputedValueTime();
+    auto customIdentifier = toStyleFromCSSValue<CustomIdentifier>(state, primitiveValue);
+    if (customIdentifier.value.isNull())
         return { };
-    }
 
     return {
-        .name = AtomString { primitiveValue.customIdent() },
+        .name = customIdentifier.value,
         .scopeOrdinal = state.styleScopeOrdinal()
     };
 }
@@ -54,13 +54,12 @@ auto CSSValueConversion<ScopedName>::operator()(BuilderState& state, const CSSVa
     if (!primitiveValue)
         return { };
 
-    if (!primitiveValue->isCustomIdent()) {
-        state.setCurrentPropertyInvalidAtComputedValueTime();
+    auto customIdentifier = toStyleFromCSSValue<CustomIdentifier>(state, *primitiveValue);
+    if (customIdentifier.value.isNull())
         return { };
-    }
 
     return ScopedName {
-        .name = AtomString { primitiveValue->customIdent() },
+        .name = customIdentifier.value,
         .scopeOrdinal = state.styleScopeOrdinal()
     };
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2026 saku
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -16,47 +16,52 @@
  * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "StyleViewTransitionName.h"
+#pragma once
 
-#include "CSSPrimitiveValue.h"
-#include "StyleBuilderChecking.h"
-#include "StyleValueTypes+CSSValueConversion.h"
+#include "CSSCustomIdent.h"
+#include <wtf/Forward.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 namespace Style {
 
-// MARK: - Conversion
+// Custom-ident values have dedicated CSS and Style representations.
+struct CustomIdent {
+    AtomString value;
 
-auto CSSValueConversion<ViewTransitionName>::operator()(BuilderState& state, const CSSValue& value) -> ViewTransitionName
-{
-    RefPtr primitiveValue = requiredDowncast<CSSPrimitiveValue>(state, value);
-    if (!primitiveValue)
-        return CSS::Keyword::None { };
-
-    switch (primitiveValue->valueID()) {
-    case CSSValueNone:
-        return CSS::Keyword::None { };
-    case CSSValueAuto:
-        return { CSS::Keyword::Auto { }, state.styleScopeOrdinal() };
-    case CSSValueMatchElement:
-        return { CSS::Keyword::MatchElement { }, state.styleScopeOrdinal() };
-    default:
-        break;
+    CustomIdent() = default;
+    CustomIdent(AtomString&& value)
+        : value(WTF::move(value))
+    {
+    }
+    CustomIdent(const AtomString& value)
+        : value(value)
+    {
+    }
+    CustomIdent(const CSS::CustomIdent& value)
+        : value(value.value)
+    {
     }
 
-    auto customIdentifier = toStyleFromCSSValue<CustomIdentifier>(state, *primitiveValue);
-    if (customIdentifier.value.isNull())
-        return CSS::Keyword::None { };
+    operator CSS::CustomIdent() const { return { value }; }
 
-    return { WTF::move(customIdentifier), state.styleScopeOrdinal() };
-}
+    bool operator==(const CustomIdent&) const = default;
+    bool operator==(const AtomString& other) const { return value == other; }
+};
+
+// Transitional alias while style code is moved to `CustomIdent`.
+using CustomIdentifier = CustomIdent;
+
+void NODELETE add(Hasher&, const CustomIdent&);
+WTF::TextStream& operator<<(WTF::TextStream&, const CustomIdent&);
 
 } // namespace Style
 } // namespace WebCore

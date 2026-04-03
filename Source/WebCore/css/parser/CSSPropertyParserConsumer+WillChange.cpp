@@ -74,7 +74,7 @@ RefPtr<CSSValue> consumeWillChange(CSSParserTokenRange& range, CSS::PropertyPars
                 range.consumeIncludingWhitespace();
                 break;
             }
-            if (auto customIdent = consumeCustomIdent(range)) {
+            if (auto customIdent = consumeCustomIdent(range, state)) {
                 // Append properties we don't recognize, but that are legal.
                 values.append(customIdent.releaseNonNull());
                 break;

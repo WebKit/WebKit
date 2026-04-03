@@ -63,7 +63,7 @@ struct SerializeInvoker {
 };
 inline constexpr SerializeInvoker serializationForCSS{};
 
-void serializationForCSSCustomIdentifier(StringBuilder&, const SerializationContext&, const CustomIdentifier&);
+void serializationForCSSCustomIdentifier(StringBuilder&, const SerializationContext&, const CustomIdent&);
 void serializationForCSSPropertyIdentifier(StringBuilder&, const SerializationContext&, const PropertyIdentifier&);
 void serializationForCSSString(StringBuilder&, const SerializationContext&, const WTF::AtomString&);
 void serializationForCSSString(StringBuilder&, const SerializationContext&, const WTF::String&);
@@ -183,9 +183,9 @@ template<CSSValueID C> struct Serialize<Constant<C>> {
     }
 };
 
-// Specialization for `CustomIdentifier`.
-template<> struct Serialize<CustomIdentifier> {
-    template<typename... Rest> void operator()(StringBuilder& builder, const SerializationContext& context, const CustomIdentifier& value, Rest&&...)
+// Specialization for `CustomIdent`.
+template<> struct Serialize<CustomIdent> {
+    template<typename... Rest> void operator()(StringBuilder& builder, const SerializationContext& context, const CustomIdent& value, Rest&&...)
     {
         serializationForCSSCustomIdentifier(builder, context, value);
     }
@@ -323,9 +323,9 @@ template<CSSValueID C> struct ComputedStyleDependenciesCollector<Constant<C>> {
     }
 };
 
-// Specialization for `CustomIdentifier`.
-template<> struct ComputedStyleDependenciesCollector<CustomIdentifier> {
-    constexpr void operator()(ComputedStyleDependencies&, const CustomIdentifier&)
+// Specialization for `CustomIdent`.
+template<> struct ComputedStyleDependenciesCollector<CustomIdent> {
+    constexpr void operator()(ComputedStyleDependencies&, const CustomIdent&)
     {
         // Nothing to do.
     }
@@ -464,9 +464,9 @@ template<CSSValueID C> struct CSSValueChildrenVisitor<Constant<C>> {
     }
 };
 
-// Specialization for `CustomIdentifier`.
-template<> struct CSSValueChildrenVisitor<CustomIdentifier> {
-    constexpr IterationStatus operator()(NOESCAPE const Function<IterationStatus(CSSValue&)>&, const CustomIdentifier&)
+// Specialization for `CustomIdent`.
+template<> struct CSSValueChildrenVisitor<CustomIdent> {
+    constexpr IterationStatus operator()(NOESCAPE const Function<IterationStatus(CSSValue&)>&, const CustomIdent&)
     {
         return IterationStatus::Continue;
     }
@@ -517,7 +517,7 @@ struct CSSValueCreationInvoker {
 inline constexpr CSSValueCreationInvoker createCSSValue{};
 
 Ref<CSSValue> NODELETE makePrimitiveCSSValue(CSSValueID);
-Ref<CSSValue> makePrimitiveCSSValue(const CustomIdentifier&);
+Ref<CSSValue> makePrimitiveCSSValue(const CustomIdent&);
 Ref<CSSValue> makePrimitiveCSSValue(const PropertyIdentifier&);
 Ref<CSSValue> makePrimitiveCSSValue(const WTF::AtomString&);
 Ref<CSSValue> makePrimitiveCSSValue(const WTF::String&);
@@ -592,9 +592,9 @@ template<CSSValueID Id> struct CSSValueCreation<Constant<Id>> {
     }
 };
 
-// Specialization for `CustomIdentifier`.
-template<> struct CSSValueCreation<CustomIdentifier> {
-    template<typename... Rest> Ref<CSSValue> operator()(CSSValuePool&, const CustomIdentifier& customIdentifier, Rest&&...)
+// Specialization for `CustomIdent`.
+template<> struct CSSValueCreation<CustomIdent> {
+    template<typename... Rest> Ref<CSSValue> operator()(CSSValuePool&, const CustomIdent& customIdentifier, Rest&&...)
     {
         return makePrimitiveCSSValue(customIdentifier);
     }

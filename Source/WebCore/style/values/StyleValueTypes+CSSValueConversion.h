@@ -28,6 +28,8 @@
 #include "CSSValueList.h"
 #include "StyleBuilderChecking.h"
 #include "StyleValueTypes.h"
+#include <WebCore/CSSParserIdioms.h>
+#include <WebCore/CSSPropertyParser.h>
 
 namespace WebCore {
 namespace Style {
@@ -70,21 +72,36 @@ template<> struct CSSValueConversion<AtomString> {
     }
 };
 
-// Specialization for `CustomIdentifier`.
-template<> struct CSSValueConversion<CustomIdentifier> {
-    CustomIdentifier operator()(BuilderState& state, const CSSPrimitiveValue& value)
+// Specialization for `CustomIdent`.
+template<> struct CSSValueConversion<CustomIdent> {
+    CustomIdent operator()(BuilderState& state, const CSSPrimitiveValue& value)
     {
+        if (value.isIdent()) {
+            auto computedIdent = value.computedIdentStringValue(state.cssToLengthConversionData());
+            if (!computedIdent) [[unlikely]] {
+                state.setCurrentPropertyInvalidAtComputedValueTime();
+                return CustomIdent { nullAtom() };
+            }
+
+            if (computedIdent->isEmpty() || !isValidCustomIdentifier(cssValueKeywordID(*computedIdent))) [[unlikely]] {
+                state.setCurrentPropertyInvalidAtComputedValueTime();
+                return CustomIdent { nullAtom() };
+            }
+
+            return CustomIdent { AtomString { *computedIdent } };
+        }
+
         if (!value.isCustomIdent()) [[unlikely]] {
             state.setCurrentPropertyInvalidAtComputedValueTime();
-            return { .value = emptyAtom() };
+            return CustomIdent { nullAtom() };
         }
-        return { .value = AtomString { value.customIdent() } };
+        return CustomIdent { value.customIdent().value };
     }
-    CustomIdentifier operator()(BuilderState& state, const CSSValue& value)
+    CustomIdent operator()(BuilderState& state, const CSSValue& value)
     {
         RefPtr primitiveValue = requiredDowncast<CSSPrimitiveValue>(state, value);
         if (!primitiveValue) [[unlikely]]
-            return { .value = emptyAtom() };
+            return CustomIdent { nullAtom() };
         return this->operator()(state, *primitiveValue);
     }
 };
@@ -109,7 +126,9 @@ template<> struct CSSValueConversion<PropertyIdentifier> {
 };
 
 // Specialization for `TupleLike` (wrapper).
-template<TupleLike StyleType> requires (std::tuple_size_v<StyleType> == 1) struct CSSValueConversion<StyleType> {
+template<TupleLike StyleType>
+    requires(std::tuple_size_v<StyleType> == 1)
+struct CSSValueConversion<StyleType> {
     template<typename... Rest> StyleType operator()(BuilderState& state, const CSSValue& value, Rest&&... rest)
     {
         return { toStyleFromCSSValue<std::remove_cvref_t<std::tuple_element_t<0, StyleType>>>(state, value, std::forward<Rest>(rest)...) };

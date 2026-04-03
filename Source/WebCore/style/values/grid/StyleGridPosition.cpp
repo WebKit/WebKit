@@ -37,6 +37,7 @@
 #include "StyleBuilderChecking.h"
 #include "StylePrimitiveKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
+#include "StyleValueTypes+CSSValueConversion.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -112,12 +113,16 @@ void GridPosition::setMaxPositionForTesting(unsigned maxPosition)
 
 auto CSSValueConversion<GridPosition>::operator()(BuilderState& state, const CSSValue& value) -> GridPosition
 {
-    if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         if (isValueID(*primitiveValue, CSSValueAuto))
             return CSS::Keyword::Auto { };
 
-        if (primitiveValue->isCustomIdent())
-            return CustomIdentifier { AtomString { primitiveValue->stringValue() } };
+        if (primitiveValue->isCustomIdent()) {
+            auto customIdentifier = toStyleFromCSSValue<CustomIdentifier>(state, *primitiveValue);
+            if (customIdentifier.value.isNull())
+                return CSS::Keyword::Auto { };
+            return customIdentifier;
+        }
 
         state.setCurrentPropertyInvalidAtComputedValueTime();
         return CSS::Keyword::Auto { };
@@ -132,7 +137,13 @@ auto CSSValueConversion<GridPosition>::operator()(BuilderState& state, const CSS
     RefPtr uncheckedGridLineName = gridLineValue->gridLineName();
 
     auto gridLineNumber = uncheckedNumericValue && uncheckedNumericValue->isInteger() ? uncheckedNumericValue->resolveAsInteger(state.cssToLengthConversionData()) : 0;
-    auto gridLineName = uncheckedGridLineName && uncheckedGridLineName->isCustomIdent() ? AtomString { uncheckedGridLineName->stringValue() } : nullAtom();
+    auto gridLineName = nullAtom();
+    if (uncheckedGridLineName && uncheckedGridLineName->isCustomIdent()) {
+        auto customIdentifier = toStyleFromCSSValue<CustomIdentifier>(state, *uncheckedGridLineName);
+        if (customIdentifier.value.isNull())
+            return CSS::Keyword::Auto { };
+        gridLineName = customIdentifier.value;
+    }
 
     if (isValueID(uncheckedSpanValue, CSSValueSpan))
         return GridPosition::Span { { gridLineNumber > 0 ? gridLineNumber : 1 }, CustomIdentifier { WTF::move(gridLineName) } };
