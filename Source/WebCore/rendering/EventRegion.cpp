@@ -471,7 +471,10 @@ void EventRegion::unite(const Region& region, const RenderObject& renderer, cons
     m_region.unite(region);
 
 #if ENABLE(TOUCH_ACTION_REGIONS)
-    uniteTouchActions(region, Style::toPlatform(style.usedTouchAction()));
+    if (auto touchAction = style.usedTouchAction(); !touchAction.isAuto())
+        uniteTouchActions(region, Style::toPlatform(touchAction));
+    else if (!m_touchActionRegions.isEmpty())
+        subtractAutoFromTouchActions(region);
 #endif
 
     uniteEventListeners(region, style.eventListenerRegionTypes());
@@ -580,6 +583,12 @@ void EventRegion::uniteTouchActions(const Region& touchRegion, OptionSet<TouchAc
             LOG_WITH_STREAM(EventRegions, stream << " subtracting for TouchAction " << regionTouchAction);
         }
     }
+}
+
+void EventRegion::subtractAutoFromTouchActions(const Region& region)
+{
+    for (auto& regionEntry : m_touchActionRegions)
+        regionEntry.subtract(region);
 }
 
 const Region* EventRegion::regionForTouchAction(TouchAction action) const

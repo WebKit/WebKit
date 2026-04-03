@@ -174,6 +174,7 @@ private:
     friend struct IPC::ArgumentCoder<EventRegion>;
 #if ENABLE(TOUCH_ACTION_REGIONS)
     void uniteTouchActions(const Region&, OptionSet<TouchAction>);
+    void subtractAutoFromTouchActions(const Region&);
 #endif
     void uniteEventListeners(const Region&, OptionSet<EventListenerRegionType>);
 
