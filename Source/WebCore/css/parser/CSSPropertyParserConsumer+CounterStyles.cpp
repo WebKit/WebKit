@@ -53,7 +53,7 @@ static bool NODELETE isPredefinedCounterStyle(CSSValueID valueID)
     return valueID >= CSSValueDisc && valueID <= CSSValueEthiopicNumeric;
 }
 
-RefPtr<CSSValue> consumeCounterStyle(CSSParserTokenRange& range, CSS::PropertyParserState&)
+RefPtr<CSSValue> consumeCounterStyle(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
     // <counter-style> = <counter-style-name excluding=none> | <symbols()>
     // https://drafts.csswg.org/css-counter-styles-3/#typedef-counter-style
@@ -64,7 +64,7 @@ RefPtr<CSSValue> consumeCounterStyle(CSSParserTokenRange& range, CSS::PropertyPa
         return nullptr;
     if (auto predefinedValues = consumeIdent(range, isPredefinedCounterStyle))
         return predefinedValues;
-    return consumeCustomIdent(range);
+    return consumeCustomIdent(range, state);
 }
 
 AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange& prelude, CSSParserMode mode)
@@ -88,7 +88,7 @@ AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange& prelude, CSSPar
     return isPredefinedCounterStyle(nameToken.id()) ? name.convertToASCIILowercaseAtom() : name.toAtomString();
 }
 
-RefPtr<CSSValue> consumeCounterStyleName(CSSParserTokenRange& range, CSS::PropertyParserState&)
+RefPtr<CSSValue> consumeCounterStyleName(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
     // <counter-style-name> is a <custom-ident> that is not an ASCII case-insensitive match for "none".
     // https://drafts.csswg.org/css-counter-styles-3/#typedef-counter-style-name
@@ -97,7 +97,7 @@ RefPtr<CSSValue> consumeCounterStyleName(CSSParserTokenRange& range, CSS::Proper
     if (valueID == CSSValueNone)
         return nullptr;
     // If the value is an ASCII case-insensitive match for any of the predefined counter styles, lowercase it.
-    if (auto name = consumeCustomIdent(range, isPredefinedCounterStyle(valueID)))
+    if (auto name = consumeCustomIdent(range, state, isPredefinedCounterStyle(valueID)))
         return name;
     return nullptr;
 }

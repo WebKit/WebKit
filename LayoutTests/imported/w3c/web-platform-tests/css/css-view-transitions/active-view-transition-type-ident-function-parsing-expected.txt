@@ -1,0 +1,10 @@
+
+PASS "html:active-view-transition-type(ident(foo))" should be a valid selector
+PASS "html:active-view-transition-type(ident(\"my\" \"type\"), ident(ba 1))" should be a valid selector
+PASS "html:active-view-transition-type(ident(-- foo))" should be a valid selector
+PASS "html:active-view-transition-type(ident())" should be an invalid selector
+PASS "html:active-view-transition-type(ident( ))" should be an invalid selector
+PASS "html:active-view-transition-type(ident(1.5))" should be an invalid selector
+PASS "html:active-view-transition-type(ident(calc(1 + 2)))" should be an invalid selector
+PASS "html:active-view-transition-type(ident(5px))" should be an invalid selector
+

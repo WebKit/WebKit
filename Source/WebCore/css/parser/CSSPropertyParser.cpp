@@ -478,7 +478,7 @@ std::pair<RefPtr<CSSValue>, CSSCustomPropertySyntax::Type> consumeCustomProperty
         case CSSCustomPropertySyntax::Type::LengthPercentage:
             return CSSPrimitiveValueResolver<CSS::LengthPercentage<>>::consumeAndResolve(range, state);
         case CSSCustomPropertySyntax::Type::CustomIdent:
-            if (RefPtr value = consumeCustomIdent(range)) {
+            if (RefPtr value = consumeCustomIdent(range, state)) {
                 if (component.ident.isNull() || value->stringValue() == component.ident)
                     return value;
             }

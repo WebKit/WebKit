@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2026 saku
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -16,6 +16,7 @@
  * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
@@ -23,40 +24,20 @@
  */
 
 #include "config.h"
-#include "StyleViewTransitionName.h"
+#include "CSSCustomIdent.h"
 
-#include "CSSPrimitiveValue.h"
-#include "StyleBuilderChecking.h"
-#include "StyleValueTypes+CSSValueConversion.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
-namespace Style {
 
-// MARK: - Conversion
-
-auto CSSValueConversion<ViewTransitionName>::operator()(BuilderState& state, const CSSValue& value) -> ViewTransitionName
+WTF::TextStream& operator<<(WTF::TextStream& ts, const CSS::CustomIdent& value)
 {
-    RefPtr primitiveValue = requiredDowncast<CSSPrimitiveValue>(state, value);
-    if (!primitiveValue)
-        return CSS::Keyword::None { };
-
-    switch (primitiveValue->valueID()) {
-    case CSSValueNone:
-        return CSS::Keyword::None { };
-    case CSSValueAuto:
-        return { CSS::Keyword::Auto { }, state.styleScopeOrdinal() };
-    case CSSValueMatchElement:
-        return { CSS::Keyword::MatchElement { }, state.styleScopeOrdinal() };
-    default:
-        break;
-    }
-
-    auto customIdentifier = toStyleFromCSSValue<CustomIdentifier>(state, *primitiveValue);
-    if (customIdentifier.value.isNull())
-        return CSS::Keyword::None { };
-
-    return { WTF::move(customIdentifier), state.styleScopeOrdinal() };
+    return ts << value.value;
 }
 
-} // namespace Style
+void add(Hasher& hasher, const CSS::CustomIdent& value)
+{
+    add(hasher, value.value);
+}
+
 } // namespace WebCore

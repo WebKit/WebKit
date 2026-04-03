@@ -27,10 +27,65 @@
 #include "CSSPropertyParserConsumer+Ident.h"
 
 #include "CSSParserIdioms.h"
-#include "CSSValuePool.h"
+#include "CSSPropertyParserConsumer+IntegerDefinitions.h"
+#include "CSSPropertyParserConsumer+MetaConsumer.h"
+#include "CSSPropertyParserConsumer+Primitives.h"
+#include "css/CSSIdentValue.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
+
+// https://drafts.csswg.org/css-values-5/#ident
+// <ident()> = ident( <ident-arg>+ )
+RefPtr<CSSPrimitiveValue> consumeIdentFunction(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    if (range.peek().functionId() != CSSValueIdent)
+        return nullptr;
+
+    auto rangeCopy = range;
+    auto block = consumeFunction(rangeCopy);
+    Vector<IdentArgument> arguments;
+
+    while (!block.atEnd()) {
+        const auto& token = block.peek();
+
+        switch (token.type()) {
+
+        // <ident-arg> = <string> | <integer> | <ident>
+        case IdentToken: {
+            if (!isValidCustomIdentifier(token.id()))
+                return nullptr;
+            auto value = block.consumeIncludingWhitespace().value().toAtomString();
+            arguments.append(IdentArgument(CSS::CustomIdent { WTF::move(value) }));
+            break;
+        }
+
+        case StringToken: {
+            auto value = block.consumeIncludingWhitespace().value().toString();
+            arguments.append(IdentArgument(WTF::move(value)));
+            break;
+        }
+
+        case NumberToken:
+        case FunctionToken: {
+            auto integer = MetaConsumer<CSS::Integer<>>::consume(block, state, { }, { });
+            if (!integer)
+                return nullptr;
+            arguments.append(IdentArgument(WTF::move(*integer)));
+            break;
+        }
+
+        default:
+            return nullptr;
+        }
+    }
+
+    if (arguments.isEmpty())
+        return nullptr;
+
+    range = rangeCopy;
+    return CSSPrimitiveValue::create(CSSIdentValue::create(WTF::move(arguments)));
+}
 
 std::optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange& range)
 {
@@ -72,8 +127,13 @@ String consumeCustomIdentRaw(CSSParserTokenRange& range, bool shouldLowercase)
     return shouldLowercase ? identifier.convertToASCIILowercase() : identifier.toString();
 }
 
-RefPtr<CSSPrimitiveValue> consumeCustomIdent(CSSParserTokenRange& range, bool shouldLowercase)
+RefPtr<CSSPrimitiveValue> consumeCustomIdent(CSSParserTokenRange& range, CSS::PropertyParserState& state, bool shouldLowercase)
 {
+    // https://drafts.csswg.org/css-values-5/#ident
+    // <ident()> = ident( <ident-arg>+ )
+    if (range.peek().functionId() == CSSValueIdent)
+        return consumeIdentFunction(range, state);
+
     auto identifier = consumeCustomIdentRaw(range, shouldLowercase);
     if (identifier.isNull())
         return nullptr;

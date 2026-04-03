@@ -1075,6 +1075,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/CSSFontPaletteValuesRule.h
     css/CSSGridIntegerRepeatValue.h
     css/CSSGroupingRule.h
+    css/CSSIdentValue.h
     css/CSSImportRule.h
     css/CSSMediaRule.h
     css/CSSNamespacePrefixMap.h
@@ -1190,6 +1191,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     css/values/motion/CSSRayFunction.h
 
+    css/values/primitives/CSSCustomIdent.h
     css/values/primitives/CSSPosition.h
     css/values/primitives/CSSPrimitiveData.h
     css/values/primitives/CSSPrimitiveKeywordList.h
@@ -3348,6 +3350,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     style/values/position/StyleInset.h
 
+    style/values/primitives/StyleCustomIdent.h
     style/values/primitives/StyleCoordinatedValueList.h
     style/values/primitives/StyleCoordinatedValueListValue.h
     style/values/primitives/StyleLengthWrapper.h

@@ -28,6 +28,7 @@
 
 #include "CSSPrimitiveValue.h"
 #include "StyleBuilderChecking.h"
+#include "StyleValueTypes+CSSValueConversion.h"
 
 namespace WebCore {
 namespace Style {
@@ -43,7 +44,14 @@ auto CSSValueConversion<SingleAnimationName>::operator()(BuilderState& state, co
     if (primitiveValue->valueID() == CSSValueNone)
         return SingleAnimationName { CSS::Keyword::None { } };
 
-    return SingleAnimationName { ScopedName { AtomString { primitiveValue->stringValue() }, state.styleScopeOrdinal(), primitiveValue->isCustomIdent() } };
+    if (primitiveValue->isCustomIdent()) {
+        auto customIdentifier = toStyleFromCSSValue<CustomIdentifier>(state, *primitiveValue);
+        if (customIdentifier.value.isNull())
+            return SingleAnimationName { CSS::Keyword::None { } };
+        return SingleAnimationName { ScopedName { customIdentifier.value, state.styleScopeOrdinal(), true } };
+    }
+
+    return SingleAnimationName { ScopedName { AtomString { primitiveValue->stringValue() }, state.styleScopeOrdinal(), false } };
 }
 
 } // namespace Style

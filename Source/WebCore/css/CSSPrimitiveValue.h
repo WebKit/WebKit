@@ -23,9 +23,11 @@
 
 #include <WebCore/CSSAttrValue.h>
 #include <WebCore/CSSCalcValue.h>
+#include <WebCore/CSSCustomIdent.h>
 #include <WebCore/CSSPrimitiveNumericUnits.h>
 #include <WebCore/CSSPropertyNames.h>
 #include <WebCore/CSSValue.h>
+#include <WebCore/CSSValueAggregates.h>
 #include <WebCore/CSSValueKeywords.h>
 #include <WebCore/LayoutUnit.h>
 #include <utility>
@@ -35,6 +37,7 @@
 namespace WebCore {
 
 class CSSToLengthConversionData;
+class CSSIdentValue;
 class FontCascade;
 class RenderStyle;
 class RenderView;
@@ -58,6 +61,7 @@ public:
     // FIXME: Some of these use primitiveUnitType() and some use NODELETE primitiveType(). Many that use primitiveUnitType() are likely broken with calc().
     bool isAngle() const { return unitCategory(primitiveType()) == CSSUnitCategory::Angle; }
     bool isAttr() const { return primitiveUnitType() == CSSUnitType::CSS_ATTR; }
+    bool isIdent() const { return primitiveUnitType() == CSSUnitType::CSS_IDENT; }
     bool isFontIndependentLength() const { return isFontIndependentLength(primitiveUnitType()); }
     bool isFontRelativeLength() const { return isFontRelativeLength(primitiveUnitType()); }
     bool isParentFontRelativeLength() const { return isPercentage() || (isFontRelativeLength() && !isRootFontRelativeLength()); }
@@ -89,6 +93,7 @@ public:
     static Ref<CSSPrimitiveValue> NODELETE createInteger(double);
     static Ref<CSSPrimitiveValue> create(Ref<CSSCalc::Value>);
     static Ref<CSSPrimitiveValue> NODELETE create(Ref<CSSAttrValue>);
+    static Ref<CSSPrimitiveValue> NODELETE create(Ref<CSSIdentValue>);
 
     static inline Ref<CSSPrimitiveValue> create(CSSValueID);
     bool isValueID() const { return primitiveUnitType() == CSSUnitType::CSS_VALUE_ID; }
@@ -101,9 +106,16 @@ public:
     bool isString() const { return primitiveUnitType() == CSSUnitType::CSS_STRING; }
     static Ref<CSSPrimitiveValue> create(String);
 
+    static Ref<CSSPrimitiveValue> createCustomIdent(const CSS::CustomIdent&);
     static Ref<CSSPrimitiveValue> createCustomIdent(String);
-    bool isCustomIdent() const { return primitiveUnitType() == CSSUnitType::CustomIdent; }
-    String customIdent() const { ASSERT(isCustomIdent()); return stringValue(); }
+    bool isCustomIdent() const { return primitiveUnitType() == CSSUnitType::CustomIdent || primitiveUnitType() == CSSUnitType::CSS_IDENT; }
+    CSS::CustomIdent customIdent() const
+    {
+        ASSERT(isCustomIdent());
+        if (primitiveUnitType() == CSSUnitType::CSS_IDENT)
+            return { AtomString { stringValue() } };
+        return { m_value.string };
+    }
 
     static Ref<CSSPrimitiveValue> createFontFamily(String);
     bool isFontFamily() const { return primitiveUnitType() == CSSUnitType::CSS_FONT_FAMILY; }
@@ -175,8 +187,11 @@ public:
     std::optional<bool> NODELETE isNegative() const;
 
     WEBCORE_EXPORT String stringValue() const;
+    std::optional<String> computedIdentStringValue(const CSSToLengthConversionData&) const;
     const CSSCalc::Value* cssCalcValue() const { return isCalculated() ? m_value.calc : nullptr; }
     const CSSAttrValue* cssAttrValue() const { return isAttr() ? m_value.attr : nullptr; }
+    RefPtr<const CSSAttrValue> protectedCssAttrValue() const { return cssAttrValue(); }
+    const CSSIdentValue* cssIdentValue() const { return isIdent() ? m_value.ident : nullptr; }
 
     String customCSSText(const CSS::SerializationContext&) const;
 
@@ -197,6 +212,7 @@ private:
     CSSPrimitiveValue(double, CSSUnitType);
     explicit CSSPrimitiveValue(Ref<CSSCalc::Value>);
     explicit CSSPrimitiveValue(Ref<CSSAttrValue>);
+    explicit CSSPrimitiveValue(Ref<CSSIdentValue>);
 
     CSSPrimitiveValue(StaticCSSValueTag, CSSValueID);
     CSSPrimitiveValue(StaticCSSValueTag, double, CSSUnitType);
@@ -220,7 +236,11 @@ private:
 
     // MARK: Non-converting
     double doubleValue(const CSSToLengthConversionData&) const;
-    double doubleValueNoConversionDataRequired() const { ASSERT(!isCalculated()); return m_value.number; }
+    double doubleValueNoConversionDataRequired() const
+    {
+        ASSERT(!isCalculated());
+        return m_value.number;
+    }
     double doubleValueDeprecated() const;
     double doubleValueDividingBy100IfPercentage(const CSSToLengthConversionData&) const;
     double NODELETE doubleValueDividingBy100IfPercentageNoConversionDataRequired() const;
@@ -250,6 +270,7 @@ private:
         StringImpl* string;
         const CSSCalc::Value* calc;
         const CSSAttrValue* attr;
+        const CSSIdentValue* ident;
     } m_value;
 };
 
@@ -747,10 +768,10 @@ inline bool CSSValue::isCustomIdent() const
     return value && value->isCustomIdent();
 }
 
-inline String CSSValue::customIdent() const
+inline CSS::CustomIdent CSSValue::customIdent() const
 {
     ASSERT(isCustomIdent());
-    return downcast<CSSPrimitiveValue>(*this).stringValue();
+    return downcast<CSSPrimitiveValue>(*this).customIdent();
 }
 
 inline bool CSSValue::isString() const

@@ -32,6 +32,7 @@
 
 #include "CSSParserEnum.h"
 #include "CSSParserIdioms.h"
+#include "CSSPropertyParser.h"
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSSelectorInlines.h"
@@ -318,16 +319,65 @@ static FixedVector<PossiblyQuotedIdentifier> consumeLangArgumentList(CSSParserTo
     return FixedVector<PossiblyQuotedIdentifier> { WTF::move(list) };
 }
 
+static std::optional<AtomString> consumeCustomIdentForSelector(CSSParserTokenRange& range)
+{
+    // Selectors do not have property parsing state, so only bare integer tokens are accepted
+    // inside ident() here (no math/function resolution path).
+    if (range.peek().functionId() == CSSValueIdent) {
+        auto rangeCopy = range;
+        auto block = CSSPropertyParserHelpers::consumeFunction(rangeCopy);
+        StringBuilder builder;
+        bool hasArgument = false;
+
+        while (!block.atEnd()) {
+            hasArgument = true;
+            auto& token = block.peek();
+            switch (token.type()) {
+            case IdentToken:
+                if (!isValidCustomIdentifier(token.id()))
+                    return std::nullopt;
+                builder.append(block.consumeIncludingWhitespace().value());
+                break;
+            case StringToken:
+                builder.append(block.consumeIncludingWhitespace().value());
+                break;
+            case NumberToken:
+                if (token.numericValueType() != IntegerValueType)
+                    return std::nullopt;
+                builder.append(String::number(token.numericValue()));
+                block.consumeIncludingWhitespace();
+                break;
+            default:
+                return std::nullopt;
+            }
+        }
+
+        if (!hasArgument)
+            return std::nullopt;
+
+        auto identifier = builder.toString();
+        if (!isValidCustomIdentifier(cssValueKeywordID(identifier)))
+            return std::nullopt;
+
+        range = rangeCopy;
+        return AtomString { WTF::move(identifier) };
+    }
+
+    if (range.peek().type() != IdentToken || !isValidCustomIdentifier(range.peek().id()))
+        return std::nullopt;
+    return range.consumeIncludingWhitespace().value().toAtomString();
+}
+
 static std::optional<FixedVector<AtomString>> consumeCommaSeparatedCustomIdentList(CSSParserTokenRange& range)
 {
     Vector<AtomString> customIdents { };
 
     do {
-        auto ident = CSSPropertyParserHelpers::consumeCustomIdentRaw(range);
-        if (ident.isEmpty())
+        auto ident = consumeCustomIdentForSelector(range);
+        if (!ident)
             return std::nullopt;
 
-        customIdents.append(WTF::move(ident));
+        customIdents.append(WTF::move(*ident));
     } while (CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(range));
 
     if (!range.atEnd())

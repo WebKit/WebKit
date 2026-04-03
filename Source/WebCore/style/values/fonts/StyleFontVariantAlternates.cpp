@@ -30,6 +30,7 @@
 #include "CSSPropertyParserConsumer+Font.h"
 #include "CSSValueList.h"
 #include "StyleBuilderChecking.h"
+#include "StyleValueTypes+CSSValueConversion.h"
 
 namespace WebCore {
 namespace Style {
@@ -48,7 +49,10 @@ auto CSSValueConversion<FontVariantAlternates>::operator()(BuilderState& state, 
             state.setCurrentPropertyInvalidAtComputedValueTime();
             return false;
         }
-        parameterToSet = primitiveArgument->customIdent();
+        auto customIdentifier = toStyleFromCSSValue<CustomIdentifier>(state, *primitiveArgument);
+        if (customIdentifier.value.isNull())
+            return false;
+        parameterToSet = customIdentifier.value;
         return true;
     };
 
@@ -63,7 +67,10 @@ auto CSSValueConversion<FontVariantAlternates>::operator()(BuilderState& state, 
                 state.setCurrentPropertyInvalidAtComputedValueTime();
                 return false;
             }
-            parameterToSet.append(primitiveArgument->customIdent());
+            auto customIdentifier = toStyleFromCSSValue<CustomIdentifier>(state, *primitiveArgument);
+            if (customIdentifier.value.isNull())
+                return false;
+            parameterToSet.append(customIdentifier.value);
         }
         return true;
     };

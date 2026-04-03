@@ -38,7 +38,7 @@
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-static bool NODELETE consumeOptionalDelimiter(CSSParserTokenRange& range, char16_t value)
+static bool consumeOptionalDelimiter(CSSParserTokenRange& range, char16_t value)
 {
     if (!(range.peek().type() == DelimiterToken && range.peek().delimiter() == value))
         return false;
@@ -46,7 +46,7 @@ static bool NODELETE consumeOptionalDelimiter(CSSParserTokenRange& range, char16
     return true;
 }
 
-static StringView NODELETE consumeIdentifier(CSSParserTokenRange& range)
+static StringView consumeIdentifier(CSSParserTokenRange& range)
 {
     if (range.peek().type() != IdentToken)
         return { };

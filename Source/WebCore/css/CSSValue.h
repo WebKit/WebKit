@@ -48,6 +48,7 @@ enum CSSPropertyID : uint16_t;
 enum CSSValueID : uint16_t;
 
 namespace CSS {
+struct CustomIdent;
 struct SerializationContext;
 }
 
@@ -72,6 +73,7 @@ public:
     bool isAppleColorFilterValue() const { return m_classType == ClassType::AppleColorFilter; }
     bool isAttrValue() const { return m_classType == ClassType::Attr; }
     bool isBackgroundRepeatValue() const { return m_classType == ClassType::BackgroundRepeat; }
+    bool isIdentValue() const { return m_classType == ClassType::Ident; }
     bool isBasicShape() const { return m_classType == ClassType::BasicShape; }
     bool isBorderImageSliceValue() const { return m_classType == ClassType::BorderImageSlice; }
     bool isBorderImageWidthValue() const { return m_classType == ClassType::BorderImageWidth; }
@@ -172,7 +174,7 @@ public:
     enum ValueSeparator : uint8_t { SpaceSeparator, CommaSeparator, SlashSeparator };
 
     inline bool isCustomIdent() const;
-    inline String customIdent() const;
+    inline CSS::CustomIdent customIdent() const;
 
     inline bool isString() const;
     inline String string() const;
@@ -217,6 +219,7 @@ protected:
         AppleColorFilter,
         Attr,
         BackgroundRepeat,
+        Ident,
         BasicShape,
         BorderImageSlice,
         BorderImageWidth,
