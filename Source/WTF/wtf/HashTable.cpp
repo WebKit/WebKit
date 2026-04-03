@@ -20,11 +20,22 @@
 #include "config.h"
 #include <wtf/HashTable.h>
 
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/WTFString.h>
 
 namespace WTF {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
+
+template class HashSet<int>;
+template class HashSet<unsigned>;
+template class HashSet<unsigned long>;
+template class HashSet<unsigned long long>;
+template class HashSet<String>;
+
+template class HashMap<String, String>;
 
 #if DUMP_HASHTABLE_STATS
 

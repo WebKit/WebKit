@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "Vector.h"
+#pragma once
 
-#include <wtf/NeverDestroyed.h>
+#include <wtf/Vector.h>
 
 namespace WTF {
 
-DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Vector);
-DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(VectorBuffer);
-
-template class Vector<bool>;
-template class Vector<char>;
-template class Vector<unsigned char>;
-template class Vector<short>;
-template class Vector<unsigned short>;
-template class Vector<int>;
-template class Vector<unsigned>;
-template class Vector<long>;
-template class Vector<unsigned long>;
-template class Vector<long long>;
-template class Vector<unsigned long long>;
-template class Vector<float>;
-template class Vector<double>;
+extern template class Vector<bool>;
+extern template class Vector<char>;
+extern template class Vector<unsigned char>;
+extern template class Vector<short>;
+extern template class Vector<unsigned short>;
+extern template class Vector<int>;
+extern template class Vector<unsigned>;
+extern template class Vector<long>;
+extern template class Vector<unsigned long>;
+extern template class Vector<long long>;
+extern template class Vector<unsigned long long>;
+extern template class Vector<float>;
+extern template class Vector<double>;
 
 } // namespace WTF
