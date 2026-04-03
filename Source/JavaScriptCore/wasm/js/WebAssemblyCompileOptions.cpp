@@ -48,6 +48,7 @@ std::optional<WebAssemblyCompileOptions> WebAssemblyCompileOptions::tryCreate(JS
     RETURN_IF_EXCEPTION(scope, std::nullopt);
     if (importedStringConstantsValue.isString()) {
         auto importedStringConstants = asString(importedStringConstantsValue)->value(globalObject);
+        RETURN_IF_EXCEPTION(scope, std::nullopt);
         options.m_importedStringConstants = makeString(StringView(importedStringConstants));
     } else if (!importedStringConstantsValue.isUndefined()) {
         auto error = createTypeError(globalObject, "importedStringConstants option value must be a string"_s);
