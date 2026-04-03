@@ -293,14 +293,10 @@ static std::optional<CSSValueID> consumeGenericFamilyUnresolved(CSSParserTokenRa
     return consumeIdentRaw<CSSValueSerif, CSSValueSansSerif, CSSValueCursive, CSSValueFantasy, CSSValueMonospace, CSSValueWebkitBody, CSSValueWebkitPictograph, CSSValueSystemUi, CSSValueMath>(range);
 }
 
-static RefPtr<CSSValue> consumeGenericFamily(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+static RefPtr<CSSValue> consumeGenericFamily(CSSParserTokenRange& range)
 {
-    if (auto familyName = consumeGenericFamilyUnresolved(range)) {
-        // FIXME: Remove special case for system-ui.
-        if (*familyName == CSSValueSystemUi)
-            return state.pool.createFontFamilyValue(nameString(*familyName));
+    if (auto familyName = consumeGenericFamilyUnresolved(range))
         return CSSPrimitiveValue::create(*familyName);
-    }
     return nullptr;
 }
 
@@ -339,7 +335,7 @@ RefPtr<CSSValue> consumeFontFamily(CSSParserTokenRange& range, CSS::PropertyPars
     // https://drafts.csswg.org/css-fonts-4/#font-family-prop
 
     return consumeListSeparatedBy<',', OneOrMore>(range, [&](auto& range) -> RefPtr<CSSValue> {
-        if (auto parsedValue = consumeGenericFamily(range, state))
+        if (auto parsedValue = consumeGenericFamily(range))
             return parsedValue;
         return consumeFamilyName(range, state);
     });
