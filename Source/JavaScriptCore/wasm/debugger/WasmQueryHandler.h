@@ -26,7 +26,7 @@
 #pragma once
 
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
-#include "WasmVirtualAddress.h"
+#include <JavaScriptCore/WasmVirtualAddress.h>
 
 namespace JSC {
 namespace Wasm {

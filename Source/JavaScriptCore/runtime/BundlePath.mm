@@ -20,14 +20,13 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #import "config.h"
 #import "BundlePath.h"
 
 #import <Foundation/Foundation.h>
-#import <string>
 
 @interface JSJavaScriptCoreFinder : NSObject
 @end
@@ -38,14 +37,13 @@
 
 namespace JSC {
 
-const CString* constantBundlePath = nullptr;
+static const CString* constantBundlePath = nullptr;
 
 const CString& bundlePath()
 {
     if (!constantBundlePath) {
         @autoreleasepool {
             NSBundle* myBundle = [NSBundle bundleForClass:[JSJavaScriptCoreFinder class]];
-
             constantBundlePath = new CString([[myBundle bundlePath] UTF8String]);
         }
     }

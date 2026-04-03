@@ -26,6 +26,10 @@
 INSTALL_PATH = $(INSTALL_PATH_PREFIX)$(JAVASCRIPTCORE_FRAMEWORKS_DIR)/$(JAVASCRIPTCORE_HELPERS_DIR);
 PRODUCT_NAME = $(TARGET_NAME);
 
+JAVASCRIPTCORE_RESOURCES_DIR = $(JAVASCRIPTCORE_RESOURCES_DIR_$(DEPLOYMENT_LOCATION));
+JAVASCRIPTCORE_RESOURCES_DIR_YES = $(JAVASCRIPTCORE_FRAMEWORKS_DIR)/$(JAVASCRIPTCORE_CONTENTS_DIR)/Resources;
+JAVASCRIPTCORE_RESOURCES_DIR_NO = $(BUILT_PRODUCTS_DIR)/$(JAVASCRIPTCORE_CONTENTS_DIR)/Resources;
+
 // We want this to always be NO. If set to YES, Xcode will invoke codesign with an --entitlements parameter that points to the platform's BaseEntitlements.plist. This parameter would override any --entitlements parameter that we establish in WK_LIBRARY_VALIDATION_CODE_SIGN_FLAGS, causing our entitlements to be ignored.
 CODE_SIGN_INJECT_BASE_ENTITLEMENTS[sdk=iphone*] = NO;
 CODE_SIGN_INJECT_BASE_ENTITLEMENTS[sdk=macosx*] = NO;

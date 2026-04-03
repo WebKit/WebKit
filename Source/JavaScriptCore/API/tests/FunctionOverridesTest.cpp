@@ -31,6 +31,11 @@
 #include "JavaScript.h"
 #include "Options.h"
 
+#if OS(DARWIN)
+#include "BundlePath.h"
+#include <wtf/text/MakeString.h>
+#endif
+
 using JSC::Options;
 
 int testFunctionOverrides()
@@ -41,7 +46,14 @@ int testFunctionOverrides()
 
     const char* oldFunctionOverrides = Options::functionOverrides();
     
+    // On Apple platforms, scripts are in the JavaScriptCore.framework/Resources/testapiScripts/ directory.
+    // On non-Apple platforms, scripts are in ./testapiScripts/.
+#if OS(DARWIN)
+    CString overridesPath = makeString(String::fromUTF8(JSC::bundlePath().data()), "/Resources/testapiScripts/testapi-function-overrides.js"_s).utf8();
+    Options::functionOverrides() = overridesPath.data();
+#else
     Options::functionOverrides() = "./testapiScripts/testapi-function-overrides.js";
+#endif
     JSC::FunctionOverrides::reinstallOverrides();
 
     JSGlobalContextRef context = JSGlobalContextCreateInGroup(nullptr, nullptr);

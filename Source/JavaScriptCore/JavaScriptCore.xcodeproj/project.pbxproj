@@ -1536,6 +1536,7 @@
 		99F1A7011B98FBEC00463B26 /* InspectorFrontendRouter.h in Headers */ = {isa = PBXBuildFile; fileRef = 99F1A7001B98FBEC00463B26 /* InspectorFrontendRouter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B4694391F97439E00CCB3F9 /* BooleanPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7952350E15EB5600A898AB /* BooleanPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9E72940B190F0514001A91B5 /* BundlePath.h in Headers */ = {isa = PBXBuildFile; fileRef = 9E72940A190F0514001A91B5 /* BundlePath.h */; };
+		9E7294101B0000000000001A /* BundlePath.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9E729409190F0306001A91B5 /* BundlePath.mm */; };
 		9F63434577274FAFB9336C38 /* ModuleNamespaceAccessCase.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CE978E385A8498199052153 /* ModuleNamespaceAccessCase.h */; };
 		A12BBFF21B044A8B00664B69 /* IntlObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A12BBFF11B044A8B00664B69 /* IntlObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1587D6E1B4DC14100D69849 /* IntlDateTimeFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = A1587D681B4DC14100D69849 /* IntlDateTimeFormat.h */; };
@@ -2292,7 +2293,7 @@
 		FEFD6FC61D5E7992008F2F0B /* JSStringInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEFD6FC51D5E7970008F2F0B /* JSStringInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEFF211D2E73558000533F23 /* VMThreadContext.h in Headers */ = {isa = PBXBuildFile; fileRef = FEFF211C2E73558000533F23 /* VMThreadContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FF06E8BF2F19BC33007B3403 /* GDBPacketParserTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF06E8BE2F19BC33007B3403 /* GDBPacketParserTest.cpp */; };
-		FF0F56752E333E1D002A232A /* WasmModuleManager.h in Headers */ = {isa = PBXBuildFile; fileRef = FF0F56712E333E1D002A232A /* WasmModuleManager.h */; };
+		FF0F56752E333E1D002A232A /* WasmModuleManager.h in Headers */ = {isa = PBXBuildFile; fileRef = FF0F56712E333E1D002A232A /* WasmModuleManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FF0F568D2E33437C002A232A /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
 		FF0F569A2E3348CA002A232A /* testwasmdebugger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF0F56992E3348CA002A232A /* testwasmdebugger.cpp */; };
 		FF0F569C2E334C90002A232A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF0F569B2E334C90002A232A /* Foundation.framework */; };
@@ -2309,15 +2310,15 @@
 		FFA2E02E2EA16F37006661A3 /* MemoryTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFA2E0232EA16F37006661A3 /* MemoryTests.cpp */; };
 		FFA2E02F2EA16F37006661A3 /* UnaryTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFA2E0262EA16F37006661A3 /* UnaryTests.cpp */; };
 		FFB951142C043CA800349750 /* OrderedHashTableHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = FFB951132C043CA800349750 /* OrderedHashTableHelper.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FFB963922E38302B0069A70F /* WasmBreakpointManager.h in Headers */ = {isa = PBXBuildFile; fileRef = FFB9638F2E38302B0069A70F /* WasmBreakpointManager.h */; };
+		FFB963922E38302B0069A70F /* WasmBreakpointManager.h in Headers */ = {isa = PBXBuildFile; fileRef = FFB9638F2E38302B0069A70F /* WasmBreakpointManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFBD27052F6B133900DE6C3D /* ExecutionHandlerVMLifecycleTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFBD27042F6B133900DE6C3D /* ExecutionHandlerVMLifecycleTest.cpp */; };
 		FFBF548A2F189712008F124F /* WasmGDBPacketParser.h in Headers */ = {isa = PBXBuildFile; fileRef = FFBF54872F189712008F124F /* WasmGDBPacketParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFCC9A412BDD7C4700C75345 /* OrderedHashTable.h in Headers */ = {isa = PBXBuildFile; fileRef = FFCC9A402BDD7C4700C75345 /* OrderedHashTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFD49E6E2E276CA10083E383 /* WasmDebugServer.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD49E5A2E276CA10083E383 /* WasmDebugServer.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FFD49E6F2E276CA10083E383 /* WasmQueryHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD49E602E276CA10083E383 /* WasmQueryHandler.h */; };
-		FFD49E722E276CA10083E383 /* WasmExecutionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD49E5C2E276CA10083E383 /* WasmExecutionHandler.h */; };
+		FFD49E6F2E276CA10083E383 /* WasmQueryHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD49E602E276CA10083E383 /* WasmQueryHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FFD49E722E276CA10083E383 /* WasmExecutionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD49E5C2E276CA10083E383 /* WasmExecutionHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFD49E732E276CA10083E383 /* WasmDebugServerUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD49E642E276CA10083E383 /* WasmDebugServerUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FFD49E742E276CA10083E383 /* WasmMemoryHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD49E5E2E276CA10083E383 /* WasmMemoryHandler.h */; };
+		FFD49E742E276CA10083E383 /* WasmMemoryHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD49E5E2E276CA10083E383 /* WasmMemoryHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFE0C0472F24802E00198308 /* ExecutionHandlerIdleStopTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFE0C0462F24802E00198308 /* ExecutionHandlerIdleStopTest.cpp */; };
 		FFE21FE52CC1BE1800DEC268 /* DFGLoopUnrollingPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = FFE21FE32CC1BE1800DEC268 /* DFGLoopUnrollingPhase.h */; };
 		FFE31BDB2E6212CD006FE0B7 /* WasmVirtualAddress.h in Headers */ = {isa = PBXBuildFile; fileRef = FFE31BDA2E6212CD006FE0B7 /* WasmVirtualAddress.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2693,8 +2694,8 @@
 		233D76732E28893100EB9FFB /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = testapiScripts;
-			dstSubfolderSpec = 7;
+			dstPath = "$(JAVASCRIPTCORE_RESOURCES_DIR)/testapiScripts";
+			dstSubfolderSpec = 0;
 			files = (
 				233D76752E288A2F00EB9FFB /* basic.js in CopyFiles */,
 				233D76762E288A2F00EB9FFB /* foo.js in CopyFiles */,
@@ -2706,8 +2707,8 @@
 		233D768A2E288B6900EB9FFB /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = testapiScripts/dependencyListTests;
-			dstSubfolderSpec = 7;
+			dstPath = "$(JAVASCRIPTCORE_RESOURCES_DIR)/testapiScripts/dependencyListTests";
+			dstSubfolderSpec = 0;
 			files = (
 				233D768B2E288BCA00EB9FFB /* badModuleImportId.js in CopyFiles */,
 				233D768C2E288BCA00EB9FFB /* bar.js in CopyFiles */,
@@ -13973,6 +13974,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9E7294101B0000000000001A /* BundlePath.mm in Sources */,
 				44F93E0E2AE71FBD00FFA37C /* JavaScriptCoreFramework.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

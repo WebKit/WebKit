@@ -27,10 +27,10 @@
 
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
 
-#include "StopTheWorldCallback.h"
-#include "WasmDebugServer.h"
-#include "WasmModuleManager.h"
-#include "WasmVirtualAddress.h"
+#include <JavaScriptCore/StopTheWorldCallback.h>
+#include <JavaScriptCore/WasmDebugServer.h>
+#include <JavaScriptCore/WasmModuleManager.h>
+#include <JavaScriptCore/WasmVirtualAddress.h>
 
 #include <wtf/Condition.h>
 #include <wtf/HashMap.h>

@@ -2230,7 +2230,16 @@ int main(int argc, char* argv[])
     JSObjectMakeConstructor(context, nullClass, 0);
     JSClassRelease(nullClass);
 
+    // When installed in a framework (Helpers/testapi), scripts are in ../Resources/testapiScripts/.
+    // When built locally on Apple platforms, scripts are in ./JavaScriptCore.framework/Resources/testapiScripts/.
+    // On non-Apple platforms, scripts are in ./testapiScripts/.
+#if OS(DARWIN)
+    const char* scriptPath = "../Resources/testapiScripts/testapi.js";
+    if (access(scriptPath, R_OK) == -1)
+        scriptPath = "./JavaScriptCore.framework/Resources/testapiScripts/testapi.js";
+#else
     const char* scriptPath = "./testapiScripts/testapi.js";
+#endif
     char* scriptUTF8 = createStringWithContentsOfFile(scriptPath);
     if (!scriptUTF8) {
         printf("FAIL: Test script could not be loaded.\n");
