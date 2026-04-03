@@ -65,6 +65,8 @@ namespace JSC { namespace B3 { namespace Air {
     macro(numGroupMovesCoalesced)               \
     macro(numGroupConstDefMerged)               \
     macro(maxGroupSize)                         \
+    macro(numSplitDisconnectedDefs)             \
+    macro(numSplitDisconnectedDefsComponents)   \
     macro(numInsts)                             \
 
 class AirAllocateRegistersStats {

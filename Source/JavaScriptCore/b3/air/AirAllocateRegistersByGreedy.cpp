@@ -752,7 +752,6 @@ public:
         , m_spillSlotTable(FillWith { }, 1, nullptr) // Sacrifice index 0.
         , m_regRanges(Reg::maxIndex() + 1)
         , m_insertionSets(code.size())
-        , m_useCounts(m_code)
         , m_tmpWidth(m_code)
     {
     }
@@ -767,6 +766,9 @@ public:
         buildRegisterSets();
         buildIndices();
         buildLiveRanges();
+        splitDisconnectedDefs<GP>();
+        splitDisconnectedDefs<FP>();
+        m_useCounts = UseCounts(m_code);
         initSpillCosts<GP>();
         initSpillCosts<FP>();
         coalesceWithPinnedRegisters();
@@ -2455,6 +2457,185 @@ private:
         m_splitMetadata.append(WTF::move(metadata));
         m_stats[bank].numSplitAroundClobbers++;
         return true;
+    }
+
+    // Split tmps whose live range intervals form disconnected components in the CFG.
+    // Each component becomes its own tmp with a smaller live range. This is pure renaming
+    // — no fixup code (loads/stores) is needed since the components are disconnected.
+    template<Bank bank>
+    void splitDisconnectedDefs()
+    {
+        if (!Options::airGreedyRegAllocSplitDisconnectedDefs())
+            return;
+
+        // forEachTmp snapshots numTmps before iterating, so newly-created tmps won't be visited.
+        m_code.forEachTmp<bank>([&](Tmp tmp) {
+            if (m_map.get<bank>(tmp).liveRange.intervals().size() <= 1)
+                return;
+            splitDisconnectedDefsForTmp<bank>(tmp);
+        });
+    }
+
+    template<Bank bank>
+    void splitDisconnectedDefsForTmp(Tmp tmp)
+    {
+        // Phase 1: Copy intervals into a stable Vector (addTmpImpl invalidates TmpData refs).
+        const auto& liveRangeIntervals = m_map.get<bank>(tmp).liveRange.intervals();
+        unsigned numIntervals = liveRangeIntervals.size();
+        ASSERT(numIntervals > 1);
+
+        Vector<Interval, 8> intervals;
+        intervals.reserveInitialCapacity(numIntervals);
+        for (const auto& interval : liveRangeIntervals)
+            intervals.append(interval);
+
+        // Phase 2: Build connectivity via union-find on interval indices.
+        // Two intervals are connected when one is live-out of a block and the other
+        // is live-in to a CFG successor.
+        Vector<unsigned, 8> parent(numIntervals);
+        Vector<unsigned, 8> rank;
+        rank.fill(0, numIntervals);
+        for (unsigned i = 0; i < numIntervals; i++)
+            parent[i] = i;
+
+        auto find = [&](unsigned x) -> unsigned {
+            while (parent[x] != x) {
+                parent[x] = parent[parent[x]]; // path halving
+                x = parent[x];
+            }
+            return x;
+        };
+
+        auto unite = [&](unsigned a, unsigned b) {
+            a = find(a);
+            b = find(b);
+            if (a == b)
+                return;
+            if (rank[a] < rank[b])
+                std::swap(a, b);
+            parent[b] = a;
+            if (rank[a] == rank[b])
+                rank[a]++;
+        };
+
+        // For each block, which interval is live-in (interval covers positionOfHead(block)).
+        HashMap<BasicBlock*, unsigned> liveInToBlock;
+        // (block, intervalIdx) pairs where the interval is live-out of the block.
+        Vector<std::pair<BasicBlock*, unsigned>> liveOuts;
+
+        for (unsigned idx = 0; idx < numIntervals; idx++) {
+            Interval interval = intervals[idx];
+            BasicBlock* firstBlock = findBlockContainingPoint(interval.begin());
+            BasicBlock* lastBlock = findBlockContainingPoint(interval.end() - 1);
+
+            for (unsigned blockIdx = firstBlock->index(); blockIdx <= lastBlock->index(); blockIdx++) {
+                BasicBlock* block = m_code[blockIdx];
+                if (!block)
+                    continue;
+                Point head = positionOfHead(block);
+                Point tail = positionOfTail(block);
+                if (tail < interval.begin() || head >= interval.end())
+                    continue;
+
+                bool isLiveIn = interval.begin() <= head;
+                bool isLiveOut = interval.end() > tail;
+
+                if (isLiveIn)
+                    liveInToBlock.add(block, idx);
+                if (isLiveOut)
+                    liveOuts.append({ block, idx });
+            }
+        }
+
+        // Unite intervals connected via CFG edges.
+        for (auto& [block, outIdx] : liveOuts) {
+            for (auto& successor : block->successors()) {
+                auto it = liveInToBlock.find(successor.block());
+                if (it != liveInToBlock.end())
+                    unite(outIdx, it->value);
+            }
+        }
+
+        // Phase 3: Count distinct components. Component 0 = first interval's root.
+        // Map root interval index -> component ID. Use a Vector since roots are in [0, numIntervals).
+        constexpr unsigned noComponent = std::numeric_limits<unsigned>::max();
+        Vector<unsigned, 8> rootToComponent;
+        rootToComponent.fill(noComponent, numIntervals);
+        unsigned numComponents = 0;
+        Vector<unsigned, 8> intervalToComponent(numIntervals);
+
+        unsigned firstRoot = find(0);
+        rootToComponent[firstRoot] = 0;
+        numComponents = 1;
+
+        for (unsigned i = 0; i < numIntervals; i++) {
+            unsigned root = find(i);
+            if (rootToComponent[root] == noComponent)
+                rootToComponent[root] = numComponents++;
+            intervalToComponent[i] = rootToComponent[root];
+        }
+
+        if (numComponents <= 1)
+            return;
+
+        dataLogLnIf(verbose(), "splitDisconnectedDefs: ", tmp, " has ", numComponents, " components across ", numIntervals, " intervals");
+
+        // Phase 4: Build per-component live ranges.
+        Vector<LiveRange> componentLRs(numComponents);
+        for (unsigned i = 0; i < numIntervals; i++)
+            componentLRs[intervalToComponent[i]].append(intervals[i]);
+
+        // Phase 5: Create new tmps for non-primary components.
+        Vector<Tmp> componentTmp(numComponents);
+        componentTmp[0] = tmp;
+        for (unsigned comp = 1; comp < numComponents; comp++) {
+            Tmp newTmp = addTmpImpl(tmp, 0, { });
+            m_map.get<bank>(newTmp).liveRange = WTF::move(componentLRs[comp]);
+            componentTmp[comp] = newTmp;
+        }
+
+        // Update original tmp's live range to component 0 only.
+        m_map.get<bank>(tmp).liveRange = WTF::move(componentLRs[0]);
+
+        // Phase 6: Replace tmp refs in instructions for non-primary components.
+        for (unsigned comp = 1; comp < numComponents; comp++) {
+            Tmp newTmp = componentTmp[comp];
+            const auto& newIntervals = m_map.get<bank>(newTmp).liveRange.intervals();
+
+            for (const auto& interval : newIntervals) {
+                BasicBlock* firstBlock = findBlockContainingPoint(interval.begin());
+                BasicBlock* lastBlock = findBlockContainingPoint(interval.end() - 1);
+
+                for (unsigned blockIdx = firstBlock->index(); blockIdx <= lastBlock->index(); blockIdx++) {
+                    BasicBlock* block = m_code[blockIdx];
+                    if (!block)
+                        continue;
+                    Point head = positionOfHead(block);
+                    Point tail = positionOfTail(block);
+                    if (tail < interval.begin() || head >= interval.end())
+                        continue;
+
+                    unsigned firstInst = 0;
+                    if (interval.begin() > head)
+                        firstInst = instIndex(head, interval.begin());
+                    unsigned lastInst = block->size() - 1;
+                    if (interval.end() <= tail)
+                        lastInst = instIndex(head, interval.end() - 1);
+
+                    for (unsigned ii = firstInst; ii <= lastInst; ii++) {
+                        block->at(ii).forEachTmpFast([&](Tmp& t) {
+                            if (t == tmp)
+                                t = newTmp;
+                        });
+                    }
+                }
+            }
+        }
+
+        // Phase 7: Clear stale coalescables and update stats.
+        m_map.get<bank>(tmp).coalescables = Coalescables();
+        m_stats[bank].numSplitDisconnectedDefs++;
+        m_stats[bank].numSplitDisconnectedDefsComponents += numComponents;
     }
 
     // Note that the use/def lists are computed only once and not kept up to date.

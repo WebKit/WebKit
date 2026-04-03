@@ -43,6 +43,8 @@ class Code;
 // that are only reachable by rare edges is scaled by Options::rareBlockPenalty().
 class UseCounts {
 public:
+    UseCounts() = default;
+
     UseCounts(Code& code)
     {
         // Find non-rare blocks.
