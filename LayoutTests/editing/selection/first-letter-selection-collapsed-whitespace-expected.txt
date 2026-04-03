@@ -1,0 +1,17 @@
+Test that selection works correctly with collapsed whitespace before ::first-letter.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.getSelection().toString() is "Hello"
+PASS window.getSelection().toString() is "H"
+PASS window.getSelection().isCollapsed is true
+PASS window.getSelection().toString() is "Hello"
+PASS window.getSelection().toString() is "A"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello
+World
+A
+

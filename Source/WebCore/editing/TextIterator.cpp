@@ -648,9 +648,15 @@ bool TextIterator::handleTextNode()
 
     std::tie(m_textRun, m_textRunLogicalOrderCache) = InlineIterator::firstTextBoxInLogicalOrderFor(renderer.get());
 
-    if (textFragment && !m_handledFirstLetter && !m_offset)
+    if (textFragment && !m_handledFirstLetter && static_cast<unsigned>(m_offset) < textFragment->start()) {
         handleTextNodeFirstLetter(*textFragment);
-    else if (!m_textRun && rendererText.length()) {
+        if (m_firstLetterText) {
+            // m_offset is a DOM offset but handleTextRun works in renderer-local coordinates.
+            // Convert to first-letter local offset.
+            auto firstLetterStart = static_cast<int>(textFragment->start() - m_firstLetterText->text().length());
+            m_offset = std::max(0, m_offset - firstLetterStart);
+        }
+    } else if (!m_textRun && rendererText.length()) {
         if (renderer->style().visibility() != Visibility::Visible && !m_behaviors.contains(TextIteratorBehavior::IgnoresStyleVisibility))
             return false;
         m_lastTextNodeEndedWithCollapsedSpace = true; // entire block is collapsed space

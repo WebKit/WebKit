@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+.first-letter::first-letter {
+    color: red;
+}
+</style>
+</head>
+<body>
+<div id="test1" class="first-letter"> Hello</div>
+<div id="test2" class="first-letter">  World</div>
+<div id="test3" class="first-letter"> A</div>
+<div id="container"></div>
+
+<script>
+description("Test that selection works correctly with collapsed whitespace before ::first-letter.");
+
+function selectRange(node, start, end) {
+    var range = document.createRange();
+    range.setStart(node, start);
+    range.setEnd(node, end);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+}
+
+function selectWord(node, offset) {
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.collapse(node, offset);
+    sel.modify("move", "backward", "word");
+    sel.modify("extend", "forward", "word");
+}
+
+// Test 1: Select all text (leading space is collapsed)
+selectRange(test1.firstChild, 0, 6);
+shouldBeEqualToString("window.getSelection().toString()", "Hello");
+
+// Test 2: Select the first letter across collapsed whitespace
+selectRange(test1.firstChild, 0, 2);
+shouldBeEqualToString("window.getSelection().toString()", "H");
+
+// Test 3: Caret at offset 0 (collapsed whitespace position)
+selectRange(test1.firstChild, 0, 0);
+shouldBe("window.getSelection().isCollapsed", "true");
+
+// Test 4: Word selection starting from the first letter — this triggered the
+selectWord(test1.firstChild, 1);
+shouldBeEqualToString("window.getSelection().toString()", "Hello");
+
+// Test 5: Single character after collapsed whitespace
+selectRange(test3.firstChild, 0, 2);
+shouldBeEqualToString("window.getSelection().toString()", "A");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
