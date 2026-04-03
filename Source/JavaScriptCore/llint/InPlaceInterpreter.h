@@ -800,10 +800,11 @@ FOR_EACH_IPINT_UINT_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
 
 namespace JSC { namespace IPInt {
 
-#if LLINT_TRACING
+#if LLINT_TRACING || ASSERT_ENABLED
 // When LLINT_TRACING is enabled, each ipintOp handler has a trace prologue injected,
 // which can push the largest handlers past 256 bytes. Double the slot size in tracing
 // builds so the dispatch table stays valid.
+// Debug builds can have larger jump instructions without linker optimizations too.
 constexpr uint64_t alignIPInt = 512;
 #else
 constexpr uint64_t alignIPInt = 256;
