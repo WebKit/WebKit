@@ -548,7 +548,7 @@ static Inspector::Protocol::ErrorStringOr<IDBFactory*> IDBFactoryFromDocument(Do
 
     IDBFactory* idbFactory = WindowOrWorkerGlobalScopeIndexedDatabase::indexedDB(*window);
     if (!idbFactory)
-        makeUnexpected("Missing IndexedDB factory of window for given document"_s);
+        return makeUnexpected("Missing IndexedDB factory of window for given document"_s);
     
     return idbFactory;
 }
