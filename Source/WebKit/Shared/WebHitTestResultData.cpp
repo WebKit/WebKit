@@ -30,6 +30,7 @@
 #include <WebCore/HitTestResult.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/LocalFrameView.h>
+#include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/NavigationAction.h>
 #include <WebCore/Node.h>
 #include <WebCore/RenderImage.h>
@@ -79,7 +80,10 @@ static String imageSuggestedFilenameFromHitTestResult(const HitTestResult& hitTe
     if (!webFrame)
         return nullString();
 
-    return webFrame->suggestedFilenameForResourceWithURL(hitTestResult.absoluteImageURL());
+    auto url = hitTestResult.absoluteImageURL();
+    auto filename = webFrame->suggestedFilenameForResourceWithURL(url);
+    auto mimeType = webFrame->mimeTypeForResourceWithURL(url);
+    return MIMETypeRegistry::correctExtensionForMIMEType(filename, mimeType);
 }
 
 WebHitTestResultData::WebHitTestResultData() = default;
