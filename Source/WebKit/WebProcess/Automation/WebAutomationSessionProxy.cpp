@@ -191,6 +191,71 @@ static JSValueRef isValidNodeIdentifier(JSContextRef context, JSObjectRef functi
     return JSValueMakeBoolean(context, isValidNodeHandle(nodeIdentifier->string()));
 }
 
+static JSValueRef isKnownReferenceCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
+{
+    // This is using the JSC C API so we cannot take a std::span in argument directly.
+    auto arguments = unsafeMakeSpan(rawArguments, rawArgumentCount);
+
+    ASSERT(arguments.size() == 2);
+    ASSERT(JSValueIsNumber(context, arguments[0]));
+    ASSERT(JSValueIsString(context, arguments[1]));
+
+    if (arguments.size() != 2)
+        return JSValueMakeUndefined(context);
+
+    auto rawFrameID = JSValueToNumber(context, arguments[0], exception);
+    if (!ObjectIdentifier<WebCore::FrameIdentifierType>::isValidIdentifier(rawFrameID))
+        return JSValueMakeUndefined(context);
+    WebCore::FrameIdentifier currentFrameIdentifier(rawFrameID);
+    auto nodeIdentifier = adoptRef(JSValueToStringCopy(context, arguments[1], exception));
+
+    RefPtr automationSessionProxy = WebProcess::singleton().automationSessionProxy();
+    if (!automationSessionProxy)
+        return JSValueMakeUndefined(context);
+
+    return JSValueMakeBoolean(context, automationSessionProxy->isKnownReference(currentFrameIdentifier, nodeIdentifier->string()));
+}
+
+bool WebAutomationSessionProxy::isKnownReference(WebCore::FrameIdentifier frameID, const String& nodeHandle)
+{
+    auto findResult = m_knownReferences.find(frameID);
+    if (findResult != m_knownReferences.end())
+        return findResult->value.contains(nodeHandle);
+    return false;
+}
+
+static JSValueRef addKnownReferenceCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
+{
+    // This is using the JSC C API so we cannot take a std::span in argument directly.
+    auto arguments = unsafeMakeSpan(rawArguments, rawArgumentCount);
+
+    ASSERT(arguments.size() == 2);
+    ASSERT(JSValueIsNumber(context, arguments[0]));
+    ASSERT(JSValueIsString(context, arguments[1]));
+
+    if (arguments.size() != 2)
+        return JSValueMakeUndefined(context);
+
+    auto rawFrameID = JSValueToNumber(context, arguments[0], exception);
+    if (!ObjectIdentifier<WebCore::FrameIdentifierType>::isValidIdentifier(rawFrameID))
+        return JSValueMakeUndefined(context);
+    WebCore::FrameIdentifier currentFrameIdentifier(rawFrameID);
+    auto nodeIdentifier = adoptRef(JSValueToStringCopy(context, arguments[1], exception));
+
+    RefPtr automationSessionProxy = WebProcess::singleton().automationSessionProxy();
+    if (!automationSessionProxy)
+        return JSValueMakeUndefined(context);
+
+    automationSessionProxy->addKnownReference(currentFrameIdentifier, nodeIdentifier->string());
+    return JSValueMakeUndefined(context);
+}
+
+void WebAutomationSessionProxy::addKnownReference(WebCore::FrameIdentifier frameID, const String& nodeHandle)
+{
+    auto result = m_knownReferences.add(frameID, HashSet<String>());
+    result.iterator->value.add(nodeHandle);
+}
+
 static JSValueRef evaluate(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     ASSERT_ARG(argumentCount, argumentCount == 1);
@@ -206,6 +271,13 @@ static JSValueRef evaluate(JSContextRef context, JSObjectRef function, JSObjectR
 static JSValueRef createUUID(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     return toJSValue(context, createVersion4UUIDString().convertToASCIIUppercase());
+}
+
+String WebAutomationSessionProxy::errorTypeFromJavaScriptExceptionName(const String& exceptionName)
+{
+    auto errorType = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::ErrorMessage>(exceptionName)
+        .value_or(Inspector::Protocol::Automation::ErrorMessage::JavaScriptError);
+    return Inspector::Protocol::AutomationHelpers::getEnumConstantValue(errorType);
 }
 
 static JSValueRef evaluateJavaScriptCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
@@ -300,10 +372,13 @@ JSObjectRef WebAutomationSessionProxy::scriptObjectForFrame(WebFrame& frame)
     ASSERT(JSValueIsObject(context, scriptObjectFunction));
 
     JSValueRef sessionIdentifier = toJSValue(context, m_sessionIdentifier);
+    JSValueRef currentFrameIdentifier = JSValueMakeNumber(context, frame.frameID().toUInt64());
     JSObjectRef evaluateFunction = JSObjectMakeFunctionWithCallback(context, nullptr, evaluate);
     JSObjectRef createUUIDFunction = JSObjectMakeFunctionWithCallback(context, nullptr, createUUID);
     JSObjectRef isValidNodeIdentifierFunction = JSObjectMakeFunctionWithCallback(context, nullptr, isValidNodeIdentifier);
-    JSValueRef arguments[] = { sessionIdentifier, evaluateFunction, createUUIDFunction, isValidNodeIdentifierFunction };
+    JSObjectRef isKnownReferenceFunction = JSObjectMakeFunctionWithCallback(context, nullptr, isKnownReferenceCallback);
+    JSObjectRef addKnownReferenceFunction = JSObjectMakeFunctionWithCallback(context, nullptr, addKnownReferenceCallback);
+    JSValueRef arguments[] = { sessionIdentifier, currentFrameIdentifier, evaluateFunction, createUUIDFunction, isValidNodeIdentifierFunction, isKnownReferenceFunction, addKnownReferenceFunction };
     JSObjectRef scriptObject = const_cast<JSObjectRef>(JSObjectCallAsFunction(context, scriptObjectFunction, nullptr, std::size(arguments), arguments, &exception));
     ASSERT(JSValueIsObject(context, scriptObject));
 
@@ -311,30 +386,47 @@ JSObjectRef WebAutomationSessionProxy::scriptObjectForFrame(WebFrame& frame)
     return scriptObject;
 }
 
-WebCore::Element* WebAutomationSessionProxy::elementForNodeHandle(WebFrame& frame, const String& nodeHandle)
+Expected<Ref<Element>, String> WebAutomationSessionProxy::elementForNodeHandle(WebFrame& frame, const String& nodeHandle)
 {
     // Don't use scriptObjectForFrame() since we can assume if the script object
-    // does not exist, there are no nodes mapped to handles. Using scriptObjectForFrame()
-    // will make a new script object if it can't find one, preventing us from returning fast.
+    // does not exist, all known references came from previous documents and should
+    // be considered stale. Using scriptObjectForFrame() will make a new script
+    // object if it can't find one, preventing us from returning fast.
     JSGlobalContextRef context = frame.jsContext();
     auto* scriptObject = this->scriptObject(context);
-    if (!scriptObject)
-        return nullptr;
+    if (!scriptObject) {
+        if (isKnownReference(frame.frameID(), nodeHandle))
+            return makeUnexpected(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound));
+        return makeUnexpected(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InvalidNodeIdentifier));
+    }
 
     JSValueRef functionArguments[] = {
         toJSValue(context, nodeHandle)
     };
+    JSValueRef exception = nullptr;
 
-    JSValueRef result = callPropertyFunction(context, scriptObject, "nodeForIdentifier"_s, std::size(functionArguments), functionArguments, nullptr);
+    JSValueRef result = callPropertyFunction(context, scriptObject, "nodeForIdentifier"_s, std::size(functionArguments), functionArguments, &exception);
+
+    if (exception) {
+        String errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::JavaScriptError);
+        if (JSValueIsObject(context, exception)) {
+            JSObjectRef exceptionObj = JSValueToObject(context, exception, nullptr);
+            JSValueRef nameValue = JSObjectGetProperty(context, exceptionObj, OpaqueJSString::tryCreate("name"_s).get(), nullptr);
+            String exceptionName = adoptRef(JSValueToStringCopy(context, nameValue, nullptr))->string();
+            errorType = errorTypeFromJavaScriptExceptionName(exceptionName);
+        }
+        return makeUnexpected(errorType);
+    }
+
     JSObjectRef element = JSValueToObject(context, result, nullptr);
     if (!element)
-        return nullptr;
+        return makeUnexpected(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InternalError));
 
     auto elementWrapper = JSC::jsDynamicCast<WebCore::JSElement*>(toJS(element));
     if (!elementWrapper)
-        return nullptr;
+        return makeUnexpected(Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::InvalidNodeIdentifier));
 
-    return &elementWrapper->wrapped();
+    return Ref { elementWrapper->wrapped() };
 }
 
 WebCore::AccessibilityObject* WebAutomationSessionProxy::getAccessibilityObjectForNode(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, String& errorType)
@@ -356,11 +448,12 @@ WebCore::AccessibilityObject* WebAutomationSessionProxy::getAccessibilityObjectF
         return nullptr;
     }
 
-    RefPtr coreElement = elementForNodeHandle(*frame, nodeHandle);
-    if (!coreElement) {
-        errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound);
+    auto coreElementOrError = elementForNodeHandle(*frame, nodeHandle);
+    if (!coreElementOrError) {
+        errorType = coreElementOrError.error();
         return nullptr;
     }
+    Ref coreElement = WTF::move(*coreElementOrError);
 
     WebCore::AXObjectCache::enableAccessibility();
 
@@ -369,7 +462,7 @@ WebCore::AccessibilityObject* WebAutomationSessionProxy::getAccessibilityObjectF
         // the accessibility object for this element will not be created (because it doesn't yet have its renderer).
         axObjectCache->performDeferredCacheUpdate(ForceLayout::Yes);
 
-        if (auto* axObject = axObjectCache->exportedGetOrCreate(*coreElement))
+        if (auto* axObject = axObjectCache->exportedGetOrCreate(coreElement))
             return axObject;
     }
 
@@ -600,14 +693,13 @@ void WebAutomationSessionProxy::resolveChildFrameWithNodeHandle(WebCore::PageIde
         return;
     }
 
-    RefPtr coreElement = elementForNodeHandle(*frame, nodeHandle);
-    if (!coreElement) {
-        String nodeNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound);
-        completionHandler(nodeNotFoundErrorType, std::nullopt);
+    auto coreElementOrError = elementForNodeHandle(*frame, nodeHandle);
+    if (!coreElementOrError) {
+        completionHandler(coreElementOrError.error(), std::nullopt);
         return;
     }
 
-    RefPtr frameElementBase = dynamicDowncast<WebCore::HTMLFrameElementBase>(*coreElement);
+    RefPtr frameElementBase = dynamicDowncast<WebCore::HTMLFrameElementBase>(*coreElementOrError);
     if (!frameElementBase) {
         completionHandler(frameNotFoundErrorType, std::nullopt);
         return;
@@ -782,14 +874,14 @@ void WebAutomationSessionProxy::computeElementLayout(WebCore::PageIdentifier pag
         return;
     }
 
-    RefPtr coreElement = elementForNodeHandle(*frame, nodeHandle);
-    if (!coreElement) {
-        String nodeNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound);
-        completionHandler(nodeNotFoundErrorType, { }, std::nullopt, false);
+    auto coreElementOrError = elementForNodeHandle(*frame, nodeHandle);
+    if (!coreElementOrError) {
+        completionHandler(coreElementOrError.error(), { }, std::nullopt, false);
         return;
     }
+    Ref coreElement = WTF::move(*coreElementOrError);
 
-    RefPtr containerElement = containerElementForElement(*coreElement);
+    RefPtr containerElement = containerElementForElement(coreElement);
     if (scrollIntoViewIfNeeded && containerElement) {
         // §14.1 Element Click. Step 4. Scroll into view the element’s container.
         // https://w3c.github.io/webdriver/webdriver-spec.html#element-click
@@ -929,20 +1021,25 @@ void WebAutomationSessionProxy::selectOptionElement(WebCore::PageIdentifier page
         return;
     }
 
-    RefPtr coreElement = elementForNodeHandle(*frame, nodeHandle);
-    if (!coreElement || (!is<WebCore::HTMLOptionElement>(coreElement) && !is<WebCore::HTMLOptGroupElement>(coreElement))) {
+    auto coreElementOrError = elementForNodeHandle(*frame, nodeHandle);
+    if (!coreElementOrError) {
+        completionHandler(coreElementOrError.error());
+        return;
+    }
+
+    if (!is<HTMLOptionElement>(*coreElementOrError) && !is<HTMLOptGroupElement>(*coreElementOrError)) {
         String nodeNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound);
         completionHandler(nodeNotFoundErrorType);
         return;
     }
 
     String elementNotInteractableErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::ElementNotInteractable);
-    if (is<WebCore::HTMLOptGroupElement>(coreElement)) {
+    if (is<WebCore::HTMLOptGroupElement>(*coreElementOrError)) {
         completionHandler(elementNotInteractableErrorType);
         return;
     }
 
-    Ref optionElement = downcast<WebCore::HTMLOptionElement>(*coreElement);
+    Ref optionElement = downcast<WebCore::HTMLOptionElement>(*coreElementOrError);
     RefPtr selectElement = optionElement->ownerSelectElement();
     if (!selectElement) {
         completionHandler(elementNotInteractableErrorType);
@@ -974,7 +1071,12 @@ void WebAutomationSessionProxy::setFilesForInputFileUpload(WebCore::PageIdentifi
         return;
     }
 
-    RefPtr inputElement = dynamicDowncast<WebCore::HTMLInputElement>(elementForNodeHandle(*frame, nodeHandle));
+    auto coreElementOrError = elementForNodeHandle(*frame, nodeHandle);
+    if (!coreElementOrError) {
+        completionHandler(coreElementOrError.error());
+        return;
+    }
+    RefPtr inputElement = dynamicDowncast<WebCore::HTMLInputElement>(*coreElementOrError);
     if (!inputElement || !inputElement->isFileUpload()) {
         String nodeNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound);
         completionHandler(nodeNotFoundErrorType);
@@ -1064,12 +1166,12 @@ void WebAutomationSessionProxy::snapshotRectForScreenshot(WebCore::PageIdentifie
             return;
         }
 
-        coreElement = elementForNodeHandle(*frame, nodeHandle);
-        if (!coreElement) {
-            String nodeNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::NodeNotFound);
-            completionHandler(nodeNotFoundErrorType, { });
+        auto coreElementOrError = elementForNodeHandle(*frame, nodeHandle);
+        if (!coreElementOrError) {
+            completionHandler(coreElementOrError.error(), { });
             return;
         }
+        coreElement = WTF::move(*coreElementOrError);
     }
 
     if (coreElement && scrollIntoViewIfNeeded)
