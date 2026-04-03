@@ -105,8 +105,7 @@ void JSLock::lock(intptr_t lockCount) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     }
 
     m_ownerThread = &Thread::currentSingleton();
-    WTF::storeStoreFence();
-    m_hasOwnerThread = true;
+    m_hasOwnerThread.store(true, std::memory_order_release);
     ASSERT(!m_lockCount);
     m_lockCount = lockCount;
 
@@ -177,7 +176,7 @@ void JSLock::unlock(intptr_t unlockCount) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     m_lockCount -= unlockCount;
 
     if (!m_lockCount) {
-        m_hasOwnerThread = false;
+        m_hasOwnerThread.store(false, std::memory_order_release);
         m_lock.unlock();
     }
 }
