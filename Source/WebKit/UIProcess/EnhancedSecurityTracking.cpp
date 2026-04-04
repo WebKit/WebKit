@@ -171,11 +171,12 @@ void EnhancedSecurityTracking::trackSameSiteNavigation(const API::Navigation& na
     }
 }
 
-bool EnhancedSecurityTracking::enableIfRequired(const API::Navigation& navigation)
+bool EnhancedSecurityTracking::enableIfRequired(const API::Navigation& navigation, bool hasDeveloperExtrasEnabled)
 {
     auto currentRequestURL = navigation.currentRequest().url();
 
     if (currentRequestURL.protocolIs("http"_s)
+        && !hasDeveloperExtrasEnabled
         && !SecurityOrigin::isLocalHostOrLoopbackIPAddress(currentRequestURL.host())) {
         enableFor(EnhancedSecurityReason::InsecureProvisional, navigation);
         return true;
@@ -200,7 +201,7 @@ void EnhancedSecurityTracking::handleBackForwardNavigation(const API::Navigation
         enableFor(reasonForEnhancedSecurity(priorState), navigation);
 }
 
-void EnhancedSecurityTracking::trackNavigation(const API::Navigation& navigation, bool hasOpenedPage)
+void EnhancedSecurityTracking::trackNavigation(const API::Navigation& navigation, bool hasOpenedPage, bool hasDeveloperExtrasEnabled)
 {
     auto lastNavigationAction = navigation.lastNavigationAction();
     if (lastNavigationAction && lastNavigationAction->hasOpener)
@@ -223,7 +224,7 @@ void EnhancedSecurityTracking::trackNavigation(const API::Navigation& navigation
     if (m_activeState != ActivationState::None && isInitialUIDriven && !isReload)
         reset();
 
-    if (m_activeState != ActivationState::Active && enableIfRequired(navigation))
+    if (m_activeState != ActivationState::Active && enableIfRequired(navigation, hasDeveloperExtrasEnabled))
         return;
 
     if (m_activeState == ActivationState::Active

@@ -188,6 +188,8 @@ static RetainPtr<TestWKWebView> enhancedSecurityTestConfiguration(
         }
     }
 
+    preferences._developerExtrasEnabled = NO;
+
     auto storeConfiguration = useNonPersistentStore
         ? adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration])
         : adoptNS([_WKWebsiteDataStoreConfiguration new]);
@@ -283,6 +285,21 @@ static void runHttpLoad(bool useSiteIsolation)
     });
 }
 TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpLoad)
+
+static void runHttpLoadWithDeveloperExtrasEnabled(bool useSiteIsolation)
+{
+    HTTPServer plaintextServer({
+        { "http://insecure.example.internal/"_s, { "<script>alert('insecure-page')</script>"_s } },
+    });
+
+    auto webView = enhancedSecurityTestConfiguration(&plaintextServer, nullptr, useSiteIsolation);
+    [webView configuration].preferences._developerExtrasEnabled = YES;
+
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"http://insecure.example.internal/", {
+        { "insecure-page"_s, ExpectedEnhancedSecurity::Disabled }
+    });
+}
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpLoadWithDeveloperExtrasEnabled)
 
 static void runHttpsLoad(bool useSiteIsolation)
 {
