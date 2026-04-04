@@ -1723,6 +1723,27 @@ std::optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bo
             float scale = styleImage->imageScaleFactor();
             // Get hotspot and convert from logical pixels to physical pixels.
             auto hotSpot = styleCursorImage.hotSpot;
+
+            CheckedPtr renderElement = dynamicDowncast<RenderElement>(renderer);
+            if (!renderElement && renderer && renderer->parent())
+                renderElement = renderer->parent();
+
+            if (renderElement) {
+                RefPtr image = cachedImage->image();
+                if (image && image->drawsSVGImage()) {
+                    // For SVG cursors, scale the image size with device resolution so
+                    // on high-DPI displays SVG images get crisp rendering.
+                    RefPtr page = frame->page();
+                    float deviceScale = page ? page->deviceScaleFactor() : 1.0f;
+
+                    FloatSize scaledSize = image->size() * deviceScale;
+                    styleImage->setContainerContextForRenderer(*renderElement, scaledSize, deviceScale);
+
+                    renderer = renderElement.get();
+                    scale *= deviceScale;
+                }
+            }
+
             FloatSize size = cachedImage->imageForRenderer(renderer)->size();
             if (cachedImage->errorOccurred())
                 continue;
