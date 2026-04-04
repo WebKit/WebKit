@@ -2228,6 +2228,7 @@ page/PointerLockController.cpp
 page/PrintContext.cpp
 page/ProcessWarming.cpp
 page/Quirks.cpp
+page/QuirksData.cpp
 page/RemoteDOMWindow.cpp
 page/RemoteFrame.cpp
 page/RemoteFrameGeometryTransformer.cpp

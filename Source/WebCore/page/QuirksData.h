@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #include <initializer_list>
 #include <wtf/Platform.h>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace WebCore {
 
@@ -54,6 +55,7 @@ struct QuirksData {
     bool isYouTube : 1 { false };
     bool isZoom : 1 { false };
 
+    // Note: When adding a new enum here, be sure to add a description of the quirk in descriptionForSiteSpecificQuirk
     enum class SiteSpecificQuirk {
 #if PLATFORM(IOS) || PLATFORM(VISION)
         AllowLayeredFullscreenVideos,
@@ -292,5 +294,7 @@ struct QuirksData {
     ShouldDispatchSimulatedMouseEvents shouldDispatchSimulatedMouseEventsQuirk { ShouldDispatchSimulatedMouseEvents::Unknown };
 #endif
 };
+
+ASCIILiteral descriptionForSiteSpecificQuirk(QuirksData::SiteSpecificQuirk);
 
 } // namespace WebCore
