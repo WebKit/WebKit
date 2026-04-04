@@ -1446,6 +1446,45 @@ UNIFIED_PDF_TEST(BackgroundDoesNotAdaptToColorSchemeOnEmbeddedDocuments)
 }
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+UNIFIED_PDF_TEST(PluginScrollViewIsNotHorizontallyScrollableForFullFramePDF)
+{
+    // Use width 391 specifically: for test.pdf (page width 129.6pt, contentWidth 161.6),
+    // the layout scale 391/161.6 produces a scaled width of ~391.000031 in float32,
+    // which expandedIntSize rounds up to 392 — a 1-pixel mismatch that makes the
+    // plugin's UIScrollView horizontally scrollable without the fix.
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 391, 800) configuration:configurationForWebViewTestingUnifiedPDF().get()]);
+    RetainPtr request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
+    [webView synchronouslyLoadRequest:request.get()];
+
+    // Wait for stable presentation to ensure the scrolling tree is fully committed
+    // and the plugin's WKChildScrollView has its geometry set.
+    __block bool stable = false;
+    [webView _doAfterNextStablePresentationUpdate:^{
+        stable = true;
+    }];
+    TestWebKitAPI::Util::run(&stable);
+
+    // The plugin's WKChildScrollView should not be horizontally scrollable.
+    // A rounding mismatch in contentsSize() could make contentSize.width
+    // 1 pixel larger than bounds.width, causing the plugin's scroll view
+    // to capture horizontal pan gestures and rubber-band (rdar://156854435).
+    UIView *childScrollView = [webView wkFirstSubviewWithClass:NSClassFromString(@"WKChildScrollView")];
+    EXPECT_NOT_NULL(childScrollView);
+    if (!childScrollView)
+        return;
+
+    auto *scrollView = dynamic_objc_cast<UIScrollView>(childScrollView);
+    EXPECT_NOT_NULL(scrollView);
+    if (!scrollView)
+        return;
+
+    EXPECT_GT(scrollView.contentSize.width, 0);
+    EXPECT_GT(scrollView.bounds.size.width, 0);
+    EXPECT_LE(scrollView.contentSize.width, scrollView.bounds.size.width);
+}
+#endif
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(UNIFIED_PDF)
