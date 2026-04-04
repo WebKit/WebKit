@@ -432,7 +432,7 @@ static void testFaviconDatabaseGetFavicon(FaviconDatabaseTest* test, gconstpoint
     g_assert_null(webkit_web_view_get_favicon(test->webView()));
     test->m_faviconURI.reset();
     test->loadURI(kServer->getURIForPath("/foo").data());
-    test->waitUntilFaviconChanged();
+    test->waitUntilLoadFinishedAndFaviconChanged();
     g_assert_false(test->m_faviconURI.has_value());
     g_assert_nonnull(webkit_web_view_get_favicon(test->webView()));
 }
