@@ -113,6 +113,8 @@ webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/interactionid-a
 # Event timing: timing out for unclear reasons - perhaps scheduling. Events handlers are called but event timing entries aren't produced
 webkit.org/b/301110 imported/w3c/web-platform-tests/event-timing/gap-keydown-keyup.html [ Skip ]
 webkit.org/b/301110 imported/w3c/web-platform-tests/event-timing/gap-pointerdown-pointerup.html [ Skip ]
+# Only gtk-wk2 had this test failing, skip it for now.
+webkit.org/b/308922 imported/w3c/web-platform-tests/css/css-images/gradient/gradient-with-huge-color-stop-length.html [ Skip ]
 
 # Media controls
 accessibility/gtk/media-controls-panel-title.html [ Failure ]

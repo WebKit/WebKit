@@ -1,0 +1,43 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, minimum-scale=1.0">
+<title>Gradients with huge color-stop-length should work</title>
+<link rel="author" title="CGQAQ" href="mailto:cgqaq@chromium.org">
+<link rel="author" title="一丝" href="mailto:yiorsi@gmail.com">
+<link rel="help" href="https://drafts.csswg.org/css-images-4/#color-stop-syntax">
+<meta name="assert" content="Tests that gradients with huge color-stop-length works.">
+<link rel="match" href="gradient-with-huge-color-stop-length-ref.html">
+<style>
+    div {
+        display: inline-block;
+        vertical-align: top;
+        font-family: sans-serif;
+        width: 100px;
+        height: 100px;
+    }
+    .expected {
+        background: linear-gradient(green 100px, red 0px);
+    }
+    .test1 {
+        background: linear-gradient(green 100px, red 100px 30000000000px);
+    }
+    .test2 {
+        background: linear-gradient(green 100px, red 100px 3000000px);
+    }
+    .test3 {
+        background: linear-gradient(green 100px, red 0px 30000000000%);
+    }
+    .test4 {
+        background: linear-gradient(green 100px, red 100px calc(Infinity * 1px));
+    }
+    .test5 {
+        background: linear-gradient(green 100px, red 100px calc(Infinity * 1%));
+    }
+</style>
+
+<div class="expected">This should be a green background.</div>
+<div class="test1">This should be a green background.</div>
+<div class="test2">This should be a green background.</div>
+<div class="test3">This should be a green background.</div>
+<div class="test4">This should be a green background.</div>
+<div class="test5">This should be a green background.</div>

@@ -190,20 +190,99 @@ public:
 
     static constexpr float NODELETE maxExtent(float) { return 1; }
 
-    void normalizeStopsAndEndpointsOutsideRange(Vector<ResolvedGradientStop>& stops, ColorInterpolationMethod)
+    void normalizeStopsAndEndpointsOutsideRange(Vector<ResolvedGradientStop>& stops, ColorInterpolationMethod colorInterpolationMethod)
     {
+        auto clampStopsOutsideUnitInterval = [&] {
+            size_t numberOfStops = stops.size();
+            size_t lastStopIndex = numberOfStops - 1;
+
+            std::optional<size_t> firstZeroOrGreaterIndex;
+            for (size_t i = 0; i < numberOfStops; ++i) {
+                if (*stops[i].offset >= 0) {
+                    firstZeroOrGreaterIndex = i;
+                    break;
+                }
+            }
+
+            if (firstZeroOrGreaterIndex) {
+                size_t index = *firstZeroOrGreaterIndex;
+                if (index > 0) {
+                    float previousOffset = *stops[index - 1].offset;
+                    float nextOffset = *stops[index].offset;
+
+                    float interStopProportion = -previousOffset / (nextOffset - previousOffset);
+                    auto blendedColor = interpolateColors(colorInterpolationMethod, stops[index - 1].color, 1.0f - interStopProportion, stops[index].color, interStopProportion);
+
+                    // Clamp the positions to 0 and set the color.
+                    for (size_t i = 0; i < index; ++i) {
+                        stops[i].offset = 0;
+                        stops[i].color = blendedColor;
+                    }
+                }
+            } else {
+                // All stop offsets below 0, clamp them.
+                for (auto& stop : stops)
+                    stop.offset = 0;
+            }
+
+            std::optional<size_t> lastOneOrLessIndex;
+            for (int i = lastStopIndex; i >= 0; --i) {
+                if (*stops[i].offset <= 1) {
+                    lastOneOrLessIndex = i;
+                    break;
+                }
+            }
+
+            if (lastOneOrLessIndex) {
+                size_t index = *lastOneOrLessIndex;
+                if (index < lastStopIndex) {
+                    float previousOffset = *stops[index].offset;
+                    float nextOffset = *stops[index + 1].offset;
+
+                    float interStopProportion = (1 - previousOffset) / (nextOffset - previousOffset);
+                    auto blendedColor = interpolateColors(colorInterpolationMethod, stops[index].color, 1.0f - interStopProportion, stops[index + 1].color, interStopProportion);
+
+                    // Clamp the positions to 1 and set the color.
+                    for (size_t i = index + 1; i < numberOfStops; ++i) {
+                        stops[i].offset = 1;
+                        stops[i].color = blendedColor;
+                    }
+                }
+            } else {
+                // All stop offsets above 1, clamp them.
+                for (auto& stop : stops)
+                    stop.offset = 1;
+            }
+        };
+
         float firstOffset = *stops.first().offset;
         float lastOffset = *stops.last().offset;
         if (firstOffset != lastOffset) {
             float scale = lastOffset - firstOffset;
+            auto p0 = m_data.point0;
+            auto p1 = m_data.point1;
+
+            FloatPoint newPoint0 { p0.x() + firstOffset * (p1.x() - p0.x()), p0.y() + firstOffset * (p1.y() - p0.y()) };
+            FloatPoint newPoint1 { p1.x() + (lastOffset - 1) * (p1.x() - p0.x()), p1.y() + (lastOffset - 1) * (p1.y() - p0.y()) };
+
+            // Keep coordinates in a range where float still has about pixel-level precision.
+            // This is basically 1.0f * 2^30, which is approximately 1e9, so it should be large
+            // enough for any reasonable gradient size while still keeping good precision.
+            const float maxEndpointMagnitude = std::scalbn(1.0f, 30);
+            auto isReasonable = [maxEndpointMagnitude](const FloatPoint& point) {
+                return std::isfinite(point.x()) && std::isfinite(point.y()) && std::abs(point.x()) <= maxEndpointMagnitude && std::abs(point.y()) <= maxEndpointMagnitude;
+            };
+            if (!isReasonable(newPoint0) || !isReasonable(newPoint1)) {
+                // Keep endpoints stable if the normalized geometry grows too large for platform gradients.
+                clampStopsOutsideUnitInterval();
+                return;
+            }
 
             for (auto& stop : stops)
                 stop.offset = (*stop.offset - firstOffset) / scale;
 
-            auto p0 = m_data.point0;
-            auto p1 = m_data.point1;
-            m_data.point0 = { p0.x() + firstOffset * (p1.x() - p0.x()), p0.y() + firstOffset * (p1.y() - p0.y()) };
-            m_data.point1 = { p1.x() + (lastOffset - 1) * (p1.x() - p0.x()), p1.y() + (lastOffset - 1) * (p1.y() - p0.y()) };
+            m_data.point0 = newPoint0;
+            m_data.point1 = newPoint1;
         } else {
             // All stops at same position - clamp offsets but keep all colors.
             // This creates a hard color stop at the clamped position.
