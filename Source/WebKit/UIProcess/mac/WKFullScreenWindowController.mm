@@ -365,6 +365,13 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     return adoptCF(CGImageCreate(width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, colorSpace.get(), bitmapInfo, provider.get(), 0, shouldInterpolate, intent));
 }
 
+static RetainPtr<NSScreen> getFirstScreen()
+{
+    RetainPtr firstScreen = [[NSScreen screens] firstObject];
+    RELEASE_ASSERT_WITH_MESSAGE(firstScreen, "No screens found, possibly due to no WindowServer session. This configuration is not supported.");
+    return firstScreen;
+}
+
 - (void)_continueEnteringFullscreenAfterPostingNotification:(CompletionHandler<void(bool)>&&)completionHandler
 {
     if ([self isFullScreen])
@@ -378,7 +385,7 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     NSRect webViewFrame = convertRectToScreen(retainPtr([webView window]).get(), [webView convertRect:[webView frame] toView:nil]);
 
     // Flip coordinate system:
-    webViewFrame.origin.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(webViewFrame);
+    webViewFrame.origin.y = NSMaxY([getFirstScreen() frame]) - NSMaxY(webViewFrame);
 
     CGWindowID windowID = [[webView window] windowNumber];
     RetainPtr webViewContents = WebCore::cgWindowListCreateImage(NSRectToCGRect(webViewFrame), kCGWindowListOptionIncludingWindow, windowID, kCGWindowImageShouldBeOpaque);
@@ -697,7 +704,7 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
     NSRect exitPlaceholderScreenRect = _initialFrame;
-    exitPlaceholderScreenRect.origin.y = NSMaxY(WebCore::safeScreenFrame(retainPtr([[NSScreen screens] objectAtIndex:0]).get())) - NSMaxY(exitPlaceholderScreenRect);
+    exitPlaceholderScreenRect.origin.y = NSMaxY(WebCore::safeScreenFrame(getFirstScreen().get())) - NSMaxY(exitPlaceholderScreenRect);
 
     RetainPtr webView = _webView.get();
     RetainPtr<CGImageRef> webViewContents = takeWindowSnapshot([[webView window] windowNumber], true);

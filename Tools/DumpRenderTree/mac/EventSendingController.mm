@@ -844,6 +844,15 @@ static NSInteger swizzledEventButtonNumber()
     }
 }
 
+#if !PLATFORM(IOS_FAMILY)
+static NSScreen *getFirstScreen()
+{
+    NSScreen *firstScreen = [[NSScreen screens] firstObject];
+    RELEASE_ASSERT_WITH_MESSAGE(firstScreen, "No screens found, possibly due to no WindowServer session. This configuration is not supported.");
+    return firstScreen;
+}
+#endif
+
 - (void)mouseScrollByX:(int)x andY:(int)y continuously:(BOOL)continuously
 {
 #if !PLATFORM(IOS_FAMILY)
@@ -853,7 +862,7 @@ static NSInteger swizzledEventButtonNumber()
     // Set the CGEvent location in flipped coords relative to the first screen, which
     // compensates for the behavior of +[NSEvent eventWithCGEvent:] when the event has
     // no associated window. See <rdar://problem/17180591>.
-    CGPoint lastGlobalMousePosition = CGPointMake(lastMousePosition.x, [[[NSScreen screens] objectAtIndex:0] frame].size.height - lastMousePosition.y);
+    CGPoint lastGlobalMousePosition = CGPointMake(lastMousePosition.x, [getFirstScreen() frame].size.height - lastMousePosition.y);
     CGEventSetLocation(cgScrollEvent.get(), lastGlobalMousePosition);
 
     NSEvent *scrollEvent = [NSEvent eventWithCGEvent:cgScrollEvent.get()];
@@ -929,7 +938,7 @@ static NSInteger swizzledEventButtonNumber()
     // Set the CGEvent location in flipped coords relative to the first screen, which
     // compensates for the behavior of +[NSEvent eventWithCGEvent:] when the event has
     // no associated window. See <rdar://problem/17180591>.
-    CGPoint globalMousePosition = CGPointMake(mouseLocation.x, [[[NSScreen screens] objectAtIndex:0] frame].size.height - mouseLocation.y);
+    CGPoint globalMousePosition = CGPointMake(mouseLocation.x, [getFirstScreen() frame].size.height - mouseLocation.y);
     CGEventSetLocation(cgScrollEvent.get(), globalMousePosition);
     CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventIsContinuous, 1);
     CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventScrollPhase, wheelPhase);

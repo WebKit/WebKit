@@ -78,10 +78,9 @@ static PlatformDisplayID displayID(Widget* widget)
 static NSScreen *firstScreen()
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    NSArray *screens = [NSScreen screens];
-    if (![screens count])
-        return nil;
-    return [screens objectAtIndex:0];
+    NSScreen *firstScreen = [[NSScreen screens] firstObject];
+    RELEASE_ASSERT_WITH_MESSAGE(firstScreen, "No screens found, possibly due to no WindowServer session. This configuration is not supported.");
+    return firstScreen;
 }
 
 static NSWindow *window(Widget* widget)
