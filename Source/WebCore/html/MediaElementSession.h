@@ -123,6 +123,7 @@ public:
 
     void mediaEngineUpdated();
 
+    void setState(State) override;
     void resetPlaybackSessionState() override;
 
     void suspendBuffering() override;
@@ -153,6 +154,7 @@ public:
 #if ENABLE(REQUIRES_PAGE_VISIBILITY_FOR_NOW_PLAYING)
         RequirePageVisibilityForVideoToBeNowPlaying = 1 << 18,
 #endif
+        RequiresUserGestureWhenPausedInBackground = 1 << 19,
         AllRestrictions = ~NoRestrictions,
     };
     typedef unsigned BehaviorRestrictions;
@@ -206,6 +208,9 @@ public:
 
     bool hasNowPlayingInfo() const;
 
+    Seconds gracePeriodForResumingPlaybackInBackground() const { return m_gracePeriodForResumingPlaybackInBackground; }
+    void setGracePeriodForResumingPlaybackInBackground(Seconds period) { m_gracePeriodForResumingPlaybackInBackground = period; }
+
 private:
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -251,6 +256,8 @@ private:
 #endif
 
     Markable<MonotonicTime> m_mostRecentUserInteractionTime;
+    Markable<MonotonicTime> m_mostRecentPlaybackEndedTime;
+    Seconds m_gracePeriodForResumingPlaybackInBackground { 10_s };
 
     mutable bool m_isMainContent { false };
     Timer m_mainContentCheckTimer;

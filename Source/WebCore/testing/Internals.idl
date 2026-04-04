@@ -1099,6 +1099,7 @@ enum ContentsFormat {
     [Conditional=VIDEO] undefined suspendAllMediaBuffering();
     [Conditional=VIDEO] undefined suspendAllMediaPlayback();
     [Conditional=VIDEO] undefined resumeAllMediaPlayback();
+    [Conditional=VIDEO] undefined setMediaElementGracePeriodForResumingPlaybackInBackground(HTMLMediaElement element, long period);
 
     [Conditional=WIRELESS_PLAYBACK_TARGET] undefined setMockMediaPlaybackTargetPickerEnabled(boolean enabled);
     [Conditional=WIRELESS_PLAYBACK_TARGET] undefined setMockMediaPlaybackTargetPickerState(DOMString deviceName, DOMString deviceState);

@@ -695,6 +695,7 @@ void HTMLMediaElement::initializeMediaSession()
     m_mediaSession = mediaSession.copyRef();
     mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureForFullscreen);
     mediaSession->addBehaviorRestriction(MediaElementSession::RequirePageConsentToLoadMedia);
+    mediaSession->addBehaviorRestriction(MediaElementSession::RequiresUserGestureWhenPausedInBackground);
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureToAutoplayToExternalDevice);
 #endif

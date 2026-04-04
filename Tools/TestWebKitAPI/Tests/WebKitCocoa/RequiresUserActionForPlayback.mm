@@ -29,6 +29,7 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
+#import "TestWKWebView.h"
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
@@ -65,21 +66,13 @@ public:
 
     void createWebView()
     {
-        webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-#if TARGET_OS_IPHONE
-        window = adoptNS([[UIWindow alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-        [window addSubview:webView.get()];
-#else
-        window = adoptNS([[NSWindow alloc] initWithContentRect:webView.get().frame styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
-        [window.get().contentView addSubview:webView.get()];
-#endif
+        webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
+        [webView setVisibility:YES];
     }
 
     void testVideoWithAudio()
     {
-        NSURL *fileURL = [NSBundle.test_resourcesBundle URLForResource:@"video-with-audio" withExtension:@"html"];
-        [webView loadFileURL:fileURL allowingReadAccessToURL:fileURL];
-        [webView _test_waitForDidFinishNavigation];
+        [webView synchronouslyLoadTestPageNamed:@"video-with-audio"];
 
         TestWebKitAPI::Util::run(&receivedScriptMessage);
         receivedScriptMessage = false;
@@ -87,9 +80,7 @@ public:
 
     void testVideoWithoutAudio()
     {
-        NSURL *fileURL = [NSBundle.test_resourcesBundle URLForResource:@"video-without-audio" withExtension:@"html"];
-        [webView loadFileURL:fileURL allowingReadAccessToURL:fileURL];
-        [webView _test_waitForDidFinishNavigation];
+        [webView synchronouslyLoadTestPageNamed:@"video-without-audio"];
 
         TestWebKitAPI::Util::run(&receivedScriptMessage);
         receivedScriptMessage = false;
@@ -97,9 +88,7 @@ public:
 
     void testAudioOnly()
     {
-        NSURL *fileURL = [NSBundle.test_resourcesBundle URLForResource:@"audio-only" withExtension:@"html"];
-        [webView loadFileURL:fileURL allowingReadAccessToURL:fileURL];
-        [webView _test_waitForDidFinishNavigation];
+        [webView synchronouslyLoadTestPageNamed:@"audio-only"];
 
         TestWebKitAPI::Util::run(&receivedScriptMessage);
         receivedScriptMessage = false;
@@ -107,12 +96,7 @@ public:
 
     RetainPtr<RequiresUserActionForPlaybackMessageHandler> handler;
     RetainPtr<WKWebViewConfiguration> configuration;
-    RetainPtr<WKWebView> webView;
-#if TARGET_OS_IPHONE
-    RetainPtr<UIWindow> window;
-#else
-    RetainPtr<NSWindow> window;
-#endif
+    RetainPtr<TestWKWebView> webView;
 };
 
 #if TARGET_OS_IPHONE
