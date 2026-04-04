@@ -908,7 +908,11 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
 
     // If we got the event back, that must mean it wasn't prevented,
     // so it's allowed to start a drag or selection if it wasn't in a scrollbar.
-    m_mouseDownMayStartSelect = canMouseDownStartSelect(event) && !event.scrollbar();
+    // Don't start selection on non-editable links (see crbug.com/244738), but allow
+    // selection on image overlay text within links.
+    bool isOverNonEditableLink = event.isOverLink() && event.targetNode() && !event.targetNode()->hasEditableStyle()
+        && !ImageOverlay::isOverlayText(event.targetNode());
+    m_mouseDownMayStartSelect = canMouseDownStartSelect(event) && !isOverNonEditableLink && !event.scrollbar();
     
 #if ENABLE(DRAG_SUPPORT)
     // Careful that the drag starting logic stays in sync with eventMayStartDrag()

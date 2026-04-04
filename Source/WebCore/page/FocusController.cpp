@@ -143,6 +143,19 @@ static void clearSelectionIfNeeded(LocalFrame* oldFocusedFrame, LocalFrame* newF
     }
 
     if (RefPtr mousePressNode = newFocusedFrame ? newFocusedFrame->eventHandler().mousePressNode() : nullptr) {
+        // Preserve selection when clicking a non-editable link, but only if the selection is not
+        // within the link itself. This is needed because EventHandler now prevents selection from
+        // starting on links (see !event.isOverLink() check), but we still want to preserve existing
+        // selections when clicking links. However, if the selection is within the link being clicked,
+        // we allow normal processing to enable dragging the link.
+        if (RefPtr linkElement = mousePressNode->enclosingLinkEventParentOrSelf()) {
+            if (!linkElement->hasEditableStyle()) {
+                Node* selectionStartNode = selection.start().deprecatedNode();
+                if (selectionStartNode && !linkElement->contains(selectionStartNode))
+                    return;
+            }
+        }
+
         if (!mousePressNode->canStartSelection()) {
             // Don't clear the selection for contentEditable elements, but do clear it for input and textarea. See bug 38696.
             RefPtr root = selection.rootEditableElement();

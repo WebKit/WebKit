@@ -1273,10 +1273,13 @@ bool Node::canStartSelection() const
     if (renderer()) {
         const auto& style = renderer()->style();
 
-        // We allow selections to begin within an element that has -webkit-user-select: none set,
-        // but if the element is draggable then dragging should take priority over selection.
-        if (style.userDrag() == UserDrag::Element && style.usedUserSelect() == UserSelect::None)
+        if (style.usedUserSelect() == UserSelect::None)
             return false;
+
+        // We allow selections to begin within |user-select: text| sub trees
+        // but not if the element is draggable.
+        if (style.userDrag() != UserDrag::Element && style.usedUserSelect() == UserSelect::Text)
+            return true;
     }
     return parentOrShadowHostNode() ? parentOrShadowHostNode()->canStartSelection() : true;
 }

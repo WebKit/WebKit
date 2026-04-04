@@ -918,6 +918,7 @@ input[type="range"]::-webkit-slider-container {
     box-sizing: border-box;
     display: flex;
     min-width: 0;
+    -webkit-user-select: none;
 }
 
 input[type="range"]::-webkit-slider-runnable-track {
@@ -926,12 +927,14 @@ input[type="range"]::-webkit-slider-runnable-track {
 
     box-sizing: border-box;
     display: block;
+    -webkit-user-select: none;
 }
 
 input[type="range"]::-webkit-slider-thumb {
     appearance: auto;
     box-sizing: border-box;
     display: block;
+    -webkit-user-select: none;
 }
 
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
