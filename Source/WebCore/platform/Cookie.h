@@ -93,13 +93,14 @@ struct Cookie {
     URL commentURL;
     Vector<uint16_t> ports;
 
-    enum class SameSitePolicy : uint8_t { 
-        None, 
-        Lax, 
-        Strict 
+    enum class SameSitePolicy : uint8_t {
+        Default,
+        None,
+        Lax,
+        Strict
     };
 
-    SameSitePolicy sameSite { SameSitePolicy::None };
+    SameSitePolicy sameSite { SameSitePolicy::Default };
 
     Cookie(String&& name, String&& value, String&& domain, String&& path, String&& partitionKey, double created, std::optional<double> expires, bool httpOnly, bool secure, bool session, String&& comment, URL&& commentURL, Vector<uint16_t> ports, SameSitePolicy sameSite)
         : name(WTF::move(name))
@@ -126,6 +127,7 @@ struct Cookie {
 namespace CookieUtil {
 
 WEBCORE_EXPORT String defaultPathForURL(const URL&);
+WEBCORE_EXPORT String buildSetCookieStringWithoutDomain(const Cookie&);
 
 } // namespace CookieUtil
 

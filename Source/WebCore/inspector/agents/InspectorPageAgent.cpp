@@ -328,6 +328,7 @@ void InspectorPageAgent::overridePrefersColorScheme(std::optional<Inspector::Pro
 static Inspector::Protocol::Page::CookieSameSitePolicy NODELETE cookieSameSitePolicyJSON(Cookie::SameSitePolicy policy)
 {
     switch (policy) {
+    case Cookie::SameSitePolicy::Default:
     case Cookie::SameSitePolicy::None:
         return Inspector::Protocol::Page::CookieSameSitePolicy::None;
     case Cookie::SameSitePolicy::Lax:

@@ -1798,6 +1798,7 @@ void WebAutomationSession::setFilesForInputFileUpload(const Inspector::Protocol:
 static inline Inspector::Protocol::Automation::CookieSameSitePolicy NODELETE toProtocolSameSitePolicy(WebCore::Cookie::SameSitePolicy policy)
 {
     switch (policy) {
+    case WebCore::Cookie::SameSitePolicy::Default:
     case WebCore::Cookie::SameSitePolicy::None:
         return Inspector::Protocol::Automation::CookieSameSitePolicy::None;
     case WebCore::Cookie::SameSitePolicy::Lax:

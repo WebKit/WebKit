@@ -50,6 +50,7 @@ static Cookie::SameSitePolicy coreSameSitePolicy(SoupSameSitePolicy policy)
 static SoupSameSitePolicy soupSameSitePolicy(Cookie::SameSitePolicy policy)
 {
     switch (policy) {
+    case Cookie::SameSitePolicy::Default:
     case Cookie::SameSitePolicy::None:
         return SOUP_SAME_SITE_POLICY_NONE;
     case Cookie::SameSitePolicy::Lax:

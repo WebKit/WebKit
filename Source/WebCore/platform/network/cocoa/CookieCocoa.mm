@@ -83,7 +83,7 @@ static std::optional<double> cookieExpiry(NSHTTPCookie *cookie)
 static Cookie::SameSitePolicy coreSameSitePolicy(NSHTTPCookieStringPolicy _Nullable policy)
 {
     if (!policy)
-        return Cookie::SameSitePolicy::None;
+        return Cookie::SameSitePolicy::Default;
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     if ([policy isEqualToString:NSHTTPCookieSameSiteLax])
         return Cookie::SameSitePolicy::Lax;
@@ -91,12 +91,13 @@ ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
         return Cookie::SameSitePolicy::Strict;
 ALLOW_NEW_API_WITHOUT_GUARDS_END
     ASSERT_NOT_REACHED();
-    return Cookie::SameSitePolicy::None;
+    return Cookie::SameSitePolicy::Default;
 }
 
 static NSHTTPCookieStringPolicy _Nullable NODELETE nsSameSitePolicy(Cookie::SameSitePolicy policy)
 {
     switch (policy) {
+    case Cookie::SameSitePolicy::Default:
     case Cookie::SameSitePolicy::None:
         return nil;
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN

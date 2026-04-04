@@ -1677,6 +1677,7 @@ struct WebCore::PlatformMediaCapabilitiesAudioConfiguration {
 };
 
 [Nested] enum class WebCore::Cookie::SameSitePolicy : uint8_t {
+    Default
     None
     Lax
     Strict

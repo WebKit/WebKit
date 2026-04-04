@@ -102,6 +102,7 @@ static inline NSString *toWebAPI(PAL::SessionID sessionID)
 static inline NSString *NODELETE toWebAPI(WebCore::Cookie::SameSitePolicy policy)
 {
     switch (policy) {
+    case WebCore::Cookie::SameSitePolicy::Default:
     case WebCore::Cookie::SameSitePolicy::None:
         return noRestrictionKey;
     case WebCore::Cookie::SameSitePolicy::Lax:

@@ -65,6 +65,24 @@ NetworkStorageSession::~NetworkStorageSession()
 
 void NetworkStorageSession::setCookie(const Cookie& cookie)
 {
+    if (equalLettersIgnoringASCIICase(cookie.domain, "localhost"_s)
+        || cookie.domain.endsWithIgnoringASCIICase(".localhost"_s)) {
+        auto header = CookieUtil::buildSetCookieStringWithoutDomain(cookie);
+        auto scheme = cookie.secure ? "https://"_s : "http://"_s;
+        auto url = URL { makeString(scheme, cookie.domain, cookie.path.isEmpty() ? "/"_s : cookie.path) };
+        RetainPtr nsHeader = header.createNSString();
+        RetainPtr<NSDictionary> headerFields = @{ @"Set-Cookie": nsHeader.get() };
+        RetainPtr nsURL = url.createNSURL();
+        RetainPtr nsCookies = [NSHTTPCookie cookiesWithResponseHeaderFields:headerFields.get() forURL:nsURL.get()];
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        // Use setCookies:forURL:mainDocumentURL: instead of setCookie: so NSHTTPCookieStorage
+        // processes the cookie as if it arrived in a Set-Cookie response header from the
+        // localhost URL, bypassing the CanAccessRawCookies privilege check below.
+        [nsCookieStorage() setCookies:nsCookies.get() forURL:nsURL.get() mainDocumentURL:nsURL.get()];
+        END_BLOCK_OBJC_EXCEPTIONS
+        return;
+    }
+
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies) || m_isInMemoryCookieStore);
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
