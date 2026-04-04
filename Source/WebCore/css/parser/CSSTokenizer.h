@@ -118,7 +118,6 @@ private:
     CSSParserToken commercialAt(char16_t);
     CSSParserToken reverseSolidus(char16_t);
     CSSParserToken asciiDigit(char16_t);
-    CSSParserToken letterU(char16_t);
     CSSParserToken nameStart(char16_t);
     CSSParserToken stringStart(char16_t);
     CSSParserToken endOfFile(char16_t);
