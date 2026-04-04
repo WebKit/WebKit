@@ -2688,6 +2688,7 @@ public:
         case ArrayPop:
         case ArrayIncludes:
         case ArrayIndexOf:
+        case ArrayLastIndexOf:
         case HasIndexedProperty:
         case AtomicsAdd:
         case AtomicsAnd:

@@ -1172,6 +1172,7 @@ private:
             break;
 
         case ArrayIndexOf:
+        case ArrayLastIndexOf:
         case RegExpSearch: {
             setPrediction(SpecInt32Only);
             break;
