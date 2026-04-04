@@ -195,6 +195,12 @@ size_t JITWorklist::queueLength(const AbstractLocker&) const
     return queueLength;
 }
 
+size_t JITWorklist::totalOngoingCompilations() const
+{
+    Locker locker { *m_lock };
+    return totalOngoingCompilations(locker);
+}
+
 size_t JITWorklist::totalOngoingCompilations(const AbstractLocker&) const
 {
     size_t total = 0;

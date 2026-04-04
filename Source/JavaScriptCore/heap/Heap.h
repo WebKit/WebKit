@@ -57,6 +57,7 @@
 #include <wtf/Markable.h>
 #include <wtf/NotFound.h>
 #include <wtf/ParallelHelperPool.h>
+#include <wtf/SegmentedVector.h>
 #include <wtf/Threading.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -608,10 +609,12 @@ public:
     void setKeepVerifierSlotVisitor();
     void clearVerifierSlotVisitor();
 
-    void appendPossiblyAccessedStringFromConcurrentThreads(String&& string)
+    void appendPossiblyAccessedStringFromConcurrentThreadsOrGCOwnedDataScope(const JSString* owner, String&& string)
     {
-        m_possiblyAccessedStringsFromConcurrentThreads.append(WTF::move(string));
+        m_possiblyAccessedStringsFromConcurrentThreadsOrGCOwnedDataScope.append({ owner, WTF::move(string) });
     }
+
+    void clearConcurrentRetainedDataIfPossible();
 
     bool isInPhase(CollectorPhase phase) const { return m_currentPhase == phase; }
 
@@ -902,7 +905,15 @@ private:
     Vector<WeakBlock*> m_logicallyEmptyWeakBlocks;
     size_t m_indexOfNextLogicallyEmptyWeakBlockToSweep { WTF::notFound };
 
-    Vector<String> m_possiblyAccessedStringsFromConcurrentThreads;
+#if ASSERT_ENABLED
+    template<typename> friend struct GCOwnedDataScope;
+    const void* m_topGCOwnedDataScope { nullptr };
+#endif
+    // Use a SegmentedVector rather than a Vector because we don't want to have to copy in order to grow the buffer.
+    // Since this list is walked once to deref all the strings
+    // We don't need fast access.
+    SegmentedVector<std::pair<const JSString*, String>, 256, 10, SegmentedVectorGrowthPolicy::Doubling> m_possiblyAccessedStringsFromConcurrentThreadsOrGCOwnedDataScope;
+   UncheckedKeyHashSet<const JSString*> m_discoveredAccessedStringsFromGCOwnedDataScope;
     
     RefPtr<GCActivityCallback> m_fullActivityCallback;
     RefPtr<GCActivityCallback> m_edenActivityCallback;

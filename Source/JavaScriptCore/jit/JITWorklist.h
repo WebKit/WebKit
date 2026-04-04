@@ -85,6 +85,8 @@ public:
 
     void dump(PrintStream&) const;
 
+    size_t totalOngoingCompilations() const;
+
 private:
     JITWorklist();
 

@@ -73,6 +73,8 @@ void IncrementalSweeper::doSweep(VM& vm, MonotonicTime deadline, SweepTrigger tr
     if (Options::useTracePoints()) [[unlikely]]
         traceScope.emplace(IncrementalSweepStart, IncrementalSweepEnd, vm.heap.size(), vm.heap.capacity());
 
+    vm.heap.clearConcurrentRetainedDataIfPossible();
+
     while (sweepNextBlock(vm, trigger)) {
         if (MonotonicTime::now() < deadline)
             continue;
