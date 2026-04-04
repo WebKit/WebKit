@@ -1231,6 +1231,27 @@ TEST(ScriptTrackingPrivacyTests, BlockSubsequent2Element)
 
     RetainPtr taintedLoadResult2 = [webView stringByEvaluatingJavaScript:@"window.taintedLoadResult2"];
     EXPECT_TRUE([taintedLoadResult2 hasPrefix:@"error"]);
+
+    // Do it again
+    [webView synchronouslyLoadRequest:[NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://top-domain.org/dir/index.html"]]];
+    Util::waitForConditionWithLogging([&] -> bool {
+        return [[webView stringByEvaluatingJavaScript:@"window.pureLoadResult1 || ''"] length] > 0
+            && [[webView stringByEvaluatingJavaScript:@"window.taintedLoadResult1 || ''"] length] > 0
+            && [[webView stringByEvaluatingJavaScript:@"window.pureLoadResult2 || ''"] length] > 0
+            && [[webView stringByEvaluatingJavaScript:@"window.taintedLoadResult2 || ''"] length] > 0;
+    }, 11, @"Timed out waiting for element load.");
+
+    pureLoadResult1 = [webView stringByEvaluatingJavaScript:@"window.pureLoadResult1"];
+    EXPECT_TRUE([pureLoadResult1 hasPrefix:@"error"]);
+
+    taintedLoadResult1 = [webView stringByEvaluatingJavaScript:@"window.taintedLoadResult1"];
+    EXPECT_TRUE([taintedLoadResult1 hasPrefix:@"error"]);
+
+    pureLoadResult2 = [webView stringByEvaluatingJavaScript:@"window.pureLoadResult2"];
+    EXPECT_TRUE([pureLoadResult2 hasPrefix:@"success"]);
+
+    taintedLoadResult2 = [webView stringByEvaluatingJavaScript:@"window.taintedLoadResult2"];
+    EXPECT_TRUE([taintedLoadResult2 hasPrefix:@"error"]);
 }
 
 } // namespace TestWebKitAPI

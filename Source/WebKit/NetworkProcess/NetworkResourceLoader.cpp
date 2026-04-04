@@ -1140,6 +1140,9 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLo
     if (shouldCaptureExtraNetworkLoadMetrics())
         connection->addNetworkLoadInformationMetrics(coreIdentifier(), networkLoadMetrics);
 
+    if (CheckedPtr session = isMainResource() && isMainFrameLoad() ? connection->networkSession() : nullptr)
+        session->resetTrackingPolicyForPageLoad(webPageProxyID());
+
     if (m_cacheEntryForValidation) {
         ASSERT(m_response.httpStatusCode() == httpStatus304NotModified);
         LOG(NetworkCache, "(NetworkProcess) revalidated");

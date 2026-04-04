@@ -358,8 +358,15 @@ bool NetworkSession::shouldBlockRequestForTrackingPolicyAndUpdatePolicy(const We
     auto it = m_trackerBlockingPolicyByPageIdentifier.find(webPageID);
     if (it == m_trackerBlockingPolicyByPageIdentifier.end())
         it = m_trackerBlockingPolicyByPageIdentifier.set(webPageID, HashSet<RegistrableDomain> { }).iterator;
-    RegistrableDomain domain { request.url() };
-    return !it->value.add(domain).isNewEntry || !mayBlockScriptLoad;
+    return !it->value.add(RegistrableDomain { request.url() }).isNewEntry;
+}
+
+void NetworkSession::resetTrackingPolicyForPageLoad(WebPageProxyIdentifier webPageID)
+{
+    auto it = m_trackerBlockingPolicyByPageIdentifier.find(webPageID);
+    if (it == m_trackerBlockingPolicyByPageIdentifier.end())
+        return;
+    it->value.clear();
 }
 
 void NetworkSession::deleteAndRestrictWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType> dataTypes, RegistrableDomainsToDeleteOrRestrictWebsiteDataFor&& domains, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&& completionHandler)
