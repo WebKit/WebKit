@@ -119,6 +119,11 @@ typedef struct _WebKitGstIceAgentClass {
 GST_DEBUG_CATEGORY(webkit_webrtc_rice_debug);
 #define GST_CAT_DEFAULT webkit_webrtc_rice_debug
 
+static GQuark webkitGstWebRTCErrorQuark()
+{
+    return g_quark_from_static_string("gst-webrtc-error-quark");
+}
+
 WEBKIT_DEFINE_TYPE_WITH_CODE(WebKitGstIceAgent, webkit_gst_webrtc_ice_backend, GST_TYPE_WEBRTC_ICE, GST_DEBUG_CATEGORY_INIT(webkit_webrtc_rice_debug, "webkitwebrtcrice", 0, "WebRTC Rice ICE backend"))
 
 using namespace WebCore;
@@ -476,7 +481,7 @@ static void webkitGstWebRTCIceAgentAddCandidate(GstWebRTCICE* ice, GstWebRTCICES
         auto errorMessageString = errorMessage.utf8();
         GST_ERROR_OBJECT(ice, "%s", errorMessageString.data());
         if (promise) {
-            GUniquePtr<GError> error(g_error_new(GST_WEBRTC_ERROR, GST_WEBRTC_ERROR_INTERNAL_FAILURE, "%s", errorMessageString.data()));
+            GUniquePtr<GError> error(g_error_new(webkitGstWebRTCErrorQuark(), GST_WEBRTC_ERROR_INTERNAL_FAILURE, "%s", errorMessageString.data()));
             gst_promise_reply(promise, gst_structure_new("application/x-gst-promise", "error", G_TYPE_ERROR, error.get(), nullptr));
         }
         return;
@@ -488,7 +493,7 @@ static void webkitGstWebRTCIceAgentAddCandidate(GstWebRTCICE* ice, GstWebRTCICES
         auto errorMessageString = errorMessage.utf8();
         GST_ERROR_OBJECT(ice, "%s", errorMessageString.data());
         if (promise) {
-            GUniquePtr<GError> error(g_error_new(GST_WEBRTC_ERROR, GST_WEBRTC_ERROR_INTERNAL_FAILURE, "%s", errorMessageString.data()));
+            GUniquePtr<GError> error(g_error_new(webkitGstWebRTCErrorQuark(), GST_WEBRTC_ERROR_INTERNAL_FAILURE, "%s", errorMessageString.data()));
             gst_promise_reply(promise, gst_structure_new("application/x-gst-promise", "error", G_TYPE_ERROR, error.get(), nullptr));
         }
         return;
@@ -507,7 +512,7 @@ static void webkitGstWebRTCIceAgentAddCandidate(GstWebRTCICE* ice, GstWebRTCICES
             auto errorMessageString = errorMessage.utf8();
             GST_ERROR("%s", errorMessageString.data());
             if (promise) {
-                GUniquePtr<GError> error(g_error_new(GST_WEBRTC_ERROR, GST_WEBRTC_ERROR_INTERNAL_FAILURE, "%s", errorMessageString.data()));
+                GUniquePtr<GError> error(g_error_new(webkitGstWebRTCErrorQuark(), GST_WEBRTC_ERROR_INTERNAL_FAILURE, "%s", errorMessageString.data()));
                 gst_promise_reply(promise.get(), gst_structure_new("application/x-gst-promise", "error", G_TYPE_ERROR, error.get(), nullptr));
             }
             return;
@@ -526,7 +531,7 @@ static void webkitGstWebRTCIceAgentAddCandidate(GstWebRTCICE* ice, GstWebRTCICES
             auto errorMessage = "Unable to create Rice candidate from SDP"_s;
             GST_ERROR("%s", errorMessage.characters());
             if (promise) {
-                GUniquePtr<GError> error(g_error_new(GST_WEBRTC_ERROR, GST_WEBRTC_ERROR_INTERNAL_FAILURE, "%s", errorMessage.characters()));
+                GUniquePtr<GError> error(g_error_new(webkitGstWebRTCErrorQuark(), GST_WEBRTC_ERROR_INTERNAL_FAILURE, "%s", errorMessage.characters()));
                 gst_promise_reply(promise.get(), gst_structure_new("application/x-gst-promise", "error", G_TYPE_ERROR, error.get(), nullptr));
             }
         }
