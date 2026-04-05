@@ -88,8 +88,8 @@ OrderIterator OrderIterator::reverse()
     OrderIterator reversedItr(*this);
     OrderValues reversedValues;
 
-    for (auto valuesItr = m_orderValues.rbegin(); valuesItr != m_orderValues.rend(); valuesItr++)
-        reversedValues.insert(*valuesItr);
+    for (auto value : std::views::reverse(m_orderValues))
+        reversedValues.insert(value);
     reversedItr.m_orderValues = reversedValues;
     reversedItr.m_reversedOrder = !m_reversedOrder;
     reversedItr.reset();
