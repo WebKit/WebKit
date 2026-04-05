@@ -219,6 +219,7 @@ private:
     void adjustSelectionRectForSimpleText(const TextRun&, LayoutRect& selectionRect, unsigned from, unsigned to) const;
     void adjustSelectionRectForSimpleTextWithFixedPitch(const TextRun&, LayoutRect& selectionRect, unsigned from, unsigned to) const;
     float width(CodePath, const TextRun&, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
+    void computeGlyphOverflow(const GlyphBuffer&, float totalWidth, GlyphOverflow&) const;
     WEBCORE_EXPORT float widthForSimpleTextSlow(StringView text, TextDirection, GlyphGeometryCacheEntry*) const;
     ALWAYS_INLINE bool NODELETE canHandleRunAsSimpleText(const TextRun&, unsigned from, unsigned to) const;
 

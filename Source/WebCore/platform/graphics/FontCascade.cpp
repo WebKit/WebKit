@@ -301,6 +301,40 @@ float FontCascade::width(StringView text) const
     return width (run);
 }
 
+void FontCascade::computeGlyphOverflow(const GlyphBuffer& glyphBuffer, float totalWidth, GlyphOverflow& glyphOverflow) const
+{
+    float minY = 0;
+    float maxY = 0;
+    float minX = 0;
+    float maxX = 0;
+    float xPosition = 0;
+
+    for (unsigned glyphIndex = 0; glyphIndex < glyphBuffer.size(); ++glyphIndex) {
+        auto glyph = glyphBuffer.glyphAt(glyphIndex);
+        auto& font = glyphBuffer.fontAt(glyphIndex);
+        auto bounds = font.boundsForGlyph(glyph);
+
+        float glyphX = xPosition + bounds.x();
+        float glyphRight = glyphX + bounds.width();
+        float glyphTop = bounds.y();
+        float glyphBottom = glyphTop + bounds.height();
+
+        minX = std::min(minX, glyphX);
+        maxX = std::max(maxX, glyphRight);
+        minY = std::min(minY, glyphTop);
+        maxY = std::max(maxY, glyphBottom);
+
+        xPosition += WebCore::width(glyphBuffer.advanceAt(glyphIndex));
+    }
+
+    auto ascent = metricsOfPrimaryFont().ascent();
+    auto descent = metricsOfPrimaryFont().descent();
+    glyphOverflow.top = std::max<double>(glyphOverflow.top, -minY - (glyphOverflow.computeBounds ? 0 : ascent));
+    glyphOverflow.bottom = std::max<double>(glyphOverflow.bottom, maxY - (glyphOverflow.computeBounds ? 0 : descent));
+    glyphOverflow.left = std::max<double>(0, -minX);
+    glyphOverflow.right = std::max<double>(0, maxX - totalWidth);
+}
+
 float FontCascade::width(const TextRun& run, SingleThreadWeakHashSet<const Font>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     if (!run.length())
@@ -330,6 +364,24 @@ float FontCascade::width(const TextRun& run, SingleThreadWeakHashSet<const Font>
     SingleThreadWeakHashSet<const Font> localFallbackFonts;
     if (!fallbackFonts)
         fallbackFonts = &localFallbackFonts;
+
+    // Go through layoutText() so the GlyphBuffer gets stashed in the shaping cache
+    // for painting to reuse later, avoiding a redundant reshape.
+    TextShapingContext shapingContext { *this };
+    if (shapingContext.hasKerningOrLigatures && !shapingContext.hasWordSpacingOrLetterSpacing
+        && !run.rtl() && !run.directionalOverride() && !run.expansion()
+        && run.length() <= ShapedTextCacheDefaults::maxTextLength
+        && isMainThread()) {
+        auto result = layoutText(codePathToUse, run, 0, run.length(), ForTextEmphasis::No);
+        if (cacheEntry)
+            cacheEntry->width = result.width;
+        if (glyphOverflow) {
+            computeGlyphOverflow(result.glyphBuffer, result.width, *glyphOverflow);
+            if (cacheEntry)
+                cacheEntry->glyphOverflow = *glyphOverflow;
+        }
+        return result.width;
+    }
 
     float result = width(codePathToUse, run, fallbackFonts, glyphOverflow);
     if (cacheEntry && fallbackFonts->isEmptyIgnoringNullReferences()) {
