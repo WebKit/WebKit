@@ -200,7 +200,16 @@ std::optional<float> SizesAttributeParser::parseFunction(CSSParserTokenRange tok
     auto result = CSSCalc::evaluateDouble(*tree, evaluationOptions);
     if (!result)
         return std::nullopt;
-    return CSS::clampToRange<range, float>(*result);
+
+    // https://drafts.csswg.org/css-values-4/#calc-ieee
+    // Infinities and NaN do not escape a top-level calculation. For the
+    // sizes attribute, treat these as invalid so the entry is skipped and
+    // the fallback/default size is used, matching other browsers.
+    auto value = *result;
+    if (std::isnan(value) || std::isinf(value))
+        return std::nullopt;
+
+    return CSS::clampToRange<range, float>(value);
 }
 
 std::optional<float> SizesAttributeParser::parseLength(CSSParserTokenRange tokens, const CSSParserContext& context)
