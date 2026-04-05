@@ -26,6 +26,7 @@ const await_with_timeout = async (delay, message, promise, cleanup = ()=>{}) => 
 //     When not present, |expectedSize| must be exactly equal to the size attribute value.
 // * 'approximateSize': the |expectedSize| is only approximate to the size attribute value.
 //     This option is mutually exclusive to 'sizeLowerBound'.
+// * 'elementUnavailable': the target element is not available (e.g. in shadow DOM).
 function checkImage(entry, expectedUrl, expectedID, expectedSize, timeLowerBound, options = []) {
   assert_equals(entry.name, '', "Entry name should be the empty string");
   assert_equals(entry.entryType, 'largest-contentful-paint',
@@ -34,9 +35,13 @@ function checkImage(entry, expectedUrl, expectedID, expectedSize, timeLowerBound
   // The entry's url can be truncated.
   assert_equals(expectedUrl.substr(0, 100), entry.url.substr(0, 100),
     `Expected URL ${expectedUrl} should at least start with the entry's URL ${entry.url}`);
-  assert_equals(entry.id, expectedID, "Entry ID matches expected one");
-  assert_equals(entry.element, document.getElementById(expectedID),
-    "Entry element is expected one");
+
+  if (!options.includes('elementUnavailable')) {
+    assert_equals(entry.id, expectedID, "Entry ID matches expected one");
+    assert_equals(entry.element, document.getElementById(expectedID),
+      "Entry element is expected one");
+  }
+
   if (options.includes('skip')) {
     return;
   }

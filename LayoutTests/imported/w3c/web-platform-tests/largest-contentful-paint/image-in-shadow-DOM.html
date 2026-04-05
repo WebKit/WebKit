@@ -1,0 +1,28 @@
+<!doctype html>
+<title>LCP entries are produced for an image in the shadow tree</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/largest-contentful-paint-helpers.js"></script>
+
+<div id="host"></div>
+<script>
+async_test(function (t) {
+  assert_implements(window.LargestContentfulPaint, "LargestContentfulPaint is not implemented");
+
+  const beforeLoad = performance.now();
+
+  const observer = new PerformanceObserver(
+    t.step_func_done(function(entryList) {
+      const entries = entryList.getEntries();
+      assert_equals(entries.length, 1);
+      const url = window.location.origin + '/images/lcp-256x256.png';
+      checkImage(entries[0], url, undefined, 65536, beforeLoad, ['elementUnavailable']);
+  }));
+  observer.observe({entryTypes: ['largest-contentful-paint']});
+
+  host.attachShadow({ mode: "open" }).innerHTML = `
+    <img id="target" src="/images/lcp-256x256.png">
+  `;
+
+}, "LCP includes image in shadow DOM")
+</script>
