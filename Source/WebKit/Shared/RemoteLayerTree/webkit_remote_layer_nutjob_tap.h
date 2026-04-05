@@ -572,40 +572,62 @@ struct SerializationState {
     };
     Vector<GlyphCodepointMap, 4> glyphCodepointMaps;
 
-    HashMap<uint16_t, uint32_t>& glyphToCodepointMap(CTFontRef font)
+    uint32_t lookupCodepoint(CTFontRef font, uint16_t glyphId)
     {
-        // Check cache
-        for (auto& entry : glyphCodepointMaps) {
-            if (entry.font && CFEqual(entry.font.get(), font))
-                return entry.map;
-        }
-
-        // Build reverse map by scanning common Unicode ranges
-        GlyphCodepointMap newMap;
-        newMap.font = font;
-
-        // Scan BMP in chunks
-        constexpr size_t chunkSize = 256;
-        UniChar chars[chunkSize];
-        CGGlyph glyphs[chunkSize];
-
-        for (uint32_t base = 32; base < 0x2000; base += chunkSize) {
-            size_t count = std::min(static_cast<size_t>(0x2000 - base), chunkSize);
-            for (size_t i = 0; i < count; ++i)
-                chars[i] = static_cast<UniChar>(base + i);
-
-            // CTFontGetGlyphsForCharacters returns false if ANY char is unmapped,
-            // but still fills in glyphs for chars it CAN map. Always check results.
-            memset(glyphs, 0, sizeof(glyphs));
-            CTFontGetGlyphsForCharacters(font, chars, glyphs, count);
-            for (size_t i = 0; i < count; ++i) {
-                if (glyphs[i] != 0)
-                    newMap.map.add(glyphs[i], base + static_cast<uint32_t>(i));
+        // Find or build cached reverse map for this font
+        size_t mapIndex = notFound;
+        for (size_t idx = 0; idx < glyphCodepointMaps.size(); ++idx) {
+            if (glyphCodepointMaps[idx].font && CFEqual(glyphCodepointMaps[idx].font.get(), font)) {
+                mapIndex = idx;
+                break;
             }
         }
 
-        glyphCodepointMaps.append(WTFMove(newMap));
-        return glyphCodepointMaps.last().map;
+        if (mapIndex == notFound) {
+            // Skip color/emoji fonts — they use surrogate pairs and complex
+            // cmap tables that don't work with our BMP scanning approach.
+            auto traits = CTFontGetSymbolicTraits(font);
+            if (traits & kCTFontTraitColorGlyphs) {
+                // Insert empty map so we don't re-check
+                GlyphCodepointMap emptyMap;
+                emptyMap.font = font;
+                glyphCodepointMaps.append(std::move(emptyMap));
+                return 0;
+            }
+
+            if (auto name = adoptCF(CTFontCopyFamilyName(font)))
+                WTFLogAlways("nutjob: building codepoint map for font: %s",
+                    String(name.get()).utf8().data());
+
+            // Build reverse map by scanning common Unicode ranges
+            GlyphCodepointMap newMap;
+            newMap.font = font;
+
+            // Scan Latin subset (ASCII + Latin-1 + Latin Extended)
+            constexpr size_t chunkSize = 256;
+            std::array<UniChar, chunkSize> chars;
+            std::array<CGGlyph, chunkSize> cgGlyphs;
+
+            for (uint32_t base = 32; base < 0x0500; base += chunkSize) {
+                size_t count = std::min(static_cast<size_t>(0x0500 - base), chunkSize);
+                for (size_t i = 0; i < count; ++i)
+                    chars[i] = static_cast<UniChar>(base + i);
+
+                cgGlyphs.fill(0);
+                CTFontGetGlyphsForCharacters(font, chars.data(), cgGlyphs.data(), count);
+                for (size_t i = 0; i < count; ++i) {
+                    if (cgGlyphs[i] != 0)
+                        newMap.map.add(cgGlyphs[i], base + static_cast<uint32_t>(i));
+                }
+            }
+
+            WTFLogAlways("nutjob: mapped %u glyphs for font", newMap.map.size());
+            glyphCodepointMaps.append(std::move(newMap));
+            mapIndex = glyphCodepointMaps.size() - 1;
+        }
+
+        auto it = glyphCodepointMaps[mapIndex].map.find(glyphId);
+        return it != glyphCodepointMaps[mapIndex].map.end() ? it->value : 0;
     }
 #endif
 };
@@ -2162,21 +2184,8 @@ inline bool emitDrawGlyphsFontResource(Writer& writer, SerializationState& state
     // Reverse-map glyph IDs to Unicode codepoints using CoreText.
     // This allows nutjob to look up the correct glyphs in its own
     // substitute font (e.g., Noto Serif instead of Georgia).
-    {
-        Vector<CGGlyph, 256> cgGlyphs;
-        cgGlyphs.reserveInitialCapacity(glyphCount);
-        for (size_t i = 0; i < glyphCount; ++i)
-            cgGlyphs.append(static_cast<CGGlyph>(glyphs[i]));
-
-        // CTFontGetStringEncoding doesn't do reverse mapping.
-        // Instead, scan common Unicode ranges to build a reverse map.
-        // This is cached per CTFont via the SerializationState.
-        auto& reverseMap = state.glyphToCodepointMap(ctFont);
-        for (size_t i = 0; i < glyphCount; ++i) {
-            auto it = reverseMap.find(static_cast<uint16_t>(glyphs[i]));
-            codepoints.append(it != reverseMap.end() ? it->second : 0);
-        }
-    }
+    for (size_t i = 0; i < glyphCount; ++i)
+        codepoints.append(state.lookupCodepoint(ctFont, static_cast<uint16_t>(glyphs[i])));
 
     float penX = 0;
     float penY = 0;
