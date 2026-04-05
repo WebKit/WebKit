@@ -16,8 +16,9 @@ T
           (transform [1.50 0.00 0.00 0.00] [0.00 0.50 0.00 0.00] [0.00 0.00 1.00 0.00] [-565.25 7.75 0.00 1.00])
           (children 1
             (GraphicsLayer
-              (anchor 0.50 0.52)
-              (bounds 10.00 31.00)
+              (anchor 0.56 0.52)
+              (bounds 9.00 31.00)
+              (contentsOpaque 1)
               (drawsContent 1)
               (backingStoreAttached 1)
             )

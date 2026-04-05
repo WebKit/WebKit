@@ -594,7 +594,6 @@ inline bool RenderStyle::affectsTransform() const
 {
     return !transform().isNone()
         || !offsetPath().isNone()
-        || !offsetPath().isNone()
         || !rotate().isNone()
         || !scale().isNone()
         || !translate().isNone();

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<head>
+<script>jsTestIsAsync = true;</script>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+select, ::picker(select) {
+    appearance: base-select;
+}
+option {
+    transform-origin: right -50px;
+    rotate: -3deg;
+}
+</style>
+</head>
+<body>
+<select id="select">
+    <option>one</option>
+    <option id="target">two</option>
+    <option>three</option>
+</select>
+<script>
+description("Tests that hovering a rotated option in base-select does not trigger a repaint of the select button.");
+
+(async () => {
+    const select = document.getElementById("select");
+    const target = document.getElementById("target");
+
+    // Open the picker via keyboard.
+    select.focus();
+    await UIHelper.keyDown(" ");
+    await UIHelper.renderingUpdate();
+
+    const selectRect = select.getBoundingClientRect();
+
+    // Start tracking repaints after the picker is fully open.
+    if (window.internals)
+        internals.startTrackingRepaints();
+
+    // Hover over the target option to trigger willResetComputedStyle.
+    if (window.eventSender) {
+        const targetRect = target.getBoundingClientRect();
+        eventSender.mouseMoveTo(targetRect.x + targetRect.width / 2, targetRect.y + targetRect.height / 2);
+    }
+
+    await UIHelper.renderingUpdate();
+
+    if (window.internals) {
+        const repaintRects = internals.repaintRectsAsText();
+        internals.stopTrackingRepaints();
+
+        // Check that no repaint rect overlaps the select button area.
+        // Without the fix, willResetComputedStyle calls select->renderer()->repaint()
+        // which unnecessarily repaints the select button.
+        const rectPattern = /\(rect ([\d.]+) ([\d.]+) ([\d.]+) ([\d.]+)\)/g;
+        let selectWasRepainted = false;
+        let match;
+        while ((match = rectPattern.exec(repaintRects)) !== null) {
+            const rx = parseFloat(match[1]);
+            const ry = parseFloat(match[2]);
+            const rw = parseFloat(match[3]);
+            const rh = parseFloat(match[4]);
+            if (rx < selectRect.right && rx + rw > selectRect.left &&
+                ry < selectRect.bottom && ry + rh > selectRect.top) {
+                selectWasRepainted = true;
+            }
+        }
+
+        window.selectWasRepainted = selectWasRepainted;
+        shouldBeFalse("selectWasRepainted");
+    }
+
+    finishJSTest();
+})();
+</script>
+</body>

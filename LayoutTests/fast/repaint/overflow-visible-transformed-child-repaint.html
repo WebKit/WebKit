@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="resources/text-based-repaint.js"></script>
+    <style>
+        #parent {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 200px;
+            height: 100px;
+            background: blue;
+            overflow: visible;
+        }
+        #child {
+            width: 200px;
+            height: 50px;
+            background: green;
+            transform: translateY(80px);
+        }
+    </style>
+    <script>
+        function repaintTest()
+        {
+            document.getElementById("parent").style.background = "red";
+        }
+    </script>
+</head>
+<body onload="runRepaintTest();">
+    <!-- The child extends from y=80 to y=130, 30px beyond the parent's border box.
+         With overflow: visible, the parent's visualOverflowRect should include the child. -->
+    <div id="parent">
+        <div id="child"></div>
+    </div>
+</body>
+</html>

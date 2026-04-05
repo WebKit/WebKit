@@ -766,6 +766,7 @@ public:
         PreserveAncestorFlags                          = 1 << 10,
         UseLocalClipRectExcludingCompositingIfPossible = 1 << 11,
         ExcludeViewTransitionCapturedDescendants       = 1 << 12,
+        ExcludeSelfPaintingChildOverflow               = 1 << 13,
     };
     static constexpr OptionSet<CalculateLayerBoundsFlag> defaultCalculateLayerBoundsFlags() { return { IncludeSelfTransform, UseLocalClipRectIfPossible, IncludePaintedFilterOutsets, UseFragmentBoxesExcludingCompositing }; }
 

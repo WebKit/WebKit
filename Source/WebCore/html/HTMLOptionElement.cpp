@@ -501,8 +501,10 @@ void HTMLOptionElement::willResetComputedStyle()
     // FIXME: This is nasty, we ask our owner select to repaint even if the new
     // style is exactly the same.
     if (RefPtr select = ownerSelectElement()) {
-        if (CheckedPtr renderer = select->renderer())
-            renderer->repaint();
+        if (CheckedPtr renderer = select->renderer()) {
+            if (renderer->style().usedAppearance() != StyleAppearance::Base)
+                renderer->repaint();
+        }
     }
 }
 

@@ -4658,7 +4658,7 @@ void RenderBox::addOverflowWithRendererOffset(const RenderBox& renderer, LayoutS
     } else {
         // Update our visual overflow in case the child spills out the block, but only if we were going to paint
         // the child block ourselves.
-        if (renderer.hasSelfPaintingLayer() && !hasFilter())
+        if (renderer.hasSelfPaintingLayer() && !hasFilter() && (!renderer.isTransformed() || renderer.layer()->has3DTransform()))
             return;
     }
     if (!childVisualOverflowRect)

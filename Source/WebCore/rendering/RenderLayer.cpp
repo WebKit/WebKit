@@ -5564,8 +5564,12 @@ LayoutRect RenderLayer::localBoundingBox(OptionSet<CalculateLayerBoundsFlag> fla
         if (!(flags & DontConstrainForMask) && box->hasMask()) {
             result = box->maskClipRect(LayoutPoint());
             box->flipForWritingMode(result); // The mask clip rect is in physical coordinates, so we have to flip, since localBoundingBox is not.
-        } else
-            result = box->visualOverflowRect();
+        } else {
+            if (flags & ExcludeSelfPaintingChildOverflow)
+                result = box->applyVisualEffectOverflow(box->borderBoxRect());
+            else
+                result = box->visualOverflowRect();
+        }
 
         if (flags.contains(IncludeRootBackgroundPaintingArea) && renderer().isDocumentElementRenderer()) {
             // If the root layer becomes composited (e.g. because some descendant with negative z-index is composited),
@@ -5623,7 +5627,7 @@ LayoutRect RenderLayer::boundingBox(const RenderLayer* ancestorLayer, const Layo
 bool RenderLayer::getOverlapBoundsIncludingChildrenAccountingForTransformAnimations(LayoutRect& bounds, OptionSet<CalculateLayerBoundsFlag> additionalFlags) const
 {
     // The animation will override the display transform, so don't include it.
-    auto boundsFlags = additionalFlags | (defaultCalculateLayerBoundsFlags() - IncludeSelfTransform);
+    auto boundsFlags = additionalFlags | (defaultCalculateLayerBoundsFlags() - IncludeSelfTransform) | ExcludeSelfPaintingChildOverflow;
 
     bounds = calculateLayerBounds(this, LayoutSize(), boundsFlags);
 
@@ -5653,9 +5657,9 @@ FloatRect RenderLayer::absoluteBoundingBoxForPainting() const
 LayoutRect RenderLayer::overlapBounds() const
 {
     if (overlapBoundsIncludeChildren())
-        return calculateLayerBounds(this, { }, { UseLocalClipRectExcludingCompositingIfPossible, IncludeFilterOutsets, UseFragmentBoxesExcludingCompositing });
+        return calculateLayerBounds(this, { }, { UseLocalClipRectExcludingCompositingIfPossible, IncludeFilterOutsets, UseFragmentBoxesExcludingCompositing, ExcludeSelfPaintingChildOverflow });
 
-    return localBoundingBox();
+    return localBoundingBox({ ExcludeSelfPaintingChildOverflow });
 }
 LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, const LayoutSize& offsetFromRoot, OptionSet<CalculateLayerBoundsFlag> flags) const
 {

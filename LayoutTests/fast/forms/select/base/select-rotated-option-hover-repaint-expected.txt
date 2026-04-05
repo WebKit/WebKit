@@ -1,0 +1,14 @@
+Tests that hovering a rotated option in base-select does not trigger a repaint of the select button.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS selectWasRepainted is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+one
+two
+three
+
