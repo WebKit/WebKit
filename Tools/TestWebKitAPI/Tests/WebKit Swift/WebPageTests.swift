@@ -60,22 +60,54 @@ fileprivate class TestNavigationDecider: WebPage.NavigationDeciding {
     }
 }
 
+private struct FakeSchemeHandler: URLSchemeHandler {
+    // This force unwrap is safe because the scheme is a static String.
+    // swift-format-ignore: NeverForceUnwrap
+    @MainActor
+    static let scheme = URLScheme("fake")!
+
+    nonisolated func reply(for request: URLRequest) -> some AsyncSequence<URLSchemeTaskResult, any Error> {
+        AsyncThrowingStream { continuation in
+            // This force unwrap is safe because this HTML is a static String.
+            // swift-format-ignore: NeverForceUnwrap
+            let data = """
+                    <html>
+                    <head>
+                        <title>Title</title>
+                    </head>
+                    <body></body>
+                    </html>
+                """
+                .data(using: .utf8)!
+            guard let url = request.url else {
+                continuation.finish(throwing: URLError(.badURL))
+                return
+            }
+            continuation.yield(
+                .response(
+                    .init(
+                        url: url,
+                        mimeType: "text/html",
+                        expectedContentLength: data.count,
+                        textEncodingName: "utf-8",
+                    )
+                )
+            )
+            continuation.yield(.data(data))
+            continuation.finish()
+        }
+    }
+}
+
 // MARK: Tests
 
 @MainActor
 struct WebPageTests {
     @Test
     func observableProperties() async throws {
-        let page = WebPage()
-
-        let html = """
-        <html>
-        <head>
-            <title>Title</title>
-        </head>
-        <body></body>
-        </html>
-        """
+        var configuration = WebPage.Configuration()
+        configuration.urlSchemeHandlers[FakeSchemeHandler.scheme] = FakeSchemeHandler()
+        let page = WebPage(configuration: configuration)
 
         #expect(page.url == nil)
         #expect(page.title == "")
@@ -84,6 +116,21 @@ struct WebPageTests {
         #expect(page.serverTrust == nil)
         #expect(!page.hasOnlySecureContent)
         #expect(page.themeColor == nil)
+
+        let observablePropertyKeyPaths: [PartialKeyPath<WebPage>] = [
+            \.title,
+            \.backForwardList,
+        ]
+        for (i, keyPath) in observablePropertyKeyPaths.enumerated() {
+            try await confirmation("Observing \(keyPath)", expectedCount: 1) { confirmation async throws in
+                _ = withObservationTracking {
+                    page[keyPath: keyPath]
+                } onChange: {
+                    confirmation()
+                }
+                try await page.load(URL(string: "fake://test/\(i)")).wait()
+            }
+        }
 
         // FIXME: (283456) Make this test more comprehensive once Observation supports observing a stream of changes to properties.
     }

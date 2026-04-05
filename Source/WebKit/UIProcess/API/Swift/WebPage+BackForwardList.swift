@@ -160,6 +160,8 @@ extension WebPage {
             wrapped?.forwardList.map(Item.init(_:)) ?? []
         }
 
+        private let id = UUID()
+
         private var wrapped: WKBackForwardList? = nil
 
         /// Accesses the item at the relative offset from the current item.
