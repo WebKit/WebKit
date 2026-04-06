@@ -4661,7 +4661,7 @@ VisiblePosition RenderBox::positionForPoint(const LayoutPoint& point, HitTestSou
         LayoutUnit left = renderer.borderLeft() + renderer.paddingLeft() + (is<RenderTableRow>(*this) ? 0_lu : renderer.x());
         LayoutUnit right = left + renderer.contentBoxWidth();
         
-        if (point.x() <= right && point.x() >= left && point.y() <= top && point.y() >= bottom) {
+        if (point.x() <= right && point.x() >= left && point.y() >= top && point.y() <= bottom) {
             if (is<RenderTableRow>(renderer))
                 return renderer.positionForPoint(point + adjustedPoint - renderer.locationOffset(), source, fragment);
             return renderer.positionForPoint(point - renderer.locationOffset(), source, fragment);
