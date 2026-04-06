@@ -8588,6 +8588,54 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
 
         protectedPageClient->clearBrowsingWarning();
 
+        if (policyAction == PolicyAction::Download && navigation->safeBrowsingCheckOngoing()) {
+            navigation->whenSafeBrowsingCheckCompletes([
+                this, protectedThis = WTF::move(protectedThis), navigation, completionHandlerWrapper = WTF::move(completionHandlerWrapper),
+                frame, frameInfo = WTF::move(frameInfo), protectedPageClient = WTF::move(protectedPageClient)
+            ] mutable {
+                if (RefPtr safeBrowsingWarning = navigation->safeBrowsingWarning()) {
+                    navigation->setSafeBrowsingWarning(nullptr);
+                    if (!frame->isMainFrame()) {
+                        auto error = interruptedForPolicyChangeError(navigation->currentRequest());
+                        m_navigationClient->didFailProvisionalNavigationWithError(*this, FrameInfoData { frameInfo }, navigation.get(), navigation->currentRequest().url(), error, nullptr);
+                        WEBPAGEPROXY_RELEASE_LOG(Loading, "decidePolicyForNavigationAction: Ignoring download because Safe Browsing found a match.");
+                        completionHandlerWrapper(PolicyAction::Ignore);
+                        return;
+                    }
+
+                    Ref protectedPageLoadState = pageLoadState();
+                    auto transaction = protectedPageLoadState->transaction();
+                    protectedPageLoadState->setTitleFromBrowsingWarning(transaction, safeBrowsingWarning->title());
+
+                    protectedPageClient->showBrowsingWarning(*safeBrowsingWarning, [protectedThis = WTF::move(protectedThis), completionHandlerWrapper = WTF::move(completionHandlerWrapper), protectedPageClient](auto&& result) mutable {
+                        Ref protectedPageLoadState = protectedThis->pageLoadState();
+                        auto transaction = protectedPageLoadState->transaction();
+                        protectedPageLoadState->setTitleFromBrowsingWarning(transaction, { });
+
+                        switchOn(result, [&](const URL& url) {
+                            completionHandlerWrapper(PolicyAction::Ignore);
+                            protectedThis->loadRequest({ URL { url } });
+                        }, [&protectedThis, &completionHandlerWrapper](ContinueUnsafeLoad continueUnsafeLoad) {
+                            switch (continueUnsafeLoad) {
+                            case ContinueUnsafeLoad::No:
+                                if (!protectedThis->hasCommittedAnyProvisionalLoads())
+                                    protectedThis->m_uiClient->close(protectedThis.ptr());
+                                completionHandlerWrapper(PolicyAction::Ignore);
+                                break;
+                            case ContinueUnsafeLoad::Yes:
+                                completionHandlerWrapper(PolicyAction::Download);
+                                break;
+                            }
+                        });
+                    });
+                    m_uiClient->didShowSafeBrowsingWarning();
+                    return;
+                }
+                completionHandlerWrapper(PolicyAction::Download);
+            });
+            return;
+        }
+
         if (RefPtr safeBrowsingWarning = navigation->safeBrowsingWarning()) {
             navigation->setSafeBrowsingWarning(nullptr);
             if (frame->isMainFrame() && safeBrowsingWarning->url().isValid()) {
@@ -8884,9 +8932,43 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
 #if USE(QUICK_LOOK) && ENABLE(QUICKLOOK_SANDBOX_RESTRICTIONS)
         bool supportsMIMEType = PreviewConverter::supportsMIMEType(navigationResponse->response().mimeType());
 #endif
-        auto completionHandlerWrapper = [navigation, protectedThis, request, navigationResponse = WTF::move(navigationResponse), frameInfo = WTF::move(frameInfo), completionHandler = WTF::move(completionHandler)]  (PolicyAction policyAction) mutable {
+        auto completionHandlerWrapper = [navigation, protectedThis, request, navigationResponse = WTF::move(navigationResponse), completionHandler = WTF::move(completionHandler)](PolicyAction policyAction) mutable {
             protectedThis->receivedNavigationResponsePolicyDecision(policyAction, navigation.get(), request, WTF::move(navigationResponse), WTF::move(completionHandler));
         };
+        if (policyAction == PolicyAction::Download && navigation && navigation->safeBrowsingCheckOngoing()) {
+            navigation->whenSafeBrowsingCheckCompletes([
+                this, protectedThis = WTF::move(protectedThis), navigation, completionHandlerWrapper = WTF::move(completionHandlerWrapper),
+                frame, frameInfo = WTF::move(frameInfo), request
+            ] mutable {
+                if (RefPtr safeBrowsingWarning = navigation->safeBrowsingWarning()) {
+                    if (!frame->isMainFrame()) {
+                        auto error = interruptedForPolicyChangeError(navigation->currentRequest());
+                        m_navigationClient->didFailProvisionalNavigationWithError(*this, FrameInfoData { frameInfo }, navigation.get(), request.url(), error, nullptr);
+                        completionHandlerWrapper(PolicyAction::Ignore);
+                        return;
+                    }
+                    Ref protectedPageLoadState = pageLoadState();
+                    auto transaction = protectedPageLoadState->transaction();
+                    protectedPageLoadState->setTitleFromBrowsingWarning(transaction, safeBrowsingWarning->title());
+                    navigation->setSafeBrowsingWarning(nullptr);
+                    protect(protectedThis->pageClient())->showBrowsingWarning(*safeBrowsingWarning, [protectedThis = WTF::move(protectedThis), completionHandlerWrapper = WTF::move(completionHandlerWrapper)](auto&& result) mutable {
+                        switchOn(result, [&](const URL& url) {
+                            completionHandlerWrapper(PolicyAction::Ignore);
+                            protectedThis->loadRequest(URL { url });
+                        }, [&](ContinueUnsafeLoad continueUnsafeLoad) {
+                            if (continueUnsafeLoad == ContinueUnsafeLoad::No)
+                                completionHandlerWrapper(PolicyAction::Ignore);
+                            else
+                                completionHandlerWrapper(PolicyAction::Download);
+                        });
+                    });
+                    m_uiClient->didShowSafeBrowsingWarning();
+                    return;
+                }
+                completionHandlerWrapper(PolicyAction::Download);
+            });
+            return;
+        }
         if (navigation && navigation->safeBrowsingWarning()) {
             RefPtr safeBrowsingWarning = navigation->safeBrowsingWarning();
             if (frame->isMainFrame() && safeBrowsingWarning->url().isValid()) {
