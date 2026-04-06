@@ -1,3 +1,0 @@
-
-PASS LCP includes image in shadow DOM
-
