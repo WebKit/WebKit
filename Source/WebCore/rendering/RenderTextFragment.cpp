@@ -68,7 +68,14 @@ RenderTextFragment::~RenderTextFragment()
 
 bool RenderTextFragment::canBeSelectionLeaf() const
 {
-    return textNode() && textNode()->hasEditableStyle();
+    if (auto* textNode = this->textNode()) {
+        // Remaining (trailing) text fragments with first-letter are always selectable,
+        // matching the base RenderText::canBeSelectionLeaf() behavior.
+        return firstLetter() ? true : textNode->hasEditableStyle();
+    }
+    // First-letter is always selectable.
+    auto* anonymousInlineWrapper = dynamicDowncast<RenderInline>(this->parent());
+    return anonymousInlineWrapper && anonymousInlineWrapper->firstLetterRemainingText();
 }
 
 void RenderTextFragment::setTextInternal(const String& newText, bool force)

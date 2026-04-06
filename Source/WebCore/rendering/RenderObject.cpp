@@ -50,6 +50,7 @@
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "NodeInlines.h"
+#include "Editing.h"
 #include "OutlinePainter.h"
 #include "Page.h"
 #include "PseudoElement.h"
@@ -1914,7 +1915,7 @@ PositionWithAffinity RenderObject::createPositionWithAffinity(int offset, Affini
     if (RefPtr node = nonPseudoNode()) {
         if (!node->hasEditableStyle()) {
             // If it can be found, we prefer a visually equivalent position that is editable. 
-            Position position = makeDeprecatedLegacyPosition(node.get(), offset);
+            Position position = makeDeprecatedLegacyPosition(node.get(), firstLetterAdjustedDOMOffset(*this, offset));
             Position candidate = position.downstream(CanCrossEditingBoundary);
             if (candidate.deprecatedNode()->hasEditableStyle())
                 return PositionWithAffinity(candidate, affinity);
@@ -1923,7 +1924,7 @@ PositionWithAffinity RenderObject::createPositionWithAffinity(int offset, Affini
                 return PositionWithAffinity(candidate, affinity);
         }
         // FIXME: Eliminate legacy editing positions
-        return PositionWithAffinity(makeDeprecatedLegacyPosition(node.get(), offset), affinity);
+        return PositionWithAffinity(makeDeprecatedLegacyPosition(node.get(), firstLetterAdjustedDOMOffset(*this, offset)), affinity);
     }
 
     // We don't want to cross the boundary between editable and non-editable

@@ -607,6 +607,8 @@ bool TextIterator::handleTextNode()
     CheckedRef renderer = *textNode->renderer();
     m_lastTextNode = textNode.ptr();
     auto rendererText = rendererTextForBehavior(renderer.get());
+    // textFragment is the renderer that holds the trailing content and has a reference to the first letter renderer.
+    CheckedPtr textFragment = dynamicDowncast<RenderTextFragment>(renderer.get());
 
     // handle pre-formatted text
     if (!renderer->style().collapseWhiteSpace()) {
@@ -615,8 +617,8 @@ bool TextIterator::handleTextNode()
             emitCharacter(' ', WTF::move(textNode), nullptr, runStart, runStart);
             return false;
         }
-        if (CheckedPtr renderTextFragment = dynamicDowncast<RenderTextFragment>(renderer); renderTextFragment && !m_handledFirstLetter && !m_offset) {
-            handleTextNodeFirstLetter(*renderTextFragment);
+        if (textFragment && !m_handledFirstLetter && !m_offset) {
+            handleTextNodeFirstLetter(*textFragment);
             if (m_firstLetterText) {
                 String firstLetter = m_firstLetterText->text();
                 emitText(textNode, *protect(m_firstLetterText), m_offset, m_offset + firstLetter.length());
@@ -627,9 +629,15 @@ bool TextIterator::handleTextNode()
         }
         if (renderer->style().visibility() != Visibility::Visible && !m_behaviors.contains(TextIteratorBehavior::IgnoresStyleVisibility))
             return false;
-        int rendererTextLength = rendererText.length();
-        int end = (textNode.ptr() == m_endContainer) ? m_endOffset : INT_MAX;
-        int runEnd = std::min(rendererTextLength, end);
+        auto rendererTextLength = static_cast<int>(rendererText.length());
+        auto end = (textNode.ptr() == m_endContainer) ? m_endOffset : INT_MAX;
+        if (textFragment && textFragment->firstLetter()) {
+            // The remaining text fragment's text is fragment-local. Convert DOM offsets to fragment-local so we can compare against the renderer's text length.
+            auto fragmentStart = static_cast<int>(textFragment->start());
+            runStart = std::max(0, runStart - fragmentStart);
+            end = end == INT_MAX ? INT_MAX : std::max(0, end - fragmentStart);
+        }
+        auto runEnd = std::min(rendererTextLength, end);
 
         if (runStart >= runEnd)
             return true;
@@ -640,8 +648,8 @@ bool TextIterator::handleTextNode()
 
     std::tie(m_textRun, m_textRunLogicalOrderCache) = InlineIterator::firstTextBoxInLogicalOrderFor(renderer.get());
 
-    if (CheckedPtr renderTextFragment = dynamicDowncast<RenderTextFragment>(renderer); renderTextFragment && !m_handledFirstLetter && !m_offset)
-        handleTextNodeFirstLetter(*renderTextFragment);
+    if (textFragment && !m_handledFirstLetter && !m_offset)
+        handleTextNodeFirstLetter(*textFragment);
     else if (!m_textRun && rendererText.length()) {
         if (renderer->style().visibility() != Visibility::Visible && !m_behaviors.contains(TextIteratorBehavior::IgnoresStyleVisibility))
             return false;
@@ -665,12 +673,21 @@ void TextIterator::handleTextRun()
 
     auto [firstTextRun, orderCache] = InlineIterator::firstTextBoxInLogicalOrderFor(renderer);
 
-    auto rendererText = rendererTextForBehavior(renderer.get());
-    unsigned rangeStart = m_offset;
-    auto rangeEnd = std::optional<unsigned> { };
-    if (textNode.ptr() == m_endContainer)
-        rangeEnd = m_endOffset;
+    // For remaining text fragments after a first-letter split, text box offsets are fragment-local but m_offset/m_endOffset are DOM offsets.
+    unsigned remainingFragmentStart = 0;
+    if (auto* renderText = dynamicDowncast<RenderTextFragment>(renderer.get()); renderText && renderText->firstLetter())
+        remainingFragmentStart = renderText->start();
 
+    auto toFragmentLocal = [&](unsigned domOffset) {
+        return domOffset > remainingFragmentStart ? domOffset - remainingFragmentStart : 0;
+    };
+    auto toDOMOffset = [&](unsigned localOffset) {
+        return localOffset + remainingFragmentStart;
+    };
+
+    auto rendererText = rendererTextForBehavior(renderer.get());
+    auto rangeStart = toFragmentLocal(m_offset);
+    auto rangeEnd = textNode.ptr() == m_endContainer ? std::make_optional(toFragmentLocal(m_endOffset)) : std::nullopt;
     while (m_textRun) {
         auto textRunStart = m_textRun->start();
         auto textRunEnd = textRunStart + m_textRun->length();
@@ -704,7 +721,7 @@ void TextIterator::handleTextRun()
             // This effectively translates newlines and tabs to spaces without copying the text.
             if (isNewlineOrTab(rendererText[runStart])) {
                 emitCharacter(' ', textNode.copyRef(), nullptr, runStart, runStart + 1);
-                m_offset = runStart + 1;
+                m_offset = toDOMOffset(runStart + 1);
             } else {
                 auto subrunEnd = runStart + 1;
                 for (; subrunEnd < runEnd; ++subrunEnd) {
@@ -716,13 +733,13 @@ void TextIterator::handleTextRun()
                     if (lastSpaceCollapsedByNextNonTextRun)
                         ++subrunEnd; // runEnd stopped before last space. Increment by one to restore the space.
                 }
-                m_offset = subrunEnd;
+                m_offset = toDOMOffset(subrunEnd);
                 emitText(textNode, renderer, runStart, subrunEnd);
             }
 
             // If we are doing a subrun that doesn't go to the end of the text box,
             // come back again to finish handling this text box; don't advance to the next one.
-            if (static_cast<unsigned>(m_positionEndOffset) < textRunEnd)
+            if (static_cast<unsigned>(m_positionEndOffset) < toDOMOffset(textRunEnd))
                 return;
 
             // Advance and return
@@ -1201,8 +1218,11 @@ void TextIterator::emitText(Text& textNode, RenderText& renderer, int textStartO
 
     m_positionNode = textNode;
     m_positionOffsetBaseNode = nullptr;
-    m_positionStartOffset = textStartOffset;
-    m_positionEndOffset = textEndOffset;
+    // For remaining text fragments after a first-letter split, the text offsets are
+    // fragment-local but position offsets need to be DOM-relative for range() to
+    // return correct boundary points (used by word/sentence boundary detection).
+    m_positionStartOffset = firstLetterAdjustedDOMOffset(renderer, textStartOffset);
+    m_positionEndOffset = firstLetterAdjustedDOMOffset(renderer, textEndOffset);
 
     m_lastCharacter = string[textEndOffset - 1];
     m_copyableText.set(WTF::move(string), textStartOffset, textEndOffset - textStartOffset);
@@ -1361,70 +1381,52 @@ bool SimplifiedBackwardsTextIterator::handleTextNode()
 {
     m_lastTextNode = downcast<Text>(m_node.get());
 
-    int startOffset;
-    int offsetInNode;
-    CheckedPtr renderer = handleFirstLetter(startOffset, offsetInNode);
-    if (!renderer)
-        return true;
+    CheckedRef renderer = downcast<RenderText>(*m_node->renderer());
+    auto startOffset = (m_node == m_startContainer) ? m_startOffset : 0;
 
-    String text = renderer->text();
+    auto text = renderer->text();
     if (!renderer->hasRenderedText() && text.length())
         return true;
 
-    if (startOffset + offsetInNode == m_offset) {
-        ASSERT(!m_shouldHandleFirstLetter);
+    if (startOffset == m_offset)
         return true;
-    }
+
+    // Nothing to emit when the renderer text is empty (e.g. the remaining text
+    // fragment after a first-letter split covers no characters).
+    if (!text.length())
+        return true;
 
     m_positionEndOffset = m_offset;
-    m_offset = startOffset + offsetInNode;
+    m_offset = startOffset;
     m_positionNode = m_node;
     m_positionStartOffset = m_offset;
 
-    ASSERT(m_positionStartOffset < m_positionEndOffset);
-    ASSERT(m_positionStartOffset - offsetInNode >= 0);
-    ASSERT(m_positionEndOffset - offsetInNode > 0);
-    ASSERT(m_positionEndOffset - offsetInNode <= static_cast<int>(text.length()));
+    // For remaining text fragments after a first-letter split, DOM offsets (m_positionStartOffset,
+    // m_positionEndOffset) differ from fragment-local offsets used to index into renderer text.
+    // Convert to fragment-local for text access, keeping DOM offsets for range().
+    unsigned fragmentStart = 0;
+    if (auto* renderText = dynamicDowncast<RenderTextFragment>(renderer.get()); renderText && renderText->firstLetter() && startOffset >= static_cast<int>(renderText->start()))
+        fragmentStart = renderText->start();
 
-    m_lastCharacter = text[m_positionEndOffset - offsetInNode - 1];
-    m_copyableText.set(WTF::move(text), m_positionStartOffset - offsetInNode, m_positionEndOffset - m_positionStartOffset);
+    // After editing mutations (e.g. deleting the last character),
+    // m_positionEndOffset can exceed the text node's current length in DOM space.
+    auto textLengthInDOMSpace = static_cast<int>(text.length() + fragmentStart);
+    if (m_positionEndOffset > textLengthInDOMSpace)
+        m_positionEndOffset = textLengthInDOMSpace;
+
+    int localStart = m_positionStartOffset - fragmentStart;
+    int localEnd = m_positionEndOffset - fragmentStart;
+
+    ASSERT(m_positionStartOffset < m_positionEndOffset);
+    ASSERT(localStart >= 0);
+    ASSERT(localEnd > 0);
+    ASSERT(localEnd <= static_cast<int>(text.length()));
+
+    m_lastCharacter = text[localEnd - 1];
+    m_copyableText.set(WTF::move(text), localStart, m_positionEndOffset - m_positionStartOffset);
     m_text = m_copyableText.text();
 
-    return !m_shouldHandleFirstLetter;
-}
-
-CheckedPtr<RenderText> SimplifiedBackwardsTextIterator::handleFirstLetter(int& startOffset, int& offsetInNode)
-{
-    CheckedRef renderer = downcast<RenderText>(*m_node->renderer());
-    startOffset = (m_node == m_startContainer) ? m_startOffset : 0;
-
-    CheckedPtr fragment = dynamicDowncast<RenderTextFragment>(renderer);
-    if (!fragment) {
-        offsetInNode = 0;
-        return renderer;
-    }
-
-    int offsetAfterFirstLetter = fragment->start();
-    if (startOffset >= offsetAfterFirstLetter) {
-        ASSERT(!m_shouldHandleFirstLetter);
-        offsetInNode = offsetAfterFirstLetter;
-        return renderer;
-    }
-
-    if (!m_shouldHandleFirstLetter && startOffset + offsetAfterFirstLetter < m_offset) {
-        m_shouldHandleFirstLetter = true;
-        offsetInNode = offsetAfterFirstLetter;
-        return renderer;
-    }
-
-    m_shouldHandleFirstLetter = false;
-    offsetInNode = 0;
-    CheckedPtr firstLetterRenderer = firstRenderTextInFirstLetter(protect(fragment->firstLetter()));
-
-    m_offset = firstLetterRenderer->caretMaxOffset();
-    m_offset += collapsedSpaceLength(*firstLetterRenderer, m_offset);
-
-    return firstLetterRenderer;
+    return true;
 }
 
 bool SimplifiedBackwardsTextIterator::handleReplacedElement()

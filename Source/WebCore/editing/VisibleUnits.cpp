@@ -29,6 +29,7 @@
 
 #include "BoundaryPointInlines.h"
 #include "Document.h"
+#include "Editing.h"
 #include "EditingInlines.h"
 #include "HTMLBRElement.h"
 #include "HTMLElement.h"
@@ -855,7 +856,7 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c, LineEndpoint
         int endOffset = endTextBox.start();
         if (!endTextBox.isLineBreak())
             endOffset += endTextBox.length();
-        pos = Position(endTextNode.releaseNonNull(), endOffset);
+        pos = Position(endTextNode.releaseNonNull(), firstLetterAdjustedDOMOffset(endTextBox.renderer(), endOffset));
     } else
         pos = positionAfterNode(*endNode);
 
@@ -1233,7 +1234,7 @@ RefPtr<Node> findEndOfParagraph(Node* startNode, Node* highestRoot, Node* stayIn
                 }
             }
             node = n;
-            offset = r->caretMaxOffset();
+            offset = caretMaxOffset(*n);
             n = NodeTraversal::next(*n, stayInsideBlock);
         } else if (editingIgnoresContent(*n) || isRenderedTable(n.get())) {
             node = n;

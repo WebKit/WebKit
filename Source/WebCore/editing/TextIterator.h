@@ -201,7 +201,6 @@ public:
 private:
     void exitNode();
     bool handleTextNode();
-    CheckedPtr<RenderText> handleFirstLetter(int& startOffset, int& offsetInNode);
     bool handleReplacedElement();
     bool handleNonTextNode();
     void emitCharacter(char16_t, RefPtr<Node>&&, int startOffset, int endOffset);
@@ -236,8 +235,6 @@ private:
     // Whether m_node has advanced beyond the iteration range (i.e. m_startContainer).
     bool m_havePassedStartContainer { false };
 
-    // Should handle first-letter renderer in the next call to handleTextNode.
-    bool m_shouldHandleFirstLetter { false };
 };
 
 // Builds on the text iterator, adding a character position so we can walk one

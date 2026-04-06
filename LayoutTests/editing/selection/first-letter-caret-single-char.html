@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+div::first-letter {
+    color: red;
+}
+div {
+    font-size: 20px;
+}
+</style>
+</head>
+<body>
+<div contenteditable id="test">A</div>
+<div id="container"></div>
+
+<script>
+description("Test that caret positioning works correctly when the entire text is a ::first-letter with an empty remaining fragment.");
+
+// Append "B" after "A", then delete it. The caret should stay after "A".
+document.body.offsetHeight;
+test.append(document.createTextNode("B"));
+document.body.offsetHeight;
+
+// Place caret after "B" and delete it.
+var sel = window.getSelection();
+sel.collapse(test.lastChild, 1);
+document.execCommand("delete");
+document.body.offsetHeight;
+
+// After deleting "B", only "A" remains as the entire first letter.
+// The caret should be after "A" (offset 1), not before it (offset 0).
+shouldBe("window.getSelection().anchorOffset", "1");
+shouldBe("test.textContent", "'A'");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -175,8 +175,12 @@ bool PositionIterator::isCandidate() const
     if (renderer->isBR())
         return Position(*this).isCandidate();
 
-    if (CheckedPtr renderText = dynamicDowncast<RenderText>(*renderer))
-        return !Position::nodeIsUserSelectNone(anchorNode.get()) && renderText->containsCaretOffset(m_offsetInAnchor);
+    if (CheckedPtr renderText = dynamicDowncast<RenderText>(*renderer)) {
+        if (Position::nodeIsUserSelectNone(anchorNode.get()))
+            return false;
+        auto [resolvedText, resolvedOffset] = Position(*this).resolvedTextRendererAndOffset();
+        return resolvedText && resolvedText->containsCaretOffset(resolvedOffset);
+    }
 
     if (positionBeforeOrAfterNodeIsCandidate(*anchorNode))
         return (atStartOfNode() || atEndOfNode()) && !Position::nodeIsUserSelectNone(anchorNode->parentNode());

@@ -1,0 +1,33 @@
+Test that selection works correctly with ::first-letter pseudo-element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.getSelection().toString() is "Hello"
+PASS window.getSelection().toString() is "12"
+PASS window.getSelection().toString() is "\"Quote"
+PASS window.getSelection().toString() is "A"
+PASS window.getSelection().toString() is "Nested"
+PASS window.getSelection().toString().replace(/\n/g, '|') is "First|Second"
+PASS window.getSelection().toString() is "Editable"
+PASS window.getSelection().toString() is "1"
+PASS window.getSelection().toString() is "2"
+PASS window.getSelection().toString() is "Hel"
+PASS window.getSelection().toString() is "\"Q"
+PASS window.getSelection().isCollapsed is true
+PASS window.getSelection().anchorOffset is 1
+PASS window.getSelection().isCollapsed is true
+PASS window.getSelection().anchorOffset is 0
+PASS window.getSelection().toString() is "A"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello
+12
+"Quote
+A
+Nested
+First
+Second
+Editable
+

@@ -66,6 +66,7 @@
 #include "RenderStyle+GettersInlines.h"
 #include "RenderTableCell.h"
 #include "RenderTextControlSingleLine.h"
+#include "RenderTextFragment.h"
 #include "RenderedPosition.h"
 #include "ShadowRoot.h"
 #include "Text.h"
@@ -904,9 +905,16 @@ int caretMaxOffset(const Node& node)
     // For rendered text nodes, return the last position that a caret could occupy.
     if (auto* text = dynamicDowncast<Text>(node)) {
         if (CheckedPtr renderer = text->renderer())
-            return renderer->caretMaxOffset();
+            return firstLetterAdjustedDOMOffset(*renderer, renderer->caretMaxOffset());
     }
     return lastOffsetForEditing(node);
+}
+
+unsigned firstLetterAdjustedDOMOffset(const RenderObject& renderer, unsigned offset)
+{
+    if (auto* textFragment = dynamicDowncast<RenderTextFragment>(renderer); textFragment && textFragment->firstLetter())
+        return offset + textFragment->start();
+    return offset;
 }
 
 bool lineBreakExistsAtVisiblePosition(const VisiblePosition& position)

@@ -32,6 +32,7 @@
 #include "RenderedPosition.h"
 
 #include "CaretRectComputation.h"
+#include "Editing.h"
 #include "InlineRunAndOffset.h"
 #include "NodeInlines.h"
 #include "RenderObjectInlines.h"
@@ -85,6 +86,7 @@ RenderedPosition::RenderedPosition(const Position& position, Affinity affinity)
     if (position.isNull())
         return;
 
+    m_node = position.deprecatedNode();
     auto boxAndOffset = position.inlineBoxAndOffset(affinity);
     m_box = boxAndOffset.box;
     m_offset = boxAndOffset.offset;
@@ -206,7 +208,7 @@ Position RenderedPosition::positionAtLeftBoundaryOfBiDiRun() const
     ASSERT(atLeftBoundaryOfBidiRun());
 
     if (atLeftmostOffsetInBox())
-        return makeDeprecatedLegacyPosition(protect(m_renderer->node()).get(), m_offset);
+        return makeDeprecatedLegacyPosition(protect(m_node.get()).get(), m_offset);
 
     return makeDeprecatedLegacyPosition(protect(nextLeafOnLine()->renderer().node()).get(), nextLeafOnLine()->leftmostCaretOffset());
 }
@@ -215,8 +217,10 @@ Position RenderedPosition::positionAtRightBoundaryOfBiDiRun() const
 {
     ASSERT(atRightBoundaryOfBidiRun());
 
-    if (atRightmostOffsetInBox())
-        return makeDeprecatedLegacyPosition(protect(m_renderer->node()).get(), m_offset);
+    if (atRightmostOffsetInBox()) {
+        auto offset = firstLetterAdjustedDOMOffset(*m_renderer, m_offset);
+        return makeDeprecatedLegacyPosition(protect(m_node.get()).get(), offset);
+    }
 
     return makeDeprecatedLegacyPosition(protect(previousLeafOnLine()->renderer().node()).get(), previousLeafOnLine()->rightmostCaretOffset());
 }

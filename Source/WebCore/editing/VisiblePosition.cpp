@@ -44,7 +44,9 @@
 #include "PositionInlines.h"
 #include "Range.h"
 #include "RenderBlockFlow.h"
+#include "RenderBoxModelObject.h"
 #include "RenderObjectInlines.h"
+#include "RenderTextFragment.h"
 #include "SimpleRange.h"
 #include "Text.h"
 #include "TextIterator.h"
@@ -57,6 +59,16 @@
 namespace WebCore {
 
 using namespace HTMLNames;
+
+// The anonymous text renderer inside ::first-letter has no DOM node.
+static RenderTextFragment* remainingTextFragmentForFirstLetter(const RenderObject& renderer)
+{
+    if (renderer.node())
+        return { };
+    if (auto* parent = dynamicDowncast<RenderBoxModelObject>(renderer.parent()))
+        return parent->firstLetterRemainingText();
+    return { };
+}
 
 VisiblePosition::VisiblePosition(const Position& position, Affinity affinity)
     : m_deepPosition { canonicalPosition(position) }
@@ -140,7 +152,7 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
             if ((renderer->isBlockLevelReplacedOrAtomicInline() || renderer->isBR()) && offset == box->rightmostCaretOffset())
                 return box->isLeftToRightDirection() ? previousVisuallyDistinctCandidate(m_deepPosition) : nextVisuallyDistinctCandidate(m_deepPosition);
 
-            if (!renderer->node()) {
+            if (!renderer->node() && !remainingTextFragmentForFirstLetter(*renderer)) {
                 box.traverseLineLeftwardOnLine();
                 if (!box)
                     return primaryDirection == TextDirection::LTR ? previousVisuallyDistinctCandidate(m_deepPosition) : nextVisuallyDistinctCandidate(m_deepPosition);
@@ -182,8 +194,8 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
             if (box->direction() == primaryDirection) {
                 if (!previousBox) {
                     auto logicalStart = primaryDirection == TextDirection::LTR
-                        ? InlineIterator::firstLeafOnLineInLogicalOrderWithNode(box->lineBox(), orderCache)
-                        : InlineIterator::lastLeafOnLineInLogicalOrderWithNode(box->lineBox(), orderCache);
+                        ? InlineIterator::firstLeafOnLineInLogicalOrder(box->lineBox(), orderCache)
+                        : InlineIterator::lastLeafOnLineInLogicalOrder(box->lineBox(), orderCache);
                     if (logicalStart) {
                         box = logicalStart;
                         renderer = &box->renderer();
@@ -253,7 +265,9 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
             break;
         }
 
-        p = makeDeprecatedLegacyPosition(protect(renderer->node()).get(), offset);
+        auto* remainingFragment = remainingTextFragmentForFirstLetter(*renderer);
+        auto* node = remainingFragment ? remainingFragment->textNode() : renderer->node();
+        p = makeDeprecatedLegacyPosition(protect(node).get(), firstLetterAdjustedDOMOffset(*renderer, offset));
 
         if ((p.isCandidate() && p.downstream() != downstreamStart) || p.atStartOfTree() || p.atEndOfTree())
             return p;
@@ -305,7 +319,7 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
             if ((renderer->isBlockLevelReplacedOrAtomicInline() || renderer->isBR()) && offset == box->leftmostCaretOffset())
                 return box->isLeftToRightDirection() ? nextVisuallyDistinctCandidate(m_deepPosition) : previousVisuallyDistinctCandidate(m_deepPosition);
 
-            if (!renderer->node()) {
+            if (!renderer->node() && !remainingTextFragmentForFirstLetter(*renderer)) {
                 box.traverseLineRightwardOnLine();
                 if (!box)
                     return primaryDirection == TextDirection::LTR ? nextVisuallyDistinctCandidate(m_deepPosition) : previousVisuallyDistinctCandidate(m_deepPosition);
@@ -422,7 +436,9 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
             break;
         }
 
-        p = makeDeprecatedLegacyPosition(protect(renderer->node()).get(), offset);
+        auto* remainingFragment = remainingTextFragmentForFirstLetter(*renderer);
+        auto* node = remainingFragment ? remainingFragment->textNode() : renderer->node();
+        p = makeDeprecatedLegacyPosition(protect(node).get(), firstLetterAdjustedDOMOffset(*renderer, offset));
 
         if ((p.isCandidate() && p.downstream() != downstreamStart) || p.atStartOfTree() || p.atEndOfTree())
             return p;
