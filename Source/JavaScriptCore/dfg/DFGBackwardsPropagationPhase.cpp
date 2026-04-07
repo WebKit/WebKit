@@ -166,14 +166,6 @@ private:
     }
     
     template<int power>
-    bool isWithinPowerOfTwoNonRecursive(Node* node)
-    {
-        if (!node->isNumberConstant())
-            return false;
-        return isWithinPowerOfTwoForConstant<power>(node);
-    }
-    
-    template<int power>
     bool isWithinPowerOfTwo(Node* node)
     {
         switch (node->op()) {
@@ -187,9 +179,17 @@ private:
         case ArithBitAnd: {
             if (power > 31)
                 return true;
-            
-            return isWithinPowerOfTwoNonRecursive<power>(node->child1().node())
-                || isWithinPowerOfTwoNonRecursive<power>(node->child2().node());
+
+            // (x & mask) is only bounded by |mask| when mask is non-negative; a negative
+            // mask preserves the sign bit and the result can span the full int32 range.
+            auto isNonNegativeMaskWithinPower = [](Node* operand) {
+                if (!operand->isNumberConstant())
+                    return false;
+                double immediate = operand->asNumber();
+                return immediate >= 0 && immediate < (static_cast<int64_t>(1) << power);
+            };
+            return isNonNegativeMaskWithinPower(node->child1().node())
+                || isNonNegativeMaskWithinPower(node->child2().node());
         }
             
         case ArithBitOr:
