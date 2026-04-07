@@ -25,7 +25,7 @@
 
 #include "pas_config.h"
 
-#if LIBPAS_ENABLED
+#if LIBPAS_ENABLED || LIBPAS_ENABLED_MINIMALLY
 
 #include "pas_race_test_hooks.h"
 

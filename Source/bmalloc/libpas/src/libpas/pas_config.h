@@ -67,6 +67,7 @@
 #if !BENABLE(LIBPAS)
 #undef LIBPAS_ENABLED
 #define LIBPAS_ENABLED 0
+#define LIBPAS_ENABLED_MINIMALLY 1
 #endif
 #endif
 

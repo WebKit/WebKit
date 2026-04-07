@@ -25,7 +25,7 @@
 
 #include "pas_config.h"
 
-#if LIBPAS_ENABLED
+#if LIBPAS_ENABLED || LIBPAS_ENABLED_MINIMALLY
 
 #include "pas_lock.h"
 #if PAS_OS(DARWIN)

@@ -49,13 +49,13 @@ typedef uint64_t Slot;
 #ifdef __cplusplus
 extern "C" {
 #endif
-#if LIBPAS_ENABLED
+#if LIBPAS_ENABLED || LIBPAS_ENABLED_MINIMALLY
 #if defined(PAS_BMALLOC)
 BEXPORT extern Slot g_config[];
 #else // !defined(PAS_BMALLOC)
 extern Slot g_config[];
 #endif // defined(PAS_BMALLOC)
-#endif // LIBPAS_ENABLED
+#endif // LIBPAS_ENABLED || LIBPAS_ENABLED_MINIMALLY
 #ifdef __cplusplus
 }
 #endif
