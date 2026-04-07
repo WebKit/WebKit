@@ -284,8 +284,8 @@ public:
     bool hitTestClipPath(const HitTestLocation&, const LayoutPoint& accumulatedOffset) const;
     bool hitTestBorderRadius(const HitTestLocation&, const LayoutPoint& accumulatedOffset) const;
 
-    virtual LayoutUnit minPreferredLogicalWidth() const;
-    virtual LayoutUnit maxPreferredLogicalWidth() const;
+    WEBCORE_EXPORT LayoutUnit minPreferredLogicalWidth() const;
+    WEBCORE_EXPORT LayoutUnit maxPreferredLogicalWidth() const;
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const = 0;
 
     std::optional<LayoutUnit> NODELETE overridingBorderBoxLogicalWidth() const;
