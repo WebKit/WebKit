@@ -291,9 +291,9 @@ void BuilderState::setUsesContainerUnits()
     m_style.setUsesContainerUnits();
 }
 
-double BuilderState::lookupCSSRandomBaseValue(const CSSCalc::RandomCachingKey& key, std::optional<CSS::Keyword::ElementShared> elementShared) const
+double BuilderState::lookupCSSRandomBaseValue(const CSSCalc::RandomCachingKey& key, std::optional<CSS::Keyword::ElementScoped> elementScoped) const
 {
-    if (!elementShared)
+    if (elementScoped)
         return element()->lookupCSSRandomBaseValue(style().pseudoElementIdentifier(), key);
 
     return document().lookupCSSRandomBaseValue(key);

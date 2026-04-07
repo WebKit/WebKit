@@ -669,10 +669,10 @@ static Random::SharingOptions::Auto makeRandomSharingAuto(ParserState& state)
 
 static std::optional<Random::SharingOptions> consumeOptionalRandomSharingOptions(CSSParserTokenRange& tokens, ParserState& state)
 {
-    // <random-value-sharing-options> = [ [ auto | <dashed-ident> ] || element-shared ]
+    // <random-value-sharing> = [ auto | <dashed-ident> ] || element-scoped | fixed <number [0,1]>
 
     std::optional<Variant<Random::SharingOptions::Auto, AtomString>> identifier;
-    std::optional<CSS::Keyword::ElementShared> elementShared;
+    std::optional<CSS::Keyword::ElementScoped> elementScoped;
 
     CSSParserTokenRangeGuard guard { tokens };
 
@@ -690,37 +690,37 @@ static std::optional<Random::SharingOptions> consumeOptionalRandomSharingOptions
         }
         return false;
     };
-    auto consumeElementShared = [&] -> bool {
-        if (elementShared)
+    auto consumeElementScoped = [&] -> bool {
+        if (elementScoped)
             return false;
-        if (tokens.peek().id() == CSSValueElementShared) {
+        if (tokens.peek().id() == CSSValueElementScoped) {
             tokens.consumeIncludingWhitespace();
-            elementShared = CSS::Keyword::ElementShared { };
+            elementScoped = CSS::Keyword::ElementScoped { };
             return true;
         }
         return false;
     };
 
     for (unsigned i = 0; i < 2; ++i) {
-        if (consumeIdentifier() || consumeElementShared())
+        if (consumeIdentifier() || consumeElementScoped())
             continue;
         break;
     }
 
-    if (!identifier && !elementShared)
+    if (!identifier && !elementScoped)
         return { };
 
     guard.commit();
 
     return Random::SharingOptions {
-        .identifier = identifier.value_or(makeRandomSharingAuto(state)),
-        .elementShared = elementShared
+        .identifier = identifier.value_or(AtomString { }),
+        .elementScoped = elementScoped
     };
 }
 
 static std::optional<Random::Sharing> consumeOptionalRandomSharing(CSSParserTokenRange& tokens, ParserState& state)
 {
-    // <random-value-sharing> = [ [ auto | <dashed-ident> ] || element-shared ] | fixed <number [0,1]>
+    // <random-value-sharing> = [ auto | <dashed-ident> ] || element-scoped | fixed <number [0,1]>
 
     if (tokens.peek().id() == CSSValueFixed) {
         if (auto fixed = consumeOptionalRandomSharingFixed(tokens, state))
@@ -762,7 +762,7 @@ static std::optional<TypedChild> consumeRandom(CSSParserTokenRange& tokens, int 
     } else {
         sharing = Random::SharingOptions {
             .identifier = makeRandomSharingAuto(state),
-            .elementShared = { },
+            .elementScoped = CSS::Keyword::ElementScoped { },
         };
     }
 

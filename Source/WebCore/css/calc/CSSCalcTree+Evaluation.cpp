@@ -211,12 +211,12 @@ std::optional<double> evaluate(const IndirectNode<Random>& root, const Evaluatio
 
     auto randomBaseValue = WTF::switchOn(root->sharing,
         [&](const Random::SharingOptions& sharingOptions) -> std::optional<double> {
-            if (!sharingOptions.elementShared.has_value() && !options.conversionData->styleBuilderState()->element())
+            if (!sharingOptions.elementScoped.has_value() && !options.conversionData->styleBuilderState()->element())
                 return { };
 
             return options.conversionData->protectedStyleBuilderState()->lookupCSSRandomBaseValue(
                 sharingOptions.identifier,
-                sharingOptions.elementShared
+                sharingOptions.elementScoped
             );
         },
         [&](const Random::SharingFixed& sharingFixed) -> std::optional<double> {

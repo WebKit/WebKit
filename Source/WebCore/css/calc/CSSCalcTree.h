@@ -747,7 +747,7 @@ struct Random {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Random);
     static constexpr auto id = CSSValueRandom;
 
-    // <random-value-sharing> = [ [ auto | <dashed-ident> ] || element-shared ] | fixed <number [0,1]>
+    // <random-value-sharing> = [ auto | <dashed-ident> ] || element-scoped | fixed <number [0,1]>
     struct SharingOptions {
         struct Auto {
             CSSPropertyID property;
@@ -756,7 +756,7 @@ struct Random {
             bool operator==(const Auto&) const = default;
         };
         Variant<Auto, AtomString> identifier;
-        std::optional<CSS::Keyword::ElementShared> elementShared;
+        std::optional<CSS::Keyword::ElementScoped> elementScoped;
 
         bool operator==(const SharingOptions&) const = default;
     };

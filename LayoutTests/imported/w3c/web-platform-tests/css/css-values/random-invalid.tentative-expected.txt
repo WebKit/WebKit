@@ -15,7 +15,6 @@ PASS e.style['width'] = "random(element-shared foo, 1px, 2px)" should not set th
 PASS e.style['width'] = "random(element-shared 1px, 2px)" should not set the property value
 PASS e.style['width'] = "random(1px, 2px, 1px, element-shared)" should not set the property value
 PASS e.style['width'] = "random(--foo --bar, 1px, 2px)" should not set the property value
-PASS e.style['width'] = "random(fixed random(1, 2), 1px, 2px)" should not set the property value
 PASS e.style['width'] = "random(fixed 0.5 element-shared, 1px, 2px)" should not set the property value
 PASS e.style['width'] = "random(fixed 0.5 auto, 1px, 2px)" should not set the property value
 PASS e.style['width'] = "random(fixed 0.5 --foo, 1px, 2px)" should not set the property value
@@ -23,5 +22,4 @@ PASS e.style['width'] = "random(fixed 0.5px, 1px, 2px)" should not set the prope
 PASS e.style['width'] = "random(fixed 0.5%, 1px, 2px)" should not set the property value
 PASS e.style['width'] = "random(fixed -1, 1px, 2px)" should not set the property value
 PASS e.style['width'] = "random(10deg, 20deg)" should not set the property value
-PASS e.style['width'] = "random(10px, 20%)" should not set the property value
 
