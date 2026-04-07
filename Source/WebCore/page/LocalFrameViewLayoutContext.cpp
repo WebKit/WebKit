@@ -760,6 +760,7 @@ bool LocalFrameViewLayoutContext::pushLayoutState(RenderBox& renderer, const Lay
 {
     // We push LayoutState even if layoutState is disabled because it stores layoutDelta too.
     auto* layoutState = this->layoutState();
+    CheckedPtr subtreeRootForDescendantScrollbarChanges = (layoutState && layoutState->isTrackingRendererForDescendantScrollbarChanges()) ? layoutState->subtreeScrollbarChangesState()->subtreeRoot.ptr() : nullptr;
     if (!layoutState || !needsFullRepaint() || layoutState->isPaginated() || renderer.enclosingFragmentedFlow()
         || layoutState->lineGrid() || (!renderer.style().lineGrid().isNone() && renderer.isRenderBlockFlow())) {
         m_layoutStateStack.append(makeUnique<RenderLayoutState>(m_layoutStateStack
@@ -768,7 +769,8 @@ bool LocalFrameViewLayoutContext::pushLayoutState(RenderBox& renderer, const Lay
             , pageHeight
             , pageHeightChanged
             , layoutState ? layoutState->lineClamp() : std::nullopt
-            , layoutState ? layoutState->legacyLineClamp() : std::nullopt));
+            , layoutState ? layoutState->legacyLineClamp() : std::nullopt
+            , subtreeRootForDescendantScrollbarChanges));
         return true;
     }
     return false;
@@ -781,14 +783,30 @@ void LocalFrameViewLayoutContext::popLayoutState()
 
     auto currentLineClamp = layoutState()->legacyLineClamp();
 
+    auto poppedSubtreeScrollbarChangesState = layoutState()->subtreeScrollbarChangesState();
+
     m_layoutStateStack.removeLast();
+
+    auto* layoutState = this->layoutState();
+    if (!layoutState)
+        return;
+
+    // It should be considered an error if a client explicitly created some state to track
+    // scrollbar changes for a subtree but did not handle the content that changed.
+    ASSERT_IMPLIES(!layoutState->subtreeScrollbarChangesState() && poppedSubtreeScrollbarChangesState, poppedSubtreeScrollbarChangesState->renderersWithScrollbarChange.isEmpty());
 
     if (currentLineClamp) {
         // Propagates the current line clamp state to the parent.
-        if (auto* layoutState = this->layoutState(); layoutState && layoutState->legacyLineClamp()) {
+        if (layoutState->legacyLineClamp()) {
             ASSERT(layoutState->legacyLineClamp()->maximumLineCount == currentLineClamp->maximumLineCount);
             layoutState->setLegacyLineClamp(currentLineClamp);
         }
+    }
+
+    if (layoutState->subtreeScrollbarChangesState() && !poppedSubtreeScrollbarChangesState->renderersWithScrollbarChange.isEmpty()) {
+        // Make sure we did not start tracking two different roots in the same subtree before we combine the descendants with changes.
+        ASSERT(layoutState->subtreeScrollbarChangesState()->subtreeRoot.ptr() == poppedSubtreeScrollbarChangesState->subtreeRoot.ptr());
+        layoutState->subtreeScrollbarChangesState()->renderersWithScrollbarChange.addAll(poppedSubtreeScrollbarChangesState->renderersWithScrollbarChange);
     }
 }
 

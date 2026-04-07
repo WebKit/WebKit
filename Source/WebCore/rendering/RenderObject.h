@@ -759,6 +759,7 @@ public:
     enum class HadSkippedLayout { No, Yes };
     void clearNeedsLayout(HadSkippedLayout = HadSkippedLayout::No);
     void setNeedsPreferredWidthsUpdate(MarkingBehavior = MarkContainingBlockChain);
+    void setNeedsPreferredWidthsUpdateUpTo(const RenderObject& ancestor);
     void clearNeedsPreferredWidthsUpdate() { m_stateBitfields.setFlag(StateFlag::PreferredLogicalWidthsNeedUpdate, { }); }
     
     inline void setNeedsLayoutAndPreferredWidthsUpdate();

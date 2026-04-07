@@ -165,6 +165,11 @@ public:
     AddResult add(const ValueType&) LIFETIME_BOUND;
     AddResult add(ValueType&&) LIFETIME_BOUND;
 
+    // Attempts to add a list of things to the set. Returns true if any of
+    // them are new to the set. Returns false if the set is unchanged.
+    template<typename ContainerType>
+    bool addAll(ContainerType&&);
+
     // Add the value to the end of the collection. If the value was already in
     // the list, it is moved to the end.
     AddResult appendOrMoveToLast(const ValueType&) LIFETIME_BOUND;
@@ -713,6 +718,16 @@ auto ListHashSet<T, U>::add(ValueType&& value) LIFETIME_BOUND -> AddResult
     if (result.isNewEntry)
         appendNode(result.iterator->get());
     return AddResult(makeIterator(result.iterator->get()), result.isNewEntry);
+}
+
+template<typename T, typename U>
+template<typename ContainerType>
+inline bool ListHashSet<T, U>::addAll(ContainerType&& container)
+{
+    bool changed = false;
+    for (auto&& item : std::forward<ContainerType>(container))
+        changed |= add(std::forward<decltype(item)>(item)).isNewEntry;
+    return changed;
 }
 
 template<typename T, typename U>

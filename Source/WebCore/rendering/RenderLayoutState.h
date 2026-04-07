@@ -27,6 +27,7 @@
 
 #include <WebCore/LayoutRect.h>
 #include <WebCore/LocalFrameViewLayoutContext.h>
+#include <WebCore/SubtreeScrollbarChangeState.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -68,7 +69,8 @@ public:
         , m_marginTrimBlockStart(false)
     {
     }
-    RenderLayoutState(const LocalFrameViewLayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged, std::optional<LineClamp>, std::optional<LegacyLineClamp>);
+    RenderLayoutState(const LocalFrameViewLayoutContext::LayoutStateStack&, RenderBox&, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged, std::optional<LineClamp>, std::optional<LegacyLineClamp>,
+        RenderBlock* subtreeRootForDescendantScrollbarChanges);
     explicit RenderLayoutState(RenderElement&);
 
     bool isPaginated() const { return m_isPaginated; }
@@ -90,6 +92,12 @@ public:
     LayoutSize pageOffset() const { return m_pageOffset; }
 
     bool needsBlockDirectionLocationSetBeforeLayout() const { return m_lineGrid || (m_isPaginated && m_pageLogicalHeight); }
+
+    bool isTrackingRendererForDescendantScrollbarChanges() const { return m_subtreeScrollbarChangesState.has_value(); }
+    void addDescendantForScrollbarChange(RenderBlock&);
+    void setSubtreeScrollbarChangeState(std::optional<SubtreeScrollbarChangesState> subtreeScrollbarChangeState) { m_subtreeScrollbarChangesState = subtreeScrollbarChangeState; }
+    std::optional<SubtreeScrollbarChangesState>& subtreeScrollbarChangesState() { return m_subtreeScrollbarChangesState; }
+    const std::optional<SubtreeScrollbarChangesState>& subtreeScrollbarChangesState() const { return m_subtreeScrollbarChangesState; }
 
 #if ASSERT_ENABLED
     RenderElement* renderer() const { return m_renderer; }
@@ -156,6 +164,8 @@ private:
     LayoutSize m_lineGridPaginationOrigin;
     std::optional<LineClamp> m_lineClamp;
     std::optional<LegacyLineClamp> m_legacyLineClamp;
+    std::optional<SubtreeScrollbarChangesState> m_subtreeScrollbarChangesState;
+
 #if ASSERT_ENABLED
     RenderElement* m_renderer { nullptr };
 #endif

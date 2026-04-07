@@ -69,7 +69,8 @@ RenderLayoutState::RenderLayoutState(RenderElement& renderer)
     }
 }
 
-RenderLayoutState::RenderLayoutState(const LocalFrameViewLayoutContext::LayoutStateStack& layoutStateStack, RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged, std::optional<LineClamp> lineClamp, std::optional<LegacyLineClamp> legacyLineClamp)
+RenderLayoutState::RenderLayoutState(const LocalFrameViewLayoutContext::LayoutStateStack& layoutStateStack, RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageLogicalHeight,
+    bool pageLogicalHeightChanged, std::optional<LineClamp> lineClamp, std::optional<LegacyLineClamp> legacyLineClamp, RenderBlock* rendererTrackedForDescendantScrollbarChanges)
     : m_clipped(false)
     , m_isPaginated(false)
     , m_pageLogicalHeightChanged(false)
@@ -80,6 +81,7 @@ RenderLayoutState::RenderLayoutState(const LocalFrameViewLayoutContext::LayoutSt
     , m_marginTrimBlockStart(false)
     , m_lineClamp(lineClamp)
     , m_legacyLineClamp(legacyLineClamp)
+    , m_subtreeScrollbarChangesState(rendererTrackedForDescendantScrollbarChanges ? std::make_optional<SubtreeScrollbarChangesState>({ *rendererTrackedForDescendantScrollbarChanges, { } }) : std::nullopt)
 #if ASSERT_ENABLED
     , m_renderer(&renderer)
 #endif
@@ -367,6 +369,12 @@ ContentVisibilityOverrideScope::~ContentVisibilityOverrideScope()
     m_layoutContext->setIsVisiblityHiddenIgnored(false);
     m_layoutContext->setIsVisiblityAutoIgnored(false);
     m_layoutContext->setIsRevealedWhenFoundIgnored(false);
+}
+
+void RenderLayoutState::addDescendantForScrollbarChange(RenderBlock& descendant)
+{
+    ASSERT(descendant.isDescendantOf(m_subtreeScrollbarChangesState->subtreeRoot.ptr()));
+    m_subtreeScrollbarChangesState->renderersWithScrollbarChange.add(descendant);
 }
 
 } // namespace WebCore
