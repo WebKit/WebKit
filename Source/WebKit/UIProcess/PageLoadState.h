@@ -206,6 +206,9 @@ public:
 
     bool committedHasInsecureContent() const { return m_committedState.hasInsecureContent; }
 
+    void setHadSafeBrowsingWarning(const Transaction::Token&);
+    bool committedHadSafeBrowsingWarning() const { return m_committedState.hadSafeBrowsingWarning; }
+
     // FIXME: We piggy-back off PageLoadState::Observer so that both WKWebView and WKObservablePageState
     // can listen for changes. Once we get rid of WKObservablePageState these could just be part of API::NavigationClient.
     void willChangeProcessIsResponsive();
@@ -241,6 +244,7 @@ private:
         bool canGoBack { false };
         bool canGoForward { false };
         bool isHTTPFallbackInProgress { false };
+        bool hadSafeBrowsingWarning { false };
 
         double estimatedProgress { 0 };
         bool networkRequestsInProgress { false };

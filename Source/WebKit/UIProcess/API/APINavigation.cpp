@@ -182,6 +182,8 @@ RefPtr<WebKit::BrowsingWarning> Navigation::safeBrowsingWarning()
 
 void Navigation::setSafeBrowsingWarning(RefPtr<WebKit::BrowsingWarning>&& safeBrowsingWarning)
 {
+    if (safeBrowsingWarning)
+        m_hadSafeBrowsingWarning = true;
     m_safeBrowsingWarning = WTF::move(safeBrowsingWarning);
 }
 

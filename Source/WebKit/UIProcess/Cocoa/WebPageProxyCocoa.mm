@@ -288,8 +288,10 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL& url, API::Navigation& navig
                 return;
 
             navigation->setSafeBrowsingCheckOngoing(redirectChainIndex, false);
-            if (error)
+            if (error) {
+                RELEASE_LOG(Loading, "beginSafeBrowsingCheck: error navigationID=%" PRIu64, navigation->navigationID().toUInt64());
                 return;
+            }
 
             RefPtr navigationState = NavigationState::fromWebPage(*protectedThis);
             auto historyDelegate = navigationState ? navigationState->historyDelegate() : nullptr;
@@ -300,6 +302,7 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL& url, API::Navigation& navig
 
             for (SSBServiceLookupResult *lookupResult in [result serviceLookupResults]) {
                 if (lookupResult.isPhishing || lookupResult.isMalware || lookupResult.isUnwantedSoftware) {
+                    RELEASE_LOG(Loading, "beginSafeBrowsingCheck: threat found navigationID=%" PRIu64 ", type=%s", navigation->navigationID().toUInt64(), lookupResult.isPhishing ? "phishing" : lookupResult.isMalware ? "malware" : "unwanted");
                     navigation->setSafeBrowsingWarning(BrowsingWarning::create(url, forMainFrameNavigation, BrowsingWarning::SafeBrowsingWarningData { lookupResult }));
                     break;
                 }
@@ -308,8 +311,25 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL& url, API::Navigation& navig
             if (!navigation->safeBrowsingCheckOngoing())
                 navigation->fireSafeBrowsingCheckCompletionCallbacks();
 
-            if (!navigation->safeBrowsingCheckOngoing() && navigation->safeBrowsingWarning() && navigation->safeBrowsingCheckTimedOut())
-                protectedThis->showBrowsingWarning(navigation->safeBrowsingWarning());
+            if (!navigation->safeBrowsingCheckOngoing() && navigation->safeBrowsingWarning()) {
+                RELEASE_LOG(Loading, "beginSafeBrowsingCheck: showing warning navigationID=%" PRIu64, navigation->navigationID().toUInt64());
+                if (navigation->safeBrowsingWarning()->forMainFrameNavigation()) {
+                    RefPtr safeBrowsingWarning = navigation->safeBrowsingWarning();
+                    navigation->setSafeBrowsingWarning(nullptr);
+                    if (safeBrowsingWarning->url().isValid()) {
+                        Ref protectedPageLoadState = protectedThis->pageLoadState();
+                        auto transaction = protectedPageLoadState->transaction();
+                        protectedPageLoadState->setHadSafeBrowsingWarning(transaction);
+                        protectedPageLoadState->setPendingAPIRequest(transaction, { navigation->navigationID(), safeBrowsingWarning->url().string() });
+                        protectedPageLoadState->commitChanges();
+                    }
+                    protectedThis->setSafeBrowsingWarningShownForNavigation(navigation->navigationID());
+                    protectedThis->showBrowsingWarning(WTF::move(safeBrowsingWarning));
+                }
+            } else if (!navigation->safeBrowsingWarning())
+                RELEASE_LOG(Loading, "beginSafeBrowsingCheck: no threat, completing navigationID=%" PRIu64, navigation->navigationID().toUInt64());
+            else
+                RELEASE_LOG(Loading, "beginSafeBrowsingCheck: check ongoing, deferring warning navigationID=%" PRIu64, navigation->navigationID().toUInt64());
         });
     };
 

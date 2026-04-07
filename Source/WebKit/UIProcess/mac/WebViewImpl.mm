@@ -1621,12 +1621,21 @@ void WebViewImpl::showWarningView(const BrowsingWarning& warning, CompletionHand
     if (!m_view)
         return completionHandler(ContinueUnsafeLoad::Yes);
 
+    if (m_warningView)
+        [std::exchange(m_warningView, nullptr) removeFromSuperview];
+
     WebCore::DiagnosticLoggingClient::ValueDictionary showedWarningDictionary;
     showedWarningDictionary.set("source"_s, "service"_s);
 
     m_page->logDiagnosticMessageWithValueDictionary("SafeBrowsing.ShowedWarning"_s, "Safari"_s, showedWarningDictionary, WebCore::ShouldSample::No);
 
-    m_warningView = adoptNS([[_WKWarningView alloc] initWithFrame:[m_view.get() bounds] browsingWarning:warning completionHandler:[weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)] (auto&& result) mutable {
+    auto navigationID = m_page->safeBrowsingWarningShownForNavigation();
+    m_warningView = adoptNS([[_WKWarningView alloc] initWithFrame:[m_view.get() bounds] browsingWarning:warning completionHandler:[weakThis = WeakPtr { *this }, navigationID, completionHandler = WTF::move(completionHandler)]<typename Result> (Result&& result) mutable {
+        if (!weakThis || weakThis->m_page->safeBrowsingWarningShownForNavigation() != navigationID) {
+            completionHandler(std::forward<Result>(result));
+            return;
+        }
+        bool forMainFrameNavigation = [weakThis->m_warningView forMainFrameNavigation];
         completionHandler(WTF::move(result));
         if (!weakThis)
             return;
@@ -1634,7 +1643,6 @@ void WebViewImpl::showWarningView(const BrowsingWarning& warning, CompletionHand
             [] (ContinueUnsafeLoad continueUnsafeLoad) { return continueUnsafeLoad == ContinueUnsafeLoad::Yes; },
             [] (const URL&) { return true; }
         );
-        bool forMainFrameNavigation = [weakThis->m_warningView forMainFrameNavigation];
 
         WebCore::DiagnosticLoggingClient::ValueDictionary dictionary;
         dictionary.set("source"_s, "service"_s);

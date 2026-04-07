@@ -2902,6 +2902,11 @@ public:
     friend class TextExtractionAssertionScope;
     UniqueRef<TextExtractionAssertionScope> createTextExtractionAssertionScope();
 
+#if HAVE(SAFE_BROWSING)
+    void setSafeBrowsingWarningShownForNavigation(WebCore::NavigationIdentifier id) { m_safeBrowsingWarningShownForNavigation = id; }
+    std::optional<WebCore::NavigationIdentifier> safeBrowsingWarningShownForNavigation() const { return m_safeBrowsingWarningShownForNavigation; }
+#endif
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -4055,6 +4060,10 @@ private:
     bool m_lastNavigationWasAppInitiated { true };
     bool m_isRunningModalJavaScriptDialog { false };
     bool m_isSuspended { false };
+
+#if HAVE(SAFE_BROWSING)
+    std::optional<WebCore::NavigationIdentifier> m_safeBrowsingWarningShownForNavigation;
+#endif
     bool m_isLockdownModeExplicitlySet { false };
 
     bool m_needsScrollGeometryUpdates { false };

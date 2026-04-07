@@ -193,6 +193,7 @@ public:
     void fireSafeBrowsingCheckCompletionCallbacks();
     void setSafeBrowsingCheckTimedOut() { m_safeBrowsingCheckTimedOut = true; }
     bool safeBrowsingCheckTimedOut() { return m_safeBrowsingCheckTimedOut; }
+    bool hadSafeBrowsingWarning() const { return m_hadSafeBrowsingWarning; }
     MonotonicTime requestStart() const { return m_requestStart; }
     void resetRequestStart();
 
@@ -234,6 +235,7 @@ private:
     bool m_requestIsFromClientInput : 1 { false };
     bool m_isFromLoadData : 1 { false };
     bool m_safeBrowsingCheckTimedOut : 1 { false };
+    bool m_hadSafeBrowsingWarning : 1 { false };
     bool m_hasStorageForCurrentSite : 1 { false };
     RefPtr<API::WebsitePolicies> m_websitePolicies;
     std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> m_originatorAdvancedPrivacyProtections;

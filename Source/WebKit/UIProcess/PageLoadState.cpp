@@ -268,6 +268,12 @@ void PageLoadState::clearPendingAPIRequest(const Transaction::Token& token)
     m_uncommittedState.pendingAPIRequest = { };
 }
 
+void PageLoadState::setHadSafeBrowsingWarning(const Transaction::Token& token)
+{
+    ASSERT_UNUSED(token, &token.m_pageLoadState == this);
+    m_uncommittedState.hadSafeBrowsingWarning = true;
+}
+
 void PageLoadState::didExplicitOpen(const Transaction::Token& token, const String& url)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
