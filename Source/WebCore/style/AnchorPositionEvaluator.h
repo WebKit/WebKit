@@ -33,6 +33,7 @@
 #include <WebCore/PseudoElementIdentifier.h>
 #include <WebCore/ResolvedScopedName.h>
 #include <WebCore/ScopedName.h>
+#include <WebCore/Styleable.h>
 #include <WebCore/WritingMode.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
@@ -155,8 +156,7 @@ struct AnchorPositionedState {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(AnchorPositionedState);
 };
 
-using AnchorPositionedKey = std::pair<RefPtr<const Element>, std::optional<PseudoElementIdentifier>>;
-using AnchorPositionedStates = HashMap<AnchorPositionedKey, UniqueRef<AnchorPositionedState>>;
+using AnchorPositionedStates = HashMap<WeakStyleable, UniqueRef<AnchorPositionedState>>;
 
 using AnchorsForAnchorName = HashMap<ResolvedScopedName, Vector<SingleThreadWeakRef<const RenderBoxModelObject>>>;
 
@@ -176,17 +176,12 @@ struct ResolvedAnchor {
 };
 
 struct AnchorPositionedToAnchorEntry {
-    // The pseudo-element identifier can be used to access the AnchorPositionedState struct
-    // of the current element in an AnchorPositionedStates map, in combination with the relevant
-    // Element object.
-    std::optional<PseudoElementIdentifier> pseudoElementIdentifier;
-
     Vector<ResolvedAnchor> anchors;
 
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(AnchorPositionedToAnchorEntry);
 };
 
-using AnchorPositionedToAnchorMap = WeakHashMap<Element, AnchorPositionedToAnchorEntry, WeakPtrImplWithEventTargetData>;
+using AnchorPositionedToAnchorMap = HashMap<WeakStyleable, AnchorPositionedToAnchorEntry>;
 using AnchorToAnchorPositionedMap = SingleThreadWeakHashMap<const RenderBoxModelObject, Vector<Ref<Element>>>;
 
 class AnchorPositionEvaluator {
@@ -223,13 +218,12 @@ public:
 
     static CheckedPtr<RenderBoxModelObject> defaultAnchorForBox(const RenderBox&);
 
-    static HashMap<AnchorPositionedKey, size_t> recordLastSuccessfulPositionOptions(const SingleThreadWeakHashSet<const RenderBox>& positionTryBoxes);
+    static HashMap<WeakStyleable, size_t> recordLastSuccessfulPositionOptions(const SingleThreadWeakHashSet<const RenderBox>& positionTryBoxes);
 
 private:
     static CheckedPtr<RenderBoxModelObject> findAnchorForAnchorFunctionAndAttemptResolution(BuilderState&, std::optional<ScopedName> elementName);
     static AnchorElements findAnchorsForAnchorPositionedElement(const Element&, const HashSet<ResolvedScopedName>& anchorNames, const AnchorsForAnchorName&);
     static RefPtr<const Element> anchorPositionedElementOrPseudoElement(BuilderState&);
-    static AnchorPositionedKey NODELETE keyForElementOrPseudoElement(const Element&);
     static void addAnchorFunctionScrollCompensatedAxis(RenderStyle&, const RenderBox& anchored, const RenderBoxModelObject& anchor, BoxAxis);
     static LayoutSize scrollOffsetFromAnchor(const RenderBoxModelObject& anchor, const RenderBox& anchored);
 };

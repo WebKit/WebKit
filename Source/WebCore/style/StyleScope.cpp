@@ -1143,19 +1143,17 @@ void Scope::updateAnchorPositioningStateAfterStyleResolution()
 
 std::optional<size_t> Scope::lastSuccessfulPositionOptionIndexFor(const Styleable& styleable)
 {
-    AnchorPositionedKey key { styleable.element, styleable.pseudoElementIdentifier };
-    return m_lastSuccessfulPositionOptionIndexes.getOptional(key);
+    return m_lastSuccessfulPositionOptionIndexes.getOptional(styleable);
 }
 
-void Scope::setLastSuccessfulPositionOptionIndexMap(HashMap<AnchorPositionedKey, size_t>&& map)
+void Scope::setLastSuccessfulPositionOptionIndexMap(HashMap<WeakStyleable, size_t>&& map)
 {
     m_lastSuccessfulPositionOptionIndexes = WTF::move(map);
 }
 
 void Scope::forgetLastSuccessfulPositionOptionIndex(const Styleable& styleable)
 {
-    AnchorPositionedKey key { styleable.element, styleable.pseudoElementIdentifier };
-    m_lastSuccessfulPositionOptionIndexes.remove(key);
+    m_lastSuccessfulPositionOptionIndexes.remove(styleable);
 }
 
 }

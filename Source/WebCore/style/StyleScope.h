@@ -177,7 +177,7 @@ public:
     void updateAnchorPositioningStateAfterStyleResolution();
 
     std::optional<size_t> lastSuccessfulPositionOptionIndexFor(const Styleable&);
-    void setLastSuccessfulPositionOptionIndexMap(HashMap<AnchorPositionedKey, size_t>&&);
+    void setLastSuccessfulPositionOptionIndexMap(HashMap<WeakStyleable, size_t>&&);
     void forgetLastSuccessfulPositionOptionIndex(const Styleable&);
 
     bool invalidateForAnchorDependencies(LayoutDependencyUpdateContext&);
@@ -282,7 +282,7 @@ private:
     SingleThreadWeakHashMap<const RenderBoxModelObject, AnchorPosition> m_anchorPositionsOnLastUpdate;
     // Stores the last successful position option for each anchor-positioned element.
     // This is recorded when ResizeObserver events are delivered, at Document::updateResizeObservations
-    HashMap<AnchorPositionedKey, size_t> m_lastSuccessfulPositionOptionIndexes;
+    HashMap<WeakStyleable, size_t> m_lastSuccessfulPositionOptionIndexes;
 
     std::unique_ptr<MatchResultCache> m_matchResultCache;
 
