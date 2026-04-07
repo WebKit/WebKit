@@ -4055,8 +4055,6 @@ imported/w3c/web-platform-tests/html/browsers/windows/auxiliary-browsing-context
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_escaping-2.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_nonescaping-2.html [ Skip ]
 
-imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-conic.html [ ImageOnlyFailure ]
-
 webkit.org/b/187773 http/tests/webAPIStatistics [ Skip ]
 
 # This is fallout from turning Web Animations on.
@@ -4331,7 +4329,6 @@ imported/w3c/web-platform-tests/css/css-images/gradient/gradient-eval-predefined
 imported/w3c/web-platform-tests/css/css-images/gradient/gradient-infinity-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/gradient/gradient-infinity-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/gradient/gradient-infinity-003.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/gradient/gradient-single-stop-none-interpolation.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-border-image.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-exif-png-3.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none-cross-origin-canvas.html [ ImageOnlyFailure ]
@@ -6708,7 +6705,6 @@ webkit.org/b/274091 imported/w3c/web-platform-tests/mediacapture-streams/idlharn
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-fixed-inside-transform-1.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-local-hidden.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-image-gradient-currentcolor-visited.html [ ImageOnlyFailure ]
-webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-image-table-cells-straddling-no-repeat.html
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-margin-iframe-root.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-margin-transformed-root.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-margin-will-change-root.html [ ImageOnlyFailure ]
@@ -6722,14 +6718,9 @@ webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/box-shad
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-radius-001.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-inline-fragmentation-001.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow/slice-inline-fragmentation-002.html [ ImageOnlyFailure ]
-webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-fixed-block-002.html [ ImageOnlyFailure ]
-webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-fixed-inline-002.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-fixed-inline-scrolled.html [ ImageOnlyFailure ]
-webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-local-block-002.html [ ImageOnlyFailure ]
-webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-local-inline-002.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-animated-text.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-gradient-interpolation-003.html [ ImageOnlyFailure ]
-webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-rounded-image-clip-002.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-borders/border-radius-greater-than-width.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-borders/tentative/border-radius-side-shorthands/border-radius-side-shorthands-001.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-borders/tentative/border-radius-side-shorthands/border-radius-side-shorthands-002.html [ ImageOnlyFailure ]

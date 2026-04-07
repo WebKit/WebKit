@@ -268,7 +268,6 @@ void Gradient::fill(GraphicsContext& context, const FloatRect& rect)
 
     ASSERT(context.hasPlatformContext());
     auto& platformContext = *context.platformContext();
-
     platformContext.save();
     Cairo::fillRect(platformContext, rect, pattern.get());
     platformContext.restore();
