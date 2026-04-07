@@ -128,8 +128,14 @@ IDBGetResult MemoryIndex::getResultForKeyRange(IndexedDB::IndexRecordType type, 
     if (!keyValue)
         return { };
 
+    if (type == IndexedDB::IndexRecordType::Key)
+        return IDBGetResult(*keyValue);
+
     RefPtr objectStore = m_objectStore.get();
-    return type == IndexedDB::IndexRecordType::Key ? IDBGetResult(*keyValue) : IDBGetResult(*keyValue, objectStore->valueForKeyRange(*keyValue), objectStore->info().keyPath());
+    if (!objectStore)
+        return { };
+
+    return IDBGetResult(*keyValue, objectStore->valueForKeyRange(*keyValue), objectStore->info().keyPath());
 }
 
 uint64_t MemoryIndex::countForKeyRange(const IDBKeyRangeData& inRange)
@@ -160,6 +166,11 @@ void MemoryIndex::getAllRecords(const IDBKeyRangeData& keyRangeData, std::option
     LOG(IndexedDB, "MemoryIndex::getAllRecords");
 
     RefPtr objectStore = m_objectStore.get();
+    if (!objectStore) {
+        result = { };
+        return;
+    }
+
     result = { type, objectStore->info().keyPath() };
 
     if (!m_records)
