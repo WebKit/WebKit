@@ -19,7 +19,6 @@ PASS HTMLElement includes ElementCSSInlineStyle: member names are unique
 PASS SVGElement includes ElementCSSInlineStyle: member names are unique
 PASS MathMLElement includes ElementCSSInlineStyle: member names are unique
 PASS SVGElement includes GlobalEventHandlers: member names are unique
-PASS SVGElement includes SVGElementInstance: member names are unique
 PASS SVGElement includes HTMLOrSVGElement: member names are unique
 PASS SVGStyleElement includes LinkStyle: member names are unique
 PASS HTMLElement includes GlobalEventHandlers: member names are unique

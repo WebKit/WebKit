@@ -22,7 +22,6 @@ PASS SVGFESpecularLightingElement includes SVGFilterPrimitiveStandardAttributes:
 PASS SVGFETileElement includes SVGFilterPrimitiveStandardAttributes: member names are unique
 PASS SVGFETurbulenceElement includes SVGFilterPrimitiveStandardAttributes: member names are unique
 PASS SVGElement includes GlobalEventHandlers: member names are unique
-PASS SVGElement includes SVGElementInstance: member names are unique
 PASS SVGElement includes HTMLOrSVGElement: member names are unique
 PASS Element includes ParentNode: member names are unique
 PASS Element includes NonDocumentTypeChildNode: member names are unique
