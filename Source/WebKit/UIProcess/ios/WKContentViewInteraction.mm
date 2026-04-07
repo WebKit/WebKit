@@ -2466,7 +2466,13 @@ static WebCore::FloatQuad inflateQuad(const WebCore::FloatQuad& quad, float infl
 #if ENABLE(TOUCH_EVENTS)
 - (void)_touchEvent:(const WebKit::WebTouchEvent&)touchEvent preventsNativeGestures:(BOOL)preventsNativeGesture
 {
-    if (!preventsNativeGesture || ![_touchEventGestureRecognizer isDispatchingTouchEvents])
+    if (!preventsNativeGesture)
+        return;
+
+    _preventsPanningInXAxis = YES;
+    _preventsPanningInYAxis = YES;
+
+    if (![_touchEventGestureRecognizer isDispatchingTouchEvents])
         return;
 
     _longPressCanClick = NO;

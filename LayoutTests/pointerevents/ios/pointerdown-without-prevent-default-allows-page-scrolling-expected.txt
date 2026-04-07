@@ -1,0 +1,3 @@
+
+PASS Page scrolling is not blocked when pointerdown does not call preventDefault() with passive touch listeners.
+
