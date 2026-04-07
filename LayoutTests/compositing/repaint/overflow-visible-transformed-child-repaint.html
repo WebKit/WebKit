@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        #container {
+            width: 200px;
+            height: 200px;
+            will-change: transform;
+            /* overflow: visible is the default */
+            margin: 100px;
+            background: gray;
+        }
+        .child {
+            width: 200px;
+            height: 40px;
+            background: blue;
+            transform-origin: right top;
+        }
+        .child:nth-child(1) { rotate: 0deg; }
+        .child:nth-child(2) { rotate: -15deg; }
+        .child:nth-child(3) { rotate: -30deg; }
+        .child:nth-child(4) { rotate: -45deg; }
+        .child:nth-child(5) { rotate: -60deg; }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                // Force compositing update before making changes.
+                if (window.internals)
+                    window.internals.layerTreeAsText(document);
+
+                document.body.offsetTop;
+
+                if (window.internals)
+                    window.internals.startTrackingRepaints();
+
+                // Change the container's background. This triggers repaint() on
+                // the container renderer, whose clippedOverflowRectForRepaint()
+                // is just the border box — it does not include transform overflow
+                // from the rotated children. The fix in setContentsNeedDisplayInRect
+                // expands the dirty rect to the full compositedBounds so the
+                // overflow region where rotated children extend is invalidated.
+                document.getElementById('container').style.backgroundColor = 'lightblue';
+
+                if (window.internals)
+                    document.getElementById('layers').textContent = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div id="container">
+        <div class="child"></div>
+        <div class="child"></div>
+        <div class="child"></div>
+        <div class="child"></div>
+        <div class="child"></div>
+    </div>
+<pre id="layers"></pre>
+</body>
+</html>

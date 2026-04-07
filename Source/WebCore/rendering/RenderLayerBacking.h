@@ -498,6 +498,7 @@ private:
     bool m_needsEventRegionUpdate { true };
 #endif
     bool m_shouldPaintUsingCompositeCopy { false };
+    bool m_hasDescendantNonCompositedTransformOverflow { false };
 };
 
 enum CanvasCompositingStrategy {

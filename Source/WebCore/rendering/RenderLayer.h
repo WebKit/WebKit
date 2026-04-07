@@ -912,6 +912,7 @@ public:
     inline bool canPaintTransparencyWithSetOpacity() const;
 
     bool paintsWithTransform(OptionSet<PaintBehavior>) const;
+    bool hasNonCompositedDescendantWithTransform() const;
     bool shouldPaintMask(OptionSet<PaintBehavior>, OptionSet<PaintLayerFlag>) const;
     bool shouldApplyClipPath(OptionSet<PaintBehavior>, OptionSet<PaintLayerFlag>) const;
 

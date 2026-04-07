@@ -5804,6 +5804,26 @@ bool RenderLayer::paintsWithTransform(OptionSet<PaintBehavior> paintBehavior) co
     return transform() && ((paintBehavior & PaintBehavior::FlattenCompositingLayers) || paintsToWindow);
 }
 
+bool RenderLayer::hasNonCompositedDescendantWithTransform() const
+{
+    auto checkLayers = [](auto layerList, auto& self) {
+        for (auto* child : layerList) {
+            if (child->isComposited() || child->paintsIntoProvidedBacking())
+                continue;
+            if (child->paintsWithTransform(PaintBehavior::Normal))
+                return true;
+            if (self(child->negativeZOrderLayers(), self)
+                || self(child->normalFlowLayers(), self)
+                || self(child->positiveZOrderLayers(), self))
+                return true;
+        }
+        return false;
+    };
+    return checkLayers(negativeZOrderLayers(), checkLayers)
+        || checkLayers(normalFlowLayers(), checkLayers)
+        || checkLayers(positiveZOrderLayers(), checkLayers);
+}
+
 bool RenderLayer::shouldPaintMask(OptionSet<PaintBehavior> paintBehavior, OptionSet<PaintLayerFlag> paintFlags) const
 {
     if (!renderer().hasMask())

@@ -1072,6 +1072,10 @@ bool RenderLayerBacking::updateCompositedBounds()
     } else
         m_artificiallyInflatedBounds = false;
 
+    m_hasDescendantNonCompositedTransformOverflow = !m_owningLayer.isRenderViewLayer()
+        && !renderer().hasNonVisibleOverflow()
+        && m_owningLayer.hasNonCompositedDescendantWithTransform();
+
     return setCompositedBounds(layerBounds);
 }
 
@@ -3786,6 +3790,10 @@ void RenderLayerBacking::setContentsNeedDisplayInRect(const LayoutRect& r, Graph
     m_owningLayer.invalidateEventRegion(RenderLayer::EventRegionInvalidationReason::Paint);
 
     FloatRect pixelSnappedRectForPainting = snapRectToDevicePixelsIfNeeded(r, renderer());
+
+    if (m_hasDescendantNonCompositedTransformOverflow)
+        pixelSnappedRectForPainting.unite(snapRectToDevicePixelsIfNeeded(compositedBounds(), renderer()));
+
     CheckedRef frameView = renderer().view().frameView();
     if (m_isMainFrameRenderViewLayer && frameView->isTrackingRepaints())
         frameView->addTrackedRepaintRect(pixelSnappedRectForPainting);
