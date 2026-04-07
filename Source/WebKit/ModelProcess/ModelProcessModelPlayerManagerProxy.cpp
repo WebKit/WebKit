@@ -31,6 +31,8 @@
 #include "ModelProcessModelPlayerProxy.h"
 #include <wtf/TZoneMallocInlines.h>
 
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_modelConnectionToWebProcess->connection())
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -67,7 +69,7 @@ void ModelProcessModelPlayerManagerProxy::createModelPlayer(WebCore::ModelPlayer
 {
     ASSERT(RunLoop::isMain());
     ASSERT(m_modelConnectionToWebProcess);
-    ASSERT(!m_proxies.contains(identifier));
+    MESSAGE_CHECK(!m_proxies.contains(identifier));
 
     auto proxy = ModelProcessModelPlayerProxy::create(*this, identifier, m_modelConnectionToWebProcess->protectedConnection(), m_modelConnectionToWebProcess->attributionTaskID(), m_modelConnectionToWebProcess->debugEntityMemoryLimit());
     m_proxies.add(identifier, WTF::move(proxy));
@@ -76,6 +78,7 @@ void ModelProcessModelPlayerManagerProxy::createModelPlayer(WebCore::ModelPlayer
 void ModelProcessModelPlayerManagerProxy::deleteModelPlayer(WebCore::ModelPlayerIdentifier identifier)
 {
     ASSERT(RunLoop::isMain());
+    MESSAGE_CHECK(m_proxies.contains(identifier));
 
     if (auto proxy = m_proxies.take(identifier))
         proxy->invalidate();
@@ -87,6 +90,7 @@ void ModelProcessModelPlayerManagerProxy::deleteModelPlayer(WebCore::ModelPlayer
 void ModelProcessModelPlayerManagerProxy::unloadModelPlayer(WebCore::ModelPlayerIdentifier identifier)
 {
     ASSERT(RunLoop::isMain());
+    MESSAGE_CHECK(m_proxies.contains(identifier));
 
     deleteModelPlayer(identifier);
     m_modelConnectionToWebProcess->didUnloadModelPlayer(identifier);
@@ -105,5 +109,7 @@ void ModelProcessModelPlayerManagerProxy::didReceivePlayerMessage(IPC::Connectio
 }
 
 } // namespace WebKit
+
+#undef MESSAGE_CHECK
 
 #endif // ENABLE(MODEL_PROCESS)
