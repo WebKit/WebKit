@@ -27,6 +27,8 @@
 #include <WebCore/AbstractRange.h>
 #include <WebCore/RangeBoundaryPoint.h>
 #include <wtf/CheckedRef.h>
+#include <wtf/Lock.h>
+#include <wtf/Locker.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -131,7 +133,7 @@ public:
     String debugDescription() const;
 #endif
 
-    void visitNodesConcurrently(JSC::AbstractSlotVisitor&) const;
+    void visitNodesInGCThread(JSC::AbstractSlotVisitor&) const;
 
     enum ActionType : uint8_t { Delete, Extract, Clone };
 
@@ -149,6 +151,7 @@ private:
     Ref<Document> m_ownerDocument;
     RangeBoundaryPoint m_start;
     RangeBoundaryPoint m_end;
+    mutable Lock m_boundaryPointLock;
     bool m_isAssociatedWithSelection { false };
     bool m_didChangeForHighlight { false };
     bool m_isAssociatedWithHighlight { false };
