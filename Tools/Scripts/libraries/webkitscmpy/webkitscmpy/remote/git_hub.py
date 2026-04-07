@@ -30,7 +30,8 @@ from collections import defaultdict
 from datetime import datetime
 from webkitbugspy import User
 from webkitbugspy.github import Tracker
-from webkitcorepy import decorators, string_utils, CallByNeed
+import webkitcorepy.credentials
+from webkitcorepy import decorators, run, string_utils, CallByNeed
 from webkitscmpy import Commit, Contributor, PullRequest
 from webkitscmpy.remote.scm import Scm
 from xml.dom import minidom
@@ -513,6 +514,21 @@ class GitHub(Scm):
         self.tracker = Tracker(url, users=users, session=self.session)
 
     def credentials(self, required=True, validate=False, save_in_keyring=None):
+        if not self._cached_credentials and run(
+            ['git', 'config', '--get', 'webkitscmpy.use-gh-cli'], capture_output=True, encoding='utf-8',
+        ).stdout.strip() == 'true':
+            try:
+                token = run(['gh', 'auth', 'token', '--hostname', self.domain], capture_output=True, encoding='utf-8').stdout.strip()
+                login = run(['gh', 'api', 'user', '--hostname', self.domain, '--jq', '.login'], capture_output=True, encoding='utf-8').stdout.strip() if token else None
+                if token and login:
+                    self._cached_credentials = (login, token)
+                    sys.modules['webkitcorepy.credentials']._cache[self.domain.replace('.', '_').upper()] = self._cached_credentials
+                else:
+                    sys.stderr.write("'webkitscmpy.use-gh-cli' is set, but failed to get credentials from gh CLI for {}\n".format(self.domain))
+            except FileNotFoundError:
+                sys.stderr.write("'webkitscmpy.use-gh-cli' is set, but 'gh' was not found in PATH\n")
+        if self._cached_credentials:
+            return self._cached_credentials
         return self.tracker.credentials(required=required, validate=validate, save_in_keyring=save_in_keyring)
 
     @property
