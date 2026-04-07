@@ -28,6 +28,7 @@
 
 #import "ColorSpaceCG.h"
 #import "IOSurface.h"
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 #import "ImageUtilities.h"
 #import "Logging.h"
 #import "RealtimeVideoUtilities.h"

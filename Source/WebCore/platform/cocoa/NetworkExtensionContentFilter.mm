@@ -40,6 +40,7 @@
 #import <wtf/CrossThreadCopier.h>
 #import <wtf/RunLoop.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/URL.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>

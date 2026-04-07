@@ -27,6 +27,7 @@
 
 #include "MediaPromiseTypes.h"
 #include "ProcessIdentity.h"
+#include <CoreMedia/CMFormatDescription.h>
 #include <CoreMedia/CMTime.h>
 #include <atomic>
 #include <wtf/Expected.h>

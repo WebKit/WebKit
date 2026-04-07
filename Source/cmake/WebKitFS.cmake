@@ -46,6 +46,7 @@ set(DumpRenderTree_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/DumpRenderTree/Deriv
 set(WebKitTestRunner_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/WebKitTestRunner/DerivedSources")
 
 set(bmalloc_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/bmalloc/Headers")
+set(bmalloc_PRIVATE_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/bmalloc/PrivateHeaders")
 set(ANGLE_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/ANGLE/Headers")
 set(Skia_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/Skia/Headers")
 set(WTF_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/WTF/Headers")

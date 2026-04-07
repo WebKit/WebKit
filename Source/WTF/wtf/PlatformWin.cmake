@@ -24,6 +24,8 @@ list(APPEND WTF_SOURCES
 )
 
 list(APPEND WTF_PUBLIC_HEADERS
+    PlatformEnableWin.h
+
     text/win/WCharStringExtras.h
 
     win/DbgHelperWin.h

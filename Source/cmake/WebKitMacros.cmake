@@ -534,7 +534,7 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         # Other options needed by Swift for C++ interop, including the location
         # of the modulemap and hader for WebKit's internal "APIs" which we
         # make available from C++ to Swift.
-        list(APPEND _swift_options "-cxx-interoperability-mode=default" "-Xcc" "-std=c++2b" "-I${_interop_module_path}")
+        list(APPEND _swift_options "-cxx-interoperability-mode=default" "-Xcc" "-std=c++2b" "-explicit-module-build" "-Xcc" "-I${_interop_module_path}" "-enable-upcoming-feature" "InternalImportsByDefault")
         # We'll use these options both for mainstream cmake invocations of swiftc (here)
         # and for our own invocation to output an interoperability .h file (later)
         list(TRANSFORM _swift_options PREPEND "$<$<COMPILE_LANGUAGE:Swift>:" OUTPUT_VARIABLE _swift_only_options)
@@ -564,6 +564,16 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         cmake_path(APPEND _header_base_path ${_output_header} OUTPUT_VARIABLE _header_path)
         cmake_path(APPEND CMAKE_CURRENT_BINARY_DIR "${_target}.emit-module.d" OUTPUT_VARIABLE _depfile_path)
 
+        # Allow targets to override include directories for Swift (e.g. to exclude
+        # directories containing conflicting module.modulemap files).
+        if (DEFINED ${_target}_SWIFT_INCLUDE_DIRECTORIES AND NOT "${${_target}_SWIFT_INCLUDE_DIRECTORIES}" STREQUAL "")
+            list(TRANSFORM ${_target}_SWIFT_INCLUDE_DIRECTORIES PREPEND "-I" OUTPUT_VARIABLE _swift_include_dirs)
+        elseif (NOT DEFINED ${_target}_SWIFT_INCLUDE_DIRECTORIES)
+            set(_swift_include_dirs $<LIST:TRANSFORM,$<TARGET_PROPERTY:${_target},INCLUDE_DIRECTORIES>,PREPEND,-I>)
+        else ()
+            set(_swift_include_dirs "")
+        endif ()
+
         add_custom_command(
             OUTPUT ${_header_path}
             DEPENDS ${_swift_sources}
@@ -571,9 +581,11 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
             COMMAND
                 ${ORIGINAL_Swift_COMPILER} -typecheck
                 ${_swift_options}
-                $<LIST:TRANSFORM,$<TARGET_PROPERTY:${_target},INCLUDE_DIRECTORIES>,PREPEND,-I>
+                ${${_target}_SWIFT_EXTRA_OPTIONS}
+                -sdk ${CMAKE_OSX_SYSROOT}
+                ${_swift_include_dirs}
                 ${_swift_sources}
-                -module-name WebKit
+                -module-name ${_module_name}
                 -emit-clang-header-path ${_header_path}
                 -emit-dependencies
             DEPFILE ${_depfile_path}

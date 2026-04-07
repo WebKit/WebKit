@@ -2819,7 +2819,7 @@ ${WebCore_DERIVED_SOURCES_DIR}/RenderStyleProperties.h ${WebCore_DERIVED_SOURCES
     DEPENDS ${WebCore_CSS_PROPERTY_NAMES}
     WORKING_DIRECTORY ${WebCore_DERIVED_SOURCES_DIR}
     COMMAND ${PERL_EXECUTABLE} -ne "print" ${WebCore_CSS_PROPERTY_NAMES} > ${WebCore_DERIVED_SOURCES_DIR}/CSSProperties.json
-    COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/css/scripts/process-css-properties.py --defines "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}" --gperf-executable "${GPERF_EXECUTABLE}"
+    COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/css/scripts/process-css-properties.py --defines "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR} ${CSS_VALUE_PLATFORM_DEFINES}" --gperf-executable "${GPERF_EXECUTABLE}"
     VERBATIM)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyNames.cpp)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyParsing.cpp)
@@ -3109,7 +3109,16 @@ list(APPEND WebCoreTestSupport_INTERFACE_DEPENDENCIES WebCore_CopyPrivateHeaders
 WEBKIT_FRAMEWORK(WebCore)
 
 if (APPLE)
-    set_target_properties(WebCore PROPERTIES LINK_FLAGS "-weak-lxslt -sub_library libobjc -umbrella WebKit -allowable_client WebCoreTestSupport -allowable_client WebKit2 -allowable_client WebKitLegacy")
+    # Use target_link_options with LINKER: so CMake translates these for
+    # whichever linker driver is used (clang or swiftc).
+    target_link_options(WebCore PRIVATE
+        "LINKER:-sub_library,libobjc"
+        "LINKER:-umbrella,WebKit"
+        "LINKER:-allowable_client,WebCoreTestSupport"
+        "LINKER:-allowable_client,WebKit2"
+        "LINKER:-allowable_client,WebKitLegacy"
+        ${WebCore_MAC_LINK_OPTIONS}
+    )
 endif ()
 
 # The -ftree-sra optimization (implicit with -O2) causes crashes when

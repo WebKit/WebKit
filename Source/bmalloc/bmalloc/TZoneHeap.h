@@ -36,6 +36,7 @@
 #endif
 
 #include "Algorithm.h"
+#include "BAssert.h"
 #include "BInline.h"
 #include "CompactAllocationMode.h"
 

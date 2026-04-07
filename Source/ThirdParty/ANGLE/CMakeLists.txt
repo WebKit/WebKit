@@ -1,6 +1,7 @@
 set_property(DIRECTORY . PROPERTY FOLDER "ANGLE")
 
 if (APPLE)
+    set(is_apple TRUE)
     set(is_mac TRUE)
 elseif (WIN32)
     set(is_win TRUE)

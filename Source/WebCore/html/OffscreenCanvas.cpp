@@ -63,7 +63,7 @@
 #endif // ENABLE(WEBGL)
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
-#include "LocalDomWindow.h"
+#include "LocalDOMWindow.h"
 #include "Navigator.h"
 #endif
 

@@ -11,6 +11,7 @@ list(APPEND WTF_LIBRARIES
 
 list(APPEND WTF_SOURCES
     BlockObjCExceptions.mm
+    ObjCRuntimeExtras.mm
     ProcessPrivilege.cpp
     TranslatedProcess.cpp
 
@@ -33,7 +34,7 @@ list(APPEND WTF_SOURCES
     cocoa/MemoryPressureHandlerCocoa.mm
     cocoa/NSURLExtras.mm
     cocoa/ResourceUsageCocoa.cpp
-    cocoa/RuntimeApplicationChecksCocoa.cpp
+    cocoa/RuntimeApplicationChecksCocoa.mm
     cocoa/SchedulePairCocoa.mm
     cocoa/SystemTracingCocoa.cpp
     cocoa/URLCocoa.mm
@@ -62,40 +63,64 @@ list(APPEND WTF_SOURCES
     text/cocoa/StringImplCocoa.mm
     text/cocoa/StringViewCocoa.mm
     text/cocoa/TextBreakIteratorInternalICUCocoa.cpp
+    text/cocoa/TextStreamCocoa.mm
 )
 
 list(APPEND WTF_PUBLIC_HEADERS
+    MachSendRightAnnotated.h
+    PlatformEnableCocoa.h
+    SequenceLocked.h
+    SwiftCXXThunk.h
+    module.modulemap
+
+    posix/SocketPOSIX.h
+
     cf/CFTypeTraits.h
     cf/CFURLExtras.h
     cf/NotificationCenterCF.h
     cf/TypeCastsCF.h
     cf/VectorCF.h
 
+    cocoa/AuditToken.h
     cocoa/CrashReporter.h
     cocoa/Entitlements.h
+    cocoa/NSStringExtras.h
     cocoa/NSURLExtras.h
     cocoa/RuntimeApplicationChecksCocoa.h
     cocoa/SoftLinking.h
+    cocoa/SpanCocoa.h
     cocoa/TollFreeBridging.h
     cocoa/TypeCastsCocoa.h
     cocoa/VectorCocoa.h
 
+    darwin/LibraryPathDiagnostics.h
     darwin/OSLogPrintStream.h
     darwin/WeakLinking.h
     darwin/XPCExtras.h
+    darwin/XPCObjectPtr.h
+
+    ios/WebCoreThread.h
 
     spi/cf/CFBundleSPI.h
+    spi/cf/CFPrivSPI.h
+    spi/cf/CFRunLoopSPI.h
     spi/cf/CFStringSPI.h
 
+    spi/cocoa/BOMSPI.h
     spi/cocoa/CFXPCBridgeSPI.h
     spi/cocoa/CrashReporterClientSPI.h
+    spi/cocoa/IOReturnSPI.h
     spi/cocoa/IOSurfaceSPI.h
+    spi/cocoa/IOTypesSPI.h
     spi/cocoa/MachVMSPI.h
     spi/cocoa/NSLocaleSPI.h
     spi/cocoa/NSObjCRuntimeSPI.h
+    spi/cocoa/OSLogSPI.h
     spi/cocoa/SecuritySPI.h
+    spi/cocoa/XTSPI.h
     spi/cocoa/objcSPI.h
 
+    spi/darwin/DispatchSPI.h
     spi/darwin/ReasonSPI.h
     spi/darwin/CodeSignSPI.h
     spi/darwin/DataVaultSPI.h
@@ -110,6 +135,11 @@ list(APPEND WTF_PUBLIC_HEADERS
 
     text/cf/StringConcatenateCF.h
     text/cf/TextBreakIteratorCF.h
+    text/cf/TextBreakIteratorCFCharacterCluster.h
+    text/cf/TextBreakIteratorCFStringTokenizer.h
+
+    text/cocoa/ContextualizedCFString.h
+    text/cocoa/ContextualizedNSString.h
 )
 
 file(COPY mac/MachExceptions.defs DESTINATION ${WTF_DERIVED_SOURCES_DIR})

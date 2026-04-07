@@ -30,6 +30,7 @@
 
 #import "ColorSpaceCG.h"
 #import "FEMerge.h"
+#import "Filter.h"
 #import "Logging.h"
 #import <CoreImage/CIFilterBuiltins.h>
 #import <CoreImage/CoreImage.h>

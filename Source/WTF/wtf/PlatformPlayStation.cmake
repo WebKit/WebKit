@@ -22,6 +22,8 @@ list(APPEND WTF_SOURCES
 )
 
 list(APPEND WTF_PUBLIC_HEADERS
+    PlatformEnablePlayStation.h
+
     unix/UnixFileDescriptor.h
 )
 

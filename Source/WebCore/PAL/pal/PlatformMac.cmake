@@ -1,9 +1,12 @@
 list(APPEND PAL_PUBLIC_HEADERS
+    module.modulemap
+
     avfoundation/MediaTimeAVFoundation.h
     avfoundation/OutputContext.h
     avfoundation/OutputDevice.h
 
     cf/AudioToolboxSoftLink.h
+    cf/CoreAudioExtras.h
     cf/CoreMediaSoftLink.h
     cf/CoreTextSoftLink.h
     cf/OTSVGTable.h
@@ -11,14 +14,19 @@ list(APPEND PAL_PUBLIC_HEADERS
 
     cg/CoreGraphicsSoftLink.h
 
-    cocoa/AppSSOSoftLink.h
+    cocoa/AVFAudioSoftLink.h
     cocoa/AVFoundationSoftLink.h
+    cocoa/AccessibilitySoftLink.h
+    cocoa/AppSSOSoftLink.h
+    cocoa/ContactsSoftLink.h
     cocoa/CoreMLSoftLink.h
     cocoa/CoreMaterialSoftLink.h
     cocoa/CoreTelephonySoftLink.h
     cocoa/CryptoKitPrivateSoftLink.h
     cocoa/DataDetectorsCoreSoftLink.h
+    cocoa/EnhancedSecurityCocoa.h
     cocoa/LinkPresentationSoftLink.h
+    cocoa/LockdownModeCocoa.h
     cocoa/MediaToolboxSoftLink.h
     cocoa/NaturalLanguageSoftLink.h
     cocoa/OpenGLSoftLinkCocoa.h
@@ -31,14 +39,32 @@ list(APPEND PAL_PUBLIC_HEADERS
     cocoa/UsageTrackingSoftLink.h
     cocoa/VisionKitCoreSoftLink.h
     cocoa/VisionSoftLink.h
+    cocoa/WebContentAnalysisSoftLink.h
+    cocoa/WebContentRestrictionsSoftLink.h
     cocoa/WebPrivacySoftLink.h
     cocoa/WritingToolsUISoftLink.h
 
+    crypto/CryptoAlgorithmAESGCMCocoa.h
+    crypto/CryptoAlgorithmAESKWCocoaBridging.h
+    crypto/CryptoAlgorithmEd25519CocoaBridging.h
+    crypto/CryptoAlgorithmHKDFCocoaBridging.h
+    crypto/CryptoAlgorithmHMACCocoaBridging.h
+    crypto/CryptoAlgorithmX25519CocoaBridging.h
+    crypto/CryptoEDKeyBridging.h
+    crypto/PlatformECKey.h
+
+    graphics/cocoa/WebAVContentKeyGrouping.h
+    graphics/cocoa/WebAVContentKeyReportGroupExtras.h
+
+    ios/UIKitSoftLink.h
+
     mac/DataDetectorsSoftLink.h
+    mac/ScreenCaptureKitSoftLink.h
     mac/LookupSoftLink.h
     mac/QuickLookUISoftLink.h
 
     spi/cf/CFNetworkConnectionCacheSPI.h
+    spi/cf/VideoToolboxSPI.h
     spi/cf/CFNetworkSPI.h
     spi/cf/CFNotificationCenterSPI.h
     spi/cf/CFUtilitiesSPI.h
@@ -51,17 +77,24 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cg/CoreGraphicsSPI.h
     spi/cg/ImageIOSPI.h
 
+    spi/cocoa/ARKitSPI.h
     spi/cocoa/AVAssetWriterSPI.h
     spi/cocoa/AVFoundationSPI.h
     spi/cocoa/AVKitSPI.h
+    spi/cocoa/AVStreamDataParserSPI.h
     spi/cocoa/AXSpeechManagerSPI.h
+    spi/cocoa/AudioToolboxCoreSPI.h
     spi/cocoa/AccessibilitySupportSPI.h
     spi/cocoa/AccessibilitySupportSoftLink.h
     spi/cocoa/AppSSOSPI.h
-    spi/cocoa/AuthKitSPI.h
     spi/cocoa/AudioToolboxSPI.h
+    spi/cocoa/AuthKitSPI.h
     spi/cocoa/CommonCryptoSPI.h
+    spi/cocoa/ContactsSPI.h
+    spi/cocoa/CoreCryptoSPI.h
     spi/cocoa/CoreMaterialSPI.h
+    spi/cocoa/CoreMotionSPI.h
+    spi/cocoa/FoundationSPI.h
     spi/cocoa/CoreServicesSPI.h
     spi/cocoa/CoreTelephonySPI.h
     spi/cocoa/CryptoKitPrivateSPI.h
@@ -77,6 +110,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cocoa/MetalSPI.h
     spi/cocoa/NEFilterSourceSPI.h
     spi/cocoa/NSAccessibilitySPI.h
+    spi/cocoa/NSKeyedUnarchiverSPI.h
     spi/cocoa/NSAttributedStringSPI.h
     spi/cocoa/NSButtonCellSPI.h
     spi/cocoa/NSCalendarDateSPI.h
@@ -102,13 +136,36 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cocoa/ServersSPI.h
     spi/cocoa/SpeechSPI.h
     spi/cocoa/TCCSPI.h
+    spi/cocoa/TranslationUIServicesSPI.h
+    spi/cocoa/UIFoundationSPI.h
     spi/cocoa/URLFormattingSPI.h
+    spi/cocoa/UniformTypeIdentifiersSPI.h
     spi/cocoa/VisionKitCoreSPI.h
+    spi/cocoa/WebContentRestrictionsSPI.h
     spi/cocoa/WebFilterEvaluatorSPI.h
+    spi/cocoa/WebPrivacySPI.h
+    spi/cocoa/WritingToolsSPI.h
+    spi/cocoa/WritingToolsUISPI.h
     spi/cocoa/pthreadSPI.h
 
+    spi/ios/AXRuntimeSPI.h
+    spi/ios/BarcodeSupportSPI.h
+    spi/ios/BrowserEngineKitSPI.h
+    spi/ios/CelestialSPI.h
     spi/ios/DataDetectorsUISPI.h
+    spi/ios/DataDetectorsUISoftLink.h
     spi/ios/GraphicsServicesSPI.h
+    spi/ios/IOKitSPIIOS.h
+    spi/ios/ManagedConfigurationSPI.h
+    spi/ios/MediaPlayerSPI.h
+    spi/ios/MobileGestaltSPI.h
+    spi/ios/MobileKeyBagSPI.h
+    spi/ios/OpenGLESSPI.h
+    spi/ios/QuickLookSPI.h
+    spi/ios/SBSStatusBarSPI.h
+    spi/ios/UIKitSPI.h
+
+    system/ios/UserInterfaceIdiom.h
 
     spi/mac/CoreUISPI.h
     spi/mac/DataDetectorsSPI.h
@@ -135,10 +192,12 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/mac/NSScrollerImpSPI.h
     spi/mac/NSScrollingInputFilterSPI.h
     spi/mac/NSScrollingMomentumCalculatorSPI.h
+    spi/mac/NSSearchFieldCellSPI.h
     spi/mac/NSServicesRolloverButtonCellSPI.h
     spi/mac/NSSharingServicePickerSPI.h
     spi/mac/NSSharingServiceSPI.h
     spi/mac/NSSpellCheckerSPI.h
+    spi/mac/NSTextFieldCellSPI.h
     spi/mac/NSTextFinderSPI.h
     spi/mac/NSTextInputContextSPI.h
     spi/mac/NSTextTableSPI.h
@@ -146,9 +205,12 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/mac/NSViewSPI.h
     spi/mac/NSWindowSPI.h
     spi/mac/PIPSPI.h
+    spi/mac/PowerLogSPI.h
+    spi/mac/QuarantineSPI.h
     spi/mac/QuickLookMacSPI.h
     spi/mac/TelephonyUtilitiesSPI.h
 
+    system/cocoa/RegexHelper.h
     system/cocoa/SleepDisablerCocoa.h
 
     system/mac/DefaultSearchProvider.h
@@ -170,6 +232,8 @@ list(APPEND PAL_SOURCES
 
     cg/CoreGraphicsSoftLink.cpp
 
+    cocoa/AVFAudioSoftLink.mm
+    cocoa/AccessibilitySoftLink.mm
     cocoa/AppSSOSoftLink.mm
     cocoa/AVFoundationSoftLink.mm
     cocoa/CoreMLSoftLink.mm
@@ -177,8 +241,10 @@ list(APPEND PAL_SOURCES
     cocoa/CoreTelephonySoftLink.mm
     cocoa/CryptoKitPrivateSoftLink.mm
     cocoa/DataDetectorsCoreSoftLink.mm
+    cocoa/EnhancedSecurityCocoa.mm
     cocoa/FileSizeFormatterCocoa.mm
     cocoa/LinkPresentationSoftLink.mm
+    cocoa/LockdownModeCocoa.mm
     cocoa/MediaToolboxSoftLink.cpp
     cocoa/NaturalLanguageSoftLink.mm
     cocoa/OpenGLSoftLinkCocoa.mm
@@ -190,13 +256,24 @@ list(APPEND PAL_SOURCES
     cocoa/TranslationUIServicesSoftLink.mm
     cocoa/UsageTrackingSoftLink.mm
     cocoa/VisionKitCoreSoftLink.mm
+    cocoa/VisionSoftLink.mm
     cocoa/WebPrivacySoftLink.mm
     cocoa/WritingToolsUISoftLink.mm
 
-    crypto/commoncrypto/CryptoDigestCommonCrypto.mm
+    crypto/CryptoAlgorithmAESGCMCocoa.cpp
+    crypto/CryptoAlgorithmAESKWCocoaBridging.cpp
+    crypto/CryptoAlgorithmEd25519CocoaBridging.cpp
+    crypto/CryptoAlgorithmHKDFCocoaBridging.cpp
+    crypto/CryptoAlgorithmHMACCocoaBridging.cpp
+    crypto/CryptoAlgorithmX25519CocoaBridging.cpp
+    crypto/CryptoEDKeyBridging.cpp
+    crypto/PlatformECKey.cpp
+
+    crypto/commoncrypto/CryptoDigestCommonCrypto.cpp
 
     mac/DataDetectorsSoftLink.mm
     mac/LookupSoftLink.mm
+    mac/ScreenCaptureKitSoftLink.mm
     mac/QuickLookUISoftLink.mm
 
     spi/cocoa/AccessibilitySupportSoftLink.cpp
@@ -222,6 +299,9 @@ list(APPEND PAL_PRIVATE_INCLUDE_DIRECTORIES
     "${PAL_DIR}/pal/avfoundation"
     "${PAL_DIR}/pal/cf"
     "${PAL_DIR}/pal/cocoa"
+    "${PAL_DIR}/pal/crypto"
+    "${PAL_DIR}/pal/crypto/commoncrypto"
+    "${PAL_DIR}/pal/mac"
     "${PAL_DIR}/pal/spi/cf"
     "${PAL_DIR}/pal/spi/cg"
     "${PAL_DIR}/pal/spi/cocoa"

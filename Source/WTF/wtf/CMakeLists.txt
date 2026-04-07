@@ -239,10 +239,6 @@ set(WTF_PUBLIC_HEADERS
     PlatformCallingConventions.h
     PlatformCPU.h
     PlatformEnable.h
-    PlatformEnableCocoa.h
-    PlatformEnableGlib.h
-    PlatformEnablePlayStation.h
-    PlatformEnableWin.h
     PlatformHave.h
     PlatformLegacy.h
     PlatformOS.h
@@ -723,6 +719,7 @@ elseif (APPLE)
         darwin/DispatchExtras.h
         darwin/DispatchOSObject.h
         darwin/NetworkOSObject.h
+        darwin/TypeCastsOSObject.h
         darwin/OSLogPrintStream.h
         darwin/WeakLinking.h
         darwin/XPCExtras.h

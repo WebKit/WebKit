@@ -49,6 +49,8 @@ else ()
 endif ()
 
 list(APPEND WTF_PUBLIC_HEADERS
+    PlatformEnableGlib.h
+
     android/RefPtrAndroid.h
 
     glib/ActivityObserver.h

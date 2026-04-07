@@ -28,20 +28,21 @@
 # Build wgslc.
 # For simplicity, build it as a monolithic executable.
 
-# Target 'wgsl-types' generates TypeDeclarations.h in the build tree.
+# Target 'wgsl-types' generates TypeDeclarations.h and TypeOverloads.h in the build tree.
 add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/TypeDeclarations.h
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/TypeDeclarations.h ${CMAKE_CURRENT_BINARY_DIR}/TypeOverloads.h
     COMMAND ${Ruby_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/generator/main.rb
         ${CMAKE_CURRENT_SOURCE_DIR}/TypeDeclarations.rb
         ${CMAKE_CURRENT_BINARY_DIR}/TypeDeclarations.h
+        ${CMAKE_CURRENT_BINARY_DIR}/TypeOverloads.h
     DEPENDS
         ${CMAKE_CURRENT_SOURCE_DIR}/generator/main.rb
         ${CMAKE_CURRENT_SOURCE_DIR}/TypeDeclarations.rb
     )
 add_custom_target(wgsl-types
     ALL
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/TypeDeclarations.h)
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/TypeDeclarations.h ${CMAKE_CURRENT_BINARY_DIR}/TypeOverloads.h)
 
 set(wgslc_SOURCES
     AliasAnalysis.cpp

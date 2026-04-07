@@ -32,6 +32,7 @@
 #include "CommonVM.h"
 #include "Document.h"
 #include "Frame.h"
+#include "FrameDestructionObserverInlines.h"
 #include "FrameLoaderTypes.h"
 #include "GarbageCollectionController.h"
 #include "JSDOMWindow.h"

@@ -208,7 +208,6 @@ editing/mac/TextUndoInsertionMarkupMac.mm @nonARC
 fileapi/FileCocoa.mm @nonARC
 history/mac/HistoryItemMac.mm @nonARC
 html/canvas/GPUCanvasContextCocoa.mm @nonARC
-html/canvas/UsdModelLoader.swift
 html/shadow/YouTubeEmbedShadowElement.cpp
 inspector/LegacyWebSocketInspectorInstrumentation.cpp
 inspector/mac/FrameDebuggerMac.mm @nonARC
@@ -580,7 +579,6 @@ platform/ios/PasteboardIOS.mm @nonARC
 platform/ios/PlatformEventFactoryIOS.mm @nonARC @no-unify
 platform/ios/PlatformPasteboardIOS.mm @nonARC
 platform/ios/PlatformScreenIOS.mm @nonARC
-platform/ios/PlaybackSessionInterfaceAVKit.mm @nonARC @no-unify
 platform/ios/PlaybackSessionInterfaceAVKitLegacy.mm @nonARC @no-unify
 platform/ios/PlaybackSessionInterfaceIOS.mm @nonARC @no-unify
 platform/ios/PlaybackSessionInterfaceTVOS.cpp
@@ -596,7 +594,6 @@ platform/ios/UIFoundationSoftLink.mm @nonARC
 platform/ios/UIViewControllerUtilities.mm @nonARC
 platform/ios/UserAgentIOS.mm @nonARC
 platform/ios/ValidationBubbleIOS.mm @nonARC
-platform/ios/VideoPresentationInterfaceAVKit.mm @nonARC @no-unify
 platform/ios/VideoPresentationInterfaceAVKitLegacy.mm @nonARC @no-unify
 platform/ios/VideoPresentationInterfaceIOS.mm @nonARC @no-unify
 platform/ios/VideoPresentationInterfaceTVOS.mm @nonARC
