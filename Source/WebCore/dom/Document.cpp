@@ -4051,6 +4051,13 @@ ExceptionOr<void> Document::open(Document* entryDocument)
         setCookieURL(newCookieURL);
     }
 
+    // Fire pagehide/unload events on descendant navigables before replacing
+    // the document content. The subsequent implicitOpen() -> removeChildren()
+    // will destroy child navigables without firing unload events (per spec),
+    // so we need to do it here first.
+    if (RefPtr frame = this->frame())
+        frame->loader().detachChildren();
+
     implicitOpen();
     if (RefPtr parser = scriptableDocumentParser())
         parser->setWasCreatedByScript(true);

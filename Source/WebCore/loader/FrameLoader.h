@@ -264,6 +264,8 @@ public:
 
     void frameDetached();
 
+    WEBCORE_EXPORT void detachChildren();
+
     void setOutgoingReferrer(const URL&);
 
     void loadDone(LoadCompletionType);
@@ -448,7 +450,6 @@ private:
 
     ResourceLoaderIdentifier requestFromDelegate(ResourceRequest&, ResourceError&);
 
-    WEBCORE_EXPORT void detachChildren();
     void closeAndRemoveChild(LocalFrame&);
 
     void loadInSameDocument(URL, RefPtr<SerializedScriptValue> stateObject, const SecurityOrigin* requesterOrigin, bool isNewNavigation, NavigationHistoryBehavior historyHandling = NavigationHistoryBehavior::Auto);

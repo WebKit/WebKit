@@ -1,0 +1,3 @@
+
+FAIL An inserted script should be able to observe its own mutation record with takeRecords assert_equals: expected 1 but got 0
+

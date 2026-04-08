@@ -1,0 +1,3 @@
+
+PASS Script execution happens after all batched DOM insertions complete through post-connection steps
+

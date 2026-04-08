@@ -8280,4 +8280,7 @@ imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open_
 
 webkit.org/b/311207 imported/w3c/web-platform-tests/workers/semantics/structured-clone/shared.html [ Pass Failure ]
 
+# This test has been flaky since its import.
+imported/w3c/web-platform-tests/dom/nodes/insertion-removing-steps/Node-appendChild-script-and-default-style-meta-from-fragment.tentative.html [ Pass Failure ]
+
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/sizes-auto-dynamic-attributes.html [ Failure Pass ]
