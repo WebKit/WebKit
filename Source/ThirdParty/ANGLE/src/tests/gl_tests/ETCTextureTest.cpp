@@ -12,6 +12,7 @@
 #endif
 
 #include "test_utils/ANGLETest.h"
+#include "test_utils/gl_raii.h"
 
 #include "media/etc2bc_srgb8_alpha8.inc"
 
@@ -307,6 +308,45 @@ TEST_P(ETCTextureTest, ETC2SRGB8A1Validation)
     {
         EXPECT_GL_ERROR(GL_INVALID_ENUM);
     }
+}
+
+// Tests that uploading compressed texture from a PBO with a misaligned offset doesn't crash.
+TEST_P(ETCTextureTest, PBOWithMisalignedOffset)
+{
+    // Need ES 3.0 for PBOs.
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+
+    // Check if ETC2 is supported. Not supported, for example, on ANGLE/OpenGL on macOS.
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ANGLE_lossy_etc_decode") &&
+                       !IsGLExtensionEnabled("GL_OES_compressed_ETC2_RGB8_texture") &&
+                       !IsGLExtensionEnabled("GL_ANGLE_compressed_texture_etc"));
+
+    constexpr GLsizei kWidth  = 512;
+    constexpr GLsizei kHeight = 512;
+    constexpr GLsizei kBPB    = 8;  // 8 bytes per block
+    constexpr GLsizei kBW     = 4;
+    constexpr GLsizei kBH     = 4;
+
+    GLsizei blocksX        = kWidth / kBW;
+    GLsizei blocksY        = kHeight / kBH;
+    GLsizei compressedSize = blocksX * blocksY * kBPB;
+
+    glBindTexture(GL_TEXTURE_2D, mTexture);
+    // Use GL_COMPRESSED_RGB8_ETC2 which is core in ES 3.0
+    glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGB8_ETC2, kWidth, kHeight, 0,
+                           compressedSize, nullptr);
+
+    // Misaligned offset to trigger the fallback path in Metal backend
+    constexpr GLsizei kPBOOffset = 1;
+
+    GLBuffer pbo;
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pbo);
+    glBufferData(GL_PIXEL_UNPACK_BUFFER, kPBOOffset + compressedSize, nullptr, GL_STATIC_DRAW);
+    ASSERT_GL_NO_ERROR();
+
+    glCompressedTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kWidth, kHeight, GL_COMPRESSED_RGB8_ETC2,
+                              compressedSize, reinterpret_cast<void *>(kPBOOffset));
+    EXPECT_GL_NO_ERROR();
 }
 
 class ETCToBCTextureTest : public ANGLETest<>

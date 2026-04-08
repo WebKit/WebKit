@@ -2399,7 +2399,29 @@ angle::Result TextureMtl::convertAndSetPerSliceSubImage(const gl::Context *conte
                                                      ? imageFormat.textureLoadFunctions(type)
                                                      : LoadImageFunctionInfo();
         const angle::Format &dstFormat         = angle::Format::Get(imageFormat.actualFormatId);
-        const size_t dstRowPitch               = dstFormat.pixelBytes * mtlArea.size.width;
+        size_t dstRowPitch;
+        size_t dstDepthPitch;
+        if (dstFormat.isBlock)
+        {
+            const gl::InternalFormat &dstFormatInfo =
+                gl::GetSizedInternalFormatInfo(dstFormat.glInternalFormat);
+            GLuint rowPitch;
+            ANGLE_CHECK_GL_MATH(contextMtl,
+                                dstFormatInfo.computeCompressedImageRowPitch(
+                                    static_cast<GLsizei>(mtlArea.size.width), &rowPitch));
+            dstRowPitch = rowPitch;
+
+            GLuint depthPitch;
+            ANGLE_CHECK_GL_MATH(contextMtl, dstFormatInfo.computeCompressedImageDepthPitch(
+                                                static_cast<GLsizei>(mtlArea.size.height),
+                                                static_cast<GLuint>(dstRowPitch), &depthPitch));
+            dstDepthPitch = depthPitch;
+        }
+        else
+        {
+            dstRowPitch   = dstFormat.pixelBytes * mtlArea.size.width;
+            dstDepthPitch = dstRowPitch * mtlArea.size.height;
+        }
 
         // It is very important to avoid allocating a new buffer for each row during these
         // uploads.
@@ -2413,7 +2435,6 @@ angle::Result TextureMtl::convertAndSetPerSliceSubImage(const gl::Context *conte
                 ASSERT(loadFunctionInfo.loadFunction);
 
                 // Need to create a buffer to hold entire decompressed image.
-                const size_t dstDepthPitch = dstRowPitch * mtlArea.size.height;
                 angle::MemoryBuffer decompressBuf;
                 ANGLE_CHECK_GL_ALLOC(contextMtl,
                                      decompressBuf.resize(dstDepthPitch * mtlArea.size.depth));
@@ -2437,7 +2458,6 @@ angle::Result TextureMtl::convertAndSetPerSliceSubImage(const gl::Context *conte
                        static_cast<unsigned int>(imageDef.image->sizeAt0().width));
                 ASSERT(mtlArea.size.height ==
                        static_cast<unsigned int>(imageDef.image->sizeAt0().height));
-                const size_t dstDepthPitch = dstRowPitch * mtlArea.size.height;
                 ANGLE_TRY(UploadTextureContents(
                     context, dstFormat, mtlArea, mtl::kZeroNativeMipLevel, slice, pixels,
                     dstRowPitch, dstDepthPitch, kAvoidStagingBuffers, imageDef.image));
