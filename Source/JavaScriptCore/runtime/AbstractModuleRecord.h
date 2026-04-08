@@ -215,5 +215,6 @@ private:
     typedef UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, Resolution, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>> Resolutions;
     Resolutions m_resolutionCache;
 };
+static_assert(JSInternalFieldObjectInitialValueCreatable<AbstractModuleRecord>);
 
 } // namespace JSC

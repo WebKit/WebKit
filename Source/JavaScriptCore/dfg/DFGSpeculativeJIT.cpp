@@ -63,6 +63,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "JSCInlines.h"
 #include "JSCellButterfly.h"
 #include "JSGeneratorFunction.h"
+#include "JSInternalFieldObjectImpl.h"
 #include "JSIteratorHelper.h"
 #include "JSLexicalEnvironment.h"
 #include "JSMapIterator.h"
@@ -15837,7 +15838,7 @@ void SpeculativeJIT::compileCreatePromise(Node* node)
 }
 
 
-template<typename JSClass, typename Operation>
+template<JSInternalFieldObjectInitialValueCreatable JSClass, typename Operation>
 void SpeculativeJIT::compileCreateInternalFieldObject(Node* node, Operation operation)
 {
     SpeculateCellOperand callee(this, node->child1());
@@ -15920,7 +15921,7 @@ void SpeculativeJIT::compileNewObject(Node* node)
     cellResult(resultGPR, node);
 }
 
-template<typename JSClass, typename Operation>
+template<JSInternalFieldObjectInitialValueCreatable JSClass, typename Operation>
 void SpeculativeJIT::compileNewInternalFieldObjectImpl(Node* node, Operation operation)
 {
     GPRTemporary result(this);

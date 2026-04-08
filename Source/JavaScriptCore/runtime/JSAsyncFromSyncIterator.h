@@ -77,6 +77,7 @@ private:
 
     void finishCreation(VM&, JSValue syncIterator, JSValue nextMethod);
 };
+static_assert(JSInternalFieldObjectInitialValueCreatable<JSAsyncFromSyncIterator>);
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSAsyncFromSyncIterator);
 

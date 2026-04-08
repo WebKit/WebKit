@@ -90,5 +90,6 @@ private:
     void finishCreation(VM&);
     void finishCreation(VM&, JSString* iteratedString);
 };
+static_assert(JSInternalFieldObjectInitialValueCreatable<JSStringIterator>);
 
 } // namespace JSC

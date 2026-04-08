@@ -83,6 +83,7 @@ private:
 
     void finishCreation(VM&);
 };
+static_assert(JSInternalFieldObjectInitialValueCreatable<JSDisposableStack>);
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSDisposableStack);
 

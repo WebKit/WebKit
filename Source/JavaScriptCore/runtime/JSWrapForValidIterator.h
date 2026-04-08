@@ -82,6 +82,7 @@ private:
 
     void finishCreation(VM&, JSValue iterator, JSValue nextMethod);
 };
+static_assert(JSInternalFieldObjectInitialValueCreatable<JSWrapForValidIterator>);
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSWrapForValidIterator);
 

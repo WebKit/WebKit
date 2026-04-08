@@ -195,4 +195,6 @@ private:
     void finishCreation(VM&);
 };
 
+static_assert(JSInternalFieldObjectInitialValueCreatable<JSAsyncGenerator>);
+
 } // namespace JSC

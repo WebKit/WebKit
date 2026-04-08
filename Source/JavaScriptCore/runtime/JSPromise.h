@@ -165,6 +165,8 @@ private:
     static void triggerPromiseReactions(VM&, JSGlobalObject*, JSPromise::Status, JSPromiseReaction* head, JSValue argument);
 };
 
+static_assert(JSInternalFieldObjectInitialValueCreatable<JSPromise>);
+
 static constexpr PropertyOffset promiseCapabilityResolvePropertyOffset = 0;
 static constexpr PropertyOffset promiseCapabilityRejectPropertyOffset = 1;
 static constexpr PropertyOffset promiseCapabilityPromisePropertyOffset = 2;

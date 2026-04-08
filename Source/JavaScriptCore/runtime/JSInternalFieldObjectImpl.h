@@ -26,6 +26,7 @@
 #pragma once
 
 #include <JavaScriptCore/JSObject.h>
+#include <concepts>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -76,6 +77,13 @@ protected:
     }
 
     WriteBarrier<Unknown> m_internalFields[numberOfInternalFields] { };
+};
+
+template<typename T>
+concept JSInternalFieldObjectInitialValueCreatable = std::derived_from<T, ::JSC::JSInternalFieldObjectImpl<T::numberOfInternalFields>> && requires(T a)
+{
+    { T::initialValues() } -> std::same_as<std::array<::JSC::JSValue, T::numberOfInternalFields>>;
+    { T::info() } -> std::same_as<const ::JSC::ClassInfo*>;
 };
 
 } // namespace JSC

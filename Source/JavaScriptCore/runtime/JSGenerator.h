@@ -128,6 +128,8 @@ private:
     void finishCreation(VM&);
 };
 
+static_assert(JSInternalFieldObjectInitialValueCreatable<JSGenerator>);
+
 OVERLOAD_RELATIONAL_OPERATORS_FOR_ENUM_CLASS_WITH_INTEGRALS(JSGenerator::Argument);
 
 } // namespace JSC

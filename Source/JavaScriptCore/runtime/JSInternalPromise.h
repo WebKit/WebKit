@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/JSInternalFieldObjectImpl.h>
 #include <JavaScriptCore/JSPromise.h>
 
 namespace JSC {
@@ -56,5 +57,6 @@ public:
 private:
     JSInternalPromise(VM&, Structure*);
 };
+static_assert(JSInternalFieldObjectInitialValueCreatable<JSInternalPromise>);
 
 } // namespace JSC

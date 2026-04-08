@@ -84,5 +84,6 @@ private:
     JSArrayIterator(VM&, Structure*);
     void finishCreation(VM&);
 };
+static_assert(JSInternalFieldObjectInitialValueCreatable<JSArrayIterator>);
 
 } // namespace JSC

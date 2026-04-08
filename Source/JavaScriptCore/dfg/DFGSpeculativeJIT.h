@@ -38,6 +38,7 @@
 #include "DFGSilentRegisterSavePlan.h"
 #include "JITMathIC.h"
 #include "JITOperations.h"
+#include "JSInternalFieldObjectImpl.h"
 #include "PropertyInlineCache.h"
 #include "SpillRegistersMode.h"
 #include "ValueRecovery.h"
@@ -1810,9 +1811,9 @@ public:
     void compilePromiseThen(Node*);
     void compilePerformPromiseThen(Node*);
 
-    template<typename JSClass, typename Operation>
+    template<JSInternalFieldObjectInitialValueCreatable JSClass, typename Operation>
     void compileCreateInternalFieldObject(Node*, Operation);
-    template<typename JSClass, typename Operation>
+    template<JSInternalFieldObjectInitialValueCreatable JSClass, typename Operation>
     void compileNewInternalFieldObjectImpl(Node*, Operation);
 
     void moveTrueTo(GPRReg);

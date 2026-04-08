@@ -114,6 +114,7 @@ private:
 
     void finishCreation(VM&);
 };
+static_assert(JSInternalFieldObjectInitialValueCreatable<JSRegExpStringIterator>);
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSRegExpStringIterator);
 

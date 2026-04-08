@@ -120,6 +120,7 @@ private:
     DeadRegistrations m_noUnregistrationDead;
     bool m_hasAlreadyScheduledWork { false };
 };
+static_assert(JSInternalFieldObjectInitialValueCreatable<JSFinalizationRegistry>);
 
 } // namespace JSC
 

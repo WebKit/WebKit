@@ -141,6 +141,7 @@ private:
     WriteBarrierStructureID m_handlerStructureID;
     WriteBarrierStructureID m_handlerPrototypeStructureID;
 };
+static_assert(JSInternalFieldObjectInitialValueCreatable<ProxyObject>);
 
 ALWAYS_INLINE bool ProxyObject::isHandlerTrapsCacheValid(JSObject* handler)
 {

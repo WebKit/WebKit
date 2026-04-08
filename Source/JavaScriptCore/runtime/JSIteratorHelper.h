@@ -70,6 +70,8 @@ private:
     void finishCreation(VM&, JSValue generator, JSValue underlyingIterator);
 };
 
+static_assert(JSInternalFieldObjectInitialValueCreatable<JSIteratorHelper>);
+
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSIteratorHelper);
 
 JSC_DECLARE_HOST_FUNCTION(iteratorHelperPrivateFuncCreate);

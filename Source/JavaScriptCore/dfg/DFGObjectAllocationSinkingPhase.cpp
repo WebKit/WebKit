@@ -44,6 +44,7 @@
 #include "JSAsyncFromSyncIterator.h"
 #include "JSAsyncGenerator.h"
 #include "JSGenerator.h"
+#include "JSInternalFieldObjectImpl.h"
 #include "JSInternalPromise.h"
 #include "JSIteratorHelper.h"
 #include "JSMapIterator.h"
@@ -917,7 +918,7 @@ private:
         m_rootInsertionSet.execute(m_graph.block(0));
     }
 
-    template<typename InternalFieldClass>
+    template<JSInternalFieldObjectInitialValueCreatable InternalFieldClass>
     Allocation* handleInternalFieldClass(Node* node, UncheckedKeyHashMap<PromotedLocationDescriptor, LazyNode>& writes)
     {
         Allocation* result = &m_heap.newAllocation(node, Allocation::Kind::InternalFieldObject);

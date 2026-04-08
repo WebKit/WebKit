@@ -200,6 +200,7 @@ private:
     JS_EXPORT_PRIVATE void finishCreation(VM&, JSMap*, IterationKind);
     void finishCreation(VM&);
 };
+static_assert(JSInternalFieldObjectInitialValueCreatable<JSMapIterator>);
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSMapIterator);
 
 JSC_DECLARE_HOST_FUNCTION(mapIteratorPrivateFuncMapIteratorNext);

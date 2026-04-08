@@ -175,6 +175,7 @@ private:
     JS_EXPORT_PRIVATE void finishCreation(VM&, JSSet*, IterationKind);
     void finishCreation(VM&);
 };
+static_assert(JSInternalFieldObjectInitialValueCreatable<JSSetIterator>);
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSSetIterator);
 
 JSC_DECLARE_HOST_FUNCTION(setIteratorPrivateFuncSetIteratorNext);

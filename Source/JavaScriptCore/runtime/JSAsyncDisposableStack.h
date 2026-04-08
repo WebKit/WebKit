@@ -83,6 +83,8 @@ private:
     void finishCreation(VM&);
 };
 
+static_assert(JSInternalFieldObjectInitialValueCreatable<JSAsyncDisposableStack>);
+
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSAsyncDisposableStack);
 
 }
