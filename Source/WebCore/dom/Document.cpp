@@ -2987,7 +2987,8 @@ bool Document::updateStyleIfNeededIgnoringPendingStylesheets()
     if (m_hasNodesWithMissingStyle)
         scheduleFullStyleRebuild();
 
-    updateRelevancyOfContentVisibilityElements();
+    if (updateRelevancyOfContentVisibilityElements() == DidUpdateAnyContentRelevancy::Yes)
+        updateLayoutIgnorePendingStylesheets();
 
     bool result = updateStyleIfNeeded();
 
@@ -3026,7 +3027,7 @@ auto Document::updateLayout(OptionSet<LayoutOptions> layoutOptions, const Elemen
             if (m_hasNodesWithMissingStyle)
                 scheduleFullStyleRebuild();
         }
-        if (updateRelevancyOfContentVisibilityElements(UpdateLayoutIfContentVisibilityChanged::No) == DidUpdateAnyContentRelevancy::Yes) {
+        if (updateRelevancyOfContentVisibilityElements() == DidUpdateAnyContentRelevancy::Yes) {
             m_ignorePendingStylesheets = oldIgnore;
             return updateLayout(layoutOptions, context);
         }
@@ -3200,7 +3201,7 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, OptionSet<Dim
         }
     }
 
-    updateRelevancyOfContentVisibilityElements();
+    const bool didUpdateContentRelevancy = updateRelevancyOfContentVisibilityElements() == DidUpdateAnyContentRelevancy::Yes;
 
     updateStyleIfNeeded();
 
@@ -3316,7 +3317,7 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, OptionSet<Dim
     StackStats::LayoutCheckPoint layoutCheckPoint;
 
     // Only do a layout if changes have occurred that make it necessary.
-    if (requireFullLayout)
+    if (requireFullLayout || didUpdateContentRelevancy)
         updateLayout(layoutOptions, &element);
 
     return requireFullLayout;
@@ -11758,14 +11759,11 @@ bool Document::isObservingContentVisibilityTargets() const
     return m_contentVisibilityDocumentState && m_contentVisibilityDocumentState->hasObservationTargets();
 }
 
-DidUpdateAnyContentRelevancy Document::updateRelevancyOfContentVisibilityElements(UpdateLayoutIfContentVisibilityChanged updateLayout)
+auto Document::updateRelevancyOfContentVisibilityElements() -> DidUpdateAnyContentRelevancy
 {
     if (m_contentRelevancyUpdate.isEmpty() || !isObservingContentVisibilityTargets())
         return DidUpdateAnyContentRelevancy::No;
-    const DidUpdateAnyContentRelevancy result = m_contentVisibilityDocumentState->updateRelevancyOfContentVisibilityElements(m_contentRelevancyUpdate);
-    if (result == DidUpdateAnyContentRelevancy::Yes && updateLayout == UpdateLayoutIfContentVisibilityChanged::Yes)
-        updateLayoutIgnorePendingStylesheets();
-
+    const auto result = m_contentVisibilityDocumentState->updateRelevancyOfContentVisibilityElements(m_contentRelevancyUpdate);
     m_contentRelevancyUpdate = { };
     return result;
 }

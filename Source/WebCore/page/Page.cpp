@@ -215,6 +215,7 @@
 #include "WindowFeatures.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerOrWorkletScriptController.h"
+#include "dom/ContentVisibilityDocumentState.h"
 #include <JavaScriptCore/VM.h>
 #include <ranges>
 #include <wtf/FileSystem.h>
@@ -2340,7 +2341,8 @@ void Page::updateRendering()
     });
 
     runProcessingStep(RenderingUpdateStep::UpdateContentRelevancy, [] (Document& document) {
-        document.updateRelevancyOfContentVisibilityElements();
+        if (document.updateRelevancyOfContentVisibilityElements() == DidUpdateAnyContentRelevancy::Yes)
+            document.updateLayoutIgnorePendingStylesheets();
     });
 
     runProcessingStep(RenderingUpdateStep::PerformPendingViewTransitions, [] (Document& document) {

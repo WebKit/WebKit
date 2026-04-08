@@ -237,8 +237,9 @@ void ContentVisibilityDocumentState::updateContentRelevancyForScrollIfNeeded(con
     if (RefPtr scrollAnchorRoot = findSkippedContentRoot(scrollAnchor)) {
         updateViewportProximity(*scrollAnchorRoot, ViewportProximity::Near);
         // Since we may not have determined initial visibility yet, force scheduling the content relevancy update.
-        protect(scrollAnchorRoot->document())->scheduleContentRelevancyUpdate(ContentRelevancy::OnScreen);
-        protect(scrollAnchorRoot->document())->updateRelevancyOfContentVisibilityElements();
+        scrollAnchorRoot->protectedDocument()->scheduleContentRelevancyUpdate(ContentRelevancy::OnScreen);
+        if (scrollAnchorRoot->protectedDocument()->updateRelevancyOfContentVisibilityElements() == DidUpdateAnyContentRelevancy::Yes)
+            scrollAnchorRoot->protectedDocument()->updateLayoutIgnorePendingStylesheets();
     }
 }
 

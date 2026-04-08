@@ -1,0 +1,50 @@
+Regressions: Unexpected text-only failures (15)
+  fast/events/gesture/wheel-gesture-event-coordinates-in-iframe.html 
+  fast/mediastream/audio-session-category-capture-audio-context.html 
+  fast/shadow-dom/link-element-in-shadow-tree.html 
+  http/tests/media/fairplay/fps-mse-unmuxed-audio-only-seek.html 
+  http/tests/media/fairplay/fps-mse-unmuxed-audio-only.html 
+  http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-and-access-from-right-frame.https.html 
+  http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-but-access-from-wrong-frame.https.html 
+  imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.tentative.https.html 
+  imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/update-the-source-set.html 
+  imported/w3c/web-platform-tests/trusted-types/should-sink-type-mismatch-violation-be-blocked-by-csp-001.html 
+  imported/w3c/web-platform-tests/trusted-types/should-trusted-type-policy-creation-be-blocked-by-csp-002.html 
+  imported/w3c/web-platform-tests/webcodecs/videoFrame-texImage.any.html 
+  imported/w3c/web-platform-tests/webcodecs/videoFrame-texImage.any.worker.html 
+  imported/w3c/web-platform-tests/webrtc-encoded-transform/RTCRtpScriptTransform-bad-chunk.https.html 
+  webrtc/video-stats.html 
+
+Regressions: Unexpected image-only failures (6)
+  fast/forms/switch/zoom-approximates-transform-rtl.html 
+  fast/forms/switch/zoom-approximates-transform-vertical-lr.html 
+  fast/forms/switch/zoom-approximates-transform-vertical-rl.html 
+  fast/forms/switch/zoom-approximates-transform.html 
+  http/tests/media/fairplay/fps-mse-video-mixed.html 
+  media/track/track-css-visible-stroke.html 
+
+Regressions: Unexpected crashes (17)
+  http/tests/cookies/same-site/popup-cross-site-post.html 
+  http/tests/media/fairplay/fps-hls-update-reject.html 
+  http/tests/media/fairplay/fps-mse-unmuxed-key-renewal.html 
+  http/tests/media/fairplay/legacy-fairplay-mse-muxed-av-nowait.html 
+  http/tests/media/fairplay/legacy-fairplay-mse-muxed-nowait.html 
+  imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/cookie.tentative.https.window.html 
+  imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-unsafe-none-to-unsafe-none.https.html?9-last 
+  imported/w3c/web-platform-tests/speculation-rules/prefetch/initiators-iframe-location-href.sub.https.html?same-site 
+  imported/w3c/web-platform-tests/webcodecs/video-decoder.crossOriginIsolated.https.any.html 
+  inspector/page/hidpi-snapshot-size.html 
+  inspector/worker/debugger-multiple-targets-pause.html 
+  webanimations/accelerated-animation-immediate-prevetion-direction-reverse.html 
+  webanimations/threaded-animations/scroll-animation-no-timeline-invalidation-after-acceleration.html 
+  webarchive/adopt-attribute-styled-node-webarchive.html 
+  webarchive/loading/cache-expired-subresource.html 
+  webexposed/counter-style-image-symbols-not-exposed.html 
+  webgl/1.0.x/conformance/extensions/oes-texture-float-with-video.html 
+
+Regressions: Unexpected timeouts (5)
+  http/tests/media/fairplay/fps-hls-key-rotation.html 
+  http/tests/media/fairplay/fps-mse-unmuxed-mpts.html 
+  http/tests/storage/storage-map-leaking.html 
+  imported/w3c/web-platform-tests/webrtc-encoded-transform/tentative/RTCEncodedAudioFrame-metadata.https.html 
+  webrtc/clone-audio-track.html 
