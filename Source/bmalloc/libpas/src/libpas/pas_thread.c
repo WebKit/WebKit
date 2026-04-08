@@ -192,4 +192,4 @@ int pthread_mutex_unlock(pthread_mutex_t* mutex)
     return 0;
 }
 
-#endif
+#endif /* LIBPAS_ENABLED && PAS_OS(WINDOWS) */

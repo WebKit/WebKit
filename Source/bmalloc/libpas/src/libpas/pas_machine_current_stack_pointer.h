@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia, S.L. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +24,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include <wtf/ThreadMessage.h>
+#ifndef PAS_MACHINE_CURRENT_STACK_POINTER_H
+#define PAS_MACHINE_CURRENT_STACK_POINTER_H
 
+#include "pas_config.h"
 
-namespace WTF {
+#include "pas_utils.h"
 
-MessageStatus sendMessageScoped(const ThreadSuspendLocker& locker, Thread& thread, const ThreadMessage& message)
+PAS_BEGIN_EXTERN_C;
+
+#if defined(NDEBUG) && (PAS_X86_64 || PAS_ARM64 || PAS_ARM)
+
+// We should only use the inline asm implementation on release builds because it
+// needs to be inlinable in order to be correct.
+static PAS_ALWAYS_INLINE_FOR_CORRECTNESS void* pas_machine_current_stack_pointer(void)
 {
-    auto result = thread.suspend(locker);
-    if (!result)
-        return MessageStatus::ThreadExited;
-
-    PlatformRegisters scratch;
-    auto registers = thread.getRegisters(locker, scratch);
-
-    message(registers);
-
-    thread.resume(locker);
-    return MessageStatus::MessageRan;
+    void* sp = 0;
+#if PAS_X86_64
+    __asm__ volatile("movq %%rsp, %0" : "=r"(sp) ::);
+#elif PAS_ARM64 && defined(__ILP32__)
+    uint64_t sp64 = 0;
+    __asm__ volatile("mov %0, sp" : "=r"(sp64) ::);
+    sp = (void*)(uintptr_t)sp64;
+#elif PAS_ARM64 || PAS_ARM
+    __asm__ volatile("mov %0, sp" : "=r"(sp) ::);
+#endif
+    return sp;
 }
 
-} // namespace WTF
+#else
+
+PAS_API_NEVER_HIDDEN void* PAS_CDECL pas_machine_current_stack_pointer(void);
+
+#endif
+
+PAS_END_EXTERN_C;
+
+#endif /* PAS_MACHINE_CURRENT_STACK_POINTER_H */

@@ -118,8 +118,9 @@ static void NODELETE copyMemory(void* dst, const void* src, size_t size)
 // See: https://bugs.webkit.org/show_bug.cgi?id=146297
 void MachineThreads::tryCopyOtherThreadStack(const ThreadSuspendLocker& locker, Thread& thread, void* buffer, size_t capacity, size_t* size)
 {
-    PlatformRegisters registers;
-    size_t registersSize = thread.getRegisters(locker, registers);
+    PlatformRegisters scratch;
+    auto registers = thread.getRegisters(locker, scratch);
+    size_t registersSize = registers.size();
 
     // This is a workaround for <rdar://problem/27607384>. libdispatch recycles work
     // queue threads without running pthread exit destructors. This can cause us to scan a
@@ -134,7 +135,7 @@ void MachineThreads::tryCopyOtherThreadStack(const ThreadSuspendLocker& locker, 
     bool canCopy = *size + registersSize + stack.second <= capacity;
 
     if (canCopy)
-        copyMemory(static_cast<char*>(buffer) + *size, &registers, registersSize);
+        copyMemory(static_cast<char*>(buffer) + *size, &registers.get(), registersSize);
     *size += registersSize;
 
     if (canCopy)

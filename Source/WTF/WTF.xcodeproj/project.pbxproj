@@ -605,7 +605,6 @@
 		DD3DC99227A4BF8E007E5B61 /* SegmentedVector.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47306151A825B004123FF /* SegmentedVector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC99327A4BF8E007E5B61 /* ThreadSpecific.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4733F151A825B004123FF /* ThreadSpecific.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC99427A4BF8E007E5B61 /* SinglyLinkedListWithTail.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4D8C711FC1E7CE001D32AC /* SinglyLinkedListWithTail.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DD3DC99527A4BF8E007E5B61 /* StackPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = FEEA4DF7216D608C00AC0602 /* StackPointer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC99627A4BF8E007E5B61 /* AnsiColors.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1132832370634900A8C83B /* AnsiColors.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC99727A4BF8E007E5B61 /* KeyValuePair.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9692941F66306E00267A9E /* KeyValuePair.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC99827A4BF8E007E5B61 /* ParkingLot.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F824A651B7443A0002E345D /* ParkingLot.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -993,7 +992,6 @@
 		FEBD5A792EDAC1CE00E9E170 /* CompactPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEBD5A782EDAC1CE00E9E170 /* CompactPtr.cpp */; };
 		FEC26BF3289DBBD300639A59 /* FunctionPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC26BF2289DBBD300639A59 /* FunctionPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEDACD3D1630F83F00C69634 /* StackStats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDACD3B1630F83F00C69634 /* StackStats.cpp */; };
-		FEEA4DF9216D7BE400AC0602 /* StackPointer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEEA4DF8216D7BE400AC0602 /* StackPointer.cpp */; };
 		FF41AC672A79C9BA00AC0FA5 /* RapidHash.h in Headers */ = {isa = PBXBuildFile; fileRef = FF41AC662A79C9B900AC0FA5 /* RapidHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FF895F11282AB96400E7BAE8 /* CompactRefPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = FF895F10282AB96400E7BAE8 /* CompactRefPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FF8CB4012A88C0D3004AF498 /* SuperFastHash.h in Headers */ = {isa = PBXBuildFile; fileRef = FF8CB4002A88C0D3004AF498 /* SuperFastHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2144,8 +2142,6 @@
 		FEC26BF2289DBBD300639A59 /* FunctionPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FunctionPtr.h; sourceTree = "<group>"; };
 		FEDACD3B1630F83F00C69634 /* StackStats.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackStats.cpp; sourceTree = "<group>"; };
 		FEDACD3C1630F83F00C69634 /* StackStats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackStats.h; sourceTree = "<group>"; };
-		FEEA4DF7216D608C00AC0602 /* StackPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackPointer.h; sourceTree = "<group>"; };
-		FEEA4DF8216D7BE400AC0602 /* StackPointer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackPointer.cpp; sourceTree = "<group>"; };
 		FEF295BF20B49DCB00CF283A /* UTF8ConversionError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UTF8ConversionError.h; sourceTree = "<group>"; };
 		FF0A436588954F3CB07DBECA /* StdList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StdList.h; sourceTree = "<group>"; };
 		FF41AC662A79C9B900AC0FA5 /* RapidHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RapidHash.h; sourceTree = "<group>"; };
@@ -2798,8 +2794,6 @@
 				A8A4730F151A825B004123FF /* StackBounds.h */,
 				FE35D09127DC5ECC009DFA5B /* StackCheck.cpp */,
 				FE1D6D87237401CD007A5C26 /* StackCheck.h */,
-				FEEA4DF8216D7BE400AC0602 /* StackPointer.cpp */,
-				FEEA4DF7216D608C00AC0602 /* StackPointer.h */,
 				0F9DAA041FD1C37B0079C5B2 /* StackShot.h */,
 				0F9DAA051FD1C37B0079C5B2 /* StackShotProfiler.h */,
 				FEDACD3B1630F83F00C69634 /* StackStats.cpp */,
@@ -3968,7 +3962,6 @@
 				DD3DC97F27A4BF8E007E5BC1 /* StackAllocation.h in Headers */,
 				DD3DC97F27A4BF8E007E5B61 /* StackBounds.h in Headers */,
 				DD3DC98E27A4BF8E007E5B61 /* StackCheck.h in Headers */,
-				DD3DC99527A4BF8E007E5B61 /* StackPointer.h in Headers */,
 				DD3DC8FE27A4BF8E007E5B61 /* StackShot.h in Headers */,
 				DD3DC8A127A4BF8E007E5B61 /* StackShotProfiler.h in Headers */,
 				DD3DC97A27A4BF8E007E5B61 /* StackStats.h in Headers */,
@@ -4703,7 +4696,6 @@
 				46CEA3FA2CC2D39B00FE325C /* SpanCocoa.mm in Sources */,
 				A8A47427151A825B004123FF /* StackBounds.cpp in Sources */,
 				FE35D09227DC5ECC009DFA5B /* StackCheck.cpp in Sources */,
-				FEEA4DF9216D7BE400AC0602 /* StackPointer.cpp in Sources */,
 				FEDACD3D1630F83F00C69634 /* StackStats.cpp in Sources */,
 				3337DB9CE743410FAF076E17 /* StackTrace.cpp in Sources */,
 				0F95B63720CB5EFD00479635 /* StringBuffer.cpp in Sources */,

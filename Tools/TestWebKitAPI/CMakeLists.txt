@@ -54,6 +54,7 @@ set(TestWTF_SOURCES
     Tests/WTF/Condition.cpp
     Tests/WTF/CrossThreadCopierTests.cpp
     Tests/WTF/CrossThreadTask.cpp
+    Tests/WTF/CurrentStackPointer.cpp
     Tests/WTF/DataMutex.cpp
     Tests/WTF/DateMath.cpp
     Tests/WTF/Deque.cpp
@@ -180,6 +181,7 @@ if (ENABLE_JAVASCRIPTCORE)
     set(TestJavaScriptCore_SOURCES
         Runner/TestsController.cpp
 
+        Tests/JavaScriptCore/ConfigureSignalForGC.cpp
         Tests/JavaScriptCore/DisallowVMEntry.cpp
         Tests/JavaScriptCore/InspectorConsoleMessage.cpp
         Tests/JavaScriptCore/MarkedVector.cpp

@@ -42,7 +42,10 @@
 #endif
 
 #include <limits.h>
+#ifndef __cplusplus
+// GCC workaround
 #include <stdatomic.h>
+#endif
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
@@ -76,6 +79,7 @@ PAS_BEGIN_EXTERN_C;
 
 #define PAS_ALWAYS_INLINE_BUT_NOT_INLINE __PAS_ALWAYS_INLINE_BUT_NOT_INLINE
 #define PAS_ALWAYS_INLINE __PAS_ALWAYS_INLINE
+#define PAS_ALWAYS_INLINE_FOR_CORRECTNESS __PAS_ALWAYS_INLINE_FOR_CORRECTNESS
 #define PAS_NEVER_INLINE __PAS_NEVER_INLINE
 #define PAS_NO_RETURN __PAS_NO_RETURN
 #define PAS_USED __attribute__((used))
@@ -83,8 +87,17 @@ PAS_BEGIN_EXTERN_C;
 
 #define PAS_COLD /* FIXME: Need some way of triggering cold CC. */
 
+#ifndef PAS_CDECL
+#if !PAS_OS(WINDOWS)
+#define PAS_CDECL
+#else
+#define PAS_CDECL __attribute__ ((cdecl))
+#endif
+#endif
+
 #define PAS_API __PAS_API
 #define PAS_BAPI __PAS_BAPI
+#define PAS_API_NEVER_HIDDEN __PAS_API_NEVER_HIDDEN
 
 #define PAS_ALIGNED(amount) __attribute__((aligned(amount)))
 
@@ -129,6 +142,8 @@ PAS_BEGIN_EXTERN_C;
 #define PAS_X86_64 __PAS_X86_64
 
 #define PAS_RISCV __PAS_RISCV
+
+#define PAS_LOONGARCH64 __PAS_LOONGARCH64
 
 #define PAS_PP_THIRD_ARG(a, b, c, ...) c
 #define PAS_VA_OPT_SUPPORTED_I(...) PAS_PP_THIRD_ARG(__VA_OPT__(,),true,false,)
@@ -386,7 +401,7 @@ static PAS_ALWAYS_INLINE void pas_assertion_failed_noreturn_silencer6(
 
 #define PAS_ASSERT_FAIL1(count, file, line, function, exp, misc1, ...) do { \
         if (count == 1) \
-            pas_assertion_failed_noreturn_silencer1(file, line, function, exp, (uint64_t)misc1); \
+            pas_assertion_failed_noreturn_silencer1(file, line, function, exp, (size_t)misc1); \
         __VA_OPT__( \
         else \
             PAS_ASSERT_FAIL2(count, file, line, function, exp, misc1, __VA_ARGS__); \
@@ -395,7 +410,7 @@ static PAS_ALWAYS_INLINE void pas_assertion_failed_noreturn_silencer6(
 
 #define PAS_ASSERT_FAIL2(count, file, line, function, exp, misc1, misc2, ...) do { \
         if (count == 2) \
-            pas_assertion_failed_noreturn_silencer2(file, line, function, exp, (uint64_t)misc1, (uint64_t)misc2); \
+            pas_assertion_failed_noreturn_silencer2(file, line, function, exp, (size_t)misc1, (size_t)misc2); \
         __VA_OPT__( \
         else \
             PAS_ASSERT_FAIL3(count, file, line, function, exp, misc1, misc2, __VA_ARGS__); \
@@ -404,7 +419,7 @@ static PAS_ALWAYS_INLINE void pas_assertion_failed_noreturn_silencer6(
 
 #define PAS_ASSERT_FAIL3(count, file, line, function, exp, misc1, misc2, misc3, ...) do { \
         if (count == 3) \
-            pas_assertion_failed_noreturn_silencer3(file, line, function, exp, (uint64_t)misc1, (uint64_t)misc2, (uint64_t)misc3); \
+            pas_assertion_failed_noreturn_silencer3(file, line, function, exp, (size_t)misc1, (size_t)misc2, (size_t)misc3); \
         __VA_OPT__( \
         else \
             PAS_ASSERT_FAIL4(count, file, line, function, exp, misc1, misc2, misc3, __VA_ARGS__); \
@@ -413,7 +428,7 @@ static PAS_ALWAYS_INLINE void pas_assertion_failed_noreturn_silencer6(
 
 #define PAS_ASSERT_FAIL4(count, file, line, function, exp, misc1, misc2, misc3, misc4, ...) do { \
         if (count == 4) \
-            pas_assertion_failed_noreturn_silencer4(file, line, function, exp, (uint64_t)misc1, (uint64_t)misc2, (uint64_t)misc3, (uint64_t)misc4); \
+            pas_assertion_failed_noreturn_silencer4(file, line, function, exp, (size_t)misc1, (size_t)misc2, (size_t)misc3, (size_t)misc4); \
         __VA_OPT__( \
         else \
             PAS_ASSERT_FAIL5(count, file, line, function, exp, misc1, misc2, misc3, misc4, __VA_ARGS__); \
@@ -422,7 +437,7 @@ static PAS_ALWAYS_INLINE void pas_assertion_failed_noreturn_silencer6(
 
 #define PAS_ASSERT_FAIL5(count, file, line, function, exp, misc1, misc2, misc3, misc4, misc5, ...) do { \
         if (count == 5) \
-            pas_assertion_failed_noreturn_silencer5(file, line, function, exp, (uint64_t)misc1, (uint64_t)misc2, (uint64_t)misc3, (uint64_t)misc4, (uint64_t)misc5); \
+            pas_assertion_failed_noreturn_silencer5(file, line, function, exp, (size_t)misc1, (size_t)misc2, (size_t)misc3, (size_t)misc4, (size_t)misc5); \
         __VA_OPT__( \
         else \
             PAS_ASSERT_FAIL6(count, file, line, function, exp, misc1, misc2, misc3, misc4, misc5, __VA_ARGS__); \
@@ -430,7 +445,7 @@ static PAS_ALWAYS_INLINE void pas_assertion_failed_noreturn_silencer6(
     } while (0)
 
 #define PAS_ASSERT_FAIL6(count, file, line, function, exp, misc1, misc2, misc3, misc4, misc5, misc6, ...) \
-        pas_assertion_failed_noreturn_silencer6(file, line, function, exp, (uint64_t)misc1, (uint64_t)misc2, (uint64_t)misc3, (uint64_t)misc4, (uint64_t)misc5, (uint64_t)misc6)
+        pas_assertion_failed_noreturn_silencer6(file, line, function, exp, (size_t)misc1, (size_t)misc2, (size_t)misc3, (size_t)misc4, (size_t)misc5, (size_t)misc6)
 
 #else /* !((PAS_OS(DARWIN) || PAS_OS(LINUX)) && PAS_VA_OPT_SUPPORTED) */
 
@@ -1072,7 +1087,7 @@ PAS_IGNORE_WARNINGS_END
 #endif
 }
 
-#if PAS_COMPILER(CLANG)
+#if PAS_COMPILER(CLANG) && !(PAS_PLATFORM(PLAYSTATION) && defined(__cplusplus))
 #define PAS_ATOMIC_TYPE(T) _Atomic T
 #define PAS_ATOMIC_LOAD_RELAXED(ptr) __c11_atomic_load((ptr), __ATOMIC_RELAXED)
 #define PAS_ATOMIC_STORE_RELAXED(ptr, val) __c11_atomic_store((ptr), (val), __ATOMIC_RELAXED)

@@ -71,4 +71,10 @@
 #define __PAS_RISCV 0
 #endif
 
+#if defined(__loongarch64)
+#define __PAS_LOONGARCH64 1
+#else
+#define __PAS_LOONGARCH64 0
+#endif
+
 #endif /* PAS_CONFIG_PREFIX_H */

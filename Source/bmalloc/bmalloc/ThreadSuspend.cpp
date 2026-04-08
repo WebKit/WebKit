@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia, S.L. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include <wtf/ThreadMessage.h>
+#include "ThreadSuspend.h"
 
+#if !BOS(DARWIN) && !BOS(WINDOWS)
 
-namespace WTF {
+namespace bmalloc { namespace api {
 
-MessageStatus sendMessageScoped(const ThreadSuspendLocker& locker, Thread& thread, const ThreadMessage& message)
+int threadSuspendSignalNumber()
 {
-    auto result = thread.suspend(locker);
-    if (!result)
-        return MessageStatus::ThreadExited;
-
-    PlatformRegisters scratch;
-    auto registers = thread.getRegisters(locker, scratch);
-
-    message(registers);
-
-    thread.resume(locker);
-    return MessageStatus::MessageRan;
+    return pas_thread_suspend_signal_number();
 }
 
-} // namespace WTF
+} } // namespace bmalloc::api
+
+#endif // !BOS(DARWIN) && !BOS(WINDOWS)

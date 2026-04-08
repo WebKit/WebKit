@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia, S.L. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +24,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include <wtf/ThreadMessage.h>
+#ifndef PAS_THREAD_YIELD_H
+#define PAS_THREAD_YIELD_H
 
+#include "pas_utils.h"
 
-namespace WTF {
+PAS_BEGIN_EXTERN_C;
 
-MessageStatus sendMessageScoped(const ThreadSuspendLocker& locker, Thread& thread, const ThreadMessage& message)
-{
-    auto result = thread.suspend(locker);
-    if (!result)
-        return MessageStatus::ThreadExited;
+PAS_API void pas_thread_yield(void);
 
-    PlatformRegisters scratch;
-    auto registers = thread.getRegisters(locker, scratch);
+PAS_END_EXTERN_C;
 
-    message(registers);
-
-    thread.resume(locker);
-    return MessageStatus::MessageRan;
-}
-
-} // namespace WTF
+#endif /* PAS_THREAD_YIELD_H */

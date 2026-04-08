@@ -25,8 +25,6 @@
 
 #include "pas_config.h"
 
-#if LIBPAS_ENABLED
-
 #include "pas_utils.h"
 
 #include "pas_log.h"
@@ -283,5 +281,3 @@ void pas_set_reallocation_did_fail_callback(void (*callback)(const char* reason,
 {
     reallocation_did_fail_callback = callback;
 }
-
-#endif /* LIBPAS_ENABLED */

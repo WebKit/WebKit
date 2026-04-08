@@ -37,6 +37,7 @@ BALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "HeapKind.h"
 #include "Mutex.h"
 #include "SystemHeap.h"
+#include "ThreadSuspend.h"
 
 #if BUSE(LIBPAS)
 #include "bmalloc_heap_inlines.h"

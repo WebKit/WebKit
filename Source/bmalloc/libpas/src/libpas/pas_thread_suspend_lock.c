@@ -25,10 +25,6 @@
 
 #include "pas_config.h"
 
-#if LIBPAS_ENABLED
-
 #include "pas_thread_suspend_lock.h"
 
 PAS_DEFINE_LOCK(pas_thread_suspend);
-
-#endif /* LIBPAS_ENABLED */

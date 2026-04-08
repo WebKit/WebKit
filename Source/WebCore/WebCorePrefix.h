@@ -463,6 +463,7 @@
 #include <JavaScriptCore/WeakSet.h>
 #include <JavaScriptCore/WriteBarrier.h>
 #include <bmalloc/BVMTags.h>
+#include <bmalloc/StackPointer.h>
 #include <pal/SessionID.h>
 #if PLATFORM(COCOA)
 #include <pal/cf/OTSVGTable.h>
@@ -517,7 +518,6 @@
 #include <wtf/SixCharacterHash.h>
 #include <wtf/StackAllocation.h>
 #include <wtf/StackBounds.h>
-#include <wtf/StackPointer.h>
 #include <wtf/StackShot.h>
 #include <wtf/StackStats.h>
 #include <wtf/StackTrace.h>

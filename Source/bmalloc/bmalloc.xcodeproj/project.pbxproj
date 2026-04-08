@@ -38,6 +38,7 @@
 		0F99999C37AAAA0000999999 /* pas_stats.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F99999A37AAAA0000999999 /* pas_stats.c */; };
 		0F99999D37AAAA0000999999 /* pas_stats.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F99999B37AAAA0000999999 /* pas_stats.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD557331F7EDB7B00B1F0A3 /* HeapKind.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FD557321F7EDB7B00B1F0A3 /* HeapKind.cpp */; };
+		60C357B112C74F1BB6EF9BC0 /* ThreadSuspend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BC5739FEB8F42C48A41F204 /* ThreadSuspend.cpp */; };
 		142B44361E2839E7001DA6E9 /* SystemHeap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 142B44341E2839E7001DA6E9 /* SystemHeap.cpp */; };
 		142B44371E2839E7001DA6E9 /* SystemHeap.h in Headers */ = {isa = PBXBuildFile; fileRef = 142B44351E2839E7001DA6E9 /* SystemHeap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		142FC6222096409E00A99362 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 142FC6212096409E00A99362 /* Foundation.framework */; };
@@ -71,6 +72,16 @@
 		3C8B4B436E304BE39DAB4864 /* pas_process.h in Headers */ = {isa = PBXBuildFile; fileRef = F31DBD0796DD4C2D906A6636 /* pas_process.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4426E2801C838EE0008EB042 /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4426E27E1C838EE0008EB042 /* Logging.cpp */; };
 		4426E2811C838EE0008EB042 /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 4426E27F1C838EE0008EB042 /* Logging.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4BCC5BF92F67153A00676D5F /* pas_thread_suspend.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BCC5BF62F67153A00676D5F /* pas_thread_suspend.c */; };
+		4BCC5BFA2F67153A00676D5F /* pas_thread_suspend_signal_handler.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BCC5BF82F67153A00676D5F /* pas_thread_suspend_signal_handler.c */; };
+		4BCC5BFB2F67153A00676D5F /* pas_thread.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BCC5BF42F67153A00676D5F /* pas_thread.c */; };
+		4BCC5BFC2F67153A00676D5F /* pas_thread_suspend_signal_handler.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BCC5BF72F67153A00676D5F /* pas_thread_suspend_signal_handler.h */; };
+		4BCC5BFD2F67153A00676D5F /* pas_thread_suspend.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BCC5BF52F67153A00676D5F /* pas_thread_suspend.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4BCC5C012F6715BF00676D5F /* ThreadSuspend.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BCC5C002F6715BE00676D5F /* ThreadSuspend.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4BCC5C062F6716C300676D5F /* pas_machine_current_stack_pointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BCC5C022F6716C300676D5F /* pas_machine_current_stack_pointer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4BCC5C0C2F6716C300676D5F /* pas_machine_current_stack_pointer.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BCC5C0B2F6716C300676D5F /* pas_machine_current_stack_pointer.c */; };
+		4BCC5C0A2F6716C300676D5F /* pas_machine_registers.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BCC5C092F6716C300676D5F /* pas_machine_registers.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4BCC5C072F6716C300676D5F /* StackPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BCC5C042F6716C300676D5F /* StackPointer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C3986CA2E0D89A600C450A4 /* module.modulemap in Headers */ = {isa = PBXBuildFile; fileRef = 5CDA07D92E0D894900E6D3DD /* module.modulemap */; settings = {ATTRIBUTES = (Private, ); }; };
 		65072AE72B6195B90065065C /* TZoneHeapManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65072AE52B6195B90065065C /* TZoneHeapManager.cpp */; };
 		652E16972C4869D000C377D7 /* TZoneLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 652E16962C4869D000C377D7 /* TZoneLog.cpp */; };
@@ -1145,6 +1156,7 @@
 		0FC40AF82451499400876DA0 /* pas_primitive_heap_ref.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_primitive_heap_ref.h; path = libpas/src/libpas/pas_primitive_heap_ref.h; sourceTree = "<group>"; };
 		0FC40BD9245243A400876DA0 /* pas_lock.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pas_lock.c; path = libpas/src/libpas/pas_lock.c; sourceTree = "<group>"; };
 		0FD557321F7EDB7B00B1F0A3 /* HeapKind.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HeapKind.cpp; path = bmalloc/HeapKind.cpp; sourceTree = "<group>"; };
+		4BC5739FEB8F42C48A41F204 /* ThreadSuspend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ThreadSuspend.cpp; path = bmalloc/ThreadSuspend.cpp; sourceTree = "<group>"; };
 		1413E460189DCE1E00546D68 /* BInline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BInline.h; path = bmalloc/BInline.h; sourceTree = "<group>"; };
 		1413E468189EEDE400546D68 /* BAssert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BAssert.h; path = bmalloc/BAssert.h; sourceTree = "<group>"; };
 		1417F64F18B7280C0076FA3F /* BSyscall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BSyscall.h; path = bmalloc/BSyscall.h; sourceTree = "<group>"; };
@@ -1212,6 +1224,16 @@
 		314164E72D38449E006B8C0D /* pas_promote_intrinsic_heap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pas_promote_intrinsic_heap.h; path = libpas/src/libpas/pas_promote_intrinsic_heap.h; sourceTree = "<group>"; };
 		4426E27E1C838EE0008EB042 /* Logging.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Logging.cpp; path = bmalloc/Logging.cpp; sourceTree = "<group>"; };
 		4426E27F1C838EE0008EB042 /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = bmalloc/Logging.h; sourceTree = "<group>"; };
+		4BCC5BF42F67153A00676D5F /* pas_thread.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pas_thread.c; path = libpas/src/libpas/pas_thread.c; sourceTree = "<group>"; };
+		4BCC5BF52F67153A00676D5F /* pas_thread_suspend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pas_thread_suspend.h; path = libpas/src/libpas/pas_thread_suspend.h; sourceTree = "<group>"; };
+		4BCC5BF62F67153A00676D5F /* pas_thread_suspend.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pas_thread_suspend.c; path = libpas/src/libpas/pas_thread_suspend.c; sourceTree = "<group>"; };
+		4BCC5BF72F67153A00676D5F /* pas_thread_suspend_signal_handler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pas_thread_suspend_signal_handler.h; path = libpas/src/libpas/pas_thread_suspend_signal_handler.h; sourceTree = "<group>"; };
+		4BCC5BF82F67153A00676D5F /* pas_thread_suspend_signal_handler.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pas_thread_suspend_signal_handler.c; path = libpas/src/libpas/pas_thread_suspend_signal_handler.c; sourceTree = "<group>"; };
+		4BCC5C002F6715BE00676D5F /* ThreadSuspend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ThreadSuspend.h; path = bmalloc/ThreadSuspend.h; sourceTree = "<group>"; };
+		4BCC5C022F6716C300676D5F /* pas_machine_current_stack_pointer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pas_machine_current_stack_pointer.h; path = libpas/src/libpas/pas_machine_current_stack_pointer.h; sourceTree = "<group>"; };
+		4BCC5C0B2F6716C300676D5F /* pas_machine_current_stack_pointer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = pas_machine_current_stack_pointer.c; path = libpas/src/libpas/pas_machine_current_stack_pointer.c; sourceTree = "<group>"; };
+		4BCC5C092F6716C300676D5F /* pas_machine_registers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pas_machine_registers.h; path = libpas/src/libpas/pas_machine_registers.h; sourceTree = "<group>"; };
+		4BCC5C042F6716C300676D5F /* StackPointer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = StackPointer.h; path = bmalloc/StackPointer.h; sourceTree = "<group>"; };
 		5CDA07D92E0D894900E6D3DD /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		65072AE52B6195B90065065C /* TZoneHeapManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TZoneHeapManager.cpp; path = bmalloc/TZoneHeapManager.cpp; sourceTree = "<group>"; };
 		65072AE62B6195B90065065C /* TZoneHeapManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TZoneHeapManager.h; path = bmalloc/TZoneHeapManager.h; sourceTree = "<group>"; };
@@ -1638,6 +1660,9 @@
 				0FC40AA42451498E00876DA0 /* pas_lock_free_read_ptr_ptr_hashtable.h */,
 				0FC40AD72451499100876DA0 /* pas_log.c */,
 				0FC40AC12451499000876DA0 /* pas_log.h */,
+				4BCC5C0B2F6716C300676D5F /* pas_machine_current_stack_pointer.c */,
+				4BCC5C022F6716C300676D5F /* pas_machine_current_stack_pointer.h */,
+				4BCC5C092F6716C300676D5F /* pas_machine_registers.h */,
 				E3696A3A28F6C48B00C2F2D4 /* pas_malloc_stack_logging.c */,
 				E3696A3B28F6C48B00C2F2D4 /* pas_malloc_stack_logging.h */,
 				F39CF9AC2E70E40900EB3567 /* pas_mar_crash_reporter_report.h */,
@@ -1793,6 +1818,7 @@
 				0FC40A952451498D00876DA0 /* pas_string_stream.c */,
 				0FC40A3F2451498700876DA0 /* pas_string_stream.h */,
 				0F373E532659EA700034BA96 /* pas_system_heap.h */,
+				4BCC5BF42F67153A00676D5F /* pas_thread.c */,
 				F15AF5182D791B4B001AE01E /* pas_thread.h */,
 				0FC40A7C2451498B00876DA0 /* pas_thread_local_cache.c */,
 				0FC40AC72451499000876DA0 /* pas_thread_local_cache.h */,
@@ -1804,8 +1830,12 @@
 				0F7C92D826E57F75006AF012 /* pas_thread_local_cache_layout_node_kind.h */,
 				0FC40AA22451498E00876DA0 /* pas_thread_local_cache_node.c */,
 				0FC40AA72451498E00876DA0 /* pas_thread_local_cache_node.h */,
+				4BCC5BF62F67153A00676D5F /* pas_thread_suspend.c */,
+				4BCC5BF52F67153A00676D5F /* pas_thread_suspend.h */,
 				E35B7BC927ADB44E00C3498F /* pas_thread_suspend_lock.c */,
 				E35B7BC827ADB44E00C3498F /* pas_thread_suspend_lock.h */,
+				4BCC5BF82F67153A00676D5F /* pas_thread_suspend_signal_handler.c */,
+				4BCC5BF72F67153A00676D5F /* pas_thread_suspend_signal_handler.h */,
 				0FC40A782451498B00876DA0 /* pas_tiny_large_map_entry.h */,
 				0FC40AC52451499000876DA0 /* pas_tree_direction.h */,
 				0F8A801C25CF938A00790B4A /* pas_tri_state.h */,
@@ -1854,6 +1884,9 @@
 				0F5167731FAD6852008236A8 /* bmalloc.cpp */,
 				1448C2FE18F3754300502839 /* bmalloc.h */,
 				1448C2FF18F3754300502839 /* mbmalloc.cpp */,
+				4BCC5C042F6716C300676D5F /* StackPointer.h */,
+				4BC5739FEB8F42C48A41F204 /* ThreadSuspend.cpp */,
+				4BCC5C002F6715BE00676D5F /* ThreadSuspend.h */,
 			);
 			name = api;
 			sourceTree = "<group>";
@@ -2232,6 +2265,8 @@
 				DD4BEDDD29CBA49700398E35 /* pas_lock.h in Headers */,
 				DD4BECC929CBA49700398E35 /* pas_lock_free_read_ptr_ptr_hashtable.h in Headers */,
 				DD4BEDFA29CBA49700398E35 /* pas_log.h in Headers */,
+				4BCC5C062F6716C300676D5F /* pas_machine_current_stack_pointer.h in Headers */,
+				4BCC5C0A2F6716C300676D5F /* pas_machine_registers.h in Headers */,
 				DD4BED2B29CBA49700398E35 /* pas_malloc_stack_logging.h in Headers */,
 				F39CF9AD2E70E41400EB3567 /* pas_mar_crash_reporter_report.h in Headers */,
 				F39CF9A82E70CA3600EB3567 /* pas_mar_registry.h in Headers */,
@@ -2348,7 +2383,9 @@
 				DD4BEDBE29CBA49700398E35 /* pas_thread_local_cache_layout_node.h in Headers */,
 				DD4BEE1629CBA49700398E35 /* pas_thread_local_cache_layout_node_kind.h in Headers */,
 				DD4BEC9629CBA49700398E35 /* pas_thread_local_cache_node.h in Headers */,
+				4BCC5BFD2F67153A00676D5F /* pas_thread_suspend.h in Headers */,
 				DD4BEE2629CBA49700398E35 /* pas_thread_suspend_lock.h in Headers */,
+				4BCC5BFC2F67153A00676D5F /* pas_thread_suspend_signal_handler.h in Headers */,
 				DD4BED9629CBA49700398E35 /* pas_tiny_large_map_entry.h in Headers */,
 				DD4BED5C29CBA49700398E35 /* pas_tree_direction.h in Headers */,
 				DD4BEDDF29CBA49700398E35 /* pas_tri_state.h in Headers */,
@@ -2372,6 +2409,7 @@
 				AD14AD29202529C400890E3B /* ProcessCheck.h in Headers */,
 				148EFAE81D6B953B008E721E /* ScopeExit.h in Headers */,
 				14DD789018F48CEB00950702 /* Sizes.h in Headers */,
+				4BCC5C072F6716C300676D5F /* StackPointer.h in Headers */,
 				E31E74802238CA5C005D084A /* StaticPerProcess.h in Headers */,
 				142B44371E2839E7001DA6E9 /* SystemHeap.h in Headers */,
 				ED4BEC4929CBA49700398E35 /* tagged_bmalloc_heap.h in Headers */,
@@ -2382,6 +2420,7 @@
 				DD4BEDD629CBA49700398E35 /* thingy_heap.h in Headers */,
 				DD4BEDC329CBA49700398E35 /* thingy_heap_config.h in Headers */,
 				DD4BECC529CBA49700398E35 /* thingy_heap_prefix.h in Headers */,
+				4BCC5C012F6715BF00676D5F /* ThreadSuspend.h in Headers */,
 				FE0383202ABC0E9F00A576A2 /* TZoneHeap.h in Headers */,
 				FE0383232ABC988C00A576A2 /* TZoneHeapInlines.h in Headers */,
 				65FE739D2B79E09800C5CDAF /* TZoneHeapManager.h in Headers */,
@@ -2682,6 +2721,7 @@
 				DD4BEC3A29CBA49700398E35 /* pas_lock.c in Sources */,
 				DD4BECF229CBA49700398E35 /* pas_lock_free_read_ptr_ptr_hashtable.c in Sources */,
 				DD4BECD429CBA49700398E35 /* pas_log.c in Sources */,
+				4BCC5C0C2F6716C300676D5F /* pas_machine_current_stack_pointer.c in Sources */,
 				DD4BEC4629CBA49700398E35 /* pas_malloc_stack_logging.c in Sources */,
 				F34D74BA2E71E80D00024262 /* pas_mar_registry.c in Sources */,
 				F34D74B92E71E80200024262 /* pas_mar_report_crash.c in Sources */,
@@ -2727,11 +2767,14 @@
 				DD4BEC7A29CBA49700398E35 /* pas_status_reporter.c in Sources */,
 				DD4BED2329CBA49700398E35 /* pas_stream.c in Sources */,
 				DD4BEE0729CBA49700398E35 /* pas_string_stream.c in Sources */,
+				4BCC5BFB2F67153A00676D5F /* pas_thread.c in Sources */,
 				DD4BEE0029CBA49700398E35 /* pas_thread_local_cache.c in Sources */,
 				DD4BECFB29CBA49700398E35 /* pas_thread_local_cache_layout.c in Sources */,
 				DD4BED4E29CBA49700398E35 /* pas_thread_local_cache_layout_node.c in Sources */,
 				DD4BECF329CBA49700398E35 /* pas_thread_local_cache_node.c in Sources */,
+				4BCC5BF92F67153A00676D5F /* pas_thread_suspend.c in Sources */,
 				DD4BEC4529CBA49700398E35 /* pas_thread_suspend_lock.c in Sources */,
+				4BCC5BFA2F67153A00676D5F /* pas_thread_suspend_signal_handler.c in Sources */,
 				DD4BED0629CBA49700398E35 /* pas_utility_heap.c in Sources */,
 				DD4BED0729CBA49700398E35 /* pas_utility_heap_config.c in Sources */,
 				DD4BEE1B29CBA49700398E35 /* pas_utils.c in Sources */,
@@ -2744,6 +2787,7 @@
 				EB00000003000000000000BB /* tagged_bmalloc_heap_utils.c in Sources */,
 				DD4BECB729CBA49700398E35 /* thingy_heap.c in Sources */,
 				DD4BEC5929CBA49700398E35 /* thingy_heap_config.c in Sources */,
+				60C357B112C74F1BB6EF9BC0 /* ThreadSuspend.cpp in Sources */,
 				FE0383212ABC0E9F00A576A2 /* TZoneHeap.cpp in Sources */,
 				65072AE72B6195B90065065C /* TZoneHeapManager.cpp in Sources */,
 				652E16972C4869D000C377D7 /* TZoneLog.cpp in Sources */,

@@ -22,6 +22,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef PAS_THREAD_H
+#define PAS_THREAD_H
+
 #include "pas_platform.h"
 
 #if !PAS_OS(WINDOWS)
@@ -29,7 +32,6 @@
 #else
 
 /* Implement the subset of pthread that libpas requires to run on Windows */
-#pragma once
 #include <process.h>
 #include <time.h>
 #include <windows.h>
@@ -73,3 +75,5 @@ int pthread_mutex_lock(pthread_mutex_t *mutex);
 int pthread_mutex_unlock(pthread_mutex_t *mutex);
 
 #endif /* PAS_OS(WINDOWS) */
+
+#endif /* PAS_THREAD_H */

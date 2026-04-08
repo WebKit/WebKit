@@ -24,6 +24,7 @@ set(bmalloc_SOURCES
     bmalloc/HeapKind.cpp
     bmalloc/Logging.cpp
     bmalloc/Mutex.cpp
+    bmalloc/ThreadSuspend.cpp
     bmalloc/TZoneHeap.cpp
     bmalloc/TZoneHeapManager.cpp
     bmalloc/VMAllocate.cpp
@@ -147,6 +148,7 @@ set(bmalloc_C_SOURCES
     libpas/src/libpas/pas_lock.c
     libpas/src/libpas/pas_lock_free_read_ptr_ptr_hashtable.c
     libpas/src/libpas/pas_log.c
+    libpas/src/libpas/pas_machine_current_stack_pointer.c
     libpas/src/libpas/pas_malloc_stack_logging.c
     libpas/src/libpas/pas_mar_registry.c
     libpas/src/libpas/pas_mar_report_crash.c
@@ -193,6 +195,9 @@ set(bmalloc_C_SOURCES
     libpas/src/libpas/pas_stream.c
     libpas/src/libpas/pas_string_stream.c
     libpas/src/libpas/pas_thread.c
+    libpas/src/libpas/pas_thread_suspend.c
+    libpas/src/libpas/pas_thread_suspend_signal_handler.c
+    libpas/src/libpas/pas_thread_yield.c
     libpas/src/libpas/pas_thread_local_cache.c
     libpas/src/libpas/pas_thread_local_cache_layout.c
     libpas/src/libpas/pas_thread_local_cache_layout_node.c
@@ -231,7 +236,9 @@ set(bmalloc_PUBLIC_HEADERS
     bmalloc/Map.h
     bmalloc/Mutex.h
     bmalloc/Sizes.h
+    bmalloc/StackPointer.h
     bmalloc/StaticPerProcess.h
+    bmalloc/ThreadSuspend.h
     bmalloc/TZoneHeap.h
     bmalloc/TZoneHeapInlines.h
     bmalloc/TZoneHeapManager.h
@@ -441,6 +448,8 @@ set(bmalloc_PUBLIC_HEADERS
     libpas/src/libpas/pas_lock_free_read_ptr_ptr_hashtable.h
     libpas/src/libpas/pas_lock.h
     libpas/src/libpas/pas_log.h
+    libpas/src/libpas/pas_machine_current_stack_pointer.h
+    libpas/src/libpas/pas_machine_registers.h
     libpas/src/libpas/pas_malloc_stack_logging.h
     libpas/src/libpas/pas_mar_crash_reporter_report.h
     libpas/src/libpas/pas_mar_registry.h
@@ -541,7 +550,10 @@ set(bmalloc_PUBLIC_HEADERS
     libpas/src/libpas/pas_stream.h
     libpas/src/libpas/pas_string_stream.h
     libpas/src/libpas/pas_thread.h
+    libpas/src/libpas/pas_thread_suspend.h
     libpas/src/libpas/pas_thread_suspend_lock.h
+    libpas/src/libpas/pas_thread_suspend_signal_handler.h
+    libpas/src/libpas/pas_thread_yield.h
     libpas/src/libpas/pas_thread_local_cache.h
     libpas/src/libpas/pas_thread_local_cache_layout.h
     libpas/src/libpas/pas_thread_local_cache_layout_entry.h

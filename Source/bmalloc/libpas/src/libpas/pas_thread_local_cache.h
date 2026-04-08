@@ -72,7 +72,12 @@ struct pas_thread_local_cache {
     unsigned* pages_committed; /* This is a bitvector, protected by the scavenger lock. */
     
     pthread_t thread;
-    
+
+#if PAS_OS(WINDOWS)
+    /* Real Win32 thread HANDLE for the owning thread, not just the ID */
+    void* native_thread_handle;
+#endif
+
     bool should_stop_some;
     
     unsigned allocator_index_upper_bound;

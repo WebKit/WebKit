@@ -30,14 +30,21 @@
 #include "LLIntPCRanges.h"
 #include <JavaScriptCore/GPRInfo.h>
 #include <JavaScriptCore/MacroAssemblerCodeRef.h>
+#include <bmalloc/pas_machine_registers.h>
 #include <wtf/PlatformRegisters.h>
 #include <wtf/PointerPreparations.h>
 #include <wtf/StdLibExtras.h>
+
+#if (HAVE(MACHINE_CONTEXT) && !PAS_HAVE(MACHINE_CONTEXT)) || (!HAVE(MACHINE_CONTEXT) && PAS_HAVE(MACHINE_CONTEXT))
+#error "PAS/WTF out of sync"
+#endif
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 namespace MachineContext {
+static_assert(sizeof(PlatformRegisters) == sizeof(pas_machine_registers));
+static_assert(alignof(PlatformRegisters) == alignof(pas_machine_registers));
 
 template<typename T = void*> T stackPointer(const PlatformRegisters&);
 

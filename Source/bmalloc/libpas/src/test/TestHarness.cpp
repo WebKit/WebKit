@@ -390,6 +390,7 @@ void addRedBlackTreeTests();
 void addReallocFastPathTests();
 void addScavengerExternalWorkTests();
 void addTLCDecommitTests();
+void addThreadSuspendTests();
 void addTSDTests();
 void addThingyAndUtilityHeapAllocationTests();
 void addUtilsTests();
@@ -884,6 +885,7 @@ int main(int argc, char** argv)
     ADD_SUITE(ReallocFastPath);
     ADD_SUITE(ScavengerExternalWork);
     ADD_SUITE(TLCDecommit);
+    ADD_SUITE(ThreadSuspend);
     ADD_SUITE(TSD);
     ADD_SUITE(Utils);
     ADD_SUITE(ViewCache);

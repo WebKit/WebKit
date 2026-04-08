@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia, S.L. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,48 +24,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <wtf/Compiler.h>
-#include <wtf/ExportMacros.h>
-#include <wtf/Platform.h>
-
 #pragma once
 
-namespace WTF {
+#include "BInline.h"
 
-#if defined(NDEBUG) \
-    && (CPU(X86_64) || CPU(X86) || CPU(ARM64) || CPU(ARM_THUMB2) || CPU(ARM_TRADITIONAL))
+#ifdef __cplusplus
+#include "pas_machine_current_stack_pointer.h"
 
-// We can only use the inline asm implementation on release builds because it
-// needs to be inlinable in order to be correct.
-ALWAYS_INLINE void* currentStackPointer()
+namespace bmalloc { namespace api {
+
+static BINLINE void* currentStackPointer()
 {
-    void* stackPointer = nullptr;
-#if CPU(X86_64)
-    __asm__ volatile ("movq %%rsp, %0" : "=r"(stackPointer) ::);
-#elif CPU(X86)
-    __asm__ volatile ("movl %%esp, %0" : "=r"(stackPointer) ::);
-#elif CPU(ARM64) && defined(__ILP32__)
-    uint64_t stackPointerRegister = 0;
-    __asm__ volatile ("mov %0, sp" : "=r"(stackPointerRegister) ::);
-    stackPointer = reinterpret_cast<void*>(stackPointerRegister);
-#elif CPU(ARM64) || CPU(ARM_THUMB2) || CPU(ARM_TRADITIONAL)
-    __asm__ volatile ("mov %0, sp" : "=r"(stackPointer) ::);
-#endif
-    return stackPointer;
+    return pas_machine_current_stack_pointer();
 }
 
-#elif !ENABLE(C_LOOP)
+} } // namespace bmalloc::api
 
-#define USE_ASM_CURRENT_STACK_POINTER 1
-extern "C" WTF_EXPORT_PRIVATE void* CDECL currentStackPointer(void);
+using bmalloc::api::currentStackPointer;
 
-#else
-
-#define USE_GENERIC_CURRENT_STACK_POINTER 1
-WTF_EXPORT_PRIVATE void* currentStackPointer();
-
-#endif
-
-} // namespace WTF
-
-using WTF::currentStackPointer;
+#endif // __cplusplus
