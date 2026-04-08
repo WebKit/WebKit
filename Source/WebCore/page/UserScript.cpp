@@ -50,6 +50,9 @@ static HashCountedSet<String>& sourceStrings()
 
 static String internedSourceString(const String& string)
 {
+    if (string.isEmpty())
+        return emptyString();
+
     auto result = sourceStrings().add(string);
     return result.iterator->key;
 }

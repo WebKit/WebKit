@@ -50,6 +50,9 @@ static HashCountedSet<String>& styleStrings()
 
 static String internedStyleString(const String& string)
 {
+    if (string.isEmpty())
+        return emptyString();
+
     auto result = styleStrings().add(string);
     return result.iterator->key;
 }
