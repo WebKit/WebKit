@@ -1,1 +1,1 @@
-PASS: root svg element size handled (0x0)
+PASS: root svg element size handled (800x600)

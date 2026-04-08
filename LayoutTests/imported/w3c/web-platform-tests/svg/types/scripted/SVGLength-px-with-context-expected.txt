@@ -1,7 +1,7 @@
 
 PASS SVGLength, converting from 'px' to other units (attached), unitless
 PASS SVGLength, converting from 'px' to other units (attached), percentage
-FAIL SVGLength, converting from 'px' to other units (attached), changing percentage basis assert_equals: expected 150 but got 75
+PASS SVGLength, converting from 'px' to other units (attached), changing percentage basis
 PASS SVGLength, converting from 'px' to other units (attached), ems
 PASS SVGLength, converting from 'px' to other units (attached) , exs
 PASS SVGLength, converting from 'px' to other units (attached), exs (check style flush)

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SVGLength.h"
 
+#include "Document.h"
 #include "SVGElement.h"
 
 namespace WebCore {
@@ -33,26 +34,32 @@ namespace WebCore {
 ExceptionOr<float> SVGLength::valueForBindings()
 {
     RefPtr element = contextElement();
-    // Ensure style is up-to-date for font-relative units (e.g., ch).
-    // https://www.w3.org/TR/css-values-3/#absolute-lengths
-    auto requiresStyleUpdate = [](SVGLengthType type) {
-        switch (type) {
-        case SVGLengthType::Number:
-        case SVGLengthType::Pixels:
-        case SVGLengthType::Centimeters:
-        case SVGLengthType::Millimeters:
-        case SVGLengthType::Inches:
-        case SVGLengthType::Points:
-        case SVGLengthType::Picas:
-            return false; // Absolute units don't need style update.
-        default:
-            return true; // Font-relative units need style update.
-        }
-    };
+    if (element) {
+        if (m_value.lengthType() == SVGLengthType::Percentage) {
+            // Percentage values depend on the viewport size from the renderer,
+            // so layout must be up-to-date to reflect any recent attribute changes.
+            protect(element->document())->updateLayoutIgnorePendingStylesheets();
+        } else {
+            // Ensure style is up-to-date for font-relative units (e.g., ch).
+            // https://www.w3.org/TR/css-values-3/#absolute-lengths
+            auto requiresStyleUpdate = [](SVGLengthType type) {
+                switch (type) {
+                case SVGLengthType::Number:
+                case SVGLengthType::Pixels:
+                case SVGLengthType::Centimeters:
+                case SVGLengthType::Millimeters:
+                case SVGLengthType::Inches:
+                case SVGLengthType::Points:
+                case SVGLengthType::Picas:
+                    return false; // Absolute units don't need style update.
+                default:
+                    return true; // Font-relative units need style update.
+                }
+            };
 
-    if (requiresStyleUpdate(m_value.lengthType())) {
-        if (element)
-            protect(element->document())->updateStyleIfNeeded();
+            if (requiresStyleUpdate(m_value.lengthType()))
+                protect(element->document())->updateStyleIfNeeded();
+        }
     }
 
     return m_value.valueForBindings(SVGLengthContext { element.get() });
