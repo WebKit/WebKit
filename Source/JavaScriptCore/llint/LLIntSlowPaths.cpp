@@ -1619,7 +1619,38 @@ LLINT_SLOW_PATH_DECL(slow_path_in_by_id)
     if (!baseValue.isObject())
         LLINT_THROW(createInvalidInParameterError(globalObject, baseValue));
 
-    LLINT_RETURN(jsBoolean(asObject(baseValue)->hasProperty(globalObject, codeBlock->identifier(bytecode.m_property))));
+    const Identifier& ident = codeBlock->identifier(bytecode.m_property);
+    JSObject* baseObject = asObject(baseValue);
+    PropertySlot slot(baseObject, PropertySlot::InternalMethodType::HasProperty);
+    bool found = baseObject->getPropertySlot(globalObject, ident, slot);
+    LLINT_CHECK_EXCEPTION();
+
+    if (Options::useLLIntICs() && found && slot.isCacheable()) {
+        auto& metadata = bytecode.metadata(codeBlock);
+        {
+            StructureID oldStructureID = metadata.m_structureID;
+            if (oldStructureID) {
+                Structure* a = oldStructureID.decode();
+                Structure* b = baseObject->structure();
+
+                if (Structure::shouldConvertToPolyProto(a, b)) {
+                    ASSERT(a->rareData()->sharedPolyProtoWatchpoint().get() == b->rareData()->sharedPolyProtoWatchpoint().get());
+                    a->rareData()->sharedPolyProtoWatchpoint()->invalidate(vm, StringFireDetail("Detected poly proto opportunity."));
+                }
+            }
+        }
+
+        Structure* structure = baseObject->structure();
+        if (slot.slotBase() == baseValue && structure->propertyAccessesAreCacheable() && !structure->needImpurePropertyWatchpoint()) {
+            {
+                ConcurrentJSLocker locker(codeBlock->m_lock);
+                metadata.m_structureID = structure->id();
+            }
+            vm.writeBarrier(codeBlock);
+        }
+    }
+
+    LLINT_RETURN(jsBoolean(found));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_in_by_val)

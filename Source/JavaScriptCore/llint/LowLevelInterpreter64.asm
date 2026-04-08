@@ -3610,7 +3610,17 @@ llintOpWithMetadata(op_enumerator_has_own_property, OpEnumeratorHasOwnProperty, 
     hasPropertyImpl(OpEnumeratorHasOwnProperty, size, get, dispatch, metadata, return, _slow_path_enumerator_has_own_property)
 end)
 
-llintOpWithReturn(op_in_by_id, OpInById, macro (size, get, dispatch, return)
+llintOpWithMetadata(op_in_by_id, OpInById, macro (size, get, dispatch, metadata, return)
+    metadata(t2, t0)
+    get(m_base, t0)
+    loadConstantOrVariableCell(size, t0, t3, .opInByIdSlow)
+    loadi JSCell::m_structureID[t3], t1
+    loadi OpInById::Metadata::m_structureID[t2], t0
+    bineq t0, t1, .opInByIdSlow
+    move ValueTrue, t0
+    return(t0)
+
+.opInByIdSlow:
     callSlowPath(_llint_slow_path_in_by_id)
     dispatch()
 .osrReturnPoint:
