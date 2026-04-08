@@ -321,12 +321,8 @@ static ResolvedFontFamily fontFamilyFromUnresolvedFontFamily(const CSSPropertyPa
     auto families = WTF::compactMap(unresolvedFamily, [&](auto& item) -> std::optional<WebCore::FontFamily> {
         auto [familyName, isGenericFamily] = switchOn(item,
             [&](CSSValueID ident) -> std::pair<AtomString, bool> {
-                if (ident != CSSValueWebkitBody) {
-                    // FIXME: Treat system-ui like other generic font families
-                    if (ident == CSSValueSystemUi)
-                        return { nameString(CSSValueSystemUi), true };
+                if (ident != CSSValueWebkitBody)
                     return { *familyNamesData->at(CSSPropertyParserHelpers::genericFontFamilyIndex(ident)), true };
-                }
                 return { AtomString(context->settingsValues().fontGenericFamilies.standardFontFamily()), false };
             },
             [&](const AtomString& familyString) -> std::pair<AtomString, bool> {

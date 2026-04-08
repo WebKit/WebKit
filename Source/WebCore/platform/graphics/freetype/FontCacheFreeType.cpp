@@ -215,7 +215,9 @@ static String getFamilyNameStringFromFamily(const String& family)
         return "math"_s;
 
 #if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
-    if (family == *familyNamesData->at(FamilyNamesIndex::SystemUiFamily) || family == "-webkit-system-font"_s)
+    if (family == *familyNamesData->at(FamilyNamesIndex::SystemUiFamily))
+        return "system-ui"_s;
+    if (family == "-webkit-system-font"_s)
         return SystemSettings::singleton().defaultSystemFont();
 #endif
 
