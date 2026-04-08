@@ -96,6 +96,7 @@ private:
     void paint(PaintInfo&, const LayoutPoint&) final;
     void paintObject(PaintInfo&, const LayoutPoint&) final;
     void paintContents(PaintInfo&, const LayoutPoint&);
+    bool shouldSkipPaint(const PaintInfo&, const LayoutPoint& paintOffset) const final;
 
     void willBeDestroyed() final;
 

@@ -935,7 +935,7 @@ void RenderBlock::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         if (paintInfo.paintBehavior.contains(PaintBehavior::CompositedOverflowScrollContent) && hasLayer() && layer()->usesCompositedScrolling())
             return false;
 
-        auto overflowBox = visualOverflowRect();
+        auto overflowBox = visualOverflowRect(); // here
         flipForWritingMode(overflowBox);
         overflowBox.moveBy(adjustedPaintOffset);
         return !overflowBox.intersects(paintingRect);
@@ -960,6 +960,24 @@ void RenderBlock::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         }
     }
 }
+
+bool RenderBlock::shouldSkipPaint(const PaintInfo& paintInfo, const LayoutPoint& paintOffset) const
+{
+    // Early exit optimization for layers that have no visual content in the paint rect.
+    // This reuses the logic from paint()'s visualContentIsClippedOut lambda.
+    if (isDocumentElementRenderer())
+        return false;
+
+    if (paintInfo.paintBehavior.contains(PaintBehavior::CompositedOverflowScrollContent) && hasLayer() && layer()->usesCompositedScrolling())
+        return false;
+
+    auto adjustedPaintOffset = paintOffset + location();
+    auto overflowBox = visualOverflowRect();
+    flipForWritingMode(overflowBox);
+    overflowBox.moveBy(adjustedPaintOffset);
+    return !overflowBox.intersects(paintInfo.rect);
+}
+
 
 PaintInfo RenderBlock::paintInfoForBlockChildren(const PaintInfo& paintInfo) const
 {

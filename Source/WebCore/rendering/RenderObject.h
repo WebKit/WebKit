@@ -867,6 +867,10 @@ public:
 
     virtual const RenderStyle& outlineStyleForRepaint() const LIFETIME_BOUND;
 
+    // Paint optimization: allows renderers to skip paint phases when their content is clipped out.
+    // Returns true if all paint phases can be skipped for this renderer.
+    virtual bool shouldSkipPaint(const PaintInfo&, const LayoutPoint&) const { return false; }
+
     virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const;
 
     // Return the RenderLayerModelObject in the container chain which is responsible for painting this object, or nullptr

@@ -175,6 +175,7 @@ FloatSize GraphicsContext::drawText(const FontCascade& font, const TextRun& run,
 
 void GraphicsContext::drawGlyphs(const Font& font, std::span<const GlyphBufferGlyph> glyphs, std::span<const GlyphBufferAdvance> advances, const FloatPoint& point, FontSmoothingMode fontSmoothingMode)
 {
+    // incrementDrawingOperationCount();
     FontCascade::drawGlyphs(*this, font, glyphs, advances, point, fontSmoothingMode);
 }
 

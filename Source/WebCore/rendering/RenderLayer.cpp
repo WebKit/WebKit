@@ -56,6 +56,7 @@
 #include "CSSPropertyNames.h"
 #include "Chrome.h"
 #include "DebugPageOverlays.h"
+#include "DisplayListRecorderImpl.h"
 #include "Document.h"
 #include "DocumentMarkerController.h"
 #include "Editor.h"
@@ -4360,8 +4361,60 @@ void RenderLayer::paintForegroundForFragments(const LayerFragments& layerFragmen
         if (selectionOnly || selectionAndBackgroundsOnly)
             return;
 
+        // Early exit optimization for SVG renderers
+        bool anyFragmentWouldPaint = false;
+        for (const auto& fragment : layerFragments) {
+            if (fragment.shouldPaintContent && !fragment.dirtyForegroundRect().isEmpty()) {
+                anyFragmentWouldPaint = true;
+                break;
+            }
+        }
+
+        if (!anyFragmentWouldPaint) {
+            // WTFLogAlways("SVG EARLY EXIT: all fragments empty/no-paint for %s", renderer().renderName().characters());
+            return;
+        }
+
+        // Additional check: even if fragments would paint, check if content is clipped out.
+        const auto& firstFragment = layerFragments.first();
+        if (firstFragment.shouldPaintContent && !firstFragment.dirtyForegroundRect().isEmpty()) {
+            LayoutPoint paintOffset = paintOffsetForRenderer(firstFragment, localPaintingInfo);
+            PaintInfo testPaintInfo(context, firstFragment.dirtyForegroundRect().rect(), PaintPhase::Foreground, localPaintBehavior, subtreePaintRootForRenderer);
+            if (renderer().shouldSkipPaint(testPaintInfo, paintOffset)) {
+                // WTFLogAlways("SVG EARLY EXIT: clipped out for %s", renderer().renderName().characters());
+                return;
+            }
+        }
+
         paintForegroundForFragmentsWithPhase(PaintPhase::Foreground, layerFragments, context, localPaintingInfo, localPaintBehavior, subtreePaintRootForRenderer);
         return;
+    }
+
+    // Early exit optimization: Check if all fragments would be skipped in paintForegroundForFragmentsWithPhase.
+    // This saves the expensive setup overhead (clipToRect, state savers, etc.) for layers
+    // that have no visual content to paint.
+    bool anyFragmentWouldPaint = false;
+    for (const auto& fragment : layerFragments) {
+        if (fragment.shouldPaintContent && !fragment.dirtyForegroundRect().isEmpty()) {
+            anyFragmentWouldPaint = true;
+            break;
+        }
+    }
+
+    if (!anyFragmentWouldPaint) {
+        // WTFLogAlways("EARLY EXIT: all fragments empty/no-paint for %s", renderer().renderName().characters());
+        return;
+    }
+
+    // Additional check: even if fragments would paint, check if content is clipped out.
+    const auto& firstFragment = layerFragments.first();
+    if (firstFragment.shouldPaintContent && !firstFragment.dirtyForegroundRect().isEmpty()) {
+        LayoutPoint paintOffset = paintOffsetForRenderer(firstFragment, localPaintingInfo);
+        PaintInfo testPaintInfo(context, firstFragment.dirtyForegroundRect().rect(), PaintPhase::Foreground, localPaintBehavior, subtreePaintRootForRenderer);
+        if (renderer().shouldSkipPaint(testPaintInfo, paintOffset)) {
+            // WTFLogAlways("EARLY EXIT: clipped out for %s", renderer().renderName().characters());
+            return;
+        }
     }
 
     if (!selectionOnly)
@@ -4376,10 +4429,50 @@ void RenderLayer::paintForegroundForFragments(const LayerFragments& layerFragmen
     }
 }
 
+// static const char* paintPhaseToString(PaintPhase phase)
+// {
+//     switch (phase) {
+//     case PaintPhase::BlockBackground:
+//         return "BlockBackground";
+//     case PaintPhase::ChildBlockBackground:
+//         return "ChildBlockBackground";
+//     case PaintPhase::ChildBlockBackgrounds:
+//         return "ChildBlockBackgrounds";
+//     case PaintPhase::Float:
+//         return "Float";
+//     case PaintPhase::Foreground:
+//         return "Foreground";
+//     case PaintPhase::Outline:
+//         return "Outline";
+//     case PaintPhase::ChildOutlines:
+//         return "ChildOutlines";
+//     case PaintPhase::SelfOutline:
+//         return "SelfOutline";
+//     case PaintPhase::Selection:
+//         return "Selection";
+//     case PaintPhase::CollapsedTableBorders:
+//         return "CollapsedTableBorders";
+//     case PaintPhase::TextClip:
+//         return "TextClip";
+//     case PaintPhase::Mask:
+//         return "Mask";
+//     case PaintPhase::ClippingMask:
+//         return "ClippingMask";
+//     case PaintPhase::EventRegion:
+//         return "EventRegion";
+//     case PaintPhase::Accessibility:
+//         return "Accessibility";
+//     }
+//     return "Unknown";
+// }
+
 void RenderLayer::paintForegroundForFragmentsWithPhase(PaintPhase phase, const LayerFragments& layerFragments, GraphicsContext& context,
     const LayerPaintingInfo& localPaintingInfo, OptionSet<PaintBehavior> paintBehavior, RenderObject* subtreePaintRootForRenderer)
 {
     bool shouldClip = layerFragments.size() > 1;
+
+    // Instrumentation: Track drawing operations
+    // unsigned drawingOpsBefore = context.drawingOperationCount();
 
     for (const auto& fragment : layerFragments) {
         if (!fragment.shouldPaintContent || fragment.dirtyForegroundRect().isEmpty())
@@ -4396,6 +4489,26 @@ void RenderLayer::paintForegroundForFragmentsWithPhase(PaintPhase phase, const L
             paintInfo.overlapTestRequests = localPaintingInfo.overlapTestRequests;
         renderer().paint(paintInfo, paintOffsetForRenderer(fragment, localPaintingInfo));
     }
+
+    // Instrumentation: Check if any drawing operations occurred
+    // unsigned drawingOpsAfter = context.drawingOperationCount();
+    // unsigned drawingOpsAdded = drawingOpsAfter - drawingOpsBefore;
+    //
+    // if (drawingOpsAdded == 0) {
+    //     WTFLogAlways("PAINT PHASE ZERO COMMANDS: %s generated 0 drawing commands for layer %p (%s)",
+    //         paintPhaseToString(phase),
+    //         this,
+    //         renderer().renderName().characters());
+    // } else {
+    //     static int s_logCount = 0;
+    //     if (s_logCount++ < 10) {
+    //         WTFLogAlways("PAINT PHASE COMMANDS: %s generated %u drawing commands for layer %p (%s)",
+    //             paintPhaseToString(phase),
+    //             drawingOpsAdded,
+    //             this,
+    //             renderer().renderName().characters());
+    //     }
+    // }
 }
 
 void RenderLayer::paintOutlineForFragments(const LayerFragments& layerFragments, GraphicsContext& context, const LayerPaintingInfo& localPaintingInfo,

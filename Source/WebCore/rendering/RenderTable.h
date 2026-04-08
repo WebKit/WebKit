@@ -228,6 +228,7 @@ protected:
 
     void paint(PaintInfo&, const LayoutPoint&) final;
     void paintObject(PaintInfo&, const LayoutPoint&) final;
+    bool shouldSkipPaint(const PaintInfo&, const LayoutPoint& paintOffset) const final;
     void paintBoxDecorations(PaintInfo&, const LayoutPoint&) final;
     void paintMask(PaintInfo&, const LayoutPoint&) final;
     void layout() final;

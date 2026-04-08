@@ -48,6 +48,8 @@ public:
     // removed once all clients are fixed.
     WEBCORE_EXPORT Ref<const DisplayList> copyDisplayList();
 
+    std::optional<size_t> displayListItemCount() const final { return m_items.size(); }
+
     void save(GraphicsContextState::Purpose) final;
     void restore(GraphicsContextState::Purpose) final;
     void translate(float x, float y) final;

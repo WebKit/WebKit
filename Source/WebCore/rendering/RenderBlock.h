@@ -270,6 +270,7 @@ protected:
 
     void paint(PaintInfo&, const LayoutPoint&) override;
     void paintObject(PaintInfo&, const LayoutPoint&) override;
+    bool shouldSkipPaint(const PaintInfo&, const LayoutPoint& paintOffset) const override;
     virtual void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect);
     enum PaintBlockType { PaintAsBlock, PaintAsInlineBlock };
     bool paintChild(RenderBox&, PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect, PaintBlockType paintType = PaintAsBlock);

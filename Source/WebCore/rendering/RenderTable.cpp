@@ -829,6 +829,20 @@ void RenderTable::addOverflowFromInFlowChildren(OptionSet<ComputeOverflowOptions
         addOverflowFromContainedBox(*section);
 }
 
+bool RenderTable::shouldSkipPaint(const PaintInfo& paintInfo, const LayoutPoint& paintOffset) const
+{
+    // Early exit optimization for tables that have no visual content in the paint rect.
+    // This reuses the logic from paint()'s overflow box intersection check.
+    if (isDocumentElementRenderer())
+        return false;
+
+    LayoutPoint adjustedPaintOffset = paintOffset + location();
+    LayoutRect overflowBox = visualOverflowRect();
+    flipForWritingMode(overflowBox);
+    overflowBox.moveBy(adjustedPaintOffset);
+    return !overflowBox.intersects(paintInfo.rect);
+}
+
 void RenderTable::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     auto isSkippedContent = [&] {

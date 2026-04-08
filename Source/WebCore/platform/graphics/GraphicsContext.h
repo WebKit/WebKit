@@ -91,6 +91,13 @@ public:
     virtual bool invalidatingImagesWithAsyncDecodes() const { return false; }
     virtual bool detectingContentfulPaint() const { return false; }
 
+    // For display list recording instrumentation
+    virtual std::optional<size_t> displayListItemCount() const { return std::nullopt; }
+
+    // Drawing operation counter for instrumentation
+    unsigned drawingOperationCount() const { return m_drawingOperationCount; }
+    void incrementDrawingOperationCount() { m_drawingOperationCount++; }
+
     // Context State
 
     const SourceBrush& fillBrush() const LIFETIME_BOUND { return m_state.fillBrush(); }
@@ -402,6 +409,7 @@ private:
     Vector<GraphicsContextState, 1> m_stack;
 
     unsigned m_transparencyLayerCount { 0 };
+    unsigned m_drawingOperationCount { 0 }; // For paint phase instrumentation
     const IsDeferred m_isDeferred : 1; // NOLINT
     bool m_contentfulPaintDetected : 1 { false };
     friend class DrawGlyphsRecorder; // To access drawGlyphsImmediate.

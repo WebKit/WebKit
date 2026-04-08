@@ -270,6 +270,39 @@ bool RenderSVGRoot::shouldApplyViewportClip() const
     return isNonVisibleOverflow(effectiveOverflowX()) || style().overflowX() == Overflow::Auto || this->isDocumentElementRenderer();
 }
 
+bool RenderSVGRoot::shouldSkipPaint(const PaintInfo& paintInfo, const LayoutPoint& paintOffset) const
+{
+    // Early exit optimization for SVG roots that have no visual content in the paint rect.
+    // This reuses the logic from paint()'s overflow box intersection check.
+
+    // An empty viewport disables rendering.
+    if (borderBoxRect().isEmpty()) {
+        // WTFLogAlways("RenderSVGRoot::shouldSkipPaint: borderBox empty, skipping");
+        return true;
+    }
+
+    if (isDocumentElementRenderer()) {
+        // WTFLogAlways("RenderSVGRoot::shouldSkipPaint: document element, not skipping");
+        return false;
+    }
+
+    if (paintInfo.paintBehavior.contains(PaintBehavior::CompositedOverflowScrollContent)) {
+        // WTFLogAlways("RenderSVGRoot::shouldSkipPaint: composited scroll content, not skipping");
+        return false;
+    }
+
+    auto adjustedPaintOffset = paintOffset + location();
+    auto overflowBox = visualOverflowRect();
+    flipForWritingMode(overflowBox);
+    overflowBox.moveBy(adjustedPaintOffset);
+    bool intersects = overflowBox.intersects(paintInfo.rect);
+    // WTFLogAlways("RenderSVGRoot::shouldSkipPaint: overflowBox=[%d,%d %dx%d] paintRect=[%d,%d %dx%d] intersects=%d",
+    //     overflowBox.x().toInt(), overflowBox.y().toInt(), overflowBox.width().toInt(), overflowBox.height().toInt(),
+    //     paintInfo.rect.x().toInt(), paintInfo.rect.y().toInt(), paintInfo.rect.width().toInt(), paintInfo.rect.height().toInt(),
+    //     intersects);
+    return !intersects;
+}
+
 // FIXME: Basically a copy of RenderBlock::paint() - ideally one would share this code.
 // However with LFC on the horizon that investment is useless, we should concentrate
 // on LFC/SVG integration once the LBSE is upstreamed.
