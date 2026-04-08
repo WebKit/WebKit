@@ -45,6 +45,7 @@ namespace WebCore {
 class MockCDMFactory : public RefCounted<MockCDMFactory>, public CDMFactory {
 public:
     static Ref<MockCDMFactory> create() { return adoptRef(*new MockCDMFactory); }
+    static void unregisterAllMockFactories();
     ~MockCDMFactory();
 
     void ref() const final { RefCounted::ref(); }

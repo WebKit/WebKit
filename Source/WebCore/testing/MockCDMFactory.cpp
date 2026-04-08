@@ -42,16 +42,30 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MockCDM);
 
+static HashSet<MockCDMFactory*>& allMockFactories()
+{
+    static NeverDestroyed<HashSet<MockCDMFactory*>> factories;
+    return factories;
+}
+
+void MockCDMFactory::unregisterAllMockFactories()
+{
+    for (auto* factory : copyToVector(allMockFactories()))
+        factory->unregister();
+}
+
 MockCDMFactory::MockCDMFactory()
     : m_supportedSessionTypes({ MediaKeySessionType::Temporary, MediaKeySessionType::PersistentUsageRecord, MediaKeySessionType::PersistentLicense })
     , m_supportedEncryptionSchemes({ MediaKeyEncryptionScheme::cenc })
 {
     CDMFactory::registerFactory(*this);
+    allMockFactories().add(this);
 }
 
 MockCDMFactory::~MockCDMFactory()
 {
     unregister();
+    allMockFactories().remove(this);
 }
 
 void MockCDMFactory::unregister()

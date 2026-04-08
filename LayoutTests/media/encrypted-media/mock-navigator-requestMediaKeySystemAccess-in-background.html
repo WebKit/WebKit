@@ -26,6 +26,7 @@
         run('promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", [capabilities])');
         await shouldResolve(promise);
         internals.settings.setCanStartMedia(true);
+        mock.unregister();
     }
 
     window.addEventListener('load', event => {
