@@ -242,7 +242,7 @@ private:
 struct WeakStyleableHashTraits : HashTraits<WeakStyleable> {
     static constexpr bool hasIsWeakNullValueFunction = true;
     static bool isWeakNullValue(const WeakStyleable& value) { return !value; }
-    static void constructDeletedValue(WeakStyleable& slot) { slot = { AtomString { WTF::HashTableDeletedValue } }; }
+    static void constructDeletedValue(WeakStyleable& slot) { new (NotNull, std::addressof(slot)) WeakStyleable(AtomString { WTF::HashTableDeletedValue }); }
     static bool isDeletedValue(const WeakStyleable& value) { return !value.element() && value.pseudoElementIdentifier() && value.pseudoElementIdentifier()->nameOrPart.isHashTableDeletedValue(); }
 };
 
