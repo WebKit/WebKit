@@ -1307,6 +1307,29 @@ void RenderLayerScrollableArea::updateScrollbarsAfterLayout()
     bool autoHorizontalScrollBarChanged = box->hasAutoScrollbar(ScrollbarOrientation::Horizontal) && (hadHorizontalScrollbar != hasHorizontalScrollbar());
     bool autoVerticalScrollBarChanged = box->hasAutoScrollbar(ScrollbarOrientation::Vertical) && (hadVerticalScrollbar != hasVerticalScrollbar());
 
+    auto handleOverflowRelayoutForRenderer = [&](RenderLayerModelObject& renderer)  {
+        if (m_inOverflowRelayout)
+            return;
+
+        SetForScope inOverflowRelayoutScope(m_inOverflowRelayout, true);
+        renderer.setNeedsLayout(MarkOnlyThis);
+
+        if (!renderer.isRenderBlock()) {
+            renderer.layout();
+            return;
+        }
+
+        CheckedRef renderBlock = downcast<RenderBlock>(renderer);
+        renderBlock->scrollbarsChanged(autoHorizontalScrollBarChanged, autoVerticalScrollBarChanged);
+        if (auto* layoutState = renderer.layoutContext().layoutState(); layoutState && layoutState->isTrackingRendererForDescendantScrollbarChanges()) {
+            layoutState->addDescendantForScrollbarChange(renderBlock);
+            return;
+        }
+        // FIXME: Calling layoutBlock here is a bit of a layering violation.
+        auto scope = LayoutScope { renderBlock };
+        renderBlock->layoutBlock(RelayoutChildren::Yes);
+    };
+
     if (autoHorizontalScrollBarChanged || autoVerticalScrollBarChanged) {
         if (autoVerticalScrollBarChanged && shouldPlaceVerticalScrollbarOnLeft())
             computeScrollOrigin();
@@ -1316,19 +1339,8 @@ void RenderLayerScrollableArea::updateScrollbarsAfterLayout()
         auto& renderer = m_layer.renderer();
         renderer.repaint();
 
-        if (renderer.style().overflowX() == Overflow::Auto || renderer.style().overflowY() == Overflow::Auto) {
-            if (!m_inOverflowRelayout) {
-                SetForScope inOverflowRelayoutScope(m_inOverflowRelayout, true);
-                renderer.setNeedsLayout(MarkOnlyThis);
-                if (CheckedPtr block = dynamicDowncast<RenderBlock>(renderer)) {
-                    // FIXME: Calling layoutBlock here is a bit of a layering violation.
-                    auto scope = LayoutScope { *block };
-                    block->scrollbarsChanged(autoHorizontalScrollBarChanged, autoVerticalScrollBarChanged);
-                    block->layoutBlock(RelayoutChildren::Yes);
-                } else
-                    renderer.layout();
-            }
-        }
+        if (renderer.style().overflowX() == Overflow::Auto || renderer.style().overflowY() == Overflow::Auto)
+            handleOverflowRelayoutForRenderer(renderer);
 
         // FIXME: This does not belong here.
         auto* parent = renderer.parent();

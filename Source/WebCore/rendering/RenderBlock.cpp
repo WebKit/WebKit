@@ -506,16 +506,42 @@ void RenderBlock::updateScrollInfoAfterLayout()
         layer()->updateScrollInfoAfterLayout();
 }
 
+static bool needsToTrackDescendantScrollbarChanges(const RenderBlock& renderBlock, const RenderLayoutState& layoutState)
+{
+    auto computedLogicalWidth = renderBlock.style().logicalWidth();
+    return computedLogicalWidth.isIntrinsic() && !layoutState.subtreeScrollbarChangesState();
+}
+
+static bool canContainDescendantScrollbarChanges(const RenderBlock& renderBlock, const RenderLayoutState& layoutState)
+{
+    return layoutState.isTrackingRendererForDescendantScrollbarChanges() && renderBlock.style().logicalWidth().isFixed();
+}
+
 void RenderBlock::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
 
+    auto* layoutState = layoutContext().layoutState();
+    bool isTrackingDescendantScrollbarChanges = false;
+    if (layoutState && needsToTrackDescendantScrollbarChanges(*this, *layoutState)) {
+        layoutState->setSubtreeScrollbarChangeState(SubtreeScrollbarChangesState { *this, { } });
+        isTrackingDescendantScrollbarChanges = true;
+    }
+
     // Table cells call layoutBlock directly, so don't add any logic here. Put code into layoutBlock().
     {
+        bool willHandleDescendantScrollbarChanges = isTrackingDescendantScrollbarChanges || (layoutState && canContainDescendantScrollbarChanges(*this, *layoutState));
         auto scope = LayoutScope { *this };
-        layoutBlock(RelayoutChildren::No);
+        if (willHandleDescendantScrollbarChanges) {
+            SubtreeScrollbarChangesHandler descendantScrollbarChangesHandler(*this);
+            layoutBlock(RelayoutChildren::No);
+        } else
+            layoutBlock(RelayoutChildren::No);
     }
-    
+
+    if (isTrackingDescendantScrollbarChanges)
+        layoutState->setSubtreeScrollbarChangeState({ });
+
     // It's safe to check for control clip here, since controls can never be table cells.
     // If we have a lightweight clip, there can never be any overflow from children.
     if (hasControlClip() && m_overflow && !isDelayingUpdateScrollInfoAfterLayout(*this))

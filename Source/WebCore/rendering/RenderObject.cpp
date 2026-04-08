@@ -674,6 +674,16 @@ void RenderObject::setNeedsPreferredWidthsUpdate(MarkingBehavior markParents)
         ensureRareData().preferredLogicalWidthsNeedUpdateIsMarkOnlyThis = false;
 }
 
+void RenderObject::setNeedsPreferredWidthsUpdateUpTo(const RenderObject& ancestor)
+{
+    ASSERT(isDescendantOf(&ancestor));
+    for (auto& renderer : lineageOfType<RenderElement>(*this)) {
+        if (&renderer == &ancestor)
+            return;
+        renderer.setNeedsPreferredWidthsUpdate(MarkOnlyThis);
+    }
+}
+
 void RenderObject::invalidateContainerPreferredLogicalWidths()
 {
     // In order to avoid pathological behavior when inlines are deeply nested, we do include them

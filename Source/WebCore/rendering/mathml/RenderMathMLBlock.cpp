@@ -35,6 +35,7 @@
 #include "MathMLElement.h"
 #include "MathMLNames.h"
 #include "MathMLPresentationElement.h"
+#include "OpenTypeMathData.h"
 #include "RenderChildIterator.h"
 #include "RenderBoxInlines.h"
 #include "RenderElementStyleInlines.h"
