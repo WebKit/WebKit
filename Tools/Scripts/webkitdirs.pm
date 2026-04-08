@@ -1171,16 +1171,23 @@ sub determineConfigurationProductDir
     return if defined $configurationProductDir;
     determineBaseProductDir();
     determineConfiguration();
+
+    # Release+Assert and Testing are meta-configurations that map to Release
+    # and Debug respectively in Xcodebuild (see Makefile.shared).
+    my $buildConfiguration = $configuration;
+    $buildConfiguration = "Release" if $configuration eq "Release+Assert";
+    $buildConfiguration = "Debug" if $configuration eq "Testing";
+
     if (isWin() || isPlayStation() || (isJSCOnly() && isWindows())) {
-        $configurationProductDir = File::Spec->catdir($baseProductDir, $configuration);
+        $configurationProductDir = File::Spec->catdir($baseProductDir, $buildConfiguration);
     } else {
         if (usesPerConfigurationBuildDirectory()) {
             $configurationProductDir = "$baseProductDir";
         } else {
             if (isGtk() or isWPE() or isJSCOnly() or shouldUseFlatpak() or shouldBuildForCrossTarget() or inCrossTargetEnvironment()) {
-                $configurationProductDir = "$baseProductDir/$portName/$configuration";
+                $configurationProductDir = "$baseProductDir/$portName/$buildConfiguration";
             } else {
-                $configurationProductDir = "$baseProductDir/$configuration";
+                $configurationProductDir = "$baseProductDir/$buildConfiguration";
             }
             $configurationProductDir .= "-" . xcodeSDKPlatformName() if isEmbeddedWebKit() || isMacCatalystWebKit();
         }

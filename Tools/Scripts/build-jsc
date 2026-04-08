@@ -32,7 +32,23 @@ use lib $FindBin::Bin;
 use webkitperl::FeatureList qw(getFeatureOptionList);
 use webkitperl::BuildSubproject;
 
+sub makeJSCStandalone
+{
+    my $jsc = File::Spec->catfile(productDir(), "jsc");
+    die "Can't find jsc at $jsc\n" unless -f $jsc;
+
+    my $oldPath = "/System/Library/Frameworks/JavaScriptCore.framework/Versions/A/JavaScriptCore";
+    my $newPath = "\@executable_path/JavaScriptCore.framework/Versions/A/JavaScriptCore";
+
+    system("xcrun", "install_name_tool", "-change", $oldPath, $newPath, $jsc);
+    die "install_name_tool failed on $jsc\n" if $?;
+
+    system("codesign", "--force", "--sign", "-", $jsc);
+    die "codesign failed on $jsc\n" if $?;
+}
+
 buildUpToProject("Source/JavaScriptCore", "JavaScriptCore");
 if (isAppleCocoaWebKit()) {
+    makeJSCStandalone();
     writeCongrats("JavaScriptCore");
 }
