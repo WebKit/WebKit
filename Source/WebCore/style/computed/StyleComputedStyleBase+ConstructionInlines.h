@@ -113,24 +113,5 @@ inline ComputedStyleBase::ComputedStyleBase(ComputedStyleBase& a, ComputedStyleB
 {
 }
 
-inline void ComputedStyleBase::NonInheritedFlags::copyNonInheritedFrom(const NonInheritedFlags& other)
-{
-    // Only some flags are copied because NonInheritedFlags contains things that are not actually style data.
-    display = other.display;
-    originalDisplay = other.originalDisplay;
-    overflowX = other.overflowX;
-    overflowY = other.overflowY;
-    clear = other.clear;
-    position = other.position;
-    unicodeBidi = other.unicodeBidi;
-    floating = other.floating;
-    textDecorationLine = other.textDecorationLine;
-    usesViewportUnits = other.usesViewportUnits;
-    usesContainerUnits = other.usesContainerUnits;
-    useTreeCountingFunctions = other.useTreeCountingFunctions;
-    hasExplicitlyInheritedProperties = other.hasExplicitlyInheritedProperties;
-    disallowsFastPathInheritance = other.disallowsFastPathInheritance;
-}
-
 } // namespace Style
 } // namespace WebCore

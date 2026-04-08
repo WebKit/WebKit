@@ -5030,6 +5030,8 @@
 		BC2B41192732F42900A2D191 /* ModelPlayerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2B410E2732EFE400A2D191 /* ModelPlayerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC2B41252733600500A2D191 /* DummyModelPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2B412327335E1F00A2D191 /* DummyModelPlayer.h */; };
 		BC2B41312734A08600A2D191 /* DummyModelPlayerProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2B412027335CB900A2D191 /* DummyModelPlayerProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC2C010A2F7AE1B800F65FC9 /* StyleInheritedFlags.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2C01062F7AE0A700F65FC9 /* StyleInheritedFlags.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC2C010B2F7AE1B800F65FC9 /* StyleNonInheritedFlags.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2C01082F7AE0AF00F65FC9 /* StyleNonInheritedFlags.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC2C0BEC2D284F7B00FCFBA0 /* CSSValueConcepts.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2C0BEB2D284F7B00FCFBA0 /* CSSValueConcepts.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC2C0C2B2D2C6A4700FCFBA0 /* StyleScrollPadding.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2C0C242D2C5D2B00FCFBA0 /* StyleScrollPadding.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC2C0C2C2D2C6A5600FCFBA0 /* StyleScrollMargin.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2C0C222D2C5D2B00FCFBA0 /* StyleScrollMargin.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -18816,6 +18818,10 @@
 		BC2B412127335CB900A2D191 /* DummyModelPlayerProvider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DummyModelPlayerProvider.cpp; sourceTree = "<group>"; };
 		BC2B412327335E1F00A2D191 /* DummyModelPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DummyModelPlayer.h; sourceTree = "<group>"; };
 		BC2B412427335E1F00A2D191 /* DummyModelPlayer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DummyModelPlayer.cpp; sourceTree = "<group>"; };
+		BC2C01062F7AE0A700F65FC9 /* StyleInheritedFlags.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleInheritedFlags.h; sourceTree = "<group>"; };
+		BC2C01072F7AE0A700F65FC9 /* StyleInheritedFlags.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleInheritedFlags.cpp; sourceTree = "<group>"; };
+		BC2C01082F7AE0AF00F65FC9 /* StyleNonInheritedFlags.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleNonInheritedFlags.h; sourceTree = "<group>"; };
+		BC2C01092F7AE0AF00F65FC9 /* StyleNonInheritedFlags.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleNonInheritedFlags.cpp; sourceTree = "<group>"; };
 		BC2C0BEB2D284F7B00FCFBA0 /* CSSValueConcepts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSValueConcepts.h; sourceTree = "<group>"; };
 		BC2C0C222D2C5D2B00FCFBA0 /* StyleScrollMargin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleScrollMargin.h; sourceTree = "<group>"; };
 		BC2C0C232D2C5D2B00FCFBA0 /* StyleScrollMargin.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleScrollMargin.cpp; sourceTree = "<group>"; };
@@ -37180,6 +37186,8 @@
 				BC63ACE62F08340A007B62C4 /* StyleGridItemData.h */,
 				BC63ACE92F08340A007B62C4 /* StyleInheritedData.cpp */,
 				BC63ACE82F08340A007B62C4 /* StyleInheritedData.h */,
+				BC2C01072F7AE0A700F65FC9 /* StyleInheritedFlags.cpp */,
+				BC2C01062F7AE0A700F65FC9 /* StyleInheritedFlags.h */,
 				BC63AD502F085657007B62C4 /* StyleInheritedRareData.cpp */,
 				BC63AD4F2F085657007B62C4 /* StyleInheritedRareData.h */,
 				BC63ACFA2F083F79007B62C4 /* StyleMarqueeData.cpp */,
@@ -37190,6 +37198,8 @@
 				BC63AD012F084141007B62C4 /* StyleMultiColumnData.h */,
 				BC63ACEB2F08340A007B62C4 /* StyleNonInheritedData.cpp */,
 				BC63ACEA2F08340A007B62C4 /* StyleNonInheritedData.h */,
+				BC2C01092F7AE0AF00F65FC9 /* StyleNonInheritedFlags.cpp */,
+				BC2C01082F7AE0AF00F65FC9 /* StyleNonInheritedFlags.h */,
 				BC63AD4A2F08561F007B62C4 /* StyleNonInheritedMiscData.cpp */,
 				BC63AD492F08561F007B62C4 /* StyleNonInheritedMiscData.h */,
 				BC63AD4C2F08561F007B62C4 /* StyleNonInheritedRareData.cpp */,
@@ -47847,6 +47857,7 @@
 				BC731E752E636D8700A6584F /* StyleImageOrNone.h in Headers */,
 				BC22AA9E2E36A2BD009AC0C3 /* StyleImageWrapper.h in Headers */,
 				BC63AD3E2F084C2F007B62C4 /* StyleInheritedData.h in Headers */,
+				BC2C010A2F7AE1B800F65FC9 /* StyleInheritedFlags.h in Headers */,
 				BC63AD512F08565F007B62C4 /* StyleInheritedRareData.h in Headers */,
 				BC9ABA192DED227400F7E52D /* StyleInset.h in Headers */,
 				BCB272092CC1F1DB00265123 /* StyleInsetFunction.h in Headers */,
@@ -47890,6 +47901,7 @@
 				BC63AD312F084C2F007B62C4 /* StyleMultiColumnData.h in Headers */,
 				BC452A6F2ED0FF4700FD066C /* StyleNameScope.h in Headers */,
 				BC63AD362F084C2F007B62C4 /* StyleNonInheritedData.h in Headers */,
+				BC2C010B2F7AE1B800F65FC9 /* StyleNonInheritedFlags.h in Headers */,
 				BC63AD4D2F085646007B62C4 /* StyleNonInheritedMiscData.h in Headers */,
 				BC63AD4E2F085646007B62C4 /* StyleNonInheritedRareData.h in Headers */,
 				BCD9F1752E203A0200D1C3DF /* StyleObjectPosition.h in Headers */,

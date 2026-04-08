@@ -33,12 +33,12 @@ namespace Style {
 
 class ChangedAnimatablePropertiesCustom final {
 public:
-    static void conservativelyCollectChangedAnimatablePropertiesForCursor(const ComputedStyle::InheritedFlags&, const ComputedStyle::InheritedFlags&, CSSPropertiesBitSet&);
+    static void conservativelyCollectChangedAnimatablePropertiesForCursor(const InheritedFlags&, const InheritedFlags&, CSSPropertiesBitSet&);
     static void conservativelyCollectChangedAnimatablePropertiesForZIndex(const BoxData&, const BoxData&, CSSPropertiesBitSet&);
     static void conservativelyCollectChangedAnimatablePropertiesForCaretColor(const InheritedRareData&, const InheritedRareData&, CSSPropertiesBitSet&);
 };
 
-inline void ChangedAnimatablePropertiesCustom::conservativelyCollectChangedAnimatablePropertiesForCursor(const ComputedStyle::InheritedFlags& a, const ComputedStyle::InheritedFlags& b, CSSPropertiesBitSet& changingProperties)
+inline void ChangedAnimatablePropertiesCustom::conservativelyCollectChangedAnimatablePropertiesForCursor(const InheritedFlags& a, const InheritedFlags& b, CSSPropertiesBitSet& changingProperties)
 {
     if (a.cursorType != b.cursorType)
         changingProperties.m_properties.set(CSSPropertyCursor);

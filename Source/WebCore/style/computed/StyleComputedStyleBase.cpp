@@ -55,12 +55,6 @@
 namespace WebCore {
 namespace Style {
 
-static_assert(PublicPseudoIDBits == allPublicPseudoElementTypes.size());
-static_assert(!(static_cast<unsigned>(maxTextTransformValue) >> TextTransformBits));
-
-// Value zero is used to indicate no pseudo-element.
-static_assert(!((std::to_underlying(PseudoElementType::HighestEnumValue) + 1) >> PseudoElementTypeBits));
-
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ComputedStyleBase);
 
 ComputedStyleBase::~ComputedStyleBase()
@@ -402,80 +396,6 @@ void ComputedStyleBase::updateUsedCounterSetDirectives()
         directives.setValue = counterSetValue.value.value;
     }
 }
-
-// MARK: - Flags Diffing
-
-#if !LOG_DISABLED
-void ComputedStyleBase::NonInheritedFlags::dumpDifferences(TextStream& ts, const NonInheritedFlags& other) const
-{
-    if (*this == other)
-        return;
-
-    LOG_IF_DIFFERENT_WITH_CAST(Style::DisplayType, display);
-    LOG_IF_DIFFERENT_WITH_CAST(Style::DisplayType, originalDisplay);
-    LOG_IF_DIFFERENT_WITH_CAST(Overflow, overflowX);
-    LOG_IF_DIFFERENT_WITH_CAST(Overflow, overflowY);
-    LOG_IF_DIFFERENT_WITH_CAST(Clear, clear);
-    LOG_IF_DIFFERENT_WITH_CAST(PositionType, position);
-    LOG_IF_DIFFERENT_WITH_CAST(UnicodeBidi, unicodeBidi);
-    LOG_IF_DIFFERENT_WITH_CAST(Float, floating);
-
-    LOG_IF_DIFFERENT(usesViewportUnits);
-    LOG_IF_DIFFERENT(usesContainerUnits);
-    LOG_IF_DIFFERENT(useTreeCountingFunctions);
-
-    LOG_IF_DIFFERENT_WITH_FROM_RAW(TextDecorationLine, textDecorationLine);
-
-    LOG_IF_DIFFERENT(hasExplicitlyInheritedProperties);
-    LOG_IF_DIFFERENT(disallowsFastPathInheritance);
-
-    LOG_IF_DIFFERENT(emptyState);
-    LOG_IF_DIFFERENT(firstChildState);
-    LOG_IF_DIFFERENT(lastChildState);
-    LOG_IF_DIFFERENT(isLink);
-
-    LOG_IF_DIFFERENT_WITH_CAST(PseudoId, pseudoElementType);
-    LOG_IF_DIFFERENT_WITH_CAST(unsigned, pseudoBits);
-}
-
-void ComputedStyleBase::InheritedFlags::dumpDifferences(TextStream& ts, const InheritedFlags& other) const
-{
-    if (*this == other)
-        return;
-
-    LOG_IF_DIFFERENT(writingMode);
-
-    LOG_IF_DIFFERENT_WITH_CAST(WhiteSpaceCollapse, whiteSpaceCollapse);
-    LOG_IF_DIFFERENT_WITH_CAST(TextWrapMode, textWrapMode);
-    LOG_IF_DIFFERENT_WITH_CAST(TextAlign, textAlign);
-    LOG_IF_DIFFERENT_WITH_CAST(TextWrapStyle, textWrapStyle);
-
-    LOG_IF_DIFFERENT_WITH_FROM_RAW(TextTransform, textTransform);
-    LOG_IF_DIFFERENT_WITH_FROM_RAW(TextDecorationLine, textDecorationLineInEffect);
-
-    LOG_IF_DIFFERENT_WITH_CAST(PointerEvents, pointerEvents);
-    LOG_IF_DIFFERENT_WITH_CAST(Visibility, visibility);
-    LOG_IF_DIFFERENT_WITH_CAST(CursorType, cursorType);
-
-#if ENABLE(CURSOR_VISIBILITY)
-    LOG_IF_DIFFERENT_WITH_CAST(CursorVisibility, cursorVisibility);
-#endif
-
-    LOG_IF_DIFFERENT_WITH_CAST(ListStylePosition, listStylePosition);
-    LOG_IF_DIFFERENT_WITH_CAST(EmptyCell, emptyCells);
-    LOG_IF_DIFFERENT_WITH_CAST(BorderCollapse, borderCollapse);
-    LOG_IF_DIFFERENT_WITH_CAST(CaptionSide, captionSide);
-    LOG_IF_DIFFERENT_WITH_CAST(BoxDirection, boxDirection);
-    LOG_IF_DIFFERENT_WITH_CAST(Order, rtlOrdering);
-    LOG_IF_DIFFERENT_WITH_CAST(bool, hasExplicitlySetColor);
-    LOG_IF_DIFFERENT_WITH_CAST(PrintColorAdjust, printColorAdjust);
-    LOG_IF_DIFFERENT_WITH_CAST(InsideLink, insideLink);
-
-#if ENABLE(TEXT_AUTOSIZING)
-    LOG_IF_DIFFERENT_WITH_CAST(unsigned, autosizeStatus);
-#endif
-}
-#endif
 
 } // namespace Style
 } // namespace WebCore

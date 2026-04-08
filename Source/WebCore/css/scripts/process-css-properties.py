@@ -6384,6 +6384,7 @@ class GenerateStyleComputedStyleProperties:
             self.generation_context.generate_includes(
                 to=writer,
                 system_headers=[
+                    "<WebCore/CSSPropertyNames.h>",
                     "<WebCore/StyleComputedStyleBase.h>",
                 ]
             )

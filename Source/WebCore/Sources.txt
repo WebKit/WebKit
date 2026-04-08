@@ -3201,11 +3201,13 @@ style/computed/data/StyleFontData.cpp
 style/computed/data/StyleGridData.cpp
 style/computed/data/StyleGridItemData.cpp
 style/computed/data/StyleInheritedData.cpp
+style/computed/data/StyleInheritedFlags.cpp
 style/computed/data/StyleInheritedRareData.cpp
 style/computed/data/StyleMarqueeData.cpp
 style/computed/data/StyleMaskBorderData.cpp
 style/computed/data/StyleMultiColumnData.cpp
 style/computed/data/StyleNonInheritedData.cpp
+style/computed/data/StyleNonInheritedFlags.cpp
 style/computed/data/StyleNonInheritedMiscData.cpp
 style/computed/data/StyleNonInheritedRareData.cpp
 style/computed/data/StyleSVGData.cpp

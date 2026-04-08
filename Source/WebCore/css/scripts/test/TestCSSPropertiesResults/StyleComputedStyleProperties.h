@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <WebCore/CSSPropertyNames.h>
 #include <WebCore/StyleComputedStyleBase.h>
 
 namespace WebCore {

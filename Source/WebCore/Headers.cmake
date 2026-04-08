@@ -3116,11 +3116,13 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/computed/data/StyleGridData.h
     style/computed/data/StyleGridItemData.h
     style/computed/data/StyleInheritedData.h
+    style/computed/data/StyleInheritedFlags.h
     style/computed/data/StyleInheritedRareData.h
     style/computed/data/StyleMarqueeData.h
     style/computed/data/StyleMaskBorderData.h
     style/computed/data/StyleMultiColumnData.h
     style/computed/data/StyleNonInheritedData.h
+    style/computed/data/StyleNonInheritedFlags.h
     style/computed/data/StyleNonInheritedMiscData.h
     style/computed/data/StyleNonInheritedRareData.h
     style/computed/data/StyleSurroundData.h

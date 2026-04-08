@@ -496,10 +496,10 @@ private:
     RenderStyle(RenderStyle&, RenderStyle&&);
 
     const Style::NonInheritedData& nonInheritedData() const LIFETIME_BOUND { return computedStyle().nonInheritedData(); }
-    const Style::ComputedStyle::NonInheritedFlags& nonInheritedFlags() const LIFETIME_BOUND { return computedStyle().nonInheritedFlags(); }
+    const Style::NonInheritedFlags& nonInheritedFlags() const LIFETIME_BOUND { return computedStyle().nonInheritedFlags(); }
     const Style::InheritedRareData& inheritedRareData() const LIFETIME_BOUND { return computedStyle().inheritedRareData(); }
     const Style::InheritedData& inheritedData() const LIFETIME_BOUND { return computedStyle().inheritedData(); }
-    const Style::ComputedStyle::InheritedFlags& inheritedFlags() const LIFETIME_BOUND { return computedStyle().inheritedFlags(); }
+    const Style::InheritedFlags& inheritedFlags() const LIFETIME_BOUND { return computedStyle().inheritedFlags(); }
     const Style::SVGData& svgData() const LIFETIME_BOUND { return computedStyle().svgData(); }
 };
 
