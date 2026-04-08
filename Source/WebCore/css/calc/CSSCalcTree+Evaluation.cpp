@@ -56,6 +56,7 @@ static auto evaluate(const IndirectNode<Min>&, const EvaluationOptions&) -> std:
 static auto evaluate(const IndirectNode<Max>&, const EvaluationOptions&) -> std::optional<double>;
 static auto evaluate(const IndirectNode<Hypot>&, const EvaluationOptions&) -> std::optional<double>;
 static auto evaluate(const IndirectNode<Random>&, const EvaluationOptions&) -> std::optional<double>;
+static auto evaluate(const IndirectNode<Round>&, const EvaluationOptions&) -> std::optional<double>;
 static auto evaluate(const IndirectNode<Anchor>&, const EvaluationOptions&) -> std::optional<double>;
 static auto evaluate(const IndirectNode<AnchorSize>&, const EvaluationOptions&) -> std::optional<double>;
 template<typename Op>
@@ -279,6 +280,27 @@ std::optional<double> evaluate(const IndirectNode<AnchorSize>& anchorSize, const
         options.conversionData->styleBuilderState()->setCurrentPropertyInvalidAtComputedValueTime();
 
     return result;
+}
+
+std::optional<double> evaluate(const IndirectNode<Round>& root, const EvaluationOptions& options)
+{
+    auto a = evaluate(root->a, options);
+    if (!a)
+        return std::nullopt;
+    auto b = evaluate(root->b, options);
+    ASSERT(b.has_value()); // evaluate(std::optional<Child>) always returns an engaged outer optional
+    switch (root->strategy) {
+    case RoundingStrategy::Nearest:
+        return executeOperation<Operator::RoundNearest>(*a, *b);
+    case RoundingStrategy::Up:
+        return executeOperation<Operator::RoundUp>(*a, *b);
+    case RoundingStrategy::Down:
+        return executeOperation<Operator::RoundDown>(*a, *b);
+    case RoundingStrategy::ToZero:
+        return executeOperation<Operator::RoundToZero>(*a, *b);
+    }
+    ASSERT_NOT_REACHED();
+    return *a;
 }
 
 template<typename Op> std::optional<double> evaluate(const IndirectNode<Op>& root, const EvaluationOptions& options)

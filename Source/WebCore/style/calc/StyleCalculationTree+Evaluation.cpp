@@ -48,6 +48,7 @@ static auto evaluate(const IndirectNode<Max>&, double percentResolutionLength, c
 static auto evaluate(const IndirectNode<Hypot>&, double percentResolutionLength, const ZoomFactor&) -> double;
 static auto evaluate(const IndirectNode<Random>&, double percentResolutionLength, const ZoomFactor&) -> double;
 static auto evaluate(const IndirectNode<Blend>&, double percentResolutionLength, const ZoomFactor&) -> double;
+static auto evaluate(const IndirectNode<Round>&, double percentResolutionLength, const ZoomFactor&) -> double;
 template<typename Op>
 static auto evaluate(const IndirectNode<Op>&, double percentResolutionLength, const ZoomFactor&) -> double;
 
@@ -146,6 +147,24 @@ double evaluate(const IndirectNode<Random>& root, double percentResolutionLength
 double evaluate(const IndirectNode<Blend>& root, double percentResolutionLength, const ZoomFactor& usedZoom)
 {
     return (1.0 - root->progress) * evaluate(root->from, percentResolutionLength, usedZoom) + root->progress * evaluate(root->to, percentResolutionLength, usedZoom);
+}
+
+double evaluate(const IndirectNode<Round>& root, double percentResolutionLength, const ZoomFactor& usedZoom)
+{
+    auto a = evaluate(root->a, percentResolutionLength, usedZoom);
+    auto b = evaluate(root->b, percentResolutionLength, usedZoom); // returns std::optional<double>
+    switch (root->strategy) {
+    case CSSCalc::RoundingStrategy::Nearest:
+        return CSSCalc::executeOperation<CSSCalc::Operator::RoundNearest>(a, b);
+    case CSSCalc::RoundingStrategy::Up:
+        return CSSCalc::executeOperation<CSSCalc::Operator::RoundUp>(a, b);
+    case CSSCalc::RoundingStrategy::Down:
+        return CSSCalc::executeOperation<CSSCalc::Operator::RoundDown>(a, b);
+    case CSSCalc::RoundingStrategy::ToZero:
+        return CSSCalc::executeOperation<CSSCalc::Operator::RoundToZero>(a, b);
+    }
+    ASSERT_NOT_REACHED();
+    return a;
 }
 
 template<typename Op> double evaluate(const IndirectNode<Op>& root, double percentResolutionLength, const ZoomFactor& usedZoom)

@@ -326,17 +326,6 @@ template<typename Op, typename Completion> static std::optional<Child> simplifyF
     );
 }
 
-template<typename Op> static std::optional<Child> simplifyForRound(Op& root, const SimplificationOptions& options)
-{
-    if (root.b)
-        return simplifyForOperation<Op>(root.a, *root.b, options);
-
-    if (auto* numberA = get_if<Number>(&root.a))
-        return makeChild(Number { .value = executeMathOperation<Op>(numberA->value, 1.0) });
-
-    return { };
-}
-
 template<typename Op> static std::optional<Child> simplifyForTrig(Op& root, const SimplificationOptions&)
 {
     // NOTE: `a` has been type checked by this point to be `<number>` or an `<angle>`, though they may not
@@ -1064,24 +1053,36 @@ std::optional<Child> simplify(Clamp& root, const SimplificationOptions& options)
     );
 }
 
-std::optional<Child> simplify(RoundNearest& root, const SimplificationOptions& options)
+std::optional<Child> simplify(Round& root, const SimplificationOptions& options)
 {
-    return simplifyForRound(root, options);
-}
+    auto executeRound = [&](double a, double b) -> double {
+        switch (root.strategy) {
+        case RoundingStrategy::Nearest: return executeOperation<Operator::RoundNearest>(a, b);
+        case RoundingStrategy::Up:      return executeOperation<Operator::RoundUp>(a, b);
+        case RoundingStrategy::Down:    return executeOperation<Operator::RoundDown>(a, b);
+        case RoundingStrategy::ToZero:  return executeOperation<Operator::RoundToZero>(a, b);
+        }
+        ASSERT_NOT_REACHED();
+        return a;
+    };
 
-std::optional<Child> simplify(RoundUp& root, const SimplificationOptions& options)
-{
-    return simplifyForRound(root, options);
-}
+    if (root.b) {
+        return switchTogether(root.a, *root.b,
+            [&]<Numeric T>(const T& numericA, const T& numericB) -> std::optional<Child> {
+                if (!unitsMatch(numericA, numericB, options) || !fullyResolved(numericA, options))
+                    return { };
+                return makeChildWithValueBasedOn(executeRound(numericA.value, numericB.value), numericA);
+            },
+            [](const auto&, const auto&) -> std::optional<Child> {
+                return { };
+            }
+        );
+    }
 
-std::optional<Child> simplify(RoundDown& root, const SimplificationOptions& options)
-{
-    return simplifyForRound(root, options);
-}
+    if (auto* numberA = get_if<Number>(&root.a))
+        return makeChild(Number { .value = executeRound(numberA->value, 1.0) });
 
-std::optional<Child> simplify(RoundToZero& root, const SimplificationOptions& options)
-{
-    return simplifyForRound(root, options);
+    return { };
 }
 
 std::optional<Child> simplify(Mod& root, const SimplificationOptions& options)
@@ -1476,6 +1477,11 @@ template<Leaf Op> static auto copyAndSimplifyChildren(const Op& op, const Simpli
 template<typename Op> static auto copyAndSimplifyChildren(const IndirectNode<Op>& root, const SimplificationOptions& options) -> Op
 {
     return WTF::apply([&](const auto& ...x) { return Op { copyAndSimplify(x, options)... }; } , *root);
+}
+
+static auto copyAndSimplifyChildren(const IndirectNode<Round>& root, const SimplificationOptions& options) -> Round
+{
+    return Round { root->strategy, copyAndSimplify(root->a, options), copyAndSimplify(root->b, options) };
 }
 
 static auto copyAndSimplifyChildren(const IndirectNode<Anchor>& anchor, const SimplificationOptions& options) -> Anchor

@@ -537,27 +537,30 @@ static std::optional<TypedChild> consumeClamp(CSSParserTokenRange& tokens, int d
     return TypedChild { makeChild(WTF::move(op), *outputType), *outputType };
 }
 
-template<typename Op> static std::optional<TypedChild> consumeRoundArguments(CSSParserTokenRange& tokens, int depth, ParserState& state)
+static std::optional<TypedChild> consumeRoundArguments(CSSParserTokenRange& tokens, int depth, ParserState& state, RoundingStrategy strategy)
 {
+    using Op = Round;
+    [[maybe_unused]] auto strategyName = nameLiteral(strategy);
+
     auto sumA = parseCalcSum(tokens, depth, state);
     if (!sumA) {
-        LOG_WITH_STREAM(Calc, stream << "Failed 'round(" << nameLiteralForSerialization(Op::id) << ")' function - failed parse of argument #1");
+        LOG_WITH_STREAM(Calc, stream << "Failed 'round(" << strategyName << ")' function - failed parse of argument #1");
         return std::nullopt;
     }
 
     if (tokens.atEnd()) {
         if (!validateType<AllowedTypes::Number>(sumA->type)) {
-            LOG_WITH_STREAM(Calc, stream << "Failed 'round(" << nameLiteralForSerialization(Op::id) << ")' function - argument #1 has invalid type: " << sumA->type);
+            LOG_WITH_STREAM(Calc, stream << "Failed 'round(" << strategyName << ")' function - argument #1 has invalid type: " << sumA->type);
             return std::nullopt;
         }
 
         auto outputType = transformType<Op::output>(sumA->type);
         if (!outputType) {
-            LOG_WITH_STREAM(Calc, stream << "Failed 'round(" << nameLiteralForSerialization(Op::id) << ")' (one argument) function - output transform failed for type: " << sumA->type);
+            LOG_WITH_STREAM(Calc, stream << "Failed 'round(" << strategyName << ")' (one argument) function - output transform failed for type: " << sumA->type);
             return std::nullopt;
         }
 
-        Op op { WTF::move(sumA->child), std::nullopt };
+        Op op { strategy, WTF::move(sumA->child), std::nullopt };
 
         if (auto* simplificationOptions = state.simplificationOptions) {
             if (auto replacement = simplify(op, *simplificationOptions))
@@ -567,36 +570,36 @@ template<typename Op> static std::optional<TypedChild> consumeRoundArguments(CSS
     }
 
     if (!CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(tokens)) {
-        LOG_WITH_STREAM(Calc, stream << "Failed 'round(" << nameLiteralForSerialization(Op::id) << ")' function - missing comma");
+        LOG_WITH_STREAM(Calc, stream << "Failed 'round(" << strategyName << ")' function - missing comma");
         return std::nullopt;
     }
 
     auto sumB = parseCalcSum(tokens, depth, state);
     if (!sumB) {
-        LOG_WITH_STREAM(Calc, stream << "Failed 'round(" << nameLiteralForSerialization(Op::id) << ")' (two arguments) function - failed parse of argument #2");
+        LOG_WITH_STREAM(Calc, stream << "Failed 'round(" << strategyName << ")' (two arguments) function - failed parse of argument #2");
         return std::nullopt;
     }
 
     if (!tokens.atEnd()) {
-        LOG_WITH_STREAM(Calc, stream << "Failed 'round(" << nameLiteralForSerialization(Op::id) << ")' (two arguments) function - extraneous tokens found");
+        LOG_WITH_STREAM(Calc, stream << "Failed 'round(" << strategyName << ")' (two arguments) function - extraneous tokens found");
         return std::nullopt;
     }
 
     auto mergedType = mergeTypes<Op::merge>(sumA->type, sumB->type);
     if (!mergedType) {
-        LOG_WITH_STREAM(Calc, stream << "Failed 'round(" << nameLiteralForSerialization(Op::id) << ")' (two arguments) function - failed to merge type with other arguments: argument #1 type " << sumA->type << " & argument #2 type" << sumB->type);
+        LOG_WITH_STREAM(Calc, stream << "Failed 'round(" << strategyName << ")' (two arguments) function - failed to merge type with other arguments: argument #1 type " << sumA->type << " & argument #2 type" << sumB->type);
         return std::nullopt;
     }
 
     auto outputType = transformType<Op::output>(*mergedType);
     if (!outputType) {
-        LOG_WITH_STREAM(Calc, stream << "Failed 'round(" << nameLiteralForSerialization(Op::id) << ")' (two arguments) function - output transform failed for type: " << *mergedType);
+        LOG_WITH_STREAM(Calc, stream << "Failed 'round(" << strategyName << ")' (two arguments) function - output transform failed for type: " << *mergedType);
         return std::nullopt;
     }
 
-    Op op { WTF::move(sumA->child), WTF::move(sumB->child) };
+    Op op { strategy, WTF::move(sumA->child), WTF::move(sumB->child) };
 
-    LOG_WITH_STREAM(Calc, stream << "Succeeded 'round(" << nameLiteralForSerialization(Op::id) << ")' (two arguments) function: type is " << *outputType);
+    LOG_WITH_STREAM(Calc, stream << "Succeeded 'round(" << strategyName << ")' (two arguments) function: type is " << *outputType);
 
     if (auto* simplificationOptions = state.simplificationOptions) {
         if (auto replacement = simplify(op, *simplificationOptions))
@@ -612,7 +615,7 @@ static std::optional<TypedChild> consumeRound(CSSParserTokenRange& tokens, int d
 
     auto roundingStrategy = CSSPropertyParserHelpers::consumeIdentRaw<CSSValueNearest, CSSValueToZero, CSSValueUp, CSSValueDown>(tokens);
     if (!roundingStrategy)
-        return consumeRoundArguments<RoundNearest>(tokens, depth, state);
+        return consumeRoundArguments(tokens, depth, state, RoundingStrategy::Nearest);
 
     if (!CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(tokens)) {
         LOG_WITH_STREAM(Calc, stream << "Failed 'round(" << nameLiteralForSerialization(*roundingStrategy) << ") function - missing comma after <rounding-strategy>");
@@ -621,13 +624,13 @@ static std::optional<TypedChild> consumeRound(CSSParserTokenRange& tokens, int d
 
     switch (*roundingStrategy) {
     case CSSValueNearest:
-        return consumeRoundArguments<RoundNearest>(tokens, depth, state);
+        return consumeRoundArguments(tokens, depth, state, RoundingStrategy::Nearest);
     case CSSValueToZero:
-        return consumeRoundArguments<RoundToZero>(tokens, depth, state);
+        return consumeRoundArguments(tokens, depth, state, RoundingStrategy::ToZero);
     case CSSValueUp:
-        return consumeRoundArguments<RoundUp>(tokens, depth, state);
+        return consumeRoundArguments(tokens, depth, state, RoundingStrategy::Up);
     case CSSValueDown:
-        return consumeRoundArguments<RoundDown>(tokens, depth, state);
+        return consumeRoundArguments(tokens, depth, state, RoundingStrategy::Down);
     default:
         break;
     }

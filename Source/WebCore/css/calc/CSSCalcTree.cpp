@@ -57,10 +57,7 @@ WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Product);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Progress);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Random);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Rem);
-WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(RoundDown);
-WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(RoundNearest);
-WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(RoundToZero);
-WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(RoundUp);
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Round);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Sign);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Sin);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Sqrt);
@@ -356,31 +353,7 @@ std::optional<Type> toType(const Clamp& root)
     return transformTypeFor(root, type);
 }
 
-std::optional<Type> toType(const RoundNearest& root)
-{
-    auto type = getValidatedTypeFor(root, root.a);
-    if (root.b)
-        type = mergeTypesFor(root, type, getValidatedTypeFor(root, *root.b));
-    return transformTypeFor(root, type);
-}
-
-std::optional<Type> toType(const RoundUp& root)
-{
-    auto type = getValidatedTypeFor(root, root.a);
-    if (root.b)
-        type = mergeTypesFor(root, type, getValidatedTypeFor(root, *root.b));
-    return transformTypeFor(root, type);
-}
-
-std::optional<Type> toType(const RoundDown& root)
-{
-    auto type = getValidatedTypeFor(root, root.a);
-    if (root.b)
-        type = mergeTypesFor(root, type, getValidatedTypeFor(root, *root.b));
-    return transformTypeFor(root, type);
-}
-
-std::optional<Type> toType(const RoundToZero& root)
+std::optional<Type> toType(const Round& root)
 {
     auto type = getValidatedTypeFor(root, root.a);
     if (root.b)

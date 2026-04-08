@@ -55,10 +55,7 @@ WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Product);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Progress);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Random);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Rem);
-WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(RoundDown);
-WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(RoundNearest);
-WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(RoundToZero);
-WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(RoundUp);
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Round);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Sign);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Sin);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Sqrt);
@@ -151,6 +148,7 @@ static auto operator<<(TextStream&, const IndirectNode<Invert>&) -> TextStream&;
 static auto operator<<(TextStream&, const IndirectNode<Min>&) -> TextStream&;
 static auto operator<<(TextStream&, const IndirectNode<Max>&) -> TextStream&;
 static auto operator<<(TextStream&, const IndirectNode<Hypot>&) -> TextStream&;
+static auto operator<<(TextStream&, const IndirectNode<Round>&) -> TextStream&;
 
 // MARK: Dumping
 
@@ -168,7 +166,6 @@ template<typename Op> TextStream& dumpVariadic(TextStream& ts, const IndirectNod
 template<typename Op> auto operator<<(TextStream& ts, const IndirectNode<Op>& root) -> TextStream&
 {
     ts << Op::op << '(';
-
     auto separator = ""_s;
     forAllChildren(*root, WTF::makeVisitor(
         [&](const std::optional<Child>& root) {
@@ -180,6 +177,14 @@ template<typename Op> auto operator<<(TextStream& ts, const IndirectNode<Op>& ro
         }
     ));
 
+    return ts << ')';
+}
+
+TextStream& operator<<(TextStream& ts, const IndirectNode<Round>& root)
+{
+    ts << "round("_s << CSSCalc::nameLiteral(root->strategy) << ", "_s << root->a;
+    if (root->b)
+        ts << ", "_s << *root->b;
     return ts << ')';
 }
 

@@ -67,6 +67,7 @@ static auto toCSS(const Number&, const ToCSSConversionOptions&) -> CSSCalc::Chil
 static auto toCSS(const Percentage&, const ToCSSConversionOptions&) -> CSSCalc::Child;
 static auto toCSS(const Dimension&, const ToCSSConversionOptions&) -> CSSCalc::Child;
 static auto toCSS(const IndirectNode<Blend>&, const ToCSSConversionOptions&) -> CSSCalc::Child;
+static auto toCSS(const IndirectNode<Round>&, const ToCSSConversionOptions&) -> CSSCalc::Child;
 template<typename CalculationOp> auto toCSS(const IndirectNode<CalculationOp>&, const ToCSSConversionOptions&) -> CSSCalc::Child;
 
 static auto toStyle(const CSSCalc::Random::Sharing&, const ToStyleConversionOptions&) -> Random::Fixed;
@@ -84,6 +85,7 @@ static auto toStyle(const CSSCalc::SiblingCount&, const ToStyleConversionOptions
 static auto toStyle(const CSSCalc::SiblingIndex&, const ToStyleConversionOptions&) -> Child;
 static auto toStyle(const CSSCalc::IndirectNode<CSSCalc::Anchor>&, const ToStyleConversionOptions&) -> Child;
 static auto toStyle(const CSSCalc::IndirectNode<CSSCalc::AnchorSize>&, const ToStyleConversionOptions&) -> Child;
+static auto toStyle(const CSSCalc::IndirectNode<CSSCalc::Round>&, const ToStyleConversionOptions&) -> Child;
 template<typename Op> auto toStyle(const CSSCalc::IndirectNode<Op>&, const ToStyleConversionOptions&) -> Child;
 
 static CSSCalc::CanonicalDimension::Dimension NODELETE determineCanonicalDimension(CSS::Category category)
@@ -199,6 +201,17 @@ CSSCalc::Child toCSS(const IndirectNode<Blend>& root, const ToCSSConversionOptio
 
     auto type = CSSCalc::toType(sum);
     return CSSCalc::makeChild(WTF::move(sum), *type);
+}
+
+CSSCalc::Child toCSS(const IndirectNode<Round>& root, const ToCSSConversionOptions& options)
+{
+    CSSCalc::Round op { root->strategy, toCSS(root->a, options), toCSS(root->b, options) };
+
+    if (auto replacement = CSSCalc::simplify(op, options.simplification))
+        return WTF::move(*replacement);
+
+    auto type = CSSCalc::toType(op);
+    return CSSCalc::makeChild(WTF::move(op), *type);
 }
 
 template<typename CalculationOp> CSSCalc::Child toCSS(const IndirectNode<CalculationOp>& root, const ToCSSConversionOptions& options)
@@ -337,6 +350,11 @@ Child toStyle(const CSSCalc::IndirectNode<CSSCalc::AnchorSize>&, const ToStyleCo
 {
     ASSERT_NOT_REACHED("Unevaluated anchor-size() functions are not supported in the Tree");
     return number(0);
+}
+
+Child toStyle(const CSSCalc::IndirectNode<CSSCalc::Round>& root, const ToStyleConversionOptions& options)
+{
+    return makeChild(Round { root->strategy, toStyle(root->a, options), toStyle(root->b, options) });
 }
 
 template<typename Op> Child toStyle(const CSSCalc::IndirectNode<Op>& root, const ToStyleConversionOptions& options)

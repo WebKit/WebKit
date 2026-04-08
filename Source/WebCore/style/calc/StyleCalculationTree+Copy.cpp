@@ -43,6 +43,7 @@ template<Leaf Op>
 Child copy(const Op&);
 template<typename Op>
 static auto copy(const IndirectNode<Op>&) -> Child;
+static auto copy(const IndirectNode<Round>&) -> Child;
 
 // MARK: Copying
 
@@ -96,6 +97,11 @@ template<Leaf Op> Child NODELETE copy(const Op& root)
 template<typename Op> Child copy(const IndirectNode<Op>& root)
 {
     return makeChild(WTF::apply([](const auto& ...x) { return Op { copy(x)... }; } , *root));
+}
+
+Child copy(const IndirectNode<Round>& root)
+{
+    return makeChild(Round { root->strategy, copy(root->a), copy(root->b) });
 }
 
 } // namespace Calculation
