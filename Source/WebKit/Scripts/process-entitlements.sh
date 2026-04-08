@@ -172,9 +172,6 @@ function mac_process_network_entitlements()
         fi
         plistbuddy Add :com.apple.security.hardened-process.checked-allocations.soft-mode bool YES # FIXME: Should be removed before release <rdar://171909082>
 
-        # FIXME: This should be removed after crash investigation as part of <rdar://problem/160965793>
-        plistbuddy Add :com.apple.private.get-system-corpse bool YES
-
         if [[ "${WK_USE_FATAL_EXCEPTIONS}" == YES ]]
         then
             plistbuddy Add :com.apple.private.pac.exception bool YES

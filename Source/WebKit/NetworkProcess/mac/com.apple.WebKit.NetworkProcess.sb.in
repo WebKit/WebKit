@@ -427,8 +427,7 @@
             "com.apple.aggregated"
             "com.apple.analyticsd"
             "com.apple.diagnosticd"
-            "com.apple.networkscored"
-            "com.apple.ReportMemoryException"))) ;; FIXME: This should be removed after crash investigation as part of <rdar://problem/160965793>.
+            "com.apple.networkscored")))
 
 (allow mach-lookup (global-name "com.apple.webkit.adattributiond.service"))
 (allow mach-lookup (global-name "org.webkit.pcmtestdaemon.service"))
