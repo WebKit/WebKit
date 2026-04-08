@@ -1,4 +1,4 @@
 
-FAIL Test that ill-founded cyclic dependencies cause ReferenceError during evaluation, which leads to error events on window, and that exceptions are remembered.
- assert_array_equals: lengths differ, expected array ["cycle-tdz-access-a", object "ReferenceError: Cannot access 'Y' before initialization.", "load", [...], "load", [...], "load"] length 7, got ["cycle-tdz-access-a", object "ReferenceError: Cannot access 'Y' before initialization.", "load", "load", "load"] length 5
+PASS Test that ill-founded cyclic dependencies cause ReferenceError during evaluation, which leads to error events on window, and that exceptions are remembered.
+
 

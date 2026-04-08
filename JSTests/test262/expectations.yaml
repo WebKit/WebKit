@@ -765,12 +765,6 @@ test/language/expressions/call/tco-non-eval-with.js:
 test/language/expressions/delete/super-property-uninitialized-this.js:
   default: 'Test262Error: Expected a ReferenceError but got a Test262Error'
   strict mode: 'Test262Error: Expected a ReferenceError but got a Test262Error'
-test/language/expressions/dynamic-import/for-await-resolution-and-error-agen-yield.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: f Expected SameValue(«null», «"foo"») to be true'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: f Expected SameValue(«null», «"foo"») to be true'
-test/language/expressions/dynamic-import/import-errored-module.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: The import should reject (second import) Expected a Error to be thrown asynchronously but no exception was thrown at all'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: The import should reject (second import) Expected a Error to be thrown asynchronously but no exception was thrown at all'
 test/language/expressions/new/non-ctor-err-realm.js:
   default: 'Test262Error: production including Arguments Expected a TypeError but got a different error constructor with the same name'
   strict mode: 'Test262Error: production including Arguments Expected a TypeError but got a different error constructor with the same name'

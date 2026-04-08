@@ -100,6 +100,8 @@ function newRegistryEntry(key, type)
         linkError: @undefined,
         linkSucceeded: true,
         evaluated: false,
+        evaluationError: @undefined,
+        evaluationSucceeded: true,
         then: @undefined,
         isAsync: false,
     };
@@ -489,8 +491,11 @@ function moduleEvaluation(entry, fetcher)
     // http://www.ecma-international.org/ecma-262/6.0/#sec-moduleevaluation
     "use strict";
 
-    if (entry.evaluated)
+    if (entry.evaluated) {
+        if (!entry.evaluationSucceeded)
+            throw entry.evaluationError;
         return;
+    }
     entry.evaluated = true;
 
     // The contents of the [[RequestedModules]] is cloned into entry.dependencies.
@@ -498,13 +503,19 @@ function moduleEvaluation(entry, fetcher)
 
     if (!entry.isAsync) {
         // Since linking sets isAsync for any strongly connected component with an async module we should only get here if all our dependencies are also sync.
-        for (var i = 0, length = dependencies.length; i < length; ++i) {
-            var dependency = dependencies[i];
-            @assert(!dependency.isAsync);
-            this.moduleEvaluation(dependency, fetcher);
-        }
+        try {
+            for (var i = 0, length = dependencies.length; i < length; ++i) {
+                var dependency = dependencies[i];
+                @assert(!dependency.isAsync);
+                this.moduleEvaluation(dependency, fetcher);
+            }
 
-        this.evaluate(entry.key, entry.module, fetcher);
+            this.evaluate(entry.key, entry.module, fetcher);
+        } catch (error) {
+            entry.evaluationSucceeded = false;
+            entry.evaluationError = error;
+            throw error;
+        }
     } else
         return this.asyncModuleEvaluation(entry, fetcher, dependencies);
 }
@@ -514,22 +525,28 @@ async function asyncModuleEvaluation(entry, fetcher, dependencies)
 {
     "use strict";
 
-    for (var i = 0, length = dependencies.length; i < length; ++i)
-        await this.moduleEvaluation(dependencies[i], fetcher);
+    try {
+        for (var i = 0, length = dependencies.length; i < length; ++i)
+            await this.moduleEvaluation(dependencies[i], fetcher);
 
-    var resumeMode = @GeneratorResumeModeNormal;
-    while (true) {
-        var awaitedValue = this.evaluate(entry.key, entry.module, fetcher, awaitedValue, resumeMode);
-        if (@getAbstractModuleRecordInternalField(entry.module, @abstractModuleRecordFieldState) == @GeneratorStateExecuting)
-            return;
+        var resumeMode = @GeneratorResumeModeNormal;
+        while (true) {
+            var awaitedValue = this.evaluate(entry.key, entry.module, fetcher, awaitedValue, resumeMode);
+            if (@getAbstractModuleRecordInternalField(entry.module, @abstractModuleRecordFieldState) == @GeneratorStateExecuting)
+                return;
 
-        try {
-            awaitedValue = await awaitedValue;
-            resumeMode = @GeneratorResumeModeNormal;
-        } catch (e) {
-            awaitedValue = e;
-            resumeMode = @GeneratorResumeModeThrow;
+            try {
+                awaitedValue = await awaitedValue;
+                resumeMode = @GeneratorResumeModeNormal;
+            } catch (e) {
+                awaitedValue = e;
+                resumeMode = @GeneratorResumeModeThrow;
+            }
         }
+    } catch (error) {
+        entry.evaluationSucceeded = false;
+        entry.evaluationError = error;
+        throw error;
     }
 }
 
