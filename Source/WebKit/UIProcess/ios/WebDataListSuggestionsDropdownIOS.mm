@@ -497,7 +497,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self _updateSuggestionsMenuElements];
 
     if (!_suggestionsContextMenuPresenter) {
-        _suggestionsContextMenuPresenter = makeUnique<WebKit::CompactContextMenuPresenter>(self.view, self);
+        _suggestionsContextMenuPresenter = makeUnique<WebKit::CompactContextMenuPresenter>(self.view, self, WebKit::CompactContextMenuPresenter::ShowsMenuFromSource::No);
         [self.view doAfterEditorStateUpdateAfterFocusingElement:[weakSelf = WeakObjCPtr<WKDataListSuggestionsDropdown>(self)] {
             auto strongSelf = weakSelf.get();
             if (!strongSelf)

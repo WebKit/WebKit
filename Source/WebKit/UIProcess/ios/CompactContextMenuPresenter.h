@@ -31,7 +31,9 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/TZoneMalloc.h>
 
-@class WKCompactContextMenuPresenterButton;
+@protocol WKCompactContextMenuPresenter
+@property (nonatomic, weak) id<UIContextMenuInteractionDelegate> externalDelegate;
+@end
 
 namespace WebKit {
 
@@ -39,7 +41,9 @@ class CompactContextMenuPresenter {
     WTF_MAKE_TZONE_ALLOCATED(CompactContextMenuPresenter);
     WTF_MAKE_NONCOPYABLE(CompactContextMenuPresenter);
 public:
-    CompactContextMenuPresenter(UIView *rootView, id<UIContextMenuInteractionDelegate>);
+    enum class ShowsMenuFromSource : bool { No, Yes };
+
+    CompactContextMenuPresenter(UIView *rootView, id<UIContextMenuInteractionDelegate>, ShowsMenuFromSource = ShowsMenuFromSource::Yes);
     ~CompactContextMenuPresenter();
 
     void present(CGRect rectInRootView);
@@ -52,7 +56,7 @@ public:
 
 private:
     __weak UIView *m_rootView { nil };
-    RetainPtr<WKCompactContextMenuPresenterButton> m_button;
+    RetainPtr<UIControl<WKCompactContextMenuPresenter>> m_control;
 };
 
 } // namespace WebKit
