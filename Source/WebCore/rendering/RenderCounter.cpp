@@ -30,6 +30,7 @@
 #include "HTMLNames.h"
 #include "HTMLOListElement.h"
 #include "RenderChildIterator.h"
+#include "RenderElement.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderElementInlines.h"
 #include "RenderListItem.h"
@@ -37,6 +38,7 @@
 #include "RenderStyle.h"
 #include "RenderView.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/AtomString.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(TREE_DEBUGGING)
@@ -58,6 +60,16 @@ static CounterMaps& NODELETE counterMaps()
 {
     static NeverDestroyed<CounterMaps> staticCounterMaps;
     return staticCounterMaps;
+}
+
+static RenderElement* ancestorStyleContainmentObject(const RenderElement& element)
+{
+    SUPPRESS_UNCOUNTED_LOCAL auto* ancestor = element.parent();
+    for (; ancestor; ancestor = ancestor->parent()) {
+        if (ancestor->shouldApplyStyleContainment())
+            break;
+    }
+    return ancestor;
 }
 
 // Descend into a subtree to find its last RenderElement in pre-order, stopping at style containment boundaries.
@@ -175,12 +187,7 @@ static CounterDirectives listItemCounterDirectives(RenderElement& renderer)
     return { };
 }
 
-struct CounterPlan {
-    OptionSet<CounterNode::Type> type;
-    int value;
-};
-
-static std::optional<CounterPlan> planCounter(RenderElement& renderer, const AtomString& identifier)
+static std::optional<CounterNode::Plan> planCounter(RenderElement& renderer, const AtomString& identifier)
 {
     // We must have a generating node or else we cannot have a counter.
     RefPtr generatingElement = renderer.generatingElement();
@@ -217,11 +224,11 @@ static std::optional<CounterPlan> planCounter(RenderElement& renderer, const Ato
         type.add(CounterNode::Type::Increment);
 
     if (directives.setValue)
-        return CounterPlan { type, *directives.setValue };
+        return CounterNode::Plan { type, *directives.setValue };
     if (directives.resetValue)
-        return CounterPlan { type, saturatedSum<int>(*directives.resetValue, directives.incrementValue.value_or(0)) };
+        return CounterNode::Plan { type, saturatedSum<int>(*directives.resetValue, directives.incrementValue.value_or(0)) };
     if (directives.incrementValue)
-        return CounterPlan { type, *directives.incrementValue };
+        return CounterNode::Plan { type, *directives.incrementValue };
     return std::nullopt;
 }
 
@@ -374,7 +381,7 @@ static CounterNode* makeCounterNode(RenderElement& renderer, const AtomString& i
     auto& maps = counterMaps();
 
     auto type = plan ? plan->type : OptionSet<CounterNode::Type> { };
-    auto newNode = CounterNode::create(renderer, type, plan ? plan->value : 0);
+    auto newNode = CounterNode::create(renderer, plan ? plan->type : OptionSet<CounterNode::Type> { }, plan ? plan->value : 0, plan);
 
     auto place = findPlaceForCounter(renderer, identifier, type);
     if (place.parent)
@@ -439,22 +446,42 @@ String RenderCounter::originalText() const
     if (!m_counterNode)
         return emptyString();
 
-    RefPtr counterNode = m_counterNode.get();
-    int value = counterNode->actsAsReset() ? counterNode->value() : counterNode->countInParent();
+    String text;
+    for (RefPtr current = m_counterNode; current; ) {
+        RefPtr child = current;
+        int value = child->actsAsReset() ? child->value() : child->countInParent();
 
-    auto counterText = [&](int value) {
-        return counterStyle()->text(value, writingMode());
-    };
-    auto text = counterText(value);
-    if (!m_counter.separator.isNull()) {
-        if (!counterNode->actsAsReset())
-            counterNode = counterNode->parent();
-        while (RefPtr parent = counterNode->parent()) {
-            text = makeString(counterText(counterNode->countInParent()), m_counter.separator, text);
-            counterNode = parent;
+        auto counterText = [&](int value) {
+            return counterStyle()->text(value, writingMode());
+        };
+        auto newText = counterText(value);
+        if (!m_counter.separator.isNull()) {
+            if (!child->actsAsReset())
+                child = child->parent();
+            while (RefPtr parent = child->parent()) {
+                newText = makeString(counterText(child->countInParent()), m_counter.separator, newText);
+                child = parent;
+            }
         }
-    }
 
+        if (newText != "0"_s || current->shouldShowZero()) {
+            if (!text.isEmpty())
+                text = makeString(newText, m_counter.separator, text);
+            else
+                text = newText;
+        }
+
+        if (m_counter.separator.isNull())
+            return text.isEmpty() ? newText : text;
+
+        if (auto ancestorContainment = ancestorStyleContainmentObject(current->owner())) {
+            if (auto renderer = ancestorContainment) {
+                current = makeCounterNode(*renderer, m_counter.identifier, true);
+                continue;
+            }
+        }
+        return text.isEmpty() ? newText : text;
+    }
     return text;
 }
 

@@ -32,10 +32,11 @@
 
 namespace WebCore {
 
-CounterNode::CounterNode(RenderElement& owner, OptionSet<CounterNode::Type> type, int value)
+CounterNode::CounterNode(RenderElement& owner, OptionSet<CounterNode::Type> type, int value, std::optional<Plan> plan)
     : m_type(type)
     , m_value(value)
     , m_owner(owner)
+    , m_plan(plan)
 {
 }
 
@@ -92,9 +93,9 @@ RenderElement& CounterNode::owner() const
     return m_owner.get();
 }
 
-Ref<CounterNode> CounterNode::create(RenderElement& owner, OptionSet<CounterNode::Type> type, int value)
+Ref<CounterNode> CounterNode::create(RenderElement& owner, OptionSet<CounterNode::Type> type, int value, std::optional<Plan> plan)
 {
-    return adoptRef(*new CounterNode(owner, type, value));
+    return adoptRef(*new CounterNode(owner, type, value, plan));
 }
 
 CounterNode* CounterNode::nextInPreOrderAfterChildren(const CounterNode* stayWithin) const
@@ -337,6 +338,15 @@ void CounterNode::removeChild(CounterNode& oldChild)
 
     if (next)
         next->recount();
+}
+
+bool CounterNode::shouldShowZero() const
+{
+    for (auto* node = this; node; node = node->parent()) {
+        if (node->m_plan.has_value())
+            return true;
+    }
+    return false;
 }
 
 #if ENABLE(TREE_DEBUGGING)
