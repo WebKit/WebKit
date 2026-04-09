@@ -18,8 +18,10 @@
 # Boston, MA 02110-1301, USA.
 
 import logging
+import optparse
 import os
 import sys
+from webkitpy.results.options import upload_options
 
 from webkitpy.port.linux_container_sdk_utils import maybe_enter_webkit_container_sdk, maybe_use_container_sdk_root_dir
 maybe_enter_webkit_container_sdk()
@@ -90,10 +92,19 @@ class GtkTestRunner(TestRunner):
 if __name__ == "__main__":
     runner_args = get_runner_args(sys.argv)
     check_environment("gtk")
+    option_group_definitions = []
+    option_group_definitions.append(('Upload Options', upload_options()))
+
     option_parser = create_option_parser()
     option_parser.add_option('--display-server', choices=['xvfb', 'xorg', 'weston', 'wayland'], default='xvfb',
                              help='"xvfb": Use a virtualized X11 server. "xorg": Use the current X11 session. '
                                   '"weston": Use a virtualized Weston server. "wayland": Use the current wayland session.'),
+
+    for group_name, group_options in option_group_definitions:
+        option_group = optparse.OptionGroup(option_parser, group_name)
+        option_group.add_options(group_options)
+        option_parser.add_option_group(option_group)
+
     options, args = option_parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(message)s")
