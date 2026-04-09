@@ -69,7 +69,6 @@ bool WillChangeAnimatableFeature::propertyCreatesStackingContext(CSSPropertyID p
     case CSSPropertyWebkitMask:
     case CSSPropertyOpacity:
     case CSSPropertyPosition:
-    case CSSPropertyZIndex:
     case CSSPropertyWebkitBoxReflect:
     case CSSPropertyMixBlendMode:
     case CSSPropertyIsolation:

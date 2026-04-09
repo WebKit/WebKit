@@ -5841,7 +5841,6 @@ webkit.org/b/225035 imported/w3c/web-platform-tests/css/css-will-change/will-cha
 imported/w3c/web-platform-tests/css/css-will-change/will-change-fixpos-cb-webkit-perspective-1.html [ ImageOnlyFailure ]
 webkit.org/b/224902 [ Debug ] imported/w3c/web-platform-tests/css/css-will-change/parsing/will-change-invalid.html [ Skip ]
 webkit.org/b/224899 imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-005.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-z-index-4.html [ ImageOnlyFailure ]
 
 # Needs display box support.
 fast/layoutformattingcontext/ [ Skip ]

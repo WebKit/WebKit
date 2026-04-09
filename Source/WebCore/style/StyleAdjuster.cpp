@@ -585,6 +585,9 @@ void Adjuster::adjust(RenderStyle& style) const
         if ((m_element && m_document->documentElement() == m_element.get())
             || hasTransformRelatedProperty(style, m_element.get(), m_parentStyle)
             || shouldTreatAutoZIndexAsZero(style)
+            || (style.willChange().containsProperty(CSSPropertyZIndex)
+                && (style.position() != PositionType::Static
+                    || m_parentBoxStyle.display().isFlexibleOrGridFormattingContextBox()))
             || isInTopLayerOrBackdrop(style, m_element.get()))
             style.setUsedZIndex(0);
         else
