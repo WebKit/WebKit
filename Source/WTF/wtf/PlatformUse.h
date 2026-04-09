@@ -280,14 +280,13 @@
 #define USE_DARWIN_REGISTER_MACROS 1
 #endif
 
-// Use OS(MACOS) to pick up JSCOnly ports on Mac.
-#if OS(MACOS) || PLATFORM(MACCATALYST) || (PLATFORM(IOS_FAMILY) && TARGET_OS_SIMULATOR)
+#if HAVE(PTHREAD_JIT_PERMISSIONS_API)
 #if USE(APPLE_INTERNAL_SDK)
 /* Always use the macro on internal builds */
 #define USE_PTHREAD_JIT_PERMISSIONS_API 0 
-#else
+#else // !USE(APPLE_INTERNAL_SDK)
 #define USE_PTHREAD_JIT_PERMISSIONS_API 1
-#endif
+#endif // USE(APPLE_INTERNAL_SDK)
 #endif
 
 #if PLATFORM(COCOA)
@@ -409,7 +408,8 @@
 
 #if PLATFORM(IOS) && !PLATFORM(IOS_FAMILY_SIMULATOR) \
     && __IPHONE_OS_VERSION_MIN_REQUIRED >= 170400
-#if CPU(ARM64)
+// <BrowserEngineCore/BEMemory.h> requires ObjectiveC
+#if CPU(ARM64) && defined(__OBJC__)
 #define USE_INLINE_JIT_PERMISSIONS_API 1
 #endif
 #endif
