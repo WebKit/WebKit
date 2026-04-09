@@ -437,7 +437,9 @@ void RenderLayerScrollableArea::scrollTo(const ScrollPosition& position)
     if (scrollsOverflow())
         view.frameView().didChangeScrollOffset();
 
-    view.frameView().viewportContentsChanged();
+    if (!view.frameView().layoutContext().isInRenderTreeLayout())
+        view.frameView().viewportContentsChanged();
+
     protect(frame->editor())->renderLayerDidScroll(m_layer);
 }
 
