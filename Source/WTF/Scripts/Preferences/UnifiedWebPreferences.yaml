@@ -2085,6 +2085,20 @@ CookieStoreManagerEnabled:
   sharedPreferenceForWebProcess: true
   richJavaScript: true
 
+CopyPlainTextWithoutTextTransformEnabled:
+  type: bool
+  status: stable
+  category: css
+  humanReadableName: "Strip text-transform when copying"
+  humanReadableDescription: "When copying text to the clipboard, strip CSS text-transform so the pasted text reflects the original DOM content"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 CoreMathMLEnabled:
   type: bool
   status: unstable

@@ -1191,11 +1191,21 @@ void TextIterator::emitText(Text& textNode, RenderText& renderer, int textStartO
 
     bool shouldIgnoreFullSizeKana = m_behaviors.contains(TextIteratorBehavior::IgnoresFullSizeKana) && renderer.style().textTransform().contains(Style::TextTransformValue::FullSizeKana);
 
-    // FIXME: This probably yields the wrong offsets when text-transform: lowercase turns a single character into two characters.
-    String string = m_behaviors.contains(TextIteratorBehavior::EmitsOriginalText) || shouldIgnoreFullSizeKana ? renderer.originalText()
+    // FIXME: This probably yields the wrong offsets when text-transform changes the string length (e.g. lowercase ß → uppercase SS).
+    auto shouldUseOriginalText = [&] {
+        if (m_behaviors.contains(TextIteratorBehavior::EmitsOriginalText) || shouldIgnoreFullSizeKana)
+            return true;
+        if (m_behaviors.contains(TextIteratorBehavior::EmitsTextsWithoutTranscoding)
+            && renderer.style().textSecurity() == TextSecurity::None
+            && textNode.document().settings().copyPlainTextWithoutTextTransformEnabled())
+            return true;
+        return false;
+    }();
+
+    auto string = shouldUseOriginalText ? renderer.originalText()
         : (m_behaviors.contains(TextIteratorBehavior::EmitsTextsWithoutTranscoding) ? renderer.textWithoutConvertingBackslashToYenSymbol() : renderer.text());
 
-    ASSERT(m_behaviors.contains(TextIteratorBehavior::EmitsOriginalText) || string.length() >= static_cast<unsigned>(textEndOffset));
+    ASSERT(shouldUseOriginalText || string.length() >= static_cast<unsigned>(textEndOffset));
 
     textEndOffset = std::min(string.length(), static_cast<unsigned>(textEndOffset));
 
