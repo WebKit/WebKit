@@ -148,14 +148,14 @@ LayoutUnit usedInlineSizeForGridItem(const PlacedGridItem& placedGridItem, Layou
             auto& usedZoom = placedGridItem.usedZoom();
 
             auto minimumSize = GridLayoutUtils::usedInlineMinimumSize(placedGridItem, trackSizingFunctions, borderAndPadding, columnsSize, integrationUtils);
-            auto maximumSize = [&inlineAxisSizes, &usedZoom] {
+            auto maximumSize = [&inlineAxisSizes, &borderAndPadding, &usedZoom] {
                 auto& computedMaximumSize = inlineAxisSizes.maximumSize;
                 if (computedMaximumSize.isNone())
                     return LayoutUnit::max();
-                return LayoutUnit { computedMaximumSize.tryFixed()->resolveZoom(usedZoom) };
+                return LayoutUnit { computedMaximumSize.tryFixed()->resolveZoom(usedZoom) } + borderAndPadding;
             };
 
-            auto stretchedWidth = columnsSize - LayoutUnit { marginStart.tryFixed()->resolveZoom(usedZoom) } - LayoutUnit { marginEnd.tryFixed()->resolveZoom(usedZoom) } - borderAndPadding;
+            auto stretchedWidth = columnsSize - LayoutUnit { marginStart.tryFixed()->resolveZoom(usedZoom) } - LayoutUnit { marginEnd.tryFixed()->resolveZoom(usedZoom) };
             return std::max(minimumSize, std::min(maximumSize(), stretchedWidth));
         }
 
@@ -303,13 +303,13 @@ LayoutUnit usedBlockSizeForGridItem(const PlacedGridItem& placedGridItem, Layout
             auto& usedZoom = placedGridItem.usedZoom();
 
             auto minimumSize = GridLayoutUtils::usedBlockMinimumSize(placedGridItem, trackSizingFunctions, borderAndPadding, rowsSize, integrationUtils);
-            auto maximumSize = [&blockAxisSizes, &usedZoom] {
+            auto maximumSize = [&blockAxisSizes, &borderAndPadding, &usedZoom] {
                 auto& computedMaximumSize = blockAxisSizes.maximumSize;
                 if (computedMaximumSize.isNone())
                     return LayoutUnit::max();
-                return LayoutUnit { computedMaximumSize.tryFixed()->resolveZoom(usedZoom) };
+                return LayoutUnit { computedMaximumSize.tryFixed()->resolveZoom(usedZoom) } + borderAndPadding;
             };
-            auto stretchedBlockSize = rowsSize - LayoutUnit { marginStart.tryFixed()->resolveZoom(usedZoom) } - LayoutUnit { marginEnd.tryFixed()->resolveZoom(usedZoom) } - borderAndPadding;
+            auto stretchedBlockSize = rowsSize - LayoutUnit { marginStart.tryFixed()->resolveZoom(usedZoom) } - LayoutUnit { marginEnd.tryFixed()->resolveZoom(usedZoom) };
             return std::max(minimumSize, std::min(maximumSize(), stretchedBlockSize));
         }
     }

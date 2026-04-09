@@ -63,7 +63,7 @@ enum class GridAvoidanceReason : uint8_t {
     GridItemHasNonInitialMaxWidth,
     GridItemHasNonInitialMaxHeight,
     GridItemHasBorder,
-    GridItemHasPadding,
+    GridItemHasNonFixedPadding,
     GridItemHasMargin,
     GridItemHasVerticalWritingMode,
     GridItemHasAspectRatio,
@@ -403,16 +403,13 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
         if (!gridItemStyle->maxHeight().isNone())
             ADD_REASON_AND_RETURN_IF_NEEDED(GridItemHasNonInitialMaxHeight, reasons, reasonCollectionMode);
 
-        if (gridItemStyle->border().hasBorder())
-            ADD_REASON_AND_RETURN_IF_NEEDED(GridItemHasBorder, reasons, reasonCollectionMode);
-
         auto gridItemHasPadding = [&] {
             return gridItemStyle->paddingBox().anyOf([](const Style::PaddingEdge& paddingEdge) {
-                return !paddingEdge.isPossiblyZero();
+                return !paddingEdge.isFixed();
             });
         };
         if (gridItemHasPadding())
-            ADD_REASON_AND_RETURN_IF_NEEDED(GridItemHasPadding, reasons, reasonCollectionMode);
+            ADD_REASON_AND_RETURN_IF_NEEDED(GridItemHasNonFixedPadding, reasons, reasonCollectionMode);
 
         auto gridItemHasMargins = [&] {
             return gridItemStyle->marginBox().anyOf([](const Style::MarginEdge& marginEdge) {
@@ -617,8 +614,8 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
     case GridAvoidanceReason::GridItemHasBorder:
         stream << "grid item has border";
         break;
-    case GridAvoidanceReason::GridItemHasPadding:
-        stream << "grid item has padding";
+    case GridAvoidanceReason::GridItemHasNonFixedPadding:
+        stream << "grid item has non fixed padding";
         break;
     case GridAvoidanceReason::GridItemHasMargin:
         stream << "grid item has margin";
