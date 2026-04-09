@@ -33,6 +33,7 @@
 #include <functional>
 #include <utility>
 #include <wtf/Assertions.h>
+#include <wtf/CompactVariantOperations.h>
 #include <wtf/Compiler.h>
 #include <wtf/Forward.h>
 #include <wtf/GetPtr.h>
@@ -44,6 +45,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/Variant.h>
 
 #if USE(CG)
@@ -213,6 +215,7 @@ public:
     WEBCORE_EXPORT String debugDescription() const;
 
 private:
+    friend class InlineColor;
     friend void add(Hasher&, const Color&);
 
     class OutOfLineComponents : public ThreadSafeRefCounted<OutOfLineComponents> {
@@ -290,6 +293,33 @@ private:
 
     static constexpr uint64_t invalidColorAndFlags = 0;
     uint64_t m_colorAndFlags { invalidColorAndFlags };
+};
+
+// InlineColor can be put inside CompactVariant<> directly
+class __attribute__((packed)) InlineColor {
+public:
+    explicit InlineColor(const Color& color)
+        : m_rgba(color.m_colorAndFlags & Color::colorValueMask)
+        , m_flags((color.m_colorAndFlags >> Color::flagsShift) & 0xFF)
+        , m_colorSpace((color.m_colorAndFlags >> Color::colorSpaceShift) & 0xFF)
+    {
+        ASSERT(!color.isOutOfLine());
+    }
+
+    operator Color() const
+    {
+        Color result;
+        result.m_colorAndFlags = (static_cast<uint64_t>(m_colorSpace) << Color::colorSpaceShift) | (static_cast<uint64_t>(m_flags) << Color::flagsShift) | m_rgba;
+        return result;
+    }
+
+    Color toColor() const { return static_cast<Color>(*this); }
+    bool operator==(const InlineColor&) const = default;
+
+private:
+    uint32_t m_rgba;
+    uint8_t m_flags;
+    uint8_t m_colorSpace;
 };
 
 inline void add(Hasher& hasher, const Color& color)
@@ -632,5 +662,6 @@ inline void Color::setOutOfLineComponents(Ref<OutOfLineComponents>&& color, Colo
 } // namespace WebCore
 
 namespace WTF {
+
 template<> struct HashTraits<WebCore::Color>;
 }

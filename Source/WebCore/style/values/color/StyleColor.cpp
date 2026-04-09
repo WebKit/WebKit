@@ -56,11 +56,6 @@
 namespace WebCore {
 namespace Style {
 
-Color::Color(Color::ColorKind&& color)
-    : value { WTF::move(color) }
-{
-}
-
 Color::Color(EmptyToken token)
     : value { token }
 {
@@ -77,32 +72,36 @@ Color::Color(CSS::Keyword::Currentcolor)
 }
 
 Color::Color(WebCore::Color color)
-    : value { ResolvedColor { WTF::move(color) } }
+    : value { color.tryGetAsPackedInline()
+        ? ColorKind { InlineResolvedColor { color } }
+        : ColorKind { makeUniqueRef<ResolvedColor>(color) } }
 {
 }
 
 Color::Color(SRGBA<uint8_t> color)
-    : value { ResolvedColor { WebCore::Color { color } } }
+    : value { InlineResolvedColor { WebCore::Color { color } } }
 {
 }
 
 Color::Color(CSS::Keyword::Transparent)
-    : value { ResolvedColor { WebCore::Color::transparentBlack } }
+    : value { InlineResolvedColor { WebCore::Color::transparentBlack } }
 {
 }
 
 Color::Color(CSS::Keyword::Black)
-    : value { ResolvedColor { WebCore::Color::black } }
+    : value { InlineResolvedColor { WebCore::Color::black } }
 {
 }
 
 Color::Color(CSS::Keyword::White)
-    : value { ResolvedColor { WebCore::Color::white } }
+    : value { InlineResolvedColor { WebCore::Color::white } }
 {
 }
 
 Color::Color(ResolvedColor&& color)
-    : value { WTF::move(color) }
+    : value { color.color.tryGetAsPackedInline()
+        ? ColorKind { InlineResolvedColor { color.color } }
+        : ColorKind { makeUniqueRef<ResolvedColor>(color.color) } }
 {
 }
 
@@ -261,53 +260,63 @@ bool Color::containsCurrentColor() const
 
 bool Color::isCurrentColor() const
 {
-    return std::holds_alternative<CurrentColor>(value);
+    return value.holdsAlternative<CurrentColor>();
 }
 
 bool Color::isColorMix() const
 {
-    return std::holds_alternative<UniqueRef<ColorMix>>(value);
+    return value.holdsAlternative<UniqueRef<ColorMix>>();
 }
 
 bool Color::isContrastColor() const
 {
-    return std::holds_alternative<UniqueRef<ContrastColor>>(value);
+    return value.holdsAlternative<UniqueRef<ContrastColor>>();
 }
 
 bool Color::isRelativeColor() const
 {
-    return std::holds_alternative<UniqueRef<RelativeColor<RGBFunctionModernRelative>>>(value)
-        || std::holds_alternative<UniqueRef<RelativeColor<HSLFunctionModern>>>(value)
-        || std::holds_alternative<UniqueRef<RelativeColor<HWBFunction>>>(value)
-        || std::holds_alternative<UniqueRef<RelativeColor<LabFunction>>>(value)
-        || std::holds_alternative<UniqueRef<RelativeColor<LCHFunction>>>(value)
-        || std::holds_alternative<UniqueRef<RelativeColor<OKLabFunction>>>(value)
-        || std::holds_alternative<UniqueRef<RelativeColor<OKLCHFunction>>>(value)
-        || std::holds_alternative<UniqueRef<RelativeColor<ColorRGBFunction<ExtendedA98RGB<float>>>>>(value)
-        || std::holds_alternative<UniqueRef<RelativeColor<ColorRGBFunction<ExtendedDisplayP3<float>>>>>(value)
-        || std::holds_alternative<UniqueRef<RelativeColor<ColorRGBFunction<ExtendedLinearDisplayP3<float>>>>>(value)
-        || std::holds_alternative<UniqueRef<RelativeColor<ColorRGBFunction<ExtendedProPhotoRGB<float>>>>>(value)
-        || std::holds_alternative<UniqueRef<RelativeColor<ColorRGBFunction<ExtendedRec2020<float>>>>>(value)
-        || std::holds_alternative<UniqueRef<RelativeColor<ColorRGBFunction<ExtendedSRGBA<float>>>>>(value)
-        || std::holds_alternative<UniqueRef<RelativeColor<ColorRGBFunction<ExtendedLinearSRGBA<float>>>>>(value)
-        || std::holds_alternative<UniqueRef<RelativeColor<ColorXYZFunction<XYZA<float, WhitePoint::D50>>>>>(value)
-        || std::holds_alternative<UniqueRef<RelativeColor<ColorXYZFunction<XYZA<float, WhitePoint::D65>>>>>(value);
+    return value.holdsAlternative<UniqueRef<RelativeColor<RGBFunctionModernRelative>>>()
+        || value.holdsAlternative<UniqueRef<RelativeColor<HSLFunctionModern>>>()
+        || value.holdsAlternative<UniqueRef<RelativeColor<HWBFunction>>>()
+        || value.holdsAlternative<UniqueRef<RelativeColor<LabFunction>>>()
+        || value.holdsAlternative<UniqueRef<RelativeColor<LCHFunction>>>()
+        || value.holdsAlternative<UniqueRef<RelativeColor<OKLabFunction>>>()
+        || value.holdsAlternative<UniqueRef<RelativeColor<OKLCHFunction>>>()
+        || value.holdsAlternative<UniqueRef<RelativeColor<ColorRGBFunction<ExtendedA98RGB<float>>>>>()
+        || value.holdsAlternative<UniqueRef<RelativeColor<ColorRGBFunction<ExtendedDisplayP3<float>>>>>()
+        || value.holdsAlternative<UniqueRef<RelativeColor<ColorRGBFunction<ExtendedLinearDisplayP3<float>>>>>()
+        || value.holdsAlternative<UniqueRef<RelativeColor<ColorRGBFunction<ExtendedProPhotoRGB<float>>>>>()
+        || value.holdsAlternative<UniqueRef<RelativeColor<ColorRGBFunction<ExtendedRec2020<float>>>>>()
+        || value.holdsAlternative<UniqueRef<RelativeColor<ColorRGBFunction<ExtendedSRGBA<float>>>>>()
+        || value.holdsAlternative<UniqueRef<RelativeColor<ColorRGBFunction<ExtendedLinearSRGBA<float>>>>>()
+        || value.holdsAlternative<UniqueRef<RelativeColor<ColorXYZFunction<XYZA<float, WhitePoint::D50>>>>>()
+        || value.holdsAlternative<UniqueRef<RelativeColor<ColorXYZFunction<XYZA<float, WhitePoint::D65>>>>>();
 }
 
 bool Color::isResolvedColor() const
 {
-    return std::holds_alternative<ResolvedColor>(value);
+    return value.holdsAlternative<InlineResolvedColor>() || value.holdsAlternative<UniqueRef<ResolvedColor>>();
 }
 
-const WebCore::Color& Color::resolvedColor() const
+WebCore::Color Color::resolvedColor() const
 {
     ASSERT(isResolvedColor());
-    return std::get<ResolvedColor>(value).color;
+    return value.switchOn(
+        [&](const InlineResolvedColor& inlined) { return inlined.toColor(); },
+        [&](const UniqueRef<ResolvedColor>& color) { return color.get().color; },
+        [](const auto&) {
+            RELEASE_ASSERT_NOT_REACHED();
+            return WebCore::Color { };
+        }
+    );
 }
 
 bool Color::isKnownTransparent() const
 {
-    return isResolvedColor() && resolvedColor().isValid() && !resolvedColor().isVisible();
+    if (!isResolvedColor())
+        return false;
+    auto color = resolvedColor();
+    return color.isValid() && !color.isVisible();
 }
 
 template<typename T> Color::ColorKind Color::makeIndirectColor(T&& colorType)

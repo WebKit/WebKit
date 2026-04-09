@@ -49,7 +49,7 @@ template<typename T> struct CompactVariantTraits {
    */
 };
 
-template<typename T> concept CompactVariantAlternativeSmallEnough = sizeof(T) <= 4;
+template<typename T> concept CompactVariantAlternativeSmallEnough = sizeof(T) <= 6;
 template<typename T> concept CompactVariantAlternativePointer =
        std::is_pointer_v<T>
    ||  IsSmartPtr<T>::value;
