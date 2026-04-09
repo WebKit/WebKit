@@ -70,6 +70,9 @@ private:
     void svgAttributeChanged(const QualifiedName&) override;
     void childrenChanged(const ChildChange&) override;
 
+    // FIXME: These initial values should be consolidated in a shared SVGFilterDefaults.h.
+    static constexpr float initialSpecularExponent = 1;
+
     const Ref<SVGAnimatedNumber> m_azimuth { SVGAnimatedNumber::create(this) };
     const Ref<SVGAnimatedNumber> m_elevation { SVGAnimatedNumber::create(this) };
     const Ref<SVGAnimatedNumber> m_x { SVGAnimatedNumber::create(this) };
@@ -78,7 +81,7 @@ private:
     const Ref<SVGAnimatedNumber> m_pointsAtX { SVGAnimatedNumber::create(this) };
     const Ref<SVGAnimatedNumber> m_pointsAtY { SVGAnimatedNumber::create(this) };
     const Ref<SVGAnimatedNumber> m_pointsAtZ { SVGAnimatedNumber::create(this) };
-    const Ref<SVGAnimatedNumber> m_specularExponent { SVGAnimatedNumber::create(this, 1) };
+    const Ref<SVGAnimatedNumber> m_specularExponent { SVGAnimatedNumber::create(this, initialSpecularExponent) };
     const Ref<SVGAnimatedNumber> m_limitingConeAngle { SVGAnimatedNumber::create(this) };
 };
 

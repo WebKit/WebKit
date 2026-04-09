@@ -60,11 +60,16 @@ private:
     IntOutsets outsets(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits) const override;
     RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
 
+    // FIXME: These initial values should be consolidated in a shared SVGFilterDefaults.h.
+    static constexpr float initialDx = 2;
+    static constexpr float initialDy = 2;
+    static constexpr float initialStdDeviation = 2;
+
     const Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
-    const Ref<SVGAnimatedNumber> m_dx { SVGAnimatedNumber::create(this, 2) };
-    const Ref<SVGAnimatedNumber> m_dy { SVGAnimatedNumber::create(this, 2) };
-    const Ref<SVGAnimatedNumber> m_stdDeviationX { SVGAnimatedNumber::create(this, 2) };
-    const Ref<SVGAnimatedNumber> m_stdDeviationY { SVGAnimatedNumber::create(this, 2) };
+    const Ref<SVGAnimatedNumber> m_dx { SVGAnimatedNumber::create(this, initialDx) };
+    const Ref<SVGAnimatedNumber> m_dy { SVGAnimatedNumber::create(this, initialDy) };
+    const Ref<SVGAnimatedNumber> m_stdDeviationX { SVGAnimatedNumber::create(this, initialStdDeviation) };
+    const Ref<SVGAnimatedNumber> m_stdDeviationY { SVGAnimatedNumber::create(this, initialStdDeviation) };
 };
     
 } // namespace WebCore

@@ -37,6 +37,7 @@
 #include "SVGFilterElement.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGNames.h"
+#include "SVGParserUtilities.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -75,34 +76,34 @@ void SVGFELightElement::attributeChanged(const QualifiedName& name, const AtomSt
 {
     switch (name.nodeName()) {
     case AttributeNames::azimuthAttr:
-        m_azimuth->setBaseValInternal(newValue.toFloat());
+        m_azimuth->setBaseValInternal(parseNumber(newValue));
         break;
     case AttributeNames::elevationAttr:
-        m_elevation->setBaseValInternal(newValue.toFloat());
+        m_elevation->setBaseValInternal(parseNumber(newValue));
         break;
     case AttributeNames::xAttr:
-        m_x->setBaseValInternal(newValue.toFloat());
+        m_x->setBaseValInternal(parseNumber(newValue));
         break;
     case AttributeNames::yAttr:
-        m_y->setBaseValInternal(newValue.toFloat());
+        m_y->setBaseValInternal(parseNumber(newValue));
         break;
     case AttributeNames::zAttr:
-        m_z->setBaseValInternal(newValue.toFloat());
+        m_z->setBaseValInternal(parseNumber(newValue));
         break;
     case AttributeNames::pointsAtXAttr:
-        m_pointsAtX->setBaseValInternal(newValue.toFloat());
+        m_pointsAtX->setBaseValInternal(parseNumber(newValue));
         break;
     case AttributeNames::pointsAtYAttr:
-        m_pointsAtY->setBaseValInternal(newValue.toFloat());
+        m_pointsAtY->setBaseValInternal(parseNumber(newValue));
         break;
     case AttributeNames::pointsAtZAttr:
-        m_pointsAtZ->setBaseValInternal(newValue.toFloat());
+        m_pointsAtZ->setBaseValInternal(parseNumber(newValue));
         break;
     case AttributeNames::specularExponentAttr:
-        m_specularExponent->setBaseValInternal(newValue.toFloat());
+        m_specularExponent->setBaseValInternal(parseNumber(newValue), initialSpecularExponent);
         break;
     case AttributeNames::limitingConeAngleAttr:
-        m_limitingConeAngle->setBaseValInternal(newValue.toFloat());
+        m_limitingConeAngle->setBaseValInternal(parseNumber(newValue));
         break;
     default:
         break;

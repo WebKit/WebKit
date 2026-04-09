@@ -63,15 +63,18 @@ void SVGFEDiffuseLightingElement::attributeChanged(const QualifiedName& name, co
         Ref { m_in1 }->setBaseValInternal(newValue);
         break;
     case AttributeNames::surfaceScaleAttr:
-        m_surfaceScale->setBaseValInternal(newValue.toFloat());
+        m_surfaceScale->setBaseValInternal(parseNumber(newValue), initialSurfaceScale);
         break;
     case AttributeNames::diffuseConstantAttr:
-        m_diffuseConstant->setBaseValInternal(newValue.toFloat());
+        m_diffuseConstant->setBaseValInternal(parseNumber(newValue), initialDiffuseConstant);
         break;
     case AttributeNames::kernelUnitLengthAttr:
         if (auto result = parseNumberOptionalNumber(newValue)) {
             m_kernelUnitLengthX->setBaseValInternal(result->first);
             m_kernelUnitLengthY->setBaseValInternal(result->second);
+        } else {
+            m_kernelUnitLengthX->setBaseValInternal(std::nullopt);
+            m_kernelUnitLengthY->setBaseValInternal(std::nullopt);
         }
         break;
     default:

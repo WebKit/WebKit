@@ -30,6 +30,7 @@
 #include "NodeDocument.h"
 #include "RenderSVGShape.h"
 #include "SVGDocumentExtensions.h"
+#include "SVGParserUtilities.h"
 #include "SVGPathUtilities.h"
 #include "SVGPoint.h"
 #include "SVGPropertyOwnerRegistry.h"
@@ -132,7 +133,7 @@ void SVGGeometryElement::attributeChanged(const QualifiedName& name, const AtomS
 {
     if (name == SVGNames::pathLengthAttr) {
         Ref pathLength = m_pathLength;
-        pathLength->setBaseValInternal(newValue.toFloat());
+        pathLength->setBaseValInternal(parseNumber(newValue));
         if (pathLength->baseVal() < 0)
             protect(protect(document())->svgExtensions())->reportError("A negative value for path attribute <pathLength> is not allowed"_s);
     }

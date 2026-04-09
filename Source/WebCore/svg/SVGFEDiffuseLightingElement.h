@@ -62,9 +62,13 @@ private:
     Vector<AtomString> filterEffectInputsNames() const override { return { AtomString { in1() } }; }
     RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
 
+    // FIXME: These initial values should be consolidated in a shared SVGFilterDefaults.h.
+    static constexpr float initialDiffuseConstant = 1;
+    static constexpr float initialSurfaceScale = 1;
+
     const Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
-    const Ref<SVGAnimatedNumber> m_diffuseConstant { SVGAnimatedNumber::create(this, 1) };
-    const Ref<SVGAnimatedNumber> m_surfaceScale { SVGAnimatedNumber::create(this, 1) };
+    const Ref<SVGAnimatedNumber> m_diffuseConstant { SVGAnimatedNumber::create(this, initialDiffuseConstant) };
+    const Ref<SVGAnimatedNumber> m_surfaceScale { SVGAnimatedNumber::create(this, initialSurfaceScale) };
     const Ref<SVGAnimatedNumber> m_kernelUnitLengthX { SVGAnimatedNumber::create(this) };
     const Ref<SVGAnimatedNumber> m_kernelUnitLengthY { SVGAnimatedNumber::create(this) };
 };

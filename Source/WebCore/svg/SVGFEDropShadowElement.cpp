@@ -69,16 +69,19 @@ void SVGFEDropShadowElement::attributeChanged(const QualifiedName& name, const A
         if (auto result = parseNumberOptionalNumber(newValue)) {
             m_stdDeviationX->setBaseValInternal(result->first);
             m_stdDeviationY->setBaseValInternal(result->second);
+        } else {
+            m_stdDeviationX->setBaseValInternal(std::nullopt, initialStdDeviation);
+            m_stdDeviationY->setBaseValInternal(std::nullopt, initialStdDeviation);
         }
         break;
     case AttributeNames::inAttr:
         Ref { m_in1 }->setBaseValInternal(newValue);
         break;
     case AttributeNames::dxAttr:
-        m_dx->setBaseValInternal(newValue.toFloat());
+        m_dx->setBaseValInternal(parseNumber(newValue), initialDx);
         break;
     case AttributeNames::dyAttr:
-        m_dy->setBaseValInternal(newValue.toFloat());
+        m_dy->setBaseValInternal(parseNumber(newValue), initialDy);
         break;
     default:
         break;

@@ -69,6 +69,9 @@ void SVGFEMorphologyElement::attributeChanged(const QualifiedName& name, const A
         if (auto result = parseNumberOptionalNumber(newValue)) {
             m_radiusX->setBaseValInternal(result->first);
             m_radiusY->setBaseValInternal(result->second);
+        } else {
+            m_radiusX->setBaseValInternal(std::nullopt);
+            m_radiusY->setBaseValInternal(std::nullopt);
         }
         break;
     default:

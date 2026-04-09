@@ -103,12 +103,17 @@ protected:
     bool rendererIsNeeded(const RenderStyle&) override { return false; }
     
 private:
+    // FIXME: These initial values should be consolidated in a shared SVGFilterDefaults.h.
+    static constexpr float initialSlope = 1;
+    static constexpr float initialAmplitude = 1;
+    static constexpr float initialExponent = 1;
+
     const Ref<SVGAnimatedEnumeration> m_type { SVGAnimatedEnumeration::create(this, ComponentTransferType::FECOMPONENTTRANSFER_TYPE_IDENTITY) };
     const Ref<SVGAnimatedNumberList> m_tableValues { SVGAnimatedNumberList::create(this) };
-    const Ref<SVGAnimatedNumber> m_slope { SVGAnimatedNumber::create(this, 1) };
+    const Ref<SVGAnimatedNumber> m_slope { SVGAnimatedNumber::create(this, initialSlope) };
     const Ref<SVGAnimatedNumber> m_intercept { SVGAnimatedNumber::create(this) };
-    const Ref<SVGAnimatedNumber> m_amplitude { SVGAnimatedNumber::create(this, 1) };
-    const Ref<SVGAnimatedNumber> m_exponent { SVGAnimatedNumber::create(this, 1) };
+    const Ref<SVGAnimatedNumber> m_amplitude { SVGAnimatedNumber::create(this, initialAmplitude) };
+    const Ref<SVGAnimatedNumber> m_exponent { SVGAnimatedNumber::create(this, initialExponent) };
     const Ref<SVGAnimatedNumber> m_offset { SVGAnimatedNumber::create(this) };
 };
 

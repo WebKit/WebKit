@@ -25,6 +25,7 @@
 #include "FEComposite.h"
 #include "NodeName.h"
 #include "SVGNames.h"
+#include "SVGParserUtilities.h"
 #include "SVGPropertyOwnerRegistry.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -71,16 +72,16 @@ void SVGFECompositeElement::attributeChanged(const QualifiedName& name, const At
         Ref { m_in2 }->setBaseValInternal(newValue);
         break;
     case AttributeNames::k1Attr:
-        m_k1->setBaseValInternal(newValue.toFloat());
+        m_k1->setBaseValInternal(parseNumber(newValue));
         break;
     case AttributeNames::k2Attr:
-        m_k2->setBaseValInternal(newValue.toFloat());
+        m_k2->setBaseValInternal(parseNumber(newValue));
         break;
     case AttributeNames::k3Attr:
-        m_k3->setBaseValInternal(newValue.toFloat());
+        m_k3->setBaseValInternal(parseNumber(newValue));
         break;
     case AttributeNames::k4Attr:
-        m_k4->setBaseValInternal(newValue.toFloat());
+        m_k4->setBaseValInternal(parseNumber(newValue));
         break;
     default:
         break;

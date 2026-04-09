@@ -26,6 +26,7 @@
 #include "SVGComponentTransferFunctionElementInlines.h"
 #include "SVGFEComponentTransferElement.h"
 #include "SVGNames.h"
+#include "SVGParserUtilities.h"
 #include "SVGPropertyOwnerRegistry.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -63,19 +64,19 @@ void SVGComponentTransferFunctionElement::attributeChanged(const QualifiedName& 
         m_tableValues->baseVal()->parse(newValue);
         break;
     case AttributeNames::slopeAttr:
-        m_slope->setBaseValInternal(newValue.toFloat());
+        m_slope->setBaseValInternal(parseNumber(newValue), initialSlope);
         break;
     case AttributeNames::interceptAttr:
-        m_intercept->setBaseValInternal(newValue.toFloat());
+        m_intercept->setBaseValInternal(parseNumber(newValue));
         break;
     case AttributeNames::amplitudeAttr:
-        m_amplitude->setBaseValInternal(newValue.toFloat());
+        m_amplitude->setBaseValInternal(parseNumber(newValue), initialAmplitude);
         break;
     case AttributeNames::exponentAttr:
-        m_exponent->setBaseValInternal(newValue.toFloat());
+        m_exponent->setBaseValInternal(parseNumber(newValue), initialExponent);
         break;
     case AttributeNames::offsetAttr:
-        m_offset->setBaseValInternal(newValue.toFloat());
+        m_offset->setBaseValInternal(parseNumber(newValue));
         break;
     default:
         break;

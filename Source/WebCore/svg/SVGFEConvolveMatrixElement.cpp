@@ -107,7 +107,7 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
         break;
     }
     case AttributeNames::biasAttr:
-        m_bias->setBaseValInternal(newValue.toFloat());
+        m_bias->setBaseValInternal(parseNumber(newValue));
         break;
     case AttributeNames::targetXAttr:
         m_targetX->setBaseValInternal(parseInteger<unsigned>(newValue).value_or(0));

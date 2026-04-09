@@ -76,10 +76,13 @@ void SVGFETurbulenceElement::attributeChanged(const QualifiedName& name, const A
         if (auto result = parseNumberOptionalNumber(newValue)) {
             m_baseFrequencyX->setBaseValInternal(result->first);
             m_baseFrequencyY->setBaseValInternal(result->second);
+        } else {
+            m_baseFrequencyX->setBaseValInternal(std::nullopt);
+            m_baseFrequencyY->setBaseValInternal(std::nullopt);
         }
         break;
     case AttributeNames::seedAttr:
-        m_seed->setBaseValInternal(newValue.toFloat());
+        m_seed->setBaseValInternal(parseNumber(newValue));
         break;
     case AttributeNames::numOctavesAttr: {
         auto result = parseInteger<int>(newValue);

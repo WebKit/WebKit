@@ -25,6 +25,7 @@
 #include "NodeName.h"
 #include "SVGFilterRenderer.h"
 #include "SVGNames.h"
+#include "SVGParserUtilities.h"
 #include "SVGPropertyOwnerRegistry.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -75,7 +76,7 @@ void SVGFEDisplacementMapElement::attributeChanged(const QualifiedName& name, co
         Ref { m_in2 }->setBaseValInternal(newValue);
         break;
     case AttributeNames::scaleAttr:
-        m_scale->setBaseValInternal(newValue.toFloat());
+        m_scale->setBaseValInternal(parseNumber(newValue));
         break;
     default:
         break;

@@ -28,6 +28,7 @@
 #include "ExceptionOr.h"
 #include "SVGAnimatedProperty.h"
 #include "SVGSharedPrimitiveProperty.h"
+#include <optional>
 
 namespace WebCore {
 
@@ -57,6 +58,7 @@ public:
 
     // Used by SVGElement::parseAttribute().
     void setBaseValInternal(const PropertyType& baseVal) { m_baseVal->setValue(baseVal); }
+    void setBaseValInternal(std::optional<PropertyType> baseVal, const PropertyType& defaultValue = PropertyType { }) requires std::is_arithmetic_v<PropertyType> { m_baseVal->setValue(baseVal.value_or(defaultValue)); }
     const PropertyType& baseVal() const LIFETIME_BOUND { return m_baseVal->value(); }
 
     // Used by SVGAttributeAnimator::progress.
