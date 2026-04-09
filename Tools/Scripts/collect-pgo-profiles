@@ -25,14 +25,22 @@ def check_or_create_empty_directory(path):
     assert os.path.isdir(path) and len(os.listdir(path)) == 0, f'{path} is not empty or is not a directory'
 
 
-def collect_pgo_profiles(harness, benchmark, output_directory, run_benchmark_args, verbose):
+def collect_pgo_profiles(harness, benchmark, output_directory, run_benchmark_args, benchmark_overrides, verbose):
     benchmark_profile_directory = os.path.join(output_directory, benchmark)
     os.makedirs(benchmark_profile_directory)
     with tempfile.TemporaryDirectory() as temp_dir:
         output_file = os.path.join(temp_dir, f'{benchmark}.json')
-        command = [sys.executable, harness, '--plan', benchmark, '--diagnose-directory', benchmark_profile_directory,
-                   '--generate-pgo-profiles', '--http-server-type', 'twisted', '--count', '1',
-                   '--output-file', output_file, *run_benchmark_args]
+        options = {
+            'plan': benchmark,
+            'diagnose-directory': benchmark_profile_directory,
+            'http-server-type': 'twisted',
+            'count': '1',
+            'output-file': output_file,
+        }
+        options.update(benchmark_overrides.get(benchmark, {}))
+        command = [sys.executable, harness,
+                   *[part for k, v in options.items() for part in (f'--{k}', v)],
+                   '--generate-pgo-profiles', *run_benchmark_args]
         if verbose:
             command.append('--debug')
         logger.info(f'Running {benchmark} with {shlex.join(command)}')
@@ -61,17 +69,32 @@ def main():
                         help='Sub path under output directory for compressed PGO profiles.')
     parser.add_argument('-v', '--verbose', action='store_true', default=False,
                         help='Turn on debug logging')
+    parser.add_argument('--benchmark-custom-options', nargs='+', action='append',
+                        metavar=('BENCHMARK', 'KEY:VALUE'),
+                        help='Per-benchmark run-benchmark option overrides in KEY:VALUE format, '
+                             'overriding any conflicting global options.')
     args, run_benchmark_args = parser.parse_known_args()
 
     if args.verbose:
         logger.setLevel(logging.DEBUG)
+
+    benchmark_overrides = {}
+    for option in (args.benchmark_custom_options or []):
+        benchmark, *pairs = option
+        if benchmark in benchmark_overrides:
+            parser.error(f'Benchmark {benchmark} is specified multiple times via --benchmark-custom-options, please merge them into one argument.')
+        for pair in pairs:
+            key, separator, value = pair.partition(':')
+            if not separator:
+                parser.error(f'Invalid KEY:VALUE format {pair} for benchmark {benchmark}')
+            benchmark_overrides.setdefault(benchmark, {})[key] = value
 
     check_or_create_empty_directory(args.output_directory)
 
     combine_command = [sys.executable, PGO_PROFILE, 'combine']
     for benchmark in args.benchmarks:
         profile_directory = collect_pgo_profiles(args.run_benchmark_harness, benchmark, args.output_directory,
-                                                 run_benchmark_args, args.verbose)
+                                                 run_benchmark_args, benchmark_overrides, args.verbose)
         combine_command.extend([f'--{benchmark}', profile_directory])
 
     combined_profile_directory = os.path.join(args.output_directory, 'output')
