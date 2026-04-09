@@ -277,7 +277,7 @@ async function testEventType(t, eventType, looseCount=false) {
   const durationThreshold = 16;
   // Now add an event handler to cause a slow event.
   target.addEventListener(eventType, () => {
-    mainThreadBusy(durationThreshold + 4);
+    mainThreadBusy(durationThreshold + 5);
   });
   const observerPromise = new Promise(async resolve => {
     new PerformanceObserver(t.step_func(entryList => {
