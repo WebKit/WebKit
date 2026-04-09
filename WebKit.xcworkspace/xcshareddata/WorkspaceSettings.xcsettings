@@ -6,5 +6,7 @@
 	<false/>
 	<key>PreviewsEnabled</key>
 	<false/>
+	<key>IDEPackageAutoResolveDisabled</key>
+	<true/>
 </dict>
 </plist>
