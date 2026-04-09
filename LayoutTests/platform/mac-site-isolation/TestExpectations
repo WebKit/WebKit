@@ -3,16 +3,6 @@
 ####################
 # Tests that crash #
 ####################
-http/tests/security/referrer-policy-header-empty.html [ Crash ]
-http/tests/security/referrer-policy-header-invalid.html [ Crash ]
-http/tests/security/referrer-policy-header-no-referrer-when-downgrade.html [ Crash ]
-http/tests/security/referrer-policy-header-no-referrer.html [ Crash ]
-http/tests/security/referrer-policy-header-origin-when-cross-origin.html [ Crash ]
-http/tests/security/referrer-policy-header-origin.html [ Crash ]
-http/tests/security/referrer-policy-header-same-origin.html [ Crash ]
-http/tests/security/referrer-policy-header-strict-origin-when-cross-origin.html [ Crash ]
-http/tests/security/referrer-policy-header-strict-origin.html [ Crash ]
-http/tests/security/referrer-policy-header-unsafe-url.html [ Crash ]
 imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Crash ]
 imported/w3c/web-platform-tests/speculation-rules/prefetch/redirect-url.https.html?origin=cross-site-redirect [ Crash ]
 imported/w3c/web-platform-tests/speculation-rules/speculation-tags/same-site-to-cross-site-redirection-prefetch.https.html [ Crash ]

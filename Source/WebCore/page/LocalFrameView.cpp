@@ -6553,10 +6553,12 @@ AXObjectCache* LocalFrameView::axObjectCache() const
     // FIXME: We should generally always be using the main-frame cache rather than
     // using it as a fallback as we do here.
     if (!cache && !m_frame->isMainFrame()) {
-        RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_frame->mainFrame());
-        if (localMainFrame) {
-            if (RefPtr mainFrameDocument = localMainFrame->document())
-                cache = mainFrameDocument->existingAXObjectCache();
+        if (RefPtr page = m_frame->page()) {
+            RefPtr localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+            if (localMainFrame) {
+                if (RefPtr mainFrameDocument = localMainFrame->document())
+                    cache = mainFrameDocument->existingAXObjectCache();
+            }
         }
     }
     return cache;
