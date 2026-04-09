@@ -830,10 +830,10 @@ def frameworkFromJSCPath(jscPath)
         parentDirectory.dirname
     elsif $hostOS == "playstation"
         jscPath.dirname
-    elsif parentDirectory.basename.to_s =~ /^Debug/ or parentDirectory.basename.to_s =~ /^Release/ or (parentDirectory / "JavaScriptCore.framework").directory?
+    elsif parentDirectory.basename.to_s =~ /^Debug/ or parentDirectory.basename.to_s =~ /^Release/
         jscPath.dirname + "JavaScriptCore.framework"
     else
-        $stderr.puts "Warning: cannot identify JSC framework, doing generic VM copy.\n"
+        $stderr.puts "Warning: cannot identify JSC framework, doing generic VM copy."
         nil
     end
 end
