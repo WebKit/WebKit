@@ -53,8 +53,10 @@ private:
     void messagePortClosed(const WebCore::MessagePortIdentifier& local) final;
     void takeAllMessagesForPort(const WebCore::MessagePortIdentifier&, CompletionHandler<void(Vector<WebCore::MessageWithMessagePorts>&&, CompletionHandler<void()>&&)>&&) final;
     void postMessageToRemote(WebCore::MessageWithMessagePorts&&, const WebCore::MessagePortIdentifier& remoteTarget) final;
+    void returnUndeliveredMessages(const WebCore::MessagePortIdentifier&, Vector<WebCore::MessageWithMessagePorts>&&) final;
 
     HashMap<WebCore::MessagePortIdentifier, Vector<WebCore::MessageWithMessagePorts>> m_inProcessPortMessages;
+    HashSet<WebCore::MessagePortIdentifier> m_portsPendingSync;
 };
 
 } // namespace WebKit

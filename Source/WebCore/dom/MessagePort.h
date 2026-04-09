@@ -32,6 +32,7 @@
 #include <WebCore/MessagePortChannel.h>
 #include <WebCore/MessagePortIdentifier.h>
 #include <WebCore/MessageWithMessagePorts.h>
+#include <wtf/Deque.h>
 #include <wtf/WeakPtr.h>
 
 namespace JSC {
@@ -130,6 +131,8 @@ private:
     MessagePortIdentifier m_remoteIdentifier;
 
     MessageHandler m_messageHandler;
+
+    Deque<MessageWithMessagePorts> m_pendingDispatchMessages;
 };
 
 WebCoreOpaqueRoot NODELETE root(MessagePort*);

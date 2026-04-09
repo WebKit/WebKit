@@ -194,6 +194,16 @@ TransferredMessagePort MessagePort::disentangle()
     m_entangled = false;
 
     Ref context = *scriptExecutionContext();
+
+    // Flush any messages that were taken from the provider but not yet dispatched
+    // back to the provider, so they follow the port to its new destination.
+    if (!m_pendingDispatchMessages.isEmpty()) {
+        Vector<MessageWithMessagePorts> messages;
+        while (!m_pendingDispatchMessages.isEmpty())
+            messages.append(m_pendingDispatchMessages.takeFirst());
+        protect(MessagePortChannelProvider::fromContext(context))->returnUndeliveredMessages(m_identifier, WTF::move(messages));
+    }
+
     protect(MessagePortChannelProvider::fromContext(context))->messagePortDisentangled(m_identifier);
 
     // We can't receive any messages or generate any events after this, so remove ourselves from the list of active ports.
@@ -275,32 +285,58 @@ void MessagePort::dispatchMessages()
             return;
 
         ASSERT(context->isContextThread());
-        auto* globalObject = context->globalObject();
-        Ref vm = globalObject->vm();
-        auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
-
         RefPtr workerGlobalScope = dynamicDowncast<WorkerGlobalScope>(*context);
-        for (auto& message : messages) {
+
+        // Append taken messages to the per-port pending buffer. Event-dispatch tasks
+        // pop from this buffer, so messages that haven't been dispatched yet can be
+        // returned to the provider if the port is transferred (disentangle).
+        auto& pending = pendingActivity->object().m_pendingDispatchMessages;
+        for (auto& message : messages)
+            pending.append(WTF::move(message));
+
+        size_t messageCount = pending.size();
+        for (size_t i = 0; i < messageCount; ++i) {
             // close() in Worker onmessage handler should prevent next message from dispatching.
             if (workerGlobalScope && workerGlobalScope->isClosing())
                 return;
 
             if (pendingActivity->object().m_messageHandler) {
+                auto* globalObject = context->globalObject();
+                if (!globalObject)
+                    return;
+                Ref vm = globalObject->vm();
+                auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
+                auto message = pending.takeFirst();
                 ASSERT(message.transferredPorts.isEmpty());
                 pendingActivity->object().m_messageHandler(*JSC::jsCast<JSDOMGlobalObject*>(globalObject), message.message.releaseNonNull().get());
+                if (scope.exception()) [[unlikely]] {
+                    RELEASE_ASSERT(vm->hasPendingTerminationException());
+                    return;
+                }
                 continue;
             }
 
-            auto ports = MessagePort::entanglePorts(*context, WTF::move(message.transferredPorts));
-            auto event = MessageEvent::create(*globalObject, message.message.releaseNonNull(), { }, { }, { }, WTF::move(ports));
-            if (scope.exception()) [[unlikely]] {
-                // Currently, we assume that the only way we can get here is if we have a termination.
-                RELEASE_ASSERT(vm->hasPendingTerminationException());
-                return;
-            }
-
             // Per specification, each MessagePort object has a task source called the port message queue.
-            queueTaskKeepingObjectAlive(pendingActivity->object(), TaskSource::PostedMessageQueue, [event = WTF::move(event)](auto& port) {
+            queueTaskKeepingObjectAlive(pendingActivity->object(), TaskSource::PostedMessageQueue, [](auto& port) {
+                if (port.m_pendingDispatchMessages.isEmpty())
+                    return;
+
+                RefPtr context = port.scriptExecutionContext();
+                if (!context || !context->globalObject())
+                    return;
+
+                auto* globalObject = context->globalObject();
+                Ref vm = globalObject->vm();
+                auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
+
+                auto message = port.m_pendingDispatchMessages.takeFirst();
+                auto ports = MessagePort::entanglePorts(*context, WTF::move(message.transferredPorts));
+                auto event = MessageEvent::create(*globalObject, message.message.releaseNonNull(), { }, { }, { }, WTF::move(ports));
+                if (scope.exception()) [[unlikely]] {
+                    RELEASE_ASSERT(vm->hasPendingTerminationException());
+                    return;
+                }
+
                 port.dispatchEvent(event.event);
             });
         }

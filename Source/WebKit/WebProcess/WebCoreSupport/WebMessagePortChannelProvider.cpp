@@ -72,6 +72,7 @@ void WebMessagePortChannelProvider::createNewMessagePortChannel(const MessagePor
 void WebMessagePortChannelProvider::entangleLocalPortInThisProcessToRemote(const MessagePortIdentifier& local, const MessagePortIdentifier& remote)
 {
     m_inProcessPortMessages.add(local, Vector<MessageWithMessagePorts> { });
+    m_portsPendingSync.add(local);
 
     protect(networkProcessConnection())->send(Messages::NetworkConnectionToWebProcess::EntangleLocalPortInThisProcessToRemote { local, remote }, 0);
 }
@@ -91,21 +92,34 @@ void WebMessagePortChannelProvider::messagePortSentToRemote(const WebCore::Messa
 void WebMessagePortChannelProvider::messagePortClosed(const MessagePortIdentifier& port)
 {
     m_inProcessPortMessages.remove(port);
+    m_portsPendingSync.remove(port);
     protect(networkProcessConnection())->send(Messages::NetworkConnectionToWebProcess::MessagePortClosed { port }, 0);
 }
 
 void WebMessagePortChannelProvider::takeAllMessagesForPort(const MessagePortIdentifier& port, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, CompletionHandler<void()>&&)>&& completionHandler)
 {
+    // Fast path: port is local and not pending sync — zero IPC.
+    if (!m_portsPendingSync.contains(port)) {
+        auto iterator = m_inProcessPortMessages.find(port);
+        if (iterator != m_inProcessPortMessages.end()) {
+            auto messages = std::exchange(iterator->value, { });
+            completionHandler(WTF::move(messages), [] { });
+            return;
+        }
+    }
+
+    // IPC path: pending sync (need to fetch pre-transfer messages) or port not in local map.
     protect(networkProcessConnection())->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::TakeAllMessagesForPort { port }, [completionHandler = WTF::move(completionHandler), port](Vector<WebCore::MessageWithMessagePorts>&& messages, std::optional<MessageBatchIdentifier> messageBatchIdentifier) mutable {
         if (!messageBatchIdentifier)
-            return completionHandler({ }, [] { }); // IPC failure.
+            return completionHandler({ }, [] { });
 
-        auto& inProcessPortMessages = WebMessagePortChannelProvider::singleton().m_inProcessPortMessages;
-        auto iterator = inProcessPortMessages.find(port);
-        if (iterator != inProcessPortMessages.end()) {
-            auto pendingMessages = std::exchange(iterator->value, { });
-            messages.appendVector(WTF::move(pendingMessages));
-        }
+        auto& provider = WebMessagePortChannelProvider::singleton();
+        provider.m_portsPendingSync.remove(port);
+
+        auto iterator = provider.m_inProcessPortMessages.find(port);
+        if (iterator != provider.m_inProcessPortMessages.end())
+            messages.appendVector(std::exchange(iterator->value, { }));
+
         completionHandler(WTF::move(messages), [messageBatchIdentifier] {
             protect(networkProcessConnection())->send(Messages::NetworkConnectionToWebProcess::DidDeliverMessagePortMessages { *messageBatchIdentifier }, 0);
         });
@@ -125,6 +139,20 @@ void WebMessagePortChannelProvider::postMessageToRemote(MessageWithMessagePorts&
         messagePortSentToRemote(port.first);
 
     protect(networkProcessConnection())->send(Messages::NetworkConnectionToWebProcess::PostMessageToRemote { message, remoteTarget }, 0);
+}
+
+void WebMessagePortChannelProvider::returnUndeliveredMessages(const MessagePortIdentifier& port, Vector<MessageWithMessagePorts>&& messages)
+{
+    if (messages.isEmpty())
+        return;
+
+    auto& buffer = m_inProcessPortMessages.ensure(port, [] {
+        return Vector<MessageWithMessagePorts> { };
+    }).iterator->value;
+
+    // Prepend: these are older messages that should be delivered before any new ones.
+    messages.appendVector(WTF::move(buffer));
+    buffer = WTF::move(messages);
 }
 
 } // namespace WebKit
