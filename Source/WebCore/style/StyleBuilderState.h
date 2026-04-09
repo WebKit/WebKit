@@ -174,6 +174,7 @@ public:
 
     void NODELETE setUsesViewportUnits();
     void NODELETE setUsesContainerUnits();
+    void NODELETE setDependsOnFontMetrics();
 
     double lookupCSSRandomBaseValue(const CSSCalc::RandomCachingKey&, std::optional<CSS::Keyword::ElementScoped>) const;
 

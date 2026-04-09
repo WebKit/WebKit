@@ -82,6 +82,11 @@ inline void RenderStyle::setUsesViewportUnits()
     m_computedStyle.setUsesViewportUnits();
 }
 
+inline void RenderStyle::setDependsOnFontMetrics()
+{
+    m_computedStyle.setDependsOnFontMetrics();
+}
+
 inline void RenderStyle::setUsesContainerUnits()
 {
     m_computedStyle.setUsesContainerUnits();

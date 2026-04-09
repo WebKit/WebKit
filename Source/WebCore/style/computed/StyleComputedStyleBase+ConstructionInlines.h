@@ -77,6 +77,7 @@ inline ComputedStyleBase::ComputedStyleBase(CreateDefaultStyleTag)
     m_nonInheritedFlags.floating = static_cast<unsigned>(ComputedStyle::initialFloating());
     m_nonInheritedFlags.textDecorationLine = ComputedStyle::initialTextDecorationLine().toRaw();
     m_nonInheritedFlags.usesViewportUnits = false;
+    m_nonInheritedFlags.dependsOnFontMetrics = false;
     m_nonInheritedFlags.usesContainerUnits = false;
     m_nonInheritedFlags.useTreeCountingFunctions = false;
     m_nonInheritedFlags.hasExplicitlyInheritedProperties = false;
@@ -126,6 +127,7 @@ inline void ComputedStyleBase::NonInheritedFlags::copyNonInheritedFrom(const Non
     floating = other.floating;
     textDecorationLine = other.textDecorationLine;
     usesViewportUnits = other.usesViewportUnits;
+    dependsOnFontMetrics = other.dependsOnFontMetrics;
     usesContainerUnits = other.usesContainerUnits;
     useTreeCountingFunctions = other.useTreeCountingFunctions;
     hasExplicitlyInheritedProperties = other.hasExplicitlyInheritedProperties;

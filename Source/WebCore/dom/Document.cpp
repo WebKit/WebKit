@@ -110,6 +110,7 @@
 #include "FocusController.h"
 #include "FocusEvent.h"
 #include "FocusOptions.h"
+#include "FontCascadeFonts.h"
 #include "FontFaceSet.h"
 #include "FormController.h"
 #include "FragmentDirective.h"
@@ -182,6 +183,7 @@
 #include "LargestContentfulPaint.h"
 #include "LargestContentfulPaintData.h"
 #include "LayoutDisallowedScope.h"
+#include "LayoutIntegrationLineLayout.h"
 #include "LazyLoadImageObserver.h"
 #include "LegacySchemeRegistry.h"
 #include "LoadableSpeculationRules.h"
@@ -247,6 +249,8 @@
 #include "Range.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "RenderBoxInlines.h"
+#include "RenderBlockFlow.h"
+#include "RenderBlockFlowInlines.h"
 #include "RenderChildIterator.h"
 #include "RenderDescendantIterator.h"
 #include "RenderElementInlines.h"
@@ -256,6 +260,7 @@
 #include "RenderLineBreak.h"
 #include "RenderObjectInlines.h"
 #include "RenderStyle+SettersInlines.h"
+#include "RenderText.h"
 #include "RenderTreeUpdater.h"
 #include "RenderView.h"
 #include "RenderWidgetInlines.h"
@@ -3371,7 +3376,45 @@ void Document::invalidateMatchedPropertiesCacheAndForceStyleRecalc()
 
     if (backForwardCacheState() != NotInBackForwardCache || !renderView())
         return;
-    scheduleFullStyleRebuild();
+
+    performFontInvalidationWalk();
+}
+
+void Document::performFontInvalidationWalk()
+{
+    if (!renderView())
+        return;
+
+    // Walk the render tree with targeted invalidation. Elements with invalidated
+    // FontCascadeFonts get relayout (ensureFontsAreCurrent lazily refreshes font
+    // data). Elements that depend on font metrics also get restyle because their
+    // computed CSS values need re-resolution.
+    for (CheckedRef descendant : descendantsOfType<RenderElement>(*renderView())) {
+        auto* fontCascadeFonts = descendant->style().fontCascade().existingFonts();
+        if (!fontCascadeFonts || fontCascadeFonts->isValid())
+            continue;
+
+        bool needsRestyle = descendant->style().dependsOnFontMetrics()
+            || !descendant->style().fontDescription().fontSizeAdjust().isNone();
+        if (needsRestyle) {
+            if (RefPtr element = descendant->element())
+                element->invalidateStyleInternal();
+        }
+
+        descendant->setNeedsLayoutAndPreferredWidthsUpdate();
+
+        if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(descendant.get())) {
+            if (auto* lineLayout = blockFlow->inlineLayout())
+                lineLayout->fontsNeedUpdate();
+        }
+
+        for (auto* child = descendant->firstChild(); child; child = child->nextSibling()) {
+            if (auto* renderText = dynamicDowncast<RenderText>(*child)) {
+                renderText->setNeedsLayoutAndPreferredWidthsUpdate();
+                renderText->clearCanUseSimplifiedTextMeasuring();
+            }
+        }
+    }
 }
 
 void Document::setIsResolvingTreeStyle(bool value)

@@ -91,6 +91,9 @@ public:
     inline bool usesViewportUnits() const;
     inline void setUsesViewportUnits();
 
+    inline bool dependsOnFontMetrics() const;
+    inline void setDependsOnFontMetrics();
+
     inline bool usesContainerUnits() const;
     inline void setUsesContainerUnits();
 

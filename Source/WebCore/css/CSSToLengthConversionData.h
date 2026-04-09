@@ -106,6 +106,7 @@ public:
     }
 
     void NODELETE setUsesContainerUnits() const;
+    void NODELETE setDependsOnFontMetrics() const;
 
     Style::BuilderState* styleBuilderState() const { return m_styleBuilderState.get(); }
 

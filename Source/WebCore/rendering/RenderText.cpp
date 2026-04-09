@@ -1042,8 +1042,11 @@ RenderText::Widths RenderText::trimmedPreferredWidths(float leadWidth, bool& str
     if (!collapseWhiteSpace)
         stripFrontSpaces = false;
 
-    if (m_hasTab || needsPreferredLogicalWidthsUpdate() || !m_minWidth || !m_maxWidth)
+    bool shouldRecompute = m_hasTab || needsPreferredLogicalWidthsUpdate() || !m_minWidth || !m_maxWidth;
+    if (shouldRecompute)
         computePreferredLogicalWidths(leadWidth, !m_minWidth || !m_maxWidth);
+    // else
+        // WTF_ALWAYS_LOG("@@@Vitor: RenderText SKIPPING computePreferredLogicalWidths this=" << (const void*)this << " needsUpdate=" << needsPreferredLogicalWidthsUpdate() << " hasMinWidth=" << !!m_minWidth << " hasMaxWidth=" << !!m_maxWidth);
 
     Widths widths;
 
@@ -1171,6 +1174,7 @@ TextBreakIterator::ContentAnalysis mapWordBreakToContentAnalysis(WordBreak wordB
 
 void RenderText::computePreferredLogicalWidths(float leadWidth, bool forcedMinMaxWidthComputation)
 {
+    // WTF_ALWAYS_LOG("@@@Vitor: RenderText::computePreferredLogicalWidths this=" << (const void*)this << " firstFamily=" << style().fontDescription().firstFamily().name << " needsUpdate=" << needsPreferredLogicalWidthsUpdate() << " fontGeneration=" << style().fontCascade().generation());
     SingleThreadWeakHashSet<const Font> fallbackFonts;
     GlyphOverflow glyphOverflow;
     computePreferredLogicalWidths(leadWidth, fallbackFonts, glyphOverflow, forcedMinMaxWidthComputation);

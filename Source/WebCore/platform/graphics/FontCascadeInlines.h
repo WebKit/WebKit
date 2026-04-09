@@ -42,6 +42,7 @@ namespace WebCore {
 
 inline const Font& FontCascade::primaryFont() const
 {
+    ensureFontsAreCurrent();
     if (m_fonts->cachedPrimaryFont())
         return *m_fonts->cachedPrimaryFont();
     WeakRef font = protect(m_fonts)->primaryFont(m_fontDescription, protect(fontSelector()).get());
@@ -51,16 +52,19 @@ inline const Font& FontCascade::primaryFont() const
 
 inline const FontRanges& FontCascade::fallbackRangesAt(unsigned index) const
 {
+    ensureFontsAreCurrent();
     return protect(m_fonts)->realizeFallbackRangesAt(m_fontDescription, protect(fontSelector()).get(), index);
 }
 
 inline bool FontCascade::isFixedPitch() const
 {
+    ensureFontsAreCurrent();
     return protect(m_fonts)->isFixedPitch(m_fontDescription, protect(fontSelector()).get());
 }
 
 inline bool FontCascade::canTakeFixedPitchFastContentMeasuring() const
 {
+    ensureFontsAreCurrent();
     auto cachedCanTakeFixedPitch = m_fonts->cachedCanTakeFixedPitchFastContentMeasuring();
     if (cachedCanTakeFixedPitch != TriState::Indeterminate)
         return cachedCanTakeFixedPitch == TriState::True;
@@ -103,6 +107,7 @@ inline float FontCascade::widthForTextUsingSimplifiedMeasuring(StringView text, 
 
 inline bool FontCascade::isPlatformFont() const
 {
+    ensureFontsAreCurrent();
     return m_fonts->isForPlatformFont();
 }
 

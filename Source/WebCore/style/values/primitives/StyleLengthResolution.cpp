@@ -302,11 +302,14 @@ double computeNonCalcLengthDouble(double value, CSS::LengthUnit lengthUnit, cons
         // FIXME: We have a bug right now where the zoom will be applied twice to EX units.
         // We really need to compute EX using fontMetrics for the original specifiedSize and not use
         // our actual constructed rendering font.
+        if (lengthUnit == Ex || lengthUnit == Cap || lengthUnit == Ch || lengthUnit == Ic)
+            conversionData.setDependsOnFontMetrics();
         value = computeUnzoomedNonCalcLengthDouble(value, lengthUnit, conversionData.propertyToCompute(), &conversionData.fontCascadeForFontUnits(), conversionData.rangeZoomOption());
         value = adjustZoomStateForFontRelativeUnitsIfNeeded(value, conversionData);
         break;
 
     case Lh:
+        conversionData.setDependsOnFontMetrics();
         if (conversionData.computingLineHeight() || conversionData.computingFontSize()) {
             // Try to get the parent's computed line-height, or fall back to the initial line-height of this element's font spacing.
             value *= conversionData.parentStyle() ? conversionData.parentStyle()->computedLineHeight() : conversionData.fontCascadeForFontUnits().metricsOfPrimaryFont().intLineSpacing();
@@ -325,11 +328,14 @@ double computeNonCalcLengthDouble(double value, CSS::LengthUnit lengthUnit, cons
     case Rem:
     case Rex:
     case Ric:
+        if (lengthUnit == Rcap || lengthUnit == Rch || lengthUnit == Rex || lengthUnit == Ric)
+            conversionData.setDependsOnFontMetrics();
         value = computeUnzoomedNonCalcLengthDouble(value, lengthUnit, conversionData.propertyToCompute(), conversionData.rootStyle() ? &conversionData.rootStyle()->fontCascade() : &conversionData.fontCascadeForFontUnits(), conversionData.rangeZoomOption());
         value = adjustZoomStateForFontRelativeUnitsIfNeeded(value, conversionData);
         break;
 
     case Rlh:
+        conversionData.setDependsOnFontMetrics();
         if (auto* rootStyle = conversionData.rootStyle()) {
             if (conversionData.computingLineHeight() || conversionData.computingFontSize())
                 value *= Style::evaluate<float>(rootStyle->specifiedLineHeight(), Style::LineHeightEvaluationContext { rootStyle->computedFontSize(), rootStyle->metricsOfPrimaryFont().lineSpacing() }, rootStyle->usedZoomForLength());

@@ -528,8 +528,11 @@ void RenderBlockFlow::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit 
 {
     ASSERT(needsLayout());
 
-    if (relayoutChildren == RelayoutChildren::No && simplifiedLayout())
+    if (relayoutChildren == RelayoutChildren::No && simplifiedLayout()) {
+        // WTF_ALWAYS_LOG("@@@Vitor: RenderBlockFlow::layoutBlock SIMPLIFIED firstFamily=" << style().fontDescription().firstFamily().name);
         return;
+    }
+    // WTF_ALWAYS_LOG("@@@Vitor: RenderBlockFlow::layoutBlock FULL firstFamily=" << style().fontDescription().firstFamily().name << " selfNeedsLayout=" << selfNeedsLayout() << " normalChildNeedsLayout=" << normalChildNeedsLayout());
 
     auto isPaginated = [&] {
         // FIXME: Grid calls into layout outside of regular layout phase (during preferred width computation).

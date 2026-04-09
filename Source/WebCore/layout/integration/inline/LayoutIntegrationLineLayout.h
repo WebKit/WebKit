@@ -150,6 +150,9 @@ public:
 
     bool NODELETE hasBlocks() const;
 
+    // Called when fonts change to clear cached inline items and text measurements.
+    void fontsNeedUpdate();
+
 private:
     void preparePlacedFloats();
     FloatRect constructContent(const Layout::InlineLayoutState&, std::unique_ptr<Layout::InlineLayoutResult>&&);

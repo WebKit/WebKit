@@ -63,6 +63,11 @@ inline void ComputedStyleBase::setUsesViewportUnits()
     m_nonInheritedFlags.usesViewportUnits = true;
 }
 
+inline void ComputedStyleBase::setDependsOnFontMetrics()
+{
+    m_nonInheritedFlags.dependsOnFontMetrics = true;
+}
+
 inline void ComputedStyleBase::setUsesContainerUnits()
 {
     m_nonInheritedFlags.usesContainerUnits = true;

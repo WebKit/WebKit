@@ -26,9 +26,17 @@
 #include "config.h"
 #include "FontSelector.h"
 
+#include "FontCascadeFonts.h"
+
 namespace WebCore {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FontAccessor);
+
+void FontSelector::invalidateAssociatedFontCascadeFonts()
+{
+    for (auto* fonts : m_associatedFontCascadeFonts)
+        fonts->invalidate();
+}
 
 TextStream& operator<<(TextStream& ts, const FontSelector& fontSelector)
 {

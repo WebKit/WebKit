@@ -106,12 +106,16 @@ class FontCascadeFonts : public RefCounted<FontCascadeFonts> {
     WTF_MAKE_NONCOPYABLE(FontCascadeFonts);
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FontCascadeFonts, FontCascadeFonts);
 public:
-    static Ref<FontCascadeFonts> create() { return adoptRef(*new FontCascadeFonts()); }
+    static Ref<FontCascadeFonts> create(FontSelector* fontSelector) { return adoptRef(*new FontCascadeFonts(fontSelector)); }
     static Ref<FontCascadeFonts> createForPlatformFont(const FontPlatformData& platformData) { return adoptRef(*new FontCascadeFonts(platformData)); }
 
     WEBCORE_EXPORT ~FontCascadeFonts();
 
     bool isForPlatformFont() const { return m_isForPlatformFont; }
+
+    bool isValid() const { return m_isValid; }
+    void invalidate() { m_isValid = false; }
+    bool isRegisteredWithFontSelector() const { return m_registeredWithFontSelector; }
 
     GlyphData glyphDataForCharacter(char32_t, const FontCascadeDescription&, FontSelector*, FontVariant, ResolvedEmojiPolicy);
 
@@ -153,8 +157,10 @@ public:
     void pruneSystemFallbacks();
 
 private:
-    FontCascadeFonts();
+    FontCascadeFonts(FontSelector*);
     FontCascadeFonts(const FontPlatformData&);
+
+    void registerWithFontSelectorIfNeeded(FontSelector*);
 
     GlyphData glyphDataForSystemFallback(char32_t, const FontCascadeDescription&, FontSelector*, FontVariant, ResolvedEmojiPolicy, bool systemFallbackShouldBeInvisible);
     GlyphData glyphDataForVariant(char32_t, const FontCascadeDescription&, FontSelector*, FontVariant, ResolvedEmojiPolicy, unsigned fallbackIndex = 0);
@@ -196,7 +202,10 @@ private:
     unsigned short m_generation { 0 };
     PitchType m_pitch { PitchType::Unknown };
     bool m_isForPlatformFont { false };
+    bool m_isValid { true };
+    bool m_registeredWithFontSelector { false };
     TriState m_canTakeFixedPitchFastContentMeasuring : 2 { TriState::Indeterminate };
+    WeakPtr<FontSelector> m_fontSelector;
 #if ASSERT_ENABLED
     std::optional<Ref<Thread>> m_thread;
 #endif

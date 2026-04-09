@@ -17,7 +17,7 @@
 </style>
 <script src="../../resources/js-test-pre.js"></script>
 </head>
-<body onload="testMain()">
+<body>
 <div id="description"></div>
 <div id="console"></div>
 <hr/>
@@ -40,8 +40,11 @@ function testMain()
     finishJSTest();
 }
 
-// Force layout, so that fonts begin to load before the document finishes loading, and thus delay the load event.
-document.body.offsetTop;
+// Wait for all @font-face fonts to load before checking widths.
+Promise.all([
+    document.fonts.load("16px ahem-data"),
+    document.fonts.load("16px ahem-end-with-eot")
+]).then(testMain);
 
 </script>
 <script src="../../resources/js-test-post.js"></script>

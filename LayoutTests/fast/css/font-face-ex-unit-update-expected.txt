@@ -1,0 +1,11 @@
+Tests that elements using ex units get restyled when a web font loads, so that the ex-based width is recalculated with the new font's metrics.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Initial width (fallback font): 80
+Final width (after font load): 80
+PASS document.getElementById('target').offsetWidth is 80
+PASS successfullyParsed is true
+
+TEST COMPLETE
+X
