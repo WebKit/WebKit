@@ -1312,7 +1312,12 @@ void AnchorPositionEvaluator::updateAnchorPositioningStatesAfterInterleavedLayou
             if (renderer) {
                 // FIXME: Remove the redundant anchorElements member. The mappings are available in anchorPositionedToAnchorMap.
                 state.anchorElements = findAnchorsForAnchorPositionedElement(*element, state.anchorNames, anchorsForAnchorName);
-                if (isLayoutTimeAnchorPositioned(renderer->style()))
+                bool hasRealAnchor = false;
+                for (auto& anchorNameAndElement : state.anchorElements) {
+                    if (anchorNameAndElement.value)
+                        hasRealAnchor = true;
+                }
+                if (hasRealAnchor && isLayoutTimeAnchorPositioned(renderer->style()))
                     renderer->setNeedsLayout();
 
                 Vector<ResolvedAnchor> anchors;
@@ -1349,7 +1354,7 @@ void AnchorPositionEvaluator::updateAnchorPositioningStatesAfterInterleavedLayou
     }
 }
 
-void AnchorPositionEvaluator::updateAnchorPositionedStateForDefaultAnchorAndPositionVisibility(Element& element, const RenderStyle& style, AnchorPositionedStates& states)
+void AnchorPositionEvaluator::updateAnchorPositionedStateForDefaultAnchorAndPositionVisibility(Element& element, const RenderStyle& style, AnchorPositionedStates& states, const AnchorPositionedToAnchorMap& persistentMap)
 {
     auto shouldResolveDefaultAnchor = isAnchorPositioned(style);
 
@@ -1365,6 +1370,25 @@ void AnchorPositionEvaluator::updateAnchorPositionedStateForDefaultAnchorAndPosi
     auto& state = states.ensure({ &element, style.pseudoElementIdentifier() }, [&] {
         return makeUniqueRef<AnchorPositionedState>();
     }).iterator->value.get();
+
+    // Pre-seed from the persistent map to avoid restarting anchor resolution from scratch.
+    // This must happen after ensure() since the entry may have already been created by
+    // findAnchorForAnchorFunctionAndAttemptResolution during anchor() function evaluation.
+    if (state.stage == AnchorPositionResolutionStage::FindAnchors && state.anchorElements.isEmpty()) {
+        auto it = persistentMap.find(element);
+        if (it != persistentMap.end()) {
+            for (auto& anchor : it->value.anchors) {
+                auto* renderer = anchor.renderer.get();
+                auto* anchorElement = renderer ? renderer->element() : nullptr;
+                if (anchorElement) {
+                    state.anchorElements.add(anchor.name, *anchorElement);
+                    state.anchorNames.add(anchor.name);
+                }
+            }
+            if (!state.anchorNames.isEmpty())
+                state.stage = AnchorPositionResolutionStage::Positioned;
+        }
+    }
 
     if (shouldResolveDefaultAnchor) {
         // Always resolve the default anchor. Even if nothing is anchored to it we need it to compute the scroll compensation.
