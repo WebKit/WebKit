@@ -107,11 +107,13 @@ void TrackBase::setSourceBuffer(SourceBuffer* buffer)
 void TrackBase::setTrackList(TrackListBase& trackList)
 {
     m_trackList = trackList;
+    m_opaqueRoot = WebCoreOpaqueRoot { &trackList };
 }
 
 void TrackBase::clearTrackList()
 {
     m_trackList = nullptr;
+    m_opaqueRoot = WebCoreOpaqueRoot { this };
 }
 
 TrackListBase* TrackBase::trackList() const
@@ -119,12 +121,12 @@ TrackListBase* TrackBase::trackList() const
     return m_trackList.get();
 }
 
-WebCoreOpaqueRoot TrackBase::opaqueRoot()
+WebCoreOpaqueRoot TrackBase::opaqueRoot() const
 {
     // Runs on GC thread.
     if (SUPPRESS_UNCOUNTED_LOCAL auto* trackList = this->trackList())
         return trackList->opaqueRoot();
-    return WebCoreOpaqueRoot { this };
+    return WebCoreOpaqueRoot { const_cast<TrackBase*>(this) };
 }
 
 // See: https://tools.ietf.org/html/bcp47#section-2.1
