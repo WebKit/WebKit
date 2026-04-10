@@ -2027,6 +2027,9 @@ bool SpeculativeJIT::compilePeepHoleBranch(Node* node, RelationalCondition condi
         else if (node->isBinaryUseKind(StringUse) || node->isBinaryUseKind(StringIdentUse)) {
             // Use non-peephole comparison, for now.
             return false;
+        } else if (node->isBinaryUseKind(HeapBigIntUse)) {
+            // Use non-peephole comparison, for now.
+            return false;
         } else if (node->isBinaryUseKind(DoubleRepUse))
             compilePeepHoleDoubleBranch(node, branchNode, doubleCondition);
         else if (node->op() == CompareEq) {
