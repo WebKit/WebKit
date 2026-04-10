@@ -132,8 +132,8 @@ void ChildChangeInvalidation::invalidateForHasBeforeMutation()
         invalidateForChangedElement(changedElement, matchingHasSelectors, ChangedElementRelation::SelfOrDescendant);
     });
 
-    // :empty is affected by text changes.
-    if (m_childChange.type == ContainerNode::ChildChange::Type::TextRemoved || m_childChange.type == ContainerNode::ChildChange::Type::AllChildrenRemoved)
+    // :empty is affected by child changes.
+    if (m_wasEmpty ? m_childChange.isInsertion() : !m_childChange.isInsertion())
         invalidateForChangedElement(parentElement(), matchingHasSelectors, ChangedElementRelation::SelfOrDescendant);
 
     auto firstChildStateWillStopMatching = [&] {
@@ -187,8 +187,7 @@ void ChildChangeInvalidation::invalidateForHasAfterMutation()
         invalidateForChangedElement(changedElement, matchingHasSelectors, ChangedElementRelation::SelfOrDescendant);
     });
 
-    // :empty is affected by text changes.
-    if (m_childChange.type == ContainerNode::ChildChange::Type::TextInserted && m_wasEmpty)
+    if (!m_childChange.isInsertion() && !parentElement().hasChildNodes())
         invalidateForChangedElement(parentElement(), matchingHasSelectors, ChangedElementRelation::SelfOrDescendant);
 
     auto firstChildStateWillStartMatching = [&](Element* elementAfterChange) {

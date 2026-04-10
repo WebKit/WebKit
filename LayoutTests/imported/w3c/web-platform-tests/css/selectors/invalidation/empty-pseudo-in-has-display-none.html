@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Selectors Invalidation: :empty in :has() with display:none</title>
+<link rel="author" title="Simon Fraser" href="smfr@apple.com">
+<link rel="help" href="https://drafts.csswg.org/selectors/#relational">
+<link rel="help" href="https://drafts.csswg.org/selectors/#empty-pseudo">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+  #subject {
+    color: green;
+  }
+  #subject:has(:empty) {
+    display: none;
+  }
+</style>
+<div id="subject">
+  <p>This should be visible after the child div gets content.</p>
+  <div id="child"></div>
+</div>
+<script>
+const subject = document.getElementById("subject");
+const child = document.getElementById("child");
+
+function testVisibility(test_name, expectVisible) {
+  test(function() {
+    const rect = subject.getBoundingClientRect();
+    if (expectVisible) {
+      assert_not_equals(getComputedStyle(subject).display, "none", "display should not be none");
+      assert_greater_than(rect.width, 0, "width should be greater than 0");
+      assert_greater_than(rect.height, 0, "height should be greater than 0");
+    } else {
+      assert_equals(getComputedStyle(subject).display, "none", "display should be none");
+    }
+  }, test_name);
+}
+
+testVisibility("Initially hidden because #child is :empty", false);
+
+child.textContent = "text";
+testVisibility("Visible after inserting text into #child", true);
+
+{
+  let inner = document.createElement("div");
+  child.appendChild(inner);
+}
+testVisibility("Hidden after inserting empty element into #child", false);
+
+child.textContent = "text";
+testVisibility("Visible after inserting text into empty #child", true);
+
+child.replaceChildren();
+testVisibility("Hidden again after removing all children from #child", false);
+
+child.textContent = "text";
+testVisibility("Visible again after inserting text into empty #child", true);
+
+child.textContent = "";
+testVisibility("Hidden again after clearing text from #child", false);
+
+{
+  let inner = document.createElement("div");
+  inner.textContent = "content";
+  child.appendChild(inner);
+}
+testVisibility("Visible after inserting non-empty element into #child", true);
+</script>
