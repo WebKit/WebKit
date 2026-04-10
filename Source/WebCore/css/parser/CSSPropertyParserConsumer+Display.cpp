@@ -106,9 +106,7 @@ constexpr auto displayOutsideInsideMap = makeDisplayOutsideInsideMap();
 template<DisplayOutside outside, DisplayInside inside>
 RefPtr<CSSValue> NODELETE mappedDisplayValue()
 {
-    static constexpr auto result = displayOutsideInsideMap[outside][inside];
-
-    if constexpr (result.first == CSSValueInvalid && result.second == CSSValueInvalid)
+    if constexpr (static constexpr auto result = displayOutsideInsideMap[outside][inside]; result.first == CSSValueInvalid && result.second == CSSValueInvalid)
         return nullptr;
     else if constexpr (result.second == CSSValueInvalid)
         return CSSPrimitiveValue::create(result.first);

@@ -108,9 +108,8 @@ template<size_t I, typename InterpolationMethodColorSpace>
 float interpolateComponentUsingPremultipliedAlpha(InterpolationMethodColorSpace interpolationMethodColorSpace, ColorComponents<float, 4> colorComponents1, double color1Multiplier, ColorComponents<float, 4> colorComponents2, double color2Multiplier, PremultipliedAlphaState interpolatedAlpha)
 {
     using ColorType = typename InterpolationMethodColorSpace::ColorType;
-    constexpr auto componentInfo = ColorType::Model::componentInfo;
 
-    if constexpr (componentInfo[I].type == ColorComponentType::Angle)
+    if constexpr (constexpr auto componentInfo = ColorType::Model::componentInfo; componentInfo[I].type == ColorComponentType::Angle)
         return interpolateHue(interpolationMethodColorSpace, colorComponents1[I], color1Multiplier, colorComponents2[I], color2Multiplier);
     else {
         if (std::isnan(colorComponents1[I]))
@@ -140,9 +139,8 @@ template<size_t I, typename InterpolationMethodColorSpace>
 float interpolateComponentUsingUnpremultipliedAlpha(InterpolationMethodColorSpace interpolationMethodColorSpace, ColorComponents<float, 4> colorComponents1, double color1Multiplier, ColorComponents<float, 4> colorComponents2, double color2Multiplier)
 {
     using ColorType = typename InterpolationMethodColorSpace::ColorType;
-    constexpr auto componentInfo = ColorType::Model::componentInfo;
 
-    if constexpr (componentInfo[I].type == ColorComponentType::Angle)
+    if constexpr (constexpr auto componentInfo = ColorType::Model::componentInfo; componentInfo[I].type == ColorComponentType::Angle)
         return interpolateHue(interpolationMethodColorSpace, colorComponents1[I], color1Multiplier, colorComponents2[I], color2Multiplier);
     else
         return interpolateComponentAccountingForNaN(colorComponents1[I], color1Multiplier, colorComponents2[I], color2Multiplier);

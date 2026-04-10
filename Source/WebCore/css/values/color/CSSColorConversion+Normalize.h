@@ -40,9 +40,7 @@ namespace WebCore {
 template<typename Descriptor, unsigned Index>
 CSS::Number<> normalizeAndClampNumericComponents(CSS::NumberRaw<> number)
 {
-    constexpr auto info = std::get<Index>(Descriptor::components);
-
-    if constexpr (info.type == ColorComponentType::Angle)
+    if constexpr (constexpr auto info = std::get<Index>(Descriptor::components); info.type == ColorComponentType::Angle)
         return { normalizeHue(number.value) };
     else if constexpr (info.min == -std::numeric_limits<double>::infinity() && info.max == std::numeric_limits<double>::infinity())
         return { number.value };
@@ -57,9 +55,7 @@ CSS::Number<> normalizeAndClampNumericComponents(CSS::NumberRaw<> number)
 template<typename Descriptor, unsigned Index>
 CSS::Number<> normalizeAndClampNumericComponents(CSS::PercentageRaw<> percent)
 {
-    constexpr auto info = std::get<Index>(Descriptor::components);
-
-    if constexpr (info.min == -std::numeric_limits<double>::infinity() && info.max == std::numeric_limits<double>::infinity())
+    if constexpr (constexpr auto info = std::get<Index>(Descriptor::components); info.min == -std::numeric_limits<double>::infinity() && info.max == std::numeric_limits<double>::infinity())
         return { percent.value * info.percentMultiplier };
     else if constexpr (info.min == -std::numeric_limits<double>::infinity())
         return { std::min(percent.value * info.percentMultiplier, info.max) };
@@ -114,9 +110,7 @@ auto normalizeAndClampNumericComponentsIntoCanonicalRepresentation(const std::op
 template<typename Descriptor, unsigned Index>
 CSS::Number<> normalizeNumericComponents(CSS::NumberRaw<> number)
 {
-    constexpr auto info = std::get<Index>(Descriptor::components);
-
-    if constexpr (info.type == ColorComponentType::Angle)
+    if constexpr (constexpr auto info = std::get<Index>(Descriptor::components); info.type == ColorComponentType::Angle)
         return { normalizeHue(number.value) };
     else
         return { number.value };

@@ -73,21 +73,16 @@ template<typename ColorType, unsigned Index, typename T> constexpr auto clampedC
 
 template<typename ColorType, unsigned Index> constexpr float clampedComponent(float c)
 {
-    constexpr auto componentInfo = ColorType::Model::componentInfo[Index];
-
-    if constexpr (componentInfo.type == ColorComponentType::Angle)
+    if constexpr (constexpr auto componentInfo = ColorType::Model::componentInfo[Index]; componentInfo.type == ColorComponentType::Angle)
         return std::fmod(std::fmod(c, 360.0) + 360.0, 360.0);
-
-    if constexpr (componentInfo.min == -std::numeric_limits<float>::infinity() && componentInfo.max == std::numeric_limits<float>::infinity())
+    else if constexpr (componentInfo.min == -std::numeric_limits<float>::infinity() && componentInfo.max == std::numeric_limits<float>::infinity())
         return c;
-
-    if constexpr (componentInfo.min == -std::numeric_limits<float>::infinity())
+    else if constexpr (componentInfo.min == -std::numeric_limits<float>::infinity())
         return std::min(c, componentInfo.max);
-
-    if constexpr (componentInfo.max == std::numeric_limits<float>::infinity())
+    else if constexpr (componentInfo.max == std::numeric_limits<float>::infinity())
         return std::max(c, componentInfo.min);
-
-    return std::clamp(c, componentInfo.min, componentInfo.max);
+    else
+        return std::clamp(c, componentInfo.min, componentInfo.max);
 }
 
 template<typename ColorType, unsigned Index, typename T> constexpr T clampedComponent(const ColorComponents<T, 4>& c)
