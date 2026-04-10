@@ -32,6 +32,7 @@
 (define (lockdown-mode)
     (signing-identifier "com.apple.WebKit.WebContent.CaptivePortal"))
 
+#define TRUE #t
 #define FALSE #f
 
 (define webcontent_gpu_sandbox_extensions_blocking?
