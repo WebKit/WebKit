@@ -5042,6 +5042,8 @@ class YarrGenerator final : public YarrJITInfo {
                 }
 
                 // Greedy/NonGreedy path: restore from context and try fewer iterations
+                MacroAssembler::Jump noGreedyContext = m_jit.branchTestPtr(MacroAssembler::Zero, currParenContextReg);
+
                 restoreParenContext(currParenContextReg, m_regs.regT2, term->parentheses.subpatternId, term->parentheses.lastSubpatternId, parenthesesFrameLocation);
 
                 m_jit.loadPtr(MacroAssembler::Address(currParenContextReg, ParenContext::nextOffset()), newParenContextReg);
@@ -5081,6 +5083,8 @@ class YarrGenerator final : public YarrJITInfo {
                     break;
                 }
                 }
+                noGreedyContext.link(&m_jit);
+                m_abortExecution.append(m_jit.jump());
                 m_backtrackingState.fallthrough();
 #else // !YARR_JIT_ALL_PARENS_EXPRESSIONS
                 RELEASE_ASSERT_NOT_REACHED();
