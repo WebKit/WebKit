@@ -1668,8 +1668,6 @@ public:
 
     Ref<FontFaceSet> fonts();
 
-    void setVisualUpdatesAllowedByClient(bool);
-
     std::optional<Vector<uint8_t>> serializeAndWrapCryptoKey(CryptoKeyData&&) final;
     std::optional<Vector<uint8_t>> unwrapCryptoKey(const Vector<uint8_t>&) final;
 
@@ -2179,14 +2177,13 @@ private:
     void setVisualUpdatesAllowed(ReadyState);
 
     enum class VisualUpdatesPreventedReason {
-        Client         = 1 << 0,
-        ReadyState     = 1 << 1,
-        Suspension     = 1 << 2,
-        RenderBlocking = 1 << 3,
+        ReadyState     = 1 << 0,
+        Suspension     = 1 << 1,
+        RenderBlocking = 1 << 2,
     };
     friend WTF::TextStream& operator<<(WTF::TextStream&, const VisualUpdatesPreventedReason&);
     static constexpr OptionSet<VisualUpdatesPreventedReason> visualUpdatePreventReasonsClearedByTimer() { return { VisualUpdatesPreventedReason::ReadyState, VisualUpdatesPreventedReason::RenderBlocking }; }
-    static constexpr OptionSet<VisualUpdatesPreventedReason> visualUpdatePreventRequiresLayoutMilestones() { return { VisualUpdatesPreventedReason::Client, VisualUpdatesPreventedReason::ReadyState }; }
+    static constexpr OptionSet<VisualUpdatesPreventedReason> visualUpdatePreventRequiresLayoutMilestones() { return { VisualUpdatesPreventedReason::ReadyState }; }
 
     enum class CompletePageTransition : bool { No, Yes };
     void addVisualUpdatePreventedReason(VisualUpdatesPreventedReason, CompletePageTransition = CompletePageTransition::Yes);

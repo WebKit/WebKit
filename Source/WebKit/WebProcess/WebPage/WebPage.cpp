@@ -8181,30 +8181,6 @@ void WebPage::updateWebsitePolicies(WebsitePoliciesData&& websitePolicies)
 #endif
 }
 
-unsigned WebPage::extendIncrementalRenderingSuppression()
-{
-    unsigned token = m_maximumRenderingSuppressionToken + 1;
-    while (!HashSet<unsigned>::isValidValue(token) || m_activeRenderingSuppressionTokens.contains(token))
-        token++;
-
-    m_activeRenderingSuppressionTokens.add(token);
-    if (RefPtr localMainFrame = this->localMainFrame())
-        protect(localMainFrame->view())->setVisualUpdatesAllowedByClient(false);
-
-    m_maximumRenderingSuppressionToken = token;
-
-    return token;
-}
-
-void WebPage::stopExtendingIncrementalRenderingSuppression(unsigned token)
-{
-    if (!m_activeRenderingSuppressionTokens.remove(token))
-        return;
-
-    if (RefPtr localMainFrame = this->localMainFrame())
-        protect(localMainFrame->view())->setVisualUpdatesAllowedByClient(!shouldExtendIncrementalRenderingSuppression());
-}
-
 WebCore::ScrollPinningBehavior WebPage::scrollPinningBehavior()
 {
     return m_internals->scrollPinningBehavior;

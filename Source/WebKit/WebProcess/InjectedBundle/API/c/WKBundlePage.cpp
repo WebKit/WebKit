@@ -582,16 +582,6 @@ bool WKBundlePageCanShowMIMEType(WKBundlePageRef pageRef, WKStringRef mimeTypeRe
     return protect(WebKit::toImpl(pageRef))->canShowMIMEType(WebKit::toWTFString(mimeTypeRef));
 }
 
-WKRenderingSuppressionToken WKBundlePageExtendIncrementalRenderingSuppression(WKBundlePageRef pageRef)
-{
-    return protect(WebKit::toImpl(pageRef))->extendIncrementalRenderingSuppression();
-}
-
-void WKBundlePageStopExtendingIncrementalRenderingSuppression(WKBundlePageRef pageRef, WKRenderingSuppressionToken token)
-{
-    protect(WebKit::toImpl(pageRef))->stopExtendingIncrementalRenderingSuppression(token);
-}
-
 bool WKBundlePageIsUsingEphemeralSession(WKBundlePageRef pageRef)
 {
     return protect(WebKit::toImpl(pageRef))->usesEphemeralSession();

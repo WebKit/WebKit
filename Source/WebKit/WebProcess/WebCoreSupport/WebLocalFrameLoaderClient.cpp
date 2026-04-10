@@ -1703,7 +1703,6 @@ void WebLocalFrameLoaderClient::transitionToCommittedForNewPage(InitializingIfra
     if (auto viewportSizeForViewportUnits = webPage->viewportSizeForCSSViewportUnits())
         view->setSizeForCSSDefaultViewportUnits(*viewportSizeForViewportUnits);
     view->setProhibitsScrolling(shouldDisableScrolling);
-    view->setVisualUpdatesAllowedByClient(!webPage->shouldExtendIncrementalRenderingSuppression());
 #if PLATFORM(COCOA)
     RefPtr drawingArea = webPage->drawingArea();
     view->setViewExposedRect(drawingArea->viewExposedRect());

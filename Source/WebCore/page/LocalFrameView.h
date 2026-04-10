@@ -654,9 +654,6 @@ public:
     WEBCORE_EXPORT void fireLayoutRelatedMilestonesIfNeeded();
     OptionSet<LayoutMilestone> milestonesPendingPaint() const { return m_milestonesPendingPaint; }
 
-    bool visualUpdatesAllowedByClient() const { return m_visualUpdatesAllowedByClient; }
-    WEBCORE_EXPORT void setVisualUpdatesAllowedByClient(bool);
-
     WEBCORE_EXPORT void setScrollPinningBehavior(ScrollPinningBehavior);
 
     ScrollBehaviorForFixedElements NODELETE scrollBehaviorForFixedElements() const;
@@ -1114,7 +1111,6 @@ private:
     bool m_needsDeferredScrollbarsUpdate { false };
     bool m_needsDeferredPositionScrollbarLayers { false };
     bool m_speculativeTilingEnabled { false };
-    bool m_visualUpdatesAllowedByClient { true };
     bool m_hasFlippedBlockRenderers { false };
     bool m_speculativeTilingDelayDisabledForTesting { false };
 

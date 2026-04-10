@@ -101,11 +101,6 @@ WK_EXPORT void WKBundlePageInsertNewlineInQuotedContent(WKBundlePageRef page);
 
 WK_EXPORT bool WKBundlePageIsSuspended(WKBundlePageRef page);
 
-// This only works if the SuppressesIncrementalRendering preference is set as well.
-typedef unsigned WKRenderingSuppressionToken;
-WK_EXPORT WKRenderingSuppressionToken WKBundlePageExtendIncrementalRenderingSuppression(WKBundlePageRef);
-WK_EXPORT void WKBundlePageStopExtendingIncrementalRenderingSuppression(WKBundlePageRef, WKRenderingSuppressionToken);
-
 // UserContent API (compatible with Modern API, for WKTR)
 WK_EXPORT void WKBundlePageAddUserScript(WKBundlePageRef page, WKStringRef source, _WKUserScriptInjectionTime injectionTime, WKUserContentInjectedFrames injectedFrames);
 WK_EXPORT void WKBundlePageAddUserScriptInWorld(WKBundlePageRef page, WKStringRef source, WKBundleScriptWorldRef scriptWorld, _WKUserScriptInjectionTime injectionTime, WKUserContentInjectedFrames injectedFrames);

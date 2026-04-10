@@ -6733,16 +6733,6 @@ void LocalFrameView::firePaintRelatedMilestonesIfNeeded()
         localMainFrame->loader().didReachLayoutMilestone(milestonesAchieved);
 }
 
-void LocalFrameView::setVisualUpdatesAllowedByClient(bool visualUpdatesAllowed)
-{
-    if (m_visualUpdatesAllowedByClient == visualUpdatesAllowed)
-        return;
-
-    m_visualUpdatesAllowedByClient = visualUpdatesAllowed;
-
-    m_frame->document()->setVisualUpdatesAllowedByClient(visualUpdatesAllowed);
-}
-    
 void LocalFrameView::setScrollPinningBehavior(ScrollPinningBehavior pinning)
 {
     m_scrollPinningBehavior = pinning;
