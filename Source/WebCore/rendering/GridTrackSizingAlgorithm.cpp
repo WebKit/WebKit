@@ -2087,7 +2087,14 @@ bool GridTrackSizingAlgorithm::copyUsedTrackSizesForSubgrid()
     auto span = outer->gridSpanForGridItem(*m_renderGrid, direction);
     auto& allTracks = tracks(m_direction);
     int numTracks = allTracks.size();
-    RELEASE_ASSERT((parentTracks.size()  - 1) >= (numTracks - 1 + span.startLine()));
+
+    // The subgrid's track count must fit within the parent's available tracks
+    // starting from the span's start line. If it doesn't (e.g., due to complex
+    // subgrid repeat() declarations producing more tracks than the parent span
+    // allows), bail out and fall back to normal grid sizing.
+    if (parentTracks.size() < static_cast<unsigned>(numTracks) + span.startLine())
+        return false;
+
     for (int i = 0; i < numTracks; i++)
         allTracks[i].get() = parentTracks[i + span.startLine()].get();
 
