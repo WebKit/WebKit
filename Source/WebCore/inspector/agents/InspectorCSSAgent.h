@@ -144,6 +144,7 @@ public:
         Scrollable = 1 << 4,
         SlotAssigned = 1 << 5,
         SlotFilled = 1 << 6,
+        ViewTransition = 1 << 7,
     };
     OptionSet<LayoutFlag> layoutFlagsForNode(Node&);
     RefPtr<JSON::ArrayOf<String /* Inspector::Protocol::CSS::LayoutFlag */>> protocolLayoutFlagsForNode(Node&);

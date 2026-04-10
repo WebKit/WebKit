@@ -1560,9 +1560,12 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             case Node.ELEMENT_NODE:
                 if (node.isPseudoElement()) {
                     var pseudoElement = info.titleDOM.createChild("span", "html-pseudo-element");
-                    pseudoElement.textContent = "::" + node.pseudoType();
+                    if (node.pseudoIdentifier())
+                        pseudoElement.textContent = "::" + node.pseudoType() + "(" + node.pseudoIdentifier() + ")";
+                    else
+                        pseudoElement.textContent = "::" + node.pseudoType();
                     info.titleDOM.appendChild(document.createTextNode("\u200B"));
-                    info.hasChildren = false;
+                    info.hasChildren = node.isViewTransitionPseudoElement() && node.hasChildNodes();
                     break;
                 }
 
@@ -1753,6 +1756,11 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         var afterPseudoElement = node.afterPseudoElement();
         if (afterPseudoElement)
             visibleChildren.push(afterPseudoElement);
+
+        for (let pseudoElement of node.pseudoElements().values()) {
+            if (pseudoElement.isViewTransitionPseudoElement())
+                visibleChildren.push(pseudoElement);
+        }
 
         return visibleChildren;
     }
@@ -2127,6 +2135,11 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             text = WI.UIString("Assigned", "Title for a badge applied to HTMLSlotElement that have assigned nodes.");
             handleClick = this._handleSlotFilledBadgeClicked.bind(this);
             break;
+
+        case WI.DOMTreeElement.BadgeType.ViewTransition:
+            text = WI.unlocalizedString("VT");
+            handleClick = this._handleViewTransitionBadgeClicked.bind(this);
+            break;
         }
 
         let badgeElement = this.title.appendChild(document.createElement("span"));
@@ -2174,6 +2187,10 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
             case WI.DOMNode.LayoutFlag.SlotFilled:
                 this._createBadge(WI.DOMTreeElement.BadgeType.SlotFilled);
+                break;
+
+            case WI.DOMNode.LayoutFlag.ViewTransition:
+                this._createBadge(WI.DOMTreeElement.BadgeType.ViewTransition);
                 break;
             }
         }
@@ -2317,6 +2334,22 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         this.representedObject.scrollIntoView();
     }
 
+    _handleViewTransitionBadgeClicked(event)
+    {
+        if (event.button !== 0 || event.ctrlKey)
+            return;
+
+        event.stop();
+
+        // Navigate to the ::view-transition pseudo tree on the document element.
+        let documentElement = this.representedObject.ownerDocument?.documentElement;
+        if (documentElement) {
+            WI.domManager.inspectElement(documentElement.id, {
+                initiatorHint: WI.TabBrowser.TabNavigationInitiator.LinkClick,
+            });
+        }
+    }
+
     _handleBadgeDoubleClicked(event)
     {
         event.stop();
@@ -2403,6 +2436,7 @@ WI.DOMTreeElement.BadgeType = {
     Event: "event",
     SlotAssigned: "slot-assigned",
     SlotFilled: "slot-filled",
+    ViewTransition: "view-transition",
 };
 WI.settings.enabledDOMTreeBadgeTypes = new WI.Setting("enabled-dom-tree-badge-types", Object.values(WI.DOMTreeElement.BadgeType));
 

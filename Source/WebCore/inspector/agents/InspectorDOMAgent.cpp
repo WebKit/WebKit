@@ -124,6 +124,7 @@
 #include "VideoTrack.h"
 #include "VideoTrackConfiguration.h"
 #include "VideoTrackList.h"
+#include "ViewTransition.h"
 #include "WebInjectedScriptManager.h"
 #include "XPathResult.h"
 #include "markup.h"
@@ -584,6 +585,7 @@ void InspectorDOMAgent::discardBindings()
     m_dispatchedEvents.clear();
     m_eventListenerEntries.clear();
     m_childrenRequested.clear();
+    unbindAllSyntheticVTNodes();
 }
 
 static RefPtr<Element> NODELETE elementToPushForStyleable(const Styleable& styleable)
@@ -1606,9 +1608,11 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightNode(std::o
     Inspector::Protocol::ErrorString errorString;
 
     RefPtr<Node> node;
-    if (nodeId)
+    if (nodeId) {
         node = assertNode(errorString, *nodeId);
-    else if (!!objectId) {
+        if (!node)
+            node = nodeForSyntheticVTNodeId(*nodeId);
+    } else if (!!objectId) {
         node = nodeForObjectId(objectId);
         errorString = "Missing node for given objectId"_s;
     } else
@@ -1875,6 +1879,8 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObjec
 
     RefPtr node = assertNode(errorString, nodeId);
     if (!node)
+        node = nodeForSyntheticVTNodeId(nodeId);
+    if (!node)
         return makeUnexpected(errorString);
 
     auto object = resolveNode(node.get(), objectGroup);
@@ -1930,6 +1936,21 @@ static bool NODELETE pseudoElementType(PseudoElementType pseudoElementType, Insp
         return true;
     case PseudoElementType::After:
         *type = Inspector::Protocol::DOM::PseudoType::After;
+        return true;
+    case PseudoElementType::ViewTransition:
+        *type = Inspector::Protocol::DOM::PseudoType::ViewTransition;
+        return true;
+    case PseudoElementType::ViewTransitionGroup:
+        *type = Inspector::Protocol::DOM::PseudoType::ViewTransitionGroup;
+        return true;
+    case PseudoElementType::ViewTransitionImagePair:
+        *type = Inspector::Protocol::DOM::PseudoType::ViewTransitionImagePair;
+        return true;
+    case PseudoElementType::ViewTransitionOld:
+        *type = Inspector::Protocol::DOM::PseudoType::ViewTransitionOld;
+        return true;
+    case PseudoElementType::ViewTransitionNew:
+        *type = Inspector::Protocol::DOM::PseudoType::ViewTransitionNew;
         return true;
     default:
         return false;
@@ -2125,7 +2146,11 @@ RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::Node>> InspectorDOMAgent::buildAr
 {
     RefPtr beforeElement = element.beforePseudoElement();
     RefPtr afterElement = element.afterPseudoElement();
-    if (!beforeElement && !afterElement)
+
+    bool hasViewTransitionTree = element.document().documentElement() == &element
+        && element.document().hasViewTransitionPseudoElementTree();
+
+    if (!beforeElement && !afterElement && !hasViewTransitionTree)
         return nullptr;
 
     auto pseudoElements = JSON::ArrayOf<Inspector::Protocol::DOM::Node>::create();
@@ -2133,6 +2158,13 @@ RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::Node>> InspectorDOMAgent::buildAr
         pseudoElements->addItem(buildObjectForNode(beforeElement.get(), 0));
     if (afterElement)
         pseudoElements->addItem(buildObjectForNode(afterElement.get(), 0));
+
+    if (hasViewTransitionTree) {
+        RefPtr viewTransition = element.document().activeViewTransition();
+        if (viewTransition)
+            pseudoElements->addItem(buildViewTransitionPseudoElementTree(*viewTransition));
+    }
+
     return pseudoElements;
 }
 
@@ -2929,6 +2961,122 @@ void InspectorDOMAgent::pseudoElementDestroyed(PseudoElement& pseudoElement)
 
     unbind(pseudoElement);
     m_frontendDispatcher->pseudoElementRemoved(parentId, pseudoElementId);
+}
+
+Ref<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForViewTransitionPseudoElement(Inspector::Protocol::DOM::PseudoType pseudoType, const AtomString& name)
+{
+    auto nodeId = m_lastNodeId++;
+    m_syntheticVTNodeIds.set(nodeId, name);
+
+    auto node = Inspector::Protocol::DOM::Node::create()
+        .setNodeId(nodeId)
+        .setNodeType(1)
+        .setNodeName(emptyString())
+        .setLocalName(emptyString())
+        .setNodeValue(emptyString())
+        .release();
+
+    node->setPseudoType(pseudoType);
+    if (!name.isNull())
+        node->setPseudoIdentifier(name);
+
+    return node;
+}
+
+Ref<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildViewTransitionPseudoElementTree(ViewTransition& viewTransition)
+{
+    auto vtChildren = JSON::ArrayOf<Inspector::Protocol::DOM::Node>::create();
+    for (auto& name : viewTransition.namedElements().keys()) {
+        auto groupChildren = JSON::ArrayOf<Inspector::Protocol::DOM::Node>::create();
+        auto pairChildren = JSON::ArrayOf<Inspector::Protocol::DOM::Node>::create();
+        pairChildren->addItem(buildObjectForViewTransitionPseudoElement(Inspector::Protocol::DOM::PseudoType::ViewTransitionOld, name));
+        pairChildren->addItem(buildObjectForViewTransitionPseudoElement(Inspector::Protocol::DOM::PseudoType::ViewTransitionNew, name));
+
+        auto pairNode = buildObjectForViewTransitionPseudoElement(Inspector::Protocol::DOM::PseudoType::ViewTransitionImagePair, name);
+        pairNode->setChildren(WTF::move(pairChildren));
+        pairNode->setChildNodeCount(2);
+        groupChildren->addItem(WTF::move(pairNode));
+
+        auto groupNode = buildObjectForViewTransitionPseudoElement(Inspector::Protocol::DOM::PseudoType::ViewTransitionGroup, name);
+        groupNode->setChildren(WTF::move(groupChildren));
+        groupNode->setChildNodeCount(1);
+        vtChildren->addItem(WTF::move(groupNode));
+    }
+
+    auto vtRoot = buildObjectForViewTransitionPseudoElement(Inspector::Protocol::DOM::PseudoType::ViewTransition, nullAtom());
+    m_viewTransitionRootNodeId = m_lastNodeId - 1;
+    vtRoot->setChildren(WTF::move(vtChildren));
+    vtRoot->setChildNodeCount(viewTransition.namedElements().size());
+    return vtRoot;
+}
+
+Node* InspectorDOMAgent::nodeForSyntheticVTNodeId(Inspector::Protocol::DOM::NodeId nodeId)
+{
+    auto it = m_syntheticVTNodeIds.find(nodeId);
+    if (it == m_syntheticVTNodeIds.end())
+        return nullptr;
+
+    auto& name = it->value;
+    if (!m_document)
+        return nullptr;
+
+    // Root ::view-transition → document element.
+    if (name.isNull())
+        return m_document->documentElement();
+
+    RefPtr viewTransition = m_document->activeViewTransition();
+    if (!viewTransition)
+        return nullptr;
+
+    auto* capturedElement = viewTransition->namedElements().find(name);
+    if (!capturedElement)
+        return nullptr;
+
+    auto styleable = capturedElement->newElement.styleable();
+    if (!styleable)
+        return nullptr;
+
+    return &styleable->element;
+}
+
+void InspectorDOMAgent::viewTransitionPseudoElementTreeCreated(Document& document)
+{
+    RefPtr documentElement = document.documentElement();
+    if (!documentElement)
+        return;
+
+    auto parentId = boundNodeId(documentElement.get());
+    if (!parentId)
+        return;
+
+    RefPtr viewTransition = document.activeViewTransition();
+    if (!viewTransition)
+        return;
+
+    m_frontendDispatcher->pseudoElementAdded(parentId, buildViewTransitionPseudoElementTree(*viewTransition));
+}
+
+void InspectorDOMAgent::viewTransitionPseudoElementTreeDestroyed(Document& document)
+{
+    if (!m_viewTransitionRootNodeId)
+        return;
+
+    RefPtr documentElement = document.documentElement();
+    if (!documentElement)
+        return;
+
+    auto parentId = boundNodeId(documentElement.get());
+    if (!parentId)
+        return;
+
+    m_frontendDispatcher->pseudoElementRemoved(parentId, m_viewTransitionRootNodeId);
+    unbindAllSyntheticVTNodes();
+}
+
+void InspectorDOMAgent::unbindAllSyntheticVTNodes()
+{
+    m_syntheticVTNodeIds.clear();
+    m_viewTransitionRootNodeId = 0;
 }
 
 void InspectorDOMAgent::didAddEventListener(EventTarget& target)

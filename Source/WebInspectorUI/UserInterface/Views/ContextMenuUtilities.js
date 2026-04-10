@@ -383,6 +383,46 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
             });
         }
 
+        if (domNode.isViewTransitionPseudoElement() && domNode.pseudoIdentifier()) {
+            contextMenu.appendItem(WI.UIString("Reveal Matched Element", "Context menu item to navigate to the real element matched by a view transition pseudo-element."), () => {
+                let target = WI.assumingMainTarget();
+                target.DOMAgent.resolveNode(domNode.id, "view-transition-reveal", (error, remoteObject) => {
+                    if (error || !remoteObject)
+                        return;
+                    target.DOMAgent.requestNode(remoteObject.objectId, (error, nodeId) => {
+                        if (!error && nodeId) {
+                            let realNode = WI.domManager.nodeForId(nodeId);
+                            if (realNode)
+                                WI.showMainFrameDOMTree(realNode);
+                        }
+                        target.RuntimeAgent.releaseObjectGroup("view-transition-reveal");
+                    });
+                });
+            });
+        }
+
+        if (domNode.isViewTransitionPseudoElement()) {
+            let currentMode = WI.domManager.viewTransitionSlowdownMode;
+
+            contextMenu.appendSeparator();
+
+            let slowLabel = currentMode === "slow" ? WI.UIString("Slow View Transitions (Active)", "Context menu item to slow down view transition animations. Currently active.") : WI.UIString("Slow View Transitions", "Context menu item to slow down view transition animations.");
+            contextMenu.appendItem(slowLabel, () => {
+                WI.domManager.setViewTransitionSlowdown(currentMode === "slow" ? "off" : "slow");
+            });
+
+            let pauseLabel = currentMode === "paused" ? WI.UIString("Pause View Transitions (Active)", "Context menu item to pause view transition animations. Currently active.") : WI.UIString("Pause View Transitions", "Context menu item to pause view transition animations.");
+            contextMenu.appendItem(pauseLabel, () => {
+                WI.domManager.setViewTransitionSlowdown(currentMode === "paused" ? "off" : "paused");
+            });
+
+            if (currentMode) {
+                contextMenu.appendItem(WI.UIString("Resume View Transitions", "Context menu item to resume view transition animations after slowing or pausing."), () => {
+                    WI.domManager.setViewTransitionSlowdown("off");
+                });
+            }
+        }
+
         if (InspectorBackend.hasDomain("LayerTree") && attached) {
             contextMenu.appendItem(WI.UIString("Reveal in Layers Tab", "Open Layers tab and select the layer corresponding to this node"), () => {
                 WI.showLayersTab({

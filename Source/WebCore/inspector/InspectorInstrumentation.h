@@ -151,6 +151,8 @@ public:
     static void didChangeCustomElementState(Element&);
     static void pseudoElementCreated(Page*, PseudoElement&);
     static void pseudoElementDestroyed(Page*, PseudoElement&);
+    static void viewTransitionPseudoElementTreeCreated(Page*, Document&);
+    static void viewTransitionPseudoElementTreeDestroyed(Page*, Document&);
     static void didCreateNamedFlow(Document*, WebKitNamedFlow&);
     static void willRemoveNamedFlow(Document*, WebKitNamedFlow&);
     static void didChangeRegionOverset(Document&, WebKitNamedFlow&);
@@ -384,6 +386,8 @@ private:
     static void didChangeCustomElementStateImpl(InstrumentingAgents&, Element&);
     static void pseudoElementCreatedImpl(InstrumentingAgents&, PseudoElement&);
     static void pseudoElementDestroyedImpl(InstrumentingAgents&, PseudoElement&);
+    static void viewTransitionPseudoElementTreeCreatedImpl(InstrumentingAgents&, Document&);
+    static void viewTransitionPseudoElementTreeDestroyedImpl(InstrumentingAgents&, Document&);
     static void didCreateNamedFlowImpl(InstrumentingAgents&, Document*, WebKitNamedFlow&);
     static void willRemoveNamedFlowImpl(InstrumentingAgents&, Document*, WebKitNamedFlow&);
     static void didChangeRegionOversetImpl(InstrumentingAgents&, Document&, WebKitNamedFlow&);
@@ -747,6 +751,20 @@ inline void InspectorInstrumentation::pseudoElementDestroyed(Page* page, PseudoE
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (RefPtr agents = instrumentingAgents(page))
         pseudoElementDestroyedImpl(*agents, pseudoElement);
+}
+
+inline void InspectorInstrumentation::viewTransitionPseudoElementTreeCreated(Page* page, Document& document)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (RefPtr agents = instrumentingAgents(page))
+        viewTransitionPseudoElementTreeCreatedImpl(*agents, document);
+}
+
+inline void InspectorInstrumentation::viewTransitionPseudoElementTreeDestroyed(Page* page, Document& document)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (RefPtr agents = instrumentingAgents(page))
+        viewTransitionPseudoElementTreeDestroyedImpl(*agents, document);
 }
 
 inline void InspectorInstrumentation::didCreateNamedFlow(Document* document, WebKitNamedFlow& namedFlow)

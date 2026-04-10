@@ -80,6 +80,7 @@ class PseudoElement;
 class RenderObject;
 class RevalidateStyleAttributeTask;
 class ShadowRoot;
+class ViewTransition;
 
 enum class ExceptionCode : uint8_t;
 enum class PlatformEventModifier : uint8_t;
@@ -200,6 +201,8 @@ public:
     void frameDocumentUpdated(LocalFrame&);
     void pseudoElementCreated(PseudoElement&);
     void pseudoElementDestroyed(PseudoElement&);
+    void viewTransitionPseudoElementTreeCreated(Document&);
+    void viewTransitionPseudoElementTreeDestroyed(Document&);
     void didAddEventListener(EventTarget&);
     void willRemoveEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     bool isEventListenerDisabled(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
@@ -263,6 +266,10 @@ private:
     Ref<JSON::ArrayOf<String>> buildArrayForElementAttributes(Element*);
     Ref<JSON::ArrayOf<Inspector::Protocol::DOM::Node>> buildArrayForContainerChildren(Node* container, int depth);
     RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::Node>> buildArrayForPseudoElements(const Element&);
+    Ref<Inspector::Protocol::DOM::Node> buildObjectForViewTransitionPseudoElement(Inspector::Protocol::DOM::PseudoType, const AtomString& name);
+    Ref<Inspector::Protocol::DOM::Node> buildViewTransitionPseudoElementTree(ViewTransition&);
+    Node* nodeForSyntheticVTNodeId(Inspector::Protocol::DOM::NodeId);
+    void unbindAllSyntheticVTNodes();
     Ref<Inspector::Protocol::DOM::EventListener> buildObjectForEventListener(const RegisteredEventListener&, Inspector::Protocol::DOM::EventListenerId identifier, EventTarget&, const AtomString& eventType, bool disabled, const RefPtr<JSC::Breakpoint>&);
     Ref<Inspector::Protocol::DOM::AccessibilityProperties> buildObjectForAccessibilityProperties(Node&);
     void processAccessibilityChildren(AXCoreObject&, JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>&);
@@ -371,6 +378,9 @@ private:
     bool m_suppressEventListenerChangedEvent { false };
     bool m_documentRequested { false };
     bool m_allowEditingUserAgentShadowTrees { false };
+
+    HashMap<Inspector::Protocol::DOM::NodeId, AtomString> m_syntheticVTNodeIds;
+    Inspector::Protocol::DOM::NodeId m_viewTransitionRootNodeId { 0 };
 };
 
 } // namespace WebCore

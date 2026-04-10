@@ -319,6 +319,18 @@ void InspectorInstrumentation::pseudoElementDestroyedImpl(InstrumentingAgents& i
         layerTreeAgent->pseudoElementDestroyed(pseudoElement);
 }
 
+void InspectorInstrumentation::viewTransitionPseudoElementTreeCreatedImpl(InstrumentingAgents& instrumentingAgents, Document& document)
+{
+    if (CheckedPtr domAgent = instrumentingAgents.persistentDOMAgent())
+        domAgent->viewTransitionPseudoElementTreeCreated(document);
+}
+
+void InspectorInstrumentation::viewTransitionPseudoElementTreeDestroyedImpl(InstrumentingAgents& instrumentingAgents, Document& document)
+{
+    if (CheckedPtr domAgent = instrumentingAgents.persistentDOMAgent())
+        domAgent->viewTransitionPseudoElementTreeDestroyed(document);
+}
+
 void InspectorInstrumentation::mouseDidMoveOverElementImpl(InstrumentingAgents& instrumentingAgents, const HitTestResult& result, OptionSet<PlatformEventModifier> modifiers)
 {
     if (CheckedPtr domAgent = instrumentingAgents.persistentDOMAgent())

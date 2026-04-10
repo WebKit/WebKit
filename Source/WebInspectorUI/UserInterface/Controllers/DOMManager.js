@@ -543,8 +543,8 @@ WI.DOMManager = class DOMManager extends WI.Object
         var node = new WI.DOMNode(this, parent.ownerDocument, false, pseudoElement);
         node.parentNode = parent;
         this._idToDOMNode[node.id] = node;
-        console.assert(!parent.pseudoElements().get(node.pseudoType()));
-        parent.pseudoElements().set(node.pseudoType(), node);
+        console.assert(!parent.pseudoElements().get(node._pseudoElementMapKey()));
+        parent.pseudoElements().set(node._pseudoElementMapKey(), node);
         this.dispatchEventToListeners(WI.DOMManager.Event.NodeInserted, {node, parent});
     }
 
@@ -582,6 +582,43 @@ WI.DOMManager = class DOMManager extends WI.Object
             this._unbind(pseudoElement);
 
         // FIXME: Handle shadow roots.
+    }
+
+    setViewTransitionSlowdown(mode)
+    {
+        let target = WI.assumingMainTarget();
+        let selectors = "::view-transition-group(*), ::view-transition-image-pair(*), ::view-transition-old(*), ::view-transition-new(*)";
+
+        let applyStyleSheetText = (styleSheetId) => {
+            let text = "";
+            if (mode === "paused")
+                text = `${selectors} { animation-play-state: paused !important; }`;
+            else if (mode === "slow")
+                text = `${selectors} { animation-duration: 5s !important; }`;
+            target.CSSAgent.setStyleSheetText(styleSheetId, text);
+            this._viewTransitionSlowdownMode = mode === "off" ? null : mode;
+        };
+
+        if (this._viewTransitionSlowdownStyleSheetId) {
+            applyStyleSheetText(this._viewTransitionSlowdownStyleSheetId);
+            return;
+        }
+
+        let frame = WI.networkManager.mainFrame;
+        if (!frame)
+            return;
+
+        target.CSSAgent.createStyleSheet(frame.id, (error, styleSheetId) => {
+            if (error)
+                return;
+            this._viewTransitionSlowdownStyleSheetId = styleSheetId;
+            applyStyleSheetText(styleSheetId);
+        });
+    }
+
+    get viewTransitionSlowdownMode()
+    {
+        return this._viewTransitionSlowdownMode || null;
     }
 
     get restoreSelectedNodeIsAllowed()
