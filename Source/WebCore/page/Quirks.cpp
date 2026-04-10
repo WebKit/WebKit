@@ -2947,10 +2947,6 @@ static void handleGoogleQuirks(QuirksData& quirksData, const URL& quirksURL, con
     // docs.google.com https://bugs.webkit.org/show_bug.cgi?id=161984
     quirksData.setQuirkState(QuirksData::SiteSpecificQuirk::IsTouchBarUpdateSuppressedForHiddenContentEditableQuirk, quirksData.isGoogleDocs);
 #endif
-#if ENABLE(MEDIA_STREAM)
-    bool shouldEnableEnumerateDeviceQuirk = topDocumentHost == "meet.google.com"_s;
-    quirksData.setQuirkState(QuirksData::SiteSpecificQuirk::ShouldEnableEnumerateDeviceQuirk, shouldEnableEnumerateDeviceQuirk);
-#endif
     quirksData.isGoogleAccounts = topDocumentHost == "accounts.google.com"_s;
 }
 
