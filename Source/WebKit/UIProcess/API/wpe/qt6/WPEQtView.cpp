@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2018, 2019, 2021, 2024 Igalia S.L
  * Copyright (C) 2018, 2019 Zodiac Inflight Innovations
+ * Copyright (C) 2026, Savoir-faire Linux, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,11 +22,13 @@
 #include "config.h"
 #include "WPEQtView.h"
 
+#include "WPEQtInputMethodContextImpl.h"
 #include "WPEQtViewLoadRequest.h"
 #include "WPEQtViewLoadRequestPrivate.h"
 #include "WPEQtViewPrivate.h"
 #include "WPEViewQtQuick.h"
 
+#include <QGuiApplication>
 #include <QQmlEngine>
 #include <QQuickWindow>
 #include <QSGSimpleTextureNode>
@@ -51,6 +54,7 @@ WPEQtView::WPEQtView(QQuickItem* parent)
 {
     connect(this, &QQuickItem::windowChanged, this, &WPEQtView::configureWindow);
     setFlag(ItemHasContents, true);
+    setFlag(ItemAcceptsInputMethod, true);
     setAcceptedMouseButtons(Qt::AllButtons);
     setAcceptHoverEvents(true);
     setAcceptTouchEvents(true);
@@ -133,6 +137,8 @@ void WPEQtView::createWebView()
         d->m_webView = nullptr;
         return;
     }
+
+    m_wpe_display = wpeDisplay;
 
     g_signal_connect_swapped(d->m_webView.get(), "notify::uri", G_CALLBACK(notifyUrlChangedCallback), this);
     g_signal_connect_swapped(d->m_webView.get(), "notify::title", G_CALLBACK(notifyTitleChangedCallback), this);
@@ -581,6 +587,21 @@ void WPEQtView::keyReleaseEvent(QKeyEvent* event)
     Q_D(WPEQtView);
     if (!d->m_webView)
         return;
+
+    // Event from a virtual keyboard has 0 nativeScanCode. Hence, it needs to be committed
+    // instead of being dispatched. Only printable text is being committed, which ensures
+    // that keys like Backspace, Delete, Tab, Escape and Enter are not committed.
+    if (!event->nativeScanCode() && !event->text().isEmpty() && event->text().at(0).isPrint()) {
+        if (m_wpe_display) {
+            auto* im = wpe_display_qtquick_get_input_method_context(m_wpe_display);
+            if (im) {
+                QByteArray commitUtf8 = event->text().toUtf8();
+                g_signal_emit_by_name(im, "committed", commitUtf8.constData());
+                return;
+            }
+        }
+    }
+
     auto* wpeView = webkit_web_view_get_wpe_view(d->m_webView.get());
     wpe_view_dispatch_key_release_event(WPE_VIEW_QTQUICK(wpeView), event);
 }
@@ -606,11 +627,183 @@ void WPEQtView::focusInEvent(QFocusEvent*)
 
 void WPEQtView::focusOutEvent(QFocusEvent*)
 {
+    bool imIsVisible = QGuiApplication::inputMethod()->isVisible();
+
+    // reset on screen keyboard
+    if (!imIsVisible && m_wpe_display) {
+        auto* im = wpe_display_qtquick_get_input_method_context(m_wpe_display);
+        if (im)
+            wpe_input_method_context_reset(im);
+        else
+            qWarning() << "WPEQtView: focusOutEvent: input method context is null.";
+    }
+
     Q_D(WPEQtView);
     if (!d->m_webView)
         return;
     auto* wpeView = webkit_web_view_get_wpe_view(d->m_webView.get());
-    wpe_view_focus_out(WPE_VIEW(wpeView));
+    // When there is an on-screen keyboard WPEView::hasFocus should stay true
+    if (!imIsVisible)
+        wpe_view_focus_out(WPE_VIEW(wpeView));
+}
+
+int wpeImHintsToQt(WPEInputHints hints, WPEInputPurpose purpose)
+{
+    int qtHints = Qt::InputMethodHint::ImhNone;
+    switch (purpose) {
+    case WPE_INPUT_PURPOSE_FREE_FORM:
+        break;
+    case WPE_INPUT_PURPOSE_ALPHA:
+        qtHints |= Qt::InputMethodHint::ImhPreferLatin;
+        break;
+    case WPE_INPUT_PURPOSE_DIGITS:
+        qtHints |= Qt::InputMethodHint::ImhDigitsOnly;
+        break;
+    case WPE_INPUT_PURPOSE_NUMBER:
+        qtHints |= Qt::InputMethodHint::ImhPreferNumbers;
+        break;
+    case WPE_INPUT_PURPOSE_PHONE:
+        qtHints |= Qt::InputMethodHint::ImhDialableCharactersOnly;
+        break;
+    case WPE_INPUT_PURPOSE_URL:
+        qtHints |= Qt::InputMethodHint::ImhUrlCharactersOnly;
+        break;
+    case WPE_INPUT_PURPOSE_EMAIL:
+        qtHints |= Qt::InputMethodHint::ImhEmailCharactersOnly;
+        break;
+    case WPE_INPUT_PURPOSE_NAME:
+        break;
+    case WPE_INPUT_PURPOSE_PASSWORD:
+        qtHints |= Qt::InputMethodHint::ImhHiddenText;
+        break;
+    case WPE_INPUT_PURPOSE_TERMINAL:
+        break;
+    default:
+        g_assert_not_reached();
+    }
+
+    if (hints & WPE_INPUT_HINT_LOWERCASE)
+        qtHints |= Qt::InputMethodHint::ImhPreferLowercase;
+    if (hints & WPE_INPUT_HINT_UPPERCASE_CHARS)
+        qtHints |= Qt::InputMethodHint::ImhPreferUppercase;
+
+    return qtHints;
+}
+
+QVariant WPEQtView::inputMethodQuery(Qt::InputMethodQuery query) const
+{
+    if (query == Qt::ImEnabled)
+        return true;
+
+    if (!m_wpe_display)
+        return QVariant();
+    auto* im = wpe_display_qtquick_get_input_method_context(m_wpe_display);
+    if (!im)
+        return QVariant();
+
+    QVariant v;
+
+    if (query == Qt::ImHints)
+        v = wpeImHintsToQt(wpe_get_hints(im), wpe_get_purpose(im));
+
+    else if (query == Qt::ImCursorPosition)
+        v = wpe_get_surrounding_cursor_index(im);
+
+    else if (query == Qt::ImAnchorPosition)
+        v = wpe_get_surrounding_anchor_index(im);
+
+    else if (query == Qt::ImSurroundingText)
+        v = QString(wpe_get_surrounding_text(im));
+
+    return v;
+}
+
+void WPEQtView::inputMethodEvent(QInputMethodEvent *event)
+{
+    const QList<QInputMethodEvent::Attribute> &attributes = event->attributes();
+
+    QByteArray preeditStringUtf8;
+    const char* preeditText = nullptr;
+    GList* preeditUnderlines = nullptr;
+    int preeditCursor = -1;
+
+    for (const auto &attribute : attributes) {
+        switch (attribute.type) {
+        case QInputMethodEvent::TextFormat: {
+            if (!event->preeditString().isEmpty()) {
+                // process underlines
+                int start = qMin(attribute.start, (attribute.start + attribute.length));
+                int end = qMax(attribute.start, (attribute.start + attribute.length));
+                if (start < 0) {
+                    start = 0;
+                    end = qMax(0, start + end);
+                }
+
+                auto* underline = wpe_input_method_underline_new(start, end);
+                WPEColor color = { 1., 1., 0., 1. };
+                wpe_input_method_underline_set_color(underline, &color);
+
+                preeditUnderlines = g_list_append(preeditUnderlines, underline);
+
+                // process string
+                preeditStringUtf8 = event->preeditString().toUtf8();
+                preeditText = preeditStringUtf8.constData();
+            }
+
+            break;
+
+            }
+        case QInputMethodEvent::Cursor:
+            preeditCursor = attribute.start;
+            break;
+
+        default:
+            qWarning() << "Unsupported attribute type:" << attribute.type;
+            break;
+        }
+    }
+
+    if (!m_wpe_display) {
+        qWarning() << "WPEQtView: inputMethodEvent: no WPE display, event dropped.";
+        event->accept();
+        return;
+    }
+    auto* im = wpe_display_qtquick_get_input_method_context(m_wpe_display);
+    if (!im) {
+        qWarning() << "WPEQtView: inputMethodEvent: no input method context, event dropped.";
+        event->accept();
+        return;
+    }
+
+    if (preeditText || preeditUnderlines || (preeditCursor >= 0)) {
+        wpe_set_preedit(im, preeditText, preeditUnderlines, preeditCursor);
+        if (m_preeditActive)
+            g_signal_emit_by_name(im, "preedit-changed", nullptr);
+        else {
+            m_preeditActive = true;
+            g_signal_emit_by_name(im, "preedit-started", nullptr);
+            g_signal_emit_by_name(im, "preedit-changed", nullptr);
+        }
+
+        if (m_preeditActive && event->preeditString().isEmpty()) {
+            g_signal_emit_by_name(im, "preedit-finished", nullptr);
+            QGuiApplication::inputMethod()->reset();
+            m_preeditActive = false;
+        }
+    }
+
+    if (!event->commitString().isEmpty()) {
+        QByteArray commitUtf8 = event->commitString().toUtf8();
+        const char* commit = commitUtf8.constData();
+
+        if (m_preeditActive) {
+            g_signal_emit_by_name(im, "preedit-finished", nullptr);
+            m_preeditActive = false;
+        }
+        g_signal_emit_by_name(im, "committed", commit);
+    }
+
+    event->accept();
 }
 
 void WPEQtView::invalidateSceneGraph()

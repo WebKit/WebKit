@@ -1,6 +1,8 @@
 /*
  * Copyright (C) 2018, 2019, 2021, 2024 Igalia S.L
  * Copyright (C) 2018, 2019 Zodiac Inflight Innovations
+ * Copyright (C) 2026 Leica Geosystems AG
+ * Copyright (C) 2026 Savoir-faire Linux, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -108,6 +110,9 @@ protected:
     void focusInEvent(QFocusEvent*) override;
     void focusOutEvent(QFocusEvent*) override;
 
+    void inputMethodEvent(QInputMethodEvent*) override;
+    QVariant inputMethodQuery(Qt::InputMethodQuery) const override;
+
 private Q_SLOTS:
     void configureWindow();
     void createWebView();
@@ -125,4 +130,6 @@ private:
 
     Q_DECLARE_PRIVATE(WPEQtView)
     QScopedPointer<WPEQtViewPrivate> d_ptr;
+    WPEDisplay *m_wpe_display = nullptr;
+    bool m_preeditActive = false;
 };
