@@ -247,6 +247,11 @@ void ViewTransition::callUpdateCallback()
     if (!document())
         return;
 
+    if (!document()->globalObject()) {
+        skipViewTransition(Exception { ExceptionCode::InvalidStateError, "Document is no longer active."_s });
+        return;
+    }
+
     LOG_WITH_STREAM(ViewTransitions, stream << "ViewTransition " << this << " callUpdateCallback");
 
     ASSERT(m_phase < ViewTransitionPhase::UpdateCallbackCalled || m_phase == ViewTransitionPhase::Done);

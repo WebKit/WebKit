@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Tests that calling startViewTransition on a detached iframe document does not crash (rdar://173407561).");
+jsTestIsAsync = true;
+
+async function runTest() {
+    // Create an iframe.
+    const iframe = document.createElement('iframe');
+    document.body.appendChild(iframe);
+
+    // Wait for iframe to load.
+    await new Promise(resolve => iframe.onload = resolve);
+
+    const iframeDoc = iframe.contentDocument;
+
+    // Start a view transition on the iframe's document.
+    try {
+        iframeDoc.startViewTransition({ update: () => {} });
+    } catch (e) {
+        // startViewTransition may not be available or may throw.
+    }
+
+    // Remove the iframe, detaching its document.
+    iframe.remove();
+
+    // Allow queued tasks to fire. The ViewTransition callback would
+    // try to call createPromiseAndWrapper on the now-detached document
+    // whose globalObject is null. This should not crash.
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    testPassed("No crash when ViewTransition fires on detached iframe document.");
+    finishJSTest();
+}
+
+runTest();
+</script>
+</head>
+<body>
+</body>
+</html>
