@@ -650,6 +650,10 @@ void RenderTableSection::layoutRows()
                 cell->setNeedsLayout(MarkOnlyThis);
                 cell->setOverridingBorderBoxLogicalWidth(rowHeight);
             }
+
+            auto ancestorIsAuto = cell->containingBlock()->hasAutoHeightOrContainingBlockWithAutoHeight() && cell->style().logicalHeight().isPercent();
+            if (ancestorIsAuto)
+                cell->setOverridingBorderBoxLogicalHeight(rowHeight);
             cell->layoutIfNeeded();
 
             // FIXME: Make pagination work with vertical tables.

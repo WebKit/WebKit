@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Nested table with percentage heights</title>
+<link rel="match" href="nested-table-height-100-percent-ref.html">
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+  }
+</style>
+<table style="border: thin solid blue" width="100%">
+  <tbody>
+    <tr>
+      <td valign="top" height="100%">
+        <table width= "100%" height= "100%"">
+          <tbody>
+            <tr>
+              <td style="background: red; width: 115; height: 100%;">&nbsp;</td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+      <td valign="top" width="155" style="background: blue; color: white;">
+        some text here<br><br><br><br><br>
+      </td>
+    </tr>
+  </tbody>
+</table>
