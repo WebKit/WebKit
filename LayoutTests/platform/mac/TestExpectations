@@ -248,8 +248,6 @@ fast/events/drag-customData.html
 # Need to implement WebGeolocationRequest::cancelPermissionRequest on mac.
 webkit.org/b/55944 fast/dom/Geolocation/page-reload-cancel-permission-requests.html [ Failure Timeout ]
 
-webkit.org/b/103435 fast/backgrounds/background-opaque-images-over-color.html [ ImageOnlyFailure ]
-
 webkit.org/b/56685 webarchive/test-link-rel-icon.html [ Failure ]
 
 # Quota API is not supported.
@@ -2083,8 +2081,6 @@ imported/w3c/web-platform-tests/svg/animations/reinserting-svg-into-document.htm
 imported/w3c/web-platform-tests/svg/animations/use-animate-display-none-symbol-2.html [ Pass Failure ]
 
 webkit.org/b/266996 imported/w3c/web-platform-tests/css/css-writing-modes/mongolian-orientation-002.html [ ImageOnlyFailure ]
-
-fast/gradients/conic-stop-with-offset-zero-in-middle.html [ ImageOnlyFailure ]
 
 # Requires (ACCESSIBILITY_NON_BLINKING_CURSOR)
 accessibility/mac/prefers-non-blinking-cursor.html [ Skip ]

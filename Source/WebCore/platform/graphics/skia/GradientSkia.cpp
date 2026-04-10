@@ -32,16 +32,141 @@
 #include "GradientColorStops.h"
 #include "GraphicsContextSkia.h"
 #include "NotImplemented.h"
+#include <numbers>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkColor.h>
+#include <skia/core/SkPathBuilder.h>
 #include <skia/core/SkScalar.h>
 #include <skia/effects/SkGradient.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+#include <span>
 
 namespace WebCore {
 
 void Gradient::stopsChanged()
 {
+}
+
+static void fillSolidBandsSkia(SkCanvas& canvas, float left, float length, const SkRect& clipBounds, std::span<const Gradient::SolidBand> bands, float globalAlpha)
+{
+    SkPaint paint;
+    paint.setAntiAlias(false);
+    paint.setStyle(SkPaint::kFill_Style);
+
+    for (auto& band : bands) {
+        float bandStart = left + band.startOffset * length;
+        float bandEnd = left + band.endOffset * length;
+        if (bandStart > bandEnd)
+            std::swap(bandStart, bandEnd);
+        bandStart = std::max(bandStart, clipBounds.fLeft);
+        bandEnd = std::min(bandEnd, clipBounds.fRight);
+        if (bandStart >= bandEnd)
+            continue;
+        SkColor4f color = static_cast<SkColor4f>(band.color);
+        color.fA *= globalAlpha;
+        paint.setColor4f(color);
+        canvas.drawRect(SkRect::MakeLTRB(bandStart, clipBounds.fTop, bandEnd, clipBounds.fBottom), paint);
+    }
+}
+
+static bool paintLinearSolidBands(SkCanvas& canvas, FloatPoint point0, FloatPoint point1, const Vector<Gradient::SolidBand>& bands, float globalAlpha)
+{
+    if (bands.isEmpty())
+        return false;
+
+    FloatSize gradientVector = point1 - point0;
+    // Check axis-alignment in screen space by transforming the gradient vector through the CTM.
+    SkMatrix ctm = canvas.getTotalMatrix();
+    SkPoint screenVector = ctm.mapVector(gradientVector.width(), gradientVector.height());
+    bool isAxisAligned = !screenVector.fX || !screenVector.fY;
+    if (!isAxisAligned)
+        return false;
+
+    canvas.save();
+
+    float gradientLength = gradientVector.diagonalLength();
+    canvas.translate(point0.x(), point0.y());
+    if (gradientLength > 0)
+        canvas.rotate(SkRadiansToDegrees(FloatPoint(gradientVector).slopeAngleRadians()));
+
+    SkRect clipBounds;
+    if (!canvas.getLocalClipBounds(&clipBounds) || clipBounds.isEmpty()) {
+        canvas.restore();
+        return true;
+    }
+
+    float padStart = gradientLength > 0 ? clipBounds.fLeft / gradientLength : 0;
+    float padEnd = gradientLength > 0 ? clipBounds.fRight / gradientLength : 1;
+    padStart = std::min(padStart, bands.first().startOffset);
+    padEnd = std::max(padEnd, bands.last().endOffset);
+
+    if (padStart < bands.first().startOffset) {
+        Gradient::SolidBand leadingPad { padStart, bands.first().startOffset, bands.first().color };
+        fillSolidBandsSkia(canvas, 0, gradientLength, clipBounds, { &leadingPad, 1 }, globalAlpha);
+    }
+
+    fillSolidBandsSkia(canvas, 0, gradientLength, clipBounds, bands, globalAlpha);
+
+    if (padEnd > bands.last().endOffset) {
+        Gradient::SolidBand trailingPad { bands.last().endOffset, padEnd, bands.last().color };
+        fillSolidBandsSkia(canvas, 0, gradientLength, clipBounds, { &trailingPad, 1 }, globalAlpha);
+    }
+
+    canvas.restore();
+    return true;
+}
+
+static bool paintConicSolidBands(SkCanvas& canvas, const Gradient::ConicData& data, const Vector<Gradient::SolidBand>& bands, float globalAlpha)
+{
+    if (bands.isEmpty())
+        return false;
+
+    canvas.save();
+
+    SkRect clipBounds;
+    if (!canvas.getLocalClipBounds(&clipBounds) || clipBounds.isEmpty()) {
+        canvas.restore();
+        return true;
+    }
+
+    float dx = std::max(std::abs(clipBounds.fLeft - data.point0.x()), std::abs(clipBounds.fRight - data.point0.x()));
+    float dy = std::max(std::abs(clipBounds.fTop - data.point0.y()), std::abs(clipBounds.fBottom - data.point0.y()));
+    float radius = std::hypot(dx, dy);
+
+    SkPaint paint;
+    paint.setAntiAlias(false);
+    paint.setStyle(SkPaint::kFill_Style);
+
+    float startDegrees = SkRadiansToDegrees(data.angleRadians) - 90.0f;
+    SkRect oval = SkRect::MakeLTRB(
+        data.point0.x() - radius, data.point0.y() - radius,
+        data.point0.x() + radius, data.point0.y() + radius);
+
+    auto drawSector = [&](float startOffset, float endOffset, const Color& bandColor) {
+        float startAngle = startDegrees + startOffset * 360.0f;
+        float sweepAngle = (endOffset - startOffset) * 360.0f;
+        SkColor4f color = static_cast<SkColor4f>(bandColor);
+        color.fA *= globalAlpha;
+        paint.setColor4f(color);
+
+        SkPathBuilder pathBuilder;
+        pathBuilder.moveTo(data.point0.x(), data.point0.y());
+        pathBuilder.arcTo(oval, startAngle, sweepAngle, false);
+        pathBuilder.close();
+        canvas.drawPath(pathBuilder.detach(), paint);
+    };
+
+    if (bands.first().startOffset > 0)
+        drawSector(0, bands.first().startOffset, bands.first().color);
+
+    for (auto& band : bands)
+        drawSector(band.startOffset, band.endOffset, band.color);
+
+    if (bands.last().endOffset < 1)
+        drawSector(bands.last().endOffset, 1, bands.last().color);
+
+    canvas.restore();
+    return true;
 }
 
 inline SkScalar webCoreDoubleToSkScalar(double d)
@@ -207,9 +332,36 @@ sk_sp<SkShader> Gradient::shader(float globalAlpha, const AffineTransform& gradi
 
 void Gradient::fill(GraphicsContext& context, const FloatRect& rect)
 {
+    SkCanvas* canvas = context.platformContext();
+
+    const auto& bands = solidBands();
+    if (!bands.isEmpty()) {
+        bool handled = WTF::switchOn(m_data,
+            [&] (const LinearData& data) {
+                if (m_spreadMethod != GradientSpreadMethod::Pad)
+                    return false;
+                canvas->save();
+                canvas->clipRect(rect);
+                bool result = paintLinearSolidBands(*canvas, data.point0, data.point1, bands, context.alpha());
+                canvas->restore();
+                return result;
+            },
+            [&] (const ConicData& data) {
+                canvas->save();
+                canvas->clipRect(rect);
+                bool result = paintConicSolidBands(*canvas, data, bands, context.alpha());
+                canvas->restore();
+                return result;
+            },
+            [&] (const RadialData&) { return false; }
+        );
+        if (handled)
+            return;
+    }
+
     auto paint = static_cast<GraphicsContextSkia*>(&context)->createFillPaint();
     paint.setShader(shader(context.alpha(), context.fillGradientSpaceTransform()));
-    context.platformContext()->drawRect(rect, paint);
+    canvas->drawRect(rect, paint);
 }
 
 } // namespace WebCore

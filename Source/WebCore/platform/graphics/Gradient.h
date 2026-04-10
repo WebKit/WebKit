@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2008 Torch Mobile, Inc.
  *
@@ -89,6 +89,12 @@ public:
 
     using Data = Variant<LinearData, RadialData, ConicData>;
 
+    struct SolidBand {
+        float startOffset;
+        float endOffset;
+        Color color;
+    };
+
     // isTransient may affect backend rendering implementation caching decisions.
     // Transient instances may be assumed to be drawn only few times or seldomly and as such the backend
     // may not persist caches related to the instance.
@@ -138,6 +144,13 @@ private:
     GradientSpreadMethod m_spreadMethod;
     GradientColorStops m_stops;
     mutable unsigned m_cachedHash { 0 };
+
+    const Vector<SolidBand>& solidBands() const;
+    mutable std::optional<Vector<SolidBand>> m_cachedSolidBands;
+
+    static bool resolvedColorsMatch(const Color& a, const Color& b);
+
+    static Vector<SolidBand> extractSolidBands(const GradientColorStops& sortedStops);
 
 #if USE(CG)
     std::optional<GradientRendererCG> m_platformRenderer;
