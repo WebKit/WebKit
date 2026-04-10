@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Picker overflow repaint bug</title>
+  <style>
+    select,
+    ::picker(select) {
+      appearance: base-select;
+    }
+
+    ::picker(select) {
+      overflow: visible;
+    }
+
+    option {
+      translate: 200px 0;
+    }
+
+    option:hover {
+      background: none;
+    }
+
+    option:hover span {
+      background: #eee;
+    }
+  </style>
+</head>
+<body>
+  <select>
+    <option value="one"><span>One</span></option>
+    <option value="two"><span>Two</span></option>
+  </select>
+</body>
+</html>

@@ -1573,7 +1573,7 @@ auto TreeResolver::updateAnchorPositioningState(Element& element, const RenderSt
     auto update = [&](const RenderStyle* style) {
         if (!style)
             return;
-        AnchorPositionEvaluator::updateAnchorPositionedStateForDefaultAnchorAndPositionVisibility(element, *style, m_treeResolutionState.anchorPositionedStates);
+        AnchorPositionEvaluator::updateAnchorPositionedStateForDefaultAnchorAndPositionVisibility(element, *style, m_treeResolutionState.anchorPositionedStates, m_document->styleScope().anchorPositionedToAnchorMap());
     };
 
     update(style);
@@ -1646,7 +1646,23 @@ void TreeResolver::generatePositionOptionsIfNeeded(const ResolvedStyle& resolved
     if (hasUnresolvedAnchorPosition(styleable))
         return;
 
-    m_positionOptions.add(positionOptionsKey, WTF::move(options));
+    auto addResult = m_positionOptions.add(positionOptionsKey, WTF::move(options));
+
+    // If the anchor state is already at Positioned (pre-seeded), try to immediately mark the
+    // last successful position option as chosen to avoid iterative position option trying.
+    if (hasResolvedAnchorPosition(styleable)) {
+        auto& addedOptions = addResult.iterator->value;
+        if (auto lastSuccessfulIndex = m_document->styleScope().lastSuccessfulPositionOptionIndexFor(styleable)) {
+            auto matchIndex = addedOptions.optionStyles.findIf([&](const auto& option) {
+                return option.style && option.style->usedPositionOptionIndex() == *lastSuccessfulIndex;
+            });
+            if (matchIndex != notFound) {
+                addedOptions.index = matchIndex;
+                addedOptions.chosen = true;
+                addedOptions.isFirstTry = false;
+            }
+        }
+    }
 }
 
 std::unique_ptr<RenderStyle> TreeResolver::generatePositionOption(const PositionTryFallback& fallback, const ResolvedStyle& resolvedStyle, const Styleable& styleable, const ResolutionContext& resolutionContext)

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Picker overflow repaint bug — no select</title>
+  <style>
+    #picker {
+      overflow: visible; /* key: matches our ::picker(select) override */
+      position-area: block-end;
+    }
+
+    /* Simulate option styles */
+    .option {
+      translate: 400px 0;
+    }
+
+    span:hover {
+      background: lime;
+    }
+  </style>
+</head>
+<body>
+  <div id="picker" popover="manual">
+    <div class="option"><span>All this text should get a green background on hover</span></div>
+  </div>
+  <script>
+    picker.showPopover();
+  </script>
+</body>
+</html>
