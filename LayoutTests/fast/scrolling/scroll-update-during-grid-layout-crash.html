@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<div style="display: grid; position: relative;">
+  <div style="overflow: scroll; writing-mode: vertical-rl; width: 10px;">
+    <div style="transform: scale(2)"></div>
+  </div>
+  <iframe style="grid-column-start: 1; padding-left: 0%; position: absolute;"></iframe>
+</div>
+<p>Test passes if it does not crash.</p>
