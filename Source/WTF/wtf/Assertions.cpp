@@ -368,7 +368,7 @@ void WTFPrintBacktrace(std::span<void* const> stack)
     WTFPrintBacktraceWithPrefixAndPrintStream(out, stack, "");
 }
 
-#if !defined(NDEBUG) || !(OS(DARWIN) || PLATFORM(PLAYSTATION) || OS(LINUX)) || !ENABLE(CRASH_DUMP_INFO)
+#if !defined(NDEBUG) || !(OS(DARWIN) || PLATFORM(PLAYSTATION) || (OS(LINUX) && !CPU(X86_64))) || !ENABLE(CRASH_DUMP_INFO)
 void WTFCrash()
 {
 #if ASAN_ENABLED
