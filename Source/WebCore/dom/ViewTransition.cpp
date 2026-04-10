@@ -40,6 +40,7 @@
 #include "ElementInlines.h"
 #include "FrameSnapshotting.h"
 #include "HostWindow.h"
+#include "InspectorInstrumentation.h"
 #include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LayoutRect.h"
@@ -738,6 +739,8 @@ void ViewTransition::setupTransitionPseudoElements()
 
     for (auto& [name, capturedElement] : m_namedElements.map())
         setupDynamicStyleSheet(name, capturedElement);
+
+    InspectorInstrumentation::viewTransitionPseudoElementTreeCreated(document()->page(), *document());
 }
 
 ExceptionOr<void> ViewTransition::checkForViewportSizeChange()
@@ -868,6 +871,7 @@ void ViewTransition::clearViewTransition()
             newStyleable->setCapturedInViewTransition(nullAtom());
     }
 
+    InspectorInstrumentation::viewTransitionPseudoElementTreeDestroyed(document->page(), document);
     document->setHasViewTransitionPseudoElementTree(false);
     document->styleScope().clearViewTransitionStyles();
     document->setActiveViewTransition(nullptr);

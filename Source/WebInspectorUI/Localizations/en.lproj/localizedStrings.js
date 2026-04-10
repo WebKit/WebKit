@@ -1300,6 +1300,10 @@ localizedStrings["Passive"] = "Passive";
 localizedStrings["Path"] = "Path";
 localizedStrings["Pause Processing"] = "Pause Processing";
 localizedStrings["Pause Reason"] = "Pause Reason";
+/* Context menu item to pause view transition animations. */
+localizedStrings["Pause View Transitions"] = "Pause View Transitions";
+/* Context menu item to pause view transition animations. Currently active. */
+localizedStrings["Pause View Transitions (Active)"] = "Pause View Transitions (Active)";
 localizedStrings["Pause script execution (%s or %s)"] = "Pause script execution (%s or %s)";
 /* Tooltip for a time range bar that represents when the playback of a audio/video element is paused */
 localizedStrings["Paused"] = "Paused";
@@ -1476,6 +1480,8 @@ localizedStrings["Result Levels"] = "Result Levels";
 localizedStrings["Results"] = "Results";
 localizedStrings["Resume Processing"] = "Resume Processing";
 localizedStrings["Resume Thread"] = "Resume Thread";
+/* Context menu item to resume view transition animations after slowing or pausing. */
+localizedStrings["Resume View Transitions"] = "Resume View Transitions";
 localizedStrings["Retained Size"] = "Retained Size";
 localizedStrings["Return string must be one of %s"] = "Return string must be one of %s";
 localizedStrings["Return type for anonymous function"] = "Return type for anonymous function";
@@ -1487,6 +1493,8 @@ localizedStrings["Reveal Breakpoint in Sources Tab"] = "Reveal Breakpoint in Sou
 localizedStrings["Reveal Breakpoints in Sources Tab"] = "Reveal Breakpoints in Sources Tab";
 localizedStrings["Reveal Descendant Breakpoints"] = "Reveal Descendant Breakpoints";
 localizedStrings["Reveal Local Override"] = "Reveal Local Override";
+/* Context menu item to navigate to the real element matched by a view transition pseudo-element. */
+localizedStrings["Reveal Matched Element"] = "Reveal Matched Element";
 /* Open Elements tab and select this node in DOM tree */
 localizedStrings["Reveal in DOM Tree"] = "Reveal in DOM Tree";
 localizedStrings["Reveal in Elements Tab"] = "Reveal in Elements Tab";
@@ -1652,6 +1660,10 @@ localizedStrings["Slashed Zeros @ Font Details Sidebar Property Value"] = "Slash
 localizedStrings["Slot"] = "Slot";
 /* Title for a badge applied to a node that is assigned to a HTMLSlotElement. */
 localizedStrings["Slotted"] = "Slotted";
+/* Context menu item to slow down view transition animations. */
+localizedStrings["Slow View Transitions"] = "Slow View Transitions";
+/* Context menu item to slow down view transition animations. Currently active. */
+localizedStrings["Slow View Transitions (Active)"] = "Slow View Transitions (Active)";
 /* Property value for `font-variant-capitals: small-caps`. */
 localizedStrings["Small Capitals @ Font Details Sidebar Property Value"] = "Small Capitals";
 localizedStrings["Snapshot Comparison (%d and %d)"] = "Snapshot Comparison (%d and %d)";

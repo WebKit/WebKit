@@ -296,7 +296,8 @@
                 "grid",
                 "event",
                 "slot-assigned",
-                "slot-filled"
+                "slot-filled",
+                "view-transition"
             ],
             "description": "Relevant layout information about the node. Things not in this list are not important to Web Inspector."
         },

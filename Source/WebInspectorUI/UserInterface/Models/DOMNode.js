@@ -49,6 +49,7 @@ WI.DOMNode = class DOMNode extends WI.Object
         this._localName = payload.localName;
         this._nodeValue = payload.nodeValue;
         this._pseudoType = payload.pseudoType;
+        this._pseudoIdentifier = payload.pseudoIdentifier || null;
         this._shadowRootType = payload.shadowRootType;
         this._computedRole = null;
         this._contentSecurityPolicyHash = payload.contentSecurityPolicyHash;
@@ -118,7 +119,7 @@ WI.DOMNode = class DOMNode extends WI.Object
             for (var i = 0; i < payload.pseudoElements.length; ++i) {
                 var node = new WI.DOMNode(this._domManager, this.ownerDocument, this._isInShadowTree, payload.pseudoElements[i]);
                 node.parentNode = this;
-                this._pseudoElements.set(node.pseudoType(), node);
+                this._pseudoElements.set(node._pseudoElementMapKey(), node);
             }
         }
 
@@ -435,6 +436,25 @@ WI.DOMNode = class DOMNode extends WI.Object
     pseudoType()
     {
         return this._pseudoType;
+    }
+
+    pseudoIdentifier()
+    {
+        return this._pseudoIdentifier;
+    }
+
+    isViewTransitionPseudoElement()
+    {
+        switch (this._pseudoType) {
+        case WI.DOMNode.PseudoElementType.ViewTransition:
+        case WI.DOMNode.PseudoElementType.ViewTransitionGroup:
+        case WI.DOMNode.PseudoElementType.ViewTransitionImagePair:
+        case WI.DOMNode.PseudoElementType.ViewTransitionOld:
+        case WI.DOMNode.PseudoElementType.ViewTransitionNew:
+            return true;
+        default:
+            return false;
+        }
     }
 
     hasPseudoElements()
@@ -991,15 +1011,21 @@ WI.DOMNode = class DOMNode extends WI.Object
 
     get displayName()
     {
-        if (this.isPseudoElement())
+        if (this.isPseudoElement()) {
+            if (this._pseudoIdentifier)
+                return "::" + this._pseudoType + "(" + this._pseudoIdentifier + ")";
             return "::" + this._pseudoType;
+        }
         return this.nodeNameInCorrectCase() + this.escapedIdSelector + this.escapedClassSelector;
     }
 
     get unescapedSelector()
     {
-        if (this.isPseudoElement())
+        if (this.isPseudoElement()) {
+            if (this._pseudoIdentifier)
+                return "::" + this._pseudoType + "(" + this._pseudoIdentifier + ")";
             return "::" + this._pseudoType;
+        }
 
         const shouldEscape = false;
         return this.nodeNameInCorrectCase() + this._idSelector(shouldEscape) + this._classSelector(shouldEscape);
@@ -1151,13 +1177,20 @@ WI.DOMNode = class DOMNode extends WI.Object
     {
         // FIXME: Handle removal if this is a shadow root.
         if (node.isPseudoElement()) {
-            this._pseudoElements.delete(node.pseudoType());
+            this._pseudoElements.delete(node._pseudoElementMapKey());
             node.parentNode = null;
         } else {
             this._children.splice(this._children.indexOf(node), 1);
             node.parentNode = null;
             this._renumber();
         }
+    }
+
+    _pseudoElementMapKey()
+    {
+        if (this._pseudoIdentifier)
+            return this._pseudoType + "(" + this._pseudoIdentifier + ")";
+        return this._pseudoType;
     }
 
     _setChildrenPayload(payloads)
@@ -1381,6 +1414,11 @@ WI.DOMNode.Event = {
 WI.DOMNode.PseudoElementType = {
     Before: "before",
     After: "after",
+    ViewTransition: "view-transition",
+    ViewTransitionGroup: "view-transition-group",
+    ViewTransitionImagePair: "view-transition-image-pair",
+    ViewTransitionOld: "view-transition-old",
+    ViewTransitionNew: "view-transition-new",
 };
 
 WI.DOMNode.ShadowRootType = {
@@ -1403,6 +1441,7 @@ WI.DOMNode.LayoutFlag = {
     Scrollable: "scrollable",
     SlotAssigned: "slot-assigned",
     SlotFilled: "slot-filled",
+    ViewTransition: "view-transition",
 
     // These are mutually exclusive.
     Flex: "flex",

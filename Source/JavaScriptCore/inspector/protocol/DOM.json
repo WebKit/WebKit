@@ -17,7 +17,7 @@
         {
             "id": "PseudoType",
             "type": "string",
-            "enum": ["before", "after"],
+            "enum": ["before", "after", "view-transition", "view-transition-group", "view-transition-image-pair", "view-transition-old", "view-transition-new"],
             "description": "Pseudo element type."
         },
         {
@@ -60,6 +60,7 @@
                 { "name": "name", "type": "string", "optional": true, "description": "<code>Attr</code>'s name." },
                 { "name": "value", "type": "string", "optional": true, "description": "<code>Attr</code>'s value." },
                 { "name": "pseudoType", "$ref": "PseudoType", "optional": true, "description": "Pseudo element type for this node." },
+                { "name": "pseudoIdentifier", "type": "string", "optional": true, "description": "Identifier argument for pseudo elements like ::view-transition-group(name)." },
                 { "name": "shadowRootType", "$ref": "ShadowRootType", "optional": true, "description": "Shadow root type." },
                 { "name": "customElementState", "$ref": "CustomElementState", "optional": true, "description": "Custom element state." },
                 { "name": "contentDocument", "$ref": "Node", "optional": true, "description": "Content document for frame owner elements." },

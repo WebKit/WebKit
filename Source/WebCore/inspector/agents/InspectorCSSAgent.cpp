@@ -64,6 +64,7 @@
 #include "Node.h"
 #include "NodeList.h"
 #include "PseudoElement.h"
+#include "RenderElement.h"
 #include "RenderFlexibleBox.h"
 #include "RenderGrid.h"
 #include "RenderStyleConstants.h"
@@ -1123,6 +1124,11 @@ OptionSet<InspectorCSSAgent::LayoutFlag> InspectorCSSAgent::layoutFlagsForNode(N
     if (isSlotElementWithAssignedNodes(node))
         layoutFlags.add(InspectorCSSAgent::LayoutFlag::SlotFilled);
 
+    if (auto* renderElement = dynamicDowncast<RenderElement>(node.renderer())) {
+        if (renderElement->hasViewTransitionName())
+            layoutFlags.add(InspectorCSSAgent::LayoutFlag::ViewTransition);
+    }
+
     return layoutFlags;
 }
 
@@ -1146,6 +1152,8 @@ static RefPtr<JSON::ArrayOf<String /* Inspector::Protocol::CSS::LayoutFlag */>> 
         protocolLayoutFlags->addItem(Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::CSS::LayoutFlag::SlotAssigned));
     if (layoutFlags.contains(InspectorCSSAgent::LayoutFlag::SlotFilled))
         protocolLayoutFlags->addItem(Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::CSS::LayoutFlag::SlotFilled));
+    if (layoutFlags.contains(InspectorCSSAgent::LayoutFlag::ViewTransition))
+        protocolLayoutFlags->addItem(Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::CSS::LayoutFlag::ViewTransition));
     return protocolLayoutFlags;
 }
 
