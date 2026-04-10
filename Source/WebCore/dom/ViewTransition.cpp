@@ -258,7 +258,10 @@ void ViewTransition::callUpdateCallback()
         return;
 
     Ref document = *this->document();
-    Ref callbackPromise = [&] -> Ref<DOMPromise> {
+    if (!document->globalObject())
+        return;
+
+    RefPtr callbackPromise = [&] -> RefPtr<DOMPromise> {
         if (!m_updateCallback) {
             auto promiseAndWrapper = createPromiseAndWrapper(document);
             protect(promiseAndWrapper.second)->resolve();
@@ -266,6 +269,12 @@ void ViewTransition::callUpdateCallback()
         }
 
         auto result = protect(m_updateCallback)->invoke();
+
+        // After invoke(), JavaScript microtasks may have run (e.g., resuming an async function
+        // that removes the iframe), detaching the document's frame and nulling globalObject().
+        if (!document->globalObject())
+            return nullptr;
+
         if (result.type() != CallbackResultType::Success || result.returnValue()->isSuspended()) {
             auto promiseAndWrapper = createPromiseAndWrapper(document);
             // FIXME: First case should reject with `ExceptionCode::ExistingExceptionError`.
@@ -279,6 +288,8 @@ void ViewTransition::callUpdateCallback()
         return result.releaseReturnValue();
     }();
 
+    if (!callbackPromise)
+        return;
     callbackPromise->whenSettledWithResult([weakThis = WeakPtr { *this }](auto*, bool isFulfilled, auto result) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
@@ -337,6 +348,8 @@ void ViewTransition::setupViewTransition()
         if (!protectedThis)
             return;
         if (protectedThis->m_phase == ViewTransitionPhase::Done)
+            return;
+        if (!protect(protectedThis->document())->globalObject())
             return;
 
         protectedThis->callUpdateCallback();

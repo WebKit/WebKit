@@ -1,0 +1,26 @@
+<body>
+    <p>This test passes if WebKit does not crash</p>
+    <div id="result"></div>
+    <script>
+        window.testRunner?.dumpAsText();
+        window.testRunner?.waitUntilDone();
+        async function test() {
+            const head = XMLDocument.parseHTMLUnsafe(document.documentElement.innerHTML).head;
+            document.documentElement.append(head);
+            const li = document.createElement('li');
+            head.append(li);
+            const frame = document.createElement('iframe');
+            li.prepend(frame);
+            const doc = frame.contentDocument;
+            await navigator.storage.persisted();
+            doc.startViewTransition({ update: () => {} });
+            await navigator.storage.getDirectory();
+            head.innerHTML = '';
+            setTimeout(() => {
+                result.textContent = 'PASS';
+                window.testRunner?.notifyDone();
+            }, 100);
+        }
+        test();
+    </script>
+</body>
