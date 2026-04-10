@@ -1001,13 +1001,15 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
     // An example of this is when an empty element such as a <canvas> or <div>
     // has added a new child. So find the closest ancestor of axObject that has
     // an associated isolated object and update its children.
-#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
-    auto* axAncestor = &axObject;
-#else
-    auto* axAncestor = Accessibility::findAncestor(axObject, true, [this] (auto& ancestor) {
-        return m_nodeMap.contains(ancestor.objectID());
-    });
-#endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+    //
+    // This behavior is important despite the isolated tree including ignored
+    // objects (and thus every object being "in-tree"). Without it, if we build
+    // the isolated tree from a main-thread tree that has only a scroll area and
+    // web area, the incremental tree updates that follow may not actually ever
+    // update the webarea's empty children, leaving the whole tree empty forever.
+    RefPtr axAncestor = &axObject;
+    while (axAncestor && !m_nodeMap.contains(axAncestor->objectID()))
+        axAncestor = downcast<AccessibilityObject>(axAncestor->parentInCoreTree());
 
     if (!axAncestor || axAncestor->isDetached()) {
         // This update was triggered before the isolated tree has been repopulated.
