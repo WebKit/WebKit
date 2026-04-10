@@ -1,4 +1,4 @@
-# Copyright (C) 2025 Apple Inc. All rights reserved.
+# Copyright (C) 2025-2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -23,12 +23,15 @@
 import os
 import re
 
+from .serialization_parser import parse_serialized_types
 
-# These are by themselves opaque without a container
+
+# Leaf opaque types — no serialization definition that decomposes further.
+# Types that are transitively opaque through their members are detected
+# automatically via the serialized type map.
 OPAQUE_TYPES = {
     "NotDispatchableFromWebContent",  # For testing message generation
     "MachSendRight",
-    "MachSendRightAnnotated",
     "WTF::MachSendRightAnnotated",
     "CFDataRef",
     "CFArrayRef",
@@ -36,17 +39,11 @@ OPAQUE_TYPES = {
     "NSArray",
     "NSData",
     "NSDictionary",
-    "WebCore::SharedMemoryHandle",
-    "WebCore::SharedMemory::Handle",
-    "IPC::SharedBufferReference",
-    "WebKit::CoreIPCData",
-    "WebKit::CoreIPCPlistDictionary",
-    "WebKit::CoreIPCPlistArray"
 }
 
 # If these types are in a 'opaque container' we are concerned
 ODT_CONCERN = {
-    "char", "signed char", "unsigned char", "int8_t", "uint8_t",
+    "char", "signed char", "unsigned char", "int8_t", "uint8_t", "char16_t"
 }.union(OPAQUE_TYPES)
 
 # Containers that are an ODT when they contain a type from ODT_CONCERN or OPAQUE_TYPES
@@ -213,16 +210,37 @@ def _get_parameters_to_check(container_name, parameters):
         return []
 
 
-def _contains_opaque_data(type_str, visited=None, from_opaque_container=False):
-    """Check if a type contains opaque data.
+def _is_verifiably_opaque(type_str):
+    """Check if a type is verifiably opaque without full type-map recursion.
+
+    Used by is_safe_wrapper_type() to filter stale entries without risking
+    infinite recursion. Returns True if the type is opaque by string analysis
+    OR has its own tracking entries (meaning it was verified as opaque when tracked).
+    """
+    clean = _remove_const_and_whitespace(type_str)
+    if _find_opaque_data_type(clean, use_type_map=False) is not None:
+        return True
+    # If the type itself has structure_param entries, it was tracked as containing
+    # opaque data. This catches types like WebCore::SharedMemoryHandle that aren't
+    # leaf types but are known to be opaque from their own tracking entries.
+    if opaque_ipc_types is not None:
+        if clean in opaque_ipc_types.structure_param_data_types:
+            return True
+    return False
+
+
+def _find_opaque_data_type(type_str, visited=None, from_opaque_container=False, use_type_map=True):
+    """Find the opaque data type within a type string, if any.
 
     Args:
         type_str: The type string to check
         visited: Set of already visited types (cycle detection)
         from_opaque_container: True if we're in an opaque container's context
+        use_type_map: Whether to resolve types via the serialized type map.
+                      Set to False to avoid recursion from SafeWrapper checks.
 
     Returns:
-        The ODT concern type if found, None otherwise
+        The opaque data type name if found, None otherwise
     """
     if visited is None:
         visited = set()
@@ -244,55 +262,55 @@ def _contains_opaque_data(type_str, visited=None, from_opaque_container=False):
     # Try to parse as container (e.g., "Vector<uint8_t>" → container_name="Vector", parameters=["uint8_t"])
     container_name, parameters, is_opaque_container = _get_container_info(clean_type)
 
-    # If not a container template, or container has no parameters, type is not opaque
-    # Examples that return None here: "String", "int", "Vector" (no <>), "Vector<>" (empty)
-    if not container_name or not parameters:
-        return None
+    if container_name and parameters:
+        params_to_check = _get_parameters_to_check(container_name, parameters)
 
-    # Get which parameters to check based on container type
-    # E.g., HashMap<K,V> checks both K and V, Expected<T,E> only checks T
-    params_to_check = _get_parameters_to_check(container_name, parameters)
+        if is_opaque_container:
+            next_context = True
+        else:
+            config = ALL_CONTAINER_CONFIGS.get(container_name, {})
+            propagates = config.get("propagate_context", False)
+            next_context = from_opaque_container if propagates else False
 
-    # Determine opaque context for checking child parameters
-    #
-    # ODT concerns (uint8_t, char, etc.) are ONLY opaque when inside
-    # an opaque container like Vector or std::span. The context flag tracks this.
-    #
-    # Three cases:
-    #   1. Opaque containers (Vector, std::span) → always create opaque context for children
-    #   2. Simple wrappers (std::optional, RetainPtr) → preserve parent's context
-    #   3. Structural containers (std::pair, Variant) → reset context to non-opaque
-    #
-    # Examples:
-    #   Vector<uint8_t>: Vector is opaque container → next_context=True → uint8_t is opaque ✓
-    #   std::optional<uint8_t>: std::optional preserves context, parent=False → next_context=False → not opaque ✓
-    #   Vector<std::optional<uint8_t>>: Vector sets context=True, std::optional preserves it → uint8_t is opaque ✓
-    #   std::pair<uint8_t, String>: std::pair resets context → next_context=False → uint8_t not opaque ✓
-    #
-    if is_opaque_container:
-        # Opaque containers always create opaque context for their contents
-        next_context = True
-    else:
-        # Transparent containers may preserve or reset context based on configuration
-        config = ALL_CONTAINER_CONFIGS.get(container_name, {})
-        propagates = config.get("propagate_context", False)
-        next_context = from_opaque_container if propagates else False
+        for param in params_to_check:
+            clean_param = _remove_const_and_whitespace(param)
 
-    # Check each template parameter for opaque data
-    for param in params_to_check:
-        clean_param = _remove_const_and_whitespace(param)
+            if _is_odt_concern(clean_param) and next_context:
+                return clean_param
 
-        # Fast path: Check if parameter is an ODT concern (uint8_t, char, etc.) in opaque context
-        # This catches cases like Vector<uint8_t> without needing to recurse
-        if _is_odt_concern(clean_param) and next_context:
-            return clean_param
+            result = _find_opaque_data_type(param, visited.copy(), next_context, use_type_map)
+            if result is not None:
+                return result
 
-        # Recurse to check if parameter contains opaque data
-        # Use visited.copy() to allow same type in different branches (e.g., std::pair<Foo, Foo>)
-        # while still preventing infinite loops within a single branch
-        result = _contains_opaque_data(param, visited.copy(), next_context)
-        if result is not None:
-            return result
+    # Resolve via serialized type map — check if the type's members are transitively opaque
+    if use_type_map and opaque_ipc_types is not None and opaque_ipc_types.type_map is not None:
+        # SafeWrapper types terminate the recursion chain
+        if opaque_ipc_types.is_safe_wrapper_type(clean_type):
+            return None
+
+        member_types = opaque_ipc_types.type_map['members'].get(clean_type)
+        if member_types is not None:
+            for member_type in member_types:
+                result = _find_opaque_data_type(member_type, visited.copy())
+                if result is not None:
+                    return result
+
+        subclass_types = opaque_ipc_types.type_map['subclasses'].get(clean_type)
+        if subclass_types is not None:
+            for subclass_type in subclass_types:
+                result = _find_opaque_data_type(subclass_type, visited.copy())
+                if result is not None:
+                    return result
+
+        alias_target = opaque_ipc_types.type_map['aliases'].get(clean_type)
+        if alias_target is not None:
+            return _find_opaque_data_type(alias_target, visited.copy())
+
+        # WTF:: types are stored without the prefix in the type map.
+        # Intentionally don't pass from_opaque_container — this is a name
+        # resolution step, not a container context propagation.
+        if clean_type.startswith('WTF::'):
+            return _find_opaque_data_type(clean_type[5:], visited.copy(), use_type_map=use_type_map)
 
     return None
 
@@ -372,6 +390,24 @@ class OpaqueIPCTypeEntry(object):
                 setattr(self, attr_name, attr_value)
 
 
+def unwrap_to_candidate_types(type_str):
+    """Unwrap container types to produce candidate types for tracking lookups.
+
+    When a parameter type is e.g. Vector<Foo>, the tracking entry may be for
+    either the full type or the inner type Foo (since the Vector wrapper doesn't
+    change the security justification). Returns a list starting with the original
+    type, followed by any unwrapped inner types.
+    """
+    clean = _remove_const_and_whitespace(type_str)
+    candidates = [clean]
+    container_name, parameters, _ = _get_container_info(clean)
+    if container_name and parameters:
+        params_to_check = _get_parameters_to_check(container_name, parameters)
+        for param in params_to_check:
+            candidates.extend(unwrap_to_candidate_types(param))
+    return candidates
+
+
 class OpaqueIPCTypes(object):
     def __init__(self, tracking_file_path=None):
         if tracking_file_path is None:
@@ -381,6 +417,7 @@ class OpaqueIPCTypes(object):
         self.message_param_replies = {}
         self.alias_params = {}
         self.structure_params = {}
+        self.type_map = self._build_type_map()
 
         # State for tracking groups
         current_group_type = None
@@ -405,6 +442,10 @@ class OpaqueIPCTypes(object):
                 entry = self._parse_line(line, current_group_type, current_group_attributes)
                 if entry:
                     self._add_entry(entry)
+
+        # Precomputed index: set of data_type names that have structure_param entries.
+        # Used by _is_verifiably_opaque() to avoid O(n) scans.
+        self.structure_param_data_types = {dt for (dt, _) in self.structure_params}
 
     def _parse_group_header(self, line):
         """Parse a group header like: [UnsafeWrapper] Vector<uint8_t> {
@@ -574,238 +615,85 @@ class OpaqueIPCTypes(object):
         key = (data_type, name_or_method)
         return self._is_webcontent_dispatchable(self.structure_params, key, 'type', type_string)
 
+    def is_safe_wrapper_type(self, type_name):
+        """Check if a type is tracked as SafeWrapper for all its opaque members.
+
+        Only considers entries whose member type is verifiably opaque:
+        either via string analysis (leaf types, container patterns) or by
+        being a known type in the serialized type map. Entries for types
+        that cannot be verified as opaque are skipped, making this robust
+        to stale entries.
+        """
+        opaque_entries = []
+        for (data_type, name_or_method), entry_list in self.structure_params.items():
+            if data_type == type_name:
+                for e in entry_list:
+                    if _is_verifiably_opaque(e.type):
+                        opaque_entries.append(e)
+        if not opaque_entries:
+            return False
+        return all(e.safe_wrapper for e in opaque_entries)
+
+    @staticmethod
+    def _build_type_map():
+        """Build the serialized type map by parsing all .serialization.in files."""
+        scripts_webkit_dir = os.path.dirname(os.path.abspath(__file__))
+        webkit_dir = os.path.dirname(os.path.dirname(scripts_webkit_dir))
+
+        type_members = {}
+        aliases = {}
+        subclass_variants = {}
+
+        for root, dirs, files in os.walk(webkit_dir):
+            if os.sep + 'tests' in root:
+                continue
+            for f in sorted(files):
+                if not f.endswith('.serialization.in'):
+                    continue
+                path = os.path.join(root, f)
+                with open(path) as fh:
+                    types, enums, headers, usings, fwds, objc = parse_serialized_types(fh)
+
+                    for st in types:
+                        name = f'{st.cf_type}Ref' if st.cf_type is not None else st.namespace_if_not_wtf_and_name()
+                        if st.members_are_subclasses:
+                            subclass_variants[name] = [
+                                f'{m.namespace}::{m.name}' if m.namespace else m.name
+                                for m in st.members
+                            ]
+                        else:
+                            members = [m.type for m in st.serialized_members()]
+                            parent = st.parent_class
+                            while parent is not None:
+                                members = [m.type for m in parent.serialized_members()] + members
+                                parent = parent.parent_class
+                            existing = type_members.get(name)
+                            if existing is not None:
+                                seen = set(existing)
+                                for m in members:
+                                    if m not in seen:
+                                        existing.append(m)
+                                        seen.add(m)
+                            else:
+                                type_members[name] = members
+
+                    for us in usings:
+                        parts = [line.strip() for line in us.alias_lines if not line.strip().startswith('#')]
+                        target = ' '.join(parts).strip().rstrip(';').strip()
+                        if target:
+                            existing = aliases.get(us.name)
+                            if existing is None or len(target) > len(existing):
+                                aliases[us.name] = target
+
+        return {'members': type_members, 'aliases': aliases, 'subclasses': subclass_variants}
+
 
 try:
     opaque_ipc_types = OpaqueIPCTypes()
-    # Add all tracked aliases to OPAQUE_TYPES for transitive opaqueness
-    OPAQUE_TYPES.update(opaque_ipc_types.alias_params.keys())
 except FileNotFoundError as e:
     raise Exception(f"opaque_ipc_types.tracking.in file not found: {e}")
 
 
 def is_opaque_type(type):
-    """Check if a type represents opaque data transport.
-
-    Returns True if the type is opaque:
-    1. Direct opaque types (MachSendRight, CFDataRef, etc.)
-    2. Opaque containers with ODT concerns (Vector<uint8_t>, std::span<char>, etc.)
-    3. Transparent containers containing opaque data (std::pair<Vector<uint8_t>, String>)
-    4. Tracked aliases and aliases wrapped in containers (transitive opaqueness)
-
-    Returns False otherwise:
-    5. Transparent containers without opaque data (std::pair<uint8_t, String>)
-    6. Non-opaque types (String, int, etc.)
-    7. Non-containers (uint8_t, WTF::UUID, etc.)
-    """
-    return _contains_opaque_data(type) is not None
-
-
-if __name__ == '__main__':
-    import unittest
-
-    class TestOpaqueTypes(unittest.TestCase):
-
-        def test_is_odt_concern_function(self):
-            for odt_type in ODT_CONCERN:
-                self.assertTrue(_is_odt_concern(odt_type), f"Expected {odt_type} to be ODT concern")
-
-            non_odt_types = ['String', 'int', 'float', 'bool', 'WTF::UUID']
-            for non_odt_type in non_odt_types:
-                self.assertFalse(_is_odt_concern(non_odt_type), f"Expected {non_odt_type} to not be ODT concern")
-
-        def test_contains_opaque_data_function(self):
-            # Test opaque containers with ODT concerns
-            self.assertEqual(_contains_opaque_data("std::span<uint8_t>"), "uint8_t")
-            self.assertEqual(_contains_opaque_data("std::span<const uint8_t>"), "uint8_t")
-            self.assertEqual(_contains_opaque_data("Vector<char>"), "char")
-            self.assertEqual(_contains_opaque_data("Vector<const char>"), "char")
-            self.assertEqual(_contains_opaque_data("std::array<uint8_t, 24>"), "uint8_t")
-            self.assertEqual(_contains_opaque_data("std::array<const uint8_t, 16>"), "uint8_t")
-            self.assertEqual(_contains_opaque_data("RetainPtr<CFDataRef>"), "CFDataRef")
-            self.assertEqual(_contains_opaque_data("Vector<MachSendRight>"), "MachSendRight")
-
-            # Test nested containers
-            self.assertEqual(_contains_opaque_data("std::optional<Vector<uint8_t>>"), "uint8_t")
-            self.assertEqual(_contains_opaque_data("Vector<std::optional<uint8_t>>"), "uint8_t")
-            self.assertEqual(_contains_opaque_data("Vector<std::pair<Vector<uint8_t>, std::optional<WTF::UUID>>>"), "uint8_t")
-            self.assertEqual(_contains_opaque_data("Variant<Vector<uint8_t>, String>"), "uint8_t")
-
-            # Test transparent containers without opaque content
-            self.assertIsNone(_contains_opaque_data("Expected<uint8_t, String>"))
-            self.assertIsNone(_contains_opaque_data("Variant<uint8_t, String>"))
-            self.assertIsNone(_contains_opaque_data("std::pair<uint8_t, String>"))
-            self.assertIsNone(_contains_opaque_data("std::optional<uint8_t>"))
-            self.assertIsNone(_contains_opaque_data("uint8_t"))
-            self.assertIsNone(_contains_opaque_data("String"))
-
-        def test_direct_opaque_types(self):
-            self.assertTrue(is_opaque_type("MachSendRight"))
-            self.assertTrue(is_opaque_type("MachSendRightAnnotated"))
-            self.assertFalse(is_opaque_type("String"))
-            self.assertFalse(is_opaque_type("int"))
-
-        def test_container_types_with_odt_concerns(self):
-            self.assertTrue(is_opaque_type("std::optional<Vector<uint8_t>>"))
-            self.assertTrue(is_opaque_type("Vector<std::optional<uint8_t>>"))
-            self.assertTrue(is_opaque_type("std::span<uint8_t>"))
-            self.assertTrue(is_opaque_type("std::span<const uint8_t>"))
-            self.assertTrue(is_opaque_type("std::span<char>"))
-            self.assertTrue(is_opaque_type("std::span<const char>"))
-            self.assertTrue(is_opaque_type("std::array<uint8_t, 24>"))
-            self.assertTrue(is_opaque_type("std::array<const uint8_t, 16>"))
-            self.assertTrue(is_opaque_type("Vector<uint8_t>"))
-            self.assertTrue(is_opaque_type("Vector<const uint8_t>"))
-            self.assertTrue(is_opaque_type("Vector<char>"))
-            self.assertTrue(is_opaque_type("RetainPtr<CFDataRef>"))
-            self.assertTrue(is_opaque_type("RetainPtr<NSData>"))
-            self.assertTrue(is_opaque_type("std::optional<Vector<uint8_t>>"))
-            self.assertTrue(is_opaque_type("Expected<Vector<uint8_t>, String>"))
-            self.assertTrue(is_opaque_type("Variant<Vector<uint8_t>, String>"))
-            self.assertTrue(is_opaque_type("std::pair<Vector<uint8_t>, String>"))
-            self.assertTrue(is_opaque_type("std::pair<String, Vector<uint8_t>>"))
-            self.assertTrue(is_opaque_type("Vector<std::pair<Vector<uint8_t>, std::optional<WTF::UUID>>>"))
-            self.assertTrue(is_opaque_type("std::optional<Vector<std::pair<Vector<uint8_t>, String>>>"))
-            self.assertTrue(is_opaque_type("HashMap<String, FixedVector<uint8_t>>"))
-            self.assertTrue(is_opaque_type("HashSet<Vector<uint8_t>>"))
-            self.assertTrue(is_opaque_type("std::unique_ptr<Vector<uint8_t>>"))
-            self.assertTrue(is_opaque_type("KeyValuePair<Vector<uint8_t>, String>"))
-            self.assertTrue(is_opaque_type("Vector<HashMap<String, std::pair<Vector<uint8_t>, int>>>"))
-            self.assertTrue(is_opaque_type("Variant<Vector<uint8_t>, WebKit::HTTPBody::Element::FileData, String>"))
-            self.assertTrue(is_opaque_type("Expected<std::pair<Vector<uint8_t>, String>, String>"))
-            self.assertTrue(is_opaque_type("Vector<std::pair<Vector<uint8_t>, std::optional<WTF::UUID>>>"))
-            self.assertTrue(is_opaque_type("std::optional<Vector<std::pair<Vector<uint8_t>, String>>>"))
-            self.assertTrue(is_opaque_type("Variant<Vector<uint8_t>, WebKit::HTTPBody::Element::FileData, String>"))
-            self.assertTrue(is_opaque_type("Variant<Vector<uint8_t>, Ref<WebCore::SharedBuffer>, URL>"))
-
-        def test_container_types_without_odt_concerns(self):
-            self.assertFalse(is_opaque_type("std::span<String>"))
-            self.assertFalse(is_opaque_type("std::array<int, 5>"))
-            self.assertFalse(is_opaque_type("Vector<String>"))
-            self.assertFalse(is_opaque_type("std::optional<String>"))
-            self.assertFalse(is_opaque_type("std::optional<uint8_t>"))
-            self.assertFalse(is_opaque_type("Expected<uint8_t, String>"))
-            self.assertFalse(is_opaque_type("Expected<String, uint8_t>"))
-            self.assertFalse(is_opaque_type("Expected<String, int>"))
-            self.assertFalse(is_opaque_type("Variant<uint8_t, int>"))
-            self.assertFalse(is_opaque_type("Variant<String, int>"))
-            self.assertFalse(is_opaque_type("std::pair<uint8_t, String>"))
-            self.assertFalse(is_opaque_type("std::optional<std::pair<uint8_t, String>>"))
-            self.assertFalse(is_opaque_type("Vector<std::pair<uint8_t, String>>"))
-
-        def test_infinite_recursion_protection(self):
-            # Create a visited set that simulates a circular reference
-            visited = {"TestType"}
-
-            # This should return None due to the visited check, not cause infinite recursion
-            result = _contains_opaque_data("TestType", visited=visited)
-            self.assertIsNone(result)
-
-            # Test with a type that would normally be opaque but is already visited
-            visited_opaque = {"Vector<uint8_t>"}
-            result = _contains_opaque_data("Vector<uint8_t>", visited=visited_opaque)
-            self.assertIsNone(result)
-
-            # Verify normal operation still works when not visited
-            result = _contains_opaque_data("Vector<uint8_t>")
-            self.assertEqual(result, "uint8_t")
-
-        def test_bad_formatting(self):
-            self.assertFalse(is_opaque_type(""))
-            self.assertFalse(is_opaque_type("Vector<>"))
-            self.assertFalse(is_opaque_type("std::optional<>"))
-            self.assertFalse(is_opaque_type("Vector"))
-            self.assertFalse(is_opaque_type("std::optional"))
-            self.assertFalse(is_opaque_type("<uint8_t>"))
-
-        def test_context_propagation_through_simple_wrappers(self):
-            # This is opaque because Vector creates opaque context
-            self.assertTrue(is_opaque_type("Vector<std::optional<uint8_t>>"))
-
-            # This is NOT opaque because std::optional alone doesn't create context
-            self.assertFalse(is_opaque_type("std::optional<uint8_t>"))
-
-        def test_context_reset_in_structural_containers(self):
-            # uint8_t alone in pair is not opaque
-            self.assertFalse(is_opaque_type("std::pair<uint8_t, String>"))
-
-            # But Vector<uint8_t> is opaque even in pair
-            self.assertTrue(is_opaque_type("std::pair<Vector<uint8_t>, String>"))
-
-        def test_retainptr_with_direct_opaque_types(self):
-            self.assertTrue(is_opaque_type("RetainPtr<CFDataRef>"))
-            self.assertTrue(is_opaque_type("RetainPtr<NSData>"))
-            self.assertTrue(is_opaque_type("RetainPtr<MachSendRight>"))
-
-        def test_deeply_nested_types(self):
-            deep_type = "Vector<HashMap<String, std::pair<std::optional<Vector<uint8_t>>, int>>>"
-            self.assertTrue(is_opaque_type(deep_type))
-
-        def test_opaque_ipc_types_parsing(self):
-            test_file = os.path.join(os.path.dirname(__file__), 'tests', 'test_opaque_ipc_types.tracking.in')
-            if not os.path.exists(test_file):
-                self.fail(f"Test tracking file not found: {test_file}")
-
-            ot = OpaqueIPCTypes(test_file)
-
-            total_entries = sum(len(entries) for entries in ot.message_params.values())
-            total_entries += sum(len(entries) for entries in ot.message_param_replies.values())
-            total_entries += sum(len(entries) for entries in ot.alias_params.values())
-            total_entries += sum(len(entries) for entries in ot.structure_params.values())
-
-            print(f"\ntest_opaque_ipc_types.tracking.in:")
-            print(f"  Total entries: {total_entries}")
-            print(f"    MessageParam: {sum(len(e) for e in ot.message_params.values())}")
-            print(f"    MessageParamReply: {sum(len(e) for e in ot.message_param_replies.values())}")
-            print(f"    AliasParam: {sum(len(e) for e in ot.alias_params.values())}")
-            print(f"    StructureParam: {sum(len(e) for e in ot.structure_params.values())}")
-
-            self.assertGreater(total_entries, 0, "Test file should have entries")
-
-            # Specific entries which are in the test file
-            self.assertTrue(ot.message_param_tracked('TestWithLegacyReceiver', 'DidCreateWebProcessConnection', 'connectionIdentifier', 'MachSendRight'))
-            self.assertTrue(ot.message_param_tracked('TestWithStream', 'SendMachSendRight', 'a1', 'MachSendRight'))
-            self.assertTrue(ot.message_param_reply_tracked('TestWithStream', 'ReceiveMachSendRight', 'r1', 'MachSendRight'))
-            self.assertTrue(ot.alias_param_tracked('TestNamespace::TestSalt', 'std::array<uint8_t, 8>'))
-            self.assertTrue(ot.structure_param_tracked('WebKit::TestStruct', 'buffer', 'Vector<uint8_t>'))
-
-            # Check the lookup logic for non existant items
-            self.assertFalse(ot.message_param_tracked('NonExistantReceiver', 'NonExistantMessage', 'NonExistantParameterName', 'NonExistantType'))
-            self.assertFalse(ot.message_param_reply_tracked('NonExistantReceiver', 'NonExistantMessage', 'NonExistantParameterName', 'NonExistantType'))
-            self.assertFalse(ot.alias_param_tracked('NonExistantAlias', 'NonExistantType'))
-            self.assertFalse(ot.structure_param_tracked('NonExistantStruct', 'NonExistantMmember', 'NonExistantType'))
-
-            # Things WebContent can send
-            self.assertTrue(ot.structure_webcontent_dispatchable('WebKit::TestStruct', 'buffer', 'Vector<uint8_t>'))
-            self.assertFalse(ot.structure_webcontent_dispatchable('WebKit::SecureData', 'encrypted', 'Vector<uint8_t>'))
-
-            self.assertTrue(ot.webcontent_dispatchable('TestWithLegacyReceiver', 'DidCreateWebProcessConnection', 'connectionIdentifier', 'MachSendRight'))
-            self.assertFalse(ot.webcontent_dispatchable('TestWithLegacyReceiver', 'OpaqueTypeSecurityAssertion', 'param', 'NotDispatchableFromWebContentType'))
-
-            self.assertTrue(ot.reply_webcontent_dispatchable('UserInterface', 'GetUserData', 'data', 'std::span<const uint8_t>'))
-            self.assertFalse(ot.reply_webcontent_dispatchable('TestInterface', 'GetData', 'result', 'std::span<const uint8_t>'))
-
-        def test_production_tracking_file_parses(self):
-            ot = OpaqueIPCTypes()
-
-            # Verify tracked aliases are treated as opaque (transitive opaqueness)
-            self.assertTrue(is_opaque_type("IPC::TransferString::IPCData"))
-            self.assertTrue(is_opaque_type("WebKit::CFObjectValue"))
-            self.assertTrue(is_opaque_type("UniqueRef<WebKit::CFObjectValue>"))
-            self.assertTrue(is_opaque_type("std::optional<IPC::TransferString::IPCData>"))
-            self.assertTrue(is_opaque_type("Vector<WebKit::CFObjectValue>"))
-
-            total_entries = sum(len(e) for e in ot.message_params.values())
-            total_entries += sum(len(e) for e in ot.message_param_replies.values())
-            total_entries += sum(len(e) for e in ot.alias_params.values())
-            total_entries += sum(len(e) for e in ot.structure_params.values())
-
-            print(f"\nopaque_ipc_types.tracking.in")
-            print(f"  Total entries: {total_entries}")
-            print(f"    MessageParam: {sum(len(e) for e in ot.message_params.values())}")
-            print(f"    MessageParamReply: {sum(len(e) for e in ot.message_param_replies.values())}")
-            print(f"    AliasParam: {sum(len(e) for e in ot.alias_params.values())}")
-            print(f"    StructureParam: {sum(len(e) for e in ot.structure_params.values())}")
-
-            self.assertGreater(total_entries, 10, "opaque_ipc_types.tracking.in seems to have too few entries")
-
-    unittest.main()
+    """Check if a type represents opaque data transport."""
+    return _find_opaque_data_type(type) is not None
