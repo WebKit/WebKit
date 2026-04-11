@@ -276,7 +276,8 @@ public:
 
         if (a.usedContain().contains(ContainValue::Size) != b.usedContain().contains(ContainValue::Size)
             || a.usedContain().contains(ContainValue::InlineSize) != b.usedContain().contains(ContainValue::InlineSize)
-            || a.usedContain().contains(ContainValue::Layout) != b.usedContain().contains(ContainValue::Layout))
+            || a.usedContain().contains(ContainValue::Layout) != b.usedContain().contains(ContainValue::Layout)
+            || a.usedContain().contains(ContainValue::Paint) != b.usedContain().contains(ContainValue::Paint))
             return true;
 
         // content-visibility:hidden turns on contain:size which requires relayout.

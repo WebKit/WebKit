@@ -218,8 +218,11 @@ void RenderGrid::styleDidChange(Style::Difference diff, const RenderStyle* oldSt
         || style().gridTemplateColumns().autoRepeatSizes.size()
         || style().gridTemplateRows().autoRepeatSizes.size()
         || subgridDidChange == SubgridDidChange::Yes
-        || isSubgridWithIndependentFormattingContextChange())
+        || isSubgridWithIndependentFormattingContextChange()) {
+        if (isSubgridWithIndependentFormattingContextChange() && subgridDidChange == SubgridDidChange::No)
+            subgridDidChange = SubgridDidChange::Yes;
         setNeedsItemPlacement(subgridDidChange);
+    }
 }
 
 SubgridDidChange RenderGrid::subgridDidChange(const RenderStyle& oldStyle) const
