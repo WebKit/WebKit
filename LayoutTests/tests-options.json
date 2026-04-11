@@ -2288,6 +2288,45 @@
     "imported/w3c/web-platform-tests/editing/other/undo-insertparagraph-after-moving-split-nodes.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/editing/plaintext-only/delete-around-linebreak-or-block-boundary.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/plaintext-only/delete-part-of-white-spaces.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/plaintext-only/forwardDelete-around-linebreak-or-block-boundary.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/plaintext-only/forwardDelete-part-of-white-spaces.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/plaintext-only/insertHTML.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/plaintext-only/insertLineBreak.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/plaintext-only/insertParagraph.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/plaintext-only/insertText.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/plaintext-only/nested-with-contenteditable-true.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/plaintext-only/paste-when-nested-with-contenteditable-true.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/plaintext-only/paste.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/plaintext-only/plaintext-only-in-designMode.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/editing/plaintext-only/styling-commands.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/editing/run/backcolor.html": [
         "slow"
     ],
