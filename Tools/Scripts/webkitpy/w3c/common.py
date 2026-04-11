@@ -67,26 +67,37 @@ class WPTPaths:
 
     @staticmethod
     def default_wpt_checkout_path(finder):
-        return os.path.join(os.path.dirname(finder.webkit_base()), "wpt")
+        return os.path.join(os.path.dirname(finder.webkit_base()), 'wpt')
 
     @staticmethod
     def ensure_wpt_repository(finder, repository_directory=None, *, non_interactive=True):
         if not repository_directory:
             repository_directory = WPTPaths.default_wpt_checkout_path(finder)
+            _log.debug(f'No path to WPT repository specified, falling back to the default: {repository_directory}')
 
         repository_directory = finder._filesystem.abspath(repository_directory)
         d = PurePath(repository_directory)
 
         if finder._filesystem.isdir(repository_directory):
-            if finder._filesystem.isfile(str(d / "resources" / "testharness.js")) and finder._filesystem.isfile(str(d / "wpt")):
+            _log.debug(f'Checking whether `{repository_directory}` is WPT working tree')
+            check_files = [d / 'resources' / 'testharness.js', d / 'wpt']
+            for path in check_files:
+                if not finder._filesystem.isfile(str(path)):
+                    _log.info(f'`{path}` does not exist, assuming `{repository_directory}` is *not* a WPT working tree')
+            else:
                 _log.info(f'Using the WPT repository found at `{repository_directory}`')
                 return repository_directory
+        elif finder._filesystem.exists(repository_directory):
+            _log.info(f'`{repository_directory}` exists but is not a directory; unable to proceed')
+            return None
         else:
-            _log.info(f'The default WPT repository location is `{repository_directory}`.')
+            _log.info(f'`{repository_directory}` does not exist')
             if not non_interactive:
-                user_directory = Terminal.input(f'Press `Enter` to use the default or input a directory of your choice: ')
+                user_directory = Terminal.input('Press `Enter` to use the default or input a directory of your choice: ')
                 repository_directory = user_directory.strip() or repository_directory
 
+        _log.debug(f'Cloning `{WPT_GH_URL}.git` into `{repository_directory}`')
         if run([local.Git.executable(), 'clone', f'{WPT_GH_URL}.git', repository_directory]).returncode:
+            _log.info('git clone failed')
             return None
         return repository_directory

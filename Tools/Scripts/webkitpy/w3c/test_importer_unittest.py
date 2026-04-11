@@ -148,6 +148,16 @@ class TestImporterTest(unittest.TestCase):
         for path, contents in files.items():
             fs.write_binary_file(path, contents)
 
+        if '-s' not in args:
+            possible_wpt_dirs = [
+                FAKE_WPT_DIR,
+                '/home/user/wpt/',
+                '/mock-checkout/WebKitBuild/w3c-tests/',
+            ]
+            matched = [d for d in possible_wpt_dirs if any(f.startswith(d) for f in files)]
+            assert len(matched) == 1
+            args[0:0] = ['-s', matched[0]]
+
         options, test_paths = parse_args(args)
         importer = TestImporter(port, test_paths, options)
         importer.do_import()
@@ -752,3 +762,76 @@ class TestImporterTest(unittest.TestCase):
         self.assertTrue(fs.exists('/test.checkout/LayoutTests/platform/test-mac-leopard/w3c/web-platform-tests/t/test-expected.txt'))
         self.assertTrue(fs.exists('/test.checkout/LayoutTests/platform/test-linux-x86_64/w3c/web-platform-tests/t/test-expected.txt'))
         self.assertTrue(fs.exists('/test.checkout/LayoutTests/platform/unknown-platform/w3c/web-platform-tests/t/test-expected.txt'))
+
+    def test_no_web_platform_tests_source(self):
+        FAKE_FILES = {
+            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/t/test.html': MINIMAL_TESTHARNESS,
+        }
+
+        with self.assertLogs('webkitpy.w3c.test_importer', level='ERROR') as cm:
+            fs = self.import_downloaded_tests(
+                ['--no-fetch', '--import-all', '-d', 'w3c', 'foo/bar'],
+                FAKE_FILES,
+                test_port=True,
+            )
+
+        self.assertEqual(
+            cm.output,
+            [
+                "ERROR:webkitpy.w3c.test_importer:All import paths must begin with "
+                "'/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests', "
+                "'/mock-checkout/WebKitBuild/w3c-tests/foo/bar/' does not"
+            ],
+        )
+
+    def test_unknown_directory(self):
+        FAKE_FILES = {
+            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/t/test.html': MINIMAL_TESTHARNESS,
+        }
+
+        with self.assertLogs('webkitpy.w3c.test_importer', level='ERROR') as cm:
+            fs = self.import_downloaded_tests(
+                [
+                    '--no-fetch',
+                    '--import-all',
+                    '-d',
+                    'w3c',
+                    'web-platform-tests/foo/bar',
+                ],
+                FAKE_FILES,
+                test_port=True,
+            )
+
+        self.assertEqual(
+            cm.output,
+            [
+                "ERROR:webkitpy.w3c.test_importer:Path does not exist: "
+                "'/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/foo/bar'"
+            ],
+        )
+
+    def test_file_not_directory(self):
+        FAKE_FILES = {
+            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/t/test.html': MINIMAL_TESTHARNESS,
+        }
+
+        with self.assertLogs('webkitpy.w3c.test_importer', level='ERROR') as cm:
+            fs = self.import_downloaded_tests(
+                [
+                    '--no-fetch',
+                    '--import-all',
+                    '-d',
+                    'w3c',
+                    'web-platform-tests/t/test.html',
+                ],
+                FAKE_FILES,
+                test_port=True,
+            )
+
+        self.assertEqual(
+            cm.output,
+            [
+                "ERROR:webkitpy.w3c.test_importer:Path does not exist: "
+                "'/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/t/test.html'"
+            ],
+        )

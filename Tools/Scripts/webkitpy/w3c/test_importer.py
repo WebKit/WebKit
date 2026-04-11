@@ -158,6 +158,12 @@ To import a web-platform-tests suite from a local checkout in ~/dev/wpt:
     return args, args.test_paths
 
 
+class TestImporterError(Exception):
+    def __init__(self, msg=''):
+        self.message = msg
+        super().__init__(msg)
+
+
 class TestImporter(object):
 
     def __init__(self, port, test_paths, options):
@@ -207,9 +213,12 @@ class TestImporter(object):
     def do_import(self):
         finder = WebKitFinder(self.filesystem)
         self.source_directory = self.source_directory or WPTPaths.ensure_wpt_repository(finder, self.source_directory)
+        if self.source_directory is None:
+            _log.error('Unable to find any WPT repository')
+            return
 
         directory = self._get_wpt_directory(self.source_directory)
-        _log.debug(f"Using {directory!r} for {self.source_directory!r}")
+        _log.debug(f'Using {directory!r} for {self.source_directory!r}')
         if directory is None:
             return
 
@@ -220,16 +229,6 @@ class TestImporter(object):
         except OSError:
             self.upstream_revision = None
 
-        for test_path in self.test_paths:
-            if test_path != "web-platform-tests" and not test_path.startswith(
-                "web-platform-tests" + self.filesystem.sep
-            ):
-                _log.error(
-                    "All test paths must start with 'web-platform-tests%s'; %r does not"
-                    % (self.filesystem.sep, test_path)
-                )
-                return
-
         test_paths = self.test_paths if self.test_paths else [test_repository['name'] for test_repository in self.test_downloader().test_repositories]
 
         test_paths = (
@@ -238,8 +237,17 @@ class TestImporter(object):
             else []
         )
 
+        had_error = False
+
         for test_path in test_paths:
-            self.find_importable_tests(self.filesystem.join(self.source_directory, test_path))
+            try:
+                self.find_importable_tests(self.filesystem.join(self.source_directory, test_path))
+            except TestImporterError as e:
+                _log.error(e.message)
+                had_error = True
+
+        if had_error:
+            return
 
         if self.options.clean_destination_directory:
             for test_path in test_paths:
@@ -393,12 +401,17 @@ class TestImporter(object):
 
     def _source_root_directory_for_path(self, path):
         for test_repository in self.test_downloader().load_test_repositories(self.filesystem):
-            source_directory = self.filesystem.join(self.source_directory, test_repository['name'])
-            if path.startswith(source_directory):
-                return source_directory
+            source_directory = self.filesystem.join(self.source_directory,  test_repository['name'])
+            if not path.startswith(source_directory):
+                raise TestImporterError(f'All import paths must begin with {source_directory!r}, {path!r} does not')
+            return source_directory
 
     def find_importable_tests(self, directory):
         source_root_directory = self._source_root_directory_for_path(directory)
+        if not self.filesystem.exists(directory):
+            raise TestImporterError(f'Path does not exist: {self.filesystem.abspath(directory)!r}')
+        if not self.filesystem.isdir(directory):
+            raise TestImporterError(f'Not a directory: {self.filesystem.abspath(directory)!r}')
         directories = self.filesystem.dirs_under(directory)
         for root in directories:
             _log.info('Scanning ' + root + '...')
@@ -755,7 +768,7 @@ class TestImporter(object):
             w3c_test_path = self.filesystem.relpath(full_path, self.source_directory)
             test_path = self.filesystem.join(self.tests_w3c_relative_path, w3c_test_path)
             options = self._tests_options.get(test_path, [])
-            if not 'slow' in options:
+            if 'slow' not in options:
                 options.append('slow')
                 self._tests_options[test_path] = options
                 should_update = True
