@@ -91,7 +91,10 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationPopulateObjectInOSR, void, (JSGlobalO
 
             if (value.isEmpty()) {
                 ASSERT(!hasDouble(materialization->indexingType()));
-                array->butterfly()->contiguous().atUnsafe(index).clear();
+                if (hasAnyArrayStorage(array->indexingType()))
+                    array->butterfly()->arrayStorage()->m_vector[index].clear();
+                else
+                    array->butterfly()->contiguous().atUnsafe(index).clear();
                 continue;
             }
 
@@ -280,7 +283,13 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, HeapCell*, (J
     }
 
     case PhantomNewArrayWithButterfly: {
-        Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(materialization->indexingType());
+        // Rematerialized butterflies are always non-ArrayStorage. However, isHavingABadTime could
+        // have become true between the FTL compilation and the rematerialization, which would have
+        // switched arrayStructureForIndexingTypeDuringAllocation to SlowPutArrayStorage for all
+        // indexing types. To avoid a layout mismatch, the original Array structure is used to
+        // rematerialize the Array initially. If we're having a bad time, the layout is switched to
+        // SlowPutArrayStorage below.
+        Structure* structure = globalObject->originalArrayStructureForIndexingType(materialization->indexingType());
 
         Butterfly* butterfly = nullptr;
         for (unsigned i = 0; i < materialization->properties().size(); ++i) {
@@ -319,6 +328,14 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, HeapCell*, (J
                 butterfly->contiguousDouble().atUnsafe(index) = static_cast<double>(sentinel);
             else
                 butterfly->contiguous().atUnsafe(index).setStartingValue(jsNumber(sentinel));
+        }
+
+        if (globalObject->isHavingABadTime()) [[unlikely]] {
+#if ASSERT_ENABLED
+            Structure* originalStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(materialization->indexingType());
+            ASSERT(!originalStructure || hasSlowPutArrayStorage(originalStructure->indexingType()));
+#endif
+            result->switchToSlowPutArrayStorage(vm);
         }
 
         return result;
