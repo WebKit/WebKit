@@ -2230,6 +2230,11 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
 
     case StringAt:
+        // String.prototype.at returns a string when in bounds and undefined when OOB. This is
+        // unlike charAt, which always returns a string. Include arrayMode to prevent CSE across
+        // modes.
+        def(PureValue(node, node->arrayMode().asWord()));
+        return;
     case StringCharAt:
         def(PureValue(node));
         return;
