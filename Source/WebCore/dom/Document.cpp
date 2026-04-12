@@ -700,13 +700,7 @@ Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, 
     setEventTargetFlag(EventTargetFlag::IsConnected);
     addToDocumentsMap();
 
-    // We depend on the url getting immediately set in subframes, but we
-    // also depend on the url NOT getting immediately set in opened windows.
-    // See fast/dom/early-frame-url.html
-    // and fast/dom/location-new-window-no-crash.html, respectively.
-    // FIXME: Can/should we unify this behavior?
-    if ((frame && frame->ownerElement()) || !url.isEmpty())
-        setURL(URL { url });
+    setURL(URL { url });
 
     if (!frame)
         setUsesNullCustomElementRegistry();
@@ -4677,7 +4671,7 @@ const URL& Document::urlForBindings()
     if (shouldAdjustURL)
         return m_adjustedURL;
 
-    return m_url.url().isEmpty() ? aboutBlankURL() : m_url.url();
+    return m_url.url();
 }
 
 URL Document::adjustedURL() const

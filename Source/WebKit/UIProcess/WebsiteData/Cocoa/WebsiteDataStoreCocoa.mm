@@ -662,8 +662,8 @@ void WebsiteDataStore::initializeAppBoundDomains(ForceReinitialization forceRein
                 }
 
                 URL url { data };
-                if (url.protocol().isEmpty())
-                    url.setProtocol("https"_s);
+                if (!url.isValid())
+                    url = URL { makeString("https:"_s, String(data)) };
                 if (!url.isValid())
                     continue;
                 WebCore::RegistrableDomain appBoundDomain { url };
@@ -855,8 +855,8 @@ void WebsiteDataStore::initializeManagedDomains(ForceReinitialization forceReini
                     break;
 
                 URL url { data };
-                if (url.protocol().isEmpty())
-                    url.setProtocol("https"_s);
+                if (!url.isValid())
+                    url = URL { makeString("https:"_s, String(data)) };
                 if (!url.isValid())
                     continue;
                 WebCore::RegistrableDomain managedDomain { url };

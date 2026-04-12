@@ -78,11 +78,7 @@ const URL& Location::url() const
         return nullURL.get();
     }
 
-    const URL& url = localWindow->document()->urlForBindings();
-    if (!url.isValid())
-        return aboutBlankURL(); // Use "about:blank" while the page is still loading (before we have a frame).
-
-    return url;
+    return localWindow->document()->urlForBindings();
 }
 
 String Location::href() const

@@ -179,11 +179,8 @@ URL removeHighEntropyComponents(const URL& url)
     if (url.protocolIs("mailto"_s) || url.protocolIs("tel"_s))
         return url;
 
-    if (url.protocolIsData() || url.protocolIsBlob() || url.protocolIsJavaScript()) {
-        URL urlPreservingProtocolOnly;
-        urlPreservingProtocolOnly.setProtocol(url.protocol());
-        return urlPreservingProtocolOnly;
-    }
+    if (url.protocolIsData() || url.protocolIsBlob() || url.protocolIsJavaScript())
+        return URL { makeString(url.protocol(), ':') };
 
     auto newURL = url;
 
