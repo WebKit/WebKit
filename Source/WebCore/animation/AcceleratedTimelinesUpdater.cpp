@@ -32,6 +32,15 @@
 
 namespace WebCore {
 
+void AcceleratedTimelinesUpdater::clear()
+{
+    // Reset all states. This should be called when the page
+    // is being suspended and placed in the back-forward cache.
+    m_scrollTimelinesPendingUpdate.clear();
+    m_timelines.clear();
+    m_timelinesUpdate = { };
+}
+
 void AcceleratedTimelinesUpdater::scrollTimelineDidChange(ScrollTimeline& timeline)
 {
     m_scrollTimelinesPendingUpdate.add(timeline);
@@ -41,8 +50,8 @@ void AcceleratedTimelinesUpdater::processTimelinesSeenDuringEffectStacksUpdate(H
 {
     for (auto& timeline : timelinesInUpdate) {
         auto& timelineIdentifier = timeline->identifier();
-        auto addResult = m_timelines.add(timelineIdentifier, timeline.ptr());
-        if (addResult.isNewEntry)
+        auto setResult = m_timelines.set(timelineIdentifier, timeline.ptr());
+        if (setResult.isNewEntry)
             m_timelinesUpdate.created.add(timeline);
     }
 }

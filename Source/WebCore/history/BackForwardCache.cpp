@@ -473,7 +473,7 @@ std::unique_ptr<CachedPage> BackForwardCache::trySuspendPage(Page& page, ForceSu
     // Fire the pagehide event in all frames.
     firePageHideEventRecursively(mainFrame);
 
-    page.destroyRenderTrees();
+    page.willEnterBackForwardCache();
 
     // Stop all loads again before checking if we can still cache the page after firing the pagehide
     // event, since the page may have started ping loads in its pagehide event handler.

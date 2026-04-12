@@ -606,6 +606,16 @@ void Page::clearPreviousItemFromAllPages(BackForwardItemIdentifier itemID)
     }
 }
 
+void Page::willEnterBackForwardCache()
+{
+    destroyRenderTrees();
+
+#if ENABLE(THREADED_ANIMATIONS)
+    if (m_acceleratedTimelinesUpdater)
+        m_acceleratedTimelinesUpdater->clear();
+#endif
+}
+
 uint64_t Page::renderTreeSize() const
 {
     uint64_t total = 0;

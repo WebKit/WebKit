@@ -395,6 +395,8 @@ public:
     // Utility pages (e.g. SVG image pages) don't have an identifier currently.
     std::optional<PageIdentifier> identifier() const { return m_identifier; }
 
+    void willEnterBackForwardCache();
+
     WEBCORE_EXPORT uint64_t renderTreeSize() const;
     WEBCORE_EXPORT void destroyRenderTrees();
 

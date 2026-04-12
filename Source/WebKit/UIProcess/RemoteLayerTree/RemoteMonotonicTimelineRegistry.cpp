@@ -54,14 +54,11 @@ void RemoteMonotonicTimelineRegistry::update(WebCore::ProcessIdentifier processI
             if (!createdTimelineRepresentation->isMonotonic())
                 continue;
             TimelineID timelineID { createdTimelineRepresentation->identifier(), processIdentifier };
-            // There should not be a pre-existing timeline for this identifier since we're creating it.
-            ASSERT([&] {
-                for (auto& existingTimeline : timelines) {
-                    if (existingTimeline->identifier() == timelineID)
-                        return false;
-                }
-                return true;
-            }());
+            // It is possible we previously created a timeline for this identifier in the case
+            // where the page was resumed from the back-forward cache.
+            timelines.removeIf([timelineID] (auto& existingTimeline) {
+                return existingTimeline->identifier() == timelineID;
+            });
             ASSERT(createdTimelineRepresentation->originTime());
             timelines.add(RemoteMonotonicTimeline::create(timelineID, *createdTimelineRepresentation->originTime(), now));
         }

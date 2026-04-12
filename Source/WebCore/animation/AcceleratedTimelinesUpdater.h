@@ -41,6 +41,7 @@ class AcceleratedTimelinesUpdater {
 public:
     AcceleratedTimelinesUpdater() = default;
 
+    void clear();
     void scrollTimelineDidChange(ScrollTimeline&);
     void processTimelinesSeenDuringEffectStacksUpdate(HashSet<Ref<AcceleratedTimeline>>&&);
     WEBCORE_EXPORT AcceleratedTimelinesUpdate takeTimelinesUpdate();
