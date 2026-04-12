@@ -1,0 +1,10 @@
+Test importing a PKCS8 ECDSA key where index equals keyData.size()
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS crypto.subtle.importKey("pkcs8", emptyKeyDataPkcs8, {name: "ECDSA", namedCurve: "P-256"}, extractable, ["sign"]) rejected promise.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

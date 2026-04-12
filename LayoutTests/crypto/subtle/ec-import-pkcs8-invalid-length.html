@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing a PKCS8 ECDSA key with invalid length byte causing buffer overread");
+
+// This test verifies that importing a malformed PKCS8 key where the final
+// length byte has a large value (0xFF) is rejected gracefully.
+// Without proper bounds checking, subvector(index) would access memory
+// far beyond the buffer.
+//
+// Key structure (71 bytes):
+// - Offset 0: 0x30 (SequenceMark - outer)
+// - Offset 1: 0x00 (length byte)
+// - Offset 2-4: 02 01 00 (Version)
+// - Offset 5: 0x30 (SequenceMark - AlgorithmIdentifier)
+// - Offset 6: 0x00 (length byte)
+// - Offset 7-15: IdEcPublicKey OID (06 07 2a 86 48 ce 3d 02 01)
+// - Offset 16-25: Secp256r1 OID (06 08 2a 86 48 ce 3d 03 01 07)
+// - Offset 26: 0x04 (OCTET STRING)
+// - Offset 27: 0x00 (length byte)
+// - Offset 28: 0x30 (SEQUENCE - ECPrivateKey)
+// - Offset 29: 0x00 (length byte)
+// - Offset 30-32: 02 01 01 (PrivateKeyVersion)
+// - Offset 33: 0x04 (OCTET STRING)
+// - Offset 34: 0x00 (length byte)
+// - Offset 35-66: 32 zero bytes (private key data)
+// - Offset 67: 0xa1 (TaggedType1)
+// - Offset 68: 0x00 (length byte)
+// - Offset 69: 0x03 (BIT STRING)
+// - Offset 70: 0xFF (length byte, bytesUsedToEncodedLength returns 128)
+//
+// At offset 70: bytesUsedToEncodedLength(0xFF) = 128
+// index = 70 + 128 + 1 = 199
+// keyData.subvector(199) on 71-byte buffer -> OOB access without bounds check
+
+var extractable = true;
+
+// 71 bytes: valid PKCS8 EC structure with IdEcPublicKey + Secp256r1 OIDs, then 0xFF length byte
+var invalidLengthPkcs8Key = hexStringToUint8Array("3000020100300006072a8648ce3d020106082a8648ce3d0301070400300002010104000000000000000000000000000000000000000000000000000000000000000000a10003ff");
+
+// Should reject with DataError, not crash or read beyond buffer
+shouldReject('crypto.subtle.importKey("pkcs8", invalidLengthPkcs8Key, {name: "ECDSA", namedCurve: "P-256"}, extractable, ["sign"])');
+
+</script>
+
+</body>
+</html>

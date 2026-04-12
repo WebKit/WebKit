@@ -3,7 +3,7 @@ Test importing a SPKI RSA-OAEP key with invalid length byte causing buffer overr
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS crypto.subtle.importKey("spki", invalidLengthSpkiKey, {name: "RSA-OAEP", hash: "sha-256"}, extractable, ["encrypt"]) rejected promise  with DataError: Data provided to an operation does not meet requirements.
+PASS crypto.subtle.importKey("spki", invalidLengthSpkiKey, {name: "RSA-OAEP", hash: "sha-256"}, extractable, ["encrypt"]) rejected promise.
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing a truncated SPKI ECDSA key that triggers bounds check failure");
+
+// This test verifies that importing a malformed SPKI key with a truncated
+// ASN.1 structure is rejected gracefully rather than crashing.
+//
+// The malformed key is crafted so that:
+// 1. All intermediate size checks pass
+// 2. But the final computed index exceeds the buffer size
+// 3. Without the fix, keyData.size() - index underflows
+//
+// Key structure (25 bytes):
+// - Offset 0-22: Valid SPKI header with IdEcPublicKey + Secp256r1 OIDs
+// - Offset 23: 0x03 (BIT STRING mark)
+// - Offset 24: 0x82 (length byte, bytesUsedToEncodedLength returns 3)
+//
+// index computation:
+// After parsing header: index = 24
+// bytesUsedToEncodedLength(0x82) = 3
+// index = 24 + 3 + 1 = 28
+// keyData.size() - index = 25 - 28 -> unsigned underflow (before fix)
+
+var extractable = true;
+
+// 25 bytes: valid SPKI header with 0x82 length byte causing index overflow
+var truncatedSpkiKey = hexStringToUint8Array("3000300006072a8648ce3d020106082a8648ce3d0301070382");
+
+// Should reject with DataError, not crash
+shouldReject('crypto.subtle.importKey("spki", truncatedSpkiKey, {name: "ECDSA", namedCurve: "P-256"}, extractable, ["verify"])');
+
+</script>
+
+</body>
+</html>
