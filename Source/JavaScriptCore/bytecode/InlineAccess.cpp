@@ -158,19 +158,12 @@ ALWAYS_INLINE static bool linkCodeInline(const char* name, CCallHelpers& jit, Re
         FINALIZE_CODE(linkBuffer, NoPtrTag, ASCIILiteral::fromLiteralUnsafe(name), "InlineAccessType: '%s'", name);
         return true;
     }
-
-    // This is helpful when determining the size for inline ICs on various
-    // platforms. You want to choose a size that usually succeeds, but sometimes
-    // there may be variability in the length of the code we generate just because
-    // of randomness. It's helpful to flip this on when running tests or browsing
-    // the web just to see how often it fails. You don't want an IC size that always fails.
     constexpr bool failIfCantInline = false;
     if (failIfCantInline) {
         dataLog("Failure for: ", name, "\n");
         dataLog("real size: ", jit.m_assembler.buffer().codeSize(), " inline size:", propertyCache.inlineCodeSize(), "\n");
         CRASH();
     }
-
     return false;
 }
 

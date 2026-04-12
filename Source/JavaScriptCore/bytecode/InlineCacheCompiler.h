@@ -307,7 +307,6 @@ private:
 #endif
     CCallHelpers* m_jit { nullptr };
     ScratchRegisterAllocator* m_allocator { nullptr };
-    MacroAssembler::JumpList m_success;
     MacroAssembler::JumpList m_failAndRepatch;
     MacroAssembler::JumpList m_failAndIgnore;
     ScratchRegisterAllocator::PreservedState m_preservedReusedRegisterState;

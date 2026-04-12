@@ -1659,11 +1659,6 @@ private:
             if (m_graph.m_plan.isUnlinked())
                 break;
 
-            if (m_graph.m_plan.isFTL()) {
-                if (Options::useHandlerICInFTL())
-                    break;
-            }
-
 #if ENABLE(WEBASSEMBLY)
             // FIXME: Support wasm IC.
             // DirectCall to wasm function has suboptimal implementation. We avoid using DirectCall if we know that function is a wasm function.

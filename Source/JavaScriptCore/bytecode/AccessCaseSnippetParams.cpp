@@ -53,8 +53,7 @@ public:
         // We spill (1) the used registers by IC and (2) the used registers by Snippet.
         InlineCacheCompiler::SpillState spillState = compiler.preserveLiveRegistersToStackForCall(usedRegistersBySnippet);
 
-        if (compiler.useHandlerIC())
-            InlineCacheCompiler::emitDataICPrepareForCall(jit);
+        InlineCacheCompiler::emitDataICPrepareForCall(jit);
         jit.makeSpaceOnStackForCCall();
 
         jit.setupArguments<FunctionType>(std::get<ArgumentsIndex>(m_arguments)...);
@@ -62,8 +61,7 @@ public:
         jit.callOperation<OperationPtrTag>(m_function);
         jit.setupResults(m_result);
         jit.reclaimSpaceOnStackForCCall();
-        if (compiler.useHandlerIC())
-            InlineCacheCompiler::emitDataICRestoreAfterCall(jit);
+        InlineCacheCompiler::emitDataICRestoreAfterCall(jit);
 
         CCallHelpers::Jump noException = jit.emitExceptionCheck(compiler.vm(), CCallHelpers::InvertedExceptionCheck);
 

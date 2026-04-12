@@ -172,8 +172,6 @@ State::~State() = default;
 PropertyInlineCache* State::addPropertyInlineCache()
 {
     ASSERT(!graph.m_plan.isUnlinked());
-    if (Options::useHandlerICInFTL())
-        return jitCode->common.m_handlerPropertyInlineCaches.add();
     return jitCode->common.m_repatchingPropertyInlineCaches.add();
 }
 

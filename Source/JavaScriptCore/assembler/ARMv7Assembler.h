@@ -2845,6 +2845,11 @@ public:
         return 10;
     }
 
+    static constexpr ptrdiff_t patchableCallSize()
+    {
+        return 10;
+    }
+
     unsigned debugOffset() { return m_formatter.debugOffset(); }
 
 #if OS(LINUX)

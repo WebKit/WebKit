@@ -7414,6 +7414,12 @@ public:
         Assembler::replaceWithJump(instructionStart.dataLocation(), destination.dataLocation());
     }
 
+    template<PtrTag startTag, PtrTag destTag>
+    static void replaceWithCall(CodeLocationLabel<startTag> instructionStart, CodeLocationLabel<destTag> destination)
+    {
+        Assembler::replaceWithCall(instructionStart.dataLocation(), destination.dataLocation());
+    }
+
     template<PtrTag startTag>
     static void replaceWithNops(CodeLocationLabel<startTag> instructionStart, size_t memoryToFillWithNopsInBytes)
     {
@@ -7428,6 +7434,11 @@ public:
     static ptrdiff_t patchableJumpSize()
     {
         return Assembler::patchableJumpSize();
+    }
+
+    static ptrdiff_t patchableCallSize()
+    {
+        return Assembler::patchableCallSize();
     }
 
     RegisterID scratchRegisterForBlinding()

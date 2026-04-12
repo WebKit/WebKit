@@ -630,7 +630,6 @@ bool hasCapacityToUseLargeGigacage();
     v(Unsigned, maxNumericHotLoopSize, 225, Normal, nullptr) \
     v(Bool, printEachUnrolledLoop, false, Normal, nullptr) \
     v(Bool, verboseExecutablePoolAllocation, false, Normal, nullptr) \
-    v(Bool, useHandlerICInFTL, false, Normal, nullptr) \
     v(Bool, useLLIntICs, true, Normal, "Use property and call ICs in LLInt code."_s) \
     v(Bool, useBaselineJITCodeSharing, is64Bit(), Normal, nullptr) \
     v(Bool, libpasScavengeContinuously, false, Normal, nullptr) \

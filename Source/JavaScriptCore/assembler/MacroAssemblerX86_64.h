@@ -4555,6 +4555,12 @@ public:
         X86Assembler::replaceWithJump(instructionStart.taggedPtr(), destination.taggedPtr());
     }
 
+    template<PtrTag startTag, PtrTag destTag>
+    static void replaceWithCall(CodeLocationLabel<startTag> instructionStart, CodeLocationLabel<destTag> destination)
+    {
+        X86Assembler::replaceWithCall(instructionStart.taggedPtr(), destination.taggedPtr());
+    }
+
     template<PtrTag startTag>
     static void replaceWithNops(CodeLocationLabel<startTag> instructionStart, size_t memoryToFillWithNopsInBytes)
     {
@@ -4569,6 +4575,11 @@ public:
     static ptrdiff_t patchableJumpSize()
     {
         return X86Assembler::patchableJumpSize();
+    }
+
+    static ptrdiff_t patchableCallSize()
+    {
+        return X86Assembler::patchableCallSize();
     }
 
     static bool supportsSSE4_1()
