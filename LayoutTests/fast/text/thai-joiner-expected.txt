@@ -1,5 +1,4 @@
-PASS 54 is >= document.getElementById('target').offsetWidth
-PASS successfullyParsed is true
+CONSOLE MESSAGE: Unhandled Promise Rejection: NetworkError:  A network error occurred.
+FAIL: Timed out waiting for notifyDone to be called
 
-TEST COMPLETE
 ส‍โ

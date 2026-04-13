@@ -683,7 +683,6 @@ style/values/transforms/StyleTranslate.cpp
 style/values/transforms/StyleTranslate.h
 style/values/will-change/StyleWillChange.h
 svg/SVGAElement.cpp
-svg/SVGAltGlyphElement.cpp
 svg/SVGComponentTransferFunctionElement.cpp
 svg/SVGElement.cpp
 svg/SVGElement.h
@@ -693,7 +692,6 @@ svg/SVGFEConvolveMatrixElement.cpp
 svg/SVGFEImageElement.cpp
 svg/SVGFontFaceElement.cpp
 svg/SVGFontFaceUriElement.cpp
-svg/SVGGlyphRefElement.cpp
 svg/SVGGradientElement.cpp
 svg/SVGGraphicsElement.cpp
 svg/SVGImageElement.cpp
@@ -713,7 +711,6 @@ svg/SVGStyleElement.cpp
 svg/SVGTRefElement.cpp
 svg/SVGTextPathElement.cpp
 svg/SVGTextPositioningElement.cpp
-svg/SVGToOTFFontConversion.cpp
 svg/SVGURIReference.cpp
 svg/SVGUseElement.cpp
 svg/SVGViewSpec.h
