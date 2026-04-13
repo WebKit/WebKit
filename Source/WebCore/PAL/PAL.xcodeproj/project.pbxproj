@@ -1712,7 +1712,6 @@
 				0705994D2EE64D4200BF2459 /* Generate TAPI filelist */,
 				1C09D0391E31C32800725F18 /* Sources */,
 				1C09D03A1E31C32800725F18 /* Frameworks */,
-				070599512EE64DA400BF2459 /* Verify Module */,
 			);
 			buildRules = (
 				DDE748742F7B28AF008013AB /* PBXBuildRule */,
@@ -1827,27 +1826,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ ${DEPLOYMENT_LOCATION} != YES ]; then\n    \"${SCRIPT_INPUT_FILE_0}\" --from=\"${WK_HEADERS_VFS_FILE}\" --install-dir=\"${BUILT_PRODUCTS_DIR}${PRIVATE_HEADERS_FOLDER_PATH}\" --relative-to=\"${SRCROOT}/pal\" > \"${SCRIPT_OUTPUT_FILE_0}\"\nelse\n    \"${WTF_BUILD_SCRIPTS_DIR}/generate-tapi-filelist.py\" --from=\"${DSTROOT}${PRIVATE_HEADERS_FOLDER_PATH}\" --install-dir=\"<SDKROOT>${PRIVATE_HEADERS_FOLDER_PATH}\" --relative-to=\"${DSTROOT}${PRIVATE_HEADERS_FOLDER_PATH}\" > \"${SCRIPT_OUTPUT_FILE_1}\"\nfi\n";
-		};
-		070599512EE64DA400BF2459 /* Verify Module */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/../../WTF/Scripts/modules-verifier/library-modules-verifier.py",
-				"$(BUILT_PRODUCTS_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/PAL.json",
-				"$(DSTROOT)/$(PRIVATE_HEADERS_FOLDER_PATH)/PAL.json",
-			);
-			name = "Verify Module";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ ${DEPLOYMENT_LOCATION} != YES ]; then\n    \"${SCRIPT_INPUT_FILE_0}\" --relative-to=\"${BUILT_PRODUCTS_DIR}${PAL_INSTALL_PATH_PREFIX}${WK_LIBRARY_HEADERS_FOLDER_PATH}\" \"${SCRIPT_INPUT_FILE_1}\"\nelse\n    \"${WTF_BUILD_SCRIPTS_DIR}/modules-verifier/library-modules-verifier.py\" --relative-to=\"<SDKROOT>${WK_LIBRARY_HEADERS_FOLDER_PATH}\"  \"${SCRIPT_INPUT_FILE_2}\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

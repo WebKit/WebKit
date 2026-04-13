@@ -2447,7 +2447,6 @@
 				DDA35E4829CA6FEB006C1018 /* Generate TAPI filelist */,
 				14F271BA18EA3963008C152F /* Sources */,
 				14F271BB18EA3963008C152F /* Frameworks */,
-				0705994C2EE64A5600BF2459 /* Verify Module */,
 			);
 			buildRules = (
 				DDE748702F7B2876008013AB /* PBXBuildRule */,
@@ -2495,27 +2494,6 @@
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		0705994C2EE64A5600BF2459 /* Verify Module */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/../WTF/Scripts/modules-verifier/library-modules-verifier.py",
-				"$(BUILT_PRODUCTS_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/bmalloc.json",
-				"$(DSTROOT)/$(PRIVATE_HEADERS_FOLDER_PATH)/bmalloc.json",
-			);
-			name = "Verify Module";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ ${DEPLOYMENT_LOCATION} != YES ]; then\n    \"${SCRIPT_INPUT_FILE_0}\" --relative-to=\"${BUILT_PRODUCTS_DIR}${BMALLOC_INSTALL_PATH_PREFIX}${WK_LIBRARY_HEADERS_FOLDER_PATH}\" \"${SCRIPT_INPUT_FILE_1}\"\nelse\n    \"${SCRIPT_INPUT_FILE_0}\" --relative-to=\"<SDKROOT>${WK_LIBRARY_HEADERS_FOLDER_PATH}\"  \"${SCRIPT_INPUT_FILE_2}\"\nfi\n";
-		};
 		DDA35E4829CA6FEB006C1018 /* Generate TAPI filelist */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;

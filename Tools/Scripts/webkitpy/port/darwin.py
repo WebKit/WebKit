@@ -42,7 +42,12 @@ class DarwinPort(ApplePort):
     CURRENT_VERSION = Version(26)
     SDK = None
 
-    API_TEST_BINARY_NAMES = ['TestWTF', 'TestWebKitAPI', 'TestIPC', 'TestWGSL']
+    API_TEST_BINARY_NAMES = ['TestWTF', 'TestWebKitAPI', 'TestIPC', 'TestWGSL', 'TestModules']
+
+    def path_to_api_test(self, program_name):
+        if program_name == 'TestModules':
+            return os.path.join(os.path.dirname(__file__), '..', '..', '..', 'TestWebKitAPI', 'TestModules')
+        return super().path_to_api_test(program_name)
 
     def __init__(self, host, port_name, **kwargs):
         super(DarwinPort, self).__init__(host, port_name, **kwargs)
@@ -302,6 +307,18 @@ class DarwinPort(ApplePort):
     def environment_for_api_tests(self):
         environment = super(DarwinPort, self).environment_for_api_tests()
         build_root_path = str(self._build_path())
+        environment['BUILT_PRODUCTS_DIR'] = build_root_path
+        if self.SDK:
+            environment['SDK_NAME'] = self.SDK
+            sdk_version = self.host.platform.xcode_sdk_version(self.SDK)
+            if sdk_version:
+                environment['SDK_VERSION'] = str(sdk_version)
+            sdk_path = self.host.platform.xcode_sdk_path(self.SDK)
+            if sdk_path:
+                environment['SDKROOT'] = sdk_path
+            internal_sdk_path = self.host.platform.xcode_sdk_path(self.SDK + '.internal')
+            if internal_sdk_path:
+                environment['INTERNAL_SDKROOT'] = internal_sdk_path
         for name in ['DYLD_LIBRARY_PATH', '__XPC_DYLD_LIBRARY_PATH', 'DYLD_FRAMEWORK_PATH', '__XPC_DYLD_FRAMEWORK_PATH']:
             self._append_value_colon_separated(environment, name, build_root_path)
         return environment

@@ -11,11 +11,6 @@
 		07B588172F74609A00E8AF32 /* module.modulemap in Headers */ = {isa = PBXBuildFile; fileRef = 07B588162F74607A00E8AF32 /* module.modulemap */; settings = {ATTRIBUTES = (Private, ); }; };
 		07C913F32F820E86003A09D8 /* OptionCountedSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 07C913F22F820E86003A09D8 /* OptionCountedSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07F5EA6F2EE8A7630085B185 /* generate-tapi-filelist.py in Headers */ = {isa = PBXBuildFile; fileRef = DD28DF2329D368BD00BBB459 /* generate-tapi-filelist.py */; settings = {ATTRIBUTES = (Private, ); }; };
-		07F5EA702EE8A7660085B185 /* GenerateModuleVerifierInputsTask.py in Headers */ = {isa = PBXBuildFile; fileRef = 076382182EE550F300DB47BC /* GenerateModuleVerifierInputsTask.py */; settings = {ATTRIBUTES = (Private, ); }; };
-		07F5EA712EE8A76A0085B185 /* library-modules-verifier.py in Headers */ = {isa = PBXBuildFile; fileRef = 077FEABB2EE007FF0071F92D /* library-modules-verifier.py */; settings = {ATTRIBUTES = (Private, ); }; };
-		07F5EA722EE8A76D0085B185 /* ModuleVerifierLanguage.py in Headers */ = {isa = PBXBuildFile; fileRef = 076382192EE5512300DB47BC /* ModuleVerifierLanguage.py */; settings = {ATTRIBUTES = (Private, ); }; };
-		07F5EA732EE8A76F0085B185 /* ModuleVerifierTypes.py in Headers */ = {isa = PBXBuildFile; fileRef = 0763821A2EE5514000DB47BC /* ModuleVerifierTypes.py */; settings = {ATTRIBUTES = (Private, ); }; };
-		07F5EA742EE8A7710085B185 /* VerifyModuleTask.py in Headers */ = {isa = PBXBuildFile; fileRef = 0763821B2EE5515E00DB47BC /* VerifyModuleTask.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0C03D029981BEB0064230A /* EmbeddedFixedVector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F0C03CF29981BEB0064230A /* EmbeddedFixedVector.cpp */; };
 		0F0C03D8299820EB0064230A /* WeakPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F0C03D7299820EB0064230A /* WeakPtr.cpp */; };
 		0F0C03E7299828E60064230A /* BloomFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F0C03E6299828E50064230A /* BloomFilter.cpp */; };
@@ -1129,13 +1124,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		076382182EE550F300DB47BC /* GenerateModuleVerifierInputsTask.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = GenerateModuleVerifierInputsTask.py; sourceTree = "<group>"; };
-		076382192EE5512300DB47BC /* ModuleVerifierLanguage.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = ModuleVerifierLanguage.py; sourceTree = "<group>"; };
-		0763821A2EE5514000DB47BC /* ModuleVerifierTypes.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = ModuleVerifierTypes.py; sourceTree = "<group>"; };
-		0763821B2EE5515E00DB47BC /* VerifyModuleTask.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = VerifyModuleTask.py; sourceTree = "<group>"; };
 		077CD86A1FD9CFD200828587 /* Logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logger.h; sourceTree = "<group>"; };
 		077CD86B1FD9CFD300828587 /* LoggerHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerHelper.h; sourceTree = "<group>"; };
-		077FEABB2EE007FF0071F92D /* library-modules-verifier.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = "library-modules-verifier.py"; sourceTree = "<group>"; };
 		07AC4F0D2EF5A62500468BCB /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		07B588162F74607A00E8AF32 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		07C913F22F820E86003A09D8 /* OptionCountedSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OptionCountedSet.h; sourceTree = "<group>"; };
@@ -2155,18 +2145,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0705994B2EE6497300BF2459 /* modules-verifier */ = {
-			isa = PBXGroup;
-			children = (
-				076382182EE550F300DB47BC /* GenerateModuleVerifierInputsTask.py */,
-				077FEABB2EE007FF0071F92D /* library-modules-verifier.py */,
-				076382192EE5512300DB47BC /* ModuleVerifierLanguage.py */,
-				0763821A2EE5514000DB47BC /* ModuleVerifierTypes.py */,
-				0763821B2EE5515E00DB47BC /* VerifyModuleTask.py */,
-			);
-			path = "modules-verifier";
-			sourceTree = "<group>";
-		};
 		1C181C881D307AB800F5FA16 /* icu */ = {
 			isa = PBXGroup;
 			children = (
@@ -3041,7 +3019,6 @@
 			isa = PBXGroup;
 			children = (
 				DD9C67FB2D70243000D4BEC7 /* generate-platform-args */,
-				0705994B2EE6497300BF2459 /* modules-verifier */,
 				DD3DCA0027A4E176007E5B61 /* Preferences */,
 				DD725EC92D8A442900E72544 /* audit-spi-if-needed.sh */,
 				DDBF3D852EE23C2400F32872 /* check-ccache-compilation-caching.sh */,
@@ -3647,7 +3624,6 @@
 				DD5697C72DC0511900050321 /* generate-platform-args in Headers */,
 				07F5EA6F2EE8A7630085B185 /* generate-tapi-filelist.py in Headers */,
 				DDE7455F2F731DBA008013AB /* generate-unified-source-bundles.py in Headers */,
-				07F5EA702EE8A7660085B185 /* GenerateModuleVerifierInputsTask.py in Headers */,
 				DDF3080327C08A77006A526F /* GeneratePreferences.rb in Headers */,
 				A400B8FB2F3AB62E009E21AF /* GenerationalSet.h in Headers */,
 				DDCAF31D27B1E7C500C45308 /* GenericHashKey.h in Headers */,
@@ -3702,7 +3678,6 @@
 				E32AB5012B5CE35D00B9FAAE /* LazyRef.h in Headers */,
 				E32AB5022B5CE35D00B9FAAE /* LazyUniqueRef.h in Headers */,
 				DD3DC88927A4BF8E007E5B61 /* LEBDecoder.h in Headers */,
-				07F5EA712EE8A76A0085B185 /* library-modules-verifier.py in Headers */,
 				6311592628989A55006A9A12 /* LibraryPathDiagnostics.h in Headers */,
 				DD3DC8B427A4BF8E007E5B61 /* LikelyDenseUnsignedIntegerSet.h in Headers */,
 				DDF307D527C086DF006A526F /* LineEnding.h in Headers */,
@@ -3751,8 +3726,6 @@
 				DDF306DB27C08654006A526F /* MetadataSPI.h in Headers */,
 				46F071BB2CDEA45300074E61 /* MmapSpan.h in Headers */,
 				07AC4F0E2EF5A68600468BCB /* module.modulemap in Headers */,
-				07F5EA722EE8A76D0085B185 /* ModuleVerifierLanguage.py in Headers */,
-				07F5EA732EE8A76F0085B185 /* ModuleVerifierTypes.py in Headers */,
 				DD3DC96827A4BF8E007E5B61 /* MonotonicTime.h in Headers */,
 				DD3DC96227A4BF8E007E5B61 /* NakedPtr.h in Headers */,
 				5164042D2AB1D46B0042B1C3 /* NativePromise.h in Headers */,
@@ -4028,7 +4001,6 @@
 				4448265228D18CA600D916E8 /* VectorCF.h in Headers */,
 				DDF3079727C086CD006A526F /* VectorCocoa.h in Headers */,
 				DD3DC95327A4BF8E007E5B61 /* VectorTraits.h in Headers */,
-				07F5EA742EE8A7710085B185 /* VerifyModuleTask.py in Headers */,
 				DD3DC95127A4BF8E007E5B61 /* VMTags.h in Headers */,
 				DD3DC8EE27A4BF8E007E5B61 /* WallTime.h in Headers */,
 				E36DC1762DF0F9C20091549D /* WasmSIMD128.h in Headers */,
@@ -4283,7 +4255,6 @@
 				DDA35E4929CA74D4006C1018 /* Generate TAPI filelist */,
 				5D247B5E14689B8600E78B76 /* Sources */,
 				5D247B5F14689B8600E78B76 /* Frameworks */,
-				077FEABC2EE0084F0071F92D /* Verify Module */,
 			);
 			buildRules = (
 				147572882CCD82170027BA8F /* PBXBuildRule */,
@@ -4352,27 +4323,6 @@
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		077FEABC2EE0084F0071F92D /* Verify Module */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Scripts/modules-verifier/library-modules-verifier.py",
-				"$(BUILT_PRODUCTS_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/WTF.json",
-				"$(DSTROOT)/$(PRIVATE_HEADERS_FOLDER_PATH)/WTF.json",
-			);
-			name = "Verify Module";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ ${DEPLOYMENT_LOCATION} != YES ]; then\n    \"${SCRIPT_INPUT_FILE_0}\" --relative-to=\"${BUILT_PRODUCTS_DIR}${WTF_INSTALL_PATH_PREFIX}${WK_LIBRARY_HEADERS_FOLDER_PATH}\" \"${SCRIPT_INPUT_FILE_1}\"\nelse\n    \"${SCRIPT_INPUT_FILE_0}\" --relative-to=\"<SDKROOT>${WK_LIBRARY_HEADERS_FOLDER_PATH}\"  \"${SCRIPT_INPUT_FILE_2}\"\nfi\n";
-		};
 		520CF9492BDA9B4800C27FD2 /* Generate clangd configuration file */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;

@@ -1,0 +1,306 @@
+#!/usr/bin/env python3
+
+# Copyright (C) 2026 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+"""
+Module verification tests for WebKit libraries and frameworks.
+
+Implements the gtest --list-tests / --filter protocol so run-api-tests
+can discover and run these tests like any other API test binary.
+"""
+
+import argparse
+import os
+import platform
+import subprocess
+import sys
+import tempfile
+
+
+# -- SDK helpers ---------------------------------------------------------------
+
+def sdkName():
+    return os.environ.get("SDK_NAME", "macosx")
+
+
+def sdkVersionString():
+    return os.environ.get("SDK_VERSION")
+
+
+def sdkVersion():
+    versionString = sdkVersionString()
+    if versionString is None:
+        return None
+    parts = versionString.split(".")
+    return (int(parts[0]), int(parts[1]) if len(parts) > 1 else 0)
+
+
+def sdkRoot():
+    return os.environ.get("SDKROOT")
+
+
+def internalSDKRoot():
+    return os.environ.get("INTERNAL_SDKROOT")
+
+
+SDK_TO_TRIPLE_OS = {
+    "macosx": "macosx",
+    "iphoneos": "ios", "iphonesimulator": "ios",
+    "appletvos": "tvos", "appletvsimulator": "tvos",
+    "watchos": "watchos", "watchsimulator": "watchos",
+    "xros": "xros", "xrsimulator": "xros",
+}
+
+
+def tripleOSVersion():
+    os_name = SDK_TO_TRIPLE_OS.get(sdkName(), sdkName())
+    return f"{os_name}{sdkVersionString()}"
+
+
+def hostTarget():
+    if not hasattr(hostTarget, "cached"):
+        hostTarget.cached = f"{platform.machine()}-apple-{tripleOSVersion()}"
+    return hostTarget.cached
+
+
+# -- SDK gating ---------------------------------------------------------------
+#
+# Module verification is disabled on SDKs where the module is known to be
+# ill-formed.
+
+disabledSDK = {
+    "WTF":            lambda m, n, cxx: m == 15 or (m == 26 and n <= 3),
+    "bmalloc":        lambda m, n, cxx: m == 15 or (m == 26 and n <= 3),
+    "PAL":            lambda m, n, cxx: m == 15 or m == 26,
+    "JavaScriptCore": lambda m, n, cxx: cxx and (m == 15 or (m == 26 and n <= 3)),  # FIXME: (rdar://74275135)
+    "WebKit":         lambda m, n, cxx: cxx and (m == 15 or m == 26),  # FIXME: (rdar://74275135)
+    "WebCore":        lambda m, n, cxx: True,  # FIXME: (rdar://168185509) Re-enable on macOS.
+    "WebGPU":         lambda m, n, cxx: m == 14 or m == 15 or (m == 26 and n <= 1),
+}
+
+
+def isDisabled(product, language):
+    version = sdkVersion()
+    if version is None:
+        return True
+    pred = disabledSDK.get(product)
+    return pred and pred(*version, "c++" in language)
+
+
+# -- Test registry -------------------------------------------------------------
+
+# The rules are:
+#     * Public frameworks/libraries must support GNU23 and GNU++23
+#     * Private frameworks/libraries must support GNU++23
+#     * Frameworks/libraries should also support language standards used by known clients
+
+# (product, header_subdir_or_None_for_frameworks, [(language, standard), ...])
+allTests = [
+    ("WTF", "wtf", [("c++", "c++2b"), ("objective-c++", "c++2b")]),
+    ("bmalloc", "bmalloc", [
+        ("c", "gnu99"), ("c", "gnu23"), ("c", "c23"),
+        ("objective-c", "gnu99"), ("objective-c", "gnu23"), ("objective-c", "c23"),
+        ("c++", "c++2b"), ("objective-c++", "c++2b"),
+    ]),
+    ("PAL", "pal", [("objective-c++", "c++23")]),
+    ("JavaScriptCore", None, [("objective-c", "gnu17"), ("objective-c++", "c++23")]),
+    ("WebKit", None, [("objective-c", "gnu17"), ("objective-c++", "c++23")]),
+    ("WebCore", None, [("objective-c++", "c++23")]),
+    ("WebGPU", None, [("objective-c", "gnu23"), ("objective-c++", "gnu++23")]),
+]
+
+
+def testName(language, standard):
+    langNames = {"c": "C", "c++": "CXX", "objective-c": "ObjC", "objective-c++": "ObjCXX"}
+    std = standard.replace("c++", "Cpp").replace("++", "CXX")
+    return f"{langNames[language]}_{std[0].upper()}{std[1:]}"
+
+
+def iterateTests():
+    for product, subdir, variants in allTests:
+        suite = f"{product}Modules"
+        for language, standard in variants:
+            yield suite, testName(language, standard), product, subdir, language, standard
+
+
+# -- Library verification (delegates to existing script) -----------------------
+
+def verifyLibrary(productName, headerSubdir, language, standard):
+    buildDir = os.environ["BUILT_PRODUCTS_DIR"]
+    headersDir = os.path.join(buildDir, "usr", "local", "include")
+    jsonPath = os.path.join(headersDir, headerSubdir, f"{productName}.json")
+
+    if not os.path.exists(jsonPath):
+        print(f"SKIPPED: {jsonPath} not found; library not built", file=sys.stderr)
+        return True
+
+    scriptDir = os.path.join(os.path.dirname(__file__), "Scripts", "modules-verifier")
+    script = os.path.join(scriptDir, "library-modules-verifier.py")
+
+    env = dict(os.environ)
+    env["ENABLE_WK_LIBRARY_MODULE_VERIFIER"] = "YES"
+    env["MODULE_VERIFIER_SUPPORTED_LANGUAGES"] = language
+    env["MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS"] = standard
+    env["ARCHS"] = platform.machine()
+    env["LLVM_TARGET_TRIPLE_VENDOR"] = "apple"
+    env["LLVM_TARGET_TRIPLE_OS_VERSION"] = tripleOSVersion()
+    env["LLVM_TARGET_TRIPLE_SUFFIX"] = ""
+    env["PRODUCT_NAME"] = productName
+    env["TARGET_TEMP_DIR"] = tempfile.mkdtemp(prefix="TestModules-")
+    env["SDKROOT"] = internalSDKRoot() or sdkRoot()
+    env["OTHER_CFLAGS"] = ""
+    env["OTHER_CPLUSPLUSFLAGS"] = ""
+    env["FRAMEWORK_SEARCH_PATHS"] = ""
+    env["OTHER_MODULE_VERIFIER_FLAGS"] = (
+        f"-- -isystem {headersDir}"
+        f" -iframework {env['SDKROOT']}/System/Library/PrivateFrameworks"
+        f" -Wsystem-headers-in-module={productName.lower()}"
+    )
+    env["PYTHONPATH"] = scriptDir + ((":" + env["PYTHONPATH"]) if env.get("PYTHONPATH") else "")
+
+    result = subprocess.run(
+        [sys.executable, script, "--relative-to", headersDir, jsonPath],
+        env=env,
+    )
+    return result.returncode == 0
+
+
+# -- Framework verification ---------------------------------------------------
+
+def verifyFramework(productName, language, standard):
+    buildDir = os.environ["BUILT_PRODUCTS_DIR"]
+    frameworkPath = os.path.join(buildDir, f"{productName}.framework")
+
+    if not os.path.exists(frameworkPath):
+        print(f"SKIPPED: {frameworkPath} not found; framework not built", file=sys.stderr)
+        return True
+
+    with tempfile.TemporaryDirectory(prefix="TestModules-") as tmpDir:
+        include = "#import" if "objective" in language else "#include"
+        ext = {"c": "c", "c++": "cpp", "objective-c": "m", "objective-c++": "mm"}[language]
+        sourceFile = os.path.join(tmpDir, f"Test.{ext}")
+        with open(sourceFile, "w") as f:
+            f.write(f"{include} <{productName}/{productName}.h>\n")
+            privateModulemap = os.path.join(frameworkPath, "Modules", "module.private.modulemap")
+            # FIXME: (rdar://74275135) Also verify private modules in non-C++ modes.
+            if "c++" in language and os.path.exists(privateModulemap):
+                f.write(f"@import {productName}_Private;\n")
+
+        sdk = internalSDKRoot() or sdkRoot()
+        command = [
+            "xcrun", "clang",
+            "-x", language, f"-std={standard}",
+            "-target", hostTarget(),
+            "-isysroot", sdk,
+            f"-F{buildDir}",
+            f"-I{buildDir}/usr/local/include",
+            f"-iframework{sdk}/System/Library/PrivateFrameworks",
+            "-fmodules", "-fsyntax-only",
+            "-fdiagnostics-show-note-include-stack",
+            f"-Wsystem-headers-in-module={productName}",
+            "-Werror=non-modular-include-in-module",
+            "-Werror=non-modular-include-in-framework-module",
+            "-Werror=incomplete-umbrella",
+            "-Werror=quoted-include-in-framework-header",
+            "-Werror=atimport-in-framework-header",
+            "-Werror=framework-include-private-from-public",
+            "-Werror=incomplete-framework-module-declaration",
+            "-Wundef-prefix=TARGET_OS",
+            "-Werror=undef-prefix",
+            "-Werror=module-import-in-extern-c",
+            "-ferror-limit=0",
+        ]
+        if "c++" in language:
+            command.append("-fcxx-modules")
+        command.append(sourceFile)
+
+        print(f"Verifying clang module ({language}, {standard}, {hostTarget()}) ...")
+        print(" ".join(command), file=sys.stderr)
+
+        result = subprocess.run(command, stderr=subprocess.PIPE, text=True)
+        if result.stderr:
+            print(result.stderr, file=sys.stderr)
+
+        return result.returncode == 0
+
+
+# -- gtest protocol -----------------------------------------------------------
+
+def listTests():
+    currentSuite = None
+    for suite, name, product, _, language, _ in iterateTests():
+        if suite != currentSuite:
+            print(f"{suite}.")
+            currentSuite = suite
+        prefix = "DISABLED_" if isDisabled(product, language) else ""
+        print(f"  {prefix}{name}")
+
+
+def runTest(filterArg):
+    parts = filterArg.split(".")
+    if len(parts) != 2:
+        print(f"Invalid filter: {filterArg}", file=sys.stderr)
+        print("**FAIL**")
+        return
+
+    suite, name = parts
+    if name.startswith("DISABLED_"):
+        name = name[len("DISABLED_"):]
+
+    for tSuite, tName, product, subdir, language, standard in iterateTests():
+        if tSuite == suite and tName == name:
+            if subdir is None:
+                passed = verifyFramework(product, language, standard)
+            else:
+                passed = verifyLibrary(product, subdir, language, standard)
+            print("**PASS**" if passed else "**FAIL**")
+            return
+
+    print(f"Unknown test: {filterArg}", file=sys.stderr)
+    print("**FAIL**")
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--list-tests", action="store_true")
+    parser.add_argument("--filter")
+    parser.add_argument("--force", action="store_true")
+    # Ignore other gtest-like flags the runner may pass.
+    parser.add_argument("--remote-layer-tree", action="store_true")
+    parser.add_argument("--no-remote-layer-tree", action="store_true")
+    parser.add_argument("--site-isolation", action="store_true")
+    parser.add_argument("--use-gpu-process", action="store_true")
+    parser.add_argument("--no-use-gpu-process", action="store_true")
+    args = parser.parse_args()
+
+    if args.list_tests:
+        listTests()
+    elif args.filter:
+        runTest(args.filter)
+    else:
+        parser.print_help()
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()

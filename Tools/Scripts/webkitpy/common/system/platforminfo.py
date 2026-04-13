@@ -202,6 +202,14 @@ class PlatformInfo(object):
                 return Version.from_string(xcrun_output)
         return None
 
+    @memoized
+    def xcode_sdk_path(self, sdk_name):
+        if self.is_mac():
+            xcrun_output = self._executive.run_command(['xcrun', '--sdk', sdk_name, '--show-sdk-path'], return_stderr=False, ignore_errors=True).rstrip()
+            if xcrun_output:
+                return xcrun_output
+        return None
+
     def xcode_simctl_list(self):
         if not self.is_mac():
             return ()
