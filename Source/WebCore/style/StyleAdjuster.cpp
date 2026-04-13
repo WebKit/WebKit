@@ -615,9 +615,6 @@ void Adjuster::adjust(RenderStyle& style) const
                 style.setTextWrapMode(TextWrapMode::NoWrap);
                 style.setTextAlign(TextAlign::Start);
             }
-            // Apparently this is the expected legacy behavior.
-            if (isVertical && style.height().isAuto())
-                style.setHeight(200_css_px);
         }
 
         if (m_element->visibilityAdjustment().contains(VisibilityAdjustment::Subtree)) [[unlikely]]

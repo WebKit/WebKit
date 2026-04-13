@@ -57,6 +57,7 @@ marquee {
 }
 #vertAuto marquee {
     height: auto;
+    max-height: 300px;
 }
 
 #vertFixed .pre {
@@ -77,7 +78,7 @@ var horiz = document.querySelector('#horiz marquee');
 var vertAuto = document.querySelector('#vertAuto marquee');
 var vertFixed = document.querySelector('#vertFixed marquee');
 shouldBe('getComputedStyle(horiz).height', '"10px"');
-shouldBe('getComputedStyle(vertAuto).height', '"200px"');
+shouldBe('getComputedStyle(vertAuto).height', '"300px"');
 shouldBe('getComputedStyle(vertFixed).height', '"100px"');
 if (window.testRunner) {
     testRunner.dumpAsText();
