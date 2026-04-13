@@ -23,6 +23,7 @@
 #include "HTMLFrameOwnerElement.h"
 
 #include "ContainerNodeInlines.h"
+#include "EventLoop.h"
 #include "FrameInlines.h"
 #include "FrameLoader.h"
 #include "LocalDOMWindow.h"
@@ -85,10 +86,33 @@ void HTMLFrameOwnerElement::disconnectContentFrame()
     if (RefPtr frame = m_contentFrame.get()) {
         if (auto* innerDocument = contentDocument())
             innerDocument->willBeDisconnectedFromFrame(document());
-        frame->frameDetached();
-        if (frame == m_contentFrame.get())
+
+        // Per the HTML spec, "destroy a child navigable" synchronously sets
+        // the container's content navigable to null (step 3), then runs
+        // "destroy a document and its descendants" asynchronously (step 5).
+        // https://html.spec.whatwg.org/C#destroy-a-child-navigable
+        //
+        // Only clear the content frame pointer synchronously. Do not call
+        // disconnectOwnerElement() here as that triggers
+        // willBeRemovedFromFrame() which fully tears down the document.
+        // The full teardown (including pagehide/unload event dispatch) is
+        // deferred to the queued task below.
+        clearContentFrame();
+
+        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get())) {
+            // Queue the actual frame destruction (which fires pagehide/unload
+            // events) as an asynchronous task. This ensures that script does
+            // not run synchronously during child navigable destruction.
+            document().eventLoop().queueTask(TaskSource::DOMManipulation, [localFrame = Ref { *localFrame }]() {
+                if (!localFrame->page())
+                    return;
+                localFrame->loader().frameDetached();
+                localFrame->disconnectOwnerElement();
+            });
+        } else {
+            frame->frameDetached();
             frame->disconnectOwnerElement();
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(frame != m_contentFrame.get());
+        }
     }
 }
 
