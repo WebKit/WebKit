@@ -302,6 +302,7 @@ void RemoteScrollingTree::tryToApplyLayerPositions()
 #if ENABLE(THREADED_ANIMATIONS)
 void RemoteScrollingTree::updateTimelinesRegistration(WebCore::ProcessIdentifier processIdentifier, const WebCore::AcceleratedTimelinesUpdate& timelinesUpdate)
 {
+    Locker locker { m_treeLock };
     if (!m_progressBasedTimelineRegistry)
         m_progressBasedTimelineRegistry = makeUnique<RemoteProgressBasedTimelineRegistry>();
     m_progressBasedTimelineRegistry->update(*this, processIdentifier, timelinesUpdate);
@@ -311,6 +312,7 @@ void RemoteScrollingTree::updateTimelinesRegistration(WebCore::ProcessIdentifier
 
 RefPtr<const RemoteAnimationTimeline> RemoteScrollingTree::timeline(const TimelineID& timelineID) const
 {
+    Locker locker { m_treeLock };
     if (m_progressBasedTimelineRegistry)
         return m_progressBasedTimelineRegistry->get(timelineID);
     return nullptr;
@@ -324,6 +326,7 @@ void RemoteScrollingTree::updateProgressBasedTimelinesForNode(const WebCore::Scr
 
 HashSet<Ref<RemoteProgressBasedTimeline>> RemoteScrollingTree::timelinesForScrollingNodeIDForTesting(WebCore::ScrollingNodeID scrollingNodeID) const
 {
+    Locker locker { m_treeLock };
     if (m_progressBasedTimelineRegistry)
         return m_progressBasedTimelineRegistry->timelinesForScrollingNodeIDForTesting(scrollingNodeID);
     return { };

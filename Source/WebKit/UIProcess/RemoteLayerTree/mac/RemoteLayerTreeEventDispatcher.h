@@ -108,13 +108,13 @@ public:
     void renderingUpdateComplete();
 
 #if ENABLE(THREADED_ANIMATIONS)
-    void lockForAnimationChanges() WTF_ACQUIRES_LOCK(m_animationLock);
+    void lockForAnimationChanges() WTF_EXCLUDES_LOCK(m_renderingSyncLock) WTF_ACQUIRES_LOCK(m_animationLock);
     void unlockForAnimationChanges() WTF_RELEASES_LOCK(m_animationLock);
     void animationsWereAddedToNode(RemoteLayerTreeNode&);
     void animationsWereRemovedFromNode(RemoteLayerTreeNode&);
     void updateTimelinesRegistration(WebCore::ProcessIdentifier, const WebCore::AcceleratedTimelinesUpdate&, MonotonicTime);
     RefPtr<const RemoteAnimationTimeline> timeline(const TimelineID&);
-    void updateAnimations();
+    void updateAnimations() WTF_EXCLUDES_LOCK(m_renderingSyncLock);
     RefPtr<const RemoteAnimationStack> animationStackForNodeWithIDForTesting(WebCore::PlatformLayerIdentifier) const;
     HashSet<Ref<RemoteProgressBasedTimeline>> timelinesForScrollingNodeIDForTesting(WebCore::ScrollingNodeID);
 #endif
@@ -150,7 +150,7 @@ private:
 
     bool scrollingTreeWasRecentlyActive();
 
-    void waitForRenderingUpdateCompletionOrTimeout() WTF_REQUIRES_LOCK(m_scrollingTreeLock);
+    void waitForRenderingUpdateCompletionOrTimeout() WTF_REQUIRES_LOCK(m_renderingSyncLock);
 
     void startFingerDownSignpostInterval();
     void endFingerDownSignpostInterval();
@@ -172,8 +172,19 @@ private:
 
     CheckedPtr<RemoteLayerTreeEventDispatcherDisplayLinkClient> checkedDisplayLinkClient();
 
-    Lock m_scrollingTreeLock;
-    RefPtr<RemoteScrollingTree> m_scrollingTree WTF_GUARDED_BY_LOCK(m_scrollingTreeLock);
+    // Lock ordering (outer -> inner, must never be reversed):
+    //
+    //   Thread          Ordering
+    //   ------          --------
+    //   Main (commit):  m_layerHitTestMutex -> m_animationLock -> ScrollingTree::m_treeLock
+    //   Main (commit):  m_animationLock -> m_renderingSyncLock (briefly, via scrollingTree())
+    //   Scrolling:      m_renderingSyncLock -> ScrollingTree::m_treeLock
+    //   Scrolling:      m_layerHitTestMutex (alone, for hit testing)
+    //
+    //   m_renderingSyncLock must never be held when acquiring m_animationLock
+    //   (the valid nesting is m_animationLock -> m_renderingSyncLock, not the reverse).
+    Lock m_renderingSyncLock;
+    RefPtr<RemoteScrollingTree> m_scrollingTree WTF_GUARDED_BY_LOCK(m_renderingSyncLock);
 
     Deque<WebWheelEvent, 2> m_wheelEventsBeingProcessed; // FIXME: Remove
 
@@ -195,17 +206,17 @@ private:
         Desynchronized,
     };
 
-    SynchronizationState m_state WTF_GUARDED_BY_LOCK(m_scrollingTreeLock) { SynchronizationState::Idle };
+    SynchronizationState m_state WTF_GUARDED_BY_LOCK(m_renderingSyncLock) { SynchronizationState::Idle };
     Condition m_stateCondition;
 
-    MonotonicTime m_lastDisplayDidRefreshTime;
+    MonotonicTime m_lastDisplayDidRefreshTime WTF_GUARDED_BY_LOCK(m_renderingSyncLock);
 
     std::unique_ptr<RunLoop::Timer> m_delayedRenderingUpdateDetectionTimer;
 
 #if ENABLE(THREADED_ANIMATIONS)
     // For WTF_ACQUIRES_LOCK
     friend class RemoteScrollingCoordinatorProxyMac;
-    Lock m_animationLock;
+    Lock m_animationLock WTF_ACQUIRED_LOCK_BEFORE(m_renderingSyncLock);
     HashMap<WebCore::PlatformLayerIdentifier, Ref<RemoteAnimationStack>> m_animationStacks WTF_GUARDED_BY_LOCK(m_animationLock);
     std::unique_ptr<RemoteMonotonicTimelineRegistry> m_monotonicTimelineRegistry WTF_GUARDED_BY_LOCK(m_animationLock);
 #endif

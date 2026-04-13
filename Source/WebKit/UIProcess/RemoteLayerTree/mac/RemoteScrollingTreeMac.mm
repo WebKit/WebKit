@@ -227,7 +227,11 @@ void RemoteScrollingTreeMac::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNo
     ScrollingTree::scrollingTreeNodeDidScroll(node, action);
 
 #if ENABLE(THREADED_ANIMATIONS)
-    updateProgressBasedTimelinesForNode(node);
+    {
+        Locker locker { m_treeLock };
+        updateProgressBasedTimelinesForNode(node);
+    }
+
 #endif
 
     std::optional<FloatPoint> layoutViewportOrigin;

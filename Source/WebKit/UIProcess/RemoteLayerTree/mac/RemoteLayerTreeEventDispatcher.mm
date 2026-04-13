@@ -132,7 +132,7 @@ void RemoteLayerTreeEventDispatcher::invalidate()
     removeDisplayLinkClient();
 
     {
-        Locker locker { m_scrollingTreeLock };
+        Locker locker { m_renderingSyncLock };
         m_scrollingTree = nullptr;
     }
 
@@ -147,7 +147,7 @@ void RemoteLayerTreeEventDispatcher::setScrollingTree(RefPtr<RemoteScrollingTree
 {
     ASSERT(isMainRunLoop());
 
-    Locker locker { m_scrollingTreeLock };
+    Locker locker { m_renderingSyncLock };
     m_scrollingTree = WTF::move(scrollingTree);
 }
 
@@ -155,7 +155,7 @@ RefPtr<RemoteScrollingTree> RemoteLayerTreeEventDispatcher::scrollingTree()
 {
     RefPtr<RemoteScrollingTree> result;
     {
-        Locker locker { m_scrollingTreeLock };
+        Locker locker { m_renderingSyncLock };
         result = m_scrollingTree;
     }
     
@@ -482,7 +482,7 @@ void RemoteLayerTreeEventDispatcher::didRefreshDisplay(PlatformDisplayID display
     auto needsAnimationUpdate = false;
 #endif
     {
-        Locker locker { m_scrollingTreeLock };
+        Locker locker { m_renderingSyncLock };
 
         auto now = MonotonicTime::now();
         m_lastDisplayDidRefreshTime = now;
@@ -545,7 +545,7 @@ void RemoteLayerTreeEventDispatcher::delayedRenderingUpdateDetectionTimerFired()
 void RemoteLayerTreeEventDispatcher::waitForRenderingUpdateCompletionOrTimeout()
 {
     ASSERT(ScrollingThread::isCurrentThread());
-    ASSERT(m_scrollingTreeLock.isLocked());
+    ASSERT(m_renderingSyncLock.isLocked());
 
     if (m_delayedRenderingUpdateDetectionTimer)
         m_delayedRenderingUpdateDetectionTimer->stop();
@@ -563,12 +563,12 @@ void RemoteLayerTreeEventDispatcher::waitForRenderingUpdateCompletionOrTimeout()
         timeoutTime = maximumTimeoutTime;
     }
 
-    bool becameIdle = m_stateCondition.waitUntil(m_scrollingTreeLock, timeoutTime, [&] {
-        assertIsHeld(m_scrollingTreeLock);
+    bool becameIdle = m_stateCondition.waitUntil(m_renderingSyncLock, timeoutTime, [&] {
+        assertIsHeld(m_renderingSyncLock);
         return m_state == SynchronizationState::Idle;
     });
 
-    ASSERT(m_scrollingTreeLock.isLocked());
+    ASSERT(m_renderingSyncLock.isLocked());
 
     if (!becameIdle) {
         m_state = SynchronizationState::Desynchronized;
@@ -611,16 +611,16 @@ void RemoteLayerTreeEventDispatcher::mainThreadDisplayDidRefresh(PlatformDisplay
 
     tracePoint(ScrollingThreadRenderUpdateSyncStart);
 
-    // Wait for the scrolling thread to acquire m_scrollingTreeLock. This ensures that any pending wheel events are processed.
+    // Wait for the scrolling thread to acquire m_renderingSyncLock. This ensures that any pending wheel events are processed.
     BinarySemaphore semaphore;
     ScrollingThread::dispatch([protectedThis = Ref { *this }, &semaphore]() {
-        Locker treeLocker { protectedThis->m_scrollingTreeLock };
+        Locker treeLocker { protectedThis->m_renderingSyncLock };
         semaphore.signal();
         protectedThis->waitForRenderingUpdateCompletionOrTimeout();
     });
     semaphore.wait();
 
-    Locker locker { m_scrollingTreeLock };
+    Locker locker { m_renderingSyncLock };
     m_state = SynchronizationState::InRenderingUpdate;
 }
 
@@ -632,7 +632,7 @@ void RemoteLayerTreeEventDispatcher::renderingUpdateComplete()
     updateAnimations();
 #endif
 
-    Locker locker { m_scrollingTreeLock };
+    Locker locker { m_renderingSyncLock };
 
     if (m_state == SynchronizationState::InRenderingUpdate)
         m_stateCondition.notifyOne();
