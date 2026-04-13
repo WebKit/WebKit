@@ -958,6 +958,18 @@ class Instruction
             emitARM64Add("add", operands, :quad)
         when 'addlshiftp'
             emitARM64AddShift("add", operands, :quad)
+        when 'addqs'
+            emitARM64Add("adds", operands, :quad)
+        when 'subqs'
+            emitARM64Sub("subs", operands, :quad)
+        when "adcq"
+            emitARM64TAC("adc", operands, :quad)
+        when "sbcq"
+            emitARM64TAC("sbc", operands, :quad)
+        when "smulhq"
+            emitARM64TAC("smulh", operands, :quad)
+        when "umulhq"
+            emitARM64TAC("umulh", operands, :quad)
         when "andi"
             emitARM64TAC("and", operands, :word)
         when "andp"

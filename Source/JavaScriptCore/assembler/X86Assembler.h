@@ -175,6 +175,8 @@ private:
         OP_OR_GvEv                      = 0x0B,
         OP_OR_EAXIv                     = 0x0D,
         OP_2BYTE_ESCAPE                 = 0x0F,
+        OP_ADC_EvGv                     = 0x11,
+        OP_SBB_EvGv                     = 0x19,
         OP_AND_EvGb                     = 0x20,
         OP_AND_EvGv                     = 0x21,
         OP_AND_GvEv                     = 0x23,
@@ -505,6 +507,7 @@ private:
         GROUP1_OP_ADD = 0,
         GROUP1_OP_OR  = 1,
         GROUP1_OP_ADC = 2,
+        GROUP1_OP_SBB = 3,
         GROUP1_OP_AND = 4,
         GROUP1_OP_SUB = 5,
         GROUP1_OP_XOR = 6,
@@ -1395,6 +1398,16 @@ public:
     void subq_rr(RegisterID src, RegisterID dst)
     {
         m_formatter.oneByteOp64(OP_SUB_EvGv, src, dst);
+    }
+
+    void adcq_rr(RegisterID src, RegisterID dst)
+    {
+        m_formatter.oneByteOp64(OP_ADC_EvGv, src, dst);
+    }
+
+    void sbbq_rr(RegisterID src, RegisterID dst)
+    {
+        m_formatter.oneByteOp64(OP_SBB_EvGv, src, dst);
     }
 
     void subq_mr(int offset, RegisterID base, RegisterID dst)

@@ -2344,6 +2344,56 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         FOR_EACH_WASM_TRUNC_SATURATED_OP(CREATE_CASE)
 #undef CREATE_CASE
 
+        case Ext1OpType::I64Add128:
+        case Ext1OpType::I64Sub128: {
+            WASM_PARSER_FAIL_IF(!Options::useWasmWideArithmetic(), "wasm wide arithmetic is not enabled"_s);
+
+            TypedExpression rhsHi;
+            TypedExpression rhsLo;
+            TypedExpression lhsHi;
+            TypedExpression lhsLo;
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(rhsHi, "i64.add128/sub128"_s);
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(rhsLo, "i64.add128/sub128"_s);
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(lhsHi, "i64.add128/sub128"_s);
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(lhsLo, "i64.add128/sub128"_s);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != lhsLo.type().kind, "i64.add128/sub128 lhs_lo to type "_s, lhsLo.type(), " expected "_s, TypeKind::I64);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != lhsHi.type().kind, "i64.add128/sub128 lhs_hi to type "_s, lhsHi.type(), " expected "_s, TypeKind::I64);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != rhsLo.type().kind, "i64.add128/sub128 rhs_lo to type "_s, rhsLo.type(), " expected "_s, TypeKind::I64);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != rhsHi.type().kind, "i64.add128/sub128 rhs_hi to type "_s, rhsHi.type(), " expected "_s, TypeKind::I64);
+
+            ExpressionType resultLo;
+            ExpressionType resultHi;
+            if (op == Ext1OpType::I64Add128)
+                WASM_TRY_ADD_TO_CONTEXT(addI64Add128(lhsLo, lhsHi, rhsLo, rhsHi, resultLo, resultHi));
+            else
+                WASM_TRY_ADD_TO_CONTEXT(addI64Sub128(lhsLo, lhsHi, rhsLo, rhsHi, resultLo, resultHi));
+            m_expressionStack.constructAndAppend(Types::I64, resultLo);
+            m_expressionStack.constructAndAppend(Types::I64, resultHi);
+            break;
+        }
+
+        case Ext1OpType::I64MulWideS:
+        case Ext1OpType::I64MulWideU: {
+            WASM_PARSER_FAIL_IF(!Options::useWasmWideArithmetic(), "wasm wide arithmetic is not enabled"_s);
+
+            TypedExpression rhs;
+            TypedExpression lhs;
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(rhs, "i64.mul_wide"_s);
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(lhs, "i64.mul_wide"_s);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != lhs.type().kind, "i64.mul_wide lhs to type "_s, lhs.type(), " expected "_s, TypeKind::I64);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I64 != rhs.type().kind, "i64.mul_wide rhs to type "_s, rhs.type(), " expected "_s, TypeKind::I64);
+
+            ExpressionType resultLo;
+            ExpressionType resultHi;
+            if (op == Ext1OpType::I64MulWideS)
+                WASM_TRY_ADD_TO_CONTEXT(addI64MulWideS(lhs, rhs, resultLo, resultHi));
+            else
+                WASM_TRY_ADD_TO_CONTEXT(addI64MulWideU(lhs, rhs, resultLo, resultHi));
+            m_expressionStack.constructAndAppend(Types::I64, resultLo);
+            m_expressionStack.constructAndAppend(Types::I64, resultHi);
+            break;
+        }
+
         default:
             WASM_PARSER_FAIL_IF(true, "invalid 0xfc extended op "_s, m_currentExtOp);
             break;

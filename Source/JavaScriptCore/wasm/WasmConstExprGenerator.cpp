@@ -294,6 +294,10 @@ public:
     [[nodiscard]] PartialResult atomicFence(ExtAtomicOpType, uint8_t) CONST_EXPR_STUB
     [[nodiscard]] PartialResult truncTrapping(OpType, ExpressionType, ExpressionType&, Type, Type) CONST_EXPR_STUB
     [[nodiscard]] PartialResult truncSaturated(Ext1OpType, ExpressionType, ExpressionType&, Type, Type) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addI64Add128(ExpressionType, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, ExpressionType&) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addI64Sub128(ExpressionType, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, ExpressionType&) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addI64MulWideS(ExpressionType, ExpressionType, ExpressionType&, ExpressionType&) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult addI64MulWideU(ExpressionType, ExpressionType, ExpressionType&, ExpressionType&) CONST_EXPR_STUB
 
     [[nodiscard]] PartialResult NODELETE addRefI31(ExpressionType value, ExpressionType& result)
     {

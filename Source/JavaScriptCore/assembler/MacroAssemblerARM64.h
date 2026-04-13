@@ -299,6 +299,16 @@ public:
         add64AndSetFlags(imm, dest, dest);
     }
 
+    void add64AndSetFlags(RegisterID a, RegisterID b, RegisterID dest)
+    {
+        m_assembler.add<64, S>(dest, a, b);
+    }
+
+    void addCarry64(RegisterID a, RegisterID b, RegisterID dest)
+    {
+        m_assembler.adc<64>(dest, a, b);
+    }
+
     void add64(TrustedImm64 imm, RegisterID dest)
     {
         add64(imm, dest, dest);
@@ -1595,6 +1605,16 @@ public:
             move(imm, getCachedDataTempRegisterIDAndInvalidate());
             m_assembler.sub<64>(dest, left, dataTempRegister);
         }
+    }
+
+    void sub64AndSetFlags(RegisterID a, RegisterID b, RegisterID dest)
+    {
+        m_assembler.sub<64, S>(dest, a, b);
+    }
+
+    void subBorrow64(RegisterID a, RegisterID b, RegisterID dest)
+    {
+        m_assembler.sbc<64>(dest, a, b);
     }
 
     void urshift32(RegisterID src, RegisterID shiftAmount, RegisterID dest)

@@ -5067,7 +5067,17 @@ public:
     {
         m_assembler.addq_rr(src, dest);
     }
-    
+
+    void addCarry64(RegisterID src, RegisterID dest)
+    {
+        m_assembler.adcq_rr(src, dest);
+    }
+
+    void subBorrow64(RegisterID src, RegisterID dest)
+    {
+        m_assembler.sbbq_rr(src, dest);
+    }
+
     void add64(Address src, RegisterID dest)
     {
         m_assembler.addq_mr(src.offset, src.base, dest);

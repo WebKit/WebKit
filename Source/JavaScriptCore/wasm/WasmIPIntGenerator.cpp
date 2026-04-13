@@ -328,6 +328,13 @@ public:
 
     [[nodiscard]] PartialResult truncSaturated(Ext1OpType, ExpressionType, ExpressionType&, Type, Type);
 
+    // Wide arithmetic
+
+    [[nodiscard]] PartialResult addI64Add128(ExpressionType, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, ExpressionType&);
+    [[nodiscard]] PartialResult addI64Sub128(ExpressionType, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, ExpressionType&);
+    [[nodiscard]] PartialResult addI64MulWideS(ExpressionType, ExpressionType, ExpressionType&, ExpressionType&);
+    [[nodiscard]] PartialResult addI64MulWideU(ExpressionType, ExpressionType, ExpressionType&, ExpressionType&);
+
     // GC
 
     [[nodiscard]] PartialResult addRefI31(ExpressionType, ExpressionType&);
@@ -2061,6 +2068,34 @@ IPIntGenerator::ExpressionType IPIntGenerator::addSIMDConstant(v128_t)
 
 [[nodiscard]] PartialResult IPIntGenerator::truncSaturated(Ext1OpType, ExpressionType, ExpressionType&, Type, Type)
 {
+    m_metadata->addLength(getCurrentInstructionLength());
+    return { };
+}
+
+[[nodiscard]] PartialResult IPIntGenerator::addI64Add128(ExpressionType, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, ExpressionType&)
+{
+    changeStackSize(-2); // pops 4, pushes 2
+    m_metadata->addLength(getCurrentInstructionLength());
+    return { };
+}
+
+[[nodiscard]] PartialResult IPIntGenerator::addI64Sub128(ExpressionType, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, ExpressionType&)
+{
+    changeStackSize(-2); // pops 4, pushes 2
+    m_metadata->addLength(getCurrentInstructionLength());
+    return { };
+}
+
+[[nodiscard]] PartialResult IPIntGenerator::addI64MulWideS(ExpressionType, ExpressionType, ExpressionType&, ExpressionType&)
+{
+    changeStackSize(0); // pops 2, pushes 2
+    m_metadata->addLength(getCurrentInstructionLength());
+    return { };
+}
+
+[[nodiscard]] PartialResult IPIntGenerator::addI64MulWideU(ExpressionType, ExpressionType, ExpressionType&, ExpressionType&)
+{
+    changeStackSize(0); // pops 2, pushes 2
     m_metadata->addLength(getCurrentInstructionLength());
     return { };
 }

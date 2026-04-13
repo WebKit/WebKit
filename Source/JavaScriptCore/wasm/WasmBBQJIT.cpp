@@ -1031,9 +1031,9 @@ PartialResult BBQJIT::addLocal(Type type, uint32_t numberOfLocals)
 
 // Globals
 
-Value BBQJIT::topValue(TypeKind type)
+Value BBQJIT::topValue(TypeKind type, unsigned offset)
 {
-    return Value::fromTemp(type, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + m_parser->expressionStack().size());
+    return Value::fromTemp(type, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + m_parser->expressionStack().size() + offset);
 }
 
 Value BBQJIT::exception(const ControlData& control)
@@ -4330,7 +4330,7 @@ template<size_t N>
 void BBQJIT::returnValuesFromCall(Vector<Value, N>& results, const FunctionSignature& functionType, const CallInformation& callInfo)
 {
     for (size_t i = 0; i < callInfo.results.size(); i ++) {
-        Value result = Value::fromTemp(functionType.returnType(i).kind, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + m_parser->expressionStack().size() + i);
+        Value result = topValue(functionType.returnType(i).kind, i);
         Location returnLocation = Location::fromArgumentLocation(callInfo.results[i], result.type());
         if (returnLocation.isRegister()) {
             RegisterBinding currentBinding;

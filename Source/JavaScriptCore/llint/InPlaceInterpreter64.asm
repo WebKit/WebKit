@@ -3182,8 +3182,8 @@ end)
 
 ipintOp(_conversion_prefix, macro()
     decodeLEBVarUInt32(1, t0, t1, t2, t3, t4)
-    # Security guarantee: always less than 18 (0x00 -> 0x11)
-    biaeq t0, 0x12, .ipint_conversion_nonexistent
+    # Security guarantee: always less than 23 (0x00 -> 0x16)
+    biaeq t0, 0x17, .ipint_conversion_nonexistent
     leap _os_script_config_storage, t1
     loadp JSC::LLInt::OpcodeConfig::ipint_conversion_dispatch_base[t1], t1
     if ARM64 or ARM64E
@@ -4062,6 +4062,95 @@ ipintOp(_table_fill, macro()
     loadb IPInt::TableFillMetadata::instructionLength[MC], t0
     advancePCByReg(t0)
     advanceMC(constexpr (sizeof(IPInt::TableFillMetadata)))
+    nextIPIntInstruction()
+end)
+
+reservedOpcode(misc_0x12)
+    break
+
+##################################
+## Wide Arithmetic Instructions ##
+##################################
+
+ipintOp(_i64_add128, macro()
+    # i64.add128: [lhsLo lhsHi rhsLo rhsHi] -> [resultLo resultHi]
+    # Stack layout (top first): sp[0]=rhsHi, sp[1]=rhsLo, sp[2]=lhsHi, sp[3]=lhsLo
+    popQuad(t3) # rhsHi
+    popQuad(t2) # rhsLo
+    popQuad(t1) # lhsHi
+    popQuad(t0) # lhsLo
+    if ARM64 or ARM64E
+        addqs t0, t2, t0   # resultLo = lhsLo + rhsLo, sets carry
+        adcq t1, t3, t1    # resultHi = lhsHi + rhsHi + carry
+    elsif X86_64
+        addq t2, t0         # resultLo = lhsLo + rhsLo, sets CF
+        adcq t3, t1         # resultHi = lhsHi + rhsHi + CF
+    end
+    pushQuad(t0)
+    pushQuad(t1)
+    loadb IPInt::InstructionLengthMetadata::length[MC], t0
+    advancePCByReg(t0)
+    advanceMC(constexpr (sizeof(IPInt::InstructionLengthMetadata)))
+    nextIPIntInstruction()
+end)
+
+ipintOp(_i64_sub128, macro()
+    # i64.sub128: [lhsLo lhsHi rhsLo rhsHi] -> [resultLo resultHi]
+    # Stack layout (top first): sp[0]=rhsHi, sp[1]=rhsLo, sp[2]=lhsHi, sp[3]=lhsLo
+    popQuad(t3) # rhsHi
+    popQuad(t2) # rhsLo
+    popQuad(t1) # lhsHi
+    popQuad(t0) # lhsLo
+    if ARM64 or ARM64E
+        subqs t0, t2, t0   # resultLo = lhsLo - rhsLo, sets borrow
+        sbcq t1, t3, t1    # resultHi = lhsHi - rhsHi - borrow
+    elsif X86_64
+        subq t2, t0         # resultLo = lhsLo - rhsLo, sets CF
+        sbcq t3, t1         # resultHi = lhsHi - rhsHi - CF
+    end
+    pushQuad(t0)
+    pushQuad(t1)
+    loadb IPInt::InstructionLengthMetadata::length[MC], t0
+    advancePCByReg(t0)
+    advanceMC(constexpr (sizeof(IPInt::InstructionLengthMetadata)))
+    nextIPIntInstruction()
+end)
+
+ipintOp(_i64_mul_wide_s, macro()
+    # i64.mul_wide_s: [lhs rhs] -> [resultLo resultHi]
+    # Stack layout (top first): sp[0]=rhs, sp[1]=lhs
+    popQuad(t1) # rhs
+    popQuad(t0) # lhs
+    if ARM64 or ARM64E
+        smulhq t0, t1, t2  # resultHi = smulh(lhs, rhs) - must precede mulq
+        mulq t1, t0         # resultLo = lhs * rhs (clobbers t0)
+    elsif X86_64
+        smulhq t1           # imulq %rsi: rdx:rax = rax * rsi -> t0=resultLo, t2=resultHi
+    end
+    pushQuad(t0)
+    pushQuad(t2)
+    loadb IPInt::InstructionLengthMetadata::length[MC], t0
+    advancePCByReg(t0)
+    advanceMC(constexpr (sizeof(IPInt::InstructionLengthMetadata)))
+    nextIPIntInstruction()
+end)
+
+ipintOp(_i64_mul_wide_u, macro()
+    # i64.mul_wide_u: [lhs rhs] -> [resultLo resultHi]
+    # Stack layout (top first): sp[0]=rhs, sp[1]=lhs
+    popQuad(t1) # rhs
+    popQuad(t0) # lhs
+    if ARM64 or ARM64E
+        umulhq t0, t1, t2  # resultHi = umulh(lhs, rhs) - must precede mulq
+        mulq t1, t0         # resultLo = lhs * rhs (clobbers t0)
+    elsif X86_64
+        umulhq t1           # mulq %rsi: rdx:rax = rax * rsi -> t0=resultLo, t2=resultHi
+    end
+    pushQuad(t0)
+    pushQuad(t2)
+    loadb IPInt::InstructionLengthMetadata::length[MC], t0
+    advancePCByReg(t0)
+    advanceMC(constexpr (sizeof(IPInt::InstructionLengthMetadata)))
     nextIPIntInstruction()
 end)
 

@@ -2461,6 +2461,202 @@ void BBQJIT::emitRefTestOrCast(CastKind castKind, const TypedExpression& typedVa
     );
 }
 
+// Wide Arithmetic
+
+[[nodiscard]] PartialResult BBQJIT::addI64Add128(Value lhsLo, Value lhsHi, Value rhsLo, Value rhsHi, Value& resultLo, Value& resultHi)
+{
+    Location lhsLoLocation = loadIfNecessary(lhsLo);
+    Location lhsHiLocation = loadIfNecessary(lhsHi);
+    Location rhsLoLocation = loadIfNecessary(rhsLo);
+    Location rhsHiLocation = loadIfNecessary(rhsHi);
+    consume(lhsLo);
+    consume(lhsHi);
+    consume(rhsLo);
+    consume(rhsHi);
+
+    resultLo = topValue(TypeKind::I64);
+    resultHi = topValue(TypeKind::I64, 1);
+    Location resultLoLocation = allocate(resultLo);
+    Location resultHiLocation = allocate(resultHi);
+
+    LOG_INSTRUCTION("I64Add128", lhsLo, lhsLoLocation, lhsHi, lhsHiLocation, rhsLo, rhsLoLocation, rhsHi, rhsHiLocation, RESULT(resultLo), RESULT(resultHi));
+
+    if (resultLoLocation.asGPR() == lhsHiLocation.asGPR()) {
+        m_jit.move(lhsHiLocation.asGPR(), wasmScratchGPR);
+        lhsHiLocation = Location::fromGPR(wasmScratchGPR);
+    } else if (resultLoLocation.asGPR() == rhsHiLocation.asGPR()) {
+        m_jit.move(rhsHiLocation.asGPR(), wasmScratchGPR);
+        rhsHiLocation = Location::fromGPR(wasmScratchGPR);
+    }
+
+#if CPU(X86_64)
+    if (resultLoLocation.asGPR() == rhsLoLocation.asGPR())
+        m_jit.add64(lhsLoLocation.asGPR(), resultLoLocation.asGPR());
+    else {
+        m_jit.move(lhsLoLocation.asGPR(), resultLoLocation.asGPR());
+        m_jit.add64(rhsLoLocation.asGPR(), resultLoLocation.asGPR());
+    }
+    if (resultHiLocation.asGPR() == rhsHiLocation.asGPR())
+        m_jit.addCarry64(lhsHiLocation.asGPR(), resultHiLocation.asGPR());
+    else {
+        m_jit.move(lhsHiLocation.asGPR(), resultHiLocation.asGPR());
+        m_jit.addCarry64(rhsHiLocation.asGPR(), resultHiLocation.asGPR());
+    }
+#elif CPU(ARM64)
+    m_jit.add64AndSetFlags(lhsLoLocation.asGPR(), rhsLoLocation.asGPR(), resultLoLocation.asGPR());
+    m_jit.addCarry64(lhsHiLocation.asGPR(), rhsHiLocation.asGPR(), resultHiLocation.asGPR());
+#endif
+
+    return { };
+}
+
+[[nodiscard]] PartialResult BBQJIT::addI64Sub128(Value lhsLo, Value lhsHi, Value rhsLo, Value rhsHi, Value& resultLo, Value& resultHi)
+{
+    Location lhsLoLocation = loadIfNecessary(lhsLo);
+    Location lhsHiLocation = loadIfNecessary(lhsHi);
+    Location rhsLoLocation = loadIfNecessary(rhsLo);
+    Location rhsHiLocation = loadIfNecessary(rhsHi);
+    consume(lhsLo);
+    consume(lhsHi);
+    consume(rhsLo);
+    consume(rhsHi);
+
+    resultLo = topValue(TypeKind::I64);
+    resultHi = topValue(TypeKind::I64, 1);
+    Location resultLoLocation = allocate(resultLo);
+    Location resultHiLocation = allocate(resultHi);
+
+    LOG_INSTRUCTION("I64Sub128", lhsLo, lhsLoLocation, lhsHi, lhsHiLocation, rhsLo, rhsLoLocation, rhsHi, rhsHiLocation, RESULT(resultLo), RESULT(resultHi));
+
+    if (resultLoLocation.asGPR() == lhsHiLocation.asGPR()) {
+        m_jit.move(lhsHiLocation.asGPR(), wasmScratchGPR);
+        lhsHiLocation = Location::fromGPR(wasmScratchGPR);
+    } else if (resultLoLocation.asGPR() == rhsHiLocation.asGPR()) {
+        m_jit.move(rhsHiLocation.asGPR(), wasmScratchGPR);
+        rhsHiLocation = Location::fromGPR(wasmScratchGPR);
+    }
+
+#if CPU(X86_64)
+    if (resultLoLocation.asGPR() == rhsLoLocation.asGPR()) {
+        m_jit.move(lhsLoLocation.asGPR(), wasmScratchGPR);
+        m_jit.sub64(rhsLoLocation.asGPR(), wasmScratchGPR);
+        m_jit.move(wasmScratchGPR, resultLoLocation.asGPR());
+    } else {
+        m_jit.move(lhsLoLocation.asGPR(), resultLoLocation.asGPR());
+        m_jit.sub64(rhsLoLocation.asGPR(), resultLoLocation.asGPR());
+    }
+    if (resultHiLocation.asGPR() == rhsHiLocation.asGPR()) {
+        m_jit.move(lhsHiLocation.asGPR(), wasmScratchGPR);
+        m_jit.subBorrow64(rhsHiLocation.asGPR(), wasmScratchGPR);
+        m_jit.move(wasmScratchGPR, resultHiLocation.asGPR());
+    } else {
+        m_jit.move(lhsHiLocation.asGPR(), resultHiLocation.asGPR());
+        m_jit.subBorrow64(rhsHiLocation.asGPR(), resultHiLocation.asGPR());
+    }
+#elif CPU(ARM64)
+    m_jit.sub64AndSetFlags(lhsLoLocation.asGPR(), rhsLoLocation.asGPR(), resultLoLocation.asGPR());
+    m_jit.subBorrow64(lhsHiLocation.asGPR(), rhsHiLocation.asGPR(), resultHiLocation.asGPR());
+#endif
+
+    return { };
+}
+
+[[nodiscard]] PartialResult BBQJIT::addI64MulWideU(Value lhs, Value rhs, Value& resultLo, Value& resultHi)
+{
+    Location lhsLocation = loadIfNecessary(lhs);
+    Location rhsLocation = loadIfNecessary(rhs);
+    consume(lhs);
+    consume(rhs);
+
+#if CPU(X86_64)
+    for (JSC::Reg reg : clobbersForDivX86())
+        clobber(reg);
+#endif
+
+    resultLo = topValue(TypeKind::I64);
+    resultHi = topValue(TypeKind::I64, 1);
+    Location resultLoLocation = allocate(resultLo);
+    Location resultHiLocation = allocate(resultHi);
+
+    LOG_INSTRUCTION("I64MulWideU", lhs, lhsLocation, rhs, rhsLocation, RESULT(resultLo), RESULT(resultHi));
+
+#if CPU(X86_64)
+    // x86 mul: rax * src -> rdx:rax
+    m_jit.move(lhsLocation.asGPR(), X86Registers::eax);
+    m_jit.x86UMulHigh64(rhsLocation.asGPR(), X86Registers::eax, X86Registers::edx);
+    if (resultLoLocation.asGPR() != X86Registers::edx) {
+        m_jit.move(X86Registers::eax, resultLoLocation.asGPR());
+        m_jit.move(X86Registers::edx, resultHiLocation.asGPR());
+    } else {
+        m_jit.move(X86Registers::edx, resultHiLocation.asGPR());
+        m_jit.move(X86Registers::eax, resultLoLocation.asGPR());
+    }
+#elif CPU(ARM64)
+    if (resultHiLocation.asGPR() == lhsLocation.asGPR()) {
+        m_jit.move(lhsLocation.asGPR(), wasmScratchGPR);
+        m_jit.uMulHigh64(wasmScratchGPR, rhsLocation.asGPR(), resultHiLocation.asGPR());
+        m_jit.mul64(wasmScratchGPR, rhsLocation.asGPR(), resultLoLocation.asGPR());
+    } else if (resultHiLocation.asGPR() == rhsLocation.asGPR()) {
+        m_jit.move(rhsLocation.asGPR(), wasmScratchGPR);
+        m_jit.uMulHigh64(lhsLocation.asGPR(), wasmScratchGPR, resultHiLocation.asGPR());
+        m_jit.mul64(lhsLocation.asGPR(), wasmScratchGPR, resultLoLocation.asGPR());
+    } else {
+        m_jit.uMulHigh64(lhsLocation.asGPR(), rhsLocation.asGPR(), resultHiLocation.asGPR());
+        m_jit.mul64(lhsLocation.asGPR(), rhsLocation.asGPR(), resultLoLocation.asGPR());
+    }
+#endif
+
+    return { };
+}
+
+[[nodiscard]] PartialResult BBQJIT::addI64MulWideS(Value lhs, Value rhs, Value& resultLo, Value& resultHi)
+{
+    Location lhsLocation = loadIfNecessary(lhs);
+    Location rhsLocation = loadIfNecessary(rhs);
+    consume(lhs);
+    consume(rhs);
+
+#if CPU(X86_64)
+    for (JSC::Reg reg : clobbersForDivX86())
+        clobber(reg);
+#endif
+
+    resultLo = topValue(TypeKind::I64);
+    resultHi = topValue(TypeKind::I64, 1);
+    Location resultLoLocation = allocate(resultLo);
+    Location resultHiLocation = allocate(resultHi);
+
+    LOG_INSTRUCTION("I64MulWideS", lhs, lhsLocation, rhs, rhsLocation, RESULT(resultLo), RESULT(resultHi));
+
+#if CPU(X86_64)
+    // x86 imul: rax * src -> rdx:rax (signed)
+    m_jit.move(lhsLocation.asGPR(), X86Registers::eax);
+    m_jit.x86MulHigh64(rhsLocation.asGPR(), X86Registers::eax, X86Registers::edx);
+    if (resultLoLocation.asGPR() != X86Registers::edx) {
+        m_jit.move(X86Registers::eax, resultLoLocation.asGPR());
+        m_jit.move(X86Registers::edx, resultHiLocation.asGPR());
+    } else {
+        m_jit.move(X86Registers::edx, resultHiLocation.asGPR());
+        m_jit.move(X86Registers::eax, resultLoLocation.asGPR());
+    }
+#elif CPU(ARM64)
+    if (resultHiLocation.asGPR() == lhsLocation.asGPR()) {
+        m_jit.move(lhsLocation.asGPR(), wasmScratchGPR);
+        m_jit.mulHigh64(wasmScratchGPR, rhsLocation.asGPR(), resultHiLocation.asGPR());
+        m_jit.mul64(wasmScratchGPR, rhsLocation.asGPR(), resultLoLocation.asGPR());
+    } else if (resultHiLocation.asGPR() == rhsLocation.asGPR()) {
+        m_jit.move(rhsLocation.asGPR(), wasmScratchGPR);
+        m_jit.mulHigh64(lhsLocation.asGPR(), wasmScratchGPR, resultHiLocation.asGPR());
+        m_jit.mul64(lhsLocation.asGPR(), wasmScratchGPR, resultLoLocation.asGPR());
+    } else {
+        m_jit.mulHigh64(lhsLocation.asGPR(), rhsLocation.asGPR(), resultHiLocation.asGPR());
+        m_jit.mul64(lhsLocation.asGPR(), rhsLocation.asGPR(), resultLoLocation.asGPR());
+    }
+#endif
+
+    return { };
+}
+
 void BBQJIT::emitThrowOnNullReference(ExceptionType type, Location ref)
 {
     recordJumpToThrowException(type, m_jit.branchIfNull(ref.asGPR()));

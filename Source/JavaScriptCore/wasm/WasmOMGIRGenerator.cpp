@@ -751,6 +751,13 @@ public:
     // Saturated truncation.
     [[nodiscard]] PartialResult truncSaturated(Ext1OpType, ExpressionType operand, ExpressionType& result, Type returnType, Type operandType);
 
+    // Wide arithmetic.
+    [[nodiscard]] PartialResult addI64Add128(ExpressionType lhsLo, ExpressionType lhsHi, ExpressionType rhsLo, ExpressionType rhsHi, ExpressionType& resultLo, ExpressionType& resultHi);
+    [[nodiscard]] PartialResult addI64Sub128(ExpressionType lhsLo, ExpressionType lhsHi, ExpressionType rhsLo, ExpressionType rhsHi, ExpressionType& resultLo, ExpressionType& resultHi);
+    [[nodiscard]] PartialResult addI64MulWideS(ExpressionType lhs, ExpressionType rhs, ExpressionType& resultLo, ExpressionType& resultHi);
+    [[nodiscard]] PartialResult addI64MulWideU(ExpressionType lhs, ExpressionType rhs, ExpressionType& resultLo, ExpressionType& resultHi);
+    B3::Type int64PairTupleType();
+
     // GC
     [[nodiscard]] PartialResult addRefI31(ExpressionType value, ExpressionType& result);
     [[nodiscard]] PartialResult addI31GetS(TypedExpression ref, ExpressionType& result);
@@ -1068,6 +1075,7 @@ private:
     unsigned* m_osrEntryScratchBufferSize;
     UncheckedKeyHashMap<ValueKey, Value*> m_constantPool;
     UncheckedKeyHashMap<const TypeDefinition*, B3::Type> m_tupleMap;
+    B3::Type m_int64PairTupleType { };
     InsertionSet m_constantInsertionValues;
     Value* m_framePointer { nullptr };
     bool m_makesCalls { false };
@@ -1500,6 +1508,13 @@ B3::Type OMGIRGenerator::toB3ResultType(const TypeDefinition* returnType)
         return m_proc.addTuple(WTF::move(result));
     });
     return result.iterator->value;
+}
+
+B3::Type OMGIRGenerator::int64PairTupleType()
+{
+    if (m_int64PairTupleType == B3::Void)
+        m_int64PairTupleType = m_proc.addTuple({ B3::Int64, B3::Int64 });
+    return m_int64PairTupleType;
 }
 
 auto OMGIRGenerator::addLocal(Type type, uint32_t count) -> PartialResult
@@ -3256,6 +3271,152 @@ auto OMGIRGenerator::truncSaturated(Ext1OpType op, ExpressionType argVar, Expres
             patchpoint, maxResult),
         requiresNaNCheck ? m_currentBlock->appendNew<Value>(m_proc, B3::Select, origin(), m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), arg, arg), minResult, zero) : minResult));
 
+    return { };
+}
+
+// Wide arithmetic
+
+auto OMGIRGenerator::addI64Add128(ExpressionType lhsLoVar, ExpressionType lhsHiVar, ExpressionType rhsLoVar, ExpressionType rhsHiVar, ExpressionType& resultLo, ExpressionType& resultHi) -> PartialResult
+{
+    Value* lhsLo = get(lhsLoVar);
+    Value* lhsHi = get(lhsHiVar);
+    Value* rhsLo = get(rhsLoVar);
+    Value* rhsHi = get(rhsHiVar);
+
+    B3::Type tupleType = int64PairTupleType();
+    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, tupleType, origin());
+    patchpoint->append(lhsLo, ValueRep::SomeRegister);
+    patchpoint->append(lhsHi, ValueRep::SomeRegister);
+    patchpoint->append(rhsLo, ValueRep::SomeRegister);
+    patchpoint->append(rhsHi, ValueRep::SomeRegister);
+    patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister, ValueRep::SomeEarlyRegister };
+    patchpoint->setGenerator([=](CCallHelpers& jit, const StackmapGenerationParams& params) {
+        GPRReg resLo = params[0].gpr();
+        GPRReg resHi = params[1].gpr();
+        GPRReg aLo = params[2].gpr();
+        GPRReg aHi = params[3].gpr();
+        GPRReg bLo = params[4].gpr();
+        GPRReg bHi = params[5].gpr();
+#if CPU(X86_64)
+        jit.move(aLo, resLo);
+        jit.add64(bLo, resLo);
+        jit.move(aHi, resHi);
+        jit.addCarry64(bHi, resHi);
+#elif CPU(ARM64)
+        jit.add64AndSetFlags(aLo, bLo, resLo);
+        jit.addCarry64(aHi, bHi, resHi);
+#endif
+    });
+    patchpoint->effects = Effects::none();
+
+    resultLo = push(m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), B3::Int64, patchpoint, 0));
+    resultHi = push(m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), B3::Int64, patchpoint, 1));
+    return { };
+}
+
+auto OMGIRGenerator::addI64Sub128(ExpressionType lhsLoVar, ExpressionType lhsHiVar, ExpressionType rhsLoVar, ExpressionType rhsHiVar, ExpressionType& resultLo, ExpressionType& resultHi) -> PartialResult
+{
+    Value* lhsLo = get(lhsLoVar);
+    Value* lhsHi = get(lhsHiVar);
+    Value* rhsLo = get(rhsLoVar);
+    Value* rhsHi = get(rhsHiVar);
+
+    B3::Type tupleType = int64PairTupleType();
+    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, tupleType, origin());
+    patchpoint->append(lhsLo, ValueRep::SomeRegister);
+    patchpoint->append(lhsHi, ValueRep::SomeRegister);
+    patchpoint->append(rhsLo, ValueRep::SomeRegister);
+    patchpoint->append(rhsHi, ValueRep::SomeRegister);
+    patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister, ValueRep::SomeEarlyRegister };
+    patchpoint->setGenerator([=](CCallHelpers& jit, const StackmapGenerationParams& params) {
+        GPRReg resLo = params[0].gpr();
+        GPRReg resHi = params[1].gpr();
+        GPRReg aLo = params[2].gpr();
+        GPRReg aHi = params[3].gpr();
+        GPRReg bLo = params[4].gpr();
+        GPRReg bHi = params[5].gpr();
+#if CPU(X86_64)
+        jit.move(aLo, resLo);
+        jit.sub64(bLo, resLo);
+        jit.move(aHi, resHi);
+        jit.subBorrow64(bHi, resHi);
+#elif CPU(ARM64)
+        jit.sub64AndSetFlags(aLo, bLo, resLo);
+        jit.subBorrow64(aHi, bHi, resHi);
+#endif
+    });
+    patchpoint->effects = Effects::none();
+
+    resultLo = push(m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), B3::Int64, patchpoint, 0));
+    resultHi = push(m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), B3::Int64, patchpoint, 1));
+    return { };
+}
+
+auto OMGIRGenerator::addI64MulWideU(ExpressionType lhsVar, ExpressionType rhsVar, ExpressionType& resultLo, ExpressionType& resultHi) -> PartialResult
+{
+    Value* lhs = get(lhsVar);
+    Value* rhs = get(rhsVar);
+
+    B3::Type tupleType = int64PairTupleType();
+    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, tupleType, origin());
+#if CPU(X86_64)
+    patchpoint->append(lhs, ValueRep::reg(X86Registers::eax));
+    patchpoint->append(rhs, ValueRep::SomeRegister);
+    patchpoint->resultConstraints = { ValueRep::reg(X86Registers::eax), ValueRep::reg(X86Registers::edx) };
+    patchpoint->setGenerator([=](CCallHelpers& jit, const StackmapGenerationParams& params) {
+        jit.x86UMulHigh64(params[3].gpr(), params[0].gpr(), params[1].gpr());
+    });
+#elif CPU(ARM64)
+    patchpoint->append(lhs, ValueRep::SomeRegister);
+    patchpoint->append(rhs, ValueRep::SomeRegister);
+    patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister, ValueRep::SomeEarlyRegister };
+    patchpoint->setGenerator([=](CCallHelpers& jit, const StackmapGenerationParams& params) {
+        GPRReg resLo = params[0].gpr();
+        GPRReg resHi = params[1].gpr();
+        GPRReg a = params[2].gpr();
+        GPRReg b = params[3].gpr();
+        jit.mul64(a, b, resLo);
+        jit.uMulHigh64(a, b, resHi);
+    });
+#endif
+    patchpoint->effects = Effects::none();
+
+    resultLo = push(m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), B3::Int64, patchpoint, 0));
+    resultHi = push(m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), B3::Int64, patchpoint, 1));
+    return { };
+}
+
+auto OMGIRGenerator::addI64MulWideS(ExpressionType lhsVar, ExpressionType rhsVar, ExpressionType& resultLo, ExpressionType& resultHi) -> PartialResult
+{
+    Value* lhs = get(lhsVar);
+    Value* rhs = get(rhsVar);
+
+    B3::Type tupleType = int64PairTupleType();
+    PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, tupleType, origin());
+#if CPU(X86_64)
+    patchpoint->append(lhs, ValueRep::reg(X86Registers::eax));
+    patchpoint->append(rhs, ValueRep::SomeRegister);
+    patchpoint->resultConstraints = { ValueRep::reg(X86Registers::eax), ValueRep::reg(X86Registers::edx) };
+    patchpoint->setGenerator([=](CCallHelpers& jit, const StackmapGenerationParams& params) {
+        jit.x86MulHigh64(params[3].gpr(), params[0].gpr(), params[1].gpr());
+    });
+#elif CPU(ARM64)
+    patchpoint->append(lhs, ValueRep::SomeRegister);
+    patchpoint->append(rhs, ValueRep::SomeRegister);
+    patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister, ValueRep::SomeEarlyRegister };
+    patchpoint->setGenerator([=](CCallHelpers& jit, const StackmapGenerationParams& params) {
+        GPRReg resLo = params[0].gpr();
+        GPRReg resHi = params[1].gpr();
+        GPRReg a = params[2].gpr();
+        GPRReg b = params[3].gpr();
+        jit.mul64(a, b, resLo);
+        jit.mulHigh64(a, b, resHi);
+    });
+#endif
+    patchpoint->effects = Effects::none();
+
+    resultLo = push(m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), B3::Int64, patchpoint, 0));
+    resultHi = push(m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), B3::Int64, patchpoint, 1));
     return { };
 }
 

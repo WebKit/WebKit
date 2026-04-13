@@ -120,6 +120,12 @@ def saturatedTruncMacroizer():
     return opcodeMacroizer(lambda op: (op["category"] == "conversion" and op["value"] == 0xfc), modifier=modifier, opcodeField="extendedOp")
 
 
+def wideArithmeticMacroizer():
+    def modifier(op):
+        return [cppType(type) for type in op["parameter"] + op["return"]]
+    return opcodeMacroizer(lambda op: (op["category"] == "widearithmetic"), modifier=modifier, opcodeField="extendedOp")
+
+
 def atomicMemoryLoadMacroizer():
     def modifier(op):
         return [cppType(op["return"][0])]
@@ -160,6 +166,8 @@ defines.append("\n\n#define FOR_EACH_WASM_TABLE_OP(macro)")
 defines.extend([op for op in opcodeMacroizer(lambda op: (op["category"] == "exttable"), opcodeField="extendedOp")])
 defines.append("\n\n#define FOR_EACH_WASM_TRUNC_SATURATED_OP(macro)")
 defines.extend([op for op in saturatedTruncMacroizer()])
+defines.append("\n\n#define FOR_EACH_WASM_WIDE_ARITHMETIC_OP(macro)")
+defines.extend([op for op in wideArithmeticMacroizer()])
 defines.append("\n\n#define FOR_EACH_WASM_EXT_ATOMIC_LOAD_OP(macro)")
 defines.extend([op for op in atomicMemoryLoadMacroizer()])
 defines.append("\n\n#define FOR_EACH_WASM_EXT_ATOMIC_STORE_OP(macro)")
@@ -439,6 +447,7 @@ enum class StoreOpType : uint8_t {
 enum class Ext1OpType : uint32_t {
     FOR_EACH_WASM_TABLE_OP(CREATE_ENUM_VALUE)
     FOR_EACH_WASM_TRUNC_SATURATED_OP(CREATE_ENUM_VALUE)
+    FOR_EACH_WASM_WIDE_ARITHMETIC_OP(CREATE_ENUM_VALUE)
 };
 
 enum class ExtSIMDOpType : uint32_t;
@@ -538,6 +547,7 @@ inline ASCIILiteral makeString(Ext1OpType op)
     switch (op) {
     FOR_EACH_WASM_TABLE_OP(CREATE_CASE)
     FOR_EACH_WASM_TRUNC_SATURATED_OP(CREATE_CASE)
+    FOR_EACH_WASM_WIDE_ARITHMETIC_OP(CREATE_CASE)
     }
     RELEASE_ASSERT_NOT_REACHED();
     return { };

@@ -1133,7 +1133,7 @@ public:
 
     // Globals
 
-    Value NODELETE topValue(TypeKind type);
+    Value NODELETE topValue(TypeKind type, unsigned offset = 0);
 
     Value NODELETE exception(const ControlData& control);
 
@@ -1405,6 +1405,11 @@ public:
     [[nodiscard]] PartialResult truncTrapping(OpType truncationOp, Value operand, Value& result, Type returnType, Type operandType);
     [[nodiscard]] PartialResult truncSaturated(Ext1OpType truncationOp, Value operand, Value& result, Type returnType, Type operandType);
 
+    // Wide arithmetic
+    [[nodiscard]] PartialResult addI64Add128(Value lhsLo, Value lhsHi, Value rhsLo, Value rhsHi, Value& resultLo, Value& resultHi);
+    [[nodiscard]] PartialResult addI64Sub128(Value lhsLo, Value lhsHi, Value rhsLo, Value rhsHi, Value& resultLo, Value& resultHi);
+    [[nodiscard]] PartialResult addI64MulWideS(Value lhs, Value rhs, Value& resultLo, Value& resultHi);
+    [[nodiscard]] PartialResult addI64MulWideU(Value lhs, Value rhs, Value& resultLo, Value& resultHi);
 
     // GC
     [[nodiscard]] PartialResult addRefI31(ExpressionType value, ExpressionType& result);
