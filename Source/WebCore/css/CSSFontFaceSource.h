@@ -40,8 +40,6 @@ class Document;
 class Font;
 class FontCreationContext;
 class FontDescription;
-class SVGFontFaceElement;
-class WeakPtrImplWithEventTargetData;
 
 struct FontCustomPlatformData;
 
@@ -50,7 +48,6 @@ class CSSFontFaceSource final : public FontLoadRequestClient {
     WTF_MAKE_TZONE_ALLOCATED(CSSFontFaceSource);
 public:
     CSSFontFaceSource(CSSFontFace& owner, AtomString fontFaceName);
-    CSSFontFaceSource(CSSFontFace& owner, AtomString fontFaceName, SVGFontFaceElement&);
     CSSFontFaceSource(CSSFontFace& owner, CSSFontSelector&, Ref<FontLoadRequest>&&);
     CSSFontFaceSource(CSSFontFace& owner, Ref<JSC::ArrayBufferView>&&);
     virtual ~CSSFontFaceSource();
@@ -98,15 +95,10 @@ private:
     WeakPtr<CSSFontSelector> m_fontSelector; // For remote fonts, to orchestrate loading.
     const RefPtr<FontLoadRequest> m_fontRequest; // Also for remote fonts, a pointer to the resource request.
 
-    RefPtr<SharedBuffer> m_generatedOTFBuffer;
     RefPtr<JSC::ArrayBufferView> m_immediateSource;
     RefPtr<FontCustomPlatformData> m_immediateFontCustomPlatformData;
 
-    WeakPtr<SVGFontFaceElement, WeakPtrImplWithEventTargetData> m_svgFontFaceElement;
-    RefPtr<FontCustomPlatformData> m_inDocumentCustomPlatformData;
-
     Status m_status { Status::Pending };
-    bool m_hasSVGFontFaceElement { false };
 };
 
 } // namespace WebCore

@@ -83,11 +83,11 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (-13,46) size 26x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 26x18
             chunk 1 (middle anchor) text run 1 at (-12.57,60.00) startOffset 0 endOffset 3 width 25.15: "<a>"
-      RenderSVGContainer {g} at (145,186) size 70x98 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,220.00)}]
+      RenderSVGContainer {g} at (149,183) size 62x101 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,220.00)}]
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-        RenderSVGText {text} at (-34,-33) size 68x41 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 68x41
-            chunk 1 (middle anchor) text run 1 at (-33.70,0.00) startOffset 0 endOffset 3 width 67.40: "123"
+        RenderSVGText {text} at (-30,-36) size 60x46 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 60x46
+            chunk 1 (middle anchor) text run 1 at (-30.00,0.00) startOffset 0 endOffset 3 width 60.00: "123"
         RenderSVGText {text} at (-22,46) size 44x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 43x18
             chunk 1 (middle anchor) text run 1 at (-21.02,60.00) startOffset 0 endOffset 6 width 42.04: "<text>"

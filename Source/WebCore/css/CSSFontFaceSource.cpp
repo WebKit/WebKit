@@ -38,11 +38,6 @@
 #include "FontCustomPlatformData.h"
 #include "FontDescription.h"
 #include "ResourceLoadObserver.h"
-#include "SVGElementTypeHelpers.h"
-#include "SVGFontElement.h"
-#include "SVGFontFaceElement.h"
-#include "SVGToOTFFontConversion.h"
-#include "SVGURIReference.h"
 #include "SharedBuffer.h"
 
 namespace WebCore {
@@ -92,14 +87,6 @@ CSSFontFaceSource::CSSFontFaceSource(CSSFontFace& owner, CSSFontSelector& fontSe
                 setStatus(Status::Success);
         }
     }
-}
-
-CSSFontFaceSource::CSSFontFaceSource(CSSFontFace& owner, AtomString fontFaceName, SVGFontFaceElement& fontFace)
-    : m_fontFaceName(WTF::move(fontFaceName))
-    , m_owningCSSFontFace(owner)
-    , m_svgFontFaceElement(fontFace)
-    , m_hasSVGFontFaceElement(true)
-{
 }
 
 CSSFontFaceSource::CSSFontFaceSource(CSSFontFace& owner, Ref<JSC::ArrayBufferView>&& arrayBufferView)
@@ -176,20 +163,7 @@ void CSSFontFaceSource::load(DownloadableBinaryFontTrustedTypes trustedTypes, Do
             context->beginLoadingFontSoon(*m_fontRequest);
     } else {
         bool success = false;
-        // SafeFontParser does not support OpenType (OTF) fonts, so we can fail early here instead of having it converted and failing later at the parsing.
-        if (m_hasSVGFontFaceElement && trustedTypes != DownloadableBinaryFontTrustedTypes::SafeFontParser) {
-            if (m_svgFontFaceElement) {
-                if (RefPtr fontElement = dynamicDowncast<SVGFontElement>(m_svgFontFaceElement->parentNode())) {
-                    ASSERT(!m_inDocumentCustomPlatformData);
-                    if (auto otfFont = convertSVGToOTFFont(*fontElement))
-                        m_generatedOTFBuffer = SharedBuffer::create(WTF::move(otfFont.value()));
-                    if (m_generatedOTFBuffer) {
-                        m_inDocumentCustomPlatformData = loadCustomFont(Ref { *m_generatedOTFBuffer }, trustedTypes);
-                        success = static_cast<bool>(m_inDocumentCustomPlatformData);
-                    }
-                }
-            }
-        } else if (m_immediateSource) {
+        if (m_immediateSource) {
             ASSERT(!m_immediateFontCustomPlatformData);
             auto buffer = SharedBuffer::create(Ref { *m_immediateSource }->span());
             m_immediateFontCustomPlatformData = loadCustomFont(buffer.get(), trustedTypes);
@@ -214,9 +188,7 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
 {
     ASSERT(status() == Status::Success);
 
-    bool usesInDocumentSVGFont = m_hasSVGFontFaceElement;
-
-    if (!m_fontRequest && !usesInDocumentSVGFont) {
+    if (!m_fontRequest) {
         if (m_immediateSource) {
             if (!m_immediateFontCustomPlatformData)
                 return nullptr;
@@ -233,30 +205,17 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
         return protect(FontCache::forCurrentThread())->fontForFamily(fontDescription, m_fontFaceName, fontCreationContext, options);
     }
 
-    if (m_fontRequest) {
-        auto success = m_fontRequest->ensureCustomFontData();
-        ASSERT_UNUSED(success, success);
+    auto success = m_fontRequest->ensureCustomFontData();
+    ASSERT_UNUSED(success, success);
 
-        ASSERT(status() == Status::Success);
-        auto result = m_fontRequest->createFont(fontDescription, syntheticBold, syntheticItalic, fontCreationContext);
-        ASSERT(result);
-        return result;
-    }
-
-    if (!usesInDocumentSVGFont)
-        return nullptr;
-
-    if (!m_svgFontFaceElement || !is<SVGFontElement>(m_svgFontFaceElement->parentNode()))
-        return nullptr;
-    if (!m_inDocumentCustomPlatformData)
-        return nullptr;
-    return Font::create(Ref { *m_inDocumentCustomPlatformData }->fontPlatformData(fontDescription, syntheticBold, syntheticItalic, fontCreationContext), Font::Origin::Remote);
+    ASSERT(status() == Status::Success);
+    auto result = m_fontRequest->createFont(fontDescription, syntheticBold, syntheticItalic, fontCreationContext);
+    ASSERT(result);
+    return result;
 }
 
 bool CSSFontFaceSource::isSVGFontFaceSource() const
 {
-    if (m_hasSVGFontFaceElement)
-        return true;
     auto* fontRequest = dynamicDowncast<CachedFontLoadRequest>(m_fontRequest.get());
     return fontRequest && is<CachedSVGFont>(fontRequest->cachedFont());
 }

@@ -3466,9 +3466,6 @@ style/values/view-transitions/StyleViewTransitionName.cpp
 style/values/will-change/StyleWillChange.cpp
 svg/DocumentSVG.cpp
 svg/SVGAElement.cpp
-svg/SVGAltGlyphDefElement.cpp
-svg/SVGAltGlyphElement.cpp
-svg/SVGAltGlyphItemElement.cpp
 svg/SVGAngleValue.cpp
 svg/SVGAnimateElement.cpp
 svg/SVGAnimateElementBase.cpp
@@ -3522,8 +3519,6 @@ svg/SVGFontFaceUriElement.cpp
 svg/SVGForeignObjectElement.cpp
 svg/SVGGElement.cpp
 svg/SVGGeometryElement.cpp
-svg/SVGGlyphElement.cpp
-svg/SVGGlyphRefElement.cpp
 svg/SVGGradientElement.cpp
 svg/SVGGraphicsElement.cpp
 svg/SVGHKernElement.cpp
@@ -3539,7 +3534,6 @@ svg/SVGMPathElement.cpp
 svg/SVGMarkerElement.cpp
 svg/SVGMaskElement.cpp
 svg/SVGMetadataElement.cpp
-svg/SVGMissingGlyphElement.cpp
 svg/SVGNumberList.cpp
 svg/SVGParserUtilities.cpp
 svg/SVGPathAbsoluteConverter.cpp
@@ -3580,7 +3574,6 @@ svg/SVGTextElement.cpp
 svg/SVGTextPathElement.cpp
 svg/SVGTextPositioningElement.cpp
 svg/SVGTitleElement.cpp
-svg/SVGToOTFFontConversion.cpp
 svg/SVGTransformDistance.cpp
 svg/SVGTransformList.cpp
 svg/SVGURIReference.cpp

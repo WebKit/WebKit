@@ -743,7 +743,6 @@ webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg
 Bug(WPE) svg/zoom/page/zoom-zoom-coords.xhtml [ Failure ]
 
 svg/text/kerning.svg [ Pass ]
-svg/text/multichar-glyph.svg [ Pass ]
 
 webkit.org/b/188433 svg/custom/href-svg-namespace-static.svg [ ImageOnlyFailure ]
 

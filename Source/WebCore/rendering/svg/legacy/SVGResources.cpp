@@ -68,13 +68,11 @@ static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& clipperFilterM
         &SVGNames::aTag,
         &SVGNames::circleTag,
         &SVGNames::ellipseTag,
-        &SVGNames::glyphTag,
         &SVGNames::gTag,
         &SVGNames::imageTag,
         &SVGNames::lineTag,
         &SVGNames::markerTag,
         &SVGNames::maskTag,
-        &SVGNames::missing_glyphTag,
         &SVGNames::pathTag,
         &SVGNames::polygonTag,
         &SVGNames::polylineTag,
@@ -92,7 +90,6 @@ static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& clipperFilterM
 
         // Not listed in the definitions are the text content elements, though filter/clipper/masker on tspan/text/.. is allowed.
         // (Already mailed SVG WG, waiting for a solution)
-        &SVGNames::altGlyphTag,
         &SVGNames::textPathTag,
         &SVGNames::trefTag,
         &SVGNames::tspanTag,
@@ -124,7 +121,6 @@ static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& markerTags()
 static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& fillAndStrokeTags()
 {
     static constexpr std::array tags {
-        &SVGNames::altGlyphTag,
         &SVGNames::circleTag,
         &SVGNames::ellipseTag,
         &SVGNames::lineTag,

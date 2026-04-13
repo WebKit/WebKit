@@ -795,17 +795,7 @@ webkit.org/b/137589 compositing/hidpi-compositing-vs-non-compositing-check-on-te
 
 # Underlines' starting and ending positions need to be pixel-snapped
 
-# Tests that fail with the SVG -> OTF font converter, but are lower priority than live-on
-webkit.org/b/140588 svg/W3C-SVG-1.1/fonts-desc-02-t.svg [ Failure ]
-webkit.org/b/137096 svg/W3C-SVG-1.1/text-altglyph-01-b.svg [ Failure ]
-webkit.org/b/137096 svg/custom/altglyph.svg [ Failure ]
-webkit.org/b/140590 svg/custom/svg-fonts-in-text-controls.html [ Failure ]
-webkit.org/b/137096 svg/text/text-altglyph-01-b.svg [ Failure ]
-webkit.org/b/137096 svg/text/alt-glyph-for-surrogate-pair.svg [ ImageOnlyFailure ]
-webkit.org/b/140589 svg/W3C-SVG-1.1/text-text-06-t.svg [ Failure ]
-webkit.org/b/140589 svg/text/text-text-06-t.svg [ Failure ]
-webkit.org/b/137098 svg/text/text-hkern.svg [ Failure ]
-webkit.org/b/137100 svg/text/text-vkern.svg [ Failure ]
+# SVG Fonts tests now globally skipped (Bug 278868)
 
 # Sometimes has an extra space at the end
 fast/forms/focus-selection-textarea.html [ Pass Failure ]
@@ -1117,13 +1107,7 @@ crypto/subtle/ecdsa-import-pkcs8-key-p521-validate-ecprivatekey-parameters-publi
 
 webkit.org/b/161491 media/video-main-content-allow-then-scroll.html [ Pass Failure ]
 
-# <rdar://problem/29031509> REGRESSION? (FontParser-195): svg/W3C-SVG-1.1/fonts-elem-* and svg/W3C-SVG-1.1/text-intro-* tests failing
-svg/W3C-SVG-1.1/text-intro-01-t.svg [ Failure ]
-svg/W3C-SVG-1.1/text-intro-02-b.svg [ Failure ]
-svg/W3C-SVG-1.1/text-intro-03-b.svg [ Failure ]
-svg/W3C-SVG-1.1/text-intro-04-t.svg [ Failure ]
-svg/custom/acid3-test-77.html [ Failure ]
-svg/custom/svg-fonts-fallback.xhtml [ Failure ]
+# SVG Fonts tests now globally skipped (Bug 278868)
 
 # <rdar://problem/30493910> REGRESSION: LayoutTest fast/writing-mode/broken-ideograph-small-caps.html failing
 fast/writing-mode/broken-ideograph-small-caps.html [ Failure ImageOnlyFailure ]

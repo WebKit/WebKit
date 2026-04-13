@@ -4023,7 +4023,6 @@ webkit.org/b/131347 fast/repaint/hidpi-inline-outline-atomic-child-overflow.html
 
 webkit.org/b/136109 fast/multicol/mixed-opacity-fixed-test.html [ ImageOnlyFailure ]
 webkit.org/b/136537 fast/sub-pixel/client-width-height-snapping.html [ Failure ]
-webkit.org/b/137096 svg/text/alt-glyph-for-surrogate-pair.svg [ ImageOnlyFailure ]
 webkit.org/b/144575 http/tests/loading/promote-img-preload-priority.html [ Failure ]
 webkit.org/b/146724 fast/text/word-break-keep-all.html [ ImageOnlyFailure ]
 webkit.org/b/148935 accessibility/scroll-to-make-visible-with-subfocus.html [ Failure ]
@@ -4651,14 +4650,7 @@ imported/w3c/web-platform-tests/css/css-view-transitions/start-skip-start.html [
 
 imported/w3c/web-platform-tests/svg/text/reftests/transform-dynamic-change.html [ ImageOnlyFailure ]
 
-# Kerning for SVG not working as expected.
-webkit.org/b/156148 fast/text/svg-font-face-with-kerning.html [ Failure ]
-webkit.org/b/156148 svg/custom/glyph-selection-lang-attribute.svg [ Failure ]
-webkit.org/b/156148 svg/text/kerning.svg [ Failure ]
-webkit.org/b/156148 svg/text/multichar-glyph.svg [ Failure ]
-webkit.org/b/156148 svg/text/text-hkern.svg [ Failure ]
-webkit.org/b/156148 svg/text/text-text-04-t.svg [ Failure ]
-webkit.org/b/156148 svg/text/text-text-06-t.svg [ Failure ]
+# SVG Fonts tests now globally skipped (Bug 278868)
 webkit.org/b/156148 svg/text/text-vkern.svg [ Failure ]
 webkit.org/b/156148 svg/W3C-SVG-1.1/text-text-05-t.svg [ Failure ]
 webkit.org/b/156148 svg/W3C-SVG-1.1/text-text-06-t.svg [ Failure ]

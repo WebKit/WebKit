@@ -601,7 +601,6 @@ svg/SVGImageElement.cpp
 svg/SVGLengthContext.cpp
 svg/SVGMaskElement.cpp
 svg/SVGSVGElement.cpp
-svg/SVGToOTFFontConversion.cpp
 svg/SVGURIReference.cpp
 svg/SVGUseElement.cpp
 svg/animation/SVGSMILElement.cpp

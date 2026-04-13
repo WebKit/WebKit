@@ -1940,7 +1940,6 @@ static ALWAYS_INLINE bool isStandardElementName(const AtomString& localName)
         || localName == SVGNames::font_face_nameTag->localName()
         || localName == SVGNames::font_face_srcTag->localName()
         || localName == SVGNames::font_face_uriTag->localName()
-        || localName == SVGNames::missing_glyphTag->localName()
         || localName == annotationXmlLocalName
         || localName == colorProfileLocalName;
 }
