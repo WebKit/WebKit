@@ -5295,6 +5295,15 @@ class YarrGenerator final : public YarrJITInfo {
                 } else {
                     // Capturing FixedCount, FixedCount with backtrackable content, or multi-alt FixedCount:
                     // need ParenContext to save/restore state between iterations.
+                    // FIXME: saveParenContext at END snapshots nested frame slots,
+                    // including any nested ParenContext head pointer. Content
+                    // backtracking can free those nested records, leaving the
+                    // snapshot dangling and corrupting the shared freelist
+                    // (rdar://173140757). Fall back to the interpreter for now.
+                    if (disjunctionContainsParenContextSubpattern(term->parentheses.disjunction)) {
+                        m_failureReason = JITFailureReason::ParenthesizedSubpattern;
+                        return;
+                    }
                     m_containsNestedSubpatterns = true;
                     m_usesT2 = true;
                     parenthesesBeginOpCode = YarrOpCode::ParenthesesSubpatternBegin;
@@ -6618,6 +6627,33 @@ public:
                     if (disjunctionContainsBacktrackableContent(term.parentheses.disjunction))
                         return true;
                 }
+            }
+        }
+        return false;
+    }
+
+    // Returns true if the disjunction contains a parenthesized subpattern that
+    // will be compiled to ParenthesesSubpatternBegin/End (i.e. one that
+    // allocates ParenContext records). FixedCount-with-ParenContext groups
+    // save their nested frame slots — including any nested paren's
+    // parenContextHead pointer — at END. During content backtracking the
+    // nested paren can free those records, leaving the saved pointer dangling
+    // and corrupting the shared freelist. Until that interaction is fixed,
+    // bail to the interpreter for FixedCount groups whose body contains such
+    // a nested paren. See rdar://173140757.
+    static bool disjunctionContainsParenContextSubpattern(PatternDisjunction* disjunction)
+    {
+        for (auto& alternative : disjunction->m_alternatives) {
+            for (auto& term : alternative->m_terms) {
+                if (term.type != PatternTerm::Type::ParenthesesSubpattern)
+                    continue;
+                // Mirror the selection logic in opCompileParenthesesSubpattern():
+                // anything that is not the Once/Terminal/simple-FixedCount path
+                // ends up using ParenContext.
+                if (term.quantityMaxCount != 1 && !term.parentheses.isTerminal)
+                    return true;
+                if (disjunctionContainsParenContextSubpattern(term.parentheses.disjunction))
+                    return true;
             }
         }
         return false;
