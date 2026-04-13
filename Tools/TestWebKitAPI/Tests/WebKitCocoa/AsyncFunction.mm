@@ -321,6 +321,46 @@ TEST(AsyncFunction, PromiseDetachedFrame)
     EXPECT_EQ([webView _webProcessIdentifier], pid);
 }
 
+TEST(AsyncFunction, CircularArgumentReference)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    NSError *error;
+
+    // Test circular references in dictionaries and arrays.
+    // Before cycle detection, these would blow out the stack and crash.
+    auto circularDictionary = adoptNS([[NSMutableDictionary alloc] init]);
+    [circularDictionary setObject:@"value" forKey:@"key"];
+    [circularDictionary setObject:circularDictionary.get() forKey:@"self"];
+
+    id result = [webView objectByCallingAsyncFunction:@"return a.key" withArguments:@{ @"a" : circularDictionary.get() } error:&error];
+    EXPECT_NULL(error);
+    EXPECT_TRUE([result isEqualToString:@"value"]);
+
+    auto circularArray = adoptNS([[NSMutableArray alloc] init]);
+    [circularArray addObject:@"value"];
+    [circularArray addObject:circularArray.get()];
+
+    result = [webView objectByCallingAsyncFunction:@"return a[0]" withArguments:@{ @"a" : circularArray.get() } error:&error];
+    EXPECT_NULL(error);
+    EXPECT_TRUE([result isEqualToString:@"value"]);
+}
+
+TEST(AsyncFunction, StructuralSharingPerformance)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    NSError *error;
+
+    // Build an object graph with 51 unique objects but 2^50 paths through the tree.
+    // Before de-duping logic this would hang "indefinitely"
+    id shared = @"baz";
+    for (int i = 0; i < 50; i++)
+        shared = @{ @"foo" : shared, @"bar" : shared };
+
+    id result = [webView objectByCallingAsyncFunction:@"return 'ok'" withArguments:@{ @"a" : shared } error:&error];
+    EXPECT_NULL(error);
+    EXPECT_TRUE([result isEqualToString:@"ok"]);
+}
+
 TEST(AsyncFunction, TransientActivation)
 {
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];

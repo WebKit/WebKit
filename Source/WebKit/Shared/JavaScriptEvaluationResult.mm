@@ -35,11 +35,13 @@ class JavaScriptEvaluationResult::ObjCExtractor {
 public:
     Map takeMap() { return WTF::move(m_map); }
     JSObjectID addObjectToMap(id);
+    bool failed() const { return m_failed; }
 private:
     Value toValue(id);
 
     Map m_map;
     HashMap<RetainPtr<id>, JSObjectID> m_objectsInMap;
+    bool m_failed { false };
 };
 
 class JavaScriptEvaluationResult::ObjCInserter {
@@ -163,8 +165,7 @@ auto JavaScriptEvaluationResult::ObjCExtractor::toValue(id object) -> Value
     if ([object isKindOfClass:_WKJSHandle.class])
         return makeUniqueRef<JSHandleInfo>(((_WKJSHandle *)object)->_ref->info());
 
-    // This object has been null checked and went through isSerializable which only supports these types.
-    ASSERT_NOT_REACHED();
+    m_failed = true;
     return EmptyType::Undefined;
 }
 
@@ -182,58 +183,15 @@ JSObjectID JavaScriptEvaluationResult::ObjCExtractor::addObjectToMap(id object)
     return identifier;
 }
 
-static bool isSerializable(id argument)
-{
-    if (!argument)
-        return true;
-
-    if ([argument isKindOfClass:NSString.class]
-        || [argument isKindOfClass:NSNumber.class]
-        || [argument isKindOfClass:NSDate.class]
-        || [argument isKindOfClass:NSNull.class]
-        || [argument isKindOfClass:_WKJSHandle.class]
-        || [argument isKindOfClass:_WKSerializedNode.class])
-        return true;
-
-    if ([argument isKindOfClass:[NSArray class]]) {
-        __block BOOL valid = true;
-
-        [argument enumerateObjectsUsingBlock:^(id object, NSUInteger, BOOL *stop) {
-            if (!isSerializable(object)) {
-                valid = false;
-                *stop = YES;
-            }
-        }];
-
-        return valid;
-    }
-
-    if ([argument isKindOfClass:[NSDictionary class]]) {
-        __block bool valid = true;
-
-        [argument enumerateKeysAndObjectsUsingBlock:^(id key, id value, BOOL *stop) {
-            if (!isSerializable(key) || !isSerializable(value)) {
-                valid = false;
-                *stop = YES;
-            }
-        }];
-
-        return valid;
-    }
-
-    return false;
-}
-
 std::optional<JavaScriptEvaluationResult> JavaScriptEvaluationResult::extract(id object)
 {
     if (!object)
         return jsUndefined();
 
-    if (!isSerializable(object))
-        return std::nullopt;
-
     ObjCExtractor extractor;
     auto root = extractor.addObjectToMap(object);
+    if (extractor.failed())
+        return std::nullopt;
     return JavaScriptEvaluationResult { root, extractor.takeMap() };
 }
 
