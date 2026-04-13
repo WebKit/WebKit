@@ -1,0 +1,19 @@
+This should be visible after the child div gets content.
+
+content
+
+PASS Initially hidden because #child is :empty
+PASS Visible after inserting text into #child
+PASS Hidden after inserting empty element into #child
+PASS Visible after inserting text into empty #child
+PASS Hidden again after removing all children from #child
+PASS Visible again after inserting text into empty #child
+PASS Hidden again after clearing text from #child
+PASS Visible after inserting non-empty element into #child
+PASS :not(:empty) - Initially hidden because #child2 is :empty
+PASS :not(:empty) - Visible after inserting text into #child2
+PASS :not(:empty) - Hidden after clearing text from #child2
+PASS :not(:empty) - Visible again after inserting text into #child2
+PASS :not(:empty) - Hidden after removing all children from #child2
+PASS :not(:empty) - Visible after inserting element into #child2
+

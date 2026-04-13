@@ -38,7 +38,22 @@
 
 namespace WebCore::Style {
 
-void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElement, MatchingHasSelectors& matchingHasSelectors, ChangedElementRelation changedElementRelation)
+static bool rightmostCompoundContainsEmpty(const CSSSelector& selector)
+{
+    for (auto* simple = &selector; simple; simple = simple->precedingInCompound()) {
+        if (simple->match() == CSSSelector::Match::PseudoClass && simple->pseudoClass() == CSSSelector::PseudoClass::Empty)
+            return true;
+        if (auto* selectorList = simple->selectorList()) {
+            for (auto& inner : *selectorList) {
+                if (rightmostCompoundContainsEmpty(inner))
+                    return true;
+            }
+        }
+    }
+    return false;
+}
+
+void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElement, MatchingHasSelectors& matchingHasSelectors, ChangedElementRelation changedElementRelation, EmptyInvalidation emptyInvalidation)
 {
     auto& ruleSets = parentElement().styleResolver().ruleSets();
 
@@ -74,6 +89,10 @@ void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElemen
         checkingContext.matchesAllHasScopes = true;
 
         for (auto& selector : invalidationRuleSet.invalidationSelectors) {
+            // For :empty invalidation only look for :empty selectors to avoid invalidating unnecessarily.
+            if (emptyInvalidation == EmptyInvalidation::Yes && !rightmostCompoundContainsEmpty(selector))
+                continue;
+
             if (isFirst && invalidationRuleSet.isNegation == IsNegation::No) {
                 // If this :has() matches ignoring this mutation, nothing actually changes and we don't need to invalidate.
                 // FIXME: We could cache this state across invalidations instead of just testing a single sibling.
@@ -132,9 +151,14 @@ void ChildChangeInvalidation::invalidateForHasBeforeMutation()
         invalidateForChangedElement(changedElement, matchingHasSelectors, ChangedElementRelation::SelfOrDescendant);
     });
 
-    // :empty is affected by text changes.
-    if (m_childChange.type == ContainerNode::ChildChange::Type::TextRemoved || m_childChange.type == ContainerNode::ChildChange::Type::AllChildrenRemoved)
-        invalidateForChangedElement(parentElement(), matchingHasSelectors, ChangedElementRelation::SelfOrDescendant);
+    auto emptyStateWillChange = [&] {
+        bool isEmpty = !parentElement().hasChildNodes();
+        return m_childChange.isInsertion() == isEmpty;
+    };
+
+    // :empty is special because insertions and removals can affect the matching state of the parent element.
+    if (emptyStateWillChange())
+        invalidateForChangedElement(parentElement(), matchingHasSelectors, ChangedElementRelation::SelfOrDescendant, EmptyInvalidation::Yes);
 
     auto firstChildStateWillStopMatching = [&] {
         if (!m_childChange.nextSiblingElement)
@@ -187,9 +211,14 @@ void ChildChangeInvalidation::invalidateForHasAfterMutation()
         invalidateForChangedElement(changedElement, matchingHasSelectors, ChangedElementRelation::SelfOrDescendant);
     });
 
-    // :empty is affected by text changes.
-    if (m_childChange.type == ContainerNode::ChildChange::Type::TextInserted && m_wasEmpty)
-        invalidateForChangedElement(parentElement(), matchingHasSelectors, ChangedElementRelation::SelfOrDescendant);
+    auto emptyStateDidChange = [&] {
+        bool isEmpty = !parentElement().hasChildNodes();
+        return m_childChange.isInsertion() != isEmpty;
+    };
+
+    // :empty is special because insertions and removals can affect the matching state of the parent element.
+    if (emptyStateDidChange())
+        invalidateForChangedElement(parentElement(), matchingHasSelectors, ChangedElementRelation::SelfOrDescendant, EmptyInvalidation::Yes);
 
     auto firstChildStateWillStartMatching = [&](Element* elementAfterChange) {
         if (!elementAfterChange)
