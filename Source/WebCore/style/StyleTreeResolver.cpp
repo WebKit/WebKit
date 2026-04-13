@@ -1935,7 +1935,7 @@ unsigned TreeResolver::maximumRenderTreeDepth()
     static unsigned maximum = [] {
 #if PLATFORM(IOS)
         if (WTF::IOSApplication::isMaild()) {
-            static const unsigned maximumMaildRenderTreeDepth = 200;
+            static const unsigned maximumMaildRenderTreeDepth = 100;
             return maximumMaildRenderTreeDepth;
         }
 #endif
