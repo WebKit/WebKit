@@ -2027,6 +2027,13 @@ bool SpeculativeJIT::compilePeepHoleBranch(Node* node, RelationalCondition condi
         else if (node->isBinaryUseKind(StringUse) || node->isBinaryUseKind(StringIdentUse)) {
             // Use non-peephole comparison, for now.
             return false;
+        } else if (node->isBinaryUseKind(HeapBigIntUse)) {
+            // Use non-peephole comparison so we go through compileHeapBigIntCompare,
+            // which calls the no-throw/no-GC operationCompareHeapBigInt* helpers.
+            // Falling through to genericJSValuePeepholeBranch would call the generic
+            // operationCompare* (with throw scope and exception check), violating the
+            // doesGC()==false claim made for HeapBigIntUse in DFGDoesGC.cpp.
+            return false;
         } else if (node->isBinaryUseKind(DoubleRepUse))
             compilePeepHoleDoubleBranch(node, branchNode, doubleCondition);
         else if (node->op() == CompareEq) {
