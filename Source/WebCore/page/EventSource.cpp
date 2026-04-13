@@ -41,6 +41,7 @@
 #include "EventNames.h"
 #include "ExceptionOr.h"
 #include "HTTPStatusCodes.h"
+#include "LocalDOMWindow.h"
 #include "MessageEvent.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
@@ -275,9 +276,23 @@ void EventSource::didFail(std::optional<ScriptExecutionContextIdentifier>, const
 
     ASSERT(m_requestInFlight);
 
-    // This is the case where the load gets cancelled on navigating away. We only fire an error event and attempt to reconnect
-    // if we end up getting resumed from back/forward cache.
+    // When window.stop() cancels the load, we should fail the connection per spec:
+    // "If res is an aborted network error, then fail the connection."
+    // Otherwise, this is the case where the load gets cancelled on navigating away.
+    // We only fire an error event and attempt to reconnect if we end up getting
+    // resumed from back/forward cache.
     if (error.isCancellation() && !m_isDoingExplicitCancellation) {
+        bool wasAbortedByWindowStop = false;
+        if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext())) {
+            if (RefPtr window = document->window())
+                wasAbortedByWindowStop = window->isStopping();
+        }
+        if (wasAbortedByWindowStop) {
+            m_state = CLOSED;
+            networkRequestEnded();
+            dispatchErrorEvent();
+            return;
+        }
         m_shouldReconnectOnResume = true;
         m_requestInFlight = false;
         return;
