@@ -28,37 +28,9 @@
 #include <mach/message.h>
 #include <optional>
 #include <wtf/ExportMacros.h>
-#include <wtf/HashTraits.h>
-#include <wtf/Hasher.h>
-#include <wtf/StdLibExtras.h>
-
-inline bool operator==(const audit_token_t& a, const audit_token_t& b)
-{
-    return equalSpans(asByteSpan(a), asByteSpan(b));
-}
 
 namespace WTF {
 
 WTF_EXPORT_PRIVATE std::optional<audit_token_t> auditTokenForSelf();
-
-inline void add(Hasher& hasher, const audit_token_t& token)
-{
-    add(hasher, asByteSpan(token));
-}
-
-template<> struct HashTraits<audit_token_t> : GenericHashTraits<audit_token_t> {
-    static constexpr bool emptyValueIsZero = true;
-    static audit_token_t emptyValue()
-    {
-        audit_token_t token;
-        zeroBytes(token);
-        return token;
-    }
-    static void constructDeletedValue(audit_token_t& slot) { memsetSpan(asMutableByteSpan(slot), 0xFF); }
-    static bool isDeletedValue(const audit_token_t& value)
-    {
-        return std::ranges::all_of(asByteSpan(value), [](uint8_t byte) { return byte == 0xFF; });
-    }
-};
 
 } // namespace WTF

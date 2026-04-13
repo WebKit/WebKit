@@ -1076,7 +1076,6 @@
 		461CCCA5231485A700B659B9 /* UIRemoteObjectRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 463236852314833F00A48FA7 /* UIRemoteObjectRegistry.h */; };
 		461CCCA6231485AA00B659B9 /* WebRemoteObjectRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 46323683231481EF00A48FA7 /* WebRemoteObjectRegistry.h */; };
 		461E1BF2279A0116006AF53B /* WebSharedWorkerContextManagerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 461E1BEF279A010F006AF53B /* WebSharedWorkerContextManagerConnection.h */; };
-		462C3C882F6BF46000845D7B /* HIServicesSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 462C3C862F6BF45200845D7B /* HIServicesSoftLink.h */; };
 		462CD80C28204DFA00F0EA04 /* MarkSurfacesAsVolatileRequestIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 462CD80B28204DF100F0EA04 /* MarkSurfacesAsVolatileRequestIdentifier.h */; };
 		46301002298477B100715DB1 /* WKWebGeolocationPolicyDecider.h in Headers */ = {isa = PBXBuildFile; fileRef = 463010012984778C00715DB1 /* WKWebGeolocationPolicyDecider.h */; };
 		463BB93A2B9D08D80098C5C3 /* ScriptMessageHandlerIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 463BB9392B9D08D50098C5C3 /* ScriptMessageHandlerIdentifier.h */; };
@@ -5643,8 +5642,6 @@
 		461E1BEF279A010F006AF53B /* WebSharedWorkerContextManagerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSharedWorkerContextManagerConnection.h; sourceTree = "<group>"; };
 		461E1BF0279A010F006AF53B /* WebSharedWorkerContextManagerConnection.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebSharedWorkerContextManagerConnection.messages.in; sourceTree = "<group>"; };
 		462107D71F38DBD300DD7810 /* PingLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PingLoad.cpp; sourceTree = "<group>"; };
-		462C3C862F6BF45200845D7B /* HIServicesSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HIServicesSoftLink.h; sourceTree = "<group>"; };
-		462C3C872F6BF45200845D7B /* HIServicesSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HIServicesSoftLink.mm; sourceTree = "<group>"; };
 		462CD80B28204DF100F0EA04 /* MarkSurfacesAsVolatileRequestIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MarkSurfacesAsVolatileRequestIdentifier.h; sourceTree = "<group>"; };
 		462FFFE32B20F2FC0016A855 /* SharedCARingBuffer.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SharedCARingBuffer.serialization.in; sourceTree = "<group>"; };
 		463010002984778C00715DB1 /* WKWebGeolocationPolicyDeciderIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebGeolocationPolicyDeciderIOS.mm; sourceTree = "<group>"; };
@@ -15907,8 +15904,6 @@
 				F4E2A38C2EBA8A9500D7A783 /* CoreIPCDDSecureActionContext.mm */,
 				F4E2A38D2EBA8A9500D7A783 /* CoreIPCDDSecureActionContext.serialization.in */,
 				1AC75A1C1B33695E0056745B /* HangDetectionDisablerMac.mm */,
-				462C3C862F6BF45200845D7B /* HIServicesSoftLink.h */,
-				462C3C872F6BF45200845D7B /* HIServicesSoftLink.mm */,
 				2D50365D1BCC793F00E20BB3 /* NativeWebGestureEventMac.mm */,
 				C02BFF1D1251502E009CCBEA /* NativeWebKeyboardEventMac.mm */,
 				31EA25D0134F78B2005B1452 /* NativeWebMouseEventMac.mm */,
@@ -17928,7 +17923,6 @@
 				57AC8F50217FEED90055438C /* HidConnection.h in Headers */,
 				2DD5A72B1EBF09A7009BA597 /* HiddenPageThrottlingAutoIncreasesCounter.h in Headers */,
 				5772F206217DBD6A0056BF2C /* HidService.h in Headers */,
-				462C3C882F6BF46000845D7B /* HIServicesSoftLink.h in Headers */,
 				51C0C9741DDD76000032CAD3 /* IconLoadingDelegate.h in Headers */,
 				93B631E527ABA62800443A44 /* IDBStorageConnectionToClient.h in Headers */,
 				93B631E827ABA65D00443A44 /* IDBStorageManager.h in Headers */,

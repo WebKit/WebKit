@@ -221,7 +221,6 @@ Shared/ios/WebParentalControlsURLFilter.mm @nonARC
 Shared/ios/WebPreferencesDefaultValuesIOS.mm @nonARC
 
 Shared/mac/AuxiliaryProcessMac.mm @nonARC
-Shared/mac/HIServicesSoftLink.mm @nonARC
 Shared/mac/HangDetectionDisablerMac.mm @nonARC
 Shared/mac/NativeWebGestureEventMac.mm @nonARC
 Shared/mac/NativeWebKeyboardEventMac.mm @nonARC

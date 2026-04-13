@@ -101,11 +101,6 @@
 #import <wtf/spi/darwin/dyldSPI.h>
 #import <wtf/text/TextStream.h>
 
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-#import <bsm/libbsm.h>
-#import <wtf/cocoa/AuditToken.h>
-#endif
-
 #if ENABLE(NOTIFY_BLOCKING) || PLATFORM(MAC)
 #include <notify.h>
 #endif
@@ -157,11 +152,6 @@
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/MediaToolboxSoftLink.h>
 #import <pal/spi/cocoa/AccessibilitySupportSoftLink.h>
-
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-#import "HIServicesSoftLink.h"
-#import "TCCSoftLink.h"
-#endif
 
 #if __has_include(<WebKitAdditions/WebProcessPoolAdditions.h>)
 #import <WebKitAdditions/WebProcessPoolAdditions.h>
@@ -235,89 +225,6 @@ NS_DIRECT_MEMBERS
 
 namespace WebKit {
 using namespace WebCore;
-
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-
-static Lock axAuthenticationResultsLock;
-
-static HashMap<audit_token_t, bool>& axAuthenticationResults() WTF_REQUIRES_LOCK(axAuthenticationResultsLock)
-{
-    static NeverDestroyed<HashMap<audit_token_t, bool>> map;
-    return map;
-}
-
-static HashMap<audit_token_t, Vector<CompletionHandler<void(std::optional<bool>)>>>& axAuthenticationPendingCompletions() WTF_REQUIRES_LOCK(axAuthenticationResultsLock)
-{
-    static NeverDestroyed<HashMap<audit_token_t, Vector<CompletionHandler<void(std::optional<bool>)>>>> map;
-    return map;
-}
-
-static void resolveAXAuthenticationPendingCompletions(audit_token_t auditToken, std::optional<bool> result) WTF_EXCLUDES_LOCK(axAuthenticationResultsLock)
-{
-    Vector<CompletionHandler<void(std::optional<bool>)>> pendingCompletions;
-    {
-        Locker locker { axAuthenticationResultsLock };
-        pendingCompletions = axAuthenticationPendingCompletions().take(auditToken);
-    }
-
-    if (pendingCompletions.isEmpty())
-        return;
-
-    RELEASE_LOG(Process, "resolveAXAuthenticationPendingCompletions: pid=%d hasResult=%d result=%d resolving %zu pending completion(s)", audit_token_to_pid(auditToken), result.has_value(), result.value_or(false), pendingCompletions.size());
-    for (auto& completionHandler : pendingCompletions)
-        completionHandler(result);
-}
-
-// This function runs on a background thread.
-static Boolean isAXAuthenticatedCallback(audit_token_t auditToken)
-{
-    bool result = TCCAccessCheckAuditToken(get_TCC_kTCCServiceAccessibilitySingleton(), auditToken, nullptr);
-    RELEASE_LOG(Process, "WebProcessPool::isAXAuthenticatedCallback: pid=%d result=%d", audit_token_to_pid(auditToken), result);
-    {
-        Locker locker { axAuthenticationResultsLock };
-        axAuthenticationResults().set(auditToken, result);
-    }
-
-    RunLoop::currentSingleton().dispatch([auditToken, result] {
-        resolveAXAuthenticationPendingCompletions(auditToken, result);
-    });
-
-    return result;
-}
-
-static constexpr auto axAuthenticationTimeout = 5_s;
-
-void WebProcessPool::isAXAuthenticated(audit_token_t auditToken, CompletionHandler<void(std::optional<bool>)>&& completionHandler)
-{
-    {
-        Locker locker { axAuthenticationResultsLock };
-
-        if (auto result = axAuthenticationResults().getOptional(auditToken)) {
-            RELEASE_LOG(Process, "WebProcessPool::isAXAuthenticated: pid=%d result=%d (cached)", audit_token_to_pid(auditToken), *result);
-            return completionHandler(*result);
-        }
-
-        // Either the WebContent process is compromised and sent us an unexpected auditToken
-        // or the UIProcess's isAXAuthenticatedCallback hasn't been called yet. Queue our
-        // completion handler to be resolved when the callback fires.
-        auto addResult = axAuthenticationPendingCompletions().add(auditToken, Vector<CompletionHandler<void(std::optional<bool>)>> { });
-        addResult.iterator->value.append(WTF::move(completionHandler));
-        if (!addResult.isNewEntry) {
-            RELEASE_LOG(Process, "WebProcessPool::isAXAuthenticated: pid=%d queued (timeout already scheduled)", audit_token_to_pid(auditToken));
-            return;
-        }
-    }
-
-    RELEASE_LOG(Process, "WebProcessPool::isAXAuthenticated: pid=%d result not available yet, waiting for callback", audit_token_to_pid(auditToken));
-
-    // Schedule a timeout. If the callback hasn't fired by then, the audit token was
-    // likely unexpected (compromised WebContent process).
-    RunLoop::currentSingleton().dispatchAfter(axAuthenticationTimeout, [auditToken] {
-        resolveAXAuthenticationPendingCompletions(auditToken, std::nullopt);
-    });
-}
-
-#endif // PLATFORM(MAC) || PLATFORM(MACCATALYST)
 
 static void registerUserDefaults()
 {
@@ -459,11 +366,6 @@ void WebProcessPool::platformInitialize(NeedsGlobalStaticInitialization needsGlo
 
 #if PLATFORM(MAC)
     [WKWebInspectorPreferenceObserver sharedInstance];
-#endif
-
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-    if (canLoad_HIServices__AXSetAuditTokenIsAuthenticatedCallback())
-        softLink_HIServices__AXSetAuditTokenIsAuthenticatedCallback(isAXAuthenticatedCallback);
 #endif
 
     PAL::registerNotifyCallback("com.apple.WebKit.logProcessState"_s, [] {

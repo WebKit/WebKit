@@ -234,7 +234,6 @@ WK_POWERLOG_LDFLAGS_macosx = -weak_framework PowerLog;
 
 WK_LIBBSM_LDFLAGS = $(WK_LIBBSM_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_LIBBSM_LDFLAGS_macosx = -weak_library $(SDKROOT)/usr/lib/libbsm.tbd
-WK_LIBBSM_LDFLAGS_maccatalyst = -weak_library $(SDKROOT)/usr/lib/libbsm.tbd
 
 WK_NETWORK_EXTENSION_LDFLAGS = $(WK_NETWORK_EXTENSION_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_NETWORK_EXTENSION_LDFLAGS_iphoneos = -framework NetworkExtension;
