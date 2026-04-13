@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/encoding/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/encoding/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/encoding/api-basics.any.js
 /LayoutTests/imported/w3c/web-platform-tests/encoding/api-invalid-label.any.js
 /LayoutTests/imported/w3c/web-platform-tests/encoding/api-replacement-encodings.any.js
@@ -36,7 +37,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/encoding/eof-utf-8-two-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/encoding/eof-utf-8-two-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/encoding/eof-utf-8-two.html
-/LayoutTests/imported/w3c/web-platform-tests/encoding/idlharness-shadowrealm.window.js
 /LayoutTests/imported/w3c/web-platform-tests/encoding/idlharness.any.js
 /LayoutTests/imported/w3c/web-platform-tests/encoding/iso-2022-jp-decoder.any.js
 /LayoutTests/imported/w3c/web-platform-tests/encoding/iso-2022-jp-encoder.html
@@ -56,6 +56,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/encoding/textdecoder-fatal.any.js
 /LayoutTests/imported/w3c/web-platform-tests/encoding/textdecoder-ignorebom.any.js
 /LayoutTests/imported/w3c/web-platform-tests/encoding/textdecoder-labels.any.js
+/LayoutTests/imported/w3c/web-platform-tests/encoding/textdecoder-mistakes.any.js
 /LayoutTests/imported/w3c/web-platform-tests/encoding/textdecoder-streaming.any.js
 /LayoutTests/imported/w3c/web-platform-tests/encoding/textdecoder-streaming.any.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/encoding/textdecoder-utf16-surrogates.any.js

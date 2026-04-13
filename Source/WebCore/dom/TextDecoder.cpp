@@ -70,8 +70,8 @@ ExceptionOr<String> TextDecoder::decode(std::optional<BufferSource::VariantType>
     bool sawError = false;
     String result = m_codec->decode(data, !options.stream, m_options.fatal, sawError);
 
-    if (!options.stream && !m_options.ignoreBOM)
-        m_codec->stripByteOrderMark();
+    if (!options.stream)
+        m_codec = nullptr;
 
     if (sawError && m_options.fatal)
         return Exception { ExceptionCode::TypeError };

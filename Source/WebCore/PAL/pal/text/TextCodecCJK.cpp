@@ -193,6 +193,8 @@ String TextCodecCJK::decodeCommon(std::span<const uint8_t> bytes, bool flush, bo
         result.append(replacementCharacter);
         if (stopOnError) {
             m_lead = 0x00;
+            m_jis0212 = false;
+            m_prependedByte = std::nullopt;
             return result.toString();
         }
     }
@@ -202,6 +204,8 @@ String TextCodecCJK::decodeCommon(std::span<const uint8_t> bytes, bool flush, bo
             result.append(replacementCharacter);
             if (stopOnError) {
                 m_lead = 0x00;
+                m_jis0212 = false;
+                m_prependedByte = std::nullopt;
                 return result.toString();
             }
         }
@@ -210,6 +214,8 @@ String TextCodecCJK::decodeCommon(std::span<const uint8_t> bytes, bool flush, bo
             result.append(replacementCharacter);
             if (stopOnError) {
                 m_lead = 0x00;
+                m_jis0212 = false;
+                m_prependedByte = std::nullopt;
                 return result.toString();
             }
         }
@@ -217,6 +223,7 @@ String TextCodecCJK::decodeCommon(std::span<const uint8_t> bytes, bool flush, bo
 
     if (flush && m_lead) {
         m_lead = 0x00;
+        m_jis0212 = false;
         sawError = true;
         result.append(replacementCharacter);
     }
@@ -437,6 +444,8 @@ String TextCodecCJK::iso2022JPDecode(std::span<const uint8_t> bytes, bool flush,
         result.append(replacementCharacter);
         if (stopOnError) {
             m_lead = 0x00;
+            m_prependedByte = std::nullopt;
+            m_iso2022JPSecondPrependedByte = std::nullopt;
             return result.toString();
         }
     }
@@ -445,6 +454,8 @@ String TextCodecCJK::iso2022JPDecode(std::span<const uint8_t> bytes, bool flush,
         result.append(replacementCharacter);
         if (stopOnError) {
             m_lead = 0x00;
+            m_prependedByte = std::nullopt;
+            m_iso2022JPSecondPrependedByte = std::nullopt;
             return result.toString();
         }
     }
@@ -454,6 +465,8 @@ String TextCodecCJK::iso2022JPDecode(std::span<const uint8_t> bytes, bool flush,
             result.append(replacementCharacter);
             if (stopOnError) {
                 m_lead = 0x00;
+                m_prependedByte = std::nullopt;
+                m_iso2022JPSecondPrependedByte = std::nullopt;
                 return result.toString();
             }
         }
@@ -462,6 +475,8 @@ String TextCodecCJK::iso2022JPDecode(std::span<const uint8_t> bytes, bool flush,
             result.append(replacementCharacter);
             if (stopOnError) {
                 m_lead = 0x00;
+                m_prependedByte = std::nullopt;
+                m_iso2022JPSecondPrependedByte = std::nullopt;
                 return result.toString();
             }
         }
@@ -470,6 +485,8 @@ String TextCodecCJK::iso2022JPDecode(std::span<const uint8_t> bytes, bool flush,
             result.append(replacementCharacter);
             if (stopOnError) {
                 m_lead = 0x00;
+                m_prependedByte = std::nullopt;
+                m_iso2022JPSecondPrependedByte = std::nullopt;
                 return result.toString();
             }
         }
@@ -483,13 +500,17 @@ String TextCodecCJK::iso2022JPDecode(std::span<const uint8_t> bytes, bool flush,
         case ISO2022JPDecoderState::LeadByte:
             break;
         case ISO2022JPDecoderState::TrailByte:
-            m_iso2022JPDecoderState = ISO2022JPDecoderState::LeadByte;
-            [[fallthrough]];
         case ISO2022JPDecoderState::EscapeStart:
+            m_iso2022JPDecoderState = ISO2022JPDecoderState::ASCII;
+            m_iso2022JPDecoderOutputState = ISO2022JPDecoderState::ASCII;
+            m_iso2022JPOutput = false;
             sawError = true;
             result.append(replacementCharacter);
             break;
         case ISO2022JPDecoderState::Escape:
+            m_iso2022JPDecoderState = ISO2022JPDecoderState::ASCII;
+            m_iso2022JPDecoderOutputState = ISO2022JPDecoderState::ASCII;
+            m_iso2022JPOutput = false;
             sawError = true;
             result.append(replacementCharacter);
             if (m_lead) {

@@ -30,6 +30,7 @@ PASS gb18030 decoder: pointer 1237576
 PASS gb18030 decoder: legacy ICU special case 1
 PASS gb18030 decoder: legacy ICU special case 2
 PASS gb18030 decoder: legacy ICU special case 3
+PASS gb18030 decoder: undefined
 PASS gb18030 decoder: GB18030-2022 1
 PASS gb18030 decoder: GB18030-2022 2
 PASS gb18030 decoder: GB18030-2022 3
