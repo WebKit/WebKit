@@ -140,7 +140,14 @@ void WebPage::platformInitializeAccessibility(ShouldInitializeNSAccessibility sh
     // Get the pid for the starting process.
     pid_t pid = legacyPresentingApplicationPID();
     createMockAccessibilityElement(pid);
-    if (protectedCorePage()->localMainFrame())
+
+    if (shouldInitializeNSAccessibility == ShouldInitializeNSAccessibility::No) {
+        // The accessibility server hasn't been initialized yet. Defer sending
+        // the remote token until WebProcess::initializeAccessibility completes,
+        // otherwise the UI process will have a remote element that can't resolve.
+        m_needsAccessibilityTokenTransfer = true;
+        RELEASE_LOG(Process, "WebPage::platformInitializeAccessibility deferring token transfer for pageID=%" PRIu64, identifier().toUInt64());
+    } else if (protectedCorePage()->localMainFrame())
         accessibilityTransferRemoteToken(accessibilityRemoteTokenData());
 
     // Close Mach connection to Launch Services.
@@ -165,6 +172,18 @@ void WebPage::platformReinitializeAccessibilityToken()
     if (!frame)
         return;
     accessibilityTransferRemoteToken(accessibilityRemoteTokenData());
+}
+
+void WebPage::sendAccessibilityTokenIfNeeded()
+{
+    if (!m_needsAccessibilityTokenTransfer)
+        return;
+    m_needsAccessibilityTokenTransfer = false;
+
+    if (protectedCorePage()->localMainFrame()) {
+        RELEASE_LOG(Process, "WebPage::sendAccessibilityTokenIfNeeded sending deferred token for pageID=%" PRIu64, identifier().toUInt64());
+        accessibilityTransferRemoteToken(accessibilityRemoteTokenData());
+    }
 }
 
 RetainPtr<NSData> WebPage::accessibilityRemoteTokenData() const

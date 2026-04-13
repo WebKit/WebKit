@@ -294,6 +294,11 @@ void WebPage::platformReinitializeAccessibilityToken()
     accessibilityTransferRemoteToken(accessibilityRemoteTokenData());
 }
 
+void WebPage::sendAccessibilityTokenIfNeeded()
+{
+    // On iOS, accessibility is always initialized eagerly, so this is a no-op.
+}
+
 RetainPtr<NSData> WebPage::accessibilityRemoteTokenData() const
 {
     return [[[NSUUID UUID] UUIDString] dataUsingEncoding:NSUTF8StringEncoding];
