@@ -750,6 +750,10 @@ function ios_family_process_model_entitlements()
 function ios_family_process_adattributiond_entitlements()
 {
     plistbuddy Add :com.apple.private.sandbox.profile string com.apple.WebKit.adattributiond
+    plistbuddy Add :com.apple.private.network.socket-delegate bool YES
+    plistbuddy Add :com.apple.security.network.client bool YES
+    plistbuddy Add :com.apple.private.networkserviceproxy bool YES
+    plistbuddy Add :com.apple.security.exception.mach-lookup.global-name:0 string com.apple.networkserviceproxy
 }
 
 function ios_family_process_webpushd_entitlements()

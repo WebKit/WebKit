@@ -132,6 +132,7 @@ int PCMDaemonMain(int argc, const char** argv)
 #else
     constexpr auto safariApplicationBundleIdentifier { "com.apple.safari"_s };
 #endif
+    constexpr auto webKitSecondaryIdentifier { "com.apple.webkit.adattributiond"_s };
 
     auto arguments = unsafeMakeSpan(argv, argc);
     if (arguments.size() < 5 || !equalSpans(unsafeSpan(arguments[1]), "--machServiceName"_span) || !equalSpans(unsafeSpan(arguments[3]), "--storageLocation"_span)) {
@@ -152,7 +153,7 @@ int PCMDaemonMain(int argc, const char** argv)
         if (startActivity)
             registerScheduledActivityHandler();
         WTF::initializeMainThread();
-        PCM::initializePCMStorageInDirectory(FileSystem::stringFromFileSystemRepresentation(storageLocation), safariApplicationBundleIdentifier);
+        PCM::initializePCMStorageInDirectory(FileSystem::stringFromFileSystemRepresentation(storageLocation), safariApplicationBundleIdentifier, webKitSecondaryIdentifier);
     }
     CFRunLoopRun();
     return 0;

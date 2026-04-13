@@ -58,12 +58,12 @@ constexpr Seconds debugModeSecondsUntilSend { 10_s };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PrivateClickMeasurementManager);
 
-Ref<PrivateClickMeasurementManager> PrivateClickMeasurementManager::create(UniqueRef<PCM::Client>&& client, const String& storageDirectory, const ApplicationBundleIdentifierOrAuditToken& applicationBundleIdentifier)
+Ref<PrivateClickMeasurementManager> PrivateClickMeasurementManager::create(UniqueRef<PCM::Client>&& client, const String& storageDirectory, const ApplicationBundleIdentifiersOrAuditToken& applicationBundleIdentifier)
 {
     return adoptRef(*new PrivateClickMeasurementManager(WTF::move(client), storageDirectory, applicationBundleIdentifier));
 }
 
-PrivateClickMeasurementManager::PrivateClickMeasurementManager(UniqueRef<PCM::Client>&& client, const String& storageDirectory, const ApplicationBundleIdentifierOrAuditToken& applicationBundleIdentifier)
+PrivateClickMeasurementManager::PrivateClickMeasurementManager(UniqueRef<PCM::Client>&& client, const String& storageDirectory, const ApplicationBundleIdentifiersOrAuditToken& applicationBundleIdentifier)
     : m_firePendingAttributionRequestsTimer(RunLoop::mainSingleton(), "PrivateClickMeasurementManager::FirePendingAttributionRequestsTimer"_s, this, &PrivateClickMeasurementManager::firePendingAttributionRequests)
     , m_storageDirectory(storageDirectory)
     , m_applicationBundleIdentifier(applicationBundleIdentifier)
