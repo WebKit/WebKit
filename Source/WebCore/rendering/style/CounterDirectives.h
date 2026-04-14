@@ -29,6 +29,10 @@ struct CounterDirectives {
     std::optional<int> resetValue;
     std::optional<int> incrementValue;
     std::optional<int> setValue;
+    bool isReversed { false };
+    // Default true because non-reversed counters always have an explicit value
+    // (0 if omitted). Only reversed() counters without a value are deferred.
+    bool hasExplicitResetValue { true };
 
     constexpr bool operator==(const CounterDirectives&) const = default;
 };

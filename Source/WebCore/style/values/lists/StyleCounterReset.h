@@ -31,13 +31,15 @@
 namespace WebCore {
 namespace Style {
 
-// <'counter-reset'> = [ <counter-name> <integer>?@(default=0) ]+ | none
-// https://drafts.csswg.org/css-lists/#propdef-counter-set
+// <'counter-reset'> = [ <counter-name> <integer>?@(default=0) | reversed(<counter-name>) <integer>? ]+ | none
+// https://drafts.csswg.org/css-lists/#propdef-counter-reset
 
-// <counter-reset-value> = [ <counter-name> <integer>?@(default=0) ]
+// <counter-reset-value> = [ <counter-name> <integer>?@(default=0) | reversed(<counter-name>) <integer>? ]
 struct CounterResetValue {
     CustomIdent name;
     Integer<> value;
+    bool isReversed { false };
+    bool hasExplicitValue { true };
 
     bool operator==(const CounterResetValue&) const = default;
 };

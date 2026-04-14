@@ -27,6 +27,7 @@
 #include "StyleCounterReset.h"
 
 #include "CSSCustomIdentValue.h"
+#include "CSSFunctionValue.h"
 #include "StyleBuilderChecking.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 #include "StyleValueTypes+CSSValueConversion.h"
@@ -40,13 +41,49 @@ using namespace CSS::Literals;
 
 auto CSSValueConversion<CounterResetValue>::operator()(BuilderState& state, const CSSValue& value) -> CounterResetValue
 {
-    auto pair = requiredPairDowncast<CSSCustomIdentValue, CSSPrimitiveValue>(state, value);
+    // Case 1: reversed(<counter-name>) without explicit value — standalone CSSFunctionValue.
+    if (auto* function = dynamicDowncast<CSSFunctionValue>(value)) {
+        if (function->name() == CSSValueReversed && function->length() == 1) {
+            if (auto* identValue = dynamicDowncast<CSSCustomIdentValue>(*function->item(0))) {
+                return {
+                    toStyleFromCSSValue<CustomIdent>(state, *identValue),
+                    0_css_integer,
+                    true,
+                    false,
+                };
+            }
+        }
+        return { CustomIdent { emptyAtom() }, 0_css_integer };
+    }
+
+    // Case 2: CSSValuePair — either normal or reversed with explicit value.
+    auto* pair = dynamicDowncast<CSSValuePair>(value);
     if (!pair)
-        return { CustomIdent { emptyAtom() }, 1_css_integer };
+        return { CustomIdent { emptyAtom() }, 0_css_integer };
+
+    // Case 2a: reversed(<counter-name>) <integer> — first is CSSFunctionValue.
+    if (auto* function = dynamicDowncast<CSSFunctionValue>(pair->first())) {
+        if (function->name() == CSSValueReversed && function->length() == 1) {
+            if (auto* identValue = dynamicDowncast<CSSCustomIdentValue>(*function->item(0))) {
+                return {
+                    toStyleFromCSSValue<CustomIdent>(state, *identValue),
+                    toStyleFromCSSValue<Integer<>>(state, pair->second()),
+                    true,
+                    true,
+                };
+            }
+        }
+        return { CustomIdent { emptyAtom() }, 0_css_integer };
+    }
+
+    // Case 2b: <counter-name> <integer> — normal counter (existing path).
+    auto* identValue = dynamicDowncast<CSSCustomIdentValue>(pair->first());
+    if (!identValue)
+        return { CustomIdent { emptyAtom() }, 0_css_integer };
 
     return {
-        toStyleFromCSSValue<CustomIdent>(state, pair->first),
-        toStyleFromCSSValue<Integer<>>(state, pair->second),
+        toStyleFromCSSValue<CustomIdent>(state, *identValue),
+        toStyleFromCSSValue<Integer<>>(state, pair->second()),
     };
 }
 

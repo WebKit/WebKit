@@ -88,7 +88,7 @@ RenderStyle RenderListItem::computeMarkerStyle() const
     return markerStyle;
 }
 
-bool isHTMLListElement(const Node& node)
+bool isHTMLListElement(const Node* node)
 {
     return isAnyOf<HTMLUListElement, HTMLOListElement>(node);
 }
@@ -112,7 +112,7 @@ static Element* enclosingList(const RenderListItem& listItem)
     SUPPRESS_UNCOUNTED_LOCAL auto* pseudoElement = dynamicDowncast<PseudoElement>(element);
     SUPPRESS_UNCOUNTED_LOCAL auto* parent = pseudoElement ? pseudoElement->hostElement() : element->parentElement();
     for (SUPPRESS_UNCOUNTED_LOCAL auto* ancestor = parent; ancestor; ancestor = ancestor->parentElement()) {
-        if (isHTMLListElement(*ancestor) || (ancestor->renderer() && ancestor->renderer()->shouldApplyStyleContainment()))
+        if (isHTMLListElement(ancestor) || (ancestor->renderer() && ancestor->renderer()->shouldApplyStyleContainment()))
             return ancestor;
     }
 
@@ -242,12 +242,67 @@ void RenderListItem::updateValueNow() const
     if (!startValue) {
         // Take in account enclosing list counter-reset.
         // FIXME: This can be a lot more simple when lists use presentational hints.
+        bool needsDeferredStart = false;
         if (list && list->renderer()) {
             auto listDirectives = list->renderer()->style().usedCounterDirectives().map.get("list-item"_s);
-            if (listDirectives.resetValue)
-                startValue = *listDirectives.resetValue;
-            else
+            if (listDirectives.resetValue) {
+                if (listDirectives.isReversed && !listDirectives.hasExplicitResetValue)
+                    needsDeferredStart = true;
+                else
+                    startValue = *listDirectives.resetValue;
+            } else if (orderedList && orderedList->isReversed()
+                && !orderedList->hasAttributeWithoutSynchronization(startAttr)) {
+                needsDeferredStart = true;
+            } else
                 startValue = orderedList ? orderedList->start() - defaultIncrement : 0;
+
+            if (needsDeferredStart) {
+                // Deferred start value for reversed lists (<ol reversed> or
+                // CSS counter-reset: reversed(list-item)) without explicit start:
+                // walk all renderers in the list scope and apply the reversed
+                // counter algorithm to compute the initial value.
+                int num = 0;
+                int lastNonZeroIncrementNegated = 0;
+                bool setOnNonListItem = false;
+                auto* listRenderer = list->renderer();
+                for (auto* descendant = listRenderer->nextInPreOrder(listRenderer); descendant; descendant = descendant->nextInPreOrder(listRenderer)) {
+                    auto* element = dynamicDowncast<RenderElement>(descendant);
+                    if (!element)
+                        continue;
+                    if (element->shouldApplyStyleContainment())
+                        continue;
+                    auto directives = element->style().usedCounterDirectives().map.get("list-item"_s);
+                    bool isListItemInScope = false;
+                    if (auto* item = dynamicDowncast<RenderListItem>(element)) {
+                        if (enclosingList(*item) == list.get()) {
+                            isListItemInScope = true;
+                            if (!directives.setValue && !directives.incrementValue)
+                                directives.incrementValue = defaultIncrement;
+                        }
+                    }
+                    if (directives.setValue) {
+                        if (isListItemInScope)
+                            num = saturatedSum<int>(num, *directives.setValue);
+                        else {
+                            // Non-list-item counter-set resets the sequence midstream.
+                            num = *directives.setValue;
+                            setOnNonListItem = true;
+                        }
+                        break;
+                    }
+                    if (directives.resetValue && element != listRenderer)
+                        break;
+                    if (directives.incrementValue) {
+                        int incrementNegated = saturatedDifference<int>(0, *directives.incrementValue);
+                        if (incrementNegated)
+                            lastNonZeroIncrementNegated = incrementNegated;
+                        num = saturatedSum<int>(num, incrementNegated);
+                    }
+                }
+                if (!setOnNonListItem)
+                    num = saturatedSum<int>(num, lastNonZeroIncrementNegated);
+                startValue = num;
+            }
         }
         auto directives = startItem->style().usedCounterDirectives().map.get("list-item"_s);
         startValue = valueForItem(startValue.value_or(0), directives);
@@ -255,13 +310,47 @@ void RenderListItem::updateValueNow() const
 
     int value = *startValue;
 
-    for (auto* item = startItem; item != this; ) {
-        item = nextListItem(*list, *item);
-        auto directives = item->style().usedCounterDirectives().map.get("list-item"_s);
-        item->m_value = valueForItem(value, directives);
-        // counter-reset creates a new nested counter, so it should not be counted towards the current counter.
-        if (!directives.resetValue)
-            value = *item->m_value;
+    if (startItem != this) {
+        auto* listRenderer = list ? list->renderer() : nullptr;
+        if (listRenderer) {
+            // Walk all renderers (not just list items) to account for non-list-item
+            // elements with explicit counter-increment/counter-set for list-item.
+            for (auto* descendant = startItem->nextInPreOrder(listRenderer); descendant; descendant = descendant->nextInPreOrder(listRenderer)) {
+                auto* element = dynamicDowncast<RenderElement>(descendant);
+                if (!element)
+                    continue;
+                if (element->shouldApplyStyleContainment())
+                    continue;
+                auto directives = element->style().usedCounterDirectives().map.get("list-item"_s);
+                if (auto* listItem = dynamicDowncast<RenderListItem>(element)) {
+                    if (enclosingList(*listItem) != list.get())
+                        continue;
+                    if (!directives.setValue && !directives.incrementValue)
+                        directives.incrementValue = defaultIncrement;
+                    listItem->m_value = valueForItem(value, directives);
+                    if (!directives.resetValue)
+                        value = *listItem->m_value;
+                    if (listItem == this)
+                        break;
+                } else {
+                    if (directives.setValue)
+                        value = *directives.setValue;
+                    else if (directives.incrementValue)
+                        value += *directives.incrementValue;
+                }
+            }
+        }
+        // Fallback: if the render tree walk didn't reach this item (e.g., the
+        // list element has no renderer), walk via DOM-based nextListItem.
+        if (!m_value) {
+            for (auto* item = startItem; item != this; ) {
+                item = nextListItem(*list, *item);
+                auto directives = item->style().usedCounterDirectives().map.get("list-item"_s);
+                item->m_value = valueForItem(value, directives);
+                if (!directives.resetValue)
+                    value = *item->m_value;
+            }
+        }
     }
 }
 

@@ -45,12 +45,13 @@ class CounterNode : public RefCounted<CounterNode>, public CanMakeSingleThreadWe
 public:
     enum class Type : uint8_t { Increment, Reset, Set };
 
-    static Ref<CounterNode> create(RenderElement&, OptionSet<Type>, int value);
+    static Ref<CounterNode> create(RenderElement&, OptionSet<Type>, int value, bool reversed = false, bool valueNeedsComputation = false);
     ~CounterNode();
     bool actsAsReset() const { return hasResetType() || !m_parent; }
     bool hasResetType() const { return m_type.contains(Type::Reset); }
     bool hasSetType() const { return m_type.contains(Type::Set); }
     int value() const { return m_value; }
+    int resolvedValue() const;
     int countInParent() const { return m_countInParent; }
     RenderElement& NODELETE owner() const;
     void NODELETE addRenderer(RenderCounter&);
@@ -74,7 +75,7 @@ public:
     void removeChild(CounterNode&);
 
 private:
-    CounterNode(RenderElement&, OptionSet<Type>, int value);
+    CounterNode(RenderElement&, OptionSet<Type>, int value, bool reversed, bool valueNeedsComputation);
     int NODELETE computeCountInParent() const;
     // Invalidates the text in the renderer of this counter, if any,
     // and in the renderers of all descendants of this counter, if any.
@@ -84,6 +85,10 @@ private:
     OptionSet<Type> m_type { };
     int m_value;
     int m_countInParent { 0 };
+    mutable int m_cachedResolvedValue { 0 };
+    bool m_reversed { false };
+    bool m_valueNeedsComputation { false };
+    mutable bool m_resolvedValueDirty { true };
     SingleThreadWeakRef<RenderElement> m_owner;
     SingleThreadWeakPtr<RenderCounter> m_rootRenderer;
 

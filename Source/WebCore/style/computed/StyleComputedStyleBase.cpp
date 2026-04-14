@@ -382,12 +382,17 @@ void ComputedStyleBase::updateUsedCounterResetDirectives()
 {
     auto& map = m_nonInheritedData.access().rareData.access().usedCounterDirectives.map;
 
-    for (auto& keyValue : map)
+    for (auto& keyValue : map) {
         keyValue.value.resetValue = std::nullopt;
+        keyValue.value.isReversed = false;
+        keyValue.value.hasExplicitResetValue = true;
+    }
 
     for (auto& counterResetValue : m_nonInheritedData->rareData->counterReset) {
         auto& directives = map.add(counterResetValue.name.value, CounterDirectives { }).iterator->value;
         directives.resetValue = counterResetValue.value.value;
+        directives.isReversed = counterResetValue.isReversed;
+        directives.hasExplicitResetValue = counterResetValue.hasExplicitValue;
     }
 }
 
