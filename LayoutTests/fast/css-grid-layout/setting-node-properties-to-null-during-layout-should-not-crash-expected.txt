@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: An accessKey with more than one code point is not supported.
 This test passes if it does not crash.
 
 

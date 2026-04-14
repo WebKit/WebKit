@@ -718,6 +718,11 @@ String HTMLElement::accessKeyLabel() const
     if (accessKey.isEmpty())
         return String();
 
+    if (accessKey.length() > 1) {
+        protect(document())->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "An accessKey with more than one code point is not supported."_s);
+        return String();
+    }
+
     StringBuilder result;
 
 #if PLATFORM(COCOA)

@@ -1222,25 +1222,25 @@ ExceptionOr<Ref<Document>> Document::parseHTMLUnsafe(Document& context, Variant<
 
 Element* Document::elementForAccessKey(const String& key)
 {
-    if (key.isEmpty())
+    if (key.length() != 1)
         return nullptr;
     if (!m_accessKeyCache)
         buildAccessKeyCache();
-    return m_accessKeyCache->get(key);
+    return m_accessKeyCache->get(toASCIILower(key[0]));
 }
 
 void Document::buildAccessKeyCache()
 {
     m_accessKeyCache = [this] {
-        HashMap<String, WeakPtr<Element, WeakPtrImplWithEventTargetData>, ASCIICaseInsensitiveHash> map;
+        HashMap<char16_t, WeakPtr<Element, WeakPtrImplWithEventTargetData>> map;
         for (CheckedRef node : composedTreeDescendants(*this)) {
             CheckedPtr element = dynamicDowncast<Element>(node);
             if (!element)
                 continue;
             auto& key = element->attributeWithoutSynchronization(accesskeyAttr);
-            if (key.isEmpty())
+            if (key.length() != 1)
                 continue;
-            map.add(key, *element);
+            map.add(toASCIILower(key[0]), *element);
         }
         return map;
     }();

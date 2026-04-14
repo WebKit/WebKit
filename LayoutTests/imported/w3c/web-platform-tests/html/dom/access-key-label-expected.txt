@@ -1,0 +1,4 @@
+
+PASS Returns non empty string when accesskey is valid
+PASS Returns empty string when accesskey is invalid
+
