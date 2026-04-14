@@ -1618,14 +1618,14 @@ void EditingStyle::removeEquivalentProperties(T& style)
         if (!style.propertyMatches(property.id(), RefPtr { property.value() }.get()))
             continue;
 
-        // Only the text-decoration longhands support serializing with the shorthand in all editing properties.
+        // If this property was not set as part of a shorthand, it can be removed independently.
         auto shorthandID = property.shorthandID();
-        if (shorthandID != CSSPropertyTextDecoration) {
+        if (shorthandID == CSSPropertyInvalid) {
             propertiesToRemove.append(property.id());
             continue;
         }
 
-        // Do not remove equivalent properties when they share a shorthand with non-equivalent ones, and the removal would prevent them from being serialized with the shorthand.
+        // Do not remove equivalent properties when they share a shorthand with non-equivalent ones, as the removal would prevent them from being serialized with the shorthand.
         if (mutableStyle->getPropertyValue(shorthandID).isEmpty()) {
             propertiesToRemove.append(property.id());
             continue;
