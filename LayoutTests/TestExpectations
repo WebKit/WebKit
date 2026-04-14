@@ -1163,9 +1163,6 @@ imported/w3c/web-platform-tests/css/css-ui/caret-color-020.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/svg/scripted.svg [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/svg/including.sub.svg [ Skip ]
 
-# FIXME (304193): CSP violation reporting from workers is not yet supported.
-imported/w3c/web-platform-tests/content-security-policy/reporting-api/dedicated-worker-correct-url-in-report.html [ Skip ]
-
 # Skip Content Security Policy tests that time out
 imported/w3c/web-platform-tests/content-security-policy/child-src/child-src-cross-origin-load.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-nested-cross-in-cross-none-block.html [ Skip ]

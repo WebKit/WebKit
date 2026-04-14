@@ -46,11 +46,13 @@
 #include "ImageBitmapOptions.h"
 #include "InspectorInstrumentation.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSExecState.h"
 #include "Logging.h"
 #include "NotImplemented.h"
 #include "Performance.h"
 #include "RTCDataChannelRemoteHandlerConnection.h"
 #include "ReportingScope.h"
+#include "ResourceRequest.h"
 #include "ScheduledAction.h"
 #include "ScriptExecutionContextInlines.h"
 #include "ScriptSourceCode.h"
@@ -60,6 +62,7 @@
 #include "ServiceWorkerClientData.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "SocketProvider.h"
+#include "ThreadableLoader.h"
 #include "TrustedType.h"
 #include "URLKeepingBlobAlive.h"
 #include "ViolationReportType.h"
@@ -80,6 +83,7 @@
 #include "WorkerThread.h"
 #include <JavaScriptCore/ScriptArguments.h>
 #include <JavaScriptCore/ScriptCallStack.h>
+#include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <wtf/Lock.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WorkQueue.h>
@@ -436,9 +440,15 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<Variant<Ref
     for (auto& url : completedURLs) {
         // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is solved.
         bool shouldBypassMainWorldContentSecurityPolicy = this->shouldBypassMainWorldContentSecurityPolicy();
-        // FIXME: Provide a source location for the blocked script URL load request.
-        if (!shouldBypassMainWorldContentSecurityPolicy && !protect(contentSecurityPolicy())->allowScriptFromSource(url, { }))
-            return Exception { ExceptionCode::NetworkError };
+        if (!shouldBypassMainWorldContentSecurityPolicy) {
+            auto stack = Inspector::createScriptCallStack(JSExecState::currentState(), 1);
+            auto* callFrame = stack->firstNonNativeCallFrame();
+            std::optional<TextPosition> sourcePosition;
+            if (callFrame && callFrame->lineNumber())
+                sourcePosition = TextPosition(OrdinalNumber::fromOneBasedInt(callFrame->lineNumber()), OrdinalNumber::fromOneBasedInt(callFrame->columnNumber()));
+            if (!protect(contentSecurityPolicy())->allowScriptFromSource(url, WTF::move(sourcePosition)))
+                return Exception { ExceptionCode::NetworkError };
+        }
 
         auto scriptLoader = WorkerScriptLoader::create();
         auto cspEnforcement = shouldBypassMainWorldContentSecurityPolicy ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceScriptSrcDirective;
@@ -769,9 +779,54 @@ String WorkerGlobalScope::endpointURIForToken(const String& token) const
     return reportingScope().endpointURIForToken(token);
 }
 
-void WorkerGlobalScope::sendReportToEndpoints(const URL&, std::span<const String> /*endpointURIs*/, std::span<const String> /*endpointTokens*/, Ref<FormData>&&, ViolationReportType)
+// A minimal ThreadableLoaderClient for fire-and-forget report delivery.
+// All callbacks are no-ops; the keepAlive option keeps the load alive.
+class ReportDeliveryClient final : public ThreadableLoaderClient {
+    void ref() const final { }
+    void deref() const final { }
+};
+
+void WorkerGlobalScope::sendReportToEndpoints(const URL& baseURL, std::span<const String> endpointURIs, std::span<const String> endpointTokens, Ref<FormData>&& report, ViolationReportType reportType)
 {
-    notImplemented();
+    Vector<URL> resolvedURLs;
+    for (auto& uri : endpointURIs)
+        resolvedURLs.append(URL { baseURL, uri });
+    for (auto& token : endpointTokens) {
+        if (auto uri = endpointURIForToken(token); !uri.isEmpty())
+            resolvedURLs.append(URL { baseURL, uri });
+    }
+
+    static NeverDestroyed<ReportDeliveryClient> client;
+
+    for (auto& reportURL : resolvedURLs) {
+        ResourceRequest request { URL { reportURL } };
+        request.setHTTPMethod("POST"_s);
+        request.setHTTPBody(report.copyRef());
+
+        if (reportType == ViolationReportType::ContentSecurityPolicy)
+            request.setHTTPContentType("application/csp-report"_s);
+        else
+            request.setHTTPContentType("application/reports+json"_s);
+
+        bool isSameOrigin = securityOrigin() && securityOrigin()->isSameSchemeHostPort(SecurityOrigin::create(reportURL).get());
+        if (!isSameOrigin)
+            request.setAllowCookies(false);
+
+        ThreadableLoaderOptions options;
+        options.contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::DoNotEnforce;
+        options.keepAlive = true;
+        options.cache = FetchOptions::Cache::NoCache;
+        options.redirect = FetchOptions::Redirect::Error;
+
+        if (reportType != ViolationReportType::ContentSecurityPolicy) {
+            options.credentials = FetchOptions::Credentials::SameOrigin;
+            options.mode = FetchOptions::Mode::Cors;
+            options.serviceWorkersMode = ServiceWorkersMode::None;
+            options.destination = FetchOptions::Destination::Report;
+        }
+
+        ThreadableLoader::create(*this, client.get(), WTF::move(request), options);
+    }
 }
 
 } // namespace WebCore

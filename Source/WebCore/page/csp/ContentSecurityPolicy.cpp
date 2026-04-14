@@ -57,6 +57,7 @@
 #include "SecurityPolicyViolationEvent.h"
 #include "Settings.h"
 #include "SubresourceIntegrity.h"
+#include "TaskSource.h"
 #include "ViolationReportType.h"
 #include "WorkerGlobalScope.h"
 #include <JavaScriptCore/HeapCellInlines.h>
@@ -920,7 +921,6 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     if (!m_isReportingEnabled)
         return;
 
-    // FIXME: Support sending reports from worker.
     CSPInfo info;
 
     bool usesReportTo = !violatedDirectiveList.reportToTokens().isEmpty();
@@ -942,12 +942,16 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
         info.columnNumber = sourcePosition.m_column.oneBasedInt();
     }
 
+    RefPtr document = dynamicDowncast<Document>(m_scriptExecutionContext.get());
+
     if (!m_client) {
-        RefPtr<Document> document = dynamicDowncast<Document>(m_scriptExecutionContext.get());
-        if (!document || !document->frame())
+        if (document && !document->frame())
             return;
 
-        info.documentURI = shouldReportProtocolOnly(document->url()) ? document->url().protocol().toString() : document->url().strippedForUseAsReferrer().string;
+        if (m_scriptExecutionContext) {
+            auto& contextURL = m_scriptExecutionContext->url();
+            info.documentURI = shouldReportProtocolOnly(contextURL) ? contextURL.protocol().toString() : contextURL.strippedForUseAsReferrer().string;
+        }
 
         auto stack = createScriptCallStack(JSExecState::currentState(), 2);
         auto* callFrame = stack->firstNonNativeCallFrame();
@@ -957,7 +961,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
             info.columnNumber = callFrame->columnNumber();
         }
     }
-    ASSERT(m_client || is<Document>(m_scriptExecutionContext.get()));
+    ASSERT(m_client || m_scriptExecutionContext);
 
     // FIXME: Is it policy to not use the status code for HTTPS, or is that a bug?
     unsigned short httpStatusCode = m_selfSourceProtocol == "http"_s ? m_httpStatusCode : 0;
@@ -999,12 +1003,18 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
 
     if (m_client)
         m_client->enqueueSecurityPolicyViolationEvent(WTF::move(violationEventInit));
-    else {
-        Ref document = downcast<Document>(*m_scriptExecutionContext);
-        if (element && &element->document() == document.ptr())
-            element->enqueueSecurityPolicyViolationEvent(WTF::move(violationEventInit));
-        else
-            document->enqueueSecurityPolicyViolationEvent(WTF::move(violationEventInit));
+    else if (m_scriptExecutionContext) {
+        if (document) {
+            if (element && &element->document() == document.get())
+                element->enqueueSecurityPolicyViolationEvent(WTF::move(violationEventInit));
+            else
+                document->enqueueSecurityPolicyViolationEvent(WTF::move(violationEventInit));
+        } else if (RefPtr workerScope = dynamicDowncast<WorkerGlobalScope>(m_scriptExecutionContext.get())) {
+            // Workers dispatch the violation event on the global scope.
+            workerScope->eventLoop().queueTask(TaskSource::DOMManipulation, [workerScope, violationEventInit = WTF::move(violationEventInit)]() mutable {
+                workerScope->dispatchEvent(SecurityPolicyViolationEvent::create(eventNames().securitypolicyviolationEvent, WTF::move(violationEventInit), Event::IsTrusted::Yes));
+            });
+        }
     }
 
     // 2. Send violation report (if applicable).
