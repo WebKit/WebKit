@@ -22,11 +22,12 @@
 
 import calendar
 import os
-import re
 import subprocess
 import sys
 import time
 import webkitcorepy
+
+from urllib.parse import urlparse
 
 from webkitcorepy import Environment, decorators
 from webkitbugspy import Issue, Tracker as GenericTracker, User, name as library_name, version as library_version
@@ -41,13 +42,6 @@ class Priority(object):
 
 
 class Tracker(GenericTracker):
-    RES = [
-        re.compile(r'<?rdar://problem/(?P<id>\d+)>?'),
-        re.compile(r'<?radar://problem/(?P<id>\d+)>?'),
-        re.compile(r'<?rdar:\/\/(?P<id>\d+)>?'),
-        re.compile(r'<?radar:\/\/(?P<id>\d+)>?'),
-        re.compile(r'<?https:\/\/rdar\.apple\.com\/(?P<id>\d+)>?'),
-    ]
 
     OTHER_BUG = 'Other Bug'
     SECURITY = 'Security'
@@ -156,12 +150,65 @@ class Tracker(GenericTracker):
             sys.stderr.write('No valid authentication session for Radar\n')
             return None
 
+    @classmethod
+    def parse_id(cls, string):
+        """Parse a radar URL string and return the numeric ID(s) as strings.
+
+        Returns a single ID string for one ID, a list of ID strings for
+        multiple IDs (ampersand-separated), or None for no match.
+        Accepts rdar://, radar://, and https://rdar.apple.com/ URL forms,
+        with optional angle brackets.
+        """
+        value = string.strip()
+        if not value:
+            return None
+
+        # Strip optional angle brackets
+        if value.startswith('<') and value.endswith('>'):
+            value = value[1:-1].strip()
+
+        parsed = urlparse(value)
+
+        # https://rdar.apple.com/N form
+        if parsed.scheme == 'https' and parsed.netloc == 'rdar.apple.com':
+            id_part = parsed.path.lstrip('/')
+            if not id_part:
+                return None
+            parts = id_part.split('&')
+            ids = [p for p in parts if p.isdigit()]
+            if not ids:
+                return None
+            if len(ids) == 1:
+                return ids[0]
+            return ids
+
+        # rdar:// or radar:// forms
+        if parsed.scheme not in ('rdar', 'radar'):
+            return None
+
+        if parsed.netloc == 'problem':
+            id_part = parsed.path.lstrip('/')
+        else:
+            id_part = parsed.netloc
+
+        if not id_part:
+            return None
+
+        parts = id_part.split('&')
+        ids = [p for p in parts if p.isdigit()]
+        if not ids:
+            return None
+        if len(ids) == 1:
+            return ids[0]
+        return ids
+
     def from_string(self, string):
-        for regex in self.RES:
-            match = regex.match(string)
-            if match:
-                return self.issue(int(match.group('id')))
-        return None
+        result = type(self).parse_id(string)
+        if result is None:
+            return None
+        if isinstance(result, list):
+            result = result[0]
+        return self.issue(int(result))
 
     def user(self, name=None, username=None, email=None):
         user = super(Tracker, self).user(name=name, username=username, email=email)

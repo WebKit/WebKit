@@ -26,7 +26,7 @@ import sys
 from .command import Command
 from .commit import Commit
 
-from webkitbugspy import Tracker, radar
+from webkitbugspy import Tracker, bugzilla, radar
 from webkitcorepy import arguments, run, string_utils, Terminal
 from webkitscmpy import local, log, remote
 
@@ -162,12 +162,11 @@ class Branch(Command):
                             input = '<rdar://problem/{}>'.format(input)
                         rdar_to_cc = Tracker.from_string(input) or False
 
-                default_proj = list(Tracker.instance().projects.keys())[0] if rdar_to_cc and rdar_to_cc.redacted else None
-                if default_proj and Terminal.choose(
-                    f"Automatically classifying bug as {default_proj}.",
-                    default='Continue', options=('Continue', 'Modify')
-                ) == 'Modify':
-                    default_proj = None
+                default_proj = None
+                if rdar_to_cc:
+                    default_proj, _, _ = bugzilla.Tracker.classify_from_radar(
+                        rdar_to_cc, None, None,
+                    )
 
                 issue = Tracker.instance().create(
                     title=args.issue,

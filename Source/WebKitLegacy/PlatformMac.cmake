@@ -565,7 +565,7 @@ set(WebKitLegacy_LEGACY_FORWARDING_HEADERS_FILES
     ${WEBCORE_DIR}/plugins/npapi.h
 )
 
-add_definitions("-include WebKitPrefix.h")
+target_precompile_headers(WebKitLegacy PRIVATE mac/WebKitPrefix.h)
 
 set(C99_FILES
     mac/DefaultDelegates/WebDefaultEditingDelegate.m

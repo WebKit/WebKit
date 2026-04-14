@@ -358,7 +358,7 @@ class Bugzilla(Base, mocks.Requests):
                 name='keywords',
                 type=8,
                 display_name='Keywords',
-                values=[dict(name='InRadar')]
+                values=[dict(name='InRadar', description='This bug also has a copy in Apple Radar.')]
             )]), url=url
         )
 

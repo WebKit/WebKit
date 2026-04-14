@@ -797,14 +797,6 @@ if (ATOMICS_REQUIRE_LIBATOMIC)
     list(APPEND WebKit_PRIVATE_LIBRARIES atomic)
 endif ()
 
-macro(ADD_WEBKIT_PREFIX_HEADER _target)
-    if (WebKit_USE_PREFIX_HEADER)
-        target_compile_options(${_target} PRIVATE "$<$<COMPILE_LANGUAGE:C,CXX,OBJC,OBJCXX>:-include>" "$<$<COMPILE_LANGUAGE:C,CXX,OBJC,OBJCXX>:${WEBKIT_DIR}/WebKit2Prefix.h>")
-    else ()
-        target_precompile_headers(${_target} PRIVATE WebKit2Prefix.h)
-    endif ()
-endmacro()
-
 set(WebKit_AUTOMATION_PROTOCOL_GENERATOR_EXTRA_FLAGS)
 
 set(WebKit_INTERFACE_LIBRARIES WebKit)
@@ -1131,20 +1123,20 @@ list(APPEND WebKit_SOURCES ${WebKit_DERIVED_SOURCES})
 
 WEBKIT_COMPUTE_SOURCES(WebKit)
 WEBKIT_FRAMEWORK(WebKit)
-ADD_WEBKIT_PREFIX_HEADER(WebKit)
+target_precompile_headers(WebKit PRIVATE WebKit2Prefix.h)
 
 list(APPEND WebProcess_PRIVATE_INCLUDE_DIRECTORIES $<TARGET_PROPERTY:WebKit,INCLUDE_DIRECTORIES>)
 WEBKIT_EXECUTABLE(WebProcess)
-ADD_WEBKIT_PREFIX_HEADER(WebProcess)
+target_precompile_headers(WebProcess PRIVATE WebKit2Prefix.h)
 
 list(APPEND NetworkProcess_PRIVATE_INCLUDE_DIRECTORIES $<TARGET_PROPERTY:WebKit,INCLUDE_DIRECTORIES>)
 WEBKIT_EXECUTABLE(NetworkProcess)
-ADD_WEBKIT_PREFIX_HEADER(NetworkProcess)
+target_precompile_headers(NetworkProcess PRIVATE WebKit2Prefix.h)
 
 if (ENABLE_GPU_PROCESS)
     list(APPEND GPUProcess_PRIVATE_INCLUDE_DIRECTORIES $<TARGET_PROPERTY:WebKit,INCLUDE_DIRECTORIES>)
     WEBKIT_EXECUTABLE(GPUProcess)
-    ADD_WEBKIT_PREFIX_HEADER(GPUProcess)
+    target_precompile_headers(GPUProcess PRIVATE WebKit2Prefix.h)
 endif ()
 
 if (COMPILER_IS_GCC_OR_CLANG)

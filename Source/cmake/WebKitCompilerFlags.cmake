@@ -562,6 +562,3 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND WTF_CPU_MIPS)
     # (see comment #28 in the link above).
     WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-mno-lxc1-sxc1)
 endif ()
-
-# FIXME: Enable pre-compiled headers for all ports <https://webkit.org/b/139438>
-set(CMAKE_DISABLE_PRECOMPILE_HEADERS ON)

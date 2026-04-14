@@ -129,6 +129,7 @@ WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
 WEBKIT_LIBRARY(TestRunnerInjectedBundle)
 WEBKIT_EXECUTABLE(WebKitTestRunner)
+target_precompile_headers(WebKitTestRunner PRIVATE WebKitTestRunnerPrefix.h)
 
 if (COMPILER_IS_GCC_OR_CLANG)
     WEBKIT_ADD_TARGET_CXX_FLAGS(TestRunnerInjectedBundle -Wno-unused-parameter)

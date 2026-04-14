@@ -60,3 +60,4 @@ list(APPEND DumpRenderTree_SOURCES
 WEBKIT_EXECUTABLE_DECLARE(DumpRenderTree)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 WEBKIT_EXECUTABLE(DumpRenderTree)
+target_precompile_headers(DumpRenderTree PRIVATE DumpRenderTreePrefix.h)

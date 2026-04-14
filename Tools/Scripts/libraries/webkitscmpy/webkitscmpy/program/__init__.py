@@ -34,6 +34,7 @@ from .clone import Clone
 from .command import Command
 from .commit import Commit
 from .conflict import Conflict
+from .create_bug import CreateBug
 from .diff import Diff
 from .squash import Squash
 from .checkout import Checkout
@@ -55,6 +56,7 @@ from .setup import Setup
 from .show import Show
 from .trace import Trace
 from .track import Track
+from .tracker_metadata import TrackerMetadata
 
 from webkitbugspy import log as webkitbugspy_log
 from webkitcorepy import arguments, filtered_call, log as webkitcorepy_log, Terminal
@@ -95,10 +97,10 @@ def main(
 
     programs = [
         Blame, Branch, Canonicalize, Checkout,
-        Clean, Clone, Conflict, Diff, Find, Info, Land, Log, Pull,
+        Clean, Clone, Conflict, CreateBug, Diff, Find, Info, Land, Log, Pull,
         PullRequest, Revert, Review, Setup, InstallGitLFS,
         Credentials, Commit, DeletePRBranches, Squash,
-        Pickable, CherryPick, Trace, Track, Show, Publish,
+        Pickable, CherryPick, Trace, Track, TrackerMetadata, Show, Publish,
         Classify, InstallHooks,
     ] + (programs or [])
     if subversion:

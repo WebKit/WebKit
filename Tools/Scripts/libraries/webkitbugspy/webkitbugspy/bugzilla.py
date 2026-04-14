@@ -48,6 +48,82 @@ class Tracker(GenericTracker):
     NAME = 'Bugzilla'
     DEFAULT_TIMEOUT = 30
 
+    # Security keywords to detect in title/description.
+    # These trigger a prompt to use Security product.
+    SECURITY_KEYWORDS = [
+        # Web platform security
+        r'\bXSS\b', r'cross[- ]?site[- ]?scripting',
+        r'\bCSRF\b', r'cross[- ]?site[- ]?request[- ]?forgery',
+        r'SQL[- ]?injection', r'command[- ]?injection', r'code[- ]?injection',
+        r'same[- ]?origin', r'\bCORS\b',
+        # Memory safety
+        r'use[- ]?after[- ]?free', r'\bUAF\b',
+        r'out[- ]?of[- ]?bounds', r'\bOOB\b', r'buffer[- ]?overflow', r'buffer[- ]?overrun',
+        r'double[- ]?free',
+        r'heap[- ]?overflow', r'stack[- ]?overflow',
+        r'null[- ]?pointer[- ]?dereference', r'nullptr[- ]?dereference',
+        r'type[- ]?confusion',
+        r'integer[- ]?overflow', r'integer[- ]?underflow',
+        r'\bTOCTOU\b', r'time[- ]?of[- ]?check', r'time[- ]?of[- ]?use', r'race[- ]?condition',
+        r'uninitialized[- ]?memory', r'uninitialized[- ]?variable',
+        r'memory[- ]?corruption',
+        # Other security terms
+        r'\bvulnerability\b', r'\bexploit\b', r'security[- ]?bug', r'security[- ]?issue',
+        r'arbitrary[- ]?code[- ]?execution', r'\bRCE\b', r'remote[- ]?code[- ]?execution',
+        r'privilege[- ]?escalation', r'sandbox[- ]?escape',
+        r'information[- ]?disclosure', r'information[- ]?leak',
+        r'denial[- ]?of[- ]?service', r'\bDoS\b',
+    ]
+
+    @classmethod
+    def check_security_keywords(cls, title, description):
+        """Return list of matched security keyword patterns."""
+        text = '{} {}'.format(title or '', description or '')
+        return [p for p in cls.SECURITY_KEYWORDS if re.search(p, text, re.IGNORECASE)]
+
+    @classmethod
+    def prompt_security_classification(cls, matches, project, component):
+        """
+        If security keywords found and project is not already 'Security',
+        prompt user to confirm.  Returns (project, component).
+        """
+        if not matches or project == 'Security':
+            return project, component
+        print("WARNING: The bug description contains security-related keywords:")
+        for match in matches[:5]:
+            readable = match.replace(r'\b', '').replace('[- ]?', '-').replace(r'\.', '.')
+            print("  - {}".format(readable))
+        response = webkitcorepy.Terminal.choose(
+            "This may be a security bug. Use Security product?",
+            options=['Yes, use Security', 'No, keep {}'.format(project or 'WebKit')],
+            default='Yes, use Security',
+        )
+        if response.startswith('Yes'):
+            return 'Security', 'Security'
+        return project, component
+
+    @classmethod
+    def classify_from_radar(cls, radar_issue, project, component):
+        """
+        If radar_issue is redacted (security-sensitive), override project and
+        component to 'Security'.  Always prints a notice when forcing Security.
+        Prints an additional warning if user-supplied values are being
+        overridden.  Returns (project, component, was_forced).
+        """
+        if not radar_issue or not radar_issue.redacted:
+            return project, component, False
+
+        print("Radar {} is security-sensitive, using Security product".format(radar_issue.link))
+        overrides = []
+        if project and project != 'Security':
+            overrides.append("--project '{}'".format(project))
+        if component and component != 'Security':
+            overrides.append("--component '{}'".format(component))
+        if overrides:
+            print("WARNING: Overriding {} with 'Security'".format(' and '.join(overrides)))
+
+        return 'Security', 'Security', True
+
     class BugzillaPageParser(HTMLParser):
         def __init__(self):
             HTMLParser.__init__(self)
@@ -341,7 +417,7 @@ class Tracker(GenericTracker):
 
         return issue
 
-    def set(self, issue, assignee=None, opened=None, why=None, project=None, component=None, version=None, original=None, keywords=None, source_changes=None, state=None, substate=None, see_also=None, **properties):
+    def set(self, issue, assignee=None, opened=None, why=None, project=None, component=None, version=None, original=None, keywords=None, source_changes=None, state=None, substate=None, cc=None, see_also=None, **properties):
         update_dict = dict()
 
         if properties:
@@ -405,6 +481,9 @@ class Tracker(GenericTracker):
 
         if see_also is not None:
             update_dict['see_also'] = dict(add=see_also)
+
+        if cc is not None:
+            update_dict['cc'] = dict(add=cc)
 
         if update_dict:
             update_dict['ids'] = [issue.id]
@@ -569,8 +648,8 @@ class Tracker(GenericTracker):
             self._logins_left -= 1
         if response.status_code // 100 != 2:
             sys.stderr.write("Failed to retrieve keywords list'\n")
-            return []
-        return [value.get('name', '') for value in response.json().get('fields')[0].get('values', [])]
+            return {}
+        return {value.get('name', ''): value.get('description', '') for value in response.json().get('fields')[0].get('values', [])}
 
     def create(
         self, title, description,

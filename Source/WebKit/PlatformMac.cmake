@@ -227,8 +227,6 @@ set(GPUProcess_OUTPUT_NAME com.apple.WebKit.GPU.Development)
 set(WebProcess_INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR})
 set(NetworkProcess_INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR})
 
-add_definitions("-include" "WebKit2Prefix.h")
-
 # Generate a simplified module map for Swift interop.
 # The source-tree module.modulemap includes many C++ submodules with deep header
 # dependencies (WEBCORE_EXPORT, API::Object, etc.) that fail in CMake's explicit
