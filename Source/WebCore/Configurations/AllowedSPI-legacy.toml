@@ -540,6 +540,7 @@ symbols = [
     "CGColorSpaceEqualToColorSpace",
     "CGColorTransformConvertColorComponents",
     "CGColorTransformCreate",
+    "CGContextCopyDeviceColorSpace",
     "CGContextCreateWithDelegate",
     "CGContextDelegateCreate",
     "CGContextDelegateGetInfo",

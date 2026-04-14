@@ -80,7 +80,7 @@ static CGError drawPath(CGContextDelegateRef delegate, CGRenderingStateRef rstat
     return kCGErrorSuccess;
 }
 
-static CGColorSpaceRef getColorSpace(CGContextDelegateRef delegate, CGRenderingStateRef, CGGStateRef)
+static CGColorSpaceRef getColorTransform(CGContextDelegateRef delegate, CGRenderingStateRef, CGGStateRef)
 {
     DrawGlyphsRecorder& recorder = *static_cast<DrawGlyphsRecorder*>(CGContextDelegateGetInfo(delegate));
     return recorder.colorSpace();
@@ -94,7 +94,7 @@ UniqueRef<GraphicsContext> DrawGlyphsRecorder::createInternalContext()
     CGContextDelegateSetCallback(contextDelegate.get(), deDrawGlyphs, reinterpret_cast<CGContextDelegateCallback>(&WebCore::drawGlyphs));
     CGContextDelegateSetCallback(contextDelegate.get(), deDrawImage, reinterpret_cast<CGContextDelegateCallback>(&drawImage));
     CGContextDelegateSetCallback(contextDelegate.get(), deDrawPath, reinterpret_cast<CGContextDelegateCallback>(&drawPath));
-    CGContextDelegateSetCallback(contextDelegate.get(), deGetColorSpace, reinterpret_cast<CGContextDelegateCallback>(&getColorSpace));
+    CGContextDelegateSetCallback(contextDelegate.get(), deGetColorTransform, reinterpret_cast<CGContextDelegateCallback>(&getColorTransform));
 
     auto contextType = kCGContextTypeUnknown;
     auto context = adoptCF(CGContextCreateWithDelegate(contextDelegate.get(), contextType, nullptr, nullptr));

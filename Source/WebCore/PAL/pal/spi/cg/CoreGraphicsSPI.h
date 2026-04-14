@@ -81,12 +81,12 @@ typedef struct CGFontHMetrics CGFontHMetrics;
 
 typedef CF_ENUM (int32_t, CGContextDelegateCallbackName)
 {
+    deGetColorTransform = 1,
     deDrawPath = 6,
     deDrawImage = 7,
     deDrawGlyphs = 8,
     deBeginLayer = 17,
     deEndLayer = 18,
-    deGetColorSpace = 30,
 };
 
 typedef const struct CGColorTransform* CGColorTransformRef;
@@ -401,7 +401,7 @@ typedef bool (^CGPDFAnnotationDrawCallbackType)(CGContextRef context, CGPDFPageR
 void CGContextDrawPDFPageWithAnnotations(CGContextRef, CGPDFPageRef, CGPDFAnnotationDrawCallbackType);
 void CGContextDrawPathDirect(CGContextRef, CGPathDrawingMode, CGPathRef, const CGRect* boundingBox);
 
-CGColorSpaceRef CGContextGetColorSpace(CGContextRef);
+CGColorSpaceRef CGContextCopyDeviceColorSpace(CGContextRef);
 CGError CGSNewRegionWithRect(const CGRect*, CGRegionRef*);
 CGError CGSPackagesEnableConnectionOcclusionNotifications(CGSConnectionID, bool flag, bool* outCurrentVisibilityState);
 CGError CGSPackagesEnableConnectionWindowModificationNotifications(CGSConnectionID, bool flag, bool* outConnectionIsCurrentlyIdle);

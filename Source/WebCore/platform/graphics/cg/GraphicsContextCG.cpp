@@ -257,7 +257,7 @@ const DestinationColorSpace& GraphicsContextCG::colorSpace() const
     else if (contextType == kCGContextTypeBitmap)
         colorSpace = CGBitmapContextGetColorSpace(context);
     else
-        colorSpace = CGContextGetColorSpace(context);
+        colorSpace = CGContextCopyDeviceColorSpace(context);
 
     // FIXME: Need to ASSERT(colorSpace). For now fall back to sRGB if colorSpace is nil.
     m_colorSpace = colorSpace ? DestinationColorSpace(colorSpace) : DestinationColorSpace::SRGB();
