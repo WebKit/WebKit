@@ -1279,6 +1279,8 @@ RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::lineTextMarkerRange
 {
     id startTextMarker = [m_element lineStartMarkerForMarker:textMarker->platformTextMarker()];
     id endTextMarker = [m_element lineEndMarkerForMarker:textMarker->platformTextMarker()];
+    if (!startTextMarker || !endTextMarker)
+        return nullptr;
     NSArray *textMarkers = @[startTextMarker, endTextMarker];
 
     id textMarkerRange = [m_element textMarkerRangeForMarkers:textMarkers];

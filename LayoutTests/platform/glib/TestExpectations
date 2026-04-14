@@ -896,6 +896,7 @@ accessibility/insert-text-into-password-field.html [ Skip ]
 accessibility/native-label-geometry-with-aria-labelledby.html [ Skip ]
 
 # These test a Cocoa-only API.
+accessibility/line-range-display-table-in-flex.html [ Skip ]
 accessibility/mixed-contenteditable-visible-character-range-hang.html [ Skip ]
 accessibility/mixed-contenteditable-double-br-visible-character-range-hang.html [ Skip ]
 

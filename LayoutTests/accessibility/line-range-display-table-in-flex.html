@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+.container {
+    display: flex;
+    justify-content: space-between;
+}
+.container .title {
+    font-size: inherit;
+    margin: 0;
+}
+.container .name { display: table; }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1 id="heading" class="title"><span class="name">FOOO Inc</span> <span class="exchange">FOOO:NYSE</span></h1>
+</div>
+
+<script>
+var output = "This test ensures that requesting a line range for a text marker inside a display:table span within a flex container does not hang.\n\n";
+
+if (window.accessibilityController) {
+    var heading = accessibilityController.accessibleElementById("heading");
+    var range = heading.textMarkerRangeForElement(heading);
+    var start = heading.startTextMarkerForTextMarkerRange(range);
+
+    // Without the fix this test was introduced with, this call infinite-loops,
+    // causing a timeout.
+    heading.lineTextMarkerRangeForTextMarker(start);
+    output += "PASS: did not hang.\n";
+
+    debug(output);
+}
+</script>
+</body>
+</html>
