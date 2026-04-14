@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import concurrent.futures
 from dataclasses import dataclass
 import json
 import os
@@ -80,6 +81,7 @@ if __name__ == "__main__":
 
     print("Generated inputs for module verifier!")
 
+    verify_tasks: list[VerifyModuleTask] = []
     for input_task in input_tasks:
         verify_task = VerifyModuleTask(
             input_task.target_set, input_task.inputs, os.environ
@@ -90,12 +92,18 @@ if __name__ == "__main__":
             f"Verifying clang module ({verify_task.language.value}, {verify_task.standard.value}, {verify_task.target}) ..."
         )
         print(" ".join(command))
+        verify_tasks.append(verify_task)
 
-        result = verify_task.perform_action()
-        print(result.stderr)
+    failed = False
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        futures = {executor.submit(task.perform_action): task for task in verify_tasks}
+        for future in concurrent.futures.as_completed(futures):
+            task = futures[future]
+            result = future.result()
+            if result.stderr:
+                print(result.stderr)
+            if result.returncode:
+                failed = True
 
-        if result.returncode:
-            sys.exit("error: Failed to verify module.")
-
-    print("Verified module!")
-    sys.exit()
+    if failed:
+        sys.exit("error: Failed to verify module.")
