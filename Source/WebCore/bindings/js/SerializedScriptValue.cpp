@@ -5281,10 +5281,10 @@ private:
                     fail();
                     return JSValue();
                 }
-                memory = Wasm::Memory::create(contents.releaseNonNull(), WTF::move(handler));
+                memory = Wasm::Memory::create(contents.releaseNonNull(), WTF::move(handler), result);
             } else {
                 // zero size & max-size.
-                memory = Wasm::Memory::createZeroSized(JSC::MemorySharingMode::Shared, WTF::move(handler));
+                memory = Wasm::Memory::createZeroSized(JSC::MemorySharingMode::Shared, WTF::move(handler), result);
             }
 
             result->adopt(memory.releaseNonNull());

@@ -2626,9 +2626,9 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentReceiveBroadcast, (JSGlobalObject* g
             auto handler = [&vm, jsMemory](Wasm::Memory::GrowSuccess, PageCount oldPageCount, PageCount newPageCount) { jsMemory->growSuccessCallback(vm, oldPageCount, newPageCount); };
             RefPtr<Wasm::Memory> memory;
             if (auto shared = std::get<RefPtr<SharedArrayBufferContents>>(WTF::move(content)))
-                memory = Wasm::Memory::create(shared.releaseNonNull(), WTF::move(handler));
+                memory = Wasm::Memory::create(shared.releaseNonNull(), WTF::move(handler), jsMemory);
             else
-                memory = Wasm::Memory::createZeroSized(MemorySharingMode::Shared, WTF::move(handler));
+                memory = Wasm::Memory::createZeroSized(MemorySharingMode::Shared, WTF::move(handler), jsMemory);
             jsMemory->adopt(memory.releaseNonNull());
             return jsMemory;
         }
