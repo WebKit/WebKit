@@ -24,6 +24,18 @@
 
 webkit_platform_headers: "CoreIPCError.h"
 
+[Nested, WebKitPlatform] struct WebKit::CoreIPCError::NetworkResolutionReportInterface {
+    String type;
+    String name;
+}
+
+[Nested, WebKitPlatform] struct WebKit::CoreIPCError::NetworkResolutionReport {
+    String provider;
+    String dnsFailureReason;
+    String extendedDNSErrorExtraText;
+    Vector<WebKit::CoreIPCError::NetworkResolutionReportInterface> interfaces;
+}
+
 [WebKitPlatform] class WebKit::CoreIPCError {
     String m_domain;
     int64_t m_code;
@@ -54,6 +66,7 @@ webkit_platform_headers: "CoreIPCError.h"
     
     String m_networkTaskDescription;
     String m_networkTaskMetricsPrivacyStance;
+    std::optional<WebKit::CoreIPCError::NetworkResolutionReport> m_networkResolutionReport;
 
     String m_description;
 }
