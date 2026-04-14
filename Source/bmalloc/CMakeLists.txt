@@ -692,6 +692,7 @@ endif ()
 
 add_definitions(-D_GNU_SOURCE)
 add_definitions(-DPAS_BMALLOC=1)
+add_definitions(-DPAS_BMALLOC_HIDDEN=1)
 
 if (USE_MIMALLOC)
     add_definitions(-DUSE_MIMALLOC=1)

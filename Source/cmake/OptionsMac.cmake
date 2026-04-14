@@ -128,6 +128,7 @@ WEBKIT_OPTION_END()
 
 set(SWIFT_REQUIRED ON)
 
+
 # FIXME: AV1 decoding requires dav1d which uses meson and isn't built by CMake yet.
 SET_AND_EXPOSE_TO_BUILD(ENABLE_AV1 OFF)
 

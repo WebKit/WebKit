@@ -281,6 +281,39 @@ if (COMPILER_IS_GCC_OR_CLANG AND NOT MSVC)
     WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wall -Wextra)
 endif ()
 
+# Match Apple Xcode xcconfig warnings.
+if (APPLE)
+    # Set -Werror directly to skip the flag-support check, which fails because
+    # -Werror turns existing warnings in the test compilation into errors.
+    set(CMAKE_C_FLAGS "-Werror ${CMAKE_C_FLAGS}")
+    set(CMAKE_CXX_FLAGS "-Werror ${CMAKE_CXX_FLAGS}")
+
+    WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(
+        -Wc99-designator
+        -Wconditional-uninitialized
+        -Wdeprecated-enum-enum-conversion
+        -Wdeprecated-enum-float-conversion
+        -Wenum-float-conversion
+        -Wfinal-dtor-non-final-class
+        -Wformat=2
+        -Wpointer-to-int-cast
+        -Wreorder-init-list
+        -Wunused-but-set-variable
+        -Wvla
+        -Werror=unguarded-availability
+        -Wcast-qual
+        -Wexit-time-destructors
+        -Wextra-tokens
+        -Wglobal-constructors
+        -Wmissing-noreturn
+        -Wpacked
+        -Wredundant-decls
+        -Wtautological-compare
+        -Wthread-safety
+        -Wwrite-strings
+    )
+endif ()
+
 # Ninja tricks compilers into turning off color support.
 if (CMAKE_GENERATOR STREQUAL "Ninja")
     WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-fcolor-diagnostics
