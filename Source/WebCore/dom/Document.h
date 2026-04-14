@@ -1609,6 +1609,7 @@ public:
     DocumentSharedObjectPool* sharedObjectPool() LIFETIME_BOUND { return m_sharedObjectPool.get(); }
 
     void invalidateMatchedPropertiesCacheAndForceStyleRecalc();
+    void performFontInvalidationWalk();
 
     void didRemoveAllPendingStylesheet();
 

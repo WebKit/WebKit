@@ -104,9 +104,10 @@ void FontCascadeFonts::GlyphPageCacheEntry::setSingleFontPage(RefPtr<GlyphPage>&
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FontCascadeFonts);
 
-FontCascadeFonts::FontCascadeFonts()
+FontCascadeFonts::FontCascadeFonts(FontSelector* fontSelector)
     : m_cachedPrimaryFont(nullptr)
     , m_generation(FontCache::forCurrentThread().generation())
+    , m_fontSelector(fontSelector)
 {
 #if ASSERT_ENABLED
     if (!isMainThread())
@@ -122,7 +123,21 @@ FontCascadeFonts::FontCascadeFonts(const FontPlatformData& platformData)
     m_realizedFallbackRanges.append(FontRanges(protect(FontCache::forCurrentThread())->fontForPlatformData(platformData)));
 }
 
-FontCascadeFonts::~FontCascadeFonts() = default;
+FontCascadeFonts::~FontCascadeFonts()
+{
+    if (m_registeredWithFontSelector) {
+        if (RefPtr fontSelector = m_fontSelector.get())
+            fontSelector->unregisterFontCascadeFonts(*this);
+    }
+}
+
+void FontCascadeFonts::registerWithFontSelectorIfNeeded(FontSelector* fontSelector)
+{
+    if (m_registeredWithFontSelector || !fontSelector)
+        return;
+    m_registeredWithFontSelector = true;
+    fontSelector->registerFontCascadeFonts(*this);
+}
 
 void FontCascadeFonts::determinePitch(const FontCascadeDescription& description, FontSelector* fontSelector)
 {
@@ -211,6 +226,11 @@ const FontRanges& FontCascadeFonts::realizeFallbackRangesAt(const FontCascadeDes
             fontRanges = fontSelector->fontRangesForFamily(description, FontFamily { *familyNamesData->at(FamilyNamesIndex::StandardFamily), FontFamilyKind::Generic });
         if (fontRanges.isNull())
             fontRanges = FontRanges(protect(FontCache::forCurrentThread())->lastResortFallbackFont(description));
+        // Register with the font selector if it was used during resolution.
+        // This matches Blink's has_loading_fallback_ pattern: registration
+        // happens at resolution time, not creation time.
+        if (fontSelector && !fontRanges.isNull())
+            registerWithFontSelectorIfNeeded(fontSelector);
         return fontRanges;
     }
 

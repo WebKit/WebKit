@@ -282,6 +282,8 @@ void CSSFontSelector::dispatchInvalidationCallbacks()
 {
     ++m_version;
 
+    invalidateAssociatedFontCascadeFonts();
+
     for (auto& client : copyToVector(m_clients)) {
         if (m_clients.contains(client))
             client->fontsNeedUpdate(*this);

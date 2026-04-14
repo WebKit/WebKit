@@ -606,6 +606,7 @@ void InlineFormattingContext::rebuildInlineItemListIfNeeded(InlineDamage* lineDa
 {
     auto& inlineContentCache = this->inlineContentCache();
     auto inlineItemListNeedsUpdate = inlineContentCache.inlineItems().isEmpty() || (lineDamage && lineDamage->isInlineItemListDirty());
+    // WTF_ALWAYS_LOG("@@@Vitor: rebuildInlineItemListIfNeeded needsUpdate=" << inlineItemListNeedsUpdate << " isEmpty=" << inlineContentCache.inlineItems().isEmpty() << " hasDamage=" << !!lineDamage << " isDirty=" << (lineDamage ? lineDamage->isInlineItemListDirty() : false));
     if (!inlineItemListNeedsUpdate)
         return;
 

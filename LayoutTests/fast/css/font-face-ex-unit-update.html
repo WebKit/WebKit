@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Font load should trigger restyle for elements using ex units</title>
+<link rel="help" href="https://bugs.webkit.org/show_bug.cgi?id=311368">
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+@font-face {
+    font-family: 'TestExFont';
+    font-style: normal;
+    font-weight: 400;
+    src: url(../../resources/Ahem.ttf) format('truetype');
+}
+
+#target {
+    font-family: 'TestExFont', sans-serif;
+    font-size: 100px;
+    width: 1ex;
+    background: blue;
+}
+</style>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<div id="target">X</div>
+<script>
+description("Tests that elements using ex units get restyled when a web font loads, so that the ex-based width is recalculated with the new font's metrics.");
+
+jsTestIsAsync = true;
+
+// Ahem font has xHeight = ascent = 800 units out of 1000 unitsPerEm.
+// At font-size: 100px, 1ex = 80px.
+// The fallback sans-serif will have a different xHeight, so the width changes.
+
+var initialWidth;
+
+function runTest() {
+    initialWidth = document.getElementById('target').offsetWidth;
+    debug("Initial width (fallback font): " + initialWidth);
+
+    document.fonts.ready.then(function() {
+        requestAnimationFrame(function() {
+            var finalWidth = document.getElementById('target').offsetWidth;
+            debug("Final width (after font load): " + finalWidth);
+
+            // Ahem at 100px: 1ex = 80px
+            shouldBe("document.getElementById('target').offsetWidth", "80");
+
+            finishJSTest();
+        });
+    });
+}
+
+// Force initial layout with fallback font, then wait for font to load.
+document.body.offsetTop;
+runTest();
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

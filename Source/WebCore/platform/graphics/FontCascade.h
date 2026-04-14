@@ -269,7 +269,9 @@ public:
     static String normalizeSpaces(StringView);
 
     bool useBackslashAsYenSymbol() const { return m_useBackslashAsYenSymbol; }
-    FontCascadeFonts* fonts() const { return m_fonts.get(); }
+    WEBCORE_EXPORT FontCascadeFonts* fonts() const;
+    FontCascadeFonts* existingFonts() const { return m_fonts.get(); }
+    WEBCORE_EXPORT void ensureFontsAreCurrent() const;
     bool isLoadingCustomFonts() const;
 
     static ResolvedEmojiPolicy resolveEmojiPolicy(FontVariantEmoji, char32_t);

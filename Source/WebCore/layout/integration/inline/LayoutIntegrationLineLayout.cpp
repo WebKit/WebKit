@@ -469,14 +469,17 @@ static inline std::optional<Layout::BlockLayoutState::LineGrid> lineGrid(const R
 
 std::optional<LayoutRect> LineLayout::layout(RenderBlockFlow::MarginInfo& marginInfo, ForceFullLayout forcedFullLayout)
 {
+    // WTF_ALWAYS_LOG("@@@Vitor: LineLayout::layout forcedFullLayout=" << (forcedFullLayout == ForceFullLayout::Yes) << " hasLineDamage=" << !!m_lineDamage << " hasInlineContent=" << !!m_inlineContent);
     if (forcedFullLayout == ForceFullLayout::Yes && m_lineDamage)
         Layout::InlineInvalidation::resetInlineDamage(*m_lineDamage);
 
     preparePlacedFloats();
 
     auto isPartialLayout = Layout::InlineInvalidation::mayOnlyNeedPartialLayout(m_lineDamage.get());
+    // WTF_ALWAYS_LOG("@@@Vitor: LineLayout::layout isPartialLayout=" << isPartialLayout);
     if (!isPartialLayout) {
         // FIXME: Partial layout should not rely on previous inline display content.
+        // WTF_ALWAYS_LOG("@@@Vitor: LineLayout::layout CLEARING INLINE CONTENT");
         clearInlineContent();
     }
 
@@ -1498,6 +1501,11 @@ void LineLayout::releaseCachesAndResetDamage()
         m_inlineContent->releaseCaches();
     if (m_lineDamage)
         Layout::InlineInvalidation::resetInlineDamage(*m_lineDamage);
+}
+
+void LineLayout::fontsNeedUpdate()
+{
+    releaseCachesAndResetDamage();
 }
 
 void LineLayout::clearInlineContent()

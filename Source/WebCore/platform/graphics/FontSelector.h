@@ -27,6 +27,7 @@
 
 #include <WebCore/FontRanges.h>
 #include <wtf/Forward.h>
+#include <wtf/HashSet.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 
 namespace WTF {
@@ -36,6 +37,7 @@ class TextStream;
 namespace WebCore {
 
 class FontCache;
+class FontCascadeFonts;
 class FontCascadeDescription;
 class FontDescription;
 struct FontFamily;
@@ -75,6 +77,12 @@ public:
 
     virtual bool isCSSFontSelector() const { return false; }
 
+    void registerFontCascadeFonts(FontCascadeFonts& fonts) { m_associatedFontCascadeFonts.add(&fonts); }
+    void unregisterFontCascadeFonts(FontCascadeFonts& fonts) { m_associatedFontCascadeFonts.remove(&fonts); }
+    WEBCORE_EXPORT void invalidateAssociatedFontCascadeFonts();
+
+private:
+    HashSet<FontCascadeFonts*> m_associatedFontCascadeFonts;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const FontSelector&);

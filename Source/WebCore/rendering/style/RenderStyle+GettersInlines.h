@@ -102,6 +102,11 @@ inline bool RenderStyle::usesViewportUnits() const
     return m_computedStyle.usesViewportUnits();
 }
 
+inline bool RenderStyle::dependsOnFontMetrics() const
+{
+    return m_computedStyle.dependsOnFontMetrics();
+}
+
 inline bool RenderStyle::usesContainerUnits() const
 {
     return m_computedStyle.usesContainerUnits();

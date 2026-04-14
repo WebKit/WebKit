@@ -80,10 +80,13 @@ InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, const FontC
     auto useSimplifiedContentMeasuring = inlineTextBox.canUseSimplifiedContentMeasuring();
     if (useSimplifiedContentMeasuring) {
         auto view = StringView(text).substring(from, to - from);
-        if (fontCascade.canTakeFixedPitchFastContentMeasuring())
+        if (fontCascade.canTakeFixedPitchFastContentMeasuring()) {
             width = fontCascade.widthForSimpleTextWithFixedPitch(view, inlineTextBox.style().collapseWhiteSpace());
-        else
+            // WTF_ALWAYS_LOG("@@@Vitor: TextUtil::width FIXEDPITCH text='" << view << "' width=" << width << " fontGeneration=" << fontCascade.generation());
+        } else {
             width = fontCascade.widthForTextUsingSimplifiedMeasuring(view);
+            // WTF_ALWAYS_LOG("@@@Vitor: TextUtil::width SIMPLIFIED text='" << view << "' width=" << width << " fontGeneration=" << fontCascade.generation());
+        }
     } else {
         CheckedRef style = inlineTextBox.style();
         auto directionalOverride = isOverride(style->unicodeBidi());
@@ -93,6 +96,7 @@ InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, const FontC
         // FIXME: consider moving this to TextRun ctor
         run.setTextSpacingState(spacingState);
         width = fontCascade.width(run, { }, glyphOverflow);
+        // WTF_ALWAYS_LOG("@@@Vitor: TextUtil::width COMPLEX text='" << StringView(text).substring(from, to - from) << "' width=" << width << " fontGeneration=" << fontCascade.generation());
     }
 
     if (extendedMeasuring)

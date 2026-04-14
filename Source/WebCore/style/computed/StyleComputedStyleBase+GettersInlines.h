@@ -104,6 +104,11 @@ inline bool ComputedStyleBase::usesViewportUnits() const
     return m_nonInheritedFlags.usesViewportUnits;
 }
 
+inline bool ComputedStyleBase::dependsOnFontMetrics() const
+{
+    return m_nonInheritedFlags.dependsOnFontMetrics;
+}
+
 inline bool ComputedStyleBase::usesContainerUnits() const
 {
     return m_nonInheritedFlags.usesContainerUnits;

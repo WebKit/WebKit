@@ -299,6 +299,11 @@ void BuilderState::setUsesContainerUnits()
     m_style.setUsesContainerUnits();
 }
 
+void BuilderState::setDependsOnFontMetrics()
+{
+    m_style.setDependsOnFontMetrics();
+}
+
 double BuilderState::lookupCSSRandomBaseValue(const CSSCalc::RandomCachingKey& key, std::optional<CSS::Keyword::ElementScoped> elementScoped) const
 {
     if (elementScoped)

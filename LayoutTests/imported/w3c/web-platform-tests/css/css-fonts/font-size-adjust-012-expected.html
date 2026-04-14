@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html class="reftest-wait">
 <head>
     <meta charset="utf-8">
     <title>CSS Test: font-size-adjust property</title>
@@ -67,4 +67,13 @@
         <span>xx<span class="tall-inline-block"></span></span>
         </div>
     </div>
+<script>
+    Promise.all([
+        document.fonts.load("100px ahem-ex-500"),
+        document.fonts.load("100px ahem-ex-250")
+    ]).then(() => {
+        document.body.offsetHeight;
+        document.documentElement.classList.remove("reftest-wait");
+    });
+</script>
 </html>

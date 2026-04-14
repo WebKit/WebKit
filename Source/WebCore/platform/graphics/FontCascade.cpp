@@ -174,6 +174,25 @@ void FontCascade::update(RefPtr<FontSelector>&& fontSelector) const
     protect(FontCache::forCurrentThread())->updateFontCascade(*this);
 }
 
+FontCascadeFonts* FontCascade::fonts() const
+{
+    ensureFontsAreCurrent();
+    return m_fonts.get();
+}
+
+void FontCascade::ensureFontsAreCurrent() const
+{
+    if (m_fonts && !m_fonts->isValid()) {
+        // WTF_ALWAYS_LOG("@@@Vitor: ensureFontsAreCurrent UPDATING oldFonts=" << m_fonts.get() << " generation=" << m_generation << " firstFamily=" << m_fontDescription.firstFamily().name);
+        update(RefPtr<FontSelector> { m_fontSelector });
+        // Clear the per-character simplified text measuring cache — it was
+        // computed with the old font's glyph-to-font mapping which may
+        // have changed (e.g. unicode-range fallback to a different font).
+        m_canUseSimplifiedTextMeasuringForAutoVariantCache.clearAll();
+        // WTF_ALWAYS_LOG("@@@Vitor: ensureFontsAreCurrent DONE newFonts=" << m_fonts.get() << " newGeneration=" << m_generation);
+    }
+}
+
 TextShapingResult FontCascade::layoutText(CodePath codePathToUse, const TextRun& run, unsigned from, unsigned to, ForTextEmphasis forTextEmphasis) const
 {
     if (RefPtr fonts = this->fonts()) {

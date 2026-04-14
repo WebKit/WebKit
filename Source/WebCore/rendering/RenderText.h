@@ -185,6 +185,7 @@ public:
     void resetMinMaxWidth();
 
     void setCanUseSimplifiedTextMeasuring(bool canUseSimplifiedTextMeasuring) { m_canUseSimplifiedTextMeasuring = canUseSimplifiedTextMeasuring; }
+    void clearCanUseSimplifiedTextMeasuring() { m_canUseSimplifiedTextMeasuring = { }; }
     std::optional<bool> canUseSimplifiedTextMeasuring() const { return m_canUseSimplifiedTextMeasuring; }
     void setHasPositionDependentContentWidth(bool hasPositionDependentContentWidth) { m_hasPositionDependentContentWidth = hasPositionDependentContentWidth; }
     std::optional<bool> hasPositionDependentContentWidth() const { return m_hasPositionDependentContentWidth; }

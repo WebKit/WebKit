@@ -140,6 +140,12 @@ void CSSToLengthConversionData::setUsesContainerUnits() const
         m_styleBuilderState->setUsesContainerUnits();
 }
 
+void CSSToLengthConversionData::setDependsOnFontMetrics() const
+{
+    if (m_styleBuilderState)
+        m_styleBuilderState->setDependsOnFontMetrics();
+}
+
 bool CSSToLengthConversionData::evaluationTimeZoomEnabled() const
 {
     ASSERT(m_style);
