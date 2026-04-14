@@ -1705,6 +1705,14 @@ void WebProcess::initializeAccessibility(Vector<SandboxExtension::Handle>&& hand
 
     [NSApplication _accessibilityInitialize];
 
+    // This flag may have been false at process creation (set from
+    // WebProcessCreationParameters). Update it now so that any WebPages
+    // created later in this process will send their accessibility remote
+    // token immediately rather than deferring it. Without this,
+    // deferred tokens are permanently lost because this method is
+    // only called once per process.
+    m_shouldInitializeAccessibility = true;
+
     // Now that the accessibility server is registered, send any deferred
     // remote tokens so the UI process can resolve the remote elements.
     for (auto& webPage : m_pageMap.values())
