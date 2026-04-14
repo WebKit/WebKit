@@ -1098,6 +1098,7 @@ ALWAYS_INLINE void FastStringifier<CharType, bufferMode>::appendInt32(int32_t nu
     }
 }
 
+// FIXME: WTF::appendEscapedJSONStringContent now has a SIMD fast path, so this prepass is redundant for strings with escapes.
 template<typename CharType>
 static ALWAYS_INLINE bool stringCopySameType(std::span<const CharType> span, CharType* cursor)
 {
