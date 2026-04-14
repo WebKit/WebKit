@@ -83,7 +83,7 @@ public:
         if (i != 3)
             return completionHandler(makeUnexpected(String()));
 
-        URL requestURL { page.pageLoadState().url() };
+        auto& requestURL = page.pageLoadState().url();
         m_inspectorProtocolHandler->inspect(requestURL.hostAndPort(), connectionID, targetID, type);
         completionHandler(makeUnexpected(String()));
     }

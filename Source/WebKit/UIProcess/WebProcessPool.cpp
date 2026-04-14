@@ -2333,7 +2333,7 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
         bool isSameSiteWithRelatedPage = false;
         if (!page.openerFrameIdentifier() && pageConfiguration->relatedPage()) {
             RefPtr relatedPage = pageConfiguration->relatedPage();
-            URL relatedPageURL { relatedPage->pageLoadState().url() };
+            auto& relatedPageURL = relatedPage->pageLoadState().url();
             isSameSiteWithRelatedPage = relatedPageURL.isValid() && targetSite.matches(relatedPageURL);
         }
         if (!isSameSiteWithRelatedPage)
@@ -2351,7 +2351,7 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
 
     if (sourceURL.isEmpty()) {
         if (RefPtr relatedPage = pageConfiguration->relatedPage()) {
-            sourceURL = URL { relatedPage->pageLoadState().url() };
+            sourceURL = relatedPage->pageLoadState().url();
             WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForNavigationInternal: Using related page's URL as source URL for process swap decision (page=%p)", pageConfiguration->relatedPage());
         }
     }

@@ -165,7 +165,7 @@ void RemotePageProxy::injectPageIntoNewProcess()
         Messages::WebProcess::CreateWebPage(
             m_webPageID,
             page->creationParametersForRemotePage(m_process, drawingArea.get(), RemotePageParameters {
-                URL(page->pageLoadState().url()),
+                page->pageLoadState().url(),
                 page->protectedMainFrame()->frameTreeCreationParameters(),
                 websitePolicies ? std::make_optional(websitePolicies->dataForProcess(m_process)) : std::nullopt
             })
@@ -287,7 +287,7 @@ void RemotePageProxy::setDrawingArea(DrawingAreaProxy* drawingArea)
         Messages::WebProcess::CreateWebPage(
             m_webPageID,
             page->creationParametersForRemotePage(m_process, *drawingArea, RemotePageParameters {
-                URL(page->pageLoadState().url()),
+                page->pageLoadState().url(),
                 mainFrame->frameTreeCreationParameters(),
                 websitePolicies ? std::make_optional(websitePolicies->dataForProcess(m_process)) : std::nullopt
             })

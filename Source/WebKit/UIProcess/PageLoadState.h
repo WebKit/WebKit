@@ -124,7 +124,7 @@ public:
 
     struct PendingAPIRequest {
         Markable<WebCore::NavigationIdentifier> navigationID;
-        String url;
+        URL url;
     };
 
     void ref() const;
@@ -145,12 +145,12 @@ public:
 
     bool hasUncommittedLoad() const { return isLoading(m_uncommittedState); }
 
-    const String& provisionalURL() const { return m_committedState.provisionalURL; }
-    const String& url() const { return m_committedState.url; }
+    const URL& provisionalURL() const { return m_committedState.provisionalURL; }
+    const URL& url() const { return m_committedState.url; }
     const WebCore::SecurityOriginData& origin() const { return m_committedState.origin; }
-    const String& unreachableURL() const { return m_committedState.unreachableURL; }
+    const URL& unreachableURL() const { return m_committedState.unreachableURL; }
 
-    String activeURL() const { return activeURL(m_committedState); }
+    const URL& activeURL() const { return activeURL(m_committedState); }
 
     bool hasOnlySecureContent() const;
     bool hasNegotiatedLegacyTLS() const;
@@ -166,14 +166,14 @@ public:
 
     const URL& resourceDirectoryURL() const { return m_committedState.resourceDirectoryURL; }
 
-    const String& pendingAPIRequestURL() const { return m_committedState.pendingAPIRequest.url; }
+    const URL& pendingAPIRequestURL() const { return m_committedState.pendingAPIRequest.url; }
     const PendingAPIRequest& pendingAPIRequest() const { return m_committedState.pendingAPIRequest; }
     void setPendingAPIRequest(const Transaction::Token&, PendingAPIRequest&& pendingAPIRequest, const URL& resourceDirectoryPath = { });
     void clearPendingAPIRequest(const Transaction::Token&);
 
-    void didStartProvisionalLoad(const Transaction::Token&, const String& url, const String& unreachableURL);
-    void didExplicitOpen(const Transaction::Token&, const String& url);
-    void didReceiveServerRedirectForProvisionalLoad(const Transaction::Token&, const String& url);
+    void didStartProvisionalLoad(const Transaction::Token&, const URL&, const URL& unreachableURL);
+    void didExplicitOpen(const Transaction::Token&, const URL&);
+    void didReceiveServerRedirectForProvisionalLoad(const Transaction::Token&, const URL&);
     void didFailProvisionalLoad(const Transaction::Token&);
 
     void didCommitLoad(const Transaction::Token&, const WebCore::CertificateInfo&, bool hasInsecureContent, bool usedLegacyTLS, bool privateRelayed, const String& proxyName, const WebCore::ResourceResponseSource, const WebCore::SecurityOriginData&);
@@ -181,9 +181,9 @@ public:
     void didFinishLoad(const Transaction::Token&);
     void didFailLoad(const Transaction::Token&);
 
-    void didSameDocumentNavigation(const Transaction::Token&, const String& url);
+    void didSameDocumentNavigation(const Transaction::Token&, const URL&);
 
-    void setUnreachableURL(const Transaction::Token&, const String&);
+    void setUnreachableURL(const Transaction::Token&, const URL&);
 
     const String& title() const;
     void setTitle(const Transaction::Token&, String&&);
@@ -230,11 +230,11 @@ private:
 
         PendingAPIRequest pendingAPIRequest;
 
-        String provisionalURL;
-        String url;
+        URL provisionalURL;
+        URL url;
         WebCore::SecurityOriginData origin;
 
-        String unreachableURL;
+        URL unreachableURL;
 
         String title;
         String titleFromBrowsingWarning;
@@ -255,7 +255,7 @@ private:
     };
 
     static bool isLoading(const Data&);
-    static String activeURL(const Data&);
+    static const URL& activeURL(const Data&);
     static bool hasOnlySecureContent(const Data&);
     static double estimatedProgress(const Data&);
 
@@ -266,7 +266,7 @@ private:
     Data m_committedState;
     Data m_uncommittedState;
 
-    String m_lastUnreachableURL;
+    URL m_lastUnreachableURL;
 
     bool m_mayHaveUncommittedChanges;
     unsigned m_outstandingTransactionCount;

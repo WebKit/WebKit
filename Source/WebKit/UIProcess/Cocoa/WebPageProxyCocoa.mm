@@ -320,7 +320,7 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL& url, API::Navigation& navig
                         Ref protectedPageLoadState = protectedThis->pageLoadState();
                         auto transaction = protectedPageLoadState->transaction();
                         protectedPageLoadState->setHadSafeBrowsingWarning(transaction);
-                        protectedPageLoadState->setPendingAPIRequest(transaction, { navigation->navigationID(), safeBrowsingWarning->url().string() });
+                        protectedPageLoadState->setPendingAPIRequest(transaction, { navigation->navigationID(), safeBrowsingWarning->url() });
                         protectedPageLoadState->commitChanges();
                     }
                     protectedThis->setSafeBrowsingWarningShownForNavigation(navigation->navigationID());
@@ -1219,7 +1219,7 @@ bool WebPageProxy::shouldForceForegroundPriorityForClientNavigation() const
 
 bool WebPageProxy::shouldAllowAutoFillForCellularIdentifiers() const
 {
-    return WebKit::shouldAllowAutoFillForCellularIdentifiers(URL { pageLoadState().activeURL() });
+    return WebKit::shouldAllowAutoFillForCellularIdentifiers(pageLoadState().activeURL());
 }
 
 #endif

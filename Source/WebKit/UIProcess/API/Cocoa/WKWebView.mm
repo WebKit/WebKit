@@ -1148,7 +1148,12 @@ static void addBrowsingContextControllerMethodStubsIfNeeded()
 
 - (NSURL *)URL
 {
-    return [NSURL _web_URLWithWTFString:_page->protectedPageLoadState()->activeURL()];
+    auto& activeURL = _page->protectedPageLoadState()->activeURL();
+    if (_cachedActiveNSURL.first != activeURL.string()) {
+        _cachedActiveNSURL.first = activeURL.string();
+        _cachedActiveNSURL.second = activeURL.createNSURL();
+    }
+    return _cachedActiveNSURL.second.getAutoreleased();
 }
 
 - (NSURL *)_resourceDirectoryURL
@@ -4692,7 +4697,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 
 - (NSURL *)_unreachableURL
 {
-    return [NSURL _web_URLWithWTFString:_page->pageLoadState().unreachableURL()];
+    return _page->pageLoadState().unreachableURL().createNSURL().autorelease();
 }
 
 - (NSURL *)_mainFrameURL
@@ -4925,7 +4930,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 
 - (NSURL *)_committedURL
 {
-    return [NSURL _web_URLWithWTFString:_page->pageLoadState().url()];
+    return _page->pageLoadState().url().createNSURL().autorelease();
 }
 
 - (NSString *)_MIMEType

@@ -2075,7 +2075,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             if (!m_client.shouldAllowDeviceOrientationAndMotionAccess)
                 return completionHandler(false);
 
-            auto origin = API::SecurityOrigin::create(SecurityOrigin::createFromString(page.protectedPageLoadState()->activeURL()).get());
+            Ref origin = API::SecurityOrigin::create(SecurityOrigin::create(page.protectedPageLoadState()->activeURL()).get());
             auto apiFrameInfo = API::FrameInfo::create(WTF::move(frameInfo));
             completionHandler(m_client.shouldAllowDeviceOrientationAndMotionAccess(toAPI(&page), toAPI(origin.ptr()), toAPI(apiFrameInfo.ptr()), m_client.base.clientInfo));
         }
@@ -2843,8 +2843,7 @@ void WKPageForceRepaint(WKPageRef pageRef, void* context, WKPageForceRepaintFunc
 
 WK_EXPORT WKURLRef WKPageCopyPendingAPIRequestURL(WKPageRef pageRef)
 {
-    const String& pendingAPIRequestURL = toProtectedImpl(pageRef)->pageLoadState().pendingAPIRequestURL();
-
+    auto& pendingAPIRequestURL = toProtectedImpl(pageRef)->pageLoadState().pendingAPIRequestURL();
     if (pendingAPIRequestURL.isNull())
         return nullptr;
 

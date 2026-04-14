@@ -91,7 +91,7 @@ static Ref<WebKit::WebPageProxy> protectedPage(WKObservablePageState *state)
 
 - (NSURL *)URL
 {
-    return [NSURL _web_URLWithWTFString:protectedPage(self)->protectedPageLoadState()->activeURL()];
+    return protectedPage(self)->protectedPageLoadState()->activeURL().createNSURL().autorelease();
 }
 
 - (BOOL)hasOnlySecureContent
@@ -111,7 +111,7 @@ static Ref<WebKit::WebPageProxy> protectedPage(WKObservablePageState *state)
 
 - (NSURL *)unreachableURL
 {
-    return [NSURL _web_URLWithWTFString:protectedPage(self)->pageLoadState().unreachableURL()];
+    return protectedPage(self)->pageLoadState().unreachableURL().createNSURL().autorelease();
 }
 
 - (SecTrustRef)serverTrust

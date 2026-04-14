@@ -370,7 +370,7 @@ Ref<Inspector::Protocol::Automation::BrowsingContext> WebAutomationSession::buil
     return Inspector::Protocol::Automation::BrowsingContext::create()
         .setHandle(handle)
         .setActive(isActive)
-        .setUrl(page.protectedPageLoadState()->activeURL())
+        .setUrl(page.protectedPageLoadState()->activeURL().string())
         .setWindowOrigin(WTF::move(originObject))
         .setWindowSize(WTF::move(sizeObject))
         .release();
@@ -1806,7 +1806,7 @@ void WebAutomationSession::addSingleCookie(const Inspector::Protocol::Automation
     auto page = webPageProxyForHandle(browsingContextHandle);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
 
-    URL activeURL { page->protectedPageLoadState()->activeURL() };
+    auto& activeURL = page->protectedPageLoadState()->activeURL();
     ASSERT(activeURL.isValid());
 
     WebCore::Cookie cookie;
@@ -1863,7 +1863,7 @@ CommandResult<void> WebAutomationSession::deleteAllCookies(const Inspector::Prot
     RefPtr page = webPageProxyForHandle(browsingContextHandle);
     SYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
 
-    URL activeURL { page->protectedPageLoadState()->activeURL() };
+    auto& activeURL = page->protectedPageLoadState()->activeURL();
     ASSERT(activeURL.isValid());
 
     String host = activeURL.host().toString();

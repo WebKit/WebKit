@@ -178,12 +178,12 @@ void PageLoadState::reset(const Transaction::Token& token)
     m_uncommittedState.hasInsecureContent = false;
 
     m_uncommittedState.pendingAPIRequest = { };
-    m_uncommittedState.provisionalURL = String();
-    m_uncommittedState.url = String();
+    m_uncommittedState.provisionalURL = { };
+    m_uncommittedState.url = { };
     m_uncommittedState.origin = { };
 
-    m_uncommittedState.unreachableURL = String();
-    m_lastUnreachableURL = String();
+    m_uncommittedState.unreachableURL = { };
+    m_lastUnreachableURL = { };
 
     m_uncommittedState.title = String();
     m_uncommittedState.titleFromBrowsingWarning = { };
@@ -192,7 +192,7 @@ void PageLoadState::reset(const Transaction::Token& token)
     m_uncommittedState.networkRequestsInProgress = false;
 }
 
-String PageLoadState::activeURL(const Data& data)
+const URL& PageLoadState::activeURL(const Data& data)
 {
     // If there is a currently pending URL, it is the active URL,
     // even when there's no main frame yet, as it might be the
@@ -212,7 +212,7 @@ String PageLoadState::activeURL(const Data& data)
     }
 
     ASSERT_NOT_REACHED();
-    return String();
+    return aboutBlankURL();
 }
 
 bool PageLoadState::hasOnlySecureContent(const Data& data)
@@ -221,9 +221,9 @@ bool PageLoadState::hasOnlySecureContent(const Data& data)
         return false;
 
     if (data.state == State::Provisional)
-        return WTF::protocolIs(data.provisionalURL, "https"_s);
+        return data.provisionalURL.protocolIs("https"_s);
 
-    return WTF::protocolIs(data.url, "https"_s);
+    return data.url.protocolIs("https"_s);
 }
 
 bool PageLoadState::hasOnlySecureContent() const
@@ -274,15 +274,15 @@ void PageLoadState::setHadSafeBrowsingWarning(const Transaction::Token& token)
     m_uncommittedState.hadSafeBrowsingWarning = true;
 }
 
-void PageLoadState::didExplicitOpen(const Transaction::Token& token, const String& url)
+void PageLoadState::didExplicitOpen(const Transaction::Token& token, const URL& url)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
 
     m_uncommittedState.url = url;
-    m_uncommittedState.provisionalURL = String();
+    m_uncommittedState.provisionalURL = { };
 }
 
-void PageLoadState::didStartProvisionalLoad(const Transaction::Token& token, const String& url, const String& unreachableURL)
+void PageLoadState::didStartProvisionalLoad(const Transaction::Token& token, const URL& url, const URL& unreachableURL)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
     ASSERT(m_uncommittedState.provisionalURL.isEmpty());
@@ -294,7 +294,7 @@ void PageLoadState::didStartProvisionalLoad(const Transaction::Token& token, con
     setUnreachableURL(token, unreachableURL);
 }
 
-void PageLoadState::didReceiveServerRedirectForProvisionalLoad(const Transaction::Token& token, const String& url)
+void PageLoadState::didReceiveServerRedirectForProvisionalLoad(const Transaction::Token& token, const URL& url)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
     ASSERT(m_uncommittedState.state == State::Provisional);
@@ -309,7 +309,7 @@ void PageLoadState::didFailProvisionalLoad(const Transaction::Token& token)
 
     m_uncommittedState.state = State::Finished;
 
-    m_uncommittedState.provisionalURL = String();
+    m_uncommittedState.provisionalURL = { };
     m_uncommittedState.unreachableURL = m_lastUnreachableURL;
 }
 
@@ -323,7 +323,7 @@ void PageLoadState::didCommitLoad(const Transaction::Token& token, const WebCore
     m_uncommittedState.certificateInfo = certificateInfo;
 
     ASSERT(!m_uncommittedState.provisionalURL.isNull());
-    m_uncommittedState.url = m_uncommittedState.provisionalURL.isNull() ? aboutBlankURL().string() : std::exchange(m_uncommittedState.provisionalURL, { });
+    m_uncommittedState.url = m_uncommittedState.provisionalURL.isNull() ? aboutBlankURL() : std::exchange(m_uncommittedState.provisionalURL, { });
     m_uncommittedState.negotiatedLegacyTLS = usedLegacyTLS;
     m_uncommittedState.wasPrivateRelayed = wasPrivateRelayed;
     m_uncommittedState.origin = origin;
@@ -351,7 +351,7 @@ void PageLoadState::didFailLoad(const Transaction::Token& token)
     m_uncommittedState.state = State::Finished;
 }
 
-void PageLoadState::didSameDocumentNavigation(const Transaction::Token& token, const String& url)
+void PageLoadState::didSameDocumentNavigation(const Transaction::Token& token, const URL& url)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
     ASSERT(!m_uncommittedState.url.isEmpty());
@@ -359,7 +359,7 @@ void PageLoadState::didSameDocumentNavigation(const Transaction::Token& token, c
     m_uncommittedState.url = url;
 }
 
-void PageLoadState::setUnreachableURL(const Transaction::Token& token, const String& unreachableURL)
+void PageLoadState::setUnreachableURL(const Transaction::Token& token, const URL& unreachableURL)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
 

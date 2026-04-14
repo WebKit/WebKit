@@ -23,6 +23,7 @@
 
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <WebKitWebViewInternal.h>
+#include <wtf/URL.h>
 
 bool WebViewTest::shouldInitializeWebViewInConstructor = true;
 bool WebViewTest::shouldCreateEphemeralWebView = false;
@@ -83,7 +84,7 @@ gboolean WebViewTest::webProcessTerminated(WebKitWebView*, WebKitWebProcessTermi
 
 void WebViewTest::loadURI(const char* uri)
 {
-    m_activeURI = uri;
+    m_activeURI = URL { String::fromUTF8(uri) }.string().utf8();
     webkit_web_view_load_uri(m_webView.get(), uri);
     g_assert_true(webkit_web_view_is_loading(m_webView.get()));
     g_assert_cmpstr(webkit_web_view_get_uri(m_webView.get()), ==, m_activeURI.data());
@@ -94,7 +95,7 @@ void WebViewTest::loadHtml(const char* html, const char* baseURI, WebKitWebView*
     if (!baseURI)
         m_activeURI = "about:blank";
     else
-        m_activeURI = baseURI;
+        m_activeURI = URL { String::fromUTF8(baseURI) }.string().utf8();
 
     if (!webView)
         webView = m_webView.get();
@@ -117,7 +118,7 @@ void WebViewTest::loadBytes(GBytes* bytes, const char* mimeType, const char* enc
     if (!baseURI)
         m_activeURI = "about:blank";
     else
-        m_activeURI = baseURI;
+        m_activeURI = URL { String::fromUTF8(baseURI) }.string().utf8();
     webkit_web_view_load_bytes(m_webView.get(), bytes, mimeType, encoding, baseURI);
     g_assert_true(webkit_web_view_is_loading(m_webView.get()));
     g_assert_cmpstr(webkit_web_view_get_uri(m_webView.get()), ==, m_activeURI.data());
@@ -125,7 +126,7 @@ void WebViewTest::loadBytes(GBytes* bytes, const char* mimeType, const char* enc
 
 void WebViewTest::loadRequest(WebKitURIRequest* request)
 {
-    m_activeURI = webkit_uri_request_get_uri(request);
+    m_activeURI = URL { String::fromUTF8(webkit_uri_request_get_uri(request)) }.string().utf8();
     webkit_web_view_load_request(m_webView.get(), request);
     g_assert_true(webkit_web_view_is_loading(m_webView.get()));
     g_assert_cmpstr(webkit_web_view_get_uri(m_webView.get()), ==, m_activeURI.data());
@@ -133,7 +134,7 @@ void WebViewTest::loadRequest(WebKitURIRequest* request)
 
 void WebViewTest::loadAlternateHTML(const char* html, const char* contentURI, const char* baseURI)
 {
-    m_activeURI = contentURI;
+    m_activeURI = URL { String::fromUTF8(contentURI) }.string().utf8();
     webkit_web_view_load_alternate_html(m_webView.get(), html, contentURI, baseURI);
     g_assert_true(webkit_web_view_is_loading(m_webView.get()));
     g_assert_cmpstr(webkit_web_view_get_uri(m_webView.get()), ==, m_activeURI.data());
