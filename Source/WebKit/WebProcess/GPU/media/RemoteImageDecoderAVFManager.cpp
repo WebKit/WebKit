@@ -44,6 +44,8 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteImageDecoderAVFManager);
 
 RefPtr<RemoteImageDecoderAVF> RemoteImageDecoderAVFManager::createImageDecoder(FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
 {
+    ASSERT(RemoteImageDecoderAVF::canDecodeType(mimeType));
+
     if (!WebProcess::singleton().mediaPlaybackEnabled())
         return nullptr;
 
