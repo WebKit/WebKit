@@ -69,6 +69,7 @@
     attribute [AtomString] DOMString name;
     readonly attribute History history;
     [EnabledBySetting=NavigationAPIEnabled, Replaceable] readonly attribute Navigation navigation;
+    [EnabledBySetting=SpellCheckCustomDictionaryAPIEnabled, SecureContext] readonly attribute SpellCheckCustomDictionary spellCheckDictionary;
     [ImplementedAs=ensureCustomElementRegistry] readonly attribute CustomElementRegistry customElements;
     [Replaceable] readonly attribute BarProp locationbar;
     [Replaceable] readonly attribute BarProp menubar;

@@ -137,6 +137,7 @@
 #include "SelectorQuery.h"
 #include "SerializedScriptValue.h"
 #include "Settings.h"
+#include "SpellCheckCustomDictionary.h"
 #include "StaticNodeList.h"
 #include "Storage.h"
 #include "StorageArea.h"
@@ -222,6 +223,13 @@ Seconds LocalDOMWindow::transientActivationDuration()
     if (auto override = transientActivationDurationOverrideForTesting())
         return *override;
     return defaultTransientActivationDuration;
+}
+
+SpellCheckCustomDictionary& LocalDOMWindow::spellCheckDictionary()
+{
+    if (!m_spellCheckDictionary)
+        m_spellCheckDictionary = SpellCheckCustomDictionary::create(*this);
+    return *m_spellCheckDictionary;
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LocalDOMWindow);

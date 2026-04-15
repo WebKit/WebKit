@@ -669,6 +669,8 @@ namespace WebCore {
     macro(matchingElementInFlatTree) \
     macro(mediaStreamTrackConstraints) \
     macro(navigation) \
+    macro(spellCheckDictionary) \
+    macro(SpellCheckCustomDictionary) \
     macro(onbackgroundfetchsuccess) \
     macro(onbackgroundfetchfail) \
     macro(onbackgroundfetchabort) \

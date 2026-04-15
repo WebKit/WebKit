@@ -2646,6 +2646,7 @@
 		623C21972F529B6F00B6094B /* StyleVisualBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 623C21962F529B1800B6094B /* StyleVisualBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		62641BBD2F3C5E5D006EA1D3 /* CSSPropertyParserConsumer+Overflow.h in Headers */ = {isa = PBXBuildFile; fileRef = 62641BB82F3C527F006EA1D3 /* CSSPropertyParserConsumer+Overflow.h */; };
 		626CDE0F1140424C001E5A68 /* SpatialNavigation.h in Headers */ = {isa = PBXBuildFile; fileRef = 626CDE0D1140424C001E5A68 /* SpatialNavigation.h */; };
+		AF551DA369934BA2ABF3BCB2 /* SpellCheckCustomDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B7A9E8BD0D944CC995645DC /* SpellCheckCustomDictionary.h */; };
 		628D214C12131ED10055DCFC /* NetworkingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 628D214B12131ED10055DCFC /* NetworkingContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		628D214E12131EF40055DCFC /* FrameNetworkingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 628D214D12131EF40055DCFC /* FrameNetworkingContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		62CD325A1157E57C0063B0A7 /* CustomEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 62CD32571157E57C0063B0A7 /* CustomEvent.h */; };
@@ -13430,6 +13431,9 @@
 		62641BB82F3C527F006EA1D3 /* CSSPropertyParserConsumer+Overflow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CSSPropertyParserConsumer+Overflow.h"; sourceTree = "<group>"; };
 		626CDE0C1140424C001E5A68 /* SpatialNavigation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpatialNavigation.cpp; sourceTree = "<group>"; };
 		626CDE0D1140424C001E5A68 /* SpatialNavigation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpatialNavigation.h; sourceTree = "<group>"; };
+		42CFABD0150B4AA7A72982C3 /* SpellCheckCustomDictionary.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SpellCheckCustomDictionary.cpp; sourceTree = "<group>"; };
+		1B7A9E8BD0D944CC995645DC /* SpellCheckCustomDictionary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpellCheckCustomDictionary.h; sourceTree = "<group>"; };
+		FCCCBF24AF644A2EBADE5B61 /* SpellCheckCustomDictionary.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SpellCheckCustomDictionary.idl; sourceTree = "<group>"; };
 		628D214B12131ED10055DCFC /* NetworkingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkingContext.h; sourceTree = "<group>"; };
 		628D214D12131EF40055DCFC /* FrameNetworkingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameNetworkingContext.h; sourceTree = "<group>"; };
 		62CD32561157E57C0063B0A7 /* CustomEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomEvent.cpp; sourceTree = "<group>"; };
@@ -30673,6 +30677,9 @@
 				1A2C6671242AFEF7003055EC /* ShareDataReader.cpp */,
 				1A2C6673242AFEF8003055EC /* ShareDataReader.h */,
 				5C7C88D71D0F1F2B009D2F6D /* SocketProvider.h */,
+				42CFABD0150B4AA7A72982C3 /* SpellCheckCustomDictionary.cpp */,
+				1B7A9E8BD0D944CC995645DC /* SpellCheckCustomDictionary.h */,
+				FCCCBF24AF644A2EBADE5B61 /* SpellCheckCustomDictionary.idl */,
 				626CDE0C1140424C001E5A68 /* SpatialNavigation.cpp */,
 				626CDE0D1140424C001E5A68 /* SpatialNavigation.h */,
 				93A0482625495500000AC462 /* SpeechRecognitionProvider.h */,
@@ -47655,6 +47662,7 @@
 				CA3344082D16174C007473A1 /* SpatialBackdropSource.h in Headers */,
 				B9CA3B402CAB1D3E00B2607C /* SpatialImageControls.h in Headers */,
 				B6D814722EE0C6D400397547 /* SpatialImageTypes.h in Headers */,
+				AF551DA369934BA2ABF3BCB2 /* SpellCheckCustomDictionary.h in Headers */,
 				626CDE0F1140424C001E5A68 /* SpatialNavigation.h in Headers */,
 				BA4E976A2E3A52290033CC0D /* SpeculationRules.h in Headers */,
 				BA6920702E0E93A80014E98A /* SpeculationRulesMatcher.h in Headers */,

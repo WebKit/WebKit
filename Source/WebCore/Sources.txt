@@ -2254,6 +2254,7 @@ page/SettingsBase.cpp
 page/ShadowRealmGlobalScope.cpp
 page/ShareDataReader.cpp
 page/SpatialNavigation.cpp
+page/SpellCheckCustomDictionary.cpp
 page/TextIndicator.cpp
 page/UndoItem.cpp
 page/UndoManager.cpp
@@ -4995,6 +4996,7 @@ JSShadowRoot.cpp
 JSShadowRootInit.cpp
 JSShadowRootMode.cpp
 JSShareData.cpp
+JSSpellCheckCustomDictionary.cpp
 JSSharedWorker.cpp
 JSSharedWorkerGlobalScope.cpp
 JSSlotAssignmentMode.cpp

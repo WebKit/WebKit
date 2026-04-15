@@ -77,6 +77,7 @@
 #include <wtf/WeakListHashSet.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomStringHash.h>
+#include <wtf/text/StringHash.h>
 
 #if ENABLE(IOS_TOUCH_EVENTS)
 #include <WebCore/IntRect.h>
@@ -1988,6 +1989,11 @@ public:
 
     WEBCORE_EXPORT Editor& editor();
     WEBCORE_EXPORT const Editor& editor() const;
+
+    void addCustomSpellingExemption(const String& word) { m_customSpellingExemptions.add(word); }
+    void removeCustomSpellingExemption(const String& word) { m_customSpellingExemptions.remove(word); }
+    bool isWordExemptFromSpellChecking(const String& word) const { return m_customSpellingExemptions.contains(word); }
+
     FrameSelection& selection() { return m_selection; }
     const FrameSelection& selection() const { return m_selection; }
 
@@ -2596,6 +2602,8 @@ private:
 
     const RefPtr<UndoManager> m_undoManager;
     const std::unique_ptr<Editor> m_editor;
+
+    HashSet<String, ASCIICaseInsensitiveHash> m_customSpellingExemptions;
     const UniqueRef<FrameSelection> m_selection;
 
     String m_fragmentDirective;

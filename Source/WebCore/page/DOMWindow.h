@@ -71,6 +71,7 @@ class RequestIdleCallback;
 class ScheduledAction;
 class Screen;
 class SecurityOrigin;
+class SpellCheckCustomDictionary;
 class Storage;
 class StyleMedia;
 class VisualViewport;
@@ -146,6 +147,7 @@ public:
     ExceptionOr<BarProp&> statusbar();
     ExceptionOr<BarProp&> toolbar();
     ExceptionOr<Navigation&> navigation();
+    ExceptionOr<SpellCheckCustomDictionary&> spellCheckDictionary();
     ExceptionOr<int> outerHeight() const;
     ExceptionOr<int> outerWidth() const;
     ExceptionOr<int> innerHeight() const;
