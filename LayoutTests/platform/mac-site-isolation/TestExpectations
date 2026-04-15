@@ -256,6 +256,7 @@ http/tests/site-isolation/inspector/debugger/pause-in-cross-origin-iframe.html [
 http/tests/site-isolation/inspector/debugger/scriptParsed-frame-target.html [ Pass ]
 http/tests/site-isolation/inspector/debugger/setBreakpoint-cross-origin-iframe.html [ Pass ]
 http/tests/site-isolation/inspector/page/override-setting-cross-origin-iframe.html [ Pass Failure ]
+http/tests/site-isolation/inspector/page/set-screen-size-override-cross-origin-iframe.html [ Pass Failure ]
 http/tests/ssl/applepay/page-cache-active-apple-pay-session.html [ Failure ]
 http/tests/ssl/applepay/page-cache-inactive-apple-pay-session.html [ Failure ]
 http/tests/ssl/media-stream/get-user-media-secure-connection.html [ Failure ]

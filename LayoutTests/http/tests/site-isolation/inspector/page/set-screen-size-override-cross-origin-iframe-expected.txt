@@ -1,0 +1,27 @@
+Test that Page.setScreenSizeOverride propagates to cross-origin iframes under site isolation.
+
+
+== Running test suite: SiteIsolation.Page.SetScreenSizeOverrideCrossOriginIFrame
+-- Running test case: SiteIsolation.Page.SetScreenSizeOverride.DefaultScreenSize
+PASS: Added target should have Frame type.
+PASS: Main page should not match media query (black).
+PASS: Cross-origin iframe should not match media query (black).
+
+-- Running test case: SiteIsolation.Page.SetScreenSizeOverride.OverrideAndReload
+Overriding screen size to 1000x500...
+Reloading...
+PASS: Main page screen width should be 1000.
+PASS: Main page screen height should be 500.
+PASS: Main page should match media query (red).
+Re-adding cross-origin iframe...
+PASS: Cross-origin iframe screen width should be 1000.
+PASS: Cross-origin iframe screen height should be 500.
+PASS: Cross-origin iframe should match media query (red).
+
+-- Running test case: SiteIsolation.Page.SetScreenSizeOverride.RemoveOverrideAndReload
+Removing screen size override...
+Reloading...
+PASS: Main page should not match media query (black).
+Re-adding cross-origin iframe...
+PASS: Cross-origin iframe should not match media query (black).
+

@@ -1,0 +1,128 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<style>
+@media only screen and (max-device-width: 1000px) {
+    body {
+        color: red;
+    }
+}
+</style>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+let iframe;
+
+function addCrossOriginIFrame() {
+    let crossOriginHost = location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+    iframe = document.createElement("iframe");
+    iframe.src = `http://${crossOriginHost}:8000/site-isolation/inspector/page/resources/screen-size-frame.html`;
+    document.body.appendChild(iframe);
+}
+
+function test() {
+    async function addIFrameAndGetTarget() {
+        let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+        InspectorTest.evaluateInPage("addCrossOriginIFrame()");
+        let event = await targetAddedPromise;
+        return event.data.target;
+    }
+
+    async function getScreenSizeInTarget(target) {
+        // Wait for the iframe document to fully load before checking screen size.
+        // TargetAdded fires when the JS context is created, before DOM and CSS are ready.
+        await target.RuntimeAgent.evaluate.invoke({
+            expression: "new Promise(resolve => { if (document.readyState === 'complete') resolve(); else window.addEventListener('load', resolve); })",
+            objectGroup: "test",
+            awaitPromise: true,
+        });
+
+        let widthResponse = await target.RuntimeAgent.evaluate.invoke({expression: "window.screen.width", objectGroup: "test", returnByValue: true});
+        InspectorTest.assert(widthResponse.result.value !== undefined, "Should be able to evaluate screen.width in cross-origin target.");
+
+        let heightResponse = await target.RuntimeAgent.evaluate.invoke({expression: "window.screen.height", objectGroup: "test", returnByValue: true});
+        InspectorTest.assert(heightResponse.result.value !== undefined, "Should be able to evaluate screen.height in cross-origin target.");
+
+        return {width: widthResponse.result.value, height: heightResponse.result.value};
+    }
+
+    async function getComputedColorInTarget(target) {
+        let response = await target.RuntimeAgent.evaluate.invoke({expression: "window.getComputedStyle(document.body).getPropertyValue('color')", objectGroup: "test", returnByValue: true});
+        InspectorTest.assert(response.result.value, "Should be able to evaluate computed style in cross-origin target.");
+        return response.result.value;
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.SetScreenSizeOverrideCrossOriginIFrame");
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SetScreenSizeOverride.DefaultScreenSize",
+        description: "Both the main page and cross-origin iframe should have the default screen size.",
+        async test() {
+            let target = await addIFrameAndGetTarget();
+            InspectorTest.expectEqual(target.type, WI.TargetType.Frame, "Added target should have Frame type.");
+
+            let mainPageColor = await InspectorTest.evaluateInPage(`getComputedStyle(document.body).color`);
+            InspectorTest.expectEqual(mainPageColor, "rgb(0, 0, 0)", "Main page should not match media query (black).");
+
+            let iframeColor = await getComputedColorInTarget(target);
+            InspectorTest.expectEqual(iframeColor, "rgb(0, 0, 0)", "Cross-origin iframe should not match media query (black).");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SetScreenSizeOverride.OverrideAndReload",
+        description: "Overriding screen size to 1000x500 and reloading should affect screen size in the cross-origin iframe.",
+        async test() {
+            InspectorTest.log("Overriding screen size to 1000x500...");
+            await PageAgent.setScreenSizeOverride(1000, 500);
+
+            InspectorTest.log("Reloading...");
+            await InspectorTest.reloadPage();
+            await InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+
+            let mainPageScreenWidth = await InspectorTest.evaluateInPage(`window.screen.width`);
+            InspectorTest.expectEqual(mainPageScreenWidth, 1000, "Main page screen width should be 1000.");
+            let mainPageScreenHeight = await InspectorTest.evaluateInPage(`window.screen.height`);
+            InspectorTest.expectEqual(mainPageScreenHeight, 500, "Main page screen height should be 500.");
+
+            let mainPageColor = await InspectorTest.evaluateInPage(`getComputedStyle(document.body).color`);
+            InspectorTest.expectEqual(mainPageColor, "rgb(255, 0, 0)", "Main page should match media query (red).");
+
+            InspectorTest.log("Re-adding cross-origin iframe...");
+            let target = await addIFrameAndGetTarget();
+
+            let iframeScreenSize = await getScreenSizeInTarget(target);
+            InspectorTest.expectEqual(iframeScreenSize.width, 1000, "Cross-origin iframe screen width should be 1000.");
+            InspectorTest.expectEqual(iframeScreenSize.height, 500, "Cross-origin iframe screen height should be 500.");
+
+            let iframeColor = await getComputedColorInTarget(target);
+            InspectorTest.expectEqual(iframeColor, "rgb(255, 0, 0)", "Cross-origin iframe should match media query (red).");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Page.SetScreenSizeOverride.RemoveOverrideAndReload",
+        description: "Removing the screen size override and reloading should restore the default screen size in both frames.",
+        async test() {
+            InspectorTest.log("Removing screen size override...");
+            await PageAgent.setScreenSizeOverride();
+
+            InspectorTest.log("Reloading...");
+            await InspectorTest.reloadPage();
+            await InspectorTest.awaitEvent(FrontendTestHarness.Event.TestPageDidLoad);
+
+            let mainPageColor = await InspectorTest.evaluateInPage(`getComputedStyle(document.body).color`);
+            InspectorTest.expectEqual(mainPageColor, "rgb(0, 0, 0)", "Main page should not match media query (black).");
+
+            InspectorTest.log("Re-adding cross-origin iframe...");
+            let target = await addIFrameAndGetTarget();
+
+            let iframeColor = await getComputedColorInTarget(target);
+            InspectorTest.expectEqual(iframeColor, "rgb(0, 0, 0)", "Cross-origin iframe should not match media query (black).");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that Page.setScreenSizeOverride propagates to cross-origin iframes under site isolation.</p>
+</body>
