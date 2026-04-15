@@ -27,9 +27,9 @@
 
 #include "LocalDOMWindowProperty.h"
 #include "ScriptWrappable.h"
+#include <wtf/FixedVector.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
-#include <wtf/FixedVector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
