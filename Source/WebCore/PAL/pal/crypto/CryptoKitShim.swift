@@ -46,7 +46,7 @@ public final class AesGcm {
     ) -> PAL.Crypto.CryptoOperationReturnValue {
         var returnValue = PAL.Crypto.CryptoOperationReturnValue()
         do {
-            if unsafe iv.size() == 0 {
+            if iv.size() == 0 {
                 returnValue.errorCode = .InvalidArgument
                 return returnValue
             }
@@ -529,7 +529,7 @@ public final class EdKey {
     ) -> PAL.Crypto.CryptoOperationReturnValue {
         var returnValue = PAL.Crypto.CryptoOperationReturnValue()
         do {
-            if unsafe privateKey.size() != 32 {
+            if privateKey.size() != 32 {
                 throw LocalErrors.invalidArgument
             }
             switch algo {
@@ -558,7 +558,7 @@ public final class EdKey {
     ) -> PAL.Crypto.CryptoOperationReturnValue {
         var returnValue = PAL.Crypto.CryptoOperationReturnValue()
         do {
-            if unsafe privateKey.size() != 32 {
+            if privateKey.size() != 32 {
                 throw LocalErrors.invalidArgument
             }
             switch algo {
@@ -587,7 +587,7 @@ public final class EdKey {
         publicKey: PAL.Crypto.SpanConstUInt8
     ) -> Bool {
         do {
-            if unsafe (privateKey.size() != 32 || publicKey.size() != 32) {
+            if privateKey.size() != 32 || publicKey.size() != 32 {
                 throw LocalErrors.invalidArgument
             }
             switch algo {
@@ -612,7 +612,7 @@ public final class EdKey {
         publicKey: PAL.Crypto.SpanConstUInt8
     ) -> Bool {
         do {
-            if unsafe (privateKey.size() != 32 || publicKey.size() != 32) {
+            if privateKey.size() != 32 || publicKey.size() != 32 {
                 throw LocalErrors.invalidArgument
             }
             switch algo {

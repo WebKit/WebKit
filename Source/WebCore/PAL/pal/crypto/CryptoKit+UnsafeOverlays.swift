@@ -34,7 +34,7 @@ private enum UnsafeErrors: Error {
 
 extension Data {
     fileprivate static func temporaryDataFromSpan(spanNoCopy: PAL.Crypto.SpanConstUInt8) -> Data {
-        guard unsafe spanNoCopy.empty() else {
+        guard spanNoCopy.empty() else {
             return unsafe Data(
                 bytesNoCopy: UnsafeMutablePointer(mutating: spanNoCopy.__dataUnsafe()),
                 count: spanNoCopy.size(),
@@ -49,7 +49,7 @@ extension Data {
 
 extension CryptoKit.HashFunction {
     mutating func update(data: PAL.Crypto.SpanConstUInt8) {
-        if unsafe data.empty() {
+        if data.empty() {
             self.update(data: Data())
         } else {
             unsafe self.update(
@@ -69,7 +69,7 @@ extension AES.GCM {
         iv: PAL.Crypto.SpanConstUInt8,
         ad: PAL.Crypto.SpanConstUInt8
     ) throws -> AES.GCM.SealedBox {
-        guard unsafe ad.size() > 0 else {
+        guard ad.size() > 0 else {
             return try unsafe AES.GCM.seal(
                 Data.temporaryDataFromSpan(spanNoCopy: message),
                 using: SymmetricKey(data: Data.temporaryDataFromSpan(spanNoCopy: key)),
@@ -105,7 +105,7 @@ extension AES.KeyWrap {
 
 extension P256.Signing.ECDSASignature {
     init(span: PAL.Crypto.SpanConstUInt8) throws {
-        if unsafe span.empty() {
+        if span.empty() {
             throw UnsafeErrors.emptySpan
         }
         try unsafe self.init(rawRepresentation: Data.temporaryDataFromSpan(spanNoCopy: span))
@@ -114,7 +114,7 @@ extension P256.Signing.ECDSASignature {
 
 extension P384.Signing.ECDSASignature {
     init(span: PAL.Crypto.SpanConstUInt8) throws {
-        if unsafe span.empty() {
+        if span.empty() {
             throw UnsafeErrors.emptySpan
         }
         try unsafe self.init(rawRepresentation: Data.temporaryDataFromSpan(spanNoCopy: span))
@@ -123,7 +123,7 @@ extension P384.Signing.ECDSASignature {
 
 extension P521.Signing.ECDSASignature {
     init(span: PAL.Crypto.SpanConstUInt8) throws {
-        if unsafe span.empty() {
+        if span.empty() {
             throw UnsafeErrors.emptySpan
         }
         try unsafe self.init(rawRepresentation: Data.temporaryDataFromSpan(spanNoCopy: span))
@@ -132,14 +132,14 @@ extension P521.Signing.ECDSASignature {
 
 extension P256.Signing.PublicKey {
     init(span: PAL.Crypto.SpanConstUInt8) throws {
-        if unsafe span.empty() {
+        if span.empty() {
             throw UnsafeErrors.emptySpan
         }
         try unsafe self.init(x963Representation: Data.temporaryDataFromSpan(spanNoCopy: span))
     }
 
     init(spanCompressed: PAL.Crypto.SpanConstUInt8) throws {
-        if unsafe spanCompressed.empty() {
+        if spanCompressed.empty() {
             throw UnsafeErrors.emptySpan
         }
         try unsafe self.init(
@@ -150,14 +150,14 @@ extension P256.Signing.PublicKey {
 
 extension P384.Signing.PublicKey {
     init(span: PAL.Crypto.SpanConstUInt8) throws {
-        if unsafe span.empty() {
+        if span.empty() {
             throw UnsafeErrors.emptySpan
         }
         try unsafe self.init(x963Representation: Data.temporaryDataFromSpan(spanNoCopy: span))
     }
 
     init(spanCompressed: PAL.Crypto.SpanConstUInt8) throws {
-        if unsafe spanCompressed.empty() {
+        if spanCompressed.empty() {
             throw UnsafeErrors.emptySpan
         }
         try unsafe self.init(
@@ -168,14 +168,14 @@ extension P384.Signing.PublicKey {
 
 extension P521.Signing.PublicKey {
     init(span: PAL.Crypto.SpanConstUInt8) throws {
-        if unsafe span.empty() {
+        if span.empty() {
             throw UnsafeErrors.emptySpan
         }
         try unsafe self.init(x963Representation: Data.temporaryDataFromSpan(spanNoCopy: span))
     }
 
     init(spanCompressed: PAL.Crypto.SpanConstUInt8) throws {
-        if unsafe spanCompressed.empty() {
+        if spanCompressed.empty() {
             throw UnsafeErrors.emptySpan
         }
         try unsafe self.init(
@@ -186,7 +186,7 @@ extension P521.Signing.PublicKey {
 
 extension P256.Signing.PrivateKey {
     init(span: PAL.Crypto.SpanConstUInt8) throws {
-        if unsafe span.empty() {
+        if span.empty() {
             throw UnsafeErrors.emptySpan
         }
         try unsafe self.init(x963Representation: Data.temporaryDataFromSpan(spanNoCopy: span))
@@ -195,7 +195,7 @@ extension P256.Signing.PrivateKey {
 
 extension P384.Signing.PrivateKey {
     init(span: PAL.Crypto.SpanConstUInt8) throws {
-        if unsafe span.empty() {
+        if span.empty() {
             throw UnsafeErrors.emptySpan
         }
         try unsafe self.init(x963Representation: Data.temporaryDataFromSpan(spanNoCopy: span))
@@ -204,7 +204,7 @@ extension P384.Signing.PrivateKey {
 
 extension P521.Signing.PrivateKey {
     init(span: PAL.Crypto.SpanConstUInt8) throws {
-        if unsafe span.empty() {
+        if span.empty() {
             throw UnsafeErrors.emptySpan
         }
         try unsafe self.init(x963Representation: Data.temporaryDataFromSpan(spanNoCopy: span))
@@ -213,14 +213,14 @@ extension P521.Signing.PrivateKey {
 
 extension Curve25519.Signing.PrivateKey {
     init(span: PAL.Crypto.SpanConstUInt8) throws {
-        if unsafe span.empty() {
+        if span.empty() {
             throw UnsafeErrors.emptySpan
         }
         try unsafe self.init(rawRepresentation: Data.temporaryDataFromSpan(spanNoCopy: span))
     }
 
     func signature(span: PAL.Crypto.SpanConstUInt8) throws -> PAL.Crypto.VectorUInt8 {
-        if unsafe span.empty() {
+        if span.empty() {
             return try self.signature(for: Data()).copyToVectorUInt8()
         }
         return try unsafe self.signature(for: Data.temporaryDataFromSpan(spanNoCopy: span))
@@ -230,14 +230,14 @@ extension Curve25519.Signing.PrivateKey {
 
 extension Curve25519.Signing.PublicKey {
     init(span: PAL.Crypto.SpanConstUInt8) throws {
-        if unsafe span.empty() {
+        if span.empty() {
             throw UnsafeErrors.emptySpan
         }
         try unsafe self.init(rawRepresentation: Data.temporaryDataFromSpan(spanNoCopy: span))
     }
 
     func isValidSignature(signature: PAL.Crypto.SpanConstUInt8, data: PAL.Crypto.SpanConstUInt8) -> Bool {
-        if unsafe (signature.empty() || data.empty()) {
+        if signature.empty() || data.empty() {
             return false
         }
 
@@ -250,14 +250,14 @@ extension Curve25519.Signing.PublicKey {
 
 extension Curve25519.KeyAgreement.PrivateKey {
     init(span: PAL.Crypto.SpanConstUInt8) throws {
-        if unsafe span.empty() {
+        if span.empty() {
             throw UnsafeErrors.emptySpan
         }
         try unsafe self.init(rawRepresentation: Data.temporaryDataFromSpan(spanNoCopy: span))
     }
 
     func sharedSecretFromKeyAgreement(pubSpan: PAL.Crypto.SpanConstUInt8) throws -> PAL.Crypto.VectorUInt8 {
-        if unsafe pubSpan.empty() {
+        if pubSpan.empty() {
             throw UnsafeErrors.emptySpan
         }
         let pub = try unsafe Curve25519.KeyAgreement.PublicKey(
@@ -269,7 +269,7 @@ extension Curve25519.KeyAgreement.PrivateKey {
 
 extension Curve25519.KeyAgreement.PublicKey {
     init(span: PAL.Crypto.SpanConstUInt8) throws {
-        if unsafe span.empty() {
+        if span.empty() {
             throw UnsafeErrors.emptySpan
         }
         try unsafe self.init(rawRepresentation: Data.temporaryDataFromSpan(spanNoCopy: span))
