@@ -105,7 +105,7 @@ JSC_DEFINE_HOST_FUNCTION(reflectObjectConstruct, (JSGlobalObject* globalObject, 
     }
 
     MarkedArgumentBuffer arguments;
-    JSObject* argumentsObject = jsDynamicCast<JSObject*>(callFrame->argument(1));
+    JSObject* argumentsObject = jsDynamicDowncast<JSObject*>(callFrame->argument(1));
     if (!argumentsObject)
         return JSValue::encode(throwTypeError(globalObject, scope, "Reflect.construct requires the second argument be an object"_s));
 

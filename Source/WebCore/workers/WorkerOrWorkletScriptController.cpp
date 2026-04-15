@@ -284,7 +284,7 @@ void WorkerOrWorkletScriptController::evaluate(const ScriptSourceCode& sourceCod
 static Identifier jsValueToModuleKey(JSGlobalObject* lexicalGlobalObject, JSValue value)
 {
     if (value.isSymbol())
-        return Identifier::fromUid(jsCast<Symbol*>(value)->privateName());
+        return Identifier::fromUid(jsUncheckedDowncast<Symbol*>(value)->privateName());
     ASSERT(value.isString());
     return asString(value)->toIdentifier(lexicalGlobalObject);
 }
@@ -308,7 +308,7 @@ JSC::JSValue WorkerOrWorkletScriptController::evaluateModule(const URL& sourceUR
     } else if (moduleRecord.inherits<JSC::SyntheticModuleRecord>())
         InspectorInstrumentation::willEvaluateScript(*globalScope, sourceURL.string(), 1, 1);
     else {
-        auto* jsModuleRecord = jsCast<JSModuleRecord*>(&moduleRecord);
+        auto* jsModuleRecord = jsUncheckedDowncast<JSModuleRecord*>(&moduleRecord);
         const auto& jsSourceCode = jsModuleRecord->sourceCode();
         InspectorInstrumentation::willEvaluateScript(*globalScope, sourceURL.string(), jsSourceCode.firstLine().oneBasedInt(), jsSourceCode.startColumn().oneBasedInt());
     }
@@ -527,7 +527,7 @@ void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL
             RETURN_IF_EXCEPTION(scope, { });
             scriptFetcher->notifyLoadCompleted(*moduleKey.impl());
 
-            RefPtr context = downcast<WorkerOrWorkletGlobalScope>(jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext());
+            RefPtr context = downcast<WorkerOrWorkletGlobalScope>(jsUncheckedDowncast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext());
             if (!context || !context->script()) {
                 task->run(std::nullopt);
                 return JSValue::encode(jsUndefined());
@@ -596,7 +596,7 @@ void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL
                     return JSValue::encode(jsUndefined());
                 }
                 if (object->inherits<ErrorInstance>()) {
-                    auto* error = jsCast<ErrorInstance*>(object);
+                    auto* error = jsUncheckedDowncast<ErrorInstance*>(object);
                     switch (error->errorType()) {
                     case ErrorType::TypeError: {
                         auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);

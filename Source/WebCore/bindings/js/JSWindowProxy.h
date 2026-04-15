@@ -53,7 +53,7 @@ public:
 
     DECLARE_INFO;
 
-    JSDOMGlobalObject* window() const { return JSC::jsCast<JSDOMGlobalObject*>(target()); }
+    JSDOMGlobalObject* window() const { return JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(target()); }
 
     void setWindow(JSC::VM&, JSDOMGlobalObject&);
     void setWindow(DOMWindow&);

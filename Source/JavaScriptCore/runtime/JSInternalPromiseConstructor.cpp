@@ -96,7 +96,7 @@ JSC_DEFINE_HOST_FUNCTION(internalPromiseConstructorFuncInternalAll, (JSGlobalObj
     };
 
     JSValue arrayValue = callFrame->argument(0);
-    JSArray* array = jsDynamicCast<JSArray*>(arrayValue);
+    JSArray* array = jsDynamicDowncast<JSArray*>(arrayValue);
     ASSERT(array);
 
     uint64_t length = array->length();
@@ -125,7 +125,7 @@ JSC_DEFINE_HOST_FUNCTION(internalPromiseConstructorFuncInternalAll, (JSGlobalObj
         JSValue value = array->getIndex(globalObject, index);
         RETURN_IF_EXCEPTION(scope, { });
 
-        auto* nextPromise = jsCast<JSInternalPromise*>(value);
+        auto* nextPromise = jsUncheckedDowncast<JSInternalPromise*>(value);
         ASSERT(nextPromise);
         JSPromiseCombinatorsContext* context = JSPromiseCombinatorsContext::create(vm, globalContext, index);
 

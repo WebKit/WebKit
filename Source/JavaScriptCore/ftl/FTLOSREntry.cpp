@@ -60,7 +60,7 @@ void* prepareOSREntry(
         bytecodeIndex);
     
     if (bytecodeIndex)
-        jsCast<ScriptExecutable*>(executable)->setDidTryToEnterInLoop(true);
+        jsUncheckedDowncast<ScriptExecutable*>(executable)->setDidTryToEnterInLoop(true);
 
     if (bytecodeIndex != entryCode->bytecodeIndex()) {
         dataLogLnIf(Options::verboseOSR(), "    OSR failed because we don't have an entrypoint for ", bytecodeIndex, "; ours is for ", entryCode->bytecodeIndex());

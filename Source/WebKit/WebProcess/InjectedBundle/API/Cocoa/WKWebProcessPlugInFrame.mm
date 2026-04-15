@@ -87,9 +87,9 @@
     JSC::JSGlobalObject* globalObject = ::toJS(context.JSGlobalContextRef);
     JSC::JSObject* jsObject = ::toJS(globalObject, object).toObject(globalObject);
 
-    if (auto* info = jsDynamicCast<WebCore::JSWebKitJSHandle*>(jsObject)) {
+    if (auto* info = jsDynamicDowncast<WebCore::JSWebKitJSHandle*>(jsObject)) {
         RELEASE_ASSERT(globalObject->template inherits<WebCore::JSDOMGlobalObject>());
-        auto* domGlobalObject = jsCast<WebCore::JSDOMGlobalObject*>(globalObject);
+        auto* domGlobalObject = jsUncheckedDowncast<WebCore::JSDOMGlobalObject*>(globalObject);
         RefPtr document = dynamicDowncast<WebCore::Document>(domGlobalObject->scriptExecutionContext());
         RefPtr frame = WebKit::WebFrame::webFrame(document->frameID());
         RefPtr world = WebKit::InjectedBundleScriptWorld::get(Ref { domGlobalObject->world() });

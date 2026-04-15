@@ -112,7 +112,7 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestLegacyFactoryFunctionLe
 {
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* castedThis = jsCast<JSTestLegacyFactoryFunctionLegacyFactoryFunction*>(callFrame->jsCallee());
+    auto* castedThis = jsUncheckedDowncast<JSTestLegacyFactoryFunctionLegacyFactoryFunction*>(callFrame->jsCallee());
     ASSERT(castedThis);
     if (callFrame->argumentCount() < 1) [[unlikely]]
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
@@ -205,12 +205,12 @@ JSObject* JSTestLegacyFactoryFunction::prototype(VM& vm, JSDOMGlobalObject& glob
 
 JSValue JSTestLegacyFactoryFunction::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestLegacyFactoryFunctionDOMConstructor, DOMConstructorID::TestLegacyFactoryFunction>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestLegacyFactoryFunctionDOMConstructor, DOMConstructorID::TestLegacyFactoryFunction>(vm, *jsUncheckedDowncast<const JSDOMGlobalObject*>(globalObject));
 }
 
 JSValue JSTestLegacyFactoryFunction::getLegacyFactoryFunction(VM& vm, JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestLegacyFactoryFunctionLegacyFactoryFunction, DOMConstructorID::TestLegacyFactoryFunctionLegacyFactory>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestLegacyFactoryFunctionLegacyFactoryFunction, DOMConstructorID::TestLegacyFactoryFunctionLegacyFactory>(vm, *jsUncheckedDowncast<JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestLegacyFactoryFunction::destroy(JSC::JSCell* cell)
@@ -223,7 +223,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestLegacyFactoryFunctionConstructor, (JSGlobalObject
 {
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestLegacyFactoryFunctionPrototype*>(JSValue::decode(thisValue));
+    auto* prototype = jsDynamicDowncast<JSTestLegacyFactoryFunctionPrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestLegacyFactoryFunction::getConstructor(vm, prototype->realm()));
@@ -241,7 +241,7 @@ JSC::GCClient::IsoSubspace* JSTestLegacyFactoryFunction::subspaceForImpl(JSC::VM
 
 void JSTestLegacyFactoryFunction::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestLegacyFactoryFunction*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSTestLegacyFactoryFunction*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (RefPtr context = thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
@@ -250,7 +250,7 @@ void JSTestLegacyFactoryFunction::analyzeHeap(JSCell* cell, HeapAnalyzer& analyz
 
 bool JSTestLegacyFactoryFunctionOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
-    SUPPRESS_UNCOUNTED_LOCAL auto* jsTestLegacyFactoryFunction = jsCast<JSTestLegacyFactoryFunction*>(handle.slot()->asCell());
+    SUPPRESS_UNCOUNTED_LOCAL auto* jsTestLegacyFactoryFunction = jsUncheckedDowncast<JSTestLegacyFactoryFunction*>(handle.slot()->asCell());
     SUPPRESS_UNCOUNTED_LOCAL auto& wrapped = jsTestLegacyFactoryFunction->wrapped();
     if (!wrapped.isContextStopped() && wrapped.hasPendingActivity()) {
         if (reason) [[unlikely]]
@@ -314,7 +314,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestLegacyFactoryFunction* JSTestLegacyFactoryFunction::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestLegacyFactoryFunction*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestLegacyFactoryFunction*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

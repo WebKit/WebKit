@@ -394,7 +394,7 @@ inline JSC::JSValue callPromiseFunction(JSC::JSGlobalObject& lexicalGlobalObject
     JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
     auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
-    auto& globalObject = *JSC::jsSecureCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
+    auto& globalObject = *JSC::jsDowncast<JSDOMGlobalObject*>(&lexicalGlobalObject);
     auto* promise = JSC::JSPromise::create(vm, globalObject.promiseStructure());
     ASSERT(promise);
 
@@ -413,7 +413,7 @@ inline JSC::JSValue callPromiseFunction(JSC::JSGlobalObject& lexicalGlobalObject
     JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
     auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
-    auto& globalObject = *JSC::jsSecureCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
+    auto& globalObject = *JSC::jsDowncast<JSDOMGlobalObject*>(&lexicalGlobalObject);
     auto* promise = JSC::JSPromise::create(vm, globalObject.promiseStructure());
     ASSERT(promise);
 
@@ -434,7 +434,7 @@ inline JSC::EncodedJSValue callPromisePairFunction(JSC::JSGlobalObject& lexicalG
     JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
     auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
-    auto& globalObject = *JSC::jsSecureCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
+    auto& globalObject = *JSC::jsDowncast<JSDOMGlobalObject*>(&lexicalGlobalObject);
     auto* promise = JSC::JSPromise::create(vm, globalObject.promiseStructure());
     ASSERT(promise);
     auto* promise2 = JSC::JSPromise::create(vm, globalObject.promiseStructure());

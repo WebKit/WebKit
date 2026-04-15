@@ -81,17 +81,17 @@ ModuleLoadingContext* ModuleLoadingContext::create(VM& vm, const AbstractModuleR
 JSModuleLoader::ModuleReferrer ModuleLoadingContext::referrer() const
 {
     JSValue ref = m_referrer.get();
-    if (auto* module = jsDynamicCast<CyclicModuleRecord*>(ref))
+    if (auto* module = jsDynamicDowncast<CyclicModuleRecord*>(ref))
         return module;
-    if (auto* exec = jsDynamicCast<ProgramExecutable*>(ref))
+    if (auto* exec = jsDynamicDowncast<ProgramExecutable*>(ref))
         return exec;
-    return jsCast<JSGlobalObject*>(ref);
+    return jsUncheckedDowncast<JSGlobalObject*>(ref);
 }
 
 template<typename Visitor>
 void ModuleLoadingContext::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<ModuleLoadingContext*>(cell);
+    auto* thisObject = jsUncheckedDowncast<ModuleLoadingContext*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_scriptFetcher);

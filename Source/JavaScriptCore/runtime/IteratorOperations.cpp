@@ -433,7 +433,7 @@ IterationMode getIterationMode(VM&, JSGlobalObject* globalObject, JSValue iterab
         return IterationMode::Generic;
 
     // This is correct because we just checked the watchpoint is still valid.
-    JSFunction* symbolIteratorFunction = jsDynamicCast<JSFunction*>(symbolIterator);
+    JSFunction* symbolIteratorFunction = jsDynamicDowncast<JSFunction*>(symbolIterator);
     if (!symbolIteratorFunction)
         return IterationMode::Generic;
 
@@ -450,7 +450,7 @@ IterationMode getIterationMode(VM&, JSGlobalObject* globalObject, JSValue iterab
     if (!isJSArray(iterable))
         return IterationMode::Generic;
 
-    JSArray* array = jsCast<JSArray*>(iterable);
+    JSArray* array = jsUncheckedDowncast<JSArray*>(iterable);
     Structure* structure = array->structure();
     // FIXME: We want to support broader JSArrays as long as array[@@iterator] is not defined.
     if (!globalObject->isOriginalArrayStructure(structure))

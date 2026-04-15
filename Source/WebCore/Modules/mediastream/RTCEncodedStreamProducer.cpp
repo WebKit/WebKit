@@ -52,7 +52,7 @@ RTCEncodedStreamProducer::~RTCEncodedStreamProducer() = default;
 
 ExceptionOr<Ref<RTCEncodedStreamProducer>> RTCEncodedStreamProducer::create(ScriptExecutionContext& context)
 {
-    auto* globalObject = JSC::jsCast<JSDOMGlobalObject*>(context.globalObject());
+    auto* globalObject = JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(context.globalObject());
     if (!globalObject)
         return Exception { ExceptionCode::InvalidStateError };
 
@@ -112,7 +112,7 @@ void RTCEncodedStreamProducer::enqueueFrame(Ref<RTCRtpTransformableFrame>&& fram
     if (!context)
         return;
 
-    auto* globalObject = JSC::jsCast<JSDOMGlobalObject*>(context->globalObject());
+    auto* globalObject = JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(context->globalObject());
     if (!globalObject)
         return;
 

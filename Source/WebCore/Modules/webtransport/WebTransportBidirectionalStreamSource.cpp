@@ -40,7 +40,7 @@ bool WebTransportBidirectionalStreamSource::receiveIncomingStream(JSC::JSGlobalO
 {
     if (m_isCancelled)
         return false;
-    auto& jsDOMGlobalObject = *JSC::jsCast<JSDOMGlobalObject*>(&globalObject);
+    auto& jsDOMGlobalObject = *JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(&globalObject);
     Locker<JSC::JSLock> locker(jsDOMGlobalObject.vm().apiLock());
     auto value = toJS(&globalObject, &jsDOMGlobalObject, stream.get());
     if (!controller().enqueue(value)) {

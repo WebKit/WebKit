@@ -189,7 +189,7 @@ void JSWebAssemblyInstance::destroy(JSCell* cell)
 template<typename Visitor>
 void JSWebAssemblyInstance::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<JSWebAssemblyInstance*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSWebAssemblyInstance*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     Base::visitChildren(thisObject, visitor);
@@ -551,7 +551,7 @@ void JSWebAssemblyInstance::initElementSegment(uint32_t tableIndex, const Elemen
                     // If we ever import a WebAssemblyWrapperFunction, we set the import as the unwrapped value.
                     // Because a WebAssemblyWrapperFunction can never wrap another WebAssemblyWrapperFunction,
                     // the only type this could be is WebAssemblyFunction.
-                    WebAssemblyFunction* wasmFunction = jsSecureCast<WebAssemblyFunction*>(functionImport);
+                    WebAssemblyFunction* wasmFunction = jsDowncast<WebAssemblyFunction*>(functionImport);
                     jsTable->set(dstIndex, wasmFunction);
                     continue;
                 }
@@ -610,7 +610,7 @@ void JSWebAssemblyInstance::initElementSegment(uint32_t tableIndex, const Elemen
         if (jsTable->table()->isFuncrefTable()) {
             // Validation should guarantee that the table is for funcs, and the value is a func as well.
             if (initValue.isObject())
-                ASSERT(jsDynamicCast<WebAssemblyFunctionBase*>(asObject(initValue)));
+                ASSERT(jsDynamicDowncast<WebAssemblyFunctionBase*>(asObject(initValue)));
             else
                 ASSERT(initValue.isNull());
         } else

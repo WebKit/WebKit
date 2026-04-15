@@ -59,7 +59,7 @@ static constexpr unsigned maximumResolutionFailures = 128;
 static Identifier jsValueToSpecifier(JSGlobalObject* globalObject, JSValue value)
 {
     if (value.isSymbol())
-        return Identifier::fromUid(jsCast<Symbol*>(value)->privateName());
+        return Identifier::fromUid(jsUncheckedDowncast<Symbol*>(value)->privateName());
     ASSERT(value.isString());
     return asString(value)->toIdentifier(globalObject);
 }
@@ -79,7 +79,7 @@ ErrorInstance* JSModuleLoader::duplicateTypeError(JSGlobalObject* globalObject, 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* copy = jsCast<ErrorInstance*>(createTypeErrorCopy(globalObject, error));
+    auto* copy = jsUncheckedDowncast<ErrorInstance*>(createTypeErrorCopy(globalObject, error));
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     auto copyField = [&](const Identifier& name) -> bool {
@@ -199,7 +199,7 @@ JSModuleLoader::ModuleFailure JSModuleLoader::getErrorInfo(JSGlobalObject* globa
     VM& vm = globalObject->vm();
     JSModuleLoader::ModuleFailure failure;
     if (JSValue sourceValue = error->getDirect(vm, vm.propertyNames->builtinNames().moduleFailureModuleRecordPrivateName()))
-        failure.m_source = jsDynamicCast<AbstractModuleRecord*>(sourceValue);
+        failure.m_source = jsDynamicDowncast<AbstractModuleRecord*>(sourceValue);
     if (JSValue keyValue = error->getDirect(vm, vm.propertyNames->builtinNames().moduleFailureModuleKeyPrivateName()))
         failure.m_key = jsValueToSpecifier(globalObject, keyValue);
     if (JSValue typeValue = error->getDirect(vm, vm.propertyNames->builtinNames().moduleFailureModuleTypePrivateName()))
@@ -224,7 +224,7 @@ void JSModuleLoader::attachErrorInfo(JSGlobalObject* globalObject, ErrorInstance
 
 bool JSModuleLoader::attachErrorInfo(JSGlobalObject* globalObject, Exception* exception, AbstractModuleRecord* source, const Identifier& key, ScriptFetchParameters::Type type, ModuleFailure::Kind kind)
 {
-    if (auto* error = jsDynamicCast<ErrorInstance*>(exception->value())) {
+    if (auto* error = jsDynamicDowncast<ErrorInstance*>(exception->value())) {
         attachErrorInfo(globalObject, error, source, key, type, kind);
         return true;
     }
@@ -260,7 +260,7 @@ void JSModuleLoader::finishCreation(JSGlobalObject*, VM& vm)
 template<typename Visitor>
 void JSModuleLoader::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    JSModuleLoader* thisObject = jsCast<JSModuleLoader*>(cell);
+    JSModuleLoader* thisObject = jsUncheckedDowncast<JSModuleLoader*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     Locker locker { thisObject->cellLock() };
@@ -312,7 +312,7 @@ JSArray* JSModuleLoader::dependencyKeysIfEvaluated(JSGlobalObject* globalObject,
     if (auto status = entry->status(); status != ModuleRegistryEntry::Status::Fetched && status != ModuleRegistryEntry::Status::EvaluationFailed)
         RELEASE_AND_RETURN(scope, nullptr);
 
-    if (auto* cyclic = jsDynamicCast<CyclicModuleRecord*>(record); cyclic && cyclic->status() != CyclicModuleRecord::Status::Evaluated)
+    if (auto* cyclic = jsDynamicDowncast<CyclicModuleRecord*>(record); cyclic && cyclic->status() != CyclicModuleRecord::Status::Evaluated)
         RELEASE_AND_RETURN(scope, nullptr);
 
     const Vector<AbstractModuleRecord::ModuleRequest>& requests = record->requestedModules();
@@ -346,7 +346,7 @@ void JSModuleLoader::provideFetch(JSGlobalObject* globalObject, const Identifier
 
 static auto getFetchType(JSValue parameters, ScriptFetchParameters::Type fallback = ScriptFetchParameters::Type::JavaScript)
 {
-    if (auto* jsParameters = jsDynamicCast<JSScriptFetchParameters*>(parameters))
+    if (auto* jsParameters = jsDynamicDowncast<JSScriptFetchParameters*>(parameters))
         return jsParameters->parameters().type();
     return fallback;
 }
@@ -411,7 +411,7 @@ JSPromise* JSModuleLoader::linkAndEvaluateModule(JSGlobalObject* globalObject, c
     if (Exception* exception = scope.exception()) {
         attachErrorInfo(globalObject, scope, record, entry->key(), entry->moduleType(), ModuleFailure::Kind::Instantiation);
         entry->instantiationError(globalObject, exception->value());
-        if (auto* cyclic = jsDynamicCast<CyclicModuleRecord*>(record))
+        if (auto* cyclic = jsDynamicDowncast<CyclicModuleRecord*>(record))
             cyclic->evaluationError(vm, exception->value());
         return nullptr;
     }
@@ -530,7 +530,7 @@ JSValue JSModuleLoader::evaluate(JSGlobalObject* globalObject, JSValue key, JSVa
 
 JSValue JSModuleLoader::evaluateNonVirtual(JSGlobalObject* globalObject, JSValue, JSValue moduleRecordValue, JSValue, JSValue sentValue, JSValue resumeMode)
 {
-    if (auto* moduleRecord = jsDynamicCast<AbstractModuleRecord*>(moduleRecordValue))
+    if (auto* moduleRecord = jsDynamicDowncast<AbstractModuleRecord*>(moduleRecordValue))
         return moduleRecord->evaluate(globalObject, sentValue, resumeMode);
     return jsUndefined();
 }
@@ -540,7 +540,7 @@ JSModuleNamespaceObject* JSModuleLoader::getModuleNamespaceObject(JSGlobalObject
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* moduleRecord = jsDynamicCast<AbstractModuleRecord*>(moduleRecordValue);
+    auto* moduleRecord = jsDynamicDowncast<AbstractModuleRecord*>(moduleRecordValue);
     if (!moduleRecord) {
         throwTypeError(globalObject, scope);
         return nullptr;
@@ -645,7 +645,7 @@ JSPromise* JSModuleLoader::hostLoadImportedModule(JSGlobalObject* globalObject, 
         // This allows fetch errors to propagate first because they're required to have priority.
         // To avoid a race condition, instantiation errors need to be checked later, not here.
         if (JSValue fetchError = mapEntry->fetchError()) {
-            if (auto* errorInstance = jsDynamicCast<ErrorInstance*>(fetchError)) {
+            if (auto* errorInstance = jsDynamicDowncast<ErrorInstance*>(fetchError)) {
                 fetchError = JSModuleLoader::duplicateError(globalObject, errorInstance);
                 RETURN_IF_EXCEPTION(scope, nullptr);
             }
@@ -740,7 +740,7 @@ void JSModuleLoader::innerModuleLoading(JSGlobalObject* globalObject, ModuleGrap
     // 1. Assert: state.[[IsLoading]] is true.
     ASSERT(state->isLoading());
     // 2. If module is a Cyclic Module Record, module.[[Status]] is NEW, and state.[[Visited]] does not contain module, then
-    if (auto* cyclic = jsDynamicCast<CyclicModuleRecord*>(module); cyclic && cyclic->status() == CyclicModuleRecord::Status::New && !state->containsVisited(cyclic)) {
+    if (auto* cyclic = jsDynamicDowncast<CyclicModuleRecord*>(module); cyclic && cyclic->status() == CyclicModuleRecord::Status::New && !state->containsVisited(cyclic)) {
         // 2.a. Append module to state.[[Visited]].
         state->appendVisited(vm, cyclic);
         // 2.b. Let requestedModulesCount be the number of elements in module.[[RequestedModules]].
@@ -1012,7 +1012,7 @@ JSPromise* JSModuleLoader::makeModule(JSGlobalObject* globalObject, const Identi
 
 #if ENABLE(WEBASSEMBLY)
     if (sourceCode.provider()->sourceType() == SourceProviderSourceType::WebAssembly)
-        RELEASE_AND_RETURN(scope, jsCast<JSPromise*>(JSWebAssembly::instantiate(globalObject, promise, sourceCode.provider(), moduleKey, jsSourceCode)));
+        RELEASE_AND_RETURN(scope, jsUncheckedDowncast<JSPromise*>(JSWebAssembly::instantiate(globalObject, promise, sourceCode.provider(), moduleKey, jsSourceCode)));
 #endif
 
     // https://tc39.es/proposal-json-modules/#sec-parse-json-module
@@ -1030,7 +1030,7 @@ JSPromise* JSModuleLoader::makeModule(JSGlobalObject* globalObject, const Identi
         vm, sourceCode, ImplementationVisibility::Public, JSParserBuiltinMode::NotBuiltin,
         StrictModeLexicallyScopedFeature, JSParserScriptMode::Module, SourceParseMode::ModuleAnalyzeMode, error);
     if (error.isValid()) {
-        auto* errorInstance = jsCast<ErrorInstance*>(error.toErrorObject(globalObject, sourceCode));
+        auto* errorInstance = jsUncheckedDowncast<ErrorInstance*>(error.toErrorObject(globalObject, sourceCode));
         attachErrorInfo(globalObject, errorInstance, nullptr, moduleKey, ScriptFetchParameters::JavaScript, ModuleFailure::Kind::Evaluation);
         promise->reject(vm, globalObject, errorInstance);
         RELEASE_AND_RETURN(scope, promise);
@@ -1043,7 +1043,7 @@ JSPromise* JSModuleLoader::makeModule(JSGlobalObject* globalObject, const Identi
     auto result = moduleAnalyzer.analyze(*moduleProgramNode);
     if (!result) {
         auto [errorType, message] = WTF::move(result.error());
-        auto* errorInstance = jsCast<ErrorInstance*>(createError(globalObject, errorType, message));
+        auto* errorInstance = jsUncheckedDowncast<ErrorInstance*>(createError(globalObject, errorType, message));
         attachErrorInfo(globalObject, errorInstance, nullptr, moduleKey, ScriptFetchParameters::JavaScript, ModuleFailure::Kind::Evaluation);
         promise->reject(vm, globalObject, errorInstance);
         RELEASE_AND_RETURN(scope, promise);

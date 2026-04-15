@@ -158,14 +158,14 @@ void ArrayProfile::observeIndexedRead(JSCell* cell, unsigned index)
 {
     m_lastSeenStructureID = cell->structureID();
 
-    if (JSObject* object = jsDynamicCast<JSObject*>(cell)) {
+    if (JSObject* object = jsDynamicDowncast<JSObject*>(cell)) {
         if (hasAnyArrayStorage(object->indexingType()) && index >= object->getVectorLength())
             setOutOfBounds();
         else if (index >= object->getArrayLength())
             setOutOfBounds();
     }
 
-    if (JSString* string = jsDynamicCast<JSString*>(cell)) {
+    if (JSString* string = jsDynamicDowncast<JSString*>(cell)) {
         if (index >= string->length())
             setOutOfBounds();
     }

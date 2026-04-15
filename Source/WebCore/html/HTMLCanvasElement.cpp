@@ -318,7 +318,7 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
     if (isWebGPUType(contextId)) {
         RefPtr<GPU> gpu;
         if (RefPtr window = document().window()) {
-            // FIXME: Should we be instead getting this through jsDynamicCast<JSDOMWindow*>(state)->wrapped().navigator().gpu()?
+            // FIXME: Should we be instead getting this through jsDynamicDowncast<JSDOMWindow*>(state)->wrapped().navigator().gpu()?
             gpu = protect(window->navigator())->gpu();
         }
         RefPtr context = createContextWebGPU(contextId, gpu.get());

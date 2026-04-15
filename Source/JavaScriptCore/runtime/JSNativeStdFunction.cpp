@@ -38,7 +38,7 @@ static JSC_DECLARE_HOST_FUNCTION(runStdFunction);
 template<typename Visitor>
 void JSNativeStdFunction::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    JSNativeStdFunction* thisObject = jsCast<JSNativeStdFunction*>(cell);
+    JSNativeStdFunction* thisObject = jsUncheckedDowncast<JSNativeStdFunction*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_captures.begin(), thisObject->m_captures.end());
@@ -59,7 +59,7 @@ NativeExecutable* JSNativeStdFunction::getHostFunction(VM& vm, Intrinsic intrins
 
 JSC_DEFINE_HOST_FUNCTION(runStdFunction, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    JSNativeStdFunction* function = jsCast<JSNativeStdFunction*>(callFrame->jsCallee());
+    JSNativeStdFunction* function = jsUncheckedDowncast<JSNativeStdFunction*>(callFrame->jsCallee());
     ASSERT(function);
     return function->function()(globalObject, callFrame);
 }

@@ -41,7 +41,7 @@ const ClassInfo JSBoundFunction::s_info = { "Function"_s, &Base::s_info, nullptr
 
 JSC_DEFINE_HOST_FUNCTION(boundThisNoArgsFunctionCall, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(callFrame->jsCallee());
+    JSBoundFunction* boundFunction = jsUncheckedDowncast<JSBoundFunction*>(callFrame->jsCallee());
 
     MarkedArgumentBuffer args;
     unsigned boundArgsLength = boundFunction->boundArgsLength();
@@ -59,7 +59,7 @@ JSC_DEFINE_HOST_FUNCTION(boundThisNoArgsFunctionCall, (JSGlobalObject* globalObj
         RELEASE_ASSERT(!args.hasOverflowed());
     }
 
-    JSFunction* targetFunction = jsCast<JSFunction*>(boundFunction->targetFunction());
+    JSFunction* targetFunction = jsUncheckedDowncast<JSFunction*>(boundFunction->targetFunction());
     ExecutableBase* executable = targetFunction->executable();
     if (executable->hasJITCodeForCall()) {
         // Force the executable to cache its arity entrypoint.
@@ -74,7 +74,7 @@ JSC_DEFINE_HOST_FUNCTION(boundFunctionCall, (JSGlobalObject* globalObject, CallF
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(callFrame->jsCallee());
+    JSBoundFunction* boundFunction = jsUncheckedDowncast<JSBoundFunction*>(callFrame->jsCallee());
 
     MarkedArgumentBuffer args;
     unsigned boundArgsLength = boundFunction->boundArgsLength();
@@ -105,7 +105,7 @@ JSC_DEFINE_HOST_FUNCTION(boundFunctionConstruct, (JSGlobalObject* globalObject, 
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(callFrame->jsCallee());
+    JSBoundFunction* boundFunction = jsUncheckedDowncast<JSBoundFunction*>(callFrame->jsCallee());
 
     JSObject* targetFunction = boundFunction->targetFunction();
     auto constructData = JSC::getConstructDataInline(targetFunction);
@@ -139,12 +139,12 @@ JSC_DEFINE_HOST_FUNCTION(boundFunctionConstruct, (JSGlobalObject* globalObject, 
 
 JSC_DEFINE_HOST_FUNCTION(isBoundFunction, (JSGlobalObject*, CallFrame* callFrame))
 {
-    return JSValue::encode(JSValue(static_cast<bool>(jsDynamicCast<JSBoundFunction*>(callFrame->uncheckedArgument(0)))));
+    return JSValue::encode(JSValue(static_cast<bool>(jsDynamicDowncast<JSBoundFunction*>(callFrame->uncheckedArgument(0)))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(hasInstanceBoundFunction, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    JSBoundFunction* boundObject = jsCast<JSBoundFunction*>(callFrame->uncheckedArgument(0));
+    JSBoundFunction* boundObject = jsUncheckedDowncast<JSBoundFunction*>(callFrame->uncheckedArgument(0));
     JSValue value = callFrame->uncheckedArgument(1);
     return JSValue::encode(jsBoolean(boundObject->targetFunction()->hasInstance(globalObject, value)));
 }
@@ -152,7 +152,7 @@ JSC_DEFINE_HOST_FUNCTION(hasInstanceBoundFunction, (JSGlobalObject* globalObject
 inline Structure* getBoundFunctionStructure(VM& vm, JSGlobalObject* globalObject, JSObject* targetFunction)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSFunction* targetJSFunction = jsDynamicCast<JSFunction*>(targetFunction);
+    JSFunction* targetJSFunction = jsDynamicDowncast<JSFunction*>(targetFunction);
     if (targetJSFunction && targetJSFunction->getPrototypeDirect() == globalObject->functionPrototype()) [[likely]]
         return globalObject->boundFunctionStructure();
 
@@ -230,7 +230,7 @@ JSBoundFunction* JSBoundFunction::createRaw(VM& vm, JSGlobalObject* globalObject
 
 bool JSBoundFunction::customHasInstance(JSObject* object, JSGlobalObject* globalObject, JSValue value)
 {
-    return jsCast<JSBoundFunction*>(object)->m_targetFunction->hasInstance(globalObject, value);
+    return jsUncheckedDowncast<JSBoundFunction*>(object)->m_targetFunction->hasInstance(globalObject, value);
 }
 
 JSBoundFunction::JSBoundFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, JSObject* targetFunction, JSValue boundThis, unsigned boundArgsLength, JSValue arg0, JSValue arg1, JSValue arg2, JSString* nameMayBeNull, double length, const SourceCode& source)
@@ -275,7 +275,7 @@ JSString* JSBoundFunction::nameSlow(VM& vm)
     while (true) {
         ASSERT(cursor->inherits<JSFunction>()); // If this is not JSFunction, we eagerly materialized the name.
         if (!cursor->inherits<JSBoundFunction>()) {
-            terminal = jsCast<JSFunction*>(cursor)->originalName(globalObject);
+            terminal = jsUncheckedDowncast<JSFunction*>(cursor)->originalName(globalObject);
             if (scope.exception()) [[unlikely]] {
                 scope.clearException();
                 terminal = jsEmptyString(vm);
@@ -283,7 +283,7 @@ JSString* JSBoundFunction::nameSlow(VM& vm)
             break;
         }
         ++nestingCount;
-        JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(cursor);
+        JSBoundFunction* boundFunction = jsUncheckedDowncast<JSBoundFunction*>(cursor);
         terminal = boundFunction->nameMayBeNull();
         if (terminal)
             break;
@@ -328,11 +328,11 @@ String JSBoundFunction::nameStringWithoutGCSlow(VM& vm)
     while (true) {
         ASSERT(cursor->inherits<JSFunction>()); // If this is not JSFunction, we eagerly materialized the name.
         if (!cursor->inherits<JSBoundFunction>()) {
-            terminal = jsCast<JSFunction*>(cursor)->nameWithoutGC(vm);
+            terminal = jsUncheckedDowncast<JSFunction*>(cursor)->nameWithoutGC(vm);
             break;
         }
         ++nestingCount;
-        JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(cursor);
+        JSBoundFunction* boundFunction = jsUncheckedDowncast<JSBoundFunction*>(cursor);
         if (boundFunction->nameMayBeNull()) {
             terminal = boundFunction->nameStringWithoutGC(vm);
             break;
@@ -360,10 +360,10 @@ double JSBoundFunction::lengthSlow(VM& vm)
     while (true) {
         ASSERT(cursor->inherits<JSFunction>()); // If this is not JSFunction, we eagerly materialized the length already.
         if (!cursor->inherits<JSBoundFunction>()) {
-            length = jsCast<JSFunction*>(cursor)->originalLength(vm);
+            length = jsUncheckedDowncast<JSFunction*>(cursor)->originalLength(vm);
             break;
         }
-        JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(cursor);
+        JSBoundFunction* boundFunction = jsUncheckedDowncast<JSBoundFunction*>(cursor);
         if (!std::isnan(boundFunction->m_length)) {
             length = boundFunction->m_length;
             break;
@@ -389,7 +389,7 @@ bool JSBoundFunction::canConstructSlow()
             m_canConstruct = constructData.type == CallData::Type::None ? TriState::False : TriState::True;
             return m_canConstruct == TriState::True;
         }
-        JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(cursor);
+        JSBoundFunction* boundFunction = jsUncheckedDowncast<JSBoundFunction*>(cursor);
         if (boundFunction->m_canConstruct != TriState::Indeterminate) {
             m_canConstruct = boundFunction->m_canConstruct;
             return m_canConstruct == TriState::True;
@@ -424,7 +424,7 @@ bool JSBoundFunction::canSkipNameAndLengthMaterialization(JSGlobalObject* global
 template<typename Visitor>
 void JSBoundFunction::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    JSBoundFunction* thisObject = jsCast<JSBoundFunction*>(cell);
+    JSBoundFunction* thisObject = jsUncheckedDowncast<JSBoundFunction*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 

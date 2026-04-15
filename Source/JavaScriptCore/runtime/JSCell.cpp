@@ -149,24 +149,24 @@ bool JSCell::deletePropertyByIndex(JSCell* cell, JSGlobalObject* globalObject, u
 
 JSValue JSCell::toPrimitive(JSGlobalObject* globalObject, PreferredPrimitiveType preferredType) const
 {
-    if (const auto* string = jsDynamicCast<const JSString*>(this))
+    if (const auto* string = jsDynamicDowncast<const JSString*>(this))
         return string->toPrimitive(globalObject, preferredType);
-    if (const auto* symbol = jsDynamicCast<const Symbol*>(this))
+    if (const auto* symbol = jsDynamicDowncast<const Symbol*>(this))
         return symbol->toPrimitive(globalObject, preferredType);
-    if (const auto* bigInt = jsDynamicCast<const JSBigInt*>(this))
+    if (const auto* bigInt = jsDynamicDowncast<const JSBigInt*>(this))
         return bigInt->toPrimitive(globalObject, preferredType);
-    return jsSecureCast<const JSObject*>(this)->toPrimitive(globalObject, preferredType);
+    return jsDowncast<const JSObject*>(this)->toPrimitive(globalObject, preferredType);
 }
 
 double JSCell::toNumber(JSGlobalObject* globalObject) const
 {
-    if (const auto* string = jsDynamicCast<const JSString*>(this))
+    if (const auto* string = jsDynamicDowncast<const JSString*>(this))
         return string->toNumber(globalObject);
-    if (const auto* symbol = jsDynamicCast<const Symbol*>(this))
+    if (const auto* symbol = jsDynamicDowncast<const Symbol*>(this))
         return symbol->toNumber(globalObject);
-    if (const auto* bigInt = jsDynamicCast<const JSBigInt*>(this))
+    if (const auto* bigInt = jsDynamicDowncast<const JSBigInt*>(this))
         return bigInt->toNumber(globalObject);
-    return jsSecureCast<const JSObject*>(this)->toNumber(globalObject);
+    return jsDowncast<const JSObject*>(this)->toNumber(globalObject);
 }
 
 bool JSCell::isObjectSlow() const
@@ -189,11 +189,11 @@ JSObject* JSCell::toObjectSlow(JSGlobalObject* globalObject) const
 {
     Integrity::auditStructureID(structureID());
     ASSERT(!isObject());
-    if (const auto* string = jsDynamicCast<const JSString*>(this))
+    if (const auto* string = jsDynamicDowncast<const JSString*>(this))
         return string->toObject(globalObject);
-    if (const auto* bigInt = jsDynamicCast<const JSBigInt*>(this))
+    if (const auto* bigInt = jsDynamicDowncast<const JSBigInt*>(this))
         return bigInt->toObject(globalObject);
-    return jsSecureCast<const Symbol*>(this)->toObject(globalObject);
+    return jsDowncast<const Symbol*>(this)->toObject(globalObject);
 }
 
 void NODELETE slowValidateCell(JSCell* cell)
@@ -267,7 +267,7 @@ JSString* JSCell::toStringSlowCase(JSGlobalObject* globalObject) const
 
     ASSERT(isSymbol() || isHeapBigInt());
     auto* emptyString = jsEmptyString(vm);
-    if (auto* bigInt = jsDynamicCast<JSBigInt*>(const_cast<JSCell*>(this))) {
+    if (auto* bigInt = jsDynamicDowncast<JSBigInt*>(const_cast<JSCell*>(this))) {
         // FIXME: we should rather have two cases here: one-character string vs jsNonTrivialString for everything else.
         auto string = bigInt->toString(globalObject, 10);
         RETURN_IF_EXCEPTION(scope, emptyString);

@@ -85,7 +85,7 @@ template<> struct JSConverter<IDLBufferSource> {
 
     static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const BufferSource& bufferSource)
     {
-        auto* jsDOMGlobalObject = JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
+        auto* jsDOMGlobalObject = JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(&lexicalGlobalObject);
 
         return WTF::switchOn(bufferSource.variant(),
             [&](const Ref<JSC::ArrayBufferView>& buffer) {
@@ -100,7 +100,7 @@ template<> struct JSConverter<IDLBufferSource> {
 
 inline RefPtr<JSC::ArrayBufferView> toPossiblySharedArrayBufferView(JSC::VM&, JSC::JSValue value)
 {
-    auto* wrapper = JSC::jsDynamicCast<JSC::JSArrayBufferView*>(value);
+    auto* wrapper = JSC::jsDynamicDowncast<JSC::JSArrayBufferView*>(value);
     if (!wrapper)
         return nullptr;
     return wrapper->possiblySharedImpl();

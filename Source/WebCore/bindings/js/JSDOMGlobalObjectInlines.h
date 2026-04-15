@@ -73,9 +73,9 @@ JSClass* toJSDOMGlobalObject(JSC::VM&, JSC::JSValue value)
 
     if (auto* object = value.getObject()) {
         if (object->type() == JSC::GlobalProxyType)
-            return JSC::jsDynamicCast<JSClass*>(JSC::jsCast<JSC::JSGlobalProxy*>(object)->target());
+            return JSC::jsDynamicDowncast<JSClass*>(JSC::jsUncheckedDowncast<JSC::JSGlobalProxy*>(object)->target());
         if (object->inherits<JSClass>())
-            return JSC::jsCast<JSClass*>(object);
+            return JSC::jsUncheckedDowncast<JSClass*>(object);
     }
 
     return nullptr;

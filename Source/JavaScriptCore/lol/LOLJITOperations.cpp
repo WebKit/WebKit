@@ -103,7 +103,7 @@ JSC_DEFINE_JIT_OPERATION(operationResolveScopeForLOL, EncodedJSValue, (CallFrame
     case UnresolvedProperty:
     case UnresolvedPropertyWithVarInjectionChecks: {
         if (resolvedScope->isGlobalObject()) {
-            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(resolvedScope);
+            JSGlobalObject* globalObject = jsUncheckedDowncast<JSGlobalObject*>(resolvedScope);
             bool hasProperty = globalObject->hasProperty(globalObject, ident);
             OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
             if (hasProperty) {
@@ -113,7 +113,7 @@ JSC_DEFINE_JIT_OPERATION(operationResolveScopeForLOL, EncodedJSValue, (CallFrame
                 metadata.m_globalLexicalBindingEpoch = globalObject->globalLexicalBindingEpoch();
             }
         } else if (resolvedScope->isGlobalLexicalEnvironment()) {
-            JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsCast<JSGlobalLexicalEnvironment*>(resolvedScope);
+            JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsUncheckedDowncast<JSGlobalLexicalEnvironment*>(resolvedScope);
             ConcurrentJSLocker locker(codeBlock->m_lock);
             metadata.m_resolveType = needsVarInjectionChecks(resolveType) ? GlobalLexicalVarWithVarInjectionChecks : GlobalLexicalVar;
             metadata.m_globalLexicalEnvironment.set(vm, codeBlock, globalLexicalEnvironment);
@@ -187,7 +187,7 @@ JSC_DEFINE_JIT_OPERATION(operationPutToScopeForLOL, void, (CallFrame* callFrame,
     ASSERT(getPutInfo.resolveType() != ModuleVar);
 
     if (getPutInfo.resolveType() == ResolvedClosureVar) {
-        JSLexicalEnvironment* environment = jsCast<JSLexicalEnvironment*>(jsScope);
+        JSLexicalEnvironment* environment = jsUncheckedDowncast<JSLexicalEnvironment*>(jsScope);
         environment->variableAt(ScopeOffset(metadata.m_operand)).set(vm, environment, value);
         if (RefPtr set = metadata.m_watchpointSet)
             set->touch(vm, "Executed op_put_scope<ResolvedClosureVar>");

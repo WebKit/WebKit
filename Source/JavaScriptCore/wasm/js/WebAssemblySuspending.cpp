@@ -116,7 +116,7 @@ void* runWebAssemblySuspendingFunction(JSGlobalObject* globalObject, CallFrame* 
     memcpySpan(std::span<CPURegister>(vmEntryFrameCalleeSaves, NUMBER_OF_CALLEE_SAVES_REGISTERS), std::span(originalCalleeSaves, NUMBER_OF_CALLEE_SAVES_REGISTERS));
 
     JSObject* callee = callFrame->jsCallee();
-    JSFunctionWithFields* self = jsCast<JSFunctionWithFields*>(callee);
+    JSFunctionWithFields* self = jsUncheckedDowncast<JSFunctionWithFields*>(callee);
     JSValue callable = self->getField(JSFunctionWithFields::Field::WebAssemblySuspendingWrappedCallable);
 
     MarkedArgumentBuffer args;
@@ -136,7 +136,7 @@ void* runWebAssemblySuspendingFunction(JSGlobalObject* globalObject, CallFrame* 
     JSValue result = call(globalObject, callable, callData, jsUndefined(), args);
     RETURN_IF_EXCEPTION(scope, { });
 
-    JSPromise* promise = jsDynamicCast<JSPromise*>(result);
+    JSPromise* promise = jsDynamicDowncast<JSPromise*>(result);
     if (!promise) {
         // The spec requires us to suspend even if the wrapped function returned a real value.
         promise = JSPromise::create(vm, globalObject->promiseStructure());

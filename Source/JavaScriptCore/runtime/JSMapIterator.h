@@ -103,7 +103,7 @@ public:
             setStorage(vm, storage);
         }
 
-        JSMap::Storage& storageRef = *jsCast<JSMap::Storage*>(storage);
+        JSMap::Storage& storageRef = *jsUncheckedDowncast<JSMap::Storage*>(storage);
         auto result = JSMap::Helper::transitAndNext(vm, storageRef, entry());
         if (!result.storage) {
             markClosed(sentinel);
@@ -157,7 +157,7 @@ public:
         JSCell* storage = this->tryGetStorage();
         ASSERT(storage);
         ASSERT_UNUSED(vm, storage != vm.orderedHashTableSentinel());
-        JSMap::Storage& storageRef = *jsCast<JSMap::Storage*>(storage);
+        JSMap::Storage& storageRef = *jsUncheckedDowncast<JSMap::Storage*>(storage);
         return JSMap::Helper::getKey(storageRef, entry);
     }
 
@@ -167,12 +167,12 @@ public:
         JSCell* storage = this->tryGetStorage();
         ASSERT(storage);
         ASSERT_UNUSED(vm, storage != vm.orderedHashTableSentinel());
-        JSMap::Storage& storageRef = *jsCast<JSMap::Storage*>(storage);
+        JSMap::Storage& storageRef = *jsUncheckedDowncast<JSMap::Storage*>(storage);
         return JSMap::Helper::getValue(storageRef, entry);
     }
 
     IterationKind kind() const { return static_cast<IterationKind>(internalField(Field::Kind).get().asUInt32AsAnyInt()); }
-    JSMap* iteratedObject() const { return jsCast<JSMap*>(internalField(Field::IteratedObject).get()); }
+    JSMap* iteratedObject() const { return jsUncheckedDowncast<JSMap*>(internalField(Field::IteratedObject).get()); }
     JSCell* tryGetStorage() const
     {
         JSValue value = internalField(Field::Storage).get();

@@ -588,7 +588,7 @@ void ScriptExecutionContext::reportUnhandledPromiseRejection(JSC::JSGlobalObject
     if (!errorMessage)
         errorMessage = "Unhandled Promise Rejection"_s;
 
-    if (auto* domGlobalObject = jsDynamicCast<JSDOMGlobalObject*>(&state); domGlobalObject && domGlobalObject->hasScriptErrorCallbacks()) {
+    if (auto* domGlobalObject = jsDynamicDowncast<JSDOMGlobalObject*>(&state); domGlobalObject && domGlobalObject->hasScriptErrorCallbacks()) {
         // Use the unmasked source URL captured at rejection time when available; fall back
         // to the call stack URL which may be masked for extension content scripts.
         String rejectionSourceURL = unmaskedSourceURL;

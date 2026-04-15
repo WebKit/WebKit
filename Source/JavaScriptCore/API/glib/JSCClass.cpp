@@ -116,8 +116,8 @@ static JSClassRef wrappedObjectClass(JSC::JSObject* jsObject)
 {
     ASSERT(isWrappedObject(jsObject));
     if (jsObject->isGlobalObject())
-        return JSC::jsCast<JSC::JSCallbackObject<JSC::JSAPIWrapperGlobalObject>*>(jsObject)->classRef();
-    return JSC::jsCast<JSC::JSCallbackObject<JSC::JSAPIWrapperObject>*>(jsObject)->classRef();
+        return JSC::jsUncheckedDowncast<JSC::JSCallbackObject<JSC::JSAPIWrapperGlobalObject>*>(jsObject)->classRef();
+    return JSC::jsUncheckedDowncast<JSC::JSCallbackObject<JSC::JSAPIWrapperObject>*>(jsObject)->classRef();
 }
 
 static GRefPtr<JSCContext> jscContextForObject(JSC::JSObject* jsObject)

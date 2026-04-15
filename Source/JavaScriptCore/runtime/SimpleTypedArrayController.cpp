@@ -65,7 +65,7 @@ bool SimpleTypedArrayController::JSArrayBufferOwner::isReachableFromOpaqueRoots(
 {
     if (reason) [[unlikely]]
         *reason = "JSArrayBuffer is opaque root"_s;
-    auto& wrapper = *JSC::jsCast<JSC::JSArrayBuffer*>(handle.slot()->asCell());
+    auto& wrapper = *JSC::jsUncheckedDowncast<JSC::JSArrayBuffer*>(handle.slot()->asCell());
     return visitor.containsOpaqueRoot(wrapper.impl());
 }
 

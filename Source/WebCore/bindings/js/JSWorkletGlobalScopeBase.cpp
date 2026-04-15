@@ -92,7 +92,7 @@ void JSWorkletGlobalScopeBase::finishCreation(VM& vm, JSGlobalProxy* proxy)
 template<typename Visitor>
 void JSWorkletGlobalScopeBase::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<JSWorkletGlobalScopeBase*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSWorkletGlobalScopeBase*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_proxy);
@@ -102,14 +102,14 @@ DEFINE_VISIT_CHILDREN(JSWorkletGlobalScopeBase);
 
 void JSWorkletGlobalScopeBase::destroy(JSCell* cell)
 {
-    // We cannot rely on jsCast() during JSObject destruction.
+    // We cannot rely on jsUncheckedDowncast() during JSObject destruction.
     SUPPRESS_MEMORY_UNSAFE_CAST static_cast<JSWorkletGlobalScopeBase*>(cell)->JSWorkletGlobalScopeBase::~JSWorkletGlobalScopeBase();
 }
 
 JSC::ScriptExecutionStatus JSWorkletGlobalScopeBase::scriptExecutionStatus(JSC::JSGlobalObject* globalObject, JSC::JSObject* owner)
 {
     ASSERT_UNUSED(owner, globalObject == owner);
-    return jsCast<JSWorkletGlobalScopeBase*>(globalObject)->wrapped().jscScriptExecutionStatus();
+    return jsUncheckedDowncast<JSWorkletGlobalScopeBase*>(globalObject)->wrapped().jscScriptExecutionStatus();
 }
 
 void JSWorkletGlobalScopeBase::reportViolationForUnsafeEval(JSC::JSGlobalObject* globalObject, const String& source)
@@ -134,7 +134,7 @@ bool JSWorkletGlobalScopeBase::shouldInterruptScriptBeforeTimeout(const JSGlobal
 
 RuntimeFlags JSWorkletGlobalScopeBase::javaScriptRuntimeFlags(const JSGlobalObject* object)
 {
-    auto* thisObject = jsCast<const JSWorkletGlobalScopeBase*>(object);
+    auto* thisObject = jsUncheckedDowncast<const JSWorkletGlobalScopeBase*>(object);
     return thisObject->m_wrapped->jsRuntimeFlags();
 }
 

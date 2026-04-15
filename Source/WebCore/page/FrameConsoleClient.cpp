@@ -219,7 +219,7 @@ void FrameConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel 
     auto lineNumber = message->line();
     auto columnNumber = message->column();
 
-    auto* domGlobalObject = jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject);
+    auto* domGlobalObject = jsDynamicDowncast<JSDOMGlobalObject*>(lexicalGlobalObject);
     if (level == MessageLevel::Error && domGlobalObject && domGlobalObject->hasScriptErrorCallbacks()) {
         auto fullMessageText = makeStringByJoining(arguments->getArgumentsAsStrings(), " "_s);
         domGlobalObject->invokeScriptErrorCallbacks(fullMessageText, url, lineNumber, columnNumber);

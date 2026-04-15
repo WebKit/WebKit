@@ -247,7 +247,7 @@ template <class Parent>
 template<typename Visitor>
 void JSCallbackObject<Parent>::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(cell);
+    JSCallbackObject* thisObject = jsUncheckedDowncast<JSCallbackObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS((static_cast<Parent*>(thisObject)), JSCallbackObject<Parent>::info());
     Parent::visitChildren(thisObject, visitor);
     thisObject->m_callbackObjectData->visitChildren(visitor);

@@ -489,7 +489,7 @@ ALWAYS_INLINE T JSValue::getAs(JSGlobalObject* globalObject, PropertyNameType pr
     if (vm.exceptionForInspection())
         return nullptr;
 #endif
-    return jsCast<T>(value);
+    return jsUncheckedDowncast<T>(value);
 }
 
 inline bool JSValue::put(JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
@@ -747,7 +747,7 @@ ALWAYS_INLINE bool isThisValueAltered(const PutPropertySlot& slot, JSObject* bas
         return true;
     JSObject* thisObject = asObject(thisValue);
     // Only GlobalProxyType can be seen as the same to the original target object.
-    if (thisObject->type() == GlobalProxyType && jsCast<JSGlobalProxy*>(thisObject)->target() == baseObject)
+    if (thisObject->type() == GlobalProxyType && jsUncheckedDowncast<JSGlobalProxy*>(thisObject)->target() == baseObject)
         return false;
     return true;
 }

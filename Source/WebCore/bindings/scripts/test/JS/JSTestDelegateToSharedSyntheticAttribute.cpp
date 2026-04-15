@@ -157,7 +157,7 @@ JSObject* JSTestDelegateToSharedSyntheticAttribute::prototype(VM& vm, JSDOMGloba
 
 JSValue JSTestDelegateToSharedSyntheticAttribute::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestDelegateToSharedSyntheticAttributeDOMConstructor, DOMConstructorID::TestDelegateToSharedSyntheticAttribute>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestDelegateToSharedSyntheticAttributeDOMConstructor, DOMConstructorID::TestDelegateToSharedSyntheticAttribute>(vm, *jsUncheckedDowncast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestDelegateToSharedSyntheticAttribute::destroy(JSC::JSCell* cell)
@@ -170,7 +170,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDelegateToSharedSyntheticAttributeConstructor, (J
 {
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestDelegateToSharedSyntheticAttributePrototype*>(JSValue::decode(thisValue));
+    auto* prototype = jsDynamicDowncast<JSTestDelegateToSharedSyntheticAttributePrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestDelegateToSharedSyntheticAttribute::getConstructor(vm, prototype->realm()));
@@ -256,7 +256,7 @@ JSC::GCClient::IsoSubspace* JSTestDelegateToSharedSyntheticAttribute::subspaceFo
 
 void JSTestDelegateToSharedSyntheticAttribute::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestDelegateToSharedSyntheticAttribute*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSTestDelegateToSharedSyntheticAttribute*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (RefPtr context = thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
@@ -323,7 +323,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestDelegateToSharedSyntheticAttribute* JSTestDelegateToSharedSyntheticAttribute::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestDelegateToSharedSyntheticAttribute*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestDelegateToSharedSyntheticAttribute*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

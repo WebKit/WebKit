@@ -63,7 +63,7 @@ void TemporalPlainMonthDay::finishCreation(VM& vm)
     m_calendar.initLater(
         [] (const auto& init) {
             VM& vm = init.vm;
-            auto* plainMonthDay = jsCast<TemporalPlainMonthDay*>(init.owner);
+            auto* plainMonthDay = jsUncheckedDowncast<TemporalPlainMonthDay*>(init.owner);
             auto* globalObject = plainMonthDay->realm();
             auto* calendar = TemporalCalendar::create(vm, globalObject->calendarStructure(), iso8601CalendarID());
             init.set(calendar);
@@ -75,7 +75,7 @@ void TemporalPlainMonthDay::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     Base::visitChildren(cell, visitor);
 
-    auto* thisObject = jsCast<TemporalPlainMonthDay*>(cell);
+    auto* thisObject = jsUncheckedDowncast<TemporalPlainMonthDay*>(cell);
     thisObject->m_calendar.visit(visitor);
 }
 
@@ -150,16 +150,16 @@ TemporalPlainMonthDay* TemporalPlainMonthDay::from(JSGlobalObject* globalObject,
 
     if (itemValue.isObject()) {
         if (itemValue.inherits<TemporalPlainMonthDay>())
-            return jsCast<TemporalPlainMonthDay*>(itemValue);
+            return jsUncheckedDowncast<TemporalPlainMonthDay*>(itemValue);
 
         if (itemValue.inherits<TemporalPlainMonthDay>())
-            return TemporalPlainMonthDay::create(vm, globalObject->plainMonthDayStructure(), jsCast<TemporalPlainMonthDay*>(itemValue)->plainMonthDay());
+            return TemporalPlainMonthDay::create(vm, globalObject->plainMonthDayStructure(), jsUncheckedDowncast<TemporalPlainMonthDay*>(itemValue)->plainMonthDay());
 
         JSObject* calendar = TemporalCalendar::getTemporalCalendarWithISODefault(globalObject, itemValue);
         RETURN_IF_EXCEPTION(scope, { });
 
         // FIXME: Implement after fleshing out Temporal.Calendar.
-        if (!calendar->inherits<TemporalCalendar>() || !jsCast<TemporalCalendar*>(calendar)->isISO8601()) [[unlikely]] {
+        if (!calendar->inherits<TemporalCalendar>() || !jsUncheckedDowncast<TemporalCalendar*>(calendar)->isISO8601()) [[unlikely]] {
             throwRangeError(globalObject, scope, "unimplemented: from non-ISO8601 calendar"_s);
             return { };
         }

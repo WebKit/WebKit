@@ -315,7 +315,7 @@ namespace JSC { namespace DFG {
     macro(CheckInBoundsInt52, NodeMustGenerate | NodeResultJS) \
     macro(CheckIdent, NodeMustGenerate) \
     macro(CheckTypeInfoFlags, NodeMustGenerate) /* Takes an OpInfo with the flags you want to test are set */\
-    macro(CheckJSCast, NodeMustGenerate) /* This is the same as jsCast but as a speculation rather than assertion */\
+    macro(CheckJSCast, NodeMustGenerate) /* This is the same as jsUncheckedDowncast but as a speculation rather than assertion */\
     macro(CheckNotJSCast, NodeMustGenerate) \
     macro(ParseInt, NodeMustGenerate | NodeResultJS) \
     macro(GetPrototypeOf, NodeMustGenerate | NodeResultJS) \

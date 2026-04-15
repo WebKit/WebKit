@@ -51,7 +51,7 @@ bool WebTransportReceiveStreamSource::receiveIncomingStream(JSC::JSGlobalObject&
 {
     if (m_isCancelled || m_identifier)
         return false;
-    auto& jsDOMGlobalObject = *JSC::jsCast<JSDOMGlobalObject*>(&globalObject);
+    auto& jsDOMGlobalObject = *JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(&globalObject);
     Locker<JSC::JSLock> locker(jsDOMGlobalObject.vm().apiLock());
     auto value = toJS(&globalObject, &jsDOMGlobalObject, stream.get());
     if (!controller().enqueue(value)) {
@@ -123,7 +123,7 @@ void WebTransportReceiveStreamSource::doCancel(JSC::JSValue value)
         return;
 
     std::optional<uint64_t> errorCode;
-    if (auto* jsWebTransportError = JSC::jsDynamicCast<JSWebTransportError*>(value)) {
+    if (auto* jsWebTransportError = JSC::jsDynamicDowncast<JSWebTransportError*>(value)) {
         auto& webTransportError = jsWebTransportError->wrapped();
         if (auto webTransportErrorCode = webTransportError.streamErrorCode())
             errorCode = static_cast<uint64_t>(*webTransportErrorCode);

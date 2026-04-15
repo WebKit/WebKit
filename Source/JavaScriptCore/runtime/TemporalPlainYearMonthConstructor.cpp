@@ -162,7 +162,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthConstructorFuncFrom, (JSGlobalObj
         toTemporalOverflow(globalObject, callFrame->argument(1));
         RETURN_IF_EXCEPTION(scope, { });
 
-        RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainYearMonth::create(vm, globalObject->plainYearMonthStructure(), jsCast<TemporalPlainYearMonth*>(itemValue)->plainYearMonth())));
+        RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainYearMonth::create(vm, globalObject->plainYearMonthStructure(), jsUncheckedDowncast<TemporalPlainYearMonth*>(itemValue)->plainYearMonth())));
     }
     RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainYearMonth::from(globalObject, itemValue, callFrame->argument(1))));
 }

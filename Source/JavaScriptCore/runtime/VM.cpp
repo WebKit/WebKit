@@ -1078,7 +1078,7 @@ Exception* VM::throwException(JSGlobalObject* globalObject, Exception* exception
 
 Exception* VM::throwException(JSGlobalObject* globalObject, JSValue thrownValue)
 {
-    Exception* exception = jsDynamicCast<Exception*>(thrownValue);
+    Exception* exception = jsDynamicDowncast<Exception*>(thrownValue);
     if (!exception)
         exception = Exception::create(*this, thrownValue);
 

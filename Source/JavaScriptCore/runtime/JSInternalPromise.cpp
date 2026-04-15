@@ -59,12 +59,12 @@ JSInternalPromise* JSInternalPromise::then(JSGlobalObject* globalObject, JSFunct
 {
     ASSERT(onFulfilled);
     ASSERT(onRejected);
-    return jsDynamicCast<JSInternalPromise*>(JSPromise::then(globalObject, onFulfilled, onRejected));
+    return jsDynamicDowncast<JSInternalPromise*>(JSPromise::then(globalObject, onFulfilled, onRejected));
 }
 
 JSInternalPromise* JSInternalPromise::rejectWithCaughtException(JSGlobalObject* globalObject, ThrowScope& scope)
 {
-    return jsCast<JSInternalPromise*>(JSPromise::rejectWithCaughtException(globalObject, scope));
+    return jsUncheckedDowncast<JSInternalPromise*>(JSPromise::rejectWithCaughtException(globalObject, scope));
 }
 
 } // namespace JSC

@@ -121,7 +121,7 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* glo
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // https://tc39.es/proposal-resizablearraybuffer/#sec-initializetypedarrayfromarraybuffer
-    if (JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(firstValue)) {
+    if (JSArrayBuffer* jsBuffer = jsDynamicDowncast<JSArrayBuffer*>(firstValue)) {
         RefPtr<ArrayBuffer> buffer = jsBuffer->impl();
         if (buffer->isDetached()) {
             throwTypeError(globalObject, scope, typedArrayErrorMessageBufferIsAlreadyDetached);
@@ -160,12 +160,12 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* glo
     // - Another array. This creates a copy of the of that array.
     // - A primitive. This creates a new typed array of that length and zero-initializes it.
 
-    if (JSObject* object = jsDynamicCast<JSObject*>(firstValue)) {
+    if (JSObject* object = jsDynamicDowncast<JSObject*>(firstValue)) {
         size_t length;
 
         // https://tc39.es/proposal-resizablearraybuffer/#sec-initializetypedarrayfromtypedarray
         if (isTypedView(object->type())) {
-            auto* view = jsCast<JSArrayBufferView*>(object);
+            auto* view = jsUncheckedDowncast<JSArrayBufferView*>(object);
 
             length = view->length();
 
@@ -193,7 +193,7 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* glo
 
         // This getPropertySlot operation should not be observed by the Proxy.
         // So we use VMInquiry. And purge the opaque object cases (proxy and namespace object) by isTaintedByOpaqueObject() guard.
-        if (JSArray* array = jsDynamicCast<JSArray*>(object); array && isJSArray(array) && array->isIteratorProtocolFastAndNonObservable()) [[likely]]
+        if (JSArray* array = jsDynamicDowncast<JSArray*>(object); array && isJSArray(array) && array->isIteratorProtocolFastAndNonObservable()) [[likely]]
             length = array->length();
         else {
             PropertySlot lengthSlot(object, PropertySlot::InternalMethodType::VMInquiry, &vm);
@@ -271,7 +271,7 @@ ALWAYS_INLINE EncodedJSValue constructGenericTypedArrayViewImpl(JSGlobalObject* 
     JSValue firstValue = callFrame->uncheckedArgument(0);
     size_t offset = 0;
     std::optional<size_t> length;
-    if (auto* arrayBuffer = jsDynamicCast<JSArrayBuffer*>(firstValue)) {
+    if (auto* arrayBuffer = jsDynamicDowncast<JSArrayBuffer*>(firstValue)) {
         if (argCount > 1) {
             offset = callFrame->uncheckedArgument(1).toIndex(globalObject, "byteOffset"_s);
             RETURN_IF_EXCEPTION(scope, { });

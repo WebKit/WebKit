@@ -60,10 +60,10 @@ int testJSObjectGetProxyTarget()
 
     {
         JSLockHolder locker(vm);
-        JSGlobalProxy* globalObjectProxyObject = jsCast<JSGlobalProxy*>(toJS(globalObjectProxy));
-        globalObjectObject = jsCast<JSGlobalObject*>(globalObjectProxyObject->target());
+        JSGlobalProxy* globalObjectProxyObject = jsUncheckedDowncast<JSGlobalProxy*>(toJS(globalObjectProxy));
+        globalObjectObject = jsUncheckedDowncast<JSGlobalObject*>(globalObjectProxyObject->target());
         Structure* proxyStructure = JSGlobalProxy::createStructure(vm, globalObjectObject, globalObjectObject->objectPrototype());
-        globalObjectRef = toRef(jsCast<JSObject*>(globalObjectObject));
+        globalObjectRef = toRef(jsUncheckedDowncast<JSObject*>(globalObjectObject));
         jsProxyObject = JSGlobalProxy::create(vm, proxyStructure);
     }
     

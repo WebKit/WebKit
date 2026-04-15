@@ -142,7 +142,7 @@ JSValue evaluate(JSGlobalObject* globalObject, const SourceCode& source, JSValue
 
     if (!thisValue || thisValue.isUndefinedOrNull())
         thisValue = globalObject;
-    JSObject* thisObj = jsCast<JSObject*>(thisValue.toThis(globalObject, ECMAMode::sloppy()));
+    JSObject* thisObj = jsUncheckedDowncast<JSObject*>(thisValue.toThis(globalObject, ECMAMode::sloppy()));
     JSValue result = vm.interpreter.executeProgram(source, globalObject, thisObj);
 
     if (scope.exception()) [[unlikely]] {
@@ -301,7 +301,7 @@ UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, String> retrieveImportAttributesF
     if (options.isUndefined())
         return { };
 
-    auto* optionsObject = jsDynamicCast<JSObject*>(options);
+    auto* optionsObject = jsDynamicDowncast<JSObject*>(options);
     if (!optionsObject) [[unlikely]] {
         throwTypeError(globalObject, scope, "dynamic import's options should be an object"_s);
         return { };
@@ -313,7 +313,7 @@ UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, String> retrieveImportAttributesF
     if (attributes.isUndefined())
         return { };
 
-    auto* attributesObject = jsDynamicCast<JSObject*>(attributes);
+    auto* attributesObject = jsDynamicDowncast<JSObject*>(attributes);
     if (!attributesObject) [[unlikely]] {
         throwTypeError(globalObject, scope, "dynamic import's options.with should be an object"_s);
         return { };

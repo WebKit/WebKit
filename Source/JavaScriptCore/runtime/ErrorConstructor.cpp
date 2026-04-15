@@ -82,7 +82,7 @@ JSC_DEFINE_HOST_FUNCTION(callErrorConstructor, (JSGlobalObject* globalObject, Ca
 bool ErrorConstructor::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     VM& vm = globalObject->vm();
-    ErrorConstructor* thisObject = jsCast<ErrorConstructor*>(cell);
+    ErrorConstructor* thisObject = jsUncheckedDowncast<ErrorConstructor*>(cell);
 
     if (propertyName == vm.propertyNames->stackTraceLimit) {
         if (value.isNumber()) {
@@ -100,7 +100,7 @@ bool ErrorConstructor::put(JSCell* cell, JSGlobalObject* globalObject, PropertyN
 bool ErrorConstructor::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
     VM& vm = globalObject->vm();
-    ErrorConstructor* thisObject = jsCast<ErrorConstructor*>(cell);
+    ErrorConstructor* thisObject = jsUncheckedDowncast<ErrorConstructor*>(cell);
 
     if (propertyName == vm.propertyNames->stackTraceLimit)
         thisObject->globalObject()->setStackTraceLimit(std::nullopt);
@@ -130,7 +130,7 @@ JSC_DEFINE_HOST_FUNCTION(errorConstructorCaptureStackTrace, (JSGlobalObject* glo
 
     object->putDirect(vm, vm.propertyNames->stack, jsString(vm, Interpreter::stackTraceAsString(vm, stackTrace)), static_cast<unsigned>(PropertyAttribute::DontEnum));
 
-    if (auto* errorInstance = jsDynamicCast<ErrorInstance*>(object))
+    if (auto* errorInstance = jsDynamicDowncast<ErrorInstance*>(object))
         errorInstance->setStackPropertyAlreadyMaterialized();
 
     return encodedJSUndefined();
@@ -138,7 +138,7 @@ JSC_DEFINE_HOST_FUNCTION(errorConstructorCaptureStackTrace, (JSGlobalObject* glo
 
 JSC_DEFINE_HOST_FUNCTION(errorConstructorIsError, (JSGlobalObject*, CallFrame* callFrame))
 {
-    JSObject* object = jsDynamicCast<JSObject*>(callFrame->argument(0));
+    JSObject* object = jsDynamicDowncast<JSObject*>(callFrame->argument(0));
     return JSValue::encode(jsBoolean(object && object->isErrorInstance()));
 }
 

@@ -48,7 +48,7 @@ Structure* JSPromiseCombinatorsGlobalContext::createStructure(VM& vm, JSGlobalOb
 template<typename Visitor>
 void JSPromiseCombinatorsGlobalContext::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<JSPromiseCombinatorsGlobalContext*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSPromiseCombinatorsGlobalContext*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_promise);

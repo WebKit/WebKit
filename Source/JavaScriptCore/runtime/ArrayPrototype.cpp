@@ -909,7 +909,7 @@ static ALWAYS_INLINE std::span<EncodedJSValue> sortStableSort(JSGlobalObject* gl
     ASSERT(callData.type != CallData::Type::None);
 
     if (callData.type == CallData::Type::JS) [[likely]] {
-        CachedCall cachedCall(globalObject, jsCast<JSFunction*>(comparator), 2);
+        CachedCall cachedCall(globalObject, jsUncheckedDowncast<JSFunction*>(comparator), 2);
         RETURN_IF_EXCEPTION(scope, compacted);
         RELEASE_AND_RETURN(scope, arrayStableSort(vm, compacted, workingSet, [&](auto left, auto right) ALWAYS_INLINE_LAMBDA {
             auto scope = DECLARE_THROW_SCOPE(vm);
@@ -950,7 +950,7 @@ static ALWAYS_INLINE void sortCommit(JSGlobalObject* globalObject, JSObject* thi
 
     bool appended = false;
     if (isJSArray(thisObject)) [[likely]] {
-        appended = jsCast<JSArray*>(thisObject)->appendMemcpy(globalObject, vm, 0, indexingType, sorted);
+        appended = jsUncheckedDowncast<JSArray*>(thisObject)->appendMemcpy(globalObject, vm, 0, indexingType, sorted);
         RETURN_IF_EXCEPTION(scope, void());
     }
 
@@ -1588,7 +1588,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncConcat, (JSGlobalObject* globalObject, Ca
 
     if (!callFrame->argumentCount()) {
         if (isJSArray(thisValue)) [[likely]] {
-            auto* array = jsCast<JSArray*>(thisValue);
+            auto* array = jsUncheckedDowncast<JSArray*>(thisValue);
             if (arrayMissingIsConcatSpreadable(vm, array) && arraySpeciesWatchpointIsValid(vm, array)) [[likely]] {
                 JSArray* result = tryCloneArrayFromFast<ArrayFillMode::Empty>(globalObject, array);
                 RETURN_IF_EXCEPTION(scope, { });
@@ -1599,7 +1599,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncConcat, (JSGlobalObject* globalObject, Ca
     } else if (callFrame->argumentCount() == 1) {
         JSValue argumentValue = callFrame->uncheckedArgument(0);
         if (isJSArray(thisValue)) [[likely]] {
-            auto* firstArray = jsCast<JSArray*>(thisValue);
+            auto* firstArray = jsUncheckedDowncast<JSArray*>(thisValue);
             if (arrayMissingIsConcatSpreadable(vm, firstArray) && arraySpeciesWatchpointIsValid(vm, firstArray)) [[likely]] {
                 // This code assumes that neither array has set Symbol.isConcatSpreadable. If the first array
                 // has indexed accessors then one of those accessors might change the value of Symbol.isConcatSpreadable
@@ -1611,7 +1611,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncConcat, (JSGlobalObject* globalObject, Ca
                         if (result) [[likely]]
                             return JSValue::encode(result);
                     } else {
-                        auto* argumentObject = jsCast<JSObject*>(argumentValue);
+                        auto* argumentObject = jsUncheckedDowncast<JSObject*>(argumentValue);
                         if (arrayMissingIsConcatSpreadable(vm, argumentObject)) [[likely]] {
                             if (!isJSArray(argumentObject)) {
                                 auto* result = concatAppendOne(globalObject, vm, firstArray, argumentValue);
@@ -1619,7 +1619,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncConcat, (JSGlobalObject* globalObject, Ca
                                 if (result) [[likely]]
                                     return JSValue::encode(result);
                             } else {
-                                auto* result = concatAppendArray(globalObject, vm, firstArray, jsCast<JSArray*>(argumentValue));
+                                auto* result = concatAppendArray(globalObject, vm, firstArray, jsUncheckedDowncast<JSArray*>(argumentValue));
                                 RETURN_IF_EXCEPTION(scope, { });
                                 if (result) [[likely]]
                                     return JSValue::encode(result);
@@ -1689,8 +1689,8 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncConcat, (JSGlobalObject* globalObject, Ca
             uint64_t resultSize = checkedResultSize.value();
 
             if (isJSArray(result) && isJSArray(object) && resultSize <= MAX_ARRAY_INDEX) {
-                JSArray* resultArray = jsCast<JSArray*>(result);
-                JSArray* otherArray = jsCast<JSArray*>(object);
+                JSArray* resultArray = jsUncheckedDowncast<JSArray*>(result);
+                JSArray* otherArray = jsUncheckedDowncast<JSArray*>(object);
                 unsigned startIndex = resultIndex;
                 bool success = resultArray->appendMemcpy(globalObject, vm, resultIndex, otherArray);
                 RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -1759,7 +1759,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncFill, (JSGlobalObject* globalObject, Call
 
     JSValue value = callFrame->argument(0);
     if (isJSArray(thisValue)) [[likely]] {
-        auto* array = jsCast<JSArray*>(thisValue);
+        auto* array = jsUncheckedDowncast<JSArray*>(thisValue);
         if (array->fastFill(vm, k, finalIndex, value))
             return JSValue::encode(array);
     }
@@ -1793,7 +1793,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncToReversed, (JSGlobalObject* globalObject
     }
 
     if (isJSArray(thisObject)) [[likely]] {
-        JSArray* thisArray = jsCast<JSArray*>(thisObject);
+        JSArray* thisArray = jsUncheckedDowncast<JSArray*>(thisObject);
         if (auto fastResult = thisArray->fastToReversed(globalObject, length))
             return JSValue::encode(fastResult);
     }
@@ -1894,7 +1894,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncWith, (JSGlobalObject* globalObject, Call
     }
     JSValue value = callFrame->argument(1);
     if (isJSArray(thisObject)) [[likely]] {
-        JSArray* thisArray = jsCast<JSArray*>(thisObject);
+        JSArray* thisArray = jsUncheckedDowncast<JSArray*>(thisObject);
         if (auto fastResult = thisArray->fastWith(globalObject, actualIndex, value, length))
             return JSValue::encode(fastResult);
     }
@@ -1950,7 +1950,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncIncludes, (JSGlobalObject* globalObject, 
     JSValue searchElement = callFrame->argument(0);
 
     if (isJSArray(thisObject)) [[likely]] {
-        JSArray* thisArray = jsCast<JSArray*>(thisObject);
+        JSArray* thisArray = jsUncheckedDowncast<JSArray*>(thisObject);
         auto fastResult = thisArray->fastIncludes(globalObject, searchElement, index, length);
         RETURN_IF_EXCEPTION(scope, { });
         if (fastResult)
@@ -2197,7 +2197,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncFlat, (JSGlobalObject* globalObject, Call
     }
 
     if (isJSArray(thisObject) && arraySpeciesWatchpointIsValid(vm, thisObject)) [[likely]] {
-        JSArray* thisArray = jsCast<JSArray*>(thisObject);
+        JSArray* thisArray = jsUncheckedDowncast<JSArray*>(thisObject);
         auto fastResult = thisArray->fastFlat(globalObject, depthNum, length);
         RETURN_IF_EXCEPTION(scope, { });
         if (fastResult) [[likely]]

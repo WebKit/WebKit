@@ -77,7 +77,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyModuleCustomSections, (JSGlobalObject* globa
     if (callFrame->argumentCount() < 2) [[unlikely]]
         return JSValue::encode(throwException(globalObject, throwScope, createNotEnoughArgumentsError(globalObject)));
 
-    JSWebAssemblyModule* module = jsDynamicCast<JSWebAssemblyModule*>(callFrame->uncheckedArgument(0));
+    JSWebAssemblyModule* module = jsDynamicDowncast<JSWebAssemblyModule*>(callFrame->uncheckedArgument(0));
     if (!module)
         return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Module.customSections called with non WebAssembly.Module argument"_s)));
 
@@ -211,7 +211,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyModuleImports, (JSGlobalObject* globalObject
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    JSWebAssemblyModule* module = jsDynamicCast<JSWebAssemblyModule*>(callFrame->argument(0));
+    JSWebAssemblyModule* module = jsDynamicDowncast<JSWebAssemblyModule*>(callFrame->argument(0));
     if (!module)
         return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Module.imports called with non WebAssembly.Module argument"_s)));
 
@@ -254,7 +254,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyModuleExports, (JSGlobalObject* globalObject
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    JSWebAssemblyModule* module = jsDynamicCast<JSWebAssemblyModule*>(callFrame->argument(0));
+    JSWebAssemblyModule* module = jsDynamicDowncast<JSWebAssemblyModule*>(callFrame->argument(0));
     if (!module)
         return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Module.exports called with non WebAssembly.Module argument"_s)));
 

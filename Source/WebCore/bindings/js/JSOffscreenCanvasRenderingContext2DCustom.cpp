@@ -37,7 +37,7 @@ bool JSOffscreenCanvasRenderingContext2DOwner::isReachableFromOpaqueRoots(JSC::H
     if (reason) [[unlikely]]
         *reason = "Canvas is opaque root"_s;
 
-    auto* jsOffscreenCanvasRenderingContext = jsCast<JSOffscreenCanvasRenderingContext2D*>(handle.slot()->asCell());
+    auto* jsOffscreenCanvasRenderingContext = jsUncheckedDowncast<JSOffscreenCanvasRenderingContext2D*>(handle.slot()->asCell());
     return containsWebCoreOpaqueRoot(visitor, jsOffscreenCanvasRenderingContext->wrapped().canvas());
 }
 

@@ -43,7 +43,7 @@ JSPromiseReaction* JSPromiseReaction::create(VM& vm, JSValue promise, JSValue on
 template<typename Visitor>
 void JSPromiseReaction::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<JSPromiseReaction*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSPromiseReaction*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_promise);

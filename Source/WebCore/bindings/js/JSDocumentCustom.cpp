@@ -100,7 +100,7 @@ DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSDocument);
 void JSDocument::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
     Base::analyzeHeap(cell, analyzer);
-    auto* thisObject = jsCast<JSDocument*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSDocument*>(cell);
     analyzer.setLabelForCell(cell, thisObject->wrapped().url().string());
 }
 

@@ -362,7 +362,7 @@ inline void JSCell::setPerCellBit(bool value)
 inline JSObject* JSCell::toObject(JSGlobalObject* globalObject) const
 {
     if (isObject())
-        return jsCast<JSObject*>(const_cast<JSCell*>(this));
+        return jsUncheckedDowncast<JSObject*>(const_cast<JSCell*>(this));
     return toObjectSlow(globalObject);
 }
 

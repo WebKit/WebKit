@@ -50,7 +50,7 @@ CommandLineAPIModule::CommandLineAPIModule()
 
 JSFunction* CommandLineAPIModule::injectModuleFunction(JSC::JSGlobalObject* lexicalGlobalObject) const
 {
-    if (auto* globalObject = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject))
+    if (auto* globalObject = jsUncheckedDowncast<JSDOMGlobalObject*>(lexicalGlobalObject))
         return globalObject->builtinInternalFunctions().commandLineAPIModuleSource().m_injectModuleFunction.get();
 
     WTFLogAlways("Attempted to get `injectModule` function from `CommandLineAPIModule` for non-`JSDOMGlobalObject`.");
@@ -65,7 +65,7 @@ JSValue CommandLineAPIModule::host(InjectedScriptManager* injectedScriptManager,
     RefPtr commandLineAPIHost = pageInjectedScriptManager->commandLineAPIHost();
     ASSERT(commandLineAPIHost);
 
-    JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject);
+    JSDOMGlobalObject* globalObject = jsUncheckedDowncast<JSDOMGlobalObject*>(lexicalGlobalObject);
     return commandLineAPIHost->wrapper(lexicalGlobalObject, globalObject);
 }
 

@@ -388,7 +388,7 @@ ExceptionOr<void> FetchBodyOwner::createReadableStream(JSC::JSGlobalObject& stat
 {
     ASSERT(!m_readableStreamSource);
 
-    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(&state);
+    auto& globalObject = *JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(&state);
     if (isDisturbed()) {
         auto streamOrException = ReadableStream::create(globalObject, { }, { });
         if (streamOrException.hasException()) [[unlikely]]
@@ -421,7 +421,7 @@ ExceptionOr<void> FetchBodyOwner::createReadableStream(JSC::JSGlobalObject& stat
     auto [fetchBodySource, readableStreamSource] = FetchBodySource::createNonByteSource(*this);
     m_readableStreamSource = WTF::move(fetchBodySource);
 
-    auto streamOrException = ReadableStream::create(*JSC::jsCast<JSDOMGlobalObject*>(&state), readableStreamSource);
+    auto streamOrException = ReadableStream::create(*JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(&state), readableStreamSource);
     if (streamOrException.hasException()) [[unlikely]] {
         m_readableStreamSource = nullptr;
         return streamOrException.releaseException();

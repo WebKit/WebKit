@@ -60,7 +60,7 @@ GCClient::IsoSubspace* JSIDBSerializationGlobalObject::subspaceForImpl(VM& vm)
 
 void JSIDBSerializationGlobalObject::destroy(JSCell* cell)
 {
-    // We cannot rely on jsCast() during JSObject destruction.
+    // We cannot rely on jsUncheckedDowncast() during JSObject destruction.
     SUPPRESS_MEMORY_UNSAFE_CAST static_cast<JSIDBSerializationGlobalObject*>(cell)->JSIDBSerializationGlobalObject::~JSIDBSerializationGlobalObject();
 }
 

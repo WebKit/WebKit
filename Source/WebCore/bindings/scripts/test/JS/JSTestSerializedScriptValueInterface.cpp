@@ -178,7 +178,7 @@ JSObject* JSTestSerializedScriptValueInterface::prototype(VM& vm, JSDOMGlobalObj
 
 JSValue JSTestSerializedScriptValueInterface::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestSerializedScriptValueInterfaceDOMConstructor, DOMConstructorID::TestSerializedScriptValueInterface>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestSerializedScriptValueInterfaceDOMConstructor, DOMConstructorID::TestSerializedScriptValueInterface>(vm, *jsUncheckedDowncast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestSerializedScriptValueInterface::destroy(JSC::JSCell* cell)
@@ -191,7 +191,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestSerializedScriptValueInterfaceConstructor, (JSGlo
 {
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestSerializedScriptValueInterfacePrototype*>(JSValue::decode(thisValue));
+    auto* prototype = jsDynamicDowncast<JSTestSerializedScriptValueInterfacePrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestSerializedScriptValueInterface::getConstructor(vm, prototype->realm()));
@@ -361,7 +361,7 @@ JSC::GCClient::IsoSubspace* JSTestSerializedScriptValueInterface::subspaceForImp
 template<typename Visitor>
 void JSTestSerializedScriptValueInterface::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<JSTestSerializedScriptValueInterface*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSTestSerializedScriptValueInterface*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_cachedValue);
@@ -372,7 +372,7 @@ DEFINE_VISIT_CHILDREN(JSTestSerializedScriptValueInterface);
 
 void JSTestSerializedScriptValueInterface::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestSerializedScriptValueInterface*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSTestSerializedScriptValueInterface*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (RefPtr context = thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
@@ -439,7 +439,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestSerializedScriptValueInterface* JSTestSerializedScriptValueInterface::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestSerializedScriptValueInterface*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestSerializedScriptValueInterface*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

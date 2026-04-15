@@ -86,7 +86,7 @@ void JSDOMWindowProperties::finishCreation(JSGlobalObject& globalObject)
 
 bool JSDOMWindowProperties::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot)
 {
-    auto* thisObject = jsCast<JSDOMWindowProperties*>(object);
+    auto* thisObject = jsUncheckedDowncast<JSDOMWindowProperties*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     if (Base::getOwnPropertySlot(thisObject, lexicalGlobalObject, propertyName, slot))
@@ -95,7 +95,7 @@ bool JSDOMWindowProperties::getOwnPropertySlot(JSObject* object, JSGlobalObject*
     if (proto->hasProperty(lexicalGlobalObject, propertyName))
         return false;
 
-    auto* jsWindow = jsDynamicCast<JSDOMWindowBase*>(thisObject->realm());
+    auto* jsWindow = jsDynamicDowncast<JSDOMWindowBase*>(thisObject->realm());
     if (!jsWindow)
         return false;
 

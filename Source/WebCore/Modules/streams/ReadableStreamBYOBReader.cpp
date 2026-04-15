@@ -278,7 +278,7 @@ WebCoreOpaqueRoot root(ReadableStreamBYOBReader* reader)
 
 bool JSReadableStreamBYOBReaderOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
-    auto* jsReader = jsCast<JSReadableStreamBYOBReader*>(handle.slot()->asCell());
+    auto* jsReader = jsUncheckedDowncast<JSReadableStreamBYOBReader*>(handle.slot()->asCell());
     SUPPRESS_UNCOUNTED_LOCAL auto& reader = jsReader->wrapped();
     SUPPRESS_UNCOUNTED_LOCAL if (reader.isReachableFromOpaqueRoots()) {
         if (reason) [[unlikely]]

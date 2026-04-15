@@ -45,7 +45,7 @@ ExceptionOr<Ref<RTCRtpScriptTransformer>> RTCRtpScriptTransformer::create(Script
     if (!context.globalObject())
         return Exception { ExceptionCode::InvalidStateError };
 
-    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(context.globalObject());
+    auto& globalObject = *JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(context.globalObject());
     JSC::JSLockHolder lock(globalObject.vm());
 
     auto producerOrException = RTCEncodedStreamProducer::create(context);

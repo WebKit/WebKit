@@ -270,7 +270,7 @@ public:
     ALWAYS_INLINE JSRopeString* asRope()
     {
         ASSERT(isRope());
-        return jsCast<JSRopeString*>(this);
+        return jsUncheckedDowncast<JSRopeString*>(this);
     }
 
     ALWAYS_INLINE bool isNonSubstringRope() const
@@ -774,7 +774,7 @@ ALWAYS_INLINE unsigned JSString::length() const
 {
     uintptr_t pointer = fiberConcurrently();
     if (pointer & isRopeInPointer)
-        return jsCast<const JSRopeString*>(this)->length();
+        return jsUncheckedDowncast<const JSRopeString*>(this)->length();
     return std::bit_cast<StringImpl*>(pointer)->length();
 }
 
@@ -795,7 +795,7 @@ inline StringImpl* JSString::tryGetValueImpl() const
 inline JSString* asString(JSValue value)
 {
     ASSERT(value.isStringSlow());
-    return jsCast<JSString*>(value.asCell());
+    return jsUncheckedDowncast<JSString*>(value.asCell());
 }
 
 // This MUST NOT GC.
@@ -1015,7 +1015,7 @@ inline JSString* tryJSSubstringImpl(VM& vm, JSString* base, unsigned offset, uns
         // Resolve non-substring rope bases so we don't have to deal with it.
         // FIXME: Evaluate if this would be worth adding more branches.
         if (base->isSubstring()) {
-            JSRopeString* baseRope = jsCast<JSRopeString*>(base);
+            JSRopeString* baseRope = jsUncheckedDowncast<JSRopeString*>(base);
             ASSERT(!baseRope->substringBase()->isRope());
             return jsSubstringOfResolved(vm, nullptr, baseRope->substringBase(), baseRope->substringOffset() + offset, length);
         }
@@ -1026,7 +1026,7 @@ inline JSString* tryJSSubstringImpl(VM& vm, JSString* base, unsigned offset, uns
         if (depth >= maxTraversalDepth)
             return nullptr;
 
-        auto* rope = jsCast<JSRopeString*>(base);
+        auto* rope = jsUncheckedDowncast<JSRopeString*>(base);
         auto* fiber0 = rope->fiber0();
         ASSERT(fiber0);
         if (offset < fiber0->length()) {
@@ -1066,7 +1066,7 @@ inline JSString* jsSubstring(JSGlobalObject* globalObject, VM& vm, JSString* bas
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     if (!result) {
-        jsCast<JSRopeString*>(base)->resolveRope(globalObject);
+        jsUncheckedDowncast<JSRopeString*>(base)->resolveRope(globalObject);
         RETURN_IF_EXCEPTION(scope, nullptr);
         return jsSubstringOfResolved(vm, nullptr, base, offset, length);
     }

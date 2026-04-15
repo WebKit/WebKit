@@ -741,7 +741,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncProtoSetter, (JSGlobalObject* globalObject, C
 
     JSValue value = callFrame->argument(0);
 
-    JSObject* thisObject = jsDynamicCast<JSObject*>(thisValue);
+    JSObject* thisObject = jsDynamicDowncast<JSObject*>(thisValue);
 
     // Setting __proto__ of a primitive should have no effect.
     if (!thisObject)
@@ -847,7 +847,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncCopyDataProperties, (JSGlobalObject* globalOb
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSFinalObject* target = jsCast<JSFinalObject*>(callFrame->thisValue());
+    JSFinalObject* target = jsUncheckedDowncast<JSFinalObject*>(callFrame->thisValue());
     ASSERT(target->isStructureExtensible());
 
     JSValue sourceValue = callFrame->uncheckedArgument(0);

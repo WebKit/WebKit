@@ -60,7 +60,7 @@ void JSStringIterator::finishCreation(VM& vm)
 JSStringIterator* JSStringIterator::clone(JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
-    JSString* iteratedString = jsCast<JSString*>(this->iteratedString());
+    JSString* iteratedString = jsUncheckedDowncast<JSString*>(this->iteratedString());
     auto* clone = JSStringIterator::create(vm, globalObject->stringIteratorStructure(), iteratedString);
     clone->internalField(Field::Index).set(vm, clone, this->index());
     return clone;
@@ -69,7 +69,7 @@ JSStringIterator* JSStringIterator::clone(JSGlobalObject* globalObject)
 template<typename Visitor>
 void JSStringIterator::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<JSStringIterator*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSStringIterator*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 }

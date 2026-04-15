@@ -686,7 +686,7 @@ void JSTestGlobalObject::finishCreation(VM& vm)
     if (DeprecatedGlobalSettings::testFeatureEnabled())
         putDirectCustomAccessor(vm, builtinNames(vm).enabledAtRuntimeAttributePublicName(), CustomGetterSetter::create(vm, jsTestGlobalObject_enabledAtRuntimeAttribute, setJSTestGlobalObject_enabledAtRuntimeAttribute), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor)));
 #endif
-    if (jsCast<JSDOMGlobalObject*>(realm())->scriptExecutionContext()->isSecureContext())
+    if (jsUncheckedDowncast<JSDOMGlobalObject*>(realm())->scriptExecutionContext()->isSecureContext())
         putDirectCustomAccessor(vm, builtinNames(vm).TestInterfaceNamePublicName(), CustomGetterSetter::create(vm, jsTestGlobalObject_TestInterfaceNameConstructor, nullptr), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)));
     putDirectCustomAccessor(vm, builtinNames(vm).publicAndPrivateAttributePrivateName(), CustomGetterSetter::create(vm, jsTestGlobalObject_publicAndPrivateAttribute, nullptr), attributesForStructure(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly));
 #if ENABLE(TEST_FEATURE)
@@ -714,12 +714,12 @@ void JSTestGlobalObject::finishCreation(VM& vm)
     if (DeprecatedGlobalSettings::testFeatureEnabled())
         putDirectBuiltinFunction(vm, this, builtinNames(vm).testJSBuiltinFunctionPublicName(), testGlobalObjectTestJSBuiltinFunctionCodeGenerator(vm), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::Builtin)));
 #endif
-    if (jsCast<JSDOMGlobalObject*>(realm())->scriptExecutionContext()->isSecureContext())
+    if (jsUncheckedDowncast<JSDOMGlobalObject*>(realm())->scriptExecutionContext()->isSecureContext())
         putDirectNativeFunction(vm, this, builtinNames(vm).calculateSecretResultPublicName(), 0, jsTestGlobalObjectInstanceFunction_calculateSecretResult, ImplementationVisibility::Public, NoIntrinsic, attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::Function)));
-    if (jsCast<JSDOMGlobalObject*>(realm())->scriptExecutionContext()->isSecureContext())
+    if (jsUncheckedDowncast<JSDOMGlobalObject*>(realm())->scriptExecutionContext()->isSecureContext())
         putDirectNativeFunction(vm, this, builtinNames(vm).getSecretBooleanPublicName(), 0, jsTestGlobalObjectInstanceFunction_getSecretBoolean, ImplementationVisibility::Public, NoIntrinsic, attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::Function)));
 #if ENABLE(TEST_FEATURE)
-    if ((jsCast<JSDOMGlobalObject*>(realm())->scriptExecutionContext()->isSecureContext() && DeprecatedGlobalSettings::testFeatureEnabled()))
+    if ((jsUncheckedDowncast<JSDOMGlobalObject*>(realm())->scriptExecutionContext()->isSecureContext() && DeprecatedGlobalSettings::testFeatureEnabled()))
         putDirectNativeFunction(vm, this, builtinNames(vm).testFeatureGetSecretBooleanPublicName(), 0, jsTestGlobalObjectInstanceFunction_testFeatureGetSecretBoolean, ImplementationVisibility::Public, NoIntrinsic, attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::Function)));
 #endif
 }
@@ -731,7 +731,7 @@ JSC::Structure* JSTestGlobalObject::createStructure(JSC::VM& vm, JSC::JSGlobalOb
 
 JSValue JSTestGlobalObject::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestGlobalObjectDOMConstructor, DOMConstructorID::TestGlobalObject>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestGlobalObjectDOMConstructor, DOMConstructorID::TestGlobalObject>(vm, *jsUncheckedDowncast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestGlobalObject::destroy(JSC::JSCell* cell)
@@ -744,7 +744,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObjectConstructor, (JSGlobalObject* lexical
 {
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestGlobalObjectPrototype*>(JSValue::decode(thisValue));
+    auto* prototype = jsDynamicDowncast<JSTestGlobalObjectPrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestGlobalObject::getConstructor(vm, prototype->realm()));
@@ -1922,7 +1922,7 @@ JSC::GCClient::IsoSubspace* JSTestGlobalObject::subspaceForImpl(JSC::VM& vm)
 
 void JSTestGlobalObject::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestGlobalObject*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSTestGlobalObject*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (RefPtr context = thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
@@ -1946,7 +1946,7 @@ void JSTestGlobalObjectOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* c
 
 TestGlobalObject* JSTestGlobalObject::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestGlobalObject*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestGlobalObject*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

@@ -119,7 +119,7 @@ template<> ConversionResult<IDLDictionary<DictionaryImplName>> convertDictionary
         callbackMemberValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "callbackMember"_s));
         RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    auto callbackMemberConversionResult = convert<IDLOptional<IDLCallbackFunction<JSVoidCallback>>>(lexicalGlobalObject, callbackMemberValue, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject));
+    auto callbackMemberConversionResult = convert<IDLOptional<IDLCallbackFunction<JSVoidCallback>>>(lexicalGlobalObject, callbackMemberValue, *jsUncheckedDowncast<JSDOMGlobalObject*>(&lexicalGlobalObject));
     if (callbackMemberConversionResult.hasException(throwScope)) [[unlikely]]
         return ConversionResultException { };
     JSValue enumMemberValue;
@@ -174,7 +174,7 @@ template<> ConversionResult<IDLDictionary<DictionaryImplName>> convertDictionary
         partialCallbackMemberValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "partialCallbackMember"_s));
         RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    auto partialCallbackMemberConversionResult = convert<IDLOptional<IDLCallbackFunction<JSVoidCallback>>>(lexicalGlobalObject, partialCallbackMemberValue, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject));
+    auto partialCallbackMemberConversionResult = convert<IDLOptional<IDLCallbackFunction<JSVoidCallback>>>(lexicalGlobalObject, partialCallbackMemberValue, *jsUncheckedDowncast<JSDOMGlobalObject*>(&lexicalGlobalObject));
     if (partialCallbackMemberConversionResult.hasException(throwScope)) [[unlikely]]
         return ConversionResultException { };
 #endif
@@ -220,7 +220,7 @@ template<> ConversionResult<IDLDictionary<DictionaryImplName>> convertDictionary
 #endif
 #if ENABLE(Conditional13) || ENABLE(Conditional14)
     auto partialStringMemberWithEnabledBySettingConversionResult = [&] -> ConversionResult<IDLOptional<IDLDOMString>> {
-        if (jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->scriptExecutionContext()->settingsValues().testSettingEnabled) {
+        if (jsUncheckedDowncast<JSDOMGlobalObject*>(&lexicalGlobalObject)->scriptExecutionContext()->settingsValues().testSettingEnabled) {
             JSValue partialStringMemberWithEnabledBySettingValue;
             if (isNullOrUndefined)
                 partialStringMemberWithEnabledBySettingValue = jsUndefined();
@@ -402,7 +402,7 @@ JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, J
     }
 #endif
 #if ENABLE(Conditional13) || ENABLE(Conditional14)
-    if (jsCast<JSDOMGlobalObject*>(&globalObject)->scriptExecutionContext()->settingsValues().testSettingEnabled) {
+    if (jsUncheckedDowncast<JSDOMGlobalObject*>(&globalObject)->scriptExecutionContext()->settingsValues().testSettingEnabled) {
         if (!IDLDOMString::isNullValue(dictionary.partialStringMemberWithEnabledBySetting)) {
             auto partialStringMemberWithEnabledBySettingValue = toJS<IDLDOMString>(lexicalGlobalObject, throwScope, IDLDOMString::extractValueFromNullable(dictionary.partialStringMemberWithEnabledBySetting));
             RETURN_IF_EXCEPTION(throwScope, { });

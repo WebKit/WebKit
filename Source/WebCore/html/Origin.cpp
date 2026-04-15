@@ -89,25 +89,25 @@ ExceptionOr<Ref<Origin>> Origin::from(ScriptExecutionContext& context, JSC::JSVa
         Ref worker = jsWorker->wrapped();
         if (RefPtr securityOrigin = worker->securityOrigin())
             return create(securityOrigin.releaseNonNull());
-    } else if (auto* jsMessageEvent = JSC::jsDynamicCast<JSMessageEvent*>(value)) {
+    } else if (auto* jsMessageEvent = JSC::jsDynamicDowncast<JSMessageEvent*>(value)) {
         Ref messageEvent = jsMessageEvent->wrapped();
         if (RefPtr securityOrigin = messageEvent->securityOrigin())
             return create(securityOrigin.releaseNonNull());
-    } else if (auto* jsExtendableMessageEvent = JSC::jsDynamicCast<JSExtendableMessageEvent*>(value)) {
+    } else if (auto* jsExtendableMessageEvent = JSC::jsDynamicDowncast<JSExtendableMessageEvent*>(value)) {
         Ref extendableMessageEvent = jsExtendableMessageEvent->wrapped();
         if (RefPtr securityOrigin = extendableMessageEvent->securityOrigin())
             return create(securityOrigin.releaseNonNull());
-    } else if (auto* jsOrigin = JSC::jsDynamicCast<JSOrigin*>(value)) {
+    } else if (auto* jsOrigin = JSC::jsDynamicDowncast<JSOrigin*>(value)) {
         Ref origin = jsOrigin->wrapped();
         return create(origin->m_origin.copyRef());
-    } else if (auto* jsDOMURL = JSC::jsDynamicCast<JSDOMURL*>(value)) {
+    } else if (auto* jsDOMURL = JSC::jsDynamicDowncast<JSDOMURL*>(value)) {
         Ref domURL = jsDOMURL->wrapped();
         return create(SecurityOrigin::create(domURL->href()));
-    } else if (auto* jsAElement = JSC::jsDynamicCast<JSHTMLAnchorElement*>(value)) {
+    } else if (auto* jsAElement = JSC::jsDynamicDowncast<JSHTMLAnchorElement*>(value)) {
         Ref aElement = jsAElement->wrapped();
         if (aElement->hasAttributeWithoutSynchronization(hrefAttr))
             return create(SecurityOrigin::create(aElement->href()));
-    } else if (auto* jsAreaElement = JSC::jsDynamicCast<JSHTMLAreaElement*>(value)) {
+    } else if (auto* jsAreaElement = JSC::jsDynamicDowncast<JSHTMLAreaElement*>(value)) {
         Ref areaElement = jsAreaElement->wrapped();
         if (areaElement->hasAttributeWithoutSynchronization(hrefAttr))
             return create(SecurityOrigin::create(areaElement->href()));

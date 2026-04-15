@@ -152,7 +152,7 @@ JSObject* JSTestStringifierOperationNamedToString::prototype(VM& vm, JSDOMGlobal
 
 JSValue JSTestStringifierOperationNamedToString::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestStringifierOperationNamedToStringDOMConstructor, DOMConstructorID::TestStringifierOperationNamedToString>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestStringifierOperationNamedToStringDOMConstructor, DOMConstructorID::TestStringifierOperationNamedToString>(vm, *jsUncheckedDowncast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestStringifierOperationNamedToString::destroy(JSC::JSCell* cell)
@@ -165,7 +165,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestStringifierOperationNamedToStringConstructor, (JS
 {
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestStringifierOperationNamedToStringPrototype*>(JSValue::decode(thisValue));
+    auto* prototype = jsDynamicDowncast<JSTestStringifierOperationNamedToStringPrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestStringifierOperationNamedToString::getConstructor(vm, prototype->realm()));
@@ -198,7 +198,7 @@ JSC::GCClient::IsoSubspace* JSTestStringifierOperationNamedToString::subspaceFor
 
 void JSTestStringifierOperationNamedToString::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestStringifierOperationNamedToString*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSTestStringifierOperationNamedToString*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (RefPtr context = thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
@@ -265,7 +265,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestStringifierOperationNamedToString* JSTestStringifierOperationNamedToString::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestStringifierOperationNamedToString*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestStringifierOperationNamedToString*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

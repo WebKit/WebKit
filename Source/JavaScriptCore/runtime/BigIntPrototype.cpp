@@ -87,10 +87,10 @@ static ALWAYS_INLINE JSBigInt* toThisBigIntValue(JSGlobalObject* globalObject, J
 #endif
 
     if (thisValue.isCell()) {
-        if (JSBigInt* bigInt = jsDynamicCast<JSBigInt*>(thisValue.asCell()))
+        if (JSBigInt* bigInt = jsDynamicDowncast<JSBigInt*>(thisValue.asCell()))
             return bigInt;
 
-        if (BigIntObject* bigIntObject = jsDynamicCast<BigIntObject*>(thisValue.asCell())) {
+        if (BigIntObject* bigIntObject = jsDynamicDowncast<BigIntObject*>(thisValue.asCell())) {
             JSValue bigInt = bigIntObject->internalValue();
 #if USE(BIGINT32)
             if (bigInt.isBigInt32())

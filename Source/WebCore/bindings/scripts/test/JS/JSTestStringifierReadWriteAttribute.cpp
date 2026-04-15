@@ -156,7 +156,7 @@ JSObject* JSTestStringifierReadWriteAttribute::prototype(VM& vm, JSDOMGlobalObje
 
 JSValue JSTestStringifierReadWriteAttribute::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestStringifierReadWriteAttributeDOMConstructor, DOMConstructorID::TestStringifierReadWriteAttribute>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestStringifierReadWriteAttributeDOMConstructor, DOMConstructorID::TestStringifierReadWriteAttribute>(vm, *jsUncheckedDowncast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestStringifierReadWriteAttribute::destroy(JSC::JSCell* cell)
@@ -169,7 +169,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestStringifierReadWriteAttributeConstructor, (JSGlob
 {
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestStringifierReadWriteAttributePrototype*>(JSValue::decode(thisValue));
+    auto* prototype = jsDynamicDowncast<JSTestStringifierReadWriteAttributePrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestStringifierReadWriteAttribute::getConstructor(vm, prototype->realm()));
@@ -235,7 +235,7 @@ JSC::GCClient::IsoSubspace* JSTestStringifierReadWriteAttribute::subspaceForImpl
 
 void JSTestStringifierReadWriteAttribute::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestStringifierReadWriteAttribute*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSTestStringifierReadWriteAttribute*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (RefPtr context = thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
@@ -302,7 +302,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestStringifierReadWriteAttribute* JSTestStringifierReadWriteAttribute::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestStringifierReadWriteAttribute*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestStringifierReadWriteAttribute*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

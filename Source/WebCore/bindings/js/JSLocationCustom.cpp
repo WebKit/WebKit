@@ -84,7 +84,7 @@ bool JSLocation::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexicalGlo
 {
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    auto* thisObject = jsCast<JSLocation*>(object);
+    auto* thisObject = jsUncheckedDowncast<JSLocation*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     bool result = getOwnPropertySlotCommon(*thisObject, *lexicalGlobalObject, propertyName, slot);
@@ -99,7 +99,7 @@ bool JSLocation::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* lex
 {
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    auto* thisObject = jsCast<JSLocation*>(object);
+    auto* thisObject = jsUncheckedDowncast<JSLocation*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     bool result = getOwnPropertySlotCommon(*thisObject, *lexicalGlobalObject, Identifier::from(vm, index), slot);
@@ -114,7 +114,7 @@ bool JSLocation::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, Property
 {
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    auto* thisObject = jsCast<JSLocation*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSLocation*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     // Always allow assigning to the whole location.
@@ -138,7 +138,7 @@ bool JSLocation::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, Property
 
 bool JSLocation::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index, JSValue value, bool shouldThrow)
 {
-    auto* thisObject = jsCast<JSLocation*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSLocation*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, thisObject->wrapped().window(), ThrowSecurityError))
@@ -149,7 +149,7 @@ bool JSLocation::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, u
 
 bool JSLocation::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
-    JSLocation* thisObject = jsCast<JSLocation*>(cell);
+    JSLocation* thisObject = jsUncheckedDowncast<JSLocation*>(cell);
     // Only allow deleting by frames in the same origin.
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, thisObject->wrapped().window(), ThrowSecurityError))
         return false;
@@ -158,7 +158,7 @@ bool JSLocation::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObjec
 
 bool JSLocation::deletePropertyByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned propertyName)
 {
-    JSLocation* thisObject = jsCast<JSLocation*>(cell);
+    JSLocation* thisObject = jsUncheckedDowncast<JSLocation*>(cell);
     // Only allow deleting by frames in the same origin.
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, thisObject->wrapped().window(), ThrowSecurityError))
         return false;
@@ -167,7 +167,7 @@ bool JSLocation::deletePropertyByIndex(JSCell* cell, JSGlobalObject* lexicalGlob
 
 void JSLocation::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArrayBuilder& propertyNames, DontEnumPropertiesMode mode)
 {
-    JSLocation* thisObject = jsCast<JSLocation*>(object);
+    JSLocation* thisObject = jsUncheckedDowncast<JSLocation*>(object);
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, thisObject->wrapped().window(), DoNotReportSecurityError)) {
         if (mode == DontEnumPropertiesMode::Include)
             addCrossOriginOwnPropertyNames<CrossOriginObject::Location>(*lexicalGlobalObject, propertyNames);
@@ -178,7 +178,7 @@ void JSLocation::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGl
 
 bool JSLocation::defineOwnProperty(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, const PropertyDescriptor& descriptor, bool throwException)
 {
-    JSLocation* thisObject = jsCast<JSLocation*>(object);
+    JSLocation* thisObject = jsUncheckedDowncast<JSLocation*>(object);
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, thisObject->wrapped().window(), ThrowSecurityError))
         return false;
 
@@ -187,7 +187,7 @@ bool JSLocation::defineOwnProperty(JSObject* object, JSGlobalObject* lexicalGlob
 
 JSValue JSLocation::getPrototype(JSObject* object, JSGlobalObject* lexicalGlobalObject)
 {
-    JSLocation* thisObject = jsCast<JSLocation*>(object);
+    JSLocation* thisObject = jsUncheckedDowncast<JSLocation*>(object);
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, thisObject->wrapped().window(), DoNotReportSecurityError))
         return jsNull();
 

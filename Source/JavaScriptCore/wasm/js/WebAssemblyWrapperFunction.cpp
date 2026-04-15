@@ -86,7 +86,7 @@ Structure* WebAssemblyWrapperFunction::createStructure(VM& vm, JSGlobalObject* g
 template<typename Visitor>
 void WebAssemblyWrapperFunction::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    WebAssemblyWrapperFunction* thisObject = jsCast<WebAssemblyWrapperFunction*>(cell);
+    WebAssemblyWrapperFunction* thisObject = jsUncheckedDowncast<WebAssemblyWrapperFunction*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 
@@ -99,7 +99,7 @@ JSC_DEFINE_HOST_FUNCTION(callWebAssemblyWrapperFunction, (JSGlobalObject* global
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    WebAssemblyWrapperFunction* wasmFunction = jsCast<WebAssemblyWrapperFunction*>(callFrame->jsCallee());
+    WebAssemblyWrapperFunction* wasmFunction = jsUncheckedDowncast<WebAssemblyWrapperFunction*>(callFrame->jsCallee());
     JSObject* function = wasmFunction->function();
     auto callData = JSC::getCallDataInline(function);
     RELEASE_ASSERT(callData.type != CallData::Type::None);

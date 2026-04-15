@@ -105,14 +105,14 @@ ALWAYS_INLINE std::span<const uint8_t> getWasmBufferFromValue(JSGlobalObject* gl
     VM& vm = getVM(globalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    if (auto* source = jsDynamicCast<JSSourceCode*>(value)) {
+    if (auto* source = jsDynamicDowncast<JSSourceCode*>(value)) {
         auto* provider = static_cast<BaseWebAssemblySourceProvider*>(source->sourceCode().provider());
         return { provider->data(), provider->size() };
     }
 
     // If the given bytes argument is not a BufferSource, a TypeError exception is thrown.
-    JSArrayBuffer* arrayBuffer = value.getObject() ? jsDynamicCast<JSArrayBuffer*>(value.getObject()) : nullptr;
-    JSArrayBufferView* arrayBufferView = value.getObject() ? jsDynamicCast<JSArrayBufferView*>(value.getObject()) : nullptr;
+    JSArrayBuffer* arrayBuffer = value.getObject() ? jsDynamicDowncast<JSArrayBuffer*>(value.getObject()) : nullptr;
+    JSArrayBufferView* arrayBufferView = value.getObject() ? jsDynamicDowncast<JSArrayBufferView*>(value.getObject()) : nullptr;
     if (!(arrayBuffer || arrayBufferView)) {
         throwException(globalObject, throwScope, createTypeError(globalObject,
             "first argument must be an ArrayBufferView or an ArrayBuffer"_s, defaultSourceAppender, runtimeTypeForValue(value)));
@@ -125,7 +125,7 @@ ALWAYS_INLINE std::span<const uint8_t> getWasmBufferFromValue(JSGlobalObject* gl
             RETURN_IF_EXCEPTION(throwScope, { });
         } else {
             IdempotentArrayBufferByteLengthGetter<std::memory_order_relaxed> getter;
-            if (!jsCast<JSDataView*>(arrayBufferView)->viewByteLength(getter)) [[unlikely]] {
+            if (!jsUncheckedDowncast<JSDataView*>(arrayBufferView)->viewByteLength(getter)) [[unlikely]] {
                 throwTypeError(globalObject, throwScope, typedArrayBufferHasBeenDetachedErrorMessage);
                 return { };
             }
@@ -145,7 +145,7 @@ ALWAYS_INLINE Vector<uint8_t> createSourceBufferFromValue(VM& vm, JSGlobalObject
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     BaseWebAssemblySourceProvider* provider = nullptr;
-    if (auto* source = jsDynamicCast<JSSourceCode*>(value))
+    if (auto* source = jsDynamicDowncast<JSSourceCode*>(value))
         provider = static_cast<BaseWebAssemblySourceProvider*>(source->sourceCode().provider());
     SourceProviderBufferGuard bufferGuard(provider);
 
@@ -164,12 +164,12 @@ ALWAYS_INLINE Vector<uint8_t> createSourceBufferFromValue(VM& vm, JSGlobalObject
 ALWAYS_INLINE bool isWebAssemblyHostFunction(JSObject* object, WebAssemblyFunction*& wasmFunction, WebAssemblyWrapperFunction*& wasmWrapperFunction)
 {
     if (object->inherits<WebAssemblyFunction>()) {
-        wasmFunction = jsCast<WebAssemblyFunction*>(object);
+        wasmFunction = jsUncheckedDowncast<WebAssemblyFunction*>(object);
         wasmWrapperFunction = nullptr;
         return true;
     }
     if (object->inherits<WebAssemblyWrapperFunction>()) {
-        wasmWrapperFunction = jsCast<WebAssemblyWrapperFunction*>(object);
+        wasmWrapperFunction = jsUncheckedDowncast<WebAssemblyWrapperFunction*>(object);
         wasmFunction = nullptr;
         return true;
     }
@@ -180,7 +180,7 @@ ALWAYS_INLINE bool isWebAssemblyHostFunction(JSValue value, WebAssemblyFunction*
 {
     if (!value.isObject())
         return false;
-    return isWebAssemblyHostFunction(jsCast<JSObject*>(value), wasmFunction, wasmWrapperFunction);
+    return isWebAssemblyHostFunction(jsUncheckedDowncast<JSObject*>(value), wasmFunction, wasmWrapperFunction);
 }
 
 ALWAYS_INLINE bool isWebAssemblyHostFunction(JSValue object)
@@ -250,7 +250,7 @@ ALWAYS_INLINE uint64_t toWebAssemblyValue(JSGlobalObject* globalObject, const Wa
             if (type.isNullable() && value.isNull())
                 break;
 
-            auto* wasmFunction = jsDynamicCast<WebAssemblyFunctionBase*>(value);
+            auto* wasmFunction = jsDynamicDowncast<WebAssemblyFunctionBase*>(value);
             if (!wasmFunction)
                 return throwVMTypeError(globalObject, scope, "Argument value did not match the reference type"_s);
 

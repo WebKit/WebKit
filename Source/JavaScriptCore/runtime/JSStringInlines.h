@@ -533,7 +533,7 @@ inline JSString* jsAtomString(JSGlobalObject* globalObject, VM& vm, JSString* st
         return vm.keyAtomStringCache.make(vm, buffer, createFromNonRope);
     }
 
-    JSRopeString* ropeString = jsCast<JSRopeString*>(string);
+    JSRopeString* ropeString = jsUncheckedDowncast<JSRopeString*>(string);
 
     auto createFromRope = [&](VM& vm, auto& buffer) {
         auto impl = AtomStringImpl::add(buffer);
@@ -718,7 +718,7 @@ inline JSString* jsSubstringOfResolved(VM& vm, GCDeferralContext* deferralContex
         return vm.smallStrings.emptyString();
 
     if (s->isSubstring()) {
-        JSRopeString* baseRope = jsCast<JSRopeString*>(s);
+        JSRopeString* baseRope = jsUncheckedDowncast<JSRopeString*>(s);
         ASSERT(!baseRope->substringBase()->isRope());
         s = baseRope->substringBase();
         offset += baseRope->substringOffset();
@@ -752,7 +752,7 @@ template<typename CharacterType>
 void JSString::resolveToBuffer(std::span<CharacterType> destination)
 {
     if (isRope()) {
-        auto* rope = jsCast<JSRopeString*>(this);
+        auto* rope = jsUncheckedDowncast<JSRopeString*>(this);
         if (rope->isSubstring()) {
             StringView view = *rope->substringBase()->valueInternal().impl();
             unsigned offset = rope->substringOffset();

@@ -328,7 +328,7 @@ ObjectPropertyConditionSet generateConditions(JSGlobalObject* globalObject, Stru
             return ObjectPropertyConditionSet::invalid();
         }
         
-        JSObject* object = jsCast<JSObject*>(value);
+        JSObject* object = jsUncheckedDowncast<JSObject*>(value);
         structure = object->structure();
         
         if (structure->isDictionary()) {

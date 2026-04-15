@@ -297,7 +297,7 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
         if (value.isCallable()) {
             if constexpr (hasCallbackFunctionType) {
                 scope.release();
-                return functor(Converter<CallbackFunctionType>::convert(lexicalGlobalObject, value, *JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)));
+                return functor(Converter<CallbackFunctionType>::convert(lexicalGlobalObject, value, *JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(&lexicalGlobalObject)));
             }
         }
 

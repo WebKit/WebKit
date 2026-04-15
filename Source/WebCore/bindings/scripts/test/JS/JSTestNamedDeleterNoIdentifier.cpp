@@ -148,7 +148,7 @@ JSObject* JSTestNamedDeleterNoIdentifier::prototype(VM& vm, JSDOMGlobalObject& g
 
 JSValue JSTestNamedDeleterNoIdentifier::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestNamedDeleterNoIdentifierDOMConstructor, DOMConstructorID::TestNamedDeleterNoIdentifier>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestNamedDeleterNoIdentifierDOMConstructor, DOMConstructorID::TestNamedDeleterNoIdentifier>(vm, *jsUncheckedDowncast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestNamedDeleterNoIdentifier::destroy(JSC::JSCell* cell)
@@ -160,7 +160,7 @@ void JSTestNamedDeleterNoIdentifier::destroy(JSC::JSCell* cell)
 bool JSTestNamedDeleterNoIdentifier::legacyPlatformObjectGetOwnProperty(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot, bool ignoreNamedProperties)
 {
     auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(lexicalGlobalObject));
-    auto* thisObject = jsCast<JSTestNamedDeleterNoIdentifier*>(object);
+    auto* thisObject = jsUncheckedDowncast<JSTestNamedDeleterNoIdentifier*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (!ignoreNamedProperties) {
         using GetterIDLType = IDLDOMString;
@@ -187,7 +187,7 @@ bool JSTestNamedDeleterNoIdentifier::getOwnPropertySlotByIndex(JSObject* object,
 {
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* thisObject = jsCast<JSTestNamedDeleterNoIdentifier*>(object);
+    auto* thisObject = jsUncheckedDowncast<JSTestNamedDeleterNoIdentifier*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     auto propertyName = Identifier::from(vm, index);
     using GetterIDLType = IDLDOMString;
@@ -206,7 +206,7 @@ bool JSTestNamedDeleterNoIdentifier::getOwnPropertySlotByIndex(JSObject* object,
 void JSTestNamedDeleterNoIdentifier::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArrayBuilder& propertyNames, DontEnumPropertiesMode mode)
 {
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
-    auto* thisObject = jsCast<JSTestNamedDeleterNoIdentifier*>(object);
+    auto* thisObject = jsUncheckedDowncast<JSTestNamedDeleterNoIdentifier*>(object);
     ASSERT_GC_OBJECT_INHERITS(object, info());
     for (auto& propertyName : thisObject->wrapped().supportedPropertyNames())
         propertyNames.add(Identifier::fromString(vm, propertyName));
@@ -215,14 +215,14 @@ void JSTestNamedDeleterNoIdentifier::getOwnPropertyNames(JSObject* object, JSGlo
 
 bool JSTestNamedDeleterNoIdentifier::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, JSValue value, PutPropertySlot& putPropertySlot)
 {
-    auto* thisObject = jsCast<JSTestNamedDeleterNoIdentifier*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSTestNamedDeleterNoIdentifier*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     if (thisObject != putPropertySlot.thisValue()) [[unlikely]]
         return JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot);
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
-    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
+    if (auto* document = dynamicDowncast<Document>(jsDynamicDowncast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
         if (document->quirks().needsConfigurableIndexedPropertiesQuirk()) [[unlikely]]
             return JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot);
     }
@@ -246,12 +246,12 @@ bool JSTestNamedDeleterNoIdentifier::putByIndex(JSCell* cell, JSGlobalObject* le
 {
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
-    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
+    if (auto* document = dynamicDowncast<Document>(jsDynamicDowncast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
         if (document->quirks().needsConfigurableIndexedPropertiesQuirk()) [[unlikely]]
             return JSObject::putByIndex(cell, lexicalGlobalObject, index, value, shouldThrow);
     }
 
-    auto* thisObject = jsCast<JSTestNamedDeleterNoIdentifier*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSTestNamedDeleterNoIdentifier*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
@@ -265,7 +265,7 @@ bool JSTestNamedDeleterNoIdentifier::putByIndex(JSCell* cell, JSGlobalObject* le
 
 bool JSTestNamedDeleterNoIdentifier::defineOwnProperty(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, const PropertyDescriptor& propertyDescriptor, bool shouldThrow)
 {
-    auto* thisObject = jsCast<JSTestNamedDeleterNoIdentifier*>(object);
+    auto* thisObject = jsUncheckedDowncast<JSTestNamedDeleterNoIdentifier*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject->vm());
@@ -288,7 +288,7 @@ bool JSTestNamedDeleterNoIdentifier::defineOwnProperty(JSObject* object, JSGloba
 
 bool JSTestNamedDeleterNoIdentifier::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
-    auto& thisObject = *jsCast<JSTestNamedDeleterNoIdentifier*>(cell);
+    auto& thisObject = *jsUncheckedDowncast<JSTestNamedDeleterNoIdentifier*>(cell);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     if (!propertyName.isSymbol() && impl.isSupportedPropertyName(propertyNameToString(propertyName))) {
         if (isVisibleNamedProperty<LegacyOverrideBuiltIns::No>(*lexicalGlobalObject, thisObject, propertyName)) {
@@ -303,7 +303,7 @@ bool JSTestNamedDeleterNoIdentifier::deleteProperty(JSCell* cell, JSGlobalObject
 bool JSTestNamedDeleterNoIdentifier::deletePropertyByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    auto& thisObject = *jsCast<JSTestNamedDeleterNoIdentifier*>(cell);
+    auto& thisObject = *jsUncheckedDowncast<JSTestNamedDeleterNoIdentifier*>(cell);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto propertyName = Identifier::from(vm, index);
@@ -321,7 +321,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestNamedDeleterNoIdentifierConstructor, (JSGlobalObj
 {
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestNamedDeleterNoIdentifierPrototype*>(JSValue::decode(thisValue));
+    auto* prototype = jsDynamicDowncast<JSTestNamedDeleterNoIdentifierPrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestNamedDeleterNoIdentifier::getConstructor(vm, prototype->realm()));
@@ -339,7 +339,7 @@ JSC::GCClient::IsoSubspace* JSTestNamedDeleterNoIdentifier::subspaceForImpl(JSC:
 
 void JSTestNamedDeleterNoIdentifier::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestNamedDeleterNoIdentifier*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSTestNamedDeleterNoIdentifier*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (RefPtr context = thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
@@ -406,7 +406,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestNamedDeleterNoIdentifier* JSTestNamedDeleterNoIdentifier::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestNamedDeleterNoIdentifier*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestNamedDeleterNoIdentifier*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

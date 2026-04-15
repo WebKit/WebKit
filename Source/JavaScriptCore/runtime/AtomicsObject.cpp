@@ -105,7 +105,7 @@ EncodedJSValue atomicReadModifyWriteCase(JSGlobalObject* globalObject, VM& vm, c
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSGenericTypedArrayView<Adaptor>* typedArray = jsCast<JSGenericTypedArrayView<Adaptor>*>(typedArrayView);
+    JSGenericTypedArrayView<Adaptor>* typedArray = jsUncheckedDowncast<JSGenericTypedArrayView<Adaptor>*>(typedArrayView);
     
     typename Adaptor::Type extraArgs[Func::numExtraArgs + 1]; // Add 1 to avoid 0 size array error in VS.
     for (unsigned i = 0; i < Func::numExtraArgs; ++i) {
@@ -333,7 +333,7 @@ EncodedJSValue atomicStoreCase(JSGlobalObject* globalObject, VM& vm, JSValue ope
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSGenericTypedArrayView<Adaptor>* typedArray = jsCast<JSGenericTypedArrayView<Adaptor>*>(typedArrayView);
+    JSGenericTypedArrayView<Adaptor>* typedArray = jsUncheckedDowncast<JSGenericTypedArrayView<Adaptor>*>(typedArrayView);
 
     typename Adaptor::Type extraArg;
     JSValue value;
@@ -496,12 +496,12 @@ JSC_DEFINE_HOST_FUNCTION(atomicsFuncWait, (JSGlobalObject* globalObject, CallFra
     case Int32ArrayType: {
         int32_t expectedValue = callFrame->argument(2).toInt32(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
-        RELEASE_AND_RETURN(scope, JSValue::encode(atomicsWaitImpl<int32_t>(globalObject, jsCast<JSInt32Array*>(typedArrayView), accessIndex, expectedValue, callFrame->argument(3), AtomicsWaitType::Sync)));
+        RELEASE_AND_RETURN(scope, JSValue::encode(atomicsWaitImpl<int32_t>(globalObject, jsUncheckedDowncast<JSInt32Array*>(typedArrayView), accessIndex, expectedValue, callFrame->argument(3), AtomicsWaitType::Sync)));
     }
     case BigInt64ArrayType: {
         int64_t expectedValue = callFrame->argument(2).toBigInt64(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
-        RELEASE_AND_RETURN(scope, JSValue::encode(atomicsWaitImpl<int64_t>(globalObject, jsCast<JSBigInt64Array*>(typedArrayView), accessIndex, expectedValue, callFrame->argument(3), AtomicsWaitType::Sync)));
+        RELEASE_AND_RETURN(scope, JSValue::encode(atomicsWaitImpl<int64_t>(globalObject, jsUncheckedDowncast<JSBigInt64Array*>(typedArrayView), accessIndex, expectedValue, callFrame->argument(3), AtomicsWaitType::Sync)));
     }
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -528,12 +528,12 @@ JSC_DEFINE_HOST_FUNCTION(atomicsFuncWaitAsync, (JSGlobalObject* globalObject, Ca
     case Int32ArrayType: {
         int32_t expectedValue = callFrame->argument(2).toInt32(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
-        RELEASE_AND_RETURN(scope, JSValue::encode(atomicsWaitImpl<int32_t>(globalObject, jsCast<JSInt32Array*>(typedArrayView), accessIndex, expectedValue, callFrame->argument(3), AtomicsWaitType::Async)));
+        RELEASE_AND_RETURN(scope, JSValue::encode(atomicsWaitImpl<int32_t>(globalObject, jsUncheckedDowncast<JSInt32Array*>(typedArrayView), accessIndex, expectedValue, callFrame->argument(3), AtomicsWaitType::Async)));
     }
     case BigInt64ArrayType: {
         int64_t expectedValue = callFrame->argument(2).toBigInt64(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
-        RELEASE_AND_RETURN(scope, JSValue::encode(atomicsWaitImpl<int64_t>(globalObject, jsCast<JSBigInt64Array*>(typedArrayView), accessIndex, expectedValue, callFrame->argument(3), AtomicsWaitType::Async)));
+        RELEASE_AND_RETURN(scope, JSValue::encode(atomicsWaitImpl<int64_t>(globalObject, jsUncheckedDowncast<JSBigInt64Array*>(typedArrayView), accessIndex, expectedValue, callFrame->argument(3), AtomicsWaitType::Async)));
     }
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -577,11 +577,11 @@ EncodedJSValue getWaiterListSize(JSGlobalObject* globalObject, CallFrame* callFr
 
     switch (typedArrayView->type()) {
     case Int32ArrayType: {
-        auto ptr = jsCast<JSInt32Array*>(typedArrayView)->typedVector() + accessIndex;
+        auto ptr = jsUncheckedDowncast<JSInt32Array*>(typedArrayView)->typedVector() + accessIndex;
         RELEASE_AND_RETURN(scope, JSValue::encode(jsNumber(WaiterListManager::singleton().waiterListSize(ptr))));
     }
     case BigInt64ArrayType: {
-        auto ptr = jsCast<JSBigInt64Array*>(typedArrayView)->typedVector() + accessIndex;
+        auto ptr = jsUncheckedDowncast<JSBigInt64Array*>(typedArrayView)->typedVector() + accessIndex;
         RELEASE_AND_RETURN(scope, JSValue::encode(jsNumber(WaiterListManager::singleton().waiterListSize(ptr))));
     }
     default:
@@ -618,11 +618,11 @@ JSC_DEFINE_HOST_FUNCTION(atomicsFuncNotify, (JSGlobalObject* globalObject, CallF
 
     switch (typedArrayView->type()) {
     case Int32ArrayType: {
-        int32_t* ptr = jsCast<JSInt32Array*>(typedArrayView)->typedVector() + accessIndex;
+        int32_t* ptr = jsUncheckedDowncast<JSInt32Array*>(typedArrayView)->typedVector() + accessIndex;
         return JSValue::encode(jsNumber(WaiterListManager::singleton().notifyWaiter(ptr, count)));
     }
     case BigInt64ArrayType: {
-        int64_t* ptr = jsCast<JSBigInt64Array*>(typedArrayView)->typedVector() + accessIndex;
+        int64_t* ptr = jsUncheckedDowncast<JSBigInt64Array*>(typedArrayView)->typedVector() + accessIndex;
         return JSValue::encode(jsNumber(WaiterListManager::singleton().notifyWaiter(ptr, count)));
     }
     default:

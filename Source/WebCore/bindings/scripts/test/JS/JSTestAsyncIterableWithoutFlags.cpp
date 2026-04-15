@@ -156,7 +156,7 @@ JSObject* JSTestAsyncIterableWithoutFlags::prototype(VM& vm, JSDOMGlobalObject& 
 
 JSValue JSTestAsyncIterableWithoutFlags::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestAsyncIterableWithoutFlagsDOMConstructor, DOMConstructorID::TestAsyncIterableWithoutFlags>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestAsyncIterableWithoutFlagsDOMConstructor, DOMConstructorID::TestAsyncIterableWithoutFlags>(vm, *jsUncheckedDowncast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestAsyncIterableWithoutFlags::destroy(JSC::JSCell* cell)
@@ -169,7 +169,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestAsyncIterableWithoutFlagsConstructor, (JSGlobalOb
 {
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestAsyncIterableWithoutFlagsPrototype*>(JSValue::decode(thisValue));
+    auto* prototype = jsDynamicDowncast<JSTestAsyncIterableWithoutFlagsPrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestAsyncIterableWithoutFlags::getConstructor(vm, prototype->realm()));
@@ -260,7 +260,7 @@ JSC::GCClient::IsoSubspace* JSTestAsyncIterableWithoutFlags::subspaceForImpl(JSC
 
 void JSTestAsyncIterableWithoutFlags::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestAsyncIterableWithoutFlags*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSTestAsyncIterableWithoutFlags*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (RefPtr context = thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
@@ -327,7 +327,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestAsyncIterableWithoutFlags* JSTestAsyncIterableWithoutFlags::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestAsyncIterableWithoutFlags*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestAsyncIterableWithoutFlags*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

@@ -413,7 +413,7 @@ ALWAYS_INLINE Structure* JSObjectWithButterfly::visitButterflyImpl(Visitor& visi
 
 size_t JSObject::estimatedSize(JSCell* cell, VM& vm)
 {
-    JSObject* thisObject = jsCast<JSObject*>(cell);
+    JSObject* thisObject = jsUncheckedDowncast<JSObject*>(cell);
     size_t butterflyOutOfLineSize = thisObject->butterfly() ? thisObject->structure()->outOfLineSize() : 0;
     return Base::estimatedSize(cell, vm) + butterflyOutOfLineSize;
 }
@@ -421,7 +421,7 @@ size_t JSObject::estimatedSize(JSCell* cell, VM& vm)
 template<typename Visitor>
 void JSObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    JSObject* thisObject = jsCast<JSObject*>(cell);
+    JSObject* thisObject = jsUncheckedDowncast<JSObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     typename Visitor::DefaultMarkingViolationAssertionScope assertionScope(visitor);
 
@@ -433,7 +433,7 @@ DEFINE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE, JSObject);
 template<typename Visitor>
 void JSObjectWithButterfly::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    JSObjectWithButterfly* thisObject = jsCast<JSObjectWithButterfly*>(cell);
+    JSObjectWithButterfly* thisObject = jsUncheckedDowncast<JSObjectWithButterfly*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     typename Visitor::DefaultMarkingViolationAssertionScope assertionScope(visitor);
 
@@ -446,7 +446,7 @@ DEFINE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE, JSObjectWithButterfly);
 
 void JSObject::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    JSObject* thisObject = jsCast<JSObject*>(cell);
+    JSObject* thisObject = jsUncheckedDowncast<JSObject*>(cell);
     Base::analyzeHeap(cell, analyzer);
 
     Structure* structure = thisObject->structure();
@@ -485,7 +485,7 @@ void JSObject::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 template<typename Visitor>
 void JSFinalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    JSFinalObject* thisObject = jsCast<JSFinalObject*>(cell);
+    JSFinalObject* thisObject = jsUncheckedDowncast<JSFinalObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     typename Visitor::DefaultMarkingViolationAssertionScope assertionScope(visitor);
     
@@ -514,10 +514,10 @@ String JSObject::calculatedClassName(JSObject* object)
     if (object->getOwnPropertySlot(object, globalObject, vm.propertyNames->constructor, slot)) {
         EXCEPTION_ASSERT(!scope.exception());
         if (slot.isValue()) {
-            if (JSObject* ctorObject = jsDynamicCast<JSObject*>(slot.getValue(globalObject, vm.propertyNames->constructor))) {
-                if (JSFunction* constructorFunction = jsDynamicCast<JSFunction*>(ctorObject))
+            if (JSObject* ctorObject = jsDynamicDowncast<JSObject*>(slot.getValue(globalObject, vm.propertyNames->constructor))) {
+                if (JSFunction* constructorFunction = jsDynamicDowncast<JSFunction*>(ctorObject))
                     constructorFunctionName = constructorFunction->calculatedDisplayName(vm);
-                else if (InternalFunction* constructorFunction = jsDynamicCast<InternalFunction*>(ctorObject))
+                else if (InternalFunction* constructorFunction = jsDynamicDowncast<InternalFunction*>(ctorObject))
                     constructorFunctionName = constructorFunction->calculatedDisplayName(vm);
             }
         }
@@ -538,10 +538,10 @@ String JSObject::calculatedClassName(JSObject* object)
                 if (protoObject->getPropertySlot(globalObject, vm.propertyNames->constructor, slot)) {
                     EXCEPTION_ASSERT(!scope.exception());
                     if (slot.isValue()) {
-                        if (JSObject* ctorObject = jsDynamicCast<JSObject*>(slot.getValue(globalObject, vm.propertyNames->constructor))) {
-                            if (JSFunction* constructorFunction = jsDynamicCast<JSFunction*>(ctorObject))
+                        if (JSObject* ctorObject = jsDynamicDowncast<JSObject*>(slot.getValue(globalObject, vm.propertyNames->constructor))) {
+                            if (JSFunction* constructorFunction = jsDynamicDowncast<JSFunction*>(ctorObject))
                                 constructorFunctionName = constructorFunction->calculatedDisplayName(vm);
-                            else if (InternalFunction* constructorFunction = jsDynamicCast<InternalFunction*>(ctorObject))
+                            else if (InternalFunction* constructorFunction = jsDynamicDowncast<InternalFunction*>(ctorObject))
                                 constructorFunctionName = constructorFunction->calculatedDisplayName(vm);
                         }
                     }
@@ -694,7 +694,7 @@ bool ordinarySetWithOwnDescriptor(JSGlobalObject* globalObject, JSObject* object
     JSObject* current = object;
     while (true) {
         if (current->type() == ProxyObjectType) {
-            auto* proxy = jsCast<ProxyObject*>(current);
+            auto* proxy = jsUncheckedDowncast<ProxyObject*>(current);
             PutPropertySlot slot(receiver, shouldThrow);
             RELEASE_AND_RETURN(scope, proxy->ProxyObject::put(proxy, globalObject, propertyName, value, slot));
         }
@@ -852,7 +852,7 @@ bool JSObject::putInlineSlow(JSGlobalObject* globalObject, PropertyName property
         if (isValidOffset(offset)) {
             hasProperty = true;
             if (attributes & PropertyAttribute::CustomAccessorOrValue)
-                customSetter = jsCast<CustomGetterSetter*>(obj->getDirect(offset))->setter();
+                customSetter = jsUncheckedDowncast<CustomGetterSetter*>(obj->getDirect(offset))->setter();
         } else if (structure->hasNonReifiedStaticProperties()) {
             if (auto entry = structure->findPropertyHashEntry(propertyName)) {
                 hasProperty = true;
@@ -875,7 +875,7 @@ bool JSObject::putInlineSlow(JSGlobalObject* globalObject, PropertyName property
                 // We need to make sure that we decide to cache this property before we potentially execute aribitrary JS.
                 if (!this->structure()->isUncacheableDictionary())
                     slot.setCacheableSetter(obj, offset);
-                RELEASE_AND_RETURN(scope, jsCast<GetterSetter*>(obj->getDirect(offset))->callSetter(globalObject, slot.thisValue(), value, slot.isStrictMode()));
+                RELEASE_AND_RETURN(scope, jsUncheckedDowncast<GetterSetter*>(obj->getDirect(offset))->callSetter(globalObject, slot.thisValue(), value, slot.isStrictMode()));
             }
             if (attributes & PropertyAttribute::CustomAccessor) {
                 // FIXME: Remove this after WebIDL generator is fixed to set ReadOnly for [RuntimeConditionallyReadWrite] attributes.
@@ -982,7 +982,7 @@ bool JSObject::definePropertyOnReceiver(JSGlobalObject* globalObject, PropertyNa
         return typeError(globalObject, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
     scope.release();
     if (receiver->type() == GlobalProxyType)
-        receiver = jsCast<JSGlobalProxy*>(receiver)->target();
+        receiver = jsUncheckedDowncast<JSGlobalProxy*>(receiver)->target();
 
     if (slot.isTaintedByOpaqueObject() || receiver->methodTable()->defineOwnProperty != JSObject::defineOwnProperty) {
         if (mightBeSpecialProperty(vm, receiver->type(), propertyName.uid()))
@@ -1032,7 +1032,7 @@ bool JSObject::putInlineFastReplacingStaticPropertyIfNeeded(JSGlobalObject* glob
 bool JSObject::putByIndex(JSCell* cell, JSGlobalObject* globalObject, unsigned propertyName, JSValue value, bool shouldThrow)
 {
     VM& vm = globalObject->vm();
-    JSObject* thisObject = jsCast<JSObject*>(cell);
+    JSObject* thisObject = jsUncheckedDowncast<JSObject*>(cell);
 
     if (propertyName > MAX_ARRAY_INDEX) {
         PutPropertySlot slot(cell, shouldThrow);
@@ -1215,7 +1215,7 @@ void JSObject::enterDictionaryIndexingMode(VM& vm)
 void JSObject::notifyPresenceOfIndexedAccessors(VM& vm)
 {
     if (isGlobalObject()) [[unlikely]] {
-        jsCast<JSGlobalObject*>(this)->globalThis()->notifyPresenceOfIndexedAccessors(vm);
+        jsUncheckedDowncast<JSGlobalObject*>(this)->globalThis()->notifyPresenceOfIndexedAccessors(vm);
         return;
     }
 
@@ -2354,7 +2354,7 @@ bool JSObject::hasEnumerableProperty(JSGlobalObject* globalObject, unsigned prop
 // ECMA 8.6.2.5
 bool JSObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
-    JSObject* thisObject = jsCast<JSObject*>(cell);
+    JSObject* thisObject = jsUncheckedDowncast<JSObject*>(cell);
     VM& vm = globalObject->vm();
     
     if (std::optional<uint32_t> index = parseIndex(propertyName))
@@ -2411,7 +2411,7 @@ bool JSObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, Proper
 bool JSObject::deletePropertyByIndex(JSCell* cell, JSGlobalObject* globalObject, unsigned i)
 {
     VM& vm = globalObject->vm();
-    JSObject* thisObject = jsCast<JSObject*>(cell);
+    JSObject* thisObject = jsUncheckedDowncast<JSObject*>(cell);
     
     if (i > MAX_ARRAY_INDEX)
         return JSCell::deleteProperty(thisObject, globalObject, Identifier::from(vm, i));
@@ -2599,7 +2599,7 @@ JSValue JSObject::toPrimitive(JSGlobalObject* globalObject, PreferredPrimitiveTy
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (isJSArray(this)) {
-        auto* array = jsCast<JSArray*>(const_cast<JSObject*>(this));
+        auto* array = jsUncheckedDowncast<JSArray*>(const_cast<JSObject*>(this));
         if (array->isToPrimitiveFastAndNonObservable()) [[likely]]
             RELEASE_AND_RETURN(scope, array->fastToString(globalObject));
     }
@@ -2842,7 +2842,7 @@ JSString* JSObject::toString(JSGlobalObject* globalObject) const
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (isJSArray(this)) {
-        auto* array = jsCast<JSArray*>(const_cast<JSObject*>(this));
+        auto* array = jsUncheckedDowncast<JSArray*>(const_cast<JSObject*>(this));
         if (array->isToPrimitiveFastAndNonObservable()) [[likely]]
             RELEASE_AND_RETURN(scope, array->fastToString(globalObject));
     }
@@ -2945,13 +2945,13 @@ void JSObject::reifyAllStaticProperties(JSGlobalObject* globalObject)
 NEVER_INLINE void JSObject::fillGetterPropertySlot(VM&, PropertySlot& slot, JSCell* getterSetter, unsigned attributes, PropertyOffset offset)
 {
     if (structure()->isUncacheableDictionary()) {
-        slot.setGetterSlot(this, attributes, jsCast<GetterSetter*>(getterSetter));
+        slot.setGetterSlot(this, attributes, jsUncheckedDowncast<GetterSetter*>(getterSetter));
         return;
     }
 
     // This access is cacheable because Structure requires an attributeChangedTransition
     // if this property stops being an accessor.
-    slot.setCacheableGetterSlot(this, attributes, jsCast<GetterSetter*>(getterSetter), offset);
+    slot.setCacheableGetterSlot(this, attributes, jsUncheckedDowncast<GetterSetter*>(getterSetter), offset);
 }
 
 static bool putIndexedDescriptor(JSGlobalObject* globalObject, SparseArrayValueMap* map, SparseArrayEntry* entryInMap, const PropertyDescriptor& descriptor, PropertyDescriptor& oldDescriptor)
@@ -3000,7 +3000,7 @@ ALWAYS_INLINE static bool canDoFastPutDirectIndex(JSObject* object)
         return false;
 
     return (isJSArray(object) && !isCopyOnWrite(object->indexingMode()))
-        || jsDynamicCast<JSFinalObject*>(object);
+        || jsDynamicDowncast<JSFinalObject*>(object);
 }
 
 // https://tc39.es/ecma262/#sec-ordinarydefineownproperty
@@ -3181,13 +3181,13 @@ bool JSObject::attemptToInterceptPutByIndexOnHoleForPrototype(JSGlobalObject* gl
 
         if (current->type() == ProxyObjectType) {
             scope.release();
-            auto* proxy = jsCast<ProxyObject*>(current);
+            auto* proxy = jsUncheckedDowncast<ProxyObject*>(current);
             putResult = proxy->putByIndexCommon(globalObject, thisValue, i, value, shouldThrow);
             return true;
         }
 
         if (isTypedArrayType(current->type())) {
-            auto* typedArray = jsCast<JSArrayBufferView*>(current);
+            auto* typedArray = jsUncheckedDowncast<JSArrayBufferView*>(current);
             if (typedArray->isOutOfBounds() || i >= typedArray->length()) {
                 putResult = true;
                 return true;

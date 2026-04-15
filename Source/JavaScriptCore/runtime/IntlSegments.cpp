@@ -108,7 +108,7 @@ JSObject* IntlSegments::createSegmentIterator(JSGlobalObject* globalObject)
 template<typename Visitor>
 void IntlSegments::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<IntlSegments*>(cell);
+    auto* thisObject = jsUncheckedDowncast<IntlSegments*>(cell);
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_string);
 }

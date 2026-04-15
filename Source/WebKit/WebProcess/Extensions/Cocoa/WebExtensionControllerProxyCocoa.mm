@@ -100,7 +100,7 @@ void WebExtensionControllerProxy::globalObjectIsAvailableForFrame(WebPage& page,
         SUPPRESS_UNCOUNTED_ARG JSObjectSetProperty(context, globalObject, chromeString.get(), namespaceObject, kJSPropertyAttributeNone, nullptr);
     }
 
-    if (auto* domGlobalObject = JSC::jsDynamicCast<JSDOMGlobalObject*>(toJS(context))) {
+    if (auto* domGlobalObject = JSC::jsDynamicDowncast<JSDOMGlobalObject*>(toJS(context))) {
         domGlobalObject->addScriptErrorCallback([extension = Ref { *extension }, contentWorldType](const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber) {
             extension->didEncounterScriptError(message, sourceURL, lineNumber, columnNumber, contentWorldType);
         });
@@ -138,7 +138,7 @@ void WebExtensionControllerProxy::serviceWorkerGlobalObjectIsAvailableForFrame(W
         SUPPRESS_UNCOUNTED_ARG JSObjectSetProperty(context, globalObject, chromeString.get(), namespaceObject, kJSPropertyAttributeNone, nullptr);
     }
 
-    if (auto* domGlobalObject = JSC::jsDynamicCast<JSDOMGlobalObject*>(toJS(context))) {
+    if (auto* domGlobalObject = JSC::jsDynamicDowncast<JSDOMGlobalObject*>(toJS(context))) {
         domGlobalObject->addScriptErrorCallback([extension = Ref { *extension }](const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber) {
             extension->didEncounterScriptError(message, sourceURL, lineNumber, columnNumber, WebExtensionContentWorldType::Main);
         });
@@ -158,7 +158,7 @@ void WebExtensionControllerProxy::addBindingsToWebPageFrameIfNecessary(WebFrame&
     SUPPRESS_UNCOUNTED_ARG auto namespaceObject = JSObjectGetProperty(context, globalObject, browserString.get(), nullptr);
     bool browserAlreadySet = namespaceObject && JSValueIsObject(context, namespaceObject);
 
-    auto* domGlobalObject = JSC::jsDynamicCast<JSDOMGlobalObject*>(toJS(context));
+    auto* domGlobalObject = JSC::jsDynamicDowncast<JSDOMGlobalObject*>(toJS(context));
     bool callbacksAlreadyRegistered = !domGlobalObject || domGlobalObject->hasScriptErrorCallbacks();
 
     // If both browser and callbacks are already set up, nothing to do.

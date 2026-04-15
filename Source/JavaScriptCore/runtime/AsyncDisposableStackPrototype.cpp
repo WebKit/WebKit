@@ -60,7 +60,7 @@ JSC_DEFINE_HOST_FUNCTION(asyncDisposableStackProtoDisposedGetter, (JSGlobalObjec
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue thisValue = callFrame->thisValue();
-    auto* asyncDisposableStack = jsDynamicCast<JSAsyncDisposableStack*>(thisValue);
+    auto* asyncDisposableStack = jsDynamicDowncast<JSAsyncDisposableStack*>(thisValue);
     if (!asyncDisposableStack) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "AsyncDisposableStack.prototype.disposed getter requires that |this| be a DisposableStack object"_s);
 

@@ -186,7 +186,7 @@ void JSWebAssemblyStruct::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     Base::visitChildren(cell, visitor);
 
-    auto* wasmStruct = jsCast<JSWebAssemblyStruct*>(cell);
+    auto* wasmStruct = jsUncheckedDowncast<JSWebAssemblyStruct*>(cell);
     if (!wasmStruct->structType().hasRefFieldTypes()) {
 #if ASSERT_ENABLED
         for (unsigned i = 0; i < wasmStruct->structType().fieldCount(); ++i)

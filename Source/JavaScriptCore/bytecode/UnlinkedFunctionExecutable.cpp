@@ -159,7 +159,7 @@ void UnlinkedFunctionExecutable::destroy(JSCell* cell)
 template<typename Visitor>
 void UnlinkedFunctionExecutable::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    UnlinkedFunctionExecutable* thisObject = jsCast<UnlinkedFunctionExecutable*>(cell);
+    UnlinkedFunctionExecutable* thisObject = jsUncheckedDowncast<UnlinkedFunctionExecutable*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 

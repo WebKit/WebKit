@@ -350,7 +350,7 @@ private:
                 const RegisteredStructureSet& set = node->structureSet();
                 
                 if (value.value()) {
-                    if (Structure* structure = jsDynamicCast<Structure*>(value.value())) {
+                    if (Structure* structure = jsDynamicDowncast<Structure*>(value.value())) {
                         if (set.contains(m_graph.registerStructure(structure))) {
                             m_interpreter.execute(indexInBlock);
                             node->remove(m_graph);
@@ -446,7 +446,7 @@ private:
                                 constantUid = static_cast<const UniquedStringImpl*>(impl);
                         }
                     } else if (childConstant.isSymbol()) {
-                        Symbol* symbol = jsCast<Symbol*>(childConstant);
+                        Symbol* symbol = jsUncheckedDowncast<Symbol*>(childConstant);
                         constantUid = &symbol->uid();
                     }
                 }
@@ -944,7 +944,7 @@ private:
 
             case CreateThis: {
                 if (JSValue base = m_state.forNode(node->child1()).m_value) {
-                    if (auto* function = jsDynamicCast<JSFunction*>(base)) {
+                    if (auto* function = jsDynamicDowncast<JSFunction*>(base)) {
                         if (FunctionRareData* rareData = function->rareData()) {
                             if (rareData->allocationProfileWatchpointSet().isStillValid() && m_graph.isWatchingStructureCacheClearedWatchpoint(node)) {
                                 Structure* structure = rareData->objectAllocationStructure();
@@ -986,7 +986,7 @@ private:
                         changed = true;
                         break;
                     }
-                    if (auto* function = jsDynamicCast<JSFunction*>(base)) {
+                    if (auto* function = jsDynamicDowncast<JSFunction*>(base)) {
                         if (FunctionRareData* rareData = function->rareData()) {
                             if (rareData->allocationProfileWatchpointSet().isStillValid() && m_graph.isWatchingStructureCacheClearedWatchpoint(node)) {
                                 Structure* structure = rareData->internalFunctionAllocationStructure();
@@ -1011,7 +1011,7 @@ private:
                 auto foldConstant = [&] (const ClassInfo* classInfo) {
                     JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
                     if (JSValue base = m_state.forNode(node->child1()).m_value) {
-                        if (auto* function = jsDynamicCast<JSFunction*>(base)) {
+                        if (auto* function = jsDynamicDowncast<JSFunction*>(base)) {
                             if (FunctionRareData* rareData = function->rareData()) {
                                 if (rareData->allocationProfileWatchpointSet().isStillValid() && m_graph.isWatchingStructureCacheClearedWatchpoint(node)) {
                                     Structure* structure = rareData->internalFunctionAllocationStructure();
@@ -1383,7 +1383,7 @@ private:
 
             case GetScope: {
                 if (JSValue base = m_state.forNode(node->child1()).m_value) {
-                    if (JSFunction* function = jsDynamicCast<JSFunction*>(base)) {
+                    if (JSFunction* function = jsDynamicDowncast<JSFunction*>(base)) {
                         m_graph.convertToConstant(node, function->scope());
                         changed = true;
                         break;
@@ -1412,8 +1412,8 @@ private:
                 JSValue calleeValue = m_state.forNode(calleeNode).m_value;
                 JSValue newTargetValue = m_state.forNode(newTargetNode).m_value;
                 if (calleeValue && newTargetValue) {
-                    auto* callee = jsDynamicCast<JSObject*>(calleeValue);
-                    auto* newTarget = jsDynamicCast<JSFunction*>(newTargetValue);
+                    auto* callee = jsDynamicDowncast<JSObject*>(calleeValue);
+                    auto* newTarget = jsDynamicDowncast<JSFunction*>(newTargetValue);
                     if (callee && newTarget) {
                         JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
                         if (callee->realmMayBeNull() == globalObject) {

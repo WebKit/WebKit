@@ -86,7 +86,7 @@ ALWAYS_INLINE static JSWebAssemblyException* getException(JSGlobalObject* global
         throwVMError(globalObject, scope, createNotAnObjectError(globalObject, thisValue));
         return nullptr;
     }
-    auto* tag = jsDynamicCast<JSWebAssemblyException*>(thisValue.asCell());
+    auto* tag = jsDynamicDowncast<JSWebAssemblyException*>(thisValue.asCell());
     if (tag) [[likely]]
         return tag;
     throwTypeError(globalObject, scope, "WebAssembly.Exception operation called on non-Exception object"_s);
@@ -108,7 +108,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyExceptionProtoFuncGetArg, (JSGlobalObject* g
     if (callFrame->argumentCount() < 2) [[unlikely]]
         return JSValue::encode(throwException(globalObject, throwScope, createNotEnoughArgumentsError(globalObject)));
 
-    JSWebAssemblyTag* tag = jsDynamicCast<JSWebAssemblyTag*>(callFrame->argument(0));
+    JSWebAssemblyTag* tag = jsDynamicDowncast<JSWebAssemblyTag*>(callFrame->argument(0));
     if (!tag) [[unlikely]]
         return throwVMTypeError(globalObject, throwScope, formatMessage("First argument must be a WebAssembly.Tag"_s));
 
@@ -135,7 +135,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyExceptionProtoFuncIs, (JSGlobalObject* globa
     if (callFrame->argumentCount() < 1) [[unlikely]]
         return JSValue::encode(throwException(globalObject, throwScope, createNotEnoughArgumentsError(globalObject)));
 
-    JSWebAssemblyTag* tag = jsDynamicCast<JSWebAssemblyTag*>(callFrame->argument(0));
+    JSWebAssemblyTag* tag = jsDynamicDowncast<JSWebAssemblyTag*>(callFrame->argument(0));
     if (!tag)
         return throwVMTypeError(globalObject, throwScope, "WebAssembly.Exception.is(): First argument must be a WebAssembly.Tag"_s);
 

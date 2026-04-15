@@ -49,7 +49,7 @@ DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSMutationObserver);
 
 bool JSMutationObserverOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
-    if (jsCast<JSMutationObserver*>(handle.slot()->asCell())->wrapped().isReachableFromOpaqueRoots(visitor)) {
+    if (jsUncheckedDowncast<JSMutationObserver*>(handle.slot()->asCell())->wrapped().isReachableFromOpaqueRoots(visitor)) {
         if (reason) [[unlikely]]
             *reason = "Reachable from observed nodes"_s;
         return true;

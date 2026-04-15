@@ -70,13 +70,13 @@ JSObject* TemporalCalendar::getTemporalCalendarWithISODefault(JSGlobalObject* gl
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (itemValue.inherits<TemporalPlainDate>())
-        return jsCast<TemporalPlainDate*>(itemValue)->calendar();
+        return jsUncheckedDowncast<TemporalPlainDate*>(itemValue)->calendar();
 
     if (itemValue.inherits<TemporalPlainDateTime>())
-        return jsCast<TemporalPlainDateTime*>(itemValue)->calendar();
+        return jsUncheckedDowncast<TemporalPlainDateTime*>(itemValue)->calendar();
 
     if (itemValue.inherits<TemporalPlainTime>())
-        return jsCast<TemporalPlainTime*>(itemValue)->calendar();
+        return jsUncheckedDowncast<TemporalPlainTime*>(itemValue)->calendar();
 
     JSValue calendar = itemValue.get(globalObject, vm.propertyNames->calendar);
     RETURN_IF_EXCEPTION(scope, { });
@@ -112,26 +112,26 @@ JSObject* TemporalCalendar::from(JSGlobalObject* globalObject, JSValue calendarL
     if (calendarLike.isObject()) {
         // FIXME: Also support PlainMonthDay, PlainYearMonth, ZonedDateTime.
         if (calendarLike.inherits<TemporalPlainDate>())
-            return jsCast<TemporalPlainDate*>(calendarLike)->calendar();
+            return jsUncheckedDowncast<TemporalPlainDate*>(calendarLike)->calendar();
 
         if (calendarLike.inherits<TemporalPlainDateTime>())
-            return jsCast<TemporalPlainDateTime*>(calendarLike)->calendar();
+            return jsUncheckedDowncast<TemporalPlainDateTime*>(calendarLike)->calendar();
 
         if (calendarLike.inherits<TemporalPlainTime>())
-            return jsCast<TemporalPlainTime*>(calendarLike)->calendar();
+            return jsUncheckedDowncast<TemporalPlainTime*>(calendarLike)->calendar();
 
-        JSObject* calendarLikeObject = jsCast<JSObject*>(calendarLike);
+        JSObject* calendarLikeObject = jsUncheckedDowncast<JSObject*>(calendarLike);
         bool hasProperty = calendarLikeObject->hasProperty(globalObject, vm.propertyNames->calendar);
         RETURN_IF_EXCEPTION(scope, { });
         if (!hasProperty)
-            return jsCast<JSObject*>(calendarLike);
+            return jsUncheckedDowncast<JSObject*>(calendarLike);
 
         calendarLike = calendarLikeObject->get(globalObject, vm.propertyNames->calendar);
         if (calendarLike.isObject()) {
-            bool hasProperty = jsCast<JSObject*>(calendarLike)->hasProperty(globalObject, vm.propertyNames->calendar);
+            bool hasProperty = jsUncheckedDowncast<JSObject*>(calendarLike)->hasProperty(globalObject, vm.propertyNames->calendar);
             RETURN_IF_EXCEPTION(scope, { });
             if (!hasProperty)
-                return jsCast<JSObject*>(calendarLike);
+                return jsUncheckedDowncast<JSObject*>(calendarLike);
         }
     }
 

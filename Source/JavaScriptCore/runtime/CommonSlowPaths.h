@@ -127,13 +127,13 @@ inline bool canAccessArgumentIndexQuickly(JSObject& object, uint32_t index)
 {
     switch (object.type()) {
     case DirectArgumentsType: {
-        DirectArguments* directArguments = jsCast<DirectArguments*>(&object);
+        DirectArguments* directArguments = jsUncheckedDowncast<DirectArguments*>(&object);
         if (directArguments->isMappedArgumentInDFG(index))
             return true;
         break;
     }
     case ScopedArgumentsType: {
-        ScopedArguments* scopedArguments = jsCast<ScopedArguments*>(&object);
+        ScopedArguments* scopedArguments = jsUncheckedDowncast<ScopedArguments*>(&object);
         if (scopedArguments->isMappedArgumentInDFG(index))
             return true;
         break;
@@ -147,7 +147,7 @@ inline bool canAccessArgumentIndexQuickly(JSObject& object, uint32_t index)
 ALWAYS_INLINE Structure* originalStructureBeforePut(JSCell* cell)
 {
     if (cell->type() == GlobalProxyType)
-        return jsCast<JSGlobalProxy*>(cell)->target()->structure();
+        return jsUncheckedDowncast<JSGlobalProxy*>(cell)->target()->structure();
     return cell->structure();
 }
 
@@ -183,7 +183,7 @@ static ALWAYS_INLINE void putDirectWithReify(VM& vm, JSGlobalObject* globalObjec
     auto scope = DECLARE_THROW_SCOPE(vm);
     bool isJSFunction = baseObject->inherits<JSFunction>();
     if (isJSFunction) {
-        JSFunction* jsFunction = jsCast<JSFunction*>(baseObject);
+        JSFunction* jsFunction = jsUncheckedDowncast<JSFunction*>(baseObject);
 
         if (propertyName == vm.propertyNames->prototype) {
             slot.disableCaching();
@@ -220,7 +220,7 @@ static ALWAYS_INLINE void putDirectAccessorWithReify(VM& vm, JSGlobalObject* glo
     bool isJSFunction = baseObject->inherits<JSFunction>();
     if (isJSFunction) {
         ASSERT(propertyName != vm.propertyNames->prototype);
-        jsCast<JSFunction*>(baseObject)->reifyLazyPropertyIfNeeded<>(vm, globalObject, propertyName);
+        jsUncheckedDowncast<JSFunction*>(baseObject)->reifyLazyPropertyIfNeeded<>(vm, globalObject, propertyName);
         RETURN_IF_EXCEPTION(scope, void());
     }
 

@@ -117,7 +117,7 @@ JSC::JSValue JSWritableStreamSink::start(JSC::JSGlobalObject& globalObject, JSC:
     Ref vm = globalObject.vm();
 
     ASSERT(callFrame.argumentCount());
-    JSWritableStreamDefaultController* controller = jsDynamicCast<JSWritableStreamDefaultController*>(callFrame.uncheckedArgument(0));
+    JSWritableStreamDefaultController* controller = jsDynamicDowncast<JSWritableStreamDefaultController*>(callFrame.uncheckedArgument(0));
     ASSERT(controller);
 
     m_controller.set(vm, this, controller);

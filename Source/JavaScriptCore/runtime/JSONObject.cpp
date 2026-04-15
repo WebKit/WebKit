@@ -166,7 +166,7 @@ static inline JSValue unwrapBoxedPrimitive(JSGlobalObject* globalObject, JSObjec
     if (object->inherits<StringObject>())
         return object->toString(globalObject);
     if (object->inherits<BooleanObject>() || object->inherits<BigIntObject>())
-        return jsCast<JSWrapperObject*>(object)->internalValue();
+        return jsUncheckedDowncast<JSWrapperObject*>(object)->internalValue();
 
     // Do not unwrap SymbolObject to Symbol. It is not performed in the spec.
     // http://www.ecma-international.org/ecma-262/6.0/#sec-serializejsonproperty
@@ -259,7 +259,7 @@ Stringifier::Stringifier(JSGlobalObject* globalObject, JSValue replacer, JSValue
                 m_usingArrayReplacer = true;
                 forEachInArrayLike(globalObject, replacerObject, [&] (JSValue name) -> bool {
                     if (name.isObject()) {
-                        auto* nameObject = jsCast<JSObject*>(name);
+                        auto* nameObject = jsUncheckedDowncast<JSObject*>(name);
                         if (!nameObject->inherits<NumberObject>() && !nameObject->inherits<StringObject>())
                             return true;
                     } else if (!name.isNumber() && !name.isString())
@@ -381,7 +381,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
     if (value.isObject()) {
         JSObject* object = asObject(value);
         if (object->inherits<JSRawJSONObject>()) {
-            String string = jsCast<JSRawJSONObject*>(object)->rawJSON(vm)->value(m_globalObject);
+            String string = jsUncheckedDowncast<JSRawJSONObject*>(object)->rawJSON(vm)->value(m_globalObject);
             RETURN_IF_EXCEPTION(scope, StringifyFailed);
             builder.append(WTF::move(string));
             return StringifySucceeded;
@@ -625,7 +625,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
                     unsigned offset = std::get<1>(m_propertiesAndOffsets[index]);
                     value = m_object->getDirect(offset);
                     if (value.isGetterSetter()) {
-                        value = jsCast<GetterSetter*>(value)->callGetter(globalObject, m_object);
+                        value = jsUncheckedDowncast<GetterSetter*>(value)->callGetter(globalObject, m_object);
                         RETURN_IF_EXCEPTION(scope, false);
                     } else if (value.isCustomGetterSetter()) {
                         value = m_object->get(globalObject, propertyName);
@@ -1771,7 +1771,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
             objectStartVisitMember:
             [[fallthrough]];
             case ObjectStartVisitMember: {
-                JSObject* object = jsCast<JSObject*>(markedStack.last());
+                JSObject* object = jsUncheckedDowncast<JSObject*>(markedStack.last());
                 uint32_t index = indexStack.last();
                 PropertyNameArrayBuilder& properties = propertyStack.last();
                 if (index == properties.size()) {
@@ -1812,7 +1812,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 [[fallthrough]];
             }
             case ObjectEndVisitMember: {
-                JSObject* object = jsCast<JSObject*>(markedStack.last());
+                JSObject* object = jsUncheckedDowncast<JSObject*>(markedStack.last());
                 Identifier prop = propertyStack.last()[indexStack.last()];
                 JSValue filteredValue = callReviver(object, jsString(vm, prop.string()), outValue, outValueRange);
                 RETURN_IF_EXCEPTION(scope, { });

@@ -43,12 +43,12 @@ WebCoreTypedArrayController::~WebCoreTypedArrayController() = default;
 
 JSC::JSArrayBuffer* WebCoreTypedArrayController::toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSC::JSGlobalObject* globalObject, JSC::ArrayBuffer& buffer)
 {
-    return JSC::jsCast<JSC::JSArrayBuffer*>(WebCore::toJS(lexicalGlobalObject, JSC::jsCast<JSDOMGlobalObject*>(globalObject), buffer));
+    return JSC::jsUncheckedDowncast<JSC::JSArrayBuffer*>(WebCore::toJS(lexicalGlobalObject, JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(globalObject), buffer));
 }
 
 void WebCoreTypedArrayController::registerWrapper(JSC::JSGlobalObject* globalObject, JSC::ArrayBuffer& native, JSC::JSArrayBuffer& wrapper)
 {
-    cacheWrapper(JSC::jsCast<JSDOMGlobalObject*>(globalObject)->world(), &native, &wrapper);
+    cacheWrapper(JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(globalObject)->world(), &native, &wrapper);
 }
 
 bool WebCoreTypedArrayController::isAtomicsWaitAllowedOnCurrentThread()
@@ -60,13 +60,13 @@ bool WebCoreTypedArrayController::JSArrayBufferOwner::isReachableFromOpaqueRoots
 {
     if (reason) [[unlikely]]
         *reason = "ArrayBuffer is opaque root"_s;
-    auto& wrapper = *JSC::jsCast<JSC::JSArrayBuffer*>(handle.slot()->asCell());
+    auto& wrapper = *JSC::jsUncheckedDowncast<JSC::JSArrayBuffer*>(handle.slot()->asCell());
     return visitor.containsOpaqueRoot(wrapper.impl());
 }
 
 void WebCoreTypedArrayController::JSArrayBufferOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
-    // We cannot rely on jsCast() during JSObject destruction.
+    // We cannot rely on jsUncheckedDowncast() during JSObject destruction.
     SUPPRESS_MEMORY_UNSAFE_CAST auto& wrapper = *static_cast<JSC::JSArrayBuffer*>(handle.slot()->asCell());
     uncacheWrapper(*static_cast<DOMWrapperWorld*>(context), wrapper.impl(), &wrapper);
 }

@@ -59,7 +59,7 @@ JSAsyncFromSyncIterator* JSAsyncFromSyncIterator::create(VM& vm, Structure* stru
 template<typename Visitor>
 void JSAsyncFromSyncIterator::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<JSAsyncFromSyncIterator*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSAsyncFromSyncIterator*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 }

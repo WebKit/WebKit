@@ -52,7 +52,7 @@ void JSAsyncDisposableStack::finishCreation(VM& vm)
 template<typename Visitor>
 void JSAsyncDisposableStack::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<JSAsyncDisposableStack*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSAsyncDisposableStack*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 }

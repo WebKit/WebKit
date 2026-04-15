@@ -136,7 +136,7 @@ ExceptionOr<Ref<ReadableStream>> ReadableStream::create(JSDOMGlobalObject& globa
 
 ExceptionOr<Ref<ReadableStream>> ReadableStream::createFromJSValues(JSC::JSGlobalObject& globalObject, JSC::JSValue underlyingSource, JSC::JSValue strategy, std::optional<double> highWaterMark)
 {
-    auto& jsDOMGlobalObject = *JSC::jsCast<JSDOMGlobalObject*>(&globalObject);
+    auto& jsDOMGlobalObject = *JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(&globalObject);
     RefPtr protectedContext { jsDOMGlobalObject.scriptExecutionContext() };
     auto result = InternalReadableStream::createFromUnderlyingSource(jsDOMGlobalObject, underlyingSource, strategy, highWaterMark);
     if (result.hasException())
@@ -358,7 +358,7 @@ void ReadableStream::cancel(Exception&& exception)
     }
 
     RefPtr context = scriptExecutionContext();
-    auto* globalObject = context ? JSC::jsCast<JSDOMGlobalObject*>(context->globalObject()): nullptr;
+    auto* globalObject = context ? JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(context->globalObject()): nullptr;
     if (!globalObject)
         return;
 
@@ -534,7 +534,7 @@ Ref<DOMPromise> ReadableStream::cancel(JSDOMGlobalObject& globalObject, JSC::JSV
             return promise;
         }
 
-        auto* jsPromise = jsCast<JSC::JSPromise*>(result);
+        auto* jsPromise = jsUncheckedDowncast<JSC::JSPromise*>(result);
         if (!jsPromise)
             return promise;
 
@@ -693,7 +693,7 @@ void ReadableStream::teedBranchIsDestroyed(ReadableStream& teedBranch)
 JSDOMGlobalObject* ReadableStream::globalObject()
 {
     RefPtr context = scriptExecutionContext();
-    return context ? JSC::jsCast<JSDOMGlobalObject*>(context->globalObject()) : nullptr;
+    return context ? JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(context->globalObject()) : nullptr;
 }
 
 bool ReadableStream::isPulling() const
@@ -809,7 +809,7 @@ Ref<DOMPromise> ReadableStream::Iterator::returnSteps(JSDOMGlobalObject& globalO
 // https://streams.spec.whatwg.org/#rs-asynciterator
 ExceptionOr<Ref<ReadableStream::Iterator>> ReadableStream::createIterator(ScriptExecutionContext* context, std::optional<IteratorOptions>&& options)
 {
-    auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(context->globalObject());
+    auto& globalObject = *JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(context->globalObject());
     auto readerOrException = ReadableStreamDefaultReader::create(globalObject, *this);
     if (readerOrException.hasException())
         return readerOrException.releaseException();

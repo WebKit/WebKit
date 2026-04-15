@@ -59,7 +59,7 @@ void AsyncDisposableStackConstructor::finishCreation(VM& vm, JSGlobalObject*, As
 template<typename Visitor>
 void AsyncDisposableStackConstructor::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<AsyncDisposableStackConstructor*>(cell);
+    auto* thisObject = jsUncheckedDowncast<AsyncDisposableStackConstructor*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 }

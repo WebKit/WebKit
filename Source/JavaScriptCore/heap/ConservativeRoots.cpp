@@ -273,7 +273,7 @@ public:
     void markKnownJSCell(JSCell* cell)
     {
         if (cell->type() == CodeBlockType)
-            m_codeBlocks.mark(m_codeBlocksLocker, jsCast<CodeBlock*>(cell));
+            m_codeBlocks.mark(m_codeBlocksLocker, jsUncheckedDowncast<CodeBlock*>(cell));
     }
 
 private:

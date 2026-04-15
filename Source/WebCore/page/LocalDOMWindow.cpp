@@ -854,7 +854,7 @@ bool LocalDOMWindow::shouldHaveWebKitNamespaceForWorld(DOMWrapperWorld& world, J
     if (world.allowNodeSerialization())
         return true;
 
-    if (jsCast<JSDOMGlobalObject*>(globalObject)->allowsJSHandleCreation())
+    if (jsUncheckedDowncast<JSDOMGlobalObject*>(globalObject)->allowsJSHandleCreation())
         return true;
 
     RefPtr frame = this->frame();

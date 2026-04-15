@@ -30,7 +30,7 @@
 namespace JSC {
 
 template<typename To, typename From>
-inline To jsCast(From* from)
+inline To jsUncheckedDowncast(From* from)
 {
     static_assert(std::is_base_of<JSCell, typename std::remove_pointer<To>::type>::value && std::is_base_of<JSCell, typename std::remove_pointer<From>::type>::value, "JS casting expects that the types you are casting to/from are subclasses of JSCell");
 #if (ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)) && CPU(X86_64)
@@ -43,7 +43,7 @@ inline To jsCast(From* from)
 }
 
 template<typename To>
-inline To jsCast(JSValue from)
+inline To jsUncheckedDowncast(JSValue from)
 {
     static_assert(std::is_base_of<JSCell, typename std::remove_pointer<To>::type>::value, "JS casting expects that the types you are casting to is a subclass of JSCell");
 #if (ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)) && CPU(X86_64)
@@ -258,7 +258,7 @@ bool inherits(From* from)
 } // namespace JSCastingHelpers
 
 template<typename To, typename From>
-To jsDynamicCast(From* from)
+To jsDynamicDowncast(From* from)
 {
     using Dispatcher = JSCastingHelpers::InheritsTraits<typename std::remove_cv<typename std::remove_pointer<To>::type>::type>;
     if (Dispatcher::template inherits<>(from)) [[likely]]
@@ -267,17 +267,17 @@ To jsDynamicCast(From* from)
 }
 
 template<typename To>
-To jsDynamicCast(JSValue from)
+To jsDynamicDowncast(JSValue from)
 {
     if (!from.isCell()) [[unlikely]]
         return nullptr;
-    return jsDynamicCast<To>(from.asCell());
+    return jsDynamicDowncast<To>(from.asCell());
 }
 
 template<typename To, typename From>
-To jsSecureCast(From from)
+To jsDowncast(From from)
 {
-    auto* result = jsDynamicCast<To>(from);
+    auto* result = jsDynamicDowncast<To>(from);
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(result);
     return result;
 }

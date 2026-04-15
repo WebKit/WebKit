@@ -120,7 +120,7 @@ static JSC::EncodedJSValue temporalPlainYearMonthPrototypeAddOrSubtract(JSGlobal
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* yearMonth = jsDynamicCast<TemporalPlainYearMonth*>(callFrame->thisValue());
+    auto* yearMonth = jsDynamicDowncast<TemporalPlainYearMonth*>(callFrame->thisValue());
     if (!yearMonth) [[unlikely]] {
         if constexpr (op == AddOrSubtract::Add)
             return throwVMTypeError(globalObject, scope, "Temporal.PlainYearMonth.prototype.add called on value that's not a PlainYearMonth"_s);
@@ -159,7 +159,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncWith, (JSGlobalObjec
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* yearMonth = jsDynamicCast<TemporalPlainYearMonth*>(callFrame->thisValue());
+    auto* yearMonth = jsDynamicDowncast<TemporalPlainYearMonth*>(callFrame->thisValue());
     if (!yearMonth) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Temporal.PlainYearMonth.prototype.with called on value that's not a PlainYearMonth"_s);
 
@@ -179,7 +179,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncUntil, (JSGlobalObje
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* yearMonth = jsDynamicCast<TemporalPlainYearMonth*>(callFrame->thisValue());
+    auto* yearMonth = jsDynamicDowncast<TemporalPlainYearMonth*>(callFrame->thisValue());
     if (!yearMonth) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Temporal.PlainYearMonth.prototype.until called on value that's not a PlainYearMonth"_s);
 
@@ -198,7 +198,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncSince, (JSGlobalObje
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* yearMonth = jsDynamicCast<TemporalPlainYearMonth*>(callFrame->thisValue());
+    auto* yearMonth = jsDynamicDowncast<TemporalPlainYearMonth*>(callFrame->thisValue());
     if (!yearMonth) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Temporal.PlainYearMonth.prototype.since called on value that's not a PlainYearMonth"_s);
 
@@ -217,7 +217,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncEquals, (JSGlobalObj
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* yearMonth = jsDynamicCast<TemporalPlainYearMonth*>(callFrame->thisValue());
+    auto* yearMonth = jsDynamicDowncast<TemporalPlainYearMonth*>(callFrame->thisValue());
     if (!yearMonth) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Temporal.PlainYearMonth.prototype.equals called on value that's not a PlainYearMonth"_s);
 
@@ -236,7 +236,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncToPlainDate, (JSGlob
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* yearMonth = jsDynamicCast<TemporalPlainYearMonth*>(callFrame->thisValue());
+    auto* yearMonth = jsDynamicDowncast<TemporalPlainYearMonth*>(callFrame->thisValue());
     if (!yearMonth) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Temporal.PlainYearMonth.prototype.toPlainDate called on value that's not a PlainYearMonth"_s);
 
@@ -270,7 +270,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncToString, (JSGlobalO
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* yearMonth = jsDynamicCast<TemporalPlainYearMonth*>(callFrame->thisValue());
+    auto* yearMonth = jsDynamicDowncast<TemporalPlainYearMonth*>(callFrame->thisValue());
     if (!yearMonth) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Temporal.PlainYearMonth.prototype.toString called on value that's not a PlainYearMonth"_s);
 
@@ -283,7 +283,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncToJSON, (JSGlobalObj
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* yearMonth = jsDynamicCast<TemporalPlainYearMonth*>(callFrame->thisValue());
+    auto* yearMonth = jsDynamicDowncast<TemporalPlainYearMonth*>(callFrame->thisValue());
     if (!yearMonth) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Temporal.PlainYearMonth.prototype.toJSON called on value that's not a PlainYearMonth"_s);
 
@@ -296,7 +296,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncToLocaleString, (JSG
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* yearMonth = jsDynamicCast<TemporalPlainYearMonth*>(callFrame->thisValue());
+    auto* yearMonth = jsDynamicDowncast<TemporalPlainYearMonth*>(callFrame->thisValue());
     if (!yearMonth) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Temporal.PlainYearMonth.prototype.toLocaleString called on value that's not a PlainYearMonth"_s);
 
@@ -317,7 +317,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainYearMonthPrototypeGetterCalendarId, (JSGlo
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* yearMonth = jsDynamicCast<TemporalPlainYearMonth*>(JSValue::decode(thisValue));
+    auto* yearMonth = jsDynamicDowncast<TemporalPlainYearMonth*>(JSValue::decode(thisValue));
     if (!yearMonth) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Temporal.PlainYearMonth.prototype.calendar called on value that's not a PlainYearMonth"_s);
 
@@ -330,7 +330,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainYearMonthPrototypeGetterYear, (JSGlobalObj
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* yearMonth = jsDynamicCast<TemporalPlainYearMonth*>(JSValue::decode(thisValue));
+    auto* yearMonth = jsDynamicDowncast<TemporalPlainYearMonth*>(JSValue::decode(thisValue));
     if (!yearMonth) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Temporal.PlainYearMonth.prototype.year called on value that's not a PlainYearMonth"_s);
 
@@ -342,7 +342,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainYearMonthPrototypeGetterMonth, (JSGlobalOb
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* yearMonth = jsDynamicCast<TemporalPlainYearMonth*>(JSValue::decode(thisValue));
+    auto* yearMonth = jsDynamicDowncast<TemporalPlainYearMonth*>(JSValue::decode(thisValue));
     if (!yearMonth) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Temporal.PlainYearMonth.prototype.month called on value that's not a PlainYearMonth"_s);
 
@@ -354,7 +354,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainYearMonthPrototypeGetterMonthCode, (JSGlob
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* yearMonth = jsDynamicCast<TemporalPlainYearMonth*>(JSValue::decode(thisValue));
+    auto* yearMonth = jsDynamicDowncast<TemporalPlainYearMonth*>(JSValue::decode(thisValue));
     if (!yearMonth) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Temporal.PlainYearMonth.prototype.monthCode called on value that's not a PlainYearMonth"_s);
 
@@ -366,7 +366,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainYearMonthPrototypeGetterDaysInMonth, (JSGl
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* yearMonth = jsDynamicCast<TemporalPlainYearMonth*>(JSValue::decode(thisValue));
+    auto* yearMonth = jsDynamicDowncast<TemporalPlainYearMonth*>(JSValue::decode(thisValue));
     if (!yearMonth) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Temporal.PlainYearMonth.prototype.daysInMonth called on value that's not a PlainYearMonth"_s);
 
@@ -378,7 +378,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainYearMonthPrototypeGetterDaysInYear, (JSGlo
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* yearMonth = jsDynamicCast<TemporalPlainYearMonth*>(JSValue::decode(thisValue));
+    auto* yearMonth = jsDynamicDowncast<TemporalPlainYearMonth*>(JSValue::decode(thisValue));
     if (!yearMonth) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Temporal.PlainYearMonth.prototype.daysInYear called on value that's not a PlainYearMonth"_s);
 
@@ -390,7 +390,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainYearMonthPrototypeGetterMonthsInYear, (JSG
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* yearMonth = jsDynamicCast<TemporalPlainYearMonth*>(JSValue::decode(thisValue));
+    auto* yearMonth = jsDynamicDowncast<TemporalPlainYearMonth*>(JSValue::decode(thisValue));
     if (!yearMonth) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Temporal.PlainYearMonth.prototype.monthsInYear called on value that's not a PlainYearMonth"_s);
 
@@ -402,7 +402,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainYearMonthPrototypeGetterInLeapYear, (JSGlo
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* yearMonth = jsDynamicCast<TemporalPlainYearMonth*>(JSValue::decode(thisValue));
+    auto* yearMonth = jsDynamicDowncast<TemporalPlainYearMonth*>(JSValue::decode(thisValue));
     if (!yearMonth) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Temporal.PlainYearMonth.prototype.inLeapYear called on value that's not a PlainYearMonth"_s);
 

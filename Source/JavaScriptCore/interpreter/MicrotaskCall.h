@@ -65,7 +65,7 @@ public:
         auto* cell = functionObject.asCell();
         if (cell->type() != JSFunctionType) [[unlikely]]
             return false;
-        return m_functionExecutable == jsCast<JSFunction*>(cell)->executable();
+        return m_functionExecutable == jsUncheckedDowncast<JSFunction*>(cell)->executable();
     }
 
     bool isInitializedFor(FunctionExecutable* executable) const

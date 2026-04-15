@@ -163,7 +163,7 @@ WTF_MAKE_COMPACT_TZONE_ALLOCATED_IMPL(UserGestureInitiatedMicrotaskDispatcher);
 
 RefPtr<JSC::MicrotaskDispatcher> UserGestureToken::createMicrotaskDispatcher(JSC::VM&, JSC::JSGlobalObject* globalObject)
 {
-    auto* domGlobalObject = JSC::jsCast<JSDOMGlobalObject*>(globalObject);
+    auto* domGlobalObject = JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(globalObject);
     RefPtr context = domGlobalObject->scriptExecutionContext();
     if (!context) [[unlikely]]
         return nullptr;

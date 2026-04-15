@@ -82,18 +82,18 @@ void validateWasmValue(uint64_t wasmValue, Type expectedType)
             ASSERT(value.isInt32());
 
         if (isStructref(expectedType))
-            ASSERT(jsDynamicCast<JSWebAssemblyStruct*>(value));
+            ASSERT(jsDynamicDowncast<JSWebAssemblyStruct*>(value));
 
         if (isArrayref(expectedType))
-            ASSERT(jsDynamicCast<JSWebAssemblyArray*>(value));
+            ASSERT(jsDynamicDowncast<JSWebAssemblyArray*>(value));
 
         if (isRefWithTypeIndex(expectedType)) {
             auto expectedRTT = Wasm::TypeInformation::getCanonicalRTT(expectedType.index);
             if (expectedRTT->kind() == RTTKind::Function) {
-                ASSERT(jsDynamicCast<JSFunction*>(value));
+                ASSERT(jsDynamicDowncast<JSFunction*>(value));
                 return;
             }
-            auto objectPtr = jsCast<WebAssemblyGCObjectBase*>(value);
+            auto objectPtr = jsUncheckedDowncast<WebAssemblyGCObjectBase*>(value);
             auto& objectRTT = objectPtr->rtt();
             ASSERT(objectRTT.isSubRTT(expectedRTT.get()));
         }

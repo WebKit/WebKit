@@ -385,7 +385,7 @@ WASM_IPINT_EXTERN_CPP_DECL(retrieve_and_clear_exception, CallFrame* callFrame, I
     if (stackPointer) {
         // We only have a stack pointer if we're doing a catch not a catch_all
         Exception* exception = throwScope.exception();
-        auto* wasmException = jsSecureCast<JSWebAssemblyException*>(exception->value());
+        auto* wasmException = jsDowncast<JSWebAssemblyException*>(exception->value());
         copyExceptionPayloadToStack(wasmException->tag().type(), wasmException->payload(), stackPointer);
     }
 
@@ -433,7 +433,7 @@ WASM_IPINT_EXTERN_CPP_DECL(retrieve_clear_and_push_exception_and_arguments, Call
     }
 
     Exception* exception = throwScope.exception();
-    auto* wasmException = jsSecureCast<JSWebAssemblyException*>(exception->value());
+    auto* wasmException = jsDowncast<JSWebAssemblyException*>(exception->value());
 
     ASSERT(wasmException->payload().size() == wasmException->tag().parameterBufferSize());
 
@@ -508,7 +508,7 @@ WASM_IPINT_EXTERN_CPP_DECL(throw_ref, CallFrame* callFrame, EncodedJSValue exnre
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    auto* exception = jsSecureCast<JSWebAssemblyException*>(JSValue::decode(exnref));
+    auto* exception = jsDowncast<JSWebAssemblyException*>(JSValue::decode(exnref));
     RELEASE_ASSERT(exception);
     throwException(globalObject, throwScope, exception);
 
@@ -681,7 +681,7 @@ WASM_IPINT_EXTERN_CPP_DECL(struct_get_s, EncodedJSValue object, uint32_t fieldIn
     Wasm::structGet(object, fieldIndex, result);
 
     // sign extension
-    JSWebAssemblyStruct* structObject = jsCast<JSWebAssemblyStruct*>(JSValue::decode(object).getObject());
+    JSWebAssemblyStruct* structObject = jsUncheckedDowncast<JSWebAssemblyStruct*>(JSValue::decode(object).getObject());
     Wasm::StorageType type = structObject->fieldType(fieldIndex).type;
     ASSERT(type.is<Wasm::PackedType>());
     size_t elementSize = type.as<Wasm::PackedType>() == Wasm::PackedType::I8 ? sizeof(uint8_t) : sizeof(uint16_t);
@@ -788,7 +788,7 @@ WASM_IPINT_EXTERN_CPP_DECL(array_get, uint32_t type, IPIntStackEntry* sp)
         IPINT_THROW(Wasm::ExceptionType::NullAccess);
     JSValue arrayValue = JSValue::decode(array);
     ASSERT(arrayValue.isObject());
-    JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(arrayValue.getObject());
+    JSWebAssemblyArray* arrayObject = jsUncheckedDowncast<JSWebAssemblyArray*>(arrayValue.getObject());
     if (index >= arrayObject->size()) [[unlikely]]
         IPINT_THROW(Wasm::ExceptionType::OutOfBoundsArrayGet);
     Wasm::arrayGet(instance, type, array, index, result);
@@ -808,7 +808,7 @@ WASM_IPINT_EXTERN_CPP_DECL(array_get_s, uint32_t type, IPIntStackEntry* sp)
         IPINT_THROW(Wasm::ExceptionType::NullAccess);
     JSValue arrayValue = JSValue::decode(array);
     ASSERT(arrayValue.isObject());
-    JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(arrayValue.getObject());
+    JSWebAssemblyArray* arrayObject = jsUncheckedDowncast<JSWebAssemblyArray*>(arrayValue.getObject());
     if (index >= arrayObject->size()) [[unlikely]]
         IPINT_THROW(Wasm::ExceptionType::OutOfBoundsArrayGet);
 
@@ -836,7 +836,7 @@ WASM_IPINT_EXTERN_CPP_DECL(array_set, uint32_t type, IPIntStackEntry* sp)
 
     JSValue arrayValue = JSValue::decode(sp[2].ref);
     ASSERT(arrayValue.isObject());
-    JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(arrayValue.getObject());
+    JSWebAssemblyArray* arrayObject = jsUncheckedDowncast<JSWebAssemblyArray*>(arrayValue.getObject());
     uint32_t index = static_cast<uint32_t>(sp[1].i32);
 
     if (index >= arrayObject->size()) [[unlikely]]
@@ -859,7 +859,7 @@ WASM_IPINT_EXTERN_CPP_DECL(array_fill, IPIntStackEntry* sp)
         IPINT_THROW(Wasm::ExceptionType::NullArrayFill);
 
     ASSERT(arrayValue.isObject());
-    JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(arrayValue.getObject());
+    JSWebAssemblyArray* arrayObject = jsUncheckedDowncast<JSWebAssemblyArray*>(arrayValue.getObject());
 
     uint32_t offset = sp[2].i32;
     IPIntStackEntry* value = &sp[1];
@@ -1071,7 +1071,7 @@ WASM_IPINT_EXTERN_CPP_DECL(prepare_call, CallFrame* callFrame, CallMetadata* cal
         wasmInstanceReturn = instance;
     }
 
-    JSWebAssemblyInstance* targetInstance = isJSCallee ? nullptr : jsDynamicCast<JSWebAssemblyInstance*>(wasmInstanceReturn.unboxedCell());
+    JSWebAssemblyInstance* targetInstance = isJSCallee ? nullptr : jsDynamicDowncast<JSWebAssemblyInstance*>(wasmInstanceReturn.unboxedCell());
     IPINT_HANDLE_STEP_INTO_CALL(instance->vm(), CalleeBits(calleeReturn.encodedJSValue()), targetInstance);
 
     RELEASE_ASSERT(WTF::isTaggedWith<WasmEntryPtrTag>(codePtr));
@@ -1110,7 +1110,7 @@ WASM_IPINT_EXTERN_CPP_DECL(prepare_call_indirect, CallFrame* callFrame, Wasm::Fu
 
     Register& functionInfoSlot = calleeReturn[1];
     if (function->m_function.isJS())
-        functionInfoSlot = reinterpret_cast<uintptr_t>(jsCast<WebAssemblyFunctionBase*>(function->m_value.get())->callLinkInfo());
+        functionInfoSlot = reinterpret_cast<uintptr_t>(jsUncheckedDowncast<WebAssemblyFunctionBase*>(function->m_value.get())->callLinkInfo());
     else {
         auto* targetInstance = function->m_function.targetInstance.get();
         functionInfoSlot = targetInstance;
@@ -1138,10 +1138,10 @@ WASM_IPINT_EXTERN_CPP_DECL(prepare_call_ref, CallFrame* callFrame, CallRefMetada
         IPINT_THROW(Wasm::ExceptionType::NullReference);
 
     ASSERT(targetReference.isObject());
-    JSObject* referenceAsObject = jsCast<JSObject*>(targetReference);
+    JSObject* referenceAsObject = jsUncheckedDowncast<JSObject*>(targetReference);
 
     ASSERT(referenceAsObject->inherits<WebAssemblyFunctionBase>());
-    auto* wasmFunction = jsCast<WebAssemblyFunctionBase*>(referenceAsObject);
+    auto* wasmFunction = jsUncheckedDowncast<WebAssemblyFunctionBase*>(referenceAsObject);
     auto& function = wasmFunction->importableFunction();
     JSWebAssemblyInstance* calleeInstance = wasmFunction->instance();
     auto boxedCallee = function.boxedCallee.encodedBits();

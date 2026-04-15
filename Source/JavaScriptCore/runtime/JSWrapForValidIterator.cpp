@@ -59,7 +59,7 @@ void JSWrapForValidIterator::finishCreation(VM& vm, JSValue iterator, JSValue ne
 template<typename Visitor>
 void JSWrapForValidIterator::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<JSWrapForValidIterator*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSWrapForValidIterator*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 }

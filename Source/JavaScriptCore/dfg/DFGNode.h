@@ -1017,7 +1017,7 @@ public:
     {
         if (!isCellConstant())
             return nullptr;
-        return jsDynamicCast<T>(asCell());
+        return jsDynamicDowncast<T>(asCell());
     }
     
     bool hasLazyJSValue()

@@ -62,22 +62,22 @@ JSC::JSValue JSIDBRequest::result(JSC::JSGlobalObject& lexicalGlobalObject) cons
         },
         [&](const Ref<IDBCursor>& cursor) {
             return cachedPropertyValue(throwScope, lexicalGlobalObject, *this, resultWrapper, [&](JSC::ThrowScope& throwScope) {
-                return toJS<IDLInterface<IDBCursor>>(lexicalGlobalObject, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), throwScope, cursor);
+                return toJS<IDLInterface<IDBCursor>>(lexicalGlobalObject, *jsUncheckedDowncast<JSDOMGlobalObject*>(&lexicalGlobalObject), throwScope, cursor);
             });
         },
         [&](const Ref<IDBDatabase>& database) {
             return cachedPropertyValue(throwScope, lexicalGlobalObject, *this, resultWrapper, [&](JSC::ThrowScope& throwScope) {
-                return toJS<IDLInterface<IDBDatabase>>(lexicalGlobalObject, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), throwScope, database);
+                return toJS<IDLInterface<IDBDatabase>>(lexicalGlobalObject, *jsUncheckedDowncast<JSDOMGlobalObject*>(&lexicalGlobalObject), throwScope, database);
             });
         },
         [&](const IDBKeyData& keyData) {
             return cachedPropertyValue(throwScope, lexicalGlobalObject, *this, resultWrapper, [&](JSC::ThrowScope&) {
-                return toJS<IDLIDBKeyData>(lexicalGlobalObject, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), keyData);
+                return toJS<IDLIDBKeyData>(lexicalGlobalObject, *jsUncheckedDowncast<JSDOMGlobalObject*>(&lexicalGlobalObject), keyData);
             });
         },
         [&](const Vector<IDBKeyData>& keyDatas) {
             return cachedPropertyValue(throwScope, lexicalGlobalObject, *this, resultWrapper, [&](JSC::ThrowScope&) {
-                return toJS<IDLSequence<IDLIDBKeyData>>(lexicalGlobalObject, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), keyDatas);
+                return toJS<IDLSequence<IDLIDBKeyData>>(lexicalGlobalObject, *jsUncheckedDowncast<JSDOMGlobalObject*>(&lexicalGlobalObject), keyDatas);
             });
         },
         [&](const IDBGetResult& getResult) {
@@ -93,7 +93,7 @@ JSC::JSValue JSIDBRequest::result(JSC::JSGlobalObject& lexicalGlobalObject) cons
                 auto& values = getAllResult.values();
                 auto& keyPath = getAllResult.keyPath();
 
-                auto* domGlobalObject = jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
+                auto* domGlobalObject = jsUncheckedDowncast<JSDOMGlobalObject*>(&lexicalGlobalObject);
 
                 JSC::MarkedArgumentBuffer list;
                 list.ensureCapacity(keys.size());

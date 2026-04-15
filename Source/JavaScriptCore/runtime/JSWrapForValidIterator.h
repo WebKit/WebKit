@@ -68,8 +68,8 @@ public:
     static JSWrapForValidIterator* createWithInitialValues(VM&, Structure*);
     static JSWrapForValidIterator* create(VM&, Structure*, JSValue iterator, JSValue nextMethod);
 
-    JSObject* iteratedIterator() const { return jsCast<JSObject*>(internalField(Field::IteratedIterator).get()); }
-    JSObject* iteratedNextMethod() const { return jsCast<JSObject*>(internalField(Field::IteratedNextMethod).get()); }
+    JSObject* iteratedIterator() const { return jsUncheckedDowncast<JSObject*>(internalField(Field::IteratedIterator).get()); }
+    JSObject* iteratedNextMethod() const { return jsUncheckedDowncast<JSObject*>(internalField(Field::IteratedNextMethod).get()); }
 
     void setIteratedIterator(VM& vm, JSValue iterator) { internalField(Field::IteratedIterator).set(vm, this, iterator); }
     void setIteratedNextMethod(VM& vm, JSValue nextMethod) { internalField(Field::IteratedNextMethod).set(vm, this, nextMethod); }

@@ -44,7 +44,7 @@ EncodedJSValue constructJSWebAnimation(JSGlobalObject* lexicalGlobalObject, Call
     VM& vm = lexicalGlobalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
-    auto* jsConstructor = jsCast<JSDOMConstructorBase*>(callFrame.jsCallee());
+    auto* jsConstructor = jsUncheckedDowncast<JSDOMConstructorBase*>(callFrame.jsCallee());
     ASSERT(jsConstructor);
     CheckedPtr context = jsConstructor->scriptExecutionContext();
     if (!context) [[unlikely]]

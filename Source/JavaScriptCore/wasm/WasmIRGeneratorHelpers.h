@@ -176,7 +176,7 @@ static inline void SYSV_ABI buildEntryBufferForCatch(Probe::Context& context)
 
     JSValue thrownValue = JSValue::decode(exception);
     void* payload = nullptr;
-    if (JSWebAssemblyException* wasmException = jsDynamicCast<JSWebAssemblyException*>(thrownValue))
+    if (JSWebAssemblyException* wasmException = jsDynamicDowncast<JSWebAssemblyException*>(thrownValue))
         payload = std::bit_cast<void*>(wasmException->payload().span().data());
 
     context.gpr(GPRInfo::argumentGPR0) = std::bit_cast<uintptr_t>(buffer);

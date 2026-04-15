@@ -73,7 +73,7 @@ JSC_DEFINE_CUSTOM_GETTER(pluginElementPropertyGetter, (JSGlobalObject* lexicalGl
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSHTMLElement* thisObject = jsDynamicCast<JSHTMLElement*>(JSValue::decode(thisValue));
+    JSHTMLElement* thisObject = jsDynamicDowncast<JSHTMLElement*>(JSValue::decode(thisValue));
     if (!thisObject)
         return throwVMTypeError(lexicalGlobalObject, scope);
     JSObject* scriptObject = pluginScriptObject(lexicalGlobalObject, thisObject);
@@ -93,7 +93,7 @@ bool pluginElementCustomGetOwnPropertySlot(JSHTMLElement* element, JSGlobalObjec
 
     if (!element->realm()->world().isNormal()) {
         JSValue proto = element->getPrototypeDirect();
-        if (proto.isObject() && JSC::jsCast<JSC::JSObject*>(asObject(proto))->hasProperty(lexicalGlobalObject, propertyName))
+        if (proto.isObject() && JSC::jsUncheckedDowncast<JSC::JSObject*>(asObject(proto))->hasProperty(lexicalGlobalObject, propertyName))
             return false;
     }
 
@@ -126,7 +126,7 @@ bool pluginElementCustomPut(JSHTMLElement* element, JSGlobalObject* lexicalGloba
 
 JSC_DEFINE_HOST_FUNCTION(callPlugin, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
-    JSHTMLElement* element = jsCast<JSHTMLElement*>(callFrame->jsCallee());
+    JSHTMLElement* element = jsUncheckedDowncast<JSHTMLElement*>(callFrame->jsCallee());
 
     // Get the plug-in script object.
     JSObject* scriptObject = pluginScriptObject(lexicalGlobalObject, element);

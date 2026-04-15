@@ -336,7 +336,7 @@ void FuncRefTable::set(uint32_t index, JSValue value)
     if (value.isNull())
         clear(index);
     else
-        setFunction(index, jsCast<WebAssemblyFunctionBase*>(value));
+        setFunction(index, jsUncheckedDowncast<WebAssemblyFunctionBase*>(value));
 }
 
 void FuncRefTable::registerInstance(JSWebAssemblyInstance& instance)

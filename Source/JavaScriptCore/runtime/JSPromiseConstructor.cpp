@@ -193,7 +193,7 @@ static JSObject* promiseRaceSlow(JSGlobalObject* globalObject, CallFrame* callFr
     std::optional<CachedCall> cachedCallHolder;
     CachedCall* cachedCall = nullptr;
     if (promiseResolveCallData.type == CallData::Type::JS) [[likely]] {
-        cachedCallHolder.emplace(globalObject, jsCast<JSFunction*>(promiseResolveValue), 1);
+        cachedCallHolder.emplace(globalObject, jsUncheckedDowncast<JSFunction*>(promiseResolveValue), 1);
         if (scope.exception()) [[unlikely]] {
             callRejectWithScopeException();
             return promise;
@@ -342,7 +342,7 @@ static JSObject* promiseAllSlow(JSGlobalObject* globalObject, CallFrame* callFra
     std::optional<CachedCall> cachedCallHolder;
     CachedCall* cachedCall = nullptr;
     if (promiseResolveCallData.type == CallData::Type::JS) [[likely]] {
-        cachedCallHolder.emplace(globalObject, jsCast<JSFunction*>(promiseResolveValue), 1);
+        cachedCallHolder.emplace(globalObject, jsUncheckedDowncast<JSFunction*>(promiseResolveValue), 1);
         if (scope.exception()) [[unlikely]] {
             callRejectWithScopeException();
             return promise;
@@ -553,16 +553,16 @@ JSC_DEFINE_HOST_FUNCTION(promiseAllFulfillFunction, (JSGlobalObject* globalObjec
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* callee = jsCast<JSFunctionWithFields*>(callFrame->jsCallee());
-    auto* context = jsDynamicCast<JSPromiseCombinatorsContext*>(callee->getField(JSFunctionWithFields::Field::PromiseAllContext));
+    auto* callee = jsUncheckedDowncast<JSFunctionWithFields*>(callFrame->jsCallee());
+    auto* context = jsDynamicDowncast<JSPromiseCombinatorsContext*>(callee->getField(JSFunctionWithFields::Field::PromiseAllContext));
     if (!context) [[unlikely]]
         return JSValue::encode(jsUndefined());
 
     callee->setField(vm, JSFunctionWithFields::Field::PromiseAllContext, jsNull());
 
-    auto* globalContext = jsCast<JSPromiseCombinatorsGlobalContext*>(context->globalContext());
-    auto* promise = jsCast<JSPromise*>(globalContext->promise());
-    auto* values = jsCast<JSArray*>(globalContext->values());
+    auto* globalContext = jsUncheckedDowncast<JSPromiseCombinatorsGlobalContext*>(context->globalContext());
+    auto* promise = jsUncheckedDowncast<JSPromise*>(globalContext->promise());
+    auto* values = jsUncheckedDowncast<JSArray*>(globalContext->values());
 
     JSValue value = callFrame->argument(0);
     uint64_t index = context->index();
@@ -588,8 +588,8 @@ JSC_DEFINE_HOST_FUNCTION(promiseAllSlowFulfillFunction, (JSGlobalObject* globalO
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* callee = jsCast<JSFunctionWithFields*>(callFrame->jsCallee());
-    auto* context = jsDynamicCast<JSPromiseCombinatorsContext*>(callee->getField(JSFunctionWithFields::Field::PromiseAllContext));
+    auto* callee = jsUncheckedDowncast<JSFunctionWithFields*>(callFrame->jsCallee());
+    auto* context = jsDynamicDowncast<JSPromiseCombinatorsContext*>(callee->getField(JSFunctionWithFields::Field::PromiseAllContext));
     if (!context) [[unlikely]]
         return JSValue::encode(jsUndefined());
 
@@ -598,8 +598,8 @@ JSC_DEFINE_HOST_FUNCTION(promiseAllSlowFulfillFunction, (JSGlobalObject* globalO
     callee->setField(vm, JSFunctionWithFields::Field::PromiseAllContext, jsNull());
     callee->setField(vm, JSFunctionWithFields::Field::PromiseAllResolve, jsNull());
 
-    auto* globalContext = jsCast<JSPromiseCombinatorsGlobalContext*>(context->globalContext());
-    auto* values = jsCast<JSArray*>(globalContext->values());
+    auto* globalContext = jsUncheckedDowncast<JSPromiseCombinatorsGlobalContext*>(context->globalContext());
+    auto* values = jsUncheckedDowncast<JSArray*>(globalContext->values());
 
     JSValue value = callFrame->argument(0);
     uint64_t index = context->index();
@@ -663,7 +663,7 @@ static JSObject* promiseAllSettledSlow(JSGlobalObject* globalObject, CallFrame* 
     std::optional<CachedCall> cachedCallHolder;
     CachedCall* cachedCall = nullptr;
     if (promiseResolveCallData.type == CallData::Type::JS) [[likely]] {
-        cachedCallHolder.emplace(globalObject, jsCast<JSFunction*>(promiseResolveValue), 1);
+        cachedCallHolder.emplace(globalObject, jsUncheckedDowncast<JSFunction*>(promiseResolveValue), 1);
         if (scope.exception()) [[unlikely]] {
             callRejectWithScopeException();
             return promise;
@@ -880,12 +880,12 @@ JSC_DEFINE_HOST_FUNCTION(promiseAllSettledFulfillFunction, (JSGlobalObject* glob
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* callee = jsCast<JSFunctionWithFields*>(callFrame->jsCallee());
-    auto* context = jsDynamicCast<JSPromiseCombinatorsContext*>(callee->getField(JSFunctionWithFields::Field::PromiseAllSettledContext));
+    auto* callee = jsUncheckedDowncast<JSFunctionWithFields*>(callFrame->jsCallee());
+    auto* context = jsDynamicDowncast<JSPromiseCombinatorsContext*>(callee->getField(JSFunctionWithFields::Field::PromiseAllSettledContext));
     if (!context) [[unlikely]]
         return JSValue::encode(jsUndefined());
 
-    auto* other = jsDynamicCast<JSFunctionWithFields*>(callee->getField(JSFunctionWithFields::Field::PromiseAllSettledOther));
+    auto* other = jsDynamicDowncast<JSFunctionWithFields*>(callee->getField(JSFunctionWithFields::Field::PromiseAllSettledOther));
     if (!other) [[unlikely]]
         return JSValue::encode(jsUndefined());
 
@@ -894,9 +894,9 @@ JSC_DEFINE_HOST_FUNCTION(promiseAllSettledFulfillFunction, (JSGlobalObject* glob
     other->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledContext, jsNull());
     other->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledOther, jsNull());
 
-    auto* globalContext = jsCast<JSPromiseCombinatorsGlobalContext*>(context->globalContext());
-    auto* promise = jsCast<JSPromise*>(globalContext->promise());
-    auto* values = jsCast<JSArray*>(globalContext->values());
+    auto* globalContext = jsUncheckedDowncast<JSPromiseCombinatorsGlobalContext*>(context->globalContext());
+    auto* promise = jsUncheckedDowncast<JSPromise*>(globalContext->promise());
+    auto* values = jsUncheckedDowncast<JSArray*>(globalContext->values());
 
     JSValue value = callFrame->argument(0);
     uint64_t index = context->index();
@@ -924,12 +924,12 @@ JSC_DEFINE_HOST_FUNCTION(promiseAllSettledRejectFunction, (JSGlobalObject* globa
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* callee = jsCast<JSFunctionWithFields*>(callFrame->jsCallee());
-    auto* context = jsDynamicCast<JSPromiseCombinatorsContext*>(callee->getField(JSFunctionWithFields::Field::PromiseAllSettledContext));
+    auto* callee = jsUncheckedDowncast<JSFunctionWithFields*>(callFrame->jsCallee());
+    auto* context = jsDynamicDowncast<JSPromiseCombinatorsContext*>(callee->getField(JSFunctionWithFields::Field::PromiseAllSettledContext));
     if (!context) [[unlikely]]
         return JSValue::encode(jsUndefined());
 
-    auto* other = jsDynamicCast<JSFunctionWithFields*>(callee->getField(JSFunctionWithFields::Field::PromiseAllSettledOther));
+    auto* other = jsDynamicDowncast<JSFunctionWithFields*>(callee->getField(JSFunctionWithFields::Field::PromiseAllSettledOther));
     if (!other) [[unlikely]]
         return JSValue::encode(jsUndefined());
 
@@ -938,9 +938,9 @@ JSC_DEFINE_HOST_FUNCTION(promiseAllSettledRejectFunction, (JSGlobalObject* globa
     other->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledContext, jsNull());
     other->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledOther, jsNull());
 
-    auto* globalContext = jsCast<JSPromiseCombinatorsGlobalContext*>(context->globalContext());
-    auto* promise = jsCast<JSPromise*>(globalContext->promise());
-    auto* values = jsCast<JSArray*>(globalContext->values());
+    auto* globalContext = jsUncheckedDowncast<JSPromiseCombinatorsGlobalContext*>(context->globalContext());
+    auto* promise = jsUncheckedDowncast<JSPromise*>(globalContext->promise());
+    auto* values = jsUncheckedDowncast<JSArray*>(globalContext->values());
 
     JSValue reason = callFrame->argument(0);
     uint64_t index = context->index();
@@ -968,12 +968,12 @@ JSC_DEFINE_HOST_FUNCTION(promiseAllSettledSlowFulfillFunction, (JSGlobalObject* 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* callee = jsCast<JSFunctionWithFields*>(callFrame->jsCallee());
-    auto* context = jsDynamicCast<JSPromiseCombinatorsContext*>(callee->getField(JSFunctionWithFields::Field::PromiseAllSettledContext));
+    auto* callee = jsUncheckedDowncast<JSFunctionWithFields*>(callFrame->jsCallee());
+    auto* context = jsDynamicDowncast<JSPromiseCombinatorsContext*>(callee->getField(JSFunctionWithFields::Field::PromiseAllSettledContext));
     if (!context) [[unlikely]]
         return JSValue::encode(jsUndefined());
 
-    auto* other = jsDynamicCast<JSFunctionWithFields*>(callee->getField(JSFunctionWithFields::Field::PromiseAllSettledOther));
+    auto* other = jsDynamicDowncast<JSFunctionWithFields*>(callee->getField(JSFunctionWithFields::Field::PromiseAllSettledOther));
     if (!other) [[unlikely]]
         return JSValue::encode(jsUndefined());
 
@@ -982,8 +982,8 @@ JSC_DEFINE_HOST_FUNCTION(promiseAllSettledSlowFulfillFunction, (JSGlobalObject* 
     other->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledContext, jsNull());
     other->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledOther, jsNull());
 
-    auto* globalContext = jsCast<JSPromiseCombinatorsGlobalContext*>(context->globalContext());
-    auto* values = jsCast<JSArray*>(globalContext->values());
+    auto* globalContext = jsUncheckedDowncast<JSPromiseCombinatorsGlobalContext*>(context->globalContext());
+    auto* values = jsUncheckedDowncast<JSArray*>(globalContext->values());
     JSValue resolve = globalContext->promise();
 
     JSValue value = callFrame->argument(0);
@@ -1016,12 +1016,12 @@ JSC_DEFINE_HOST_FUNCTION(promiseAllSettledSlowRejectFunction, (JSGlobalObject* g
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* callee = jsCast<JSFunctionWithFields*>(callFrame->jsCallee());
-    auto* context = jsDynamicCast<JSPromiseCombinatorsContext*>(callee->getField(JSFunctionWithFields::Field::PromiseAllSettledContext));
+    auto* callee = jsUncheckedDowncast<JSFunctionWithFields*>(callFrame->jsCallee());
+    auto* context = jsDynamicDowncast<JSPromiseCombinatorsContext*>(callee->getField(JSFunctionWithFields::Field::PromiseAllSettledContext));
     if (!context) [[unlikely]]
         return JSValue::encode(jsUndefined());
 
-    auto* other = jsDynamicCast<JSFunctionWithFields*>(callee->getField(JSFunctionWithFields::Field::PromiseAllSettledOther));
+    auto* other = jsDynamicDowncast<JSFunctionWithFields*>(callee->getField(JSFunctionWithFields::Field::PromiseAllSettledOther));
     if (!other) [[unlikely]]
         return JSValue::encode(jsUndefined());
 
@@ -1030,8 +1030,8 @@ JSC_DEFINE_HOST_FUNCTION(promiseAllSettledSlowRejectFunction, (JSGlobalObject* g
     other->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledContext, jsNull());
     other->setField(vm, JSFunctionWithFields::Field::PromiseAllSettledOther, jsNull());
 
-    auto* globalContext = jsCast<JSPromiseCombinatorsGlobalContext*>(context->globalContext());
-    auto* values = jsCast<JSArray*>(globalContext->values());
+    auto* globalContext = jsUncheckedDowncast<JSPromiseCombinatorsGlobalContext*>(context->globalContext());
+    auto* values = jsUncheckedDowncast<JSArray*>(globalContext->values());
     JSValue resolve = globalContext->promise();
 
     JSValue reason = callFrame->argument(0);
@@ -1146,7 +1146,7 @@ static JSObject* promiseAnySlow(JSGlobalObject* globalObject, CallFrame* callFra
     std::optional<CachedCall> cachedCallHolder;
     CachedCall* cachedCall = nullptr;
     if (promiseResolveCallData.type == CallData::Type::JS) [[likely]] {
-        cachedCallHolder.emplace(globalObject, jsCast<JSFunction*>(promiseResolveValue), 1);
+        cachedCallHolder.emplace(globalObject, jsUncheckedDowncast<JSFunction*>(promiseResolveValue), 1);
         if (scope.exception()) [[unlikely]] {
             callRejectWithScopeException();
             return promise;
@@ -1355,16 +1355,16 @@ JSC_DEFINE_HOST_FUNCTION(promiseAnyRejectFunction, (JSGlobalObject* globalObject
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* callee = jsCast<JSFunctionWithFields*>(callFrame->jsCallee());
-    auto* context = jsDynamicCast<JSPromiseCombinatorsContext*>(callee->getField(JSFunctionWithFields::Field::PromiseAnyContext));
+    auto* callee = jsUncheckedDowncast<JSFunctionWithFields*>(callFrame->jsCallee());
+    auto* context = jsDynamicDowncast<JSPromiseCombinatorsContext*>(callee->getField(JSFunctionWithFields::Field::PromiseAnyContext));
     if (!context) [[unlikely]]
         return JSValue::encode(jsUndefined());
 
     callee->setField(vm, JSFunctionWithFields::Field::PromiseAnyContext, jsNull());
 
-    auto* globalContext = jsCast<JSPromiseCombinatorsGlobalContext*>(context->globalContext());
-    auto* promise = jsCast<JSPromise*>(globalContext->promise());
-    auto* errors = jsCast<JSArray*>(globalContext->values());
+    auto* globalContext = jsUncheckedDowncast<JSPromiseCombinatorsGlobalContext*>(context->globalContext());
+    auto* promise = jsUncheckedDowncast<JSPromise*>(globalContext->promise());
+    auto* errors = jsUncheckedDowncast<JSArray*>(globalContext->values());
 
     JSValue reason = callFrame->argument(0);
     uint64_t index = context->index();
@@ -1391,8 +1391,8 @@ JSC_DEFINE_HOST_FUNCTION(promiseAnySlowRejectFunction, (JSGlobalObject* globalOb
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* callee = jsCast<JSFunctionWithFields*>(callFrame->jsCallee());
-    auto* context = jsDynamicCast<JSPromiseCombinatorsContext*>(callee->getField(JSFunctionWithFields::Field::PromiseAnyContext));
+    auto* callee = jsUncheckedDowncast<JSFunctionWithFields*>(callFrame->jsCallee());
+    auto* context = jsDynamicDowncast<JSPromiseCombinatorsContext*>(callee->getField(JSFunctionWithFields::Field::PromiseAnyContext));
     if (!context) [[unlikely]]
         return JSValue::encode(jsUndefined());
 
@@ -1401,8 +1401,8 @@ JSC_DEFINE_HOST_FUNCTION(promiseAnySlowRejectFunction, (JSGlobalObject* globalOb
     callee->setField(vm, JSFunctionWithFields::Field::PromiseAnyContext, jsNull());
     callee->setField(vm, JSFunctionWithFields::Field::PromiseAnyReject, jsNull());
 
-    auto* globalContext = jsCast<JSPromiseCombinatorsGlobalContext*>(context->globalContext());
-    auto* errors = jsCast<JSArray*>(globalContext->values());
+    auto* globalContext = jsUncheckedDowncast<JSPromiseCombinatorsGlobalContext*>(context->globalContext());
+    auto* errors = jsUncheckedDowncast<JSArray*>(globalContext->values());
 
     JSValue reason = callFrame->argument(0);
     uint64_t index = context->index();

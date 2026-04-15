@@ -231,7 +231,7 @@ bool FrameInspectorController::canAccessInspectedScriptState(JSC::JSGlobalObject
 {
     JSLockHolder lock(lexicalGlobalObject);
 
-    auto* inspectedWindow = jsDynamicCast<JSDOMWindow*>(lexicalGlobalObject);
+    auto* inspectedWindow = jsDynamicDowncast<JSDOMWindow*>(lexicalGlobalObject);
     if (!inspectedWindow)
         return false;
 

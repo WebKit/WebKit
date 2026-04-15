@@ -107,7 +107,7 @@ JSC_DEFINE_HOST_FUNCTION(structuredCloneForStream, (JSGlobalObject* globalObject
     }
 
     if (value.inherits<JSArrayBufferView>()) {
-        auto* bufferView = jsCast<JSArrayBufferView*>(value);
+        auto* bufferView = jsUncheckedDowncast<JSArrayBufferView*>(value);
         ASSERT(bufferView);
 
         auto* buffer = bufferView->unsharedBuffer();

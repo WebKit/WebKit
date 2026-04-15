@@ -64,7 +64,7 @@ void TemporalPlainDate::finishCreation(VM& vm)
     m_calendar.initLater(
         [] (const auto& init) {
             VM& vm = init.vm;
-            auto* plainDate = jsCast<TemporalPlainDate*>(init.owner);
+            auto* plainDate = jsUncheckedDowncast<TemporalPlainDate*>(init.owner);
             auto* globalObject = plainDate->realm();
             auto* calendar = TemporalCalendar::create(vm, globalObject->calendarStructure(), iso8601CalendarID());
             init.set(calendar);
@@ -76,7 +76,7 @@ void TemporalPlainDate::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     Base::visitChildren(cell, visitor);
 
-    auto* thisObject = jsCast<TemporalPlainDate*>(cell);
+    auto* thisObject = jsUncheckedDowncast<TemporalPlainDate*>(cell);
     thisObject->m_calendar.visit(visitor);
 }
 
@@ -161,16 +161,16 @@ TemporalPlainDate* TemporalPlainDate::from(JSGlobalObject* globalObject, JSValue
 
     if (itemValue.isObject()) {
         if (itemValue.inherits<TemporalPlainDate>())
-            return jsCast<TemporalPlainDate*>(itemValue);
+            return jsUncheckedDowncast<TemporalPlainDate*>(itemValue);
 
         if (itemValue.inherits<TemporalPlainDateTime>())
-            return TemporalPlainDate::create(vm, globalObject->plainDateStructure(), jsCast<TemporalPlainDateTime*>(itemValue)->plainDate());
+            return TemporalPlainDate::create(vm, globalObject->plainDateStructure(), jsUncheckedDowncast<TemporalPlainDateTime*>(itemValue)->plainDate());
 
         JSObject* calendar = TemporalCalendar::getTemporalCalendarWithISODefault(globalObject, itemValue);
         RETURN_IF_EXCEPTION(scope, { });
 
         // FIXME: Implement after fleshing out Temporal.Calendar.
-        if (!calendar->inherits<TemporalCalendar>() || !jsCast<TemporalCalendar*>(calendar)->isISO8601()) {
+        if (!calendar->inherits<TemporalCalendar>() || !jsUncheckedDowncast<TemporalCalendar*>(calendar)->isISO8601()) {
             throwRangeError(globalObject, scope, "unimplemented: from non-ISO8601 calendar"_s);
             return { };
         }

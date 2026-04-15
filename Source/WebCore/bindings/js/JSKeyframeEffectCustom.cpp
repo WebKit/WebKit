@@ -41,10 +41,10 @@ JSValue JSKeyframeEffect::getKeyframes(JSGlobalObject& lexicalGlobalObject, Call
 {
     auto lock = JSLockHolder { &lexicalGlobalObject };
 
-    if (!jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->scriptExecutionContext()) [[unlikely]]
+    if (!jsUncheckedDowncast<JSDOMGlobalObject*>(&lexicalGlobalObject)->scriptExecutionContext()) [[unlikely]]
         return jsUndefined();
 
-    auto& domGlobalObject = *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
+    auto& domGlobalObject = *jsUncheckedDowncast<JSDOMGlobalObject*>(&lexicalGlobalObject);
     auto computedKeyframes = wrapped().getKeyframes();
     auto keyframeObjects = computedKeyframes.map([&](auto& computedKeyframe) -> Strong<JSObject> {
         auto keyframeObject = convertDictionaryToJS(lexicalGlobalObject, domGlobalObject, { computedKeyframe });

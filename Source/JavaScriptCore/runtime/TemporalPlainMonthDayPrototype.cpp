@@ -101,7 +101,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncToString, (JSGlobalOb
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* monthDay = jsDynamicCast<TemporalPlainMonthDay*>(callFrame->thisValue());
+    auto* monthDay = jsDynamicDowncast<TemporalPlainMonthDay*>(callFrame->thisValue());
     if (!monthDay)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainMonthDay.prototype.toString called on value that's not a PlainMonthDay"_s);
 
@@ -114,7 +114,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncToJSON, (JSGlobalObje
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* monthDay = jsDynamicCast<TemporalPlainMonthDay*>(callFrame->thisValue());
+    auto* monthDay = jsDynamicDowncast<TemporalPlainMonthDay*>(callFrame->thisValue());
     if (!monthDay)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainMonthDay.prototype.toJSON called on value that's not a PlainMonthDay"_s);
 
@@ -127,7 +127,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncToLocaleString, (JSGl
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* monthDay = jsDynamicCast<TemporalPlainMonthDay*>(callFrame->thisValue());
+    auto* monthDay = jsDynamicDowncast<TemporalPlainMonthDay*>(callFrame->thisValue());
     if (!monthDay)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainMonthDay.prototype.toLocaleString called on value that's not a PlainMonthDay"_s);
 
@@ -140,7 +140,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncWith, (JSGlobalObject
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* monthDay = jsDynamicCast<TemporalPlainMonthDay*>(callFrame->thisValue());
+    auto* monthDay = jsDynamicDowncast<TemporalPlainMonthDay*>(callFrame->thisValue());
     if (!monthDay) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Temporal.PlainMonthDay.prototype.with called on value that's not a PlainMonthDay"_s);
 
@@ -162,7 +162,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncEquals, (JSGlobalObje
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* monthDay = jsDynamicCast<TemporalPlainMonthDay*>(callFrame->thisValue());
+    auto* monthDay = jsDynamicDowncast<TemporalPlainMonthDay*>(callFrame->thisValue());
     if (!monthDay) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Temporal.PlainMonthDay.prototype.equals called on value that's not a PlainMonthDay"_s);
 
@@ -181,7 +181,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainMonthDayPrototypeFuncToPlainDate, (JSGloba
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* monthDay = jsDynamicCast<TemporalPlainMonthDay*>(callFrame->thisValue());
+    auto* monthDay = jsDynamicDowncast<TemporalPlainMonthDay*>(callFrame->thisValue());
     if (!monthDay) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Temporal.PlainMonthDay.prototype.toPlainDate called on value that's not a PlainMonthDay"_s);
 
@@ -224,7 +224,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainMonthDayPrototypeGetterCalendarId, (JSGlob
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* monthDay = jsDynamicCast<TemporalPlainMonthDay*>(JSValue::decode(thisValue));
+    auto* monthDay = jsDynamicDowncast<TemporalPlainMonthDay*>(JSValue::decode(thisValue));
     if (!monthDay)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainMonthDay.prototype.calendar called on value that's not a PlainMonthDay"_s);
 
@@ -238,7 +238,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainMonthDayPrototypeGetterDay, (JSGlobalObjec
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* monthDay = jsDynamicCast<TemporalPlainMonthDay*>(JSValue::decode(thisValue));
+    auto* monthDay = jsDynamicDowncast<TemporalPlainMonthDay*>(JSValue::decode(thisValue));
     if (!monthDay)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainMonthDay.prototype.day called on value that's not a PlainMonthDay"_s);
 
@@ -251,7 +251,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalPlainMonthDayPrototypeGetterMonthCode, (JSGloba
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* monthDay = jsDynamicCast<TemporalPlainMonthDay*>(JSValue::decode(thisValue));
+    auto* monthDay = jsDynamicDowncast<TemporalPlainMonthDay*>(JSValue::decode(thisValue));
     if (!monthDay)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainMonthDay.prototype.monthCode called on value that's not a PlainMonthDay"_s);
 

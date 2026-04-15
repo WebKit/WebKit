@@ -64,7 +64,7 @@ using JSC::JSLockHolder;
 using JSC::JSObject;
 using JSC::MarkedArgumentBuffer;
 using JSC::PutPropertySlot;
-using JSC::jsCast;
+using JSC::jsUncheckedDowncast;
 using JSC::jsUndefined;
 using JSC::makeSource;
 
@@ -281,7 +281,7 @@ void disconnectWindowWrapper(WebScriptObject *windowWrapper)
     JSC::VM& vm = globalObject->vm();
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
-    auto* target = JSC::jsDynamicCast<JSDOMWindowBase*>(globalObject);
+    auto* target = JSC::jsDynamicDowncast<JSDOMWindowBase*>(globalObject);
     if (!target)
         return false;
     
@@ -405,7 +405,7 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSC::JSGlobalObject* lexicalGlobalObject = globalObject;
 
-    JSObject* object = JSC::jsDynamicCast<JSObject*>([self _imp]);
+    JSObject* object = JSC::jsDynamicDowncast<JSObject*>([self _imp]);
     PutPropertySlot slot(object);
     object->methodTable()->put(object, lexicalGlobalObject, Identifier::fromString(vm, String(key)), convertObjcValueToValue(lexicalGlobalObject, &value, ObjcObjectType, [self _rootObject]), slot);
 
@@ -568,11 +568,11 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
         JSC::VM& vm = rootObject->globalObject()->vm();
         JSLockHolder lock(vm);
 
-        if (auto* jsHTMLElement = JSC::jsDynamicCast<JSHTMLElement*>(object)) {
+        if (auto* jsHTMLElement = JSC::jsDynamicDowncast<JSHTMLElement*>(object)) {
             // Plugin elements cache the instance internally.
             if (auto* instance = downcast<ObjcInstance>(pluginInstance(jsHTMLElement->wrapped())))
                 return instance->getObject();
-        } else if (auto* runtimeObject = JSC::jsDynamicCast<ObjCRuntimeObject*>(object)) {
+        } else if (auto* runtimeObject = JSC::jsDynamicDowncast<ObjCRuntimeObject*>(object)) {
             if (auto* instance = runtimeObject->getInternalObjCInstance())
                 return instance->getObject();
             return nil;

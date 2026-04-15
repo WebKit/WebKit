@@ -76,7 +76,7 @@ void ProxyObject::finishCreation(VM& vm, JSGlobalObject* globalObject, JSValue t
         return;
     }
 
-    JSObject* targetAsObject = jsCast<JSObject*>(target);
+    JSObject* targetAsObject = jsUncheckedDowncast<JSObject*>(target);
 
     m_isCallable = targetAsObject->isCallable();
     if (m_isCallable) {
@@ -181,7 +181,7 @@ static JSValue performProxyGet(JSGlobalObject* globalObject, ProxyObject* proxyO
     if (handlerValue.isNull())
         return throwTypeError(globalObject, scope, s_proxyAlreadyRevokedErrorMessage);
 
-    JSObject* handler = jsCast<JSObject*>(handlerValue);
+    JSObject* handler = jsUncheckedDowncast<JSObject*>(handlerValue);
     CallData callData;
     JSObject* getHandler = proxyObject->getHandlerTrap(globalObject, handler, callData, vm.propertyNames->get, ProxyObject::HandlerTrap::Get);
     RETURN_IF_EXCEPTION(scope, { });
@@ -287,7 +287,7 @@ bool ProxyObject::performInternalMethodGetOwnProperty(JSGlobalObject* globalObje
         return false;
     }
 
-    JSObject* handler = jsCast<JSObject*>(handlerValue);
+    JSObject* handler = jsUncheckedDowncast<JSObject*>(handlerValue);
     CallData callData;
     JSObject* getOwnPropertyDescriptorMethod = getHandlerTrap(globalObject, handler, callData, vm.propertyNames->getOwnPropertyDescriptor, HandlerTrap::GetOwnPropertyDescriptor);
     RETURN_IF_EXCEPTION(scope, false);
@@ -394,7 +394,7 @@ bool ProxyObject::performHasProperty(JSGlobalObject* globalObject, PropertyName 
         return false;
     }
 
-    JSObject* handler = jsCast<JSObject*>(handlerValue);
+    JSObject* handler = jsUncheckedDowncast<JSObject*>(handlerValue);
     CallData callData;
     JSObject* hasMethod = getHandlerTrap(globalObject, handler, callData, vm.propertyNames->has, HandlerTrap::Has);
     RETURN_IF_EXCEPTION(scope, false);
@@ -476,14 +476,14 @@ bool ProxyObject::getOwnPropertySlotCommon(JSGlobalObject* globalObject, Propert
 
 bool ProxyObject::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
 {
-    ProxyObject* thisObject = jsCast<ProxyObject*>(object);
+    ProxyObject* thisObject = jsUncheckedDowncast<ProxyObject*>(object);
     return thisObject->getOwnPropertySlotCommon(globalObject, propertyName, slot);
 }
 
 bool ProxyObject::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* globalObject, unsigned propertyName, PropertySlot& slot)
 {
     VM& vm = globalObject->vm();
-    ProxyObject* thisObject = jsCast<ProxyObject*>(object);
+    ProxyObject* thisObject = jsUncheckedDowncast<ProxyObject*>(object);
     Identifier ident = Identifier::from(vm, propertyName);
     return thisObject->getOwnPropertySlotCommon(globalObject, ident.impl(), slot);
 }
@@ -509,7 +509,7 @@ bool ProxyObject::performPut(JSGlobalObject* globalObject, JSValue putValue, JSV
         return false;
     }
 
-    JSObject* handler = jsCast<JSObject*>(handlerValue);
+    JSObject* handler = jsUncheckedDowncast<JSObject*>(handlerValue);
     CallData callData;
     JSObject* setMethod = getHandlerTrap(globalObject, handler, callData, vm.propertyNames->set, HandlerTrap::Set);
     RETURN_IF_EXCEPTION(scope, false);
@@ -570,9 +570,9 @@ bool ProxyObject::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName p
     slot.disableCaching();
     slot.setIsTaintedByOpaqueObject();
 
-    ProxyObject* thisObject = jsCast<ProxyObject*>(cell);
+    ProxyObject* thisObject = jsUncheckedDowncast<ProxyObject*>(cell);
     auto performDefaultPut = [&] () {
-        JSObject* target = jsCast<JSObject*>(thisObject->target());
+        JSObject* target = jsUncheckedDowncast<JSObject*>(thisObject->target());
         return target->methodTable()->put(target, globalObject, propertyName, value, slot);
     };
     return thisObject->performPut(globalObject, value, slot.thisValue(), propertyName, performDefaultPut, slot.isStrictMode());
@@ -595,7 +595,7 @@ bool ProxyObject::putByIndexCommon(JSGlobalObject* globalObject, JSValue thisVal
 
 bool ProxyObject::putByIndex(JSCell* cell, JSGlobalObject* globalObject, unsigned propertyName, JSValue value, bool shouldThrow)
 {
-    ProxyObject* thisObject = jsCast<ProxyObject*>(cell);
+    ProxyObject* thisObject = jsUncheckedDowncast<ProxyObject*>(cell);
     return thisObject->putByIndexCommon(globalObject, thisObject, propertyName, value, shouldThrow);
 }
 
@@ -609,12 +609,12 @@ JSC_DEFINE_HOST_FUNCTION(performProxyCall, (JSGlobalObject* globalObject, CallFr
         throwStackOverflowError(globalObject, scope);
         return encodedJSValue();
     }
-    ProxyObject* proxy = jsCast<ProxyObject*>(callFrame->jsCallee());
+    ProxyObject* proxy = jsUncheckedDowncast<ProxyObject*>(callFrame->jsCallee());
     JSValue handlerValue = proxy->handler();
     if (handlerValue.isNull())
         return throwVMTypeError(globalObject, scope, s_proxyAlreadyRevokedErrorMessage);
 
-    JSObject* handler = jsCast<JSObject*>(handlerValue);
+    JSObject* handler = jsUncheckedDowncast<JSObject*>(handlerValue);
     CallData callData;
     JSValue applyMethod = handler->getMethod(globalObject, callData, makeIdentifier(vm, "apply"_s), "'apply' property of a Proxy's handler should be callable"_s);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -638,7 +638,7 @@ JSC_DEFINE_HOST_FUNCTION(performProxyCall, (JSGlobalObject* globalObject, CallFr
 CallData ProxyObject::getCallData(JSCell* cell)
 {
     CallData callData;
-    ProxyObject* proxy = jsCast<ProxyObject*>(cell);
+    ProxyObject* proxy = jsUncheckedDowncast<ProxyObject*>(cell);
     if (proxy->m_isCallable) {
         callData.type = CallData::Type::Native;
         callData.native.function = performProxyCall;
@@ -658,12 +658,12 @@ JSC_DEFINE_HOST_FUNCTION(performProxyConstruct, (JSGlobalObject* globalObject, C
         throwStackOverflowError(globalObject, scope);
         return encodedJSValue();
     }
-    ProxyObject* proxy = jsCast<ProxyObject*>(callFrame->jsCallee());
+    ProxyObject* proxy = jsUncheckedDowncast<ProxyObject*>(callFrame->jsCallee());
     JSValue handlerValue = proxy->handler();
     if (handlerValue.isNull())
         return throwVMTypeError(globalObject, scope, s_proxyAlreadyRevokedErrorMessage);
 
-    JSObject* handler = jsCast<JSObject*>(handlerValue);
+    JSObject* handler = jsUncheckedDowncast<JSObject*>(handlerValue);
     CallData callData;
     JSValue constructMethod = handler->getMethod(globalObject, callData, makeIdentifier(vm, "construct"_s), "'construct' property of a Proxy's handler should be callable"_s);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -691,7 +691,7 @@ JSC_DEFINE_HOST_FUNCTION(performProxyConstruct, (JSGlobalObject* globalObject, C
 CallData ProxyObject::getConstructData(JSCell* cell)
 {
     CallData constructData;
-    ProxyObject* proxy = jsCast<ProxyObject*>(cell);
+    ProxyObject* proxy = jsUncheckedDowncast<ProxyObject*>(cell);
     if (proxy->m_isConstructible) {
         constructData.type = CallData::Type::Native;
         constructData.native.function = performProxyConstruct;
@@ -722,7 +722,7 @@ bool ProxyObject::performDelete(JSGlobalObject* globalObject, PropertyName prope
         return false;
     }
 
-    JSObject* handler = jsCast<JSObject*>(handlerValue);
+    JSObject* handler = jsUncheckedDowncast<JSObject*>(handlerValue);
     CallData callData;
     JSValue deletePropertyMethod = handler->getMethod(globalObject, callData, makeIdentifier(vm, "deleteProperty"_s), "'deleteProperty' property of a Proxy's handler should be callable"_s);
     RETURN_IF_EXCEPTION(scope, false);
@@ -769,7 +769,7 @@ bool ProxyObject::performDelete(JSGlobalObject* globalObject, PropertyName prope
 
 bool ProxyObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
-    ProxyObject* thisObject = jsCast<ProxyObject*>(cell);
+    ProxyObject* thisObject = jsUncheckedDowncast<ProxyObject*>(cell);
     auto performDefaultDelete = [&] () -> bool {
         JSObject* target = thisObject->target();
         return target->methodTable()->deleteProperty(target, globalObject, propertyName, slot);
@@ -780,7 +780,7 @@ bool ProxyObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, Pro
 bool ProxyObject::deletePropertyByIndex(JSCell* cell, JSGlobalObject* globalObject, unsigned propertyName)
 {
     VM& vm = globalObject->vm();
-    ProxyObject* thisObject = jsCast<ProxyObject*>(cell);
+    ProxyObject* thisObject = jsUncheckedDowncast<ProxyObject*>(cell);
     Identifier ident = Identifier::from(vm, propertyName);
     auto performDefaultDelete = [&] () -> bool {
         JSObject* target = thisObject->target();
@@ -806,7 +806,7 @@ bool ProxyObject::performPreventExtensions(JSGlobalObject* globalObject)
         return false;
     }
 
-    JSObject* handler = jsCast<JSObject*>(handlerValue);
+    JSObject* handler = jsUncheckedDowncast<JSObject*>(handlerValue);
     CallData callData;
     JSValue preventExtensionsMethod = handler->getMethod(globalObject, callData, makeIdentifier(vm, "preventExtensions"_s), "'preventExtensions' property of a Proxy's handler should be callable"_s);
     RETURN_IF_EXCEPTION(scope, false);
@@ -837,7 +837,7 @@ bool ProxyObject::performPreventExtensions(JSGlobalObject* globalObject)
 
 bool ProxyObject::preventExtensions(JSObject* object, JSGlobalObject* globalObject)
 {
-    return jsCast<ProxyObject*>(object)->performPreventExtensions(globalObject);
+    return jsUncheckedDowncast<ProxyObject*>(object)->performPreventExtensions(globalObject);
 }
 
 bool ProxyObject::performIsExtensible(JSGlobalObject* globalObject)
@@ -857,7 +857,7 @@ bool ProxyObject::performIsExtensible(JSGlobalObject* globalObject)
         return false;
     }
 
-    JSObject* handler = jsCast<JSObject*>(handlerValue);
+    JSObject* handler = jsUncheckedDowncast<JSObject*>(handlerValue);
     CallData callData;
     JSValue isExtensibleMethod = handler->getMethod(globalObject, callData, makeIdentifier(vm, "isExtensible"_s), "'isExtensible' property of a Proxy's handler should be callable"_s);
     RETURN_IF_EXCEPTION(scope, false);
@@ -894,7 +894,7 @@ bool ProxyObject::performIsExtensible(JSGlobalObject* globalObject)
 
 bool ProxyObject::isExtensible(JSObject* object, JSGlobalObject* globalObject)
 {
-    return jsCast<ProxyObject*>(object)->performIsExtensible(globalObject);
+    return jsUncheckedDowncast<ProxyObject*>(object)->performIsExtensible(globalObject);
 }
 
 bool ProxyObject::performDefineOwnProperty(JSGlobalObject* globalObject, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)
@@ -922,7 +922,7 @@ bool ProxyObject::performDefineOwnProperty(JSGlobalObject* globalObject, Propert
         return false;
     }
 
-    JSObject* handler = jsCast<JSObject*>(handlerValue);
+    JSObject* handler = jsUncheckedDowncast<JSObject*>(handlerValue);
     CallData callData;
     JSValue definePropertyMethod = handler->getMethod(globalObject, callData, vm.propertyNames->defineProperty, "'defineProperty' property of a Proxy's handler should be callable"_s);
     RETURN_IF_EXCEPTION(scope, false);
@@ -1001,7 +1001,7 @@ bool ProxyObject::performDefineOwnProperty(JSGlobalObject* globalObject, Propert
 
 bool ProxyObject::defineOwnProperty(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)
 {
-    ProxyObject* thisObject = jsCast<ProxyObject*>(object);
+    ProxyObject* thisObject = jsUncheckedDowncast<ProxyObject*>(object);
     return thisObject->performDefineOwnProperty(globalObject, propertyName, descriptor, shouldThrow);
 }
 
@@ -1041,7 +1041,7 @@ void ProxyObject::performGetOwnPropertyNames(JSGlobalObject* globalObject, Prope
         return;
     }
 
-    JSObject* handler = jsCast<JSObject*>(handlerValue);
+    JSObject* handler = jsUncheckedDowncast<JSObject*>(handlerValue);
     CallData callData;
     JSObject* ownKeysMethod = getHandlerTrap(globalObject, handler, callData, vm.propertyNames->ownKeys, HandlerTrap::OwnKeys);
     RETURN_IF_EXCEPTION(scope, void());
@@ -1149,7 +1149,7 @@ void ProxyObject::performGetOwnEnumerablePropertyNames(JSGlobalObject* globalObj
 
 void ProxyObject::getOwnPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArrayBuilder& propertyNameArray, DontEnumPropertiesMode mode)
 {
-    ProxyObject* thisObject = jsCast<ProxyObject*>(object);
+    ProxyObject* thisObject = jsUncheckedDowncast<ProxyObject*>(object);
     if (mode == DontEnumPropertiesMode::Include)
         thisObject->performGetOwnPropertyNames(globalObject, propertyNameArray);
     else
@@ -1175,7 +1175,7 @@ bool ProxyObject::performSetPrototype(JSGlobalObject* globalObject, JSValue prot
         return false;
     }
 
-    JSObject* handler = jsCast<JSObject*>(handlerValue);
+    JSObject* handler = jsUncheckedDowncast<JSObject*>(handlerValue);
     CallData callData;
     JSValue setPrototypeOfMethod = handler->getMethod(globalObject, callData, makeIdentifier(vm, "setPrototypeOf"_s), "'setPrototypeOf' property of a Proxy's handler should be callable"_s);
     RETURN_IF_EXCEPTION(scope, false);
@@ -1219,7 +1219,7 @@ bool ProxyObject::performSetPrototype(JSGlobalObject* globalObject, JSValue prot
 
 bool ProxyObject::setPrototype(JSObject* object, JSGlobalObject* globalObject, JSValue prototype, bool shouldThrowIfCantSet)
 {
-    return jsCast<ProxyObject*>(object)->performSetPrototype(globalObject, prototype, shouldThrowIfCantSet);
+    return jsUncheckedDowncast<ProxyObject*>(object)->performSetPrototype(globalObject, prototype, shouldThrowIfCantSet);
 }
 
 JSValue ProxyObject::performGetPrototype(JSGlobalObject* globalObject)
@@ -1239,7 +1239,7 @@ JSValue ProxyObject::performGetPrototype(JSGlobalObject* globalObject)
         return { };
     }
 
-    JSObject* handler = jsCast<JSObject*>(handlerValue);
+    JSObject* handler = jsUncheckedDowncast<JSObject*>(handlerValue);
     CallData callData;
     JSValue getPrototypeOfMethod = handler->getMethod(globalObject, callData, makeIdentifier(vm, "getPrototypeOf"_s), "'getPrototypeOf' property of a Proxy's handler should be callable"_s);
     RETURN_IF_EXCEPTION(scope, { });
@@ -1278,7 +1278,7 @@ JSValue ProxyObject::performGetPrototype(JSGlobalObject* globalObject)
 
 JSValue ProxyObject::getPrototype(JSObject* object, JSGlobalObject* globalObject)
 {
-    return jsCast<ProxyObject*>(object)->performGetPrototype(globalObject);
+    return jsUncheckedDowncast<ProxyObject*>(object)->performGetPrototype(globalObject);
 }
 
 void ProxyObject::revoke(VM& vm)
@@ -1296,7 +1296,7 @@ bool ProxyObject::isRevoked() const
 template<typename Visitor>
 void ProxyObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<ProxyObject*>(cell);
+    auto* thisObject = jsUncheckedDowncast<ProxyObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_handlerStructureID);

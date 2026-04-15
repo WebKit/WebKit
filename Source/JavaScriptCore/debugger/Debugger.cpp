@@ -179,9 +179,9 @@ void Debugger::attach(JSGlobalObject* globalObject)
         m_vm.heap.objectSpace().forEachLiveCell(iterationScope, [&] (HeapCell* heapCell, HeapCell::Kind kind) {
             if (isJSCellKind(kind)) {
                 auto* cell = static_cast<JSCell*>(heapCell);
-                if (auto* function = jsDynamicCast<JSFunction*>(cell)) {
+                if (auto* function = jsDynamicDowncast<JSFunction*>(cell)) {
                     if (function->scope()->realm() == globalObject && function->executable()->isFunctionExecutable() && !function->isHostOrBuiltinFunction())
-                        sourceProviders.add(jsCast<FunctionExecutable*>(function->executable())->source().provider());
+                        sourceProviders.add(jsUncheckedDowncast<FunctionExecutable*>(function->executable())->source().provider());
                 }
             }
             return IterationStatus::Continue;
@@ -1175,7 +1175,7 @@ void Debugger::exception(JSGlobalObject* globalObject, CallFrame* callFrame, JSV
     if (m_isPaused)
         return;
 
-    if (JSObject* object = jsDynamicCast<JSObject*>(exception)) {
+    if (JSObject* object = jsDynamicDowncast<JSObject*>(exception)) {
         if (object->isErrorInstance()) {
             ErrorInstance* error = static_cast<ErrorInstance*>(object);
             // FIXME: <https://webkit.org/b/173625> Web Inspector: Should be able to pause and debug a StackOverflow Exception
@@ -1252,7 +1252,7 @@ void Debugger::willAwait(CallFrame* callFrame, JSValue generatorValue)
     if (!m_pauseOnCallFrame || m_pauseOnCallFrame != callFrame)
         return;
 
-    m_pauseForAwaitInGenerator = jsDynamicCast<JSGenerator*>(generatorValue);
+    m_pauseForAwaitInGenerator = jsDynamicDowncast<JSGenerator*>(generatorValue);
     ASSERT(m_pauseForAwaitInGenerator);
     if (!m_pauseForAwaitInGenerator)
         return;
@@ -1276,7 +1276,7 @@ void Debugger::didAwait(CallFrame*, JSValue generatorValue)
     if (!m_pauseForAwaitInGenerator)
         return;
 
-    JSGenerator* generator = jsDynamicCast<JSGenerator*>(generatorValue);
+    JSGenerator* generator = jsDynamicDowncast<JSGenerator*>(generatorValue);
     ASSERT(generator);
     if (m_pauseForAwaitInGenerator != generator)
         return;

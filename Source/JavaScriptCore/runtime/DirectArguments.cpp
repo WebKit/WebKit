@@ -79,14 +79,14 @@ DirectArguments* DirectArguments::createByCopying(JSGlobalObject* globalObject, 
     for (unsigned i = capacity; i--;)
         result->storage()[i].set(vm, result, callFrame->getArgumentUnsafe(i));
     
-    result->setCallee(vm, jsCast<JSFunction*>(callFrame->jsCallee()));
+    result->setCallee(vm, jsUncheckedDowncast<JSFunction*>(callFrame->jsCallee()));
     
     return result;
 }
 
 size_t DirectArguments::estimatedSize(JSCell* cell, VM& vm)
 {
-    DirectArguments* thisObject = jsCast<DirectArguments*>(cell);
+    DirectArguments* thisObject = jsUncheckedDowncast<DirectArguments*>(cell);
     size_t mappedArgumentsSize = thisObject->m_mappedArguments ? thisObject->mappedArgumentsSize() * sizeof(bool) : 0;
     size_t modifiedArgumentsSize = thisObject->m_modifiedArgumentsDescriptor ? thisObject->m_length * sizeof(bool) : 0;
     return Base::estimatedSize(cell, vm) + mappedArgumentsSize + modifiedArgumentsSize;

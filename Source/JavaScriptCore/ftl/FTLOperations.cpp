@@ -83,7 +83,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationPopulateObjectInOSR, void, (JSGlobalO
     case PhantomNewArrayWithButterfly: {
         auto scope = DECLARE_THROW_SCOPE(vm);
         // This might be unnecessary because operationMaterializeObjectInOSR does DeferGCForAWhile but its better to be safe.
-        JSArray* array = jsCast<JSArray*>(JSValue::decode(*encodedValue));
+        JSArray* array = jsUncheckedDowncast<JSArray*>(JSValue::decode(*encodedValue));
 
         // This may be called during a GenericUnwind OSR exit (e.g. stack overflow caught by
         // try/catch), where vm.exception() is already set. Suspend it so the assertion below
@@ -110,7 +110,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationPopulateObjectInOSR, void, (JSGlobalO
 
 
     case PhantomNewObject: {
-        JSFinalObject* object = jsCast<JSFinalObject*>(JSValue::decode(*encodedValue));
+        JSFinalObject* object = jsUncheckedDowncast<JSFinalObject*>(JSValue::decode(*encodedValue));
         Structure* structure = object->structure();
 
         // Figure out what the heck to populate the object with. Use
@@ -149,7 +149,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationPopulateObjectInOSR, void, (JSGlobalO
         break;
 
     case PhantomCreateActivation: {
-        JSLexicalEnvironment* activation = jsCast<JSLexicalEnvironment*>(JSValue::decode(*encodedValue));
+        JSLexicalEnvironment* activation = jsUncheckedDowncast<JSLexicalEnvironment*>(JSValue::decode(*encodedValue));
 
         // Figure out what to populate the activation with
         for (unsigned i = materialization->properties().size(); i--;) {
@@ -176,44 +176,44 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationPopulateObjectInOSR, void, (JSGlobalO
             }
         };
 
-        JSObject* target = jsCast<JSObject*>(JSValue::decode(*encodedValue));
+        JSObject* target = jsUncheckedDowncast<JSObject*>(JSValue::decode(*encodedValue));
         switch (target->type()) {
         case JSArrayIteratorType:
-            materialize(jsCast<JSArrayIterator*>(target));
+            materialize(jsUncheckedDowncast<JSArrayIterator*>(target));
             break;
         case JSMapIteratorType:
-            materialize(jsCast<JSMapIterator*>(target));
+            materialize(jsUncheckedDowncast<JSMapIterator*>(target));
             break;
         case JSSetIteratorType:
-            materialize(jsCast<JSSetIterator*>(target));
+            materialize(jsUncheckedDowncast<JSSetIterator*>(target));
             break;
         case JSStringIteratorType:
-            materialize(jsCast<JSStringIterator*>(target));
+            materialize(jsUncheckedDowncast<JSStringIterator*>(target));
             break;
         case JSIteratorHelperType:
-            materialize(jsCast<JSIteratorHelper*>(target));
+            materialize(jsUncheckedDowncast<JSIteratorHelper*>(target));
             break;
         case JSWrapForValidIteratorType:
-            materialize(jsCast<JSWrapForValidIterator*>(target));
+            materialize(jsUncheckedDowncast<JSWrapForValidIterator*>(target));
             break;
         case JSAsyncFromSyncIteratorType:
-            materialize(jsCast<JSAsyncFromSyncIterator*>(target));
+            materialize(jsUncheckedDowncast<JSAsyncFromSyncIterator*>(target));
             break;
         case JSRegExpStringIteratorType:
-            materialize(jsCast<JSRegExpStringIterator*>(target));
+            materialize(jsUncheckedDowncast<JSRegExpStringIterator*>(target));
             break;
         case JSGeneratorType:
-            materialize(jsCast<JSGenerator*>(target));
+            materialize(jsUncheckedDowncast<JSGenerator*>(target));
             break;
         case JSAsyncGeneratorType:
-            materialize(jsCast<JSAsyncGenerator*>(target));
+            materialize(jsUncheckedDowncast<JSAsyncGenerator*>(target));
             break;
         case JSPromiseType:
             if (target->classInfo() == JSInternalPromise::info())
-                materialize(jsCast<JSInternalPromise*>(target));
+                materialize(jsUncheckedDowncast<JSInternalPromise*>(target));
             else {
                 ASSERT(target->classInfo() == JSPromise::info());
-                materialize(jsCast<JSPromise*>(target));
+                materialize(jsUncheckedDowncast<JSPromise*>(target));
             }
             break;
         default:
@@ -224,7 +224,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationPopulateObjectInOSR, void, (JSGlobalO
     }
 
     case PhantomNewRegExp: {
-        RegExpObject* regExpObject = jsCast<RegExpObject*>(JSValue::decode(*encodedValue));
+        RegExpObject* regExpObject = jsUncheckedDowncast<RegExpObject*>(JSValue::decode(*encodedValue));
 
         for (unsigned i = materialization->properties().size(); i--;) {
             const ExitPropertyValue& property = materialization->properties()[i];
@@ -345,7 +345,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, HeapCell*, (J
                 continue;
 
             RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits<Structure>());
-            structure = jsCast<Structure*>(JSValue::decode(values[i]));
+            structure = jsUncheckedDowncast<Structure*>(JSValue::decode(values[i]));
             break;
         }
         RELEASE_ASSERT(structure);
@@ -379,11 +379,11 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, HeapCell*, (J
             const ExitPropertyValue& property = materialization->properties()[i];
             if (property.location() == PromotedLocationDescriptor(FunctionExecutablePLoc)) {
                 RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits<FunctionExecutable>());
-                executable = jsCast<FunctionExecutable*>(JSValue::decode(values[i]));
+                executable = jsUncheckedDowncast<FunctionExecutable*>(JSValue::decode(values[i]));
             }
             if (property.location() == PromotedLocationDescriptor(FunctionActivationPLoc)) {
                 RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits<JSScope>());
-                activation = jsCast<JSScope*>(JSValue::decode(values[i]));
+                activation = jsUncheckedDowncast<JSScope*>(JSValue::decode(values[i]));
             }
         }
         RELEASE_ASSERT(executable && activation);
@@ -408,10 +408,10 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, HeapCell*, (J
             const ExitPropertyValue& property = materialization->properties()[i];
             if (property.location() == PromotedLocationDescriptor(ActivationScopePLoc)) {
                 RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits<JSScope>());
-                scope = jsCast<JSScope*>(JSValue::decode(values[i]));
+                scope = jsUncheckedDowncast<JSScope*>(JSValue::decode(values[i]));
             } else if (property.location() == PromotedLocationDescriptor(ActivationSymbolTablePLoc)) {
                 RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits<SymbolTable>());
-                table = jsCast<SymbolTable*>(JSValue::decode(values[i]));
+                table = jsUncheckedDowncast<SymbolTable*>(JSValue::decode(values[i]));
             }
         }
         RELEASE_ASSERT(scope);
@@ -475,7 +475,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, HeapCell*, (J
             const ExitPropertyValue& property = materialization->properties()[i];
             if (property.location() == PromotedLocationDescriptor(StructurePLoc)) {
                 RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits<Structure>());
-                structure = jsCast<Structure*>(JSValue::decode(values[i]));
+                structure = jsUncheckedDowncast<Structure*>(JSValue::decode(values[i]));
             }
         }
         RELEASE_ASSERT(structure);
@@ -571,7 +571,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, HeapCell*, (J
                 if (property.location() != PromotedLocationDescriptor(ArgumentsCalleePLoc))
                     continue;
                 
-                callee = jsCast<JSFunction*>(JSValue::decode(values[i]));
+                callee = jsUncheckedDowncast<JSFunction*>(JSValue::decode(values[i]));
                 break;
             }
         } else
@@ -695,7 +695,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, HeapCell*, (J
         for (unsigned i = materialization->properties().size(); i--;) {
             const ExitPropertyValue& property = materialization->properties()[i];
             if (property.location().kind() == SpreadPLoc) {
-                array = jsCast<JSArray*>(JSValue::decode(values[i]));
+                array = jsUncheckedDowncast<JSArray*>(JSValue::decode(values[i]));
                 break;
             }
         }
@@ -715,7 +715,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, HeapCell*, (J
         for (unsigned i = materialization->properties().size(); i--;) {
             const ExitPropertyValue& property = materialization->properties()[i];
             if (property.location().kind() == NewArrayBufferPLoc) {
-                immutableButterfly = jsCast<JSCellButterfly*>(JSValue::decode(values[i]));
+                immutableButterfly = jsUncheckedDowncast<JSCellButterfly*>(JSValue::decode(values[i]));
                 break;
             }
         }
@@ -772,7 +772,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, HeapCell*, (J
             if (property.location().kind() == NewArrayWithSpreadArgumentPLoc) {
                 ++numProperties;
                 JSValue value = JSValue::decode(values[i]);
-                if (JSCellButterfly* immutableButterfly = jsDynamicCast<JSCellButterfly*>(value))
+                if (JSCellButterfly* immutableButterfly = jsDynamicDowncast<JSCellButterfly*>(value))
                     checkedArraySize += immutableButterfly->publicLength();
                 else
                     checkedArraySize += 1;
@@ -814,7 +814,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, HeapCell*, (J
 
         unsigned arrayIndex = 0;
         for (JSValue value : arguments) {
-            if (JSCellButterfly* immutableButterfly = jsDynamicCast<JSCellButterfly*>(value)) {
+            if (JSCellButterfly* immutableButterfly = jsDynamicDowncast<JSCellButterfly*>(value)) {
                 for (unsigned i = 0; i < immutableButterfly->publicLength(); i++) {
                     ASSERT(immutableButterfly->get(i));
                     result->putDirectIndex(globalObject, arrayIndex, immutableButterfly->get(i));
@@ -836,7 +836,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, HeapCell*, (J
             const ExitPropertyValue& property = materialization->properties()[i];
             if (property.location() == PromotedLocationDescriptor(RegExpObjectRegExpPLoc)) {
                 RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits<RegExp>());
-                regExp = jsCast<RegExp*>(JSValue::decode(values[i]));
+                regExp = jsUncheckedDowncast<RegExp*>(JSValue::decode(values[i]));
             }
         }
         RELEASE_ASSERT(regExp);
@@ -876,7 +876,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationTypeOfObjectAsTypeofType, UCPUStrictI
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    ASSERT(jsDynamicCast<JSObject*>(object));
+    ASSERT(jsDynamicDowncast<JSObject*>(object));
 
     if (object->structure()->masqueradesAsUndefined(globalObject))
         return toUCPUStrictInt32(static_cast<int32_t>(TypeofType::Undefined));

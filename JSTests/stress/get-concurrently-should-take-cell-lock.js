@@ -16,7 +16,7 @@ index 07aed18ca1b4..157a836cf50e 100644
      if (!structureSet.toStructureSet().contains(structure))
          return JSValue();
 +    
-+    if (jsDynamicCast<JSArray*>(object)) {
++    if (jsDynamicDowncast<JSArray*>(object)) {
 +        usleep(1000 * 1000);
 +    }
  

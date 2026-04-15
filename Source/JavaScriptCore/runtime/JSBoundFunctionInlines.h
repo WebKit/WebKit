@@ -49,7 +49,7 @@ inline void JSBoundFunction::forEachBoundArg(const Invocable<IterationStatus(JSV
         return;
     }
     for (unsigned index = 0; index < length; ++index) {
-        if (func(jsCast<JSCellButterfly*>(m_boundArgs[0].get())->get(index)) == IterationStatus::Done)
+        if (func(jsUncheckedDowncast<JSCellButterfly*>(m_boundArgs[0].get())->get(index)) == IterationStatus::Done)
             return;
     }
 }

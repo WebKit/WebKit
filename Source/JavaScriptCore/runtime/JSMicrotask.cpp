@@ -87,7 +87,7 @@ static JSValue callMicrotask(JSGlobalObject* globalObject, JSValue functionObjec
     if (microtaskCall && microtaskCall->canUseCall(functionObject)) [[likely]] {
         if (!vm.isSafeToRecurseSoft()) [[unlikely]]
             return throwStackOverflowError(globalObject, scope);
-        auto* jsFunction = jsCast<JSFunction*>(functionObject.asCell());
+        auto* jsFunction = jsUncheckedDowncast<JSFunction*>(functionObject.asCell());
         if (auto result = microtaskCall->tryCallWithArguments(vm, jsFunction, thisValue, context, args...)) [[likely]] {
             scope.release();
             return result;
@@ -124,14 +124,14 @@ static JSValue callMicrotask(JSGlobalObject* globalObject, JSValue functionObjec
             DeferTraps deferTraps(vm); // We can't jettison this code if we're about to run it.
 
             // Compile the callee:
-            functionExecutable->prepareForExecution<FunctionExecutable>(vm, jsCast<JSFunction*>(functionObject.asCell()), functionScope, CodeSpecializationKind::CodeForCall, newCodeBlock);
+            functionExecutable->prepareForExecution<FunctionExecutable>(vm, jsUncheckedDowncast<JSFunction*>(functionObject.asCell()), functionScope, CodeSpecializationKind::CodeForCall, newCodeBlock);
             RETURN_IF_EXCEPTION_WITH_TRAPS_DEFERRED(scope, scope.exception());
             ASSERT(newCodeBlock);
             newCodeBlock->m_shouldAlwaysBeInlined = false;
         }
 
         if (microtaskCall) {
-            auto* jsFunction = jsCast<JSFunction*>(functionObject.asCell());
+            auto* jsFunction = jsUncheckedDowncast<JSFunction*>(functionObject.asCell());
             microtaskCall->initialize(vm, jsFunction);
             RETURN_IF_EXCEPTION_WITH_TRAPS_DEFERRED(scope, scope.exception());
 
@@ -191,7 +191,7 @@ static JSValue callMicrotask(JSGlobalObject* globalObject, JSValue functionObjec
 
 #if ENABLE(WEBASSEMBLY)
     if (callData.native.isWasm)
-        return JSValue::decode(vmEntryToWasm(jsCast<WebAssemblyFunction*>(functionObject)->jsToWasm(ArityCheckMode::MustCheckArity).taggedPtr(), &vm, &protoCallFrame));
+        return JSValue::decode(vmEntryToWasm(jsUncheckedDowncast<WebAssemblyFunction*>(functionObject)->jsToWasm(ArityCheckMode::MustCheckArity).taggedPtr(), &vm, &protoCallFrame));
 #endif
 
     return JSValue::decode(vmEntryToNative(nativeFunction.taggedPtr(), &vm, &protoCallFrame));
@@ -307,7 +307,7 @@ static void asyncFromSyncIteratorContinueOrDone(JSGlobalObject* globalObject, VM
                 }
             }
             if (error) [[unlikely]] {
-                jsCast<JSPromise*>(promise)->reject(vm, globalObject, error);
+                jsUncheckedDowncast<JSPromise*>(promise)->reject(vm, globalObject, error);
                 return;
             }
             if (returnMethod.isCallable()) {
@@ -317,13 +317,13 @@ static void asyncFromSyncIteratorContinueOrDone(JSGlobalObject* globalObject, VM
             }
         }
         scope.release();
-        jsCast<JSPromise*>(promise)->reject(vm, globalObject, result);
+        jsUncheckedDowncast<JSPromise*>(promise)->reject(vm, globalObject, result);
         break;
     }
     case JSPromise::Status::Fulfilled: {
         auto* resultObject = createIteratorResultObject(globalObject, result, done);
         scope.release();
-        jsCast<JSPromise*>(promise)->resolve(globalObject, vm, resultObject);
+        jsUncheckedDowncast<JSPromise*>(promise)->resolve(globalObject, vm, resultObject);
         break;
     }
     }
@@ -358,14 +358,14 @@ static void promiseAllResolveJob(JSGlobalObject* globalObject, VM& vm, JSPromise
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* globalContext = jsCast<JSPromiseCombinatorsGlobalContext*>(context->globalContext());
+    auto* globalContext = jsUncheckedDowncast<JSPromiseCombinatorsGlobalContext*>(context->globalContext());
     switch (status) {
     case JSPromise::Status::Pending: {
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }
     case JSPromise::Status::Fulfilled: {
-        auto* values = jsCast<JSArray*>(globalContext->values());
+        auto* values = jsUncheckedDowncast<JSArray*>(globalContext->values());
         uint64_t index = context->index();
 
         values->putDirectIndex(globalObject, index, resolution);
@@ -397,14 +397,14 @@ static void internalPromiseAllResolveJob(JSGlobalObject* globalObject, VM& vm, J
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* globalContext = jsCast<JSPromiseCombinatorsGlobalContext*>(context->globalContext());
+    auto* globalContext = jsUncheckedDowncast<JSPromiseCombinatorsGlobalContext*>(context->globalContext());
     switch (status) {
     case JSPromise::Status::Pending: {
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }
     case JSPromise::Status::Fulfilled: {
-        auto* values = jsCast<JSArray*>(globalContext->values());
+        auto* values = jsUncheckedDowncast<JSArray*>(globalContext->values());
         uint64_t index = context->index();
 
         values->putDirectIndex(globalObject, index, resolution);
@@ -434,8 +434,8 @@ static void promiseAllSettledResolveJob(JSGlobalObject* globalObject, VM& vm, JS
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* globalContext = jsCast<JSPromiseCombinatorsGlobalContext*>(context->globalContext());
-    auto* values = jsCast<JSArray*>(globalContext->values());
+    auto* globalContext = jsUncheckedDowncast<JSPromiseCombinatorsGlobalContext*>(context->globalContext());
+    auto* values = jsUncheckedDowncast<JSArray*>(globalContext->values());
     uint64_t index = context->index();
 
     JSObject* resultObject = nullptr;
@@ -472,7 +472,7 @@ static void promiseAnyResolveJob(JSGlobalObject* globalObject, VM& vm, JSPromise
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* globalContext = jsCast<JSPromiseCombinatorsGlobalContext*>(context->globalContext());
+    auto* globalContext = jsUncheckedDowncast<JSPromiseCombinatorsGlobalContext*>(context->globalContext());
 
     switch (status) {
     case JSPromise::Status::Pending: {
@@ -485,7 +485,7 @@ static void promiseAnyResolveJob(JSGlobalObject* globalObject, VM& vm, JSPromise
         break;
     }
     case JSPromise::Status::Rejected: {
-        auto* errors = jsCast<JSArray*>(globalContext->values());
+        auto* errors = jsUncheckedDowncast<JSArray*>(globalContext->values());
         uint64_t index = context->index();
 
         errors->putDirectIndex(globalObject, index, resolution);
@@ -726,7 +726,7 @@ static void asyncGeneratorResumeNextReturn(JSGlobalObject* globalObject, JSAsync
 
 static void promiseFinallyAwaitJob(JSGlobalObject* globalObject, VM& vm, JSValue settledValue, JSPromiseCombinatorsGlobalContext* context, JSPromise::Status status)
 {
-    auto* resultPromise = jsCast<JSPromise*>(context->promise());
+    auto* resultPromise = jsUncheckedDowncast<JSPromise*>(context->promise());
     JSValue originalValue = context->values();
     bool wasFulfilled = context->remainingElementsCount().asBoolean();
 
@@ -770,7 +770,7 @@ static void promiseFinallyReactionJob(JSGlobalObject* globalObject, VM& vm, JSPr
     context->setRemainingElementsCount(vm, jsBoolean(status == JSPromise::Status::Fulfilled));
 
     if (result.inherits<JSPromise>()) {
-        auto* promise = jsCast<JSPromise*>(result);
+        auto* promise = jsUncheckedDowncast<JSPromise*>(result);
         if (promise->isThenFastAndNonObservable()) {
             scope.release();
             promise->performPromiseThenWithInternalMicrotask(vm, globalObject, InternalMicrotask::PromiseFinallyAwaitJob, resultPromise, context);
@@ -823,7 +823,7 @@ static void promiseFinallyReactionJob(JSGlobalObject* globalObject, VM& vm, JSPr
 static void asyncModuleExecutionDone(JSGlobalObject* globalObject, ThrowScope& scope, std::span<const JSValue, maxMicrotaskArguments> arguments, uint8_t payload)
 {
     scope.release();
-    auto* module = jsCast<JSModuleRecord*>(arguments[2]);
+    auto* module = jsUncheckedDowncast<JSModuleRecord*>(arguments[2]);
     auto status = static_cast<JSPromise::Status>(payload);
     if (status == JSPromise::Status::Fulfilled)
         module->asyncExecutionFulfilled(globalObject);
@@ -835,7 +835,7 @@ static void asyncModuleExecutionDone(JSGlobalObject* globalObject, ThrowScope& s
 
 static void asyncModuleExecutionResume(JSGlobalObject* globalObject, VM& vm, ThrowScope& scope, std::span<const JSValue, maxMicrotaskArguments> arguments, uint8_t payload)
 {
-    auto* module = jsCast<JSModuleRecord*>(arguments[2]);
+    auto* module = jsUncheckedDowncast<JSModuleRecord*>(arguments[2]);
     JSValue resolution = arguments[1];
     auto status = static_cast<JSPromise::Status>(payload);
     auto* capability = module->asyncCapability();
@@ -862,11 +862,11 @@ static void moduleRegistryFetchSettled(JSGlobalObject* globalObject, VM& vm, Thr
     // arguments[0] = pre-created modulePromise
     // arguments[1] = resolution (JSSourceCode*) or rejection (error)
     // arguments[2] = ModuleRegistryEntry*
-    auto* entry = jsCast<ModuleRegistryEntry*>(arguments[2]);
-    auto* modulePromise = jsCast<JSPromise*>(arguments[0]);
+    auto* entry = jsUncheckedDowncast<ModuleRegistryEntry*>(arguments[2]);
+    auto* modulePromise = jsUncheckedDowncast<JSPromise*>(arguments[0]);
     auto status = static_cast<JSPromise::Status>(payload);
     if (status == JSPromise::Status::Fulfilled) {
-        auto* jsSourceCode = jsSecureCast<JSSourceCode*>(arguments[1]);
+        auto* jsSourceCode = jsDowncast<JSSourceCode*>(arguments[1]);
         JSPromise* makeModulePromise = JSModuleLoader::makeModule(globalObject, entry->key(), jsSourceCode);
         if (scope.exception()) {
             modulePromise->rejectWithCaughtException(globalObject, scope);
@@ -875,7 +875,7 @@ static void moduleRegistryFetchSettled(JSGlobalObject* globalObject, VM& vm, Thr
         makeModulePromise->performPromiseThenWithInternalMicrotask(vm, globalObject, InternalMicrotask::ModuleRegistryModuleSettled, modulePromise, entry);
     } else {
         JSValue errorValue = arguments[1];
-        if (auto* error = jsDynamicCast<ErrorInstance*>(errorValue))
+        if (auto* error = jsDynamicDowncast<ErrorInstance*>(errorValue))
             JSModuleLoader::attachErrorInfo(globalObject, error, nullptr, entry->key(), entry->moduleType(), JSModuleLoader::ModuleFailure::Kind::Instantiation);
         entry->fetchError(globalObject, errorValue);
         modulePromise->reject(vm, globalObject, errorValue);
@@ -887,11 +887,11 @@ static void moduleRegistryModuleSettled(JSGlobalObject* globalObject, VM& vm, st
     // arguments[0] = pre-created modulePromise
     // arguments[1] = resolution (AbstractModuleRecord*) or rejection (error)
     // arguments[2] = ModuleRegistryEntry*
-    auto* entry = jsCast<ModuleRegistryEntry*>(arguments[2]);
-    auto* modulePromise = jsCast<JSPromise*>(arguments[0]);
+    auto* entry = jsUncheckedDowncast<ModuleRegistryEntry*>(arguments[2]);
+    auto* modulePromise = jsUncheckedDowncast<JSPromise*>(arguments[0]);
     auto status = static_cast<JSPromise::Status>(payload);
     if (status == JSPromise::Status::Fulfilled) {
-        auto* moduleRecord = jsSecureCast<AbstractModuleRecord*>(arguments[1]);
+        auto* moduleRecord = jsDowncast<AbstractModuleRecord*>(arguments[1]);
         entry->fetchComplete(globalObject, moduleRecord);
         modulePromise->fulfill(vm, globalObject, moduleRecord);
     } else {
@@ -908,9 +908,9 @@ static void moduleGraphLoadingError(JSGlobalObject* globalObject, VM& vm, ThrowS
     // arguments[2] = ModuleGraphLoadingState*
     auto status = static_cast<JSPromise::Status>(payload);
     if (status == JSPromise::Status::Rejected) {
-        auto* state = jsCast<ModuleGraphLoadingState*>(arguments[2]);
+        auto* state = jsUncheckedDowncast<ModuleGraphLoadingState*>(arguments[2]);
         JSValue errorValue = arguments[1];
-        if (auto* error = jsDynamicCast<ErrorInstance*>(errorValue)) {
+        if (auto* error = jsDynamicDowncast<ErrorInstance*>(errorValue)) {
             errorValue = JSModuleLoader::maybeDuplicateFetchError(globalObject, error);
             RETURN_IF_EXCEPTION(scope, void());
         }
@@ -923,15 +923,15 @@ static void moduleLoadStep(JSGlobalObject* globalObject, VM& vm, ThrowScope& sco
     // arguments[0] = pre-created loadPromise
     // arguments[1] = resolution value or error
     // arguments[2] = ModuleLoadingContext*
-    auto* context = jsCast<ModuleLoadingContext*>(arguments[2]);
-    auto* loadPromise = jsCast<JSPromise*>(arguments[0]);
+    auto* context = jsUncheckedDowncast<ModuleLoadingContext*>(arguments[2]);
+    auto* loadPromise = jsUncheckedDowncast<JSPromise*>(arguments[0]);
     auto status = static_cast<JSPromise::Status>(payload);
 
     switch (context->step()) {
     case ModuleLoadingContext::Step::Main: {
         // modulePromise settled: on fulfillment, call loadRequestedModules and chain next step
         if (status == JSPromise::Status::Fulfilled) {
-            auto* module = jsSecureCast<AbstractModuleRecord*>(arguments[1]);
+            auto* module = jsDowncast<AbstractModuleRecord*>(arguments[1]);
             context->module(vm, module);
             JSPromise* requestedPromise = globalObject->moduleLoader()->loadRequestedModules(globalObject, module, context->scriptFetcher());
             if (scope.exception()) {
@@ -956,7 +956,7 @@ static void moduleLoadStep(JSGlobalObject* globalObject, VM& vm, ThrowScope& sco
 
             // setEntryRecord logic
             auto* entry = context->entry();
-            if (auto* cyclic = jsDynamicCast<CyclicModuleRecord*>(module); cyclic && cyclic->status() != CyclicModuleRecord::Status::Unlinked) {
+            if (auto* cyclic = jsDynamicDowncast<CyclicModuleRecord*>(module); cyclic && cyclic->status() != CyclicModuleRecord::Status::Unlinked) {
                 ASSERT(cyclic->status() != CyclicModuleRecord::Status::Linking);
                 loadPromise->fulfill(vm, globalObject, entry->record());
             } else {
@@ -976,7 +976,7 @@ static void moduleLoadStep(JSGlobalObject* globalObject, VM& vm, ThrowScope& sco
     case ModuleLoadingContext::Step::Cached: {
         // Cached loadPromise settled: on fulfillment, call finishLoading
         if (status == JSPromise::Status::Fulfilled) {
-            auto* module = jsSecureCast<AbstractModuleRecord*>(arguments[1]);
+            auto* module = jsDowncast<AbstractModuleRecord*>(arguments[1]);
             globalObject->moduleLoader()->finishLoadingImportedModule(globalObject, context->referrer(), context->moduleRequest(), context->payload(), module, context->scriptFetcher());
             if (scope.exception()) {
                 loadPromise->rejectWithCaughtException(globalObject, scope);
@@ -1002,11 +1002,11 @@ static void moduleLoadTopSettled(JSGlobalObject* globalObject, VM& vm, ThrowScop
     // arguments[0] = pre-created intermediatePromise
     // arguments[1] = resolution (JSSourceCode*) or error
     // arguments[2] = ModuleLoadingContext*
-    auto* context = jsCast<ModuleLoadingContext*>(arguments[2]);
-    auto* intermediatePromise = jsCast<JSPromise*>(arguments[0]);
+    auto* context = jsUncheckedDowncast<ModuleLoadingContext*>(arguments[2]);
+    auto* intermediatePromise = jsUncheckedDowncast<JSPromise*>(arguments[0]);
     auto status = static_cast<JSPromise::Status>(payload);
     if (status == JSPromise::Status::Fulfilled) {
-        auto* jsSourceCode = jsSecureCast<JSSourceCode*>(arguments[1]);
+        auto* jsSourceCode = jsDowncast<JSSourceCode*>(arguments[1]);
 
         const Identifier& specifier = context->moduleRequest().m_specifier;
         auto type = context->moduleRequest().type();
@@ -1064,7 +1064,7 @@ static void moduleLoadTopSettled(JSGlobalObject* globalObject, VM& vm, ThrowScop
             return;
         }
         JSValue errorValue = arguments[1];
-        if (auto* error = jsDynamicCast<ErrorInstance*>(errorValue)) {
+        if (auto* error = jsDynamicDowncast<ErrorInstance*>(errorValue)) {
             auto failure = JSModuleLoader::getErrorInfo(globalObject, error);
             if (failure.isEvaluationError(specifier, type))
                 entry->evaluationError(globalObject, error);
@@ -1081,8 +1081,8 @@ static void moduleLoadTopRejected(JSGlobalObject* globalObject, VM& vm, ThrowSco
     // arguments[0] = pre-created resultPromise
     // arguments[1] = resolution or error
     // arguments[2] = ModuleLoadingContext*
-    auto* context = jsCast<ModuleLoadingContext*>(arguments[2]);
-    auto* resultPromise = jsCast<JSPromise*>(arguments[0]);
+    auto* context = jsUncheckedDowncast<ModuleLoadingContext*>(arguments[2]);
+    auto* resultPromise = jsUncheckedDowncast<JSPromise*>(arguments[0]);
     auto status = static_cast<JSPromise::Status>(payload);
     if (status == JSPromise::Status::Fulfilled)
         resultPromise->fulfill(vm, globalObject, arguments[1]);
@@ -1095,7 +1095,7 @@ static void moduleLoadTopRejected(JSGlobalObject* globalObject, VM& vm, ThrowSco
             return;
         }
         if (JSValue fetchErrorValue = entry->fetchError()) {
-            if (ErrorInstance* fetchError = jsDynamicCast<ErrorInstance*>(fetchErrorValue)) {
+            if (ErrorInstance* fetchError = jsDynamicDowncast<ErrorInstance*>(fetchErrorValue)) {
                 ErrorInstance* fetchErrorCopy = JSModuleLoader::maybeDuplicateFetchError(globalObject, fetchError);
                 if (scope.exception()) {
                     resultPromise->rejectWithCaughtException(globalObject, scope);
@@ -1118,10 +1118,10 @@ static void moduleLoadSpecifierTransform(JSGlobalObject* globalObject, VM& vm, T
     // arguments[0] = pre-created transformedStatePromise
     // arguments[1] = resolution
     // arguments[2] = ModuleLoadingContext*
-    auto* transformedPromise = jsCast<JSPromise*>(arguments[0]);
+    auto* transformedPromise = jsUncheckedDowncast<JSPromise*>(arguments[0]);
     auto status = static_cast<JSPromise::Status>(payload);
     if (status == JSPromise::Status::Fulfilled) {
-        auto* context = jsCast<ModuleLoadingContext*>(arguments[2]);
+        auto* context = jsUncheckedDowncast<ModuleLoadingContext*>(arguments[2]);
         scope.release();
         transformedPromise->fulfill(vm, globalObject, identifierToJSValue(vm, context->moduleRequest().m_specifier));
     } else
@@ -1134,8 +1134,8 @@ static void moduleLoadCombinedLoadSettled(JSGlobalObject* globalObject, VM& vm, 
     // arguments[0] = combinedPromise
     // arguments[1] = resolution or error
     // arguments[2] = ModuleLoaderPayload*
-    auto* combinedPromise = jsCast<JSPromise*>(arguments[0]);
-    auto* modulePayload = jsCast<ModuleLoaderPayload*>(arguments[2]);
+    auto* combinedPromise = jsUncheckedDowncast<JSPromise*>(arguments[0]);
+    auto* modulePayload = jsUncheckedDowncast<ModuleLoaderPayload*>(arguments[2]);
     auto status = static_cast<JSPromise::Status>(payload);
     scope.release();
     if (status == JSPromise::Status::Fulfilled) {
@@ -1157,8 +1157,8 @@ static void moduleLoadCombinedStateSettled(JSGlobalObject* globalObject, VM& vm,
     // arguments[0] = combinedPromise
     // arguments[1] = resolution or error
     // arguments[2] = ModuleLoaderPayload*
-    auto* combinedPromise = jsCast<JSPromise*>(arguments[0]);
-    auto* modulePayload = jsCast<ModuleLoaderPayload*>(arguments[2]);
+    auto* combinedPromise = jsUncheckedDowncast<JSPromise*>(arguments[0]);
+    auto* modulePayload = jsUncheckedDowncast<ModuleLoaderPayload*>(arguments[2]);
     auto status = static_cast<JSPromise::Status>(payload);
     scope.release();
     if (status == JSPromise::Status::Fulfilled) {
@@ -1180,11 +1180,11 @@ static void moduleLoadLinkEvaluateSettled(JSGlobalObject* globalObject, VM& vm, 
     // arguments[0] = pre-created resultPromise
     // arguments[1] = resolution (AbstractModuleRecord*) or error
     // arguments[2] = ModuleLoadingContext*
-    auto* context = jsCast<ModuleLoadingContext*>(arguments[2]);
-    auto* resultPromise = jsCast<JSPromise*>(arguments[0]);
+    auto* context = jsUncheckedDowncast<ModuleLoadingContext*>(arguments[2]);
+    auto* resultPromise = jsUncheckedDowncast<JSPromise*>(arguments[0]);
     auto status = static_cast<JSPromise::Status>(payload);
     if (status == JSPromise::Status::Fulfilled) {
-        auto* record = jsSecureCast<AbstractModuleRecord*>(arguments[1]);
+        auto* record = jsDowncast<AbstractModuleRecord*>(arguments[1]);
         if (context->evaluate()) {
             record->link(globalObject, context->scriptFetcher());
             JSModuleLoader::attachErrorInfo(globalObject, scope, record, record->moduleKey(), record->moduleType(), JSModuleLoader::ModuleFailure::Kind::Instantiation);
@@ -1212,7 +1212,7 @@ static void moduleLoadReturnRecord(JSGlobalObject* globalObject, VM& vm, ThrowSc
     // arguments[0] = resultPromise
     // arguments[1] = resolution or error
     // arguments[2] = AbstractModuleRecord*
-    auto* resultPromise = jsCast<JSPromise*>(arguments[0]);
+    auto* resultPromise = jsUncheckedDowncast<JSPromise*>(arguments[0]);
     auto status = static_cast<JSPromise::Status>(payload);
     scope.release();
     if (status == JSPromise::Status::Fulfilled)
@@ -1229,13 +1229,13 @@ static void moduleLoadStoreError(JSGlobalObject* globalObject, ThrowScope& scope
     // arguments[2] = ModuleLoadingContext*
     auto status = static_cast<JSPromise::Status>(payload);
     if (status == JSPromise::Status::Rejected) {
-        auto* context = jsCast<ModuleLoadingContext*>(arguments[2]);
+        auto* context = jsUncheckedDowncast<ModuleLoadingContext*>(arguments[2]);
         JSValue errorValue = arguments[1];
         const Identifier& specifier = context->moduleRequest().m_specifier;
         auto type = context->moduleRequest().type();
         ModuleRegistryEntry* entry = globalObject->moduleLoader()->ensureRegistered(globalObject, specifier, type);
         RETURN_IF_EXCEPTION(scope, void());
-        if (auto* error = jsDynamicCast<ErrorInstance*>(errorValue)) {
+        if (auto* error = jsDynamicDowncast<ErrorInstance*>(errorValue)) {
             auto failure = JSModuleLoader::getErrorInfo(globalObject, error);
             if (failure.isEvaluationError(specifier, type))
                 entry->evaluationError(globalObject, error);
@@ -1254,8 +1254,8 @@ static void dynamicImportLoadSettled(JSGlobalObject* globalObject, VM& vm, Throw
     // arguments[0] = capabilityPromise
     // arguments[1] = resolution or error
     // arguments[2] = AbstractModuleRecord*
-    auto* capabilityPromise = jsCast<JSPromise*>(arguments[0]);
-    auto* module = jsCast<AbstractModuleRecord*>(arguments[2]);
+    auto* capabilityPromise = jsUncheckedDowncast<JSPromise*>(arguments[0]);
+    auto* module = jsUncheckedDowncast<AbstractModuleRecord*>(arguments[2]);
     auto status = static_cast<JSPromise::Status>(payload);
     if (status == JSPromise::Status::Fulfilled) {
         // linkAndEvaluate logic
@@ -1281,8 +1281,8 @@ static void dynamicImportEvaluateSettled(JSGlobalObject* globalObject, VM& vm, T
     // arguments[0] = capabilityPromise
     // arguments[1] = resolution or error
     // arguments[2] = AbstractModuleRecord*
-    auto* capabilityPromise = jsCast<JSPromise*>(arguments[0]);
-    auto* module = jsCast<AbstractModuleRecord*>(arguments[2]);
+    auto* capabilityPromise = jsUncheckedDowncast<JSPromise*>(arguments[0]);
+    auto* module = jsUncheckedDowncast<AbstractModuleRecord*>(arguments[2]);
     auto status = static_cast<JSPromise::Status>(payload);
     if (status == JSPromise::Status::Fulfilled) {
         JSModuleNamespaceObject* moduleNamespace = module->getModuleNamespace(globalObject);
@@ -1307,7 +1307,7 @@ static void importModuleNamespace(JSGlobalObject* globalObject, VM& vm, ThrowSco
     // arguments[0] = resultPromise
     // arguments[1] = module namespace (from dynamic import pipeline) or error
     // arguments[2] = unused
-    auto* resultPromise = jsCast<JSPromise*>(arguments[0]);
+    auto* resultPromise = jsUncheckedDowncast<JSPromise*>(arguments[0]);
     auto status = static_cast<JSPromise::Status>(payload);
     if (status == JSPromise::Status::Fulfilled) {
         // The value is a JSModuleNamespaceObject forwarded from the internal
@@ -1316,7 +1316,7 @@ static void importModuleNamespace(JSGlobalObject* globalObject, VM& vm, ThrowSco
         // ContinueDynamicImport https://tc39.es/ecma262/#sec-ContinueDynamicImport
         // Step 6.d.ii: Call(promiseCapability.[[Resolve]], undefined, « namespace »).
         // A module namespace that exports "then" is a thenable per spec.
-        auto* moduleNamespace = jsSecureCast<JSModuleNamespaceObject*>(arguments[1]);
+        auto* moduleNamespace = jsDowncast<JSModuleNamespaceObject*>(arguments[1]);
         resultPromise->resolve(globalObject, vm, moduleNamespace);
     } else
         resultPromise->reject(vm, globalObject, arguments[1]);
@@ -1329,8 +1329,8 @@ void runInternalMicrotask(JSGlobalObject* globalObject, VM& vm, InternalMicrotas
 
     switch (task) {
     case InternalMicrotask::PromiseResolveThenableJobFast: {
-        auto* promise = jsCast<JSPromise*>(arguments[0]);
-        auto* promiseToResolve = jsCast<JSPromise*>(arguments[1]);
+        auto* promise = jsUncheckedDowncast<JSPromise*>(arguments[0]);
+        auto* promiseToResolve = jsUncheckedDowncast<JSPromise*>(arguments[1]);
 
         if (!promiseSpeciesWatchpointIsValid(vm, promise)) [[unlikely]]
             RELEASE_AND_RETURN(scope, promiseResolveThenableJobFastSlow(globalObject, promise, promiseToResolve));
@@ -1341,7 +1341,7 @@ void runInternalMicrotask(JSGlobalObject* globalObject, VM& vm, InternalMicrotas
     }
 
     case InternalMicrotask::PromiseResolveThenableJobWithInternalMicrotaskFast: {
-        auto* promise = jsCast<JSPromise*>(arguments[0]);
+        auto* promise = jsUncheckedDowncast<JSPromise*>(arguments[0]);
         JSValue context = arguments[1];
         auto task = static_cast<InternalMicrotask>(payload);
 
@@ -1352,7 +1352,7 @@ void runInternalMicrotask(JSGlobalObject* globalObject, VM& vm, InternalMicrotas
         switch (promise->status()) {
         case JSPromise::Status::Pending: {
             JSValue encodedTask = jsNumber(static_cast<int32_t>(task));
-            auto* reaction = JSPromiseReaction::create(vm, jsUndefined(), encodedTask, encodedTask, context, reactionsOrResult ? jsCast<JSPromiseReaction*>(reactionsOrResult) : nullptr);
+            auto* reaction = JSPromiseReaction::create(vm, jsUndefined(), encodedTask, encodedTask, context, reactionsOrResult ? jsUncheckedDowncast<JSPromiseReaction*>(reactionsOrResult) : nullptr);
             promise->setReactionsOrResult(vm, reaction);
             promise->markAsHandled();
             break;
@@ -1375,7 +1375,7 @@ void runInternalMicrotask(JSGlobalObject* globalObject, VM& vm, InternalMicrotas
     case InternalMicrotask::PromiseResolveThenableJob: {
         JSValue promise = arguments[0];
         JSValue then = arguments[1];
-        JSPromise* promiseToResolve = jsCast<JSPromise*>(arguments[2]);
+        JSPromise* promiseToResolve = jsUncheckedDowncast<JSPromise*>(arguments[2]);
         auto [resolve, reject] = promiseToResolve->createResolvingFunctions(vm, globalObject);
         RELEASE_AND_RETURN(scope, promiseResolveThenableJob(globalObject, promise, then, resolve, reject));
     }
@@ -1390,7 +1390,7 @@ void runInternalMicrotask(JSGlobalObject* globalObject, VM& vm, InternalMicrotas
     }
 
     case InternalMicrotask::PromiseResolveWithoutHandlerJob: {
-        auto* promise = jsCast<JSPromise*>(arguments[0]);
+        auto* promise = jsUncheckedDowncast<JSPromise*>(arguments[0]);
         JSValue resolution = arguments[1];
         switch (static_cast<JSPromise::Status>(payload)) {
         case JSPromise::Status::Pending: {
@@ -1412,7 +1412,7 @@ void runInternalMicrotask(JSGlobalObject* globalObject, VM& vm, InternalMicrotas
     }
 
     case InternalMicrotask::PromiseFulfillWithoutHandlerJob: {
-        auto* promise = jsCast<JSPromise*>(arguments[0]);
+        auto* promise = jsDowncast<JSPromise*>(arguments[0]);
         JSValue resolution = arguments[1];
         switch (static_cast<JSPromise::Status>(payload)) {
         case JSPromise::Status::Pending:
@@ -1431,19 +1431,19 @@ void runInternalMicrotask(JSGlobalObject* globalObject, VM& vm, InternalMicrotas
     }
 
     case InternalMicrotask::PromiseRaceResolveJob:
-        RELEASE_AND_RETURN(scope, promiseRaceResolveJob(globalObject, vm, jsCast<JSPromise*>(arguments[0]), arguments[1], static_cast<JSPromise::Status>(payload)));
+        RELEASE_AND_RETURN(scope, promiseRaceResolveJob(globalObject, vm, jsUncheckedDowncast<JSPromise*>(arguments[0]), arguments[1], static_cast<JSPromise::Status>(payload)));
 
     case InternalMicrotask::PromiseAllResolveJob:
-        RELEASE_AND_RETURN(scope, promiseAllResolveJob(globalObject, vm, jsCast<JSPromise*>(arguments[0]), arguments[1], jsCast<JSPromiseCombinatorsContext*>(arguments[2]), static_cast<JSPromise::Status>(payload)));
+        RELEASE_AND_RETURN(scope, promiseAllResolveJob(globalObject, vm, jsUncheckedDowncast<JSPromise*>(arguments[0]), arguments[1], jsUncheckedDowncast<JSPromiseCombinatorsContext*>(arguments[2]), static_cast<JSPromise::Status>(payload)));
 
     case InternalMicrotask::PromiseAllSettledResolveJob:
-        RELEASE_AND_RETURN(scope, promiseAllSettledResolveJob(globalObject, vm, jsCast<JSPromise*>(arguments[0]), arguments[1], jsCast<JSPromiseCombinatorsContext*>(arguments[2]), static_cast<JSPromise::Status>(payload)));
+        RELEASE_AND_RETURN(scope, promiseAllSettledResolveJob(globalObject, vm, jsUncheckedDowncast<JSPromise*>(arguments[0]), arguments[1], jsUncheckedDowncast<JSPromiseCombinatorsContext*>(arguments[2]), static_cast<JSPromise::Status>(payload)));
 
     case InternalMicrotask::PromiseAnyResolveJob:
-        RELEASE_AND_RETURN(scope, promiseAnyResolveJob(globalObject, vm, jsCast<JSPromise*>(arguments[0]), arguments[1], jsCast<JSPromiseCombinatorsContext*>(arguments[2]), static_cast<JSPromise::Status>(payload)));
+        RELEASE_AND_RETURN(scope, promiseAnyResolveJob(globalObject, vm, jsUncheckedDowncast<JSPromise*>(arguments[0]), arguments[1], jsUncheckedDowncast<JSPromiseCombinatorsContext*>(arguments[2]), static_cast<JSPromise::Status>(payload)));
 
     case InternalMicrotask::InternalPromiseAllResolveJob:
-        RELEASE_AND_RETURN(scope, internalPromiseAllResolveJob(globalObject, vm, jsCast<JSPromise*>(arguments[0]), arguments[1], jsCast<JSPromiseCombinatorsContext*>(arguments[2]), static_cast<JSPromise::Status>(payload)));
+        RELEASE_AND_RETURN(scope, internalPromiseAllResolveJob(globalObject, vm, jsUncheckedDowncast<JSPromise*>(arguments[0]), arguments[1], jsUncheckedDowncast<JSPromiseCombinatorsContext*>(arguments[2]), static_cast<JSPromise::Status>(payload)));
 
     case InternalMicrotask::PromiseReactionJob: {
         JSValue promiseOrCapability = arguments[0];
@@ -1475,7 +1475,7 @@ void runInternalMicrotask(JSGlobalObject* globalObject, VM& vm, InternalMicrotas
         }
 
         if (error) {
-            if (auto* promise = jsDynamicCast<JSPromise*>(promiseOrCapability))
+            if (auto* promise = jsDynamicDowncast<JSPromise*>(promiseOrCapability))
                 RELEASE_AND_RETURN(scope, promise->rejectPromise(vm, globalObject, error));
 
             JSValue reject = promiseOrCapability.get(globalObject, vm.propertyNames->reject);
@@ -1489,7 +1489,7 @@ void runInternalMicrotask(JSGlobalObject* globalObject, VM& vm, InternalMicrotas
             return;
         }
 
-        if (auto* promise = jsDynamicCast<JSPromise*>(promiseOrCapability))
+        if (auto* promise = jsDynamicDowncast<JSPromise*>(promiseOrCapability))
             RELEASE_AND_RETURN(scope, promise->resolvePromise(globalObject, vm, result));
 
         JSValue resolve = promiseOrCapability.get(globalObject, vm.propertyNames->resolve);
@@ -1512,7 +1512,7 @@ void runInternalMicrotask(JSGlobalObject* globalObject, VM& vm, InternalMicrotas
 
     case InternalMicrotask::AsyncFunctionResume: {
         JSValue resolution = arguments[1];
-        auto* generator = jsCast<JSGenerator*>(arguments[2]);
+        auto* generator = jsUncheckedDowncast<JSGenerator*>(arguments[2]);
         JSGenerator::ResumeMode resumeMode = JSGenerator::ResumeMode::NormalMode;
         switch (static_cast<JSPromise::Status>(payload)) {
         case JSPromise::Status::Pending: {
@@ -1550,14 +1550,14 @@ void runInternalMicrotask(JSGlobalObject* globalObject, VM& vm, InternalMicrotas
         }
 
         if (error) {
-            auto* promise = jsCast<JSPromise*>(generator->context());
+            auto* promise = jsUncheckedDowncast<JSPromise*>(generator->context());
             scope.release();
             promise->reject(vm, globalObject, error);
             return;
         }
 
         if (generator->state() == static_cast<int32_t>(JSGenerator::State::Executing)) {
-            auto* promise = jsCast<JSPromise*>(generator->context());
+            auto* promise = jsUncheckedDowncast<JSPromise*>(generator->context());
             scope.release();
             promise->resolve(globalObject, vm, value);
             return;
@@ -1573,19 +1573,19 @@ void runInternalMicrotask(JSGlobalObject* globalObject, VM& vm, InternalMicrotas
         RELEASE_AND_RETURN(scope, asyncFromSyncIteratorContinueOrDone(globalObject, vm, arguments[2], arguments[1], static_cast<JSPromise::Status>(payload), task == InternalMicrotask::AsyncFromSyncIteratorDone));
 
     case InternalMicrotask::AsyncGeneratorYieldAwaited: {
-        RELEASE_AND_RETURN(scope, asyncGeneratorYieldAwaited(globalObject, jsCast<JSAsyncGenerator*>(arguments[2]), arguments[1], static_cast<JSPromise::Status>(payload)));
+        RELEASE_AND_RETURN(scope, asyncGeneratorYieldAwaited(globalObject, jsUncheckedDowncast<JSAsyncGenerator*>(arguments[2]), arguments[1], static_cast<JSPromise::Status>(payload)));
     }
 
     case InternalMicrotask::AsyncGeneratorBodyCallNormal: {
-        RELEASE_AND_RETURN(scope, asyncGeneratorBodyCallNormal(globalObject, jsCast<JSAsyncGenerator*>(arguments[2]), arguments[1], static_cast<JSPromise::Status>(payload)));
+        RELEASE_AND_RETURN(scope, asyncGeneratorBodyCallNormal(globalObject, jsUncheckedDowncast<JSAsyncGenerator*>(arguments[2]), arguments[1], static_cast<JSPromise::Status>(payload)));
     }
 
     case InternalMicrotask::AsyncGeneratorBodyCallReturn: {
-        RELEASE_AND_RETURN(scope, asyncGeneratorBodyCallReturn(globalObject, jsCast<JSAsyncGenerator*>(arguments[2]), arguments[1], static_cast<JSPromise::Status>(payload)));
+        RELEASE_AND_RETURN(scope, asyncGeneratorBodyCallReturn(globalObject, jsUncheckedDowncast<JSAsyncGenerator*>(arguments[2]), arguments[1], static_cast<JSPromise::Status>(payload)));
     }
 
     case InternalMicrotask::AsyncGeneratorResumeNext: {
-        RELEASE_AND_RETURN(scope, asyncGeneratorResumeNextReturn(globalObject, jsCast<JSAsyncGenerator*>(arguments[2]), arguments[1], static_cast<JSPromise::Status>(payload)));
+        RELEASE_AND_RETURN(scope, asyncGeneratorResumeNextReturn(globalObject, jsUncheckedDowncast<JSAsyncGenerator*>(arguments[2]), arguments[1], static_cast<JSPromise::Status>(payload)));
     }
 
     case InternalMicrotask::PromiseFinallyReactionJob: {
@@ -1596,9 +1596,9 @@ void runInternalMicrotask(JSGlobalObject* globalObject, VM& vm, InternalMicrotas
         // payload = Fulfilled/Rejected status
         scope.release();
         promiseFinallyReactionJob(globalObject, vm,
-            jsCast<JSPromise*>(arguments[0]),
+            jsUncheckedDowncast<JSPromise*>(arguments[0]),
             arguments[1],
-            jsCast<JSPromiseCombinatorsGlobalContext*>(arguments[2]),
+            jsUncheckedDowncast<JSPromiseCombinatorsGlobalContext*>(arguments[2]),
             static_cast<JSPromise::Status>(payload));
         return;
     }
@@ -1612,7 +1612,7 @@ void runInternalMicrotask(JSGlobalObject* globalObject, VM& vm, InternalMicrotas
         scope.release();
         promiseFinallyAwaitJob(globalObject, vm,
             arguments[1],
-            jsCast<JSPromiseCombinatorsGlobalContext*>(arguments[2]),
+            jsUncheckedDowncast<JSPromiseCombinatorsGlobalContext*>(arguments[2]),
             static_cast<JSPromise::Status>(payload));
         return;
     }
@@ -1686,11 +1686,11 @@ void runInternalMicrotask(JSGlobalObject* globalObject, VM& vm, InternalMicrotas
         // loadAndEvaluateModule: extract module key from AbstractModuleRecord
         // arguments[0] = resultPromise
         // arguments[1] = resolution (AbstractModuleRecord*) or error
-        auto* resultPromise = jsCast<JSPromise*>(arguments[0]);
+        auto* resultPromise = jsDowncast<JSPromise*>(arguments[0]);
         auto status = static_cast<JSPromise::Status>(payload);
         scope.release();
         if (status == JSPromise::Status::Fulfilled) {
-            auto* module = jsSecureCast<AbstractModuleRecord*>(arguments[1]);
+            auto* module = jsDowncast<AbstractModuleRecord*>(arguments[1]);
             resultPromise->fulfillPromise(vm, globalObject, identifierToJSValue(vm, module->moduleKey()));
         } else
             resultPromise->rejectPromise(vm, globalObject, arguments[1]);

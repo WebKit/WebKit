@@ -61,7 +61,7 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSWebAssembly);
 #define DEFINE_CALLBACK_FOR_CONSTRUCTOR(capitalName, lowerName, properName, instanceType, jsName, prototypeBase, featureFlag) \
 static UNUSED_FUNCTION JSValue create##capitalName(VM&, JSObject* object) \
 { \
-    JSWebAssembly* webAssembly = jsCast<JSWebAssembly*>(object); \
+    JSWebAssembly* webAssembly = jsUncheckedDowncast<JSWebAssembly*>(object); \
     JSGlobalObject* globalObject = webAssembly->realm(); \
     return globalObject->properName##Constructor(); \
 }
@@ -372,7 +372,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyInstantiateFunc, (JSGlobalObject* globalObje
 
     JSValue firstArgument = callFrame->argument(0);
     if (firstArgument.inherits<JSWebAssemblyModule>())
-        instantiate(vm, globalObject, promise, jsCast<JSWebAssemblyModule*>(firstArgument), importObject, WTF::move(provider), JSWebAssemblyInstance::createPrivateModuleKey(), Resolve::WithInstance, Wasm::CreationMode::FromJS, /* alwaysAsync */ true);
+        instantiate(vm, globalObject, promise, jsUncheckedDowncast<JSWebAssemblyModule*>(firstArgument), importObject, WTF::move(provider), JSWebAssemblyInstance::createPrivateModuleKey(), Resolve::WithInstance, Wasm::CreationMode::FromJS, /* alwaysAsync */ true);
     else {
         auto compileOptions = WebAssemblyCompileOptions::tryCreate(globalObject, compileOptionsObject);
         RETURN_IF_EXCEPTION(scope, { });
@@ -388,7 +388,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyPromisingFunc, (JSGlobalObject* globalObject
 
     JSValue arg = callFrame->argument(0);
 
-    auto* wrapped = jsDynamicCast<WebAssemblyFunctionBase*>(arg);
+    auto* wrapped = jsDynamicDowncast<WebAssemblyFunctionBase*>(arg);
     if (!wrapped) [[unlikely]]
         return JSValue::encode(throwTypeError(globalObject, scope, "Argument 0 must be a WebAssembly exported function"_s));
 

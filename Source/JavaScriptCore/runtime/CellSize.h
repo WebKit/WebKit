@@ -51,17 +51,17 @@ inline size_t cellSize(JSCell* cell)
     if (isDynamicallySizedType(cellType)) {
         switch (cellType) {
         case DirectArgumentsType: {
-            auto* args = jsCast<DirectArguments*>(cell);
+            auto* args = jsUncheckedDowncast<DirectArguments*>(cell);
             return DirectArguments::allocationSize(args->m_minCapacity);
         }
         case FinalObjectType:
             return JSFinalObject::allocationSize(structure->inlineCapacity());
         case LexicalEnvironmentType: {
-            auto* env = jsCast<JSLexicalEnvironment*>(cell);
+            auto* env = jsUncheckedDowncast<JSLexicalEnvironment*>(cell);
             return JSLexicalEnvironment::allocationSize(env->symbolTable());
         }
         case ModuleEnvironmentType: {
-            auto* env = jsCast<JSModuleEnvironment*>(cell);
+            auto* env = jsUncheckedDowncast<JSModuleEnvironment*>(cell);
             return JSModuleEnvironment::allocationSize(env->symbolTable());
         }
         default:

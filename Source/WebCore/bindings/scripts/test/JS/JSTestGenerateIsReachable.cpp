@@ -120,7 +120,7 @@ void JSTestGenerateIsReachablePrototype::finishCreation(VM& vm)
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestGenerateIsReachable::info(), JSTestGenerateIsReachablePrototypeTableValues, *this);
     bool hasDisabledRuntimeProperties = false;
-    if (!jsCast<JSDOMGlobalObject*>(realm())->scriptExecutionContext()->isSecureContext()) {
+    if (!jsUncheckedDowncast<JSDOMGlobalObject*>(realm())->scriptExecutionContext()->isSecureContext()) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, "aSecretAttribute"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
@@ -160,7 +160,7 @@ JSObject* JSTestGenerateIsReachable::prototype(VM& vm, JSDOMGlobalObject& global
 
 JSValue JSTestGenerateIsReachable::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestGenerateIsReachableDOMConstructor, DOMConstructorID::TestGenerateIsReachable>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestGenerateIsReachableDOMConstructor, DOMConstructorID::TestGenerateIsReachable>(vm, *jsUncheckedDowncast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestGenerateIsReachable::destroy(JSC::JSCell* cell)
@@ -173,7 +173,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGenerateIsReachableConstructor, (JSGlobalObject* 
 {
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestGenerateIsReachablePrototype*>(JSValue::decode(thisValue));
+    auto* prototype = jsDynamicDowncast<JSTestGenerateIsReachablePrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestGenerateIsReachable::getConstructor(vm, prototype->realm()));
@@ -204,7 +204,7 @@ JSC::GCClient::IsoSubspace* JSTestGenerateIsReachable::subspaceForImpl(JSC::VM& 
 
 void JSTestGenerateIsReachable::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestGenerateIsReachable*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSTestGenerateIsReachable*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (RefPtr context = thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
@@ -213,7 +213,7 @@ void JSTestGenerateIsReachable::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer
 
 bool JSTestGenerateIsReachableOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
-    auto* jsTestGenerateIsReachable = jsCast<JSTestGenerateIsReachable*>(handle.slot()->asCell());
+    auto* jsTestGenerateIsReachable = jsUncheckedDowncast<JSTestGenerateIsReachable*>(handle.slot()->asCell());
     TestGenerateIsReachable* owner = &jsTestGenerateIsReachable->wrapped();
     if (reason) [[unlikely]]
         *reason = "Reachable from TestGenerateIsReachable"_s;
@@ -272,7 +272,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestGenerateIsReachable* JSTestGenerateIsReachable::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestGenerateIsReachable*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestGenerateIsReachable*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

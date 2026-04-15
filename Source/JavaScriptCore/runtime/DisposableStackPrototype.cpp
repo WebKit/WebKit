@@ -59,7 +59,7 @@ JSC_DEFINE_HOST_FUNCTION(disposableStackProtoDisposedGetter, (JSGlobalObject* gl
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue thisValue = callFrame->thisValue();
-    auto* disposableStack = jsDynamicCast<JSDisposableStack*>(thisValue);
+    auto* disposableStack = jsDynamicDowncast<JSDisposableStack*>(thisValue);
     if (!disposableStack) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "DisposableStack.prototype.disposed getter requires that |this| be a DisposableStack object"_s);
 

@@ -1109,12 +1109,12 @@ bool TypeInformation::isReferenceValueAssignable(JSValue refValue, bool allowNul
             // Casts to these types cannot fail as any value can be an externref/hostref.
             return true;
         case TypeKind::Funcref:
-            return jsDynamicCast<WebAssemblyFunctionBase*>(refValue);
+            return jsDynamicDowncast<WebAssemblyFunctionBase*>(refValue);
         case TypeKind::Eqref:
-            return (refValue.isInt32() && refValue.asInt32() <= maxI31ref && refValue.asInt32() >= minI31ref) || jsDynamicCast<JSWebAssemblyArray*>(refValue) || jsDynamicCast<JSWebAssemblyStruct*>(refValue);
+            return (refValue.isInt32() && refValue.asInt32() <= maxI31ref && refValue.asInt32() >= minI31ref) || jsDynamicDowncast<JSWebAssemblyArray*>(refValue) || jsDynamicDowncast<JSWebAssemblyStruct*>(refValue);
         case TypeKind::Exnref:
             // Exnref and Noexnref are in a different heap hierarchy
-            return jsDynamicCast<JSWebAssemblyException*>(refValue);
+            return jsDynamicDowncast<JSWebAssemblyException*>(refValue);
         case TypeKind::Noexnref:
         case TypeKind::Noneref:
         case TypeKind::Nofuncref:
@@ -1123,9 +1123,9 @@ bool TypeInformation::isReferenceValueAssignable(JSValue refValue, bool allowNul
         case TypeKind::I31ref:
             return refValue.isInt32() && refValue.asInt32() <= maxI31ref && refValue.asInt32() >= minI31ref;
         case TypeKind::Arrayref:
-            return jsDynamicCast<JSWebAssemblyArray*>(refValue);
+            return jsDynamicDowncast<JSWebAssemblyArray*>(refValue);
         case TypeKind::Structref:
-            return jsDynamicCast<JSWebAssemblyStruct*>(refValue);
+            return jsDynamicDowncast<JSWebAssemblyStruct*>(refValue);
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
@@ -1140,14 +1140,14 @@ bool TypeInformation::isReferenceValueAssignable(JSValue refValue, bool allowNul
 
     switch (rtt->kind()) {
     case RTTKind::Function: {
-        WebAssemblyFunctionBase* funcRef = jsDynamicCast<WebAssemblyFunctionBase*>(refValue);
+        WebAssemblyFunctionBase* funcRef = jsDynamicDowncast<WebAssemblyFunctionBase*>(refValue);
         if (!funcRef)
             return false;
         return funcRef->rtt()->isSubRTT(*rtt);
     }
     case RTTKind::Array:
     case RTTKind::Struct: {
-        auto* object = jsDynamicCast<WebAssemblyGCObjectBase*>(refValue);
+        auto* object = jsDynamicDowncast<WebAssemblyGCObjectBase*>(refValue);
         if (!object)
             return false;
         return object->rtt().isSubRTT(*rtt);

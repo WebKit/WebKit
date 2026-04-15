@@ -103,7 +103,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalCalendarPrototypeFuncDateFromFields, (JSGlobalO
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* calendar = jsDynamicCast<TemporalCalendar*>(callFrame->thisValue());
+    auto* calendar = jsDynamicDowncast<TemporalCalendar*>(callFrame->thisValue());
     if (!calendar)
         return throwVMTypeError(globalObject, scope, "Temporal.Calendar.prototype.dateFromFields called on value that's not a Calendar"_s);
 
@@ -131,7 +131,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalCalendarPrototypeFuncDateAdd, (JSGlobalObject* 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* calendar = jsDynamicCast<TemporalCalendar*>(callFrame->thisValue());
+    auto* calendar = jsDynamicDowncast<TemporalCalendar*>(callFrame->thisValue());
     if (!calendar)
         return throwVMTypeError(globalObject, scope, "Temporal.Calendar.prototype.dateAdd called on value that's not a Calendar"_s);
 
@@ -160,7 +160,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalCalendarPrototypeFuncDateUntil, (JSGlobalObject
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* calendar = jsDynamicCast<TemporalCalendar*>(callFrame->thisValue());
+    auto* calendar = jsDynamicDowncast<TemporalCalendar*>(callFrame->thisValue());
     if (!calendar)
         return throwVMTypeError(globalObject, scope, "Temporal.Calendar.prototype.dateUntil called on value that's not a Calendar"_s);
 
@@ -202,7 +202,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalCalendarPrototypeFuncFields, (JSGlobalObject* g
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* calendar = jsDynamicCast<TemporalCalendar*>(callFrame->thisValue());
+    auto* calendar = jsDynamicDowncast<TemporalCalendar*>(callFrame->thisValue());
     if (!calendar)
         return throwVMTypeError(globalObject, scope, "Temporal.Calendar.prototype.fields called on value that's not a Calendar"_s);
 
@@ -216,7 +216,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalCalendarPrototypeFuncFields, (JSGlobalObject* g
             return;
         }
         if (!isISO8601 && !shouldAddEraAndEraYear) {
-            auto string = jsCast<JSString*>(value)->value(globalObject);
+            auto string = jsUncheckedDowncast<JSString*>(value)->value(globalObject);
             RETURN_IF_EXCEPTION(scope, void());
             if (string.data == "year"_s)
                 shouldAddEraAndEraYear = true;
@@ -312,7 +312,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalCalendarPrototypeFuncMergeFields, (JSGlobalObje
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* calendar = jsDynamicCast<TemporalCalendar*>(callFrame->thisValue());
+    auto* calendar = jsDynamicDowncast<TemporalCalendar*>(callFrame->thisValue());
     if (!calendar)
         return throwVMTypeError(globalObject, scope, "Temporal.Calendar.prototype.mergeFields called on value that's not a Calendar"_s);
 
@@ -427,7 +427,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalCalendarPrototypeFuncToString, (JSGlobalObject*
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* calendar = jsDynamicCast<TemporalCalendar*>(callFrame->thisValue());
+    auto* calendar = jsDynamicDowncast<TemporalCalendar*>(callFrame->thisValue());
     if (!calendar)
         return throwVMTypeError(globalObject, scope, "Temporal.Calendar.prototype.toString called on value that's not a Calendar"_s);
 
@@ -440,7 +440,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalCalendarPrototypeFuncToJSON, (JSGlobalObject* g
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* calendar = jsDynamicCast<TemporalCalendar*>(callFrame->thisValue());
+    auto* calendar = jsDynamicDowncast<TemporalCalendar*>(callFrame->thisValue());
     if (!calendar)
         return throwVMTypeError(globalObject, scope, "Temporal.Calendar.prototype.toJSON called on value that's not a Calendar"_s);
 

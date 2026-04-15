@@ -85,7 +85,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 void PinballCompletion::destroy(JSCell* cell)
 {
-    SUPPRESS_MEMORY_UNSAFE_CAST // jsCast() is not available here; validity is guaranteed by the destruction mechanism
+    SUPPRESS_MEMORY_UNSAFE_CAST // jsUncheckedDowncast() is not available here; validity is guaranteed by the destruction mechanism
     auto* thisObject = static_cast<PinballCompletion*>(cell);
     thisObject->~PinballCompletion();
 }
@@ -99,7 +99,7 @@ void PinballCompletion::assimilate(PinballCompletion* other)
 template<typename Visitor>
 void PinballCompletion::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<PinballCompletion*>(cell);
+    auto* thisObject = jsUncheckedDowncast<PinballCompletion*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 
@@ -153,10 +153,10 @@ extern "C" void pinballHandlerFinishReject(PinballHandlerContext*);
 static void pinballHandlerInitContext(JSGlobalObject* globalObject, CallFrame* callFrame, PinballHandlerContext* context)
 {
     VM& vm = globalObject->vm();
-    JSFunctionWithFields* self = jsCast<JSFunctionWithFields*>(callFrame->jsCallee());
+    JSFunctionWithFields* self = jsUncheckedDowncast<JSFunctionWithFields*>(callFrame->jsCallee());
 
     ASSERT(callFrame->argumentCount() == 1);
-    PinballCompletion* pinball = jsCast<PinballCompletion*>(self->getField(JSFunctionWithFields::Field::PromiseHandlerPinballCompletion));
+    PinballCompletion* pinball = jsUncheckedDowncast<PinballCompletion*>(self->getField(JSFunctionWithFields::Field::PromiseHandlerPinballCompletion));
     ASSERT(pinball->hasSlices());
 #if ASSERT_ENABLED
     context->magic = 0xBA11FEED;
@@ -184,8 +184,8 @@ void pinballHandlerInitContextForFulfill(JSGlobalObject* globalObject, CallFrame
 void pinballHandlerInitContextForReject(JSGlobalObject* globalObject, CallFrame* callFrame, PinballHandlerContext* context)
 {
 #if ASSERT_ENABLED
-    JSFunctionWithFields* self = jsCast<JSFunctionWithFields*>(callFrame->jsCallee());
-    PinballCompletion* pinball = jsCast<PinballCompletion*>(self->getField(JSFunctionWithFields::Field::PromiseHandlerPinballCompletion));
+    JSFunctionWithFields* self = jsUncheckedDowncast<JSFunctionWithFields*>(callFrame->jsCallee());
+    PinballCompletion* pinball = jsUncheckedDowncast<PinballCompletion*>(self->getField(JSFunctionWithFields::Field::PromiseHandlerPinballCompletion));
     ASSERT(pinball->slices().size() == 1); // exceptions are only supported with slab slicing, expecting 1 slice
 #endif
 
@@ -200,7 +200,7 @@ void pinballHandlerImplantSlice(PinballHandlerContext* context, Register *base, 
 {
     ASSERT(context->magic == 0xBA11FEED);
     VM& vm = context->globalObject->vm();
-    PinballCompletion* pinball = jsCast<PinballCompletion*>(context->handler->getField(JSFunctionWithFields::Field::PromiseHandlerPinballCompletion));
+    PinballCompletion* pinball = jsUncheckedDowncast<PinballCompletion*>(context->handler->getField(JSFunctionWithFields::Field::PromiseHandlerPinballCompletion));
 
     auto* slice = context->slice.get();
     CallFrame* bottommostImplantedFrame = slice->implant(base, sentinelFrame);
@@ -227,7 +227,7 @@ UCPURegister pinballHandlerFulfillFunctionContinue(PinballHandlerContext* contex
     VM& vm = *context->vm;
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSPIContext& jspiContext = context->jspiContext;
-    PinballCompletion* pinball = jsCast<PinballCompletion*>(context->handler->getField(JSFunctionWithFields::Field::PromiseHandlerPinballCompletion));
+    PinballCompletion* pinball = jsUncheckedDowncast<PinballCompletion*>(context->handler->getField(JSFunctionWithFields::Field::PromiseHandlerPinballCompletion));
 
     if (jspiContext.completion) {
         // Computation was suspended again; the remainder of this completion should be added to the new one.
@@ -269,7 +269,7 @@ void pinballHandlerFinishReject(PinballHandlerContext* context)
     VM& vm = *context->vm;
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSPIContext& jspiContext = context->jspiContext;
-    PinballCompletion* pinball = jsCast<PinballCompletion*>(context->handler->getField(JSFunctionWithFields::Field::PromiseHandlerPinballCompletion));
+    PinballCompletion* pinball = jsUncheckedDowncast<PinballCompletion*>(context->handler->getField(JSFunctionWithFields::Field::PromiseHandlerPinballCompletion));
     ASSERT(!pinball->hasSlices());
 
     if (jspiContext.completion) {

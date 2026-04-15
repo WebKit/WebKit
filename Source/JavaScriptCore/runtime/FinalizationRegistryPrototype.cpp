@@ -58,7 +58,7 @@ ALWAYS_INLINE static JSFinalizationRegistry* getFinalizationRegistry(VM& vm, JSG
         return nullptr;
     }
 
-    auto* group = jsDynamicCast<JSFinalizationRegistry*>(asObject(value));
+    auto* group = jsDynamicDowncast<JSFinalizationRegistry*>(asObject(value));
     if (group) [[likely]]
         return group;
 

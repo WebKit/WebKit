@@ -33,12 +33,12 @@ namespace WebCore {
 
 JSC::JSValue JSIDBRecord::key(JSC::JSGlobalObject& lexicalGlobalObject) const
 {
-    return toJS<IDLIDBKeyData>(lexicalGlobalObject, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), wrapped().key());
+    return toJS<IDLIDBKeyData>(lexicalGlobalObject, *jsUncheckedDowncast<JSDOMGlobalObject*>(&lexicalGlobalObject), wrapped().key());
 }
 
 JSC::JSValue JSIDBRecord::primaryKey(JSC::JSGlobalObject& lexicalGlobalObject) const
 {
-    return toJS<IDLIDBKeyData>(lexicalGlobalObject, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject), wrapped().primaryKey());
+    return toJS<IDLIDBKeyData>(lexicalGlobalObject, *jsUncheckedDowncast<JSDOMGlobalObject*>(&lexicalGlobalObject), wrapped().primaryKey());
 }
 
 JSC::JSValue JSIDBRecord::value(JSC::JSGlobalObject& lexicalGlobalObject) const

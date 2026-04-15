@@ -76,7 +76,7 @@ template<> ConversionResult<IDLDictionary<TestInheritedDictionary2>> convertDict
         callbackMemberValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "callbackMember"_s));
         RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    auto callbackMemberConversionResult = convert<IDLOptional<IDLCallbackFunction<JSVoidCallback>>>(lexicalGlobalObject, callbackMemberValue, *jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject));
+    auto callbackMemberConversionResult = convert<IDLOptional<IDLCallbackFunction<JSVoidCallback>>>(lexicalGlobalObject, callbackMemberValue, *jsUncheckedDowncast<JSDOMGlobalObject*>(&lexicalGlobalObject));
     if (callbackMemberConversionResult.hasException(throwScope)) [[unlikely]]
         return ConversionResultException { };
     JSValue stringMemberValue;

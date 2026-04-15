@@ -88,7 +88,7 @@ RefPtr<DOMPromise> writableStreamDefaultWriterCloseWithErrorPropagation(Internal
     if (result.hasException())
         return nullptr;
 
-    auto* promise = jsCast<JSC::JSPromise*>(result.returnValue());
+    auto* promise = jsUncheckedDowncast<JSC::JSPromise*>(result.returnValue());
     if (!promise)
         return nullptr;
 
@@ -127,7 +127,7 @@ RefPtr<DOMPromise> writableStreamDefaultWriterWrite(InternalWritableStreamWriter
     if (result.hasException())
         return nullptr;
 
-    auto* promise = jsCast<JSC::JSPromise*>(result.returnValue());
+    auto* promise = jsUncheckedDowncast<JSC::JSPromise*>(result.returnValue());
     if (!promise)
         return nullptr;
 
@@ -150,7 +150,7 @@ void InternalWritableStreamWriter::onClosedPromiseRejection(Function<void(JSDOMG
     if (result.hasException())
         return;
 
-    auto* promise = jsCast<JSC::JSPromise*>(result.returnValue());
+    auto* promise = jsUncheckedDowncast<JSC::JSPromise*>(result.returnValue());
     if (!promise)
         return;
 
@@ -178,7 +178,7 @@ void InternalWritableStreamWriter::onClosedPromiseResolution(Function<void()>&& 
     if (result.hasException())
         return;
 
-    auto* promise = jsCast<JSC::JSPromise*>(result.returnValue());
+    auto* promise = jsUncheckedDowncast<JSC::JSPromise*>(result.returnValue());
     if (!promise)
         return;
 
@@ -227,7 +227,7 @@ void InternalWritableStreamWriter::whenReady(Function<void (bool)>&& callback)
     if (result.hasException())
         return;
 
-    auto* promise = jsCast<JSC::JSPromise*>(result.returnValue());
+    auto* promise = jsUncheckedDowncast<JSC::JSPromise*>(result.returnValue());
     if (!promise)
         return;
 

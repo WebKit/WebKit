@@ -79,7 +79,7 @@ inline JSDOMGlobalObject* deprecatedGlobalObjectForPrototype(JSC::JSGlobalObject
     // FIXME: Callers to this function should be using the global object
     // from which the object is being created, instead of assuming the lexical one.
     // e.g. subframe.document.body should use the subframe's global object, not the lexical one.
-    return JSC::jsCast<JSDOMGlobalObject*>(lexicalGlobalObject);
+    return JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(lexicalGlobalObject);
 }
 
 template<typename WrapperClass> inline JSC::Structure* getDOMStructure(JSC::VM& vm, JSDOMGlobalObject& globalObject)
@@ -97,7 +97,7 @@ template<typename WrapperClass> inline JSC::Structure* deprecatedGetDOMStructure
 
 template<typename WrapperClass> inline JSC::JSObject* getDOMPrototype(JSC::VM& vm, JSDOMGlobalObject& globalObject)
 {
-    return JSC::jsCast<JSC::JSObject*>(asObject(getDOMStructure<WrapperClass>(vm, globalObject)->storedPrototype()));
+    return JSC::jsUncheckedDowncast<JSC::JSObject*>(asObject(getDOMStructure<WrapperClass>(vm, globalObject)->storedPrototype()));
 }
 
 inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld& world, JSC::ArrayBuffer*)
@@ -219,7 +219,7 @@ template<typename DOMClass> inline void setSubclassStructureIfNeeded(JSC::JSGlob
 
     auto* functionGlobalObject = JSC::getFunctionRealm(lexicalGlobalObject, newTarget);
     RETURN_IF_EXCEPTION(scope, void());
-    auto* newTargetGlobalObject = JSC::jsCast<JSDOMGlobalObject*>(functionGlobalObject);
+    auto* newTargetGlobalObject = JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(functionGlobalObject);
     auto* baseStructure = getDOMStructure<WrapperClass>(vm, *newTargetGlobalObject);
     auto* subclassStructure = JSC::InternalFunction::createSubclassStructure(lexicalGlobalObject, newTarget, baseStructure);
     RETURN_IF_EXCEPTION(scope, void());

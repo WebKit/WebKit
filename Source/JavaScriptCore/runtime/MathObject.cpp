@@ -461,7 +461,7 @@ JSC_DEFINE_HOST_FUNCTION(mathProtoFuncSumPrecise, (JSGlobalObject* globalObject,
     scope.release();
 
     const std::optional<uint64_t> length = isJSArray(iterable) ?
-        std::make_optional(static_cast<uint64_t>(jsCast<JSArray*>(iterable)->length()))
+        std::make_optional(static_cast<uint64_t>(jsUncheckedDowncast<JSArray*>(iterable)->length()))
         : std::nullopt;
 
     auto calculatePreciseSum = [&](auto& sum) {

@@ -172,14 +172,14 @@ void JSTestConditionallyReadWritePrototype::finishCreation(VM& vm)
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSTestConditionallyReadWrite::info(), JSTestConditionallyReadWritePrototypeTableValues, *this);
     bool hasDisabledRuntimeProperties = false;
-    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(realm())->scriptExecutionContext())->settingsValues().testFeatureEnabled) {
+    if (!downcast<Document>(jsUncheckedDowncast<JSDOMGlobalObject*>(realm())->scriptExecutionContext())->settingsValues().testFeatureEnabled) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, "enabledConditionallyReadWriteBySettingAttribute"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, realm(), propertyName, slot);
     }
-    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(realm())->scriptExecutionContext())->settingsValues().testFeatureEnabled) {
+    if (!downcast<Document>(jsUncheckedDowncast<JSDOMGlobalObject*>(realm())->scriptExecutionContext())->settingsValues().testFeatureEnabled) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, "enabledConditionallyReadWriteBySettingAttributePromise"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
@@ -187,10 +187,10 @@ void JSTestConditionallyReadWritePrototype::finishCreation(VM& vm)
         JSObject::deleteProperty(this, realm(), propertyName, slot);
     }
     // Adding back attribute, but as readonly, after removing the read-write variant above. 
-    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(realm())->scriptExecutionContext())->settingsValues().testFeatureEnabled)
+    if (!downcast<Document>(jsUncheckedDowncast<JSDOMGlobalObject*>(realm())->scriptExecutionContext())->settingsValues().testFeatureEnabled)
         putDirectCustomAccessor(vm, builtinNames(vm).enabledConditionallyReadWriteBySettingAttributePublicName(), JSC::DOMAttributeGetterSetter::create(vm, jsTestConditionallyReadWrite_enabledConditionallyReadWriteBySettingAttribute, nullptr, JSC::DOMAttributeAnnotation { JSTestConditionallyReadWrite::info(), nullptr }), attributesForStructure(JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute));
     // Adding back attribute, but as readonly, after removing the read-write variant above. 
-    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(realm())->scriptExecutionContext())->settingsValues().testFeatureEnabled)
+    if (!downcast<Document>(jsUncheckedDowncast<JSDOMGlobalObject*>(realm())->scriptExecutionContext())->settingsValues().testFeatureEnabled)
         putDirectCustomAccessor(vm, builtinNames(vm).enabledConditionallyReadWriteBySettingAttributePromisePublicName(), CustomGetterSetter::create(vm, jsTestConditionallyReadWrite_enabledConditionallyReadWriteBySettingAttributePromise, nullptr), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor)));
     if (hasDisabledRuntimeProperties && structure()->isDictionary())
         flattenDictionaryObject(vm);
@@ -233,7 +233,7 @@ JSObject* JSTestConditionallyReadWrite::prototype(VM& vm, JSDOMGlobalObject& glo
 
 JSValue JSTestConditionallyReadWrite::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestConditionallyReadWriteDOMConstructor, DOMConstructorID::TestConditionallyReadWrite>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestConditionallyReadWriteDOMConstructor, DOMConstructorID::TestConditionallyReadWrite>(vm, *jsUncheckedDowncast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestConditionallyReadWrite::destroy(JSC::JSCell* cell)
@@ -246,7 +246,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestConditionallyReadWriteConstructor, (JSGlobalObjec
 {
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestConditionallyReadWritePrototype*>(JSValue::decode(thisValue));
+    auto* prototype = jsDynamicDowncast<JSTestConditionallyReadWritePrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestConditionallyReadWrite::getConstructor(vm, prototype->realm()));
@@ -474,7 +474,7 @@ JSC::GCClient::IsoSubspace* JSTestConditionallyReadWrite::subspaceForImpl(JSC::V
 
 void JSTestConditionallyReadWrite::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestConditionallyReadWrite*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSTestConditionallyReadWrite*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (RefPtr context = thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
@@ -541,7 +541,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestConditionallyReadWrite* JSTestConditionallyReadWrite::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestConditionallyReadWrite*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestConditionallyReadWrite*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

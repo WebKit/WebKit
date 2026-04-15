@@ -42,11 +42,11 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeSetFromBase64, (JSGlobalObject* glob
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSUint8Array* uint8Array = jsDynamicCast<JSUint8Array*>(callFrame->thisValue());
+    JSUint8Array* uint8Array = jsDynamicDowncast<JSUint8Array*>(callFrame->thisValue());
     if (!uint8Array) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Uint8Array.prototype.setFromBase64 requires that |this| be a Uint8Array"_s);
 
-    JSString* jsString = jsDynamicCast<JSString*>(callFrame->argument(0));
+    JSString* jsString = jsDynamicDowncast<JSString*>(callFrame->argument(0));
     if (!jsString) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Uint8Array.prototype.setFromBase64 requires a string"_s);
 
@@ -55,14 +55,14 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeSetFromBase64, (JSGlobalObject* glob
 
     JSValue optionsValue = callFrame->argument(1);
     if (!optionsValue.isUndefined()) {
-        JSObject* optionsObject = jsDynamicCast<JSObject*>(optionsValue);
+        JSObject* optionsObject = jsDynamicDowncast<JSObject*>(optionsValue);
         if (!optionsValue.isObject()) [[unlikely]]
             return throwVMTypeError(globalObject, scope, "Uint8Array.prototype.setFromBase64 requires that options be an object"_s);
 
         JSValue alphabetValue = optionsObject->get(globalObject, vm.propertyNames->alphabet);
         RETURN_IF_EXCEPTION(scope, { });
         if (!alphabetValue.isUndefined()) {
-            JSString* alphabetString = jsDynamicCast<JSString*>(alphabetValue);
+            JSString* alphabetString = jsDynamicDowncast<JSString*>(alphabetValue);
             if (!alphabetString) [[unlikely]]
                 return throwVMTypeError(globalObject, scope, "Uint8Array.prototype.setFromBase64 requires that alphabet be \"base64\" or \"base64url\""_s);
 
@@ -77,7 +77,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeSetFromBase64, (JSGlobalObject* glob
         JSValue lastChunkHandlingValue = optionsObject->get(globalObject, vm.propertyNames->lastChunkHandling);
         RETURN_IF_EXCEPTION(scope, { });
         if (!lastChunkHandlingValue.isUndefined()) {
-            JSString* lastChunkHandlingString = jsDynamicCast<JSString*>(lastChunkHandlingValue);
+            JSString* lastChunkHandlingString = jsDynamicDowncast<JSString*>(lastChunkHandlingValue);
             if (!lastChunkHandlingString) [[unlikely]]
                 return throwVMTypeError(globalObject, scope, "Uint8Array.prototype.setFromBase64 requires that lastChunkHandling be \"loose\", \"strict\", or \"stop-before-partial\""_s);
 
@@ -117,7 +117,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeSetFromHex, (JSGlobalObject* globalO
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSUint8Array* uint8Array = jsDynamicCast<JSUint8Array*>(callFrame->thisValue());
+    JSUint8Array* uint8Array = jsDynamicDowncast<JSUint8Array*>(callFrame->thisValue());
     if (!uint8Array) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Uint8Array.prototype.setFromHex requires that |this| be a Uint8Array"_s);
 
@@ -125,7 +125,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeSetFromHex, (JSGlobalObject* globalO
     if (isIntegerIndexedObjectOutOfBounds(uint8Array, byteLengthGetter)) [[unlikely]]
         return throwVMTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
 
-    JSString* jsString = jsDynamicCast<JSString*>(callFrame->argument(0));
+    JSString* jsString = jsDynamicDowncast<JSString*>(callFrame->argument(0));
     if (!jsString) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Uint8Array.prototype.setFromHex requires a string"_s);
     if (jsString->length() % 2) [[unlikely]]
@@ -160,7 +160,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeToBase64, (JSGlobalObject* globalObj
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSUint8Array* uint8Array = jsDynamicCast<JSUint8Array*>(callFrame->thisValue());
+    JSUint8Array* uint8Array = jsDynamicDowncast<JSUint8Array*>(callFrame->thisValue());
     if (!uint8Array) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Uint8Array.prototype.toBase64 requires that |this| be a Uint8Array"_s);
 
@@ -168,14 +168,14 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeToBase64, (JSGlobalObject* globalObj
 
     JSValue optionsValue = callFrame->argument(0);
     if (!optionsValue.isUndefined()) {
-        JSObject* optionsObject = jsDynamicCast<JSObject*>(optionsValue);
+        JSObject* optionsObject = jsDynamicDowncast<JSObject*>(optionsValue);
         if (!optionsObject) [[unlikely]]
             return throwVMTypeError(globalObject, scope, "Uint8Array.prototype.toBase64 requires that options be an object"_s);
 
         JSValue alphabetValue = optionsObject->get(globalObject, vm.propertyNames->alphabet);
         RETURN_IF_EXCEPTION(scope, { });
         if (!alphabetValue.isUndefined()) {
-            JSString* alphabetString = jsDynamicCast<JSString*>(alphabetValue);
+            JSString* alphabetString = jsDynamicDowncast<JSString*>(alphabetValue);
             if (!alphabetString) [[unlikely]]
                 return throwVMTypeError(globalObject, scope, "Uint8Array.prototype.toBase64 requires that alphabet be \"base64\" or \"base64url\""_s);
 
@@ -213,7 +213,7 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeToHex, (JSGlobalObject* globalObject
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSUint8Array* uint8Array = jsDynamicCast<JSUint8Array*>(callFrame->thisValue());
+    JSUint8Array* uint8Array = jsDynamicDowncast<JSUint8Array*>(callFrame->thisValue());
     if (!uint8Array) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Uint8Array.prototype.toHex requires that |this| be a Uint8Array"_s);
 

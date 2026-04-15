@@ -51,7 +51,7 @@ JSFunctionWithFields* JSFunctionWithFields::create(VM& vm, JSGlobalObject* globa
 template<typename Visitor>
 void JSFunctionWithFields::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    JSFunctionWithFields* thisObject = jsCast<JSFunctionWithFields*>(cell);
+    JSFunctionWithFields* thisObject = jsUncheckedDowncast<JSFunctionWithFields*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.appendValues(thisObject->m_internalFields, numberOfInternalFields);

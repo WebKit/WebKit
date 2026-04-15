@@ -55,7 +55,7 @@ ScriptCachedFrameData::ScriptCachedFrameData(LocalFrame& frame)
     JSLockHolder lock(commonVM());
 
     for (auto windowProxy : frame.windowProxy().jsWindowProxiesAsVector()) {
-        auto* window = jsCast<JSDOMWindow*>(windowProxy->window());
+        auto* window = jsUncheckedDowncast<JSDOMWindow*>(windowProxy->window());
         m_windows.add(windowProxy->world(), Strong<JSDOMWindow>(window->vm(), window));
         window->setConsoleClient(nullptr);
     }

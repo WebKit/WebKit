@@ -60,7 +60,7 @@ ALWAYS_INLINE static JSWeakSet* getWeakSet(JSGlobalObject* globalObject, JSValue
         return nullptr;
     }
 
-    if (auto* set = jsDynamicCast<JSWeakSet*>(asObject(value))) [[likely]]
+    if (auto* set = jsDynamicDowncast<JSWeakSet*>(asObject(value))) [[likely]]
         return set;
 
     throwTypeError(globalObject, scope, "Called WeakSet function on a non-WeakSet object"_s);

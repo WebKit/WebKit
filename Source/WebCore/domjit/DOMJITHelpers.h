@@ -57,7 +57,7 @@ inline CCallHelpers::Jump branchIfNotWeakIsLive(CCallHelpers& jit, GPRReg weakIm
 template<typename WrappedNode>
 JSC::EncodedJSValue toWrapperSlowImpl(JSC::JSGlobalObject* globalObject, void* result)
 {
-    return JSC::JSValue::encode(toJS(globalObject, JSC::jsCast<JSDOMGlobalObject*>(globalObject), *static_cast<WrappedNode*>(result)));
+    return JSC::JSValue::encode(toJS(globalObject, JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(globalObject), *static_cast<WrappedNode*>(result)));
 }
 
 template<typename WrappedType>
@@ -78,7 +78,7 @@ void toWrapper(CCallHelpers& jit, JSC::SnippetParams& params, GPRReg wrapped, GP
     CCallHelpers::JumpList slowCases;
 
     if (globalObjectConstant) {
-        if (!JSC::jsCast<JSDOMGlobalObject*>(globalObjectConstant)->worldIsNormal()) {
+        if (!JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(globalObjectConstant)->worldIsNormal()) {
             slowCases.append(jit.jump());
             params.addSlowPathCall(slowCases, jit, function, result, globalObject, wrapped);
             return;

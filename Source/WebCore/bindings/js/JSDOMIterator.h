@@ -224,7 +224,7 @@ template<typename JSIterator> JSC::JSValue iteratorForEach(JSC::JSGlobalObject& 
     if (callData.type == JSC::CallData::Type::None)
         return throwTypeError(&lexicalGlobalObject, scope, "Cannot call callback"_s);
 
-    auto iterator = thisObject.wrapped().createIterator(protect(JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->scriptExecutionContext()).get());
+    auto iterator = thisObject.wrapped().createIterator(protect(JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(&lexicalGlobalObject)->scriptExecutionContext()).get());
     while (auto value = iterator.next()) {
         JSC::MarkedArgumentBuffer arguments;
         appendForEachArguments<JSIterator>(lexicalGlobalObject, *thisObject.realm(), arguments, value);
@@ -243,7 +243,7 @@ template<typename JSIterator> JSC::JSValue iteratorForEach(JSC::JSGlobalObject& 
 template<typename JSWrapper, typename IteratorTraits>
 void JSDOMIteratorBase<JSWrapper, IteratorTraits>::destroy(JSCell* cell)
 {
-    // We cannot rely on jsCast() during JSObject destruction.
+    // We cannot rely on jsUncheckedDowncast() during JSObject destruction.
     SUPPRESS_MEMORY_UNSAFE_CAST auto* thisObject = static_cast<JSDOMIteratorBase<JSWrapper, IteratorTraits>*>(cell);
     thisObject->JSDOMIteratorBase<JSWrapper, IteratorTraits>::~JSDOMIteratorBase();
 }
@@ -266,7 +266,7 @@ JSC::EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSDOMIteratorPrototype<JSWrapper, I
     JSC::VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto iterator = JSC::jsDynamicCast<JSDOMIteratorBase<JSWrapper, IteratorTraits>*>(callFrame->thisValue());
+    auto iterator = JSC::jsDynamicDowncast<JSDOMIteratorBase<JSWrapper, IteratorTraits>*>(callFrame->thisValue());
     if (!iterator)
         return JSC::JSValue::encode(throwTypeError(globalObject, scope, "Cannot call next() on a non-Iterator object"_s));
 

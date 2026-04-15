@@ -186,7 +186,7 @@ JSObject* constructArrayBufferWithSize(JSGlobalObject* globalObject, Structure* 
 // ECMA 24.1.3.1
 JSC_DEFINE_HOST_FUNCTION(arrayBufferFuncIsView, (JSGlobalObject*, CallFrame* callFrame))
 {
-    return JSValue::encode(jsBoolean(jsDynamicCast<JSArrayBufferView*>(callFrame->argument(0))));
+    return JSValue::encode(jsBoolean(jsDynamicDowncast<JSArrayBufferView*>(callFrame->argument(0))));
 }
 
 // Instantiate JSGenericArrayBufferConstructors.

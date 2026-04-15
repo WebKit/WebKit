@@ -82,7 +82,7 @@ CommandLineAPIHost::CommandLineAPIHost()
 
 static InstrumentingAgents* instrumentingAgentsForGlobalObject(JSC::JSGlobalObject& globalObject)
 {
-    auto* domGlobalObject = jsDynamicCast<JSDOMGlobalObject*>(&globalObject);
+    auto* domGlobalObject = jsDynamicDowncast<JSDOMGlobalObject*>(&globalObject);
     if (!domGlobalObject)
         return nullptr;
 
@@ -165,7 +165,7 @@ CommandLineAPIHost::EventListenersRecord CommandLineAPIHost::getEventListeners(J
 #if ENABLE(WEB_RTC)
 void CommandLineAPIHost::gatherRTCLogs(JSGlobalObject& globalObject, RefPtr<RTCLogsCallback>&& callback)
 {
-    RefPtr document = dynamicDowncast<Document>(jsCast<JSDOMGlobalObject*>(&globalObject)->scriptExecutionContext());
+    RefPtr document = dynamicDowncast<Document>(jsUncheckedDowncast<JSDOMGlobalObject*>(&globalObject)->scriptExecutionContext());
     if (!document)
         return;
 

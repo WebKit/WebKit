@@ -74,7 +74,7 @@ StructureRareData::StructureRareData(VM& vm, Structure* previous)
 template<typename Visitor>
 void StructureRareData::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    StructureRareData* thisObject = jsCast<StructureRareData*>(cell);
+    StructureRareData* thisObject = jsUncheckedDowncast<StructureRareData*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     Base::visitChildren(thisObject, visitor);

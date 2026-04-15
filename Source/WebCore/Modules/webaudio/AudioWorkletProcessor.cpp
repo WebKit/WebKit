@@ -67,7 +67,7 @@ static ArrayType* getArrayAtIndex(JSArray& jsArray, JSGlobalObject& globalObject
     // We call getDirectIndex() instead of getIndex() since we only want to consider the values
     // we populated the array with, not the ones the worklet might have set on the Array prototype.
     auto item = jsArray.getDirectIndex(&globalObject, index);
-    return item ? jsDynamicCast<ArrayType*>(item) : nullptr;
+    return item ? jsDynamicDowncast<ArrayType*>(item) : nullptr;
 }
 
 static unsigned NODELETE busChannelCount(const AudioBus* bus)
@@ -77,12 +77,12 @@ static unsigned NODELETE busChannelCount(const AudioBus* bus)
 
 static JSArray* NODELETE toJSArray(JSValueInWrappedObject& wrapper)
 {
-    return wrapper ? jsDynamicCast<JSArray*>(wrapper.getValue()) : nullptr;
+    return wrapper ? jsDynamicDowncast<JSArray*>(wrapper.getValue()) : nullptr;
 }
 
 static JSObject* NODELETE toJSObject(JSValueInWrappedObject& wrapper)
 {
-    return wrapper ? jsDynamicCast<JSObject*>(wrapper.getValue()) : nullptr;
+    return wrapper ? jsDynamicDowncast<JSObject*>(wrapper.getValue()) : nullptr;
 }
 
 static JSFloat32Array* constructJSFloat32Array(VM& vm, JSGlobalObject& globalObject, unsigned length, std::span<const float> data = { })
@@ -210,7 +210,7 @@ static bool copyDataFromParameterMapToJSObject(VM& vm, JSGlobalObject& globalObj
         return false;
 
     for (auto& pair : paramValuesMap) {
-        auto* jsTypedArray = jsDynamicCast<JSFloat32Array*>(jsObject->get(&globalObject, Identifier::fromString(vm, pair.key)));
+        auto* jsTypedArray = jsDynamicDowncast<JSFloat32Array*>(jsObject->get(&globalObject, Identifier::fromString(vm, pair.key)));
         RETURN_IF_EXCEPTION(scope, false);
         if (!jsTypedArray)
             return false;
@@ -305,7 +305,7 @@ bool AudioWorkletProcessor::process(const Vector<RefPtr<AudioBus>>& inputs, Vect
     DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
 
     ASSERT(wrapper());
-    auto* globalObject = jsDynamicCast<JSDOMGlobalObject*>(m_globalScope->globalObject());
+    auto* globalObject = jsDynamicDowncast<JSDOMGlobalObject*>(m_globalScope->globalObject());
     if (!globalObject) [[unlikely]]
         return false;
 

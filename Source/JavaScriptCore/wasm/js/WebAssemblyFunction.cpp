@@ -64,7 +64,7 @@ static JSC_DECLARE_HOST_FUNCTION(callWebAssemblyFunction);
 JSC_DEFINE_HOST_FUNCTION(callWebAssemblyFunction, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
-    WebAssemblyFunction* wasmFunction = jsCast<WebAssemblyFunction*>(callFrame->jsCallee());
+    WebAssemblyFunction* wasmFunction = jsUncheckedDowncast<WebAssemblyFunction*>(callFrame->jsCallee());
 
     if (wasmFunction->instance()->taintedness() >= SourceTaintedOrigin::IndirectlyTainted)
         vm.setMightBeExecutingTaintedCode();
@@ -108,7 +108,7 @@ WebAssemblyFunction::WebAssemblyFunction(VM& vm, NativeExecutable* executable, J
 template<typename Visitor>
 void WebAssemblyFunction::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    WebAssemblyFunction* thisObject = jsCast<WebAssemblyFunction*>(cell);
+    WebAssemblyFunction* thisObject = jsUncheckedDowncast<WebAssemblyFunction*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     Base::visitChildren(thisObject, visitor);

@@ -148,7 +148,7 @@ JSObject* JSTestNamedGetterNoIdentifier::prototype(VM& vm, JSDOMGlobalObject& gl
 
 JSValue JSTestNamedGetterNoIdentifier::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestNamedGetterNoIdentifierDOMConstructor, DOMConstructorID::TestNamedGetterNoIdentifier>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestNamedGetterNoIdentifierDOMConstructor, DOMConstructorID::TestNamedGetterNoIdentifier>(vm, *jsUncheckedDowncast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestNamedGetterNoIdentifier::destroy(JSC::JSCell* cell)
@@ -160,7 +160,7 @@ void JSTestNamedGetterNoIdentifier::destroy(JSC::JSCell* cell)
 bool JSTestNamedGetterNoIdentifier::legacyPlatformObjectGetOwnProperty(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot, bool ignoreNamedProperties)
 {
     auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(lexicalGlobalObject));
-    auto* thisObject = jsCast<JSTestNamedGetterNoIdentifier*>(object);
+    auto* thisObject = jsUncheckedDowncast<JSTestNamedGetterNoIdentifier*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (!ignoreNamedProperties) {
         using GetterIDLType = IDLDOMString;
@@ -187,7 +187,7 @@ bool JSTestNamedGetterNoIdentifier::getOwnPropertySlotByIndex(JSObject* object, 
 {
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* thisObject = jsCast<JSTestNamedGetterNoIdentifier*>(object);
+    auto* thisObject = jsUncheckedDowncast<JSTestNamedGetterNoIdentifier*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     auto propertyName = Identifier::from(vm, index);
     using GetterIDLType = IDLDOMString;
@@ -206,7 +206,7 @@ bool JSTestNamedGetterNoIdentifier::getOwnPropertySlotByIndex(JSObject* object, 
 void JSTestNamedGetterNoIdentifier::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyNameArrayBuilder& propertyNames, DontEnumPropertiesMode mode)
 {
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
-    auto* thisObject = jsCast<JSTestNamedGetterNoIdentifier*>(object);
+    auto* thisObject = jsUncheckedDowncast<JSTestNamedGetterNoIdentifier*>(object);
     ASSERT_GC_OBJECT_INHERITS(object, info());
     for (auto& propertyName : thisObject->wrapped().supportedPropertyNames())
         propertyNames.add(Identifier::fromString(vm, propertyName));
@@ -215,14 +215,14 @@ void JSTestNamedGetterNoIdentifier::getOwnPropertyNames(JSObject* object, JSGlob
 
 bool JSTestNamedGetterNoIdentifier::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, JSValue value, PutPropertySlot& putPropertySlot)
 {
-    auto* thisObject = jsCast<JSTestNamedGetterNoIdentifier*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSTestNamedGetterNoIdentifier*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     if (thisObject != putPropertySlot.thisValue()) [[unlikely]]
         return JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot);
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
-    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
+    if (auto* document = dynamicDowncast<Document>(jsDynamicDowncast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
         if (document->quirks().needsConfigurableIndexedPropertiesQuirk()) [[unlikely]]
             return JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot);
     }
@@ -246,12 +246,12 @@ bool JSTestNamedGetterNoIdentifier::putByIndex(JSCell* cell, JSGlobalObject* lex
 {
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
-    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
+    if (auto* document = dynamicDowncast<Document>(jsDynamicDowncast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
         if (document->quirks().needsConfigurableIndexedPropertiesQuirk()) [[unlikely]]
             return JSObject::putByIndex(cell, lexicalGlobalObject, index, value, shouldThrow);
     }
 
-    auto* thisObject = jsCast<JSTestNamedGetterNoIdentifier*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSTestNamedGetterNoIdentifier*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
@@ -265,7 +265,7 @@ bool JSTestNamedGetterNoIdentifier::putByIndex(JSCell* cell, JSGlobalObject* lex
 
 bool JSTestNamedGetterNoIdentifier::defineOwnProperty(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, const PropertyDescriptor& propertyDescriptor, bool shouldThrow)
 {
-    auto* thisObject = jsCast<JSTestNamedGetterNoIdentifier*>(object);
+    auto* thisObject = jsUncheckedDowncast<JSTestNamedGetterNoIdentifier*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject->vm());
@@ -288,11 +288,11 @@ bool JSTestNamedGetterNoIdentifier::defineOwnProperty(JSObject* object, JSGlobal
 
 bool JSTestNamedGetterNoIdentifier::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, DeletePropertySlot& slot)
 {
-    auto& thisObject = *jsCast<JSTestNamedGetterNoIdentifier*>(cell);
+    auto& thisObject = *jsUncheckedDowncast<JSTestNamedGetterNoIdentifier*>(cell);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
-    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
+    if (auto* document = dynamicDowncast<Document>(jsDynamicDowncast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
         if (document->quirks().needsConfigurableIndexedPropertiesQuirk()) [[unlikely]]
             return JSObject::deleteProperty(cell, lexicalGlobalObject, propertyName, slot);
     }
@@ -308,11 +308,11 @@ bool JSTestNamedGetterNoIdentifier::deleteProperty(JSCell* cell, JSGlobalObject*
 bool JSTestNamedGetterNoIdentifier::deletePropertyByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index)
 {
     UNUSED_PARAM(lexicalGlobalObject);
-    auto& thisObject = *jsCast<JSTestNamedGetterNoIdentifier*>(cell);
+    auto& thisObject = *jsUncheckedDowncast<JSTestNamedGetterNoIdentifier*>(cell);
     SUPPRESS_UNCOUNTED_LOCAL auto& impl = thisObject.wrapped();
 
     // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
-    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
+    if (auto* document = dynamicDowncast<Document>(jsDynamicDowncast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
         if (document->quirks().needsConfigurableIndexedPropertiesQuirk()) [[unlikely]]
             return JSObject::deletePropertyByIndex(cell, lexicalGlobalObject, index);
     }
@@ -331,7 +331,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestNamedGetterNoIdentifierConstructor, (JSGlobalObje
 {
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestNamedGetterNoIdentifierPrototype*>(JSValue::decode(thisValue));
+    auto* prototype = jsDynamicDowncast<JSTestNamedGetterNoIdentifierPrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestNamedGetterNoIdentifier::getConstructor(vm, prototype->realm()));
@@ -349,7 +349,7 @@ JSC::GCClient::IsoSubspace* JSTestNamedGetterNoIdentifier::subspaceForImpl(JSC::
 
 void JSTestNamedGetterNoIdentifier::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestNamedGetterNoIdentifier*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSTestNamedGetterNoIdentifier*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (RefPtr context = thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
@@ -416,7 +416,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestNamedGetterNoIdentifier* JSTestNamedGetterNoIdentifier::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestNamedGetterNoIdentifier*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestNamedGetterNoIdentifier*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

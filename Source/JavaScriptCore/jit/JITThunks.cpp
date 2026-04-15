@@ -65,7 +65,7 @@ static inline NativeExecutable& NODELETE getMayBeDyingNativeExecutable(const Wea
     ASSERT(impl);
     // We have a callback removing entry when finalizing. This means that we never hold Deallocated entry in HashSet.
     ASSERT(impl->state() != WeakImpl::State::Deallocated);
-    // Never use jsCast here. This is possible that this value is "Dead" but not "Finalized" yet. In this case,
+    // Never use jsUncheckedDowncast here. This is possible that this value is "Dead" but not "Finalized" yet. In this case,
     // we can still access to non-JS data, as we are doing in a finalize callback.
     auto* executable = static_cast<NativeExecutable*>(impl->jsValue().asCell());
     ASSERT(executable);

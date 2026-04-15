@@ -207,15 +207,15 @@ ALWAYS_INLINE uint64_t toLength(JSGlobalObject* globalObject, JSObject* object)
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (isJSArray(object)) [[likely]]
-        return jsCast<JSArray*>(object)->length();
+        return jsUncheckedDowncast<JSArray*>(object)->length();
 
     switch (object->type()) {
     case DirectArgumentsType:
-        RELEASE_AND_RETURN(scope, jsCast<DirectArguments*>(object)->length(globalObject));
+        RELEASE_AND_RETURN(scope, jsUncheckedDowncast<DirectArguments*>(object)->length(globalObject));
     case ScopedArgumentsType:
-        RELEASE_AND_RETURN(scope, jsCast<ScopedArguments*>(object)->length(globalObject));
+        RELEASE_AND_RETURN(scope, jsUncheckedDowncast<ScopedArguments*>(object)->length(globalObject));
     case ClonedArgumentsType:
-        RELEASE_AND_RETURN(scope, jsCast<ClonedArguments*>(object)->length(globalObject));
+        RELEASE_AND_RETURN(scope, jsUncheckedDowncast<ClonedArguments*>(object)->length(globalObject));
     default:
         break;
     }

@@ -69,7 +69,7 @@ void JSGenerator::finishCreation(VM& vm)
 template<typename Visitor>
 void JSGenerator::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<JSGenerator*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSGenerator*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 }

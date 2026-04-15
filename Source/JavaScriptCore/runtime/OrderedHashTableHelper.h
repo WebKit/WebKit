@@ -209,8 +209,8 @@ public:
     {
         JSValue* value = slot(storage, aliveEntryCountIndex());
         if (!value->isInt32()) {
-            ASSERT(jsDynamicCast<Storage*>(*value));
-            return jsCast<Storage*>(*value);
+            ASSERT(jsDynamicDowncast<Storage*>(*value));
+            return jsUncheckedDowncast<Storage*>(*value);
         }
         return nullptr;
     }

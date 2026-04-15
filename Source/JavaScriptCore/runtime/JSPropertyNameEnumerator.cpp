@@ -88,7 +88,7 @@ void JSPropertyNameEnumerator::finishCreation(VM& vm, RefPtr<PropertyNameArray>&
 template<typename Visitor>
 void JSPropertyNameEnumerator::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    JSPropertyNameEnumerator* thisObject = jsCast<JSPropertyNameEnumerator*>(cell);
+    JSPropertyNameEnumerator* thisObject = jsUncheckedDowncast<JSPropertyNameEnumerator*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(cell, visitor);
     if (auto* propertyNames = thisObject->m_propertyNames.get()) {

@@ -44,7 +44,7 @@ WebAssemblyGCObjectBase::WebAssemblyGCObjectBase(VM& vm, WebAssemblyGCStructure*
 template<typename Visitor>
 void WebAssemblyGCObjectBase::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    WebAssemblyGCObjectBase* thisObject = jsCast<WebAssemblyGCObjectBase*>(cell);
+    WebAssemblyGCObjectBase* thisObject = jsUncheckedDowncast<WebAssemblyGCObjectBase*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 }

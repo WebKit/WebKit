@@ -68,13 +68,13 @@ inline bool isArray(JSGlobalObject* globalObject, JSValue argumentValue)
     if (!argumentValue.isObject())
         return false;
 
-    JSObject* argument = jsCast<JSObject*>(argumentValue);
+    JSObject* argument = jsUncheckedDowncast<JSObject*>(argumentValue);
     if (argument->type() == ArrayType || argument->type() == DerivedArrayType)
         return true;
 
     if (argument->type() != ProxyObjectType)
         return false;
-    return isArraySlow(globalObject, jsCast<ProxyObject*>(argument));
+    return isArraySlow(globalObject, jsUncheckedDowncast<ProxyObject*>(argument));
 }
 
 } // namespace JSC

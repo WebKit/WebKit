@@ -379,9 +379,9 @@ auto JavaScriptEvaluationResult::JSExtractor::jsValueToExtractedValue(JSGlobalCo
     JSC::JSGlobalObject* globalObject = ::toJS(context);
     JSC::JSObject* jsObject = ::toJS(globalObject, object).toObject(globalObject);
 
-    if (auto* info = jsDynamicCast<JSWebKitJSHandle*>(jsObject)) {
+    if (auto* info = jsDynamicDowncast<JSWebKitJSHandle*>(jsObject)) {
         RELEASE_ASSERT(globalObject->template inherits<WebCore::JSDOMGlobalObject>());
-        auto* domGlobalObject = jsCast<WebCore::JSDOMGlobalObject*>(globalObject);
+        auto* domGlobalObject = jsUncheckedDowncast<WebCore::JSDOMGlobalObject*>(globalObject);
         RefPtr document = dynamicDowncast<Document>(domGlobalObject->scriptExecutionContext());
         RefPtr frame = WebFrame::webFrame(document->frameID());
         RefPtr world = InjectedBundleScriptWorld::get(domGlobalObject->world());
@@ -390,7 +390,7 @@ auto JavaScriptEvaluationResult::JSExtractor::jsValueToExtractedValue(JSGlobalCo
         return makeUniqueRef<JSHandleInfo>(ref->identifier(), world->identifier(), frame->info(), ref->windowFrameIdentifier());
     }
 
-    if (auto* node = jsDynamicCast<JSWebKitSerializedNode*>(jsObject)) {
+    if (auto* node = jsDynamicDowncast<JSWebKitSerializedNode*>(jsObject)) {
         Ref serializedNode { node->wrapped() };
         return makeUniqueRef<SerializedNode>(serializedNode->serializedNode());
     }
@@ -425,7 +425,7 @@ JSValueRef JavaScriptEvaluationResult::JSInserter::toJS(JSGlobalContextRef conte
     auto globalObjectTuple = [] (auto context) {
         auto* lexicalGlobalObject = ::toJS(context);
         RELEASE_ASSERT(lexicalGlobalObject->template inherits<WebCore::JSDOMGlobalObject>());
-        auto* domGlobalObject = jsCast<WebCore::JSDOMGlobalObject*>(lexicalGlobalObject);
+        auto* domGlobalObject = jsUncheckedDowncast<WebCore::JSDOMGlobalObject*>(lexicalGlobalObject);
         RefPtr document = dynamicDowncast<WebCore::Document>(domGlobalObject->scriptExecutionContext());
         RELEASE_ASSERT(document);
         return std::make_tuple(lexicalGlobalObject, domGlobalObject, WTF::move(document));

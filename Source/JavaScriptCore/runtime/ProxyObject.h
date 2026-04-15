@@ -79,7 +79,7 @@ public:
 
     DECLARE_VISIT_CHILDREN;
 
-    JSObject* target() const { return jsCast<JSObject*>(internalField(Field::Target).get()); }
+    JSObject* target() const { return jsUncheckedDowncast<JSObject*>(internalField(Field::Target).get()); }
     JSValue handler() const { return internalField(Field::Handler).get(); }
 
     static void validateNegativeHasTrapResult(JSGlobalObject*, JSObject*, PropertyName);

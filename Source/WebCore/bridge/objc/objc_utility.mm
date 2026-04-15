@@ -107,7 +107,7 @@ ObjcValue convertValueToObjcValue(JSGlobalObject* lexicalGlobalObject, JSValue v
 
             JSGlobalObject* globalObject = 0;
             if (value.isObject() && asObject(value)->isGlobalObject())
-                globalObject = jsCast<JSGlobalObject*>(asObject(value));
+                globalObject = jsUncheckedDowncast<JSGlobalObject*>(asObject(value));
 
             if (!globalObject)
                 globalObject = originGlobalObject;

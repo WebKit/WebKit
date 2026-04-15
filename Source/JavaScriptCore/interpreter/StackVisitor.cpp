@@ -398,11 +398,11 @@ String StackVisitor::Frame::functionName() const
     case CodeType::Native: {
         JSCell* callee = this->callee().asCell();
         if (callee)
-            traceLine = getCalculatedDisplayName(callFrame()->deprecatedVM(), jsCast<JSObject*>(callee)).impl();
+            traceLine = getCalculatedDisplayName(callFrame()->deprecatedVM(), jsUncheckedDowncast<JSObject*>(callee)).impl();
         break;
     }
     case CodeType::Function: 
-        traceLine = getCalculatedDisplayName(callFrame()->deprecatedVM(), jsCast<JSObject*>(this->callee().asCell())).impl();
+        traceLine = getCalculatedDisplayName(callFrame()->deprecatedVM(), jsUncheckedDowncast<JSObject*>(this->callee().asCell())).impl();
         break;
     case CodeType::Global:
         traceLine = "global code"_s;
@@ -544,7 +544,7 @@ bool StackVisitor::Frame::isImplementationVisibilityPrivate() const
 
         if (callee().isCell()) {
             if (auto* callee = this->callee().asCell()) {
-                if (auto* jsFunction = jsDynamicCast<JSFunction*>(callee)) {
+                if (auto* jsFunction = jsDynamicDowncast<JSFunction*>(callee)) {
                     if (auto* executable = jsFunction->executable())
                         return executable->implementationVisibility();
                     return ImplementationVisibility::Public;

@@ -126,7 +126,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainTimeConstructorFuncFrom, (JSGlobalObject* 
             toTemporalOverflow(globalObject, options);
         RETURN_IF_EXCEPTION(scope, { });
         return JSValue::encode(TemporalPlainTime::create(vm, globalObject->plainTimeStructure(),
-            jsCast<TemporalPlainTime*>(itemValue)->plainTime()));
+            jsUncheckedDowncast<TemporalPlainTime*>(itemValue)->plainTime()));
     }
 
     RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainTime::from(globalObject, itemValue, options)));

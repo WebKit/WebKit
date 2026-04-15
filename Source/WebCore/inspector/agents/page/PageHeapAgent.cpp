@@ -65,13 +65,13 @@ Inspector::Protocol::ErrorStringOr<void> PageHeapAgent::disable()
 String PageHeapAgent::heapSnapshotBuilderOverrideClassName(const JSC::HeapSnapshotBuilder& builder, JSC::JSCell* cell, const String& currentClassName)
 {
     if (currentClassName == "HTMLElement"_s) {
-        if (auto* jsElement = jsDynamicCast<JSElement*>(cell)) {
+        if (auto* jsElement = jsDynamicDowncast<JSElement*>(cell)) {
             Ref element = jsElement->wrapped();
             if (element->isDefinedCustomElement()) {
                 if (RefPtr customElementRegistry = element->customElementRegistry()) {
                     if (RefPtr customElementInterface = customElementRegistry->findInterface(element)) {
                         if (JSC::JSObject* customElementConstructorObject = customElementInterface->constructor()) {
-                            if (JSC::JSFunction* customElementConstructorFunction = jsDynamicCast<JSC::JSFunction*>(customElementConstructorObject)) {
+                            if (JSC::JSFunction* customElementConstructorFunction = jsDynamicDowncast<JSC::JSFunction*>(customElementConstructorObject)) {
                                 String customElementClassName = customElementConstructorFunction->calculatedDisplayName(customElementConstructorFunction->vm());
                                 if (!customElementClassName.isNull())
                                     return customElementClassName;
@@ -88,7 +88,7 @@ String PageHeapAgent::heapSnapshotBuilderOverrideClassName(const JSC::HeapSnapsh
 
 bool PageHeapAgent::heapSnapshotBuilderIsElement(const JSC::HeapSnapshotBuilder&, JSC::JSCell* cell)
 {
-    return jsDynamicCast<JSNode*>(cell);
+    return jsDynamicDowncast<JSNode*>(cell);
 }
 
 void PageHeapAgent::mainFrameNavigated()

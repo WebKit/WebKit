@@ -105,7 +105,7 @@ void JSWebAssemblyArray::copy(VM& vm, JSWebAssemblyArray& dst, uint32_t dstOffse
 template<typename Visitor>
 void JSWebAssemblyArray::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    JSWebAssemblyArray* thisObject = jsCast<JSWebAssemblyArray*>(cell);
+    JSWebAssemblyArray* thisObject = jsUncheckedDowncast<JSWebAssemblyArray*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     Base::visitChildren(thisObject, visitor);

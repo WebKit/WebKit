@@ -82,7 +82,7 @@ void WorkerConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel
     auto message = makeUnique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, type, level, messageText, arguments.copyRef(), exec);
     protect(m_globalScope.get())->addConsoleMessage(WTF::move(message));
 
-    auto* domGlobalObject = jsDynamicCast<JSDOMGlobalObject*>(exec);
+    auto* domGlobalObject = jsDynamicDowncast<JSDOMGlobalObject*>(exec);
     if (level == MessageLevel::Error && domGlobalObject && domGlobalObject->hasScriptErrorCallbacks()) {
         auto fullMessageText = makeStringByJoining(arguments->getArgumentsAsStrings(), " "_s);
         domGlobalObject->invokeScriptErrorCallbacks(fullMessageText, message->url(), message->line(), message->column());

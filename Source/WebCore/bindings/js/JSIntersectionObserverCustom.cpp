@@ -44,7 +44,7 @@ DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSIntersectionObserver);
 
 bool JSIntersectionObserverOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, JSC::AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
-    if (JSC::jsCast<JSIntersectionObserver*>(handle.slot()->asCell())->wrapped().isReachableFromOpaqueRoots(visitor)) {
+    if (JSC::jsUncheckedDowncast<JSIntersectionObserver*>(handle.slot()->asCell())->wrapped().isReachableFromOpaqueRoots(visitor)) {
         if (reason) [[unlikely]]
             *reason = "Reachable from observed nodes"_s;
         return true;

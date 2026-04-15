@@ -42,7 +42,7 @@ namespace Inspector {
 
 static inline String argumentAsString(JSC::JSGlobalObject* globalObject, JSC::JSValue argument)
 {
-    if (JSC::jsDynamicCast<JSC::ProxyObject*>(argument))
+    if (JSC::jsDynamicDowncast<JSC::ProxyObject*>(argument))
         return "[object Proxy]"_s;
 
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(globalObject->vm());

@@ -72,7 +72,7 @@ void JSAsyncGenerator::finishCreation(VM& vm)
 template<typename Visitor>
 void JSAsyncGenerator::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<JSAsyncGenerator*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSAsyncGenerator*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 }
@@ -100,7 +100,7 @@ void JSAsyncGenerator::enqueue(VM& vm, JSValue value, int32_t mode, JSPromise* p
             item->setContext(vm, item);
             setQueue(vm, item);
         } else {
-            JSPromiseReaction* tail = jsCast<JSPromiseReaction*>(last);
+            JSPromiseReaction* tail = jsUncheckedDowncast<JSPromiseReaction*>(last);
             JSPromiseReaction* head = tail->next();
             JSPromiseReaction* item = JSPromiseReaction::create(
                 vm,
@@ -123,7 +123,7 @@ std::tuple<JSValue, int32_t, JSPromise*> JSAsyncGenerator::dequeue(VM& vm)
 
     JSValue value = resumeValue();
     int32_t mode = resumeMode();
-    JSPromise* promise = jsCast<JSPromise*>(resumePromise());
+    JSPromise* promise = jsUncheckedDowncast<JSPromise*>(resumePromise());
 
     JSValue last = queue();
     if (last.isNull()) {
@@ -131,7 +131,7 @@ std::tuple<JSValue, int32_t, JSPromise*> JSAsyncGenerator::dequeue(VM& vm)
         setResumeValue(vm, jsUndefined());
         setResumePromise(vm, jsUndefined());
     } else {
-        JSPromiseReaction* tail = jsCast<JSPromiseReaction*>(last);
+        JSPromiseReaction* tail = jsUncheckedDowncast<JSPromiseReaction*>(last);
         JSPromiseReaction* head = tail->next();
 
         setResumePromise(vm, head->promise());

@@ -2969,7 +2969,7 @@ String Internals::parserMetaData(JSC::JSValue code)
         StackVisitor::visit(callFrame, vm, iter);
         executable = iter.codeBlock()->ownerExecutable();
     } else if (code.isCallable())
-        executable = JSC::jsCast<JSFunction*>(code.toObject(globalObject))->jsExecutable();
+        executable = JSC::jsUncheckedDowncast<JSFunction*>(code.toObject(globalObject))->jsExecutable();
     else
         return String();
 
@@ -2977,7 +2977,7 @@ String Internals::parserMetaData(JSC::JSValue code)
     String functionName;
     ASCIILiteral suffix = ""_s;
 
-    if (auto* functionExecutable = jsDynamicCast<FunctionExecutable*>(executable)) {
+    if (auto* functionExecutable = jsDynamicDowncast<FunctionExecutable*>(executable)) {
         prefix = "function \""_s;
         functionName = functionExecutable->ecmaName().string();
         suffix = "\""_s;
@@ -8117,7 +8117,7 @@ JSC::JSValue Internals::dumpJSNodeStatistics()
         vm.heap.objectSpace().forEachLiveCell(iterationScope, [&](JSC::HeapCell* heapCell, JSC::HeapCell::Kind kind) {
             if (!isJSCellKind(kind))
                 return IterationStatus::Continue;
-            SUPPRESS_MEMORY_UNSAFE_CAST auto* jsNode = JSC::jsDynamicCast<JSNode*>(static_cast<JSC::JSCell*>(heapCell));
+            SUPPRESS_MEMORY_UNSAFE_CAST auto* jsNode = JSC::jsDynamicDowncast<JSNode*>(static_cast<JSC::JSCell*>(heapCell));
             if (!jsNode)
                 return IterationStatus::Continue;
 

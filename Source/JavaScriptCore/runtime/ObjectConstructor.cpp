@@ -118,7 +118,7 @@ void ObjectConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject, Obj
 static ALWAYS_INLINE JSObject* constructObjectWithNewTarget(JSGlobalObject* globalObject, CallFrame* callFrame, JSValue newTarget)
 {
     VM& vm = globalObject->vm();
-    ObjectConstructor* objectConstructor = jsCast<ObjectConstructor*>(callFrame->jsCallee());
+    ObjectConstructor* objectConstructor = jsUncheckedDowncast<ObjectConstructor*>(callFrame->jsCallee());
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // We need to check newTarget condition in this caller side instead of InternalFunction::createSubclassStructure side.
@@ -324,7 +324,7 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorAssign, (JSGlobalObject* globalObject,
 
     // FIXME: Extend this for non JSFinalObject. For example, we would like to use this fast path for function objects too.
     // https://bugs.webkit.org/show_bug.cgi?id=185358
-    JSFinalObject* targetObject = jsDynamicCast<JSFinalObject*>(target);
+    JSFinalObject* targetObject = jsDynamicDowncast<JSFinalObject*>(target);
     bool targetCanPerformFastPut = targetObject && targetObject->canPerformFastPutInlineExcludingProto() && targetObject->isStructureExtensible();
     unsigned argsCount = callFrame->argumentCount();
 
@@ -1116,7 +1116,7 @@ JSObject* objectConstructorSeal(JSGlobalObject* globalObject, JSObject* object)
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (jsDynamicCast<JSFinalObject*>(object) && !hasIndexedProperties(object->indexingType())) {
+    if (jsDynamicDowncast<JSFinalObject*>(object) && !hasIndexedProperties(object->indexingType())) {
         object->seal(vm);
         return object;
     }
@@ -1149,7 +1149,7 @@ JSObject* objectConstructorFreeze(JSGlobalObject* globalObject, JSObject* object
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (jsDynamicCast<JSFinalObject*>(object) && !hasIndexedProperties(object->indexingType())) {
+    if (jsDynamicDowncast<JSFinalObject*>(object) && !hasIndexedProperties(object->indexingType())) {
         object->freeze(vm);
         return object;
     }
@@ -1203,7 +1203,7 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorIsSealed, (JSGlobalObject* globalObjec
     JSObject* object = asObject(obj);
 
     // Quick check for final objects.
-    if (jsDynamicCast<JSFinalObject*>(object) && !hasIndexedProperties(object->indexingType()))
+    if (jsDynamicDowncast<JSFinalObject*>(object) && !hasIndexedProperties(object->indexingType()))
         return JSValue::encode(jsBoolean(object->isSealed(vm)));
 
     // 2. Return ? TestIntegrityLevel(O, "sealed").
@@ -1221,7 +1221,7 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorIsFrozen, (JSGlobalObject* globalObjec
     JSObject* object = asObject(obj);
 
     // Quick check for final objects.
-    if (jsDynamicCast<JSFinalObject*>(object) && !hasIndexedProperties(object->indexingType()))
+    if (jsDynamicDowncast<JSFinalObject*>(object) && !hasIndexedProperties(object->indexingType()))
         return JSValue::encode(jsBoolean(object->isFrozen(vm)));
 
     // 2. Return ? TestIntegrityLevel(O, "frozen").
@@ -1269,7 +1269,7 @@ JSArray* ownPropertyKeys(JSGlobalObject* globalObject, JSObject* object, Propert
     auto kind = inferCachedPropertyNamesKind(propertyNameMode, dontEnumPropertiesMode);
 
     if (object->inherits<ProxyObject>()) {
-        ProxyObject* proxy = jsCast<ProxyObject*>(object);
+        ProxyObject* proxy = jsUncheckedDowncast<ProxyObject*>(object);
         if (proxy->forwardsGetOwnPropertyNamesToTarget(dontEnumPropertiesMode))
             object = proxy->target();
     }

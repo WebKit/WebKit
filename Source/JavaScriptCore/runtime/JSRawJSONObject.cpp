@@ -64,8 +64,8 @@ Structure* JSRawJSONObject::createStructure(VM& vm, JSGlobalObject* globalObject
 JSString* JSRawJSONObject::rawJSON(VM& vm)
 {
     if (!structure()->didTransition()) [[likely]]
-        return jsCast<JSString*>(getDirect(rawJSONObjectRawJSONPropertyOffset));
-    return jsCast<JSString*>(getDirect(vm, vm.propertyNames->rawJSON));
+        return jsUncheckedDowncast<JSString*>(getDirect(rawJSONObjectRawJSONPropertyOffset));
+    return jsUncheckedDowncast<JSString*>(getDirect(vm, vm.propertyNames->rawJSON));
 }
 
 } // namespace JSC

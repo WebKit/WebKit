@@ -44,7 +44,7 @@ void reportException(JSGlobalObject* lexicalGlobalObject, JSValue exceptionValue
 {
     VM& vm = lexicalGlobalObject->vm();
     RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
-    auto* exception = jsDynamicCast<JSC::Exception*>(exceptionValue);
+    auto* exception = jsDynamicDowncast<JSC::Exception*>(exceptionValue);
     if (!exception) {
         exception = vm.lastException();
         if (!exception)
@@ -68,9 +68,9 @@ String retrieveErrorMessageWithoutName(JSGlobalObject& lexicalGlobalObject, VM& 
     // FIXME: <http://webkit.org/b/115087> Web Inspector: WebCore::reportException should not evaluate JavaScript handling exceptions
     // If this is a custom exception object, call toString on it to try and get a nice string representation for the exception.
     String errorMessage;
-    if (auto* error = jsDynamicCast<ErrorInstance*>(exception))
+    if (auto* error = jsDynamicDowncast<ErrorInstance*>(exception))
         errorMessage = error->sanitizedMessageString(&lexicalGlobalObject);
-    else if (auto* error = jsDynamicCast<JSDOMException*>(exception))
+    else if (auto* error = jsDynamicDowncast<JSDOMException*>(exception))
         errorMessage = error->wrapped().message();
     else
         errorMessage = exception.toWTFString(&lexicalGlobalObject);
@@ -87,7 +87,7 @@ String retrieveErrorMessage(JSGlobalObject& lexicalGlobalObject, VM& vm, JSValue
     // FIXME: <http://webkit.org/b/115087> Web Inspector: WebCore::reportException should not evaluate JavaScript handling exceptions
     // If this is a custom exception object, call toString on it to try and get a nice string representation for the exception.
     String errorMessage;
-    if (auto* error = jsDynamicCast<ErrorInstance*>(exception))
+    if (auto* error = jsDynamicDowncast<ErrorInstance*>(exception))
         errorMessage = error->sanitizedToString(&lexicalGlobalObject);
     else
         errorMessage = exception.toWTFString(&lexicalGlobalObject);
@@ -117,8 +117,8 @@ void reportException(JSGlobalObject* lexicalGlobalObject, JSC::Exception* except
     scope.clearException();
     vm.clearLastException();
 
-    auto* globalObject = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject);
-    if (auto* window = jsDynamicCast<JSDOMWindow*>(globalObject)) {
+    auto* globalObject = jsUncheckedDowncast<JSDOMGlobalObject*>(lexicalGlobalObject);
+    if (auto* window = jsDynamicDowncast<JSDOMWindow*>(globalObject)) {
         RefPtr localDOMWindow = dynamicDowncast<LocalDOMWindow>(window->wrapped());
         if (!localDOMWindow || !localDOMWindow->isCurrentlyDisplayedInFrame())
             return;

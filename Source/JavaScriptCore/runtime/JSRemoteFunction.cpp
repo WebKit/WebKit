@@ -85,9 +85,9 @@ JSC_DEFINE_HOST_FUNCTION(remoteFunctionCallForJSFunction, (JSGlobalObject* globa
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSRemoteFunction* remoteFunction = jsCast<JSRemoteFunction*>(callFrame->jsCallee());
+    JSRemoteFunction* remoteFunction = jsUncheckedDowncast<JSRemoteFunction*>(callFrame->jsCallee());
     ASSERT(remoteFunction->isRemoteFunction());
-    JSFunction* targetFunction = jsCast<JSFunction*>(remoteFunction->targetFunction());
+    JSFunction* targetFunction = jsUncheckedDowncast<JSFunction*>(remoteFunction->targetFunction());
     JSGlobalObject* targetGlobalObject = targetFunction->realm();
 
     MarkedArgumentBuffer args;
@@ -126,7 +126,7 @@ JSC_DEFINE_HOST_FUNCTION(remoteFunctionCallGeneric, (JSGlobalObject* globalObjec
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSRemoteFunction* remoteFunction = jsCast<JSRemoteFunction*>(callFrame->jsCallee());
+    JSRemoteFunction* remoteFunction = jsUncheckedDowncast<JSRemoteFunction*>(callFrame->jsCallee());
     ASSERT(remoteFunction->isRemoteFunction());
     JSObject* targetFunction = remoteFunction->targetFunction();
     JSGlobalObject* targetGlobalObject = targetFunction->realm();
@@ -174,13 +174,13 @@ JSC_DEFINE_HOST_FUNCTION(createRemoteFunction, (JSGlobalObject* globalObject, Ca
     JSValue targetFunction = callFrame->uncheckedArgument(0);
     ASSERT(targetFunction.isCallable());
 
-    JSObject* targetCallable = jsCast<JSObject*>(targetFunction.asCell());
+    JSObject* targetCallable = jsUncheckedDowncast<JSObject*>(targetFunction.asCell());
     JSGlobalObject* destinationGlobalObject = globalObject;
     if (!callFrame->uncheckedArgument(1).isUndefinedOrNull()) {
-        if (auto shadowRealm = jsDynamicCast<ShadowRealmObject*>(callFrame->uncheckedArgument(1)))
+        if (auto shadowRealm = jsDynamicDowncast<ShadowRealmObject*>(callFrame->uncheckedArgument(1)))
             destinationGlobalObject = shadowRealm->globalObject();
         else
-            destinationGlobalObject = jsCast<JSGlobalObject*>(callFrame->uncheckedArgument(1));
+            destinationGlobalObject = jsUncheckedDowncast<JSGlobalObject*>(callFrame->uncheckedArgument(1));
     }
 
     RELEASE_AND_RETURN(scope, JSValue::encode(JSRemoteFunction::tryCreate(destinationGlobalObject, vm, targetCallable)));
@@ -195,7 +195,7 @@ inline Structure* getRemoteFunctionStructure(JSGlobalObject* globalObject)
 JSRemoteFunction* JSRemoteFunction::tryCreate(JSGlobalObject* globalObject, VM& vm, JSObject* targetCallable)
 {
     ASSERT(targetCallable && targetCallable->isCallable());
-    if (auto remote = jsDynamicCast<JSRemoteFunction*>(targetCallable)) {
+    if (auto remote = jsDynamicDowncast<JSRemoteFunction*>(targetCallable)) {
         targetCallable = remote->targetFunction();
         ASSERT(!JSC::isRemoteFunction(targetCallable));
     }
@@ -259,7 +259,7 @@ void JSRemoteFunction::finishCreation(JSGlobalObject* globalObject, VM& vm)
 template<typename Visitor>
 void JSRemoteFunction::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    JSRemoteFunction* thisObject = jsCast<JSRemoteFunction*>(cell);
+    JSRemoteFunction* thisObject = jsUncheckedDowncast<JSRemoteFunction*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 

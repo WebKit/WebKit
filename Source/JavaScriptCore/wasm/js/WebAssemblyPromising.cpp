@@ -48,9 +48,9 @@ JSC_DEFINE_HOST_FUNCTION(runWebAssemblyPromisingFunction, (JSGlobalObject* globa
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSObject* callee = callFrame->jsCallee();
-    JSFunctionWithFields* thisFunction = jsCast<JSFunctionWithFields*>(callee);
+    JSFunctionWithFields* thisFunction = jsUncheckedDowncast<JSFunctionWithFields*>(callee);
     ASSERT(thisFunction);
-    JSFunction* wrappedFunction = jsCast<JSFunction*>(thisFunction->getField(JSFunctionWithFields::Field::WebAssemblyPromisingWrappedFunction));
+    JSFunction* wrappedFunction = jsUncheckedDowncast<JSFunction*>(thisFunction->getField(JSFunctionWithFields::Field::WebAssemblyPromisingWrappedFunction));
 
     MarkedArgumentBuffer args;
     for (unsigned i = 0; i < callFrame->argumentCount(); ++i)

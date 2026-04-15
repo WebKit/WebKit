@@ -320,7 +320,7 @@ String HeapSnapshotBuilder::descriptionForNode(const HeapSnapshotNode& node)
     Structure* structure = cell->structure();
 
     if (structure->classInfoForCells()->isSubClassOf(Structure::info())) {
-        Structure* cellAsStructure = jsCast<Structure*>(cell);
+        Structure* cellAsStructure = jsUncheckedDowncast<Structure*>(cell);
         String className = cellAsStructure->classInfoForCells()->className;
         if (m_client)
             className = m_client->heapSnapshotBuilderOverrideClassName(*this, cell, className);
@@ -416,8 +416,8 @@ void HeapSnapshotBuilder::dumpToStream(PrintStream& out)
                     nodeLabel.append(it->value);
 
                 if (nodeLabel.isEmpty()) {
-                    if (auto* object = jsDynamicCast<JSObject*>(node.cell)) {
-                        if (auto* function = jsDynamicCast<JSFunction*>(object))
+                    if (auto* object = jsDynamicDowncast<JSObject*>(node.cell)) {
+                        if (auto* function = jsDynamicDowncast<JSFunction*>(object))
                             nodeLabel.append(function->calculatedDisplayName(vm));
                     }
                 }

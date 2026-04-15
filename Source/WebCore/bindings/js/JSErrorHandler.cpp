@@ -87,7 +87,7 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
         Ref<JSErrorHandler> protectedThis(*this);
 
         RefPtr<Event> savedEvent;
-        auto* jsFunctionWindow = jsDynamicCast<JSDOMWindow*>(jsFunction->realm());
+        auto* jsFunctionWindow = jsDynamicDowncast<JSDOMWindow*>(jsFunction->realm());
         if (jsFunctionWindow) {
             savedEvent = jsFunctionWindow->currentEvent();
 
@@ -107,7 +107,7 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
 
             {
                 auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
-                auto* jsErrorEvent = jsCast<JSErrorEvent*>(toJS(globalObject, globalObject, *errorEvent));
+                auto* jsErrorEvent = jsUncheckedDowncast<JSErrorEvent*>(toJS(globalObject, globalObject, *errorEvent));
                 if (auto* exception = scope.exception()) [[unlikely]] {
                     scope.clearException();
                     return exception;

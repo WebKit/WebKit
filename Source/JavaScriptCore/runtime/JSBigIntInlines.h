@@ -37,7 +37,7 @@ inline JSValue JSBigInt::toNumber(JSValue bigInt)
     if (bigInt.isBigInt32())
         return jsNumber(bigInt.bigInt32AsInt32());
 #endif
-    return toNumberHeap(jsCast<JSBigInt*>(bigInt));
+    return toNumberHeap(jsUncheckedDowncast<JSBigInt*>(bigInt));
 }
 
 uint64_t JSBigInt::toBigUInt64(JSValue bigInt)

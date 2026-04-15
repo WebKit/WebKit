@@ -218,14 +218,14 @@ String JSVMClientData::overrideSourceURL(const JSC::StackFrame& frame, const Str
     JSGlobalObject* globalObject = nullptr;
     if (auto* codeBlock = frame.codeBlock())
         globalObject = codeBlock->globalObject();
-    else if (auto* callee = jsDynamicCast<JSObject*>(frame.callee()))
+    else if (auto* callee = jsDynamicDowncast<JSObject*>(frame.callee()))
         globalObject = callee->realm();
     RELEASE_ASSERT(globalObject);
 
     if (!globalObject->inherits<JSDOMWindowBase>())
         return nullString();
 
-    RefPtr document = jsCast<const JSDOMWindowBase*>(globalObject)->wrapped().documentIfLocal();
+    RefPtr document = jsUncheckedDowncast<const JSDOMWindowBase*>(globalObject)->wrapped().documentIfLocal();
     if (!document)
         return nullString();
 

@@ -461,7 +461,7 @@ inline JSString* replaceUsingStringSearch(VM& vm, JSGlobalObject* globalObject, 
 
     std::optional<CachedCall> cachedCall;
     if (callData.type == CallData::Type::JS) {
-        cachedCall.emplace(globalObject, jsCast<JSFunction*>(replaceValue), 3);
+        cachedCall.emplace(globalObject, jsUncheckedDowncast<JSFunction*>(replaceValue), 3);
         RETURN_IF_EXCEPTION(scope, nullptr);
     }
 
@@ -1300,7 +1300,7 @@ ALWAYS_INLINE JSString* replaceUsingRegExpSearch(VM& vm, JSGlobalObject* globalO
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     unsigned sourceLen = source->length();
-    RegExpObject* regExpObject = jsCast<RegExpObject*>(searchValue);
+    RegExpObject* regExpObject = jsUncheckedDowncast<RegExpObject*>(searchValue);
     RegExp* regExp = regExpObject->regExp();
     bool global = regExp->global();
     bool hasNamedCaptures = regExp->hasNamedCaptures();
@@ -1314,7 +1314,7 @@ ALWAYS_INLINE JSString* replaceUsingRegExpSearch(VM& vm, JSGlobalObject* globalO
             RELEASE_AND_RETURN(scope, removeAllUsingRegExpSearch(vm, globalObject, string, source, regExp));
 
         if (callData.type == CallData::Type::JS && !hasNamedCaptures && sourceLen >= Options::thresholdForStringReplaceCache())
-            RELEASE_AND_RETURN(scope, replaceAllWithCacheUsingRegExpSearch(vm, globalObject, string, source, regExp, jsCast<JSFunction*>(replaceValue)));
+            RELEASE_AND_RETURN(scope, replaceAllWithCacheUsingRegExpSearch(vm, globalObject, string, source, regExp, jsUncheckedDowncast<JSFunction*>(replaceValue)));
     }
 
     if (callData.type == CallData::Type::None) {
@@ -1354,7 +1354,7 @@ ALWAYS_INLINE JSString* replaceUsingRegExpSearch(VM& vm, JSGlobalObject* globalO
         int argCount = regExp->numSubpatterns() + 1 + 2;
         if (hasNamedCaptures)
             ++argCount;
-        JSFunction* func = jsCast<JSFunction*>(replaceValue);
+        JSFunction* func = jsUncheckedDowncast<JSFunction*>(replaceValue);
         std::optional<CachedCall> cachedCallHolder;
         CachedCall* cachedCall = nullptr;
         while (true) {

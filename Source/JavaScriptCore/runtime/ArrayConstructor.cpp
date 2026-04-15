@@ -132,7 +132,7 @@ static ALWAYS_INLINE bool isArraySlowInline(JSGlobalObject* globalObject, ProxyO
             auto* callFrame = vm.topJSCallFrame();
             auto* callee = callFrame && !callFrame->isNativeCalleeFrame() ? callFrame->jsCallee() : nullptr;
             ASCIILiteral calleeName = "Array.isArray"_s;
-            auto* function = callee ? jsDynamicCast<JSFunction*>(callee) : nullptr;
+            auto* function = callee ? jsDynamicDowncast<JSFunction*>(callee) : nullptr;
             // If this function is from a different globalObject than the one passed in above,
             // then this test will fail even if function is Object.prototype.toString. The only
             // way this test will be work everytime is if we check against the
@@ -150,7 +150,7 @@ static ALWAYS_INLINE bool isArraySlowInline(JSGlobalObject* globalObject, ProxyO
         if (argument->type() != ProxyObjectType)
             return false;
 
-        proxy = jsCast<ProxyObject*>(argument);
+        proxy = jsUncheckedDowncast<ProxyObject*>(argument);
     }
 
     ASSERT_NOT_REACHED();
@@ -165,8 +165,8 @@ bool isArraySlow(JSGlobalObject* globalObject, ProxyObject* argument)
 // https://tc39.github.io/ecma262/#sec-isarray
 JSC_DEFINE_HOST_FUNCTION(arrayConstructorPrivateFuncIsArraySlow, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    ASSERT_UNUSED(globalObject, jsDynamicCast<ProxyObject*>(callFrame->argument(0)));
-    return JSValue::encode(jsBoolean(isArraySlowInline(globalObject, jsCast<ProxyObject*>(callFrame->uncheckedArgument(0)))));
+    ASSERT_UNUSED(globalObject, jsDynamicDowncast<ProxyObject*>(callFrame->argument(0)));
+    return JSValue::encode(jsBoolean(isArraySlowInline(globalObject, jsUncheckedDowncast<ProxyObject*>(callFrame->uncheckedArgument(0)))));
 }
 
 ALWAYS_INLINE JSArray* fastArrayOf(JSGlobalObject* globalObject, CallFrame* callFrame, size_t length)
@@ -375,7 +375,7 @@ static JSArray* tryCreateArrayFromSet(JSGlobalObject* globalObject, JSSet* set)
     if (storageCell == vm.orderedHashTableSentinel())
         RELEASE_AND_RETURN(scope, constructEmptyArray(globalObject, nullptr));
 
-    auto* storage = jsCast<JSSet::Storage*>(storageCell);
+    auto* storage = jsUncheckedDowncast<JSSet::Storage*>(storageCell);
 
     // First pass: determine indexing type
     IndexingType indexingType = IsArray;
@@ -386,7 +386,7 @@ static JSArray* tryCreateArrayFromSet(JSGlobalObject* globalObject, JSSet* set)
         if (storageCell == vm.orderedHashTableSentinel())
             break;
 
-        auto* currentStorage = jsCast<JSSet::Storage*>(storageCell);
+        auto* currentStorage = jsUncheckedDowncast<JSSet::Storage*>(storageCell);
         entry = JSSet::Helper::iterationEntry(*currentStorage) + 1;
         JSValue entryKey = JSSet::Helper::getIterationEntryKey(*currentStorage);
 
@@ -417,7 +417,7 @@ static JSArray* tryCreateArrayFromSet(JSGlobalObject* globalObject, JSSet* set)
     storageCell = set->storageOrSentinel(vm);
     if (storageCell == vm.orderedHashTableSentinel()) [[unlikely]]
         return nullptr;
-    storage = jsCast<JSSet::Storage*>(storageCell);
+    storage = jsUncheckedDowncast<JSSet::Storage*>(storageCell);
 
     entry = 0;
     size_t i = 0;
@@ -428,7 +428,7 @@ static JSArray* tryCreateArrayFromSet(JSGlobalObject* globalObject, JSSet* set)
             if (storageCell == vm.orderedHashTableSentinel())
                 break;
 
-            auto* currentStorage = jsCast<JSSet::Storage*>(storageCell);
+            auto* currentStorage = jsUncheckedDowncast<JSSet::Storage*>(storageCell);
             entry = JSSet::Helper::iterationEntry(*currentStorage) + 1;
             JSValue value = JSSet::Helper::getIterationEntryKey(*currentStorage);
 
@@ -443,7 +443,7 @@ static JSArray* tryCreateArrayFromSet(JSGlobalObject* globalObject, JSSet* set)
             if (storageCell == vm.orderedHashTableSentinel())
                 break;
 
-            auto* currentStorage = jsCast<JSSet::Storage*>(storageCell);
+            auto* currentStorage = jsUncheckedDowncast<JSSet::Storage*>(storageCell);
             entry = JSSet::Helper::iterationEntry(*currentStorage) + 1;
             JSValue value = JSSet::Helper::getIterationEntryKey(*currentStorage);
 
@@ -478,7 +478,7 @@ static JSArray* tryCreateArrayFromMapIterator(JSGlobalObject* globalObject, JSMa
     if (storageCell == vm.orderedHashTableSentinel())
         RELEASE_AND_RETURN(scope, constructEmptyArray(globalObject, nullptr));
 
-    auto* storage = jsCast<JSMap::Storage*>(storageCell);
+    auto* storage = jsUncheckedDowncast<JSMap::Storage*>(storageCell);
 
     IndexingType indexingType = IsArray;
     JSMap::Helper::Entry entry = 0;
@@ -488,7 +488,7 @@ static JSArray* tryCreateArrayFromMapIterator(JSGlobalObject* globalObject, JSMa
         if (storageCell == vm.orderedHashTableSentinel())
             break;
 
-        auto* currentStorage = jsCast<JSMap::Storage*>(storageCell);
+        auto* currentStorage = jsUncheckedDowncast<JSMap::Storage*>(storageCell);
         entry = JSMap::Helper::iterationEntry(*currentStorage) + 1;
 
         JSValue entryValue;
@@ -523,7 +523,7 @@ static JSArray* tryCreateArrayFromMapIterator(JSGlobalObject* globalObject, JSMa
     storageCell = map->storageOrSentinel(vm);
     if (storageCell == vm.orderedHashTableSentinel()) [[unlikely]]
         return nullptr;
-    storage = jsCast<JSMap::Storage*>(storageCell);
+    storage = jsUncheckedDowncast<JSMap::Storage*>(storageCell);
 
     entry = 0;
     size_t i = 0;
@@ -534,7 +534,7 @@ static JSArray* tryCreateArrayFromMapIterator(JSGlobalObject* globalObject, JSMa
             if (storageCell == vm.orderedHashTableSentinel())
                 break;
 
-            auto* currentStorage = jsCast<JSMap::Storage*>(storageCell);
+            auto* currentStorage = jsUncheckedDowncast<JSMap::Storage*>(storageCell);
             entry = JSMap::Helper::iterationEntry(*currentStorage) + 1;
 
             JSValue value;
@@ -554,7 +554,7 @@ static JSArray* tryCreateArrayFromMapIterator(JSGlobalObject* globalObject, JSMa
             if (storageCell == vm.orderedHashTableSentinel())
                 break;
 
-            auto* currentStorage = jsCast<JSMap::Storage*>(storageCell);
+            auto* currentStorage = jsUncheckedDowncast<JSMap::Storage*>(storageCell);
             entry = JSMap::Helper::iterationEntry(*currentStorage) + 1;
 
             JSValue value;
@@ -595,7 +595,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayConstructorPrivateFromFastWithoutMapFn, (JSGlobalO
         // For `Array.from(arguments)`
         switch (items.asCell()->type()) {
         case DirectArgumentsType: {
-            auto* arguments = jsCast<DirectArguments*>(items.asCell());
+            auto* arguments = jsUncheckedDowncast<DirectArguments*>(items.asCell());
             if (arguments->isIteratorProtocolFastAndNonObservable()) [[likely]] {
                 result = tryCreateArrayFromDirectArguments(globalObject, arguments);
                 RETURN_IF_EXCEPTION(scope, { });
@@ -603,7 +603,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayConstructorPrivateFromFastWithoutMapFn, (JSGlobalO
             break;
         }
         case ScopedArgumentsType: {
-            auto* arguments = jsCast<ScopedArguments*>(items.asCell());
+            auto* arguments = jsUncheckedDowncast<ScopedArguments*>(items.asCell());
             if (arguments->isIteratorProtocolFastAndNonObservable()) [[likely]] {
                 result = tryCreateArrayFromScopedArguments(globalObject, arguments);
                 RETURN_IF_EXCEPTION(scope, { });
@@ -611,7 +611,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayConstructorPrivateFromFastWithoutMapFn, (JSGlobalO
             break;
         }
         case ClonedArgumentsType: {
-            auto* arguments = jsCast<ClonedArguments*>(items.asCell());
+            auto* arguments = jsUncheckedDowncast<ClonedArguments*>(items.asCell());
             if (arguments->isIteratorProtocolFastAndNonObservable()) [[likely]] {
                 result = tryCreateArrayFromClonedArguments(globalObject, arguments);
                 RETURN_IF_EXCEPTION(scope, { });
@@ -624,14 +624,14 @@ JSC_DEFINE_HOST_FUNCTION(arrayConstructorPrivateFromFastWithoutMapFn, (JSGlobalO
         }
     } else if (items && items.isCell() && items.asCell()->type() == JSSetType) {
         // For `Array.from(set)`
-        auto* set = jsCast<JSSet*>(items.asCell());
+        auto* set = jsUncheckedDowncast<JSSet*>(items.asCell());
         if (set->isIteratorProtocolFastAndNonObservable()) [[likely]] {
             result = tryCreateArrayFromSet(globalObject, set);
             RETURN_IF_EXCEPTION(scope, { });
         }
     } else if (items && items.isCell() && items.asCell()->type() == JSMapIteratorType) {
         // For `Array.from(map.keys())`, `Array.from(map.values())`
-        auto* mapIterator = jsCast<JSMapIterator*>(items.asCell());
+        auto* mapIterator = jsUncheckedDowncast<JSMapIterator*>(items.asCell());
         if (mapIterator->kind() != IterationKind::Entries && mapIteratorProtocolIsFastAndNonObservable(vm, mapIterator)) [[likely]] {
             result = tryCreateArrayFromMapIterator(globalObject, mapIterator);
             RETURN_IF_EXCEPTION(scope, { });

@@ -61,7 +61,7 @@ public:
     JSFunction* function()
     {
         ASSERT(m_valid);
-        return jsCast<JSFunction*>(m_protoCallFrame.calleeValue.unboxedCell());
+        return jsUncheckedDowncast<JSFunction*>(m_protoCallFrame.calleeValue.unboxedCell());
     }
     FunctionExecutable* functionExecutable() { return m_functionExecutable; }
     JSScope* scope() { return m_scope; }

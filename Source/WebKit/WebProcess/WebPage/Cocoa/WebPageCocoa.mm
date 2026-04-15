@@ -1286,7 +1286,7 @@ void WebPage::willBeginWritingToolsSession(const std::optional<WebCore::WritingT
         if (!object)
             continue;
 
-        if (auto* jsNode = JSC::jsDynamicCast<JSNode*>(object))
+        if (auto* jsNode = JSC::jsDynamicDowncast<JSNode*>(object))
             preservedNodes.add(protect(jsNode->wrapped()));
     }
 

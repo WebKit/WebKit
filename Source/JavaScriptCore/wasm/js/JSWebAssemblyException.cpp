@@ -67,7 +67,7 @@ void JSWebAssemblyException::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     Base::visitChildren(cell, visitor);
 
-    auto* exception = jsCast<JSWebAssemblyException*>(cell);
+    auto* exception = jsUncheckedDowncast<JSWebAssemblyException*>(cell);
     SUPPRESS_UNCOUNTED_LOCAL const auto& tagType = exception->tag().type();
     unsigned offset = 0;
     for (unsigned i = 0; i < tagType.argumentCount(); ++i) {

@@ -92,8 +92,8 @@ public:
         return result;
     }
 
-    bool isGetterNull() const { return !!jsDynamicCast<NullGetterFunction*>(m_getter.get()); }
-    bool isSetterNull() const { return !!jsDynamicCast<NullSetterFunction*>(m_setter.get()); }
+    bool isGetterNull() const { return !!jsDynamicDowncast<NullGetterFunction*>(m_getter.get()); }
+    bool isSetterNull() const { return !!jsDynamicDowncast<NullSetterFunction*>(m_setter.get()); }
 
     JSObject* setter() const LIFETIME_BOUND { return m_setter.get(); }
 

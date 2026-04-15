@@ -189,7 +189,7 @@ private:
         if (!globalObject)
             return;
 
-        packAndPostMessage(*JSC::jsCast<JSDOMGlobalObject*>(globalObject), m_port.get(), "pull"_s, JSC::jsUndefined());
+        packAndPostMessage(*JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(globalObject), m_port.get(), "pull"_s, JSC::jsUndefined());
         pullFinished();
     }
     void doCancel(JSC::JSValue reason) final
@@ -199,7 +199,7 @@ private:
         if (!globalObject)
             return;
 
-        auto result = packAndPostMessageHandlingError(*JSC::jsCast<JSDOMGlobalObject*>(globalObject), m_port.get(), "error"_s, reason);
+        auto result = packAndPostMessageHandlingError(*JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(globalObject), m_port.get(), "error"_s, reason);
         if (result.hasException())
             cancelFinished(result.releaseException());
         else
@@ -311,7 +311,7 @@ private:
             return;
 
         if (!m_backpressurePromise) {
-            RefPtr backpressurePromise = DeferredPromise::create(*JSC::jsCast<JSDOMGlobalObject*>(globalObject), DeferredPromise::Mode::RetainPromiseOnResolve);
+            RefPtr backpressurePromise = DeferredPromise::create(*JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(globalObject), DeferredPromise::Mode::RetainPromiseOnResolve);
             if (!backpressurePromise)
                 return;
             backpressurePromise->resolve();
@@ -325,11 +325,11 @@ private:
                 return;
 
             RefPtr context = protectedThis->m_port->scriptExecutionContext();
-            auto* globalObject = context ? JSC::jsCast<JSDOMGlobalObject*>(context->globalObject()) : nullptr;
+            auto* globalObject = context ? JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(context->globalObject()) : nullptr;
             if (!globalObject)
                 return;
 
-            protectedThis->m_backpressurePromise = DeferredPromise::create(*JSC::jsCast<JSDOMGlobalObject*>(globalObject), DeferredPromise::Mode::RetainPromiseOnResolve);
+            protectedThis->m_backpressurePromise = DeferredPromise::create(*JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(globalObject), DeferredPromise::Mode::RetainPromiseOnResolve);
             if (!protectedThis->m_backpressurePromise)
                 return;
 

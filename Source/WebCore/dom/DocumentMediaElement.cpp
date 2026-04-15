@@ -154,7 +154,7 @@ bool DocumentMediaElement::setupAndCallJS(NOESCAPE const JSSetupFunction& task, 
     if (!protectedFrame)
         return false;
     CheckedRef scriptController = protectedFrame->script();
-    auto* globalObject = JSC::jsCast<JSDOMGlobalObject*>(scriptController->globalObject(world));
+    auto* globalObject = JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(scriptController->globalObject(world));
     if (!globalObject)
         return false;
     auto& vm = globalObject->vm();

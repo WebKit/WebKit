@@ -196,7 +196,7 @@ JSC_DEFINE_HOST_FUNCTION(iteratorProtoFuncForEach, (JSGlobalObject* globalObject
     uint64_t counter = 0;
 
     if (callData.type == CallData::Type::JS) [[likely]] {
-        CachedCall cachedCall(globalObject, jsCast<JSFunction*>(callbackArg), 2);
+        CachedCall cachedCall(globalObject, jsUncheckedDowncast<JSFunction*>(callbackArg), 2);
         RETURN_IF_EXCEPTION(scope, { });
 
         forEachInIteratorProtocol(globalObject, thisValue, [&](VM&, JSGlobalObject*, JSValue nextItem) ALWAYS_INLINE_LAMBDA {
@@ -282,7 +282,7 @@ JSC_DEFINE_HOST_FUNCTION(iteratorProtoFuncIncludes, (JSGlobalObject* globalObjec
     std::optional<CachedCall> cachedCallHolder;
     CachedCall* cachedCall = nullptr;
     if (callData.type == CallData::Type::JS) [[likely]] {
-        cachedCallHolder.emplace(globalObject, jsCast<JSFunction*>(nextMethod), 0);
+        cachedCallHolder.emplace(globalObject, jsUncheckedDowncast<JSFunction*>(nextMethod), 0);
         RETURN_IF_EXCEPTION(scope, { });
 
         cachedCall = &cachedCallHolder.value();
@@ -363,7 +363,7 @@ JSC_DEFINE_HOST_FUNCTION(iteratorProtoFuncJoin, (JSGlobalObject* globalObject, C
     std::optional<CachedCall> cachedCallHolder;
     CachedCall* cachedCall = nullptr;
     if (callData.type == CallData::Type::JS) [[likely]] {
-        cachedCallHolder.emplace(globalObject, jsCast<JSFunction*>(nextMethod), 0);
+        cachedCallHolder.emplace(globalObject, jsUncheckedDowncast<JSFunction*>(nextMethod), 0);
         RETURN_IF_EXCEPTION(scope, { });
 
         cachedCall = &cachedCallHolder.value();

@@ -118,7 +118,7 @@ static inline JSValue regExpExec(JSGlobalObject* globalObject, JSValue thisValue
         auto callData = JSC::getCallDataInline(regExpExec);
         ASSERT(callData.type != CallData::Type::None);
         if (callData.type == CallData::Type::JS) [[likely]] {
-            CachedCall cachedCall(globalObject, jsCast<JSFunction*>(regExpExec), 1);
+            CachedCall cachedCall(globalObject, jsUncheckedDowncast<JSFunction*>(regExpExec), 1);
             RETURN_IF_EXCEPTION(scope, { });
             match = cachedCall.callWithArguments(globalObject, thisValue, str);
             RETURN_IF_EXCEPTION(scope, { });
@@ -159,7 +159,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncTest, (JSGlobalObject* globalObject, Cal
     RETURN_IF_EXCEPTION(scope, { });
 
     if (regExpExecWatchpointIsValid(vm, thisObject)) [[likely]] {
-        auto* regExp = jsDynamicCast<RegExpObject*>(thisValue);
+        auto* regExp = jsDynamicDowncast<RegExpObject*>(thisValue);
         if (!regExp) [[unlikely]]
             return throwVMTypeError(globalObject, scope, "Builtin RegExp exec can only be called on a RegExp object"_s);
         auto strValue = str->value(globalObject);
@@ -180,7 +180,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncExec, (JSGlobalObject* globalObject, Cal
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue thisValue = callFrame->thisValue();
-    auto* regexp = jsDynamicCast<RegExpObject*>(thisValue);
+    auto* regexp = jsDynamicDowncast<RegExpObject*>(thisValue);
     if (!regexp) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Builtin RegExp exec can only be called on a RegExp object"_s);
     JSString* string = callFrame->argument(0).toStringOrNull(globalObject);
@@ -192,8 +192,8 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncExec, (JSGlobalObject* globalObject, Cal
 
 JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncMatchFast, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    RegExpObject* thisObject = jsCast<RegExpObject*>(callFrame->thisValue());
-    JSString* string = jsCast<JSString*>(callFrame->uncheckedArgument(0));
+    RegExpObject* thisObject = jsUncheckedDowncast<RegExpObject*>(callFrame->thisValue());
+    JSString* string = jsUncheckedDowncast<JSString*>(callFrame->uncheckedArgument(0));
     if (!thisObject->regExp()->global())
         return JSValue::encode(thisObject->exec(globalObject, string));
     return JSValue::encode(thisObject->matchGlobal(globalObject, string));
@@ -205,7 +205,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncCompile, (JSGlobalObject* globalObject, 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue thisValue = callFrame->thisValue();
-    auto* thisRegExp = jsDynamicCast<RegExpObject*>(thisValue);
+    auto* thisRegExp = jsDynamicDowncast<RegExpObject*>(thisValue);
     if (!thisRegExp) [[unlikely]]
         return throwVMTypeError(globalObject, scope);
 
@@ -219,7 +219,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncCompile, (JSGlobalObject* globalObject, 
     JSValue arg0 = callFrame->argument(0);
     JSValue arg1 = callFrame->argument(1);
     
-    if (auto* regExpObject = jsDynamicCast<RegExpObject*>(arg0)) {
+    if (auto* regExpObject = jsDynamicDowncast<RegExpObject*>(arg0)) {
         if (!arg1.isUndefined())
             return throwVMTypeError(globalObject, scope, "Cannot supply flags when constructing one RegExp from another."_s);
         regExp = regExpObject->regExp();
@@ -304,7 +304,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoGetterGlobal, (JSGlobalObject* globalObject,
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue thisValue = callFrame->thisValue();
-    auto* regexp = jsDynamicCast<RegExpObject*>(thisValue);
+    auto* regexp = jsDynamicDowncast<RegExpObject*>(thisValue);
     if (!regexp) [[unlikely]] {
         if (thisValue == globalObject->regExpPrototype())
             return JSValue::encode(jsUndefined());
@@ -320,7 +320,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoGetterHasIndices, (JSGlobalObject* globalObj
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue thisValue = callFrame->thisValue();
-    auto* regexp = jsDynamicCast<RegExpObject*>(thisValue);
+    auto* regexp = jsDynamicDowncast<RegExpObject*>(thisValue);
     if (!regexp) [[unlikely]] {
         if (thisValue == globalObject->regExpPrototype())
             return JSValue::encode(jsUndefined());
@@ -336,7 +336,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoGetterIgnoreCase, (JSGlobalObject* globalObj
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue thisValue = callFrame->thisValue();
-    auto* regexp = jsDynamicCast<RegExpObject*>(thisValue);
+    auto* regexp = jsDynamicDowncast<RegExpObject*>(thisValue);
     if (!regexp) [[unlikely]] {
         if (thisValue == globalObject->regExpPrototype())
             return JSValue::encode(jsUndefined());
@@ -352,7 +352,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoGetterMultiline, (JSGlobalObject* globalObje
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue thisValue = callFrame->thisValue();
-    auto* regexp = jsDynamicCast<RegExpObject*>(thisValue);
+    auto* regexp = jsDynamicDowncast<RegExpObject*>(thisValue);
     if (!regexp) [[unlikely]] {
         if (thisValue == globalObject->regExpPrototype())
             return JSValue::encode(jsUndefined());
@@ -368,7 +368,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoGetterDotAll, (JSGlobalObject* globalObject,
     auto scope = DECLARE_THROW_SCOPE(vm);
     
     JSValue thisValue = callFrame->thisValue();
-    auto* regexp = jsDynamicCast<RegExpObject*>(thisValue);
+    auto* regexp = jsDynamicDowncast<RegExpObject*>(thisValue);
     if (!regexp) [[unlikely]] {
         if (thisValue == globalObject->regExpPrototype())
             return JSValue::encode(jsUndefined());
@@ -384,7 +384,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoGetterSticky, (JSGlobalObject* globalObject,
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue thisValue = callFrame->thisValue();
-    auto* regexp = jsDynamicCast<RegExpObject*>(thisValue);
+    auto* regexp = jsDynamicDowncast<RegExpObject*>(thisValue);
     if (!regexp) [[unlikely]] {
         if (thisValue == globalObject->regExpPrototype())
             return JSValue::encode(jsUndefined());
@@ -400,7 +400,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoGetterUnicode, (JSGlobalObject* globalObject
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue thisValue = callFrame->thisValue();
-    auto* regexp = jsDynamicCast<RegExpObject*>(thisValue);
+    auto* regexp = jsDynamicDowncast<RegExpObject*>(thisValue);
     if (!regexp) [[unlikely]] {
         if (thisValue == globalObject->regExpPrototype())
             return JSValue::encode(jsUndefined());
@@ -416,7 +416,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoGetterUnicodeSets, (JSGlobalObject* globalOb
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue thisValue = callFrame->thisValue();
-    auto* regexp = jsDynamicCast<RegExpObject*>(thisValue);
+    auto* regexp = jsDynamicDowncast<RegExpObject*>(thisValue);
     if (!regexp) [[unlikely]] {
         if (thisValue == globalObject->regExpPrototype())
             return JSValue::encode(jsUndefined());
@@ -449,7 +449,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoGetterSource, (JSGlobalObject* globalObject,
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue thisValue = callFrame->thisValue();
-    auto* regexp = jsDynamicCast<RegExpObject*>(thisValue);
+    auto* regexp = jsDynamicDowncast<RegExpObject*>(thisValue);
     if (!regexp) [[unlikely]] {
         if (thisValue == globalObject->regExpPrototype())
             return JSValue::encode(jsNontrivialString(vm, "(?:)"_s));
@@ -473,7 +473,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncSearch, (JSGlobalObject* globalObject, C
     RETURN_IF_EXCEPTION(scope, { });
 
     if (regExpExecWatchpointIsValid(vm, thisObject)) [[likely]] {
-        auto* regExp = jsDynamicCast<RegExpObject*>(thisValue);
+        auto* regExp = jsDynamicDowncast<RegExpObject*>(thisValue);
         if (!regExp) [[unlikely]]
             return throwVMTypeError(globalObject, scope, "Builtin RegExp exec can only be called on a RegExp object"_s);
         if (regExp->lastIndexIsWritable() && regExp->getLastIndex().isNumber()) [[likely]] {
@@ -625,7 +625,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncSplitFast, (JSGlobalObject* globalObject
     // 1. [handled by JS builtin] Let rx be the this value.
     // 2. [handled by JS builtin] If Type(rx) is not Object, throw a TypeError exception.
     JSValue thisValue = callFrame->thisValue();
-    RegExp* regexp = jsCast<RegExpObject*>(thisValue)->regExp();
+    RegExp* regexp = jsUncheckedDowncast<RegExpObject*>(thisValue)->regExp();
 
     // 3. [handled by JS builtin] Let S be ? ToString(string).
     JSString* inputString = callFrame->argument(0).toString(globalObject);
@@ -1208,7 +1208,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncMatchAll, (JSGlobalObject* globalObject,
     JSString* string = callFrame->argument(0).toString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto* regExpObject = jsDynamicCast<RegExpObject*>(thisObject);
+    auto* regExpObject = jsDynamicDowncast<RegExpObject*>(thisObject);
     if (regExpObject && regExpMatchAllWathpointIsValid(regExpObject)) [[likely]] {
         RegExp* regExp = regExpObject->regExp();
 

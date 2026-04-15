@@ -99,7 +99,7 @@ public:
             setStorage(vm, storage);
         }
 
-        JSSet::Storage& storageRef = *jsCast<JSSet::Storage*>(storage);
+        JSSet::Storage& storageRef = *jsUncheckedDowncast<JSSet::Storage*>(storage);
         auto result = JSSet::Helper::transitAndNext(vm, storageRef, entry());
         if (!result.storage) {
             markClosed(sentinel);
@@ -142,12 +142,12 @@ public:
         JSCell* storage = this->tryGetStorage();
         ASSERT(storage);
         ASSERT_UNUSED(vm, storage != vm.orderedHashTableSentinel());
-        JSSet::Storage& storageRef = *jsCast<JSSet::Storage*>(storage);
+        JSSet::Storage& storageRef = *jsUncheckedDowncast<JSSet::Storage*>(storage);
         return JSSet::Helper::getKey(storageRef, entry);
     }
 
     IterationKind kind() const { return static_cast<IterationKind>(internalField(Field::Kind).get().asUInt32AsAnyInt()); }
-    JSSet* iteratedObject() const { return jsCast<JSSet*>(internalField(Field::IteratedObject).get()); }
+    JSSet* iteratedObject() const { return jsUncheckedDowncast<JSSet*>(internalField(Field::IteratedObject).get()); }
     JSCell* tryGetStorage() const
     {
         JSValue value = internalField(Field::Storage).get();

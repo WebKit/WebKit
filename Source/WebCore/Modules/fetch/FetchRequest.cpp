@@ -308,7 +308,7 @@ ExceptionOr<void> FetchRequest::setBody(FetchRequest& request)
             return Exception { ExceptionCode::TypeError, makeString("Request has method '"_s, m_request.httpMethod(), "' and cannot have a body"_s) };
 
         RefPtr context = scriptExecutionContext();
-        auto* globalObject = context ? JSC::jsCast<JSDOMGlobalObject*>(context->globalObject()) : nullptr;
+        auto* globalObject = context ? JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(context->globalObject()) : nullptr;
         m_body = request.m_body->createProxy(*globalObject);
         request.setDisturbed();
     }

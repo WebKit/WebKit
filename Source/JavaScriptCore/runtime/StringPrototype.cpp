@@ -344,7 +344,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncReplace, (JSGlobalObject* globalObject, 
 
     JSValue searchValue = callFrame->argument(0);
     if (searchValue.isObject()) {
-        RegExpObject* regExpObject = jsDynamicCast<RegExpObject*>(searchValue);
+        RegExpObject* regExpObject = jsDynamicDowncast<RegExpObject*>(searchValue);
         if (regExpObject && regExpObject->isSymbolReplaceFastAndNonObservable()) [[likely]] {
             JSString* string = thisValue.toString(globalObject);
             RETURN_IF_EXCEPTION(scope, { });
@@ -403,7 +403,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncReplaceAll, (JSGlobalObject* globalObjec
 
     JSValue searchValue = callFrame->argument(0);
     if (searchValue.isObject()) {
-        RegExpObject* regExpObject = jsDynamicCast<RegExpObject*>(searchValue);
+        RegExpObject* regExpObject = jsDynamicDowncast<RegExpObject*>(searchValue);
         if (regExpObject && regExpObject->isSymbolReplaceFastAndNonObservable()) [[likely]] {
             if (!regExpObject->regExp()->global()) [[unlikely]]
                 return throwVMTypeError(globalObject, scope, "String.prototype.replaceAll argument must not be a non-global regular expression"_s);
@@ -466,7 +466,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToString, (JSGlobalObject* globalObject,
         return JSValue::encode(thisValue);
     }
 
-    auto* stringObject = jsDynamicCast<StringObject*>(thisValue);
+    auto* stringObject = jsDynamicDowncast<StringObject*>(thisValue);
     if (!stringObject)
         return throwVMTypeError(globalObject, scope);
 

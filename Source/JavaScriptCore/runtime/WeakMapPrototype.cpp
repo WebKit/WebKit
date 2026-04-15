@@ -66,7 +66,7 @@ ALWAYS_INLINE static JSWeakMap* getWeakMap(JSGlobalObject* globalObject, JSValue
         return nullptr;
     }
 
-    if (auto* map = jsDynamicCast<JSWeakMap*>(asObject(value))) [[likely]]
+    if (auto* map = jsDynamicDowncast<JSWeakMap*>(asObject(value))) [[likely]]
         return map;
 
     throwTypeError(globalObject, scope, "Called WeakMap function on a non-WeakMap object"_s);
@@ -188,7 +188,7 @@ JSC_DEFINE_HOST_FUNCTION(protoFuncWeakMapGetOrInsertComputed, (JSGlobalObject* g
 
     JSValue value;
     if (callData.type == CallData::Type::JS) [[likely]] {
-        CachedCall cachedCall(globalObject, jsCast<JSFunction*>(valueCallback), 1);
+        CachedCall cachedCall(globalObject, jsUncheckedDowncast<JSFunction*>(valueCallback), 1);
         RETURN_IF_EXCEPTION(scope, { });
 
         value = cachedCall.callWithArguments(globalObject, jsUndefined(), key);

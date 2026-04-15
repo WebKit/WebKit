@@ -88,7 +88,7 @@ void WebAssemblyModuleRecord::finishCreation(JSGlobalObject* globalObject, VM& v
 template<typename Visitor>
 void WebAssemblyModuleRecord::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    WebAssemblyModuleRecord* thisObject = jsCast<WebAssemblyModuleRecord*>(cell);
+    WebAssemblyModuleRecord* thisObject = jsUncheckedDowncast<WebAssemblyModuleRecord*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_instance);
@@ -202,7 +202,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                 return exception(createTypeError(globalObject, importFailMessage(import, "import"_s, "must be an object"_s), defaultSourceAppender, runtimeTypeForValue(importModuleValue)));
 
             // 3. Let v be the value of performing Get(o, i.item_name)
-            JSObject* object = jsCast<JSObject*>(importModuleValue);
+            JSObject* object = jsUncheckedDowncast<JSObject*>(importModuleValue);
             value = object->get(globalObject, fieldName);
             RETURN_IF_EXCEPTION(scope, void());
         } else {
@@ -258,7 +258,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
             JSWebAssemblyInstance* calleeInstance = m_instance.get();
             WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = nullptr;
             CalleeBits boxedCallee { &Wasm::WasmToJSCallee::singleton() };
-            JSObject* function = jsCast<JSObject*>(value);
+            JSObject* function = jsUncheckedDowncast<JSObject*>(value);
 
             // ii. If v is an Exported Function Exotic Object:
             WebAssemblyFunction* wasmFunction;
@@ -301,7 +301,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
             const Wasm::GlobalInformation& global = moduleInformation.globals[import.kindIndex];
             if (global.mutability == Wasm::Immutable) {
                 if (value.inherits<JSWebAssemblyGlobal>()) {
-                    JSWebAssemblyGlobal* globalValue = jsCast<JSWebAssemblyGlobal*>(value);
+                    JSWebAssemblyGlobal* globalValue = jsUncheckedDowncast<JSWebAssemblyGlobal*>(value);
                     if (!Wasm::isSubtype(globalValue->global()->type(), global.type))
                         return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global"_s, "must be a same type"_s)));
                     if (globalValue->global()->mutability() != Wasm::Immutable)
@@ -418,7 +418,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
             } else {
                 if (!value.inherits<JSWebAssemblyGlobal>())
                     return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global"_s, "must be a WebAssembly.Global object since it is mutable"_s)));
-                JSWebAssemblyGlobal* globalValue = jsCast<JSWebAssemblyGlobal*>(value);
+                JSWebAssemblyGlobal* globalValue = jsUncheckedDowncast<JSWebAssemblyGlobal*>(value);
                 if (!isSubtype(globalValue->global()->type(), global.type) || !isSubtype(global.type, globalValue->global()->type()))
                     return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global"_s, "must be a same type"_s)));
                 if (globalValue->global()->mutability() != global.mutability)
@@ -431,7 +431,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
 
         case Wasm::ExternalKind::Table: {
             // 7. If i is a table import:
-            JSWebAssemblyTable* table = jsDynamicCast<JSWebAssemblyTable*>(value);
+            JSWebAssemblyTable* table = jsDynamicDowncast<JSWebAssemblyTable*>(value);
             // i. If v is not a WebAssembly.Table object, throw a WebAssembly.LinkError.
             if (!table)
                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Table import"_s, "is not an instance of WebAssembly.Table"_s)));
@@ -462,7 +462,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
         }
 
         case Wasm::ExternalKind::Exception: {
-            JSWebAssemblyTag* tag = jsDynamicCast<JSWebAssemblyTag*>(value);
+            JSWebAssemblyTag* tag = jsDynamicDowncast<JSWebAssemblyTag*>(value);
             if (!tag)
                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Tag import"_s, "is not an instance of WebAssembly.Tag"_s)));
 
@@ -477,7 +477,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
         }
 
         case Wasm::ExternalKind::Memory:
-            JSWebAssemblyMemory* memory = jsDynamicCast<JSWebAssemblyMemory*>(value);
+            JSWebAssemblyMemory* memory = jsDynamicDowncast<JSWebAssemblyMemory*>(value);
             // i. If v is not a WebAssembly.Memory object, throw a WebAssembly.LinkError.
             if (!memory)
                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Memory import"_s, "is not an instance of WebAssembly.Memory"_s)));

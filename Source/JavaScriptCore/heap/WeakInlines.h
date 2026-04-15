@@ -84,7 +84,7 @@ template<typename T> inline T* Weak<T>::operator->() const
 {
     auto* pointer = impl();
     ASSERT(pointer && pointer->state() == WeakImpl::Live);
-    // We can't use jsCast here since we could be called in a finalizer.
+    // We can't use jsUncheckedDowncast here since we could be called in a finalizer.
     return static_cast<T*>(pointer->jsValue().asCell());
 }
 
@@ -92,7 +92,7 @@ template<typename T> inline T& Weak<T>::operator*() const
 {
     auto* pointer = impl();
     ASSERT(pointer && pointer->state() == WeakImpl::Live);
-    // We can't use jsCast here since we could be called in a finalizer.
+    // We can't use jsUncheckedDowncast here since we could be called in a finalizer.
     return *static_cast<T*>(pointer->jsValue().asCell());
 }
 
@@ -101,7 +101,7 @@ template<typename T> inline T* Weak<T>::get() const
     auto* pointer = impl();
     if (!pointer || pointer->state() != WeakImpl::Live)
         return nullptr;
-    // We can't use jsCast here since we could be called in a finalizer.
+    // We can't use jsUncheckedDowncast here since we could be called in a finalizer.
     return static_cast<T*>(pointer->jsValue().asCell());
 }
 

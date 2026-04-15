@@ -279,7 +279,7 @@ void CodeCache::write()
 
 void writeCodeBlock(const SourceCodeKey& key, const SourceCodeValue& value)
 {
-    UnlinkedCodeBlock* codeBlock = jsDynamicCast<UnlinkedCodeBlock*>(value.cell.get());
+    UnlinkedCodeBlock* codeBlock = jsDynamicDowncast<UnlinkedCodeBlock*>(value.cell.get());
     if (!codeBlock)
         return;
 

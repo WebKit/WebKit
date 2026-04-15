@@ -61,7 +61,7 @@ JSMicrotaskDispatcher::JSMicrotaskDispatcher(VM& vm, Structure* structure, Ref<M
 template<typename Visitor>
 void JSMicrotaskDispatcher::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    auto* thisObject = jsCast<JSMicrotaskDispatcher*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSMicrotaskDispatcher*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_globalObject);

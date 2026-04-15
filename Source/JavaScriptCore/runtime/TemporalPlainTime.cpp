@@ -66,7 +66,7 @@ void TemporalPlainTime::finishCreation(VM& vm)
     m_calendar.initLater(
         [] (const auto& init) {
             VM& vm = init.vm;
-            auto* plainTime = jsCast<TemporalPlainTime*>(init.owner);
+            auto* plainTime = jsUncheckedDowncast<TemporalPlainTime*>(init.owner);
             auto* globalObject = plainTime->realm();
             auto* calendar = TemporalCalendar::create(vm, globalObject->calendarStructure(), iso8601CalendarID());
             init.set(calendar);
@@ -78,7 +78,7 @@ void TemporalPlainTime::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     Base::visitChildren(cell, visitor);
 
-    auto* thisObject = jsCast<TemporalPlainTime*>(cell);
+    auto* thisObject = jsUncheckedDowncast<TemporalPlainTime*>(cell);
     thisObject->m_calendar.visit(visitor);
 }
 
@@ -434,7 +434,7 @@ TemporalPlainTime* TemporalPlainTime::from(JSGlobalObject* globalObject, JSValue
 
     if (itemValue.isObject()) {
         if (itemValue.inherits<TemporalPlainTime>())
-            return jsCast<TemporalPlainTime*>(itemValue);
+            return jsUncheckedDowncast<TemporalPlainTime*>(itemValue);
 
         if (itemValue.inherits<TemporalPlainDateTime>()) {
             // Validate overflow -- see step 2(a)(ii) of ToTemporalTime
@@ -442,9 +442,9 @@ TemporalPlainTime* TemporalPlainTime::from(JSGlobalObject* globalObject, JSValue
                 toTemporalOverflow(globalObject, options);
                 RETURN_IF_EXCEPTION(scope, { });
             }
-            return TemporalPlainTime::create(vm, globalObject->plainTimeStructure(), jsCast<TemporalPlainDateTime*>(itemValue)->plainTime());
+            return TemporalPlainTime::create(vm, globalObject->plainTimeStructure(), jsUncheckedDowncast<TemporalPlainDateTime*>(itemValue)->plainTime());
         }
-        auto duration = toTemporalTimeRecord(globalObject, jsCast<JSObject*>(itemValue));
+        auto duration = toTemporalTimeRecord(globalObject, jsUncheckedDowncast<JSObject*>(itemValue));
         RETURN_IF_EXCEPTION(scope, { });
 
         TemporalOverflow overflow = TemporalOverflow::Constrain;

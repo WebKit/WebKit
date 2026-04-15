@@ -131,7 +131,7 @@ void WebAssemblyGCStructure::finishCreation(VM& vm)
 template<typename Visitor>
 void WebAssemblyGCStructure::visitAdditionalChildren(JSCell* cell, Visitor& visitor)
 {
-    WebAssemblyGCStructure* thisObject = jsCast<WebAssemblyGCStructure*>(cell);
+    WebAssemblyGCStructure* thisObject = jsUncheckedDowncast<WebAssemblyGCStructure*>(cell);
     for (auto& slot : thisObject->m_inlinedDisplay)
         visitor.append(slot);
 }

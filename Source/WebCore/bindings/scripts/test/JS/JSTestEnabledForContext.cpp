@@ -136,7 +136,7 @@ void JSTestEnabledForContext::finishCreation(VM& vm)
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
 
-    if ((downcast<Document>(jsCast<JSDOMGlobalObject*>(realm())->scriptExecutionContext())->settingsValues().testSettingEnabled && TestSubObjEnabledForContext::enabledForContext(*jsCast<JSDOMGlobalObject*>(realm())->scriptExecutionContext())))
+    if ((downcast<Document>(jsUncheckedDowncast<JSDOMGlobalObject*>(realm())->scriptExecutionContext())->settingsValues().testSettingEnabled && TestSubObjEnabledForContext::enabledForContext(*jsUncheckedDowncast<JSDOMGlobalObject*>(realm())->scriptExecutionContext())))
         putDirectCustomAccessor(vm, builtinNames(vm).TestSubObjEnabledForContextPublicName(), CustomGetterSetter::create(vm, jsTestEnabledForContext_TestSubObjEnabledForContextConstructor, nullptr), attributesForStructure(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)));
 }
 
@@ -159,7 +159,7 @@ JSObject* JSTestEnabledForContext::prototype(VM& vm, JSDOMGlobalObject& globalOb
 
 JSValue JSTestEnabledForContext::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestEnabledForContextDOMConstructor, DOMConstructorID::TestEnabledForContext>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestEnabledForContextDOMConstructor, DOMConstructorID::TestEnabledForContext>(vm, *jsUncheckedDowncast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestEnabledForContext::destroy(JSC::JSCell* cell)
@@ -172,7 +172,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestEnabledForContextConstructor, (JSGlobalObject* le
 {
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestEnabledForContextPrototype*>(JSValue::decode(thisValue));
+    auto* prototype = jsDynamicDowncast<JSTestEnabledForContextPrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestEnabledForContext::getConstructor(vm, prototype->realm()));
@@ -201,7 +201,7 @@ JSC::GCClient::IsoSubspace* JSTestEnabledForContext::subspaceForImpl(JSC::VM& vm
 
 void JSTestEnabledForContext::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestEnabledForContext*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSTestEnabledForContext*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (RefPtr context = thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
@@ -268,7 +268,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestEnabledForContext* JSTestEnabledForContext::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestEnabledForContext*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestEnabledForContext*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

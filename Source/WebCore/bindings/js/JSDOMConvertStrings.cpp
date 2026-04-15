@@ -141,7 +141,7 @@ ConversionResult<IDLDOMString> trustedScriptCompliantString(JSGlobalObject& glob
     if (RefPtr trustedScript = JSTrustedScript::toWrapped(vm, input))
         return trustedScript->toString();
 
-    RefPtr scriptExecutionContext = jsDynamicCast<JSDOMGlobalObject*>(&global)->scriptExecutionContext();
+    RefPtr scriptExecutionContext = jsDynamicDowncast<JSDOMGlobalObject*>(&global)->scriptExecutionContext();
     if (!scriptExecutionContext) {
         ASSERT_NOT_REACHED();
         return { String() };

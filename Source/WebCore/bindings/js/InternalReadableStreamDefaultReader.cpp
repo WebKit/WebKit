@@ -158,7 +158,7 @@ void InternalReadableStreamDefaultReader::onClosedPromiseRejection(Function<void
     if (result.hasException())
         return;
 
-    auto* promise = jsCast<JSC::JSPromise*>(result.returnValue());
+    auto* promise = jsUncheckedDowncast<JSC::JSPromise*>(result.returnValue());
     if (!promise)
         return;
 
@@ -188,7 +188,7 @@ void InternalReadableStreamDefaultReader::onClosedPromiseResolution(Function<voi
     if (result.hasException())
         return;
 
-    auto* promise = jsCast<JSC::JSPromise*>(result.returnValue());
+    auto* promise = jsUncheckedDowncast<JSC::JSPromise*>(result.returnValue());
     if (!promise)
         return;
 

@@ -208,7 +208,7 @@ void JSTestDefaultToJSONPrototype::finishCreation(VM& vm)
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, realm(), propertyName, slot);
     }
-    if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(realm())->scriptExecutionContext())->settingsValues().testSettingEnabled) {
+    if (!downcast<Document>(jsUncheckedDowncast<JSDOMGlobalObject*>(realm())->scriptExecutionContext())->settingsValues().testSettingEnabled) {
         hasDisabledRuntimeProperties = true;
         auto propertyName = Identifier::fromString(vm, "enabledBySettingsAttribute"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
@@ -248,7 +248,7 @@ JSObject* JSTestDefaultToJSON::prototype(VM& vm, JSDOMGlobalObject& globalObject
 
 JSValue JSTestDefaultToJSON::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestDefaultToJSONDOMConstructor, DOMConstructorID::TestDefaultToJSON>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestDefaultToJSONDOMConstructor, DOMConstructorID::TestDefaultToJSON>(vm, *jsUncheckedDowncast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestDefaultToJSON::destroy(JSC::JSCell* cell)
@@ -261,7 +261,7 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestDefaultToJSONConstructor, (JSGlobalObject* lexica
 {
     SUPPRESS_UNCOUNTED_LOCAL auto& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestDefaultToJSONPrototype*>(JSValue::decode(thisValue));
+    auto* prototype = jsDynamicDowncast<JSTestDefaultToJSONPrototype*>(JSValue::decode(thisValue));
     if (!prototype) [[unlikely]]
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestDefaultToJSON::getConstructor(vm, prototype->realm()));
@@ -777,7 +777,7 @@ static inline EncodedJSValue jsTestDefaultToJSONPrototypeFunction_toJSONBody(JSG
         RETURN_IF_EXCEPTION(throwScope, { });
         result->putDirect(vm, Identifier::fromString(vm, "longAttribute"_s), longAttributeValue);
     }
-    if (downcast<Document>(jsCast<JSDOMGlobalObject*>(castedThis->realm())->scriptExecutionContext())->settingsValues().testSettingEnabled) {
+    if (downcast<Document>(jsUncheckedDowncast<JSDOMGlobalObject*>(castedThis->realm())->scriptExecutionContext())->settingsValues().testSettingEnabled) {
         auto enabledBySettingsAttributeValue = toJS<IDLUnsignedShort>(*lexicalGlobalObject, throwScope, impl.enabledBySettingsAttribute());
         RETURN_IF_EXCEPTION(throwScope, { });
         result->putDirect(vm, Identifier::fromString(vm, "enabledBySettingsAttribute"_s), enabledBySettingsAttributeValue);
@@ -844,7 +844,7 @@ JSC::GCClient::IsoSubspace* JSTestDefaultToJSON::subspaceForImpl(JSC::VM& vm)
 
 void JSTestDefaultToJSON::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
-    auto* thisObject = jsCast<JSTestDefaultToJSON*>(cell);
+    auto* thisObject = jsUncheckedDowncast<JSTestDefaultToJSON*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (RefPtr context = thisObject->scriptExecutionContext())
         analyzer.setLabelForCell(cell, makeString("url "_s, context->url().string()));
@@ -910,7 +910,7 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 TestDefaultToJSON* JSTestDefaultToJSON::toWrapped(JSC::VM&, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestDefaultToJSON*>(value))
+    if (auto* wrapper = jsDynamicDowncast<JSTestDefaultToJSON*>(value))
         return &wrapper->wrapped();
     return nullptr;
 }

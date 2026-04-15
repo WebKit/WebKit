@@ -41,12 +41,12 @@ JSDOMWindow* mainWorldGlobalObject(LocalFrame*);
 
 inline JSDOMWindow* asJSDOMWindow(JSC::JSGlobalObject* globalObject)
 {
-    return JSC::jsCast<JSDOMWindow*>(globalObject);
+    return JSC::jsUncheckedDowncast<JSDOMWindow*>(globalObject);
 }
 
 inline const JSDOMWindow* asJSDOMWindow(const JSC::JSGlobalObject* globalObject)
 {
-    return JSC::jsCast<const JSDOMWindow*>(globalObject);
+    return JSC::jsUncheckedDowncast<const JSDOMWindow*>(globalObject);
 }
 
 inline JSDOMWindow* mainWorldGlobalObject(LocalFrame* frame)

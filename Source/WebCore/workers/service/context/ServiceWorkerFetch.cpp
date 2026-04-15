@@ -197,7 +197,7 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
         fetchRequest->setNavigationPreloadIdentifier(fetchIdentifier);
 
 
-    auto& jsDOMGlobalObject = *JSC::jsCast<JSDOMGlobalObject*>(globalScope.globalObject());
+    auto& jsDOMGlobalObject = *JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(globalScope.globalObject());
     JSC::JSLockHolder lock(jsDOMGlobalObject.vm());
 
     auto* promise = JSC::JSPromise::create(jsDOMGlobalObject.vm(), jsDOMGlobalObject.promiseStructure());

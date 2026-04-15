@@ -92,7 +92,7 @@ IntlDateTimeFormat::IntlDateTimeFormat(VM& vm, Structure* structure)
 template<typename Visitor>
 void IntlDateTimeFormat::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    IntlDateTimeFormat* thisObject = jsCast<IntlDateTimeFormat*>(cell);
+    IntlDateTimeFormat* thisObject = jsUncheckedDowncast<IntlDateTimeFormat*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     Base::visitChildren(thisObject, visitor);

@@ -82,13 +82,13 @@ JSC_DEFINE_HOST_FUNCTION(functionProtoFuncToString, (JSGlobalObject* globalObjec
 
     JSValue thisValue = callFrame->thisValue();
     if (thisValue.inherits<JSFunction>()) {
-        JSFunction* function = jsCast<JSFunction*>(thisValue);
+        JSFunction* function = jsUncheckedDowncast<JSFunction*>(thisValue);
         Integrity::auditStructureID(function->structureID());
         RELEASE_AND_RETURN(scope, JSValue::encode(function->toString(globalObject)));
     }
 
     if (thisValue.inherits<InternalFunction>()) {
-        InternalFunction* function = jsCast<InternalFunction*>(thisValue);
+        InternalFunction* function = jsUncheckedDowncast<InternalFunction*>(thisValue);
         Integrity::auditStructureID(function->structureID());
         RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(globalObject, "function "_s, function->name(), "() {\n    [native code]\n}"_s)));
     }
@@ -128,7 +128,7 @@ JSC_DEFINE_HOST_FUNCTION(functionProtoFuncBind, (JSGlobalObject* globalObject, C
 
     double length = 0;
     JSString* name = nullptr;
-    JSFunction* function = jsDynamicCast<JSFunction*>(target);
+    JSFunction* function = jsDynamicDowncast<JSFunction*>(target);
     if (function && function->canAssumeNameAndLengthAreOriginal(vm)) [[likely]] {
         // Do nothing! 'length' and 'name' computation are lazily done.
         // And this is totally OK since we know that wrapped functions have canAssumeNameAndLengthAreOriginal condition
@@ -218,7 +218,7 @@ JSC_DEFINE_CUSTOM_GETTER(argumentsGetter, (JSGlobalObject* globalObject, Encoded
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSFunction* thisObj = jsDynamicCast<JSFunction*>(JSValue::decode(thisValue));
+    JSFunction* thisObj = jsDynamicDowncast<JSFunction*>(JSValue::decode(thisValue));
     if (!thisObj || !isAllowedReceiverFunctionForCallerAndArguments(thisObj))
         return throwVMTypeError(globalObject, scope, RestrictedPropertyAccessError);
 
@@ -259,7 +259,7 @@ public:
             if (callee->inherits<JSBoundFunction>() || callee->inherits<JSRemoteFunction>() || callee->type() == ProxyObjectType)
                 return IterationStatus::Continue;
             if (callee->inherits<JSFunction>()) {
-                if (jsCast<JSFunction*>(callee)->executable()->implementationVisibility() != ImplementationVisibility::Public)
+                if (jsUncheckedDowncast<JSFunction*>(callee)->executable()->implementationVisibility() != ImplementationVisibility::Public)
                     return IterationStatus::Continue;
             }
 
@@ -289,7 +289,7 @@ JSC_DEFINE_CUSTOM_GETTER(callerGetter, (JSGlobalObject* globalObject, EncodedJSV
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSFunction* thisObj = jsDynamicCast<JSFunction*>(JSValue::decode(thisValue));
+    JSFunction* thisObj = jsDynamicDowncast<JSFunction*>(JSValue::decode(thisValue));
     if (!thisObj || !isAllowedReceiverFunctionForCallerAndArguments(thisObj))
         return throwVMTypeError(globalObject, scope, RestrictedPropertyAccessError);
 
@@ -298,7 +298,7 @@ JSC_DEFINE_CUSTOM_GETTER(callerGetter, (JSGlobalObject* globalObject, EncodedJSV
         return JSValue::encode(jsNull());
 
     // 11. If caller is not an ECMAScript function object, return null.
-    JSFunction* function = jsDynamicCast<JSFunction*>(caller);
+    JSFunction* function = jsDynamicDowncast<JSFunction*>(caller);
     if (!function || function->isHostOrBuiltinFunction())
         return JSValue::encode(jsNull());
 
@@ -321,7 +321,7 @@ JSC_DEFINE_CUSTOM_SETTER(callerAndArgumentsSetter, (JSGlobalObject* globalObject
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSFunction* thisObj = jsDynamicCast<JSFunction*>(JSValue::decode(thisValue));
+    JSFunction* thisObj = jsDynamicDowncast<JSFunction*>(JSValue::decode(thisValue));
     if (!thisObj || !isAllowedReceiverFunctionForCallerAndArguments(thisObj))
         throwTypeError(globalObject, scope, RestrictedPropertyAccessError);
 

@@ -410,7 +410,7 @@ public:
 
     WriteBarrierStructureID& gcObjectStructureID(unsigned index) { return gcObjectStructureIDs()[index]; }
 
-    WebAssemblyGCStructure* gcObjectStructure(unsigned typeIndex) { return jsCast<WebAssemblyGCStructure*>(gcObjectStructureID(typeIndex).get()); }
+    WebAssemblyGCStructure* gcObjectStructure(unsigned typeIndex) { return jsUncheckedDowncast<WebAssemblyGCStructure*>(gcObjectStructureID(typeIndex).get()); }
 
     Allocator& allocatorForGCObject(unsigned index) { ASSERT(moduleInformation().hasGCObjectTypes()); return allocators()[index]; }
 

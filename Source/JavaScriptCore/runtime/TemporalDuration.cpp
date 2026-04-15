@@ -81,7 +81,7 @@ ISO8601::Duration TemporalDuration::fromDurationLike(JSGlobalObject* globalObjec
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (durationLike->inherits<TemporalDuration>())
-        return jsCast<TemporalDuration*>(durationLike)->m_duration;
+        return jsUncheckedDowncast<TemporalDuration*>(durationLike)->m_duration;
 
     ISO8601::Duration result;
     auto hasRelevantProperty = false;
@@ -156,7 +156,7 @@ TemporalDuration* TemporalDuration::toTemporalDuration(JSGlobalObject* globalObj
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (itemValue.inherits<TemporalDuration>())
-        return jsCast<TemporalDuration*>(itemValue);
+        return jsUncheckedDowncast<TemporalDuration*>(itemValue);
 
     auto result = toISO8601Duration(globalObject, itemValue);
     RETURN_IF_EXCEPTION(scope, nullptr);
@@ -194,7 +194,7 @@ TemporalDuration* TemporalDuration::from(JSGlobalObject* globalObject, JSValue i
     VM& vm = globalObject->vm();
 
     if (itemValue.inherits<TemporalDuration>()) {
-        ISO8601::Duration cloned = jsCast<TemporalDuration*>(itemValue)->m_duration;
+        ISO8601::Duration cloned = jsUncheckedDowncast<TemporalDuration*>(itemValue)->m_duration;
         return TemporalDuration::create(vm, globalObject->durationStructure(), WTF::move(cloned));
     }
 

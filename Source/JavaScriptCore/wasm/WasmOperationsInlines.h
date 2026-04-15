@@ -300,7 +300,7 @@ inline void arrayGet(JSWebAssemblyInstance* instance, uint32_t typeIndex, Encode
 
     JSValue arrayRef = JSValue::decode(arrayValue);
     ASSERT(arrayRef.isObject());
-    JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(arrayRef.getObject());
+    JSWebAssemblyArray* arrayObject = jsUncheckedDowncast<JSWebAssemblyArray*>(arrayRef.getObject());
 
     if (arrayObject->elementType().type.unpacked().isV128())
         result->v128 = arrayObject->getVector(index);
@@ -316,7 +316,7 @@ inline void arraySet(JSWebAssemblyInstance* instance, uint32_t typeIndex, Encode
 
     JSValue arrayRef = JSValue::decode(arrayValue);
     ASSERT(arrayRef.isObject());
-    JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(arrayRef.getObject());
+    JSWebAssemblyArray* arrayObject = jsUncheckedDowncast<JSWebAssemblyArray*>(arrayRef.getObject());
 
     Wasm::FieldType elementType = arraySignature.as<ArrayType>()->elementType();
     if (elementType.type.unpacked().isV128())
@@ -329,7 +329,7 @@ inline bool doArrayFill(VM& vm, EncodedJSValue arrayValue, uint32_t offset, Vari
 {
     JSValue arrayRef = JSValue::decode(arrayValue);
     ASSERT(arrayRef.isObject());
-    JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(arrayRef.getObject());
+    JSWebAssemblyArray* arrayObject = jsUncheckedDowncast<JSWebAssemblyArray*>(arrayRef.getObject());
 
     CheckedUint32 lastElementIndexChecked = offset;
     lastElementIndexChecked += size;
@@ -368,8 +368,8 @@ inline bool arrayCopy(JSWebAssemblyInstance* instance, EncodedJSValue dst, uint3
     JSValue srcRef = JSValue::decode(src);
     ASSERT(dstRef.isObject());
     ASSERT(srcRef.isObject());
-    JSWebAssemblyArray* dstObject = jsCast<JSWebAssemblyArray*>(dstRef.getObject());
-    JSWebAssemblyArray* srcObject = jsCast<JSWebAssemblyArray*>(srcRef.getObject());
+    JSWebAssemblyArray* dstObject = jsUncheckedDowncast<JSWebAssemblyArray*>(dstRef.getObject());
+    JSWebAssemblyArray* srcObject = jsUncheckedDowncast<JSWebAssemblyArray*>(srcRef.getObject());
 
     CheckedUint32 lastDstElementIndexChecked = dstOffset;
     lastDstElementIndexChecked += size;
@@ -397,7 +397,7 @@ inline bool arrayInitElem(JSWebAssemblyInstance* instance, EncodedJSValue dst, u
 {
     JSValue dstRef = JSValue::decode(dst);
     ASSERT(dstRef.isObject());
-    JSWebAssemblyArray* dstObject = jsCast<JSWebAssemblyArray*>(dstRef.getObject());
+    JSWebAssemblyArray* dstObject = jsUncheckedDowncast<JSWebAssemblyArray*>(dstRef.getObject());
 
     CheckedUint32 lastDstElementIndexChecked = dstOffset;
     lastDstElementIndexChecked += size;
@@ -433,7 +433,7 @@ inline bool arrayInitData(JSWebAssemblyInstance* instance, EncodedJSValue dst, u
 {
     JSValue dstRef = JSValue::decode(dst);
     ASSERT(dstRef.isObject());
-    JSWebAssemblyArray* dstObject = jsCast<JSWebAssemblyArray*>(dstRef.getObject());
+    JSWebAssemblyArray* dstObject = jsUncheckedDowncast<JSWebAssemblyArray*>(dstRef.getObject());
 
     CheckedUint32 lastDstElementIndexChecked = dstOffset;
     lastDstElementIndexChecked += size;
@@ -498,9 +498,9 @@ inline void structGet(EncodedJSValue encodedStructReference, uint32_t fieldIndex
 {
     auto structReference = JSValue::decode(encodedStructReference);
     ASSERT(structReference.isObject());
-    JSObject* structureAsObject = jsCast<JSObject*>(structReference);
+    JSObject* structureAsObject = jsUncheckedDowncast<JSObject*>(structReference);
     ASSERT(structureAsObject->inherits<JSWebAssemblyStruct>());
-    JSWebAssemblyStruct* structPointer = jsCast<JSWebAssemblyStruct*>(structureAsObject);
+    JSWebAssemblyStruct* structPointer = jsUncheckedDowncast<JSWebAssemblyStruct*>(structureAsObject);
 
     Wasm::FieldType field = structPointer->fieldType(fieldIndex);
     if (field.type.unpacked().isV128())
@@ -513,9 +513,9 @@ inline void structSet(EncodedJSValue encodedStructReference, uint32_t fieldIndex
 {
     auto structReference = JSValue::decode(encodedStructReference);
     ASSERT(structReference.isObject());
-    JSObject* structureAsObject = jsCast<JSObject*>(structReference);
+    JSObject* structureAsObject = jsUncheckedDowncast<JSObject*>(structReference);
     ASSERT(structureAsObject->inherits<JSWebAssemblyStruct>());
-    JSWebAssemblyStruct* structPointer = jsCast<JSWebAssemblyStruct*>(structureAsObject);
+    JSWebAssemblyStruct* structPointer = jsUncheckedDowncast<JSWebAssemblyStruct*>(structureAsObject);
 
     Wasm::FieldType field = structPointer->fieldType(fieldIndex);
     if (field.type.unpacked().isV128())

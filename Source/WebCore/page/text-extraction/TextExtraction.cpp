@@ -1128,7 +1128,7 @@ static Node* NODELETE nodeFromJSHandle(JSHandleIdentifier identifier)
     if (!object)
         return nullptr;
 
-    if (auto* jsNode = jsDynamicCast<JSNode*>(object))
+    if (auto* jsNode = jsDynamicDowncast<JSNode*>(object))
         return &jsNode->wrapped();
 
     return nullptr;

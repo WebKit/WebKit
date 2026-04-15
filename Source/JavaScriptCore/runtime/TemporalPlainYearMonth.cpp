@@ -64,7 +64,7 @@ void TemporalPlainYearMonth::finishCreation(VM& vm)
     m_calendar.initLater(
         [] (const auto& init) {
             VM& vm = init.vm;
-            auto* plainYearMonth = jsCast<TemporalPlainYearMonth*>(init.owner);
+            auto* plainYearMonth = jsUncheckedDowncast<TemporalPlainYearMonth*>(init.owner);
             auto* globalObject = plainYearMonth->realm();
             auto* calendar = TemporalCalendar::create(vm, globalObject->calendarStructure(), iso8601CalendarID());
             init.set(calendar);
@@ -76,7 +76,7 @@ void TemporalPlainYearMonth::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     Base::visitChildren(cell, visitor);
 
-    auto* thisObject = jsCast<TemporalPlainYearMonth*>(cell);
+    auto* thisObject = jsUncheckedDowncast<TemporalPlainYearMonth*>(cell);
     thisObject->m_calendar.visit(visitor);
 }
 
@@ -148,13 +148,13 @@ TemporalPlainYearMonth* TemporalPlainYearMonth::from(JSGlobalObject* globalObjec
 
     if (item.isObject()) {
         if (item.inherits<TemporalPlainYearMonth>())
-            return jsCast<TemporalPlainYearMonth*>(item);
+            return jsUncheckedDowncast<TemporalPlainYearMonth*>(item);
 
         JSObject* calendar = TemporalCalendar::getTemporalCalendarWithISODefault(globalObject, item);
         RETURN_IF_EXCEPTION(scope, { });
 
         // FIXME: Implement after fleshing out Temporal.Calendar.
-        if (!calendar->inherits<TemporalCalendar>() || !jsCast<TemporalCalendar*>(calendar)->isISO8601()) [[unlikely]] {
+        if (!calendar->inherits<TemporalCalendar>() || !jsUncheckedDowncast<TemporalCalendar*>(calendar)->isISO8601()) [[unlikely]] {
             throwRangeError(globalObject, scope, "unimplemented: from non-ISO8601 calendar"_s);
             return { };
         }

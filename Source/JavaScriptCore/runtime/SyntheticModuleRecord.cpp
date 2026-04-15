@@ -71,7 +71,7 @@ void SyntheticModuleRecord::finishCreation(JSGlobalObject* globalObject, VM& vm)
 template<typename Visitor>
 void SyntheticModuleRecord::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
-    SyntheticModuleRecord* thisObject = jsCast<SyntheticModuleRecord*>(cell);
+    SyntheticModuleRecord* thisObject = jsUncheckedDowncast<SyntheticModuleRecord*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 }

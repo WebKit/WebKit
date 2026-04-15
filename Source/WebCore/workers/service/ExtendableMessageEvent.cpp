@@ -45,7 +45,7 @@ static JSC::Strong<JSC::JSObject> createWrapperAndSetData(JSC::JSGlobalObject& g
     JSC::Strong<JSC::Unknown> strongData(vm, value);
 
     Locker<JSC::JSLock> locker(vm.apiLock());
-    JSC::Strong<JSC::JSObject> strongWrapper(vm, JSC::jsCast<JSC::JSObject*>(toJSNewlyCreated<IDLInterface<ExtendableMessageEvent>>(globalObject,  *JSC::jsCast<JSDOMGlobalObject*>(&globalObject), Ref { event })));
+    JSC::Strong<JSC::JSObject> strongWrapper(vm, JSC::jsUncheckedDowncast<JSC::JSObject*>(toJSNewlyCreated<IDLInterface<ExtendableMessageEvent>>(globalObject,  *JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(&globalObject), Ref { event })));
     event.data().set(globalObject, strongWrapper.get(), value);
 
     return strongWrapper;

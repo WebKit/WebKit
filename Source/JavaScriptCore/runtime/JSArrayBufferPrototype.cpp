@@ -63,7 +63,7 @@ std::optional<JSValue> arrayBufferSpeciesConstructorSlow(JSGlobalObject* globalO
     JSValue constructor = thisObject->get(globalObject, vm.propertyNames->constructor);
     RETURN_IF_EXCEPTION(scope, std::nullopt);
     if (constructor.isConstructor()) {
-        JSObject* constructorObject = jsCast<JSObject*>(constructor);
+        JSObject* constructorObject = jsUncheckedDowncast<JSObject*>(constructor);
         JSGlobalObject* globalObjectFromConstructor = constructorObject->realm();
         bool isAnyArrayBufferConstructor = constructorObject == globalObjectFromConstructor->arrayBufferConstructor(mode);
         if (isAnyArrayBufferConstructor)
@@ -109,7 +109,7 @@ static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSArrayBuffer*> speciesCo
     RETURN_IF_EXCEPTION(scope, errorResult);
 
     // 17. Perform ? RequireInternalSlot(new, [[ArrayBufferData]]).
-    JSArrayBuffer* result = jsDynamicCast<JSArrayBuffer*>(newObject);
+    JSArrayBuffer* result = jsDynamicDowncast<JSArrayBuffer*>(newObject);
     if (!result) [[unlikely]] {
         throwTypeError(globalObject, scope, "Species construction does not create ArrayBuffer"_s);
         return errorResult;
@@ -160,7 +160,7 @@ static EncodedJSValue arrayBufferSlice(JSGlobalObject* globalObject, JSValue arr
 
     // 2. Perform ? RequireInternalSlot(O, [[ArrayBufferData]]).
     // 3. If IsSharedArrayBuffer(O) is true, throw a TypeError exception.
-    JSArrayBuffer* thisObject = jsDynamicCast<JSArrayBuffer*>(arrayBufferValue);
+    JSArrayBuffer* thisObject = jsDynamicDowncast<JSArrayBuffer*>(arrayBufferValue);
     if (!thisObject || (mode != thisObject->impl()->sharingMode()))
         return throwVMTypeError(globalObject, scope, makeString("Receiver must be "_s, mode == ArrayBufferSharingMode::Default ? "ArrayBuffer"_s : "SharedArrayBuffer"_s));
 
@@ -252,7 +252,7 @@ static EncodedJSValue arrayBufferByteLength(JSGlobalObject* globalObject, JSValu
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* thisObject = jsDynamicCast<JSArrayBuffer*>(arrayBufferValue);
+    auto* thisObject = jsDynamicDowncast<JSArrayBuffer*>(arrayBufferValue);
     if (!thisObject || (mode != thisObject->impl()->sharingMode()))
         return throwVMTypeError(globalObject, scope, makeString("Receiver must be "_s, mode == ArrayBufferSharingMode::Default ? "ArrayBuffer"_s : "SharedArrayBuffer"_s));
 
@@ -276,7 +276,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayBufferProtoFuncResize, (JSGlobalObject* globalObje
 
     JSValue arrayBufferValue = callFrame->thisValue();
 
-    JSArrayBuffer* thisObject = jsDynamicCast<JSArrayBuffer*>(arrayBufferValue);
+    JSArrayBuffer* thisObject = jsDynamicDowncast<JSArrayBuffer*>(arrayBufferValue);
     if (!thisObject || (ArrayBufferSharingMode::Shared == thisObject->impl()->sharingMode()))
         return throwVMTypeError(globalObject, scope, "Receiver must be ArrayBuffer"_s);
 
@@ -369,7 +369,7 @@ static JSArrayBuffer* arrayBufferProtoFuncTransferImpl(JSGlobalObject* globalObj
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSArrayBuffer* thisObject = jsDynamicCast<JSArrayBuffer*>(arrayBufferValue);
+    JSArrayBuffer* thisObject = jsDynamicDowncast<JSArrayBuffer*>(arrayBufferValue);
     if (!thisObject || (ArrayBufferSharingMode::Shared == thisObject->impl()->sharingMode())) {
         throwVMTypeError(globalObject, scope, "Receiver must be ArrayBuffer"_s);
         return nullptr;
@@ -417,7 +417,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayBufferProtoGetterFuncResizable, (JSGlobalObject* g
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* thisObject = jsDynamicCast<JSArrayBuffer*>(callFrame->thisValue());
+    auto* thisObject = jsDynamicDowncast<JSArrayBuffer*>(callFrame->thisValue());
     if (!thisObject || (ArrayBufferSharingMode::Shared == thisObject->impl()->sharingMode()))
         return throwVMTypeError(globalObject, scope, "Receiver must be ArrayBuffer"_s);
 
@@ -430,7 +430,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayBufferProtoGetterFuncMaxByteLength, (JSGlobalObjec
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* thisObject = jsDynamicCast<JSArrayBuffer*>(callFrame->thisValue());
+    auto* thisObject = jsDynamicDowncast<JSArrayBuffer*>(callFrame->thisValue());
     if (!thisObject || (ArrayBufferSharingMode::Shared == thisObject->impl()->sharingMode()))
         return throwVMTypeError(globalObject, scope, "Receiver must be ArrayBuffer"_s);
 
@@ -447,7 +447,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayBufferProtoGetterFuncDetached, (JSGlobalObject* gl
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* thisObject = jsDynamicCast<JSArrayBuffer*>(callFrame->thisValue());
+    auto* thisObject = jsDynamicDowncast<JSArrayBuffer*>(callFrame->thisValue());
     if (!thisObject || (ArrayBufferSharingMode::Shared == thisObject->impl()->sharingMode()))
         return throwVMTypeError(globalObject, scope, "Receiver must be ArrayBuffer"_s);
 
@@ -468,7 +468,7 @@ JSC_DEFINE_HOST_FUNCTION(sharedArrayBufferProtoFuncGrow, (JSGlobalObject* global
 
     JSValue arrayBufferValue = callFrame->thisValue();
 
-    JSArrayBuffer* thisObject = jsDynamicCast<JSArrayBuffer*>(arrayBufferValue);
+    JSArrayBuffer* thisObject = jsDynamicDowncast<JSArrayBuffer*>(arrayBufferValue);
     if (!thisObject || (ArrayBufferSharingMode::Shared != thisObject->impl()->sharingMode()))
         return throwVMTypeError(globalObject, scope, "Receiver must be SharedArrayBuffer"_s);
 
@@ -499,7 +499,7 @@ JSC_DEFINE_HOST_FUNCTION(sharedArrayBufferProtoGetterFuncGrowable, (JSGlobalObje
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* thisObject = jsDynamicCast<JSArrayBuffer*>(callFrame->thisValue());
+    auto* thisObject = jsDynamicDowncast<JSArrayBuffer*>(callFrame->thisValue());
     if (!thisObject || (ArrayBufferSharingMode::Shared != thisObject->impl()->sharingMode()))
         return throwVMTypeError(globalObject, scope, "Receiver must be SharedArrayBuffer"_s);
 
@@ -512,7 +512,7 @@ JSC_DEFINE_HOST_FUNCTION(sharedArrayBufferProtoGetterFuncMaxByteLength, (JSGloba
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* thisObject = jsDynamicCast<JSArrayBuffer*>(callFrame->thisValue());
+    auto* thisObject = jsDynamicDowncast<JSArrayBuffer*>(callFrame->thisValue());
     if (!thisObject || (ArrayBufferSharingMode::Shared != thisObject->impl()->sharingMode()))
         return throwVMTypeError(globalObject, scope, "Receiver must be SharedArrayBuffer"_s);
 

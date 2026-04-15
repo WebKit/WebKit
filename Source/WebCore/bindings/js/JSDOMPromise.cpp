@@ -54,11 +54,11 @@ auto DOMPromise::whenPromiseIsSettled(JSDOMGlobalObject* globalObject, JSC::JSPr
     auto& vm = lexicalGlobalObject.vm();
     JSLockHolder lock(vm);
     auto* handler = JSC::JSNativeStdFunction::create(vm, globalObject, 1, String { }, [callback = WTF::move(callback)] (JSGlobalObject* globalObject, CallFrame* callFrame) mutable {
-        auto* castedThis = JSC::jsDynamicCast<JSC::JSPromise*>(callFrame->thisValue());
+        auto* castedThis = JSC::jsDynamicDowncast<JSC::JSPromise*>(callFrame->thisValue());
         ASSERT(castedThis);
         // We exchange callback so that all captured variables are deallocated after the call. This is quicker than waiting for the handler function to be GCed.
         if (castedThis)
-            std::exchange(callback, { })(JSC::jsCast<JSDOMGlobalObject*>(globalObject), castedThis->status() == JSC::JSPromise::Status::Fulfilled, castedThis->result());
+            std::exchange(callback, { })(JSC::jsUncheckedDowncast<JSDOMGlobalObject*>(globalObject), castedThis->status() == JSC::JSPromise::Status::Fulfilled, castedThis->result());
         return JSC::JSValue::encode(JSC::jsUndefined());
     });
 

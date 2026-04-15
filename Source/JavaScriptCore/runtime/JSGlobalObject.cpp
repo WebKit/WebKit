@@ -390,42 +390,42 @@ static JSC_DECLARE_HOST_FUNCTION(signpostStop);
 
 static JSValue initializeEvalFunction(VM&, JSObject* object)
 {
-    return jsCast<JSGlobalObject*>(object)->evalFunction();
+    return jsUncheckedDowncast<JSGlobalObject*>(object)->evalFunction();
 }
 
 static JSValue createProxyProperty(VM& vm, JSObject* object)
 {
-    JSGlobalObject* global = jsCast<JSGlobalObject*>(object);
+    JSGlobalObject* global = jsUncheckedDowncast<JSGlobalObject*>(object);
     return ProxyConstructor::create(vm, ProxyConstructor::createStructure(vm, global, global->functionPrototype()));
 }
 
 static JSValue createJSONProperty(VM& vm, JSObject* object)
 {
-    JSGlobalObject* global = jsCast<JSGlobalObject*>(object);
+    JSGlobalObject* global = jsUncheckedDowncast<JSGlobalObject*>(object);
     return JSONObject::create(vm, global, JSONObject::createStructure(vm, global, global->objectPrototype()));
 }
 
 static JSValue createMathProperty(VM& vm, JSObject* object)
 {
-    JSGlobalObject* global = jsCast<JSGlobalObject*>(object);
+    JSGlobalObject* global = jsUncheckedDowncast<JSGlobalObject*>(object);
     return MathObject::create(vm, global, MathObject::createStructure(vm, global, global->objectPrototype()));
 }
 
 static JSValue createReflectProperty(VM& vm, JSObject* object)
 {
-    JSGlobalObject* global = jsCast<JSGlobalObject*>(object);
+    JSGlobalObject* global = jsUncheckedDowncast<JSGlobalObject*>(object);
     return ReflectObject::create(vm, global, ReflectObject::createStructure(vm, global, global->objectPrototype()));
 }
 
 static JSValue createAtomicsProperty(VM& vm, JSObject *object)
 {
-    JSGlobalObject* global = jsCast<JSGlobalObject*>(object);
+    JSGlobalObject* global = jsUncheckedDowncast<JSGlobalObject*>(object);
     return AtomicsObject::create(vm, global, AtomicsObject::createStructure(vm, global, global->objectPrototype()));
 }
 
 static JSValue createConsoleProperty(VM& vm, JSObject* object)
 {
-    JSGlobalObject* global = jsCast<JSGlobalObject*>(object);
+    JSGlobalObject* global = jsUncheckedDowncast<JSGlobalObject*>(object);
     return ConsoleObject::create(vm, global, ConsoleObject::createStructure(vm, global, constructEmptyObject(global)));
 }
 
@@ -745,7 +745,7 @@ const GlobalObjectMethodTable* JSGlobalObject::baseGlobalObjectMethodTable()
 
 JSC_DEFINE_HOST_FUNCTION(resolvePromise, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    auto* promise = jsCast<JSPromise*>(callFrame->uncheckedArgument(0));
+    auto* promise = jsUncheckedDowncast<JSPromise*>(callFrame->uncheckedArgument(0));
     JSValue argument = callFrame->uncheckedArgument(1);
     promise->resolvePromise(globalObject, globalObject->vm(), argument);
     return encodedJSUndefined();
@@ -753,7 +753,7 @@ JSC_DEFINE_HOST_FUNCTION(resolvePromise, (JSGlobalObject* globalObject, CallFram
 
 JSC_DEFINE_HOST_FUNCTION(rejectPromise, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    auto* promise = jsCast<JSPromise*>(callFrame->uncheckedArgument(0));
+    auto* promise = jsUncheckedDowncast<JSPromise*>(callFrame->uncheckedArgument(0));
     JSValue argument = callFrame->uncheckedArgument(1);
     promise->rejectPromise(globalObject->vm(), globalObject, argument);
     return encodedJSUndefined();
@@ -761,7 +761,7 @@ JSC_DEFINE_HOST_FUNCTION(rejectPromise, (JSGlobalObject* globalObject, CallFrame
 
 JSC_DEFINE_HOST_FUNCTION(fulfillPromise, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    auto* promise = jsCast<JSPromise*>(callFrame->uncheckedArgument(0));
+    auto* promise = jsUncheckedDowncast<JSPromise*>(callFrame->uncheckedArgument(0));
     JSValue argument = callFrame->uncheckedArgument(1);
     promise->fulfillPromise(globalObject->vm(), globalObject, argument);
     return encodedJSUndefined();
@@ -769,7 +769,7 @@ JSC_DEFINE_HOST_FUNCTION(fulfillPromise, (JSGlobalObject* globalObject, CallFram
 
 JSC_DEFINE_HOST_FUNCTION(resolvePromiseWithFirstResolvingFunctionCallCheck, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    auto* promise = jsCast<JSPromise*>(callFrame->uncheckedArgument(0));
+    auto* promise = jsUncheckedDowncast<JSPromise*>(callFrame->uncheckedArgument(0));
     JSValue argument = callFrame->uncheckedArgument(1);
     promise->resolve(globalObject, globalObject->vm(), argument);
     return encodedJSUndefined();
@@ -777,7 +777,7 @@ JSC_DEFINE_HOST_FUNCTION(resolvePromiseWithFirstResolvingFunctionCallCheck, (JSG
 
 JSC_DEFINE_HOST_FUNCTION(rejectPromiseWithFirstResolvingFunctionCallCheck, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    auto* promise = jsCast<JSPromise*>(callFrame->uncheckedArgument(0));
+    auto* promise = jsUncheckedDowncast<JSPromise*>(callFrame->uncheckedArgument(0));
     JSValue argument = callFrame->uncheckedArgument(1);
     promise->reject(globalObject->vm(), globalObject, argument);
     return encodedJSUndefined();
@@ -785,7 +785,7 @@ JSC_DEFINE_HOST_FUNCTION(rejectPromiseWithFirstResolvingFunctionCallCheck, (JSGl
 
 JSC_DEFINE_HOST_FUNCTION(fulfillPromiseWithFirstResolvingFunctionCallCheck, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    auto* promise = jsCast<JSPromise*>(callFrame->uncheckedArgument(0));
+    auto* promise = jsUncheckedDowncast<JSPromise*>(callFrame->uncheckedArgument(0));
     JSValue argument = callFrame->uncheckedArgument(1);
     promise->fulfill(globalObject->vm(), globalObject, argument);
     return encodedJSUndefined();
@@ -835,7 +835,7 @@ JSC_DEFINE_HOST_FUNCTION(promiseEmptyOnRejected, (JSGlobalObject* globalObject, 
 JSC_DEFINE_HOST_FUNCTION(promiseResolve, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ASSERT(callFrame->argumentCount() == 2);
-    JSObject* constructor = jsCast<JSObject*>(callFrame->uncheckedArgument(0));
+    JSObject* constructor = jsUncheckedDowncast<JSObject*>(callFrame->uncheckedArgument(0));
     JSValue argument = callFrame->uncheckedArgument(1);
     return JSValue::encode(JSPromise::promiseResolve(globalObject, constructor, argument));
 }
@@ -843,14 +843,14 @@ JSC_DEFINE_HOST_FUNCTION(promiseResolve, (JSGlobalObject* globalObject, CallFram
 JSC_DEFINE_HOST_FUNCTION(promiseReject, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     ASSERT(callFrame->argumentCount() == 2);
-    JSObject* constructor = jsCast<JSObject*>(callFrame->uncheckedArgument(0));
+    JSObject* constructor = jsUncheckedDowncast<JSObject*>(callFrame->uncheckedArgument(0));
     JSValue argument = callFrame->uncheckedArgument(1);
     return JSValue::encode(JSPromise::promiseReject(globalObject, constructor, argument));
 }
 
 JSC_DEFINE_HOST_FUNCTION(performPromiseThen, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    auto* promise = jsCast<JSPromise*>(callFrame->uncheckedArgument(0));
+    auto* promise = jsUncheckedDowncast<JSPromise*>(callFrame->uncheckedArgument(0));
     JSValue onFulfilled = callFrame->uncheckedArgument(1);
     JSValue onRejected = callFrame->uncheckedArgument(2);
     JSValue promiseOrCapability = callFrame->uncheckedArgument(3);
@@ -862,10 +862,10 @@ JSC_DEFINE_HOST_FUNCTION(asyncGeneratorQueueEnqueue, (JSGlobalObject* globalObje
 {
     VM& vm = globalObject->vm();
 
-    JSAsyncGenerator* generator = jsDynamicCast<JSAsyncGenerator*>(callFrame->uncheckedArgument(0));
+    JSAsyncGenerator* generator = jsDynamicDowncast<JSAsyncGenerator*>(callFrame->uncheckedArgument(0));
     JSValue value = callFrame->uncheckedArgument(1);
     int32_t resumeMode = callFrame->uncheckedArgument(2).asInt32();
-    JSPromise* promise = jsCast<JSPromise*>(callFrame->uncheckedArgument(3));
+    JSPromise* promise = jsUncheckedDowncast<JSPromise*>(callFrame->uncheckedArgument(3));
 
     if (!generator) [[unlikely]] {
         promise->reject(vm, globalObject, createTypeError(globalObject, "|this| should be an async generator"_s));
@@ -883,7 +883,7 @@ JSC_DEFINE_HOST_FUNCTION(asyncGeneratorQueueDequeueResolve, (JSGlobalObject* glo
 {
     VM& vm = globalObject->vm();
 
-    JSAsyncGenerator* generator = jsCast<JSAsyncGenerator*>(callFrame->uncheckedArgument(0));
+    JSAsyncGenerator* generator = jsUncheckedDowncast<JSAsyncGenerator*>(callFrame->uncheckedArgument(0));
     JSValue resolution = callFrame->uncheckedArgument(1);
 
     auto [value, resumeMode, promise] = generator->dequeue(vm);
@@ -897,7 +897,7 @@ JSC_DEFINE_HOST_FUNCTION(asyncGeneratorQueueDequeueReject, (JSGlobalObject* glob
 {
     VM& vm = globalObject->vm();
 
-    JSAsyncGenerator* generator = jsCast<JSAsyncGenerator*>(callFrame->uncheckedArgument(0));
+    JSAsyncGenerator* generator = jsUncheckedDowncast<JSAsyncGenerator*>(callFrame->uncheckedArgument(0));
     JSValue error = callFrame->uncheckedArgument(1);
 
     auto [value, resumeMode, promise] = generator->dequeue(vm);
@@ -960,7 +960,7 @@ static GetterSetter* getGetterById(JSGlobalObject* globalObject, JSObject* base,
     JSValue baseValue = JSValue(base);
     PropertySlot slot(baseValue, PropertySlot::InternalMethodType::VMInquiry, &vm);
     baseValue.getPropertySlot(globalObject, ident, slot);
-    return jsCast<GetterSetter*>(slot.getPureResult());
+    return jsUncheckedDowncast<GetterSetter*>(slot.getPureResult());
 }
 
 static ObjectPropertyCondition setupAdaptiveWatchpoint(JSGlobalObject* globalObject, JSObject* base, const Identifier& ident)
@@ -976,7 +976,7 @@ static ObjectPropertyCondition setupAdaptiveWatchpoint(JSGlobalObject* globalObj
     RELEASE_ASSERT(slot.isCacheableValue() || slot.isCacheableGetter());
     JSValue functionValue = slot.isCacheableValue() ? slot.getValue(globalObject, ident) : slot.getterSetter();
     catchScope.assertNoException();
-    ASSERT(jsDynamicCast<JSFunction*>(functionValue) || jsDynamicCast<GetterSetter*>(functionValue));
+    ASSERT(jsDynamicDowncast<JSFunction*>(functionValue) || jsDynamicDowncast<GetterSetter*>(functionValue));
 
     ObjectPropertyCondition condition = generateConditionForSelfEquivalence(vm, nullptr, base, ident.impl());
     RELEASE_ASSERT(condition.requiredValue() == functionValue);
@@ -1012,21 +1012,21 @@ void JSGlobalObject::initializeErrorConstructor(LazyClassStructure::Initializer&
 {
     init.setPrototype(NativeErrorPrototype::create(init.vm, NativeErrorPrototype::createStructure(init.vm, this, m_errorStructure.prototype(this)), errorTypeName(errorType)));
     init.setStructure(ErrorInstance::createStructure(init.vm, this, init.prototype));
-    init.setConstructor(NativeErrorConstructor<errorType>::create(init.vm, NativeErrorConstructor<errorType>::createStructure(init.vm, this, m_errorStructure.constructor(this)), jsCast<NativeErrorPrototype*>(init.prototype)));
+    init.setConstructor(NativeErrorConstructor<errorType>::create(init.vm, NativeErrorConstructor<errorType>::createStructure(init.vm, this, m_errorStructure.constructor(this)), jsUncheckedDowncast<NativeErrorPrototype*>(init.prototype)));
 }
 
 void JSGlobalObject::initializeAggregateErrorConstructor(LazyClassStructure::Initializer& init)
 {
     init.setPrototype(AggregateErrorPrototype::create(init.vm, AggregateErrorPrototype::createStructure(init.vm, this, m_errorStructure.prototype(this))));
     init.setStructure(ErrorInstance::createStructure(init.vm, this, init.prototype));
-    init.setConstructor(AggregateErrorConstructor::create(init.vm, AggregateErrorConstructor::createStructure(init.vm, this, m_errorStructure.constructor(this)), jsCast<AggregateErrorPrototype*>(init.prototype)));
+    init.setConstructor(AggregateErrorConstructor::create(init.vm, AggregateErrorConstructor::createStructure(init.vm, this, m_errorStructure.constructor(this)), jsUncheckedDowncast<AggregateErrorPrototype*>(init.prototype)));
 }
 
 void JSGlobalObject::initializeSuppressedErrorConstructor(LazyClassStructure::Initializer& init)
 {
     init.setPrototype(SuppressedErrorPrototype::create(init.vm, SuppressedErrorPrototype::createStructure(init.vm, this, m_errorStructure.prototype(this))));
     init.setStructure(ErrorInstance::createStructure(init.vm, this, init.prototype));
-    init.setConstructor(SuppressedErrorConstructor::create(init.vm, SuppressedErrorConstructor::createStructure(init.vm, this, m_errorStructure.constructor(this)), jsCast<SuppressedErrorPrototype*>(init.prototype)));
+    init.setConstructor(SuppressedErrorConstructor::create(init.vm, SuppressedErrorConstructor::createStructure(init.vm, this, m_errorStructure.constructor(this)), jsUncheckedDowncast<SuppressedErrorPrototype*>(init.prototype)));
 }
 
 SUPPRESS_ASAN inline void JSGlobalObject::initStaticGlobals(VM& vm)
@@ -1123,11 +1123,11 @@ void JSGlobalObject::init(VM& vm)
 
     m_numberProtoToStringFunction.initLater(
         [] (const Initializer<JSFunction>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, init.vm.propertyNames->toString.string(), numberProtoFuncToString, ImplementationVisibility::Public, NumberPrototypeToStringIntrinsic));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 1, init.vm.propertyNames->toString.string(), numberProtoFuncToString, ImplementationVisibility::Public, NumberPrototypeToStringIntrinsic));
         });
 
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::stringSubstring)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "substring"_s, stringProtoFuncSubstring, ImplementationVisibility::Public, StringPrototypeSubstringIntrinsic));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 2, "substring"_s, stringProtoFuncSubstring, ImplementationVisibility::Public, StringPrototypeSubstringIntrinsic));
         });
 
     m_functionProtoHasInstanceSymbolFunction.set(vm, this, hasInstanceSymbolFunction);
@@ -1144,7 +1144,7 @@ void JSGlobalObject::init(VM& vm)
     m_objectPrototype->putDirectNonIndexAccessorWithoutTransition(vm, vm.propertyNames->underscoreProto, protoAccessor, PropertyAttribute::Accessor | PropertyAttribute::DontEnum);
     m_functionPrototype->structure()->setPrototypeWithoutTransition(vm, m_objectPrototype.get());
     m_objectStructureForObjectConstructor.set(vm, this, m_structureCache.emptyObjectStructureForPrototype(this, m_objectPrototype.get(), JSFinalObject::defaultInlineCapacity));
-    m_objectProtoValueOfFunction.set(vm, this, jsCast<JSFunction*>(objectPrototype()->getDirect(vm, vm.propertyNames->valueOf)));
+    m_objectProtoValueOfFunction.set(vm, this, jsUncheckedDowncast<JSFunction*>(objectPrototype()->getDirect(vm, vm.propertyNames->valueOf)));
 
     JS_GLOBAL_OBJECT_ADDITIONS_3;
 
@@ -1189,7 +1189,7 @@ void JSGlobalObject::init(VM& vm)
             init.owner->typedArrayStructure(Type##type, /* isResizableOrGrowableShared */ false); /* Initialize non-resizable Structure too */ \
         }); \
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::type##Array)].initLater([](const Initializer<JSCell>& init) { \
-            init.set(jsCast<JSGlobalObject*>(init.owner)->typedArrayConstructor(TypedArrayType::Type##type)); \
+            init.set(jsUncheckedDowncast<JSGlobalObject*>(init.owner)->typedArrayConstructor(TypedArrayType::Type##type)); \
         });
     FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(INIT_TYPED_ARRAY_LATER)
 #undef INIT_TYPED_ARRAY_LATER
@@ -1340,20 +1340,20 @@ void JSGlobalObject::init(VM& vm)
         [] (LazyClassStructure::Initializer& init) {
             init.setPrototype(JSArrayBufferPrototype::create(init.vm, init.global, JSArrayBufferPrototype::createStructure(init.vm, init.global, init.global->m_objectPrototype.get()), ArrayBufferSharingMode::Shared));
             init.setStructure(JSArrayBuffer::createStructure(init.vm, init.global, init.prototype));
-            init.setConstructor(JSSharedArrayBufferConstructor::create(init.vm, JSSharedArrayBufferConstructor::createStructure(init.vm, init.global, init.global->m_functionPrototype.get()), jsCast<JSArrayBufferPrototype*>(init.prototype)));
+            init.setConstructor(JSSharedArrayBufferConstructor::create(init.vm, JSSharedArrayBufferConstructor::createStructure(init.vm, init.global, init.global->m_functionPrototype.get()), jsUncheckedDowncast<JSArrayBufferPrototype*>(init.prototype)));
         });
 
     m_disposableStackStructure.initLater(
         [] (LazyClassStructure::Initializer& init) -> void {
             init.setPrototype(DisposableStackPrototype::create(init.vm, init.global, DisposableStackPrototype::createStructure(init.vm, init.global, init.global->m_objectPrototype.get())));
             init.setStructure(JSDisposableStack::createStructure(init.vm, init.global, init.prototype));
-            init.setConstructor(DisposableStackConstructor::create(init.vm, init.global, DisposableStackConstructor::createStructure(init.vm, init.global, init.global->m_functionPrototype.get()), jsCast<DisposableStackPrototype*>(init.prototype)));
+            init.setConstructor(DisposableStackConstructor::create(init.vm, init.global, DisposableStackConstructor::createStructure(init.vm, init.global, init.global->m_functionPrototype.get()), jsUncheckedDowncast<DisposableStackPrototype*>(init.prototype)));
         });
     m_asyncDisposableStackStructure.initLater(
         [] (LazyClassStructure::Initializer& init) -> void {
             init.setPrototype(AsyncDisposableStackPrototype::create(init.vm, init.global, AsyncDisposableStackPrototype::createStructure(init.vm, init.global, init.global->m_objectPrototype.get())));
             init.setStructure(JSAsyncDisposableStack::createStructure(init.vm, init.global, init.prototype));
-            init.setConstructor(AsyncDisposableStackConstructor::create(init.vm, init.global, AsyncDisposableStackConstructor::createStructure(init.vm, init.global, init.global->m_functionPrototype.get()), jsCast<AsyncDisposableStackPrototype*>(init.prototype)));
+            init.setConstructor(AsyncDisposableStackConstructor::create(init.vm, init.global, AsyncDisposableStackConstructor::createStructure(init.vm, init.global, init.global->m_functionPrototype.get()), jsUncheckedDowncast<AsyncDisposableStackPrototype*>(init.prototype)));
         });
 
     m_iteratorPrototype.set(vm, this, JSIteratorPrototype::create(vm, this, JSIteratorPrototype::createStructure(vm, this, m_objectPrototype.get())));
@@ -1409,7 +1409,7 @@ void JSGlobalObject::init(VM& vm)
         [] (LazyClassStructure::Initializer& init) { \
             init.setPrototype(capitalName##Prototype::create(init.vm, init.global, capitalName##Prototype::createStructure(init.vm, init.global, init.global->m_ ## prototypeBase ## Prototype.get()))); \
             init.setStructure(instanceType::createStructure(init.vm, init.global, init.prototype)); \
-            init.setConstructor(capitalName ## Constructor::create(init.vm, capitalName ## Constructor::createStructure(init.vm, init.global, init.global->m_functionPrototype.get()), jsCast<capitalName ## Prototype*>(init.prototype))); \
+            init.setConstructor(capitalName ## Constructor::create(init.vm, capitalName ## Constructor::createStructure(init.vm, init.global, init.global->m_functionPrototype.get()), jsUncheckedDowncast<capitalName ## Prototype*>(init.prototype))); \
         }); \
     }
     
@@ -1576,61 +1576,61 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
 
     m_collatorStructure.initLater(
         [] (const Initializer<Structure>& init) {
-            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+            JSGlobalObject* globalObject = jsUncheckedDowncast<JSGlobalObject*>(init.owner);
             IntlCollatorPrototype* collatorPrototype = IntlCollatorPrototype::create(init.vm, globalObject, IntlCollatorPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
             init.set(IntlCollator::createStructure(init.vm, globalObject, collatorPrototype));
         });
     m_displayNamesStructure.initLater(
         [] (const Initializer<Structure>& init) {
-            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+            JSGlobalObject* globalObject = jsUncheckedDowncast<JSGlobalObject*>(init.owner);
             IntlDisplayNamesPrototype* displayNamesPrototype = IntlDisplayNamesPrototype::create(init.vm, IntlDisplayNamesPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
             init.set(IntlDisplayNames::createStructure(init.vm, globalObject, displayNamesPrototype));
         });
     m_durationFormatStructure.initLater(
         [] (const Initializer<Structure>& init) {
-            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+            JSGlobalObject* globalObject = jsUncheckedDowncast<JSGlobalObject*>(init.owner);
             IntlDurationFormatPrototype* durationFormatPrototype = IntlDurationFormatPrototype::create(init.vm, IntlDurationFormatPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
             init.set(IntlDurationFormat::createStructure(init.vm, globalObject, durationFormatPrototype));
         });
     m_listFormatStructure.initLater(
         [] (const Initializer<Structure>& init) {
-            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+            JSGlobalObject* globalObject = jsUncheckedDowncast<JSGlobalObject*>(init.owner);
             IntlListFormatPrototype* listFormatPrototype = IntlListFormatPrototype::create(init.vm, IntlListFormatPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
             init.set(IntlListFormat::createStructure(init.vm, globalObject, listFormatPrototype));
         });
     m_localeStructure.initLater(
         [] (const Initializer<Structure>& init) {
-            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+            JSGlobalObject* globalObject = jsUncheckedDowncast<JSGlobalObject*>(init.owner);
             IntlLocalePrototype* localePrototype = IntlLocalePrototype::create(init.vm, IntlLocalePrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
             init.set(IntlLocale::createStructure(init.vm, globalObject, localePrototype));
         });
     m_pluralRulesStructure.initLater(
         [] (const Initializer<Structure>& init) {
-            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+            JSGlobalObject* globalObject = jsUncheckedDowncast<JSGlobalObject*>(init.owner);
             IntlPluralRulesPrototype* pluralRulesPrototype = IntlPluralRulesPrototype::create(init.vm, globalObject, IntlPluralRulesPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
             init.set(IntlPluralRules::createStructure(init.vm, globalObject, pluralRulesPrototype));
         });
     m_relativeTimeFormatStructure.initLater(
         [] (const Initializer<Structure>& init) {
-            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+            JSGlobalObject* globalObject = jsUncheckedDowncast<JSGlobalObject*>(init.owner);
             IntlRelativeTimeFormatPrototype* relativeTimeFormatPrototype = IntlRelativeTimeFormatPrototype::create(init.vm, IntlRelativeTimeFormatPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
             init.set(IntlRelativeTimeFormat::createStructure(init.vm, globalObject, relativeTimeFormatPrototype));
         });
     m_segmentIteratorStructure.initLater(
         [] (const Initializer<Structure>& init) {
-            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+            JSGlobalObject* globalObject = jsUncheckedDowncast<JSGlobalObject*>(init.owner);
             IntlSegmentIteratorPrototype* segmentIteratorPrototype = IntlSegmentIteratorPrototype::create(init.vm, IntlSegmentIteratorPrototype::createStructure(init.vm, globalObject, globalObject->iteratorPrototype()));
             init.set(IntlSegmentIterator::createStructure(init.vm, globalObject, segmentIteratorPrototype));
         });
     m_segmenterStructure.initLater(
         [] (const Initializer<Structure>& init) {
-            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+            JSGlobalObject* globalObject = jsUncheckedDowncast<JSGlobalObject*>(init.owner);
             IntlSegmenterPrototype* segmenterPrototype = IntlSegmenterPrototype::create(init.vm, IntlSegmenterPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
             init.set(IntlSegmenter::createStructure(init.vm, globalObject, segmenterPrototype));
         });
     m_segmentsStructure.initLater(
         [] (const Initializer<Structure>& init) {
-            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+            JSGlobalObject* globalObject = jsUncheckedDowncast<JSGlobalObject*>(init.owner);
             IntlSegmentsPrototype* segmentsPrototype = IntlSegmentsPrototype::create(init.vm, globalObject, IntlSegmentsPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
             init.set(IntlSegments::createStructure(init.vm, globalObject, segmentsPrototype));
         });
@@ -1663,18 +1663,18 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
         [] (LazyClassStructure::Initializer& init) {
             init.setPrototype(IntlDateTimeFormatPrototype::create(init.vm, init.global, IntlDateTimeFormatPrototype::createStructure(init.vm, init.global, init.global->objectPrototype())));
             init.setStructure(IntlDateTimeFormat::createStructure(init.vm, init.global, init.prototype));
-            init.setConstructor(IntlDateTimeFormatConstructor::create(init.vm, IntlDateTimeFormatConstructor::createStructure(init.vm, init.global, init.global->functionPrototype()), jsCast<IntlDateTimeFormatPrototype*>(init.prototype)));
+            init.setConstructor(IntlDateTimeFormatConstructor::create(init.vm, IntlDateTimeFormatConstructor::createStructure(init.vm, init.global, init.global->functionPrototype()), jsUncheckedDowncast<IntlDateTimeFormatPrototype*>(init.prototype)));
         });
     m_numberFormatStructure.initLater(
         [] (LazyClassStructure::Initializer& init) {
             init.setPrototype(IntlNumberFormatPrototype::create(init.vm, init.global, IntlNumberFormatPrototype::createStructure(init.vm, init.global, init.global->objectPrototype())));
             init.setStructure(IntlNumberFormat::createStructure(init.vm, init.global, init.prototype));
-            init.setConstructor(IntlNumberFormatConstructor::create(init.vm, IntlNumberFormatConstructor::createStructure(init.vm, init.global, init.global->functionPrototype()), jsCast<IntlNumberFormatPrototype*>(init.prototype)));
+            init.setConstructor(IntlNumberFormatConstructor::create(init.vm, IntlNumberFormatConstructor::createStructure(init.vm, init.global, init.global->functionPrototype()), jsUncheckedDowncast<IntlNumberFormatPrototype*>(init.prototype)));
         });
 
     m_defaultCollator.initLater(
         [] (const Initializer<IntlCollator>& init) {
-            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+            JSGlobalObject* globalObject = jsUncheckedDowncast<JSGlobalObject*>(init.owner);
             VM& vm = init.vm;
             auto scope = DECLARE_THROW_SCOPE(vm);
             IntlCollator* collator = IntlCollator::create(vm, globalObject->collatorStructure());
@@ -1685,7 +1685,7 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
 
     m_defaultDateTimeFormat.initLater(
         [] (const Initializer<IntlDateTimeFormat>& init) {
-            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+            JSGlobalObject* globalObject = jsUncheckedDowncast<JSGlobalObject*>(init.owner);
             VM& vm = init.vm;
             auto scope = DECLARE_THROW_SCOPE(vm);
             auto* dateTimeFormat = IntlDateTimeFormat::create(vm, globalObject->dateTimeFormatStructure());
@@ -1696,7 +1696,7 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
 
     m_defaultDateFormat.initLater(
         [] (const Initializer<IntlDateTimeFormat>& init) {
-            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+            JSGlobalObject* globalObject = jsUncheckedDowncast<JSGlobalObject*>(init.owner);
             VM& vm = init.vm;
             auto scope = DECLARE_THROW_SCOPE(vm);
             auto* dateTimeFormat = IntlDateTimeFormat::create(vm, globalObject->dateTimeFormatStructure());
@@ -1707,7 +1707,7 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
 
     m_defaultTimeFormat.initLater(
         [] (const Initializer<IntlDateTimeFormat>& init) {
-            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+            JSGlobalObject* globalObject = jsUncheckedDowncast<JSGlobalObject*>(init.owner);
             VM& vm = init.vm;
             auto scope = DECLARE_THROW_SCOPE(vm);
             auto* dateTimeFormat = IntlDateTimeFormat::create(vm, globalObject->dateTimeFormatStructure());
@@ -1718,7 +1718,7 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
 
     m_defaultNumberFormat.initLater(
         [] (const Initializer<IntlNumberFormat>& init) {
-            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+            JSGlobalObject* globalObject = jsUncheckedDowncast<JSGlobalObject*>(init.owner);
             VM& vm = init.vm;
             auto scope = DECLARE_THROW_SCOPE(vm);
             auto* numberFormat = IntlNumberFormat::create(vm, globalObject->numberFormatStructure());
@@ -1733,63 +1733,63 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     if (Options::useTemporal()) {
         m_calendarStructure.initLater(
             [] (const Initializer<Structure>& init) {
-                JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+                JSGlobalObject* globalObject = jsUncheckedDowncast<JSGlobalObject*>(init.owner);
                 TemporalCalendarPrototype* calendarPrototype = TemporalCalendarPrototype::create(init.vm, globalObject, TemporalCalendarPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
                 init.set(TemporalCalendar::createStructure(init.vm, globalObject, calendarPrototype));
             });
 
         m_durationStructure.initLater(
             [] (const Initializer<Structure>& init) {
-                JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+                JSGlobalObject* globalObject = jsUncheckedDowncast<JSGlobalObject*>(init.owner);
                 TemporalDurationPrototype* durationPrototype = TemporalDurationPrototype::create(init.vm, TemporalDurationPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
                 init.set(TemporalDuration::createStructure(init.vm, globalObject, durationPrototype));
             });
 
         m_instantStructure.initLater(
             [] (const Initializer<Structure>& init) {
-                JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+                JSGlobalObject* globalObject = jsUncheckedDowncast<JSGlobalObject*>(init.owner);
                 TemporalInstantPrototype* instantPrototype = TemporalInstantPrototype::create(init.vm, TemporalInstantPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
                 init.set(TemporalInstant::createStructure(init.vm, globalObject, instantPrototype));
             });
 
         m_plainDateStructure.initLater(
             [] (const Initializer<Structure>& init) {
-                auto* globalObject = jsCast<JSGlobalObject*>(init.owner);
+                auto* globalObject = jsUncheckedDowncast<JSGlobalObject*>(init.owner);
                 auto* plainDatePrototype = TemporalPlainDatePrototype::create(init.vm, globalObject, TemporalPlainDatePrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
                 init.set(TemporalPlainDate::createStructure(init.vm, globalObject, plainDatePrototype));
             });
 
         m_plainDateTimeStructure.initLater(
             [] (const Initializer<Structure>& init) {
-                auto* globalObject = jsCast<JSGlobalObject*>(init.owner);
+                auto* globalObject = jsUncheckedDowncast<JSGlobalObject*>(init.owner);
                 auto* plainDateTimePrototype = TemporalPlainDateTimePrototype::create(init.vm, globalObject, TemporalPlainDateTimePrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
                 init.set(TemporalPlainDateTime::createStructure(init.vm, globalObject, plainDateTimePrototype));
             });
 
         m_plainMonthDayStructure.initLater(
             [] (const Initializer<Structure>& init) {
-                auto* globalObject = jsCast<JSGlobalObject*>(init.owner);
+                auto* globalObject = jsUncheckedDowncast<JSGlobalObject*>(init.owner);
                 auto* plainMonthDayPrototype = TemporalPlainMonthDayPrototype::create(init.vm, globalObject, TemporalPlainMonthDayPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
                 init.set(TemporalPlainMonthDay::createStructure(init.vm, globalObject, plainMonthDayPrototype));
             });
 
         m_plainTimeStructure.initLater(
             [] (const Initializer<Structure>& init) {
-                auto* globalObject = jsCast<JSGlobalObject*>(init.owner);
+                auto* globalObject = jsUncheckedDowncast<JSGlobalObject*>(init.owner);
                 auto* plainTimePrototype = TemporalPlainTimePrototype::create(init.vm, globalObject, TemporalPlainTimePrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
                 init.set(TemporalPlainTime::createStructure(init.vm, globalObject, plainTimePrototype));
             });
 
         m_plainYearMonthStructure.initLater(
             [] (const Initializer<Structure>& init) {
-                auto* globalObject = jsCast<JSGlobalObject*>(init.owner);
+                auto* globalObject = jsUncheckedDowncast<JSGlobalObject*>(init.owner);
                 auto* plainYearMonthPrototype = TemporalPlainYearMonthPrototype::create(init.vm, globalObject, TemporalPlainYearMonthPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
                 init.set(TemporalPlainYearMonth::createStructure(init.vm, globalObject, plainYearMonthPrototype));
             });
 
         m_timeZoneStructure.initLater(
             [] (const Initializer<Structure>& init) {
-                JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+                JSGlobalObject* globalObject = jsUncheckedDowncast<JSGlobalObject*>(init.owner);
                 TemporalTimeZonePrototype* timeZonePrototype = TemporalTimeZonePrototype::create(init.vm, globalObject, TemporalTimeZonePrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
                 init.set(TemporalTimeZone::createStructure(init.vm, globalObject, timeZonePrototype));
             });
@@ -1839,28 +1839,28 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     GetterSetter* regExpProtoUnicodeSetsGetter = getGetterById(this, m_regExpPrototype.get(), vm.propertyNames->unicodeSets);
     catchScope.assertNoException();
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::regExpProtoUnicodeSetsGetter)].set(vm, this, regExpProtoUnicodeSetsGetter);
-    JSFunction* regExpSymbolReplace = jsCast<JSFunction*>(m_regExpPrototype->getDirect(vm, vm.propertyNames->replaceSymbol));
+    JSFunction* regExpSymbolReplace = jsUncheckedDowncast<JSFunction*>(m_regExpPrototype->getDirect(vm, vm.propertyNames->replaceSymbol));
     m_regExpProtoSymbolReplace.set(vm, this, regExpSymbolReplace);
-    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::regExpBuiltinExec)].set(vm, this, jsCast<JSFunction*>(m_regExpPrototype->getDirect(vm, vm.propertyNames->exec)));
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::regExpBuiltinExec)].set(vm, this, jsUncheckedDowncast<JSFunction*>(m_regExpPrototype->getDirect(vm, vm.propertyNames->exec)));
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::regExpPrototypeSymbolMatch)].set(vm, this, m_regExpPrototype->getDirect(vm, vm.propertyNames->matchSymbol).asCell());
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::regExpPrototypeSymbolReplace)].set(vm, this, m_regExpPrototype->getDirect(vm, vm.propertyNames->replaceSymbol).asCell());
 
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::isArray)].initLater([] (const Initializer<JSCell>& init) {
-        init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, "isArray"_s, arrayConstructorIsArray, ImplementationVisibility::Public, ArrayIsArrayIntrinsic));
+        init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 1, "isArray"_s, arrayConstructorIsArray, ImplementationVisibility::Public, ArrayIsArrayIntrinsic));
     });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::callFunction)].set(vm, this, callFunction);
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::applyFunction)].set(vm, this, applyFunction);
 
     {
-        JSValue hasOwnPropertyFunction = jsCast<JSFunction*>(objectPrototype()->get(this, vm.propertyNames->hasOwnProperty));
+        JSValue hasOwnPropertyFunction = jsUncheckedDowncast<JSFunction*>(objectPrototype()->get(this, vm.propertyNames->hasOwnProperty));
         catchScope.assertNoException();
-        RELEASE_ASSERT(!!jsDynamicCast<JSFunction*>(hasOwnPropertyFunction));
-        m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::hasOwnPropertyFunction)].set(vm, this, jsCast<JSFunction*>(hasOwnPropertyFunction));
+        RELEASE_ASSERT(!!jsDynamicDowncast<JSFunction*>(hasOwnPropertyFunction));
+        m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::hasOwnPropertyFunction)].set(vm, this, jsUncheckedDowncast<JSFunction*>(hasOwnPropertyFunction));
     }
 
 #define INIT_PRIVATE_GLOBAL(funcName, code) \
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::funcName)].initLater([] (const Initializer<JSCell>& init) { \
-            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner); \
+            JSGlobalObject* globalObject = jsUncheckedDowncast<JSGlobalObject*>(init.owner); \
             init.set(JSFunction::create(init.vm, globalObject, code ## CodeGenerator(init.vm), globalObject)); \
         });
     JSC_FOREACH_BUILTIN_LINK_TIME_CONSTANT(INIT_PRIVATE_GLOBAL)
@@ -1868,302 +1868,302 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
 
     // AsyncFromSyncIterator Helpers
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::asyncFromSyncIteratorCreate)].initLater([](const Initializer<JSCell>& init) {
-        init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "asyncFromSyncIteratorCreate"_s, asyncFromSyncIteratorPrivateFuncCreate, ImplementationVisibility::Private, AsyncFromSyncIteratorCreateIntrinsic));
+        init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 2, "asyncFromSyncIteratorCreate"_s, asyncFromSyncIteratorPrivateFuncCreate, ImplementationVisibility::Private, AsyncFromSyncIteratorCreateIntrinsic));
     });
 
     // RegExpStringIteratorHelpers
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::regExpStringIteratorCreate)].initLater([](const Initializer<JSCell>& init) {
-        init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 4, "regExpStringIteratorCreate"_s, regExpStringIteratorPrivateFuncCreate, ImplementationVisibility::Private, RegExpStringIteratorCreateIntrinsic));
+        init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 4, "regExpStringIteratorCreate"_s, regExpStringIteratorPrivateFuncCreate, ImplementationVisibility::Private, RegExpStringIteratorCreateIntrinsic));
     });
 
     // WrapForValidIterator Helpers
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::wrapForValidIteratorCreate)].initLater([](const Initializer<JSCell>& init) {
-        init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "wrapForValidIteratorCreate"_s, wrapForValidIteratorPrivateFuncCreate, ImplementationVisibility::Private, WrapForValidIteratorCreateIntrinsic));
+        init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 2, "wrapForValidIteratorCreate"_s, wrapForValidIteratorPrivateFuncCreate, ImplementationVisibility::Private, WrapForValidIteratorCreateIntrinsic));
     });
 
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::iteratorHelperCreate)].initLater([](const Initializer<JSCell>& init) {
-        init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "iteratorHelperCreate"_s, iteratorHelperPrivateFuncCreate, ImplementationVisibility::Private, IteratorHelperCreateIntrinsic));
+        init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 2, "iteratorHelperCreate"_s, iteratorHelperPrivateFuncCreate, ImplementationVisibility::Private, IteratorHelperCreateIntrinsic));
     });
 
     // Global object and function helpers.
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::isFinite)].initLater([] (const Initializer<JSCell>& init) {
-        init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, "isFinite"_s, globalFuncIsFinite, ImplementationVisibility::Private, GlobalIsFiniteIntrinsic));
+        init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 1, "isFinite"_s, globalFuncIsFinite, ImplementationVisibility::Private, GlobalIsFiniteIntrinsic));
     });
 
     // Map and Set helpers.
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::Set)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(jsCast<JSGlobalObject*>(init.owner)->setConstructor());
+            init.set(jsUncheckedDowncast<JSGlobalObject*>(init.owner)->setConstructor());
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::Map)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(jsCast<JSGlobalObject*>(init.owner)->mapConstructor());
+            init.set(jsUncheckedDowncast<JSGlobalObject*>(init.owner)->mapConstructor());
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::mapIterationNext)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "mapIterationNext"_s, mapPrivateFuncMapIterationNext, ImplementationVisibility::Private, JSMapIterationNextIntrinsic));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 0, "mapIterationNext"_s, mapPrivateFuncMapIterationNext, ImplementationVisibility::Private, JSMapIterationNextIntrinsic));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::mapIterationEntry)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "mapIterationEntry"_s, mapPrivateFuncMapIterationEntry, ImplementationVisibility::Private, JSMapIterationEntryIntrinsic));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 0, "mapIterationEntry"_s, mapPrivateFuncMapIterationEntry, ImplementationVisibility::Private, JSMapIterationEntryIntrinsic));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::mapStorage)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "mapStorage"_s, mapPrivateFuncMapStorage, ImplementationVisibility::Private, JSMapStorageIntrinsic));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 0, "mapStorage"_s, mapPrivateFuncMapStorage, ImplementationVisibility::Private, JSMapStorageIntrinsic));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::mapIteratorNext)].initLater([](const Initializer<JSCell>& init) {
-        init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "mapIteratorNext"_s, mapIteratorPrivateFuncMapIteratorNext, ImplementationVisibility::Private, JSMapIteratorNextIntrinsic));
+        init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 0, "mapIteratorNext"_s, mapIteratorPrivateFuncMapIteratorNext, ImplementationVisibility::Private, JSMapIteratorNextIntrinsic));
     });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::mapIteratorKey)].initLater([](const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "mapIteratorKey"_s, mapIteratorPrivateFuncMapIteratorKey, ImplementationVisibility::Private, JSMapIteratorKeyIntrinsic));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 0, "mapIteratorKey"_s, mapIteratorPrivateFuncMapIteratorKey, ImplementationVisibility::Private, JSMapIteratorKeyIntrinsic));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::mapIteratorValue)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "mapIteratorValue"_s, mapIteratorPrivateFuncMapIteratorValue, ImplementationVisibility::Private, JSMapIteratorValueIntrinsic));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 0, "mapIteratorValue"_s, mapIteratorPrivateFuncMapIteratorValue, ImplementationVisibility::Private, JSMapIteratorValueIntrinsic));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::mapIterationEntryKey)].initLater([](const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "mapIterationEntryKey"_s, mapPrivateFuncMapIterationEntryKey, ImplementationVisibility::Private, JSMapIterationEntryKeyIntrinsic));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 0, "mapIterationEntryKey"_s, mapPrivateFuncMapIterationEntryKey, ImplementationVisibility::Private, JSMapIterationEntryKeyIntrinsic));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::mapIterationEntryValue)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "mapIterationEntryValue"_s, mapPrivateFuncMapIterationEntryValue, ImplementationVisibility::Private, JSMapIterationEntryValueIntrinsic));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 0, "mapIterationEntryValue"_s, mapPrivateFuncMapIterationEntryValue, ImplementationVisibility::Private, JSMapIterationEntryValueIntrinsic));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::setIterationNext)].initLater([](const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "setIterationNext"_s, setPrivateFuncSetIterationNext, ImplementationVisibility::Private, JSSetIterationNextIntrinsic));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 0, "setIterationNext"_s, setPrivateFuncSetIterationNext, ImplementationVisibility::Private, JSSetIterationNextIntrinsic));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::setIterationEntry)].initLater([](const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "setIterationEntry"_s, setPrivateFuncSetIterationEntry, ImplementationVisibility::Private, JSSetIterationEntryIntrinsic));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 0, "setIterationEntry"_s, setPrivateFuncSetIterationEntry, ImplementationVisibility::Private, JSSetIterationEntryIntrinsic));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::setIterationEntryKey)].initLater([](const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "setIterationEntryKey"_s, setPrivateFuncSetIterationEntryKey, ImplementationVisibility::Private, JSSetIterationEntryKeyIntrinsic));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 0, "setIterationEntryKey"_s, setPrivateFuncSetIterationEntryKey, ImplementationVisibility::Private, JSSetIterationEntryKeyIntrinsic));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::setIteratorNext)].initLater([](const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "setIteratorNext"_s, setIteratorPrivateFuncSetIteratorNext, ImplementationVisibility::Private, JSSetIteratorNextIntrinsic));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 0, "setIteratorNext"_s, setIteratorPrivateFuncSetIteratorNext, ImplementationVisibility::Private, JSSetIteratorNextIntrinsic));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::setIteratorKey)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "setIteratorKey"_s, setIteratorPrivateFuncSetIteratorKey, ImplementationVisibility::Private, JSSetIteratorKeyIntrinsic));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 0, "setIteratorKey"_s, setIteratorPrivateFuncSetIteratorKey, ImplementationVisibility::Private, JSSetIteratorKeyIntrinsic));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::setStorage)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "setStorage"_s, setPrivateFuncSetStorage, ImplementationVisibility::Private, JSSetStorageIntrinsic));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 0, "setStorage"_s, setPrivateFuncSetStorage, ImplementationVisibility::Private, JSSetStorageIntrinsic));
         });
 
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::importModule)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "importModule"_s, globalFuncImportModule, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 0, "importModule"_s, globalFuncImportModule, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::copyDataProperties)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "copyDataProperties"_s, globalFuncCopyDataProperties, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 2, "copyDataProperties"_s, globalFuncCopyDataProperties, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::cloneObject)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "cloneObject"_s, globalFuncCloneObject, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 0, "cloneObject"_s, globalFuncCloneObject, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::resolvePromise)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "resolvePromise"_s, resolvePromise, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 2, "resolvePromise"_s, resolvePromise, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::rejectPromise)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "rejectPromise"_s, rejectPromise, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 2, "rejectPromise"_s, rejectPromise, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::fulfillPromise)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "fulfillPromise"_s, fulfillPromise, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 2, "fulfillPromise"_s, fulfillPromise, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::resolvePromiseWithFirstResolvingFunctionCallCheck)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "resolvePromiseWithFirstResolvingFunctionCallCheck"_s, resolvePromiseWithFirstResolvingFunctionCallCheck, ImplementationVisibility::Private, ResolvePromiseWithFirstResolvingFunctionCallCheckIntrinsic));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 2, "resolvePromiseWithFirstResolvingFunctionCallCheck"_s, resolvePromiseWithFirstResolvingFunctionCallCheck, ImplementationVisibility::Private, ResolvePromiseWithFirstResolvingFunctionCallCheckIntrinsic));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::rejectPromiseWithFirstResolvingFunctionCallCheck)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "rejectPromiseWithFirstResolvingFunctionCallCheck"_s, rejectPromiseWithFirstResolvingFunctionCallCheck, ImplementationVisibility::Private, RejectPromiseWithFirstResolvingFunctionCallCheckIntrinsic));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 2, "rejectPromiseWithFirstResolvingFunctionCallCheck"_s, rejectPromiseWithFirstResolvingFunctionCallCheck, ImplementationVisibility::Private, RejectPromiseWithFirstResolvingFunctionCallCheckIntrinsic));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::fulfillPromiseWithFirstResolvingFunctionCallCheck)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "fulfillPromiseWithFirstResolvingFunctionCallCheck"_s, fulfillPromiseWithFirstResolvingFunctionCallCheck, ImplementationVisibility::Private, FulfillPromiseWithFirstResolvingFunctionCallCheckIntrinsic));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 2, "fulfillPromiseWithFirstResolvingFunctionCallCheck"_s, fulfillPromiseWithFirstResolvingFunctionCallCheck, ImplementationVisibility::Private, FulfillPromiseWithFirstResolvingFunctionCallCheckIntrinsic));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::resolveWithInternalMicrotaskForAsyncAwait)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 3, "resolveWithInternalMicrotaskForAsyncAwait"_s, resolveWithInternalMicrotaskForAsyncAwait, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 3, "resolveWithInternalMicrotaskForAsyncAwait"_s, resolveWithInternalMicrotaskForAsyncAwait, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::asyncGeneratorQueueEnqueue)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 4, "asyncGeneratorQueueEnqueue"_s, asyncGeneratorQueueEnqueue, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 4, "asyncGeneratorQueueEnqueue"_s, asyncGeneratorQueueEnqueue, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::asyncGeneratorQueueDequeueResolve)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "asyncGeneratorQueueDequeueResolve"_s, asyncGeneratorQueueDequeueResolve, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 2, "asyncGeneratorQueueDequeueResolve"_s, asyncGeneratorQueueDequeueResolve, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::asyncGeneratorQueueDequeueReject)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "asyncGeneratorQueueDequeueReject"_s, asyncGeneratorQueueDequeueReject, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 2, "asyncGeneratorQueueDequeueReject"_s, asyncGeneratorQueueDequeueReject, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::driveAsyncFunction)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "driveAsyncFunction"_s, driveAsyncFunction, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 2, "driveAsyncFunction"_s, driveAsyncFunction, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::newHandledRejectedPromise)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, "newHandledRejectedPromise"_s, newHandledRejectedPromise, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 1, "newHandledRejectedPromise"_s, newHandledRejectedPromise, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::promiseEmptyOnFulfilled)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, "promiseEmptyOnFulfilled"_s, promiseEmptyOnFulfilled, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 1, "promiseEmptyOnFulfilled"_s, promiseEmptyOnFulfilled, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::promiseEmptyOnRejected)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, "promiseEmptyOnRejected"_s, promiseEmptyOnRejected, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 1, "promiseEmptyOnRejected"_s, promiseEmptyOnRejected, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::promiseResolve)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "promiseResolve"_s, promiseResolve, ImplementationVisibility::Private, PromiseResolveIntrinsic));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 2, "promiseResolve"_s, promiseResolve, ImplementationVisibility::Private, PromiseResolveIntrinsic));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::promiseReject)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "promiseReject"_s, promiseReject, ImplementationVisibility::Private, PromiseRejectIntrinsic));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 2, "promiseReject"_s, promiseReject, ImplementationVisibility::Private, PromiseRejectIntrinsic));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::performPromiseThen)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 4, "performPromiseThen"_s, performPromiseThen, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 4, "performPromiseThen"_s, performPromiseThen, ImplementationVisibility::Private));
         });
 
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::makeTypeError)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "makeTypeError"_s, globalFuncMakeTypeError, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 0, "makeTypeError"_s, globalFuncMakeTypeError, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::AggregateError)].initLater([] (const Initializer<JSCell>& init) {
-            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+            JSGlobalObject* globalObject = jsUncheckedDowncast<JSGlobalObject*>(init.owner);
             init.set(globalObject->m_aggregateErrorStructure.constructor(globalObject));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::ReferenceError)].initLater([] (const Initializer<JSCell>& init) {
-        JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+        JSGlobalObject* globalObject = jsUncheckedDowncast<JSGlobalObject*>(init.owner);
         init.set(globalObject->m_referenceErrorStructure.constructor(globalObject));
     });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::SuppressedError)].initLater([] (const Initializer<JSCell>& init) {
-        JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+        JSGlobalObject* globalObject = jsUncheckedDowncast<JSGlobalObject*>(init.owner);
         init.set(globalObject->m_suppressedErrorStructure.constructor(globalObject));
     });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::DisposableStack)].initLater([] (const Initializer<JSCell>& init) {
-        JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+        JSGlobalObject* globalObject = jsUncheckedDowncast<JSGlobalObject*>(init.owner);
         init.set(globalObject->m_disposableStackStructure.constructor(globalObject));
     });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::AsyncDisposableStack)].initLater([] (const Initializer<JSCell>& init) {
-        JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+        JSGlobalObject* globalObject = jsUncheckedDowncast<JSGlobalObject*>(init.owner);
         init.set(globalObject->m_asyncDisposableStackStructure.constructor(globalObject));
     });
 
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::typedArrayLength)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "typedArrayViewLength"_s, typedArrayViewPrivateFuncLength, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 0, "typedArrayViewLength"_s, typedArrayViewPrivateFuncLength, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::isTypedArrayView)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, "typedArrayViewIsTypedArrayView"_s, typedArrayViewPrivateFuncIsTypedArrayView, ImplementationVisibility::Private, IsTypedArrayViewIntrinsic));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 1, "typedArrayViewIsTypedArrayView"_s, typedArrayViewPrivateFuncIsTypedArrayView, ImplementationVisibility::Private, IsTypedArrayViewIntrinsic));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::isSharedTypedArrayView)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, "typedArrayViewIsSharedTypedArrayView"_s, typedArrayViewPrivateFuncIsSharedTypedArrayView, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 1, "typedArrayViewIsSharedTypedArrayView"_s, typedArrayViewPrivateFuncIsSharedTypedArrayView, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::isResizableOrGrowableSharedTypedArrayView)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, "typedArrayViewPrivateFuncIsResizableOrGrowableSharedTypedArrayView"_s, typedArrayViewPrivateFuncIsResizableOrGrowableSharedTypedArrayView, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 1, "typedArrayViewPrivateFuncIsResizableOrGrowableSharedTypedArrayView"_s, typedArrayViewPrivateFuncIsResizableOrGrowableSharedTypedArrayView, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::typedArrayFromFast)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "typedArrayViewTypedArrayFromFast"_s, typedArrayViewPrivateFuncTypedArrayFromFast, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 2, "typedArrayViewTypedArrayFromFast"_s, typedArrayViewPrivateFuncTypedArrayFromFast, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::arrayFromFastWithoutMapFn)].initLater([] (const Initializer<JSCell>& init) {
-        init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "arrayFromFastWithoutMapFn"_s, arrayConstructorPrivateFromFastWithoutMapFn, ImplementationVisibility::Private));
+        init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 2, "arrayFromFastWithoutMapFn"_s, arrayConstructorPrivateFromFastWithoutMapFn, ImplementationVisibility::Private));
     });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::isDetached)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, "typedArrayViewIsDetached"_s, typedArrayViewPrivateFuncIsDetached, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 1, "typedArrayViewIsDetached"_s, typedArrayViewPrivateFuncIsDetached, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::isBoundFunction)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "isBound"_s, isBoundFunction, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 0, "isBound"_s, isBoundFunction, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::hasInstanceBoundFunction)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "hasInstanceBound"_s, hasInstanceBoundFunction, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 0, "hasInstanceBound"_s, hasInstanceBoundFunction, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::instanceOf)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "instanceOf"_s, objectPrivateFuncInstanceOf, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 0, "instanceOf"_s, objectPrivateFuncInstanceOf, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::BuiltinLog)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, "BuiltinLog"_s, globalFuncBuiltinLog, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 1, "BuiltinLog"_s, globalFuncBuiltinLog, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::BuiltinDescribe)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, "BuiltinDescribe"_s, globalFuncBuiltinDescribe, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 1, "BuiltinDescribe"_s, globalFuncBuiltinDescribe, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::min)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "min"_s, mathProtoFuncMin, ImplementationVisibility::Private, MinIntrinsic));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 0, "min"_s, mathProtoFuncMin, ImplementationVisibility::Private, MinIntrinsic));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::repeatCharacter)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "repeatCharacter"_s, stringProtoFuncRepeatCharacter, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 2, "repeatCharacter"_s, stringProtoFuncRepeatCharacter, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::isArraySlow)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "isArraySlow"_s, arrayConstructorPrivateFuncIsArraySlow, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 0, "isArraySlow"_s, arrayConstructorPrivateFuncIsArraySlow, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::importInRealm)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "importInRealm"_s, importInRealm, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 0, "importInRealm"_s, importInRealm, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::evalFunction)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, init.vm.propertyNames->eval.string(), globalFuncEval, ImplementationVisibility::Public));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 1, init.vm.propertyNames->eval.string(), globalFuncEval, ImplementationVisibility::Public));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::evalInRealm)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "evalInRealm"_s, evalInRealm, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 0, "evalInRealm"_s, evalInRealm, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::moveFunctionToRealm)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "moveFunctionToRealm"_s, moveFunctionToRealm, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 0, "moveFunctionToRealm"_s, moveFunctionToRealm, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::sameValue)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "is"_s, objectConstructorIs, ImplementationVisibility::Private, ObjectIsIntrinsic));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 2, "is"_s, objectConstructorIs, ImplementationVisibility::Private, ObjectIsIntrinsic));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::setPrototypeDirect)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "setPrototypeDirect"_s, globalFuncSetPrototypeDirect, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 2, "setPrototypeDirect"_s, globalFuncSetPrototypeDirect, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::setPrototypeDirectOrThrow)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "setPrototypeDirectOrThrow"_s, globalFuncSetPrototypeDirectOrThrow, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 2, "setPrototypeDirectOrThrow"_s, globalFuncSetPrototypeDirectOrThrow, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::toIntegerOrInfinity)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, "toIntegerOrInfinity"_s, globalFuncToIntegerOrInfinity, ImplementationVisibility::Private, ToIntegerOrInfinityIntrinsic));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 1, "toIntegerOrInfinity"_s, globalFuncToIntegerOrInfinity, ImplementationVisibility::Private, ToIntegerOrInfinityIntrinsic));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::toLength)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, "toLength"_s, globalFuncToLength, ImplementationVisibility::Private, ToLengthIntrinsic));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 1, "toLength"_s, globalFuncToLength, ImplementationVisibility::Private, ToLengthIntrinsic));
         });
 
     // RegExp.prototype helpers.
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::regExpCreate)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "esSpecRegExpCreate"_s, esSpecRegExpCreate, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 2, "esSpecRegExpCreate"_s, esSpecRegExpCreate, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::isRegExp)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, "esSpecIsRegExp"_s, esSpecIsRegExp, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 1, "esSpecIsRegExp"_s, esSpecIsRegExp, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::regExpMatchFast)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, "regExpMatchFast"_s, regExpProtoFuncMatchFast, ImplementationVisibility::Private, RegExpMatchFastIntrinsic));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 1, "regExpMatchFast"_s, regExpProtoFuncMatchFast, ImplementationVisibility::Private, RegExpMatchFastIntrinsic));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::regExpSplitFast)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "regExpSplitFast"_s, regExpProtoFuncSplitFast, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 2, "regExpSplitFast"_s, regExpProtoFuncSplitFast, ImplementationVisibility::Private));
         });
 
     // String.prototype helpers.
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::stringIncludesInternal)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, "stringIncludesInternal"_s, builtinStringIncludesInternal, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 1, "stringIncludesInternal"_s, builtinStringIncludesInternal, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::stringIndexOfInternal)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, "stringIndexOfInternal"_s, builtinStringIndexOfInternal, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 1, "stringIndexOfInternal"_s, builtinStringIndexOfInternal, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::stringSplitFast)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "stringSplitFast"_s, stringProtoFuncSplitFast, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 2, "stringSplitFast"_s, stringProtoFuncSplitFast, ImplementationVisibility::Private));
         });
 
     // Proxy helpers.
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::handleNegativeProxyHasTrapResult)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "handleNegativeProxyHasTrapResult"_s, globalFuncHandleNegativeProxyHasTrapResult, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 2, "handleNegativeProxyHasTrapResult"_s, globalFuncHandleNegativeProxyHasTrapResult, ImplementationVisibility::Private));
         });
 
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::handleProxyGetTrapResult)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 3, "handleProxyGetTrapResult"_s, globalFuncHandleProxyGetTrapResult, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 3, "handleProxyGetTrapResult"_s, globalFuncHandleProxyGetTrapResult, ImplementationVisibility::Private));
         });
 
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::handlePositiveProxySetTrapResult)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 3, "handlePositiveProxySetTrapResult"_s, globalFuncHandlePositiveProxySetTrapResult, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 3, "handlePositiveProxySetTrapResult"_s, globalFuncHandlePositiveProxySetTrapResult, ImplementationVisibility::Private));
         });
 
     // PrivateSymbols / PrivateNames
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::createPrivateSymbol)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, "createPrivateSymbol"_s, createPrivateSymbol, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 1, "createPrivateSymbol"_s, createPrivateSymbol, ImplementationVisibility::Private));
         });
 
     // JSON helpers
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::jsonParse)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, "parse"_s, jsonParse, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 1, "parse"_s, jsonParse, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::jsonStringify)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, "stringify"_s, jsonStringify, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 2, "stringify"_s, jsonStringify, ImplementationVisibility::Private));
         });
 
     // ShadowRealms
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::createRemoteFunction)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "createRemoteFunction"_s, createRemoteFunction, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 0, "createRemoteFunction"_s, createRemoteFunction, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::isRemoteFunction)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "isRemoteFunction"_s, isRemoteFunction, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 0, "isRemoteFunction"_s, isRemoteFunction, ImplementationVisibility::Private));
         });
 
 #if ENABLE(WEBASSEMBLY)
     // WebAssembly Streaming API
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::webAssemblyCompileStreamingInternal)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, "compileStreamingInternal"_s, webAssemblyCompileStreamingInternal, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 1, "compileStreamingInternal"_s, webAssemblyCompileStreamingInternal, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::webAssemblyInstantiateStreamingInternal)].initLater([] (const Initializer<JSCell>& init) {
-            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, "instantiateStreamingInternal"_s, webAssemblyInstantiateStreamingInternal, ImplementationVisibility::Private));
+            init.set(JSFunction::create(init.vm, jsUncheckedDowncast<JSGlobalObject*>(init.owner), 1, "instantiateStreamingInternal"_s, webAssemblyInstantiateStreamingInternal, ImplementationVisibility::Private));
         });
 #endif
 
@@ -2171,14 +2171,14 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
         init.set(init.vm.emptyPropertyNameEnumerator());
     });
 
-    m_performProxyObjectHasFunction.set(vm, this, jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performProxyObjectHas)));
-    m_performProxyObjectHasByValFunction.set(vm, this, jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performProxyObjectHasByVal)));
-    m_performProxyObjectGetFunction.set(vm, this, jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performProxyObjectGet)));
-    m_performProxyObjectGetByValFunction.set(vm, this, jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performProxyObjectGetByVal)));
-    m_performProxyObjectSetStrictFunction.set(vm, this, jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performProxyObjectSetStrict)));
-    m_performProxyObjectSetSloppyFunction.set(vm, this, jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performProxyObjectSetSloppy)));
-    m_performProxyObjectSetByValStrictFunction.set(vm, this, jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performProxyObjectSetByValStrict)));
-    m_performProxyObjectSetByValSloppyFunction.set(vm, this, jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performProxyObjectSetByValSloppy)));
+    m_performProxyObjectHasFunction.set(vm, this, jsUncheckedDowncast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performProxyObjectHas)));
+    m_performProxyObjectHasByValFunction.set(vm, this, jsUncheckedDowncast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performProxyObjectHasByVal)));
+    m_performProxyObjectGetFunction.set(vm, this, jsUncheckedDowncast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performProxyObjectGet)));
+    m_performProxyObjectGetByValFunction.set(vm, this, jsUncheckedDowncast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performProxyObjectGetByVal)));
+    m_performProxyObjectSetStrictFunction.set(vm, this, jsUncheckedDowncast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performProxyObjectSetStrict)));
+    m_performProxyObjectSetSloppyFunction.set(vm, this, jsUncheckedDowncast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performProxyObjectSetSloppy)));
+    m_performProxyObjectSetByValStrictFunction.set(vm, this, jsUncheckedDowncast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performProxyObjectSetByValStrict)));
+    m_performProxyObjectSetByValSloppyFunction.set(vm, this, jsUncheckedDowncast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performProxyObjectSetByValSloppy)));
 
     if (Options::exposeProfilersOnGlobalObject()) {
 #if ENABLE(SAMPLING_PROFILER)
@@ -2228,7 +2228,7 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
                 init.setPrototype(capitalName##Prototype::create(init.vm, init.global, capitalName##Prototype::createStructure(init.vm, init.global, init.global->prototypeBase ## Prototype()))); \
                 init.setStructure(instanceType::createStructure(init.vm, init.global, init.prototype)); \
                 auto* constructorPrototype = strcmp(#prototypeBase, "error") == 0 ? init.global->m_errorStructure.constructor(init.global) : init.global->functionPrototype(); \
-                init.setConstructor(capitalName ## Constructor::create(init.vm, capitalName ## Constructor::createStructure(init.vm, init.global, constructorPrototype), jsCast<capitalName ## Prototype*>(init.prototype))); \
+                init.setConstructor(capitalName ## Constructor::create(init.vm, capitalName ## Constructor::createStructure(init.vm, init.global, constructorPrototype), jsUncheckedDowncast<capitalName ## Prototype*>(init.prototype))); \
             }); \
     }
 
@@ -2317,7 +2317,7 @@ bool JSGlobalObject::put(JSCell* cell, JSGlobalObject* globalObject, PropertyNam
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(cell);
+    JSGlobalObject* thisObject = jsUncheckedDowncast<JSGlobalObject*>(cell);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
 
     if (isThisValueAltered(slot, thisObject)) [[unlikely]] {
@@ -2344,7 +2344,7 @@ bool JSGlobalObject::defineOwnProperty(JSObject* object, JSGlobalObject* globalO
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(object);
+    JSGlobalObject* thisObject = jsUncheckedDowncast<JSGlobalObject*>(object);
 
     SymbolTableEntry entry;
     PropertyDescriptor currentDescriptor;
@@ -2524,7 +2524,7 @@ IterationStatus GlobalObjectDependencyFinder::operator()(HeapCell* cell, HeapCel
     if (isJSCellKind(kind) && static_cast<JSCell*>(cell)->isObject()) {
         // FIXME: This const_cast exists because this isn't a C++ lambda.
         // https://bugs.webkit.org/show_bug.cgi?id=159644
-        const_cast<GlobalObjectDependencyFinder*>(this)->visit(jsCast<JSObject*>(static_cast<JSCell*>(cell)));
+        const_cast<GlobalObjectDependencyFinder*>(this)->visit(jsUncheckedDowncast<JSObject*>(static_cast<JSCell*>(cell)));
     }
     return IterationStatus::Continue;
 }
@@ -2628,7 +2628,7 @@ inline IterationStatus ObjectsWithBrokenIndexingFinder<mode>::visit(JSObject* ob
     };
 
     if (object->inherits<JSFunction>()) {
-        JSFunction* function = jsCast<JSFunction*>(object);
+        JSFunction* function = jsUncheckedDowncast<JSFunction*>(object);
         if (FunctionRareData* rareData = function->rareData()) {
             // We only use this to cache JSFinalObjects. They do not start off with a broken indexing type.
             ASSERT(!(rareData->objectAllocationStructure() && hasBrokenIndexing(rareData->objectAllocationStructure()->indexingType())));
@@ -2644,7 +2644,7 @@ inline IterationStatus ObjectsWithBrokenIndexingFinder<mode>::visit(JSObject* ob
     }
 
     if (object->inherits<JSGlobalObject>()) {
-        JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(object);
+        JSGlobalObject* globalObject = jsUncheckedDowncast<JSGlobalObject*>(object);
         // If this globalObject is already having a bad time, then structures in its StructureCache
         // does not affect on this new JSGlobalObject's haveABadTime since they are already slow mode.
         if (!globalObject->isHavingABadTime()) {
@@ -2688,7 +2688,7 @@ IterationStatus ObjectsWithBrokenIndexingFinder<mode>::operator()(HeapCell* cell
     if (isJSCellKind(kind) && static_cast<JSCell*>(cell)->isObject()) {
         // FIXME: This const_cast exists because this isn't a C++ lambda.
         // https://bugs.webkit.org/show_bug.cgi?id=159644
-        return const_cast<ObjectsWithBrokenIndexingFinder*>(this)->visit(jsCast<JSObject*>(static_cast<JSCell*>(cell)));
+        return const_cast<ObjectsWithBrokenIndexingFinder*>(this)->visit(jsUncheckedDowncast<JSObject*>(static_cast<JSCell*>(cell)));
     }
     return IterationStatus::Continue;
 }
@@ -2888,7 +2888,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 template<typename Visitor>
 void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 { 
-    JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(cell);
+    JSGlobalObject* thisObject = jsUncheckedDowncast<JSGlobalObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 
@@ -3186,12 +3186,12 @@ bool JSGlobalObject::getOwnPropertySlot(JSObject* object, JSGlobalObject* global
 {
     if (Base::getOwnPropertySlot(object, globalObject, propertyName, slot))
         return true;
-    return symbolTableGet(jsCast<JSGlobalObject*>(object), propertyName, slot);
+    return symbolTableGet(jsUncheckedDowncast<JSGlobalObject*>(object), propertyName, slot);
 }
 
 void JSGlobalObject::clearRareData(JSCell* cell)
 {
-    jsCast<JSGlobalObject*>(cell)->m_rareData = nullptr;
+    jsUncheckedDowncast<JSGlobalObject*>(cell)->m_rareData = nullptr;
 }
 
 template<typename SpeciesWatchpoint>
@@ -3271,7 +3271,7 @@ void JSGlobalObject::tryInstallSpeciesWatchpoint(JSObject* prototype, JSObject* 
         speciesCondition = ObjectPropertyCondition::equivalence(vm, this, constructor, vm.propertyNames->speciesSymbol.impl(), speciesGetterSetter);
         break;
     case HasSpeciesProperty::No:
-        speciesCondition = ObjectPropertyCondition::absence(vm, this, constructor, vm.propertyNames->speciesSymbol.impl(), jsDynamicCast<JSObject*>(constructor->getPrototypeDirect()));
+        speciesCondition = ObjectPropertyCondition::absence(vm, this, constructor, vm.propertyNames->speciesSymbol.impl(), jsDynamicDowncast<JSObject*>(constructor->getPrototypeDirect()));
         break;
     }
 

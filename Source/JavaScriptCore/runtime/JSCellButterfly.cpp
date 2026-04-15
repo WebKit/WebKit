@@ -50,7 +50,7 @@ void JSCellButterfly::visitChildrenImpl(JSCell* cell, Visitor& visitor)
         return;
     }
 
-    Butterfly* butterfly = jsCast<JSCellButterfly*>(cell)->toButterfly();
+    Butterfly* butterfly = jsUncheckedDowncast<JSCellButterfly*>(cell)->toButterfly();
     visitor.appendValuesHidden(butterfly->contiguous().data(), butterfly->publicLength());
 }
 

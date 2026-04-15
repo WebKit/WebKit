@@ -99,9 +99,9 @@ static void jscWeakValueInitialize(JSCWeakValue* weakValue, JSCValue* value)
 
     JSC::JSValue jsValue = toJS(globalObject, jscValueGetJSValue(value));
     if (jsValue.isObject())
-        priv->weakValueRef.setObject(JSC::jsCast<JSC::JSObject*>(jsValue.asCell()), owner, weakValue);
+        priv->weakValueRef.setObject(JSC::jsUncheckedDowncast<JSC::JSObject*>(jsValue.asCell()), owner, weakValue);
     else if (jsValue.isString())
-        priv->weakValueRef.setString(JSC::jsCast<JSC::JSString*>(jsValue.asCell()), owner, weakValue);
+        priv->weakValueRef.setString(JSC::jsUncheckedDowncast<JSC::JSString*>(jsValue.asCell()), owner, weakValue);
     else
         priv->weakValueRef.setPrimitive(jsValue);
 }

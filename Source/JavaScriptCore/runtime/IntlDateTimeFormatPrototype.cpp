@@ -101,7 +101,7 @@ static double handleDateTimeValue(JSGlobalObject* globalObject, JSValue x)
     //  - Add all of the other Temporal types
     //  - Work in epoch nanoseconds
     //  - Return UDateFormat and UDateIntervalFormat depending on the type
-    TemporalInstant* instant = jsDynamicCast<TemporalInstant*>(x);
+    TemporalInstant* instant = jsDynamicDowncast<TemporalInstant*>(x);
     if (instant)
         return instant->exactTime().epochMilliseconds();
 
@@ -115,7 +115,7 @@ JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatFuncFormatDateTime, (JSGlobalObject* 
     // 12.1.7 DateTime Format Functions (ECMA-402)
     // https://tc39.github.io/ecma402/#sec-formatdatetime
 
-    IntlDateTimeFormat* format = jsDynamicCast<IntlDateTimeFormat*>(callFrame->thisValue());
+    IntlDateTimeFormat* format = jsDynamicDowncast<IntlDateTimeFormat*>(callFrame->thisValue());
     if (!format) [[unlikely]]
         return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.format called on value that's not a DateTimeFormat"_s));
 
@@ -168,7 +168,7 @@ JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatPrototypeFuncFormatToParts, (JSGlobal
     // https://tc39.github.io/ecma402/#sec-Intl.DateTimeFormat.prototype.formatToParts
 
     // Do not use unwrapForOldFunctions.
-    auto* dateTimeFormat = jsDynamicCast<IntlDateTimeFormat*>(callFrame->thisValue());
+    auto* dateTimeFormat = jsDynamicDowncast<IntlDateTimeFormat*>(callFrame->thisValue());
     if (!dateTimeFormat) [[unlikely]]
         return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.formatToParts called on value that's not a DateTimeFormat"_s));
 
@@ -186,7 +186,7 @@ JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatPrototypeFuncFormatRange, (JSGlobalOb
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // Do not use unwrapForOldFunctions.
-    auto* dateTimeFormat = jsDynamicCast<IntlDateTimeFormat*>(callFrame->thisValue());
+    auto* dateTimeFormat = jsDynamicDowncast<IntlDateTimeFormat*>(callFrame->thisValue());
     if (!dateTimeFormat) [[unlikely]]
         return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.formatRange called on value that's not a DateTimeFormat"_s));
 
@@ -211,7 +211,7 @@ JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatPrototypeFuncFormatRangeToParts, (JSG
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // Do not use unwrapForOldFunctions.
-    auto* dateTimeFormat = jsDynamicCast<IntlDateTimeFormat*>(callFrame->thisValue());
+    auto* dateTimeFormat = jsDynamicDowncast<IntlDateTimeFormat*>(callFrame->thisValue());
     if (!dateTimeFormat) [[unlikely]]
         return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.formatRangeToParts called on value that's not a DateTimeFormat"_s));
 

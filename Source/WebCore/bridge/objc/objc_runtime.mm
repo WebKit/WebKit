@@ -224,7 +224,7 @@ ObjcFallbackObjectImp::ObjcFallbackObjectImp(JSGlobalObject* globalObject, Struc
 
 void ObjcFallbackObjectImp::destroy(JSCell* cell)
 {
-    // Cannot call jsCast() during destruction.
+    // Cannot call jsUncheckedDowncast() during destruction.
     SUPPRESS_MEMORY_UNSAFE_CAST static_cast<ObjcFallbackObjectImp*>(cell)->ObjcFallbackObjectImp::~ObjcFallbackObjectImp();
 }
 
@@ -260,7 +260,7 @@ JSC_DEFINE_HOST_FUNCTION(callObjCFallbackObject, (JSGlobalObject* lexicalGlobalO
     JSC::VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* runtimeObject = jsDynamicCast<ObjCRuntimeObject*>(callFrame->thisValue());
+    auto* runtimeObject = jsDynamicDowncast<ObjCRuntimeObject*>(callFrame->thisValue());
     if (!runtimeObject)
         return throwVMTypeError(lexicalGlobalObject, scope);
 
@@ -278,7 +278,7 @@ JSC_DEFINE_HOST_FUNCTION(callObjCFallbackObject, (JSGlobalObject* lexicalGlobalO
     if ([targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)]){
         auto* objcClass = downcast<ObjcClass>(objcInstance->getClass());
         std::unique_ptr<ObjcMethod> fallbackMethod(makeUnique<ObjcMethod>(objcClass->isa(), @selector(invokeUndefinedMethodFromWebScript:withArguments:)));
-        auto& nameIdentifier = jsCast<ObjcFallbackObjectImp*>(callFrame->jsCallee())->propertyName();
+        auto& nameIdentifier = jsUncheckedDowncast<ObjcFallbackObjectImp*>(callFrame->jsCallee())->propertyName();
         fallbackMethod->setJavaScriptName(nameIdentifier.createCFString().get());
         result = objcInstance->invokeObjcMethod(lexicalGlobalObject, callFrame, fallbackMethod.get());
     }
@@ -292,7 +292,7 @@ CallData ObjcFallbackObjectImp::getCallData(JSCell* cell)
 {
     CallData callData;
 
-    ObjcFallbackObjectImp* thisObject = jsCast<ObjcFallbackObjectImp*>(cell);
+    ObjcFallbackObjectImp* thisObject = jsUncheckedDowncast<ObjcFallbackObjectImp*>(cell);
     id targetObject = thisObject->_instance->getObject();
     if ([targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)]) {
         callData.type = CallData::Type::Native;
@@ -314,7 +314,7 @@ JSC_DEFINE_HOST_FUNCTION(convertObjCFallbackObjectToPrimitive, (JSGlobalObject* 
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* thisObject = jsDynamicCast<ObjcFallbackObjectImp*>(callFrame->thisValue());
+    auto* thisObject = jsDynamicDowncast<ObjcFallbackObjectImp*>(callFrame->thisValue());
     if (!thisObject)
         return throwVMTypeError(lexicalGlobalObject, scope, "ObjcFallbackObject[Symbol.toPrimitive] method called on incompatible |this| value."_s);
 

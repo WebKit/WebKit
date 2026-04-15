@@ -1553,7 +1553,7 @@ gboolean jsc_value_is_array_buffer(JSCValue* value)
     if (!jsValue.isObject())
         return FALSE;
 
-    return !!jsDynamicCast<JSArrayBuffer*>(jsValue.getObject());
+    return !!jsDynamicDowncast<JSArrayBuffer*>(jsValue.getObject());
 }
 
 /**

@@ -155,7 +155,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
         return;
 
     if (scriptExecutionContext.isDocument()) {
-        auto* window = jsCast<JSDOMWindow*>(globalObject);
+        auto* window = jsUncheckedDowncast<JSDOMWindow*>(globalObject);
         RefPtr localDOMWindow = dynamicDowncast<LocalDOMWindow>(window->wrapped());
         if (!localDOMWindow || !localDOMWindow->isCurrentlyDisplayedInFrame())
             return;
@@ -175,7 +175,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
         return;
 
     RefPtr<Event> savedEvent;
-    auto* jsFunctionWindow = jsDynamicCast<JSDOMWindow*>(jsFunctionGlobalObject);
+    auto* jsFunctionWindow = jsDynamicDowncast<JSDOMWindow*>(jsFunctionGlobalObject);
     if (jsFunctionWindow) {
         savedEvent = jsFunctionWindow->currentEvent();
 
@@ -296,7 +296,7 @@ String JSEventListener::functionName() const
     auto& vm = m_isolatedWorld->vm();
     JSC::JSLockHolder lock(vm);
 
-    auto* handlerFunction = JSC::jsDynamicCast<JSC::JSFunction*>(m_jsFunction.get());
+    auto* handlerFunction = JSC::jsDynamicDowncast<JSC::JSFunction*>(m_jsFunction.get());
     if (!handlerFunction)
         return { };
 

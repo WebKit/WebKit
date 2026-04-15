@@ -208,7 +208,7 @@ void CallLinkInfo::visitWeak(VM& vm)
 
     if (haveLastSeenCallee() && !vm.heap.isMarked(lastSeenCallee())) {
         if (lastSeenCallee()->type() == JSFunctionType)
-            handleSpecificCallee(jsCast<JSFunction*>(lastSeenCallee()));
+            handleSpecificCallee(jsUncheckedDowncast<JSFunction*>(lastSeenCallee()));
         else
             m_clearedByGC = true;
         m_lastSeenCallee.clear();
@@ -245,7 +245,7 @@ void DataOnlyCallLinkInfo::initialize(VM& vm, CodeBlock* owner, CallType callTyp
 
 std::tuple<CodeBlock*, BytecodeIndex> CallLinkInfo::retrieveCaller(JSCell* owner)
 {
-    auto* codeBlock = jsDynamicCast<CodeBlock*>(owner);
+    auto* codeBlock = jsDynamicDowncast<CodeBlock*>(owner);
     if (!codeBlock)
         return { };
     CodeOrigin codeOrigin = this->codeOrigin();
@@ -292,7 +292,7 @@ JSGlobalObject* CallLinkInfo::globalObjectForSlowPath(JSCell* owner)
     if (codeBlock)
         return codeBlock->globalObject();
 #if ENABLE(WEBASSEMBLY)
-    auto* module = jsDynamicCast<JSWebAssemblyModule*>(owner);
+    auto* module = jsDynamicDowncast<JSWebAssemblyModule*>(owner);
     if (module)
         return module->realm();
 #endif
@@ -554,7 +554,7 @@ CodeBlock* DirectCallLinkInfo::retrieveCodeBlock(FunctionExecutable* functionExe
     if (!codeBlock)
         return nullptr;
 
-    CodeBlock* ownerCodeBlock = jsDynamicCast<CodeBlock*>(owner());
+    CodeBlock* ownerCodeBlock = jsDynamicDowncast<CodeBlock*>(owner());
     if (!ownerCodeBlock)
         return nullptr;
 
@@ -587,7 +587,7 @@ void DirectCallLinkInfo::repatchSpeculatively()
         return;
     }
 
-    FunctionExecutable* functionExecutable = jsDynamicCast<FunctionExecutable*>(m_executable);
+    FunctionExecutable* functionExecutable = jsDynamicDowncast<FunctionExecutable*>(m_executable);
     if (!functionExecutable) {
         initialize();
         return;
@@ -611,7 +611,7 @@ void DirectCallLinkInfo::repatchSpeculatively()
 void DirectCallLinkInfo::validateSpeculativeRepatchOnMainThread(VM&)
 {
     constexpr bool verbose = false;
-    FunctionExecutable* functionExecutable = jsDynamicCast<FunctionExecutable*>(m_executable);
+    FunctionExecutable* functionExecutable = jsDynamicDowncast<FunctionExecutable*>(m_executable);
     if (!functionExecutable)
         return;
 

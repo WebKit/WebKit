@@ -166,7 +166,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyMemory, (JSGlobalObject* globalOb
         JSValue argument = callFrame->argument(0);
         if (!argument.isObject())
             return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Memory expects its first argument to be an object"_s)));
-        memoryDescriptor = jsCast<JSObject*>(argument);
+        memoryDescriptor = jsUncheckedDowncast<JSObject*>(argument);
     }
 
     JSWebAssemblyMemory* memory = WebAssemblyMemoryConstructor::createMemoryFromDescriptor(globalObject, webAssemblyMemoryStructure, memoryDescriptor);

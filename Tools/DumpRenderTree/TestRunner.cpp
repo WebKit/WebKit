@@ -309,7 +309,7 @@ static JSValueRef setAudioResultCallback(JSContextRef context, JSObjectRef funct
     JSC::VM& vm = toJS(context)->vm();
     JSC::JSLockHolder lock(vm);
 
-    JSC::JSArrayBufferView* jsBufferView = JSC::jsDynamicCast<JSC::JSArrayBufferView*>(toJS(toJS(context), arguments[0]));
+    JSC::JSArrayBufferView* jsBufferView = JSC::jsDynamicDowncast<JSC::JSArrayBufferView*>(toJS(toJS(context), arguments[0]));
     ASSERT(jsBufferView);
     RefPtr<JSC::ArrayBufferView> bufferView = jsBufferView->unsharedImpl();
     auto buffer = static_cast<const uint8_t*>(bufferView->baseAddress());
@@ -2354,7 +2354,7 @@ void TestRunner::setOpenPanelFilesMediaIcon(JSContextRef context, JSValueRef med
     JSC::VM& vm = toJS(context)->vm();
     JSC::JSLockHolder lock(vm);
     
-    JSC::JSArrayBufferView* jsBufferView = JSC::jsDynamicCast<JSC::JSArrayBufferView*>(toJS(toJS(context), mediaIcon));
+    JSC::JSArrayBufferView* jsBufferView = JSC::jsDynamicDowncast<JSC::JSArrayBufferView*>(toJS(toJS(context), mediaIcon));
     ASSERT(jsBufferView);
     RefPtr<JSC::ArrayBufferView> bufferView = jsBufferView->unsharedImpl();
     auto buffer = static_cast<const uint8_t*>(bufferView->baseAddress());

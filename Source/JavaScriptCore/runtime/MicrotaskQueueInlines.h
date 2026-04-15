@@ -42,14 +42,14 @@ inline JSCell* QueuedTask::dispatcher() const
 inline JSGlobalObject* QueuedTask::globalObject() const
 {
     if (isJSMicrotaskDispatcher()) [[unlikely]]
-        return jsCast<JSMicrotaskDispatcher*>(dispatcher())->globalObject();
-    return jsCast<JSGlobalObject*>(dispatcher());
+        return jsUncheckedDowncast<JSMicrotaskDispatcher*>(dispatcher())->globalObject();
+    return jsUncheckedDowncast<JSGlobalObject*>(dispatcher());
 }
 
 inline JSMicrotaskDispatcher* QueuedTask::jsMicrotaskDispatcher() const
 {
     if (isJSMicrotaskDispatcher()) [[unlikely]]
-        return jsCast<JSMicrotaskDispatcher*>(dispatcher());
+        return jsUncheckedDowncast<JSMicrotaskDispatcher*>(dispatcher());
     return nullptr;
 }
 
