@@ -134,6 +134,7 @@ enum class SDKAlignedBehavior {
     GetBoundingClientRectZoomed,
     CrashWhenMutatingProcessAssertionsFromBackgroundThread,
     NoFontFaceSetConstructor,
+    EnableUserScriptAndUserStyleInterning,
 
     NumberOfBehaviors
 };

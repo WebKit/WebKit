@@ -53,6 +53,10 @@
 #include "WebExtensionMatchPattern.h"
 #endif
 
+#if PLATFORM(COCOA)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -98,6 +102,14 @@ void WebUserContentControllerProxy::removeNetworkProcess(NetworkProcessProxy& pr
 
 IPC::TransferString WebUserContentControllerProxy::cachedTransferString(const String& string) const
 {
+#if PLATFORM(COCOA)
+    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::EnableUserScriptAndUserStyleInterning)) {
+        auto result = IPC::TransferString::create(string);
+        RELEASE_ASSERT(result);
+        return *result;
+    }
+#endif
+
     if (auto maybeTransferString = m_transferStringCache.getOptional(string))
         return *maybeTransferString;
 

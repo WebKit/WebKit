@@ -242,6 +242,10 @@ static SDKAlignedBehaviors computeSDKAlignedBehaviors()
     if (linkedBefore(dyld_2025_SU_B_os_versions, DYLD_IOS_VERSION_26_1, DYLD_MACOSX_VERSION_26_1))
         disableBehavior(SDKAlignedBehavior::GetBoundingClientRectZoomed);
 
+    // This should be disabled unconditionally until WTF::String is made thread-safe. See the comment in UserScript.cpp.
+    // It's only enabled for clients that purposely enable all LOOA checks.
+    disableBehavior(SDKAlignedBehavior::EnableUserScriptAndUserStyleInterning);
+
     disableAdditionalSDKAlignedBehaviors(behaviors);
 
     return behaviors;
