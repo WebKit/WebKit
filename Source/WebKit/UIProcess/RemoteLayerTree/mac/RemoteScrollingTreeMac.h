@@ -64,8 +64,8 @@ private:
     void scrollingTreeNodeDidStopAnimatedScroll(WebCore::ScrollingTreeScrollingNode&) override;
     void scrollingTreeNodeDidStopWheelEventScroll(WebCore::ScrollingTreeScrollingNode&) override;
     void scrollingTreeNodeDidStopProgrammaticScroll(WebCore::ScrollingTreeScrollingNode&) override;
-    bool scrollingTreeNodeRequestsScroll(WebCore::ScrollingNodeID, const WebCore::RequestedScrollData&) override WTF_REQUIRES_LOCK(m_treeLock);
-    bool scrollingTreeNodeRequestsKeyboardScroll(WebCore::ScrollingNodeID, const WebCore::RequestedKeyboardScrollData&) override WTF_REQUIRES_LOCK(m_treeLock);
+    bool scrollingTreeNodeRequestsScroll(WebCore::ScrollingNodeID, const WebCore::RequestedScrollData&) override;
+    bool scrollingTreeNodeRequestsKeyboardScroll(WebCore::ScrollingNodeID, const WebCore::RequestedKeyboardScrollData&) override;
     void currentSnapPointIndicesDidChange(WebCore::ScrollingNodeID, std::optional<unsigned> horizontal, std::optional<unsigned> vertical) override;
     void reportExposedUnfilledArea(MonotonicTime, unsigned unfilledArea) override;
     void reportSynchronousScrollingReasonsChanged(MonotonicTime, OptionSet<WebCore::SynchronousScrollingReason>) override;
@@ -100,13 +100,10 @@ private:
 
     Ref<WebCore::ScrollingTreeNode> createScrollingTreeNode(WebCore::ScrollingNodeType, WebCore::ScrollingNodeID) override;
 
-    HashMap<WebCore::ScrollingNodeID, WebCore::RequestedScrollData> m_nodesWithPendingScrollAnimations WTF_GUARDED_BY_LOCK(m_treeLock);
-    HashMap<WebCore::ScrollingNodeID, WebCore::RequestedKeyboardScrollData> m_nodesWithPendingKeyboardScrollAnimations WTF_GUARDED_BY_LOCK(m_treeLock);
+    HashMap<WebCore::ScrollingNodeID, WebCore::RequestedScrollData> m_nodesWithPendingScrollAnimations; // Guarded by m_treeLock but used via call chains that can't be annotated.
+    HashMap<WebCore::ScrollingNodeID, WebCore::RequestedKeyboardScrollData> m_nodesWithPendingKeyboardScrollAnimations; // Guarded by m_treeLock but used via call chains that can't be annotated.
 
-    // Protects the CA layer tree during hit testing. Held on the main thread
-    // during layer tree commits, and on the scrolling thread during wheel event
-    // handling. See lock ordering comment in RemoteLayerTreeEventDispatcher.h.
-    mutable Lock m_layerHitTestMutex WTF_ACQUIRED_LOCK_BEFORE(m_treeLock);
+    mutable Lock m_layerHitTestMutex;
 
     Condition m_waitingForBeganEventCondition;
     bool m_receivedBeganEventFromMainThread WTF_GUARDED_BY_LOCK(m_treeLock) { false };

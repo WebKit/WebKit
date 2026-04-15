@@ -113,10 +113,10 @@ protected:
     bool m_hasNodesWithSynchronousScrollingReasons WTF_GUARDED_BY_LOCK(m_treeLock) { false };
 
 #if ENABLE(THREADED_ANIMATIONS)
-    void updateProgressBasedTimelinesForNode(const WebCore::ScrollingTreeScrollingNode&) WTF_REQUIRES_LOCK(m_treeLock);
+    void updateProgressBasedTimelinesForNode(const WebCore::ScrollingTreeScrollingNode&);
 
 private:
-    std::unique_ptr<RemoteProgressBasedTimelineRegistry> m_progressBasedTimelineRegistry WTF_GUARDED_BY_LOCK(m_treeLock);
+    std::unique_ptr<RemoteProgressBasedTimelineRegistry> m_progressBasedTimelineRegistry;
 #endif
 };
 

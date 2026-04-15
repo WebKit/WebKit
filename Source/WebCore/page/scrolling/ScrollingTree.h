@@ -285,16 +285,7 @@ protected:
     HashSet<ScrollingNodeID> nodesWithActiveScrollAnimations();
     WEBCORE_EXPORT void serviceScrollAnimations(MonotonicTime) WTF_REQUIRES_LOCK(m_treeLock);
 
-    // Primary lock protecting tree structure (node map, root node, layer positions).
-    // Held on the main thread during commitTreeState() and on the scrolling thread
-    // during displayDidRefresh() and scroll animation servicing.
-    // On macOS, also nested inside RemoteLayerTreeEventDispatcher::m_renderingSyncLock
-    // and m_animationLock. See lock ordering comment in RemoteLayerTreeEventDispatcher.h.
-    //
-    // The other locks below (m_treeStateLock, m_swipeStateLock, etc.) are deliberately
-    // independent of m_treeLock to avoid contention and deadlock — they protect
-    // transient state that can be read without holding the tree structure lock.
-    mutable Lock m_treeLock;
+    mutable Lock m_treeLock; // Protects the scrolling tree.
 
 private:
     bool updateTreeFromStateNodeRecursive(const ScrollingStateNode*, struct CommitTreeState&) WTF_REQUIRES_LOCK(m_treeLock);

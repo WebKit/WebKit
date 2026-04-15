@@ -53,13 +53,12 @@ RemoteScrollingTreeIOS::RemoteScrollingTreeIOS(RemoteScrollingCoordinatorProxy& 
 
 RemoteScrollingTreeIOS::~RemoteScrollingTreeIOS() = default;
 
-void RemoteScrollingTreeIOS::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNode& node, ScrollingLayerPositionAction scrollingLayerPositionAction) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+void RemoteScrollingTreeIOS::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNode& node, ScrollingLayerPositionAction scrollingLayerPositionAction)
 {
     ASSERT(isMainRunLoop());
 
 #if ENABLE(THREADED_ANIMATIONS)
     updateProgressBasedTimelinesForNode(node);
-
     if (CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get())
         scrollingCoordinatorProxy->progressBasedTimelinesWereUpdatedForNode(node);
 #endif
