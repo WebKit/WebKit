@@ -1123,5 +1123,5 @@
 #endif
 
 #if !defined(ENABLE_CRASH_DUMP_INFO)
-#define ENABLE_CRASH_DUMP_INFO 1
+#define ENABLE_CRASH_DUMP_INFO 0
 #endif

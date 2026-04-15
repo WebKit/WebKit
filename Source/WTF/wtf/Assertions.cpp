@@ -367,7 +367,6 @@ void WTFPrintBacktrace(std::span<void* const> stack)
     WTFPrintBacktraceWithPrefixAndPrintStream(out, stack, "");
 }
 
-#if !defined(NDEBUG) || !(OS(DARWIN) || PLATFORM(PLAYSTATION) || OS(LINUX)) || !ENABLE(CRASH_DUMP_INFO)
 void WTFCrash()
 {
 #if ASAN_ENABLED
@@ -381,15 +380,6 @@ void WTFCrash()
     __builtin_trap();
 #endif // ASAN_ENABLED
 }
-#else
-// We need to keep WTFCrash() around (even on non-debug OS(DARWIN) builds) as a workaround
-// for presently shipping (circa early 2016) SafariForWebKitDevelopment binaries which still
-// expects to link to it.
-void WTFCrash()
-{
-    CRASH();
-}
-#endif // !defined(NDEBUG) || !(OS(DARWIN) || PLATFORM(PLAYSTATION))
 
 #if ENABLE(CONJECTURE_ASSERT)
 int wtfConjectureAssertIsEnabled = 0;
@@ -733,6 +723,11 @@ void WTFCrashWithInfoImpl(int, const char*, const char*, UCPURegister, UCPURegis
 void WTFCrashWithInfoImpl(int, const char*, const char*, UCPURegister, UCPURegister, UCPURegister) { CRASH(); }
 void WTFCrashWithInfoImpl(int, const char*, const char*, UCPURegister, UCPURegister) { CRASH(); }
 void WTFCrashWithInfoImpl(int, const char*, const char*, UCPURegister) { CRASH(); }
+
+void WTFCrashWithInfo(int, const char*, const char*)
+{
+    CRASH();
+}
 
 #endif // (OS(DARWIN) || PLATFORM(PLAYSTATION)) && (CPU(X64_64) || CPU(ARM64))
 

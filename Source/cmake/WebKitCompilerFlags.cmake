@@ -142,6 +142,11 @@ if (DEVELOPER_MODE OR ARM)
     WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-fno-omit-frame-pointer)
 endif ()
 
+if (DEVELOPER_MODE)
+    # This lets us get good backtraces in noreturn functions.
+    WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-fno-optimize-sibling-calls -mno-omit-leaf-frame-pointer)
+endif ()
+
 if (COMPILER_IS_GCC_OR_CLANG)
     if (COMPILER_IS_CLANG OR (DEVELOPER_MODE AND NOT ARM))
         # Split debug information in ".debug_types" / ".debug_info" sections - this leads

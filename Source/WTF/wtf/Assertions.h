@@ -329,14 +329,13 @@ WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached(void);
 #elif CPU(X86_64) || CPU(X86) || CPU(ARM64) || CPU(ARM_THUMB2)
 #define WTFBreakpointTrap()  __asm__ volatile (WTF_FATAL_CRASH_INST)
 #else
-#define WTFBreakpointTrap() WTFCrash() // Not implemented.
+#define WTFBreakpointTrap() __builtin_trap()
 #endif
 
 #define WTFBreakpointTrapUnderConstexprContext() __builtin_trap()
 
 #ifndef CRASH
-
-#if defined(NDEBUG)
+#if defined(NDEBUG) && ENABLE(CRASH_DUMP_INFO)
 // Crash with a SIGTRAP i.e EXC_BREAKPOINT.
 // We are not using __builtin_trap because it is only guaranteed to abort, but not necessarily
 // trigger a SIGTRAP. Instead, we use inline asm to ensure that we trigger the SIGTRAP.
@@ -348,19 +347,10 @@ WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached(void);
     WTFBreakpointTrapUnderConstexprContext(); \
     __builtin_unreachable(); \
 } while (0)
-#elif !ENABLE(DEVELOPER_MODE) && !OS(DARWIN)
-#ifdef __cplusplus
-#define CRASH() std::abort()
-#define CRASH_UNDER_CONSTEXPR_CONTEXT() WTFBreakpointTrapUnderConstexprContext()
-#else
-#define CRASH() abort()
-#define CRASH_UNDER_CONSTEXPR_CONTEXT() WTFBreakpointTrapUnderConstexprContext()
-#endif // __cplusplus
-#else
+#else // defined(NDEBUG) && ENABLE(CRASH_DUMP_INFO)
 #define CRASH() WTFCrash()
 #define CRASH_UNDER_CONSTEXPR_CONTEXT() WTFBreakpointTrapUnderConstexprContext()
-#endif
-
+#endif // defined(NDEBUG) && ENABLE(CRASH_DUMP_INFO)
 #endif // !defined(CRASH)
 
 WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void NODELETE WTFCrash(void);
@@ -933,7 +923,7 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void WTFCrashWithInfoI
 #if !ASAN_ENABLED && (CPU(X86_64) || CPU(ARM64) || CPU(ARM_THUMB2)) && ENABLE(CRASH_DUMP_INFO)
 NO_RETURN_DUE_TO_CRASH ALWAYS_INLINE void WTFCrashWithInfo(int line, const char* file, const char* function);
 #else
-NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void WTFCrashWithInfo(int line, const char* file, const char* function);
+WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED NEVER_INLINE void WTFCrashWithInfo(int line, const char* file, const char* function);
 #endif
 
 template<typename T>
@@ -996,16 +986,6 @@ NO_RETURN_DUE_TO_CRASH ALWAYS_INLINE void WTFCrashWithInfo(int line, const char*
     register UCPURegister x2GPR __asm__(CRASH_ARG_GPR2) = x2Value;
     __asm__ volatile (WTF_FATAL_CRASH_INST : : "r"(x0GPR), "r"(x1GPR), "r"(x2GPR));
     __builtin_unreachable();
-}
-
-#else
-
-inline void WTFCrashWithInfo(int, const char*, const char*)
-#if COMPILER(CLANG)
-    __attribute__((optnone))
-#endif
-{
-    CRASH();
 }
 
 #endif
