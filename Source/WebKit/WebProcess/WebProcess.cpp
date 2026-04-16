@@ -1392,10 +1392,10 @@ NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
         RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }] {
             for (auto& webPage : m_pageMap.values())
                 webPage->synchronizeCORSDisablingPatternsWithNetworkProcess();
-        });
 
-        if (std::exchange(m_needsIDBConnectionRefreshForWorkers, false))
-            refreshIDBConnectionForWorkers();
+            if (std::exchange(m_needsIDBConnectionRefreshForWorkers, false))
+                refreshIDBConnectionForWorkers();
+        });
     }
     
     return *m_networkProcessConnection;
