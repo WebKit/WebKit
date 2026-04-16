@@ -3,6 +3,14 @@
 set(WEBKIT_MAC_VERSION 615.1.1)
 set(MACOSX_FRAMEWORK_BUNDLE_VERSION 615.1.1+)
 
+# Enable Objective-C / Objective-C++ so .m/.mm sources use the OBJC/OBJCXX
+# compile rules. Without this CMake falls back to compiling .mm as CXX, which
+# causes target_precompile_headers() to generate only a CXX PCH (Objective-C
+# disabled) that is then -included into .mm sources where Objective-C is
+# enabled by file extension, producing:
+#   "Objective-C was disabled in precompiled file ... but is currently enabled"
+enable_language(OBJC OBJCXX)
+
 WEBKIT_OPTION_BEGIN()
 # Private options shared with other WebKit ports. Add options here only if
 # we need a value different from the default defined in WebKitFeatures.cmake.
@@ -296,6 +304,8 @@ if (CMAKE_CXX_COMPILER_LAUNCHER OR CMAKE_C_COMPILER_LAUNCHER)
     # -frecord-command-line embeds absolute paths; use CMAKE_*_FLAGS for all languages.
     string(APPEND CMAKE_C_FLAGS " -fno-record-command-line")
     string(APPEND CMAKE_CXX_FLAGS " -fno-record-command-line")
+    string(APPEND CMAKE_OBJC_FLAGS " -fno-record-command-line")
+    string(APPEND CMAKE_OBJCXX_FLAGS " -fno-record-command-line")
 endif ()
 
 # Dead-strip unused symbols and dylibs.

@@ -567,35 +567,28 @@ set(WebKitLegacy_LEGACY_FORWARDING_HEADERS_FILES
 
 target_precompile_headers(WebKitLegacy PRIVATE mac/WebKitPrefix.h)
 
-set(C99_FILES
-    mac/DefaultDelegates/WebDefaultEditingDelegate.m
-
-    mac/Misc/WebKitErrors.m
-    mac/Misc/WebKitStatistics.m
-    mac/Misc/WebNSControlExtras.m
-    mac/Misc/WebNSEventExtras.m
-    mac/Misc/WebNSPrintOperationExtras.m
-    mac/Misc/WebNSURLRequestExtras.m
-    mac/Misc/WebNSViewExtras.m
-    mac/Misc/WebNSWindowExtras.m
-
-    mac/WebView/WebFormDelegate.m
-)
-
 set(CPP_FILES
     Storage/StorageThread.cpp
 )
 
 foreach (_file ${WebKitLegacy_SOURCES})
-    list(FIND C99_FILES ${_file} _c99_index)
     list(FIND CPP_FILES ${_file} _cpp_index)
-    if (NOT ${_c99_index} EQUAL -1)
-        set_source_files_properties(${_file} PROPERTIES COMPILE_FLAGS -std=c99)
-    elseif (NOT ${_cpp_index} EQUAL -1)
+    if (NOT ${_cpp_index} EQUAL -1)
+        # Truly C++ (not Objective-C++): compile via the CXX rule with -std=c++2b.
         set_source_files_properties(${_file} PROPERTIES COMPILE_FLAGS -std=c++2b)
-    else ()
-        set_source_files_properties(${_file} PROPERTIES COMPILE_FLAGS "-ObjC++ -std=c++2b")
+    elseif (_file MATCHES "\\.cpp$")
+        # Most WebKitLegacy .cpp files transitively include Objective-C
+        # headers (e.g. WebView.h declares `@class`), so they must be compiled
+        # as Objective-C++. CMake assigns CXX to .cpp by extension; force the
+        # source language to OBJCXX so they go through the OBJCXX rule with
+        # the OBJCXX PCH and Objective-C semantics enabled. This replaces the
+        # previous "-ObjC++ -std=c++2b" COMPILE_FLAGS override, which conflicts
+        # with the proper OBJC/OBJCXX language pipeline now that those
+        # languages are enabled (see Source/cmake/OptionsMac.cmake).
+        set_source_files_properties(${_file} PROPERTIES LANGUAGE OBJCXX)
     endif ()
+    # .m / .mm sources need no override: CMake routes them through the OBJC /
+    # OBJCXX compile rules with the appropriate language semantics.
 endforeach ()
 
 foreach (_file ${WebKitLegacy_LEGACY_FORWARDING_HEADERS_FILES})

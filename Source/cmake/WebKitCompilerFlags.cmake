@@ -52,44 +52,74 @@ endfunction()
 
 # Prepends flags to CMAKE_C_FLAGS if supported by the C compiler. Almost all
 # flags should be prepended to allow the user to override them.
+#
+# Also mirrors the resulting flags into CMAKE_OBJC_FLAGS so that .m sources on
+# Apple ports get the same WebKit-curated flag set as their .c counterparts.
+# This is a no-op on ports where OBJC is not an enabled language.
 macro(WEBKIT_PREPEND_GLOBAL_C_FLAGS)
     WEBKIT_VAR_ADD_COMPILER_FLAGS(C PREPEND CMAKE_C_FLAGS ${ARGN})
+    WEBKIT_VAR_ADD_COMPILER_FLAGS(C PREPEND CMAKE_OBJC_FLAGS ${ARGN})
 endmacro()
 
 # Appends flags to CMAKE_C_FLAGS if supported by the C compiler. This macro
 # should be used sparingly. Only append flags if the user must not be allowed to
 # override them.
+#
+# See WEBKIT_PREPEND_GLOBAL_C_FLAGS for the OBJC mirroring rationale.
 macro(WEBKIT_APPEND_GLOBAL_C_FLAGS)
     WEBKIT_VAR_ADD_COMPILER_FLAGS(C APPEND CMAKE_C_FLAGS ${ARGN})
+    WEBKIT_VAR_ADD_COMPILER_FLAGS(C APPEND CMAKE_OBJC_FLAGS ${ARGN})
 endmacro()
 
 # Prepends flags to CMAKE_CXX_FLAGS if supported by the C++ compiler. Almost all
 # flags should be prepended to allow the user to override them.
+#
+# Also mirrors the resulting flags into CMAKE_OBJCXX_FLAGS so that .mm sources
+# on Apple ports get the same WebKit-curated flag set (warnings, -fno-rtti,
+# -fno-exceptions, etc.) as their .cpp counterparts. Without this mirroring,
+# .mm sources are compiled with default OBJCXX flags (notably *with* RTTI),
+# which produces undefined-symbol errors at link time when ObjC++ subclasses
+# reference RTTI-less C++ base classes' typeinfo. This is a no-op on ports
+# where OBJCXX is not an enabled language.
 macro(WEBKIT_PREPEND_GLOBAL_CXX_FLAGS)
     WEBKIT_VAR_ADD_COMPILER_FLAGS(CXX PREPEND CMAKE_CXX_FLAGS ${ARGN})
+    WEBKIT_VAR_ADD_COMPILER_FLAGS(CXX PREPEND CMAKE_OBJCXX_FLAGS ${ARGN})
 endmacro()
 
 # Appends flags to CMAKE_CXX_FLAGS if supported by the C++ compiler. This macro
 # should be used sparingly. Only append flags if the user must not be allowed to
 # override them.
+#
+# See WEBKIT_PREPEND_GLOBAL_CXX_FLAGS for the OBJCXX mirroring rationale.
 macro(WEBKIT_APPEND_GLOBAL_CXX_FLAGS)
     WEBKIT_VAR_ADD_COMPILER_FLAGS(CXX APPEND CMAKE_CXX_FLAGS ${ARGN})
+    WEBKIT_VAR_ADD_COMPILER_FLAGS(CXX APPEND CMAKE_OBJCXX_FLAGS ${ARGN})
 endmacro()
 
 # Prepends flags to CMAKE_C_FLAGS and CMAKE_CXX_FLAGS if supported by the C
 # or C++ compiler, respectively. Almost all flags should be prepended to allow
 # the user to override them.
+#
+# Also mirrors into CMAKE_OBJC_FLAGS / CMAKE_OBJCXX_FLAGS — see the per-language
+# macros above for rationale.
 macro(WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS)
     WEBKIT_VAR_ADD_COMPILER_FLAGS(C PREPEND CMAKE_C_FLAGS ${ARGN})
+    WEBKIT_VAR_ADD_COMPILER_FLAGS(C PREPEND CMAKE_OBJC_FLAGS ${ARGN})
     WEBKIT_VAR_ADD_COMPILER_FLAGS(CXX PREPEND CMAKE_CXX_FLAGS ${ARGN})
+    WEBKIT_VAR_ADD_COMPILER_FLAGS(CXX PREPEND CMAKE_OBJCXX_FLAGS ${ARGN})
 endmacro()
 
 # Appends flags to CMAKE_C_FLAGS and CMAKE_CXX_FLAGS if supported by the C or
 # C++ compiler, respectively. This macro should be used sparingly. Only append
 # flags if the user must not be allowed to override them.
+#
+# Also mirrors into CMAKE_OBJC_FLAGS / CMAKE_OBJCXX_FLAGS — see the per-language
+# macros above for rationale.
 macro(WEBKIT_APPEND_GLOBAL_COMPILER_FLAGS)
     WEBKIT_VAR_ADD_COMPILER_FLAGS(C APPEND CMAKE_C_FLAGS ${ARGN})
+    WEBKIT_VAR_ADD_COMPILER_FLAGS(C APPEND CMAKE_OBJC_FLAGS ${ARGN})
     WEBKIT_VAR_ADD_COMPILER_FLAGS(CXX APPEND CMAKE_CXX_FLAGS ${ARGN})
+    WEBKIT_VAR_ADD_COMPILER_FLAGS(CXX APPEND CMAKE_OBJCXX_FLAGS ${ARGN})
 endmacro()
 
 # Appends flags to COMPILE_OPTIONS of _subject if supported by the C
@@ -304,6 +334,9 @@ endif ()
 if (LTO_MODE AND COMPILER_IS_CLANG AND NOT MSVC)
     set(CMAKE_C_FLAGS "-flto=${LTO_MODE} ${CMAKE_C_FLAGS}")
     set(CMAKE_CXX_FLAGS "-flto=${LTO_MODE} ${CMAKE_CXX_FLAGS}")
+    # Mirror to OBJC/OBJCXX for Apple ports — see compiler-flag macro comments.
+    set(CMAKE_OBJC_FLAGS "-flto=${LTO_MODE} ${CMAKE_OBJC_FLAGS}")
+    set(CMAKE_OBJCXX_FLAGS "-flto=${LTO_MODE} ${CMAKE_OBJCXX_FLAGS}")
     set(CMAKE_EXE_LINKER_FLAGS "-flto=${LTO_MODE} ${CMAKE_EXE_LINKER_FLAGS}")
     set(CMAKE_SHARED_LINKER_FLAGS "-flto=${LTO_MODE} ${CMAKE_SHARED_LINKER_FLAGS}")
     set(CMAKE_MODULE_LINKER_FLAGS "-flto=${LTO_MODE} ${CMAKE_MODULE_LINKER_FLAGS}")
@@ -361,6 +394,10 @@ if (COMPILER_IS_GCC_OR_CLANG)
 
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${SANITIZER_COMPILER_FLAGS}")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SANITIZER_COMPILER_FLAGS}")
+        # Apple ports also enable OBJC/OBJCXX so .m/.mm sources need the same flags.
+        # On ports where these languages are not enabled, setting these variables is harmless.
+        set(CMAKE_OBJC_FLAGS "${CMAKE_OBJC_FLAGS} ${SANITIZER_COMPILER_FLAGS}")
+        set(CMAKE_OBJCXX_FLAGS "${CMAKE_OBJCXX_FLAGS} ${SANITIZER_COMPILER_FLAGS}")
         set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${SANITIZER_LINK_FLAGS}")
         set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${SANITIZER_LINK_FLAGS}")
         set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${SANITIZER_LINK_FLAGS}")
