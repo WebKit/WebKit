@@ -99,11 +99,11 @@ public:
     bool isNull() const { return std::holds_alternative<std::nullptr_t>(m_value); }
     bool isValid() const;
     WEBCORE_EXPORT static bool isValidValue(const ValueVariant&);
-    IndexedDB::KeyType type() const;
+    WEBCORE_EXPORT IndexedDB::KeyType type() const;
 
     WEBCORE_EXPORT friend std::weak_ordering operator<=>(const IDBKeyData&, const IDBKeyData&);
 
-    bool operator==(const IDBKeyData& other) const;
+    WEBCORE_EXPORT bool operator==(const IDBKeyData& other) const;
 
     String string() const
     {
