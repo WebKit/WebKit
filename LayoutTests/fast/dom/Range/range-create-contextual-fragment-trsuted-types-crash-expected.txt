@@ -1,0 +1,4 @@
+This tests calling createContextualFragment with trusted types createHTML callback which clears range's endpoints.
+WebKit should not crash or hit any assertions under ASAN and you should see PASS below:
+
+PASS
