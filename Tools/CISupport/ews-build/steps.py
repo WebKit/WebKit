@@ -3418,19 +3418,8 @@ class CompileWebKit(shell.Compile, AddToLogMixin, ShellMixin):
         self.build.buildFinished([MSG_FOR_EXCESSIVE_LOGS], FAILURE)
 
     def follow_up_steps(self):
-        if self.getProperty('platform') in self.APPLE_PLATFORMS and USE_S3 and SHOULD_FILTER_LOGS and CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES + TESTING_ENVIRONMENT_HOSTNAMES:
-            return [
-                GenerateS3URL(
-                    f"{self.getProperty('fullPlatform')}-{self.getProperty('archForUpload')}-{self.getProperty('configuration')}-{self.name}",
-                    extension='txt',
-                    additions=f'{self.build.number}',
-                    content_type='text/plain',
-                ), UploadFileToS3(
-                    'build-log.txt',
-                    links={self.name: 'Full build log'},
-                    content_type='text/plain',
-                )
-            ]
+        if self.getProperty('platform') in self.APPLE_PLATFORMS:
+            return filtered_log_upload_steps(self, 'build-log.txt', links={self.name: 'Full build log'})
         return []
 
     def evaluateCommand(self, cmd):
@@ -3852,20 +3841,7 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
 
     def evaluateCommand(self, cmd):
         rc = super().evaluateCommand(cmd)
-        steps_to_add = []
-        if SHOULD_FILTER_LOGS is True:
-            steps_to_add = [
-                GenerateS3URL(
-                    f"{self.getProperty('fullPlatform')}-{self.getProperty('archForUpload')}-{self.getProperty('configuration')}-{self.name}",
-                    extension='txt',
-                    additions=f'{self.build.number}',
-                    content_type='text/plain',
-                ), UploadFileToS3(
-                    'logs.txt',
-                    links={self.name: 'Full logs'},
-                    content_type='text/plain',
-                )
-            ]
+        steps_to_add = filtered_log_upload_steps(self, 'logs.txt', links={self.name: 'Full logs'})
         if self.countFailures() != 0:
             rc = FAILURE
         if rc == SUCCESS or rc == WARNINGS:
@@ -4376,21 +4352,7 @@ class RunWebKitTests(shell.Test, AddToLogMixin, ShellMixin):
         rc = self.evaluateResult(cmd)
         previous_build_summary = self.getProperty('build_summary', '')
         platform = self.getProperty('platform')
-        steps_to_add = []
-
-        if SHOULD_FILTER_LOGS is True:
-            steps_to_add = [
-                GenerateS3URL(
-                    f"{self.getProperty('fullPlatform')}-{self.getProperty('archForUpload')}-{self.getProperty('configuration')}-{self.name}",
-                    extension='txt',
-                    additions=f'{self.build.number}',
-                    content_type='text/plain',
-                ), UploadFileToS3(
-                    'logs.txt',
-                    links={self.name: 'Full logs'},
-                    content_type='text/plain',
-                )
-            ]
+        steps_to_add = filtered_log_upload_steps(self, 'logs.txt', links={self.name: 'Full logs'})
 
         if rc == SUCCESS or rc == WARNINGS:
             message = 'Passed layout tests'
@@ -4485,21 +4447,7 @@ class RunWebKitTestsInStressMode(RunWebKitTests):
 
     def evaluateCommand(self, cmd):
         rc = self.evaluateResult(cmd)
-        steps_to_add = []
-
-        if SHOULD_FILTER_LOGS is True:
-            steps_to_add = [
-                GenerateS3URL(
-                    f"{self.getProperty('fullPlatform')}-{self.getProperty('archForUpload')}-{self.getProperty('configuration')}-{self.name}",
-                    extension='txt',
-                    additions=f'{self.build.number}',
-                    content_type='text/plain',
-                ), UploadFileToS3(
-                    'logs.txt',
-                    links={self.name: 'Full logs'},
-                    content_type='text/plain',
-                )
-            ]
+        steps_to_add = filtered_log_upload_steps(self, 'logs.txt', links={self.name: 'Full logs'})
 
         if rc == SUCCESS or rc == WARNINGS:
             message = 'Passed layout tests'
@@ -4570,21 +4518,7 @@ class ReRunWebKitTests(RunWebKitTests):
         flaky_failures_string = ', '.join(flaky_failures)
         previous_build_summary = self.getProperty('build_summary', '')
         platform = self.getProperty('platform')
-        steps_to_add = []
-
-        if SHOULD_FILTER_LOGS is True:
-            steps_to_add = [
-                GenerateS3URL(
-                    f"{self.getProperty('fullPlatform')}-{self.getProperty('archForUpload')}-{self.getProperty('configuration')}-{self.name}",
-                    extension='txt',
-                    additions=f'{self.build.number}',
-                    content_type='text/plain',
-                ), UploadFileToS3(
-                    'logs.txt',
-                    links={self.name: 'Full logs'},
-                    content_type='text/plain',
-                )
-            ]
+        steps_to_add = filtered_log_upload_steps(self, 'logs.txt', links={self.name: 'Full logs'})
 
         if rc == SUCCESS or rc == WARNINGS:
             message = 'Passed layout tests'
@@ -4705,21 +4639,7 @@ class RunWebKitTestsWithoutChange(RunWebKitTests):
 
     def evaluateCommand(self, cmd):
         rc = shell.Test.evaluateCommand(self, cmd)
-        steps_to_add = []
-
-        if SHOULD_FILTER_LOGS is True:
-            steps_to_add = [
-                GenerateS3URL(
-                    f"{self.getProperty('fullPlatform')}-{self.getProperty('archForUpload')}-{self.getProperty('configuration')}-{self.name}",
-                    extension='txt',
-                    additions=f'{self.build.number}',
-                    content_type='text/plain',
-                ), UploadFileToS3(
-                    'logs.txt',
-                    links={self.name: 'Full logs'},
-                    content_type='text/plain',
-                )
-            ]
+        steps_to_add = filtered_log_upload_steps(self, 'logs.txt', links={self.name: 'Full logs'})
         steps_to_add += [ArchiveTestResults(), UploadTestResults(identifier='clean-tree'), ExtractTestResults(identifier='clean-tree'), AnalyzeLayoutTestsResults()]
         self.build.addStepsAfterCurrentStep(steps_to_add)
         self.setProperty('clean_tree_run_status', rc)
@@ -5079,21 +4999,7 @@ class RunWebKitTestsRedTree(RunWebKitTests):
         first_results_flaky_tests = set(self.getProperty('first_run_flakies', []))
         platform = self.getProperty('platform')
         rc = self.evaluateResult(cmd)
-        steps_to_add = []
-
-        if SHOULD_FILTER_LOGS is True:
-            steps_to_add = [
-                GenerateS3URL(
-                    f"{self.getProperty('fullPlatform')}-{self.getProperty('archForUpload')}-{self.getProperty('configuration')}-{self.name}",
-                    extension='txt',
-                    additions=f'{self.build.number}',
-                    content_type='text/plain',
-                ), UploadFileToS3(
-                    'logs.txt',
-                    links={self.name: 'Full logs'},
-                    content_type='text/plain',
-                )
-            ]
+        steps_to_add = filtered_log_upload_steps(self, 'logs.txt', links={self.name: 'Full logs'})
         steps_to_add += [ArchiveTestResults(), UploadTestResults(), ExtractTestResults()]
         if first_results_failing_tests:
             steps_to_add.extend([ValidateChange(verifyBugClosed=False, addURLs=False), KillOldProcesses(), RunWebKitTestsRepeatFailuresRedTree()])
@@ -5152,21 +5058,7 @@ class RunWebKitTestsRepeatFailuresRedTree(RunWebKitTestsRedTree):
         platform = self.getProperty('platform')
         rc = self.evaluateResult(cmd)
         self.setProperty('with_change_repeat_failures_retcode', rc)
-        steps_to_add = []
-
-        if SHOULD_FILTER_LOGS is True:
-            steps_to_add = [
-                GenerateS3URL(
-                    f"{self.getProperty('fullPlatform')}-{self.getProperty('archForUpload')}-{self.getProperty('configuration')}-{self.name}",
-                    extension='txt',
-                    additions=f'{self.build.number}',
-                    content_type='text/plain',
-                ), UploadFileToS3(
-                    'logs.txt',
-                    links={self.name: 'Full logs'},
-                    content_type='text/plain',
-                )
-            ]
+        steps_to_add = filtered_log_upload_steps(self, 'logs.txt', links={self.name: 'Full logs'})
         steps_to_add += [ArchiveTestResults(), UploadTestResults(identifier='repeat-failures'), ExtractTestResults(identifier='repeat-failures')]
         if with_change_repeat_failures_results_nonflaky_failures or with_change_repeat_failures_timedout:
             steps_to_add.extend([
@@ -5240,21 +5132,7 @@ class RunWebKitTestsRepeatFailuresWithoutChangeRedTree(RunWebKitTestsRedTree):
     def evaluateCommand(self, cmd):
         rc = self.evaluateResult(cmd)
         self.setProperty('without_change_repeat_failures_retcode', rc)
-        steps_to_add = []
-
-        if SHOULD_FILTER_LOGS is True:
-            steps_to_add = [
-                GenerateS3URL(
-                    f"{self.getProperty('fullPlatform')}-{self.getProperty('archForUpload')}-{self.getProperty('configuration')}-{self.name}",
-                    extension='txt',
-                    additions=f'{self.build.number}',
-                    content_type='text/plain',
-                ), UploadFileToS3(
-                    'logs.txt',
-                    links={self.name: 'Full logs'},
-                    content_type='text/plain',
-                )
-            ]
+        steps_to_add = filtered_log_upload_steps(self, 'logs.txt', links={self.name: 'Full logs'})
         steps_to_add += [ArchiveTestResults(), UploadTestResults(identifier='repeat-failures-without-change'), ExtractTestResults(identifier='repeat-failures-without-change'), AnalyzeLayoutTestsResultsRedTree()]
         self.build.addStepsAfterCurrentStep(steps_to_add)
         return rc
@@ -5288,21 +5166,7 @@ class RunWebKitTestsWithoutChangeRedTree(RunWebKitTestsWithoutChange):
 
     def evaluateCommand(self, cmd):
         rc = shell.Test.evaluateCommand(self, cmd)
-        steps_to_add = []
-
-        if SHOULD_FILTER_LOGS is True:
-            steps_to_add = [
-                GenerateS3URL(
-                    f"{self.getProperty('fullPlatform')}-{self.getProperty('archForUpload')}-{self.getProperty('configuration')}-{self.name}",
-                    extension='txt',
-                    additions=f'{self.build.number}',
-                    content_type='text/plain',
-                ), UploadFileToS3(
-                    'logs.txt',
-                    links={self.name: 'Full logs'},
-                    content_type='text/plain',
-                )
-            ]
+        steps_to_add = filtered_log_upload_steps(self, 'logs.txt', links={self.name: 'Full logs'})
 
         steps_to_add += [ArchiveTestResults(), UploadTestResults(identifier='clean-tree'), ExtractTestResults(identifier='clean-tree'), AnalyzeLayoutTestsResultsRedTree()]
         self.build.addStepsAfterCurrentStep(steps_to_add)
@@ -5507,6 +5371,53 @@ class UploadBuiltProduct(transfer.FileUpload):
         return super().getResultSummary()
 
 
+class UploadFilteredLogToMaster(transfer.FileUpload):
+    name = 'upload-filtered-log-to-master'
+    descriptionDone = ['Uploaded filtered log']
+    haltOnFailure = False
+    flunkOnFailure = False
+
+    def __init__(self, file_name, step_name, links=None, **kwargs):
+        self.file_name = file_name
+        self.links = links or dict()
+        self.step_name = step_name
+        kwargs['workersrc'] = file_name
+        kwargs['masterdest'] = Interpolate(f'public_html/results/%(prop:buildername)s/%(prop:change_id)s-%(prop:buildnumber)s-{step_name}.txt')
+        kwargs['mode'] = 0o0644
+        kwargs['blocksize'] = 1024 * 256
+        super().__init__(**kwargs)
+
+    def getLastBuildStepByName(self, name):
+        for step in reversed(self.build.executedSteps):
+            if name in step.name:
+                return step
+        return None
+
+    @defer.inlineCallbacks
+    def run(self):
+        rc = yield super().run()
+        buildbot_url = self.master.config.buildbotURL
+        self.url = f'{buildbot_url}results/{self.getProperty("buildername")}/{self.getProperty("change_id")}-{self.getProperty("buildnumber")}-{self.step_name}.txt'
+        if rc in [SUCCESS, WARNINGS]:
+            for step_name, message in self.links.items():
+                step = self.getLastBuildStepByName(step_name)
+                if step:
+                    step.addURL(message, self.url)
+        defer.returnValue(rc)
+
+    def doStepIf(self, step):
+        return SHOULD_FILTER_LOGS and not USE_S3 and CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES + TESTING_ENVIRONMENT_HOSTNAMES
+
+    def getResultSummary(self):
+        if self.results == FAILURE:
+            return {'step': f'Failed to upload {self.file_name} to master'}
+        if self.results == SKIPPED:
+            return {'step': f'Skipped uploading {self.file_name} to master'}
+        if self.results in [SUCCESS, WARNINGS]:
+            return {'step': f'Uploaded {self.file_name} to master'}
+        return super().getResultSummary()
+
+
 class UploadFileToS3(shell.ShellCommand, AddToLogMixin):
     name = 'upload-file-to-s3'
     descriptionDone = name
@@ -5623,6 +5534,29 @@ class GenerateS3URL(master.MasterShellCommand):
         if self.results == FAILURE:
             return {'step': 'Failed to generate S3 URL'}
         return super().getResultSummary()
+
+
+def filtered_log_upload_steps(step_instance, file_name, links=None):
+    if not SHOULD_FILTER_LOGS:
+        return []
+    if CURRENT_HOSTNAME not in EWS_BUILD_HOSTNAMES + TESTING_ENVIRONMENT_HOSTNAMES:
+        return []
+    identifier = f"{step_instance.getProperty('fullPlatform')}-{step_instance.getProperty('archForUpload')}-{step_instance.getProperty('configuration')}-{step_instance.name}"
+    if USE_S3:
+        return [
+            GenerateS3URL(
+                identifier,
+                extension='txt',
+                additions=f'{step_instance.build.number}',
+                content_type='text/plain',
+            ),
+            UploadFileToS3(
+                file_name,
+                links=links,
+                content_type='text/plain',
+            ),
+        ]
+    return [UploadFilteredLogToMaster(file_name, step_instance.name, links=links)]
 
 
 class TransferToS3(master.MasterShellCommand):
@@ -5892,19 +5826,7 @@ class RunAPITests(shell.Test, AddToLogMixin, ShellMixin):
 
         yield self.analyze_failures_using_results_db()
 
-        if SHOULD_FILTER_LOGS is True:
-            self.steps_to_add += [
-                GenerateS3URL(
-                    f"{self.getProperty('fullPlatform')}-{self.getProperty('archForUpload')}-{self.getProperty('configuration')}-{self.name}",
-                    extension='txt',
-                    additions=f'{self.build.number}',
-                    content_type='text/plain',
-                ), UploadFileToS3(
-                    'logs.txt',
-                    links={self.name: 'Full logs'},
-                    content_type='text/plain',
-                )
-            ]
+        self.steps_to_add += filtered_log_upload_steps(self, 'logs.txt', links={self.name: 'Full logs'})
 
         if rc in [SUCCESS, WARNINGS]:
             message = 'Passed API tests'
@@ -7739,30 +7661,21 @@ class BuildSwift(steps.ShellSequence, ShellMixin):
             '--install-swift-driver=1',
         ]
 
-        filter_command = ' '.join(quote(str(c)) for c in build_script_args) + f" 2>&1 | python3 {builddir}/build/Tools/Scripts/filter-test-logs swift --output {builddir}/build/swift-build-log.txt"
+        if SHOULD_FILTER_LOGS is True:
+            build_command = ' '.join(quote(str(c)) for c in build_script_args) + f" 2>&1 | python3 {builddir}/build/Tools/Scripts/filter-test-logs swift --output {builddir}/build/swift-build-log.txt"
+        else:
+            build_command = ' '.join(quote(str(c)) for c in build_script_args)
 
         self.commands = [
             util.ShellArg(command=self.shell_command('rm -rf ../build'), logname='stdio', haltOnFailure=False),
             util.ShellArg(command=self.shell_command('rm -rf "$(getconf DARWIN_USER_CACHE_DIR)org.llvm.clang"'), logname='stdio', haltOnFailure=False),
             util.ShellArg(command=self.shell_command('rm -rf /Users/buildbot/Library/Developer/Xcode/DerivedData'), logname='stdio'),
-            util.ShellArg(command=self.shell_command(filter_command), logname='stdio', haltOnFailure=True),
+            util.ShellArg(command=self.shell_command(build_command), logname='stdio', haltOnFailure=True),
         ]
 
         rc = yield super().run()
 
-        steps_to_add = [
-            GenerateS3URL(
-                f"{self.getProperty('fullPlatform')}-{self.getProperty('archForUpload')}-{self.getProperty('configuration')}-{self.name}",
-                extension='txt',
-                content_type='text/plain',
-                additions=f'{self.build.number}',
-            ),
-            UploadFileToS3(
-                'swift-build-log.txt',
-                links={self.name: 'Swift build log'},
-                content_type='text/plain',
-            )
-        ]
+        steps_to_add = filtered_log_upload_steps(self, 'swift-build-log.txt', links={self.name: 'Swift build log'})
 
         if rc != SUCCESS:
             if self.getProperty('current_swift_tag', '') and self.getProperty('has_swift_toolchain', False):
@@ -7851,17 +7764,7 @@ class ScanBuild(steps.ShellSequence, ShellMixin):
         self.build.addStepsAfterCurrentStep(steps_to_add)
 
     def uploadLogsSteps(self):
-        return [
-            GenerateS3URL(
-                f"{self.getProperty('fullPlatform')}-{self.getProperty('archForUpload')}-{self.getProperty('configuration')}-{self.name}",
-                extension='txt',
-                content_type='text/plain',
-            ), UploadFileToS3(
-                'build-log.txt',
-                links={self.name: 'Full build log'},
-                content_type='text/plain',
-            )
-        ]
+        return filtered_log_upload_steps(self, 'build-log.txt', links={self.name: 'Full build log'})
 
     def addResultsSteps(self):
         return [ParseStaticAnalyzerResults(), FindUnexpectedStaticAnalyzerResults()]
