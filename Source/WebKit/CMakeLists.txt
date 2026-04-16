@@ -834,9 +834,26 @@ set(WebKit_SWIFT_INTEROP_MODULE_PATH "${WEBKIT_DIR}/Modules/Internal")
 WEBKIT_FRAMEWORK_DECLARE(WebKit)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
-WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER(WebKit WebKit
-    "${WebKit_SWIFT_INTEROP_MODULE_PATH}"
-    "${WebKit_DERIVED_SOURCES_DIR}/WebKit-Swift-CPP.h")
+# When WebKitSwift exists (Apple ports with SWIFT_REQUIRED), set up the Swift
+# interop header generation on the separate static library.  Otherwise fall
+# back to the original behaviour for ports that compile Swift in-tree.
+if (TARGET WebKitSwift)
+    WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER(WebKitSwift WebKit
+        "${WebKit_SWIFT_INTEROP_MODULE_PATH}"
+        "${WebKit_DERIVED_SOURCES_DIR}/WebKit-Swift-CPP.h")
+    # The macro adds the generated-header include directory as PUBLIC on
+    # WebKitSwift; propagate it to WebKit so C++ sources can #include
+    # "WebKit-Swift-CPP.h".
+    target_include_directories(WebKit PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/include")
+    # Linking WebKitSwift causes CMake to promote WebKit's linker to Swift.
+    # Force CXX so that the framework links with c++ (fast) instead of swiftc,
+    # which would re-invoke the combined Swift compile+link rule.
+    set_target_properties(WebKit PROPERTIES LINKER_LANGUAGE CXX)
+else ()
+    WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER(WebKit WebKit
+        "${WebKit_SWIFT_INTEROP_MODULE_PATH}"
+        "${WebKit_DERIVED_SOURCES_DIR}/WebKit-Swift-CPP.h")
+endif ()
 
 if (PORT STREQUAL GTK OR PORT STREQUAL WPE)
     WEBKIT_ADD_TARGET_CXX_FLAGS(WebKit
@@ -1123,9 +1140,15 @@ list(APPEND WebKit_SOURCES
 )
 
 if (ENABLE_SWIFT_DEMO_URI_SCHEME)
-    list(APPEND WebKit_SOURCES
-        ${WEBKIT_DIR}/UIProcess/SwiftDemoLogo.swift
-    )
+    if (TARGET WebKitSwift)
+        target_sources(WebKitSwift PRIVATE
+            ${WEBKIT_DIR}/UIProcess/SwiftDemoLogo.swift
+        )
+    else ()
+        list(APPEND WebKit_SOURCES
+            ${WEBKIT_DIR}/UIProcess/SwiftDemoLogo.swift
+        )
+    endif ()
 endif ()
 
 list(APPEND WebKit_SOURCES ${WebKit_DERIVED_SOURCES})

@@ -88,12 +88,7 @@ list(APPEND WebKit_SOURCES
     UIProcess/Cocoa/WebInspectorPreferenceObserver.mm
 
     UIProcess/PDF/WKPDFHUDView.mm
-    ${WEBKIT_DIR}/UIProcess/PDF/WKPDFHUDView.swift
     UIProcess/PDF/WKPDFPageNumberIndicator.mm
-
-    ${WEBKIT_DIR}/Platform/cocoa/WKMaterialHostingSupport.swift
-
-    ${WEBKIT_DIR}/UIProcess/API/Cocoa/_WKTextExtraction.swift
 
     WebProcess/InjectedBundle/API/c/mac/WKBundlePageMac.mm
 
@@ -269,38 +264,76 @@ file(WRITE "${WebKit_CMAKE_MODULEMAP_DIR}/module.modulemap"
 ")
 set(WebKit_SWIFT_INTEROP_MODULE_PATH "${WebKit_CMAKE_MODULEMAP_DIR}")
 
-# SPI .swiftinterface modules (SwiftUI_SPI, AVKit_SPI, etc.) live under
-# Platform/spi/. These paths mirror Xcode's SWIFT_INCLUDE_PATHS setting.
-set(WebKit_SWIFT_INCLUDE_DIRECTORIES
-    "${WEBKIT_DIR}/Platform/spi/Cocoa"
-    "${WEBKIT_DIR}/Platform/spi/Cocoa/Modules"
-    "${WEBKIT_DIR}/Platform/spi/ios"
-)
+# Build Swift sources in a separate STATIC library so that CMake generates an
+# independent Swift_STATIC_LIBRARY_LINKER rule. This prevents WebCore-only changes
+# from triggering a 37-second Swift recompilation: the WebKit framework link step
+# (CXX_SHARED_LIBRARY_LINKER) just relinks against the unchanged libWebKitSwift.a.
+if (SWIFT_REQUIRED)
+    add_library(WebKitSwift STATIC "${CMAKE_BINARY_DIR}/cmakeconfig.h")
+    target_sources(WebKitSwift PRIVATE
+        ${WEBKIT_DIR}/UIProcess/PDF/WKPDFHUDView.swift
+        ${WEBKIT_DIR}/Platform/cocoa/WKMaterialHostingSupport.swift
+        ${WEBKIT_DIR}/UIProcess/API/Cocoa/_WKTextExtraction.swift
+    )
 
-# HAVE_MATERIAL_HOSTING is a PlatformHave.h preprocessor flag (macOS 16+),
-# not a CMake define. SWIFT_EXTRA_OPTIONS and SWIFT_INCLUDE_DIRECTORIES only
-# affect the typecheck custom command. Mirror everything to target_compile_options
-# so the actual Swift compilation sees the same flags.
-target_compile_options(WebKit PRIVATE
-    "$<$<COMPILE_LANGUAGE:Swift>:-DHAVE_MATERIAL_HOSTING>"
-    "$<$<COMPILE_LANGUAGE:Swift>:-I${WEBKIT_DIR}/Platform/spi/Cocoa>"
-    "$<$<COMPILE_LANGUAGE:Swift>:-I${WEBKIT_DIR}/Platform/spi/Cocoa/Modules>"
-    "$<$<COMPILE_LANGUAGE:Swift>:-I${WEBKIT_DIR}/Platform/spi/ios>"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -I${WebKit_FRAMEWORK_HEADERS_DIR}>"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -I${WTF_FRAMEWORK_HEADERS_DIR}>"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -I${bmalloc_FRAMEWORK_HEADERS_DIR}>"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -I${PAL_FRAMEWORK_HEADERS_DIR}>"
-    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -I${ICU_INCLUDE_DIRS}>"
-)
+    # HAVE_MATERIAL_HOSTING is a PlatformHave.h preprocessor flag (macOS 16+),
+    # not a CMake define. SWIFT_EXTRA_OPTIONS and SWIFT_INCLUDE_DIRECTORIES only
+    # affect the typecheck custom command. Mirror everything to target_compile_options
+    # so the actual Swift compilation sees the same flags.
+    target_compile_options(WebKitSwift PRIVATE
+        "$<$<COMPILE_LANGUAGE:Swift>:-DHAVE_MATERIAL_HOSTING>"
+        "$<$<COMPILE_LANGUAGE:Swift>:-I${WEBKIT_DIR}/Platform/spi/Cocoa>"
+        "$<$<COMPILE_LANGUAGE:Swift>:-I${WEBKIT_DIR}/Platform/spi/Cocoa/Modules>"
+        "$<$<COMPILE_LANGUAGE:Swift>:-I${WEBKIT_DIR}/Platform/spi/ios>"
+        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -I${WebKit_FRAMEWORK_HEADERS_DIR}>"
+        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -I${WTF_FRAMEWORK_HEADERS_DIR}>"
+        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -I${bmalloc_FRAMEWORK_HEADERS_DIR}>"
+        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -I${PAL_FRAMEWORK_HEADERS_DIR}>"
+        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -I${ICU_INCLUDE_DIRS}>"
+    )
 
-set(WebKit_SWIFT_EXTRA_OPTIONS
-    -DHAVE_MATERIAL_HOSTING
-    -Xcc -I${WebKit_FRAMEWORK_HEADERS_DIR}
-    -Xcc -I${WTF_FRAMEWORK_HEADERS_DIR}
-    -Xcc -I${bmalloc_FRAMEWORK_HEADERS_DIR}
-    -Xcc -I${PAL_FRAMEWORK_HEADERS_DIR}
-    -Xcc -I${ICU_INCLUDE_DIRS}
-)
+    set(WebKitSwift_SWIFT_INCLUDE_DIRECTORIES
+        "${WEBKIT_DIR}/Platform/spi/Cocoa"
+        "${WEBKIT_DIR}/Platform/spi/Cocoa/Modules"
+        "${WEBKIT_DIR}/Platform/spi/ios"
+    )
+
+    set(WebKitSwift_SWIFT_EXTRA_OPTIONS
+        -DHAVE_MATERIAL_HOSTING
+        -Xcc -I${WebKit_FRAMEWORK_HEADERS_DIR}
+        -Xcc -I${WTF_FRAMEWORK_HEADERS_DIR}
+        -Xcc -I${bmalloc_FRAMEWORK_HEADERS_DIR}
+        -Xcc -I${PAL_FRAMEWORK_HEADERS_DIR}
+        -Xcc -I${ICU_INCLUDE_DIRS}
+    )
+
+    # Ensure copy-headers targets run before Swift compilation so that the
+    # module map headers (WKWebView.h, etc.) are available.
+    add_dependencies(WebKitSwift WebKit_CopyHeaders)
+
+    # The Swift sources import ObjC headers via the module map. CMake's Swift
+    # rules have no depfile tracking, so ninja won't rebuild the Swift when
+    # those headers change. Work around this by generating a dummy .swift
+    # file that is touched whenever a module-map header changes — CMake
+    # includes .swift files as explicit inputs to the build rule, so the
+    # timestamp bump triggers a full Swift recompilation.
+    set(_swift_header_deps
+        "${WEBKIT_DIR}/UIProcess/PDF/WKPDFHUDView.h"
+        "${WEBKIT_DIR}/Platform/cocoa/WKMaterialHostingSupport.h"
+        "${WEBKIT_DIR}/UIProcess/API/Cocoa/_WKTextExtractionInternal.h"
+    )
+    set(_swift_header_trigger "${CMAKE_CURRENT_BINARY_DIR}/WebKitSwiftHeaderDeps.swift")
+    file(WRITE ${_swift_header_trigger} "// Generated — forces Swift recompilation when module-map headers change.\n")
+    add_custom_command(
+        OUTPUT ${_swift_header_trigger}
+        DEPENDS ${_swift_header_deps}
+        COMMAND ${CMAKE_COMMAND} -E touch ${_swift_header_trigger}
+        COMMENT "Module-map header changed — marking Swift for recompilation"
+    )
+    target_sources(WebKitSwift PRIVATE ${_swift_header_trigger})
+
+    list(APPEND WebKit_PRIVATE_LIBRARIES WebKitSwift)
+endif ()
 
 # webpushd entry points are standalone daemon executables, not part of the
 # framework. WKMain.mm references them, so provide stubs that return error.
