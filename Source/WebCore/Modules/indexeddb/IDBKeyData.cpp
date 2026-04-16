@@ -256,8 +256,10 @@ std::weak_ordering operator<=>(const IDBKeyData& a, const IDBKeyData& b)
     if (aType == IndexedDB::KeyType::Invalid) {
         if (bType != IndexedDB::KeyType::Invalid)
             return std::weak_ordering::less;
-        if (bType == IndexedDB::KeyType::Invalid)
-            return std::weak_ordering::equivalent;
+        // Distinguish nullptr_t and Invalid{} to match operator==.
+        if (a.isNull() != b.isNull())
+            return a.isNull() ? std::weak_ordering::less : std::weak_ordering::greater;
+        return std::weak_ordering::equivalent;
     } else if (bType == IndexedDB::KeyType::Invalid)
         return std::weak_ordering::greater;
 
@@ -282,9 +284,15 @@ std::weak_ordering operator<=>(const IDBKeyData& a, const IDBKeyData& b)
     }
     case IndexedDB::KeyType::Binary:
         return compareBinaryKeyData(std::get<ThreadSafeDataBuffer>(a.m_value), std::get<ThreadSafeDataBuffer>(b.m_value));
-    case IndexedDB::KeyType::String:
-        return codePointCompare(std::get<String>(a.m_value), std::get<String>(b.m_value));
-    case IndexedDB::KeyType::Date:
+    case IndexedDB::KeyType::String: {
+        auto& aStr = std::get<String>(a.m_value);
+        auto& bStr = std::get<String>(b.m_value);
+        // Distinguish null String from empty String to match operator==;
+        // codePointCompare treats them as equivalent.
+        if (aStr.isNull() != bStr.isNull())
+            return aStr.isNull() ? std::weak_ordering::less : std::weak_ordering::greater;
+        return codePointCompare(aStr, bStr);
+    } case IndexedDB::KeyType::Date:
         return weakOrderingCast(std::get<IDBKeyData::Date>(a.m_value).value <=> std::get<IDBKeyData::Date>(b.m_value).value);
     case IndexedDB::KeyType::Number:
         return weakOrderingCast(std::get<double>(a.m_value) <=> std::get<double>(b.m_value));
