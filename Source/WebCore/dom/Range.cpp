@@ -755,8 +755,8 @@ String Range::toString() const
 // https://w3c.github.io/DOM-Parsing/#widl-Range-createContextualFragment-DocumentFragment-DOMString-fragment
 ExceptionOr<Ref<DocumentFragment>> Range::createContextualFragment(Variant<RefPtr<TrustedHTML>, String>&& markup)
 {
-    Node& node = startContainer();
-    auto stringValueHolder = trustedTypeCompliantString(node.document().contextDocument(), WTF::move(markup), "Range createContextualFragment"_s);
+    Ref node = startContainer();
+    auto stringValueHolder = trustedTypeCompliantString(node->document().contextDocument(), WTF::move(markup), "Range createContextualFragment"_s);
 
     if (stringValueHolder.hasException())
         return stringValueHolder.releaseException();
@@ -764,12 +764,12 @@ ExceptionOr<Ref<DocumentFragment>> Range::createContextualFragment(Variant<RefPt
     RefPtr<Element> element;
     if (is<Document>(node) || is<DocumentFragment>(node))
         element = nullptr;
-    else if (auto* maybeElement = dynamicDowncast<Element>(node))
+    else if (auto* maybeElement = dynamicDowncast<Element>(node.get()))
         element = maybeElement;
     else
-        element = node.parentElement();
+        element = node->parentElement();
     if (!element || (element->document().isHTMLDocument() && is<HTMLHtmlElement>(*element)))
-        element = HTMLBodyElement::create(node.protectedDocument());
+        element = HTMLBodyElement::create(node->protectedDocument());
     return WebCore::createContextualFragment(*element, stringValueHolder.releaseReturnValue(), { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::DoNotMarkAlreadyStarted });
 }
 
