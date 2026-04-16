@@ -92,6 +92,36 @@
 {
 }
 
++ (BOOL)requiresForceCapability
+{
+    return NO;
+}
+
+- (BOOL)hasExceededAllowableMovement
+{
+    return NO;
+}
+
+- (BOOL)isCurrentlyAcceleratedByForce
+{
+    return NO;
+}
+
+- (BOOL)clicksUpAutomaticallyAfterTimeout
+{
+    return NO;
+}
+
+- (CGFloat)maximumEffectProgress
+{
+    return 0;
+}
+
+- (_UIInputPrecision)inputPrecision
+{
+    return _UIInputPrecisionUnknown;
+}
+
 - (void)begin:(void(^)(BOOL))completionHandler
 {
     auto completionBlock = makeBlockPtr(completionHandler);

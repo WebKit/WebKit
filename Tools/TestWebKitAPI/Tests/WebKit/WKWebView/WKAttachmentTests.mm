@@ -87,9 +87,9 @@ using CocoaPasteboard = UIPasteboard;
 #endif
 
 @interface AttachmentUpdateObserver : NSObject <WKUIDelegatePrivate>
-@property (nonatomic, readonly) NSArray *inserted;
-@property (nonatomic, readonly) NSArray *removed;
-@property (nonatomic, readonly) NSArray *dataInvalidated;
+@property (nonatomic, readonly) NSArray<_WKAttachment *> *inserted;
+@property (nonatomic, readonly) NSArray<_WKAttachment *> *removed;
+@property (nonatomic, readonly) NSArray<_WKAttachment *> *dataInvalidated;
 @end
 
 @implementation AttachmentUpdateObserver {
@@ -1527,7 +1527,7 @@ TEST(WKAttachmentTests, ChangeFileWrapperForPastedImage)
     [webView paste:nil];
     [webView waitForImageElementSizeToBecome:CGSizeMake(215, 174)];
 
-    auto attachment = retainPtr(observer.observer().inserted.firstObject);
+    RetainPtr<_WKAttachment> attachment = retainPtr(observer.observer().inserted.firstObject);
     auto originalImageData = retainPtr([attachment info].fileWrapper);
     EXPECT_WK_STREQ([attachment uniqueIdentifier], [webView stringByEvaluatingJavaScript:@"HTMLAttachmentElement.getAttachmentIdentifier(document.querySelector('img'))"]);
 
