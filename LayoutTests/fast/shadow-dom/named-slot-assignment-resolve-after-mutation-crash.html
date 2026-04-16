@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<body>
+<p>This tests inserting a bunch of nodes with slot attributes under shadow host.<br>
+WebKit should not crash or hit assertions under ASAN, and you should see PASS below:</p>
+<script>
+
+globalThis?.testRunner.dumpAsText();
+
+const host = document.createElement('div');
+document.body.appendChild(host);
+const shadowRoot = host.attachShadow({mode:'open'}); // NamedSlotAssignment (default)
+
+// Shadow tree: shadowRoot -> c -> [slot1(name=X), slot2(name=X)]
+const container = document.createElement('div');
+shadowRoot.appendChild(container);
+
+const slot1 = document.createElement('slot');
+slot1.setAttribute('name','X');
+container.appendChild(slot1);
+
+const slot2 = document.createElement('slot');
+slot2.setAttribute('name','X');
+container.appendChild(slot2);
+
+// Host child with slot='X' -> didChangeSlot('X') -> m_slotAssignmentsIsValid=false
+const spanChild = document.createElement('span');
+spanChild.setAttribute('slot','X');
+host.appendChild(spanChild);
+
+// Many host children with FRESH slot names not in m_slots.
+for (let i = 0; i < 10; i++) {
+    const span = document.createElement('span');
+    span.setAttribute('slot', 'new' + i);
+    host.appendChild(span);
+}
+
+// Trigger: removeAllChildren on container (inside shadow tree).
+container.replaceChildren();
+
+document.write('PASS');
+
+</script>
