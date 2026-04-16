@@ -187,11 +187,19 @@ find_package(Threads REQUIRED)
 # SDK resolution
 # -----------------------------------------------------------------------------
 # Ask xcrun directly; CMake's default sysroot discovery can lag Xcode versions.
+# Prefer the internal SDK when available (mirrors Xcode/WKA: webkitdirs.pm:1041-1056).
 if (NOT CMAKE_OSX_SYSROOT)
-    execute_process(COMMAND xcrun --show-sdk-path
+    execute_process(COMMAND xcrun --sdk macosx.internal --show-sdk-path
         OUTPUT_VARIABLE CMAKE_OSX_SYSROOT
         OUTPUT_STRIP_TRAILING_WHITESPACE
+        RESULT_VARIABLE _internal_sdk_result
         ERROR_QUIET)
+    if (NOT _internal_sdk_result EQUAL 0 OR NOT CMAKE_OSX_SYSROOT)
+        execute_process(COMMAND xcrun --show-sdk-path
+            OUTPUT_VARIABLE CMAKE_OSX_SYSROOT
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            ERROR_QUIET)
+    endif ()
 endif ()
 
 # Deployment target must match SDK version -- PlatformHave.h SPI guards depend on
@@ -206,6 +214,13 @@ if (_sdk_version)
         set(CMAKE_OSX_DEPLOYMENT_TARGET "${_sdk_major_minor}" CACHE STRING "Minimum macOS version" FORCE)
         message(WARNING "Deployment target auto-set to SDK version: ${CMAKE_OSX_DEPLOYMENT_TARGET} (SPI header guards require this)")
     endif ()
+endif ()
+
+if (NOT CMAKE_OSX_ARCHITECTURES
+        AND CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64"
+        AND CMAKE_OSX_SYSROOT MATCHES "\\.Internal\\.sdk$")
+    set(CMAKE_OSX_ARCHITECTURES "arm64e")
+    message(STATUS "arm64e enabled (internal SDK detected)")
 endif ()
 
 # -----------------------------------------------------------------------------
