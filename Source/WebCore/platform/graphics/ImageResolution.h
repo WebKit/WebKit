@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "AffineTransform.h"
-#include "FloatSize.h"
-#include "IntSize.h"
+#include <WebCore/AffineTransform.h>
+#include <WebCore/FloatSize.h>
+#include <WebCore/IntSize.h>
 
 namespace WebCore {
 
