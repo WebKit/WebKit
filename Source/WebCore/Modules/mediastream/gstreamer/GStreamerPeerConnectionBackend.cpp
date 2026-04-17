@@ -242,7 +242,8 @@ Ref<RTCRtpReceiver> GStreamerPeerConnectionBackend::createReceiver(std::unique_p
     auto source = backend->createSource(trackKind, trackId);
     // Remote source is initially muted and will be unmuted when receiving the first packet.
     source->setMuted(true);
-    auto remoteTrackPrivate = MediaStreamTrackPrivate::create(document.logger(), WTF::move(source), createVersion4UUIDString());
+    auto trackID = source->persistentID();
+    auto remoteTrackPrivate = MediaStreamTrackPrivate::create(document.logger(), WTF::move(source), WTF::move(trackID));
     auto remoteTrack = MediaStreamTrack::create(document, WTF::move(remoteTrackPrivate));
 
     return RTCRtpReceiver::create(*this, WTF::move(remoteTrack), WTF::move(backend));
