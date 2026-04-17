@@ -385,6 +385,16 @@ void initialize()
 #define INITIALIZE_TAG_AND_UNTAG_THUNKS_JIT_PATH(name)
 #endif
 
+#if ENABLE(JIT)
+#define INITIALIZE_TAG_AND_UNTAG_THUNKS_JIT_PATH(name) \
+    if (Options::useJIT()) { \
+        tagCodeRef.construct(tagGateThunk(retagCodePtr<void*, CFunctionPtrTag, OperationPtrTag>(name##TagGateAfter))); \
+        untagCodeRef.construct(untagGateThunk(retagCodePtr<void*, CFunctionPtrTag, OperationPtrTag>(name##UntagGateAfter))); \
+    } else
+#else
+#define INITIALIZE_TAG_AND_UNTAG_THUNKS_JIT_PATH(name)
+#endif
+
 #define INITIALIZE_TAG_AND_UNTAG_THUNKS(name) \
     do { \
         static LazyNeverDestroyed<MacroAssemblerCodeRef<NativeToJITGatePtrTag>> tagCodeRef; \

@@ -398,6 +398,14 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
+template<RepatchingInfo>
+inline void* performJITMemcpy(void *dst, const void *src, size_t n)
+{
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    return memcpy(dst, src, n);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+}
+
 inline bool isJITPC(void*) { return false; }
 #endif // ENABLE(JIT)
 
