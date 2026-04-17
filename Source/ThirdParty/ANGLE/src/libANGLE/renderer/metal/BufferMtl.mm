@@ -14,7 +14,6 @@
 #include "libANGLE/renderer/metal/BufferMtl.h"
 
 #include "common/debug.h"
-#include "common/span.h"
 #include "common/utilities.h"
 #include "libANGLE/ErrorStrings.h"
 #include "libANGLE/renderer/metal/ContextMtl.h"
@@ -449,11 +448,11 @@ void BufferMtl::clearConversionBuffers()
 }
 
 template <typename T>
-static std::vector<IndexRange> CalculateRestartRanges(angle::Span<const T> bufferData)
+static std::vector<IndexRange> calculateRestartRanges(ContextMtl *ctx, const T *bufferData, size_t numIndices)
 {
     std::vector<IndexRange> result;
     constexpr T restartMarker = std::numeric_limits<T>::max();
-    for (size_t i = 0; i < bufferData.size(); ++i)
+    for (size_t i = 0; i < numIndices; ++i)
     {
         // Find the start of the restart range, i.e. first index with value of restart marker.
         if (bufferData[i] != restartMarker)
@@ -463,7 +462,7 @@ static std::vector<IndexRange> CalculateRestartRanges(angle::Span<const T> buffe
         do
         {
             ++i;
-        } while (i < bufferData.size() && bufferData[i] == restartMarker);
+        } while (i < numIndices && bufferData[i] == restartMarker);
         result.emplace_back(restartBegin, i - 1);
     }
     return result;
@@ -475,46 +474,46 @@ const std::vector<IndexRange> &BufferMtl::getRestartIndices(ContextMtl *ctx,
     if (!mRestartRangeCache || mRestartRangeCache->indexType != indexType)
     {
         mRestartRangeCache.reset();
-        mtl::BufferRef idxBuffer = getCurrentBuffer();
-        const void *indices  = idxBuffer->mapReadOnly(ctx);
-        size_t size = idxBuffer->size();
         std::vector<IndexRange> ranges;
+        const uint8_t *data = getBufferDataReadOnly(ctx); // Read-only, ok to not unmap.
+        const size_t size = this->size();
         switch (indexType)
         {
             case gl::DrawElementsType::UnsignedByte:
-                ranges = CalculateRestartRanges<uint8_t>({static_cast<const uint8_t *>(indices), size});
+                ranges = calculateRestartRanges<uint8_t>(ctx, data, size);
                 break;
             case gl::DrawElementsType::UnsignedShort:
-                ranges = CalculateRestartRanges<uint16_t>({static_cast<const uint16_t *>(indices), size / 2});
+                ranges = calculateRestartRanges<uint16_t>(ctx, reinterpret_cast<const uint16_t *>(data), size / 2);
                 break;
             case gl::DrawElementsType::UnsignedInt:
-                ranges = CalculateRestartRanges<uint32_t>({static_cast<const uint32_t *>(indices), size / 4});
+                ranges = calculateRestartRanges<uint32_t>(ctx, reinterpret_cast<const uint32_t *>(data), size / 4);
                 break;
             default:
                 ASSERT(false);
         }
-        idxBuffer->unmap(ctx);
         mRestartRangeCache.emplace(std::move(ranges), indexType);
     }
     return mRestartRangeCache->ranges;
 }
 
-const std::vector<IndexRange> BufferMtl::GetRestartIndicesFromClientData(
-    gl::DrawElementsType type,
-    GLint count,
-    const void *indices)
+const std::vector<IndexRange> BufferMtl::getRestartIndicesFromClientData(
+    ContextMtl *ctx,
+    gl::DrawElementsType indexType,
+    mtl::BufferRef idxBuffer)
 {
     std::vector<IndexRange> restartIndices;
-    switch (type)
+    const uint8_t *data = idxBuffer->mapReadOnly(ctx); // Read-only, ok to not unmap.
+    const size_t size = idxBuffer->size();
+    switch (indexType)
     {
         case gl::DrawElementsType::UnsignedByte:
-            restartIndices = CalculateRestartRanges<uint8_t>({static_cast<const uint8_t *>(indices), static_cast<size_t>(count)});
+            restartIndices = calculateRestartRanges<uint8_t>(ctx, data, size);
             break;
         case gl::DrawElementsType::UnsignedShort:
-            restartIndices = CalculateRestartRanges<uint16_t>({static_cast<const uint16_t *>(indices), static_cast<size_t>(count)});
+            restartIndices = calculateRestartRanges<uint16_t>(ctx, reinterpret_cast<const uint16_t *>(data), size / 2);
             break;
         case gl::DrawElementsType::UnsignedInt:
-            restartIndices = CalculateRestartRanges<uint32_t>({static_cast<const uint32_t *>(indices), static_cast<size_t>(count)});
+            restartIndices = calculateRestartRanges<uint32_t>(ctx, reinterpret_cast<const uint32_t *>(data), size / 4);
             break;
         default:
             ASSERT(false);

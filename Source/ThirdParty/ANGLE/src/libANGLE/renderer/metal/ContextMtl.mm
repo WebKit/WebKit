@@ -787,7 +787,6 @@ angle::Result ContextMtl::drawElementsImpl(const gl::Context *context,
     ASSERT((convertedType == gl::DrawElementsType::UnsignedShort && (convertedOffset % 2) == 0) ||
            (convertedType == gl::DrawElementsType::UnsignedInt && (convertedOffset % 4) == 0));
 
-    gl::PrimitiveMode newMode = mode;
     uint32_t convertedCounti32 = (uint32_t)count;
 
     size_t provokingVertexAdditionalOffset = 0;
@@ -795,12 +794,14 @@ angle::Result ContextMtl::drawElementsImpl(const gl::Context *context,
     if (requiresIndexRewrite(context->getState(), mode))
     {
         uint32_t outIndexCount    = 0;
+        gl::PrimitiveMode newMode = gl::PrimitiveMode::InvalidEnum;
         ANGLE_TRY(mProvokingVertexHelper.preconditionIndexBuffer(
             mtl::GetImpl(context), idxBuffer, count, convertedOffset,
             mState.isPrimitiveRestartEnabled(), mode, convertedType, outIndexCount,
             provokingVertexAdditionalOffset, newMode, drawIdxBuffer));
         // Line strips and triangle strips are rewritten to flat line arrays and tri arrays.
         convertedCounti32 = outIndexCount;
+        mode              = newMode;
     }
     else
     {
@@ -812,12 +813,12 @@ angle::Result ContextMtl::drawElementsImpl(const gl::Context *context,
     // It's safe to use idxBuffer in this case, as it will contain the same count and restart ranges
     // as drawIdxBuffer.
     const std::vector<DrawCommandRange> drawCommands = mVertexArray->getDrawIndices(
-        context, mode, count, type, indices, newMode, convertedCounti32, convertedType, convertedOffset);
+        context, type, convertedType, mode, idxBuffer, convertedCounti32, convertedOffset);
     bool isNoOp = false;
-    ANGLE_TRY(setupDraw(context, newMode, 0, count, instances, type, indices, false, &isNoOp));
+    ANGLE_TRY(setupDraw(context, mode, 0, count, instances, type, indices, false, &isNoOp));
     if (!isNoOp)
     {
-        MTLPrimitiveType mtlType = mtl::GetPrimitiveType(newMode);
+        MTLPrimitiveType mtlType = mtl::GetPrimitiveType(mode);
 
         MTLIndexType mtlIdxType = mtl::GetIndexType(convertedType);
 
