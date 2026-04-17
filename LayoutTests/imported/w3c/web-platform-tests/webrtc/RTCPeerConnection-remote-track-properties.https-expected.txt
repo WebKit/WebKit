@@ -1,8 +1,8 @@
 
 PASS Remote video track and stream
 PASS Remote audio track and stream
-PASS Remote audio track ID is different on different PCs
-PASS Remote video track ID is different on different PCs
+FAIL Remote audio track ID is different on different PCs assert_greater_than: Remote tracks should have their own id expected a number greater than 1 but got 1
+FAIL Remote video track ID is different on different PCs assert_greater_than: Remote tracks should have their own id expected a number greater than 1 but got 1
 PASS Stream id for video
 PASS Track label for video
 PASS Stream id for audio
