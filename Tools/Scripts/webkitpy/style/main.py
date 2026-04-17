@@ -26,6 +26,7 @@ import sys
 import webkitpy.style.checker as checker
 from webkitpy.common.host import Host
 from webkitpy.style.checker import StyleProcessor
+from webkitpy.style.checkers.wpt import run_wpt_lint
 from webkitpy.style.filereader import TextFileReader
 from webkitpy.style.patchreader import PatchReader
 
@@ -125,16 +126,24 @@ class CheckWebKitStyle(object):
         if paths and not options.diff_files:
             file_reader.process_paths(paths)
             file_reader.do_association_check(host.scm().checkout_root)
+            changed_files = paths
         else:
-            changed_files = paths if options.diff_files else None
-            patch = host.scm().create_patch(options.git_commit, changed_files=changed_files, git_index=options.git_index, commit_message=False, find_branch=True)
+            changed_files_list = paths if options.diff_files else None
+            patch = host.scm().create_patch(options.git_commit, changed_files=changed_files_list, git_index=options.git_index, commit_message=False, find_branch=True)
             patch_checker = PatchReader(file_reader)
             patch_checker.check(patch)
+            changed_files = host.scm().changed_files(options.git_commit, find_branch=True) if not changed_files_list else changed_files_list
 
         error_count = style_processor.error_count
         file_count = file_reader.file_count
         delete_only_file_count = file_reader.delete_only_file_count
 
+        # Run WPT linter on any changed web-platform-tests files.
+        if options.wpt_lint and changed_files:
+            checkout_root = host.scm().checkout_root
+            error_count += run_wpt_lint(checkout_root, changed_files)
+
         _log.info("Total errors found: %d in %d files" % (error_count, file_count))
+
         # We fail when style errors are found or there are no checked files.
         return error_count > 0 or (file_count == 0 and delete_only_file_count == 0)

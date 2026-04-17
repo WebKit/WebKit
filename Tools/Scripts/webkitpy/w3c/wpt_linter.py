@@ -24,13 +24,49 @@
  This script is a wrapper for the web-platform-tests linter
 """
 
+import logging
+import os
 import subprocess
+import tempfile
+
+_log = logging.getLogger(__name__)
 
 
 class WPTLinter(object):
-    def __init__(self, repository_directory, filesystem):
+    def __init__(self, repository_directory):
         self.wpt_path = repository_directory
 
-    def lint(self):
-        proc = subprocess.Popen(['./wpt', 'lint'], cwd=self.wpt_path)
-        return proc.wait()
+    def lint(self, paths=None):
+        """Run the WPT linter.
+
+        Args:
+            paths: Optional list of file paths (relative to the WPT repo root)
+                   to lint. If None, lints all changed files.
+
+        Returns:
+            A tuple of (return_code, output) where return_code is 0 if no
+            errors were found, and output is the linter's stdout/stderr.
+        """
+        cmd = ['./wpt', 'lint', '--json']
+
+        if paths:
+            paths_file = None
+            try:
+                with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False) as f:
+                    paths_file = f.name
+                    for path in paths:
+                        f.write(path + '\n')
+                cmd.extend(['--paths-file', paths_file])
+                return self._run_lint(cmd)
+            finally:
+                if paths_file and os.path.exists(paths_file):
+                    os.unlink(paths_file)
+        else:
+            return self._run_lint(cmd)
+
+    def _run_lint(self, cmd):
+        _log.debug("Running WPT linter: %s (cwd=%s)", ' '.join(cmd), self.wpt_path)
+        result = subprocess.run(cmd, cwd=self.wpt_path,
+                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                text=True)
+        return (result.returncode, result.stdout)

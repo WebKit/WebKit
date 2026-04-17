@@ -149,7 +149,8 @@ class CommandOptionValues(object):
                  min_confidence=1,
                  output_format="emacs",
                  commit_queue=False,
-                 git_index=False):
+                 git_index=False,
+                 wpt_lint=True):
         if filter_rules is None:
             filter_rules = []
 
@@ -171,6 +172,7 @@ class CommandOptionValues(object):
         self.output_format = output_format
         self.commit_queue = commit_queue
         self.git_index = git_index
+        self.wpt_lint = wpt_lint
 
     # Useful for unit testing.
     def __eq__(self, other):
@@ -188,6 +190,8 @@ class CommandOptionValues(object):
         if self.output_format != other.output_format:
             return False
         if self.git_index != other.git_index:
+            return False
+        if self.wpt_lint != other.wpt_lint:
             return False
 
         return True
@@ -310,6 +314,9 @@ class ArgumentParser(object):
         parser.add_option("--commit-queue", action="store_true", dest="commit_queue", default=False, help=commit_queue_help)
         parser.add_option("--git-index", action="store_true", dest="git_index", default=False, help="Scan staged files only")
 
+        no_wpt_lint_help = "skip running the WPT linter on web-platform-tests files"
+        parser.add_option("--no-wpt-lint", action="store_true", dest="no_wpt_lint", default=False, help=no_wpt_lint_help)
+
         # Override OptionParser's error() method so that option help will
         # also display when an error occurs.  Normally, just the usage
         # string displays and not option help.
@@ -397,6 +404,7 @@ class ArgumentParser(object):
         output_format = options.output_format
         commit_queue = options.commit_queue
         git_index = options.git_index
+        wpt_lint = not options.no_wpt_lint
 
         if filter_value is not None and not filter_value:
             # Then the user explicitly passed no filter, for
@@ -428,6 +436,7 @@ class ArgumentParser(object):
                                       min_confidence=min_confidence,
                                       output_format=output_format,
                                       commit_queue=commit_queue,
-                                      git_index=git_index)
+                                      git_index=git_index,
+                                      wpt_lint=wpt_lint)
 
         return (paths, options)
