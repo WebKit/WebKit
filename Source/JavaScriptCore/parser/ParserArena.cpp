@@ -114,6 +114,7 @@ const Identifier* IdentifierArena::makeBigIntDecimalIdentifier(VM& vm, const Ide
 #endif
         heapBigInt = bigInt.asHeapBigInt();
 
+    JSC::EnsureStillAliveScope ensureHeapBigInt(heapBigInt);
     m_identifiers.append(Identifier::fromString(vm, JSBigInt::tryGetString(vm, heapBigInt, 10)));
     return &m_identifiers.last();
 }

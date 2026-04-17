@@ -48,6 +48,7 @@ JSObject* cachedDocumentWrapper(JSGlobalObject& lexicalGlobalObject, JSDOMGlobal
     auto* documentGlobalObject = toJSDOMGlobalObject<JSDOMWindow>(lexicalGlobalObject.vm(), toJS(&lexicalGlobalObject, *window));
     if (!documentGlobalObject)
         return nullptr;
+    JSC::EnsureStillAliveScope ensureDocumentGlobalObject(documentGlobalObject);
 
     // Creating a wrapper for domWindow might have created a wrapper for document as well.
     return getCachedWrapper(documentGlobalObject->world(), document);

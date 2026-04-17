@@ -85,6 +85,7 @@ JSObjectRef JSObjectMake(JSContextRef ctx, JSClassRef jsClass, void* data)
         return nullptr;
     }
     JSGlobalObject* globalObject = toJS(ctx);
+    JSC::EnsureStillAliveScope ensureGlobalObject(globalObject);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
 
@@ -117,6 +118,7 @@ JSObjectRef JSObjectMakeConstructor(JSContextRef ctx, JSClassRef jsClass, JSObje
         return nullptr;
     }
     JSGlobalObject* globalObject = toJS(ctx);
+    JSC::EnsureStillAliveScope ensureGlobalObject(globalObject);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
 

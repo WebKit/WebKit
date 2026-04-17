@@ -667,6 +667,7 @@ inline bool toPropertyDescriptor(JSGlobalObject* globalObject, JSValue in, Prope
         return false;
     }
     JSObject* description = asObject(in);
+    JSC::EnsureStillAliveScope ensureDescription(description);
 
     JSValue enumerable;
     JSValue configurable;

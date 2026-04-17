@@ -193,6 +193,15 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
 
     JSValue handleEventFunction = jsFunction;
 
+    // Prevent the compiler from keeping jsFunction, globalObject, or lexicalGlobalObject
+    // only in caller-saved registers across GC allocation points below (toJS calls, property
+    // accesses, etc.). On ARM 32-bit, conservative stack scanning only sees callee-saved
+    // registers and stack-spilled values. Without these, a GC triggered by e.g. toJS() at
+    // line 213/220 could miss these cells, collect them, and corrupt the heap.
+    EnsureStillAliveScope ensureJSFunction(jsFunction);
+    EnsureStillAliveScope ensureGlobalObject(globalObject);
+    EnsureStillAliveScope ensureLexicalGlobalObject(lexicalGlobalObject);
+
     Ref protectedThis { *this };
 
     auto callData = JSC::getCallData(handleEventFunction);

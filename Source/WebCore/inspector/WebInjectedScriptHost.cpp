@@ -97,7 +97,9 @@ static JSObject* objectForPaymentItem(VM& vm, JSGlobalObject* exec, const Paymen
 {
     auto* object = constructEmptyObject(exec);
     object->putDirect(vm, Identifier::fromString(vm, "label"_s), jsString(vm, paymentItem.label));
-    object->putDirect(vm, Identifier::fromString(vm, "amount"_s), objectForPaymentCurrencyAmount(vm, exec, paymentItem.amount));
+    auto* amount = objectForPaymentCurrencyAmount(vm, exec, paymentItem.amount);
+    JSC::EnsureStillAliveScope ensureAmount(amount);
+    object->putDirect(vm, Identifier::fromString(vm, "amount"_s), amount);
     object->putDirect(vm, Identifier::fromString(vm, "pending"_s), jsBoolean(paymentItem.pending));
     return object;
 }
@@ -107,7 +109,9 @@ static JSObject* objectForPaymentShippingOption(VM& vm, JSGlobalObject* exec, co
     auto* object = constructEmptyObject(exec);
     object->putDirect(vm, Identifier::fromString(vm, "id"_s), jsString(vm, paymentShippingOption.id));
     object->putDirect(vm, Identifier::fromString(vm, "label"_s), jsString(vm, paymentShippingOption.label));
-    object->putDirect(vm, Identifier::fromString(vm, "amount"_s), objectForPaymentCurrencyAmount(vm, exec, paymentShippingOption.amount));
+    auto* amount = objectForPaymentCurrencyAmount(vm, exec, paymentShippingOption.amount);
+    JSC::EnsureStillAliveScope ensureAmount(amount);
+    object->putDirect(vm, Identifier::fromString(vm, "amount"_s), amount);
     object->putDirect(vm, Identifier::fromString(vm, "selected"_s), jsBoolean(paymentShippingOption.selected));
     return object;
 }
@@ -116,12 +120,19 @@ static JSObject* objectForPaymentDetailsModifier(VM& vm, JSGlobalObject* exec, c
 {
     auto* object = constructEmptyObject(exec);
     object->putDirect(vm, Identifier::fromString(vm, "supportedMethods"_s), jsString(vm, modifier.supportedMethods));
-    if (modifier.total)
-        object->putDirect(vm, Identifier::fromString(vm, "total"_s), objectForPaymentItem(vm, exec, *modifier.total));
+    if (modifier.total) {
+        auto* total = objectForPaymentItem(vm, exec, *modifier.total);
+        JSC::EnsureStillAliveScope ensureTotal(total);
+        object->putDirect(vm, Identifier::fromString(vm, "total"_s), total);
+    }
     if (!modifier.additionalDisplayItems.isEmpty()) {
         auto* additionalDisplayItems = constructEmptyArray(exec, nullptr);
-        for (unsigned i = 0; i < modifier.additionalDisplayItems.size(); ++i)
-            additionalDisplayItems->putDirectIndex(exec, i, objectForPaymentItem(vm, exec, modifier.additionalDisplayItems[i]));
+        JSC::EnsureStillAliveScope ensureAdditionalDisplayItems(additionalDisplayItems);
+        for (unsigned i = 0; i < modifier.additionalDisplayItems.size(); ++i) {
+            auto* item = objectForPaymentItem(vm, exec, modifier.additionalDisplayItems[i]);
+            JSC::EnsureStillAliveScope ensureItem(item);
+            additionalDisplayItems->putDirectIndex(exec, i, item);
+        }
         object->putDirect(vm, Identifier::fromString(vm, "additionalDisplayItems"_s), additionalDisplayItems);
     }
     return object;
@@ -131,23 +142,39 @@ static JSObject* objectForPaymentDetails(VM& vm, JSGlobalObject* exec, const Pay
 {
     auto* object = constructEmptyObject(exec);
     object->putDirect(vm, Identifier::fromString(vm, "id"_s), jsString(vm, paymentDetails.id));
-    object->putDirect(vm, Identifier::fromString(vm, "total"_s), objectForPaymentItem(vm, exec, paymentDetails.total));
+    {
+        auto* total = objectForPaymentItem(vm, exec, paymentDetails.total);
+        JSC::EnsureStillAliveScope ensureTotal(total);
+        object->putDirect(vm, Identifier::fromString(vm, "total"_s), total);
+    }
     if (paymentDetails.displayItems) {
         auto* displayItems = constructEmptyArray(exec, nullptr);
-        for (unsigned i = 0; i < paymentDetails.displayItems->size(); ++i)
-            displayItems->putDirectIndex(exec, i, objectForPaymentItem(vm, exec, paymentDetails.displayItems->at(i)));
+        JSC::EnsureStillAliveScope ensureDisplayItems(displayItems);
+        for (unsigned i = 0; i < paymentDetails.displayItems->size(); ++i) {
+            auto* item = objectForPaymentItem(vm, exec, paymentDetails.displayItems->at(i));
+            JSC::EnsureStillAliveScope ensureItem(item);
+            displayItems->putDirectIndex(exec, i, item);
+        }
         object->putDirect(vm, Identifier::fromString(vm, "displayItems"_s), displayItems);
     }
     if (paymentDetails.shippingOptions) {
         auto* shippingOptions = constructEmptyArray(exec, nullptr);
-        for (unsigned i = 0; i < paymentDetails.shippingOptions->size(); ++i)
-            shippingOptions->putDirectIndex(exec, i, objectForPaymentShippingOption(vm, exec, paymentDetails.shippingOptions->at(i)));
+        JSC::EnsureStillAliveScope ensureShippingOptions(shippingOptions);
+        for (unsigned i = 0; i < paymentDetails.shippingOptions->size(); ++i) {
+            auto* option = objectForPaymentShippingOption(vm, exec, paymentDetails.shippingOptions->at(i));
+            JSC::EnsureStillAliveScope ensureOption(option);
+            shippingOptions->putDirectIndex(exec, i, option);
+        }
         object->putDirect(vm, Identifier::fromString(vm, "shippingOptions"_s), shippingOptions);
     }
     if (paymentDetails.modifiers) {
         auto* modifiers = constructEmptyArray(exec, nullptr);
-        for (unsigned i = 0; i < paymentDetails.modifiers->size(); ++i)
-            modifiers->putDirectIndex(exec, i, objectForPaymentDetailsModifier(vm, exec, paymentDetails.modifiers->at(i)));
+        JSC::EnsureStillAliveScope ensureModifiers(modifiers);
+        for (unsigned i = 0; i < paymentDetails.modifiers->size(); ++i) {
+            auto* modifier = objectForPaymentDetailsModifier(vm, exec, paymentDetails.modifiers->at(i));
+            JSC::EnsureStillAliveScope ensureModifier(modifier);
+            modifiers->putDirectIndex(exec, i, modifier);
+        }
         object->putDirect(vm, Identifier::fromString(vm, "modifiers"_s), modifiers);
     }
     return object;

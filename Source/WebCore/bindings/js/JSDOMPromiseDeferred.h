@@ -79,6 +79,7 @@ public:
         auto* lexicalGlobalObject = globalObject();
         auto& vm = lexicalGlobalObject->vm();
         JSC::JSLockHolder locker(vm);
+        JSC::EnsureStillAliveScope ensureLexicalGlobalObject(lexicalGlobalObject);
         auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
         auto jsValue = toJS<IDLType>(*lexicalGlobalObject, *globalObject(), std::forward<typename IDLType::ParameterType>(value));
         DEFERRED_PROMISE_HANDLE_AND_RETURN_IF_EXCEPTION(scope, lexicalGlobalObject);
@@ -121,6 +122,7 @@ public:
         auto* lexicalGlobalObject = globalObject();
         auto& vm = lexicalGlobalObject->vm();
         JSC::JSLockHolder locker(vm);
+        JSC::EnsureStillAliveScope ensureLexicalGlobalObject(lexicalGlobalObject);
         auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
         auto jsValue = toJSNewlyCreated<IDLType>(*lexicalGlobalObject, *globalObject(), std::forward<typename IDLType::ParameterType>(value));
         DEFERRED_PROMISE_HANDLE_AND_RETURN_IF_EXCEPTION(scope, lexicalGlobalObject);
@@ -138,6 +140,7 @@ public:
         auto* lexicalGlobalObject = globalObject();
         auto& vm = lexicalGlobalObject->vm();
         JSC::JSLockHolder locker(vm);
+        JSC::EnsureStillAliveScope ensureLexicalGlobalObject(lexicalGlobalObject);
         auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
         auto jsValue = toJSNewlyCreated<IDLType>(*lexicalGlobalObject, *globalObject(), createValue(*protect(globalObject()->scriptExecutionContext())));
         DEFERRED_PROMISE_HANDLE_AND_RETURN_IF_EXCEPTION(scope, lexicalGlobalObject);
@@ -155,6 +158,7 @@ public:
         auto* lexicalGlobalObject = globalObject();
         auto& vm = lexicalGlobalObject->vm();
         JSC::JSLockHolder locker(vm);
+        JSC::EnsureStillAliveScope ensureLexicalGlobalObject(lexicalGlobalObject);
         auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
         auto jsValue = toJS<IDLType>(*lexicalGlobalObject, *globalObject(), std::forward<typename IDLType::ParameterType>(value));
         DEFERRED_PROMISE_HANDLE_AND_RETURN_IF_EXCEPTION(scope, lexicalGlobalObject);
@@ -178,6 +182,7 @@ public:
         auto* lexicalGlobalObject = globalObject();
         auto& vm = lexicalGlobalObject->vm();
         JSC::JSLockHolder locker(vm);
+        JSC::EnsureStillAliveScope ensureLexicalGlobalObject(lexicalGlobalObject);
         auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
         auto jsValue = callback(*globalObject());
         DEFERRED_PROMISE_HANDLE_AND_RETURN_IF_EXCEPTION(scope, lexicalGlobalObject);
@@ -212,6 +217,7 @@ public:
         auto* lexicalGlobalObject = globalObject();
         JSC::VM& vm = lexicalGlobalObject->vm();
         JSC::JSLockHolder locker(vm);
+        JSC::EnsureStillAliveScope ensureLexicalGlobalObject(lexicalGlobalObject);
         auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
         auto jsValue = callback(*globalObject());
         DEFERRED_PROMISE_HANDLE_AND_RETURN_IF_EXCEPTION(scope, lexicalGlobalObject);

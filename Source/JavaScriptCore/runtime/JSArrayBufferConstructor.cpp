@@ -87,7 +87,9 @@ EncodedJSValue JSGenericArrayBufferConstructor<sharingMode>::constructImpl(JSGlo
         RETURN_IF_EXCEPTION(scope, { });
         JSValue options = callFrame->argument(1);
         if (options.isObject()) {
-            JSValue maxByteLengthValue = asObject(options)->get(globalObject, vm.propertyNames->maxByteLength);
+            auto* optionsObj = asObject(options);
+            JSC::EnsureStillAliveScope ensureOptions(optionsObj);
+            JSValue maxByteLengthValue = optionsObj->get(globalObject, vm.propertyNames->maxByteLength);
             RETURN_IF_EXCEPTION(scope, { });
             if (!maxByteLengthValue.isUndefined()) {
                 maxByteLength = maxByteLengthValue.toIndex(globalObject, "maxByteLength"_s);

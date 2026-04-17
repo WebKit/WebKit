@@ -407,6 +407,7 @@ GetByStatus GetByStatus::computeForPropertyInlineCacheWithoutExitSiteFeedback(co
                     }
                     }
 
+                    JSC::EnsureStillAliveScope ensureIntrinsicFunction(intrinsicFunction);
                     ASSERT((AccessCase::Miss == access.type() || access.isCustom()) == (access.offset() == invalidOffset));
                     GetByVariant variant(access.identifier(), StructureSet(structure), viaGlobalProxy, complexGetStatus.offset(),
                         complexGetStatus.conditionSet(), WTF::move(callLinkStatus), intrinsicFunction);

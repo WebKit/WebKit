@@ -56,6 +56,7 @@ JSValue JSPopStateEvent::state(JSGlobalObject& lexicalGlobalObject) const
         // Share the same deserialization with history.state when the state is the current one.
         if (history->isSameAsCurrentState(event.serializedState())) {
             auto* jsHistory = jsCast<JSHistory*>(toJS(&lexicalGlobalObject, realm(), *history).asCell());
+            JSC::EnsureStillAliveScope ensureJsHistory(jsHistory);
             return jsHistory->state(lexicalGlobalObject);
         }
 

@@ -147,10 +147,11 @@ bool JSCallbackObject<Parent>::getOwnPropertySlot(JSObject* object, JSGlobalObje
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(object);
+    JSC::EnsureStillAliveScope ensureThisObject(thisObject);
     JSContextRef ctx = toRef(globalObject);
     JSObjectRef thisRef = toRef(jsCast<JSObject*>(thisObject));
     RefPtr<OpaqueJSString> propertyNameRef;
-    
+
     if (StringImpl* name = propertyName.uid()) {
         unsigned attributes = PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum;
         for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
@@ -267,6 +268,7 @@ bool JSCallbackObject<Parent>::put(JSCell* cell, JSGlobalObject* globalObject, P
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(cell);
+    JSC::EnsureStillAliveScope ensureThisObject(thisObject);
     JSContextRef ctx = toRef(globalObject);
     JSObjectRef thisRef = toRef(jsCast<JSObject*>(thisObject));
     RefPtr<OpaqueJSString> propertyNameRef;
@@ -397,10 +399,11 @@ bool JSCallbackObject<Parent>::deleteProperty(JSCell* cell, JSGlobalObject* glob
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(cell);
+    JSC::EnsureStillAliveScope ensureThisObject(thisObject);
     JSContextRef ctx = toRef(globalObject);
     JSObjectRef thisRef = toRef(jsCast<JSObject*>(thisObject));
     RefPtr<OpaqueJSString> propertyNameRef;
-    
+
     if (StringImpl* name = propertyName.uid()) {
         for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
             if (JSObjectDeletePropertyCallback deleteProperty = jsClass->deleteProperty) {

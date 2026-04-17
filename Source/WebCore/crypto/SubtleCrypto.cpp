@@ -278,6 +278,7 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
             JSValue nameValue = value.get()->get(&state, Identifier::fromString(vm, "name"_s));
             JSValue publicValue = value.get()->get(&state, Identifier::fromString(vm, "public"_s));
             JSObject* newValue = constructEmptyObject(&state);
+            JSC::EnsureStillAliveScope ensureNewValue(newValue);
             newValue->putDirect(vm, Identifier::fromString(vm, "name"_s), nameValue);
             newValue->putDirect(vm, Identifier::fromString(vm, "publicKey"_s), publicValue);
 
@@ -291,6 +292,7 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
             JSValue nameValue = value.get()->get(&state, Identifier::fromString(vm, "name"_s));
             JSValue publicValue = value.get()->get(&state, Identifier::fromString(vm, "public"_s));
             JSObject* newValue = constructEmptyObject(&state);
+            JSC::EnsureStillAliveScope ensureNewValue(newValue);
             newValue->putDirect(vm, Identifier::fromString(vm, "name"_s), nameValue);
             newValue->putDirect(vm, Identifier::fromString(vm, "publicKey"_s), publicValue);
 

@@ -3088,6 +3088,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 if (inputObjectStack.size() > maximumFilterRecursion)
                     return SerializationReturnCode::StackOverflowError;
                 JSMap* inMap = jsCast<JSMap*>(inValue);
+                JSC::EnsureStillAliveScope ensureInMap(inMap);
                 if (!addToObjectPoolIfNotDupe<MapObjectTag>(inMap))
                     break;
                 write(MapObjectTag);
@@ -3134,6 +3135,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 if (inputObjectStack.size() > maximumFilterRecursion)
                     return SerializationReturnCode::StackOverflowError;
                 JSSet* inSet = jsCast<JSSet*>(inValue);
+                JSC::EnsureStillAliveScope ensureInSet(inSet);
                 if (!addToObjectPoolIfNotDupe<SetObjectTag>(inSet))
                     break;
                 write(SetObjectTag);
@@ -5959,6 +5961,7 @@ DeserializationResult CloneDeserializer::deserialize()
             if (outputObjectStack.size() > maximumFilterRecursion)
                 return { JSValue(), SerializationReturnCode::StackOverflowError };
             JSObject* outObject = constructEmptyObject(m_lexicalGlobalObject, m_globalObject->objectPrototype());
+            JSC::EnsureStillAliveScope ensureOutObject(outObject);
             addToObjectPool<ObjectTag>(outObject);
             outputObjectStack.append(outObject);
         }
@@ -5998,6 +6001,7 @@ DeserializationResult CloneDeserializer::deserialize()
                 return { JSValue(), SerializationReturnCode::StackOverflowError };
             }
             JSMap* map = JSMap::create(m_lexicalGlobalObject->vm(), m_globalObject->mapStructure());
+            JSC::EnsureStillAliveScope ensureMap(map);
             addToObjectPool<MapObjectTag>(map);
             outputObjectStack.append(map);
             mapStack.append(map);
@@ -6034,6 +6038,7 @@ DeserializationResult CloneDeserializer::deserialize()
                 return { JSValue(), SerializationReturnCode::StackOverflowError };
             }
             JSSet* set = JSSet::create(m_lexicalGlobalObject->vm(), m_globalObject->setStructure());
+            JSC::EnsureStillAliveScope ensureSet(set);
             addToObjectPool<SetObjectTag>(set);
             outputObjectStack.append(set);
             setStack.append(set);

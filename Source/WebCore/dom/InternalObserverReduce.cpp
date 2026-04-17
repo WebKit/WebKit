@@ -76,6 +76,7 @@ private:
         if (exception) [[unlikely]] {
             scope.clearException();
             auto value = exception->value();
+            JSC::Strong<JSC::Unknown> strongValue(vm.get(), value);
             protect(m_promise)->reject<IDLAny>(value);
             Ref { m_signal }->signalAbort(value);
         }

@@ -56,6 +56,7 @@ ExceptionOr<Ref<RTCEncodedStreamProducer>> RTCEncodedStreamProducer::create(Scri
     if (!globalObject)
         return Exception { ExceptionCode::InvalidStateError };
 
+    JSC::EnsureStillAliveScope ensureGlobal(globalObject);
     Ref readableSource = SimpleReadableStreamSource::create();
     auto readable = ReadableStream::create(*globalObject, readableSource.copyRef());
     if (readable.hasException())
@@ -116,6 +117,7 @@ void RTCEncodedStreamProducer::enqueueFrame(Ref<RTCRtpTransformableFrame>&& fram
     if (!globalObject)
         return;
 
+    JSC::EnsureStillAliveScope ensureGlobal(globalObject);
     Ref vm = globalObject->vm();
     JSC::JSLockHolder lock(vm);
 

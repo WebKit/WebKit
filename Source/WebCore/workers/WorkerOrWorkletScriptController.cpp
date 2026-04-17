@@ -308,6 +308,7 @@ JSC::JSValue WorkerOrWorkletScriptController::evaluateModule(const URL& sourceUR
         InspectorInstrumentation::willEvaluateScript(*globalScope, sourceURL.string(), 1, 1);
     else {
         auto* jsModuleRecord = jsCast<JSModuleRecord*>(&moduleRecord);
+        JSC::EnsureStillAliveScope ensureModuleRecord(jsModuleRecord);
         const auto& jsSourceCode = jsModuleRecord->sourceCode();
         InspectorInstrumentation::willEvaluateScript(*globalScope, sourceURL.string(), jsSourceCode.firstLine().oneBasedInt(), jsSourceCode.startColumn().oneBasedInt());
     }
@@ -352,6 +353,7 @@ bool WorkerOrWorkletScriptController::loadModuleSynchronously(WorkerScriptFetche
             auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
             if (errorValue.isObject()) {
                 auto* object = JSC::asObject(errorValue);
+                JSC::EnsureStillAliveScope ensureObject(object);
                 if (JSValue failureKindValue = object->getDirect(vm, vm.propertyNames->builtinNames().moduleFetchFailureKindPrivateName())) {
                     // This is host propagated error in the module loader pipeline.
                     switch (static_cast<ModuleFetchFailureKind>(failureKindValue.asInt32())) {
@@ -579,6 +581,7 @@ void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL
             JSValue errorValue = callFrame->argument(0);
             if (errorValue.isObject()) {
                 auto* object = JSC::asObject(errorValue);
+                JSC::EnsureStillAliveScope ensureObject(object);
                 if (JSValue failureKindValue = object->getDirect(vm, vm.propertyNames->builtinNames().moduleFetchFailureKindPrivateName())) {
                     auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
                     String message = retrieveErrorMessageWithoutName(*globalObject, vm, object, catchScope);
@@ -596,6 +599,7 @@ void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL
                 }
                 if (object->inherits<ErrorInstance>()) {
                     auto* error = jsCast<ErrorInstance*>(object);
+                    JSC::EnsureStillAliveScope ensureError(error);
                     switch (error->errorType()) {
                     case ErrorType::TypeError: {
                         auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);

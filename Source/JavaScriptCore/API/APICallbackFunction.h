@@ -139,7 +139,9 @@ EncodedJSValue APICallbackFunction::constructImpl(JSGlobalObject* globalObject, 
         return JSValue::encode(newObject);
     }
     
-    return JSValue::encode(toJS(JSObjectMake(ctx, jsCast<JSCallbackConstructor*>(callee)->classRef(), nullptr)));
+    auto* callbackConstructor = jsCast<JSCallbackConstructor*>(callee);
+    JSC::EnsureStillAliveScope ensureCallbackConstructor(callbackConstructor);
+    return JSValue::encode(toJS(JSObjectMake(ctx, callbackConstructor->classRef(), nullptr)));
 }
 
 } // namespace JSC

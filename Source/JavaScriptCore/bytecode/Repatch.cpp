@@ -672,6 +672,7 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
             JSFunction* getter = nullptr;
             if (slot.isCacheableGetter())
                 getter = jsDynamicCast<JSFunction*>(slot.getterSetter()->getter());
+            JSC::EnsureStillAliveScope ensureGetter(getter);
 
             std::optional<DOMAttributeAnnotation> domAttribute;
             if (slot.isCacheableCustom() && slot.domAttribute())

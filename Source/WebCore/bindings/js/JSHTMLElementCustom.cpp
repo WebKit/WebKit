@@ -114,6 +114,7 @@ EncodedJSValue constructJSHTMLElement(JSGlobalObject* lexicalGlobalObject, CallF
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSObject* elementWrapperObject = asObject(elementWrapperValue);
+    JSC::EnsureStillAliveScope ensureElementWrapperObject(elementWrapperObject);
     JSObject::setPrototype(elementWrapperObject, lexicalGlobalObject, newPrototype, true /* shouldThrowIfCantSet */);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
@@ -133,16 +134,23 @@ JSScope* JSHTMLElement::pushEventHandlerScope(JSGlobalObject* lexicalGlobalObjec
     // https://bugs.webkit.org/show_bug.cgi?id=134932
     VM& vm = lexicalGlobalObject->vm();
     
-    scope = JSWithScope::create(vm, lexicalGlobalObject, scope, asObject(toJS(lexicalGlobalObject, realm(), element->document())));
+    auto* docWrapper = asObject(toJS(lexicalGlobalObject, realm(), element->document()));
+    JSC::EnsureStillAliveScope ensureDocWrapper(docWrapper);
+    scope = JSWithScope::create(vm, lexicalGlobalObject, scope, docWrapper);
 
     // The form is next, searched before the document, but after the element itself.
     if (auto* formAssociated = element->asFormAssociatedElement()) {
-        if (RefPtr form = formAssociated->form())
-            scope = JSWithScope::create(vm, lexicalGlobalObject, scope, asObject(toJS(lexicalGlobalObject, realm(), *form)));
+        if (RefPtr form = formAssociated->form()) {
+            auto* formWrapper = asObject(toJS(lexicalGlobalObject, realm(), *form));
+            JSC::EnsureStillAliveScope ensureFormWrapper(formWrapper);
+            scope = JSWithScope::create(vm, lexicalGlobalObject, scope, formWrapper);
+        }
     }
 
     // The element is on top, searched first.
-    return JSWithScope::create(vm, lexicalGlobalObject, scope, asObject(toJS(lexicalGlobalObject, realm(), element)));
+    auto* elementWrapper = asObject(toJS(lexicalGlobalObject, realm(), element));
+    JSC::EnsureStillAliveScope ensureElementWrapper(elementWrapper);
+    return JSWithScope::create(vm, lexicalGlobalObject, scope, elementWrapper);
 }
 
 JSValue toJS(JSGlobalObject*, JSDOMGlobalObject* globalObject, HTMLElement& element)

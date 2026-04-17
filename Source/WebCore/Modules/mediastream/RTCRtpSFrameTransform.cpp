@@ -225,6 +225,7 @@ ExceptionOr<void> RTCRtpSFrameTransform::createStreams()
     if (!globalObject)
         return Exception { ExceptionCode::InvalidStateError };
 
+    JSC::EnsureStillAliveScope ensureGlobal(globalObject);
     m_readableStreamSource = SimpleReadableStreamSource::create();
     auto readable = ReadableStream::create(*globalObject, *m_readableStreamSource);
     if (readable.hasException())

@@ -351,7 +351,9 @@ JSObject* constructRegExp(JSGlobalObject* globalObject, const ArgList& args,  JS
     }
 
     if (isPatternRegExp) {
-        RegExp* regExp = jsCast<RegExpObject*>(patternArg)->regExp();
+        auto* regExpObj = jsCast<RegExpObject*>(patternArg);
+        JSC::EnsureStillAliveScope ensureRegExpObj(regExpObj);
+        RegExp* regExp = regExpObj->regExp();
         Structure* structure = getRegExpStructure(globalObject, newTarget);
         RETURN_IF_EXCEPTION(scope, nullptr);
 

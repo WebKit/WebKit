@@ -303,6 +303,7 @@ bool JSValueIsInstanceOfConstructor(JSContextRef ctx, JSValueRef value, JSObject
     JSValue jsValue = toJS(globalObject, value);
 
     JSObject* jsConstructor = toJS(constructor);
+    JSC::EnsureStillAliveScope ensureJsConstructor(jsConstructor);
     if (!jsConstructor->structure()->typeInfo().implementsHasInstance())
         return false;
     bool result = jsConstructor->hasInstance(globalObject, jsValue); // false if an exception is thrown

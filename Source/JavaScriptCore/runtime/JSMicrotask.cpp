@@ -297,7 +297,9 @@ static void asyncFromSyncIteratorContinueOrDone(JSGlobalObject* globalObject, VM
             JSValue error;
             {
                 auto catchScope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
-                returnMethod = asObject(syncIterator)->get(globalObject, vm.propertyNames->returnKeyword);
+                auto* syncIteratorObj = asObject(syncIterator);
+                JSC::EnsureStillAliveScope ensureSyncIterator(syncIteratorObj);
+                returnMethod = syncIteratorObj->get(globalObject, vm.propertyNames->returnKeyword);
                 if (catchScope.exception()) [[unlikely]] {
                     error = catchScope.exception()->value();
                     if (!catchScope.clearExceptionExceptTermination()) [[unlikely]] {

@@ -307,6 +307,7 @@ void JSCustomElementInterface::invokeCallback(Element& element, JSObject* callba
     JSGlobalObject* lexicalGlobalObject = globalObject;
 
     JSObject* jsElement = asObject(toJS(lexicalGlobalObject, globalObject, element));
+    JSC::EnsureStillAliveScope ensureJsElement(jsElement);
 
     auto callData = JSC::getCallData(callback);
     ASSERT(callData.type != CallData::Type::None);

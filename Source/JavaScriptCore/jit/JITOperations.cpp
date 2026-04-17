@@ -1364,9 +1364,11 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdDirectStrictGaveUp, void, (EncodedJSVal
     propertyCache->tookSlowPath = true;
     
     JSValue baseValue = JSValue::decode(encodedBase);
+    JSObject* baseObject = asObject(baseValue);
+    JSC::EnsureStillAliveScope ensureBase(baseObject);
     CacheableIdentifier identifier = propertyCache->identifier();
     PutPropertySlot slot(baseValue, true, callFrame->codeBlock()->putByIdContext());
-    CommonSlowPaths::putDirectWithReify(vm, globalObject, asObject(baseValue), identifier, JSValue::decode(encodedValue), slot);
+    CommonSlowPaths::putDirectWithReify(vm, globalObject, baseObject, identifier, JSValue::decode(encodedValue), slot);
 
     LOG_IC((ICEvent::OperationPutByIdDirectStrictGaveUp, baseValue.classInfoOrNull(), slot.base() == baseValue));
     OPERATION_RETURN(scope);
@@ -1385,9 +1387,11 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdDirectSloppyGaveUp, void, (EncodedJSVal
     propertyCache->tookSlowPath = true;
     
     JSValue baseValue = JSValue::decode(encodedBase);
+    JSObject* baseObject = asObject(baseValue);
+    JSC::EnsureStillAliveScope ensureBase(baseObject);
     CacheableIdentifier identifier = propertyCache->identifier();
     PutPropertySlot slot(baseValue, false, callFrame->codeBlock()->putByIdContext());
-    CommonSlowPaths::putDirectWithReify(vm, globalObject, asObject(baseValue), identifier, JSValue::decode(encodedValue), slot);
+    CommonSlowPaths::putDirectWithReify(vm, globalObject, baseObject, identifier, JSValue::decode(encodedValue), slot);
 
     LOG_IC((ICEvent::OperationPutByIdDirectSloppyGaveUp, baseValue.classInfoOrNull(), slot.base() == baseValue));
     OPERATION_RETURN(scope);
@@ -1474,6 +1478,7 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdDirectStrictOptimize, void, (EncodedJSV
 
     JSValue value = JSValue::decode(encodedValue);
     JSObject* baseObject = asObject(JSValue::decode(encodedBase));
+    JSC::EnsureStillAliveScope ensureBase(baseObject);
     CodeBlock* codeBlock = callFrame->codeBlock();
     PutPropertySlot slot(baseObject, true, codeBlock->putByIdContext());
     Structure* structure = nullptr;
@@ -1506,6 +1511,7 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdDirectSloppyOptimize, void, (EncodedJSV
 
     JSValue value = JSValue::decode(encodedValue);
     JSObject* baseObject = asObject(JSValue::decode(encodedBase));
+    JSC::EnsureStillAliveScope ensureBase(baseObject);
     CodeBlock* codeBlock = callFrame->codeBlock();
     PutPropertySlot slot(baseObject, false, codeBlock->putByIdContext());
     Structure* structure = nullptr;
@@ -1841,6 +1847,7 @@ static ALWAYS_INLINE void directPutByValOptimize(JSGlobalObject* globalObject, C
 
     RELEASE_ASSERT(baseValue.isObject());
     JSObject* baseObject = asObject(baseValue);
+    JSC::EnsureStillAliveScope ensureBase(baseObject);
 
     if (!isCopyOnWrite(baseObject->indexingMode()) && subscript.isInt32()) {
         Structure* structure = baseObject->structure();

@@ -1784,7 +1784,9 @@ void LOLJIT::emit_op_new_reg_exp(const JSInstruction* currentInstruction)
     constexpr GPRReg globalObjectGPR = preferredArgumentGPR<Operation, 0>();
 
     loadGlobalObject(globalObjectGPR);
-    callOperation(operationNewRegExp, globalObjectGPR, TrustedImmPtr(jsCast<RegExp*>(m_unlinkedCodeBlock->getConstant(regexp))));
+    auto* regExp = jsCast<RegExp*>(m_unlinkedCodeBlock->getConstant(regexp));
+    JSC::EnsureStillAliveScope ensureRegExp(regExp);
+    callOperation(operationNewRegExp, globalObjectGPR, TrustedImmPtr(regExp));
     boxCell(returnValueGPR, returnValueJSR);
     emitPutVirtualRegister(dst, returnValueJSR);
 

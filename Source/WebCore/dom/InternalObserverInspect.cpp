@@ -120,7 +120,9 @@ private:
             JSC::Exception* exception = scope.exception();
             if (exception) [[unlikely]] {
                 scope.clearException();
-                protect(m_subscriber)->error(exception->value());
+                auto exceptionValue = exception->value();
+                JSC::Strong<JSC::Unknown> strongValue(vm.get(), exceptionValue);
+                protect(m_subscriber)->error(exceptionValue);
                 return;
             }
         }
@@ -142,7 +144,9 @@ private:
             JSC::Exception* exception = scope.exception();
             if (exception) [[unlikely]] {
                 scope.clearException();
-                protect(m_subscriber)->error(exception->value());
+                auto exceptionValue = exception->value();
+                JSC::Strong<JSC::Unknown> strongValue(vm.get(), exceptionValue);
+                protect(m_subscriber)->error(exceptionValue);
                 return;
             }
         }
@@ -166,7 +170,9 @@ private:
             JSC::Exception* exception = scope.exception();
             if (exception) [[unlikely]] {
                 scope.clearException();
-                protect(m_subscriber)->error(exception->value());
+                auto exceptionValue = exception->value();
+                JSC::Strong<JSC::Unknown> strongValue(vm.get(), exceptionValue);
+                protect(m_subscriber)->error(exceptionValue);
                 return;
             }
         }

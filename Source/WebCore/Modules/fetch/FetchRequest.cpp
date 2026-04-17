@@ -309,6 +309,7 @@ ExceptionOr<void> FetchRequest::setBody(FetchRequest& request)
 
         RefPtr context = scriptExecutionContext();
         auto* globalObject = context ? JSC::jsCast<JSDOMGlobalObject*>(context->globalObject()) : nullptr;
+        JSC::EnsureStillAliveScope ensureGlobal(globalObject);
         m_body = request.m_body->createProxy(*globalObject);
         request.setDisturbed();
     }

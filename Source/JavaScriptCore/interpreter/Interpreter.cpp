@@ -235,6 +235,7 @@ unsigned sizeOfVarargs(JSGlobalObject* globalObject, JSValue arguments, uint32_t
     }
     
     JSCell* cell = arguments.asCell();
+    JSC::EnsureStillAliveScope ensureCell(cell);
     unsigned length;
     switch (cell->type()) {
     case DirectArgumentsType:
@@ -313,6 +314,7 @@ void loadVarargs(JSGlobalObject* globalObject, JSValue* firstElementDest, JSValu
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSCell* cell = arguments.asCell();
+    JSC::EnsureStillAliveScope ensureCell(cell);
 
     switch (cell->type()) {
     case DirectArgumentsType:

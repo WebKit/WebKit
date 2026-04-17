@@ -217,9 +217,11 @@ void PDFDocument::sendPDFArrayBuffer()
     ASSERT(documentLoader);
     if (auto mainResourceData = documentLoader->mainResourceData()) {
         if (auto arrayBuffer = mainResourceData->tryCreateArrayBuffer()) {
-            auto& vm = globalObject()->vm();
+            auto* domGlobalObject = globalObject();
+            auto& vm = domGlobalObject->vm();
             JSC::JSLockHolder lock(vm);
-            auto* dataObject = JSC::JSArrayBuffer::create(vm, globalObject()->arrayBufferStructure(arrayBuffer->sharingMode()), WTF::move(arrayBuffer));
+            JSC::EnsureStillAliveScope ensureGlobalObject(domGlobalObject);
+            auto* dataObject = JSC::JSArrayBuffer::create(vm, domGlobalObject->arrayBufferStructure(arrayBuffer->sharingMode()), WTF::move(arrayBuffer));
             postMessageToIframe("open-pdf"_s, dataObject);
         }
     }

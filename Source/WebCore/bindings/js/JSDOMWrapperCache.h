@@ -187,6 +187,7 @@ template<typename DOMClass, typename T> inline auto createWrapper(JSDOMGlobalObj
     if constexpr (std::is_same_v<DOMClass, T>) {
         using WrapperClass = typename JSDOMWrapperConverterTraits<DOMClass>::WrapperClass;
 
+        JSC::EnsureStillAliveScope ensureGlobalObject(globalObject);
         ASSERT(!getCachedWrapper(globalObject->world(), domObject));
         auto* domObjectPtr = domObject.ptr();
         auto* wrapper = WrapperClass::create(getDOMStructure<WrapperClass>(globalObject->vm(), *globalObject), globalObject, WTF::move(domObject));
@@ -202,6 +203,8 @@ template<typename DOMClass> inline JSC::JSValue wrap(JSC::JSGlobalObject* lexica
 {
     if (auto* wrapper = getCachedWrapper(globalObject->world(), domObject))
         return wrapper;
+    JSC::EnsureStillAliveScope ensureLexicalGlobalObject(lexicalGlobalObject);
+    JSC::EnsureStillAliveScope ensureGlobalObject(globalObject);
     return toJSNewlyCreated(lexicalGlobalObject, globalObject, Ref<DOMClass>(domObject));
 }
 

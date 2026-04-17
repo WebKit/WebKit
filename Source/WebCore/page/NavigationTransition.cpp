@@ -65,7 +65,9 @@ DOMPromise& NavigationTransition::finished()
 {
     if (!m_finishedDOMPromise) {
         auto& promise = *jsCast<JSC::JSPromise*>(m_finished->promise());
-        m_finishedDOMPromise = DOMPromise::create(*m_finished->globalObject(), promise);
+        JSC::EnsureStillAliveScope ensurePromise(&promise);
+        auto& finishedGlobalObject = *m_finished->globalObject();
+        m_finishedDOMPromise = DOMPromise::create(finishedGlobalObject, promise);
     }
 
     return *m_finishedDOMPromise;

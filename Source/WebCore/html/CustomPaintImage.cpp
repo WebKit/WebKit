@@ -116,6 +116,7 @@ ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, co
 
     auto& vm = paintConstructor.getObject()->vm();
     JSC::JSLockHolder lock(vm);
+    JSC::EnsureStillAliveScope ensurePaintConstructor(paintConstructor.asCell());
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto& globalObject = *paintConstructor.getObject()->realm();
 

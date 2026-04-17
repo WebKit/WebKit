@@ -152,6 +152,7 @@ void FileSystemFileHandle::createWritable(const CreateWritableOptions& options, 
             return promise.reject(Exception { ExceptionCode::InvalidStateError, "Global object is invalid"_s });
         }
 
+        JSC::EnsureStillAliveScope ensureGlobal(globalObject);
         auto sink = FileSystemWritableFileStreamSink::create(streamIdentifier, *this);
         if (sink.hasException()) {
             closeWritable(streamIdentifier, FileSystemWriteCloseReason::Aborted);

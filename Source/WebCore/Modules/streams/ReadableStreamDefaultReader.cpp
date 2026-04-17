@@ -102,6 +102,7 @@ void ReadableStreamDefaultReader::read(JSDOMGlobalObject& globalObject, Ref<Read
         if (!promise)
             return;
 
+        JSC::EnsureStillAliveScope ensurePromise(promise);
         Ref domPromise = DOMPromise::create(globalObject, *promise);
         domPromise->whenSettledWithResult([domPromise, readRequest = WTF::move(readRequest)](auto* globalObject, bool isFulfilled, auto promiseResult) {
             if (!isFulfilled) {

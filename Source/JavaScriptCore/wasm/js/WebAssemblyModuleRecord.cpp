@@ -716,6 +716,7 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
     // Let exports be a list of (string, JS value) pairs that is mapped from each external value e in instance.exports as follows:
     // https://webassembly.github.io/spec/js-api/index.html#create-an-exports-object
     JSObject* exportsObject = constructEmptyObject(vm, globalObject->nullPrototypeObjectStructure());
+    JSC::EnsureStillAliveScope ensureExportsObject(exportsObject);
     JSModuleEnvironment* moduleEnvironment = this->moduleEnvironment();
     for (const auto& exp : moduleInformation.exports) {
         JSValue exportedValue;

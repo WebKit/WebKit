@@ -1619,7 +1619,9 @@ LLINT_SLOW_PATH_DECL(slow_path_in_by_id)
     if (!baseValue.isObject())
         LLINT_THROW(createInvalidInParameterError(globalObject, baseValue));
 
-    LLINT_RETURN(jsBoolean(asObject(baseValue)->hasProperty(globalObject, codeBlock->identifier(bytecode.m_property))));
+    JSObject* baseObject = asObject(baseValue);
+    JSC::EnsureStillAliveScope ensureBase(baseObject);
+    LLINT_RETURN(jsBoolean(baseObject->hasProperty(globalObject, codeBlock->identifier(bytecode.m_property))));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_in_by_val)
@@ -1639,12 +1641,14 @@ LLINT_SLOW_PATH_DECL(slow_path_has_private_name)
     if (!baseValue.isObject())
         LLINT_THROW(createInvalidInParameterError(globalObject, baseValue));
 
+    JSObject* baseObject = asObject(baseValue);
+    JSC::EnsureStillAliveScope ensureBase(baseObject);
     auto propertyValue = getOperand(callFrame, bytecode.m_property);
     ASSERT(propertyValue.isSymbol());
     auto property = propertyValue.toPropertyKey(globalObject);
     LLINT_CHECK_EXCEPTION();
 
-    LLINT_RETURN(jsBoolean(asObject(baseValue)->hasPrivateField(globalObject, property)));
+    LLINT_RETURN(jsBoolean(baseObject->hasPrivateField(globalObject, property)));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_has_private_brand)
@@ -1656,7 +1660,9 @@ LLINT_SLOW_PATH_DECL(slow_path_has_private_brand)
     if (!baseValue.isObject())
         LLINT_THROW(createInvalidInParameterError(globalObject, baseValue));
 
-    LLINT_RETURN(jsBoolean(asObject(baseValue)->hasPrivateBrand(globalObject, getOperand(callFrame, bytecode.m_brand))));
+    JSObject* baseObject = asObject(baseValue);
+    JSC::EnsureStillAliveScope ensureBase(baseObject);
+    LLINT_RETURN(jsBoolean(baseObject->hasPrivateBrand(globalObject, getOperand(callFrame, bytecode.m_brand))));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_has_structure_with_flags)
@@ -1682,8 +1688,10 @@ LLINT_SLOW_PATH_DECL(slow_path_put_getter_by_id)
 
     JSValue getter = getNonConstantOperand(callFrame, bytecode.m_accessor);
     ASSERT(getter.isObject());
+    JSObject* getterObject = asObject(getter);
+    JSC::EnsureStillAliveScope ensureGetter(getterObject);
 
-    baseObj->putGetter(globalObject, codeBlock->identifier(bytecode.m_property), asObject(getter), options);
+    baseObj->putGetter(globalObject, codeBlock->identifier(bytecode.m_property), getterObject, options);
     LLINT_END();
 }
 
@@ -1698,8 +1706,10 @@ LLINT_SLOW_PATH_DECL(slow_path_put_setter_by_id)
 
     JSValue setter = getNonConstantOperand(callFrame, bytecode.m_accessor);
     ASSERT(setter.isObject());
+    JSObject* setterObject = asObject(setter);
+    JSC::EnsureStillAliveScope ensureSetter(setterObject);
 
-    baseObj->putSetter(globalObject, codeBlock->identifier(bytecode.m_property), asObject(setter), options);
+    baseObj->putSetter(globalObject, codeBlock->identifier(bytecode.m_property), setterObject, options);
     LLINT_END();
 }
 
@@ -1731,11 +1741,13 @@ LLINT_SLOW_PATH_DECL(slow_path_put_getter_by_val)
 
     JSValue getter = getNonConstantOperand(callFrame, bytecode.m_accessor);
     ASSERT(getter.isObject());
+    JSObject* getterObject = asObject(getter);
+    JSC::EnsureStillAliveScope ensureGetter(getterObject);
 
     auto property = subscript.toPropertyKey(globalObject);
     LLINT_CHECK_EXCEPTION();
 
-    baseObj->putGetter(globalObject, property, asObject(getter), options);
+    baseObj->putGetter(globalObject, property, getterObject, options);
     LLINT_END();
 }
 
@@ -1751,11 +1763,13 @@ LLINT_SLOW_PATH_DECL(slow_path_put_setter_by_val)
 
     JSValue setter = getNonConstantOperand(callFrame, bytecode.m_accessor);
     ASSERT(setter.isObject());
+    JSObject* setterObject = asObject(setter);
+    JSC::EnsureStillAliveScope ensureSetter(setterObject);
 
     auto property = subscript.toPropertyKey(globalObject);
     LLINT_CHECK_EXCEPTION();
 
-    baseObj->putSetter(globalObject, property, asObject(setter), options);
+    baseObj->putSetter(globalObject, property, setterObject, options);
     LLINT_END();
 }
 

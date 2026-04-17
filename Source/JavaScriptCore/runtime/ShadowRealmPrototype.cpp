@@ -78,6 +78,7 @@ JSC_DEFINE_HOST_FUNCTION(importInRealm, (JSGlobalObject* globalObject, CallFrame
     RETURN_IF_EXCEPTION(scope, { });
 
     JSGlobalObject* realmGlobalObject = thisRealm->globalObject();
+    JSC::EnsureStillAliveScope ensureRealmGlobalObject(realmGlobalObject);
     auto* result = realmGlobalObject->moduleLoader()->importModule(realmGlobalObject, specifier, jsUndefined(), sourceOrigin);
     RETURN_IF_EXCEPTION(scope, JSValue::encode(promise->rejectWithCaughtException(realmGlobalObject, scope)));
 

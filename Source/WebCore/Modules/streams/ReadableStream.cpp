@@ -538,6 +538,7 @@ Ref<DOMPromise> ReadableStream::cancel(JSDOMGlobalObject& globalObject, JSC::JSV
         if (!jsPromise)
             return promise;
 
+        JSC::EnsureStillAliveScope ensureJSPromise(jsPromise);
         return DOMPromise::create(globalObject, *jsPromise);
     }
 

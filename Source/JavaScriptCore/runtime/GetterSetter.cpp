@@ -55,6 +55,7 @@ JSValue GetterSetter::callGetter(JSGlobalObject* globalObject, JSValue thisValue
     RETURN_IF_EXCEPTION(scope, scope.exception()->value());
 
     JSObject* getter = this->getter();
+    JSC::EnsureStillAliveScope ensureGetter(getter);
 
     auto callData = JSC::getCallDataInline(getter);
     RELEASE_AND_RETURN(scope, call(globalObject, getter, callData, thisValue, ArgList()));
@@ -66,6 +67,7 @@ bool GetterSetter::callSetter(JSGlobalObject* globalObject, JSValue thisValue, J
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSObject* setter = this->setter();
+    JSC::EnsureStillAliveScope ensureSetter(setter);
 
     if (setter->type() == NullSetterFunctionType)
         return typeError(globalObject, scope, shouldThrow, ReadonlyPropertyWriteError);

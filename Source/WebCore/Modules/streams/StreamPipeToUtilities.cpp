@@ -257,6 +257,7 @@ static RefPtr<DOMPromise> cancelReadableStream(JSDOMGlobalObject& globalObject, 
     if (!promise)
         return nullptr;
 
+    JSC::EnsureStillAliveScope ensurePromise(promise);
     return DOMPromise::create(globalObject, *promise);
 }
 
@@ -306,6 +307,7 @@ void StreamPipeToState::handleSignal()
                 if (!promise)
                     return nullptr;
 
+                JSC::EnsureStillAliveScope ensurePromise(promise);
                 return DOMPromise::create(*globalObject, *promise);
             }();
 
@@ -413,6 +415,7 @@ void StreamPipeToState::errorsMustBePropagatedForward(JSDOMGlobalObject& globalO
                     deferred->resolve();
                     return RefPtr { WTF::move(result) };
                 }
+                JSC::EnsureStillAliveScope ensurePromise(promise);
                 return DOMPromise::create(*globalObject, *promise);
             }, [error](auto&) { return error.get(); });
             return;
@@ -559,6 +562,7 @@ void StreamPipeToState::closingMustBePropagatedBackward()
             if (!promise)
                 deferred->rejectWithCallback(WTF::move(getError2), RejectAsHandled::Yes);
             else {
+                JSC::EnsureStillAliveScope ensurePromise(promise);
                 Ref cancelPromise = DOMPromise::create(*globalObject, *promise);
                 cancelPromise->whenSettledWithResult([deferred = WTF::move(deferred), getError2 = WTF::move(getError2)](auto*, bool isFulfilled, auto result) mutable {
                     if (!isFulfilled) {

@@ -329,6 +329,7 @@ ObjectPropertyConditionSet generateConditions(JSGlobalObject* globalObject, Stru
         }
         
         JSObject* object = jsCast<JSObject*>(value);
+        JSC::EnsureStillAliveScope ensureObject(object);
         structure = object->structure();
         
         if (structure->isDictionary()) {
