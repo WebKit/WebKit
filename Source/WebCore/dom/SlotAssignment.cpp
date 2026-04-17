@@ -264,6 +264,9 @@ void NamedSlotAssignment::resolveSlotsAfterSlotMutation(ShadowRoot& shadowRoot, 
         return;
     }
 
+    if (!m_slotAssignmentsIsValid)
+        assignSlots(shadowRoot);
+
     for (auto& slot : m_slots.values()) {
         if (slot->seenFirstElement)
             continue;
@@ -275,7 +278,7 @@ void NamedSlotAssignment::resolveSlotsAfterSlotMutation(ShadowRoot& shadowRoot, 
         // All slot elements have been removed for this slot.
         slot->seenFirstElement = true;
         ASSERT(slot->element);
-        if (hasAssignedNodes(shadowRoot, *slot))
+        if (!slot->assignedNodes.isEmpty())
             slot->oldElement = WTF::move(slot->element);
         slot->element = nullptr;
     }
