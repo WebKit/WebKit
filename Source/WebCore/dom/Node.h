@@ -335,6 +335,7 @@ public:
     inline Node& rootNode() const;
     WEBCORE_EXPORT Node& traverseToRootNode() const;
     Node& shadowIncludingRoot() const { return *m_shadowIncludingRoot; }
+    void resetShadowIncludingRoot() { m_shadowIncludingRoot = this; }
 
     struct GetRootNodeOptions {
         bool composed;
