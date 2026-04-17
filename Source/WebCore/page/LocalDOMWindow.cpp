@@ -2827,8 +2827,8 @@ ExceptionOr<RefPtr<Frame>> LocalDOMWindow::createWindow(const String& urlString,
     if (!activeDocument)
         return RefPtr<Frame> { nullptr };
 
-    URL completedURL = urlString.isEmpty() ? URL({ }, emptyString()) : protect(firstFrame.document())->completeURL(urlString);
-    if (!completedURL.isEmpty() && !completedURL.isValid())
+    URL completedURL = urlString.isEmpty() ? URL() : protect(firstFrame.document())->completeURL(urlString);
+    if (!completedURL.isNull() && !completedURL.isValid())
         return Exception { ExceptionCode::SyntaxError };
 
     WindowFeatures windowFeatures = initialWindowFeatures;

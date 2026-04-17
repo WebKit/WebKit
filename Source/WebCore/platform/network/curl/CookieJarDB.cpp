@@ -543,7 +543,7 @@ bool CookieJarDB::setCookie(const URL& firstParty, const URL& url, const String&
     if (!isEnabled() || !m_database.isOpen())
         return false;
 
-    if (url.isEmpty() || body.isEmpty())
+    if (url.isNull() || body.isEmpty())
         return false;
 
     auto cookie = CookieUtil::parseCookieHeader(body);

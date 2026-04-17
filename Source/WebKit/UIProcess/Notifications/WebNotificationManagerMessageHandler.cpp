@@ -54,7 +54,7 @@ void WebNotificationManagerMessageHandler::showNotification(IPC::Connection& con
 {
     RELEASE_LOG(Push, "WebNotificationManagerMessageHandler showNotification called");
 
-    if (!data.serviceWorkerRegistrationURL.isEmpty()) {
+    if (!data.serviceWorkerRegistrationURL.isNull()) {
         ServiceWorkerNotificationHandler::singleton().showNotification(connection, data, WTF::move(resources), WTF::move(callback));
         return;
     }

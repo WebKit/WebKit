@@ -91,7 +91,7 @@ static void removeSourceString(const String& string)
 
 UserScript::UserScript(String&& source, URL&& url, Vector<String>&& allowlist, Vector<String>&& blocklist, UserScriptInjectionTime injectionTime, UserContentInjectedFrames injectedFrames, UserContentMatchParentFrame matchParentFrame)
     : m_source(internedSourceString(source))
-    , m_url(url.isEmpty() ? generateUserScriptUniqueURL() : WTF::move(url))
+    , m_url(url.isNull() ? generateUserScriptUniqueURL() : WTF::move(url))
     , m_allowlist(WTF::move(allowlist))
     , m_blocklist(WTF::move(blocklist))
     , m_injectionTime(injectionTime)

@@ -133,7 +133,7 @@ static bool canCacheLocalFrame(LocalFrame& frame, DiagnosticLoggingClient& diagn
     URL currentURL = documentLoader->url();
     RefPtr provisionalDocumentLoader = frameLoader->provisionalDocumentLoader();
     URL newURL = provisionalDocumentLoader ? provisionalDocumentLoader->url() : URL();
-    if (!newURL.isEmpty())
+    if (!newURL.isNull())
         PCLOG(" Determining if frame can be cached navigating from ("_s, currentURL.string(), ") to ("_s, newURL.string(), "):"_s);
     else
         PCLOG(" Determining if subframe with URL ("_s, currentURL.string(), ") can be cached:"_s);
@@ -147,7 +147,7 @@ static bool canCacheLocalFrame(LocalFrame& frame, DiagnosticLoggingClient& diagn
     }
 
     // Do not cache error pages (these can be recognized as pages with substitute data or unreachable URLs).
-    if (documentLoader->substituteData().isValid() && !documentLoader->substituteData().failingURL().isEmpty()) {
+    if (documentLoader->substituteData().isValid() && !documentLoader->substituteData().failingURL().isNull()) {
         PCLOG("   -Frame is an error page"_s);
         logBackForwardCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::isErrorPageKey());
         isCacheable = false;

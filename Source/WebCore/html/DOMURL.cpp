@@ -105,7 +105,7 @@ String DOMURL::createObjectURL(ScriptExecutionContext& scriptExecutionContext, B
 String DOMURL::createPublicURL(ScriptExecutionContext& scriptExecutionContext, URLRegistrable& registrable)
 {
     URL publicURL = BlobURL::createPublicURL(protect(scriptExecutionContext.securityOrigin()).get());
-    if (publicURL.isEmpty())
+    if (publicURL.isNull())
         return String();
 
     protect(scriptExecutionContext.publicURLManager())->registerURL(publicURL, registrable);

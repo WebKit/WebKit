@@ -137,7 +137,7 @@ RefPtr<WebExtensionMatchPattern> WebExtensionMatchPattern::getOrCreate(const Str
 
 RefPtr<WebExtensionMatchPattern> WebExtensionMatchPattern::getOrCreate(const URL& url, OptionSet<CreateOptions> options)
 {
-    ASSERT(!url.isEmpty());
+    ASSERT(!url.isNull());
 
     String scheme = "*"_s;
     if (options.contains(CreateOptions::MatchExactScheme) || !url.protocolIsInHTTPFamily())

@@ -60,10 +60,10 @@ static constexpr auto webKitBlobResourceDomain = "WebKitBlobResource"_s;
 static RefPtr<BlobData> blobDataFrom(NetworkSession& session, const WebCore::ResourceRequest& request, const SecurityOrigin* topOrigin)
 {
     // We use request.firstPartyForCookies() to indicate if the request originated from the DOM or WebView API.
-    ASSERT(topOrigin || request.firstPartyForCookies().isEmpty());
+    ASSERT(topOrigin || request.firstPartyForCookies().isNull());
 
     std::optional<SecurityOriginData> topOriginData = topOrigin ? std::optional { topOrigin->data() } : std::nullopt;
-    if (!topOriginData && !request.firstPartyForCookies().isEmpty() && request.firstPartyForCookies().isValid()) {
+    if (!topOriginData && !request.firstPartyForCookies().isNull() && request.firstPartyForCookies().isValid()) {
         RELEASE_LOG(Network, "Got request for blob without topOrigin but request specifies firstPartyForCookies");
         topOriginData = SecurityOriginData::fromURLWithoutStrictOpaqueness(request.firstPartyForCookies());
     }

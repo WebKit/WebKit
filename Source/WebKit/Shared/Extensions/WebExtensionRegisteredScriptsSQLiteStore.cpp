@@ -298,7 +298,7 @@ URL WebExtensionRegisteredScriptsSQLiteStore::databaseURL()
     if (useInMemoryDatabase())
         return WebExtensionSQLiteDatabase::inMemoryDatabaseURL();
 
-    ASSERT(!directory().isEmpty());
+    ASSERT(!directory().isNull());
     return URL(URL { makeString(directory().string(), "/"_s) }, "RegisteredContentScripts.db"_s);
 }
 

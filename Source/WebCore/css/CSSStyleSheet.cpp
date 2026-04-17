@@ -338,7 +338,7 @@ bool CSSStyleSheet::canAccessRules() const
         return m_isOriginClean.value();
 
     URL baseURL = m_contents->baseURL();
-    if (baseURL.isEmpty())
+    if (baseURL.isNull())
         return true;
 
     RefPtr document = ownerDocument();

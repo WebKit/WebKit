@@ -288,7 +288,7 @@ static void readURLAlongsideAttachmentIfNecessary(PasteboardWebContentReader& re
 
     String title;
     auto url = strategy.readURLFromPasteboard(itemIndex, pasteboardName, title, context);
-    if (!url.isEmpty())
+    if (!url.isNull())
         reader.readURL(url, title);
 }
 

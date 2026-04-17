@@ -45,7 +45,7 @@ namespace WebKit {
 String CacheStorageCache::computeKeyURL(const URL& url)
 {
     RELEASE_ASSERT(url.isValid());
-    RELEASE_ASSERT(!url.isEmpty());
+    RELEASE_ASSERT(!url.isNull());
     URL keyURL { url };
     keyURL.removeQueryAndFragmentIdentifier();
     auto keyURLString = keyURL.string();

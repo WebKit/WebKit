@@ -97,7 +97,7 @@ WebExtension::WebExtension(NSBundle *appExtensionBundle, NSURL *resourceURL, Ref
 
     if (m_bundle) {
         auto *bundleResourceURL = m_bundle.get().resourceURL.URLByStandardizingPath.absoluteURL;
-        if (m_resourceBaseURL.isEmpty())
+        if (m_resourceBaseURL.isNull())
             m_resourceBaseURL = bundleResourceURL;
 
 #if PLATFORM(MAC)

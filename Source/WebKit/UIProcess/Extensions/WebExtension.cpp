@@ -189,7 +189,7 @@ WebExtension::WebExtension(Resources&& resources)
 
 WebExtension::~WebExtension()
 {
-    if (m_resourcesAreTemporary && !m_resourceBaseURL.isEmpty())
+    if (m_resourcesAreTemporary && !m_resourceBaseURL.isNull())
         FileSystem::deleteNonEmptyDirectory(m_resourceBaseURL.fileSystemPath());
 }
 
@@ -520,7 +520,7 @@ URL WebExtension::resourceFileURLForPath(const String& originalPath)
     if (path.startsWith('/'))
         path = path.substring(1);
 
-    if (!path.length() || m_resourceBaseURL.isEmpty())
+    if (!path.length() || m_resourceBaseURL.isNull())
         return { };
 
     URL result { m_resourceBaseURL, path };

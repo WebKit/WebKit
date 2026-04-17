@@ -143,7 +143,7 @@ void CookieJar::setCookies(Document& document, const URL& url, const String& coo
 bool CookieJar::cookiesEnabled(Document& document)
 {
     auto cookieURL = document.cookieURL();
-    if (cookieURL.isEmpty())
+    if (cookieURL.isNull())
         return false;
 
     auto pageID = document.pageID();

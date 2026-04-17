@@ -80,7 +80,7 @@ void NotificationResourcesLoader::start(CompletionHandler<void(RefPtr<Notificati
     if (resourceIsSupportedInPlatform(Resource::Icon)) {
         Ref notification = m_notification.get();
         const URL& iconURL = notification->icon();
-        if (!iconURL.isEmpty()) {
+        if (!iconURL.isNull()) {
             Ref loader = ResourceLoader::create(*protect(notification->scriptExecutionContext()), iconURL, [this](ResourceLoader* loader, RefPtr<BitmapImage>&& image) {
                 if (m_stopped)
                     return;

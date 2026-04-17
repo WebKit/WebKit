@@ -242,7 +242,7 @@ String HTMLImageElement::imageSourceURL() const
 const AtomString& HTMLImageElement::currentSrc()
 {
     if (m_currentSrc.isNull()) {
-        if (!m_currentURL.isEmpty())
+        if (!m_currentURL.isNull())
             m_currentSrc = AtomString(m_currentURL.string());
     }
     return m_currentSrc;

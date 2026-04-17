@@ -642,7 +642,7 @@ void NavigationScheduler::scheduleRedirect(Document& initiatingDocument, double 
         return;
     if (delay < 0 || delay > INT_MAX / 1000)
         return;
-    if (url.isEmpty())
+    if (url.isNull())
         return;
 
     // We want a new back/forward list item if the refresh timeout is > 1 second.
@@ -779,7 +779,7 @@ void NavigationScheduler::scheduleRefresh(Document& initiatingDocument)
         return;
     Ref frame = downcast<LocalFrame>(m_frame.get());
     const URL& url = frame->document()->url();
-    if (url.isEmpty())
+    if (url.isNull())
         return;
 
     schedule(makeUnique<ScheduledRefresh>(initiatingDocument, protect(protect(frame->document())->securityOrigin()).ptr(), url, frame->loader().outgoingReferrer()));

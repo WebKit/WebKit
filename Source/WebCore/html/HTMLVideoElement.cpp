@@ -338,7 +338,7 @@ bool HTMLVideoElement::shouldDisplayPosterImage() const
     if (!showPosterFlag())
         return false;
 
-    if (posterImageURL().isEmpty())
+    if (posterImageURL().isNull())
         return false;
 
     CheckedPtr renderer = this->renderer();

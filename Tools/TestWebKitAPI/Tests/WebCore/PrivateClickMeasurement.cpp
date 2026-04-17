@@ -137,8 +137,8 @@ TEST(PrivateClickMeasurement, InvalidSourceHost)
     PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { emptyURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
     attribution.attributeAndGetEarliestTimeToSend(WebCore::PCM::AttributionTriggerData { WebCore::PCM::AttributionTriggerData::MaxEntropy, WebCore::PCM::AttributionTriggerData::Priority::PriorityValue(WebCore::PCM::AttributionTriggerData::Priority::MaxEntropy), { }, { }, { }, { }, { }, { } }, WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
-    ASSERT_TRUE(attribution.attributionReportClickSourceURL().isEmpty());
-    ASSERT_TRUE(attribution.attributionReportClickDestinationURL().isEmpty());
+    ASSERT_TRUE(attribution.attributionReportClickSourceURL().isNull());
+    ASSERT_TRUE(attribution.attributionReportClickDestinationURL().isNull());
 }
 
 TEST(PrivateClickMeasurement, InvalidDestinationHost)
@@ -146,8 +146,8 @@ TEST(PrivateClickMeasurement, InvalidDestinationHost)
     PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { emptyURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
     attribution.attributeAndGetEarliestTimeToSend(WebCore::PCM::AttributionTriggerData { WebCore::PCM::AttributionTriggerData::MaxEntropy, WebCore::PCM::AttributionTriggerData::Priority::PriorityValue(WebCore::PCM::AttributionTriggerData::Priority::MaxEntropy), { }, { }, { }, { }, { }, { } }, WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
-    ASSERT_TRUE(attribution.attributionReportClickSourceURL().isEmpty());
-    ASSERT_TRUE(attribution.attributionReportClickDestinationURL().isEmpty());
+    ASSERT_TRUE(attribution.attributionReportClickSourceURL().isNull());
+    ASSERT_TRUE(attribution.attributionReportClickDestinationURL().isNull());
 }
 
 TEST(PrivateClickMeasurement, AttributionTriggerData)
@@ -155,8 +155,8 @@ TEST(PrivateClickMeasurement, AttributionTriggerData)
     PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
     attribution.attributeAndGetEarliestTimeToSend(WebCore::PCM::AttributionTriggerData { (WebCore::PCM::AttributionTriggerData::MaxEntropy + 1), WebCore::PCM::AttributionTriggerData::Priority::PriorityValue(WebCore::PCM::AttributionTriggerData::Priority::MaxEntropy), { }, { }, { }, { }, { }, { } }, WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
-    ASSERT_TRUE(attribution.attributionReportClickSourceURL().isEmpty());
-    ASSERT_TRUE(attribution.attributionReportClickDestinationURL().isEmpty());
+    ASSERT_TRUE(attribution.attributionReportClickSourceURL().isNull());
+    ASSERT_TRUE(attribution.attributionReportClickDestinationURL().isNull());
 }
 
 TEST(PrivateClickMeasurement, InvalidPriority)
@@ -164,16 +164,16 @@ TEST(PrivateClickMeasurement, InvalidPriority)
     PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
     attribution.attributeAndGetEarliestTimeToSend(WebCore::PCM::AttributionTriggerData { WebCore::PCM::AttributionTriggerData::MaxEntropy, WebCore::PCM::AttributionTriggerData::Priority::PriorityValue(WebCore::PCM::AttributionTriggerData::Priority::MaxEntropy + 1), { }, { }, { }, { }, { }, { } }, WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
-    ASSERT_TRUE(attribution.attributionReportClickSourceURL().isEmpty());
-    ASSERT_TRUE(attribution.attributionReportClickDestinationURL().isEmpty());
+    ASSERT_TRUE(attribution.attributionReportClickSourceURL().isNull());
+    ASSERT_TRUE(attribution.attributionReportClickDestinationURL().isNull());
 }
 
 TEST(PrivateClickMeasurement, InvalidMissingConversion)
 {
     PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
 
-    ASSERT_TRUE(attribution.attributionReportClickSourceURL().isEmpty());
-    ASSERT_TRUE(attribution.attributionReportClickDestinationURL().isEmpty());
+    ASSERT_TRUE(attribution.attributionReportClickSourceURL().isNull());
+    ASSERT_TRUE(attribution.attributionReportClickDestinationURL().isNull());
     ASSERT_FALSE(attribution.timesToSend().sourceEarliestTimeToSend && attribution.timesToSend().destinationEarliestTimeToSend);
 }
 

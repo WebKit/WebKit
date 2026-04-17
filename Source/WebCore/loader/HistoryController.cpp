@@ -562,13 +562,13 @@ void HistoryController::updateForStandardLoad(HistoryUpdateType updateType)
 
     RefPtr documentLoader = frameLoader->documentLoader();
     if (!frameLoader->documentLoader()->isClientRedirect()) {
-        if (!historyURL.isEmpty()) {
+        if (!historyURL.isNull()) {
             if (updateType != UpdateAllExceptBackForwardList)
                 updateBackForwardListClippedAtTarget(true);
             if (canRecordHistory) {
                 protect(frameLoader->client())->updateGlobalHistory();
                 documentLoader->setDidCreateGlobalHistoryEntry(true);
-                if (documentLoader->unreachableURL().isEmpty())
+                if (documentLoader->unreachableURL().isNull())
                     protect(frameLoader->client())->updateGlobalHistoryRedirectLinks();
             }
         }
@@ -577,11 +577,11 @@ void HistoryController::updateForStandardLoad(HistoryUpdateType updateType)
         updateCurrentItem();
     }
 
-    if (!historyURL.isEmpty() && canRecordHistory) {
+    if (!historyURL.isNull() && canRecordHistory) {
         if (RefPtr page = m_frame->page())
             addVisitedLink(*page, historyURL);
 
-        if (!documentLoader->didCreateGlobalHistoryEntry() && documentLoader->unreachableURL().isEmpty() && !m_frame->document()->url().isEmpty())
+        if (!documentLoader->didCreateGlobalHistoryEntry() && documentLoader->unreachableURL().isNull() && !m_frame->document()->url().isNull())
             protect(frameLoader->client())->updateGlobalHistoryRedirectLinks();
     }
 }
@@ -596,13 +596,13 @@ void HistoryController::updateForRedirectWithLockedBackForwardList()
 
     if (documentLoader && documentLoader->isClientRedirect()) {
         if (!m_currentItem && m_frame->isMainFrame()) {
-            if (!historyURL.isEmpty()) {
+            if (!historyURL.isNull()) {
                 updateBackForwardListClippedAtTarget(true);
                 if (canRecordHistory) {
                     Ref frameLoader = m_frame->loader();
                     protect(frameLoader->client())->updateGlobalHistory();
                     documentLoader->setDidCreateGlobalHistoryEntry(true);
-                    if (documentLoader->unreachableURL().isEmpty())
+                    if (documentLoader->unreachableURL().isNull())
                         protect(frameLoader->client())->updateGlobalHistoryRedirectLinks();
                 }
             }
@@ -621,12 +621,12 @@ void HistoryController::updateForRedirectWithLockedBackForwardList()
         }
     }
 
-    if (!historyURL.isEmpty() && canRecordHistory) {
+    if (!historyURL.isNull() && canRecordHistory) {
         Ref frame = m_frame.get();
         if (RefPtr page = frame->page())
             addVisitedLink(*page, historyURL);
 
-        if (!documentLoader->didCreateGlobalHistoryEntry() && documentLoader->unreachableURL().isEmpty())
+        if (!documentLoader->didCreateGlobalHistoryEntry() && documentLoader->unreachableURL().isNull())
             protect(frame->loader().client())->updateGlobalHistoryRedirectLinks();
     }
 }
@@ -645,7 +645,7 @@ void HistoryController::updateForClientRedirect()
     bool canRecordHistory = canRecordHistoryForFrame(m_frame);
     const URL& historyURL = protect(m_frame->loader().documentLoader())->urlForHistory();
 
-    if (!historyURL.isEmpty() && canRecordHistory) {
+    if (!historyURL.isNull() && canRecordHistory) {
         if (RefPtr page = m_frame->page())
             addVisitedLink(*page, historyURL);
     }
@@ -659,7 +659,7 @@ void HistoryController::updateForCommit()
     FrameLoadType type = frameLoader->loadType();
     if (isBackForwardLoadType(type)
         || isMultipartReplaceLoadTypeWithProvisionalItem(type)
-        || (isReloadTypeWithProvisionalItem(type) && !frameLoader->provisionalDocumentLoader()->unreachableURL().isEmpty())) {
+        || (isReloadTypeWithProvisionalItem(type) && !frameLoader->provisionalDocumentLoader()->unreachableURL().isNull())) {
         // Once committed, we want to use current item for saving DocState, and
         // the provisional item for restoring state.
         // Note previousItem must be set before we close the URL, which will
@@ -738,7 +738,7 @@ void HistoryController::recursiveUpdateForCommit()
 void HistoryController::updateForSameDocumentNavigation()
 {
     Ref frame = m_frame.get();
-    if (frame->document()->url().isEmpty())
+    if (frame->document()->url().isNull())
         return;
 
     RefPtr page = frame->page();
@@ -835,7 +835,7 @@ void HistoryController::initializeItem(HistoryItem& item, RefPtr<DocumentLoader>
     URL url;
     URL originalURL;
 
-    if (!unreachableURL.isEmpty()) {
+    if (!unreachableURL.isNull()) {
         url = unreachableURL;
         originalURL = unreachableURL;
     } else {
@@ -848,9 +848,9 @@ void HistoryController::initializeItem(HistoryItem& item, RefPtr<DocumentLoader>
     // deal with such things, so we nip that in the bud here.
     // Later we may want to learn to live with nil for URL.
     // See bug 3368236 and related bugs for more information.
-    if (url.isEmpty())
+    if (url.isNull())
         url = aboutBlankURL();
-    if (originalURL.isEmpty())
+    if (originalURL.isNull())
         originalURL = aboutBlankURL();
 
     StringWithDirection title = documentLoader->title();
@@ -862,7 +862,7 @@ void HistoryController::initializeItem(HistoryItem& item, RefPtr<DocumentLoader>
     item.setTitle(WTF::move(title.string));
     item.setOriginalURLString(originalURL.string());
 
-    if (!unreachableURL.isEmpty() || documentLoader->response().httpStatusCode() >= 400)
+    if (!unreachableURL.isNull() || documentLoader->response().httpStatusCode() >= 400)
         item.setLastVisitWasFailure(true);
 
     item.setShouldOpenExternalURLsPolicy(documentLoader->shouldOpenExternalURLsPolicyToPropagate());
@@ -1004,7 +1004,7 @@ void HistoryController::updateBackForwardListClippedAtTarget(bool doClip)
     if (!page)
         return;
 
-    if (protect(frame->loader().documentLoader())->urlForHistory().isEmpty())
+    if (protect(frame->loader().documentLoader())->urlForHistory().isNull())
         return;
 
     RefPtr item = protect(frame->loader().client())->createHistoryItemTree(doClip, BackForwardItemIdentifier::generate());
@@ -1021,7 +1021,7 @@ void HistoryController::updateCurrentItem()
         return;
 
     RefPtr documentLoader = m_frame->loader().documentLoader();
-    if (!documentLoader || !documentLoader->unreachableURL().isEmpty())
+    if (!documentLoader || !documentLoader->unreachableURL().isNull())
         return;
 
     if (currentItem->url() != documentLoader->url()) {

@@ -491,7 +491,7 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRole()
 
     // FIXME: When the URL changes, we should recompute an object's role.
     if (isImageMapLink())
-        return !url().isEmpty() ? AccessibilityRole::Link : AccessibilityRole::Generic;
+        return !url().isNull() ? AccessibilityRole::Link : AccessibilityRole::Generic;
 
     auto roleFromNode = determineAccessibilityRoleFromNode();
 
@@ -1027,7 +1027,7 @@ bool AccessibilityNodeObject::computeIsIgnored() const
     if (decision == AccessibilityObjectInclusion::IgnoreObject)
         return true;
 
-    if (isImageMapLink() && !url().isEmpty())
+    if (isImageMapLink() && !url().isNull())
         return false;
 
     auto role = this->role();

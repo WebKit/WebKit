@@ -184,7 +184,7 @@ static void prepareContextForQRCode(ContextMenuContext& context)
     if (!node || !node->document().settings().contextMenuQRCodeDetectionEnabled())
         return;
 
-    if (result.image() || !result.absoluteLinkURL().isEmpty())
+    if (result.image() || !result.absoluteLinkURL().isNull())
         return;
 
     RefPtr nodeElement = dynamicDowncast<Element>(*node);
@@ -390,7 +390,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         break;
     case ContextMenuItemTagOpenFrameInNewWindow: {
         RefPtr loader = frame->loader().documentLoader();
-        if (!loader->unreachableURL().isEmpty())
+        if (!loader->unreachableURL().isNull())
             openNewWindow(loader->unreachableURL(), *frame, nullptr, ShouldOpenExternalURLsPolicy::ShouldNotAllow);
         else
             openNewWindow(loader->url(), *frame, nullptr, ShouldOpenExternalURLsPolicy::ShouldNotAllow);
@@ -1136,7 +1136,7 @@ void ContextMenuController::populate()
     if (!m_context.hitTestResult().isContentEditable()) {
         Ref loader = frame->loader();
         URL linkURL = m_context.hitTestResult().absoluteLinkURL();
-        const bool linkURLEmpty = linkURL.isEmpty();
+        const bool linkURLEmpty = linkURL.isNull();
         if (!linkURLEmpty) {
             if (loader->client().canHandleRequest(ResourceRequest(WTF::move(linkURL)))) {
                 appendItem(OpenLinkItem, m_contextMenu.get());
@@ -1147,7 +1147,7 @@ void ContextMenuController::populate()
         }
 
         URL imageURL = m_context.hitTestResult().absoluteImageURL();
-        if (!imageURL.isEmpty()) {
+        if (!imageURL.isNull()) {
             if (!linkURLEmpty)
                 appendItem(*separatorItem(), m_contextMenu.get());
 
@@ -1187,9 +1187,9 @@ void ContextMenuController::populate()
         }
 
         URL mediaURL = m_context.hitTestResult().absoluteMediaURL();
-        const bool mediaURLEmpty = mediaURL.isEmpty();
+        const bool mediaURLEmpty = mediaURL.isNull();
         if (!mediaURLEmpty) {
-            if (!linkURLEmpty || !imageURL.isEmpty())
+            if (!linkURLEmpty || !imageURL.isNull())
                 appendItem(*separatorItem(), m_contextMenu.get());
 
             appendItem(MediaPlayPause, m_contextMenu.get());
@@ -1216,8 +1216,8 @@ void ContextMenuController::populate()
 
         auto selectedRange = frame->selection().selection().range();
         bool selectionIsInsideImageOverlay = selectedRange && ImageOverlay::isInsideOverlay(*selectedRange);
-        if (selectionIsInsideImageOverlay || (linkURLEmpty && mediaURLEmpty && imageURL.isEmpty())) {
-            if (!imageURL.isEmpty())
+        if (selectionIsInsideImageOverlay || (linkURLEmpty && mediaURLEmpty && imageURL.isNull())) {
+            if (!imageURL.isNull())
                 appendItem(*separatorItem(), m_contextMenu.get());
             
             RefPtr page = frame->page();
@@ -1381,7 +1381,7 @@ void ContextMenuController::populate()
 
         Ref loader = frame->loader();
         URL linkURL = m_context.hitTestResult().absoluteLinkURL();
-        if (!linkURL.isEmpty()) {
+        if (!linkURL.isNull()) {
             if (loader->client().canHandleRequest(ResourceRequest(WTF::move(linkURL)))) {
                 appendItem(OpenLinkItem, m_contextMenu.get());
                 appendItem(OpenLinkInNewWindowItem, m_contextMenu.get());
@@ -1531,7 +1531,7 @@ void ContextMenuController::addDebuggingItems()
     appendItem(InspectElementItem, m_contextMenu.get());
 
 #if ENABLE(VIDEO)
-    if (page->settings().showMediaStatsContextMenuItemEnabled() && !m_context.hitTestResult().absoluteMediaURL().isEmpty()) {
+    if (page->settings().showMediaStatsContextMenuItemEnabled() && !m_context.hitTestResult().absoluteMediaURL().isNull()) {
         ContextMenuItem ShowMediaStats(ContextMenuItemType::CheckableAction, ContextMenuItemTagShowMediaStats, contextMenuItemTagShowMediaStats());
         appendItem(ShowMediaStats, m_contextMenu.get());
     }

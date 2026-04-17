@@ -94,7 +94,7 @@ void ResourceMonitor::setDocumentURL(URL&& url)
     didReceiveResponse(m_frameURL, m_frame->isMainFrame() ? ContentExtensions::ResourceType::TopDocument : ContentExtensions::ResourceType::ChildDocument);
 
     if (RefPtr iframe = dynamicDowncast<HTMLIFrameElement>(frame->ownerElement())) {
-        if (auto& url = iframe->initiatorSourceURL(); !url.isEmpty())
+        if (auto& url = iframe->initiatorSourceURL(); !url.isNull())
             didReceiveResponse(url, ContentExtensions::ResourceType::Script);
     }
 }

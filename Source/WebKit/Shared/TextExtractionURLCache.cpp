@@ -39,7 +39,7 @@ void TextExtractionURLCache::clear()
 
 String TextExtractionURLCache::add(const String& shortenedString, const URL& originalURL, ExtractedURLType type)
 {
-    if (shortenedString.isEmpty() || originalURL.isEmpty())
+    if (shortenedString.isEmpty() || originalURL.isNull())
         return shortenedString;
 
     if (auto existingString = m_urlToShortenedStringMap.get(originalURL); !existingString.isEmpty())

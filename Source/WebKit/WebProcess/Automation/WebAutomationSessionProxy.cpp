@@ -1115,7 +1115,7 @@ void WebAutomationSessionProxy::getCookiesForFrame(WebCore::PageIdentifier pageI
 
     // This returns the same list of cookies as when evaluating `document.cookies` in JavaScript.
     Vector<WebCore::Cookie> foundCookies;
-    if (!document->cookieURL().isEmpty())
+    if (!document->cookieURL().isNull())
         page->corePage()->cookieJar().getRawCookies(*document, document->cookieURL(), foundCookies);
 
     completionHandler(std::nullopt, foundCookies);

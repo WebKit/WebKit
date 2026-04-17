@@ -253,7 +253,7 @@ bool WebCookieJar::remoteCookiesEnabledSync(Document& document) const
         return false;
 
     auto cookieURL = document.cookieURL();
-    if (cookieURL.isEmpty())
+    if (cookieURL.isNull())
         return false;
 
     std::optional<FrameIdentifier> frameID = webFrame ? std::make_optional(webFrame->frameID()) : std::nullopt;
@@ -274,7 +274,7 @@ void WebCookieJar::remoteCookiesEnabled(const Document& document, CompletionHand
         return completionHandler(false);
 
     auto cookieURL = document.cookieURL();
-    if (cookieURL.isEmpty())
+    if (cookieURL.isNull())
         return completionHandler(false);
 
     std::optional<FrameIdentifier> frameID = webFrame ? std::make_optional(webFrame->frameID()) : std::nullopt;

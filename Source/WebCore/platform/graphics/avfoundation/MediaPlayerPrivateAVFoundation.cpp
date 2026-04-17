@@ -734,7 +734,7 @@ void MediaPlayerPrivateAVFoundation::setPreload(MediaPlayer::Preload preload)
 {
     ALWAYS_LOG(LOGIDENTIFIER, " - ", static_cast<int>(preload));
     m_preload = preload;
-    if (m_assetURL.isEmpty())
+    if (m_assetURL.isNull())
         return;
 
     if (m_preload >= MediaPlayer::Preload::MetaData && assetStatus() == MediaPlayerAVAssetStatusDoesNotExist)

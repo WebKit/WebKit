@@ -1222,7 +1222,7 @@ void WebPushDaemon::setAppBadge(PushClientConnection& connection, WebCore::Secur
     // FIXME: Establish the app page URL for Mac apps here
 #endif
 
-    if (!appPageURL.isEmpty()) {
+    if (!appPageURL.isNull()) {
         auto badgeOrigin = badgeOriginData.securityOrigin();
         auto appOrigin = WebCore::SecurityOrigin::create(appPageURL);
         if (!badgeOrigin->isSameSiteAs(appOrigin.get()))

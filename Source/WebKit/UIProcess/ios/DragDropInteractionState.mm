@@ -351,7 +351,7 @@ void DragDropInteractionState::stageDragItem(const DragItem& item, DragSourceSta
         item.image.textIndicator(),
         item.image.visiblePath(),
         item.title.isEmpty() ? nil : item.title.createNSString().get(),
-        item.url.isEmpty() ? nil : item.url.createNSURL().get(),
+        item.url.isNull() ? nil : item.url.createNSURL().get(),
         true, // We assume here that drag previews need to be updated until proven otherwise in updatePreviewsForActiveDragSources().
         item.containsSelection,
         ++currentDragSourceItemIdentifier

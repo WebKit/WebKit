@@ -45,7 +45,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLResourcePreloader);
 
 URL PreloadRequest::completeURL(Document& document)
 {
-    return document.completeURL(m_resourceURL, m_baseURL.isEmpty() ? document.baseURL() : m_baseURL);
+    return document.completeURL(m_resourceURL, m_baseURL.isNull() ? document.baseURL() : m_baseURL);
 }
 
 CachedResourceRequest PreloadRequest::resourceRequest(Document& document)

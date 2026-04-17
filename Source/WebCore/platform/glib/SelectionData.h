@@ -43,7 +43,7 @@ public:
     void setURL(const URL&, const String&);
     const URL& url() const LIFETIME_BOUND { return m_url; }
     const String& urlLabel() const LIFETIME_BOUND;
-    bool hasURL() const { return !m_url.isEmpty() && m_url.isValid(); }
+    bool hasURL() const { return m_url.isValid(); }
     void clearURL() { m_url = URL(); }
 
     void setURIList(const String&);

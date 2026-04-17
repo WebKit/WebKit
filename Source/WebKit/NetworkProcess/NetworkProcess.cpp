@@ -2374,11 +2374,11 @@ void NetworkProcess::findPendingDownloadLocation(NetworkDataTask& networkDataTas
 
 #if PLATFORM(COCOA)
         URL publishURL;
-        if (usePlaceholder == UseDownloadPlaceholder::No && !alternatePlaceholderURL.isEmpty())
+        if (usePlaceholder == UseDownloadPlaceholder::No && !alternatePlaceholderURL.isNull())
             publishURL = alternatePlaceholderURL;
         else
             publishURL = URL::fileURLWithFileSystemPath(destination);
-        if (usePlaceholder == UseDownloadPlaceholder::Yes || !alternatePlaceholderURL.isEmpty())
+        if (usePlaceholder == UseDownloadPlaceholder::Yes || !alternatePlaceholderURL.isNull())
 #if HAVE(MODERN_DOWNLOADPROGRESS)
             publishDownloadProgress(downloadID, publishURL, placeholderBookmarkData, usePlaceholder, activityAccessToken);
 #else

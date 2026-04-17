@@ -349,7 +349,7 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
 - (NSURL *)_URL
 {
     const URL& url = toPrivate(_private)->loader->url();
-    if (url.isEmpty())
+    if (url.isNull())
         return nil;
     return url.createNSURL().autorelease();
 }
@@ -516,7 +516,7 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
 - (NSURL *)unreachableURL
 {
     const URL& unreachableURL = toPrivate(_private)->loader->unreachableURL();
-    if (unreachableURL.isEmpty())
+    if (unreachableURL.isNull())
         return nil;
     return unreachableURL.createNSURL().autorelease();
 }

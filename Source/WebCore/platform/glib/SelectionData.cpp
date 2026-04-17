@@ -36,7 +36,7 @@ SelectionData::SelectionData(const String& text, const String& markup, const URL
         setText(text);
     if (!markup.isEmpty())
         setMarkup(markup);
-    if (!url.isEmpty())
+    if (!url.isNull())
         setURL(url, String());
     if (!uriList.isEmpty())
         setURIList(uriList);

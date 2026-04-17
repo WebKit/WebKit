@@ -1083,7 +1083,7 @@ void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
     WebHistoryDelegateImplementationCache* implementations = [view.get() historyDelegate] ? WebViewGetHistoryDelegateImplementations(view.get()) : 0;
 
     auto* loader = core(m_webFrame.get())->loader().documentLoader();
-    ASSERT(loader->unreachableURL().isEmpty());
+    ASSERT(loader->unreachableURL().isNull());
 
     if (!loader->clientRedirectSourceForHistory().isNull()) {
         if (implementations) {

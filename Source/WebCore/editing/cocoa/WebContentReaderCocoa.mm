@@ -922,7 +922,7 @@ bool WebContentReader::readFilePath(const String& path, PresentationSize preferr
 
 bool WebContentReader::readURL(const URL& url, const String& title)
 {
-    if (url.isEmpty())
+    if (url.isNull())
         return false;
 
     Ref frame = this->frame();

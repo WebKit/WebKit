@@ -1311,7 +1311,7 @@ static void restoreAttachmentElementsInFragment(DocumentFragment& fragment)
         auto blobURL = attachment->blobURL();
         if (!attachmentPath.isEmpty())
             attachment->setFile(File::create(ownerDocument.get(), attachmentPath));
-        else if (!blobURL.isEmpty())
+        else if (!blobURL.isNull())
             attachment->setFile(File::deserialize(ownerDocument.get(), { }, blobURL, attachment->attachmentType(), attachment->attachmentTitle()));
 
         // Remove temporary attributes that were previously added in StyledMarkupAccumulator::appendCustomAttributes.
@@ -1353,7 +1353,7 @@ Ref<DocumentFragment> createFragmentFromMarkup(Document& document, const String&
 
     fragment->parseHTML(markup, fakeBody, parserContentPolicy);
     restoreAttachmentElementsInFragment(fragment);
-    if (!baseURL.isEmpty() && baseURL != aboutBlankURL() && baseURL != document.baseURL())
+    if (!baseURL.isNull() && baseURL != aboutBlankURL() && baseURL != document.baseURL())
         completeURLs(fragment.ptr(), baseURL);
 
     return fragment;

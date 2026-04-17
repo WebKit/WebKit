@@ -195,7 +195,7 @@ const URL& PageLoadState::activeURL(const Data& data)
     if (!data.pendingAPIRequest.url.isNull())
         return data.pendingAPIRequest.url;
 
-    if (!data.unreachableURL.isEmpty())
+    if (!data.unreachableURL.isNull())
         return data.unreachableURL;
 
     switch (data.state) {
@@ -280,7 +280,7 @@ void PageLoadState::didExplicitOpen(const Transaction::Token& token, const URL& 
 void PageLoadState::didStartProvisionalLoad(const Transaction::Token& token, const URL& url, const URL& unreachableURL)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
-    ASSERT(m_uncommittedState.provisionalURL.isEmpty());
+    ASSERT(m_uncommittedState.provisionalURL.isNull());
 
     m_uncommittedState.state = State::Provisional;
 
@@ -334,7 +334,7 @@ void PageLoadState::didFinishLoad(const Transaction::Token& token)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
     ASSERT(m_uncommittedState.state == State::Committed);
-    ASSERT(m_uncommittedState.provisionalURL.isEmpty());
+    ASSERT(m_uncommittedState.provisionalURL.isNull());
 
     m_uncommittedState.state = State::Finished;
 }
@@ -342,7 +342,7 @@ void PageLoadState::didFinishLoad(const Transaction::Token& token)
 void PageLoadState::didFailLoad(const Transaction::Token& token)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
-    ASSERT(m_uncommittedState.provisionalURL.isEmpty());
+    ASSERT(m_uncommittedState.provisionalURL.isNull());
 
     m_uncommittedState.state = State::Finished;
 }
@@ -350,7 +350,7 @@ void PageLoadState::didFailLoad(const Transaction::Token& token)
 void PageLoadState::didSameDocumentNavigation(const Transaction::Token& token, const URL& url)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
-    ASSERT(!m_uncommittedState.url.isEmpty());
+    ASSERT(!m_uncommittedState.url.isNull());
 
     m_uncommittedState.url = url;
 }

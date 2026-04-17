@@ -1035,7 +1035,7 @@ static void populateJSONForItem(JSON::Object& jsonObject, const TextExtraction::
             }
         },
         [&](const TextExtraction::ImageItemData& imageData) {
-            if (!imageData.completedSource.isEmpty() && aggregator.includeURLs())
+            if (!imageData.completedSource.isNull() && aggregator.includeURLs())
                 jsonObject.setString("src"_s, aggregator.stringForURL(imageData));
             if (!imageData.altText.isEmpty())
                 jsonObject.setString("alt"_s, imageData.altText);
@@ -1101,7 +1101,7 @@ static void populateJSONForItem(JSON::Object& jsonObject, const TextExtraction::
                 jsonObject.setString("name"_s, formData.name);
         },
         [&](const TextExtraction::LinkItemData& linkData) {
-            if (!linkData.completedURL.isEmpty() && aggregator.includeURLs())
+            if (!linkData.completedURL.isNull() && aggregator.includeURLs())
                 jsonObject.setString("url"_s, aggregator.stringForURL(linkData));
             if (!linkData.target.isEmpty())
                 jsonObject.setString("target"_s, linkData.target);
@@ -1501,7 +1501,7 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
             if (aggregator.useHTMLOutput()) {
                 auto attributes = partsForItem(item, aggregator, includeRectForParentItem);
 
-                if (!linkData.completedURL.isEmpty() && aggregator.includeURLs())
+                if (!linkData.completedURL.isNull() && aggregator.includeURLs())
                     attributes.append(makeString("href='"_s, aggregator.stringForURL(linkData), '\''));
 
                 if (attributes.isEmpty())
@@ -1512,7 +1512,7 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
                 parts.append("link"_s);
                 parts.appendVector(partsForItem(item, aggregator, includeRectForParentItem));
 
-                if (!linkData.completedURL.isEmpty() && aggregator.includeURLs())
+                if (!linkData.completedURL.isNull() && aggregator.includeURLs())
                     parts.append(makeString("url="_s, quoteValue(aggregator.stringForURL(linkData), streamlined)));
             }
 
@@ -1606,7 +1606,7 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
             if (aggregator.useHTMLOutput()) {
                 auto attributes = partsForItem(item, aggregator, includeRectForParentItem);
 
-                if (!imageData.completedSource.isEmpty() && aggregator.includeURLs())
+                if (!imageData.completedSource.isNull() && aggregator.includeURLs())
                     attributes.append(makeString("src='"_s, aggregator.stringForURL(imageData), '\''));
 
                 if (!imageData.altText.isEmpty())
@@ -1631,7 +1631,7 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
                 parts.append("image"_s);
                 parts.appendVector(partsForItem(item, aggregator, includeRectForParentItem));
 
-                if (!imageData.completedSource.isEmpty() && aggregator.includeURLs())
+                if (!imageData.completedSource.isNull() && aggregator.includeURLs())
                     parts.append(makeString("src="_s, quoteValue(aggregator.stringForURL(imageData), streamlined)));
 
                 if (!imageData.altText.isEmpty())

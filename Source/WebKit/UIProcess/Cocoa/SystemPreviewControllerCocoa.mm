@@ -164,7 +164,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         if (auto strongSelf = weakSelf.get()) {
             // If the download happened instantly, the call to finish might have come before this
             // loadHandler. In that case, call the completionHandler here.
-            if (!strongSelf->_downloadedURL.isEmpty())
+            if (!strongSelf->_downloadedURL.isNull())
                 completionHandler(strongSelf->_downloadedURL.createNSURL().get(), nil);
             else
                 [strongSelf setCompletionHandler:completionHandler];

@@ -640,7 +640,7 @@ static HashMap<Ref<CSSStyleSheet>, String> addSubresourcesForCSSStyleSheetsIfNec
                 continue;
 
             auto url = currentCSSStyleSheet->baseURL();
-            if (url.isNull() || url.isEmpty())
+            if (url.isNull())
                 continue;
 
             auto addResult = uniqueCSSStyleSheets.add(currentCSSStyleSheet.copyRef(), emptyString());
@@ -736,7 +736,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::createInternal(const String& markupSt
             if (auto subframeArchive = createInternal(*localChildFrame->document(), options, frameFilter)) {
                 RefPtr subframeMainResource = subframeArchive->mainResource();
                 auto subframeMainResourceURL = subframeMainResource ? subframeMainResource->url() : URL { };
-                if (!subframeMainResourceURL.isEmpty()) {
+                if (!subframeMainResourceURL.isNull()) {
                     auto subframeMainResourceRelativePath = frame.isMainFrame() ? subframeMainResource->relativeFilePath() : FileSystem::lastComponentOfPathIgnoringTrailingSlash(subframeMainResource->relativeFilePath());
                     uniqueSubresources.add(makeString(childFrame->frameID().toUInt64()), subframeMainResourceRelativePath);
                 }
@@ -817,7 +817,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::createInternal(const String& markupSt
         if (!document)
             return nullptr;
 
-        if (responseURL.isEmpty())
+        if (responseURL.isNull())
             return nullptr;
 
         auto extension = MIMETypeRegistry::preferredExtensionForMIMEType(textHTMLContentTypeAtom());
@@ -831,7 +831,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::createInternal(const String& markupSt
         bool baseElementExcluded = std::ranges::any_of(options.markupExclusionRules, [&](auto& rule) {
             return rule.elementLocalName == "base"_s;
         });
-        if (!document->baseElementURL().isEmpty() && baseElementExcluded)
+        if (!document->baseElementURL().isNull() && baseElementExcluded)
             resolveURLs = ResolveURLs::Yes;
 
         String updatedMarkupString = serializeFragmentWithURLReplacement(*document, SerializedNodes::SubtreeIncludingNode, nullptr, resolveURLs, std::nullopt, WTF::move(uniqueSubresources), WTF::move(uniqueCSSStyleSheets), SerializeShadowRoots::AllForInterchange, { }, options.markupExclusionRules);

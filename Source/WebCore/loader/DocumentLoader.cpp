@@ -259,7 +259,7 @@ void DocumentLoader::setRequest(ResourceRequest&& req)
     // Replacing an unreachable URL with alternate content looks like a server-side
     // redirect at this point, but we can replace a committed dataSource.
     bool handlingUnreachableURL = false;
-    handlingUnreachableURL = m_substituteData.isValid() && !m_substituteData.failingURL().isEmpty();
+    handlingUnreachableURL = m_substituteData.isValid() && !m_substituteData.failingURL().isNull();
 
     bool shouldNotifyAboutProvisionalURLChange = false;
     if (handlingUnreachableURL)
@@ -586,7 +586,7 @@ void DocumentLoader::handleSubstituteDataLoadNow()
     }
 
     ResourceResponse response = m_substituteData.response();
-    if (response.url().isEmpty())
+    if (response.url().isNull())
         response = ResourceResponse(URL { m_request.url() }, String { m_substituteData.mimeType() }, m_substituteData.content()->size(), String { m_substituteData.textEncoding() });
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -1318,7 +1318,7 @@ void DocumentLoader::commitData(const SharedBuffer& data)
         if (shouldEnableResourceMonitor(*frame)) {
             URL url = documentURL();
 
-            if (!url.isEmpty() && url.protocolIsInHTTPFamily())
+            if (url.protocolIsInHTTPFamily())
                 protect(document->resourceMonitor())->setDocumentURL(WTF::move(url));
         }
 #endif
@@ -1638,7 +1638,7 @@ void DocumentLoader::loadApplicationManifest(CompletionHandler<void(const std::o
     if (!document->isTopDocument())
         return;
 
-    if (document->url().isEmpty() || document->url().protocolIsAbout())
+    if (document->url().isNull() || document->url().protocolIsAbout())
         return;
 
     RefPtr head = document->head();
@@ -1652,7 +1652,7 @@ void DocumentLoader::loadApplicationManifest(CompletionHandler<void(const std::o
             continue;
 
         auto href = link->href();
-        if (href.isEmpty() || !href.isValid())
+        if (!href.isValid())
             continue;
 
         if (!link->mediaAttributeMatches())
@@ -1663,7 +1663,7 @@ void DocumentLoader::loadApplicationManifest(CompletionHandler<void(const std::o
         break;
     }
 
-    if (manifestURL.isEmpty() || !manifestURL.isValid())
+    if (!manifestURL.isValid())
         return;
 
     Ref applicationManifestLoader = ApplicationManifestLoader::create(*this, manifestURL, useCredentials);
@@ -1980,12 +1980,12 @@ URL DocumentLoader::documentURL() const
 {
     URL url = substituteData().response().url();
 #if ENABLE(WEB_ARCHIVE)
-    if (RefPtr archive = m_archive; url.isEmpty() && archive && archive->shouldUseMainResourceURL())
+    if (RefPtr archive = m_archive; url.isNull() && archive && archive->shouldUseMainResourceURL())
         url = archive->mainResource()->url();
 #endif
-    if (url.isEmpty())
+    if (url.isNull())
         url = m_request.url();
-    if (url.isEmpty())
+    if (url.isNull())
         url = m_response.url();
     return url;
 }
@@ -2106,7 +2106,7 @@ bool DocumentLoader::isMultipartReplacingLoad() const
 
 bool DocumentLoader::maybeLoadEmpty()
 {
-    bool shouldLoadEmpty = !m_substituteData.isValid() && (m_request.url().isEmpty() || LegacySchemeRegistry::shouldLoadURLSchemeAsEmptyDocument(m_request.url().protocol()));
+    bool shouldLoadEmpty = !m_substituteData.isValid() && (m_request.url().isNull() || LegacySchemeRegistry::shouldLoadURLSchemeAsEmptyDocument(m_request.url().protocol()));
     Ref frameLoaderClient = frameLoader()->client();
     if (!shouldLoadEmpty && !frameLoaderClient->representationExistsForURLScheme(m_request.url().protocol()))
         return false;
@@ -2114,7 +2114,7 @@ bool DocumentLoader::maybeLoadEmpty()
     if (m_request.url().protocolIsAbout() && isHandledByAboutSchemeHandler())
         return false;
 
-    if (m_request.url().isEmpty() && !frameLoader()->stateMachine().creatingInitialEmptyDocument()) {
+    if (m_request.url().isNull() && !frameLoader()->stateMachine().creatingInitialEmptyDocument()) {
         m_request.setURL(URL { aboutBlankURL() });
         if (isLoadingMainResource())
             frameLoaderClient->dispatchDidChangeProvisionalURL();
@@ -2475,7 +2475,7 @@ void DocumentLoader::startIconLoading()
     if (!m_frame->isMainFrame())
         return;
 
-    if (document->url().isEmpty() || document->url().protocolIsAbout())
+    if (document->url().isNull() || document->url().protocolIsAbout())
         return;
 
     m_linkIcons = LinkIconCollector { *document }.iconsOfTypes({ LinkIconType::Favicon, LinkIconType::TouchIcon, LinkIconType::TouchPrecomposedIcon });
@@ -2505,7 +2505,7 @@ void DocumentLoader::didGetLoadDecisionForIcon(bool decision, uint64_t loadIdent
     // If the LinkIcon we just took is empty, then the DocumentLoader had all of its loaders stopped
     // while this icon load decision was pending.
     // In this case we need to notify the client that the icon finished loading with empty data.
-    if (icon.url.isEmpty())
+    if (icon.url.isNull())
         return completionHandler(nullptr);
 
     Ref iconLoader = IconLoader::create(*this, icon.url);

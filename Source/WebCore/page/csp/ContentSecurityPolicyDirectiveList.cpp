@@ -264,7 +264,7 @@ const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violat
         || checkNonce(operativeDirective, nonce)
         || operativeDirective->containsAllHashes(subResourceIntegrityDigests)
         || (checkSource(operativeDirective, url) && !strictDynamicIncluded())
-        || (url.isEmpty() && checkInline(operativeDirective)))
+        || (url.isNull() && checkInline(operativeDirective)))
         return nullptr;
     return operativeDirective;
 }

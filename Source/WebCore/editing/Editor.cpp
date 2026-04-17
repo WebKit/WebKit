@@ -1815,7 +1815,7 @@ void Editor::copyImage(const HitTestResult& result)
         return;
 
     URL url = result.absoluteLinkURL();
-    if (url.isEmpty())
+    if (url.isNull())
         url = result.absoluteImageURL();
 
 #if !PLATFORM(WIN)

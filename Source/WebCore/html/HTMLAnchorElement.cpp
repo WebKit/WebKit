@@ -406,7 +406,7 @@ std::optional<RegistrableDomain> HTMLAnchorElement::mainDocumentRegistrableDomai
 {
     Ref document = this->document();
     if (RefPtr page = document->page()) {
-        if (auto mainFrameURL = page->mainFrameURL(); !mainFrameURL.isEmpty())
+        if (auto mainFrameURL = page->mainFrameURL(); !mainFrameURL.isNull())
             return RegistrableDomain(mainFrameURL);
     }
 
@@ -517,7 +517,7 @@ std::optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasu
     }
 
     auto& mainURL = page->mainFrameURL();
-    if (mainURL.isEmpty()) {
+    if (mainURL.isNull()) {
         protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "Could not find a main document to use as source site for Private Click Measurement."_s);
         return std::nullopt;
     }

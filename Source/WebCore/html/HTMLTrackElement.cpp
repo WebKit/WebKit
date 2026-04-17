@@ -218,7 +218,7 @@ bool HTMLTrackElement::canLoadURL(const URL& url)
     // 4. Download: If URL is not the empty string, perform a potentially CORS-enabled fetch of URL, with the
     // mode being the state of the media element's crossorigin content attribute, the origin being the
     // origin of the media element's Document, and the default origin behaviour set to fail.
-    if (url.isEmpty())
+    if (url.isNull())
         return false;
 
     Ref document = this->document();

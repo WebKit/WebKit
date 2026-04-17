@@ -708,7 +708,7 @@ Ref<JSON::ArrayOf<Inspector::Protocol::CSS::Grouping>> InspectorStyleSheet::buil
                 String sourceURL;
                 if (RefPtr ownerDocument = styleSheet->ownerDocument())
                     sourceURL = ownerDocument->url().string();
-                else if (!styleSheet->contents().baseURL().isEmpty())
+                else if (!styleSheet->contents().baseURL().isNull())
                     sourceURL = styleSheet->contents().baseURL().string();
                 if (!sourceURL.isEmpty())
                     sheetGroupingPayload->setSourceURL(sourceURL);
@@ -1033,7 +1033,7 @@ Ref<InspectorStyleSheet> InspectorStyleSheet::create(Inspector::IdentifierRegist
 
 String InspectorStyleSheet::styleSheetURL(CSSStyleSheet* pageStyleSheet)
 {
-    if (pageStyleSheet && !pageStyleSheet->contents().baseURL().isEmpty())
+    if (pageStyleSheet && !pageStyleSheet->contents().baseURL().isNull())
         return pageStyleSheet->contents().baseURL().string();
     return emptyString();
 }

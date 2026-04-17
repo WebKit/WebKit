@@ -420,7 +420,7 @@ LocalFrame& FrameLoader::frame() const
 void FrameLoader::init()
 {
     // This somewhat odd set of steps gives the frame an initial empty document.
-    setPolicyDocumentLoader(m_client->createDocumentLoader(ResourceRequest(URL({ }, emptyString())), SubstituteData()));
+    setPolicyDocumentLoader(m_client->createDocumentLoader(ResourceRequest(URL()), SubstituteData()));
     setProvisionalDocumentLoader(m_policyDocumentLoader.copyRef());
     protect(m_provisionalDocumentLoader)->startLoadingMainResource();
     setPolicyDocumentLoader(nullptr);
@@ -553,7 +553,7 @@ void FrameLoader::submitForm(Ref<FormSubmission>&& submission)
     if (!frame->page())
         return;
 
-    if (submission->action().isEmpty())
+    if (submission->action().isNull())
         return;
 
     RefPtr document = frame->document();
@@ -1204,7 +1204,7 @@ String FrameLoader::outgoingOrigin() const
 
 bool FrameLoader::checkIfFormActionAllowedByCSP(const URL& url, bool didReceiveRedirectResponse, const URL& preRedirectURL) const
 {
-    if (m_submittedFormURL.isEmpty())
+    if (m_submittedFormURL.isNull())
         return true;
 
     Ref document = *m_frame->document();
@@ -1861,7 +1861,7 @@ void FrameLoader::load(DocumentLoader& newDocumentLoader, const SecurityOrigin* 
         type = FrameLoadType::Same;
     } else if (shouldTreatURLAsSameAsCurrent(requesterOrigin, newDocumentLoader.unreachableURL()) && isReload(m_loadType))
         type = m_loadType;
-    else if ((m_loadType == FrameLoadType::RedirectWithLockedBackForwardList || policyChecker().loadType() == FrameLoadType::RedirectWithLockedBackForwardList) && ((!newDocumentLoader.unreachableURL().isEmpty() && newDocumentLoader.substituteData().isValid()) || shouldTreatCurrentLoadAsContinuingLoad()))
+    else if ((m_loadType == FrameLoadType::RedirectWithLockedBackForwardList || policyChecker().loadType() == FrameLoadType::RedirectWithLockedBackForwardList) && ((!newDocumentLoader.unreachableURL().isNull() && newDocumentLoader.substituteData().isValid()) || shouldTreatCurrentLoadAsContinuingLoad()))
         type = FrameLoadType::RedirectWithLockedBackForwardList;
     else
         type = FrameLoadType::Standard;
@@ -1960,7 +1960,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
 
     policyChecker().stopCheck();
     setPolicyDocumentLoader(loader);
-    if (loader->triggeringAction().isEmpty()) {
+    if (loader->triggeringAction().isNull()) {
         NavigationAction action = loader->crossSiteRequester() ? NavigationAction { *loader->crossSiteRequester(), loader->request(), InitiatedByMainFrame::Unknown, loader->isRequestFromClientOrUserInput(), policyChecker().loadType(), isFormSubmission } : NavigationAction { protect(frame->document()).releaseNonNull(), loader->request(), InitiatedByMainFrame::Unknown, loader->isRequestFromClientOrUserInput(), policyChecker().loadType(), isFormSubmission };
         action.setIsContentRuleListRedirect(loader->isContentRuleListRedirect());
         action.setNavigationAPIType(determineNavigationType(type, NavigationHistoryBehavior::Auto));
@@ -2010,7 +2010,7 @@ void FrameLoader::reportLocalLoadFailed(LocalFrame* frame, const String& url)
 
 void FrameLoader::reportBlockedLoadFailed(LocalFrame& frame, const URL& url)
 {
-    ASSERT(!url.isEmpty());
+    ASSERT(!url.isNull());
     auto restrictedHostPort = isIPAddressDisallowed(url) ? makeString("host \""_s, url.host(), "\""_s) : makeString("port "_s, url.port().value());
     auto message = makeString("Not allowed to use restricted network "_s, restrictedHostPort, ": "_s, url.stringCenterEllipsizedToLength());
     protect(frame.document())->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);
@@ -2043,7 +2043,7 @@ bool FrameLoader::shouldReloadToHandleUnreachableURL(DocumentLoader& docLoader)
 {
     URL unreachableURL = docLoader.unreachableURL();
 
-    if (unreachableURL.isEmpty())
+    if (unreachableURL.isNull())
         return false;
 
     if (!isBackForwardLoadType(policyChecker().loadType()))
@@ -2070,7 +2070,7 @@ void FrameLoader::reloadWithOverrideEncoding(const String& encoding)
 
     ResourceRequest request = documentLoader->request();
     URL unreachableURL = documentLoader->unreachableURL();
-    if (!unreachableURL.isEmpty())
+    if (!unreachableURL.isNull())
         request.setURL(WTF::move(unreachableURL));
 
     // FIXME: If the resource is a result of form submission and is not cached, the form will be silently resubmitted.
@@ -2096,7 +2096,7 @@ void FrameLoader::reload(OptionSet<ReloadOption> options, bool isRequestFromClie
 
     // If a window is created by javascript, its main frame can have an empty but non-nil URL.
     // Reloading in this case will lose the current contents (see 4151001).
-    if (documentLoader->request().url().isEmpty())
+    if (documentLoader->request().url().isNull())
         return;
 
     FRAMELOADER_RELEASE_LOG_FORWARDABLE(FrameLoaderReload);
@@ -2104,7 +2104,7 @@ void FrameLoader::reload(OptionSet<ReloadOption> options, bool isRequestFromClie
     // Replace error-page URL with the URL we were trying to reach.
     ResourceRequest initialRequest = documentLoader->request();
     URL unreachableURL = documentLoader->unreachableURL();
-    if (!unreachableURL.isEmpty())
+    if (!unreachableURL.isNull())
         initialRequest.setURL(WTF::move(unreachableURL));
 
     // Create a new document loader for the reload, this will become m_documentLoader eventually,
@@ -2935,7 +2935,7 @@ void FrameLoader::checkLoadCompleteForThisFrame(LoadWillContinueInAnotherProcess
         // while handling provisional load failures is too heavy. For example, the current
         // load will fail to cancel another ongoing load. That might prevent clients' page
         // load state being handled properly.
-        if (!m_provisionalLoadErrorBeingHandledURL.isEmpty())
+        if (!m_provisionalLoadErrorBeingHandledURL.isNull())
             return;
 
         RefPtr provisionalDocumentLoader = m_provisionalDocumentLoader;
@@ -2993,7 +2993,7 @@ void FrameLoader::checkLoadCompleteForThisFrame(LoadWillContinueInAnotherProcess
                 clearProvisionalLoad();
             else if (activeDocumentLoader()) {
                 URL unreachableURL = activeDocumentLoader()->unreachableURL();
-                if (!unreachableURL.isEmpty() && unreachableURL == provisionalDocumentLoader->request().url())
+                if (!unreachableURL.isNull() && unreachableURL == provisionalDocumentLoader->request().url())
                     shouldReset = false;
             }
         }
@@ -3107,7 +3107,7 @@ void FrameLoader::setOriginalURLForDownloadRequest(ResourceRequest& request)
         originalURL = initiator->firstPartyForCookies();
         // If there is no main document URL, it means that this document is newly opened and just for download purpose.
         // In this case, we need to set the originalURL to this document's opener's main document URL.
-        if (originalURL.isEmpty()) {
+        if (originalURL.isNull()) {
             if (RefPtr localOpener = dynamicDowncast<LocalFrame>(m_frame->opener()); localOpener && localOpener->document()) {
                 originalURL = localOpener->document()->firstPartyForCookies();
                 initiator = localOpener->document();
@@ -3451,7 +3451,7 @@ void FrameLoader::updateRequestAndAddExtraFields(Frame& targetFrame, ResourceReq
     // But make sure to set it on all requests regardless of protocol, as it has significance beyond the cookie policy (<rdar://problem/6616664>).
     bool isMainResource = mainResource == IsMainResource::Yes;
     bool isMainFrameMainResource = isMainResource && (targetFrame.isMainFrame() || willOpenInNewWindow == WillOpenInNewWindow::Yes);
-    if (request.firstPartyForCookies().isEmpty()) {
+    if (request.firstPartyForCookies().isNull()) {
         if (isMainFrameMainResource)
             request.setFirstPartyForCookies(request.url());
         else if (document)
@@ -3489,7 +3489,7 @@ void FrameLoader::updateRequestAndAddExtraFields(Frame& targetFrame, ResourceReq
         request.setCachePolicy(defaultRequestCachingPolicy(request, loadType, isMainResource));
 
     // The remaining modifications are only necessary for HTTP and HTTPS.
-    if (!request.url().isEmpty() && !request.url().protocolIsInHTTPFamily())
+    if (!request.url().isNull() && !request.url().protocolIsInHTTPFamily())
         return;
 
     if (!hasSpecificCachePolicy && request.cachePolicy() == ResourceRequestCachePolicy::ReloadIgnoringCacheData) {
@@ -4090,7 +4090,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
     // If we loaded an alternate page to replace an unreachableURL, we'll get in here with a
     // nil policyDataSource because loading the alternate page will have passed
     // through this method already, nested; otherwise, policyDataSource should still be set.
-    ASSERT(m_policyDocumentLoader || !m_provisionalDocumentLoader->unreachableURL().isEmpty());
+    ASSERT(m_policyDocumentLoader || !m_provisionalDocumentLoader->unreachableURL().isNull());
 
     Ref frame = m_frame.get();
 
@@ -5046,7 +5046,7 @@ void FrameLoader::prefetchDNSIfNeeded(const URL& url)
         return;
 #endif
 
-    if (url.isValid() && !url.isEmpty() && url.protocolIsInHTTPFamily())
+    if (url.protocolIsInHTTPFamily())
         client().prefetchDNS(url.host().toString());
 }
 

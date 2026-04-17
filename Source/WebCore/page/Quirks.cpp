@@ -2048,7 +2048,7 @@ String Quirks::scriptToEvaluateBeforeRunningScriptFromURL(const URL& scriptURL)
     if (!m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk))
         return { };
 
-    if (scriptURL.isEmpty())
+    if (scriptURL.isNull())
         return { };
 
     // iheart.com rdar://171198911
@@ -2070,7 +2070,7 @@ String Quirks::scriptToEvaluateBeforeRunningScriptFromURL(const URL& scriptURL)
         return chromeUserAgentScript;
 
     // nba.com rdar://147429596
-    if (m_quirksData.isNBA && !scriptURL.isEmpty()) [[unlikely]]
+    if (m_quirksData.isNBA && !scriptURL.isNull()) [[unlikely]]
         return nbaSeekBarFixScript;
 
 #if ENABLE(DESKTOP_CONTENT_MODE_QUIRKS)
@@ -2608,7 +2608,7 @@ bool Quirks::shouldReportVisibleDueToActivePictureInPictureContent() const
 
 URL Quirks::topDocumentURL() const
 {
-    if (!m_topDocumentURLForTesting.isEmpty()) [[unlikely]]
+    if (!m_topDocumentURLForTesting.isNull()) [[unlikely]]
         return m_topDocumentURLForTesting;
 
     return protect(m_document)->topURL();
@@ -3705,7 +3705,7 @@ void Quirks::determineRelevantQuirks()
 #endif
 
     auto quirksURL = topDocumentURL();
-    if (quirksURL.isEmpty())
+    if (quirksURL.isNull())
         return;
 
     RegistrableDomain registrableDomain { quirksURL };

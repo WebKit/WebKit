@@ -342,7 +342,7 @@ Vector<ApplicationManifest::Icon> ApplicationManifestParser::parseIcons(const JS
             continue;
         }
         URL srcURL(m_manifestURL, srcStringValue);
-        if (srcURL.isEmpty())
+        if (srcURL.isNull())
             continue;
         if (!srcURL.isValid()) {
             logManifestPropertyInvalidURL("src"_s);
@@ -421,7 +421,7 @@ Vector<ApplicationManifest::Shortcut> ApplicationManifestParser::parseShortcuts(
         }
 
         URL shortcutURL(m_manifestURL, urlStringValue);
-        if (shortcutURL.isEmpty())
+        if (shortcutURL.isNull())
             continue;
         if (!shortcutURL.isValid()) {
             logManifestPropertyInvalidURL("url"_s);
@@ -440,7 +440,7 @@ Vector<ApplicationManifest::Shortcut> ApplicationManifestParser::parseShortcuts(
 static bool isInScope(const URL& scopeURL, const URL& targetURL)
 {
     // 1. If scopeURL is undefined (i.e., it is unbounded because of an error or it was not declared in the manifest), return true.
-    if (scopeURL.isNull() || scopeURL.isEmpty())
+    if (scopeURL.isNull())
         return true;
 
     // 2. Let target be a new URL using targetURL as input. If target is failure, return false.

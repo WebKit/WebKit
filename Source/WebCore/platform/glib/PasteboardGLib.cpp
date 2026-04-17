@@ -159,7 +159,7 @@ void Pasteboard::writePlainText(const String& text, SmartReplaceOption smartRepl
 
 void Pasteboard::write(const PasteboardURL& pasteboardURL)
 {
-    ASSERT(!pasteboardURL.url.isEmpty());
+    ASSERT(!pasteboardURL.url.isNull());
     if (m_selectionData) {
         m_selectionData->clearAll();
         m_selectionData->setURL(pasteboardURL.url, pasteboardURL.title);
@@ -179,14 +179,14 @@ void Pasteboard::write(const PasteboardImage& pasteboardImage)
 {
     if (m_selectionData) {
         m_selectionData->clearAll();
-        if (!pasteboardImage.url.url.isEmpty()) {
+        if (!pasteboardImage.url.url.isNull()) {
             m_selectionData->setURL(pasteboardImage.url.url, pasteboardImage.url.title);
             m_selectionData->setMarkup(pasteboardImage.url.markup);
         }
         m_selectionData->setImage(pasteboardImage.image.get());
     } else {
         SelectionData data;
-        if (!pasteboardImage.url.url.isEmpty()) {
+        if (!pasteboardImage.url.url.isNull()) {
             data.setURL(pasteboardImage.url.url, pasteboardImage.url.title);
             data.setMarkup(pasteboardImage.url.markup);
         }

@@ -2358,7 +2358,7 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
     else
         sourceURL = pageSourceURL;
 
-    if (sourceURL.isEmpty()) {
+    if (sourceURL.isNull()) {
         if (RefPtr relatedPage = pageConfiguration->relatedPage()) {
             sourceURL = relatedPage->pageLoadState().url();
             WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForNavigationInternal: Using related page's URL as source URL for process swap decision (page=%p)", pageConfiguration->relatedPage());
@@ -2369,7 +2369,7 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
     if (!m_configuration->processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol() && !sourceURL.protocolIsInHTTPFamily() && sourceURL.protocol() == targetURL.protocol() && !siteIsolationEnabled)
         return { WTF::move(sourceProcess), nullptr, "Navigation within the same non-HTTP(s) protocol"_s };
 
-    bool sourceURLIsInvalid = !sourceURL.isValid() || sourceURL.isEmpty();
+    bool sourceURLIsInvalid = !sourceURL.isValid();
     if (!siteIsolationEnabled && (sourceURLIsInvalid || !targetURL.isValid() || targetSite.domain().matches(sourceURL)))
         return { WTF::move(sourceProcess), nullptr, "Navigation is same-site"_s };
 

@@ -5102,7 +5102,7 @@ ExceptionOr<bool> WebGLRenderingContextBase::validateHTMLImageElement(ASCIILiter
         return false;
     }
     const URL& url = image.cachedImage()->response().url();
-    if (url.isNull() || url.isEmpty() || !url.isValid()) {
+    if (!url.isValid()) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "invalid image"_s);
         return false;
     }

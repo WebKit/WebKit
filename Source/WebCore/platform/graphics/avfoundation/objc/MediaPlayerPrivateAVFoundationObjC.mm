@@ -786,7 +786,7 @@ void MediaPlayerPrivateAVFoundationObjC::synchronizeTextTrackState()
 
 static RetainPtr<NSURL> canonicalURL(const URL& url)
 {
-    if (url.isEmpty())
+    if (url.isNull())
         return URL::emptyNSURL();
 
     return URLByCanonicalizingURL(url.createNSURL().get());

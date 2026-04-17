@@ -517,7 +517,7 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
 
     if (element->isLink()) {
         if (auto href = element->attributeWithoutSynchronization(HTMLNames::hrefAttr); !href.isEmpty()) {
-            if (auto url = protect(element->document())->completeURL(href); !url.isEmpty()) {
+            if (auto url = protect(element->document())->completeURL(href); !url.isNull()) {
                 if (context.mergeParagraphs)
                     return { WTF::move(url) };
 

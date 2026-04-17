@@ -200,7 +200,7 @@ void ContentFilter::startFilteringMainResource(const URL& url)
 
     LOG(ContentFiltering, "ContentFilter will start filtering main resource at <%{sensitive}s>.\n", url.string().ascii().data());
     m_state = State::Filtering;
-    ASSERT(m_mainResourceURL.isEmpty());
+    ASSERT(m_mainResourceURL.isNull());
     m_mainResourceURL = url;
 }
 

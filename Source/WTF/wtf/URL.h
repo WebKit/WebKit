@@ -134,7 +134,6 @@ public:
     WTF_EXPORT_PRIVATE URL isolatedCopy() &&;
 
     bool isNull() const;
-    bool isEmpty() const;
     bool isValid() const;
 
     // Since we overload operator NSURL * we have this to prevent accidentally using that operator
@@ -362,11 +361,6 @@ inline URL::URL(HashTableDeletedValueType)
 inline bool URL::isNull() const
 {
     return m_string.isNull();
-}
-
-inline bool URL::isEmpty() const
-{
-    return m_string.isEmpty();
 }
 
 inline bool URL::isValid() const

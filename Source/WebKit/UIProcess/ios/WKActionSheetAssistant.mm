@@ -444,7 +444,7 @@ static bool isJavaScriptURL(NSURL *url)
             [self cleanupSheet];
     };
 
-    if (_positionInformation->url.isEmpty() && _positionInformation->image && [delegate respondsToSelector:@selector(actionSheetAssistant:getAlternateURLForImage:completion:)]) {
+    if (_positionInformation->url.isNull() && _positionInformation->image && [delegate respondsToSelector:@selector(actionSheetAssistant:getAlternateURLForImage:completion:)]) {
         RetainPtr<UIImage> uiImage = adoptNS([[UIImage alloc] initWithCGImage:protect(_positionInformation->image)->createPlatformImage().get()]);
 
         _hasPendingActionSheet = YES;

@@ -672,13 +672,13 @@ InteractionInformationAtPosition positionInformationForWebPage(WebPage& page, co
 #endif
 
 #if ENABLE(MODEL_ELEMENT)
-    if (RefPtr modelElement = dynamicDowncast<WebCore::HTMLModelElement>(hitTestNode); modelElement && !modelElement->currentSrc().isEmpty())
+    if (RefPtr modelElement = dynamicDowncast<WebCore::HTMLModelElement>(hitTestNode); modelElement && !modelElement->currentSrc().isNull())
         info.modelURL = modelElement->currentSrc();
 #endif
 
 #if ENABLE(PDF_PLUGIN) && PLATFORM(IOS_FAMILY)
     if (pluginView) {
-        if (auto&& [url, bounds, textIndicator] = pluginView->linkDataAtPoint(request.point); !url.isEmpty()) {
+        if (auto&& [url, bounds, textIndicator] = pluginView->linkDataAtPoint(request.point); !url.isNull()) {
             info.isLink = true;
             info.url = WTF::move(url);
             info.bounds = enclosingIntRect(bounds);

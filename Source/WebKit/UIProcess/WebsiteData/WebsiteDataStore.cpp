@@ -1160,7 +1160,7 @@ void WebsiteDataStore::isPrevalentResource(const URL& url, CompletionHandler<voi
 {
     ASSERT(RunLoop::isMain());
     
-    if (url.protocolIsAbout() || url.isEmpty()) {
+    if (url.protocolIsAbout() || url.isNull()) {
         completionHandler(false);
         return;
     }
@@ -1172,7 +1172,7 @@ void WebsiteDataStore::isGrandfathered(const URL& url, CompletionHandler<void(bo
 {
     ASSERT(RunLoop::isMain());
     
-    if (url.protocolIsAbout() || url.isEmpty()) {
+    if (url.protocolIsAbout() || url.isNull()) {
         completionHandler(false);
         return;
     }
@@ -1184,7 +1184,7 @@ void WebsiteDataStore::setPrevalentResource(const URL& url, CompletionHandler<vo
 {
     ASSERT(RunLoop::isMain());
     
-    if (url.protocolIsAbout() || url.isEmpty()) {
+    if (url.protocolIsAbout() || url.isNull()) {
         completionHandler();
         return;
     }
@@ -1196,7 +1196,7 @@ void WebsiteDataStore::setPrevalentResourceForDebugMode(const URL& url, Completi
 {
     ASSERT(RunLoop::isMain());
     
-    if (url.protocolIsAbout() || url.isEmpty()) {
+    if (url.protocolIsAbout() || url.isNull()) {
         completionHandler();
         return;
     }
@@ -1208,7 +1208,7 @@ void WebsiteDataStore::isVeryPrevalentResource(const URL& url, CompletionHandler
 {
     ASSERT(RunLoop::isMain());
     
-    if (url.protocolIsAbout() || url.isEmpty()) {
+    if (url.protocolIsAbout() || url.isNull()) {
         completionHandler(false);
         return;
     }
@@ -1220,7 +1220,7 @@ void WebsiteDataStore::setVeryPrevalentResource(const URL& url, CompletionHandle
 {
     ASSERT(RunLoop::isMain());
     
-    if (url.protocolIsAbout() || url.isEmpty()) {
+    if (url.protocolIsAbout() || url.isNull()) {
         completionHandler();
         return;
     }
@@ -1239,7 +1239,7 @@ void WebsiteDataStore::setSubframeUnderTopFrameDomain(const URL& subFrameURL, co
 {
     ASSERT(RunLoop::isMain());
     
-    if (subFrameURL.protocolIsAbout() || subFrameURL.isEmpty() || topFrameURL.protocolIsAbout() || topFrameURL.isEmpty()) {
+    if (subFrameURL.protocolIsAbout() || subFrameURL.isNull() || topFrameURL.protocolIsAbout() || topFrameURL.isNull()) {
         completionHandler();
         return;
     }
@@ -1258,7 +1258,7 @@ void WebsiteDataStore::setSubresourceUnderTopFrameDomain(const URL& subresourceU
 {
     ASSERT(RunLoop::isMain());
     
-    if (subresourceURL.protocolIsAbout() || subresourceURL.isEmpty() || topFrameURL.protocolIsAbout() || topFrameURL.isEmpty()) {
+    if (subresourceURL.protocolIsAbout() || subresourceURL.isNull() || topFrameURL.protocolIsAbout() || topFrameURL.isNull()) {
         completionHandler();
         return;
     }
@@ -1277,7 +1277,7 @@ void WebsiteDataStore::setSubresourceUniqueRedirectTo(const URL& subresourceURL,
 {
     ASSERT(RunLoop::isMain());
     
-    if (subresourceURL.protocolIsAbout() || subresourceURL.isEmpty() || urlRedirectedTo.protocolIsAbout() || urlRedirectedTo.isEmpty()) {
+    if (subresourceURL.protocolIsAbout() || subresourceURL.isNull() || urlRedirectedTo.protocolIsAbout() || urlRedirectedTo.isNull()) {
         completionHandler();
         return;
     }
@@ -1289,7 +1289,7 @@ void WebsiteDataStore::setSubresourceUniqueRedirectFrom(const URL& subresourceUR
 {
     ASSERT(RunLoop::isMain());
     
-    if (subresourceURL.protocolIsAbout() || subresourceURL.isEmpty() || urlRedirectedFrom.protocolIsAbout() || urlRedirectedFrom.isEmpty()) {
+    if (subresourceURL.protocolIsAbout() || subresourceURL.isNull() || urlRedirectedFrom.protocolIsAbout() || urlRedirectedFrom.isNull()) {
         completionHandler();
         return;
     }
@@ -1301,7 +1301,7 @@ void WebsiteDataStore::setTopFrameUniqueRedirectTo(const URL& topFrameURL, const
 {
     ASSERT(RunLoop::isMain());
     
-    if (topFrameURL.protocolIsAbout() || topFrameURL.isEmpty() || urlRedirectedTo.protocolIsAbout() || urlRedirectedTo.isEmpty()) {
+    if (topFrameURL.protocolIsAbout() || topFrameURL.isNull() || urlRedirectedTo.protocolIsAbout() || urlRedirectedTo.isNull()) {
         completionHandler();
         return;
     }
@@ -1313,7 +1313,7 @@ void WebsiteDataStore::setTopFrameUniqueRedirectFrom(const URL& topFrameURL, con
 {
     ASSERT(RunLoop::isMain());
     
-    if (topFrameURL.protocolIsAbout() || topFrameURL.isEmpty() || urlRedirectedFrom.protocolIsAbout() || urlRedirectedFrom.isEmpty()) {
+    if (topFrameURL.protocolIsAbout() || topFrameURL.isNull() || urlRedirectedFrom.protocolIsAbout() || urlRedirectedFrom.isNull()) {
         completionHandler();
         return;
     }
@@ -1332,7 +1332,7 @@ void WebsiteDataStore::clearPrevalentResource(const URL& url, CompletionHandler<
 {
     ASSERT(RunLoop::isMain());
         
-    if (url.protocolIsAbout() || url.isEmpty()) {
+    if (url.protocolIsAbout() || url.isNull()) {
         completionHandler();
         return;
     }
@@ -1426,7 +1426,7 @@ void WebsiteDataStore::statisticsDatabaseHasAllTables(CompletionHandler<void(boo
 
 void WebsiteDataStore::setLastSeen(const URL& url, Seconds seconds, CompletionHandler<void()>&& completionHandler)
 {
-    if (url.protocolIsAbout() || url.isEmpty()) {
+    if (url.protocolIsAbout() || url.isNull()) {
         completionHandler();
         return;
     }
@@ -1443,7 +1443,7 @@ void WebsiteDataStore::domainIDExistsInDatabase(int domainID, CompletionHandler<
 
 void WebsiteDataStore::mergeStatisticForTesting(const URL& url, const URL& topFrameUrl1, const URL& topFrameUrl2, Seconds lastSeen, bool hadUserInteraction, Seconds mostRecentUserInteraction, bool isGrandfathered, bool isPrevalent, bool isVeryPrevalent, unsigned dataRecordsRemoved, CompletionHandler<void()>&& completionHandler)
 {
-    if (url.protocolIsAbout() || url.isEmpty()) {
+    if (url.protocolIsAbout() || url.isNull()) {
         completionHandler();
         return;
     }
@@ -1453,7 +1453,7 @@ void WebsiteDataStore::mergeStatisticForTesting(const URL& url, const URL& topFr
 
 void WebsiteDataStore::insertExpiredStatisticForTesting(const URL& url, unsigned numberOfOperatingDaysPassed, bool hadUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent, CompletionHandler<void()>&& completionHandler)
 {
-    if (url.protocolIsAbout() || url.isEmpty()) {
+    if (url.protocolIsAbout() || url.isNull()) {
         completionHandler();
         return;
     }
@@ -1519,7 +1519,7 @@ void WebsiteDataStore::setTimeToLiveUserInteraction(Seconds seconds, CompletionH
 
 void WebsiteDataStore::didHaveUserInteractionForSiteIsolation(const URL& url)
 {
-    if (url.protocolIsAbout() || url.isEmpty())
+    if (url.protocolIsAbout() || url.isNull())
         return;
 
     WebCore::RegistrableDomain registrableDomain { url };
@@ -1538,7 +1538,7 @@ void WebsiteDataStore::logUserInteraction(const URL& url, CompletionHandler<void
 {
     ASSERT(RunLoop::isMain());
     
-    if (url.protocolIsAbout() || url.isEmpty()) {
+    if (url.protocolIsAbout() || url.isNull()) {
         completionHandler();
         return;
     }
@@ -1550,7 +1550,7 @@ void WebsiteDataStore::hasHadUserInteraction(const URL& url, CompletionHandler<v
 {
     ASSERT(RunLoop::isMain());
     
-    if (url.protocolIsAbout() || url.isEmpty()) {
+    if (url.protocolIsAbout() || url.isNull()) {
         completionHandler(false);
         return;
     }
@@ -1562,7 +1562,7 @@ void WebsiteDataStore::isRelationshipOnlyInDatabaseOnce(const URL& subUrl, const
 {
     ASSERT(RunLoop::isMain());
     
-    if (subUrl.protocolIsAbout() || subUrl.isEmpty() || topUrl.protocolIsAbout() || topUrl.isEmpty()) {
+    if (subUrl.protocolIsAbout() || subUrl.isNull() || topUrl.protocolIsAbout() || topUrl.isNull()) {
         completionHandler(false);
         return;
     }
@@ -1574,7 +1574,7 @@ void WebsiteDataStore::clearUserInteraction(const URL& url, CompletionHandler<vo
 {
     ASSERT(RunLoop::isMain());
     
-    if (url.protocolIsAbout() || url.isEmpty()) {
+    if (url.protocolIsAbout() || url.isNull()) {
         completionHandler();
         return;
     }
@@ -1586,7 +1586,7 @@ void WebsiteDataStore::setGrandfathered(const URL& url, bool isGrandfathered, Co
 {
     ASSERT(RunLoop::isMain());
     
-    if (url.protocolIsAbout() || url.isEmpty()) {
+    if (url.protocolIsAbout() || url.isNull()) {
         completionHandler();
         return;
     }
