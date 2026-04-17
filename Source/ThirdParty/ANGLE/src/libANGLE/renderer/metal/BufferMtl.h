@@ -187,10 +187,10 @@ class BufferMtl : public BufferImpl, public BufferHolderMtl
     const std::vector<IndexRange> &getRestartIndices(ContextMtl *ctx,
                                                      gl::DrawElementsType indexType);
 
-    static const std::vector<IndexRange> GetRestartIndicesFromClientData(
-        gl::DrawElementsType type,
-        GLint count,
-        const void* indices);
+    static const std::vector<IndexRange> getRestartIndicesFromClientData(
+        ContextMtl *ctx,
+        gl::DrawElementsType indexType,
+        const mtl::BufferRef clientBuffer);
 
   private:
     angle::Result allocateNewMetalBuffer(ContextMtl *contextMtl,

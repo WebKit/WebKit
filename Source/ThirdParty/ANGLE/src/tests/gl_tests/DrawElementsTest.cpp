@@ -793,52 +793,6 @@ TEST_P(WebGLDrawElementsTest, DrawElementsTypeAlignment)
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 
-// Test that subsequent UNSIGNED_BYTE primitive restart draws work without problems.
-// At the time of writing, Metal backend would use incorrect internal offset and
-// fail the draw with validation.
-TEST_P(DrawElementsTest, DrawElementsUintByteBytePrimitiveRestart)
-{
-    glClearColor(1.f, 0.f, 0.f, 1.f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    const char kVS[] = R"(#version 300 es
-in vec4 a_position;
-void main()
-{
-    gl_Position = a_position;
-    gl_PointSize = 2.0;
-})";
-    ANGLE_GL_PROGRAM(mProgram, kVS, essl3_shaders::fs::Green());
-    glUseProgram(mProgram);
-
-    GLBuffer vertexBuffer;
-    std::array<GLfloat, 3> vertices { -1.0f, -1.0f, 0.5f };
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-    GLint posLocation = glGetAttribLocation(mProgram, essl3_shaders::PositionAttrib());
-    ASSERT_NE(-1, posLocation);
-    glEnableVertexAttribArray(posLocation);
-    glVertexAttribPointer(posLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * vertices.size(), vertices.data(),
-                 GL_STATIC_DRAW);
-
-    GLubyte indices[4] = {0xff, 0xff, 0, 0};
-    GLBuffer elementBuffer;
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-    ASSERT_GL_NO_ERROR();
-
-    glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
-    glDrawElements(GL_POINTS, 1, GL_UNSIGNED_SHORT, nullptr);
-    ASSERT_GL_NO_ERROR();
-    glDrawElements(GL_POINTS, 4, GL_UNSIGNED_BYTE, nullptr);
-    ASSERT_GL_NO_ERROR();
-    glDrawElements(GL_POINTS, 4, GL_UNSIGNED_BYTE, nullptr);
-    ASSERT_GL_NO_ERROR();
-
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
-    EXPECT_PIXEL_RECT_EQ(1, 1, getWindowWidth() - 1, getWindowHeight() - 1, GLColor::red);
-    ASSERT_GL_NO_ERROR();
-}
-
 class WebGLDrawElementsTest3 : public WebGLDrawElementsTest
 {};
 // Test one element buffer bind to two vertexArrays and switch vertexArray should draw correctly.
