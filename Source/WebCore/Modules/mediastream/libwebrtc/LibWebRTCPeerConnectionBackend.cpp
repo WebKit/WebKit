@@ -296,7 +296,8 @@ Ref<RTCRtpReceiver> LibWebRTCPeerConnectionBackend::createReceiver(std::unique_p
 
     // Remote source is initially muted and will be unmuted when receiving the first packet.
     source->setMuted(true);
-    Ref remoteTrackPrivate = MediaStreamTrackPrivate::create(document->logger(), WTF::move(source), createVersion4UUIDString());
+    auto trackID = source->persistentID();
+    Ref remoteTrackPrivate = MediaStreamTrackPrivate::create(document->logger(), WTF::move(source), WTF::move(trackID));
     Ref remoteTrack = MediaStreamTrack::create(document.get(), WTF::move(remoteTrackPrivate));
 
     return RTCRtpReceiver::create(*this, WTF::move(remoteTrack), WTF::move(backend));
