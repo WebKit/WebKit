@@ -37,7 +37,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SVGScriptElement);
 inline SVGScriptElement::SVGScriptElement(const QualifiedName& tagName, Document& document, bool wasInsertedByParser, bool alreadyStarted)
     : SVGElement(tagName, document, makeUniqueRef<PropertyRegistry>(*this))
     , SVGURIReference(this)
-    , ScriptElement(*this, wasInsertedByParser, alreadyStarted)
+    , ScriptElement(*this, &document, wasInsertedByParser, alreadyStarted)
 {
     ASSERT(hasTagName(SVGNames::scriptTag));
 }

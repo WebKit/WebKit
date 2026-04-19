@@ -45,16 +45,23 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLScriptElement);
 
 using namespace HTMLNames;
 
-inline HTMLScriptElement::HTMLScriptElement(const QualifiedName& tagName, Document& document, bool wasInsertedByParser, bool alreadyStarted)
+inline HTMLScriptElement::HTMLScriptElement(const QualifiedName& tagName, Document& document, Document* parserDocument, bool wasInsertedByParser, bool alreadyStarted)
     : HTMLElement(tagName, document, TypeFlag::HasDidMoveToNewDocument)
-    , ScriptElement(*this, wasInsertedByParser, alreadyStarted)
+    , ScriptElement(*this, parserDocument, wasInsertedByParser, alreadyStarted)
 {
     ASSERT(hasTagName(scriptTag));
 }
 
 Ref<HTMLScriptElement> HTMLScriptElement::create(const QualifiedName& tagName, Document& document, bool wasInsertedByParser, bool alreadyStarted)
 {
-    Ref scriptElement = adoptRef(*new HTMLScriptElement(tagName, document, wasInsertedByParser, alreadyStarted));
+    Ref scriptElement = adoptRef(*new HTMLScriptElement(tagName, document, wasInsertedByParser ? &document : nullptr, wasInsertedByParser, alreadyStarted));
+    scriptElement->suspendIfNeeded();
+    return scriptElement;
+}
+
+Ref<HTMLScriptElement> HTMLScriptElement::create(const QualifiedName& tagName, Document& document, Document& parserDocument, bool wasInsertedByParser, bool alreadyStarted)
+{
+    Ref scriptElement = adoptRef(*new HTMLScriptElement(tagName, document, &parserDocument, wasInsertedByParser, alreadyStarted));
     scriptElement->suspendIfNeeded();
     return scriptElement;
 }

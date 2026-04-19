@@ -636,7 +636,7 @@ void HTMLConstructionSite::insertScriptElement(AtomHTMLToken&& token)
     // those flags or effects thereof.
     const bool parserInserted = !m_parserContentPolicy.contains(ParserContentPolicy::DoNotMarkAlreadyStarted);
     const bool alreadyStarted = m_isParsingFragment && parserInserted;
-    auto element = HTMLScriptElement::create(scriptTag, ownerDocumentForCurrentNode(), parserInserted, alreadyStarted);
+    auto element = HTMLScriptElement::create(scriptTag, ownerDocumentForCurrentNode(), m_document.get(), parserInserted, alreadyStarted);
     setAttributes(element, token, m_parserContentPolicy);
     if (scriptingContentIsAllowed(m_parserContentPolicy))
         attachLater(protect(currentNode()), element.copyRef());
