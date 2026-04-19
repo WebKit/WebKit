@@ -54,14 +54,12 @@ inline HTMLScriptElement::HTMLScriptElement(const QualifiedName& tagName, Docume
 
 Ref<HTMLScriptElement> HTMLScriptElement::create(const QualifiedName& tagName, Document& document, bool wasInsertedByParser, bool alreadyStarted)
 {
-    Ref scriptElement = adoptRef(*new HTMLScriptElement(tagName, document, wasInsertedByParser ? &document : nullptr, wasInsertedByParser, alreadyStarted));
-    scriptElement->suspendIfNeeded();
-    return scriptElement;
+    return create(tagName, document, document, wasInsertedByParser, alreadyStarted);
 }
 
 Ref<HTMLScriptElement> HTMLScriptElement::create(const QualifiedName& tagName, Document& document, Document& parserDocument, bool wasInsertedByParser, bool alreadyStarted)
 {
-    Ref scriptElement = adoptRef(*new HTMLScriptElement(tagName, document, &parserDocument, wasInsertedByParser, alreadyStarted));
+    Ref scriptElement = adoptRef(*new HTMLScriptElement(tagName, document, wasInsertedByParser ? &parserDocument : nullptr, wasInsertedByParser, alreadyStarted));
     scriptElement->suspendIfNeeded();
     return scriptElement;
 }
@@ -177,7 +175,7 @@ ExceptionOr<void> HTMLScriptElement::setTextContent(ExceptionOr<String> value)
 
     setTrustedScriptText(newValue);
     setTextContent(WTF::move(newValue));
-    return { };
+    return {};
 }
 
 ExceptionOr<void> HTMLScriptElement::setInnerText(Variant<Ref<TrustedScript>, String>&& value)
@@ -190,7 +188,7 @@ ExceptionOr<void> HTMLScriptElement::setInnerText(Variant<Ref<TrustedScript>, St
 
     setTrustedScriptText(newValue);
     setInnerText(WTF::move(newValue));
-    return { };
+    return {};
 }
 
 void HTMLScriptElement::setAsync(bool async)
@@ -221,7 +219,7 @@ ExceptionOr<void> HTMLScriptElement::setSrc(Variant<Ref<TrustedScriptURL>, Strin
         return stringValueHolder.releaseException();
 
     setAttributeWithoutSynchronization(HTMLNames::srcAttr, AtomString { stringValueHolder.releaseReturnValue() });
-    return { };
+    return {};
 }
 
 void HTMLScriptElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const

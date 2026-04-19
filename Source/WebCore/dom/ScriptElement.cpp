@@ -23,7 +23,6 @@
 
 #include "config.h"
 #include "ScriptElement.h"
-#include <iostream>
 
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
