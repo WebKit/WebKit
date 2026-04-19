@@ -25,6 +25,7 @@
 #pragma once
 
 #include <WebCore/CSSCalcOperator.h>
+#include <WebCore/CSSCalcRoundingStrategy.h>
 #include <WebCore/CSSValueKeywords.h>
 #include <optional>
 #include <tuple>
@@ -51,10 +52,7 @@ struct Invert;
 struct Min;
 struct Max;
 struct Clamp;
-struct RoundNearest;
-struct RoundUp;
-struct RoundDown;
-struct RoundToZero;
+struct Round;
 struct Mod;
 struct Rem;
 struct Sin;
@@ -140,10 +138,7 @@ using Node = Variant<
     IndirectNode<Min>,
     IndirectNode<Max>,
     IndirectNode<Clamp>,
-    IndirectNode<RoundNearest>,
-    IndirectNode<RoundUp>,
-    IndirectNode<RoundDown>,
-    IndirectNode<RoundToZero>,
+    IndirectNode<Round>,
     IndirectNode<Mod>,
     IndirectNode<Rem>,
     IndirectNode<Sin>,
@@ -300,44 +295,14 @@ struct Clamp {
 };
 
 // Stepped Value Functions - https://drafts.csswg.org/css-values-4/#round-func
-struct RoundNearest {
-    WTF_MAKE_STRUCT_TZONE_ALLOCATED(RoundNearest);
-    static constexpr auto op = CSSCalc::Operator::RoundNearest;
+struct Round {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(Round);
 
+    CSSCalc::RoundingStrategy strategy;
     Child a;
     std::optional<Child> b;
 
-    bool operator==(const RoundNearest&) const = default;
-};
-
-struct RoundUp {
-    WTF_MAKE_STRUCT_TZONE_ALLOCATED(RoundUp);
-    static constexpr auto op = CSSCalc::Operator::RoundUp;
-
-    Child a;
-    std::optional<Child> b;
-
-    bool operator==(const RoundUp&) const = default;
-};
-
-struct RoundDown {
-    WTF_MAKE_STRUCT_TZONE_ALLOCATED(RoundDown);
-    static constexpr auto op = CSSCalc::Operator::RoundDown;
-
-    Child a;
-    std::optional<Child> b;
-
-    bool operator==(const RoundDown&) const = default;
-};
-
-struct RoundToZero {
-    WTF_MAKE_STRUCT_TZONE_ALLOCATED(RoundToZero);
-    static constexpr auto op = CSSCalc::Operator::RoundToZero;
-
-    Child a;
-    std::optional<Child> b;
-
-    bool operator==(const RoundToZero&) const = default;
+    bool operator==(const Round&) const = default;
 };
 
 struct Mod {
@@ -628,31 +593,7 @@ template<size_t I> const auto& get(const Clamp& root)
         return root.max;
 }
 
-template<size_t I> const auto& get(const RoundNearest& root)
-{
-    if constexpr (!I)
-        return root.a;
-    else if constexpr (I == 1)
-        return root.b;
-}
-
-template<size_t I> const auto& get(const RoundUp& root)
-{
-    if constexpr (!I)
-        return root.a;
-    else if constexpr (I == 1)
-        return root.b;
-}
-
-template<size_t I> const auto& get(const RoundDown& root)
-{
-    if constexpr (!I)
-        return root.a;
-    else if constexpr (I == 1)
-        return root.b;
-}
-
-template<size_t I> const auto& get(const RoundToZero& root)
+template<size_t I> const auto& get(const Round& root)
 {
     if constexpr (!I)
         return root.a;
@@ -913,10 +854,7 @@ OP_TUPLE_LIKE_CONFORMANCE(Invert, 1);
 OP_TUPLE_LIKE_CONFORMANCE(Min, 1);
 OP_TUPLE_LIKE_CONFORMANCE(Max, 1);
 OP_TUPLE_LIKE_CONFORMANCE(Clamp, 3);
-OP_TUPLE_LIKE_CONFORMANCE(RoundNearest, 2);
-OP_TUPLE_LIKE_CONFORMANCE(RoundUp, 2);
-OP_TUPLE_LIKE_CONFORMANCE(RoundDown, 2);
-OP_TUPLE_LIKE_CONFORMANCE(RoundToZero, 2);
+OP_TUPLE_LIKE_CONFORMANCE(Round, 2);
 OP_TUPLE_LIKE_CONFORMANCE(Mod, 2);
 OP_TUPLE_LIKE_CONFORMANCE(Rem, 2);
 OP_TUPLE_LIKE_CONFORMANCE(Sin, 1);

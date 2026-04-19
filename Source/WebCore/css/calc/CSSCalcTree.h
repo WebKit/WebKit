@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/CSSCalcRoundingStrategy.h>
 #include <WebCore/CSSCalcType.h>
 #include <WebCore/CSSCustomIdent.h>
 #include <WebCore/CSSPrimitiveNumeric.h>
@@ -55,10 +56,7 @@ struct Invert;
 struct Min;
 struct Max;
 struct Clamp;
-struct RoundNearest;
-struct RoundUp;
-struct RoundDown;
-struct RoundToZero;
+struct Round;
 struct Mod;
 struct Rem;
 struct Sin;
@@ -205,10 +203,7 @@ using Node = Variant<
     IndirectNode<Min>,
     IndirectNode<Max>,
     IndirectNode<Clamp>,
-    IndirectNode<RoundNearest>,
-    IndirectNode<RoundUp>,
-    IndirectNode<RoundDown>,
-    IndirectNode<RoundToZero>,
+    IndirectNode<Round>,
     IndirectNode<Mod>,
     IndirectNode<Rem>,
     IndirectNode<Sin>,
@@ -383,105 +378,37 @@ struct Clamp {
     bool operator==(const Clamp&) const = default;
 };
 
+// Maps a RoundingStrategy to its corresponding CSS keyword identifier for use
+// in serialization and logging.
+constexpr CSSValueID toCSSValueID(RoundingStrategy strategy)
+{
+    switch (strategy) {
+    case RoundingStrategy::Nearest: return CSSValueNearest;
+    case RoundingStrategy::Up:      return CSSValueUp;
+    case RoundingStrategy::Down:    return CSSValueDown;
+    case RoundingStrategy::ToZero:  return CSSValueToZero;
+    }
+    ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
+    return CSSValueNearest;
+}
+
 // Stepped Value Functions - https://drafts.csswg.org/css-values-4/#round-func
-struct RoundNearest {
-    WTF_MAKE_STRUCT_TZONE_ALLOCATED(RoundNearest);
-    static constexpr auto id = CSSValueNearest;
+struct Round {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(Round);
+    static constexpr auto id = CSSValueRound;
 
-    // <round()> = round( <rounding-strategy>?, <calc-sum>, <calc-sum> )
+    // <round()> = round( <rounding-strategy>?, <calc-sum>, <calc-sum>? )
     //     - INPUT: "consistent" <number>, <dimension>, or <percentage>
     //     - OUTPUT: consistent type
     static constexpr auto input = AllowedTypes::Any;
     static constexpr auto merge = MergePolicy::Consistent;
     static constexpr auto output = OutputTransform::None;
 
-    //    -- and --
-
-    // <round()> = round( <rounding-strategy>?, <calc-sum> )
-    //     - INPUT: "consistent" <number>
-    //     - OUTPUT: consistent type
-
-    // NOTE: This is special cased in the code.
-
+    RoundingStrategy strategy;
     Child a;
     std::optional<Child> b;
 
-    bool operator==(const RoundNearest&) const = default;
-};
-
-struct RoundUp {
-    WTF_MAKE_STRUCT_TZONE_ALLOCATED(RoundUp);
-    static constexpr auto id = CSSValueUp;
-
-    // <round()> = round( <rounding-strategy>?, <calc-sum>, <calc-sum> )
-    //     - INPUT: "consistent" <number>, <dimension>, or <percentage>
-    //     - OUTPUT: consistent type
-    static constexpr auto input = AllowedTypes::Any;
-    static constexpr auto merge = MergePolicy::Consistent;
-    static constexpr auto output = OutputTransform::None;
-
-    //    -- and --
-
-    // <round()> = round( <rounding-strategy>?, <calc-sum> )
-    //     - INPUT: "consistent" <number>
-    //     - OUTPUT: consistent type
-
-    // NOTE: This is special cased in the code.
-
-    Child a;
-    std::optional<Child> b;
-
-    bool operator==(const RoundUp&) const = default;
-};
-
-struct RoundDown {
-    WTF_MAKE_STRUCT_TZONE_ALLOCATED(RoundDown);
-    static constexpr auto id = CSSValueDown;
-
-    // <round()> = round( <rounding-strategy>?, <calc-sum>, <calc-sum> )
-    //     - INPUT: "consistent" <number>, <dimension>, or <percentage>
-    //     - OUTPUT: consistent type
-    static constexpr auto input = AllowedTypes::Any;
-    static constexpr auto merge = MergePolicy::Consistent;
-    static constexpr auto output = OutputTransform::None;
-
-    //    -- and --
-
-    // <round()> = round( <rounding-strategy>?, <calc-sum> )
-    //     - INPUT: "consistent" <number>
-    //     - OUTPUT: consistent type
-
-    // NOTE: This is special cased in the code.
-
-    Child a;
-    std::optional<Child> b;
-
-    bool operator==(const RoundDown&) const = default;
-};
-
-struct RoundToZero {
-    WTF_MAKE_STRUCT_TZONE_ALLOCATED(RoundToZero);
-    static constexpr auto id = CSSValueToZero;
-
-    // <round()> = round( <rounding-strategy>?, <calc-sum>, <calc-sum> )
-    //     - INPUT: "consistent" <number>, <dimension>, or <percentage>
-    //     - OUTPUT: consistent type
-    static constexpr auto input = AllowedTypes::Any;
-    static constexpr auto merge = MergePolicy::Consistent;
-    static constexpr auto output = OutputTransform::None;
-
-    //    -- and --
-
-    // <round()> = round( <rounding-strategy>?, <calc-sum> )
-    //     - INPUT: "consistent" <number>
-    //     - OUTPUT: consistent type
-
-    // NOTE: This is special cased in the code.
-
-    Child a;
-    std::optional<Child> b;
-
-    bool operator==(const RoundToZero&) const = default;
+    bool operator==(const Round&) const = default;
 };
 
 struct Mod {
@@ -902,10 +829,7 @@ std::optional<Type> toType(const Invert&);
 std::optional<Type> toType(const Min&);
 std::optional<Type> toType(const Max&);
 std::optional<Type> toType(const Clamp&);
-std::optional<Type> toType(const RoundNearest&);
-std::optional<Type> toType(const RoundUp&);
-std::optional<Type> toType(const RoundDown&);
-std::optional<Type> toType(const RoundToZero&);
+std::optional<Type> toType(const Round&);
 std::optional<Type> toType(const Mod&);
 std::optional<Type> toType(const Rem&);
 std::optional<Type> toType(const Sin&);
@@ -1017,31 +941,7 @@ template<size_t I> const auto& get(const Clamp& root)
         return root.max;
 }
 
-template<size_t I> const auto& get(const RoundNearest& root)
-{
-    if constexpr (!I)
-        return root.a;
-    else if constexpr (I == 1)
-        return root.b;
-}
-
-template<size_t I> const auto& get(const RoundUp& root)
-{
-    if constexpr (!I)
-        return root.a;
-    else if constexpr (I == 1)
-        return root.b;
-}
-
-template<size_t I> const auto& get(const RoundDown& root)
-{
-    if constexpr (!I)
-        return root.a;
-    else if constexpr (I == 1)
-        return root.b;
-}
-
-template<size_t I> const auto& get(const RoundToZero& root)
+template<size_t I> const auto& get(const Round& root)
 {
     if constexpr (!I)
         return root.a;
@@ -1307,10 +1207,7 @@ OP_TUPLE_LIKE_CONFORMANCE(Invert, 1);
 OP_TUPLE_LIKE_CONFORMANCE(Min, 1);
 OP_TUPLE_LIKE_CONFORMANCE(Max, 1);
 OP_TUPLE_LIKE_CONFORMANCE(Clamp, 3);
-OP_TUPLE_LIKE_CONFORMANCE(RoundNearest, 2);
-OP_TUPLE_LIKE_CONFORMANCE(RoundUp, 2);
-OP_TUPLE_LIKE_CONFORMANCE(RoundDown, 2);
-OP_TUPLE_LIKE_CONFORMANCE(RoundToZero, 2);
+OP_TUPLE_LIKE_CONFORMANCE(Round, 2);
 OP_TUPLE_LIKE_CONFORMANCE(Mod, 2);
 OP_TUPLE_LIKE_CONFORMANCE(Rem, 2);
 OP_TUPLE_LIKE_CONFORMANCE(Sin, 1);
