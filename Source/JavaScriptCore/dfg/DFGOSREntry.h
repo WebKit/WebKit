@@ -60,9 +60,10 @@ struct OSREntryData {
     // Use bitvectors here because they tend to only require one word.
     BitVector m_localsForcedDouble;
     BitVector m_localsForcedAnyInt;
+    BitVector m_localsForcedBigInt64;
     FixedVector<OSREntryReshuffling> m_reshufflings;
     BitVector m_machineStackUsed;
-    
+
     void dumpInContext(PrintStream&, DumpContext*) const;
     void dump(PrintStream&) const;
 };

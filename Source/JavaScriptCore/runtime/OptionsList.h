@@ -253,6 +253,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, useOSREntryToFTL, true, Normal, nullptr) \
     \
     v(Bool, useFTLJIT, true, Normal, "allows the FTL JIT to be used if true"_s) \
+    v(Bool, useBigInt64, true, Normal, "allows the BigInt64 unboxed representation tier in DFG/FTL for HeapBigInts that fit in int64"_s) \
     v(Bool, validateFTLOSRExitLiveness, false, Normal, nullptr) \
     v(Bool, poisonDeadOSRExitVariables, false, Normal, "Put 0xbad0beef into dead OSR exit values rather than jsUndefined"_s) \
     v(Unsigned, defaultB3OptLevel, 2, Normal, nullptr) \

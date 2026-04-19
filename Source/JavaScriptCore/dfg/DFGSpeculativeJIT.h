@@ -342,6 +342,9 @@ public:
 #if USE(BIGINT32)
     GPRReg fillSpeculateBigInt32(Edge);
 #endif
+#if USE(JSVALUE64)
+    GPRReg fillSpeculateBigInt64(Edge);
+#endif
     GeneratedOperandType checkGeneratedTypeForToInt32(Node*);
 
     void addSlowPathGenerator(std::unique_ptr<SlowPathGenerator>);
@@ -521,7 +524,14 @@ public:
             info.spill(m_stream, spillMe, spillFormat);
             return;
         }
-            
+
+        case DataFormatBigInt64: {
+            // Unboxed int64 BigInt: store raw 64-bit value to the stack slot.
+            store64(info.gpr(), JITCompiler::addressFor(spillMe));
+            info.spill(m_stream, spillMe, DataFormatBigInt64);
+            return;
+        }
+
         default:
             // The following code handles JSValues, int32s, and cells.
             RELEASE_ASSERT(spillFormat == DataFormatCell || spillFormat & DataFormatJS);
@@ -819,6 +829,17 @@ public:
     void strictInt52Result(GPRReg reg, Node* node, UseChildrenMode mode = CallUseChildren)
     {
         int52Result(reg, node, DataFormatStrictInt52, mode);
+    }
+    void bigInt64Result(GPRReg reg, Node* node, UseChildrenMode mode = CallUseChildren)
+    {
+        if (mode == CallUseChildren)
+            useChildren(node);
+
+        VirtualRegister virtualRegister = node->virtualRegister();
+        GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
+
+        m_gprs.retain(reg, virtualRegister, SpillOrderJS);
+        info.initBigInt64(node, node->refCount(), reg);
     }
     void noResult(Node* node, UseChildrenMode mode = CallUseChildren)
     {
@@ -1465,6 +1486,11 @@ public:
 
     void compileInt32Compare(Node*, RelationalCondition);
     void compileInt52Compare(Node*, RelationalCondition);
+#if USE(JSVALUE64)
+    void compileBigInt64Compare(Node*, RelationalCondition);
+    void compilePeepHoleBigInt64Branch(Node*, Node* branchNode, JITCompiler::RelationalCondition);
+    void compileBigInt64Rep(Node*);
+#endif
 #if USE(BIGINT32)
     void compileBigInt32Compare(Node*, RelationalCondition);
 #endif
@@ -2763,6 +2789,56 @@ private:
 };
 
 enum OppositeShiftTag { OppositeShift };
+
+// Gives you an unboxed BigInt64 value (raw int64_t) in a GPR.
+#if USE(JSVALUE64)
+class SpeculateBigInt64Operand {
+    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(SpeculateBigInt64Operand);
+public:
+    explicit SpeculateBigInt64Operand(SpeculativeJIT* jit, Edge edge)
+        : m_jit(jit)
+        , m_edge(edge)
+        , m_gprOrInvalid(InvalidGPRReg)
+    {
+        RELEASE_ASSERT(edge.useKind() == BigInt64RepUse);
+        if (jit->isFilled(node()))
+            gpr();
+    }
+
+    ~SpeculateBigInt64Operand()
+    {
+        ASSERT(m_gprOrInvalid != InvalidGPRReg);
+        m_jit->unlock(m_gprOrInvalid);
+    }
+
+    Edge edge() const
+    {
+        return m_edge;
+    }
+
+    Node* node() const
+    {
+        return edge().node();
+    }
+
+    GPRReg gpr()
+    {
+        if (m_gprOrInvalid == InvalidGPRReg)
+            m_gprOrInvalid = m_jit->fillSpeculateBigInt64(edge());
+        return m_gprOrInvalid;
+    }
+
+    void use()
+    {
+        m_jit->use(node());
+    }
+
+private:
+    SpeculativeJIT* m_jit;
+    Edge m_edge;
+    GPRReg m_gprOrInvalid;
+};
+#endif // USE(JSVALUE64)
 
 class SpeculateWhicheverInt52Operand {
     WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(SpeculateWhicheverInt52Operand);

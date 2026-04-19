@@ -43,7 +43,8 @@ enum FlushFormat : uint8_t {
     FlushedCell,
     FlushedBoolean,
     FlushedJSValue,
-    ConflictingFlush
+    ConflictingFlush,
+    FlushedBigInt64, // Unboxed int64 for HeapBigInt values that fit in int64.
 };
 
 inline NodeFlags resultFor(FlushFormat format)
@@ -62,6 +63,8 @@ inline NodeFlags resultFor(FlushFormat format)
         return NodeResultDouble;
     case FlushedBoolean:
         return NodeResultBoolean;
+    case FlushedBigInt64:
+        return NodeResultBigInt64;
     }
     RELEASE_ASSERT_NOT_REACHED();
     return 0;
@@ -84,6 +87,8 @@ inline UseKind useKindFor(FlushFormat format)
         return DoubleRepUse;
     case FlushedBoolean:
         return BooleanUse;
+    case FlushedBigInt64:
+        return BigInt64RepUse;
     }
     RELEASE_ASSERT_NOT_REACHED();
     return UntypedUse;
@@ -106,6 +111,8 @@ inline UseKind uncheckedUseKindFor(FlushFormat format)
         return DoubleRepUse;
     case FlushedBoolean:
         return KnownBooleanUse;
+    case FlushedBigInt64:
+        return BigInt64RepUse;
     }
     RELEASE_ASSERT_NOT_REACHED();
     return UntypedUse;
@@ -134,6 +141,8 @@ inline DataFormat dataFormatFor(FlushFormat format)
         return DataFormatCell;
     case FlushedBoolean:
         return DataFormatBoolean;
+    case FlushedBigInt64:
+        return DataFormatBigInt64;
     }
     RELEASE_ASSERT_NOT_REACHED();
     return DataFormatDead;

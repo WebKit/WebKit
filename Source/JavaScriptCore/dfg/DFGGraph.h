@@ -536,6 +536,52 @@ public:
         return prediction && !(prediction & ~(SpecHeapBigInt | SpecOther));
     }
 
+    // A child node qualifies for BigInt64 speculation if it is a HeapBigInt value (whose
+    // int64 fitness will be checked via the ArithProfile of the parent) OR if it is itself
+    // already the result of a BigInt64-speculated operation (SpecBigInt64 prediction), which
+    // enables chained operations like (a + b) * c to stay unboxed end-to-end.
+    static bool childShouldSpeculateHeapBigIntOrBigInt64(Node* child)
+    {
+        return child->shouldSpeculateHeapBigInt() || child->shouldSpeculateBigInt64();
+    }
+
+    // BUG FIX #2: Both operands must qualify for BigInt64 speculation.
+    // The ArithProfile overflow gate (canSpeculateBigInt64) guards against values that
+    // have been observed to exceed int64 range.
+    bool binaryArithShouldSpeculateBigInt64(Node* node, PredictionPass pass)
+    {
+        if (!Options::useBigInt64())
+            return false;
+        if (!node->canSpeculateBigInt64(node->sourceFor(pass)))
+            return false;
+        if (hasExitSite(node, BigInt64Overflow))
+            return false;
+        return childShouldSpeculateHeapBigIntOrBigInt64(node->child1().node())
+            && childShouldSpeculateHeapBigIntOrBigInt64(node->child2().node());
+    }
+
+    bool unaryArithShouldSpeculateBigInt64(Node* node, PredictionPass pass)
+    {
+        if (!Options::useBigInt64())
+            return false;
+        if (!node->canSpeculateBigInt64(node->sourceFor(pass)))
+            return false;
+        if (hasExitSite(node, BigInt64Overflow))
+            return false;
+        return childShouldSpeculateHeapBigIntOrBigInt64(node->child1().node());
+    }
+
+    // BUG FIX #2: Both operands must qualify for BigInt64 comparison speculation.
+    bool comparisonShouldSpeculateBigInt64(Node* node)
+    {
+        if (!Options::useBigInt64())
+            return false;
+        if (hasExitSite(node, BigInt64Overflow))
+            return false;
+        return childShouldSpeculateHeapBigIntOrBigInt64(node->child1().node())
+            && childShouldSpeculateHeapBigIntOrBigInt64(node->child2().node());
+    }
+
     bool variadicArithShouldSpeculateInt32(Node* node, PredictionPass pass)
     {
         bool result = true;

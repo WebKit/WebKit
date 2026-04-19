@@ -98,4 +98,30 @@ ALWAYS_INLINE std::optional<double> JSBigInt::tryExtractDouble(JSValue value)
     return std::nullopt;
 }
 
+// Returns true if bigInt's value fits in int64_t (i.e., in the range [-2^63, 2^63-1]).
+inline bool JSBigInt::fitsInInt64(JSBigInt* bigInt)
+{
+    if (!bigInt->length())
+        return true; // zero
+
+    uint64_t integer;
+    if constexpr (sizeof(Digit) == 8) {
+        if (bigInt->length() != 1)
+            return false;
+        integer = bigInt->digit(0);
+    } else {
+        ASSERT(sizeof(Digit) == 4);
+        if (bigInt->length() > 2)
+            return false;
+        integer = bigInt->digit(0);
+        if (bigInt->length() == 2)
+            integer |= (static_cast<uint64_t>(bigInt->digit(1)) << 32);
+    }
+
+    if (!bigInt->sign())
+        return integer <= static_cast<uint64_t>(std::numeric_limits<int64_t>::max());
+    // Negative: -(integer) must be >= INT64_MIN. INT64_MIN = -(2^63), so abs(INT64_MIN) = 2^63.
+    return integer <= static_cast<uint64_t>(std::numeric_limits<int64_t>::max()) + 1u;
+}
+
 }

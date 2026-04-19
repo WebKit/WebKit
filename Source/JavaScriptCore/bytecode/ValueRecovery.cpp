@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ValueRecovery.h"
 
+#include "JSBigIntInlines.h"
 #include "JSCJSValueInlines.h"
 
 namespace JSC {
@@ -43,6 +44,12 @@ JSValue ValueRecovery::recover(CallFrame* callFrame) const
         return jsNumber(callFrame->r(virtualRegister()).unboxedStrictInt52());
     case DoubleDisplacedInJSStack:
         return jsNumber(purifyNaN(callFrame->r(virtualRegister()).unboxedDouble()));
+    case BigInt64DisplacedInJSStack: {
+        VM& vm = callFrame->deprecatedVM();
+        JSGlobalObject* globalObject = callFrame->lexicalGlobalObject(vm);
+        int64_t rawValue = callFrame->r(virtualRegister()).unboxedInt64();
+        return JSBigInt::makeHeapBigIntOrBigInt32(globalObject, rawValue);
+    }
     case CellDisplacedInJSStack:
         return callFrame->r(virtualRegister()).unboxedCell();
     case BooleanDisplacedInJSStack:
@@ -75,6 +82,9 @@ void ValueRecovery::dumpInContext(PrintStream& out, DumpContext* context) const
         return;
     case UnboxedStrictInt52InGPR:
         out.print("strictInt52(", gpr(), ")");
+        return;
+    case UnboxedBigInt64InGPR:
+        out.print("bigInt64(", gpr(), ")");
         return;
     case UnboxedBooleanInGPR:
         out.print("bool(", gpr(), ")");
@@ -112,6 +122,9 @@ void ValueRecovery::dumpInContext(PrintStream& out, DumpContext* context) const
         return;
     case DoubleDisplacedInJSStack:
         out.print("*double(", virtualRegister(), ")");
+        return;
+    case BigInt64DisplacedInJSStack:
+        out.print("*bigInt64(", virtualRegister(), ")");
         return;
     case CellDisplacedInJSStack:
         out.print("*cell(", virtualRegister(), ")");

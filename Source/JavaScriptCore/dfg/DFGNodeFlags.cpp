@@ -55,6 +55,9 @@ void dumpNodeFlags(PrintStream& actualOut, NodeFlags flags)
         case NodeResultInt52:
             out.print(comma, "Int52"_s);
             break;
+        case NodeResultBigInt64:
+            out.print(comma, "BigInt64"_s);
+            break;
         case NodeResultBoolean:
             out.print(comma, "Boolean"_s);
             break;

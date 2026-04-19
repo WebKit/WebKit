@@ -164,8 +164,16 @@ bool VariableAccessData::couldRepresentInt52()
 {
     if (shouldNeverUnbox())
         return false;
-    
+
     return couldRepresentInt52Impl();
+}
+
+bool VariableAccessData::couldRepresentBigInt64()
+{
+    if (shouldNeverUnbox())
+        return false;
+
+    return couldRepresentBigInt64Impl();
 }
 
 bool VariableAccessData::couldRepresentInt52Impl()
@@ -173,14 +181,27 @@ bool VariableAccessData::couldRepresentInt52Impl()
     // The hardware has to support it.
     if (!enableInt52())
         return false;
-    
+
     // We punt for machine arguments.
     if (operand().isArgument())
         return false;
-    
+
     // The argument-aware prediction -- which merges all of an (inlined or machine)
     // argument's variable access datas' predictions -- must possibly be Int52Any.
     return isInt32OrInt52Speculation(argumentAwarePrediction());
+}
+
+bool VariableAccessData::couldRepresentBigInt64Impl()
+{
+#if USE(JSVALUE64)
+    // We punt for machine arguments.
+    if (operand().isArgument())
+        return false;
+
+    return isBigInt64Speculation(argumentAwarePrediction());
+#else
+    return false;
+#endif
 }
 
 FlushFormat VariableAccessData::flushFormat()
@@ -205,7 +226,10 @@ FlushFormat VariableAccessData::flushFormat()
     
     if (couldRepresentInt52Impl())
         return FlushedInt52;
-    
+
+    if (couldRepresentBigInt64Impl())
+        return FlushedBigInt64;
+
     if (isCellSpeculation(prediction))
         return FlushedCell;
     

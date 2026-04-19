@@ -38,6 +38,7 @@
 #include "FrameTracers.h"
 #include "IteratorOperations.h"
 #include "JSArrayIterator.h"
+#include "JSBigIntInlines.h"
 #include "JSAsyncGenerator.h"
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
@@ -477,13 +478,22 @@ static void updateArithProfileForBinaryArithOp(JSGlobalObject*, CodeBlock* codeB
                     profile.setObservedInt52Overflow();
             }
         }
-    } else if (result.isHeapBigInt())
+    } else if (result.isHeapBigInt()) {
         profile.setObservedHeapBigInt();
+        // For BigInt64 speculation: if any operand or the result doesn't fit in int64,
+        // mark BigInt64Overflow to prevent speculative BigInt64 compilation at this site.
+        if (!JSBigInt::fitsInInt64(result.asHeapBigInt()))
+            profile.setObservedBigInt64Overflow();
+        if (left.isHeapBigInt() && !JSBigInt::fitsInInt64(left.asHeapBigInt()))
+            profile.setObservedBigInt64Overflow();
+        if (right.isHeapBigInt() && !JSBigInt::fitsInInt64(right.asHeapBigInt()))
+            profile.setObservedBigInt64Overflow();
+    }
 #if USE(BIGINT32)
     else if (result.isBigInt32())
         profile.setObservedBigInt32();
 #endif
-    else 
+    else
         profile.setObservedNonNumeric();
 }
 #else

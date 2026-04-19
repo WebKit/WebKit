@@ -92,7 +92,6 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case Branch:
     case Unreachable:
     case DoubleRep:
-    case ValueRep:
     case PurifyNaN:
     case ExtractOSREntryLocal:
     case ExtractCatchLocal:
@@ -145,6 +144,12 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
         }
         break;
     }
+
+    case ValueRep:
+        // ValueRep for BigInt64RepUse allocates a new HeapBigInt and can throw OOM.
+        if (node->child1().useKind() == BigInt64RepUse)
+            return ExitsForExceptions;
+        break;
 
     case Int52Rep:
         switch (node->child1().useKind()) {

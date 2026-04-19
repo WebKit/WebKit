@@ -55,6 +55,7 @@ public:
         case DoubleRepUse:
         case DoubleRepRealUse:
         case Int52RepUse:
+        case BigInt64RepUse:
         case NumberUse:
         case RealNumberUse:
         case BooleanUse:
@@ -308,6 +309,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case DoubleRep:
     case PurifyNaN:
     case Int52Rep:
+    case BigInt64Rep:
     case BooleanToNumber:
     case FiatInt52:
     case HasIndexedProperty:

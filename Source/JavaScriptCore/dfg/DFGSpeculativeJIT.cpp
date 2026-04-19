@@ -2026,6 +2026,8 @@ bool SpeculativeJIT::compilePeepHoleBranch(Node* node, RelationalCondition condi
 #if USE(JSVALUE64)
         else if (node->isBinaryUseKind(Int52RepUse))
             compilePeepHoleInt52Branch(node, branchNode, condition);
+        else if (node->isBinaryUseKind(BigInt64RepUse))
+            compilePeepHoleBigInt64Branch(node, branchNode, condition);
 #endif // USE(JSVALUE64)
         else if (node->isBinaryUseKind(StringUse) || node->isBinaryUseKind(StringIdentUse)) {
             // Use non-peephole comparison, for now.
@@ -3286,13 +3288,29 @@ void SpeculativeJIT::compileValueRep(Node* node)
     case Int52RepUse: {
         SpeculateStrictInt52Operand value(this, node->child1());
         GPRTemporary result(this);
-        
+
         GPRReg valueGPR = value.gpr();
         GPRReg resultGPR = result.gpr();
-        
+
         boxInt52(valueGPR, resultGPR, DataFormatStrictInt52);
-        
+
         jsValueResult(resultGPR, node);
+        return;
+    }
+
+    case BigInt64RepUse: {
+        SpeculateBigInt64Operand value(this, node->child1());
+        GPRReg valueGPR = value.gpr();
+
+        flushRegisters();
+        JSValueRegsFlushedCallResult result(this);
+        JSValueRegs resultRegs = result.regs();
+
+        // ValueRep with BigInt64RepUse allocates a new HeapBigInt; DFGMayExit marks
+        // this node as ExitsForExceptions so callOperation's exceptionCheck() is valid.
+        callOperation(operationInt64ToBigInt, resultRegs, LinkableConstant::globalObject(*this, node), valueGPR);
+
+        jsValueResult(resultRegs, node);
         return;
     }
 #endif // USE(JSVALUE64)
@@ -4237,6 +4255,18 @@ void SpeculativeJIT::compileValueBitNot(Node* node)
     // FIXME: add support for mixed BigInt32 / HeapBigInt
 #endif
 
+#if USE(JSVALUE64)
+    if (child1.useKind() == BigInt64RepUse) {
+        SpeculateBigInt64Operand operand(this, child1);
+        GPRTemporary result(this, Reuse, operand);
+        GPRReg resultGPR = result.gpr();
+        // ~x for int64: just bitwise NOT
+        not64(resultGPR);
+        bigInt64Result(resultGPR, node);
+        return;
+    }
+#endif // USE(JSVALUE64)
+
     if (child1.useKind() == HeapBigIntUse) {
         SpeculateCellOperand operand(this, child1);
         GPRReg operandGPR = operand.gpr();
@@ -4407,6 +4437,32 @@ void SpeculativeJIT::compileValueBitwiseOp(Node* node)
     }
     // FIXME: add support for mixed BigInt32 / HeapBigInt
 #endif
+
+#if USE(JSVALUE64)
+    if (node->isBinaryUseKind(BigInt64RepUse)) {
+        SpeculateBigInt64Operand left(this, leftChild);
+        SpeculateBigInt64Operand right(this, rightChild);
+        GPRTemporary result(this, Reuse, left);
+        GPRReg resultGPR = result.gpr();
+
+        switch (op) {
+        case ValueBitAnd:
+            and64(right.gpr(), resultGPR);
+            break;
+        case ValueBitOr:
+            or64(right.gpr(), resultGPR);
+            break;
+        case ValueBitXor:
+            xor64(right.gpr(), resultGPR);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+
+        bigInt64Result(resultGPR, node);
+        return;
+    }
+#endif // USE(JSVALUE64)
 
     if (node->isBinaryUseKind(HeapBigIntUse)) {
         SpeculateCellOperand left(this, node->child1());
@@ -4588,6 +4644,36 @@ void SpeculativeJIT::compileValueLShiftOp(Node* node)
     Edge& leftChild = node->child1();
     Edge& rightChild = node->child2();
 
+#if USE(JSVALUE64)
+    if (node->isBinaryUseKind(BigInt64RepUse)) {
+        SpeculateBigInt64Operand op1(this, leftChild);
+        SpeculateBigInt64Operand op2(this, rightChild);
+        GPRTemporary result(this);
+        GPRTemporary check(this);
+        GPRReg op1GPR = op1.gpr();
+        GPRReg op2GPR = op2.gpr();
+        GPRReg resultGPR = result.gpr();
+        GPRReg checkGPR = check.gpr();
+
+        JumpList overflow;
+        // Exit if shift amount is negative or >= 64 (those cases can produce out-of-range results)
+        overflow.append(branch64(LessThan, op2GPR, TrustedImm32(0)));
+        overflow.append(branch64(GreaterThanOrEqual, op2GPR, TrustedImm32(64)));
+
+        move(op1GPR, resultGPR);
+        lshift64(op2GPR, resultGPR);
+
+        // Overflow check: shift back right and compare
+        move(resultGPR, checkGPR);
+        rshift64(op2GPR, checkGPR);
+        overflow.append(branch64(NotEqual, checkGPR, op1GPR));
+
+        speculationCheck(BigInt64Overflow, JSValueRegs(), nullptr, overflow);
+        bigInt64Result(resultGPR, node);
+        return;
+    }
+#endif // USE(JSVALUE64)
+
     // FIXME: support BigInt32
     if (node->binaryUseKind() == HeapBigIntUse) {
         SpeculateCellOperand left(this, leftChild);
@@ -4614,6 +4700,36 @@ void SpeculativeJIT::compileValueBitRShift(Node* node)
 {
     Edge& leftChild = node->child1();
     Edge& rightChild = node->child2();
+
+#if USE(JSVALUE64)
+    if (node->isBinaryUseKind(BigInt64RepUse)) {
+        SpeculateBigInt64Operand op1(this, leftChild);
+        SpeculateBigInt64Operand op2(this, rightChild);
+        GPRTemporary result(this);
+        GPRReg op1GPR = op1.gpr();
+        GPRReg op2GPR = op2.gpr();
+        GPRReg resultGPR = result.gpr();
+
+        JumpList overflow;
+        // Exit if shift amount is negative or >= 64
+        overflow.append(branch64(LessThan, op2GPR, TrustedImm32(0)));
+
+        Jump inRange = branch64(LessThan, op2GPR, TrustedImm32(64));
+        // shift >= 64: result = all sign bits (0 or -1), use rshift64 by 63
+        move(op1GPR, resultGPR);
+        rshift64(TrustedImm32(63), resultGPR);
+        Jump done = jump();
+
+        inRange.link(this);
+        move(op1GPR, resultGPR);
+        rshift64(op2GPR, resultGPR);
+
+        done.link(this);
+        speculationCheck(BigInt64Overflow, JSValueRegs(), nullptr, overflow);
+        bigInt64Result(resultGPR, node);
+        return;
+    }
+#endif // USE(JSVALUE64)
 
     // FIXME: support BigInt32
     if (node->isBinaryUseKind(HeapBigIntUse)) {
@@ -4728,6 +4844,21 @@ void SpeculativeJIT::compileValueAdd(Node* node)
     // FIXME: add support for mixed BigInt32/HeapBigInt
 #endif // USE(BIGINT32)
 
+#if USE(JSVALUE64)
+    if (node->isBinaryUseKind(BigInt64RepUse)) {
+        SpeculateBigInt64Operand op1(this, leftChild);
+        SpeculateBigInt64Operand op2(this, rightChild);
+        GPRTemporary result(this);
+        GPRReg op1GPR = op1.gpr();
+        GPRReg op2GPR = op2.gpr();
+        GPRReg resultGPR = result.gpr();
+        move(op1GPR, resultGPR);
+        speculationCheck(BigInt64Overflow, JSValueRegs(), nullptr, branchAdd64(Overflow, op2GPR, resultGPR));
+        bigInt64Result(resultGPR, node);
+        return;
+    }
+#endif // USE(JSVALUE64)
+
     if (node->isBinaryUseKind(HeapBigIntUse)) {
         SpeculateCellOperand left(this, leftChild);
         SpeculateCellOperand right(this, rightChild);
@@ -4823,6 +4954,25 @@ void SpeculativeJIT::compileValueSub(Node* node)
         return;
     }
 #endif // USE(BIGINT32)
+
+#if USE(JSVALUE64)
+    if (node->binaryUseKind() == BigInt64RepUse) {
+        SpeculateBigInt64Operand op1(this, leftChild);
+        SpeculateBigInt64Operand op2(this, rightChild);
+        GPRTemporary result(this);
+        GPRReg op1GPR = op1.gpr();
+        GPRReg op2GPR = op2.gpr();
+        GPRReg resultGPR = result.gpr();
+#if CPU(ARM64)
+        speculationCheck(BigInt64Overflow, JSValueRegs(), nullptr, branchSub64(Overflow, op1GPR, op2GPR, resultGPR));
+#else
+        move(op1GPR, resultGPR);
+        speculationCheck(BigInt64Overflow, JSValueRegs(), nullptr, branchSub64(Overflow, op2GPR, resultGPR));
+#endif
+        bigInt64Result(resultGPR, node);
+        return;
+    }
+#endif // USE(JSVALUE64)
 
     if (node->binaryUseKind() == HeapBigIntUse) {
         SpeculateCellOperand left(this, node->child1());
@@ -5485,6 +5635,19 @@ void SpeculativeJIT::compileIncOrDec(Node* node)
 
 void SpeculativeJIT::compileValueNegate(Node* node)
 {
+#if USE(JSVALUE64)
+    if (node->child1().useKind() == BigInt64RepUse) {
+        SpeculateBigInt64Operand op1(this, node->child1());
+        GPRTemporary result(this);
+        GPRReg op1GPR = op1.gpr();
+        GPRReg resultGPR = result.gpr();
+        move(op1GPR, resultGPR);
+        speculationCheck(BigInt64Overflow, JSValueRegs(), nullptr, branchNeg64(Overflow, resultGPR));
+        bigInt64Result(resultGPR, node);
+        return;
+    }
+#endif // USE(JSVALUE64)
+
     // FIXME: add a fast path, at least for BigInt32, but probably also for HeapBigInt here.
     CodeBlock* baselineCodeBlock = m_graph.baselineCodeBlockFor(node->origin.semantic);
     BytecodeIndex bytecodeIndex = node->origin.semantic.bytecodeIndex();
@@ -5687,6 +5850,20 @@ void SpeculativeJIT::compileValueMul(Node* node)
     // FIXME: add support for mixed BigInt32/HeapBigInt
 #endif
 
+#if USE(JSVALUE64)
+    if (node->binaryUseKind() == BigInt64RepUse) {
+        SpeculateBigInt64Operand op1(this, leftChild);
+        SpeculateBigInt64Operand op2(this, rightChild);
+        GPRTemporary result(this);
+        GPRReg op1GPR = op1.gpr();
+        GPRReg op2GPR = op2.gpr();
+        GPRReg resultGPR = result.gpr();
+        speculationCheck(BigInt64Overflow, JSValueRegs(), nullptr, branchMul64(Overflow, op1GPR, op2GPR, resultGPR));
+        bigInt64Result(resultGPR, node);
+        return;
+    }
+#endif // USE(JSVALUE64)
+
     if (leftChild.useKind() == HeapBigIntUse && rightChild.useKind() == HeapBigIntUse) {
         SpeculateCellOperand left(this, leftChild);
         SpeculateCellOperand right(this, rightChild);
@@ -5883,6 +6060,63 @@ void SpeculativeJIT::compileValueDiv(Node* node)
 
     // FIXME: add a fast path for BigInt32. Currently we go through the slow path, because of how ugly the code for Div gets.
     // https://bugs.webkit.org/show_bug.cgi?id=211041
+
+#if USE(JSVALUE64)
+    if (node->isBinaryUseKind(BigInt64RepUse)) {
+        SpeculateBigInt64Operand op1(this, leftChild);
+        SpeculateBigInt64Operand op2(this, rightChild);
+        GPRReg op1GPR = op1.gpr();
+        GPRReg op2GPR = op2.gpr();
+
+        // Handle edge cases: divisor == 0 and INT64_MIN / -1 overflow.
+        GPRTemporary overflowTemp(this);
+        GPRReg overflowTempGPR = overflowTemp.gpr();
+        add64(TrustedImm32(1), op2GPR, overflowTempGPR);
+        Jump safeDenominator = branch64(Above, overflowTempGPR, TrustedImm32(1));
+        // Divisor is 0 or -1.
+        speculationCheck(BigInt64Overflow, JSValueRegs(), nullptr, branchTest64(Zero, op2GPR));
+        // Divisor is -1; check INT64_MIN / -1 overflow.
+        speculationCheck(BigInt64Overflow, JSValueRegs(), nullptr,
+            branch64(Equal, op1GPR, TrustedImm64(std::numeric_limits<int64_t>::min())));
+        safeDenominator.link(this);
+
+#if CPU(X86_64)
+        GPRTemporary eax(this, X86Registers::eax);
+        GPRTemporary edx(this, X86Registers::edx);
+
+        GPRReg op1SaveGPR;
+        if (op1GPR == X86Registers::eax || op1GPR == X86Registers::edx) {
+            op1SaveGPR = allocate();
+            move(op1GPR, op1SaveGPR);
+        } else
+            op1SaveGPR = op1GPR;
+
+        if (op2GPR == X86Registers::eax || op2GPR == X86Registers::edx) {
+            GPRReg op2TempGPR = allocate();
+            move(op2GPR, op2TempGPR);
+            op2GPR = op2TempGPR;
+        }
+
+        move(op1GPR, X86Registers::eax);
+        x86ConvertToQuadWord64();
+        x86Div64(op2GPR);
+
+        if (op1SaveGPR != op1GPR)
+            unlock(op1SaveGPR);
+
+        bigInt64Result(X86Registers::eax, node);
+#elif CPU(ARM64)
+        GPRTemporary quotient(this);
+        GPRReg quotientGPR = quotient.gpr();
+
+        div64(op1GPR, op2GPR, quotientGPR);
+        bigInt64Result(quotientGPR, node);
+#else
+        RELEASE_ASSERT_NOT_REACHED();
+#endif
+        return;
+    }
+#endif // USE(JSVALUE64)
 
     if (node->isBinaryUseKind(HeapBigIntUse)) {
         SpeculateCellOperand left(this, leftChild);
@@ -6187,6 +6421,67 @@ void SpeculativeJIT::compileValueMod(Node* node)
     Edge& rightChild = node->child2();
 
     // FIXME: add a fast path for BigInt32. Currently we go through the slow path, because of how ugly the code for Mod gets.
+
+#if USE(JSVALUE64)
+    if (node->isBinaryUseKind(BigInt64RepUse)) {
+        SpeculateBigInt64Operand op1(this, leftChild);
+        SpeculateBigInt64Operand op2(this, rightChild);
+        GPRReg op1GPR = op1.gpr();
+        GPRReg op2GPR = op2.gpr();
+
+        // Handle edge cases: divisor == 0 and INT64_MIN % -1 (which would trap on x86_64).
+        GPRTemporary overflowTemp(this);
+        GPRReg overflowTempGPR = overflowTemp.gpr();
+        add64(TrustedImm32(1), op2GPR, overflowTempGPR);
+        Jump safeDenominator = branch64(Above, overflowTempGPR, TrustedImm32(1));
+        // Divisor is 0 or -1.
+        speculationCheck(BigInt64Overflow, JSValueRegs(), nullptr, branchTest64(Zero, op2GPR));
+        // Divisor is -1; INT64_MIN % -1 would trap on x86_64 — exit conservatively.
+        speculationCheck(BigInt64Overflow, JSValueRegs(), nullptr,
+            branch64(Equal, op1GPR, TrustedImm64(std::numeric_limits<int64_t>::min())));
+        safeDenominator.link(this);
+
+#if CPU(X86_64)
+        GPRTemporary eax(this, X86Registers::eax);
+        GPRTemporary edx(this, X86Registers::edx);
+
+        GPRReg op1SaveGPR;
+        if (op1GPR == X86Registers::eax || op1GPR == X86Registers::edx) {
+            op1SaveGPR = allocate();
+            move(op1GPR, op1SaveGPR);
+        } else
+            op1SaveGPR = op1GPR;
+
+        if (op2GPR == X86Registers::eax || op2GPR == X86Registers::edx) {
+            GPRReg op2TempGPR = allocate();
+            move(op2GPR, op2TempGPR);
+            op2GPR = op2TempGPR;
+        }
+
+        move(op1GPR, X86Registers::eax);
+        x86ConvertToQuadWord64();
+        x86Div64(op2GPR);
+
+        if (op1SaveGPR != op1GPR)
+            unlock(op1SaveGPR);
+
+        bigInt64Result(X86Registers::edx, node);
+#elif CPU(ARM64)
+        GPRTemporary quotient(this);
+        GPRTemporary remainder(this);
+        GPRReg quotientGPR = quotient.gpr();
+        GPRReg remainderGPR = remainder.gpr();
+
+        div64(op1GPR, op2GPR, quotientGPR);
+        mul64(quotientGPR, op2GPR, remainderGPR);
+        sub64(op1GPR, remainderGPR, remainderGPR);
+        bigInt64Result(remainderGPR, node);
+#else
+        RELEASE_ASSERT_NOT_REACHED();
+#endif
+        return;
+    }
+#endif // USE(JSVALUE64)
 
     if (node->binaryUseKind() == HeapBigIntUse) {
         SpeculateCellOperand left(this, leftChild);
@@ -6975,6 +7270,52 @@ void SpeculativeJIT::compileValuePow(Node* node)
     Edge& rightChild = node->child2();
 
     // FIXME: do we want a fast path for BigInt32 for Pow? I expect it would overflow pretty often.
+#if USE(JSVALUE64)
+    if (node->isBinaryUseKind(BigInt64RepUse)) {
+        // Implement binary exponentiation with inline overflow detection.
+        SpeculateBigInt64Operand op1(this, leftChild);
+        SpeculateBigInt64Operand op2(this, rightChild);
+        GPRReg baseGPR = op1.gpr();
+        GPRReg expGPR = op2.gpr();
+
+        GPRTemporary result(this);
+        GPRTemporary base(this);
+        GPRTemporary exp(this);
+        GPRReg resultGPR = result.gpr();
+        GPRReg baseReg = base.gpr();
+        GPRReg expReg = exp.gpr();
+
+        move(TrustedImm64(1), resultGPR);
+        move(baseGPR, baseReg);
+        move(expGPR, expReg);
+
+        // Negative exponent is a TypeError at the BigInt level — should not be reached
+        // with correct profiling, but guard anyway.
+        speculationCheck(BigInt64Overflow, JSValueRegs(), nullptr,
+            branch64(LessThan, expReg, TrustedImm64(0)));
+
+        // Binary exponentiation loop.
+        Label loopStart = label();
+        // If exp is odd, result *= base (with overflow check).
+        Jump notOdd = branchTest64(Zero, expReg, TrustedImm32(1));
+        speculationCheck(BigInt64Overflow, JSValueRegs(), nullptr,
+            branchMul64(Overflow, baseReg, resultGPR, resultGPR));
+        notOdd.link(this);
+        // exp >>= 1
+        rshift64(TrustedImm32(1), expReg);
+        // If exp == 0, done (no need to square base).
+        Jump done = branchTest64(Zero, expReg);
+        // base *= base (with overflow check).
+        speculationCheck(BigInt64Overflow, JSValueRegs(), nullptr,
+            branchMul64(Overflow, baseReg, baseReg, baseReg));
+        jump().linkTo(loopStart, this);
+        done.link(this);
+
+        bigInt64Result(resultGPR, node);
+        return;
+    }
+#endif // USE(JSVALUE64)
+
     if (node->binaryUseKind() == HeapBigIntUse) {
         SpeculateCellOperand left(this, leftChild);
         SpeculateCellOperand right(this, rightChild);
@@ -7167,6 +7508,11 @@ bool SpeculativeJIT::compare(Node* node, RelationalCondition condition, DoubleCo
         compileInt52Compare(node, condition);
         return false;
     }
+
+    if (node->isBinaryUseKind(BigInt64RepUse)) {
+        compileBigInt64Compare(node, condition);
+        return false;
+    }
 #endif // USE(JSVALUE64)
     
     if (node->isBinaryUseKind(DoubleRepUse)) {
@@ -7307,6 +7653,21 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
             return true;
         }
         compileInt52Compare(node, Equal);
+        return false;
+    }
+
+    if (node->isBinaryUseKind(BigInt64RepUse)) {
+        unsigned branchIndexInBlock = detectPeepHoleBranch();
+        if (branchIndexInBlock != UINT_MAX) {
+            Node* branchNode = m_block->at(branchIndexInBlock);
+            compilePeepHoleBigInt64Branch(node, branchNode, Equal);
+            use(node->child1());
+            use(node->child2());
+            m_indexInBlock = branchIndexInBlock;
+            m_currentNode = branchNode;
+            return true;
+        }
+        compileBigInt64Compare(node, Equal);
         return false;
     }
 #endif // USE(JSVALUE64)
@@ -12722,6 +13083,7 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
         break;
     case DoubleRepUse:
     case Int52RepUse:
+    case BigInt64RepUse:
     case KnownInt32Use:
     case KnownCellUse:
     case KnownStringUse:

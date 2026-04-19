@@ -32,6 +32,7 @@
 #include "BytecodeStructs.h"
 #include "CheckpointOSRExitSideState.h"
 #include "DFGOSRExitCompilerCommon.h"
+#include "DFGOperations.h"
 #include "FTLJITCode.h"
 #include "FTLLocation.h"
 #include "FTLOSRExit.h"
@@ -53,7 +54,8 @@ namespace JSC { namespace FTL {
 using namespace DFG;
 
 static void reboxAccordingToFormat(
-    DataFormat format, AssemblyHelpers& jit, GPRReg value, GPRReg scratch1, GPRReg scratch2)
+    DataFormat format, CCallHelpers& jit, GPRReg value, GPRReg scratch1, GPRReg scratch2,
+    JSGlobalObject* globalObject)
 {
     switch (format) {
     case DataFormatInt32: {
@@ -97,6 +99,19 @@ static void reboxAccordingToFormat(
         break;
     }
 
+    case DataFormatBigInt64: {
+        // Box the raw int64 to a HeapBigInt (or BigInt32 if it fits).
+        ASSERT(globalObject);
+        VM& vm = jit.codeBlock()->vm();
+        jit.setupArguments<decltype(operationInt64ToBigInt)>(
+            CCallHelpers::TrustedImmPtr(globalObject), value);
+        jit.prepareCallOperation(vm);
+        jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationInt64ToBigInt)), scratch1);
+        jit.call(scratch1, OperationPtrTag);
+        jit.move(GPRInfo::returnValueGPR, value);
+        break;
+    }
+
     default:
         RELEASE_ASSERT_NOT_REACHED();
         break;
@@ -107,7 +122,8 @@ static void compileRecovery(
     CCallHelpers& jit, const ExitValue& value,
     const FixedVector<B3::ValueRep>& valueReps,
     char* registerScratch,
-    const UncheckedKeyHashMap<ExitTimeObjectMaterialization*, EncodedJSValue*>& materializationToPointer)
+    const UncheckedKeyHashMap<ExitTimeObjectMaterialization*, EncodedJSValue*>& materializationToPointer,
+    JSGlobalObject* globalObject)
 {
     switch (value.kind()) {
     case ExitValueDead: {
@@ -115,34 +131,39 @@ static void compileRecovery(
         jit.move(MacroAssembler::TrustedImm64(deadValue), GPRInfo::regT0);
         break;
     }
-            
+
     case ExitValueConstant:
         jit.move(MacroAssembler::TrustedImm64(JSValue::encode(value.constant())), GPRInfo::regT0);
         break;
-            
+
     case ExitValueArgument:
         Location::forValueRep(valueReps[value.exitArgument().argument()]).restoreInto(
             jit, registerScratch, GPRInfo::regT0);
         break;
-            
+
     case ExitValueInJSStack:
     case ExitValueInJSStackAsInt32:
     case ExitValueInJSStackAsInt52:
     case ExitValueInJSStackAsDouble:
         jit.load64(AssemblyHelpers::addressFor(value.virtualRegister()), GPRInfo::regT0);
         break;
-            
+
+    case ExitValueInJSStackAsBigInt64:
+        jit.load64(AssemblyHelpers::addressFor(value.virtualRegister()), GPRInfo::regT0);
+        // value is now the raw int64; let reboxAccordingToFormat box it via operationInt64ToBigInt
+        break;
+
     case ExitValueMaterializeNewObject:
         jit.loadPtr(materializationToPointer.get(value.objectMaterialization()), GPRInfo::regT0);
         break;
-            
+
     default:
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }
-        
+
     reboxAccordingToFormat(
-        value.dataFormat(), jit, GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT2);
+        value.dataFormat(), jit, GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT2, globalObject);
 }
 
 static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit, CodeBlock* codeBlock)
@@ -213,7 +234,8 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
         compileRecovery(
             jit, value,
             exit.m_valueReps,
-            registerScratch, materializationToPointer);
+            registerScratch, materializationToPointer,
+            codeBlock->globalObject());
     };
     
     // Note that we come in here, the stack used to be as B3 left it except that someone called pushToSave().
@@ -260,7 +282,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
     // Do some value profiling.
     if (exit.m_descriptor->m_profileDataFormat != DataFormatNone) {
         Location::forValueRep(exit.m_valueReps[0]).restoreInto(jit, registerScratch, GPRInfo::regT0);
-        reboxAccordingToFormat(exit.m_descriptor->m_profileDataFormat, jit, GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT2);
+        reboxAccordingToFormat(exit.m_descriptor->m_profileDataFormat, jit, GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT2, codeBlock->globalObject());
         
         if (exit.m_kind == BadCache || exit.m_kind == BadIndexingType) {
             CodeOrigin codeOrigin = exit.m_codeOriginForExitProfile;

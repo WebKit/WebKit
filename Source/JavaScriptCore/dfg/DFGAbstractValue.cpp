@@ -166,6 +166,14 @@ void AbstractValue::fixTypeForRepresentation(Graph& graph, NodeFlags representat
             DFG_ASSERT(graph, node, m_value.isAnyInt());
             m_type = int52AwareSpeculationFromValue(m_value);
         }
+    } else if (representation == NodeResultBigInt64) {
+        // Convert any HeapBigInt abstract type to the BigInt64 unboxed representation.
+        if (m_type & SpecHeapBigInt) {
+            m_type &= ~SpecHeapBigInt;
+            m_type |= SpecBigInt64;
+        }
+        if (m_type & ~SpecBigInt64)
+            DFG_CRASH(graph, node, toCString("Abstract value ", *this, " for bigint64 node has type outside SpecBigInt64.\n").data());
     } else {
         if (m_type & SpecInt32AsInt52) {
             m_type &= ~SpecInt32AsInt52;
@@ -174,6 +182,12 @@ void AbstractValue::fixTypeForRepresentation(Graph& graph, NodeFlags representat
         if (m_type & SpecNonInt32AsInt52) {
             m_type &= ~SpecNonInt32AsInt52;
             m_type |= SpecAnyIntAsDouble;
+        }
+        // When a BigInt64 (unboxed int64) is converted back to a JSValue (e.g. by ValueRep),
+        // it becomes a HeapBigInt — the boxed representation of the value.
+        if (m_type & SpecBigInt64) {
+            m_type &= ~SpecBigInt64;
+            m_type |= SpecHeapBigInt;
         }
         if (m_type & ~SpecBytecodeTop)
             DFG_CRASH(graph, node, toCString("Abstract value ", *this, " for value node has type outside SpecBytecodeTop.\n").data());
