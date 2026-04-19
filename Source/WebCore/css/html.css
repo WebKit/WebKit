@@ -222,7 +222,7 @@ h6 {
 table {
     display: table;
     border-collapse: separate;
-    border-spacing: 2px;
+    border-spacing: 10px;
     text-indent: initial;
     box-sizing: border-box;
 }
