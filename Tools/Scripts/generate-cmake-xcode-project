@@ -404,6 +404,22 @@ def asan_options(build_dir: Path) -> str:
     return ""
 
 
+def tsan_options(build_dir: Path) -> str:
+    """TSAN_OPTIONS for any process built with -fsanitize=thread.
+    Points at the in-tree suppressions file (JSC parallel-GC, JIT, allocator
+    internals -- see Tools/Scripts/tsan_suppressions.txt). second_deadlock_stack
+    gives both lock-order stacks; halt_on_error=0 lets a test surface multiple
+    races in one run."""
+    if "thread" not in read_cmake_cache(build_dir, "ENABLE_SANITIZERS"):
+        return ""
+    source_dir = Path(read_cmake_cache(build_dir, "CMAKE_HOME_DIRECTORY"))
+    supp = source_dir / "Tools" / "Scripts" / "tsan_suppressions.txt"
+    opts = "halt_on_error=0:second_deadlock_stack=1"
+    if supp.exists():
+        opts += f":suppressions={supp}"
+    return opts
+
+
 def bundle_identifier(app_path: Path, fallback_name: str) -> str:
     try:
         with (app_path / "Contents" / "Info.plist").open("rb") as f:
@@ -430,6 +446,7 @@ def generate_scheme(name: str, executable_path: Path, is_bundle: bool,
 
     framework_path = f"{build_dir}:{build_dir}/lib"
     asan = asan_options(build_dir)
+    tsan = tsan_options(build_dir)
 
     # Plain executables (jsc, testapi, ...) find their frameworks via LC_RPATH;
     # setting DYLD_FRAMEWORK_PATH on them would only redirect Xcode's injected
@@ -454,6 +471,10 @@ def generate_scheme(name: str, executable_path: Path, is_bundle: bool,
         env.append(("ASAN_OPTIONS", asan))
         if is_bundle:
             env.append(("__XPC_ASAN_OPTIONS", asan))
+    if tsan:
+        env.append(("TSAN_OPTIONS", tsan))
+        if is_bundle:
+            env.append(("__XPC_TSAN_OPTIONS", tsan))
 
     if env:
         entries = "".join(
