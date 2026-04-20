@@ -1108,7 +1108,16 @@ static RetainPtr<_WKAuthenticationExtensionsClientOutputs> wkAuthenticationExten
         if (secondBuffer)
             second = WTF::toNSData(secondBuffer->span());
     }
-    return adoptNS([[_WKAuthenticationExtensionsClientOutputs alloc] initWithAppid:(outputs.appid && *outputs.appid) prfEnabled:(outputs.prf && outputs.prf->enabled && *outputs.prf->enabled) prfFirst:first.get() prfSecond:second.get()]);
+
+    RetainPtr<_WKAuthenticationExtensionsClientLargeBlobOutputs> largeBlobOutputs;
+    if (outputs.largeBlob) {
+        RetainPtr<NSData> blobData;
+        if (RefPtr blobBuffer = outputs.largeBlob->blob)
+            blobData = WTF::toNSData(blobBuffer->span());
+        largeBlobOutputs = adoptNS([[_WKAuthenticationExtensionsClientLargeBlobOutputs alloc] initWithSupported:(outputs.largeBlob->supported && *outputs.largeBlob->supported) blob:blobData.get() written:(outputs.largeBlob->written && *outputs.largeBlob->written)]);
+    }
+
+    return adoptNS([[_WKAuthenticationExtensionsClientOutputs alloc] initWithAppid:(outputs.appid && *outputs.appid) prfEnabled:(outputs.prf && outputs.prf->enabled && *outputs.prf->enabled) prfFirst:first.get() prfSecond:second.get() largeBlobOutputs:largeBlobOutputs.get()]);
 }
 
 static RetainPtr<_WKAuthenticatorAttestationResponse> wkAuthenticatorAttestationResponse(const WebCore::AuthenticatorResponseData& data, NSData *clientDataJSON, WebCore::AuthenticatorAttachment attachment)

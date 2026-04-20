@@ -29,10 +29,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@interface _WKAuthenticationExtensionsClientLargeBlobOutputs ()
+
+- (instancetype)initWithSupported:(BOOL)supported blob:(nullable NSData *)blob written:(BOOL)written;
+
+@end
+
 @interface _WKAuthenticationExtensionsClientOutputs ()
 
 - (instancetype)initWithAppid:(BOOL)appid;
 - (instancetype)initWithAppid:(BOOL)appid prfEnabled:(BOOL)prfEnabled prfFirst:(NSData *)prfFirst prfSecond:(NSData *)prfSecond;
+- (instancetype)initWithAppid:(BOOL)appid prfEnabled:(BOOL)prfEnabled prfFirst:(nullable NSData *)prfFirst prfSecond:(nullable NSData *)prfSecond largeBlobOutputs:(nullable _WKAuthenticationExtensionsClientLargeBlobOutputs *)largeBlobOutputs;
 
 @end
 
