@@ -172,8 +172,11 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
     };
     ruleData.setLinkMatchType(computeLinkMatchType());
 
-    if (featureCollectionContext)
+    if (featureCollectionContext) {
         m_features.collectFeatures(*featureCollectionContext, ruleData, scopeRules);
+        if (!m_features.usesDProperty && ruleData.styleRule().properties().hasDProperty())
+            m_features.usesDProperty = true;
+    }
 
     unsigned classBucketSize = 0;
     const CSSSelector* idSelector = nullptr;

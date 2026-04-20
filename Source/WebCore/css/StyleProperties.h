@@ -131,6 +131,7 @@ public:
 
     bool NODELETE hasCSSOMWrapper() const;
     bool isMutable() const { return m_isMutable; }
+    bool hasDProperty() const { return m_hasDProperty; }
 
     bool traverseSubresources(NOESCAPE const Function<bool(const CachedResource&)>& handler) const;
     bool mayDependOnBaseURL() const;
@@ -152,7 +153,8 @@ protected:
 
     unsigned m_cssParserMode : 3;
     mutable unsigned m_isMutable : 1 { true };
-    unsigned m_arraySize : 28 { 0 };
+    unsigned m_hasDProperty : 1 { 0 };
+    unsigned m_arraySize : 27 { 0 };
 
 private:
     StringBuilder asTextInternal(const CSS::SerializationContext&) const;

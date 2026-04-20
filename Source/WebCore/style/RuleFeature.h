@@ -163,6 +163,7 @@ struct RuleFeatureSet {
     bool usesFirstLetterRules { false };
     bool hasStartingStyleRules { false };
     bool usesHasPseudoClass { false };
+    bool usesDProperty { false };
 
 private:
     struct SelectorFeatures {

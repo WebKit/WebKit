@@ -124,11 +124,16 @@ private:
 
     void invalidateMPathDependencies();
 
+    bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
     void collectExtraStyleForPresentationalHints(MutableStyleProperties&) override;
     void collectDPresentationalHint(MutableStyleProperties&);
 
+    bool canDirectlyUpdateD() const;
+    void flushDirectDStyleUpdate();
+
     const Ref<SVGAnimatedPathSegList> m_pathSegList { SVGAnimatedPathSegList::create(this) };
+    bool m_needsDirectDStyleUpdate { false };
 };
 
 } // namespace WebCore

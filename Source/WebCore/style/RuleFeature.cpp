@@ -542,6 +542,7 @@ void RuleFeatureSet::add(const RuleFeatureSet& other)
     usesFirstLetterRules = usesFirstLetterRules || other.usesFirstLetterRules;
     hasStartingStyleRules = hasStartingStyleRules || other.hasStartingStyleRules;
     usesHasPseudoClass = usesHasPseudoClass || other.usesHasPseudoClass;
+    usesDProperty = usesDProperty || other.usesDProperty;
 }
 
 void RuleFeatureSet::registerSubstitutionAttribute(const AtomString& attributeName)
@@ -571,6 +572,7 @@ void RuleFeatureSet::clear()
     usesFirstLineRules = false;
     usesFirstLetterRules = false;
     hasStartingStyleRules = false;
+    usesDProperty = false;
 }
 
 void RuleFeatureSet::shrinkToFit()

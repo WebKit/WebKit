@@ -29,6 +29,7 @@
 #include "MutableStyleProperties.h"
 #include "RenderSVGPath.h"
 #include "RenderStyle+GettersInlines.h"
+#include "RenderStyle+SettersInlines.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGMPathElement.h"
@@ -36,6 +37,9 @@
 #include "SVGPathUtilities.h"
 #include "SVGPoint.h"
 #include "Settings.h"
+#include "StyleResolver.h"
+#include "StyleSVGPathData.h"
+#include "StyleScope.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
@@ -149,8 +153,12 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
             path->setNeedsShapeUpdate();
 
         updateSVGRendererForElementChange();
-        if (document().settings().cssDPropertyEnabled())
-            setPresentationalHintStyleIsDirty();
+        if (document().settings().cssDPropertyEnabled()) {
+            if (canDirectlyUpdateD())
+                m_needsDirectDStyleUpdate = true;
+            else
+                setPresentationalHintStyleIsDirty();
+        }
         invalidateResourceImageBuffersIfNeeded();
         return;
     }
@@ -238,6 +246,8 @@ RenderPtr<RenderElement> SVGPathElement::createElementRenderer(RenderStyle&& sty
 const SVGPathByteStream& SVGPathElement::pathByteStream() const
 {
     if (document().settings().cssDPropertyEnabled()) {
+        if (m_needsDirectDStyleUpdate)
+            const_cast<SVGPathElement&>(*this).flushDirectDStyleUpdate();
         if (CheckedPtr renderer = this->renderer()) {
             if (auto& pathFunction = renderer->style().d().tryPath())
                 return pathFunction->parameters.data.byteStream;
@@ -251,6 +261,8 @@ const SVGPathByteStream& SVGPathElement::pathByteStream() const
 Path SVGPathElement::path() const
 {
     if (document().settings().cssDPropertyEnabled()) {
+        if (m_needsDirectDStyleUpdate)
+            const_cast<SVGPathElement&>(*this).flushDirectDStyleUpdate();
         if (CheckedPtr renderer = this->renderer()) {
             CheckedRef style = renderer->style();
             if (auto& pathFunction = style->d().tryPath())
@@ -292,6 +304,47 @@ void SVGPathElement::collectDPresentationalHint(MutableStyleProperties& style)
 void SVGPathElement::pathDidChange()
 {
     invalidateMPathDependencies();
+}
+
+bool SVGPathElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
+{
+    if (name == SVGNames::dAttr && document().settings().cssDPropertyEnabled())
+        return false;
+    return SVGGeometryElement::hasPresentationalHintsForAttribute(name);
+}
+
+bool SVGPathElement::canDirectlyUpdateD() const
+{
+    if (!renderer())
+        return false;
+
+    // If any author CSS declares the d property, we must go through full style
+    // resolution.
+    auto& scope = const_cast<Style::Scope&>(Style::Scope::forNode(*this));
+    if (scope.resolver().ruleSets().authorStyle().features().usesDProperty)
+        return false;
+
+    return true;
+}
+
+void SVGPathElement::flushDirectDStyleUpdate()
+{
+    ASSERT(m_needsDirectDStyleUpdate);
+    m_needsDirectDStyleUpdate = false;
+
+    auto* renderer = this->renderer();
+    if (!renderer)
+        return;
+
+    auto& byteStream = Ref { m_pathSegList }->currentPathByteStream();
+
+    Style::SVGPathData newD { Style::PathFunction { Style::Path {
+        std::nullopt,
+        Style::Path::Data { byteStream },
+        1.0f
+    } } };
+
+    renderer->mutableStyle().setD(WTF::move(newD));
 }
 
 }

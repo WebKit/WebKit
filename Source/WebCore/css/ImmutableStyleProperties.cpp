@@ -46,6 +46,8 @@ ImmutableStyleProperties::ImmutableStyleProperties(std::span<const CSSProperty> 
         RefPtr value = property.value();
         valueSpan[i] = value.get();
         value->ref();
+        if (property.id() == CSSPropertyD)
+            m_hasDProperty = true;
     }
 }
 
