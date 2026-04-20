@@ -80,6 +80,7 @@ private:
     static void getOwnPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArrayBuilder&, DontEnumPropertiesMode);
 
     WriteBarrierStructureID m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructureID;
+    uintptr_t m_addressOfDocument;
 };
 
 } // namespace JSC
