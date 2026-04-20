@@ -943,7 +943,7 @@ void TextureMapperLayer::computeOverlapRegions(ComputeOverlapRegionData& data, c
     else if (m_contentsLayer || m_state.solidColor.isVisible())
         localBoundingRect = m_state.contentsRect;
 
-    if (m_currentFilters.hasOutsets() && !m_state.backdropLayer && !m_state.masksToBounds && !m_state.maskLayer) {
+    if (!data.skipFilterOutsets && m_currentFilters.hasOutsets() && !m_state.backdropLayer && !m_state.masksToBounds && !m_state.maskLayer) {
         auto outsets = m_currentFilters.outsets();
         localBoundingRect.move(-outsets.left(), -outsets.top());
         localBoundingRect.expand(outsets.left() + outsets.right(), outsets.top() + outsets.bottom());
@@ -1030,7 +1030,7 @@ void TextureMapperLayer::paintUsingOverlapRegions(TextureMapperPaintOptions& opt
     }
 }
 
-Vector<IntRect, 1> TextureMapperLayer::computeConsolidatedOverlapRegionRects(TextureMapperPaintOptions& options)
+Vector<IntRect, 1> TextureMapperLayer::computeConsolidatedOverlapRegionRects(TextureMapperPaintOptions& options, std::optional<IntRect> clipBoundsOverride, bool skipFilterOutsets)
 {
     Region overlapRegion;
     Region nonOverlapRegion;
@@ -1039,11 +1039,13 @@ Vector<IntRect, 1> TextureMapperLayer::computeConsolidatedOverlapRegionRects(Tex
         mode = ComputeOverlapRegionMode::Mask;
     ComputeOverlapRegionData data {
         mode,
-        options.textureMapper.clipBounds(),
+        clipBoundsOverride.value_or(options.textureMapper.clipBounds()),
         overlapRegion,
-        nonOverlapRegion
+        nonOverlapRegion,
+        skipFilterOutsets
     };
-    data.clipBounds.move(-options.offset);
+    if (!clipBoundsOverride)
+        data.clipBounds.move(-options.offset);
     computeOverlapRegions(data, options.transform, false);
     ASSERT(nonOverlapRegion.isEmpty());
 
@@ -1059,14 +1061,59 @@ Vector<IntRect, 1> TextureMapperLayer::computeConsolidatedOverlapRegionRects(Tex
 
 void TextureMapperLayer::paintSelfChildrenFilterAndMask(TextureMapperPaintOptions& options)
 {
+    bool useLocalSpaceTransform = !m_isBackdrop && !hasBackdrop();
+
+    SetForScope scopedTransform(options.transform, options.transform);
+    TransformationMatrix surfaceCommitTransform;
+    std::optional<IntRect> clipOverride;
+    IntOutsets surfaceOutsets;
+
+    if (useLocalSpaceTransform) {
+        auto layerCombinedInverse = m_layerTransforms.combined.inverse();
+        if (!layerCombinedInverse)
+            return;
+
+        auto combinedAffine = m_layerTransforms.combined.toAffineTransform();
+        double surfaceScaleX = combinedAffine.xScale();
+        double surfaceScaleY = combinedAffine.yScale();
+        if (!(surfaceScaleX > 0 && surfaceScaleY > 0))
+            surfaceScaleX = surfaceScaleY = 1.0;
+
+        surfaceCommitTransform = options.transform;
+        surfaceCommitTransform.multiply(m_layerTransforms.combined);
+        surfaceCommitTransform.scaleNonUniform(1.0 / surfaceScaleX, 1.0 / surfaceScaleY);
+
+        // Children paint into scaled-local-space: undo this layer's transform,
+        // then pre-scale so the surface dimensions match the rendered size.
+        options.transform = TransformationMatrix();
+        options.transform.scaleNonUniform(surfaceScaleX, surfaceScaleY);
+        options.transform.multiply(*layerCombinedInverse);
+
+        // Use a clip that comfortably covers any realistic scaled-local bounds
+        // without overflowing int32 when its corners are mapped.
+        constexpr int kLargeClipHalfExtent = 1 << 23;
+        clipOverride = IntRect(-kLargeClipHalfExtent, -kLargeClipHalfExtent, kLargeClipHalfExtent * 2, kLargeClipHalfExtent * 2);
+
+        if (m_currentFilters.hasOutsets() && !m_state.masksToBounds && !m_state.maskLayer)
+            surfaceOutsets = m_currentFilters.outsets();
+    }
+
+    auto rects = computeConsolidatedOverlapRegionRects(options, clipOverride, /*skipFilterOutsets=*/true);
+    if (!surfaceOutsets.isZero()) {
+        for (auto& rect : rects) {
+            rect.move(-surfaceOutsets.left(), -surfaceOutsets.top());
+            rect.expand(surfaceOutsets.left() + surfaceOutsets.right(), surfaceOutsets.top() + surfaceOutsets.bottom());
+        }
+    }
+
     IntSize maxTextureSize = options.textureMapper.maxTextureSize();
-    for (auto& rect : computeConsolidatedOverlapRegionRects(options)) {
+    for (auto& rect : rects) {
         for (int x = rect.x(); x < rect.maxX(); x += maxTextureSize.width()) {
             for (int y = rect.y(); y < rect.maxY(); y += maxTextureSize.height()) {
                 IntRect tileRect(IntPoint(x, y), maxTextureSize);
                 tileRect.intersect(rect);
 
-                paintSelfAndChildrenWithIntermediateSurface(options, tileRect);
+                paintSelfAndChildrenWithIntermediateSurface(options, tileRect, surfaceCommitTransform);
             }
         }
     }
@@ -1125,7 +1172,7 @@ void TextureMapperLayer::paintWithIntermediateSurface(TextureMapperPaintOptions&
     commitSurface(options, surface.get(), rect, options.opacity);
 }
 
-void TextureMapperLayer::paintSelfAndChildrenWithIntermediateSurface(TextureMapperPaintOptions& options, const IntRect& rect)
+void TextureMapperLayer::paintSelfAndChildrenWithIntermediateSurface(TextureMapperPaintOptions& options, const IntRect& rect, const TransformationMatrix& surfaceCommitTransform)
 {
     auto surface = BitmapTexturePool::singleton().acquireTexture(rect.size(), { BitmapTexture::Flags::SupportsAlpha });
     {
@@ -1137,7 +1184,12 @@ void TextureMapperLayer::paintSelfAndChildrenWithIntermediateSurface(TextureMapp
         surface = Ref { *options.surface };
     }
 
-    commitSurface(options, surface.get(), rect, options.opacity);
+    TransformationMatrix modelView;
+    modelView.translate(options.offset.width(), options.offset.height());
+    modelView.multiply(surfaceCommitTransform);
+
+    options.textureMapper.bindSurface(options.surface.get());
+    options.textureMapper.drawTexture(surface.get(), rect, modelView, options.opacity);
 }
 
 void TextureMapperLayer::paintSelfChildrenReplicaFilterAndMask(TextureMapperPaintOptions& options)

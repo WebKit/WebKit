@@ -167,9 +167,10 @@ private:
         IntRect clipBounds;
         Region& overlapRegion;
         Region& nonOverlapRegion;
+        bool skipFilterOutsets { false };
     };
     void computeOverlapRegions(ComputeOverlapRegionData&, const TransformationMatrix&, bool includesReplica = true);
-    Vector<IntRect, 1> computeConsolidatedOverlapRegionRects(TextureMapperPaintOptions&);
+    Vector<IntRect, 1> computeConsolidatedOverlapRegionRects(TextureMapperPaintOptions&, std::optional<IntRect> clipBoundsOverride = std::nullopt, bool skipFilterOutsets = false);
 
     void paintRecursive(TextureMapperPaintOptions&);
     void paintFlattened(TextureMapperPaintOptions&);
@@ -178,7 +179,7 @@ private:
     void paintUsingOverlapRegions(TextureMapperPaintOptions&);
     void paintIntoSurface(TextureMapperPaintOptions&);
     void paintWithIntermediateSurface(TextureMapperPaintOptions&, const IntRect&);
-    void paintSelfAndChildrenWithIntermediateSurface(TextureMapperPaintOptions&, const IntRect&);
+    void paintSelfAndChildrenWithIntermediateSurface(TextureMapperPaintOptions&, const IntRect&, const TransformationMatrix& surfaceCommitTransform);
     void paintSelfChildrenFilterAndMask(TextureMapperPaintOptions&);
     void paintSelf(TextureMapperPaintOptions&);
     void paintSelfAndChildren(TextureMapperPaintOptions&);
