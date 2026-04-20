@@ -1030,7 +1030,7 @@ void TextureMapperLayer::paintUsingOverlapRegions(TextureMapperPaintOptions& opt
     }
 }
 
-Vector<IntRect, 1> TextureMapperLayer::computeConsolidatedOverlapRegionRects(TextureMapperPaintOptions& options)
+Vector<IntRect, 1> TextureMapperLayer::computeConsolidatedOverlapRegionRects(TextureMapperPaintOptions& options, std::optional<IntRect> clipBoundsOverride)
 {
     Region overlapRegion;
     Region nonOverlapRegion;
@@ -1039,11 +1039,12 @@ Vector<IntRect, 1> TextureMapperLayer::computeConsolidatedOverlapRegionRects(Tex
         mode = ComputeOverlapRegionMode::Mask;
     ComputeOverlapRegionData data {
         mode,
-        options.textureMapper.clipBounds(),
+        clipBoundsOverride.value_or(options.textureMapper.clipBounds()),
         overlapRegion,
         nonOverlapRegion
     };
-    data.clipBounds.move(-options.offset);
+    if (!clipBoundsOverride)
+        data.clipBounds.move(-options.offset);
     computeOverlapRegions(data, options.transform, false);
     ASSERT(nonOverlapRegion.isEmpty());
 
@@ -1059,14 +1060,37 @@ Vector<IntRect, 1> TextureMapperLayer::computeConsolidatedOverlapRegionRects(Tex
 
 void TextureMapperLayer::paintSelfChildrenFilterAndMask(TextureMapperPaintOptions& options)
 {
+    auto layerCombinedInverse = m_isBackdrop
+        ? TransformationMatrix()
+        : m_layerTransforms.combined.inverse().value_or(TransformationMatrix());
+
+    SetForScope scopedTransform(options.transform, options.transform);
+    auto outerTransform = options.transform;
+    if (!m_isBackdrop)
+        options.transform.multiply(layerCombinedInverse);
+
+    TransformationMatrix surfaceCommitTransform = outerTransform;
+    if (!m_isBackdrop)
+        surfaceCommitTransform.multiply(m_layerTransforms.combined);
+
+    // Use a clip that comfortably covers any realistic layer bounds (no
+    // layer tree should ever approach ±8M pixels in local coordinates),
+    // while staying small enough that corner arithmetic (x + width,
+    // matrix-mapped corners) won't overflow int32_t or lose precision
+    // when promoted to float.
+    constexpr int kLargeClipHalfExtent = 1 << 23;
+    std::optional<IntRect> clipOverride;
+    if (!m_isBackdrop)
+        clipOverride = IntRect(-kLargeClipHalfExtent, -kLargeClipHalfExtent, kLargeClipHalfExtent * 2, kLargeClipHalfExtent * 2);
+
     IntSize maxTextureSize = options.textureMapper.maxTextureSize();
-    for (auto& rect : computeConsolidatedOverlapRegionRects(options)) {
+    for (auto& rect : computeConsolidatedOverlapRegionRects(options, clipOverride)) {
         for (int x = rect.x(); x < rect.maxX(); x += maxTextureSize.width()) {
             for (int y = rect.y(); y < rect.maxY(); y += maxTextureSize.height()) {
                 IntRect tileRect(IntPoint(x, y), maxTextureSize);
                 tileRect.intersect(rect);
 
-                paintSelfAndChildrenWithIntermediateSurface(options, tileRect);
+                paintSelfAndChildrenWithIntermediateSurface(options, tileRect, surfaceCommitTransform);
             }
         }
     }
@@ -1125,7 +1149,7 @@ void TextureMapperLayer::paintWithIntermediateSurface(TextureMapperPaintOptions&
     commitSurface(options, surface.get(), rect, options.opacity);
 }
 
-void TextureMapperLayer::paintSelfAndChildrenWithIntermediateSurface(TextureMapperPaintOptions& options, const IntRect& rect)
+void TextureMapperLayer::paintSelfAndChildrenWithIntermediateSurface(TextureMapperPaintOptions& options, const IntRect& rect, const TransformationMatrix& surfaceCommitTransform)
 {
     auto surface = BitmapTexturePool::singleton().acquireTexture(rect.size(), { BitmapTexture::Flags::SupportsAlpha });
     {
@@ -1137,7 +1161,12 @@ void TextureMapperLayer::paintSelfAndChildrenWithIntermediateSurface(TextureMapp
         surface = Ref { *options.surface };
     }
 
-    commitSurface(options, surface.get(), rect, options.opacity);
+    TransformationMatrix modelView;
+    modelView.translate(options.offset.width(), options.offset.height());
+    modelView.multiply(surfaceCommitTransform);
+
+    options.textureMapper.bindSurface(options.surface.get());
+    options.textureMapper.drawTexture(surface.get(), rect, modelView, options.opacity);
 }
 
 void TextureMapperLayer::paintSelfChildrenReplicaFilterAndMask(TextureMapperPaintOptions& options)

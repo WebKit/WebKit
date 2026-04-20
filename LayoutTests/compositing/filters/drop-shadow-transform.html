@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="fuzzy" content="maxDifference=0-16; totalPixels=0-300" />
+    <style>
+      .x div {
+	      will-change: transform;
+      }
+      div div {
+        background: green;
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        top: 100px;
+        filter: drop-shadow(20px 20px black);
+      }
+      .a {
+        transform: translate(150px,0) rotate(90deg);
+      }
+      .b {
+        transform: translate(300px,0) rotate(180deg);
+      }
+      .c {
+        transform: translate(450px,0) rotate(270deg);
+      }
+      .d {
+        transform: translate(600px,0) rotate(360deg);
+      }
+    </style>
+  </head>
+  <body>
+    <div class=x>
+      <div class=a></div>
+      <div class=b></div>
+      <div class=c></div>
+      <div class=d></div>
+    </div>
+  </body>
+</html>
