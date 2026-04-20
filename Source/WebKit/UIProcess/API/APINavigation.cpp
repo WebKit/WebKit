@@ -180,6 +180,17 @@ void Navigation::setSafeBrowsingWarning(RefPtr<WebKit::BrowsingWarning>&& safeBr
     m_safeBrowsingWarning = WTF::move(safeBrowsingWarning);
 }
 
+void Navigation::setSafeBrowsingCheckCompletionHandler(CompletionHandler<void()>&& handler)
+{
+    m_safeBrowsingCheckCompletionHandler = WTF::move(handler);
+}
+
+void Navigation::didCompleteSafeBrowsingCheck()
+{
+    if (auto handler = std::exchange(m_safeBrowsingCheckCompletionHandler, { }))
+        handler();
+}
+
 size_t Navigation::redirectChainIndex(const WTF::URL& url)
 {
     size_t index = m_redirectChain.find(url);

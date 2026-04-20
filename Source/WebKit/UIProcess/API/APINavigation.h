@@ -40,6 +40,7 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SubstituteData.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Ref.h>
@@ -189,6 +190,8 @@ public:
     RefPtr<WebKit::BrowsingWarning> NODELETE safeBrowsingWarning();
     void setSafeBrowsingCheckTimedOut() { m_safeBrowsingCheckTimedOut = true; }
     bool safeBrowsingCheckTimedOut() { return m_safeBrowsingCheckTimedOut; }
+    void setSafeBrowsingCheckCompletionHandler(CompletionHandler<void()>&&);
+    void didCompleteSafeBrowsingCheck();
     bool hadSafeBrowsingWarning() const { return m_hadSafeBrowsingWarning; }
     MonotonicTime requestStart() const { return m_requestStart; }
     void resetRequestStart();
@@ -249,6 +252,7 @@ private:
     MonotonicTime m_requestStart { MonotonicTime::now() };
     RefPtr<WebKit::BrowsingWarning> m_safeBrowsingWarning;
     ListHashSet<size_t> m_ongoingSafeBrowsingChecks;
+    CompletionHandler<void()> m_safeBrowsingCheckCompletionHandler;
     RefPtr<WebKit::FrameProcess> m_pendingSharedProcess;
     RefPtr<WebKit::FrameState> m_backForwardFrameState;
 };
