@@ -40,6 +40,7 @@ from webkitpy.common.system.logutils import configure_logging as _configure_logg
 from webkitpy.port.config import apple_additions
 from webkitpy.style.checkers.basexcconfig import BaseXcconfigChecker
 from webkitpy.style.checkers.common import categories as CommonCategories
+from webkitpy.style.checkers.xcconfig import XcconfigChecker
 from webkitpy.style.checkers.common import CarriageReturnChecker
 from webkitpy.style.checkers.contributors import ContributorsChecker
 from webkitpy.style.checkers.changelog import ChangeLogChecker
@@ -622,6 +623,7 @@ def _all_categories():
     categories = categories.union(PNGChecker.categories)
     categories = categories.union(FeatureDefinesChecker.categories)
     categories = categories.union(BaseXcconfigChecker.categories)
+    categories = categories.union(XcconfigChecker.categories)
     categories = categories.union(XcodeSchemeChecker.categories)
 
     # FIXME: Consider adding all of the pep8 categories.  Since they
@@ -790,9 +792,10 @@ class FileType:
     CMAKE = 11
     FEATUREDEFINES = 12
     BASE_XCCONFIG = 13
-    XCSCHEME = 14
-    SWIFT = 15
-    SPI_ALLOWLIST = 16
+    XCCONFIG = 14
+    XCSCHEME = 15
+    SWIFT = 16
+    SPI_ALLOWLIST = 17
 
 
 class ANSIColor:
@@ -906,6 +909,8 @@ class CheckerDispatcher(object):
             return FileType.BASE_XCCONFIG
         elif os.path.basename(file_path) == "General.xcconfig":  # gtest is different.
             return FileType.BASE_XCCONFIG
+        elif file_extension == "xcconfig":
+            return FileType.XCCONFIG
         elif os.path.basename(file_path).startswith('AllowedSPI') and file_extension == 'toml':
             return FileType.SPI_ALLOWLIST
         else:
@@ -987,6 +992,8 @@ class CheckerDispatcher(object):
             checker = FeatureDefinesChecker(file_path, handle_style_error)
         elif file_type == FileType.BASE_XCCONFIG:
             checker = BaseXcconfigChecker(file_path, handle_style_error)
+        elif file_type == FileType.XCCONFIG:
+            checker = XcconfigChecker(file_path, handle_style_error)
         elif file_type == FileType.SPI_ALLOWLIST:
             checker = SPIAllowlistChecker(file_path, handle_style_error)
         else:

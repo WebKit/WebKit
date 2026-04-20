@@ -24,6 +24,12 @@
 // Use the following helpers to define build settings whose value depends on the target
 // macOS version in a succinct and future-proof way.
 //
+// Prefer these over [sdk=] conditionals in build settings. SDK conditionals
+// test for the SDK version, not deployment target version, so they are not
+// appropriate for controlling features based on platform availability. SDK
+// conditionals also apply to Mac Catalyst and are inherited by embedded
+// platforms in non-obvious ways.
+//
 // Example 1: To give the SMOOTHNESS build setting the value 3 in macOS 10.12 and later and the
 // value 2 in earlier versions, write:
 //
