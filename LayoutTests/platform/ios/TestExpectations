@@ -8228,8 +8228,6 @@ webkit.org/b/296910 http/tests/app-privacy-report/app-attribution-beacon-isnotap
 
 webkit.org/b/297001 http/tests/local/blob/navigate-blob.html [ Pass Failure ]
 
-webkit.org/b/312814 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/selectedcontent-mutations.html [ Failure ]
-
 webkit.org/b/297007 media/webaudio-background-playback.html [ Pass Failure ]
 
 webkit.org/b/297013 [ Debug ] imported/w3c/web-platform-tests/css/css-viewport/zoom/scroll-top-test-with-zoom.html [ Pass Crash ]
