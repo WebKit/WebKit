@@ -6779,30 +6779,56 @@ class CleanGitRepo(steps.ShellSequence, ShellMixin):
 
     def run(self):
         self.commands = []
-        if self.getProperty('platform', '*') == 'win':
-            self.commands.append(util.ShellArg(
-                command=self.shell_command(r'del .git\gc.log || {}'.format(self.shell_exit_0())),
-                logname='stdio',
-            ))
-        else:
-            self.commands.append(util.ShellArg(
-                command=self.shell_command('rm -f .git/gc.log || {}'.format(self.shell_exit_0())),
-                logname='stdio',
-            ))
 
-        for command in [
-            self.shell_command('git rebase --abort || {}'.format(self.shell_exit_0())),
-            self.shell_command('git am --abort || {}'.format(self.shell_exit_0())),
-            self.shell_command('git cherry-pick --abort || {}'.format(self.shell_exit_0())),
-            ['git', 'clean', '-f', '-d'],  # Remove any left-over layout test results, added files, etc.
-            ['git', 'checkout', '--progress', '{}/{}'.format(self.git_remote, self.default_branch), '-f'],  # Checkout branch from specific remote
-            ['git', 'branch', '-D', self.default_branch],  # Delete any local cache of the specified branch
-            ['git', 'branch', self.default_branch],  # Create local instance of branch from remote, but don't track it
-            self.shell_command("git branch | grep -v ' {}$' | grep -v 'HEAD detached at' | xargs git branch -D || {}".format(self.default_branch, self.shell_exit_0())),
-            self.shell_command("git remote | grep -v '{}$' | xargs -L 1 git remote rm || {}".format(self.git_remote, self.shell_exit_0())),
-            ['git', 'prune'],
-        ]:
+        def add_cmd(cmd, shell=False):
+            if shell:
+                command = self.shell_command(cmd)
+            else:
+                command = cmd
             self.commands.append(util.ShellArg(command=command, logname='stdio'))
+
+        # Kill any running git processes to ensure clean state
+        add_cmd(f'pkill -9 git || {self.shell_exit_0()}', shell=True)
+
+        # Delete stale lock files (must run first to unblock git config)
+        add_cmd("find .git -name '*.lock' -delete", shell=True)
+
+        # Disable auto-gc; configure aggressive pruning for gc
+        add_cmd(['git', 'config', 'gc.auto', '0'])
+        add_cmd(['git', 'config', 'gc.reflogExpireUnreachable', 'now'])
+        add_cmd(['git', 'config', 'gc.pruneExpire', 'now'])
+        add_cmd(['git', 'config', 'gc.worktreePruneExpire', 'now'])
+
+        # Abort any in-progress git operations
+        add_cmd(f'git rebase --abort || {self.shell_exit_0()}', shell=True)
+        add_cmd(f'git am --abort || {self.shell_exit_0()}', shell=True)
+        add_cmd(f'git cherry-pick --abort || {self.shell_exit_0()}', shell=True)
+        add_cmd(f'git merge --abort || {self.shell_exit_0()}', shell=True)
+        add_cmd(f'git revert --abort || {self.shell_exit_0()}', shell=True)
+
+        # Switch to the remote branch (ensures working directory is in known state)
+        add_cmd(['git', 'switch', '--force', '--detach', f'refs/remotes/{self.git_remote}/{self.default_branch}'])
+
+        # Remove untracked files/dirs (not -x, so build artifacts survive)
+        add_cmd(['git', 'clean', '-f', '-d'])
+
+        # Delete all refs except refs/remotes/{remote}/{branch} and tags
+        add_cmd(
+            "git for-each-ref --format='delete %(refname)'"
+            " | sed -e '\\|^delete refs/remotes/{remote}/{branch}$|d' -e '\\|^delete refs/tags/|d'"
+            " | git update-ref --stdin --no-deref".format(remote=self.git_remote, branch=self.default_branch),
+            shell=True
+        )
+
+        # Recreate local branch from remote-tracking ref (not tracked)
+        add_cmd(['git', 'branch', '--no-track', self.default_branch, f'refs/remotes/{self.git_remote}/{self.default_branch}'])
+
+        # Remove extra remote config sections
+        add_cmd(f"git remote | grep -v '^{self.git_remote}$' | xargs -L 1 git remote rm || {self.shell_exit_0()}", shell=True)
+
+        # Full GC: expires all unreachable objects
+        self.commands.append(util.ShellArg(command=['git', 'gc', '--force'], logname='stdio'))
+
         return super().run()
 
     def getResultSummary(self):
