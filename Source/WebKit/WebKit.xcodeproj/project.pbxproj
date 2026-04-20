@@ -20021,6 +20021,7 @@
 				DD00C28D2A37908400CBB4D9 /* Work around rdar://109484516 */,
 				DD4BDE9F2CAB1275001A3339 /* Create legacy Swift overlay symlink */,
 				07275C652D00E284002315A5 /* Install SwiftUI Cross Import Overlay */,
+				AA000002302004200000F002 /* Verify Module */,
 			);
 			buildRules = (
 				DD4DB777280F91CA001700D4 /* PBXBuildRule */,
@@ -21591,6 +21592,28 @@
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "Scripts/copy-binary-plists.sh\n";
+		};
+		AA000002302004200000F002 /* Verify Module */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			dependencyFile = "$(DERIVED_FILES_DIR)/verify-module.d";
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../WTF/Scripts/modules-verifier/framework-modules-verifier.py",
+				"$(BUILT_PRODUCTS_DIR)/$(FULL_PRODUCT_NAME)/Modules/module.modulemap",
+			);
+			name = "Verify Module";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/verify-module.timestamp",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "depfile=\"${SCRIPT_OUTPUT_FILE_0/%.timestamp/.d}\"\n\nif [ \"${ACTION}\" = \"installhdrs\" ]; then\n    echo \"dependencies: \" > \"${depfile}\"\n    touch \"${SCRIPT_OUTPUT_FILE_0}\"\n    exit 0;\nfi\n\n\"${SCRIPT_INPUT_FILE_0}\" --depfile \"${depfile}\" \"${BUILT_PRODUCTS_DIR}/${FULL_PRODUCT_NAME}\"\n\ntouch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

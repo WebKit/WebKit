@@ -1218,6 +1218,7 @@
 				1CEBD7E12716AFBA00A5254D /* Resources */,
 				6577FFC8276ACA060011AEC8 /* Create Symlink to Cryptex Path */,
 				DD725EBA2D8937A200E72544 /* Audit SPI use */,
+				AA000003302004200000F003 /* Verify Module */,
 			);
 			buildRules = (
 				DDE748762F7B28F4008013AB /* PBXBuildRule */,
@@ -1386,6 +1387,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ -f \"${SCRIPT_INPUT_FILE_0}\" ]\nthen \"${SCRIPT_INPUT_FILE_0}\" \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\" -framework JavaScriptCore\nfi && touch \"${DERIVED_FILES_DIR}/audit-spi.d\"\n";
+		};
+		AA000003302004200000F003 /* Verify Module */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			dependencyFile = "$(DERIVED_FILES_DIR)/verify-module.d";
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../WTF/Scripts/modules-verifier/framework-modules-verifier.py",
+				"$(BUILT_PRODUCTS_DIR)/$(FULL_PRODUCT_NAME)/Modules/module.modulemap",
+			);
+			name = "Verify Module";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/verify-module.timestamp",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "depfile=\"${SCRIPT_OUTPUT_FILE_0/%.timestamp/.d}\"\n\nif [ \"${ACTION}\" = \"installhdrs\" ]; then\n    echo \"dependencies: \" > \"${depfile}\"\n    touch \"${SCRIPT_OUTPUT_FILE_0}\"\n    exit 0;\nfi\n\n\"${SCRIPT_INPUT_FILE_0}\" --depfile \"${depfile}\" \"${BUILT_PRODUCTS_DIR}/${FULL_PRODUCT_NAME}\"\n\ntouch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

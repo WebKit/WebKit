@@ -13045,6 +13045,7 @@
 				6577FFC6276AC8D20011AEC8 /* Create Symlink to Cryptex Path */,
 				DD9C4CC52A05D4FB00D52E2E /* Fix up SDKROOT path in TAPI filelists (install only) */,
 				DDA8F1542A15BEEA00BE8D11 /* Work around rdar://109484516 */,
+				AA000001302004200000F001 /* Verify Module */,
 			);
 			buildRules = (
 				DDE7487C2F7B35DC008013AB /* PBXBuildRule */,
@@ -13758,6 +13759,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "Scripts/process-entitlements.sh\n";
+		};
+		AA000001302004200000F001 /* Verify Module */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			dependencyFile = "$(DERIVED_FILES_DIR)/verify-module.d";
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../WTF/Scripts/modules-verifier/framework-modules-verifier.py",
+				"$(BUILT_PRODUCTS_DIR)/$(FULL_PRODUCT_NAME)/Modules/module.modulemap",
+			);
+			name = "Verify Module";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/verify-module.timestamp",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "depfile=\"${SCRIPT_OUTPUT_FILE_0/%.timestamp/.d}\"\n\nif [ \"${ACTION}\" = \"installhdrs\" ]; then\n    echo \"dependencies: \" > \"${depfile}\"\n    touch \"${SCRIPT_OUTPUT_FILE_0}\"\n    exit 0;\nfi\n\n\"${SCRIPT_INPUT_FILE_0}\" --depfile \"${depfile}\" \"${BUILT_PRODUCTS_DIR}/${FULL_PRODUCT_NAME}\"\n\ntouch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
