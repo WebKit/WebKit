@@ -607,7 +607,8 @@ WEB_PREFERENCES_PATTERNS = $(call to-pattern, $(WEB_PREFERENCES_FILES))
 
 all : $(WEB_PREFERENCES_FILES)
 
-$(WEB_PREFERENCES_PATTERNS) : $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb $(WEB_PREFERENCES_TEMPLATES) $(WEB_PREFERENCES)
+$(WEB_PREFERENCES_PATTERNS) : $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb $(WEB_PREFERENCES_TEMPLATES) $(WEB_PREFERENCES) $(WebKit2)/../WTF/Scripts/Preferences/UnifiedWebPreferences.yaml
+	cp $(WebKit2)/../WTF/Scripts/Preferences/UnifiedWebPreferences.yaml $(WTF_BUILD_SCRIPTS_DIR)/Preferences/UnifiedWebPreferences.yaml
 	$(RUBY) $< --frontend WebKit $(addprefix --template , $(WEB_PREFERENCES_TEMPLATES)) $(WEB_PREFERENCES)
 
 SERIALIZATION_DESCRIPTION_FILES = \

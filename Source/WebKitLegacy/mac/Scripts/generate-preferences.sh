@@ -31,6 +31,13 @@ ARGS=("$@")
 PREFERENCES_DIR=${WTF_BUILD_SCRIPTS_DIR}/Preferences
 TEMPLATES_DIR=${SRCROOT}/mac/Scripts/PreferencesTemplates
 
+# Ensure the installed copy of UnifiedWebPreferences.yaml is up to date even when WTF's Copy
+# Headers phase is skipped during incremental builds.
+SOURCE_YAML="${SRCROOT}/../WTF/Scripts/Preferences/UnifiedWebPreferences.yaml"
+if [ "${SOURCE_YAML}" -nt "${PREFERENCES_DIR}/UnifiedWebPreferences.yaml" ]; then
+    cp "${SOURCE_YAML}" "${PREFERENCES_DIR}/UnifiedWebPreferences.yaml"
+fi
+
 TEMPLATES=(
     WebPreferencesDefinitions.h.erb
     WebPreferencesExperimentalFeatures.mm.erb

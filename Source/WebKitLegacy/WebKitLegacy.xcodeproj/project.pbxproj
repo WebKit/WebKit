@@ -714,7 +714,7 @@
 		072E5F441ABF88750003B164 /* WebMediaPlaybackTargetPicker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebMediaPlaybackTargetPicker.mm; sourceTree = "<group>"; };
 		0FBE258129551486009DA69F /* WebViewRenderingUpdateScheduler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewRenderingUpdateScheduler.mm; sourceTree = "<group>"; };
 		0FBE258229551487009DA69F /* WebViewRenderingUpdateScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebViewRenderingUpdateScheduler.h; sourceTree = "<group>"; };
-		1430C12A1B2C5DF700DEA01D /* WebViewGroup.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = WebViewGroup.mm; path = WebCoreSupport/WebViewGroup.mm; sourceTree = SOURCE_ROOT; };
+		1430C12A1B2C5DF700DEA01D /* WebViewGroup.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebViewGroup.mm; path = WebCoreSupport/WebViewGroup.mm; sourceTree = SOURCE_ROOT; };
 		1430C12B1B2C5DF700DEA01D /* WebViewGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebViewGroup.h; path = WebCoreSupport/WebViewGroup.h; sourceTree = SOURCE_ROOT; };
 		14D8252D0AF955090004F057 /* WebChromeClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebChromeClient.h; sourceTree = "<group>"; };
 		14D8252E0AF955090004F057 /* WebChromeClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebChromeClient.mm; sourceTree = "<group>"; };
@@ -3383,6 +3383,7 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/../WTF/Scripts/Preferences/UnifiedWebPreferences.yaml",
 				"$(WTF_BUILD_SCRIPTS_DIR)/Preferences/UnifiedWebPreferences.yaml",
 				"$(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb",
 				"$(SRCROOT)/mac/Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb",

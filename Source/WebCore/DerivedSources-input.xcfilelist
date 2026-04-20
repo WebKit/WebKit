@@ -37,6 +37,7 @@ $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/lazywriter.py
 $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/make-js-file-arrays.py
 $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/wkbuiltins.py
 $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/xxd.pl
+$(PROJECT_DIR)/../WTF/Scripts/Preferences/UnifiedWebPreferences.yaml
 $(PROJECT_DIR)/DerivedSources.make
 $(PROJECT_DIR)/Modules/ShapeDetection/BarcodeDetector.idl
 $(PROJECT_DIR)/Modules/ShapeDetection/BarcodeDetectorOptions.idl
@@ -1142,8 +1143,8 @@ $(PROJECT_DIR)/Modules/webxr/WebXRRenderState+Layers.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRRenderState.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRRigidTransform.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRSession+AR.idl
-$(PROJECT_DIR)/Modules/webxr/WebXRSession+Layers.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRSession+HitTest.idl
+$(PROJECT_DIR)/Modules/webxr/WebXRSession+Layers.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRSession.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRSpace.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRSystem.idl

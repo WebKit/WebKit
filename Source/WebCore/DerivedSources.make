@@ -2568,6 +2568,7 @@ $(NAMESPACE_GENERATED_PATTERNS) : $(DOM_NAME_ENUM_DEPS)
 
 WEB_PREFERENCES_INPUT_FILES = \
     ${WTF_BUILD_SCRIPTS_DIR}/Preferences/UnifiedWebPreferences.yaml \
+    ${WebCore}/../WTF/Scripts/Preferences/UnifiedWebPreferences.yaml \
     ${WebCore}/page/Settings.yaml \
 #
 
