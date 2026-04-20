@@ -308,8 +308,11 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL& url, API::Navigation& navig
                 return;
 
             navigation->setSafeBrowsingCheckOngoing(redirectChainIndex, false);
-            if (error)
+            if (error) {
+                if (!navigation->safeBrowsingCheckOngoing())
+                    navigation->didCompleteSafeBrowsingCheck();
                 return protectedThis->completeSafeBrowsingCheckForModals(true);
+            }
 
             RefPtr navigationState = NavigationState::fromWebPage(*protectedThis);
             auto historyDelegate = navigationState ? navigationState->historyDelegate() : nullptr;
@@ -331,6 +334,9 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL& url, API::Navigation& navig
                 protectedThis->showBrowsingWarning(navigation->safeBrowsingWarning());
             } else if (!navigation->safeBrowsingWarning())
                 protectedThis->completeSafeBrowsingCheckForModals(true);
+
+            if (!navigation->safeBrowsingCheckOngoing())
+                navigation->didCompleteSafeBrowsingCheck();
         });
     };
 

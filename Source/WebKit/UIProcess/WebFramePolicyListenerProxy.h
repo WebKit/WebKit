@@ -61,7 +61,7 @@ public:
     void download();
     void ignore(WasNavigationIntercepted = WasNavigationIntercepted::No);
     
-    void didReceiveSafeBrowsingResults(RefPtr<BrowsingWarning>&&);
+    void didReceiveSafeBrowsingResults();
     void didReceiveAppBoundDomainResult(std::optional<NavigatingToAppBoundDomain>);
     void didReceiveManagedDomainResult(std::optional<NavigatingToAppBoundDomain>);
     void didReceiveInitialLinkDecorationFilteringData();
@@ -72,7 +72,7 @@ private:
     WebFramePolicyListenerProxy(Reply&&, ShouldExpectSafeBrowsingResult, ShouldExpectAppBoundDomainResult, ShouldWaitForInitialLinkDecorationFilteringData, ShouldWaitForSiteHasStorageCheck, ShouldWaitForEnhancedSecurityLinkCheck);
 
     std::optional<std::pair<RefPtr<API::WebsitePolicies>, ProcessSwapRequestedByClient>> m_policyResult;
-    std::optional<RefPtr<BrowsingWarning>> m_safeBrowsingWarning;
+    bool m_safeBrowsingDone { false };
     std::optional<std::optional<NavigatingToAppBoundDomain>> m_isNavigatingToAppBoundDomain;
     bool m_doneWaitingForSiteHasStorage { false };
     bool m_doneWaitingForEnhancedSecurityLink { false };
