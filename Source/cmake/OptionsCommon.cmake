@@ -291,7 +291,11 @@ set(ENABLE_ASSERTS "AUTO" CACHE STRING "Enable or disable assertions regardless 
 set_property(CACHE ENABLE_ASSERTS PROPERTY STRINGS "AUTO" "ON" "OFF")
 
 if (ENABLE_ASSERTS STREQUAL "AUTO")
-    # The default value is handled by the NDEBUG define which is generally set by the toolchain module used by CMake.
+    # On GTK and WPE for DEVELOPER_MODE builds it defaults to enable assertions, but in other cases the
+    # default is handled by the NDEBUG define which is generally set by the toolchain module used by CMake.
+    if (DEVELOPER_MODE AND (PORT STREQUAL "GTK" OR PORT STREQUAL "WPE"))
+        WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-DASSERT_ENABLED=1)
+    endif ()
 elseif (ENABLE_ASSERTS)
     WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-DASSERT_ENABLED=1)
 elseif (NOT ENABLE_ASSERTS)
