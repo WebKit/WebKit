@@ -50,8 +50,8 @@ if [[ "${USE_SYSTEM_CONTENT_PATH}" == "YES" ]]; then
         exit 0;
     fi
 else
-    if [[ ${PLATFORM_NAME} != "macosx" || "${USE_STAGING_INSTALL_PATH}" == "YES" ]]; then
-        echo "Not creating symlink because current platform is not macOS or this isn't a standard install."
+    if [[ ${PLATFORM_NAME} != "macosx" || "${USE_STAGING_INSTALL_PATH}" == "YES" || "${WK_RELOCATABLE_WEBPUSHD}" == "YES" ]]; then
+        echo "Not creating symlink because current platform is not macOS, or this isn't a standard install."
         exit 0;
     fi
 fi
