@@ -186,7 +186,7 @@ public:
     DocumentLoader* provisionalDocumentLoader() const { return m_provisionalDocumentLoader.get(); }
     FrameState state() const { return m_state; }
 
-    enum class CanIncludeCurrentDocumentLoader : bool { No, Yes };
+    enum class CanIncludeCurrentDocumentLoader : uint8_t { No, Yes, Always };
     WEBCORE_EXPORT RefPtr<DocumentLoader> loaderForWebsitePolicies(CanIncludeCurrentDocumentLoader = CanIncludeCurrentDocumentLoader::Yes) const;
 
     bool shouldReportResourceTimingToParentFrame() const { return m_shouldReportResourceTimingToParentFrame; };

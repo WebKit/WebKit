@@ -5020,7 +5020,7 @@ RefPtr<DocumentLoader> FrameLoader::loaderForWebsitePolicies(CanIncludeCurrentDo
     auto* loader = policyDocumentLoader();
     if (!loader)
         loader = provisionalDocumentLoader();
-    if (!loader && canIncludeCurrentDocumentLoader == CanIncludeCurrentDocumentLoader::Yes)
+    if ((!loader && canIncludeCurrentDocumentLoader == CanIncludeCurrentDocumentLoader::Yes) || (canIncludeCurrentDocumentLoader == CanIncludeCurrentDocumentLoader::Always))
         loader = documentLoader();
     return loader;
 }
