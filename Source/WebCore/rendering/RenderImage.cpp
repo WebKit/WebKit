@@ -357,9 +357,16 @@ void RenderImage::updateIntrinsicSizeIfNeeded(const LayoutSize& newSize)
 void RenderImage::updateInnerContentRect()
 {
     // Propagate container size to image resource.
-    IntSize containerSize = isDimensionlessSVG()
-        ? flooredIntSize(contentBoxRect().size())
-        : flooredIntSize(replacedContentRect().size());
+    LayoutSize size = isDimensionlessSVG()
+        ? contentBoxRect().size()
+        : replacedContentRect().size();
+    IntSize containerSize = flooredIntSize(size);
+
+    // Flooring fractional sizes (e.g. 100x12.5 → 100x12) changes the aspect
+    // ratio, causing SVG preserveAspectRatio to misalign the viewBox content.
+    // Use the intrinsic size instead, which matches the viewBox exactly.
+    if (size != LayoutSize(containerSize))
+        containerSize = flooredIntSize(intrinsicSize());
 
     if (!containerSize.isEmpty()) {
         URL imageSourceURL;
