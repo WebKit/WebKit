@@ -35,6 +35,10 @@ IGNORE_WARNINGS_BEGIN("cast-align")
 IGNORE_WARNINGS_BEGIN("documentation")
 
 #define SIMDUTF_CPLUSPLUS20 1
+// simdutf 8.2.0's `if consteval` branches in some span overloads (e.g.
+// convert_utf16le_to_utf8_with_replacement) pass char8_t* to scalar helpers
+// that expect char*, which fails to compile in C++23. Force the runtime branch
+// by disabling the C++23 path. Spans remain available via C++20.
 #define SIMDUTF_CPLUSPLUS23 0
 
 #include <wtf/simdutf/simdutf_impl.h>
