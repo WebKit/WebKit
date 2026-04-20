@@ -755,7 +755,7 @@ static bool shouldPerformHTTPSUpgrade(const URL& originalURL, const URL& newURL,
     if (!frame.isMainFrame() || type != CachedResource::Type::MainResource)
         return false;
 
-    bool isSameSiteNavigation = (originalURL.isEmpty() || RegistrableDomain(newURL) == RegistrableDomain(originalURL));
+    bool isSameSiteNavigation = (originalURL.isNull() || RegistrableDomain(newURL) == RegistrableDomain(originalURL));
     const bool isSameSiteBypassEnabled =
         isSameSiteNavigation
         && (advancedPrivacyProtections.contains(AdvancedPrivacyProtections::HTTPSOnlyExplicitlyBypassedForDomain) || frame.loader().shouldNavigateWithHTTP(isSameSiteNavigation) || originalURL.protocolIs("http"_s));

@@ -2112,7 +2112,7 @@ void WebExtensionContext::userGesturePerformed(WebExtensionTab& tab)
         return;
 
     auto currentURL = tab.url();
-    if (currentURL.isEmpty())
+    if (currentURL.isNull())
         return;
 
     switch (permissionState(currentURL, &tab)) {

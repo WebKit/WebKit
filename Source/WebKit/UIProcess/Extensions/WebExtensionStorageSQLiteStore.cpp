@@ -416,7 +416,7 @@ URL WebExtensionStorageSQLiteStore::databaseURL()
         return { };
     }
 
-    ASSERT(!directory().isEmpty());
+    ASSERT(!directory().isNull());
 
     return URL(URL { makeString(directory().string(), "/"_s) }, databaseName);
 }

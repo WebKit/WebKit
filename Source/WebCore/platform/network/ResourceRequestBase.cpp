@@ -112,7 +112,7 @@ bool ResourceRequestBase::isEmpty() const
 {
     updateResourceRequest(); 
     
-    return url().isEmpty();
+    return url().isNull();
 }
 
 bool ResourceRequestBase::isNull() const

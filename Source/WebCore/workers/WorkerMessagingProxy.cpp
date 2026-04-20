@@ -498,7 +498,7 @@ void WorkerMessagingProxy::setAppBadge(std::optional<uint64_t> badge)
     postTaskToLoader([badge = WTF::move(badge), this, protectedThis = Ref { *this }] (auto& context) {
         ASSERT(isMainThread());
 
-        if (m_scriptURL.isEmpty())
+        if (m_scriptURL.isNull())
             return;
 
         auto* document = downcast<Document>(&context);

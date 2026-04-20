@@ -99,7 +99,7 @@ public:
 
     NavigationAction copyWithShouldOpenExternalURLsPolicy(ShouldOpenExternalURLsPolicy) const;
 
-    bool isEmpty() const { return !m_requester || m_requester->url.isEmpty() || m_originalRequest.url().isEmpty(); }
+    bool isNull() const { return !m_requester || m_requester->url.isNull() || m_originalRequest.url().isNull(); }
 
     URL url() const { return m_originalRequest.url(); }
     const ResourceRequest& originalRequest() const LIFETIME_BOUND { return m_originalRequest; }

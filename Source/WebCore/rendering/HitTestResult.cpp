@@ -260,7 +260,7 @@ bool HitTestResult::isSelected() const
 bool HitTestResult::allowsFollowingLink() const
 {
     auto linkURL = absoluteLinkURL();
-    if (linkURL.isEmpty())
+    if (linkURL.isNull())
         return false;
 
     RefPtr innerFrame = innerNodeFrame();
@@ -277,7 +277,7 @@ bool HitTestResult::allowsFollowingLink() const
 bool HitTestResult::allowsFollowingImageURL() const
 {
     auto linkURL = absoluteImageURL();
-    if (linkURL.isEmpty())
+    if (linkURL.isNull())
         return false;
 
     RefPtr innerFrame = innerNodeFrame();
@@ -460,7 +460,7 @@ IntRect HitTestResult::imageRect() const
 bool HitTestResult::hasEntireImage() const
 {
     auto imageURL = absoluteImageURL();
-    if (imageURL.isEmpty() || imageRect().isEmpty())
+    if (imageURL.isNull() || imageRect().isEmpty())
         return false;
 
     RefPtr innerFrame = innerNodeFrame();
@@ -777,7 +777,7 @@ URL HitTestResult::absoluteLinkURL() const
 bool HitTestResult::hasLocalDataForLinkURL() const
 {
     auto linkURL = absoluteLinkURL();
-    if (linkURL.isEmpty())
+    if (linkURL.isNull())
         return false;
 
     if (RefPtr page = m_innerURLElement->document().page())

@@ -369,7 +369,7 @@ void WebResourceLoadObserver::logWebSocketLoading(const URL& targetURL, const UR
 void WebResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Document& document)
 {
     auto& url = document.url();
-    if (url.protocolIsAbout() || url.protocolIsFile() || url.isEmpty())
+    if (url.protocolIsAbout() || url.protocolIsFile() || url.isNull())
         return;
 
     RegistrableDomain topFrameDomain { url };

@@ -159,7 +159,7 @@ bool WebExtensionSQLiteDatabase::openWithAccessType(AccessType accessType, RefPt
     else if (m_url == privateOnDiskDatabaseURL())
         databasePath = ""_s;
     else {
-        ASSERT(!m_url.isEmpty());
+        ASSERT(!m_url.isNull());
 
         databasePath = m_url.fileSystemPath();
 

@@ -2050,7 +2050,7 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
         return handle;
     };
 
-    if (!resourceDirectoryURL.isEmpty()) {
+    if (!resourceDirectoryURL.isNull()) {
         if (!url.string().startsWith(resourceDirectoryURL.string()))
             WEBPAGEPROXY_RELEASE_LOG_ERROR(Sandbox, "maybeInitializeSandboxExtensionHandle: url is not inside resource directory url");
 
@@ -2219,7 +2219,7 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
 
     auto url = request.url();
 #if PLATFORM(COCOA)
-    bool urlIsInvalidButNotEmpty = !url.isValid() && !url.isEmpty();
+    bool urlIsInvalidButNotEmpty = !url.isValid() && !url.isNull();
     if (urlIsInvalidButNotEmpty && WTF::linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ConvertsInvalidURLsToNull)) {
         RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }, request, navigation = protect(navigation)] mutable {
             RefPtr protectedThis = weakThis.get();
@@ -5987,9 +5987,9 @@ SessionState WebPageProxy::sessionState(WTF::Function<bool (WebBackForwardListIt
 #endif
 
     auto& pendingURL = internals().pageLoadState.pendingAPIRequestURL();
-    auto& provisionalURL = !pendingURL.isEmpty() ? pendingURL : internals().pageLoadState.provisionalURL();
+    auto& provisionalURL = !pendingURL.isNull() ? pendingURL : internals().pageLoadState.provisionalURL();
 
-    if (!provisionalURL.isEmpty())
+    if (!provisionalURL.isNull())
         sessionState.provisionalURL = provisionalURL;
 
     sessionState.renderTreeSize = renderTreeSize();
@@ -7673,7 +7673,7 @@ void WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrameShared(Ref<
         // If the main frame in a provisional page is getting a server-side redirect, make sure the
         // committed page's provisional URL is kept up-to-date too.
         RefPtr mainFrame = m_mainFrame;
-        if (frame != mainFrame && !mainFrame->frameLoadState().provisionalURL().isEmpty())
+        if (frame != mainFrame && !mainFrame->frameLoadState().provisionalURL().isNull())
             mainFrame->didReceiveServerRedirectForProvisionalLoad(URL { requestURL });
     }
     frame->didReceiveServerRedirectForProvisionalLoad(WTF::move(requestURL));
@@ -7810,7 +7810,7 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
         // Update current main frame when provisional main frame load fails, because it
         // is updated when provisional main frame load starts or gets redirected.
         RefPtr mainFrame = m_mainFrame;
-        if (&frame != mainFrame && !mainFrame->frameLoadState().provisionalURL().isEmpty())
+        if (&frame != mainFrame && !mainFrame->frameLoadState().provisionalURL().isNull())
             mainFrame->didFailProvisionalLoad();
     }
 
@@ -12472,7 +12472,7 @@ String WebPageProxy::currentURL() const
 {
     auto& url = pageLoadState().activeURL();
     RefPtr currentItem = backForwardList().currentItem();
-    if (url.isEmpty() && currentItem)
+    if (url.isNull() && currentItem)
         return currentItem->url();
     return url.string();
 }
@@ -12480,7 +12480,7 @@ String WebPageProxy::currentURL() const
 URL WebPageProxy::currentResourceDirectoryURL() const
 {
     auto resourceDirectoryURL = internals().pageLoadState.resourceDirectoryURL();
-    if (!resourceDirectoryURL.isEmpty())
+    if (!resourceDirectoryURL.isNull())
         return resourceDirectoryURL;
     if (auto* item = backForwardList().currentItem())
         return item->resourceDirectoryURL();

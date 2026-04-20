@@ -410,7 +410,7 @@ static bool writeURL(WCDataObject *data, const URL& url, String title, bool with
 {
     ASSERT(data);
 
-    if (url.isEmpty())
+    if (url.isNull())
         return false;
 
     if (title.isEmpty()) {
@@ -747,7 +747,7 @@ void Pasteboard::writeURLToDataObject(const URL& kurl, const String& titleStr)
 
 void Pasteboard::write(const PasteboardURL& pasteboardURL)
 {
-    ASSERT(!pasteboardURL.url.isEmpty());
+    ASSERT(!pasteboardURL.url.isNull());
 
     clear();
 

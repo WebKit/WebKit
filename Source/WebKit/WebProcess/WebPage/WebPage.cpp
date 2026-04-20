@@ -2030,7 +2030,7 @@ void WebPage::close()
     m_isClosed = true;
 
     // If there is still no URL, then we never loaded anything in this page, so nothing to report.
-    if (!m_mainFrame->url().isEmpty())
+    if (!m_mainFrame->url().isNull())
         reportUsedFeatures();
 
     if (WebProcess::singleton().injectedBundle())

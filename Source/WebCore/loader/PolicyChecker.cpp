@@ -125,7 +125,7 @@ URLKeepingBlobAlive PolicyChecker::extendBlobURLLifetimeIfNecessary(const Resour
     if (mode != PolicyDecisionMode::Asynchronous || !request.url().protocolIsBlob())
         return { };
 
-    bool haveTriggeringRequester = m_frame->loader().policyDocumentLoader() && !m_frame->loader().policyDocumentLoader()->triggeringAction().isEmpty() && m_frame->loader().policyDocumentLoader()->triggeringAction().requester();
+    bool haveTriggeringRequester = m_frame->loader().policyDocumentLoader() && !m_frame->loader().policyDocumentLoader()->triggeringAction().isNull() && m_frame->loader().policyDocumentLoader()->triggeringAction().requester();
     auto& topOrigin = haveTriggeringRequester ? m_frame->loader().policyDocumentLoader()->triggeringAction().requester()->topOrigin->data() : document.topOrigin().data();
     return { request.url(), topOrigin };
 }
@@ -134,7 +134,7 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
 {
     NavigationAction action = loader->triggeringAction();
     Ref frame = m_frame.get();
-    if (action.isEmpty()) {
+    if (action.isNull()) {
         action = NavigationAction { protect(frame->document()).releaseNonNull(), request, InitiatedByMainFrame::Unknown, loader->isRequestFromClientOrUserInput(), NavigationType::Other, loader->shouldOpenExternalURLsPolicyToPropagate() };
         action.setIsContentRuleListRedirect(loader->isContentRuleListRedirect());
         if (navigationAPIType)
@@ -149,8 +149,8 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
 
     // Don't ask more than once for the same request or if we are loading an empty URL.
     // This avoids confusion on the part of the client.
-    if (equalIgnoringHeaderFields(request, loader->lastCheckedRequest()) || (!request.isNull() && request.url().isEmpty())) {
-        if (!request.isNull() && request.url().isEmpty())
+    if (equalIgnoringHeaderFields(request, loader->lastCheckedRequest()) || (!request.isNull() && request.url().isNull())) {
+        if (!request.isNull() && request.url().isNull())
             POLICYCHECKER_RELEASE_LOG("checkNavigationPolicy: continuing because the URL is empty");
         else
             POLICYCHECKER_RELEASE_LOG("checkNavigationPolicy: continuing because the URL is the same as the last request");
@@ -162,7 +162,7 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
     // We are always willing to show alternate content for unreachable URLs;
     // treat it like a reload so it maintains the right state for b/f list.
     auto& substituteData = loader->substituteData();
-    if (substituteData.isValid() && !substituteData.failingURL().isEmpty()) {
+    if (substituteData.isValid() && !substituteData.failingURL().isNull()) {
         bool shouldContinue = true;
 #if ENABLE(CONTENT_FILTERING)
         if (RefPtr loader = frameLoader->activeDocumentLoader())

@@ -298,7 +298,7 @@ AtomString YouTubePluginReplacement::youTubeURLFromAbsoluteURL(const URL& srcURL
     bool isYouTubeShortenedURL = false;
     String possiblyMalformedQuery;
     URL youTubeURL = processAndCreateYouTubeURL(srcURL, isYouTubeShortenedURL, possiblyMalformedQuery);
-    if (youTubeURL.isEmpty())
+    if (youTubeURL.isNull())
         return srcString;
 
     // Transform the youtubeURL (youtube:VideoID) to iframe embed url which has the format: http://www.youtube.com/embed/VideoID

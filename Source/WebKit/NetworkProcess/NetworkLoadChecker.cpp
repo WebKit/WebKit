@@ -579,7 +579,7 @@ ContentSecurityPolicy* NetworkLoadChecker::contentSecurityPolicy()
         m_contentSecurityPolicy = makeUnique<ContentSecurityPolicy>(URL { protect(origin())->toRawString() }, nullptr, m_networkResourceLoader.get());
         CheckedPtr checkedContentSecurityPolicy = m_contentSecurityPolicy.get();
         checkedContentSecurityPolicy->didReceiveHeaders(*m_cspResponseHeaders, String { m_referrer }, ContentSecurityPolicy::ReportParsingErrors::No);
-        if (!m_documentURL.isEmpty())
+        if (!m_documentURL.isNull())
             checkedContentSecurityPolicy->setDocumentURL(m_documentURL);
     }
     return m_contentSecurityPolicy.get();

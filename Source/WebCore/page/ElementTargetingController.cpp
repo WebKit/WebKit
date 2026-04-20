@@ -689,7 +689,7 @@ static URL urlForElement(const Element& element)
 static void collectMediaAndLinkURLsRecursive(const Element& element, HashSet<URL>& urls)
 {
     auto addURLForElement = [&urls](const Element& element) {
-        if (auto url = urlForElement(element); !url.isEmpty() && !url.protocolIsData() && !url.protocolIsBlob())
+        if (auto url = urlForElement(element); !url.isNull() && !url.protocolIsData() && !url.protocolIsBlob())
             urls.add(WTF::move(url));
     };
 

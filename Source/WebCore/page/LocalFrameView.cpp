@@ -5595,7 +5595,7 @@ void LocalFrameView::updateControlTints()
     // to define when controls get the tint and to call this function when that changes.
     
     // Optimize the common case where we bring a window to the front while it's still empty.
-    if (m_frame->document()->url().isEmpty())
+    if (m_frame->document()->url().isNull())
         return;
 
     // As noted above, this is a "fake" paint, so we should pause counting relevant repainted objects.

@@ -142,7 +142,7 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const ImageWrapper& value)
     Ref image = value.value;
 
     ts << "image"_s;
-    if (!image->url().resolved.isEmpty())
+    if (!image->url().resolved.isNull())
         ts << '(' << image->url().resolved << ')';
     return ts;
 }

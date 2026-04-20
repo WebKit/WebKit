@@ -104,7 +104,7 @@ Expected<Ref<API::Data>, RefPtr<API::Error>> WebExtension::resourceDataForPath(c
     }
 
     auto resourceURL = resourceFileURLForPath(path);
-    if (resourceURL.isEmpty()) {
+    if (resourceURL.isNull()) {
         if (suppressErrors == SuppressNotFoundErrors::No)
             return makeUnexpected(createError(Error::ResourceNotFound, WEB_UI_FORMAT_STRING("Unable to find \"%s\" in the extension’s resources. It is an invalid path.", "WKWebExtensionErrorResourceNotFound description with invalid file path", path.utf8().data())));
         return makeUnexpected(nullptr);

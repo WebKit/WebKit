@@ -135,7 +135,7 @@ static std::optional<uint16_t> getProxyPort(const URL& url)
 
 static std::optional<String> createProxyUrl(const URL &url)
 {
-    if (url.isEmpty() || url.host().isEmpty())
+    if (url.isNull() || url.host().isEmpty())
         return std::nullopt;
 
     if (!url.protocolIsInHTTPFamily() && !protocolIsInSocksFamily(url))

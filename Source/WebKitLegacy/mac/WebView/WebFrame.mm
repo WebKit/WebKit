@@ -2490,9 +2490,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     // Some users of WebKit API incorrectly use "file path as URL" style requests which are invalid.
     // By re-writing those URLs here we technically break the -[WebDataSource initialRequest] API
     // but that is necessary to implement this quirk only at the API boundary.
-    // Note that other users of WebKit API use nil requests or requests with nil URLs or empty URLs, so we
-    // only implement this workaround when the request had a non-nil or non-empty URL.
-    if (!resourceRequest.url().isValid() && !resourceRequest.url().isEmpty())
+    // Note that other users of WebKit API use nil requests or requests with nil URLs, so we
+    // only implement this workaround when the request had a non-nil URL.
+    if (!resourceRequest.url().isValid() && !resourceRequest.url().isNull())
         resourceRequest.setURL([NSURL URLWithString:[@"file:" stringByAppendingString:[[request URL] absoluteString]]]);
 
     coreFrame->loader().load(WebCore::FrameLoadRequest(*coreFrame, WTF::move(resourceRequest)));

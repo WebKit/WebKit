@@ -68,7 +68,7 @@ public:
     PAL::SessionID sessionID() const { return m_data.sourceSession; }
 
     const WebCore::NotificationData& data() const LIFETIME_BOUND { return m_data; }
-    bool isPersistentNotification() const { return !m_data.serviceWorkerRegistrationURL.isEmpty(); }
+    bool isPersistentNotification() const { return !m_data.serviceWorkerRegistrationURL.isNull(); }
 
     API::SecurityOrigin& origin() const { return m_origin; }
 

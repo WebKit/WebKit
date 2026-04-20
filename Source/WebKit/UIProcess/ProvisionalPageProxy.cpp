@@ -146,12 +146,12 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<FrameProcess>
     if (m_isServerRedirect) {
         // FIXME: When <rdar://116203552> is fixed we should not need this case here
         // because main frame redirect messages won't come from the web content process.
-        if (protect(page.preferences())->siteIsolationEnabled() && !m_mainFrame->frameLoadState().provisionalURL().isEmpty())
+        if (protect(page.preferences())->siteIsolationEnabled() && !m_mainFrame->frameLoadState().provisionalURL().isNull())
             m_mainFrame->frameLoadState().didReceiveServerRedirectForProvisionalLoad(URL { m_request.url() });
         else
             m_mainFrame->frameLoadState().didStartProvisionalLoad(URL { m_request.url() });
         page.didReceiveServerRedirectForProvisionalLoadForFrameShared(WTF::move(process), m_mainFrame->frameID(), m_navigationID, WTF::move(m_request), { });
-    } else if (previousMainFrame && !previousMainFrame->provisionalURL().isEmpty() && !m_shouldReuseMainFrame) {
+    } else if (previousMainFrame && !previousMainFrame->provisionalURL().isNull() && !m_shouldReuseMainFrame) {
         // In case of a process swap after response policy, the didStartProvisionalLoad already happened but the new main frame doesn't know about it
         // so we need to tell it so it can update its provisional URL.
         protect(mainFrame())->didStartProvisionalLoad(URL { previousMainFrame->provisionalURL() });
@@ -226,7 +226,7 @@ void ProvisionalPageProxy::cancel()
 {
     // If the provisional load started, then indicate that it failed due to cancellation by calling didFailProvisionalLoadForFrame().
     RefPtr mainFrame = m_mainFrame;
-    if (m_provisionalLoadURL.isEmpty() || !mainFrame)
+    if (m_provisionalLoadURL.isNull() || !mainFrame)
         return;
 
     ASSERT(process().state() == WebProcessProxy::State::Running);

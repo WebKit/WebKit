@@ -394,7 +394,7 @@ ExceptionOr<std::optional<URLPatternResult>> URLPattern::match(ScriptExecutionCo
     String protocol, username, password, hostname, port, pathname, search, hash;
 
     if (URL* inputURL = std::get_if<URL>(&input)) {
-        ASSERT(!inputURL->isEmpty() && inputURL->isValid());
+        ASSERT(inputURL->isValid());
         matchHelperAssignInputsFromURL(*inputURL, protocol, username, password, hostname, port, pathname, search, hash);
         result.inputs = Vector<URLPatternInput> { String { inputURL->string() } };
     } else {

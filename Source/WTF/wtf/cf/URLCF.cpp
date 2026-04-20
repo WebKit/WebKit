@@ -59,8 +59,11 @@ RetainPtr<CFURLRef> URL::createCFURL() const
     if (isNull())
         return nullptr;
 
-    if (isEmpty())
+    if (m_string.isEmpty()) {
+        if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ConvertsInvalidURLsToNull))
+            return nullptr;
         return emptyCFURL();
+    }
 
     if (!isValid() && linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ConvertsInvalidURLsToNull))
         return nullptr;

@@ -212,7 +212,7 @@ static long writeURLForTypes(const Vector<String>& types, const String& pasteboa
 {
     auto newChangeCount = platformStrategies()->pasteboardStrategy()->setTypes(types, pasteboardName, context);
     
-    ASSERT(!pasteboardURL.url.isEmpty());
+    ASSERT(!pasteboardURL.url.isNull());
     
     RetainPtr nsURL = pasteboardURL.url.createNSURL();
     RetainPtr userVisibleString = pasteboardURL.userVisibleForm.createNSString();

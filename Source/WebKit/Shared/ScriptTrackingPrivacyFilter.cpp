@@ -94,7 +94,7 @@ bool ScriptTrackingPrivacyFilter::matches(const URL& url, const WebCore::Securit
 
 bool ScriptTrackingPrivacyFilter::shouldAllowAccess(const URL& url, const WebCore::SecurityOrigin& topOrigin, WebCore::ScriptTrackingPrivacyCategory category)
 {
-    if (url.isEmpty())
+    if (url.isNull())
         return false;
 
 #if PLATFORM(COCOA)
@@ -111,7 +111,7 @@ bool ScriptTrackingPrivacyFilter::shouldAllowAccess(const URL& url, const WebCor
 
 bool ScriptTrackingPrivacyFilter::shouldBlockRequest(const URL& url, const WebCore::SecurityOrigin& topOrigin)
 {
-    if (url.isEmpty())
+    if (url.isNull())
         return true;
 
 #if PLATFORM(COCOA)

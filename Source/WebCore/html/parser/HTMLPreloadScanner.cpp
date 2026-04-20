@@ -512,7 +512,7 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<Pr
         }
         if (tagId == TagId::Base) {
             // The first <base> element is the one that wins.
-            if (!m_predictedBaseElementURL.isEmpty())
+            if (!m_predictedBaseElementURL.isNull())
                 return;
             updatePredictedBaseURL(token, document.settings().shouldRestrictBaseURLSchemes());
             return;
@@ -536,7 +536,7 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<Pr
 
 void TokenPreloadScanner::updatePredictedBaseURL(const HTMLToken& token, bool shouldRestrictBaseURLSchemes)
 {
-    ASSERT(m_predictedBaseElementURL.isEmpty());
+    ASSERT(m_predictedBaseElementURL.isNull());
     static constexpr auto hrefAsUTF16 = std::to_array<char16_t>({ 'h', 'r', 'e', 'f' });
     auto* hrefAttribute = findAttribute(token.attributes(), hrefAsUTF16);
     if (!hrefAttribute)
@@ -564,7 +564,7 @@ void HTMLPreloadScanner::scan(HTMLResourcePreloader& preloader, Document& docume
     const URL& startingBaseElementURL = document.baseElementURL();
 
     // When we start scanning, our best prediction of the baseElementURL is the real one!
-    if (!startingBaseElementURL.isEmpty())
+    if (!startingBaseElementURL.isNull())
         m_scanner.setPredictedBaseElementURL(startingBaseElementURL);
 
     PreloadRequestStream requests;

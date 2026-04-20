@@ -144,7 +144,7 @@ void PrivateClickMeasurementManager::getTokenPublicKey(PrivateClickMeasurement&&
             return;
     }
 
-    if (tokenPublicKeyURL.isEmpty() || !tokenPublicKeyURL.isValid())
+    if (!tokenPublicKeyURL.isValid())
         return;
 
     if (debugModeEnabled())
@@ -193,7 +193,7 @@ void PrivateClickMeasurementManager::getTokenPublicKey(AttributionTriggerData&& 
             return;
     }
 
-    if (tokenPublicKeyURL.isEmpty() || !tokenPublicKeyURL.isValid())
+    if (!tokenPublicKeyURL.isValid())
         return;
 
     if (debugModeEnabled())
@@ -266,7 +266,7 @@ void PrivateClickMeasurementManager::getSignedUnlinkableTokenForSource(PrivateCl
     URL tokenSignatureURL;
     configureForTokenSigning(pcmDataCarried, tokenSignatureURL, measurement.tokenSignatureURL());
 
-    if (tokenSignatureURL.isEmpty() || !tokenSignatureURL.isValid())
+    if (!tokenSignatureURL.isValid())
         return;
 
     RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire a unlinkable token signing request for the click source.");
@@ -313,7 +313,7 @@ void PrivateClickMeasurementManager::getSignedUnlinkableTokenForDestination(Sour
     URL tokenSignatureURL;
     configureForTokenSigning(pcmDataCarried, tokenSignatureURL, attributionTriggerData.tokenSignatureURL());
 
-    if (tokenSignatureURL.isEmpty() || !tokenSignatureURL.isValid())
+    if (!tokenSignatureURL.isValid())
         return;
 
     RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire a unlinkable token signing request for the click destination.");
@@ -587,7 +587,7 @@ void PrivateClickMeasurementManager::fireConversionRequestImpl(const PrivateClic
         attributionURL = m_attributionReportTestConfig ? m_attributionReportTestConfig->attributionReportClickDestinationURL : attribution.attributionReportClickDestinationURL();
     }
 
-    if (attributionURL.isEmpty() || !attributionURL.isValid())
+    if (!attributionURL.isValid())
         return;
 
     auto pcmDataCarried = debugModeEnabled() ? PrivateClickMeasurement::PcmDataCarried::PersonallyIdentifiable : PrivateClickMeasurement::PcmDataCarried::NonPersonallyIdentifiable;
@@ -718,14 +718,14 @@ void PrivateClickMeasurementManager::toStringForTesting(CompletionHandler<void(S
 
 void PrivateClickMeasurementManager::setTokenPublicKeyURLForTesting(URL&& testURL)
 {
-    if (testURL.isEmpty())
+    if (testURL.isNull())
         return;
     m_tokenPublicKeyURLForTesting = WTF::move(testURL);
 }
 
 void PrivateClickMeasurementManager::setTokenSignatureURLForTesting(URL&& testURL)
 {
-    if (testURL.isEmpty())
+    if (testURL.isNull())
         m_tokenSignatureURLForTesting = { };
     else
         m_tokenSignatureURLForTesting = WTF::move(testURL);
@@ -733,7 +733,7 @@ void PrivateClickMeasurementManager::setTokenSignatureURLForTesting(URL&& testUR
 
 void PrivateClickMeasurementManager::setAttributionReportURLsForTesting(URL&& sourceURL, URL&& destinationURL)
 {
-    if (sourceURL.isEmpty() || destinationURL.isEmpty())
+    if (sourceURL.isNull() || destinationURL.isNull())
         m_attributionReportTestConfig = std::nullopt;
     else
         m_attributionReportTestConfig = AttributionReportTestConfig { WTF::move(sourceURL), WTF::move(destinationURL) };

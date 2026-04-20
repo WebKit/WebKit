@@ -707,7 +707,7 @@ Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, 
     // See fast/dom/early-frame-url.html
     // and fast/dom/location-new-window-no-crash.html, respectively.
     // FIXME: Can/should we unify this behavior?
-    if ((frame && frame->ownerElement()) || !url.isEmpty())
+    if ((frame && frame->ownerElement()) || !url.isNull())
         setURL(URL { url });
 
     if (!frame)
@@ -2048,7 +2048,7 @@ void Document::setReadyState(ReadyState readyState)
             if (auto eventTiming = documentEventTimingFromNavigationTiming())
                 eventTiming->domLoading = now;
             // We do this here instead of in the Document constructor because monotonicTimestamp() is 0 when the Document constructor is running.
-            if (!url().isEmpty())
+            if (!url().isNull())
                 WTFBeginSignpostWithTimeDelta(this, NavigationAndPaintTiming, -Seconds(monotonicTimestamp()), "Loading %" PRIVATE_LOG_STRING " | isMainFrame: %d", url().string().utf8().data(), frame() && frame()->isMainFrame());
             WTFEmitSignpost(this, NavigationAndPaintTiming, "domLoading");
         }
@@ -4581,7 +4581,7 @@ String Document::documentURI() const
 
 void Document::setURL(URL&& url)
 {
-    URL newURL = url.isEmpty() ? aboutBlankURL() : WTF::move(url);
+    URL newURL = url.isNull() ? aboutBlankURL() : WTF::move(url);
     if (newURL == m_url)
         return;
 
@@ -4612,7 +4612,7 @@ void Document::setURL(URL&& url)
 const URL& Document::urlForBindings()
 {
     auto shouldAdjustURL = [this] {
-        if (m_url.url().isEmpty() || !loader() || !isTopDocument() || !frame())
+        if (m_url.url().isNull() || !loader() || !isTopDocument() || !frame())
             return false;
 
         Ref protectedThis { *this };
@@ -4625,7 +4625,7 @@ const URL& Document::urlForBindings()
             return false;
 
         auto preNavigationURL = URL { documentLoader->originalRequest().httpReferrer() };
-        if (preNavigationURL.isEmpty() || RegistrableDomain { preNavigationURL }.matches(securityOrigin().data())) {
+        if (preNavigationURL.isNull() || RegistrableDomain { preNavigationURL }.matches(securityOrigin().data())) {
             // Only apply the protections below following a cross-origin navigation.
             return false;
         }
@@ -4655,7 +4655,7 @@ const URL& Document::urlForBindings()
             if (!m_hasLoadedThirdPartyScript)
                 return false;
 
-            if (auto sourceURL = currentSourceURL(); !sourceURL.isEmpty()) {
+            if (auto sourceURL = currentSourceURL(); !sourceURL.isNull()) {
                 if (RegistrableDomain { sourceURL }.matches(securityOrigin().data()))
                     return false;
 
@@ -4683,7 +4683,7 @@ const URL& Document::urlForBindings()
     if (shouldAdjustURL)
         return m_adjustedURL;
 
-    return m_url.url().isEmpty() ? aboutBlankURL() : m_url.url();
+    return m_url.url().isNull() ? aboutBlankURL() : m_url.url();
 }
 
 URL Document::adjustedURL() const
@@ -4725,9 +4725,9 @@ void Document::updateBaseURL()
     // DOM 3 Core: When the Document supports the feature "HTML" [DOM Level 2 HTML], the base URI is computed using
     // first the value of the href attribute of the HTML BASE element if any, and the value of the documentURI attribute
     // from the Document interface otherwise.
-    if (!m_baseElementURL.isEmpty())
+    if (!m_baseElementURL.isNull())
         m_baseURL = m_baseElementURL;
-    else if (!m_baseURLOverride.isEmpty())
+    else if (!m_baseURLOverride.isNull())
         m_baseURL = m_baseURLOverride;
     else
         m_baseURL = fallbackBaseURL();
@@ -4896,12 +4896,12 @@ void Document::processBaseElement()
     if (!href.isNull())
         baseElementURL = completeURL(href, fallbackBaseURL());
     if (m_baseElementURL != baseElementURL) {
-        if (settings().shouldRestrictBaseURLSchemes() && !baseElementURL.isEmpty() && !baseElementURL.isValid()) {
+        if (settings().shouldRestrictBaseURLSchemes() && !baseElementURL.isNull() && !baseElementURL.isValid()) {
             m_baseElementURL = { };
             addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Blocked setting "_s, baseElementURL.stringCenterEllipsizedToLength(), " as the base URL because it is not a valid URL."_s));
         } else if (!protect(contentSecurityPolicy())->allowBaseURI(baseElementURL))
             m_baseElementURL = { };
-        else if (settings().shouldRestrictBaseURLSchemes() && !baseElementURL.isEmpty() && !SecurityPolicy::isBaseURLSchemeAllowed(baseElementURL)) {
+        else if (settings().shouldRestrictBaseURLSchemes() && !baseElementURL.isNull() && !SecurityPolicy::isBaseURLSchemeAllowed(baseElementURL)) {
             m_baseElementURL = { };
             addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Blocked setting "_s, baseElementURL.stringCenterEllipsizedToLength(), " as the base URL because it does not have an allowed scheme."_s));
         } else
@@ -7233,7 +7233,7 @@ ExceptionOr<String> Document::cookie()
         return Exception { ExceptionCode::SecurityError };
 
     URL cookieURL = this->cookieURL();
-    if (cookieURL.isEmpty())
+    if (cookieURL.isNull())
         return String();
 
     if (!isDOMCookieCacheValid() && page())
@@ -7254,7 +7254,7 @@ ExceptionOr<void> Document::setCookie(const String& value)
         return Exception { ExceptionCode::SecurityError };
 
     URL cookieURL = this->cookieURL();
-    if (cookieURL.isEmpty())
+    if (cookieURL.isNull())
         return { };
 
     invalidateDOMCookieCache();
@@ -7419,7 +7419,7 @@ void Document::setDecoder(RefPtr<TextResourceDecoder>&& decoder)
 
 URL Document::baseURLForComplete(const URL& baseURLOverride) const
 {
-    return ((baseURLOverride.isEmpty() || baseURLOverride == aboutBlankURL()) && parentDocument()) ? parentDocument()->baseURL() : baseURLOverride;
+    return ((baseURLOverride.isNull() || baseURLOverride == aboutBlankURL()) && parentDocument()) ? parentDocument()->baseURL() : baseURLOverride;
 }
 
 URL Document::completeURL(const String& url, const URL& baseURLOverride, ForceUTF8 forceUTF8) const
@@ -10716,7 +10716,7 @@ void Document::wasLoadedWithDataTransferFromPrevalentResource()
 void Document::downgradeReferrerToRegistrableDomain()
 {
     URL referrerURL { referrer() };
-    if (referrerURL.isEmpty())
+    if (!referrerURL.isValid())
         return;
 
     auto domainString = RegistrableDomain { referrerURL }.string();

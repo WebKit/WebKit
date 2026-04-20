@@ -2572,7 +2572,7 @@ void WebPage::performActionOnElement(uint32_t action, const String& authorizatio
             URL urlToCopy;
             String titleToCopy;
             if (RefPtr linkElement = containingLinkAnchorElement(*element)) {
-                if (auto url = linkElement->href(); !url.isEmpty() && !url.protocolIsJavaScript()) {
+                if (auto url = linkElement->href(); !url.isNull() && !url.protocolIsJavaScript()) {
                     urlToCopy = url;
                     titleToCopy = linkElement->attributeWithoutSynchronization(HTMLNames::titleAttr);
                     if (!titleToCopy.length())

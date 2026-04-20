@@ -1323,7 +1323,7 @@ struct WKWebsiteData {
     WebCore::NotificationData notificationData = constNotificationData;
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
-    if (!notificationData.navigateURL.isEmpty() && _websiteDataStore->configuration().isDeclarativeWebPushEnabled()) {
+    if (!notificationData.navigateURL.isNull() && _websiteDataStore->configuration().isDeclarativeWebPushEnabled()) {
         RELEASE_LOG(Push, "Sending persistent notification clicked with default action URL. Requesting navigation to it now.");
 
         _websiteDataStore->client().navigationToNotificationActionURL(notificationData.navigateURL);

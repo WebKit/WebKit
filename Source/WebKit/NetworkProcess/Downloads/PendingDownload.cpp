@@ -217,7 +217,7 @@ uint64_t PendingDownload::messageSenderDestinationID() const
 URL PendingDownload::mainDocumentURL() const
 {
     auto firstParty = m_networkLoad->currentRequest().firstPartyForCookies();
-    if (!firstParty.isEmpty())
+    if (!firstParty.isNull())
         return firstParty;
 
     RefPtr topOrigin = m_networkLoad->parameters().topOrigin;

@@ -194,8 +194,8 @@ void MediaPlayerPrivateWebM::setPreload(MediaPlayer::Preload preload)
 void MediaPlayerPrivateWebM::doPreload()
 {
     assertIsMainThread();
-    if (m_assetURL.isEmpty() || m_networkState >= MediaPlayerNetworkState::FormatError) {
-        INFO_LOG(LOGIDENTIFIER, " - hasURL = ", static_cast<int>(m_assetURL.isEmpty()), " networkState = ", static_cast<int>(m_networkState.load()));
+    if (m_assetURL.isNull() || m_networkState >= MediaPlayerNetworkState::FormatError) {
+        INFO_LOG(LOGIDENTIFIER, " - hasURL = ", static_cast<int>(m_assetURL.isNull()), " networkState = ", static_cast<int>(m_networkState.load()));
         return;
     }
 

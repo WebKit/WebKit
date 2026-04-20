@@ -967,7 +967,7 @@ void WebExtensionAPITabs::captureVisibleTab(WebPageProxyIdentifier webPageProxyI
             return;
         }
 
-        if (result.value().isEmpty()) {
+        if (result.value().isNull()) {
             // This is a safer cpp false positive (rdar://163760990).
             SUPPRESS_UNCOUNTED_ARG callback->call(JSValueMakeString(callback->globalContext(), toJSString(emptyDataURLValue).get()));
             return;

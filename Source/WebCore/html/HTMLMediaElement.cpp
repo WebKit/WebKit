@@ -1924,7 +1924,7 @@ static VideoRendererPreferences videoRendererPreferences(const Settings& setting
 
 void HTMLMediaElement::loadResource(const URL& initialURL, const ContentType& initialContentType)
 {
-    ASSERT(initialURL.isEmpty() || isSafeToLoadURL(initialURL, InvalidURLAction::Complain));
+    ASSERT(initialURL.isNull() || isSafeToLoadURL(initialURL, InvalidURLAction::Complain));
 
     auto logSiteIdentifier = LOGIDENTIFIER;
     INFO_LOG(logSiteIdentifier, initialURL, initialContentType);
@@ -1954,7 +1954,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, const ContentType& in
         return;
     }
 #elif USE(GSTREAMER)
-    if (!url.isEmpty() && !frame->loader().willLoadMediaElementURL(url, *this)) {
+    if (!url.isNull() && !frame->loader().willLoadMediaElementURL(url, *this)) {
         mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
         return;
     }
@@ -2098,7 +2098,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, const ContentType& in
             protectedThis->mediaPlayerRenderingModeChanged();
     };
 
-    if (needsContentTypeToPlay() && !url.isEmpty()) {
+    if (needsContentTypeToPlay() && !url.isNull()) {
         if (contentType.isEmpty() && url.protocolIsData())
             contentType = ContentType(mimeTypeFromDataURL(url.string()));
         else {
@@ -7247,7 +7247,7 @@ bool HTMLMediaElement::hasWirelessPlaybackTargetAlternative() const
         return false;
     for (Ref source : childrenOfType<HTMLSourceElement>(*this)) {
         auto mediaURL = source->getNonEmptyURLAttribute(srcAttr);
-        bool maybeSuitable = !mediaURL.isEmpty();
+        bool maybeSuitable = !mediaURL.isNull();
 #if ENABLE(MEDIA_SOURCE)
         maybeSuitable &= !mediaURL.protocolIs(mediaSourceBlobProtocol);
 #endif
@@ -8560,7 +8560,7 @@ Vector<Ref<PlatformTextTrack>> HTMLMediaElement::outOfBandTrackSources()
     Vector<Ref<PlatformTextTrack>> outOfBandTrackSources;
     for (Ref trackElement : childrenOfType<HTMLTrackElement>(*this)) {
         URL url = trackElement->getNonEmptyURLAttribute(srcAttr);
-        if (url.isEmpty())
+        if (url.isNull())
             continue;
 
         if (!isAllowedToLoadMediaURL(*this, url, trackElement->isInUserAgentShadowTree()))

@@ -59,7 +59,7 @@ static SecurityOriginData resolveOriginForRealm(LocalFrame& localFrame)
     if (RefPtr document = localFrame.document())
         return document->securityOrigin().data();
 
-    if (RefPtr loader = localFrame.loader().activeDocumentLoader(); loader && !loader->url().isEmpty())
+    if (RefPtr loader = localFrame.loader().activeDocumentLoader(); loader && !loader->url().isNull())
         return SecurityOriginData::fromURL(loader->url());
 
     return SecurityOriginData::createOpaque();

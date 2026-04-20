@@ -845,7 +845,7 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
 
 WebExtensionContext::PermissionState WebExtensionContext::permissionState(const URL& url, WebExtensionTab* tab, OptionSet<PermissionStateOptions> options)
 {
-    if (url.isEmpty())
+    if (url.isNull())
         return PermissionState::Unknown;
 
     if (isURLForThisExtension(url))
@@ -1087,7 +1087,7 @@ void WebExtensionContext::setPermissionState(PermissionState state, const String
 
 void WebExtensionContext::setPermissionState(PermissionState state, const URL& url, WallTime expirationDate)
 {
-    ASSERT(!url.isEmpty());
+    ASSERT(!url.isNull());
     ASSERT(!expirationDate.isNaN());
 
     RefPtr pattern = WebExtensionMatchPattern::getOrCreate(url);

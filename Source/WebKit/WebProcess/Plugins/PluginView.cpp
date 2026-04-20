@@ -415,7 +415,7 @@ void PluginView::initializePlugin()
     Ref plugin = m_plugin;
     plugin->setView(*this);
 
-    if (!m_shouldUseManualLoader && !m_mainResourceURL.isEmpty())
+    if (!m_shouldUseManualLoader && !m_mainResourceURL.isNull())
         loadMainResource();
 
     m_isInitialized = true;

@@ -56,7 +56,7 @@ Ref<LoadableTextTrack> LoadableTextTrack::create(HTMLTrackElement& track, const 
 
 void LoadableTextTrack::scheduleLoad(const URL& url)
 {
-    ASSERT(!url.isEmpty());
+    ASSERT(!url.isNull());
 
     if (url == m_url)
         return;

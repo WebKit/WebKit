@@ -965,13 +965,13 @@ void DragController::prepareForDragStart(LocalFrame& source, OptionSet<DragSourc
 
     RefPtr image = getImage(element);
     auto imageURL = hitTestResult->absoluteImageURL();
-    if (actionMask.contains(DragSourceAction::Image) && !imageURL.isEmpty() && image && !image->isNull()) {
+    if (actionMask.contains(DragSourceAction::Image) && !imageURL.isNull() && image && !image->isNull()) {
         editor->writeImageToPasteboard(pasteboard, element, imageURL, { });
         return;
     }
 
     auto linkURL = hitTestResult->absoluteLinkURL();
-    if (actionMask.contains(DragSourceAction::Link) && !linkURL.isEmpty() && protect(source.document()->securityOrigin())->canDisplay(linkURL, OriginAccessPatternsForWebProcess::singleton()))
+    if (actionMask.contains(DragSourceAction::Link) && !linkURL.isNull() && protect(source.document()->securityOrigin())->canDisplay(linkURL, OriginAccessPatternsForWebProcess::singleton()))
         editor->copyURL(linkURL, hitTestResult->textContent().simplifyWhiteSpace(deprecatedIsSpaceOrNewline), pasteboard);
 #else
     // FIXME: Make this work on Windows by implementing Editor::writeSelectionToPasteboard and Editor::writeImageToPasteboard.
@@ -1037,12 +1037,12 @@ bool DragController::startDrag(LocalFrame& src, const DragState& state, OptionSe
         // We allow DHTML/JS to set the drag image, even if its a link, image or text we're dragging.
         // This is in the spirit of the IE API, which allows overriding of pasteboard data and DragOp.
         if (dragImage) {
-            dragLoc = dragLocForDHTMLDrag(mouseDraggedPoint, dragOrigin, dragImageOffset, !linkURL.isEmpty());
+            dragLoc = dragLocForDHTMLDrag(mouseDraggedPoint, dragOrigin, dragImageOffset, !linkURL.isNull());
             m_dragOffset = dragImageOffset;
         }
     }
 
-    if (state.type == DragSourceAction::Selection || !imageURL.isEmpty() || !linkURL.isEmpty()) {
+    if (state.type == DragSourceAction::Selection || !imageURL.isNull() || !linkURL.isNull()) {
         // Selection, image, and link drags receive a default set of allowed drag operations that
         // follows from:
         // http://trac.webkit.org/browser/trunk/WebKit/mac/WebView/WebHTMLView.mm?rev=48526#L3430
@@ -1135,7 +1135,7 @@ bool DragController::startDrag(LocalFrame& src, const DragState& state, OptionSe
         return false;
     }
 
-    if (!imageURL.isEmpty() && image && !image->isNull() && m_dragSourceAction.contains(DragSourceAction::Image)) {
+    if (!imageURL.isNull() && image && !image->isNull() && m_dragSourceAction.contains(DragSourceAction::Image)) {
         // We shouldn't be starting a drag for an image that can't provide an extension.
         // This is an early detection for problems encountered later upon drop.
         ASSERT(!image->filenameExtension().isEmpty());
@@ -1151,7 +1151,7 @@ bool DragController::startDrag(LocalFrame& src, const DragState& state, OptionSe
             if (element->isContentRichlyEditable())
                 selectElement(element);
             if (!attachmentInfo)
-                declareAndWriteDragImage(dataTransfer, element, !linkURL.isEmpty() ? linkURL : imageURL, hitTestResult->altDisplayString());
+                declareAndWriteDragImage(dataTransfer, element, !linkURL.isNull() ? linkURL : imageURL, hitTestResult->altDisplayString());
         }
 
         client().willPerformDragSourceAction(DragSourceAction::Image, dragOrigin, dataTransfer);
@@ -1166,7 +1166,7 @@ bool DragController::startDrag(LocalFrame& src, const DragState& state, OptionSe
         return true;
     }
 
-    if (!linkURL.isEmpty() && m_dragSourceAction.contains(DragSourceAction::Link)) {
+    if (!linkURL.isNull() && m_dragSourceAction.contains(DragSourceAction::Link)) {
         PasteboardWriterData pasteboardWriterData;
 
         String textContentWithSimplifiedWhiteSpace = hitTestResult->textContent().simplifyWhiteSpace(deprecatedIsSpaceOrNewline);

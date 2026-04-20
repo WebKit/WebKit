@@ -543,7 +543,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
         // the blob. Deriving from the URL is correct since the main frame IS the top frame.
         bool shouldUseBlobRequesterTopOrigin = request.url().protocolIsBlob()
             && resourceLoader.documentLoader()
-            && !resourceLoader.documentLoader()->triggeringAction().isEmpty()
+            && !resourceLoader.documentLoader()->triggeringAction().isNull()
             && resourceLoader.documentLoader()->triggeringAction().requester()
             && resourceLoader.documentLoader()->triggeringAction().type() != NavigationType::BackForward;
         if (shouldUseBlobRequesterTopOrigin)

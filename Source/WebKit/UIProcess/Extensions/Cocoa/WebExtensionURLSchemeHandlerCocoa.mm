@@ -66,7 +66,7 @@ void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLS
         URL frameDocumentURL = task->frameInfo().request().url();
         URL requestURL = task->request().url();
 
-        if (task->frameInfo().request().url().isEmpty() || task->frameInfo().request().url().isAboutBlank()) {
+        if (task->frameInfo().request().url().isNull() || task->frameInfo().request().url().isAboutBlank()) {
             frameDocumentURL = task->request().firstPartyForCookies();
 
             if (!task->frameInfo().isMainFrame()) {

@@ -226,10 +226,10 @@ std::optional<String> customTrackerBlockingMessageForConsole(const ContentRuleLi
         return std::nullopt;
 
     auto trackerBlockingMessage = "Blocked connection to known tracker"_s;
-    if (!requestURL.isEmpty() && !documentURL.isEmpty())
+    if (!requestURL.isNull() && !documentURL.isNull())
         return makeString(trackerBlockingMessage, ' ', requestURL.string(), " in frame displaying "_s, documentURL.string());
 
-    if (!requestURL.isEmpty())
+    if (!requestURL.isNull())
         return makeString(trackerBlockingMessage, ' ', requestURL.string());
 
     return trackerBlockingMessage;
@@ -494,7 +494,7 @@ void applyResultsToRequest(ContentRuleListResults&& results, Page* page, Resourc
     for (auto& action : results.summary.modifyHeadersActions)
         action.applyToRequest(request, headerNameToFirstOperationApplied);
 
-    if (redirectURL.isEmpty()) {
+    if (redirectURL.isNull()) {
         for (auto& pair : results.summary.redirectActions)
             pair.first.applyToRequest(request, pair.second);
     } else

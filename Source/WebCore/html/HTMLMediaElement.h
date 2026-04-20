@@ -1053,7 +1053,7 @@ private:
     bool isBlocked() const;
     bool isBlockedOnMediaController() const;
     void setCurrentSrc(const URL&);
-    bool hasCurrentSrc() const override { return !m_currentSrc.isEmpty(); }
+    bool hasCurrentSrc() const override { return !m_currentSrc.isNull(); }
     bool isLiveStream() const override { return movieLoadType() == MovieLoadType::LiveStream; }
 
     void updateSleepDisabling();

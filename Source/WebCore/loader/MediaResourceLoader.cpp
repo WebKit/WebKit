@@ -103,7 +103,7 @@ void MediaResourceLoader::sendH2Ping(const URL& url, CompletionHandler<void(Expe
 
 static LoadedFromOpaqueSource computeLoadedFromOpaqueSource(const Document& document, const HashSet<URL>& nonOpaqueLoadURLs, const URL& url, const std::optional<LoadedFromOpaqueSource> loadedFromOpaqueSource)
 {
-    if (!document.settings().enableOpaqueLoadingForMedia() || url.isEmpty())
+    if (!document.settings().enableOpaqueLoadingForMedia() || url.isNull())
         return LoadedFromOpaqueSource::No;
 
     if (loadedFromOpaqueSource.value_or(LoadedFromOpaqueSource::No) == LoadedFromOpaqueSource::No)
@@ -120,7 +120,7 @@ RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(ResourceReque
     if (!document)
         return nullptr;
 
-    if (!m_loadedFromOpaqueSource && !request.url().isEmpty())
+    if (!m_loadedFromOpaqueSource && !request.url().isNull())
         m_nonOpaqueLoadURLs.add(request.url());
 
     DataBufferingPolicy bufferingPolicy = options & LoadOption::BufferData ? DataBufferingPolicy::BufferData : DataBufferingPolicy::DoNotBufferData;
@@ -269,7 +269,7 @@ bool MediaResourceLoader::verifyMediaResponse(const URL& requestURL, const Resou
 
 void MediaResourceLoader::redirectReceived(const URL& url)
 {
-    ASSERT(!url.isEmpty());
+    ASSERT(!url.isNull());
     if (!m_loadedFromOpaqueSource)
         m_nonOpaqueLoadURLs.add(url);
 }

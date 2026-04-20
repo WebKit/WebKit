@@ -3563,12 +3563,12 @@ static RetainPtr<NSMenuItem> createShareMenuItem(const WebCore::HitTestResult& h
 {
     auto items = adoptNS([[NSMutableArray alloc] init]);
 
-    if (!hitTestResult.absoluteLinkURL().isEmpty()) {
+    if (!hitTestResult.absoluteLinkURL().isNull()) {
         RetainPtr absoluteLinkURL = hitTestResult.absoluteLinkURL().createNSURL();
         [items addObject:absoluteLinkURL.get()];
     }
 
-    if (!hitTestResult.absoluteMediaURL().isEmpty() && hitTestResult.isDownloadableMedia()) {
+    if (!hitTestResult.absoluteMediaURL().isNull() && hitTestResult.isDownloadableMedia()) {
         RetainPtr downloadableMediaURL = hitTestResult.absoluteMediaURL().createNSURL();
         [items addObject:downloadableMediaURL.get()];
     }
@@ -4367,7 +4367,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             return nil; 
 
         const URL& imageURL = page->dragController().draggingImageURL();
-        if (!imageURL.isEmpty())
+        if (!imageURL.isNull())
             draggingElementURL = imageURL.createNSURL();
 
         wrapper = [[self _dataSource] _fileWrapperForURL:draggingElementURL.get()];

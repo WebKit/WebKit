@@ -90,7 +90,7 @@ static void removeStyleString(const String& string)
 
 UserStyleSheet::UserStyleSheet(const String& source, const URL& url, Vector<String>&& allowlist, Vector<String>&& blocklist, UserContentInjectedFrames injectedFrames, UserContentMatchParentFrame matchParentFrame, UserStyleLevel level, std::optional<PageIdentifier> pageID)
     : m_source(internedStyleString(source))
-    , m_url(url.isEmpty() ? generateUserStyleUniqueURL() : url)
+    , m_url(url.isNull() ? generateUserStyleUniqueURL() : url)
     , m_allowlist(WTF::move(allowlist))
     , m_blocklist(WTF::move(blocklist))
     , m_injectedFrames(injectedFrames)

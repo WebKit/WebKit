@@ -5818,7 +5818,7 @@ void Page::flushDeferredIntersectionObservations()
 
 bool Page::reportScriptTrackingPrivacy(const URL& url, ScriptTrackingPrivacyCategory category)
 {
-    return !url.isEmpty() && m_scriptTrackingPrivacyReports.add({ url, category }).isNewEntry;
+    return !url.isNull() && m_scriptTrackingPrivacyReports.add({ url, category }).isNewEntry;
 }
 
 bool Page::shouldAllowScriptAccess(const URL& url, const SecurityOrigin& topOrigin, ScriptTrackingPrivacyCategory category) const

@@ -90,7 +90,7 @@ static String consoleMessageForViolation(const ContentSecurityPolicyDirective& v
         name = ContentSecurityPolicyDirectiveNames::styleSrc;
 
     return makeString(violatedDirective.directiveList().isReportOnly() ? "[Report Only] "_s : ""_s,
-        prefix, blockedURL.isEmpty() ? ""_s : " "_s, blockedURL.stringCenterEllipsizedToLength(), " because "_s, subject,
+        prefix, blockedURL.isNull() ? ""_s : " "_s, blockedURL.stringCenterEllipsizedToLength(), " because "_s, subject,
         isDefaultSrc ? " appears in neither the "_s : " does not appear in the "_s,
         name,
         isDefaultSrc ? " directive nor the default-src directive of the Content Security Policy."_s : " directive of the Content Security Policy."_s);
@@ -492,9 +492,9 @@ bool ContentSecurityPolicy::allowNonParserInsertedScripts(const URL& sourceURL, 
 
     auto handleViolatedDirective = [checkedThis = CheckedRef { *this }, &sourceURL, &contextURL, &contextLine, &scriptContent] (const ContentSecurityPolicyDirective& violatedDirective) {
         TextPosition sourcePosition(contextLine, OrdinalNumber());
-        const auto message = sourceURL.isEmpty() ? "Refused to execute a script"_s : "Refused to load"_s;
+        const auto message = sourceURL.isNull() ? "Refused to execute a script"_s : "Refused to load"_s;
         String consoleMessage = consoleMessageForViolation(violatedDirective, sourceURL, message);
-        checkedThis->reportViolation(violatedDirective, sourceURL.isEmpty() ? "inline"_s : sourceURL.string(), consoleMessage, contextURL.string(), scriptContent, sourcePosition);
+        checkedThis->reportViolation(violatedDirective, sourceURL.isNull() ? "inline"_s : sourceURL.string(), consoleMessage, contextURL.string(), scriptContent, sourcePosition);
     };
 
     auto subResourceIntegrityDigests = parseSubResourceIntegrityIntoDigests(subResourceIntegrity);

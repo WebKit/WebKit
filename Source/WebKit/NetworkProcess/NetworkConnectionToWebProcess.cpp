@@ -960,8 +960,8 @@ void NetworkConnectionToWebProcess::setRawCookie(const URL& firstParty, const UR
 
 void NetworkConnectionToWebProcess::deleteCookie(const URL& firstParty, const URL& url, const String& cookieName, CompletionHandler<void()>&& completionHandler)
 {
-    MESSAGE_CHECK_COMPLETION(!firstParty.isEmpty() && firstParty.isValid(), completionHandler());
-    MESSAGE_CHECK_COMPLETION(!url.isEmpty() && url.isValid(), completionHandler());
+    MESSAGE_CHECK_COMPLETION(firstParty.isValid(), completionHandler());
+    MESSAGE_CHECK_COMPLETION(url.isValid(), completionHandler());
     MESSAGE_CHECK_COMPLETION(!cookieName.isEmpty(), completionHandler());
     auto allowCookieAccess = m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty);
     MESSAGE_CHECK_COMPLETION(allowCookieAccess != NetworkProcess::AllowCookieAccess::Terminate, completionHandler());
@@ -1138,7 +1138,7 @@ static bool shouldCheckBlobFileAccess()
 
 void NetworkConnectionToWebProcess::registerInternalFileBlobURL(const URL& url, const String& path, const String& replacementPath, SandboxExtension::Handle&& extensionHandle, const String& contentType)
 {
-    MESSAGE_CHECK(!url.isEmpty());
+    MESSAGE_CHECK(!url.isNull());
 
     CheckedPtr session = networkSession();
     if (!session)
@@ -1192,7 +1192,7 @@ void NetworkConnectionToWebProcess::registerBlobURL(const URL& url, const URL& s
 
 void NetworkConnectionToWebProcess::registerInternalBlobURLOptionallyFileBacked(URL&& url, URL&& srcURL, const String& fileBackedPath, String&& contentType)
 {
-    MESSAGE_CHECK(!url.isEmpty() && !srcURL.isEmpty() && !fileBackedPath.isEmpty());
+    MESSAGE_CHECK(!url.isNull() && !srcURL.isNull() && !fileBackedPath.isEmpty());
     CheckedPtr session = networkSession();
     if (!session)
         return;

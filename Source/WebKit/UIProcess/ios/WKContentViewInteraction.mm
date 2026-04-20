@@ -13077,7 +13077,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
         auto previewOptions = adoptNS([[NSMutableDictionary alloc] initWithCapacity:2]);
         if (_visualSearchPreviewImageURL)
             [previewOptions setObject:_visualSearchPreviewImageURL.get() forKey:@"imageURL"];
-        if (auto pageURL = URL { protect(_page)->currentURL() }; !pageURL.isEmpty())
+        if (auto pageURL = URL { protect(_page)->currentURL() }; !pageURL.isNull())
             [previewOptions setObject:pageURL.createNSURL().get() forKey:@"pageURL"];
         if ([previewOptions count])
             [item setPreviewOptions:previewOptions.get()];
@@ -15285,7 +15285,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     URL linkURL = _positionInformation.url;
 
-    if (_positionInformation.isLink && linkURL.isEmpty())
+    if (_positionInformation.isLink && linkURL.isNull())
         return continueWithContextMenuConfiguration(nil);
 
     auto uiDelegate = static_cast<id<WKUIDelegatePrivate>>(self.webView.UIDelegate);
@@ -15636,7 +15636,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         if (_positionInformation.isImage) {
             if ([uiDelegate respondsToSelector:@selector(_webView:commitPreviewedImageWithURL:)]) {
                 const auto& imageURL = _positionInformation.imageURL;
-                if (imageURL.isEmpty() || !(imageURL.protocolIsInHTTPFamily() || imageURL.protocolIs("data"_s)))
+                if (imageURL.isNull() || !(imageURL.protocolIsInHTTPFamily() || imageURL.protocolIs("data"_s)))
                     return;
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                 [uiDelegate _webView:self.webView commitPreviewedImageWithURL:imageURL.createNSURL().get()];
@@ -15785,7 +15785,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             return [uiDelegate webView:self.webView shouldPreviewElement:previewElementInfo.get()];
         }
 ALLOW_DEPRECATED_DECLARATIONS_END
-        if (linkURL.isEmpty())
+        if (linkURL.isNull())
             return NO;
         if (linkURL.protocolIsInHTTPFamily())
             return YES;
@@ -15826,7 +15826,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return nil;
 
     const URL& linkURL = _positionInformation.url;
-    if (!useImageURLForLink && (linkURL.isEmpty() || (!linkURL.protocolIsInHTTPFamily() && !isDataDetectorLink))) {
+    if (!useImageURLForLink && (linkURL.isNull() || (!linkURL.protocolIsInHTTPFamily() && !isDataDetectorLink))) {
         if (canShowLinkPreview && !canShowImagePreview)
             return nil;
         canShowLinkPreview = NO;
@@ -15901,7 +15901,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     NSURL *targetURL = controller.previewData[UIPreviewDataLink];
     URL coreTargetURL = targetURL;
-    bool isValidURLForImagePreview = !coreTargetURL.isEmpty() && (coreTargetURL.protocolIsInHTTPFamily() || coreTargetURL.protocolIs("data"_s));
+    bool isValidURLForImagePreview = !coreTargetURL.isNull() && (coreTargetURL.protocolIsInHTTPFamily() || coreTargetURL.protocolIs("data"_s));
 
     if ([_previewItemController type] == UIPreviewItemTypeLink) {
         _longPressCanClick = NO;
@@ -15993,7 +15993,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if ([_previewItemController type] == UIPreviewItemTypeImage) {
         if ([uiDelegate respondsToSelector:@selector(_webView:commitPreviewedImageWithURL:)]) {
             const URL& imageURL = _positionInformation.imageURL;
-            if (imageURL.isEmpty() || !(imageURL.protocolIsInHTTPFamily() || imageURL.protocolIs("data"_s)))
+            if (imageURL.isNull() || !(imageURL.protocolIsInHTTPFamily() || imageURL.protocolIs("data"_s)))
                 return;
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             [uiDelegate _webView:self.webView commitPreviewedImageWithURL:imageURL.createNSURL().get()];

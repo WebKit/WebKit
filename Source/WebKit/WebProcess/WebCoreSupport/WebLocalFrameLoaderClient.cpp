@@ -1389,7 +1389,7 @@ void WebLocalFrameLoaderClient::updateGlobalHistoryRedirectLinks()
         return;
 
     RefPtr loader = m_localFrame->loader().documentLoader();
-    ASSERT(loader->unreachableURL().isEmpty());
+    ASSERT(loader->unreachableURL().isNull());
 
     // Client redirect
     if (!loader->clientRedirectSourceForHistory().isNull()) {
@@ -2126,7 +2126,7 @@ void WebLocalFrameLoaderClient::didExceedNetworkUsageThreshold()
         return;
 
     auto url = document->url();
-    if (url.isEmpty())
+    if (url.isNull())
         return;
 
     WebLocalFrameLoaderClient_RELEASE_LOG(ResourceMonitoring, "didExceedNetworkUsageThreshold host=%" SENSITIVE_LOG_STRING, url.host().utf8().data());

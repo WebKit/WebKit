@@ -46,7 +46,7 @@ public:
 
     operator const URL&() const LIFETIME_BOUND { return m_url; }
     const URL& url() const LIFETIME_BOUND { return m_url; }
-    bool isEmpty() const { return m_url.isEmpty(); }
+    bool isEmpty() const { return m_url.isNull(); }
     std::optional<SecurityOriginData> topOrigin() const { return m_topOrigin; }
 
     void clear();

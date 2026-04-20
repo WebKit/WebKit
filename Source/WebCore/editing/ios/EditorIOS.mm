@@ -111,7 +111,7 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
 
     auto imageSourceURL = imageElement.document().completeURL(imageElement.imageSourceURL());
 
-    auto pasteboardImageURL = url.isEmpty() ? imageSourceURL : url;
+    auto pasteboardImageURL = url.isNull() ? imageSourceURL : url;
     if (!pasteboardImageURL.protocolIsFile()) {
         pasteboardImage.url.url = pasteboardImageURL;
         pasteboardImage.url.title = title;

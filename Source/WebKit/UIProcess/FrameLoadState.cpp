@@ -44,7 +44,7 @@ void FrameLoadState::removeObserver(FrameLoadStateObserver& observer)
 
 void FrameLoadState::didStartProvisionalLoad(URL&& url)
 {
-    ASSERT(m_provisionalURL.isEmpty());
+    ASSERT(m_provisionalURL.isNull());
 
     m_state = State::Provisional;
     m_provisionalURL = WTF::move(url);
@@ -117,7 +117,7 @@ void FrameLoadState::didCommitLoad()
 void FrameLoadState::didFinishLoad()
 {
     ASSERT(m_state == State::Committed);
-    ASSERT(m_provisionalURL.isEmpty());
+    ASSERT(m_provisionalURL.isNull());
 
     m_state = State::Finished;
 
@@ -129,7 +129,7 @@ void FrameLoadState::didFinishLoad()
 void FrameLoadState::didFailLoad()
 {
     ASSERT(m_state == State::Committed);
-    ASSERT(m_provisionalURL.isEmpty());
+    ASSERT(m_provisionalURL.isNull());
 
     m_state = State::Finished;
     forEachObserver([&](FrameLoadStateObserver& observer) {

@@ -290,7 +290,7 @@ void HTMLModelElement::setSourceURL(const URL& url)
     m_readyPromise = makeUniqueRef<ReadyPromise>(*this, &HTMLModelElement::readyPromiseResolve);
     m_shouldCreateModelPlayerUponRendererAttachment = false;
 
-    if (m_sourceURL.isEmpty()) {
+    if (m_sourceURL.isNull()) {
         ActiveDOMObject::queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
         reportExtraMemoryCost();
         return;
@@ -434,7 +434,7 @@ void HTMLModelElement::didConvertModelData(ModelPlayer& modelPlayer, Ref<SharedB
 
 void HTMLModelElement::didFinishEnvironmentMapLoading(ModelPlayer&, bool succeeded)
 {
-    if (!m_environmentMapURL.isEmpty() && !m_environmentMapReadyPromise->isFulfilled()) {
+    if (!m_environmentMapURL.isNull() && !m_environmentMapReadyPromise->isFulfilled()) {
         if (succeeded)
             m_environmentMapReadyPromise->resolve();
         else {
@@ -609,7 +609,7 @@ void HTMLModelElement::createModelPlayer()
 #if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
     if (m_environmentMapData)
         modelPlayer->setEnvironmentMap(m_environmentMapData.takeBufferAsContiguous().get());
-    else if (!m_environmentMapURL.isEmpty())
+    else if (!m_environmentMapURL.isNull())
         environmentMapRequestResource();
 #endif
 
@@ -705,7 +705,7 @@ void HTMLModelElement::reloadModelPlayer()
 #if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
     if (m_environmentMapData)
         modelPlayer->setEnvironmentMap(m_environmentMapData.takeBufferAsContiguous().get());
-    else if (!m_environmentMapURL.isEmpty())
+    else if (!m_environmentMapURL.isNull())
         environmentMapRequestResource();
 #endif
 }
@@ -1221,7 +1221,7 @@ void HTMLModelElement::setEnvironmentMap(const URL& url)
     environmentMapResetAndReject(Exception { ExceptionCode::AbortError });
     m_environmentMapReadyPromise = makeUniqueRef<EnvironmentMapPromise>();
 
-    if (m_environmentMapURL.isEmpty()) {
+    if (m_environmentMapURL.isNull()) {
         // sending a message with empty data to indicate resource removal
         if (m_modelPlayer)
             m_modelPlayer->setEnvironmentMap(SharedBuffer::create());
@@ -1788,7 +1788,7 @@ size_t HTMLModelElement::externalMemoryCost() const
 
 void HTMLModelElement::sourceRequestResource()
 {
-    if (m_sourceURL.isEmpty())
+    if (m_sourceURL.isNull())
         return triggerModelPlayerCreationCallbacksIfNeeded(Exception { ExceptionCode::AbortError, "The source URL is empty"_s });
 
     auto request = createResourceRequest(m_sourceURL, FetchOptions::Destination::Model);

@@ -473,7 +473,7 @@ WebHistoryItem *kit(HistoryItem* item)
 - (NSURL *)URL
 {
     const URL& url = core(_private)->url();
-    if (url.isEmpty())
+    if (url.isNull())
         return nil;
     return url.createNSURL().autorelease();
 }

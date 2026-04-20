@@ -49,7 +49,6 @@ TEST_F(WTF_URL, URLConstructorDefault)
 {
     URL kurl;
 
-    EXPECT_TRUE(kurl.isEmpty());
     EXPECT_TRUE(kurl.isNull());
     EXPECT_FALSE(kurl.isValid());
 }
@@ -58,7 +57,6 @@ TEST_F(WTF_URL, URLConstructorConstChar)
 {
     URL kurl("http://username:password@www.example.com:8080/index.html?var=val#fragment"_s);
 
-    EXPECT_FALSE(kurl.isEmpty());
     EXPECT_FALSE(kurl.isNull());
     EXPECT_TRUE(kurl.isValid());
 
@@ -79,6 +77,24 @@ static URL createURL(ASCIILiteral urlAsString)
 {
     return URL(urlAsString);
 };
+
+TEST_F(WTF_URL, URLThreeStates)
+{
+    // Null URL: default-constructed, never set.
+    URL nullURL;
+    EXPECT_TRUE(nullURL.isNull());
+    EXPECT_FALSE(nullURL.isValid());
+
+    // Non-null invalid URL: parse was attempted but failed.
+    URL emptyURL(""_s);
+    EXPECT_FALSE(emptyURL.isNull());
+    EXPECT_FALSE(emptyURL.isValid());
+
+    // Non-null valid URL: parse succeeded.
+    URL validURL("https://example.com/"_s);
+    EXPECT_FALSE(validURL.isNull());
+    EXPECT_TRUE(validURL.isValid());
+}
 
 TEST_F(WTF_URL, URLProtocolHostAndPort)
 {

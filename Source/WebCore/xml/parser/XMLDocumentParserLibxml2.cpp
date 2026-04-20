@@ -527,7 +527,7 @@ static void* openFunc(const char* uri)
             options.credentials = FetchOptions::Credentials::Include;
             cachedResourceLoader->frame()->loader().loadResourceSynchronously(URL { url }, ClientCredentialPolicy::MayAskClientForCredentials, options, { }, error, response, data);
 
-            if (response.url().isEmpty()) {
+            if (response.url().isNull()) {
                 if (RefPtr frame = document ? document->frame() : nullptr)
                     frame->console().addMessage(MessageSource::Security, MessageLevel::Error, makeString("Did not parse external entity resource at '"_s, url.stringCenterEllipsizedToLength(), "' because cross-origin loads are not allowed."_s));
                 return &globalDescriptor;
