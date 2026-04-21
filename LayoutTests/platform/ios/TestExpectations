@@ -10281,3 +10281,9 @@ imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-filter-2
 webkit.org/b/322305 fast/visual-viewport/ios/interactive-widget/resizes-content-orientation-rotations.html [ Failure ]
 
 imported/w3c/web-platform-tests/input-events/select-event-drag-remove.html [ Skip ] # timeout
+
+# The drop shadow offset is not scaled by the perspective transform of an ancestor.
+webkit.org/b/323693 compositing/filters/drop-shadow-perspective-scale.html [ ImageOnlyFailure ]
+
+# The drop shadow of a composited child far outside the viewport is missing.
+webkit.org/b/323693 compositing/filters/filter-child-outside-viewport.html [ ImageOnlyFailure ]

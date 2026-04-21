@@ -2543,3 +2543,9 @@ imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-filter-2
 [ Tahoe+ ] fast/mediastream/mediastreamtrack-video-frameRate-clone-increasing.html [ Pass Failure ]
 
 webkit.org/b/322313 accessibility/isolated-tree/aria-owns-id-change.html [ Timeout ]
+
+# The drop shadow offset is not scaled by the perspective transform of an ancestor.
+webkit.org/b/323693 compositing/filters/drop-shadow-perspective-scale.html [ ImageOnlyFailure ]
+
+# The drop shadow of a composited child far outside the viewport is missing.
+webkit.org/b/323693 compositing/filters/filter-child-outside-viewport.html [ ImageOnlyFailure ]

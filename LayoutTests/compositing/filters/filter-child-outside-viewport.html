@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- A filtered layer whose child sits far above the viewport. The filter still samples it, so the shadow it
+         casts has to appear on screen even though the child itself never intersects the visible
+         area. The child is further away than the tiles kept around the visible area, and has a border
+         so it paints into tiles instead of being drawn as a solid color. -->
+    <meta name="fuzzy" content="maxDifference=0-2; totalPixels=0-400">
+    <style>
+      body { margin: 0; background: white; }
+      .filtered {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100px;
+        height: 100px;
+        filter: drop-shadow(0 2100px 0 green);
+        will-change: transform;
+      }
+      .filtered > div {
+        position: absolute;
+        top: -2000px;
+        left: 50px;
+        width: 100px;
+        height: 100px;
+        box-sizing: border-box;
+        border: 10px solid blue;
+        background: red;
+        will-change: transform;
+      }
+    </style>
+  </head>
+  <body>
+    <div class=filtered><div></div></div>
+  </body>
+</html>

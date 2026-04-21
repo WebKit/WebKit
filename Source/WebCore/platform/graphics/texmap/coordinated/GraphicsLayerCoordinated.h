@@ -195,6 +195,7 @@ private:
     void updateBackdropFiltersRect();
     void updateAnimations();
     void updateVisibleRect(const FloatRect&);
+    IntOutsets outsetsForFiltersSamplingThisLayer() const;
     void updateIndicators();
     bool isRunningTransformAnimation() const;
     bool filtersCanBeComposited(const FilterOperations&) const;
