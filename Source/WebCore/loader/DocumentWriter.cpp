@@ -207,6 +207,17 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
     frameLoader->setOutgoingReferrer(url);
     frame->setDocument(document.copyRef());
 
+    // Preserves the sticky user activation state after a page navigates to
+    // another same-origin page.
+    // https://bugs.webkit.org/show_bug.cgi?id=312241
+    if (frame->settings().stickyUserActivationAcrossSameOriginNavigationEnabled()
+        && previousWindow && previousWindow->hasStickyActivation() && existingDocument) {
+        if (existingDocument->securityOrigin().isSameOriginAs(SecurityOrigin::create(url))) {
+            if (auto* newWindow = document->window())
+                newWindow->setLastActivationTimestamp(-MonotonicTime::infinity());
+        }
+    }
+
     if (RefPtr decoder = m_decoder)
         document->setDecoder(decoder.get());
     if (ownerDocument) {
