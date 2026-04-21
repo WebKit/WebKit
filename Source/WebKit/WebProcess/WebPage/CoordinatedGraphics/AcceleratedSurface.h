@@ -273,7 +273,7 @@ private:
         static std::unique_ptr<RenderTarget> create(AcceleratedSurface&, const WebCore::IntSize&, const BufferFormat&);
 #if OS(ANDROID)
         RenderTargetEGLImage(AcceleratedSurface&, const WebCore::IntSize&, EGLImage, RefPtr<AHardwareBuffer>&&);
-#else
+#elif USE(GBM)
         RenderTargetEGLImage(AcceleratedSurface&, const WebCore::IntSize&, EGLImage, WebCore::DMABufBufferAttributes&&, RendererBufferFormat::Usage);
 #endif
         ~RenderTargetEGLImage();
@@ -303,6 +303,7 @@ private:
         RefPtr<WebCore::BitmapTexture> m_texture;
     };
 
+#if USE(GBM)
     class RenderTargetTexture final : public RenderTargetShareableBuffer {
     public:
         static std::unique_ptr<RenderTarget> create(AcceleratedSurface&, const WebCore::IntSize&);
@@ -314,6 +315,7 @@ private:
 
         Ref<WebCore::BitmapTexture> m_texture;
     };
+#endif
 #endif // PLATFORM(GTK) || ENABLE(WPE_PLATFORM)
 
 #if USE(WPE_RENDERER)
@@ -346,7 +348,9 @@ private:
             EGLImage,
 #endif
             SharedMemory,
+#if USE(GBM)
             Texture,
+#endif // !OS(ANDROID)
 #endif
 #if USE(WPE_RENDERER)
             WPEBackend

@@ -26,7 +26,9 @@
     ExceptionForEnabledBy
 ]
 messages -> AcceleratedBackingStore {
+#if USE(GBM)
     DidCreateDMABufBuffer(uint64_t id, WebCore::DMABufBufferAttributes dmaBufAttributes, WebKit::RendererBufferFormat::Usage usage)
+#endif
     DidCreateSHMBuffer(uint64_t id, WebCore::ShareableBitmapHandle handle)
 
 #if OS(ANDROID)
