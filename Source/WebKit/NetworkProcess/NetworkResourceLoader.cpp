@@ -67,6 +67,7 @@
 #include <WebCore/DiagnosticLoggingKeys.h>
 #include <WebCore/HTTPParsers.h>
 #include <WebCore/HTTPStatusCodes.h>
+#include <WebCore/IPAddressSpace.h>
 #include <WebCore/LegacySchemeRegistry.h>
 #include <WebCore/LinkHeader.h>
 #include <WebCore/NetworkLoadMetrics.h>
@@ -1053,6 +1054,32 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
         if (m_isKeptAlive) {
             LOADER_RELEASE_LOG("didReceiveResponse: Ignoring response because of keepalive option");
             return completionHandler(PolicyAction::Ignore);
+        }
+
+        if (!isMainResource() && isPrivateNetworkRequest(m_parameters.clientIPAddressSpace, m_response.ipAddressSpace())) {
+            auto& currentRequest = m_networkLoad ? m_networkLoad->currentRequest() : originalRequest();
+            bool isPreflightRequest = currentRequest.httpHeaderField(HTTPHeaderName::AccessControlRequestPrivateNetwork) == "true"_s;
+            if (!isPreflightRequest && !m_privateNetworkAccessGranted) {
+                LOADER_RELEASE_LOG("didReceiveResponse: Pausing load for private network access permission");
+                m_responseCompletionHandler = WTF::move(completionHandler);
+                connectionToWebProcess().networkProcess().parentProcessConnection()->sendWithAsyncReply(
+                    Messages::NetworkProcessProxy::RequestLocalNetworkAccessPermission(webPageProxyID()),
+                    [this, protectedThis = Ref { *this }](bool granted) {
+                        if (granted) {
+                            m_privateNetworkAccessGranted = true;
+                            continueDidReceiveResponse();
+                        } else {
+                            LOADER_RELEASE_LOG_ERROR("didReceiveResponse: Private network access denied by user");
+                            if (m_responseCompletionHandler)
+                                m_responseCompletionHandler(PolicyAction::Ignore);
+                            RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, url = m_response.url()] {
+                                if (protectedThis->m_networkLoad)
+                                    protectedThis->didFailLoading(ResourceError { errorDomainWebKitInternal, 0, url, "User denied local network access"_s, ResourceError::Type::AccessControl });
+                            });
+                        }
+                    });
+                return;
+            }
         }
 
         LOADER_RELEASE_LOG("didReceiveResponse: Using response");

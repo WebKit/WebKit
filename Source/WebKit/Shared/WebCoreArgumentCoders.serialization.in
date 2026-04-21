@@ -105,7 +105,11 @@ enum class WebCore::IDBTransactionMode : uint8_t {
     Versionchange
 };
 
-enum class WebCore::IPAddressSpace : bool;
+enum class WebCore::IPAddressSpace : uint8_t {
+    Public,
+    Private,
+    Local
+};
 
 #if ENABLE(MEDIA_SESSION)
 header: <WebCore/MediaSessionPlaybackState.h>
@@ -168,6 +172,7 @@ enum class WebCore::PermissionName : uint8_t {
     DisplayCapture,
     Geolocation,
     Gyroscope,
+    LocalNetwork,
     Magnetometer,
     Microphone,
     Midi,

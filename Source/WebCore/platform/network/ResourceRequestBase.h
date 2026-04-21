@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-enum class IPAddressSpace : bool;
+enum class IPAddressSpace : uint8_t;
 
 enum class ResourceRequestCachePolicy : uint8_t {
     UseProtocolCachePolicy, // normal load, equivalent to fetch "default" cache mode.

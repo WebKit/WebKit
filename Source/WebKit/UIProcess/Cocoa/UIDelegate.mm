@@ -248,6 +248,8 @@ void UIDelegate::setDelegate(id<WKUIDelegate> delegate)
 
     m_delegateMethods.webViewRequestNotificationPermissionForSecurityOriginDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestNotificationPermissionForSecurityOrigin:decisionHandler:)];
 
+    m_delegateMethods.webViewRequestLocalNetworkAccessPermissionForOriginDecisionHandler = [delegate respondsToSelector:@selector(webView:requestLocalNetworkAccessPermissionForOrigin:decisionHandler:)];
+
     m_delegateMethods.webViewUpdatedAppBadge = [delegate respondsToSelector:@selector(_webView:updatedAppBadge:fromSecurityOrigin:)];
 
     m_delegateMethods.webViewDidAdjustVisibilityWithSelectors = [delegate respondsToSelector:@selector(_webView:didAdjustVisibilityWithSelectors:)];
@@ -622,6 +624,36 @@ void UIDelegate::UIClient::decidePolicyForGeolocationPermissionRequest(WebKit::W
         checker->didCallCompletionHandler();
         completionHandler(result);
     }).get()];
+}
+
+void UIDelegate::UIClient::decidePolicyForLocalNetworkAccessPermissionRequest(WebKit::WebPageProxy& page, const WebCore::SecurityOriginData& originData, CompletionHandler<void(bool)>&& completionHandler)
+{
+    RefPtr uiDelegate = m_uiDelegate.get();
+    if (!uiDelegate || !uiDelegate->m_delegateMethods.webViewRequestLocalNetworkAccessPermissionForOriginDecisionHandler) {
+        alertForPermission(page, MediaPermissionReason::LocalNetworkAccess, originData, WTF::move(completionHandler));
+        return;
+    }
+
+    RetainPtr delegate = uiDelegate->m_delegate.get();
+    if (!delegate)
+        return completionHandler(false);
+
+    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(webView:requestLocalNetworkAccessPermissionForOrigin:decisionHandler:));
+    auto decisionHandler = makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)](WKPermissionDecision decision) mutable {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
+        checker->didCallCompletionHandler();
+        switch (decision) {
+        case WKPermissionDecisionPrompt:
+        case WKPermissionDecisionDeny:
+            completionHandler(false);
+            break;
+        case WKPermissionDecisionGrant:
+            completionHandler(true);
+            break;
+        }
+    });
+    [delegate webView:uiDelegate->m_webView.get().get() requestLocalNetworkAccessPermissionForOrigin:wrapper(API::SecurityOrigin::create(originData)).get() decisionHandler:decisionHandler.get()];
 }
 
 void UIDelegate::UIClient::didResignInputElementStrongPasswordAppearance(WebPageProxy&, API::Object* userInfo)

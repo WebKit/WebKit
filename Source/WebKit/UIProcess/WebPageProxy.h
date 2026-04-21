@@ -29,6 +29,7 @@
 // Use forward declarations and WebPageProxyInternals.h instead.
 #include "APIObject.h"
 #include "MessageReceiver.h"
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/ApproximateTime.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/CompletionHandler.h>
@@ -743,6 +744,8 @@ class WebPageProxy final : public API::ObjectImpl<API::Object::Type::Page>, publ
 public:
     static Ref<WebPageProxy> create(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     virtual ~WebPageProxy();
+
+    void requestLocalNetworkAccessPermissionFromNetworkProcess(CompletionHandler<void(bool)>&&);
 
     void ref() const final { API::ObjectImpl<API::Object::Type::Page>::ref(); }
     void deref() const final { API::ObjectImpl<API::Object::Type::Page>::deref(); }
@@ -3690,6 +3693,8 @@ private:
     std::unique_ptr<API::IconLoadingClient> m_iconLoadingClient;
     std::unique_ptr<API::FormClient> m_formClient;
     std::unique_ptr<API::UIClient> m_uiClient;
+    HashMap<WebCore::SecurityOriginData, bool> m_localNetworkAccessPermissions;
+    HashMap<WebCore::SecurityOriginData, Vector<CompletionHandler<void(bool)>>> m_pendingLocalNetworkAccessRequests;
     std::unique_ptr<API::FindClient> m_findClient;
     std::unique_ptr<API::FindMatchesClient> m_findMatchesClient;
     std::unique_ptr<API::DiagnosticLoggingClient> m_diagnosticLoggingClient;

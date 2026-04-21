@@ -35,6 +35,7 @@ enum class PermissionName : uint8_t {
     DisplayCapture,
     Geolocation,
     Gyroscope,
+    LocalNetwork,
     Magnetometer,
     Microphone,
     Midi,

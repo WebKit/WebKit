@@ -301,6 +301,14 @@ WK_SWIFT_UI_ACTOR
  */
 - (void)webView:(WKWebView *)webView requestGeolocationPermissionForOrigin:(WKSecurityOrigin*)origin initiatedByFrame:(WKFrameInfo *)frame decisionHandler:(WK_SWIFT_UI_ACTOR void (^)(WKPermissionDecision decision))decisionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
+/*! @abstract Called when a web view requests access to the local network.
+ @param webView The web view requesting local network access.
+ @param origin The origin of the web content requesting local network access.
+ @param frame The frame that initiated the request.
+ @param decisionHandler The decision handler to call once the app has made its decision.
+ */
+- (void)webView:(WKWebView *)webView requestLocalNetworkAccessPermissionForOrigin:(WKSecurityOrigin *)origin decisionHandler:(WK_SWIFT_UI_ACTOR void (^)(WKPermissionDecision decision))decisionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
 #if TARGET_OS_IOS && !TARGET_OS_MACCATALYST && __IPHONE_OS_VERSION_MIN_REQUIRED >= 180400
 
 /*! @abstract Tells the delegate when the keyboard delivers an input suggestion.

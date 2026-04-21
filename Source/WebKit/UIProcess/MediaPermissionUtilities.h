@@ -58,6 +58,7 @@ enum class MediaPermissionReason {
     Microphone,
     DeviceOrientation,
     Geolocation,
+    LocalNetworkAccess,
     SpeechRecognition,
     ScreenCapture
 };

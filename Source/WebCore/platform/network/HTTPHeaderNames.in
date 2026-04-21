@@ -32,10 +32,12 @@ Access-Control-Allow-Credentials
 Access-Control-Allow-Headers
 Access-Control-Allow-Methods
 Access-Control-Allow-Origin
+Access-Control-Allow-Private-Network
 Access-Control-Expose-Headers
 Access-Control-Max-Age
 Access-Control-Request-Headers
 Access-Control-Request-Method
+Access-Control-Request-Private-Network
 Age
 Authorization
 Cache-Control

@@ -87,7 +87,7 @@ void updateRequestForAccessControl(ResourceRequest& request, SecurityOrigin& sec
     request.setHTTPOrigin(securityOrigin.toString());
 }
 
-ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& request, SecurityOrigin& securityOrigin, const String& referrer, bool includeFetchMetadata)
+ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& request, SecurityOrigin& securityOrigin, const String& referrer, bool includeFetchMetadata, bool isPrivateNetworkRequest)
 {
     ResourceRequest preflightRequest { URL { request.url() } };
     static const double platformDefaultTimeout = 0;
@@ -126,6 +126,9 @@ ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& reque
         if (!headerBuffer.isEmpty())
             preflightRequest.setHTTPHeaderField(HTTPHeaderName::AccessControlRequestHeaders, headerBuffer.toString());
     }
+
+    if (isPrivateNetworkRequest)
+        preflightRequest.setHTTPHeaderField(HTTPHeaderName::AccessControlRequestPrivateNetwork, "true"_s);
 
     if (includeFetchMetadata) {
         Ref requestOrigin = SecurityOrigin::create(request.url());
@@ -296,7 +299,7 @@ Expected<void, String> passesAccessControlCheck(const ResourceResponse& response
     return { };
 }
 
-Expected<void, String> validatePreflightResponse(PAL::SessionID sessionID, const ResourceRequest& request, const ResourceResponse& response, StoredCredentialsPolicy storedCredentialsPolicy, const SecurityOrigin& topOrigin, const SecurityOrigin& securityOrigin, const CrossOriginAccessControlCheckDisabler* checkDisabler)
+Expected<void, String> validatePreflightResponse(PAL::SessionID sessionID, const ResourceRequest& request, const ResourceResponse& response, StoredCredentialsPolicy storedCredentialsPolicy, const SecurityOrigin& topOrigin, const SecurityOrigin& securityOrigin, const CrossOriginAccessControlCheckDisabler* checkDisabler, bool isPrivateNetworkRequest, bool* privateNetworkAllowed)
 {
     if (!response.isSuccessful())
         return makeUnexpected(makeString("Preflight response is not successful. Status code: "_s, response.httpStatusCode()));
@@ -304,6 +307,11 @@ Expected<void, String> validatePreflightResponse(PAL::SessionID sessionID, const
     auto accessControlCheckResult = passesAccessControlCheck(response, storedCredentialsPolicy, securityOrigin, checkDisabler);
     if (!accessControlCheckResult)
         return accessControlCheckResult;
+
+    if (isPrivateNetworkRequest && privateNetworkAllowed) {
+        const String& allowPrivateNetwork = response.httpHeaderField(HTTPHeaderName::AccessControlAllowPrivateNetwork);
+        *privateNetworkAllowed = (allowPrivateNetwork == "true"_s);
+    }
 
     auto result = CrossOriginPreflightResultCacheItem::create(storedCredentialsPolicy, response);
     if (!result.has_value())

@@ -694,6 +694,17 @@ void NetworkProcessProxy::resourceLoadDidCompleteWithError(WebPageProxyIdentifie
     page->resourceLoadDidCompleteWithError(WTF::move(loadInfo), WTF::move(response), WTF::move(error));
 }
 
+void NetworkProcessProxy::requestLocalNetworkAccessPermission(WebPageProxyIdentifier pageID, CompletionHandler<void(bool)>&& completionHandler)
+{
+    RefPtr page = WebProcessProxy::webPage(pageID);
+    if (!page) {
+        completionHandler(false);
+        return;
+    }
+
+    page->requestLocalNetworkAccessPermissionFromNetworkProcess(WTF::move(completionHandler));
+}
+
 void NetworkProcessProxy::didAllowPrivateTokenUsageByThirdPartyForTesting(PAL::SessionID sessionID, bool wasAllowed, URL&& resourceURL)
 {
     if (RefPtr store = websiteDataStoreFromSessionID(sessionID))

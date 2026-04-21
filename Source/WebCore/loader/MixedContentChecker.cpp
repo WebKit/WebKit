@@ -139,7 +139,9 @@ bool MixedContentChecker::shouldBlockRequest(Frame& frame, const URL& url, IsUpg
 
     if (!isMixedContent(frame, url))
         return false;
-    if ((LegacySchemeRegistry::schemeIsHandledBySchemeHandler(url.protocol()) || shouldTreatAsPotentiallyTrustworthy(url)) && isUpgradable == IsUpgradable::Yes)
+    if (shouldTreatAsPotentiallyTrustworthy(url))
+        return false;
+    if (LegacySchemeRegistry::schemeIsHandledBySchemeHandler(url.protocol()) && isUpgradable == IsUpgradable::Yes)
         return false;
     frame.reportMixedContentViolation(true, url);
     return true;

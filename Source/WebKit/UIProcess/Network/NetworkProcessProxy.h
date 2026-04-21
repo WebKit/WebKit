@@ -281,6 +281,8 @@ public:
     void resourceLoadDidReceiveResponse(WebPageProxyIdentifier, ResourceLoadInfo&&, WebCore::ResourceResponse&&);
     void resourceLoadDidCompleteWithError(WebPageProxyIdentifier, ResourceLoadInfo&&, WebCore::ResourceResponse&&, WebCore::ResourceError&&);
 
+    void requestLocalNetworkAccessPermission(WebPageProxyIdentifier, CompletionHandler<void(bool)>&&);
+
     void didAllowPrivateTokenUsageByThirdPartyForTesting(PAL::SessionID, bool wasAllowed, URL&&);
 
 #if ENABLE(APP_BOUND_DOMAINS)

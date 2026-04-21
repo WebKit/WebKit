@@ -116,6 +116,8 @@ std::optional<PermissionName> Permissions::toPermissionName(const String& name)
         return PermissionName::Camera;
     if (name == "geolocation"_s)
         return PermissionName::Geolocation;
+    if (name == "local-network"_s)
+        return PermissionName::LocalNetwork;
     if (name == "microphone"_s)
         return PermissionName::Microphone;
     if (name == "notifications"_s)
