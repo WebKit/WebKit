@@ -618,10 +618,12 @@ void TextBoxPainter::paintBackgroundFillForRange(unsigned startOffset, unsigned 
     auto selectionRect = selectionRectForRange(startOffset, endOffset);
 
     if (m_paintTextRun.length() == endOffset - startOffset) {
-        // FIXME: We should reconsider re-measuring the content when non-whitespace runs are joined together (see webkit.org/b/251318).
+        // adjustSelectionRectForText re-measures the text to compute the selection rect,
+        // which can produce a different width than the layout-computed width due to kerning
+        // or ligature adjustments. Use the layout-computed width for the right edge since
+        // the selection gap is painted using layout-computed sizing.
         auto unAdjustedSelectionRectMaxX = LayoutUnit { m_paintRect.x() + m_logicalRect.width() };
-        auto visualRight = std::max(selectionRect.maxX(), unAdjustedSelectionRectMaxX);
-        selectionRect.shiftMaxXEdgeTo(visualRight);
+        selectionRect.shiftMaxXEdgeTo(unAdjustedSelectionRectMaxX);
     }
 
     // FIXME: Support painting combined text. See <https://bugs.webkit.org/show_bug.cgi?id=180993>.
