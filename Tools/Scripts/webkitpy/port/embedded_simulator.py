@@ -57,6 +57,7 @@ class EmbeddedSimulatorPort(EmbeddedPort):
                 new_environment[SIMCTL_ENV_PREFIX + value] = inherited_env[value]
             else:
                 new_environment[value] = inherited_env[value]
+        new_environment['DEVELOPER_DIR'] = self.developer_dir
         return new_environment
 
     def setup_environ_for_server(self, server_name=None):
