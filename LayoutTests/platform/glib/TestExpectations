@@ -3301,7 +3301,9 @@ webkit.org/b/212807 imported/w3c/web-platform-tests/fetch/api/basic/error-after-
 webkit.org/b/213709 imported/w3c/web-platform-tests/cors/credentials-flag.htm [ Crash Pass ]
 
 webkit.org/b/214029 webkit.org/b/312629 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/resize-during-playback.html [ Failure Crash ]
-webkit.org/b/262391 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox-top-navigation-escalate-privileges.tentative.sub.window.html [ Failure ]
+webkit.org/b/312629 [ arm64 ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox_001.htm [ Pass Crash ]
+webkit.org/b/262391 [ x86_64 ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox-top-navigation-escalate-privileges.tentative.sub.window.html [ Failure ]
+webkit.org/b/262391 webkit.org/b/312629 [ arm64 ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox-top-navigation-escalate-privileges.tentative.sub.window.html [ Failure Crash ]
 
 webkit.org/b/214125 imported/w3c/web-platform-tests/html/rendering/widgets/select-wrap-no-spill.optional.html [ Failure ]
 imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/propagate-text-decoration.html [ ImageOnlyFailure ]
