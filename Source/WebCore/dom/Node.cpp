@@ -1549,6 +1549,15 @@ void Node::removedFromAncestor(RemovalType removalType, ContainerNode& oldParent
     }
 }
 
+void Node::updateShadowIncludingRootForSubtree()
+{
+    SUPPRESS_UNCOUNTED_LOCAL for (auto* current = this; current; current = NodeTraversal::next(*current, this)) {
+        current->updateShadowIncludingRoot();
+        SUPPRESS_UNCOUNTED_LOCAL if (auto* shadowRoot = current->shadowRoot())
+            shadowRoot->updateShadowIncludingRootForSubtree();
+    }
+}
+
 bool Node::isRootEditableElement() const
 {
     return hasEditableStyle() && isElementNode() && (!parentNode() || !parentNode()->hasEditableStyle()

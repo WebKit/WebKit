@@ -181,6 +181,8 @@ void removeDetachedChildrenInContainer(ContainerNode& container)
         node->setTreeScopeRecursively(Ref<Document> { container.document() });
         if (node->isInTreeScope())
             notifyChildNodeRemoved(container, *node);
+        else if (node->refCount() > 1)
+            node->updateShadowIncludingRootForSubtree();
         ASSERT_WITH_SECURITY_IMPLICATION(!node->isInTreeScope());
     }
 }
