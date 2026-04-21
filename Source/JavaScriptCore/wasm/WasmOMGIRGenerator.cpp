@@ -2408,45 +2408,8 @@ inline void OMGIRGenerator::emitWriteBarrierForJSWrapper()
 
 inline void OMGIRGenerator::emitWriteBarrier(Value* cell)
 {
-    Value* cellState = m_currentBlock->appendNew<MemoryValue>(m_proc, Load8Z, Int32, origin(), cell, safeCast<int32_t>(JSCell::cellStateOffset()));
-    m_heaps.decorateMemory(&m_heaps.JSCell_cellState, cellState);
-
-    auto* vm = vmValue();
-    Value* threshold = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(), vm, safeCast<int32_t>(VM::offsetOfHeapBarrierThreshold()));
-    m_heaps.decorateMemory(&m_heaps.VM_heap_barrierThreshold, threshold);
-
-    BasicBlock* recheckPath = m_proc.addBlock();
-    BasicBlock* doSlowPath = m_proc.addBlock();
-    BasicBlock* continuation = m_proc.addBlock();
-
-    m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(),
-        m_currentBlock->appendNew<Value>(m_proc, Above, origin(), cellState, threshold),
-        FrequentedBlock(continuation), FrequentedBlock(recheckPath, FrequencyClass::Rare));
-    recheckPath->addPredecessor(m_currentBlock);
-    continuation->addPredecessor(m_currentBlock);
-    m_currentBlock = recheckPath;
-
-    auto* fence = m_currentBlock->appendNew<FenceValue>(m_proc, origin());
-    m_heaps.decorateFenceRead(&m_heaps.root, fence);
-    m_heaps.decorateFenceWrite(&m_heaps.JSCell_cellState, fence);
-
-    Value* cellStateLoadAfterFence = m_currentBlock->appendNew<MemoryValue>(m_proc, Load8Z, Int32, origin(), cell, safeCast<int32_t>(JSCell::cellStateOffset()));
-    m_heaps.decorateMemory(&m_heaps.JSCell_cellState, cellStateLoadAfterFence);
-
-    m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(),
-        m_currentBlock->appendNew<Value>(m_proc, Above, origin(), cellStateLoadAfterFence, constant(Int32, blackThreshold)),
-        FrequentedBlock(continuation), FrequentedBlock(doSlowPath, FrequencyClass::Rare));
-    doSlowPath->addPredecessor(m_currentBlock);
-    continuation->addPredecessor(m_currentBlock);
-    m_currentBlock = doSlowPath;
-
-    Value* call = callWasmOperation(m_currentBlock, B3::Void, operationWasmWriteBarrierSlowPath, cell, vm);
-    m_heaps.decorateCCallRead(&m_heaps.root, call);
-    m_heaps.decorateCCallWrite(&m_heaps.JSCell_cellState, call);
-    m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), continuation);
-
-    continuation->addPredecessor(m_currentBlock);
-    m_currentBlock = continuation;
+    m_proc.setUsesStoreBarriers();
+    m_currentBlock->appendNew<Value>(m_proc, FencedStoreBarrier, origin(), cell, vmValue());
 }
 
 inline Value* OMGIRGenerator::emitCheckAndPreparePointer(Value* pointer, uint64_t offset, uint32_t sizeOfOperation, uint8_t memoryIndex)

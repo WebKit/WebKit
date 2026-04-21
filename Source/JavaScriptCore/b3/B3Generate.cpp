@@ -47,6 +47,8 @@
 #include "B3Procedure.h"
 #include "B3ReduceDoubleToFloat.h"
 #include "B3ReduceStrength.h"
+#include "B3StoreBarrierClusteringPhase.h"
+#include "B3StoreBarrierElisionPhase.h"
 #include "B3Validate.h"
 #include "CompilerTimingScope.h"
 
@@ -99,6 +101,14 @@ void generateToAir(Procedure& procedure)
     } else if (procedure.optLevel() >= 1) {
         // FIXME: Explore better "quick mode" optimizations.
         reduceStrength(procedure, ReduceStrengthPass::Initial);
+    }
+
+    // Drop redundant StoreBarriers and coalesce neighbours into clusters before they get
+    // expanded into the full check + slow-path sequence by lowerMacros. The procedure-level
+    // gate makes both phases an O(1) early-out for non-wasm B3 compiles.
+    if (procedure.usesStoreBarriers()) {
+        storeBarrierElision(procedure);
+        storeBarrierClustering(procedure);
     }
 
     // This puts the IR in quirks mode.

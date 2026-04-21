@@ -249,6 +249,9 @@
 		0F30FB611DC2DE99003124F2 /* ArrayBufferSharingMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F30FB601DC2DE96003124F2 /* ArrayBufferSharingMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F32BD111BB34F190093A57F /* HeapHelperPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F32BD0F1BB34F190093A57F /* HeapHelperPool.h */; };
 		0F338DF21BE93AD10013C88F /* B3StackmapValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F338DF01BE93AD10013C88F /* B3StackmapValue.h */; };
+		7C31DE8B745B482EA02C18D7 /* B3StoreBarrierUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C9D4EEB89374F7E8841E456 /* B3StoreBarrierUtils.h */; };
+		688D59BB4C9547C6A093A908 /* B3StoreBarrierElisionPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = FEE2E3F1DFBC40E9A652E013 /* B3StoreBarrierElisionPhase.h */; };
+		B2310A7329144B04A216B3A9 /* B3StoreBarrierClusteringPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8B645668EB4E8B8613C9D9 /* B3StoreBarrierClusteringPhase.h */; };
 		0F338DF61BE93D550013C88F /* B3ConstrainedValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F338DF41BE93D550013C88F /* B3ConstrainedValue.h */; };
 		0F338DFA1BE96AA80013C88F /* B3CCallValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F338DF81BE96AA80013C88F /* B3CCallValue.h */; };
 		0F338DFE1BED51270013C88F /* AirSimplifyCFG.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F338DFC1BED51270013C88F /* AirSimplifyCFG.h */; };
@@ -3042,6 +3045,11 @@
 		0F32BD0F1BB34F190093A57F /* HeapHelperPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapHelperPool.h; sourceTree = "<group>"; };
 		0F338DEF1BE93AD10013C88F /* B3StackmapValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3StackmapValue.cpp; path = b3/B3StackmapValue.cpp; sourceTree = "<group>"; };
 		0F338DF01BE93AD10013C88F /* B3StackmapValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3StackmapValue.h; path = b3/B3StackmapValue.h; sourceTree = "<group>"; };
+		EBC316497F9045C3BAC83BD9 /* B3StoreBarrierElisionPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3StoreBarrierElisionPhase.cpp; path = b3/B3StoreBarrierElisionPhase.cpp; sourceTree = "<group>"; };
+		FEE2E3F1DFBC40E9A652E013 /* B3StoreBarrierElisionPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3StoreBarrierElisionPhase.h; path = b3/B3StoreBarrierElisionPhase.h; sourceTree = "<group>"; };
+		3963789034D8470A9D6D5D77 /* B3StoreBarrierClusteringPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3StoreBarrierClusteringPhase.cpp; path = b3/B3StoreBarrierClusteringPhase.cpp; sourceTree = "<group>"; };
+		7C8B645668EB4E8B8613C9D9 /* B3StoreBarrierClusteringPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3StoreBarrierClusteringPhase.h; path = b3/B3StoreBarrierClusteringPhase.h; sourceTree = "<group>"; };
+		2C9D4EEB89374F7E8841E456 /* B3StoreBarrierUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3StoreBarrierUtils.h; path = b3/B3StoreBarrierUtils.h; sourceTree = "<group>"; };
 		0F338DF31BE93D550013C88F /* B3ConstrainedValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3ConstrainedValue.cpp; path = b3/B3ConstrainedValue.cpp; sourceTree = "<group>"; };
 		0F338DF41BE93D550013C88F /* B3ConstrainedValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3ConstrainedValue.h; path = b3/B3ConstrainedValue.h; sourceTree = "<group>"; };
 		0F338DF71BE96AA80013C88F /* B3CCallValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3CCallValue.cpp; path = b3/B3CCallValue.cpp; sourceTree = "<group>"; };
@@ -7024,6 +7032,11 @@
 				0FEC84E71BDACDAC0080FF74 /* B3StackmapSpecial.h */,
 				0F338DEF1BE93AD10013C88F /* B3StackmapValue.cpp */,
 				0F338DF01BE93AD10013C88F /* B3StackmapValue.h */,
+				3963789034D8470A9D6D5D77 /* B3StoreBarrierClusteringPhase.cpp */,
+				7C8B645668EB4E8B8613C9D9 /* B3StoreBarrierClusteringPhase.h */,
+				EBC316497F9045C3BAC83BD9 /* B3StoreBarrierElisionPhase.cpp */,
+				FEE2E3F1DFBC40E9A652E013 /* B3StoreBarrierElisionPhase.h */,
+				2C9D4EEB89374F7E8841E456 /* B3StoreBarrierUtils.h */,
 				0FEC84EC1BDACDAC0080FF74 /* B3SuccessorCollection.h */,
 				0FEC84ED1BDACDAC0080FF74 /* B3SwitchCase.cpp */,
 				0FEC84EE1BDACDAC0080FF74 /* B3SwitchCase.h */,
@@ -11087,6 +11100,9 @@
 				0F33FCF81C136E2500323F67 /* B3StackmapGenerationParams.h in Headers */,
 				0FEC85311BDACDAC0080FF74 /* B3StackmapSpecial.h in Headers */,
 				0F338DF21BE93AD10013C88F /* B3StackmapValue.h in Headers */,
+				B2310A7329144B04A216B3A9 /* B3StoreBarrierClusteringPhase.h in Headers */,
+				688D59BB4C9547C6A093A908 /* B3StoreBarrierElisionPhase.h in Headers */,
+				7C31DE8B745B482EA02C18D7 /* B3StoreBarrierUtils.h in Headers */,
 				0FEC85361BDACDAC0080FF74 /* B3SuccessorCollection.h in Headers */,
 				0FEC85381BDACDAC0080FF74 /* B3SwitchCase.h in Headers */,
 				0FEC853A1BDACDAC0080FF74 /* B3SwitchValue.h in Headers */,

@@ -131,6 +131,8 @@ namespace JSC { namespace B3 {
     case BelowEqual: \
     case EqualOrUnordered: \
     case Select: \
+    case StoreBarrier: \
+    case FencedStoreBarrier: \
         return MACRO(Value); \
     case WasmArrayLength: \
         return MACRO(WasmArrayLengthValue); \

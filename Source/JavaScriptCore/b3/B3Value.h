@@ -525,6 +525,8 @@ protected:
         case WasmStructNew:
         case WasmRefCast:
         case WasmRefTest:
+        case StoreBarrier:
+        case FencedStoreBarrier:
         case VectorReplaceLane:
         case VectorEqual:
         case VectorNotEqual:
@@ -831,6 +833,8 @@ private:
         case VectorRelaxedMax:
         case VectorRelaxedDotI8x16I7x16:
         case Stitch:
+        case StoreBarrier:
+        case FencedStoreBarrier:
             if (numArgs != 2) [[unlikely]]
                 badKind(kind, numArgs);
             return Two;

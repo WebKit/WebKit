@@ -362,6 +362,14 @@ enum Opcode : uint8_t {
     // workings of wasm to be able to perform such optimizations.
     WasmBoundsCheck,
 
+    // GC store barriers used by the wasm OMG B3 IR generator. These are high-level macros
+    // that B3LowerMacros expands into the threshold-check + (optional fence + recheck) +
+    // slow-path call sequence. StoreBarrierElisionPhase / StoreBarrierClusteringPhase run
+    // before LowerMacros to drop redundant ones and downgrade non-leading members of a
+    // cluster from FencedStoreBarrier to the narrow StoreBarrier. Two children: (cell, vm).
+    StoreBarrier,
+    FencedStoreBarrier,
+
     WasmArrayGet,
     WasmArraySet,
     WasmArrayNew,

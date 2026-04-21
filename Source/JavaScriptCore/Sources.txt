@@ -176,6 +176,8 @@ b3/B3SlotBaseValue.cpp
 b3/B3StackmapGenerationParams.cpp
 b3/B3StackmapSpecial.cpp
 b3/B3StackmapValue.cpp
+b3/B3StoreBarrierClusteringPhase.cpp
+b3/B3StoreBarrierElisionPhase.cpp
 b3/B3SwitchCase.cpp
 b3/B3SwitchValue.cpp
 b3/B3TZoneImpls.cpp

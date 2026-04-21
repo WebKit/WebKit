@@ -283,6 +283,8 @@ Value* ValueKey::materialize(Procedure& proc, Origin origin) const
     case WasmArrayGet:
     case WasmArraySet:
     case WasmArrayNew:
+    case StoreBarrier:
+    case FencedStoreBarrier:
     case MemoryCopy:
     case MemoryFill:
     case Fence:

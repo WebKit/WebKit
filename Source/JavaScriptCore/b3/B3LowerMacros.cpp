@@ -58,6 +58,7 @@
 #include "B3WasmStructSetValue.h"
 #include "CCallHelpers.h"
 #include "GPRInfo.h"
+#include "JITOperations.h"
 #include "JSCJSValueInlines.h"
 #include "JSCell.h"
 #include "JSObject.h"
@@ -66,6 +67,7 @@
 #include "JSWebAssemblyStruct.h"
 #include "LinkBuffer.h"
 #include "MarkedSpace.h"
+#include "VM.h"
 #include "WasmExceptionType.h"
 #include "WasmFaultSignalHandler.h"
 #include "WasmOperations.h"
@@ -1048,6 +1050,57 @@ private:
                 break;
             }
 #endif
+
+            case StoreBarrier:
+            case FencedStoreBarrier: {
+                // Lower the (Fenced)StoreBarrier(cell, vm) macro into the GC store-barrier
+                // sequence. The narrow StoreBarrier skips the fence and the post-fence cellState
+                // re-check; the FencedStoreBarrier emits the full sequence (matching what the
+                // wasm OMG IR generator used to emit by hand). The slow path calls the JS-side
+                // operationWriteBarrierSlowPath (no wasm-operation prepare dance).
+                bool isFenced = m_value->opcode() == FencedStoreBarrier;
+                Value* cell = m_value->child(0);
+                Value* vm = m_value->child(1);
+
+                BasicBlock* before = m_blockInsertionSet.splitForward(m_block, m_index, &m_insertionSet);
+                BasicBlock* slowPath = m_blockInsertionSet.insertBefore(m_block);
+                BasicBlock* recheckPath = isFenced ? m_blockInsertionSet.insertBefore(m_block) : nullptr;
+
+                // splitForward leaves a Jump at the end of `before`. Replace it with Nop so we
+                // can append the threshold check + Branch.
+                before->replaceLastWithNew<Value>(m_proc, Nop, m_origin);
+
+                Value* threshold = before->appendNew<MemoryValue>(m_proc, Load, Int32, m_origin, vm,
+                    safeCast<int32_t>(VM::offsetOfHeapBarrierThreshold()));
+                Value* cellStateFast = before->appendNew<MemoryValue>(m_proc, Load8Z, Int32, m_origin, cell,
+                    safeCast<int32_t>(JSCell::cellStateOffset()));
+                Value* fastCheck = before->appendNew<Value>(m_proc, Above, m_origin, cellStateFast, threshold);
+                before->appendNewControlValue(m_proc, Branch, m_origin, fastCheck,
+                    FrequentedBlock(m_block, FrequencyClass::Normal),
+                    FrequentedBlock(isFenced ? recheckPath : slowPath, FrequencyClass::Rare));
+
+                if (isFenced) {
+                    recheckPath->appendNew<FenceValue>(m_proc, m_origin);
+                    Value* cellStateAfterFence = recheckPath->appendNew<MemoryValue>(m_proc, Load8Z, Int32, m_origin, cell,
+                        safeCast<int32_t>(JSCell::cellStateOffset()));
+                    Value* recheckThreshold = recheckPath->appendIntConstant(m_proc, m_origin, Int32, blackThreshold);
+                    Value* recheck = recheckPath->appendNew<Value>(m_proc, Above, m_origin, cellStateAfterFence, recheckThreshold);
+                    recheckPath->appendNewControlValue(m_proc, Branch, m_origin, recheck,
+                        FrequentedBlock(m_block, FrequencyClass::Normal),
+                        FrequentedBlock(slowPath, FrequencyClass::Rare));
+                }
+
+                Value* opPtr = slowPath->appendNew<ConstPtrValue>(m_proc, m_origin,
+                    tagCFunction<OperationPtrTag>(operationWriteBarrierSlowPath));
+                slowPath->appendNew<CCallValue>(m_proc, B3::Void, m_origin, Effects::forCall(),
+                    opPtr, vm, cell);
+                slowPath->appendNewControlValue(m_proc, Jump, m_origin, FrequentedBlock(m_block));
+
+                m_value->replaceWithNop();
+                before->updatePredecessorsAfter();
+                m_changed = true;
+                break;
+            }
 
             default:
                 break;
