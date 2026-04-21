@@ -542,6 +542,8 @@ public:
     };
     virtual void removedFromAncestor(RemovalType, ContainerNode& oldParentOfRemovedTree);
 
+    void updateShadowIncludingRootForSubtree();
+
     virtual String description() const;
     virtual String debugDescription() const;
 
