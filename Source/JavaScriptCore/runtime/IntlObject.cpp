@@ -2086,8 +2086,6 @@ String TimeZone::toString() const
 {
     if (isID())
         return intlTimeZoneIDToString(m_id);
-    if (!m_offset)
-        return intlTimeZoneIDToString(utcTimeZoneID());
     return ISO8601::formatTimeZoneOffsetString(m_offset);
 }
 

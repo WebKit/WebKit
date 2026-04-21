@@ -64,7 +64,7 @@ for (let text of failures) {
     }, RangeError);
 }
 
-shouldBe(new Temporal.TimeZone("+00:00").id, `UTC`);
+shouldBe(new Temporal.TimeZone("+00:00").id, `+00:00`);
 shouldBe(new Temporal.TimeZone("+01:00").id, `+01:00`);
 shouldBe(new Temporal.TimeZone("+01:59").id, `+01:59`);
 shouldBe(new Temporal.TimeZone("-01:59").id, `-01:59`);

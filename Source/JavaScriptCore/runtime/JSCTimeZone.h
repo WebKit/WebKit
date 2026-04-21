@@ -58,16 +58,15 @@ public:
     }
 
     static TimeZone fromID(TimeZoneID id) { return TimeZone(id, 0); }
-    static TimeZone fromUTCOffset(int64_t offsetNanoseconds) { return TimeZone(utcTimeZoneID(), offsetNanoseconds); }
+    static TimeZone fromUTCOffset(int64_t offsetNanoseconds) { return TimeZone(offsetSentinelID, offsetNanoseconds); }
 
-    bool isUTCOffset() const { return m_id == utcTimeZoneID(); }
+    bool isUTCOffset() const { return m_id == offsetSentinelID; }
     bool isID() const { return !isUTCOffset(); }
 
     TimeZoneID id() const { ASSERT(isID()); return m_id; }
     int64_t utcOffsetNanoseconds() const { ASSERT(isUTCOffset()); return m_offset; }
 
-    // IANA primary identifier for non-UTC named zones, "UTC" for offset 0, or formatted
-    // "+HH:MM[:SS[.fff...]]" for non-zero UTC offsets.
+    // IANA primary identifier for named zones, or formatted "+HH:MM[:SS[.fff...]]" for UTC offsets.
     JS_EXPORT_PRIVATE String toString() const;
 
     // ICU accepts named identifiers as-is, and offsets only in "GMT+HHMM" form.
@@ -76,6 +75,9 @@ public:
     friend bool operator==(const TimeZone&, const TimeZone&) = default;
 
 private:
+    // A TimeZoneID is an index into intlAvailableTimeZones() so it can never reach this value.
+    static constexpr TimeZoneID offsetSentinelID = std::numeric_limits<TimeZoneID>::max();
+
     constexpr TimeZone(TimeZoneID id, int64_t offset) : m_id(id), m_offset(offset) { }
 
     TimeZoneID m_id { };
