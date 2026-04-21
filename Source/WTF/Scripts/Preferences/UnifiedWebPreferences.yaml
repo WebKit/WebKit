@@ -7881,6 +7881,20 @@ StandardFontFamily:
     WebCore:
       default: '""_str'
 
+StickyUserActivationAcrossSameOriginNavigationEnabled:
+  type: bool
+  status: stable
+  category: dom
+  humanReadableName: "Sticky User Activation Carry-Over on Same-Origin Navigation"
+  humanReadableDescription: "Carry over sticky user activation state across same-origin navigations"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 StorageAPIEnabled:
   type: bool
   status: stable
@@ -7896,20 +7910,6 @@ StorageAPIEnabled:
     WebCore:
       "PLATFORM(COCOA)" : true
       default: false
-
-StickyUserActivationAcrossSameOriginNavigationEnabled:
-  type: bool
-  status: stable
-  category: dom
-  humanReadableName: "Sticky User Activation Carry-Over on Same-Origin Navigation"
-  humanReadableDescription: "Carry over sticky user activation state across same-origin navigations"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
 
 StorageAPIEstimateEnabled:
   type: bool
