@@ -152,26 +152,54 @@ static RenderElement* nextInPreOrder(const RenderElement& renderer, const Render
 static CounterDirectives listItemCounterDirectives(RenderElement& renderer)
 {
     if (auto* item = dynamicDowncast<RenderListItem>(renderer)) {
+        bool inReversedScope = item->isInReversedOrderedList();
+        if (!inReversedScope) {
+            // Check if the element itself has CSS counter-reset: reversed(list-item).
+            auto& ownDirectives = renderer.style().usedCounterDirectives();
+            auto ownIt = ownDirectives.map.find("list-item"_s);
+            if (ownIt != ownDirectives.map.end() && ownIt->value.resetValue)
+                inReversedScope = ownIt->value.isReversed;
+        }
+        if (!inReversedScope) {
+            // Check if there's a CSS reversed(list-item) counter in scope by
+            // walking backward through the render tree (previous siblings, then
+            // parent, etc.) — the same traversal order used by the counter tree.
+            for (auto* current = previousInPreOrderRespectingContainment(renderer); current; current = previousInPreOrderRespectingContainment(*current)) {
+                auto& counterDirectives = current->style().usedCounterDirectives();
+                auto it = counterDirectives.map.find("list-item"_s);
+                if (it != counterDirectives.map.end() && it->value.resetValue) {
+                    inReversedScope = it->value.isReversed;
+                    break;
+                }
+                if (isHTMLListElement(current->element()))
+                    break;
+            }
+        }
         return {
             .resetValue = std::nullopt,
-            .incrementValue = item->isInReversedOrderedList() ? -1 : 1,
+            .incrementValue = inReversedScope ? -1 : 1,
             .setValue = std::nullopt
         };
     }
     if (RefPtr element = renderer.element()) {
         if (RefPtr list = dynamicDowncast<HTMLOListElement>(*element)) {
+            bool reversed = list->isReversed();
+            bool hasExplicitStart = list->hasAttributeWithoutSynchronization(HTMLNames::startAttr);
             return {
-                .resetValue = list->start(),
-                .incrementValue = list->isReversed() ? 1 : -1,
-                .setValue = std::nullopt
+                .resetValue = (reversed && !hasExplicitStart) ? 0 : list->start(),
+                .incrementValue = reversed ? 1 : -1,
+                .setValue = std::nullopt,
+                .isReversed = reversed,
+                .hasExplicitResetValue = hasExplicitStart || !reversed,
             };
         }
-        if (isHTMLListElement(*element))
+        if (isHTMLListElement(element.get())) {
             return {
                 .resetValue = 0,
                 .incrementValue = std::nullopt,
                 .setValue = std::nullopt
             };
+        }
     }
     return { };
 }
@@ -179,6 +207,8 @@ static CounterDirectives listItemCounterDirectives(RenderElement& renderer)
 struct CounterPlan {
     OptionSet<CounterNode::Type> type;
     int value;
+    bool reversed { false };
+    bool valueNeedsComputation { false };
 };
 
 static std::optional<CounterPlan> planCounter(RenderElement& renderer, const AtomString& identifier)
@@ -200,8 +230,11 @@ static std::optional<CounterPlan> planCounter(RenderElement& renderer, const Ato
 
     if (identifier == "list-item"_s) {
         auto itemDirectives = listItemCounterDirectives(renderer);
-        if (!directives.resetValue)
+        if (!directives.resetValue) {
             directives.resetValue = itemDirectives.resetValue;
+            directives.isReversed = itemDirectives.isReversed;
+            directives.hasExplicitResetValue = itemDirectives.hasExplicitResetValue;
+        }
         if (!directives.incrementValue)
             directives.incrementValue = itemDirectives.incrementValue;
         if (!directives.setValue)
@@ -217,12 +250,15 @@ static std::optional<CounterPlan> planCounter(RenderElement& renderer, const Ato
     if (directives.incrementValue)
         type.add(CounterNode::Type::Increment);
 
+    bool reversed = directives.isReversed;
+    bool valueNeedsComputation = reversed && !directives.hasExplicitResetValue;
+
     if (directives.setValue)
-        return CounterPlan { type, *directives.setValue };
+        return CounterPlan { type, *directives.setValue, reversed, false };
     if (directives.resetValue)
-        return CounterPlan { type, saturatedSum<int>(*directives.resetValue, directives.incrementValue.value_or(0)) };
+        return CounterPlan { type, saturatedSum<int>(*directives.resetValue, directives.incrementValue.value_or(0)), reversed, valueNeedsComputation };
     if (directives.incrementValue)
-        return CounterPlan { type, *directives.incrementValue };
+        return CounterPlan { type, *directives.incrementValue, false, false };
     return std::nullopt;
 }
 
@@ -375,14 +411,43 @@ static CounterNode* makeCounterNode(RenderElement& renderer, const AtomString& i
     auto& maps = counterMaps();
 
     auto type = plan ? plan->type : OptionSet<CounterNode::Type> { };
-    auto newNode = CounterNode::create(renderer, type, plan ? plan->value : 0);
+    bool reversed = plan ? plan->reversed : false;
+    bool valueNeedsComputation = plan ? plan->valueNeedsComputation : false;
+    auto newNode = CounterNode::create(renderer, type, plan ? plan->value : 0, reversed, valueNeedsComputation);
 
     auto place = findPlaceForCounter(renderer, identifier, type);
+
+    // The backward walk inside findPlaceForCounter may have triggered creation
+    // of an ancestor's counter node whose forward walk recursively created this
+    // renderer's counter node already. If so, return the existing node.
+    if (renderer.hasCounterNodeMap()) {
+        if (auto* node = counterMaps().find(renderer)->value->get(identifier))
+            return node;
+    }
+
     if (place.parent)
         place.parent->insertAfter(newNode, place.previousSibling.get(), identifier);
 
     maps.add(renderer, makeUnique<CounterMap>()).iterator->value->add(identifier, newNode.copyRef());
     renderer.setHasCounterNodeMap(true);
+
+    // For reversed counters with deferred initial values, eagerly create counter
+    // nodes for all subsequent renderers in scope so that resolvedValue() can see
+    // all children when computing the initial value. Counter nodes for
+    // increment-only elements are normally created lazily, but resolvedValue()
+    // needs the complete set of children to produce the correct initial value.
+    if (valueNeedsComputation) {
+        auto* forwardRenderer = &renderer;
+        auto* forwardStayWithin = renderer.firstNonAnonymousAncestor();
+        bool forwardSkipDescendants = false;
+        while ((forwardRenderer = nextInPreOrder(*forwardRenderer, forwardStayWithin, forwardSkipDescendants))) {
+            forwardSkipDescendants = forwardRenderer->shouldApplyStyleContainment();
+            if (auto* node = makeCounterNode(*forwardRenderer, identifier, false)) {
+                if (node->hasResetType())
+                    break;
+            }
+        }
+    }
 
     if (newNode->parent() || renderer.shouldApplyStyleContainment())
         return newNode.unsafePtr();
@@ -441,7 +506,7 @@ String RenderCounter::originalText() const
         return emptyString();
 
     RefPtr counterNode = m_counterNode.get();
-    int value = counterNode->actsAsReset() ? counterNode->value() : counterNode->countInParent();
+    int value = counterNode->actsAsReset() ? counterNode->resolvedValue() : counterNode->countInParent();
 
     auto counterText = [&](int value) {
         return counterStyle()->text(value, writingMode());

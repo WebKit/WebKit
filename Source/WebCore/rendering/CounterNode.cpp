@@ -32,9 +32,11 @@
 
 namespace WebCore {
 
-CounterNode::CounterNode(RenderElement& owner, OptionSet<CounterNode::Type> type, int value)
+CounterNode::CounterNode(RenderElement& owner, OptionSet<CounterNode::Type> type, int value, bool reversed, bool valueNeedsComputation)
     : m_type(type)
     , m_value(value)
+    , m_reversed(reversed)
+    , m_valueNeedsComputation(valueNeedsComputation)
     , m_owner(owner)
 {
 }
@@ -92,9 +94,47 @@ RenderElement& CounterNode::owner() const
     return m_owner.get();
 }
 
-Ref<CounterNode> CounterNode::create(RenderElement& owner, OptionSet<CounterNode::Type> type, int value)
+Ref<CounterNode> CounterNode::create(RenderElement& owner, OptionSet<CounterNode::Type> type, int value, bool reversed, bool valueNeedsComputation)
 {
-    return adoptRef(*new CounterNode(owner, type, value));
+    return adoptRef(*new CounterNode(owner, type, value, reversed, valueNeedsComputation));
+}
+
+// Note: this algorithm treats all Set nodes uniformly (adds their value to the
+// running sum). RenderListItem::updateValueNow() has a parallel deferred
+// computation that distinguishes list-item vs non-list-item Set nodes. The two
+// can diverge for non-list-item counter-set inside reversed scopes. This will
+// be resolved when lists use presentational hints for counter-reset/increment.
+int CounterNode::resolvedValue() const
+{
+    if (!m_valueNeedsComputation)
+        return m_value;
+
+    if (!m_resolvedValueDirty)
+        return m_cachedResolvedValue;
+
+    // For reversed counters without an explicit initial value, compute the
+    // starting value by walking direct children. The algorithm negates each
+    // child's increment and sums them, then adds one extra step so the sequence
+    // ends at a value near 1 rather than 0.
+    int num = 0;
+    int lastNonZeroIncrementNegated = 0;
+    for (auto* child = m_firstChild.get(); child; child = child->m_nextSibling.get()) {
+        if (child->hasResetType())
+            continue;
+        if (child->hasSetType()) {
+            num = WTF::sumIfNoOverflowOrFirstValue(num, child->m_value);
+            break;
+        }
+        int incrementNegated = saturatedDifference<int>(0, child->m_value);
+        if (incrementNegated)
+            lastNonZeroIncrementNegated = incrementNegated;
+        num = WTF::sumIfNoOverflowOrFirstValue(num, incrementNegated);
+    }
+    num = WTF::sumIfNoOverflowOrFirstValue(num, lastNonZeroIncrementNegated);
+
+    m_cachedResolvedValue = num;
+    m_resolvedValueDirty = false;
+    return num;
 }
 
 CounterNode* CounterNode::nextInPreOrderAfterChildren(const CounterNode* stayWithin) const
@@ -156,7 +196,7 @@ int CounterNode::computeCountInParent() const
     if (m_previousSibling)
         return WTF::sumIfNoOverflowOrFirstValue(m_previousSibling->m_countInParent, increment);
     ASSERT(m_parent->m_firstChild == this);
-    return WTF::sumIfNoOverflowOrFirstValue(m_parent->m_value, increment);
+    return WTF::sumIfNoOverflowOrFirstValue(m_parent->resolvedValue(), increment);
 }
 
 void CounterNode::addRenderer(RenderCounter& renderer)
@@ -263,7 +303,10 @@ void CounterNode::insertAfter(CounterNode& newChild, CounterNode* beforeChild, c
     if (!newChild.m_firstChild || newChild.hasResetType()) {
         newChild.m_countInParent = newChild.computeCountInParent();
         newChild.resetThisAndDescendantsRenderers();
-        if (next)
+        if (m_valueNeedsComputation && m_firstChild) {
+            m_resolvedValueDirty = true;
+            m_firstChild->recount();
+        } else if (next)
             next->recount();
         return;
     }
@@ -335,7 +378,10 @@ void CounterNode::removeChild(CounterNode& oldChild)
         m_lastChild = previous;
     }
 
-    if (next)
+    if (m_valueNeedsComputation && m_firstChild) {
+        m_resolvedValueDirty = true;
+        m_firstChild->recount();
+    } else if (next)
         next->recount();
 }
 

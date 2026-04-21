@@ -5367,13 +5367,8 @@ imported/w3c/web-platform-tests/css/css-lists/counters-scope-004.html [ ImageOnl
 imported/w3c/web-platform-tests/css/css-lists/nested-marker-styling.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-lists/counter-list-item-2.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-lists/counter-list-item-slot-order.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-lists/counter-list-item.html [ ImageOnlyFailure ]
 
-# No support for reversed(<counter-name>) syntax
-imported/w3c/web-platform-tests/css/css-lists/counter-reset-reversed-list-item-start.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-lists/counter-reset-reversed-list-item.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-lists/counter-reset-reversed-not-list-item-start.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-lists/counter-reset-reversed-not-list-item.html [ ImageOnlyFailure ]
+# ::marker content property not supported (webkit.org/b/204163)
 imported/w3c/web-platform-tests/css/css-lists/foo-counter-reversed-006a.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-lists/foo-counter-reversed-006b.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-lists/foo-counter-reversed-006c.html [ ImageOnlyFailure ]
@@ -5385,14 +5380,8 @@ imported/w3c/web-platform-tests/css/css-lists/foo-counter-reversed-008a.html [ I
 imported/w3c/web-platform-tests/css/css-lists/foo-counter-reversed-008b.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-lists/foo-counter-reversed-009a.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-lists/foo-counter-reversed-009b.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-003.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-004.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-005.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-006a.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-006b.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-006c.html [ ImageOnlyFailure ]
+
+# reversed() counter scope limitations (sibling scopes, nested lists, counter-set)
 imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-006d.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-006e.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-lists/li-value-reversed-007a.html [ ImageOnlyFailure ]

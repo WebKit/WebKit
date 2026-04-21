@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CSSPropertyParserConsumer+Lists.h"
 
+#include "CSSFunctionValue.h"
 #include "CSSParserContext.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPrimitiveValue.h"
@@ -63,11 +64,40 @@ static RefPtr<CSSValue> consumeCounter(CSSParserTokenRange& range, CSS::Property
 RefPtr<CSSValue> consumeCounterReset(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
     // <'counter-reset'> = [ <counter-name> <integer>? | <reversed-counter-name> <integer>? ]+ | none
+    // <reversed-counter-name> = reversed( <counter-name> )
     // https://drafts.csswg.org/css-lists/#propdef-counter-reset
 
-    // FIXME: Implement support for `reversed-counter-name`.
+    if (range.peek().id() == CSSValueNone)
+        return consumeIdent(range);
 
-    return consumeCounter(range, state, 0);
+    CSSValueListBuilder list;
+    do {
+        bool isReversed = range.peek().type() == FunctionToken && range.peek().functionId() == CSSValueReversed;
+        if (isReversed) {
+            auto args = consumeFunction(range);
+            if (args.peek().id() == CSSValueNone)
+                return nullptr;
+            auto counterName = consumeCustomIdent(args, state);
+            if (!counterName || !args.atEnd())
+                return nullptr;
+            auto reversedFunction = CSSFunctionValue::create(CSSValueReversed, counterName.releaseNonNull());
+            if (auto counterValue = CSSPrimitiveValueResolver<CSS::Integer<>>::consumeAndResolve(range, state))
+                list.append(CSSValuePair::create(WTF::move(reversedFunction), counterValue.releaseNonNull()));
+            else
+                list.append(WTF::move(reversedFunction));
+        } else {
+            if (range.peek().id() == CSSValueNone)
+                return nullptr;
+            auto counterName = consumeCustomIdent(range, state);
+            if (!counterName)
+                return nullptr;
+            if (auto counterValue = CSSPrimitiveValueResolver<CSS::Integer<>>::consumeAndResolve(range, state))
+                list.append(CSSValuePair::create(counterName.releaseNonNull(), counterValue.releaseNonNull()));
+            else
+                list.append(CSSValuePair::create(counterName.releaseNonNull(), CSSPrimitiveValue::createInteger(0)));
+        }
+    } while (!range.atEnd());
+    return CSSValueList::createSpaceSeparated(WTF::move(list));
 }
 
 RefPtr<CSSValue> consumeCounterIncrement(CSSParserTokenRange& range, CSS::PropertyParserState& state)

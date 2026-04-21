@@ -694,6 +694,7 @@ slice
 // CSS_PROP_BOX_DIRECTION
 // normal
 reverse
+reversed
 
 // CSS_PROP_BOX_ORIENT
 horizontal

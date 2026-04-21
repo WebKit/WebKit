@@ -67,7 +67,7 @@ static LineBoxParentSearchResult findParentOfEmptyOrFirstLineBox(RenderBlock& bl
         if (auto* renderBox = dynamicDowncast<RenderBox>(child); renderBox && renderBox->isWritingModeRoot())
             break;
 
-        if (is<RenderListItem>(blockContainer) && inQuirksMode && child.node() && isHTMLListElement(*child.node()))
+        if (is<RenderListItem>(blockContainer) && inQuirksMode && isHTMLListElement(child.node()))
             break;
 
         if (!is<RenderBlock>(child) || is<RenderTable>(child) || child.style().display() == Style::DisplayType::BlockRuby) {
