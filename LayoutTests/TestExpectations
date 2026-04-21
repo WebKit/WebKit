@@ -8310,3 +8310,17 @@ imported/w3c/web-platform-tests/svg/text/reftests/textpath-side-005.svg [ ImageO
 
 webkit.org/b/312264 imported/w3c/web-platform-tests/css/cssom-view/interrupt-hidden-smooth-scroll.html [ Pass Failure ]
 
+webkit.org/b/55094 imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.fillTextCluster-align.tentative.html [ ImageOnlyFailure ]
+webkit.org/b/55094 imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.fillTextCluster-baseline.tentative.html [ ImageOnlyFailure ]
+webkit.org/b/55094 imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.fillTextCluster-drawing-styles-change.tentative.html [ ImageOnlyFailure ]
+webkit.org/b/55094 imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.strokeTextCluster-align.tentative.html [ ImageOnlyFailure ]
+webkit.org/b/55094 imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.strokeTextCluster-baseline.tentative.html [ ImageOnlyFailure ]
+webkit.org/b/55094 imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.strokeTextCluster-drawing-styles-change.tentative.html [ ImageOnlyFailure ]
+webkit.org/b/55094 imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.fillTextCluster-align.tentative.w.html [ Timeout ]
+webkit.org/b/55094 imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.fillTextCluster-baseline.tentative.w.html [ Timeout ]
+webkit.org/b/55094 imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.fillTextCluster-drawing-styles-change.tentative.w.html [ Timeout ]
+webkit.org/b/55094 imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.fillTextCluster-font-change.tentative.w.html [ Timeout ]
+webkit.org/b/55094 imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.strokeTextCluster-align.tentative.w.html [ Timeout ]
+webkit.org/b/55094 imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.strokeTextCluster-baseline.tentative.w.html [ Timeout ]
+webkit.org/b/55094 imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.strokeTextCluster-drawing-styles-change.tentative.w.html [ Timeout ]
+webkit.org/b/55094 imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.measure.strokeTextCluster-font-change.tentative.w.html [ Timeout ]
