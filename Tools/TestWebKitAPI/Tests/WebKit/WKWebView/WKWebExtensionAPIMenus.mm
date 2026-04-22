@@ -2249,6 +2249,7 @@ TEST(WKWebExtensionAPIMenus, MacVideoContextMenuItems)
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<video src='test.mp4' style='width: 400px; height: 400px' controls></video>"_s } },
         { "/test.mp4"_s, [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"mp4"]] },
+        { "/favicon.ico"_s, { 404u } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *urlRequest = server.requestWithLocalhost();
@@ -2334,6 +2335,7 @@ TEST(WKWebExtensionAPIMenus, MacAudioContextMenuItems)
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<audio src='test.m4a' style='width: 400px; height: 400px' controls></audio>"_s } },
         { "/test.m4a"_s, [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"silence-long" withExtension:@"m4a"]] },
+        { "/favicon.ico"_s, { 404u } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *urlRequest = server.requestWithLocalhost();
