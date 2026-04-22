@@ -570,7 +570,7 @@ void Lexer<T>::setCode(const SourceCode& source, ParserArena* arena)
     m_codeEnd = m_codeStart + source.endOffset();
     m_error = false;
     m_atLineStart = true;
-    m_lineStart = m_code;
+    m_lineStart = m_codeStartPlusOffset - source.startColumn().zeroBasedInt();
     m_lexErrorMessage = String();
     m_sourceURLDirective = String();
     m_sourceMappingURLDirective = String();

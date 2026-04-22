@@ -635,16 +635,7 @@ namespace JSC {
             ASSERT(line >= firstLine);
             line -= firstLine;
 
-            unsigned lineStart = divot.lineStartOffset;
-            if (lineStart > sourceOffset)
-                lineStart -= sourceOffset;
-            else
-                lineStart = 0;
-
-            if (divotOffset < lineStart)
-                return;
-
-            unsigned column = divotOffset - lineStart;
+            unsigned column = divot.column();
 
             unsigned instructionOffset = instructions().size();
             m_codeBlock->addExpressionInfo(instructionOffset, divotOffset, startOffset, endOffset, { line, column });

@@ -95,7 +95,7 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM& vm, Structure* struct
     , m_isBuiltinFunction(kind == UnlinkedBuiltinFunction)
     , m_unlinkedBodyStartColumn(node->startColumn())
     , m_isBuiltinDefaultClassConstructor(isBuiltinDefaultClassConstructor)
-    , m_unlinkedBodyEndColumn(m_lineCount ? node->endColumn() : node->endColumn() - node->startColumn())
+    , m_unlinkedBodyEndColumn(node->endColumn())
     , m_constructAbility(static_cast<unsigned>(constructAbility))
     , m_startOffset(node->source().startOffset() - parentSource.startOffset())
     , m_scriptMode(static_cast<unsigned>(scriptMode))
@@ -185,7 +185,7 @@ DEFINE_VISIT_CHILDREN(UnlinkedFunctionExecutable);
 SourceCode UnlinkedFunctionExecutable::linkedSourceCode(const SourceCode& passedParentSource) const
 {
     const SourceCode& parentSource = !m_isBuiltinDefaultClassConstructor ? passedParentSource : BuiltinExecutables::defaultConstructorSourceCode(constructorKind());
-    unsigned startColumn = linkedStartColumn(parentSource.startColumn().oneBasedInt());
+    unsigned startColumn = linkedStartColumn();
     unsigned startOffset = parentSource.startOffset() + m_startOffset;
     unsigned firstLine = parentSource.firstLine().oneBasedInt() + m_firstLineOffset;
     return SourceCode(parentSource.provider(), startOffset, startOffset + m_sourceLength, firstLine, startColumn);

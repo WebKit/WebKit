@@ -145,7 +145,7 @@ Parser<LexerType>::Parser(VM& vm, const SourceCode& source, ImplementationVisibi
     m_lexer->setCode(source, &m_parserArena);
     m_token.m_startPosition.line = source.firstLine().oneBasedInt();
     m_token.m_startPosition.offset = source.startOffset();
-    m_token.m_startPosition.lineStartOffset = source.startOffset();
+    m_token.m_startPosition.lineStartOffset = source.startOffset() - source.startColumn().zeroBasedInt();
     m_token.m_endPosition.offset = source.startOffset();
     m_functionCache = vm.addSourceProviderCache(source.provider());
 

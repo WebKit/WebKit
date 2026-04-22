@@ -106,8 +106,8 @@ public:
     SuperBinding superBinding() const { return static_cast<SuperBinding>(m_superBinding); }
 
     unsigned lineCount() const { return m_lineCount; }
-    unsigned linkedStartColumn(unsigned parentStartColumn) const { return m_unlinkedBodyStartColumn + (!m_firstLineOffset ? parentStartColumn : 1); }
-    unsigned linkedEndColumn(unsigned startColumn) const { return m_unlinkedBodyEndColumn + (!m_lineCount ? startColumn : 1); }
+    unsigned linkedStartColumn() const { return m_unlinkedBodyStartColumn + 1; }
+    unsigned linkedEndColumn() const { return m_unlinkedBodyEndColumn + 1; }
 
     unsigned unlinkedFunctionStart() const { return m_unlinkedFunctionStart; }
     unsigned unlinkedFunctionEnd() const { return m_unlinkedFunctionEnd; }

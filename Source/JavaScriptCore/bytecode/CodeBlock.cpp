@@ -2170,7 +2170,7 @@ LineColumn CodeBlock::lineColumnForBytecodeIndex(BytecodeIndex bytecodeIndex) co
 {
     RELEASE_ASSERT(bytecodeIndex.offset() < instructions().size());
     auto lineColumn = m_unlinkedCode->lineColumnForBytecodeIndex(bytecodeIndex);
-    lineColumn.column += lineColumn.line ? 1 : firstLineColumnOffset();
+    lineColumn.column += 1;
     lineColumn.line += ownerExecutable()->firstLine();
     return lineColumn;
 }
@@ -2179,7 +2179,7 @@ ExpressionInfo::Entry CodeBlock::expressionInfoForBytecodeIndex(BytecodeIndex by
 {
     auto entry = m_unlinkedCode->expressionInfoForBytecodeIndex(bytecodeIndex);
     entry.divot += sourceOffset();
-    entry.lineColumn.column += entry.lineColumn.line ? 1 : firstLineColumnOffset();
+    entry.lineColumn.column += 1;
     entry.lineColumn.line += ownerExecutable()->firstLine();
     return entry;
 }
