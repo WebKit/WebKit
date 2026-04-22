@@ -169,6 +169,8 @@ void InternalWritableStreamWriter::onClosedPromiseRejection(Function<void(JSDOMG
 
     Ref domPromise = DOMPromise::create(*globalObject, *promise);
     domPromise->whenSettled([domPromise, callback = WTF::move(callback)]() mutable {
+        if (domPromise->activeDOMObjectAreStopped())
+            return;
         if (domPromise->status() != DOMPromise::Status::Rejected || !domPromise->globalObject())
             return;
         callback(*domPromise->globalObject(), domPromise->result());
@@ -197,6 +199,8 @@ void InternalWritableStreamWriter::onClosedPromiseResolution(Function<void()>&& 
 
     Ref domPromise = DOMPromise::create(*globalObject, *promise);
     domPromise->whenSettled([domPromise, callback = WTF::move(callback)]() mutable {
+        if (domPromise->activeDOMObjectAreStopped())
+            return;
         if (domPromise->status() != DOMPromise::Status::Fulfilled)
             return;
         callback();
@@ -225,6 +229,8 @@ void InternalWritableStreamWriter::whenReady(Function<void (bool)>&& callback)
 
     Ref domPromise = DOMPromise::create(*globalObject, *promise);
     domPromise->whenSettled([domPromise, callback = WTF::move(callback)]() mutable {
+        if (domPromise->activeDOMObjectAreStopped())
+            return;
         callback(domPromise->status() == DOMPromise::Status::Fulfilled);
     });
 }
