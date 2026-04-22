@@ -36,6 +36,7 @@
 #include "WasmLimits.h"
 #include "js/JSWebAssemblyInstance.h"
 #include <span>
+#include <wtf/CheckedArithmetic.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -1147,8 +1148,13 @@ public:
 
     // Memory
 
-    inline Location emitCheckAndPreparePointer(Value pointer, uint32_t uoffset, uint32_t sizeOfOperation, uint8_t memoryIndex)
+    inline Location emitCheckAndPreparePointer(Value pointer, uint64_t uoffset, uint32_t sizeOfOperation, uint8_t memoryIndex)
     {
+        if (WTF::sumOverflows<uint64_t>(static_cast<uint64_t>(sizeOfOperation), uoffset)) {
+            recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, m_jit.jump());
+            return Location::fromGPR(wasmBaseMemoryPointer);
+        }
+
         ScratchScope<1, 0> scratches(*this);
         Location pointerLocation;
 
@@ -1167,7 +1173,18 @@ public:
                 boundsCheckingSizeRegister);
         }
 
+        uint64_t boundary = static_cast<uint64_t>(sizeOfOperation) + uoffset - 1;
+
         if (pointer.isConst()) {
+            uint64_t constantPointer = m_info.memory(memoryIndex).isMemory64()
+                ? pointer.asI64()
+                : static_cast<uint32_t>(pointer.asI32());
+
+            if (sumOverflows<uint64_t>(constantPointer, boundary)) {
+                recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, m_jit.jump());
+                return Location::fromGPR(wasmBaseMemoryPointer);
+            }
+
             pointerLocation = Location::fromGPR(scratches.gpr(0));
             emitMoveConst(pointer, pointerLocation);
         } else
@@ -1181,20 +1198,31 @@ public:
         loadWebAssemblyGlobalState(wasmBaseMemoryPointer, wasmBoundsCheckingSizeRegister);
 #endif
 
-        uint64_t boundary = static_cast<uint64_t>(sizeOfOperation) + uoffset - 1;
         // conservatively force bounds checking if memoryIndex != 0
         switch (memoryIndex ? MemoryMode::BoundsChecking : m_mode) {
         case MemoryMode::BoundsChecking: {
             // We're not using signal handling only when the memory is not shared.
             // Regardless of signaling, we must check that no memory access exceeds the current memory size.
-            m_jit.zeroExtend32ToWord(pointerLocation.asGPR(), wasmScratchGPR);
-            if (boundary)
-                m_jit.addPtr(TrustedImmPtr(boundary), wasmScratchGPR);
+
+            if (m_info.memory(memoryIndex).isMemory64()) {
+                if (boundary) {
+                    m_jit.move(TrustedImmPtr(boundary), wasmScratchGPR);
+                    Jump overflow = m_jit.branchAddPtr(ResultCondition::Carry, pointerLocation.asGPR(), wasmScratchGPR);
+                    recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, overflow);
+                } else
+                    m_jit.move(pointerLocation.asGPR(), wasmScratchGPR);
+            } else {
+                m_jit.zeroExtend32ToWord(pointerLocation.asGPR(), wasmScratchGPR);
+                if (boundary)
+                    m_jit.addPtr(TrustedImmPtr(boundary), wasmScratchGPR);
+            }
+
             recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchPtr(RelationalCondition::AboveOrEqual, wasmScratchGPR, boundsCheckingSizeRegister));
             break;
         }
 
         case MemoryMode::Signaling: {
+            RELEASE_ASSERT(!m_info.memory(memoryIndex).isMemory64());
             // We've virtually mapped 4GiB+redzone for this memory. Only the user-allocated pages are addressable, contiguously in range [0, current],
             // and everything above is mapped PROT_NONE. We don't need to perform any explicit bounds check in the 4GiB range because WebAssembly register
             // memory accesses are 32-bit. However WebAssembly register + offset accesses perform the addition in 64-bit which can push an access above
@@ -1217,10 +1245,17 @@ public:
         }
 
 #if CPU(ARM64)
-        m_jit.addZeroExtend64(baseRegister, pointerLocation.asGPR(), wasmScratchGPR);
+        if (m_info.memory(memoryIndex).isMemory64())
+            m_jit.addPtr(baseRegister, pointerLocation.asGPR(), wasmScratchGPR);
+        else
+            m_jit.addZeroExtend64(baseRegister, pointerLocation.asGPR(), wasmScratchGPR);
 #else
-        m_jit.zeroExtend32ToWord(pointerLocation.asGPR(), wasmScratchGPR);
-        m_jit.addPtr(baseRegister, wasmScratchGPR);
+        if (m_info.memory(memoryIndex).isMemory64())
+            m_jit.addPtr(baseRegister, pointerLocation.asGPR(), wasmScratchGPR);
+        else {
+            m_jit.zeroExtend32ToWord(pointerLocation.asGPR(), wasmScratchGPR);
+            m_jit.addPtr(baseRegister, wasmScratchGPR);
+        }
 #endif
 
         consume(pointer);
@@ -1355,25 +1390,25 @@ public:
     template<typename Functor>
     void emitAtomicOpGeneric(ExtAtomicOpType op, Address address, Location old, Location cur, const Functor& functor);
 
-    [[nodiscard]] Value emitAtomicLoadOp(ExtAtomicOpType loadOp, Type valueType, Location pointer, uint32_t uoffset);
+    [[nodiscard]] Value emitAtomicLoadOp(ExtAtomicOpType loadOp, Type valueType, Location pointer, uint64_t uoffset);
 
-    [[nodiscard]] PartialResult atomicLoad(ExtAtomicOpType loadOp, Type valueType, ExpressionType pointer, ExpressionType& result, uint32_t uoffset, uint8_t memoryIndex);
+    [[nodiscard]] PartialResult atomicLoad(ExtAtomicOpType loadOp, Type valueType, ExpressionType pointer, ExpressionType& result, uint64_t uoffset, uint8_t memoryIndex);
 
-    void emitAtomicStoreOp(ExtAtomicOpType storeOp, Type, Location pointer, Value value, uint32_t uoffset);
+    void emitAtomicStoreOp(ExtAtomicOpType storeOp, Type, Location pointer, Value, uint64_t uoffset);
 
-    [[nodiscard]] PartialResult atomicStore(ExtAtomicOpType storeOp, Type valueType, ExpressionType pointer, ExpressionType value, uint32_t uoffset, uint8_t memoryIndex);
+    [[nodiscard]] PartialResult atomicStore(ExtAtomicOpType storeOp, Type valueType, ExpressionType pointer, ExpressionType value, uint64_t uoffset, uint8_t memoryIndex);
 
     Value emitAtomicBinaryRMWOp(ExtAtomicOpType op, Type valueType, Location pointer, Value value, uint32_t uoffset);
 
-    [[nodiscard]] PartialResult atomicBinaryRMW(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType value, ExpressionType& result, uint32_t uoffset, uint8_t memoryIndex);
+    [[nodiscard]] PartialResult atomicBinaryRMW(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType value, ExpressionType& result, uint64_t uoffset, uint8_t memoryIndex);
 
     [[nodiscard]] Value emitAtomicCompareExchange(ExtAtomicOpType op, Type, Location pointer, Value expected, Value value, uint32_t uoffset);
 
-    [[nodiscard]] PartialResult atomicCompareExchange(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType expected, ExpressionType value, ExpressionType& result, uint32_t uoffset, uint8_t memoryIndex);
+    [[nodiscard]] PartialResult atomicCompareExchange(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType expected, ExpressionType value, ExpressionType& result, uint64_t uoffset, uint8_t memoryIndex);
 
-    [[nodiscard]] PartialResult atomicWait(ExtAtomicOpType op, ExpressionType pointer, ExpressionType value, ExpressionType timeout, ExpressionType& result, uint32_t uoffset, uint8_t memoryIndex);
+    [[nodiscard]] PartialResult atomicWait(ExtAtomicOpType op, ExpressionType pointer, ExpressionType value, ExpressionType timeout, ExpressionType& result, uint64_t uoffset, uint8_t memoryIndex);
 
-    [[nodiscard]] PartialResult atomicNotify(ExtAtomicOpType op, ExpressionType pointer, ExpressionType count, ExpressionType& result, uint32_t uoffset, uint8_t memoryIndex);
+    [[nodiscard]] PartialResult atomicNotify(ExtAtomicOpType op, ExpressionType pointer, ExpressionType count, ExpressionType& result, uint64_t uoffset, uint8_t memoryIndex);
 
     [[nodiscard]] PartialResult atomicFence(ExtAtomicOpType, uint8_t);
 

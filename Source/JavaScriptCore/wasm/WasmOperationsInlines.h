@@ -778,9 +778,11 @@ inline int32_t memoryAtomicWait32(JSWebAssemblyInstance* instance, uint64_t offs
     return waitImpl<int32_t>(vm, pointer, value, timeoutInNanoseconds);
 }
 
-inline int32_t memoryAtomicWait32(JSWebAssemblyInstance* instance, unsigned base, unsigned offset, int32_t value, int64_t timeoutInNanoseconds, uint8_t memoryIndex)
+inline int32_t memoryAtomicWait32(JSWebAssemblyInstance* instance, uint64_t base, uint64_t offset, int32_t value, int64_t timeoutInNanoseconds, uint8_t memoryIndex)
 {
-    return memoryAtomicWait32(instance, static_cast<uint64_t>(base) + offset, value, timeoutInNanoseconds, memoryIndex);
+    if (sumOverflows<uint64_t>(base, offset))
+        return -1;
+    return memoryAtomicWait32(instance, base + offset, value, timeoutInNanoseconds, memoryIndex);
 }
 
 inline int32_t memoryAtomicWait64(JSWebAssemblyInstance* instance, uint64_t offsetInMemory, int64_t value, int64_t timeoutInNanoseconds, uint8_t memoryIndex)
@@ -800,14 +802,18 @@ inline int32_t memoryAtomicWait64(JSWebAssemblyInstance* instance, uint64_t offs
     return waitImpl<int64_t>(vm, pointer, value, timeoutInNanoseconds);
 }
 
-inline int32_t memoryAtomicWait64(JSWebAssemblyInstance* instance, unsigned base, unsigned offset, int64_t value, int64_t timeoutInNanoseconds, uint8_t memoryIndex)
+inline int32_t memoryAtomicWait64(JSWebAssemblyInstance* instance, uint64_t base, uint64_t offset, int64_t value, int64_t timeoutInNanoseconds, uint8_t memoryIndex)
 {
-    return memoryAtomicWait64(instance, static_cast<uint64_t>(base) + offset, value, timeoutInNanoseconds, memoryIndex);
+    if (sumOverflows<uint64_t>(base, offset))
+        return -1;
+    return memoryAtomicWait64(instance, base + offset, value, timeoutInNanoseconds, memoryIndex);
 }
 
-inline int32_t memoryAtomicNotify(JSWebAssemblyInstance* instance, unsigned base, unsigned offset, int32_t countValue, uint8_t memoryIndex)
+inline int32_t memoryAtomicNotify(JSWebAssemblyInstance* instance, uint64_t base, uint64_t offset, int32_t countValue, uint8_t memoryIndex)
 {
-    uint64_t offsetInMemory = static_cast<uint64_t>(base) + offset;
+    if (sumOverflows<uint64_t>(base, offset))
+        return -1;
+    uint64_t offsetInMemory = base + offset;
     if (offsetInMemory & (0x4 - 1))
         return -1;
     if (memoryIndex >= instance->moduleInformation().memoryCount())

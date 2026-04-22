@@ -640,13 +640,13 @@ void BBQJIT::emitAtomicOpGeneric(ExtAtomicOpType op, Address address, GPRReg old
 #endif
 }
 
-[[nodiscard]] Value BBQJIT::emitAtomicLoadOp(ExtAtomicOpType loadOp, Type valueType, Location pointer, uint32_t uoffset)
+[[nodiscard]] Value BBQJIT::emitAtomicLoadOp(ExtAtomicOpType loadOp, Type valueType, Location pointer, uint64_t uoffset)
 {
     ASSERT(pointer.isGPR());
 
     // For Atomic access, we need SimpleAddress (uoffset = 0).
     if (uoffset)
-        m_jit.add64(TrustedImm64(static_cast<int64_t>(uoffset)), pointer.asGPR());
+        m_jit.add64(TrustedImm64(uoffset), pointer.asGPR());
     Address address = Address(pointer.asGPR());
 
     if (accessWidth(loadOp) != Width8)
@@ -732,7 +732,7 @@ void BBQJIT::emitAtomicOpGeneric(ExtAtomicOpType op, Address address, GPRReg old
     return result;
 }
 
-void BBQJIT::emitAtomicStoreOp(ExtAtomicOpType storeOp, Type, Location pointer, Value value, uint32_t uoffset)
+void BBQJIT::emitAtomicStoreOp(ExtAtomicOpType storeOp, Type, Location pointer, Value value, uint64_t uoffset)
 {
     ASSERT(pointer.isGPR());
 

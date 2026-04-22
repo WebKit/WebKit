@@ -128,7 +128,7 @@ final class WebBackForwardList {
     }
 
     private static let shouldSkipItemsWithoutUserGestureForWebKitAPI: Bool = {
-        #if os(Darwin)
+        #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS) || os(visionOS)
         return WTF.linkedOnOrAfterSDKWithBehavior(WTF.SDKAlignedBehavior.AllBackForwardItemsWithoutUserGestureInvisibleToUI)
         #else
         return false

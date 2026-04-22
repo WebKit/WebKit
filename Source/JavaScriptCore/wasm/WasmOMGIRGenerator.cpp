@@ -749,13 +749,13 @@ public:
     [[nodiscard]] PartialResult addDataDrop(unsigned);
 
     // Atomics
-    [[nodiscard]] PartialResult atomicLoad(ExtAtomicOpType, Type, ExpressionType pointer, ExpressionType& result, uint32_t offset, uint8_t memoryIndex);
-    [[nodiscard]] PartialResult atomicStore(ExtAtomicOpType, Type, ExpressionType pointer, ExpressionType value, uint32_t offset, uint8_t memoryIndex);
-    [[nodiscard]] PartialResult atomicBinaryRMW(ExtAtomicOpType, Type, ExpressionType pointer, ExpressionType value, ExpressionType& result, uint32_t offset, uint8_t memoryIndex);
-    [[nodiscard]] PartialResult atomicCompareExchange(ExtAtomicOpType, Type, ExpressionType pointer, ExpressionType expected, ExpressionType value, ExpressionType& result, uint32_t offset, uint8_t memoryIndex);
+    [[nodiscard]] PartialResult atomicLoad(ExtAtomicOpType, Type, ExpressionType pointer, ExpressionType& result, uint64_t offset, uint8_t memoryIndex);
+    [[nodiscard]] PartialResult atomicStore(ExtAtomicOpType, Type, ExpressionType pointer, ExpressionType value, uint64_t offset, uint8_t memoryIndex);
+    [[nodiscard]] PartialResult atomicBinaryRMW(ExtAtomicOpType, Type, ExpressionType pointer, ExpressionType value, ExpressionType& result, uint64_t offset, uint8_t memoryIndex);
+    [[nodiscard]] PartialResult atomicCompareExchange(ExtAtomicOpType, Type, ExpressionType pointer, ExpressionType expected, ExpressionType value, ExpressionType& result, uint64_t offset, uint8_t memoryIndex);
 
-    [[nodiscard]] PartialResult atomicWait(ExtAtomicOpType, ExpressionType pointer, ExpressionType value, ExpressionType timeout, ExpressionType& result, uint32_t offset, uint8_t memoryIndex);
-    [[nodiscard]] PartialResult atomicNotify(ExtAtomicOpType, ExpressionType pointer, ExpressionType value, ExpressionType& result, uint32_t offset, uint8_t memoryIndex);
+    [[nodiscard]] PartialResult atomicWait(ExtAtomicOpType, ExpressionType pointer, ExpressionType value, ExpressionType timeout, ExpressionType& result, uint64_t offset, uint8_t memoryIndex);
+    [[nodiscard]] PartialResult atomicNotify(ExtAtomicOpType, ExpressionType pointer, ExpressionType value, ExpressionType& result, uint64_t offset, uint8_t memoryIndex);
     [[nodiscard]] PartialResult atomicFence(ExtAtomicOpType, uint8_t flags);
 
     // Saturated truncation.
@@ -932,14 +932,14 @@ private:
     void emitWriteBarrier(Value* cell);
     Value* emitCheckAndPreparePointer(Value* pointer, uint64_t offset, uint32_t sizeOfOp, uint8_t memoryIndex);
     B3::Kind memoryKind(B3::Opcode memoryOp);
-    Value* emitLoadOp(LoadOpType, Value* pointer, uint32_t offset);
-    void emitStoreOp(StoreOpType, Value* pointer, Value*, uint32_t offset);
+    Value* emitLoadOp(LoadOpType, Value* pointer, uint64_t offset);
+    void emitStoreOp(StoreOpType, Value* pointer, Value*, uint64_t offset);
 
     Value* sanitizeAtomicResult(ExtAtomicOpType, Type, Value* result);
-    Value* emitAtomicLoadOp(ExtAtomicOpType, Type, Value* pointer, uint32_t offset);
-    void emitAtomicStoreOp(ExtAtomicOpType, Type, Value* pointer, Value*, uint32_t offset);
-    Value* emitAtomicBinaryRMWOp(ExtAtomicOpType, Type, Value* pointer, Value*, uint32_t offset);
-    Value* emitAtomicCompareExchange(ExtAtomicOpType, Type, Value* pointer, Value* expected, Value*, uint32_t offset);
+    Value* emitAtomicLoadOp(ExtAtomicOpType, Type, Value* pointer, uint64_t offset);
+    void emitAtomicStoreOp(ExtAtomicOpType, Type, Value* pointer, Value*, uint64_t offset);
+    Value* emitAtomicBinaryRMWOp(ExtAtomicOpType, Type, Value* pointer, Value*, uint64_t offset);
+    Value* emitAtomicCompareExchange(ExtAtomicOpType, Type, Value* pointer, Value* expected, Value*, uint64_t offset);
 
     void mutatorFence();
 
@@ -2591,7 +2591,7 @@ inline B3::Kind OMGIRGenerator::memoryKind(B3::Opcode memoryOp)
     return memoryOp;
 }
 
-inline Value* OMGIRGenerator::emitLoadOp(LoadOpType op, Value* pointer, uint32_t uoffset)
+inline Value* OMGIRGenerator::emitLoadOp(LoadOpType op, Value* pointer, uint64_t uoffset)
 {
     int32_t offset = fixupPointerPlusOffset(pointer, uoffset);
 
@@ -2751,7 +2751,7 @@ inline uint32_t sizeOfStoreOp(StoreOpType op)
 }
 
 
-inline void OMGIRGenerator::emitStoreOp(StoreOpType op, Value* pointer, Value* value, uint32_t uoffset)
+inline void OMGIRGenerator::emitStoreOp(StoreOpType op, Value* pointer, Value* value, uint64_t uoffset)
 {
     int32_t offset = fixupPointerPlusOffset(pointer, uoffset);
 
@@ -2864,7 +2864,7 @@ Value* OMGIRGenerator::fixupPointerPlusOffsetForAtomicOps(ExtAtomicOpType op, Va
     return pointer;
 }
 
-inline Value* OMGIRGenerator::emitAtomicLoadOp(ExtAtomicOpType op, Type valueType, Value* pointer, uint32_t uoffset)
+inline Value* OMGIRGenerator::emitAtomicLoadOp(ExtAtomicOpType op, Type valueType, Value* pointer, uint64_t uoffset)
 {
     pointer = fixupPointerPlusOffsetForAtomicOps(op, pointer, uoffset);
 
@@ -2889,11 +2889,15 @@ inline Value* OMGIRGenerator::emitAtomicLoadOp(ExtAtomicOpType op, Type valueTyp
     return sanitizeAtomicResult(op, valueType, atomic);
 }
 
-auto OMGIRGenerator::atomicLoad(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType& result, uint32_t offset, uint8_t memoryIndex) -> PartialResult
+auto OMGIRGenerator::atomicLoad(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType& result, uint64_t offset, uint8_t memoryIndex) -> PartialResult
 {
-    ASSERT(pointer.type() == Int32);
+    ASSERT(pointer.type().kind() == m_info.memory(memoryIndex).addressType().asB3TypeKind());
 
-    if (sumOverflows<uint32_t>(offset, sizeOfAtomicOpMemoryAccess(op))) [[unlikely]] {
+    const bool overflows = m_info.memory(memoryIndex).isMemory64()
+        ? sumOverflows<uint64_t>(offset, sizeOfAtomicOpMemoryAccess(op))
+        : sumOverflows<uint32_t>(offset, sizeOfAtomicOpMemoryAccess(op));
+
+    if (overflows) [[unlikely]] {
         // FIXME: Even though this is provably out of bounds, it's not a validation error, so we have to handle it
         // as a runtime exception. However, this may change: https://bugs.webkit.org/show_bug.cgi?id=166435
         B3::PatchpointValue* throwException = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, B3::Void, origin());
@@ -2919,7 +2923,7 @@ auto OMGIRGenerator::atomicLoad(ExtAtomicOpType op, Type valueType, ExpressionTy
     return { };
 }
 
-inline void OMGIRGenerator::emitAtomicStoreOp(ExtAtomicOpType op, Type valueType, Value* pointer, Value* value, uint32_t uoffset)
+inline void OMGIRGenerator::emitAtomicStoreOp(ExtAtomicOpType op, Type valueType, Value* pointer, Value* value, uint64_t uoffset)
 {
     pointer = fixupPointerPlusOffsetForAtomicOps(op, pointer, uoffset);
 
@@ -2930,11 +2934,14 @@ inline void OMGIRGenerator::emitAtomicStoreOp(ExtAtomicOpType op, Type valueType
     m_heaps.decorateFencedAccess(&m_heaps.WebAssemblyMemory, atomic);
 }
 
-auto OMGIRGenerator::atomicStore(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType value, uint32_t offset, uint8_t memoryIndex) -> PartialResult
+auto OMGIRGenerator::atomicStore(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType value, uint64_t offset, uint8_t memoryIndex) -> PartialResult
 {
-    ASSERT(pointer.type() == Int32);
+    ASSERT(pointer.type().kind() == m_info.memory(memoryIndex).addressType().asB3TypeKind());
+    const bool overflows = m_info.memory(memoryIndex).isMemory64()
+        ? sumOverflows<uint64_t>(offset, sizeOfAtomicOpMemoryAccess(op))
+        : sumOverflows<uint32_t>(offset, sizeOfAtomicOpMemoryAccess(op));
 
-    if (sumOverflows<uint32_t>(offset, sizeOfAtomicOpMemoryAccess(op))) [[unlikely]] {
+    if (overflows) [[unlikely]] {
         // FIXME: Even though this is provably out of bounds, it's not a validation error, so we have to handle it
         // as a runtime exception. However, this may change: https://bugs.webkit.org/show_bug.cgi?id=166435
         B3::PatchpointValue* throwException = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, B3::Void, origin());
@@ -2948,7 +2955,7 @@ auto OMGIRGenerator::atomicStore(ExtAtomicOpType op, Type valueType, ExpressionT
     return { };
 }
 
-inline Value* OMGIRGenerator::emitAtomicBinaryRMWOp(ExtAtomicOpType op, Type valueType, Value* pointer, Value* value, uint32_t uoffset)
+inline Value* OMGIRGenerator::emitAtomicBinaryRMWOp(ExtAtomicOpType op, Type valueType, Value* pointer, Value* value, uint64_t uoffset)
 {
     pointer = fixupPointerPlusOffsetForAtomicOps(op, pointer, uoffset);
 
@@ -3022,11 +3029,15 @@ inline Value* OMGIRGenerator::emitAtomicBinaryRMWOp(ExtAtomicOpType op, Type val
     return sanitizeAtomicResult(op, valueType, atomic);
 }
 
-auto OMGIRGenerator::atomicBinaryRMW(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType value, ExpressionType& result, uint32_t offset, uint8_t memoryIndex) -> PartialResult
+auto OMGIRGenerator::atomicBinaryRMW(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType value, ExpressionType& result, uint64_t offset, uint8_t memoryIndex) -> PartialResult
 {
-    ASSERT(pointer.type() == Int32);
+    ASSERT(pointer.type().kind() == m_info.memory(memoryIndex).addressType().asB3TypeKind());
 
-    if (sumOverflows<uint32_t>(offset, sizeOfAtomicOpMemoryAccess(op))) [[unlikely]] {
+    const bool overflows = m_info.memory(memoryIndex).isMemory64()
+        ? sumOverflows<uint64_t>(offset, sizeOfAtomicOpMemoryAccess(op))
+        : sumOverflows<uint32_t>(offset, sizeOfAtomicOpMemoryAccess(op));
+
+    if (overflows) [[unlikely]] {
         // FIXME: Even though this is provably out of bounds, it's not a validation error, so we have to handle it
         // as a runtime exception. However, this may change: https://bugs.webkit.org/show_bug.cgi?id=166435
         B3::PatchpointValue* throwException = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, B3::Void, origin());
@@ -3052,7 +3063,7 @@ auto OMGIRGenerator::atomicBinaryRMW(ExtAtomicOpType op, Type valueType, Express
     return { };
 }
 
-Value* OMGIRGenerator::emitAtomicCompareExchange(ExtAtomicOpType op, Type valueType, Value* pointer, Value* expected, Value* value, uint32_t uoffset)
+Value* OMGIRGenerator::emitAtomicCompareExchange(ExtAtomicOpType op, Type valueType, Value* pointer, Value* expected, Value* value, uint64_t uoffset)
 {
     pointer = fixupPointerPlusOffsetForAtomicOps(op, pointer, uoffset);
 
@@ -3135,11 +3146,15 @@ Value* OMGIRGenerator::emitAtomicCompareExchange(ExtAtomicOpType op, Type valueT
     return fieldType.is<Type>() && isRefType(fieldType.unpacked());
 }
 
-auto OMGIRGenerator::atomicCompareExchange(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType expected, ExpressionType value, ExpressionType& result, uint32_t offset, uint8_t memoryIndex) -> PartialResult
+auto OMGIRGenerator::atomicCompareExchange(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType expected, ExpressionType value, ExpressionType& result, uint64_t offset, uint8_t memoryIndex) -> PartialResult
 {
-    ASSERT(pointer.type() == Int32);
+    ASSERT(pointer.type().kind() == m_info.memory(memoryIndex).addressType().asB3TypeKind());
 
-    if (sumOverflows<uint32_t>(offset, sizeOfAtomicOpMemoryAccess(op))) [[unlikely]] {
+    const bool overflows = m_info.memory(memoryIndex).isMemory64()
+        ? sumOverflows<uint64_t>(offset, sizeOfAtomicOpMemoryAccess(op))
+        : sumOverflows<uint32_t>(offset, sizeOfAtomicOpMemoryAccess(op));
+
+    if (overflows) [[unlikely]] {
         // FIXME: Even though this is provably out of bounds, it's not a validation error, so we have to handle it
         // as a runtime exception. However, this may change: https://bugs.webkit.org/show_bug.cgi?id=166435
         B3::PatchpointValue* throwException = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, B3::Void, origin());
@@ -3165,7 +3180,7 @@ auto OMGIRGenerator::atomicCompareExchange(ExtAtomicOpType op, Type valueType, E
     return { };
 }
 
-auto OMGIRGenerator::atomicWait(ExtAtomicOpType op, ExpressionType pointerVar, ExpressionType valueVar, ExpressionType timeoutVar, ExpressionType& result, uint32_t offset, uint8_t memoryIndex) -> PartialResult
+auto OMGIRGenerator::atomicWait(ExtAtomicOpType op, ExpressionType pointerVar, ExpressionType valueVar, ExpressionType timeoutVar, ExpressionType& result, uint64_t offset, uint8_t memoryIndex) -> PartialResult
 {
     Value* pointer = get(pointerVar);
     Value* value = get(valueVar);
@@ -3173,10 +3188,10 @@ auto OMGIRGenerator::atomicWait(ExtAtomicOpType op, ExpressionType pointerVar, E
     Value* resultValue = nullptr;
     if (op == ExtAtomicOpType::MemoryAtomicWait32) {
         resultValue = callWasmOperation(m_currentBlock, Int32, operationMemoryAtomicWait32,
-            instanceValue(), pointer, constant(Int32, offset), value, timeout, constant(Int32, memoryIndex));
+            instanceValue(), pointer, constant(Int64, offset), value, timeout, constant(Int32, memoryIndex));
     } else {
         resultValue = callWasmOperation(m_currentBlock, Int32, operationMemoryAtomicWait64,
-            instanceValue(), pointer, constant(Int32, offset), value, timeout, constant(Int32, memoryIndex));
+            instanceValue(), pointer, constant(Int64, offset), value, timeout, constant(Int32, memoryIndex));
     }
 
     {
@@ -3192,10 +3207,10 @@ auto OMGIRGenerator::atomicWait(ExtAtomicOpType op, ExpressionType pointerVar, E
     return { };
 }
 
-auto OMGIRGenerator::atomicNotify(ExtAtomicOpType, ExpressionType pointer, ExpressionType count, ExpressionType& result, uint32_t offset, uint8_t memoryIndex) -> PartialResult
+auto OMGIRGenerator::atomicNotify(ExtAtomicOpType, ExpressionType pointer, ExpressionType count, ExpressionType& result, uint64_t offset, uint8_t memoryIndex) -> PartialResult
 {
     Value* resultValue = callWasmOperation(m_currentBlock, Int32, operationMemoryAtomicNotify,
-        instanceValue(), get(pointer), constant(Int32, offset), get(count), constant(Int32, memoryIndex));
+        instanceValue(), get(pointer), constant(Int64, offset), get(count), constant(Int32, memoryIndex));
     {
         result = push(resultValue);
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),

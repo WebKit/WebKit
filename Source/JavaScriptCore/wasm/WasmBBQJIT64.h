@@ -113,10 +113,13 @@ auto BBQJIT::emitCheckAndPrepareAndMaterializePointerApply(Value pointer, uint64
     case MemoryMode::BoundsChecking: {
         // We're not using signal handling only when the memory is not shared.
         // Regardless of signaling, we must check that no memory access exceeds the current memory size.
-        if (m_info.memory(memoryIndex).isMemory64() && boundary) {
-            m_jit.move(TrustedImmPtr(boundary), wasmScratchGPR);
-            Jump overflow = m_jit.branchAddPtr(ResultCondition::Carry, pointerLocation.asGPR(), wasmScratchGPR);
-            recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, overflow);
+        if (m_info.memory(memoryIndex).isMemory64()) {
+            if (boundary) {
+                m_jit.move(TrustedImmPtr(boundary), wasmScratchGPR);
+                Jump overflow = m_jit.branchAddPtr(ResultCondition::Carry, pointerLocation.asGPR(), wasmScratchGPR);
+                recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, overflow);
+            } else
+                m_jit.move(pointerLocation.asGPR(), wasmScratchGPR);
         } else {
             m_jit.zeroExtend32ToWord(pointerLocation.asGPR(), wasmScratchGPR);
             if (boundary)

@@ -285,12 +285,12 @@ public:
     [[nodiscard]] PartialResult addMemoryCopy(ExpressionType, ExpressionType, ExpressionType, uint8_t, uint8_t) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addMemoryInit(unsigned, ExpressionType, ExpressionType, ExpressionType, uint8_t) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addDataDrop(unsigned) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult atomicLoad(ExtAtomicOpType, Type, ExpressionType, ExpressionType&, uint32_t, uint8_t) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult atomicStore(ExtAtomicOpType, Type, ExpressionType, ExpressionType, uint32_t, uint8_t) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult atomicBinaryRMW(ExtAtomicOpType, Type, ExpressionType, ExpressionType, ExpressionType&, uint32_t, uint8_t) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult atomicCompareExchange(ExtAtomicOpType, Type, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, uint32_t, uint8_t) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult atomicWait(ExtAtomicOpType, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, uint32_t, uint8_t) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult atomicNotify(ExtAtomicOpType, ExpressionType, ExpressionType, ExpressionType&, uint32_t, uint8_t) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult atomicLoad(ExtAtomicOpType, Type, ExpressionType, ExpressionType&, uint64_t, uint8_t) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult atomicStore(ExtAtomicOpType, Type, ExpressionType, ExpressionType, uint64_t, uint8_t) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult atomicBinaryRMW(ExtAtomicOpType, Type, ExpressionType, ExpressionType, ExpressionType&, uint64_t, uint8_t) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult atomicCompareExchange(ExtAtomicOpType, Type, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, uint64_t, uint8_t) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult atomicWait(ExtAtomicOpType, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, uint64_t, uint8_t) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult atomicNotify(ExtAtomicOpType, ExpressionType, ExpressionType, ExpressionType&, uint64_t, uint8_t) CONST_EXPR_STUB
     [[nodiscard]] PartialResult atomicFence(ExtAtomicOpType, uint8_t) CONST_EXPR_STUB
     [[nodiscard]] PartialResult truncTrapping(OpType, ExpressionType, ExpressionType&, Type, Type) CONST_EXPR_STUB
     [[nodiscard]] PartialResult truncSaturated(Ext1OpType, ExpressionType, ExpressionType&, Type, Type) CONST_EXPR_STUB

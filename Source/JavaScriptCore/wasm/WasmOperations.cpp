@@ -1626,17 +1626,17 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationGetWasmTableSize, UCPUStrictInt32, (J
     return toUCPUStrictInt32(tableSize(instance, tableIndex));
 }
 
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryAtomicWait32, UCPUStrictInt32, (JSWebAssemblyInstance* instance, unsigned base, unsigned offset, int32_t value, int64_t timeoutInNanoseconds, uint8_t memoryIndex))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryAtomicWait32, UCPUStrictInt32, (JSWebAssemblyInstance* instance, uint64_t base, uint64_t offset, int32_t value, int64_t timeoutInNanoseconds, uint8_t memoryIndex))
 {
     return toUCPUStrictInt32(memoryAtomicWait32(instance, base, offset, value, timeoutInNanoseconds, memoryIndex));
 }
 
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryAtomicWait64, UCPUStrictInt32, (JSWebAssemblyInstance* instance, unsigned base, unsigned offset, int64_t value, int64_t timeoutInNanoseconds, uint8_t memoryIndex))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryAtomicWait64, UCPUStrictInt32, (JSWebAssemblyInstance* instance, uint64_t base, uint64_t offset, int64_t value, int64_t timeoutInNanoseconds, uint8_t memoryIndex))
 {
     return toUCPUStrictInt32(memoryAtomicWait64(instance, base, offset, value, timeoutInNanoseconds, memoryIndex));
 }
 
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryAtomicNotify, UCPUStrictInt32, (JSWebAssemblyInstance* instance, unsigned base, unsigned offset, int32_t countValue, uint8_t memoryIndex))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryAtomicNotify, UCPUStrictInt32, (JSWebAssemblyInstance* instance, uint64_t base, uint64_t offset, int32_t countValue, uint8_t memoryIndex))
 {
     return toUCPUStrictInt32(memoryAtomicNotify(instance, base, offset, countValue, memoryIndex));
 }

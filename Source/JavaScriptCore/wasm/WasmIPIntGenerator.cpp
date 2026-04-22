@@ -315,13 +315,13 @@ public:
 
     // Atomics
 
-    [[nodiscard]] PartialResult atomicLoad(ExtAtomicOpType, Type, ExpressionType, ExpressionType&, uint32_t, uint8_t);
-    [[nodiscard]] PartialResult atomicStore(ExtAtomicOpType, Type, ExpressionType, ExpressionType, uint32_t, uint8_t);
-    [[nodiscard]] PartialResult atomicBinaryRMW(ExtAtomicOpType, Type, ExpressionType, ExpressionType, ExpressionType&, uint32_t, uint8_t);
-    [[nodiscard]] PartialResult atomicCompareExchange(ExtAtomicOpType, Type, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, uint32_t, uint8_t);
+    [[nodiscard]] PartialResult atomicLoad(ExtAtomicOpType, Type, ExpressionType, ExpressionType&, uint64_t, uint8_t);
+    [[nodiscard]] PartialResult atomicStore(ExtAtomicOpType, Type, ExpressionType, ExpressionType, uint64_t, uint8_t);
+    [[nodiscard]] PartialResult atomicBinaryRMW(ExtAtomicOpType, Type, ExpressionType, ExpressionType, ExpressionType&, uint64_t, uint8_t);
+    [[nodiscard]] PartialResult atomicCompareExchange(ExtAtomicOpType, Type, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, uint64_t, uint8_t);
 
-    [[nodiscard]] PartialResult atomicWait(ExtAtomicOpType, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, uint32_t, uint8_t);
-    [[nodiscard]] PartialResult atomicNotify(ExtAtomicOpType, ExpressionType, ExpressionType, ExpressionType&, uint32_t, uint8_t);
+    [[nodiscard]] PartialResult atomicWait(ExtAtomicOpType, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, uint64_t, uint8_t);
+    [[nodiscard]] PartialResult atomicNotify(ExtAtomicOpType, ExpressionType, ExpressionType, ExpressionType&, uint64_t, uint8_t);
     [[nodiscard]] PartialResult atomicFence(ExtAtomicOpType, uint8_t);
 
     // Saturated truncation
@@ -1128,37 +1128,37 @@ IPIntGenerator::ExpressionType IPIntGenerator::addSIMDConstant(v128_t)
 
 // Atomics
 
-[[nodiscard]] PartialResult IPIntGenerator::atomicLoad(ExtAtomicOpType, Type, ExpressionType, ExpressionType&, uint32_t, uint8_t)
+[[nodiscard]] PartialResult IPIntGenerator::atomicLoad(ExtAtomicOpType, Type, ExpressionType, ExpressionType&, uint64_t, uint8_t)
 {
     return { };
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::atomicStore(ExtAtomicOpType, Type, ExpressionType, ExpressionType, uint32_t, uint8_t)
+[[nodiscard]] PartialResult IPIntGenerator::atomicStore(ExtAtomicOpType, Type, ExpressionType, ExpressionType, uint64_t, uint8_t)
 {
     changeStackSize(-2);
     return { };
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::atomicBinaryRMW(ExtAtomicOpType, Type, ExpressionType, ExpressionType, ExpressionType&, uint32_t, uint8_t)
+[[nodiscard]] PartialResult IPIntGenerator::atomicBinaryRMW(ExtAtomicOpType, Type, ExpressionType, ExpressionType, ExpressionType&, uint64_t, uint8_t)
 {
     changeStackSize(-1);
     return { };
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::atomicCompareExchange(ExtAtomicOpType, Type, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, uint32_t, uint8_t)
+[[nodiscard]] PartialResult IPIntGenerator::atomicCompareExchange(ExtAtomicOpType, Type, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, uint64_t, uint8_t)
 {
     changeStackSize(-2);
     return { };
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::atomicWait(ExtAtomicOpType, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, uint32_t offset, uint8_t memoryIndex)
+[[nodiscard]] PartialResult IPIntGenerator::atomicWait(ExtAtomicOpType, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, uint64_t offset, uint8_t memoryIndex)
 {
     changeStackSize(-2);
     m_metadata->addAtomicMemoryAccess(memoryIndex, offset, getCurrentInstructionLength());
     return { };
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::atomicNotify(ExtAtomicOpType, ExpressionType, ExpressionType, ExpressionType&, uint32_t offset, uint8_t memoryIndex)
+[[nodiscard]] PartialResult IPIntGenerator::atomicNotify(ExtAtomicOpType, ExpressionType, ExpressionType, ExpressionType&, uint64_t offset, uint8_t memoryIndex)
 {
     changeStackSize(-1);
     m_metadata->addAtomicMemoryAccess(memoryIndex, offset, getCurrentInstructionLength());
