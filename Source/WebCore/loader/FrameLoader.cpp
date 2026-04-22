@@ -1815,7 +1815,7 @@ void FrameLoader::loadWithNavigationAction(ResourceRequest&& request, Navigation
     FRAMELOADER_RELEASE_LOG_FORWARDABLE(FrameLoaderLoadWithNavigationAction);
 
     m_errorOccurredInLoading = false;
-    if (request.url().protocolIsJavaScript() && !action.isInitialFrameSrcLoad()) {
+    if (request.url().protocolIsJavaScript()) {
         if (auto requester = action.requester(); requester && requester->documentIdentifier) {
             if (RefPtr requestingDocument = Document::allDocumentsMap().get(requester->documentIdentifier); requestingDocument && requestingDocument->contentSecurityPolicy()) {
                 if (!requestingDocument->contentSecurityPolicy()->allowJavaScriptURLs(m_frame->document()->url().string(), { }, request.url().string(), nullptr))
