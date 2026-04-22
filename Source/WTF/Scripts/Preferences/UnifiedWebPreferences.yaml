@@ -7840,6 +7840,20 @@ SpeechSynthesisAPIEnabled:
   sharedPreferenceForWebProcess: true
   richJavaScript: true
 
+SpellCheckCustomDictionaryAPIEnabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "Spell Check Custom Dictionary API"
+  humanReadableDescription: "Enable the SpellCheckCustomDictionary API (window.spellCheckDictionary)"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 SpringTimingFunctionEnabled:
   type: bool
   status: unstable

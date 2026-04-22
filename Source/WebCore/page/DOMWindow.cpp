@@ -56,6 +56,7 @@
 #include "ScheduledAction.h"
 #include "Screen.h"
 #include "SecurityOrigin.h"
+#include "SpellCheckCustomDictionary.h"
 #include "StyleMedia.h"
 #include "VisualViewport.h"
 #include "WebCoreOpaqueRoot.h"
@@ -333,6 +334,14 @@ ExceptionOr<Navigation&> DOMWindow::navigation()
     if (!localThis)
         return Exception { ExceptionCode::SecurityError };
     return localThis->navigation();
+}
+
+ExceptionOr<SpellCheckCustomDictionary&> DOMWindow::spellCheckDictionary()
+{
+    auto* localThis = dynamicDowncast<LocalDOMWindow>(*this);
+    if (!localThis)
+        return Exception { ExceptionCode::SecurityError };
+    return localThis->spellCheckDictionary();
 }
 
 ExceptionOr<int> DOMWindow::outerHeight() const

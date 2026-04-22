@@ -1599,6 +1599,7 @@ set(WebCore_NON_SVG_IDL_FILES
     page/ScrollToOptions.idl
     page/ShadowRealmGlobalScope.idl
     page/ShareData.idl
+    page/SpellCheckCustomDictionary.idl
     page/StructuredSerializeOptions.idl
     page/UADataValues.idl
     page/UALowEntropyJSON.idl

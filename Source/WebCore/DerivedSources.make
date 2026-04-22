@@ -1626,6 +1626,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/page/ScrollToOptions.idl \
     $(WebCore)/page/ShadowRealmGlobalScope.idl \
     $(WebCore)/page/ShareData.idl \
+    $(WebCore)/page/SpellCheckCustomDictionary.idl \
     $(WebCore)/page/StructuredSerializeOptions.idl \
     $(WebCore)/page/UADataValues.idl \
     $(WebCore)/page/UALowEntropyJSON.idl \

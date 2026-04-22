@@ -3400,6 +3400,8 @@ void Editor::markAndReplaceFor(const SpellCheckRequest& request, const Vector<Te
             auto misspellingRange = paragraph.subrange({ resultLocation, resultLength });
             if (!m_alternativeTextController->isSpellingMarkerAllowed(misspellingRange))
                 continue;
+            if (document->settings().spellCheckCustomDictionaryAPIEnabled() && document->isWordExemptFromSpellChecking(plainText(misspellingRange)))
+                continue;
             addMarker(misspellingRange, DocumentMarkerType::Spelling, replacement);
         } else if (shouldMarkGrammar && resultType == TextCheckingType::Grammar && paragraph.checkingRangeCovers({ resultLocation, resultLength })) {
             ASSERT(resultLength > 0);

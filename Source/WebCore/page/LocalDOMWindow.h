@@ -351,6 +351,8 @@ public:
     // Navigation API
     WEBCORE_EXPORT Navigation& navigation();
 
+    SpellCheckCustomDictionary& spellCheckDictionary();
+
     void willDetachDocumentFromFrame();
     void willDestroyCachedFrame();
 
@@ -443,6 +445,7 @@ private:
     mutable RefPtr<BarProp> m_toolbar;
     mutable RefPtr<VisualViewport> m_visualViewport;
     mutable RefPtr<Navigation> m_navigation;
+    mutable RefPtr<SpellCheckCustomDictionary> m_spellCheckDictionary;
     mutable RefPtr<CloseWatcherManager> m_closeWatcherManager;
 
     // Equivalent to the list of PerformanceEventTiming objects mentioned in https://www.w3.org/TR/event-timing/#sec-modifications-HTML :
