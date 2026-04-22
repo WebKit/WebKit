@@ -1271,13 +1271,24 @@ void NetworkResourceLoader::willSendRedirectedRequestInternal(ResourceRequest&& 
         m_firstResponseURL = redirectResponse.url();
 
 #if ENABLE(CONTENT_FILTERING)
-    if (m_contentFilter && !protect(m_contentFilter)->continueAfterWillSendRequest(redirectRequest, redirectResponse)) {
-        if (RefPtr networkLoad = std::exchange(m_networkLoad, nullptr))
-            networkLoad->clearClient();
-        return completionHandler({ });
+    if (m_contentFilter) {
+        auto redirectResponseForContentFilter = redirectResponse;
+        protect(m_contentFilter)->continueAfterWillSendRequest(WTF::move(redirectRequest), redirectResponseForContentFilter, [this, protectedThis = Ref { *this }, request = WTF::move(request), redirectResponse = WTF::move(redirectResponse), isFromServiceWorker, completionHandler = WTF::move(completionHandler)](ResourceRequest&& filteredRequest) mutable {
+            if (filteredRequest.isNull()) {
+                if (RefPtr networkLoad = std::exchange(m_networkLoad, nullptr))
+                    networkLoad->clearClient();
+                return completionHandler({ });
+            }
+            continueWillSendRedirectedRequestAfterContentFiltering(WTF::move(request), WTF::move(filteredRequest), WTF::move(redirectResponse), isFromServiceWorker, WTF::move(completionHandler));
+        });
+        return;
     }
 #endif
+    continueWillSendRedirectedRequestAfterContentFiltering(WTF::move(request), WTF::move(redirectRequest), WTF::move(redirectResponse), isFromServiceWorker, WTF::move(completionHandler));
+}
 
+void NetworkResourceLoader::continueWillSendRedirectedRequestAfterContentFiltering(ResourceRequest&& request, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse, IsFromServiceWorker isFromServiceWorker, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
+{
     std::optional<WebCore::PCM::AttributionTriggerData> privateClickMeasurementAttributionTriggerData;
     if (auto result = WebCore::PrivateClickMeasurement::parseAttributionRequest(redirectRequest.url())) {
         privateClickMeasurementAttributionTriggerData = result.value();

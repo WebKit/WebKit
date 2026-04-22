@@ -192,7 +192,10 @@ void ContentFilter::continueAfterWillSendRequest(ResourceRequest&& request, cons
             contentFilterCallbackAggregator->didReceivePlatformContentFilterDecision(platformContentFilter, WTF::move(urlString));
         };
 
-        ASSERT(platformContentFilter->needsMoreData());
+        if (!platformContentFilter->needsMoreData()) {
+            completion({ });
+            continue;
+        }
         platformContentFilter->willSendRequest(ResourceRequest { request }, redirectResponse, WTF::move(completion));
     }
 }

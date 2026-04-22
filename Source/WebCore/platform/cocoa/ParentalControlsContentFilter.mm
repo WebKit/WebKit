@@ -92,14 +92,31 @@ ParentalControlsContentFilter::ParentalControlsContentFilter(const PlatformConte
     UNUSED_PARAM(params);
 }
 
-void ParentalControlsContentFilter::willSendRequest(ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(String&&)>&& completionHandler)
-{
-    completionHandler({ });
-}
-
 static inline bool canHandleResponse(const ResourceResponse& response)
 {
     return response.url().protocolIsInHTTPFamily();
+}
+
+void ParentalControlsContentFilter::willSendRequest(ResourceRequest&&, const ResourceResponse& redirectResponse, CompletionHandler<void(String&&)>&& completionHandler)
+{
+#if HAVE(WEBCONTENTRESTRICTIONS)
+    if (redirectResponse.isNull() || !canHandleResponse(redirectResponse) || !enabled()) {
+        completionHandler({ });
+        return;
+    }
+
+    urlFilter()->isURLAllowed(m_mainDocumentURL, redirectResponse.url(), [this, protectedThis = Ref { *this }, evaluatedURL = redirectResponse.url(), completionHandler = WTF::move(completionHandler)](bool isAllowed, NSData *replacementData) mutable {
+        if (!isAllowed) {
+            m_state = State::Blocked;
+            m_evaluatedURL = evaluatedURL;
+            m_replacementData = replacementData;
+        }
+        completionHandler({ });
+    });
+#else
+    UNUSED_PARAM(redirectResponse);
+    completionHandler({ });
+#endif
 }
 
 void ParentalControlsContentFilter::responseReceived(const ResourceResponse& response)
