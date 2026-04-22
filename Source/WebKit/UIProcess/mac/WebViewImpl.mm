@@ -4693,6 +4693,10 @@ void WebViewImpl::startDrag(const WebCore::DragItem& item, ShareableBitmap::Hand
 
     WebCore::FloatSize size { [dragNSImage size] };
     size.scale(1.0 / m_page->deviceScaleFactor());
+    if (size.isEmpty()) {
+        m_page->dragCancelled();
+        return;
+    }
     [dragNSImage setSize:size];
 
     // The call below could release the view.
