@@ -89,10 +89,8 @@ WARNING_CFLAGS = $(inherited) $(WK_FIXME_WARNING_CFLAGS) -Wcast-qual -Wchar-subs
 WK_FIXME_WARNING_CFLAGS = -Wno-unused-parameter;
 
 COPY_PHASE_STRIP = NO;
-// Dead code stripping needs to be on in the debug variant to avoid link errors.  This is due to unconditionally
-// building the MiG bindings for WebKitPluginClient even when the functions that the bindings wrap are not built.
-// FIXME: This explanation isn't correct any more, because plug-ins are gone. But is there any reason to change this setting?
 DEAD_CODE_STRIPPING = YES;
+DEAD_CODE_STRIPPING[config=Debug] = NO;
 
 DEBUG_DEFINES = NDEBUG;
 DEBUG_DEFINES[config=Debug] = $(WK_ENABLE_CONJECTURE_ASSERT_YES);
