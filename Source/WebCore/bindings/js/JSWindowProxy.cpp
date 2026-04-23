@@ -36,6 +36,7 @@
 #include "FrameLoaderTypes.h"
 #include "GarbageCollectionController.h"
 #include "JSDOMWindow.h"
+#include "JSDOMWindowBase.h"
 #include "JSDOMWindowProperties.h"
 #include "JSEventTarget.h"
 #include "Location.h"
@@ -197,8 +198,18 @@ static std::optional<FrameInfo> frameInfo(JSGlobalObject* globalObject)
         return std::nullopt;
 
     RefPtr document { dynamicDowncast<Document>(domGlobalObject->scriptExecutionContext()) };
-    if (!document)
-        return std::nullopt;
+    if (!document) {
+        auto* jsDOMWindow = dynamicDowncast<JSDOMWindowBase>(domGlobalObject);
+        if (!jsDOMWindow || !jsDOMWindow->wrapped().isRemoteDOMWindow())
+            return std::nullopt;
+
+        RefPtr frame { jsDOMWindow->wrapped().frame() };
+        if (!frame)
+            return std::nullopt;
+
+        Ref mainFrame { frame->mainFrame() };
+        return FrameInfo { frame.releaseNonNull(), WTF::move(mainFrame) };
+    }
 
     RefPtr frame { document->frame() };
     if (!frame)
