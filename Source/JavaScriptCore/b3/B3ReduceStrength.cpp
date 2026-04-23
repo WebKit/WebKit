@@ -2313,7 +2313,7 @@ private:
             }
             break;
 
-        case Trunc:
+        case Trunc: {
             // Turn this: Trunc(int64Constant)
             // Into this: static_cast<int32_t>(int64Constant)
             if (m_value->child(0)->hasInt64()) {
@@ -2420,7 +2420,7 @@ private:
             case Add:
             case Sub:
             case BitOr:
-            case BitXor:
+            case BitXor: {
                 if (m_value->child(0)->child(1)->hasInt64()
                     && !(m_value->child(0)->child(1)->asInt64() & 0xffffffffll)) {
                     m_value->child(0) = m_value->child(0)->child(0);
@@ -2428,10 +2428,36 @@ private:
                     break;
                 }
                 break;
+            }
             default:
                 break;
             }
+
+            auto handleTruncOpExtension = [&]() {
+                // Turn this: Trunc(Op(@a, @b))
+                // Into this: Op(Trunc(@a), Trunc(@b))
+                switch (m_value->child(0)->opcode()) {
+                case Add:
+                case Sub:
+                case Mul:
+                case BitOr:
+                case BitAnd:
+                case BitXor: {
+                    auto* lhs = m_insertionSet.insert<Value>(m_index, Trunc, m_value->origin(), m_value->child(0)->child(0));
+                    auto* rhs = m_insertionSet.insert<Value>(m_index, Trunc, m_value->origin(), m_value->child(0)->child(1));
+                    replaceWithNew<Value>(m_value->child(0)->opcode(), m_value->origin(), lhs, rhs);
+                    return true;
+                }
+                default:
+                    return false;
+                }
+            };
+
+            if (handleTruncOpExtension())
+                break;
+
             break;
+        }
 
         case IToD:
             // Turn this: IToD(constant)
@@ -2751,6 +2777,8 @@ private:
         }
         case Equal:
             handleCommutativity();
+            if (handleCompareExt())
+                break;
 
             // Turn this: Equal(bool, 0)
             // Into this: BitXor(bool, 1)
@@ -2785,6 +2813,8 @@ private:
             
         case NotEqual:
             handleCommutativity();
+            if (handleCompareExt())
+                break;
 
             if (m_value->child(0)->returnsBool()) {
                 // Turn this: NotEqual(bool, 0)
@@ -2827,6 +2857,9 @@ private:
         case Below:
         case AboveEqual:
         case BelowEqual: {
+            if (handleCompareExt())
+                break;
+
             CanonicalizedComparison comparison = canonicalizeComparison(m_value);
             TriState result = TriState::Indeterminate;
             switch (comparison.opcode) {
@@ -4331,6 +4364,34 @@ private:
             std::swap(m_value->child(0), m_value->child(1));
             m_changed = true;
         }
+    }
+
+    bool handleCompareExt()
+    {
+        bool changed = false;
+
+        // Turn this Op(SExt32(@a), SExt32(@b))
+        // Into this: Op(@a, @b)
+        if (m_value->child(0)->opcode() == SExt32 && m_value->child(1)->opcode() == SExt32) {
+            m_value->child(0) = m_value->child(0)->child(0);
+            m_value->child(1) = m_value->child(1)->child(0);
+            changed = true;
+            // Continue folding.
+        }
+
+        // Turn this Op(ZExt32(@a), ZExt32(@b))
+        // Into this: Op(@a, @b)
+        if (m_value->child(0)->opcode() == ZExt32 && m_value->child(1)->opcode() == ZExt32) {
+            m_value->child(0) = m_value->child(0)->child(0);
+            m_value->child(1) = m_value->child(1)->child(0);
+            changed = true;
+            // Continue folding.
+        }
+
+        if (changed)
+            m_changed = true;
+
+        return changed;
     }
 
     // For Op==Add or Sub, turn any of these:
