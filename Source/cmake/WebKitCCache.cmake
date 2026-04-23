@@ -35,5 +35,9 @@ if (("$ENV{WEBKIT_USE_SCCACHE}" STREQUAL "1") OR DEFINED ENV{SCCACHE_REDIS} OR D
         message(STATUS "Enabling sccache as prefix for compiler.")
         set(CMAKE_C_COMPILER_LAUNCHER ${SCCACHE_FOUND})
         set(CMAKE_CXX_COMPILER_LAUNCHER ${SCCACHE_FOUND})
+        # sccache does not understand PCH compilation steps — it caches the
+        # binary .pch/.gch output and later feeds it back as source, causing
+        # "not valid UTF-8" errors.
+        set(CMAKE_DISABLE_PRECOMPILE_HEADERS ON)
     endif ()
 endif ()
