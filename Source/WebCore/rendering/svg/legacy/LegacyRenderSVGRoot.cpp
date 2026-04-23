@@ -65,9 +65,9 @@ LegacyRenderSVGRoot::LegacyRenderSVGRoot(SVGSVGElement& element, RenderStyle&& s
 {
     ASSERT(isLegacyRenderSVGRoot());
     LayoutSize intrinsicSize(computeIntrinsicSize());
-    if (!intrinsicSize.width())
+    if (!intrinsicSize.width() && !svgSVGElement().hasIntrinsicWidth())
         intrinsicSize.setWidth(defaultWidth);
-    if (!intrinsicSize.height())
+    if (!intrinsicSize.height() && !svgSVGElement().hasIntrinsicHeight())
         intrinsicSize.setHeight(defaultHeight);
     setIntrinsicSize(intrinsicSize);
 }

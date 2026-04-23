@@ -117,6 +117,11 @@ bool RenderReplaced::shouldRespectZeroIntrinsicWidth() const
     return false;
 }
 
+bool RenderReplaced::shouldRespectZeroIntrinsicHeight() const
+{
+    return false;
+}
+
 void RenderReplaced::willBeDestroyed()
 {
     if (!renderTreeBeingDestroyed() && parent())
@@ -725,7 +730,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ShouldComputePreferred sh
     if (style.logicalWidth().isAuto()) {
         bool computedHeightIsAuto = style.logicalHeight().isAuto();
         bool hasIntrinsicWidth = constrainedSize.width() > 0 || (!constrainedSize.width() && shouldRespectZeroIntrinsicWidth()) || shouldApplySizeOrInlineSizeContainment();
-        bool hasIntrinsicHeight = constrainedSize.height() > 0 || shouldApplySizeContainment();
+        bool hasIntrinsicHeight = constrainedSize.height() > 0 || (!constrainedSize.height() && shouldRespectZeroIntrinsicHeight()) || shouldApplySizeContainment();
 
         // For flex or grid items where the logical height has been overriden then we should use that size to compute the replaced width as long as the flex or
         // grid item has an intrinsic size. It is possible (indeed, common) for an SVG graphic to have an intrinsic aspect ratio but not to have an intrinsic
@@ -822,7 +827,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeight(std::optional<LayoutUnit
 
     bool widthIsAuto = style().logicalWidth().isAuto();
     bool hasIntrinsicWidth = constrainedSize.width() > 0 || (!constrainedSize.width() && shouldRespectZeroIntrinsicWidth()) || shouldApplySizeOrInlineSizeContainment();
-    bool hasIntrinsicHeight = constrainedSize.height() > 0 || shouldApplySizeContainment();
+    bool hasIntrinsicHeight = constrainedSize.height() > 0 || (!constrainedSize.height() && shouldRespectZeroIntrinsicHeight()) || shouldApplySizeContainment();
 
     // See computeReplacedLogicalHeight() for a similar check for heights.
     if (auto overridinglogicalWidth = (!intrinsicRatio.isEmpty() && (isFlexItem() || isGridItem()) && hasIntrinsicSize(contentRenderer, hasIntrinsicWidth, hasIntrinsicHeight) ? overridingBorderBoxLogicalWidth() : std::nullopt))

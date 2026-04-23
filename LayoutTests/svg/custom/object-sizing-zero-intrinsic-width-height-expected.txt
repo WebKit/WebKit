@@ -1,0 +1,8 @@
+
+
+PASS SVG in <object> with zero intrinsic size - 0x0
+PASS SVG in <object> with zero intrinsic size - 50x0
+PASS SVG in <object> with zero intrinsic size - 0x50
+PASS SVG in <object> with zero intrinsic size - 0x150
+PASS SVG in <object> with zero intrinsic size - 300x0
+

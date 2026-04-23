@@ -39,8 +39,10 @@
 #include "HTMLParamElement.h"
 #include "HTMLPlugInElement.h"
 #include "HitTestResult.h"
+#include "LegacyRenderSVGRoot.h"
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
+#include "LocalFrameView.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
 #include "Page.h"
@@ -50,9 +52,11 @@
 #include "RenderBoxInlines.h"
 #include "RenderLayoutState.h"
 #include "RenderObjectInlines.h"
+#include "RenderSVGRoot.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "RenderWidgetInlines.h"
+#include "SVGSVGElement.h"
 #include "Settings.h"
 #include "SystemFontDatabase.h"
 #include "Text.h"
@@ -108,6 +112,35 @@ bool RenderEmbeddedObject::requiresAcceleratedCompositing() const
     if (!pluginViewBase)
         return false;
     return pluginViewBase->layerHostingStrategy() != PluginLayerHostingStrategy::None;
+}
+
+static RefPtr<SVGSVGElement> embeddedSVGElement(const RenderWidget& renderer)
+{
+    RefPtr frameView = dynamicDowncast<LocalFrameView>(renderer.widget());
+    if (!frameView)
+        return nullptr;
+    CheckedPtr contentBox = frameView->embeddedContentBox();
+    if (!contentBox)
+        return nullptr;
+    if (CheckedPtr svgRoot = dynamicDowncast<RenderSVGRoot>(contentBox.get()))
+        return &svgRoot->svgSVGElement();
+    if (CheckedPtr legacySvgRoot = dynamicDowncast<LegacyRenderSVGRoot>(contentBox.get()))
+        return &legacySvgRoot->svgSVGElement();
+    return nullptr;
+}
+
+bool RenderEmbeddedObject::shouldRespectZeroIntrinsicWidth() const
+{
+    if (RefPtr svgElement = embeddedSVGElement(*this))
+        return svgElement->hasIntrinsicWidth();
+    return false;
+}
+
+bool RenderEmbeddedObject::shouldRespectZeroIntrinsicHeight() const
+{
+    if (RefPtr svgElement = embeddedSVGElement(*this))
+        return svgElement->hasIntrinsicHeight();
+    return false;
 }
 
 ScrollableArea* RenderEmbeddedObject::scrollableArea() const
