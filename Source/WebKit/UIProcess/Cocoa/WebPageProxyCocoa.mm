@@ -1065,6 +1065,11 @@ void WebPageProxy::disableURLSchemeCheckInDataDetectors() const
     protect(legacyMainFrameProcess())->send(Messages::WebProcess::DisableURLSchemeCheckInDataDetectors(), 0);
 }
 
+bool WebPageProxy::gpuProcessHasAccessToMachService(const String& service) const
+{
+    return false;
+}
+
 void WebPageProxy::switchFromStaticFontRegistryToUserFontRegistry()
 {
     if (auto handles = protect(legacyMainFrameProcess())->fontdMachExtensionHandles())

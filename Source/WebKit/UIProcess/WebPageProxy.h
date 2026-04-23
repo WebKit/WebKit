@@ -2418,6 +2418,8 @@ public:
 
     void disableURLSchemeCheckInDataDetectors() const;
 
+    bool gpuProcessHasAccessToMachService(const String& service) const;
+        
     void setIsTakingSnapshotsForApplicationSuspension(bool);
     bool isTakingSnapshotsForApplicationSuspension() const { return m_isTakingSnapshotsForApplicationSuspension; }
 
