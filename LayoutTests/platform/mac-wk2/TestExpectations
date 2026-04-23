@@ -2391,8 +2391,6 @@ webkit.org/b/309833 fast/scrolling/mac/scrollend-event-user-scroll-basic.html [ 
 
 webkit.org/b/307691 [ Tahoe Release arm64 ] svg/gradients/spreadMethod.svg [ ImageOnlyFailure Pass ]
 
-webkit.org/b/309370 fast/css/vertical-text-overflow-ellipsis-text-align-center.html [ Failure Pass ]
-
 webkit.org/b/306436 http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-with-link-query-using-cookiestore-api.https.html [ Pass Failure ]
 
 # webkit.org/b/309529 3x imported/w3c/web-platform-tests/editing/other/typing-around-link-element-at-collapsed-selection.tentative.html are flaky text failures

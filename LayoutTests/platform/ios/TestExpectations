@@ -8470,8 +8470,6 @@ webkit.org/b/305404 imported/w3c/web-platform-tests/css/css-text-decor/text-emph
 
 webkit.org/b/305508 http/tests/resourceLoadStatistics/log-cross-site-load-with-link-decoration.html [ Pass Failure ]
 
-webkit.org/b/309370 fast/css/vertical-text-overflow-ellipsis-text-align-center.html [ Failure Pass ]
-
 webkit.org/b/305605 media/volume-sleep-disable.html [ Failure ]
 
 imported/w3c/web-platform-tests/uievents/mouse/layer-coords-transform.html [ Skip ]
