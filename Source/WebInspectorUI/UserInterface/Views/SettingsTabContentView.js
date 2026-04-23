@@ -407,8 +407,6 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
     {
         let experimentalSettingsView = new WI.SettingsView("experimental", WI.UIString("Experimental"));
 
-        let initialValues = new Map;
-        
         let consoleGroup = experimentalSettingsView.addGroup(WI.UIString("Console:"));
         consoleGroup.addSetting(WI.settings.experimentalGroupSourceMapErrors, WI.UIString("Group source map network errors"));
         
@@ -455,38 +453,24 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         diagnosticsGroup.addSetting(WI.settings.experimentalAllowInspectingInspector, WI.UIString("Allow Inspecting Web Inspector", "Allow Inspecting Web Inspector @ Experimental Settings", "Label for setting that allows the user to inspect the Web Inspector user interface."));
         experimentalSettingsView.addSeparator();
 
-        let reloadInspectorButton = document.createElement("button");
-        reloadInspectorButton.textContent = WI.UIString("Reload Web Inspector");
-        reloadInspectorButton.addEventListener("click", (event) => {
-            InspectorFrontendHost.reopen();
-        });
-
-        let reloadInspectorContainerElement = experimentalSettingsView.addCenteredContainer(reloadInspectorButton, WI.UIString("for changes to take effect"));
-        reloadInspectorContainerElement.classList.add("hidden");
-
-        function listenForChange(setting) {
-            initialValues.set(setting, setting.value);
-            setting.addEventListener(WI.Setting.Event.Changed, function(event) {
-                this.classList.toggle("hidden", Array.from(initialValues).every(([setting, initialValue]) => setting.value === initialValue));
-            }, reloadInspectorContainerElement);
-        }
-
-        listenForChange(WI.settings.experimentalGroupSourceMapErrors);
+        let reloadRequiredSettings = [WI.settings.experimentalGroupSourceMapErrors];
 
         if (hasCSSDomain) {
-            listenForChange(WI.settings.experimentalEnableStylesJumpToEffective);
-            listenForChange(WI.settings.experimentalEnableStylesJumpToVariableDeclaration);
-            listenForChange(WI.settings.experimentalCSSSortPropertyNameAutocompletionByUsage);
+            reloadRequiredSettings.push(WI.settings.experimentalEnableStylesJumpToEffective);
+            reloadRequiredSettings.push(WI.settings.experimentalEnableStylesJumpToVariableDeclaration);
+            reloadRequiredSettings.push(WI.settings.experimentalCSSSortPropertyNameAutocompletionByUsage);
         }
 
         if (InspectorBackend.hasCommand("LayerTree.requestContent"))
-            listenForChange(WI.settings.experimentalLayers3DShowLayerContents);
+            reloadRequiredSettings.push(WI.settings.experimentalLayers3DShowLayerContents);
 
         if (hasNetworkEmulatedCondition)
-            listenForChange(WI.settings.experimentalEnableNetworkEmulatedCondition);
+            reloadRequiredSettings.push(WI.settings.experimentalEnableNetworkEmulatedCondition);
 
-        listenForChange(WI.settings.experimentalLimitSourceCodeHighlighting);
-        listenForChange(WI.settings.experimentalUseFuzzyMatchingForCSSCodeCompletion);
+        reloadRequiredSettings.push(WI.settings.experimentalLimitSourceCodeHighlighting);
+        reloadRequiredSettings.push(WI.settings.experimentalUseFuzzyMatchingForCSSCodeCompletion);
+
+        experimentalSettingsView.addReloadRequiredFooter(reloadRequiredSettings);
 
         this._createReferenceLink(experimentalSettingsView);
 
@@ -515,10 +499,19 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         heapSnapshotGroup.addSetting(WI.settings.engineeringShowInternalObjectsInHeapSnapshot, WI.unlocalizedString("Show Internal Objects"));
         heapSnapshotGroup.addSetting(WI.settings.engineeringShowPrivateSymbolsInHeapSnapshot, WI.unlocalizedString("Show Private Symbols"));
 
+        if (WI.isSiteIsolationEnabled()) {
+            engineeringSettingsView.addSeparator();
+
+            let siteIsolationGroup = engineeringSettingsView.addGroup(WI.unlocalizedString("Site Isolation:"));
+            siteIsolationGroup.addSetting(WI.settings.engineeringEnableFrameTargetDomains, WI.unlocalizedString("Enable experimental frame-target domains"));
+        }
+
         if (WI.isEngineeringBuild) {
             engineeringSettingsView.addSeparator();
             engineeringSettingsView.addSetting(WI.unlocalizedString("Debug UI:"), WI.showDebugUISetting, WI.unlocalizedString("Show Debug UI"));
         }
+
+        engineeringSettingsView.addReloadRequiredFooter([WI.settings.engineeringEnableFrameTargetDomains]);
 
         this.addSettingsView(engineeringSettingsView);
     }
