@@ -302,7 +302,7 @@ protected:
         Rejected,
         Failed,
     };
-    ChangePipelineStateResult changePipelineState(GstState);
+    ChangePipelineStateResult changePipelineState(GstState, bool isForInterruptionSimulation = false);
 
     static bool isAvailable();
 
@@ -401,6 +401,7 @@ protected:
     GstState m_currentState { GST_STATE_NULL };
     GstState m_oldState { GST_STATE_NULL };
     GstState m_requestedState { GST_STATE_VOID_PENDING };
+    bool m_isPipelinePausedForInterruptionSimulation { false };
     bool m_shouldResetPipeline { false };
     bool m_isSeeking { false };
     bool m_isSeekPending { false };

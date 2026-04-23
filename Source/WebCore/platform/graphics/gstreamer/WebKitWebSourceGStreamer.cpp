@@ -543,8 +543,10 @@ static GstFlowReturn webKitWebSrcCreate(GstPushSrc* pushSrc, GstBuffer** buffer)
         members->responseCondition.wait(members.mutex(), [&] {
             return members->isFlushing || gst_adapter_available(members->adapter.get()) || members->doesHaveEOS;
         });
-        if (members->isFlushing)
+        if (members->isFlushing) {
+            GST_TRACE_OBJECT(src, "Still flushing");
             return GST_FLOW_FLUSHING;
+        }
 
         queueSize = gst_adapter_available(members->adapter.get());
         GST_TRACE_OBJECT(src, "available %" G_GSIZE_FORMAT, queueSize);
@@ -798,6 +800,10 @@ static gboolean webKitWebSrcQuery(GstBaseSrc* baseSrc, GstQuery* query)
     if (!result)
         result = GST_BASE_SRC_CLASS(webkit_web_src_parent_class)->query(baseSrc, query);
 
+    // URL url { String::fromLatin1(priv->originalURI.data()) };
+    // if (url.protocolIsBlob() || url.protocolIsFile())
+    //     return result;
+
     if (GST_QUERY_TYPE(query) == GST_QUERY_SCHEDULING) {
         GstSchedulingFlags flags;
         int minSize, maxSize, align;
@@ -846,6 +852,7 @@ static gboolean webKitWebSrcUnLock(GstBaseSrc* baseSrc)
         RunLoop::mainSingleton().dispatch([resource = WTF::move(members->resource), requestNumber = members->requestNumber] {
             GST_DEBUG("Stopping resource request R%u", requestNumber);
             resource->shutdown();
+            GST_DEBUG("Stopping resource request R%u DONE", requestNumber);
         });
     }
     ASSERT(!members->resource);
@@ -875,7 +882,7 @@ static gboolean webKitWebSrcUnLockStop(GstBaseSrc* baseSrc)
 
 static bool urlHasSupportedProtocol(const URL& url)
 {
-    return url.isValid() && (url.protocolIsInHTTPFamily() || url.protocolIsBlob());
+    return url.isValid() && (url.protocolIsInHTTPFamily() || url.protocolIsBlob() || url.protocolIsFile());
 }
 
 // uri handler interface
@@ -887,7 +894,7 @@ static GstURIType webKitWebSrcUriGetType(GType)
 
 const gchar* const* webKitWebSrcGetProtocols(GType)
 {
-    static std::array<const char*, 4> protocols { "http", "https", "blob" };
+    static std::array<const char*, 5> protocols { "http", "https", "blob", "file" };
     return protocols.data();
 }
 
@@ -1077,8 +1084,9 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
     members->pendingHttpHeadersMessage = adoptGRef(gst_message_new_element(GST_OBJECT_CAST(src.get()), gst_structure_copy(httpHeaders.get())));
     members->pendingHttpHeadersEvent = adoptGRef(gst_event_new_custom(GST_EVENT_CUSTOM_DOWNSTREAM_STICKY, httpHeaders.release()));
 
-    if (response.httpStatusCode() >= 400) {
-        GST_ELEMENT_ERROR(src.get(), RESOURCE, READ, ("R%u: Received %d HTTP error code", m_requestNumber, response.httpStatusCode()), (nullptr));
+    auto httpStatusCode = response.httpStatusCode();
+    if (httpStatusCode >= 400) {
+        GST_ELEMENT_ERROR(src.get(), RESOURCE, READ, ("R%u: Received %d HTTP error code", m_requestNumber, httpStatusCode), (nullptr));
         members->doesHaveEOS = true;
         members->responseCondition.notifyOne();
         completionHandler(ShouldContinuePolicyCheck::No);
@@ -1087,9 +1095,9 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
 
     if (members->requestedPosition) {
         // Seeking ... we expect a 206 == PARTIAL_CONTENT
-        if (response.httpStatusCode() != 206) {
+        if (httpStatusCode && (httpStatusCode != 206)) {
             // Range request completely failed.
-            GST_ELEMENT_ERROR(src.get(), RESOURCE, READ, ("R%u: Received unexpected %d HTTP status code for range request", m_requestNumber, response.httpStatusCode()), (nullptr));
+            GST_ELEMENT_ERROR(src.get(), RESOURCE, READ, ("R%u: Received unexpected %d HTTP status code for range request", m_requestNumber, httpStatusCode), (nullptr));
             members->doesHaveEOS = true;
             members->responseCondition.notifyOne();
             completionHandler(ShouldContinuePolicyCheck::No);
@@ -1197,6 +1205,10 @@ void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const S
     }
 
     int length = data.size();
+
+    URL url { String::fromLatin1(priv->originalURI.data()) };
+    if (url.protocolIsFile())
+        length -= members->requestedPosition;
     GST_LOG_OBJECT(src.get(), "R%u: Have %d bytes of data", m_requestNumber, length);
 
     members->readPosition += length;
@@ -1207,6 +1219,8 @@ void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const S
 
     checkUpdateBlocksize(length);
     auto dataSpan = data.span();
+    if (url.protocolIsFile())
+        dataSpan = dataSpan.subspan(members->requestedPosition);
     GstBuffer* buffer = gstBufferNewWrappedFast(fastMemDup(dataSpan.data(), dataSpan.size()), length);
     gst_adapter_push(members->adapter.get(), buffer);
 
