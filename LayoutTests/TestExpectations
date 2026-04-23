@@ -2290,7 +2290,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-events.html [ Skip ]
 
 # These tests time out (fail) because they only work in engines that support Ogg Vorbis video.
-imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/intrinsicsize/intrinsicsize-without-unsized-media.tentative.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-poster-shown-preload-auto.html [ Skip ]
 
 imported/w3c/web-platform-tests/css/css-conditional/at-supports-namespace-001.html [ ImageOnlyFailure ]
@@ -4094,6 +4093,8 @@ webkit.org/b/198103 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 # HTMLMediaElement uses a taskQueue to change video.src, but taskQueue isn't tied to rAF so the task sometimes
 # runs before rAF and the test passes, and sometimes run after and the test fails.
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/intrinsic_sizes.htm [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-lazy-in-viewport.tentative.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek.html [ Skip ]
 
 # Skip all HTTP/2 WebSocket tests.
 imported/w3c/web-platform-tests/websockets/basic-auth.any.html?wpt_flags=h2 [ Skip ]

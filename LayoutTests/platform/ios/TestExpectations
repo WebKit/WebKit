@@ -7299,8 +7299,6 @@ webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 
 imported/w3c/web-platform-tests/wasm [ Skip ]
 
-webkit.org/b/201509 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek.html [ Failure ]
-
 # ANGLE Metal backend failing tests with shared texture memory on the simulator
 webkit.org/b/222685 webgl/1.0.x/conformance/textures/misc/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Pass Failure ]
 webkit.org/b/222685 webgl/1.0.x/conformance/textures/misc/texture-mips.html [ Pass Failure ]

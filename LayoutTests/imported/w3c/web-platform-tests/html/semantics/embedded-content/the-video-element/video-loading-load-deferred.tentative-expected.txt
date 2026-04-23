@@ -1,0 +1,4 @@
+
+
+FAIL Video with loading=lazy that is not visible in viewport does not load video data assert_equals: expected 0 but got 4
+

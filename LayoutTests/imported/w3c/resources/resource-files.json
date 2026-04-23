@@ -12784,6 +12784,7 @@
         "web-platform-tests/html/semantics/embedded-content/the-object-element/test1.html",
         "web-platform-tests/html/semantics/embedded-content/the-object-element/test2.html",
         "web-platform-tests/html/semantics/embedded-content/the-video-element/video-poster-shown-preload-auto-ref.html",
+        "web-platform-tests/html/semantics/embedded-content/the-video-element/video-transparent-controls-ref.html",
         "web-platform-tests/html/semantics/embedded-content/the-video-element/video_content-ref.htm",
         "web-platform-tests/html/semantics/embedded-content/the-video-element/video_dynamic_poster-ref.htm",
         "web-platform-tests/html/semantics/embedded-content/the-video-element/video_initially_paused-ref.html",
