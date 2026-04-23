@@ -44,14 +44,13 @@ WebAssemblyWrapperFunction::WebAssemblyWrapperFunction(VM& vm, NativeExecutable*
     , m_function(function, WriteBarrierEarlyInit)
 { }
 
-WebAssemblyWrapperFunction* WebAssemblyWrapperFunction::create(VM& vm, JSGlobalObject* globalObject, Structure* structure, JSObject* function, unsigned importIndex, JSWebAssemblyInstance* instance, Wasm::TypeIndex typeIndex, Ref<const Wasm::RTT>&& rtt)
+WebAssemblyWrapperFunction* WebAssemblyWrapperFunction::create(VM& vm, JSGlobalObject* globalObject, Structure* structure, JSObject* function, unsigned importIndex, JSWebAssemblyInstance* instance, Ref<const Wasm::RTT>&& signature)
 {
     ASSERT_WITH_MESSAGE(!function->inherits<WebAssemblyWrapperFunction>(), "We should never double wrap a wrapper function.");
 
     String name = emptyString();
-    SUPPRESS_UNCOUNTED_LOCAL const auto& signature = Wasm::TypeInformation::getFunctionSignature(typeIndex);
     NativeExecutable* executable = nullptr;
-    if (signature.argumentsOrResultsIncludeV128() || signature.argumentsOrResultsIncludeExnref()) [[unlikely]]
+    if (signature->argumentsOrResultsIncludeV128() || signature->argumentsOrResultsIncludeExnref()) [[unlikely]]
         executable = vm.getHostFunction(callWebAssemblyWrapperFunctionIncludingInvalidValues, ImplementationVisibility::Public, NoIntrinsic, callHostFunctionAsConstructor, nullptr, name);
     else
         executable = vm.getHostFunction(callWebAssemblyWrapperFunction, ImplementationVisibility::Public, NoIntrinsic, callHostFunctionAsConstructor, nullptr, name);
@@ -65,15 +64,14 @@ WebAssemblyWrapperFunction* WebAssemblyWrapperFunction::create(VM& vm, JSGlobalO
                     { instance, WriteBarrierEarlyInit },
                     &instance->importFunctionInfo(importIndex)->importFunctionStub
                 },
-                rtt.ptr(),
-                typeIndex
+                signature.ptr()
             },
             { },
             { }
         },
         instance->importFunctionInfo(importIndex));
     result->m_importableFunction.importFunction.set(vm, globalObject, function);
-    result->finishCreation(vm, executable, signature.argumentCount(), name);
+    result->finishCreation(vm, executable, signature->argumentCount(), name);
     return result;
 }
 

@@ -39,6 +39,7 @@
 #include "WasmSourceMappingURLSectionParser.h"
 #include "WasmTypeDefinitionInlines.h"
 #include <wtf/HexNumber.h>
+#include <wtf/Scope.h>
 #include <wtf/SetForScope.h>
 #include <wtf/text/MakeString.h>
 
@@ -51,19 +52,21 @@ auto SectionParser::parseType() -> PartialResult
 
     WASM_PARSER_FAIL_IF(!parseVarUInt32(count), "can't get Type section's count"_s);
     WASM_PARSER_FAIL_IF(count > maxTypes, "Type section's count is too big "_s, count, " maximum "_s, maxTypes);
-    RELEASE_ASSERT(!m_info->m_typeSignatures.capacity());
     RELEASE_ASSERT(!m_info->m_rtts.capacity());
-    WASM_ALLOCATOR_FAIL_IF(!m_info->m_typeSignatures.tryReserveInitialCapacity(count), "can't allocate enough memory for Type section's "_s, count, " entries"_s);
-    WASM_ALLOCATOR_FAIL_IF(!m_info->m_expandedTypeSignatures.tryReserveInitialCapacity(count), "can't allocate enough memory for Type section's "_s, count, " expanded entries"_s);
     WASM_ALLOCATOR_FAIL_IF(!m_info->m_rtts.tryReserveInitialCapacity(count), "can't allocate enough memory for Type section's "_s, count, " canonical RTT entries"_s);
+
+    // Expose this parser's TypeSectionState to parseValueType's placeholder
+    // creation path for the duration of the type section.
+    m_typeSectionState = &m_typeSection;
+    auto clearState = WTF::makeScopeExit([&] { m_typeSectionState = nullptr; });
 
     for (uint32_t i = 0; i < count; ++i) {
         int8_t typeKind;
         WASM_PARSER_FAIL_IF(!parseInt7(typeKind), "can't get "_s, i, "th Type's type"_s);
-        RefPtr<TypeDefinition> signature;
+        ParsedDef signature;
 
         // When GC is enabled, recursive references can show up in any of these cases.
-        SetForScope<RecursionGroupInformation> recursionGroupInfo(m_recursionGroupInformation, RecursionGroupInformation { true, m_info->typeCount(), m_info->typeCount() + 1 });
+        SetForScope<RecursionGroupInformation> recursionGroupInfo(m_typeSection.recursionGroupInformation, RecursionGroupInformation { true, m_info->typeCount(), m_info->typeCount() + 1 });
 
         switch (static_cast<TypeKind>(typeKind)) {
         case TypeKind::Func: {
@@ -103,33 +106,46 @@ auto SectionParser::parseType() -> PartialResult
         // Recursion group parsing will append the entries itself, as there may
         // be multiple entries that need to be added to the type section for
         // each recursion group.
-        if (signature->is<RecursionGroup>())
-            m_info->recursionGroups.append(signature.releaseNonNull());
-        else {
-            if (signature->hasRecursiveReference()) {
+        if (signature.isRecursionGroup()) {
+            // RecursionGroup is owned by m_typeSection; no per-module retention needed.
+        } else {
+            if (signature.hasRecursiveReference()) {
+                // The original signature (Subtype or concrete RTT). We keep a
+                // reference so we can call checkSubtypeValidity on it below.
+                const Subtype* originalSubtype = signature.isSubtype() ? signature.asSubtype() : nullptr;
+
                 Vector<TypeIndex> types;
-                bool result = types.tryAppend(signature->index());
+                bool result = types.tryAppend(signature.index());
                 WASM_PARSER_FAIL_IF(!result, "can't allocate enough memory for Type section's "_s, i, "th signature"_s);
-                // group takes ownership of signature via types, and projection takes ownership of group.
-                RefPtr<TypeDefinition> group = TypeInformation::typeDefinitionForRecursionGroup(types);
-                RefPtr<TypeDefinition> projection = TypeInformation::typeDefinitionForProjection(group->index(), 0);
-                signature = WTF::move(projection);
+                const RecursionGroup* group = m_typeSection.createRecursionGroup(WTF::move(types));
+                const Projection* projection = m_typeSection.createProjection(group->index(), 0);
+                m_typeSection.registerCanonicalRTT(*projection);
+                // Singleton fast path: bypass the multi-member recgroup table.
+                // Use the GROUP index so placeholder refs in the payload (whose
+                // recursionGroup is the GROUP pointer) are rewritten correctly.
+                Ref<const RTT> canonical = TypeInformation::canonicalizeSingleton(&m_typeSection, group->index(), Ref<const RTT> { *projection->rtt() });
+                projection->setRTT(canonical.copyRef());
+                m_info->m_rtts.append(canonical.copyRef());
+                if (originalSubtype) {
+                    WASM_PARSER_FAIL_IF(m_info->m_rtts.last()->displaySizeExcludingThis() > maxSubtypeDepth, "subtype depth for Type section's "_s, i, "th signature exceeded the limits of "_s, maxSubtypeDepth);
+                    WASM_FAIL_IF_HELPER_FAILS(checkSubtypeValidity(*originalSubtype, canonical.get()));
+                }
+            } else {
+                if (signature.isSubtype())
+                    m_typeSection.registerCanonicalRTT(*signature.asSubtype());
+                // Singleton fast path: non-recursive 1-member candidate.
+                Ref<const RTT> canonical = TypeInformation::canonicalizeSingleton(&m_typeSection, signature.index(), signature.canonicalRTT());
+                if (signature.isSubtype())
+                    signature.asSubtype()->setRTT(canonical.copyRef());
+                m_info->m_rtts.append(canonical.copyRef());
+                if (signature.isSubtype()) {
+                    WASM_PARSER_FAIL_IF(m_info->m_rtts.last()->displaySizeExcludingThis() > maxSubtypeDepth, "subtype depth for Type section's "_s, i, "th signature exceeded the limits of "_s, maxSubtypeDepth);
+                    WASM_FAIL_IF_HELPER_FAILS(checkSubtypeValidity(*signature.asSubtype(), canonical.get()));
+                }
             }
-            TypeInformation::registerCanonicalRTTForType(signature->index());
-            m_info->m_rtts.append(TypeInformation::getCanonicalRTT(signature->index()));
-            const TypeDefinition& unrolled = signature->unroll();
-            if (unrolled.is<Subtype>()) {
-                WASM_PARSER_FAIL_IF(m_info->m_rtts.last()->displaySizeExcludingThis() > maxSubtypeDepth, "subtype depth for Type section's "_s, i, "th signature exceeded the limits of "_s, maxSubtypeDepth);
-                WASM_FAIL_IF_HELPER_FAILS(checkSubtypeValidity(unrolled));
-            }
-            m_info->m_typeSignatures.append(signature.releaseNonNull());
         }
     }
 
-    RELEASE_ASSERT(m_info->m_typeSignatures.size() == m_info->m_rtts.size());
-    for (auto& sig : m_info->m_typeSignatures)
-        m_info->m_expandedTypeSignatures.append(Ref { sig->expand() });
-    RELEASE_ASSERT(m_info->m_typeSignatures.size() == m_info->m_expandedTypeSignatures.size());
     return { };
 }
 
@@ -169,7 +185,8 @@ auto SectionParser::parseImport() -> PartialResult
             WASM_PARSER_FAIL_IF(functionTypeIndex >= m_info->typeCount(), "invalid function signature for "_s, importNumber, "th Import, "_s, functionTypeIndex, " is out of range of "_s, m_info->typeCount(), " in module '"_s, moduleString, "' field '"_s, fieldString, "'"_s);
             kindIndex = m_info->importFunctionTypeSignatureIndices.size();
             auto index = TypeSignatureIndex(functionTypeIndex);
-            WASM_PARSER_FAIL_IF(!m_info->expandedTypeSignature(index).is<FunctionSignature>(), importNumber, "th Function type "_s, functionTypeIndex, " doesn't have a function signature"_s);
+            const auto& importRTT = m_info->rtt(index);
+            WASM_PARSER_FAIL_IF(importRTT.kind() != RTTKind::Function, importNumber, "th Function type "_s, functionTypeIndex, " doesn't have a function signature"_s);
             m_info->importFunctionTypeSignatureIndices.append(index);
             break;
         }
@@ -209,9 +226,9 @@ auto SectionParser::parseImport() -> PartialResult
             WASM_PARSER_FAIL_IF(exceptionSignatureIndex >= m_info->typeCount(), "invalid exception signature for "_s, importNumber, "th Import, "_s, exceptionSignatureIndex, " is out of range of "_s, m_info->typeCount(), " in module '"_s, moduleString, "' field '"_s, fieldString, "'"_s);
             kindIndex = m_info->importExceptionTypeSignatureIndices.size();
             auto index = TypeSignatureIndex(exceptionSignatureIndex);
-            const auto& expanded = m_info->expandedTypeSignature(index);
-            WASM_PARSER_FAIL_IF(!expanded.is<FunctionSignature>(), importNumber, "th Exception type "_s, exceptionSignatureIndex, " doesn't have a function signature"_s);
-            WASM_PARSER_FAIL_IF(!expanded.as<FunctionSignature>()->returnsVoid(), importNumber, "th Exception type cannot have a non-void return type "_s, exceptionSignatureIndex);
+            const auto& expandedRTT = m_info->rtt(index);
+            WASM_PARSER_FAIL_IF(expandedRTT.kind() != RTTKind::Function, importNumber, "th Exception type "_s, exceptionSignatureIndex, " doesn't have a function signature"_s);
+            WASM_PARSER_FAIL_IF(!expandedRTT.returnsVoid(), importNumber, "th Exception type cannot have a non-void return type "_s, exceptionSignatureIndex);
             m_info->importExceptionTypeSignatureIndices.append(index);
             break;
         }
@@ -240,7 +257,8 @@ auto SectionParser::parseFunction() -> PartialResult
         WASM_PARSER_FAIL_IF(typeNumber >= m_info->typeCount(), i, "th Function type number is invalid "_s, typeNumber);
 
         auto index = TypeSignatureIndex(typeNumber);
-        WASM_PARSER_FAIL_IF(!m_info->expandedTypeSignature(index).is<FunctionSignature>(), i, "th Function type "_s, typeNumber, " doesn't have a function signature"_s);
+        const auto& funcRTT = m_info->rtt(index);
+        WASM_PARSER_FAIL_IF(funcRTT.kind() != RTTKind::Function, i, "th Function type "_s, typeNumber, " doesn't have a function signature"_s);
         // The Code section fixes up start and end.
         size_t start = 0;
         size_t end = 0;
@@ -555,11 +573,10 @@ auto SectionParser::parseStart() -> PartialResult
     uint32_t startFunctionIndex;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(startFunctionIndex), "can't get Start index"_s);
     WASM_PARSER_FAIL_IF(startFunctionIndex >= m_info->functionIndexSpaceSize(), "Start index "_s, startFunctionIndex, " exceeds function index space "_s, m_info->functionIndexSpaceSize());
-    TypeIndex typeIndex = m_info->typeIndexFromFunctionIndexSpace(FunctionSpaceIndex(startFunctionIndex));
-    auto signature = TypeInformation::tryGetFunctionSignature(typeIndex);
-    WASM_PARSER_FAIL_IF(!signature.has_value(), "can't get Start function signature"_s);
-    WASM_PARSER_FAIL_IF(signature.value()->argumentCount(), "Start function can't have arguments"_s);
-    WASM_PARSER_FAIL_IF(!signature.value()->returnsVoid(), "Start function can't return a value"_s);
+    const RTT& signature = m_info->rtt(FunctionSpaceIndex(startFunctionIndex));
+    WASM_PARSER_FAIL_IF(signature.kind() != RTTKind::Function, "Start function index "_s, startFunctionIndex, " is not a function"_s);
+    WASM_PARSER_FAIL_IF(signature.argumentCount(), "Start function can't have arguments"_s);
+    WASM_PARSER_FAIL_IF(!signature.returnsVoid(), "Start function can't return a value"_s);
     m_info->startFunctionIndexSpace = startFunctionIndex;
     return { };
 }
@@ -808,7 +825,7 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, bool& isExtendedConstantExpre
         int32_t heapType;
         WASM_PARSER_FAIL_IF(!parseHeapType(m_info, heapType), "ref.null heaptype must be funcref, externref or type_idx"_s);
         if (isTypeIndexHeapType(heapType)) {
-            TypeIndex typeIndex = m_info->typeIndexFromTypeSignatureIndex(ModuleInformation::typeSignatureIndexFromHeapType(heapType));
+            TypeIndex typeIndex = m_info->rtt(ModuleInformation::typeSignatureIndexFromHeapType(heapType)).asTypeIndex();
             typeOfNull = Type { TypeKind::RefNull, typeIndex };
         } else
             typeOfNull = Type { TypeKind::RefNull, static_cast<TypeIndex>(heapType) };
@@ -823,7 +840,7 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, bool& isExtendedConstantExpre
         WASM_PARSER_FAIL_IF(index >= m_info->functionIndexSpaceSize(), "ref.func index "_s, index, " exceeds the number of functions "_s, m_info->functionIndexSpaceSize());
         auto spaceIndex = FunctionSpaceIndex(index);
         m_info->addReferencedFunction(spaceIndex);
-        TypeIndex typeIndex = m_info->typeIndexFromFunctionIndexSpace(spaceIndex);
+        TypeIndex typeIndex = m_info->rtt(spaceIndex).asTypeIndex();
         resultType = { TypeKind::Ref, typeIndex };
         bitsOrImportNumber = index;
         break;
@@ -883,7 +900,7 @@ auto SectionParser::parseI32InitExpr(std::optional<I32InitExpr>& initExpr, ASCII
     return { };
 }
 
-auto SectionParser::parseFunctionType(uint32_t position, RefPtr<TypeDefinition>& functionSignature) -> PartialResult
+auto SectionParser::parseFunctionType(uint32_t position, ParsedDef& functionSignature) -> PartialResult
 {
     uint32_t argumentCount;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(argumentCount), "can't get Type's argument count at index "_s, position);
@@ -911,7 +928,7 @@ auto SectionParser::parseFunctionType(uint32_t position, RefPtr<TypeDefinition>&
         returnTypes[i] = value;
     }
 
-    functionSignature = TypeInformation::typeDefinitionForFunction(returnTypes, argumentTypes);
+    functionSignature = ParsedDef { TypeInformation::typeDefinitionForFunction(returnTypes, argumentTypes) };
     return { };
 }
 
@@ -943,7 +960,7 @@ auto SectionParser::parseStorageType(StorageType& storageType) -> PartialResult
     return { };
 }
 
-auto SectionParser::parseStructType(uint32_t position, RefPtr<TypeDefinition>& structType) -> PartialResult
+auto SectionParser::parseStructType(uint32_t position, ParsedDef& structType) -> PartialResult
 {
     uint32_t fieldCount;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(fieldCount), "can't get "_s, position, "th struct type's field count"_s);
@@ -967,11 +984,11 @@ auto SectionParser::parseStructType(uint32_t position, RefPtr<TypeDefinition>& s
     }
 
     m_info->m_hasGCObjectTypes = true;
-    structType = TypeInformation::typeDefinitionForStruct(fields);
+    structType = ParsedDef { TypeInformation::typeDefinitionForStruct(fields) };
     return { };
 }
 
-auto SectionParser::parseArrayType(uint32_t position, RefPtr<TypeDefinition>& arrayType) -> PartialResult
+auto SectionParser::parseArrayType(uint32_t position, ParsedDef& arrayType) -> PartialResult
 {
     StorageType elementType;
     WASM_PARSER_FAIL_IF(!parseStorageType(elementType), "can't get array's element Type"_s);
@@ -981,26 +998,26 @@ auto SectionParser::parseArrayType(uint32_t position, RefPtr<TypeDefinition>& ar
     WASM_PARSER_FAIL_IF(mutability != 0x0 && mutability != 0x1, "invalid array mutability: 0x"_s, hex(mutability, 2, Lowercase));
 
     m_info->m_hasGCObjectTypes = true;
-    arrayType = TypeInformation::typeDefinitionForArray(FieldType { elementType, static_cast<Mutability>(mutability) });
+    arrayType = ParsedDef { TypeInformation::typeDefinitionForArray(FieldType { elementType, static_cast<Mutability>(mutability) }) };
     return { };
 }
 
-auto SectionParser::parseRecursionGroup(uint32_t position, RefPtr<TypeDefinition>& recursionGroup) -> PartialResult
+auto SectionParser::parseRecursionGroup(uint32_t position, ParsedDef& recursionGroup) -> PartialResult
 {
     uint32_t typeCount;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(typeCount), "can't get "_s, position, "th recursion group's type count"_s);
     WASM_PARSER_FAIL_IF(typeCount > maxRecursionGroupCount, "number of types for recursion group at position "_s, position, " is too big "_s, typeCount, " maximum "_s, maxRecursionGroupCount);
     Vector<TypeIndex> types;
     WASM_ALLOCATOR_FAIL_IF(!types.tryReserveInitialCapacity(typeCount), "can't allocate enough memory for recursion group "_s, typeCount, " entries"_s);
-    Vector<Ref<TypeDefinition>> signatures;
+    Vector<ParsedDef> signatures;
     WASM_ALLOCATOR_FAIL_IF(!signatures.tryReserveInitialCapacity(typeCount), "can't allocate enough memory for recursion group "_s, typeCount, " entries"_s);
 
-    SetForScope<RecursionGroupInformation> recursionGroupInfo(m_recursionGroupInformation, RecursionGroupInformation { true, m_info->typeCount(), m_info->typeCount() + typeCount });
+    SetForScope<RecursionGroupInformation> recursionGroupInfo(m_typeSection.recursionGroupInformation, RecursionGroupInformation { true, m_info->typeCount(), m_info->typeCount() + typeCount });
 
     for (uint32_t i = 0; i < typeCount; ++i) {
         int8_t typeKind;
         WASM_PARSER_FAIL_IF(!parseInt7(typeKind), "can't get recursion group's "_s, i, "th Type's type"_s);
-        RefPtr<TypeDefinition> signature;
+        ParsedDef signature;
         switch (static_cast<TypeKind>(typeKind)) {
         case TypeKind::Func: {
             WASM_FAIL_IF_HELPER_FAILS(parseFunctionType(i, signature));
@@ -1024,44 +1041,57 @@ auto SectionParser::parseRecursionGroup(uint32_t position, RefPtr<TypeDefinition
         }
 
         WASM_PARSER_FAIL_IF(!signature, "can't allocate enough memory for recursion group's "_s, i, "th signature"_s);
-        types.append(signature->index());
-        signatures.append(signature.releaseNonNull());
+        types.append(signature.index());
+        signatures.append(WTF::move(signature));
     }
     // Recursion group takes ownership of signatures via types.
-    recursionGroup = TypeInformation::typeDefinitionForRecursionGroup(types);
+    const RecursionGroup* recursionGroupRef = m_typeSection.createRecursionGroup(WTF::move(types));
+    recursionGroup = ParsedDef { recursionGroupRef };
 
     // Type definitions are normalized such that non-recursive, singleton recursion groups
     // are stored as the underlying concrete type without a projection. Otherwise we will
     // store projections for each recursion group index in the type section.
-    // Note: m_expandedTypeSignatures is only pre-allocated here; the actual expanded entries
-    // are populated by the final loop in parseType() after all m_typeSignatures are complete.
-    WASM_PARSER_FAIL_IF(!m_info->m_typeSignatures.tryGrowCapacityBy(typeCount), "can't allocate enough memory for recursion group's "_s, typeCount, " type "_s, typeCount > 1 ? "indices"_s : "index"_s);
-    WASM_PARSER_FAIL_IF(!m_info->m_expandedTypeSignatures.tryGrowCapacityBy(typeCount), "can't allocate enough memory for recursion group's "_s, typeCount, " expanded type "_s, typeCount > 1 ? "indices"_s : "index"_s);
     WASM_PARSER_FAIL_IF(!m_info->m_rtts.tryGrowCapacityBy(typeCount), "can't allocate enough memory for recursion group's "_s, typeCount, " RTT"_s, typeCount > 1 ? "s"_s : ""_s);
-    if (typeCount == 1 && !signatures[0]->hasRecursiveReference()) {
-        TypeInformation::registerCanonicalRTTForType(signatures[0]->index());
-        m_info->m_rtts.append(TypeInformation::getCanonicalRTT(signatures[0]->index()));
-        if (signatures[0]->is<Subtype>())
-            WASM_FAIL_IF_HELPER_FAILS(checkSubtypeValidity(signatures[0]));
-        m_info->m_typeSignatures.append(WTF::move(signatures[0]));
+    if (!typeCount) {
+        // Empty `(rec)`. Allowed by spec -- no members to canonicalize or register.
+    } else if (typeCount == 1 && !signatures[0].hasRecursiveReference()) {
+        if (signatures[0].isSubtype())
+            m_typeSection.registerCanonicalRTT(*signatures[0].asSubtype());
+        // Singleton fast path for explicit (rec (<single non-recursive type>)).
+        Ref<const RTT> canonical = TypeInformation::canonicalizeSingleton(&m_typeSection, signatures[0].index(), signatures[0].canonicalRTT());
+        if (signatures[0].isSubtype())
+            signatures[0].asSubtype()->setRTT(canonical.copyRef());
+        m_info->m_rtts.append(canonical.copyRef());
+        if (signatures[0].isSubtype())
+            WASM_FAIL_IF_HELPER_FAILS(checkSubtypeValidity(*signatures[0].asSubtype(), canonical.get()));
     } else {
-        Vector<Ref<TypeDefinition>> projections;
+        Vector<const Projection*> projections;
         // Take ownership of all projections before unrolling since they can refer to each other.
+        // These sequential projections (groupIndex, 0..N-1) are unique by construction, so skip hash dedup.
         for (uint32_t i = 0; i < typeCount; ++i) {
-            RefPtr<TypeDefinition> projection = TypeInformation::typeDefinitionForProjection(recursionGroup->index(), i);
+            const Projection* projection = m_typeSection.createProjectionDirect(recursionGroupRef->index(), i);
             WASM_PARSER_FAIL_IF(!projection, "can't allocate enough memory for recursion group's "_s, i, "th projection"_s);
-            projections.append(projection.releaseNonNull());
+            projections.append(projection);
         }
+        Vector<Ref<const RTT>> candidateRTTs;
+        candidateRTTs.reserveInitialCapacity(typeCount);
         for (uint32_t i = 0; i < typeCount; ++i) {
-            TypeInformation::registerCanonicalRTTForType(projections[i]->index());
-            m_info->m_rtts.append(TypeInformation::getCanonicalRTT(projections[i]->index()));
-            m_info->m_typeSignatures.append(projections[i]);
+            m_typeSection.registerCanonicalRTT(*projections[i]);
+            candidateRTTs.append(Ref<const RTT> { *projections[i]->rtt() });
+        }
+        Vector<Ref<const RTT>> canonicalRTTs = TypeInformation::canonicalizeRecursionGroup(&m_typeSection, recursionGroupRef->index(), WTF::move(candidateRTTs));
+        for (uint32_t i = 0; i < typeCount; ++i) {
+            projections[i]->setRTT(canonicalRTTs[i].copyRef());
+            m_info->m_rtts.append(canonicalRTTs[i].copyRef());
         }
         // Checking subtyping requirements has to be deferred until we construct projections in case recursive references show up in the type.
         for (uint32_t i = 0; i < typeCount; ++i) {
-            const TypeDefinition& unrolled = projections[i]->unroll();
-            if (unrolled.is<Subtype>())
-                WASM_FAIL_IF_HELPER_FAILS(checkSubtypeValidity(unrolled));
+            // The projected member is either a Subtype (tagged) or a concrete RTT (untagged).
+            TypeIndex memberIdx = recursionGroupRef->type(i);
+            if (memberIdx & subtypeTagBit) {
+                const Subtype* subtype = untagSubtype(memberIdx);
+                WASM_FAIL_IF_HELPER_FAILS(checkSubtypeValidity(*subtype, canonicalRTTs[i].get()));
+            }
         }
     }
 
@@ -1074,15 +1104,11 @@ auto SectionParser::parseRecursionGroup(uint32_t position, RefPtr<TypeDefinition
 //   https://github.com/WebAssembly/gc/blob/main/proposals/gc/MVP.md#structural-types
 //
 // The subtype argument should be unrolled before it is passed here, if needed.
-bool SectionParser::checkStructuralSubtype(const TypeDefinition& subtype, const TypeDefinition& supertype)
+bool SectionParser::checkStructuralSubtype(const RTT& subRTT, const RTT& expandedRTT)
 {
-    ASSERT(subtype.is<FunctionSignature>() || subtype.is<StructType>() || subtype.is<ArrayType>());
-    const TypeDefinition& expanded = supertype.expand();
-    ASSERT(expanded.is<FunctionSignature>() || expanded.is<StructType>() || expanded.is<ArrayType>());
-
-    if (subtype.is<FunctionSignature>() && expanded.is<FunctionSignature>()) {
-        const FunctionSignature& subFunc = *subtype.as<FunctionSignature>();
-        const FunctionSignature& superFunc = *expanded.as<FunctionSignature>();
+    if (subRTT.kind() == RTTKind::Function && expandedRTT.kind() == RTTKind::Function) {
+        const RTT& subFunc = subRTT;
+        const RTT& superFunc = expandedRTT;
         if (subFunc.argumentCount() == superFunc.argumentCount() && subFunc.returnCount() == superFunc.returnCount()) {
             for (FunctionArgCount i = 0; i < subFunc.argumentCount(); ++i)  {
                 if (!isSubtype(superFunc.argumentType(i), subFunc.argumentType(i)))
@@ -1094,9 +1120,9 @@ bool SectionParser::checkStructuralSubtype(const TypeDefinition& subtype, const 
             }
             return true;
         }
-    } else if (subtype.is<StructType>() && expanded.is<StructType>()) {
-        const StructType& subStruct = *subtype.as<StructType>();
-        const StructType& superStruct = *expanded.as<StructType>();
+    } else if (subRTT.kind() == RTTKind::Struct && expandedRTT.kind() == RTTKind::Struct) {
+        const RTT& subStruct = subRTT;
+        const RTT& superStruct = expandedRTT;
         if (subStruct.fieldCount() >= superStruct.fieldCount()) {
             for (StructFieldCount i = 0; i < superStruct.fieldCount(); ++i)  {
                 FieldType subField = subStruct.field(i);
@@ -1110,9 +1136,9 @@ bool SectionParser::checkStructuralSubtype(const TypeDefinition& subtype, const 
             }
             return true;
         }
-    } else if (subtype.is<ArrayType>() && expanded.is<ArrayType>()) {
-        FieldType subField = subtype.as<ArrayType>()->elementType();
-        FieldType superField = expanded.as<ArrayType>()->elementType();
+    } else if (subRTT.kind() == RTTKind::Array && expandedRTT.kind() == RTTKind::Array) {
+        FieldType subField = subRTT.elementType();
+        FieldType superField = expandedRTT.elementType();
         if (subField.mutability != superField.mutability)
             return false;
         if (subField.mutability == Mutability::Mutable && subField.type != superField.type)
@@ -1125,48 +1151,50 @@ bool SectionParser::checkStructuralSubtype(const TypeDefinition& subtype, const 
     return false;
 }
 
-auto SectionParser::checkSubtypeValidity(const TypeDefinition& subtype) -> PartialResult
+auto SectionParser::checkSubtypeValidity(const Subtype& subtype, const RTT& canonicalRTT) -> PartialResult
 {
-    ASSERT(subtype.is<Subtype>());
-
-    if (subtype.as<Subtype>()->supertypeCount() < 1)
+    if (subtype.supertypeCount() < 1)
         return { };
-    TypeIndex superIndex = subtype.as<Subtype>()->firstSuperType();
 
-    const auto& superSignature = TypeInformation::get(superIndex);
-    ASSERT(!superSignature.is<Projection>() || !superSignature.as<Projection>()->isPlaceholder());
+    // Use the canonical RTT's display chain for the supertype. The display
+    // chain is populated by canonicalizeRecursionGroup with the correct
+    // parent RTT regardless of whether subtype.firstSuperType() is a bare
+    // RTT pointer or a placeholder Projection (whose rtt() may be null for
+    // intra-rec-group supertypes that weren't separately canonicalized).
+    ASSERT(canonicalRTT.displaySizeExcludingThis() > 0);
+    const RTT* superRTT = canonicalRTT.displayEntry(canonicalRTT.displaySizeExcludingThis() - 1);
+    ASSERT(superRTT);
 
-    const TypeDefinition& supertype = superSignature.unroll();
-    WASM_PARSER_FAIL_IF(!supertype.is<Subtype>() || supertype.as<Subtype>()->isFinal(), "cannot declare subtype of final supertype"_s);
-    WASM_PARSER_FAIL_IF(!checkStructuralSubtype(TypeInformation::get(subtype.as<Subtype>()->underlyingType()), supertype), "structural type is not a subtype of the specified supertype"_s);
+    WASM_PARSER_FAIL_IF(superRTT->isFinalType(), "cannot declare subtype of final supertype"_s);
+    WASM_PARSER_FAIL_IF(!checkStructuralSubtype(canonicalRTT, *superRTT), "structural type is not a subtype of the specified supertype"_s);
 
     return { };
 }
 
-auto SectionParser::parseSubtype(uint32_t position, RefPtr<TypeDefinition>& subtype, Vector<TypeIndex>& recursionGroupTypes, bool isFinal) -> PartialResult
+auto SectionParser::parseSubtype(uint32_t position, ParsedDef& subtype, Vector<TypeIndex>& recursionGroupTypes, bool isFinal) -> PartialResult
 {
     uint32_t supertypeCount;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(supertypeCount), "can't get "_s, position, "th subtype's supertype count"_s);
     WASM_PARSER_FAIL_IF(supertypeCount > maxSubtypeSupertypeCount, "number of supertypes for subtype at position "_s, position, " is too big "_s, supertypeCount, " maximum "_s, maxSubtypeSupertypeCount);
 
     // The following assumes the MVP restriction that only up to a single supertype is allowed.
-    TypeIndex supertypeIndex = TypeDefinition::invalidIndex;
+    TypeIndex supertypeIndex = invalidTypeIndex;
     if (supertypeCount > 0) {
         uint32_t typeIndex;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(typeIndex), "can't get subtype's supertype index"_s);
         WASM_PARSER_FAIL_IF(typeIndex >= m_info->typeCount() + recursionGroupTypes.size(), "supertype index is a forward reference"_s);
         if (typeIndex < m_info->typeCount())
-            supertypeIndex = m_info->typeIndexFromTypeSignatureIndex(TypeSignatureIndex(typeIndex));
-        // If a parent type is in the same recursion group, the index needs to refer to the projection instead.
+            supertypeIndex = m_info->rtt(TypeSignatureIndex(typeIndex)).asTypeIndex();
         else {
-            RefPtr<TypeDefinition> projection = TypeInformation::getPlaceholderProjection(typeIndex - m_info->typeCount());
-            supertypeIndex = projection->index(); // Placeholders are owned by TypeInformation singleton.
+            // If a parent type is in the same recursion group, the index needs to refer to the projection instead.
+            const Projection* projection = m_typeSection.createPlaceholderProjection(typeIndex - m_info->typeCount());
+            supertypeIndex = tagAsProjection(projection); // Tagged placeholder.
         }
     }
 
     int8_t typeKind;
     WASM_PARSER_FAIL_IF(!parseInt7(typeKind), "can't get subtype's underlying Type's type"_s);
-    RefPtr<TypeDefinition> underlyingType;
+    ParsedDef underlyingType;
     switch (static_cast<TypeKind>(typeKind)) {
     case TypeKind::Func: {
         WASM_FAIL_IF_HELPER_FAILS(parseFunctionType(position, underlyingType));
@@ -1188,15 +1216,16 @@ auto SectionParser::parseSubtype(uint32_t position, RefPtr<TypeDefinition>& subt
     // type definitions to not have the subtype. This ensures that type shorthands
     // and the full subtype form are represented in the same way.
     if (!supertypeCount && isFinal) {
-        subtype = underlyingType;
+        subtype = WTF::move(underlyingType);
         return { };
     }
 
-    // Subtype takes ownership of underlyingType.
+    // Subtype takes ownership of underlyingType's RTT.
+    Ref underlyingRTT = underlyingType.asRTT();
+    Vector<TypeIndex> superTypes;
     if (supertypeCount > 0)
-        subtype = TypeInformation::typeDefinitionForSubtype({ supertypeIndex }, TypeInformation::get(*underlyingType), isFinal);
-    else
-        subtype = TypeInformation::typeDefinitionForSubtype({ }, TypeInformation::get(*underlyingType), isFinal);
+        superTypes.append(supertypeIndex);
+    subtype = ParsedDef { m_typeSection.createSubtype(WTF::move(superTypes), WTF::move(underlyingRTT), isFinal) };
 
     return { };
 }
@@ -1400,9 +1429,9 @@ auto SectionParser::parseException() -> PartialResult
         WASM_PARSER_FAIL_IF(!parseVarUInt32(typeNumber), "can't get "_s, exceptionNumber, "th Exception's type number"_s);
         WASM_PARSER_FAIL_IF(typeNumber >= m_info->typeCount(), exceptionNumber, "th Exception type number is invalid "_s, typeNumber);
         auto index = TypeSignatureIndex(typeNumber);
-        const auto& expanded = m_info->expandedTypeSignature(index);
-        WASM_PARSER_FAIL_IF(!expanded.is<FunctionSignature>(), exceptionNumber, "th Exception type "_s, typeNumber, " doesn't have a function signature"_s);
-        WASM_PARSER_FAIL_IF(!expanded.as<FunctionSignature>()->returnsVoid(), exceptionNumber, "th Exception type cannot have a non-void return type "_s, typeNumber);
+        const auto& expandedRTT = m_info->rtt(index);
+        WASM_PARSER_FAIL_IF(expandedRTT.kind() != RTTKind::Function, exceptionNumber, "th Exception type "_s, typeNumber, " doesn't have a function signature"_s);
+        WASM_PARSER_FAIL_IF(!expandedRTT.returnsVoid(), exceptionNumber, "th Exception type cannot have a non-void return type "_s, typeNumber);
         m_info->internalExceptionTypeSignatureIndices.append(index);
     }
 

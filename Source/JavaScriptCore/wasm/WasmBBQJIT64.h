@@ -546,8 +546,8 @@ void BBQJIT::emitCCall(Func function, std::span<const Value> arguments)
     auto argumentTypes = WTF::map<16>(arguments, [](auto& value) {
         return Type { value.type(), 0u };
     });
-    RefPtr<TypeDefinition> functionType = TypeInformation::typeDefinitionForFunction(resultTypes, argumentTypes);
-    CallInformation callInfo = wasmCallingConvention().callInformationFor(*functionType, CallRole::Caller);
+    Ref<const RTT> functionRTT = TypeInformation::rttForFunction(resultTypes, argumentTypes);
+    CallInformation callInfo = wasmCallingConvention().callInformationFor(functionRTT.get(), CallRole::Caller);
     Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(callInfo.headerAndArgumentStackSizeInBytes);
     m_maxCalleeStackSizeForValidation = std::max<uint32_t>(calleeStackSize, m_maxCalleeStackSizeForValidation);
     ASSERT(static_cast<uint32_t>(alignedFrameSize(m_maxCalleeStackSizeForValidation + m_frameSizeForValidation)) <= m_frameSize);
@@ -557,7 +557,7 @@ void BBQJIT::emitCCall(Func function, std::span<const Value> arguments)
 
     // Preserve caller-saved registers and other info
     prepareForExceptions();
-    saveValuesAcrossCallAndPassArguments(arguments, callInfo, *functionType);
+    saveValuesAcrossCallAndPassArguments(arguments, callInfo, functionRTT.get());
 
     // Materialize address of native function and call register
     void* taggedFunctionPtr = tagCFunctionPtr<void*, OperationPtrTag>(function);
@@ -576,8 +576,8 @@ void BBQJIT::emitCCall(Func function, std::span<const Value> arguments, Value& r
         return Type { value.type(), 0u };
     });
 
-    RefPtr<TypeDefinition> functionType = TypeInformation::typeDefinitionForFunction(resultTypes, argumentTypes);
-    CallInformation callInfo = wasmCallingConvention().callInformationFor(*functionType, CallRole::Caller);
+    Ref<const RTT> functionRTT = TypeInformation::rttForFunction(resultTypes, argumentTypes);
+    CallInformation callInfo = wasmCallingConvention().callInformationFor(functionRTT.get(), CallRole::Caller);
     Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(callInfo.headerAndArgumentStackSizeInBytes);
     m_maxCalleeStackSizeForValidation = std::max<uint32_t>(calleeStackSize, m_maxCalleeStackSizeForValidation);
     ASSERT(static_cast<uint32_t>(alignedFrameSize(m_maxCalleeStackSizeForValidation + m_frameSizeForValidation)) <= m_frameSize);
@@ -587,7 +587,7 @@ void BBQJIT::emitCCall(Func function, std::span<const Value> arguments, Value& r
 
     // Preserve caller-saved registers and other info
     prepareForExceptions();
-    saveValuesAcrossCallAndPassArguments(arguments, callInfo, *functionType);
+    saveValuesAcrossCallAndPassArguments(arguments, callInfo, functionRTT.get());
 
     // Materialize address of native function and call register
     void* taggedFunctionPtr = tagCFunctionPtr<void*, OperationPtrTag>(function);

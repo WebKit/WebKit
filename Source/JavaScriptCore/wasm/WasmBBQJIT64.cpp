@@ -1451,13 +1451,14 @@ void BBQJIT::emitAllocateGCArrayUninitialized(GPRReg resultGPR, TypeSignatureInd
 {
     RELEASE_ASSERT(m_info.hasGCObjectTypes());
     JumpList slowPath;
-    const ArrayType* typeDefinition = m_info.expandedTypeSignature(typeIndex).template as<ArrayType>();
+    const RTT& rtt = m_info.rtt(typeIndex);
+    ASSERT(rtt.kind() == RTTKind::Array);
     MacroAssembler::Address allocatorBufferBase(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfAllocatorForGCObject(m_info, 0));
     MacroAssembler::Address structureIDAddress(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfGCObjectStructureID(m_info, typeIndex.rawIndex()));
     Location sizeLocation;
-    size_t elementSize = typeDefinition->elementType().type.elementSize();
+    size_t elementSize = rtt.elementType().type.elementSize();
     if (size.isConst()) {
-        std::optional<unsigned> sizeInBytes = JSWebAssemblyArray::allocationSizeInBytes(typeDefinition->elementType(), size.asI32());
+        std::optional<unsigned> sizeInBytes = JSWebAssemblyArray::allocationSizeInBytes(rtt.elementType(), size.asI32());
 
         if (sizeInBytes && sizeInBytes.value() <= MarkedSpace::largeCutoff) {
             size_t sizeClassIndex = MarkedSpace::sizeClassToIndex(sizeInBytes.value());
@@ -1966,7 +1967,7 @@ void BBQJIT::emitArraySetUnchecked(TypeSignatureIndex typeIndex, Value arrayref,
     return { };
 }
 
-bool BBQJIT::emitStructSet(GPRReg structGPR, const StructType& structType, uint32_t fieldIndex, Value value)
+bool BBQJIT::emitStructSet(GPRReg structGPR, const RTT& structType, uint32_t fieldIndex, Value value)
 {
     unsigned fieldOffset = JSWebAssemblyStruct::offsetOfData() + structType.offsetOfFieldInPayload(fieldIndex);
     RELEASE_ASSERT((std::numeric_limits<int32_t>::max() & fieldOffset) == fieldOffset);
@@ -1989,12 +1990,13 @@ void BBQJIT::emitAllocateGCStructUninitialized(GPRReg resultGPR, TypeSignatureIn
 {
     RELEASE_ASSERT(m_info.hasGCObjectTypes());
     JumpList slowPath;
-    const StructType* typeDefinition = m_info.expandedTypeSignature(typeIndex).template as<StructType>();
+    const RTT& rtt = m_info.rtt(typeIndex);
+    ASSERT(rtt.kind() == RTTKind::Struct);
     MacroAssembler::Address allocatorBufferBase(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfAllocatorForGCObject(m_info, 0));
     MacroAssembler::Address structureIDAddress(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfGCObjectStructureID(m_info, typeIndex.rawIndex()));
     Location sizeLocation;
 
-    size_t sizeInBytes = JSWebAssemblyStruct::allocationSize(typeDefinition->instancePayloadSize());
+    size_t sizeInBytes = JSWebAssemblyStruct::allocationSize(rtt.instancePayloadSize());
 
     if (sizeInBytes <= MarkedSpace::largeCutoff) {
         size_t sizeClassIndex = MarkedSpace::sizeClassToIndex(sizeInBytes);
@@ -2023,7 +2025,7 @@ void BBQJIT::emitAllocateGCStructUninitialized(GPRReg resultGPR, TypeSignatureIn
 
 [[nodiscard]] PartialResult BBQJIT::addStructNewDefault(TypeSignatureIndex typeIndex, ExpressionType& result)
 {
-    const auto& structType = *m_info.expandedTypeSignature(typeIndex).template as<StructType>();
+    const auto& structType = m_info.rtt(typeIndex);
     GPRReg resultGPR;
     {
         ScratchScope<2, 0> scratches(*this);
@@ -2069,7 +2071,7 @@ void BBQJIT::emitAllocateGCStructUninitialized(GPRReg resultGPR, TypeSignatureIn
 
 [[nodiscard]] PartialResult BBQJIT::addStructNew(TypeSignatureIndex typeIndex, ArgumentList& args, Value& result)
 {
-    const auto& structType = *m_info.expandedTypeSignature(typeIndex).template as<StructType>();
+    const auto& structType = m_info.rtt(typeIndex);
     GPRReg resultGPR;
     {
         ScratchScope<2, 0> scratches(*this);
@@ -2107,7 +2109,7 @@ void BBQJIT::emitAllocateGCStructUninitialized(GPRReg resultGPR, TypeSignatureIn
     return { };
 }
 
-[[nodiscard]] PartialResult BBQJIT::addStructGet(ExtGCOpType structGetKind, TypedExpression typedStruct, const StructType& structType, const RTT&, uint32_t fieldIndex, Value& result)
+[[nodiscard]] PartialResult BBQJIT::addStructGet(ExtGCOpType structGetKind, TypedExpression typedStruct, const RTT& structType, uint32_t fieldIndex, Value& result)
 {
     auto structValue = typedStruct.value();
     TypeKind resultKind = structType.field(fieldIndex).type.unpacked().kind;
@@ -2194,7 +2196,7 @@ void BBQJIT::emitAllocateGCStructUninitialized(GPRReg resultGPR, TypeSignatureIn
     return { };
 }
 
-[[nodiscard]] PartialResult BBQJIT::addStructSet(TypedExpression typedStruct, const StructType& structType, const RTT&, uint32_t fieldIndex, Value value)
+[[nodiscard]] PartialResult BBQJIT::addStructSet(TypedExpression typedStruct, const RTT& structRTT, uint32_t fieldIndex, Value value)
 {
     auto structValue = typedStruct.value();
     if (structValue.isConst()) {
@@ -2207,14 +2209,14 @@ void BBQJIT::emitAllocateGCStructUninitialized(GPRReg resultGPR, TypeSignatureIn
         return { };
     }
 
-    unsigned fieldOffset = JSWebAssemblyStruct::offsetOfData() + structType.offsetOfFieldInPayload(fieldIndex);
+    unsigned fieldOffset = JSWebAssemblyStruct::offsetOfData() + structRTT.offsetOfFieldInPayload(fieldIndex);
     RELEASE_ASSERT((std::numeric_limits<int32_t>::max() & fieldOffset) == fieldOffset);
 
     Location structLocation = loadIfNecessary(structValue);
     if (typedStruct.type().isNullable())
         emitThrowOnNullReferenceBeforeAccess(structLocation, fieldOffset);
 
-    bool needsWriteBarrier = emitStructSet(structLocation.asGPR(), structType, fieldIndex, value);
+    bool needsWriteBarrier = emitStructSet(structLocation.asGPR(), structRTT, fieldIndex, value);
     if (needsWriteBarrier)
         emitWriteBarrier(structLocation.asGPR());
 
@@ -3201,7 +3203,7 @@ void BBQJIT::emitCatchAllImpl(ControlData& dataCatch)
     dataCatch.startBlock(*this, emptyStack);
 }
 
-void BBQJIT::emitCatchImpl(ControlData& dataCatch, const TypeDefinition& exceptionSignature, ResultList& results)
+void BBQJIT::emitCatchImpl(ControlData& dataCatch, const RTT& exceptionSignature, ResultList& results)
 {
     m_catchEntrypoints.append(m_jit.label());
     emitCatchPrologue();
@@ -3209,11 +3211,11 @@ void BBQJIT::emitCatchImpl(ControlData& dataCatch, const TypeDefinition& excepti
     Stack emptyStack { };
     dataCatch.startBlock(*this, emptyStack);
 
-    if (exceptionSignature.as<FunctionSignature>()->argumentCount()) {
+    if (exceptionSignature.argumentCount()) {
         m_jit.loadPtr(Address(GPRInfo::returnValueGPR, JSWebAssemblyException::offsetOfPayload() + JSWebAssemblyException::Payload::offsetOfStorage()), wasmScratchGPR);
         unsigned offset = 0;
-        for (unsigned i = 0; i < exceptionSignature.as<FunctionSignature>()->argumentCount(); ++i) {
-            Type type = exceptionSignature.as<FunctionSignature>()->argumentType(i);
+        for (unsigned i = 0; i < exceptionSignature.argumentCount(); ++i) {
+            Type type = exceptionSignature.argumentType(i);
             Value result = Value::fromTemp(type.kind, dataCatch.enclosedHeight() + dataCatch.implicitSlots() + i);
             Location slot = canonicalSlot(result);
             switch (type.kind) {
@@ -3295,7 +3297,7 @@ void BBQJIT::emitCatchTableImpl(ControlData& entryData, ControlType::TryTableTar
     }
 
     if (target.type == CatchKind::Catch || target.type == CatchKind::CatchRef) {
-        auto signature = target.exceptionSignature->template as<FunctionSignature>();
+        auto signature = target.exceptionSignature;
         if (signature->argumentCount()) {
             m_jit.loadPtr(Address(GPRInfo::returnValueGPR, JSWebAssemblyException::offsetOfPayload() + JSWebAssemblyException::Payload::offsetOfStorage()), wasmScratchGPR);
             unsigned offset = 0;
@@ -5130,12 +5132,11 @@ void BBQJIT::emitMove(StorageType type, Value src, Address dst)
         emitStore(type, srcLocation, dst);
 }
 
-[[nodiscard]] PartialResult BBQJIT::addCallRef(unsigned callProfileIndex, const TypeDefinition& expandedSignature, ArgumentList& args, ResultList& results, CallType callType)
+[[nodiscard]] PartialResult BBQJIT::addCallRef(unsigned callProfileIndex, const RTT& signature, ArgumentList& args, ResultList& results, CallType callType)
 {
     emitIncrementCallProfileCount(callProfileIndex);
     Value callee = args.takeLast();
-    const TypeDefinition& signature = expandedSignature;
-    ASSERT(signature.as<FunctionSignature>()->argumentCount() == args.size());
+    ASSERT(signature.argumentCount() == args.size());
 
     CallInformation callInfo = wasmCallingConvention().callInformationFor(signature, CallRole::Caller);
     Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(callInfo.headerAndArgumentStackSizeInBytes);

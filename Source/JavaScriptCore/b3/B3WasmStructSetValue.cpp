@@ -34,8 +34,8 @@ namespace JSC::B3 {
 
 WasmStructSetValue::~WasmStructSetValue() = default;
 
-WasmStructSetValue::WasmStructSetValue(Kind kind, Origin origin, Value* structPtr, Value* value, Ref<const Wasm::RTT> rtt, const Wasm::StructType* structType, Wasm::StructFieldCount fieldIndex, uint64_t fieldHeapKey)
-    : WasmStructFieldValue(CheckedOpcode, kind, Void, Two, origin, WTF::move(rtt), structType, fieldIndex, fieldHeapKey, Mutability::Mutable, structPtr, value)
+WasmStructSetValue::WasmStructSetValue(Kind kind, Origin origin, Value* structPtr, Value* value, Ref<const Wasm::RTT> rtt, Wasm::StructFieldCount fieldIndex, uint64_t fieldHeapKey)
+    : WasmStructFieldValue(CheckedOpcode, kind, Void, Two, origin, WTF::move(rtt), fieldIndex, fieldHeapKey, Mutability::Mutable, structPtr, value)
 {
 }
 

@@ -162,9 +162,9 @@ public:
     friend class Callee;
     friend class JSC::LLIntOffsetsExtractor;
 
-    static inline Ref<JSToWasmCallee> create(TypeIndex typeIndex, bool usesSIMD)
+    static inline Ref<JSToWasmCallee> create(Ref<const RTT>&& rtt, bool usesSIMD)
     {
-        return adoptRef(*new JSToWasmCallee(typeIndex, usesSIMD));
+        return adoptRef(*new JSToWasmCallee(WTF::move(rtt), usesSIMD));
     }
 
     CodePtr<WasmEntryPtrTag> entrypointImpl() const;
@@ -181,7 +181,7 @@ public:
 
     unsigned frameSize() const { return m_frameSize; }
     CalleeBits wasmCallee() const { return m_wasmCallee; }
-    TypeIndex typeIndex() const { return m_typeIndex; }
+    const RTT& rtt() const LIFETIME_BOUND { return m_rtt; }
 
     void setWasmCallee(CalleeBits wasmCallee)
     {
@@ -189,12 +189,12 @@ public:
     }
 
 private:
-    JSToWasmCallee(TypeIndex, bool);
+    JSToWasmCallee(Ref<const RTT>&&, bool);
 
     unsigned m_frameSize { };
     // This must be initialized after the callee is created unfortunately.
     CalleeBits m_wasmCallee;
-    const TypeIndex m_typeIndex;
+    const Ref<const RTT> m_rtt;
 };
 
 class WasmToJSCallee final : public Callee {

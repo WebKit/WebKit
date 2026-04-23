@@ -45,7 +45,7 @@
 namespace JSC {
 namespace Wasm {
 
-static void marshallJSResult(CCallHelpers& jit, const FunctionSignature& signature, const CallInformation& wasmFrameConvention, const RegisterAtOffsetList& savedResultRegisters, CCallHelpers::JumpList& exceptionChecks, int32_t stackResultReadOffset = 0)
+static void marshallJSResult(CCallHelpers& jit, const RTT& signature, const CallInformation& wasmFrameConvention, const RegisterAtOffsetList& savedResultRegisters, CCallHelpers::JumpList& exceptionChecks, int32_t stackResultReadOffset = 0)
 {
     auto boxNativeCalleeResult = [](CCallHelpers& jit, Type type, ValueLocation src, JSValueRegs dst) {
         JIT_COMMENT(jit, "boxNativeCalleeResult ", type);
@@ -526,7 +526,7 @@ static size_t NODELETE trampolineReservedStackSize()
     return (Options::softReservedZoneSize() - Options::reservedZoneSize()) / 2;
 }
 
-static RegisterAtOffsetList usedCalleeSaveRegisters(const Wasm::FunctionSignature& signature)
+static RegisterAtOffsetList usedCalleeSaveRegisters(const Wasm::RTT& signature)
 {
     // Pessimistically save callee saves in BoundsChecking mode since the IPInt always bounds checks
     RegisterSet calleeSaves = RegisterSet::wasmPinnedRegisters();
@@ -539,8 +539,9 @@ static RegisterAtOffsetList usedCalleeSaveRegisters(const Wasm::FunctionSignatur
     return RegisterAtOffsetList { calleeSaves, RegisterAtOffsetList::OffsetBaseType::FramePointerBased };
 }
 
-CodePtr<JSEntryPtrTag> FunctionSignature::jsToWasmICEntrypoint() const
+CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
 {
+    ASSERT(kind() == RTTKind::Function);
     if (m_jsToWasmICCallee) [[likely]] {
         ASSERT(m_jsToWasmICCallee->jsToWasm());
         return m_jsToWasmICCallee->jsToWasm();
@@ -685,7 +686,7 @@ CodePtr<JSEntryPtrTag> FunctionSignature::jsToWasmICEntrypoint() const
         case Wasm::TypeKind::RefNull:
         case Wasm::TypeKind::Funcref:
         case Wasm::TypeKind::Externref: {
-            if (Wasm::isFuncref(type) || (Wasm::isRefWithTypeIndex(type) && Wasm::TypeInformation::get(type.index).is<Wasm::FunctionSignature>())) {
+            if (Wasm::isFuncref(type) || (Wasm::isRefWithTypeIndex(type) && Wasm::TypeInformation::tryGetRTT(type.index) && Wasm::TypeInformation::tryGetRTT(type.index)->kind() == Wasm::RTTKind::Function)) {
                 // Ensure we have a WASM exported function.
                 jit.loadValue(jsParam, scratchJSR);
                 auto isNull = jit.branchIfNull(scratchJSR);

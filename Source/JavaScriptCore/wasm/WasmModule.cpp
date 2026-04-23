@@ -59,9 +59,9 @@ Module::~Module()
 #endif
 }
 
-Wasm::TypeIndex Module::typeIndexFromFunctionIndexSpace(FunctionSpaceIndex functionIndexSpace) const
+Wasm::RTT const& Module::rttFromFunctionIndexSpace(FunctionSpaceIndex functionIndexSpace) const
 {
-    return m_moduleInformation->typeIndexFromFunctionIndexSpace(functionIndexSpace);
+    return m_moduleInformation->rtt(functionIndexSpace);
 }
 
 static Module::ValidationResult makeValidationResult(IPIntPlan& plan)

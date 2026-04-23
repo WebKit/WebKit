@@ -71,7 +71,7 @@ public:
         return adoptRef(*new Module(plan));
     }
 
-    Wasm::TypeIndex NODELETE typeIndexFromFunctionIndexSpace(FunctionSpaceIndex functionIndexSpace) const;
+    const Wasm::RTT& rttFromFunctionIndexSpace(FunctionSpaceIndex functionIndexSpace) const;
     const Wasm::ModuleInformation& moduleInformation() const { return m_moduleInformation.get(); }
 
     void applyCompileOptions(const WebAssemblyCompileOptions&);

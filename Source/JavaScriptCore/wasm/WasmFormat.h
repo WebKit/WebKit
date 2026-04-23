@@ -78,16 +78,17 @@ public:
     {
     }
 
-    // Constructor from FunctionSignature held by Wasm::Module.
-    explicit BlockSignature(const FunctionSignature& signature)
+    // Constructor from RTT held by Wasm::Module.
+    explicit BlockSignature(const RTT& signature)
         : m_storage(&signature)
     {
+        ASSERT(signature.kind() == RTTKind::Function);
     }
 
     unsigned argumentCount() const
     {
         return WTF::switchOn(m_storage,
-            [](const FunctionSignature* signature) -> unsigned {
+            [](const RTT* signature) -> unsigned {
                 return signature->argumentCount();
             },
             [](Type) -> unsigned {
@@ -99,7 +100,7 @@ public:
     unsigned returnCount() const
     {
         return WTF::switchOn(m_storage,
-            [](const FunctionSignature* signature) -> unsigned {
+            [](const RTT* signature) -> unsigned {
                 return signature->returnCount();
             },
             [](Type type) -> unsigned {
@@ -111,7 +112,7 @@ public:
     Type argumentType(unsigned index) const
     {
         return WTF::switchOn(m_storage,
-            [&](const FunctionSignature* signature) -> Type {
+            [&](const RTT* signature) -> Type {
                 ASSERT(index < signature->argumentCount());
                 return signature->argumentType(index);
             },
@@ -125,7 +126,7 @@ public:
     Type returnType(unsigned index) const
     {
         return WTF::switchOn(m_storage,
-            [&](const FunctionSignature* signature) -> Type {
+            [&](const RTT* signature) -> Type {
                 ASSERT(index < signature->returnCount());
                 return signature->returnType(index);
             },
@@ -136,11 +137,11 @@ public:
         );
     }
 
-    bool hasReturnVector() const
+    bool hasReturnedV128() const
     {
         return WTF::switchOn(m_storage,
-            [](const FunctionSignature* signature) -> bool {
-                return signature->hasReturnVector();
+            [](const RTT* signature) -> bool {
+                return signature->hasReturnedV128();
             },
             [](Type type) -> bool {
                 return type.isV128();
@@ -151,7 +152,7 @@ public:
     void dump(PrintStream& out) const;
 
 private:
-    WTF::Variant<const FunctionSignature*, Type> m_storage;
+    WTF::Variant<const RTT*, Type> m_storage;
 };
 
 enum class TableElementType : uint8_t {
@@ -176,7 +177,7 @@ inline bool isValueType(Type type)
         return false;
     case TypeKind::Ref:
     case TypeKind::RefNull:
-        return type.index != TypeDefinition::invalidIndex;
+        return type.index != invalidTypeIndex;
     case TypeKind::V128:
         return Options::useWasmSIMD();
     default:
@@ -271,7 +272,7 @@ inline bool isInternalref(Type type)
             return false;
         }
     }
-    return !TypeInformation::get(type.index).expand().is<FunctionSignature>();
+    return TypeInformation::getCanonicalRTT(type.index)->kind() != RTTKind::Function;
 }
 
 inline bool isI31ref(Type type)
@@ -361,27 +362,6 @@ inline bool isRefWithTypeIndex(Type type)
     return isRefType(type) && !typeIndexIsType(type.index);
 }
 
-// Determine if the ref type has a placeholder type index that is used
-// for an unresolved recursive reference in a recursion group.
-inline bool isRefWithRecursiveReference(Type type)
-{
-    if (isRefWithTypeIndex(type)) {
-        const TypeDefinition& def = TypeInformation::get(type.index);
-        if (def.is<Projection>())
-            return def.as<Projection>()->isPlaceholder();
-    }
-
-    return false;
-}
-
-inline bool isRefWithRecursiveReference(StorageType storageType)
-{
-    if (storageType.is<PackedType>())
-        return false;
-
-    return isRefWithRecursiveReference(storageType.as<Type>());
-}
-
 inline bool isTypeIndexHeapType(int32_t heapType)
 {
     return heapType >= 0;
@@ -394,7 +374,6 @@ inline bool isSubtypeIndex(TypeIndex sub, TypeIndex parent)
 
     auto subRTT = TypeInformation::getCanonicalRTT(sub);
     auto parentRTT = TypeInformation::getCanonicalRTT(parent);
-
     return subRTT->isStrictSubRTT(parentRTT.get());
 }
 
@@ -410,17 +389,19 @@ inline bool isSubtypeSlow(Type sub, Type parent)
         if (isRefWithTypeIndex(parent))
             return isSubtypeIndex(sub.index, parent.index);
 
+        Ref<const RTT> subRTT = TypeInformation::getCanonicalRTT(sub.index);
+
         if ((isAnyref(parent) || isEqref(parent)))
-            return !TypeInformation::get(sub.index).expand().is<FunctionSignature>();
+            return subRTT->kind() != RTTKind::Function;
 
         if (isArrayref(parent))
-            return TypeInformation::get(sub.index).expand().is<ArrayType>();
+            return subRTT->kind() == RTTKind::Array;
 
         if (isStructref(parent))
-            return TypeInformation::get(sub.index).expand().is<StructType>();
+            return subRTT->kind() == RTTKind::Struct;
 
         if (isFuncref(parent))
-            return TypeInformation::get(sub.index).expand().is<FunctionSignature>();
+            return subRTT->kind() == RTTKind::Function;
     }
 
     if ((isI31ref(sub) || isStructref(sub) || isArrayref(sub)) && (isAnyref(parent) || isEqref(parent)))
@@ -970,10 +951,7 @@ struct alignas(8) WasmCallableFunction {
 struct WasmToWasmImportableFunction : public WasmCallableFunction {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(WasmToWasmImportableFunction);
     static constexpr ptrdiff_t offsetOfRTT() { return OBJECT_OFFSETOF(WasmToWasmImportableFunction, rtt); }
-
     const RTT* rtt { nullptr };
-    // FIXME: Pack type index and code pointer into one 64-bit value. See <https://bugs.webkit.org/show_bug.cgi?id=165511>.
-    TypeIndex typeIndex { TypeDefinition::invalidIndex };
 };
 using FunctionIndexSpace = Vector<WasmToWasmImportableFunction>;
 

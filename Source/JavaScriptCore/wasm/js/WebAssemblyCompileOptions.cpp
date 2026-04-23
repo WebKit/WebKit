@@ -137,12 +137,8 @@ bool WebAssemblyCompileOptions::validateImportForBuiltinSetNames(const Wasm::Imp
     if (import.kind != Wasm::ExternalKind::Function)
         return false;
     Wasm::TypeSignatureIndex typeSignatureIndex = moduleInfo.importFunctionTypeSignatureIndices[import.kindIndex];
-    SUPPRESS_UNCOUNTED_LOCAL const Wasm::TypeDefinition& type = moduleInfo.expandedTypeSignature(typeSignatureIndex);
-    if (!type.is<Wasm::FunctionSignature>())
-        return false;
-    SUPPRESS_UNCOUNTED_LOCAL auto* importSig = type.as<Wasm::FunctionSignature>();
-
-    return builtinSig.isValid(*importSig);
+    Ref<const Wasm::RTT> importRTT = moduleInfo.rtt(typeSignatureIndex);
+    return builtinSig.isValid(importRTT);
 }
 
 /**

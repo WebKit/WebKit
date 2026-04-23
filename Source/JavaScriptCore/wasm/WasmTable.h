@@ -106,8 +106,9 @@ protected:
     NO_UNIQUE_ADDRESS const std::optional<uint32_t> m_maximum;
     const TableElementType m_type;
     Type m_wasmType;
-    // If m_wasmType came from a TypeDefinition, the following retains the definition to prevent a dangling m_wasmType.
-    RefPtr<const TypeDefinition> m_wasmTypeDefinition;
+    // For concrete (RTT-bearing) heap types, retain the canonical RTT so the
+    // pointer embedded in m_wasmType does not dangle.
+    RefPtr<const RTT> m_wasmTypeRTT;
     bool m_isFixedSized { false };
     JSWebAssemblyTable* m_owner;
 };
@@ -140,6 +141,7 @@ public:
     struct Function {
         WasmOrJSImportableFunction m_function;
         WriteBarrier<Unknown> m_value { NullWriteBarrierTag };
+        void* m_padding { nullptr };
         static constexpr ptrdiff_t offsetOfFunction() { return OBJECT_OFFSETOF(Function, m_function); }
         static constexpr ptrdiff_t offsetOfValue() { return OBJECT_OFFSETOF(Function, m_value); }
     };

@@ -888,7 +888,7 @@ public:
         struct TryTableTarget {
             CatchKind type;
             uint32_t tag;
-            const TypeDefinition* exceptionSignature;
+            const RTT* exceptionSignature;
             ControlRef target;
         };
         using TargetList = Vector<TryTableTarget>;
@@ -1088,7 +1088,7 @@ public:
     static constexpr bool tierSupportsSIMD() { return true; }
     static constexpr bool validateFunctionBodySize = true;
 
-    BBQJIT(CompilationContext&, const TypeDefinition& signature, Module&, CalleeGroup&, IPIntCallee& profiledCallee, BBQCallee& callee, const FunctionData& function, FunctionCodeIndex functionIndex, const ModuleInformation& info, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, InternalFunction* compilation);
+    BBQJIT(CompilationContext&, const RTT& signature, Module&, CalleeGroup&, IPIntCallee& profiledCallee, BBQCallee& callee, const FunctionData& function, FunctionCodeIndex functionIndex, const ModuleInformation& info, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, InternalFunction* compilation);
 
     ALWAYS_INLINE static Value emptyExpression()
     {
@@ -1097,7 +1097,7 @@ public:
 
     void NODELETE setParser(FunctionParser<BBQJIT>* parser);
 
-    bool NODELETE addArguments(const TypeDefinition& signature);
+    bool addArguments(const RTT& signature);
 
     Value addConstant(Type type, uint64_t value);
 
@@ -1419,9 +1419,6 @@ public:
 
     [[nodiscard]] PartialResult addI31GetU(TypedExpression value, ExpressionType& result);
 
-    // Given a type index, verify that it's an array type and return its expansion
-    const ArrayType* getArrayTypeDefinition(TypeSignatureIndex typeIndex);
-
     // Given a type index for an array signature, look it up, expand it and
     // return the element type
     StorageType getArrayElementType(TypeSignatureIndex typeIndex);
@@ -1463,15 +1460,15 @@ public:
     [[nodiscard]] PartialResult addArrayInitData(TypeSignatureIndex dstTypeIndex, TypedExpression dst, ExpressionType dstOffset, uint32_t srcDataIndex, ExpressionType srcOffset, ExpressionType size);
 
     // Returns true if a writeBarrier/mutatorFence is needed.
-    [[nodiscard]] bool emitStructSet(GPRReg structGPR, const StructType& structType, uint32_t fieldIndex, Value value);
+    [[nodiscard]] bool emitStructSet(GPRReg structGPR, const RTT& structType, uint32_t fieldIndex, Value value);
 
     void emitAllocateGCStructUninitialized(GPRReg resultGPR, TypeSignatureIndex typeIndex, GPRReg scratchGPR, GPRReg scratchGPR2);
     [[nodiscard]] PartialResult addStructNewDefault(TypeSignatureIndex typeIndex, ExpressionType& result);
     [[nodiscard]] PartialResult addStructNew(TypeSignatureIndex typeIndex, ArgumentList& args, Value& result);
 
-    [[nodiscard]] PartialResult addStructGet(ExtGCOpType structGetKind, TypedExpression structValue, const StructType& structType, const RTT&, uint32_t fieldIndex, Value& result);
+    [[nodiscard]] PartialResult addStructGet(ExtGCOpType structGetKind, TypedExpression structValue, const RTT& structType, uint32_t fieldIndex, Value& result);
 
-    [[nodiscard]] PartialResult addStructSet(TypedExpression structValue, const StructType& structType, const RTT&, uint32_t fieldIndex, Value value);
+    [[nodiscard]] PartialResult addStructSet(TypedExpression structValue, const RTT& structType, uint32_t fieldIndex, Value value);
 
     enum class CastKind { Test, Cast };
     void emitRefTestOrCast(CastKind, const TypedExpression&, GPRReg, bool allowNull, int32_t toHeapType, JumpList& failureCases);
@@ -1978,12 +1975,12 @@ public:
 
     void emitCatchAllImpl(ControlData& dataCatch);
 
-    void emitCatchImpl(ControlData& dataCatch, const TypeDefinition& exceptionSignature, ResultList& results);
+    void emitCatchImpl(ControlData& dataCatch, const RTT& exceptionSignature, ResultList& results);
     void emitCatchTableImpl(ControlData& entryData, ControlType::TryTableTarget&);
 
-    [[nodiscard]] PartialResult addCatch(unsigned exceptionIndex, const TypeDefinition& exceptionSignature, Stack& expressionStack, ControlType& data, ResultList& results);
+    [[nodiscard]] PartialResult addCatch(unsigned exceptionIndex, const RTT& exceptionSignature, Stack& expressionStack, ControlType& data, ResultList& results);
 
-    [[nodiscard]] PartialResult addCatchToUnreachable(unsigned exceptionIndex, const TypeDefinition& exceptionSignature, ControlType& data, ResultList& results);
+    [[nodiscard]] PartialResult addCatchToUnreachable(unsigned exceptionIndex, const RTT& exceptionSignature, ControlType& data, ResultList& results);
 
     [[nodiscard]] PartialResult addCatchAll(Stack& expressionStack, ControlType& data);
 
@@ -2051,14 +2048,14 @@ public:
     void flushRegisters();
 
     template<typename Args>
-    void saveValuesAcrossCallAndPassArguments(const Args& arguments, const CallInformation& callInfo, const TypeDefinition& signature);
+    void saveValuesAcrossCallAndPassArguments(const Args& arguments, const CallInformation& callInfo, const RTT& signature);
 
     void slowPathSpillBindings(const RegisterBindings&);
     void slowPathRestoreBindings(const RegisterBindings&);
     void NODELETE restoreValuesAfterCall(const CallInformation&);
 
     template<size_t N>
-    void returnValuesFromCall(Vector<Value, N>& results, const FunctionSignature& functionType, const CallInformation& callInfo);
+    void returnValuesFromCall(Vector<Value, N>& results, const RTT& functionType, const CallInformation& callInfo);
 
     template<typename Func>
     void emitCCall(Func function, std::span<const Value> arguments);
@@ -2066,15 +2063,15 @@ public:
     template<typename Func>
     void emitCCall(Func function, std::span<const Value> arguments, Value& result);
 
-    void emitTailCall(FunctionSpaceIndex, const TypeDefinition& signature, ArgumentList& arguments);
-    [[nodiscard]] PartialResult addCall(unsigned, FunctionSpaceIndex, const TypeDefinition& signature, ArgumentList& arguments, ResultList& results, CallType = CallType::Call);
+    void emitTailCall(FunctionSpaceIndex, const RTT& signature, ArgumentList& arguments);
+    [[nodiscard]] PartialResult addCall(unsigned, FunctionSpaceIndex, const RTT& signature, ArgumentList& arguments, ResultList& results, CallType = CallType::Call);
 
-    void emitIndirectCall(const char* opcode, unsigned callProfileIndex, const Value& callee, GPRReg importableFunction, const TypeDefinition& signature, ArgumentList& arguments, ResultList& results);
-    void emitIndirectTailCall(const char* opcode, const Value& callee, GPRReg importableFunction, const TypeDefinition& signature, ArgumentList& arguments);
+    void emitIndirectCall(const char* opcode, unsigned callProfileIndex, const Value& callee, GPRReg importableFunction, const RTT& signature, ArgumentList& arguments, ResultList& results);
+    void emitIndirectTailCall(const char* opcode, const Value& callee, GPRReg importableFunction, const RTT& signature, ArgumentList& arguments);
 
-    [[nodiscard]] PartialResult addCallIndirect(unsigned, unsigned tableIndex, const TypeDefinition& expandedSignature, const RTT& rtt, ArgumentList& args, ResultList& results, CallType = CallType::Call);
+    [[nodiscard]] PartialResult addCallIndirect(unsigned, unsigned tableIndex, const RTT& expandedSignature, ArgumentList& args, ResultList& results, CallType = CallType::Call);
 
-    [[nodiscard]] PartialResult addCallRef(unsigned, const TypeDefinition& expandedSignature, ArgumentList& args, ResultList& results, CallType = CallType::Call);
+    [[nodiscard]] PartialResult addCallRef(unsigned, const RTT& expandedSignature, ArgumentList& args, ResultList& results, CallType = CallType::Call);
 
     [[nodiscard]] PartialResult addUnreachable();
 
@@ -2257,7 +2254,7 @@ private:
     IPIntCallee& m_profiledCallee;
     BBQCallee& m_callee;
     const FunctionData& m_function;
-    const FunctionSignature* m_functionSignature;
+    const Ref<const RTT> m_functionSignature;
     FunctionCodeIndex m_functionIndex;
     const ModuleInformation& m_info;
     MemoryMode m_mode;
@@ -2323,7 +2320,7 @@ using MinOrMax = BBQJIT::MinOrMax;
 } // namespace JSC::Wasm::BBQJITImpl
 
 using BBQJIT = BBQJITImpl::BBQJIT;
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(CompilationContext&, IPIntCallee&, BBQCallee&, const FunctionData&, const TypeDefinition&, Vector<UnlinkedWasmToWasmCall>&, Module&, CalleeGroup&, const ModuleInformation&, MemoryMode, FunctionCodeIndex functionIndex);
+Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(CompilationContext&, IPIntCallee&, BBQCallee&, const FunctionData&, const RTT&, Vector<UnlinkedWasmToWasmCall>&, Module&, CalleeGroup&, const ModuleInformation&, MemoryMode, FunctionCodeIndex functionIndex);
 
 } } // namespace JSC::Wasm
 

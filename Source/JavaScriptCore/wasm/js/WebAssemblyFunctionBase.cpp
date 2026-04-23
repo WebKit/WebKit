@@ -62,9 +62,9 @@ void WebAssemblyFunctionBase::finishCreation(VM& vm, NativeExecutable* executabl
     ASSERT(inherits(info()));
 }
 
-const Wasm::FunctionSignature& WebAssemblyFunctionBase::signature() const
+const Wasm::RTT& WebAssemblyFunctionBase::signature() const
 {
-    return Wasm::TypeInformation::getFunctionSignature(typeIndex());
+    return *m_importableFunction.rtt;
 }
 
 } // namespace JSC

@@ -69,7 +69,7 @@ public:
 private:
     BBQPlan(VM&, Ref<ModuleInformation>&&, FunctionCodeIndex functionIndex, Ref<IPIntCallee>&&, Ref<Module>&&, Ref<CalleeGroup>&&, CompletionTask&&);
 
-    bool dumpDisassembly(CompilationContext&, LinkBuffer&, const TypeDefinition&, FunctionSpaceIndex functionIndexSpace);
+    bool dumpDisassembly(CompilationContext&, LinkBuffer&, const RTT&, FunctionSpaceIndex functionIndexSpace);
 
     std::unique_ptr<InternalFunction> compileFunction(FunctionCodeIndex functionIndex, BBQCallee&, CompilationContext&, Vector<UnlinkedWasmToWasmCall>&);
     bool isComplete() const final { return m_completed; }

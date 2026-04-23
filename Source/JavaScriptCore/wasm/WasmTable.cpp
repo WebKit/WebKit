@@ -86,7 +86,7 @@ Table::Table(uint32_t initial, std::optional<uint32_t> maximum, Type wasmType, T
     : m_maximum(maximum)
     , m_type(type)
     , m_wasmType(wasmType)
-    , m_wasmTypeDefinition(TypeInformation::getRef(wasmType.index))
+    , m_wasmTypeRTT(TypeInformation::tryGetRTT(wasmType.index))
     , m_isFixedSized(maximum && maximum.value() == initial)
     , m_owner(nullptr)
 {
@@ -277,7 +277,7 @@ FuncRefTable::FuncRefTable(VM& vm, uint32_t initial, std::optional<uint32_t> max
 
     for (uint32_t i = 0; i < allocatedLength(m_length); ++i) {
         new (&m_importableFunctions.get()[i]) Function();
-        ASSERT(m_importableFunctions.get()[i].m_function.typeIndex == Wasm::TypeDefinition::invalidIndex); // We rely on this in compiled code.
+        ASSERT(!m_importableFunctions.get()[i].m_function.rtt); // We rely on this in compiled code.
         ASSERT(m_importableFunctions.get()[i].m_value.isNull());
     }
 }
@@ -327,7 +327,7 @@ void FuncRefTable::clear(uint32_t index)
 {
     ASSERT(wasmType().isNullable());
     m_importableFunctions.get()[index] = FuncRefTable::Function { };
-    ASSERT(m_importableFunctions.get()[index].m_function.typeIndex == Wasm::TypeDefinition::invalidIndex); // We rely on this in compiled code.
+    ASSERT(!m_importableFunctions.get()[index].m_function.rtt); // We rely on this in compiled code.
     ASSERT(m_importableFunctions.get()[index].m_value.isNull());
 }
 

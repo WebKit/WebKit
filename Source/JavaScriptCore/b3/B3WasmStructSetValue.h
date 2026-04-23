@@ -48,8 +48,8 @@ private:
     friend class Procedure;
     friend class Value;
 
-    static Opcode opcodeFromConstructor(Kind, Origin, Value*, Value*, Ref<const Wasm::RTT>, const Wasm::StructType*, Wasm::StructFieldCount, uint64_t) { return WasmStructSet; }
-    JS_EXPORT_PRIVATE WasmStructSetValue(Kind, Origin, Value* structPtr, Value*, Ref<const Wasm::RTT>, const Wasm::StructType*, Wasm::StructFieldCount fieldIndex, uint64_t fieldHeapKey);
+    static Opcode opcodeFromConstructor(Kind, Origin, Value*, Value*, Ref<const Wasm::RTT>, Wasm::StructFieldCount, uint64_t) { return WasmStructSet; }
+    JS_EXPORT_PRIVATE WasmStructSetValue(Kind, Origin, Value* structPtr, Value*, Ref<const Wasm::RTT>, Wasm::StructFieldCount fieldIndex, uint64_t fieldHeapKey);
 };
 
 } // namespace JSC::B3

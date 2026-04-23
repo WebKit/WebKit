@@ -98,9 +98,9 @@ SymbolTable* JSWebAssemblyModule::exportSymbolTable() const
     return m_exportSymbolTable.get();
 }
 
-Wasm::TypeIndex JSWebAssemblyModule::typeIndexFromFunctionIndexSpace(Wasm::FunctionSpaceIndex functionIndexSpace) const
+const Wasm::RTT& JSWebAssemblyModule::rttFromFunctionIndexSpace(Wasm::FunctionSpaceIndex functionIndexSpace) const
 {
-    return m_module->typeIndexFromFunctionIndexSpace(functionIndexSpace);
+    return m_module->rttFromFunctionIndexSpace(functionIndexSpace);
 }
 
 Wasm::Module& JSWebAssemblyModule::module()

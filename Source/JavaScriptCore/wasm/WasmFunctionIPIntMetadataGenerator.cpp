@@ -149,7 +149,7 @@ void FunctionIPIntMetadataGenerator::addAtomicMemoryAccess(uint8_t memoryIndex, 
     appendMetadata(md);
 }
 
-void FunctionIPIntMetadataGenerator::addReturnData(const FunctionSignature& sig, const CallInformation& returnCC)
+void FunctionIPIntMetadataGenerator::addReturnData(const RTT& sig, const CallInformation& returnCC)
 {
     m_uINTBytecode.reserveInitialCapacity(sig.returnCount() + 1);
     // uINT: the interpreter smaller than mINT

@@ -41,7 +41,7 @@
 // Forward declaration to ensure proper linkage
 namespace JSC {
 namespace Wasm {
-void parseForDebugInfo(std::span<const uint8_t>, const TypeDefinition&, ModuleInformation&, FunctionCodeIndex, FunctionDebugInfo&);
+void parseForDebugInfo(std::span<const uint8_t>, const RTT&, ModuleInformation&, FunctionCodeIndex, FunctionDebugInfo&);
 }
 }
 
@@ -79,12 +79,11 @@ FunctionDebugInfo& ModuleDebugInfo::ensureFunctionDebugInfo(FunctionCodeIndex fu
     dataLogLnIf(Options::verboseWasmDebugger(), "[ModuleDebugInfo] Lazy collection for function ", functionIndex);
     const auto& function = moduleInfo->functions[functionIndex];
     FunctionSpaceIndex spaceIndex = moduleInfo->toSpaceIndex(functionIndex);
-    TypeIndex typeIndex = moduleInfo->typeIndexFromFunctionIndexSpace(spaceIndex);
+    Ref rtt = moduleInfo->rtt(spaceIndex);
     auto& info = functionIndexToData.add(functionIndex, FunctionDebugInfo()).iterator->value;
     auto functionData = source.subspan(function.start, function.data.size());
 
-    Ref typeDefinition = TypeInformation::get(typeIndex);
-    parseForDebugInfo(functionData, typeDefinition, moduleInfo, functionIndex, info);
+    parseForDebugInfo(functionData, rtt.get(), moduleInfo, functionIndex, info);
     dataLogLnIf(Options::verboseWasmDebugger(), "[ModuleDebugInfo] Debug info collection completed for function ", functionIndex, " with ", info.offsetToNextInstructions.size(), " instruction mappings and ", info.locals.size(), " locals");
     return info;
 }

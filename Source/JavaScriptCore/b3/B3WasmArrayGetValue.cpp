@@ -34,14 +34,14 @@ namespace JSC::B3 {
 
 WasmArrayGetValue::~WasmArrayGetValue() = default;
 
-WasmArrayGetValue::WasmArrayGetValue(Kind kind, Origin origin, Type resultType, Value* arrayPtr, Value* index, Ref<const Wasm::RTT> rtt, const Wasm::ArrayType* arrayType, Mutability mutability)
-    : WasmArrayElementValue(CheckedOpcode, kind, resultType, Two, origin, WTF::move(rtt), arrayType, mutability, arrayPtr, index)
+WasmArrayGetValue::WasmArrayGetValue(Kind kind, Origin origin, Type resultType, Value* arrayPtr, Value* index, Ref<const Wasm::RTT> rtt, Mutability mutability)
+    : WasmArrayElementValue(CheckedOpcode, kind, resultType, Two, origin, WTF::move(rtt), mutability, arrayPtr, index)
 {
 }
 
 void WasmArrayGetValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
-    out.print(comma, "elementType = ", m_arrayType->elementType().type);
+    out.print(comma, "elementType = ", m_rtt->elementType().type);
 }
 
 } // namespace JSC::B3

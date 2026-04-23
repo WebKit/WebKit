@@ -75,7 +75,7 @@ FunctionAllowlist& BBQPlan::ensureGlobalBBQAllowlist()
     return bbqAllowlist;
 }
 
-bool BBQPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& linkBuffer, const TypeDefinition& signature, FunctionSpaceIndex functionIndexSpace)
+bool BBQPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& linkBuffer, const RTT& signature, FunctionSpaceIndex functionIndexSpace)
 {
     if (shouldDumpDisassemblyFor(CompilationMode::BBQMode)) [[unlikely]] {
         dataLogLn("Generated BBQ functionIndexSpace:(", functionIndexSpace, "),sig:(", signature.toString().ascii().data(), "),name:(", m_profiledCallee->nameWithHash(), "),wasmSize:(", m_moduleInformation->functionWasmSizeImportSpace(functionIndexSpace), ")");
@@ -94,7 +94,7 @@ void BBQPlan::work()
     Vector<UnlinkedWasmToWasmCall> unlinkedWasmToWasmCalls;
     FunctionSpaceIndex functionIndexSpace = m_moduleInformation->toSpaceIndex(m_functionIndex);
     TypeSignatureIndex typeSignatureIndex = m_moduleInformation->internalFunctionTypeSignatureIndices[m_functionIndex];
-    const TypeDefinition& signature = m_moduleInformation->expandedTypeSignature(typeSignatureIndex);
+    const RTT& signature = m_moduleInformation->rtt(typeSignatureIndex);
 
     Ref<BBQCallee> callee = BBQCallee::create(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), Ref { m_profiledCallee });
     std::unique_ptr<InternalFunction> function = compileFunction(m_functionIndex, callee.get(), context, unlinkedWasmToWasmCalls);
@@ -151,9 +151,9 @@ std::unique_ptr<InternalFunction> BBQPlan::compileFunction(FunctionCodeIndex fun
 {
     const auto& function = m_moduleInformation->functions[functionIndex];
     TypeSignatureIndex typeSignatureIndex = m_moduleInformation->internalFunctionTypeSignatureIndices[functionIndex];
-    const TypeDefinition& signature = m_moduleInformation->expandedTypeSignature(typeSignatureIndex);
+    const RTT& signature = m_moduleInformation->rtt(typeSignatureIndex);
     FunctionSpaceIndex functionIndexSpace = m_moduleInformation->toSpaceIndex(functionIndex);
-    ASSERT_UNUSED(functionIndexSpace, m_moduleInformation->typeIndexFromFunctionIndexSpace(functionIndexSpace) == m_moduleInformation->typeIndexFromTypeSignatureIndex(typeSignatureIndex));
+    ASSERT_UNUSED(functionIndexSpace, &m_moduleInformation->rtt(functionIndexSpace) == &m_moduleInformation->rtt(typeSignatureIndex));
     Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileResult;
 
     beginCompilerSignpost(callee);

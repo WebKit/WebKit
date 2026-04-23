@@ -58,7 +58,7 @@ public:
     bool definitelyIsCellOrNull() const { return m_flags.contains(WasmRefTypeCheckFlag::DefinitelyIsCellOrNull); }
     bool definitelyIsWasmGCObjectOrNull() const { return m_flags.contains(WasmRefTypeCheckFlag::DefinitelyIsWasmGCObjectOrNull); }
     bool shouldNegate() const { return m_flags.contains(WasmRefTypeCheckFlag::ShouldNegate); }
-    const Wasm::RTT* targetRTT() const { return m_targetRTT.get(); }
+    RefPtr<const Wasm::RTT> targetRTT() const { return m_targetRTT; }
     OptionSet<WasmRefTypeCheckFlag> flags() const { return m_flags; }
 
     bool hasTargetStructureID() const { return numChildren() > 1; }

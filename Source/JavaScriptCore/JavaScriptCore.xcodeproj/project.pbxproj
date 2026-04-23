@@ -1789,6 +1789,7 @@
 		AD5C36EB1F75AD73000BCAAF /* JSWebAssembly.h in Headers */ = {isa = PBXBuildFile; fileRef = ADD09AF31F62482E001313C2 /* JSWebAssembly.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD5C36EC1F75AD7C000BCAAF /* WasmToJS.h in Headers */ = {isa = PBXBuildFile; fileRef = ADD09AEE1F5F623F001313C2 /* WasmToJS.h */; };
 		AD7438C01E0457A400FD0C2A /* WasmTypeDefinition.h in Headers */ = {isa = PBXBuildFile; fileRef = AD7438BF1E04579200FD0C2A /* WasmTypeDefinition.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A6336EF88EB74A63806230CC /* WasmTypeSectionState.h in Headers */ = {isa = PBXBuildFile; fileRef = ED0E6BC2545A476E80BB4698 /* WasmTypeSectionState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD7B4B2E1FA3E29800C9DF79 /* WasmNameSection.h in Headers */ = {isa = PBXBuildFile; fileRef = AD7B4B2D1FA3E28600C9DF79 /* WasmNameSection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD86A93E1AA4D88D002FE77F /* WeakGCMapInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = AD86A93D1AA4D87C002FE77F /* WeakGCMapInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD8FF3981EB5BDB20087FF82 /* WasmIndexOrName.h in Headers */ = {isa = PBXBuildFile; fileRef = AD8FF3951EB5BD850087FF82 /* WasmIndexOrName.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5624,6 +5625,8 @@
 		AD5C36E41F69EC8B000BCAAF /* WasmTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmTable.h; sourceTree = "<group>"; };
 		AD7438BE1E04579200FD0C2A /* WasmTypeDefinition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmTypeDefinition.cpp; sourceTree = "<group>"; };
 		AD7438BF1E04579200FD0C2A /* WasmTypeDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmTypeDefinition.h; sourceTree = "<group>"; };
+		184E6FFC399E45AABE309649 /* WasmTypeSectionState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmTypeSectionState.cpp; sourceTree = "<group>"; };
+		ED0E6BC2545A476E80BB4698 /* WasmTypeSectionState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmTypeSectionState.h; sourceTree = "<group>"; };
 		AD7B4B2D1FA3E28600C9DF79 /* WasmNameSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmNameSection.h; sourceTree = "<group>"; };
 		AD86A93D1AA4D87C002FE77F /* WeakGCMapInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakGCMapInlines.h; sourceTree = "<group>"; };
 		AD8DD6CF1F67089F0004EB52 /* JSToWasm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = JSToWasm.h; path = js/JSToWasm.h; sourceTree = "<group>"; };
@@ -8371,6 +8374,8 @@
 				AD7438BE1E04579200FD0C2A /* WasmTypeDefinition.cpp */,
 				AD7438BF1E04579200FD0C2A /* WasmTypeDefinition.h */,
 				30A5F403F11C4F599CD596D5 /* WasmTypeDefinitionInlines.h */,
+				184E6FFC399E45AABE309649 /* WasmTypeSectionState.cpp */,
+				ED0E6BC2545A476E80BB4698 /* WasmTypeSectionState.h */,
 				6571E9562AF3495A009DF224 /* WasmTZoneImpls.cpp */,
 				863FBC5725B093B800F6C930 /* WasmValueLocation.cpp */,
 				863FBC5825B093B900F6C930 /* WasmValueLocation.h */,
@@ -12705,6 +12710,7 @@
 				AD5C36EC1F75AD7C000BCAAF /* WasmToJS.h in Headers */,
 				AD7438C01E0457A400FD0C2A /* WasmTypeDefinition.h in Headers */,
 				4BAA07CEB81F49A296E02203 /* WasmTypeDefinitionInlines.h in Headers */,
+				A6336EF88EB74A63806230CC /* WasmTypeSectionState.h in Headers */,
 				863FBC5A25B093B900F6C930 /* WasmValueLocation.h in Headers */,
 				FFE31BDB2E6212CD006FE0B7 /* WasmVirtualAddress.h in Headers */,
 				530FB3021E7A0B6E003C19DD /* WasmWorklist.h in Headers */,

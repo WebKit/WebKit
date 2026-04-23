@@ -57,7 +57,6 @@ class BytecodeGeneratorBase;
 namespace Wasm {
 
 class IPIntCallee;
-class TypeDefinition;
 struct IPIntGeneratorTraits;
 struct JumpTableEntry;
 
@@ -127,7 +126,7 @@ private:
     void addMemoryFill(uint8_t memoryIndex, size_t length);
     void addMemoryCopy(uint8_t dstMemoryIndex, uint8_t srcMemoryIndex, size_t length);
     void addAtomicMemoryAccess(uint8_t memoryIndex, uint64_t offset, size_t length);
-    void addReturnData(const FunctionSignature&, const CallInformation&);
+    void addReturnData(const RTT&, const CallInformation&);
 
     FunctionCodeIndex m_functionIndex;
     bool m_hasTailCallSuccessors { false };

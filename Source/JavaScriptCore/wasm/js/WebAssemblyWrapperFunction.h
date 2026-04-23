@@ -49,7 +49,7 @@ public:
 
     DECLARE_VISIT_CHILDREN;
 
-    static WebAssemblyWrapperFunction* create(VM&, JSGlobalObject*, Structure*, JSObject*, unsigned importIndex, JSWebAssemblyInstance*, Wasm::TypeIndex, Ref<const Wasm::RTT>&&);
+    static WebAssemblyWrapperFunction* create(VM&, JSGlobalObject*, Structure*, JSObject*, unsigned importIndex, JSWebAssemblyInstance*, Ref<const Wasm::RTT>&&);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     JSObject* function() LIFETIME_BOUND { return m_function.get(); }

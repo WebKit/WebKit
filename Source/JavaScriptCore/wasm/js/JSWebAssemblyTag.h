@@ -51,7 +51,7 @@ public:
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     const Wasm::Tag& tag() const { return m_tag; }
-    const Wasm::FunctionSignature& type() const { return tag().type(); }
+    const Wasm::RTT& type() const { return tag().type(); }
 
 private:
     JSWebAssemblyTag(VM&, Structure*, const Wasm::Tag&);

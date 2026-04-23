@@ -59,6 +59,8 @@ namespace Wasm {
 
 class JSToWasmICCallee;
 class RTT;
+class SectionParser;
+class TypeSectionState;
 
 #define CREATE_ENUM_VALUE(name, id, ...) name = id,
 enum class ExtSIMDOpType : uint32_t {
@@ -341,191 +343,12 @@ constexpr size_t typeKindSizeInBytes(TypeKind kind)
     return 0;
 }
 
-enum class TypeDefinitionKind : uint8_t {
-    FunctionSignature,
-    StructType,
-    ArrayType,
-    RecursionGroup,
-    Projection,
-    Subtype
-};
-
-class FunctionSignature;
-class StructType;
-class ArrayType;
 class RecursionGroup;
 class Projection;
 class Subtype;
 
-class TypeDefinition : public ThreadSafeRefCounted<TypeDefinition> {
-    WTF_DEPRECATED_MAKE_FAST_COMPACT_ALLOCATED(TypeDefinition);
-    WTF_MAKE_NONCOPYABLE(TypeDefinition);
-public:
-    friend class TypeInformation;
-
-    template <typename T>
-    bool is() const { return m_kind == T::kind; }
-
-    template <typename T>
-    T* as() { ASSERT(is<T>()); return static_cast<T*>(this); }
-
-    template <typename T>
-    const T* as() const { return static_cast<const T*>(this); }
-
-    TypeIndex index() const;
-
-    WTF::String toString() const;
-    void dump(WTF::PrintStream& out) const;
-    bool operator==(const TypeDefinition& rhs) const { return this == &rhs; }
-    unsigned hash() const;
-
-    Ref<const TypeDefinition> replacePlaceholders(TypeIndex) const;
-    ALWAYS_INLINE const TypeDefinition& unroll() const
-    {
-        if (is<Projection>()) [[unlikely]]
-            return unrollSlow();
-        ASSERT(refCount() > 1); // TypeInformation registry + owner(s).
-        return *this;
-    }
-
-    const TypeDefinition& expand() const;
-    bool NODELETE hasRecursiveReference() const;
-    bool isFinalType() const;
-
-    // Type definitions that are compound and contain references to other definitions
-    // via a type index should ref() the other definition when new unique instances are
-    // constructed, and need to be cleaned up and have deref() called through this cleanup()
-    // method when the containing module is destroyed. Returns true if any ref counts may
-    // have changed.
-    bool cleanup();
-
-    virtual ~TypeDefinition() = default;
-
-    // Type definitions are uniqued and, for call_indirect, validated at runtime. Tables can create invalid TypeIndex values which cause call_indirect to fail. We use 0 as the invalidIndex so that the codegen can easily test for it and trap, and we add a token invalid entry in TypeInformation.
-    static const constexpr TypeIndex invalidIndex = 0;
-
-private:
-    // Returns the TypeIndex of a potentially unowned (other than TypeInformation::m_typeSet) TypeDefinition.
-    TypeIndex unownedIndex() const { return std::bit_cast<TypeIndex>(this); }
-
-    const TypeDefinition& unrollSlow() const;
-
-    friend class TypeInformation;
-    friend struct FunctionParameterTypes;
-    friend struct StructParameterTypes;
-    friend struct ArrayParameterTypes;
-    friend struct RecursionGroupParameterTypes;
-    friend struct ProjectionParameterTypes;
-    friend struct SubtypeParameterTypes;
-
-    static Type substitute(Type, TypeIndex);
-
-protected:
-    TypeDefinition(TypeDefinitionKind kind)
-        : m_kind(kind)
-    {
-    }
-
-    TypeDefinitionKind m_kind;
-    mutable Lock m_rttLock;
-    mutable RefPtr<RTT> m_rtt;
-    // Payload is stored after this header.
-};
-
-class FunctionSignature final : public TypeDefinition {
-    WTF_MAKE_NONCOPYABLE(FunctionSignature);
-    WTF_MAKE_NONMOVABLE(FunctionSignature);
-public:
-    static constexpr TypeDefinitionKind kind = TypeDefinitionKind::FunctionSignature;
-
-    static size_t allocationSize(Checked<FunctionArgCount> retCount, Checked<FunctionArgCount> argCount) { return sizeof(FunctionSignature) + (retCount + argCount) * sizeof(Type); }
-
-    FunctionSignature(FunctionArgCount argumentCount, FunctionArgCount returnCount);
-    ~FunctionSignature();
-
-    static RefPtr<FunctionSignature> tryCreate(FunctionArgCount returnCount, FunctionArgCount argumentCount);
-
-    FunctionArgCount argumentCount() const { return m_argCount; }
-    FunctionArgCount returnCount() const { return m_retCount; }
-    bool hasRecursiveReference() const { return m_hasRecursiveReference; }
-    void setHasRecursiveReference(bool value) { m_hasRecursiveReference = value; }
-    Type returnType(FunctionArgCount i) const { ASSERT(i < returnCount()); return const_cast<FunctionSignature*>(this)->getReturnType(i); }
-    bool returnsVoid() const { return !returnCount(); }
-    Type argumentType(FunctionArgCount i) const { return const_cast<FunctionSignature*>(this)->getArgumentType(i); }
-    bool argumentsOrResultsIncludeI64() const { return m_argumentsOrResultsIncludeI64; }
-    void setArgumentsOrResultsIncludeI64(bool value) { m_argumentsOrResultsIncludeI64 = value; }
-    bool argumentsOrResultsIncludeV128() const { return m_argumentsOrResultsIncludeV128; }
-    void setArgumentsOrResultsIncludeV128(bool value) { m_argumentsOrResultsIncludeV128 = value; }
-    bool argumentsOrResultsIncludeExnref() const { return m_argumentsOrResultsIncludeExnref; }
-    void setArgumentsOrResultsIncludeExnref(bool value) { m_argumentsOrResultsIncludeExnref = value; }
-
-    size_t numVectors() const
-    {
-        size_t n = 0;
-        for (size_t i = 0; i < argumentCount(); ++i) {
-            if (argumentType(i).isV128())
-                ++n;
-        }
-        return n;
-    }
-
-    size_t numReturnVectors() const
-    {
-        size_t n = 0;
-        for (size_t i = 0; i < returnCount(); ++i) {
-            if (returnType(i).isV128())
-                ++n;
-        }
-        return n;
-    }
-
-    bool hasReturnVector() const
-    {
-        for (size_t i = 0; i < returnCount(); ++i) {
-            if (returnType(i).isV128())
-                return true;
-        }
-        return false;
-    }
-
-    bool operator==(const FunctionSignature& other) const
-    {
-        return this == &other;
-    }
-
-    WTF::String toString() const;
-    void dump(WTF::PrintStream& out) const;
-
-    Type& getReturnType(FunctionArgCount i) { ASSERT(i < returnCount()); return *storage(i); }
-    Type& getArgumentType(FunctionArgCount i) { ASSERT(i < argumentCount()); return *storage(returnCount() + i); }
-
-    Type* storage(FunctionArgCount i) { return payload() + i; }
-    const Type* storage(FunctionArgCount i) const { return const_cast<FunctionSignature*>(this)->storage(i); }
-
-#if ENABLE(JIT)
-    // This is const because we generally think of FunctionSignatures as immutable.
-    // Conceptually this more like using the `const FunctionSignature*` as a global UncheckedKeyHashMap
-    // key to the JIT code though.
-    CodePtr<JSEntryPtrTag> jsToWasmICEntrypoint() const;
-#endif
-
-private:
-    Type* payload() { return std::bit_cast<Type*>(this + 1); }
-    friend class TypeInformation;
-
-    FunctionArgCount m_argCount;
-    FunctionArgCount m_retCount;
-#if ENABLE(JIT)
-    mutable RefPtr<JSToWasmICCallee> m_jsToWasmICCallee;
-    // FIXME: We should have a WTF::Once that uses ParkingLot and the low bits of a pointer as a lock and use that here.
-    mutable Lock m_jitCodeLock;
-    // FIXME: Support caching wasmToJS too.
-#endif
-    bool m_hasRecursiveReference : 1 { false };
-    bool m_argumentsOrResultsIncludeI64 : 1 { false };
-    bool m_argumentsOrResultsIncludeV128 : 1 { false };
-    bool m_argumentsOrResultsIncludeExnref : 1 { false };
-};
+// Sentinel TypeIndex for "no type" / uninitialized slots (e.g. empty entries).
+static constexpr TypeIndex invalidTypeIndex = 0;
 
 // FIXME auto-generate this. https://bugs.webkit.org/show_bug.cgi?id=165231
 enum Mutability : uint8_t {
@@ -614,7 +437,6 @@ public:
 
 private:
     Variant<Type, PackedType> m_storageType;
-
 };
 
 inline ASCIILiteral makeString(const StorageType& storageType)
@@ -651,173 +473,45 @@ public:
     friend bool operator==(const FieldType&, const FieldType&) = default;
 };
 
-class StructType final : public TypeDefinition {
-    WTF_MAKE_NONCOPYABLE(StructType);
-    WTF_MAKE_NONMOVABLE(StructType);
-public:
-    static constexpr TypeDefinitionKind kind = TypeDefinitionKind::StructType;
+// Co-locates a Type value with the RefPtr that anchors the canonical RTT it
+// references (if any). Used inside payload storage so anchors travel with
+// their slots under copy/move -- no separate vector to keep in sync.
+// rttAnchor is null unless `type` is a ref type whose TypeIndex is a bare
+// canonical RTT pointer that needs to be kept alive (intra- or inter-recgroup).
+struct TypeSlot {
+    Type type;
+    RefPtr<const RTT> rttAnchor;
 
-    static size_t allocationSize(Checked<StructFieldCount> fieldCount) { return sizeof(StructType) + fieldCount * (sizeof(FieldType) + sizeof(unsigned)); }
-
-    static RefPtr<StructType> tryCreate(std::span<const FieldType>);
-
-    StructFieldCount fieldCount() const { return m_fieldCount; }
-    const FieldType& field(StructFieldCount i) const { return fields()[i]; }
-
-    bool hasRefFieldTypes() const { return m_hasRefFieldTypes; }
-    bool hasRecursiveReference() const { return m_hasRecursiveReference; }
-
-    WTF::String toString() const;
-    void dump(WTF::PrintStream& out) const;
-
-    std::span<const FieldType> fields() const { return { payload(), m_fieldCount }; }
-
-    // Returns the offset relative to JSWebAssemblyStruct::offsetOfData() (the internal vector of fields)
-    unsigned offsetOfFieldInPayload(StructFieldCount i) const { return const_cast<StructType*>(this)->fieldOffsetFromInstancePayload(i); }
-    size_t instancePayloadSize() const { return m_instancePayloadSize; }
-
-private:
-    explicit StructType(std::span<const FieldType>);
-    std::span<FieldType> mutableFields() { return { payload(), m_fieldCount }; }
-    unsigned& fieldOffsetFromInstancePayload(StructFieldCount i) { ASSERT(i < fieldCount()); return *(std::bit_cast<unsigned*>(payload() + m_fieldCount) + i); }
-    FieldType* payload() const { return std::bit_cast<FieldType*>(this + 1); }
-
-    // Payload is structured this way = | field types | precalculated field offsets |.
-    StructFieldCount m_fieldCount;
-    // FIXME: We should consider caching the offsets of exactly which fields are ref types in payload() to speed up visitChildren.
-    bool m_hasRefFieldTypes { false };
-    bool m_hasRecursiveReference { false };
-    size_t m_instancePayloadSize;
+    TypeSlot() = default;
+    TypeSlot(Type t)
+        : type(t)
+    {
+    }
+    TypeSlot(Type t, RefPtr<const RTT> anchor)
+        : type(t)
+        , rttAnchor(WTF::move(anchor))
+    {
+    }
 };
 
-class ArrayType final : public TypeDefinition {
-    WTF_MAKE_NONCOPYABLE(ArrayType);
-    WTF_MAKE_NONMOVABLE(ArrayType);
-public:
-    static constexpr TypeDefinitionKind kind = TypeDefinitionKind::ArrayType;
+// Paired field + offset entry. Collapses what used to be two parallel
+// FixedVectors in RTTStructPayload (fields + field offsets) into a single
+// allocation. Costs one alignment-induced padding word per field but saves
+// a heap allocation per struct RTT -- a measurable win during type-section
+// parse given how many struct RTTs are built. rttAnchor anchors the
+// canonical RTT referenced by `type.type` when it's a ref Type.
+struct StructFieldEntry {
+    FieldType type;
+    unsigned offset;
+    RefPtr<const RTT> rttAnchor;
 
-    static size_t allocationSize() { return sizeof(ArrayType); }
-
-    static RefPtr<ArrayType> tryCreate(const FieldType&);
-
-    const FieldType& elementType() const LIFETIME_BOUND { return m_elementType; }
-    bool hasRecursiveReference() const { return m_hasRecursiveReference; }
-
-    WTF::String toString() const;
-    void dump(WTF::PrintStream& out) const;
-
-private:
-    ArrayType(const FieldType&);
-
-    bool m_hasRecursiveReference { false };
-    FieldType m_elementType { };
-};
-
-class RecursionGroup final : public TypeDefinition {
-    WTF_MAKE_NONCOPYABLE(RecursionGroup);
-    WTF_MAKE_NONMOVABLE(RecursionGroup);
-public:
-    static constexpr TypeDefinitionKind kind = TypeDefinitionKind::RecursionGroup;
-
-    static size_t allocationSize(Checked<RecursionGroupCount> typeCount) { return sizeof(RecursionGroup) + typeCount * sizeof(TypeIndex); }
-
-    static RefPtr<RecursionGroup> tryCreate(std::span<const TypeIndex>);
-
-    bool cleanup();
-
-    RecursionGroupCount typeCount() const { return m_typeCount; }
-    TypeIndex type(RecursionGroupCount i) const { return types()[i]; }
-    std::span<const TypeIndex> types() const { return { payload(), m_typeCount }; }
-
-    WTF::String toString() const;
-    void dump(WTF::PrintStream& out) const;
-
-private:
-    explicit RecursionGroup(std::span<const TypeIndex>);
-
-    std::span<TypeIndex> mutableTypes() { return { payload(), m_typeCount }; }
-    TypeIndex* payload() const { return std::bit_cast<TypeIndex*>(this + 1); }
-
-    RecursionGroupCount m_typeCount;
-};
-
-// This class represents a projection into a recursion group. That is, if a recursion
-// group is defined as $r = (rec (type $s ...) (type $t ...)), then a projection accesses
-// the inner types. For example $r.$s or $r.$t, or $r.0 or $r.1 with numeric indices.
-//
-// See https://github.com/WebAssembly/gc/blob/main/proposals/gc/MVP.md#type-contexts
-//
-// We store projections rather than the implied unfolding because the actual type being
-// represented may be recursive and infinite. Projections are unfolded into a concrete type
-// when operations on the type require a specific concrete type.
-//
-// A projection with an invalid PlaceholderGroup index represents a recursive reference
-// that has not yet been resolved. The expand() function on type definitions resolves it.
-class Projection final : public TypeDefinition {
-    WTF_MAKE_NONCOPYABLE(Projection);
-    WTF_MAKE_NONMOVABLE(Projection);
-public:
-    static constexpr TypeDefinitionKind kind = TypeDefinitionKind::Projection;
-
-    static size_t allocationSize() { return sizeof(Projection); }
-
-    static RefPtr<Projection> tryCreate(TypeIndex recursionGroup, ProjectionIndex index);
-
-    bool cleanup();
-
-    TypeIndex recursionGroup() const { return m_recursionGroup; }
-    ProjectionIndex projectionIndex() const { return m_projectionIndex; }
-
-    WTF::String toString() const;
-    void dump(WTF::PrintStream& out) const;
-
-    static constexpr TypeIndex PlaceholderGroup = 0;
-    bool isPlaceholder() const { return recursionGroup() == PlaceholderGroup; }
-
-private:
-    Projection(TypeIndex recursionGroup, ProjectionIndex index);
-
-    TypeIndex m_recursionGroup;
-    ProjectionIndex m_projectionIndex;
-};
-
-// A Subtype represents a type that is declared to be a subtype of another type
-// definition.
-//
-// The representation allows multiple supertypes for simplicity, as it needs to
-// support 0 or 1 supertypes. More than 1 supertype is not supported in the initial
-// GC proposal.
-class Subtype final : public TypeDefinition {
-    WTF_MAKE_NONCOPYABLE(Subtype);
-    WTF_MAKE_NONMOVABLE(Subtype);
-public:
-    static constexpr TypeDefinitionKind kind = TypeDefinitionKind::Subtype;
-
-    static size_t allocationSize(Checked<SupertypeCount> count) { return sizeof(Subtype) + count * sizeof(TypeIndex); }
-
-    static RefPtr<Subtype> tryCreate(std::span<const TypeIndex>, TypeIndex, bool isFinal);
-
-    bool cleanup();
-
-    SupertypeCount supertypeCount() const { return m_supertypeCount; }
-    bool isFinal() const { return m_final; }
-    TypeIndex firstSuperType() const { return superTypes()[0]; }
-    TypeIndex superType(SupertypeCount i) const { return superTypes()[i]; }
-    TypeIndex underlyingType() const { return m_underlyingType; }
-    std::span<const TypeIndex> superTypes() const { return { payload(), m_supertypeCount }; }
-
-    WTF::String toString() const;
-    void dump(WTF::PrintStream& out) const;
-
-private:
-    Subtype(std::span<const TypeIndex>, TypeIndex, bool isFinal);
-
-    std::span<TypeIndex> mutableSuperTypes() { return { payload(), m_supertypeCount }; }
-    TypeIndex* payload() const { return std::bit_cast<TypeIndex*>(this + 1); }
-
-    bool m_final;
-    TypeIndex m_underlyingType;
-    SupertypeCount m_supertypeCount;
+    StructFieldEntry() = default;
+    StructFieldEntry(FieldType type, unsigned offset, RefPtr<const RTT> anchor = nullptr)
+        : type(type)
+        , offset(offset)
+        , rttAnchor(WTF::move(anchor))
+    {
+    }
 };
 
 // An RTT encodes subtyping information in a way that is suitable for executing
@@ -833,6 +527,173 @@ enum class RTTKind : uint8_t {
     Struct
 };
 
+// RTT*Payload holds the structural data for a concrete type (function,
+// struct, or array). One of the three is stored inline in RTT via Variant,
+// chosen by RTTKind.
+class RTTFunctionPayload {
+    WTF_MAKE_NONCOPYABLE(RTTFunctionPayload);
+    // TypeSectionState::createCanonicalRTT(const Subtype&) reads
+    // signatureSpan() to bulk-copy the slot vector. No other consumer.
+    friend class TypeSectionState;
+public:
+    RTTFunctionPayload() = default;
+    RTTFunctionPayload(RTTFunctionPayload&&) = default;
+    RTTFunctionPayload& operator=(RTTFunctionPayload&&) = default;
+
+    RTTFunctionPayload(FunctionArgCount argCount, FunctionArgCount retCount, std::span<const TypeSlot> signatureReturnsThenArgs, bool includesI64, bool includesV128, bool includesExnref, bool hasRecursiveReference)
+        : m_signature(signatureReturnsThenArgs)
+        , m_argCount(argCount)
+        , m_retCount(retCount)
+        , m_argumentsOrResultsIncludeI64(includesI64)
+        , m_argumentsOrResultsIncludeV128(includesV128)
+        , m_argumentsOrResultsIncludeExnref(includesExnref)
+        , m_hasRecursiveReference(hasRecursiveReference)
+    {
+        ASSERT(m_signature.size() == static_cast<size_t>(m_argCount) + static_cast<size_t>(m_retCount));
+    }
+
+    // Move-in constructor: caller has already built a FixedVector<TypeSlot>
+    // for the signature (returns then args). Avoids the span-copy performed
+    // by the span-based constructor. Used by provider-based typeDefinitionFor*
+    // paths that populate the FixedVector in place.
+    RTTFunctionPayload(FunctionArgCount argCount, FunctionArgCount retCount, FixedVector<TypeSlot>&& signatureReturnsThenArgs, bool includesI64, bool includesV128, bool includesExnref, bool hasRecursiveReference)
+        : m_signature(WTF::move(signatureReturnsThenArgs))
+        , m_argCount(argCount)
+        , m_retCount(retCount)
+        , m_argumentsOrResultsIncludeI64(includesI64)
+        , m_argumentsOrResultsIncludeV128(includesV128)
+        , m_argumentsOrResultsIncludeExnref(includesExnref)
+        , m_hasRecursiveReference(hasRecursiveReference)
+    {
+        ASSERT(m_signature.size() == static_cast<size_t>(m_argCount) + static_cast<size_t>(m_retCount));
+    }
+
+    FunctionArgCount argumentCount() const { return m_argCount; }
+    FunctionArgCount returnCount() const { return m_retCount; }
+    Type returnType(FunctionArgCount i) const { ASSERT(i < m_retCount); return m_signature[i].type; }
+    Type argumentType(FunctionArgCount i) const { ASSERT(i < m_argCount); return m_signature[m_retCount + i].type; }
+    bool returnsVoid() const { return !m_retCount; }
+    bool argumentsOrResultsIncludeI64() const { return m_argumentsOrResultsIncludeI64; }
+    bool argumentsOrResultsIncludeV128() const { return m_argumentsOrResultsIncludeV128; }
+    bool argumentsOrResultsIncludeExnref() const { return m_argumentsOrResultsIncludeExnref; }
+    bool hasRecursiveReference() const { return m_hasRecursiveReference; }
+
+    // Iterate every ref-bearing slot, invoking `cb(TypeSlot&)`. Used by both
+    // the rewrite path (RTT::rewriteInternalRefs) and the cycle-break path
+    // (RTT::clearReferencedRTTs).
+    template<typename Callback>
+    void visitChildrenRTT(Callback&& cb)
+    {
+        for (TypeSlot& slot : m_signature)
+            cb(slot);
+    }
+
+private:
+    std::span<const TypeSlot> signatureSpan() const LIFETIME_BOUND { return m_signature.span(); }
+
+    FixedVector<TypeSlot> m_signature;
+    FunctionArgCount m_argCount { 0 };
+    FunctionArgCount m_retCount { 0 };
+    bool m_argumentsOrResultsIncludeI64 : 1 { false };
+    bool m_argumentsOrResultsIncludeV128 : 1 { false };
+    bool m_argumentsOrResultsIncludeExnref : 1 { false };
+    bool m_hasRecursiveReference : 1 { false };
+};
+
+class RTTStructPayload {
+    WTF_MAKE_NONCOPYABLE(RTTStructPayload);
+    // TypeSectionState::createCanonicalRTT(const Subtype&) reads
+    // fieldsSpan() to bulk-copy the entry vector. No other consumer.
+    friend class TypeSectionState;
+public:
+    RTTStructPayload() = default;
+    RTTStructPayload(RTTStructPayload&&) = default;
+    RTTStructPayload& operator=(RTTStructPayload&&) = default;
+
+    // Move-in constructor: caller has prebuilt the FixedVector<StructFieldEntry>
+    // (fields + offsets colocated). One heap allocation per struct RTT.
+    RTTStructPayload(FixedVector<StructFieldEntry>&& fields, size_t instancePayloadSize, bool hasRefFieldTypes, bool hasRecursiveReference)
+        : m_fields(WTF::move(fields))
+        , m_instancePayloadSize(instancePayloadSize)
+        , m_hasRefFieldTypes(hasRefFieldTypes)
+        , m_hasRecursiveReference(hasRecursiveReference)
+    {
+    }
+
+    StructFieldCount fieldCount() const { return m_fields.size(); }
+    const FieldType& field(StructFieldCount i) const LIFETIME_BOUND { return m_fields[i].type; }
+    unsigned offsetOfFieldInPayload(StructFieldCount i) const { return m_fields[i].offset; }
+    size_t instancePayloadSize() const { return m_instancePayloadSize; }
+    bool hasRefFieldTypes() const { return m_hasRefFieldTypes; }
+    bool hasRecursiveReference() const { return m_hasRecursiveReference; }
+
+    // Iterate every ref-bearing field (PackedType fields are skipped --
+    // they cannot reference an RTT). The callback receives a TypeSlot& view
+    // built from the entry's FieldType + rttAnchor; mutations are written
+    // back into the entry on return.
+    template<typename Callback>
+    void visitChildrenRTT(Callback&& cb)
+    {
+        for (StructFieldEntry& entry : m_fields) {
+            if (!entry.type.type.is<Type>())
+                continue;
+            TypeSlot slot { entry.type.type.as<Type>(), WTF::move(entry.rttAnchor) };
+            cb(slot);
+            entry.type.type = StorageType(slot.type);
+            entry.rttAnchor = WTF::move(slot.rttAnchor);
+        }
+    }
+
+private:
+    std::span<const StructFieldEntry> fieldsSpan() const LIFETIME_BOUND { return m_fields.span(); }
+
+    FixedVector<StructFieldEntry> m_fields;
+    size_t m_instancePayloadSize { 0 };
+    bool m_hasRefFieldTypes : 1 { false };
+    bool m_hasRecursiveReference : 1 { false };
+};
+
+class RTTArrayPayload {
+    WTF_MAKE_NONCOPYABLE(RTTArrayPayload);
+    // TypeSectionState::createCanonicalRTT(const Subtype&) reads
+    // elementTypeAnchor() to bulk-copy the anchor. No other consumer.
+    friend class TypeSectionState;
+public:
+    RTTArrayPayload() = default;
+    RTTArrayPayload(RTTArrayPayload&&) = default;
+    RTTArrayPayload& operator=(RTTArrayPayload&&) = default;
+
+    RTTArrayPayload(FieldType elementType, RefPtr<const RTT> elementTypeAnchor, bool hasRecursiveReference)
+        : m_elementType(elementType)
+        , m_elementTypeAnchor(WTF::move(elementTypeAnchor))
+        , m_hasRecursiveReference(hasRecursiveReference)
+    {
+    }
+
+    const FieldType& elementType() const LIFETIME_BOUND { return m_elementType; }
+    bool hasRecursiveReference() const { return m_hasRecursiveReference; }
+
+    // Iterate the (single) ref-bearing element, if any. PackedType element
+    // types are skipped. Same view-pattern as RTTStructPayload::visitChildrenRTT.
+    template<typename Callback>
+    void visitChildrenRTT(Callback&& cb)
+    {
+        if (!m_elementType.type.is<Type>())
+            return;
+        TypeSlot slot { m_elementType.type.as<Type>(), WTF::move(m_elementTypeAnchor) };
+        cb(slot);
+        m_elementType.type = StorageType(slot.type);
+        m_elementTypeAnchor = WTF::move(slot.rttAnchor);
+    }
+
+private:
+    const RefPtr<const RTT>& elementTypeAnchor() const LIFETIME_BOUND { return m_elementTypeAnchor; }
+
+    FieldType m_elementType { };
+    RefPtr<const RTT> m_elementTypeAnchor;
+    bool m_hasRecursiveReference { false };
+};
+
 class alignas(16) RTT final : public ThreadSafeRefCounted<RTT>, private TrailingArray<RTT, RefPtr<const RTT>> {
     WTF_DEPRECATED_MAKE_FAST_COMPACT_ALLOCATED(RTT);
     WTF_MAKE_NONMOVABLE(RTT);
@@ -842,14 +703,95 @@ public:
     static_assert(sizeof(const RTT*) == sizeof(RefPtr<const RTT>));
     static constexpr unsigned inlinedDisplaySize = 6;
     RTT() = delete;
+    ~RTT();
 
-    static RefPtr<RTT> tryCreate(RTTKind, bool isFinalType, StructFieldCount fieldCount);
-    static RefPtr<RTT> tryCreate(RTTKind, const RTT&, bool isFinalType, StructFieldCount fieldCount);
+    static RefPtr<RTT> tryCreateFunction(bool isFinalType, RTTFunctionPayload&&);
+    static RefPtr<RTT> tryCreateFunction(const RTT& supertype, bool isFinalType, RTTFunctionPayload&&);
+    static RefPtr<RTT> tryCreateStruct(bool isFinalType, RTTStructPayload&&);
+    static RefPtr<RTT> tryCreateStruct(const RTT& supertype, bool isFinalType, RTTStructPayload&&);
+    static RefPtr<RTT> tryCreateArray(bool isFinalType, RTTArrayPayload&&);
+    static RefPtr<RTT> tryCreateArray(const RTT& supertype, bool isFinalType, RTTArrayPayload&&);
 
     RTTKind kind() const { return m_kind; }
     DisplayCount displaySizeExcludingThis() const { return m_displaySizeExcludingThis; }
     const RTT* displayEntry(DisplayCount i) const { return at(i).get(); }
     StructFieldCount fieldCount() const { return m_fieldCount; }
+
+    // View this RTT pointer as a TypeIndex (concrete encoding: bit-cast of the RTT pointer).
+    // Use when a Category-C API takes `TypeIndex`; every concrete TypeIndex is bit-identical
+    // to `const RTT*`.
+    TypeIndex asTypeIndex() const { return std::bit_cast<TypeIndex>(this); }
+
+    const RTTFunctionPayload& functionPayload() const LIFETIME_BOUND { return std::get<RTTFunctionPayload>(m_payload); }
+    const RTTStructPayload& structPayload() const LIFETIME_BOUND { return std::get<RTTStructPayload>(m_payload); }
+    const RTTArrayPayload& arrayPayload() const LIFETIME_BOUND { return std::get<RTTArrayPayload>(m_payload); }
+
+    // Function payload accessors.
+    FunctionArgCount argumentCount() const { return functionPayload().argumentCount(); }
+    FunctionArgCount returnCount() const { return functionPayload().returnCount(); }
+    Type argumentType(FunctionArgCount i) const { return functionPayload().argumentType(i); }
+    Type returnType(FunctionArgCount i) const { return functionPayload().returnType(i); }
+    bool returnsVoid() const { return functionPayload().returnsVoid(); }
+    bool argumentsOrResultsIncludeI64() const { return functionPayload().argumentsOrResultsIncludeI64(); }
+    bool argumentsOrResultsIncludeV128() const { return functionPayload().argumentsOrResultsIncludeV128(); }
+    bool argumentsOrResultsIncludeExnref() const { return functionPayload().argumentsOrResultsIncludeExnref(); }
+
+    size_t numberOfV128() const
+    {
+        size_t n = 0;
+        for (FunctionArgCount i = 0; i < argumentCount(); ++i) {
+            if (argumentType(i).isV128())
+                ++n;
+        }
+        return n;
+    }
+
+    size_t numberOfReturnedV128() const
+    {
+        size_t n = 0;
+        for (FunctionArgCount i = 0; i < returnCount(); ++i) {
+            if (returnType(i).isV128())
+                ++n;
+        }
+        return n;
+    }
+
+    bool hasReturnedV128() const
+    {
+        for (FunctionArgCount i = 0; i < returnCount(); ++i) {
+            if (returnType(i).isV128())
+                return true;
+        }
+        return false;
+    }
+
+    // Struct payload accessors.
+    const FieldType& field(StructFieldCount i) const LIFETIME_BOUND
+    {
+        ASSERT(m_kind == RTTKind::Struct);
+        return structPayload().field(i);
+    }
+    unsigned offsetOfFieldInPayload(StructFieldCount i) const { return structPayload().offsetOfFieldInPayload(i); }
+    size_t instancePayloadSize() const { return structPayload().instancePayloadSize(); }
+    bool hasRefFieldTypes() const { return structPayload().hasRefFieldTypes(); }
+
+    // Array payload accessors.
+    const FieldType& elementType() const LIFETIME_BOUND { return arrayPayload().elementType(); }
+
+    // Returns whether the payload references a type within its own recursion group.
+    bool hasRecursiveReference() const
+    {
+        switch (m_kind) {
+        case RTTKind::Function:
+            return functionPayload().hasRecursiveReference();
+        case RTTKind::Struct:
+            return structPayload().hasRecursiveReference();
+        case RTTKind::Array:
+            return arrayPayload().hasRecursiveReference();
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+        return false;
+    }
 
     const RTT& definingRTTForField(StructFieldCount fieldIndex) const
     {
@@ -881,58 +823,170 @@ public:
     bool NODELETE isStrictSubRTT(const RTT& other) const;
     bool isFinalType() const { return m_isFinalType; }
 
+    // Print this RTT for debugging.
+    String toString() const;
+    void dump(WTF::PrintStream& out) const;
+
+#if ENABLE(JIT)
+    // For function-kind RTTs: returns the JS->Wasm IC entrypoint for this signature.
+    // The IC cache + lock live on the RTT itself.
+    CodePtr<JSEntryPtrTag> jsToWasmICEntrypoint() const;
+#endif
+
+    // Walk every ref-bearing TypeSlot in this RTT's payload, dispatching to
+    // the per-payload visitor based on m_kind. Used by both
+    // rewriteInternalRefs (sets each slot's anchor inline as it rewrites)
+    // and clearReferencedRTTs (nulls each anchor).
+    template<typename Callback>
+    void visitChildrenRTT(Callback&& cb)
+    {
+        switch (m_kind) {
+        case RTTKind::Function:
+            std::get<RTTFunctionPayload>(m_payload).visitChildrenRTT(std::forward<Callback>(cb));
+            return;
+        case RTTKind::Struct:
+            std::get<RTTStructPayload>(m_payload).visitChildrenRTT(std::forward<Callback>(cb));
+            return;
+        case RTTKind::Array:
+            std::get<RTTArrayPayload>(m_payload).visitChildrenRTT(std::forward<Callback>(cb));
+            return;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    // Rewrite internal recgroup refs in this RTT's payload to canonical RTT
+    // pointers. Called during canonicalizeRecursionGroup before the candidate
+    // RTTs are exposed: any Type ref whose index is a Projection of
+    // recursionGroupIndex is replaced with groupMembers[projectionIndex] (i.e.,
+    // a self-reference in the post-canonicalization group). After this all
+    // refs in payload are uniformly RTT* form.
+    void rewriteInternalRefs(TypeSectionState*, const Vector<Ref<const RTT>>& groupMembers, TypeIndex recursionGroupIndex);
+
+    // Drop all RTT anchors added by rewriteInternalRefs (and by
+    // typeDefinitionFor* for external refs). Used when a freshly built
+    // candidate RTT turns out to duplicate an existing canonical entry
+    // during canonicalization: nulling each TypeSlot's rttAnchor breaks the
+    // intra-recgroup refcount cycle so the discarded candidate can actually
+    // be freed. Never call on a committed canonical RTT -- doing so would
+    // re-introduce the UAF rewriteInternalRefs guards against.
+    void clearReferencedRTTs();
+
+    // Set during canonicalization (under TypeInformation::m_lock) to identify
+    // membership in a canonical recursion group without scanning the group's
+    // members vector. 0 = not yet canonicalized. indexInGroup is the relative
+    // projection index (0 for singletons, 0..size-1 for multi-member).
+    // Mirrors V8's CanonicalTypeIndex + RecursionGroupRange arithmetic.
+    void setCanonicalGroup(uint32_t groupId, uint32_t indexInGroup) const
+    {
+        m_canonicalGroupId = groupId;
+        m_canonicalIndexInGroup = indexInGroup;
+    }
+    uint32_t canonicalGroupId() const { return m_canonicalGroupId; }
+    uint32_t canonicalIndexInGroup() const { return m_canonicalIndexInGroup; }
+
     static constexpr ptrdiff_t offsetOfKind() { return OBJECT_OFFSETOF(RTT, m_kind); }
     static constexpr ptrdiff_t offsetOfDisplaySizeExcludingThis() { return OBJECT_OFFSETOF(RTT, m_displaySizeExcludingThis); }
     using TrailingArrayType::offsetOfData;
 
 private:
-    explicit RTT(RTTKind kind, bool isFinalType, StructFieldCount fieldCount);
-    RTT(RTTKind, const RTT& supertype, bool isFinalType, StructFieldCount fieldCount);
+    // Templated payload-aware constructors. Initialize m_payload in the
+    // initializer list so the Variant is never observed in an unset state
+    // (no std::monostate alternative). Defined inline so each tryCreate*
+    // call site instantiates the matching specialization.
+    template<typename Payload>
+    RTT(RTTKind kind, bool isFinalType, StructFieldCount fieldCount, Payload&& payload)
+        : TrailingArrayType(std::max(1u, inlinedDisplaySize))
+        , m_kind(kind)
+        , m_isFinalType(isFinalType)
+        , m_displaySizeExcludingThis(0)
+        , m_fieldCount(fieldCount)
+        , m_payload(std::forward<Payload>(payload))
+    {
+        at(0) = this;
+    }
+    template<typename Payload>
+    RTT(RTTKind kind, const RTT& supertype, bool isFinalType, StructFieldCount fieldCount, Payload&& payload)
+        : TrailingArrayType(std::max(supertype.displaySizeExcludingThis() + 2, inlinedDisplaySize))
+        , m_kind(kind)
+        , m_isFinalType(isFinalType)
+        , m_displaySizeExcludingThis(supertype.displaySizeExcludingThis() + 1)
+        , m_fieldCount(fieldCount)
+        , m_payload(std::forward<Payload>(payload))
+    {
+        unsigned actualDisplaySize = supertype.displaySizeExcludingThis() + 2;
+        ASSERT(actualDisplaySize == (m_displaySizeExcludingThis + 1));
+        for (size_t i = 0; i < actualDisplaySize - 1; ++i)
+            span()[i] = supertype.span()[i];
+        at(m_displaySizeExcludingThis) = this;
+    }
 
     const RTTKind m_kind;
     const bool m_isFinalType { false };
     const unsigned m_displaySizeExcludingThis { };
     const StructFieldCount m_fieldCount { 0 };
+    mutable uint32_t m_canonicalGroupId { 0 };
+    mutable uint32_t m_canonicalIndexInGroup { 0 };
+#if ENABLE(JIT)
+    // Cache for the JS->Wasm IC entrypoint. Function-kind only; null for
+    // struct/array. Lazy-initialized under m_jitCodeLock; once set, the IC
+    // pointer is read without locking via the storeStoreFence in the writer.
+    mutable RefPtr<JSToWasmICCallee> m_jsToWasmICCallee;
+    mutable Lock m_jitCodeLock;
+#endif
+    Variant<RTTFunctionPayload, RTTStructPayload, RTTArrayPayload> m_payload;
 };
 
-inline void Type::dump(PrintStream& out) const
-{
-    TypeKind kindToPrint = kind;
-    if (index != TypeDefinition::invalidIndex) {
-        if (typeIndexIsType(index)) {
-            // If the index is negative, we assume we're using it to represent a TypeKind.
-            // FIXME: Reusing index to store a typekind is kind of messy? We should consider
-            // refactoring Type to handle this case more explicitly, since it's used in
-            // funcrefType() and externrefType().
-            // https://bugs.webkit.org/show_bug.cgi?id=247454
-            kindToPrint = static_cast<TypeKind>(index);
-        } else {
-            // Assume the index is a pointer to a TypeDefinition.
-            out.print(*reinterpret_cast<TypeDefinition*>(index));
-            return;
-        }
-    }
-    switch (kindToPrint) {
-#define CREATE_CASE(name, ...) case TypeKind::name: out.print(#name); break;
-        FOR_EACH_WASM_TYPE(CREATE_CASE)
-#undef CREATE_CASE
-    }
-}
+// Isorecursive canonical recursion-group entry. groupId is a globally-unique
+// id assigned during canonicalization; each member RTT carries the same
+// groupId in its m_canonicalGroupId field, so intra-group membership is
+// tested by a single id comparison instead of a HashMap/Vector scan. Mirrors
+// V8's CanonicalTypeIndex + RecursionGroupRange.
+struct CanonicalRecursionGroupEntry {
+    TypeIndex recursionGroupIndex { 0 };
+    uint32_t groupId { 0 };
+    Vector<Ref<const RTT>> rtts;
 
-struct TypeHash {
-    RefPtr<TypeDefinition> key { nullptr };
-    TypeHash() = default;
-    explicit TypeHash(Ref<TypeDefinition>&& key)
-        : key(WTF::move(key))
+    CanonicalRecursionGroupEntry() = default;
+    CanonicalRecursionGroupEntry(TypeIndex idx, uint32_t id, Vector<Ref<const RTT>>&& r)
+        : recursionGroupIndex(idx)
+        , groupId(id)
+        , rtts(WTF::move(r))
     { }
-    explicit TypeHash(WTF::HashTableDeletedValueType)
-        : key(WTF::HashTableDeletedValue)
+    explicit CanonicalRecursionGroupEntry(WTF::HashTableDeletedValueType)
+        : recursionGroupIndex(std::numeric_limits<TypeIndex>::max())
     { }
-    bool operator==(const TypeHash& rhs) const { return equal(*this, rhs); }
-    static bool equal(const TypeHash& lhs, const TypeHash& rhs) { return lhs.key == rhs.key; }
-    static unsigned hash(const TypeHash& typeHash) { return typeHash.key ? typeHash.key->hash() : 0; }
+    bool isHashTableDeletedValue() const { return recursionGroupIndex == std::numeric_limits<TypeIndex>::max(); }
+    bool operator==(const CanonicalRecursionGroupEntry& other) const;
+};
+
+struct CanonicalRecursionGroupEntryHash {
+    static unsigned hash(const CanonicalRecursionGroupEntry&);
+    static bool equal(const CanonicalRecursionGroupEntry&, const CanonicalRecursionGroupEntry&);
     static constexpr bool safeToCompareToEmptyOrDeleted = false;
-    bool isHashTableDeletedValue() const { return key.isHashTableDeletedValue(); }
+};
+
+// Canonical entry for a size-1 recursion group. Fast-path analogue of
+// CanonicalRecursionGroupEntry: hashed/compared by the single RTT's
+// structural content, with self-refs detected by pointer equality against
+// the entry's own RTT. Mirrors V8's canonical_singleton_groups_.
+struct CanonicalSingletonEntry {
+    RefPtr<const RTT> rtt;
+
+    CanonicalSingletonEntry() = default;
+    explicit CanonicalSingletonEntry(Ref<const RTT>&& r)
+        : rtt(WTF::move(r))
+    { }
+    explicit CanonicalSingletonEntry(WTF::HashTableDeletedValueType)
+        : rtt(WTF::HashTableDeletedValue)
+    { }
+    bool isHashTableDeletedValue() const { return rtt.isHashTableDeletedValue(); }
+    bool operator==(const CanonicalSingletonEntry& other) const;
+};
+
+struct CanonicalSingletonEntryHash {
+    static unsigned hash(const CanonicalSingletonEntry&);
+    static bool equal(const CanonicalSingletonEntry&, const CanonicalSingletonEntry&);
+    static constexpr bool safeToCompareToEmptyOrDeleted = false;
 };
 
 } } // namespace JSC::Wasm
@@ -941,10 +995,14 @@ struct TypeHash {
 namespace WTF {
 
 template<typename T> struct DefaultHash;
-template<> struct DefaultHash<JSC::Wasm::TypeHash> : JSC::Wasm::TypeHash { };
+template<> struct DefaultHash<JSC::Wasm::CanonicalRecursionGroupEntry> : JSC::Wasm::CanonicalRecursionGroupEntryHash { };
+template<> struct DefaultHash<JSC::Wasm::CanonicalSingletonEntry> : JSC::Wasm::CanonicalSingletonEntryHash { };
 
 template<typename T> struct HashTraits;
-template<> struct HashTraits<JSC::Wasm::TypeHash> : SimpleClassHashTraits<JSC::Wasm::TypeHash> {
+template<> struct HashTraits<JSC::Wasm::CanonicalRecursionGroupEntry> : SimpleClassHashTraits<JSC::Wasm::CanonicalRecursionGroupEntry> {
+    static constexpr bool emptyValueIsZero = false;
+};
+template<> struct HashTraits<JSC::Wasm::CanonicalSingletonEntry> : SimpleClassHashTraits<JSC::Wasm::CanonicalSingletonEntry> {
     static constexpr bool emptyValueIsZero = true;
 };
 
@@ -953,7 +1011,8 @@ template<> struct HashTraits<JSC::Wasm::TypeHash> : SimpleClassHashTraits<JSC::W
 
 namespace JSC { namespace Wasm {
 
-// Type information is held globally and shared by the entire process to allow all type definitions to be unique. This is required when wasm calls another wasm instance, and must work when modules are shared between multiple VMs.
+// Type information is held globally and shared by the entire process to allow all type definitions to be unique.
+// This is required when wasm calls another wasm instance, and must work when modules are shared between multiple VMs.
 class TypeInformation {
     WTF_MAKE_NONCOPYABLE(TypeInformation);
     WTF_MAKE_TZONE_ALLOCATED(TypeInformation);
@@ -961,59 +1020,107 @@ class TypeInformation {
     TypeInformation();
 
 public:
+    friend class ParserBase;
+    friend class ParsedDef;
+    friend class RTT;
+    friend class SectionParser;
+    friend class Subtype;
+    friend class TypeSectionState;
+
     static TypeInformation& singleton();
 
-    static const FunctionSignature& signatureForJSException();
+    static const RTT& signatureForJSException();
 
-    static RefPtr<FunctionSignature> typeDefinitionForFunction(const Vector<Type, 16>& returnTypes, const Vector<Type, 16>& argumentTypes);
-    static RefPtr<StructType> typeDefinitionForStruct(const Vector<FieldType>& fields);
-    static RefPtr<ArrayType> typeDefinitionForArray(FieldType);
-    static RefPtr<RecursionGroup> typeDefinitionForRecursionGroup(const Vector<TypeIndex>& types);
-    static RefPtr<Projection> typeDefinitionForProjection(TypeIndex, ProjectionIndex);
-    static RefPtr<Subtype> typeDefinitionForSubtype(const Vector<TypeIndex>&, TypeIndex, bool);
-    static RefPtr<Projection> getPlaceholderProjection(ProjectionIndex);
-    ALWAYS_INLINE const FunctionSignature* thunkFor(Type type) const { return thunkTypes[linearizeType(type.kind)]; }
+    static Ref<const RTT> rttForFunction(const Vector<Type, 16>& returnTypes, const Vector<Type, 16>& argumentTypes);
 
-    static void addCachedUnrolling(TypeIndex, const TypeDefinition&);
-    static std::optional<TypeIndex> tryGetCachedUnrolling(TypeIndex);
+    static bool isReferenceValueAssignable(JSValue, bool, TypeIndex);
 
-    // Every type definition that is in a module's signature list should have a canonical RTT registered for subtyping checks.
-    static void registerCanonicalRTTForType(TypeIndex);
-    // This will only return valid results for types in the type signature list and that have a registered canonical RTT.
+    // External TypeIndex values for concrete types are RTT pointers (set up
+    // by ModuleInformation::typeIndexFromTypeSignatureIndex / Tag::typeIndex /
+    // WebAssemblyFunctionBase). This bit-casts directly, no lookup.
     static Ref<const RTT> getCanonicalRTT(TypeIndex);
 
-    static bool isReferenceValueAssignable(JSValue, bool, TypeIndex, const RTT* = nullptr);
+    // The index passed to tryGetRTTRef may be an abstract type or
+    // invalid, in which case nullptr is returned. The non-null result
+    // assumes the index is a bare RTT pointer (the external/canonical
+    // convention).
+    static RefPtr<const RTT> tryGetRTT(TypeIndex);
 
-    static const TypeDefinition& get(TypeIndex);
-    static TypeIndex get(const TypeDefinition&);
-    // Unlike with `get`, the index passed to `getRef` may be a type or invalid, in which case a nullptr is returned.
-    static RefPtr<const TypeDefinition> getRef(TypeIndex);
-
-    inline static const FunctionSignature& getFunctionSignature(TypeIndex);
-    inline static std::optional<const FunctionSignature*> tryGetFunctionSignature(TypeIndex);
+    // Allocate a fresh canonical group id. Used by translator-based probe
+    // paths that insert a new canonical singleton and want to mark the RTT
+    // as canonical so redundant canonicalizeSingleton calls can short
+    // circuit. Caller must hold m_lock.
+    uint32_t allocateCanonicalGroupId() { return m_nextCanonicalGroupId++; }
 
     static void tryCleanup();
-private:
-    static Ref<RTT> createCanonicalRTTForType(const AbstractLocker&, const TypeDefinition&);
 
-    UncheckedKeyHashSet<Wasm::TypeHash> m_typeSet;
-    UncheckedKeyHashMap<TypeIndex, RefPtr<const TypeDefinition>> m_unrollingCache;
-    UncheckedKeyHashSet<RefPtr<Projection>> m_placeholders;
-    const FunctionSignature* thunkTypes[numTypes];
-    RefPtr<FunctionSignature> m_I64_Void;
-    RefPtr<FunctionSignature> m_Void_I32;
-    RefPtr<FunctionSignature> m_Void_I32I32I32;
-    RefPtr<FunctionSignature> m_Void_I32I32I32I32;
-    RefPtr<FunctionSignature> m_Void_I32I32I32I32I32;
-    RefPtr<FunctionSignature> m_I32_I32;
-    RefPtr<FunctionSignature> m_I32_RefI32I32I32;
-    RefPtr<FunctionSignature> m_Ref_RefI32I32;
-    RefPtr<FunctionSignature> m_Arrayref_I32I32I32I32;
-    RefPtr<FunctionSignature> m_Anyref_Externref;
-    RefPtr<FunctionSignature> m_Void_Externref;
-    RefPtr<FunctionSignature> m_Void_I32AnyrefI32;
-    RefPtr<FunctionSignature> m_Void_I32AnyrefI32I32I32I32;
-    RefPtr<FunctionSignature> m_Void_I32AnyrefI32I32AnyrefI32I32;
+private:
+    static Ref<const RTT> typeDefinitionForFunction(const Vector<Type, 16>& returnTypes, const Vector<Type, 16>& argumentTypes);
+    static Ref<const RTT> typeDefinitionForStruct(const Vector<FieldType>& fields);
+    static Ref<const RTT> typeDefinitionForArray(FieldType);
+
+    // Provider-based overloads: caller supplies a callable instead of a
+    // Vector. The FixedVector inside the resulting RTT payload is built in
+    // place via the provider, eliminating one heap allocation + one copy
+    // compared to the Vector-based overloads. Used by
+    // TypeSectionState::createCanonicalRTT's rebuild-with-substitution path
+    // where the intermediate Vector was purely scaffolding.
+    template<typename FieldProvider>
+    static Ref<const RTT> typeDefinitionForStructFromProvider(StructFieldCount fieldCount, FieldProvider&& provider);
+    template<typename ReturnProvider, typename ArgProvider>
+    static Ref<const RTT> typeDefinitionForFunctionFromProviders(FunctionArgCount retCount, ReturnProvider&& returnsProvider, FunctionArgCount argCount, ArgProvider&& argsProvider);
+
+    // Isorecursive RTT canonicalization at recursion-group granularity.
+    // Given a freshly-parsed recursion group identified by recursionGroupIndex
+    // and the per-member candidate RTTs auto-registered for it, return the
+    // canonical RTT vector. If a structurally-identical recursion group is
+    // already canonical, the candidates are discarded and the existing canonical
+    // RTTs are returned (so cross-module identical recgroups share RTT identity).
+    // Otherwise the candidates become canonical for this signature.
+    //
+    // Equality treats refs to projections of recursionGroupIndex by their
+    // relative projection index; refs outside the group are compared by
+    // canonical RTT pointer. Mirrors V8's CanonicalEquality.
+    static Vector<Ref<const RTT>> canonicalizeRecursionGroup(TypeSectionState*, TypeIndex recursionGroupIndex, Vector<Ref<const RTT>>&& candidateRTTs);
+
+    // Fast path for the common case of a single-member recursion group
+    // (standalone struct/array/function, shorthand types, self-recursive
+    // singletons). Bypasses the Vector<Ref<const RTT>> allocation and goes
+    // directly to the singleton canonical table. recursionGroupIndex is the
+    // original recursion-group TypeIndex used by placeholder projections in
+    // the candidate's payload; pass 0 for non-recursive standalone types.
+    static Ref<const RTT> canonicalizeSingleton(TypeSectionState*, TypeIndex recursionGroupIndex, Ref<const RTT>&& candidate);
+
+    // Canonicalize a single non-recursive RTT (function/struct/array). If a
+    // structurally-identical RTT is already canonical, returns it; otherwise the
+    // input becomes canonical. Used by TypeInformation initialization for
+    // built-in signatures (m_Void_Externref, thunks) so they share identity with
+    // RTTs minted later by parseType.
+    static Ref<const RTT> canonicalizeStandaloneRTT(Ref<const RTT>&&);
+
+    // Non-static impls (avoid singleton() recursion when called from
+    // TypeInformation's own constructor).
+    Vector<Ref<const RTT>> canonicalizeRecursionGroupImpl(TypeSectionState*, TypeIndex, Vector<Ref<const RTT>>&&);
+    Ref<const RTT> canonicalizeSingletonImpl(TypeSectionState*, TypeIndex recursionGroupIndex, Ref<const RTT>&&);
+    Ref<const RTT> canonicalizeStandaloneRTTImpl(Ref<const RTT>&&);
+    static RefPtr<const RTT> extractExternalRTT(Type);
+
+    // Returns true iff `type` is a ref whose index encodes a parser-time
+    // placeholder Projection (i.e. an unresolved intra-recgroup reference).
+    // Canonical (post-parse) Type::index values are RTT pointers and return
+    // false. Centralised here so consumers don't need to know about the
+    // placeholder-tag-bit encoding.
+    static bool isRefWithRecursiveReference(Type);
+    static bool isRefWithRecursiveReference(StorageType);
+
+    UncheckedKeyHashSet<CanonicalRecursionGroupEntry, CanonicalRecursionGroupEntryHash> m_canonicalRecursionGroups;
+    UncheckedKeyHashSet<CanonicalSingletonEntry> m_canonicalSingletonGroups;
+    // Monotonically-allocated id for canonical groups (singleton and
+    // multi-member). Each canonical RTT stores its group's id in
+    // m_canonicalGroupId so membership checks during hash/equal are O(1)
+    // integer comparisons. 0 is reserved for "not yet canonicalized".
+    uint32_t m_nextCanonicalGroupId { 1 };
+    RefPtr<const RTT> m_Void_Externref;
     Lock m_lock;
 };
 

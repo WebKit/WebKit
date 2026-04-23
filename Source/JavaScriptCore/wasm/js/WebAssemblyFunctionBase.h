@@ -53,13 +53,12 @@ public:
 
     JSWebAssemblyInstance* instance() const LIFETIME_BOUND { return m_importableFunction.targetInstance.get(); }
 
-    Wasm::TypeIndex typeIndex() const { return m_importableFunction.typeIndex; }
-    Wasm::Type type() const { return { Wasm::TypeKind::Ref, typeIndex() }; }
+    Wasm::Type type() const { return { Wasm::TypeKind::Ref, m_importableFunction.rtt->asTypeIndex() }; }
     WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation() const { return m_importableFunction.entrypointLoadLocation; }
     CalleeBits boxedCallee() const { return m_importableFunction.boxedCallee; }
     const Wasm::WasmOrJSImportableFunction& importableFunction() const LIFETIME_BOUND { return m_importableFunction; }
     const Wasm::RTT* rtt() const { return m_importableFunction.rtt; }
-    const Wasm::FunctionSignature& signature() const;
+    const Wasm::RTT& signature() const;
     WasmOrJSImportableFunctionCallLinkInfo* callLinkInfo() const { return m_callLinkInfo; }
 
     static constexpr ptrdiff_t offsetOfImportableFunction() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_importableFunction); }

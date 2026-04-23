@@ -117,7 +117,7 @@ public:
     size_t numParams() const { return m_params.size(); }
     size_t numResults() const { return m_results.size(); }
 
-    bool isValid(const Wasm::FunctionSignature&) const;
+    bool isValid(const Wasm::RTT&) const;
 
 private:
     Expectations m_results;

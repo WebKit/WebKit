@@ -62,7 +62,7 @@ public:
 
     DECLARE_VISIT_CHILDREN;
 
-    JS_EXPORT_PRIVATE static WebAssemblyFunction* create(VM&, JSGlobalObject*, Structure*, unsigned, const String&, JSWebAssemblyInstance*, Wasm::JSToWasmCallee&, Wasm::IPIntCallee&, WasmToWasmImportableFunction::LoadLocation, Wasm::TypeIndex, Ref<const Wasm::RTT>&&);
+    JS_EXPORT_PRIVATE static WebAssemblyFunction* create(VM&, JSGlobalObject*, Structure*, unsigned, const String&, JSWebAssemblyInstance*, Wasm::JSToWasmCallee&, Wasm::IPIntCallee&, WasmToWasmImportableFunction::LoadLocation, Ref<const Wasm::RTT>&&);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     Wasm::JSToWasmCallee* jsToWasmCallee() const { return m_boxedJSToWasmCallee.ptr(); }
@@ -94,7 +94,7 @@ public:
     static constexpr ptrdiff_t offsetOfFrameSize() { return OBJECT_OFFSETOF(WebAssemblyFunction, m_frameSize); }
 
 private:
-    WebAssemblyFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, JSWebAssemblyInstance*, Wasm::JSToWasmCallee&, Wasm::IPIntCallee&, WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation, Wasm::TypeIndex, Ref<const Wasm::RTT>&&);
+    WebAssemblyFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, JSWebAssemblyInstance*, Wasm::JSToWasmCallee&, Wasm::IPIntCallee&, WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation, Ref<const Wasm::RTT>&&);
 
     CodePtr<JSEntryPtrTag> jsCallEntrypointSlow();
 

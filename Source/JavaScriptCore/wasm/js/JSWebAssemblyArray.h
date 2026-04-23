@@ -53,13 +53,13 @@ public:
     DECLARE_INFO;
 
     static inline TypeInfoBlob typeInfoBlob();
-    static inline WebAssemblyGCStructure* createStructure(VM&, Ref<const Wasm::TypeDefinition>&&, Ref<const Wasm::RTT>&&);
+    static inline WebAssemblyGCStructure* createStructure(VM&, Ref<const Wasm::RTT>&&);
 
     static JSWebAssemblyArray* tryCreate(VM& vm, WebAssemblyGCStructure* structure, unsigned size);
 
     DECLARE_VISIT_CHILDREN;
 
-    static Wasm::FieldType elementType(const WebAssemblyGCStructure* structure) { return structure->typeDefinition().as<Wasm::ArrayType>()->elementType(); }
+    static Wasm::FieldType elementType(const WebAssemblyGCStructure* structure) { return structure->rtt().elementType(); }
     Wasm::FieldType elementType() const { return elementType(gcStructure()); }
     // Only v128 needs runtime masking (PreciseAllocation only guarantees 8-byte alignment).
     static bool needsV128AlignmentMask(Wasm::StorageType type) { return type.unpacked().isV128(); }

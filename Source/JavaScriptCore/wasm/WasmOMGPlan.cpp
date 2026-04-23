@@ -75,7 +75,7 @@ FunctionAllowlist& OMGPlan::ensureGlobalOMGAllowlist()
     return omgAllowlist;
 }
 
-void OMGPlan::dumpDisassembly(const Callee& callee, CompilationContext& context, LinkBuffer& linkBuffer, const TypeDefinition& signature, FunctionSpaceIndex functionIndexSpace)
+void OMGPlan::dumpDisassembly(const Callee& callee, CompilationContext& context, LinkBuffer& linkBuffer, const RTT& signature, FunctionSpaceIndex functionIndexSpace)
 {
     dataLogLnIf(context.procedure->shouldDumpIR() || shouldDumpDisassemblyFor(CompilationMode::OMGMode), "Generated OMG functionIndexSpace:(", functionIndexSpace, "),sig:(", signature.toString().ascii().data(), "),name:(", callee.nameWithHash(), "),wasmSize:(", m_moduleInformation->functionWasmSizeImportSpace(functionIndexSpace), ")");
     if (shouldDumpDisassemblyFor(CompilationMode::OMGMode)) [[unlikely]] {
@@ -128,7 +128,7 @@ void OMGPlan::work()
 
     const FunctionSpaceIndex functionIndexSpace = m_moduleInformation->toSpaceIndex(m_functionIndex);
     TypeSignatureIndex typeSignatureIndex = m_moduleInformation->internalFunctionTypeSignatureIndices[m_functionIndex];
-    const TypeDefinition& signature = m_moduleInformation->expandedTypeSignature(typeSignatureIndex);
+    const RTT& signature = m_moduleInformation->rtt(typeSignatureIndex);
 
     Ref<IPIntCallee> profiledCallee = m_calleeGroup->ipintCalleeFromFunctionIndexSpace(functionIndexSpace);
     Ref<OMGCallee> callee = OMGCallee::create(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), Ref { profiledCallee });

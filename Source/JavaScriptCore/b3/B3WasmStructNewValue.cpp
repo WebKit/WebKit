@@ -36,7 +36,7 @@ WasmStructNewValue::~WasmStructNewValue() = default;
 
 void WasmStructNewValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
-    out.print(comma, "typeIndex = ", m_typeIndex, comma, "fieldCount = ", m_structType->fieldCount());
+    out.print(comma, "typeIndex = ", m_typeIndex, comma, "fieldCount = ", m_rtt->fieldCount());
 }
 
 } // namespace JSC::B3

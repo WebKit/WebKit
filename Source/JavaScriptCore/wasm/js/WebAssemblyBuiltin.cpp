@@ -159,17 +159,19 @@ bool WebAssemblyArrayMutI16TypeExpectation::isValid(const Wasm::Type& type) cons
 {
     if (!type.isRefNull())
         return false;
-    Ref<const Wasm::TypeDefinition> referentType = Wasm::TypeInformation::get(type.index);
-    if (!referentType->is<Wasm::ArrayType>())
+    RefPtr referentRTT = Wasm::TypeInformation::tryGetRTT(type.index);
+    if (!referentRTT || referentRTT->kind() != Wasm::RTTKind::Array)
         return false;
-    Wasm::FieldType elementType = referentType->as<Wasm::ArrayType>()->elementType();
+    Wasm::FieldType elementType = referentRTT->elementType();
     return elementType.mutability == Wasm::Mutability::Mutable
         && elementType.type.is<Wasm::PackedType>()
         && elementType.type.as<Wasm::PackedType>() == Wasm::PackedType::I16;
 }
 
-bool WebAssemblyBuiltinSignature::isValid(const Wasm::FunctionSignature& sig) const
+bool WebAssemblyBuiltinSignature::isValid(const Wasm::RTT& sig) const
 {
+    if (sig.kind() != Wasm::RTTKind::Function)
+        return false;
     if (sig.returnCount() != m_results.size() || sig.argumentCount() != m_params.size())
         return false;
     for (unsigned i = 0; i < sig.returnCount(); ++i) {

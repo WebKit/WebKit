@@ -120,14 +120,13 @@ static JSObject* createTypeReflectionObject(JSGlobalObject* globalObject, JSWebA
     case Wasm::ExternalKind::Function: {
         typeObj = constructEmptyObject(globalObject, globalObject->objectPrototype(), 2);
 
-        Wasm::TypeIndex typeIndex = module->moduleInformation().typeIndexFromFunctionIndexSpace(Wasm::FunctionSpaceIndex(impOrExp.kindIndex));
-        SUPPRESS_UNCOUNTED_LOCAL const auto& signature = Wasm::TypeInformation::getFunctionSignature(typeIndex);
+        Ref signature = module->moduleInformation().rtt(Wasm::FunctionSpaceIndex(impOrExp.kindIndex));
 
         JSArray* functionParametersTypes = constructEmptyArray(globalObject, nullptr);
         RETURN_IF_EXCEPTION(throwScope, { });
-        auto argumentCount = signature.argumentCount();
+        auto argumentCount = signature->argumentCount();
         for (unsigned i = 0; i < argumentCount; ++i) {
-            JSString* typeString = Wasm::typeToJSAPIString(vm, signature.argumentType(i));
+            JSString* typeString = Wasm::typeToJSAPIString(vm, signature->argumentType(i));
             if (!typeString) {
                 throwException(globalObject, throwScope, createTypeError(globalObject, errorMessage));
                 return nullptr;
@@ -138,9 +137,9 @@ static JSObject* createTypeReflectionObject(JSGlobalObject* globalObject, JSWebA
 
         JSArray* functionResultsTypes = constructEmptyArray(globalObject, nullptr);
         RETURN_IF_EXCEPTION(throwScope, { });
-        auto returnCount = signature.returnCount();
+        auto returnCount = signature->returnCount();
         for (unsigned i = 0; i < returnCount; ++i) {
-            JSString* typeString = Wasm::typeToJSAPIString(vm, signature.returnType(i));
+            JSString* typeString = Wasm::typeToJSAPIString(vm, signature->returnType(i));
             if (!typeString) {
                 throwException(globalObject, throwScope, createTypeError(globalObject, errorMessage));
                 return nullptr;

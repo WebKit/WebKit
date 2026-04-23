@@ -502,12 +502,11 @@ Box<PCToCodeOriginMap> OptimizingJITCallee::materializePCToOriginMap(B3::PCToOri
 
 #endif
 
-JSToWasmCallee::JSToWasmCallee(TypeIndex typeIndex, bool)
+JSToWasmCallee::JSToWasmCallee(Ref<const RTT>&& rtt, bool)
     : Callee(Wasm::CompilationMode::JSToWasmMode)
-    , m_typeIndex(typeIndex)
+    , m_rtt(WTF::move(rtt))
 {
-    const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
-    CallInformation wasmFrameConvention = wasmCallingConvention().callInformationFor(signature, CallRole::Caller);
+    CallInformation wasmFrameConvention = wasmCallingConvention().callInformationFor(m_rtt.get(), CallRole::Caller);
 
     RegisterAtOffsetList savedResultRegisters = wasmFrameConvention.computeResultsOffsetList();
     size_t totalFrameSize = wasmFrameConvention.headerAndArgumentStackSizeInBytes;

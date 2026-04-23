@@ -661,7 +661,7 @@ private:
             case WasmStructGet: {
                 WasmStructGetValue* structGet = m_value->as<WasmStructGetValue>();
                 Value* structPtr = structGet->child(0);
-                SUPPRESS_UNCOUNTED_LOCAL const Wasm::StructType* structType = structGet->structType();
+                Ref structType = structGet->rtt();
                 Wasm::StructFieldCount fieldIndex = structGet->fieldIndex();
                 auto fieldType = structType->field(fieldIndex).type;
                 bool canTrap = structGet->kind().traps();
@@ -724,7 +724,7 @@ private:
                 WasmStructSetValue* structSet = m_value->as<WasmStructSetValue>();
                 Value* structPtr = structSet->child(0);
                 Value* value = structSet->child(1);
-                SUPPRESS_UNCOUNTED_LOCAL const Wasm::StructType* structType = structSet->structType();
+                Ref structType = structSet->rtt();
                 Wasm::StructFieldCount fieldIndex = structSet->fieldIndex();
                 auto fieldType = structType->field(fieldIndex).type;
                 bool canTrap = structSet->kind().traps();
@@ -759,12 +759,11 @@ private:
                 WasmStructNewValue* structNew = m_value->as<WasmStructNewValue>();
                 Value* instance = structNew->instance();
                 Value* structureID = structNew->structureID();
-                SUPPRESS_UNCOUNTED_LOCAL const Wasm::StructType* structType = structNew->structType();
+                Ref rtt = structNew->rtt();
                 uint32_t typeIndex = structNew->typeIndex();
-                auto rtt = structNew->rtt();
                 int32_t allocatorsBaseOffset = structNew->allocatorsBaseOffset();
 
-                size_t allocationSize = JSWebAssemblyStruct::allocationSize(structType->instancePayloadSize());
+                size_t allocationSize = JSWebAssemblyStruct::allocationSize(rtt->instancePayloadSize());
 
                 static_assert(!(MarkedSpace::sizeStep & (MarkedSpace::sizeStep - 1)), "MarkedSpace::sizeStep must be a power of two.");
                 unsigned stepShift = getLSBSet(MarkedSpace::sizeStep);
@@ -825,7 +824,7 @@ private:
                 WasmArrayGetValue* arrayGet = m_value->as<WasmArrayGetValue>();
                 Value* arrayPtr = arrayGet->child(0);
                 Value* indexValue = arrayGet->child(1);
-                SUPPRESS_UNCOUNTED_LOCAL const Wasm::ArrayType* arrayType = arrayGet->arrayType();
+                Ref arrayType = arrayGet->rtt();
                 auto elementType = arrayType->elementType().type;
                 HeapRange range = arrayGet->range();
                 Mutability mutability = arrayGet->mutability();
@@ -885,7 +884,7 @@ private:
                 Value* arrayPtr = arraySet->child(0);
                 Value* indexValue = arraySet->child(1);
                 Value* value = arraySet->child(2);
-                SUPPRESS_UNCOUNTED_LOCAL const Wasm::ArrayType* arrayType = arraySet->arrayType();
+                Ref arrayType = arraySet->rtt();
                 auto elementType = arrayType->elementType().type;
                 HeapRange range = arraySet->range();
 
@@ -916,12 +915,11 @@ private:
                 Value* instance = arrayNew->instance();
                 Value* structureID = arrayNew->structureID();
                 Value* size = arrayNew->size();
-                SUPPRESS_UNCOUNTED_LOCAL const Wasm::ArrayType* arrayType = arrayNew->arrayType();
+                Ref rtt = arrayNew->rtt();
                 uint32_t typeIndex = arrayNew->typeIndex();
-                auto rtt = arrayNew->rtt();
                 int32_t allocatorsBaseOffset = arrayNew->allocatorsBaseOffset();
 
-                size_t elementSize = arrayType->elementType().type.elementSize();
+                size_t elementSize = rtt->elementType().type.elementSize();
                 ASSERT(hasOneBitSet(elementSize));
 
                 static_assert(!(MarkedSpace::sizeStep & (MarkedSpace::sizeStep - 1)), "MarkedSpace::sizeStep must be a power of two.");
@@ -971,7 +969,7 @@ private:
 
                 if (arrayNew->hasInitValue()) {
                     auto* initValue = arrayNew->initValue();
-                    Wasm::StorageType storageType = arrayType->elementType().type;
+                    Wasm::StorageType storageType = rtt->elementType().type;
 
                     // Compute payloadBase directly in mergeBlock rather than using wasmArrayPayload(),
                     // because wasmArrayPayload() inserts into m_block (the loop exit), but payloadBase
@@ -1348,7 +1346,7 @@ private:
         bool referenceIsNullable = typeCheck->referenceIsNullable();
         bool definitelyIsCellOrNull = typeCheck->definitelyIsCellOrNull();
         bool definitelyIsWasmGCObjectOrNull = typeCheck->definitelyIsWasmGCObjectOrNull();
-        SUPPRESS_UNCOUNTED_LOCAL const Wasm::RTT* targetRTT = typeCheck->targetRTT();
+        RefPtr targetRTT = typeCheck->targetRTT();
         bool isCast = typeCheck->kind().opcode() == WasmRefCast;
         CastKind castKind = isCast ? CastKind::Cast : CastKind::Test;
         bool shouldNegate = typeCheck->shouldNegate();
@@ -1546,7 +1544,7 @@ private:
         } else {
             ([&] {
                 MemoryValue* rtt;
-                auto* targetRTTPointer = constant(Int64, std::bit_cast<uintptr_t>(targetRTT));
+                auto* targetRTTPointer = constant(Int64, std::bit_cast<uintptr_t>(targetRTT.get()));
                 if (targetRTT->kind() == Wasm::RTTKind::Function)
                     rtt = currentBlock->appendNew<MemoryValue>(m_proc, wrapTrapping(B3::Load), Int64, m_origin, value, safeCast<int32_t>(WebAssemblyFunctionBase::offsetOfRTT()));
                 else {

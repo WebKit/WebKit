@@ -118,7 +118,7 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
                 return;
             }
             m_value.m_externref.set(m_owner->vm(), m_owner, argument);
-        } else if (isFuncref(m_type) || (isRefWithTypeIndex(m_type) && TypeInformation::get(m_type.index).is<FunctionSignature>())) {
+        } else if (isFuncref(m_type) || (isRefWithTypeIndex(m_type) && TypeInformation::tryGetRTT(m_type.index) && TypeInformation::tryGetRTT(m_type.index)->kind() == RTTKind::Function)) {
             RELEASE_ASSERT(m_owner);
             WebAssemblyFunction* wasmFunction = nullptr;
             WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
@@ -129,7 +129,7 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
 
             if (isRefWithTypeIndex(m_type) && !argument.isNull()) {
                 Wasm::TypeIndex paramIndex = m_type.index;
-                Wasm::TypeIndex argIndex = wasmFunction ? wasmFunction->typeIndex() : wasmWrapperFunction->typeIndex();
+                Wasm::TypeIndex argIndex = (wasmFunction ? wasmFunction->rtt() : wasmWrapperFunction->rtt())->asTypeIndex();
                 if (paramIndex != argIndex) {
                     throwTypeError(globalObject, throwScope, "Argument value did not match the reference type"_s);
                     return;

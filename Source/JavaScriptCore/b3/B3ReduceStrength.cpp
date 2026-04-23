@@ -3977,7 +3977,7 @@ private:
         case WasmStructGet: {
             auto replaceWithNonTrapping = [&] {
                 WasmStructGetValue* structGet = m_value->as<WasmStructGetValue>();
-                SUPPRESS_UNCOUNTED_ARG Value* newValue = m_insertionSet.insert<WasmStructGetValue>(m_index, WasmStructGet, m_value->origin(), m_value->type(), structGet->child(0), structGet->rtt(), structGet->structType(), structGet->fieldIndex(), structGet->fieldHeapKey(), structGet->mutability());
+                Value* newValue = m_insertionSet.insert<WasmStructGetValue>(m_index, WasmStructGet, m_value->origin(), m_value->type(), structGet->child(0), structGet->rtt(), structGet->fieldIndex(), structGet->fieldHeapKey(), structGet->mutability());
                 newValue->as<WasmStructFieldValue>()->setRange(structGet->range());
                 m_value->replaceWithIdentity(newValue);
                 m_changed = true;
@@ -4030,7 +4030,7 @@ private:
         case WasmStructSet: {
             auto replaceWithNonTrapping = [&] {
                 WasmStructSetValue* structSet = m_value->as<WasmStructSetValue>();
-                SUPPRESS_UNCOUNTED_ARG Value* newValue = m_insertionSet.insert<WasmStructSetValue>(m_index, WasmStructSet, m_value->origin(), structSet->child(0), structSet->child(1), structSet->rtt(), structSet->structType(), structSet->fieldIndex(), structSet->fieldHeapKey());
+                Value* newValue = m_insertionSet.insert<WasmStructSetValue>(m_index, WasmStructSet, m_value->origin(), structSet->child(0), structSet->child(1), structSet->rtt(), structSet->fieldIndex(), structSet->fieldHeapKey());
                 newValue->as<WasmStructFieldValue>()->setRange(structSet->range());
                 m_value->replaceWithIdentity(newValue);
                 m_changed = true;
@@ -4062,7 +4062,7 @@ private:
                 auto* structNew = child->as<WasmStructNewValue>();
                 auto rtt = structNew->rtt();
                 int32_t toHeapType = cast->targetHeapType();
-                SUPPRESS_UNCOUNTED_LOCAL const Wasm::RTT* targetRTT = cast->targetRTT();
+                RefPtr targetRTT = cast->targetRTT();
                 if (!Wasm::typeIndexIsType(static_cast<Wasm::TypeIndex>(toHeapType))) {
                     if (rtt->isSubRTT(*targetRTT)) {
                         // shouldNegate can only be set on WasmRefTest.
@@ -4134,7 +4134,7 @@ private:
                 auto* structNew = child->as<WasmStructNewValue>();
                 auto rtt = structNew->rtt();
                 int32_t toHeapType = cast->targetHeapType();
-                SUPPRESS_UNCOUNTED_LOCAL const Wasm::RTT* targetRTT = cast->targetRTT();
+                RefPtr targetRTT = cast->targetRTT();
                 if (!Wasm::typeIndexIsType(static_cast<Wasm::TypeIndex>(toHeapType))) {
                     const bool isSubtype = rtt->isSubRTT(*targetRTT);
                     replaceWithNewValue(m_proc.addIntConstant(m_value, cast->shouldNegate() ? !isSubtype : isSubtype));

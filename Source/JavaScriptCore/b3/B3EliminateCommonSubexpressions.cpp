@@ -1093,11 +1093,14 @@ private:
 
         m_changed = true;
 
+        Ref structType = structGet->rtt();
+        auto fieldIndex = structGet->fieldIndex();
+        auto fieldType = structType->field(fieldIndex).type;
+        auto structGetOrigin = structGet->origin();
+
         auto replace = [&](Value* dominatingMatch, Vector<Value*, 16>& extraValues) -> Value* {
             if (auto* structSet = dominatingMatch->as<WasmStructSetValue>()) {
                 Value* storedValue = structSet->child(1);
-                SUPPRESS_UNCOUNTED_LOCAL const Wasm::StructType* structType = structGet->structType();
-                auto fieldType = structType->field(structGet->fieldIndex()).type;
 
                 Value* forwardedValue = storedValue;
 
@@ -1113,8 +1116,8 @@ private:
                         break;
                     }
 
-                    Value* maskValue = m_proc.add<Const32Value>(structGet->origin(), mask);
-                    forwardedValue = m_proc.add<Value>(BitAnd, structGet->origin(), storedValue, maskValue);
+                    Value* maskValue = m_proc.add<Const32Value>(structGetOrigin, mask);
+                    forwardedValue = m_proc.add<Value>(BitAnd, structGetOrigin, storedValue, maskValue);
                     extraValues.append(maskValue);
                     extraValues.append(forwardedValue);
                 }
@@ -1321,8 +1324,9 @@ private:
 
         m_changed = true;
 
-        SUPPRESS_UNCOUNTED_LOCAL const Wasm::ArrayType* arrayType = arrayGet->arrayType();
+        Ref arrayType = arrayGet->rtt();
         auto elementType = arrayType->elementType().type;
+        auto arrayGetOrigin = arrayGet->origin();
 
         auto replace = [&](Value* dominatingMatch, Vector<Value*, 16>& extraValues) -> Value* {
             if (auto* arraySet = dominatingMatch->as<WasmArraySetValue>()) {
@@ -1340,8 +1344,8 @@ private:
                         mask = 0xffff;
                         break;
                     }
-                    Value* maskValue = m_proc.add<Const32Value>(arrayGet->origin(), mask);
-                    forwardedValue = m_proc.add<Value>(BitAnd, arrayGet->origin(), storedValue, maskValue);
+                    Value* maskValue = m_proc.add<Const32Value>(arrayGetOrigin, mask);
+                    forwardedValue = m_proc.add<Value>(BitAnd, arrayGetOrigin, storedValue, maskValue);
                     extraValues.append(maskValue);
                     extraValues.append(forwardedValue);
                 }

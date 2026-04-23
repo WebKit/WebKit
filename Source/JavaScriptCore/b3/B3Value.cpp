@@ -1162,9 +1162,9 @@ ValueKey Value::key() const
         Value* child2 = wasmValue->hasTargetStructureID() ? child(1) : nullptr;
 
         // Check if RTT is present and set HasRTT flag accordingly
-        if (wasmValue->targetRTT()) {
+        if (RefPtr targetRTT = wasmValue->targetRTT()) {
             flags.add(WasmRefTypeCheckFlag::HasRTT);
-            return ValueKey(kind(), type(), child(0), child2, flags.toRaw(), wasmValue->targetRTT());
+            return ValueKey(kind(), type(), child(0), child2, flags.toRaw(), targetRTT.get());
         }
 
         // Use targetHeapType when RTT is null (builtin types)

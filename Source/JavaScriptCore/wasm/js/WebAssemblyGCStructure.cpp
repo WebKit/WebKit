@@ -38,49 +38,9 @@
 
 namespace JSC {
 
-static inline Wasm::TypeHash typeHash(const Wasm::TypeDefinition& typeDef)
-{
-    return Wasm::TypeHash { const_cast<Wasm::TypeDefinition&>(typeDef) };
-}
-
-WebAssemblyGCStructureTypeDependencies::WebAssemblyGCStructureTypeDependencies(Ref<const Wasm::TypeDefinition>&& unexpandedType)
-{
-    WorkList work;
-    SUPPRESS_UNCHECKED_ARG work.append(unexpandedType->expand());
-    while (!work.isEmpty())
-        SUPPRESS_UNCHECKED_ARG process(work.takeLast(), work);
-    m_typeDefinitions.add(typeHash(unexpandedType));
-}
-
-void WebAssemblyGCStructureTypeDependencies::process(const Wasm::TypeDefinition& typeDef, WorkList& work)
-{
-    if (m_typeDefinitions.contains(typeHash(typeDef)))
-        return;
-    m_typeDefinitions.add(typeHash(typeDef));
-    if (typeDef.is<Wasm::StructType>()) {
-        SUPPRESS_UNCHECKED_LOCAL auto* structType = typeDef.as<Wasm::StructType>();
-        for (unsigned i = 0; i < structType->fieldCount(); ++i)
-            process(structType->field(i), work);
-    } else if (typeDef.is<Wasm::ArrayType>())
-        process(typeDef.as<Wasm::ArrayType>()->elementType(), work);
-}
-
-void WebAssemblyGCStructureTypeDependencies::process(Wasm::FieldType fieldType, WorkList& work)
-{
-    if (fieldType.type.is<Wasm::Type>()) {
-        Wasm::Type type = fieldType.type.as<Wasm::Type>();
-        if (isRefWithTypeIndex(type)) {
-            SUPPRESS_UNCHECKED_LOCAL const auto& typeDef = Wasm::TypeInformation::get(type.index).expand();
-            work.append(typeDef);
-        }
-    }
-}
-
-WebAssemblyGCStructure::WebAssemblyGCStructure(VM& vm, const TypeInfo& typeInfo, const ClassInfo* classInfo, Ref<const Wasm::TypeDefinition>&& unexpandedType, Ref<const Wasm::TypeDefinition>&& type, Ref<const Wasm::RTT>&& rtt)
+WebAssemblyGCStructure::WebAssemblyGCStructure(VM& vm, const TypeInfo& typeInfo, const ClassInfo* classInfo, Ref<const Wasm::RTT>&& rtt)
     : Structure(vm, StructureVariant::WebAssemblyGC, nullptr, typeInfo, classInfo)
     , m_rtt(WTF::move(rtt))
-    , m_type(WTF::move(type))
-    , m_typeDependencies(WebAssemblyGCStructureTypeDependencies { WTF::move(unexpandedType) })
 {
     setMayBePrototype(true); // Make sure that didPrototype transition does not happen.
     switch (m_rtt->kind()) {
@@ -96,13 +56,13 @@ WebAssemblyGCStructure::WebAssemblyGCStructure(VM& vm, const TypeInfo& typeInfo,
     }
 }
 
-WebAssemblyGCStructure* WebAssemblyGCStructure::create(VM& vm, const TypeInfo& typeInfo, const ClassInfo* classInfo, Ref<const Wasm::TypeDefinition>&& unexpandedType, Ref<const Wasm::TypeDefinition>&& type, Ref<const Wasm::RTT>&& rtt)
+WebAssemblyGCStructure* WebAssemblyGCStructure::create(VM& vm, const TypeInfo& typeInfo, const ClassInfo* classInfo, Ref<const Wasm::RTT>&& rtt)
 {
     ASSERT(vm.structureStructure);
     const Wasm::RTT* rttPtr = rtt.ptr();
     DeferGC deferGC(vm);
     return vm.wasmGCStructureMap.ensureValue(rttPtr, [&] {
-        WebAssemblyGCStructure* newStructure = new (NotNull, allocateCell<WebAssemblyGCStructure>(vm)) WebAssemblyGCStructure(vm, typeInfo, classInfo, WTF::move(unexpandedType), WTF::move(type), WTF::move(rtt));
+        WebAssemblyGCStructure* newStructure = new (NotNull, allocateCell<WebAssemblyGCStructure>(vm)) WebAssemblyGCStructure(vm, typeInfo, classInfo, WTF::move(rtt));
         newStructure->finishCreation(vm);
         ASSERT(newStructure->type() == StructureType);
         return newStructure;

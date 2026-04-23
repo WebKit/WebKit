@@ -72,7 +72,7 @@ public:
 
     const Wasm::ModuleInformation& NODELETE moduleInformation() const;
     SymbolTable* NODELETE exportSymbolTable() const;
-    Wasm::TypeIndex typeIndexFromFunctionIndexSpace(Wasm::FunctionSpaceIndex functionIndexSpace) const;
+    const Wasm::RTT& rttFromFunctionIndexSpace(Wasm::FunctionSpaceIndex functionIndexSpace) const;
 
     JS_EXPORT_PRIVATE Wasm::Module& NODELETE module();
 

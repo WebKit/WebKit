@@ -51,8 +51,8 @@ private:
     friend class Procedure;
     friend class Value;
 
-    static Opcode opcodeFromConstructor(Kind, Origin, Value*, Value*, Value*, Ref<const Wasm::RTT>, const Wasm::ArrayType*) { return WasmArraySet; }
-    JS_EXPORT_PRIVATE WasmArraySetValue(Kind, Origin, Value* arrayPtr, Value* index, Value*, Ref<const Wasm::RTT>, const Wasm::ArrayType*);
+    static Opcode opcodeFromConstructor(Kind, Origin, Value*, Value*, Value*, Ref<const Wasm::RTT>) { return WasmArraySet; }
+    JS_EXPORT_PRIVATE WasmArraySetValue(Kind, Origin, Value* arrayPtr, Value* index, Value*, Ref<const Wasm::RTT>);
 };
 
 } // namespace JSC::B3

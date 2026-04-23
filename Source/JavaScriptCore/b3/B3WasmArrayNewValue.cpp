@@ -36,7 +36,7 @@ WasmArrayNewValue::~WasmArrayNewValue() = default;
 
 void WasmArrayNewValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
-    out.print(comma, "typeIndex = ", m_typeIndex, comma, "elementType = ", m_arrayType->elementType().type, comma, "hasInitValue = ", m_hasInitValue);
+    out.print(comma, "typeIndex = ", m_typeIndex, comma, "elementType = ", m_rtt->elementType().type, comma, "hasInitValue = ", m_hasInitValue);
 }
 
 } // namespace JSC::B3

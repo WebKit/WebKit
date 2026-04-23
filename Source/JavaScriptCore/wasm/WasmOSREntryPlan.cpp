@@ -65,7 +65,7 @@ OSREntryPlan::OSREntryPlan(VM& vm, Ref<Module>&& module, Ref<Callee>&& callee, F
     dataLogLnIf(WasmOSREntryPlanInternal::verbose, "Starting OMGForOSREntry plan for ", functionIndex, " of module: ", RawPointer(&m_module.get()));
 }
 
-void OSREntryPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& linkBuffer, const TypeDefinition& signature, FunctionSpaceIndex functionIndexSpace)
+void OSREntryPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& linkBuffer, const RTT& signature, FunctionSpaceIndex functionIndexSpace)
 {
     CompilationMode targetCompilationMode = CompilationMode::OMGForOSREntryMode;
     dataLogLnIf(context.procedure->shouldDumpIR() || shouldDumpDisassemblyFor(targetCompilationMode), "Generated OMGforOSREntry functionIndexSpace:(", functionIndexSpace, "),sig:(", signature.toString().ascii().data(), "),name:(", m_callee->nameWithHash(), "),wasmSize:(", m_moduleInformation->functionWasmSizeImportSpace(functionIndexSpace), ")");
@@ -103,7 +103,7 @@ void OSREntryPlan::work()
     ASSERT(functionIndexSpace < m_module->moduleInformation().functionIndexSpaceSize());
 
     TypeSignatureIndex typeSignatureIndex = m_moduleInformation->internalFunctionTypeSignatureIndices[m_functionIndex];
-    const TypeDefinition& signature = m_moduleInformation->expandedTypeSignature(typeSignatureIndex);
+    const RTT& signature = m_moduleInformation->rtt(typeSignatureIndex);
 
     Ref<IPIntCallee> profiledCallee = m_calleeGroup->ipintCalleeFromFunctionIndexSpace(functionIndexSpace);
     Ref<OMGOSREntryCallee> callee = OMGOSREntryCallee::create(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace), Ref { profiledCallee }, m_loopIndex);

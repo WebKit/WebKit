@@ -370,7 +370,7 @@ WASM_IPINT_EXTERN_CPP_DECL(epilogue_osr, CallFrame* callFrame)
 }
 #endif
 
-static void NODELETE copyExceptionStackToPayload(const Wasm::FunctionSignature& tagType, const IPIntStackEntry* stackPointer, FixedVector<uint64_t>& payload)
+static void copyExceptionStackToPayload(const Wasm::RTT& tagType, const IPIntStackEntry* stackPointer, FixedVector<uint64_t>& payload)
 {
     unsigned payloadIndex = payload.size();
     for (unsigned i = 0; i < tagType.argumentCount(); ++i) {
@@ -384,7 +384,7 @@ static void NODELETE copyExceptionStackToPayload(const Wasm::FunctionSignature& 
     ASSERT(!payloadIndex);
 }
 
-static void NODELETE copyExceptionPayloadToStack(const Wasm::FunctionSignature& tagType, const FixedVector<uint64_t>& payload, IPIntStackEntry* stackPointer)
+static void copyExceptionPayloadToStack(const Wasm::RTT& tagType, const FixedVector<uint64_t>& payload, IPIntStackEntry* stackPointer)
 {
     unsigned payloadIndex = payload.size();
     for (unsigned i = 0; i < tagType.argumentCount(); ++i) {
@@ -738,8 +738,8 @@ WASM_IPINT_EXTERN_CPP_DECL(array_new, uint32_t type, uint32_t size, IPIntStackEn
 {
     WasmSlowPathWithoutCallFrameTracer tracer(instance->vm());
     WebAssemblyGCStructure* structure = instance->gcObjectStructure(type);
-    const Wasm::TypeDefinition& arraySignature = structure->typeDefinition();
-    Wasm::StorageType elementType = arraySignature.as<Wasm::ArrayType>()->elementType().type;
+    const Wasm::RTT& arraySignature = structure->rtt();
+    Wasm::StorageType elementType = arraySignature.elementType().type;
 
     JSValue result;
     if (elementType.unpacked().isV128())
@@ -756,8 +756,8 @@ WASM_IPINT_EXTERN_CPP_DECL(array_new_default, uint32_t type, uint32_t size)
     WasmSlowPathWithoutCallFrameTracer tracer(instance->vm());
     UNUSED_PARAM(instance);
     WebAssemblyGCStructure* structure = instance->gcObjectStructure(type);
-    const Wasm::TypeDefinition& arraySignature = structure->typeDefinition();
-    Wasm::StorageType elementType = arraySignature.as<Wasm::ArrayType>()->elementType().type;
+    const Wasm::RTT& arraySignature = structure->rtt();
+    Wasm::StorageType elementType = arraySignature.elementType().type;
     EncodedJSValue defaultValue = 0;
 
     if (Wasm::isRefType(elementType)) {
@@ -1032,25 +1032,25 @@ WASM_IPINT_EXTERN_CPP_DECL(any_convert_extern, EncodedJSValue value)
 WASM_IPINT_EXTERN_CPP_DECL(ref_test, int32_t heapType, bool allowNull, EncodedJSValue value)
 {
     if (Wasm::typeIndexIsType(static_cast<Wasm::TypeIndex>(heapType))) {
-        bool result = Wasm::refCast(value, allowNull, static_cast<Wasm::TypeIndex>(heapType), nullptr);
+        bool result = Wasm::refCast(value, allowNull, static_cast<Wasm::TypeIndex>(heapType));
         IPINT_RETURN(static_cast<uint64_t>(result));
     }
 
     auto& info = instance->module().moduleInformation();
-    SUPPRESS_UNCOUNTED_ARG bool result = Wasm::refCast(value, allowNull, info.typeIndexFromTypeSignatureIndex(Wasm::ModuleInformation::typeSignatureIndexFromHeapType(heapType)), &info.rtt(Wasm::ModuleInformation::typeSignatureIndexFromHeapType(heapType)));
+    SUPPRESS_UNCOUNTED_ARG bool result = Wasm::refCast(value, allowNull, info.rtt(Wasm::ModuleInformation::typeSignatureIndexFromHeapType(heapType)).asTypeIndex());
     IPINT_RETURN(static_cast<uint64_t>(result));
 }
 
 WASM_IPINT_EXTERN_CPP_DECL(ref_cast, int32_t heapType, bool allowNull, EncodedJSValue value)
 {
     if (Wasm::typeIndexIsType(static_cast<Wasm::TypeIndex>(heapType))) {
-        if (!Wasm::refCast(value, allowNull, static_cast<Wasm::TypeIndex>(heapType), nullptr)) [[unlikely]]
+        if (!Wasm::refCast(value, allowNull, static_cast<Wasm::TypeIndex>(heapType))) [[unlikely]]
             IPINT_THROW(Wasm::ExceptionType::CastFailure);
         IPINT_RETURN(value);
     }
 
     auto& info = instance->module().moduleInformation();
-    SUPPRESS_UNCOUNTED_ARG if (!Wasm::refCast(value, allowNull, info.typeIndexFromTypeSignatureIndex(Wasm::ModuleInformation::typeSignatureIndexFromHeapType(heapType)), &info.rtt(Wasm::ModuleInformation::typeSignatureIndexFromHeapType(heapType)))) [[unlikely]] {
+    SUPPRESS_UNCOUNTED_ARG if (!Wasm::refCast(value, allowNull, info.rtt(Wasm::ModuleInformation::typeSignatureIndexFromHeapType(heapType)).asTypeIndex())) [[unlikely]] {
         if (!allowNull && JSValue::decode(value).isNull())
             IPINT_THROW(Wasm::ExceptionType::NullAccess);
         IPINT_THROW(Wasm::ExceptionType::CastFailure);

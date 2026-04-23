@@ -65,9 +65,9 @@ JSWebAssemblyArray* tryFillArray(JSWebAssemblyInstance* instance, WebAssemblyGCS
 
 inline JSValue arrayNew(JSWebAssemblyInstance* instance, WebAssemblyGCStructure* structure, uint32_t size, EncodedJSValue encValue)
 {
-    const Wasm::TypeDefinition& arraySignature = structure->typeDefinition();
-    ASSERT(arraySignature.is<ArrayType>());
-    Wasm::FieldType fieldType = arraySignature.as<ArrayType>()->elementType();
+    const Wasm::RTT& arrayRTT = structure->rtt();
+    ASSERT(arrayRTT.kind() == Wasm::RTTKind::Array);
+    Wasm::FieldType fieldType = arrayRTT.elementType();
 
     size_t elementSize = fieldType.type.elementSize();
 
@@ -101,9 +101,9 @@ inline JSValue arrayNew(JSWebAssemblyInstance* instance, WebAssemblyGCStructure*
 {
     VM& vm = instance->vm();
 
-    const Wasm::TypeDefinition& arraySignature = structure->typeDefinition();
-    ASSERT(arraySignature.is<ArrayType>());
-    Wasm::FieldType fieldType = arraySignature.as<ArrayType>()->elementType();
+    const Wasm::RTT& arrayRTT = structure->rtt();
+    ASSERT(arrayRTT.kind() == Wasm::RTTKind::Array);
+    Wasm::FieldType fieldType = arrayRTT.elementType();
     ASSERT_UNUSED(fieldType, fieldType.type.unpacked().isV128());
 
     auto* array = JSWebAssemblyArray::tryCreate(vm, structure, size);
@@ -144,9 +144,9 @@ JSWebAssemblyArray* tryCopyElementsInReverse(JSWebAssemblyInstance* instance, We
 inline JSValue arrayNewFixed(JSWebAssemblyInstance* instance, WebAssemblyGCStructure* structure, uint32_t size, IPInt::IPIntStackEntry* arguments)
 {
     // Get the array element type and determine the element size
-    const Wasm::TypeDefinition& arraySignature = structure->typeDefinition();
-    ASSERT(arraySignature.is<ArrayType>());
-    Wasm::FieldType fieldType = arraySignature.as<ArrayType>()->elementType();
+    const Wasm::RTT& arrayRTT = structure->rtt();
+    ASSERT(arrayRTT.kind() == Wasm::RTTKind::Array);
+    Wasm::FieldType fieldType = arrayRTT.elementType();
     size_t elementSize = fieldType.type.elementSize();
 
     // Copy the elements into the result array in reverse order
@@ -205,11 +205,11 @@ inline EncodedJSValue arrayNewData(JSWebAssemblyInstance* instance, uint32_t typ
     // Check that the type index is within bounds
     ASSERT(typeIndex < instance->module().moduleInformation().typeCount());
     WebAssemblyGCStructure* structure = instance->gcObjectStructure(typeIndex);
-    const Wasm::TypeDefinition& arraySignature = structure->typeDefinition();
-    ASSERT(arraySignature.is<ArrayType>());
+    const Wasm::RTT& arrayRTT = structure->rtt();
+    ASSERT(arrayRTT.kind() == Wasm::RTTKind::Array);
 
     // Get the array element type
-    Wasm::FieldType fieldType = arraySignature.as<ArrayType>()->elementType();
+    Wasm::FieldType fieldType = arrayRTT.elementType();
     // Determine the array length in bytes from the element type and desired array size
     size_t elementSize = fieldType.type.elementSize();
 
@@ -262,7 +262,7 @@ inline EncodedJSValue arrayNewElem(JSWebAssemblyInstance* instance, uint32_t typ
     ASSERT(typeIndex < instance->module().moduleInformation().typeCount());
 
     WebAssemblyGCStructure* structure = instance->gcObjectStructure(typeIndex);
-    ASSERT(structure->typeDefinition().is<ArrayType>());
+    ASSERT(structure->rtt().kind() == RTTKind::Array);
 
     // Ensure that adding the offset to the desired array length doesn't overflow int32 or
     // overflow the length of the element segment
@@ -273,7 +273,7 @@ inline EncodedJSValue arrayNewElem(JSWebAssemblyInstance* instance, uint32_t typ
         return JSValue::encode(jsNull());
 
     VM& vm = instance->vm();
-    StorageType arrayType = structure->typeDefinition().as<ArrayType>()->elementType().type;
+    StorageType arrayType = structure->rtt().elementType().type;
     ASSERT_UNUSED(arrayType, !arraySize || isSubtype(StorageType(element->elementType), arrayType));
     auto* array = JSWebAssemblyArray::tryCreate(vm, structure, arraySize);
     if (!array) [[unlikely]]
@@ -295,8 +295,8 @@ inline EncodedJSValue arrayNewElem(JSWebAssemblyInstance* instance, uint32_t typ
 inline void arrayGet(JSWebAssemblyInstance* instance, uint32_t typeIndex, EncodedJSValue arrayValue, uint32_t index, IPInt::IPIntStackEntry* result)
 {
     ASSERT_UNUSED(instance, typeIndex < instance->module().moduleInformation().typeCount());
-    const Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().expandedTypeSignature(Wasm::TypeSignatureIndex(typeIndex));
-    ASSERT_UNUSED(arraySignature, arraySignature.is<ArrayType>());
+    const Wasm::RTT& arraySignature = instance->module().moduleInformation().rtt(Wasm::TypeSignatureIndex(typeIndex));
+    ASSERT_UNUSED(arraySignature, arraySignature.kind() == Wasm::RTTKind::Array);
 
     JSValue arrayRef = JSValue::decode(arrayValue);
     ASSERT(arrayRef.isObject());
@@ -311,14 +311,14 @@ inline void arrayGet(JSWebAssemblyInstance* instance, uint32_t typeIndex, Encode
 inline void arraySet(JSWebAssemblyInstance* instance, uint32_t typeIndex, EncodedJSValue arrayValue, uint32_t index, IPInt::IPIntStackEntry* value)
 {
     ASSERT_UNUSED(instance, typeIndex < instance->module().moduleInformation().typeCount());
-    const Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().expandedTypeSignature(Wasm::TypeSignatureIndex(typeIndex));
-    ASSERT(arraySignature.is<ArrayType>());
+    const Wasm::RTT& arrayRTT = instance->module().moduleInformation().rtt(Wasm::TypeSignatureIndex(typeIndex));
+    ASSERT(arrayRTT.kind() == Wasm::RTTKind::Array);
 
     JSValue arrayRef = JSValue::decode(arrayValue);
     ASSERT(arrayRef.isObject());
     JSWebAssemblyArray* arrayObject = uncheckedDowncast<JSWebAssemblyArray>(arrayRef.getObject());
 
-    Wasm::FieldType elementType = arraySignature.as<ArrayType>()->elementType();
+    Wasm::FieldType elementType = arrayRTT.elementType();
     if (elementType.type.unpacked().isV128())
         arrayObject->set(instance->vm(), index, value->v128);
     else
@@ -466,26 +466,26 @@ inline JSValue structNew(JSWebAssemblyInstance* instance, WebAssemblyGCStructure
     JSGlobalObject* globalObject = instance->realm();
     VM& vm = globalObject->vm();
 
-    ASSERT(structure->typeDefinition().is<StructType>());
-    const StructType& structType = *structure->typeDefinition().as<StructType>();
+    ASSERT(structure->rtt().kind() == Wasm::RTTKind::Struct);
+    const Wasm::RTT& structRTT = structure->rtt();
     JSWebAssemblyStruct* structValue = JSWebAssemblyStruct::create(vm, structure);
     if (static_cast<Wasm::UseDefaultValue>(useDefault) == Wasm::UseDefaultValue::Yes) {
-        for (unsigned i = 0; i < structType.fieldCount(); ++i) {
-            if (structType.field(i).type.unpacked().isV128()) {
+        for (unsigned i = 0; i < structRTT.fieldCount(); ++i) {
+            if (structRTT.field(i).type.unpacked().isV128()) {
                 structValue->set(i, vectorAllZeros());
                 continue;
             }
             EncodedJSValue value = 0;
-            if (Wasm::isRefType(structType.field(i).type))
+            if (Wasm::isRefType(structRTT.field(i).type))
                 value = JSValue::encode(jsNull());
             structValue->set(i, value);
         }
     } else {
         ASSERT(arguments);
-        for (unsigned dstIndex = 0; dstIndex < structType.fieldCount(); ++dstIndex) {
+        for (unsigned dstIndex = 0; dstIndex < structRTT.fieldCount(); ++dstIndex) {
             // Arguments are in reverse order!
-            unsigned srcIndex = structType.fieldCount() - dstIndex - 1;
-            if (structType.field(dstIndex).type.unpacked().isV128())
+            unsigned srcIndex = structRTT.fieldCount() - dstIndex - 1;
+            if (structRTT.field(dstIndex).type.unpacked().isV128())
                 structValue->set(dstIndex, arguments[srcIndex].v128);
             else
                 structValue->set(dstIndex, arguments[srcIndex].i64);
@@ -524,9 +524,9 @@ inline void structSet(EncodedJSValue encodedStructReference, uint32_t fieldIndex
         structPointer->set(fieldIndex, argument->i64);
 }
 
-inline bool refCast(EncodedJSValue encodedReference, bool allowNull, TypeIndex typeIndex, const RTT* rtt)
+inline bool refCast(EncodedJSValue encodedReference, bool allowNull, TypeIndex typeIndex)
 {
-    return TypeInformation::isReferenceValueAssignable(JSValue::decode(encodedReference), allowNull, typeIndex, rtt);
+    return TypeInformation::isReferenceValueAssignable(JSValue::decode(encodedReference), allowNull, typeIndex);
 }
 
 inline EncodedJSValue externInternalize(EncodedJSValue reference)

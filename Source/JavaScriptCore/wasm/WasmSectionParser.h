@@ -31,6 +31,7 @@
 #include "WasmFormat.h"
 #include "WasmOps.h"
 #include "WasmParser.h"
+#include "WasmTypeSectionState.h"
 #include <wtf/text/ASCIILiteral.h>
 #include <wtf/text/MakeString.h>
 
@@ -71,13 +72,13 @@ private:
     [[nodiscard]] PartialResult parseInitExpr(uint8_t&, bool&, uint64_t&, v128_t&, Type, Type& initExprType);
     [[nodiscard]] PartialResult parseI32InitExpr(std::optional<I32InitExpr>&, ASCIILiteral failMessage);
 
-    [[nodiscard]] PartialResult parseFunctionType(uint32_t position, RefPtr<TypeDefinition>&);
+    [[nodiscard]] PartialResult parseFunctionType(uint32_t position, ParsedDef&);
     [[nodiscard]] PartialResult parsePackedType(PackedType&);
     [[nodiscard]] PartialResult parseStorageType(StorageType&);
-    [[nodiscard]] PartialResult parseStructType(uint32_t position, RefPtr<TypeDefinition>&);
-    [[nodiscard]] PartialResult parseArrayType(uint32_t position, RefPtr<TypeDefinition>&);
-    [[nodiscard]] PartialResult parseRecursionGroup(uint32_t position, RefPtr<TypeDefinition>&);
-    [[nodiscard]] PartialResult parseSubtype(uint32_t position, RefPtr<TypeDefinition>&, Vector<TypeIndex>&, bool);
+    [[nodiscard]] PartialResult parseStructType(uint32_t position, ParsedDef&);
+    [[nodiscard]] PartialResult parseArrayType(uint32_t position, ParsedDef&);
+    [[nodiscard]] PartialResult parseRecursionGroup(uint32_t position, ParsedDef&);
+    [[nodiscard]] PartialResult parseSubtype(uint32_t position, ParsedDef&, Vector<TypeIndex>&, bool);
 
     [[nodiscard]] PartialResult validateElementTableIdx(uint32_t, Type);
     [[nodiscard]] PartialResult parseI32InitExprForElementSection(std::optional<I32InitExpr>&);
@@ -88,11 +89,15 @@ private:
 
     [[nodiscard]] PartialResult parseI32InitExprForDataSection(std::optional<I32InitExpr>&);
 
-    static bool checkStructuralSubtype(const TypeDefinition&, const TypeDefinition&);
-    [[nodiscard]] PartialResult checkSubtypeValidity(const TypeDefinition&);
+    static bool checkStructuralSubtype(const RTT& subRTT, const RTT& expandedRTT);
+    [[nodiscard]] PartialResult checkSubtypeValidity(const Subtype&, const RTT& canonicalRTT);
 
     size_t m_offsetInSource;
     const Ref<ModuleInformation> m_info;
+    // Parser-local scaffolding for the type section. Only populated during
+    // parseType(); the base class's m_typeSectionState pointer references
+    // this member for the duration of that call.
+    TypeSectionState m_typeSection;
 };
 
 } } // namespace JSC::Wasm

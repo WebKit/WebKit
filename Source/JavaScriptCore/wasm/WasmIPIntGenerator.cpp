@@ -197,7 +197,7 @@ private:
     struct TryTableTarget {
         CatchKind type;
         uint32_t tag;
-        const TypeDefinition* exceptionSignature;
+        const RTT* exceptionSignature;
         ControlRef target;
     };
     Vector<TryTableTarget> m_tryTableTargets;
@@ -205,7 +205,7 @@ private:
 
 class IPIntGenerator {
 public:
-    IPIntGenerator(ModuleInformation&, FunctionCodeIndex, const TypeDefinition&, std::span<const uint8_t>, FunctionDebugInfo* = nullptr);
+    IPIntGenerator(ModuleInformation&, FunctionCodeIndex, const RTT&, std::span<const uint8_t>, FunctionDebugInfo* = nullptr);
 
     static constexpr bool shouldFuseBranchCompare = false;
 
@@ -238,7 +238,7 @@ public:
 
     std::unique_ptr<FunctionIPIntMetadataGenerator> finalize();
 
-    [[nodiscard]] PartialResult addArguments(const TypeDefinition&);
+    [[nodiscard]] PartialResult addArguments(const RTT&);
     [[nodiscard]] PartialResult addLocal(Type, uint32_t);
     Value addConstant(Type, uint64_t);
 
@@ -354,8 +354,8 @@ public:
     [[nodiscard]] PartialResult addArrayInitData(TypeSignatureIndex, ExpressionType, ExpressionType, uint32_t, ExpressionType, ExpressionType);
     [[nodiscard]] PartialResult addStructNew(TypeSignatureIndex, ArgumentList&, ExpressionType&);
     [[nodiscard]] PartialResult addStructNewDefault(TypeSignatureIndex, ExpressionType&);
-    [[nodiscard]] PartialResult addStructGet(ExtGCOpType, ExpressionType, const StructType&, const RTT&, uint32_t, ExpressionType&);
-    [[nodiscard]] PartialResult addStructSet(ExpressionType, const StructType&, const RTT&, uint32_t, ExpressionType);
+    [[nodiscard]] PartialResult addStructGet(ExtGCOpType, ExpressionType, const RTT&, uint32_t, ExpressionType&);
+    [[nodiscard]] PartialResult addStructSet(ExpressionType, const RTT&, uint32_t, ExpressionType);
     [[nodiscard]] PartialResult addRefTest(ExpressionType, bool, int32_t, bool, ExpressionType&);
     [[nodiscard]] PartialResult addRefCast(ExpressionType, bool, int32_t, ExpressionType&);
     [[nodiscard]] PartialResult addAnyConvertExtern(ExpressionType, ExpressionType&);
@@ -504,8 +504,8 @@ public:
 
     [[nodiscard]] PartialResult addTry(BlockSignature&&, Stack&, ControlType&, Stack&);
     [[nodiscard]] PartialResult addTryTable(BlockSignature&&, Stack& enclosingStack, const Vector<CatchHandler>& targets, ControlType& result, Stack& newStack);
-    [[nodiscard]] PartialResult addCatch(unsigned, const TypeDefinition&, Stack&, ControlType&, ResultList&);
-    [[nodiscard]] PartialResult addCatchToUnreachable(unsigned, const TypeDefinition&, ControlType&, ResultList&);
+    [[nodiscard]] PartialResult addCatch(unsigned, const RTT&, Stack&, ControlType&, ResultList&);
+    [[nodiscard]] PartialResult addCatchToUnreachable(unsigned, const RTT&, ControlType&, ResultList&);
     [[nodiscard]] PartialResult addCatchAll(Stack&, ControlType&);
     [[nodiscard]] PartialResult addCatchAllToUnreachable(ControlType&);
     [[nodiscard]] PartialResult addDelegate(ControlType&, ControlType&);
@@ -533,9 +533,9 @@ public:
 
     // Calls
 
-    [[nodiscard]] PartialResult addCall(unsigned, FunctionSpaceIndex, const TypeDefinition&, ArgumentList&, ResultList&, CallType = CallType::Call);
-    [[nodiscard]] PartialResult addCallIndirect(unsigned, unsigned, const TypeDefinition&, const RTT&, ArgumentList&, ResultList&, CallType = CallType::Call);
-    [[nodiscard]] PartialResult addCallRef(unsigned, const TypeDefinition&, ArgumentList&, ResultList&, CallType = CallType::Call);
+    [[nodiscard]] PartialResult addCall(unsigned, FunctionSpaceIndex, const RTT&, ArgumentList&, ResultList&, CallType = CallType::Call);
+    [[nodiscard]] PartialResult addCallIndirect(unsigned, unsigned, const RTT&, ArgumentList&, ResultList&, CallType = CallType::Call);
+    [[nodiscard]] PartialResult addCallRef(unsigned, const RTT&, ArgumentList&, ResultList&, CallType = CallType::Call);
     [[nodiscard]] PartialResult addUnreachable();
     [[nodiscard]] PartialResult addCrash();
 
@@ -544,8 +544,8 @@ public:
     {
         return m_parser->offset() - m_parser->currentOpcodeStartingOffset();
     }
-    void addCallCommonData(const FunctionSignature&, const CallInformation&);
-    void addTailCallCommonData(const FunctionSignature&, const CallInformation&);
+    void addCallCommonData(const RTT&, const CallInformation&);
+    void addTailCallCommonData(const RTT&, const CallInformation&);
     void NODELETE didFinishParsingLocals()
     {
         m_metadata->m_bytecodeOffset = m_parser->offset();
@@ -614,7 +614,7 @@ public:
         }
     }
 
-    ALWAYS_INLINE const CallInformation& cachedCallInformationFor(const FunctionSignature& signature)
+    ALWAYS_INLINE const CallInformation& cachedCallInformationFor(const RTT& signature)
     {
         if (m_cachedSignature != &signature) {
             m_cachedSignature = &signature;
@@ -671,7 +671,7 @@ private:
     inline uint32_t NODELETE curMC() { return m_metadata->m_metadata.size(); }
 
     CallInformation m_cachedCallInformation { };
-    const FunctionSignature* m_cachedSignature { nullptr };
+    const RTT* m_cachedSignature { nullptr };
     Vector<uint8_t, 16> m_cachedCallBytecode;
 
     Checked<int32_t> m_argumentAndResultsStackSize;
@@ -686,7 +686,7 @@ private:
 // use if (true) to avoid warnings.
 #define IPINT_UNIMPLEMENTED { if (true) { CRASH(); } return { }; }
 
-IPIntGenerator::IPIntGenerator(ModuleInformation& info, FunctionCodeIndex functionIndex, const TypeDefinition&, std::span<const uint8_t> bytecode, FunctionDebugInfo* debugInfo)
+IPIntGenerator::IPIntGenerator(ModuleInformation& info, FunctionCodeIndex functionIndex, const RTT&, std::span<const uint8_t> bytecode, FunctionDebugInfo* debugInfo)
     : m_info(info)
     , m_functionIndex(functionIndex)
     , m_metadata(WTF::makeUnique<FunctionIPIntMetadataGenerator>(functionIndex, bytecode))
@@ -925,20 +925,19 @@ IPIntGenerator::ExpressionType IPIntGenerator::addSIMDConstant(v128_t)
 
 // Locals and Globals
 
-[[nodiscard]] PartialResult IPIntGenerator::addArguments(const TypeDefinition &signature)
+[[nodiscard]] PartialResult IPIntGenerator::addArguments(const RTT& signature)
 {
-    auto sig = signature.as<FunctionSignature>();
-    const CallInformation callCC = wasmCallingConvention().callInformationFor(*sig, CallRole::Callee);
+    const CallInformation callCC = wasmCallingConvention().callInformationFor(signature, CallRole::Callee);
 
     ASSERT(callCC.headerAndArgumentStackSizeInBytes >= callCC.headerIncludingThisSizeInBytes);
     m_argumentAndResultsStackSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(callCC.headerAndArgumentStackSizeInBytes) - callCC.headerIncludingThisSizeInBytes;
     ASSERT(!Options::useWasmIPInt() || !(m_argumentAndResultsStackSize % 16)); // mINT requires this
 
-    auto numArgs = sig->argumentCount();
+    auto numArgs = signature.argumentCount();
     m_metadata->m_numLocals += numArgs;
     m_metadata->m_numArguments = numArgs;
 
-    m_metadata->m_argumINTBytecode.reserveInitialCapacity(sig->argumentCount() + 1);
+    m_metadata->m_argumINTBytecode.reserveInitialCapacity(signature.argumentCount() + 1);
 
     constexpr static int NUM_ARGUMINT_GPRS = 8;
     constexpr static int NUM_ARGUMINT_FPRS = 8;
@@ -988,12 +987,12 @@ IPIntGenerator::ExpressionType IPIntGenerator::addSIMDConstant(v128_t)
         if (m_debugInfo) {
             auto* localTypes = &m_debugInfo->locals;
             for (size_t i = 0; i < numArgs; ++i)
-                localTypes->append(sig->argumentType(i));
+                localTypes->append(signature.argumentType(i));
         }
     }
 #endif
 
-    m_metadata->addReturnData(*sig, callCC);
+    m_metadata->addReturnData(signature, callCC);
     return { };
 }
 
@@ -1304,7 +1303,8 @@ IPIntGenerator::ExpressionType IPIntGenerator::addSIMDConstant(v128_t)
 
 [[nodiscard]] PartialResult IPIntGenerator::addStructNew(TypeSignatureIndex index, ArgumentList&, ExpressionType&)
 {
-    const StructType& type = *m_info.expandedTypeSignature(index).as<StructType>();
+    const RTT& type = m_info.rtt(index);
+    ASSERT(type.kind() == RTTKind::Struct);
     m_metadata->appendMetadata<IPInt::StructNewMetadata>({
         index.rawIndex(),
         static_cast<uint16_t>(type.fieldCount()),
@@ -1324,7 +1324,7 @@ IPIntGenerator::ExpressionType IPIntGenerator::addSIMDConstant(v128_t)
     return { };
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::addStructGet(ExtGCOpType, ExpressionType, const StructType&, const RTT&, uint32_t fieldIndex, ExpressionType&)
+[[nodiscard]] PartialResult IPIntGenerator::addStructGet(ExtGCOpType, ExpressionType, const RTT&, uint32_t fieldIndex, ExpressionType&)
 {
     m_metadata->appendMetadata<IPInt::StructGetSetMetadata>({
         fieldIndex,
@@ -1333,7 +1333,7 @@ IPIntGenerator::ExpressionType IPIntGenerator::addSIMDConstant(v128_t)
     return { };
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::addStructSet(ExpressionType, const StructType&, const RTT&, uint32_t fieldIndex, ExpressionType)
+[[nodiscard]] PartialResult IPIntGenerator::addStructSet(ExpressionType, const RTT&, uint32_t fieldIndex, ExpressionType)
 {
     m_metadata->appendMetadata<IPInt::StructGetSetMetadata>({
         fieldIndex,
@@ -2458,18 +2458,17 @@ void IPIntGenerator::convertTryToCatch(ControlType& tryBlock, CatchKind catchKin
     tryBlock = WTF::move(catchBlock);
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::addCatch(unsigned exceptionIndex, const TypeDefinition& exceptionSignature, Stack&, ControlType& block, ResultList& results)
+[[nodiscard]] PartialResult IPIntGenerator::addCatch(unsigned exceptionIndex, const RTT& exceptionSignature, Stack&, ControlType& block, ResultList& results)
 {
 
     return addCatchToUnreachable(exceptionIndex, exceptionSignature, block, results);
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::addCatchToUnreachable(unsigned exceptionIndex, const TypeDefinition& exceptionSignature, ControlType& block, ResultList& results)
+[[nodiscard]] PartialResult IPIntGenerator::addCatchToUnreachable(unsigned exceptionIndex, const RTT& signature, ControlType& block, ResultList& results)
 {
     if (ControlType::isTry(block))
         convertTryToCatch(block, CatchKind::Catch);
 
-    const FunctionSignature& signature = *exceptionSignature.as<FunctionSignature>();
     for (unsigned i = 0; i < signature.argumentCount(); i++)
         results.append(Value { });
 
@@ -2575,7 +2574,7 @@ void IPIntGenerator::convertTryToCatch(ControlType& tryBlock, CatchKind catchKin
 {
     // IPInt reads throw arguments directly from the operand stack, but BBQ copies
     // them to a separate callee stack area. Track the size BBQ will need.
-    const auto& signature = *m_info.expandedTypeSignature(m_info.typeSignatureIndexFromExceptionIndexSpace(exceptionIndex)).as<FunctionSignature>();
+    const auto& signature = m_info.rtt(m_info.typeSignatureIndexFromExceptionIndexSpace(exceptionIndex));
     unsigned offset = 0;
     for (unsigned i = 0; i < signature.argumentCount(); ++i)
         offset += signature.argumentType(i).kind == TypeKind::V128 ? 2 : 1;
@@ -2977,7 +2976,7 @@ static intptr_t addCallResultBytecode(Vector<uint8_t, 16>& results, const CallIn
     return firstStackResultSPOffset;
 }
 
-void IPIntGenerator::addCallCommonData(const FunctionSignature&, const CallInformation& callConvention)
+void IPIntGenerator::addCallCommonData(const RTT&, const CallInformation& callConvention)
 {
     // cachedCallInformationFor() invalidates this cache on a miss, so if the cache is populated,
     // it was a cache hit and we can use the previously generated payload.
@@ -3015,7 +3014,7 @@ void IPIntGenerator::addCallCommonData(const FunctionSignature&, const CallInfor
     memcpy(m_metadata->m_metadata.mutableSpan().data() + size, m_cachedCallBytecode.mutableSpan().data(), m_cachedCallBytecode.size());
 }
 
-void IPIntGenerator::addTailCallCommonData(const FunctionSignature&, const CallInformation& callConvention)
+void IPIntGenerator::addTailCallCommonData(const RTT&, const CallInformation& callConvention)
 {
     Vector<uint8_t, 16> mINTBytecode;
     addCallArgumentBytecode<true>(mINTBytecode, callConvention);
@@ -3034,9 +3033,8 @@ void IPIntGenerator::addTailCallCommonData(const FunctionSignature&, const CallI
     m_metadata->appendMetadata(stackArgumentsAndResultsInBytes);
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::addCall(unsigned callProfileIndex, FunctionSpaceIndex index, const TypeDefinition& type, ArgumentList&, ResultList& results, CallType callType)
+[[nodiscard]] PartialResult IPIntGenerator::addCall(unsigned callProfileIndex, FunctionSpaceIndex index, const RTT& signature, ArgumentList&, ResultList& results, CallType callType)
 {
-    const FunctionSignature& signature = *type.as<FunctionSignature>();
     const CallInformation& callConvention = cachedCallInformationFor(signature);
     m_metadata->addCallTarget(callProfileIndex, index);
 
@@ -3084,9 +3082,8 @@ void IPIntGenerator::addTailCallCommonData(const FunctionSignature&, const CallI
     return { };
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::addCallIndirect(unsigned callProfileIndex, unsigned tableIndex, const TypeDefinition& expandedSignature, const RTT& rtt, ArgumentList&, ResultList& results, CallType callType)
+[[nodiscard]] PartialResult IPIntGenerator::addCallIndirect(unsigned callProfileIndex, unsigned tableIndex, const RTT& signature, ArgumentList&, ResultList& results, CallType callType)
 {
-    const FunctionSignature& signature = *expandedSignature.as<FunctionSignature>();
     const CallInformation& callConvention = cachedCallInformationFor(signature);
     m_metadata->addCallTarget(callProfileIndex, { });
 
@@ -3106,7 +3103,7 @@ void IPIntGenerator::addTailCallCommonData(const FunctionSignature&, const CallI
             .length = safeCast<uint8_t>(getCurrentInstructionLength()),
             .callProfileIndex = callProfileIndex,
             .tableIndex = tableIndex,
-            .rtt = &rtt,
+            .rtt = &signature,
             .callerStackArgSize = static_cast<int32_t>(m_argumentAndResultsStackSize),
             .argumentBytecode = { }
         };
@@ -3125,7 +3122,7 @@ void IPIntGenerator::addTailCallCommonData(const FunctionSignature&, const CallI
         .length = safeCast<uint8_t>(getCurrentInstructionLength()),
         .callProfileIndex = callProfileIndex,
         .tableIndex = tableIndex,
-        .rtt = &rtt,
+        .rtt = &signature,
         .signature = {
             frameSize,
             static_cast<uint16_t>(signature.returnCount() > signature.argumentCount() ? signature.returnCount() - signature.argumentCount() : 0),
@@ -3139,9 +3136,8 @@ void IPIntGenerator::addTailCallCommonData(const FunctionSignature&, const CallI
     return { };
 }
 
-[[nodiscard]] PartialResult IPIntGenerator::addCallRef(unsigned callProfileIndex, const TypeDefinition& expandedSignature, ArgumentList&, ResultList& results, CallType callType)
+[[nodiscard]] PartialResult IPIntGenerator::addCallRef(unsigned callProfileIndex, const RTT& signature, ArgumentList&, ResultList& results, CallType callType)
 {
-    const FunctionSignature& signature = *expandedSignature.as<FunctionSignature>();
     const CallInformation& callConvention = cachedCallInformationFor(signature);
     m_metadata->addCallTarget(callProfileIndex, { });
 
@@ -3222,7 +3218,7 @@ std::unique_ptr<FunctionIPIntMetadataGenerator> IPIntGenerator::finalize()
     return WTF::move(m_metadata);
 }
 
-Expected<std::unique_ptr<FunctionIPIntMetadataGenerator>, String> parseAndCompileMetadata(std::span<const uint8_t> function, const TypeDefinition& signature, ModuleInformation& info, FunctionCodeIndex functionIndex)
+Expected<std::unique_ptr<FunctionIPIntMetadataGenerator>, String> parseAndCompileMetadata(std::span<const uint8_t> function, const RTT& signature, ModuleInformation& info, FunctionCodeIndex functionIndex)
 {
     IPIntGenerator generator(info, functionIndex, signature, function);
     FunctionParser<IPIntGenerator> parser(generator, function, signature, info);
@@ -3230,7 +3226,7 @@ Expected<std::unique_ptr<FunctionIPIntMetadataGenerator>, String> parseAndCompil
     return generator.finalize();
 }
 
-void parseForDebugInfo(std::span<const uint8_t> function, const TypeDefinition& signature, ModuleInformation& info, FunctionCodeIndex functionIndex, FunctionDebugInfo& debugInfo)
+void parseForDebugInfo(std::span<const uint8_t> function, const RTT& signature, ModuleInformation& info, FunctionCodeIndex functionIndex, FunctionDebugInfo& debugInfo)
 {
     IPIntGenerator generator(info, functionIndex, signature, function, &debugInfo);
     FunctionParser<IPIntGenerator> parser(generator, function, signature, info);

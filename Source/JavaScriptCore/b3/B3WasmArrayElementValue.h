@@ -43,7 +43,6 @@ public:
     ~WasmArrayElementValue() override;
 
     Ref<const Wasm::RTT> rtt() const { return m_rtt; }
-    const Wasm::ArrayType* arrayType() const { return m_arrayType; }
 
     const HeapRange& range() const { return m_range; }
     void setRange(HeapRange range) { m_range = range; }
@@ -51,16 +50,14 @@ public:
 
 protected:
     template<typename... Arguments>
-    WasmArrayElementValue(CheckedOpcodeTag tag, Kind kind, Type type, NumChildren numChildren, Origin origin, Ref<const Wasm::RTT> rtt, const Wasm::ArrayType* arrayType, Mutability mutability, Arguments... arguments)
+    WasmArrayElementValue(CheckedOpcodeTag tag, Kind kind, Type type, NumChildren numChildren, Origin origin, Ref<const Wasm::RTT> rtt, Mutability mutability, Arguments... arguments)
         : Value(tag, kind, type, numChildren, origin, arguments...)
         , m_rtt(WTF::move(rtt))
-        , m_arrayType(arrayType)
         , m_mutability(mutability)
     {
     }
 
     const Ref<const Wasm::RTT> m_rtt;
-    SUPPRESS_UNCOUNTED_MEMBER const Wasm::ArrayType* m_arrayType;
     HeapRange m_range { HeapRange::top() };
     Mutability m_mutability;
 };

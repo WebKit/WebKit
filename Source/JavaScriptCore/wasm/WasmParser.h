@@ -37,6 +37,7 @@
 #include "WasmOps.h"
 #include "WasmSections.h"
 #include "WasmTypeDefinitionInlines.h"
+#include "WasmTypeSectionState.h"
 #include "Width.h"
 #include <type_traits>
 #include <wtf/Expected.h>
@@ -67,12 +68,6 @@ public:
     size_t offset() const { return m_offset; }
 
 protected:
-    struct RecursionGroupInformation {
-        bool inRecursionGroup;
-        uint32_t start;
-        uint32_t end;
-    };
-
     explicit ParserBase(std::span<const uint8_t>);
 
     [[nodiscard]] bool consumeCharacter(char);
@@ -128,10 +123,10 @@ private:
     std::span<const uint8_t> m_source;
 
 protected:
-    // We keep a local reference to the global table so we don't have to fetch it to find thunk types.
-    const TypeInformation& m_typeInformation;
-    // Used to track whether we are in a recursion group and the group's type indices, if any.
-    RecursionGroupInformation m_recursionGroupInformation;
+    // Parser-local state for Subtype / Projection / RecursionGroup objects;
+    // set by SectionParser::parseType for the duration of the type section,
+    // null otherwise. Also carries the currently-active RecursionGroupInformation.
+    TypeSectionState* m_typeSectionState { nullptr };
 };
 
 template<typename SuccessType> class Parser : public ParserBase {
@@ -145,8 +140,6 @@ public:
 
 ALWAYS_INLINE ParserBase::ParserBase(std::span<const uint8_t> source)
     : m_source(source)
-    , m_typeInformation(TypeInformation::singleton())
-    , m_recursionGroupInformation({ })
 {
 }
 
@@ -314,7 +307,7 @@ ALWAYS_INLINE bool ParserBase::parseHeapType(const ModuleInformation& info, int3
         return false;
     }
 
-    if (static_cast<size_t>(heapType) >= info.typeCount() && (!m_recursionGroupInformation.inRecursionGroup || !(static_cast<uint32_t>(heapType) >= m_recursionGroupInformation.start && static_cast<uint32_t>(heapType) < m_recursionGroupInformation.end)))
+    if (static_cast<size_t>(heapType) >= info.typeCount() && (!m_typeSectionState || !m_typeSectionState->recursionGroupInformation.inRecursionGroup || !(static_cast<uint32_t>(heapType) >= m_typeSectionState->recursionGroupInformation.start && static_cast<uint32_t>(heapType) < m_typeSectionState->recursionGroupInformation.end)))
         return false;
 
     result = heapType;
@@ -344,15 +337,14 @@ ALWAYS_INLINE bool ParserBase::parseValueType(const ModuleInformation& info, Typ
             // For recursive references inside recursion groups, we construct a
             // placeholder projection with an invalid group index. These should
             // be replaced with a real type index in expand() before use.
-            if (m_recursionGroupInformation.inRecursionGroup && static_cast<uint32_t>(heapType) >= m_recursionGroupInformation.start) {
-                ASSERT(static_cast<uint32_t>(heapType) >= info.typeCount() && static_cast<uint32_t>(heapType) < m_recursionGroupInformation.end);
-                ProjectionIndex groupIndex = static_cast<ProjectionIndex>(heapType - m_recursionGroupInformation.start);
-                RefPtr<TypeDefinition> def = TypeInformation::getPlaceholderProjection(groupIndex);
-                RELEASE_ASSERT(def->refCount() > 2); // tbl + RefPtr + owner
-                typeIndex = def->index(); // Owned by TypeInformation placeholder projections singleton.
+            if (m_typeSectionState && m_typeSectionState->recursionGroupInformation.inRecursionGroup && static_cast<uint32_t>(heapType) >= m_typeSectionState->recursionGroupInformation.start) {
+                ASSERT(static_cast<uint32_t>(heapType) >= info.typeCount() && static_cast<uint32_t>(heapType) < m_typeSectionState->recursionGroupInformation.end);
+                ProjectionIndex groupIndex = static_cast<ProjectionIndex>(heapType - m_typeSectionState->recursionGroupInformation.start);
+                const Projection* def = m_typeSectionState->createPlaceholderProjection(groupIndex);
+                typeIndex = tagAsProjection(def); // Tagged so isRefWithRecursiveReference can detect.
             } else {
                 ASSERT(static_cast<uint32_t>(heapType) < info.typeCount());
-                SUPPRESS_UNCOUNTED_ARG typeIndex = TypeInformation::get(info.typeSignature(ModuleInformation::typeSignatureIndexFromHeapType(heapType)));
+                typeIndex = info.rtt(ModuleInformation::typeSignatureIndexFromHeapType(heapType)).asTypeIndex();
             }
         }
     }

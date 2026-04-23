@@ -188,14 +188,7 @@ private:
     }
 
 public:
-
-    CallInformation callInformationFor(const TypeDefinition& type, CallRole role = CallRole::Caller) const
-    {
-        SUPPRESS_UNCOUNTED_LOCAL const auto& signature = *type.as<FunctionSignature>();
-        return callInformationFor(signature, role);
-    }
-
-    CallInformation callInformationFor(const FunctionSignature& signature, CallRole role = CallRole::Caller) const
+    CallInformation callInformationFor(const RTT& signature, CallRole role = CallRole::Caller) const
     {
         size_t gpArgumentCount = 0;
         size_t fpArgumentCount = 0;
@@ -280,12 +273,7 @@ private:
     }
 
 public:
-    CallInformation callInformationFor(const TypeDefinition& signature, CallRole role = CallRole::Callee) const
-    {
-        SUPPRESS_UNCOUNTED_LOCAL auto& functionSignature = *signature.as<FunctionSignature>();
-        return callInformationFor(functionSignature, role);
-    }
-    CallInformation callInformationFor(const FunctionSignature& signature, CallRole role = CallRole::Callee) const
+    CallInformation callInformationFor(const RTT& signature, CallRole role = CallRole::Callee) const
     {
         size_t gpArgumentCount = 0;
         size_t fpArgumentCount = 0;
@@ -391,7 +379,7 @@ private:
     }
 
 public:
-    uint32_t numberOfStackResults(const FunctionSignature& signature) const
+    uint32_t numberOfStackResults(const RTT& signature) const
     {
         const uint32_t gprCount = gprArgs.size();
         const uint32_t fprCount = fprArgs.size();
@@ -432,7 +420,7 @@ public:
         return stackCount;
     }
 
-    uint32_t numberOfStackArguments(const FunctionSignature& signature) const
+    uint32_t numberOfStackArguments(const RTT& signature) const
     {
         const uint32_t gprCount = gprArgs.size();
         const uint32_t fprCount = fprArgs.size();
@@ -475,9 +463,8 @@ public:
         return stackCount;
     }
 
-    CallInformation callInformationFor(const TypeDefinition& type, CallRole role = CallRole::Caller) const
+    CallInformation callInformationFor(const RTT& signature, CallRole role = CallRole::Caller) const
     {
-        const auto& signature = *type.as<FunctionSignature>();
         size_t gpArgumentCount = 0;
         size_t fpArgumentCount = 0;
         size_t headerSize = headerSizeInBytes;

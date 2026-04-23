@@ -80,12 +80,12 @@ JSC_DECLARE_JIT_OPERATION(operationConvertToI64, int64_t, (JSWebAssemblyInstance
 JSC_DECLARE_JIT_OPERATION(operationConvertToF64, double, (JSWebAssemblyInstance*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationConvertToI32, UCPUStrictInt32, (JSWebAssemblyInstance*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationConvertToF32, float, (JSWebAssemblyInstance*, EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationConvertToFuncref, EncodedJSValue, (JSWebAssemblyInstance*, const TypeDefinition*, EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationConvertToAnyref, EncodedJSValue, (JSWebAssemblyInstance*, const TypeDefinition*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationConvertToFuncref, EncodedJSValue, (JSWebAssemblyInstance*, const RTT*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationConvertToAnyref, EncodedJSValue, (JSWebAssemblyInstance*, const RTT*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationConvertToBigInt, EncodedJSValue, (JSWebAssemblyInstance*, EncodedWasmValue));
 
-JSC_DECLARE_JIT_OPERATION(operationIterateResults, void, (JSWebAssemblyInstance*, const TypeDefinition*, EncodedJSValue, uint64_t*, uint64_t*));
-JSC_DECLARE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (JSWebAssemblyInstance*, const FunctionSignature*, IndexingType, JSValue*));
+JSC_DECLARE_JIT_OPERATION(operationIterateResults, void, (JSWebAssemblyInstance*, const RTT*, EncodedJSValue, uint64_t*, uint64_t*));
+JSC_DECLARE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (JSWebAssemblyInstance*, const RTT*, IndexingType, JSValue*));
 
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmWriteBarrierSlowPath, void, (JSCell*, VM*));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationPopcount32, UCPUStrictInt32, (int32_t));
