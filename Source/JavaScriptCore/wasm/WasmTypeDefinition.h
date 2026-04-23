@@ -42,6 +42,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/HashTraits.h>
 #include <wtf/Lock.h>
+#include <wtf/ReadWriteLock.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -1014,7 +1015,7 @@ private:
     RefPtr<FunctionSignature> m_Void_I32AnyrefI32;
     RefPtr<FunctionSignature> m_Void_I32AnyrefI32I32I32I32;
     RefPtr<FunctionSignature> m_Void_I32AnyrefI32I32AnyrefI32I32;
-    Lock m_lock;
+    ReadWriteLock m_lock;
 };
 
 } } // namespace JSC::Wasm

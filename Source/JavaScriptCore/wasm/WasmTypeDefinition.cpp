@@ -960,7 +960,7 @@ RefPtr<FunctionSignature> TypeInformation::typeDefinitionForFunction(const Vecto
         ASSERT(!args.contains(Wasm::Types::Void));
     }
     TypeInformation& info = singleton();
-    Locker locker { info.m_lock };
+    Locker locker { info.m_lock.write() };
 
     auto addResult = info.m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { results, args });
     return addResult.iterator->key->as<FunctionSignature>();
@@ -969,7 +969,7 @@ RefPtr<FunctionSignature> TypeInformation::typeDefinitionForFunction(const Vecto
 RefPtr<StructType> TypeInformation::typeDefinitionForStruct(const Vector<FieldType>& fields)
 {
     TypeInformation& info = singleton();
-    Locker locker { info.m_lock };
+    Locker locker { info.m_lock.write() };
 
     auto addResult = info.m_typeSet.template add<StructParameterTypes>(StructParameterTypes { fields });
     return addResult.iterator->key->as<StructType>();
@@ -978,7 +978,7 @@ RefPtr<StructType> TypeInformation::typeDefinitionForStruct(const Vector<FieldTy
 RefPtr<ArrayType> TypeInformation::typeDefinitionForArray(FieldType elementType)
 {
     TypeInformation& info = singleton();
-    Locker locker { info.m_lock };
+    Locker locker { info.m_lock.write() };
 
     auto addResult = info.m_typeSet.template add<ArrayParameterTypes>(ArrayParameterTypes { elementType });
     return addResult.iterator->key->as<ArrayType>();
@@ -987,7 +987,7 @@ RefPtr<ArrayType> TypeInformation::typeDefinitionForArray(FieldType elementType)
 RefPtr<RecursionGroup> TypeInformation::typeDefinitionForRecursionGroup(const Vector<TypeIndex>& types)
 {
     TypeInformation& info = singleton();
-    Locker locker { info.m_lock };
+    Locker locker { info.m_lock.write() };
 
     auto addResult = info.m_typeSet.template add<RecursionGroupParameterTypes>(RecursionGroupParameterTypes { types });
     return addResult.iterator->key->as<RecursionGroup>();
@@ -996,7 +996,7 @@ RefPtr<RecursionGroup> TypeInformation::typeDefinitionForRecursionGroup(const Ve
 RefPtr<Projection> TypeInformation::typeDefinitionForProjection(TypeIndex recursionGroup, ProjectionIndex projectionIndex)
 {
     TypeInformation& info = singleton();
-    Locker locker { info.m_lock };
+    Locker locker { info.m_lock.write() };
 
     auto addResult = info.m_typeSet.template add<ProjectionParameterTypes>(ProjectionParameterTypes { recursionGroup, projectionIndex });
     return addResult.iterator->key->as<Projection>();
@@ -1005,7 +1005,7 @@ RefPtr<Projection> TypeInformation::typeDefinitionForProjection(TypeIndex recurs
 RefPtr<Subtype> TypeInformation::typeDefinitionForSubtype(const Vector<TypeIndex>& superTypes, TypeIndex underlyingType, bool isFinal)
 {
     TypeInformation& info = singleton();
-    Locker locker { info.m_lock };
+    Locker locker { info.m_lock.write() };
 
     auto addResult = info.m_typeSet.template add<SubtypeParameterTypes>(SubtypeParameterTypes { superTypes, underlyingType, isFinal });
     return addResult.iterator->key->as<Subtype>();
@@ -1017,7 +1017,7 @@ RefPtr<Projection> TypeInformation::getPlaceholderProjection(ProjectionIndex pro
     auto projection = typeDefinitionForProjection(Projection::PlaceholderGroup, projectionIndex);
 
     {
-        Locker locker { info.m_lock };
+        Locker locker { info.m_lock.write() };
         info.m_placeholders.add(projection);
     }
 
@@ -1027,7 +1027,7 @@ RefPtr<Projection> TypeInformation::getPlaceholderProjection(ProjectionIndex pro
 void TypeInformation::addCachedUnrolling(TypeIndex type, const TypeDefinition& unrolled)
 {
     TypeInformation& info = singleton();
-    Locker locker { info.m_lock };
+    Locker locker { info.m_lock.write() };
 
     info.m_unrollingCache.add(type, RefPtr { &unrolled });
 }
@@ -1035,7 +1035,7 @@ void TypeInformation::addCachedUnrolling(TypeIndex type, const TypeDefinition& u
 std::optional<TypeIndex> TypeInformation::tryGetCachedUnrolling(TypeIndex type)
 {
     TypeInformation& info = singleton();
-    Locker locker { info.m_lock };
+    Locker locker { info.m_lock.read() };
 
     const auto iterator = info.m_unrollingCache.find(type);
     if (iterator == info.m_unrollingCache.end())
@@ -1161,7 +1161,7 @@ bool TypeInformation::isReferenceValueAssignable(JSValue refValue, bool allowNul
 void TypeInformation::tryCleanup()
 {
     TypeInformation& info = singleton();
-    Locker locker { info.m_lock };
+    Locker locker { info.m_lock.write() };
 
     bool changed;
     do {
