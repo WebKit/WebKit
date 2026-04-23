@@ -706,13 +706,19 @@ float HTMLImageElement::effectiveImageDevicePixelRatio() const
 unsigned HTMLImageElement::naturalWidth() const
 {
     RefPtr image = m_imageLoader->image();
-    return image ? image->unclampedImageSizeForRenderer(protect(renderer()).get(), effectiveImageDevicePixelRatio()).width().toUnsigned() : 0;
+    if (!image)
+        return 0;
+    CheckedPtr renderer = this->renderer();
+    return image->unclampedImageSizeForRenderer(renderer.get(), effectiveImageDevicePixelRatio(), CachedImage::UsedSize, ImageOrientation::Orientation::FromImage).width().toUnsigned();
 }
 
 unsigned HTMLImageElement::naturalHeight() const
 {
     RefPtr image = m_imageLoader->image();
-    return image ? image->unclampedImageSizeForRenderer(protect(renderer()).get(), effectiveImageDevicePixelRatio()).height().toUnsigned() : 0;
+    if (!image)
+        return 0;
+    CheckedPtr renderer = this->renderer();
+    return image->unclampedImageSizeForRenderer(renderer.get(), effectiveImageDevicePixelRatio(), CachedImage::UsedSize, ImageOrientation::Orientation::FromImage).height().toUnsigned();
 }
 
 bool HTMLImageElement::isURLAttribute(const Attribute& attribute) const

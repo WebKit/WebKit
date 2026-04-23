@@ -308,7 +308,7 @@ void CachedImage::setContainerContextForClient(const CachedImageClient& client, 
     m_svgImageCache->setContainerContextForClient(client, containerSize, containerZoom, imageURL);
 }
 
-FloatSize CachedImage::imageSizeForRenderer(const RenderElement* renderer, SizeType sizeType) const
+FloatSize CachedImage::imageSizeForRenderer(const RenderElement* renderer, SizeType sizeType, std::optional<ImageOrientation> orientationOverride) const
 {
     RefPtr image = m_image;
     if (!image)
@@ -322,13 +322,14 @@ FloatSize CachedImage::imageSizeForRenderer(const RenderElement* renderer, SizeT
     if (image->drawsSVGImage() && sizeType == UsedSize)
         return m_svgImageCache->imageSizeForRenderer(renderer);
 
-    return image->size(renderer ? renderer->imageOrientation() : ImageOrientation(ImageOrientation::Orientation::FromImage));
+    auto orientation = orientationOverride.value_or(renderer ? renderer->imageOrientation() : ImageOrientation(ImageOrientation::Orientation::FromImage));
+    return image->size(orientation);
 }
 
 
-LayoutSize CachedImage::unclampedImageSizeForRenderer(const RenderElement* renderer, float multiplier, SizeType sizeType) const
+LayoutSize CachedImage::unclampedImageSizeForRenderer(const RenderElement* renderer, float multiplier, SizeType sizeType, std::optional<ImageOrientation> orientationOverride) const
 {
-    LayoutSize imageSize = LayoutSize(imageSizeForRenderer(renderer, sizeType));
+    LayoutSize imageSize = LayoutSize(imageSizeForRenderer(renderer, sizeType, orientationOverride));
     if (imageSize.isEmpty() || multiplier == 1.0f)
         return imageSize;
 
