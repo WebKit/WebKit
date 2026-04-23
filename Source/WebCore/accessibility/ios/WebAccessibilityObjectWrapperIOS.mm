@@ -73,6 +73,10 @@
 #import "ModelPlayerAccessibilityChildren.h"
 #endif
 
+#if USE(BROWSERENGINEKIT)
+#import <BrowserEngineKit/BrowserEngineKit.h>
+#endif
+
 #if ENABLE(SPATIAL_IMAGE_CONTROLS)
 #import "HTMLImageElement.h"
 #import "SpatialImageControls.h"
@@ -2093,7 +2097,7 @@ static NSArray *accessibleElementsForObjects(const AXCoreObject::AccessibilityCh
     return makeNSArray(accessibleElements);
 }
 
-- (NSArray *)accessibilityDetailsElements
+- (NSArray<NSObject *> *)browserAccessibilityDetailsElements
 {
     if (![self _prepareAccessibilityCall])
         return nil;
@@ -3372,30 +3376,32 @@ static RenderObject* rendererForView(WAKView* view)
     return [NSString stringWithFormat:@"%@: %@", [self class], [self accessibilityLabel]];
 }
 
-- (AccessibilityOrientation)accessibilityOrientation
+#if USE(BROWSERENGINEKIT)
+- (BEAccessibilityOrientation)browserAccessibilityOrientation
 {
     if (![self _prepareAccessibilityCall])
-        return AccessibilityOrientation::Undefined;
+        return BEAccessibilityOrientationUnknown;
 
     std::optional defaultOrientation = self.axBackingObject->defaultOrientation();
-    // If we don't have a default orientation (unknown or otherwise), don't expose anything.
     if (!defaultOrientation)
-        return AccessibilityOrientation::Undefined;
+        return BEAccessibilityOrientationUnknown;
 
-    // If the orientation is the default, we don't need to share that with ATs.
     std::optional orientation = self.axBackingObject->orientation();
-    return orientation && *orientation == *defaultOrientation ? AccessibilityOrientation::Undefined : *orientation;
+    if (orientation && *orientation != *defaultOrientation) {
+        switch (*orientation) {
+        case AccessibilityOrientation::Vertical:
+            return BEAccessibilityOrientationVertical;
+        case AccessibilityOrientation::Horizontal:
+            return BEAccessibilityOrientationHorizontal;
+        case AccessibilityOrientation::Undefined:
+            break;
+        }
+    }
+    return BEAccessibilityOrientationUnknown;
 }
+#endif
 
-- (BOOL)accessibilitySupportsKeyboardShortcuts
-{
-    if (![self _prepareAccessibilityCall])
-        return NO;
-
-    return self.axBackingObject->supportsKeyShortcuts();
-}
-
-- (NSString *)accessibilityKeyboardShortcuts
+- (NSString *)browserAccessibilityKeyboardShortcuts
 {
     if (![self _prepareAccessibilityCall])
         return nil;
