@@ -44,6 +44,8 @@
 #include "HeapSnapshotBuilder.h"
 #include "InterpreterInlines.h"
 #include "JITSizeStatistics.h"
+#include "JITPlan.h"
+#include "JITWorklist.h"
 #include "JSArray.h"
 #include "JSCInlines.h"
 #include "JSGlobalProxyInlines.h"
@@ -228,6 +230,122 @@ private:
 };
 
 const ClassInfo JSDollarVMCallFrame::s_info = { "CallFrame"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDollarVMCallFrame) };
+
+#if ENABLE(JIT)
+// CompilerThreadStallHandle - holds synchronization state for stalling a compiler thread
+struct CompilerThreadStallHandle : public ThreadSafeRefCounted<CompilerThreadStallHandle> {
+    std::atomic<bool> stallRequested { true };
+    std::atomic<bool> stalled { false };
+    StackBounds stackBounds { StackBounds::emptyBounds() };
+    Lock lock;
+    Condition condition;
+};
+
+// StallPlan - a JITPlan that stalls instead of compiling, for testing purposes
+class StallPlan final : public JITPlan {
+public:
+    StallPlan(CodeBlock* codeBlock, Ref<CompilerThreadStallHandle>&& handle)
+        : JITPlan(JITCompilationMode::Baseline, codeBlock)
+        , m_handle(WTF::move(handle))
+    {
+        DollarVMAssertScope assertScope;
+    }
+
+    CompilationPath compileInThreadImpl() final
+    {
+        DollarVMAssertScope assertScope;
+
+        // Capture our stack bounds
+        m_handle->stackBounds = Thread::currentSingleton().stack();
+
+        // Signal that we're stalled
+        {
+            Locker locker { m_handle->lock };
+            m_handle->stalled = true;
+            m_handle->condition.notifyAll();
+        }
+
+        // Wait until released
+        {
+            Locker locker { m_handle->lock };
+            while (m_handle->stallRequested)
+                m_handle->condition.wait(m_handle->lock);
+        }
+
+        return BaselinePath;
+    }
+
+    size_t codeSize() const final { return 0; }
+
+    CompilationResult finalize() final
+    {
+        DollarVMAssertScope assertScope;
+        // Don't actually install any code
+        return CompilationResult::CompilationSuccessful;
+    }
+
+    bool isKnownToBeLiveAfterGC() final { return m_stage != JITPlanStage::Canceled; }
+    bool isKnownToBeLiveDuringGC(AbstractSlotVisitor&) final { return m_stage != JITPlanStage::Canceled; }
+
+private:
+    Ref<CompilerThreadStallHandle> m_handle;
+};
+
+// JSCompilerThreadStallHandle - JS wrapper exposing the stall handle
+class JSCompilerThreadStallHandle : public JSDestructibleObject {
+    using Base = JSDestructibleObject;
+public:
+    template<typename CellType, SubspaceAccess>
+    static CompleteSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.destructibleObjectSpace();
+    }
+
+    static JSCompilerThreadStallHandle* create(VM& vm, Structure* structure, Ref<CompilerThreadStallHandle>&& handle)
+    {
+        DollarVMAssertScope assertScope;
+        JSCompilerThreadStallHandle* result = new (NotNull, allocateCell<JSCompilerThreadStallHandle>(vm)) JSCompilerThreadStallHandle(vm, structure, WTF::move(handle));
+        result->finishCreation(vm);
+        return result;
+    }
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        DollarVMAssertScope assertScope;
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    }
+
+    DECLARE_INFO;
+
+    CompilerThreadStallHandle& handle() { return m_handle.get(); }
+
+    void release()
+    {
+        DollarVMAssertScope assertScope;
+        Locker locker { m_handle->lock };
+        m_handle->stallRequested = false;
+        m_handle->condition.notifyAll();
+    }
+
+private:
+    JSCompilerThreadStallHandle(VM& vm, Structure* structure, Ref<CompilerThreadStallHandle>&& handle)
+        : Base(vm, structure)
+        , m_handle(WTF::move(handle))
+    {
+        DollarVMAssertScope assertScope;
+    }
+
+    void finishCreation(VM& vm)
+    {
+        DollarVMAssertScope assertScope;
+        Base::finishCreation(vm);
+    }
+
+    Ref<CompilerThreadStallHandle> m_handle;
+};
+
+const ClassInfo JSCompilerThreadStallHandle::s_info = { "CompilerThreadStallHandle"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCompilerThreadStallHandle) };
+#endif // ENABLE(JIT)
 
 class ElementHandleOwner;
 class Root;
@@ -2239,6 +2357,8 @@ static JSC_DECLARE_HOST_FUNCTION(functionHeapExtraMemorySize);
 static JSC_DECLARE_HOST_FUNCTION(functionJITSizeStatistics);
 static JSC_DECLARE_HOST_FUNCTION(functionDumpJITSizeStatistics);
 static JSC_DECLARE_HOST_FUNCTION(functionResetJITSizeStatistics);
+static JSC_DECLARE_HOST_FUNCTION(functionStallCompilerThread);
+static JSC_DECLARE_HOST_FUNCTION(functionReleaseStallHandle);
 #endif
 
 static JSC_DECLARE_HOST_FUNCTION(functionAllowDoubleShape);
@@ -4227,6 +4347,69 @@ JSC_DEFINE_HOST_FUNCTION(functionResetJITSizeStatistics, (JSGlobalObject* global
     vm.jitSizeStatistics->reset();
     return JSValue::encode(jsUndefined());
 }
+
+// Usage: var handle = $vm.stallCompilerThread(function() {})
+// The function argument is used to get a CodeBlock for the plan.
+// Returns an object with stackBase, stackBound properties and a release() method.
+JSC_DEFINE_HOST_FUNCTION(functionStallCompilerThread, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue functionValue = callFrame->argument(0);
+    FunctionExecutable* executable = getExecutableForFunction(functionValue);
+    if (!executable)
+        return throwVMError(globalObject, scope, "Could not get FunctionExecutable from function"_s);
+
+    CodeBlock* codeBlock = executable->baselineCodeBlockFor(CodeSpecializationKind::CodeForCall);
+    JITWorklist* worklist = JITWorklist::existingGlobalWorklistOrNull();
+    if (!worklist)
+        worklist = &JITWorklist::ensureGlobalWorklist();
+
+    auto handle = adoptRef(*new CompilerThreadStallHandle());
+    Ref<JITPlan> plan = adoptRef(*new StallPlan(codeBlock, handle.copyRef()));
+
+    // Enqueue the stall plan and wait for the compiler thread to
+    // get into the loop
+    worklist->enqueue(WTF::move(plan));
+    {
+        Locker locker { handle->lock };
+        while (!handle->stalled)
+            handle->condition.wait(handle->lock);
+    }
+
+    Structure* structure = JSCompilerThreadStallHandle::createStructure(vm, globalObject, jsNull());
+    JSCompilerThreadStallHandle* jsHandle = JSCompilerThreadStallHandle::create(vm, structure, handle.copyRef());
+#if CPU(ADDRESS64)
+    using targetType = double;
+#else
+    using targetType = float;
+#endif
+    jsHandle->putDirect(vm, Identifier::fromString(vm, "stackBase"_s), jsNumber(std::bit_cast<targetType>(reinterpret_cast<uintptr_t>(handle->stackBounds.origin()))));
+    jsHandle->putDirect(vm, Identifier::fromString(vm, "stackBound"_s), jsNumber(std::bit_cast<targetType>(reinterpret_cast<uintptr_t>(handle->stackBounds.end()))));
+
+    return JSValue::encode(jsHandle);
+}
+
+// Releases a stalled compiler thread.
+// Usage: $vm.releaseStallHandle(handle)
+JSC_DEFINE_HOST_FUNCTION(functionReleaseStallHandle, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue handleValue = callFrame->argument(0);
+    JSCompilerThreadStallHandle* jsHandle = jsDynamicCast<JSCompilerThreadStallHandle*>(handleValue);
+    if (!jsHandle)
+        return throwVMError(globalObject, scope, "Argument is not a CompilerThreadStallHandle"_s);
+
+    jsHandle->release();
+    return JSValue::encode(jsUndefined());
+}
 #endif
 
 // Checks if DoubleShape is allowed.
@@ -4562,6 +4745,8 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "jitSizeStatistics"_s, functionJITSizeStatistics, 0);
     addFunction(vm, "dumpJITSizeStatistics"_s, functionDumpJITSizeStatistics, 0);
     addFunction(vm, "resetJITSizeStatistics"_s, functionResetJITSizeStatistics, 0);
+    addFunction(vm, "stallCompilerThread"_s, functionStallCompilerThread, 1);
+    addFunction(vm, "releaseStallHandle"_s, functionReleaseStallHandle, 1);
 #endif
 
     addFunction(vm, "allowDoubleShape"_s, functionAllowDoubleShape, 0);
