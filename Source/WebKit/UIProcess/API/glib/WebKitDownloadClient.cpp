@@ -93,28 +93,30 @@ private:
 
     void didFail(DownloadProxy& downloadProxy, const ResourceError& error, API::Data*) override
     {
-        if (webkitDownloadIsCancelled(m_download.get()))
+        if (!m_download)
             return;
 
-        ASSERT(m_download);
-        webkitDownloadFailed(m_download.get(), error);
+        if (webkitDownloadIsCancelled(m_download.get())) {
+            // Cancellation takes precedence over other errors.
+            webkitDownloadCancelled(m_download.get());
+        } else
+            webkitDownloadFailed(m_download.get(), error);
         m_download = nullptr;
     }
 
     void didFinish(DownloadProxy& downloadProxy) override
     {
-        if (webkitDownloadIsCancelled(m_download.get()))
+        if (!m_download)
             return;
 
-        ASSERT(m_download);
-        webkitDownloadFinished(m_download.get());
-        m_download = nullptr;
-    }
-
-    void legacyDidCancel(WebKit::DownloadProxy&) override
-    {
-        ASSERT(m_download);
-        webkitDownloadCancelled(m_download.get());
+        // Since cancellation is asynchronous, didFinish might be called even
+        // if the download was cancelled. User cancelled the download,
+        // so we should fail with cancelled error even if the download
+        // actually finished successfully.
+        if (webkitDownloadIsCancelled(m_download.get()))
+            webkitDownloadCancelled(m_download.get());
+        else
+            webkitDownloadFinished(m_download.get());
         m_download = nullptr;
     }
 

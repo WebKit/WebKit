@@ -597,7 +597,7 @@ void webkit_download_cancel(WebKitDownload* download)
 
     download->priv->isCancelled = true;
     download->priv->download->cancel([download = Ref { *download->priv->download }] (auto*) {
-        download->client().legacyDidCancel(download.get());
+        download->client().didFinish(download.get());
     });
 }
 
