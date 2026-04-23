@@ -211,9 +211,6 @@ ReferencedSVGResources::SVGElementIdentifierAndTagPairs ReferencedSVGResources::
         );
     }
 
-    if (!document.settings().layerBasedSVGEngineEnabled())
-        return referencedResources;
-
     if (style.hasPositionedMask()) {
         // FIXME: We should support all the values in the CSS mask property, but for now just use the first mask-image if it's a reference.
         if (RefPtr maskImage = style.maskLayers().usedFirst().image().tryStyleImage()) {
@@ -222,6 +219,9 @@ ReferencedSVGResources::SVGElementIdentifierAndTagPairs ReferencedSVGResources::
                 referencedResources.append({ resourceID, { SVGNames::maskTag } });
         }
     }
+
+    if (!document.settings().layerBasedSVGEngineEnabled())
+        return referencedResources;
 
     if (style.hasMarkers()) {
         if (auto markerStartResource = style.markerStart(); !markerStartResource.isNone()) {
