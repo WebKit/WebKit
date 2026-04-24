@@ -109,7 +109,7 @@ WebLockManager::MainThreadBridge::MainThreadBridge(ScriptExecutionContext& conte
 
 void WebLockManager::MainThreadBridge::requestLock(WebLockIdentifier lockIdentifier, const String& name, const Options& options, Function<void(bool)>&& grantedHandler, Function<void()>&& lockStolenHandler)
 {
-    callOnMainThread([this, protectedThis = Ref { *this }, name = crossThreadCopy(name), mode = options.mode, steal = options.steal, ifAvailable = options.ifAvailable, lockIdentifier, grantedHandler = WTF::move(grantedHandler), lockStolenHandler = WTF::move(lockStolenHandler)]() mutable {
+    callOnMainThread([this, protectedThis = protect(*this), name = crossThreadCopy(name), mode = options.mode, steal = options.steal, ifAvailable = options.ifAvailable, lockIdentifier, grantedHandler = WTF::move(grantedHandler), lockStolenHandler = WTF::move(lockStolenHandler)]() mutable {
         WebLockRegistry::singleton().requestLock(m_sessionID, m_clientOrigin, lockIdentifier, m_clientID, name, mode, steal, ifAvailable, [clientID = m_clientID, grantedHandler = WTF::move(grantedHandler)] (bool success) mutable {
             ScriptExecutionContext::ensureOnContextThread(clientID, [grantedHandler = WTF::move(grantedHandler), success](auto&) mutable {
                 grantedHandler(success);
@@ -124,14 +124,14 @@ void WebLockManager::MainThreadBridge::requestLock(WebLockIdentifier lockIdentif
 
 void WebLockManager::MainThreadBridge::releaseLock(WebLockIdentifier lockIdentifier, const String& name)
 {
-    callOnMainThread([this, protectedThis = Ref { *this }, lockIdentifier, name = crossThreadCopy(name)] {
+    callOnMainThread([this, protectedThis = protect(*this), lockIdentifier, name = crossThreadCopy(name)] {
         WebLockRegistry::singleton().releaseLock(m_sessionID, m_clientOrigin, lockIdentifier, m_clientID, name);
     });
 }
 
 void WebLockManager::MainThreadBridge::abortLockRequest(WebLockIdentifier lockIdentifier, const String& name, CompletionHandler<void(bool)>&& completionHandler)
 {
-    callOnMainThread([this, protectedThis = Ref { *this }, lockIdentifier, name = crossThreadCopy(name), completionHandler = WTF::move(completionHandler)]() mutable {
+    callOnMainThread([this, protectedThis = protect(*this), lockIdentifier, name = crossThreadCopy(name), completionHandler = WTF::move(completionHandler)]() mutable {
         WebLockRegistry::singleton().abortLockRequest(m_sessionID, m_clientOrigin, lockIdentifier, m_clientID, name, [clientID = m_clientID, completionHandler = WTF::move(completionHandler)](bool wasAborted) mutable {
             ScriptExecutionContext::ensureOnContextThread(clientID, [completionHandler = WTF::move(completionHandler), wasAborted](auto&) mutable {
                 completionHandler(wasAborted);
@@ -142,7 +142,7 @@ void WebLockManager::MainThreadBridge::abortLockRequest(WebLockIdentifier lockId
 
 void WebLockManager::MainThreadBridge::query(CompletionHandler<void(Snapshot&&)>&& completionHandler)
 {
-    callOnMainThread([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)]() mutable {
+    callOnMainThread([this, protectedThis = protect(*this), completionHandler = WTF::move(completionHandler)]() mutable {
         WebLockRegistry::singleton().snapshot(m_sessionID, m_clientOrigin, [clientID = m_clientID, completionHandler = WTF::move(completionHandler)](Snapshot&& snapshot) mutable {
             ScriptExecutionContext::ensureOnContextThread(clientID, [completionHandler = WTF::move(completionHandler), snapshot = crossThreadCopy(snapshot)](auto&) mutable {
                 completionHandler(WTF::move(snapshot));
@@ -153,7 +153,7 @@ void WebLockManager::MainThreadBridge::query(CompletionHandler<void(Snapshot&&)>
 
 void WebLockManager::MainThreadBridge::clientIsGoingAway()
 {
-    callOnMainThread([this, protectedThis = Ref { *this }] {
+    callOnMainThread([this, protectedThis = protect(*this)] {
         WebLockRegistry::singleton().clientIsGoingAway(m_sessionID, m_clientOrigin, m_clientID);
     });
 }
