@@ -422,6 +422,59 @@ jobs:
           name: ${{matrix.label}}
           path: ${{runner.temp}}/bun-webkit.tar.gz
 
+  linux-android:
+    name: Linux Android
+    # NDK only ships linux-x86_64 prebuilts, so all Android targets
+    # cross-compile from x64 regardless of target arch.
+    runs-on: linux-x64-gh
+    strategy:
+      matrix:
+        include:
+          - label: bun-webkit-linux-arm64-android
+            android_arch: aarch64
+            package_json_arch: "arm64"
+            CMAKE_BUILD_TYPE: "Release"
+          - label: bun-webkit-linux-arm64-android-debug
+            android_arch: aarch64
+            package_json_arch: "arm64"
+            CMAKE_BUILD_TYPE: "Debug"
+          - label: bun-webkit-linux-amd64-android
+            android_arch: x86_64
+            package_json_arch: "x64"
+            CMAKE_BUILD_TYPE: "Release"
+          - label: bun-webkit-linux-amd64-android-debug
+            android_arch: x86_64
+            package_json_arch: "x64"
+            CMAKE_BUILD_TYPE: "Debug"
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.build_ref }}
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !LayoutTests/
+            !JSTests/
+      - uses: docker/setup-buildx-action@v2
+        id: buildx
+        with:
+          install: true
+      - name: Run
+        run: |
+          rm -rf ${{runner.temp}}/bun-webkit ${{runner.temp}}/bun-webkit.tar.gz
+          ANDROID_ARCH="${{matrix.android_arch}}" WEBKIT_RELEASE_TYPE="${{matrix.CMAKE_BUILD_TYPE}}" temp=${{runner.temp}} bash android-release.sh
+          cd ${{runner.temp}}
+          echo "#define BUN_WEBKIT_VERSION \"${{ inputs.build_ref }}\"" >> bun-webkit/include/cmakeconfig.h
+          echo '{ "name": "${{matrix.label}}", "version": "0.0.1-${{ inputs.build_ref }}", "os": ["android"], "cpu": ["${{matrix.package_json_arch}}"], "repository": "https://github.com/${{github.repository}}" }' > bun-webkit/package.json
+          rm -rf bun-webkit/lib/*.so bun-webkit/lib/*.so.*
+          tar -czf bun-webkit.tar.gz bun-webkit
+          rm -rf bun-webkit
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{matrix.label}}
+          path: ${{runner.temp}}/bun-webkit.tar.gz
+
   release:
     name: release
     permissions:
@@ -433,6 +486,7 @@ jobs:
       - macos
       - windows
       - linux-musl
+      - linux-android
     outputs:
       tag: ${{ steps.release_info.outputs.tag }}
     steps:
@@ -570,6 +624,22 @@ jobs:
         with:
           name: bun-webkit-linux-amd64-musl-baseline-lto
           path: ${{runner.temp}}/bun-webkit-linux-amd64-musl-baseline-lto
+      - uses: actions/download-artifact@v4
+        with:
+          name: bun-webkit-linux-arm64-android
+          path: ${{runner.temp}}/bun-webkit-linux-arm64-android
+      - uses: actions/download-artifact@v4
+        with:
+          name: bun-webkit-linux-arm64-android-debug
+          path: ${{runner.temp}}/bun-webkit-linux-arm64-android-debug
+      - uses: actions/download-artifact@v4
+        with:
+          name: bun-webkit-linux-amd64-android
+          path: ${{runner.temp}}/bun-webkit-linux-amd64-android
+      - uses: actions/download-artifact@v4
+        with:
+          name: bun-webkit-linux-amd64-android-debug
+          path: ${{runner.temp}}/bun-webkit-linux-amd64-android-debug
 
       - name: Rename files
         run: |
@@ -605,6 +675,10 @@ jobs:
           mv ${{runner.temp}}/bun-webkit-windows-amd64-debug/bun-webkit.tar.gz ./out/bun-webkit-windows-amd64-debug.tar.gz
           mv ${{runner.temp}}/bun-webkit-windows-arm64/bun-webkit.tar.gz ./out/bun-webkit-windows-arm64.tar.gz
           mv ${{runner.temp}}/bun-webkit-windows-arm64-debug/bun-webkit.tar.gz ./out/bun-webkit-windows-arm64-debug.tar.gz
+          mv ${{runner.temp}}/bun-webkit-linux-arm64-android/bun-webkit.tar.gz ./out/bun-webkit-linux-arm64-android.tar.gz
+          mv ${{runner.temp}}/bun-webkit-linux-arm64-android-debug/bun-webkit.tar.gz ./out/bun-webkit-linux-arm64-android-debug.tar.gz
+          mv ${{runner.temp}}/bun-webkit-linux-amd64-android/bun-webkit.tar.gz ./out/bun-webkit-linux-amd64-android.tar.gz
+          mv ${{runner.temp}}/bun-webkit-linux-amd64-android-debug/bun-webkit.tar.gz ./out/bun-webkit-linux-amd64-android-debug.tar.gz
 
       - name: Set release info
         id: release_info
@@ -647,6 +721,15 @@ jobs:
             ./out/bun-webkit-linux-amd64-musl-baseline-lto.tar.gz
             ./out/bun-webkit-linux-amd64-musl-debug.tar.gz
             ./out/bun-webkit-linux-arm64-musl-debug.tar.gz
+
+      - uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ inputs.release_tag }}
+          files: |
+            ./out/bun-webkit-linux-arm64-android.tar.gz
+            ./out/bun-webkit-linux-arm64-android-debug.tar.gz
+            ./out/bun-webkit-linux-amd64-android.tar.gz
+            ./out/bun-webkit-linux-amd64-android-debug.tar.gz
 
       - uses: softprops/action-gh-release@v1
         with:
