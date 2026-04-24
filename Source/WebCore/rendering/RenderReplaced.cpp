@@ -753,7 +753,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ComputePreferredLogicalWi
                     return computeReplacedLogicalWidthRespectingMinMaxWidth(constrainedLogicalWidth, ComputePreferredLogicalWidth::No);
                 }();
 
-                LayoutUnit logicalHeight = computeReplacedLogicalHeight(std::optional<LayoutUnit>(estimatedUsedWidth));
+                LayoutUnit logicalHeight = computeReplacedLogicalHeight(std::optional<LayoutUnit>(estimatedUsedWidth), computePreferredLogicalWidth);
                 auto boxSizing = style.aspectRatio().hasRatio() ? style.boxSizingForAspectRatio() : BoxSizing::ContentBox;
                 return computeReplacedLogicalWidthRespectingMinMaxWidth(resolveWidthForRatio(borderAndPaddingLogicalHeight(), borderAndPaddingLogicalWidth(), logicalHeight, intrinsicRatio.aspectRatioDouble(), boxSizing), computePreferredLogicalWidth);
             }
@@ -807,11 +807,11 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ComputePreferredLogicalWi
     return computeReplacedLogicalWidthRespectingMinMaxWidth(intrinsicLogicalWidth(), computePreferredLogicalWidth);
 }
 
-LayoutUnit RenderReplaced::computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth) const
+LayoutUnit RenderReplaced::computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth, ComputePreferredLogicalWidth computePreferredLogicalWidth) const
 {
     // 10.5 Content height: the 'height' property: http://www.w3.org/TR/CSS21/visudet.html#propdef-height
     if (hasReplacedLogicalHeight())
-        return computeReplacedLogicalHeightRespectingMinMaxHeight(computeReplacedLogicalHeightUsing(style().logicalHeight()));
+        return computeReplacedLogicalHeightRespectingMinMaxHeight(computeReplacedLogicalHeightUsing(style().logicalHeight(), computePreferredLogicalWidth));
 
     RenderBox* contentRenderer = embeddedContentBox();
 
@@ -1276,7 +1276,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeightRespectingMinMaxHeight(La
 }
 
 template<typename SizeType>
-LayoutUnit RenderReplaced::computeReplacedLogicalHeightUsingGeneric(const SizeType& logicalHeight) const
+LayoutUnit RenderReplaced::computeReplacedLogicalHeightUsingGeneric(const SizeType& logicalHeight, ComputePreferredLogicalWidth computePreferredLogicalWidth) const
 {
 #if ASSERT_ENABLED
     // This function should get called with Style::MinimumSize/Style::MaximumSize only if replaced[Min|Max]LogicalHeightComputesAsNone
@@ -1374,6 +1374,8 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeightUsingGeneric(const SizeTy
             return percentageOrCalculated(calculatedLogicalHeight);
         },
         [&](const CSS::Keyword::FitContent&) -> LayoutUnit {
+            if (computePreferredLogicalWidth == ComputePreferredLogicalWidth::Yes)
+                return content();
             auto [transferredMinLogicalHeight, transferredMaxLogicalHeight] = computeMinMaxLogicalHeightFromAspectRatio();
             return std::clamp(content(), transferredMinLogicalHeight, transferredMaxLogicalHeight);
         },
@@ -1384,10 +1386,14 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeightUsingGeneric(const SizeTy
             return intrinsicLogicalHeight();
         },
         [&](const CSS::Keyword::MinContent&) -> LayoutUnit {
+            if (computePreferredLogicalWidth == ComputePreferredLogicalWidth::Yes)
+                return content();
             auto [transferredMinLogicalHeight, transferredMaxLogicalHeight] = computeMinMaxLogicalHeightFromAspectRatio();
             return std::clamp(content(), transferredMinLogicalHeight, transferredMaxLogicalHeight);
         },
         [&](const CSS::Keyword::MaxContent&) -> LayoutUnit {
+            if (computePreferredLogicalWidth == ComputePreferredLogicalWidth::Yes)
+                return content();
             auto [transferredMinLogicalHeight, transferredMaxLogicalHeight] = computeMinMaxLogicalHeightFromAspectRatio();
             return std::clamp(content(), transferredMinLogicalHeight, transferredMaxLogicalHeight);
         },
@@ -1409,9 +1415,9 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeightUsingGeneric(const SizeTy
     );
 }
 
-LayoutUnit RenderReplaced::computeReplacedLogicalHeightUsing(const Style::PreferredSize& logicalHeight) const
+LayoutUnit RenderReplaced::computeReplacedLogicalHeightUsing(const Style::PreferredSize& logicalHeight, ComputePreferredLogicalWidth computePreferredLogicalWidth) const
 {
-    return computeReplacedLogicalHeightUsingGeneric(logicalHeight);
+    return computeReplacedLogicalHeightUsingGeneric(logicalHeight, computePreferredLogicalWidth);
 }
 
 LayoutUnit RenderReplaced::computeReplacedLogicalHeightUsing(const Style::MinimumSize& logicalHeight) const

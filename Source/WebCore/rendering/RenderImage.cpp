@@ -297,11 +297,11 @@ LayoutUnit RenderImage::computeReplacedLogicalWidth(ComputePreferredLogicalWidth
     return RenderReplaced::computeReplacedLogicalWidth(computePreferredLogicalWidth);
 }
 
-LayoutUnit RenderImage::computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth) const
+LayoutUnit RenderImage::computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth, ComputePreferredLogicalWidth computePreferredLogicalWidth) const
 {
     if (shouldCollapseToEmpty())
         return { };
-    return RenderReplaced::computeReplacedLogicalHeight(estimatedUsedWidth);
+    return RenderReplaced::computeReplacedLogicalHeight(estimatedUsedWidth, computePreferredLogicalWidth);
 }
 
 void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)

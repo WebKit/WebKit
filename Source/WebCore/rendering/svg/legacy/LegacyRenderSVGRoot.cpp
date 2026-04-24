@@ -152,7 +152,7 @@ LayoutUnit LegacyRenderSVGRoot::computeReplacedLogicalWidth(ComputePreferredLogi
     return RenderReplaced::computeReplacedLogicalWidth(computePreferredLogicalWidth);
 }
 
-LayoutUnit LegacyRenderSVGRoot::computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth) const
+LayoutUnit LegacyRenderSVGRoot::computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth, ComputePreferredLogicalWidth computePreferredLogicalWidth) const
 {
     // When we're embedded through SVGImage (border-image/background-image/<html:img>/...) we're forced to resize to a specific size.
     if (!m_containerSize.isEmpty())
@@ -162,7 +162,7 @@ LayoutUnit LegacyRenderSVGRoot::computeReplacedLogicalHeight(std::optional<Layou
         return containingBlock()->availableLogicalHeight(AvailableLogicalHeightType::IncludeMarginBorderPadding);
 
     // SVG embedded via SVGImage (background-image/border-image/etc) / Inline SVG.
-    return RenderReplaced::computeReplacedLogicalHeight(estimatedUsedWidth);
+    return RenderReplaced::computeReplacedLogicalHeight(estimatedUsedWidth, computePreferredLogicalWidth);
 }
 
 void LegacyRenderSVGRoot::layout()

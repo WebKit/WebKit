@@ -138,7 +138,7 @@ private:
     bool hasShadowContent() const { return m_hasShadowControls || m_hasImageOverlay; }
 
     LayoutUnit computeReplacedLogicalWidth(ComputePreferredLogicalWidth = ComputePreferredLogicalWidth::No) const override;
-    LayoutUnit computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth = std::nullopt) const override;
+    LayoutUnit computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth = std::nullopt, ComputePreferredLogicalWidth = ComputePreferredLogicalWidth::No) const override;
 
     bool shouldCollapseToEmpty() const;
 

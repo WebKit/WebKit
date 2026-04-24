@@ -53,12 +53,12 @@ public:
 
     virtual bool paintsContent() const { return true; }
 
-    LayoutUnit computeReplacedLogicalHeightUsing(const Style::PreferredSize& logicalHeight) const;
+    LayoutUnit computeReplacedLogicalHeightUsing(const Style::PreferredSize& logicalHeight, ComputePreferredLogicalWidth = ComputePreferredLogicalWidth::No) const;
     LayoutUnit computeReplacedLogicalHeightUsing(const Style::MinimumSize& logicalHeight) const;
     LayoutUnit computeReplacedLogicalHeightUsing(const Style::MaximumSize& logicalHeight) const;
 
     virtual LayoutUnit computeReplacedLogicalWidth(ComputePreferredLogicalWidth  = ComputePreferredLogicalWidth::No) const;
-    virtual LayoutUnit computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth = std::nullopt) const;
+    virtual LayoutUnit computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth = std::nullopt, ComputePreferredLogicalWidth = ComputePreferredLogicalWidth::No) const;
 
     bool replacedMinLogicalHeightComputesAsNone() const;
     bool replacedMaxLogicalHeightComputesAsNone() const;
@@ -101,7 +101,7 @@ private:
     LayoutUnit computeConstrainedLogicalWidth() const;
 
     template<typename SizeType> LayoutUnit computeReplacedLogicalWidthUsing(const SizeType& logicalWidth) const;
-    template<typename SizeType> LayoutUnit computeReplacedLogicalHeightUsingGeneric(const SizeType& logicalHeight) const;
+    template<typename SizeType> LayoutUnit computeReplacedLogicalHeightUsingGeneric(const SizeType& logicalHeight, ComputePreferredLogicalWidth = ComputePreferredLogicalWidth::No) const;
     LayoutUnit computeReplacedLogicalHeightRespectingMinMaxHeight(LayoutUnit logicalHeight) const;
     template<typename T> LayoutUnit computeReplacedLogicalHeightRespectingMinMaxHeight(T logicalHeight) const { return computeReplacedLogicalHeightRespectingMinMaxHeight(LayoutUnit(logicalHeight)); }
     bool replacedMinMaxLogicalHeightComputesAsNone(const auto& logicalHeight, const auto& initialLogicalHeight) const;

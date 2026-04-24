@@ -90,7 +90,7 @@ private:
     std::optional<FloatRect> NODELETE computeFloatVisibleRectInContainer(const FloatRect&, const RenderLayerModelObject*, VisibleRectContext) const final;
 
     LayoutUnit computeReplacedLogicalWidth(ComputePreferredLogicalWidth  = ComputePreferredLogicalWidth::No) const final;
-    LayoutUnit computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth = std::nullopt) const final;
+    LayoutUnit computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth = std::nullopt, ComputePreferredLogicalWidth = ComputePreferredLogicalWidth::No) const final;
     void layout() final;
     void layoutChildren();
     void paint(PaintInfo&, const LayoutPoint&) final;
