@@ -98,17 +98,22 @@ COPY --from=build_icu /output /icu
 
 ENV WEBKIT_OUT_DIR=/webkitbuild
 
+# NOTE: NOT using CMAKE_SYSTEM_NAME=Android — that module force-selects the
+# NDK's bundled clang and silently overrides CMAKE_{C,CXX}_COMPILER. Instead,
+# treat as a generic Linux cross-compile and pass --target/--sysroot in CFLAGS;
+# WebKit's source detects Android via __ANDROID__ (set by --target=*-android*),
+# and we set ANDROID=ON so cmake `if(ANDROID)` blocks fire.
 RUN --mount=type=tmpfs,target=/webkitbuild \
-    export CFLAGS="${DEFAULT_CFLAGS} ${MARCH_FLAG} ${LTO_FLAG} -ffile-prefix-map=/webkit/Source=vendor/WebKit/Source -ffile-prefix-map=/webkitbuild/=." && \
-    export CXXFLAGS="${DEFAULT_CFLAGS} ${MARCH_FLAG} ${LTO_FLAG} -fno-c++-static-destructors -ffile-prefix-map=/webkit/Source=vendor/WebKit/Source -ffile-prefix-map=/webkitbuild/=." && \
+    export TARGET_TRIPLE="${ANDROID_ARCH}-unknown-linux-android${ANDROID_API}" && \
+    export CROSS="--target=${TARGET_TRIPLE} --sysroot=${NDK_SYSROOT}" && \
+    export CFLAGS="${CROSS} ${DEFAULT_CFLAGS} ${MARCH_FLAG} ${LTO_FLAG} -isystem /icu/include -ffile-prefix-map=/webkit/Source=vendor/WebKit/Source -ffile-prefix-map=/webkitbuild/=." && \
+    export CXXFLAGS="${CROSS} -isystem ${NDK_SYSROOT}/usr/include/c++/v1 ${DEFAULT_CFLAGS} ${MARCH_FLAG} ${LTO_FLAG} -isystem /icu/include -fno-c++-static-destructors -ffile-prefix-map=/webkit/Source=vendor/WebKit/Source -ffile-prefix-map=/webkitbuild/=." && \
     cd /webkitbuild && \
     cmake \
-    -DCMAKE_SYSTEM_NAME=Android \
-    -DCMAKE_SYSTEM_VERSION=${ANDROID_API} \
-    -DCMAKE_ANDROID_NDK=${ANDROID_NDK_ROOT} \
-    -DCMAKE_ANDROID_ARCH_ABI=$([ "${ANDROID_ARCH}" = "aarch64" ] && echo arm64-v8a || echo x86_64) \
-    -DCMAKE_ANDROID_STL_TYPE=c++_static \
-    -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang \
+    -DCMAKE_SYSTEM_NAME=Linux \
+    -DCMAKE_SYSTEM_PROCESSOR=${ANDROID_ARCH} \
+    -DCMAKE_SYSROOT=${NDK_SYSROOT} \
+    -DANDROID=ON \
     -DCMAKE_C_COMPILER=$(which $CC) \
     -DCMAKE_CXX_COMPILER=$(which $CXX) \
     -DCMAKE_AR=$(which $AR) \
@@ -129,6 +134,10 @@ RUN --mount=type=tmpfs,target=/webkitbuild \
     -DCMAKE_C_FLAGS="$CFLAGS" \
     -DCMAKE_CXX_FLAGS="$CXXFLAGS" \
     -DICU_ROOT=/icu \
+    -DICU_INCLUDE_DIR=/icu/include \
+    -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=BOTH \
+    -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=BOTH \
+    -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=BOTH \
     -G Ninja \
     /webkit && \
     cmake --build /webkitbuild --config ${WEBKIT_RELEASE_TYPE} --target jsc && \
