@@ -192,7 +192,7 @@ macro(_WEBKIT_TARGET_SETUP _target _logical_name)
     target_include_directories(${_target} PRIVATE "$<BUILD_INTERFACE:${${_logical_name}_PRIVATE_INCLUDE_DIRECTORIES}>")
 
     if (DEVELOPER_MODE_CXX_FLAGS)
-        target_compile_options(${_target} PRIVATE ${DEVELOPER_MODE_CXX_FLAGS})
+        target_compile_options(${_target} PRIVATE $<$<NOT:$<COMPILE_LANGUAGE:Swift>>:${DEVELOPER_MODE_CXX_FLAGS}>)
     endif ()
 
     target_compile_definitions(${_target} PRIVATE "BUILDING_${_logical_name}")
