@@ -193,7 +193,10 @@ macro(_WEBKIT_TARGET_SETUP _target _logical_name)
 
     if (DEVELOPER_MODE_CXX_FLAGS)
         target_compile_options(${_target} PRIVATE $<$<NOT:$<COMPILE_LANGUAGE:Swift>>:${DEVELOPER_MODE_CXX_FLAGS}>)
-        target_compile_options(${_target} PRIVATE $<$<COMPILE_LANGUAGE:Swift>:-warnings-as-errors>)
+        # Match Xcode's WK_SWIFT_MEMORY_SAFETY_ERROR_FLAGS in CommonBase.xcconfig.
+        target_compile_options(${_target} PRIVATE
+            "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Werror StrictMemorySafety>"
+            "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Werror ForeignReferenceType>")
     endif ()
 
     target_compile_definitions(${_target} PRIVATE "BUILDING_${_logical_name}")
