@@ -324,7 +324,7 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
         m_dynamicMediaQueryResults.appendVector(sizesParser.dynamicMediaQueryResults());
 
         auto sourceSize = sizesParser.effectiveSize();
-        if (sizesParser.isAuto() && isLazyLoadable()) {
+        if (sizesParser.isAuto() && hasAutoSizes() && isLazyLoadable()) {
             if (auto layoutWidth = autoSizesLayoutWidth())
                 sourceSize = std::optional<float>(*layoutWidth);
         }
@@ -395,7 +395,7 @@ void HTMLImageElement::selectImageSource(RelevantMutation relevantMutation)
             SizesAttributeParser sizesParser(attributeWithoutSynchronization(sizesAttr).string(), document.get());
             m_dynamicMediaQueryResults.appendVector(sizesParser.dynamicMediaQueryResults());
             auto sourceSize = sizesParser.effectiveSize();
-            if (sizesParser.isAuto() && isLazyLoadable()) {
+            if (sizesParser.isAuto() && hasAutoSizes() && isLazyLoadable()) {
                 if (auto layoutWidth = autoSizesLayoutWidth())
                     sourceSize = std::optional<float>(*layoutWidth);
             }
