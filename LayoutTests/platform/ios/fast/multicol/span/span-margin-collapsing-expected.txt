@@ -12,7 +12,7 @@ layer at (8,16) size 750x460
         text run at (0,31) width 529: "should collapse its margins with the top of the page."
     RenderMultiColumnSet at (0,99) size 750x361
 layer at (8,16) size 367x700
-  RenderMultiColumnFlowThread at (0,0) size 367x700
+  RenderMultiColumnFlow at (0,0) size 367x700
     RenderMultiColumnSpannerPlaceholder at (0,0) size 0x0
     RenderBlock (anonymous) at (0,0) size 367x700
       RenderText {#text} at (0,0) size 367x700
@@ -64,7 +64,7 @@ layer at (8,492) size 750x460
         text run at (0,31) width 505: "collapse its margins with the h2 in the next block."
     RenderMultiColumnSet at (0,459) size 750x0
 layer at (8,492) size 367x700
-  RenderMultiColumnFlowThread at (0,0) size 367x700
+  RenderMultiColumnFlow at (0,0) size 367x700
     RenderBlock (anonymous) at (0,0) size 367x700
       RenderText {#text} at (0,0) size 367x700
         text run at (0,0) width 364: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
@@ -115,7 +115,7 @@ layer at (8,968) size 750x459
         text run at (0,31) width 622: "should collapse its margins with the h2 in the previous block."
     RenderMultiColumnSet at (0,99) size 750x361
 layer at (8,968) size 367x700
-  RenderMultiColumnFlowThread at (0,0) size 367x700
+  RenderMultiColumnFlow at (0,0) size 367x700
     RenderMultiColumnSpannerPlaceholder at (0,0) size 0x0
     RenderBlock (anonymous) at (0,0) size 367x700
       RenderText {#text} at (0,0) size 367x700
@@ -173,7 +173,7 @@ layer at (8,1443) size 750x620
         text run at (0,31) width 569: "collapse its margins with the spanning element above it."
     RenderMultiColumnSet at (0,399) size 750x221
 layer at (8,1443) size 367x880 backgroundClip at (0,0) size 800x2079 clip at (0,0) size 800x2079
-  RenderMultiColumnFlowThread at (0,0) size 367x880
+  RenderMultiColumnFlow at (0,0) size 367x880
     RenderBlock (anonymous) at (0,0) size 367x440
       RenderText {#text} at (0,0) size 367x440
         text run at (0,0) width 364: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."

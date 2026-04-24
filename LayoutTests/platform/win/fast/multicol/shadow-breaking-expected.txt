@@ -8,7 +8,7 @@ layer at (20,36) size 424x291
   RenderBlock (positioned) {P} at (20,36) size 424x291 [border: (2px solid #000000)]
     RenderMultiColumnSet at (2,2) size 420x287
 layer at (22,38) size 200x560
-  RenderMultiColumnFlowThread at (2,2) size 200x560
+  RenderMultiColumnFlow at (2,2) size 200x560
     RenderBlock (floating) at (0,0) size 24x43
       RenderText at (0,1) size 24x41
         text run at (0,1) width 24: "L"

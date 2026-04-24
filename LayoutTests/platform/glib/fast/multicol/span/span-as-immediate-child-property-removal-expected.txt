@@ -12,7 +12,7 @@ layer at (8,60) size 760x352
   RenderBlock {DIV} at (0,52) size 760x352 [border: (5px solid #800000)]
     RenderMultiColumnSet at (5,5) size 750x342
 layer at (13,65) size 367x684
-  RenderMultiColumnFlowThread at (5,5) size 367x684
+  RenderMultiColumnFlow at (5,5) size 367x684
     RenderBlock {H2} at (0,19) size 367x28 [bgcolor=#EEEEEE]
       RenderText {#text} at (0,0) size 276x27
         text run at (0,0) width 276: "This is a spanning element."
@@ -58,7 +58,7 @@ layer at (8,428) size 760x352
   RenderBlock {DIV} at (0,420) size 760x352 [border: (5px solid #800000)]
     RenderMultiColumnSet at (5,5) size 750x342
 layer at (13,433) size 367x679
-  RenderMultiColumnFlowThread at (5,5) size 367x679
+  RenderMultiColumnFlow at (5,5) size 367x679
     RenderBlock (anonymous) at (0,0) size 367x612
       RenderText {#text} at (0,0) size 363x612
         text run at (0,0) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
@@ -104,7 +104,7 @@ layer at (8,796) size 760x381
   RenderBlock {DIV} at (0,788) size 760x381 [border: (5px solid #800000)]
     RenderMultiColumnSet at (5,5) size 750x371
 layer at (13,801) size 367x729
-  RenderMultiColumnFlowThread at (5,5) size 367x729
+  RenderMultiColumnFlow at (5,5) size 367x729
     RenderBlock {P} at (0,16) size 367x234
       RenderText {#text} at (0,0) size 363x234
         text run at (0,0) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
@@ -153,7 +153,7 @@ layer at (8,1193) size 760x383
   RenderBlock {DIV} at (0,1184) size 760x384 [border: (5px solid #800000)]
     RenderMultiColumnSet at (5,5) size 750x373
 layer at (13,1198) size 367x729
-  RenderMultiColumnFlowThread at (5,5) size 367x729
+  RenderMultiColumnFlow at (5,5) size 367x729
     RenderBlock (anonymous) at (0,0) size 367x234
       RenderText {#text} at (0,0) size 363x234
         text run at (0,0) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
@@ -206,7 +206,7 @@ layer at (8,1592) size 760x370
   RenderBlock {DIV} at (0,1583) size 760x371 [border: (5px solid #800000)]
     RenderMultiColumnSet at (5,5) size 750x360
 layer at (13,1597) size 367x713
-  RenderMultiColumnFlowThread at (5,5) size 367x713
+  RenderMultiColumnFlow at (5,5) size 367x713
     RenderBlock (anonymous) at (0,0) size 367x432
       RenderInline {SPAN} at (0,0) size 367x252
         RenderText {#text} at (0,0) size 362x198
@@ -259,7 +259,7 @@ layer at (8,1978) size 760x400
   RenderBlock {DIV} at (0,1969) size 760x401 [border: (5px solid #800000)]
     RenderMultiColumnSet at (5,5) size 750x390
 layer at (13,1983) size 367x763 backgroundClip at (0,0) size 785x2394 clip at (0,0) size 785x2394
-  RenderMultiColumnFlowThread at (5,5) size 367x763
+  RenderMultiColumnFlow at (5,5) size 367x763
     RenderBlock {P} at (0,16) size 367x198
       RenderText {#text} at (0,0) size 362x198
         text run at (0,0) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."

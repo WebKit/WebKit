@@ -7,7 +7,7 @@ layer at (473,8) size 304x584
   RenderBlock {DIV} at (0,0) size 304x584 [border: (2px solid #0000FF)]
     RenderMultiColumnSet at (2,2) size 300x580
 layer at (125,10) size 650x282
-  RenderMultiColumnFlowThread at (2,2) size 650x282
+  RenderMultiColumnFlow at (2,2) size 650x282
     RenderBlock {P} at (16,0) size 76x282
       RenderText {#text} at (0,0) size 19x277
         text run at (0,0) width 277: "This image should not be split across columns."

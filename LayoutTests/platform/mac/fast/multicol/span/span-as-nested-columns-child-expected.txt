@@ -11,7 +11,7 @@ layer at (8,16) size 760x410
         text run at (0,0) width 666: "This is a spanning element at the beginning of the columns block."
     RenderMultiColumnSet at (5,80) size 750x325
 layer at (13,21) size 367x656
-  RenderMultiColumnFlowThread at (5,5) size 367x656
+  RenderMultiColumnFlow at (5,5) size 367x656
     RenderBlock {SPAN} at (0,8) size 367x198 [color=#FFFFFF] [bgcolor=#000000]
       RenderMultiColumnSpannerPlaceholder at (0,0) size 0x0
       RenderBlock (anonymous) at (0,0) size 367x198
@@ -63,7 +63,7 @@ layer at (8,442) size 760x410
         text run at (0,0) width 602: "This is a spanning element at the end of the columns block."
     RenderMultiColumnSet at (5,396) size 750x9
 layer at (13,447) size 367x662
-  RenderMultiColumnFlowThread at (5,5) size 367x662
+  RenderMultiColumnFlow at (5,5) size 367x662
     RenderBlock (anonymous) at (0,0) size 367x396
       RenderText {#text} at (0,0) size 367x396
         text run at (0,0) width 364: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
@@ -115,7 +115,7 @@ layer at (8,868) size 760x409
         text run at (0,0) width 635: "This is a spanning element in the middle of the columns block."
     RenderMultiColumnSet at (5,198) size 750x207
 layer at (13,873) size 367x654 backgroundClip at (0,0) size 785x1293 clip at (0,0) size 785x1293
-  RenderMultiColumnFlowThread at (5,5) size 367x654
+  RenderMultiColumnFlow at (5,5) size 367x654
     RenderBlock (anonymous) at (0,0) size 367x198
       RenderText {#text} at (0,0) size 367x198
         text run at (0,0) width 364: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."

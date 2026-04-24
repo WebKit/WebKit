@@ -8,7 +8,7 @@ layer at (16,16) size 768x20
     RenderBlock {DIV} at (0,0) size 768x0
     RenderMultiColumnSet at (0,0) size 768x20
 layer at (16,16) size 374x40
-  RenderMultiColumnFlowThread at (0,0) size 374x40
+  RenderMultiColumnFlow at (0,0) size 374x40
     RenderMultiColumnSpannerPlaceholder at (0,0) size 0x0
     RenderBlock {DIV} at (0,0) size 374x20
       RenderText {#text} at (0,0) size 20x20
