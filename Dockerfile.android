@@ -1,6 +1,6 @@
 ARG MARCH_FLAG="-march=armv8-a+crc -mtune=cortex-a78"
 ARG WEBKIT_RELEASE_TYPE=Release
-ARG LTO_FLAG="-flto=full -fwhole-program-vtables -fforce-emit-vtables "
+ARG LTO_FLAG=""
 ARG LLVM_VERSION="21"
 ARG NDK_VERSION="r27c"
 ARG ANDROID_API="28"
