@@ -82,7 +82,7 @@ private:
 
     void visibleInViewportStateChanged() final;
 
-    LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred  = ShouldComputePreferred::ComputeActual) const final;
+    LayoutUnit computeReplacedLogicalWidth(ComputePreferredLogicalWidth  = ComputePreferredLogicalWidth::No) const final;
     LayoutUnit minimumReplacedHeight() const final;
 
     bool updatePlayer();

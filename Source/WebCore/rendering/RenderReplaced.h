@@ -25,6 +25,8 @@
 
 namespace WebCore {
 
+enum class ComputePreferredLogicalWidth : bool { No, Yes };
+
 class RenderReplaced : public RenderBox {
     WTF_MAKE_TZONE_ALLOCATED(RenderReplaced);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderReplaced);
@@ -55,7 +57,7 @@ public:
     LayoutUnit computeReplacedLogicalHeightUsing(const Style::MinimumSize& logicalHeight) const;
     LayoutUnit computeReplacedLogicalHeightUsing(const Style::MaximumSize& logicalHeight) const;
 
-    virtual LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred  = ShouldComputePreferred::ComputeActual) const;
+    virtual LayoutUnit computeReplacedLogicalWidth(ComputePreferredLogicalWidth  = ComputePreferredLogicalWidth::No) const;
     virtual LayoutUnit computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth = std::nullopt) const;
 
     bool replacedMinLogicalHeightComputesAsNone() const;
@@ -92,8 +94,8 @@ protected:
 
     virtual void layoutShadowContent(const LayoutSize&);
 
-    LayoutUnit computeReplacedLogicalWidthRespectingMinMaxWidth(LayoutUnit logicalWidth, ShouldComputePreferred = ShouldComputePreferred::ComputeActual) const;
-    template<typename T> LayoutUnit computeReplacedLogicalWidthRespectingMinMaxWidth(T logicalWidth, ShouldComputePreferred shouldComputePreferred = ShouldComputePreferred::ComputeActual) const { return computeReplacedLogicalWidthRespectingMinMaxWidth(LayoutUnit(logicalWidth), shouldComputePreferred); }
+    LayoutUnit computeReplacedLogicalWidthRespectingMinMaxWidth(LayoutUnit logicalWidth, ComputePreferredLogicalWidth = ComputePreferredLogicalWidth::No) const;
+    template<typename T> LayoutUnit computeReplacedLogicalWidthRespectingMinMaxWidth(T logicalWidth, ComputePreferredLogicalWidth computePreferredLogicalWidth = ComputePreferredLogicalWidth::No) const { return computeReplacedLogicalWidthRespectingMinMaxWidth(LayoutUnit(logicalWidth), computePreferredLogicalWidth); }
 
 private:
     LayoutUnit computeConstrainedLogicalWidth() const;
