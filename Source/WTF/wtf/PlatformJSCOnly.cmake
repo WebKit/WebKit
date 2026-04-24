@@ -106,6 +106,14 @@ elseif (APPLE)
         ${WTF_DERIVED_SOURCES_DIR}/mach_excServer.c
         ${WTF_DERIVED_SOURCES_DIR}/mach_excUser.c
     )
+elseif (ANDROID)
+    list(APPEND WTF_SOURCES
+        linux/CurrentProcessMemoryStatus.cpp
+        linux/MemoryFootprintLinux.cpp
+        linux/RealTimeThreads.cpp
+
+        generic/MemoryPressureHandlerGeneric.cpp
+    )
 elseif (CMAKE_SYSTEM_NAME MATCHES "Linux")
     list(APPEND WTF_SOURCES
         linux/CurrentProcessMemoryStatus.cpp

@@ -29,6 +29,7 @@
 #include <sched.h>
 #include <signal.h>
 #include <string.h>
+#include <unistd.h>
 #include <wtf/Logging.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>

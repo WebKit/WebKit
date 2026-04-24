@@ -48,7 +48,7 @@
 #include <wtf/ExportMacros.h>
 #include <wtf/StdIntExtras.h>
 
-#if OS(ANDROID) && !USE(BUN_JSC_ADDITIONS)
+#if OS(ANDROID)
 #include <android/log.h>
 #endif
 
