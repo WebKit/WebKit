@@ -14,6 +14,16 @@ namespace WebCore {
 
 using namespace CSSPropertyParserHelpers;
 
+static bool isKeywordValidForTestDirectlyReferencingProperty(CSSValueID keyword)
+{
+    switch (keyword) {
+    case CSSValueID::CSSValueAuto:
+        return true;
+    default:
+        return false;
+    }
+}
+
 static bool isKeywordValidForTestKeyword(CSSValueID keyword)
 {
     switch (keyword) {
@@ -137,6 +147,26 @@ static bool isKeywordValidForTestUsingSharedRule(CSSValueID keyword)
 }
 
 static bool isKeywordValidForTestUsingSharedRuleExported(CSSValueID keyword)
+{
+    switch (keyword) {
+    case CSSValueID::CSSValueAuto:
+        return true;
+    default:
+        return false;
+    }
+}
+
+static bool isKeywordValidForTestUsingSharedRuleMultipleTimes(CSSValueID keyword)
+{
+    switch (keyword) {
+    case CSSValueID::CSSValueAuto:
+        return true;
+    default:
+        return false;
+    }
+}
+
+static bool isKeywordValidForTestUsingSharedRuleReferencingProperty(CSSValueID keyword)
 {
     switch (keyword) {
     case CSSValueID::CSSValueAuto:
@@ -390,6 +420,15 @@ static RefPtr<CSSValue> consumeTestBoundedRepetitionWithSpacesWithTypeWithDefaul
         return CSSValuePair::create(term0.releaseNonNull(), term1.releaseNonNull(), term2.releaseNonNull(), term3.releaseNonNull());
     };
     return consumeBoundedRepetition(range, state);
+}
+
+static RefPtr<CSSValue> consumeTestDirectlyReferencingProperty(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    // auto
+    if (auto result = consumeIdent(range, isKeywordValidForTestDirectlyReferencingProperty))
+        return result;
+    // <number>
+    return CSSPrimitiveValueResolver<CSS::Number<>>::consumeAndResolve(range, state);
 }
 
 static RefPtr<CSSValue> consumeTestFunctionBoundedParameters(CSSParserTokenRange& range, CSS::PropertyParserState& state)
@@ -3273,6 +3312,49 @@ static RefPtr<CSSValue> consumeTestUsingSharedRuleExported(CSSParserTokenRange& 
     return consumeString(range);
 }
 
+static RefPtr<CSSValue> consumeTestUsingSharedRuleMultipleTimes(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    // auto
+    if (auto result = consumeIdent(range, isKeywordValidForTestUsingSharedRuleMultipleTimes))
+        return result;
+    // [ [ <number> | <percentage> ] [ <number> | <percentage> ] ]
+    auto consumeMatchAllOrdered = [](CSSParserTokenRange& range, CSS::PropertyParserState& state) -> RefPtr<CSSValue> {
+        auto consumeTerm0 = [](CSSParserTokenRange& range, CSS::PropertyParserState& state) -> RefPtr<CSSValue> {
+            // <number>
+            if (auto result = CSSPrimitiveValueResolver<CSS::Number<>>::consumeAndResolve(range, state))
+                return result;
+            // <percentage>
+            return CSSPrimitiveValueResolver<CSS::Percentage<>>::consumeAndResolve(range, state);
+        };
+        auto consumeTerm1 = [](CSSParserTokenRange& range, CSS::PropertyParserState& state) -> RefPtr<CSSValue> {
+            // <number>
+            if (auto result = CSSPrimitiveValueResolver<CSS::Number<>>::consumeAndResolve(range, state))
+                return result;
+            // <percentage>
+            return CSSPrimitiveValueResolver<CSS::Percentage<>>::consumeAndResolve(range, state);
+        };
+        // [ <number> | <percentage> ]
+        auto value0 = consumeTerm0(range, state);
+        if (!value0)
+            return { };
+        // [ <number> | <percentage> ]
+        auto value1 = consumeTerm1(range, state);
+        if (!value1)
+            return { };
+        return CSSValueList::createSpaceSeparated(value0.releaseNonNull(), value1.releaseNonNull());
+    };
+    return consumeMatchAllOrdered(range, state);
+}
+
+static RefPtr<CSSValue> consumeTestUsingSharedRuleReferencingProperty(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    // auto
+    if (auto result = consumeIdent(range, isKeywordValidForTestUsingSharedRuleReferencingProperty))
+        return result;
+    // <number>
+    return CSSPrimitiveValueResolver<CSS::Number<>>::consumeAndResolve(range, state);
+}
+
 static RefPtr<CSSValue> consumeTestUsingSharedRuleWithOverrideFunction(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
     // auto
@@ -3355,6 +3437,8 @@ RefPtr<CSSValue> CSSPropertyParsing::parseStylePropertyLonghand(CSSParserTokenRa
         return consumeColor(range, state, { .allowedColorTypes = { CSS::ColorType::Absolute, CSS::ColorType::Current, CSS::ColorType::System } });
     case CSSPropertyID::CSSPropertyTestColorAllowsTypesAbsolute:
         return consumeColor(range, state, { .allowedColorTypes = { CSS::ColorType::Absolute } });
+    case CSSPropertyID::CSSPropertyTestDirectlyReferencingProperty:
+        return consumeTestDirectlyReferencingProperty(range, state);
     case CSSPropertyID::CSSPropertyTestFunctionBoundedParameters:
         return consumeTestFunctionBoundedParameters(range, state);
     case CSSPropertyID::CSSPropertyTestFunctionFixedParameters:
@@ -3501,6 +3585,10 @@ RefPtr<CSSValue> CSSPropertyParsing::parseStylePropertyLonghand(CSSParserTokenRa
         return consumeTestUsingSharedRule(range, state);
     case CSSPropertyID::CSSPropertyTestUsingSharedRuleExported:
         return consumeTestUsingSharedRuleExported(range, state);
+    case CSSPropertyID::CSSPropertyTestUsingSharedRuleMultipleTimes:
+        return consumeTestUsingSharedRuleMultipleTimes(range, state);
+    case CSSPropertyID::CSSPropertyTestUsingSharedRuleReferencingProperty:
+        return consumeTestUsingSharedRuleReferencingProperty(range, state);
     case CSSPropertyID::CSSPropertyTestUsingSharedRuleWithOverrideFunction:
         return consumeTestUsingSharedRuleWithOverrideFunction(range, state);
     default:
@@ -3531,6 +3619,8 @@ bool CSSPropertyParsing::parseStylePropertyShorthand(CSSParserTokenRange& range,
 bool CSSPropertyParsing::isKeywordValidForStyleProperty(CSSPropertyID id, CSSValueID keyword, CSS::PropertyParserState& state)
 {
     switch (id) {
+    case CSSPropertyID::CSSPropertyTestDirectlyReferencingProperty:
+        return isKeywordValidForTestDirectlyReferencingProperty(keyword);
     case CSSPropertyID::CSSPropertyTestKeyword:
         return isKeywordValidForTestKeyword(keyword);
     case CSSPropertyID::CSSPropertyTestKeywordWithAliasedTo:
@@ -3555,6 +3645,10 @@ bool CSSPropertyParsing::isKeywordValidForStyleProperty(CSSPropertyID id, CSSVal
         return isKeywordValidForTestUsingSharedRule(keyword);
     case CSSPropertyID::CSSPropertyTestUsingSharedRuleExported:
         return isKeywordValidForTestUsingSharedRuleExported(keyword);
+    case CSSPropertyID::CSSPropertyTestUsingSharedRuleMultipleTimes:
+        return isKeywordValidForTestUsingSharedRuleMultipleTimes(keyword);
+    case CSSPropertyID::CSSPropertyTestUsingSharedRuleReferencingProperty:
+        return isKeywordValidForTestUsingSharedRuleReferencingProperty(keyword);
     case CSSPropertyID::CSSPropertyTestUsingSharedRuleWithOverrideFunction:
         return isKeywordValidForTestUsingSharedRuleWithOverrideFunction(keyword);
     default:
@@ -3565,6 +3659,7 @@ bool CSSPropertyParsing::isKeywordValidForStyleProperty(CSSPropertyID id, CSSVal
 bool CSSPropertyParsing::isKeywordFastPathEligibleStyleProperty(CSSPropertyID id)
 {
     switch (id) {
+    case CSSPropertyID::CSSPropertyTestDirectlyReferencingProperty:
     case CSSPropertyID::CSSPropertyTestKeyword:
     case CSSPropertyID::CSSPropertyTestKeywordWithAliasedTo:
     case CSSPropertyID::CSSPropertyTestMatchOneWithGroupWithSettingsFlag:
@@ -3577,6 +3672,8 @@ bool CSSPropertyParsing::isKeywordFastPathEligibleStyleProperty(CSSPropertyID id
     case CSSPropertyID::CSSPropertyTestUrlWithNoModifiers:
     case CSSPropertyID::CSSPropertyTestUsingSharedRule:
     case CSSPropertyID::CSSPropertyTestUsingSharedRuleExported:
+    case CSSPropertyID::CSSPropertyTestUsingSharedRuleMultipleTimes:
+    case CSSPropertyID::CSSPropertyTestUsingSharedRuleReferencingProperty:
     case CSSPropertyID::CSSPropertyTestUsingSharedRuleWithOverrideFunction:
         return true;
     default:

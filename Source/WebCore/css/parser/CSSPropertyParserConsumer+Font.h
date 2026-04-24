@@ -84,7 +84,7 @@ using UnresolvedFontSize = Variant<CSSValueID, CSS::LengthPercentage<CSS::Nonneg
 // normal | <number [0,∞]> | <length-percentage [0,∞]>
 using UnresolvedFontLineHeight = Variant<CSSValueID, CSS::Number<CSS::Nonnegative>, CSS::LengthPercentage<CSS::Nonnegative>>;
 
-// [ <family-name> | <generic-family> ]#
+// [ <font-family-name> | <generic-font-family> ]#
 using UnresolvedFontFamilyName = Variant<CSSValueID, AtomString>;
 using UnresolvedFontFamily = Vector<UnresolvedFontFamilyName>;
 
@@ -107,15 +107,14 @@ std::optional<UnresolvedFont> parseUnresolvedFont(const String&, ScriptExecution
 RefPtr<CSSValue> consumeFontStyle(CSSParserTokenRange&, CSS::PropertyParserState&);
 
 // MARK: 'font-family'
-// https://drafts.csswg.org/css-fonts-4/#font-family-prop
-RefPtr<CSSValue> consumeFontFamily(CSSParserTokenRange&, CSS::PropertyParserState&);
-// Sub-production of 'font-family': <family-name>
+// Sub-production of 'font-family': <font-family-name>
 // https://drafts.csswg.org/css-fonts-4/#family-name-syntax
-RefPtr<CSSValue> consumeFamilyName(CSSParserTokenRange&, CSS::PropertyParserState&);
-// Sub-production of 'font-family': <generic-family>
+RefPtr<CSSValue> consumeFontFamilyName(CSSParserTokenRange&, CSS::PropertyParserState&);
+// Sub-production of 'font-family': <generic-font-family>
 // https://drafts.csswg.org/css-fonts-4/#generic-family-name-syntax
 const AtomString& NODELETE genericFontFamily(CSSValueID);
 WebKitFontFamilyNames::FamilyNamesIndex NODELETE genericFontFamilyIndex(CSSValueID);
+RefPtr<CSSValue> consumeGenericFontFamily(CSSParserTokenRange&, CSS::PropertyParserState&);
 
 // MARK: 'font-size-adjust'
 // https://drafts.csswg.org/css-fonts-4/#font-size-adjust-prop

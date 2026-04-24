@@ -44,6 +44,50 @@
                 "parser-grammar": "auto | <shared-rule-with-override-function>"
             }
         },
+        "test-using-shared-rule-multiple-times": {
+            "animation-type": "discrete",
+            "initial": "0",
+            "values": [ "auto" ],
+            "codegen-properties": {
+                "skip-computed-style": true,
+                "skip-style-builder": true,
+                "skip-style-extractor": true,
+                "parser-grammar": "auto | [ <shared-rule-one> <shared-rule-one> ]"
+            }
+        },
+        "test-using-shared-rule-referencing-property": {
+            "animation-type": "discrete",
+            "initial": "0",
+            "values": [ "auto" ],
+            "codegen-properties": {
+                "skip-computed-style": true,
+                "skip-style-builder": true,
+                "skip-style-extractor": true,
+                "parser-grammar": "auto | <shared-rule-referencing-property>"
+            }
+        },
+        "test-directly-referencing-property": {
+            "animation-type": "discrete",
+            "initial": "0",
+            "values": [ "auto" ],
+            "codegen-properties": {
+                "skip-computed-style": true,
+                "skip-style-builder": true,
+                "skip-style-extractor": true,
+                "parser-grammar": "auto | <'test-property'>"
+            }
+        },
+        "test-directly-referencing-property": {
+            "animation-type": "discrete",
+            "initial": "0",
+            "values": [ "auto" ],
+            "codegen-properties": {
+                "skip-computed-style": true,
+                "skip-style-builder": true,
+                "skip-style-extractor": true,
+                "parser-grammar": "auto | <'test-property'>"
+            }
+        },
         "test-sink-priority": {
             "animation-type": "discrete",
             "initial": "0",
@@ -1275,6 +1319,9 @@
         "<shared-rule-exported>": {
             "grammar": "<length> | <string>",
             "exported": true
+        },
+        "<shared-rule-referencing-property>": {
+            "grammar": "<'test-property'>"
         },
         "<shared-rule-with-override-function>": {
             "grammar-unused": "<number> | <percentage>",

@@ -34,6 +34,7 @@ StylePropertyShorthand allShorthand()
         CSSPropertyID::CSSPropertyTestColorAllowsTypesAbsolute,
         CSSPropertyID::CSSPropertyTestColorPropertyWithVisitedLinkSupport,
         CSSPropertyID::CSSPropertyTestCustomExtractor,
+        CSSPropertyID::CSSPropertyTestDirectlyReferencingProperty,
         CSSPropertyID::CSSPropertyTestFunctionBoundedParameters,
         CSSPropertyID::CSSPropertyTestFunctionFixedParameters,
         CSSPropertyID::CSSPropertyTestFunctionNoParameters,
@@ -116,6 +117,8 @@ StylePropertyShorthand allShorthand()
         CSSPropertyID::CSSPropertyTestUrlWithNoModifiers,
         CSSPropertyID::CSSPropertyTestUsingSharedRule,
         CSSPropertyID::CSSPropertyTestUsingSharedRuleExported,
+        CSSPropertyID::CSSPropertyTestUsingSharedRuleMultipleTimes,
+        CSSPropertyID::CSSPropertyTestUsingSharedRuleReferencingProperty,
         CSSPropertyID::CSSPropertyTestUsingSharedRuleWithOverrideFunction,
         CSSPropertyID::CSSPropertyTestSinkPriority,
         CSSPropertyID::CSSPropertyTestLogicalPropertyGroupPhysicalHorizontal,
@@ -202,6 +205,7 @@ StylePropertyShorthandVector matchingShorthandsForLonghand(CSSPropertyID id)
     case CSSPropertyID::CSSPropertyTestColorAllowsTypesAbsolute:
     case CSSPropertyID::CSSPropertyTestColorPropertyWithVisitedLinkSupport:
     case CSSPropertyID::CSSPropertyTestCustomExtractor:
+    case CSSPropertyID::CSSPropertyTestDirectlyReferencingProperty:
     case CSSPropertyID::CSSPropertyTestFunctionBoundedParameters:
     case CSSPropertyID::CSSPropertyTestFunctionFixedParameters:
     case CSSPropertyID::CSSPropertyTestFunctionNoParameters:
@@ -286,6 +290,8 @@ StylePropertyShorthandVector matchingShorthandsForLonghand(CSSPropertyID id)
     case CSSPropertyID::CSSPropertyTestUrlWithNoModifiers:
     case CSSPropertyID::CSSPropertyTestUsingSharedRule:
     case CSSPropertyID::CSSPropertyTestUsingSharedRuleExported:
+    case CSSPropertyID::CSSPropertyTestUsingSharedRuleMultipleTimes:
+    case CSSPropertyID::CSSPropertyTestUsingSharedRuleReferencingProperty:
     case CSSPropertyID::CSSPropertyTestUsingSharedRuleWithOverrideFunction:
         return StylePropertyShorthandVector{allShorthand()};
     default:

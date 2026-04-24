@@ -282,6 +282,9 @@ RefPtr<CSSValue> ExtractorGenerated::extractValue(ExtractorState& extractorState
         return ExtractorFunctions::extractTestColorPropertyWithVisitedLinkSupport(extractorState);
     case CSSPropertyID::CSSPropertyTestCustomExtractor:
         return ExtractorCustom::extractTestCustomExtractor(extractorState);
+    case CSSPropertyID::CSSPropertyTestDirectlyReferencingProperty:
+        // Skipped - Not computable
+        return nullptr;
     case CSSPropertyID::CSSPropertyTestFunctionBoundedParameters:
         // Skipped - Not computable
         return nullptr;
@@ -516,6 +519,12 @@ RefPtr<CSSValue> ExtractorGenerated::extractValue(ExtractorState& extractorState
     case CSSPropertyID::CSSPropertyTestUsingSharedRuleExported:
         // Skipped - Not computable
         return nullptr;
+    case CSSPropertyID::CSSPropertyTestUsingSharedRuleMultipleTimes:
+        // Skipped - Not computable
+        return nullptr;
+    case CSSPropertyID::CSSPropertyTestUsingSharedRuleReferencingProperty:
+        // Skipped - Not computable
+        return nullptr;
     case CSSPropertyID::CSSPropertyTestUsingSharedRuleWithOverrideFunction:
         // Skipped - Not computable
         return nullptr;
@@ -636,6 +645,9 @@ void ExtractorGenerated::extractValueSerialization(ExtractorState& extractorStat
         return;
     case CSSPropertyID::CSSPropertyTestCustomExtractor:
         ExtractorCustom::extractTestCustomExtractorSerialization(extractorState, builder, context);
+        return;
+    case CSSPropertyID::CSSPropertyTestDirectlyReferencingProperty:
+        // Skipped - Not computable
         return;
     case CSSPropertyID::CSSPropertyTestFunctionBoundedParameters:
         // Skipped - Not computable
@@ -881,6 +893,12 @@ void ExtractorGenerated::extractValueSerialization(ExtractorState& extractorStat
         // Skipped - Not computable
         return;
     case CSSPropertyID::CSSPropertyTestUsingSharedRuleExported:
+        // Skipped - Not computable
+        return;
+    case CSSPropertyID::CSSPropertyTestUsingSharedRuleMultipleTimes:
+        // Skipped - Not computable
+        return;
+    case CSSPropertyID::CSSPropertyTestUsingSharedRuleReferencingProperty:
         // Skipped - Not computable
         return;
     case CSSPropertyID::CSSPropertyTestUsingSharedRuleWithOverrideFunction:

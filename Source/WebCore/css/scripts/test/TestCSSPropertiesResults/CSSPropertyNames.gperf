@@ -79,6 +79,7 @@ constexpr ASCIILiteral propertyNameStrings[numCSSProperties] = {
     "test-color-allows-types-absolute"_s,
     "test-color-property-with-visited-link-support"_s,
     "test-custom-extractor"_s,
+    "test-directly-referencing-property"_s,
     "test-function-bounded-parameters"_s,
     "test-function-fixed-parameters"_s,
     "test-function-no-parameters"_s,
@@ -161,6 +162,8 @@ constexpr ASCIILiteral propertyNameStrings[numCSSProperties] = {
     "test-url-with-no-modifiers"_s,
     "test-using-shared-rule"_s,
     "test-using-shared-rule-exported"_s,
+    "test-using-shared-rule-multiple-times"_s,
+    "test-using-shared-rule-referencing-property"_s,
     "test-using-shared-rule-with-override-function"_s,
     "test-sink-priority"_s,
     "test-logical-property-group-physical-horizontal"_s,
@@ -213,6 +216,7 @@ test-color, CSSPropertyID::CSSPropertyTestColor
 test-color-allows-types-absolute, CSSPropertyID::CSSPropertyTestColorAllowsTypesAbsolute
 test-color-property-with-visited-link-support, CSSPropertyID::CSSPropertyTestColorPropertyWithVisitedLinkSupport
 test-custom-extractor, CSSPropertyID::CSSPropertyTestCustomExtractor
+test-directly-referencing-property, CSSPropertyID::CSSPropertyTestDirectlyReferencingProperty
 test-function-bounded-parameters, CSSPropertyID::CSSPropertyTestFunctionBoundedParameters
 test-function-fixed-parameters, CSSPropertyID::CSSPropertyTestFunctionFixedParameters
 test-function-no-parameters, CSSPropertyID::CSSPropertyTestFunctionNoParameters
@@ -305,6 +309,8 @@ test-url-with-modifiers, CSSPropertyID::CSSPropertyTestUrlWithModifiers
 test-url-with-no-modifiers, CSSPropertyID::CSSPropertyTestUrlWithNoModifiers
 test-using-shared-rule, CSSPropertyID::CSSPropertyTestUsingSharedRule
 test-using-shared-rule-exported, CSSPropertyID::CSSPropertyTestUsingSharedRuleExported
+test-using-shared-rule-multiple-times, CSSPropertyID::CSSPropertyTestUsingSharedRuleMultipleTimes
+test-using-shared-rule-referencing-property, CSSPropertyID::CSSPropertyTestUsingSharedRuleReferencingProperty
 test-using-shared-rule-with-override-function, CSSPropertyID::CSSPropertyTestUsingSharedRuleWithOverrideFunction
 %%
 
@@ -459,6 +465,7 @@ constexpr bool isInheritedPropertyTable[cssPropertyIDEnumValueCount] = {
     false, // CSSPropertyID::CSSPropertyTestColorAllowsTypesAbsolute
     false, // CSSPropertyID::CSSPropertyTestColorPropertyWithVisitedLinkSupport
     false, // CSSPropertyID::CSSPropertyTestCustomExtractor
+    false, // CSSPropertyID::CSSPropertyTestDirectlyReferencingProperty
     false, // CSSPropertyID::CSSPropertyTestFunctionBoundedParameters
     false, // CSSPropertyID::CSSPropertyTestFunctionFixedParameters
     false, // CSSPropertyID::CSSPropertyTestFunctionNoParameters
@@ -541,6 +548,8 @@ constexpr bool isInheritedPropertyTable[cssPropertyIDEnumValueCount] = {
     false, // CSSPropertyID::CSSPropertyTestUrlWithNoModifiers
     false, // CSSPropertyID::CSSPropertyTestUsingSharedRule
     false, // CSSPropertyID::CSSPropertyTestUsingSharedRuleExported
+    false, // CSSPropertyID::CSSPropertyTestUsingSharedRuleMultipleTimes
+    false, // CSSPropertyID::CSSPropertyTestUsingSharedRuleReferencingProperty
     false, // CSSPropertyID::CSSPropertyTestUsingSharedRuleWithOverrideFunction
     false, // CSSPropertyID::CSSPropertyTestSinkPriority
     false, // CSSPropertyID::CSSPropertyTestLogicalPropertyGroupPhysicalHorizontal
@@ -620,6 +629,7 @@ bool CSSProperty::allowsNumberOrIntegerInput(CSSPropertyID id)
     case CSSPropertyID::CSSPropertyTestBoundedRepetitionWithSpacesWithTypeWithDefaultPrevious:
     case CSSPropertyID::CSSPropertyTestBoundedRepetitionWithSpacesWithTypeWithDefaultPreviousTwo:
     case CSSPropertyID::CSSPropertyTestCustomExtractor:
+    case CSSPropertyID::CSSPropertyTestDirectlyReferencingProperty:
     case CSSPropertyID::CSSPropertyTestMatchAllAnyOrderWithOptionalAndCustomType:
     case CSSPropertyID::CSSPropertyTestMatchAllAnyOrderWithOptionalAndPreserveOrderAndCustomType:
     case CSSPropertyID::CSSPropertyTestMatchAllAnyOrderWithOptionalNoSingleItemOpt:
@@ -660,6 +670,8 @@ bool CSSProperty::allowsNumberOrIntegerInput(CSSPropertyID id)
     case CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithSpacesWithMinNoSingleItemOpt:
     case CSSPropertyID::CSSPropertyTestUnboundedRepetitionWithSpacesWithMinSingleItemOpt:
     case CSSPropertyID::CSSPropertyTestUsingSharedRule:
+    case CSSPropertyID::CSSPropertyTestUsingSharedRuleMultipleTimes:
+    case CSSPropertyID::CSSPropertyTestUsingSharedRuleReferencingProperty:
     case CSSPropertyID::CSSPropertyTestSinkPriority:
     case CSSPropertyID::CSSPropertyTestLogicalPropertyGroupPhysicalHorizontal:
     case CSSPropertyID::CSSPropertyTestLogicalPropertyGroupPhysicalVertical:
@@ -869,11 +881,23 @@ TextStream& operator<<(TextStream& stream, CSSPropertyID property)
     return stream << nameLiteral(property);
 }
 
+static constexpr std::array validKeywordsForTestDirectlyReferencingProperty {
+    CSSValueID::CSSValueAuto,
+};
+
 static constexpr std::array validKeywordsForTestUsingSharedRule {
     CSSValueID::CSSValueAuto,
 };
 
 static constexpr std::array validKeywordsForTestUsingSharedRuleExported {
+    CSSValueID::CSSValueAuto,
+};
+
+static constexpr std::array validKeywordsForTestUsingSharedRuleMultipleTimes {
+    CSSValueID::CSSValueAuto,
+};
+
+static constexpr std::array validKeywordsForTestUsingSharedRuleReferencingProperty {
     CSSValueID::CSSValueAuto,
 };
 
@@ -884,10 +908,16 @@ static constexpr std::array validKeywordsForTestUsingSharedRuleWithOverrideFunct
 std::span<const CSSValueID> CSSProperty::validKeywordsForProperty(CSSPropertyID id)
 {
     switch (id) {
+    case CSSPropertyID::CSSPropertyTestDirectlyReferencingProperty:
+        return std::span<const CSSValueID> { validKeywordsForTestDirectlyReferencingProperty };
     case CSSPropertyID::CSSPropertyTestUsingSharedRule:
         return std::span<const CSSValueID> { validKeywordsForTestUsingSharedRule };
     case CSSPropertyID::CSSPropertyTestUsingSharedRuleExported:
         return std::span<const CSSValueID> { validKeywordsForTestUsingSharedRuleExported };
+    case CSSPropertyID::CSSPropertyTestUsingSharedRuleMultipleTimes:
+        return std::span<const CSSValueID> { validKeywordsForTestUsingSharedRuleMultipleTimes };
+    case CSSPropertyID::CSSPropertyTestUsingSharedRuleReferencingProperty:
+        return std::span<const CSSValueID> { validKeywordsForTestUsingSharedRuleReferencingProperty };
     case CSSPropertyID::CSSPropertyTestUsingSharedRuleWithOverrideFunction:
         return std::span<const CSSValueID> { validKeywordsForTestUsingSharedRuleWithOverrideFunction };
     default:
@@ -898,10 +928,16 @@ std::span<const CSSValueID> CSSProperty::validKeywordsForProperty(CSSPropertyID 
 bool CSSProperty::isKeywordValidForPropertyValues(CSSPropertyID id, CSSValueID keyword, const CSSParserContext& context)
 {
     switch (id) {
+    case CSSPropertyID::CSSPropertyTestDirectlyReferencingProperty:
+        return std::ranges::find(validKeywordsForTestDirectlyReferencingProperty, keyword) != validKeywordsForTestDirectlyReferencingProperty.end();
     case CSSPropertyID::CSSPropertyTestUsingSharedRule:
         return std::ranges::find(validKeywordsForTestUsingSharedRule, keyword) != validKeywordsForTestUsingSharedRule.end();
     case CSSPropertyID::CSSPropertyTestUsingSharedRuleExported:
         return std::ranges::find(validKeywordsForTestUsingSharedRuleExported, keyword) != validKeywordsForTestUsingSharedRuleExported.end();
+    case CSSPropertyID::CSSPropertyTestUsingSharedRuleMultipleTimes:
+        return std::ranges::find(validKeywordsForTestUsingSharedRuleMultipleTimes, keyword) != validKeywordsForTestUsingSharedRuleMultipleTimes.end();
+    case CSSPropertyID::CSSPropertyTestUsingSharedRuleReferencingProperty:
+        return std::ranges::find(validKeywordsForTestUsingSharedRuleReferencingProperty, keyword) != validKeywordsForTestUsingSharedRuleReferencingProperty.end();
     case CSSPropertyID::CSSPropertyTestUsingSharedRuleWithOverrideFunction:
         return std::ranges::find(validKeywordsForTestUsingSharedRuleWithOverrideFunction, keyword) != validKeywordsForTestUsingSharedRuleWithOverrideFunction.end();
     default:

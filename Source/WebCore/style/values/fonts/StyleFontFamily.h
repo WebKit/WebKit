@@ -34,7 +34,7 @@
 namespace WebCore {
 namespace Style {
 
-// <single-font-family> = [ <family-name> | <generic-family> ]
+// <single-font-family> = [ <font-family-name> | <generic-font-family> ]
 // https://drafts.csswg.org/css-fonts-4/#propdef-font-family
 struct FontFamily {
     WebCore::FontFamily value;
@@ -46,7 +46,7 @@ struct FontFamily {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
 
         if (value.isGeneric()) {
-            // <generic-family>
+            // <generic-font-family>
             if (value.name == sansSerifFamily)
                 return visitor(CSS::Keyword::SansSerif { });
             if (value.name == monospaceFamily)
@@ -64,14 +64,14 @@ struct FontFamily {
             if (value.name == pictographFamily)
                 return visitor(CSS::Keyword::WebkitPictograph { });
         }
-        // <family-name>
+        // <font-family-name>
         return visitor(FontFamilyName { value.name });
     }
 
     bool operator==(const FontFamily&) const = default;
 };
 
-// <'font-family'> = [ <family-name> | <generic-family> ]#
+// <'font-family'> = [ <font-family-name> | <generic-font-family> ]#
 // https://drafts.csswg.org/css-fonts-4/#propdef-font-family
 struct FontFamilies {
     FontFamilies(Ref<RefCountedFixedVector<WebCore::FontFamily>>&& families, FontFamilyKind firstFontKind)
