@@ -36,6 +36,17 @@ RUN wget -q https://dl.google.com/android/repository/android-ndk-${NDK_VERSION}-
 ENV ANDROID_NDK_ROOT=/opt/android-ndk
 ENV NDK_SYSROOT=/opt/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/sysroot
 
+# Symlink NDK compiler-rt builtins + libunwind into host clang's resource dir.
+# clang's driver emits a FULL PATH to <resource-dir>/lib/<triple>/libclang_rt.builtins.a
+# with no -L fallback, so the file must exist there for any link step.
+ARG ANDROID_API
+ARG ANDROID_ARCH
+RUN RT_DIR=$($CC -print-resource-dir)/lib/${ANDROID_ARCH}-unknown-linux-android${ANDROID_API} && \
+    NDK_RT=/opt/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/lib/clang/$(ls /opt/android-ndk/toolchains/llvm/prebuilt/linux-x86_64/lib/clang/)/lib/linux && \
+    mkdir -p $RT_DIR && \
+    ln -sf $NDK_RT/libclang_rt.builtins-${ANDROID_ARCH}-android.a $RT_DIR/libclang_rt.builtins.a && \
+    ln -sf $NDK_RT/${ANDROID_ARCH}/libunwind.a $RT_DIR/libunwind.a
+
 RUN mkdir -p /output/lib /output/include /output/include/JavaScriptCore /output/include/wtf /output/include/bmalloc /output/include/unicode
 
 # ───────────────────────────────────────────────────────────────────────────
