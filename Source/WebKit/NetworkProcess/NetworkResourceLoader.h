@@ -167,6 +167,8 @@ public:
 
     void startWithServiceWorker();
     void serviceWorkerDidNotHandle(ServiceWorkerFetchTask*);
+    void cancelNetworkLoadIfServiceWorkerWonRace();
+    bool isRacingServiceWorkerAgainstNetwork() const { return m_isRacingNetworkAgainstServiceWorkerImport; }
     void setServiceWorkerRegistration(WebCore::SWServerRegistration& serviceWorkerRegistration) { m_serviceWorkerRegistration = serviceWorkerRegistration; }
     void NODELETE setWorkerStart(MonotonicTime);
 
@@ -289,6 +291,8 @@ private:
 
     void startRequest(const WebCore::ResourceRequest&);
     bool abortIfServiceWorkersOnly();
+    void serviceWorkerImportCompletedWhileRacingNetwork();
+    void cancelServiceWorkerFetchTaskIfNetworkWonRace();
 
     bool NODELETE shouldSendResourceLoadMessages() const;
 
@@ -343,6 +347,7 @@ private:
     RefPtr<ServiceWorkerFetchTask> m_serviceWorkerFetchTask;
     WeakPtr<WebCore::SWServerRegistration> m_serviceWorkerRegistration;
     std::optional<ServiceWorkerTimingInfo> m_serviceWorkerTimingInfo;
+    bool m_isRacingNetworkAgainstServiceWorkerImport { false };
 
     NetworkResourceLoadIdentifier m_resourceLoadID;
     WebCore::ResourceResponse m_redirectResponse;

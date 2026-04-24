@@ -74,6 +74,7 @@
 #include <WebCore/OriginAccessPatterns.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ReportingScope.h>
+#include <WebCore/SWServer.h>
 #include <WebCore/SameSiteInfo.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityPolicy.h>
@@ -619,6 +620,8 @@ void NetworkResourceLoader::abort()
     LOADER_RELEASE_LOG("abort: (hasNetworkLoad=%d)", !!m_networkLoad);
     ASSERT(RunLoop::isMain());
 
+    m_isRacingNetworkAgainstServiceWorkerImport = false;
+
     if (m_parameters.options.keepAlive && m_response.isNull() && !m_isKeptAlive) {
         m_isKeptAlive = true;
         LOADER_RELEASE_LOG("abort: Keeping network load alive due to keepalive option");
@@ -897,6 +900,8 @@ void NetworkResourceLoader::didReceiveInformationalResponse(ResourceResponse&& r
 
 void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedResponse, PrivateRelayed privateRelayed, ResponseCompletionHandler&& completionHandler)
 {
+    cancelServiceWorkerFetchTaskIfNetworkWonRace();
+
     LOADER_RELEASE_LOG("didReceiveResponse: (httpStatusCode=%d, MIMEType=%" PUBLIC_LOG_STRING ", expectedContentLength=%lld, hasCachedEntryForValidation=%d, hasNetworkLoadChecker=%d)", receivedResponse.httpStatusCode(), receivedResponse.mimeType().utf8().data(), receivedResponse.expectedContentLength(), !!m_cacheEntryForValidation, !!m_networkLoadChecker);
 
 #if ENABLE(CONTENT_FILTERING)
@@ -1184,6 +1189,8 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLo
 
 void NetworkResourceLoader::didFailLoading(const ResourceError& error)
 {
+    cancelServiceWorkerFetchTaskIfNetworkWonRace();
+
     bool wasServiceWorkerLoad = false;
     wasServiceWorkerLoad = !!m_serviceWorkerFetchTask;
     LOADER_RELEASE_LOG_ERROR("didFailLoading: (wasServiceWorkerLoad=%d, isTimeout=%d, isCancellation=%d, isAccessControl=%d, errorCode=%d)", wasServiceWorkerLoad, error.isTimeout(), error.isCancellation(), error.isAccessControl(), error.errorCode());
@@ -1254,11 +1261,14 @@ std::optional<Seconds> NetworkResourceLoader::validateCacheEntryForMaxAgeCapVali
 
 void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
 {
+    cancelServiceWorkerFetchTaskIfNetworkWonRace();
+
     willSendRedirectedRequestInternal(WTF::move(request), WTF::move(redirectRequest), WTF::move(redirectResponse), IsFromServiceWorker::No, WTF::move(completionHandler));
 }
 
 void NetworkResourceLoader::willSendServiceWorkerRedirectedRequest(ResourceRequest&& request, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse)
 {
+    cancelNetworkLoadIfServiceWorkerWonRace();
     willSendRedirectedRequestInternal(WTF::move(request), WTF::move(redirectRequest), WTF::move(redirectResponse), IsFromServiceWorker::Yes, [] (auto) { });
 }
 
@@ -2104,6 +2114,27 @@ void NetworkResourceLoader::startWithServiceWorker()
         if (request.isNull())
             return;
 
+        if (protectedThis->m_parameters.serviceWorkersMode != ServiceWorkersMode::None) {
+            if (CheckedPtr session = protectedThis->connectionToWebProcess().networkSession()) {
+                if (RefPtr server = session->swServer(); server && !server->isImportCompleted()) {
+                    if (protectedThis->m_parameters.serviceWorkersMode == ServiceWorkersMode::Only) {
+                        LOADER_RELEASE_LOG_WITH_THIS(protectedThis, "startWithServiceWorker: SW import not complete, deferring ServiceWorkersMode::Only load");
+                        server->whenImportIsCompleted([protectedThis]() mutable {
+                            protectedThis->startWithServiceWorker();
+                        });
+                        return;
+                    }
+                    LOADER_RELEASE_LOG_WITH_THIS(protectedThis, "startWithServiceWorker: SW import not complete, racing network against import");
+                    protectedThis->m_isRacingNetworkAgainstServiceWorkerImport = true;
+                    server->whenImportIsCompleted([protectedThis]() mutable {
+                        protectedThis->serviceWorkerImportCompletedWhileRacingNetwork();
+                    });
+                    protectedThis->startRequest(WTF::move(request));
+                    return;
+                }
+            }
+        }
+
         ASSERT(!protectedThis->m_serviceWorkerFetchTask);
         protectedThis->m_serviceWorkerFetchTask = protect(protectedThis->connectionToWebProcess())->createFetchTask(protectedThis, request);
         if (protectedThis->m_serviceWorkerFetchTask) {
@@ -2125,6 +2156,48 @@ void NetworkResourceLoader::startWithServiceWorker()
 #endif
 }
 
+void NetworkResourceLoader::serviceWorkerImportCompletedWhileRacingNetwork()
+{
+    if (!m_isRacingNetworkAgainstServiceWorkerImport)
+        return;
+
+    LOADER_RELEASE_LOG("serviceWorkerImportCompletedWhileRacingNetwork:");
+
+    auto serviceWorkerFetchTask = protect(connectionToWebProcess())->createFetchTask(*this, originalRequest());
+    if (!serviceWorkerFetchTask) {
+        LOADER_RELEASE_LOG("serviceWorkerImportCompletedWhileRacingNetwork: No matching service worker, continuing network load");
+        m_isRacingNetworkAgainstServiceWorkerImport = false;
+        return;
+    }
+
+    LOADER_RELEASE_LOG("serviceWorkerImportCompletedWhileRacingNetwork: Service worker matched, racing fetch handler against network load (fetchIdentifier=%" PRIu64 ")", serviceWorkerFetchTask->fetchIdentifier().toUInt64());
+    m_serviceWorkerFetchTask = WTF::move(serviceWorkerFetchTask);
+}
+
+void NetworkResourceLoader::cancelServiceWorkerFetchTaskIfNetworkWonRace()
+{
+    if (!m_isRacingNetworkAgainstServiceWorkerImport)
+        return;
+    m_isRacingNetworkAgainstServiceWorkerImport = false;
+    if (auto task = std::exchange(m_serviceWorkerFetchTask, nullptr)) {
+        LOADER_RELEASE_LOG("cancelServiceWorkerFetchTaskIfNetworkWonRace: Network won the race, cancelling service worker fetch task (fetchIdentifier=%" PRIu64 ")", task->fetchIdentifier().toUInt64());
+        task->cancelFromClient();
+    }
+}
+
+void NetworkResourceLoader::cancelNetworkLoadIfServiceWorkerWonRace()
+{
+    if (!m_isRacingNetworkAgainstServiceWorkerImport)
+        return;
+    m_isRacingNetworkAgainstServiceWorkerImport = false;
+
+    LOADER_RELEASE_LOG("cancelNetworkLoadIfServiceWorkerWonRace:");
+    if (RefPtr networkLoad = std::exchange(m_networkLoad, nullptr)) {
+        networkLoad->cancel();
+        networkLoad->clearClient();
+    }
+}
+
 bool NetworkResourceLoader::abortIfServiceWorkersOnly()
 {
     if (m_parameters.serviceWorkersMode != ServiceWorkersMode::Only)
@@ -2143,6 +2216,13 @@ void NetworkResourceLoader::serviceWorkerDidNotHandle(ServiceWorkerFetchTask* fe
 
     if (abortIfServiceWorkersOnly())
         return;
+
+    if (m_isRacingNetworkAgainstServiceWorkerImport) {
+        LOADER_RELEASE_LOG("serviceWorkerDidNotHandle: Network load already in progress, letting it continue");
+        m_isRacingNetworkAgainstServiceWorkerImport = false;
+        m_serviceWorkerFetchTask = nullptr;
+        return;
+    }
 
     if (RefPtr serviceWorkerFetchTask = m_serviceWorkerFetchTask) {
         auto newRequest = serviceWorkerFetchTask->takeRequest();

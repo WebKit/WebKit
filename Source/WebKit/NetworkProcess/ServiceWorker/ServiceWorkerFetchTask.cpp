@@ -285,6 +285,8 @@ void ServiceWorkerFetchTask::processResponse(ResourceResponse&& response, bool n
         return;
 
     Ref loader = *m_loader;
+    loader->cancelNetworkLoadIfServiceWorkerWonRace();
+
 #if ENABLE(CONTENT_FILTERING)
     if (!loader->continueAfterServiceWorkerReceivedResponse(response))
         return;
@@ -385,7 +387,13 @@ void ServiceWorkerFetchTask::didFail(const ResourceError& error)
     cancelPreloadIfNecessary();
 
     SWFETCH_RELEASE_LOG_ERROR("didFail: (error.domain=%" PUBLIC_LOG_STRING ", error.code=%d)", error.domain().utf8().data(), error.errorCode());
-    protect(m_loader)->didFailLoading(error);
+    Ref loader = *m_loader;
+    if (loader->isRacingServiceWorkerAgainstNetwork()) {
+        SWFETCH_RELEASE_LOG("didFail: Racing against network, treating as didNotHandle");
+        loader->serviceWorkerDidNotHandle(this);
+        return;
+    }
+    loader->didFailLoading(error);
 }
 
 void ServiceWorkerFetchTask::didNotHandle()
