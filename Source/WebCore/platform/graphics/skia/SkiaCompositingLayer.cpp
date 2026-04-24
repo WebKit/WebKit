@@ -934,7 +934,7 @@ bool SkiaCompositingLayer::hasVisualContent() const
 
 void SkiaCompositingLayer::collect3DRenderingContextLayers(Vector<Ref<SkiaCompositingLayer>>& layers)
 {
-    if (m_preserves3D || isLeafOf3DRenderingContext()) {
+    if (isPartOf3DRenderingContext()) {
         // Add layers to 3d rendering context only if they get actually painted.
         bool hasVisualContentOrFilters = hasVisualContent() || filter() || m_backdrop.filter;
         if (isVisible() && (hasVisualContentOrFilters || (isLeafOf3DRenderingContext() && !m_children.isEmpty())))

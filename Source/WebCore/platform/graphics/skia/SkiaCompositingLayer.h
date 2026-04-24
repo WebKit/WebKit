@@ -113,6 +113,7 @@ private:
     void removeFromParent();
     bool isVisible() const;
     bool isLeafOf3DRenderingContext() const { return !m_preserves3D && (m_parent && m_parent->m_preserves3D); }
+    bool isPartOf3DRenderingContext() const { return m_preserves3D || isLeafOf3DRenderingContext(); }
     bool isReplica() const { return !!m_replicatedLayer; }
     bool hasVisualContent() const;
     Ref<SkiaCompositingLayer> backdropRoot();
