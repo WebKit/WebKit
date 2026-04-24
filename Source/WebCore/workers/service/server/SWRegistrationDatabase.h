@@ -45,7 +45,9 @@ public:
 
     WEBCORE_EXPORT SWRegistrationDatabase(const String& path);
     WEBCORE_EXPORT ~SWRegistrationDatabase();
-    
+
+    WEBCORE_EXPORT static String databaseFilePath(const String& directory);
+
     WEBCORE_EXPORT std::optional<Vector<ServiceWorkerContextData>> importRegistrations();
     WEBCORE_EXPORT std::optional<Vector<ServiceWorkerScripts>> updateRegistrations(const Vector<ServiceWorkerContextData>&, const Vector<ServiceWorkerRegistrationKey>&);
     WEBCORE_EXPORT std::optional<ServiceWorkerScripts> retrieveWorkerScripts(ServiceWorkerIdentifier, const ServiceWorkerRegistrationKey&, const URL& mainScriptURL, const Vector<URL>& importedScriptURLs);

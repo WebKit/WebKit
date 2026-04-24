@@ -196,7 +196,7 @@ String OriginStorageManager::StorageBucket::toStorageIdentifier(StorageType type
     case StorageType::BackgroundFetchStorage:
         return "BackgroundFetchStorage"_s;
     case StorageType::ServiceWorkerStorage:
-        return "ServiceWorkers"_s;
+        return serviceWorkerStorageIdentifier();
     default:
         break;
     }
@@ -623,6 +623,11 @@ void OriginStorageManager::StorageBucket::closeCacheStorageManager()
 String OriginStorageManager::originFileIdentifier()
 {
     return originFileName;
+}
+
+ASCIILiteral OriginStorageManager::serviceWorkerStorageIdentifier()
+{
+    return "ServiceWorkers"_s;
 }
 
 Ref<OriginQuotaManager> OriginStorageManager::createQuotaManager(OriginQuotaManager::Parameters&& parameters)

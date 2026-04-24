@@ -83,7 +83,7 @@ static constexpr std::array<ASCIILiteral, 4> swRegistrationUpdatesV2 {
 
 static constexpr int currentSWRegistrationVersion = 2;
 
-static String databaseFilePath(const String& directory)
+String SWRegistrationDatabase::databaseFilePath(const String& directory)
 {
     if (directory.isEmpty())
         return emptyString();

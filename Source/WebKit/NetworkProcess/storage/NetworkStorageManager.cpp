@@ -54,6 +54,7 @@
 #include "WebsiteDataType.h"
 #include <WebCore/DOMCacheEngine.h>
 #include <WebCore/IDBRequestData.h>
+#include <WebCore/SWRegistrationDatabase.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/ServiceWorkerContextData.h>
 #include <WebCore/StorageBlockingPolicy.h>
@@ -66,6 +67,7 @@
 #include <ranges>
 #include <wtf/SuspendableWorkQueue.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/WorkQueue.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/MakeString.h>
 
@@ -2231,6 +2233,30 @@ void NetworkStorageManager::clearServiceWorkerRegistrations(CompletionHandler<vo
 
         RunLoop::mainSingleton().dispatch([protectedThis = WTF::move(protectedThis), completionHandler = WTF::move(completionHandler)]() mutable {
             completionHandler();
+        });
+    });
+}
+
+void NetworkStorageManager::hasServiceWorkerRegistrationForOrigin(const WebCore::ClientOrigin& origin, CompletionHandler<void(bool)>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    if (m_closed || m_unifiedOriginStorageLevel < UnifiedOriginStorageLevel::Standard)
+        return completionHandler(true); // Conservative fallback.
+
+    auto originPath = originDirectoryPath(m_path, origin, m_salt);
+    if (originPath.isEmpty())
+        return completionHandler(true); // Conservative fallback.
+
+    // Use a dedicated concurrent work queue rather than the NetworkStorageManager's serial work
+    // queue, because the serial queue may be blocked by the ongoing full registration import —
+    // which is exactly what we are trying to avoid waiting on.
+    static NeverDestroyed<Ref<ConcurrentWorkQueue>> fileCheckQueue = ConcurrentWorkQueue::create("com.apple.WebKit.SWOriginCheck"_s, WorkQueue::QOS::UserInteractive);
+    auto swDatabasePath = WebCore::SWRegistrationDatabase::databaseFilePath(FileSystem::pathByAppendingComponent(originPath, OriginStorageManager::serviceWorkerStorageIdentifier()));
+    fileCheckQueue.get()->dispatch([swDatabasePath = crossThreadCopy(WTF::move(swDatabasePath)), completionHandler = WTF::move(completionHandler)]() mutable {
+        bool hasRegistration = FileSystem::fileExists(swDatabasePath);
+        RunLoop::mainSingleton().dispatch([hasRegistration, completionHandler = WTF::move(completionHandler)]() mutable {
+            completionHandler(hasRegistration);
         });
     });
 }

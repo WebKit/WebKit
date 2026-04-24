@@ -595,13 +595,31 @@ void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadPara
 
     if (CheckedPtr session = networkSession()) {
         if (Ref server = session->ensureSWServer(); !server->isImportCompleted()) {
-            server->whenImportIsCompleted([this, protectedThis = Ref { *this }, loadParameters = WTF::move(loadParameters), existingLoaderToResume]() mutable {
+            auto topOrigin = loadParameters.isMainFrameNavigation
+                ? WebCore::SecurityOriginData::fromURLWithoutStrictOpaqueness(loadParameters.request.url())
+                : loadParameters.topOrigin ? loadParameters.topOrigin->data() : WebCore::SecurityOriginData { };
+            auto clientOrigin = WebCore::SecurityOriginData::fromURLWithoutStrictOpaqueness(loadParameters.request.url());
+            // Fast path: quickly check on a concurrent work queue whether a service worker database
+            // exists for this origin, to avoid blocking the load on the full registration import when
+            // the origin has no service workers.
+            CONNECTION_RELEASE_LOG(ServiceWorker, "scheduleResourceLoad: SW registration import not complete, checking if origin has a service worker database");
+            auto startTime = MonotonicTime::now();
+            session->storageManager().hasServiceWorkerRegistrationForOrigin(WebCore::ClientOrigin { WTF::move(topOrigin), WTF::move(clientOrigin) }, [this, protectedThis = Ref { *this }, loadParameters = WTF::move(loadParameters), existingLoaderToResume, startTime](bool hasRegistration) mutable {
+                CONNECTION_RELEASE_LOG(ServiceWorker, "scheduleResourceLoad: hasServiceWorkerRegistrationForOrigin completed in %.0f ms, hasRegistration=%d", (MonotonicTime::now() - startTime).milliseconds(), hasRegistration);
                 if (!m_networkProcess->webProcessConnection(webProcessIdentifier()))
                     return;
 
-                ASSERT(networkSession());
-                ASSERT(networkSession()->swServer());
-                ASSERT(networkSession()->swServer()->isImportCompleted());
+                CheckedPtr session = networkSession();
+                if (hasRegistration && session) {
+                    if (Ref server = session->ensureSWServer(); !server->isImportCompleted()) {
+                        server->whenImportIsCompleted([this, protectedThis = WTF::move(protectedThis), loadParameters = WTF::move(loadParameters), existingLoaderToResume]() mutable {
+                            if (!m_networkProcess->webProcessConnection(webProcessIdentifier()))
+                                return;
+                            scheduleResourceLoad(WTF::move(loadParameters), existingLoaderToResume);
+                        });
+                        return;
+                    }
+                }
                 scheduleResourceLoad(WTF::move(loadParameters), existingLoaderToResume);
             });
             return;

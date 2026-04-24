@@ -62,6 +62,7 @@ class OriginStorageManager final : public CanMakeWeakPtr<OriginStorageManager>, 
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(OriginStorageManager);
 public:
     static String originFileIdentifier();
+    static ASCIILiteral serviceWorkerStorageIdentifier();
 
     OriginStorageManager(OriginQuotaManager::Parameters&&, String&& path, String&& cusotmLocalStoragePath, String&& customIDBStoragePath, String&& customCacheStoragePath, UnifiedOriginStorageLevel);
     ~OriginStorageManager();
