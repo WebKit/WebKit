@@ -67,6 +67,18 @@ else ()
 
         unix/UniStdExtrasUnix.cpp
     )
+
+    if (ANDROID)
+        list(REMOVE_ITEM WTF_SOURCES unix/LoggingUnix.cpp)
+        list(APPEND WTF_SOURCES
+            android/LoggingAndroid.cpp
+            android/RefPtrAndroid.cpp
+        )
+        list(APPEND WTF_PUBLIC_HEADERS
+            android/RefPtrAndroid.h
+        )
+        list(APPEND WTF_LIBRARIES log)
+    endif ()
 endif ()
 
 if (WIN32)
