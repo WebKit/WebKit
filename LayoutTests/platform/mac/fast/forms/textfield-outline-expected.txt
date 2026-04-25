@@ -8,8 +8,8 @@ layer at (0,0) size 800x600
       RenderBR {BR} at (562,0) size 1x18
       RenderTextControl {INPUT} at (0,18) size 247x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
       RenderText {#text} at (0,0) size 0x0
-layer at (10,28) size 243x23
+layer at (10,28) size 243x23 scrollWidth 542
   RenderBlock {DIV} at (2,1) size 243x24
-    RenderText {#text} at (0,-1) size 33x25
-      text run at (0,0) width 33: "abc"
+    RenderText {#text} at (0,-1) size 540x25
+      text run at (0,0) width 540: "abcThis tests that typing doesn't cut holes in the focus outline"
 caret: position 3 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 3 {INPUT} of body

@@ -11,7 +11,7 @@ if (window.testRunner)
     testRunner.dumpAsText();
 
 var input = document.querySelector('input');
-input.focus();
+input.select();
 document.execCommand('InsertHTML', false, 'PASS');
 
 document.write(input.value);

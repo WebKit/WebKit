@@ -31,5 +31,4 @@ layer at (175,46) size 142x13
   RenderBlock {DIV} at (7,4) size 142x13
     RenderText {#text} at (0,0) size 80x13
       text run at (0,0) width 80: "My Text Field 2"
-selection start: position 0 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 3 {INPUT} of child 1 {P} of body
-selection end:   position 15 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 3 {INPUT} of child 1 {P} of body
+caret: position 0 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 3 {INPUT} of child 1 {P} of body
