@@ -20897,8 +20897,12 @@ IGNORE_CLANG_WARNINGS_END
         LBasicBlock rightReadyCase = m_out.newBlock();
         LBasicBlock left8BitCase = m_out.newBlock();
         LBasicBlock right8BitCase = m_out.newBlock();
-        LBasicBlock loop = m_out.newBlock();
+        LBasicBlock left16BitCase = m_out.newBlock();
+        LBasicBlock right16BitCase = m_out.newBlock();
+        LBasicBlock loop8Bit = m_out.newBlock();
+        LBasicBlock loop16Bit = m_out.newBlock();
         LBasicBlock bytesEqual = m_out.newBlock();
+        LBasicBlock charactersEqual = m_out.newBlock();
         LBasicBlock trueCase = m_out.newBlock();
         LBasicBlock falseCase = m_out.newBlock();
         LBasicBlock slowCase = m_out.newBlock();
@@ -20921,11 +20925,10 @@ IGNORE_CLANG_WARNINGS_END
         m_out.branch(m_out.isZero32(length), unsure(trueCase), unsure(notEmptyCase));
 
         m_out.appendTo(notEmptyCase, left8BitCase);
-        m_out.branch(
-            m_out.testIsZero32(
-                m_out.load32(left, m_heaps.StringImpl_hashAndFlags),
-                m_out.constInt32(StringImpl::flagIs8Bit())),
-            unsure(slowCase), unsure(left8BitCase));
+        LValue leftIs8Bit = m_out.testNonZero32(
+            m_out.load32(left, m_heaps.StringImpl_hashAndFlags),
+            m_out.constInt32(StringImpl::flagIs8Bit()));
+        m_out.branch(leftIs8Bit, unsure(left8BitCase), unsure(left16BitCase));
 
         m_out.appendTo(left8BitCase, right8BitCase);
         m_out.branch(
@@ -20934,32 +20937,74 @@ IGNORE_CLANG_WARNINGS_END
                 m_out.constInt32(StringImpl::flagIs8Bit())),
             unsure(slowCase), unsure(right8BitCase));
 
-        m_out.appendTo(right8BitCase, loop);
+        m_out.appendTo(left16BitCase, right16BitCase);
+        m_out.branch(
+            m_out.testNonZero32(
+                m_out.load32(right, m_heaps.StringImpl_hashAndFlags),
+                m_out.constInt32(StringImpl::flagIs8Bit())),
+            unsure(slowCase), unsure(right16BitCase));
+
+        m_out.appendTo(right8BitCase, loop8Bit);
 
         LValue leftData = m_out.loadPtr(left, m_heaps.StringImpl_data);
         LValue rightData = m_out.loadPtr(right, m_heaps.StringImpl_data);
 
-        ValueFromBlock indexAtStart = m_out.anchor(length);
+        {
+            // 8bit string loop
 
-        m_out.jump(loop);
+            ValueFromBlock indexAtStart = m_out.anchor(length);
 
-        m_out.appendTo(loop, bytesEqual);
+            m_out.jump(loop8Bit);
 
-        LValue indexAtLoopTop = m_out.phi(Int32, indexAtStart);
-        LValue indexInLoop = m_out.sub(indexAtLoopTop, m_out.int32One);
+            m_out.appendTo(loop8Bit, bytesEqual);
 
-        LValue leftByte = m_out.load8ZeroExt32(
-            m_out.baseIndex(m_heaps.characters8, leftData, m_out.zeroExtPtr(indexInLoop)));
-        LValue rightByte = m_out.load8ZeroExt32(
-            m_out.baseIndex(m_heaps.characters8, rightData, m_out.zeroExtPtr(indexInLoop)));
+            LValue indexAtLoopTop = m_out.phi(Int32, indexAtStart);
+            LValue indexInLoop = m_out.sub(indexAtLoopTop, m_out.int32One);
 
-        m_out.branch(m_out.notEqual(leftByte, rightByte), unsure(falseCase), unsure(bytesEqual));
+            LValue leftByte = m_out.load8ZeroExt32(
+                m_out.baseIndex(m_heaps.characters8, leftData, m_out.zeroExtPtr(indexInLoop)));
+            LValue rightByte = m_out.load8ZeroExt32(
+                m_out.baseIndex(m_heaps.characters8, rightData, m_out.zeroExtPtr(indexInLoop)));
 
-        m_out.appendTo(bytesEqual, trueCase);
+            m_out.branch(m_out.notEqual(leftByte, rightByte), unsure(falseCase), unsure(bytesEqual));
 
-        ValueFromBlock indexForNextIteration = m_out.anchor(indexInLoop);
-        m_out.addIncomingToPhi(indexAtLoopTop, indexForNextIteration);
-        m_out.branch(m_out.notZero32(indexInLoop), unsure(loop), unsure(trueCase));
+            m_out.appendTo(bytesEqual, trueCase);
+
+            ValueFromBlock indexForNextIteration = m_out.anchor(indexInLoop);
+            m_out.addIncomingToPhi(indexAtLoopTop, indexForNextIteration);
+            m_out.branch(m_out.notZero32(indexInLoop), unsure(loop8Bit), unsure(trueCase));
+        }
+
+        m_out.appendTo(right16BitCase, loop16Bit);
+
+        LValue leftData16 = m_out.loadPtr(left, m_heaps.StringImpl_data);
+        LValue rightData16 = m_out.loadPtr(right, m_heaps.StringImpl_data);
+
+        {
+            // 16bit string loop
+
+            ValueFromBlock indexAtStart = m_out.anchor(length);
+
+            m_out.jump(loop16Bit);
+
+            m_out.appendTo(loop16Bit, charactersEqual);
+
+            LValue indexAtLoopTop = m_out.phi(Int32, indexAtStart);
+            LValue indexInLoop = m_out.sub(indexAtLoopTop, m_out.int32One);
+
+            LValue leftChar = m_out.load16ZeroExt32(
+                m_out.baseIndex(m_heaps.characters16, leftData16, m_out.zeroExtPtr(indexInLoop)));
+            LValue rightChar = m_out.load16ZeroExt32(
+                m_out.baseIndex(m_heaps.characters16, rightData16, m_out.zeroExtPtr(indexInLoop)));
+
+            m_out.branch(m_out.notEqual(leftChar, rightChar), unsure(falseCase), unsure(charactersEqual));
+
+            m_out.appendTo(charactersEqual, trueCase);
+
+            ValueFromBlock indexForNextIteration = m_out.anchor(indexInLoop);
+            m_out.addIncomingToPhi(indexAtLoopTop, indexForNextIteration);
+            m_out.branch(m_out.notZero32(indexInLoop), unsure(loop16Bit), unsure(trueCase));
+        }
 
         m_out.appendTo(trueCase, falseCase);
 

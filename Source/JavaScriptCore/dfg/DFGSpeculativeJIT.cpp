@@ -7726,15 +7726,46 @@ void SpeculativeJIT::compileStringEquality(
     
     trueCase.append(branchTest32(Zero, lengthGPR));
     
-    slowCase.append(branchTest32(
-        Zero,
+    Jump leftIs8Bit = branchTest32(
+        NonZero,
         Address(leftTempGPR, StringImpl::flagsOffset()),
-        TrustedImm32(StringImpl::flagIs8Bit())));
-    slowCase.append(branchTest32(
+        TrustedImm32(StringImpl::flagIs8Bit()));
+    Jump rightIs8Bit = branchTest32(
+        NonZero,
+        Address(rightTempGPR, StringImpl::flagsOffset()),
+        TrustedImm32(StringImpl::flagIs8Bit()));
+
+    // Both are 16-bit strings
+    loadPtr(Address(leftTempGPR, StringImpl::dataOffset()), leftTempGPR);
+    loadPtr(Address(rightTempGPR, StringImpl::dataOffset()), rightTempGPR);
+
+    Label loop16Bit = label();
+
+    sub32(TrustedImm32(1), lengthGPR);
+
+    load16(BaseIndex(leftTempGPR, lengthGPR, TimesTwo), leftTemp2GPR);
+    load16(BaseIndex(rightTempGPR, lengthGPR, TimesTwo), rightTemp2GPR);
+    falseCase.append(branch32(NotEqual, leftTemp2GPR, rightTemp2GPR));
+    trueCase.append(branchTest32(Zero, lengthGPR));
+    jump(loop16Bit);
+
+    // Handle mixed encoding cases
+    JumpList mixedEncoding;
+    leftIs8Bit.link(this);
+    mixedEncoding.append(branchTest32(
         Zero,
         Address(rightTempGPR, StringImpl::flagsOffset()),
         TrustedImm32(StringImpl::flagIs8Bit())));
-    
+
+    rightIs8Bit.link(this);
+    mixedEncoding.append(branchTest32(
+        Zero,
+        Address(leftTempGPR, StringImpl::flagsOffset()),
+        TrustedImm32(StringImpl::flagIs8Bit())));
+
+    slowCase.append(mixedEncoding);
+
+    // Both are 8-bit strings
     loadPtr(Address(leftTempGPR, StringImpl::dataOffset()), leftTempGPR);
     loadPtr(Address(rightTempGPR, StringImpl::dataOffset()), rightTempGPR);
     
