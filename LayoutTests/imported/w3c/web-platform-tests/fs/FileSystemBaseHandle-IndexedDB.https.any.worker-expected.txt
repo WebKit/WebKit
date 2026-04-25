@@ -1,8 +1,8 @@
 
-FAIL Store handle in IndexedDB and read from pending transaction. promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL Store handle in IndexedDB and read from new transaction. promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL Store handles and blobs in IndexedDB. promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL Store handle in IndexedDB and read using a cursor. promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL Store handle in IndexedDB using inline keys. promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL Store and retrieve the root directory from IndexedDB. promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+PASS Store handle in IndexedDB and read from pending transaction.
+PASS Store handle in IndexedDB and read from new transaction.
+PASS Store handles and blobs in IndexedDB.
+PASS Store handle in IndexedDB and read using a cursor.
+PASS Store handle in IndexedDB using inline keys.
+PASS Store and retrieve the root directory from IndexedDB.
 

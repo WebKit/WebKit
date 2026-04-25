@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class CacheStorageConnection;
+class FileSystemStorageConnection;
 class StorageConnection;
 struct ReportingClient;
 
@@ -50,6 +51,9 @@ public:
 
     // Creates a cache storage connection to be used on the main thread. Method must be called on the main thread.
     virtual RefPtr<CacheStorageConnection> createCacheStorageConnection() = 0;
+
+    // Creates a file system storage connection to be used on the main thread. Method must be called on the main thread.
+    virtual RefPtr<FileSystemStorageConnection> createFileSystemStorageConnection() = 0;
 
     virtual RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() = 0;
 

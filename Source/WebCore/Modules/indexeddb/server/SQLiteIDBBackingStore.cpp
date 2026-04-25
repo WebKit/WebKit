@@ -80,6 +80,7 @@ static const uint64_t maxGeneratorValue = 0x20000000000000;
 #define INDEX_INFO_TABLE_SCHEMA_SUFFIX " (id INTEGER NOT NULL ON CONFLICT FAIL, name TEXT NOT NULL ON CONFLICT FAIL, objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, keyPath BLOB NOT NULL ON CONFLICT FAIL, isUnique INTEGER NOT NULL ON CONFLICT FAIL, multiEntry INTEGER NOT NULL ON CONFLICT FAIL)"_s;
 #define BLOB_RECORDS_TABLE_SCHEMA_SUFFIX " (objectStoreRow INTEGER NOT NULL ON CONFLICT FAIL, blobURL TEXT NOT NULL ON CONFLICT FAIL)"_s;
 #define BLOB_FILES_TABLE_SCHEMA_SUFFIX " (blobURL TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT FAIL, fileName TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT FAIL)"_s;
+#define FILESYSTEM_HANDLE_RECORDS_TABLE_SCHEMA_SUFFIX " (objectStoreRow INTEGER NOT NULL ON CONFLICT FAIL, handleIndex INTEGER NOT NULL ON CONFLICT FAIL, path TEXT NOT NULL ON CONFLICT FAIL, kind INTEGER NOT NULL ON CONFLICT FAIL, name TEXT NOT NULL ON CONFLICT FAIL)"_s;
 
 static int idbKeyCollate(std::span<const uint8_t> aBuffer, std::span<const uint8_t> bBuffer)
 {
@@ -223,6 +224,16 @@ static ASCIILiteral blobFilesTableSchemaAlternate()
     return TABLE_SCHEMA_PREFIX "\"BlobFiles\"" BLOB_FILES_TABLE_SCHEMA_SUFFIX;
 }
 
+static ASCIILiteral fileSystemHandleRecordsTableSchema()
+{
+    return TABLE_SCHEMA_PREFIX "FileSystemHandleRecords" FILESYSTEM_HANDLE_RECORDS_TABLE_SCHEMA_SUFFIX;
+}
+
+static ASCIILiteral fileSystemHandleRecordsTableSchemaAlternate()
+{
+    return TABLE_SCHEMA_PREFIX "\"FileSystemHandleRecords\"" FILESYSTEM_HANDLE_RECORDS_TABLE_SCHEMA_SUFFIX;
+}
+
 static String createV1ObjectStoreInfoSchema(ASCIILiteral tableName)
 {
     return makeString("CREATE TABLE "_s, tableName, " (id INTEGER PRIMARY KEY NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT FAIL, name TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT FAIL, keyPath BLOB NOT NULL ON CONFLICT FAIL, autoInc INTEGER NOT NULL ON CONFLICT FAIL, maxIndexID INTEGER NOT NULL ON CONFLICT FAIL)"_s);
@@ -323,6 +334,17 @@ IDBError SQLiteIDBBackingStore::ensureValidBlobTables()
     }
 
     RELEASE_ASSERT(filesTableStatement == blobFilesTableSchema() || filesTableStatement == blobFilesTableSchemaAlternate());
+
+    String handleRecordsTableStatement = sqliteDB->tableSQL("FileSystemHandleRecords"_s);
+    if (handleRecordsTableStatement.isEmpty()) {
+        if (!sqliteDB->executeCommand(fileSystemHandleRecordsTableSchema()))
+            return IDBError { ExceptionCode::UnknownError, makeString("Error creating FileSystemHandleRecords table ("_s, sqliteDB->lastError(), ") - "_s, unsafeSpan(sqliteDB->lastErrorMsg())) };
+
+        handleRecordsTableStatement = fileSystemHandleRecordsTableSchema();
+    }
+
+    RELEASE_ASSERT(handleRecordsTableStatement == fileSystemHandleRecordsTableSchema() || handleRecordsTableStatement == fileSystemHandleRecordsTableSchemaAlternate());
+
     return IDBError { };
 }
 
@@ -1275,6 +1297,18 @@ IDBError SQLiteIDBBackingStore::deleteObjectStore(const IDBResourceIdentifier& t
         }
     }
 
+    // Delete all orphaned FileSystemHandle records.
+    {
+        auto sql = cachedStatement(SQL::DeleteOrphanedFileSystemHandleRecords, "DELETE FROM FileSystemHandleRecords WHERE objectStoreRow NOT IN (SELECT recordID FROM Records)"_s);
+        CheckedPtr statement = sql.get();
+        if (!statement
+            || statement->step() != SQLITE_DONE) {
+            CheckedRef sqliteDB = *m_sqliteDB;
+            LOG_ERROR("Could not delete FileSystemHandle records(%i) - %s", sqliteDB->lastError(), sqliteDB->lastErrorMsg());
+            return IDBError { ExceptionCode::UnknownError, "Could not delete stored file system handle records for deleted object store"_s };
+        }
+    }
+
     // Delete all unused Blob File records.
     auto error = deleteUnusedBlobFileRecords(*transaction);
     if (!error.isNull())
@@ -1356,6 +1390,16 @@ IDBError SQLiteIDBBackingStore::clearObjectStore(const IDBResourceIdentifier& tr
             CheckedRef sqliteDB = *m_sqliteDB;
             LOG_ERROR("Could not delete records from index record store id %" PRIi64 " (%i) - %s", objectStoreID.toRawValue(), sqliteDB->lastError(), sqliteDB->lastErrorMsg());
             return IDBError { ExceptionCode::UnknownError, "Unable to delete index records while clearing object store"_s };
+        }
+    }
+
+    // Clean up orphaned handle and blob records after Records deletion.
+    {
+        auto sql = cachedStatement(SQL::DeleteOrphanedFileSystemHandleRecords, "DELETE FROM FileSystemHandleRecords WHERE objectStoreRow NOT IN (SELECT recordID FROM Records)"_s);
+        CheckedPtr statement = sql.get();
+        if (!statement || statement->step() != SQLITE_DONE) {
+            CheckedRef sqliteDB = *m_sqliteDB;
+            LOG_ERROR("Could not delete FileSystemHandle records(%i) - %s", sqliteDB->lastError(), sqliteDB->lastErrorMsg());
         }
     }
 
@@ -1718,6 +1762,18 @@ IDBError SQLiteIDBBackingStore::deleteRecord(SQLiteIDBTransaction& transaction, 
         }
     }
 
+    {
+        auto sql = cachedStatement(SQL::DeleteFileSystemHandleRecords, "DELETE FROM FileSystemHandleRecords WHERE objectStoreRow = ?;"_s);
+        CheckedPtr statement = sql.get();
+        if (!statement
+            || statement->bindInt64(1, recordID) != SQLITE_OK
+            || statement->step() != SQLITE_DONE) {
+            CheckedRef sqliteDB = *m_sqliteDB;
+            LOG_ERROR("Could not delete record from object store %" PRIi64 " (%i) (Could not delete FileSystemHandleRecords records) - %s", objectStoreID.toRawValue(), sqliteDB->lastError(), sqliteDB->lastErrorMsg());
+            return IDBError { ExceptionCode::UnknownError, "Failed to delete record from object store"_s };
+        }
+    }
+
     auto error = deleteUnusedBlobFileRecords(transaction);
     if (!error.isNull())
         return error;
@@ -1961,6 +2017,23 @@ IDBError SQLiteIDBBackingStore::addRecord(const IDBResourceIdentifier& transacti
         transaction->addBlobFile(blobFiles[i], storedFilename);
     }
 
+    const auto& handleRecords = value.fileSystemHandleRecords();
+    for (size_t i = 0; i < handleRecords.size(); ++i) {
+        auto& record = handleRecords[i];
+        auto sql = cachedStatement(SQL::AddFileSystemHandleRecord, "INSERT INTO FileSystemHandleRecords VALUES (?, ?, ?, ?, ?);"_s);
+        CheckedPtr statement = sql.get();
+        if (!statement
+            || statement->bindInt64(1, recordID) != SQLITE_OK
+            || statement->bindInt64(2, i) != SQLITE_OK
+            || statement->bindText(3, record.path) != SQLITE_OK
+            || statement->bindInt(4, std::to_underlying(record.kind)) != SQLITE_OK
+            || statement->bindText(5, record.name) != SQLITE_OK
+            || statement->step() != SQLITE_DONE) {
+            LOG_ERROR("Unable to record FileSystemHandle record in database");
+            return IDBError { ExceptionCode::UnknownError, "Unable to record FileSystemHandle record in database"_s };
+        }
+    }
+
     transaction->notifyCursorsOfChanges(objectStoreInfo.identifier());
 
     return error;
@@ -2021,6 +2094,39 @@ IDBError SQLiteIDBBackingStore::getBlobRecordsForObjectStoreRecord(int64_t objec
         String fileName = statement->columnText(0);
         blobFilePaths.append(FileSystem::pathByAppendingComponent(m_databaseDirectory, fileName));
     }
+    return IDBError { };
+}
+
+IDBError SQLiteIDBBackingStore::getFileSystemHandleRecordsForObjectStoreRecord(int64_t objectStoreRecord, Vector<IDBFileSystemHandleRecord>& records)
+{
+    ASSERT(objectStoreRecord);
+
+    auto sql = cachedStatement(SQL::GetFileSystemHandleRecords, "SELECT path, kind, name FROM FileSystemHandleRecords WHERE objectStoreRow = ? ORDER BY handleIndex;"_s);
+    CheckedPtr statement = sql.get();
+    if (!statement
+        || statement->bindInt64(1, objectStoreRecord) != SQLITE_OK) {
+        CheckedRef sqliteDB = *m_sqliteDB;
+        LOG_ERROR("Could not prepare statement to fetch file system handle records (%i) - %s", sqliteDB->lastError(), sqliteDB->lastErrorMsg());
+        return IDBError { ExceptionCode::UnknownError, "Failed to look up file system handle records"_s };
+    }
+
+    int sqlResult = statement->step();
+    while (sqlResult == SQLITE_ROW) {
+        auto kindValue = statement->columnInt(1);
+        if (kindValue != std::to_underlying(FileSystemHandleKind::File) && kindValue != std::to_underlying(FileSystemHandleKind::Directory)) {
+            LOG_ERROR("Invalid file system handle kind value %d in database", kindValue);
+            return IDBError { ExceptionCode::UnknownError, "Invalid file system handle kind in database"_s };
+        }
+        records.append({ static_cast<FileSystemHandleKind>(kindValue), statement->columnText(2), statement->columnText(0) });
+        sqlResult = statement->step();
+    }
+
+    if (sqlResult != SQLITE_DONE) {
+        CheckedRef sqliteDB = *m_sqliteDB;
+        LOG_ERROR("Could not fetch file system handle records (%i) - %s", sqliteDB->lastError(), sqliteDB->lastErrorMsg());
+        return IDBError { ExceptionCode::UnknownError, "Failed to look up file system handle records"_s };
+    }
+
     return IDBError { };
 }
 
@@ -2145,7 +2251,12 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
     if (!error.isNull())
         return error;
 
-    resultValue = { keyData, { valueResultBuffer, WTF::move(blobURLs), WTF::move(blobFilePaths) }, objectStoreInfo->keyPath() };
+    Vector<IDBFileSystemHandleRecord> handleRecords;
+    error = getFileSystemHandleRecordsForObjectStoreRecord(recordID, handleRecords);
+    if (!error.isNull())
+        return error;
+
+    resultValue = { keyData, { valueResultBuffer, WTF::move(blobURLs), WTF::move(blobFilePaths), WTF::move(handleRecords) }, objectStoreInfo->keyPath() };
     return IDBError { };
 }
 
@@ -2282,7 +2393,12 @@ IDBError SQLiteIDBBackingStore::getAllObjectStoreRecords(const IDBResourceIdenti
             if (!error.isNull())
                 return error;
 
-            result.addValue({ valueResultBuffer, WTF::move(blobURLs), WTF::move(blobFilePaths) });
+            Vector<IDBFileSystemHandleRecord> handleRecords;
+            error = getFileSystemHandleRecordsForObjectStoreRecord(recordID, handleRecords);
+            if (!error.isNull())
+                return error;
+
+            result.addValue({ valueResultBuffer, WTF::move(blobURLs), WTF::move(blobFilePaths), WTF::move(handleRecords) });
         }
 
         ++returnedResults;
@@ -2455,12 +2571,17 @@ IDBError SQLiteIDBBackingStore::uncheckedGetIndexRecordForOneKey(IDBIndexIdentif
     if (!error.isNull())
         return error;
 
+    Vector<IDBFileSystemHandleRecord> handleRecords;
+    error = getFileSystemHandleRecordsForObjectStoreRecord(recordID, handleRecords);
+    if (!error.isNull())
+        return error;
+
     auto* objectStoreInfo = infoForObjectStore(objectStoreID);
     if (!objectStoreInfo) {
         RELEASE_LOG_ERROR(IndexedDB, "%p - SQLiteIDBBackingStore::uncheckedGetIndexRecordForOneKey: object store cannot be found in database", this);
         return IDBError { ExceptionCode::UnknownError, "Object store cannot be found in the database"_s };
     }
-    getResult = { objectStoreKey, objectStoreKey, { ThreadSafeDataBuffer::create(WTF::move(valueVector)), WTF::move(blobURLs), WTF::move(blobFilePaths) }, objectStoreInfo->keyPath() };
+    getResult = { objectStoreKey, objectStoreKey, { ThreadSafeDataBuffer::create(WTF::move(valueVector)), WTF::move(blobURLs), WTF::move(blobFilePaths), WTF::move(handleRecords) }, objectStoreInfo->keyPath() };
     return IDBError { };
 }
 

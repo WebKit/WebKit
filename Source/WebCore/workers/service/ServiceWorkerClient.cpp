@@ -90,11 +90,16 @@ ExceptionOr<void> ServiceWorkerClient::postMessage(JSC::JSGlobalObject& globalOb
     MessageWithMessagePorts message = { messageData.releaseReturnValue(), portsOrException.releaseReturnValue() };
     Ref context = downcast<ServiceWorkerGlobalScope>(*scriptExecutionContext());
     auto sourceIdentifier = context->thread()->identifier();
-    callOnMainThread([message = WTF::move(message), destinationIdentifier = identifier(), sourceIdentifier, sourceOrigin = context->securityOrigin()->data().isolatedCopy()] {
-        if (RefPtr connection = SWContextManager::singleton().connection())
-            connection->postMessageToServiceWorkerClient(destinationIdentifier, message, sourceIdentifier, sourceOrigin);
-    });
 
+    auto destinationIdentifier = identifier();
+    auto sourceOrigin = context->securityOrigin()->data().isolatedCopy();
+    auto& serializedMessage = *message.message;
+    resolveFileSystemHandlesForSending(serializedMessage, context, [message = WTF::move(message), destinationIdentifier, sourceIdentifier, sourceOrigin] mutable {
+        callOnMainThread([message = WTF::move(message), destinationIdentifier, sourceIdentifier, sourceOrigin] {
+            if (RefPtr connection = SWContextManager::singleton().connection())
+                connection->postMessageToServiceWorkerClient(destinationIdentifier, message, sourceIdentifier, sourceOrigin);
+        });
+    });
     return { };
 }
 

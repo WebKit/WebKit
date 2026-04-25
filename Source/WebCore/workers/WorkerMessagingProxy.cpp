@@ -40,6 +40,7 @@
 #include "ErrorEvent.h"
 #include "EventNames.h"
 #include "FetchRequestCredentials.h"
+#include "FileSystemStorageConnection.h"
 #include "IDBConnectionProxy.h"
 #include "LoaderStrategy.h"
 #include "LocalDOMWindow.h"
@@ -49,6 +50,7 @@
 #include "ScriptExecutionContext.h"
 #include "Settings.h"
 #include "SocketProvider.h"
+#include "StorageConnection.h"
 #include "UserGestureIndicator.h"
 #include "WebRTCProvider.h"
 #include "Worker.h"
@@ -321,6 +323,23 @@ RefPtr<CacheStorageConnection> WorkerMessagingProxy::createCacheStorageConnectio
     if (!document || !document->page())
         return nullptr;
     return document->page()->cacheStorageProvider().createCacheStorageConnection();
+}
+
+RefPtr<FileSystemStorageConnection> WorkerMessagingProxy::createFileSystemStorageConnection()
+{
+    ASSERT(isMainThread());
+    if (!m_scriptExecutionContext)
+        return nullptr;
+
+    RefPtr document = dynamicDowncast<Document>(*m_scriptExecutionContext);
+    if (!document)
+        document = Document::allDocumentsMap().get(m_loaderContextIdentifier);
+
+    if (!document)
+        return nullptr;
+    if (auto* storageConnection = document->storageConnection())
+        return storageConnection->fileSystemStorageConnection();
+    return nullptr;
 }
 
 RefPtr<RTCDataChannelRemoteHandlerConnection> WorkerMessagingProxy::createRTCDataChannelRemoteHandlerConnection()

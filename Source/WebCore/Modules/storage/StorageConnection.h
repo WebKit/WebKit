@@ -45,6 +45,7 @@ public:
     using DirectoryInfo = std::pair<FileSystemHandleIdentifier, RefPtr<FileSystemStorageConnection>>;
     using GetDirectoryCallback = CompletionHandler<void(ExceptionOr<DirectoryInfo>&&)>;
     virtual void fileSystemGetDirectory(ClientOrigin&&, GetDirectoryCallback&&) = 0;
+    virtual RefPtr<FileSystemStorageConnection> fileSystemStorageConnection() { return nullptr; }
     using GetEstimateCallback = CompletionHandler<void(ExceptionOr<StorageEstimate>&&)>;
     virtual void getEstimate(ClientOrigin&&, GetEstimateCallback&&) = 0;
 };

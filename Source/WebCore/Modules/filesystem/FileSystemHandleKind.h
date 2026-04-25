@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,35 +25,11 @@
 
 #pragma once
 
-#include <WebCore/SerializedScriptValue.h>
-#include <WebCore/TransferredMessagePort.h>
-#include <wtf/CompletionHandler.h>
-#include <wtf/RefPtr.h>
-
 namespace WebCore {
 
-class ScriptExecutionContext;
-
-struct MessageWithMessagePorts {
-    RefPtr<SerializedScriptValue> message;
-    Vector<TransferredMessagePort> transferredPorts;
+enum class FileSystemHandleKind : bool {
+    File,
+    Directory
 };
-
-WEBCORE_EXPORT void resolveFileSystemHandlesForSending(SerializedScriptValue&, ScriptExecutionContext&, CompletionHandler<void()>&&);
-WEBCORE_EXPORT void resolveFileSystemHandlesForReceiving(SerializedScriptValue&, ScriptExecutionContext&, CompletionHandler<void()>&&);
-
-inline void resolveFileSystemHandlesForSending(MessageWithMessagePorts& message, ScriptExecutionContext& context, CompletionHandler<void()>&& completionHandler)
-{
-    if (message.message)
-        return resolveFileSystemHandlesForSending(*message.message, context, WTF::move(completionHandler));
-    completionHandler();
-}
-
-inline void resolveFileSystemHandlesForReceiving(MessageWithMessagePorts& message, ScriptExecutionContext& context, CompletionHandler<void()>&& completionHandler)
-{
-    if (message.message)
-        return resolveFileSystemHandlesForReceiving(*message.message, context, WTF::move(completionHandler));
-    completionHandler();
-}
 
 } // namespace WebCore

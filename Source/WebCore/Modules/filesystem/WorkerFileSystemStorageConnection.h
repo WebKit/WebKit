@@ -43,7 +43,6 @@ public:
     static Ref<WorkerFileSystemStorageConnection> create(WorkerGlobalScope&, Ref<FileSystemStorageConnection>&&);
     ~WorkerFileSystemStorageConnection();
 
-    FileSystemStorageConnection* mainThreadConnection() const { return m_mainThreadConnection.get(); }
     void connectionClosed();
     void scopeClosed();
     void registerSyncAccessHandle(FileSystemSyncAccessHandleIdentifier, FileSystemSyncAccessHandle&);
@@ -57,6 +56,7 @@ public:
     void didCreateSyncAccessHandle(CallbackIdentifier, ExceptionOr<FileSystemStorageConnection::SyncAccessHandleInfo>&&);
     void completeVoidCallback(CallbackIdentifier, ExceptionOr<void>&& result);
     void didGetHandleNames(CallbackIdentifier, ExceptionOr<Vector<String>>&&);
+    void didConnectToPath(CallbackIdentifier, ExceptionOr<std::pair<FileSystemHandleIdentifier, String>>&&);
 
 private:
     WorkerFileSystemStorageConnection(WorkerGlobalScope&, Ref<FileSystemStorageConnection>&&);
@@ -72,6 +72,8 @@ private:
     void resolve(FileSystemHandleIdentifier, FileSystemHandleIdentifier, FileSystemStorageConnection::ResolveCallback&&) final;
     void getHandleNames(FileSystemHandleIdentifier, GetHandleNamesCallback&&) final;
     void getHandle(FileSystemHandleIdentifier, const String& name, GetHandleCallback&&) final;
+    void getPathForHandle(ClientOrigin&&, FileSystemHandleIdentifier, GetPathCallback&&) final;
+    void connectToPath(ClientOrigin&&, const String& path, bool isDirectory, ConnectToPathCallback&&) final;
     void getFile(FileSystemHandleIdentifier, StringCallback&&) final;
     void createSyncAccessHandle(FileSystemHandleIdentifier, FileSystemStorageConnection::GetAccessHandleCallback&&) final;
     void closeSyncAccessHandle(FileSystemHandleIdentifier, FileSystemSyncAccessHandleIdentifier, EmptyCallback&&) final;
@@ -82,6 +84,7 @@ private:
     void createWritable(ScriptExecutionContextIdentifier, FileSystemHandleIdentifier, bool keepExistingData, StreamCallback&&) final;
     void closeWritable(FileSystemHandleIdentifier, FileSystemWritableFileStreamIdentifier, FileSystemWriteCloseReason, VoidCallback&&) final;
     void executeCommandForWritable(FileSystemHandleIdentifier, FileSystemWritableFileStreamIdentifier, FileSystemWriteCommandType, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t> dataBytes, bool hasDataError, VoidCallback&&) final;
+    FileSystemStorageConnection& mainThreadConnection() final;
 
     WeakPtr<WorkerGlobalScope, WeakPtrImplWithEventTargetData> m_scope;
     RefPtr<FileSystemStorageConnection> m_mainThreadConnection;
@@ -93,6 +96,7 @@ private:
     HashMap<CallbackIdentifier, GetHandleNamesCallback> m_getHandleNamesCallbacks;
     HashMap<CallbackIdentifier, StringCallback> m_stringCallbacks;
     HashMap<CallbackIdentifier, StreamCallback> m_streamCallbacks;
+    HashMap<CallbackIdentifier, ConnectToPathCallback> m_connectToPathCallbacks;
     HashMap<FileSystemSyncAccessHandleIdentifier, Function<void()>> m_accessHandleInvalidationHandlers;
     HashMap<FileSystemSyncAccessHandleIdentifier, WeakPtr<FileSystemSyncAccessHandle>> m_syncAccessHandles;
 };

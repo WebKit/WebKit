@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/FileSystemHandleKind.h>
 #include <WebCore/ThreadSafeDataBuffer.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
@@ -33,15 +34,35 @@ namespace WebCore {
 
 class SerializedScriptValue;
 
+struct IDBFileSystemHandleRecord {
+    FileSystemHandleKind kind { FileSystemHandleKind::File };
+    String name;
+    String path;
+
+    IDBFileSystemHandleRecord isolatedCopy() const& {
+        return { kind, name.isolatedCopy(), path.isolatedCopy() };
+    }
+
+    IDBFileSystemHandleRecord isolatedCopy() && {
+        return { kind, WTF::move(name).isolatedCopy(), WTF::move(path).isolatedCopy() };
+    }
+};
+
 class IDBValue {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(IDBValue, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT IDBValue();
+    WEBCORE_EXPORT ~IDBValue();
+    WEBCORE_EXPORT IDBValue(const IDBValue&);
+    WEBCORE_EXPORT IDBValue(IDBValue&&);
+    WEBCORE_EXPORT IDBValue& operator=(const IDBValue&);
+    WEBCORE_EXPORT IDBValue& operator=(IDBValue&&);
     IDBValue(const SerializedScriptValue&);
     WEBCORE_EXPORT IDBValue(const ThreadSafeDataBuffer&);
     IDBValue(const SerializedScriptValue&, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths);
     WEBCORE_EXPORT IDBValue(const ThreadSafeDataBuffer&, Vector<String>&& blobURLs, Vector<String>&& blobFilePaths);
     IDBValue(const ThreadSafeDataBuffer&, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths);
+    WEBCORE_EXPORT IDBValue(const ThreadSafeDataBuffer&, Vector<String>&& blobURLs, Vector<String>&& blobFilePaths, Vector<IDBFileSystemHandleRecord>&&);
 
     void setAsIsolatedCopy(const IDBValue&);
     WEBCORE_EXPORT IDBValue isolatedCopy() const;
@@ -49,12 +70,18 @@ public:
     const ThreadSafeDataBuffer& data() const LIFETIME_BOUND { return m_data; }
     const Vector<String>& blobURLs() const LIFETIME_BOUND { return m_blobURLs; }
     const Vector<String>& blobFilePaths() const LIFETIME_BOUND { return m_blobFilePaths; }
+    const Vector<IDBFileSystemHandleRecord>& fileSystemHandleRecords() const LIFETIME_BOUND { return m_fileSystemHandleRecords; }
+
+    void setResolvedSerializedValue(Ref<SerializedScriptValue>&&);
+    SerializedScriptValue* resolvedSerializedValue() const { return m_resolvedSerializedValue.get(); }
 
     size_t NODELETE size() const;
 private:
     ThreadSafeDataBuffer m_data;
     Vector<String> m_blobURLs;
     Vector<String> m_blobFilePaths;
+    Vector<IDBFileSystemHandleRecord> m_fileSystemHandleRecords;
+    RefPtr<SerializedScriptValue> m_resolvedSerializedValue;
 };
 
 } // namespace WebCore

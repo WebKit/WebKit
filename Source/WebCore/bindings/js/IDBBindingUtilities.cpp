@@ -404,7 +404,10 @@ static JSValue deserializeIDBValueToJSValue(JSGlobalObject& lexicalGlobalObject,
     if (data.isEmpty())
         return jsNull();
 
-    auto serializedValue = SerializedScriptValue::createFromWireBytes(Vector<uint8_t>(data));
+    // Use pre-resolved SSV if available (handles with identifiers already resolved).
+    Ref serializedValue = value.resolvedSerializedValue()
+        ? Ref { *value.resolvedSerializedValue() }
+        : SerializedScriptValue::createFromWireBytes(Vector<uint8_t>(data));
 
     Ref apiLock = lexicalGlobalObject.vm().apiLock();
     apiLock->lock();

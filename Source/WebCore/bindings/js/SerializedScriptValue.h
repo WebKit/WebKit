@@ -31,6 +31,9 @@
 #include <JavaScriptCore/Strong.h>
 #include <WebCore/Blob.h>
 #include <WebCore/DetachedRTCDataChannel.h>
+#include <WebCore/FileSystemHandleIdentifier.h>
+#include <WebCore/FileSystemHandleKind.h>
+#include <WebCore/FileSystemStorageConnection.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
@@ -73,6 +76,8 @@ class JSGlobalObject;
 
 namespace WebCore {
 
+struct ClientOrigin;
+struct IDBFileSystemHandleRecord;
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
 class DetachedOffscreenCanvas;
 class OffscreenCanvas;
@@ -137,6 +142,22 @@ public:
     Vector<URLKeepingBlobAlive> blobHandles() const { return crossThreadCopy(m_internals.blobHandles); }
     void writeBlobsToDiskForIndexedDB(bool isEphemeral, CompletionHandler<void(IDBValue&&)>&&);
     IDBValue writeBlobsToDiskForIndexedDBSynchronously(bool isEphemeral);
+
+    void resolveFileSystemHandlesForIndexedDB(Ref<FileSystemStorageConnection>&&, ClientOrigin&&, CompletionHandler<void(Vector<IDBFileSystemHandleRecord>&&)>&&);
+
+    struct FileSystemHandleData {
+        FileSystemHandleKind kind { FileSystemHandleKind::File };
+        String name;
+        String path; // Only set for IDB reconstruction
+        std::optional<FileSystemHandleIdentifier> identifier;
+    };
+
+    bool hasFileSystemHandles() const { return !m_internals.fileSystemHandles.isEmpty(); }
+    const Vector<FileSystemHandleData>& fileSystemHandles() const { return m_internals.fileSystemHandles; }
+    void setFileSystemHandles(Vector<FileSystemHandleData>&& handles) { m_internals.fileSystemHandles = WTF::move(handles); }
+
+    void resolveFileSystemHandlePaths(Ref<FileSystemStorageConnection>&&, ClientOrigin&&, CompletionHandler<void()>&&);
+    void resolveFileSystemHandleIdentifiers(Ref<FileSystemStorageConnection>&&, ClientOrigin&&, CompletionHandler<void()>&&);
     WEBCORE_EXPORT static Ref<SerializedScriptValue> createFromWireBytes(Vector<uint8_t>&&);
     const Vector<uint8_t>& wireBytes() const LIFETIME_BOUND { return m_internals.data; }
 
@@ -222,6 +243,7 @@ private:
         Vector<Ref<WebCodecsEncodedAudioChunkStorage>> serializedAudioChunks;
 #endif
         uint64_t exposedMessagePortCount;
+        Vector<FileSystemHandleData> fileSystemHandles { };
 #if ENABLE(WEB_CODECS)
         Vector<WebCodecsVideoFrameData> serializedVideoFrames { };
         Vector<WebCodecsAudioInternalData> serializedAudioData { };

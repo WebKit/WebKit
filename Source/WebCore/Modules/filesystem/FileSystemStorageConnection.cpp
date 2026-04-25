@@ -26,8 +26,13 @@
 #include "config.h"
 #include "FileSystemStorageConnection.h"
 
+#include "ClientOrigin.h"
+#include "Document.h"
+#include "DocumentPage.h"
 #include "Exception.h"
 #include "FileSystemWritableFileStream.h"
+#include "StorageConnection.h"
+#include "WorkerGlobalScope.h"
 
 namespace WebCore {
 
@@ -48,6 +53,28 @@ void FileSystemStorageConnection::registerFileSystemWritable(FileSystemWritableF
 void FileSystemStorageConnection::unregisterFileSystemWritable(FileSystemWritableFileStreamIdentifier identifier)
 {
     m_writables.remove(identifier);
+}
+
+RefPtr<FileSystemStorageConnection> fileSystemStorageConnectionForContext(ScriptExecutionContext& context)
+{
+    if (auto* workerScope = dynamicDowncast<WorkerGlobalScope>(context))
+        return workerScope->fileSystemStorageConnection();
+
+    if (auto* document = dynamicDowncast<Document>(context)) {
+        if (auto* storageConnection = document->storageConnection())
+            return storageConnection->fileSystemStorageConnection();
+    }
+
+    return nullptr;
+}
+
+ClientOrigin clientOriginForContext(ScriptExecutionContext& context)
+{
+    if (auto* workerScope = dynamicDowncast<WorkerGlobalScope>(context))
+        return workerScope->clientOrigin();
+    if (auto* document = dynamicDowncast<Document>(context))
+        return { document->topOrigin().data(), document->securityOrigin().data() };
+    return { };
 }
 
 } // namespace WebCore

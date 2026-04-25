@@ -82,4 +82,9 @@ IPC::Connection& WebStorageConnection::connection()
     return WebProcess::singleton().ensureNetworkProcessConnection().connection();
 }
 
+RefPtr<WebCore::FileSystemStorageConnection> WebStorageConnection::fileSystemStorageConnection()
+{
+    return &WebProcess::singleton().fileSystemStorageConnection();
+}
+
 } // namespace WebKit

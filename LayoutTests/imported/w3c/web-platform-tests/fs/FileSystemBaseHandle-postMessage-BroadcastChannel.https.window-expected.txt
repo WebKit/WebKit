@@ -1,3 +1,3 @@
 
-FAIL Send and receive messages using a broadcast channel in an iframe, dedicated worker and service worker. promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+PASS Send and receive messages using a broadcast channel in an iframe, dedicated worker and service worker.
 

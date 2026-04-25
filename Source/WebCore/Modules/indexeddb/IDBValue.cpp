@@ -35,6 +35,11 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBValue);
 
 IDBValue::IDBValue() = default;
+IDBValue::~IDBValue() = default;
+IDBValue::IDBValue(const IDBValue&) = default;
+IDBValue::IDBValue(IDBValue&&) = default;
+IDBValue& IDBValue::operator=(const IDBValue&) = default;
+IDBValue& IDBValue::operator=(IDBValue&&) = default;
 
 IDBValue::IDBValue(const SerializedScriptValue& scriptValue)
     : m_data(ThreadSafeDataBuffer::copyData(scriptValue.wireBytes()))
@@ -69,6 +74,14 @@ IDBValue::IDBValue(const ThreadSafeDataBuffer& value, const Vector<String>& blob
 {
 }
 
+IDBValue::IDBValue(const ThreadSafeDataBuffer& value, Vector<String>&& blobURLs, Vector<String>&& blobFilePaths, Vector<IDBFileSystemHandleRecord>&& fileSystemHandleRecords)
+    : m_data(value)
+    , m_blobURLs(WTF::move(blobURLs))
+    , m_blobFilePaths(WTF::move(blobFilePaths))
+    , m_fileSystemHandleRecords(WTF::move(fileSystemHandleRecords))
+{
+}
+
 void IDBValue::setAsIsolatedCopy(const IDBValue& other)
 {
     ASSERT(m_blobURLs.isEmpty() && m_blobFilePaths.isEmpty());
@@ -76,6 +89,9 @@ void IDBValue::setAsIsolatedCopy(const IDBValue& other)
     m_data = other.m_data;
     m_blobURLs = crossThreadCopy(other.m_blobURLs);
     m_blobFilePaths = crossThreadCopy(other.m_blobFilePaths);
+    m_fileSystemHandleRecords = crossThreadCopy(other.m_fileSystemHandleRecords);
+    // m_resolvedSerializedValue is intentionally not copied — it is only
+    // used transiently on the originating thread.
 }
 
 IDBValue IDBValue::isolatedCopy() const
@@ -83,6 +99,11 @@ IDBValue IDBValue::isolatedCopy() const
     IDBValue result;
     result.setAsIsolatedCopy(*this);
     return result;
+}
+
+void IDBValue::setResolvedSerializedValue(Ref<SerializedScriptValue>&& value)
+{
+    m_resolvedSerializedValue = WTF::move(value);
 }
 
 size_t IDBValue::size() const

@@ -490,6 +490,19 @@ void ServiceWorkerContainer::postMessage(MessageWithMessagePorts&& message, Serv
     if (context->isJSExecutionForbidden()) [[unlikely]]
         return;
 
+    auto& serializedMessage = *message.message;
+    resolveFileSystemHandlesForReceiving(serializedMessage, context, [weakThis = WeakPtr { *this }, message = WTF::move(message), sourceData = WTF::move(sourceData), sourceOrigin = WTF::move(sourceOrigin)] mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        protectedThis->dispatchMessageEvent(WTF::move(message), WTF::move(sourceData), WTF::move(sourceOrigin));
+    });
+}
+
+void ServiceWorkerContainer::dispatchMessageEvent(MessageWithMessagePorts&& message, ServiceWorkerData&& sourceData, Ref<SecurityOrigin>&& sourceOrigin)
+{
+    Ref context = *scriptExecutionContext();
+
     auto* globalObject = context->globalObject();
     if (!globalObject)
         return;

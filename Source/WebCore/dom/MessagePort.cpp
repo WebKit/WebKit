@@ -181,7 +181,12 @@ ExceptionOr<void> MessagePort::postMessage(JSC::JSGlobalObject& globalObject, JS
 
     LOG(MessagePorts, "Actually posting message to port %s (to be received by port %s)", m_identifier.logString().utf8().data(), m_remoteIdentifier.logString().utf8().data());
 
-    protect(MessagePortChannelProvider::fromContext(*protect(scriptExecutionContext())))->postMessageToRemote(WTF::move(message), m_remoteIdentifier);
+    auto remoteIdentifier = m_remoteIdentifier;
+    Ref context = *scriptExecutionContext();
+    auto& serializedMessage = *message.message;
+    resolveFileSystemHandlesForSending(serializedMessage, context, [context, message = WTF::move(message), remoteIdentifier] mutable {
+        protect(MessagePortChannelProvider::fromContext(context))->postMessageToRemote(WTF::move(message), remoteIdentifier);
+    });
     return { };
 }
 
@@ -277,35 +282,69 @@ void MessagePort::dispatchMessages()
             return;
 
         ASSERT(context->isContextThread());
-        auto* globalObject = context->globalObject();
-        Ref vm = globalObject->vm();
-        auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
         RefPtr workerGlobalScope = dynamicDowncast<WorkerGlobalScope>(*context);
+
+        auto dispatchMessages = [pendingActivity, context, workerGlobalScope](Vector<MessageWithMessagePorts>&& messages) mutable {
+            auto* globalObject = context->globalObject();
+            if (!globalObject)
+                return;
+            Ref vm = globalObject->vm();
+            auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
+
+            for (auto& message : messages) {
+                if (workerGlobalScope && workerGlobalScope->isClosing())
+                    return;
+
+                if (pendingActivity->object().m_messageHandler) {
+                    ASSERT(message.transferredPorts.isEmpty());
+                    pendingActivity->object().m_messageHandler(*uncheckedDowncast<JSDOMGlobalObject>(globalObject), message.message.releaseNonNull().get());
+                    continue;
+                }
+
+                auto ports = MessagePort::entanglePorts(*context, WTF::move(message.transferredPorts));
+                auto event = MessageEvent::create(*globalObject, message.message.releaseNonNull(), { }, { }, { }, WTF::move(ports));
+                if (scope.exception()) [[unlikely]] {
+                    RELEASE_ASSERT(vm->hasPendingTerminationException());
+                    return;
+                }
+
+                queueTaskKeepingObjectAlive(pendingActivity->object(), TaskSource::PostedMessageQueue, [event = WTF::move(event)](auto& port) {
+                    port.dispatchEvent(event.event);
+                });
+            }
+        };
+
+        // Resolve file system handle identifiers from paths after IPC transfer.
+        size_t pendingResolutions = 0;
         for (auto& message : messages) {
-            // close() in Worker onmessage handler should prevent next message from dispatching.
-            if (workerGlobalScope && workerGlobalScope->isClosing())
-                return;
-
-            if (pendingActivity->object().m_messageHandler) {
-                ASSERT(message.transferredPorts.isEmpty());
-                pendingActivity->object().m_messageHandler(*uncheckedDowncast<JSDOMGlobalObject>(globalObject), message.message.releaseNonNull().get());
-                continue;
-            }
-
-            auto ports = MessagePort::entanglePorts(*context, WTF::move(message.transferredPorts));
-            auto event = MessageEvent::create(*globalObject, message.message.releaseNonNull(), { }, { }, { }, WTF::move(ports));
-            if (scope.exception()) [[unlikely]] {
-                // Currently, we assume that the only way we can get here is if we have a termination.
-                RELEASE_ASSERT(vm->hasPendingTerminationException());
-                return;
-            }
-
-            // Per specification, each MessagePort object has a task source called the port message queue.
-            queueTaskKeepingObjectAlive(pendingActivity->object(), TaskSource::PostedMessageQueue, [event = WTF::move(event)](auto& port) {
-                port.dispatchEvent(event.event);
-            });
+            if (message.message && message.message->hasFileSystemHandles())
+                pendingResolutions++;
         }
+
+        if (pendingResolutions) {
+            struct ResolutionState : public RefCounted<ResolutionState> {
+                size_t pendingCount { 0 };
+                Vector<MessageWithMessagePorts> messages;
+                Function<void(Vector<MessageWithMessagePorts>&&)> dispatchHandler;
+            };
+            Ref state = adoptRef(*new ResolutionState);
+            state->pendingCount = pendingResolutions;
+            state->messages = WTF::move(messages);
+            state->dispatchHandler = WTF::move(dispatchMessages);
+
+            for (auto& message : state->messages) {
+                if (message.message && message.message->hasFileSystemHandles()) {
+                    resolveFileSystemHandlesForReceiving(message, *context, [state] mutable {
+                        if (!--state->pendingCount)
+                            state->dispatchHandler(WTF::move(state->messages));
+                    });
+                }
+            }
+            return;
+        }
+
+        dispatchMessages(WTF::move(messages));
     };
 
     protect(MessagePortChannelProvider::fromContext(*context))->takeAllMessagesForPort(m_identifier, WTF::move(messagesTakenHandler));

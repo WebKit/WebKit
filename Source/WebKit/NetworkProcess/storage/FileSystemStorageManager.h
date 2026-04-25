@@ -47,6 +47,7 @@ public:
     uint64_t allocatedUnusedCapacity() const;
     Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> createHandle(IPC::Connection::UniqueID, FileSystemStorageHandle::Type, String&& path, String&& name, bool createIfNecessary);
     const String& NODELETE getPath(WebCore::FileSystemHandleIdentifier);
+    const String& rootPath() const LIFETIME_BOUND { return m_path; }
     FileSystemStorageHandle::Type NODELETE getType(WebCore::FileSystemHandleIdentifier);
     void closeHandle(FileSystemStorageHandle&);
     void connectionClosed(IPC::Connection::UniqueID);

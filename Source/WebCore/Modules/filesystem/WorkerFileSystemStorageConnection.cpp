@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WorkerFileSystemStorageConnection.h"
 
+#include "ClientOrigin.h"
 #include "ExceptionOr.h"
 #include "FileSystemHandleCloseScope.h"
 #include "FileSystemSyncAccessHandle.h"
@@ -85,6 +86,10 @@ void WorkerFileSystemStorageConnection::scopeClosed()
 
     auto streamCallbacks = std::exchange(m_streamCallbacks, { });
     for (auto& callback : streamCallbacks.values())
+        callback(Exception { ExceptionCode::InvalidStateError });
+
+    auto connectToPathCallbacks = std::exchange(m_connectToPathCallbacks, { });
+    for (auto& callback : connectToPathCallbacks.values())
         callback(Exception { ExceptionCode::InvalidStateError });
 
     m_scope = nullptr;
@@ -245,6 +250,12 @@ void WorkerFileSystemStorageConnection::getFile(FileSystemHandleIdentifier ident
 void WorkerFileSystemStorageConnection::completeStringCallback(CallbackIdentifier callbackIdentifier, ExceptionOr<String>&& result)
 {
     if (auto callback = m_stringCallbacks.take(callbackIdentifier))
+        callback(WTF::move(result));
+}
+
+void WorkerFileSystemStorageConnection::didConnectToPath(CallbackIdentifier callbackIdentifier, ExceptionOr<std::pair<FileSystemHandleIdentifier, String>>&& result)
+{
+    if (auto callback = m_connectToPathCallbacks.take(callbackIdentifier))
         callback(WTF::move(result));
 }
 
@@ -486,6 +497,54 @@ void WorkerFileSystemStorageConnection::requestNewCapacityForSyncAccessHandle(Fi
 {
     ASSERT_NOT_REACHED();
     return callback(std::nullopt);
+}
+
+void WorkerFileSystemStorageConnection::getPathForHandle(ClientOrigin&& origin, FileSystemHandleIdentifier identifier, GetPathCallback&& callback)
+{
+    RefPtr scope = m_scope.get();
+    if (!scope)
+        return callback(Exception { ExceptionCode::InvalidStateError });
+
+    auto callbackIdentifier = CallbackIdentifier::generate();
+    m_stringCallbacks.add(callbackIdentifier, WTF::move(callback));
+
+    callOnMainThread([callbackIdentifier, workerThread = Ref { scope->thread() }, mainThreadConnection = m_mainThreadConnection, origin = crossThreadCopy(WTF::move(origin)), identifier]() mutable {
+        auto mainThreadCallback = [callbackIdentifier, workerThread = WTF::move(workerThread)](auto&& result) mutable {
+            workerThread->runLoop().postTaskForMode([callbackIdentifier, result = crossThreadCopy(WTF::move(result))](auto& scope) mutable {
+                if (auto connection = downcast<WorkerGlobalScope>(scope).fileSystemStorageConnection())
+                    connection->completeStringCallback(callbackIdentifier, WTF::move(result));
+            }, WorkerRunLoop::defaultMode());
+        };
+
+        mainThreadConnection->getPathForHandle(WTF::move(origin), identifier, WTF::move(mainThreadCallback));
+    });
+}
+
+void WorkerFileSystemStorageConnection::connectToPath(ClientOrigin&& origin, const String& path, bool isDirectory, ConnectToPathCallback&& callback)
+{
+    RefPtr scope = m_scope.get();
+    if (!scope)
+        return callback(Exception { ExceptionCode::InvalidStateError });
+
+    auto callbackIdentifier = CallbackIdentifier::generate();
+    m_connectToPathCallbacks.add(callbackIdentifier, WTF::move(callback));
+
+    callOnMainThread([callbackIdentifier, workerThread = Ref { scope->thread() }, mainThreadConnection = m_mainThreadConnection, origin = crossThreadCopy(WTF::move(origin)), path = crossThreadCopy(path), isDirectory]() mutable {
+        auto mainThreadCallback = [callbackIdentifier, workerThread = WTF::move(workerThread)](auto&& result) mutable {
+            workerThread->runLoop().postTaskForMode([callbackIdentifier, result = crossThreadCopy(WTF::move(result))](auto& scope) mutable {
+                if (auto connection = downcast<WorkerGlobalScope>(scope).fileSystemStorageConnection())
+                    connection->didConnectToPath(callbackIdentifier, WTF::move(result));
+            }, WorkerRunLoop::defaultMode());
+        };
+
+        mainThreadConnection->connectToPath(WTF::move(origin), path, isDirectory, WTF::move(mainThreadCallback));
+    });
+}
+
+FileSystemStorageConnection& WorkerFileSystemStorageConnection::mainThreadConnection()
+{
+    ASSERT(m_mainThreadConnection);
+    return *m_mainThreadConnection;
 }
 
 } // namespace WebCore

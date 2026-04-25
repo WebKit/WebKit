@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/FileSystemHandleIdentifier.h>
+#include <WebCore/FileSystemHandleKind.h>
 #include <WebCore/FileSystemSyncAccessHandleIdentifier.h>
 #include <WebCore/FileSystemWritableFileStreamIdentifier.h>
 #include <WebCore/FileSystemWriteCloseReason.h>
@@ -39,11 +40,13 @@
 
 namespace WebCore {
 
+struct ClientOrigin;
 class FileSystemDirectoryHandle;
 class FileSystemFileHandle;
 class FileSystemHandleCloseScope;
 class FileSystemSyncAccessHandle;
 class FileSystemWritableFileStream;
+class ScriptExecutionContext;
 template<typename> class ExceptionOr;
 
 class FileSystemStorageConnection : public ThreadSafeRefCounted<FileSystemStorageConnection> {
@@ -66,6 +69,8 @@ public:
     using StringCallback = CompletionHandler<void(ExceptionOr<String>&&)>;
     using StreamCallback = CompletionHandler<void(ExceptionOr<FileSystemWritableFileStreamIdentifier>&&)>;
     using RequestCapacityCallback = CompletionHandler<void(std::optional<uint64_t>&&)>;
+    using GetPathCallback = CompletionHandler<void(ExceptionOr<String>&&)>;
+    using ConnectToPathCallback = CompletionHandler<void(ExceptionOr<std::pair<FileSystemHandleIdentifier, String>>&&)>;
 
     virtual bool isWorker() const { return false; }
     virtual void closeHandle(FileSystemHandleIdentifier) = 0;
@@ -87,6 +92,9 @@ public:
     virtual void executeCommandForWritable(FileSystemHandleIdentifier, FileSystemWritableFileStreamIdentifier, FileSystemWriteCommandType, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t> dataBytes, bool hasDataError, VoidCallback&&) = 0;
     virtual void getHandleNames(FileSystemHandleIdentifier, GetHandleNamesCallback&&) = 0;
     virtual void getHandle(FileSystemHandleIdentifier, const String& name, GetHandleCallback&&) = 0;
+    virtual void getPathForHandle(ClientOrigin&&, FileSystemHandleIdentifier, GetPathCallback&&) = 0;
+    virtual void connectToPath(ClientOrigin&&, const String& path, bool isDirectory, ConnectToPathCallback&&) = 0;
+    virtual FileSystemStorageConnection& mainThreadConnection() { return *this; }
 
     WEBCORE_EXPORT bool errorFileSystemWritable(FileSystemWritableFileStreamIdentifier);
     void registerFileSystemWritable(FileSystemWritableFileStreamIdentifier, FileSystemWritableFileStream&);
@@ -97,5 +105,8 @@ public:
 private:
     HashMap<FileSystemWritableFileStreamIdentifier, WeakPtr<FileSystemWritableFileStream>> m_writables;
 };
+
+RefPtr<FileSystemStorageConnection> fileSystemStorageConnectionForContext(ScriptExecutionContext&);
+ClientOrigin clientOriginForContext(ScriptExecutionContext&);
 
 } // namespace WebCore

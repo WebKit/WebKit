@@ -230,10 +230,16 @@ void ServiceWorkerThread::queueTaskToPostMessage(MessageWithMessagePorts&& messa
                 return ExtendableMessageEventSource { WTF::move(sourceWorker) };
             }
         );
-        fireMessageEvent(serviceWorkerGlobalScope, WTF::move(message), WTF::move(source), sourceURL);
-        callOnMainThread([weakThis = WTF::move(weakThis)] {
-            if (RefPtr protectedThis = weakThis.get())
-                protectedThis->finishedFiringMessageEvent();
+        auto fireAndFinish = [weakThis = WTF::move(weakThis), serviceWorkerGlobalScope](MessageWithMessagePorts&& message, ExtendableMessageEventSource&& source, URL&& sourceURL) mutable {
+            fireMessageEvent(serviceWorkerGlobalScope, WTF::move(message), WTF::move(source), sourceURL);
+            callOnMainThread([weakThis = WTF::move(weakThis)] {
+                if (RefPtr protectedThis = weakThis.get())
+                    protectedThis->finishedFiringMessageEvent();
+            });
+        };
+        auto& serializedMessage = *message.message;
+        resolveFileSystemHandlesForReceiving(serializedMessage, serviceWorkerGlobalScope.get(), [fireAndFinish = WTF::move(fireAndFinish), message = WTF::move(message), source = WTF::move(source), sourceURL = WTF::move(sourceURL)] mutable {
+            fireAndFinish(WTF::move(message), WTF::move(source), WTF::move(sourceURL));
         });
     });
 }

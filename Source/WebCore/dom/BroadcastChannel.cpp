@@ -33,6 +33,7 @@
 #include "EventTargetInlines.h"
 #include "ExceptionOr.h"
 #include "MessageEvent.h"
+#include "MessageWithMessagePorts.h"
 #include "PartitionedSecurityOrigin.h"
 #include "SecurityOrigin.h"
 #include "SerializedScriptValue.h"
@@ -203,7 +204,11 @@ ExceptionOr<void> BroadcastChannel::postMessage(JSC::JSGlobalObject& globalObjec
         return messageData.releaseException();
     ASSERT(ports.isEmpty());
 
-    m_mainThreadBridge->postMessage(messageData.releaseReturnValue());
+    Ref serializedMessage = messageData.releaseReturnValue();
+    auto& serializedMessageRef = serializedMessage.get();
+    resolveFileSystemHandlesForSending(serializedMessageRef, *scriptExecutionContext(), [mainThreadBridge = Ref { m_mainThreadBridge }, serializedMessage = WTF::move(serializedMessage)] mutable {
+        mainThreadBridge->postMessage(WTF::move(serializedMessage));
+    });
     return { };
 }
 
@@ -246,7 +251,53 @@ void BroadcastChannel::dispatchMessage(Ref<SerializedScriptValue>&& message)
     if (m_isClosed)
         return;
 
-    queueTaskKeepingObjectAlive(*this, TaskSource::PostedMessageQueue, [message = WTF::move(message)](auto& channel) mutable {
+    // Queue messages behind any pending file system handle resolution to preserve ordering.
+    if (m_hasPendingHandleResolution) {
+        m_pendingMessages.append(WTF::move(message));
+        return;
+    }
+
+    if (!message->hasFileSystemHandles()) {
+        dispatchMessageInternal(WTF::move(message));
+        return;
+    }
+
+    auto* context = scriptExecutionContext();
+    if (!context) {
+        dispatchMessageInternal(WTF::move(message));
+        return;
+    }
+
+    m_hasPendingHandleResolution = true;
+
+    // Create a per-receiver SSV so that each receiver gets its own identifiers,
+    // avoiding race conditions with other receivers sharing the original SSV.
+    auto receiverMessage = SerializedScriptValue::createFromWireBytes(Vector<uint8_t>(message->wireBytes()));
+    receiverMessage->setFileSystemHandles(Vector<SerializedScriptValue::FileSystemHandleData>(message->fileSystemHandles()));
+
+    auto& receiverMessageRef = receiverMessage.get();
+    resolveFileSystemHandlesForReceiving(receiverMessageRef, *context, [weakThis = WeakPtr { *this }, originalMessage = WTF::move(message), receiverMessage = WTF::move(receiverMessage)] mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis || protectedThis->m_isClosed)
+            return;
+        protectedThis->dispatchMessageInternal(WTF::move(receiverMessage), WTF::move(originalMessage));
+
+        protectedThis->m_hasPendingHandleResolution = false;
+        auto pendingMessages = std::exchange(protectedThis->m_pendingMessages, { });
+        for (auto& pending : pendingMessages)
+            protectedThis->dispatchMessage(WTF::move(pending));
+    });
+}
+
+void BroadcastChannel::dispatchMessageInternal(Ref<SerializedScriptValue>&& message, RefPtr<SerializedScriptValue>&& keepAlive)
+{
+    if (!isEligibleForMessaging())
+        return;
+
+    if (m_isClosed)
+        return;
+
+    queueTaskKeepingObjectAlive(*this, TaskSource::PostedMessageQueue, [message = WTF::move(message), keepAlive = WTF::move(keepAlive)](auto& channel) mutable {
         if (channel.m_isClosed || !channel.scriptExecutionContext())
             return;
 

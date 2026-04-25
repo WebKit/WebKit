@@ -71,6 +71,7 @@ private:
     BroadcastChannel(ScriptExecutionContext&, const String& name);
 
     void dispatchMessage(Ref<SerializedScriptValue>&&);
+    void dispatchMessageInternal(Ref<SerializedScriptValue>&&, RefPtr<SerializedScriptValue>&& keepAlive = nullptr);
 
     bool isEligibleForMessaging() const;
 
@@ -89,6 +90,8 @@ private:
     const Ref<MainThreadBridge> m_mainThreadBridge;
     bool m_isClosed { false };
     bool m_hasRelevantEventListener { false };
+    bool m_hasPendingHandleResolution { false };
+    Vector<Ref<SerializedScriptValue>> m_pendingMessages;
 };
 
 } // namespace WebCore

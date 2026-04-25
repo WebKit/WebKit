@@ -129,7 +129,12 @@ ExceptionOr<void> ServiceWorker::postMessage(JSC::JSGlobalObject& globalObject, 
     }();
 
     MessageWithMessagePorts message { messageData.releaseReturnValue(), portsOrException.releaseReturnValue() };
-    protect(swConnection())->postMessageToServiceWorker(identifier(), WTF::move(message), sourceIdentifier);
+
+    auto destinationIdentifier = identifier();
+    auto& serializedMessage = *message.message;
+    resolveFileSystemHandlesForSending(serializedMessage, context, [swConnection = protect(swConnection()), destinationIdentifier, message = WTF::move(message), sourceIdentifier] mutable {
+        swConnection->postMessageToServiceWorker(destinationIdentifier, WTF::move(message), sourceIdentifier);
+    });
     return { };
 }
 

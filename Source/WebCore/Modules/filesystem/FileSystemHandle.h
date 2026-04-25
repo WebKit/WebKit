@@ -27,6 +27,7 @@
 
 #include <WebCore/ActiveDOMObject.h>
 #include <WebCore/FileSystemHandleIdentifier.h>
+#include <WebCore/FileSystemHandleKind.h>
 #include <WebCore/FileSystemStorageConnection.h>
 #include <WebCore/IDLTypes.h>
 #include <wtf/RefCounted.h>
@@ -44,10 +45,7 @@ public:
 
     virtual ~FileSystemHandle();
 
-    enum class Kind : uint8_t {
-        File,
-        Directory
-    };
+    using Kind = FileSystemHandleKind;
     Kind kind() const { return m_kind; }
     const String& name() const LIFETIME_BOUND { return m_name; }
     FileSystemHandleIdentifier identifier() const { return m_identifier; }

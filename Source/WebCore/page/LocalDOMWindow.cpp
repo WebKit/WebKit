@@ -978,44 +978,56 @@ void LocalDOMWindow::processPostMessage(JSC::JSGlobalObject& lexicalGlobalObject
             return;
 
         RefPtr document = this->document();
-        Ref frame = *this->frame();
-        if (targetOrigin) {
-            // Check target origin now since the target document may have changed since the timer was scheduled.
-            if (!targetOrigin->isSameSchemeHostPort(protect(document->securityOrigin()))) {
-                if (CheckedPtr frameConsole = console()) {
-                    auto message = makeString("Unable to post message to "_s, targetOrigin->toString(), ". Recipient has origin "_s, document->securityOrigin().toString(), ".\n"_s);
-                    if (stackTrace)
-                        frameConsole->addMessage(MessageSource::Security, MessageLevel::Error, message, *stackTrace);
-                    else
-                        frameConsole->addMessage(MessageSource::Security, MessageLevel::Error, message);
-                }
+        auto& serializedMessage = *message.message;
 
-                InspectorInstrumentation::didFailPostMessage(frame, postMessageIdentifier);
+        auto dispatchMessage = [this, protectedThis = WTF::move(protectedThis), message = WTF::move(message), incumbentWindowProxy = WTF::move(incumbentWindowProxy), sourceOrigin = WTF::move(sourceOrigin), userGestureToForward = WTF::move(userGestureToForward), postMessageIdentifier, stackTrace = WTF::move(stackTrace), targetOrigin = WTF::move(targetOrigin)] mutable {
+            if (!isCurrentlyDisplayedInFrame())
+                return;
+
+            RefPtr document = this->document();
+            Ref frame = *this->frame();
+            if (targetOrigin) {
+                // Check target origin now since the target document may have changed since the timer was scheduled.
+                if (!targetOrigin->isSameSchemeHostPort(protect(document->securityOrigin()))) {
+                    if (CheckedPtr frameConsole = console()) {
+                        auto message = makeString("Unable to post message to "_s, targetOrigin->toString(), ". Recipient has origin "_s, document->securityOrigin().toString(), ".\n"_s);
+                        if (stackTrace)
+                            frameConsole->addMessage(MessageSource::Security, MessageLevel::Error, message, *stackTrace);
+                        else
+                            frameConsole->addMessage(MessageSource::Security, MessageLevel::Error, message);
+                    }
+
+                    InspectorInstrumentation::didFailPostMessage(frame, postMessageIdentifier);
+                    return;
+                }
+            }
+
+            auto* globalObject = document->globalObject();
+            if (!globalObject)
+                return;
+
+            auto& vm = globalObject->vm();
+            auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
+
+            UserGestureIndicator userGestureIndicator(userGestureToForward);
+            InspectorInstrumentation::willDispatchPostMessage(frame, postMessageIdentifier);
+
+            auto ports = MessagePort::entanglePorts(*document, WTF::move(message.transferredPorts));
+            auto event = MessageEvent::create(*globalObject, message.message.releaseNonNull(), WTF::move(sourceOrigin), { }, incumbentWindowProxy ? std::optional { MessageEventSource(incumbentWindowProxy.releaseNonNull()) } : std::nullopt, WTF::move(ports));
+            if (scope.exception()) [[unlikely]] {
+                // Currently, we assume that the only way we can get here is if we have a termination.
+                RELEASE_ASSERT(vm.hasPendingTerminationException());
                 return;
             }
-        }
 
-        auto* globalObject = document->globalObject();
-        if (!globalObject)
-            return;
+            dispatchEvent(event.event);
 
-        auto& vm = globalObject->vm();
-        auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
+            InspectorInstrumentation::didDispatchPostMessage(frame, postMessageIdentifier);
+        };
 
-        UserGestureIndicator userGestureIndicator(userGestureToForward);
-        InspectorInstrumentation::willDispatchPostMessage(frame, postMessageIdentifier);
-
-        auto ports = MessagePort::entanglePorts(*document, WTF::move(message.transferredPorts));
-        auto event = MessageEvent::create(*globalObject, message.message.releaseNonNull(), WTF::move(sourceOrigin), { }, incumbentWindowProxy ? std::optional { MessageEventSource(incumbentWindowProxy.releaseNonNull()) } : std::nullopt, WTF::move(ports));
-        if (scope.exception()) [[unlikely]] {
-            // Currently, we assume that the only way we can get here is if we have a termination.
-            RELEASE_ASSERT(vm.hasPendingTerminationException());
-            return;
-        }
-
-        dispatchEvent(event.event);
-
-        InspectorInstrumentation::didDispatchPostMessage(frame, postMessageIdentifier);
+        resolveFileSystemHandlesForReceiving(serializedMessage, *document, [dispatchMessage = WTF::move(dispatchMessage)] mutable {
+            dispatchMessage();
+        });
     });
 
     InspectorInstrumentation::didPostMessage(*protect(frame()), postMessageIdentifier, lexicalGlobalObject);
@@ -1050,7 +1062,10 @@ ExceptionOr<void> LocalDOMWindow::postMessage(JSC::JSGlobalObject& lexicalGlobal
     // Schedule the message.
     RefPtr incumbentWindowProxy = incumbentWindow.frame() ? &incumbentWindow.frame()->windowProxy() : nullptr;
     MessageWithMessagePorts message { messageData.releaseReturnValue(), disentangledPorts.releaseReturnValue() };
-    processPostMessage(lexicalGlobalObject, WTF::move(sourceOrigin), message, WTF::move(incumbentWindowProxy), targetSecurityOrigin.releaseReturnValue());
+    auto& serializedMessage = *message.message;
+    resolveFileSystemHandlesForSending(serializedMessage, *sourceDocument, [protectedThis = Ref { *this }, lexicalGlobalObject = &lexicalGlobalObject, sourceOrigin = WTF::move(sourceOrigin), message = WTF::move(message), incumbentWindowProxy = WTF::move(incumbentWindowProxy), targetSecurityOrigin = targetSecurityOrigin.releaseReturnValue()] mutable {
+        protectedThis->processPostMessage(*lexicalGlobalObject, WTF::move(sourceOrigin), message, WTF::move(incumbentWindowProxy), WTF::move(targetSecurityOrigin));
+    });
     return { };
 }
 

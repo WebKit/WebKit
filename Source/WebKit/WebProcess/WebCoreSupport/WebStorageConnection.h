@@ -47,6 +47,7 @@ private:
     void persist(const WebCore::ClientOrigin&, StorageConnection::PersistCallback&&) final;
     void getEstimate(WebCore::ClientOrigin&&, StorageConnection::GetEstimateCallback&&) final;
     void fileSystemGetDirectory(WebCore::ClientOrigin&&, StorageConnection::GetDirectoryCallback&&) final;
+    RefPtr<WebCore::FileSystemStorageConnection> fileSystemStorageConnection() final;
 
     IPC::Connection& connection();
 };

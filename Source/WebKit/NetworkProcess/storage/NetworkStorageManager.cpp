@@ -1094,6 +1094,67 @@ void NetworkStorageManager::getHandle(IPC::Connection& connection, WebCore::File
         completionHandler(makeUnexpected(result.error()));
 }
 
+void NetworkStorageManager::getPathForHandle(IPC::Connection& connection, WebCore::ClientOrigin&& origin, WebCore::FileSystemHandleIdentifier identifier, CompletionHandler<void(Expected<String, FileSystemStorageError>)>&& completionHandler)
+{
+    ASSERT(!RunLoop::isMain());
+    MESSAGE_CHECK_COMPLETION(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), connection, completionHandler(makeUnexpected(FileSystemStorageError::Unknown)));
+
+    RefPtr handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
+    if (!handle)
+        return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
+
+    Ref fileSystemStorageManager = originStorageManager(origin)->fileSystemStorageManager(*protect(m_fileSystemStorageHandleRegistry));
+    auto& rootPath = fileSystemStorageManager->rootPath();
+    auto& handlePath = handle->path();
+
+    if (handlePath.isNull() || (handlePath != rootPath && !(handlePath.startsWith(rootPath) && handlePath[rootPath.length()] == '/')))
+        return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
+
+    // Return path relative to OPFS root.
+    auto relativePath = handlePath.substring(rootPath.length());
+    if (relativePath.startsWith('/'))
+        relativePath = relativePath.substring(1);
+
+    completionHandler(relativePath);
+}
+
+void NetworkStorageManager::connectToPath(IPC::Connection& connection, WebCore::ClientOrigin&& origin, String&& path, bool isDirectory, CompletionHandler<void(Expected<std::pair<WebCore::FileSystemHandleIdentifier, String>, FileSystemStorageError>)>&& completionHandler)
+{
+    ASSERT(!RunLoop::isMain());
+    MESSAGE_CHECK_COMPLETION(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), connection, completionHandler(makeUnexpected(FileSystemStorageError::Unknown)));
+
+    Ref fileSystemStorageManager = originStorageManager(origin)->fileSystemStorageManager(*protect(m_fileSystemStorageHandleRegistry));
+
+    // Empty path means root directory; delegate to getDirectory() to use the canonical root path.
+    if (path.isEmpty()) {
+        auto result = fileSystemStorageManager->getDirectory(connection.uniqueID());
+        if (!result)
+            return completionHandler(makeUnexpected(result.error()));
+        completionHandler(std::pair { result.value(), String() });
+        return;
+    }
+
+    auto& rootPath = fileSystemStorageManager->rootPath();
+    auto fullPath = FileSystem::pathByAppendingComponent(rootPath, path);
+
+    // Validate the resolved path stays within the OPFS root.
+    auto resolvedPath = FileSystem::realPath(fullPath);
+    if (resolvedPath.isNull() || (resolvedPath != rootPath && !(resolvedPath.startsWith(rootPath) && resolvedPath[rootPath.length()] == '/')))
+        return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
+
+    auto type = isDirectory ? FileSystemStorageHandle::Type::Directory : FileSystemStorageHandle::Type::File;
+    auto name = FileSystem::pathFileName(resolvedPath);
+    auto result = fileSystemStorageManager->createHandle(connection.uniqueID(), type, WTF::move(resolvedPath), WTF::move(name), false);
+    if (!result)
+        return completionHandler(makeUnexpected(result.error()));
+
+    RefPtr newHandle = m_fileSystemStorageHandleRegistry->getHandle(result.value());
+    if (!newHandle)
+        return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
+
+    completionHandler(std::pair { result.value(), String { newHandle->name() } });
+}
+
 void NetworkStorageManager::forEachOriginDirectory(NOESCAPE const Function<void(const String&)>& apply)
 {
     for (auto& topOrigin : FileSystem::listDirectory(m_path)) {

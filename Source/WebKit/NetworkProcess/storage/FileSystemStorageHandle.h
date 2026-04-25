@@ -57,6 +57,7 @@ public:
     static RefPtr<FileSystemStorageHandle> create(FileSystemStorageManager&, Type, String&& path, String&& name);
 
     const String& path() const LIFETIME_BOUND { return m_path; }
+    const String& name() const LIFETIME_BOUND { return m_name; }
     Type type() const { return m_type; }
     uint64_t allocatedUnusedCapacity();
 

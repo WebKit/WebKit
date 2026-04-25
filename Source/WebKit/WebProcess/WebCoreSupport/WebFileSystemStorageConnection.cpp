@@ -27,6 +27,7 @@
 #include "WebFileSystemStorageConnection.h"
 
 #include "NetworkStorageManagerMessages.h"
+#include <WebCore/ClientOrigin.h>
 #include <WebCore/ExceptionOr.h>
 #include <WebCore/FileSystemDirectoryHandle.h>
 #include <WebCore/FileSystemFileHandle.h>
@@ -209,6 +210,34 @@ void WebFileSystemStorageConnection::getHandle(WebCore::FileSystemHandleIdentifi
         
         auto [identifier, isDirectory] = *result.value();
         completionHandler(WebCore::FileSystemHandleCloseScope::create(identifier, isDirectory, *this));
+    });
+}
+
+void WebFileSystemStorageConnection::getPathForHandle(WebCore::ClientOrigin&& origin, WebCore::FileSystemHandleIdentifier identifier, GetPathCallback&& completionHandler)
+{
+    RefPtr connection = m_connection;
+    if (!connection)
+        return completionHandler(WebCore::Exception { WebCore::ExceptionCode::UnknownError, "Connection is lost"_s });
+
+    connection->sendWithAsyncReply(Messages::NetworkStorageManager::GetPathForHandle(origin, identifier), [completionHandler = WTF::move(completionHandler)](auto result) mutable {
+        if (!result)
+            return completionHandler(WebCore::Exception { WebCore::ExceptionCode::UnknownError, "Failed to get path for handle"_s });
+
+        completionHandler(WTF::move(result.value()));
+    });
+}
+
+void WebFileSystemStorageConnection::connectToPath(WebCore::ClientOrigin&& origin, const String& path, bool isDirectory, ConnectToPathCallback&& completionHandler)
+{
+    RefPtr connection = m_connection;
+    if (!connection)
+        return completionHandler(WebCore::Exception { WebCore::ExceptionCode::UnknownError, "Connection is lost"_s });
+
+    connection->sendWithAsyncReply(Messages::NetworkStorageManager::ConnectToPath(origin, path, isDirectory), [completionHandler = WTF::move(completionHandler)](auto result) mutable {
+        if (!result)
+            return completionHandler(WebCore::Exception { WebCore::ExceptionCode::UnknownError, "Failed to connect to path"_s });
+
+        completionHandler(WTF::move(result.value()));
     });
 }
 

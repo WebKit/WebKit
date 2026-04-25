@@ -100,6 +100,7 @@ public:
     void unregisterCursor(SQLiteIDBCursor&);
 
     IDBError getBlobRecordsForObjectStoreRecord(int64_t objectStoreRecord, Vector<String>& blobURLs, Vector<String>& blobFilePaths);
+    IDBError getFileSystemHandleRecordsForObjectStoreRecord(int64_t objectStoreRecord, Vector<IDBFileSystemHandleRecord>&);
 
     WEBCORE_EXPORT static uint64_t databasesSizeForDirectory(const String& directory);
     const String& databaseDirectory() const LIFETIME_BOUND { return m_databaseDirectory; };
@@ -187,6 +188,10 @@ private:
         BlobFilenameForBlobURL,
         AddBlobFilename,
         GetBlobURL,
+        AddFileSystemHandleRecord,
+        GetFileSystemHandleRecords,
+        DeleteFileSystemHandleRecords,
+        DeleteOrphanedFileSystemHandleRecords,
         GetKeyGeneratorValue,
         SetKeyGeneratorValue,
         GetObjectStoreRecords,

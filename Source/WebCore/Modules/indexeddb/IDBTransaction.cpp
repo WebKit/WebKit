@@ -26,19 +26,24 @@
 #include "config.h"
 #include "IDBTransaction.h"
 
+#include "ClientOrigin.h"
 #include "ContextDestructionObserverInlines.h"
 #include "DOMException.h"
 #include "DOMStringList.h"
+#include "Document.h"
 #include "DocumentPage.h"
 #include "Event.h"
 #include "EventDispatcher.h"
 #include "EventLoop.h"
 #include "EventNames.h"
+#include "FileSystemHandleKind.h"
+#include "FileSystemStorageConnection.h"
 #include "IDBBindingUtilities.h"
 #include "IDBCursorWithValue.h"
 #include "IDBDatabase.h"
 #include "IDBError.h"
 #include "IDBGetRecordData.h"
+#include "IDBGetResult.h"
 #include "IDBIndex.h"
 #include "IDBIterateCursorData.h"
 #include "IDBKeyData.h"
@@ -51,10 +56,12 @@
 #include "JSDOMWindowBase.h"
 #include "LocalDOMWindow.h"
 #include "Logging.h"
+#include "MessageWithMessagePorts.h"
 #include "ScriptExecutionContextInlines.h"
 #include "SerializedScriptValue.h"
 #include "TransactionOperation.h"
 #include "WebCoreOpaqueRootInlines.h"
+#include "WorkerGlobalScope.h"
 #include "WorkerOrWorkletGlobalScope.h"
 #include "WorkerOrWorkletScriptController.h"
 #include <wtf/CompletionHandler.h>
@@ -66,6 +73,20 @@ using namespace JSC;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IDBTransaction);
 
 std::atomic<unsigned> IDBTransaction::numberOfIDBTransactions { 0 };
+
+static Ref<SerializedScriptValue> createSerializedValueWithHandlePaths(const IDBValue& value)
+{
+    auto serializedValue = SerializedScriptValue::createFromWireBytes(Vector<uint8_t>(*value.data().data()));
+    auto& handleRecords = value.fileSystemHandleRecords();
+    if (!handleRecords.isEmpty()) {
+        Vector<SerializedScriptValue::FileSystemHandleData> handleData;
+        handleData.reserveInitialCapacity(handleRecords.size());
+        for (auto& record : handleRecords)
+            handleData.append({ record.kind, record.name, record.path, std::nullopt });
+        serializedValue->setFileSystemHandles(WTF::move(handleData));
+    }
+    return serializedValue;
+}
 
 Ref<IDBTransaction> IDBTransaction::create(IDBDatabase& database, const IDBTransactionInfo& info)
 {
@@ -429,6 +450,33 @@ void IDBTransaction::completeNoncursorRequest(IDBRequest& request, const IDBResu
 void IDBTransaction::completeCursorRequest(IDBRequest& request, const IDBResultData& result)
 {
     ASSERT(!m_currentlyCompletingRequest);
+
+    auto& getResult = result.getResult();
+    if (!getResult.value().fileSystemHandleRecords().isEmpty()) {
+        auto* context = scriptExecutionContext();
+        if (context) {
+            m_currentlyCompletingRequest = request;
+            auto valueCopy = getResult.value();
+            Ref serializedValue = createSerializedValueWithHandlePaths(valueCopy);
+            auto& serializedValueRef = serializedValue.get();
+            auto resultType = result.type();
+            auto requestIdentifier = result.requestIdentifier();
+            auto keyData = getResult.keyData();
+            auto primaryKeyData = getResult.primaryKeyData();
+            auto keyPath = getResult.keyPath();
+            resolveFileSystemHandlesForReceiving(serializedValueRef, *context, [protectedThis = Ref { *this }, protectedRequest = Ref { request }, resultType, requestIdentifier, keyData = WTF::move(keyData), primaryKeyData = WTF::move(primaryKeyData), keyPath = WTF::move(keyPath), valueCopy = WTF::move(valueCopy), serializedValue = WTF::move(serializedValue)] mutable {
+                valueCopy.setResolvedSerializedValue(WTF::move(serializedValue));
+                auto modifiedGetResult = IDBGetResult { keyData, primaryKeyData, WTF::move(valueCopy), keyPath };
+                IDBResultData modifiedResult;
+                if (resultType == IDBResultType::OpenCursorSuccess)
+                    modifiedResult = IDBResultData::openCursorSuccess(requestIdentifier, modifiedGetResult);
+                else
+                    modifiedResult = IDBResultData::iterateCursorSuccess(requestIdentifier, modifiedGetResult);
+                protectedRequest->didOpenOrIterateCursor(modifiedResult);
+            });
+            return;
+        }
+    }
 
     request.didOpenOrIterateCursor(result);
 
@@ -1096,13 +1144,35 @@ void IDBTransaction::didGetRecordOnServer(IDBRequest& request, const IDBResultDa
             request.setResult(result.keyData());
         else
             request.setResultToUndefined();
-    } else {
-        if (resultData.getResult().value().data().data())
-            request.setResultToStructuredClone(resultData.getResult());
-        else
-            request.setResultToUndefined();
+        completeNoncursorRequest(request, resultData);
+        return;
     }
 
+    if (!resultData.getResult().value().data().data()) {
+        request.setResultToUndefined();
+        completeNoncursorRequest(request, resultData);
+        return;
+    }
+
+    auto& value = resultData.getResult().value();
+    if (!value.fileSystemHandleRecords().isEmpty()) {
+        auto* context = scriptExecutionContext();
+        if (context) {
+            m_currentlyCompletingRequest = request;
+            auto valueCopy = value;
+            Ref serializedValue = createSerializedValueWithHandlePaths(valueCopy);
+            auto& serializedValueRef = serializedValue.get();
+            resolveFileSystemHandlesForReceiving(serializedValueRef, *context, [protectedThis = Ref { *this }, protectedRequest = Ref { request }, resultData, valueCopy = WTF::move(valueCopy), serializedValue = WTF::move(serializedValue)] mutable {
+                valueCopy.setResolvedSerializedValue(WTF::move(serializedValue));
+                auto modifiedResult = IDBGetResult { resultData.getResult().keyData(), resultData.getResult().primaryKeyData(), WTF::move(valueCopy), resultData.getResult().keyPath() };
+                protectedRequest->setResultToStructuredClone(modifiedResult);
+                protectedRequest->completeRequestAndDispatchEvent(resultData);
+            });
+            return;
+        }
+    }
+
+    request.setResultToStructuredClone(resultData.getResult());
     completeNoncursorRequest(request, resultData);
 }
 
@@ -1278,24 +1348,66 @@ void IDBTransaction::putOrAddOnServer(IDBClient::TransactionOperation& operation
 
     // Create placeholder key to be replaced by auto generated key on server side.
     IDBKeyData keyData = key ? IDBKeyData { key.get() } : IDBKeyData::placeholder();
-    if (!value->hasBlobURLs()) {
+    bool hasBlobs = value->hasBlobURLs();
+    bool hasHandles = value->hasFileSystemHandles();
+
+    if (!hasBlobs && !hasHandles) {
         auto indexKeys = generateIndexKeyMapForValueIsolatedCopy(*globalObject, objectStoreInfo, keyData, value.get());
         m_database->connectionProxy().putOrAdd(operation, WTF::move(keyData), value.get(), indexKeys, overwriteMode);
         return;
     }
 
+    auto connection = context ? fileSystemStorageConnectionForContext(*context) : nullptr;
+    auto origin = context ? clientOriginForContext(*context) : ClientOrigin { };
     bool isEphemeral = database().connectionProxy().sessionID().isEphemeral();
-    // Due to current limitations on our ability to post tasks back to a worker thread,
-    // workers currently write blobs to disk synchronously.
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=157958 - Make this asynchronous after refactoring allows it.
+
+    // Handles only (no blobs).
+    if (!hasBlobs && hasHandles) {
+        if (connection) {
+            operation.setNextRequestCanGoToServer(false);
+            value->resolveFileSystemHandlesForIndexedDB(connection.releaseNonNull(), origin.isolatedCopy(), [protectedThis = Ref { *this }, this, protectedOperation = Ref { operation }, objectStoreInfo = crossThreadCopy(objectStoreInfo), keyData = crossThreadCopy(WTF::move(keyData)), value = WTF::move(value), overwriteMode](Vector<IDBFileSystemHandleRecord>&& handleRecords) mutable {
+                RefPtr context = scriptExecutionContext();
+                auto* globalObject = context ? context->globalObject() : nullptr;
+                if (globalObject) {
+                    IDBValue idbValue { ThreadSafeDataBuffer::copyData(value->wireBytes()), { }, { }, WTF::move(handleRecords) };
+                    auto indexKeys = generateIndexKeyMapForValueIsolatedCopy(*globalObject, objectStoreInfo, keyData, idbValue);
+                    m_database->connectionProxy().putOrAdd(protectedOperation.get(), WTF::move(keyData), idbValue, indexKeys, overwriteMode);
+                    return;
+                }
+                auto result = IDBResultData::error(protectedOperation->identifier(), IDBError { ExceptionCode::UnknownError, "Error resolving file system handles"_s });
+                protectedOperation->doComplete(result);
+            });
+        } else {
+            IDBValue idbValue { ThreadSafeDataBuffer::copyData(value->wireBytes()), { }, { } };
+            auto indexKeys = generateIndexKeyMapForValueIsolatedCopy(*globalObject, objectStoreInfo, keyData, idbValue);
+            m_database->connectionProxy().putOrAdd(operation, WTF::move(keyData), idbValue, indexKeys, overwriteMode);
+        }
+        return;
+    }
+
+    // Blobs (with or without handles).
     if (!isMainThread()) {
         auto idbValue = value->writeBlobsToDiskForIndexedDBSynchronously(isEphemeral);
         if (idbValue.data().data()) {
-            auto indexKeys = generateIndexKeyMapForValueIsolatedCopy(*globalObject, objectStoreInfo, keyData, idbValue);
-            m_database->connectionProxy().putOrAdd(operation, WTF::move(keyData), idbValue, indexKeys, overwriteMode);
+            if (hasHandles && connection) {
+                operation.setNextRequestCanGoToServer(false);
+                value->resolveFileSystemHandlesForIndexedDB(connection.releaseNonNull(), origin.isolatedCopy(), [protectedThis = Ref { *this }, protectedOperation = Ref { operation }, objectStoreInfo = crossThreadCopy(objectStoreInfo), keyData = crossThreadCopy(WTF::move(keyData)), overwriteMode, idbValue = WTF::move(idbValue)](Vector<IDBFileSystemHandleRecord>&& handleRecords) mutable {
+                    RefPtr context = protectedThis->scriptExecutionContext();
+                    auto* globalObject = context ? context->globalObject() : nullptr;
+                    if (globalObject) {
+                        IDBValue combinedValue { idbValue.data(), Vector<String> { idbValue.blobURLs() }, Vector<String> { idbValue.blobFilePaths() }, WTF::move(handleRecords) };
+                        auto indexKeys = generateIndexKeyMapForValueIsolatedCopy(*globalObject, objectStoreInfo, keyData, combinedValue);
+                        protectedThis->m_database->connectionProxy().putOrAdd(protectedOperation.get(), WTF::move(keyData), combinedValue, indexKeys, overwriteMode);
+                        return;
+                    }
+                    auto result = IDBResultData::error(protectedOperation->identifier(), IDBError { ExceptionCode::UnknownError, "Error resolving file system handles"_s });
+                    protectedOperation->doComplete(result);
+                });
+            } else {
+                auto indexKeys = generateIndexKeyMapForValueIsolatedCopy(*globalObject, objectStoreInfo, keyData, idbValue);
+                m_database->connectionProxy().putOrAdd(operation, WTF::move(keyData), idbValue, indexKeys, overwriteMode);
+            }
         } else {
-            // If the IDBValue doesn't have any data, then something went wrong writing the blobs to disk.
-            // In that case, we cannot successfully store this record, so we callback with an error.
             context->postTask([protectedOperation = Ref { operation }](ScriptExecutionContext&) {
                 auto result = IDBResultData::error(protectedOperation->identifier(), IDBError { ExceptionCode::UnknownError, "Error preparing Blob/File data to be stored in object store"_s });
                 protectedOperation->doComplete(result);
@@ -1304,28 +1416,43 @@ void IDBTransaction::putOrAddOnServer(IDBClient::TransactionOperation& operation
         return;
     }
 
-    // Since this request won't actually go to the server until the blob writes are complete,
-    // stop future requests from going to the server ahead of it.
     operation.setNextRequestCanGoToServer(false);
 
-    value->writeBlobsToDiskForIndexedDB(isEphemeral, [protectedThis = Ref { *this }, this, protectedOperation = Ref<IDBClient::TransactionOperation>(operation), objectStoreInfo = crossThreadCopy(objectStoreInfo), keyData = crossThreadCopy(WTF::move(keyData)), overwriteMode](IDBValue&& idbValue) mutable {
+    value->writeBlobsToDiskForIndexedDB(isEphemeral, [protectedThis = Ref { *this }, this, protectedOperation = Ref<IDBClient::TransactionOperation>(operation), objectStoreInfo = crossThreadCopy(objectStoreInfo), keyData = crossThreadCopy(WTF::move(keyData)), overwriteMode, value = WTF::move(value), hasHandles, origin](IDBValue&& idbValue) mutable {
         ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
         ASSERT(isMainThread());
 
         RefPtr context = scriptExecutionContext();
         auto* globalObject = context ? context->globalObject() : nullptr;
-        if (idbValue.data().data() && globalObject) {
-            auto indexKeys = generateIndexKeyMapForValueIsolatedCopy(*globalObject, objectStoreInfo, keyData, idbValue);
-            m_database->connectionProxy().putOrAdd(protectedOperation.get(), WTF::move(keyData), idbValue, indexKeys, overwriteMode);
+        if (!idbValue.data().data() || !globalObject) {
+            callOnMainThread([protectedThis = WTF::move(protectedThis), protectedOperation = WTF::move(protectedOperation)]() mutable {
+                auto result = IDBResultData::error(protectedOperation->identifier(), IDBError { ExceptionCode::UnknownError, "Error preparing Blob/File data to be stored in object store"_s });
+                protectedOperation->doComplete(result);
+            });
             return;
         }
 
-        // If the IDBValue doesn't have any data, then something went wrong writing the blobs to disk.
-        // In that case, we cannot successfully store this record, so we callback with an error.
-        callOnMainThread([protectedThis = WTF::move(protectedThis), protectedOperation = WTF::move(protectedOperation)]() mutable {
-            auto result = IDBResultData::error(protectedOperation->identifier(), IDBError { ExceptionCode::UnknownError, "Error preparing Blob/File data to be stored in object store"_s });
-            protectedOperation->doComplete(result);
-        });
+        if (hasHandles) {
+            auto connection = context ? fileSystemStorageConnectionForContext(*context) : nullptr;
+            if (connection) {
+                value->resolveFileSystemHandlesForIndexedDB(connection.releaseNonNull(), origin.isolatedCopy(), [protectedThis = WTF::move(protectedThis), protectedOperation = WTF::move(protectedOperation), objectStoreInfo, keyData = WTF::move(keyData), overwriteMode, idbValue = WTF::move(idbValue)](Vector<IDBFileSystemHandleRecord>&& handleRecords) mutable {
+                    RefPtr context = protectedThis->scriptExecutionContext();
+                    auto* globalObject = context ? context->globalObject() : nullptr;
+                    if (globalObject) {
+                        IDBValue combinedValue { idbValue.data(), Vector<String> { idbValue.blobURLs() }, Vector<String> { idbValue.blobFilePaths() }, WTF::move(handleRecords) };
+                        auto indexKeys = generateIndexKeyMapForValueIsolatedCopy(*globalObject, objectStoreInfo, keyData, combinedValue);
+                        protectedThis->m_database->connectionProxy().putOrAdd(protectedOperation.get(), WTF::move(keyData), combinedValue, indexKeys, overwriteMode);
+                        return;
+                    }
+                    auto result = IDBResultData::error(protectedOperation->identifier(), IDBError { ExceptionCode::UnknownError, "Error resolving file system handles"_s });
+                    protectedOperation->doComplete(result);
+                });
+                return;
+            }
+        }
+
+        auto indexKeys = generateIndexKeyMapForValueIsolatedCopy(*globalObject, objectStoreInfo, keyData, idbValue);
+        m_database->connectionProxy().putOrAdd(protectedOperation.get(), WTF::move(keyData), idbValue, indexKeys, overwriteMode);
     });
 }
 

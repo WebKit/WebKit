@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,37 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "MessageWithMessagePorts.h"
 
-#include <WebCore/SerializedScriptValue.h>
-#include <WebCore/TransferredMessagePort.h>
-#include <wtf/CompletionHandler.h>
-#include <wtf/RefPtr.h>
+#include "FileSystemStorageConnection.h"
+#include "SerializedScriptValue.h"
 
 namespace WebCore {
 
-class ScriptExecutionContext;
-
-struct MessageWithMessagePorts {
-    RefPtr<SerializedScriptValue> message;
-    Vector<TransferredMessagePort> transferredPorts;
-};
-
-WEBCORE_EXPORT void resolveFileSystemHandlesForSending(SerializedScriptValue&, ScriptExecutionContext&, CompletionHandler<void()>&&);
-WEBCORE_EXPORT void resolveFileSystemHandlesForReceiving(SerializedScriptValue&, ScriptExecutionContext&, CompletionHandler<void()>&&);
-
-inline void resolveFileSystemHandlesForSending(MessageWithMessagePorts& message, ScriptExecutionContext& context, CompletionHandler<void()>&& completionHandler)
+void resolveFileSystemHandlesForSending(SerializedScriptValue& value, ScriptExecutionContext& context, CompletionHandler<void()>&& completionHandler)
 {
-    if (message.message)
-        return resolveFileSystemHandlesForSending(*message.message, context, WTF::move(completionHandler));
-    completionHandler();
+    if (!value.hasFileSystemHandles())
+        return completionHandler();
+
+    auto connection = fileSystemStorageConnectionForContext(context);
+    if (!connection)
+        return completionHandler();
+
+    value.resolveFileSystemHandlePaths(connection.releaseNonNull(), clientOriginForContext(context), WTF::move(completionHandler));
 }
 
-inline void resolveFileSystemHandlesForReceiving(MessageWithMessagePorts& message, ScriptExecutionContext& context, CompletionHandler<void()>&& completionHandler)
+void resolveFileSystemHandlesForReceiving(SerializedScriptValue& value, ScriptExecutionContext& context, CompletionHandler<void()>&& completionHandler)
 {
-    if (message.message)
-        return resolveFileSystemHandlesForReceiving(*message.message, context, WTF::move(completionHandler));
-    completionHandler();
+    if (!value.hasFileSystemHandles())
+        return completionHandler();
+
+    auto connection = fileSystemStorageConnectionForContext(context);
+    if (!connection)
+        return completionHandler();
+
+    value.resolveFileSystemHandleIdentifiers(connection.releaseNonNull(), clientOriginForContext(context), WTF::move(completionHandler));
 }
 
 } // namespace WebCore

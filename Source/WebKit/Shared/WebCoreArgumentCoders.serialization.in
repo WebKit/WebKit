@@ -105,6 +105,9 @@ enum class WebCore::IDBTransactionMode : uint8_t {
     Versionchange
 };
 
+header: <WebCore/FileSystemHandleKind.h>
+enum class WebCore::FileSystemHandleKind : bool;
+
 enum class WebCore::IPAddressSpace : bool;
 
 #if ENABLE(MEDIA_SESSION)
@@ -445,6 +448,21 @@ class WebCore::FloatQuad {
     WebCore::FloatPoint p4();
 }
 
+header: <WebCore/IDBValue.h>
+[CustomHeader] struct WebCore::IDBFileSystemHandleRecord {
+    WebCore::FileSystemHandleKind kind;
+    String name;
+    String path;
+}
+
+header: <WebCore/SerializedScriptValue.h>
+[CustomHeader, Nested] struct WebCore::SerializedScriptValue::FileSystemHandleData {
+    WebCore::FileSystemHandleKind kind;
+    String name;
+    String path;
+    [NotSerialized] std::optional<WebCore::FileSystemHandleIdentifier> identifier;
+}
+
 struct WebCore::IDBCursorRecord {
     WebCore::IDBKeyData key;
     WebCore::IDBKeyData primaryKey;
@@ -559,6 +577,7 @@ class WebCore::IDBValue {
     WebCore::ThreadSafeDataBuffer data()
     Vector<String> blobURLs()
     Vector<String> blobFilePaths()
+    Vector<WebCore::IDBFileSystemHandleRecord> fileSystemHandleRecords()
 };
 
 class WebCore::IDBOpenRequestData {
@@ -7957,6 +7976,7 @@ headers: <JavaScriptCore/WasmModule.h> <WebCore/ImageBitmap.h> <WebCore/MessageP
     Vector<Ref<WebCore::WebCodecsEncodedAudioChunkStorage>> serializedAudioChunks;
 #endif
     uint64_t exposedMessagePortCount;
+    Vector<WebCore::SerializedScriptValue::FileSystemHandleData> fileSystemHandles;
 #if ENABLE(WEB_CODECS)
     [NotSerialized] Vector<WebCore::WebCodecsVideoFrameData> serializedVideoFrames;
     [NotSerialized] Vector<WebCore::WebCodecsAudioInternalData> serializedAudioData;

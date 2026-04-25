@@ -540,8 +540,16 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
             return FetchResult::Failure;
         }
 
+        Vector<IDBFileSystemHandleRecord> handleRecords;
+        error = m_transaction->backingStore().getFileSystemHandleRecordsForObjectStoreRecord(record.rowID, handleRecords);
+        if (!error.isNull()) {
+            LOG_ERROR("Unable to fetch file system handle records from database while advancing cursor");
+            markAsErrored(record);
+            return FetchResult::Failure;
+        }
+
         if (m_cursorType == IndexedDB::CursorType::KeyAndValue)
-            record.record.value = { ThreadSafeDataBuffer::create(WTF::move(keyData)), blobURLs, blobFilePaths };
+            record.record.value = { ThreadSafeDataBuffer::create(WTF::move(keyData)), WTF::move(blobURLs), WTF::move(blobFilePaths), WTF::move(handleRecords) };
     } else {
         if (!deserializeIDBKeyData(keyData.span(), record.record.primaryKey)) {
             LOG_ERROR("Unable to deserialize value data from database while advancing index cursor");
@@ -575,7 +583,15 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
                 return FetchResult::Failure;
             }
 
-            record.record.value = { ThreadSafeDataBuffer::create(cachedObjectStoreStatement->columnBlob(1)), WTF::move(blobURLs), WTF::move(blobFilePaths) };
+            Vector<IDBFileSystemHandleRecord> handleRecords;
+            error = m_transaction->backingStore().getFileSystemHandleRecordsForObjectStoreRecord(recordsRowID, handleRecords);
+            if (!error.isNull()) {
+                LOG_ERROR("Unable to fetch file system handle records from database while advancing cursor");
+                markAsErrored(record);
+                return FetchResult::Failure;
+            }
+
+            record.record.value = { ThreadSafeDataBuffer::create(cachedObjectStoreStatement->columnBlob(1)), WTF::move(blobURLs), WTF::move(blobFilePaths), WTF::move(handleRecords) };
         } else if (result == SQLITE_DONE) {
             // This indicates that the record we're trying to retrieve has been removed from the object store.
             // Skip over it.

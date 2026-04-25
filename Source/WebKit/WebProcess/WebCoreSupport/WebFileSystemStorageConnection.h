@@ -68,6 +68,8 @@ private:
     void resolve(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemHandleIdentifier, WebCore::FileSystemStorageConnection::ResolveCallback&&) final;
     void getHandleNames(WebCore::FileSystemHandleIdentifier, FileSystemStorageConnection::GetHandleNamesCallback&&) final;
     void getHandle(WebCore::FileSystemHandleIdentifier, const String& name, FileSystemStorageConnection::GetHandleCallback&&) final;
+    void getPathForHandle(WebCore::ClientOrigin&&, WebCore::FileSystemHandleIdentifier, GetPathCallback&&) final;
+    void connectToPath(WebCore::ClientOrigin&&, const String& path, bool isDirectory, ConnectToPathCallback&&) final;
     void getFile(WebCore::FileSystemHandleIdentifier, StringCallback&&) final;
 
     void createSyncAccessHandle(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemStorageConnection::GetAccessHandleCallback&&) final;

@@ -3691,6 +3691,7 @@
 		93500F3213FDE3BE0099EC24 /* NSScrollerImpDetails.h in Headers */ = {isa = PBXBuildFile; fileRef = 93500F3113FDE3BE0099EC24 /* NSScrollerImpDetails.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		935207BE09BD410A00F2038D /* LocalizedStrings.h in Headers */ = {isa = PBXBuildFile; fileRef = 935207BD09BD410A00F2038D /* LocalizedStrings.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9354242F2703CA51005CA72C /* FileSystemHandleIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 935424272703BC88005CA72C /* FileSystemHandleIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE0001012D0A0001000F0002 /* FileSystemHandleKind.h in Headers */ = {isa = PBXBuildFile; fileRef = FE0001012D0A0001000F0001 /* FileSystemHandleKind.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		935424302703CB86005CA72C /* FileSystemStorageConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 935424292703BCAD005CA72C /* FileSystemStorageConnection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9355EF51253A4279006FF4A4 /* JSAbstractRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 9355EF4F253A4278006FF4A4 /* JSAbstractRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		935C476309AC4CE600A6AAB4 /* MouseEventWithHitTestResults.h in Headers */ = {isa = PBXBuildFile; fileRef = 935C476209AC4CE600A6AAB4 /* MouseEventWithHitTestResults.h */; };
@@ -12535,6 +12536,7 @@
 		51A4BB0E1954D62700FA5C2E /* NavigatorGamepad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorGamepad.h; sourceTree = "<group>"; };
 		51A4BB0F1954D62700FA5C2E /* Navigator+Gamepad.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Navigator+Gamepad.idl"; sourceTree = "<group>"; };
 		51A748E02005D0E00075BA68 /* MessageWithMessagePorts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageWithMessagePorts.h; sourceTree = "<group>"; };
+		E1F5A8262D0C000000000001 /* MessageWithMessagePorts.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageWithMessagePorts.cpp; sourceTree = "<group>"; };
 		51A748E4200600210075BA68 /* MessagePortChannelProviderImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessagePortChannelProviderImpl.cpp; sourceTree = "<group>"; };
 		51A748E5200600210075BA68 /* MessagePortChannelProviderImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessagePortChannelProviderImpl.h; sourceTree = "<group>"; };
 		51A9D9E7195B931F001B2B5C /* GamepadManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GamepadManager.cpp; sourceTree = "<group>"; };
@@ -15938,6 +15940,7 @@
 		935207BD09BD410A00F2038D /* LocalizedStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalizedStrings.h; sourceTree = "<group>"; };
 		9353676A09AED88B00D35CD6 /* ScrollViewMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollViewMac.mm; sourceTree = "<group>"; };
 		935424272703BC88005CA72C /* FileSystemHandleIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemHandleIdentifier.h; sourceTree = "<group>"; };
+		FE0001012D0A0001000F0001 /* FileSystemHandleKind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemHandleKind.h; sourceTree = "<group>"; };
 		935424292703BCAD005CA72C /* FileSystemStorageConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemStorageConnection.h; sourceTree = "<group>"; };
 		9355EF4F253A4278006FF4A4 /* JSAbstractRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAbstractRange.h; sourceTree = "<group>"; };
 		9355EF50253A4279006FF4A4 /* JSAbstractRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAbstractRange.cpp; sourceTree = "<group>"; };
@@ -28592,6 +28595,7 @@
 				51A748E5200600210075BA68 /* MessagePortChannelProviderImpl.h */,
 				51ECC3F5200587B700483EAE /* MessagePortChannelRegistry.cpp */,
 				51ECC3F1200587B500483EAE /* MessagePortChannelRegistry.h */,
+				E1F5A8262D0C000000000001 /* MessageWithMessagePorts.cpp */,
 				51A748E02005D0E00075BA68 /* MessageWithMessagePorts.h */,
 				46DA4A0027AB038D00E375A8 /* TransferredMessagePort.h */,
 				41114A7C2317B39E00B56007 /* WorkerMessagePortChannelProvider.cpp */,
@@ -32042,6 +32046,7 @@
 				932C9BD926DD62600053B3DB /* FileSystemHandle.idl */,
 				93445082276A6356001F712B /* FileSystemHandleCloseScope.h */,
 				935424272703BC88005CA72C /* FileSystemHandleIdentifier.h */,
+				FE0001012D0A0001000F0001 /* FileSystemHandleKind.h */,
 				41B109772D554D99008A11E8 /* FileSystemStorageConnection.cpp */,
 				935424292703BCAD005CA72C /* FileSystemStorageConnection.h */,
 				93E269A0270A5D5C002C4FF0 /* FileSystemSyncAccessHandle.cpp */,
@@ -44538,6 +44543,7 @@
 				93443E8826E995C40058538F /* FileSystemHandle.h in Headers */,
 				93445084276A6357001F712B /* FileSystemHandleCloseScope.h in Headers */,
 				9354242F2703CA51005CA72C /* FileSystemHandleIdentifier.h in Headers */,
+				FE0001012D0A0001000F0002 /* FileSystemHandleKind.h in Headers */,
 				935424302703CB86005CA72C /* FileSystemStorageConnection.h in Headers */,
 				93E269A2270A5D5D002C4FF0 /* FileSystemSyncAccessHandle.h in Headers */,
 				930E4486270C372200DE7AB7 /* FileSystemSyncAccessHandleIdentifier.h in Headers */,
