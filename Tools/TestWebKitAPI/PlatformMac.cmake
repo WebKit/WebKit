@@ -109,6 +109,7 @@ list(APPEND TestWebKit_PRIVATE_INCLUDE_DIRECTORIES
     ${TOOLS_DIR}/TestRunnerShared/cocoa
     ${TOOLS_DIR}/TestRunnerShared/spi
     ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCoreTestSupport
+    ${WEBCORE_DIR}/testing/js
     ${TESTWEBKITAPI_DIR}/Tests/WebCore
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/cocoa
     ${TESTWEBKITAPI_DIR}/Tests/WebKit/WKWebView/ios
@@ -133,6 +134,7 @@ list(APPEND TestWebKit_LIBRARIES
     WebKitLegacy
     ${CARBON_LIBRARY}
 )
+list(APPEND TestWebKit_DEPENDENCIES Copy_WebCoreTestSupportPrivateHeaders)
 
 set_source_files_properties(Helpers/cocoa/WebExtensionUtilities.mm PROPERTIES COMPILE_FLAGS "-fobjc-arc")
 
