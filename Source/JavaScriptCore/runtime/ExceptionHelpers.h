@@ -34,6 +34,7 @@
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/ThrowScope.h>
+#include <wtf/MathExtras.h>
 #include <wtf/text/MakeString.h>
 
 namespace JSC {
@@ -125,7 +126,8 @@ inline uint64_t JSValue::toIndex(JSGlobalObject* globalObject, ASCIILiteral erro
         return 0;
     }
 
-    RELEASE_AND_RETURN(scope, d);
+    uint64_t result = WTF::truncateDoubleToUint64(d);
+    RELEASE_AND_RETURN(scope, result);
 }
 
 ALWAYS_INLINE bool JSValue::requireObjectCoercible(JSGlobalObject* globalObject) const
