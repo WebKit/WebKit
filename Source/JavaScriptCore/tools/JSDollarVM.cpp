@@ -3453,6 +3453,25 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateBuiltin, (JSGlobalObject* globalObject, C
     auto functionText = asString(callFrame->argument(0))->value(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
+    // BuiltinExecutables::createExecutable uses a hand-rolled single-function parser that
+    // RELEASE_ASSERTs (and can scan past the buffer) when its input does not match the exact
+    // shape produced by the builtins generator. Real builtins always satisfy that shape; reject
+    // anything else here so fuzzer-supplied source via $vm.createBuiltin throws instead of crashing.
+    {
+        StringView view { functionText };
+        constexpr auto regularPrefix = "(function ("_s;
+        constexpr auto asyncPrefix = "(async function ("_s;
+        bool isAsync = view.length() >= strlen("(async function (){})") && view.startsWith(asyncPrefix);
+        bool isRegular = !isAsync && view.length() >= strlen("(function (){})") && view.startsWith(regularPrefix);
+        bool isValid = view.is8Bit() && (isAsync || isRegular);
+        if (isValid) {
+            unsigned afterOpenParen = isAsync ? asyncPrefix.length() : regularPrefix.length();
+            isValid = view.find(')', afterOpenParen) != notFound && view.reverseFind('}') != notFound;
+        }
+        if (!isValid)
+            return throwVMTypeError(globalObject, scope, "$vm.createBuiltin source must be an 8-bit string of the form '(function (...){...})' or '(async function (...){...})'"_s);
+    }
+
     ImplementationVisibility visibility = ImplementationVisibility::Public;
     if (callFrame->argumentCount() >= 2 && callFrame->argument(1).isString()) {
         String visibilityString = asString(callFrame->argument(1))->value(globalObject);
