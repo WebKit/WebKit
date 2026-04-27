@@ -394,7 +394,6 @@ void RenderLayerModelObject::mapLocalToSVGContainer(const RenderLayerModelObject
 
 void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, const SVGGraphicsElement& graphicsElement, const RenderStyle& style, const FloatRect& boundingBox, const std::optional<AffineTransform>& preApplySVGTransformMatrix, const std::optional<AffineTransform>& postApplySVGTransformMatrix, OptionSet<Style::TransformResolverOption> options) const
 {
-    auto svgTransform = graphicsElement.transform().concatenate().value_or(identity);
     auto* supplementalTransform = graphicsElement.supplementalTransform(); // SMIL <animateMotion>
 
     // This check does not use style.hasTransformRelatedProperty() on purpose -- we only want to know if either the 'transform' property, an
@@ -404,13 +403,13 @@ void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, 
         || !style.rotate().isNone()
         || !style.translate().isNone()
         || !style.scale().isNone();
-    bool hasSVGTransform = !svgTransform.isIdentity() || preApplySVGTransformMatrix || postApplySVGTransformMatrix || supplementalTransform;
+    bool hasSVGExtras = preApplySVGTransformMatrix || postApplySVGTransformMatrix || supplementalTransform;
 
     // Common case: 'viewBox' set on outermost <svg> element -> 'preApplySVGTransformMatrix'
     // passed by RenderSVGViewportContainer::applyTransform(), the anonymous single child
     // of RenderSVGRoot, that wraps all direct children from <svg> as present in DOM. All
     // other transformations are unset (no need to compute transform-origin, etc. in that case).
-    if (!hasCSSTransform && !hasSVGTransform)
+    if (!hasCSSTransform && !hasSVGExtras)
         return;
 
     Style::TransformResolver transformResolver { transform, style };
@@ -424,7 +423,7 @@ void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, 
             return true;
         if (hasCSSTransform)
             return transformResolver.affectedByTransformOrigin();
-        return !svgTransform.isIdentityOrTranslation();
+        return false;
     };
 
     FloatPoint3D originTranslate;
@@ -439,11 +438,8 @@ void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, 
     if (preApplySVGTransformMatrix)
         transform.multiplyAffineTransform(preApplySVGTransformMatrix.value());
 
-    // CSS transforms take precedence over SVG transforms.
     if (hasCSSTransform)
         transformResolver.applyCSSTransform(TransformOperationData(boundingBox, this), options);
-    else if (!svgTransform.isIdentity())
-        transform.multiplyAffineTransform(svgTransform);
 
     if (postApplySVGTransformMatrix)
         transform.multiplyAffineTransform(postApplySVGTransformMatrix.value());

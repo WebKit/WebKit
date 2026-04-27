@@ -98,7 +98,10 @@ static RefPtr<const TransformFunctionBase> createMatrixTransformFunction(const C
     if (!function)
         return { };
 
-    auto zoom = state.cssToLengthConversionData().zoom();
+    // SVG elements handle zoom at the root level — matrix translation
+    // values should not be scaled. Other CSS lengths on SVG elements
+    // already use useSVGZoomRulesForLength() which returns 1.0.
+    auto zoom = state.useSVGZoomRulesForLength() ? 1.0f : state.cssToLengthConversionData().zoom();
     return MatrixTransformFunction::create(
         toStyleFromCSSValue<Number<>>(state, function->item(0)).value,
         toStyleFromCSSValue<Number<>>(state, function->item(1)).value,

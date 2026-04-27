@@ -4125,7 +4125,7 @@ imported/w3c/web-platform-tests/css/selectors/selection-image-001.html [ ImageOn
 imported/w3c/web-platform-tests/css/selectors/selection-image-002.html [ ImageOnlyFailure ]
 
 # The following test only works with LBSE activated -- text transform changes fail to repaint using the legacy engine.
-svg/repaint/text-repainting-after-modifying-transform.html [ ImageOnlyFailure ]
+# svg/repaint/text-repainting-after-modifying-transform.html [ ImageOnlyFailure ]
 
 webkit.org/b/251219 fast/images/animated-avif.html [ ImageOnlyFailure ]
 

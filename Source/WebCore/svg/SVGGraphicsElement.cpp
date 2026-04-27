@@ -39,6 +39,7 @@
 #include "RenderSVGResourceMasker.h"
 #include "RenderSVGResourcePattern.h"
 #include "SVGElementTypeHelpers.h"
+#include "SVGElementInlines.h"
 #include "SVGImageElement.h"
 #include "SVGLayerTransformComputation.h"
 #include "SVGMatrix.h"
@@ -149,6 +150,41 @@ SVGGraphicsElement::SVGGraphicsElement(const QualifiedName& tagName, Document& d
 
 SVGGraphicsElement::~SVGGraphicsElement() = default;
 
+bool SVGGraphicsElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
+{
+    if (name == SVGNames::transformAttr)
+        return true;
+    return SVGElement::hasPresentationalHintsForAttribute(name);
+}
+
+void SVGGraphicsElement::addTransformPresentationalHint(MutableStyleProperties& style)
+{
+    auto matrix = transform().concatenate();
+    if (!matrix)
+        return;
+
+    addPropertyToPresentationalHintStyle(style, CSSPropertyTransform,
+        makeString("matrix("_s,
+            matrix->a(), ", "_s, matrix->b(), ", "_s,
+            matrix->c(), ", "_s, matrix->d(), ", "_s,
+            matrix->e(), ", "_s, matrix->f(), ')'));
+}
+
+void SVGGraphicsElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+{
+    if (name == SVGNames::transformAttr) {
+        addTransformPresentationalHint(style);
+        return;
+    }
+    SVGElement::collectPresentationalHintsForAttribute(name, value, style);
+}
+
+void SVGGraphicsElement::collectExtraStyleForPresentationalHints(MutableStyleProperties& style)
+{
+    if (style.findPropertyIndex(CSSPropertyTransform) == -1)
+        addTransformPresentationalHint(style);
+}
+
 Ref<SVGMatrix> SVGGraphicsElement::getCTMForBindings()
 {
     return SVGMatrix::create(getCTM());
@@ -171,13 +207,11 @@ AffineTransform SVGGraphicsElement::getScreenCTM(StyleUpdateStrategy styleUpdate
 
 AffineTransform SVGGraphicsElement::animatedLocalTransform() const
 {
-    // LBSE handles transforms via RenderLayer, no need to handle CSS transforms here.
-    if (document().settings().layerBasedSVGEngineEnabled()) {
-        auto concatenatedTransform = protect(transform())->concatenate();
-        if (concatenatedTransform && m_supplementalTransform)
-            return *m_supplementalTransform * *concatenatedTransform;
-        return m_supplementalTransform ? *m_supplementalTransform : concatenatedTransform.value_or(identity);
-    }
+    // LBSE handles transforms via RenderLayer — the SVG transform attribute
+    // is now in the cascade and applied through applySVGTransform().
+    // Only supplementalTransform (SMIL <animateMotion>) remains here.
+    if (document().settings().layerBasedSVGEngineEnabled())
+        return m_supplementalTransform ? *m_supplementalTransform : identity;
 
     AffineTransform matrix;
 
@@ -186,6 +220,10 @@ AffineTransform SVGGraphicsElement::animatedLocalTransform() const
     bool hasSpecifiedTransform = style && (!style->transform().isNone() || !style->offsetPath().isNone());
 
     // Honor any of the transform-related CSS properties if set.
+    // With the cascade approach, the SVG transform attribute is injected as
+    // a presentation hint at specificity 0. The computed transform is non-none
+    // when the SVG attribute is set (and not overridden by CSS). CSS
+    // "transform: none" correctly overrides the hint via the cascade.
     if (hasSpecifiedTransform || (style && (!style->translate().isNone() || !style->scale().isNone() || !style->rotate().isNone()))) {
         // Note: objectBoundingBox is an emptyRect for elements like pattern or clipPath.
         // See the "Object bounding box units" section of http://dev.w3.org/csswg/css3-transforms/
@@ -193,14 +231,6 @@ AffineTransform SVGGraphicsElement::animatedLocalTransform() const
 
         // Flatten any 3D transform.
         matrix = transform.toAffineTransform();
-    }
-
-    // If we didn't have the CSS "transform" property set, we must account for the "transform" attribute.
-    if (!hasSpecifiedTransform && style && !transform().isEmpty()) {
-        auto t = Style::TransformResolver::computeTransformOrigin(*style, renderer->transformReferenceBoxRect()).xy();
-        matrix.translate(t);
-        matrix *= *transform().concatenate();
-        matrix.translate(-t.x(), -t.y());
     }
 
     if (m_supplementalTransform)
@@ -230,16 +260,23 @@ void SVGGraphicsElement::svgAttributeChanged(const QualifiedName& attrName)
         ASSERT(attrName == SVGNames::transformAttr);
         InstanceInvalidationGuard guard(*this);
 
+        // Ensure the HTML attribute is synchronized from the SVG DOM so
+        // that rebuildPresentationalHintStyle() finds it when iterating
+        // attributes. Without this, DOM API mutations (e.g. baseVal.appendItem)
+        // that lazily sync the attribute would be missed by the hint rebuild.
+        synchronizeAttribute(attrName);
+
         if (document().settings().layerBasedSVGEngineEnabled()) {
             if (CheckedPtr layerRenderer = dynamicDowncast<RenderLayerModelObject>(renderer()))
                 layerRenderer->repaintOrRelayoutAfterSVGTransformChange();
-            return;
+        } else {
+            if (CheckedPtr renderer = this->renderer()) {
+                renderer->setNeedsTransformUpdate();
+                updateSVGRendererForElementChange();
+            }
         }
 
-        if (CheckedPtr renderer = this->renderer()) {
-            renderer->setNeedsTransformUpdate();
-            updateSVGRendererForElementChange();
-        }
+        setPresentationalHintStyleIsDirty();
         return;
     }
 

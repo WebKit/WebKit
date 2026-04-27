@@ -86,6 +86,10 @@ protected:
     void svgAttributeChanged(const QualifiedName&) override;
     void didAttachRenderers() override;
 
+    bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
+    void collectExtraStyleForPresentationalHints(MutableStyleProperties&) override;
+
     void invalidateResourceImageBuffersIfNeeded();
 
 private:
@@ -93,6 +97,7 @@ private:
 
     static FloatRect computeBBox(SVGElement*, StyleUpdateStrategy);
     static AffineTransform computeCTM(SVGElement*, CTMScope, StyleUpdateStrategy);
+    void addTransformPresentationalHint(MutableStyleProperties&);
 
     // Used by <animateMotion>
     std::unique_ptr<AffineTransform> m_supplementalTransform;

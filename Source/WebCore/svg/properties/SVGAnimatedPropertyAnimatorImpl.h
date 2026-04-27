@@ -32,6 +32,7 @@
 #include "SVGAnimationAdditiveValueFunctionImpl.h"
 #include "SVGAnimationDiscreteFunctionImpl.h"
 #include <wtf/TypeCasts.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
@@ -393,6 +394,27 @@ private:
     void animate(SVGElement& targetElement, float progress, unsigned repeatCount) final
     {
         m_function.animate(targetElement, progress, repeatCount, m_animated->animVal());
+    }
+
+    void apply(SVGElement& targetElement) final
+    {
+        if (auto matrix = m_animated->animVal().concatenate()) {
+            applyAnimatedStylePropertyChange(targetElement, CSSPropertyTransform,
+                makeString("matrix("_s,
+                    matrix->a(), ", "_s, matrix->b(), ", "_s,
+                    matrix->c(), ", "_s, matrix->d(), ", "_s,
+                    matrix->e(), ", "_s, matrix->f(), ')'));
+        }
+        applyAnimatedPropertyChange(targetElement);
+    }
+
+    void stop(SVGElement& targetElement) final
+    {
+        if (!m_animated->isAnimating())
+            return;
+
+        Base::stop(targetElement);
+        removeAnimatedStyleProperty(targetElement, CSSPropertyTransform);
     }
 };
 
