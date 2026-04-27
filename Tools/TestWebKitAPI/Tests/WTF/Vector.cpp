@@ -178,8 +178,8 @@ TEST(WTF_Vector, IsolatedCopy)
     EXPECT_TRUE("s1"_s == vector2[0]);
     EXPECT_TRUE("s2"_s == vector2[1]);
 
-    EXPECT_FALSE(data1 == vector2[0].impl());
-    EXPECT_FALSE(data2 == vector2[1].impl());
+    EXPECT_TRUE(data1 == vector2[0].impl());
+    EXPECT_TRUE(data2 == vector2[1].impl());
 
     auto vector3 = crossThreadCopy(WTF::move(vector1));
     SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(0U, vector1.size());
@@ -188,7 +188,7 @@ TEST(WTF_Vector, IsolatedCopy)
     EXPECT_TRUE("s2"_s == vector3[1]);
 
     EXPECT_TRUE(data1 == vector3[0].impl());
-    EXPECT_FALSE(data2 == vector3[1].impl());
+    EXPECT_TRUE(data2 == vector3[1].impl());
 }
 
 TEST(WTF_Vector, ConstructWithFromMoveOnly)

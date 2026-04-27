@@ -169,7 +169,7 @@ protected:
         const char* m_data8Char;
         const char16_t* m_data16Char;
     };
-    mutable unsigned m_hashAndFlags;
+    mutable std::atomic<unsigned> m_hashAndFlags;
 };
 
 // FIXME: Use of StringImpl and const is rather confused.
@@ -254,6 +254,7 @@ private:
 
 public:
     WTF_EXPORT_PRIVATE static void destroy(StringImpl*);
+    WTF_EXPORT_PRIVATE static void destroyIfNeeded(StringImpl*);
 
     WTF_EXPORT_PRIVATE static Ref<StringImpl> create(std::span<const char16_t>);
     WTF_EXPORT_PRIVATE static Ref<StringImpl> create(std::span<const Latin1Character>);
@@ -313,7 +314,7 @@ public:
     static constexpr ptrdiff_t lengthMemoryOffset() { return OBJECT_OFFSETOF(StringImpl, m_length); }
     bool isEmpty() const { return !m_length; }
 
-    bool is8Bit() const { return m_hashAndFlags & s_hashFlag8BitBuffer; }
+    bool is8Bit() const { return m_hashAndFlags.load(std::memory_order_relaxed) & s_hashFlag8BitBuffer; }
     ALWAYS_INLINE std::span<const Latin1Character> span8() const LIFETIME_BOUND { ASSERT(is8Bit()); return unsafeMakeSpan(m_data8, length()); }
     ALWAYS_INLINE std::span<const char16_t> span16() const LIFETIME_BOUND { ASSERT(!is8Bit() || isEmpty()); return unsafeMakeSpan(m_data16, length()); }
 
@@ -324,8 +325,8 @@ public:
 
     WTF_EXPORT_PRIVATE size_t NODELETE sizeInBytes() const;
 
-    bool isSymbol() const { return m_hashAndFlags & s_hashFlagStringKindIsSymbol; }
-    bool isAtom() const { return m_hashAndFlags & s_hashFlagStringKindIsAtom; }
+    bool isSymbol() const { return m_hashAndFlags.load(std::memory_order_relaxed) & s_hashFlagStringKindIsSymbol; }
+    bool isAtom() const { return m_hashAndFlags.load(std::memory_order_relaxed) & s_hashFlagStringKindIsAtom; }
     void setIsAtom(bool);
     
     bool isExternal() const { return bufferOwnership() == BufferExternal; }
@@ -354,7 +355,7 @@ private:
     // So, we shift left and right when setting and getting our hash code.
     void setHash(unsigned) const;
 
-    unsigned rawHash() const { return m_hashAndFlags >> s_flagCount; }
+    unsigned rawHash() const { return m_hashAndFlags.load(std::memory_order_relaxed) >> s_flagCount; }
 
 public:
     bool hasHash() const { return !!rawHash(); }
@@ -392,19 +393,9 @@ public:
         //    We also know that a StringImpl never changes from 8 bit to 16 bit because there
         //    is no way to set/clear the s_hashFlag8BitBuffer flag other than at construction.
         //
-        // 3. m_hashAndFlags will not be mutated by different threads because:
-        //
-        //    a. StaticStringImpl's constructor sets the s_hashFlagDidReportCost flag to ensure
-        //       that StringImpl::cost() returns early.
-        //       This means StaticStringImpl costs are not counted. But since there should only
-        //       be a finite set of StaticStringImpls, their cost can be aggregated into a single
-        //       system cost if needed.
-        //    b. setIsAtom() is never called on a StaticStringImpl.
-        //       setIsAtom() asserts !isStatic().
-        //    c. setHash() is never called on a StaticStringImpl.
-        //       StaticStringImpl's constructor sets the hash on construction.
-        //       StringImpl::hash() only sets a new hash iff !hasHash().
-        //       Additionally, StringImpl::setHash() asserts hasHash() and !isStatic().
+        // 3. m_hashAndFlags is std::atomic<unsigned> so concurrent access is well-defined.
+        //    StaticStringImpl's constructor pre-sets the hash and s_hashFlagDidReportCost
+        //    flag, so no mutation occurs after construction for static strings.
 
         template<unsigned characterCount> explicit constexpr StaticStringImpl(const char (&characters)[characterCount], StringKind = StringNormal);
         template<unsigned characterCount> explicit constexpr StaticStringImpl(const char16_t (&characters)[characterCount], StringKind = StringNormal);
@@ -528,7 +519,7 @@ public:
     ALWAYS_INLINE static StringStats& stringStats() { return m_stringStats; }
 #endif
 
-    BufferOwnership bufferOwnership() const { return static_cast<BufferOwnership>(m_hashAndFlags & s_hashMaskBufferOwnership); }
+    BufferOwnership bufferOwnership() const { return static_cast<BufferOwnership>(m_hashAndFlags.load(std::memory_order_relaxed) & s_hashMaskBufferOwnership); }
 
     template<typename T> static constexpr size_t headerSize() { return tailOffset<T>(); }
     
@@ -550,7 +541,7 @@ private:
     WTF_EXPORT_PRIVATE size_t NODELETE find(std::span<const Latin1Character>, size_t start);
     WTF_EXPORT_PRIVATE size_t NODELETE reverseFind(std::span<const Latin1Character>, size_t start);
 
-    bool requiresCopy() const;
+
     template<typename T> const T* tailPointer() const;
     template<typename T> T* tailPointer();
     StringImpl* const& substringBuffer() const;
@@ -894,15 +885,7 @@ template<unsigned characterCount> constexpr StringImplShape::StringImplShape(uin
 
 inline Ref<StringImpl> StringImpl::isolatedCopy() const
 {
-    if (!requiresCopy()) {
-        if (is8Bit())
-            return StringImpl::createWithoutCopying(span8());
-        return StringImpl::createWithoutCopying(span16());
-    }
-
-    if (is8Bit())
-        return create(span8());
-    return create(span16());
+    return const_cast<StringImpl&>(*this);
 }
 
 inline bool StringImpl::containsOnlyASCII() const
@@ -1105,10 +1088,10 @@ inline size_t StringImpl::cost() const
     // We ensure this by pre-setting the s_hashFlagDidReportCost bit in all instances of
     // StaticStringImpl. As a result, StaticStringImpl instances will always return a cost of
     // 0 here and avoid modifying m_hashAndFlags.
-    if (m_hashAndFlags & s_hashFlagDidReportCost)
+    if (m_hashAndFlags.load(std::memory_order_relaxed) & s_hashFlagDidReportCost)
         return 0;
 
-    m_hashAndFlags |= s_hashFlagDidReportCost;
+    m_hashAndFlags.fetch_or(s_hashFlagDidReportCost, std::memory_order_relaxed);
     size_t result = m_length;
     if (!is8Bit())
         result <<= 1;
@@ -1134,9 +1117,9 @@ inline void StringImpl::setIsAtom(bool isAtom)
     ASSERT(!isStatic());
     ASSERT(!isSymbol());
     if (isAtom)
-        m_hashAndFlags |= s_hashFlagStringKindIsAtom;
+        m_hashAndFlags.fetch_or(s_hashFlagStringKindIsAtom, std::memory_order_relaxed);
     else
-        m_hashAndFlags &= ~s_hashFlagStringKindIsAtom;
+        m_hashAndFlags.fetch_and(~s_hashFlagStringKindIsAtom, std::memory_order_relaxed);
 }
 
 inline void StringImpl::setHash(unsigned hash) const
@@ -1152,10 +1135,10 @@ inline void StringImpl::setHash(unsigned hash) const
     ASSERT(!(hash & (s_flagMask << (8 * sizeof(hash) - s_flagCount)))); // Verify that enough high bits are empty.
 
     hash <<= s_flagCount;
-    ASSERT(!(hash & m_hashAndFlags)); // Verify that enough low bits are empty after shift.
-    ASSERT(hash); // Verify that 0 is a valid sentinel hash value.
+    ASSERT(!(hash & m_hashAndFlags.load(std::memory_order_relaxed)));
+    ASSERT(hash);
 
-    m_hashAndFlags |= hash; // Store hash with flags in low bits.
+    m_hashAndFlags.fetch_or(hash, std::memory_order_relaxed);
 }
 
 inline void StringImpl::ref()
@@ -1179,11 +1162,13 @@ inline void StringImpl::deref()
         return;
 #endif
 
-    auto oldRefCount = m_refCount.fetch_sub(s_refCountIncrement, std::memory_order_relaxed);
-    if (oldRefCount != s_refCountIncrement)
-        return;
-
-    StringImpl::destroy(this);
+    auto oldRefCount = m_refCount.load(std::memory_order_relaxed);
+    do {
+        if (oldRefCount == s_refCountIncrement) {
+            destroyIfNeeded(this);
+            return;
+        }
+    } while (!m_refCount.compare_exchange_weak(oldRefCount, oldRefCount - s_refCountIncrement, std::memory_order_relaxed));
 }
 
 inline char16_t StringImpl::at(unsigned i) const
@@ -1233,15 +1218,6 @@ template<typename T> constexpr size_t StringImpl::tailOffset()
     return roundUpToMultipleOf<alignof(T)>(offsetof(StringImpl, m_hashAndFlags) + sizeof(StringImpl::m_hashAndFlags));
 }
 
-inline bool StringImpl::requiresCopy() const
-{
-    if (bufferOwnership() != BufferInternal)
-        return true;
-
-    if (is8Bit())
-        return m_data8 == tailPointer<Latin1Character>();
-    return m_data16 == tailPointer<char16_t>();
-}
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 template<typename T> inline const T* StringImpl::tailPointer() const

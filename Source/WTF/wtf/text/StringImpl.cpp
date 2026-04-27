@@ -123,11 +123,7 @@ StringImpl::~StringImpl()
 
     STRING_STATS_REMOVE_STRING(*this);
 
-    if (isAtom()) {
-        ASSERT(!isSymbol());
-        if (length())
-            AtomStringImpl::remove(static_cast<AtomStringImpl*>(this));
-    } else if (isSymbol()) {
+    if (isSymbol()) {
         auto& symbol = static_cast<SymbolImpl&>(*this);
         if (CheckedPtr symbolRegistry = symbol.symbolRegistry())
             SUPPRESS_UNCOUNTED_ARG symbolRegistry->remove(*symbol.asRegisteredSymbolImpl());
@@ -158,6 +154,19 @@ void StringImpl::destroy(StringImpl* stringImpl)
 {
     stringImpl->~StringImpl();
     StringImplMalloc::free(stringImpl);
+}
+
+void StringImpl::destroyIfNeeded(StringImpl* stringImpl)
+{
+    if (auto* atomStringImpl = dynamicDowncast<AtomStringImpl>(*stringImpl); atomStringImpl && atomStringImpl->length()) {
+        if (!AtomStringImpl::releaseAndRemoveIfNeeded(atomStringImpl))
+            return;
+    } else {
+        auto oldRefCount = stringImpl->m_refCount.fetch_sub(s_refCountIncrement, std::memory_order_relaxed);
+        if (oldRefCount != s_refCountIncrement)
+            return;
+    }
+    destroy(stringImpl);
 }
 
 Ref<StringImpl> StringImpl::createWithoutCopyingNonEmpty(std::span<const char16_t> characters)

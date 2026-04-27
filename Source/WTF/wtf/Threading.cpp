@@ -208,15 +208,6 @@ void Thread::initializeInThread()
         allThreads().add(*this); // Must have stack bounds before adding to allThreads()
 #endif
 
-    m_currentAtomStringTable = &m_defaultAtomStringTable;
-#if USE(WEB_THREAD)
-    // On iOS, one AtomStringTable is shared between the main UI thread and the WebThread.
-    if (isWebThread() || isUIThread()) {
-        static NeverDestroyed<AtomStringTable> sharedStringTable;
-        m_currentAtomStringTable = &sharedStringTable.get();
-    }
-#endif
-
 #if OS(LINUX)
     m_id = currentID();
 #endif

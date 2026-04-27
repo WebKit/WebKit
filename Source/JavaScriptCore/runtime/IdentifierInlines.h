@@ -50,27 +50,21 @@ ALWAYS_INLINE Identifier::Identifier(VM& vm, ASCIILiteral literal)
     ASSERT(m_string.impl()->isAtom());
 }
 
-inline Identifier::Identifier(VM& vm, AtomStringImpl* string)
+inline Identifier::Identifier(VM&, AtomStringImpl* string)
     : m_string(string)
 {
-#ifndef NDEBUG
-    checkCurrentAtomStringTable(vm);
+#if ASSERT_ENABLED
     if (string)
-        ASSERT_WITH_MESSAGE(!string->length() || string->isSymbol() || AtomStringImpl::isInAtomStringTable(string), "The atomic string comes from an other thread!");
-#else
-    UNUSED_PARAM(vm);
+        ASSERT_WITH_MESSAGE(!string->length() || string->isSymbol() || AtomStringImpl::isInAtomStringTable(string), "The atomic string is not in the global atom string table!");
 #endif
 }
 
-inline Identifier::Identifier(VM& vm, const AtomString& string)
+inline Identifier::Identifier(VM&, const AtomString& string)
     : m_string(string)
 {
-#ifndef NDEBUG
-    checkCurrentAtomStringTable(vm);
+#if ASSERT_ENABLED
     if (!string.isNull())
-        ASSERT_WITH_MESSAGE(!string.length() || string.impl()->isSymbol() || AtomStringImpl::isInAtomStringTable(string.impl()), "The atomic string comes from an other thread!");
-#else
-    UNUSED_PARAM(vm);
+        ASSERT_WITH_MESSAGE(!string.length() || string.impl()->isSymbol() || AtomStringImpl::isInAtomStringTable(string.impl()), "The atomic string is not in the global atom string table!");
 #endif
 }
 
@@ -110,9 +104,6 @@ Ref<AtomStringImpl> Identifier::add(VM& vm, std::span<const T> string)
 
 inline Ref<AtomStringImpl> Identifier::add(VM& vm, StringImpl* r)
 {
-#ifndef NDEBUG
-    checkCurrentAtomStringTable(vm);
-#endif
     return *AtomStringImpl::addWithStringTableProvider(vm, r);
 }
 

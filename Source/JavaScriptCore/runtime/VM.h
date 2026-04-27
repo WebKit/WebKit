@@ -61,6 +61,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/ThreadSafeRefCountedWithSuppressingSaferCPPChecking.h>
 #include <wtf/text/AdaptiveStringSearcher.h>
+#include <wtf/text/AtomStringTable.h>
 
 #if ENABLE(WEBASSEMBLY)
 #include <JavaScriptCore/WasmContext.h>
@@ -591,7 +592,6 @@ public:
     JSCell* currentlyDestructingCallbackObject { nullptr };
     const ClassInfo* currentlyDestructingCallbackObjectClassInfo { nullptr };
 
-    AtomStringTable* m_atomStringTable;
     const UniqueRef<WTF::SymbolRegistry> m_symbolRegistry;
     const UniqueRef<WTF::SymbolRegistry> m_privateSymbolRegistry;
     CommonIdentifiers* propertyNames { nullptr };
@@ -612,7 +612,7 @@ public:
     bool* addressOfMightBeExecutingTaintedCode() LIFETIME_BOUND { return &m_mightBeExecutingTaintedCode; }
     void setMightBeExecutingTaintedCode(bool value = true) { m_mightBeExecutingTaintedCode = value; }
 
-    AtomStringTable* atomStringTable() const { return m_atomStringTable; }
+    AtomStringTable* atomStringTable() const { return &AtomStringTable::singleton(); }
     WTF::SymbolRegistry& symbolRegistry() { return m_symbolRegistry.get(); }
     WTF::SymbolRegistry& privateSymbolRegistry() { return m_privateSymbolRegistry.get(); }
 

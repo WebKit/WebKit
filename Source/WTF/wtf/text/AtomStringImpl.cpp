@@ -29,44 +29,24 @@
 #include <wtf/text/AtomStringTable.h>
 #include <wtf/text/WTFString.h>
 
-#if USE(WEB_THREAD)
-#include <wtf/Lock.h>
-#endif
-
 namespace WTF {
 
 using namespace Unicode;
 
-#if USE(WEB_THREAD)
-
 class AtomStringTableLocker : public Locker<Lock> {
     WTF_MAKE_NONCOPYABLE(AtomStringTableLocker);
-
-    static Lock s_stringTableLock;
 public:
     AtomStringTableLocker()
-        : Locker<Lock>(s_stringTableLock)
+        : Locker<Lock>(AtomStringTable::singleton().lock())
     {
     }
 };
-
-Lock AtomStringTableLocker::s_stringTableLock;
-
-#else
-
-class AtomStringTableLocker {
-    WTF_MAKE_NONCOPYABLE(AtomStringTableLocker);
-public:
-    AtomStringTableLocker() { }
-};
-
-#endif // USE(WEB_THREAD)
 
 using StringTableImpl = AtomStringTable::StringTableImpl;
 
 static ALWAYS_INLINE StringTableImpl& stringTable()
 {
-    return Thread::currentSingleton().atomStringTable()->table();
+    return AtomStringTable::singleton().table();
 }
 
 template<typename T, typename HashTranslator>
@@ -74,8 +54,6 @@ static inline Ref<AtomStringImpl> addToStringTable(AtomStringTableLocker&, Strin
 {
     auto addResult = atomStringTable.add<HashTranslator>(value);
 
-    // If the string is newly-translated, then we need to adopt it.
-    // The boolean in the pair tells us if that is so.
     if (addResult.isNewEntry)
         return adoptRef(uncheckedDowncast<AtomStringImpl>(*addResult.iterator->get()));
     return *uncheckedDowncast<AtomStringImpl>(addResult.iterator->get());
@@ -399,14 +377,22 @@ struct AtomStringTableRemovalHashTranslator {
     static bool equal(const AtomStringTable::StringEntry& a, const AtomStringImpl* b) { return a == b; }
 };
 
-void AtomStringImpl::remove(AtomStringImpl* string)
+bool AtomStringImpl::releaseAndRemoveIfNeeded(AtomStringImpl* string)
 {
     ASSERT(string->isAtom());
     AtomStringTableLocker locker;
+
+    // Do the final refcount decrement under the lock so that Add() cannot
+    // ref this string between our decrement and the table removal.
+    auto oldRefCount = string->m_refCount.fetch_sub(StringImpl::s_refCountIncrement, std::memory_order_relaxed);
+    if (oldRefCount != StringImpl::s_refCountIncrement)
+        return false;
+
     auto& atomStringTable = stringTable();
     auto iterator = atomStringTable.find<AtomStringTableRemovalHashTranslator>(string);
-    bool wasRemoved = atomStringTable.remove(iterator);
-    RELEASE_ASSERT(wasRemoved, "The string being removed is an atom in the string table of an other thread!");
+    ASSERT(iterator != atomStringTable.end());
+    atomStringTable.remove(iterator);
+    return true;
 }
 
 RefPtr<AtomStringImpl> AtomStringImpl::lookUpSlowCase(StringImpl& string)

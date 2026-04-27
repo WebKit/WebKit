@@ -53,7 +53,6 @@
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/WordLock.h>
-#include <wtf/text/AtomStringTable.h>
 
 #if USE(PTHREADS) && !OS(DARWIN)
 #include <signal.h>
@@ -261,18 +260,6 @@ public:
         return m_stack;
     }
 
-    AtomStringTable* atomStringTable()
-    {
-        return m_currentAtomStringTable;
-    }
-
-    AtomStringTable* setCurrentAtomStringTable(AtomStringTable* atomStringTable)
-    {
-        AtomStringTable* oldAtomStringTable = m_currentAtomStringTable;
-        m_currentAtomStringTable = atomStringTable;
-        return oldAtomStringTable;
-    }
-
 #if ENABLE(STACK_STATS)
     StackStats::PerThreadStats& stackStats()
     {
@@ -422,8 +409,6 @@ protected:
     SpecificStorage m_specificStorage;
 #endif
 
-    AtomStringTable* m_currentAtomStringTable { nullptr };
-    AtomStringTable m_defaultAtomStringTable;
 
 #if ENABLE(STACK_STATS)
     StackStats::PerThreadStats m_stackStats;

@@ -79,16 +79,6 @@ OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass*
 
 OpaqueJSClass::~OpaqueJSClass()
 {
-    // The empty string is shared across threads & is an identifier, in all other cases we should have done a deep copy in className(), below. 
-    ASSERT(!m_className.length() || !m_className.impl()->isAtom());
-
-#if ASSERT_ENABLED
-    for (auto& key : m_staticValues.keys())
-        ASSERT(!key->isAtom());
-    for (auto& key : m_staticFunctions.keys())
-        ASSERT(!key->isAtom());
-#endif
-
     if (prototypeClass)
         JSClassRelease(prototypeClass);
 }
@@ -115,16 +105,11 @@ Ref<OpaqueJSClass> OpaqueJSClass::create(const JSClassDefinition* clientDefiniti
 OpaqueJSClassContextData::OpaqueJSClassContextData(JSC::VM&, OpaqueJSClass* jsClass)
     : m_class(jsClass)
 {
-    for (auto& it : jsClass->m_staticValues) {
-        ASSERT(!it.key->isAtom());
-        String valueName = it.key->isolatedCopy();
-        staticValues.add(valueName.impl(), makeUnique<StaticValueEntry>(it.value->getProperty, it.value->setProperty, it.value->attributes, valueName));
-    }
+    for (auto& it : jsClass->m_staticValues)
+        staticValues.add(it.key, makeUnique<StaticValueEntry>(it.value->getProperty, it.value->setProperty, it.value->attributes, String(it.key.get())));
 
-    for (auto& it : jsClass->m_staticFunctions) {
-        ASSERT(!it.key->isAtom());
-        staticFunctions.add(it.key->isolatedCopy(), makeUnique<StaticFunctionEntry>(it.value->callAsFunction, it.value->attributes));
-    }
+    for (auto& it : jsClass->m_staticFunctions)
+        staticFunctions.add(it.key, makeUnique<StaticFunctionEntry>(it.value->callAsFunction, it.value->attributes));
 }
 
 OpaqueJSClassContextData& OpaqueJSClass::contextData(JSGlobalObject* globalObject)
@@ -137,8 +122,7 @@ OpaqueJSClassContextData& OpaqueJSClass::contextData(JSGlobalObject* globalObjec
 
 String OpaqueJSClass::className()
 {
-    // Make a deep copy, so that the caller has no chance to put the original into AtomStringTable.
-    return m_className.isolatedCopy();
+    return m_className;
 }
 
 OpaqueJSClassStaticValuesTable* OpaqueJSClass::staticValues(JSC::JSGlobalObject* globalObject)

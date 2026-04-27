@@ -66,7 +66,6 @@ JSLock::JSLock(VM* vm)
     : m_lockCount(0)
     , m_lockDropDepth(0)
     , m_vm(vm)
-    , m_entryAtomStringTable(nullptr)
 {
 }
 
@@ -118,11 +117,8 @@ void JSLock::didAcquireLock()
     // FIXME: What should happen to the per-thread identifier table if we don't have a VM?
     if (!m_vm)
         return;
-    
+
     auto& thread = Thread::currentSingleton();
-    ASSERT(!m_entryAtomStringTable);
-    m_entryAtomStringTable = thread.setCurrentAtomStringTable(m_vm->atomStringTable());
-    ASSERT(m_entryAtomStringTable);
 
     m_vm->setLastStackTop(thread);
 
@@ -257,11 +253,10 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void JSLock::dumpInfoAndCrashForLockNotOwned
     updateDumpState(0xBBBB, numZeroBytesInLock, totalZeroBytesInPage, currentZeroBytes);
 
     register VM* vmPtr __asm__("r19") = m_vm;
-    register AtomStringTable* atomStringTable __asm__("x15") = m_entryAtomStringTable;
     register JSLock* thisPtr __asm__("x14") = this;
-    updateDumpState(0xCCCC, vmPtr, atomStringTable, thisPtr);
+    updateDumpState(0xCCCC, vmPtr, thisPtr, thisPtr);
 
-    __asm__ volatile (WTF_FATAL_CRASH_INST : : "r"(dumpState), "r"(miscState), "r"(lockWord0), "r"(currentThread), "r"(ownerThread), "r"(lockWord2), "r"(lockWord3), "r"(numZeroBytesBeforeAfter), "r"(numZeroBytesInLock), "r"(vmPtr), "r"(atomStringTable), "r"(thisPtr));
+    __asm__ volatile (WTF_FATAL_CRASH_INST : : "r"(dumpState), "r"(miscState), "r"(lockWord0), "r"(currentThread), "r"(ownerThread), "r"(lockWord2), "r"(lockWord3), "r"(numZeroBytesBeforeAfter), "r"(numZeroBytesInLock), "r"(vmPtr), "r"(thisPtr));
     __builtin_unreachable();
 
 #undef updateDumpState
@@ -319,11 +314,6 @@ void JSLock::willReleaseLock()
             if (m_shouldReleaseHeapAccess)
                 protectedVM->heap.releaseAccess();
         }
-    }
-
-    if (m_entryAtomStringTable) {
-        Thread::currentSingleton().setCurrentAtomStringTable(m_entryAtomStringTable);
-        m_entryAtomStringTable = nullptr;
     }
 }
 

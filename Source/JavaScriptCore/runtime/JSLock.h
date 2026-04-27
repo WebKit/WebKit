@@ -160,7 +160,6 @@ private:
     unsigned m_lockDropDepth;
     uint32_t m_lastOwnerThread { 0 };
     VM* m_vm;
-    AtomStringTable* m_entryAtomStringTable; 
 };
 
 } // namespace

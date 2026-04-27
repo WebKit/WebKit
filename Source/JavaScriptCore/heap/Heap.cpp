@@ -1720,11 +1720,6 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
     }
         
     {
-        auto* previous = Thread::currentSingleton().setCurrentAtomStringTable(nullptr);
-        auto scopeExit = makeScopeExit([&] {
-            Thread::currentSingleton().setCurrentAtomStringTable(previous);
-        });
-
         if (vm().typeProfiler())
             vm().typeProfiler()->invalidateTypeSetCache(vm());
 
@@ -2322,10 +2317,9 @@ void Heap::finalize()
 Heap::Ticket Heap::requestCollection(GCRequest request)
 {
     stopIfNecessary();
-    
+
     ASSERT(vm().currentThreadIsHoldingAPILock());
-    RELEASE_ASSERT(vm().atomStringTable() == Thread::currentSingleton().atomStringTable());
-    
+
     Locker locker { *m_threadLock };
     // We may be able to steal the conn. That only works if the collector is definitely not running
     // right now. This is an optimization that prevents the collector thread from ever starting in most

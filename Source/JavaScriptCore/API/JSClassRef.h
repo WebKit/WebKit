@@ -39,7 +39,7 @@
 struct StaticValueEntry {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StaticValueEntry);
 public:
-    StaticValueEntry(JSObjectGetPropertyCallback _getProperty, JSObjectSetPropertyCallback _setProperty, JSPropertyAttributes _attributes, String& propertyName)
+    StaticValueEntry(JSObjectGetPropertyCallback _getProperty, JSObjectSetPropertyCallback _setProperty, JSPropertyAttributes _attributes, const String& propertyName)
         : getProperty(_getProperty)
         , setProperty(_setProperty)
         , attributes(_attributes)
@@ -134,7 +134,6 @@ private:
 
     OpaqueJSClassContextData& contextData(JSC::JSGlobalObject*);
 
-    // Strings in these data members should not be put into any AtomStringTable.
     String m_className;
     OpaqueJSClassStaticValuesTable m_staticValues;
     OpaqueJSClassStaticFunctionsTable m_staticFunctions;
