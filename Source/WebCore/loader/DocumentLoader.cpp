@@ -1371,6 +1371,12 @@ void DocumentLoader::commitData(const SharedBuffer& data)
         if (!isLoading())
             return;
 
+        // Under site isolation, receivedFirstData() commits the provisional frame into the frame
+        // tree, which sets the correct parent. Re-register the service worker client so that
+        // ancestorOrigins reflects the now-correct frame tree.
+        if (m_canUseServiceWorkers)
+            document->updateServiceWorkerClientData();
+
         if (RefPtr window = document->window()) {
             window->prewarmLocalStorageIfNecessary();
 
