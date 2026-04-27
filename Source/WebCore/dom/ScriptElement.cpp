@@ -253,9 +253,8 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
         m_forceAsync = false;
     }
 
-    if (m_parserDocument && &(element->document()) != m_parserDocument.get()) {
+    if (m_parserDocument && &element->document() != m_parserDocument.get())
         return false;
-    }
 
     m_alreadyStarted = true;
 

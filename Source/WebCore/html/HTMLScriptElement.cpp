@@ -175,7 +175,7 @@ ExceptionOr<void> HTMLScriptElement::setTextContent(ExceptionOr<String> value)
 
     setTrustedScriptText(newValue);
     setTextContent(WTF::move(newValue));
-    return {};
+    return { };
 }
 
 ExceptionOr<void> HTMLScriptElement::setInnerText(Variant<Ref<TrustedScript>, String>&& value)
@@ -188,7 +188,7 @@ ExceptionOr<void> HTMLScriptElement::setInnerText(Variant<Ref<TrustedScript>, St
 
     setTrustedScriptText(newValue);
     setInnerText(WTF::move(newValue));
-    return {};
+    return { };
 }
 
 void HTMLScriptElement::setAsync(bool async)
@@ -219,7 +219,7 @@ ExceptionOr<void> HTMLScriptElement::setSrc(Variant<Ref<TrustedScriptURL>, Strin
         return stringValueHolder.releaseException();
 
     setAttributeWithoutSynchronization(HTMLNames::srcAttr, AtomString { stringValueHolder.releaseReturnValue() });
-    return {};
+    return { };
 }
 
 void HTMLScriptElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
