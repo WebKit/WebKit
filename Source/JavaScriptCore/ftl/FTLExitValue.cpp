@@ -73,9 +73,12 @@ DataFormat ExitValue::dataFormat() const
             
     case ExitValueInJSStackAsInt52:
         return DataFormatInt52;
-            
+
     case ExitValueInJSStackAsDouble:
         return DataFormatDouble;
+
+    case ExitValueInJSStackAsBigInt64:
+        return DataFormatBigInt64;
     }
         
     RELEASE_ASSERT_NOT_REACHED();
@@ -107,6 +110,9 @@ void ExitValue::dumpInContext(PrintStream& out, DumpContext* context) const
         return;
     case ExitValueInJSStackAsDouble:
         out.print("InJSStackAsDouble:", virtualRegister());
+        return;
+    case ExitValueInJSStackAsBigInt64:
+        out.print("InJSStackAsBigInt64:", virtualRegister());
         return;
     case ExitValueMaterializeNewObject:
         out.print("Materialize(", WTF::RawPointer(objectMaterialization()), ")");

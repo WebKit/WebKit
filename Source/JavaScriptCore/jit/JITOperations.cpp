@@ -56,6 +56,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "JSAsyncGenerator.h"
 #include "JSAsyncGeneratorFunction.h"
 #include "JSBoundFunction.h"
+#include "JSBigIntInlines.h"
 #include "JSCInlines.h"
 #include "JSCPtrTag.h"
 #include "JSGeneratorFunction.h"
@@ -107,11 +108,28 @@ ALWAYS_INLINE ICSlowPathCallFrameTracer::ICSlowPathCallFrameTracer(VM& vm, CallF
     callFrame->setCallSiteIndex(propertyCache->callSiteIndex);
 }
 
+// For BigInt64 speculation: set BigInt64Overflow in the profile if any of the three values
+// (left operand, right operand, result) is a HeapBigInt that doesn't fit in int64.
+// This prevents the DFG/FTL from speculatively compiling an operation as BigInt64 when the
+// observed data includes values outside the int64 range.
+static ALWAYS_INLINE void checkBigInt64Overflow(BinaryArithProfile& arithProfile, JSValue result, JSValue op1, JSValue op2)
+{
+    if (!result.isHeapBigInt())
+        return;
+    if (!JSBigInt::fitsInInt64(result.asHeapBigInt()))
+        arithProfile.setObservedBigInt64Overflow();
+    if (op1.isHeapBigInt() && !JSBigInt::fitsInInt64(op1.asHeapBigInt()))
+        arithProfile.setObservedBigInt64Overflow();
+    if (op2.isHeapBigInt() && !JSBigInt::fitsInInt64(op2.asHeapBigInt()))
+        arithProfile.setObservedBigInt64Overflow();
+}
+
 ALWAYS_INLINE JSValue profiledAdd(JSGlobalObject* globalObject, JSValue op1, JSValue op2, BinaryArithProfile& arithProfile)
 {
     arithProfile.observeLHSAndRHS(op1, op2);
     JSValue result = jsAdd(globalObject, op1, op2);
     arithProfile.observeResult(result);
+    checkBigInt64Overflow(arithProfile, result, op1, op2);
     return result;
 }
 
@@ -4877,6 +4895,7 @@ JSC_DEFINE_JIT_OPERATION(operationValueAddProfiledOptimize, EncodedJSValue, (JSG
     
     JSValue result = jsAdd(globalObject, op1, op2);
     arithProfile->observeResult(result);
+    checkBigInt64Overflow(*arithProfile, result, op1, op2);
 
     OPERATION_RETURN(scope, JSValue::encode(result));
 }
@@ -4951,6 +4970,7 @@ ALWAYS_INLINE static EncodedJSValue profiledMul(JSGlobalObject* globalObject, En
     JSValue result = jsMul(globalObject, op1, op2);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     arithProfile.observeResult(result);
+    checkBigInt64Overflow(arithProfile, result, op1, op2);
     return JSValue::encode(result);
 }
 
@@ -5198,6 +5218,7 @@ ALWAYS_INLINE static EncodedJSValue profiledSub(VM& vm, JSGlobalObject* globalOb
     JSValue result = jsSub(globalObject, op1, op2);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     arithProfile.observeResult(result);
+    checkBigInt64Overflow(arithProfile, result, op1, op2);
     return JSValue::encode(result);
 }
 

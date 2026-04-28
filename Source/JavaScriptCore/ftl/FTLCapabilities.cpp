@@ -332,6 +332,7 @@ inline CapabilityLevel canCompile(Node* node)
     case DoubleRep:
     case ValueRep:
     case Int52Rep:
+    case BigInt64Rep:
     case PurifyNaN:
     case DoubleConstant:
     case Int52Constant:
@@ -590,6 +591,7 @@ CapabilityLevel canCompile(Graph& graph)
                 case AnyBigIntUse:
                 case BigInt32Use:
                 case HeapBigIntUse:
+                case BigInt64RepUse:
                 case DateObjectUse:
                 case MapObjectUse:
                 case MapIteratorObjectUse:

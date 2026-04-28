@@ -33,6 +33,8 @@
 #include "CodeBlock.h"
 #include "DFGJITCode.h"
 #include "DFGNode.h"
+#include "JSBigInt.h"
+#include "JSBigIntInlines.h"
 #include "JSCJSValueInlines.h"
 #include "RegisterAtOffsetList.h"
 #include "VMInlines.h"
@@ -202,6 +204,16 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, Byteco
             }
             value = jsDoubleNumber(value.asNumber());
             format = FlushedDouble;
+        } else if (entry->m_localsForcedBigInt64.get(local)) {
+            if (!value.isHeapBigInt()) {
+                dataLogLnIf(Options::verboseOSR(), "    OSR failed because variable ", localOffset, " is ", value, ", expected HeapBigInt.");
+                return nullptr;
+            }
+            if (!JSBigInt::fitsInInt64(value.asHeapBigInt())) {
+                dataLogLnIf(Options::verboseOSR(), "    OSR failed because variable ", localOffset, " is ", value, ", too large for BigInt64.");
+                return nullptr;
+            }
+            format = FlushedBigInt64;
         } else {
             if (value.isDouble() && abstractValue.isType(SpecInt32Only)) {
                 if (!value.isInt32AsAnyInt()) {
@@ -266,9 +278,15 @@ void* prepareOSREntry(VM& vm, CallFrame* callFrame, CodeBlock* codeBlock, Byteco
                 *std::bit_cast<double*>(pivot + index) = value.asNumber();
                 continue;
             }
-            
+
             if (entry->m_localsForcedAnyInt.get(reg.toLocal())) {
                 *std::bit_cast<int64_t*>(pivot + index) = value.asAnyInt() << JSValue::int52ShiftAmount;
+                continue;
+            }
+
+            if (entry->m_localsForcedBigInt64.get(reg.toLocal())) {
+                // Store the raw int64 value (already verified to fit in int64 during validation).
+                *std::bit_cast<int64_t*>(pivot + index) = JSBigInt::toBigInt64(value);
                 continue;
             }
 

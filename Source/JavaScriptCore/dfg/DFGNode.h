@@ -1680,7 +1680,12 @@ public:
     {
         return result() == NodeResultInt52;
     }
-    
+
+    bool hasBigInt64Result()
+    {
+        return result() == NodeResultBigInt64;
+    }
+
     bool hasNumberResult()
     {
         return result() == NodeResultNumber;
@@ -3218,7 +3223,12 @@ public:
     {
         return isHeapBigIntSpeculation(prediction());
     }
-    
+
+    bool shouldSpeculateBigInt64()
+    {
+        return isBigInt64Speculation(prediction());
+    }
+
     bool shouldSpeculateBigInt()
     {
         return isBigIntSpeculation(prediction());
@@ -3460,6 +3470,11 @@ public:
         return op1->shouldSpeculateHeapBigInt() && op2->shouldSpeculateHeapBigInt();
     }
 
+    static bool shouldSpeculateBigInt64(Node* op1, Node* op2)
+    {
+        return op1->shouldSpeculateBigInt64() && op2->shouldSpeculateBigInt64();
+    }
+
     static bool shouldSpeculateFinalObject(Node* op1, Node* op2)
     {
         return op1->shouldSpeculateFinalObject() && op2->shouldSpeculateFinalObject();
@@ -3484,7 +3499,12 @@ public:
     {
         return nodeCanSpeculateBigInt32(arithNodeFlags(), source);
     }
-    
+
+    bool canSpeculateBigInt64(RareCaseProfilingSource source)
+    {
+        return nodeCanSpeculateBigInt64(arithNodeFlags(), source);
+    }
+
     RareCaseProfilingSource sourceFor(PredictionPass pass)
     {
         if (pass == PrimaryPass || child1()->sawBooleans() || (child2() && child2()->sawBooleans()))

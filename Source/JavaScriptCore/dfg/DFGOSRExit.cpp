@@ -504,6 +504,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
         case InGPR:
         case UnboxedInt52InGPR:
         case UnboxedStrictInt52InGPR:
+        case UnboxedBigInt64InGPR:
             jit.store64(recovery.gpr(), scratch + index);
             break;
 #else
@@ -690,6 +691,26 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
             jit.boxInt52(GPRInfo::regT0, GPRInfo::regT0, GPRInfo::regT1, FPRInfo::fpRegT0);
             jit.store64(GPRInfo::regT0, scratch + index);
             break;
+
+        case UnboxedBigInt64InGPR:
+            jit.load64(scratch + index, GPRInfo::regT0);
+            jit.setupArguments<decltype(operationInt64ToBigInt)>(
+                CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObject()), GPRInfo::regT0);
+            jit.prepareCallOperation(vm);
+            jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationInt64ToBigInt)), GPRInfo::regT1);
+            jit.call(GPRInfo::regT1, OperationPtrTag);
+            jit.store64(GPRInfo::returnValueGPR, scratch + index);
+            break;
+
+        case BigInt64DisplacedInJSStack:
+            jit.load64(AssemblyHelpers::addressFor(recovery.virtualRegister()), GPRInfo::regT0);
+            jit.setupArguments<decltype(operationInt64ToBigInt)>(
+                CCallHelpers::TrustedImmPtr(jit.codeBlock()->globalObject()), GPRInfo::regT0);
+            jit.prepareCallOperation(vm);
+            jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationInt64ToBigInt)), GPRInfo::regT1);
+            jit.call(GPRInfo::regT1, OperationPtrTag);
+            jit.store64(GPRInfo::returnValueGPR, scratch + index);
+            break;
 #endif
 
         default:
@@ -804,6 +825,8 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
         case Int52DisplacedInJSStack:
         case UnboxedStrictInt52InGPR:
         case StrictInt52DisplacedInJSStack:
+        case UnboxedBigInt64InGPR:
+        case BigInt64DisplacedInJSStack:
             spooler.loadGPR(index * sizeof(CPURegister));
             spooler.storeGPR(operand.virtualRegister().offset() * sizeof(CPURegister));
             break;

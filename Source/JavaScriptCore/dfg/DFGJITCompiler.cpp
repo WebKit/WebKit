@@ -486,6 +486,9 @@ void JITCompiler::noticeOSREntry(BasicBlock& basicBlock, JITCompiler::Label bloc
             case FlushedInt52:
                 entry.m_localsForcedAnyInt.set(local);
                 break;
+            case FlushedBigInt64:
+                entry.m_localsForcedBigInt64.set(local);
+                break;
             default:
                 break;
             }

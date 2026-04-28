@@ -147,6 +147,7 @@ namespace JSC { namespace DFG {
     /* Change the representation of a value. */\
     macro(DoubleRep, NodeResultDouble) \
     macro(Int52Rep, NodeResultInt52) \
+    macro(BigInt64Rep, NodeResultBigInt64) \
     macro(ValueRep, NodeResultJS) \
     macro(PurifyNaN, NodeResultDouble) \
     \

@@ -1381,6 +1381,55 @@ GPRReg SpeculativeJIT::fillSpeculateInt52(Edge edge, DataFormat desiredFormat)
     }
 }
 
+GPRReg SpeculativeJIT::fillSpeculateBigInt64(Edge edge)
+{
+    ASSERT(edge.useKind() == BigInt64RepUse);
+    AbstractValue& value = m_state.forNode(edge);
+    SpeculatedType type = value.m_type;
+
+    m_interpreter.filter(value, SpecBigInt64);
+    if (value.isClear()) {
+        if (!type)
+            terminateUnreachableNode();
+        else if (mayHaveTypeCheck(edge.useKind()))
+            terminateSpeculativeExecution(Uncountable, JSValueRegs(), nullptr);
+        return allocate();
+    }
+
+    VirtualRegister virtualRegister = edge->virtualRegister();
+    GenerationInfo& info = generationInfoFromVirtualRegister(virtualRegister);
+
+    switch (info.registerFormat()) {
+    case DataFormatNone: {
+        GPRReg gpr = allocate();
+
+        if (edge->hasConstant()) {
+            // BigInt64 constants should not appear, but handle gracefully.
+            DFG_CRASH(m_graph, m_currentNode, "Unexpected BigInt64 constant");
+            return gpr;
+        }
+
+        DataFormat spillFormat = info.spillFormat();
+        DFG_ASSERT(m_graph, m_currentNode, spillFormat == DataFormatBigInt64, spillFormat);
+
+        m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
+        load64(addressFor(virtualRegister), gpr);
+        info.fillBigInt64(m_stream, gpr);
+        return gpr;
+    }
+
+    case DataFormatBigInt64: {
+        GPRReg gpr = info.gpr();
+        lock(gpr);
+        return gpr;
+    }
+
+    default:
+        DFG_CRASH(m_graph, m_currentNode, "Bad data format");
+        return InvalidGPRReg;
+    }
+}
+
 FPRReg SpeculativeJIT::fillSpeculateDouble(Edge edge)
 {
     ASSERT(edge.useKind() == DoubleRepUse || edge.useKind() == DoubleRepRealUse || edge.useKind() == DoubleRepAnyIntUse);
@@ -1946,6 +1995,90 @@ void SpeculativeJIT::compilePeepHoleInt52Branch(Node* node, Node* branchNode, Re
     SpeculateWhicheverInt52Operand op1(this, node->child1());
     SpeculateWhicheverInt52Operand op2(this, node->child2(), op1);
     
+    branch64(condition, op1.gpr(), op2.gpr(), taken);
+    jump(notTaken);
+}
+
+void SpeculativeJIT::compileBigInt64Rep(Node* node)
+{
+    // Unbox a HeapBigInt → int64_t, OSR exiting if the value is out of int64 range.
+    SpeculateCellOperand input(this, node->child1());
+    GPRTemporary result(this);
+    GPRTemporary scratch(this);
+
+    GPRReg inputGPR = input.gpr();
+    GPRReg resultGPR = result.gpr();
+    GPRReg scratchGPR = scratch.gpr();
+
+    speculateHeapBigInt(node->child1(), inputGPR);
+
+    // Default result = 0 (for length == 0).
+    move(TrustedImm64(0), resultGPR);
+
+    // Load length.
+    load32(Address(inputGPR, JSBigInt::offsetOfLength()), scratchGPR);
+
+    // length > 1: value doesn't fit in int64 → overflow.
+    speculationCheck(BigInt64Overflow, JSValueRegs(), nullptr,
+        branch32(GreaterThan, scratchGPR, TrustedImm32(1)));
+
+    // length == 0: done (result = 0).
+    Jump lengthIsZero = branchTest32(Zero, scratchGPR);
+
+    // length == 1: load digit[0].
+    load64(Address(inputGPR, JSBigInt::offsetOfData()), resultGPR);
+
+    // Check sign bit (TypeInfoPerCellBit = 0x80 at typeInfoFlagsOffset()).
+    load8(Address(inputGPR, JSCell::typeInfoFlagsOffset()), scratchGPR);
+    Jump isNegative = branchTest32(NonZero, scratchGPR, TrustedImm32(TypeInfoPerCellBit));
+
+    // Positive: digit must be <= INT64_MAX (bit 63 clear).
+    // Treat the unsigned digit as a signed 64-bit value: if negative bit set, overflow.
+    speculationCheck(BigInt64Overflow, JSValueRegs(), nullptr,
+        branch64(LessThan, resultGPR, TrustedImm64(0)));
+    Jump done = jump();
+
+    isNegative.link(this);
+    // Negative: digit <= 2^63 (= 0x8000000000000000), i.e., -digit >= INT64_MIN.
+    speculationCheck(BigInt64Overflow, JSValueRegs(), nullptr,
+        branch64(Above, resultGPR,
+            TrustedImm64(static_cast<int64_t>(std::numeric_limits<int64_t>::min()))));
+    // result = -digit.
+    neg64(resultGPR);
+
+    done.link(this);
+    lengthIsZero.link(this);
+
+    bigInt64Result(resultGPR, node);
+}
+
+void SpeculativeJIT::compileBigInt64Compare(Node* node, RelationalCondition condition)
+{
+    SpeculateBigInt64Operand op1(this, node->child1());
+    SpeculateBigInt64Operand op2(this, node->child2());
+    GPRTemporary result(this, Reuse, op1);
+
+    compare64(condition, op1.gpr(), op2.gpr(), result.gpr());
+
+    or32(TrustedImm32(JSValue::ValueFalse), result.gpr());
+    jsValueResult(result.gpr(), m_currentNode, DataFormatJSBoolean);
+}
+
+void SpeculativeJIT::compilePeepHoleBigInt64Branch(Node* node, Node* branchNode, RelationalCondition condition)
+{
+    BasicBlock* taken = branchNode->branchData()->taken.block;
+    BasicBlock* notTaken = branchNode->branchData()->notTaken.block;
+
+    if (taken == nextBlock()) {
+        condition = invert(condition);
+        BasicBlock* tmp = taken;
+        taken = notTaken;
+        notTaken = tmp;
+    }
+
+    SpeculateBigInt64Operand op1(this, node->child1());
+    SpeculateBigInt64Operand op2(this, node->child2());
+
     branch64(condition, op1.gpr(), op2.gpr(), taken);
     jump(notTaken);
 }
@@ -3588,6 +3721,11 @@ void SpeculativeJIT::compile(Node* node)
         default:
             DFG_CRASH(m_graph, node, "Bad use kind");
         }
+        break;
+    }
+
+    case BigInt64Rep: {
+        compileBigInt64Rep(node);
         break;
     }
 

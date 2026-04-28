@@ -582,6 +582,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 #else
             RELEASE_ASSERT_NOT_REACHED();
 #endif
+        } else if (node->child1().useKind() == BigInt64RepUse) {
+            setTypeForNode(node, SpecBigInt64);
+            forNode(node).fixTypeForRepresentation(m_graph, node);
         } else if (node->child1().useKind() == HeapBigIntUse) {
             // FIXME: We will want an arithmetic mode here that allows us to speculate or dictate
             // the format of our result:
@@ -658,6 +661,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 #else
             DFG_CRASH(m_graph, node, "No BigInt32 support");
 #endif
+        } else if (node->isBinaryUseKind(BigInt64RepUse)) {
+            setTypeForNode(node, SpecBigInt64);
+            forNode(node).fixTypeForRepresentation(m_graph, node);
         } else if (node->isBinaryUseKind(HeapBigIntUse)) {
             // FIXME: We will want an arithmetic mode here that allows us to speculate or dictate
             // the format of our result:
@@ -901,6 +907,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).fixTypeForRepresentation(m_graph, node);
         break;
     }
+
+    case BigInt64Rep: {
+        setTypeForNode(node, SpecBigInt64);
+        forNode(node).fixTypeForRepresentation(m_graph, node);
+        break;
+    }
         
     case ValueRep: {
         JSValue value = forNode(node->child1()).value();
@@ -920,7 +932,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case ValueSub:
     case ValueAdd: {
-        if (node->isBinaryUseKind(HeapBigIntUse)) {
+        if (node->isBinaryUseKind(BigInt64RepUse)) {
+            setTypeForNode(node, SpecBigInt64);
+            forNode(node).fixTypeForRepresentation(m_graph, node);
+        } else if (node->isBinaryUseKind(HeapBigIntUse)) {
             // FIXME: We will want an arithmetic mode here that allows us to speculate or dictate
             // the format of our result:
             // https://bugs.webkit.org/show_bug.cgi?id=210982
@@ -1092,6 +1107,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
     case ValueNegate: {
         // FIXME: we could do much smarter things for BigInts, see ValueAdd/ValueSub.
+        if (node->child1().useKind() == BigInt64RepUse) {
+            setTypeForNode(node, SpecBigInt64);
+            forNode(node).fixTypeForRepresentation(m_graph, node);
+            break;
+        }
         clobberWorld();
         setTypeForNode(node, SpecBytecodeNumber | SpecBigInt);
         break;
@@ -1195,7 +1215,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         }
 
-        if (node->isBinaryUseKind(HeapBigIntUse)) {
+        if (node->isBinaryUseKind(BigInt64RepUse)) {
+            setTypeForNode(node, SpecBigInt64);
+            forNode(node).fixTypeForRepresentation(m_graph, node);
+        } else if (node->isBinaryUseKind(HeapBigIntUse)) {
             // FIXME: We will want an arithmetic mode here that allows us to speculate or dictate
             // the format of our result:
             // https://bugs.webkit.org/show_bug.cgi?id=210982
@@ -1211,7 +1234,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case ValueMul: {
         // FIXME: why is this code not shared with ValueSub?
-        if (node->isBinaryUseKind(HeapBigIntUse)) {
+        if (node->isBinaryUseKind(BigInt64RepUse)) {
+            setTypeForNode(node, SpecBigInt64);
+            forNode(node).fixTypeForRepresentation(m_graph, node);
+        } else if (node->isBinaryUseKind(HeapBigIntUse)) {
             // FIXME: We will want an arithmetic mode here that allows us to speculate or dictate
             // the format of our result:
             // https://bugs.webkit.org/show_bug.cgi?id=210982
@@ -1290,7 +1316,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         if (handleConstantDivOp(node))
             break;
 
-        if (node->isBinaryUseKind(HeapBigIntUse)) {
+        if (node->isBinaryUseKind(BigInt64RepUse)) {
+            setTypeForNode(node, SpecBigInt64);
+            forNode(node).fixTypeForRepresentation(m_graph, node);
+        } else if (node->isBinaryUseKind(HeapBigIntUse)) {
             // FIXME: We will want an arithmetic mode here that allows us to speculate or dictate
             // the format of our result:
             // https://bugs.webkit.org/show_bug.cgi?id=210982
@@ -2465,6 +2494,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 || node->isBinaryUseKind(BigInt32Use)
                 || node->isBinaryUseKind(HeapBigIntUse)
                 || node->isBinaryUseKind(AnyBigIntUse)
+                || node->isBinaryUseKind(BigInt64RepUse)
                 || node->isBinaryUseKind(StringUse)
                 || node->isBinaryUseKind(BooleanUse)
                 || node->isBinaryUseKind(SymbolUse)

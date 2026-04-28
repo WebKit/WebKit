@@ -189,10 +189,10 @@ bool doesGC(Graph& graph, Node* node)
     case HasStructureWithFlags:
     case MultiGetByOffset:
     case MultiDeleteByOffset:
-    case ValueRep:
     case DoubleRep:
     case PurifyNaN:
     case Int52Rep:
+    case BigInt64Rep:
     case GetGetter:
     case GetSetter:
     case GetArrayLength:
@@ -281,6 +281,10 @@ bool doesGC(Graph& graph, Node* node)
     case ArithDiv:
     case ArithMod:
         return false;
+
+    case ValueRep:
+        // ValueRep for BigInt64RepUse allocates a new HeapBigInt — that GCs.
+        return node->child1().useKind() == BigInt64RepUse;
 
 #if ASSERT_ENABLED
     case ArrayPush:

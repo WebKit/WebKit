@@ -195,9 +195,10 @@ public:
     }
     
     FlushFormat NODELETE flushFormat();
-    
+
     bool NODELETE couldRepresentInt52();
-    
+    bool NODELETE couldRepresentBigInt64();
+
     FlushedAt flushedAt()
     {
         return FlushedAt(flushFormat(), machineLocal());
@@ -205,6 +206,7 @@ public:
 
 private:
     bool NODELETE couldRepresentInt52Impl();
+    bool NODELETE couldRepresentBigInt64Impl();
     
     // This is slightly space-inefficient, since anything we're unified with
     // will have the same operand and should have the same prediction. But

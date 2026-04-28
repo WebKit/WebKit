@@ -258,6 +258,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case PurifyNaN:
     case ValueRep:
     case Int52Rep:
+    case BigInt64Rep:
     case BooleanToNumber:
     case FiatInt52:
     case MakeRope:
@@ -354,6 +355,12 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
 
     case ValueBitNot:
         if (node->child1().useKind() == AnyBigIntUse || node->child1().useKind() == BigInt32Use || node->child1().useKind() == HeapBigIntUse) {
+            def(PureValue(node));
+            return;
+        }
+        if (node->child1().useKind() == BigInt64RepUse) {
+            // Unboxed int64 bitwise-not is pure integer arithmetic — no heap access.
+            write(SideState);
             def(PureValue(node));
             return;
         }
@@ -802,7 +809,19 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case HasPrivateName:
     case HasPrivateBrand:
     case HasOwnProperty:
+        clobberTop();
+        return;
+
     case ValueNegate:
+        if (node->child1().useKind() == BigInt64RepUse) {
+            // Unboxed int64 negation is pure integer arithmetic — no heap access.
+            write(SideState);
+            def(PureValue(node));
+            return;
+        }
+        clobberTop();
+        return;
+
     case SetFunctionName:
     case GetDynamicVar:
     case PutDynamicVar:
@@ -893,6 +912,12 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         // FIXME: this use of single-argument isBinaryUseKind would prevent us from specializing (for example) for a HeapBigInt left-operand and a BigInt32 right-operand.
         if (node->isBinaryUseKind(AnyBigIntUse) || node->isBinaryUseKind(BigInt32Use) || node->isBinaryUseKind(HeapBigIntUse)) {
             read(World);
+            write(SideState);
+            def(PureValue(node));
+            return;
+        }
+        if (node->isBinaryUseKind(BigInt64RepUse)) {
+            // Unboxed int64 arithmetic is pure — no heap access needed.
             write(SideState);
             def(PureValue(node));
             return;

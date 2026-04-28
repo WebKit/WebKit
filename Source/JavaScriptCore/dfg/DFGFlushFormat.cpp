@@ -59,6 +59,9 @@ void printInternal(PrintStream& out, FlushFormat format)
     case ConflictingFlush:
         out.print("ConflictingFlush");
         return;
+    case FlushedBigInt64:
+        out.print("FlushedBigInt64");
+        return;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

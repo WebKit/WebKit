@@ -787,6 +787,9 @@ private:
         case Int52Rep:
             compileInt52Rep();
             break;
+        case BigInt64Rep:
+            compileBigInt64Rep();
+            break;
         case ValueToInt32:
             compileValueToInt32();
             break;
@@ -2357,6 +2360,13 @@ private:
             return;
         }
 
+        case BigInt64RepUse: {
+            JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+            LValue int64Val = lowBigInt64(m_node->child1());
+            setJSValue(vmCall(Int64, operationInt64ToBigInt, weakPointer(globalObject), int64Val));
+            return;
+        }
+
         default:
             DFG_CRASH(m_graph, m_node, "Bad use kind");
         }
@@ -2368,7 +2378,6 @@ private:
         case Int32Use:
             setStrictInt52(m_out.signExt32To64(lowInt32(m_node->child1())));
             return;
-
         case AnyIntUse: {
             bool canIgnoreNegativeZero = bytecodeCanIgnoreNegativeZero(m_node->arithNodeFlags());
             setStrictInt52(jsValueToStrictInt52(m_node->child1(), lowJSValue(m_node->child1(), ManualOperandSpeculation), canIgnoreNegativeZero));
@@ -2400,6 +2409,65 @@ private:
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
+    }
+
+    void compileBigInt64Rep()
+    {
+        // Unbox a HeapBigInt to a raw int64_t.
+        // Speculates BigInt64Overflow if the value doesn't fit in int64.
+        LValue bigInt = lowCell(m_node->child1());
+        speculateHeapBigInt(m_node->child1(), bigInt);
+
+        LBasicBlock lengthIsZero = m_out.newBlock();
+        LBasicBlock lengthIsOne = m_out.newBlock();
+        LBasicBlock isNegative = m_out.newBlock();
+        LBasicBlock positiveOverflow = m_out.newBlock();
+        LBasicBlock negateDigit = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        // Load length.
+        LValue length = m_out.load32NonNegative(bigInt, m_heaps.JSBigInt_length);
+
+        // If length > 1, overflow.
+        speculate(BigInt64Overflow, noValue(), nullptr, m_out.above(length, m_out.int32One));
+
+        // Branch on length == 0 vs. == 1.
+        m_out.branch(m_out.isZero32(length), unsure(lengthIsZero), unsure(lengthIsOne));
+
+        // length == 0 → result is 0
+        LBasicBlock lastNext = m_out.appendTo(lengthIsZero, lengthIsOne);
+        ValueFromBlock zeroResult = m_out.anchor(m_out.int64Zero);
+        m_out.jump(continuation);
+
+        // length == 1 → load digit
+        m_out.appendTo(lengthIsOne, isNegative);
+        LValue digit = m_out.load64(bigInt, m_heaps.JSBigInt_data0);
+
+        // Check sign bit in typeInfoFlags
+        LValue flags = m_out.load8ZeroExt32(bigInt, m_heaps.JSCell_typeInfoFlags);
+        m_out.branch(
+            m_out.notZero32(m_out.bitAnd(flags, m_out.constInt32(TypeInfoPerCellBit))),
+            unsure(isNegative), unsure(positiveOverflow));
+
+        // Positive: digit must be <= INT64_MAX (bit 63 must be 0)
+        m_out.appendTo(positiveOverflow, isNegative);
+        speculate(BigInt64Overflow, noValue(), nullptr, m_out.lessThan(digit, m_out.int64Zero));
+        ValueFromBlock positiveResult = m_out.anchor(digit);
+        m_out.jump(continuation);
+
+        // Negative: digit is absolute value; digit <= 2^63 → negate → int64
+        // Overflow if digit > 2^63 (i.e. digit > 0x8000000000000000 as unsigned)
+        m_out.appendTo(isNegative, negateDigit);
+        // Unsigned comparison: digit > 0x8000000000000000 → absolute value too large
+        speculate(BigInt64Overflow, noValue(), nullptr, m_out.above(digit, m_out.constInt64(static_cast<uint64_t>(std::numeric_limits<int64_t>::min()))));
+        m_out.jump(negateDigit);
+
+        m_out.appendTo(negateDigit, continuation);
+        ValueFromBlock negativeResult = m_out.anchor(m_out.neg(digit));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        setBigInt64(m_out.phi(Int64, zeroResult, positiveResult, negativeResult));
     }
 
     void compileValueToInt32()
@@ -2691,6 +2759,15 @@ private:
             return;
         }
 
+        if (m_node->isBinaryUseKind(BigInt64RepUse)) {
+            LValue left = lowBigInt64(m_node->child1());
+            LValue right = lowBigInt64(m_node->child2());
+            CheckValue* result = m_out.speculateAdd(left, right);
+            blessSpeculation(result, BigInt64Overflow, noValue(), nullptr, m_origin);
+            setBigInt64(result);
+            return;
+        }
+
         CodeBlock* baselineCodeBlock = m_ftlState.graph.baselineCodeBlockFor(m_origin.semantic);
         BytecodeIndex bytecodeIndex = m_origin.semantic.bytecodeIndex();
         BinaryArithProfile* arithProfile = baselineCodeBlock->binaryArithProfileForBytecodeIndex(bytecodeIndex);
@@ -2730,6 +2807,15 @@ private:
 
             LValue result = vmCall(pointerType(), operationSubHeapBigInt, weakPointer(globalObject), left, right);
             setJSValue(result);
+            return;
+        }
+
+        if (m_node->isBinaryUseKind(BigInt64RepUse)) {
+            LValue left = lowBigInt64(m_node->child1());
+            LValue right = lowBigInt64(m_node->child2());
+            CheckValue* result = m_out.speculateSub(left, right);
+            blessSpeculation(result, BigInt64Overflow, noValue(), nullptr, m_origin);
+            setBigInt64(result);
             return;
         }
 
@@ -2791,6 +2877,15 @@ private:
             return;
         }
 
+        // BUG FIX #1: Use CheckMul result directly; do NOT call m_out.mul() again.
+        if (m_node->isBinaryUseKind(BigInt64RepUse)) {
+            LValue left = lowBigInt64(m_node->child1());
+            LValue right = lowBigInt64(m_node->child2());
+            CheckValue* result = m_out.speculateMul(left, right);
+            blessSpeculation(result, BigInt64Overflow, noValue(), nullptr, m_origin);
+            setBigInt64(result);
+            return;
+        }
         CodeBlock* baselineCodeBlock = m_ftlState.graph.baselineCodeBlockFor(m_origin.semantic);
         BytecodeIndex bytecodeIndex = m_origin.semantic.bytecodeIndex();
         BinaryArithProfile* arithProfile = baselineCodeBlock->binaryArithProfileForBytecodeIndex(bytecodeIndex);
@@ -3184,6 +3279,31 @@ private:
             return;
         }
 
+        if (m_node->isBinaryUseKind(BigInt64RepUse)) {
+            LValue numerator = lowBigInt64(m_node->child1());
+            LValue denominator = lowBigInt64(m_node->child2());
+
+            LBasicBlock unsafeDenominator = m_out.newBlock();
+            LBasicBlock safeDivision = m_out.newBlock();
+
+            // If denominator ∈ {0, -1}: adjustedDen ∈ {1, 0}; above(x, 1) is false for both.
+            LValue adjustedDen = m_out.add(denominator, m_out.constInt64(1));
+            m_out.branch(
+                m_out.above(adjustedDen, m_out.constInt64(1)),
+                usually(safeDivision), rarely(unsafeDenominator));
+
+            LBasicBlock lastNext = m_out.appendTo(unsafeDenominator, safeDivision);
+            speculate(BigInt64Overflow, noValue(), nullptr, m_out.isZero64(denominator));
+            // denominator == -1 and numerator == INT64_MIN → result 2^63, overflow
+            speculate(BigInt64Overflow, noValue(), nullptr,
+                m_out.equal(numerator, m_out.constInt64(std::numeric_limits<int64_t>::min())));
+            m_out.jump(safeDivision);
+
+            m_out.appendTo(safeDivision, lastNext);
+            setBigInt64(m_out.div(numerator, denominator));
+            return;
+        }
+
         emitBinarySnippet<JITDivGenerator, NeedScratchFPR>(operationValueDiv);
     }
 
@@ -3261,6 +3381,29 @@ private:
 
             LValue result = vmCall(pointerType(), operationModHeapBigInt, weakPointer(globalObject), left, right);
             setJSValue(result);
+            return;
+        }
+
+        if (m_node->isBinaryUseKind(BigInt64RepUse)) {
+            LValue numerator = lowBigInt64(m_node->child1());
+            LValue denominator = lowBigInt64(m_node->child2());
+            // Same guards as div: exit on denominator == 0, and on INT64_MIN % -1 (quotient overflows)
+            LBasicBlock unsafeDenominator = m_out.newBlock();
+            LBasicBlock safeMod = m_out.newBlock();
+
+            LValue adjustedDen = m_out.add(denominator, m_out.constInt64(1));
+            m_out.branch(
+                m_out.above(adjustedDen, m_out.constInt64(1)),
+                usually(safeMod), rarely(unsafeDenominator));
+
+            LBasicBlock lastNext = m_out.appendTo(unsafeDenominator, safeMod);
+            speculate(BigInt64Overflow, noValue(), nullptr, m_out.isZero64(denominator));
+            speculate(BigInt64Overflow, noValue(), nullptr,
+                m_out.equal(numerator, m_out.constInt64(std::numeric_limits<int64_t>::min())));
+            m_out.jump(safeMod);
+
+            m_out.appendTo(safeMod, lastNext);
+            setBigInt64(m_out.mod(numerator, denominator));
             return;
         }
 
@@ -3505,6 +3648,51 @@ private:
 
             LValue result = vmCall(pointerType(), operationPowHeapBigInt, weakPointer(globalObject), base, exponent);
             setJSValue(result);
+            return;
+        }
+
+        if (m_node->isBinaryUseKind(BigInt64RepUse)) {
+            JSGlobalObject* globalObject2 = m_graph.globalObjectFor(m_origin.semantic);
+            LValue base = lowBigInt64(m_node->child1());
+            LValue exp = lowBigInt64(m_node->child2());
+            // Negative exponent → fractional result → overflow exit.
+            speculate(BigInt64Overflow, noValue(), nullptr, m_out.lessThan(exp, m_out.int64Zero));
+            // Box both operands as HeapBigInt, call operationPowHeapBigInt, then unbox.
+            // The result may be larger than int64 → handled by compileBigInt64Rep on the result.
+            // For simplicity, call operationInt64ToBigInt for each operand, then pow, then re-unbox.
+            LValue bigBase = vmCall(Int64, operationInt64ToBigInt, weakPointer(globalObject2), base);
+            LValue bigExp = vmCall(Int64, operationInt64ToBigInt, weakPointer(globalObject2), exp);
+            LValue bigResult = vmCall(pointerType(), operationPowHeapBigInt, weakPointer(globalObject2), bigBase, bigExp);
+            // bigResult is a HeapBigInt JSValue; unbox it inline (same logic as compileBigInt64Rep).
+            // Use a vmCall to a helper that returns int64 or signals overflow via exception.
+            // For correctness, speculate via length check on the result BigInt.
+            LValue resultCell = bigResult; // it's a cell (HeapBigInt pointer)
+            LValue resLen = m_out.load32NonNegative(resultCell, m_heaps.JSBigInt_length);
+            speculate(BigInt64Overflow, noValue(), nullptr, m_out.above(resLen, m_out.int32One));
+            LBasicBlock resultIsZero = m_out.newBlock();
+            LBasicBlock resultIsOne = m_out.newBlock();
+            LBasicBlock resultIsNeg = m_out.newBlock();
+            LBasicBlock resultCont = m_out.newBlock();
+            m_out.branch(m_out.isZero32(resLen), unsure(resultIsZero), unsure(resultIsOne));
+            LBasicBlock lastNext2 = m_out.appendTo(resultIsZero, resultIsOne);
+            ValueFromBlock zeroVal = m_out.anchor(m_out.int64Zero);
+            m_out.jump(resultCont);
+            m_out.appendTo(resultIsOne, resultIsNeg);
+            LValue digit = m_out.load64(resultCell, m_heaps.JSBigInt_data0);
+            LValue resFlags = m_out.load8ZeroExt32(resultCell, m_heaps.JSCell_typeInfoFlags);
+            m_out.branch(m_out.notZero32(m_out.bitAnd(resFlags, m_out.constInt32(TypeInfoPerCellBit))),
+                unsure(resultIsNeg), unsure(resultCont));
+            // Positive: check no overflow
+            speculate(BigInt64Overflow, noValue(), nullptr, m_out.lessThan(digit, m_out.int64Zero));
+            ValueFromBlock posVal = m_out.anchor(digit);
+            m_out.jump(resultCont);
+            m_out.appendTo(resultIsNeg, resultCont);
+            speculate(BigInt64Overflow, noValue(), nullptr,
+                m_out.above(digit, m_out.constInt64(static_cast<uint64_t>(std::numeric_limits<int64_t>::min()))));
+            ValueFromBlock negVal = m_out.anchor(m_out.neg(digit));
+            m_out.jump(resultCont);
+            m_out.appendTo(resultCont, lastNext2);
+            setBigInt64(m_out.phi(Int64, zeroVal, posVal, negVal));
             return;
         }
 
@@ -3842,6 +4030,13 @@ private:
 
     void compileValueNegate()
     {
+        if (m_node->child1().useKind() == BigInt64RepUse) {
+            LValue value = lowBigInt64(m_node->child1());
+            CheckValue* result = m_out.speculateSub(m_out.int64Zero, value);
+            blessSpeculation(result, BigInt64Overflow, noValue(), nullptr, m_origin);
+            setBigInt64(result);
+            return;
+        }
         DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse);
         CodeBlock* baselineCodeBlock = m_ftlState.graph.baselineCodeBlockFor(m_origin.semantic);
         BytecodeIndex bytecodeIndex = m_origin.semantic.bytecodeIndex();
@@ -3928,6 +4123,13 @@ private:
             return;
         }
 
+        // BUG FIX #4: Add BigInt64RepUse case (was missing, causing stall at DFG).
+        if (m_node->child1().useKind() == BigInt64RepUse) {
+            LValue operand = lowBigInt64(m_node->child1());
+            setBigInt64(m_out.bitNot(operand));
+            return;
+        }
+
         DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse || m_node->child1().useKind() == AnyBigIntUse);
         LValue operand = lowJSValue(m_node->child1(), ManualOperandSpeculation);
         speculate(m_node, m_node->child1());
@@ -3964,6 +4166,11 @@ private:
             return;
         }
 
+        if (m_node->isBinaryUseKind(BigInt64RepUse)) {
+            setBigInt64(m_out.bitAnd(lowBigInt64(m_node->child1()), lowBigInt64(m_node->child2())));
+            return;
+        }
+
         emitBinaryBitOpSnippet<JITBitAndGenerator>(operationValueBitAnd);
     }
 
@@ -3996,6 +4203,11 @@ private:
             return;
         }
 
+        if (m_node->isBinaryUseKind(BigInt64RepUse)) {
+            setBigInt64(m_out.bitOr(lowBigInt64(m_node->child1()), lowBigInt64(m_node->child2())));
+            return;
+        }
+
         emitBinaryBitOpSnippet<JITBitOrGenerator>(operationValueBitOr);
     }
 
@@ -4025,6 +4237,11 @@ private:
 
             LValue result = vmCall(pointerType(), operationBitXorHeapBigInt, weakPointer(globalObject), left, right);
             setJSValue(result);
+            return;
+        }
+
+        if (m_node->isBinaryUseKind(BigInt64RepUse)) {
+            setBigInt64(m_out.bitXor(lowBigInt64(m_node->child1()), lowBigInt64(m_node->child2())));
             return;
         }
 
@@ -4067,6 +4284,20 @@ private:
             return;
         }
 
+        if (m_node->isBinaryUseKind(BigInt64RepUse)) {
+            LValue value = lowBigInt64(m_node->child1());
+            LValue shift = lowBigInt64(m_node->child2());
+            // For BigInt, right-shift by negative is a left-shift — treat large shifts as overflow.
+            speculate(BigInt64Overflow, noValue(), nullptr, m_out.lessThan(shift, m_out.int64Zero));
+            // Shifts >= 64 produce 0 (arithmetic right shift; fill with sign bit → all-ones for neg, 0 for pos)
+            // Use aShr with amount masked to 63 to avoid UB; clamp large amounts.
+            LValue clampedShift = m_out.select(
+                m_out.above(m_out.castToInt32(shift), m_out.constInt32(63)),
+                m_out.constInt32(63), m_out.castToInt32(shift));
+            setBigInt64(m_out.aShr(value, clampedShift));
+            return;
+        }
+
         emitRightShiftSnippet(JITRightShiftGenerator::SignedShift);
     }
 
@@ -4094,6 +4325,23 @@ private:
 
             LValue result = vmCall(pointerType(), operationBitLShiftHeapBigInt, weakPointer(globalObject), left, right);
             setJSValue(result);
+            return;
+        }
+
+        if (m_node->isBinaryUseKind(BigInt64RepUse)) {
+            LValue value = lowBigInt64(m_node->child1());
+            LValue shift = lowBigInt64(m_node->child2());
+            // Negative left-shift is right-shift for BigInt — treat as overflow.
+            speculate(BigInt64Overflow, noValue(), nullptr, m_out.lessThan(shift, m_out.int64Zero));
+            // Large left shifts will overflow; check for amount >= 64.
+            LValue shiftAmount = m_out.castToInt32(shift);
+            speculate(BigInt64Overflow, noValue(), nullptr,
+                m_out.above(shiftAmount, m_out.constInt32(63)));
+            // Perform the shift and verify round-trip to detect signed overflow.
+            LValue shiftResult = m_out.shl(value, shiftAmount);
+            speculate(BigInt64Overflow, noValue(), nullptr,
+                m_out.notEqual(m_out.aShr(shiftResult, shiftAmount), value));
+            setBigInt64(shiftResult);
             return;
         }
 
@@ -12403,7 +12651,8 @@ IGNORE_CLANG_WARNINGS_END
             || m_node->isBinaryUseKind(StringUse)
             || m_node->isBinaryUseKind(BigInt32Use)
             || m_node->isBinaryUseKind(HeapBigIntUse)
-            || m_node->isBinaryUseKind(AnyBigIntUse)) {
+            || m_node->isBinaryUseKind(AnyBigIntUse)
+            || m_node->isBinaryUseKind(BigInt64RepUse)) {
             compileCompareStrictEq();
             return;
         }
@@ -12549,6 +12798,13 @@ IGNORE_CLANG_WARNINGS_END
             Int52Kind kind;
             LValue left = lowWhicheverInt52(m_node->child1(), kind);
             LValue right = lowInt52(m_node->child2(), kind);
+            setBoolean(m_out.equal(left, right));
+            return;
+        }
+
+        if (m_node->isBinaryUseKind(BigInt64RepUse)) {
+            LValue left = lowBigInt64(m_node->child1());
+            LValue right = lowBigInt64(m_node->child2());
             setBoolean(m_out.equal(left, right));
             return;
         }
@@ -19628,6 +19884,13 @@ IGNORE_CLANG_WARNINGS_END
         }
 #endif
 
+        if (m_node->isBinaryUseKind(BigInt64RepUse)) {
+            LValue left = lowBigInt64(m_node->child1());
+            LValue right = lowBigInt64(m_node->child2());
+            setBoolean(intFunctor(left, right));
+            return;
+        }
+
         if (m_node->isBinaryUseKind(StringIdentUse)) {
             LValue left = lowStringIdent(m_node->child1());
             LValue right = lowStringIdent(m_node->child2());
@@ -23349,6 +23612,19 @@ IGNORE_CLANG_WARNINGS_END
         return lowInt52(edge, StrictInt52);
     }
 
+    LValue lowBigInt64(Edge edge)
+    {
+        DFG_ASSERT(m_graph, m_node, edge.useKind() == BigInt64RepUse, edge.useKind());
+
+        LoweredNodeValue value = m_bigInt64Values.get(edge.node());
+        if (isValid(value))
+            return value.value();
+
+        if (mayHaveTypeCheck(edge.useKind()))
+            terminate(Uncountable);
+        return m_out.int64Zero;
+    }
+
     bool betterUseStrictInt52(Node* node)
     {
         return !isValid(m_int52Values.get(node));
@@ -25671,6 +25947,9 @@ IGNORE_CLANG_WARNINGS_END
         case FlushedInt52:
             return ExitValue::inJSStackAsInt52(flush.virtualRegister());
 
+        case FlushedBigInt64:
+            return ExitValue::inJSStackAsBigInt64(flush.virtualRegister());
+
         case FlushedDouble:
             return ExitValue::inJSStackAsDouble(flush.virtualRegister());
         }
@@ -25720,6 +25999,10 @@ IGNORE_CLANG_WARNINGS_END
         value = m_strictInt52Values.get(node);
         if (isValid(value))
             return exitArgument(arguments, DataFormatStrictInt52, value.value());
+
+        value = m_bigInt64Values.get(node);
+        if (isValid(value))
+            return exitArgument(arguments, DataFormatBigInt64, value.value());
 
         value = m_booleanValues.get(node);
         if (isValid(value))
@@ -25791,6 +26074,10 @@ IGNORE_CLANG_WARNINGS_END
     {
         m_strictInt52Values.set(node, LoweredNodeValue(value, m_highBlock));
     }
+    void setBigInt64(Node* node, LValue value)
+    {
+        m_bigInt64Values.set(node, LoweredNodeValue(value, m_highBlock));
+    }
     void setInt52(Node* node, LValue value, Int52Kind kind)
     {
         switch (kind) {
@@ -25842,6 +26129,10 @@ IGNORE_CLANG_WARNINGS_END
     void setInt52(LValue value, Int52Kind kind)
     {
         setInt52(m_node, value, kind);
+    }
+    void setBigInt64(LValue value)
+    {
+        setBigInt64(m_node, value);
     }
     void setJSValue(LValue value)
     {
@@ -26104,6 +26395,7 @@ IGNORE_CLANG_WARNINGS_END
     UncheckedKeyHashMap<Node*, LoweredNodeValue> m_int32Values;
     UncheckedKeyHashMap<Node*, LoweredNodeValue> m_strictInt52Values;
     UncheckedKeyHashMap<Node*, LoweredNodeValue> m_int52Values;
+    UncheckedKeyHashMap<Node*, LoweredNodeValue> m_bigInt64Values;
     UncheckedKeyHashMap<Node*, LoweredNodeValue> m_jsValueValues;
     UncheckedKeyHashMap<Node*, LoweredNodeValue> m_booleanValues;
     UncheckedKeyHashMap<Node*, LoweredNodeValue> m_storageValues;

@@ -107,6 +107,10 @@ enum UseKind : uint8_t {
     //    in a GP register.
     Int52RepUse,
 
+    // 4. The BigInt64 representation for an unboxed int64 value representing a HeapBigInt
+    //    that is known to fit in int64. Stored in a GP register.
+    BigInt64RepUse,
+
     LastUseKind // Must always be the last entry in the enum, as it is used to denote the number of enum elements.
 };
 
@@ -120,6 +124,8 @@ inline SpeculatedType typeFilterFor(UseKind useKind)
         return SpecInt32Only;
     case Int52RepUse:
         return SpecInt52Any;
+    case BigInt64RepUse:
+        return SpecBigInt64;
     case AnyIntUse:
         return SpecInt32Only | SpecAnyIntAsDouble;
     case NumberUse:
@@ -205,7 +211,7 @@ inline SpeculatedType typeFilterFor(UseKind useKind)
     case NotCellUse:
         return ~SpecCellCheck;
     case NotCellNorBigIntUse:
-        return ~SpecCellCheck & ~SpecBigInt;
+        return ~SpecCellCheck & ~SpecBigInt & ~SpecBigInt64;
     case NotDoubleUse:
         return ~SpecFullDouble;
     case NeitherDoubleNorHeapBigIntUse:
@@ -236,6 +242,7 @@ inline bool shouldNotHaveTypeCheck(UseKind kind)
     case KnownOtherUse:
     case Int52RepUse:
     case DoubleRepUse:
+    case BigInt64RepUse:
         return true;
     default:
         return false;
@@ -320,6 +327,8 @@ inline UseKind useKindForResult(NodeFlags result)
     switch (result) {
     case NodeResultInt52:
         return Int52RepUse;
+    case NodeResultBigInt64:
+        return BigInt64RepUse;
     case NodeResultDouble:
         return DoubleRepUse;
     case NodeResultStorage:

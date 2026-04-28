@@ -47,6 +47,9 @@ void printInternal(PrintStream& out, UseKind useKind)
     case Int52RepUse:
         out.print("Int52Rep");
         return;
+    case BigInt64RepUse:
+        out.print("BigInt64Rep");
+        return;
     case AnyIntUse:
         out.print("AnyInt");
         return;

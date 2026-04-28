@@ -458,6 +458,8 @@ public:
 
     inline static uint64_t toBigUInt64(JSValue); // Defined in JSBigIntInlines.h
     inline static int64_t toBigInt64(JSValue); // Defined in JSBigIntInlines.h
+    // Returns true if this HeapBigInt's value fits in int64_t (i.e., [-2^63, 2^63-1]).
+    static bool fitsInInt64(JSBigInt*); // Defined in JSBigIntInlines.h
 
     Digit digit(unsigned);
     void setDigit(unsigned, Digit); // Use only when initializing.
