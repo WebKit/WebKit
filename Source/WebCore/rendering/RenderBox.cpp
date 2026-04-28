@@ -4238,6 +4238,22 @@ void RenderBox::computeOutOfFlowPositionedLogicalWidth(LogicalExtentComputedValu
     if (CheckedPtr replaced = dynamicDowncast<RenderReplaced>(this))
         return replaced->computeReplacedOutOfFlowPositionedLogicalWidth(computedValues);
 
+    // Tables must respect their min-content width even when absolutely positioned.
+    // CSS width on tables acts as a minimum width, not an exact width.
+    // Additionally, the available width for an abspos table can never exceed
+    // the containing block size per CSS Tables § abspos.
+    if (isRenderTable()) {
+        if (needsPreferredLogicalWidthsUpdate())
+            const_cast<RenderBox*>(this)->computePreferredLogicalWidths();
+
+        if (auto fixedWidth = style().logicalWidth().tryFixed()) {
+            auto cssWidth = adjustBorderBoxLogicalWidthForBoxSizing(*fixedWidth);
+            auto tableMinContentWidth = minPreferredLogicalWidth();
+            if (tableMinContentWidth > cssWidth)
+                const_cast<RenderBox*>(this)->setOverridingBorderBoxLogicalWidth(tableMinContentWidth);
+        }
+    }
+
     // QUESTIONS
     // FIXME 1: Should we still deal with these the cases of 'left' or 'right' having
     // the type 'static' in determining whether to calculate the static distance?
@@ -4259,6 +4275,24 @@ void RenderBox::computeOutOfFlowPositionedLogicalWidth(LogicalExtentComputedValu
     // Calculate the used width. See CSS2 § 10.3.7.
     auto& styleToUse = style();
     auto usedWidth = computeOutOfFlowPositionedLogicalWidthUsing(styleToUse.logicalWidth(), inlineConstraints);
+
+    // Apply the table width override if one was set.
+    if (isRenderTable()) {
+        if (auto override = overridingBorderBoxLogicalWidth())
+            usedWidth = *override - inlineConstraints.bordersPlusPadding();
+
+        auto tableMinContentWidth = minPreferredLogicalWidth() - inlineConstraints.bordersPlusPadding();
+        // Per CSS Tables § abspos, the available width for an auto-width abspos table
+        // can never exceed its containing block size. However, min-content width always
+        // wins — the table can never be smaller than its min-content size.
+        // Only clamp auto-width tables: tables with an explicit CSS width should be
+        // allowed to exceed the containing block (e.g. width: calc(100% + 50px)).
+        if (styleToUse.logicalWidth().isAuto()) {
+            auto containingBlockContentWidth = inlineConstraints.containingSize();
+            usedWidth = std::max(tableMinContentWidth, std::min(usedWidth, containingBlockContentWidth));
+        } else
+            usedWidth = std::max(tableMinContentWidth, usedWidth);
+    }
 
     LayoutUnit transferredMinSize = LayoutUnit::min();
     LayoutUnit transferredMaxSize = LayoutUnit::max();
@@ -4446,9 +4480,13 @@ LayoutUnit RenderBox::computeOutOfFlowPositionedLogicalHeightUsing(const Style::
 {
     auto contentLogicalHeight = computedHeight - blockConstraints.bordersPlusPadding();
 
-    // Height is never unsolved for tables.
-    if (isRenderTable())
+    // For tables, resolve percentage heights against the containing block
+    // instead of returning early with the computed content height.
+    if (isRenderTable()) {
+        if (logicalHeight.isPercentOrCalculated())
+            return adjustContentBoxLogicalHeightForBoxSizing(Style::evaluate<LayoutUnit>(logicalHeight, blockConstraints.containingSize(), style().usedZoomForLength()));
         return contentLogicalHeight;
+    }
 
     bool fromAspectRatio = shouldComputeLogicalHeightFromAspectRatio();
     bool logicalHeightIsAuto = logicalHeight.isAuto() && !fromAspectRatio;

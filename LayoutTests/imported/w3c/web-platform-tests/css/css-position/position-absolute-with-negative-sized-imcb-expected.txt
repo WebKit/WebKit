@@ -76,7 +76,7 @@ FAIL .abspos 18 assert_equals:
 <div class="abspos case2" style="display: table;" data-expected-width="12" data-expected-height="12" data-offset-x="-10" data-offset-y="12">
     <div style="width: 12px; height: 12px"></div>
   </div>
-offsetLeft expected -10 but got 2
+offsetTop expected 12 but got 4
 FAIL .abspos 19 assert_equals:
 <div class="container">
   <div class="abspos case3" data-expected-width="20" data-expected-height="20" data-offset-x="8" data-offset-y="8"></div>
