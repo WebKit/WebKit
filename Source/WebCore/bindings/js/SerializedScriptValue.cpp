@@ -2187,11 +2187,12 @@ private:
                 
                 if (arrayBuffer->isShared()) {
                     // https://html.spec.whatwg.org/multipage/structured-data.html#structuredserializeinternal
-                    if (m_context == SerializationContext::WorkerPostMessage) {
-                        if (!JSC::Options::useSharedArrayBuffer() || m_forStorage == SerializationForStorage::Yes) {
-                            code = SerializationReturnCode::DataCloneError;
-                            return true;
-                        }
+                    if (m_forStorage == SerializationForStorage::Yes) {
+                        code = SerializationReturnCode::DataCloneError;
+                        return true;
+                    }
+                    bool isCrossOriginIsolated = ScriptExecutionContext::crossOriginMode() == CrossOriginMode::Isolated;
+                    if (m_context == SerializationContext::WorkerPostMessage && (isCrossOriginIsolated || JSC::Options::useSharedArrayBuffer())) {
                         uint32_t index = m_sharedBuffers.size();
                         ArrayBufferContents contents;
                         if (arrayBuffer->shareWith(contents)) {
@@ -2201,11 +2202,12 @@ private:
                             write(index);
                             return true;
                         }
-                    } else if (m_context != SerializationContext::WindowPostMessage || ScriptExecutionContext::crossOriginMode() != CrossOriginMode::Isolated) {
+                    }
+                    if (!isCrossOriginIsolated) {
                         code = SerializationReturnCode::DataCloneError;
                         return true;
                     }
-                    // WindowPostMessage in a cross-origin isolated context: fall through to serialize as a non-shared copy.
+                    // FIXME: For non-WorkerPostMessage contexts that are cross-origin isolated, this falls through and serializes as a non-shared copy, which is not correct per the specification.
                 }
                 
                 if (arrayBuffer->isResizableOrGrowableShared()) {
