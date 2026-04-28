@@ -156,20 +156,20 @@ void AbstractModuleRecord::addExportEntry(const ExportEntry& entry)
     ASSERT_UNUSED(isNewEntry, isNewEntry); // This is guaranteed by the parser.
 }
 
-auto AbstractModuleRecord::tryGetImportEntry(UniquedStringImpl* localName) -> std::optional<ImportEntry>
+auto AbstractModuleRecord::tryGetImportEntry(UniquedStringImpl* localName) -> const ImportEntry*
 {
     const auto iterator = m_importEntries.find(localName);
     if (iterator == m_importEntries.end())
-        return std::nullopt;
-    return std::optional<ImportEntry>(iterator->value);
+        return nullptr;
+    return &iterator->value;
 }
 
-auto AbstractModuleRecord::tryGetExportEntry(UniquedStringImpl* exportName) -> std::optional<ExportEntry>
+auto AbstractModuleRecord::tryGetExportEntry(UniquedStringImpl* exportName) -> const ExportEntry*
 {
     const auto iterator = m_exportEntries.find(exportName);
     if (iterator == m_exportEntries.end())
-        return std::nullopt;
-    return std::optional<ExportEntry>(iterator->value);
+        return nullptr;
+    return &iterator->value;
 }
 
 auto AbstractModuleRecord::ExportEntry::createLocal(const Identifier& exportName, const Identifier& localName) -> ExportEntry
@@ -214,7 +214,7 @@ auto AbstractModuleRecord::resolveImport(JSGlobalObject* globalObject, const Ide
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    std::optional<ImportEntry> optionalImportEntry = tryGetImportEntry(localName.impl());
+    const ImportEntry* optionalImportEntry = tryGetImportEntry(localName.impl());
     if (!optionalImportEntry)
         return Resolution::notFound();
 
@@ -662,7 +662,7 @@ auto AbstractModuleRecord::resolveExportImpl(JSGlobalObject* globalObject, const
                 }
             }
 
-            const std::optional<ExportEntry> optionalExportEntry = moduleRecord->tryGetExportEntry(query.exportName.get());
+            const ExportEntry* optionalExportEntry = moduleRecord->tryGetExportEntry(query.exportName.get());
             if (!optionalExportEntry) {
                 // If there is no matched exported binding in the current module,
                 // we need to look into the stars.

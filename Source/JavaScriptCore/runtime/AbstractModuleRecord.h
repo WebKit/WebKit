@@ -127,8 +127,8 @@ public:
     void addImportEntry(const ImportEntry&);
     void addExportEntry(const ExportEntry&);
 
-    std::optional<ImportEntry> NODELETE tryGetImportEntry(UniquedStringImpl* localName);
-    std::optional<ExportEntry> NODELETE tryGetExportEntry(UniquedStringImpl* exportName);
+    const ImportEntry* NODELETE tryGetImportEntry(UniquedStringImpl* localName);
+    const ExportEntry* NODELETE tryGetExportEntry(UniquedStringImpl* exportName);
 
     class AsyncEvaluationOrder {
     public:

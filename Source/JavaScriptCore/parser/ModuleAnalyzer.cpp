@@ -74,7 +74,7 @@ void ModuleAnalyzer::exportVariable(ModuleProgramNode& moduleProgramNode, const 
         return;
     }
 
-    std::optional<JSModuleRecord::ImportEntry> optionalImportEntry = moduleRecord()->tryGetImportEntry(localName.get());
+    const JSModuleRecord::ImportEntry* optionalImportEntry = moduleRecord()->tryGetImportEntry(localName.get());
     ASSERT(optionalImportEntry);
     const JSModuleRecord::ImportEntry& importEntry = *optionalImportEntry;
 
