@@ -26,6 +26,8 @@ import operator
 import os
 import re
 
+from webkitcorepy import Config
+
 from buildbot.scheduler import AnyBranchScheduler, Triggerable, Nightly
 from buildbot.schedulers.forcesched import BooleanParameter, CodebaseParameter, FixedParameter, ForceScheduler, StringParameter
 from buildbot.schedulers.filter import ChangeFilter
@@ -46,11 +48,28 @@ def pickLatestBuild(builder, requests):
     return max(requests, key=operator.attrgetter("submittedAt"))
 
 
+def render_config(template=None, output=None):
+    template = template or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config-template.yaml')
+    output = output or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config.json')
+
+    with open(template) as i_file:
+        config = Config.load(i_file)
+
+    with open(output, 'w') as o_file:
+        config.dump(o_file, mode=Config.Mode.JSON)
+
+    return config
+
+
 def loadBuilderConfig(c, is_test_mode_enabled=False, setup_main_schedulers=True, setup_force_schedulers=True, master_prefix_path=None):
     if not master_prefix_path:
         master_prefix_path = os.path.dirname(os.path.abspath(__file__))
-    with open(os.path.join(master_prefix_path, 'config.json')) as config_json:
-        config = json.load(config_json)
+
+    config = render_config(
+        template=os.path.join(master_prefix_path, 'config-template.yaml'),
+        output=os.path.join(master_prefix_path, 'config.json'),
+    )
+
     if is_test_mode_enabled:
         passwords = {}
     else:
