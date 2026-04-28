@@ -1,0 +1,11 @@
+Verifies vertical overflow scrolling momentum is preserved when a sibling behind the scroller toggles compositing. Same bug pattern as horizontal, exercises the vertical scroll path.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS scroller.scrollTop is >= 100
+PASS toggleCount is >= 3
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

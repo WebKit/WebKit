@@ -1,0 +1,11 @@
+Stress test: multiple siblings rapidly toggling compositing during scroll. Each scroll event toggles a different sibling's compositing state. Momentum must be preserved.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS scroller.scrollLeft is >= 150
+PASS toggleCount is >= 5
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -170,6 +170,7 @@ struct RenderLayerCompositor::CompositingState {
         childState.ancestorHasTransformAnimation = ancestorHasTransformAnimation;
         childState.ancestorAllowsBackingStoreDetachingForFixed = ancestorAllowsBackingStoreDetachingForFixed;
         childState.hasCompositedNonContainedDescendants = false;
+        childState.hasCompositedScrollableOverflowDescendants = false;
         childState.hasNotIsolatedCompositedBlendingDescendants = false; // FIXME: should this only be reset for stacking contexts?
         childState.hasBackdropFilterDescendantsWithoutRoot = false;
 #if !LOG_DISABLED
@@ -210,6 +211,11 @@ struct RenderLayerCompositor::CompositingState {
 
         hasCompositedNonContainedDescendants = computeHasCompositedNonContainedDescendants();
 
+        if (layer.isComposited() && layer.hasCompositedScrollableOverflow())
+            hasCompositedScrollableOverflowDescendants = true;
+        else
+            hasCompositedScrollableOverflowDescendants |= childState.hasCompositedScrollableOverflowDescendants;
+
         if ((layer.isComposited() && layer.hasBlendMode()) || (layer.hasNotIsolatedCompositedBlendingDescendants() && !layer.isolatesCompositedBlending()))
             hasNotIsolatedCompositedBlendingDescendants = true;
 
@@ -237,6 +243,7 @@ struct RenderLayerCompositor::CompositingState {
     bool ancestorHasTransformAnimation { false };
     bool ancestorAllowsBackingStoreDetachingForFixed { false };
     bool hasCompositedNonContainedDescendants { false };
+    bool hasCompositedScrollableOverflowDescendants { false };
     bool hasNotIsolatedCompositedBlendingDescendants { false };
     bool hasBackdropFilterDescendantsWithoutRoot { false };
 #if !LOG_DISABLED
@@ -1469,7 +1476,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     // Now check for reasons to become composited that depend on the state of descendant layers.
     if (!willBeComposited && canBeComposited(layer)) {
         layer.update3DTransformedDescendantStatus();
-        auto indirectReason = computeIndirectCompositingReason(layer, currentState.subtreeIsCompositing, layer.has3DTransformedDescendant(), !!providedBackingLayer);
+        auto indirectReason = computeIndirectCompositingReason(layer, currentState.subtreeIsCompositing, layer.has3DTransformedDescendant(), !!providedBackingLayer, currentState.hasCompositedScrollableOverflowDescendants);
         if (indirectReason != IndirectCompositingReason::None) {
             layer.setIndirectCompositingReason(indirectReason);
             layerWillCompositePostDescendants();
@@ -4149,8 +4156,11 @@ bool RenderLayerCompositor::requiresCompositingForAnchorPositioning(const Render
     return !!layer.anchorScrollAdjustment();
 }
 
-IndirectCompositingReason RenderLayerCompositor::computeIndirectCompositingReason(const RenderLayer& layer, bool hasCompositedDescendants, bool has3DTransformedDescendants, bool paintsIntoProvidedBacking) const
+IndirectCompositingReason RenderLayerCompositor::computeIndirectCompositingReason(const RenderLayer& layer, bool hasCompositedDescendants, bool has3DTransformedDescendants, bool paintsIntoProvidedBacking, bool hasCompositedScrollableOverflowDescendants) const
 {
+#if !PLATFORM(IOS_FAMILY)
+    UNUSED_PARAM(hasCompositedScrollableOverflowDescendants);
+#endif
     // When a layer has composited descendants, some effects, like 2d transforms, filters, masks etc must be implemented
     // via compositing so that they also apply to those composited descendants.
     auto& renderer = layer.renderer();
@@ -4162,10 +4172,19 @@ IndirectCompositingReason RenderLayerCompositor::computeIndirectCompositingReaso
     if (has3DTransformedDescendants) {
         if (renderer.style().usedTransformStyle3D() == TransformStyle3D::Preserve3D)
             return IndirectCompositingReason::Preserve3D;
-    
+
         if (!renderer.style().perspective().isNone())
             return IndirectCompositingReason::Perspective;
     }
+
+#if PLATFORM(IOS_FAMILY)
+    // Stacking contexts with composited scrollable overflow descendants need their own compositing
+    // layer to prevent layer tree restructuring when sibling compositing state changes. Without
+    // this, composited overflow scrollers get reparented, which causes UIKit to cancel active
+    // scroll gesture recognizers.
+    if (hasCompositedScrollableOverflowDescendants && layer.isStackingContext())
+        return IndirectCompositingReason::Stacking;
+#endif
 
     // If this layer scrolls independently from the layer that it would paint into, it needs to get composited.
     if (!paintsIntoProvidedBacking && layer.hasCompositedScrollingAncestor()) {

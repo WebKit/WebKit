@@ -1,0 +1,55 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .container { position: relative; width: 200px; height: 200px; margin: 20px; }
+
+        .stacking-zindex { z-index: 1; position: relative; }
+        .stacking-opacity { opacity: 0.99; }
+        .stacking-isolation { isolation: isolate; }
+
+        .composited-child { will-change: transform; width: 50px; height: 50px; background: green; }
+        .overflow-scroller { overflow: auto; width: 100px; height: 100px; }
+        .tall-content { height: 500px; background: repeating-linear-gradient(silver, white 50px); }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function doTest()
+        {
+            if (window.internals) {
+                document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
+                testRunner.notifyDone();
+            }
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <!-- Test 1: z-index stacking context with composited overflow scroller should be composited on iOS -->
+    <div class="container stacking-zindex" id="test1">
+        <div class="overflow-scroller">
+            <div class="tall-content"></div>
+        </div>
+    </div>
+
+    <!-- Test 2: z-index stacking context with only a will-change child (no scrolling) — should NOT get extra compositing -->
+    <div class="container stacking-zindex" id="test2">
+        <div class="composited-child"></div>
+    </div>
+
+    <!-- Test 3: nested stacking contexts — outer z-index wrapping inner with composited scroller -->
+    <div class="container stacking-zindex" id="test3-outer">
+        <div class="stacking-zindex" id="test3-inner" style="position: relative;">
+            <div class="overflow-scroller">
+                <div class="tall-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <pre id="layers"></pre>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; }
+
+#container { width: 100%; height: 100%; position: relative; }
+#below { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #246; }
+#scroller-wrapper { position: absolute; top: 50px; left: 0; right: 0; height: 150px; z-index: 1; }
+#scroller { height: 100%; overflow-y: auto; }
+#content { height: 5000px; background: repeating-linear-gradient(to bottom, #ccc 0px, #eee 100px); }
+</style>
+</head>
+<body>
+<div id="container">
+    <div id="below"></div>
+    <div id="scroller-wrapper">
+        <div id="scroller">
+            <div id="content"></div>
+        </div>
+    </div>
+</div>
+<p id="description"></p>
+<p id="console"></p>
+<script>
+jsTestIsAsync = true;
+
+const scroller = document.getElementById("scroller");
+const below = document.getElementById("below");
+
+let toggleCount = 0;
+scroller.addEventListener("scroll", () => {
+    if (Math.floor(scroller.scrollTop / 20) % 2 === 0) {
+        below.style.willChange = "transform";
+        below.style.transform = "translateZ(0)";
+    } else {
+        below.style.willChange = "auto";
+        below.style.transform = "none";
+    }
+    toggleCount++;
+});
+
+addEventListener("load", async () => {
+    description("Verifies vertical overflow scrolling momentum is preserved when a sibling behind the scroller toggles compositing. Same bug pattern as horizontal, exercises the vertical scroll path.");
+
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.ensureStablePresentationUpdate();
+
+    const rect = scroller.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const startY = rect.top + rect.height * 0.75;
+    const endY = rect.top + rect.height * 0.1;
+    await UIHelper.dragFromPointToPoint(x, startY, x, endY, 0.08);
+
+    await UIHelper.waitForTargetScrollAnimationToSettle(scroller);
+
+    shouldBeGreaterThanOrEqual("scroller.scrollTop", "100");
+    shouldBeGreaterThanOrEqual("toggleCount", "3");
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>
