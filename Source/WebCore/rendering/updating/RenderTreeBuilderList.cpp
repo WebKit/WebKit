@@ -56,9 +56,9 @@ static LineBoxParentSearchResult findParentOfEmptyOrFirstLineBox(RenderBlock& bl
             continue;
 
         if (child.isInline()) {
-            if (!is<RenderInline>(child) || !isEmptyInline(downcast<RenderInline>(child)))
-                return { &blockContainer, { }, false };
-            fallbackParent = &blockContainer;
+            if (is<RenderInline>(child) && isEmptyInline(downcast<RenderInline>(child)))
+                fallbackParent = &blockContainer;
+            return { &blockContainer, { }, false };
         }
 
         if (child.isFloating() || child.isOutOfFlowPositioned() || is<RenderMenuList>(child))
