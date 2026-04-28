@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov
  *
  * Redistribution and use in source and binary forms, with or without
@@ -615,6 +615,24 @@ float Font::platformWidthForGlyph(Glyph glyph) const
     return advance.width;
 }
 
+Vector<float, Font::inlineGlyphRunCapacity> Font::platformWidthsForGlyphs(const Vector<Glyph, inlineGlyphRunCapacity>& glyphs) const
+{
+    Vector<CGSize, inlineGlyphRunCapacity> advancesForGlyphs(FillWith { }, glyphs.size(), CGSizeZero);
+
+    if (platformData().size()) {
+        RetainPtr ctFont = this->ctFont();
+        bool horizontal = platformData().orientation() == FontOrientation::Horizontal;
+        CTFontOrientation orientation = horizontal || m_isBrokenIdeographFallback ? kCTFontOrientationHorizontal : kCTFontOrientationVertical;
+        auto advancesForGlyphsSpan = advancesForGlyphs.mutableSpan();
+        CTFontGetAdvancesForGlyphs(ctFont.get(), orientation, glyphs.span().data(), advancesForGlyphsSpan.data(), advancesForGlyphsSpan.size());
+    }
+
+    Vector<float, inlineGlyphRunCapacity> widths(glyphs.size());
+    for (size_t i = 0; i < advancesForGlyphs.size(); ++i)
+        widths[i] = advancesForGlyphs[i].width;
+    return widths;
+}
+
 GlyphBufferAdvance Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned beginningGlyphIndex, unsigned beginningStringIndex, bool enableKerning, bool requiresShaping, const AtomString& locale, StringView text, TextDirection textDirection) const
 {
     UNUSED_PARAM(requiresShaping);
@@ -798,15 +816,18 @@ FloatRect Font::platformBoundsForGlyph(Glyph glyph) const
 
 Vector<FloatRect, Font::inlineGlyphRunCapacity> Font::platformBoundsForGlyphs(const Vector<Glyph, inlineGlyphRunCapacity>& glyphs) const
 {
+    RetainPtr ctFont = this->ctFont();
     Vector<CGRect, inlineGlyphRunCapacity> rectsForGlyphs(glyphs.size());
-    CTFontGetBoundingRectsForGlyphs(protect(ctFont()).get(), platformData().orientation() == FontOrientation::Vertical ? kCTFontOrientationVertical : kCTFontOrientationHorizontal, glyphs.span().data(), rectsForGlyphs.mutableSpan().data(), rectsForGlyphs.size());
+    CTFontGetBoundingRectsForGlyphs(ctFont.get(), platformData().orientation() == FontOrientation::Vertical ? kCTFontOrientationVertical : kCTFontOrientationHorizontal, glyphs.span().data(), rectsForGlyphs.mutableSpan().data(), rectsForGlyphs.size());
 
-    return rectsForGlyphs.map<Vector<FloatRect, inlineGlyphRunCapacity>>([&](const auto& rect) -> auto {
-        FloatRect boundingBox(rect);
+    Vector<FloatRect, inlineGlyphRunCapacity> bounds(glyphs.size());
+    for (size_t i = 0; i < rectsForGlyphs.size(); ++i) {
+        FloatRect boundingBox(rectsForGlyphs[i]);
         boundingBox.setY(-boundingBox.maxY());
         boundingBox.setWidth(boundingBox.width() + m_syntheticBoldOffset);
-        return boundingBox;
-    });
+        bounds[i] = boundingBox;
+    }
+    return bounds;
 }
 
 Path Font::platformPathForGlyph(Glyph glyph) const

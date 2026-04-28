@@ -366,6 +366,24 @@ float FontCascade::width(CodePath codePathToUse, const TextRun& run, SingleThrea
     return it.runWidthSoFar();
 }
 
+#if USE(CORE_TEXT)
+template <typename T, size_t N>
+void processCharacterSpan(GlyphBuffer& glyphBuffer, const Font& font, std::span<T, N> characters)
+{
+    auto [glyphs, widths] = font.glyphsAndWidthsForCharacters(characters);
+
+    for (size_t i = 0; i < glyphs.size(); ++i)
+        glyphBuffer.add(glyphs[i], font, widths[i], i);
+}
+
+template <typename T>
+void processCharacterSpan(GlyphBuffer& glyphBuffer, const Font& font, std::span<T, 1> characters)
+{
+    auto glyph = font.glyphForCharacter(characters[0]);
+    glyphBuffer.add(glyph, font, font.widthForGlyph(glyph), 0);
+}
+#endif
+
 NEVER_INLINE float FontCascade::widthForSimpleTextSlow(StringView text, TextDirection textDirection, GlyphGeometryCacheEntry* cacheEntry) const
 {
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -373,14 +391,28 @@ NEVER_INLINE float FontCascade::widthForSimpleTextSlow(StringView text, TextDire
     float result = width(CodePath::Simple, run);
 #else
     GlyphBuffer glyphBuffer;
+    glyphBuffer.reserveInitialCapacity(text.length());
     Ref font = primaryFont();
     ASSERT(!font->syntheticBoldOffset()); // This function should only be called when RenderText::computeCanUseSimplifiedTextMeasuring() returns true, and that function requires no synthetic bold.
 
     auto addGlyphsFromText = [&](GlyphBuffer& glyphBuffer, const Font& font, auto characters) {
+#if USE(CORE_TEXT)
+        if (characters.size() == 1)
+            processCharacterSpan(glyphBuffer, font, characters.template first<1>());
+        else if (characters.size() < 16) {
+            // For short runs profiling indicates its more efficient to use the per-character lookup.
+            for (size_t i = 0; i < characters.size(); ++i) {
+                auto glyph = font.glyphForCharacter(characters[i]);
+                glyphBuffer.add(glyph, font, font.widthForGlyph(glyph), i);
+            }
+        } else
+            processCharacterSpan(glyphBuffer, font, characters);
+#else
         for (size_t i = 0; i < characters.size(); ++i) {
             auto glyph = font.glyphForCharacter(characters[i]);
             glyphBuffer.add(glyph, font, font.widthForGlyph(glyph), i);
         }
+#endif
     };
 
     if (text.is8Bit())

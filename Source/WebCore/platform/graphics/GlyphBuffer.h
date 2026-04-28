@@ -63,6 +63,15 @@ public:
         m_offsetsInString.clear();
     }
 
+    void reserveInitialCapacity(size_t capacity)
+    {
+        m_fonts.reserveInitialCapacity(capacity);
+        m_glyphs.reserveInitialCapacity(capacity);
+        m_advances.reserveInitialCapacity(capacity);
+        m_origins.reserveInitialCapacity(capacity);
+        m_offsetsInString.reserveInitialCapacity(capacity);
+    }
+
     std::span<SingleThreadWeakPtr<const Font>> fonts(size_t from = 0, size_t count = std::dynamic_extent) LIFETIME_BOUND { return m_fonts.mutableSpan().subspan(from, count); }
     std::span<GlyphBufferGlyph> glyphs(size_t from = 0, size_t count = std::dynamic_extent) LIFETIME_BOUND { return m_glyphs.mutableSpan().subspan(from, count); }
     std::span<GlyphBufferAdvance> advances(size_t from = 0, size_t count = std::dynamic_extent) LIFETIME_BOUND { return m_advances.mutableSpan().subspan(from, count); }

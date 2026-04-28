@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2008 Torch Mobile, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -182,6 +182,9 @@ public:
     };
 
     float widthForGlyph(Glyph, SyntheticBoldInclusion = SyntheticBoldInclusion::Incorporate) const;
+#if USE(CORE_TEXT)
+    Vector<float, inlineGlyphRunCapacity> widthsForGlyphs(std::span<const Glyph>, SyntheticBoldInclusion = SyntheticBoldInclusion::Incorporate) const;
+#endif
 
     Path pathForGlyph(Glyph) const;
 
@@ -198,6 +201,13 @@ public:
 
     GlyphData glyphDataForCharacter(char32_t) const;
     Glyph glyphForCharacter(char32_t) const;
+
+#if USE(CORE_TEXT)
+    template<typename charType>
+    ALWAYS_INLINE std::pair<Vector<Glyph, inlineGlyphRunCapacity>, Vector<float, inlineGlyphRunCapacity>>
+    glyphsAndWidthsForCharacters(std::span<charType> characters, SyntheticBoldInclusion = SyntheticBoldInclusion::Incorporate) const;
+#endif
+
     bool supportsCodePoint(char32_t) const;
     bool platformSupportsCodePoint(char32_t, std::optional<char32_t> variation = std::nullopt) const;
 
@@ -287,6 +297,9 @@ private:
     Vector<FloatRect, inlineGlyphRunCapacity> platformBoundsForGlyphs(const Vector<Glyph, inlineGlyphRunCapacity>&) const;
 #endif
     float platformWidthForGlyph(Glyph) const;
+#if USE(CORE_TEXT)
+    Vector<float, inlineGlyphRunCapacity> platformWidthsForGlyphs(const Vector<Glyph, inlineGlyphRunCapacity>&) const;
+#endif
     Path platformPathForGlyph(Glyph) const;
 
 #if PLATFORM(COCOA)

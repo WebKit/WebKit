@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2025-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,7 +71,7 @@ ALWAYS_INLINE Vector<FloatRect, Font::inlineGlyphRunCapacity> Font::boundsForGly
         return { boundsForGlyph(glyphs[0]) };
 
     Vector<Glyph, inlineGlyphRunCapacity> glyphsNeedingMeasurement;
-    Vector<size_t, inlineGlyphRunCapacity> positionsNeedingMeasurement;
+    Vector<uint32_t, inlineGlyphRunCapacity> positionsNeedingMeasurement;
 
     Vector<FloatRect, inlineGlyphRunCapacity> glyphBounds(FillWith { }, glyphCount, FloatRect());
     for (size_t glyphIndex = 0; glyphIndex < glyphCount; ++glyphIndex) {
@@ -112,18 +112,14 @@ ALWAYS_INLINE Vector<FloatRect, Font::inlineGlyphRunCapacity> Font::boundsForGly
 }
 #endif
 
-ALWAYS_INLINE float Font::widthForGlyph(Glyph glyph, SyntheticBoldInclusion SyntheticBoldInclusion) const
+ALWAYS_INLINE float Font::widthForGlyph(Glyph glyph, SyntheticBoldInclusion syntheticBoldInclusion) const
 {
-    // The optimization of returning 0 for the zero-width-space glyph is incorrect for the LastResort font,
-    // used in place of the actual font when isLoading() is true on both macOS and iOS.
-    // The zero-width-space glyph in that font does not have a width of zero and, further, that glyph is used
-    // for many other characters and must not be zero width when used for them.
     if (isZeroWidthSpaceGlyph(glyph) && !isInterstitial())
         return 0;
 
     float width = m_glyphToWidthMap.metricsForGlyph(glyph);
     if (width != cGlyphSizeUnknown)
-        return width + (SyntheticBoldInclusion == SyntheticBoldInclusion::Incorporate ? syntheticBoldOffset() : 0);
+        return width + (syntheticBoldInclusion == SyntheticBoldInclusion::Incorporate ? syntheticBoldOffset() : 0);
 
 #if ENABLE(OPENTYPE_VERTICAL)
     if (m_verticalData)
@@ -133,7 +129,108 @@ ALWAYS_INLINE float Font::widthForGlyph(Glyph glyph, SyntheticBoldInclusion Synt
         width = platformWidthForGlyph(glyph);
 
     m_glyphToWidthMap.setMetricsForGlyph(glyph, width);
-    return width + (SyntheticBoldInclusion == SyntheticBoldInclusion::Incorporate ? syntheticBoldOffset() : 0);
+    return width + (syntheticBoldInclusion == SyntheticBoldInclusion::Incorporate ? syntheticBoldOffset() : 0);
 }
+
+#if USE(CORE_TEXT)
+ALWAYS_INLINE Vector<float, Font::inlineGlyphRunCapacity> Font::widthsForGlyphs(std::span<const Glyph> glyphs, SyntheticBoldInclusion syntheticBoldInclusion) const
+{
+    ASSERT(glyphs.size());
+
+    if (glyphs.size() == 1) [[unlikely]]
+        return { widthForGlyph(glyphs[0], syntheticBoldInclusion) };
+
+    Vector<Glyph, inlineGlyphRunCapacity> glyphsNeedingMeasurement;
+    Vector<uint32_t, inlineGlyphRunCapacity> positionsNeedingMeasurement;
+
+    glyphsNeedingMeasurement.reserveInitialCapacity(glyphs.size());
+    positionsNeedingMeasurement.reserveInitialCapacity(glyphs.size());
+
+    Vector<float, inlineGlyphRunCapacity> glyphWidths(FillWith { }, glyphs.size(), 0.f);
+    const bool isInterstitial = this->isInterstitial();
+    const float syntheticBoldOffset = syntheticBoldInclusion == SyntheticBoldInclusion::Incorporate ? this->syntheticBoldOffset() : 0;
+    for (size_t glyphIndex = 0; glyphIndex < glyphs.size(); ++glyphIndex) {
+        const auto& glyph = glyphs[glyphIndex];
+        if (isZeroWidthSpaceGlyph(glyph) && isInterstitial)
+            continue;
+
+        float width = m_glyphToWidthMap.metricsForGlyph(glyph);
+        if (width != cGlyphSizeUnknown) {
+            glyphWidths[glyphIndex] = width + syntheticBoldOffset;
+            continue;
+        }
+
+        glyphsNeedingMeasurement.append(glyph);
+        positionsNeedingMeasurement.append(glyphIndex);
+    }
+
+    if (glyphsNeedingMeasurement.isEmpty())
+        return glyphWidths;
+
+    auto measuredWidths = platformWidthsForGlyphs(glyphsNeedingMeasurement);
+
+    size_t index = 0;
+    for (auto& width : measuredWidths) {
+        const auto measuredGlyph = glyphsNeedingMeasurement[index];
+        const auto measuredGlyphPosition = positionsNeedingMeasurement[index];
+
+        m_glyphToWidthMap.setMetricsForGlyph(measuredGlyph, width);
+        glyphWidths[measuredGlyphPosition] = width + syntheticBoldOffset;
+        ++index;
+    }
+    return glyphWidths;
+}
+#endif
+
+#if USE(CORE_TEXT)
+template<typename charType>
+ALWAYS_INLINE std::pair<Vector<Glyph, Font::inlineGlyphRunCapacity>, Vector<float, Font::inlineGlyphRunCapacity>>
+Font::glyphsAndWidthsForCharacters(std::span<charType> characters, SyntheticBoldInclusion syntheticBoldInclusion) const
+{
+    ASSERT(characters.size());
+
+    Vector<Glyph, inlineGlyphRunCapacity> glyphs;
+    glyphs.reserveInitialCapacity(characters.size());
+
+    Vector<float, inlineGlyphRunCapacity> widths(FillWith { }, characters.size(), 0.f);
+
+    Vector<Glyph, inlineGlyphRunCapacity> uncachedGlyphs;
+    Vector<uint32_t, inlineGlyphRunCapacity> uncachedPositions;
+
+    const bool isInterstitial = this->isInterstitial();
+    const float syntheticBoldOffset = syntheticBoldInclusion == SyntheticBoldInclusion::Incorporate ? this->syntheticBoldOffset() : 0;
+
+    for (size_t i = 0; i < characters.size(); ++i) {
+        auto glyph = glyphForCharacter(characters[i]);
+        glyphs.append(glyph);
+
+        if (isZeroWidthSpaceGlyph(glyph) && isInterstitial)
+            continue;
+
+        float width = m_glyphToWidthMap.metricsForGlyph(glyph);
+        if (width != cGlyphSizeUnknown) {
+            widths[i] = width + syntheticBoldOffset;
+            continue;
+        }
+
+        if (uncachedGlyphs.isEmpty()) {
+            uncachedGlyphs.reserveInitialCapacity(characters.size());
+            uncachedPositions.reserveInitialCapacity(characters.size());
+        }
+        uncachedGlyphs.append(glyph);
+        uncachedPositions.append(i);
+    }
+
+    if (!uncachedGlyphs.isEmpty()) {
+        auto measuredWidths = platformWidthsForGlyphs(uncachedGlyphs);
+        for (size_t j = 0; j < measuredWidths.size(); ++j) {
+            m_glyphToWidthMap.setMetricsForGlyph(uncachedGlyphs[j], measuredWidths[j]);
+            widths[uncachedPositions[j]] = measuredWidths[j] + syntheticBoldOffset;
+        }
+    }
+
+    return { WTF::move(glyphs), WTF::move(widths) };
+}
+#endif
 
 } // namespace WebCore
