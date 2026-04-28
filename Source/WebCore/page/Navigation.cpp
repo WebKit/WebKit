@@ -950,9 +950,19 @@ void Navigation::abortOngoingNavigation(NavigateEvent& event)
     if (RefPtr signal = event.signal())
         signal->signalAbort(domException);
 
+    // signalAbort() may have run script (e.g. an abort event handler calling pushState)
+    // that triggered a re-entrant navigation, replacing m_ongoingNavigateEvent. If so,
+    // the remaining cleanup belongs to the aborted event, not the new one.
+    if (m_ongoingNavigateEvent && m_ongoingNavigateEvent != &event)
+        return;
+
     m_ongoingNavigateEvent = nullptr;
 
     dispatchEvent(ErrorEvent::create(*globalObject, eventNames().navigateerrorEvent, exception.message(), errorInformation.sourceURL, errorInformation.line, errorInformation.column, { globalObject->vm(), domException }));
+
+    // navigateerror dispatch may also trigger re-entrant navigation.
+    if (m_ongoingNavigateEvent)
+        return;
 
     RefPtr<NavigationAPIMethodTracker> ongoingAPIMethodTracker;
     {
