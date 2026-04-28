@@ -537,6 +537,7 @@ int main() {
     return static_cast<int>(result + d.load().value());
 }
     ]=])
+    set(CMAKE_REQUIRED_FLAGS "--std=c++2b")
     check_cxx_source_compiles("${ATOMIC_TEST_SOURCE}" ATOMICS_ARE_BUILTIN)
     if (NOT ATOMICS_ARE_BUILTIN)
         set(CMAKE_REQUIRED_LIBRARIES atomic)
@@ -547,6 +548,7 @@ int main() {
             message(FATAL_ERROR "Failed to detect support for atomic variables")
         endif ()
     endif ()
+    unset(CMAKE_REQUIRED_FLAGS)
 
     # <filesystem> vs <experimental/filesystem>
     set(FILESYSTEM_TEST_SOURCE "
