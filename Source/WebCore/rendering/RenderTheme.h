@@ -429,11 +429,9 @@ protected:
     // Whether or not whitespace: pre should be forced on always.
     virtual bool controlRequiresPreWhiteSpace(StyleAppearance) const { return false; }
 
-    // Used when we want to set computed style on a form control. Before Evaluation Time Zoom, we were
-    // setting the zoomed size on the computed style. In order to make sure this behavior remains if
-    // the flag is off, we return the used zoom value, which was being used before, when the flag
-    // is disabled and 1.0f when it is enabled so that we do not modify the value.
-    float usedZoomForComputedStyle(const RenderStyle& renderStyle) const { return renderStyle.evaluationTimeZoomEnabled() ? 1.0f : renderStyle.usedZoom(); }
+    // Used when we want to set computed style on a form control. The used zoom value is applied
+    // during layout, so we return 1.0f here so that we do not modify the value at style-build time.
+    float usedZoomForComputedStyle(const RenderStyle&) const { return 1.0f; }
 
 private:
     OptionSet<ControlStyle::State> extractControlStyleStatesForRendererInternal(const RenderElement&) const;

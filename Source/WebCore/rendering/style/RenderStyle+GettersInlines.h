@@ -338,11 +338,6 @@ inline void RenderStyle::addCustomPaintWatchProperty(const AtomString& property)
 
 // MARK: - Zoom
 
-inline bool RenderStyle::evaluationTimeZoomEnabled() const
-{
-    return m_computedStyle.evaluationTimeZoomEnabled();
-}
-
 inline bool RenderStyle::useSVGZoomRulesForLength() const
 {
     return m_computedStyle.useSVGZoomRulesForLength();

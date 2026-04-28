@@ -2753,20 +2753,6 @@ EnumeratingVisibleNetworkInterfacesEnabled:
     WebKit:
       default: true
 
-EvaluationTimeZoomEnabled:
-  category: css
-  type: bool
-  status: stable
-  humanReadableName: "Evaluation time zoom enabled"
-  humanReadableDescription: "Enables used zoom value to be applied during layout and avoid applying at style-build time"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 EventHandlerDrivenSmoothKeyboardScrollingEnabled:
   type: bool
   status: internal

@@ -40,10 +40,7 @@ template<auto R, typename V, CSS::SpecificKeyword... Ks> struct ToCSS<PrimitiveN
                 if constexpr (R.zoomOptions == CSS::RangeZoomOptions::Default) {
                     return CSS::LengthPercentageRaw<R, V> { length.unit, adjustForZoom(length.unresolvedValue(), style) };
                 } else if constexpr (R.zoomOptions == CSS::RangeZoomOptions::Unzoomed) {
-                    if (evaluationTimeZoomEnabled(style))
-                        return CSS::LengthPercentageRaw<R, V> { length.unit, length.unresolvedValue() };
-
-                    return CSS::LengthPercentageRaw<R, V> { length.unit, adjustForZoom(length.unresolvedValue(), style) };
+                    return CSS::LengthPercentageRaw<R, V> { length.unit, length.unresolvedValue() };
                 }
             },
             [&](const typename LengthPercentage<R, V>::Percentage& percentage) -> Result {

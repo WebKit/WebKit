@@ -1147,13 +1147,6 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyPerspectiveOrigin> {
         if (state.renderer) {
             auto box = state.renderer->transformReferenceBoxRect(state.style);
 
-            if (!state.style.evaluationTimeZoomEnabled()) {
-                auto perspectiveOriginX = Length<> { evaluate<float>(state.style.perspectiveOriginX(), box.width(), ZoomFactor::none()) };
-                auto perspectiveOriginY = Length<> { evaluate<float>(state.style.perspectiveOriginY(), box.height(), ZoomFactor::none()) };
-
-                return functor(SpaceSeparatedTuple { perspectiveOriginX, perspectiveOriginY });
-            }
-
             auto zoom = state.style.usedZoomForLength();
 
             auto perspectiveOriginX = Length<CSS::AllUnzoomed> { evaluate<float>(state.style.perspectiveOriginX(), box.width(), zoom) / zoom.value };
@@ -1241,15 +1234,6 @@ template<> struct PropertyExtractorAdaptor<CSSPropertyTransformOrigin> {
     {
         if (state.renderer) {
             auto box = state.renderer->transformReferenceBoxRect(state.style);
-
-            if (!state.style.evaluationTimeZoomEnabled()) {
-                auto transformOriginX = Length<> { evaluate<float>(state.style.transformOriginX(), box.width(), ZoomFactor::none()) };
-                auto transformOriginY = Length<> { evaluate<float>(state.style.transformOriginY(), box.height(), ZoomFactor::none()) };
-
-                if (auto transformOriginZ = state.style.transformOriginZ(); !transformOriginZ.isZero())
-                    return functor(SpaceSeparatedTuple { transformOriginX, transformOriginY, transformOriginZ });
-                return functor(SpaceSeparatedTuple { transformOriginX, transformOriginY });
-            }
 
             auto zoom = state.style.usedZoomForLength();
 
