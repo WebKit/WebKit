@@ -1,0 +1,20 @@
+This test verifies that selection text marker indices are correctly reported via AXSelectedTextChanged notifications on a contenteditable element.
+
+Empty contenteditable:
+target: AXRole: AXTextArea, marker index: 0
+
+Contenteditable with just a br:
+target: AXRole: AXUnknown, marker index: 0
+
+After inserting 'hello':
+target: AXRole: AXStaticText, marker index: 5
+
+After inserting line break:
+target: AXRole: AXUnknown, marker index: 6
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+

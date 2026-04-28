@@ -3074,25 +3074,36 @@ void AXObjectCache::onSelectedTextChanged(const VisiblePositionRange& selection,
             m_selectedTextRangeTimer.restart();
     }
 
-    if (RefPtr tree = AXIsolatedTree::treeForFrameID(m_frameID)) {
-        if (selection.isNull())
-            tree->setSelectedTextMarkerRange({ });
-        else {
-            auto startPosition = selection.start.deepEquivalent();
-            auto endPosition = selection.end.deepEquivalent();
+    RefPtr tree = AXIsolatedTree::treeForFrameID(m_frameID);
+    if (!tree)
+        return;
 
-            if (startPosition.isNull() || endPosition.isNull())
-                tree->setSelectedTextMarkerRange({ });
-            else {
-                if (RefPtr startObject = get(startPosition.anchorNode()))
-                    createIsolatedObjectIfNeeded(*startObject);
-                if (RefPtr endObject = get(endPosition.anchorNode()))
-                    createIsolatedObjectIfNeeded(*endObject);
+    AXTextMarkerRange markerRange;
+    if (!selection.isNull()) {
+        auto startPosition = selection.start.deepEquivalent();
+        auto endPosition = selection.end.deepEquivalent();
 
-                tree->setSelectedTextMarkerRange({ selection });
-            }
+        RefPtr startObject = getOrCreate(startPosition.anchorNode());
+        if (startObject)
+            createIsolatedObjectIfNeeded(*startObject);
+        RefPtr endObject = getOrCreate(endPosition.anchorNode());
+        if (endObject && endObject != startObject)
+            createIsolatedObjectIfNeeded(*endObject);
+
+        markerRange = { selection };
+        if (!markerRange && startObject) {
+            unsigned startOffset = std::max(startPosition.deprecatedEditingOffset(), 0);
+            unsigned endOffset = std::max(endPosition.deprecatedEditingOffset(), 0);
+            markerRange = { startObject->treeID(), startObject->objectID(), startOffset, endOffset };
         }
     }
+
+    if (!markerRange && object) {
+        createIsolatedObjectIfNeeded(*object);
+        markerRange = { object->treeID(), object->objectID(), 0, 0 };
+    }
+
+    tree->setSelectedTextMarkerRange(WTF::move(markerRange));
 }
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
@@ -4446,8 +4457,11 @@ std::optional<TextMarkerData> AXObjectCache::textMarkerDataForVisiblePosition(co
 
         if (!renderText) {
             renderText = dynamicDowncast<RenderText>(node ? node->renderer() : nullptr);
-            if (!renderText)
+            if (!renderText) {
+                if (node->renderer())
+                    return createFromRendererAndOffset(*node->renderer(), domOffset);
                 return std::nullopt;
+            }
         }
 
         auto [textBox, orderCache] = InlineIterator::firstTextBoxInLogicalOrderFor(*renderText);
