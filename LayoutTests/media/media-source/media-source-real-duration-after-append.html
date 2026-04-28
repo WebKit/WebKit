@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-duration-after-append</title>
+    <script src="mp4-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Real-MP4 equivalent of media-source-duration-after-append.html
+    // Tests that duration updates correctly after appending samples.
+
+    var source;
+    var sourceBuffer;
+
+    async function runTest() {
+        findMediaElement();
+
+        source = new MediaSource();
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen');
+
+        sourceBuffer = source.addSourceBuffer(MP4.VIDEO_TYPE);
+
+        var initData = MP4.initSegment({
+            timescale: 1000,
+            tracks: [{ id: 1, type: 'video', timescale: 1000 }]
+        });
+        sourceBuffer.appendBuffer(initData);
+        await waitFor(sourceBuffer, 'updateend');
+        testExpected('video.duration', 0);
+
+        // Append one 10-second sample
+        var media = MP4.mediaSegment({
+            sequenceNumber: 1,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 0, samples: [
+                { duration: 10000, compositionTimeOffset: 0, isSync: true },
+            ]}]
+        });
+        sourceBuffer.appendBuffer(media);
+        await waitFor(sourceBuffer, 'updateend');
+        testExpected('video.duration', 10);
+
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>
