@@ -1,0 +1,5 @@
+Row 1
+Row 2
+
+PASS Table specified height is honored when distributing extra height with border-spacing
+

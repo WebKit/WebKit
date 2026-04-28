@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<title>Table specified height with border-spacing and fixed-height cells</title>
+<link rel="help" href="https://drafts.csswg.org/css-tables/#height-distribution">
+<script src='/resources/testharness.js'></script>
+<script src='/resources/testharnessreport.js'></script>
+<style>
+  #tabletest {
+    height: 200px;
+    width: 200px;
+    border-spacing: 0 50px;
+    border: none;
+  }
+  #tabletest td {
+    height: 20px;
+    padding: 0;
+  }
+</style>
+<table id="tabletest">
+  <tr><td>Row 1</td></tr>
+  <tr><td>Row 2</td></tr>
+</table>
+<script>
+  test(function() {
+    var table = document.getElementById("tabletest");
+    assert_equals(table.offsetHeight, 200,
+      "Table with fixed-height cells and border-spacing must respect specified height");
+  }, "Table specified height is honored when distributing extra height with border-spacing");
+</script>
