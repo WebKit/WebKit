@@ -1,0 +1,8 @@
+
+EVENT(sourceopen)
+EVENT(updateend)
+EXPECTED (video.duration == '0') OK
+EVENT(updateend)
+EXPECTED (video.duration == '10') OK
+END OF TEST
+

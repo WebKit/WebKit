@@ -1,0 +1,18 @@
+
+EVENT(sourceopen)
+EVENT(updateend)
+EVENT(updateend)
+RUN(video.currentTime = 2)
+EVENT(seeked)
+EXPECTED (video.currentTime == '2') OK
+RUN(video.currentTime = 6)
+EVENT(seeked)
+EXPECTED (video.currentTime == '6') OK
+RUN(video.currentTime = 0)
+EVENT(seeked)
+EXPECTED (video.currentTime == '0') OK
+RUN(video.currentTime = 4)
+EVENT(seeked)
+EXPECTED (video.currentTime == '4') OK
+END OF TEST
+

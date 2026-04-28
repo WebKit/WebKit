@@ -1,0 +1,15 @@
+
+EVENT(sourceopen)
+EVENT(updateend)
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '8') OK
+RUN(sourceBuffer.remove(2, 6))
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '2') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '0') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '2') OK
+EXPECTED (sourceBuffer.buffered.start(1) == '6') OK
+EXPECTED (sourceBuffer.buffered.end(1) == '8') OK
+END OF TEST
+

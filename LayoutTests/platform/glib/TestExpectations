@@ -4853,6 +4853,10 @@ webkit.org/b/305514 fullscreen/fullscreen-zero-height-element-with-non-zero-chil
 
 webkit.org/b/305538 fast/images/async-image-multiple-clients-repaint.html [ Pass Failure ]
 
+webkit.org/b/313511 media/media-source/media-source-real-duration-after-append.html [ Failure ]
+webkit.org/b/313511 media/media-source/media-source-real-fastseek.html [ Failure ]
+webkit.org/b/313511 media/media-source/media-source-real-overlapping-dts.html [ Failure ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////
