@@ -2477,6 +2477,31 @@ void WebAutomationSession::evaluateBidiScript(const Inspector::Protocol::Automat
     } });
 }
 
+void WebAutomationSession::callBidiFunction(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, const String& functionDeclaration, Vector<String>&& serializedArguments, bool awaitPromise, int maxObjectDepth, std::optional<double>&& callbackTimeout, CommandCallback<String>&& callback)
+{
+    auto page = webPageProxyForHandle(browsingContextHandle);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
+    bool frameNotFound = false;
+    auto frameID = webFrameIDForHandle(frameHandle, frameNotFound);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(frameNotFound, FrameNotFound);
+
+    uint64_t callbackID = m_nextEvaluateJavaScriptCallbackID++;
+    m_evaluateJavaScriptFunctionCallbacks.set(callbackID, WTF::move(callback));
+
+    page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::CallBidiFunction(page->webPageIDInMainFrameProcess(), frameID, functionDeclaration, serializedArguments, awaitPromise, maxObjectDepth, WTF::move(callbackTimeout)), CompletionHandler<void(String&&, String&&)> { [protectedThis = Ref { *this }, callbackID] (String&& result, String&& errorType) {
+        auto callback = protectedThis->m_evaluateJavaScriptFunctionCallbacks.take(callbackID);
+        if (!callback)
+            return;
+
+        if (!errorType.isEmpty()) {
+            callback(makeUnexpected(errorType));
+            return;
+        }
+
+        callback(WTF::move(result));
+    } });
+}
+
 void WebAutomationSession::performMouseInteraction(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, Ref<JSON::Object>&& requestedPosition, Inspector::Protocol::Automation::MouseButton mouseButton, Inspector::Protocol::Automation::MouseInteraction mouseInteraction, Ref<JSON::Array>&& keyModifierStrings, CommandCallback<Ref<Inspector::Protocol::Automation::Point>>&& callback)
 {
 #if !ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
