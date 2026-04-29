@@ -87,36 +87,50 @@ set(GPUProcess_SOURCES
 set(WebProcess_INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR})
 set(NetworkProcess_INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR})
 
-# Stripped-down module map for Swift — full map's C++ submodules fail in CMake's explicit module context.
+# Generate WebKit_Internal modulemap by rewriting the canonical source-tree
+# modulemap to absolute paths, filtered to submodules the Swift build exercises.
 set(WebKit_CMAKE_MODULEMAP_DIR "${CMAKE_BINARY_DIR}/WebKit/SwiftModules")
 file(MAKE_DIRECTORY "${WebKit_CMAKE_MODULEMAP_DIR}")
-file(WRITE "${WebKit_CMAKE_MODULEMAP_DIR}/module.modulemap"
-"module WebKit_Internal [system] {
-    module WKPDFHUDView {
-        requires objc
-        header \"${WEBKIT_DIR}/UIProcess/PDF/WKPDFHUDView.h\"
-        export *
-    }
 
+file(READ "${WEBKIT_DIR}/Modules/Internal/module.modulemap" _webkit_internal_modulemap)
+string(REPLACE "../../" "${WEBKIT_DIR}/" _webkit_internal_modulemap "${_webkit_internal_modulemap}")
+string(REPLACE "header \"WebKitInternalCxx.h\""
+               "header \"${WEBKIT_DIR}/Modules/Internal/WebKitInternalCxx.h\""
+               _webkit_internal_modulemap "${_webkit_internal_modulemap}")
+
+set(_webkit_internal_allowed_submodules
+    WKMaterialHostingSupport
+    WKPDFHUDView
+    _WKTextExtractionInternal
+)
+string(REGEX MATCHALL
+    "[ \t]+module [A-Za-z_][A-Za-z0-9_]*[ \t]*\\{[^}]*\\}"
+    _webkit_internal_blocks "${_webkit_internal_modulemap}")
+foreach (_block IN LISTS _webkit_internal_blocks)
+    if (_block MATCHES "module ([A-Za-z_][A-Za-z0-9_]*)[ \t]*\\{")
+        set(_module_name "${CMAKE_MATCH_1}")
+        list(FIND _webkit_internal_allowed_submodules "${_module_name}" _idx)
+        if (_idx EQUAL -1)
+            string(REPLACE "${_block}" "" _webkit_internal_modulemap "${_webkit_internal_modulemap}")
+        endif ()
+    endif ()
+endforeach ()
+
+# WKWebView is declared in the public OSX.modulemap; re-expose it here so Swift
+# files using `internal import WebKit_Internal` can see the type.
+string(REGEX REPLACE "\n}[ \t\r\n]*$" "" _webkit_internal_modulemap "${_webkit_internal_modulemap}")
+string(APPEND _webkit_internal_modulemap "
     module WKWebView {
         requires objc
         header \"${WebKit_FRAMEWORK_HEADERS_DIR}/WebKit/WKWebView.h\"
         export *
     }
-
-    module WKMaterialHostingSupport {
-        requires objc
-        header \"${WEBKIT_DIR}/Platform/cocoa/WKMaterialHostingSupport.h\"
-        export *
-    }
-
-    module _WKTextExtractionInternal {
-        requires objc
-        header \"${WEBKIT_DIR}/UIProcess/API/Cocoa/_WKTextExtractionInternal.h\"
-        export *
-    }
 }
 ")
+
+string(REGEX REPLACE "\n\n+" "\n\n" _webkit_internal_modulemap "${_webkit_internal_modulemap}")
+
+file(WRITE "${WebKit_CMAKE_MODULEMAP_DIR}/module.modulemap" "${_webkit_internal_modulemap}")
 set(WebKit_SWIFT_INTEROP_MODULE_PATH "${WebKit_CMAKE_MODULEMAP_DIR}")
 
 # Mirror flags to target_compile_options so native Swift compilation matches typecheck.
