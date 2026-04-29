@@ -182,7 +182,6 @@ http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-o
 http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url.html [ Failure ]
 http/tests/misc/iframe-beforeunload-dialog-not-matching-ancestor-securityorigin.html [ Failure ]
 http/tests/misc/webtiming-ssl.py [ Failure ]
-http/tests/misc/will-send-request-returns-null-on-redirect.html [ Failure ]
 http/tests/navigation/cross-origin-navigation-fires-onload.html [ Failure ]
 http/tests/navigation/cross-site-iframe-nav-with-bfcache.html [ Failure ]
 http/tests/navigation/fetch-pagecache.html [ Failure ]

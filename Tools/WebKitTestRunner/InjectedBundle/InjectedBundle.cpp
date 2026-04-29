@@ -377,6 +377,11 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
     if (m_timeout > 0_s)
         m_testRunner->setCustomTimeout(m_timeout);
 
+    if (booleanValue(settings, "WillSendRequestReturnsNullOnRedirect"))
+        m_testRunner->setWillSendRequestReturnsNullOnRedirect(true);
+    if (booleanValue(settings, "DumpResourceLoadCallbacks"))
+        m_testRunner->dumpResourceLoadCallbacks();
+
     if (testingMode != BegingTestingMode::New)
         return;
 

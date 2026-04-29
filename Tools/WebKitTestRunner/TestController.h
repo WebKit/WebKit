@@ -201,6 +201,10 @@ public:
     void setPluginSupportedMode(const String&);
 
     void dumpPolicyDelegateCallbacks() { m_dumpPolicyDelegateCallbacks = true; }
+    void setWillSendRequestReturnsNullOnRedirect(bool f) { m_willSendRequestReturnsNullOnRedirect = f; }
+    bool willSendRequestReturnsNullOnRedirect() const { return m_willSendRequestReturnsNullOnRedirect; }
+    void setDumpResourceLoadCallbacks(bool f) { m_dumpResourceLoadCallbacks = f; }
+    bool shouldDumpResourceLoadCallbacks() const { return m_dumpResourceLoadCallbacks; }
     void dumpFullScreenCallbacks() { m_dumpFullScreenCallbacks = true; }
     void waitBeforeFinishingFullscreenExit() { m_waitBeforeFinishingFullscreenExit = true; }
     void scrollDuringEnterFullscreen() { m_scrollDuringEnterFullscreen = true; }
@@ -884,6 +888,8 @@ private:
     size_t m_downloadIndex { 0 };
     bool m_shouldDownloadContentDispositionAttachments { true };
     bool m_dumpPolicyDelegateCallbacks { false };
+    bool m_willSendRequestReturnsNullOnRedirect { false };
+    bool m_dumpResourceLoadCallbacks { false };
     bool m_dumpFullScreenCallbacks { false };
     bool m_waitBeforeFinishingFullscreenExit { false };
     bool m_scrollDuringEnterFullscreen { false };

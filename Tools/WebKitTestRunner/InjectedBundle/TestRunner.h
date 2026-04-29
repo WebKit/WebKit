@@ -138,7 +138,7 @@ public:
     void dumpTitleChanges() { m_dumpTitleChanges = true; }
     void dumpFrameLoadCallbacks() { setShouldDumpFrameLoadCallbacks(true); }
     void dumpProgressFinishedCallback() { setShouldDumpProgressFinishedCallback(true); }
-    void dumpResourceLoadCallbacks() { m_dumpResourceLoadCallbacks = true; }
+    void dumpResourceLoadCallbacks();
     void dumpResourceResponseMIMETypes() { m_dumpResourceResponseMIMETypes = true; }
     void dumpWillCacheResponse() { m_dumpWillCacheResponse = true; }
     void dumpApplicationCacheDelegateCallbacks() { m_dumpApplicationCacheDelegateCallbacks = true; }
@@ -259,7 +259,7 @@ public:
     bool willSendRequestReturnsNull() const { return m_willSendRequestReturnsNull; }
     void setWillSendRequestReturnsNull(bool f) { m_willSendRequestReturnsNull = f; }
     bool willSendRequestReturnsNullOnRedirect() const { return m_willSendRequestReturnsNullOnRedirect; }
-    void setWillSendRequestReturnsNullOnRedirect(bool f) { m_willSendRequestReturnsNullOnRedirect = f; }
+    void setWillSendRequestReturnsNullOnRedirect(bool);
     void setWillSendRequestAddsHTTPBody(JSStringRef body) { m_willSendRequestHTTPBody = toWTFString(body); }
     String willSendRequestHTTPBody() const { return m_willSendRequestHTTPBody; }
 

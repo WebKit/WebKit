@@ -143,6 +143,8 @@ WKRetainPtr<WKMutableDictionaryRef> TestInvocation::createTestSettingsDictionary
     for (auto& host : TestController::singleton().allowedHosts())
         WKArrayAppendItem(allowedHostsValue.get(), toWK(host.c_str()).get());
     setValue(beginTestMessageBody, "AllowedHosts", allowedHostsValue);
+    setValue(beginTestMessageBody, "WillSendRequestReturnsNullOnRedirect", TestController::singleton().willSendRequestReturnsNullOnRedirect());
+    setValue(beginTestMessageBody, "DumpResourceLoadCallbacks", TestController::singleton().shouldDumpResourceLoadCallbacks());
 #if ENABLE(VIDEO)
     setValue(beginTestMessageBody, "CaptionDisplayMode", options().captionDisplayMode().c_str());
 #endif
@@ -538,6 +540,16 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
 
     if (WKStringIsEqualToUTF8CString(messageName, "DumpPolicyDelegateCallbacks")) {
         TestController::singleton().dumpPolicyDelegateCallbacks();
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetWillSendRequestReturnsNullOnRedirect")) {
+        TestController::singleton().setWillSendRequestReturnsNullOnRedirect(booleanValue(messageBody));
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetDumpResourceLoadCallbacks")) {
+        TestController::singleton().setDumpResourceLoadCallbacks(true);
         return;
     }
 

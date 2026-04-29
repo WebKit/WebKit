@@ -1624,6 +1624,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     m_downloadIndex = 0;
     m_shouldDownloadContentDispositionAttachments = true;
     m_dumpPolicyDelegateCallbacks = false;
+    m_willSendRequestReturnsNullOnRedirect = false;
+    m_dumpResourceLoadCallbacks = false;
     m_dumpFullScreenCallbacks = false;
     m_waitBeforeFinishingFullscreenExit = false;
     m_scrollDuringEnterFullscreen = false;
@@ -4260,6 +4262,37 @@ void TestController::decidePolicyForNavigationAction(WKPageRef page, WKNavigatio
 
     auto request = adoptWK(WKNavigationActionCopyRequest(navigationAction));
     auto targetFrame = adoptWK(WKNavigationActionCopyTargetFrameInfo(navigationAction));
+
+    // Under site isolation, a cross-site redirect in a subframe triggers a process swap before the
+    // injected bundle's willSendRequestForFrame can handle it. When willSendRequestReturnsNullOnRedirect
+    // is set, emulate the injected bundle's output (willSendRequest + "Returning null for this redirect"
+    // + didFailLoadingWithError) and block the navigation to produce identical output as without site isolation.
+    if (targetFrame && !WKFrameInfoGetIsMainFrame(targetFrame.get()) && m_willSendRequestReturnsNullOnRedirect && protectedCurrentInvocation()->options().siteIsolationEnabled() && WKNavigationActionIsRedirect(navigationAction)) {
+        if (auto url = adoptWK(WKURLRequestCopyURL(request.get()))) {
+            auto host = adoptWK(WKURLCopyHostName(url.get()));
+            auto scheme = adoptWK(WKURLCopyScheme(url.get()));
+            if (isExternalURLBlockable(host.get(), scheme.get()) && !m_allowedHosts.count(toSTD(host))) {
+                auto redirectResponseURL = adoptWK(WKNavigationActionCopyRedirectResponseURL(navigationAction));
+                auto redirectResponseStatusCode = WKNavigationActionGetRedirectResponseStatusCode(navigationAction);
+                auto redirectResponseURLString = redirectResponseURL ? toWTFString(adoptWK(WKURLCopyString(redirectResponseURL.get()))) : "(null)"_s;
+
+                StringBuilder output;
+                if (m_dumpResourceLoadCallbacks) {
+                    output.append(redirectResponseURLString, " - willSendRequest "_s, string(request.get(), page),
+                        " redirectResponse <NSURLResponse "_s, redirectResponseURLString,
+                        ", http status code "_s, redirectResponseStatusCode, ">\n"_s);
+                }
+                output.append("Returning null for this redirect\n"_s);
+                if (m_dumpResourceLoadCallbacks) {
+                    output.append(redirectResponseURLString,
+                        " - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -999>\n"_s);
+                }
+                protectedCurrentInvocation()->outputText(output.toString());
+                WKFramePolicyListenerIgnore(listener);
+                return;
+            }
+        }
+    }
 
     // Block access to external URLs in subframe navigations when site isolation is enabled.
     // With site isolation, the injected bundle's willSendRequestForFrame callback cannot emit

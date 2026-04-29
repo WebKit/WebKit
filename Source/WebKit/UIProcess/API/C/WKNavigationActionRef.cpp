@@ -65,3 +65,21 @@ WK_EXPORT bool WKNavigationActionHasUnconsumedUserGesture(WKNavigationActionRef 
 {
     return WebKit::toImpl(action)->isProcessingUnconsumedUserGesture();
 }
+
+bool WKNavigationActionIsRedirect(WKNavigationActionRef action)
+{
+    return WebKit::toImpl(action)->isRedirect();
+}
+
+WKURLRef WKNavigationActionCopyRedirectResponseURL(WKNavigationActionRef action)
+{
+    auto& response = WebKit::toImpl(action)->data().redirectResponse;
+    if (response.isNull())
+        return nullptr;
+    return WebKit::toCopiedURLAPI(response.url());
+}
+
+int WKNavigationActionGetRedirectResponseStatusCode(WKNavigationActionRef action)
+{
+    return WebKit::toImpl(action)->data().redirectResponse.httpStatusCode();
+}

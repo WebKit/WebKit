@@ -922,6 +922,18 @@ void TestRunner::dumpPolicyDelegateCallbacks()
     postMessage("DumpPolicyDelegateCallbacks");
 }
 
+void TestRunner::setWillSendRequestReturnsNullOnRedirect(bool f)
+{
+    m_willSendRequestReturnsNullOnRedirect = f;
+    postMessage("SetWillSendRequestReturnsNullOnRedirect", f);
+}
+
+void TestRunner::dumpResourceLoadCallbacks()
+{
+    m_dumpResourceLoadCallbacks = true;
+    postMessage("SetDumpResourceLoadCallbacks");
+}
+
 bool TestRunner::isStatisticsPrevalentResource(JSStringRef hostName)
 {
     return postSynchronousPageMessageReturningBoolean("IsStatisticsPrevalentResource", hostName);
