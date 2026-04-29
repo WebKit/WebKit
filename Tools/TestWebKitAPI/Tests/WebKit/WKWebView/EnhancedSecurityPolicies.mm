@@ -1345,6 +1345,8 @@ static void runHttpThenNavigateToHttpsSiteWithCookiesViaAPIAndSeenOutsideEnhance
 
 TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpThenNavigateToHttpsSiteWithCookiesViaAPIAndSeenOutsideEnhancedSecurity)
 
+#if HAVE(ENHANCED_SECURITY_HEURISTICS)
+
 TEST(EnhancedSecurityPolicies, NonPersistentDataStoreCookieNotification)
 {
     HTTPServer plaintextServer({
@@ -1365,6 +1367,8 @@ TEST(EnhancedSecurityPolicies, NonPersistentDataStoreCookieNotification)
 
     EXPECT_EQ(observerCallbacks, 1u);
 }
+
+#endif // HAVE(ENHANCED_SECURITY_HEURISTICS)
 
 TEST(EnhancedSecurityPolicies, HistoryEventsUseCorrectOriginalRequest)
 {

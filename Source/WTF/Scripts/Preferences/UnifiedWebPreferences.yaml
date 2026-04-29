@@ -2676,13 +2676,13 @@ EnhancedSecurityHeuristicsEnabled:
   humanReadableDescription: "Triggers EnhancedSecurity when insecure HTTP loads occur"
   defaultValue:
     WebKitLegacy:
-      "PLATFORM(COCOA)": true
+      "PLATFORM(COCOA) && HAVE(ENHANCED_SECURITY_HEURISTICS)": true
       default: false
     WebKit:
-      "PLATFORM(COCOA)": true
+      "PLATFORM(COCOA) && HAVE(ENHANCED_SECURITY_HEURISTICS)": true
       default: false
     WebCore:
-      "PLATFORM(COCOA)": true
+      "PLATFORM(COCOA) && HAVE(ENHANCED_SECURITY_HEURISTICS)": true
       default: false
 
 EnhancedSecurityLinksEnabled:

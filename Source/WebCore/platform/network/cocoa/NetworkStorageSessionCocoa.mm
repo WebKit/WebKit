@@ -139,14 +139,9 @@ void NetworkStorageSession::hasCookies(const RegistrableDomain& domain, Completi
     
     for (NSHTTPCookie *nsCookie in [nsCookieStorage() cookies]) {
         if (RegistrableDomain::uncheckedCreateFromHost(nsCookie.domain) == domain) {
-            hasCookieForDomain = true;
-            break;
+            return completionHandler(true);
         }
     }
-
-    // FIXME: rdar://168454473 (Remove workaround in CookieStorageObserver once CFNetwork bug is resolved)
-    if (m_cookieStorageObserver && cookieStorage().get())
-        protect(cookieStorageObserver())->registerInternalsForNotifications(true);
 
     completionHandler(hasCookieForDomain);
 }
