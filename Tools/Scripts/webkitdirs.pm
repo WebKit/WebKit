@@ -559,7 +559,7 @@ sub determineArchitecture
     }
 
     $architecture = nativeArchitecture([]);
-    if (isAppleCocoaWebKit() && $architecture eq "arm64") {
+    if (isDarwin() && $architecture eq "arm64") {
         determineXcodeSDK();
         if ($xcodeSDK =~ /\.internal$/ && $xcodeSDK !~ /simulator/) {
             # Device SDKs (macosx.internal, iphoneos.internal, etc.) default to arm64e.
@@ -573,7 +573,9 @@ sub determineArchitecture
             $compiler = $ENV{'CC'} if (defined($ENV{'CC'}));
             my @compiler_machine = split('-', `$compiler -dumpmachine`);
             $architecture = $compiler_machine[0];
-        } else {
+        } elsif (!isDarwin()) {
+            # On non-Apple, query cmake for the host processor.
+            # On Apple, architecture is determined by SDK (arm64e for internal SDK).
             my $prefix = "";
             # This gets called from argumentsForConfiguration() which needs to resolve the target architecture
             # before entering into the cross-toolchain-env, so to achieve that we call the cross-target cmake.
@@ -2869,6 +2871,19 @@ sub generateBuildSystemFromCMakeProject
     push @args, "-DENABLE_SANITIZERS=fuzzer" if libFuzzerIsEnabled();
 
     push @args, "-DLTO_MODE=$ltoMode" if ltoMode();
+
+    # Pass SDK and architecture to CMake, mirroring xcodebuild's SDKROOT= (line 1413).
+    if (isDarwin()) {
+        determineXcodeSDK();
+        if ($xcodeSDK) {
+            my $sdkPath = sdkDirectory($xcodeSDK);
+            push @args, "-DCMAKE_OSX_SYSROOT=\"$sdkPath\"" if $sdkPath;
+        }
+        determineArchitecture();
+        if ($architecture && $architecture ne nativeArchitecture([])) {
+            push @args, "-DCMAKE_OSX_ARCHITECTURES=$architecture";
+        }
+    }
 
     if (shouldUseVcpkg()) {
         push @args, '-DCMAKE_TOOLCHAIN_FILE="' . $ENV{VCPKG_ROOT} . '\\scripts\\buildsystems\\vcpkg.cmake"';

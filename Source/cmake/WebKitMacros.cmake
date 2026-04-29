@@ -629,6 +629,7 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         # of the modulemap and hader for WebKit's internal "APIs" which we
         # make available from C++ to Swift.
         list(APPEND _swift_options "-cxx-interoperability-mode=default" "-Xcc" "-std=c++2b" "-enable-upcoming-feature" "InternalImportsByDefault" "-Xcc" "-I${_interop_module_path}")
+        list(APPEND _swift_options "-swift-version" "6")
         # swiftc spawns swift-plugin-server under sandbox-exec to expand macros
         # (e.g. SwiftUI @State). When the cmake build itself runs inside an
         # outer sandbox that disallows nested sandbox_apply, macro expansion
@@ -636,6 +637,7 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         # found". -disable-sandbox skips the inner sandbox; the macros are
         # WebKit's own, so the isolation it provides isn't load-bearing here.
         list(APPEND _swift_options "-disable-sandbox")
+        list(APPEND _swift_options "-module-cache-path" "${CMAKE_BINARY_DIR}/SwiftModuleCache")
         if (NOT (PORT STREQUAL GTK OR PORT STREQUAL WPE))
             # This does not yet work on non-Apple platforms for reasons yet to be determined.
             list(APPEND _swift_options "-explicit-module-build")
@@ -681,7 +683,23 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
 
         set(_swift_sdk_flag "")
         if (APPLE AND CMAKE_OSX_SYSROOT)
-            set(_swift_sdk_flag -sdk ${CMAKE_OSX_SYSROOT})
+            set(_swift_sdk_flag
+                -sdk ${CMAKE_OSX_SYSROOT}
+                -Fsystem ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks
+                -Fsystem ${CMAKE_OSX_SYSROOT}/Library/Apple/System/Library/PrivateFrameworks
+                -Xcc -isystem -Xcc ${CMAKE_OSX_SYSROOT}/usr/local/include
+            )
+            if (CMAKE_OSX_ARCHITECTURES)
+                string(REGEX MATCH "[0-9]+\\.[0-9]+" _swift_sdk_ver "${CMAKE_OSX_SYSROOT}")
+                list(APPEND _swift_sdk_flag
+                    -target ${CMAKE_OSX_ARCHITECTURES}-apple-macosx${_swift_sdk_ver}
+                    -clang-target ${CMAKE_OSX_ARCHITECTURES}-apple-macosx${_swift_sdk_ver}
+                )
+            endif ()
+        endif ()
+
+        if (WEBKIT_ADDITIONS_INCLUDE_DIR)
+            list(APPEND _swift_sdk_flag -Xcc -isystem -Xcc ${WEBKIT_ADDITIONS_INCLUDE_DIR})
         endif ()
 
         set(_header_tmp_path "${_header_path}.tmp")
@@ -695,7 +713,6 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
                 ${${_target}_SWIFT_EXTRA_OPTIONS}
                 ${_swift_sdk_flag}
                 ${_swift_include_dirs}
-                ${_swift_xcc_options}
                 ${_swift_sources}
                 -module-name ${_module_name}
                 -emit-clang-header-path ${_header_tmp_path}

@@ -53,6 +53,8 @@ set(webrtc_SOURCES
     Source/third_party/abseil-cpp/absl/debugging/internal/address_is_readable.cc
     Source/third_party/abseil-cpp/absl/debugging/internal/demangle.cc
     Source/third_party/abseil-cpp/absl/debugging/internal/demangle_rust.cc
+    Source/third_party/abseil-cpp/absl/debugging/internal/decode_rust_punycode.cc
+    Source/third_party/abseil-cpp/absl/debugging/internal/utf8_for_code_point.cc
     Source/third_party/abseil-cpp/absl/debugging/internal/elf_mem_image.cc
     Source/third_party/abseil-cpp/absl/debugging/internal/examine_stack.cc
     Source/third_party/abseil-cpp/absl/debugging/internal/stack_consumption.cc

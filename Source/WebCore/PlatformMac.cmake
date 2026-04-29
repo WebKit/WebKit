@@ -562,6 +562,10 @@ list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
 )
 
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+    platform/graphics/cocoa/CVPixelBufferUtilities.h
+    platform/graphics/cocoa/ShareableCVPixelBuffer.h
+    platform/graphics/cocoa/ShareableCVPixelFormat.h
+
     Modules/ShapeDetection/Implementation/Cocoa/BarcodeDetectorImplementation.h
     Modules/ShapeDetection/Implementation/Cocoa/FaceDetectorImplementation.h
     Modules/ShapeDetection/Implementation/Cocoa/TextDetectorImplementation.h

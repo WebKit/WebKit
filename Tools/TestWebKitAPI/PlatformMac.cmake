@@ -123,6 +123,7 @@ list(APPEND TestWebKit_PRIVATE_INCLUDE_DIRECTORIES
 
 list(APPEND TestWebKit_LIBRARIES
     "-framework AuthenticationServices"
+    "-framework HID"
     "-framework LocalAuthentication"
     "-framework Network"
     "-framework QuartzCore"

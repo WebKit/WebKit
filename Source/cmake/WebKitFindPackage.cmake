@@ -23,7 +23,14 @@ macro(find_package package)
     if (USE_APPLE_ICU AND "${package}" STREQUAL "ICU")
         set(_found_package ON)
 
-        set(ICU_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/ICU/Headers)
+        # Use the SDK's ICU headers when the Internal SDK is present so
+        # Apple ICU SPI (e.g. ualoc_canonicalForm) is available — matching
+        # xcodebuild, which uses the SDK headers directly.
+        if (WK_USING_INTERNAL_SDK AND CMAKE_OSX_SYSROOT)
+            set(ICU_INCLUDE_DIRS "${CMAKE_OSX_SYSROOT}/usr/local/include")
+        else ()
+            set(ICU_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/ICU/Headers)
+        endif ()
 
         # Apple just has a single tbd/dylib for ICU.
         find_library(ICU_I18N_LIBRARY icucore)

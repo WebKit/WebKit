@@ -4,6 +4,12 @@ if (USE_MIMALLOC)
     add_subdirectory(mimalloc)
 endif ()
 
+set(bmalloc_INCLUDE_DIRECTORIES
+    "${bmalloc_FRAMEWORK_HEADERS_DIR}"
+)
+
+set(bmalloc_DEPENDENCIES bmalloc_CopyHeaders)
+
 set(bmalloc_PRIVATE_INCLUDE_DIRECTORIES
     "${BMALLOC_DIR}"
     "${BMALLOC_DIR}/bmalloc"
@@ -643,6 +649,7 @@ endif ()
 if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
     list(APPEND bmalloc_SOURCES
         bmalloc/TZoneLog.cpp
+        bmalloc/VMAllocate.cpp
     )
 endif ()
 
@@ -675,6 +682,13 @@ if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
             PROPERTIES COMPILE_OPTIONS "-O2"
         )
     endif ()
+endif ()
+
+# Always compile bmalloc/libpas at -O3 — tests time out when libpas is not
+# compiled with optimizations.
+if (APPLE)
+    add_compile_options($<$<COMPILE_LANGUAGE:C>:-O3>)
+    add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-O3>)
 endif ()
 
 set(bmalloc_COMPILE_OPTIONS
@@ -726,6 +740,10 @@ if (bmalloc_PRIVATE_FRAMEWORK_HEADERS_DIR)
 endif ()
 
 WEBKIT_FRAMEWORK(bmalloc)
+
+if (APPLE AND NOT bmalloc_LIBRARY_TYPE STREQUAL "OBJECT")
+    target_compile_definitions(bmalloc PRIVATE PAS_BMALLOC_HIDDEN)
+endif ()
 
 # Only build mbmalloc on platforms that MallocBench supports
 if (DEVELOPER_MODE AND (APPLE OR HAVE_MALLOC_TRIM))

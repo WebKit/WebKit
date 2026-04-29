@@ -8,6 +8,10 @@ add_definitions(-DBUILDING_WEBKIT=1)
 add_definitions(-DHAVE_CONFIG_H=1)
 add_definitions(-DPAS_BMALLOC=1)
 
+if (APPLE)
+    include(OptionsDarwin)
+endif ()
+
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 define_property(TARGET PROPERTY FOLDER INHERITED BRIEF_DOCS "folder" FULL_DOCS "IDE folder name")
 

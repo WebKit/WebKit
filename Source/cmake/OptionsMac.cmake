@@ -17,6 +17,7 @@ WEBKIT_OPTION_BEGIN()
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_API_TESTS PRIVATE ON)
 
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_APPLE_PAY PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_APPLE_PAY_DELEGATED_REQUEST PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MINIBROWSER PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_APPLICATION_MANIFEST PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_ASYNC_SCROLLING PRIVATE ON)
@@ -29,6 +30,7 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_CONTENT_FILTERING PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_CURSOR_VISIBILITY PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_DARK_MODE_CSS PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_DATACUE_VALUE PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_DEVICE_ORIENTATION PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_DRAG_SUPPORT PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_ENCRYPTED_MEDIA PRIVATE ON)
 # FIXME: CSSPaintingAPI static_assert fires when this is ON. https://bugs.webkit.org/show_bug.cgi?id=312028
@@ -42,9 +44,13 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_LEGACY_CUSTOM_PROTOCOL_MANAGER PRIVATE O
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_LEGACY_ENCRYPTED_MEDIA PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MEDIA_SOURCE PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MEDIA_RECORDER PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MEDIA_SESSION PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MEDIA_SESSION_COORDINATOR PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MEDIA_SESSION_PLAYLIST PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MEDIA_STREAM PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MEMORY_SAMPLER PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MOUSE_CURSOR_SCALE PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_NAVIGATOR_STANDALONE PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_PAYMENT_REQUEST PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_PDF_HUD PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_PDF_PLUGIN PRIVATE ON)
@@ -63,6 +69,7 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_TEXT_AUTOSIZING PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_VARIATION_FONTS PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_VIDEO_PRESENTATION_MODE PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBDRIVER_KEYBOARD_INTERACTIONS PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBDRIVER_BIDI PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBDRIVER_MOUSE_INTERACTIONS PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBDRIVER_WHEEL_INTERACTIONS PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBXR PRIVATE OFF)
@@ -130,6 +137,9 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS PRI
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MEDIA_CONTROLS_CONTEXT_MENUS PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MODEL_ELEMENT PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WRITING_TOOLS PRIVATE ON)
+
+# PlatformEnableCocoa.h-derived: unconditionally 1
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_STREAMING_IPC_IN_LOG_FORWARDING PRIVATE ON)
 
 WEBKIT_OPTION_END()
 
@@ -259,18 +269,47 @@ unset(_additions_candidates)
 unset(_additions)
 
 # Stub AppleFeatures.h when WebKitAdditions is present but the full Internal SDK is not.
-if (EXISTS "/usr/local/include/WebKitAdditions" AND NOT EXISTS "/usr/local/include/AppleFeatures/AppleFeatures.h")
-    set(_apple_features_stub "${CMAKE_BINARY_DIR}/generated-stubs/AppleFeatures")
-    file(MAKE_DIRECTORY "${_apple_features_stub}")
-    file(WRITE "${_apple_features_stub}/AppleFeatures.h"
-        "/* Auto-generated stub -- AppleFeatures not available in this SDK. */\n")
-    add_compile_options("$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-isystem${CMAKE_BINARY_DIR}/generated-stubs>")
-    message(STATUS "AppleFeatures stub generated (WebKitAdditions present, AppleFeatures SDK absent)")
-    unset(_apple_features_stub)
+set(_sysroot_local "${CMAKE_OSX_SYSROOT}/usr/local/include")
+if (NOT EXISTS "${_sysroot_local}/AppleFeatures/AppleFeatures.h")
+    if (EXISTS "${_sysroot_local}/WebKitAdditions" OR EXISTS "/usr/local/include/WebKitAdditions")
+        set(_apple_features_stub "${CMAKE_BINARY_DIR}/generated-stubs/AppleFeatures")
+        file(MAKE_DIRECTORY "${_apple_features_stub}")
+        file(WRITE "${_apple_features_stub}/AppleFeatures.h"
+            "/* Auto-generated stub -- AppleFeatures not available in this SDK. */\n")
+        add_compile_options("$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-isystem${CMAKE_BINARY_DIR}/generated-stubs>")
+        message(STATUS "AppleFeatures stub generated (WebKitAdditions present, AppleFeatures SDK absent)")
+        unset(_apple_features_stub)
+    endif ()
 endif ()
-# Add PrivateFrameworks to framework search path (mirrors Base.xcconfig).
+unset(_sysroot_local)
+
+include("${CMAKE_SOURCE_DIR}/../Internal/WebKit/WebKitAdditions/WebKitAdditions.cmake" OPTIONAL)
+
+# Disable features whose WebKitAdditions source integration is incomplete.
+add_definitions(-DENABLE_MAC_GESTURE_EVENTS=0)
+add_definitions(-DENABLE_IOS_GESTURE_EVENTS=0)
+add_definitions(-DENABLE_TOUCH_EVENTS=0)
+
+# Ensure Swift compiles for the correct target architecture. CMake passes
+# -arch to clang but swiftc needs -target and -clang-target instead.
+if (CMAKE_OSX_ARCHITECTURES AND CMAKE_OSX_SYSROOT)
+    string(REGEX MATCH "[0-9]+\\.[0-9]+" _sdk_version "${CMAKE_OSX_SYSROOT}")
+    set(_swift_target "${CMAKE_OSX_ARCHITECTURES}-apple-macosx${_sdk_version}")
+    add_compile_options(
+        "$<$<COMPILE_LANGUAGE:Swift>:-target>" "$<$<COMPILE_LANGUAGE:Swift>:${_swift_target}>"
+    )
+    # Swift linker also needs -target for the correct architecture (arm64e).
+    # CMAKE_Swift_FLAGS is passed to both compilation and linking by CMake.
+    string(APPEND CMAKE_Swift_FLAGS " -target ${_swift_target}")
+    unset(_swift_target)
+    unset(_sdk_version)
+endif ()
+
+# Add PrivateFrameworks to framework search path (mirrors PAL.xcconfig
+# SYSTEM_FRAMEWORK_SEARCH_PATHS).  swiftc-wrapper.sh translates -iframework
+# to -Fsystem for Swift.
 if (CMAKE_OSX_SYSROOT)
-    add_compile_options("$<$<NOT:$<COMPILE_LANGUAGE:Swift>>:-iframework${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks>")
+    add_compile_options("-iframework${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks")
 endif ()
 
 # FIXME: Audit and reduce these suppressions. https://bugs.webkit.org/show_bug.cgi?id=312034

@@ -14,6 +14,14 @@ for arg in "$@"; do
         "-msse2") ;;
         "-pthread") ;;
         "-include") skip_next=1 ;;
+        # Translate clang's -iframework to swiftc's -Fsystem.
+        "-iframework"*)
+            args+=("-Fsystem" "${arg#-iframework}")
+            ;;
+        # Translate clang's -isystem to swiftc's -Xcc -isystem -Xcc.
+        "-isystem"*)
+            args+=("-Xcc" "-isystem" "-Xcc" "${arg#-isystem}")
+            ;;
         # CMake leaks clang linker flags into swiftc; translate them.
         "-compatibility_version"|"-current_version")
             args+=("-Xlinker" "$arg")
@@ -33,6 +41,10 @@ for arg in "$@"; do
         "--original-swift-compiler="*)
             REAL_SWIFTC="${arg#--original-swift-compiler=}"
             ;;
+        "-target")
+            capture_target=1
+            args+=("$arg")
+            ;;
         "-D"*)
             args+=("$arg" "-Xcc" "$arg")
             ;;
@@ -42,6 +54,9 @@ for arg in "$@"; do
             elif [[ -n "$skip_next_as_xlinker" ]]; then
                 args+=("-Xlinker" "$arg")
                 skip_next_as_xlinker=
+            elif [[ -n "$capture_target" ]]; then
+                args+=("$arg" "-clang-target" "$arg")
+                capture_target=
             else
                 args+=("$arg")
             fi

@@ -3122,6 +3122,18 @@ endif ()
 # Force CXX linker -- swiftc mishandles -I include paths during linking.
 set_target_properties(WebCore PROPERTIES LINKER_LANGUAGE CXX)
 
+if (APPLE AND PAL_LIBRARY_TYPE STREQUAL "STATIC")
+    target_link_options(WebCore PRIVATE "LINKER:-force_load,$<TARGET_FILE:PAL>")
+    execute_process(
+        COMMAND ${ORIGINAL_Swift_COMPILER} -print-target-info
+        OUTPUT_VARIABLE _webcore_swift_info
+    )
+    string(JSON _webcore_swift_paths GET ${_webcore_swift_info} "paths")
+    string(JSON _webcore_swift_rt GET ${_webcore_swift_paths} "runtimeLibraryPaths")
+    string(JSON _webcore_swift_rt_first GET ${_webcore_swift_rt} 0)
+    target_link_libraries(WebCore PRIVATE "-L${_webcore_swift_rt_first}" "-lswiftCore")
+endif ()
+
 if (APPLE)
     # Use target_link_options with LINKER: so CMake translates these for
     # whichever linker driver is used (clang or swiftc).

@@ -78,7 +78,7 @@
 #define BOS_HAIKU 1
 #endif
 
-#if BOS(DARWIN) && !defined(BUILDING_WITH_CMAKE)
+#if BOS(DARWIN)
 #if TARGET_OS_IOS
 #define BOS_IOS 1
 #define BPLATFORM_IOS 1

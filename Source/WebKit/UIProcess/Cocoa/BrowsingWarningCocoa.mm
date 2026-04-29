@@ -159,7 +159,7 @@ static NSString *browsingWarningText(BrowsingWarning::Data data)
 
 static NSMutableAttributedString *browsingDetailsText(const URL& url, SSBServiceLookupResult *result)
 {
-    BROWSING_WARNING_DETAILS_TEXT_ADDITIONS
+    BROWSING_WARNING_DETAILS_TEXT_ADDITIONS;
 
     if (result.isPhishing) {
         RetainPtr phishingDescription = WEB_UI_NSSTRING(@"Warnings are shown for websites that have been reported as deceptive. Deceptive websites try to trick you into believing they are legitimate websites you trust.", "Phishing warning description");

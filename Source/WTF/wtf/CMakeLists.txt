@@ -586,9 +586,11 @@ set(WTF_SOURCES
     ParallelHelperPool.cpp
     ParallelJobsGeneric.cpp
     ParkingLot.cpp
+    PlatformRegisters.cpp
     PreciseSum.cpp
     PrintStream.cpp
     ProcessPrivilege.cpp
+    PtrTag.cpp
     RAMSize.cpp
     RandomDevice.cpp
     ReadWriteLock.cpp
@@ -776,6 +778,12 @@ elseif (CMAKE_SYSTEM_NAME MATCHES "Linux")
         linux/ProcessMemoryFootprint.h
     )
 endif ()
+
+set(WTF_INCLUDE_DIRECTORIES
+    "${WTF_FRAMEWORK_HEADERS_DIR}"
+)
+
+set(WTF_DEPENDENCIES WTF_CopyHeaders)
 
 set(WTF_PRIVATE_INCLUDE_DIRECTORIES
     "${CMAKE_BINARY_DIR}"

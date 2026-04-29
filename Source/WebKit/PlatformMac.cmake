@@ -154,6 +154,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     # they self-guard with feature checks, safe to include-path them.
     "${WEBKIT_DIR}/WebKitSwift/MarketplaceKit"
     "${WEBKIT_DIR}/WebKitSwift/WritingTools"
+    "${WEBKIT_DIR}/WebKitSwift/GroupActivities"
     "${WEBKIT_DIR}/Platform/spi/Cocoa"
     "${WEBKIT_DIR}/Platform/spi/mac"
     "${WEBKIT_DIR}/Platform/IPC/darwin"
@@ -289,6 +290,7 @@ set(WebKit_SWIFT_INCLUDE_DIRECTORIES
 # so the actual Swift compilation sees the same flags.
 target_compile_options(WebKit PRIVATE
     "$<$<COMPILE_LANGUAGE:Swift>:-DHAVE_MATERIAL_HOSTING>"
+    "$<$<COMPILE_LANGUAGE:Swift>:-DUSE_APPLE_INTERNAL_SDK>"
     "$<$<COMPILE_LANGUAGE:Swift>:-I${WEBKIT_DIR}/Platform/spi/Cocoa>"
     "$<$<COMPILE_LANGUAGE:Swift>:-I${WEBKIT_DIR}/Platform/spi/Cocoa/Modules>"
     "$<$<COMPILE_LANGUAGE:Swift>:-I${WEBKIT_DIR}/Platform/spi/ios>"
@@ -301,6 +303,7 @@ target_compile_options(WebKit PRIVATE
 
 set(WebKit_SWIFT_EXTRA_OPTIONS
     -DHAVE_MATERIAL_HOSTING
+    -DUSE_APPLE_INTERNAL_SDK
     -Xcc -I${WebKit_FRAMEWORK_HEADERS_DIR}
     -Xcc -I${WTF_FRAMEWORK_HEADERS_DIR}
     -Xcc -I${bmalloc_FRAMEWORK_HEADERS_DIR}
@@ -1153,6 +1156,12 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
     endforeach ()
     if (EXISTS "${CMAKE_BINARY_DIR}/generated-stubs/AppleFeatures/AppleFeatures.h")
         list(APPEND _sb_extra_includes "-isystem" "${CMAKE_BINARY_DIR}/generated-stubs")
+    endif ()
+    if (CMAKE_OSX_SYSROOT)
+        list(APPEND _sb_extra_includes "-isystem" "${CMAKE_OSX_SYSROOT}/usr/local/include")
+    endif ()
+    if (WEBKIT_ADDITIONS_INCLUDE_DIR)
+        list(APPEND _sb_extra_includes "-isystem" "${WEBKIT_ADDITIONS_INCLUDE_DIR}")
     endif ()
     # Sandbox profiles gate ASan-required syscalls (SYS_sigaltstack, ...) on
     # #if ASAN_ENABLED, which wtf/Compiler.h derives from

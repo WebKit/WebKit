@@ -99,6 +99,7 @@ if (SWIFT_REQUIRED AND NOT (PORT STREQUAL GTK OR PORT STREQUAL WPE))
     set(PAL_SWIFT_EXTRA_OPTIONS
         "-import-underlying-module"
         "-strict-memory-safety"
+        # TODO: Remove -swift-version here; now set globally in WebKitMacros.cmake.
         "-swift-version" "6"
         "-Xcc" "-I${PAL_FRAMEWORK_HEADERS_DIR}"
         "-Xcc" "-I${CMAKE_BINARY_DIR}/WTF/Headers"

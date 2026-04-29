@@ -58,6 +58,7 @@ PAS_END_EXTERN_C;
 #define PAS_USE_ULOCK_SPI 1
 #define PAS_USE_ULOCK_FLAGS_API 0
 #if !defined(OS_UNFAIR_LOCK_INLINE) || !OS_UNFAIR_LOCK_INLINE
+// FIXME: Define OS_UNFAIR_LOCK_INLINE here instead of requiring the build system to pass it.
 #pragma message "OS_UNFAIR_LOCK_INLINE needs to be enabled."
 #endif
 #include <os/lock_private.h>
