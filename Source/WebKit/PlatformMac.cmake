@@ -39,6 +39,9 @@ list(APPEND WebKit_PRIVATE_LIBRARIES "-weak_framework PowerLog")
 list(APPEND WebKit_SOURCES
     NetworkProcess/mac/NetworkConnectionToWebProcessMac.mm
 
+    ${WEBKIT_DIR}/UIProcess/Cocoa/Foundation+Extras.swift
+    ${WEBKIT_DIR}/UIProcess/Cocoa/WKScrollGeometryAdapter.swift
+
     UIProcess/PDF/WKPDFHUDView.mm
     ${WEBKIT_DIR}/UIProcess/PDF/WKPDFHUDView.swift
     ${WEBKIT_DIR}/Platform/cocoa/WKMaterialHostingSupport.swift
@@ -101,6 +104,7 @@ string(REPLACE "header \"WebKitInternalCxx.h\""
 set(_webkit_internal_allowed_submodules
     WKMaterialHostingSupport
     WKPDFHUDView
+    WKScrollGeometry
     _WKTextExtractionInternal
 )
 string(REGEX MATCHALL
@@ -138,6 +142,7 @@ set(WebKit_SWIFT_INTEROP_MODULE_PATH "${WebKit_CMAKE_MODULEMAP_DIR}")
 # Must go in WebKit_COMPILE_OPTIONS (applied after -warnings-as-errors in _WEBKIT_TARGET_SETUP).
 list(APPEND WebKit_COMPILE_OPTIONS "$<$<COMPILE_LANGUAGE:Swift>:-no-warnings-as-errors>")
 target_compile_options(WebKit PRIVATE
+    "$<$<COMPILE_LANGUAGE:Swift>:-DENABLE_SWIFTUI>"
     "$<$<COMPILE_LANGUAGE:Swift>:-DHAVE_MATERIAL_HOSTING>"
     "$<$<COMPILE_LANGUAGE:Swift>:-I${WEBKIT_DIR}/Platform/spi/Cocoa>"
     "$<$<COMPILE_LANGUAGE:Swift>:-I${WEBKIT_DIR}/Platform/spi/Cocoa/Modules>"
@@ -150,6 +155,7 @@ target_compile_options(WebKit PRIVATE
 )
 
 set(WebKit_SWIFT_EXTRA_OPTIONS
+    -DENABLE_SWIFTUI
     -DHAVE_MATERIAL_HOSTING
     -Xcc -I${WebKit_FRAMEWORK_HEADERS_DIR}
     -Xcc -I${WTF_FRAMEWORK_HEADERS_DIR}
