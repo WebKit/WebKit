@@ -409,14 +409,13 @@ let AutomationSessionProxy = class AutomationSessionProxy
                     }
                     return { type: "array", value: serializedArray };
                 } else {
-                    // Deterministic key ordering for plain objects.
-                    let serializedObject = {};
+                    let serializedPairs = [];
                     let keys = Object.keys(value).sort();
                     for (let i = 0; i < keys.length; ++i) {
                         let key = keys[i];
-                        serializedObject[key] = this.serializeBidiRemoteValue(value[key], maxObjectDepth, depth + 1, visitedObjects);
+                        serializedPairs.push([key, this.serializeBidiRemoteValue(value[key], maxObjectDepth, depth + 1, visitedObjects)]);
                     }
-                    return { type: "object", value: serializedObject };
+                    return { type: "object", value: serializedPairs };
                 }
             } finally {
                 visitedObjects.delete(value);
