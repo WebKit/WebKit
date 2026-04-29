@@ -697,7 +697,8 @@ const String& convertEnumerationToString(FetchMetadataSite enumerationValue)
 
 static void updateRequestFetchMetadataHeaders(ResourceRequest& request, const ResourceLoaderOptions& options, FetchMetadataSite site)
 {
-    // Implementing step 13 of https://fetch.spec.whatwg.org/#http-network-or-cache-fetch as of 22 Feb 2022
+    // https://fetch.spec.whatwg.org/#http-network-or-cache-fetch
+    // 8.13. Append the Fetch metadata headers for httpRequest.
     // https://w3c.github.io/webappsec-fetch-metadata/#fetch-integration
     Ref requestOrigin = SecurityOrigin::create(request.url());
     if (!requestOrigin->isPotentiallyTrustworthy())
@@ -1007,24 +1008,30 @@ static bool shouldUpdateFetchMetadata(const LocalFrame& frame, const ResourceReq
 
 void CachedResourceLoader::updateHTTPRequestHeaders(FrameLoader& frameLoader, CachedResource::Type type, CachedResourceRequest& request)
 {
-    // Implementing steps 11 to 19 of https://fetch.spec.whatwg.org/#http-network-or-cache-fetch as of 22 Feb 2022.
-
+    // Implementing steps 8.11 to 8.12 of https://fetch.spec.whatwg.org/#http-network-or-cache-fetch.
     // FIXME: We should reconcile handling of MainResource with other resources.
     if (type != CachedResource::Type::MainResource && request.options().cachingPolicy != CachingPolicy::AllowCachingMainResourcePrefetch)
         request.updateReferrerAndOriginHeaders(frameLoader);
+
     // FetchMetadata depends on PSL to determine same-site relationships and without this
     // ability it is best to not set any FetchMetadata headers as sites generally expect
     // all of them or none.
+    // Implementing step 8.13 of https://fetch.spec.whatwg.org/#http-network-or-cache-fetch.
     Ref frame = frameLoader.frame();
     if (shouldUpdateFetchMetadata(frame, request.resourceRequest(), type, request.options().mode)) {
         auto site = computeFetchMetadataSite(request.resourceRequest(), type, request.options().mode, frame, frame->isMainFrame() && m_documentLoader && m_documentLoader->isRequestFromClientOrUserInput(), m_documentLoader.get());
         updateRequestFetchMetadataHeaders(request.resourceRequest(), request.options(), site);
     }
+    // Implementing step 8.15 of https://fetch.spec.whatwg.org/#http-network-or-cache-fetch.
     request.updateUserAgentHeader(frameLoader);
 
     if (frame->loader().loadType() == FrameLoadType::ReloadFromOrigin)
         request.updateCacheModeIfNeeded(cachePolicy(type, request.resourceRequest().url()));
+
+    // Implementing steps 8.16 to 8.18 of https://fetch.spec.whatwg.org/#http-network-or-cache-fetch.
     request.updateAccordingCacheMode();
+
+    // Implementing step 8.19 of https://fetch.spec.whatwg.org/#http-network-or-cache-fetch.
     request.updateAcceptEncodingHeader();
 }
 

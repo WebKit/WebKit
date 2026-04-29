@@ -222,6 +222,8 @@ void CachedResourceRequest::disableCachingIfNeeded()
 
 void CachedResourceRequest::updateAccordingCacheMode()
 {
+    // https://fetch.spec.whatwg.org/#http-network-or-cache-fetch
+    // 16. If httpRequest’s cache mode is "default" and httpRequest’s header list contains `If-Modified-Since`, `If-None-Match`, `If-Unmodified-Since`, `If-Match`, or `If-Range`, then set httpRequest’s cache mode to "no-store".
     if (m_options.cache == FetchOptions::Cache::Default
         && (m_resourceRequest.hasHTTPHeaderField(HTTPHeaderName::IfModifiedSince)
             || m_resourceRequest.hasHTTPHeaderField(HTTPHeaderName::IfNoneMatch)
@@ -233,16 +235,21 @@ void CachedResourceRequest::updateAccordingCacheMode()
     switch (m_options.cache) {
     case FetchOptions::Cache::NoCache:
         m_resourceRequest.setCachePolicy(ResourceRequestCachePolicy::RefreshAnyCacheData);
+        // 8.17. If httpRequest’s cache mode is "no-cache", httpRequest’s prevent no-cache cache-control header modification flag is unset, and httpRequest’s header list does not contain `Cache-Control`, then append (`Cache-Control`, `max-age=0`) to httpRequest’s header list.
         m_resourceRequest.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::CacheControl, HTTPHeaderValues::maxAge0());
         break;
     case FetchOptions::Cache::NoStore:
         m_resourceRequest.setCachePolicy(ResourceRequestCachePolicy::DoNotUseAnyCache);
+        // 8.18.1. If httpRequest’s header list does not contain `Pragma`, then append (`Pragma`, `no-cache`) to httpRequest’s header list.
         m_resourceRequest.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::Pragma, HTTPHeaderValues::noCache());
+        // 8.18.2. If httpRequest’s header list does not contain `Cache-Control`, then append (`Cache-Control`, `no-cache`) to httpRequest’s header list.
         m_resourceRequest.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::CacheControl, HTTPHeaderValues::noCache());
         break;
     case FetchOptions::Cache::Reload:
         m_resourceRequest.setCachePolicy(ResourceRequestCachePolicy::ReloadIgnoringCacheData);
+        // 8.18.1. If httpRequest’s header list does not contain `Pragma`, then append (`Pragma`, `no-cache`) to httpRequest’s header list.
         m_resourceRequest.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::Pragma, HTTPHeaderValues::noCache());
+        // 8.18.2. If httpRequest’s header list does not contain `Cache-Control`, then append (`Cache-Control`, `no-cache`) to httpRequest’s header list.
         m_resourceRequest.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::CacheControl, HTTPHeaderValues::noCache());
         break;
     case FetchOptions::Cache::Default:
@@ -264,6 +271,8 @@ void CachedResourceRequest::updateCacheModeIfNeeded(CachePolicy cachePolicy)
 
 void CachedResourceRequest::updateAcceptEncodingHeader()
 {
+    // https://fetch.spec.whatwg.org/#http-network-or-cache-fetch
+    // 8.19. If httpRequest’s header list contains `Range`, then append (`Accept-Encoding`, `identity`) to httpRequest’s header list.
     if (!m_resourceRequest.hasHTTPHeaderField(HTTPHeaderName::Range))
         return;
 
@@ -297,7 +306,8 @@ void CachedResourceRequest::updateReferrerPolicy(ReferrerPolicy defaultPolicy)
 
 void CachedResourceRequest::updateReferrerAndOriginHeaders(FrameLoader& frameLoader)
 {
-    // Implementing step 9 to 11 of https://fetch.spec.whatwg.org/#http-network-or-cache-fetch as of 16 March 2018
+    // https://fetch.spec.whatwg.org/#http-network-or-cache-fetch
+    // 8.11. If httpRequest’s referrer is a URL, then:
     URL outgoingReferrerURL;
     if (m_resourceRequest.hasHTTPReferrer())
         outgoingReferrerURL = URL { m_resourceRequest.httpReferrer() };
@@ -308,14 +318,23 @@ void CachedResourceRequest::updateReferrerAndOriginHeaders(FrameLoader& frameLoa
     if (!m_resourceRequest.httpOrigin().isEmpty())
         return;
 
+    // https://fetch.spec.whatwg.org/#http-network-or-cache-fetch
+    // 8.12. Append a request `Origin` header for httpRequest.
+
+    // https://fetch.spec.whatwg.org/#append-a-request-origin-header
+    // 2. Let serializedOrigin be the result of byte-serializing a request origin with request.
     RefPtr document = frameLoader.frame().document();
     auto actualOrigin = (document && m_options.destination == FetchOptionsDestination::EmptyString && m_initiatorType == cachedResourceRequestInitiatorTypes().fetch) ? Ref { document->securityOrigin() } : SecurityOrigin::create(outgoingReferrerURL);
     String outgoingOrigin;
-    if (m_options.mode == FetchOptions::Mode::Cors)
+    if (m_options.mode == FetchOptions::Mode::Cors) {
+        // 3. If request’s response tainting is "cors" or request’s mode is either "websocket" or "webtransport", then append (`Origin`, serializedOrigin) to request’s header list.
         outgoingOrigin = actualOrigin->toString();
-    else
+    } else {
+        // 4. Otherwise, if request’s method is neither `GET` nor `HEAD`, then:
         outgoingOrigin = SecurityPolicy::generateOriginHeader(m_options.referrerPolicy, m_resourceRequest.url(), actualOrigin, OriginAccessPatternsForWebProcess::singleton());
+    }
 
+    // 3. or 4.2. Append (`Origin`, serializedOrigin) to request’s header list.
     FrameLoader::addHTTPOriginIfNeeded(m_resourceRequest, outgoingOrigin);
 }
 

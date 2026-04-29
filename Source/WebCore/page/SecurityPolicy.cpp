@@ -138,6 +138,8 @@ String SecurityPolicy::generateReferrerHeader(ReferrerPolicy referrerPolicy, con
 
 String SecurityPolicy::generateOriginHeader(ReferrerPolicy referrerPolicy, const URL& url, const SecurityOrigin& securityOrigin, const OriginAccessPatterns& patterns)
 {
+    // https://fetch.spec.whatwg.org/#append-a-request-origin-header
+    // 4.1. If request’s mode is not "cors", then switch on request’s referrer policy:
     switch (referrerPolicy) {
     case ReferrerPolicy::NoReferrer:
         return "null"_s;

@@ -75,9 +75,12 @@ static ExceptionOr<String> computeReferrer(ScriptExecutionContext& context, cons
 
 static std::optional<Exception> buildOptions(FetchOptions& options, ResourceRequest& request, String& referrer, RequestPriority& priority, ScriptExecutionContext& context, const FetchRequest::Init& init)
 {
+    // https://fetch.spec.whatwg.org/#dom-request
+    // 10. If init["window"] exists and is non-null, then throw a TypeError.
     if (!init.window.isUndefinedOrNull() && !init.window.isEmpty())
         return Exception { ExceptionCode::TypeError, "Window can only be null."_s };
 
+    // 13. If init is not empty, then:
     if (init.hasMembers()) {
         if (options.mode == FetchOptions::Mode::Navigate)
             options.mode = FetchOptions::Mode::SameOrigin;
@@ -85,6 +88,7 @@ static std::optional<Exception> buildOptions(FetchOptions& options, ResourceRequ
         options.referrerPolicy = { };
     }
 
+    // 14. If init["referrer"] exists, then:
     if (!init.referrer.isNull()) {
         auto result = computeReferrer(context, init.referrer);
         if (result.hasException())
@@ -92,39 +96,52 @@ static std::optional<Exception> buildOptions(FetchOptions& options, ResourceRequ
         referrer = result.releaseReturnValue();
     }
 
+    // 15. If init["referrerPolicy"] exists, then set request’s referrer policy to it.
     if (init.referrerPolicy)
         options.referrerPolicy = init.referrerPolicy.value();
 
-    if (init.priority)
-        priority = *init.priority;
-
+    // 16. Let mode be init["mode"] if it exists, and fallbackMode otherwise.
+    // 17. If mode is "navigate", then throw a TypeError.
+    // 18. If mode is non-null, set request’s mode to mode.
     if (init.mode) {
         options.mode = init.mode.value();
         if (options.mode == FetchOptions::Mode::Navigate)
             return Exception { ExceptionCode::TypeError, "Request constructor does not accept navigate fetch mode."_s };
     }
 
+    // 19. If init["credentials"] exists, then set request’s credentials mode to it.
     if (init.credentials)
         options.credentials = init.credentials.value();
 
+    // 20. If init["cache"] exists, then set request’s cache mode to it.
     if (init.cache)
         options.cache = init.cache.value();
+
+    // 21. If request’s cache mode is "only-if-cached" and request’s mode is not "same-origin", then throw a TypeError.
     if (options.cache == FetchOptions::Cache::OnlyIfCached && options.mode != FetchOptions::Mode::SameOrigin)
         return Exception { ExceptionCode::TypeError, "only-if-cached cache option requires fetch mode to be same-origin."_s  };
 
+    // 22. If init["redirect"] exists, then set request’s redirect mode to it.
     if (init.redirect)
         options.redirect = init.redirect.value();
 
+    // 23. If init["integrity"] exists, then set request’s integrity metadata to it.
     if (!init.integrity.isNull())
         options.integrity = init.integrity;
 
+    // 24. If init["keepalive"] exists, then set request’s keepalive to it.
     if (init.keepalive && init.keepalive.value())
         options.keepAlive = true;
 
+    // 25. If init["method"] exists, then:
     if (!init.method.isNull()) {
         if (auto exception = setMethod(request, init.method))
             return exception;
     }
+
+    // 27. If init["priority"] exists, then:
+    if (init.priority)
+        priority = *init.priority;
 
     return std::nullopt;
 }
@@ -168,6 +185,8 @@ ExceptionOr<void> FetchRequest::initializeOptions(const Init& init)
     if (exception)
         return WTF::move(exception.value());
 
+    // https://fetch.spec.whatwg.org/#dom-request
+    // 32. If this’s request’s mode is "no-cors", then:
     if (m_options.mode == FetchOptions::Mode::NoCors) {
         const String& method = m_request.httpMethod();
         if (method != "GET"_s && method != "POST"_s && method != "HEAD"_s)
@@ -320,14 +339,18 @@ ExceptionOr<void> FetchRequest::setBody(FetchRequest& request)
 
 ExceptionOr<Ref<FetchRequest>> FetchRequest::create(ScriptExecutionContext& context, Info&& input, Init&& init)
 {
+    // https://fetch.spec.whatwg.org/#dom-request
+
     auto request = adoptRef(*new FetchRequest(context, std::nullopt, FetchHeaders::create(FetchHeaders::Guard::Request), { }, { }, { }));
     request->suspendIfNeeded();
 
     if (std::holds_alternative<String>(input)) {
+        // 5. If input is a string, then:
         auto result = request->initializeWith(std::get<String>(input), WTF::move(init));
         if (result.hasException())
             return result.releaseException();
     } else {
+        // 6.Otherwise:
         auto result = request->initializeWith(std::get<Ref<FetchRequest>>(input).get(), WTF::move(init));
         if (result.hasException())
             return result.releaseException();

@@ -4343,6 +4343,8 @@ void FrameLoader::loadedResourceFromMemoryCache(CachedResource& resource, Resour
 
 void FrameLoader::applyUserAgentIfNeeded(ResourceRequest& request)
 {
+    // https://fetch.spec.whatwg.org/#http-network-or-cache-fetch
+    // 8.15. If httpRequest’s header list does not contain `User-Agent`, then user agents should:
     if (!request.hasHTTPHeaderField(HTTPHeaderName::UserAgent)) {
         String userAgent = this->userAgent(request.url());
         ASSERT(!userAgent.isNull());

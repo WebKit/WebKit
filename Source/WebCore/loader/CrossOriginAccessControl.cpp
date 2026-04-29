@@ -269,15 +269,22 @@ bool CrossOriginAccessControlCheckDisabler::crossOriginAccessControlCheckEnabled
 
 Expected<void, String> passesAccessControlCheck(const ResourceResponse& response, StoredCredentialsPolicy storedCredentialsPolicy, const SecurityOrigin& securityOrigin, const CrossOriginAccessControlCheckDisabler* checkDisabler)
 {
+    // https://fetch.spec.whatwg.org/#cors-check
+
     // A wildcard Access-Control-Allow-Origin can not be used if credentials are to be sent,
     // even with Access-Control-Allow-Credentials set to true.
+
+    // 1. Let origin be the result of getting `Access-Control-Allow-Origin` from response’s header list.
     const String& accessControlOriginString = response.httpHeaderField(HTTPHeaderName::AccessControlAllowOrigin);
+
+    // 3. If request’s credentials mode is not "include" and origin is `*`, then return success.
     bool starAllowed = storedCredentialsPolicy == StoredCredentialsPolicy::DoNotUse;
     if (!starAllowed)
         starAllowed = checkDisabler && !checkDisabler->crossOriginAccessControlCheckEnabled();
     if (accessControlOriginString == "*"_s && starAllowed)
         return { };
 
+    // 4. If the result of byte-serializing a request origin with request is not origin, then return failure.
     String securityOriginString = securityOrigin.toString();
     if (accessControlOriginString != securityOriginString) {
         if (accessControlOriginString == "*"_s)
@@ -287,13 +294,19 @@ Expected<void, String> passesAccessControlCheck(const ResourceResponse& response
         return makeUnexpected(makeString("Origin "_s, securityOriginString, " is not allowed by Access-Control-Allow-Origin."_s, " Status code: "_s, response.httpStatusCode()));
     }
 
-    if (storedCredentialsPolicy == StoredCredentialsPolicy::Use) {
-        const String& accessControlCredentialsString = response.httpHeaderField(HTTPHeaderName::AccessControlAllowCredentials);
-        if (accessControlCredentialsString != "true"_s)
-            return makeUnexpected("Credentials flag is true, but Access-Control-Allow-Credentials is not \"true\"."_s);
-    }
+    // 5. If request’s credentials mode is not "include", then return success.
+    if (storedCredentialsPolicy != StoredCredentialsPolicy::Use)
+        return { };
 
-    return { };
+    // 6. Let credentials be the result of getting `Access-Control-Allow-Credentials` from response’s header list.
+    const String& accessControlCredentialsString = response.httpHeaderField(HTTPHeaderName::AccessControlAllowCredentials);
+
+    // 7. If credentials is `true`, then return success.
+    if (accessControlCredentialsString == "true"_s)
+        return { };
+
+    // 8. Return failure.
+    return makeUnexpected("Credentials flag is true, but Access-Control-Allow-Credentials is not \"true\"."_s);
 }
 
 Expected<void, String> validatePreflightResponse(PAL::SessionID sessionID, const ResourceRequest& request, const ResourceResponse& response, StoredCredentialsPolicy storedCredentialsPolicy, const SecurityOrigin& topOrigin, const SecurityOrigin& securityOrigin, const CrossOriginAccessControlCheckDisabler* checkDisabler)

@@ -283,6 +283,8 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
             return completionHandler(WTF::move(newRequest));
         }
 
+        // https://fetch.spec.whatwg.org/#http-redirect-fetch
+        // 7. If request’s redirect count is 20, then return a network error.
         if (m_redirectCount++ >= options().maxRedirectCount) {
             SUBRESOURCELOADER_RELEASE_LOG(SubResourceLoaderWillSendRequestInternalResourceLoadCancelledTooManyRedirects);
             cancel(ResourceError(String(), 0, request().url(), "Too many redirections"_s, ResourceError::Type::General));
@@ -724,7 +726,8 @@ Expected<void, String> SubresourceLoader::checkRedirectionCrossOriginAccessContr
 
     newRequest.redirectAsGETIfNeeded(previousRequest, redirectResponse);
 
-    // Implementing https://fetch.spec.whatwg.org/#concept-http-redirect-fetch step 14.
+    // https://fetch.spec.whatwg.org/#http-redirect-fetch
+    // 19. Invoke set request’s referrer policy on redirect on request and internalResponse.
     updateReferrerPolicy(redirectResponse.httpHeaderField(HTTPHeaderName::ReferrerPolicy));
 
     if (options().mode == FetchOptions::Mode::Cors && redirectingToNewOrigin) {
@@ -741,6 +744,7 @@ Expected<void, String> SubresourceLoader::checkRedirectionCrossOriginAccessContr
 
 void SubresourceLoader::updateReferrerPolicy(const String& referrerPolicyValue)
 {
+    // https://w3c.github.io/webappsec-referrer-policy/#set-requests-referrer-policy-on-redirect
     if (auto referrerPolicy = parseReferrerPolicy(referrerPolicyValue, ReferrerPolicySource::HTTPHeader)) {
         ASSERT(*referrerPolicy != ReferrerPolicy::EmptyString);
         setReferrerPolicy(*referrerPolicy);

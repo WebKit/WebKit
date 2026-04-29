@@ -212,13 +212,18 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
             ASSERT(cachedResourceLoader.cachePolicy(type(), url()) != CachePolicy::Reload);
             if (cachedResourceLoader.cachePolicy(type(), url()) == CachePolicy::Revalidate)
                 m_resourceRequest.setHTTPHeaderField(HTTPHeaderName::CacheControl, HTTPHeaderValues::maxAge0());
-            if (!lastModified.isEmpty())
-                m_resourceRequest.setHTTPHeaderField(HTTPHeaderName::IfModifiedSince, lastModified);
+            // https://fetch.spec.whatwg.org/#http-network-or-cache-fetch
+            // 8.26.2.2.1 If storedResponse’s header list contains `ETag`, then append (`If-None-Match`, `ETag`'s value) to httpRequest’s header list.
             if (!eTag.isEmpty())
                 m_resourceRequest.setHTTPHeaderField(HTTPHeaderName::IfNoneMatch, eTag);
+            // 8.26.2.2.2 If storedResponse’s header list contains `Last-Modified`, then append (`If-Modified-Since`, `Last-Modified`'s value) to httpRequest’s header list.
+            if (!lastModified.isEmpty())
+                m_resourceRequest.setHTTPHeaderField(HTTPHeaderName::IfModifiedSince, lastModified);
         }
     }
 
+    // https://fetch.spec.whatwg.org/#http-network-or-cache-fetch
+    // 8.14. If httpRequest’s initiator is "prefetch", then set a structured field value given (`Sec-Purpose`, the token prefetch) in httpRequest’s header list.
     if (type() == Type::LinkPrefetch)
         m_resourceRequest.setHTTPHeaderField(HTTPHeaderName::SecPurpose, "prefetch"_s);
     m_resourceRequest.setPriority(loadPriority());
@@ -240,6 +245,8 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
         m_fragmentIdentifierForRequest = String();
     }
 
+    // https://fetch.spec.whatwg.org/#http-network-or-cache-fetch
+    // 8.10. If contentLength is non-null and httpRequest’s keepalive is true, then:
     if (m_options.keepAlive && type() != Type::Ping && !cachedResourceLoader.keepaliveRequestTracker().tryRegisterRequest(*this)) {
         setResourceError({ errorDomainWebKitInternal, 0, request.url(), "Reached maximum amount of queued data of 64Kb for keepalive requests"_s, ResourceError::Type::AccessControl });
         failBeforeStarting();

@@ -335,6 +335,8 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
 {
     static const int maxRedirects = 20;
 
+    // https://fetch.spec.whatwg.org/#http-redirect-fetch
+    // 7. If request’s redirect count is 20, then return a network error.
     if (m_redirectCount++ > maxRedirects) {
         m_client->didCompleteWithError(ResourceError(CURLE_TOO_MANY_REDIRECTS, m_response.url()));
         return;
