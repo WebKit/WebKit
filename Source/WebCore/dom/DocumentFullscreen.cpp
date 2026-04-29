@@ -481,6 +481,18 @@ static void clearFullscreenFlags(Element& element)
 void DocumentFullscreen::exitFullscreen(Document& document, Ref<DeferredPromise>&& promise)
 {
     if (!document.isFullyActive() || !protect(document.fullscreen())->fullscreenElement()) {
+#if ENABLE(VIDEO) && PLATFORM(IOS_FAMILY)
+        RefPtr<HTMLMediaElement> fullscreenVideo;
+        document.forEachMediaElement([&](HTMLMediaElement& element) {
+            if (!fullscreenVideo && element.isStandardFullscreen())
+                fullscreenVideo = &element;
+        });
+        if (fullscreenVideo) {
+            fullscreenVideo->exitFullscreen();
+            promise->resolve();
+            return;
+        }
+#endif
         promise->reject(Exception { ExceptionCode::TypeError, "Not in fullscreen"_s });
         return;
     }
