@@ -55,12 +55,15 @@ RetainPtr<SecKeyRef> createPrivateKey()
         (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
         (id)kSecAttrKeySizeInBits: @256,
     };
-    CFErrorRef errorRef = nullptr;
-    auto key = adoptCF(SecKeyCreateRandomKey(
-        (__bridge CFDictionaryRef)options,
-        &errorRef
-    ));
-    if (errorRef)
+    RetainPtr<SecKeyRef> key;
+    RetainPtr<CFErrorRef> error;
+    {
+        // FIXME: The Security framework API is missing the `CF_RETURNS_RETAINED` annotation (rdar://161546781).
+        CFErrorRef rawError = NULL;
+        key = adoptCF(SecKeyCreateRandomKey(bridge_cast(options), &rawError));
+        SUPPRESS_RETAINPTR_CTOR_ADOPT error = adoptCF(rawError);
+    }
+    if (error)
         return nullptr;
     return key;
 }
@@ -117,13 +120,16 @@ RetainPtr<SecKeyRef> privateKeyFromBase64(const String& base64PrivateKey)
         (id)kSecAttrKeySizeInBits: @256,
     };
     RetainPtr<NSData> privateKey = adoptNS([[NSData alloc] initWithBase64EncodedString:base64PrivateKey.createNSString().get() options:0]);
-    CFErrorRef errorRef = nullptr;
-    auto key = adoptCF(SecKeyCreateWithData(
-        bridge_cast(privateKey.get()),
-        bridge_cast(options),
-        &errorRef
-    ));
-    ASSERT(!errorRef);
+    RetainPtr<SecKeyRef> key;
+    RetainPtr<CFErrorRef> error;
+    {
+        // FIXME: The Security framework API is missing the `CF_RETURNS_RETAINED` annotation (rdar://161546781).
+        CFErrorRef rawError = NULL;
+        key = adoptCF(SecKeyCreateWithData(bridge_cast(privateKey.get()), bridge_cast(options), &rawError));
+        SUPPRESS_RETAINPTR_CTOR_ADOPT error = adoptCF(rawError);
+    }
+    if (error)
+        return nullptr;
     return key;
 }
 

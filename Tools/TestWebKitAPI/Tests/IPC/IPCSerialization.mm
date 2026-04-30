@@ -178,19 +178,29 @@ static bool secTrustRefsEqual(SecTrustRef trust1, SecTrustRef trust2)
 {
     // SecTrust doesn't compare equal after round-tripping through SecTrustSerialize/SecTrustDeserialize <rdar://122051396>
     // Therefore, we compare all the attributes we can access to verify equality.
-    CFErrorRef error = NULL;
     bool equal;
 #if HAVE(WK_SECURE_CODING_SECTRUST)
-    CFPropertyListRef trust1Plist = SecTrustCopyPropertyListRepresentation(trust1, &error);
-    EXPECT_FALSE(error);
-    CFPropertyListRef trust2Plist = SecTrustCopyPropertyListRepresentation(trust2, &error);
-    EXPECT_FALSE(error);
-    EXPECT_TRUE(CFGetTypeID(trust1Plist) == CFDictionaryGetTypeID());
-    EXPECT_TRUE(CFGetTypeID(trust2Plist) == CFDictionaryGetTypeID());
-    equal = CFEqual(trust1Plist, trust2Plist);
+    RetainPtr<CFPropertyListRef> trust1Plist;
+    RetainPtr<CFErrorRef> plistError;
+    {
+        // FIXME: The Security framework API is missing the `CF_RETURNS_RETAINED` annotation (rdar://161546781).
+        CFErrorRef rawError = NULL;
+        trust1Plist = adoptCF(SecTrustCopyPropertyListRepresentation(trust1, &rawError));
+        SUPPRESS_RETAINPTR_CTOR_ADOPT plistError = adoptCF(rawError);
+    }
+    EXPECT_FALSE(plistError);
+    plistError = NULL;
+    RetainPtr<CFPropertyListRef> trust2Plist;
+    {
+        CFErrorRef rawError = NULL;
+        trust2Plist = adoptCF(SecTrustCopyPropertyListRepresentation(trust2, &rawError));
+        SUPPRESS_RETAINPTR_CTOR_ADOPT plistError = adoptCF(rawError);
+    }
+    EXPECT_FALSE(plistError);
+    EXPECT_TRUE(CFGetTypeID(trust1Plist.get()) == CFDictionaryGetTypeID());
+    EXPECT_TRUE(CFGetTypeID(trust2Plist.get()) == CFDictionaryGetTypeID());
+    equal = CFEqual(trust1Plist.get(), trust2Plist.get());
     EXPECT_TRUE(equal);
-    CFRelease(trust1Plist);
-    CFRelease(trust2Plist);
 #endif
 
     SecKeyRef pk1 = SecTrustCopyPublicKey(trust1);
@@ -209,34 +219,42 @@ static bool secTrustRefsEqual(SecTrustRef trust1, SecTrustRef trust2)
     if (!equal)
         return false;
 
-    CFDataRef ex1 = SecTrustCopyExceptions(trust1);
-    CFDataRef ex2 = SecTrustCopyExceptions(trust2);
+    RetainPtr<CFDataRef> ex1 = adoptCF(SecTrustCopyExceptions(trust1));
+    RetainPtr<CFDataRef> ex2 = adoptCF(SecTrustCopyExceptions(trust2));
     EXPECT_TRUE(ex1);
     EXPECT_TRUE(ex2);
-    equal = CFEqual(ex1, ex2);
+    equal = CFEqual(ex1.get(), ex2.get());
 
     CFPropertyListFormat format;
-    CFPropertyListRef ex1plist = CFPropertyListCreateWithData(
-        kCFAllocatorDefault,
-        ex1,
-        kCFPropertyListImmutable,
-        &format,
-        &error
-    );
+    RetainPtr<CFErrorRef> error;
+    RetainPtr<CFPropertyListRef> ex1plist;
+    {
+        CFErrorRef rawError = NULL;
+        ex1plist = adoptCF(CFPropertyListCreateWithData(
+            kCFAllocatorDefault,
+            ex1.get(),
+            kCFPropertyListImmutable,
+            &format,
+            &rawError
+        ));
+        SUPPRESS_RETAINPTR_CTOR_ADOPT error = adoptCF(rawError);
+    }
     EXPECT_FALSE(error);
-    CFPropertyListRef ex2plist = CFPropertyListCreateWithData(
-        kCFAllocatorDefault,
-        ex2,
-        kCFPropertyListImmutable,
-        &format,
-        &error
-    );
+    error = NULL;
+    RetainPtr<CFPropertyListRef> ex2plist;
+    {
+        CFErrorRef rawError = NULL;
+        ex2plist = adoptCF(CFPropertyListCreateWithData(
+            kCFAllocatorDefault,
+            ex2.get(),
+            kCFPropertyListImmutable,
+            &format,
+            &rawError
+        ));
+        SUPPRESS_RETAINPTR_CTOR_ADOPT error = adoptCF(rawError);
+    }
     EXPECT_FALSE(error);
-    equal = CFEqual(ex1plist, ex2plist);
-    CFRelease(ex1);
-    CFRelease(ex2);
-    CFRelease(ex1plist);
-    CFRelease(ex2plist);
+    equal = CFEqual(ex1plist.get(), ex2plist.get());
     EXPECT_TRUE(equal);
     if (!equal)
         return false;

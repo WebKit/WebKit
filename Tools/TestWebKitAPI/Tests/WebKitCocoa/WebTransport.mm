@@ -41,6 +41,7 @@
 #import <WebKit/_WKInternalDebugFeature.h>
 #import <pal/spi/cocoa/NetworkSPI.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/MakeString.h>
 #import <wtf/text/StringBuilder.h>
@@ -689,9 +690,15 @@ TEST(WebTransport, ServerCertificateHashes)
             (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
             (id)kSecAttrKeySizeInBits: @256,
         };
-        CFErrorRef error = nullptr;
-        RetainPtr privateKey = adoptCF(SecKeyCreateRandomKey((__bridge CFDictionaryRef)options, &error));
-        EXPECT_NULL(error);
+        RetainPtr<SecKeyRef> privateKey;
+        RetainPtr<CFErrorRef> keyError;
+        {
+            // FIXME: The Security framework API is missing the `CF_RETURNS_RETAINED` annotation (rdar://161546781).
+            CFErrorRef rawError = NULL;
+            privateKey = adoptCF(SecKeyCreateRandomKey(bridge_cast(options), &rawError));
+            SUPPRESS_RETAINPTR_CTOR_ADOPT keyError = adoptCF(rawError);
+        }
+        EXPECT_NULL(keyError);
 
         NSArray *subject = @[];
         NSDictionary *parameters = @{

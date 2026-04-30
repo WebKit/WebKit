@@ -44,6 +44,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/cf/VectorCF.h>
 #import <wtf/cocoa/SpanCocoa.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/Base64.h>
 
@@ -64,9 +65,15 @@ static RetainPtr<SecIdentityRef> createTestIdentity(const Vector<uint8_t>& priva
         (id)kSecAttrKeySizeInBits: @4096,
     };
     const NSUInteger pemEncodedPrivateKeyHeaderLength = 26;
-    CFErrorRef error = nullptr;
-    auto privateKey = adoptCF(SecKeyCreateWithData((__bridge CFDataRef)[derEncodedPrivateKey subdataWithRange:NSMakeRange(pemEncodedPrivateKeyHeaderLength, [derEncodedPrivateKey length] - pemEncodedPrivateKeyHeaderLength)], (__bridge CFDictionaryRef)options, &error));
-    EXPECT_NULL(error);
+    RetainPtr<SecKeyRef> privateKey;
+    RetainPtr<CFErrorRef> keyError;
+    {
+        // FIXME: The Security framework API is missing the `CF_RETURNS_RETAINED` annotation (rdar://161546781).
+        CFErrorRef rawError = NULL;
+        privateKey = adoptCF(SecKeyCreateWithData(bridge_cast([derEncodedPrivateKey subdataWithRange:NSMakeRange(pemEncodedPrivateKeyHeaderLength, [derEncodedPrivateKey length] - pemEncodedPrivateKeyHeaderLength)]), bridge_cast(options), &rawError));
+        SUPPRESS_RETAINPTR_CTOR_ADOPT keyError = adoptCF(rawError);
+    }
+    EXPECT_NULL(keyError);
     EXPECT_NOT_NULL(privateKey.get());
 
     RetainPtr testCertificate = adoptCF(SecCertificateCreateWithData(nullptr, toCFData(certificateBytes.span()).get()));

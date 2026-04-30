@@ -373,10 +373,16 @@ static RetainPtr<CFDataRef> transformTrustToData(SecTrustRef trust)
 {
     if (CFGetTypeID(trust) != SecTrustGetTypeID())
         [NSException raise:NSInvalidArgumentException format:@"Error encoding invalid SecTrustRef"];
-    CFErrorRef error = nullptr;
-    auto data = adoptCF(SecTrustSerialize(trust, &error));
+    RetainPtr<CFDataRef> data;
+    RetainPtr<CFErrorRef> error;
+    {
+        // FIXME: The Security framework API is missing the `CF_RETURNS_RETAINED` annotation (rdar://161546781).
+        CFErrorRef rawError = NULL;
+        data = adoptCF(SecTrustSerialize(trust, &rawError));
+        SUPPRESS_RETAINPTR_CTOR_ADOPT error = adoptCF(rawError);
+    }
     if (error)
-        [NSException raise:NSInvalidArgumentException format:@"Error serializing SecTrustRef: %@", error];
+        [NSException raise:NSInvalidArgumentException format:@"Error serializing SecTrustRef: %@", error.get()];
     return data;
 }
 
@@ -426,10 +432,16 @@ static RetainPtr<SecTrustRef> transformDataToTrust(NSData *data)
 {
     if (CFGetTypeID(data) != CFDataGetTypeID())
         [NSException raise:NSInvalidUnarchiveOperationException format:@"Invalid SecTrustRef data %@", NSStringFromClass([data class])];
-    CFErrorRef error = nullptr;
-    auto trust = adoptCF(SecTrustDeserialize((CFDataRef)data, &error));
+    RetainPtr<SecTrustRef> trust;
+    RetainPtr<CFErrorRef> error;
+    {
+        // FIXME: The Security framework API is missing the `CF_RETURNS_RETAINED` annotation (rdar://161546781).
+        CFErrorRef rawError = NULL;
+        trust = adoptCF(SecTrustDeserialize((CFDataRef)data, &rawError));
+        SUPPRESS_RETAINPTR_CTOR_ADOPT error = adoptCF(rawError);
+    }
     if (error || !trust)
-        [NSException raise:NSInvalidUnarchiveOperationException format:@"Invalid SecTrustRef %@", error];
+        [NSException raise:NSInvalidUnarchiveOperationException format:@"Invalid SecTrustRef %@", error.get()];
     return trust;
 }
 

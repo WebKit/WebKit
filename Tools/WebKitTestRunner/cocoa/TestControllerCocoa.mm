@@ -66,6 +66,7 @@
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>
 #import <wtf/UniqueRef.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/MakeString.h>
@@ -633,13 +634,19 @@ void TestController::addTestKeyToKeychain(const String& privateKeyBase64, const 
         (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
         (id)kSecAttrKeySizeInBits: @256
     };
-    CFErrorRef errorRef = nullptr;
-    auto key = adoptCF(SecKeyCreateWithData(
-        (__bridge CFDataRef)adoptNS([[NSData alloc] initWithBase64EncodedString:privateKeyBase64.createNSString().get() options:NSDataBase64DecodingIgnoreUnknownCharacters]).get(),
-        (__bridge CFDictionaryRef)options,
-        &errorRef
-    ));
-    ASSERT(!errorRef);
+    RetainPtr<SecKeyRef> key;
+    RetainPtr<CFErrorRef> keyError;
+    {
+        // FIXME: The Security framework API is missing the `CF_RETURNS_RETAINED` annotation (rdar://161546781).
+        CFErrorRef rawError = NULL;
+        key = adoptCF(SecKeyCreateWithData(
+            bridge_cast(adoptNS([[NSData alloc] initWithBase64EncodedString:privateKeyBase64.createNSString().get() options:NSDataBase64DecodingIgnoreUnknownCharacters]).get()),
+            bridge_cast(options),
+            &rawError
+        ));
+        SUPPRESS_RETAINPTR_CTOR_ADOPT keyError = adoptCF(rawError);
+    }
+    ASSERT(!keyError);
 
     NSDictionary* addQuery = @{
         (id)kSecValueRef: (id)key.get(),

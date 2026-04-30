@@ -255,12 +255,17 @@ static String optionalArrayOfDataHelper(std::optional<Vector<CoreIPCData>>& toSe
 
 CoreIPCSecTrust::CoreIPCSecTrust(SecTrustRef trust)
 {
-    CFErrorRef error = nullptr;
-
     if (!trust)
         return;
 
-    RetainPtr cfDictionary = adoptCF(dynamic_cf_cast<CFDictionaryRef>(SecTrustCopyPropertyListRepresentation(trust, &error)));
+    RetainPtr<CFDictionaryRef> cfDictionary;
+    RetainPtr<CFErrorRef> error;
+    {
+        // FIXME: The Security framework API is missing the `CF_RETURNS_RETAINED` annotation (rdar://161546781).
+        CFErrorRef rawError = NULL;
+        cfDictionary = adoptCF(dynamic_cf_cast<CFDictionaryRef>(SecTrustCopyPropertyListRepresentation(trust, &rawError)));
+        SUPPRESS_RETAINPTR_CTOR_ADOPT error = adoptCF(rawError);
+    }
     if (!cfDictionary || error)
         return;
     RetainPtr dict = bridge_cast(cfDictionary.get());
@@ -892,8 +897,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [dict setObject:exceptions.get() forKey:@"exceptions"];
     }
 
-    CFErrorRef error = nullptr;
-    RetainPtr trust = adoptCF(SecTrustCreateFromPropertyListRepresentation(dict.get(), &error));
+    RetainPtr<SecTrustRef> trust;
+    RetainPtr<CFErrorRef> error;
+    {
+        // FIXME: The Security framework API is missing the `CF_RETURNS_RETAINED` annotation (rdar://161546781).
+        CFErrorRef rawError = NULL;
+        trust = adoptCF(SecTrustCreateFromPropertyListRepresentation(dict.get(), &rawError));
+        SUPPRESS_RETAINPTR_CTOR_ADOPT error = adoptCF(rawError);
+    }
     if (error) {
         RELEASE_LOG_ERROR(IPC, "CoreIPCSecTrust error creating trust object");
         return { nullptr };
