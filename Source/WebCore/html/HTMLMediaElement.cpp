@@ -4791,8 +4791,17 @@ ExceptionOr<void> HTMLMediaElement::setVolume(double volume)
     }
 
     if (!m_volumeLocked) {
-        if (volume && processingUserGestureForMedia())
+        if (volume && processingUserGestureForMedia()) {
             removeBehaviorRestrictionsAfterFirstUserGesture(MediaElementSession::AllRestrictions & ~MediaElementSession::RequireUserGestureToControlControlsManager);
+
+            if (!m_volume) {
+                if (RefPtr page = document().page())
+                    page->setLastUnmuteAuthorization(protect(document())->securityOrigin().data());
+            }
+        } else if (!volume && m_volume && processingUserGestureForMedia()) {
+            if (RefPtr page = document().page())
+                page->clearLastUnmuteAuthorization();
+        }
 
         m_volume = volume;
         m_volumeInitialized = true;
@@ -4856,6 +4865,14 @@ void HTMLMediaElement::setMutedInternal(bool muted, ForceMuteChange forceChange)
 
             if (hasAudio() && muted)
                 userDidInterfereWithAutoplay();
+
+            if (!muted && m_muted) {
+                if (RefPtr page = document().page())
+                    page->setLastUnmuteAuthorization(protect(document())->securityOrigin().data());
+            } else if (muted && !m_muted) {
+                if (RefPtr page = document().page())
+                    page->clearLastUnmuteAuthorization();
+            }
         }
         Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClass::Muted, muted);
         m_muted = muted;

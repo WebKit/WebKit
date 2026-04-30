@@ -77,6 +77,7 @@ public:
     bool needsPerDocumentAutoplayBehavior() const;
     bool needsExpediaGroupAnimationQuirk(Element&) const;
     bool shouldAutoplayWebAudioForArbitraryUserGesture() const;
+    bool shouldAllowUnmutedAutoplayAfterUserUnmute() const;
     bool hasBrokenEncryptedMediaAPISupportQuirk() const;
 #if ENABLE(TOUCH_EVENTS)
     bool shouldDispatchSimulatedMouseEvents(const EventTarget*) const;

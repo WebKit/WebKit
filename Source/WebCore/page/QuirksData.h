@@ -253,6 +253,7 @@ struct QuirksData {
 #if PLATFORM(IOS_FAMILY)
         NeedsChromeOSNavigatorUserAgentQuirk,
 #endif
+        ShouldAllowUnmutedAutoplayAfterUserUnmuteQuirk,
         ShouldLimitHLSPlaybackRate,
         ShouldDeferIntersectionObserversDuringResize,
 
