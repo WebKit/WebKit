@@ -817,7 +817,8 @@ imported/w3c/web-platform-tests/html/user-activation/activation-trigger-keyboard
 imported/w3c/web-platform-tests/html/user-activation/activation-trigger-keyboard-escape.html [ Skip ]
 imported/w3c/web-platform-tests/html/user-activation/activation-trigger-mouse-left.html [ Skip ]
 imported/w3c/web-platform-tests/html/user-activation/activation-trigger-mouse-right.html [ Skip ]
-webkit.org/b/312719 imported/w3c/web-platform-tests/html/user-activation/navigate-to-sameorigin.html [ Skip ]
+webkit.org/b/313716 imported/w3c/web-platform-tests/html/user-activation/navigate-to-crossorigin-redirect.html [ Skip ]
+webkit.org/b/313716 imported/w3c/web-platform-tests/html/user-activation/navigate-to-sameorigin.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/allow-crossorigin.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/disallow-crossorigin.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/promise-rejection-events.html [ Skip ]
@@ -1410,8 +1411,6 @@ http/wpt/html/browsers/browsing-the-web/navigating-across-documents/click.html
 http/wpt/html/browsers/browsing-the-web/navigating-across-documents/href.html
 
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/cross-origin-top-navigation-with-user-activation-in-parent.window.html [ Pass Failure ]
-# Test should be rewritten to use async_test, but it also doesn't appear upstream?
-imported/w3c/web-platform-tests/html/user-activation/consumption-crossorigin.sub.html [ Pass Failure ]
 
 # Tests in this directory take > 30 minutes to run on debug bots.
 [ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-japanese

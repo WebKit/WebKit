@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/activation-trigger-keyboard-enter.html
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/activation-trigger-keyboard-escape.html
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/activation-trigger-mouse-left.html
@@ -24,6 +25,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/detached-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/message-event-activation-api-iframe-cross-origin.sub.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/message-event-init.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/navigate-to-crossorigin-redirect.html
+/LayoutTests/imported/w3c/web-platform-tests/html/user-activation/navigate-to-sameorigin.html
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/navigation-state-reset-crossorigin.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/navigation-state-reset-sameorigin.html
 /LayoutTests/imported/w3c/web-platform-tests/html/user-activation/no-activation-thru-escape-key.html

@@ -4673,16 +4673,10 @@
     "imported/w3c/web-platform-tests/html/tools/html5lib_test_fragment.xml": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/html/user-activation/activation-thru-contextmenu-event.html": [
-        "slow"
-    ],
     "imported/w3c/web-platform-tests/html/user-activation/no-activation-thru-escape-key.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/user-activation/propagation-crossorigin.sub.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/html/user-activation/propagation-crossorigin.sub.tentative.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/image-decodes/image-decode-iframe.html": [
