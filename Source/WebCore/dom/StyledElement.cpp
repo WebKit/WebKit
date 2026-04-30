@@ -89,7 +89,8 @@ Ref<MutableStyleProperties> StyledElement::ensureMutableInlineStyle()
 {
     RefPtr<StyleProperties>& inlineStyle = ensureUniqueElementData().m_inlineStyle;
     if (!inlineStyle) {
-        Ref mutableProperties = MutableStyleProperties::create(strictToCSSParserMode(isHTMLElement() && !document().inQuirksMode()));
+        auto parserMode = isSVGElement() ? SVGAttributeMode : strictToCSSParserMode(isHTMLElement() && !document().inQuirksMode());
+        Ref mutableProperties = MutableStyleProperties::create(parserMode);
         inlineStyle = mutableProperties.copyRef();
         return mutableProperties;
     }
