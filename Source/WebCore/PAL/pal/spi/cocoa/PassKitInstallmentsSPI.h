@@ -79,7 +79,6 @@ typedef NS_ENUM(NSUInteger, PKPaymentRequestType) {
 
 @interface PKPaymentInstallmentConfiguration ()
 @property (nonatomic, assign) PKPaymentSetupFeatureType feature;
-@property (nonatomic, copy) NSData *merchandisingImageData;
 @property (nonatomic, strong) NSDecimalNumber *openToBuyThresholdAmount;
 @property (nonatomic, strong) NSDecimalNumber *bindingTotalAmount;
 @property (nonatomic, copy) NSString *currencyCode;

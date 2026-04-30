@@ -1202,7 +1202,6 @@ struct WebCore::ApplePayDisbursementRequest {
 header: <WebCore/ApplePayInstallmentConfigurationWebCore.h>
 [CustomHeader] struct WebCore::ApplePayInstallmentConfiguration {
     WebCore::ApplePaySetupFeatureType featureType;
-    String merchandisingImageData;
     String openToBuyThresholdAmount;
     String bindingTotalAmount;
     String currencyCode;
@@ -1212,6 +1211,7 @@ header: <WebCore/ApplePayInstallmentConfigurationWebCore.h>
     Vector<WebCore::ApplePayInstallmentItem> items;
     String applicationMetadata;
     WebCore::ApplePayInstallmentRetailChannel retailChannel;
+    [NotSerialized] String merchandisingImageData;
 };
 header: <WebCore/PaymentInstallmentConfigurationWebCore.h>
 [CustomHeader] class WebCore::PaymentInstallmentConfiguration {

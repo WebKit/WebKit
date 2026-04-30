@@ -193,9 +193,6 @@ static RetainPtr<PKPaymentInstallmentConfiguration> createPlatformConfiguration(
     [configuration setCurrencyCode:coreConfiguration.currencyCode.createNSString().get()];
     [configuration setInStorePurchase:coreConfiguration.isInStorePurchase];
     [configuration setOpenToBuyThresholdAmount:protect(toDecimalNumber(coreConfiguration.openToBuyThresholdAmount)).get()];
-
-    RetainPtr merchandisingImageData = adoptNS([[NSData alloc] initWithBase64EncodedString:coreConfiguration.merchandisingImageData.createNSString().get() options:0]);
-    [configuration setMerchandisingImageData:merchandisingImageData.get()];
     [configuration setInstallmentMerchantIdentifier:coreConfiguration.merchantIdentifier.createNSString().get()];
     [configuration setReferrerIdentifier:coreConfiguration.referrerIdentifier.createNSString().get()];
 
@@ -269,7 +266,6 @@ std::optional<ApplePayInstallmentConfiguration> PaymentInstallmentConfiguration:
     installmentConfiguration.isInStorePurchase = [configuration isInStorePurchase];
     installmentConfiguration.openToBuyThresholdAmount = fromDecimalNumber(retainPtr([configuration openToBuyThresholdAmount]).get());
 
-    installmentConfiguration.merchandisingImageData = [retainPtr([configuration merchandisingImageData]) base64EncodedStringWithOptions:0];
     installmentConfiguration.merchantIdentifier = [configuration installmentMerchantIdentifier];
     installmentConfiguration.referrerIdentifier = [configuration referrerIdentifier];
 
