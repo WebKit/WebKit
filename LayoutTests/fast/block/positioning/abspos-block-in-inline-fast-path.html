@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<title>abspos block inside an inline custom-element slot should lay out</title>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<body>
+<div id="log"></div>
+<test-host><test-child></test-child></test-host>
+<script>
+customElements.define('test-host', class extends HTMLElement {
+    connectedCallback() {
+        this.attachShadow({ mode: 'open' }).innerHTML = `
+            <style>
+                #drawer { position: absolute; left: 0; right: 0; height: auto; }
+                #drawer[hidden] { height: 0; min-height: 0; display: block; }
+            </style>
+            <section id="drawer" hidden><slot></slot></section>`;
+    }
+});
+customElements.define('test-child', class extends HTMLElement {
+    connectedCallback() {
+        this.attachShadow({ mode: 'open' }).innerHTML =
+            `<div style="display: block; height: 200px;"></div>`;
+    }
+});
+
+document.body.offsetHeight;
+const drawer = document.querySelector('test-host').shadowRoot.getElementById('drawer');
+drawer.removeAttribute('hidden');
+const height = drawer.getBoundingClientRect().height;
+document.getElementById('log').textContent =
+    height >= 100 ? 'PASS' : `FAIL: drawer measured ${height}px`;
+</script>
+</body>

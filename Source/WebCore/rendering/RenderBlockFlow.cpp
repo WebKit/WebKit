@@ -4334,8 +4334,15 @@ void RenderBlockFlow::layoutInlineContent(RelayoutChildren relayoutChildren, Lay
     if (mayRunSimpleBlockContentInInlineLayout) {
         auto marginInfo = MarginInfo { *this, MarginInfo::IgnoreScrollbarForAfterMargin::No };
         if (layoutSimpleBlockContentInInline(marginInfo)) {
-            setLogicalHeight(previousHeight);
-            handleAfterSideOfBlock(marginInfo, previousHeight - (borderAndPaddingLogicalHeight() + scrollbarLogicalHeight()));
+            if (isOutOfFlowPositioned()) {
+                auto contentBoxHeight = hasContentfulInlineOrBlockLine()
+                    ? inlineLayout()->contentLogicalHeight()
+                    : (hasLineIfEmpty() ? LayoutUnit { lineHeight() } : 0_lu);
+                setLogicalHeight(handleAfterSideOfBlock(marginInfo, contentBoxHeight));
+            } else {
+                setLogicalHeight(previousHeight);
+                handleAfterSideOfBlock(marginInfo, previousHeight - (borderAndPaddingLogicalHeight() + scrollbarLogicalHeight()));
+            }
             // Pass empty rect as partialRepaintRect because child blocks issue their own repaints if needed.
             updateRepaintTopAndBottomAfterLayout(relayoutChildren, LayoutRect { }, oldContentTopAndBottomIncludingInkOverflow, repaintLogicalTop, repaintLogicalBottom);
             return;
