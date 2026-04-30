@@ -294,7 +294,9 @@ String HTMLLinkElement::as() const
         || equalLettersIgnoringASCIICase(as, "style"_s)
         || (document().settings().mediaPreloadingEnabled() && (equalLettersIgnoringASCIICase(as, "video"_s) || equalLettersIgnoringASCIICase(as, "audio"_s)))
         || equalLettersIgnoringASCIICase(as, "track"_s)
-        || equalLettersIgnoringASCIICase(as, "font"_s))
+        || equalLettersIgnoringASCIICase(as, "font"_s)
+        || equalLettersIgnoringASCIICase(as, "sharedworker"_s)
+        || equalLettersIgnoringASCIICase(as, "worker"_s))
         return as.convertToASCIILowercase();
     return String();
 }
