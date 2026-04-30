@@ -1284,7 +1284,10 @@ template<typename SizeType> LayoutUnit RenderFlexibleBox::computeMainSizeFromAsp
 
     auto crossSizeOptional = WTF::switchOn(crossSizeLength,
         [&](const SizeType::Fixed& fixedCrossSizeLength) -> std::optional<LayoutUnit> {
-            return LayoutUnit(fixedCrossSizeLength.resolveZoom(flexItem.style().usedZoomForLength()));
+            auto crossSizeLength = LayoutUnit(fixedCrossSizeLength.resolveZoom(flexItem.style().usedZoomForLength()));
+            return mainAxisIsFlexItemInlineAxis(flexItem)
+                ? crossSizeLength + flexItem.verticalBorderAndPaddingExtent()
+                : crossSizeLength + flexItem.horizontalBorderAndPaddingExtent();
         },
         [&](const SizeType::Percentage& percentageCrossSizeLength) -> std::optional<LayoutUnit> {
             return mainAxisIsFlexItemInlineAxis(flexItem)
@@ -1327,7 +1330,6 @@ template<typename SizeType> LayoutUnit RenderFlexibleBox::computeMainSizeFromAsp
         if (flexItem.style().boxSizing() == BoxSizing::BorderBox)
             crossSize -= isHorizontalFlow() ? flexItem.verticalBorderAndPaddingExtent() : flexItem.horizontalBorderAndPaddingExtent();
     }
-
     auto preferredAspectRatio = preferredAspectRatioForFlexItem(flexItem);
     return std::max(0_lu, LayoutUnit(crossSize * preferredAspectRatio) - borderAndPadding);
 }
