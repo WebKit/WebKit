@@ -38,6 +38,7 @@ from .results_db import ResultsDatabase
 from .twisted_additions import TwistedAdditions
 from .utils import load_password, get_custom_suffix
 
+import fnmatch
 import json
 import os
 import re
@@ -1890,8 +1891,13 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
         patch_id = self.getProperty('patch_id', '')
         pr_number = self.getProperty('github.number', self.getProperty('pr_number', ''))
         branch = self.getProperty('github.base.ref', DEFAULT_BRANCH)
+        allowed_base_branches = self.getProperty('allowed_base_branches', None)
 
-        if not any(candidate.match(branch) for candidate in self.branches):
+        if allowed_base_branches is not None:
+            if not any(fnmatch.fnmatchcase(branch, pattern) for pattern in allowed_base_branches):
+                rc = yield self.skip_build(f"Base branch '{branch}' is not allowed for this builder")
+                return defer.returnValue(rc)
+        elif not any(candidate.match(branch) for candidate in self.branches):
             rc = yield self.skip_build(f"Changes to '{branch}' are not tested")
             return defer.returnValue(rc)
 

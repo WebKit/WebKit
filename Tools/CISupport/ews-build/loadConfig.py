@@ -74,6 +74,9 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, setup_main_schedulers=True,
         builder['description'] = builder.pop('shortname')
         if 'icon' in builder:
             del builder['icon']
+        allowed_base_branches = builder.pop('allowed_base_branches', None)
+        if allowed_base_branches is not None:
+            builder.setdefault('properties', {})['allowed_base_branches'] = allowed_base_branches
         factorykwargs = {}
         for key in ['platform', 'configuration', 'architectures', 'triggers', 'remotes', 'additionalArguments', 'runTests', 'triggered_by', 'rebuild_without_change_on_builder', 'deployment_target']:
             value = builder.pop(key, None)
@@ -199,6 +202,14 @@ def checkValidBuilder(config, builder):
 
     if builder.get('rebuild_without_change_on_builder') and not builder.get('triggers'):
         raise Exception(f'rebuild_without_change_on_builder can only be set on builders with triggers. Builder: {builder["name"]}')
+
+    if 'allowed_base_branches' in builder:
+        allowed_base_branches = builder['allowed_base_branches']
+        if not isinstance(allowed_base_branches, list) or not allowed_base_branches:
+            raise Exception(f'allowed_base_branches must be a non-empty list of glob strings. Builder: {builder["name"]}')
+        for pattern in allowed_base_branches:
+            if not isinstance(pattern, str) or not pattern:
+                raise Exception(f'allowed_base_branches must contain non-empty glob strings. Builder: {builder["name"]}')
 
 
 def checkValidSchedulers(config, schedulers):
