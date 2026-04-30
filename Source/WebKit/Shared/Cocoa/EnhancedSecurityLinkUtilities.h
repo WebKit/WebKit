@@ -35,6 +35,7 @@ class URL;
 
 namespace WebKit {
 
+bool hasURLsRequiringEnhancedSecurityCheck();
 void isEnhancedSecurityEnabledForURL(const WTF::URL&, CompletionHandler<void(bool)>&&);
 
 } // namespace WebKit

@@ -476,6 +476,10 @@
 #include "RemoteMediaSessionManagerProxy.h"
 #endif
 
+#if HAVE(ENHANCED_SECURITY_LINKS)
+#include "EnhancedSecurityLinkUtilities.h"
+#endif
+
 #define MESSAGE_CHECK(process, assertion) MESSAGE_CHECK_BASE(assertion, process->connection())
 #define MESSAGE_CHECK_URL(process, url) MESSAGE_CHECK_BASE(checkURLReceivedFromCurrentOrPreviousWebProcess(process, url), process->connection())
 #define MESSAGE_CHECK_URL_COROUTINE(process, url) MESSAGE_CHECK_BASE_COROUTINE(checkURLReceivedFromCurrentOrPreviousWebProcess(process, url), process->connection())
@@ -17440,6 +17444,9 @@ void WebPageProxy::beginEnhancedSecurityLinkCheck(const URL& url, API::Navigatio
             listener->didReceiveEnhancedSecurityLinkResults();
         }
     };
+
+    if (!hasURLsRequiringEnhancedSecurityCheck())
+        return completionHandler(false);
 
     if (RefPtr networkProcess = websiteDataStore().networkProcessIfExists())
         networkProcess->sendWithAsyncReply(Messages::NetworkProcess::IsEnhancedSecurityLink(url), WTF::move(completionHandler));

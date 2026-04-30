@@ -16,5 +16,9 @@
 	<array>
 		<string>EnableQuickLookSandboxResources</string>
 	</array>
+	<key>com.apple.security.exception.shared-preference.read-only</key>
+	<array>
+		<string>com.apple.messages.EnhancedLinkSecurity</string>
+	</array>
 </dict>
 </plist>
