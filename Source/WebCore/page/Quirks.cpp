@@ -247,6 +247,18 @@ bool Quirks::isEmbedDomain(const String& domainString) const
     return RegistrableDomain(document->url()).string() == domainString;
 }
 
+// thesaurus.com, dictionary.com https://bugs.webkit.org/show_bug.cgi?id=312692 rdar://174959285
+bool Quirks::needsAnchorToBeMouseFocusable() const
+{
+#if PLATFORM(COCOA)
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+
+    return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::NeedsAnchorToBeMouseFocusableQuirk);
+#else
+    return false;
+#endif // PLATFORM(COCOA)
+}
+
 // ceac.state.gov https://bugs.webkit.org/show_bug.cgi?id=193478
 // weather.com rdar://139689157
 // madisoncity.k12.al.us https://bugs.webkit.org/show_bug.cgi?id=296989
@@ -499,7 +511,10 @@ bool Quirks::shouldDispatchSimulatedMouseEvents(const EventTarget* target) const
             return QuirksData::ShouldDispatchSimulatedMouseEvents::Yes;
         // facebook.com rdar://174179871
         if (m_quirksData.isFacebook)
-            return QuirksData::ShouldDispatchSimulatedMouseEvents::DependingOnTargetForFacebook;
+            return QuirksData::ShouldDispatchSimulatedMouseEvents::DependingOnTargetWithSliderRole;
+        // tiktok.com rdar://174179805
+        if (m_quirksData.isTikTok)
+            return QuirksData::ShouldDispatchSimulatedMouseEvents::DependingOnTargetWithSliderRole;
 
         const URL& topDocumentURL = this->topDocumentURL();
         const auto registrableDomainString = RegistrableDomain(topDocumentURL).string();
@@ -547,7 +562,7 @@ bool Quirks::shouldDispatchSimulatedMouseEvents(const EventTarget* target) const
     case QuirksData::ShouldDispatchSimulatedMouseEvents::No:
         return false;
 
-    case QuirksData::ShouldDispatchSimulatedMouseEvents::DependingOnTargetForFacebook:
+    case QuirksData::ShouldDispatchSimulatedMouseEvents::DependingOnTargetWithSliderRole:
         for (RefPtr node = dynamicDowncast<Node>(target); node; node = node->parentNode()) {
             if (RefPtr element = dynamicDowncast<Element>(*node); element && element->attributeWithoutSynchronization(HTMLNames::roleAttr) == "slider"_s)
                 return true;
@@ -598,7 +613,19 @@ bool Quirks::shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTar
     if (m_quirksData.isSoundCloud)
         return element->hasClassName("sceneLayer"_s);
 
+    // facebook.com rdar://174179871 tiktok.com rdar://174179805
+    if (m_quirksData.isFacebook || m_quirksData.isTikTok)
+        return element->attributeWithoutSynchronization(HTMLNames::roleAttr) == "slider"_s;
+
     return false;
+}
+
+// facebook.com rdar://174179871 tiktok.com rdar://174179805
+bool Quirks::shouldComputeSimulatedMouseEventMovementDelta() const
+{
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+
+    return m_quirksData.isTikTok || m_quirksData.isFacebook;
 }
 
 // sites.google.com rdar://58653069
@@ -811,6 +838,14 @@ bool Quirks::needsZillowFloorplanMarginQuirk() const
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
     return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::NeedsZillowFloorplanMarginQuirk);
+}
+
+// yahoo.com rdar://170502516
+bool Quirks::needsYahooVolumeSliderQuirk() const
+{
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+
+    return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::NeedsYahooVolumeSliderQuirk);
 }
 
 // Kugou Music rdar://74602294
@@ -2751,26 +2786,16 @@ static void handleSlackQuirks(QuirksData& quirksData, const URL&, const String& 
 #endif
 }
 
+#if ENABLE(DESKTOP_CONTENT_MODE_QUIRKS)
 static void handleScriptToEvaluateBeforeRunningScriptFromURLQuirk(QuirksData& quirksData, const URL& /* quirksURL */, const String& topDomain, const URL& /* documentURL */)
 {
-    if (topDomain == "dictionary.com"_s) {
-        quirksData.isDictionary = true;
-        quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk);
-    }
-
-    if (topDomain == "thesaurus.com"_s) {
-        quirksData.isThesaurus = true;
-        quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk);
-    }
-
-#if ENABLE(DESKTOP_CONTENT_MODE_QUIRKS)
     if (topDomain == "webex.com"_s) {
         quirksData.isWebEx = true;
         quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk);
     }
-#endif
 }
 #endif
+#endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(TWO_PHASE_CLICKS)
 static void handleWalmartQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
@@ -2878,11 +2903,42 @@ static void handleWPDevelopmentQuirks(QuirksData& quirksData, const URL& /* quir
 }
 #endif
 
+static void handleThesaurusQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
+{
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("thesaurus.com"_s);
+
+    quirksData.isThesaurus = true;
+#if PLATFORM(IOS_FAMILY)
+    quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk);
+#endif
+#if PLATFORM(COCOA)
+    quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsAnchorToBeMouseFocusableQuirk);
+#endif
+}
+
+static void handleDictionaryQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
+{
+    QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("dictionary.com"_s);
+
+    quirksData.isDictionary = true;
+#if PLATFORM(IOS_FAMILY)
+    quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk);
+#endif
+#if PLATFORM(COCOA)
+    quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsAnchorToBeMouseFocusableQuirk);
+#endif
+}
+
 static void handleTikTokQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
     QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("tiktok.com"_s);
 
-    quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsTikTokOverflowingContentQuirk);
+    quirksData.isTikTok = true;
+    quirksData.enableQuirks({
+        QuirksData::SiteSpecificQuirk::NeedsTikTokOverflowingContentQuirk,
+        // tiktok.com rdar://174179805
+        QuirksData::SiteSpecificQuirk::ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk,
+    });
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -2953,6 +3009,12 @@ static void handleYCombinatorQuirks(QuirksData& quirksData, const URL& quirksURL
 }
 #endif
 
+static void handleYahooQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& /* quirksDomainString */, const URL& /* documentURL */)
+{
+    // yahoo.com: rdar://170502516
+    quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsYahooVolumeSliderQuirk);
+}
+
 #if ENABLE(TOUCH_EVENTS)
 static void handleSoylentQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& /* quirksDomainString */, const URL& /* documentURL */)
 {
@@ -2970,6 +3032,8 @@ static void handleFacebookQuirks(QuirksData& quirksData, const URL& /* quirksURL
     quirksData.enableQuirks({
         // facebook.com rdar://100871402
         QuirksData::SiteSpecificQuirk::NeedsFacebookRemoveNotSupportedQuirk,
+        // facebook.com rdar://174179871
+        QuirksData::SiteSpecificQuirk::ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk,
 #if ENABLE(VIDEO_PRESENTATION_MODE)
         // facebook.com rdar://67273166
         QuirksData::SiteSpecificQuirk::RequiresUserGestureToPauseInPictureInPictureQuirk,
@@ -3780,8 +3844,8 @@ void Quirks::determineRelevantQuirks()
         { "crunchyroll"_s, &handleCrunchyRollQuirks },
         { "t-mobile"_s, &handleTMobileQuirks },
         { "descript"_s, &handleDescriptQuirks },
+        { "dictionary"_s, &handleDictionaryQuirks },
 #if PLATFORM(IOS_FAMILY)
-        { "dictionary"_s, &handleScriptToEvaluateBeforeRunningScriptFromURLQuirk },
         { "disneyplus"_s, &handleDisneyPlusQuirks },
 #endif
         { "ea"_s, &handleEAQuirks },
@@ -3859,8 +3923,8 @@ void Quirks::determineRelevantQuirks()
         { "state"_s, &handleCEACStateGovQuirks },
 #if PLATFORM(IOS_FAMILY)
         { "theguardian"_s, &handleGuardianQuirks },
-        { "thesaurus"_s, &handleScriptToEvaluateBeforeRunningScriptFromURLQuirk },
 #endif
+        { "thesaurus"_s, &handleThesaurusQuirks },
         { "tiktok"_s, &handleTikTokQuirks },
 #if PLATFORM(MAC)
         { "trix-editor"_s, &handleTrixEditorQuirks },
@@ -3887,6 +3951,7 @@ void Quirks::determineRelevantQuirks()
         { "wpdevelopment"_s, &handleWPDevelopmentQuirks },
 #endif
         { "x"_s, &handleTwitterXQuirks },
+        { "yahoo"_s, &handleYahooQuirks },
 #if ENABLE(TEXT_AUTOSIZING)
         { "ycombinator"_s, &handleYCombinatorQuirks },
 #endif

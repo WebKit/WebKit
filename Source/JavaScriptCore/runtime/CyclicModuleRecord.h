@@ -67,9 +67,9 @@ public:
     JSValue evaluationError() const { return m_evaluationError.get(); }
     unsigned dfsAncestorIndex() const { return m_dfsAncestorIndex; }
 
-    void status(Status newStatus) { m_status = newStatus; }
-    void evaluationError(VM& vm, JSValue error) { m_evaluationError.set(vm, this, error); }
-    void dfsAncestorIndex(unsigned newIndex) { m_dfsAncestorIndex = newIndex; }
+    void setStatus(Status newStatus) { m_status = newStatus; }
+    void setEvaluationError(VM& vm, JSValue error) { m_evaluationError.set(vm, this, error); }
+    void setDFSAncestorIndex(unsigned newIndex) { m_dfsAncestorIndex = newIndex; }
 
 protected:
     CyclicModuleRecord(VM&, Structure*, const Identifier&);

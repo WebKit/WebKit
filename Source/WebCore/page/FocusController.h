@@ -60,7 +60,7 @@ public:
 
     WEBCORE_EXPORT void setFocusedFrame(Frame*, BroadcastFocusedFrame = BroadcastFocusedFrame::Yes);
     Frame* focusedFrame() const { return m_focusedFrame.get(); }
-    LocalFrame* focusedLocalFrame() const { return dynamicDowncast<LocalFrame>(m_focusedFrame.get()); }
+    LocalFrame* localFocusedFrame() const { return dynamicDowncast<LocalFrame>(m_focusedFrame.get()); }
     WEBCORE_EXPORT LocalFrame* NODELETE focusedOrMainFrame() const;
 
     WEBCORE_EXPORT bool setInitialFocus(FocusDirection, KeyboardEvent*);
@@ -110,6 +110,8 @@ private:
     FocusableElementSearchResult previousFocusableElementWithinScope(const FocusNavigationScope&, Node* start, const FocusEventData&);
 
     FocusableElementSearchResult findFocusableElementDescendingIntoSubframes(FocusDirection, Element*, const FocusEventData&, ShouldFocusElement);
+
+    FocusableElementSearchResult findFocusableElementContinuingFromOwnerElement(FocusDirection, Element&, const FocusEventData&, ShouldFocusElement);
 
     // Searches through the given tree scope, starting from start node, for the next/previous selectable element that comes after/before start node.
     // The order followed is as specified in section 17.11.1 of the HTML4 spec, which is elements with tab indexes

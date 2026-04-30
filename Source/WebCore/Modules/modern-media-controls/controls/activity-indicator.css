@@ -24,7 +24,7 @@
  */
 
 .activity-indicator {
-    position: absolute;
+    position: relative;
     mix-blend-mode: plus-lighter;
     width: 14px;
     height: 14px;

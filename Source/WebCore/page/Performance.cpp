@@ -87,7 +87,7 @@ Performance::Performance(ScriptExecutionContext* context, MonotonicTime timeOrig
     : ContextDestructionObserver(context)
     , m_resourceTimingBufferFullTimer(*this, &Performance::resourceTimingBufferFullTimerFired) // FIXME: Migrate this to the event loop as well. https://bugs.webkit.org/show_bug.cgi?id=229044
     , m_timeOrigin(timeOrigin)
-    , m_continuousTimeOrigin(timeOrigin.approximateContinuousTime())
+    , m_continuousTimeOrigin(timeOrigin.approximate<ContinuousTime>())
 {
     ASSERT(m_timeOrigin);
 }
@@ -107,7 +107,7 @@ DOMHighResTimeStamp Performance::now() const
 
 DOMHighResTimeStamp Performance::timeOrigin() const
 {
-    return reduceTimeResolution(m_timeOrigin.approximateWallTime().secondsSinceEpoch()).milliseconds();
+    return reduceTimeResolution(m_timeOrigin.approximate<WallTime>().secondsSinceEpoch()).milliseconds();
 }
 
 ReducedResolutionSeconds Performance::nowInReducedResolutionSeconds() const
@@ -540,7 +540,7 @@ ExceptionOr<Ref<PerformanceMeasure>> Performance::measure(JSC::JSGlobalObject& g
         }
 #endif
         {
-            auto timeOrigin = m_continuousTimeOrigin.approximateMonotonicTime();
+            auto timeOrigin = m_continuousTimeOrigin.approximate<MonotonicTime>();
             auto startTime = timeOrigin + Seconds::fromMilliseconds(entry->startTime());
             auto endTime = timeOrigin + Seconds::fromMilliseconds(entry->startTime() + entry->duration());
             JSC::ProfilerSupport::markInterval(entry.ptr(), JSC::ProfilerSupport::Category::WebKitPerformanceSignpost, startTime, endTime, WTF::move(message));

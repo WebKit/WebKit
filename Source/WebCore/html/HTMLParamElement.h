@@ -32,6 +32,8 @@ class HTMLParamElement final : public HTMLElement {
 public:
     static Ref<HTMLParamElement> create(const QualifiedName&, Document&);
 
+    ~HTMLParamElement();
+
 private:
     HTMLParamElement(const QualifiedName&, Document&);
 };

@@ -23,6 +23,7 @@
 #include "NumberObject.h"
 
 #include "JSCInlines.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 
@@ -49,6 +50,11 @@ NumberObject* constructNumber(JSGlobalObject* globalObject, JSValue number)
     NumberObject* object = NumberObject::create(globalObject->vm(), globalObject->numberObjectStructure());
     object->setInternalValue(globalObject->vm(), number);
     return object;
+}
+
+Structure* NumberObject::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(NumberObjectType, StructureFlags), info());
 }
 
 } // namespace JSC

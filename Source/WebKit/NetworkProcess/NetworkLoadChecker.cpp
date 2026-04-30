@@ -168,6 +168,20 @@ void NetworkLoadChecker::checkRedirection(ResourceRequest&& request, ResourceReq
     m_previousURL = WTF::move(m_url);
     m_url = redirectRequest.url();
 
+    // Strip request-body headers when the redirect converts the method to GET.
+    // https://fetch.spec.whatwg.org/#concept-http-redirect-fetch
+    auto originalMethod = request.httpMethod();
+    if (!equalLettersIgnoringASCIICase(originalMethod, "get"_s) && !equalLettersIgnoringASCIICase(originalMethod, "head"_s)) {
+        auto status = redirectResponse.httpStatusCode();
+        bool willConvertToGet = (status == httpStatus301MovedPermanently || status == httpStatus302Found)
+            ? equalLettersIgnoringASCIICase(originalMethod, "post"_s)
+            : status == httpStatus303SeeOther;
+        if (willConvertToGet) {
+            m_firstRequestHeaders.removeRequestBodyHeaders();
+            m_originalRequestHeaders.removeRequestBodyHeaders();
+        }
+    }
+
     checkRequest(WTF::move(redirectRequest), client, [handler = WTF::move(handler), request = WTF::move(request), redirectResponse](auto&& result) mutable {
         WTF::switchOn(result,
             [&handler] (ResourceError& error) mutable {

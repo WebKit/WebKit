@@ -28,6 +28,7 @@
 #include "InspectorBackendDispatcher.h"
 
 #include "InspectorFrontendRouter.h"
+#include <array>
 #include <wtf/JSONValues.h>
 #include <wtf/SetForScope.h>
 #include <wtf/text/MakeString.h>
@@ -229,14 +230,14 @@ void BackendDispatcher::sendResponse(long requestId, Ref<JSON::Object>&& result,
 void BackendDispatcher::sendPendingErrors()
 {
     // These error codes are specified in JSON-RPC 2.0, Section 5.1.
-    static const int errorCodes[] = {
+    static constexpr auto errorCodes = std::to_array<int>({
         -32700, // ParseError
         -32600, // InvalidRequest
         -32601, // MethodNotFound
         -32602, // InvalidParams
         -32603, // InternalError
         -32000, // ServerError
-    };
+    });
 
     // To construct the error object, only use the last error's code and message.
     // Per JSON-RPC 2.0, Section 5.1, the 'data' member may contain nested errors,

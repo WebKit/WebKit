@@ -98,7 +98,6 @@ void testEnableViewCacheAtSomeBoundForNoViewCache(unsigned bound)
 void addViewCacheTests()
 {
 #if PAS_ENABLE_BMALLOC
-    ForceExclusives forceExclusives;
     ForceTLAs forceTLAs;
     
     ADD_TEST(testDisableViewCacheUsingBoundForNoViewCache());

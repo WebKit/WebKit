@@ -12,6 +12,7 @@
 
 #import <Metal/Metal.h>
 
+#include <deque>
 #include <optional>
 #include <utility>
 
@@ -84,11 +85,13 @@ struct IndexConversionBufferMtl : public ConversionBufferMtl
 struct UniformConversionBufferMtl : public ConversionBufferMtl
 {
     UniformConversionBufferMtl(ContextMtl *context,
+                               uint64_t programSerialIdIn,
                                std::pair<size_t, size_t> offsetIn,
                                size_t blockSize);
 
     size_t initialSrcOffset() { return offset.second; }
 
+    const uint64_t programSerialId;
     const size_t uniformBufferBlockSize;
     const std::pair<size_t, size_t> offset;
 };
@@ -180,6 +183,7 @@ class BufferMtl : public BufferImpl, public BufferHolderMtl
                                                        size_t offset);
 
     ConversionBufferMtl *getUniformConversionBuffer(ContextMtl *context,
+                                                    uint64_t programSerialId,
                                                     std::pair<size_t, size_t> offset,
                                                     size_t blockSize);
 
@@ -246,7 +250,8 @@ class BufferMtl : public BufferImpl, public BufferHolderMtl
 
     std::vector<IndexConversionBufferMtl> mIndexConversionBuffers;
 
-    std::vector<UniformConversionBufferMtl> mUniformConversionBuffers;
+    // TODO(crbug.com/500942658): Consider using LRU cache
+    std::deque<UniformConversionBufferMtl> mUniformConversionBuffers;
 
     struct RestartRangeCache
     {

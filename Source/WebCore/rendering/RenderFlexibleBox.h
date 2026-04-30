@@ -109,6 +109,9 @@ public:
 
     bool NODELETE isColumnOrRowReverse() const;
     bool NODELETE isWrapReverse() const;
+    bool NODELETE mainAxisIsFlexItemInlineAxis(const RenderBox&) const;
+    ItemPosition alignmentForFlexItem(const RenderBox&) const;
+    Style::FlexBasis flexBasisForFlexItem(const RenderBox&) const;
 
 protected:
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
@@ -152,11 +155,9 @@ private:
     static constexpr unsigned s_lineStatesInitialCapacity = 2;
     using FlexLineStates = Vector<LineState, s_lineStatesInitialCapacity>;
 
-    bool NODELETE mainAxisIsFlexItemInlineAxis(const RenderBox&) const;
     bool NODELETE isColumnFlow() const;
     bool NODELETE isLeftToRightFlow() const;
     bool NODELETE isMultiline() const;
-    Style::FlexBasis flexBasisForFlexItem(const RenderBox& flexItem) const;
     const Style::PreferredSize& NODELETE preferredMainSizeLengthForFlexItem(const RenderBox&) const LIFETIME_BOUND;
     const Style::MinimumSize& NODELETE minMainSizeLengthForFlexItem(const RenderBox&) const LIFETIME_BOUND;
     const Style::MaximumSize& NODELETE maxMainSizeLengthForFlexItem(const RenderBox&) const LIFETIME_BOUND;
@@ -209,7 +210,6 @@ private:
     LayoutUnit computeFlexBaseSizeForFlexItem(RenderBox& flexItem, RelayoutChildren);
     void maybeCacheFlexItemMainIntrinsicSize(RenderBox& flexItem, RelayoutChildren);
     void NODELETE adjustAlignmentForFlexItem(RenderBox& flexItem, LayoutUnit);
-    ItemPosition alignmentForFlexItem(const RenderBox& flexItem) const;
     inline OverflowAlignment overflowAlignmentForFlexItem(const RenderBox& flexItem) const;
     template<typename SizeType> bool canComputePercentageFlexBasis(const RenderBox& flexItem, const SizeType&, UpdatePercentageHeightDescendants);
     template<typename SizeType> bool flexItemMainSizeIsDefinite(const RenderBox&, const SizeType&);

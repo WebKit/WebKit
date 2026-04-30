@@ -32,6 +32,8 @@
 #include "InjectedScriptManager.h"
 #include "InspectorEnvironment.h"
 #include "JSBigInt.h"
+#include "JSCJSValueInlines.h"
+#include "JSFunction.h"
 #include "VM.h"
 #include <wtf/Stopwatch.h>
 #include <wtf/TZoneMallocInlines.h>

@@ -145,12 +145,6 @@ public:
     void animationCurrentTime(CurrentTimePromise&&);
     void setAnimationCurrentTime(double, DOMPromiseDeferred<void>&&);
 
-    using HasAudioPromise = DOMPromiseDeferred<IDLBoolean>;
-    void hasAudio(HasAudioPromise&&);
-    using IsMutedPromise = DOMPromiseDeferred<IDLBoolean>;
-    void isMuted(IsMutedPromise&&);
-    void setIsMuted(bool, DOMPromiseDeferred<void>&&);
-
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     bool immersive() const;
     void requestImmersive(DOMPromiseDeferred<void>&&);

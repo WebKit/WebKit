@@ -23,53 +23,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@linkTimeConstant
-function promiseReturnUndefinedOnFulfilled(argument)
-{
-    "use strict";
-
-    return @undefined;
-}
-
 // https://tc39.es/proposal-explicit-resource-management/#sec-%asynciteratorprototype%-@@asyncdispose
 @overriddenName="[Symbol.asyncDispose]"
 function asyncDispose()
 {
     'use strict';
 
-    var promise = @newPromise();
-    var returnMethod;
     try {
-        returnMethod = this.return;
-    } catch (e) {
-        @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, e);
-        return promise;
-    }
+        var returnMethod = this.return;
+        if (@isUndefinedOrNull(returnMethod))
+            return @newResolvedPromise(@undefined);
 
-    if (@isUndefinedOrNull(returnMethod))
-        @resolvePromiseWithFirstResolvingFunctionCallCheck(promise, @undefined);
-    else {
-        var result;
-        try {
-            result = returnMethod.@call(this, @undefined);
-        } catch (e) {
-            @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, e);
-            return promise;
-        }
+        var result = returnMethod.@call(this, @undefined);
         var resultWrapper;
-        try {
-            if (@isPromise(result) && result.constructor == @Promise)
-                resultWrapper = result;
-            else {
-                resultWrapper = @newPromise();
-                @resolvePromiseWithFirstResolvingFunctionCallCheck(resultWrapper, result);
-            }
-        } catch (e) {
-            @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, e);
-            return promise;
-        }
+        if (@isPromise(result) && result.constructor === @Promise)
+            resultWrapper = result;
+        else
+            resultWrapper = @newResolvedPromise(result);
+        var promise = @newPromise();
         @performPromiseThen(resultWrapper, @promiseReturnUndefinedOnFulfilled, @undefined, promise);
+        return promise;
+    } catch (e) {
+        return @newRejectedPromise(e);
     }
-
-    return promise;
 }

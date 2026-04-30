@@ -49,10 +49,6 @@ public:
 
     WTF_EXPORT_PRIVATE static ApproximateTime now();
 
-    ApproximateTime approximateApproximateTime() const { return *this; }
-    WTF_EXPORT_PRIVATE WallTime approximateWallTime() const;
-    WTF_EXPORT_PRIVATE MonotonicTime approximateMonotonicTime() const;
-
     WTF_EXPORT_PRIVATE void dump(PrintStream&) const;
 
 private:

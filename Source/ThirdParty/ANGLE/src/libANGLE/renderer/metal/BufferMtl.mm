@@ -84,9 +84,11 @@ IndexRange IndexConversionBufferMtl::getRangeForConvertedBuffer(size_t count)
 
 // UniformConversionBufferMtl implementation
 UniformConversionBufferMtl::UniformConversionBufferMtl(ContextMtl *context,
+                                                       uint64_t programSerialIdIn,
                                                        std::pair<size_t, size_t> offsetIn,
                                                        size_t uniformBufferBlockSize)
     : ConversionBufferMtl(context, 0, mtl::kUniformBufferSettingOffsetMinAlignment),
+      programSerialId(programSerialIdIn),
       uniformBufferBlockSize(uniformBufferBlockSize),
       offset(offsetIn)
 {}
@@ -412,12 +414,14 @@ IndexConversionBufferMtl *BufferMtl::getIndexConversionBuffer(ContextMtl *contex
 }
 
 ConversionBufferMtl *BufferMtl::getUniformConversionBuffer(ContextMtl *context,
+                                                           uint64_t programSerialId,
                                                            std::pair<size_t, size_t> offset,
                                                            size_t stdSize)
 {
     for (UniformConversionBufferMtl &buffer : mUniformConversionBuffers)
     {
-        if (buffer.offset.first == offset.first && buffer.uniformBufferBlockSize == stdSize)
+        if (buffer.programSerialId == programSerialId && buffer.offset.first == offset.first &&
+            buffer.uniformBufferBlockSize == stdSize)
         {
             if (buffer.offset.second <= offset.second &&
                 (offset.second - buffer.offset.second) % buffer.uniformBufferBlockSize == 0)
@@ -425,7 +429,13 @@ ConversionBufferMtl *BufferMtl::getUniformConversionBuffer(ContextMtl *context,
         }
     }
 
-    mUniformConversionBuffers.emplace_back(context, offset, stdSize);
+    constexpr size_t kMaxCacheSize = 32;
+    if (mUniformConversionBuffers.size() >= kMaxCacheSize)
+    {
+        mUniformConversionBuffers.pop_front();
+    }
+
+    mUniformConversionBuffers.emplace_back(context, programSerialId, offset, stdSize);
     return &mUniformConversionBuffers.back();
 }
 

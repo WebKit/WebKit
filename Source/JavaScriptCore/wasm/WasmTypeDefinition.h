@@ -42,6 +42,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/HashTraits.h>
 #include <wtf/Lock.h>
+#include <wtf/ReferenceWrapperVector.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -1015,6 +1016,27 @@ private:
     RefPtr<FunctionSignature> m_Void_I32AnyrefI32I32I32I32;
     RefPtr<FunctionSignature> m_Void_I32AnyrefI32I32AnyrefI32I32;
     Lock m_lock;
+};
+
+// A set of TypeDefinitions retained to prevent dangling pointers in Wasm::Types. TypeDefinitions
+// may reference other TypeDefinitions via pointers disguised as type indices stored in StructType
+// fields, ArrayType element types, or FunctionSignature parameters and return types. To prevent
+// these unmanaged pointers from dangling if a type referenced by a GC object or Wasm::Tag outlives
+// the Wasm instance it originated from, we collect a transitive closure of all TypeDefinitions
+// reachable from a root type and retain them for at least as long as the object that depends on
+// those types lives.
+
+class WebAssemblyGCTypeDependencies {
+public:
+    WebAssemblyGCTypeDependencies(const Ref<const TypeDefinition>& unexpandedType);
+
+    using WorkList = ReferenceWrapperVector<const TypeDefinition>;
+
+private:
+    void process(const TypeDefinition&, WorkList&);
+    void process(FieldType, WorkList&);
+
+    UncheckedKeyHashSet<TypeHash> m_typeDefinitions;
 };
 
 } } // namespace JSC::Wasm

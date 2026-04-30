@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -67,9 +67,10 @@
 
 // XCode path
 #include <JavaScriptCore/JSExportMacros.h>
+#if !defined(BUILDING_TEST_WGSL) && !defined(BUILDING_TEST_WTF)
 #include <WebCore/PlatformExportMacros.h>
 #include <pal/ExportMacros.h>
-#if !PLATFORM(IOS_FAMILY)
+#if !PLATFORM(IOS_FAMILY) && !defined(BUILDING_TEST_IPC)
 #include <WebKit/WebKit2_C.h>
 #endif
 #if PLATFORM(COCOA) && defined(__OBJC__)
@@ -79,8 +80,9 @@
 // on macCatalyst, WebKit.h does not include WebKitLegacy.h, so we need
 // to do it explicitly here.
 #import <WebKit/WebKitLegacy.h>
-#endif
-#endif
+#endif // PLATFORM(MACCATALYST)
+#endif // PLATFORM(COCOA) && defined(__OBJC__)
+#endif // !defined(BUILDING_TEST_WGSL) && !defined(BUILDING_TEST_WTF)
 
 #endif
 

@@ -12,7 +12,7 @@
     function runTest() {
         var doc = document.getElementById('target').contentWindow.document;
         doc.open();
-        doc.write("<body onload='test()'><p>Test Content</p><script>function test() { var doc=document.getElementById('target').contentWindow.document; doc.open(); doc.write('<img src=x onerror=alert(0)>'); doc.close(); if (window.testRunner) { testRunner.notifyDone(); } }</" + lscript + "<iframe id='target' src='http://255.255.255.255'></body>");
+        doc.write("<body onload='test()'><p>Test Content</p><script>function test() { var doc=document.getElementById('target').contentWindow.document; doc.open(); doc.write(\'<img src=x onerror=\"alert(0);if(window.testRunner)testRunner.notifyDone()\">\'); doc.close(); }</" + lscript + "<iframe id='target' src='http://255.255.255.255'></body>");
         doc.close();
     }
     </script>

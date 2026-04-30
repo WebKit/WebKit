@@ -34,9 +34,11 @@ namespace JSC {
 enum class IterationMode : uint8_t {
     Generic = 1 << 0,
     FastArray = 1 << 1,
+    FastMap = 1 << 2,
+    FastSet = 1 << 3,
 };
 
-constexpr uint8_t numberOfIterationModes = 2;
+constexpr uint8_t numberOfIterationModes = 4;
 
 OVERLOAD_BITWISE_OPERATORS_FOR_ENUM_CLASS_WITH_INTERGRALS(IterationMode);
 

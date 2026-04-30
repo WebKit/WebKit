@@ -35,6 +35,6 @@ PASS execCommand(delete, false, "") in <select multiple contenteditable>{<option
 PASS execCommand(delete, false, "") in <select multiple><option contenteditable>{abc}</option><option>def</option></select>: shouldn't modify <option>
 PASS execCommand(delete, false, "") in <select multiple><optgroup contenteditable>{<option>abc</option><option>def</option>}</optgroup></select>: shouldn't delete <option>s
 PASS execCommand(delete, false, "") in <select multiple><optgroup contenteditable><option>{abc}</option><option>def</option></optgroup></select>: shouldn't delete <option>s nor optgroup
-FAIL execCommand(delete, false, "") in <optgroup contenteditable><option>{abc}</option><option>def</option></optgroup>: shouldn't delete <option>s nor optgroup assert_equals: expected "<optgroup contenteditable><option>abc</option><option>def</option></optgroup>" but got "<optgroup contenteditable><option>def</option></optgroup>"
+FAIL execCommand(delete, false, "") in <optgroup contenteditable><option>{abc}</option><option>def</option></optgroup>: shouldn't delete <option>s nor optgroup assert_equals: expected "<optgroup contenteditable><option>abc</option><option>def</option></optgroup>" but got "<optgroup contenteditable><option></option><option>def</option></optgroup>"
 FAIL execCommand(delete, false, "") in <option contenteditable>{abc}</option>: shouldn't modify <option> assert_equals: expected "<option contenteditable>abc</option>" but got "<option contenteditable></option>"
 

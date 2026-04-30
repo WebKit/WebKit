@@ -546,7 +546,9 @@ NSUInteger SafeThreadgroupWidth(size_t numThreads, NSUInteger maxWidth)
         size_t numGroups      = (numThreads + threadgroupWidth - 1) / threadgroupWidth;
         size_t roundedThreads = numGroups * threadgroupWidth;
         if (roundedThreads <= std::numeric_limits<uint32_t>::max())
+        {
             break;
+        }
         threadgroupWidth >>= 1;
     }
     return threadgroupWidth;

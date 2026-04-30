@@ -140,6 +140,8 @@ JS_EXPORT_PRIVATE std::optional<AvailableNamedTimeZone> intlAvailableNamedTimeZo
 JS_EXPORT_PRIVATE String toPrimaryIanaTimeZoneIdentifier(std::span<const char16_t> timeZone);
 JS_EXPORT_PRIVATE String toPrimaryIanaTimeZoneIdentifier(StringView timeZone);
 
+void initializeAvailableTimeZones();
+
 TriState intlBooleanOption(JSGlobalObject*, JSObject* options, PropertyName);
 String intlStringOption(JSGlobalObject*, JSObject* options, PropertyName, std::initializer_list<ASCIILiteral> values, ASCIILiteral notFound, ASCIILiteral fallback);
 unsigned intlNumberOption(JSGlobalObject*, JSObject* options, PropertyName, unsigned minimum, unsigned maximum, unsigned fallback);
@@ -163,6 +165,8 @@ String extractNonUnicodeBCP47Extensions(StringView locale);
 String bestAvailableLocale(const LocaleSet& availableLocales, const String& requestedLocale);
 template<typename Predicate> String bestAvailableLocale(const String& requestedLocale, Predicate);
 Vector<String> numberingSystemsForLocale(const String& locale);
+String defaultNumberingSystemForLocale(const String& dataLocale);
+String defaultCalendarForLocale(const String& dataLocale);
 
 Vector<char, 32> canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(Vector<char, 32>&&);
 

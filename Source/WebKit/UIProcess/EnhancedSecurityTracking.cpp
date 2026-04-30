@@ -27,6 +27,8 @@
 #include "config.h"
 #include "EnhancedSecurityTracking.h"
 
+#include "APIWebsitePolicies.h"
+#include "WebPreferences.h"
 #include <WebCore/IPAddressSpace.h>
 #include <WebCore/SecurityOrigin.h>
 #include <wtf/Condition.h>
@@ -171,7 +173,26 @@ void EnhancedSecurityTracking::trackSameSiteNavigation(const API::Navigation& na
     }
 }
 
-bool EnhancedSecurityTracking::enableIfRequired(const API::Navigation& navigation)
+static bool shouldExpectHTTPSUpgrade(const URL& requestURL, API::WebsitePolicies* websitePolicies, const WebPreferences& preferences, const URL& sourceURL, bool httpFallbackInProgress)
+{
+    if (!requestURL.protocolIs("http"_s) || SecurityOrigin::isLocalHostOrLoopbackIPAddress(requestURL.host()))
+        return false;
+
+    bool httpsByDefaultEnabled = (websitePolicies && (websitePolicies->isUpgradeWithAutomaticFallbackEnabled() || websitePolicies->isUpgradeWithUserMediatedFallbackEnabled()))
+        || preferences.httpSByDefaultEnabled();
+
+    if (!httpsByDefaultEnabled || httpFallbackInProgress)
+        return false;
+
+    bool isSameSite = sourceURL.isEmpty() || RegistrableDomain(requestURL) == RegistrableDomain(sourceURL);
+    bool isSameSiteBypassEnabled = isSameSite
+        && ((websitePolicies && websitePolicies->advancedPrivacyProtections().contains(WebCore::AdvancedPrivacyProtections::HTTPSOnlyExplicitlyBypassedForDomain))
+            || sourceURL.protocolIs("http"_s));
+
+    return !isSameSiteBypassEnabled;
+}
+
+bool EnhancedSecurityTracking::enableIfRequired(const API::Navigation& navigation, API::WebsitePolicies* websitePolicies, const WebPreferences& preferences, const URL& sourceURL, bool httpFallbackInProgress)
 {
     if (navigation.isEnhancedSecurityLinkForCurrentSite()) {
         enableFor(EnhancedSecurityReason::LinkSecurity, navigation);
@@ -181,7 +202,8 @@ bool EnhancedSecurityTracking::enableIfRequired(const API::Navigation& navigatio
     auto currentRequestURL = navigation.currentRequest().url();
 
     if (currentRequestURL.protocolIs("http"_s)
-        && !SecurityOrigin::isLocalHostOrLoopbackIPAddress(currentRequestURL.host())) {
+        && !SecurityOrigin::isLocalHostOrLoopbackIPAddress(currentRequestURL.host())
+        && !shouldExpectHTTPSUpgrade(currentRequestURL, websitePolicies, preferences, sourceURL, httpFallbackInProgress)) {
         enableFor(EnhancedSecurityReason::InsecureProvisional, navigation);
         return true;
     }
@@ -200,7 +222,7 @@ void EnhancedSecurityTracking::handleBackForwardNavigation(const API::Navigation
         enableFor(reasonForEnhancedSecurity(priorState), navigation);
 }
 
-void EnhancedSecurityTracking::trackNavigation(const API::Navigation& navigation, bool hasOpenedPage)
+void EnhancedSecurityTracking::trackNavigation(const API::Navigation& navigation, bool hasOpenedPage, API::WebsitePolicies* websitePolicies, const WebPreferences& preferences, const URL& sourceURL, bool httpFallbackInProgress)
 {
     auto lastNavigationAction = navigation.lastNavigationAction();
     if (lastNavigationAction && lastNavigationAction->hasOpener)
@@ -223,7 +245,7 @@ void EnhancedSecurityTracking::trackNavigation(const API::Navigation& navigation
     if (m_activeState != ActivationState::None && isInitialUIDriven && !isReload)
         reset();
 
-    if (m_activeState != ActivationState::Active && enableIfRequired(navigation))
+    if (m_activeState != ActivationState::Active && enableIfRequired(navigation, websitePolicies, preferences, sourceURL, httpFallbackInProgress))
         return;
 
     if (m_activeState == ActivationState::Active

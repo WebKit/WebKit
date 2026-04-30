@@ -41,6 +41,7 @@
 #include "SystemFontDatabaseCoreText.h"
 #include "UnrealizedCoreTextFont.h"
 #include <CoreText/SFNTLayoutTypes.h>
+#include <array>
 #include <pal/spi/cf/CoreTextSPI.h>
 #include <pal/spi/cocoa/AccessibilitySupportSPI.h>
 #include <wtf/HashSet.h>
@@ -158,7 +159,7 @@ RefPtr<Font> FontCache::similarFont(const FontDescription& description, const St
         return fontForFamily(description, "verdana"_s);
 #endif
 
-    static constexpr ASCIILiteral matchWords[] = { "Arabic"_s, "Pashto"_s, "Urdu"_s };
+    static constexpr auto matchWords = std::to_array<ASCIILiteral>({ "Arabic"_s, "Pashto"_s, "Urdu"_s });
     auto familyMatcher = StringView(family);
     for (auto matchWord : matchWords) {
         if (equalIgnoringASCIICase(familyMatcher, matchWord))

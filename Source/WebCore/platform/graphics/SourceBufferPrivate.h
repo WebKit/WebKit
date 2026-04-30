@@ -242,6 +242,8 @@ private:
     void iterateTrackBuffers(NOESCAPE const Function<void(const TrackBuffer&)>&) const;
     bool isReenqueuePending() const;
 
+    void flushTracksThatNeedReenqueueing();
+
     using OperationPromise = NativePromise<void, PlatformMediaError, WTF::PromiseOption::Default | WTF::PromiseOption::NonExclusive>;
 
     void ensureWeakOnDispatcher(Function<void(SourceBufferPrivate&)>&&);

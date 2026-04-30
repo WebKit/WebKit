@@ -249,6 +249,8 @@ void RenderTreeBuilder::destroy(RenderObject& renderer, CanCollapseAnonymousBloc
     tearDownSubTreeIfApplicable();
 
     auto delayDestroyRendererIfApplicable = [&] {
+        if (view().layoutContext().immediateRendererDestructionEnabledForTesting()) [[unlikely]]
+            return;
         CheckedRef rendererToDelete = *toDestroy;
         if (rendererToDelete->view().layoutContext().addToDetachedRendererList(WTF::move(toDestroy))) {
             rendererToDelete->willBeDestroyed();
@@ -1033,8 +1035,13 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement
     ASSERT(parent.canHaveChildren() || parent.canHaveGeneratedChildren());
     ASSERT(child.parent() == &parent);
 
-    if (parent.renderTreeBeingDestroyed() || m_tearDownType == TearDownType::SubtreeWithRootAlreadyDetached)
+    if (parent.renderTreeBeingDestroyed() || m_tearDownType == TearDownType::SubtreeWithRootAlreadyDetached) {
+        if (parent.document().settings().layerBasedSVGEngineEnabled() && parent.isSVGLayerAwareRenderer()) {
+            if (CheckedPtr parentLayer = parent.enclosingLayer())
+                parentLayer->dirtyChildrenInDOMOrderForSVG();
+        }
         return parent.detachRendererInternal(child);
+    }
 
     if (child.everHadLayout())
         resetRendererStateOnDetach(parent, child, willBeDestroyed, m_internalMovesType);

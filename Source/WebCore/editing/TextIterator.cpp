@@ -947,8 +947,13 @@ static bool isBlockLevelReplacedElement(Node& node)
         && !renderer->isFloatingOrOutOfFlowPositioned();
 }
 
-bool shouldEmitNewlinesBeforeAndAfterNode(Node& node)
+bool shouldEmitNewlinesBeforeAndAfterNode(Node& node, bool emitsNewlinesPerInnerTextSpec)
 {
+    // <p> elements always emit newlines regardless of their CSS display value.
+    // https://html.spec.whatwg.org/multipage/dom.html#rendered-text-collection-steps
+    if (emitsNewlinesPerInnerTextSpec && is<HTMLParagraphElement>(node))
+        return true;
+
     // Block flow (versus inline flow) is represented by having
     // a newline both before and after the element.
     auto* renderer = node.renderer();
@@ -999,10 +1004,10 @@ bool shouldEmitNewlinesBeforeAndAfterNode(Node& node)
         && !renderer->isBody();
 }
 
-static bool shouldEmitNewlineAfterNode(Node& node, bool emitsCharactersBetweenAllVisiblePositions = false)
+static bool shouldEmitNewlineAfterNode(Node& node, bool emitsCharactersBetweenAllVisiblePositions = false, bool emitsNewlinesPerInnerTextSpec = false)
 {
     // FIXME: It should be better but slower to create a VisiblePosition here.
-    if (!shouldEmitNewlinesBeforeAndAfterNode(node))
+    if (!shouldEmitNewlinesBeforeAndAfterNode(node, emitsNewlinesPerInnerTextSpec))
         return false;
 
     // Don't emit a new line at the end of the document unless we're matching the behavior of VisiblePosition.
@@ -1016,9 +1021,9 @@ static bool shouldEmitNewlineAfterNode(Node& node, bool emitsCharactersBetweenAl
     return false;
 }
 
-static bool NODELETE shouldEmitNewlineBeforeNode(Node& node)
+static bool NODELETE shouldEmitNewlineBeforeNode(Node& node, bool emitsNewlinesPerInnerTextSpec = false)
 {
-    return shouldEmitNewlinesBeforeAndAfterNode(node); 
+    return shouldEmitNewlinesBeforeAndAfterNode(node, emitsNewlinesPerInnerTextSpec);
 }
 
 static bool shouldEmitExtraNewlineForNode(Node& node, bool emitsNewlinesPerInnerTextSpec)
@@ -1142,12 +1147,18 @@ void TextIterator::representNodeOffsetZero()
     // before encountering shouldRepresentNodeOffsetZero()s worse case behavior.
     RefPtr currentNode = m_currentNode;
     bool emitsNewlinesPerInnerTextSpec = m_behaviors.contains(TextIteratorBehavior::EmitsNewlinesPerInnerTextSpec);
+
+    if (emitsNewlinesPerInnerTextSpec) {
+        if (auto* renderer = currentNode->renderer(); renderer && renderer->style().visibility() != Visibility::Visible)
+            return;
+    }
+
     if (shouldEmitTabBeforeNode(*currentNode)) {
         if (shouldRepresentNodeOffsetZero()) {
             RefPtr parentNode = currentNode->parentNode();
             emitCharacter('\t', WTF::move(parentNode), WTF::move(currentNode), 0, 0);
         }
-    } else if (shouldEmitNewlineBeforeNode(*currentNode) || (emitsNewlinesPerInnerTextSpec && isBlockLevelReplacedElement(*currentNode))) {
+    } else if (shouldEmitNewlineBeforeNode(*currentNode, emitsNewlinesPerInnerTextSpec) || (emitsNewlinesPerInnerTextSpec && isBlockLevelReplacedElement(*currentNode))) {
         if (shouldRepresentNodeOffsetZero()) {
             RefPtr parentNode = currentNode->parentNode();
             emitCharacter('\n', WTF::move(parentNode), WTF::move(currentNode), 0, 0);
@@ -1214,16 +1225,21 @@ void TextIterator::exitNode(Node* exitedNode)
     // therefore look like a blank line.
     if (!m_hasEmitted)
         return;
-        
+    
+    if (m_behaviors.contains(TextIteratorBehavior::EmitsNewlinesPerInnerTextSpec)) {
+        if (auto* renderer = m_currentNode->renderer(); renderer && renderer->style().visibility() != Visibility::Visible)
+            return;
+    }
+
     // Emit with a position *inside* m_currentNode, after m_currentNode's contents, in
-    // case it is a block, because the run should start where the 
+    // case it is a block, because the run should start where the
     // emitted character is positioned visually.
     RefPtr baseNode = exitedNode;
     // FIXME: This shouldn't require the m_lastTextNode to be true, but we can't change that without making
     // the logic in _web_attributedStringFromRange match. We'll get that for free when we switch to use
     // TextIterator in _web_attributedStringFromRange.
     // See <rdar://problem/5428427> for an example of how this mismatch will cause problems.
-    if (m_lastTextNode && (shouldEmitNewlineAfterNode(*protect(m_currentNode), m_behaviors.contains(TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions)) || (m_behaviors.contains(TextIteratorBehavior::EmitsNewlinesPerInnerTextSpec) && isBlockLevelReplacedElement(*protect(m_currentNode))))) {
+    if (m_lastTextNode && (shouldEmitNewlineAfterNode(*protect(m_currentNode), m_behaviors.contains(TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions), m_behaviors.contains(TextIteratorBehavior::EmitsNewlinesPerInnerTextSpec)) || (m_behaviors.contains(TextIteratorBehavior::EmitsNewlinesPerInnerTextSpec) && isBlockLevelReplacedElement(*protect(m_currentNode))))) {
         // use extra newline to represent margin bottom, as needed
         bool addNewline = shouldEmitExtraNewlineForNode(*protect(m_currentNode), m_behaviors.contains(TextIteratorBehavior::EmitsNewlinesPerInnerTextSpec));
 

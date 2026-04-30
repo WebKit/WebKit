@@ -332,6 +332,28 @@ TEST(PasteWebArchive, StripsDataDetectorsLinks)
 
 #endif // ENABLE(DATA_DETECTION)
 
+TEST(PasteWebArchive, DestinationUsesLockdownMode)
+{
+    auto archiveURL = [NSBundle.test_resourcesBundle URLForResource:@"opentype_test" withExtension:@"webarchive"];
+    auto archiveData = adoptNS([[NSData alloc] initWithContentsOfURL:archiveURL]);
+
+    RetainPtr pasteboard = [NSPasteboard generalPasteboard];
+    [pasteboard declareTypes:@[UTTypeWebArchive.identifier] owner:nil];
+    [pasteboard setData:archiveData.get() forType:UTTypeWebArchive.identifier];
+
+    auto webView = createLockdownModeWebViewWithCustomPasteboardDataEnabled();
+    [webView synchronouslyLoadTestPageNamed:@"paste-rtfd"];
+    [webView paste:nil];
+
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"clipboardData.types.includes('text/html')"]);
+    [webView stringByEvaluatingJavaScript:@"html = clipboardData.values[0]"];
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"html.includes('test case')"].boolValue);
+
+    [webView stringByEvaluatingJavaScript:@"editor.innerHTML = html; editor.focus(); getSelection().setPosition(editor, 0)"];
+    [webView stringByEvaluatingJavaScript:@"getSelection().modify('move', 'forward', 'lineboundary')"];
+    EXPECT_WK_STREQ("test case", [webView stringByEvaluatingJavaScript:@"editor.textContent"]);
+}
+
 #endif // PLATFORM(MAC)
 
 

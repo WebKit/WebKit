@@ -346,7 +346,7 @@ void CyclicModuleRecord::link(JSGlobalObject* globalObject, RefPtr<ScriptFetcher
             // 4.a.i. Assert: m.[[Status]] is LINKING.
             ASSERT(m->status() == Status::Linking);
             // 4.a.ii. Set m.[[Status]] to UNLINKED.
-            m->status(Status::Unlinked);
+            m->setStatus(Status::Unlinked);
         }
         // 4.b. Assert: module.[[Status]] is UNLINKED.
         ASSERT(status() == Status::Unlinked);
@@ -396,7 +396,7 @@ JSPromise* CyclicModuleRecord::evaluate(JSGlobalObject* globalObject)
     // 6. Let capability be ! NewPromiseCapability(%Promise%).
     JSPromise* capability = JSPromise::create(vm, globalObject->promiseStructure());
     // 7. Set module.[[TopLevelCapability]] to capability.
-    module->topLevelCapability(vm, capability);
+    module->setTopLevelCapability(vm, capability);
     // 8. Let result be Completion(InnerModuleEvaluation(module, stack, 0)).
     module->innerModuleEvaluation(globalObject, stack, 0);
     // 9. If result is an abrupt completion, then
@@ -408,9 +408,9 @@ JSPromise* CyclicModuleRecord::evaluate(JSGlobalObject* globalObject)
             auto* cyclic = uncheckedDowncast<CyclicModuleRecord>(abstractRecord);
             ASSERT(cyclic->status() == Status::Evaluating);
             // 9.a.ii. Set m.[[Status]] to EVALUATED.
-            cyclic->status(Status::Evaluated);
+            cyclic->setStatus(Status::Evaluated);
             // 9.a.iii. Set m.[[EvaluationError]] to result.
-            cyclic->evaluationError(vm, exception->value());
+            cyclic->setEvaluationError(vm, exception->value());
         }
         // 9.b. Assert: module.[[Status]] is EVALUATED.
         ASSERT(module->status() == Status::Evaluated);
@@ -520,7 +520,7 @@ static void gatherAvailableAncestors(CyclicModuleRecord* module, Vector<CyclicMo
             ASSERT(m->pendingAsyncDependencies() > 0);
             // 1.a.v. Set m.[[PendingAsyncDependencies]] to m.[[PendingAsyncDependencies]] - 1.
             int newDependencies = m->pendingAsyncDependencies().value() - 1;
-            m->pendingAsyncDependencies(newDependencies);
+            m->setPendingAsyncDependencies(newDependencies);
             // 1.a.vi. If m.[[PendingAsyncDependencies]] = 0, then
             if (!newDependencies) {
                 // 1.a.vi.1. Append m to execList.
@@ -555,11 +555,11 @@ void CyclicModuleRecord::asyncExecutionRejected(JSGlobalObject* globalObject, JS
     // 4. Assert: module.[[EvaluationError]] is EMPTY.
     ASSERT(evaluationError() == nullptr);
     // 5. Set module.[[EvaluationError]] to ThrowCompletion(error).
-    evaluationError(vm, error);
+    setEvaluationError(vm, error);
     // 6. Set module.[[Status]] to EVALUATED.
-    status(CyclicModuleRecord::Status::Evaluated);
+    setStatus(CyclicModuleRecord::Status::Evaluated);
     // 7. Set module.[[AsyncEvaluationOrder]] to DONE.
-    asyncEvaluationOrder(AbstractModuleRecord::AsyncEvaluationOrder::done());
+    setAsyncEvaluationOrder(AbstractModuleRecord::AsyncEvaluationOrder::done());
     // 8. NOTE: module.[[AsyncEvaluationOrder]] is set to DONE for symmetry with AsyncModuleExecutionFulfilled. In InnerModuleEvaluation, the value of a module's [[AsyncEvaluationOrder]] internal slot is unused when its [[EvaluationError]] internal slot is not EMPTY.
     // 9. If module.[[TopLevelCapability]] is not EMPTY, then
     if (auto* topLevel = topLevelCapability()) {
@@ -598,9 +598,9 @@ void CyclicModuleRecord::asyncExecutionFulfilled(JSGlobalObject* globalObject)
     // 4. Assert: module.[[EvaluationError]] is EMPTY.
     ASSERT(evaluationError() == nullptr);
     // 5. Set module.[[AsyncEvaluationOrder]] to DONE.
-    asyncEvaluationOrder(AbstractModuleRecord::AsyncEvaluationOrder::done());
+    setAsyncEvaluationOrder(AbstractModuleRecord::AsyncEvaluationOrder::done());
     // 6. Set module.[[Status]] to EVALUATED.
-    status(CyclicModuleRecord::Status::Evaluated);
+    setStatus(CyclicModuleRecord::Status::Evaluated);
     // 7. If module.[[TopLevelCapability]] is not EMPTY, then
     if (auto* capability = topLevelCapability()) {
         // 7.a. Assert: module.[[CycleRoot]] and module are the same Module Record.
@@ -653,9 +653,9 @@ void CyclicModuleRecord::asyncExecutionFulfilled(JSGlobalObject* globalObject)
             // 12.c.iii. Else,
             } else {
                 // 12.c.iii.1. Set m.[[AsyncEvaluationOrder]] to DONE.
-                m->asyncEvaluationOrder(AbstractModuleRecord::AsyncEvaluationOrder::done());
+                m->setAsyncEvaluationOrder(AbstractModuleRecord::AsyncEvaluationOrder::done());
                 // 12.c.iii.2. Set m.[[Status]] to EVALUATED.
-                m->status(CyclicModuleRecord::Status::Evaluated);
+                m->setStatus(CyclicModuleRecord::Status::Evaluated);
                 // 12.c.iii.3. If m.[[TopLevelCapability]] is not EMPTY, then
                 if (auto* capability = m->topLevelCapability()) {
                     // 12.c.iii.3.a. Assert: m.[[CycleRoot]] and m are the same Module Record.

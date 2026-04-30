@@ -33,6 +33,7 @@ gn_args.config(
     name = "angle_ir",
     args = {
         "angle_ir": True,
+        "enable_rust_clippy": True,
     },
 )
 
@@ -61,6 +62,13 @@ gn_args.config(
     name = "component",
     args = {
         "is_component_build": True,
+    },
+)
+
+gn_args.config(
+    name = "debug",
+    args = {
+        "is_debug": True,
     },
 )
 

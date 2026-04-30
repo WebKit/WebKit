@@ -236,6 +236,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case StringCharCodeAt:
     case StringCodePointAt:
     case StringIndexOf:
+    case StringLastIndexOf:
     case StringStartsWith:
     case StringEndsWith:
     case CompareStrictEq:
@@ -2125,21 +2126,14 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
     }
 
-    case ObjectCreate: {
-        switch (node->child1().useKind()) {
-        case ObjectUse:
-            read(HeapObjectCount);
-            write(HeapObjectCount);
-            write(JSCell_structureID); // prototype object can be transitioned.
-            return;
-        case UntypedUse:
-            clobberTop();
-            return;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            return;
-        }
-    }
+    case ObjectCreate:
+        read(HeapObjectCount);
+        write(HeapObjectCount);
+        write(JSCell_structureID); // prototype object can be transitioned.
+        write(Watchpoint_fire);
+        if (node->child1().useKind() == UntypedUse)
+            write(SideState);
+        return;
 
     case NewSymbol:
         if (!node->child1() || node->child1().useKind() == StringUse) {
@@ -2542,6 +2536,11 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ResolvePromiseFirstResolving:
     case RejectPromiseFirstResolving:
     case FulfillPromiseFirstResolving:
+        clobberTop();
+        return;
+
+    case NewResolvedPromise:
+    case NewRejectedPromise:
         clobberTop();
         return;
 

@@ -338,10 +338,23 @@ auto RenderLayerModelObject::computeVisibleRectsInSVGContainer(const RepaintRect
     else if (auto* svgBlock = dynamicDowncast<RenderSVGBlock>(this))
         locationOffset = svgBlock->locationOffset();
 
-
     // We are now in our parent container's coordinate space. Apply our transform to obtain a bounding box
     // in the parent's coordinate space that encloses us.
-    if (hasLayer() && layer()->transform())
+    if (!hasLayer()) {
+        // Non-layered SVG elements: apply the SVG transform first, then locationOffset.
+        // The localTransform() includes the transform-origin effect (which accounts for
+        // the element's position in the reference box), matching the layer path order
+        // (transform, then offset). Applying offset first would double-count the position.
+        //
+        // Don't use isTransformed() here -- the flags may already reflect the NEW transform
+        // (e.g., identity after clearing the transform attribute), while localTransform()
+        // still holds the OLD value needed for correct old-position repaint.
+        if (auto* svgModel = dynamicDowncast<RenderSVGModelObject>(this)) {
+            auto svgTransform = svgModel->localTransform();
+            if (!svgTransform.isIdentity())
+                adjustedRects.transform(TransformationMatrix(svgTransform));
+        }
+    } else if (layer()->transform())
         adjustedRects.transform(*layer()->transform());
 
     adjustedRects.move(locationOffset);
@@ -455,9 +468,20 @@ void RenderLayerModelObject::updateHasSVGTransformFlags()
 {
     ASSERT(document().settings().layerBasedSVGEngineEnabled());
 
+    bool wasTransformed = isTransformed();
     bool hasSVGTransform = needsHasSVGTransformFlags();
     setHasTransformRelatedProperty(hasSVGTransform || style().hasTransformRelatedProperty());
     setHasSVGTransform(hasSVGTransform);
+
+    // When the isTransformed() state changes, the enclosing layer's SVG children order cache
+    // must be rebuilt. A transformed non-layer renderer is collected as a single atomic entry
+    // without recursing into its subtree, so any layered descendants are not registered in
+    // the DOM-order list. A stale classification either drops those descendants (when toggled
+    // to transformed) or leaves them un-wrapped by the new transform (when toggled away).
+    if (isTransformed() != wasTransformed) {
+        if (CheckedPtr layer = enclosingLayer())
+            layer->dirtyChildrenInDOMOrderForSVG();
+    }
 }
 
 RenderSVGResourceClipper* RenderLayerModelObject::svgClipperResourceFromStyle() const
@@ -688,20 +712,30 @@ void RenderLayerModelObject::repaintOrRelayoutAfterSVGTransformChange()
     // There is no intrinsic reason for that, besides historical ones. If we decouple
     // the 'font size screen scaling factor' from layout and only use it during painting
     // we can optimize transformations for text, simply by avoid the need for layout.
-    auto previousTransform = layerTransform() ? layerTransform()->toAffineTransform() : identity;
-    updateLayerTransform();
+    AffineTransform previousTransform;
+    AffineTransform currentTransform;
 
-    auto currentTransform = layerTransform() ? layerTransform()->toAffineTransform() : identity;
+    if (hasLayer()) {
+        // Layered path: use the layer's cached transform.
+        previousTransform = layerTransform() ? layerTransform()->toAffineTransform() : identity;
+        updateLayerTransform();
+        currentTransform = layerTransform() ? layerTransform()->toAffineTransform() : identity;
 
-    // We have to force a stacking context if we did not have a transform before. Normally
-    // RenderLayer::styleChanged does this for us but repaintOrRelayoutAfterSVGTransformChange
-    // does not end up calling it.
-    if (previousTransform.isIdentity() && !currentTransform.isIdentity()) {
-        if (hasLayer())
+        // We have to force a stacking context if we did not have a transform before. Normally
+        // RenderLayer::styleChanged does this for us but repaintOrRelayoutAfterSVGTransformChange
+        // does not end up calling it.
+        if (previousTransform.isIdentity() && !currentTransform.isIdentity())
             layer()->forceStackingContextIfNeeded();
+    } else if (auto* svgModel = dynamicDowncast<RenderSVGModelObject>(this)) {
+        // Non-layered path: use the renderer's cached local SVG transform.
+        // The local transform was set during initial layout/style update and still
+        // holds the old value, analogous to the layer's transform for layered elements.
+        previousTransform = svgModel->localTransform();
+        svgModel->updateLocalTransform();
+        currentTransform = svgModel->localTransform();
     }
 
-    auto determineIfLayerTransformChangeModifiesScale = [&]() -> bool {
+    auto determineIfTransformChangeModifiesScale = [&]() -> bool {
         if (previousTransform == currentTransform)
             return false;
 
@@ -716,7 +750,7 @@ void RenderLayerModelObject::repaintOrRelayoutAfterSVGTransformChange()
         return false;
     }();
 
-    if (determineIfLayerTransformChangeModifiesScale) {
+    if (determineIfTransformChangeModifiesScale) {
         if (auto* textAffectedByTransformChange = dynamicDowncast<RenderSVGText>(this)) {
             // Mark text metrics for update, and only trigger a relayout and not an explicit repaint.
             textAffectedByTransformChange->setNeedsTextMetricsUpdate();

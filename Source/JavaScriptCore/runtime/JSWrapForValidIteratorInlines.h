@@ -26,6 +26,7 @@
 #pragma once
 
 #include "JSWrapForValidIterator.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

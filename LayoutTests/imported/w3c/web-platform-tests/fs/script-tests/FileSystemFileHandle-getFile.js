@@ -2,7 +2,8 @@
 
 directory_test(async (t, root) => {
   const fileContents = 'awesome content';
-  let handle = await createFileWithContents(t, 'foo.txt', fileContents, /*parent=*/ root);
+  let handle =
+      await createFileWithContents('foo.txt', fileContents, /*parent=*/ root);
   let file = await handle.getFile();
   let slice = file.slice(1, file.size);
   let actualContents = await slice.text();
@@ -10,7 +11,7 @@ directory_test(async (t, root) => {
 }, 'getFile() provides a file that can be sliced');
 
 directory_test(async (t, root) => {
-  const handle = await createEmptyFile(t, 'mtime.txt', root);
+  const handle = await createEmptyFile('mtime.txt', root);
   let file = await handle.getFile();
   const first_mtime = file.lastModified;
 
@@ -40,3 +41,13 @@ directory_test(async (t, root) => {
 
   assert_less_than(first_mtime, second_mtime);
 }, 'getFile() returns last modified time');
+
+directory_test(async (t, root) => {
+  const fileName = "fileAttributesTest.txt";
+
+  const fileHandle = await createEmptyFile(fileName, root);
+  assert_equals(fileHandle.name, fileName);
+
+  const file = await fileHandle.getFile();
+  assert_equals(file.name, fileName);
+}, 'getFile() returns expected name');

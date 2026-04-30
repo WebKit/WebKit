@@ -180,7 +180,7 @@ dom/ios/MouseEventIOS.cpp
 dom/ios/PointerEventIOS.cpp
 dom/ios/TouchEvents.cpp
 dom/mac/ImageControlsMac.cpp
-editing/SelectionGeometryGatherer.cpp
+editing/SelectionGeometryGatherer.cpp @header:RenderStyleGetters
 editing/SmartReplaceCF.cpp
 editing/cocoa/AlternativeTextContextController.mm @nonARC
 editing/cocoa/AlternativeTextUIController.mm @nonARC
@@ -223,7 +223,7 @@ loader/mac/LoaderNSURLExtras.mm @nonARC
 loader/mac/ResourceLoaderMac.mm @nonARC
 page/CaptionUserPreferencesMediaAF.cpp
 page/cocoa/CaptionUserPreferencesMediaAFCocoa.mm @nonARC
-page/cocoa/ContentChangeObserver.cpp
+page/cocoa/ContentChangeObserver.cpp @header:RenderStyleGetters
 page/cocoa/DOMTimerHoldingTank.cpp
 page/cocoa/EventHandlerCocoa.mm @nonARC
 page/cocoa/MemoryReleaseCocoa.mm @nonARC
@@ -475,6 +475,7 @@ platform/graphics/cocoa/PlatformMediaEngineConfigurationFactoryCocoa.cpp
 platform/graphics/cocoa/PlatformTimeRangesCocoa.mm @nonARC @no-unify
 platform/graphics/cocoa/ShareableCVPixelBuffer.cpp
 platform/graphics/cocoa/ShareableCVPixelFormat.cpp
+platform/graphics/cocoa/ShareableGainMap.cpp
 platform/graphics/cocoa/SourceBufferParser.cpp
 platform/graphics/cocoa/SourceBufferParserWebM.cpp
 platform/graphics/cocoa/SystemFontDatabaseCocoa.mm @nonARC
@@ -495,7 +496,7 @@ platform/graphics/cocoa/controls/ApplePayButtonCocoa.mm @nonARC
 platform/graphics/cocoa/controls/ControlFactoryCocoa.mm @nonARC
 platform/graphics/coretext/ComplexTextControllerCoreText.mm @nonARC
 platform/graphics/coretext/DrawGlyphsRecorder.cpp
-platform/graphics/coretext/FontCascadeCoreText.cpp
+platform/graphics/coretext/FontCascadeCoreText.cpp @header:RenderStyleGetters
 platform/graphics/coretext/FontCoreText.cpp
 platform/graphics/coretext/FontCustomPlatformDataCoreText.cpp
 platform/graphics/coretext/FontPlatformDataCoreText.cpp
@@ -734,7 +735,7 @@ platform/video-codecs/cocoa/WebRTCVideoDecoderVTBAV1.mm @nonARC
 platform/video-codecs/cocoa/WebRTCVideoDecoderVTBVP9.mm @nonARC
 platform/xr/cocoa/PlatformXRPose.cpp
 rendering/AttachmentLayout.mm @nonARC
-rendering/TextAutoSizing.cpp
+rendering/TextAutoSizing.cpp @header:RenderStyleGetters
 rendering/cocoa/RenderThemeCocoa.mm @nonARC
 rendering/ios/RenderThemeIOS.mm @nonARC
 rendering/mac/RenderThemeMac.mm @nonARC

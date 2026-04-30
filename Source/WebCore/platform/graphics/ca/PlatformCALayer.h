@@ -312,7 +312,7 @@ public:
 
     virtual const EventRegion* eventRegion() const { return nullptr; }
     virtual void setEventRegion(const EventRegion&) { }
-    
+
 #if ENABLE(SCROLLING_THREAD)
     virtual std::optional<ScrollingNodeID> scrollingNodeID() const { return std::nullopt; }
     virtual void setScrollingNodeID(std::optional<ScrollingNodeID>) { }

@@ -33,6 +33,7 @@
 
 #include <WebCore/EventTarget.h>
 #include <WebCore/Node.h>
+#include <WebCore/WebCoreOpaqueRoot.h>
 
 namespace WebCore {
 

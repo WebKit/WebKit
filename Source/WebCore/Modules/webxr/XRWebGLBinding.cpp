@@ -34,14 +34,18 @@
 #include "WebGLOpaqueTexture.h"
 #include "WebGLRenderingContext.h"
 #include "WebGLRenderingContextBase.h"
+#include "WebXRReferenceSpace.h"
 #include "WebXRSession.h"
 #include "WebXRView.h"
 #include "WebXRViewport.h"
+#include "XREquirectLayer.h"
+#include "XREquirectLayerInit.h"
 #include "XRLayerLayout.h"
 #include "XRProjectionLayer.h"
 #include "XRProjectionLayerInit.h"
 #include "XRQuadLayer.h"
 #include "XRQuadLayerInit.h"
+#include "XRWebGLEquirectLayerBacking.h"
 #include "XRWebGLProjectionLayerBacking.h"
 #include "XRWebGLQuadLayerBacking.h"
 #include "XRWebGLSubImage.h"
@@ -329,6 +333,32 @@ static ExceptionOr<void> checkCanSetSpace(const WebXRSpace& space, const WebXRSe
     return { };
 }
 
+ExceptionOr<void> XRWebGLBinding::validateCompositionLayerInitParameters(const XRLayerInit& init) const
+{
+    if (init.layout == XRLayerLayout::Default)
+        return Exception { ExceptionCode::TypeError, "Default layout is not supported for non projection layers."_s };
+
+    // The following checks are really part of the allocate textures algorithm, but we prefer to early fail here
+    // as the allocation happens lazily when getSubImage() is called.
+    if (init.mipLevels < 1)
+        return Exception { ExceptionCode::InvalidStateError, "Mip levels lower than 1 are invalid."_s };
+    if (init.mipLevels > 1) {
+        auto isPowerOfTwo = [](uint32_t n) {
+            return !(n & (n - 1));
+        };
+        if (!isPowerOfTwo(init.viewPixelWidth) || !isPowerOfTwo(init.viewPixelHeight))
+            return Exception { ExceptionCode::InvalidStateError, "Mip levels greater than 1 are not supported for non power of 2 textures."_s };
+    }
+
+    if (!colorFormatIsSupportedForNonProjectionLayer(init.colorFormat))
+        return Exception { ExceptionCode::NotSupportedError, "Unsupported texture format."_s };
+
+    if (init.depthFormat && !depthFormatIsSupportedForNonProjectionLayer(*init.depthFormat))
+        return Exception { ExceptionCode::NotSupportedError, "Unsupported texture depth format."_s };
+
+    return { };
+}
+
 ExceptionOr<Ref<XRQuadLayer>> XRWebGLBinding::createQuadLayer(ScriptExecutionContext& scriptExecutionContext, const XRQuadLayerInit& init)
 {
     if (!m_session->supportsFeature(PlatformXR::SessionFeature::Layers))
@@ -342,29 +372,9 @@ ExceptionOr<Ref<XRQuadLayer>> XRWebGLBinding::createQuadLayer(ScriptExecutionCon
             if (baseContext->isContextLost())
                 return Exception { ExceptionCode::InvalidStateError, "Cannot create a quad layer with a lost WebGL context"_s };
 
-            if (init.layout == XRLayerLayout::Default)
-                return Exception { ExceptionCode::TypeError, "Default layout is not supported for quad layers."_s };
-
-            // The following three checks are really part of the allocate textures algorithm, but we need to fail early here
-            // as the allocation happens lazily when getSubImage() is called.
-            if (!colorFormatIsSupportedForNonProjectionLayer(init.colorFormat))
-                return Exception { ExceptionCode::NotSupportedError, "Unsupported texture format."_s };
-
-            if (init.mipLevels < 1)
-                return Exception { ExceptionCode::InvalidStateError, "Mip levels lower than 1 are invalid."_s };
-            if (init.mipLevels > 1) {
-                auto isPowerOfTwo = [](uint32_t n) {
-                    return !(n & (n - 1));
-                };
-                if (!isPowerOfTwo(init.viewPixelWidth) || !isPowerOfTwo(init.viewPixelHeight))
-                    return Exception { ExceptionCode::InvalidStateError, "Mip levels greater than 1 are not supported for non power of 2 textures."_s };
-
-            }
-
-            // The following check is really part of the allocate depth textures algorithm, but we need to fail early for the quad layer case
-            // as the allocation happens lazily when getSubImage() is called.
-            if (init.depthFormat && !depthFormatIsSupportedForNonProjectionLayer(*init.depthFormat))
-                return Exception { ExceptionCode::NotSupportedError, "Unsupported texture depth format."_s };
+            auto validateInitResult = validateCompositionLayerInitParameters(init);
+            if (validateInitResult.hasException())
+                return validateInitResult.releaseException();
 
             auto createBackingResult = XRWebGLQuadLayerBacking::create(m_session, baseContext, init);
             if (createBackingResult.hasException())
@@ -517,6 +527,57 @@ ExceptionOr<Vector<RefPtr<WebGLOpaqueTexture>>> XRWebGLBinding::allocateDepthTex
             if (textures.isEmpty())
                 return Exception { ExceptionCode::OperationError };
             return textures;
+        },
+        [](std::monostate) {
+            ASSERT_NOT_REACHED();
+            return Exception { ExceptionCode::OperationError, "Could not get a WebGL rendering context."_s };
+        }
+    );
+}
+
+ExceptionOr<Ref<XREquirectLayer>> XRWebGLBinding::createEquirectLayer(ScriptExecutionContext& scriptExecutionContext, const XREquirectLayerInit& init)
+{
+    if (!m_session->supportsFeature(PlatformXR::SessionFeature::Layers))
+        return Exception { ExceptionCode::NotSupportedError, "Layers are not supported by the session."_s };
+
+    if (m_session->ended())
+        return Exception { ExceptionCode::InvalidStateError, "Cannot create an equirect layer with an XRSession that has ended."_s };
+
+    return WTF::switchOn(m_context,
+        [&](const Ref<WebGLRenderingContextBase>& baseContext) -> ExceptionOr<Ref<XREquirectLayer>> {
+            if (baseContext->isContextLost())
+                return Exception { ExceptionCode::InvalidStateError, "Cannot create an equirect layer with a lost WebGL context"_s };
+
+            if (!init.space->isReferenceSpace())
+                return Exception { ExceptionCode::TypeError, "The space is not a reference space."_s };
+
+            if (downcast<WebXRReferenceSpace>(init.space)->type() == XRReferenceSpaceType::Viewer)
+                return Exception { ExceptionCode::TypeError, "Viewer space is not allowed for equirect layers."_s };
+
+            auto validateInitResult = validateCompositionLayerInitParameters(init);
+            if (validateInitResult.hasException())
+                return validateInitResult.releaseException();
+
+            auto createBackingResult = XRWebGLEquirectLayerBacking::create(m_session, baseContext, init);
+            if (createBackingResult.hasException())
+                return createBackingResult.releaseException();
+            Ref backing = createBackingResult.releaseReturnValue();
+
+            auto checkSpaceResult = checkCanSetSpace(init.space.get(), m_session);
+            if (checkSpaceResult.hasException())
+                return checkSpaceResult.releaseException();
+
+            Ref layer = XREquirectLayer::create(scriptExecutionContext, m_session, WTF::move(backing), init);
+            initializeCompositionLayer(layer.get());
+
+            auto layoutResult = determineLayout(init.textureType, init.layout);
+            if (layoutResult.hasException())
+                return layoutResult.releaseException();
+            auto layout = layoutResult.releaseReturnValue();
+            layer->setLayout(layout);
+            layer->setNeedsRedraw(true);
+
+            return layer;
         },
         [](std::monostate) {
             ASSERT_NOT_REACHED();

@@ -1117,7 +1117,8 @@ private:
             break;
         }
 
-        case StringIndexOf: {
+        case StringIndexOf:
+        case StringLastIndexOf: {
             fixEdge<StringUse>(node->child1());
             fixEdge<StringUse>(node->child2());
             if (node->child3())
@@ -3602,6 +3603,8 @@ private:
         case ResolvePromiseFirstResolving:
         case RejectPromiseFirstResolving:
         case FulfillPromiseFirstResolving:
+        case NewResolvedPromise:
+        case NewRejectedPromise:
         case PromiseResolve:
         case PromiseReject:
         case PromiseThen:

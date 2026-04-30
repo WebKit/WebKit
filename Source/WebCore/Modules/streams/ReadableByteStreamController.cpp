@@ -996,6 +996,9 @@ void ReadableByteStreamController::handleQueueDrain(JSDOMGlobalObject& globalObj
 
 void ReadableByteStreamController::handleSourcePromise(JSDOMGlobalObject& globalObject, DOMPromise& algorithmPromise, Callback&& callback)
 {
+    // FIXME: Handle the suspended but not stopped case.
+    if (algorithmPromise.isSuspended())
+        return;
     auto thisValue = toJS(&globalObject, &globalObject, *this);
     DOMPromise::whenPromiseIsSettled(&globalObject, algorithmPromise.promise(), [callback = WTF::move(callback)](auto* globalObject, bool isFulfilled, auto result) mutable {
         RefPtr context = globalObject ? globalObject->scriptExecutionContext() : nullptr;

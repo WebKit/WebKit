@@ -29,6 +29,7 @@
 #include "DataFunctions.h"
 #include "DictionaryFunctions.h"
 #include "EventSenderProxy.h"
+#include "ExternalURLBlockingHelpers.h"
 #include "Options.h"
 #include "PlatformWebView.h"
 #include "StringFunctions.h"
@@ -1453,6 +1454,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     WKContextSetCacheModel(TestController::singleton().context(), kWKCacheModelDocumentBrowser);
 
     WKWebsiteDataStoreResetServiceWorkerFetchTimeoutForTesting(websiteDataStore());
+    WKWebsiteDataStoreClearCrossOriginPreflightResultCacheForTesting(websiteDataStore());
 
     WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(websiteDataStore(), true);
     WKWebsiteDataStoreClearAllDeviceOrientationPermissions(websiteDataStore());
@@ -4257,7 +4259,37 @@ void TestController::decidePolicyForNavigationAction(WKPageRef page, WKNavigatio
     m_shouldSwapToDefaultSessionOnNextNavigation = false;
 
     auto request = adoptWK(WKNavigationActionCopyRequest(navigationAction));
-    if (auto targetFrame = adoptWK(WKNavigationActionCopyTargetFrameInfo(navigationAction)); targetFrame && m_dumpPolicyDelegateCallbacks) {
+    auto targetFrame = adoptWK(WKNavigationActionCopyTargetFrameInfo(navigationAction));
+
+    // Block access to external URLs in subframe navigations when site isolation is enabled.
+    // With site isolation, the injected bundle's willSendRequestForFrame callback cannot emit
+    // the console message because WKBundleFrameGetJavaScriptContext returns null for provisional
+    // frames in the new process. Without site isolation, the injected bundle handles this.
+    if (targetFrame && !WKFrameInfoGetIsMainFrame(targetFrame.get()) && protectedCurrentInvocation()->options().siteIsolationEnabled()) {
+        if (auto url = adoptWK(WKURLRequestCopyURL(request.get()))) {
+            auto host = adoptWK(WKURLCopyHostName(url.get()));
+            auto scheme = adoptWK(WKURLCopyScheme(url.get()));
+            if (isExternalURLBlockable(host.get(), scheme.get())) {
+                bool mainFrameIsExternal = false;
+                WKFrameRef mainFrame = WKPageGetMainFrame(page);
+                if (mainFrame) {
+                    auto mainFrameURL = adoptWK(WKFrameCopyURL(mainFrame));
+                    if (!mainFrameURL || WKStringIsEqualToUTF8CString(adoptWK(WKURLCopyString(mainFrameURL.get())).get(), "about:blank"))
+                        mainFrameURL = adoptWK(WKFrameCopyProvisionalURL(mainFrame));
+                    mainFrameIsExternal = isMainFrameURLExternal(mainFrameURL.get());
+                }
+                if (!mainFrameIsExternal && !m_allowedHosts.count(toSTD(host))) {
+                    auto urlString = adoptWK(WKURLCopyString(url.get()));
+                    auto blockedURL = sanitizeExternalURL(urlString.get());
+                    protectedCurrentInvocation()->outputText(makeString("CONSOLE MESSAGE: Blocked access to external URL "_s, blockedURL, '\n'));
+                    WKFramePolicyListenerIgnore(listener);
+                    return;
+                }
+            }
+        }
+    }
+
+    if (targetFrame && m_dumpPolicyDelegateCallbacks) {
         protectedCurrentInvocation()->outputText(makeString(" - decidePolicyForNavigationAction\n"_s, string(request.get(), page),
             " is main frame - "_s, targetFrame && WKFrameInfoGetIsMainFrame(targetFrame.get()) ? "yes"_s : "no"_s,
             " should open URLs externally - "_s, WKNavigationActionGetShouldOpenExternalSchemes(navigationAction) ? "yes"_s : "no"_s, '\n'));

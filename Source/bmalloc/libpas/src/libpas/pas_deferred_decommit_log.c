@@ -185,10 +185,7 @@ void pas_deferred_decommit_log_unlock_after_aborted_add(pas_deferred_decommit_lo
 
     /* We could support using this with the common lock - but it so happens that nobody would need
        that functionality right now. So we save ourselves the trouble and just assert it won't
-       happen.
-    
-       This won't happen because this function is only used by the shared page directory, which is
-       going to use this to unlock a shared view commit lock. */
+       happen. */
     PAS_ASSERT(lock_ptr != &pas_virtual_range_common_lock);
 
     pas_lock_unlock(lock_ptr);

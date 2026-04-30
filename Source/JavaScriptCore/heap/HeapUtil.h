@@ -25,6 +25,12 @@
 
 #pragma once
 
+#include "Heap.h"
+#include "HeapCell.h"
+#include "JSCJSValue.h"
+#include "JSCell.h"
+#include "MarkedBlock.h"
+
 namespace JSC {
 
 // Are you tired of waiting for all of WebKit to build because you changed the implementation of a

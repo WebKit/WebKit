@@ -160,8 +160,9 @@ static CounterDirectives listItemCounterDirectives(RenderElement& renderer)
     }
     if (RefPtr element = renderer.element()) {
         if (RefPtr list = dynamicDowncast<HTMLOListElement>(*element)) {
+            auto resetValue = (list->isReversed() && !list->hasExplicitStart()) ? RenderListItem::startForReversedOrderedList(*list) : list->start();
             return {
-                .resetValue = list->start(),
+                .resetValue = resetValue,
                 .incrementValue = list->isReversed() ? 1 : -1,
                 .setValue = std::nullopt
             };

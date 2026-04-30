@@ -22,18 +22,11 @@
 
 #if USE(COORDINATED_GRAPHICS)
 #include "BitmapTexture.h"
-#include "ColorMatrix.h"
 #include "CoordinatedTileBuffer.h"
 #include "GraphicsLayer.h"
 #include "TextureMapper.h"
 #include "TextureMapperFlags.h"
 #include <wtf/SystemTracing.h>
-
-#if USE(SKIA)
-WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
-#include <skia/core/SkColorFilter.h>
-WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
-#endif
 
 namespace WebCore {
 
@@ -123,47 +116,6 @@ void CoordinatedBackingStore::drawRepaintCounter(TextureMapper& textureMapper, i
     for (const auto& tile : m_tiles.values())
         textureMapper.drawNumber(repaintCount, borderColor, tile.rect().location(), adjustedTransform);
 }
-
-#if USE(SKIA)
-void CoordinatedBackingStore::paintToCanvas(SkCanvas& canvas, const SkPaint& paint)
-{
-    if (m_tiles.isEmpty())
-        return;
-
-    FloatRect layerRect = { { }, m_size };
-
-    sk_sp<SkColorFilter> bgraFilter;
-    auto tilePaint = paint;
-    for (auto& tile : m_tiles.values()) {
-        if (canvas.quickReject(tile.rect()))
-            continue;
-
-        const auto& image = tile.ensureSkImage();
-        if (!image)
-            continue;
-
-        tilePaint.setAntiAlias(allTileEdgesExposed(layerRect, tile.rect()));
-
-        if (tile.texture().colorConvertFlags().contains(TextureMapperFlags::ShouldConvertTextureBGRAToRGBA)) {
-            if (!bgraFilter) {
-                const auto matrix = swapRedBlueMatrix();
-                bgraFilter = SkColorFilters::Matrix(matrix.data().data());
-            }
-            if (auto* colorFilter = paint.getColorFilter())
-                tilePaint.setColorFilter(colorFilter->makeComposed(bgraFilter));
-            else
-                tilePaint.setColorFilter(bgraFilter);
-        }
-        canvas.drawImageRect(image, SkRect::MakeWH(image->width(), image->height()), tile.rect(), SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kNone), &tilePaint, SkCanvas::kFast_SrcRectConstraint);
-    }
-}
-
-void CoordinatedBackingStore::drawDebugBorders(SkCanvas& canvas, const SkPaint& paint)
-{
-    for (const auto& tile : m_tiles.values())
-        canvas.drawRect(SkRect(tile.rect()), paint);
-}
-#endif
 
 } // namespace WebCore
 

@@ -359,7 +359,7 @@ void Frame::updateFrameTreeSyncData(const FrameTreeSyncSerializationData& data)
             auto oldFrameInfo = oldMap.getOptional(child->frameID());
             auto newFrameInfo = newMap.getOptional(child->frameID());
 
-            if (!oldFrameInfo || !newFrameInfo || oldFrameInfo->useDarkAppearance != newFrameInfo->useDarkAppearance) {
+            if (!oldFrameInfo || !newFrameInfo || oldFrameInfo->ownerElementAppearance.contains(FrameOwnerElementAppearance::IsDark) != newFrameInfo->ownerElementAppearance.contains(FrameOwnerElementAppearance::IsDark)) {
                 RefPtr localChildView = localChild->view();
 
                 localChildView->invalidateForBaseBackgroundOrColorSchemeChange();

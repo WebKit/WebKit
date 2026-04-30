@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2019, 2026 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Google Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
@@ -37,6 +37,7 @@
 #include <wtf/ContinuousTime.h>
 #include <wtf/MathExtras.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/UnbarrieredMonotonicTime.h>
 #include <wtf/WallTime.h>
 
 #if OS(DARWIN)
@@ -320,7 +321,9 @@ MonotonicTime MonotonicTime::now()
 
 ApproximateTime ApproximateTime::now()
 {
-#if OS(DARWIN)
+#if USE(HARDWARE_UNBARRIERED_MONOTONIC_TIME)
+    return ApproximateTime(UnbarrieredMonotonicTime::now().secondsSinceEpoch().value());
+#elif OS(DARWIN)
     return fromMachApproximateTime(mach_approximate_time());
 #elif OS(LINUX)
     struct timespec ts { };
@@ -372,5 +375,12 @@ ContinuousApproximateTime ContinuousApproximateTime::now()
     return fromRawSeconds(currentTimeNow);
 #endif
 }
+
+#if !USE(HARDWARE_UNBARRIERED_MONOTONIC_TIME)
+UnbarrieredMonotonicTime UnbarrieredMonotonicTime::now()
+{
+    return UnbarrieredMonotonicTime(MonotonicTime::now().secondsSinceEpoch().value());
+}
+#endif
 
 } // namespace WTF

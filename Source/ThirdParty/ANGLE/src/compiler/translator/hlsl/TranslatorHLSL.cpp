@@ -7,11 +7,11 @@
 #include "compiler/translator/hlsl/TranslatorHLSL.h"
 
 #include "compiler/translator/hlsl/OutputHLSL.h"
+#include "compiler/translator/tree_ops/AddDefaultReturnStatements.h"
 #include "compiler/translator/tree_ops/RemoveDynamicIndexing.h"
 #include "compiler/translator/tree_ops/RewriteTexelFetchOffset.h"
 #include "compiler/translator/tree_ops/SimplifyLoopConditions.h"
 #include "compiler/translator/tree_ops/SplitSequenceOperator.h"
-#include "compiler/translator/tree_ops/hlsl/AddDefaultReturnStatements.h"
 #include "compiler/translator/tree_ops/hlsl/ArrayReturnValueToOutParameter.h"
 #include "compiler/translator/tree_ops/hlsl/BreakVariableAliasingInInnerLoops.h"
 #include "compiler/translator/tree_ops/hlsl/ExpandIntegerPowExpressions.h"
@@ -57,9 +57,12 @@ bool TranslatorHLSL::translate(TIntermBlock *root,
     int maxDualSourceDrawBuffers =
         resources.EXT_blend_func_extended ? resources.MaxDualSourceDrawBuffers : 0;
 
-    if (!sh::AddDefaultReturnStatements(this, root))
+    if (!compileOptions.useIR)
     {
-        return false;
+        if (!sh::AddDefaultReturnStatements(this, root))
+        {
+            return false;
+        }
     }
 
     // Note that SimplifyLoopConditions needs to be run before any other AST transformations that

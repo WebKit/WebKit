@@ -282,8 +282,8 @@ static IOHIDDigitizerTransducerType transducerTypeFromString(NSString * transduc
 
     if ([transducerTypeString isEqualToString:HIDEventInputTypeStylus])
         return kIOHIDDigitizerTransducerTypeStylus;
-    
-    ASSERT_NOT_REACHED();
+
+    NSLog(@"Unsupported transducer type %@", transducerTypeString);
     return 0;
 }
 
@@ -360,8 +360,14 @@ static InterpolationType interpolationFromString(NSString *string)
     // touch is 1 if a finger is down.
     CFIndex touch = [self touchFromEventInfo:info];
 
+    NSString *inputType = info[HIDEventInputType];
+    if (!inputType) {
+        NSLog(@"Failed to find `%@` in event info %@", HIDEventInputType, info);
+        return nullptr;
+    }
+
     IOHIDEventRef eventRef = IOHIDEventCreateDigitizerEvent(kCFAllocatorDefault, machTime,
-        transducerTypeFromString(info[HIDEventInputType]),  // transducerType
+        transducerTypeFromString(inputType),                // transducerType
         0,                                                  // index
         0,                                                  // identifier
         eventMask,                                          // event mask
@@ -1130,6 +1136,9 @@ RetainPtr<IOHIDEventRef> createHIDKeyEvent(NSString *character, uint64_t timesta
     ASSERT([NSThread isMainThread]);
 
     auto eventRef = adoptCF([self _createIOHIDEventWithInfo:eventInfo]);
+    if (!eventRef)
+        return;
+
     [self _sendHIDEvent:eventRef.get()];
 }
 

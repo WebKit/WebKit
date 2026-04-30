@@ -75,6 +75,7 @@ PACKAGES+=(
     libpciaccess
     libtiff
     libunistring-dev
+    libunwind
     libxfixes
     libxfont2
     libxkbcommon-x11

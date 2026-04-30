@@ -1399,6 +1399,43 @@ private:
             break;
         }
 
+        case StringLastIndexOf: {
+            Node* stringNode = m_node->child1().node();
+            String string = stringNode->tryGetString(m_graph);
+            if (!string)
+                break;
+
+            String searchString = m_node->child2()->tryGetString(m_graph);
+            if (!searchString)
+                break;
+
+            if (string.length() < searchString.length()) {
+                m_changed = true;
+                m_insertionSet.insertNode(m_nodeIndex, SpecNone, Check, m_node->origin, m_node->children.justChecks());
+                m_graph.convertToConstant(m_node, jsNumber(-1));
+                break;
+            }
+            unsigned maxStart = string.length() - searchString.length();
+            unsigned startPosition = maxStart;
+            if (m_node->child3()) {
+                if (!m_node->child3()->isInt32Constant())
+                    break;
+                int32_t pos = m_node->child3()->asInt32();
+                if (pos < 0)
+                    startPosition = 0;
+                else
+                    startPosition = std::min<unsigned>(pos, maxStart);
+            }
+
+            size_t result = string.reverseFind(searchString, startPosition);
+            int32_t indexResult = (result == notFound) ? -1 : static_cast<int32_t>(result);
+
+            m_changed = true;
+            m_insertionSet.insertNode(m_nodeIndex, SpecNone, Check, m_node->origin, m_node->children.justChecks());
+            m_graph.convertToConstant(m_node, jsNumber(indexResult));
+            break;
+        }
+
         case StringStartsWith:
         case StringEndsWith: {
             bool isStartsWith = m_node->op() == StringStartsWith;

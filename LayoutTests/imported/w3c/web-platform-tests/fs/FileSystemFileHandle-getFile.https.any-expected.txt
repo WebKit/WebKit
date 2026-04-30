@@ -1,4 +1,5 @@
 
 PASS getFile() provides a file that can be sliced
 PASS getFile() returns last modified time
+PASS getFile() returns expected name
 

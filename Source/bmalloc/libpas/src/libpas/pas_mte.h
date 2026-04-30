@@ -792,22 +792,6 @@ pas_mte_retag_freed_region_if_tagged(
     return begin;
 }
 
-// We leave the majority of the view to be tagged as individual segregated
-// allocations are slab-allocated from within it. All we need to do here is
-// zero-tag the trailing-buffer which the shared view shared-allocator leaves
-// at the end of the new partial view.
-#define PAS_MTE_TAG_BUMP_ALLOCATION_FOR_PARTIAL_VIEW(page_config, page, view, bump, mode) do { \
-        if (mode != pas_always_compact_allocation_mode) { \
-            uintptr_t page_boundary = (uintptr_t)pas_page_base_boundary(&page->base, page_config.base); \
-            uintptr_t ptr = page_boundary + (bump.new_bump - 16); \
-            pas_mte_tag_region_from_pointer(ptr, 16, PAS_MTE_IS_KNOWN_MEDIUM_PAGE(page_config.base)); \
-            if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_LOG_ON_TAG)) { \
-                uintptr_t bump_base = page_boundary + bump.old_bump; \
-                printf("[MTE]\tTagging 16 bytes from %p for trailing-buffer of partial view %p, bump starting at %p\n", (void*)ptr, view, (void*)bump_base); \
-            } \
-        } \
-    } while (0)
-
 // When zeroing out memory we need to be careful to not clear its tagged status.
 // Neither memset nor mach_vm_behavior_set will do so, but re-mapping the page
 // with mmap or mach_vm_map will do so unless we force it to use PAS_VM_MTE.
@@ -1035,18 +1019,6 @@ void* pas_mte_system_heap_realloc_zero_tagged(malloc_zone_t* zone, void* ptr, si
             return pas_mte_system_heap_realloc_zero_tagged(systemHeap->zone(), (ptr), (size)); \
     } while (false)
 
-// Used to tag bump allocations in the primordial heap.
-// Non-homogeneous because this comes from a partial view, meaning other
-// allocators can use the same page.
-// Takes a pas_segregated_page_config
-#define PAS_MTE_HANDLE_PRIMORDIAL_BUMP_ALLOCATION(page_config, ptr, size, mode) do { \
-        /* Even though this is a bump allocation, because we have the page_config */ \
-        /* handy, we use the page instead of the allocator for purposes of checking */ \
-        /* if this allocation should be tagged. */ \
-        if (PAS_USE_MTE && PAS_MTE_SHOULD_TAG_PAGE(page_config)) \
-            pas_mte_maybe_tag_allocated_region(ptr, (size_t)size, mode, pas_mte_homogeneous_allocator, pas_initial_allocation, PAS_MTE_IS_KNOWN_MEDIUM_PAGE(page_config.base)); \
-    } while (false)
-
 // Used to bail from allocating megapages from the megapage large heap if PAS_MTE is disabled.
 // The non-MTE default is to use the megapage large heap for any non-compact megapage
 // allocation, which is what we want in an PAS_MTE world, but splitting up the page sources incurs
@@ -1061,20 +1033,7 @@ void* pas_mte_system_heap_realloc_zero_tagged(malloc_zone_t* zone, void* ptr, si
         } \
     } while (false)
 
-// Used to tag the trailing-buffer bytes of a partial view when it is first
-// committed and becomes ready for use as an allocator.
-#define PAS_MTE_HANDLE_POPULATE_PRIMORDIAL_PARTIAL_VIEW(page_config, page, view, bump_result, mode) do { \
-        if (PAS_USE_MTE) { \
-            if (PAS_MTE_SHOULD_TAG_PAGE(page_config)) \
-                PAS_MTE_TAG_BUMP_ALLOCATION_FOR_PARTIAL_VIEW(page_config, page, view, bump_result, mode); \
-        } \
-    } while (false)
-
 // Used to redirect small megapage allocations when PAS_MTE is not enabled to the respective untagged megapage cache.
-#define PAS_MTE_HANDLE_SMALL_SHARED_SEGREGATED_PAGE_ALLOCATION(heap, megapage_cache) do { \
-        if (!PAS_USE_MTE || !heap->parent_heap->is_non_compact_heap) \
-            megapage_cache = &page_caches->small_compact_other_megapage_cache; \
-    } while (false)
 #define PAS_MTE_HANDLE_SMALL_EXCLUSIVE_SEGREGATED_PAGE_ALLOCATION(heap, megapage_cache) do { \
         if (!PAS_USE_MTE || !heap->parent_heap->is_non_compact_heap) \
             megapage_cache = &page_caches->small_compact_exclusive_segregated_megapage_cache; \

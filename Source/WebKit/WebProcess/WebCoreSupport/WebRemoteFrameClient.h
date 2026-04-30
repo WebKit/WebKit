@@ -66,6 +66,7 @@ private:
     void setPrinting(bool printing, WebCore::FloatSize pageSize, WebCore::FloatSize originalPageSize, float maximumShrinkRatio, WebCore::AdjustViewSize) final;
     void updateScrollingMode(WebCore::ScrollbarMode scrollingMode) final;
     void reportMixedContentViolation(bool blocked, const URL& target) final;
+    void addResourceTimingFromChild(WebCore::ResourceTiming&&) final;
     void findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirection, const WebCore::FocusEventData&, WebCore::ShouldFocusElement, CompletionHandler<void(WebCore::FoundElementInRemoteFrame)>&&) final;
     void findFocusableElementContinuingFromFrame(WebCore::FocusDirection, WebCore::FrameIdentifier, const WebCore::FocusEventData&, WebCore::ShouldFocusElement) final;
 

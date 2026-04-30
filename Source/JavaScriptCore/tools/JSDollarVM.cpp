@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,6 +60,7 @@
 #include "Snippet.h"
 #include "SnippetParams.h"
 #include "Strong.h"
+#include "StructureCreateInlines.h"
 #include "TypeProfiler.h"
 #include "TypeProfilerLog.h"
 #include "VMEntryScopeInlines.h"
@@ -2812,7 +2813,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDumpCallFrame, (JSGlobalObject* globalObject, C
 }
 
 // Dumps the JS stack.
-// Usage: $vm.printStack()
+// Usage: $vm.dumpStack()
 JSC_DEFINE_HOST_FUNCTION(functionDumpStack, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     DollarVMAssertScope assertScope;
@@ -4383,19 +4384,26 @@ void JSDollarVM::finishCreation(VM& vm)
 
     JSGlobalObject* globalObject = this->realm();
 
-    auto addFunction = [&] (VM& vm, ASCIILiteral name, NativeFunction function, unsigned arguments) {
+    auto addFunction = [&] (VM& vm, bool allowed, ASCIILiteral name, NativeFunction function, unsigned arguments) {
+        if (!allowed)
+            return;
         DollarVMAssertScope assertScope;
         JSDollarVM::addFunction(vm, globalObject, name, function, arguments);
     };
-    auto addConstructibleFunction = [&] (VM& vm, ASCIILiteral name, NativeFunction function, unsigned arguments) {
+    auto addConstructibleFunction = [&] (VM& vm, bool allowed, ASCIILiteral name, NativeFunction function, unsigned arguments) {
+        if (!allowed)
+            return;
         DollarVMAssertScope assertScope;
         JSDollarVM::addConstructibleFunction(vm, globalObject, name, function, arguments);
     };
 
-    addFunction(vm, "abort"_s, functionCrash, 0);
-    addFunction(vm, "crash"_s, functionCrash, 0);
-    addFunction(vm, "breakpoint"_s, functionBreakpoint, 0);
-    addFunction(vm, "exit"_s, functionExit, 0);
+    bool alwaysAllow = true;
+    bool allowIfNotFuzz = !Options::useFuzzerMode();
+
+    addFunction(vm, allowIfNotFuzz, "abort"_s, functionCrash, 0);
+    addFunction(vm, allowIfNotFuzz, "crash"_s, functionCrash, 0);
+    addFunction(vm, allowIfNotFuzz, "breakpoint"_s, functionBreakpoint, 0);
+    addFunction(vm, allowIfNotFuzz, "exit"_s, functionExit, 0);
 
     putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "dfgTrue"_s), 0, functionDFGTrue, ImplementationVisibility::Public, DFGTrueIntrinsic, jsDollarVMPropertyAttributes);
     putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "ftlTrue"_s), 0, functionFTLTrue, ImplementationVisibility::Public, FTLTrueIntrinsic, jsDollarVMPropertyAttributes);
@@ -4405,181 +4413,183 @@ void JSDollarVM::finishCreation(VM& vm)
     putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "cpuRdtsc"_s), 0, functionCpuRdtsc, ImplementationVisibility::Public, CPURdtscIntrinsic, jsDollarVMPropertyAttributes);
     putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "cpuCpuid"_s), 0, functionCpuCpuid, ImplementationVisibility::Public, CPUCpuidIntrinsic, jsDollarVMPropertyAttributes);
     putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "cpuPause"_s), 0, functionCpuPause, ImplementationVisibility::Public, CPUPauseIntrinsic, jsDollarVMPropertyAttributes);
-    addFunction(vm, "cpuClflush"_s, functionCpuClflush, 2);
+    addFunction(vm, alwaysAllow, "cpuClflush"_s, functionCpuClflush, 2);
 
-    addFunction(vm, "llintTrue"_s, functionLLintTrue, 0);
-    addFunction(vm, "baselineJITTrue"_s, functionBaselineJITTrue, 0);
+    addFunction(vm, alwaysAllow, "llintTrue"_s, functionLLintTrue, 0);
+    addFunction(vm, alwaysAllow, "baselineJITTrue"_s, functionBaselineJITTrue, 0);
 
-    addFunction(vm, "noInline"_s, functionNoInline, 1);
+    addFunction(vm, alwaysAllow, "noInline"_s, functionNoInline, 1);
 
-    addFunction(vm, "triggerMemoryPressure"_s, functionTriggerMemoryPressure, 0);
-    addFunction(vm, "gc"_s, functionGC, 0);
-    addFunction(vm, "gcSweepAsynchronously"_s, functionGCSweepAsynchronously, 0);
-    addFunction(vm, "edenGC"_s, functionEdenGC, 0);
-    addFunction(vm, "dumpSubspaceHashes"_s, functionDumpSubspaceHashes, 0);
+    addFunction(vm, alwaysAllow, "triggerMemoryPressure"_s, functionTriggerMemoryPressure, 0);
+    addFunction(vm, alwaysAllow, "gc"_s, functionGC, 0);
+    addFunction(vm, alwaysAllow, "gcSweepAsynchronously"_s, functionGCSweepAsynchronously, 0);
+    addFunction(vm, alwaysAllow, "edenGC"_s, functionEdenGC, 0);
+    addFunction(vm, alwaysAllow, "dumpSubspaceHashes"_s, functionDumpSubspaceHashes, 0);
 
-    addFunction(vm, "callFrame"_s, functionCallFrame, 1);
-    addFunction(vm, "codeBlockFor"_s, functionCodeBlockFor, 1);
-    addFunction(vm, "codeBlockForFrame"_s, functionCodeBlockForFrame, 1);
-    addFunction(vm, "dumpSourceFor"_s, functionDumpSourceFor, 1);
-    addFunction(vm, "dumpBytecodeFor"_s, functionDumpBytecodeFor, 1);
+    addFunction(vm, allowIfNotFuzz, "callFrame"_s, functionCallFrame, 1);
+    addFunction(vm, allowIfNotFuzz, "codeBlockFor"_s, functionCodeBlockFor, 1);
+    addFunction(vm, allowIfNotFuzz, "codeBlockForFrame"_s, functionCodeBlockForFrame, 1);
+    addFunction(vm, allowIfNotFuzz, "dumpSourceFor"_s, functionDumpSourceFor, 1);
+    addFunction(vm, allowIfNotFuzz, "dumpBytecodeFor"_s, functionDumpBytecodeFor, 1);
 
-    addFunction(vm, "dataLog"_s, functionDataLog, 1);
-    addFunction(vm, "print"_s, functionPrint, 1);
-    addFunction(vm, "dumpCallFrame"_s, functionDumpCallFrame, 0);
-    addFunction(vm, "dumpStack"_s, functionDumpStack, 0);
-    addFunction(vm, "dumpRegisters"_s, functionDumpRegisters, 1);
+    addFunction(vm, alwaysAllow, "dataLog"_s, functionDataLog, 1);
+    addFunction(vm, alwaysAllow, "print"_s, functionPrint, 1);
+    addFunction(vm, alwaysAllow, "dumpCallFrame"_s, functionDumpCallFrame, 0);
+    addFunction(vm, alwaysAllow, "dumpStack"_s, functionDumpStack, 0);
+    addFunction(vm, alwaysAllow, "dumpRegisters"_s, functionDumpRegisters, 1);
 
-    addFunction(vm, "dumpCell"_s, functionDumpCell, 1);
+    addFunction(vm, allowIfNotFuzz, "dumpCell"_s, functionDumpCell, 1);
 
-    addFunction(vm, "dumpHeapSnapshot"_s, functionDumpHeapSnapshot, 0);
+    addFunction(vm, allowIfNotFuzz, "dumpHeapSnapshot"_s, functionDumpHeapSnapshot, 0);
 
-    addFunction(vm, "indexingMode"_s, functionIndexingMode, 1);
-    addFunction(vm, "inlineCapacity"_s, functionInlineCapacity, 1);
-    addFunction(vm, "clearLinkBufferStats"_s, functionClearLinkBufferStats, 0);
-    addFunction(vm, "linkBufferStats"_s, functionLinkBufferStats, 0);
-    addFunction(vm, "value"_s, functionValue, 1);
-    addFunction(vm, "getpid"_s, functionGetPID, 0);
+    addFunction(vm, allowIfNotFuzz, "indexingMode"_s, functionIndexingMode, 1);
+    addFunction(vm, allowIfNotFuzz, "inlineCapacity"_s, functionInlineCapacity, 1);
+    addFunction(vm, allowIfNotFuzz, "clearLinkBufferStats"_s, functionClearLinkBufferStats, 0);
+    addFunction(vm, allowIfNotFuzz, "linkBufferStats"_s, functionLinkBufferStats, 0);
+    addFunction(vm, allowIfNotFuzz, "value"_s, functionValue, 1);
+    addFunction(vm, allowIfNotFuzz, "getpid"_s, functionGetPID, 0);
 
-    addFunction(vm, "haveABadTime"_s, functionHaveABadTime, 1);
-    addFunction(vm, "isHavingABadTime"_s, functionIsHavingABadTime, 1);
+    addFunction(vm, alwaysAllow, "haveABadTime"_s, functionHaveABadTime, 1);
+    addFunction(vm, alwaysAllow, "isHavingABadTime"_s, functionIsHavingABadTime, 1);
 
-    addFunction(vm, "callWithStackSize"_s, functionCallWithStackSize, 2);
+    addFunction(vm, allowIfNotFuzz, "callWithStackSize"_s, functionCallWithStackSize, 2);
 
-    addFunction(vm, "createGlobalObject"_s, functionCreateGlobalObject, 0);
-    addFunction(vm, "createGlobalProxy"_s, functionCreateProxy, 1);
-    addFunction(vm, "createRuntimeArray"_s, functionCreateRuntimeArray, 0);
+    addFunction(vm, allowIfNotFuzz, "createGlobalObject"_s, functionCreateGlobalObject, 0);
+    addFunction(vm, allowIfNotFuzz, "createGlobalProxy"_s, functionCreateProxy, 1);
+    addFunction(vm, allowIfNotFuzz, "createRuntimeArray"_s, functionCreateRuntimeArray, 0);
 
-    addFunction(vm, "createImpureGetter"_s, functionCreateImpureGetter, 1);
-    addFunction(vm, "createCustomGetterObject"_s, functionCreateCustomGetterObject, 0);
-    addFunction(vm, "createDOMJITNodeObject"_s, functionCreateDOMJITNodeObject, 0);
-    addFunction(vm, "createDOMJITGetterObject"_s, functionCreateDOMJITGetterObject, 0);
-    addFunction(vm, "createDOMJITGetterNoEffectsObject"_s, functionCreateDOMJITGetterNoEffectsObject, 0);
-    addFunction(vm, "createDOMJITGetterComplexObject"_s, functionCreateDOMJITGetterComplexObject, 0);
-    addFunction(vm, "createDOMJITFunctionObject"_s, functionCreateDOMJITFunctionObject, 0);
-    addFunction(vm, "createDOMJITCheckJSCastObject"_s, functionCreateDOMJITCheckJSCastObject, 0);
-    addFunction(vm, "createDOMJITGetterBaseJSObject"_s, functionCreateDOMJITGetterBaseJSObject, 0);
-    addFunction(vm, "createBuiltin"_s, functionCreateBuiltin, 2);
+    addFunction(vm, allowIfNotFuzz, "createImpureGetter"_s, functionCreateImpureGetter, 1);
+    addFunction(vm, allowIfNotFuzz, "createCustomGetterObject"_s, functionCreateCustomGetterObject, 0);
+    addFunction(vm, allowIfNotFuzz, "createDOMJITNodeObject"_s, functionCreateDOMJITNodeObject, 0);
+    addFunction(vm, allowIfNotFuzz, "createDOMJITGetterObject"_s, functionCreateDOMJITGetterObject, 0);
+    addFunction(vm, allowIfNotFuzz, "createDOMJITGetterNoEffectsObject"_s, functionCreateDOMJITGetterNoEffectsObject, 0);
+    addFunction(vm, allowIfNotFuzz, "createDOMJITGetterComplexObject"_s, functionCreateDOMJITGetterComplexObject, 0);
+    addFunction(vm, allowIfNotFuzz, "createDOMJITFunctionObject"_s, functionCreateDOMJITFunctionObject, 0);
+    addFunction(vm, allowIfNotFuzz, "createDOMJITCheckJSCastObject"_s, functionCreateDOMJITCheckJSCastObject, 0);
+    addFunction(vm, allowIfNotFuzz, "createDOMJITGetterBaseJSObject"_s, functionCreateDOMJITGetterBaseJSObject, 0);
+    addFunction(vm, allowIfNotFuzz, "createBuiltin"_s, functionCreateBuiltin, 2);
 
-    addFunction(vm, "vmTaintedState"_s, functionVMTaintedState, 0);
-    addFunction(vm, "runTaintedString"_s, functionRunTaintedString, 1);
+    addFunction(vm, allowIfNotFuzz, "vmTaintedState"_s, functionVMTaintedState, 0);
+    addFunction(vm, allowIfNotFuzz, "runTaintedString"_s, functionRunTaintedString, 1);
 
 #if ENABLE(WEBASSEMBLY)
-    addFunction(vm, "createWasmStreamingParser"_s, functionCreateWasmStreamingParser, 0);
-    addFunction(vm, "createWasmStreamingCompilerForCompile"_s, functionCreateWasmStreamingCompilerForCompile, 0);
-    addFunction(vm, "createWasmStreamingCompilerForInstantiate"_s, functionCreateWasmStreamingCompilerForInstantiate, 0);
+    addFunction(vm, allowIfNotFuzz, "createWasmStreamingParser"_s, functionCreateWasmStreamingParser, 0);
+    addFunction(vm, allowIfNotFuzz, "createWasmStreamingCompilerForCompile"_s, functionCreateWasmStreamingCompilerForCompile, 0);
+    addFunction(vm, allowIfNotFuzz, "createWasmStreamingCompilerForInstantiate"_s, functionCreateWasmStreamingCompilerForInstantiate, 0);
 #endif
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
-    addFunction(vm, "hasDebuggerContinued"_s, functionHasDebuggerContinued, 0);
-    addFunction(vm, "createWasmStreamingCompilerForInstantiateWithURL"_s, functionCreateWasmStreamingCompilerForInstantiateWithURL, 2);
+    addFunction(vm, allowIfNotFuzz, "hasDebuggerContinued"_s, functionHasDebuggerContinued, 0);
+    addFunction(vm, allowIfNotFuzz, "createWasmStreamingCompilerForInstantiateWithURL"_s, functionCreateWasmStreamingCompilerForInstantiateWithURL, 2);
 #endif
-    addFunction(vm, "createStaticCustomAccessor"_s, functionCreateStaticCustomAccessor, 0);
-    addFunction(vm, "createStaticCustomValue"_s, functionCreateStaticCustomValue, 0);
-    addFunction(vm, "createStaticDontDeleteDontEnum"_s, functionCreateStaticDontDeleteDontEnum, 0);
-    addFunction(vm, "createObjectDoingSideEffectPutWithoutCorrectSlotStatus"_s, functionCreateObjectDoingSideEffectPutWithoutCorrectSlotStatus, 0);
-    addFunction(vm, "createEmptyFunctionWithName"_s, functionCreateEmptyFunctionWithName, 1);
-    addFunction(vm, "getPrivateProperty"_s, functionGetPrivateProperty, 2);
-    addFunction(vm, "setImpureGetterDelegate"_s, functionSetImpureGetterDelegate, 2);
+    addFunction(vm, allowIfNotFuzz, "createStaticCustomAccessor"_s, functionCreateStaticCustomAccessor, 0);
+    addFunction(vm, allowIfNotFuzz, "createStaticCustomValue"_s, functionCreateStaticCustomValue, 0);
+    addFunction(vm, allowIfNotFuzz, "createStaticDontDeleteDontEnum"_s, functionCreateStaticDontDeleteDontEnum, 0);
+    addFunction(vm, allowIfNotFuzz, "createObjectDoingSideEffectPutWithoutCorrectSlotStatus"_s, functionCreateObjectDoingSideEffectPutWithoutCorrectSlotStatus, 0);
+    addFunction(vm, allowIfNotFuzz, "createEmptyFunctionWithName"_s, functionCreateEmptyFunctionWithName, 1);
+    addFunction(vm, allowIfNotFuzz, "getPrivateProperty"_s, functionGetPrivateProperty, 2);
+    addFunction(vm, allowIfNotFuzz, "setImpureGetterDelegate"_s, functionSetImpureGetterDelegate, 2);
 
-    addConstructibleFunction(vm, "Root"_s, functionCreateRoot, 0);
-    addConstructibleFunction(vm, "Element"_s, functionCreateElement, 1);
-    addFunction(vm, "getElement"_s, functionGetElement, 1);
+    addConstructibleFunction(vm, allowIfNotFuzz, "Root"_s, functionCreateRoot, 0);
+    addConstructibleFunction(vm, allowIfNotFuzz, "Element"_s, functionCreateElement, 1);
 
-    addConstructibleFunction(vm, "SimpleObject"_s, functionCreateSimpleObject, 0);
-    addFunction(vm, "getHiddenValue"_s, functionGetHiddenValue, 1);
-    addFunction(vm, "setHiddenValue"_s, functionSetHiddenValue, 2);
+    addFunction(vm, allowIfNotFuzz, "getElement"_s, functionGetElement, 1);
 
-    addFunction(vm, "shadowChickenFunctionsOnStack"_s, functionShadowChickenFunctionsOnStack, 0);
-    addFunction(vm, "setGlobalConstRedeclarationShouldNotThrow"_s, functionSetGlobalConstRedeclarationShouldNotThrow, 0);
+    addConstructibleFunction(vm, allowIfNotFuzz, "SimpleObject"_s, functionCreateSimpleObject, 0);
+    addFunction(vm, allowIfNotFuzz, "getHiddenValue"_s, functionGetHiddenValue, 1);
+    addFunction(vm, allowIfNotFuzz, "setHiddenValue"_s, functionSetHiddenValue, 2);
 
-    addFunction(vm, "findTypeForExpression"_s, functionFindTypeForExpression, 2);
-    addFunction(vm, "returnTypeFor"_s, functionReturnTypeFor, 1);
+    addFunction(vm, allowIfNotFuzz, "shadowChickenFunctionsOnStack"_s, functionShadowChickenFunctionsOnStack, 0);
+    addFunction(vm, allowIfNotFuzz, "setGlobalConstRedeclarationShouldNotThrow"_s, functionSetGlobalConstRedeclarationShouldNotThrow, 0);
 
-    addFunction(vm, "flattenDictionaryObject"_s, functionFlattenDictionaryObject, 1);
+    addFunction(vm, allowIfNotFuzz, "findTypeForExpression"_s, functionFindTypeForExpression, 2);
+    addFunction(vm, allowIfNotFuzz, "returnTypeFor"_s, functionReturnTypeFor, 1);
 
-    addFunction(vm, "dumpBasicBlockExecutionRanges"_s, functionDumpBasicBlockExecutionRanges , 0);
-    addFunction(vm, "hasBasicBlockExecuted"_s, functionHasBasicBlockExecuted, 2);
-    addFunction(vm, "basicBlockExecutionCount"_s, functionBasicBlockExecutionCount, 2);
+    addFunction(vm, allowIfNotFuzz, "flattenDictionaryObject"_s, functionFlattenDictionaryObject, 1);
 
-    addFunction(vm, "enableDebuggerModeWhenIdle"_s, functionEnableDebuggerModeWhenIdle, 0);
-    addFunction(vm, "disableDebuggerModeWhenIdle"_s, functionDisableDebuggerModeWhenIdle, 0);
+    addFunction(vm, allowIfNotFuzz, "dumpBasicBlockExecutionRanges"_s, functionDumpBasicBlockExecutionRanges , 0);
+    addFunction(vm, allowIfNotFuzz, "hasBasicBlockExecuted"_s, functionHasBasicBlockExecuted, 2);
+    addFunction(vm, allowIfNotFuzz, "basicBlockExecutionCount"_s, functionBasicBlockExecutionCount, 2);
 
-    addFunction(vm, "deleteAllCodeWhenIdle"_s, functionDeleteAllCodeWhenIdle, 0);
+    addFunction(vm, alwaysAllow, "enableDebuggerModeWhenIdle"_s, functionEnableDebuggerModeWhenIdle, 0);
+    addFunction(vm, alwaysAllow, "disableDebuggerModeWhenIdle"_s, functionDisableDebuggerModeWhenIdle, 0);
 
-    addFunction(vm, "globalObjectCount"_s, functionGlobalObjectCount, 0);
-    addFunction(vm, "globalObjectForObject"_s, functionGlobalObjectForObject, 1);
+    addFunction(vm, alwaysAllow, "deleteAllCodeWhenIdle"_s, functionDeleteAllCodeWhenIdle, 0);
 
-    addFunction(vm, "getGetterSetter"_s, functionGetGetterSetter, 2);
-    addFunction(vm, "loadGetterFromGetterSetter"_s, functionLoadGetterFromGetterSetter, 1);
-    addFunction(vm, "createCustomTestGetterSetter"_s, functionCreateCustomTestGetterSetter, 1);
+    addFunction(vm, allowIfNotFuzz, "globalObjectCount"_s, functionGlobalObjectCount, 0);
+    addFunction(vm, allowIfNotFuzz, "globalObjectForObject"_s, functionGlobalObjectForObject, 1);
 
-    addFunction(vm, "deltaBetweenButterflies"_s, functionDeltaBetweenButterflies, 2);
+    addFunction(vm, allowIfNotFuzz, "getGetterSetter"_s, functionGetGetterSetter, 2);
+    addFunction(vm, allowIfNotFuzz, "loadGetterFromGetterSetter"_s, functionLoadGetterFromGetterSetter, 1);
+    addFunction(vm, alwaysAllow, "createCustomTestGetterSetter"_s, functionCreateCustomTestGetterSetter, 1);
+
+    addFunction(vm, allowIfNotFuzz, "deltaBetweenButterflies"_s, functionDeltaBetweenButterflies, 2);
     
-    addFunction(vm, "currentCPUTime"_s, functionCurrentCPUTime, 0);
-    addFunction(vm, "totalGCTime"_s, functionTotalGCTime, 0);
+    addFunction(vm, alwaysAllow, "currentCPUTime"_s, functionCurrentCPUTime, 0);
+    addFunction(vm, alwaysAllow, "totalGCTime"_s, functionTotalGCTime, 0);
 
-    addFunction(vm, "parseCount"_s, functionParseCount, 0);
+    addFunction(vm, alwaysAllow, "parseCount"_s, functionParseCount, 0);
 
-    addFunction(vm, "isWasmSupported"_s, functionIsWasmSupported, 0);
-    addFunction(vm, "make16BitStringIfPossible"_s, functionMake16BitStringIfPossible, 1);
+    addFunction(vm, alwaysAllow, "isWasmSupported"_s, functionIsWasmSupported, 0);
+    addFunction(vm, alwaysAllow, "make16BitStringIfPossible"_s, functionMake16BitStringIfPossible, 1);
 
-    addFunction(vm, "getStructureTransitionList"_s, functionGetStructureTransitionList, 1);
-    addFunction(vm, "getConcurrently"_s, functionGetConcurrently, 2);
+    addFunction(vm, allowIfNotFuzz, "getStructureTransitionList"_s, functionGetStructureTransitionList, 1);
+    addFunction(vm, allowIfNotFuzz, "getConcurrently"_s, functionGetConcurrently, 2);
 
-    addFunction(vm, "hasOwnLengthProperty"_s, functionHasOwnLengthProperty, 1);
-    addFunction(vm, "rejectPromiseAsHandled"_s, functionRejectPromiseAsHandled, 1);
+    addFunction(vm, allowIfNotFuzz, "hasOwnLengthProperty"_s, functionHasOwnLengthProperty, 1);
+    addFunction(vm, allowIfNotFuzz, "rejectPromiseAsHandled"_s, functionRejectPromiseAsHandled, 1);
 
-    addFunction(vm, "setUserPreferredLanguages"_s, functionSetUserPreferredLanguages, 1);
-    addFunction(vm, "icuVersion"_s, functionICUVersion, 0);
-    addFunction(vm, "icuMinorVersion"_s, functionICUMinorVersion, 0);
-    addFunction(vm, "icuHeaderVersion"_s, functionICUHeaderVersion, 0);
+    addFunction(vm, allowIfNotFuzz, "setUserPreferredLanguages"_s, functionSetUserPreferredLanguages, 1);
+    addFunction(vm, allowIfNotFuzz, "icuVersion"_s, functionICUVersion, 0);
+    addFunction(vm, allowIfNotFuzz, "icuMinorVersion"_s, functionICUMinorVersion, 0);
+    addFunction(vm, allowIfNotFuzz, "icuHeaderVersion"_s, functionICUHeaderVersion, 0);
 
-    addFunction(vm, "assertEnabled"_s, functionAssertEnabled, 0);
-    addFunction(vm, "securityAssertEnabled"_s, functionSecurityAssertEnabled, 0);
-    addFunction(vm, "asanEnabled"_s, functionAsanEnabled, 0);
+    addFunction(vm, alwaysAllow, "assertEnabled"_s, functionAssertEnabled, 0);
+    addFunction(vm, alwaysAllow, "securityAssertEnabled"_s, functionSecurityAssertEnabled, 0);
+    addFunction(vm, alwaysAllow, "asanEnabled"_s, functionAsanEnabled, 0);
 
-    addFunction(vm, "isMemoryLimited"_s, functionIsMemoryLimited, 0);
-    addFunction(vm, "useJIT"_s, functionUseJIT, 0);
-    addFunction(vm, "useDFGJIT"_s, functionUseDFGJIT, 0);
-    addFunction(vm, "useFTLJIT"_s, functionUseFTLJIT, 0);
-    addFunction(vm, "isGigacageEnabled"_s, functionIsGigacageEnabled, 0);
+    addFunction(vm, alwaysAllow, "isMemoryLimited"_s, functionIsMemoryLimited, 0);
+    addFunction(vm, alwaysAllow, "useJIT"_s, functionUseJIT, 0);
+    addFunction(vm, alwaysAllow, "useDFGJIT"_s, functionUseDFGJIT, 0);
+    addFunction(vm, alwaysAllow, "useFTLJIT"_s, functionUseFTLJIT, 0);
+    addFunction(vm, alwaysAllow, "isGigacageEnabled"_s, functionIsGigacageEnabled, 0);
 
-    addFunction(vm, "toCacheableDictionary"_s, functionToCacheableDictionary, 1);
-    addFunction(vm, "toUncacheableDictionary"_s, functionToUncacheableDictionary, 1);
+    addFunction(vm, allowIfNotFuzz, "toCacheableDictionary"_s, functionToCacheableDictionary, 1);
+    addFunction(vm, allowIfNotFuzz, "toUncacheableDictionary"_s, functionToUncacheableDictionary, 1);
 
-    addFunction(vm, "isPrivateSymbol"_s, functionIsPrivateSymbol, 1);
-    addFunction(vm, "dumpAndResetPasDebugSpectrum"_s, functionDumpAndResetPasDebugSpectrum, 0);
+    addFunction(vm, allowIfNotFuzz, "isPrivateSymbol"_s, functionIsPrivateSymbol, 1);
+    addFunction(vm, allowIfNotFuzz, "dumpAndResetPasDebugSpectrum"_s, functionDumpAndResetPasDebugSpectrum, 0);
 
-    addFunction(vm, "monotonicTimeNow"_s, functionMonotonicTimeNow, 0);
-    addFunction(vm, "wallTimeNow"_s, functionWallTimeNow, 0);
-    addFunction(vm, "approximateTimeNow"_s, functionApproximateTimeNow, 0);
+    addFunction(vm, alwaysAllow, "monotonicTimeNow"_s, functionMonotonicTimeNow, 0);
+    addFunction(vm, alwaysAllow, "wallTimeNow"_s, functionWallTimeNow, 0);
+    addFunction(vm, alwaysAllow, "approximateTimeNow"_s, functionApproximateTimeNow, 0);
 
-    addFunction(vm, "evaluateWithScopeExtension"_s, functionEvaluateWithScopeExtension, 1);
+    addFunction(vm, allowIfNotFuzz, "evaluateWithScopeExtension"_s, functionEvaluateWithScopeExtension, 1);
 
-    addFunction(vm, "heapExtraMemorySize"_s, functionHeapExtraMemorySize, 0);
+    addFunction(vm, alwaysAllow, "heapExtraMemorySize"_s, functionHeapExtraMemorySize, 0);
 
 #if ENABLE(JIT)
-    addFunction(vm, "jitSizeStatistics"_s, functionJITSizeStatistics, 0);
-    addFunction(vm, "dumpJITSizeStatistics"_s, functionDumpJITSizeStatistics, 0);
-    addFunction(vm, "resetJITSizeStatistics"_s, functionResetJITSizeStatistics, 0);
+    addFunction(vm, allowIfNotFuzz, "jitSizeStatistics"_s, functionJITSizeStatistics, 0);
+    addFunction(vm, allowIfNotFuzz, "dumpJITSizeStatistics"_s, functionDumpJITSizeStatistics, 0);
+    addFunction(vm, allowIfNotFuzz, "resetJITSizeStatistics"_s, functionResetJITSizeStatistics, 0);
 #endif
 
-    addFunction(vm, "allowDoubleShape"_s, functionAllowDoubleShape, 0);
-    addFunction(vm, "ensureArrayStorage"_s, functionEnsureArrayStorage, 1);
+    addFunction(vm, alwaysAllow, "allowDoubleShape"_s, functionAllowDoubleShape, 0);
+    addFunction(vm, alwaysAllow, "ensureArrayStorage"_s, functionEnsureArrayStorage, 1);
 
 #if PLATFORM(COCOA)
-    addFunction(vm, "setCrashLogMessage"_s, functionSetCrashLogMessage, 1);
+    addFunction(vm, allowIfNotFuzz, "setCrashLogMessage"_s, functionSetCrashLogMessage, 1);
 #endif
 
-    addFunction(vm, "assertFrameAligned"_s, functionAssertFrameAligned, 0);
+    addFunction(vm, alwaysAllow, "assertFrameAligned"_s, functionAssertFrameAligned, 0);
 
-    addFunction(vm, "callFromCPPAsFirstEntry"_s, functionCallFromCPPAsFirstEntry, 2);
-    addFunction(vm, "callFromCPP"_s, functionCallFromCPP, 2);
-    addFunction(vm, "cachedCallFromCPP"_s, functionCachedCallFromCPP, 2);
-    addFunction(vm, "dumpLineBreakData"_s, functionDumpLineBreakData, 0);
-    addFunction(vm, "weakCreate"_s, functionWeakCreate, 0);
+    addFunction(vm, alwaysAllow, "callFromCPPAsFirstEntry"_s, functionCallFromCPPAsFirstEntry, 2);
+    addFunction(vm, alwaysAllow, "callFromCPP"_s, functionCallFromCPP, 2);
+    addFunction(vm, alwaysAllow, "cachedCallFromCPP"_s, functionCachedCallFromCPP, 2);
+    addFunction(vm, alwaysAllow, "dumpLineBreakData"_s, functionDumpLineBreakData, 0);
+    addFunction(vm, alwaysAllow, "weakCreate"_s, functionWeakCreate, 0);
 
-    m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructureID.set(vm, this, ObjectDoingSideEffectPutWithoutCorrectSlotStatus::createStructure(vm, globalObject, jsNull()));
+    if (allowIfNotFuzz)
+        m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructureID.set(vm, this, ObjectDoingSideEffectPutWithoutCorrectSlotStatus::createStructure(vm, globalObject, jsNull()));
 }
 
 void JSDollarVM::addFunction(VM& vm, JSGlobalObject* globalObject, ASCIILiteral name, NativeFunction function, unsigned arguments)
@@ -4607,6 +4617,12 @@ void JSDollarVM::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     JSDollarVM* thisObject = uncheckedDowncast<JSDollarVM>(cell);
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructureID);
+}
+
+Structure* JSDollarVM::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    DollarVMAssertScope assertScope;
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
 DEFINE_VISIT_CHILDREN(JSDollarVM);

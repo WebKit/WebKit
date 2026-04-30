@@ -3,7 +3,7 @@ SIBLING
 
 FAIL UA styles of base appearance <select>. assert_equals: min-inline-size expected "calc-size(auto, max(size, 24px))" but got "0px"
 PASS UA styles of base appearance select::picker-icon.
-FAIL UA styles of base appearance ::picker(select) assert_equals: position-area expected "self-end span-self-end" but got "end span-end"
+PASS UA styles of base appearance ::picker(select)
 PASS UA styles of base appearance <option>.
 PASS UA styles of base appearance option::checkmark.
 PASS UA styles of base appearance <optgroup>.

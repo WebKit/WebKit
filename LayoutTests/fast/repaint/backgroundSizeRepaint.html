@@ -6,18 +6,21 @@
     div.test { width: 200px; height: 120px; border: 1px solid blue; padding: 10px; }
 </style>
     <script type="text/javascript">
-        if (window.testRunner)
+        window.addEventListener('load', async () => {
+            if (!window.testRunner)
+                return;
             testRunner.waitUntilDone();
-        function runTest()
-        {
-           document.getElementById('a').style.height = '40px';
-           document.getElementById('b').style.height = '60px';
-            if (window.testRunner)
-                testRunner.notifyDone();
-        }
+
+            document.getElementById('a').style.height = '40px';
+            document.getElementById('b').style.height = '60px';
+
+            await new Promise(requestAnimationFrame);
+
+            testRunner.notifyDone();
+        });
     </script>
 </head>
-<body onload="setTimeout(runTest, 10)">
+<body>
 <p><b>BUG ID:</b> <a href="https://bugs.webkit.org/show_bug.cgi?id=8467">Bugzilla bug 8467</a> Block with percentage background-size doesn't repaint properly when it grows</p>
 
 <p id="success" style="background-color:palegreen; padding:3px;"><b>TEST PASS:</b> 

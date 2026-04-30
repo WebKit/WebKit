@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<style>
+div::first-letter {
+  color: red;
+}
+</style>
+<div id="target">BC</div>
+<p>PASS - did not crash</p>
+<script>
+window.testRunner?.dumpAsText();
+window.internals?.setImmediateRendererDestructionEnabled(true);
+document.body.offsetHeight;
+document.getElementById('target').prepend('A');
+document.body.offsetHeight;
+window.internals?.setImmediateRendererDestructionEnabled(false);
+</script>

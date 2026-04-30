@@ -32,6 +32,7 @@
 #include <WebCore/ChromeClient.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
+#include <WebCore/Settings.h>
 #include <wtf/MainThread.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefCounted.h>

@@ -322,6 +322,7 @@ private:
     bool isFullMainFramePlugin() const;
 
     void scrollbarStyleChanged(WebCore::ScrollbarStyle, bool forceUpdate) override;
+    void updateScrollbarOverlayStyle();
     void updateScrollbars() override;
     void willAttachScrollingNode() final;
     void didAttachScrollingNode() final;

@@ -33,6 +33,11 @@
 #else
 namespace WebKit {
 
+bool hasURLsRequiringEnhancedSecurityCheck()
+{
+    return false;
+}
+
 void isEnhancedSecurityEnabledForURL(const WTF::URL& url, CompletionHandler<void(bool)>&& completionHandler)
 {
     completionHandler(false);

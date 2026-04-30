@@ -1,0 +1,14 @@
+
+Test that currentTime advances past a route position update as the CMTimebase continues to run.
+
+RUN(internals.mockMediaDeviceRouteController.activateRoute(route))
+RUN(video.src = findMediaFile('video', '../content/test'))
+RUN(route.playbackRate = 1)
+RUN(route.timeRange = { start: 0, duration: 60 })
+RUN(video.play())
+RUN(route.ready = true)
+EVENT(canplaythrough)
+RUN(route.currentPlaybackPosition = 10)
+EXPECTED (video.currentTime > 10) OK
+END OF TEST
+

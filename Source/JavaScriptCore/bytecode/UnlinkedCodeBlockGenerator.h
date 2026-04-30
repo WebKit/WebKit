@@ -39,11 +39,7 @@ class UnlinkedCodeBlockGenerator {
     WTF_MAKE_TZONE_ALLOCATED(UnlinkedCodeBlockGenerator);
     WTF_MAKE_NONCOPYABLE(UnlinkedCodeBlockGenerator)
 public:
-    UnlinkedCodeBlockGenerator(VM& vm, UnlinkedCodeBlock* codeBlock)
-        : m_vm(vm)
-        , m_codeBlock(vm, codeBlock)
-    {
-    }
+    UnlinkedCodeBlockGenerator(VM&, UnlinkedCodeBlock*);
 
     VM& vm() { return m_vm; }
 

@@ -1,0 +1,13 @@
+Box 0Box 1Box 2Box 3Box 4Box 5Box 6Box 7Box 8Box 9
+
+PASS box0 is common to both axes and is the snap target despite being last in tree order.
+FAIL box1 is common to both axes and is the snap target despite being last in tree order. assert_equals: scroller followed box1 in x axis after layout change expected 200 but got 100
+FAIL box2 is common to both axes and is the snap target despite being last in tree order. assert_equals: scroller followed box2 in x axis after layout change expected 200 but got 100
+FAIL box3 is common to both axes and is the snap target despite being last in tree order. assert_equals: scroller followed box3 in x axis after layout change expected 200 but got 100
+PASS box4 is common to both axes and is the snap target despite being last in tree order.
+PASS box5 is common to both axes and is the snap target despite being last in tree order.
+FAIL box6 is common to both axes and is the snap target despite being last in tree order. assert_equals: scroller followed box6 in x axis after layout change expected 200 but got 100
+FAIL box7 is common to both axes and is the snap target despite being last in tree order. assert_equals: scroller followed box7 in x axis after layout change expected 200 but got 100
+FAIL box8 is common to both axes and is the snap target despite being last in tree order. assert_equals: scroller followed box8 in x axis after layout change expected 200 but got 100
+FAIL box9 is common to both axes and is the snap target despite being last in tree order. assert_equals: scroller followed box9 in x axis after layout change expected 200 but got 100
+

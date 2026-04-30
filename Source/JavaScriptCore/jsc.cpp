@@ -1100,22 +1100,25 @@ JSPromise* GlobalObject::moduleLoaderImportModule(JSGlobalObject* globalObject, 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
-
-    auto rejectWithError = [&](JSValue error) {
-        promise->reject(vm, globalObject, error);
-        return promise;
+    auto rejectWithCaughtException = [&]() -> JSPromise* {
+        auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
+        return promise->rejectWithCaughtException(globalObject, scope);
     };
 
     auto& referrer = sourceOrigin.url();
     auto specifier = moduleNameValue->value(globalObject);
-    RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
+    if (scope.exception()) [[unlikely]]
+        return rejectWithCaughtException();
 
-    if (!referrer.protocolIsFile())
-        RELEASE_AND_RETURN(scope, rejectWithError(createError(globalObject, makeString("Could not resolve the referrer's path '"_s, referrer.string(), "', while trying to resolve module '"_s, specifier.data, "'."_s))));
+    if (!referrer.protocolIsFile()) [[unlikely]] {
+        auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
+        promise->reject(vm, globalObject, createError(globalObject, makeString("Could not resolve the referrer's path '"_s, referrer.string(), "', while trying to resolve module '"_s, specifier.data, "'."_s)));
+        return promise;
+    }
 
-    auto result = JSC::importModule(globalObject, Identifier::fromString(vm, specifier), Identifier::fromString(vm, referrer.string()), WTF::move(fetchParams), nullptr);
-    RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
+    auto* result = JSC::importModule(globalObject, Identifier::fromString(vm, specifier), Identifier::fromString(vm, referrer.string()), WTF::move(fetchParams), nullptr);
+    if (scope.exception()) [[unlikely]]
+        return rejectWithCaughtException();
 
     return result;
 }

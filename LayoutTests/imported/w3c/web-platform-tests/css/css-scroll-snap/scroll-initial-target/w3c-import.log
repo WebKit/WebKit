@@ -1,0 +1,36 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-initial-target/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-initial-target/scroll-initial-target-aligns-with-snap-align.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-initial-target/scroll-initial-target-display-toggled.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-initial-target/scroll-initial-target-nested-container.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-initial-target/scroll-initial-target-root.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-initial-target/scroll-initial-target-rtl.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-initial-target/scroll-initial-target-shadow-dom.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-initial-target/scroll-initial-target-span.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-initial-target/scroll-initial-target-with-anchor-navigation-inner-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-initial-target/scroll-initial-target-with-anchor-navigation.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-initial-target/scroll-initial-target-with-hash-fragment-navigation-inner-frame.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-initial-target/scroll-initial-target-with-hash-fragment-navigation.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-initial-target/scroll-initial-target-with-scroll-snap.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-initial-target/scroll-initial-target-with-scroll-start-root.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-initial-target/scroll-initial-target-with-scroll-start.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-initial-target/scroll-initial-target-with-text-fragment-navigation-target.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-initial-target/scroll-initial-target-with-text-fragment-navigation.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-initial-target/scroll-initial-target-with-user-programmatic-scroll.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-initial-target/scroll-initial-target.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-initial-target/stash.py

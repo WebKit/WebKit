@@ -42,6 +42,8 @@ class WebAssemblyCompileOptions;
 
 namespace Wasm {
 
+struct ModuleDebugInfo;
+
 struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> {
 
     using BranchHints = UncheckedKeyHashMap<uint32_t, BranchHintMap, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
@@ -236,7 +238,8 @@ struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> 
     Ref<NameSection> nameSection;
     BranchHints branchHints;
     std::optional<uint32_t> numberOfDataSegments;
-    Vector<Vector<uint8_t>> constantExpressions;
+    using ConstantExpressionAndSourceOffset = std::pair<Vector<uint8_t>, size_t>;
+    Vector<ConstantExpressionAndSourceOffset> constantExpressions;
     Name sourceMappingURL;
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
     std::unique_ptr<Wasm::ModuleDebugInfo> debugInfo;

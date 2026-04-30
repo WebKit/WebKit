@@ -23,7 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// onuncapturederror moved to GPUDevice.idl
 partial interface GPUDevice {
-    [Exposed=(Window, Worker)]
-    attribute EventHandler onuncapturederror;
 };

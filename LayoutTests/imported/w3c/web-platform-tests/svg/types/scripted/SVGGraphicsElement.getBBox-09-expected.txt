@@ -8,18 +8,18 @@ PASS stroked zero-dim rect: not rendered, fill bbox is all zeros
 PASS stroked zero-radius circle: not rendered, fill bbox is all zeros
 PASS stroked path with only MoveTo: fill bbox is zero-area at the point
 PASS stroked zero-length line: stroke bbox same as fill bbox
-PASS stroked horizontal line: stroke bbox same as fill bbox
-PASS stroked vertical line: stroke bbox same as fill bbox
+FAIL stroked horizontal line: stroke-width wide assert_approx_equals: y expected 18 +/- 0.01 but got 20
+FAIL stroked vertical line: stroke-width wide assert_approx_equals: x expected 8 +/- 0.01 but got 10
 PASS stroked zero-width rect: not rendered, stroke bbox is all zeros
 PASS stroked zero-height rect: not rendered, stroke bbox is all zeros
 PASS stroked zero-dim rect: not rendered, stroke bbox is all zeros
 PASS stroked zero-radius circle: not rendered, stroke bbox is all zeros
 PASS stroked path MoveTo only with round linecap: stroke bbox same as fill bbox
-PASS stroked zero-length path segment with round linecap: stroke bbox same as fill bbox
+FAIL stroked zero-length path segment with round linecap: stroke-width wide assert_approx_equals: x expected 8 +/- 0.01 but got 10
 PASS stroked ellipse with zero rx: not rendered, stroke bbox is all zeros
-PASS stroked horizontal path with butt linecap: stroke bbox same as fill bbox
+FAIL stroked horizontal path with butt linecap: stroke-width wide assert_approx_equals: y expected 18 +/- 0.01 but got 20
 PASS stroked zero-length line: fill+stroke bbox same as fill bbox
-FAIL zero-length line with fill:false stroke:false returns empty bbox assert_equals: x expected 0 but got 10
+FAIL zero-length line with fill:false stroke:false returns empty bbox assert_approx_equals: x expected 0 +/- 0.01 but got 10
 PASS empty text element has zero-area bbox
 PASS positioned empty text element has zero-area bbox
 PASS display:none text element returns zero bbox

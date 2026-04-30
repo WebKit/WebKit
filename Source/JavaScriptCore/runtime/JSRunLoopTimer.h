@@ -39,7 +39,6 @@
 
 namespace JSC {
 
-class JSLock;
 class VM;
 
 class JSRunLoopTimer : public ThreadSafeRefCounted<JSRunLoopTimer> {

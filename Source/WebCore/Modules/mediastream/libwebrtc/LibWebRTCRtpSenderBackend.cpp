@@ -69,6 +69,8 @@ LibWebRTCRtpSenderBackend::LibWebRTCRtpSenderBackend(LibWebRTCPeerConnectionBack
 
 LibWebRTCRtpSenderBackend::~LibWebRTCRtpSenderBackend()
 {
+    if (RefPtr transformBackend = m_transformBackend)
+        transformBackend->detachFromOwningBackend();
     stopSource();
 }
 

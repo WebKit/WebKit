@@ -24,39 +24,8 @@
 
 #if USE(CF) || defined(__OBJC__)
 
-#include <algorithm>
-#include <cstddef>
-#include <wtf/HashTraits.h>
 #include <wtf/NeverDestroyed.h>
-
-#if USE(CF)
-#include <CoreFoundation/CoreFoundation.h>
-#include <wtf/cf/CFTypeTraits.h>
-#endif
-
-#ifdef __OBJC__
-#import <Foundation/Foundation.h>
-#endif
-
-#ifndef CF_BRIDGED_TYPE
-#define CF_BRIDGED_TYPE(T)
-#endif
-
-#ifndef CF_RELEASES_ARGUMENT
-#define CF_RELEASES_ARGUMENT
-#endif
-
-#ifndef CF_RETURNS_RETAINED
-#define CF_RETURNS_RETAINED
-#endif
-
-#ifndef NS_RELEASES_ARGUMENT
-#define NS_RELEASES_ARGUMENT
-#endif
-
-#ifndef NS_RETURNS_RETAINED
-#define NS_RETURNS_RETAINED
-#endif
+#include <wtf/RetainRef.h>
 
 // Because ARC enablement is a compile-time choice, and we compile this header
 // both ways, we need a separate copy of our code when ARC is enabled.
@@ -66,11 +35,6 @@
 #endif
 
 namespace WTF {
-
-template<typename T> class RetainPtr;
-
-template<typename T> constexpr bool IsNSType = std::is_convertible_v<T, id>;
-template<typename T> using RetainPtrType = std::conditional_t<IsNSType<T> && !std::is_same_v<T, id>, std::remove_pointer_t<T>, T>;
 
 template<typename T> [[nodiscard]] constexpr RetainPtr<RetainPtrType<T>> adoptCF(T CF_RELEASES_ARGUMENT);
 
@@ -132,6 +96,8 @@ public:
     constexpr RetainPtr(RetainPtr&& o) : m_ptr(o.leakRef()) { }
     template<typename U, typename = std::enable_if_t<std::is_convertible_v<typename RetainPtr<RetainPtrType<U>>::PtrType, PtrType>>>
     constexpr RetainPtr(RetainPtr<U>&& o) : m_ptr(o.leakRef()) { }
+    template<typename U, typename = std::enable_if_t<std::is_convertible_v<typename RetainRef<RetainPtrType<U>>::PtrType, PtrType>>>
+    constexpr RetainPtr(RetainRef<U>&& o) : m_ptr(o.leakRef()) { }
 
     // Hash table deleted values, which are only constructed and never copied or destroyed.
     constexpr RetainPtr(HashTableDeletedValueType) : m_ptr(hashTableDeletedValue()) { }
@@ -154,6 +120,14 @@ public:
     PtrType autorelease();
     PtrType getAutoreleased();
 
+    RetainRef<T> releaseNonNull()
+    {
+        ASSERT(m_ptr);
+        auto ptr = get();
+        m_ptr = nullptr;
+        return RetainRef<T>(ptr, RetainRef<T>::Adopt);
+    }
+
 #ifdef __OBJC__
     id bridgingAutorelease();
 #endif
@@ -173,6 +147,7 @@ public:
 
     RetainPtr& operator=(RetainPtr&&);
     template<typename U> RetainPtr& operator=(RetainPtr<U>&&);
+    template<typename U> RetainPtr& operator=(RetainRef<U>&&);
 
     void swap(RetainPtr&);
 
@@ -215,6 +190,7 @@ private:
 };
 
 template<typename T> RetainPtr(T) -> RetainPtr<RetainPtrType<T>>;
+template<typename U> RetainPtr(RetainRef<U>&&) -> RetainPtr<U>;
 
 // Helper function for creating a RetainPtr using template argument deduction.
 template<typename T> [[nodiscard]] RetainPtr<RetainPtrType<T>> retainPtr(T);
@@ -309,6 +285,13 @@ template<typename T> inline RetainPtr<T>& RetainPtr<T>::operator=(RetainPtr&& o)
 }
 
 template<typename T> template<typename U> inline RetainPtr<T>& RetainPtr<T>::operator=(RetainPtr<U>&& o)
+{
+    RetainPtr ptr = WTF::move(o);
+    swap(ptr);
+    return *this;
+}
+
+template<typename T> template<typename U> inline RetainPtr<T>& RetainPtr<T>::operator=(RetainRef<U>&& o)
 {
     RetainPtr ptr = WTF::move(o);
     swap(ptr);

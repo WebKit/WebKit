@@ -6,9 +6,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Received message: frameload
 Received message: frameload
 Checking that requestAnimationFrame is throttled in cross origin frame
-Received message: throttled[cross]: NonInteractiveCrossOriginFrame
+Received message: throttled[cross]: NonInteractedCrossOriginFrame
 Received message: throttled[same]: [Unthrottled]
-PASS throttledState['cross'] is "NonInteractiveCrossOriginFrame"
+PASS throttledState['cross'] is "NonInteractedCrossOriginFrame"
 PASS throttledState['same'] is "[Unthrottled]"
 Interacted with cross-origin frame
 Interacted with same-origin frame

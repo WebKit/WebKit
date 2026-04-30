@@ -38,6 +38,7 @@ enum class FileSystemStorageError : uint8_t {
     InvalidName,
     InvalidState,
     MissingArgument,
+    NoModificationAllowed,
     TypeMismatch,
     QuotaError,
     Unknown
@@ -62,6 +63,8 @@ inline WebCore::Exception convertToException(FileSystemStorageError error)
         return WebCore::Exception { WebCore::ExceptionCode::InvalidStateError };
     case FileSystemStorageError::MissingArgument:
         return WebCore::Exception { WebCore::ExceptionCode::TypeError, "Required argument is missing"_s };
+    case FileSystemStorageError::NoModificationAllowed:
+        return WebCore::Exception { WebCore::ExceptionCode::NoModificationAllowedError };
     case FileSystemStorageError::TypeMismatch:
         return WebCore::Exception { WebCore::ExceptionCode::TypeMismatchError, "File type is incompatible with handle type"_s };
     case FileSystemStorageError::QuotaError:

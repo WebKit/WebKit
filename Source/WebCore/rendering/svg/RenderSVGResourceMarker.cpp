@@ -88,8 +88,6 @@ void RenderSVGResourceMarker::updateFromStyle()
 
 void RenderSVGResourceMarker::updateLayerTransform()
 {
-    ASSERT(hasLayer());
-
     // First update the supplemental layer transform.
     Ref useMarkerElement = markerElement();
     auto viewportSize = this->viewportSize();
@@ -98,9 +96,10 @@ void RenderSVGResourceMarker::updateLayerTransform()
 
     if (useMarkerElement->hasAttribute(SVGNames::viewBoxAttr)) {
         // An empty viewBox disables the rendering -- dirty the visible descendant status!
-        if (useMarkerElement->hasEmptyViewBox())
-            layer()->dirtyVisibleContentStatus();
-        else if (auto viewBoxTransform = useMarkerElement->viewBoxToViewTransform(viewportSize.width(), viewportSize.height()); !viewBoxTransform.isIdentity())
+        if (useMarkerElement->hasEmptyViewBox()) {
+            if (hasLayer())
+                layer()->dirtyVisibleContentStatus();
+        } else if (auto viewBoxTransform = useMarkerElement->viewBoxToViewTransform(viewportSize.width(), viewportSize.height()); !viewBoxTransform.isIdentity())
             m_supplementalLayerTransform = viewBoxTransform;
     }
 

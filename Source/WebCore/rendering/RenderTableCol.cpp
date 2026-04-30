@@ -196,8 +196,8 @@ RenderTableCol* RenderTableCol::enclosingColumnGroup() const
 RenderTableCol* RenderTableCol::nextColumn() const
 {
     // If |this| is a column-group, the next column is the colgroup's first child column.
-    if (CheckedPtr firstChild = this->firstChild())
-        return downcast<RenderTableCol>(firstChild.get());
+    if (auto* firstChild = this->firstChild())
+        return downcast<RenderTableCol>(firstChild);
 
     // Otherwise it's the next column along.
     CheckedPtr next = nextSibling();

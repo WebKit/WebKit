@@ -21,6 +21,7 @@
 #include "Lookup.h"
 
 #include "GetterSetter.h"
+#include "JSCInlines.h"
 #include <wtf/text/MakeString.h>
 
 namespace JSC {

@@ -283,7 +283,7 @@ void RemoteMeshProxy::setBackgroundColor(const WebModel::Float3& color)
 #endif
 }
 
-bool RemoteMeshProxy::supportsTransform(const WebCore::TransformationMatrix& transformationMatrix) const
+bool RemoteMeshProxy::supportsTransform(const WebCore::TransformationMatrix& transformationMatrix)
 {
 #if ENABLE(GPU_PROCESS_MODEL)
     const WebModel::Float4x4 matrix = static_cast<simd_float4x4>(transformationMatrix);

@@ -1615,6 +1615,19 @@ struct WKWebsiteData {
     });
 }
 
+- (void)_installMockParentalControlsURLFilterForTestingWithBlockedURLs:(NSArray<NSURL *> *)blockedURLs completionHandler:(void(^)(void))completionHandler
+{
+#if HAVE(WEBCONTENTRESTRICTIONS)
+    auto urls = makeVector<URL>(blockedURLs);
+
+    protect(*_websiteDataStore)->installMockParentalControlsURLFilterForTesting(WTF::move(urls), [completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
+    });
+#else
+    completionHandler();
+#endif
+}
+
 - (NSString *)_thirdPartyCookieBlockingModeForTesting
 {
     switch (protect(*_websiteDataStore)->thirdPartyCookieBlockingMode()) {

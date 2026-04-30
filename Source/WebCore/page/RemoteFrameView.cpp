@@ -79,12 +79,12 @@ std::optional<LayoutRect> RemoteFrameView::visibleRectOfChild(const Frame& child
     });
 }
 
-bool RemoteFrameView::ownerElementOfChildFrameUsesDarkAppearance(const Frame& child) const
+OptionSet<FrameOwnerElementAppearance> RemoteFrameView::appearanceOfOwnerElementOfChildFrame(const Frame& child) const
 {
-    auto maybeInfo = m_frame->frameTreeSyncData().childrenFrameLayoutInfo.getOptional(child.frameID());
-    return maybeInfo.transform([] (auto& info) {
-        return info.useDarkAppearance;
-    }).value_or(false);
+    if (auto info = m_frame->frameTreeSyncData().childrenFrameLayoutInfo.getOptional(child.frameID()))
+        return info->ownerElementAppearance;
+
+    return { };
 }
 
 // FIXME: Implement all the stubs below.

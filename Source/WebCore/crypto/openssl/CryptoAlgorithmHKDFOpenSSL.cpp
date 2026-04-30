@@ -46,15 +46,39 @@ int HKDF(unsigned char* output, size_t outSize, const evp_md_st* algorithm,
 {
     EVP_PKEY_CTX* kctx = EVP_PKEY_CTX_new_id(EVP_PKEY_HKDF, nullptr);
 
-    EVP_PKEY_CTX_set_hkdf_md(kctx, EVP_sha256());
-    EVP_PKEY_CTX_set1_hkdf_salt(kctx, inSalt, inSaltSize);
-    EVP_PKEY_CTX_set1_hkdf_key(kctx, inKey, inKeySize);
-    EVP_PKEY_CTX_add1_hkdf_info(kctx, inInfo, inInfoSize);
+    int ret = EVP_PKEY_derive_init(kctx);
+    if (ret <= 0) {
+        EVP_PKEY_CTX_free(kctx);
+        return ret;
+    }
 
-    int ret = EVP_PKEY_derive(kctx, output, &outSize);
+    ret = EVP_PKEY_CTX_set_hkdf_md(kctx, algorithm);
+    if (ret <= 0) {
+        EVP_PKEY_CTX_free(kctx);
+        return ret;
+    }
+
+    ret = EVP_PKEY_CTX_set1_hkdf_salt(kctx, inSalt, inSaltSize);
+    if (ret <= 0) {
+        EVP_PKEY_CTX_free(kctx);
+        return ret;
+    }
+
+    ret = EVP_PKEY_CTX_set1_hkdf_key(kctx, inKey, inKeySize);
+    if (ret <= 0) {
+        EVP_PKEY_CTX_free(kctx);
+        return ret;
+    }
+
+    ret = EVP_PKEY_CTX_add1_hkdf_info(kctx, inInfo, inInfoSize);
+    if (ret <= 0) {
+        EVP_PKEY_CTX_free(kctx);
+        return ret;
+    }
+
+    ret = EVP_PKEY_derive(kctx, output, &outSize);
 
     EVP_PKEY_CTX_free(kctx);
-
     return ret;
 }
 #endif

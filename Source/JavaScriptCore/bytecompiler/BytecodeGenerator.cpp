@@ -306,16 +306,25 @@ ParserError BytecodeGenerator::generate(unsigned& size)
         AsyncFuncParametersTryCatchInfo& info = m_asyncFuncParametersTryCatchInfo.value();
         ASSERT(info.catchStartLabel && info.thrownValue);
         emitLabel(*info.catchStartLabel.get());
-        // @rejectPromiseWithFirstResolvingFunctionCallCheck(@promise, thrownValue);
-        // return @promise;
-        RefPtr<RegisterID> rejectPromise = moveLinkTimeConstant(nullptr, LinkTimeConstant::rejectPromiseWithFirstResolvingFunctionCallCheck);
-        CallArguments args(*this, nullptr, 2);
-        emitLoad(args.thisRegister(), jsUndefined());
-        move(args.argumentRegister(0), promiseRegister());
-        move(args.argumentRegister(1), info.thrownValue.get());
         JSTextPosition divot(m_scopeNode->firstLine(), m_scopeNode->startOffset(), m_scopeNode->lineStartOffset());
-        emitCallIgnoreResult(newTemporary(), rejectPromise.get(), NoExpectedFunction, args, divot, divot, divot, DebuggableCall::No);
-        emitReturn(promiseRegister());
+        if (promiseRegister()) {
+            RefPtr<RegisterID> rejectPromise = moveLinkTimeConstant(nullptr, LinkTimeConstant::rejectPromiseWithFirstResolvingFunctionCallCheck);
+            CallArguments args(*this, nullptr, 2);
+            emitLoad(args.thisRegister(), jsUndefined());
+            move(args.argumentRegister(0), promiseRegister());
+            move(args.argumentRegister(1), info.thrownValue.get());
+            emitCallIgnoreResult(newTemporary(), rejectPromise.get(), NoExpectedFunction, args, divot, divot, divot, DebuggableCall::No);
+            emitReturn(promiseRegister());
+        } else {
+            // If we are not creating a promise yet, we can just do `return @newRejectedPromise(thrownValue)`.
+            RefPtr<RegisterID> newRejectedPromise = moveLinkTimeConstant(nullptr, LinkTimeConstant::newRejectedPromise);
+            CallArguments args(*this, nullptr, 1);
+            emitLoad(args.thisRegister(), jsUndefined());
+            move(args.argumentRegister(0), info.thrownValue.get());
+            RefPtr<RegisterID> result = newTemporary();
+            emitCall(result.get(), newRejectedPromise.get(), NoExpectedFunction, args, divot, divot, divot, DebuggableCall::No);
+            emitReturn(result.get());
+        }
     }
 
     m_staticPropertyAnalyzer.kill();
@@ -822,9 +831,10 @@ IGNORE_GCC_WARNINGS_END
         bool isAsyncFunctionWithoutAwait = m_scopeNode->isAsyncFunctionWithoutAwait();
         // Check if this async function body doesn't use await.
         // If so, we can skip generator creation entirely.
-        if (!isAsyncFunctionWithoutAwait)
+        if (!isAsyncFunctionWithoutAwait) {
             m_generatorRegister = addVar();
-        m_promiseRegister = addVar();
+            m_promiseRegister = addVar();
+        }
 
         bool willEmitToThis = false;
         if (parseMode != SourceParseMode::AsyncArrowFunctionMode) {
@@ -838,9 +848,8 @@ IGNORE_GCC_WARNINGS_END
         if (willEmitToThis)
             emitToThis();
 
-        emitNewPromise(promiseRegister());
-
         if (!isAsyncFunctionWithoutAwait) {
+            emitNewPromise(promiseRegister());
             emitNewGenerator(m_generatorRegister);
             emitPutInternalField(generatorRegister(), static_cast<unsigned>(JSGenerator::Field::Context), promiseRegister());
         }
@@ -4731,7 +4740,7 @@ void BytecodeGenerator::emitUsingBodyScope(unsigned usingCount, bool hasAwaitUsi
         // Shared temporaries for the catch handler (one pair is enough across all slots).
         RefPtr<RegisterID> caughtException = newTemporary();
         RefPtr<RegisterID> caughtValue = newTemporary();
-        RefPtr<RegisterID> createSuppressedErrorFunc = newTemporary();
+        RefPtr<RegisterID> suppressedErrorCtor = newTemporary();
 
         auto emitSuppressedErrorCatch = [&](TryData* trySlotData, Label& catchLabel) {
             emitLabel(catchLabel);
@@ -4741,12 +4750,11 @@ void BytecodeGenerator::emitUsingBodyScope(unsigned usingCount, bool hasAwaitUsi
             Ref<Label> firstError = newLabel();
             emitJumpIfFalse(hasError.get(), firstError.get());
 
-            moveLinkTimeConstant(createSuppressedErrorFunc.get(), LinkTimeConstant::createSuppressedError);
+            moveLinkTimeConstant(suppressedErrorCtor.get(), LinkTimeConstant::SuppressedError);
             CallArguments seArgs(*this, nullptr, 2);
-            emitLoad(seArgs.thisRegister(), jsUndefined());
             move(seArgs.argumentRegister(0), caughtValue.get());
             move(seArgs.argumentRegister(1), pendingError.get());
-            emitCall(pendingError.get(), createSuppressedErrorFunc.get(), NoExpectedFunction, seArgs, divot, divot, divot, DebuggableCall::No);
+            emitConstruct(pendingError.get(), suppressedErrorCtor.get(), suppressedErrorCtor.get(), NoExpectedFunction, seArgs, divot, divot, divot);
             emitJump(afterCatch.get());
 
             emitLabel(firstError.get());
@@ -5823,6 +5831,11 @@ void BytecodeGenerator::pushOptionalChainTarget()
     m_optionalChainTargetStack.append(newLabel());
 }
 
+void BytecodeGenerator::pushOptionalChainTarget(Label& existingTarget)
+{
+    m_optionalChainTargetStack.append(existingTarget);
+}
+
 void BytecodeGenerator::popOptionalChainTarget()
 {
     ASSERT(m_optionalChainTargetStack.size());
@@ -5838,6 +5851,12 @@ void BytecodeGenerator::popOptionalChainTarget(RegisterID* dst, bool isDelete)
     emitLoad(dst, isDelete ? jsBoolean(true) : jsUndefined());
 
     emitLabel(endLabel.get());
+}
+
+void BytecodeGenerator::discardOptionalChainTarget()
+{
+    ASSERT(m_optionalChainTargetStack.size());
+    m_optionalChainTargetStack.removeLast();
 }
 
 void BytecodeGenerator::emitOptionalCheck(RegisterID* src)

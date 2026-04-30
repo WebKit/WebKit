@@ -69,6 +69,7 @@ PACKAGES+=(
     libxfont-dev
     libxkbcommon-x11-dev
     libxkbfile-dev
+    libunwind-dev
     ragel
     x11proto-gl-dev
     x11proto-input-dev

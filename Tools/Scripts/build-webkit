@@ -212,6 +212,7 @@ if (isWinCrossCompileFromLinux()) {
     # Prevent pkg-config from finding host system packages during cross-compilation.
     # The triplet sets VCPKG_ENV_PASSTHROUGH_UNTRACKED to forward this to port builds.
     $ENV{"PKG_CONFIG_LIBDIR"} = "";
+    $ENV{"PKG_CONFIG_PATH"} = "";
     # Add WebKitLibraries/windows/bin to PATH for dummy pwsh (satisfies vcpkg's PowerShell check)
     my $winBinDir = File::Spec->catdir(sourceDir(), "WebKitLibraries", "windows", "bin");
     $ENV{"PATH"} = "$winBinDir:$ENV{PATH}";

@@ -103,7 +103,7 @@ RefPtr<Image> ShareableBitmap::createImage()
     return BitmapImage::create(createPlatformImage(BackingStoreCopy::DontCopyBackingStore));
 }
 
-PlatformImagePtr ShareableBitmap::createPlatformImage(BackingStoreCopy backingStoreCopy, ShouldInterpolate)
+PlatformImagePtr ShareableBitmap::createBasePlatformImage(BackingStoreCopy backingStoreCopy, ShouldInterpolate)
 {
     sk_sp<SkData> pixelData;
     if (backingStoreCopy == BackingStoreCopy::CopyBackingStore)
@@ -115,6 +115,11 @@ PlatformImagePtr ShareableBitmap::createPlatformImage(BackingStoreCopy backingSt
         }, this);
     }
     return SkImages::RasterFromData(m_configuration.imageInfo(), pixelData, bytesPerRow());
+}
+
+PlatformImagePtr ShareableBitmap::createPlatformImage(BackingStoreCopy copyBehavior, ShouldInterpolate shouldInterpolate)
+{
+    return createBasePlatformImage(copyBehavior, shouldInterpolate);
 }
 
 void ShareableBitmap::setOwnershipOfMemory(const ProcessIdentity&)

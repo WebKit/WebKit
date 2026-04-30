@@ -43,4 +43,6 @@ Ref<HTMLDListElement> HTMLDListElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new HTMLDListElement(tagName, document));
 }
 
+HTMLDListElement::~HTMLDListElement() = default;
+
 }

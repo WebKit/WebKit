@@ -209,13 +209,13 @@ private:
     if (!self)
         return nil;
 
+    UIWindowScene *windowScene = webView.window.windowScene;
+    _nonZeroStatusBarHeight = windowScene.statusBarManager.statusBarFrame.size.height;
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    _nonZeroStatusBarHeight = UIApplication.sharedApplication.statusBarFrame.size.height;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_statusBarFrameDidChange:) name:UIApplicationDidChangeStatusBarFrameNotification object:nil];
 ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if PLATFORM(VISION)
-    UIWindowScene *windowScene = webView.window.windowScene;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_didBeginInteractionWithSystemChrome:) name:_UIWindowSceneDidBeginLiveResizeNotification object:windowScene];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_didEndInteractionWithSystemChrome:) name:_UIWindowSceneDidEndLiveResizeNotification object:windowScene];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_didBeginInteractionWithSystemChrome:) name:_MRUIWindowSceneDidBeginRepositioningNotification object:windowScene];
@@ -1198,9 +1198,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_statusBarFrameDidChange:(NSNotificationCenter *)notification
 {
     ASSERT(_valid);
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    CGFloat height = UIApplication.sharedApplication.statusBarFrame.size.height;
-ALLOW_DEPRECATED_DECLARATIONS_END
+    CGFloat height = self.view.window.windowScene.statusBarManager.statusBarFrame.size.height;
     if (!height || height == _nonZeroStatusBarHeight)
         return;
 

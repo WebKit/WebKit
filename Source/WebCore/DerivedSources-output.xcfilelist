@@ -1096,6 +1096,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFakeXRViewInit.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFakeXRViewInit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFakeXRWorldInit.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFakeXRWorldInit.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFederatedCredentialRequestOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFederatedCredentialRequestOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFetchBody.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFetchBody.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFetchEvent.cpp
@@ -1752,6 +1754,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIIRFilterOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIIRFilterOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIPAddressSpace.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIPAddressSpace.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIdentityCredentialRequestOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIdentityCredentialRequestOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIdleDeadline.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIdleDeadline.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIdleRequestCallback.cpp
@@ -2189,6 +2193,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOESTextureHalfFloatLinear.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOESTextureHalfFloatLinear.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOESVertexArrayObject.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOESVertexArrayObject.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOTPCredentialRequestOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOTPCredentialRequestOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSObservable.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSObservable.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSObservableInspector.cpp

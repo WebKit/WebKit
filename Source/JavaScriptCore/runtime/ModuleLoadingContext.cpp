@@ -28,7 +28,7 @@
 
 #include "CyclicModuleRecord.h"
 #include "JSCInlines.h"
-#include "ModuleLoaderPayload.h"
+#include "JSModuleLoader.h"
 #include "ModuleRegistryEntry.h"
 #include "ProgramExecutable.h"
 
@@ -36,7 +36,7 @@ namespace JSC {
 
 const ClassInfo ModuleLoadingContext::s_info = { "ModuleLoadingContext"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(ModuleLoadingContext) };
 
-ModuleLoadingContext::ModuleLoadingContext(VM& vm, Structure* structure, Step step, const JSModuleLoader::ModuleReferrer& referrer, AbstractModuleRecord::ModuleRequest&& moduleRequest, ModuleLoaderPayload* payload, ModuleRegistryEntry* entry, RefPtr<ScriptFetcher> scriptFetcher)
+ModuleLoadingContext::ModuleLoadingContext(VM& vm, Structure* structure, Step step, const JSModuleLoader::ModuleReferrer& referrer, AbstractModuleRecord::ModuleRequest&& moduleRequest, JSCell* payload, ModuleRegistryEntry* entry, RefPtr<ScriptFetcher> scriptFetcher)
     : Base(vm, structure)
     , m_step(step)
     , m_moduleRequest(WTF::move(moduleRequest))
@@ -53,8 +53,9 @@ void ModuleLoadingContext::destroy(JSCell* cell)
     thisObject->~ModuleLoadingContext();
 }
 
-ModuleLoadingContext* ModuleLoadingContext::create(VM& vm, Step step, const JSModuleLoader::ModuleReferrer& referrer, const AbstractModuleRecord::ModuleRequest& moduleRequest, ModuleLoaderPayload* payload, ModuleRegistryEntry* entry, RefPtr<ScriptFetcher> scriptFetcher)
+ModuleLoadingContext* ModuleLoadingContext::create(VM& vm, Step step, const JSModuleLoader::ModuleReferrer& referrer, const AbstractModuleRecord::ModuleRequest& moduleRequest, JSCell* payload, ModuleRegistryEntry* entry, RefPtr<ScriptFetcher> scriptFetcher)
 {
+    ASSERT(isModuleLoaderHostDefinedPayload(payload));
     AbstractModuleRecord::ModuleRequest requestCopy { moduleRequest };
     auto* context = new (NotNull, allocateCell<ModuleLoadingContext>(vm)) ModuleLoadingContext(vm, vm.moduleLoadingContextStructure.get(), step, referrer, WTF::move(requestCopy), payload, entry, WTF::move(scriptFetcher));
     context->finishCreation(vm);

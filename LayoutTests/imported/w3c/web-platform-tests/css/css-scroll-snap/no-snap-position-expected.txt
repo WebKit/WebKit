@@ -1,4 +1,5 @@
 
 PASS No snapping occurs if there is no valid snap position
 PASS No snapping occurs if there is no valid snap position matches scroll-snap-type
+PASS No snapping occurs when last remaining valid snap point is no longer valid.
 

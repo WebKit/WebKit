@@ -421,7 +421,7 @@ static inline FloatRect rootViewBounds(Node& node)
 
 static inline String labelText(HTMLElement& element)
 {
-    auto labels = element.labels();
+    RefPtr labels = element.labels();
     if (!labels)
         return { };
 
@@ -435,6 +435,35 @@ static inline String labelText(HTMLElement& element)
         return firstRenderedLabel->textContent().simplifyWhiteSpace(isASCIIWhitespace);
 
     return { };
+}
+
+static inline std::optional<FloatRect> visibleAssociatedLabelBounds(HTMLElement& element)
+{
+    RefPtr labels = element.labels();
+    if (!labels)
+        return std::nullopt;
+
+    for (unsigned index = 0; index < labels->length(); ++index) {
+        RefPtr label = dynamicDowncast<Element>(labels->item(index));
+        if (!label)
+            continue;
+
+        CheckedPtr renderer = label->renderer();
+        if (!renderer)
+            continue;
+
+        if (renderer->style().usedVisibility() == Visibility::Hidden)
+            continue;
+
+        if (renderer->style().opacity() < minOpacityToConsiderVisible)
+            continue;
+
+        auto bounds = rootViewBounds(*label);
+        if (!bounds.isEmpty())
+            return bounds;
+    }
+
+    return std::nullopt;
 }
 
 template<typename T>
@@ -487,8 +516,10 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
     if (!renderer)
         return { SkipExtraction::SelfAndSubtree };
 
-    if (context.skipNearlyTransparentContent && renderer->style().opacity() < minOpacityToConsiderVisible)
-        return { SkipExtraction::SelfAndSubtree };
+    if (context.skipNearlyTransparentContent && renderer->style().opacity() < minOpacityToConsiderVisible) {
+        if (RefPtr input = dynamicDowncast<HTMLInputElement>(node); !input || !visibleAssociatedLabelBounds(*input))
+            return { SkipExtraction::SelfAndSubtree };
+    }
 
     if (renderer->style().usedVisibility() == Visibility::Hidden)
         return { SkipExtraction::Self };
@@ -639,6 +670,7 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
                 .autocomplete = control->autocomplete(),
                 .pattern = control->attributeWithoutSynchronization(HTMLNames::patternAttr),
                 .name = input ? stringOnlyIfHumanReadable(input->name()) : String { },
+                .value = input ? String { input->value() } : String { },
                 .minLength = input ? wholeNumberOrNull(input->minLength()) : std::optional<int> { },
                 .maxLength = input ? wholeNumberOrNull(input->maxLength()) : std::optional<int> { },
                 .isRequired = control->isRequired(),
@@ -961,6 +993,12 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
         },
         [&](ItemData&& result) {
             auto bounds = rootViewBounds(node);
+            if (bounds.isEmpty()) {
+                if (RefPtr input = dynamicDowncast<HTMLInputElement>(node)) {
+                    if (auto labelBounds = visibleAssociatedLabelBounds(*input))
+                        bounds = *labelBounds;
+                }
+            }
             if (!context.inAdditionalContainerToCollectCount && !context.shouldIncludeNodeWithRect(bounds)) {
                 if (context.hasOverflowItemsStack.isEmpty()) {
                     ASSERT_NOT_REACHED();

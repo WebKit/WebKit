@@ -53,3 +53,29 @@ extension AsyncSequence {
         }
     }
 }
+
+extension StringProtocol {
+    /// Finds and returns the range of the first occurrence of a given string within a given range of the String, subject to given options, using the specified locale, if any.
+    ///
+    /// - Parameters:
+    ///   - aString: The string to search for.
+    ///   - mask: A mask specifying search options.
+    ///   - searchRange: The range within the receiver for which to search for `aString`.
+    ///   - locale: The locale to use when comparing the receiver with `aString`.
+    /// - Returns: The range that `aString` is located in, represented as a quantity of UTF-16 code points.
+    public func utf16Range(
+        of aString: some StringProtocol,
+        options mask: String.CompareOptions = [],
+        range searchRange: Range<Self.Index>? = nil,
+        locale: Locale? = nil
+    ) -> Range<Int>? {
+        guard let nominalRange = range(of: aString, options: mask, range: searchRange, locale: locale) else {
+            return nil
+        }
+
+        let start = nominalRange.lowerBound.utf16Offset(in: self)
+        let end = nominalRange.upperBound.utf16Offset(in: self)
+
+        return start..<end
+    }
+}

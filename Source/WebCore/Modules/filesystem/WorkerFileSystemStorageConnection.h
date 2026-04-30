@@ -52,7 +52,7 @@ public:
     using CallbackIdentifier = WorkerFileSystemStorageConnectionCallbackIdentifier;
     void didIsSameEntry(CallbackIdentifier, ExceptionOr<bool>&&);
     void didGetHandle(CallbackIdentifier, ExceptionOr<Ref<FileSystemHandleCloseScope>>&&);
-    void didResolve(CallbackIdentifier, ExceptionOr<Vector<String>>&&);
+    void didResolve(CallbackIdentifier, ExceptionOr<std::optional<Vector<String>>>&&);
     void completeStringCallback(CallbackIdentifier, ExceptionOr<String>&&);
     void didCreateSyncAccessHandle(CallbackIdentifier, ExceptionOr<FileSystemStorageConnection::SyncAccessHandleInfo>&&);
     void completeVoidCallback(CallbackIdentifier, ExceptionOr<void>&& result);

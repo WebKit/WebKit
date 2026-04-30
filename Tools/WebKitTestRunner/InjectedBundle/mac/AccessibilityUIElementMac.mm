@@ -152,7 +152,7 @@ RetainPtr<NSArray> supportedAttributes(id element)
 
     BEGIN_AX_OBJC_EXCEPTIONS
     AccessibilityUIElementMac::s_controller->executeOnAXThreadAndWait([&attributes, &element] {
-        attributes = [[element accessibilityAttributeNames] mutableCopy];
+        attributes = adoptNS([[element accessibilityAttributeNames] mutableCopy]);
         // Exposing this in tests is not valuable, so remove it to decrease test maintenance burden.
         [attributes removeObject:@"AXPerformsOwnTextStitching"];
         [attributes removeObject:@"AXPostsOwnLiveRegionAnnouncements"];

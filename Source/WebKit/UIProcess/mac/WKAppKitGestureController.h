@@ -56,6 +56,10 @@ OBJC_CLASS NSPanGestureRecognizer;
 
 - (instancetype)initWithPage:(std::reference_wrapper<WebKit::WebPageProxy>)page viewImpl:(std::reference_wrapper<WebKit::WebViewImpl>)viewImpl;
 - (void)enableGesturesIfNeeded;
+- (NSGestureRecognizer *)activeDragGestureRecognizer;
+- (void)setGestureDraggingSession:(NSDraggingSession *)session;
+- (void)clearGestureDragState;
+- (void)reset;
 
 #if ENABLE(TWO_PHASE_CLICKS)
 

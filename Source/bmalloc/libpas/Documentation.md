@@ -384,9 +384,9 @@ three-fold:
 
 This section lays out the details of how this works. *Segregated heaps* are organized into *segregated
 directories*. Each segregated directory is an array of page *views*. Each page view may or may not have a *page*
-associated with it. A view can be *exclusive* (the view has the page to itself), *partial* (it's a view into a
-page shared by others), or *shared* (it represents a page shared by many partial views). Pages have a *page
-boundary* (the address of the beginning of the page) and a *page header* (the object describing the page, which
+associated with it. A view is always *exclusive*, in that if a view has a page, the relationship is one-to-one,
+such that no other view is able to use the same page at the same time. Pages have a *page boundary*
+(the address of the beginning of the page) and a *page header* (the object describing the page, which
 may or may not actually be inside the page). Pages maintain *alloc bits* to tell which objects are live.
 Allocation uses the heap's lookup tables to find the right *allocator index* in the TLC, which yields a *local
 allocator*; that allocator usually has a cache of memory to allocate from. When it doesn't, it first tries to
@@ -397,6 +397,14 @@ push the object onto the deallocation log. When the log is full, the TLC flushes
 amortize lock acquisition. Freeing an object in a page means clearing the corresponding alloc bit. Once enough
 alloc bits are clear, either the page's view ends up on the view cache, or the directory is notified to mark the
 page either eligible or empty. The sections that follow go into each of these concepts in detail.
+
+Historical note: in the past, there also existed partial (which owned part of a page shared by other viewa)
+and shared views (which represented a page shared by many partial views). Their intention was to reduce
+memory wasteage by allowing size-classes with a small number of allocations to allocate from the same page.
+This kind of wasteage, however, is mostly noticable in smaller programs (e.g. daemons), whereas in web
+browsers the effect size was ultimately rather small (~1% memory). Disabling them was enough of a performance
+win to easily pay for some changes to the size-class boundaries which recouped the memory loss, and
+subsequently they were removed due to the security complexity and maintenance burden.
 
 ### The Thread Local Cache
 
@@ -486,30 +494,20 @@ The lookup tables maintained by segregated heaps have some interesting propertie
 
 ### Segregated Directories
 
-Much of the action of managing memory in a segregated heap happens in the segregated directories. There are two
-kinds:
+Much of the action of managing memory in a segregated heap happens in the segregated directories;
+specifically, segregated size directories, which track the views belonging to some size class in some heap.
 
-- Segregated size directories, which track the views belonging to some size class in some heap. These may be
-  *exclusive views*, which own a page, or *partial views*, which own part of a *shared page*. Partial views
-  range in size between just below 512 bytes to possibly a whole page (in rare cases).
-- Segregated shared page directories, which track *shared views*. Each shared view tracks shared page and which
-  partial views belong to it. However, when a shared page is decommitted, to save space, the shared view will
-  forget which partial views belong to it; they will re-register themselves the first time someone allocates in
-  them.
-
-Both of them rely on the same basic state, though they use it a bit differently:
+The basic state they rely on is as follows:
 
 - A lock-free-access vector of compact view pointers. These are 4-byte pointers. This is possible because views
   are always allocated out of the compact reservation (they are usually allocated in the immortal
   heap). This vector may be appended to, but existing entries are immutable. So, resizing just avoids deleting
   the smaller-sized vectors so that they may still be accessed in case of a race.
 - A lock-free-access segmented vector of bitvectors. There are two bitvectors, and we interleave their 32-bit
-  words of bits. The *eligible* bitvector tells us which views may be allocated out of. This means different
-  things for size directories than shared page directories. For size directories, these are the views that have
-  some free memory and nobody is currently doing anything with them. For shared page directories, these are the
-  shared pages that haven't yet been fully claimed by partial views. The *empty* bitvector tells us which pages
-  are fully empty and can be decommitted. It's never set for partial views. It means the same thing for both
-  exclusive views in size directories and shared views in shared page directories.
+  words of bits.
+  - The *eligible* bitvector tells us which views may be allocated out of. These are the views that have
+    some free memory and which are currently unused.
+  - The *empty* bitvector tells us which pages are fully empty and can be decommitted.
 
 Both bitvectors are searched in order:
 
@@ -558,12 +556,12 @@ at the point where the vector append happens, the view will report itself as not
 any thread can initialize an empty view. The normal flow of allocation means asking a view to "start
 allocating". This actually happens in two steps (`will_start_allocating` and `did_start_allocating`). The
 will-start step checks if the view needs to commit its memory, which will cause empty exclusive views to
-allocate a page. Empty partial views get put into the *partial primordial* state where they grab their first
-chunk of memory from some shared view and prepare to possibly grab more chunks of that shared view, depending on
-demand. But all of this happens after the directory has created the view and appended it. This means that there
-is even the possibility that one thread creates a view, but then some other thread takes it right after it was
-appended. In that case, the first thread will loop around and try again, maybe finding some other view that had
-been made eligible in the meantime, or against appending another new view.
+allocate a page.
+In the past, it was possible for one thread to create a view, but then some other thread to take it right
+after it was appended. In that case, the first thread would loop around and try again, maybe finding some other
+view that had been made eligible in the meantime, or against appending another new view. The code that made
+this possible (partial views, and the corresponding partial primordial state) has been removed, but it's
+possible that this scenario could still occur. 
 
 Size directories maintain additional state to make page management easy and to accelerate allocation.
 
@@ -590,31 +588,24 @@ The page header contains:
 
 - The page's kind. The segregated page header is a subtype of the `pas_page_base`, and we support safely
   downcasting from `pas_page_base*` to `pas_segregated_page*`. Having the kind helps with this.
-- Whether the page is in use for allocation right now. This field is only for exclusive views. Allocation in
-  exclusive pages can only happen when some local allocator claims a page. For shared pages, this bit is in
-  each of the the partial views.
-- Whether we have freed an object in the page while also allocating in it. This field is only for exclusive
-  views. When we finish allocating, and the bit is set, we do the eligibility stuff we would have done if we had
-  freed objects without the page being used for allocation. For shared pages, this bit is in each of the partial
-  views.
-- The sizes of objects that the page manages. Again, this is only used for exclusive views. For shared pages,
-  each partial view may have a different size directory, and the size directory tells the object size. It's also
-  possible to get the object size by asking the exclusive view for its size directory, and you will get the same
-  answer as if you had asked the page in that case.
+- Whether the page is in use for allocation right now. Allocation in exclusive pages can only happen when some
+  local allocator claims a page.
+- Whether we have freed an object in the page while also allocating in it. views. When we finish allocating,
+  and the bit is set, we do the eligibility stuff we would have done if we had freed objects without the page
+  being used for allocation.
+- The sizes of objects that the page manages. It's also possible to get the object size by asking the
+  exclusive view for its size directory, and you will get the same answer as if you had asked the page in that
+  case.
 - A pointer to the lock that the page uses. Pages are locked using a kind of locking dance: you load the
   `page->lock_ptr`, lock that lock, and then check if `page->lock_ptr` still points at the lock you tried.
   Anyone who holds both the current lock and some other lock can change `page->lock_ptr` to the other lock.
-  For shared pages, the `lock_ptr` always points at the shared view's ownership lock. For exclusive views, the
-  libpas allocator will change the lock of a page to be the lock associated with their TLC. If contention
+  The libpas allocator will change the lock of a page to be the lock associated with their TLC. If contention
   on `page->lock_ptr` happens, then we change the lock back to the view's ownership lock. This means that in
   the common case, flushing the deallocation log will encounter page after page that wants to hold the same
   lock -- usually the TLC lock. This allows the deallocation log flush to only do a handful of lock acquisitions
   for deallocating thousands of objects.
 - The timestamp of when the page became empty, using a unit of time libpas calls *epoch*.
-- The view that owns the page. This is either an exclusive view or a *shared handle*, which is the part of the
-  shared view that gets deallocated for decommitted pages. Note: an obvious improvement is if shared handles
-  were actually part of the page header; they aren't only because until recently, the page header size had to be
-  the same for exclusive and shared pages.
+- The view that owns the page. This is always an exclusive view.
 - View cache index, if the directory enabled view caching. This allows deallocation to quickly find out which
   view cache to use.
 - The alloc bits.
@@ -634,16 +625,14 @@ but those weren't any better than either of the two current approaches.
 
 The most important part of the page header is the alloc bits array and the `num_non_empty_words` counter. This
 is where most of the action of allocating and deallocating happens. The magic of the algorithm arises from the
-simple bitvector operations we can perform on `page->alloc_bits`, `full_alloc_bits` (from the size
-directory in case of exclusive pages or from the partial view in case of shared pages), and the
-`allocator->bits`. These operations allow us to achieve most of the algorithm:
+simple bitvector operations we can perform on `page->alloc_bits`, `full_alloc_bits` (from the size directory)
+and the `allocator->bits`. These operations allow us to achieve most of the algorithm:
 
 - Deallocation clears a bit in `page->alloc_bits` and if this results in the word becoming zero, it decrements
   the `num_non_empty_words`. The bit index is just the object's offset shifted by the page config's
-  `min_aligh_shift`, which is a compile-time constant in most of the algorithm. If the algorithm makes any bit
-  (for partials) or any word (for exclusives) empty, it makes the page eligible (either by putting it on a view
-  cache or marking the view eligible in its owning directory). If `num_non_empty_words` hits zero, the
-  deallocator also makes the view empty.
+  `min_aligh_shift`, which is a compile-time constant in most of the algorithm. If the algorithm makes any
+  word empty, it makes the page eligible (either by putting it on a view cache or marking the view eligible
+  in its owning directory). If `num_non_empty_words` hits zero, the deallocator also makes the view empty.
 - Allocation does a find-first-set-bit on the `allocator->bits`, but in a very efficient way, because the
   current 64-bit word of bits that the allocator is on is cached in `allocator->current_word` -- so allocation
   rarely searches an array. So, the allocator just loads the current word, does a `ctz` or `clz` kind of
@@ -668,12 +657,8 @@ Local allocators can be in any of these modes:
 
 - They are totally uninitialized. All fast paths fail and slow paths will initialize the local allocator by
   asking the TLC layout. This state happens if TLC decommit causes a local allocator to become all zero.
-- They are in bump allocation mode. Bump allocation happens either when a local allocator decides to allocate in
-  a totally empty exclusive page, or for primordial partial allocation. In the former case, it's worth about 1%
-  performance to sometimes bump-allocate. In the latter case, using bump allocation is just convenient -- the
-  slow path will decide that the partial view should get a certain range of memory within a shared page and it
-  knows that this memory has never been used before, so it's natural to just set up a bump range over that
-  memory.
+- They are in bump allocation mode. Bump allocation happens when a local allocator decides to allocate in
+  a totally empty exclusive page. In this case, it's worth about 1% performance to sometimes bump-allocate.
 - They are in free bits mode. This is slightly more common than the bump mode. In this mode, the
   `allocator->bits` is computed using `full_alloc_bits & ~page->alloc_bits` and contains a bit for the start of
   every free object.
@@ -772,12 +757,11 @@ being tuned and twisted so many times during the development of this allocator. 
 *deferred decommit log*, which is how we coalesce madvise calls. Then I'll describe the *page sharing pool*,
 which is a mechanism for multiple *participants* to report that they have some empty pages. Then I'll describe
 how the large heap implements this with the large sharing pool, which is one of the singleton participants. Then
-I'll describe the segregated directory participants -- which are a bit different for shared page directories
-versus size directories. I'll also describe the bitfit directory participants, which are quite close to their
-segregated directory cousins. Then I'll describe some of the things that the scavenger does that aren't to do
-with the page sharing pool, like stopping baseline allocators, stopping utility heap allocators, stopping
-TLC allocators, flushing TLC deallocation logs, decommitting unused parts of TLCs, and decommitting expendable
-memory.
+I'll describe the segregated directory participants. I'll also describe the bitfit directory participants,
+which are quite close to their segregated directory cousins. Then I'll describe some of the things that the
+scavenger does that aren't to do with the page sharing pool, like stopping baseline allocators, stopping
+utility heap allocators, stopping TLC allocators, flushing TLC deallocation logs, decommitting unused parts of
+TLCs, and decommitting expendable memory.
 
 ### Deferred Decommit Log
 
@@ -817,10 +801,10 @@ the asymmetric variant might be faster or more efficient, if the target OS allow
 ### Page Sharing Pool
 
 Different kinds of heaps have different ways of discovering that they have empty pages. Libpas supports three
-different kinds of heaps (large, segregated, and bitfit) and one of those heaps has two different ways of
-discovering free mempry (segregated shared page directories and segregated size directories). The page sharing
-pool is a data structure that can handle an arbitrary number of *page sharing participants*, each of which is
-able to say whether they have empty pages and whether those empty pages are old enough to be worth decommitting.
+different kinds of heaps (large, segregated, and bitfit) each of which has its own way of discovering free
+memory. The page sharing pool is a data structure that can handle an arbitrary number of *page sharing
+participants*, each of which is able to say whether they have empty pages and whether those empty pages are
+old enough to be worth decommitting.
 
 Page sharing participants need to be able to answer the following queries:
 
@@ -952,11 +936,8 @@ Once an empty page is found the basic idea is:
 
 Sadly, it's a bit more complicated than that:
 
-- Directories don't track pages; they track views. Shared page directories have views of pages whose actual
-  eligibility is covered by the eligible bits in the segregated size directories that hold the shared page's
-  partial views. So, insofar as taking eligibility is part of the algorithm, shared page directories have to
-  take eligibility for each partial view associated with the shared view.
-- Shared and exclusive views could both be in a state where they don't even have a page. So, before looking at
+- Directories don't track pages; they track views.
+- Exclusive views can be in a state where they don't even have a page. So, before looking at
   anything about the view, it's necessary to take the ownership lock. In fact, to have a guarantee that nobody
   is messing with the page, we need to grab the ownership lock and take eligibility. The actual algorithm does
   these two things together.
@@ -1158,9 +1139,7 @@ The header file usually looks like this:
         .small_segregated_page_size = PAS_SMALL_PAGE_DEFAULT_SIZE, \
         .small_segregated_wasteage_handicap = PAS_SMALL_PAGE_HANDICAP, \
         .small_exclusive_segregated_logging_mode = pas_segregated_deallocation_size_oblivious_logging_mode, \
-        .small_shared_segregated_logging_mode = pas_segregated_deallocation_no_logging_mode, \
         .small_exclusive_segregated_enable_empty_word_eligibility_optimization = false, \
-        .small_shared_segregated_enable_empty_word_eligibility_optimization = false, \
         .small_segregated_use_reversed_current_word = PAS_ARM64, \
         .enable_view_cache = false, \
         .use_small_bitfit = true, \
@@ -1174,7 +1153,6 @@ The header file usually looks like this:
         .medium_segregated_sharing_shift = PAS_MEDIUM_SHARING_SHIFT, \
         .medium_segregated_wasteage_handicap = PAS_MEDIUM_PAGE_HANDICAP, \
         .medium_exclusive_segregated_logging_mode = pas_segregated_deallocation_size_aware_logging_mode, \
-        .medium_shared_segregated_logging_mode = pas_segregated_deallocation_no_logging_mode, \
         .use_medium_bitfit = true, \
         .medium_bitfit_min_align_shift = PAS_MIN_MEDIUM_ALIGN_SHIFT, \
         .use_marge_bitfit = true, \
@@ -1219,7 +1197,6 @@ The basic heap config template sets up some basic defaults for how heaps work:
   it arranges to have those pages allocated out of megapages.
 - It makes medium segregated, medium bitfit, and marge bitfit use page header tables.
 - It sets up a way to find things like the page header tables from the enumerator.
-- It sets up segregated shared page directories for each of the segregated page configs.
 
 The `bmalloc_heap_config` is an example of a configuration that uses the basic template. If we ever wanted to
 put libpas into some other malloc library, we'd probably create a heap config for that library, and we would

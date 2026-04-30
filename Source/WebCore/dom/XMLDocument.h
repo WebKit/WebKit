@@ -41,6 +41,8 @@ public:
         return document;
     }
 
+    ~XMLDocument();
+
     WEBCORE_EXPORT static Ref<XMLDocument> createXHTML(LocalFrame*, const Settings&, const URL&);
 
 protected:

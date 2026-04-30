@@ -144,10 +144,11 @@ public:
     using ModuleCompletion = Variant<AbstractModuleRecord*, Exception*>;
 
     void innerModuleLoading(JSGlobalObject*, ModuleGraphLoadingState*, AbstractModuleRecord*);
-    void finishLoadingImportedModule(JSGlobalObject*, const ModuleReferrer&, const ModuleRequest&, ModuleLoaderPayload*, ModuleCompletion result, RefPtr<ScriptFetcher>);
+    // payload is opaque to callers and is either a ModuleGraphLoadingState* (graph load) or a ModuleLoaderPayload* (top-level dynamic import).
+    void finishLoadingImportedModule(JSGlobalObject*, const ModuleReferrer&, const ModuleRequest&, JSCell* payload, ModuleCompletion result, RefPtr<ScriptFetcher>);
 
-    JSPromise* hostLoadImportedModule(JSGlobalObject*, const ModuleReferrer&, const ModuleRequest&, ModuleLoaderPayload*, RefPtr<ScriptFetcher>, bool useImportMap);
-    JSPromise* loadModule(JSGlobalObject*, const ModuleReferrer&, const ModuleRequest&, ModuleLoaderPayload*, RefPtr<ScriptFetcher>, bool evaluate, bool useImportMap);
+    JSPromise* hostLoadImportedModule(JSGlobalObject*, const ModuleReferrer&, const ModuleRequest&, JSCell* payload, RefPtr<ScriptFetcher>, bool useImportMap);
+    JSPromise* loadModule(JSGlobalObject*, const ModuleReferrer&, const ModuleRequest&, JSCell* payload, RefPtr<ScriptFetcher>, bool evaluate, bool useImportMap);
     void continueModuleLoading(JSGlobalObject*, ModuleGraphLoadingState*, ModuleCompletion result);
     void continueDynamicImport(JSGlobalObject*, JSPromise*, ModuleCompletion, RefPtr<ScriptFetcher>);
     JSPromise* loadRequestedModules(JSGlobalObject*, AbstractModuleRecord*, RefPtr<ScriptFetcher>);
@@ -180,5 +181,13 @@ private:
 
     ResolutionMap<WriteBarrier<Unknown>> m_resolutionFailures;
 };
+
+// Validates the host-defined payload threaded through HostLoadImportedModule / FinishLoadingImportedModule.
+// Spec's `payload ∈ { GraphLoadingState Record, PromiseCapability Record }` is encoded in JSC as
+// either ModuleGraphLoadingState* (graph load) or ModuleLoaderPayload* (top-level dynamic import).
+inline bool isModuleLoaderHostDefinedPayload(JSCell* cell)
+{
+    return cell->inherits<ModuleGraphLoadingState>() || cell->inherits<ModuleLoaderPayload>();
+}
 
 } // namespace JSC

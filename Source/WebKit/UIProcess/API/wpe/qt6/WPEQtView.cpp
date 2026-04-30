@@ -145,6 +145,10 @@ void WPEQtView::createWebView()
     else if (!d->m_html.isEmpty())
         webkit_web_view_load_html(d->m_webView.get(), d->m_html.toUtf8().constData(), d->m_baseUrl.toString().toUtf8().constData());
 
+    updateWpeToplevelState();
+    connect(window(), &QQuickWindow::activeChanged, this, &WPEQtView::updateWpeToplevelState);
+    connect(window(), &QQuickWindow::windowStateChanged, this, &WPEQtView::updateWpeToplevelState);
+
     Q_EMIT webViewCreated();
 }
 
@@ -621,6 +625,25 @@ void WPEQtView::invalidateSceneGraph()
 
     auto* wpeView = webkit_web_view_get_wpe_view(d->m_webView.get());
     wpe_view_qtquick_invalidate_rendering(WPE_VIEW_QTQUICK(wpeView));
+}
+
+void WPEQtView::updateWpeToplevelState()
+{
+    Q_D(WPEQtView);
+    auto* wpeView = webkit_web_view_get_wpe_view(d->m_webView.get());
+    if (auto* wpeToplevel = wpe_view_get_toplevel(wpeView)) {
+        auto active = window()->isActive();
+        auto states = window()->windowStates();
+        uint32_t toplevelState = WPE_TOPLEVEL_STATE_NONE;
+        if (states & Qt::WindowMaximized)
+            toplevelState |= WPE_TOPLEVEL_STATE_MAXIMIZED;
+        if (states & Qt::WindowFullScreen)
+            toplevelState |= WPE_TOPLEVEL_STATE_FULLSCREEN;
+        if (active)
+            toplevelState |= WPE_TOPLEVEL_STATE_ACTIVE;
+
+        wpe_toplevel_state_changed(wpeToplevel, static_cast<WPEToplevelState>(toplevelState));
+    }
 }
 
 WebKitWebView* WPEQtView::webView() const

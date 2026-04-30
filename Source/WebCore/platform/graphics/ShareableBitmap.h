@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,6 +44,10 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #endif
 
+#if USE(CG)
+#include <WebCore/ShareableGainMap.h>
+#endif
+
 namespace WebCore {
 
 class GraphicsContext;
@@ -55,16 +59,21 @@ inline constexpr auto defaultCopyOnWrite = SharedMemory::CopyOnWrite::No;
 class ShareableBitmapConfiguration {
 public:
     ShareableBitmapConfiguration() = default;
+    explicit ShareableBitmapConfiguration(const ShareableBitmapConfiguration&) = default;
+    ShareableBitmapConfiguration(ShareableBitmapConfiguration&&) = default;
 
     WEBCORE_EXPORT ShareableBitmapConfiguration(const IntSize&, std::optional<DestinationColorSpace> = std::nullopt, Headroom = Headroom::None, bool isOpaque = false);
     WEBCORE_EXPORT ShareableBitmapConfiguration(const IntSize&, std::optional<DestinationColorSpace>, Headroom, bool isOpaque, unsigned bitsPerComponent, unsigned bytesPerPixel, unsigned bytesPerRow
 #if USE(CG)
         , CGBitmapInfo
+        , std::optional<ShareableGainMap>&&
 #endif
     );
 #if USE(CG)
     ShareableBitmapConfiguration(const NativeImage&);
 #endif
+
+    ShareableBitmapConfiguration& operator=(ShareableBitmapConfiguration&&) = default;
 
     IntSize size() const { return m_size; }
     const DestinationColorSpace& colorSpace() const { return m_colorSpace ? *m_colorSpace : DestinationColorSpace::SRGB(); }
@@ -77,6 +86,7 @@ public:
     unsigned bytesPerRow() const { ASSERT(!m_bytesPerRow.hasOverflowed()); return m_bytesPerRow; }
 #if USE(CG)
     CGBitmapInfo bitmapInfo() const { return m_bitmapInfo; }
+    std::optional<ShareableGainMap> shareableGainMap() const { return m_shareableGainMap; }
 #endif
 #if USE(SKIA)
     const SkImageInfo& imageInfo() const LIFETIME_BOUND { return m_imageInfo; }
@@ -107,6 +117,7 @@ private:
     CheckedUint32 m_bytesPerRow;
 #if USE(CG)
     CGBitmapInfo m_bitmapInfo { 0 };
+    std::optional<ShareableGainMap> m_shareableGainMap;
 #endif
 #if USE(SKIA)
     SkImageInfo m_imageInfo;
@@ -187,6 +198,8 @@ public:
     // This is only safe to use when we know that the contents of the shareable bitmap won't change.
     WEBCORE_EXPORT RefPtr<Image> createImage();
 
+    WEBCORE_EXPORT PlatformImagePtr createBasePlatformImage(BackingStoreCopy = CopyBackingStore, ShouldInterpolate = ShouldInterpolate::No);
+
     WEBCORE_EXPORT PlatformImagePtr createPlatformImage(BackingStoreCopy = CopyBackingStore, ShouldInterpolate = ShouldInterpolate::No);
 
 #if USE(CAIRO)
@@ -201,7 +214,7 @@ public:
 #endif
 
 private:
-    ShareableBitmap(ShareableBitmapConfiguration, Ref<SharedMemory>&&);
+    ShareableBitmap(const ShareableBitmapConfiguration&, Ref<SharedMemory>&&);
 
 #if USE(CG)
     static void releaseBitmapContextData(void* typelessBitmap, void* typelessData);

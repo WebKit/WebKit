@@ -45,17 +45,11 @@ void pas_segregated_page_config_validate(const pas_segregated_page_config* confi
         return;
 
     PAS_ASSERT(config->exclusive_payload_size <= config->base.page_size);
-    PAS_ASSERT(config->shared_payload_size <= config->base.page_size);
     PAS_ASSERT(pas_segregated_page_config_min_align(*config) < config->base.max_object_size);
     PAS_ASSERT(config->exclusive_payload_offset < config->base.page_size);
-    PAS_ASSERT(config->shared_payload_offset < config->base.page_size);
     PAS_ASSERT(config->base.max_object_size <= config->exclusive_payload_size);
-    PAS_ASSERT(config->base.max_object_size <= config->shared_payload_size);
-    PAS_ASSERT(config->num_alloc_bits >=
-               (pas_segregated_page_config_payload_end_offset_for_role(
-                   *config, pas_segregated_page_shared_role) >> config->base.min_align_shift));
-    PAS_ASSERT(pas_segregated_page_config_payload_end_offset_for_role(
-                   *config, pas_segregated_page_exclusive_role) <= config->base.page_size);
+    PAS_ASSERT(pas_segregated_page_config_payload_end_offset(
+                   *config) <= config->base.page_size);
     PAS_ASSERT(!(config->base.page_size % config->base.granule_size));
     PAS_ASSERT(config->base.page_size >= config->base.granule_size);
     PAS_ASSERT(!(config->base.granule_size % pas_page_malloc_alignment()));

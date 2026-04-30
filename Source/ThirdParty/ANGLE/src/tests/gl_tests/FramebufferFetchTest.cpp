@@ -2857,6 +2857,79 @@ void main (void)
     ASSERT_GL_NO_ERROR();
 }
 
+// Verify that sample shading is automatically enabled when framebuffer fetch is used with
+// multisampling.  Uses gl_SampleID at the same time as framebuffer fetch.
+TEST_P(FramebufferFetchES31, MultiSampledWithSampleID)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch") &&
+                       !IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch_non_coherent"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_sample_variables"));
+
+    const WhichExtension whichExtension = chooseBetweenCoherentOrIncoherent();
+
+    // Create a single-sampled framebuffer as the resolve target
+    GLRenderbuffer resolve;
+    glBindRenderbuffer(GL_RENDERBUFFER, resolve);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kViewportWidth, kViewportHeight);
+    GLFramebuffer resolveFbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFbo);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, resolve);
+
+    // Create a multisampled framebuffer
+    GLRenderbuffer rbo;
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8, kViewportWidth, kViewportHeight);
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo);
+
+    // Clear the framebuffer to some that will be read later
+    glClearColor(0.5, 0.25, 0.75, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw reads from the framebuffer and transforms each channel differently based on SampleID.
+    std::ostringstream fs;
+    fs << makeShaderPreamble(whichExtension, "#extension GL_OES_sample_variables : require", 1);
+    fs << R"(void main()
+{
+    switch (gl_SampleID)
+    {
+    case 0:
+        color0.r *= color0.r;
+        break;
+    case 1:
+        color0.g = 1.0;
+        break;
+    case 2:
+        color0.b = color0.r;
+        break;
+    default:
+        color0.g = 0.75;
+        break;
+    }
+})";
+
+    ANGLE_GL_PROGRAM(square, essl31_shaders::vs::Passthrough(), fs.str().c_str());
+    drawQuad(square, essl31_shaders::PositionAttrib(), 0.0f);
+
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFbo);
+    glBlitFramebuffer(0, 0, kViewportWidth, kViewportHeight, 0, 0, kViewportWidth, kViewportHeight,
+                      GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, resolveFbo);
+
+    // The input color (0.5, 0.25, 0.75, 1.0) is transformed to the following 4 colors in the
+    // samples:
+    //
+    //     Sample 0: (0.25, 0.25, 0.75, 1.0)
+    //     Sample 1: (0.5,  1.0,  0.75, 1.0)
+    //     Sample 2: (0.5,  0.25, 0.5,  1.0)
+    //     Sample 3: (0.5,  0.75, 0.75, 1.0)
+    //
+    // Which average out to (0.4375, 0.5625, 0.6875, 1.0)
+    EXPECT_PIXEL_NEAR(0, 0, 112, 143, 175, 255, 2);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test recovering a supposedly closed render pass that used framebuffer fetch.
 TEST_P(FramebufferFetchES31, ReopenRenderPass)
 {

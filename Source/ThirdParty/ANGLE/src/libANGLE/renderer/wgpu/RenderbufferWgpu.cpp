@@ -122,8 +122,7 @@ void RenderbufferWgpu::onSubjectStateChange(angle::SubjectIndex index,
                                             angle::SubjectMessage message)
 {
     ASSERT(index == kRenderbufferImageSubjectIndex &&
-           (message == angle::SubjectMessage::SubjectChanged ||
-            message == angle::SubjectMessage::InitializationComplete));
+           message == angle::SubjectMessage::SubjectChanged);
 
     // Forward the notification to the parent that the internal storage changed.
     onStateChange(message);

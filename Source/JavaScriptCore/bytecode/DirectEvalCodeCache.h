@@ -28,17 +28,27 @@
 
 #pragma once
 
-#include <JavaScriptCore/DirectEvalExecutable.h>
+#include <JavaScriptCore/BytecodeIndex.h>
+#include <JavaScriptCore/SlotVisitorMacros.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/StringHash.h>
 
 namespace JSC {
 
+    class BytecodeIndex;
+    class DirectEvalExecutable;
+    class JSCell;
+    class JSGlobalObject;
     class SlotVisitor;
+
+    template<typename T, typename Traits> class WriteBarrier;
 
     class DirectEvalCodeCache {
     public:
+        DirectEvalCodeCache();
+        ~DirectEvalCodeCache();
+
         class CacheLookupKey;
 
         class CacheKey {
@@ -116,11 +126,8 @@ namespace JSC {
             }
         };
 
-        DirectEvalExecutable* get(const CacheLookupKey& cacheKey)
-        {
-            return m_cacheMap.inlineGet<CacheLookupKeyHashTranslator>(cacheKey).get();
-        }
-        
+        inline DirectEvalExecutable* get(const CacheLookupKey&); // Defined in DirectEvalCodeCacheInlines.h
+
         void set(JSGlobalObject* globalObject, JSCell* owner, const CacheLookupKey& cacheKey, DirectEvalExecutable* evalExecutable)
         {
             if (m_cacheMap.size() < maxCacheEntries)
@@ -138,7 +145,7 @@ namespace JSC {
 
         void setSlow(JSGlobalObject*, JSCell* owner, const CacheLookupKey& cacheKey, DirectEvalExecutable*);
 
-        typedef UncheckedKeyHashMap<CacheKey, WriteBarrier<DirectEvalExecutable>, DefaultHash<CacheKey>, CacheKey::HashTraits> EvalCacheMap;
+        typedef UncheckedKeyHashMap<CacheKey, WriteBarrier<DirectEvalExecutable, RawPtrTraits<DirectEvalExecutable>>, DefaultHash<CacheKey>, CacheKey::HashTraits> EvalCacheMap;
         EvalCacheMap m_cacheMap;
         Lock m_lock;
     };

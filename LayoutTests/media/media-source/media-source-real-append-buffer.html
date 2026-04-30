@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-append-buffer</title>
+    <script src="mp4-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // This test mirrors media-source-append-buffer.html but uses real MP4 data
+    // instead of the mock backend, exercising the real SourceBufferParser pipeline.
+
+    var source;
+    var sourceBuffer;
+    var initData;
+    var mediaData;
+
+    async function runTest() {
+        findMediaElement();
+
+        if (!MediaSource.isTypeSupported(MP4.VIDEO_TYPE)) {
+            failTest(`${MP4.VIDEO_TYPE} is not supported`);
+            return;
+        }
+
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+
+        run(`sourceBuffer = source.addSourceBuffer('${MP4.VIDEO_TYPE}')`);
+
+        // Append init segment
+        initData = MP4.initSegment({
+            timescale: 1000,
+            tracks: [{ id: 1, type: 'video', timescale: 1000 }]
+        });
+        run('sourceBuffer.appendBuffer(initData)');
+        testExpected('sourceBuffer.updating', true);
+        await waitFor(sourceBuffer, 'updateend');
+        testExpected('sourceBuffer.updating', false);
+
+        // Append media segment with 4 samples of 1-second duration each
+        mediaData = MP4.mediaSegment({
+            sequenceNumber: 1,
+            tracks: [{
+                id: 1,
+                type: 'video',
+                baseDecodeTime: 0,
+                samples: [
+                    { duration: 1000, compositionTimeOffset: 0, isSync: true },
+                    { duration: 1000, compositionTimeOffset: 0, isSync: false },
+                    { duration: 1000, compositionTimeOffset: 0, isSync: false },
+                    { duration: 1000, compositionTimeOffset: 0, isSync: false },
+                ]
+            }]
+        });
+        run('sourceBuffer.appendBuffer(mediaData)');
+        testExpected('sourceBuffer.updating', true);
+        await waitFor(sourceBuffer, 'updateend');
+        testExpected('sourceBuffer.updating', false);
+
+        // Verify buffered ranges: 4 samples x 1000 units / 1000 timescale = 4 seconds
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.start(0)', 0, 0.01);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', 4, 0.01);
+
+        endTest();
+    }
+
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>

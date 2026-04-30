@@ -1,0 +1,4 @@
+
+
+PASS javascript: URL in iframe src, initial src is not about:blank
+

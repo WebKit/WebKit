@@ -54,14 +54,13 @@ public:
         UseBGRALayout = 1 << 2
     };
 
-    // On some non-Mesa stacks gbm_bo allocation and dma-buf export succeed but mmap still
-    // fails; the probe verifies all three once per session before committing to this path.
-    // Gates only MemoryMappedGPUBuffer::create() -- exportFDForPlane() remains usable for
-    // non-mmap callers (e.g. EGLImage wrapping) when export works but the FD isn't RDWR.
+    // The probe verifies dma-buf allocation, export and CPU mapping once per session
+    // before committing to this path. The CPU-mapping side has two strategies:
+    // mmap() on the dma-buf FD when gbm exports an RDWR-capable FD, otherwise
+    // gbm_bo_map() as a driver-native fallback. The single GPU-sampling export always
+    // goes through gbm_bo_get_fd_for_plane() so Mesa attaches its implicit-sync fence;
+    // see DMABufBufferAttributes::fromGBMBufferObject().
     static bool isSupported();
-
-    // The returned FD may not be RDWR-mappable; callers that mmap must gate on isSupported().
-    static int exportFDForPlane(struct gbm_bo*, int plane);
 
     static ASCIILiteral exportStrategyDescription();
 
@@ -135,14 +134,19 @@ private:
     void updateContentsInLinearFormat(const void* srcData, const IntRect& targetRect, unsigned bytesPerLine);
     void updateContentsInVivanteSuperTiledFormat(const void* srcData, const IntRect& targetRect, unsigned bytesPerLine);
 
-    int primaryPlaneDmaBufFD() const;
     uint32_t primaryPlaneDmaBufStride() const;
+    int primaryPlaneDmaBufFD() const;
 
     IntSize m_size;
     IntSize m_allocatedSize;
     OptionSet<BufferFlag> m_flags;
     uint64_t m_modifier { 0 };
     RefPtr<DMABufBuffer> m_dmaBuf;
+
+    // Owned for the lifetime of the buffer. gbm_bo_map() requires it; even on the
+    // dma-buf-mmap strategy we keep it so ownership doesn't depend on the strategy.
+    struct gbm_bo* m_bo { nullptr };
+    void* m_gbmBoMapData { nullptr };
 
     void* m_mappedData { nullptr };
     size_t m_mappedLength { 0 };

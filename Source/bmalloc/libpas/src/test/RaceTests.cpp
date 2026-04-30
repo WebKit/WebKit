@@ -262,7 +262,6 @@ void addRaceTests()
 
     {
         DisableBitfit disableBitfit;
-        ForceExclusives forceExclusives;
         ForceTLAs forceTLAs;
 
         ADD_TEST(testLocalAllocatorStopRace(pas_race_test_hook_local_allocator_stop_before_did_stop_allocating));

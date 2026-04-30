@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<canvas id="canvas" width="200" height="100" style="width: 400px; height: 400px; object-fit: contain;">
+    <button id="button">Canvas Button</button>
+</canvas>
+
+<script>
+var output = "This test ensures that drawFocusIfNeeded() accessibility bounds account for object-fit on the canvas.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    touchAccessibilityTree(accessibilityController.rootElement);
+
+    // Canvas backing store is 200x100. CSS box is 400x400 with object-fit: contain.
+    // The content scales by 2x (limited by width: 400/200=2, height would be 400/100=4)
+    // producing a 400x200 content area centered vertically in the 400x400 box.
+    // replacedContentRect should be (0, 100, 400, 200).
+    //
+    // A focus path at canvas (50, 25) with size (40, 20) maps to:
+    //   x: 0 + 50 * (400 / 200) = 100
+    //   y: 100 + 25 * (200 / 100) = 150
+    //   w: 40 * (400 / 200) = 80
+    //   h: 20 * (200 / 100) = 40
+    // Page position: (8 + 100, 8 + 150) = (108, 158), size (80, 40).
+    setTimeout(async function() {
+        output += await verifyCanvasFocusBounds({
+            canvasId: "canvas", canvasDescendantId: "button",
+            focusX: 50, focusY: 25, focusWidth: 40, focusHeight: 20,
+            expectedPageX: 108, expectedPageY: 158,
+            expectedWidth: 80, expectedHeight: 40,
+            variance: 1,
+        });
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

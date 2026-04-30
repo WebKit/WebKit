@@ -60,6 +60,8 @@
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
+#include <WebCore/DocumentSyncData.h>
+#include <WebCore/SecurityOrigin.h>
 #include <WebCore/ShouldTreatAsContinuingLoad.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -502,7 +504,11 @@ void ProvisionalPageProxy::didCommitLoadForFrame(IPC::Connection& connection, Fr
         // BrowsingContext group, pages in that process still need access to this page.
         // So transition the WebPageProxy in that process to a RemotePageProxy.
         if (frameProcessChanged && pageMainFrame == m_mainFrame && pageMainFrameProcess->frameCount() && pageMainFrameProcess->browsingContextGroup() == m_browsingContextGroup.ptr()) {
-            protect(page->legacyMainFrameProcess())->send(Messages::WebPage::LoadDidCommitInAnotherProcess(page->mainFrame()->frameID(), std::nullopt), page->webPageIDInMainFrameProcess());
+            auto topDocumentSyncData = DocumentSyncData::create();
+            topDocumentSyncData->documentURL = request.url();
+            topDocumentSyncData->documentSecurityOrigin = SecurityOrigin::create(request.url());
+            page->setTopDocumentSyncData(topDocumentSyncData.copyRef());
+            protect(page->legacyMainFrameProcess())->send(Messages::WebPage::LoadDidCommitInAnotherProcess(page->mainFrame()->frameID(), std::nullopt, WTF::move(topDocumentSyncData)), page->webPageIDInMainFrameProcess());
             m_browsingContextGroup->transitionPageToRemotePage(*page, pageMainFrameSite);
         }
     }
@@ -725,6 +731,10 @@ void ProvisionalPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::D
 #if ENABLE(CONTENT_EXTENSIONS)
         || decoder.messageName() == Messages::WebPageProxy::ContentRuleListNotification::name()
 #endif
+        || decoder.messageName() == Messages::WebPageProxy::AddMessageToConsoleForTesting::name()
+        || decoder.messageName() == Messages::WebPageProxy::HandleMessage::name()
+        || decoder.messageName() == Messages::WebPageProxy::BroadcastDocumentSyncData::name()
+        || decoder.messageName() == Messages::WebPageProxy::BroadcastAllDocumentSyncData::name()
         )
     {
         if (RefPtr page = m_page.get())

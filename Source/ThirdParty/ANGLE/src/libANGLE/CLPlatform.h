@@ -32,6 +32,7 @@ class Platform final : public _cl_platform_id, public Object
     static Platform *GetDefault();
     static Platform *CastOrDefault(cl_platform_id platform);
     static bool IsValidOrDefault(const _cl_platform_id *platform);
+    static bool IsDeviceTypeMatch(DeviceType select, DeviceType type);
 
     static angle::Result GetPlatformIDs(cl_uint numEntries,
                                         cl_platform_id *platforms,
@@ -114,6 +115,15 @@ inline Platform *Platform::CastOrDefault(cl_platform_id platform)
 inline bool Platform::IsValidOrDefault(const _cl_platform_id *platform)
 {
     return platform != nullptr ? IsValid(platform) : GetDefault() != nullptr;
+}
+
+inline bool Platform::IsDeviceTypeMatch(DeviceType select, DeviceType type)
+{
+    // The type 'DeviceType' is a bitfield, so it matches if any selected bit is set.
+    // A custom device is an exception, which only matches if it was explicitly selected, see:
+    // https://www.khronos.org/registry/OpenCL/specs/3.0-unified/html/OpenCL_API.html#clGetDeviceIDs
+    return type == CL_DEVICE_TYPE_CUSTOM ? select == CL_DEVICE_TYPE_CUSTOM
+                                         : type.intersects(select);
 }
 
 inline const rx::CLPlatformImpl::Info &Platform::getInfo() const

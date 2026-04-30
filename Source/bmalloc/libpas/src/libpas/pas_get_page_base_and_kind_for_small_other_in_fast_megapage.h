@@ -57,7 +57,7 @@ pas_get_page_base_and_kind_for_small_other_in_fast_megapage(uintptr_t begin, pas
     
     return pas_page_base_and_kind_create(
         pas_page_base_for_address_and_page_config(begin, config.small_segregated_config.base),
-        pas_small_shared_segregated_page_kind);
+        pas_small_exclusive_segregated_page_kind);
 }
 
 PAS_END_EXTERN_C;

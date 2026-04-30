@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test that ::cue(:root) matches the cue element but :root does not</title>
+    <script src=../media-file.js></script>
+    <script src=../video-test.js></script>
+    <style>
+    ::cue(:root) {
+        color: lime;
+    }
+    :root {
+        background-color: red;
+    }
+    </style>
+    <script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function cueElement() {
+        return internals.shadowRoot(video).querySelector('[useragentpart="cue"]');
+    }
+
+    window.addEventListener('load', function() {
+        findMediaElement();
+        video.src = findMediaFile('video', '../content/test');
+        video.textTracks[0].mode = 'showing';
+
+        waitForEvent('canplaythrough', function() {
+            video.currentTime = 0.5;
+        });
+
+        waitForEvent('seeked', function() {
+            var cue = cueElement();
+            if (!cue) {
+                consoleWrite("FAIL: Could not find cue element in shadow root.");
+                endTest();
+                return;
+            }
+
+            window.cueStyle = getComputedStyle(cue);
+            consoleWrite("Test that ::cue(:root) targets the cue element's text color.");
+            testExpected("cueStyle.color", "rgb(0, 255, 0)");
+
+            consoleWrite("");
+            consoleWrite("Test that the document :root selector does not affect the cue element background color.");
+            testExpected("cueStyle.backgroundColor != 'rgb(255, 0, 0)'", true);
+
+            endTest();
+        });
+    });
+    </script>
+</head>
+<body>
+    <video>
+        <track src="captions-webvtt/captions.vtt" kind="captions" default>
+    </video>
+</body>
+</html>

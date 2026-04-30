@@ -112,18 +112,6 @@ void DummyModelPlayer::setAnimationCurrentTime(Seconds, CompletionHandler<void(b
 {
 }
 
-void DummyModelPlayer::hasAudio(CompletionHandler<void(std::optional<bool>&&)>&&)
-{
-}
-
-void DummyModelPlayer::isMuted(CompletionHandler<void(std::optional<bool>&&)>&&)
-{
-}
-
-void DummyModelPlayer::setIsMuted(bool, CompletionHandler<void(bool success)>&&)
-{
-}
-
 #if ENABLE(MODEL_ELEMENT_ACCESSIBILITY)
 
 ModelPlayerAccessibilityChildren DummyModelPlayer::accessibilityChildren()

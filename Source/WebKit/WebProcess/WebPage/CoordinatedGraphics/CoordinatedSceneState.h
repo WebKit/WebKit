@@ -69,10 +69,14 @@ public:
 private:
     CoordinatedSceneState();
 
+    void commitPendingLayers();
+
     const Ref<WebCore::CoordinatedPlatformLayer> m_rootLayer;
     HashSet<Ref<WebCore::CoordinatedPlatformLayer>> m_layers;
+    HashSet<Ref<WebCore::CoordinatedPlatformLayer>> m_layersToRemove;
     Lock m_pendingLayersLock;
     HashSet<Ref<WebCore::CoordinatedPlatformLayer>> m_pendingLayers WTF_GUARDED_BY_LOCK(m_pendingLayersLock);
+    HashSet<Ref<WebCore::CoordinatedPlatformLayer>> m_pendingLayersToRemove WTF_GUARDED_BY_LOCK(m_pendingLayersLock);
     std::atomic<bool> m_didChangeLayers { false };
     HashSet<Ref<WebCore::CoordinatedPlatformLayer>> m_committedLayers;
     std::atomic<unsigned> m_pendingTiles { 0 };

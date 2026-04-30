@@ -3314,7 +3314,7 @@ LayoutUnit RenderBlockFlow::computedClearDeltaForChild(RenderBox& child, LayoutU
                 return newLogicalTop - logicalTop;
 
             LayoutRect borderBox = child.borderBoxRect();
-            LayoutUnit childLogicalWidthAtOldLogicalTopOffset = isHorizontalWritingMode() ? borderBox.width() : borderBox.height();
+            LayoutUnit childBorderBoxLogicalWidthAtOldLogicalTopOffset = isHorizontalWritingMode() ? borderBox.width() : borderBox.height();
 
             // FIXME: None of this is right for perpendicular writing-mode children.
             LayoutUnit childOldLogicalWidth = child.logicalWidth();
@@ -3325,18 +3325,42 @@ LayoutUnit RenderBlockFlow::computedClearDeltaForChild(RenderBox& child, LayoutU
             child.setLogicalTop(newLogicalTop);
             child.updateLogicalWidth();
             borderBox = child.borderBoxRect();
-            LayoutUnit childLogicalWidthAtNewLogicalTopOffset = isHorizontalWritingMode() ? borderBox.width() : borderBox.height();
+            LayoutUnit childBorderBoxLogicalWidth = isHorizontalWritingMode() ? borderBox.width() : borderBox.height();
 
             child.setLogicalTop(childOldLogicalTop);
             child.setLogicalWidth(childOldLogicalWidth);
             child.setMarginLeft(childOldMarginLeft);
             child.setMarginRight(childOldMarginRight);
-            
-            if (childLogicalWidthAtNewLogicalTopOffset <= availableLogicalWidthAtNewLogicalTopOffset) {
+
+            auto fitsNextToFloat = [&] {
+                // The border box of a BFC must not overlap the margin box of any float (CSS 2.1 SS 9.5).
+                // The child is positioned at max(marginStart, positionToAvoidFloats). The margin only
+                // consumes available space to the extent it exceeds positionToAvoidFloats.
+                //
+                // float: right (does not fit, border box end overlaps with float)
+                //
+                //   |  margin left  |   border box   |
+                //   |       available        |   float    |
+                //
+                // float: left (does fit, notice that margin box may overlap with float)
+                //
+                //   |  margin left  |   border box   |
+                //   |   float    ||       available       |
+                //
+                auto childLogicalHeight = logicalHeightForChild(child);
+                // No end-side float: the child's margin can only push its border box into the container's overflow, not into a float.
+                if (endOffsetForLine(newLogicalTop, childLogicalHeight) <= endOffsetForContent())
+                    return childBorderBoxLogicalWidth <= availableLogicalWidthAtNewLogicalTopOffset;
+
+                auto positionToAvoidFloats = startOffsetForLine(newLogicalTop, childLogicalHeight) - startOffsetForContent();
+                auto marginOffset = std::max(marginStartForChild(child), positionToAvoidFloats) - positionToAvoidFloats;
+                return marginOffset + childBorderBoxLogicalWidth <= availableLogicalWidthAtNewLogicalTopOffset;
+            };
+            if (fitsNextToFloat()) {
                 // Even though we may not be moving, if the logical width did shrink because of the presence of new floats, then
                 // we need to force a relayout as though we shifted. This happens because of the dynamic addition of overhanging floats
                 // from previous siblings when negative margins exist on a child (see the addOverhangingFloats call at the end of collapseMargins).
-                if (childLogicalWidthAtOldLogicalTopOffset != childLogicalWidthAtNewLogicalTopOffset)
+                if (childBorderBoxLogicalWidthAtOldLogicalTopOffset != childBorderBoxLogicalWidth)
                     child.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
                 return newLogicalTop - logicalTop;
             }
@@ -4031,6 +4055,11 @@ bool RenderBlockFlow::layoutSimpleBlockContentInInline(MarginInfo& marginInfo)
 {
     if (!inlineLayout() || !inlineLayout()->hasContent())
         return false;
+
+    if (is<RenderTableCell>(*this)) {
+        // Intrinsic padding changes requires full layout to get the cell repositioned.
+        return false;
+    }
 
     for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance()) {
         ASSERT(!walker.current()->selfNeedsLayout());
@@ -4989,11 +5018,7 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
             auto blocMaxWidth = LayoutUnit { };
             computeChildPreferredLogicalWidths(downcast<RenderBox>(*child), blockMinWidth, blocMaxWidth);
 
-            auto marginsInInlineDirection = LayoutUnit { };
-            if (auto fixedMarginStart = child->style().marginStart(writingMode()).tryFixed())
-                marginsInInlineDirection += LayoutUnit::fromFloatCeil(fixedMarginStart->resolveZoom(child->style().usedZoomForLength()));
-            if (auto fixedMarginEnd = child->style().marginEnd(writingMode()).tryFixed())
-                marginsInInlineDirection += LayoutUnit::fromFloatCeil(fixedMarginEnd->resolveZoom(child->style().usedZoomForLength()));
+            auto marginsInInlineDirection = marginIntrinsicLogicalWidthForChild(downcast<RenderBox>(*child));
 
             minLogicalWidth = std::max(minLogicalWidth, blockMinWidth + marginsInInlineDirection);
             maxLogicalWidth = std::max(maxLogicalWidth, blocMaxWidth + marginsInInlineDirection);

@@ -224,11 +224,6 @@ public:
                            std::function<void(pas_heap_runtime_config&)> setUp);
 };
 
-class ForceExclusives : public RuntimeConfigTestScope {
-public:
-    ForceExclusives();
-};
-
 class ForceTLAs : public RuntimeConfigTestScope {
 public:
     ForceTLAs();
@@ -242,11 +237,6 @@ public:
 class DisableBitfit : public RuntimeConfigTestScope {
 public:
     DisableBitfit();
-};
-
-class ForcePartials : public RuntimeConfigTestScope {
-public:
-    ForcePartials();
 };
 
 class ForceBaselines : public RuntimeConfigTestScope {

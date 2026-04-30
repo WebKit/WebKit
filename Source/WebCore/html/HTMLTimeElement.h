@@ -35,6 +35,8 @@ class HTMLTimeElement final : public HTMLElement {
 public:
     static Ref<HTMLTimeElement> create(const QualifiedName&, Document&);
 
+    ~HTMLTimeElement();
+
 private:
     HTMLTimeElement(const QualifiedName&, Document&);
 };

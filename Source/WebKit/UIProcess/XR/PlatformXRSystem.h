@@ -106,9 +106,11 @@ private:
 #endif
 #if ENABLE(WEBXR_LAYERS)
 #if !USE(OPENXR) && !defined(NDEBUG)
-    [[noreturn]]
+#define XR_NORETURN [[noreturn]]
+#else
+#define XR_NORETURN
 #endif
-    void NODELETE createQuadLayer(IPC::Connection&, WebCore::IntSize, PlatformXR::LayerLayout, CompletionHandler<void(std::optional<PlatformXR::LayerInfo>)>&&);
+    XR_NORETURN void NODELETE createCompositionLayer(IPC::Connection&, PlatformXR::CompositionLayerType, WebCore::IntSize, PlatformXR::LayerLayout, CompletionHandler<void(std::optional<PlatformXR::LayerInfo>)>&&);
 #endif
 #if ENABLE(WEBXR_HIT_TEST)
     void requestHitTestSource(const PlatformXR::HitTestOptions&, CompletionHandler<void(Expected<PlatformXR::HitTestSource, WebCore::ExceptionData>)>&&);

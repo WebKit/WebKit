@@ -48,7 +48,7 @@ using BufferWeakRef  = std::weak_ptr<Buffer>;
 class BufferSlice
 {
   public:
-    BufferSlice() = default;
+    BufferSlice()                               = default;
     BufferSlice(const BufferSlice &)            = default;
     BufferSlice(BufferSlice &&)                 = default;
     BufferSlice &operator=(const BufferSlice &) = default;
@@ -551,10 +551,10 @@ inline angle::Span<uint8_t> Buffer::mapNoSync(ContextMtl *context, size_t offset
 }
 
 inline angle::Span<uint8_t> Buffer::mapWithOpt(ContextMtl *context,
-                                                bool readonly,
-                                                bool noSync,
-                                                size_t offset,
-                                                size_t length)
+                                               bool readonly,
+                                               bool noSync,
+                                               size_t offset,
+                                               size_t length)
 {
     return mapWithOpt(context, readonly, noSync, offset).first(length);
 }

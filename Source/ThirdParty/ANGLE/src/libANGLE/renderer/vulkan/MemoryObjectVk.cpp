@@ -180,8 +180,11 @@ angle::Result MemoryObjectVk::createImage(
 {
     vk::Renderer *renderer = contextVk->getRenderer();
 
+    // The format of the image is dictated by |internalFormat|, we can't fall back to a renderable
+    // format if any, because the image must match the external one.
     const vk::Format &vkFormat     = renderer->getFormat(internalFormat);
-    angle::FormatID actualFormatID = vkFormat.getActualRenderableImageFormatID();
+    angle::FormatID actualFormatID =
+        vkFormat.getActualImageFormatID(vk::ImageFormatSupport::SampleOnly);
 
     VkExternalMemoryImageCreateInfo externalMemoryImageCreateInfo = {};
     externalMemoryImageCreateInfo.sType       = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO;

@@ -40,6 +40,8 @@ public:
         return adoptRef(*new MathMLUnknownElement(tagName, document));
     }
 
+    ~MathMLUnknownElement();
+
 private:
     MathMLUnknownElement(const QualifiedName& tagName, Document& document)
         : MathMLRowElement(tagName, document, TypeFlag::IsUnknownElement)

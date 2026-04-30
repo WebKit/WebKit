@@ -15,4 +15,5 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/systemLanguage-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/use-getComputedStyle.html

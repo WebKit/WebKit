@@ -255,7 +255,7 @@ private:
     void updateSpeculativeLoadManagerEnabledState();
 
     std::unique_ptr<WebCore::LowPowerModeNotifier> m_lowPowerModeNotifier;
-    std::unique_ptr<WebCore::ThermalMitigationNotifier> m_thermalMitigationNotifier;
+    RefPtr<WebCore::ThermalMitigationNotifier> m_thermalMitigationNotifier;
     std::unique_ptr<SpeculativeLoadManager> m_speculativeLoadManager;
 
     HashMap<Key, Ref<AsyncRevalidation>> m_pendingAsyncRevalidations;

@@ -85,6 +85,7 @@
 #include "Settings.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <JavaScriptCore/HeapInlines.h>
+#include <WebCore/HTTPStatusCodes.h>
 #include <wtf/Seconds.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
@@ -1219,7 +1220,7 @@ const URL& HTMLModelElement::environmentMap() const
 
 void HTMLModelElement::setEnvironmentMap(const URL& url)
 {
-    if (url.string() == m_environmentMapURL.string())
+    if (url == m_environmentMapURL)
         return;
 
     m_environmentMapURL = url;
@@ -1294,7 +1295,7 @@ void HTMLModelElement::environmentMapResetAndReject(Exception&& exception)
 void HTMLModelElement::environmentMapResourceFinished()
 {
     int status = m_environmentMapResource->response().httpStatusCode();
-    if (m_environmentMapResource->loadFailedOrCanceled() || (status && (status < 200 || status > 299))) {
+    if (m_environmentMapResource->loadFailedOrCanceled() || !isHttpOkStatus(status)) {
         environmentMapResetAndReject(Exception { ExceptionCode::NetworkError });
 
         // sending a message with empty data to indicate resource removal
@@ -1475,56 +1476,6 @@ void HTMLModelElement::setAnimationCurrentTime(double currentTime, DOMPromiseDef
     }
 
     modelPlayer->setAnimationCurrentTime(Seconds(currentTime), [promise = WTF::move(promise)](bool success) mutable {
-        if (success)
-            promise.resolve();
-        else
-            promise.reject();
-    });
-}
-
-// MARK: - Audio support.
-
-void HTMLModelElement::hasAudio(HasAudioPromise&& promise)
-{
-    RefPtr modelPlayer = m_modelPlayer;
-    if (!modelPlayer) {
-        promise.reject();
-        return;
-    }
-
-    modelPlayer->isPlayingAnimation([promise = WTF::move(promise)](std::optional<bool> hasAudio) mutable {
-        if (!hasAudio)
-            promise.reject();
-        else
-            promise.resolve(*hasAudio);
-    });
-}
-
-void HTMLModelElement::isMuted(IsMutedPromise&& promise)
-{
-    RefPtr modelPlayer = m_modelPlayer;
-    if (!modelPlayer) {
-        promise.reject();
-        return;
-    }
-
-    modelPlayer->isPlayingAnimation([promise = WTF::move(promise)](std::optional<bool> isMuted) mutable {
-        if (!isMuted)
-            promise.reject();
-        else
-            promise.resolve(*isMuted);
-    });
-}
-
-void HTMLModelElement::setIsMuted(bool isMuted, DOMPromiseDeferred<void>&& promise)
-{
-    RefPtr modelPlayer = m_modelPlayer;
-    if (!modelPlayer) {
-        promise.reject();
-        return;
-    }
-
-    modelPlayer->setIsMuted(isMuted, [promise = WTF::move(promise)](bool success) mutable {
         if (success)
             promise.resolve();
         else

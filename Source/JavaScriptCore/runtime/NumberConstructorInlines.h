@@ -21,6 +21,7 @@
 #pragma once
 
 #include "NumberConstructor.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

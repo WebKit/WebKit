@@ -39,6 +39,7 @@
 namespace JSC {
 
 class CodeBlock;
+class PolymorphicAccessJITStubRoutine;
 class PropertyInlineCache;
 
 class PropertyInlineCacheClearingWatchpoint final : public Watchpoint {

@@ -29,6 +29,7 @@
 #include "GetVM.h"
 #include "Identifier.h"
 #include "JSCJSValue.h"
+#include "Strong.h"
 #include <array>
 #include <wtf/Range.h>
 #include <wtf/text/MakeString.h>

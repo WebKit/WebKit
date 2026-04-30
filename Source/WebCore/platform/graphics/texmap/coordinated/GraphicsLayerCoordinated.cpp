@@ -282,6 +282,15 @@ void GraphicsLayerCoordinated::setOpacity(float opacity)
     noteLayerPropertyChanged(Change::Opacity, ScheduleFlush::Yes);
 }
 
+void GraphicsLayerCoordinated::setBlendMode(BlendMode blendMode)
+{
+    if (m_blendMode == blendMode)
+        return;
+
+    GraphicsLayer::setBlendMode(blendMode);
+    noteLayerPropertyChanged(Change::BlendMode, ScheduleFlush::Yes);
+}
+
 void GraphicsLayerCoordinated::setContentsVisible(bool contentsVisible)
 {
     if (m_contentsVisible == contentsVisible)
@@ -381,7 +390,7 @@ void GraphicsLayerCoordinated::setContentsToPlatformLayer(PlatformLayer* content
 
     m_contentsBufferProxy = contentsLayer;
 
-    OptionSet<Change> change = { Change::ContentsBuffer };
+    EnumSet<Change> change = { Change::ContentsBuffer };
     if (m_contentsBufferProxy) {
         m_contentsBufferProxy->setTargetLayer(m_platformLayer.ptr());
         m_contentsDisplayDelegate = nullptr;
@@ -397,7 +406,7 @@ void GraphicsLayerCoordinated::setContentsDisplayDelegate(RefPtr<GraphicsLayerCo
 
     m_contentsDisplayDelegate = WTF::move(delegate);
 
-    OptionSet<Change> change = { Change::ContentsBuffer };
+    EnumSet<Change> change = { Change::ContentsBuffer };
     if (m_contentsDisplayDelegate) {
         if (m_contentsBufferProxy) {
             m_contentsBufferProxy->setTargetLayer(nullptr);
@@ -755,7 +764,7 @@ bool GraphicsLayerCoordinated::filtersCanBeComposited(const FilterOperations& fi
     return !filters.isEmpty();
 }
 
-void GraphicsLayerCoordinated::noteLayerPropertyChanged(OptionSet<Change> change, ScheduleFlush scheduleFlush)
+void GraphicsLayerCoordinated::noteLayerPropertyChanged(EnumSet<Change> change, ScheduleFlush scheduleFlush)
 {
     if (beingDestroyed())
         return;
@@ -1084,6 +1093,9 @@ void GraphicsLayerCoordinated::commitLayerChanges(CommitState& commitState, floa
 
     if (m_pendingChanges.contains(Change::Opacity))
         m_platformLayer->setOpacity(m_opacity);
+
+    if (m_pendingChanges.contains(Change::BlendMode))
+        m_platformLayer->setBlendMode(m_blendMode);
 
     if (m_pendingChanges.contains(Change::ContentsVisible)) {
         m_platformLayer->setContentsVisible(m_contentsVisible);

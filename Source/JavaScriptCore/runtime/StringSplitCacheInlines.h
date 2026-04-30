@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "DeferGC.h"
 #include "StringSplitCache.h"
 
 namespace JSC {

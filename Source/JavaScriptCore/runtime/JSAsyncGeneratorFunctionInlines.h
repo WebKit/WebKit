@@ -27,6 +27,7 @@
 #pragma once
 
 #include "JSAsyncGeneratorFunction.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

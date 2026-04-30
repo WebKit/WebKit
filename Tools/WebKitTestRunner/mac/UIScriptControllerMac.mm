@@ -419,7 +419,7 @@ void UIScriptControllerMac::sendEventStream(JSStringRef eventsJSON, JSValueRef c
 
         id eventType = event[EventTypeKey];
         if (!event[EventTypeKey]) {
-            WTFLogAlways("Missing event type");
+            WTFLogAlways("Failed to find `%@` key in %@", EventTypeKey, event);
             break;
         }
         

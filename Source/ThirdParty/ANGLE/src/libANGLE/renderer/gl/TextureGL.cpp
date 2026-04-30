@@ -2479,7 +2479,8 @@ angle::Result TextureGL::initializeContents(const gl::Context *context,
 
     GLenum nativeInternalFormat =
         getLevelInfo(imageIndex.getTarget(), imageIndex.getLevelIndex()).nativeInternalFormat;
-    if (features.allowClearForRobustResourceInit.enabled &&
+    if ((features.allowClearForRobustResourceInit.enabled ||
+         !nativegl::SupportsTexImage(getType())) &&
         nativegl::SupportsNativeRendering(functions, mState.getType(), nativeInternalFormat))
     {
         BlitGL *blitter = GetBlitGL(context);

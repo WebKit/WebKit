@@ -1,0 +1,12 @@
+Tests that entering fullscreen dispatches boundary events so that JS-driven hover state on a full-coverage overlay is properly cleared.
+
+Fullscreen content
+
+Enter Fullscreen
+EXPECTED (fsBtn.style.backgroundColor == 'rgba(0, 0, 255, 0.2)') OK
+EVENT(webkitfullscreenchange)
+EXPECTED (document.fullscreenElement == '[object HTMLDivElement]') OK
+EXPECTED (overlayReceivedLeave == 'true') OK
+EXPECTED (fsBtn.style.backgroundColor == '') OK
+END OF TEST
+

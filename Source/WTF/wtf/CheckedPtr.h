@@ -286,19 +286,19 @@ inline bool isAnyOf(const CheckedPtr<ArgType, ArgPtrTraits>& source)
 }
 
 template<typename ExpectedType, typename ArgType, typename ArgPtrTraits>
-inline ExpectedType& downcast(CheckedPtr<ArgType, ArgPtrTraits>& source)
+inline ExpectedType& downcast(CheckedPtr<ArgType, ArgPtrTraits>& source LIFETIME_BOUND)
 {
     return downcast<ExpectedType>(source.get());
 }
 
 template<typename ExpectedType, typename ArgType, typename ArgPtrTraits>
-inline ExpectedType& downcast(const CheckedPtr<ArgType, ArgPtrTraits>& source)
+inline ExpectedType& downcast(const CheckedPtr<ArgType, ArgPtrTraits>& source LIFETIME_BOUND)
 {
     return downcast<ExpectedType>(source.get());
 }
 
 template<typename ExpectedType, typename ArgType, typename ArgPtrTraits>
-inline const ExpectedType& downcast(CheckedPtr<const ArgType, ArgPtrTraits>& source)
+inline const ExpectedType& downcast(CheckedPtr<const ArgType, ArgPtrTraits>& source LIFETIME_BOUND)
 {
     return downcast<ExpectedType>(source.get());
 }

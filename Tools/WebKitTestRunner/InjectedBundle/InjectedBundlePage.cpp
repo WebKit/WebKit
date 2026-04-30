@@ -27,13 +27,13 @@
 #include "InjectedBundlePage.h"
 
 #include "ActivateFonts.h"
+#include "ExternalURLBlockingHelpers.h"
 #include "InjectedBundle.h"
 #include "StringFunctions.h"
 #include "WPTFunctions.h"
 #include "WebCoreTestSupport.h"
 #include <cmath>
 #include <JavaScriptCore/JSRetainPtr.h>
-#include <JavaScriptCore/RegularExpression.h>
 #include <WebKit/WKArray.h>
 #include <WebKit/WKBundle.h>
 #include <WebKit/WKBundleBackForwardList.h>
@@ -865,16 +865,6 @@ void InjectedBundlePage::didInitiateLoadForResource(WKBundlePageRef page, WKBund
 
 // Resource Load Client Callbacks
 
-static inline bool isLocalHost(WKStringRef host)
-{
-    return WKStringIsEqualToUTF8CString(host, "127.0.0.1") || WKStringIsEqualToUTF8CString(host, "localhost");
-}
-
-static inline bool isHTTPOrHTTPSScheme(WKStringRef scheme)
-{
-    return WKStringIsEqualToUTF8CStringIgnoringCase(scheme, "http") || WKStringIsEqualToUTF8CStringIgnoringCase(scheme, "https");
-}
-
 static inline bool isAllowedHost(WKStringRef host)
 {
     return InjectedBundle::singleton().isAllowedHost(host);
@@ -905,10 +895,7 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef page
     auto host = adoptWK(WKURLCopyHostName(url.get()));
     auto scheme = adoptWK(WKURLCopyScheme(url.get()));
     auto urlString = adoptWK(WKURLCopyString(url.get()));
-    if (host && !WKStringIsEmpty(host.get())
-        && isHTTPOrHTTPSScheme(scheme.get())
-        && !WKStringIsEqualToUTF8CString(host.get(), "255.255.255.255") // Used in some tests that expect to get back an error.
-        && !isLocalHost(host.get())) {
+    if (isExternalURLBlockable(host.get(), scheme.get())) {
         bool mainFrameIsExternal = false;
         if (injectedBundle.isTestRunning()) {
             ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -917,11 +904,7 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef page
             auto mainFrameURL = adoptWK(WKBundleFrameCopyURL(mainFrame));
             if (!mainFrameURL || WKStringIsEqualToUTF8CString(adoptWK(WKURLCopyString(mainFrameURL.get())).get(), "about:blank"))
                 mainFrameURL = adoptWK(WKBundleFrameCopyProvisionalURL(mainFrame));
-            if (mainFrameURL) {
-                auto mainFrameHost = adoptWK(WKURLCopyHostName(mainFrameURL.get()));
-                auto mainFrameScheme = adoptWK(WKURLCopyScheme(mainFrameURL.get()));
-                mainFrameIsExternal = isHTTPOrHTTPSScheme(mainFrameScheme.get()) && !isLocalHost(mainFrameHost.get());
-            }
+            mainFrameIsExternal = isMainFrameURLExternal(mainFrameURL.get());
         }
         if (!mainFrameIsExternal && !isAllowedHost(host.get())) {
             JSGlobalContextRef jsContext = WKBundleFrameGetJavaScriptContext(frame);
@@ -930,14 +913,7 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef page
                 return request;
             }
 
-            auto blockedURL = makeString(urlString.get());
-            replace(blockedURL, JSC::Yarr::RegularExpression("\\?key=[-0123456789abcdefABCDEF]+"_s), "?key=GENERATED_KEY"_s);
-            replace(blockedURL, JSC::Yarr::RegularExpression("&key=[-0123456789abcdefABCDEF]+"_s), "&key=GENERATED_KEY"_s);
-            replace(blockedURL, JSC::Yarr::RegularExpression("%3Fkey%3D[-0123456789abcdefABCDEF]+"_s), "%3Fkey%3DGENERATED_KEY"_s);
-            replace(blockedURL, JSC::Yarr::RegularExpression("%26key%3D[-0123456789abcdefABCDEF]+"_s), "%26key%3DGENERATED_KEY"_s);
-            replace(blockedURL, JSC::Yarr::RegularExpression("%253Fkey%253D[-0123456789abcdefABCDEF]+"_s), "%253Fkey%253DGENERATED_KEY"_s);
-            replace(blockedURL, JSC::Yarr::RegularExpression("%2526key%253D[-0123456789abcdefABCDEF]+"_s), "%2526key%253DGENERATED_KEY"_s);
-            replace(blockedURL, JSC::Yarr::RegularExpression("reportID=[-0123456789abcdefABCDEF]+"_s), "reportID=GENERATED_REPORT_ID"_s);
+            auto blockedURL = sanitizeExternalURL(urlString.get());
             auto script = makeString("console.log('Blocked access to external URL "_s, blockedURL, "');"_s);
             auto scriptRef = adopt(JSStringCreateWithUTF8CString(script.utf8().data()));
             JSEvaluateScript(jsContext, scriptRef.get(), 0, 0, 0, 0);

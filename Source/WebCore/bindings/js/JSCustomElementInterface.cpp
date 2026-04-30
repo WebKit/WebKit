@@ -346,6 +346,16 @@ void JSCustomElementInterface::invokeDisconnectedCallback(Element& element)
     invokeCallback(element, m_disconnectedCallback.get(), [](JSC::JSGlobalObject*, JSDOMGlobalObject*, JSC::MarkedArgumentBuffer&) { });
 }
 
+void JSCustomElementInterface::setConnectedMoveCallback(JSC::JSObject* callback)
+{
+    m_connectedMoveCallback = callback;
+}
+
+void JSCustomElementInterface::invokeConnectedMoveCallback(Element& element)
+{
+    invokeCallback(element, m_connectedMoveCallback.get(), [](JSC::JSGlobalObject*, JSDOMGlobalObject*, JSC::MarkedArgumentBuffer&) { });
+}
+
 void JSCustomElementInterface::setAdoptedCallback(JSC::JSObject* callback)
 {
     m_adoptedCallback = callback;

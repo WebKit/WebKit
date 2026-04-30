@@ -115,8 +115,6 @@ void pas_local_allocator_move(pas_local_allocator* dst,
 {
     size_t size;
     pas_segregated_size_directory* directory;
-    pas_segregated_partial_view* partial_view;
-    pas_segregated_shared_view* shared_view;
 
     pas_heap_lock_assert_held(); /* Needed to modify a lenient_compact_ptr. */
 
@@ -128,21 +126,6 @@ void pas_local_allocator_move(pas_local_allocator* dst,
     size = pas_segregated_size_directory_local_allocator_size(directory);
     
     memcpy(dst, src, size);
-
-    if (!pas_local_allocator_config_kind_is_primordial_partial(dst->config_kind))
-        return;
-
-    partial_view = pas_segregated_view_get_partial(dst->view);
-    shared_view = pas_compact_segregated_shared_view_ptr_load(&partial_view->shared_view);
-
-    /* Holding the ownership lock during this time ensures that
-       pas_segregated_view_for_each_live_object works. We grab that lock here because that function
-       is the only client of partial_view->alloc_bits being right during primordial mode, and it
-       happens to hold the ownership lock. */
-    pas_lock_lock(&shared_view->ownership_lock);
-    if (pas_lenient_compact_unsigned_ptr_load(&partial_view->alloc_bits) == (unsigned*)src->bits)
-        pas_lenient_compact_unsigned_ptr_store(&partial_view->alloc_bits, (unsigned*)dst->bits);
-    pas_lock_unlock(&shared_view->ownership_lock);
 }
 
 static bool stop_impl(
@@ -182,11 +165,9 @@ static bool stop_impl(
                                                 allocator, page_config),
                                             page_config);
     
-    if (pas_segregated_view_is_size_directory(view)) {
-        view = page->owner;
-        PAS_ASSERT(pas_segregated_view_is_some_exclusive(view));
-    } else
-        PAS_ASSERT(pas_segregated_view_is_partial(view));
+    PAS_ASSERT(pas_segregated_view_is_size_directory(view));
+    view = page->owner;
+    PAS_ASSERT(pas_segregated_view_is_some_exclusive(view));
     
     if (!pas_segregated_page_switch_lock_with_mode(page, &held_lock, page_lock_mode, page_config))
         return false;

@@ -105,6 +105,7 @@ public:
 
     // Can be called from main thread or context's audio thread.  It must be called while the context's graph lock is held.
     void decrementConnectionCountWithLock();
+    void derefWithLock() const;
 
     // The AudioNodeInput(s) (if any) will already have their input data available when process() is called.
     // Subclasses will take this input data and put the results in the AudioBus(s) of its AudioNodeOutput(s) (if any).
@@ -159,6 +160,8 @@ public:
 #endif
 
     bool isMarkedForDeletion() const { return m_isMarkedForDeletion; }
+    void clearIsMarkedForDeletion() { m_isMarkedForDeletion = false; }
+    bool hasReferences() const { return m_normalRefCount || m_connectionRefCount; }
 
     // tailTime() is the length of time (not counting latency time) where non-zero output may occur after continuous silent input.
     virtual double tailTime() const = 0;
@@ -213,7 +216,6 @@ protected:
 
     void markNodeForDeletionIfNecessary();
     void unmarkNodeForDeletionIfNecessary();
-    void derefWithLock() const;
 
     struct DefaultAudioNodeOptions {
         unsigned channelCount;
@@ -325,11 +327,6 @@ namespace WTF {
 template<> struct LogArgument<WebCore::AudioNode::NodeType> {
     static String toString(WebCore::AudioNode::NodeType type) { return convertEnumerationToString(type); }
 };
-
-// Make sure `protect()` returns a CheckedPtr/CheckedRef for AudioNodes instead of a RefPtr/Ref
-// since AudioNode's ref-counting is not thread-safe and protect() gets called from the AudioThread.
-inline CheckedRef<WebCore::AudioNode> protect(WebCore::AudioNode& node) { return node; }
-inline CheckedPtr<WebCore::AudioNode> protect(WebCore::AudioNode* node) { return node; }
 
 } // namespace WTF
 

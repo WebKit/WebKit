@@ -193,7 +193,8 @@ macro(_WEBKIT_TARGET_SETUP _target _logical_name)
 
     if (DEVELOPER_MODE_CXX_FLAGS)
         target_compile_options(${_target} PRIVATE $<$<NOT:$<COMPILE_LANGUAGE:Swift>>:${DEVELOPER_MODE_CXX_FLAGS}>)
-        target_compile_options(${_target} PRIVATE $<$<COMPILE_LANGUAGE:Swift>:-warnings-as-errors>)
+        target_compile_options(${_target} PRIVATE
+            "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Werror ExistentialAny -Werror StrictMemorySafety -Werror ForeignReferenceType>")
     endif ()
 
     target_compile_definitions(${_target} PRIVATE "BUILDING_${_logical_name}")
@@ -611,20 +612,56 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         string(JSON _swift_target_paths GET ${_swift_target_info} "paths")
         string(JSON _swift_runtime_resource_path GET ${_swift_target_paths} "runtimeResourcePath")
         target_include_directories(${_target} SYSTEM AFTER PRIVATE "${_swift_runtime_resource_path}")
+        # Swift C++-interop objects auto-link swiftCxx/swiftCxxStdlib; consumers
+        # linked by clang++ need this search path to satisfy those directives.
+        string(JSON _swift_runtime_library_path GET ${_swift_target_paths} "runtimeLibraryPaths" 0)
+        target_link_directories(${_target} INTERFACE "${_swift_runtime_library_path}")
 
         # Assemble arguments which need to be passed to swiftc.
         # Add WebKit's various feature flags as -D directives to the Swift compiler.
         GET_WEBKIT_CONFIG_VARIABLES(_swift_definitions)
         list(TRANSFORM _swift_definitions PREPEND "-D")
         set(_swift_options ${_swift_definitions})
+        set(_swift_xcc_options "")
+        foreach (item IN LISTS _swift_options)
+            list(APPEND _swift_xcc_options "-Xcc" ${item})
+        endforeach ()
+        get_directory_property(_dir_defs COMPILE_DEFINITIONS)
+        foreach (_def IN LISTS _dir_defs)
+            list(APPEND _swift_xcc_options "-Xcc" "-D${_def}")
+        endforeach ()
         # Other options needed by Swift for C++ interop, including the location
         # of the modulemap and hader for WebKit's internal "APIs" which we
         # make available from C++ to Swift.
-        list(APPEND _swift_options "-cxx-interoperability-mode=default" "-Xcc" "-std=c++2b" "-explicit-module-build" "-enable-upcoming-feature" "InternalImportsByDefault" "-Xcc" "-I${_interop_module_path}")
+        list(APPEND _swift_options "-cxx-interoperability-mode=default" "-Xcc" "-std=c++2b" "-enable-upcoming-feature" "InternalImportsByDefault" "-Xcc" "-I${_interop_module_path}")
+        # swiftc spawns swift-plugin-server under sandbox-exec to expand macros
+        # (e.g. SwiftUI @State). When the cmake build itself runs inside an
+        # outer sandbox that disallows nested sandbox_apply, macro expansion
+        # fails with "external macro implementation type ... could not be
+        # found". -disable-sandbox skips the inner sandbox; the macros are
+        # WebKit's own, so the isolation it provides isn't load-bearing here.
+        list(APPEND _swift_options "-disable-sandbox")
+        if (NOT (PORT STREQUAL GTK OR PORT STREQUAL WPE))
+            # This does not yet work on non-Apple platforms for reasons yet to be determined.
+            list(APPEND _swift_options "-explicit-module-build")
+        endif ()
         # We'll use these options both for mainstream cmake invocations of swiftc (here)
-        # and for our own invocation to output an interoperability .h file (later)
-        list(TRANSFORM _swift_options PREPEND "$<$<COMPILE_LANGUAGE:Swift>:" OUTPUT_VARIABLE _swift_only_options)
-        list(TRANSFORM _swift_only_options APPEND ">")
+        # and for our own invocation to output an interoperability .h file (later).
+        # target_compile_options deduplicates repeated tokens, so collapse each
+        # -Xcc <arg> into a single SHELL: entry to keep the pair together.
+        # https://bugs.webkit.org/show_bug.cgi?id=312105
+        set(_swift_only_options "")
+        set(_pending_xcc FALSE)
+        foreach (_opt IN LISTS _swift_options)
+            if (_pending_xcc)
+                list(APPEND _swift_only_options "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc ${_opt}>")
+                set(_pending_xcc FALSE)
+            elseif (_opt STREQUAL "-Xcc")
+                set(_pending_xcc TRUE)
+            else ()
+                list(APPEND _swift_only_options "$<$<COMPILE_LANGUAGE:Swift>:${_opt}>")
+            endif ()
+        endforeach ()
         target_compile_options(${_target} PRIVATE ${_swift_only_options})
 
         # cmake's Swift interop does not respect CMAKE_SHARED_LINKER_FLAGS, so let's pass
@@ -636,8 +673,9 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
             string(SUBSTRING ${_flag} 0 4 _prefix)
             if (${_prefix} STREQUAL "-Wl,")
                 string(SUBSTRING ${_flag} 4 -1 _shorter_flag)
-                # The following unfortunately deduplicates the -Xlinker
-                # target_compile_options(${_target} PUBLIC "$<$<COMPILE_LANGUAGE:Swift>:-Xlinker>")
+                # SHELL: keeps the -Xlinker/argument pair together; without it
+                # CMake deduplicates the repeated -Xlinker tokens.
+                # https://bugs.webkit.org/show_bug.cgi?id=312105
                 target_compile_options(${_target} PUBLIC "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xlinker ${_shorter_flag}>")
             endif ()
         endforeach ()
@@ -671,11 +709,12 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
             DEPENDS ${_swift_sources}
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
             COMMAND
-                ${ORIGINAL_Swift_COMPILER} -typecheck
+                ${CMAKE_Swift_COMPILER} --original-swift-compiler=${ORIGINAL_Swift_COMPILER} -typecheck
                 ${_swift_options}
                 ${${_target}_SWIFT_EXTRA_OPTIONS}
                 ${_swift_sdk_flag}
                 ${_swift_include_dirs}
+                ${_swift_xcc_options}
                 ${_swift_sources}
                 -module-name ${_module_name}
                 -emit-clang-header-path ${_header_tmp_path}

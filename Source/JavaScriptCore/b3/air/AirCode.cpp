@@ -48,6 +48,8 @@ const char* const tierName = "Air ";
 
 WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_IMPL(CFG);
 WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_IMPL(Code);
+WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_IMPL(Dominators);
+WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED_IMPL(NaturalLoops);
 
 static void defaultPrologueGenerator(CCallHelpers& jit, Code& code)
 {

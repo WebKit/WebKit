@@ -1,0 +1,3 @@
+
+PASS getDirectory returns a directory whose name is the empty string
+

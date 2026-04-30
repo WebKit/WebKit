@@ -26,6 +26,7 @@
 #pragma once
 
 #include "EvalExecutable.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

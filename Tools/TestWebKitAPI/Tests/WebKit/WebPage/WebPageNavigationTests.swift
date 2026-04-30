@@ -25,6 +25,7 @@
 
 import Testing
 @_spi(Testing) import WebKit
+import struct _Concurrency.Task
 private import TestWebKitAPILibrary
 
 private struct NeverLoadingSchemeHandler: URLSchemeHandler {

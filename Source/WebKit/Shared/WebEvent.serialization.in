@@ -127,6 +127,7 @@ class WebKit::WebTouchEvent : WebKit::WebEvent {
 #if PLATFORM(IOS_FAMILY)
     unsigned identifier()
     WebCore::DoublePoint locationInRootView()
+    WebCore::DoublePoint previousLocationInRootView()
     WebCore::DoublePoint locationInViewport()
     WebKit::WebPlatformTouchPoint::State phase()
 #endif

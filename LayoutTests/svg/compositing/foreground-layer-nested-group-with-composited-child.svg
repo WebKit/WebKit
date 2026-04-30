@@ -1,0 +1,13 @@
+<!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+    <!-- Test: A non-composited group containing a composited child.
+         The group itself is not composited, but it contains a composited rect.
+         This tests the parent SVG container's foreground layer splitting. -->
+    <rect x="10" y="10" width="80" height="80" fill="blue"/>
+    <g>
+        <rect x="110" y="10" width="80" height="80" fill="red"/>
+        <rect style="will-change: transform" x="210" y="10" width="80" height="80" fill="green"/>
+        <rect x="310" y="10" width="80" height="80" fill="orange"/>
+    </g>
+    <rect x="10" y="110" width="80" height="80" fill="purple"/>
+</svg>

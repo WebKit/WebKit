@@ -476,7 +476,10 @@ void SourceBufferPrivate::reenqueueMediaIfNeeded(const MediaTime& currentTime)
 
             if (trackBuffer.needsReenqueueing()) {
                 DEBUG_LOG_WITH_THIS(&buffer, LOGIDENTIFIER_WITH_THIS(&buffer), "reenqueuing at time ", currentTime);
-                buffer.reenqueueMediaForTime(trackBuffer, trackID, currentTime);
+                // Flush has already been issued by flushTracksThatNeedReenqueueing()
+                // at the end of the operation that set needsReenqueueing (append /
+                // removeCodedFramesInternal). Skip the redundant flush here.
+                buffer.reenqueueMediaForTime(trackBuffer, trackID, currentTime, NeedsFlush::No);
             } else
                 buffer.provideMediaData(trackBuffer, trackID);
         }
@@ -546,6 +549,7 @@ void SourceBufferPrivate::removeCodedFramesInternal(const MediaTime& start, cons
     }
     ASSERT(contentSize() == totalTrackBufferSizeInBytes());
 
+    flushTracksThatNeedReenqueueing();
     reenqueueMediaIfNeeded(currentTime);
 
     // 4. If buffer full flag equals true and this object is ready to accept more bytes, then set the buffer full flag to false.
@@ -1000,6 +1004,12 @@ Ref<MediaPromise> SourceBufferPrivate::append(Ref<SharedBuffer>&& buffer)
         if (!protectedThis || !result)
             return OperationPromise::createAndReject(!result ? result.error() : PlatformMediaError::BufferRemoved);
         assertIsCurrent(protectedThis->m_dispatcher.get());
+
+        // Flush any tracks marked needsReenqueueing during this append (overlap detection
+        // in didReceiveSample) before the main thread reacts to bufferedChanged. The flush
+        // IPC must reach the renderer queue ahead of any subsequent play()/setRate() IPC
+        // dispatched in response to the readyState change.
+        protectedThis->flushTracksThatNeedReenqueueing();
 
         protectedThis->computeEvictionData();
 
@@ -1640,6 +1650,21 @@ void SourceBufferPrivate::iterateTrackBuffers(NOESCAPE const Function<void(const
     assertIsCurrent(m_dispatcher.get());
     for (auto& pair : m_trackBufferMap)
         func(pair.second);
+}
+
+// Issue flushTrack IPCs now (still on m_dispatcher) for any track whose
+// renderer holds samples about to be re-enqueued. Done at the end of an
+// append (or removal) operation so the flush IPC reaches the renderer
+// queue before any play()/setRate() that the main thread may dispatch
+// in response to the resulting bufferedChanged/readyState notifications.
+void SourceBufferPrivate::flushTracksThatNeedReenqueueing()
+{
+    assertIsCurrent(m_dispatcher.get());
+    for (auto& trackBufferPair : m_trackBufferMap) {
+        TrackBuffer& trackBuffer = trackBufferPair.second;
+        if (trackBuffer.needsReenqueueing())
+            flush(trackBufferPair.first);
+    }
 }
 
 RefPtr<SourceBufferPrivateClient> SourceBufferPrivate::client() const

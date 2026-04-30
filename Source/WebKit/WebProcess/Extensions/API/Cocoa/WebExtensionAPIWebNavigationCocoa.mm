@@ -203,7 +203,7 @@ void WebExtensionContextProxy::dispatchWebNavigationEvent(WebExtensionEventListe
         tabIdKey: @(toWebAPI(tabID)),
         frameIdKey: @(toWebAPI(frameID)),
         parentFrameIdKey: @(toWebAPI(parentFrameID)),
-        timeStampKey: @(floor(timestamp.approximateWallTime().secondsSinceEpoch().milliseconds()))
+        timeStampKey: @(floor(timestamp.approximate<WallTime>().secondsSinceEpoch().milliseconds()))
     } mutableCopy];
 
     if (frameParameters.documentIdentifier)

@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #if HAVE(APPLE_GRAPHICS_CONTROL)
+#include <array>
 #include <sys/sysctl.h>
 #endif
 
@@ -92,10 +93,10 @@ static bool hasMuxCapability()
         // Based on information from Apple's OpenGL team, such devices
         // have four or fewer processors.
         // <rdar://problem/30060378>
-        int names[2] = { CTL_HW, HW_NCPU };
+        std::array<int, 2> names { CTL_HW, HW_NCPU };
         int cpuCount;
         size_t cpuCountLength = sizeof(cpuCount);
-        sysctl(names, 2, &cpuCount, &cpuCountLength, nullptr, 0);
+        sysctl(names.data(), names.size(), &cpuCount, &cpuCountLength, nullptr, 0);
         result = cpuCount > 4;
     }
 

@@ -1485,6 +1485,16 @@ Node& Node::shadowIncludingRoot() const
     return root;
 }
 
+SUPPRESS_NODELETE WebCoreOpaqueRoot Node::opaqueRoot() const
+{
+    if (isConnected()) {
+        Locker locker { TreeScope::treeScopeMutationLock() };
+        return WebCoreOpaqueRoot { &treeScope().documentScope() };
+    }
+    // FIXME: Possible race?
+    return traverseToOpaqueRoot();
+}
+
 Node& Node::getRootNode(const GetRootNodeOptions& options) const
 {
     return options.composed ? shadowIncludingRoot() : rootNode();

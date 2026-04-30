@@ -982,7 +982,7 @@ that `JSStyleSheet` should be kept alive so long as the garbage collector had en
 ```cpp
 bool JSStyleSheetOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char** reason)
 {
-    auto* jsStyleSheet = jsCast<JSStyleSheet*>(handle.slot()->asCell());
+    auto* jsStyleSheet = downcast<JSStyleSheet>(handle.slot()->asCell());
     void* root = WebCore::root(&jsStyleSheet->wrapped());
     if (UNLIKELY(reason))
         *reason = "Reachable from jsStyleSheet";

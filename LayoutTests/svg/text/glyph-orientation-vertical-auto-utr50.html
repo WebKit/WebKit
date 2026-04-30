@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<title>glyph-orientation-vertical: auto should use UTR#50 Vertical_Orientation</title>
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/text.html#GlyphOrientationVerticalProperty">
+<link rel="help" href="https://drafts.csswg.org/css-writing-modes-3/#glyph-orientation">
+<link rel="help" href="https://www.unicode.org/reports/tr50/">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<svg id="container" width="800" height="600" style="writing-mode: tb; glyph-orientation-vertical: auto;"></svg>
+<script>
+const container = document.querySelector('#container');
+
+function createText(content) {
+  const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  text.setAttribute('x', '50');
+  text.setAttribute('y', '50');
+  text.textContent = content;
+  container.appendChild(text);
+  return text;
+}
+
+// CJK ideographs: UTR#50 Vertical_Orientation=U (Upright) -> 0 degrees
+test(() => {
+  const el = createText('\u4E00');
+  assert_equals(el.getRotationOfChar(0), 0, 'U+4E00 CJK ideograph should be upright');
+}, 'CJK ideograph U+4E00 is upright (VO=U)');
+
+test(() => {
+  const el = createText('\u6708');
+  assert_equals(el.getRotationOfChar(0), 0, 'U+6708 CJK ideograph should be upright');
+}, 'CJK ideograph U+6708 is upright (VO=U)');
+
+// Latin letters: UTR#50 Vertical_Orientation=R (Rotated) -> 90 degrees
+test(() => {
+  const el = createText('A');
+  assert_equals(el.getRotationOfChar(0), 90, 'Latin A should be sideways');
+}, 'Latin A is sideways (VO=R)');
+
+test(() => {
+  const el = createText('z');
+  assert_equals(el.getRotationOfChar(0), 90, 'Latin z should be sideways');
+}, 'Latin z is sideways (VO=R)');
+
+// EAW=Ambiguous, UTR#50 VO=U (Upright): should be upright (0 degrees).
+// Both old EAW logic and UTR#50 agree on these.
+test(() => {
+  const el = createText('\u00A7');
+  assert_equals(el.getRotationOfChar(0), 0, 'U+00A7 SECTION SIGN should be upright per UTR#50');
+}, 'U+00A7 SECTION SIGN is upright (EAW=A, VO=U)');
+
+test(() => {
+  const el = createText('\u00D7');
+  assert_equals(el.getRotationOfChar(0), 0, 'U+00D7 MULTIPLICATION SIGN should be upright per UTR#50');
+}, 'U+00D7 MULTIPLICATION SIGN is upright (EAW=A, VO=U)');
+
+test(() => {
+  const el = createText('\u2103');
+  assert_equals(el.getRotationOfChar(0), 0, 'U+2103 DEGREE CELSIUS should be upright per UTR#50');
+}, 'U+2103 DEGREE CELSIUS is upright (EAW=A, VO=U)');
+
+// EAW=Ambiguous, UTR#50 VO=R (Rotated): should be sideways (90 degrees).
+// The old EAW-based logic incorrectly treated Ambiguous as upright (0 degrees).
+test(() => {
+  const el = createText('\u00B0');
+  assert_equals(el.getRotationOfChar(0), 90, 'U+00B0 DEGREE SIGN should be sideways per UTR#50');
+}, 'U+00B0 DEGREE SIGN is sideways (EAW=A, VO=R)');
+
+test(() => {
+  const el = createText('\u2014');
+  assert_equals(el.getRotationOfChar(0), 90, 'U+2014 EM DASH should be sideways per UTR#50');
+}, 'U+2014 EM DASH is sideways (EAW=A, VO=R)');
+
+test(() => {
+  const el = createText('\u2026');
+  assert_equals(el.getRotationOfChar(0), 90, 'U+2026 HORIZONTAL ELLIPSIS should be sideways per UTR#50');
+}, 'U+2026 HORIZONTAL ELLIPSIS is sideways (EAW=A, VO=R)');
+
+// Mixed string: verify per-character orientation in a single text element.
+test(() => {
+  const el = createText('A\u4E00\u00A7\u00B0');
+  assert_equals(el.getRotationOfChar(0), 90, 'A should be sideways');
+  assert_equals(el.getRotationOfChar(1), 0, 'U+4E00 should be upright');
+  assert_equals(el.getRotationOfChar(2), 0, 'U+00A7 should be upright');
+  assert_equals(el.getRotationOfChar(3), 90, 'U+00B0 should be sideways');
+}, 'Mixed string: per-character orientation matches UTR#50');
+</script>

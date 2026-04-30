@@ -1,0 +1,528 @@
+#!/usr/bin/env python3
+# Copyright (C) 2026 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+"""
+cmake-build-analysis -- whole-build timing analysis for a CMake/Ninja tree.
+
+Companion to analyze-ftime-trace. That tool answers "why is this translation
+unit slow?" (headers, templates, codegen) from clang's per-TU -ftime-trace
+output. This tool answers "why is the whole ninja invocation slow?" from
+.ninja_log + build.ninja: which edges dominate, where parallelism collapses,
+and -- the actionable number -- the critical path that bounds wall time
+regardless of core count.
+
+The analysis assumes .ninja_log covers exactly one cold build:
+
+    rm WebKitBuild/cmake-mac/ASan/.ninja_log
+    ninja -C WebKitBuild/cmake-mac/ASan
+    Tools/Scripts/cmake-build-analysis WebKitBuild/cmake-mac/ASan
+    open WebKitBuild/cmake-mac/ASan/build-analysis.html
+
+Multi-run logs are refused rather than guessed at: ninja compacts the log in
+place (discarding completion order), so once two runs are interleaved there is
+no reliable way to separate them, and a merged timeline silently
+double-counts. Detection is two-pronged: duplicate outputs in the raw log
+(catches the uncompacted case) and CPU-seconds > wall x cores (catches a
+compacted multi-run log whose merged intervals over-subscribe the machine).
+
+Critical path comes from build.ninja, not .ninja_log -- the log has timings
+but no dependency edges. CMake-generated ninja writes fully-expanded paths in
+`build` statements (variables appear only in FLAGS/DEFINES blocks), so a
+single pass that handles `$\\n` line continuations and `$$ $: $ ` escapes is
+sufficient; no general ninja-variable evaluator is needed. Order-only deps are
+included in the graph because for codegen edges (DerivedSources stamps,
+forwarding headers) they are exactly what serializes the early build, which is
+the thing this tool exists to surface. Edges that produced no .ninja_log entry
+(phony, or skipped by restat) contribute zero weight but still propagate the
+path so a phony aggregate doesn't break the chain.
+
+The HTML is a single self-contained file: edge data inlined as JSON, drawn on
+a <canvas> so ~35k rectangles stay smooth where the equivalent SVG would not.
+X is wall time, each row is one greedily-packed parallelism slot, colour is
+category, hatched edges are on the critical path. Wheel zooms, drag pans,
+hover names the edge. Serialization is visually obvious as the chart narrowing
+to a few rows -- no legend-reading required.
+"""
+
+import argparse
+import heapq
+import json
+import os
+import re
+import sys
+from collections import defaultdict
+from dataclasses import dataclass
+from pathlib import Path
+
+
+@dataclass(eq=False)
+class Edge:
+    start: int      # ms
+    end: int        # ms
+    out: str
+    cat: str = ""
+    lane: int = -1
+    crit: bool = False
+
+    @property
+    def dur(self):
+        return self.end - self.start
+
+
+# ── .ninja_log ───────────────────────────────────────────────────────────────
+
+def parse_ninja_log(path: Path):
+    raw = []
+    with path.open() as f:
+        header = f.readline()
+        if not header.startswith("# ninja log v"):
+            sys.exit(f"error: {path} is not a ninja log")
+        for line in f:
+            p = line.rstrip("\n").split("\t")
+            if len(p) < 5:
+                continue
+            raw.append((int(p[0]), int(p[1]), p[3]))
+
+    # An edge with N outputs produces N consecutive log lines sharing one
+    # (start,end) pair; collapse those to a single edge keyed by the timing so
+    # multi-output codegen rules aren't N-times over-counted.
+    by_key = {}
+    out_seen = defaultdict(int)
+    for s, e, o in raw:
+        out_seen[o] += 1
+        by_key.setdefault((s, e), []).append(o)
+
+    rebuilds = sum(1 for n in out_seen.values() if n > 1)
+    if rebuilds:
+        sys.exit(
+            f"error: {path} contains {rebuilds} output(s) built more than once.\n"
+            f"       This log spans multiple ninja invocations; analysis would mix runs.\n"
+            f"       For a clean measurement:\n"
+            f"           rm {path}\n"
+            f"           ninja -C {path.parent}\n"
+        )
+
+    edges = [Edge(s, e, min(outs, key=len)) for (s, e), outs in by_key.items()]
+    edges.sort(key=lambda x: (x.start, x.end))
+    for ed in edges:
+        ed.cat = categorize(ed.out)
+    return edges
+
+
+def sanity_check(edges, ncpu):
+    wall = max(e.end for e in edges) - min(e.start for e in edges)
+    cpu = sum(e.dur for e in edges)
+    if cpu > wall * ncpu * 1.2:
+        sys.exit(
+            "error: CPU-seconds ({:.0f}s) exceed wall x cores ({:.0f}s x {}).\n"
+            "       The log almost certainly spans multiple compacted runs.\n"
+            "       rm .ninja_log and rebuild before analysing."
+            .format(cpu / 1000, wall / 1000, ncpu)
+        )
+    return wall, cpu
+
+
+# ── categorization ───────────────────────────────────────────────────────────
+
+_CAT_RULES = (
+    (re.compile(r"\.swift\.o$|\.swiftmodule$|\.swiftinterface$|/Swift/"), "swift"),
+    (re.compile(r"\.o$|\.obj$"), "compile"),
+    (re.compile(r"\.dSYM/|\.dSYM$"), "dsym"),
+    (re.compile(r"\.a$"), "archive"),
+    (re.compile(r"\.dylib$|\.framework/Versions/.*/[^/.]+$|/bin/[^/.]+$"), "link"),
+    (re.compile(r"DerivedSources|\.stamp$|Headers/|PrivateHeaders/|\.h$|\.cpp$|\.mm$"), "codegen"),
+)
+
+
+def categorize(out):
+    for rx, cat in _CAT_RULES:
+        if rx.search(out):
+            return cat
+    base = out.rsplit("/", 1)[-1]
+    return "link" if "." not in base else "other"
+
+
+# ── build.ninja dependency graph ─────────────────────────────────────────────
+
+# `build` statements only -- enough to recover the edge DAG. CMake never emits
+# `subninja` for the main graph (the lone CMakeFiles/rules.ninja `include`
+# carries rule bodies, not edges) and never uses ninja variables in paths, so
+# this stays a flat-file scan rather than a ninja evaluator.
+_BUILD_RE = re.compile(r"^build\s+(.+?)\s*:\s*\S+\s*(.*)$")
+
+
+def _unescape(tok):
+    return tok.replace("$$", "$").replace("$:", ":").replace("$ ", " ")
+
+
+def _split(spec):
+    # Split on whitespace but keep `$ `-escaped spaces inside a token.
+    return [_unescape(t) for t in re.split(r"(?<!\$)\s+", spec) if t]
+
+
+def parse_build_graph(path: Path):
+    text = path.read_text()
+    text = re.sub(r"\$\n[ \t]*", "", text)  # join $-continuations
+    inputs_of = {}
+    for line in text.splitlines():
+        m = _BUILD_RE.match(line)
+        if not m:
+            continue
+        outs_spec, ins_spec = m.groups()
+        outs = _split(re.sub(r"(?<!\$)\|.*$", "", outs_spec))  # drop implicit-out marker
+        ins = _split(ins_spec.replace("||", " ").replace("|", " "))
+        for o in outs:
+            inputs_of[o] = ins
+    return inputs_of
+
+
+def critical_path(edges, inputs_of):
+    """Longest-weighted path through the build DAG, where the weight of a node
+    is its measured duration (zero for phony / restat-skipped nodes that have a
+    `build` statement but no .ninja_log entry). Computed by memoised DFS rather
+    than an explicit topological sort: the graph is a DAG by construction (ninja
+    refuses cycles), recursion depth is bounded by the longest dependency chain
+    (~100 for WebKit, well under the interpreter limit), and memoisation makes
+    it O(V+E)."""
+    dur = {e.out: e.dur for e in edges}
+    best = {}
+    sys.setrecursionlimit(max(10000, len(inputs_of) + 100))
+
+    def dp(node):
+        if node in best:
+            return best[node][0]
+        d = dur.get(node, 0)
+        ins = inputs_of.get(node, ())
+        pred, pred_cost = None, 0
+        for i in ins:
+            if i not in inputs_of and i not in dur:
+                continue  # source file
+            c = dp(i)
+            if c > pred_cost:
+                pred_cost, pred = c, i
+        best[node] = (pred_cost + d, pred)
+        return pred_cost + d
+
+    end, end_cost = None, -1
+    for e in edges:
+        c = dp(e.out)
+        if c > end_cost:
+            end_cost, end = c, e.out
+
+    path = []
+    node = end
+    while node is not None:
+        if node in dur:
+            path.append(node)
+        node = best.get(node, (0, None))[1]
+    path.reverse()
+    crit = set(path)
+    for e in edges:
+        if e.out in crit:
+            e.crit = True
+    return [(o, dur[o]) for o in path], end_cost
+
+
+# ── layout & windows ─────────────────────────────────────────────────────────
+
+def pack_lanes(edges):
+    """Greedy interval packing with a min-heap of (free_at, lane). Choosing the
+    lane that has been free the longest -- rather than first-fit -- spreads work
+    evenly across rows so the chart's silhouette reads as instantaneous
+    parallelism: where it is N rows tall, N jobs were running."""
+    heap = []  # (free_at, lane)
+    next_lane = 0
+    for e in sorted(edges, key=lambda x: x.start):
+        if heap and heap[0][0] <= e.start:
+            _, lane = heapq.heappop(heap)
+        else:
+            lane = next_lane
+            next_lane += 1
+        e.lane = lane
+        heapq.heappush(heap, (e.end, lane))
+    return next_lane
+
+
+def serialization_windows(edges, ncpu, threshold=None, min_ms=2000):
+    threshold = threshold or max(1, ncpu // 2)
+    events = []
+    for e in edges:
+        events.append((e.start, 1, e))
+        events.append((e.end, -1, e))
+    events.sort(key=lambda x: (x[0], -x[1]))
+    windows = []
+    running = 0
+    t0 = None
+    active = set()
+    sample = None
+    for t, d, e in events:
+        prev = running
+        running += d
+        if d > 0:
+            active.add(e)
+        else:
+            active.discard(e)
+        if prev >= threshold > running and running > 0:
+            t0 = t
+            sample = max(active, key=lambda x: x.dur, default=None)
+        elif prev < threshold <= running and t0 is not None:
+            if t - t0 >= min_ms:
+                windows.append((t0, t, prev, sample))
+            t0 = None
+    return windows
+
+
+# ── reporting ────────────────────────────────────────────────────────────────
+
+def fmt_ms(ms):
+    s = ms / 1000
+    if s < 60:
+        return f"{s:6.1f}s"
+    m, s = divmod(s, 60)
+    if m < 60:
+        return f"{int(m):3d}m{int(s):02d}s"
+    h, m = divmod(m, 60)
+    return f"{int(h):2d}h{int(m):02d}m "
+
+
+def short(out, n=70):
+    return out if len(out) <= n else "…" + out[-(n - 1):]
+
+
+def terminal_report(edges, wall, cpu, ncpu, peak, crit_path, crit_ms, windows, top):
+    eff = cpu / (wall * ncpu) if wall else 0
+    print(f"wall  {fmt_ms(wall)}   cpu  {fmt_ms(cpu)}   "
+          f"cores {ncpu}   peak {peak}   efficiency {eff:4.0%}")
+
+    print("\n── slowest edges " + "─" * 60)
+    for e in sorted(edges, key=lambda x: -x.dur)[:top]:
+        mark = "*" if e.crit else " "
+        print(f" {mark}{fmt_ms(e.dur)}  {e.cat:<8} {short(e.out)}")
+    print("   (* = on critical path)")
+
+    print(f"\n── critical path ({fmt_ms(crit_ms)}) " + "─" * 47)
+    t = 0
+    for o, d in crit_path:
+        if d < 50:
+            continue
+        print(f"  {fmt_ms(t)}  +{fmt_ms(d)}  {categorize(o):<8} {short(o)}")
+        t += d
+
+    print(f"\n── serialization windows (parallelism < {ncpu // 2}) " + "─" * 36)
+    if not windows:
+        print("  (none ≥ 2s)")
+    for t0, t1, n, e in windows:
+        what = short(e.out, 50) if e else ""
+        print(f"  {fmt_ms(t0)}–{fmt_ms(t1)}  {n} job(s)  {what}")
+
+    print("\n── by category " + "─" * 62)
+    by_cat = defaultdict(int)
+    for e in edges:
+        by_cat[e.cat] += e.dur
+    for cat, ms in sorted(by_cat.items(), key=lambda kv: -kv[1]):
+        print(f"  {cat:<8} {fmt_ms(ms)}  ({ms / cpu:4.0%})")
+
+
+# ── HTML ─────────────────────────────────────────────────────────────────────
+
+_CAT_COLOR = {
+    "compile": "#4e79a7", "link": "#e15759", "swift": "#f28e2b",
+    "codegen": "#76b7b2", "archive": "#59a14f", "dsym": "#edc948",
+    "other": "#bab0ac",
+}
+
+_HTML = r"""<!doctype html><meta charset=utf-8>
+<title>__TITLE__</title>
+<style>
+ html,body{margin:0;font:12px -apple-system,system-ui,sans-serif;background:#1e1e1e;color:#ccc}
+ #hdr{padding:8px 12px;background:#252526;position:sticky;top:0;z-index:5}
+ #hdr .row{display:flex;gap:18px;align-items:center}
+ #hdr b{color:#fff}
+ #hdr .sub{opacity:.65;font-size:11px;margin-top:4px}
+ .lg{display:inline-flex;align-items:center;gap:4px}.lg i{width:10px;height:10px;display:inline-block}
+ .lg.crit i{background:none;border:1px solid #fff;width:9px;height:9px}
+ #tip{position:fixed;background:#2d2d30;border:1px solid #444;padding:4px 6px;pointer-events:none;
+      display:none;white-space:pre;z-index:10;max-width:60vw}
+ canvas{display:block}
+</style>
+<div id=hdr>
+ <div class=row>
+  <b>__TITLE__</b>
+  <span>wall <b>__WALL__</b></span><span>cpu <b>__CPU__</b></span>
+  <span>peak <b>__PEAK__</b></span><span>eff <b>__EFF__</b></span>
+  __LEGEND__
+  <span class="lg crit"><i></i>critical path</span>
+  <span style="margin-left:auto;opacity:.7">wheel: zoom · drag: pan · hover: details</span>
+ </div>
+ <div class=sub>
+  x-axis: wall-clock time since ninja started ·
+  top strip: jobs running at that instant (red line = __NCPU__ cores) ·
+  each row below: one parallel slot (one box = one ninja edge; where the chart narrows, the build serialized)
+ </div>
+</div>
+<canvas id=c></canvas><div id=tip></div>
+<script>
+const E=__DATA__;
+const COL=__COLORS__;
+const WALL=__WALL_MS__, LANES=__LANES__, NCPU=__NCPU__, ROW=14;
+const STRIP=40, AXIS=14, TOP=STRIP+AXIS;
+const cv=document.getElementById('c'),cx=cv.getContext('2d'),tip=document.getElementById('tip');
+let sx=innerWidth/WALL, ox=0;
+// Per-lane index for O(log n) hover hit-test instead of scanning all ~35k edges.
+const byLane=[];for(let i=0;i<LANES;i++)byLane.push([]);
+for(const e of E)byLane[e[3]].push(e);
+for(const L of byLane)L.sort((a,b)=>a[0]-b[0]);
+// Parallelism timeline: sweep-line over start/end events -> [t, jobs_after_t].
+const ev=[];for(const e of E){ev.push([e[0],1]);ev.push([e[0]+e[1],-1]);}
+ev.sort((a,b)=>a[0]-b[0]||b[1]-a[1]);
+const PT=[];{let n=0;for(const[t,d]of ev){n+=d;PT.push([t,n]);}}
+const PMAX=Math.max(NCPU,...PT.map(p=>p[1]));
+function fmt(ms){const s=ms/1000;if(s<60)return s.toFixed(s<10?1:0)+'s';
+ const m=Math.floor(s/60);if(m<60)return m+'m'+String(Math.floor(s%60)).padStart(2,'0');
+ return Math.floor(m/60)+'h'+String(m%60).padStart(2,'0')+'m';}
+function draw(){
+ const w=innerWidth,h=TOP+LANES*ROW+4;cv.width=w;cv.height=h;
+ cx.fillStyle='#1e1e1e';cx.fillRect(0,0,w,h);
+ // time grid + axis labels
+ const span=w/sx, step=[.1,.5,1,5,10,30,60,300,600,1800,3600].find(s=>span/s<12)*1000||3600000;
+ cx.font='10px -apple-system';
+ for(let t=Math.ceil((-ox/sx)/step)*step;t*sx+ox<w;t+=step){
+  const x=t*sx+ox;if(x<0)continue;
+  cx.fillStyle='#2a2a2a';cx.fillRect(x,0,1,h);
+  cx.fillStyle='#888';cx.fillText(fmt(t),x+3,STRIP+11);}
+ // parallelism strip: filled area = jobs running, red line = core count
+ cx.fillStyle='#3a3d41';
+ cx.beginPath();cx.moveTo(ox,STRIP);
+ for(const[t,n]of PT){const x=t*sx+ox,y=STRIP-(n/PMAX)*STRIP;cx.lineTo(x,y);}
+ cx.lineTo(WALL*sx+ox,STRIP);cx.closePath();cx.fill();
+ const cy=STRIP-(NCPU/PMAX)*STRIP;
+ cx.strokeStyle='#e15759';cx.setLineDash([4,3]);cx.beginPath();
+ cx.moveTo(0,cy);cx.lineTo(w,cy);cx.stroke();cx.setLineDash([]);
+ cx.fillStyle='#e15759';cx.fillText(NCPU+' cores',4,cy-2);
+ cx.fillStyle='#555';cx.fillRect(0,STRIP,w,1);
+ // edges
+ for(const e of E){
+  const x=e[0]*sx+ox,ww=Math.max(1,e[1]*sx);if(x+ww<0||x>w)continue;
+  const y=TOP+e[3]*ROW;
+  cx.fillStyle=COL[e[4]]||'#888';cx.fillRect(x,y,ww,ROW-2);
+  if(e[5]){cx.strokeStyle='#fff';cx.lineWidth=1;cx.strokeRect(x+.5,y+.5,ww-1,ROW-3);}
+ }
+}
+function hit(mx,my){
+ if(my<TOP)return null;
+ const lane=Math.floor((my-TOP)/ROW);if(lane<0||lane>=LANES)return null;
+ const t=(mx-ox)/sx,L=byLane[lane];
+ let lo=0,hi=L.length;while(lo<hi){const m=(lo+hi)>>1;if(L[m][0]+L[m][1]<t)lo=m+1;else hi=m;}
+ const e=L[lo];return e&&e[0]<=t&&t<=e[0]+e[1]?e:null;
+}
+function stripHit(mx,my){
+ if(my>=STRIP)return null;const t=(mx-ox)/sx;
+ let lo=0,hi=PT.length;while(lo<hi){const m=(lo+hi)>>1;if(PT[m][0]<t)lo=m+1;else hi=m;}
+ return PT[Math.max(0,lo-1)];
+}
+cv.onmousemove=ev=>{
+ const e=hit(ev.offsetX,ev.offsetY),s=stripHit(ev.offsetX,ev.offsetY);
+ if(e){tip.style.display='block';tip.style.left=ev.clientX+12+'px';tip.style.top=ev.clientY+12+'px';
+  tip.textContent=e[2]+'\n'+(e[1]/1000).toFixed(2)+'s  '+e[4]+(e[5]?'  [critical path]':'');}
+ else if(s){tip.style.display='block';tip.style.left=ev.clientX+12+'px';tip.style.top=ev.clientY+12+'px';
+  tip.textContent=fmt(s[0])+'  '+s[1]+' job'+(s[1]==1?'':'s')+' running';}
+ else tip.style.display='none';
+ if(drag){ox+=ev.clientX-drag;drag=ev.clientX;draw();}
+};
+cv.onwheel=ev=>{ev.preventDefault();const f=ev.deltaY<0?1.15:1/1.15;
+ const t=(ev.offsetX-ox)/sx;sx*=f;ox=ev.offsetX-t*sx;draw();};
+let drag=0;cv.onmousedown=ev=>drag=ev.clientX;onmouseup=()=>drag=0;
+cv.onmouseleave=()=>tip.style.display='none';
+onresize=draw;draw();
+</script>
+"""
+
+
+def write_html(path: Path, edges, wall, cpu, ncpu, peak, build_dir):
+    data = [[e.start, e.dur, e.out, e.lane, e.cat, 1 if e.crit else 0] for e in edges]
+    legend = " ".join(
+        f'<span class=lg><i style="background:{c}"></i>{k}</span>'
+        for k, c in _CAT_COLOR.items()
+    )
+    html = (_HTML
+            .replace("__TITLE__", f"ninja build — {build_dir.name}")
+            .replace("__WALL__", fmt_ms(wall).strip())
+            .replace("__CPU__", fmt_ms(cpu).strip())
+            .replace("__PEAK__", str(peak))
+            .replace("__EFF__", f"{cpu / (wall * ncpu):.0%}")
+            .replace("__LEGEND__", legend)
+            .replace("__WALL_MS__", str(wall))
+            .replace("__LANES__", str(peak))
+            .replace("__NCPU__", str(ncpu))
+            .replace("__COLORS__", json.dumps(_CAT_COLOR))
+            .replace("__DATA__", json.dumps(data, separators=(",", ":"))))
+    path.write_text(html)
+
+
+# ── main ─────────────────────────────────────────────────────────────────────
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("build_dir", nargs="?", default="WebKitBuild/cmake-mac/ASan")
+    ap.add_argument("--top", type=int, default=20, help="rows in slowest-edge table")
+    ap.add_argument("--html", metavar="PATH",
+                    help="write Gantt to PATH (default: <build-dir>/build-analysis.html)")
+    ap.add_argument("--no-html", action="store_true")
+    ap.add_argument("--no-critical-path", action="store_true",
+                    help="skip build.ninja parse (faster, but loses the only number "
+                         "that tells you what to fix)")
+    ap.add_argument("--open", action="store_true", help="open the HTML when done")
+    args = ap.parse_args()
+
+    build_dir = Path(args.build_dir).resolve()
+    log = build_dir / ".ninja_log"
+    if not log.exists():
+        sys.exit(f"error: {log} not found")
+
+    edges = parse_ninja_log(log)
+    if not edges:
+        sys.exit("error: .ninja_log is empty")
+    ncpu = os.cpu_count() or 1
+    wall, cpu = sanity_check(edges, ncpu)
+    peak = pack_lanes(edges)
+
+    crit_path, crit_ms = [], 0
+    if not args.no_critical_path:
+        graph = parse_build_graph(build_dir / "build.ninja")
+        crit_path, crit_ms = critical_path(edges, graph)
+
+    windows = serialization_windows(edges, ncpu)
+    terminal_report(edges, wall, cpu, ncpu, peak, crit_path, crit_ms, windows, args.top)
+
+    if not args.no_html:
+        out = Path(args.html) if args.html else build_dir / "build-analysis.html"
+        write_html(out, edges, wall, cpu, ncpu, peak, build_dir)
+        print(f"\n  open {out}")
+        if args.open:
+            os.system(f"open {out}")
+
+
+if __name__ == "__main__":
+    main()

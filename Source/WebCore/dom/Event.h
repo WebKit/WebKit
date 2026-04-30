@@ -28,6 +28,7 @@
 #include <WebCore/EventInterfaces.h>
 #include <WebCore/EventOptions.h>
 #include <WebCore/ScriptWrappable.h>
+#include <wtf/Lock.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TypeCasts.h>
@@ -149,6 +150,8 @@ public:
 
     bool isTrustedForBindings() const { return m_isTrusted || m_isTrustedForBindingsOnly; }
 
+    template<typename Visitor> void visitInGCThread(Visitor&);
+
 protected:
     explicit Event(enum EventInterfaceType, IsTrusted = IsTrusted::No);
     Event(enum EventInterfaceType, const AtomString& type, CanBubble, IsCancelable, IsComposed = IsComposed::No);
@@ -188,7 +191,7 @@ private:
 
     unsigned m_eventInterface : 7 { 0 };
 
-    // 8-bits left.
+    Lock m_targetLock;
 
     AtomString m_type;
 

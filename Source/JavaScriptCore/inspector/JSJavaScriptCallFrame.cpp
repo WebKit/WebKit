@@ -30,6 +30,7 @@
 #include "JSCInlines.h"
 #include "JSJavaScriptCallFramePrototype.h"
 #include "ObjectConstructor.h"
+#include "StructureCreateInlines.h"
 
 namespace Inspector {
 
@@ -234,6 +235,11 @@ JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject, 
     JSJavaScriptCallFrame* javaScriptCallFrame = JSJavaScriptCallFrame::create(vm, structure, *impl);
 
     return javaScriptCallFrame;
+}
+
+Structure* JSJavaScriptCallFrame::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
 } // namespace Inspector

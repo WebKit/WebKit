@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ModuleGraphLoadingState.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "SetConstructor.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

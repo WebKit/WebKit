@@ -134,7 +134,7 @@ void PopUpSOAuthorizationSession::fallBackToWebPathInternal()
 void PopUpSOAuthorizationSession::abortInternal()
 {
     AUTHORIZATIONSESSION_RELEASE_LOG("abortInternal: m_page=%p", page());
-    if (!page()) {
+    if (!page() || page()->isClosed()) {
         m_newPageCallback(nullptr);
         return;
     }
@@ -152,7 +152,7 @@ void PopUpSOAuthorizationSession::abortInternal()
 void PopUpSOAuthorizationSession::completeInternal(const WebCore::ResourceResponse& response, NSData *data)
 {
     AUTHORIZATIONSESSION_RELEASE_LOG("completeInternal: httpState=%d", response.httpStatusCode());
-    if (response.httpStatusCode() != httpStatus200OK || !page()) {
+    if (response.httpStatusCode() != httpStatus200OK || !page() || page()->isClosed()) {
         fallBackToWebPathInternal();
         return;
     }

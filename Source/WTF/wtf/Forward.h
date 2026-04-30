@@ -28,6 +28,7 @@
 #if __has_feature(objc_arc)
 #define OSObjectPtr OSObjectPtrArc
 #define RetainPtr RetainPtrArc
+#define RetainRef RetainRefArc
 #endif
 #endif
 
@@ -148,6 +149,7 @@ template<typename T, typename = RawPtrTraits<T>> class CheckedPtr;
 template<typename T, typename = RawPtrTraits<T>, typename = DefaultRefDerefTraits<T>> class Ref;
 template<typename T, typename = RawPtrTraits<T>, typename = DefaultRefDerefTraits<T>> class RefPtr;
 template<typename> class RetainPtr;
+template<typename> class RetainRef;
 template<typename> class ScopedLambda;
 template<typename> class StringBuffer;
 template<typename> class StringParsingBuffer;
@@ -298,6 +300,7 @@ using WTF::RawValueTraits;
 using WTF::Ref;
 using WTF::RefPtr;
 using WTF::RetainPtr;
+using WTF::RetainRef;
 using WTF::SHA1;
 using WTF::ScopedLambda;
 using WTF::SerialFunctionDispatcher;

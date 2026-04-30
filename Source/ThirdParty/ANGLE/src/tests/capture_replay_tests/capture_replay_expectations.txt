@@ -81,6 +81,7 @@
 42264831 : FramebufferTest_ES3.ChangeAttachmentThenInvalidateAndDraw/* = SKIP_FOR_CAPTURE
 42264831 : FramebufferTest_ES3.RenderAndInvalidateImmutableTextureWithBeyondMaxLevel/* = SKIP_FOR_CAPTURE
 490170083 : CopyTextureTestES3.SRGBWithPackParameters/* = SKIP_FOR_CAPTURE
+498904293 : CopyTextureTestES3.PBOSynchronization/* = SKIP_FOR_CAPTURE
 
 # The following tests fail with forceRobustResourceInit
 # They were accidentally passing until http://crrev/c/5588816
@@ -247,6 +248,7 @@
 
 # VVL error
 42264614 LINUX : VulkanExternalImageTestES31.UninitializedOnGLImportAndStorageWrite/* = SKIP_FOR_CAPTURE
+42264614 LINUX : VulkanExternalImageTest.NonRenderableWithFlags/* = SKIP_FOR_CAPTURE
 
 # CoherentBufferTracker deadlocks and flaky crashes
 42266529 LINUX : BufferDataTestES3.* = SKIP_FOR_CAPTURE

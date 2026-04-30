@@ -36,10 +36,10 @@
 #include "pas_segregated_exclusive_view_inlines.h"
 #include "pas_segregated_heap_inlines.h"
 #include "pas_segregated_page_inlines.h"
-#include "pas_segregated_partial_view_inlines.h"
-#include "pas_segregated_shared_page_directory.h"
-#include "pas_segregated_shared_view_inlines.h"
+#include "pas_segregated_size_directory_inlines.h"
+#include "pas_segregated_view.h"
 #include "pas_segregated_view_allocator_inlines.h"
+#include "pas_segregated_view_kind.h"
 #include "pas_stats.h"
 #include "pas_system_heap.h"
 #include "pas_thread_local_cache.h"
@@ -177,7 +177,6 @@ static PAS_ALWAYS_INLINE void pas_local_allocator_scan_bits_to_set_up_free_bits(
     
     unsigned* alloc_bits;
     size_t index;
-    unsigned num_denullified_words;
     pas_local_allocator_scan_bits_to_set_up_use_counts_data data;
     unsigned object_size;
 
@@ -188,14 +187,13 @@ static PAS_ALWAYS_INLINE void pas_local_allocator_scan_bits_to_set_up_free_bits(
 
     PAS_ASSERT(page_config.base.is_enabled);
     PAS_UNUSED_PARAM(directory);
+    PAS_UNUSED_PARAM(data);
 
     if (pas_segregated_page_config_is_utility(page_config))
         PAS_ASSERT(view_kind == pas_segregated_exclusive_view_kind);
     
     object_size = allocator->object_size;
     alloc_bits = page->alloc_bits;
-    
-    num_denullified_words = 0;
 
     /* Get the compiler to not suffer an anxiety attack. */
     data.free = 0;
@@ -270,31 +268,6 @@ static PAS_ALWAYS_INLINE void pas_local_allocator_scan_bits_to_set_up_free_bits(
         switch (view_kind) {
         case pas_segregated_exclusive_view_kind:
             break;
-
-        case pas_segregated_partial_view_kind:
-            if (!alloc && full)
-                num_denullified_words++;
-
-            if (page_config.base.page_size > page_config.base.granule_size) {
-                data.free = free;
-                data.base_offset = pas_page_base_object_offset_from_page_boundary_at_index(
-                    (unsigned)PAS_BITVECTOR_BIT_INDEX(index), page_config.base);
-
-                if (verbose) {
-                    pas_log("Dealing with use counts at index = %zu, base_offset = %zu, free = %x\n",
-                            index,
-                            data.base_offset,
-                            data.free);
-                }
-                
-                pas_bitvector_for_each_set_bit(
-                    pas_local_allocator_scan_bits_to_set_up_use_counts_bits_source,
-                    0, 1,
-                    pas_local_allocator_scan_bits_to_set_up_use_counts_bit_callback,
-                    &data);
-            }
-            break;
-
         default:
             PAS_ASSERT_NOT_REACHED();
             break;
@@ -336,10 +309,6 @@ static PAS_ALWAYS_INLINE void pas_local_allocator_scan_bits_to_set_up_free_bits(
         page->emptiness.num_non_empty_words = pas_segregated_size_directory_data_ptr_load_non_null(&directory->data)->full_num_non_empty_words;
         break;
         
-    case pas_segregated_partial_view_kind:
-        page->emptiness.num_non_empty_words += num_denullified_words;
-        break;
-        
     default:
         PAS_ASSERT_NOT_REACHED();
         break;
@@ -355,57 +324,36 @@ pas_local_allocator_set_up_free_bits(pas_local_allocator* allocator,
                                      uintptr_t page_boundary,
                                      pas_segregated_page_config page_config)
 {
-    pas_full_alloc_bits full_alloc_bits;
-    pas_segregated_view partial_view_as_view;
-
     PAS_ASSERT(page_config.base.is_enabled);
-    PAS_ASSERT(view_kind == pas_segregated_exclusive_view_kind
-               || view_kind == pas_segregated_partial_view_kind);
+    PAS_ASSERT(view_kind == pas_segregated_exclusive_view_kind);
 
     allocator->payload_end = 0;
     allocator->remaining = 0;
 
-    if (view_kind == pas_segregated_exclusive_view_kind) {
-        unsigned begin_offset;
-        unsigned end_offset;
-        pas_segregated_size_directory_data* data;
+    unsigned begin_offset;
+    unsigned end_offset;
+    pas_segregated_size_directory_data* data;
 
-        if (page_config.base.page_size > page_config.base.granule_size)
-            pas_segregated_exclusive_view_install_full_use_counts((pas_segregated_exclusive_view*)view);
+    if (page_config.base.page_size > page_config.base.granule_size)
+        pas_segregated_exclusive_view_install_full_use_counts((pas_segregated_exclusive_view*)view);
 
-        data = pas_segregated_size_directory_data_ptr_load_non_null(&directory->data);
+    data = pas_segregated_size_directory_data_ptr_load_non_null(&directory->data);
 
-        begin_offset = data->offset_from_page_boundary_to_first_object;
-        end_offset = data->offset_from_page_boundary_to_end_of_last_object;
+    begin_offset = data->offset_from_page_boundary_to_first_object;
+    end_offset = data->offset_from_page_boundary_to_end_of_last_object;
 
-        begin_offset = PAS_BITVECTOR_WORD64_INDEX(
-            (unsigned)pas_page_base_index_of_object_at_offset_from_page_boundary(
-                begin_offset, page_config.base));
-        end_offset = PAS_BITVECTOR_WORD64_INDEX(
-            (unsigned)pas_page_base_index_of_object_at_offset_from_page_boundary(
-                end_offset, page_config.base) - 1) + 1;
-        
-        pas_local_allocator_scan_bits_to_set_up_free_bits(
-            allocator, directory, page, page_boundary, begin_offset, end_offset,
-            pas_segregated_exclusive_view_kind,
-            pas_full_alloc_bits_create_for_exclusive(directory, page_config), page_config);
-        return;
-    }
-
-    PAS_ASSERT(!pas_segregated_page_config_is_utility(page_config));
-
-    partial_view_as_view = pas_segregated_partial_view_as_view((pas_segregated_partial_view*)view);
+    begin_offset = PAS_BITVECTOR_WORD64_INDEX(
+        (unsigned)pas_page_base_index_of_object_at_offset_from_page_boundary(
+            begin_offset, page_config.base));
+    end_offset = PAS_BITVECTOR_WORD64_INDEX(
+        (unsigned)pas_page_base_index_of_object_at_offset_from_page_boundary(
+            end_offset, page_config.base) - 1) + 1;
     
-    full_alloc_bits = pas_full_alloc_bits_create_for_partial_but_not_primordial(partial_view_as_view);
-    
-    allocator->view = partial_view_as_view;
-
     pas_local_allocator_scan_bits_to_set_up_free_bits(
-        allocator, directory, page, page_boundary,
-        full_alloc_bits.word_index_begin >> 1,
-        (full_alloc_bits.word_index_end + 1) >> 1,
-        pas_segregated_partial_view_kind,
-        full_alloc_bits, page_config);
+        allocator, directory, page, page_boundary, begin_offset, end_offset,
+        pas_segregated_exclusive_view_kind,
+        pas_full_alloc_bits_create_for_exclusive(directory, page_config), page_config);
+    return;
 }
 
 static PAS_ALWAYS_INLINE void
@@ -435,8 +383,7 @@ pas_local_allocator_prepare_to_allocate(
     uintptr_t page_boundary;
 
     PAS_ASSERT(page_config.base.is_enabled);
-    PAS_ASSERT(view_kind == pas_segregated_exclusive_view_kind
-               || view_kind == pas_segregated_partial_view_kind);
+    PAS_ASSERT(view_kind == pas_segregated_exclusive_view_kind);
 
     if (!pas_segregated_page_config_is_utility(page_config))
         pas_lock_testing_assert_held(page->lock_ptr);
@@ -494,440 +441,9 @@ pas_local_allocator_prepare_to_allocate(
         page_config);
 }
 
-typedef enum {
-    pas_local_allocator_primordial_bump_return_first_allocation,
-    pas_local_allocator_primordial_bump_stash_whole_allocation
-} pas_local_allocator_primordial_bump_allocation_mode;
-
-/* Call holding the page lock and maybe the commit lock. But definitely the page lock. */
-static PAS_ALWAYS_INLINE pas_allocation_result
-pas_local_allocator_set_up_primordial_bump(
-    pas_local_allocator* allocator,
-    pas_allocation_mode allocation_mode,
-    pas_segregated_partial_view* view,
-    pas_segregated_shared_handle* handle,
-    pas_segregated_page* page,
-    pas_lock** held_lock,
-    pas_shared_view_computed_bump_result bump_result,
-    pas_local_allocator_primordial_bump_allocation_mode mode,
-    pas_segregated_page_config page_config)
-{
-    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
-    
-    uintptr_t page_boundary;
-    unsigned object_size;
-    unsigned current_offset;
-    unsigned begin_offset;
-    unsigned end_offset;
-    unsigned* bits;
-    unsigned* alloc_bits;
-    pas_page_granule_use_count* use_counts;
-
-    PAS_UNUSED_PARAM(held_lock);
-    PAS_ASSERT(page_config.base.is_enabled);
-
-    PAS_ASSERT(!pas_segregated_page_config_is_utility(page_config));
-
-    page_boundary = allocator->page_ish;
-    object_size = allocator->object_size;
-    begin_offset = bump_result.old_bump;
-    end_offset = bump_result.end_bump;
-
-    bits = (unsigned*)allocator->bits;
-    alloc_bits = page->alloc_bits;
-
-    if (page_config.base.page_size > page_config.base.granule_size)
-        use_counts = pas_segregated_page_get_granule_use_counts(page, page_config);
-    else
-        use_counts = NULL; /* Prevent the compiler from having an episode. */
-
-    if (verbose)
-        pas_log("Allocator %p setting up primordial bump.\n", allocator);
-    allocator->payload_end = page_boundary + end_offset;
-
-    switch (mode) {
-    case pas_local_allocator_primordial_bump_return_first_allocation:
-        allocator->remaining = end_offset - begin_offset - object_size;
-        break;
-
-    case pas_local_allocator_primordial_bump_stash_whole_allocation:
-        allocator->remaining = end_offset - begin_offset;
-        break;
-    }
-
-    pas_compiler_fence();
-
-    for (current_offset = begin_offset; current_offset < end_offset; current_offset += object_size) {
-        size_t index;
-        size_t word_index;
-        unsigned word;
-
-        index = pas_page_base_index_of_object_at_offset_from_page_boundary(
-            current_offset, page_config.base);
-
-        word_index = PAS_BITVECTOR_WORD_INDEX(index);
-
-        pas_bitvector_set_in_word(bits + word_index, index, true);
-
-        word = alloc_bits[word_index];
-        if (!word) {
-            if (page_config.sharing_shift == PAS_BITVECTOR_WORD_SHIFT) {
-                PAS_ASSERT(pas_compact_atomic_segregated_partial_view_ptr_is_null(
-                               handle->partial_views + word_index));
-                pas_compact_atomic_segregated_partial_view_ptr_store(
-                    handle->partial_views + word_index, view);
-            }
-            
-            page->emptiness.num_non_empty_words++;
-        }
-        if (page_config.sharing_shift != PAS_BITVECTOR_WORD_SHIFT) {
-            pas_compact_atomic_segregated_partial_view_ptr* ptr;
-            pas_segregated_partial_view* old_view;
-
-            ptr = pas_segregated_shared_handle_partial_view_ptr_for_index(
-                handle, index, page_config);
-            old_view = pas_compact_atomic_segregated_partial_view_ptr_load(ptr);
-            PAS_ASSERT(!old_view || old_view == view);
-            pas_compact_atomic_segregated_partial_view_ptr_store(ptr, view);
-        }
-        pas_bitvector_set_in_word(&word, index, true);
-        alloc_bits[word_index] = word;
-
-        if (page_config.base.page_size > page_config.base.granule_size) {
-            pas_page_granule_increment_uses_for_range(
-                use_counts, current_offset, current_offset + object_size,
-                page_config.base.page_size, page_config.base.granule_size); 
-        }
-    }
-
-    PAS_PROFILE(POPULATE_PRIMORDIAL_PARTIAL_VIEW, page_config, page, view, bump_result, allocation_mode);
-    PAS_MTE_HANDLE(POPULATE_PRIMORDIAL_PARTIAL_VIEW, page_config, page, view, bump_result, allocation_mode);
-
-    switch (mode) {
-    case pas_local_allocator_primordial_bump_return_first_allocation:
-        return pas_allocation_result_create_success(page_boundary + begin_offset);
-
-    case pas_local_allocator_primordial_bump_stash_whole_allocation:
-        return pas_allocation_result_create_failure();
-    }
-
-    PAS_ASSERT_NOT_REACHED();
-    return pas_allocation_result_create_failure();
-}
-
-static PAS_ALWAYS_INLINE bool
-pas_local_allocator_start_allocating_in_primordial_partial_view(
-    pas_local_allocator* allocator,
-    pas_allocation_mode allocation_mode,
-    pas_segregated_partial_view* view,
-    pas_segregated_size_directory* size_directory,
-    pas_segregated_page_config page_config)
-{
-    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
-    
-    unsigned size;
-    unsigned effective_minimum_size;
-    unsigned alignment;
-
-    PAS_ASSERT(page_config.base.is_enabled);
-    PAS_ASSERT(!pas_compact_segregated_shared_view_ptr_load(&view->shared_view));
-
-    PAS_ASSERT(!pas_segregated_page_config_is_utility(page_config));
-
-    size = allocator->object_size;
-    alignment = (unsigned)pas_local_allocator_alignment(allocator);
-    effective_minimum_size = pas_segregated_shared_view_compute_minimum_size_for_bump(
-        size, page_config);
-    
-    for (;;) {
-        pas_segregated_shared_view* shared_view;
-        pas_segregated_shared_handle* handle;
-        pas_segregated_page* page;
-        pas_shared_view_computed_bump_result bump_result;
-        pas_segregated_heap* heap;
-        pas_segregated_shared_page_directory* shared_page_directory;
-        pas_lock* held_lock;
-
-        heap = size_directory->heap;
-        shared_page_directory = page_config.shared_page_directory_selector(heap, size_directory);
-        
-        shared_view = pas_segregated_shared_page_directory_find_first_eligible(
-            shared_page_directory, effective_minimum_size, alignment, pas_lock_is_not_held);
-
-        PAS_ASSERT(shared_view);
-        
-        pas_lock_lock(&shared_view->commit_lock);
-
-        handle = pas_segregated_shared_view_commit_page_if_necessary(
-            shared_view, heap, shared_page_directory, view, page_config);
-        if (!handle) {
-            pas_lock_unlock(&shared_view->commit_lock);
-            return false;
-        }
-
-        page = pas_segregated_page_for_boundary(handle->page_boundary, page_config);
-
-        held_lock = NULL;
-        pas_segregated_page_switch_lock(page, &held_lock, page_config);
-
-        bump_result = pas_segregated_shared_view_bump(shared_view, size, alignment, page_config);
-
-        if (verbose) {
-            pas_log("bump_result = %u, %u, %u, %u.\n",
-                    bump_result.old_bump,
-                    bump_result.new_bump,
-                    bump_result.end_bump,
-                    bump_result.num_objects);
-        }
-
-        if (!bump_result.num_objects) {
-            pas_lock_switch(&held_lock, NULL);
-            pas_lock_unlock_conditionally(
-                &shared_view->commit_lock,
-                pas_segregated_page_config_heap_lock_hold_mode(page_config));
-            continue;
-        }
-
-        /* We have to mark this in use for allocation since otherwise we would try to decommmit this page
-           right as we try to commit it. But that creates a fun situation where the shared_view knows itself
-           to be in use for allocation but we don't know which partial is responsible for that, since the
-           partial doesn't get registered until we do set_up_primordial_bump, below. */
-        pas_segregated_partial_view_set_is_in_use_for_allocation(view, shared_view, handle);
-        
-        if (page_config.base.page_size > page_config.base.granule_size) {
-            pas_segregated_page_commit_fully(
-                page, &held_lock, pas_commit_fully_holding_page_and_commit_locks);
-        }
-
-        pas_compact_segregated_shared_view_ptr_store(&view->shared_view, shared_view);
-
-        /* Make sure that if the enumerator sees a nonzero page_ish, it will know that the allocator is
-           in primordial mode. */
-        allocator->config_kind = pas_local_allocator_config_kind_create_primordial_partial(
-            pas_local_allocator_config_kind_get_segregated_page_config_kind(allocator->config_kind));
-        pas_compiler_fence();
-        
-        allocator->page_ish = (uintptr_t)pas_segregated_page_boundary(page, page_config);
-        PAS_PROFILE(SET_UP_LOCAL_ALLOCATOR, page_config, heap, allocator);
-        PAS_MTE_HANDLE(SET_UP_LOCAL_ALLOCATOR, page_config, heap, allocator);
-
-        pas_zero_memory(allocator->bits, pas_segregated_page_config_num_alloc_bytes(page_config));
-
-        pas_local_allocator_set_up_primordial_bump(
-            allocator, allocation_mode, view, handle, page, &held_lock, bump_result,
-            pas_local_allocator_primordial_bump_stash_whole_allocation,
-            page_config);
-
-        allocator->view = pas_segregated_partial_view_as_view_non_null(view);
-
-        view->is_attached_to_shared_handle = true;
-
-        pas_lock_unlock(&shared_view->commit_lock);
-
-        /* This code to set the view's alloc_bits is primarily for heap enumeration.
-           
-           If the enumerator ran right now then (before we do this stuff), then it would see:
-        
-           - A bunch of page alloc bits set for the objects we are about to allocate.
-           - No partial views say that they own those objects.
-           - Local allocator claims to own those objects.
-        
-           So, we would report that those objects are not live right now. I believe they would show up
-           as "meta" allocations, not even as objects.
-        
-           Immediately after settings the view's alloc_bits and alloc_bits_size, we will know that the
-           objects exist (view alloc bits are set), but they are dead (despite page alloc bits also being
-           set, the objects are part of the bump range). */
-        if (!pas_heap_lock_try_lock()) {
-            pas_lock_switch(&held_lock, NULL);
-            pas_heap_lock_lock();
-            pas_segregated_page_switch_lock(page, &held_lock, page_config);
-        }
-
-        pas_lenient_compact_unsigned_ptr_store(&view->alloc_bits, (unsigned*)allocator->bits);
-        PAS_ASSERT(!view->alloc_bits_offset);
-        PAS_ASSERT((uint8_t)pas_segregated_page_config_num_alloc_words(page_config)
-                   == pas_segregated_page_config_num_alloc_words(page_config));
-        pas_compiler_fence();
-        view->alloc_bits_size = (uint8_t)pas_segregated_page_config_num_alloc_words(page_config);
-        pas_lock_switch(&held_lock, NULL);
-        pas_heap_lock_unlock();
-
-        return true;
-    }
-}
-
-static PAS_ALWAYS_INLINE void
-pas_local_allocator_bless_primordial_partial_view_before_stopping(
-    pas_local_allocator* allocator,
-    pas_segregated_page* page,
-    pas_lock_hold_mode heap_lock_hold_mode,
-    pas_segregated_page_config page_config)
-{
-    static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
-    
-    /* We're sitting on a still-ineligible partial view. Nobody else can do things to it. We need
-       to grab the heap lock in order to allocate the full alloc bits. This is called with the
-       page lock held, which is great, since we mess with eligibility data structures. */
-
-    pas_segregated_partial_view* view;
-    bool has_first_non_zero_word_index;
-    size_t first_non_zero_word_index;
-    size_t last_non_zero_word_index;
-    size_t word_index;
-    unsigned* bits;
-    size_t alloc_bits_size;
-    size_t alloc_bits_offset;
-    unsigned* alloc_bits;
-
-    PAS_ASSERT(page_config.base.is_enabled);
-    PAS_ASSERT(pas_local_allocator_config_kind_is_primordial_partial(allocator->config_kind));
-    
-    PAS_ASSERT(!pas_segregated_page_config_is_utility(page_config));
-
-    has_first_non_zero_word_index = false;
-    bits = (unsigned*)allocator->bits;
-
-    first_non_zero_word_index = SIZE_MAX;
-    last_non_zero_word_index = SIZE_MAX;
-
-    view = pas_segregated_view_get_partial(allocator->view);
-
-    if (verbose)
-        pas_log("Blessing view %p.\n", view);
-
-    for (word_index = 0;
-         word_index < pas_segregated_page_config_num_alloc_words(page_config);
-         word_index++) {
-        unsigned full_alloc_word;
-
-        full_alloc_word = bits[word_index];
-        
-        if (!full_alloc_word)
-            continue;
-
-        if (verbose)
-            pas_log("Nonzero full alloc word at index = %zu\n", word_index);
-
-        if (!has_first_non_zero_word_index) {
-            first_non_zero_word_index = word_index;
-            has_first_non_zero_word_index = true;
-        }
-        last_non_zero_word_index = word_index;
-    }
-
-    PAS_ASSERT(has_first_non_zero_word_index);
-
-    alloc_bits_size = last_non_zero_word_index + 1 - first_non_zero_word_index;
-    alloc_bits_offset = first_non_zero_word_index;
-
-    PAS_ASSERT(alloc_bits_size);
-    
-    PAS_ASSERT((uint8_t)alloc_bits_size == alloc_bits_size);
-    view->alloc_bits_size = (uint8_t)alloc_bits_size;
-    
-    PAS_ASSERT((uint8_t)alloc_bits_offset == alloc_bits_offset);
-    view->alloc_bits_offset = (uint8_t)alloc_bits_offset;
-    
-    /* We hold the page lock. Lock ordering says that we cannot acquire the heap lock when
-       we are holding the page lock.
-       
-       Luckily, this is a fine place to drop the page lock.
-       
-       Therefore, we try-lock the heap lock. It's always safe to do that. Usually it will just
-       succeed. But if it fails, we will drop the page lock and then acquire both of them. */
-    if (!pas_heap_lock_try_lock_conditionally(heap_lock_hold_mode)) {
-        pas_segregated_page_unlock(page, page_config);
-        pas_heap_lock_lock();
-        pas_segregated_page_lock(page, page_config);
-    }
-
-    if (alloc_bits_size == 1)
-        alloc_bits = &view->inline_alloc_bits - alloc_bits_offset;
-    else {
-        alloc_bits = (unsigned*)pas_immortal_heap_allocate_with_manual_alignment(
-            alloc_bits_size * sizeof(unsigned),
-            PAS_MAX(PAS_INTERNAL_MIN_ALIGN, sizeof(unsigned)),
-            "pas_segregated_partial_view/alloc_bits",
-            pas_object_allocation) - alloc_bits_offset;
-    }
-    
-    memcpy(alloc_bits + alloc_bits_offset,
-           bits + alloc_bits_offset,
-           alloc_bits_size * sizeof(unsigned));
-
-    pas_store_store_fence();
-
-    pas_lenient_compact_unsigned_ptr_store(&view->alloc_bits, alloc_bits);
-    
-    pas_heap_lock_unlock_conditionally(heap_lock_hold_mode);
-}
-
-static PAS_ALWAYS_INLINE pas_allocation_result
-pas_local_allocator_try_allocate_in_primordial_partial_view(
-    pas_local_allocator* allocator,
-    pas_allocation_mode allocation_mode,
-    pas_segregated_page_config page_config)
-{
-    pas_segregated_page* page;
-    pas_segregated_partial_view* partial_view;
-    pas_segregated_shared_view* shared_view;
-    pas_shared_view_computed_bump_result bump_result;
-    pas_allocation_result result;
-    pas_lock* held_lock;
-
-    PAS_ASSERT(page_config.base.is_enabled);
-
-    PAS_ASSERT(!pas_segregated_page_config_is_utility(page_config));
-
-    page = pas_segregated_page_for_boundary((void*)allocator->page_ish, page_config);
-    partial_view = pas_segregated_view_get_partial(allocator->view);
-    shared_view = pas_compact_segregated_shared_view_ptr_load_non_null(&partial_view->shared_view);
-
-    held_lock = NULL;
-    pas_segregated_page_switch_lock(page, &held_lock, page_config);
-    
-    bump_result = pas_segregated_shared_view_bump(
-        shared_view,
-        allocator->object_size,
-        (unsigned)pas_local_allocator_alignment(allocator),
-        page_config);
-
-    if (!bump_result.num_objects) {
-        pas_local_allocator_bless_primordial_partial_view_before_stopping(
-            allocator, page,
-            pas_segregated_page_config_heap_lock_hold_mode(page_config),
-            page_config);
-        pas_segregated_page_unlock(page, page_config);
-        return pas_allocation_result_create_failure();
-    }
-
-    result = pas_local_allocator_set_up_primordial_bump(
-        allocator,
-        allocation_mode,
-        partial_view,
-        pas_unwrap_shared_handle(shared_view->shared_handle_or_page_boundary, page_config),
-        page,
-        &held_lock,
-        bump_result,
-        pas_local_allocator_primordial_bump_return_first_allocation,
-        page_config);
-
-    if (result.did_succeed) {
-        PAS_PROFILE(PRIMORDIAL_BUMP_ALLOCATION, &page_config, result.begin, allocator->object_size, allocation_mode);
-        PAS_MTE_HANDLE(PRIMORDIAL_BUMP_ALLOCATION, page_config, result.begin, allocator->object_size, allocation_mode);
-        PAS_RECORD_STAT_MALLOC(pas_stats_heap_type_segregated, allocator->object_size);
-    }
-
-    pas_lock_switch(&held_lock, NULL);
-    
-    return result;
-}
-
 static PAS_ALWAYS_INLINE bool
 pas_local_allocator_refill_with_known_config(
     pas_local_allocator* allocator,
-    pas_allocation_mode allocation_mode,
     pas_allocator_counts* counts,
     pas_segregated_page_config page_config)
 {
@@ -942,8 +458,6 @@ pas_local_allocator_refill_with_known_config(
     pas_segregated_directory* directory;
     pas_thread_local_cache_node* cache_node;
     pas_segregated_exclusive_view* exclusive;
-    pas_segregated_partial_view* partial;
-    pas_segregated_shared_view* shared;
     pas_thread_local_cache* cache;
     bool did_get_view;
 
@@ -984,12 +498,7 @@ pas_local_allocator_refill_with_known_config(
         old_page = pas_segregated_page_for_boundary(
             (void*)pas_local_allocator_page_boundary(allocator, page_config), page_config);
         old_view = old_page->owner;
-        if (!pas_segregated_view_is_some_exclusive(old_view)) {
-            PAS_ASSERT(!pas_segregated_page_config_is_utility(page_config));
-            PAS_ASSERT(pas_segregated_view_is_shared_handle(old_view));
-            old_view = allocator->view;
-            PAS_ASSERT(pas_segregated_view_is_partial(old_view));
-        }
+        PAS_ASSERT(pas_segregated_view_is_some_exclusive(old_view));
     }
     
     PAS_TESTING_ASSERT(!allocator->remaining); /* If we did have a bump region we should have
@@ -1043,14 +552,12 @@ pas_local_allocator_refill_with_known_config(
         pas_segregated_view_kind kind;
 
         kind = pas_segregated_view_get_kind(old_view);
-
-        switch (kind) {
-        case pas_segregated_exclusive_view_kind: {
+        if (kind == pas_segregated_exclusive_view_kind) {
             new_view = old_view;
             new_page = old_page;
-            
+
             exclusive = (pas_segregated_exclusive_view*)pas_segregated_view_get_ptr(new_view);
-            
+
             if (verbose)
                 pas_log("Restarting on same page as before.\n");
             pas_segregated_page_switch_lock_and_rebias_while_ineligible(
@@ -1058,24 +565,6 @@ pas_local_allocator_refill_with_known_config(
             new_page->owner = pas_segregated_view_as_ineligible(new_view);
             new_page->eligibility_notification_has_been_deferred = false;
             goto prepare_exclusive;
-        }
-
-        case pas_segregated_partial_view_kind: {
-            PAS_ASSERT(!pas_segregated_page_config_is_utility(page_config));
-            partial = (pas_segregated_partial_view*)pas_segregated_view_get_ptr(old_view);
-            if (partial->eligibility_has_been_noted) {
-                new_view = old_view;
-                new_page = old_page;
-                pas_segregated_page_switch_lock(new_page, &held_lock, page_config);
-                partial->eligibility_has_been_noted = false;
-                partial->eligibility_notification_has_been_deferred = false;
-                goto prepare_partial;
-            }
-            break;
-        }
-
-        default:
-            break;
         }
     }
 
@@ -1164,8 +653,7 @@ pas_local_allocator_refill_with_known_config(
         }
     }
 
-    /* At this point we need to get the page. We can't do that for primordial partial views,
-       though. */
+    /* At this point we need to get the page. */
     
     if (old_view) {
         if (verbose)
@@ -1183,64 +671,25 @@ pas_local_allocator_refill_with_known_config(
         return false;
     }
 
-    if (pas_segregated_view_is_some_exclusive(new_view)) {
-        exclusive = pas_segregated_view_get_exclusive(new_view);
-        new_page = pas_segregated_page_for_boundary(exclusive->page_boundary, page_config);
+    PAS_ASSERT(pas_segregated_view_is_some_exclusive(new_view));
+    exclusive = pas_segregated_view_get_exclusive(new_view);
+    new_page = pas_segregated_page_for_boundary(exclusive->page_boundary, page_config);
 
-        pas_segregated_page_switch_lock_and_rebias_while_ineligible(
-            new_page, &held_lock, cache_node, page_config);
+    pas_segregated_page_switch_lock_and_rebias_while_ineligible(
+        new_page, &held_lock, cache_node, page_config);
 
-        pas_segregated_exclusive_view_did_start_allocating(
-            exclusive, new_view, size_directory, new_page, &held_lock, page_config);
-        goto prepare_exclusive;
-    }
+    pas_segregated_exclusive_view_did_start_allocating(
+        exclusive, new_view, size_directory, new_page, &held_lock, page_config);
 
-    PAS_TESTING_ASSERT(pas_segregated_view_is_partial(new_view));
-    PAS_ASSERT(!pas_segregated_page_config_is_utility(page_config));
-
-    partial = pas_segregated_view_get_partial(new_view);
-    shared = pas_compact_segregated_shared_view_ptr_load(&partial->shared_view);
-
-    if (!shared) {
-        pas_lock_switch(&held_lock, NULL);
-        if (verbose)
-            pas_log("Going the primordial route.\n");
-        
-        return page_config.specialized_local_allocator_start_allocating_in_primordial_partial_view(
-            allocator, allocation_mode, pas_segregated_view_get_partial(new_view), size_directory);
-    }
-
-    new_page = pas_segregated_page_for_boundary(
-        pas_shared_handle_or_page_boundary_get_page_boundary(
-            shared->shared_handle_or_page_boundary, page_config),
-        page_config);
-
-    pas_segregated_page_switch_lock(new_page, &held_lock, page_config);
-
-    pas_segregated_partial_view_did_start_allocating(partial, shared, page_config);
-    goto prepare_partial;
-    
 prepare_exclusive:
     pas_local_allocator_prepare_to_allocate(
         allocator, pas_segregated_exclusive_view_kind, exclusive, new_page, size_directory,
         page_config);
-    goto done;
 
-prepare_partial:
-    pas_local_allocator_prepare_to_allocate(
-        allocator, pas_segregated_partial_view_kind, partial, new_page, size_directory,
-        page_config);
-
-done:
     pas_lock_switch(&held_lock, NULL);
     
     PAS_TESTING_ASSERT(allocator->page_ish);
     PAS_TESTING_ASSERT(allocator->payload_end || allocator->current_offset < allocator->end_offset);
-    if (pas_local_allocator_config_kind_is_primordial_partial(allocator->config_kind)) {
-        PAS_TESTING_ASSERT(allocator->current_offset == allocator->end_offset);
-        PAS_TESTING_ASSERT(allocator->remaining); /* We must have left behind at least one object for the
-                                                     fast path to take. */
-    }
 
     return true;
 }
@@ -1251,7 +700,6 @@ typedef struct {
     pas_segregated_page_config page_config;
     uintptr_t page_boundary;
     pas_segregated_page* page;
-    pas_segregated_page_role role;
 } pas_local_allocator_return_memory_to_page_set_bit_data;
 
 static PAS_ALWAYS_INLINE unsigned
@@ -1278,20 +726,18 @@ pas_local_allocator_return_memory_to_page_set_bit_callback(pas_found_bit_index i
         (unsigned)index.index, data->page_config.base);
 
     pas_segregated_page_deallocate_with_page(
-        data->page, object, pas_segregated_deallocation_direct_mode, NULL, data->page_config, data->role);
+        data->page, object, pas_segregated_deallocation_direct_mode, NULL, data->page_config);
 
     return true;
 }
 
 static PAS_ALWAYS_INLINE void
-pas_local_allocator_return_memory_to_page_for_role(
+pas_local_allocator_return_memory_to_page(
     pas_local_allocator* allocator,
     pas_segregated_view view,
     pas_segregated_page* page,
     pas_segregated_size_directory* directory,
-    pas_lock_hold_mode heap_lock_hold_mode,
-    pas_segregated_page_config page_config,
-    pas_segregated_page_role role)
+    pas_segregated_page_config page_config)
 {
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
@@ -1312,14 +758,6 @@ pas_local_allocator_return_memory_to_page_for_role(
                 allocator,
                 pas_local_allocator_config_kind_get_string(allocator->config_kind));
     }
-
-    if (pas_local_allocator_config_kind_is_primordial_partial(allocator->config_kind)) {
-        PAS_ASSERT(!pas_segregated_page_config_is_utility(page_config));
-        if (verbose)
-            pas_log("Blessing primordial.\n");
-        pas_local_allocator_bless_primordial_partial_view_before_stopping(
-            allocator, page, heap_lock_hold_mode, page_config);
-    }
     
     object_size = allocator->object_size;
 
@@ -1329,7 +767,7 @@ pas_local_allocator_return_memory_to_page_for_role(
         
         for (object = begin; object < end; object += object_size) {
             pas_segregated_page_deallocate_with_page(
-                page, object, pas_segregated_deallocation_direct_mode, NULL, page_config, role);
+                page, object, pas_segregated_deallocation_direct_mode, NULL, page_config);
         }
     }
     
@@ -1341,8 +779,6 @@ pas_local_allocator_return_memory_to_page_for_role(
         allocator->bits[allocator->current_offset] = pas_reverse64(allocator->current_word);
     } else if (page_config.variant == pas_small_segregated_page_config_variant)
         allocator->bits[allocator->current_offset] = allocator->current_word;
-
-    PAS_ASSERT(!pas_local_allocator_config_kind_is_primordial_partial(allocator->config_kind));
 
     full_alloc_bits =
         pas_full_alloc_bits_create_for_view_and_directory(view, directory, page_config);
@@ -1358,7 +794,6 @@ pas_local_allocator_return_memory_to_page_for_role(
     data.page_config = page_config;
     data.page_boundary = pas_local_allocator_page_boundary(allocator, page_config);
     data.page = page;
-    data.role = role;
     pas_bitvector_for_each_set_bit(
         pas_local_allocator_return_memory_to_page_bits_source,
         full_alloc_bits.word_index_begin, full_alloc_bits.word_index_end,
@@ -1366,28 +801,6 @@ pas_local_allocator_return_memory_to_page_for_role(
         &data);
 }
 
-static PAS_ALWAYS_INLINE void
-pas_local_allocator_return_memory_to_page(pas_local_allocator* allocator,
-                                          pas_segregated_view view,
-                                          pas_segregated_page* page,
-                                          pas_segregated_size_directory* directory,
-                                          pas_lock_hold_mode heap_lock_hold_mode,
-                                          pas_segregated_page_config page_config)
-{
-    switch (pas_segregated_view_get_page_role_for_allocator(view)) {
-    case pas_segregated_page_shared_role:
-        pas_local_allocator_return_memory_to_page_for_role(
-            allocator, view, page, directory, heap_lock_hold_mode, page_config,
-            pas_segregated_page_shared_role);
-        return;
-    case pas_segregated_page_exclusive_role:
-        pas_local_allocator_return_memory_to_page_for_role(
-            allocator, view, page, directory, heap_lock_hold_mode, page_config,
-            pas_segregated_page_exclusive_role);
-        return;
-    }
-    PAS_ASSERT_NOT_REACHED();
-}
 
 /* This returns either:
    
@@ -1602,7 +1015,7 @@ pas_local_allocator_try_allocate_small_segregated_slow_impl(
            inlining this made it twice as expensive. It's just one of those things: if code size is ever
            an issue, then we should ponder turning this back into an outline call. */
         refill_result = pas_local_allocator_refill_with_known_config(
-            allocator, allocation_mode, counts, config.small_segregated_config);
+            allocator, counts, config.small_segregated_config);
 
         if (!refill_result)
             return pas_allocation_result_create_failure();
@@ -1671,24 +1084,6 @@ pas_local_allocator_try_allocate_out_of_line_cases(
         pas_local_allocator_scavenger_data_did_use_for_allocation(&allocator->scavenger_data);
         return config.medium_bitfit_config.specialized_allocator_try_allocate(
             pas_local_allocator_get_bitfit(allocator), allocator, size, alignment, allocation_mode);
-    }
-    
-    if (config.small_segregated_config.base.is_enabled &&
-        our_kind == pas_local_allocator_config_kind_create_primordial_partial(
-            config.small_segregated_config.kind)) {
-        return pas_fast_path_allocation_result_from_allocation_result(
-            config.small_segregated_config
-            .specialized_local_allocator_try_allocate_in_primordial_partial_view(allocator, allocation_mode),
-            pas_fast_path_allocation_result_need_slow);
-    }
-
-    if (config.medium_segregated_config.base.is_enabled &&
-        our_kind == pas_local_allocator_config_kind_create_primordial_partial(
-            config.medium_segregated_config.kind)) {
-        return pas_fast_path_allocation_result_from_allocation_result(
-            config.medium_segregated_config
-            .specialized_local_allocator_try_allocate_in_primordial_partial_view(allocator, allocation_mode),
-            pas_fast_path_allocation_result_need_slow);
     }
 
     if (config.marge_bitfit_config.base.is_enabled &&

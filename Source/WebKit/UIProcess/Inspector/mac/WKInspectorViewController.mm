@@ -87,6 +87,7 @@ static void* const safeAreaInsetsKVOContext = (void*)&safeAreaInsetsKVOContext;
 - (void)dealloc
 {
     if (_webView) {
+        [_webView removeObserver:self forKeyPath:safeAreaInsetsKVOKey context:safeAreaInsetsKVOContext];
         [_webView setUIDelegate:nil];
         [_webView setNavigationDelegate:nil];
         [_webView setInspectorWKWebViewDelegate:nil];
@@ -321,8 +322,6 @@ static void* const safeAreaInsetsKVOContext = (void*)&safeAreaInsetsKVOContext;
 
 - (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView
 {
-    [_webView removeObserver:self forKeyPath:safeAreaInsetsKVOKey];
-
     RetainPtr delegate = _delegate.get();
     if (!!delegate && [delegate respondsToSelector:@selector(inspectorViewControllerInspectorDidCrash:)])
         [delegate inspectorViewControllerInspectorDidCrash:self];

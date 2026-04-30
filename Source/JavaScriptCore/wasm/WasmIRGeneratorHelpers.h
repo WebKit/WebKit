@@ -35,6 +35,7 @@
 #include "JSWebAssemblyInstance.h"
 #include "LinkBuffer.h"
 #include "ProbeContext.h"
+#include "WasmCompilationContext.h"
 #include "WasmOperations.h"
 
 namespace JSC { namespace Wasm {

@@ -99,7 +99,7 @@ PlatformPathImpl& Path::ensurePlatformPathImpl()
     if (RefPtr impl = asImpl()) {
         if (const auto* stream = dynamicDowncast<PathStream>(*impl))
             return downcast<PlatformPathImpl>(setImpl(PlatformPathImpl::create(stream->segments())));
-        return downcast<PlatformPathImpl>(*impl);
+        return downcast<PlatformPathImpl>(*impl.unsafeGet());
     }
     // Generally platform path is never empty. This should only be called during Path::add() on an empty path.
     return downcast<PlatformPathImpl>(setImpl(PlatformPathImpl::create()));

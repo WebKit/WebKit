@@ -37,6 +37,7 @@ class MultithreadingTest : public ANGLETest<>
         setConfigGreenBits(8);
         setConfigBlueBits(8);
         setConfigAlphaBits(8);
+        setPbuffer(true);
     }
 
     bool hasFenceSyncExtension() const
@@ -4495,6 +4496,132 @@ TEST_P(MultithreadingTest, EGLImageSiblingDeleteShouldNotUAF)
         glFinish();
 
         glDeleteFramebuffers(1, &fbo);
+        threadSynchronization.nextStep(Step::Finish);
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+    };
+
+    std::array<LockStepThreadFunc, 2> threadFuncs = {
+        std::move(thread0),
+        std::move(thread1),
+    };
+
+    RunLockStepThreads(getEGLWindow(), threadFuncs.size(), threadFuncs.data());
+
+    ASSERT_NE(currentStep, Step::Abort);
+
+    // Restore the fixture's context for teardown.
+    EXPECT_EGL_TRUE(
+        eglMakeCurrent(dpy, window->getSurface(), window->getSurface(), window->getContext()));
+}
+
+// Test that EGL image creation and destruction don't race.
+TEST_P(MultithreadingTest, EGLImageRaceCreateAndDestroy)
+{
+    // While the EGL backend doesn't technically support multithreading, it's expected to be
+    // thread-safe for image creation to support Chrome.
+    ANGLE_SKIP_TEST_IF(!platformSupportsMultithreading() && !IsOpenGLES());
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_EGL_image"));
+
+    EGLWindow *window = getEGLWindow();
+    EGLDisplay dpy    = window->getDisplay();
+
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(dpy, "EGL_KHR_image_base"));
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(dpy, "EGL_KHR_gl_texture_2D_image"));
+
+    constexpr GLsizei kTexSize = 64;
+
+    std::mutex mutex;
+    std::condition_variable condVar;
+
+    enum class Step
+    {
+        Start,
+        T0CreatedImage,
+        T1DestroyLoopStarted,
+        T0RecreatedImage,
+        Finish,
+        Abort,
+    };
+    Step currentStep = Step::Start;
+
+    EGLImage predictedEglImage = EGL_NO_IMAGE_KHR;
+
+    auto thread0 = [&](EGLDisplay dpy, EGLSurface surface, EGLContext context) {
+        ThreadSynchronization<Step> threadSynchronization(&currentStep, &mutex, &condVar);
+
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, surface, surface, context));
+        EXPECT_EGL_SUCCESS();
+
+        // Create source texture and the EGLImage
+        GLuint sourceTex = 0;
+        glGenTextures(1, &sourceTex);
+        glBindTexture(GL_TEXTURE_2D, sourceTex);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kTexSize, kTexSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                     nullptr);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        ASSERT_GL_NO_ERROR();
+
+        predictedEglImage = eglCreateImageKHR(
+            dpy, context, EGL_GL_TEXTURE_2D_KHR,
+            reinterpret_cast<EGLClientBuffer>(static_cast<uintptr_t>(sourceTex)), nullptr);
+        ASSERT_EGL_SUCCESS();
+        ASSERT_NE(predictedEglImage, EGL_NO_IMAGE_KHR);
+
+        // Immediately delete the image.  This puts the |predictedEglImage| handle in a recycle
+        // list.
+        EXPECT_EGL_TRUE(eglDestroyImageKHR(dpy, predictedEglImage));
+
+        // Let the other thread get into a loop that tries to destroy the predicted image, to be
+        // created by this thread simultaneously.
+        threadSynchronization.nextStep(Step::T0CreatedImage);
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::T1DestroyLoopStarted));
+
+        // Create another EGL image.  In ANGLE, this would return the same handle as
+        // |predictedEglImage|.
+        GLuint sourceTex2 = 0;
+        glGenTextures(1, &sourceTex2);
+        glBindTexture(GL_TEXTURE_2D, sourceTex2);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kTexSize, kTexSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                     nullptr);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        ASSERT_GL_NO_ERROR();
+
+        EGLImage eglImage = eglCreateImageKHR(
+            dpy, context, EGL_GL_TEXTURE_2D_KHR,
+            reinterpret_cast<EGLClientBuffer>(static_cast<uintptr_t>(sourceTex2)), nullptr);
+        ASSERT_EGL_SUCCESS();
+        ASSERT_NE(eglImage, EGL_NO_IMAGE_KHR);
+
+        // Wait for the destroy loop to stop.
+        threadSynchronization.nextStep(Step::T0RecreatedImage);
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Finish));
+
+        if (eglImage != predictedEglImage)
+        {
+            WARN() << "New EGL image does not have the same handle as destroyed image, test is "
+                      "ineffective";
+            EXPECT_EGL_TRUE(eglDestroyImageKHR(dpy, eglImage));
+        }
+
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+    };
+
+    auto thread1 = [&](EGLDisplay dpy, EGLSurface surface, EGLContext context) {
+        ThreadSynchronization<Step> threadSynchronization(&currentStep, &mutex, &condVar);
+
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::T0CreatedImage));
+        Timer timer;
+        timer.start();
+        threadSynchronization.nextStep(Step::T1DestroyLoopStarted);
+        // Try to destroy the image with a handle that is expected to be recycled.  The destroy call
+        // will fail before T0 creates the image, and will succeed right after, assuming there are
+        // no race conditions.
+        while (!eglDestroyImageKHR(dpy, predictedEglImage) && timer.getElapsedWallClockTime() < 1.0)
+            ;
+
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::T0RecreatedImage));
         threadSynchronization.nextStep(Step::Finish);
         EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
     };

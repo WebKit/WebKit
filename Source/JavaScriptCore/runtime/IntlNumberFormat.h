@@ -228,7 +228,8 @@ private:
     CString m_dataLocaleWithExtensions;
 
     String m_locale;
-    String m_numberingSystem;
+    String m_dataLocale;
+    mutable String m_numberingSystem;
     String m_currency;
     String m_unit;
     unsigned m_minimumIntegerDigits { 1 };

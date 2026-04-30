@@ -24,14 +24,133 @@
  */
 
 #include "config.h"
+#include "XREquirectLayer.h"
 
 #if ENABLE(WEBXR_LAYERS)
-#include "XREquirectLayer.h"
+
+#include "Logging.h"
+#include "WebXRRigidTransform.h"
+#include "WebXRSession.h"
+#include "XRLayerBacking.h"
+#include "XRWebGLBinding.h"
+#include <wtf/Scope.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-XREquirectLayer::~XREquirectLayer() = default;
+WTF_MAKE_TZONE_ALLOCATED_IMPL(XREquirectLayer);
 
+XREquirectLayer::XREquirectLayer(ScriptExecutionContext& scriptExecutionContext, WebXRSession& session, Ref<XRLayerBacking>&& backing, const XREquirectLayerInit& init)
+    : XRCompositionLayer(&scriptExecutionContext, session, WTF::move(backing), init)
+    , m_space(init.space)
+    , m_transform((init.transform) ? init.transform : WebXRRigidTransform::create())
+    , m_radius(init.radius)
+    , m_centralHorizontalAngle(init.centralHorizontalAngle)
+    , m_upperVerticalAngle(init.upperVerticalAngle)
+    , m_lowerVerticalAngle(init.lowerVerticalAngle)
+{
+    setIsStatic(init.isStatic);
 }
 
+XREquirectLayer::~XREquirectLayer() = default;
+
+const WebXRSpace& XREquirectLayer::space() const
+{
+    ASSERT(m_space);
+    return *m_space;
+}
+
+void XREquirectLayer::setSpace(WebXRSpace& space)
+{
+    if (m_space == &space)
+        return;
+
+    m_space = space;
+    setNeedsRedraw(true);
+}
+
+const WebXRRigidTransform& XREquirectLayer::transform() const
+{
+    ASSERT(m_transform);
+    return *m_transform;
+}
+
+void XREquirectLayer::setTransform(WebXRRigidTransform& transform)
+{
+    if (m_transform == &transform)
+        return;
+
+    m_transform = transform;
+    setNeedsRedraw(true);
+}
+
+void XREquirectLayer::startFrame(PlatformXR::FrameData& frameData)
+{
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    auto it = frameData.layers.find(m_backing->handle());
+    if (it == frameData.layers.end())
+        return;
+
+    if (needsRedraw())
+        m_backing->startFrame(frameData);
+#else
+    UNUSED_PARAM(frameData);
 #endif
+}
+
+void XREquirectLayer::recomputePose()
+{
+    auto scopeExit = makeScopeExit([&]() {
+        RELEASE_LOG_ERROR(XR, "Failed to invert space transform, using identity transform for layer pose");
+        m_poseInLocalSpace = PlatformXR::FrameData::Pose { .position = { 0, 0, 0 }, .orientation = { 0, 0, 0, 1 } };
+    });
+
+    std::optional<TransformationMatrix> spaceTransform;
+    if (m_space)
+        spaceTransform = m_space->nativeOrigin();
+    if (!spaceTransform)
+        spaceTransform = TransformationMatrix();
+    else if (!spaceTransform->isInvertible())
+        return;
+
+    auto transformInLocalSpace = m_transform ? *spaceTransform->inverse() * m_transform->rawTransform() : *spaceTransform->inverse();
+    TransformationMatrix::Decomposed4Type decomposed;
+    if (!transformInLocalSpace.decompose4(decomposed))
+        return;
+
+    scopeExit.release();
+    m_poseInLocalSpace.position = { static_cast<float>(decomposed.translateX), static_cast<float>(decomposed.translateY), static_cast<float>(decomposed.translateZ) };
+    m_poseInLocalSpace.orientation = { static_cast<float>(decomposed.quaternion.x), static_cast<float>(decomposed.quaternion.y), static_cast<float>(decomposed.quaternion.z), static_cast<float>(decomposed.quaternion.w) };
+}
+
+PlatformXR::DeviceLayer XREquirectLayer::endFrame()
+{
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    PlatformXR::DeviceLayer layerData;
+    if (needsRedraw())
+        m_backing->endFrame(layerData);
+
+    layerData.handle = m_backing->handle();
+    layerData.visible = true;
+
+    if (needsRedraw())
+        recomputePose();
+
+    fillInCommonDeviceLayerData(layerData);
+
+    layerData.equirectLayerData = {
+        .radius = m_radius,
+        .centralHorizontalAngle = m_centralHorizontalAngle,
+        .upperVerticalAngle = m_upperVerticalAngle,
+        .lowerVerticalAngle = m_lowerVerticalAngle,
+        .poseInLocalSpace = m_poseInLocalSpace,
+    };
+    return layerData;
+#else
+    return PlatformXR::DeviceLayer { };
+#endif
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(WEBXR_LAYERS)

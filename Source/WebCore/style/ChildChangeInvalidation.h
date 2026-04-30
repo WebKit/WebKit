@@ -48,12 +48,12 @@ private:
     using MatchingHasSelectors = HashSet<const CSSSelector*>;
     enum class ChangedElementRelation : uint8_t { SelfOrDescendant, Sibling };
     enum class EmptyInvalidation : bool { No, Yes };
+    enum class MutationPhase : bool { Before, After };
     void invalidateForChangedElement(Element&, MatchingHasSelectors&, ChangedElementRelation, EmptyInvalidation = EmptyInvalidation::No);
-    void invalidateForChangeOutsideHasScope();
+    void invalidateForHasSiblings(MatchingHasSelectors&, MutationPhase);
 
     template<typename Function> void traverseRemovedElements(Function&&);
     template<typename Function> void traverseAddedElements(Function&&);
-    template<typename Function> void traverseRemainingExistingSiblings(Function&&);
 
     Element& parentElement() { return *m_parentElement; }
 

@@ -6151,12 +6151,6 @@ GraphicsLayerFactory* RenderLayerCompositor::graphicsLayerFactory() const
     return page().chrome().client().graphicsLayerFactory();
 }
 
-void RenderLayerCompositor::updateScrollSnapPropertiesWithFrameView(const LocalFrameView& frameView) const
-{
-    if (RefPtr coordinator = scrollingCoordinator())
-        coordinator->updateScrollSnapPropertiesWithFrameView(frameView);
-}
-
 Page& RenderLayerCompositor::page() const
 {
     return m_renderView.page();

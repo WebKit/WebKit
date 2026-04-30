@@ -38,7 +38,6 @@
 #include <wtf/StringPrintStream.h>
 #include <wtf/text/MakeString.h>
 
-extern "C" void* SYSV_ABI relocateJITReturnPC(const void* codePtr, const void* oldSignatureSP, const void* newSignatureSP);
 extern "C" void* SYSV_ABI getSentinelFrameReturnPC(const void* signatureSP);
 
 namespace JSC {
@@ -53,31 +52,27 @@ std::unique_ptr<EvacuatedStackSlice> EvacuatedStackSlice::create(std::span<Regis
     return slice;
 }
 
-EvacuatedStackSlice::EvacuatedStackSlice(std::span<Register> stackSpan, Vector<unsigned>&& frameOffsets, const CallFrame* frameToReturnFromForEntry)
-    : Base(stackSpan.size())
-    , m_originalBase(stackSpan.data())
-    , m_frameOffsets(WTF::move(frameOffsets))
-    , m_entryPC(frameToReturnFromForEntry->rawReturnPC())
-    , m_entryPCFrame(frameToReturnFromForEntry)
-{
-    memcpySpan(slots(), stackSpan);
-}
-
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
-void* relocateReturnPC(void* returnPC, const CallerFrameAndPC* originalFP, const CallerFrameAndPC* newFP)
+EvacuatedStackSlice::EvacuatedStackSlice(std::span<Register> stackSpan, Vector<unsigned>&& frameOffsets, const CallFrame* frameToReturnFromForEntry)
+    : Base(stackSpan.size())
+    , m_frameOffsets(WTF::move(frameOffsets))
+    , m_entryPC(frameToReturnFromForEntry->rawReturnPC())
 {
-#if CPU(ARM64E)
-    auto* originalSignatureSP = reinterpret_cast<const void*>(originalFP + 1);
-    auto* newSignatureSP = reinterpret_cast<const void*>(newFP + 1);
-    if (Options::useJITCage() && isJITPC(removeCodePtrTag(returnPC)))
-        return relocateJITReturnPC(returnPC, originalSignatureSP, newSignatureSP);
-    return ptrauth_auth_and_resign(returnPC, ptrauth_key_asib, originalSignatureSP, ptrauth_key_asib, newSignatureSP);
-#else
-    UNUSED_PARAM(originalFP);
-    UNUSED_PARAM(newFP);
-    return returnPC;
-#endif
+    memcpySpan(slots(), stackSpan);
+
+    // Re-sign all return PCs
+    for (unsigned offset : m_frameOffsets) {
+        SUPPRESS_MEMORY_UNSAFE_CAST // this and other casts are guaranteed by stack construction
+        auto* frameRecord = reinterpret_cast<CallerFrameAndPC*>(slots().data() + offset);
+        SUPPRESS_MEMORY_UNSAFE_CAST
+        auto* originalDiscriminator = reinterpret_cast<const void*>(reinterpret_cast<const CallerFrameAndPC*>(stackSpan.data() + offset) + 1);
+        frameRecord->returnPC = relocateReturnPC(frameRecord->returnPC, originalDiscriminator, saltedDiscriminator(frameRecord));
+    }
+
+    SUPPRESS_MEMORY_UNSAFE_CAST
+    auto* entryOriginalDiscriminator = reinterpret_cast<const void*>(reinterpret_cast<const CallerFrameAndPC*>(frameToReturnFromForEntry) + 1);
+    m_entryPC = relocateReturnPC(const_cast<void*>(m_entryPC), entryOriginalDiscriminator, saltedDiscriminator(this));
 }
 
 CallFrame* EvacuatedStackSlice::implant(Register* base, CallFrame* lastFrame)
@@ -95,14 +90,16 @@ CallFrame* EvacuatedStackSlice::implant(Register* base, CallFrame* lastFrame)
 
         SUPPRESS_MEMORY_UNSAFE_CAST // cast validity is guaranteed by stack construction
         auto* frameRecord = reinterpret_cast<CallerFrameAndPC*>(base + offset);
-        SUPPRESS_MEMORY_UNSAFE_CAST // ditto
-        auto* originalFrameRecordAddr = reinterpret_cast<const CallerFrameAndPC*>(m_originalBase + offset);
 
         // Link this frame to the one above and re-sign the returnPC for the new location
         frameRecord->callerFrame = lastFrame;
-        frameRecord->returnPC = isReturnToSentinelFrame
-            ? getSentinelFrameReturnPC(frameRecord + 1)
-            : relocateReturnPC(frameRecord->returnPC, originalFrameRecordAddr, frameRecord);
+        if (isReturnToSentinelFrame)
+            frameRecord->returnPC = getSentinelFrameReturnPC(frameRecord + 1);
+        else {
+            auto* originalDiscriminator = saltedDiscriminator(reinterpret_cast<const void*>(slots().data() + offset));
+            auto* newDiscriminator = reinterpret_cast<const void*>(frameRecord + 1);
+            frameRecord->returnPC = relocateReturnPC(frameRecord->returnPC, originalDiscriminator, newDiscriminator);
+        }
 
         lastFrame = static_cast<CallFrame*>(static_cast<void*>(frameRecord));
         ASSERT(isStackAligned(lastFrame));

@@ -32,6 +32,7 @@
 #include "RenderMultiColumnFlow.h"
 #include "RenderObjectStyle.h"
 #include "RenderTable.h"
+#include "RenderText.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -56,9 +57,15 @@ static LineBoxParentSearchResult findParentOfEmptyOrFirstLineBox(RenderBlock& bl
             continue;
 
         if (child.isInline()) {
-            if (!is<RenderInline>(child) || !isEmptyInline(downcast<RenderInline>(child)))
-                return { &blockContainer, { }, false };
-            fallbackParent = &blockContainer;
+            // Continue searching past empty inlines (e.g., <a id="anchor"></a>) — the remaining checks below
+            // assume block-level children, and an inline falling through would falsely trigger failedDueToBlockification.
+            if (is<RenderInline>(child) && isEmptyInline(downcast<RenderInline>(child))) {
+                fallbackParent = &blockContainer;
+                continue;
+            }
+            if (is<RenderText>(child) && downcast<RenderText>(child).containsOnlyCollapsibleWhitespace())
+                continue;
+            return { &blockContainer, { }, false };
         }
 
         if (child.isFloating() || child.isOutOfFlowPositioned() || is<RenderMenuList>(child))

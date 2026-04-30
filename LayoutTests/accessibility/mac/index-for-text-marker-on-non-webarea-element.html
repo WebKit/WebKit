@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<p id="p">Hello</p>
+
+<script>
+output = "This test ensures that non-WebArea elements advertise and support AXIndexForTextMarker, AXTextMarkerForIndex, and AXTextMarkerIsValid parameterized attributes.\n\n";
+
+if (window.accessibilityController) {
+    webArea = accessibilityController.rootElement.childAtIndex(0);
+    pElement = accessibilityController.accessibleElementById("p");
+
+    // The p element is not a WebArea — it should still support index-for-marker attributes.
+    pParamAttrs = pElement.parameterizedAttributeNames();
+    output += expect("pParamAttrs.includes('AXIndexForTextMarker')", "true");
+    output += expect("pParamAttrs.includes('AXTextMarkerForIndex')", "true");
+    output += expect("pParamAttrs.includes('AXTextMarkerIsValid')", "true");
+
+    // Verify the WebArea also still supports them.
+    webAreaParamAttrs = webArea.parameterizedAttributeNames();
+    output += expect("webAreaParamAttrs.includes('AXIndexForTextMarker')", "true");
+    output += expect("webAreaParamAttrs.includes('AXTextMarkerForIndex')", "true");
+    output += expect("webAreaParamAttrs.includes('AXTextMarkerIsValid')", "true");
+
+    // Verify the attribute works: ask the p element for the index of its start marker.
+    range = pElement.textMarkerRangeForElement(pElement);
+    startMarker = pElement.startTextMarkerForTextMarkerRange(range);
+    output += expect("pElement.indexForTextMarker(startMarker) >= 0", "true");
+
+    debug(output);
+}
+</script>
+</body>
+</html>

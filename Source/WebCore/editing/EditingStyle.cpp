@@ -72,6 +72,7 @@
 #include "StyleRule.h"
 #include "StyledElement.h"
 #include "VisibleUnits.h"
+#include <array>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
@@ -1049,9 +1050,9 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement& element, Ref
     return conflicts;
 }
 
-static std::span<const HTMLElementEquivalent* const> NODELETE htmlElementEquivalents()
+SUPPRESS_NODELETE static std::span<const HTMLElementEquivalent* const> NODELETE htmlElementEquivalents()
 {
-    static const HTMLElementEquivalent* const equivalents[] = {
+    static const auto equivalents = std::to_array<const HTMLElementEquivalent*>({
         new HTMLFontWeightEquivalent(HTMLNames::bTag),
         new HTMLFontWeightEquivalent(HTMLNames::strongTag),
 
@@ -1063,7 +1064,7 @@ static std::span<const HTMLElementEquivalent* const> NODELETE htmlElementEquival
         new HTMLTextDecorationEquivalent(CSSValueUnderline, HTMLNames::uTag),
         new HTMLTextDecorationEquivalent(CSSValueLineThrough, HTMLNames::sTag),
         new HTMLTextDecorationEquivalent(CSSValueLineThrough, HTMLNames::strikeTag),
-    };
+    });
     return equivalents;
 }
 
@@ -1083,9 +1084,9 @@ bool EditingStyle::conflictsWithImplicitStyleOfElement(HTMLElement& element, Edi
     return false;
 }
 
-static std::span<const HTMLAttributeEquivalent* const> NODELETE htmlAttributeEquivalents()
+SUPPRESS_NODELETE static std::span<const HTMLAttributeEquivalent* const> NODELETE htmlAttributeEquivalents()
 {
-    static const HTMLAttributeEquivalent* const equivalents[] = {
+    static const auto equivalents = std::to_array<const HTMLAttributeEquivalent*>({
         // elementIsStyledSpanOrHTMLEquivalent depends on the fact each HTMLAttriuteEquivalent matches exactly one attribute
         // of exactly one element except dirAttr.
         new HTMLAttributeEquivalent(CSSPropertyColor, HTMLNames::fontTag, HTMLNames::colorAttr),
@@ -1094,7 +1095,7 @@ static std::span<const HTMLAttributeEquivalent* const> NODELETE htmlAttributeEqu
 
         new HTMLAttributeEquivalent(CSSPropertyDirection, HTMLNames::dirAttr),
         new HTMLAttributeEquivalent(CSSPropertyUnicodeBidi, HTMLNames::dirAttr),
-    };
+    });
     return equivalents;
 }
 

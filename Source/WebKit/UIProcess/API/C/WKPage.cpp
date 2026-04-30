@@ -917,17 +917,17 @@ unsigned WKPageGetPageCount(WKPageRef pageRef)
 
 bool WKPageCanDelete(WKPageRef pageRef)
 {
-    return toImpl(pageRef)->canDelete();
+    return protect(toImpl(pageRef))->canDelete();
 }
 
 bool WKPageHasSelectedRange(WKPageRef pageRef)
 {
-    return toImpl(pageRef)->hasSelectedRange();
+    return protect(toImpl(pageRef))->hasSelectedRange();
 }
 
 bool WKPageIsContentEditable(WKPageRef pageRef)
 {
-    return toImpl(pageRef)->isContentEditable();
+    return protect(toImpl(pageRef))->isContentEditable();
 }
 
 void WKPageSetMaintainsInactiveSelection(WKPageRef pageRef, bool newValue)

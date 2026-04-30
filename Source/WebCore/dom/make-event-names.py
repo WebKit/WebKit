@@ -214,18 +214,33 @@ inline EventTypeInfo EventNames::typeInfoForEvent(const AtomString& eventType) c
 #include "EventNames.h"
 
 namespace WebCore {
+''')
 
-EventNames::EventNames()''')
+        # Generate static constexpr StaticStringImpl declarations
+        for name in sorted(event_names_input.keys()):
+            conditional = event_names_input[name].get('conditional', None)
+            if conditional:
+                writeln(f'#if {conditional}')
+            writeln(f'static constexpr StringImpl::StaticStringImpl {name}Data("{name}", StringImpl::StringAtom);')
+            if conditional:
+                writeln('#endif')
+
+        writeln('')
+
+        # Generate constructor using StaticStringImpl references
+        writeln('EventNames::EventNames()')
 
         delimiter = ':'
         for name in sorted(event_names_input.keys()):
             conditional = event_names_input[name].get('conditional', None)
             if conditional:
                 writeln(f'#if {conditional}')
-            writeln(f'    {delimiter} {name}Event(\"{name}\"_s)')
+            writeln(f'    {delimiter} {name}Event({name}Data)')
             delimiter = ','
             if conditional:
                 writeln('#endif')
+
+        # m_typeInfoMap uses already-initialized member variables as keys
         writeln(f'    {delimiter} m_typeInfoMap({{')
         for name in sorted(event_names_input.keys()):
             entry = event_names_input[name]

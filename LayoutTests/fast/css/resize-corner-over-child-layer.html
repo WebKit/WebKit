@@ -1,0 +1,49 @@
+<html>
+<head>
+<style>
+div.container {
+    overflow: scroll;
+    resize: both;
+    width: 200px;
+    height: 100px;
+    border: solid 1px black;
+}
+div.child {
+    will-change: transform;
+}
+</style>
+<script>
+function test()
+{
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    if (!window.eventSender)
+        return;
+
+    var target = document.getElementById("container");
+    var x = target.offsetLeft + target.offsetWidth - 5;
+    var y = target.offsetTop + target.offsetHeight - 5;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(x + 50, y + 50);
+    eventSender.mouseUp();
+
+    var result = document.getElementById("result");
+    var newWidth = target.offsetWidth;
+    var newHeight = target.offsetHeight;
+    if (newWidth > 200 && newHeight > 100)
+        result.textContent = "PASS: container resized to " + newWidth + "x" + newHeight;
+    else
+        result.textContent = "FAIL: container stayed at " + newWidth + "x" + newHeight + " (expected > 200x100)";
+}
+</script>
+</head>
+<body onload="test()">
+<p>The resize handle should work even when a child layer with overflowing content covers it.</p>
+<div id="container" class="container">
+    <div class="child">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</div>
+</div>
+<p id="result"></p>
+</body>
+</html>

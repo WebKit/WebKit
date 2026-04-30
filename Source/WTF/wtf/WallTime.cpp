@@ -31,13 +31,6 @@
 
 namespace WTF {
 
-MonotonicTime WallTime::approximateMonotonicTime() const
-{
-    if (isInfinity())
-        return MonotonicTime::fromRawSeconds(m_value);
-    return *this - now() + MonotonicTime::now();
-}
-
 void WallTime::dump(PrintStream& out) const
 {
     out.print("Wall(", m_value, " sec)");

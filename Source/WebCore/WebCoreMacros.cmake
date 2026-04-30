@@ -89,7 +89,6 @@ function(GENERATE_BINDINGS target)
         --idlFilesList ${idl_files_list}
         --idlFileNamesList ${included_idl_files_list}
         --ppIDLFilesList ${pp_idl_files_list}
-        --preprocessor "${CODE_GENERATOR_PREPROCESSOR}"
         --idlAttributesFile ${idl_attributes_file}
     )
     if (arg_SUPPLEMENTAL_DEPFILE)

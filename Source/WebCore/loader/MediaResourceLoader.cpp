@@ -44,6 +44,7 @@
 #include "OriginAccessPatterns.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include <WebCore/HTTPStatusCodes.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SortedArrayMap.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -239,7 +240,7 @@ bool MediaResourceLoader::verifyMediaResponse(const URL& requestURL, const Resou
         m_loadedFromOpaqueSource = LoadedFromOpaqueSource::Yes;
 
     // FIXME: We should probably implement https://html.spec.whatwg.org/multipage/media.html#verify-a-media-response
-    if (!requestURL.protocolIsInHTTPFamily() || response.httpStatusCode() != 206 || !response.contentRange().isValid() || !contextOrigin)
+    if (!requestURL.protocolIsInHTTPFamily() || response.httpStatusCode() != httpStatus206PartialContent || !response.contentRange().isValid() || !contextOrigin)
         return true;
 
     auto ensureResult = m_validationLoadInformations.ensure(requestURL, [&] () -> ValidationInformation {

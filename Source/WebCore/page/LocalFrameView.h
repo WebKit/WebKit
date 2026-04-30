@@ -324,7 +324,7 @@ public:
     LayoutRect layoutViewportRectIncludingObscuredInsets() const;
 
     std::optional<LayoutRect> visibleRectOfChild(const Frame&) const final;
-    bool ownerElementOfChildFrameUsesDarkAppearance(const Frame&) const final;
+    OptionSet<FrameOwnerElementAppearance> appearanceOfOwnerElementOfChildFrame(const Frame&) const final;
     
     static LayoutRect visibleDocumentRect(const FloatRect& visibleContentRect, float headerHeight, float footerHeight, const FloatSize& totalContentsSize, float pageScaleFactor);
 
@@ -685,7 +685,6 @@ public:
 
     void updateSnapOffsets() final;
     bool isScrollSnapInProgress() const final;
-    void updateScrollingCoordinatorScrollSnapProperties() const;
 
     float adjustVerticalPageScrollStepForFixedContent(float step) final;
 

@@ -27,6 +27,7 @@
 #pragma once
 
 #include "ShadowRealmObject.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

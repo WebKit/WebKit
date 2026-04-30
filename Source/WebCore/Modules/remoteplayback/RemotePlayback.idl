@@ -36,7 +36,7 @@ enum RemotePlaybackState {
     EnabledBySetting=RemotePlaybackEnabled,
     Exposed=Window,
     GenerateIsReachable=ImplOwnerNodeRoot,
-    GenerateAddOpaqueRoot=opaqueRootConcurrently
+    GenerateAddOpaqueRoot,
 ] interface RemotePlayback : EventTarget {
     Promise<long> watchAvailability(RemotePlaybackAvailabilityCallback callback);
     Promise<undefined> cancelWatchAvailability(optional long id);

@@ -266,14 +266,25 @@ const RealtimeMediaSourceCapabilities& MockRealtimeVideoSource::capabilities()
 
 auto MockRealtimeVideoSource::takePhotoInternal(PhotoSettings&&) -> Ref<TakePhotoNativePromise>
 {
+    if (m_isTakingPhoto)
+        return TakePhotoNativePromise::createAndReject("Already taking photo"_s);
+
     {
         Locker lock { m_imageBufferLock };
         invalidateDrawingState();
     }
 
+    m_isTakingPhoto = true;
     return invokeAsync(m_runLoop, [this, protectedThis = Ref { *this }] () mutable {
-        if (auto currentImage = generatePhoto())
+        auto currentImage = generatePhoto();
+        m_isTakingPhoto = false;
+
+        if (m_captureWasInterrupted.exchange(false))
+            return TakePhotoNativePromise::createAndReject("Capture interrupted by session reconfiguration"_s);
+
+        if (currentImage)
             return TakePhotoNativePromise::createAndResolve(std::make_pair(encodeData(WTF::move(currentImage), "image/png"_s, std::nullopt), "image/png"_s));
+
         return TakePhotoNativePromise::createAndReject("Failed to capture photo"_s);
     });
 }
@@ -809,6 +820,8 @@ void MockRealtimeVideoSource::triggerCameraConfigurationChange()
 void MockRealtimeVideoSource::startApplyingConstraints()
 {
     ASSERT(!m_beingConfigured);
+    if (m_isTakingPhoto)
+        m_captureWasInterrupted = true;
     m_beingConfigured = true;
 }
 

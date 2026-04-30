@@ -424,6 +424,17 @@ void CoordinatedPlatformLayer::setOpacity(float opacity)
     notifyCompositionRequired();
 }
 
+void CoordinatedPlatformLayer::setBlendMode(BlendMode blendMode)
+{
+    ASSERT(m_lock.isHeld());
+    if (m_blendMode == blendMode)
+        return;
+
+    m_blendMode = blendMode;
+    m_pendingChanges.add(Change::BlendMode);
+    notifyCompositionRequired();
+}
+
 void CoordinatedPlatformLayer::setContentsVisible(bool contentsVisible)
 {
     ASSERT(m_lock.isHeld());
@@ -1242,6 +1253,11 @@ void CoordinatedPlatformLayer::flushCompositingStateOnSkiaTarget(const OptionSet
         if (m_pendingChanges.contains(Change::Opacity)) {
             layer.setOpacity(m_opacity);
             m_pendingChanges.remove(Change::Opacity);
+        }
+
+        if (m_pendingChanges.contains(Change::BlendMode)) {
+            layer.setBlendMode(m_blendMode);
+            m_pendingChanges.remove(Change::BlendMode);
         }
 
         if (m_pendingChanges.contains(Change::BackingStore)) {

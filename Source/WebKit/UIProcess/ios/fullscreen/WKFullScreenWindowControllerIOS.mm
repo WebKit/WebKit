@@ -664,6 +664,7 @@ static constexpr CGFloat kWindowTranslationDuration = 0.6;
 @property (nonatomic, readonly) Class windowClass;
 @property (nonatomic, readonly) CGSize sceneSize;
 @property (nonatomic, readonly) CGSize sceneMinimumSize;
+@property (nonatomic, readonly) CGSize sceneMaximumSize;
 @property (nonatomic, readonly) RSSSceneChromeOptions sceneChromeOptions;
 @property (nonatomic, readonly) MRUISceneResizingBehavior sceneResizingBehavior;
 @property (nonatomic, readonly) WKSurroundingsEffectType preferredSurroundingsEffect;
@@ -693,6 +694,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     _sceneSize = windowScene.coordinateSpace.bounds.size;
 ALLOW_DEPRECATED_DECLARATIONS_END
     _sceneMinimumSize = windowScene.sizeRestrictions.minimumSize;
+    _sceneMaximumSize = windowScene.sizeRestrictions.maximumSize;
     _sceneChromeOptions = windowScene.mrui_placement.preferredChromeOptions;
     _sceneResizingBehavior = windowScene.mrui_placement.preferredResizingBehavior;
 
@@ -2294,6 +2296,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         } completion:animationCompletionBlock.get()];
     });
 
+    if (!enter)
+        [inWindow windowScene].sizeRestrictions.maximumSize = [originalState sceneMaximumSize];
+
     if (!shouldAnimateResizeScene || enter)
         animationBlock();
     else
@@ -2328,6 +2333,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         scene.mrui_placement.preferredChromeOptions = [_parentWindowState sceneChromeOptions];
         scene.mrui_placement.preferredResizingBehavior = [_parentWindowState sceneResizingBehavior];
         scene.sizeRestrictions.minimumSize = [_parentWindowState sceneMinimumSize];
+        scene.sizeRestrictions.maximumSize = [_parentWindowState sceneMaximumSize];
 
         _lastKnownParentWindow = nil;
         _parentWindowState = nil;

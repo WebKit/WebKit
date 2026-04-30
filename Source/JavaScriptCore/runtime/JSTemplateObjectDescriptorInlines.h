@@ -27,6 +27,7 @@
 #pragma once
 
 #include "JSTemplateObjectDescriptor.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

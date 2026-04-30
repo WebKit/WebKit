@@ -2897,7 +2897,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
         NSAccessibilityLineTextMarkerRangeForTextMarkerAttribute,
         NSAccessibilitySelectTextWithCriteriaParameterizedAttribute,
         NSAccessibilitySearchTextWithCriteriaParameterizedAttribute,
-        NSAccessibilityTextOperationParameterizedAttribute
+        NSAccessibilityTextOperationParameterizedAttribute,
+        NSAccessibilityTextMarkerForIndexAttribute,
+        NSAccessibilityTextMarkerIsValidAttribute,
+        NSAccessibilityIndexForTextMarkerAttribute
     ];
 
     static NeverDestroyed textParamAttrs = [] {
@@ -2924,13 +2927,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
         [tempArray addObject:NSAccessibilityCellForColumnAndRowParameterizedAttribute];
         return tempArray;
     }();
-    static NeverDestroyed webAreaParamAttrs = [] {
-        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:paramAttrs.get().get()]);
-        [tempArray addObject:NSAccessibilityTextMarkerForIndexAttribute];
-        [tempArray addObject:NSAccessibilityTextMarkerIsValidAttribute];
-        [tempArray addObject:NSAccessibilityIndexForTextMarkerAttribute];
-        return tempArray;
-    }();
     static NeverDestroyed secureFieldParamAttrs = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] init]);
         [tempArray addObject:NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute];
@@ -2950,9 +2946,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 
     if (backingObject->isExposableTable())
         return tableParamAttrs.get().get();
-
-    if (backingObject->isWebArea())
-        return webAreaParamAttrs.get().get();
 
     if (backingObject->isStaticText())
         return staticTextParamAttrs.get().get();

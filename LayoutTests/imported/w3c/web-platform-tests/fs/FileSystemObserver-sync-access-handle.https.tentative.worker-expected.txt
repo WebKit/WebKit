@@ -1,0 +1,6 @@
+
+FAIL FileSystemSyncAccessHandle.write produces a "modified" event promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: FileSystemObserver"
+FAIL Multiple FileSystemSyncAccessHandle.writes produces the same amount of "modified" event promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: FileSystemObserver"
+FAIL FileSystemSyncAccessHandle.truncate produces a "modified" event promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: FileSystemObserver"
+FAIL FileSystemSyncAccessHandle methods that don't modify the file don't produce events promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: FileSystemObserver"
+

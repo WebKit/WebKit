@@ -90,7 +90,7 @@ WaiterListManager::WaitSyncResult WaiterListManager::waitSyncImpl(VM& vm, ValueT
         dataLogLnIf(WaiterListsManagerInternal::verbose, "<WaiterListManager> <Thread:", Thread::currentSingleton(), "> added a new SyncWaiter=", syncWaiter.get(), " to a waiterList for ptr ", RawPointer(ptr));
 
         while (syncWaiter->isOnList() && time.now() < time && !vm.hasTerminationRequest())
-            syncWaiter->condition().waitUntil(list->lock, time.approximateWallTime());
+            syncWaiter->condition().waitUntil(list->lock, time.approximate<WallTime>());
 
         // At this point, syncWaiter should be either notified (dequeued) or timeout (not dequeued).
         bool didGetDequeued = !syncWaiter->isOnList();

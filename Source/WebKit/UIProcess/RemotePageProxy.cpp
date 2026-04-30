@@ -219,6 +219,10 @@ void RemotePageProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decode
         IPC::handleMessage<Messages::WebPageProxy::SetNetworkRequestsInProgress>(connection, decoder, this, &RemotePageProxy::setNetworkRequestsInProgress);
         return;
     }
+    if (decoder.messageName() == Messages::WebPageProxy::SetCanShortCircuitHorizontalWheelEvents::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::SetCanShortCircuitHorizontalWheelEvents>(connection, decoder, this, &RemotePageProxy::setCanShortCircuitHorizontalWheelEvents);
+        return;
+    }
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     if (decoder.messageName() == Messages::WebPageProxy::DidCreateContextInWebProcessForVisibilityPropagation::name()) {
         IPC::handleMessage<Messages::WebPageProxy::DidCreateContextInWebProcessForVisibilityPropagation>(connection, decoder, this, &RemotePageProxy::didCreateContextInWebProcessForVisibilityPropagation);
@@ -287,6 +291,20 @@ void RemotePageProxy::setNetworkRequestsInProgress(bool hasNetworkRequestsInProg
         return;
 
     page->networkRequestsInProgressDidChange();
+}
+
+void RemotePageProxy::setCanShortCircuitHorizontalWheelEvents(bool canShortCircuitHorizontalWheelEvents)
+{
+    if (m_canShortCircuitHorizontalWheelEvents == canShortCircuitHorizontalWheelEvents)
+        return;
+
+    m_canShortCircuitHorizontalWheelEvents = canShortCircuitHorizontalWheelEvents;
+
+    RefPtr page = m_page.get();
+    if (!page || page->isClosed())
+        return;
+
+    page->updateCanShortCircuitHorizontalWheelEvents();
 }
 
 void RemotePageProxy::setDrawingArea(DrawingAreaProxy* drawingArea)

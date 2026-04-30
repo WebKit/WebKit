@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,6 +49,7 @@ ShareableBitmapConfiguration::ShareableBitmapConfiguration(const NativeImage& im
     , m_bytesPerPixel(CGImageGetBitsPerPixel(image.platformImage().get()) / 8)
     , m_bytesPerRow(CGImageGetBytesPerRow(image.platformImage().get()))
     , m_bitmapInfo(CGImageGetBitmapInfo(image.platformImage().get()))
+    , m_shareableGainMap(ShareableGainMap::create(image.gainMap()))
 {
 }
 
@@ -210,7 +211,7 @@ void ShareableBitmap::paint(GraphicsContext& context, float scaleFactor, const I
     CGContextRestoreGState(cgContext.get());
 }
 
-PlatformImagePtr ShareableBitmap::createPlatformImage(BackingStoreCopy copyBehavior, ShouldInterpolate shouldInterpolate)
+PlatformImagePtr ShareableBitmap::createBasePlatformImage(BackingStoreCopy copyBehavior, ShouldInterpolate shouldInterpolate)
 {
     verifyImageBufferIsBigEnough(span());
 
@@ -241,6 +242,28 @@ PlatformImagePtr ShareableBitmap::createPlatformImage(BackingStoreCopy copyBehav
 #endif
     return adoptCF(CGImageCreate(size().width(), size().height(), bitsPerComponent, bitsPerPixel, bytesPerRow, protect(m_configuration.platformColorSpace()).get(), m_configuration.bitmapInfo(), dataProvider.get(), 0, shouldInterpolate == ShouldInterpolate::Yes, kCGRenderingIntentDefault));
 
+}
+
+PlatformImagePtr ShareableBitmap::createPlatformImage(BackingStoreCopy copyBehavior, ShouldInterpolate shouldInterpolate)
+{
+    auto basePlatformImage = createBasePlatformImage(copyBehavior, shouldInterpolate);
+    if (!basePlatformImage)
+        return basePlatformImage;
+
+    auto shareableGainMap = m_configuration.shareableGainMap();
+    if (!shareableGainMap)
+        return basePlatformImage;
+
+    auto outputPlatformImage = shareableGainMap->applyGainMapToBaseImage(basePlatformImage);
+    if (!outputPlatformImage)
+        return basePlatformImage;
+
+#if ENABLE(DUMP_GAIN_MAP_IMAGES)
+    CGImageDumpToFile(basePlatformImage.get(), "*/base-image.br2");
+    CGImageDumpToFile(outputPlatformImage.get(), "*/output-image.br2");
+#endif
+
+    return outputPlatformImage;
 }
 
 void ShareableBitmap::releaseBitmapContextData(void* typelessBitmap, void* typelessData)

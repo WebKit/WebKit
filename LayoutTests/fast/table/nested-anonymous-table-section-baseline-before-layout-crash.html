@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<style>
+:read-only {
+    display: table-cell;
+    -webkit-border-vertical-spacing: 1000px;
+}
+tbody {
+    writing-mode: vertical-rl;
+}
+</style>
+<script>
+testRunner?.dumpAsText();
+document.documentElement.prepend(document.createElement('wbr'));
+let tbody = document.createElement('tbody');
+document.head.append(tbody);
+tbody.append(document.createElement('a'));
+onload = () => document.body.innerText = 'PASS if no crash.';
+</script>

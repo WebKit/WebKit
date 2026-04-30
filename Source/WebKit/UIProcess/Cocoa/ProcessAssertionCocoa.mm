@@ -55,6 +55,17 @@
 using WebKit::ProcessAndUIAssertion;
 #endif
 
+@interface WKRBSAssertion : RBSAssertion
+@end
+
+@implementation WKRBSAssertion
+- (void)dealloc
+{
+    [self invalidate];
+    [super dealloc];
+}
+@end
+
 static WorkQueue& assertionsWorkQueue()
 {
     static NeverDestroyed<Ref<WorkQueue>> workQueue(WorkQueue::create("ProcessAssertion Queue"_s, WorkQueue::QOS::UserInitiated));
@@ -85,7 +96,7 @@ static bool processHasActiveRunTimeLimitation()
 
 @implementation WKProcessAssertionBackgroundTaskManager
 {
-    RetainPtr<RBSAssertion> _backgroundTask;
+    RetainPtr<WKRBSAssertion> _backgroundTask;
     std::atomic<bool> _backgroundTaskWasInvalidated;
     ThreadSafeWeakHashSet<ProcessAndUIAssertion> _assertionsNeedingBackgroundTask;
     dispatch_block_t _pendingTaskReleaseTask;
@@ -187,7 +198,7 @@ static bool processHasActiveRunTimeLimitation()
         RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager: beginBackgroundTaskWithName", self);
         RBSTarget *target = [RBSTarget currentProcess];
         RBSDomainAttribute *domainAttribute = [RBSDomainAttribute attributeWithDomain:@"com.apple.common" name:@"FinishTaskInterruptable"];
-        _backgroundTask = adoptNS([[RBSAssertion alloc] initWithExplanation:@"WebKit UIProcess background task" target:target attributes:@[domainAttribute]]);
+        _backgroundTask = adoptNS([[WKRBSAssertion alloc] initWithExplanation:@"WebKit UIProcess background task" target:target attributes:@[domainAttribute]]);
         [_backgroundTask addObserver:self];
 
         _backgroundTaskWasInvalidated = false;
@@ -263,7 +274,6 @@ static bool processHasActiveRunTimeLimitation()
     }
 
     [_backgroundTask removeObserver:self];
-    [_backgroundTask invalidate];
     _backgroundTask = nullptr;
 }
 
@@ -434,7 +444,7 @@ void ProcessAssertion::init(const String& environmentIdentifier)
         target = [RBSTarget targetWithPid:m_pid environmentIdentifier:environmentIdentifier.createNSString().get()];
 
     RetainPtr domainAttribute = [RBSDomainAttribute attributeWithDomain:runningBoardDomainForAssertionType(m_assertionType).createNSString().get() name:runningBoardAssertionName.createNSString().get()];
-    m_rbsAssertion = adoptNS([[RBSAssertion alloc] initWithExplanation:m_reason.createNSString().get() target:target attributes:@[domainAttribute.get()]]);
+    m_rbsAssertion = adoptNS([[WKRBSAssertion alloc] initWithExplanation:m_reason.createNSString().get() target:target attributes:@[domainAttribute.get()]]);
 
     m_delegate = adoptNS([[WKRBSAssertionDelegate alloc] init]);
     [m_rbsAssertion addObserver:m_delegate.get()];
@@ -513,7 +523,6 @@ ProcessAssertion::~ProcessAssertion()
         m_delegate.get().prepareForInvalidationCallback = nil;
         [m_rbsAssertion removeObserver:m_delegate.get()];
         m_delegate = nil;
-        [m_rbsAssertion invalidate];
     }
 
 #if USE(EXTENSIONKIT)

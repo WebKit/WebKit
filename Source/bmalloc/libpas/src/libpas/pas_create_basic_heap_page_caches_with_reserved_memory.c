@@ -36,7 +36,6 @@
 #include "pas_megapage_cache.h"
 #include "pas_mte.h"
 #include "pas_reserved_memory_provider.h"
-#include "pas_segregated_shared_page_directory.h"
 
 static pas_allocation_result allocate_from_compact_megapages(
     size_t size,
@@ -95,7 +94,8 @@ pas_basic_heap_page_caches* pas_create_basic_heap_page_caches_with_reserved_memo
 {
     pas_reserved_memory_provider* provider;
     pas_basic_heap_page_caches* caches;
-    pas_segregated_page_config_variant segregated_variant;
+
+    PAS_UNUSED_PARAM(template_runtime_config);
 
     pas_heap_lock_lock();
 
@@ -150,19 +150,6 @@ pas_basic_heap_page_caches* pas_create_basic_heap_page_caches_with_reserved_memo
         &caches->medium_compact_megapage_cache,
         allocate_from_compact_megapages,
         pas_megapage_cache_size_medium_compact);
-
-    for (PAS_EACH_SEGREGATED_PAGE_CONFIG_VARIANT_ASCENDING(segregated_variant)) {
-        pas_shared_page_directory_by_size* directories;
-
-        directories = pas_basic_heap_page_caches_get_shared_page_directories(caches,
-                                                                             segregated_variant);
-
-        *directories = PAS_SHARED_PAGE_DIRECTORY_BY_SIZE_INITIALIZER(
-            pas_basic_heap_page_caches_get_shared_page_directories(
-                template_runtime_config->page_caches,
-                segregated_variant)->log_shift,
-            pas_share_pages);
-    }
 
     pas_heap_lock_unlock();
 

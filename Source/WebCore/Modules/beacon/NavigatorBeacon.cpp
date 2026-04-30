@@ -50,7 +50,7 @@ NavigatorBeacon::NavigatorBeacon(Navigator& navigator)
 NavigatorBeacon::~NavigatorBeacon()
 {
     for (auto& beacon : m_inflightBeacons)
-        RefPtr { beacon }->removeClient(*this);
+        protect(beacon)->removeClient(*this);
 }
 
 void NavigatorBeacon::ref() const

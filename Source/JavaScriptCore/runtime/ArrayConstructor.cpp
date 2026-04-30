@@ -161,14 +161,6 @@ bool isArraySlow(JSGlobalObject* globalObject, ProxyObject* argument)
     return isArraySlowInline(globalObject, argument);
 }
 
-// ES6 7.2.2
-// https://tc39.github.io/ecma262/#sec-isarray
-JSC_DEFINE_HOST_FUNCTION(arrayConstructorPrivateFuncIsArraySlow, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    ASSERT_UNUSED(globalObject, is<ProxyObject>(callFrame->argument(0)));
-    return JSValue::encode(jsBoolean(isArraySlowInline(globalObject, uncheckedDowncast<ProxyObject>(callFrame->uncheckedArgument(0)))));
-}
-
 ALWAYS_INLINE JSArray* fastArrayOf(JSGlobalObject* globalObject, CallFrame* callFrame, size_t length)
 {
     VM& vm = globalObject->vm();

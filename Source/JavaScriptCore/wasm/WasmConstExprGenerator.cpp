@@ -203,8 +203,9 @@ public:
         ASSERT(mode == Mode::Validate);
     }
 
-    ConstExprGenerator(Mode mode, const ModuleInformation& info, JSWebAssemblyInstance* instance)
+    ConstExprGenerator(Mode mode, size_t offsetInSource, const ModuleInformation& info, JSWebAssemblyInstance* instance)
         : m_mode(mode)
+        , m_offsetInSource(offsetInSource)
         , m_info(info)
         , m_instance(instance)
     {
@@ -285,12 +286,12 @@ public:
     [[nodiscard]] PartialResult addMemoryCopy(ExpressionType, ExpressionType, ExpressionType, uint8_t, uint8_t) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addMemoryInit(unsigned, ExpressionType, ExpressionType, ExpressionType, uint8_t) CONST_EXPR_STUB
     [[nodiscard]] PartialResult addDataDrop(unsigned) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult atomicLoad(ExtAtomicOpType, Type, ExpressionType, ExpressionType&, uint64_t, uint8_t) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult atomicStore(ExtAtomicOpType, Type, ExpressionType, ExpressionType, uint64_t, uint8_t) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult atomicBinaryRMW(ExtAtomicOpType, Type, ExpressionType, ExpressionType, ExpressionType&, uint64_t, uint8_t) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult atomicCompareExchange(ExtAtomicOpType, Type, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, uint64_t, uint8_t) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult atomicWait(ExtAtomicOpType, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, uint64_t, uint8_t) CONST_EXPR_STUB
-    [[nodiscard]] PartialResult atomicNotify(ExtAtomicOpType, ExpressionType, ExpressionType, ExpressionType&, uint64_t, uint8_t) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult atomicLoad(ExtAtomicOpType, Type, ExpressionType, ExpressionType&, uint32_t, uint8_t) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult atomicStore(ExtAtomicOpType, Type, ExpressionType, ExpressionType, uint32_t, uint8_t) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult atomicBinaryRMW(ExtAtomicOpType, Type, ExpressionType, ExpressionType, ExpressionType&, uint32_t, uint8_t) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult atomicCompareExchange(ExtAtomicOpType, Type, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, uint32_t, uint8_t) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult atomicWait(ExtAtomicOpType, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, uint32_t, uint8_t) CONST_EXPR_STUB
+    [[nodiscard]] PartialResult atomicNotify(ExtAtomicOpType, ExpressionType, ExpressionType, ExpressionType&, uint32_t, uint8_t) CONST_EXPR_STUB
     [[nodiscard]] PartialResult atomicFence(ExtAtomicOpType, uint8_t) CONST_EXPR_STUB
     [[nodiscard]] PartialResult truncTrapping(OpType, ExpressionType, ExpressionType&, Type, Type) CONST_EXPR_STUB
     [[nodiscard]] PartialResult truncSaturated(Ext1OpType, ExpressionType, ExpressionType&, Type, Type) CONST_EXPR_STUB
@@ -732,7 +733,7 @@ public:
 private:
     FunctionParser<ConstExprGenerator>* m_parser { nullptr };
     Mode m_mode;
-    size_t m_offsetInSource;
+    size_t m_offsetInSource { 0 };
     ExpressionType m_result;
     const ModuleInformation& m_info;
     JSWebAssemblyInstance* m_instance { nullptr };
@@ -754,9 +755,11 @@ Expected<void, String> parseExtendedConstExpr(std::span<const uint8_t> source, s
     return { };
 }
 
-Expected<uint64_t, String> evaluateExtendedConstExpr(const Vector<uint8_t>& constantExpression, JSWebAssemblyInstance* instance, const ModuleInformation& info, Type expectedType)
+Expected<uint64_t, String> evaluateExtendedConstExpr(const ModuleInformation::ConstantExpressionAndSourceOffset& constantExpressionAndSourceOffset, JSWebAssemblyInstance* instance, const ModuleInformation& info, Type expectedType)
 {
-    ConstExprGenerator generator(ConstExprGenerator::Mode::Evaluate, info, instance);
+    auto constantExpression = constantExpressionAndSourceOffset.first;
+    size_t offsetInSource = constantExpressionAndSourceOffset.second;
+    ConstExprGenerator generator(ConstExprGenerator::Mode::Evaluate, offsetInSource, info, instance);
     FunctionParser<ConstExprGenerator> parser(generator, constantExpression, *TypeInformation::typeDefinitionForFunction({ expectedType }, { }), info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parseConstantExpression());
 

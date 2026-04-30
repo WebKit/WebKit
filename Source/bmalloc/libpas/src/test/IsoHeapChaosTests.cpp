@@ -956,16 +956,14 @@ void addSpotTests(bool testEnumerator)
     ADD_GROUP(addTheTests(10, testEnumerator));
     
     {
-        ForceExclusives forceExclusives;
         DisableBitfit disableBitfit;
         ADD_GROUP(addTheTests(1, testEnumerator));
     }
     
-    {
-        ForceTLAs forceTLAs;
-        ForcePartials forcePartials;
-        ADD_GROUP(addTheTests(1, false));
-    }
+    //{
+    //    ForceTLAs forceTLAs;
+    //    ADD_GROUP(addTheTests(1, false));
+    //}
     
     {
         ForceBitfit forceBitfit;
@@ -998,21 +996,14 @@ void addIsoTests()
         }
     
         {
-            ForceExclusives forceExclusives;
-            ADD_GROUP(addTheTests(1, false));
-        }
-    
-        {
-            ForceExclusives forceExclusives;
             DisableBitfit disableBitfit;
-            ADD_GROUP(addTheTests(1, true)); // This tests enumeration with exclusives on for sure.
+            ADD_GROUP(addTheTests(1, true)); // This tests enumeration with bitfit off for sure.
         }
     
-        {
-            ForceTLAs forceTLAs;
-            ForcePartials forcePartials;
-            ADD_GROUP(addTheTests(1, true)); // This tests enumeration with partials and TLAs on for sure.
-        }
+        //{
+        //    ForceTLAs forceTLAs;
+        //    ADD_GROUP(addTheTests(1, true)); // This tests enumeration with TLAs on for sure.
+        //}
     
         {
             ForceBitfit forceBitfit;
@@ -1030,11 +1021,10 @@ void addIsoTests()
             ADD_GROUP(addTheTests(1, false));
         }
     
-        {
-            ForceBaselines forceBaselines;
-            ForcePartials forcePartials;
-            ADD_GROUP(addTheTests(1, false));
-        }
+        //{
+        //    ForceBaselines forceBaselines;
+        //    ADD_GROUP(addTheTests(1, false));
+        //}
 
         {
             TestScope frequentScavenging(

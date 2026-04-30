@@ -100,7 +100,9 @@ extension TestPDFPage {
     @objc(colorAtPoint:)
     func color(at point: CGPoint) -> CocoaColor {
         let boundsRect = bounds
-        let colorSpace = CGColorSpace(name: CGColorSpace.sRGB)
+        guard let colorSpace = CGColorSpace(name: CGColorSpace.sRGB) else {
+            preconditionFailure("Unable to create sRGB color space")
+        }
 
         // FIXME: document safety invariants here.
         #if HAVE_CGCONTEXT_INIT_WITH_BITMAP_INFO_AND_NULLABLE_COLORSPACE
@@ -120,7 +122,7 @@ extension TestPDFPage {
             height: Int(boundsRect.size.height),
             bitsPerComponent: 8,
             bytesPerRow: 0,
-            space: colorSpace!,
+            space: colorSpace,
             bitmapInfo: CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue).union(.byteOrder32Big).rawValue
         )
         #endif
@@ -180,7 +182,10 @@ extension TestPDFDocument {
 
     @objc(initFromData:)
     init(from data: Data) {
-        let document = PDFDocument(data: data)!
+        guard let document = PDFDocument(data: data) else {
+            preconditionFailure("failed to create PDFDocument from data")
+        }
+
         self.document = document
         self.pages = .init(repeating: nil, count: document.pageCount)
     }

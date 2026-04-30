@@ -34,7 +34,6 @@ OBJC_CLASS WebCoreNSURLSessionDataTask;
 
 namespace WebCore {
 
-struct ParsedRequestRange;
 class PlatformMediaResource;
 class ResourceResponse;
 
@@ -56,7 +55,7 @@ private:
 
     class MediaResourceClient;
     void giveResponseToTasksWithFinishedRanges(Data&);
-    void giveResponseToTaskIfBytesInRangeReceived(WebCoreNSURLSessionDataTask *, const ParsedRequestRange&, std::optional<size_t> expectedContentLength, const Data&);
+    void giveResponseToTaskIfBytesInRangeReceived(WebCoreNSURLSessionDataTask *, std::optional<size_t> expectedContentLength, const Data&);
     static std::optional<size_t> expectedContentLengthFromData(const Data&);
 
     HashMap<String, std::unique_ptr<Data>> m_map WTF_GUARDED_BY_CAPABILITY(m_targetDispatcher.get());

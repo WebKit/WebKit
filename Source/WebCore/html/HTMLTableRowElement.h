@@ -37,6 +37,8 @@ public:
     static Ref<HTMLTableRowElement> create(Document&);
     static Ref<HTMLTableRowElement> create(const QualifiedName&, Document&);
 
+    ~HTMLTableRowElement();
+
     WEBCORE_EXPORT int rowIndex() const;
     void setRowIndex(int);
 

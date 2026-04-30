@@ -179,7 +179,7 @@ void WebExtensionAPIDeclarativeNetRequest::updateDynamicRules(NSDictionary *opti
     for (NSDictionary *ruleDictionary in rulesToAdd) {
         if (![[_WKWebExtensionDeclarativeNetRequestRule  alloc] initWithDictionary:ruleDictionary rulesetID:dynamicRulesetID errorString:&ruleErrorString]) {
             ASSERT(ruleErrorString);
-            *outExceptionString = toErrorString(nullString(), addRulesKey, @"an error with rule at index %lu: %@", index, ruleErrorString).createNSString().autorelease();
+            *outExceptionString = toErrorString(nullString(), addRulesKey, makeString("an error with rule at index "_s, index, ": "_s, String(ruleErrorString))).createNSString().autorelease();
             return;
         }
 
@@ -250,7 +250,7 @@ void WebExtensionAPIDeclarativeNetRequest::updateSessionRules(NSDictionary *opti
     for (NSDictionary *ruleDictionary in rulesToAdd) {
         if (![[_WKWebExtensionDeclarativeNetRequestRule  alloc] initWithDictionary:ruleDictionary rulesetID:sessionRulesetID errorString:&ruleErrorString]) {
             ASSERT(ruleErrorString);
-            *outExceptionString = toErrorString(nullString(), addRulesKey, @"an error with rule at index %lu: %@", index, ruleErrorString).createNSString().autorelease();
+            *outExceptionString = toErrorString(nullString(), addRulesKey, makeString("an error with rule at index "_s, index, ": "_s, String(ruleErrorString))).createNSString().autorelease();
             return;
         }
 
@@ -346,7 +346,7 @@ void WebExtensionAPIDeclarativeNetRequest::getMatchedRules(NSDictionary *filter,
     NSNumber *tabID = objectForKey<NSNumber>(filter, getMatchedRulesTabIDKey);
     auto optionalTabIdentifier = tabID ? toWebExtensionTabIdentifier(tabID.doubleValue) : std::nullopt;
     if (tabID && !isValid(optionalTabIdentifier)) {
-        *outExceptionString = toErrorString(nullString(), getMatchedRulesTabIDKey, @"%@ is not a valid tab identifier", tabID).createNSString().autorelease();
+        *outExceptionString = toErrorString(nullString(), getMatchedRulesTabIDKey, makeString(String([tabID description]), " is not a valid tab identifier"_s)).createNSString().autorelease();
         return;
     }
 
@@ -412,7 +412,7 @@ void WebExtensionAPIDeclarativeNetRequest::setExtensionActionOptions(NSDictionar
         NSNumber *tabID = objectForKey<NSNumber>(tabUpdateDictionary, actionCountTabIDKey);
         auto tabIdentifier = toWebExtensionTabIdentifier(tabID.doubleValue);
         if (!isValid(tabIdentifier)) {
-            *outExceptionString = toErrorString(nullString(), actionCountTabIDKey, @"%@ is not a valid tab identifier", tabID).createNSString().autorelease();
+            *outExceptionString = toErrorString(nullString(), actionCountTabIDKey, makeString(String([tabID description]), " is not a valid tab identifier"_s)).createNSString().autorelease();
             return;
         }
 

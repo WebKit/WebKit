@@ -51,4 +51,6 @@ Ref<HTMLSpanElement> HTMLSpanElement::create(const QualifiedName& tagName, Docum
     return adoptRef(*new HTMLSpanElement(tagName, document));
 }
 
+HTMLSpanElement::~HTMLSpanElement() = default;
+
 }

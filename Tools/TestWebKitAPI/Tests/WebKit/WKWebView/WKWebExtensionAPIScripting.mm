@@ -1869,10 +1869,10 @@ TEST(WKWebExtensionAPIScripting, MigrateScriptDataToNewFormat)
     // Give the extension a unique identifier so it opts into saving data in the temporary configuration.
     manager.get().context.uniqueIdentifier = @"org.webkit.test.extension (76C788B8)";
 
-    [manager load];
-
     auto *storageDirectory = manager.get().controller.configuration._storageDirectoryPath;
     storageDirectory = [storageDirectory stringByAppendingPathComponent:manager.get().context.uniqueIdentifier];
+
+    [NSFileManager.defaultManager createDirectoryAtPath:storageDirectory withIntermediateDirectories:YES attributes:nil error:nil];
 
     static auto *files = @[
         [NSBundle.test_resourcesBundle URLForResource:@"RegisteredContentScripts" withExtension:@"db"],
@@ -1885,7 +1885,7 @@ TEST(WKWebExtensionAPIScripting, MigrateScriptDataToNewFormat)
         [NSFileManager.defaultManager copyItemAtURL:file toURL:[NSURL fileURLWithPath:combinedPath] error:nil];
     }
 
-    [manager run];
+    [manager loadAndRun];
 }
 
 TEST(WKWebExtensionAPIScripting, ContentScriptsAndStyleSheetsWithManyMatchPatterns)

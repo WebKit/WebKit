@@ -211,6 +211,7 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
 
     SetServiceWorkerFetchTimeoutForTesting(Seconds seconds) -> () Synchronous
     ResetServiceWorkerFetchTimeoutForTesting() -> () Synchronous
+    ClearCrossOriginPreflightResultCacheForTesting() -> () Synchronous
 
     TerminateIdleServiceWorkers(WebCore::ProcessIdentifier processIdentifier) -> ()
 
@@ -295,6 +296,7 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
 
 #if HAVE(WEBCONTENTRESTRICTIONS)
     AllowEvaluatedURL(struct WebCore::ParentalControlsURLFilterParameters parameters) -> (bool allowed)
+    InstallMockParentalControlsURLFilterForTesting(Vector<URL> blockedURLs) -> ()
 #endif
 
 #if HAVE(ENHANCED_SECURITY_LINKS)

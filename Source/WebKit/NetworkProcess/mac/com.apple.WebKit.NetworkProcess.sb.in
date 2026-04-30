@@ -157,12 +157,8 @@
 
 (allow file-link (subpath "/private/var/folders"))
 
-(allow file-clone (with telemetry))
 (allow file-clone
-    (home-subpath "/Library/Caches")
     (home-subpath "/Library/Containers"))
-(allow file-clone (subpath
-    "/private/var/folders") )
 
 (allow darwin-notification-post
     (notification-name
@@ -477,20 +473,22 @@
     "com.apple.security.revocation")
 
 (allow file-read*
-       (subpath "/private/var/db/mds")
+   (subpath "/private/var/db/mds"))
 
-       ; The following are needed until the causes of <rdar://problem/41487786> are resolved.
-       (literal "/Library/Preferences/com.apple.security.plist")
-       (home-literal "/Library/Preferences/com.apple.security.plist")
+; The following are needed until the causes of <rdar://problem/41487786> are resolved.
+(allow file-read*
+    (literal "/Library/Preferences/com.apple.security.plist")
+    (home-literal "/Library/Preferences/com.apple.security.plist"))
 
-       ; Likewise for <rdar://problem/43310000>
-       (literal "/Library/Preferences/com.apple.ist.ds.appleconnect2.plist")
-       (literal "/Library/Preferences/com.apple.ist.ds.appleconnect2.production.plist")
-       (home-literal "/Library/Preferences/com.apple.ist.ds.appleconnect2.plist")
-       (home-literal "/Library/Preferences/com.apple.ist.ds.appleconnect2.production.plist")
-       (home-regex (string-append "/Library/Preferences/ByHost/com\.apple\.ist\.ds\.appleconnect2\." (uuid-regex-string) "\.plist$"))
-       (home-regex (string-append "/Library/Preferences/ByHost/com\.apple\.ist\.ds\.appleconnect2\.production\." (uuid-regex-string) "\.plist$"))
-)
+; Likewise for <rdar://problem/43310000>
+(with-filter (system-attribute apple-internal)
+    (allow file-read*
+        (literal "/Library/Preferences/com.apple.ist.ds.appleconnect2.plist")
+        (literal "/Library/Preferences/com.apple.ist.ds.appleconnect2.production.plist")
+        (home-literal "/Library/Preferences/com.apple.ist.ds.appleconnect2.plist")
+        (home-literal "/Library/Preferences/com.apple.ist.ds.appleconnect2.production.plist")
+        (home-regex (string-append "/Library/Preferences/ByHost/com\.apple\.ist\.ds\.appleconnect2\." (uuid-regex-string) "\.plist$"))
+        (home-regex (string-append "/Library/Preferences/ByHost/com\.apple\.ist\.ds\.appleconnect2\.production\." (uuid-regex-string) "\.plist$"))))
 
 (allow ipc-posix-shm-read* ipc-posix-shm-write-create ipc-posix-shm-write-data
        (ipc-posix-name "com.apple.AppleDatabaseChanged"))

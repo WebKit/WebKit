@@ -27,6 +27,7 @@
 
 #include "ActiveDOMObject.h"
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 
 namespace JSC {
 class AbstractSlotVisitor;
@@ -34,6 +35,8 @@ class JSValue;
 } // namespace JSC
 
 namespace WebCore {
+
+class Subscriber;
 
 class InternalObserver : public ActiveDOMObject, public RefCounted<InternalObserver> {
 public:
@@ -52,6 +55,9 @@ public:
 
     virtual void visitAdditionalChildrenInGCThread(JSC::AbstractSlotVisitor&) const = 0;
 
+    void setSubscriber(Subscriber& subscriber) { m_subscriber = subscriber; }
+    Subscriber* subscriber() const { return m_subscriber.get(); }
+
 protected:
     bool m_active { true };
 
@@ -63,6 +69,9 @@ protected:
     // ActiveDOMObject
     void stop() override { }
     bool virtualHasPendingActivity() const override { return m_active; }
+
+private:
+    WeakPtr<Subscriber> m_subscriber;
 };
 
 } // namespace WebCore

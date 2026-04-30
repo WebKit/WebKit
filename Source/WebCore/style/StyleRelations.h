@@ -52,7 +52,8 @@ struct Relation {
         FirstChild,
         LastChild,
         NthChildIndex,
-        AffectedByHasWithSiblingRelationship,
+        AffectedByHasWithBackwardSiblingRelationship,
+        AffectedByHasWithForwardSiblingRelationship,
         AffectedByHasWithAdjacentSiblingRelationship,
     };
     const Element* element;

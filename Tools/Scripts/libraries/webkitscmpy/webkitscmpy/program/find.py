@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import json
+import os
 import sys
 
 from .command import Command
@@ -160,5 +161,21 @@ class Find(Command):
         )
 
     @classmethod
-    def main(cls, args, repository, **kwargs):
+    def _needs_fallback(cls, repository):
+        if not repository:
+            return True
+        if not isinstance(repository, local.Scm):
+            return False
+        root = getattr(repository, 'root_path', None)
+        if root and not os.path.isfile(os.path.join(root, 'Tools', 'Scripts', 'git-webkit')):
+            return True
+        return False
+
+    @classmethod
+    def main(cls, args, repository, fallback_path=None, **kwargs):
+        if fallback_path and cls._needs_fallback(repository):
+            try:
+                repository = local.Scm.from_path(path=fallback_path)
+            except OSError:
+                pass
         return Info.main(args, repository=repository, reference=args.argument[0], **kwargs)

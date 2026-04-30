@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ProxyRevoke.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

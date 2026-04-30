@@ -43,6 +43,7 @@
 #include "ContextDestructionObserverInlines.h"
 #include "Document.h"
 #include "Event.h"
+#include "EventTargetInlines.h"
 #include "EventNames.h"
 #include "ExceptionOr.h"
 #include "HTMLMediaElement.h"
@@ -1469,9 +1470,9 @@ size_t SourceBuffer::memoryCost() const
     return sizeof(SourceBuffer) + m_extraMemoryCost;
 }
 
-WebCoreOpaqueRoot SourceBuffer::opaqueRoot()
+WebCoreOpaqueRoot SourceBuffer::opaqueRoot() const
 {
-    return WebCoreOpaqueRoot { this };
+    return WebCoreOpaqueRoot { const_cast<SourceBuffer*>(this) };
 }
 
 void SourceBuffer::memoryPressure()

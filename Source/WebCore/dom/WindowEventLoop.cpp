@@ -232,7 +232,7 @@ void WindowEventLoop::didReachTimeToRun()
     Ref protectedThis { *this }; // Executing tasks may remove the last reference to this WindowEventLoop.
     auto deadline = ApproximateTime::now() + ThreadTimers::maxDurationOfFiringTimers;
     run(commonVM(), deadline);
-    opportunisticallyRunIdleCallbacks(deadline.approximateMonotonicTime());
+    opportunisticallyRunIdleCallbacks(deadline.approximate<MonotonicTime>());
 }
 
 void WindowEventLoop::didFireIdleTimer()

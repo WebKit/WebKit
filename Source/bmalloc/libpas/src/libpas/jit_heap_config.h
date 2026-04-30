@@ -71,13 +71,11 @@ PAS_API pas_page_base* jit_page_header_for_boundary_remote(pas_enumerator* enume
 static PAS_ALWAYS_INLINE pas_page_base* jit_small_page_header_for_boundary(void* boundary);
 static PAS_ALWAYS_INLINE void* jit_small_boundary_for_page_header(pas_page_base* page);
 PAS_API void* jit_small_segregated_allocate_page(
-    pas_segregated_heap* heap, pas_physical_memory_transaction* transaction, pas_segregated_page_role role);
+    pas_segregated_heap* heap, pas_physical_memory_transaction* transaction);
 PAS_API pas_page_base* jit_small_segregated_create_page_header(
     void* boundary, pas_page_kind kind, pas_lock_hold_mode heap_lock_hold_mode);
 PAS_API void jit_small_destroy_page_header(
     pas_page_base* page, pas_lock_hold_mode heap_lock_hold_mode);
-PAS_API pas_segregated_shared_page_directory* jit_small_segregated_shared_page_directory_selector(
-    pas_segregated_heap* heap, pas_segregated_size_directory* directory);
 
 PAS_SEGREGATED_PAGE_CONFIG_SPECIALIZATION_DECLARATIONS(jit_small_segregated_page_config);
 
@@ -110,20 +108,6 @@ static PAS_ALWAYS_INLINE pas_page_base* jit_heap_config_page_header(uintptr_t be
 PAS_API pas_aligned_allocation_result jit_aligned_allocator(
     size_t size, pas_alignment alignment, pas_large_heap* large_heap, const pas_heap_config* config);
 PAS_API void* jit_prepare_to_enumerate(pas_enumerator* enumerator);
-PAS_API bool jit_heap_config_for_each_shared_page_directory(
-    pas_segregated_heap* heap,
-    bool (*callback)(pas_segregated_shared_page_directory* directory,
-                     void* arg),
-    void* arg);
-PAS_API bool jit_heap_config_for_each_shared_page_directory_remote(
-    pas_enumerator* enumerator,
-    pas_segregated_heap* heap,
-    bool (*callback)(pas_enumerator* enumerator,
-                     pas_segregated_shared_page_directory* directory,
-                     void* arg),
-    void* arg);
-PAS_API void jit_heap_config_dump_shared_page_directory_arg(
-    pas_stream* stream, pas_segregated_shared_page_directory* directory);
 
 PAS_HEAP_CONFIG_SPECIALIZATION_DECLARATIONS(jit_heap_config);
 
@@ -186,22 +170,16 @@ PAS_HEAP_CONFIG_SPECIALIZATION_DECLARATIONS(jit_heap_config);
             .kind = pas_segregated_page_config_kind_jit_small_segregated, \
             .wasteage_handicap = 1., \
             .sharing_shift = PAS_SMALL_SHARING_SHIFT, \
-            .partial_view_padding = 0, \
             .num_alloc_bits = PAS_BASIC_SEGREGATED_NUM_ALLOC_BITS(JIT_SMALL_SEGREGATED_MIN_ALIGN_SHIFT, \
                                                                   JIT_SMALL_PAGE_SIZE), \
-            .shared_payload_offset = 0, \
             .exclusive_payload_offset = 0, \
-            .shared_payload_size = 0, \
             .exclusive_payload_size = JIT_SMALL_PAGE_SIZE, \
-            .shared_logging_mode = pas_segregated_deallocation_no_logging_mode, \
             .exclusive_logging_mode = pas_segregated_deallocation_size_oblivious_logging_mode, \
             .use_reversed_current_word = PAS_ARM64, \
             .check_deallocation = false, \
-            .enable_empty_word_eligibility_optimization_for_shared = false, \
             .enable_empty_word_eligibility_optimization_for_exclusive = true, \
             .enable_view_cache = true, \
             .page_allocator = jit_small_segregated_allocate_page, \
-            .shared_page_directory_selector = jit_small_segregated_shared_page_directory_selector, \
             PAS_SEGREGATED_PAGE_CONFIG_SPECIALIZATIONS(jit_small_segregated_page_config) \
         }, \
         .medium_segregated_config = { \
@@ -229,10 +207,6 @@ PAS_HEAP_CONFIG_SPECIALIZATION_DECLARATIONS(jit_heap_config);
         .mmap_capability = pas_may_not_mmap, \
         .root_data = &jit_root_data, \
         .prepare_to_enumerate = jit_prepare_to_enumerate, \
-        .for_each_shared_page_directory = jit_heap_config_for_each_shared_page_directory, \
-        .for_each_shared_page_directory_remote = \
-            jit_heap_config_for_each_shared_page_directory_remote, \
-        .dump_shared_page_directory_arg = jit_heap_config_dump_shared_page_directory_arg, \
         PAS_HEAP_CONFIG_SPECIALIZATIONS(jit_heap_config), \
         .large_map_variant = pas_sequestered_large_map_variant, \
     })

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "JSNativeStdFunction.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

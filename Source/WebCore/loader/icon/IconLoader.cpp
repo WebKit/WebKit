@@ -38,6 +38,7 @@
 #include "Logging.h"
 #include "ResourceRequest.h"
 #include "SharedBuffer.h"
+#include <WebCore/HTTPStatusCodes.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -117,7 +118,7 @@ void IconLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetri
     // ignore the data and not try to decode the error page as an icon.
     RefPtr data = resource.resourceBuffer();
     int status = resource.response().httpStatusCode();
-    if (status && (status < 200 || status > 299))
+    if (status && !isHttpOkStatus(status))
         data = nullptr;
 
     constexpr std::array<uint8_t, 4> pdfMagicNumber { '%', 'P', 'D', 'F' };

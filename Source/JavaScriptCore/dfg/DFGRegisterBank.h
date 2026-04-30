@@ -30,6 +30,8 @@
 #include "DFGCommon.h"
 #include "FPRInfo.h"
 #include "GPRInfo.h"
+#include "RegisterSet.h"
+#include "VirtualRegister.h"
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 

@@ -57,4 +57,6 @@ Ref<HTMLHtmlElement> HTMLHtmlElement::create(const QualifiedName& tagName, Docum
     return adoptRef(*new HTMLHtmlElement(tagName, document));
 }
 
+HTMLHtmlElement::~HTMLHtmlElement() = default;
+
 } // namespace WebCore

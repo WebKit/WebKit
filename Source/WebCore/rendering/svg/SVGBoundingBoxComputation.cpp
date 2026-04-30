@@ -224,8 +224,6 @@ FloatRect SVGBoundingBoxComputation::handleRootOrContainer(const SVGBoundingBoxC
     adjustBoxForClippingAndEffects(options, box, { DecorationOption::OverrideBoxWithFilterBox });
 
     if (options.contains(DecorationOption::IncludeClippers) && m_renderer->hasNonVisibleOverflow()) {
-        ASSERT(m_renderer->hasLayer());
-
         ASSERT(is<RenderSVGViewportContainer>(m_renderer) || is<RenderSVGResourceMarker>(m_renderer) || is<RenderSVGRoot>(m_renderer));
 
         LayoutRect overflowClipRect;

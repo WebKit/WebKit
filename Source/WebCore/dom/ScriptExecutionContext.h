@@ -35,8 +35,8 @@
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/ObjectIdentifier.h>
-#include <wtf/SmallSet.h>
 #include <wtf/ThreadSafeWeakHashSet.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
@@ -453,7 +453,7 @@ private:
     int m_timerNestingLevel { 0 };
 
     Vector<CompletionHandler<void()>> m_processMessageWithMessagePortsSoonHandlers;
-    SmallSet<MessagePortIdentifier, DefaultHash<MessagePortIdentifier>, HashTraits<MessagePortIdentifier>, 2> m_portsWithAvailableMessages;
+    ListHashSet<MessagePortIdentifier> m_portsWithAvailableMessages;
     bool m_dispatchAllPorts { false };
 
 #if ASSERT_ENABLED

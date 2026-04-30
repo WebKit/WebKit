@@ -23,6 +23,7 @@
 #include "FourCC.h"
 #include "GLContext.h"
 #include "Logging.h"
+#include <array>
 #include <wtf/Locker.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/StringView.h>
@@ -250,13 +251,13 @@ const Vector<GLDisplay::BufferFormat>& GLDisplay::bufferFormats()
 
         // This list includes those formats supported by AHardwareBuffer which are suitable for rendering content, sorted by preference. See:
         // https://android.googlesource.com/platform/frameworks/native/+/4f463a6b1de9198963dc6aff74154a504ba3f8f6/libs/nativewindow/include/android/hardware_buffer.h#66
-        static constexpr FourCC drmFormats[] = {
+        static constexpr auto drmFormats = std::to_array<FourCC>({
             DRM_FORMAT_RGBA8888,
             DRM_FORMAT_RGBX8888,
             DRM_FORMAT_RGB565,
             DRM_FORMAT_RGBA1010102,
             DRM_FORMAT_RGB888,
-        };
+        });
 
         // The usage flags match the common set used in the usageToAHardwareBufferUsage() helper function
         // in AcceleratedSurface.cpp, under the assumption that the additional flag hinting that buffers

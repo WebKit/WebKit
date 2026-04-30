@@ -100,9 +100,18 @@ WI.ScopeBar = class ScopeBar extends WI.NavigationItem
         if (selectedItems.length === 1 && selectedItems[0] === this._defaultItem)
             return;
 
+        this._ignoreItemSelectedEvent = true;
+
         for (let item of this._items)
             item.selected = false;
-        this._defaultItem.selected = true;
+
+        if (this._multipleItem && !this._defaultItem.exclusive)
+            this._multipleItem.selectedScopeBarItem = this._defaultItem;
+        else
+            this._defaultItem.selected = true;
+
+        this._ignoreItemSelectedEvent = false;
+        this._element.classList.toggle("default-item-selected", this._defaultItem.selected);
 
         this.dispatchEventToListeners(WI.ScopeBar.Event.SelectionChanged);
     }

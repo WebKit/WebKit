@@ -33,7 +33,7 @@ private import TestWebKitAPILibrary
 // MARK: Supporting test types
 
 @MainActor
-fileprivate class TestNavigationDecider: WebPage.NavigationDeciding {
+private class TestNavigationDecider: WebPage.NavigationDeciding {
     init() {
         (self.navigationActionStream, self.navigationActionContinuation) = AsyncStream.makeStream(of: WebPage.NavigationAction.self)
         (self.navigationResponseStream, self.navigationResponseContinuation) = AsyncStream.makeStream(of: WebPage.NavigationResponse.self)
@@ -47,7 +47,10 @@ fileprivate class TestNavigationDecider: WebPage.NavigationDeciding {
 
     var preferencesMutation: (inout WebPage.NavigationPreferences) -> Void = { _ in }
 
-    func decidePolicy(for action: WebPage.NavigationAction, preferences: inout WebPage.NavigationPreferences) async -> WKNavigationActionPolicy {
+    func decidePolicy(
+        for action: WebPage.NavigationAction,
+        preferences: inout WebPage.NavigationPreferences
+    ) async -> WKNavigationActionPolicy {
         preferencesMutation(&preferences)
 
         navigationActionContinuation.yield(action)
@@ -69,13 +72,13 @@ struct WebPageTests {
         let page = WebPage()
 
         let html = """
-        <html>
-        <head>
-            <title>Title</title>
-        </head>
-        <body></body>
-        </html>
-        """
+            <html>
+            <head>
+                <title>Title</title>
+            </head>
+            <body></body>
+            </html>
+            """
 
         #expect(page.url == nil)
         #expect(page.title == "")

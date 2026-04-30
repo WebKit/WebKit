@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="full-screen-test.js"></script>
+<style>
+#target { position: relative; width: 300px; height: 200px; background: #eee; }
+#overlay { position: absolute; inset: 0; display: flex; flex-direction: column; }
+#fs-btn { padding: 8px; margin-top: auto; }
+</style>
+</head>
+<body>
+<p>Tests that entering fullscreen dispatches boundary events so that
+JS-driven hover state on a full-coverage overlay is properly cleared.</p>
+<div id="target">
+    <div id="overlay">
+        <p>Fullscreen content</p>
+        <button id="fs-btn">Enter Fullscreen</button>
+    </div>
+</div>
+<script>
+    var target = document.getElementById('target');
+    var overlay = document.getElementById('overlay');
+    var fsBtn = document.getElementById('fs-btn');
+    var overlayReceivedLeave = false;
+
+    // Simulate React Native Web's Pressable pattern: the full-coverage overlay
+    // div has pointerenter/pointerleave handlers that control hover styling on
+    // a child button via inline background-color.
+    overlay.addEventListener('pointerenter', function() {
+        fsBtn.style.backgroundColor = 'rgba(0, 0, 255, 0.2)';
+    });
+    overlay.addEventListener('pointerleave', function() {
+        overlayReceivedLeave = true;
+        fsBtn.style.backgroundColor = '';
+    });
+
+    var callback;
+    waitForEvent(document, 'webkitfullscreenchange', function(event) {
+        if (callback)
+            callback(event);
+    });
+
+    // Position the mouse over the fullscreen button (inside the overlay)
+    // before entering fullscreen. This establishes the overlay's hover state.
+    if (window.eventSender) {
+        var btnRect = fsBtn.getBoundingClientRect();
+        eventSender.mouseMoveTo(btnRect.left + btnRect.width / 2, btnRect.top + btnRect.height / 2);
+    }
+
+    testExpected("fsBtn.style.backgroundColor", "rgba(0, 0, 255, 0.2)");
+
+    callback = function() {
+        testExpected("document.fullscreenElement", target);
+
+        // Boundary events are dispatched after the fullscreen layout change,
+        // so wait before checking.
+        setTimeout(function() {
+            // The overlay (position:absolute inset:0) expands to fill the
+            // screen on fullscreen. Without the fix, pointerleave would never
+            // fire on the overlay because the cursor remains inside it.
+            testExpected("overlayReceivedLeave", true);
+            testExpected("fsBtn.style.backgroundColor", "");
+
+            endTest();
+        }, 300);
+    };
+
+    runWithKeyDown(function() { target.requestFullscreen(); });
+</script>
+</body>
+</html>

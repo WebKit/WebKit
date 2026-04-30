@@ -349,12 +349,13 @@ sub Parse
     my $self = shift;
     my $fileName = shift;
     my $defines = shift;
-    my $preprocessor = shift;
     my $idlAttributes = shift;
 
     my @definitions = ();
 
-    my @lines = applyPreprocessor($fileName, $defines, $preprocessor);
+    my $keepComments = 0;
+    my $stripLineComments = 1;
+    my @lines = applyPreprocessor($fileName, $defines, $keepComments, $stripLineComments);
     $self->{Line} = $lines[0];
     $self->{DocumentContent} = join(' ', @lines);
     $self->{ExtendedAttributeMap} = $idlAttributes;

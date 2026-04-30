@@ -30,6 +30,7 @@
 #include <wtf/ContinuousApproximateTime.h>
 #include <wtf/ContinuousTime.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/UnbarrieredMonotonicTime.h>
 #include <wtf/WallTime.h>
 
 namespace WTF {
@@ -71,6 +72,12 @@ public:
     {
     }
 
+    TimeWithDynamicClockType(UnbarrieredMonotonicTime time)
+        : m_value(time.secondsSinceEpoch().value())
+        , m_type(ClockType::UnbarrieredMonotonic)
+    {
+    }
+
     static TimeWithDynamicClockType fromRawSeconds(double value, ClockType type)
     {
         TimeWithDynamicClockType result;
@@ -97,6 +104,7 @@ public:
     WTF_EXPORT_PRIVATE ApproximateTime NODELETE approximateTime() const;
     WTF_EXPORT_PRIVATE ContinuousTime NODELETE continuousTime() const;
     WTF_EXPORT_PRIVATE ContinuousApproximateTime NODELETE continuousApproximateTime() const;
+    WTF_EXPORT_PRIVATE UnbarrieredMonotonicTime NODELETE unbarrieredMonotonicTime() const;
 
     WTF_EXPORT_PRIVATE WallTime approximateWallTime() const;
     WTF_EXPORT_PRIVATE MonotonicTime approximateMonotonicTime() const;

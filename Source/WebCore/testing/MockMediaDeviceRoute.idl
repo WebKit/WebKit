@@ -37,6 +37,7 @@
     attribute float playbackRate;
     attribute float currentPlaybackPosition;
     attribute MockMediaDeviceRouteTimeRange timeRange;
+    attribute float volume;
 };
 
 [

@@ -26,6 +26,7 @@
 #include "JSCInlines.h"
 #include "NumberPrototype.h"
 #include "ParseInt.h"
+#include "RegExpConstructorInlines.h"
 #include "RegExpGlobalDataInlines.h"
 #include "RegExpPrototype.h"
 #include "YarrFlags.h"

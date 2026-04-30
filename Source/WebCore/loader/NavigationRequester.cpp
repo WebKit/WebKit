@@ -51,7 +51,10 @@ NavigationRequester NavigationRequester::from(Document& document)
         document.hasLoadedThirdPartyScript(),
         document.hasLoadedThirdPartyFrame(),
         frame ? frame->hasHadUserInteraction() : false,
-        parentFrame ? parentFrame->frameDocumentSecurityOrigin() : nullptr
+        [&] {
+            RefPtr parentOrigin = parentFrame ? parentFrame->frameDocumentSecurityOrigin() : nullptr;
+            return parentOrigin && parentOrigin->isSameOriginDomain(protect(document.topOrigin()));
+        }()
     };
 }
 

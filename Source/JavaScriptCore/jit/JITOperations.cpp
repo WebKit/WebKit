@@ -61,8 +61,10 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "JSGeneratorFunction.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSLexicalEnvironment.h"
+#include "JSMapIterator.h"
 #include "JSPromise.h"
 #include "JSRemoteFunction.h"
+#include "JSSetIterator.h"
 #include "JSWithScope.h"
 #include "JumpTable.h"
 #include "LLIntEntrypoint.h"
@@ -3405,7 +3407,7 @@ JSC_DEFINE_JIT_OPERATION(operationInstanceOfCustom, size_t, (JSGlobalObject* glo
 
 #if CPU(ARM64) || CPU(X86_64)
 
-JSC_DEFINE_JIT_OPERATION(operationIteratorNextTryFast, UGPRPair, (JSGlobalObject* globalObject, JSArrayIterator* arrayIterator, JSArray* array, void* metadataPointer))
+JSC_DEFINE_JIT_OPERATION(operationIteratorNextTryFast, UGPRPair, (JSGlobalObject* globalObject, JSObject* iterator, JSCell* iterable, void* metadataPointer))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -3413,27 +3415,54 @@ JSC_DEFINE_JIT_OPERATION(operationIteratorNextTryFast, UGPRPair, (JSGlobalObject
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto& metadata = *std::bit_cast<OpIteratorNext::Metadata*>(metadataPointer);
-    metadata.m_iterableProfile.observeStructureID(array->structureID());
-    metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastArray;
 
-    auto& indexSlot = arrayIterator->internalField(JSArrayIterator::Field::Index);
-    int64_t index = indexSlot.get().asAnyInt();
-    ASSERT(0 <= index && index <= maxSafeInteger());
+    if (auto* arrayIterator = dynamicDowncast<JSArrayIterator>(iterator)) {
+        auto* array = uncheckedDowncast<JSArray>(iterable);
+        metadata.m_iterableProfile.observeStructureID(array->structureID());
+        metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastArray;
 
-    JSValue value;
-    bool done = index == JSArrayIterator::doneIndex || index >= array->length();
-    if (!done) {
-        // No need for a barrier here because we know this is a primitive.
-        indexSlot.setWithoutWriteBarrier(jsNumber(index + 1));
-        ASSERT(index == static_cast<unsigned>(index));
-        value = array->getIndex(globalObject, static_cast<unsigned>(index));
-        OPERATION_RETURN_IF_EXCEPTION(scope, makeUGPRPair(0, 0));
-    } else {
-        // No need for a barrier here because we know this is a primitive.
-        indexSlot.setWithoutWriteBarrier(jsNumber(-1));
+        auto& indexSlot = arrayIterator->internalField(JSArrayIterator::Field::Index);
+        int64_t index = indexSlot.get().asAnyInt();
+        ASSERT(0 <= index && index <= maxSafeInteger());
+
+        JSValue value;
+        bool done = index == JSArrayIterator::doneIndex || index >= array->length();
+        if (!done) {
+            // No need for a barrier here because we know this is a primitive.
+            indexSlot.setWithoutWriteBarrier(jsNumber(index + 1));
+            ASSERT(index == static_cast<unsigned>(index));
+            value = array->getIndex(globalObject, static_cast<unsigned>(index));
+            OPERATION_RETURN_IF_EXCEPTION(scope, makeUGPRPair(0, 0));
+        } else {
+            // No need for a barrier here because we know this is a primitive.
+            indexSlot.setWithoutWriteBarrier(jsNumber(-1));
+        }
+
+        OPERATION_RETURN(scope, makeUGPRPair(JSValue::encode(jsBoolean(done)), JSValue::encode(value)));
     }
 
-    OPERATION_RETURN(scope, makeUGPRPair(JSValue::encode(jsBoolean(done)), JSValue::encode(value)));
+    if (auto* mapIterator = dynamicDowncast<JSMapIterator>(iterator)) {
+        metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastMap;
+        auto result = mapIterator->nextWithAdvance(vm);
+        bool done = result.key.isEmpty();
+        JSValue value;
+        if (!done) {
+            value = constructArrayPair(globalObject, result.key, result.value);
+            OPERATION_RETURN_IF_EXCEPTION(scope, makeUGPRPair(0, 0));
+        }
+        OPERATION_RETURN(scope, makeUGPRPair(JSValue::encode(jsBoolean(done)), JSValue::encode(value)));
+    }
+
+    if (auto* setIterator = dynamicDowncast<JSSetIterator>(iterator)) {
+        metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastSet;
+        JSValue nextKey = setIterator->nextWithAdvance(vm);
+        bool done = nextKey.isEmpty();
+        JSValue value = done ? JSValue() : nextKey;
+        OPERATION_RETURN(scope, makeUGPRPair(JSValue::encode(jsBoolean(done)), JSValue::encode(value)));
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+    OPERATION_RETURN(scope, makeUGPRPair(0, 0));
 }
 
 #endif

@@ -5862,7 +5862,7 @@ void main()
     ANGLE_GL_PROGRAM(program, kVS, kFS);
     glUseProgram(program);
 
-    GLint positionLocation = glGetAttribLocation(program, "position");
+    GLint positionLocation   = glGetAttribLocation(program, "position");
     GLint testAttribLocation = glGetAttribLocation(program, "testAttrib");
     ASSERT_NE(-1, positionLocation);
     ASSERT_NE(-1, testAttribLocation);
@@ -5917,7 +5917,7 @@ void main()
     ANGLE_GL_PROGRAM(program, kVS, kFS);
     glUseProgram(program);
 
-    GLint positionLocation = glGetAttribLocation(program, "position");
+    GLint positionLocation   = glGetAttribLocation(program, "position");
     GLint testAttribLocation = glGetAttribLocation(program, "testAttrib");
     ASSERT_NE(-1, positionLocation);
     ASSERT_NE(-1, testAttribLocation);
@@ -5974,8 +5974,8 @@ TEST_P(VertexAttributeShiftInstancedArrayDataWithOffsetTest,
 attribute vec4 instance;
 varying vec4 color;
 void main() {
-    gl_Position = position + instance * 0.001;
-    color = vec4(1, 0, 0, 1);
+    gl_Position = position;
+    color = vec4(instance.x, 1.0, 0, 1.0);
 })";
     constexpr char kFS[] = R"(varying lowp vec4 color;
 void main() {
@@ -5987,28 +5987,46 @@ void main() {
     GLint posLoc  = glGetAttribLocation(program, "position");
     GLint instLoc = glGetAttribLocation(program, "instance");
 
-    auto quadVertices = GetQuadVertices();
+    const int first       = 100;
+    const int vertexCount = 6;
+    auto quadVertices     = GetQuadVertices();
+    std::vector<Vector3> posData(first + quadVertices.size());
+    // Place quad vertices at the 'first' offset so they are read during the draw.
+    std::copy(quadVertices.begin(), quadVertices.end(), posData.begin() + first);
     GLBuffer posBuf;
     glBindBuffer(GL_ARRAY_BUFFER, posBuf);
-    glBufferData(GL_ARRAY_BUFFER, quadVertices.size() * sizeof(Vector3), quadVertices.data(),
-                 GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, posData.size() * sizeof(Vector3), posData.data(), GL_STATIC_DRAW);
     glEnableVertexAttribArray(posLoc);
     glVertexAttribPointer(posLoc, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 
-    const int instanceCount = 1024;
-    const int srcStride     = 20;  // 20 bytes stride for vec4 (16 bytes) forces slow path
-    std::vector<uint8_t> instData(instanceCount * srcStride, 0);
+    constexpr int instanceCount = 1024;
+    struct Inst
+    {
+        float v0 = 1.0;
+        float v1 = 0.0;
+        float v2 = 0.0;
+        float v3 = 0.0;
+        float v4 = 0.0;
+    };
+    constexpr int srcStride = sizeof(Inst);  // 20 bytes stride for vec4 (16 bytes) forces slow path
+    static_assert(srcStride == 20);
+    std::array<Inst, instanceCount> instData;
     GLBuffer instBuf;
     glBindBuffer(GL_ARRAY_BUFFER, instBuf);
-    glBufferData(GL_ARRAY_BUFFER, instData.size(), instData.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, instData.size() * sizeof(Inst), instData.data(), GL_STATIC_DRAW);
     glEnableVertexAttribArray(instLoc);
     glVertexAttribPointer(instLoc, 4, GL_FLOAT, GL_FALSE, srcStride, nullptr);
     glVertexAttribDivisorANGLE(instLoc, 1);
 
-    const int first = 100;
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
     // This will trigger the workaround and the overflow if the fix is not present.
-    glDrawArraysInstancedANGLE(GL_TRIANGLES, first, 6, instanceCount);
+    glDrawArraysInstancedANGLE(GL_TRIANGLES, first, vertexCount, instanceCount);
     EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::yellow);
 }
 
 class VertexAttributeUint8Test : public VertexAttributeTestES3

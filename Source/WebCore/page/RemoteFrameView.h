@@ -52,7 +52,7 @@ public:
     // RemoteFrameViews on the receiving end will set using this method to avoid repeating the sync.
     WEBCORE_EXPORT void setFrameRectWithoutSync(const IntRect&);
 
-    bool ownerElementOfChildFrameUsesDarkAppearance(const Frame&) const final;
+    OptionSet<FrameOwnerElementAppearance> appearanceOfOwnerElementOfChildFrame(const Frame&) const final;
 
 private:
     WEBCORE_EXPORT RemoteFrameView(RemoteFrame&);

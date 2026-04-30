@@ -32,6 +32,7 @@
 
 #include "GtkVersioning.h"
 #include <WebCore/WindowsKeyboardCodes.h>
+#include <array>
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
 #include <wtf/HexNumber.h>
@@ -435,9 +436,9 @@ String WebKeyboardEvent::keyValueStringForGdkKeyval(unsigned keyCode)
         guint32 unicodeCharacter = gdk_keyval_to_unicode(keyCode);
         if (unicodeCharacter) {
             // UTF-8 will use up to 6 bytes.
-            char utf8[7] = { 0 };
-            g_unichar_to_utf8(unicodeCharacter, utf8);
-            return String::fromUTF8(utf8);
+            std::array<char, 7> utf8 = { 0 };
+            g_unichar_to_utf8(unicodeCharacter, utf8.data());
+            return String::fromUTF8(utf8.data());
         }
         return "Unidentified"_s;
     }

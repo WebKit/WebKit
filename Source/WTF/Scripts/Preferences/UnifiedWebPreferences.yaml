@@ -6572,6 +6572,7 @@ RemoteSnapshottingEnabled:
        default: false
      WebCore:
        default: false
+   sharedPreferenceForWebProcess: true
 
 RemoveBackgroundEnabled:
   type: bool

@@ -28,6 +28,7 @@
 
 #include "JSCInlines.h"
 #include "JSJavaScriptCallFrame.h"
+#include "StructureCreateInlines.h"
 
 namespace Inspector {
 
@@ -210,6 +211,11 @@ JSC_DEFINE_HOST_FUNCTION(jsJavaScriptCallFrameIsTailDeleted, (JSGlobalObject* gl
         return throwVMTypeError(globalObject, scope);
 
     return JSValue::encode(castedThis->isTailDeleted(globalObject));
+}
+
+Structure* JSJavaScriptCallFramePrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
 } // namespace Inspector

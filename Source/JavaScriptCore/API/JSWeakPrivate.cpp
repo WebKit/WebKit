@@ -28,6 +28,7 @@
 
 #include "APICast.h"
 #include "IntegrityInlines.h"
+#include "JSCellInlines.h"
 #include "Weak.h"
 #include <wtf/ThreadSafeRefCounted.h>
 

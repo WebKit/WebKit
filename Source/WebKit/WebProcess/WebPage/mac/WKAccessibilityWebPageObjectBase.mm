@@ -88,7 +88,7 @@ namespace ax = WebCore::Accessibility;
 // Called directly by Accessibility framework.
 - (id)accessibilityRootObjectWrapper
 {
-    return [self accessibilityRootObjectWrapper:protect([self focusedLocalFrame]).get()];
+    return [self accessibilityRootObjectWrapper:protect([self localFocusedFrame]).get()];
 }
 
 - (id)accessibilityRootObjectWrapper:(WebCore::LocalFrame*)frame
@@ -122,7 +122,7 @@ namespace ax = WebCore::Accessibility;
                 return [protectedSelf accessibilityPluginObject];
         }
 
-        RefPtr frame = protectedFrame ? protectedFrame : RefPtr { [protectedSelf focusedLocalFrame] };
+        RefPtr frame = protectedFrame ? protectedFrame : RefPtr { [protectedSelf localFocusedFrame] };
         if (RefPtr document = frame ? frame->document() : nullptr) {
             if (CheckedPtr cache = document->axObjectCache()) {
                 if (RefPtr root = cache->rootObjectForFrame(*frame))
@@ -134,7 +134,7 @@ namespace ax = WebCore::Accessibility;
             // It's possible we were given a null frame (this is explicitly expected when off the main-thread, since
             // we can't access the webpage off the main-thread to get a frame). Now that we are actually on the main-thread,
             // try again if necessary.
-            RefPtr frame = protectedFrame ? protectedFrame : RefPtr { [protectedSelf focusedLocalFrame] };
+            RefPtr frame = protectedFrame ? protectedFrame : RefPtr { [protectedSelf localFocusedFrame] };
 
             if (RefPtr root = frame ? cache->rootObjectForFrame(*frame) : nullptr)
                 return root->wrapper();
@@ -259,10 +259,10 @@ namespace ax = WebCore::Accessibility;
 
 - (id)accessibilityFocusedUIElement
 {
-    return [[self accessibilityRootObjectWrapper:protect([self focusedLocalFrame]).get()] accessibilityFocusedUIElement];
+    return [[self accessibilityRootObjectWrapper:protect([self localFocusedFrame]).get()] accessibilityFocusedUIElement];
 }
 
-- (WebCore::LocalFrame *)focusedLocalFrame
+- (WebCore::LocalFrame *)localFocusedFrame
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (!isMainRunLoop())

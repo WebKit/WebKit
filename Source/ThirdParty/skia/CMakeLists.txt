@@ -1021,6 +1021,8 @@ target_compile_definitions(Skia PRIVATE
     SK_CODEC_DECODES_PNG
 
     SK_GAMMA_APPLY_TO_A8
+
+    SK_USER_CONFIG_HEADER=\"./WebKitSkiaConfig.h\"
 )
 
 # SK_DEBUG enables consistency checks. It is enabled by default in Debug

@@ -52,21 +52,17 @@ struct FileInformation {
 static void appendDirectoryFiles(const String& directory, const String& relativePath, Vector<FileInformation>& files)
 {
     ASSERT(!isMainThread());
-    for (auto& childName : FileSystem::listDirectory(directory)) {
+    FileSystem::traverseDirectory(directory, [&](const String& childName, FileSystem::FileType fileType) {
         auto childPath = FileSystem::pathByAppendingComponent(directory, childName);
         if (FileSystem::isHiddenFile(childPath))
-            continue;
-
-        auto fileType = FileSystem::fileType(childPath);
-        if (!fileType)
-            continue;
+            return;
 
         auto childRelativePath = makeString(relativePath, '/', childName);
-        if (*fileType == FileSystem::FileType::Directory)
+        if (fileType == FileSystem::FileType::Directory)
             appendDirectoryFiles(childPath, childRelativePath, files);
-        else if (*fileType == FileSystem::FileType::Regular)
+        else if (fileType == FileSystem::FileType::Regular)
             files.append(FileInformation { childPath, childRelativePath, { } });
-    }
+    });
 }
 
 static Vector<FileInformation> gatherFileInformation(const Vector<FileChooserFileInfo>& paths)

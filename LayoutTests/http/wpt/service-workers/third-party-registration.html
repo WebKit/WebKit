@@ -26,11 +26,11 @@ async function doTest()
         iframe.contentWindow.postMessage("ancestorOrigins", '*');
         const ancestorOriginsData = await new Promise(resolve => window.onmessage = (e) => resolve(e.data));
         if (ancestorOriginsData.length !== 1) {
-            logAndFinishTest("FAIL ancestorOriginsData length is not 1");
+            logAndFinishTest(`FAIL ancestorOriginsData.length is ${ancestorOriginsData.length} instead of 1`);
             return;
         }
         if (ancestorOriginsData[0] !== "http://localhost:8801") {
-            logAndFinishTest("FAIL ancestorOriginsData length is not 1");
+            logAndFinishTest(`FAIL ancestorOriginsData[0] is "${ancestorOriginsData[0]}" instead of localhost:8801`);
             return;
         }
     }

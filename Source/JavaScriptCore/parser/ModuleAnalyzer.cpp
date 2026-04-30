@@ -148,7 +148,7 @@ Expected<JSModuleRecord*, std::tuple<ErrorType, String>> ModuleAnalyzer::analyze
     for (const auto& pair : m_moduleRecord->lexicalVariables())
         exportVariable(moduleProgramNode, pair.key, pair.value);
 
-    m_moduleRecord->hasTLA(moduleProgramNode.usesAwait());
+    m_moduleRecord->setHasTLA(moduleProgramNode.usesAwait());
 
     if (Options::dumpModuleRecord()) [[unlikely]]
         m_moduleRecord->dump();

@@ -682,7 +682,7 @@ static void* lib##Library() \
     } \
     \
     resultType softLink_##framework##_##functionName parameterDeclarations; \
-    resultType softLink_##framework##_##functionName parameterDeclarations \
+    export resultType softLink_##framework##_##functionName parameterDeclarations \
     { \
         ASSERT(softLink##framework##functionName); \
         return softLink##framework##functionName parameterNames; \

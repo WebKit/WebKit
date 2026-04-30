@@ -29,6 +29,7 @@
 
 // For testing only.
 - (CGImageRef)_copySnapshotForTesting WK_API_AVAILABLE(macos(10.12.3), ios(10.3));
+- (NSString *)_loggingStringForTesting WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 @property (nonatomic) CGPoint _scrollPosition WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 @property (nonatomic, readonly) BOOL _wasCreatedByJSWithoutUserInteraction WK_API_AVAILABLE(macos(14.0), ios(17.0));

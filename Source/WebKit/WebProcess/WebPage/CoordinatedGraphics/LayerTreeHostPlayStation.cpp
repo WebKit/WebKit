@@ -123,13 +123,14 @@ LayerTreeHost::~LayerTreeHost()
 
     cancelRenderingUpdate();
 
-    m_sceneState->invalidate();
-
 #if USE(SKIA)
     m_skiaPaintingEngine = nullptr;
 #endif
 
+    // ThreadedCompositor must be invalidated before invalidating CoordinatedSceneState
+    // to invalidate pending layers in the compositor thread.
     m_compositor->invalidate();
+    m_sceneState->invalidate();
 }
 
 void LayerTreeHost::setLayerTreeStateIsFrozen(bool isFrozen)

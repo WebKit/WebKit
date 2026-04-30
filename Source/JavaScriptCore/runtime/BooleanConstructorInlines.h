@@ -21,6 +21,7 @@
 #pragma once
 
 #include "BooleanConstructor.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

@@ -418,8 +418,6 @@ public:
 
     void setRootElementCapturedInViewTransition(bool);
 
-    void updateScrollSnapPropertiesWithFrameView(const LocalFrameView&) const;
-
     // For testing.
     void startTrackingLayerFlushes() { m_layerFlushCount = 0; }
     unsigned layerFlushCount() const { return m_layerFlushCount; }

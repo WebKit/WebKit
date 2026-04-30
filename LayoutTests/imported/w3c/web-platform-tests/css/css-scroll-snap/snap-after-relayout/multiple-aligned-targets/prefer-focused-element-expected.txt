@@ -1,0 +1,6 @@
+top lefttop rightbottom leftbottom right
+
+PASS scroller selects focused target from aligned choices on snap
+FAIL out-of-viewport focused element is not the selected snap target. assert_equals: scroller followed bottomleft in y axis after layout change expected 300 but got 200
+FAIL scroller follows selected snap target through layout shift,regardless of focus assert_equals: scroller followed bottomleft in y axis after layout change expected 500 but got 400
+

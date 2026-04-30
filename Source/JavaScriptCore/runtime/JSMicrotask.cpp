@@ -982,16 +982,17 @@ static void moduleLoadTopSettled(JSGlobalObject* globalObject, VM& vm, ThrowScop
         JSPromise* statePromise = JSPromise::create(vm, globalObject->promiseStructure());
         statePromise->markAsHandled();
         AbstractModuleRecord::ModuleRequest request { specifier, ScriptFetchParameters::create(type) };
-        ModuleLoaderPayload* modulePayload;
+        // combinedCell is the host-defined payload AND the AND-join state for loadPromise+statePromise.
+        // For dynamic import we wrap statePromise; for graph load we use the ModuleGraphLoadingState directly.
+        JSCell* combinedCell;
         JSPromise* loadPromise;
 
         if (context->dynamic()) {
-            modulePayload = ModuleLoaderPayload::create(vm, statePromise);
-            loadPromise = globalObject->moduleLoader()->loadModule(globalObject, globalObject, request, modulePayload, scriptFetcher, false, context->useImportMap());
+            combinedCell = ModuleLoaderPayload::create(vm, statePromise);
+            loadPromise = globalObject->moduleLoader()->loadModule(globalObject, globalObject, request, combinedCell, scriptFetcher, false, context->useImportMap());
         } else {
-            auto graphLoadingState = ModuleGraphLoadingState::create(vm, statePromise, scriptFetcher);
-            modulePayload = ModuleLoaderPayload::create(vm, graphLoadingState);
-            loadPromise = globalObject->moduleLoader()->loadModule(globalObject, globalObject, request, modulePayload, scriptFetcher, context->evaluate(), context->useImportMap());
+            combinedCell = ModuleGraphLoadingState::create(vm, statePromise, scriptFetcher);
+            loadPromise = globalObject->moduleLoader()->loadModule(globalObject, globalObject, request, combinedCell, scriptFetcher, context->evaluate(), context->useImportMap());
             if (scope.exception()) {
                 intermediatePromise->rejectWithCaughtException(globalObject, scope);
                 return;
@@ -1011,8 +1012,8 @@ static void moduleLoadTopSettled(JSGlobalObject* globalObject, VM& vm, ThrowScop
         JSPromise* combinedPromise = JSPromise::create(vm, globalObject->promiseStructure());
         combinedPromise->markAsHandled();
 
-        loadPromise->performPromiseThenWithInternalMicrotask(vm, globalObject, InternalMicrotask::ModuleLoadCombinedLoadSettled, combinedPromise, modulePayload);
-        statePromise->performPromiseThenWithInternalMicrotask(vm, globalObject, InternalMicrotask::ModuleLoadCombinedStateSettled, combinedPromise, modulePayload);
+        loadPromise->performPromiseThenWithInternalMicrotask(vm, globalObject, InternalMicrotask::ModuleLoadCombinedLoadSettled, combinedPromise, combinedCell);
+        statePromise->performPromiseThenWithInternalMicrotask(vm, globalObject, InternalMicrotask::ModuleLoadCombinedStateSettled, combinedPromise, combinedCell);
 
         intermediatePromise->pipeFrom(vm, combinedPromise);
     } else {
@@ -1094,21 +1095,35 @@ static void moduleLoadCombinedLoadSettled(JSGlobalObject* globalObject, VM& vm, 
     // Combined promise: load side settled
     // arguments[0] = combinedPromise
     // arguments[1] = resolution or error
-    // arguments[2] = ModuleLoaderPayload*
+    // arguments[2] = ModuleGraphLoadingState* (graph load) or ModuleLoaderPayload* (dynamic import)
     auto* combinedPromise = uncheckedDowncast<JSPromise>(arguments[0]);
-    auto* modulePayload = uncheckedDowncast<ModuleLoaderPayload>(arguments[2]);
+    auto* combinedCell = arguments[2].asCell();
+    ASSERT(isModuleLoaderHostDefinedPayload(combinedCell));
     auto status = static_cast<JSPromise::Status>(payload);
     scope.release();
-    if (status == JSPromise::Status::Fulfilled) {
-        if (modulePayload->decrementRemaining() && combinedPromise->status() == JSPromise::Status::Pending) {
-            JSValue fulfillmentValue = modulePayload->fulfillment();
+    bool fullySettled;
+    if (auto* state = dynamicDowncast<ModuleGraphLoadingState>(combinedCell))
+        fullySettled = state->decrementRemaining();
+    else
+        fullySettled = uncheckedDowncast<ModuleLoaderPayload>(combinedCell)->decrementRemaining();
+    switch (combinedPromise->status()) {
+    case JSPromise::Status::Pending: {
+        if (status == JSPromise::Status::Fulfilled) {
+            if (!fullySettled)
+                return;
+            JSValue fulfillmentValue;
+            if (auto* state = dynamicDowncast<ModuleGraphLoadingState>(combinedCell))
+                fulfillmentValue = state->fulfillment();
+            else
+                fulfillmentValue = uncheckedDowncast<ModuleLoaderPayload>(combinedCell)->fulfillment();
             ASSERT(fulfillmentValue);
             combinedPromise->fulfill(vm, globalObject, fulfillmentValue);
-        }
-    } else {
-        modulePayload->decrementRemaining();
-        if (combinedPromise->status() == JSPromise::Status::Pending)
+        } else
             combinedPromise->reject(vm, globalObject, arguments[1]);
+        return;
+    }
+    default:
+        return;
     }
 }
 
@@ -1117,21 +1132,33 @@ static void moduleLoadCombinedStateSettled(JSGlobalObject* globalObject, VM& vm,
     // Combined promise: state side settled
     // arguments[0] = combinedPromise
     // arguments[1] = resolution or error
-    // arguments[2] = ModuleLoaderPayload*
+    // arguments[2] = ModuleGraphLoadingState* (graph load) or ModuleLoaderPayload* (dynamic import)
     auto* combinedPromise = uncheckedDowncast<JSPromise>(arguments[0]);
-    auto* modulePayload = uncheckedDowncast<ModuleLoaderPayload>(arguments[2]);
+    auto* combinedCell = arguments[2].asCell();
+    ASSERT(isModuleLoaderHostDefinedPayload(combinedCell));
     auto status = static_cast<JSPromise::Status>(payload);
     scope.release();
-    if (status == JSPromise::Status::Fulfilled) {
-        if (modulePayload->decrementRemaining()) {
-            if (combinedPromise->status() == JSPromise::Status::Pending)
+    bool fullySettled;
+    if (auto* state = dynamicDowncast<ModuleGraphLoadingState>(combinedCell)) {
+        fullySettled = state->decrementRemaining();
+        if (status == JSPromise::Status::Fulfilled && !fullySettled)
+            state->setFulfillment(vm, arguments[1]);
+    } else {
+        auto* p = uncheckedDowncast<ModuleLoaderPayload>(combinedCell);
+        fullySettled = p->decrementRemaining();
+        if (status == JSPromise::Status::Fulfilled && !fullySettled)
+            p->setFulfillment(vm, arguments[1]);
+    }
+    switch (combinedPromise->status()) {
+    case JSPromise::Status::Pending:
+        if (status == JSPromise::Status::Fulfilled) {
+            if (fullySettled)
                 combinedPromise->fulfill(vm, globalObject, arguments[1]);
         } else
-            modulePayload->fulfillment(vm, arguments[1]);
-    } else {
-        modulePayload->decrementRemaining();
-        if (combinedPromise->status() == JSPromise::Status::Pending)
             combinedPromise->reject(vm, globalObject, arguments[1]);
+        return;
+    default:
+        return;
     }
 }
 
@@ -1211,6 +1238,9 @@ static void moduleLoadStoreError(JSGlobalObject* globalObject, ThrowScope& scope
 
 static void dynamicImportLoadSettled(JSGlobalObject* globalObject, VM& vm, ThrowScope& scope, std::span<const JSValue, maxMicrotaskArguments> arguments, uint8_t payload)
 {
+    // https://tc39.es/ecma262/#sec-ContinueDynamicImport
+    // Step-4 rejectedClosure or Step-6 linkAndEvaluateClosure
+    //
     // continueDynamicImport: loadPromise settled
     // arguments[0] = capabilityPromise
     // arguments[1] = resolution or error
@@ -1219,25 +1249,39 @@ static void dynamicImportLoadSettled(JSGlobalObject* globalObject, VM& vm, Throw
     auto* module = uncheckedDowncast<AbstractModuleRecord>(arguments[2]);
     auto status = static_cast<JSPromise::Status>(payload);
     if (status == JSPromise::Status::Fulfilled) {
-        // linkAndEvaluate logic
+        // Step-6 linkAndEvaluateClosure
+        // 6.a. Let link be Completion(module.Link()).
         module->link(globalObject, nullptr);
-        if (Exception* exception = scope.exception()) {
+
+        // 6.b. If link is an abrupt completion, then
+        if (Exception* exception = scope.exception()) [[unlikely]] {
+            // 6.b.i. Perform ! Call(promiseCapability.[[Reject]], undefined, « link.[[Value]] »).
             JSModuleLoader::attachErrorInfo(globalObject, exception, module, module->moduleKey(), module->moduleType(), JSModuleLoader::ModuleFailure::Kind::Instantiation);
             capabilityPromise->rejectWithCaughtException(globalObject, scope);
             return;
         }
+
+        // 6.c. Let evaluatePromise be module.Evaluate().
         JSPromise* evaluatePromise = module->evaluate(globalObject);
-        if (scope.exception()) {
+        if (scope.exception()) [[unlikely]] {
             capabilityPromise->rejectWithCaughtException(globalObject, scope);
             return;
         }
+
+        // 6.d-f. Perform PerformPromiseThen(evaluatePromise, onFulfilled, onRejected).
         evaluatePromise->performPromiseThenWithInternalMicrotask(vm, globalObject, InternalMicrotask::DynamicImportEvaluateSettled, capabilityPromise, module);
-    } else
+    } else {
+        // Step-4 rejectedClosure
+        // 4.a. Perform ! Call(promiseCapability.[[Reject]], undefined, « reason »).
         capabilityPromise->reject(vm, globalObject, arguments[1]);
+    }
 }
 
 static void dynamicImportEvaluateSettled(JSGlobalObject* globalObject, VM& vm, ThrowScope& scope, std::span<const JSValue, maxMicrotaskArguments> arguments, uint8_t payload)
 {
+    // https://tc39.es/ecma262/#sec-ContinueDynamicImport
+    // Step-4 rejectedClosure or Step-6.c fulfilledClosure
+    //
     // continueDynamicImport: evaluate settled
     // arguments[0] = capabilityPromise
     // arguments[1] = resolution or error
@@ -1246,17 +1290,24 @@ static void dynamicImportEvaluateSettled(JSGlobalObject* globalObject, VM& vm, T
     auto* module = uncheckedDowncast<AbstractModuleRecord>(arguments[2]);
     auto status = static_cast<JSPromise::Status>(payload);
     if (status == JSPromise::Status::Fulfilled) {
+        // 6.d.i. Let namespace be GetModuleNamespace(module).
         JSModuleNamespaceObject* moduleNamespace = module->getModuleNamespace(globalObject);
-        if (scope.exception()) {
+        if (scope.exception()) [[unlikely]] {
             capabilityPromise->rejectWithCaughtException(globalObject, scope);
             return;
         }
-        // ContinueDynamicImport https://tc39.es/ecma262/#sec-ContinueDynamicImport
-        // Step 10 resolves the promiseCapability with the namespace. However,
+
+        // 6.d.ii. Perform ! Call(promiseCapability.[[Resolve]], undefined, « namespace »).
+        // This step resolves the promiseCapability with the namespace. However,
         // capabilityPromise here is the internal statePromise from moduleLoadTopSettled,
         // not the user-visible import() promise. The actual spec-required resolve()
         // happens in importModuleNamespace. Use fulfill here to avoid unnecessary
         // thenable unwrapping on internal pipeline.
+        //
+        // FIXME: This is different from the spec while user-observable behavior is correctly
+        // aligned (as "resolve" will happen in resultPromise side from dynamic import).
+        // But ideally, this carried capabilityPromise should be the last user-observable
+        // promise and we should do "resolve" here. This requires some clean up.
         capabilityPromise->fulfill(vm, globalObject, moduleNamespace);
     } else
         capabilityPromise->reject(vm, globalObject, arguments[1]);
@@ -1284,11 +1335,62 @@ static void importModuleNamespace(JSGlobalObject* globalObject, VM& vm, ThrowSco
     return;
 }
 
+static void promiseResolveWithoutHandlerJobSlow(JSGlobalObject* globalObject, VM& vm, JSValue capability, JSValue resolution, JSPromise::Status status)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (status == JSPromise::Status::Rejected) {
+        JSValue reject = capability.get(globalObject, vm.propertyNames->reject);
+        RETURN_IF_EXCEPTION(scope, void());
+
+        MarkedArgumentBuffer arguments;
+        arguments.append(resolution);
+        ASSERT(!arguments.hasOverflowed());
+        scope.release();
+        call(globalObject, reject, jsUndefined(), arguments, "reject is not a function"_s);
+        return;
+    }
+
+    JSValue resolve = capability.get(globalObject, vm.propertyNames->resolve);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    MarkedArgumentBuffer arguments;
+    arguments.append(resolution);
+    ASSERT(!arguments.hasOverflowed());
+    scope.release();
+    call(globalObject, resolve, jsUndefined(), arguments, "resolve is not a function"_s);
+}
+
+static void promiseResolveWithoutHandlerJob(JSGlobalObject* globalObject, VM& vm, JSValue promiseOrCapability, JSValue resolution, JSPromise::Status status)
+{
+    if (auto* promise = dynamicDowncast<JSPromise>(promiseOrCapability)) [[likely]] {
+        switch (status) {
+        case JSPromise::Status::Pending:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        case JSPromise::Status::Fulfilled:
+            promise->resolvePromise(globalObject, vm, resolution);
+            break;
+        case JSPromise::Status::Rejected:
+            promise->rejectPromise(vm, globalObject, resolution);
+            break;
+        }
+        return;
+    }
+
+    promiseResolveWithoutHandlerJobSlow(globalObject, vm, promiseOrCapability, resolution, status);
+}
+
 void runInternalMicrotask(JSGlobalObject* globalObject, VM& vm, InternalMicrotask task, uint8_t payload, std::span<const JSValue, maxMicrotaskArguments> arguments, MicrotaskCall* microtaskCall)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     switch (task) {
+    case InternalMicrotask::None: {
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+
     case InternalMicrotask::PromiseResolveThenableJobFast: {
         auto* promise = uncheckedDowncast<JSPromise>(arguments[0]);
         auto* promiseToResolve = uncheckedDowncast<JSPromise>(arguments[1]);
@@ -1312,8 +1414,7 @@ void runInternalMicrotask(JSGlobalObject* globalObject, VM& vm, InternalMicrotas
         JSValue reactionsOrResult = promise->reactionsOrResult();
         switch (promise->status()) {
         case JSPromise::Status::Pending: {
-            JSValue encodedTask = jsNumber(static_cast<int32_t>(task));
-            auto* reaction = JSPromiseReaction::create(vm, jsUndefined(), encodedTask, encodedTask, context, reactionsOrResult ? uncheckedDowncast<JSPromiseReaction>(reactionsOrResult) : nullptr);
+            auto* reaction = JSSlimPromiseReaction::create(vm, jsUndefined(), task, context, reactionsOrResult ? uncheckedDowncast<JSPromiseReaction>(reactionsOrResult) : nullptr);
             promise->setReactionsOrResult(vm, reaction);
             promise->markAsHandled();
             break;
@@ -1351,25 +1452,7 @@ void runInternalMicrotask(JSGlobalObject* globalObject, VM& vm, InternalMicrotas
     }
 
     case InternalMicrotask::PromiseResolveWithoutHandlerJob: {
-        auto* promise = uncheckedDowncast<JSPromise>(arguments[0]);
-        JSValue resolution = arguments[1];
-        switch (static_cast<JSPromise::Status>(payload)) {
-        case JSPromise::Status::Pending: {
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
-        }
-        case JSPromise::Status::Fulfilled: {
-            scope.release();
-            promise->resolvePromise(globalObject, vm, resolution);
-            break;
-        }
-        case JSPromise::Status::Rejected: {
-            scope.release();
-            promise->rejectPromise(vm, globalObject, resolution);
-            break;
-        }
-        }
-        return;
+        RELEASE_AND_RETURN(scope, promiseResolveWithoutHandlerJob(globalObject, vm, arguments[0], arguments[1], static_cast<JSPromise::Status>(payload)));
     }
 
     case InternalMicrotask::PromiseFulfillWithoutHandlerJob: {

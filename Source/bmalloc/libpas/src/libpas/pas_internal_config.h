@@ -69,12 +69,6 @@
 /* Use VA-based memory zeroing when the allocation size exceeds this threshold. */
 #define PAS_VA_BASED_ZERO_MEMORY_SHIFT   20
 
-/* Default amount of padding between backing allocations of different partial views within a
- * single segregated shared page. Most useful for heaps which allocate user-facing objects. */
-#define PAS_SMALL_PARTIAL_VIEW_PADDING   16
-#define PAS_MEDIUM_PARTIAL_VIEW_PADDING  0
-#define PAS_PARTIAL_VIEW_PADDING_ALIGN   16
-
 /* This is the same as PAS_BITVECTOR_WORD_SHIFT, which is a nice performance optimization but
    isn't necessary. It's a performance optimization because there are specialized fast code
    paths for sharing_shift == PAS_BITVECTOR_WORD_SHIFT. */
@@ -147,9 +141,7 @@
 #define PAS_SMALL_SHARED_PAGE_LOG_SHIFT     31
 #define PAS_MEDIUM_SHARED_PAGE_LOG_SHIFT    31
 
-/* Must be zero; utility doesn't support partials right now (though it could if we hacked deallocation and
-   added a shared page directory). */
-#define PAS_UTILITY_BOUND_FOR_PARTIAL_VIEWS                     0
+/* Utility heap handles libpas-internal metadata */
 #define PAS_UTILITY_BOUND_FOR_BASELINE_ALLOCATORS               0
 #define PAS_UTILITY_BOUND_FOR_NO_VIEW_CACHE                     UINT_MAX
 #define PAS_UTILITY_MAX_SEGREGATED_OBJECT_SIZE                  UINT_MAX
@@ -157,7 +149,6 @@
 
 /* Intrinsic heaps are for global, singleton, process-wide heaps -- so the "not isoheaped" heap, the
    thing you get from regular malloc. */
-#define PAS_INTRINSIC_BOUND_FOR_PARTIAL_VIEWS                   0
 #define PAS_INTRINSIC_BOUND_FOR_BASELINE_ALLOCATORS             0
 #define PAS_INTRINSIC_BOUND_FOR_NO_VIEW_CACHE                   0
 #define PAS_INTRINSIC_MAX_SEGREGATED_OBJECT_SIZE                UINT_MAX
@@ -167,7 +158,6 @@
    tuning has to be such that we are efficient for lots of small heaps. But, there's no restriction
    on whether the data in the heap is reused in any particular way -- we run this with a type size
    of 1. */
-#define PAS_PRIMITIVE_BOUND_FOR_PARTIAL_VIEWS                   0
 #define PAS_PRIMITIVE_BOUND_FOR_BASELINE_ALLOCATORS             0
 #define PAS_PRIMITIVE_BOUND_FOR_NO_VIEW_CACHE                   UINT_MAX
 #define PAS_PRIMITIVE_MAX_SEGREGATED_OBJECT_SIZE                UINT_MAX
@@ -178,7 +168,6 @@
    The alignment requirement is taken together with the minalign argument (the allocator uses
    whichever is bigger), but it's a bit more optimal to convey alignment using the alignment part
    of the type than by passing it to minalign. */
-#define PAS_TYPED_BOUND_FOR_PARTIAL_VIEWS                       0
 #define PAS_TYPED_BOUND_FOR_BASELINE_ALLOCATORS                 0
 #define PAS_TYPED_BOUND_FOR_NO_VIEW_CACHE                       UINT_MAX
 #define PAS_TYPED_MAX_SEGREGATED_OBJECT_SIZE                    UINT_MAX
@@ -189,7 +178,6 @@
    Implementing these as segregated heaps is valid since sizes get segregated and different-sized
    objects will only overlap at the header. However, FIXME: we need flex heaps to use a large heap
    that won't overlap objects in these heaps as if they were arrays. */
-#define PAS_FLEX_BOUND_FOR_PARTIAL_VIEWS                        0
 #define PAS_FLEX_BOUND_FOR_BASELINE_ALLOCATORS                  0
 #define PAS_FLEX_BOUND_FOR_NO_VIEW_CACHE                        UINT_MAX
 #define PAS_FLEX_MAX_SEGREGATED_OBJECT_SIZE                     UINT_MAX

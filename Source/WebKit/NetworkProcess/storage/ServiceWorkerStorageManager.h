@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/SWRegistrationDatabase.h>
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -39,6 +40,8 @@ public:
     void closeFiles();
     void clearAllRegistrations();
     std::optional<Vector<WebCore::ServiceWorkerContextData>> importRegistrations();
+    std::optional<Vector<WebCore::ServiceWorkerContextData>> importRegistrations(const WebCore::SecurityOriginData& topOrigin);
+    std::optional<HashSet<WebCore::ClientOrigin>> importOrigins();
     std::optional<Vector<WebCore::ServiceWorkerScripts>> updateRegistrations(const Vector<WebCore::ServiceWorkerContextData>&, const Vector<WebCore::ServiceWorkerRegistrationKey>&);
     std::optional<WebCore::ServiceWorkerScripts> retrieveWorkerScripts(WebCore::ServiceWorkerIdentifier, const WebCore::ServiceWorkerRegistrationKey&, const URL& mainScriptURL, const Vector<URL>& importedScriptURLs);
 

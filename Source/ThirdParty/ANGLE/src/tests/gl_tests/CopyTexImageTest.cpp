@@ -1130,6 +1130,29 @@ TEST_P(CopyTexImageTestRobustResourceInit, InvalidInputParam)
     EXPECT_GL_ERROR(GL_INVALID_VALUE);
 }
 
+// Ensure that reading out of the framebuffer bounds yields zero-initialized data
+TEST_P(CopyTexImageTestRobustResourceInit, OOBReadShouldBeZeroInit)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 1, 1);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+
+    GLTexture dest;
+    glBindTexture(GL_TEXTURE_2D, dest);
+    // Copy from out of bounds of source texture, should be zeros. Copy into a format that requires
+    // emulation on most backends.
+    glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, 1, 1, 1, 1, 0);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, dest, 0);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
+}
+
 // specialization of CopyTexImageTest is added so that some tests can be explicitly run with an ES3
 // context
 class CopyTexImageTestES3 : public CopyTexImageTest
@@ -2065,10 +2088,9 @@ ANGLE_INSTANTIATE_TEST_ES3_AND(
     ES3_OPENGL().enable(Feature::ForceLumaWorkaroundForSameTextureCopyTexImage2D),
     ES3_OPENGLES().enable(Feature::ForceLumaWorkaroundForSameTextureCopyTexImage2D));
 
-ANGLE_INSTANTIATE_TEST_ES2_AND(
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     CopyTexImageTestRobustResourceInit,
     ES2_D3D11_PRESENT_PATH_FAST(),
-    ES3_VULKAN(),
     ES2_OPENGL().enable(Feature::EmulateCopyTexImage2D),
     ES2_OPENGLES().enable(Feature::EmulateCopyTexImage2D),
     ES2_OPENGL().enable(Feature::EmulateCopyTexImage2DFromRenderbuffers),

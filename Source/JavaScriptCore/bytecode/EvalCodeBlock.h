@@ -29,7 +29,9 @@
 
 #pragma once
 
+#include "EvalExecutable.h"
 #include "GlobalCodeBlock.h"
+#include "UnlinkedEvalCodeBlock.h"
 
 namespace JSC {
 

@@ -85,6 +85,10 @@
                 "PORT": {
                     "type": "STRING",
                     "value": "Mac"
+                },
+                "ENABLE_EXPERIMENTAL_FEATURES": {
+                    "type": "BOOL",
+                    "value": "OFF"
                 }
             },
             "environment": {
@@ -107,18 +111,28 @@
         {
             "name": "mac-dev-release",
             "displayName": "macOS Development (Release, ccache, compile_commands)",
-            "inherits": ["mac-release", "dev"],
-            "cacheVariables": {
-                "ENABLE_EXPERIMENTAL_FEATURES": {
-                    "type": "BOOL",
-                    "value": "OFF"
-                }
-            }
+            "inherits": ["mac-release", "dev"]
         },
         {
             "name": "mac-dev-debug",
             "displayName": "macOS Development (Debug, ccache, compile_commands)",
             "inherits": ["mac-debug", "dev"]
+        },
+        {
+            "name": "mac-dev-debug-o3",
+            "displayName": "macOS Development (Debug O3 optimization, ccache, compile_commands)",
+            "inherits": ["mac-debug", "dev"],
+            "binaryDir": "WebKitBuild/cmake-mac/DebugO3",
+            "cacheVariables": {
+                "CMAKE_C_FLAGS_DEBUG": {
+                    "type": "STRING",
+                    "value": "-g -O3"
+                },
+                "CMAKE_CXX_FLAGS_DEBUG": {
+                    "type": "STRING",
+                    "value": "-g -O3"
+                }
+            }
         },
         {
             "name": "mac-dev-relwithdebinfo",
@@ -206,6 +220,11 @@
             "name": "mac-dev-debug",
             "displayName": "macOS Development Debug",
             "configurePreset": "mac-dev-debug"
+        },
+        {
+            "name": "mac-dev-debug-o3",
+            "displayName": "macOS Development Debug O3",
+            "configurePreset": "mac-dev-debug-o3"
         },
         {
             "name": "mac-dev-relwithdebinfo",

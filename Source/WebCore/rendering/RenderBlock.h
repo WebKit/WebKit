@@ -270,7 +270,8 @@ protected:
     
     void markFixedPositionBoxForLayoutIfNeeded(RenderBox& child);
 
-    LayoutUnit marginIntrinsicLogicalWidthForChild(RenderBox&) const;
+    std::pair<LayoutUnit, LayoutUnit> intrinsicLogicalMarginStartAndEnd(const RenderBox&) const;
+    inline LayoutUnit marginIntrinsicLogicalWidthForChild(const RenderBox&) const;
 
     void paint(PaintInfo&, const LayoutPoint&) override;
     void paintObject(PaintInfo&, const LayoutPoint&) override;

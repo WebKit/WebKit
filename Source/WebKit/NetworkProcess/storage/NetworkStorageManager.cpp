@@ -54,6 +54,7 @@
 #include "WebsiteDataType.h"
 #include <WebCore/DOMCacheEngine.h>
 #include <WebCore/IDBRequestData.h>
+#include <WebCore/SWRegistrationDatabase.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/ServiceWorkerContextData.h>
 #include <WebCore/StorageBlockingPolicy.h>
@@ -64,6 +65,7 @@
 #include <algorithm>
 #include <pal/crypto/CryptoDigest.h>
 #include <ranges>
+#include <wtf/FileSystem.h>
 #include <wtf/SuspendableWorkQueue.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/Base64.h>
@@ -981,7 +983,7 @@ void NetworkStorageManager::removeEntry(WebCore::FileSystemHandleIdentifier iden
     completionHandler(handle->removeEntry(name, deleteRecursively));
 }
 
-void NetworkStorageManager::resolve(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier targetIdentifier, CompletionHandler<void(Expected<Vector<String>, FileSystemStorageError>)>&& completionHandler)
+void NetworkStorageManager::resolve(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier targetIdentifier, CompletionHandler<void(Expected<std::optional<Vector<String>>, FileSystemStorageError>)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -999,6 +1001,9 @@ void NetworkStorageManager::getFile(WebCore::FileSystemHandleIdentifier identifi
     RefPtr handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
     if (!handle)
         return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
+
+    if (!FileSystem::fileExists(handle->path()))
+        return completionHandler(makeUnexpected(FileSystemStorageError::FileNotFound));
 
     completionHandler(handle->path());
 }
@@ -1094,24 +1099,28 @@ void NetworkStorageManager::getHandle(IPC::Connection& connection, WebCore::File
         completionHandler(makeUnexpected(result.error()));
 }
 
+void NetworkStorageManager::forEachClientOriginDirectoryUnderTopOrigin(const String& encodedTopOrigin, NOESCAPE const Function<void(const String&)>& apply)
+{
+    auto topOriginDirectory = FileSystem::pathByAppendingComponent(m_path, encodedTopOrigin);
+    auto openingOrigins = FileSystem::listDirectory(topOriginDirectory);
+    if (openingOrigins.isEmpty()) {
+        FileSystem::deleteEmptyDirectory(topOriginDirectory);
+        return;
+    }
+
+    for (auto& openingOrigin : openingOrigins) {
+        if (openingOrigin.startsWith('.'))
+            continue;
+
+        auto openingOriginDirectory = FileSystem::pathByAppendingComponent(topOriginDirectory, openingOrigin);
+        apply(openingOriginDirectory);
+    }
+}
+
 void NetworkStorageManager::forEachOriginDirectory(NOESCAPE const Function<void(const String&)>& apply)
 {
-    for (auto& topOrigin : FileSystem::listDirectory(m_path)) {
-        auto topOriginDirectory = FileSystem::pathByAppendingComponent(m_path, topOrigin);
-        auto openingOrigins = FileSystem::listDirectory(topOriginDirectory);
-        if (openingOrigins.isEmpty()) {
-            FileSystem::deleteEmptyDirectory(topOriginDirectory);
-            continue;
-        }
-
-        for (auto& openingOrigin : openingOrigins) {
-            if (openingOrigin.startsWith('.'))
-                continue;
-
-            auto openingOriginDirectory = FileSystem::pathByAppendingComponent(topOriginDirectory, openingOrigin);
-            apply(openingOriginDirectory);
-        }
-    }
+    for (auto& topOrigin : FileSystem::listDirectory(m_path))
+        forEachClientOriginDirectoryUnderTopOrigin(topOrigin, apply);
 }
 
 HashSet<WebCore::ClientOrigin> NetworkStorageManager::getAllOrigins()
@@ -1141,6 +1150,9 @@ HashSet<WebCore::ClientOrigin> NetworkStorageManager::getAllOrigins()
 
 static void updateOriginData(HashMap<WebCore::SecurityOriginData, OriginStorageManager::DataTypeSizeMap>& originTypes, const WebCore::SecurityOriginData& origin, const OriginStorageManager::DataTypeSizeMap& newTypeSizeMap)
 {
+    if (newTypeSizeMap.isEmpty())
+        return;
+
     auto& typeSizeMap = originTypes.add(origin, OriginStorageManager::DataTypeSizeMap { }).iterator->value;
     for (auto [type, size] : newTypeSizeMap) {
         auto& currentSize = typeSizeMap.add(type, 0).iterator->value;
@@ -2235,41 +2247,82 @@ void NetworkStorageManager::clearServiceWorkerRegistrations(CompletionHandler<vo
     });
 }
 
-void NetworkStorageManager::importServiceWorkerRegistrations(CompletionHandler<void(std::optional<Vector<WebCore::ServiceWorkerContextData>>&&)>&& completionHandler)
+void NetworkStorageManager::importServiceWorkerRegistrationsForOrigin(const WebCore::SecurityOriginData& topOrigin, CompletionHandler<void(std::optional<Vector<WebCore::ServiceWorkerContextData>>&&)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
     if (m_closed)
         return completionHandler(std::nullopt);
 
-    RELEASE_LOG(Storage, "%p - NetworkStorageManager::importServiceWorkerRegistrations: Starting import", this);
+    RELEASE_LOG(Storage, "%p - NetworkStorageManager::importServiceWorkerRegistrationsForOrigin: Starting import", this);
     auto startTime = MonotonicTime::now();
-    workQueue().dispatchWithQOS([this, protectedThis = Ref { *this }, startTime, completionHandler = WTF::move(completionHandler)]() mutable {
+    workQueue().dispatchWithQOS([this, protectedThis = Ref { *this }, topOrigin = crossThreadCopy(topOrigin), startTime, completionHandler = WTF::move(completionHandler)]() mutable {
         assertIsCurrent(workQueue());
 
         std::optional<Vector<WebCore::ServiceWorkerContextData>> result;
         if (m_sharedServiceWorkerStorageManager)
-            result = m_sharedServiceWorkerStorageManager->importRegistrations();
+            result = m_sharedServiceWorkerStorageManager->importRegistrations(topOrigin);
         else {
-            bool hasResult = false;
             Vector<WebCore::ServiceWorkerContextData> registrations;
-            for (auto& origin : getAllOrigins()) {
-                if (auto originRegistrations = originStorageManager(origin)->serviceWorkerStorageManager().importRegistrations()) {
-                    hasResult = true;
+            forEachClientOriginDirectoryUnderTopOrigin(encode(topOrigin.toString(), m_salt), [&](auto& directory) {
+                auto origin = WebCore::StorageUtilities::readOriginFromFile(originFilePath(directory));
+                if (!origin)
+                    return;
+                if (auto originRegistrations = originStorageManager(*origin)->serviceWorkerStorageManager().importRegistrations(topOrigin))
                     registrations.appendVector(WTF::move(*originRegistrations));
-                }
-                removeOriginStorageManagerIfPossible(origin);
-            }
-            if (hasResult)
+                removeOriginStorageManagerIfPossible(*origin);
+            });
+            if (!registrations.isEmpty())
                 result = WTF::move(registrations);
         }
 
         RunLoop::mainSingleton().dispatch([protectedThis = WTF::move(protectedThis), startTime, result = crossThreadCopy(WTF::move(result)), completionHandler = WTF::move(completionHandler)]() mutable {
+#if !RELEASE_LOG_DISABLED
             auto elapsed = MonotonicTime::now() - startTime;
-            if (elapsed > 2_s)
-                RELEASE_LOG_ERROR(Storage, "%p - NetworkStorageManager::importServiceWorkerRegistrations: Imported %zu registrations in %.0f ms", protectedThis.ptr(), result ? result->size() : 0, elapsed.milliseconds());
-            else
-                RELEASE_LOG(Storage, "%p - NetworkStorageManager::importServiceWorkerRegistrations: Imported %zu registrations in %.0f ms", protectedThis.ptr(), result ? result->size() : 0, elapsed.milliseconds());
+            RELEASE_LOG(Storage, "%p - NetworkStorageManager::importServiceWorkerRegistrationsForOrigin: Imported %zu registrations in %.0f ms", protectedThis.ptr(), result ? result->size() : 0, elapsed.milliseconds());
+#else
+            UNUSED_PARAM(startTime);
+#endif
+            completionHandler(WTF::move(result));
+        });
+    }, WorkQueue::QOS::UserInitiated);
+}
+
+void NetworkStorageManager::importServiceWorkerOriginList(CompletionHandler<void(std::optional<HashSet<WebCore::ClientOrigin>>&&)>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    if (m_closed)
+        return completionHandler(std::nullopt);
+
+    auto startTime = MonotonicTime::now();
+    workQueue().dispatchWithQOS([this, protectedThis = Ref { *this }, startTime, completionHandler = WTF::move(completionHandler)]() mutable {
+        assertIsCurrent(workQueue());
+
+        std::optional<HashSet<WebCore::ClientOrigin>> result;
+        if (m_sharedServiceWorkerStorageManager)
+            result = m_sharedServiceWorkerStorageManager->importOrigins();
+        else {
+            HashSet<WebCore::ClientOrigin> origins;
+            forEachOriginDirectory([&](auto& directory) {
+                auto origin = WebCore::StorageUtilities::readOriginFromFile(originFilePath(directory));
+                if (!origin)
+                    return;
+                auto swStoragePath = originStorageManager(*origin)->resolvedPath(WebsiteDataType::ServiceWorkerRegistrations);
+                if (!swStoragePath.isEmpty() && FileSystem::fileExists(WebCore::SWRegistrationDatabase::databaseFilePath(swStoragePath)))
+                    origins.add(*origin);
+                removeOriginStorageManagerIfPossible(*origin);
+            });
+            result = WTF::move(origins);
+        }
+
+        RunLoop::mainSingleton().dispatch([protectedThis = WTF::move(protectedThis), startTime, result = crossThreadCopy(WTF::move(result)), completionHandler = WTF::move(completionHandler)]() mutable {
+#if !RELEASE_LOG_DISABLED
+            auto elapsed = MonotonicTime::now() - startTime;
+            RELEASE_LOG(Storage, "%p - NetworkStorageManager::importServiceWorkerOriginList: Imported %u origins in %.0f ms", protectedThis.ptr(), result ? result->size() : 0, elapsed.milliseconds());
+#else
+            UNUSED_PARAM(startTime);
+#endif
             completionHandler(WTF::move(result));
         });
     }, WorkQueue::QOS::UserInitiated);

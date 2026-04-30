@@ -6,6 +6,10 @@
 candidates =
     WebKitBuild/Debug/DeveloperTools/compile_commands.json
     WebKitBuild/Release/DeveloperTools/compile_commands.json
+    WebKitBuild/cmake-mac/Debug/DeveloperTools/compile_commands.json
+    WebKitBuild/cmake-mac/Release/DeveloperTools/compile_commands.json
+    WebKitBuild/cmake-mac/RelWithDebInfo/DeveloperTools/compile_commands.json
+    WebKitBuild/cmake-mac/ASan/DeveloperTools/compile_commands.json
     WebKitBuild/GTK/Debug/DeveloperTools/compile_commands.json
     WebKitBuild/GTK/Release/DeveloperTools/compile_commands.json
     WebKitBuild/WPE/Debug/DeveloperTools/compile_commands.json

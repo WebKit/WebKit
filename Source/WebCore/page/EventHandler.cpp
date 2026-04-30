@@ -3166,6 +3166,19 @@ void EventHandler::clearElementUnderMouse()
     imageOverlayController->elementUnderMouseDidChange(protect(m_frame), nullptr);
 }
 
+void EventHandler::dispatchMouseBoundaryEventsAfterFullscreenChange()
+{
+    if (!m_elementUnderMouse || !m_lastKnownMousePosition)
+        return;
+
+    auto modifiers = PlatformKeyboardEvent::currentStateOfModifierKeys();
+    PlatformMouseEvent syntheticEvent(valueOrDefault(m_lastKnownMousePosition), m_lastKnownMouseGlobalPosition,
+        MouseButton::None, PlatformEvent::Type::NoType, 0, modifiers,
+        MonotonicTime::now(), 0, SyntheticClickType::NoTap, MouseEventInputSource::UserDriven);
+    updateMouseEventTargetNode(eventNames().mouseoutEvent, nullptr, syntheticEvent, FireMouseOverOut::Yes);
+    m_lastKnownMousePosition = std::nullopt;
+}
+
 bool EventHandler::isElementAnAncestorOfLastElementUnderMouse(Element* element) const
 {
     if (!element)

@@ -1,3 +1,7 @@
+#if defined(__APPLE__) && defined(__aarch64__)
+#define SIMDE_ARM_SVE_H
+#endif
+
 /* AUTOMATICALLY GENERATED FILE, DO NOT MODIFY */
 /* b8e468a68a879f51c694791e17a4bff175d7cd5e */
 /* :: Begin simde/arm/sve.h :: */

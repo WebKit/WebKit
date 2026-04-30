@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <wtf/PrintStream.h>
+#include <cstdint>
 
 namespace JSC {
 
@@ -48,26 +48,6 @@ enum class ConstraintVolatility : uint8_t {
     // mutator resumes.
     GreyedByMarking
 };
-    
+
 } // namespace JSC
-
-namespace WTF {
-
-inline void printInternal(PrintStream& out, JSC::ConstraintVolatility volatility)
-{
-    switch (volatility) {
-    case JSC::ConstraintVolatility::SeldomGreyed:
-        out.print("SeldomGreyed");
-        return;
-    case JSC::ConstraintVolatility::GreyedByExecution:
-        out.print("GreyedByExecuction");
-        return;
-    case JSC::ConstraintVolatility::GreyedByMarking:
-        out.print("GreyedByMarking");
-        return;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-} // namespace WTF
 

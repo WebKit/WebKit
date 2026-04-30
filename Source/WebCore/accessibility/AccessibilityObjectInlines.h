@@ -57,6 +57,12 @@ inline AXObjectCache* AccessibilityObject::axObjectCache() const
     return m_axObjectCache.get();
 }
 
+inline bool AccessibilityObject::anyObjectHasAriaOwns() const
+{
+    auto* cache = axObjectCache();
+    return cache && cache->hasAriaOwnsRelations();
+}
+
 inline bool AccessibilityObject::isDetached() const
 {
     return !wrapper();

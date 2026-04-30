@@ -32,6 +32,8 @@ class HTMLDirectoryElement final : public HTMLElement {
 public:
     static Ref<HTMLDirectoryElement> create(const QualifiedName& tagName, Document&);
 
+    ~HTMLDirectoryElement();
+
 private:
     HTMLDirectoryElement(const QualifiedName&, Document&);
 };

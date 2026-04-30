@@ -50,6 +50,7 @@ PositionedLayoutConstraints::PositionedLayoutConstraints(const RenderBox& render
     : m_renderer(renderer)
     , m_container(downcast<RenderBoxModelObject>(*renderer.container())) // Using containingBlock() would be wrong for relpositioned inlines.
     , m_containingWritingMode(m_container->writingMode())
+    , m_parentWritingMode(renderer.parent()->writingMode())
     , m_writingMode(style.writingMode())
     , m_selfAxis(selfAxis)
     , m_containingAxis(!isOrthogonal() ? selfAxis : oppositeAxis(selfAxis))
@@ -109,6 +110,33 @@ bool PositionedLayoutConstraints::containingCoordsAreFlipped() const
     return !m_useStaticPosition && ((isBlockOpposing() && m_containingAxis == LogicalBoxAxis::Block) || (isOrthogonal() && orthogonalOpposing));
 }
 
+static bool isFlippedOnAxis(WritingMode writingMode, BoxAxis physicalAxis)
+{
+    bool axisIsBlock = writingMode.isHorizontal() != (physicalAxis == BoxAxis::Horizontal);
+    return axisIsBlock ? writingMode.isBlockFlipped() : writingMode.isInlineFlipped();
+}
+
+bool PositionedLayoutConstraints::isOrthogonalToContainingBlockWithFlippedParent() const
+{
+    // Grid items use alignment-based static positioning.
+    if (is<RenderGrid>(m_container) && m_container.get() == m_renderer->parent())
+        return false;
+    if (!isOrthogonal())
+        return false;
+    return isFlippedOnAxis(m_parentWritingMode, m_physicalAxis);
+}
+
+bool PositionedLayoutConstraints::isParentOpposingContainingBlock() const
+{
+    if (is<RenderGrid>(m_container) && m_container.get() == m_renderer->parent())
+        return false;
+    bool parentFlipped = isFlippedOnAxis(m_parentWritingMode, m_physicalAxis);
+    // Only block-flip matters for the containing block -- direction (rtl) does not flip the physical containing range.
+    bool physicalAxisIsCBBlock = m_containingWritingMode.isHorizontal() != (m_physicalAxis == BoxAxis::Horizontal);
+    bool containingBlockFlipped = physicalAxisIsCBBlock && m_containingWritingMode.isBlockFlipped();
+    return parentFlipped != containingBlockFlipped;
+}
+
 void PositionedLayoutConstraints::captureInsets()
 {
     bool isHorizontal = BoxAxis::Horizontal == m_physicalAxis;
@@ -127,8 +155,9 @@ void PositionedLayoutConstraints::captureInsets()
         m_insetBefore = m_style.logicalLeft();
         m_insetAfter = m_style.logicalRight();
     } else {
-        m_marginBefore = m_style.marginBefore();
-        m_marginAfter = m_style.marginAfter();
+        auto staticPositionIsFromFlippedParent = m_useStaticPosition && isOrthogonalToContainingBlockWithFlippedParent();
+        m_marginBefore = staticPositionIsFromFlippedParent ? m_style.marginAfter() : m_style.marginBefore();
+        m_marginAfter = staticPositionIsFromFlippedParent ? m_style.marginBefore() : m_style.marginAfter();
         m_insetBefore = m_style.logicalTop();
         m_insetAfter = m_style.logicalBottom();
     }
@@ -590,13 +619,14 @@ void PositionedLayoutConstraints::computeStaticPosition()
     auto staticDistance = m_selfAxis == LogicalBoxAxis::Inline ? computedInlineStaticDistance() : computedBlockStaticDistance();
     auto shouldUseInsetBefore = [&] {
         if (m_selfAxis == LogicalBoxAxis::Block)
-            return true;
-        auto parentWritingMode = m_renderer->parent()->writingMode();
-        auto shouldUseInsetBefore = parentWritingMode.isOrthogonal(selfWritingMode()) || !parentWritingMode.isInlineFlipped(); // This is what trunk has.
+            return !isParentOpposingContainingBlock();
+        auto shouldUseInsetBefore = m_parentWritingMode.isOrthogonal(selfWritingMode()) || !m_parentWritingMode.isInlineFlipped(); // This is what trunk has.
         if (!shouldUseInsetBefore) {
             // FIXME: Figure out why.
-            shouldUseInsetBefore = m_containingWritingMode.isOrthogonal(parentWritingMode) && m_containingWritingMode.isBlockFlipped();
+            shouldUseInsetBefore = m_containingWritingMode.isOrthogonal(m_parentWritingMode) && m_containingWritingMode.isBlockFlipped();
         }
+        if (shouldUseInsetBefore && isParentOpposingContainingBlock())
+            shouldUseInsetBefore = false;
         return shouldUseInsetBefore;
     };
     // Since the static position is computed during in flow layout, the computed
@@ -719,7 +749,14 @@ static bool NODELETE shouldInlineStaticDistanceAdjustedWithBoxHeight(WritingMode
 void PositionedLayoutConstraints::fixupLogicalLeftPosition(RenderBox::LogicalExtentComputedValues& computedValues) const
 {
     if (m_useStaticPosition) {
-        if (m_container.get() != m_renderer->parent() && shouldInlineStaticDistanceAdjustedWithBoxHeight(m_containingWritingMode, m_renderer->parent()->writingMode(), selfWritingMode()))
+        auto shouldAdjustWithBoxExtent = [&] {
+            if (isParentOpposingContainingBlock())
+                return false;
+            if (m_container.get() == m_renderer->parent())
+                return false;
+            return shouldInlineStaticDistanceAdjustedWithBoxHeight(m_containingWritingMode, m_parentWritingMode, selfWritingMode());
+        };
+        if (shouldAdjustWithBoxExtent())
             computedValues.position -= computedValues.extent;
         return;
     }
@@ -813,6 +850,10 @@ void PositionedLayoutConstraints::adjustLogicalTopWithLogicalHeightIfNeeded(Rend
 {
     if (!m_useStaticPosition || m_selfAxis != LogicalBoxAxis::Block)
         return;
+    if (isParentOpposingContainingBlock()) {
+        // When the static position was corrected to insetAfter, the position is already at the correct edge.
+        return;
+    }
     if (shouldBlockStaticDistanceAdjustedWithBoxHeight(*m_container, *m_renderer->parent(), m_writingMode))
         computedValues.position -= computedValues.extent;
 }

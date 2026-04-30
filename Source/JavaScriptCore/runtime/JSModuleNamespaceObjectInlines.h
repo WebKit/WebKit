@@ -26,6 +26,7 @@
 #pragma once
 
 #include "JSModuleNamespaceObject.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

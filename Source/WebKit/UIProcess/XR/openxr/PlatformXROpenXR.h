@@ -58,7 +58,7 @@ public:
     void createLayerProjection(uint32_t, uint32_t, bool, CompletionHandler<void(std::optional<PlatformXR::LayerInfo>)>&&) override;
 
 #if ENABLE(WEBXR_LAYERS)
-    void createQuadLayer(WebCore::IntSize, PlatformXR::LayerLayout, CreateQuadCallback&&) override;
+    void createCompositionLayer(PlatformXR::CompositionLayerType, WebCore::IntSize, PlatformXR::LayerLayout, CreateCompositionLayerCallback&&) override;
 #endif
 
     void startSession(WebPageProxy&, WeakPtr<PlatformXRCoordinatorSessionEventClient>&&, const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&, std::optional<WebCore::XRCanvasConfiguration>&&) override;

@@ -50,6 +50,9 @@ skip:
     - test/built-ins/Function/prototype/restricted-property-arguments.js
     - test/built-ins/Function/prototype/restricted-property-caller.js
 
+    # New ICU (66~) raises a different failure
+    - test/intl402/Locale/constructor-apply-options-canonicalizes-twice.js
+
     # ICU canonicalization bug
     # https://unicode-org.atlassian.net/browse/ICU-21367
     - test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-yes-to-true.js

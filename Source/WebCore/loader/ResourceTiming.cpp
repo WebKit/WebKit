@@ -65,6 +65,17 @@ ResourceTiming::ResourceTiming(const URL& url, const String& initiatorType, cons
 {
 }
 
+ResourceTiming::ResourceTiming(URL&& url, String&& initiatorType, ResourceLoadTiming&& resourceLoadTiming, NetworkLoadMetrics&& networkLoadMetrics, Vector<ServerTiming>&& serverTiming, bool isLoadedFromServiceWorker, bool isSameOriginRequest)
+    : m_url(WTF::move(url))
+    , m_initiatorType(WTF::move(initiatorType))
+    , m_resourceLoadTiming(WTF::move(resourceLoadTiming))
+    , m_networkLoadMetrics(WTF::move(networkLoadMetrics))
+    , m_serverTiming(WTF::move(serverTiming))
+    , m_isLoadedFromServiceWorker(isLoadedFromServiceWorker)
+    , m_isSameOriginRequest(isSameOriginRequest)
+{
+}
+
 void ResourceTiming::updateExposure(const SecurityOrigin& origin)
 {
     m_isSameOriginRequest = m_isSameOriginRequest && origin.canRequest(m_url, OriginAccessPatternsForWebProcess::singleton());
@@ -97,7 +108,9 @@ ResourceTiming ResourceTiming::isolatedCopy() const &
         m_initiatorType.isolatedCopy(),
         m_resourceLoadTiming.isolatedCopy(),
         m_networkLoadMetrics.isolatedCopy(),
-        crossThreadCopy(m_serverTiming)
+        crossThreadCopy(m_serverTiming),
+        m_isLoadedFromServiceWorker,
+        m_isSameOriginRequest
     };
 }
 
@@ -108,7 +121,9 @@ ResourceTiming ResourceTiming::isolatedCopy() &&
         WTF::move(m_initiatorType).isolatedCopy(),
         WTF::move(m_resourceLoadTiming).isolatedCopy(),
         WTF::move(m_networkLoadMetrics).isolatedCopy(),
-        crossThreadCopy(WTF::move(m_serverTiming))
+        crossThreadCopy(WTF::move(m_serverTiming)),
+        m_isLoadedFromServiceWorker,
+        m_isSameOriginRequest
     };
 }
 

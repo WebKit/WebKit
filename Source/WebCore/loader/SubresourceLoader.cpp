@@ -38,15 +38,23 @@
 #include "DocumentPage.h"
 #include "DocumentPrefetcher.h"
 #include "DocumentResourceLoader.h"
+#include "Frame.h"
+#include "FrameDestructionObserverInlines.h"
+#include "FrameInlines.h"
 #include "FrameLoader.h"
+#include "HTMLFrameOwnerElement.h"
 #include "HTTPParsers.h"
 #include "HTTPStatusCodes.h"
 #include "InspectorNetworkAgent.h"
 #include "LinkLoader.h"
+#include "LoaderStrategy.h"
 #include "LocalFrame.h"
+#include "LocalFrameLoaderClient.h"
 #include "Logging.h"
 #include "MemoryCache.h"
 #include "OriginAccessPatterns.h"
+#include "PlatformStrategies.h"
+#include "RemoteFrame.h"
 #include "ResourceLoadObserver.h"
 #include "ResourceTiming.h"
 #include "SecurityOrigin.h"
@@ -124,7 +132,7 @@ SubresourceLoader::SubresourceLoader(LocalFrame& frame, CachedResource& resource
     m_resourceType = ContentExtensions::toResourceType(resource.type(), resource.resourceRequest().requester(), frame.isMainFrame());
 #endif
 
-    m_site = CachedResourceLoader::computeFetchMetadataSite(resource.resourceRequest(), resource.type(), options.mode, frame, frame.isMainFrame() && m_documentLoader && m_documentLoader->isRequestFromClientOrUserInput());
+    m_site = CachedResourceLoader::computeFetchMetadataSite(resource.resourceRequest(), resource.type(), options.mode, frame, frame.isMainFrame() && m_documentLoader && m_documentLoader->isRequestFromClientOrUserInput(), m_documentLoader.get());
     ASSERT(!resource.resourceRequest().hasHTTPHeaderField(HTTPHeaderName::SecFetchSite) || resource.resourceRequest().httpHeaderField(HTTPHeaderName::SecFetchSite) == convertEnumerationToString(m_site) || m_site == FetchMetadataSite::None);
 }
 
@@ -413,6 +421,7 @@ void SubresourceLoader::didReceiveResponse(ResourceResponse&& response, Completi
         }
     }
 
+    // Implementing step 20 of https://fetch.spec.whatwg.org/#concept-main-fetch.
     if (auto error = validateRangeRequestedFlag(request(), response)) {
         SUBRESOURCELOADER_RELEASE_LOG(SubResourceLoaderDidReceiveResponseCancelingLoadReceivedUnexpectedRangeResponse);
         cancel(WTF::move(*error));
@@ -470,7 +479,7 @@ void SubresourceLoader::didReceiveResponse(ResourceResponse&& response, Completi
 
     if (response.isRedirection()) {
         if (options().redirect == FetchOptions::Redirect::Follow && isLocationURLFailure(response)) {
-            // Implementing https://fetch.spec.whatwg.org/#concept-http-redirect-fetch step 3
+            // Implementing https://fetch.spec.whatwg.org/#concept-http-redirect-fetch step 5
             cancel();
             return;
         }
@@ -660,6 +669,11 @@ static void logResourceLoaded(LocalFrame* frame, CachedResource::Type type)
 Expected<void, String> SubresourceLoader::checkResponseCrossOriginAccessControl(const ResourceResponse& response)
 {
     if (!m_resource->isCrossOrigin() || options().mode != FetchOptions::Mode::Cors)
+        return { };
+
+    if (platformStrategies()->loaderStrategy()->havePerformedSecurityChecks(response)
+        && response.source() != ResourceResponse::Source::Unknown
+        && response.tainting() == ResourceResponse::Tainting::Basic)
         return { };
 
     if (response.source() == ResourceResponse::Source::ServiceWorker) {
@@ -951,6 +965,17 @@ void SubresourceLoader::reportResourceTiming(const NetworkLoadMetrics& networkLo
     }
 
     ASSERT(options().initiatorContext == InitiatorContext::Document);
+
+    if (resource->type() == CachedResource::Type::MainResource
+        && document->frame()
+        && document->frame()->loader().shouldReportResourceTimingToParentFrame()) {
+        if (RefPtr remoteParent = dynamicDowncast<RemoteFrame>(document->frame()->tree().parent())) {
+            resourceTiming.overrideInitiatorType(document->frame()->ownerElement() ? document->frame()->ownerElement()->localName() : "iframe"_s);
+            remoteParent->addResourceTimingFromChild(WTF::move(resourceTiming));
+            return;
+        }
+    }
+
     documentLoader->cachedResourceLoader().resourceTimingInformation().addResourceTiming(*protect(cachedResource()), *document, WTF::move(resourceTiming));
 }
 

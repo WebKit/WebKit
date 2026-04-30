@@ -4,8 +4,7 @@ FAIL get a handle to a moved file promise_test: Unhandled rejection with value: 
 FAIL move(name) to rename a file the same name promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
 PASS move("") to rename a file fails
 FAIL move(name) can be called multiple times promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-PASS move(name) with a name with a trailing period should fail
-PASS move(name) with a name with invalid characters should fail
+PASS move(name) with a name with path separators should fail
 FAIL move(name) while the file has an open writable fails promise_rejects_dom: function "function() { throw e; }" threw object "TypeError: Not enough arguments" that is not a DOMException NoModificationAllowedError: property "code" is equal to undefined, expected 7
 FAIL move(name) while the destination file has an open writable fails promise_rejects_dom: function "function() { throw e; }" threw object "TypeError: Not enough arguments" that is not a DOMException NoModificationAllowedError: property "code" is equal to undefined, expected 7
 FAIL move(name) can overwrite an existing file promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"

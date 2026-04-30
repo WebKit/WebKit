@@ -51,4 +51,10 @@ inline LayoutUnit RenderBlock::availableLogicalWidthForLine(LayoutUnit position,
     return std::max(0_lu, logicalRightOffsetForLine - logicalLeftOffsetForLine);
 }
 
+inline LayoutUnit RenderBlock::marginIntrinsicLogicalWidthForChild(const RenderBox& child) const
+{
+    auto [start, end] = intrinsicLogicalMarginStartAndEnd(child);
+    return start + end;
+}
+
 } // namespace WebCore

@@ -2684,6 +2684,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
         
     case StringIndexOf:
+    case StringLastIndexOf:
         setNonCellTypeForNode(node, SpecInt32Only);
         break;
 
@@ -3973,6 +3974,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case NewResolvedPromise:
+    case NewRejectedPromise: {
+        clobberWorld();
+        setTypeForNode(node, SpecPromiseObject);
+        break;
+    }
+
     case CreateGenerator:
     case CreateAsyncGenerator: {
         auto tryToFold = [&] (const ClassInfo* classInfo) -> bool {
@@ -4042,12 +4050,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             }
 
             if (structure) {
-                didFoldClobberWorld();
+                didFoldClobberStructures();
                 setForNode(node, structure);
                 break;
             }
         }
-        clobberWorld();
+        clobberStructures();
         setTypeForNode(node, SpecFinalObject);
         break;
     }

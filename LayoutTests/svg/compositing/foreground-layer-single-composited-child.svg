@@ -1,0 +1,9 @@
+<!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+    <!-- Test: Single composited child with non-composited siblings before and after.
+         The non-composited rect before should be in the primary layer,
+         the non-composited rect after should be in the foreground layer. -->
+    <rect x="10" y="10" width="80" height="80" fill="blue"/>
+    <rect style="will-change: transform" x="110" y="10" width="80" height="80" fill="green"/>
+    <rect x="210" y="10" width="80" height="80" fill="red"/>
+</svg>

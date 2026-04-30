@@ -27,6 +27,7 @@
 
 #include "IntlSegmenter.h"
 #include "JSGlobalObject.h"
+#include "JSString.h"
 #include "ObjectConstructor.h"
 
 namespace JSC {

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "JSGlobalLexicalEnvironment.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

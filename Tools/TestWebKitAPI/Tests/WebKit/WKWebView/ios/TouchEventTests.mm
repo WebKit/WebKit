@@ -73,8 +73,31 @@ static Class touchEventsGestureRecognizerClassSingleton()
 
 namespace TestWebKitAPI {
 
-static WebKit::WKTouchPoint globalTouchPoint { CGPointZero, CGPointZero, 100, UITouchPhaseBegan, 1, 0, 0, 0, 0, WebKit::WKTouchPointType::Direct };
-static WebKit::WKTouchEvent globalTouchEvent { WebKit::WKTouchEventType::Begin, CACurrentMediaTime(), CGPointZero, 1, 0, false, { globalTouchPoint }, { }, { }, true };
+static WebKit::WKTouchPoint globalTouchPoint {
+    .previousLocationInRootViewCoordinates = CGPointZero,
+    .locationInRootViewCoordinates = CGPointZero,
+    .locationInViewport = CGPointZero,
+    .identifier = 100,
+    .phase = UITouchPhaseBegan,
+    .majorRadiusInWindowCoordinates = 1,
+    .twist = 0,
+    .force = 0,
+    .altitudeAngle = 0,
+    .azimuthAngle = 0,
+    .touchType = WebKit::WKTouchPointType::Direct,
+};
+static WebKit::WKTouchEvent globalTouchEvent {
+    .type = WebKit::WKTouchEventType::Begin,
+    .timestamp = CACurrentMediaTime(),
+    .locationInRootViewCoordinates = CGPointZero,
+    .scale = 1,
+    .rotation = 0,
+    .inJavaScriptGesture = false,
+    .touchPoints = { globalTouchPoint },
+    .coalescedEvents = { },
+    .predictedEvents = { },
+    .isPotentialTap = true,
+};
 static void updateSimulatedTouchEvent(CGPoint location, UITouchPhase phase)
 {
     globalTouchEvent.locationInRootViewCoordinates = location;

@@ -312,19 +312,71 @@ class GitHub(Scm):
                     content=comment.content,
                 )
 
-        def _diff_comments(self, pull_request, ids=False):
+        HUNK_HEADER_RE = re.compile(r'^@@ -\d+(?:,\d+)? \+(?P<new_start>\d+)(?:,\d+)? @@')
+
+        @classmethod
+        def _line_to_position_map(cls, diff_text_lines):
+            # Build a map of (file, new-file line number) -> position within the diff
+            # we fetched, matching how insert_diff_comments counts line positions.
+            # GitHub's reported comment position is computed against a diff that can
+            # differ from what 'application/vnd.github.diff' returns (e.g. base SHA
+            # vs merge base), so we translate using the line number GitHub reports
+            # for the comment instead of trusting its position.
+            result = defaultdict(dict)
+            file = None
+            count = 0
+            new_line = None
+            for line in diff_text_lines or []:
+                if line.startswith('+++ b/'):
+                    file = line.split('/', 1)[-1]
+                    count = -1
+                    new_line = None
+                elif file and line.startswith('@@'):
+                    match = cls.HUNK_HEADER_RE.match(line)
+                    if match:
+                        new_line = int(match.group('new_start')) - 1
+                elif file and new_line is not None:
+                    if line.startswith('+') or line.startswith(' '):
+                        new_line += 1
+                        result[file][new_line] = count
+                count += 1
+            return result
+
+        def _diff_comments(self, pull_request, ids=False, diff_text_lines=None):
+            if diff_text_lines is None:
+                response = self.repository.request('pulls/{}'.format(pull_request.number), headers=dict(Accept=self.repository.DIFF_HEADER))
+                if response.status_code // 100 == 2:
+                    diff_text_lines = response.text.splitlines()
+                else:
+                    diff_text_lines = []
+            line_to_position = self._line_to_position_map(diff_text_lines)
+
             comment_lines = defaultdict(lambda: defaultdict(list))
             for comment in self.repository.request('pulls/{}/comments'.format(pull_request.number)):
                 id = comment.get('id', None)
                 path = comment.get('path', None)
-                position = comment.get('position', None)
-                if comment.get('commit_id') != comment.get('original_commit_id') and position is None:
-                    continue
                 if not id or not path:
                     continue
-                position = int(position) if position else None
                 if comment.get('subject_type') == 'file':
                     position = None
+                else:
+                    line = comment.get('line')
+                    if line is None:
+                        line = comment.get('original_line')
+                    if line is not None:
+                        position = line_to_position.get(path, {}).get(int(line))
+                        if position is None:
+                            # The commented line is not present in the diff we
+                            # fetched (e.g. outdated comment on code that is no
+                            # longer in the current diff). Skip.
+                            continue
+                    else:
+                        # No line information (can happen for legacy comments or
+                        # mocked data); fall back to the reported position field.
+                        raw_position = comment.get('position', None)
+                        if comment.get('commit_id') != comment.get('original_commit_id') and raw_position is None:
+                            continue
+                        position = int(raw_position) if raw_position else None
                 if ids:
                     comment_lines[path][position].append(id)
                 else:
@@ -460,17 +512,19 @@ class GitHub(Scm):
                 )
 
         def diff(self, pull_request, comments=False):
-            def generator(repository=self.repository, pull_request=pull_request):
-                response = repository.request('pulls/{}'.format(pull_request.number), headers=dict(Accept=repository.DIFF_HEADER))
-                if response.status_code // 100 != 2:
-                    sys.stderr.write('Failed to retrieve diff of {} with status code {}\n'.format(commit, response.status_code))
-                    return
-                for line in response.text.splitlines():
+            response = self.repository.request('pulls/{}'.format(pull_request.number), headers=dict(Accept=self.repository.DIFF_HEADER))
+            if response.status_code // 100 != 2:
+                sys.stderr.write('Failed to retrieve diff of {} with status code {}\n'.format(pull_request, response.status_code))
+                return
+            diff_text_lines = response.text.splitlines()
+
+            def generator(lines=diff_text_lines):
+                for line in lines:
                     yield line
 
             comment_lines = defaultdict(lambda: defaultdict(list))
             if comments:
-                comment_lines = self._diff_comments(pull_request)
+                comment_lines = self._diff_comments(pull_request, diff_text_lines=diff_text_lines)
 
             for line in self.repository.insert_diff_comments(generator, comments=comment_lines):
                 yield line

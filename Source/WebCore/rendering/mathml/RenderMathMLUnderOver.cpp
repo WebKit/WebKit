@@ -26,6 +26,7 @@
 
 #include "config.h"
 #include "RenderMathMLUnderOver.h"
+#include "RenderBlockInlines.h"
 
 #if ENABLE(MATHML)
 

@@ -265,7 +265,7 @@ class Bugzilla(Base, mocks.Requests):
                 id=id,
                 see_also=[
                     'https://{}/show_bug.cgi?id={}'.format(self.hosts[0], n) for n in issue.get('references', [])
-                ],
+                ] + issue.get('related_links', []),
             )],
         ), url=url)
 

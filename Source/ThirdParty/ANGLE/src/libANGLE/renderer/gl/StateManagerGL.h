@@ -365,6 +365,8 @@ class StateManagerGL final : angle::NonCopyable
     void updateDispatchIndirectBufferBinding(const gl::Context *context);
     void updateDrawIndirectBufferBinding(const gl::Context *context);
 
+    void setBufferBindingDirty(gl::BufferBinding binding);
+
     template <typename T>
     void get(GLenum name, T *value);
 

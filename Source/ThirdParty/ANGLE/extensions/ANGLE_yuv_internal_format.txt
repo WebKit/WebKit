@@ -26,7 +26,7 @@ Status
 
 Version
 
-    Version 5, June 23, 2021
+    Version 7, April 23, 2026
 
 Number
 
@@ -35,6 +35,8 @@ Number
 Dependencies
 
     OpenGL ES 3.0 is required.
+
+    This extension interacts with GL_EXT_YUV_target, see issue 4
 
 Overview
 
@@ -96,7 +98,42 @@ Issues
        for textures with the above YUV formats is assumed to be ITU-R BT.601 with YUV
        values in limited range. Refer to ITU-R BT.601 spec for further details.
 
+    3. Can textures created with these new formats be rendered to via color attachments?
+
+       No, this extension only allows for sampling from such textures. This means attaching
+       textures created using ANGLE_yuv_internal_format as framebuffer color attachments is
+       invalid and the framebuffer completeness check fails with a
+       FRAMEBUFFER_INCOMPLETE_ATTACHMENT error.
+
+       Some additional context - GLES has no native support for YUV formats. Support for
+       usecases that need to sample from YUV formats, like camera and video, is achieved
+       through a multi-step process of creating EGLImages backed by "external memory" and
+       binding them to external texture targets.
+
+       On Android, for example, an app can create an Android Hardware Buffer (AHB) with a
+       YUV format, create an EGLImage out of it using EGL_ANDROID_image_native_buffer,
+       bind the image to an external texture target using GL_OES_EGL_image_external and then
+       sample from that texture. This severely limits validation of YUV features to only
+       those platforms that support all these extensions (or their equivalents).
+
+       The intent behind ANGLE_yuv_internal_format extension is to decouple YUV code paths
+       from EGLImages and "external memory" in ANGLE when using the Vulkan backend
+       (since Vulkan is capable of supporting YUV formats natively).
+
+    4. How does this extension interact with EXT_YUV_target?
+
+       EXT_YUV_target extension provides 2 categories of enhancements - raw YUV sampling
+       from textures and rendering to YUV textures, only the former is relevant to
+       ANGLE_yuv_internal_format. It is valid to sample raw YUV values from a texture
+       created using ANGLE_yuv_internal_format
+
 Revision History
+
+    #7 - (April 23, 2026) Mohan Maiya
+         Clarify interaction with EXT_YUV_target
+
+    #6 - (April 22, 2026) Mohan Maiya
+         Clarification about sample-only usage of textures
 
     #5 - (June 23, 2021) Mohan Maiya
          Renamed format enums from *_ANGLEX to *_ANGLE

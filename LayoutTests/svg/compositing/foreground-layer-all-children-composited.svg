@@ -1,0 +1,9 @@
+<!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+    <!-- Test: All children are composited.
+         No non-composited content exists, so neither primary nor foreground layer
+         has anything to paint. All painting happens via composited child layers. -->
+    <rect style="will-change: transform" x="10" y="10" width="80" height="80" fill="blue"/>
+    <rect style="will-change: transform" x="110" y="10" width="80" height="80" fill="green"/>
+    <rect style="will-change: transform" x="210" y="10" width="80" height="80" fill="red"/>
+</svg>

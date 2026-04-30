@@ -4913,6 +4913,81 @@ void main() {
     ASSERT_GL_NO_ERROR();
 }
 
+// Test that reusing the same uniform buffer for two different programs where the Metal
+// layout results in different sizes (e.g. mat2[64] vs row_major mat4[32]) works correctly.
+// See crbug.com/500472605 for more details.
+// Both have std140 size of 2048 bytes.
+// mat2[64]: std140 is 64 * 32 = 2048 bytes, Metal is 64 * 16 = 1024 bytes.
+// mat4[32]: std140 is 32 * 64 = 2048 bytes, Metal is 32 * 64 = 2048 bytes.
+TEST_P(UniformBufferTest, SameBufferDifferentMetalSize)
+{
+    // Program A: mat2[64] (stdSize 2048, metalSize 1024)
+    const char *kVS  = essl3_shaders::vs::Simple();
+    const char *kFSA = R"(#version 300 es
+precision highp float;
+layout(std140) uniform block {
+    mat2 m[64];
+} ubo;
+out vec4 fragColor;
+void main()
+{
+    fragColor = vec4(ubo.m[63][0], 0.0, 1.0);
+})";
+
+    // Program B: row_major mat4[32] (stdSize 2048, metalSize 2048)
+    const char *kFSB = R"(#version 300 es
+precision highp float;
+layout(std140, row_major) uniform block {
+    mat4 m[32];
+} ubo;
+out vec4 fragColor;
+void main()
+{
+    fragColor = ubo.m[30][0];
+})";
+
+    ANGLE_GL_PROGRAM(programA, kVS, kFSA);
+    ANGLE_GL_PROGRAM(programB, kVS, kFSB);
+
+    glUniformBlockBinding(programA, glGetUniformBlockIndex(programA, "block"), 0);
+    glUniformBlockBinding(programB, glGetUniformBlockIndex(programB, "block"), 0);
+
+    GLBuffer buffer;
+    glBindBuffer(GL_UNIFORM_BUFFER, buffer);
+
+    // 2048 bytes of data. (512 floats)
+    std::vector<float> data(512, 0.0f);
+    // Program A: m[63][0] is at offset 63 * 32 = 2016. (r0c0, r1c0)
+    // float index = 2016 / 4 = 504.
+    data[504] = 1.0f;
+    data[505] = 0.5f;
+
+    // Program B: m[30] starts at offset 30 * 64 = 1920.
+    // m[30][0] is the first column of the 31st matrix.
+    // In row-major, m[30][0] = (r0c0, r1c0, r2c0, r3c0) of m[30].
+    // Float indices (offset / 4):
+    // r0c0: 1920 / 4 = 480
+    // r1c0: 1936 / 4 = 484
+    // r2c0: 1952 / 4 = 488
+    // r3c0: 1968 / 4 = 492
+    data[480] = 0.2f;
+    data[484] = 0.1f;
+    data[488] = 0.7f;
+    data[492] = 0.4f;
+
+    glBufferData(GL_UNIFORM_BUFFER, data.size() * sizeof(float), data.data(), GL_STATIC_DRAW);
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, buffer);
+
+    // Program A: mat2[64]. Should see m[63][0] = (1.0, 0.5)
+    drawQuad(programA, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(255, 127, 0, 255), 1);
+
+    // Program B: row_major mat4[32]. Should see m[30][0] = (0.2, 0.1, 0.7, 0.4)
+    // If it incorrectly reuses Program A's 1024-byte buffer, it will go OOB.
+    drawQuad(programB, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(51, 25, 178, 102), 1);
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(UniformBufferTest);
 ANGLE_INSTANTIATE_TEST_ES3(UniformBufferTest);
 
@@ -4931,5 +5006,108 @@ ANGLE_INSTANTIATE_TEST_ES3(UniformBufferMemoryTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(WebGL2UniformBufferTest);
 ANGLE_INSTANTIATE_TEST_ES3(WebGL2UniformBufferTest);
+
+class SimpleUniformBufferTest : public ANGLETest<>
+{
+  protected:
+    SimpleUniformBufferTest()
+    {
+        setWindowWidth(128);
+        setWindowHeight(128);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+    }
+};
+
+// Test that maps a buffer as staging, then performs a draw inducing a garbage collect of the
+// staging buffer. This would formerly UAF, but now returns an invalid operation.
+// TODO(http://anglebug.com/505771894): Update test once we validate that drawing with a mapped
+// buffer is invalid.
+TEST_P(SimpleUniformBufferTest, MappedUBOStagingGarbageCollection)
+{
+    // Only applies to D3D11 backend.
+    ANGLE_SKIP_TEST_IF(!IsD3D11());
+
+    // Create a program with 10 uniform blocks.
+    constexpr char kVS[] = R"(#version 300 es
+layout(std140) uniform block0 { vec4 data0; };
+layout(std140) uniform block1 { vec4 data1; };
+layout(std140) uniform block2 { vec4 data2; };
+layout(std140) uniform block3 { vec4 data3; };
+layout(std140) uniform block4 { vec4 data4; };
+layout(std140) uniform block5 { vec4 data5; };
+layout(std140) uniform block6 { vec4 data6; };
+layout(std140) uniform block7 { vec4 data7; };
+layout(std140) uniform block8 { vec4 data8; };
+layout(std140) uniform block9 { vec4 data9; };
+
+void main() {
+    vec4 total = vec4(0.0);
+    total += data0;
+    total += data1;
+    total += data2;
+    total += data3;
+    total += data4;
+    total += data5;
+    total += data6;
+    total += data7;
+    total += data8;
+    total += data9;
+    gl_Position = vec4(total.xyz, 1.0);
+}
+    )";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+out vec4 color;
+void main() {
+    color = vec4(1.0);
+}
+)";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    // Create a buffer and bind it as a COPY_READ_BUFFER.
+    GLBuffer buffer;
+    glBindBuffer(GL_COPY_READ_BUFFER, buffer);
+
+    // Use GL_DYNAMIC_DRAW and provide data to ensure it uses SYSTEM_MEMORY storage
+    // and sets it as mLatestBufferStorage.
+    std::vector<uint8_t> data(1024, 0);
+    glBufferData(GL_COPY_READ_BUFFER, 1024, data.data(), GL_DYNAMIC_DRAW);
+
+    // Bind the buffer as a UBO to all 10 slots.
+    for (int i = 0; i < 10; ++i)
+    {
+        glBindBufferBase(GL_UNIFORM_BUFFER, i, buffer);
+    }
+
+    // Map the buffer for reading. Since it's SYSTEM_MEMORY and we are mapping for read,
+    // it should allocate a STAGING buffer.
+    void *ptr = glMapBufferRange(GL_COPY_READ_BUFFER, 0, 1024, GL_MAP_READ_BIT);
+    ASSERT_NE(ptr, nullptr);
+
+    // Now perform a draw call.
+    // This will trigger StateManager11::syncUniformBuffersForShader.
+    // It will iterate through the 10 slots.
+    // For each slot, it calls Buffer11::getConstantBufferRange -> getBufferStorage(UNIFORM) ->
+    // garbageCollection. garbageCollection(UNIFORM) calls checkForDeallocation(STAGING). On the 9th
+    // slot, STAGING's idleness will be 9, exceeding the threshold of 8. checkForDeallocation would
+    // then attempt to delete the STAGING storage because latestStorage (SYSTEM_MEMORY) != storage
+    // (STAGING), however, it currently detects this and returns failure.
+    glDrawArrays(GL_POINTS, 0, 1);
+
+    // Now unmap. This calls Buffer11::unmap() which uses mMappedStorage and would formerly UAF on
+    // accessing mMappedBuffer.
+    glUnmapBuffer(GL_COPY_READ_BUFFER);
+
+    ASSERT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(SimpleUniformBufferTest);
+ANGLE_INSTANTIATE_TEST_ES3(SimpleUniformBufferTest);
 
 }  // namespace

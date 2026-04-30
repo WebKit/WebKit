@@ -798,20 +798,32 @@ static const IdentifierSchema& overflowInlineFeatureSchema()
 }
 
 #if ENABLE(DARK_MODE_CSS)
-static bool frameUsesDarkAppearanceForPrefersColorScheme(const Frame& frame)
+static bool frameOwnerElementAncestorsUseDarkAppearance(const Frame& frame)
 {
-    if (RefPtr parent = frame.parent()) {
+    {
+        RefPtr<const Frame> child = &frame;
+        RefPtr<const Frame> parent = child->parent();
+
         // From CSS Media Queries Level 5: if the frame is a subframe, its preferred color scheme
         // is the color scheme of its owner element:
         // > the preferred color scheme must reflect the value of the used color scheme on the
         // > embedding node in the embedding document.
-        // FIXME (webkit.org/b/309611): this should recurse up to the main frame.
-        if (RefPtr ownerRenderer = frame.ownerRenderer()) {
-            if (ownerRenderer->style().hasExplicitlySetColorScheme())
-                return protect(parent->virtualView())->ownerElementOfChildFrameUsesDarkAppearance(frame);
+
+        // Iterate up the chain of owner elements to find the first one with explicitly set color scheme.
+        while (parent) {
+            ASSERT(child);
+
+            auto ownerElementAppearance = protect(parent->virtualView())->appearanceOfOwnerElementOfChildFrame(*child);
+
+            if (ownerElementAppearance.contains(FrameOwnerElementAppearance::ExplicitlySet))
+                return ownerElementAppearance.contains(FrameOwnerElementAppearance::IsDark);
+
+            child = parent;
+            parent = child->parent();
         }
     }
 
+    // If none of the ancestor owner elements specify color scheme, fallback to the system appearance.
     return protect(frame.page())->useDarkAppearance();
 }
 
@@ -822,7 +834,7 @@ static const IdentifierSchema& prefersColorSchemeFeatureSchema()
         FixedVector { CSSValueLight, CSSValueDark },
         MediaQueryDynamicDependency::Appearance,
         [](auto& context) {
-            bool useDarkAppearance = frameUsesDarkAppearanceForPrefersColorScheme(*context.document->frame());
+            bool useDarkAppearance = frameOwnerElementAncestorsUseDarkAppearance(*context.document->frame());
 
             return MatchingIdentifiers { useDarkAppearance ? CSSValueDark : CSSValueLight };
         }

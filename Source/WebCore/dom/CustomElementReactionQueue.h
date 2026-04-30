@@ -60,6 +60,7 @@ public:
         ElementUpgrade,
         Connected,
         Disconnected,
+        ConnectedMove,
         Adopted,
         AttributeChanged,
         FormAssociated,
@@ -129,6 +130,7 @@ public:
     static void tryToUpgradeElement(Element&);
     static void enqueueConnectedCallbackIfNeeded(Element&);
     static void enqueueDisconnectedCallbackIfNeeded(Element&);
+    static void enqueueConnectedMoveCallbackIfNeeded(Element&);
     static void enqueueAdoptedCallbackIfNeeded(Element&, Document& oldDocument, Document& newDocument);
     static void enqueueAttributeChangedCallbackIfNeeded(Element&, const QualifiedName&, const AtomString& oldValue, const AtomString& newValue);
     static void enqueueFormAssociatedCallbackIfNeeded(Element&, HTMLFormElement*);

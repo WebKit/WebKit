@@ -1,5 +1,7 @@
 
 
 PASS Permissions-Policy is by default 'self' for get().
-FAIL Permissions-Policy is by default 'self' for create(). assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL Permissions-Policy is by default 'self' for create(). promise_rejects_js: function "function() { throw e; }" threw object "NotSupportedError: No credential type was specified." ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
 

@@ -122,6 +122,7 @@ namespace JSC {
     macro(StringPrototypeAtIntrinsic) \
     macro(StringPrototypeCodePointAtIntrinsic) \
     macro(StringPrototypeIndexOfIntrinsic) \
+    macro(StringPrototypeLastIndexOfIntrinsic) \
     macro(StringPrototypeIncludesIntrinsic) \
     macro(StringPrototypeStartsWithIntrinsic) \
     macro(StringPrototypeEndsWithIntrinsic) \
@@ -210,6 +211,8 @@ namespace JSC {
     macro(ResolvePromiseWithFirstResolvingFunctionCallCheckIntrinsic) \
     macro(RejectPromiseWithFirstResolvingFunctionCallCheckIntrinsic) \
     macro(FulfillPromiseWithFirstResolvingFunctionCallCheckIntrinsic) \
+    macro(NewResolvedPromiseIntrinsic) \
+    macro(NewRejectedPromiseIntrinsic) \
     macro(PromiseConstructorResolveIntrinsic) \
     macro(PromiseResolveIntrinsic) \
     macro(PromiseConstructorRejectIntrinsic) \

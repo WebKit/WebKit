@@ -32,6 +32,7 @@
 #include "AudioNodeOutput.h"
 #include "AudioSourceProvider.h"
 #include "AudioUtilities.h"
+#include "EventTargetInlines.h"
 #include "Logging.h"
 #include "MediaStreamAudioSourceOptions.h"
 #include "WebAudioSourceProvider.h"

@@ -36,6 +36,7 @@
 
 #if BOS(DARWIN)
 #include <CommonCrypto/CommonHMAC.h>
+#include <array>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/sysctl.h>
@@ -211,10 +212,10 @@ void TZoneHeapManager::init()
 
     uint64_t primordialSeed;
     struct timeval timeValue;
-    int mib[2] = { CTL_KERN, KERN_BOOTTIME };
+    std::array<int, 2> mib { CTL_KERN, KERN_BOOTTIME };
     size_t size = sizeof(timeValue);
 
-    auto sysctlResult = sysctl(mib, 2, &timeValue, &size, nullptr, 0);
+    auto sysctlResult = sysctl(mib.data(), mib.size(), &timeValue, &size, nullptr, 0);
     if (sysctlResult) {
         TZONE_LOG_DEBUG("kern.boottime is required for TZoneHeap initialization: %d errno %d\n", sysctlResult, errno);
         RELEASE_BASSERT(!sysctlResult || !requirePerBootPrimordialSeed);

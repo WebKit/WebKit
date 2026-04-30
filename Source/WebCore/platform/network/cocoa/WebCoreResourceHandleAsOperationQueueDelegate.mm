@@ -338,7 +338,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
         if (auto metrics = protectedSelf->m_handle->networkLoadMetrics()) {
             if (double responseEndTime = [[timingData objectForKey:@"_kCFNTimingDataResponseEnd"] doubleValue])
-                metrics->responseEnd = WallTime::fromRawSeconds(adoptNS([[NSDate alloc] initWithTimeIntervalSinceReferenceDate:responseEndTime]).get().timeIntervalSince1970).approximateMonotonicTime();
+                metrics->responseEnd = WallTime::fromRawSeconds(adoptNS([[NSDate alloc] initWithTimeIntervalSinceReferenceDate:responseEndTime]).get().timeIntervalSince1970).approximate<MonotonicTime>();
             else
                 metrics->responseEnd = metrics->responseStart;
             metrics->protocol = checked_objc_cast<NSString>([timingData objectForKey:@"_kCFNTimingDataNetworkProtocolName"]);

@@ -180,12 +180,12 @@ bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, N
 
             RefPtr extensionContext = this->extensionContext();
             if ([context isEqualToString:@"action"] && !extensionContext->supportsManifestVersion(3)) {
-                *outExceptionString = toErrorString(nullString(), contextsKey, @"'%@' is not a valid context", context).createNSString().autorelease();
+                *outExceptionString = toErrorString(nullString(), contextsKey, makeString("'"_s, String(context), "' is not a valid context"_s)).createNSString().autorelease();
                 return false;
             }
 
             if (([context isEqualToString:@"browser_action"] || [context isEqualToString:@"page_action"]) && extensionContext->supportsManifestVersion(3)) {
-                *outExceptionString = toErrorString(nullString(), contextsKey, @"'%@' is not a valid context", context).createNSString().autorelease();
+                *outExceptionString = toErrorString(nullString(), contextsKey, makeString("'"_s, String(context), "' is not a valid context"_s)).createNSString().autorelease();
                 return false;
             }
 
@@ -197,7 +197,7 @@ bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, N
         for (NSString *patternString in documentPatterns) {
             auto pattern = WebExtensionMatchPattern::getOrCreate(patternString);
             if (!pattern || !pattern->isSupported()) {
-                *outExceptionString = toErrorString(nullString(), documentURLPatternsKey, @"'%@' is not a valid pattern", patternString).createNSString().autorelease();
+                *outExceptionString = toErrorString(nullString(), documentURLPatternsKey, makeString("'"_s, String(patternString), "' is not a valid pattern"_s)).createNSString().autorelease();
                 return false;
             }
         }
@@ -211,7 +211,7 @@ bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, N
 
             // Any valid pattern is allowed, not just supported schemes.
             if (!pattern || !pattern->isValid()) {
-                *outExceptionString = toErrorString(nullString(), targetURLPatternsKey, @"'%@' is not a valid pattern", patternString).createNSString().autorelease();
+                *outExceptionString = toErrorString(nullString(), targetURLPatternsKey, makeString("'"_s, String(patternString), "' is not a valid pattern"_s)).createNSString().autorelease();
                 return false;
             }
         }

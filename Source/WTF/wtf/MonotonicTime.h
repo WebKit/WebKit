@@ -53,10 +53,6 @@ public:
 
     WTF_EXPORT_PRIVATE static MonotonicTime now();
     
-    MonotonicTime approximateMonotonicTime() const { return *this; }
-    WTF_EXPORT_PRIVATE WallTime approximateWallTime() const;
-    WTF_EXPORT_PRIVATE ContinuousTime approximateContinuousTime() const;
-
     WTF_EXPORT_PRIVATE void dump(PrintStream&) const;
 
     friend struct MarkableTraits<MonotonicTime>;

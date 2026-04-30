@@ -115,7 +115,8 @@ public:
     static Ref<MouseEvent> create(const AtomString& eventType, const MouseEventInit&);
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
-    static Ref<MouseEvent> create(const PlatformTouchEvent&, unsigned touchIndex, Ref<WindowProxy>&&, IsCancelable = IsCancelable::Yes);
+    enum class ShouldComputeMovementDelta : bool { No, Yes };
+    static Ref<MouseEvent> create(const PlatformTouchEvent&, unsigned touchIndex, Ref<WindowProxy>&&, IsCancelable = IsCancelable::Yes, ShouldComputeMovementDelta = ShouldComputeMovementDelta::No);
 #endif
 
     virtual ~MouseEvent();

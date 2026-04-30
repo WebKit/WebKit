@@ -27,6 +27,7 @@
 #pragma once
 
 #include "StringIteratorPrototype.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

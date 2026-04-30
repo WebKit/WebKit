@@ -28,6 +28,7 @@
 #pragma once
 
 #include "JSRemoteFunction.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

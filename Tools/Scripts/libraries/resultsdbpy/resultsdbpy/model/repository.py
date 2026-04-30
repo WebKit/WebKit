@@ -69,12 +69,12 @@ class StashRepository(Repository):
 
 class WebKitRepository(Repository):
 
-    def __init__(self):
+    def __init__(self, default_branch=None):
         self.svn = remote.Svn('https://svn.webkit.org/repository/webkit')
         self.github = remote.GitHub('https://github.com/WebKit/WebKit')
         super(WebKitRepository, self).__init__(
             key='webkit',
-            default_branch=self.github.default_branch,
+            default_branch=default_branch or self.github.default_branch,
         )
 
     def commit(self, ref=None, revision=None, hash=None, identifier=None, fast=False):

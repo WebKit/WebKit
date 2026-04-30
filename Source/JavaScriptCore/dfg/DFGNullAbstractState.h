@@ -27,6 +27,9 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGEdge.h"
+#include <wtf/SequesteredMalloc.h>
+
 namespace JSC { namespace DFG {
 
 class Edge;

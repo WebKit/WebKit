@@ -48,10 +48,6 @@ struct pas_segregated_directory;
 struct pas_segregated_exclusive_view;
 struct pas_segregated_page;
 struct pas_segregated_page_config;
-struct pas_segregated_partial_view;
-struct pas_segregated_shared_handle;
-struct pas_segregated_shared_page_directory;
-struct pas_segregated_shared_view;
 struct pas_segregated_size_directory;
 struct pas_segregated_view_opaque;
 typedef struct pas_heap_config pas_heap_config;
@@ -60,10 +56,6 @@ typedef struct pas_segregated_directory pas_segregated_directory;
 typedef struct pas_segregated_exclusive_view pas_segregated_exclusive_view;
 typedef struct pas_segregated_page pas_segregated_page;
 typedef struct pas_segregated_page_config pas_segregated_page_config;
-typedef struct pas_segregated_partial_view pas_segregated_partial_view;
-typedef struct pas_segregated_shared_handle pas_segregated_shared_handle;
-typedef struct pas_segregated_shared_page_directory pas_segregated_shared_page_directory;
-typedef struct pas_segregated_shared_view pas_segregated_shared_view;
 typedef struct pas_segregated_size_directory pas_segregated_size_directory;
 typedef struct pas_segregated_view_opaque* pas_segregated_view;
 
@@ -143,40 +135,6 @@ static inline pas_segregated_exclusive_view* pas_segregated_view_get_exclusive(p
     return (pas_segregated_exclusive_view*)pas_segregated_view_get_ptr(view);
 }
 
-static inline bool pas_segregated_view_is_shared(pas_segregated_view view)
-{
-    return pas_segregated_view_get_kind(view) == pas_segregated_shared_view_kind;
-}
-
-static inline pas_segregated_shared_view* pas_segregated_view_get_shared(pas_segregated_view view)
-{
-    PAS_ASSERT(pas_segregated_view_is_shared(view));
-    return (pas_segregated_shared_view*)pas_segregated_view_get_ptr(view);
-}
-
-static inline bool pas_segregated_view_is_shared_handle(pas_segregated_view view)
-{
-    return pas_segregated_view_get_kind(view) == pas_segregated_shared_handle_kind;
-}
-
-static inline pas_segregated_shared_handle*
-pas_segregated_view_get_shared_handle(pas_segregated_view view)
-{
-    PAS_ASSERT(pas_segregated_view_is_shared_handle(view));
-    return (pas_segregated_shared_handle*)pas_segregated_view_get_ptr(view);
-}
-
-static inline bool pas_segregated_view_is_partial(pas_segregated_view view)
-{
-    return pas_segregated_view_get_kind(view) == pas_segregated_partial_view_kind;
-}
-
-static inline pas_segregated_partial_view* pas_segregated_view_get_partial(pas_segregated_view view)
-{
-    PAS_ASSERT(pas_segregated_view_is_partial(view));
-    return (pas_segregated_partial_view*)pas_segregated_view_get_ptr(view);
-}
-
 static inline bool pas_segregated_view_is_size_directory(pas_segregated_view view)
 {
     return pas_segregated_view_get_kind(view) == pas_segregated_size_directory_view_kind;
@@ -196,16 +154,6 @@ pas_segregated_view_get_size_directory(pas_segregated_view view)
 PAS_API pas_segregated_page_config_kind
 pas_segregated_view_get_page_config_kind(pas_segregated_view view);
 PAS_API const pas_segregated_page_config* pas_segregated_view_get_page_config(pas_segregated_view view);
-
-static inline pas_segregated_page_role pas_segregated_view_get_page_role_for_owner(pas_segregated_view view)
-{
-    return pas_segregated_view_kind_get_role_for_owner(pas_segregated_view_get_kind(view));
-}
-
-static inline pas_segregated_page_role pas_segregated_view_get_page_role_for_allocator(pas_segregated_view view)
-{
-    return pas_segregated_view_kind_get_role_for_allocator(pas_segregated_view_get_kind(view));
-}
 
 PAS_API size_t pas_segregated_view_get_index(pas_segregated_view view);
 
@@ -236,9 +184,6 @@ PAS_API void pas_segregated_view_unlock_ownership_lock(pas_segregated_view view)
 PAS_API void pas_segregated_view_unlock_ownership_lock_conditionally(pas_segregated_view view,
                                                                      pas_lock_hold_mode lock_hold_mode);
 
-/* This is only valid to call on a partial view that was just made ineligible. */
-PAS_API bool pas_segregated_view_is_primordial_partial(pas_segregated_view view);
-
 PAS_API void pas_segregated_view_note_emptiness(
     pas_segregated_view view,
     pas_segregated_page* page);
@@ -259,9 +204,10 @@ PAS_API bool pas_segregated_view_for_each_live_object(
     void *arg,
     pas_lock_hold_mode ownership_lock_hold_mode);
 
-/* Tells us if the eligible bit should be set. Note that for shared views/handles, this may return
-   "maybe", since those are never in a state where they *cannot* be eligible. This can only be called
-   during steady-state (no concurrent allocations or deallocations). */
+/* Tells us if the eligible bit should be set.
+ * This can only be called during steady-state (no concurrent allocations or deallocations).
+ * FIXME: now that we don't have shared views/handles, we may be able to have
+ * this return a boolean instead. */
 PAS_API pas_tri_state pas_segregated_view_should_be_eligible(pas_segregated_view view,
                                                              const pas_segregated_page_config* page_config);
 

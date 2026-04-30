@@ -28,10 +28,12 @@
 #if ENABLE(JIT)
 
 #include "CCallHelpers.h"
-#include "JITMathIC.h"
 #include "JITMathICInlineResult.h"
 
 namespace JSC {
+
+struct MathICGenerationState;
+class UnaryArithProfile;
 
 class JITNegGenerator {
 public:

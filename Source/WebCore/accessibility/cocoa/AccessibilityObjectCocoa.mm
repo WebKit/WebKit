@@ -157,11 +157,7 @@ RetainPtr<NSArray> AccessibilityObject::contentForRange(const SimpleRange& range
 
 RetainPtr<NSAttributedString> AccessibilityObject::attributedStringForTextMarkerRange(AXTextMarkerRange&& textMarkerRange, SpellCheck spellCheck) const
 {
-#if PLATFORM(MAC)
-    auto range = rangeForTextMarkerRange(axObjectCache(), textMarkerRange);
-#else
     auto range = textMarkerRange.simpleRange();
-#endif
     return range ? attributedStringForRange(*range, spellCheck) : nil;
 }
 

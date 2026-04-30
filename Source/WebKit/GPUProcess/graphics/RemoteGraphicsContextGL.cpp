@@ -108,7 +108,7 @@ IGNORE_GCC_WARNINGS_END
 void RemoteGraphicsContextGL::initialize(GraphicsContextGLAttributes&& attributes)
 {
     assertIsMainRunLoop();
-    m_workQueue->dispatch([attributes = WTF::move(attributes), protectedThis = Ref { *this }]() mutable {
+    m_workQueue->dispatch([attributes = WTF::move(attributes), protectedThis = protect(*this)]() mutable {
         protectedThis->workQueueInitialize(WTF::move(attributes));
     });
 }

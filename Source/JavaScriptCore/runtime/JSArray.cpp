@@ -1352,6 +1352,78 @@ JSValue JSArray::pop(JSGlobalObject* globalObject)
     return element;
 }
 
+JSValue JSArray::fastShift(VM& vm)
+{
+    ensureWritable(vm);
+
+    Butterfly* butterfly = this->butterfly();
+    auto indexingType = this->indexingType();
+
+    constexpr unsigned shiftThreshold = 128;
+
+    switch (indexingType) {
+    case ArrayClass:
+        return jsUndefined();
+
+    case ArrayWithInt32:
+    case ArrayWithContiguous: {
+        unsigned length = butterfly->publicLength();
+
+        if (!length)
+            return jsUndefined();
+
+        if (length > shiftThreshold) [[unlikely]]
+            return { };
+
+        JSValue result = butterfly->contiguous().at(this, 0).get();
+        if (!result)
+            return { };
+
+        unsigned moveCount = length - 1;
+        if (moveCount) {
+            if (holesMustForwardToPrototype()) [[unlikely]]
+                return { };
+            if (indexingType == ArrayWithInt32)
+                memmove(butterfly->contiguous().data(), butterfly->contiguous().data() + 1, sizeof(JSValue) * moveCount);
+            else
+                gcSafeMemmove(butterfly->contiguous().data(), butterfly->contiguous().data() + 1, sizeof(JSValue) * moveCount);
+        }
+        butterfly->contiguous().at(this, moveCount).clear();
+        butterfly->setPublicLength(moveCount);
+        if (indexingType == ArrayWithContiguous)
+            vm.writeBarrier(this);
+        return result;
+    }
+
+    case ArrayWithDouble: {
+        unsigned length = butterfly->publicLength();
+
+        if (!length)
+            return jsUndefined();
+
+        if (length > shiftThreshold) [[unlikely]]
+            return { };
+
+        double result = butterfly->contiguousDouble().at(this, 0);
+        if (result != result)
+            return { };
+
+        unsigned moveCount = length - 1;
+        if (moveCount) {
+            if (holesMustForwardToPrototype()) [[unlikely]]
+                return { };
+            memmove(butterfly->contiguousDouble().data(), butterfly->contiguousDouble().data() + 1, sizeof(double) * moveCount);
+        }
+        butterfly->contiguousDouble().at(this, moveCount) = PNaN;
+        butterfly->setPublicLength(moveCount);
+        return JSValue(JSValue::EncodeAsDouble, result);
+    }
+
+    default:
+        return { };
+    }
+}
+
 // Push & putIndex are almost identical, with two small differences.
 //  - we always are writing beyond the current array bounds, so it is always necessary to update m_length & m_numValuesInVector.
 //  - pushing to an array of length 2^32-1 stores the property, but throws a range error.
@@ -2081,11 +2153,7 @@ JSArray* constructArrayPair(JSGlobalObject* globalObject, JSValue first, JSValue
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     ObjectInitializationScope initializationScope(vm);
 
-    IndexingType indexingType = ArrayWithUndecided;
-    indexingType = leastUpperBoundOfIndexingTypeAndValue(indexingType, first);
-    indexingType = leastUpperBoundOfIndexingTypeAndValue(indexingType, second);
-
-    Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType);
+    Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
 
     JSArray* array = JSArray::tryCreateUninitializedRestricted(initializationScope, structure, 2);
     if (!array) [[unlikely]] {

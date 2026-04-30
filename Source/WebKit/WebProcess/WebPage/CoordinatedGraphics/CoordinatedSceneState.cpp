@@ -46,6 +46,7 @@ CoordinatedSceneState::~CoordinatedSceneState()
 {
     ASSERT(m_layers.isEmpty());
     ASSERT(m_pendingLayers.isEmpty());
+    ASSERT(m_pendingLayersToRemove.isEmpty());
     ASSERT(m_committedLayers.isEmpty());
 }
 
@@ -71,6 +72,7 @@ void CoordinatedSceneState::removeLayer(CoordinatedPlatformLayer& layer)
 {
     ASSERT(isMainRunLoop());
     m_layers.remove(layer);
+    m_layersToRemove.add(layer);
     m_didChangeLayers = true;
 }
 
@@ -84,25 +86,37 @@ bool CoordinatedSceneState::flush()
 
     Locker pendingLayersLock { m_pendingLayersLock };
     m_pendingLayers = m_layers;
+    if (m_pendingLayersToRemove.isEmpty())
+        m_pendingLayersToRemove = WTF::move(m_layersToRemove);
+    else
+        m_pendingLayersToRemove.addAll(std::exchange(m_layersToRemove, { }));
+
     return true;
+}
+
+void CoordinatedSceneState::commitPendingLayers()
+{
+    ASSERT(!isMainRunLoop());
+    Locker pendingLayersLock { m_pendingLayersLock };
+    while (!m_pendingLayersToRemove.isEmpty()) {
+        auto layer = m_pendingLayersToRemove.takeAny();
+        layer->invalidateTarget();
+    }
+
+    if (!m_pendingLayers.isEmpty())
+        m_committedLayers = WTF::move(m_pendingLayers);
 }
 
 const HashSet<Ref<CoordinatedPlatformLayer>>& CoordinatedSceneState::committedLayers()
 {
-    ASSERT(!isMainRunLoop());
-    Locker pendingLayersLock { m_pendingLayersLock };
-    if (!m_pendingLayers.isEmpty()) {
-        auto removedLayers = m_committedLayers.differenceWith(m_pendingLayers);
-        m_committedLayers = WTF::move(m_pendingLayers);
-        for (auto& layer : removedLayers)
-            layer->invalidateTarget();
-    }
+    commitPendingLayers();
     return m_committedLayers;
 }
 
 void CoordinatedSceneState::invalidateCommittedLayers()
 {
     ASSERT(!isMainRunLoop());
+    commitPendingLayers();
     m_rootLayer->invalidateTarget();
     while (!m_committedLayers.isEmpty()) {
         auto layer = m_committedLayers.takeAny();
@@ -121,6 +135,7 @@ void CoordinatedSceneState::invalidate()
 
     Locker pendingLayersLock { m_pendingLayersLock };
     m_pendingLayers = { };
+    m_pendingLayersToRemove = { };
 }
 
 void CoordinatedSceneState::waitUntilPaintingComplete()

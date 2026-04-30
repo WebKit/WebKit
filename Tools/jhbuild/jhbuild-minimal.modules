@@ -11,6 +11,7 @@
       <dep package="glib"/>
       <dep package="glib-networking"/>
       <dep package="libavif"/>
+      <dep package="libbacktrace"/>
       <dep package="libdrm"/>
       <dep package="libjxl"/>
       <dep package="libsoup"/>
@@ -27,6 +28,7 @@
       <dep package="glib"/>
       <dep package="glib-networking"/>
       <dep package="libavif"/>
+      <dep package="libbacktrace"/>
       <dep package="libdrm"/>
       <dep package="libjxl"/>
       <dep package="libsoup"/>
@@ -270,5 +272,11 @@
       <patch file="libjxl-add-cmake-flag-provision-dependencies.patch" strip="1"/>
     </branch>
   </cmake>
+
+  <autotools id="libbacktrace" autogenargs="--with-system-libunwind --enable-shared --disable-static">
+    <branch repo="github.com"
+            module="ianlancetaylor/libbacktrace.git"
+            checkoutdir="libbacktrace"/>
+  </autotools>
 
 </moduleset>

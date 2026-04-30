@@ -42,6 +42,8 @@
 #include "Debugger.h"
 #include "DirectArguments.h"
 #include "DirectEvalCodeCache.h"
+#include "DirectEvalCodeCacheInlines.h"
+#include "DirectEvalExecutable.h"
 #include "EvalCodeBlock.h"
 #include "ExecutableBaseInlines.h"
 #include "FrameTracers.h"
@@ -455,8 +457,8 @@ void Interpreter::getAsyncStackTrace(JSCell* owner, Vector<StackFrame>& results,
         if (promise && promise->status() == JSPromise::Status::Pending) {
             JSValue reactionsValue = promise->internalField(JSPromise::Field::ReactionsOrResult).get();
             if (reactionsValue) {
-                if (auto* reaction = dynamicDowncast<JSPromiseReaction>(reactionsValue))
-                    return reaction->context();
+                if (JSValue context = JSPromiseReaction::tryGetContext(reactionsValue))
+                    return context;
             }
         }
         return JSValue();

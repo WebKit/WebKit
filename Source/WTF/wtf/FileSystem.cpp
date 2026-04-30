@@ -433,14 +433,9 @@ void deleteAllFilesModifiedSince(const String& directory, WallTime time)
         return;
     }
 
-    auto children = listDirectory(directory);
-    for (auto& child : children) {
+    traverseDirectory(directory, [&](const String& child, FileType childType) {
         auto childPath = FileSystem::pathByAppendingComponent(directory, child);
-        auto childType = fileType(childPath);
-        if (!childType)
-            continue;
-
-        switch (*childType) {
+        switch (childType) {
         case FileType::Regular: {
             if (auto modificationTime = FileSystem::fileModificationTime(childPath); modificationTime && *modificationTime >= time)
                 deleteFile(childPath);
@@ -453,7 +448,7 @@ void deleteAllFilesModifiedSince(const String& directory, WallTime time)
         case FileType::SymbolicLink:
             break;
         }
-    }
+    });
 
     FileSystem::deleteEmptyDirectory(directory);
 }
@@ -740,6 +735,32 @@ Vector<String> listDirectory(const String& path)
             fileNames.append(WTF::move(fileName));
     }
     return fileNames;
+}
+
+void traverseDirectory(const String& path, NOESCAPE const Function<void(const String&, FileType)>& function)
+{
+    std::error_code ec;
+    auto entries = std::filesystem::directory_iterator(toStdFileSystemPath(path), ec);
+    for (auto it = std::filesystem::begin(entries), end = std::filesystem::end(entries); !ec && it != end; it.increment(ec)) {
+        auto fileName = fromStdFileSystemPath(it->path().filename());
+        if (fileName.isNull())
+            continue;
+        std::error_code statusEC;
+        auto status = it->symlink_status(statusEC);
+        if (statusEC)
+            continue;
+        switch (status.type()) {
+        case std::filesystem::file_type::directory:
+            function(fileName, FileType::Directory);
+            break;
+        case std::filesystem::file_type::symlink:
+            function(fileName, FileType::SymbolicLink);
+            break;
+        default:
+            function(fileName, FileType::Regular);
+            break;
+        }
+    }
 }
 #endif
 

@@ -249,12 +249,26 @@ void OpenXRCoordinator::createLayerProjection(uint32_t width, uint32_t height, b
 }
 
 #if ENABLE(WEBXR_LAYERS)
-void OpenXRCoordinator::createQuadLayer(WebCore::IntSize size, PlatformXR::LayerLayout layout, CreateQuadCallback&& reply)
+void OpenXRCoordinator::createCompositionLayer(PlatformXR::CompositionLayerType type, WebCore::IntSize size, PlatformXR::LayerLayout layout, CreateCompositionLayerCallback&& reply)
 {
+    if (type == PlatformXR::CompositionLayerType::Equirect) {
+#if !defined(XR_KHR_composition_layer_equirect2)
+        RELEASE_LOG(XR, "OpenXRCoordinator: equirect layer not supported (XR_KHR_composition_layer_equirect2 not defined)");
+        reply(std::nullopt);
+        return;
+#else
+        if (!OpenXRExtensions::singleton().isExtensionSupported(XR_KHR_COMPOSITION_LAYER_EQUIRECT2_EXTENSION_NAME ""_span)) {
+            RELEASE_LOG(XR, "OpenXRCoordinator: equirect layer extension not supported");
+            reply(std::nullopt);
+            return;
+        }
+#endif
+    }
+
     WTF::switchOn(m_state,
         [&](Idle&) { reply(std::nullopt); },
         [&](Active& active) {
-            active.renderQueue->dispatch([this, size, layout, completionHandler = WTF::move(reply)] mutable {
+            active.renderQueue->dispatch([this, type, size, layout, completionHandler = WTF::move(reply)] mutable {
                 if (!collectSwapchainFormatsIfNeeded()) {
                     RELEASE_LOG(XR, "OpenXRCoordinator: no supported swapchain formats");
                     callOnMainRunLoop([completion = WTF::move(completionHandler)] mutable {
@@ -273,25 +287,37 @@ void OpenXRCoordinator::createQuadLayer(WebCore::IntSize size, PlatformXR::Layer
                     return;
                 }
 
-                LOG(XR, "Created swapchain for quad layer with size %dx%d and format %ld", size.width(), size.height(), swapchain->format());
                 auto imageCount = swapchain->imageCount();
-                if (auto layer = OpenXRQuadLayer::create(WTF::move(swapchain), layout)) {
-#if USE(GBM)
-                    if (m_gbmDevice)
-                        layer->setGBMDevice(m_gbmDevice);
+
+                std::unique_ptr<OpenXRCompositionLayer> layer;
+                switch (type) {
+                case PlatformXR::CompositionLayerType::Quad:
+                    layer = OpenXRQuadLayer::create(WTF::move(swapchain), layout);
+                    break;
+                case PlatformXR::CompositionLayerType::Equirect:
+#if defined(XR_KHR_composition_layer_equirect2)
+                    layer = OpenXREquirectLayer::create(WTF::move(swapchain), layout);
 #endif
-                    auto layerHandle = m_nextLayerHandle++;
-                    m_layers.add(layerHandle, WTF::move(layer));
-                    PlatformXR::LayerInfo layerInfo { layerHandle, imageCount };
-                    callOnMainRunLoop([completion = WTF::move(completionHandler), info = layerInfo] mutable {
-                        completion(info);
-                    });
-                } else {
-                    RELEASE_LOG(XR, "OpenXRCoordinator: failed to create quad layer");
+                    break;
+                }
+                if (!layer) {
+                    RELEASE_LOG(XR, "OpenXRCoordinator: failed to create composition layer");
                     callOnMainRunLoop([completion = WTF::move(completionHandler)] mutable {
                         completion(std::nullopt);
                     });
+                    return;
                 }
+
+#if USE(GBM)
+                if (m_gbmDevice)
+                    layer->setGBMDevice(m_gbmDevice);
+#endif
+                auto layerHandle = m_nextLayerHandle++;
+                m_layers.add(layerHandle, WTF::move(layer));
+                PlatformXR::LayerInfo layerInfo { layerHandle, imageCount };
+                callOnMainRunLoop([completion = WTF::move(completionHandler), info = layerInfo] mutable {
+                    completion(info);
+                });
             });
         });
 }
@@ -630,6 +656,10 @@ void OpenXRCoordinator::createInstance()
         extensions.append(const_cast<char*>(XR_ANDROID_RAYCAST_EXTENSION_NAME));
 #endif
 #endif
+#endif
+#if defined(XR_KHR_composition_layer_equirect2)
+    if (OpenXRExtensions::singleton().isExtensionSupported(XR_KHR_COMPOSITION_LAYER_EQUIRECT2_EXTENSION_NAME ""_span))
+        extensions.append(const_cast<char*>(XR_KHR_COMPOSITION_LAYER_EQUIRECT2_EXTENSION_NAME));
 #endif
 
     XrInstanceCreateInfo createInfo = createOpenXRStruct<XrInstanceCreateInfo, XR_TYPE_INSTANCE_CREATE_INFO >();

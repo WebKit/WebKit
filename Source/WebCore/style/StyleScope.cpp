@@ -1058,7 +1058,7 @@ bool Scope::invalidateForAnchorDependencies(LayoutDependencyUpdateContext& conte
 
     auto makeAnchorPosition = [&](const RenderBoxModelObject& anchorRenderer) {
         AnchorPosition result;
-        result.absoluteRect = anchorRenderer.absoluteBoundingBoxRectIgnoringTransforms();
+        result.absoluteRect = anchorRenderer.absoluteBoundingBoxRect();
         // Include containing block sizes as anchor function insets may be computed against any side and if they change
         // we need to invalidate.
         for (auto* containingBlock = anchorRenderer.containingBlock(); containingBlock; containingBlock = containingBlock->containingBlock()) {

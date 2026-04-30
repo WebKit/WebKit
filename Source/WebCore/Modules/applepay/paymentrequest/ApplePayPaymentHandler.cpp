@@ -97,7 +97,7 @@ static ExceptionOr<ApplePayRequest> convertAndValidateApplePayRequest(Document& 
         return Exception { ExceptionCode::ExistingExceptionError };
     auto applePayRequest = applePayRequestConversion.releaseReturnValue();
 
-    auto validatedRequest = convertAndValidate(document, applePayRequest.version, applePayRequest, Ref { paymentCoordinator(document) }.get());
+    auto validatedRequest = convertAndValidate(document, applePayRequest.version, applePayRequest, protect(paymentCoordinator(document)).get());
     if (validatedRequest.hasException())
         return validatedRequest.releaseException();
 

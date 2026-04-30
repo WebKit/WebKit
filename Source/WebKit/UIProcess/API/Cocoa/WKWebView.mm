@@ -615,6 +615,8 @@ static void addBrowsingContextControllerMethodStubsIfNeeded()
     if (!configuration)
         [NSException raise:NSInvalidArgumentException format:@"Configuration cannot be nil"];
 
+    protect(*configuration->_pageConfiguration)->ensureLazyInitializedRefsAreInitialized();
+
     _configuration = adoptNS([configuration copy]);
 
 #if PLATFORM(IOS_FAMILY)

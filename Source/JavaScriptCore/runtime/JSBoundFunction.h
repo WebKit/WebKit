@@ -33,8 +33,6 @@ namespace JSC {
 JSC_DECLARE_HOST_FUNCTION(boundThisNoArgsFunctionCall);
 JSC_DECLARE_HOST_FUNCTION(boundFunctionCall);
 JSC_DECLARE_HOST_FUNCTION(boundFunctionConstruct);
-JSC_DECLARE_HOST_FUNCTION(isBoundFunction);
-JSC_DECLARE_HOST_FUNCTION(hasInstanceBoundFunction);
 
 class JSBoundFunction final : public JSFunction {
 public:

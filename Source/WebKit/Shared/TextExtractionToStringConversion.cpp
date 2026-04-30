@@ -904,6 +904,23 @@ static String jsonTypeStringForItem(const TextExtraction::Item& item, const Text
     );
 }
 
+static bool shouldIncludeFormControlValue(const TextExtraction::TextFormControlData& controlData, const TextExtraction::Item& item)
+{
+    if (controlData.value.isEmpty())
+        return false;
+
+    if (equalLettersIgnoringASCIICase(controlData.value, "on"_s))
+        return false;
+
+    if (!equalLettersIgnoringASCIICase(controlData.controlType, "radio"_s) && !equalLettersIgnoringASCIICase(controlData.controlType, "checkbox"_s))
+        return false;
+
+    return !item.children.containsIf([](auto& child) {
+        auto text = child.template dataAs<TextExtraction::TextItemData>();
+        return text && !text->content.template containsOnly<isASCIIWhitespace>();
+    });
+}
+
 template<typename T> static Vector<String> sortedKeys(const HashMap<String, T>& dictionary)
 {
     auto keys = copyToVector(dictionary.keys());
@@ -1075,6 +1092,8 @@ static void populateJSONForItem(JSON::Object& jsonObject, const TextExtraction::
                 jsonObject.setString("pattern"_s, controlData.pattern);
             if (!controlData.name.isEmpty())
                 jsonObject.setString("name"_s, controlData.name);
+            if (shouldIncludeFormControlValue(controlData, item))
+                jsonObject.setString("value"_s, controlData.value);
             if (controlData.minLength)
                 jsonObject.setInteger("minLength"_s, *controlData.minLength);
             if (controlData.maxLength)
@@ -1400,6 +1419,9 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
                 if (!controlData.name.isEmpty())
                     attributes.append(makeString("name='"_s, escapeString(controlData.name), '\''));
 
+                if (shouldIncludeFormControlValue(controlData, item))
+                    attributes.append(makeString("value='"_s, escapeString(controlData.value), '\''));
+
                 if (auto minLength = controlData.minLength)
                     attributes.append(makeString("minlength="_s, *minLength));
 
@@ -1475,6 +1497,9 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
 
                 if (!controlData.name.isEmpty())
                     parts.append(makeString("name="_s, quoteValue(escapeString(controlData.name), streamlined)));
+
+                if (shouldIncludeFormControlValue(controlData, item))
+                    parts.append(makeString("value="_s, quoteValue(escapeString(controlData.value), streamlined)));
 
                 if (auto minLength = controlData.minLength)
                     parts.append(makeString("minlength="_s, *minLength));

@@ -64,7 +64,6 @@ list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebKitTestRunner_LIBRARIES
-    WTF
     ${CARBON_LIBRARY}
 )
 

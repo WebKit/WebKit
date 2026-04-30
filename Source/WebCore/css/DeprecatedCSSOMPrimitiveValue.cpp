@@ -33,7 +33,6 @@
 #include "CSSCustomIdentValue.h"
 #include "CSSFontFamilyNameValue.h"
 #include "CSSKeywordValue.h"
-#include "CSSPropertyIdentifierValue.h"
 #include "CSSRectValue.h"
 #include "CSSSerializationContext.h"
 #include "CSSStringValue.h"
@@ -59,7 +58,7 @@ unsigned short DeprecatedCSSOMPrimitiveValue::primitiveType() const
         return CSS_RGBCOLOR;
     if (m_value->isURL())
         return CSS_URI;
-    if (m_value->isKeywordValue() || m_value->isCustomIdentValue() || m_value->isPropertyIdentifierValue())
+    if (m_value->isKeywordValue() || m_value->isCustomIdentValue())
         return CSS_IDENT;
     if (m_value->isStringValue() || m_value->isFontFamilyNameValue())
         return CSS_STRING;
@@ -136,8 +135,6 @@ ExceptionOr<String> DeprecatedCSSOMPrimitiveValue::getStringValue() const
     case CSS_IDENT:
         if (RefPtr customIdentValue = dynamicDowncast<CSSCustomIdentValue>(m_value))
             return customIdentValue->stringValue();
-        if (RefPtr propertyIdentifierValue = dynamicDowncast<CSSPropertyIdentifierValue>(m_value))
-            return propertyIdentifierValue->stringValue();
         return downcast<CSSKeywordValue>(m_value.get()).stringValue();
     case CSS_STRING:
         if (RefPtr fontFamilyNameValue = dynamicDowncast<CSSFontFamilyNameValue>(m_value))

@@ -46,6 +46,7 @@ public:
 
     static void updateItemValuesForOrderedList(const HTMLOListElement&);
     static unsigned itemCountForOrderedList(const HTMLOListElement&);
+    static int startForReversedOrderedList(const HTMLOListElement&);
 
     RenderStyle computeMarkerStyle() const;
 

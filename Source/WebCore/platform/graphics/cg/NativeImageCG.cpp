@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,13 +38,18 @@
 namespace WebCore {
 
 
-RefPtr<NativeImage> NativeImage::create(PlatformImagePtr&& image)
+RefPtr<NativeImage> NativeImage::create(PlatformImagePtr&& image, std::optional<GainMap>&& gainMap)
 {
     if (!image)
         return nullptr;
     if (CGImageGetWidth(image.get()) > std::numeric_limits<int>::max() || CGImageGetHeight(image.get()) > std::numeric_limits<int>::max())
         return nullptr;
-    return adoptRef(*new NativeImage(WTF::move(image)));
+    return adoptRef(*new NativeImage(WTF::move(image), WTF::move(gainMap)));
+}
+
+RefPtr<NativeImage> NativeImage::create(PlatformImagePtr&& image)
+{
+    return create(WTF::move(image), std::nullopt);
 }
 
 RefPtr<NativeImage> NativeImage::createTransient(PlatformImagePtr&& image)

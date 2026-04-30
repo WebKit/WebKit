@@ -2569,7 +2569,7 @@ class ImageHelper final : public Resource, public angle::Subject
                                     const gl::Box &clearArea,
                                     const ClearTextureMode clearMode,
                                     gl::TextureType textureType,
-                                    uint32_t levelIndex,
+                                    uint32_t levelIndexGL,
                                     uint32_t layerIndex,
                                     uint32_t layerCount,
                                     GLenum type,
@@ -3000,6 +3000,7 @@ class ImageHelper final : public Resource, public angle::Subject
         }
         VkImageAspectFlags aspectFlags;
         VkClearValue value;
+        // Note: The level index is a GL level (gl::LevelIndex)
         uint32_t levelIndex;
         uint32_t layerIndex;
         uint32_t layerCount;
@@ -3016,6 +3017,7 @@ class ImageHelper final : public Resource, public angle::Subject
         }
         VkImageAspectFlags aspectFlags;
         VkClearValue clearValue;
+        // Note: The level index is a GL level (gl::LevelIndex)
         uint32_t levelIndex;
         uint32_t layerIndex;
         uint32_t layerCount;
@@ -3028,11 +3030,13 @@ class ImageHelper final : public Resource, public angle::Subject
     struct BufferUpdate
     {
         BufferHelper *bufferHelper;
+        // Note: copyRegion.imageSubresource.mipLevel is a GL level (gl::LevelIndex)
         VkBufferImageCopy copyRegion;
         angle::FormatID formatID;
     };
     struct ImageUpdate
     {
+        // Note: copyRegion.src/dstSubresource.mipLevel are GL levels (gl::LevelIndex)
         VkImageCopy copyRegion;
         angle::FormatID formatID;
     };
@@ -3075,8 +3079,11 @@ class ImageHelper final : public Resource, public angle::Subject
         void release(Renderer *renderer);
 
         // Returns true if the update's layer range exact matches [layerIndex,
-        // layerIndex+layerCount) range
-        bool matchesLayerRange(uint32_t layerIndex, uint32_t layerCount) const;
+        // layerIndex+layerCount) range.  To support VK_REMAINING_ARRAY_LAYERS, the number of layers
+        // in the image is also passed in.
+        bool matchesLayerRange(uint32_t layerIndex,
+                               uint32_t layerCount,
+                               uint32_t imageLayerCount) const;
         // Returns true if the update is to any layer within range of [layerIndex,
         // layerIndex+layerCount)
         bool intersectsLayerRange(uint32_t layerIndex, uint32_t layerCount) const;
@@ -4095,8 +4102,10 @@ class CommandResources : angle::NonCopyable
                          ImageHelper *image)
     {
         ASSERT(image->canTransferFrom() && image->canTransferTo());
+        // aspectFlags maybe a subset of image->getAspectFlags(). Image layout change must include
+        // all aspectFlags without separateDepthStencilLayouts feature enabled.
         onImageReadSubresources(readLevelStart, readLevelCount, readLayerStart, readLayerCount,
-                                aspectFlags, ImageAccess::TransferSrcDst, image);
+                                image->getAspectFlags(), ImageAccess::TransferSrcDst, image);
         onImageWrite(writeLevelStart, writeLevelCount, writeLayerStart, writeLayerCount,
                      aspectFlags, ImageAccess::TransferSrcDst, image);
     }

@@ -27,19 +27,28 @@
 
 DECLARE_SYSTEM_HEADER
 
+#include <ImageIO/CGImageMetadata.h>
 #include <ImageIO/CGImageSource.h>
 #include <ImageIO/ImageIOBase.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 
+#include <ImageIO/CGImageHDRFunctionsPrivate.h>
+#include <ImageIO/CGImageMetadataPrivate.h>
+#include <ImageIO/CGImagePropertiesPriv.h>
 #include <ImageIO/CGImageSourcePrivate.h>
 
 #else
 
+typedef struct CF_BRIDGED_TYPE(id) __CVBuffer* CVPixelBufferRef;
+
+IMAGEIO_EXTERN const CFStringRef kCGImageAuxiliaryDataInfoColorSpace;
+IMAGEIO_EXTERN const CFStringRef kCGImageAuxiliaryDataInfoMetadata;
+IMAGEIO_EXTERN const CFStringRef kCGImageAuxiliaryDataTypeISOGainMap;
+IMAGEIO_EXTERN const CFStringRef kCGImageSourceShouldCacheImmediately;
 IMAGEIO_EXTERN const CFStringRef kCGImageSourceShouldPreferRGB32;
 IMAGEIO_EXTERN const CFStringRef kCGImageSourceSkipMetadata;
 IMAGEIO_EXTERN const CFStringRef kCGImageSourceSubsampleFactor;
-IMAGEIO_EXTERN const CFStringRef kCGImageSourceShouldCacheImmediately;
 IMAGEIO_EXTERN const CFStringRef kCGImageSourceUseHardwareAcceleration;
 
 WTF_EXTERN_C_BEGIN
@@ -50,6 +59,8 @@ IMAGEIO_EXTERN OSStatus CGImageSourceDisableHardwareDecoding();
 IMAGEIO_EXTERN OSStatus CGImageSourceEnableRestrictedDecoding();
 
 IMAGEIO_EXTERN uint16_t CGImageGetContentAverageLightLevelNits(CGImageRef);
+
+IMAGEIO_EXTERN OSStatus CGImageApplyHDRGainMap(CVPixelBufferRef inputImage, CVPixelBufferRef inputGainmap, CVPixelBufferRef outputImage, CFDictionaryRef options);
 
 WTF_EXTERN_C_END
 

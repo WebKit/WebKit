@@ -6,8 +6,13 @@
     <script>
         prepareForTest();
         async function runTest() {
-            if (window.internals)
+            if (!window.internals)
+                return;
+
+            if ('ontouchstart' in window)
                 await UIHelper.tapAt(10, 10);
+            else
+                dumpRegions();
         }
         window.addEventListener('load', runTest, false);
     </script>

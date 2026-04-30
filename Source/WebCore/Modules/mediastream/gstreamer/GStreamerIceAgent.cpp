@@ -66,6 +66,12 @@ using WebKitGstRiceStream = struct _WebKitGstRiceStream {
 
 using StreamHashMap = HashMap<unsigned, std::unique_ptr<WebKitGstRiceStream>, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>;
 
+enum class AgentState : uint8_t {
+    Open,
+    Closing,
+    Closed
+};
+
 typedef struct _WebKitGstIceAgentPrivate {
     ~_WebKitGstIceAgentPrivate()
     {
@@ -88,8 +94,9 @@ typedef struct _WebKitGstIceAgentPrivate {
 
     RefPtr<RunLoop> runLoop;
 
-    Atomic<bool> agentIsClosed;
-    GRefPtr<GstPromise> closePromise;
+    Lock stateLock;
+    AgentState state WTF_GUARDED_BY_LOCK(stateLock) { AgentState::Open };
+    GRefPtr<GstPromise> closePromise WTF_GUARDED_BY_LOCK(stateLock);
 
     GstWebRTCICEOnCandidateFunc onCandidate;
     gpointer onCandidateData;
@@ -380,6 +387,7 @@ static GstWebRTCICEStream* webkitGstWebRTCIceAgentAddStream(GstWebRTCICE* ice, g
     auto riceStream = adoptGRef(rice_agent_add_stream(backend->priv->agent.get()));
     auto streamId = static_cast<unsigned>(rice_stream_get_id(riceStream.get()));
     [[maybe_unused]] auto component = adoptGRef(rice_stream_add_component(riceStream.get()));
+    GST_DEBUG_OBJECT(ice, "Component %zu added for stream %u", rice_component_get_id(component.get()), streamId);
 
     auto stream = adoptGRef(GST_WEBRTC_ICE_STREAM(webkitGstWebRTCCreateIceStream(backend, WTF::move(riceStream))));
     backend->priv->streams.add(sessionId, WTF::makeUnique<WebKitGstRiceStream>(streamId, WTF::move(stream)));
@@ -625,14 +633,19 @@ static gboolean webkitGstWebRTCIceAgentGetSelectedPair(GstWebRTCICE* ice, GstWeb
 
 void webkitGstWebRTCIceAgentClosed(WebKitGstIceAgent* agent)
 {
-    agent->priv->agentIsClosed.exchange(true);
-    agent->priv->streams.clear();
+    GST_DEBUG_OBJECT(agent, "Agent successfully closed");
+    auto priv = agent->priv;
 
-    if (!agent->priv->closePromise)
+    Locker locker { priv->stateLock };
+    priv->state = AgentState::Closed;
+
+    priv->streams.clear();
+
+    if (!priv->closePromise)
         return;
 
-    gst_promise_reply(agent->priv->closePromise.get(), nullptr);
-    agent->priv->closePromise.clear();
+    gst_promise_reply(priv->closePromise.get(), nullptr);
+    priv->closePromise.clear();
 }
 
 #if GST_CHECK_VERSION(1, 28, 0)
@@ -640,24 +653,48 @@ static void webkitGstWebRTCIceAgentClose(GstWebRTCICE* ice, GstPromise* promise)
 {
     auto backend = WEBKIT_GST_WEBRTC_ICE_BACKEND(ice);
 
-    auto isClosed = backend->priv->agentIsClosed.load();
-    if (isClosed)
-        return;
+    {
+        Locker locker { backend->priv->stateLock };
 
-    bool shouldWait = promise == nullptr;
-    backend->priv->closePromise = promise;
-    auto now = WTF::MonotonicTime::now().secondsSinceEpoch();
-    rice_agent_close(backend->priv->agent.get(), now.nanoseconds());
+        GST_DEBUG_OBJECT(ice, "Attempting to close connection");
+        if (backend->priv->state >= AgentState::Closing) {
+            GST_DEBUG_OBJECT(ice, "Agent %s, no need to close again", backend->priv->state == AgentState::Closed ? "was closed" : "is closing");
+            return;
+        }
+
+        backend->priv->closePromise = promise;
+        backend->priv->state = AgentState::Closing;
+        auto now = WTF::MonotonicTime::now().secondsSinceEpoch();
+        rice_agent_close(backend->priv->agent.get(), now.nanoseconds());
+    }
+
+    {
+        Locker locker { backend->priv->stateLock };
+
+        bool shouldWait = promise == nullptr;
+        auto isClosed = backend->priv->state == AgentState::Closed;
+        if (!shouldWait || isClosed) {
+            GST_DEBUG_OBJECT(ice, "No need to wait close procedure completion");
+            backend->priv->state = AgentState::Closed;
+            return;
+        }
+    }
+
+    GST_DEBUG_OBJECT(ice, "Waiting close procedure completion");
     webkitGstWebRTCIceAgentWakeup(backend);
 
-    isClosed = backend->priv->agentIsClosed.load();
-    if (!shouldWait || isClosed)
-        return;
-
-    while (!isClosed) {
+    auto timeout = WTF::MonotonicTime::now().secondsSinceEpoch() + 2_s;
+    while (WTF::MonotonicTime::now().secondsSinceEpoch() < timeout) {
+        bool isClosed = false;
+        {
+            Locker locker { backend->priv->stateLock };
+            isClosed = backend->priv->state == AgentState::Closed;
+        }
+        if (isClosed)
+            return;
         g_main_context_iteration(backend->priv->runLoop->mainContext(), FALSE);
-        isClosed = backend->priv->agentIsClosed.load();
     }
+    GST_DEBUG_OBJECT(ice, "Agent failed to properly close connections");
 }
 #endif
 
@@ -667,8 +704,6 @@ static void webkitGstWebRTCIceAgentConstructed(GObject* object)
 
     auto backend = WEBKIT_GST_WEBRTC_ICE_BACKEND(object);
     auto priv = backend->priv;
-
-    priv->agentIsClosed.exchange(false);
 
     static Atomic<uint32_t> counter = 0;
     auto id = counter.load();
@@ -846,10 +881,25 @@ void webkitGstWebRTCIceAgentGatheringDoneForStream(WebKitGstIceAgent* agent, uns
 
 void webkitGstWebRTCIceAgentLocalCandidateGatheredForStream(WebKitGstIceAgent* agent, unsigned streamId, RiceAgentGatheredCandidate& candidate)
 {
+    auto priv = agent->priv;
+    {
+        Locker locker { priv->stateLock };
+
+        if (priv->state >= AgentState::Closing) {
+            GST_DEBUG_OBJECT(agent, "Agent %s, no need to notify gathered candidate anymore", priv->state == AgentState::Closed ? "was closed" : "is closing");
+            return;
+        }
+    }
+
     findStreamAndApply(agent->priv->streams, streamId, [&](const auto* stream) {
+        Locker locker { priv->stateLock };
+        if (priv->state >= AgentState::Closing) {
+            GST_DEBUG_OBJECT(agent, "Agent %s, no need to notify gathered candidate anymore", priv->state == AgentState::Closed ? "was closed" : "is closing");
+            return;
+        }
         auto sdp = GMallocString::unsafeAdoptFromUTF8(rice_candidate_to_sdp_string(&candidate.gathered.candidate));
 
-        if (agent->priv->forceRelay && candidate.gathered.candidate.candidate_type != RICE_CANDIDATE_TYPE_RELAYED) {
+        if (priv->forceRelay && candidate.gathered.candidate.candidate_type != RICE_CANDIDATE_TYPE_RELAYED) {
             GST_DEBUG_OBJECT(agent, "Ignoring non-relay ICE candidate %s", sdp.utf8());
             webkitGstWebRTCIceStreamAddLocalGatheredCandidate(stream, candidate.gathered);
             return;
@@ -858,7 +908,7 @@ void webkitGstWebRTCIceAgentLocalCandidateGatheredForStream(WebKitGstIceAgent* a
         GST_DEBUG_OBJECT(agent, "Notifying candidate %s", sdp.utf8());
         ASSERT(startsWith(sdp.span(), "a="_s));
         String strippedSdp(sdp.span().subspan(2));
-        agent->priv->onCandidate(GST_WEBRTC_ICE(agent), streamId, strippedSdp.utf8().data(), agent->priv->onCandidateData);
+        priv->onCandidate(GST_WEBRTC_ICE(agent), streamId, strippedSdp.utf8().data(), priv->onCandidateData);
         webkitGstWebRTCIceStreamAddLocalGatheredCandidate(stream, candidate.gathered);
     });
 }

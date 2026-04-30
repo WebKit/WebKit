@@ -37,6 +37,7 @@
 #include "ServiceWorker.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerThreadableLoader.h"
+#include <WebCore/HTTPStatusCodes.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -130,7 +131,7 @@ void WorkerFontLoadRequest::setClient(FontLoadRequestClient* client)
 
 void WorkerFontLoadRequest::didReceiveResponse(ScriptExecutionContextIdentifier, std::optional<ResourceLoaderIdentifier>, const ResourceResponse& response)
 {
-    if (response.httpStatusCode() / 100 != 2 && response.httpStatusCode())
+    if (!response.isSuccessful() && response.httpStatusCode())
         m_errorOccurred = true;
 }
 

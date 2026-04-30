@@ -351,6 +351,7 @@ static PAS_ALWAYS_INLINE bool scavenge_impl(pas_expendable_memory* header,
             pas_page_malloc_decommit_without_mprotect(
                 (char*)payload + index * PAS_EXPENDABLE_MEMORY_PAGE_SIZE,
                 (other_index - index) * PAS_EXPENDABLE_MEMORY_PAGE_SIZE,
+                /* is_symmetric */ false,
                 pas_may_mmap);
         }
 

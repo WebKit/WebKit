@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "RegisterID.h"
 #include "StaticPropertyAnalysis.h"
 #include <wtf/HashMap.h>
 

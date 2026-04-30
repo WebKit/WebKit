@@ -31,6 +31,7 @@
 #include "ContextDestructionObserverInlines.h"
 #include "DOMPointReadOnly.h"
 #include "Document.h"
+#include "EventTargetInlines.h"
 #include "WebXRRigidTransform.h"
 #include "WebXRSession.h"
 #include <wtf/TZoneMallocInlines.h>

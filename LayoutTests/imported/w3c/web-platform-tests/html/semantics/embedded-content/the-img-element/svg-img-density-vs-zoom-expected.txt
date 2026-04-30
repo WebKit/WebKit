@@ -1,0 +1,15 @@
+
+
+
+
+
+PASS SVG, no intrinsic dims: baseline
+FAIL SVG, no intrinsic dims + 2x density: defaults not scaled assert_equals: naturalWidth expected 300 but got 150
+FAIL SVG, no intrinsic dims + 2x zoom: rendered size scaled, naturalWidth/Height not assert_equals: naturalWidth expected 300 but got 600
+PASS SVG, intrinsic width only: baseline
+FAIL SVG, intrinsic width only + 2x density: width scaled, default height not assert_equals: naturalHeight expected 150 but got 75
+FAIL SVG, intrinsic width only + 2x zoom: everything scaled assert_equals: naturalWidth expected 60 but got 120
+PASS SVG, both intrinsic dims: baseline
+PASS SVG, both intrinsic dims + 2x density: both scaled
+FAIL SVG, both intrinsic dims + 2x zoom: rendered size scaled, naturalWidth/Height not assert_equals: naturalWidth expected 60 but got 120
+

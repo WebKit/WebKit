@@ -78,6 +78,7 @@ b3/air/AirCustom.cpp
 b3/air/AirDisassembler.cpp
 b3/air/AirEliminateDeadCode.cpp
 b3/air/AirEmitShuffle.cpp
+b3/air/AirEnsureDedicatedLoopEntryExitBlocks.cpp
 b3/air/AirFixObviousSpills.cpp
 b3/air/AirFixPartialRegisterStalls.cpp
 b3/air/AirFixSpillsAfterTerminals.cpp
@@ -1030,6 +1031,7 @@ runtime/Options.cpp
 runtime/OrderedHashTable.cpp
 runtime/PageCount.cpp
 runtime/PinballCompletion.cpp
+runtime/PinballHandlerContext.cpp
 runtime/PredictionFileCreatingFuzzerAgent.cpp
 runtime/PrivateFieldPutKind.cpp
 runtime/ProfilerSupport.cpp

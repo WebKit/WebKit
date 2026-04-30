@@ -26,6 +26,7 @@
 #pragma once
 
 #if HAVE(WEBCONTENTRESTRICTIONS)
+#include <wtf/URL.h>
 
 namespace WebCore {
 

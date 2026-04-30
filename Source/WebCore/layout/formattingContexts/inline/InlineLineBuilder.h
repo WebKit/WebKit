@@ -101,6 +101,7 @@ private:
     const FloatingContext& m_floatingContext;
     InlineRect m_lineInitialLogicalRect;
     InlineLayoutUnit m_lineMarginStart { 0.f };
+    InlineLayoutUnit m_lineContentEdgeOffset { 0.f };
     InlineLayoutUnit m_initialIntrusiveFloatsWidth { 0.f };
     InlineLayoutUnit m_candidateContentMaximumHeight { 0.f };
     LineLayoutResult::PlacedFloatList m_placedFloats;

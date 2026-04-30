@@ -40,7 +40,6 @@
 #include "pas_page_sharing_pool.h"
 #include "pas_range.h"
 #include "pas_segregated_page_inlines.h"
-#include "pas_segregated_shared_page_directory.h"
 #include "pas_segregated_size_directory.h"
 #include "pas_zero_memory.h"
 
@@ -194,17 +193,12 @@ void pas_segregated_page_construct(pas_segregated_page* page,
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
 
     pas_segregated_page_config page_config;
-    pas_segregated_page_role role;
 
     page_config = *page_config_ptr;
 
-    PAS_ASSERT(page_config.base.page_config_kind == pas_page_config_kind_segregated);
-
-    role = pas_segregated_view_get_page_role_for_owner(owner);
-
     /* This is essential for medium deallocation. */
     pas_page_base_construct(
-        &page->base, pas_page_kind_for_segregated_variant_and_role(page_config.variant, role));
+        &page->base, pas_page_kind_for_segregated_variant(page_config.variant));
 
     if (verbose) {
         pas_log("Constructing page %p with boundary %p for view %p and config %s.\n",
@@ -228,8 +222,7 @@ void pas_segregated_page_construct(pas_segregated_page* page,
 
     page->view_cache_index = (pas_allocator_index)UINT_MAX;
 
-    switch (role) {
-    case pas_segregated_page_exclusive_role:{
+    {
         pas_segregated_size_directory* directory;
         pas_segregated_size_directory_data* data;
 
@@ -246,12 +239,6 @@ void pas_segregated_page_construct(pas_segregated_page* page,
             page->view_cache_index = directory->view_cache_index;
         } else
             PAS_ASSERT(directory->view_cache_index == (pas_allocator_index)UINT_MAX);
-        break;
-    }
-
-    case pas_segregated_page_shared_role:
-        page->object_size = 0;
-        break;
     }
 
     page->is_in_use_for_allocation = false;
@@ -278,8 +265,8 @@ void pas_segregated_page_construct(pas_segregated_page* page,
 
         /* If there are any bytes in the page not made available for allocation then make sure
            that the use counts know about it. */
-        start_of_payload = pas_segregated_page_config_payload_offset_for_role(page_config, role);
-        end_of_payload = pas_segregated_page_config_payload_end_offset_for_role(page_config, role);
+        start_of_payload = pas_segregated_page_config_payload_offset(page_config);
+        end_of_payload = pas_segregated_page_config_payload_end_offset(page_config);
 
         pas_page_granule_increment_uses_for_range(
             use_counts, 0, start_of_payload,
@@ -524,17 +511,10 @@ void pas_segregated_page_commit_fully(
             pas_segregated_view owner;
             owner = page->owner;
             pas_heap_lock_lock();
-            if (pas_segregated_view_is_shared_handle(owner)) {
-                pas_debug_spectrum_add(
-                    pas_segregated_view_get_shared_handle(owner)->directory,
-                    pas_segregated_shared_page_directory_dump_for_spectrum,
-                    commit_span.total_bytes);
-            } else {
-                pas_debug_spectrum_add(
-                    pas_segregated_view_get_size_directory(owner),
-                    pas_segregated_size_directory_dump_for_spectrum,
-                    commit_span.total_bytes);
-            }
+            pas_debug_spectrum_add(
+                pas_segregated_view_get_size_directory(owner),
+                pas_segregated_size_directory_dump_for_spectrum,
+                commit_span.total_bytes);
             pas_heap_lock_unlock();
         }
 
@@ -596,7 +576,6 @@ void pas_segregated_page_verify_granules(pas_segregated_page* page)
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
 
     pas_segregated_page_config page_config;
-    pas_segregated_page_role role;
     pas_page_granule_use_count correct_use_counts[PAS_MAX_GRANULES];
     pas_page_granule_use_count* use_counts;
     uintptr_t num_granules;
@@ -606,7 +585,6 @@ void pas_segregated_page_verify_granules(pas_segregated_page* page)
     verify_granules_data data;
 
     page_config = *pas_segregated_view_get_page_config(page->owner);
-    role = pas_page_kind_get_segregated_role(pas_page_base_get_kind(&page->base));
 
     if (verbose)
         pas_log("Verifying granules in page %p.\n", page);
@@ -618,8 +596,8 @@ void pas_segregated_page_verify_granules(pas_segregated_page* page)
 
     /* If there are any bytes in the page not made available for allocation then make sure
        that the use counts know about it. */
-    start_of_payload = pas_segregated_page_config_payload_offset_for_role(page_config, role);
-    end_of_payload = pas_segregated_page_config_payload_end_offset_for_role(page_config, role);
+    start_of_payload = pas_segregated_page_config_payload_offset(page_config);
+    end_of_payload = pas_segregated_page_config_payload_end_offset(page_config);
 
     pas_page_granule_increment_uses_for_range(
         correct_use_counts, 0, start_of_payload,
@@ -632,8 +610,7 @@ void pas_segregated_page_verify_granules(pas_segregated_page* page)
 
     /* We actually don't hold the ownership lock, but we lie and say that we do, since we can
        guarantee that the page and views aren't going away right now, since this gets called from
-       deallocation code. Also, if we're dealing with a shared page, then we _are_ holding the
-       ownership lock, so we aren't even lying. */
+       deallocation code. */
     pas_segregated_view_for_each_live_object(
         page->owner, verify_granules_live_object_callback, &data, pas_lock_is_held);
 
@@ -786,10 +763,6 @@ pas_segregated_page_and_config_for_address_and_heap_config(uintptr_t begin,
         pas_page_base_and_kind page_and_kind;
         page_and_kind = pas_get_page_base_and_kind_for_small_other_in_fast_megapage(begin, *config);
         switch (page_and_kind.page_kind) {
-        case pas_small_shared_segregated_page_kind:
-            return pas_segregated_page_and_config_create(
-                pas_page_base_get_segregated(page_and_kind.page_base),
-                &config->small_segregated_config);
         case pas_small_bitfit_page_kind:
             return pas_segregated_page_and_config_create_empty();
         default:
@@ -803,12 +776,10 @@ pas_segregated_page_and_config_for_address_and_heap_config(uintptr_t begin,
         if (page_base) {
             switch (pas_page_base_get_kind(page_base)) {
             case pas_small_exclusive_segregated_page_kind:
-            case pas_small_shared_segregated_page_kind:
                 return pas_segregated_page_and_config_create(
                     pas_page_base_get_segregated(page_base),
                     &config->small_segregated_config);
             case pas_medium_exclusive_segregated_page_kind:
-            case pas_medium_shared_segregated_page_kind:
                 return pas_segregated_page_and_config_create(
                     pas_page_base_get_segregated(page_base),
                     &config->medium_segregated_config);

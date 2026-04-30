@@ -36,7 +36,6 @@ use Data::Dumper;
 use IDLParser;
 
 my $defines;
-my $preprocessor;
 my $idlFileNamesList;
 my $testGlobalContextName;
 my $supplementalDependencyFile;
@@ -78,7 +77,6 @@ my @supportedGlobalContexts = (
 my $validateAgainstParser = 0;
 
 GetOptions('defines=s' => \$defines,
-           'preprocessor=s' => \$preprocessor,
            'idlFileNamesList=s' => \$idlFileNamesList,
            'testGlobalContextName=s' => \$testGlobalContextName,
            'supplementalDependencyFile=s' => \$supplementalDependencyFile,
@@ -605,7 +603,7 @@ sub processIDL
 
     if ($validateAgainstParser) {
         my $parser = IDLParser->new(1);
-        $idlFile->parsedDocument($parser->Parse($filePath, $defines, $preprocessor, $idlAttributes));
+        $idlFile->parsedDocument($parser->Parse($filePath, $defines, $idlAttributes));
     }
 
     return $idlFile;

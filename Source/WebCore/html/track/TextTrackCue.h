@@ -59,7 +59,7 @@ protected:
     void initialize();
 
     TextTrackCueBox(Document&, TextTrackCue&);
-    ~TextTrackCueBox() { }
+    ~TextTrackCueBox();
 
 private:
 

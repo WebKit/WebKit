@@ -4,7 +4,7 @@ PASS truncate() to grow a file
 PASS createWritable() fails when parent directory is removed
 PASS createWritable({keepExistingData: true}): atomic writable file stream initialized with source contents
 PASS createWritable({keepExistingData: false}): atomic writable file stream initialized with empty file
-PASS createWritable() can be called on two handles representing the same file
+FAIL createWritable() can be called on two handles representing the same file promise_test: Unhandled rejection with value: object "TypeError: parent.getDirectoryHandle is not a function. (In 'parent.getDirectoryHandle(name, {create: true})', 'parent.getDirectoryHandle' is undefined)"
 PASS cursor position: truncate size > offset
 PASS cursor position: truncate size < offset
 PASS commands are queued, stream is unlocked after each operation

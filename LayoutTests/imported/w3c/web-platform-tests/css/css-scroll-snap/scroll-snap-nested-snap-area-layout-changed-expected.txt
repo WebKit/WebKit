@@ -1,0 +1,4 @@
+
+FAIL newly larger-than-snapport area is snapped to when straddled close to bottom. assert_equals: scroller snaps to just below the inner snap area. expected 200 but got 190
+FAIL snapport remains within newly covering snap area when already in covering position. assert_equals: scroller snaps to just below the inner snap area. expected 200 but got 190
+

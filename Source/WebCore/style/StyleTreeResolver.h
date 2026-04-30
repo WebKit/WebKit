@@ -162,7 +162,7 @@ private:
 
     DescendantsToResolve computeDescendantsToResolve(const ElementUpdate&, const RenderStyle* existingStyle, Validity) const;
     static std::optional<ResolutionType> determineResolutionType(const Element&, const RenderStyle*, DescendantsToResolve, OptionSet<Change> parentChange);
-    static void resetDescendantStyleRelations(Element&, DescendantsToResolve);
+    void resetDescendantStyleRelations(Element&, DescendantsToResolve);
 
     ResolutionContext makeResolutionContext();
     ResolutionContext makeResolutionContextForPseudoElement(const ElementUpdate&, const PseudoElementIdentifier&);
@@ -203,6 +203,7 @@ private:
     Vector<Ref<Scope>, 4> m_scopeStack;
     Vector<Parent, 32> m_parentStack;
     bool m_didSeePendingStylesheet { false };
+    bool m_isFullDocumentStyleRebuild { false };
 
     // States relevant to deferring and resuming descendant resolution.
     // Also see deferDescendantResolution and resumeDescendantResolutionIfNeeded.

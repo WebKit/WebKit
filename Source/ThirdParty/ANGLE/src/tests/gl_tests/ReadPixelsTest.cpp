@@ -79,7 +79,8 @@ TEST_P(ReadPixelsTest, LargeTexture)
     GLTexture tex;
     glBindTexture(GL_TEXTURE_2D, tex);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 16384, 8193, 0, GL_RGBA, GL_FLOAT, nullptr);
-    ANGLE_SKIP_TEST_IF(glGetError() == GL_OUT_OF_MEMORY);
+    GLenum err = glGetError();
+    ANGLE_SKIP_TEST_IF(err == GL_OUT_OF_MEMORY || err == GL_INVALID_OPERATION);
     EXPECT_GL_NO_ERROR();
 
     GLFramebuffer fbo;
@@ -1575,6 +1576,18 @@ TEST_P(ReadPixelsErrorTest, ReadBufferIsNone)
     std::vector<GLubyte> pixels(4);
     EXPECT_GL_NO_ERROR();
     glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
+// The test verifies (x + width) and (y + height) integer overflows.
+TEST_P(ReadPixelsErrorTest, Overflow)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
+    std::vector<GLubyte> pixels(4);
+    ASSERT_GL_NO_ERROR();
+    glReadPixels(1, 0, 2147483647, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    glReadPixels(0, 1, 4, 2147483647, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 

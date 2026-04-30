@@ -21,6 +21,7 @@
 #pragma once
 
 #include "DateInstance.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

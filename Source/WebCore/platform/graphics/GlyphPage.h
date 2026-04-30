@@ -69,10 +69,10 @@ public:
 
     ~GlyphPage()
     {
-        --s_count;
+        s_count.fetch_sub(1, std::memory_order_relaxed);
     }
 
-    static unsigned count() { return s_count; }
+    WEBCORE_EXPORT static unsigned count();
 
     static constexpr unsigned size = 16;
 
@@ -131,14 +131,14 @@ private:
     explicit GlyphPage(const Font& font)
         : m_font(font)
     {
-        ++s_count;
+        s_count.fetch_add(1, std::memory_order_relaxed);
     }
 
     SingleThreadWeakPtr<const Font> m_font;
     std::array<Glyph, size> m_glyphs { };
     WTF::BitSet<size> m_isColor;
 
-    WEBCORE_EXPORT static unsigned s_count;
+    static std::atomic<unsigned> s_count;
 };
 
 } // namespace WebCore

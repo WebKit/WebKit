@@ -55,20 +55,7 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(RegExpConstructor, InternalFunction);
 
 JSObject* constructRegExp(JSGlobalObject*, const ArgList&, JSObject* callee = nullptr, JSValue newTarget = JSValue());
 
-ALWAYS_INLINE bool isRegExp(VM& vm, JSGlobalObject* globalObject, JSValue value)
-{
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    if (!value.isObject())
-        return false;
-
-    JSObject* object = asObject(value);
-    JSValue matchValue = object->get(globalObject, vm.propertyNames->matchSymbol);
-    RETURN_IF_EXCEPTION(scope, false);
-    if (!matchValue.isUndefined())
-        return matchValue.toBoolean(globalObject);
-
-    return object->inherits<RegExpObject>();
-}
+ALWAYS_INLINE bool isRegExp(VM&, JSGlobalObject*, JSValue); // Defined in RegExpConstructorInlines.h
 
 JSC_DECLARE_HOST_FUNCTION(esSpecRegExpCreate);
 JSC_DECLARE_HOST_FUNCTION(esSpecIsRegExp);

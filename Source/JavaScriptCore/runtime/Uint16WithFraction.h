@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/MathExtras.h>
+#include <wtf/Vector.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 

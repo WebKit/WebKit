@@ -83,7 +83,8 @@ private:
     mutable std::unique_ptr<UConstrainedFieldPosition, ICUDeleter<ucfpos_close>> m_cfpos;
 
     String m_locale;
-    String m_numberingSystem;
+    String m_dataLocale;
+    mutable String m_numberingSystem;
     Style m_style { Style::Long };
     bool m_numeric { true };
 };

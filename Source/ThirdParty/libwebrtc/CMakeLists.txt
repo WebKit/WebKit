@@ -51,11 +51,13 @@ set(webrtc_SOURCES
     Source/third_party/abseil-cpp/absl/container/internal/test_instance_tracker.cc
     Source/third_party/abseil-cpp/absl/debugging/failure_signal_handler.cc
     Source/third_party/abseil-cpp/absl/debugging/internal/address_is_readable.cc
+    Source/third_party/abseil-cpp/absl/debugging/internal/decode_rust_punycode.cc
     Source/third_party/abseil-cpp/absl/debugging/internal/demangle.cc
     Source/third_party/abseil-cpp/absl/debugging/internal/demangle_rust.cc
     Source/third_party/abseil-cpp/absl/debugging/internal/elf_mem_image.cc
     Source/third_party/abseil-cpp/absl/debugging/internal/examine_stack.cc
     Source/third_party/abseil-cpp/absl/debugging/internal/stack_consumption.cc
+    Source/third_party/abseil-cpp/absl/debugging/internal/utf8_for_code_point.cc
     Source/third_party/abseil-cpp/absl/debugging/internal/vdso_support.cc
     Source/third_party/abseil-cpp/absl/debugging/leak_check.cc
     Source/third_party/abseil-cpp/absl/debugging/stacktrace.cc
@@ -2139,6 +2141,19 @@ if (APPLE)
         )
     endif ()
 
+    # AV1 codec sources -- mirrors libwebrtc.xcodeproj when DISABLE_RTC_AV1 is unset.
+    # libaom is built via the aom OBJECT lib below; dav1d via Source/ThirdParty/dav1d.
+    if (ENABLE_AV1)
+        list(APPEND webrtc_SOURCES
+            Source/webrtc/modules/video_coding/codecs/av1/dav1d_decoder.cc
+            Source/webrtc/modules/video_coding/codecs/av1/libaom_av1_decoder.cc
+            Source/webrtc/modules/video_coding/codecs/av1/libaom_av1_encoder.cc
+            Source/webrtc/modules/video_coding/codecs/av1/libaom_speed_config_factory.cc
+            Source/webrtc/webkit_sdk/objc/api/video_codec/RTCVideoDecoderAV1.mm
+            Source/webrtc/webkit_sdk/objc/api/video_codec/RTCVideoEncoderAV1.mm
+        )
+    endif ()
+
     list(APPEND webrtc_SOURCES
         Source/third_party/boringssl/src/crypto/cpu_aarch64_apple.cc
     )
@@ -2323,11 +2338,32 @@ target_compile_definitions(webrtc PRIVATE
   WEBRTC_USE_BUILTIN_ISAC_FLOAT=0
   WEBRTC_USE_H265=1
   RTC_ENABLE_H265
-  DISABLE_RTC_AV1
   WTF_USE_DYNAMIC_ANNOTATIONS=1
   _GNU_SOURCE
   HWAES
 )
+
+if (ENABLE_AV1)
+    target_compile_definitions(webrtc PRIVATE
+        RTC_USE_LIBAOM_AV1_ENCODER
+        RTC_DAV1D_IN_INTERNAL_DECODER_FACTORY
+    )
+
+    # dav1d_decoder.cc includes "third_party/dav1d/libdav1d/include/dav1d/dav1d.h",
+    # but PAL vendors dav1d at Source/WebCore/PAL/ThirdParty/dav1d/. Forward the
+    # include path so the relative include resolves -- mirrors the opus header
+    # forwarding pattern in Source/WebCore/PlatformMac.cmake.
+    set(_dav1d_fwd "${CMAKE_BINARY_DIR}/dav1d-fwd")
+    file(MAKE_DIRECTORY "${_dav1d_fwd}/third_party/dav1d/libdav1d")
+    if (NOT EXISTS "${_dav1d_fwd}/third_party/dav1d/libdav1d/include")
+        file(CREATE_LINK
+            "${CMAKE_SOURCE_DIR}/Source/WebCore/PAL/ThirdParty/dav1d/include"
+            "${_dav1d_fwd}/third_party/dav1d/libdav1d/include"
+            SYMBOLIC)
+    endif ()
+else ()
+    target_compile_definitions(webrtc PRIVATE DISABLE_RTC_AV1)
+endif ()
 
 if (APPLE)
     target_compile_definitions(webrtc PRIVATE
@@ -2388,7 +2424,13 @@ if (APPLE)
         Source/webrtc/webkit_sdk/objc/Framework/Classes
         Source/webrtc/webkit_sdk/objc/Framework/Headers
     )
+    if (ENABLE_AV1)
+        list(APPEND webrtc_INCLUDE_DIRECTORIES PRIVATE "${_dav1d_fwd}")
+    endif ()
     target_link_libraries(webrtc opus vpx yuv libsrtp)
+    if (ENABLE_AV1)
+        target_link_libraries(webrtc aom dav1d)
+    endif ()
 else ()
     target_link_libraries(webrtc ${LIBEVENT_LIBRARY})
     target_link_libraries(webrtc ${LIBOPUS_LIBRARY})
@@ -3245,3 +3287,282 @@ endif ()
 
 target_include_directories(vpx PRIVATE ${vpx_INCLUDE_DIRECTORIES})
 target_compile_options(vpx PRIVATE -Wno-cast-align -Wno-incompatible-pointer-types)
+
+# libaom OBJECT library, mirrors libwebrtc.xcodeproj's libaom target.
+# Source list canonically extracted from libwebrtc.xcodeproj/project.pbxproj (228 entries),
+# bucketed per the EXCLUDED_SOURCE_FILE_NAMES rules in Configurations/libaom.xcconfig:34-45.
+# Apple uses linux/<arch>-cpu-detect or linux/generic config dirs (no mac/* config exists);
+# the aom_config.h there has __APPLE__ guards. Defines mirror BaseTarget-libaom.xcconfig:41.
+# No .asm files are listed (Xcode source list omits them too); .S files don't exist.
+if (ENABLE_AV1 AND APPLE)
+    set(aom_SOURCES_common
+        Source/third_party/libaom/source/libaom/aom/src/aom_codec.c
+        Source/third_party/libaom/source/libaom/aom/src/aom_decoder.c
+        Source/third_party/libaom/source/libaom/aom/src/aom_encoder.c
+        Source/third_party/libaom/source/libaom/aom/src/aom_image.c
+        Source/third_party/libaom/source/libaom/aom/src/aom_integer.c
+        Source/third_party/libaom/source/libaom/aom_dsp/aom_convolve.c
+        Source/third_party/libaom/source/libaom/aom_dsp/aom_dsp_rtcd.c
+        Source/third_party/libaom/source/libaom/aom_dsp/avg.c
+        Source/third_party/libaom/source/libaom/aom_dsp/binary_codes_reader.c
+        Source/third_party/libaom/source/libaom/aom_dsp/binary_codes_writer.c
+        Source/third_party/libaom/source/libaom/aom_dsp/bitreader.c
+        Source/third_party/libaom/source/libaom/aom_dsp/bitreader_buffer.c
+        Source/third_party/libaom/source/libaom/aom_dsp/bitwriter.c
+        Source/third_party/libaom/source/libaom/aom_dsp/bitwriter_buffer.c
+        Source/third_party/libaom/source/libaom/aom_dsp/blend_a64_hmask.c
+        Source/third_party/libaom/source/libaom/aom_dsp/blend_a64_mask.c
+        Source/third_party/libaom/source/libaom/aom_dsp/blend_a64_vmask.c
+        Source/third_party/libaom/source/libaom/aom_dsp/blk_sse_sum.c
+        Source/third_party/libaom/source/libaom/aom_dsp/entcode.c
+        Source/third_party/libaom/source/libaom/aom_dsp/entdec.c
+        Source/third_party/libaom/source/libaom/aom_dsp/entenc.c
+        Source/third_party/libaom/source/libaom/aom_dsp/fastssim.c
+        Source/third_party/libaom/source/libaom/aom_dsp/fft.c
+        Source/third_party/libaom/source/libaom/aom_dsp/fwd_txfm.c
+        Source/third_party/libaom/source/libaom/aom_dsp/grain_table.c
+        Source/third_party/libaom/source/libaom/aom_dsp/intrapred.c
+        Source/third_party/libaom/source/libaom/aom_dsp/loopfilter.c
+        Source/third_party/libaom/source/libaom/aom_dsp/noise_model.c
+        Source/third_party/libaom/source/libaom/aom_dsp/noise_util.c
+        Source/third_party/libaom/source/libaom/aom_dsp/odintrin.c
+        Source/third_party/libaom/source/libaom/aom_dsp/psnr.c
+        Source/third_party/libaom/source/libaom/aom_dsp/psnrhvs.c
+        Source/third_party/libaom/source/libaom/aom_dsp/quantize.c
+        Source/third_party/libaom/source/libaom/aom_dsp/sad.c
+        Source/third_party/libaom/source/libaom/aom_dsp/sad_av1.c
+        Source/third_party/libaom/source/libaom/aom_dsp/sse.c
+        Source/third_party/libaom/source/libaom/aom_dsp/ssim.c
+        Source/third_party/libaom/source/libaom/aom_dsp/subtract.c
+        Source/third_party/libaom/source/libaom/aom_dsp/sum_squares.c
+        Source/third_party/libaom/source/libaom/aom_dsp/variance.c
+        Source/third_party/libaom/source/libaom/aom_mem/aom_mem.c
+        Source/third_party/libaom/source/libaom/aom_ports/aarch64_cpudetect.c
+        Source/third_party/libaom/source/libaom/aom_scale/aom_scale_rtcd.c
+        Source/third_party/libaom/source/libaom/aom_scale/generic/yv12config.c
+        Source/third_party/libaom/source/libaom/aom_scale/generic/yv12extend.c
+        Source/third_party/libaom/source/libaom/aom_util/aom_thread.c
+        Source/third_party/libaom/source/libaom/aom_util/debug_util.c
+        Source/third_party/libaom/source/libaom/av1/arg_defs.c
+        Source/third_party/libaom/source/libaom/av1/av1_cx_iface.c
+        Source/third_party/libaom/source/libaom/av1/av1_dx_iface.c
+        Source/third_party/libaom/source/libaom/av1/common/alloccommon.c
+        Source/third_party/libaom/source/libaom/av1/common/av1_inv_txfm1d.c
+        Source/third_party/libaom/source/libaom/av1/common/av1_inv_txfm2d.c
+        Source/third_party/libaom/source/libaom/av1/common/av1_loopfilter.c
+        Source/third_party/libaom/source/libaom/av1/common/av1_rtcd.c
+        Source/third_party/libaom/source/libaom/av1/common/av1_txfm.c
+        Source/third_party/libaom/source/libaom/av1/common/blockd.c
+        Source/third_party/libaom/source/libaom/av1/common/cdef.c
+        Source/third_party/libaom/source/libaom/av1/common/cdef_block.c
+        Source/third_party/libaom/source/libaom/av1/common/cfl.c
+        Source/third_party/libaom/source/libaom/av1/common/common_data.c
+        Source/third_party/libaom/source/libaom/av1/common/convolve.c
+        Source/third_party/libaom/source/libaom/av1/common/debugmodes.c
+        Source/third_party/libaom/source/libaom/av1/common/entropy.c
+        Source/third_party/libaom/source/libaom/av1/common/entropymode.c
+        Source/third_party/libaom/source/libaom/av1/common/entropymv.c
+        Source/third_party/libaom/source/libaom/av1/common/frame_buffers.c
+        Source/third_party/libaom/source/libaom/av1/common/idct.c
+        Source/third_party/libaom/source/libaom/av1/common/mvref_common.c
+        Source/third_party/libaom/source/libaom/av1/common/obu_util.c
+        Source/third_party/libaom/source/libaom/av1/common/pred_common.c
+        Source/third_party/libaom/source/libaom/av1/common/quant_common.c
+        Source/third_party/libaom/source/libaom/av1/common/reconinter.c
+        Source/third_party/libaom/source/libaom/av1/common/reconintra.c
+        Source/third_party/libaom/source/libaom/av1/common/resize.c
+        Source/third_party/libaom/source/libaom/av1/common/restoration.c
+        Source/third_party/libaom/source/libaom/av1/common/scale.c
+        Source/third_party/libaom/source/libaom/av1/common/scan.c
+        Source/third_party/libaom/source/libaom/av1/common/seg_common.c
+        Source/third_party/libaom/source/libaom/av1/common/thread_common.c
+        Source/third_party/libaom/source/libaom/av1/common/tile_common.c
+        Source/third_party/libaom/source/libaom/av1/common/timing.c
+        Source/third_party/libaom/source/libaom/av1/common/txb_common.c
+        Source/third_party/libaom/source/libaom/av1/common/warped_motion.c
+        Source/third_party/libaom/source/libaom/av1/decoder/accounting.c
+        Source/third_party/libaom/source/libaom/av1/decoder/decodeframe.c
+        Source/third_party/libaom/source/libaom/av1/decoder/decodemv.c
+        Source/third_party/libaom/source/libaom/av1/decoder/decoder.c
+        Source/third_party/libaom/source/libaom/av1/decoder/decodetxb.c
+        Source/third_party/libaom/source/libaom/av1/decoder/detokenize.c
+        Source/third_party/libaom/source/libaom/av1/decoder/grain_synthesis.c
+        Source/third_party/libaom/source/libaom/av1/decoder/obu.c
+        Source/third_party/libaom/source/libaom/av1/encoder/allintra_vis.c
+        Source/third_party/libaom/source/libaom/av1/encoder/aq_complexity.c
+        Source/third_party/libaom/source/libaom/av1/encoder/aq_cyclicrefresh.c
+        Source/third_party/libaom/source/libaom/av1/encoder/aq_variance.c
+        Source/third_party/libaom/source/libaom/av1/encoder/av1_ext_ratectrl.c
+        Source/third_party/libaom/source/libaom/av1/encoder/av1_fwd_txfm1d.c
+        Source/third_party/libaom/source/libaom/av1/encoder/av1_fwd_txfm2d.c
+        Source/third_party/libaom/source/libaom/av1/encoder/av1_noise_estimate.c
+        Source/third_party/libaom/source/libaom/av1/encoder/av1_quantize.c
+        Source/third_party/libaom/source/libaom/av1/encoder/av1_temporal_denoiser.c
+        Source/third_party/libaom/source/libaom/av1/encoder/bitstream.c
+        Source/third_party/libaom/source/libaom/av1/encoder/blockiness.c
+        Source/third_party/libaom/source/libaom/av1/encoder/compound_type.c
+        Source/third_party/libaom/source/libaom/av1/encoder/context_tree.c
+        Source/third_party/libaom/source/libaom/av1/encoder/cost.c
+        Source/third_party/libaom/source/libaom/av1/encoder/deltaq4_model.c
+        Source/third_party/libaom/source/libaom/av1/encoder/dwt.c
+        Source/third_party/libaom/source/libaom/av1/encoder/encode_strategy.c
+        Source/third_party/libaom/source/libaom/av1/encoder/encodeframe.c
+        Source/third_party/libaom/source/libaom/av1/encoder/encodeframe_utils.c
+        Source/third_party/libaom/source/libaom/av1/encoder/encodemb.c
+        Source/third_party/libaom/source/libaom/av1/encoder/encodemv.c
+        Source/third_party/libaom/source/libaom/av1/encoder/encoder.c
+        Source/third_party/libaom/source/libaom/av1/encoder/encoder_utils.c
+        Source/third_party/libaom/source/libaom/av1/encoder/encodetxb.c
+        Source/third_party/libaom/source/libaom/av1/encoder/ethread.c
+        Source/third_party/libaom/source/libaom/av1/encoder/extend.c
+        Source/third_party/libaom/source/libaom/av1/encoder/external_partition.c
+        Source/third_party/libaom/source/libaom/av1/encoder/gop_structure.c
+        Source/third_party/libaom/source/libaom/av1/encoder/hash.c
+        Source/third_party/libaom/source/libaom/av1/encoder/hash_motion.c
+        Source/third_party/libaom/source/libaom/av1/encoder/hybrid_fwd_txfm.c
+        Source/third_party/libaom/source/libaom/av1/encoder/interp_search.c
+        Source/third_party/libaom/source/libaom/av1/encoder/intra_mode_search.c
+        Source/third_party/libaom/source/libaom/av1/encoder/level.c
+        Source/third_party/libaom/source/libaom/av1/encoder/lookahead.c
+        Source/third_party/libaom/source/libaom/av1/encoder/mcomp.c
+        Source/third_party/libaom/source/libaom/av1/encoder/ml.c
+        Source/third_party/libaom/source/libaom/av1/encoder/motion_search_facade.c
+        Source/third_party/libaom/source/libaom/av1/encoder/mv_prec.c
+        Source/third_party/libaom/source/libaom/av1/encoder/nonrd_opt.c
+        Source/third_party/libaom/source/libaom/av1/encoder/nonrd_pickmode.c
+        Source/third_party/libaom/source/libaom/av1/encoder/palette.c
+        Source/third_party/libaom/source/libaom/av1/encoder/partition_search.c
+        Source/third_party/libaom/source/libaom/av1/encoder/partition_strategy.c
+        Source/third_party/libaom/source/libaom/av1/encoder/pickcdef.c
+        Source/third_party/libaom/source/libaom/av1/encoder/picklpf.c
+        Source/third_party/libaom/source/libaom/av1/encoder/ratectrl.c
+        Source/third_party/libaom/source/libaom/av1/encoder/rd.c
+        Source/third_party/libaom/source/libaom/av1/encoder/rdopt.c
+        Source/third_party/libaom/source/libaom/av1/encoder/reconinter_enc.c
+        Source/third_party/libaom/source/libaom/av1/encoder/segmentation.c
+        Source/third_party/libaom/source/libaom/av1/encoder/speed_features.c
+        Source/third_party/libaom/source/libaom/av1/encoder/superres_scale.c
+        Source/third_party/libaom/source/libaom/av1/encoder/svc_layercontext.c
+        Source/third_party/libaom/source/libaom/av1/encoder/thirdpass.c
+        Source/third_party/libaom/source/libaom/av1/encoder/tokenize.c
+        Source/third_party/libaom/source/libaom/av1/encoder/tx_search.c
+        Source/third_party/libaom/source/libaom/av1/encoder/txb_rdopt.c
+        Source/third_party/libaom/source/libaom/av1/encoder/var_based_part.c
+        Source/third_party/libaom/source/libaom/av1/encoder/wedge_utils.c
+        Source/third_party/libaom/source/libaom/av1/ratectrl_rtc.cc
+        Source/third_party/libaom/source/libaom/common/args.c
+        Source/third_party/libaom/source/libaom/common/args_helper.c
+        Source/third_party/libaom/source/libaom/common/av1_config.c
+        Source/third_party/libaom/source/libaom/common/ivfdec.c
+        Source/third_party/libaom/source/libaom/common/ivfenc.c
+        Source/third_party/libaom/source/libaom/third_party/vector/vector.c
+    )
+
+    set(aom_INCLUDE_DIRECTORIES
+        Source/third_party/libaom/source/libaom
+        Source/third_party/libaom/source/config
+    )
+
+    if (WTF_CPU_ARM64)
+        list(APPEND aom_INCLUDE_DIRECTORIES
+            Source/third_party/libaom/source/config/linux/arm64-cpu-detect
+        )
+        list(APPEND aom_SOURCES_common
+            Source/third_party/libaom/source/config/linux/arm64-cpu-detect/config/aom_config.c
+            Source/third_party/libaom/source/libaom/aom_dsp/arm/aom_convolve8_neon.c
+            Source/third_party/libaom/source/libaom/aom_dsp/arm/aom_convolve8_neon_dotprod.c
+            Source/third_party/libaom/source/libaom/aom_dsp/arm/aom_convolve_copy_neon.c
+            Source/third_party/libaom/source/libaom/aom_dsp/arm/aom_scaled_convolve8_neon.c
+            Source/third_party/libaom/source/libaom/aom_dsp/arm/avg_neon.c
+            Source/third_party/libaom/source/libaom/aom_dsp/arm/avg_pred_neon.c
+            Source/third_party/libaom/source/libaom/aom_dsp/arm/blend_a64_mask_neon.c
+            Source/third_party/libaom/source/libaom/aom_dsp/arm/blk_sse_sum_neon.c
+            Source/third_party/libaom/source/libaom/aom_dsp/arm/fwd_txfm_neon.c
+            Source/third_party/libaom/source/libaom/aom_dsp/arm/hadamard_neon.c
+            Source/third_party/libaom/source/libaom/aom_dsp/arm/highbd_variance_neon_dotprod.c
+            Source/third_party/libaom/source/libaom/aom_dsp/arm/intrapred_neon.c
+            Source/third_party/libaom/source/libaom/aom_dsp/arm/loopfilter_neon.c
+            Source/third_party/libaom/source/libaom/aom_dsp/arm/masked_sad_neon.c
+            Source/third_party/libaom/source/libaom/aom_dsp/arm/obmc_sad_neon.c
+            Source/third_party/libaom/source/libaom/aom_dsp/arm/obmc_variance_neon.c
+            Source/third_party/libaom/source/libaom/aom_dsp/arm/sad_neon.c
+            Source/third_party/libaom/source/libaom/aom_dsp/arm/sad_neon_dotprod.c
+            Source/third_party/libaom/source/libaom/aom_dsp/arm/sadxd_neon.c
+            Source/third_party/libaom/source/libaom/aom_dsp/arm/sadxd_neon_dotprod.c
+            Source/third_party/libaom/source/libaom/aom_dsp/arm/sse_neon.c
+            Source/third_party/libaom/source/libaom/aom_dsp/arm/sse_neon_dotprod.c
+            Source/third_party/libaom/source/libaom/aom_dsp/arm/subpel_variance_neon.c
+            Source/third_party/libaom/source/libaom/aom_dsp/arm/subtract_neon.c
+            Source/third_party/libaom/source/libaom/aom_dsp/arm/sum_squares_neon.c
+            Source/third_party/libaom/source/libaom/aom_dsp/arm/sum_squares_neon_dotprod.c
+            Source/third_party/libaom/source/libaom/aom_dsp/arm/variance_neon.c
+            Source/third_party/libaom/source/libaom/aom_dsp/arm/variance_neon_dotprod.c
+            Source/third_party/libaom/source/libaom/av1/common/arm/av1_inv_txfm_neon.c
+            Source/third_party/libaom/source/libaom/av1/common/arm/av1_txfm_neon.c
+            Source/third_party/libaom/source/libaom/av1/common/arm/blend_a64_hmask_neon.c
+            Source/third_party/libaom/source/libaom/av1/common/arm/blend_a64_vmask_neon.c
+            Source/third_party/libaom/source/libaom/av1/common/arm/cdef_block_neon.c
+            Source/third_party/libaom/source/libaom/av1/common/arm/cfl_neon.c
+            Source/third_party/libaom/source/libaom/av1/common/arm/compound_convolve_neon.c
+            Source/third_party/libaom/source/libaom/av1/common/arm/compound_convolve_neon_dotprod.c
+            Source/third_party/libaom/source/libaom/av1/common/arm/convolve_neon.c
+            Source/third_party/libaom/source/libaom/av1/common/arm/convolve_neon_dotprod.c
+            Source/third_party/libaom/source/libaom/av1/common/arm/highbd_inv_txfm_neon.c
+            Source/third_party/libaom/source/libaom/av1/common/arm/reconinter_neon.c
+            Source/third_party/libaom/source/libaom/av1/common/arm/reconintra_neon.c
+            Source/third_party/libaom/source/libaom/av1/common/arm/resize_neon.c
+            Source/third_party/libaom/source/libaom/av1/common/arm/selfguided_neon.c
+            Source/third_party/libaom/source/libaom/av1/common/arm/warp_plane_neon.c
+            Source/third_party/libaom/source/libaom/av1/common/arm/wiener_convolve_neon.c
+            Source/third_party/libaom/source/libaom/av1/encoder/arm/av1_error_neon.c
+            Source/third_party/libaom/source/libaom/av1/encoder/arm/av1_fwd_txfm2d_neon.c
+            Source/third_party/libaom/source/libaom/av1/encoder/arm/av1_highbd_quantize_neon.c
+            Source/third_party/libaom/source/libaom/av1/encoder/arm/av1_k_means_neon.c
+            Source/third_party/libaom/source/libaom/av1/encoder/arm/av1_temporal_denoiser_neon.c
+            Source/third_party/libaom/source/libaom/av1/encoder/arm/cnn_neon.c
+            Source/third_party/libaom/source/libaom/av1/encoder/arm/encodetxb_neon.c
+            Source/third_party/libaom/source/libaom/av1/encoder/arm/hash_arm_crc32.c
+            Source/third_party/libaom/source/libaom/av1/encoder/arm/highbd_fwd_txfm_neon.c
+            Source/third_party/libaom/source/libaom/av1/encoder/arm/highbd_pickrst_neon.c
+            Source/third_party/libaom/source/libaom/av1/encoder/arm/highbd_rdopt_neon.c
+            Source/third_party/libaom/source/libaom/av1/encoder/arm/highbd_temporal_filter_neon.c
+            Source/third_party/libaom/source/libaom/av1/encoder/arm/hybrid_fwd_txfm_neon.c
+            Source/third_party/libaom/source/libaom/av1/encoder/arm/ml_neon.c
+            Source/third_party/libaom/source/libaom/av1/encoder/arm/pickrst_neon.c
+            Source/third_party/libaom/source/libaom/av1/encoder/arm/quantize_neon.c
+            Source/third_party/libaom/source/libaom/av1/encoder/arm/rdopt_neon.c
+            Source/third_party/libaom/source/libaom/av1/encoder/arm/reconinter_enc_neon.c
+            Source/third_party/libaom/source/libaom/av1/encoder/arm/temporal_filter_neon.c
+            Source/third_party/libaom/source/libaom/av1/encoder/arm/temporal_filter_neon_dotprod.c
+            Source/third_party/libaom/source/libaom/av1/encoder/arm/wedge_utils_neon.c
+        )
+    elseif (WTF_CPU_X86_64)
+        # FIXME (mirrors libaom.xcconfig:35): x86_64 currently uses the generic (no-SIMD) config.
+        list(APPEND aom_INCLUDE_DIRECTORIES
+            Source/third_party/libaom/source/config/linux/generic
+        )
+        list(APPEND aom_SOURCES_common
+            Source/third_party/libaom/source/config/linux/generic/config/aom_config.c
+            Source/third_party/libaom/source/libaom/av1/common/x86/resize_sse2.c
+        )
+    endif ()
+
+    add_library(aom OBJECT ${aom_SOURCES_common})
+    target_include_directories(aom PRIVATE ${aom_INCLUDE_DIRECTORIES})
+    target_compile_definitions(aom PRIVATE
+        CONFIG_REALTIME_ONLY=1
+        CONFIG_AV1_DECODER=1
+        CONFIG_TUNE_VMAF=0
+    )
+    target_compile_options(aom PRIVATE
+        -w                                                # third-party: suppress all warnings
+        -Wno-error=implicit-function-declaration          # libaom relies on rtcd-generated decls; Clang 16+ makes implicit-decl a hard error
+    )
+    set_target_properties(aom PROPERTIES C_VISIBILITY_PRESET hidden)
+    if (WTF_CPU_ARM64)
+        target_compile_options(aom PRIVATE
+            $<$<COMPILE_LANGUAGE:C>:-march=armv8.2-a+dotprod>
+            $<$<COMPILE_LANGUAGE:CXX>:-march=armv8.2-a+dotprod>
+        )
+    endif ()
+endif ()

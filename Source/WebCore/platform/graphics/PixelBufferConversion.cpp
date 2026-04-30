@@ -31,6 +31,7 @@
 #include "IntSize.h"
 #include "Logging.h"
 #include "PixelFormat.h"
+#include <array>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/ParsingUtilities.h>
 #include <wtf/text/TextStream.h>
@@ -147,8 +148,8 @@ static void convertImagePixelsAccelerated(const ConstPixelBufferConversionView& 
 
     if (source.format.pixelFormat != destination.format.pixelFormat) {
         // Swap pixel channels BGRA <-> RGBA.
-        const uint8_t map[4] = { 2, 1, 0, 3 };
-        vImagePermuteChannels_ARGB8888(&sourceVImageBuffer, &destinationVImageBuffer, map, kvImageNoFlags);
+        constexpr std::array<uint8_t, 4> map { 2, 1, 0, 3 };
+        vImagePermuteChannels_ARGB8888(&sourceVImageBuffer, &destinationVImageBuffer, map.data(), kvImageNoFlags);
     }
 }
 

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSGlobalProxy.h"
 
+#include "JSCInlines.h"
 #include "JSGlobalObject.h"
 
 namespace JSC {

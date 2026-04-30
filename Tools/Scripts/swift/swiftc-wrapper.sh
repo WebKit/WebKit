@@ -3,9 +3,35 @@
 # This script filters out the arguments that swiftc cannot accommodate.
 
 set -e
+set -o pipefail
+
+# Swift's C++ interop changes which imported members are @unsafe between
+# toolchain versions, so an `unsafe` that is required on one toolchain emits
+# "no unsafe operations occur within 'unsafe' expression" on another. The
+# diagnostic has no group, so it can't be suppressed with -Wwarning; filter it
+# (and its multi-line source snippet) from stderr instead.
+filter_benign_warnings() {
+    awk '
+        /: warning: no unsafe operations occur within .unsafe. expression/ { skip = 1; next }
+        skip && /^[[:space:]]*[0-9]*[[:space:]]*\|/ { next }
+        skip && /^[[:space:]]*$/ { skip = 0; next }
+        { skip = 0; print }
+    '
+}
 
 REAL_SWIFTC=swiftc
 args=()
+
+# CMake's Swift link rule injects <LANGUAGE_COMPILE_FLAGS> into the link
+# command, which includes -g, which causes swiftc to run dsymutil. 
+# dsymutil is super expensive, and we don't need it because we have DWARF
+# debug info in our object files.
+linking=
+for arg in "$@"; do
+    case "$arg" in
+        "-emit-library"|"-emit-executable") linking=1 ;;
+    esac
+done
 
 for arg in "$@"; do
     case "$arg" in
@@ -13,6 +39,14 @@ for arg in "$@"; do
         "-msse") ;;
         "-msse2") ;;
         "-pthread") ;;
+        "-fsanitize="*)
+            args+=("-sanitize=${arg#-fsanitize=}")
+            ;;
+        "-g")
+            if [[ -z "$linking" ]]; then
+                args+=("$arg")
+            fi
+            ;;
         "-include") skip_next=1 ;;
         # CMake leaks clang linker flags into swiftc; translate them.
         "-compatibility_version"|"-current_version")
@@ -33,6 +67,9 @@ for arg in "$@"; do
         "--original-swift-compiler="*)
             REAL_SWIFTC="${arg#--original-swift-compiler=}"
             ;;
+        "-D"*)
+            args+=("$arg" "-Xcc" "$arg")
+            ;;
         *)
             if [[ -n "$skip_next" ]]; then
                 skip_next=
@@ -46,4 +83,4 @@ for arg in "$@"; do
     esac
 done
 
-exec "$REAL_SWIFTC" "${args[@]}"
+{ "$REAL_SWIFTC" "${args[@]}" 2>&1 1>&3 | filter_benign_warnings >&2; } 3>&1

@@ -33,6 +33,7 @@
 #include "WebKitWebViewBasePrivate.h"
 #include <WebCore/DragData.h>
 #include <WebCore/PasteboardCustomData.h>
+#include <array>
 #include <gtk/gtk.h>
 #include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -258,8 +259,8 @@ struct DropReadAsyncData {
 
 void DropTarget::loadData(const char* mimeType, CompletionHandler<void(GRefPtr<GBytes>&&)>&& completionHandler)
 {
-    const char* mimeTypes[] = { mimeType, nullptr };
-    gdk_drop_read_async(m_drop.get(), mimeTypes, G_PRIORITY_DEFAULT, m_cancellable.get(), [](GObject* gdkDrop, GAsyncResult* result, gpointer userData) {
+    auto mimeTypes = std::to_array<const char*>({ mimeType, nullptr });
+    gdk_drop_read_async(m_drop.get(), mimeTypes.data(), G_PRIORITY_DEFAULT, m_cancellable.get(), [](GObject* gdkDrop, GAsyncResult* result, gpointer userData) {
         std::unique_ptr<DropReadAsyncData<void(GRefPtr<GBytes>&&)>> data(static_cast<DropReadAsyncData<void(GRefPtr<GBytes>&&)>*>(userData));
         GRefPtr<GInputStream> inputStream = adoptGRef(gdk_drop_read_finish(GDK_DROP(gdkDrop), result, nullptr, nullptr));
         if (!inputStream) {

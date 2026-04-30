@@ -55,10 +55,7 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject) 
-    {
-        return Structure::create(vm, globalObject, jsNull(), TypeInfo(ObjectType, StructureFlags), info()); 
-    } 
+    static Structure* createStructure(VM&, JSGlobalObject*);
     class iterator {
     public:
         iterator(DebuggerScope* node)

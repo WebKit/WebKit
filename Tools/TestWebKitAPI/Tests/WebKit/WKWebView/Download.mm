@@ -2032,7 +2032,7 @@ TEST(WKDownload, ResumeCantReconnect)
         Util::spinRunLoop();
 
     server.cancel();
-    
+
     retainedDownload = nil;
     [webView resumeDownloadFromResumeData:retainedResumeData.get() completionHandler:^(WKDownload *download) {
         retainedDownload = download;

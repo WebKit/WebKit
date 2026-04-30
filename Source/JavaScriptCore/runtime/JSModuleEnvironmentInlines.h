@@ -29,6 +29,7 @@
 #pragma once
 
 #include "JSModuleEnvironment.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

@@ -156,7 +156,7 @@ static xmlDocPtr docLoaderFunc(const xmlChar* uri,
         return xmlReadMemory(dataSpan.data(), static_cast<int>(dataSpan.size()), byteCast<char>(uri), nullptr, options);
     }
     case XSLT_LOAD_STYLESHEET:
-        return RefPtr { globalProcessor->xslStylesheet() }->locateStylesheetSubResource(((xsltStylesheetPtr)ctxt)->doc, uri);
+        return protect(globalProcessor->xslStylesheet())->locateStylesheetSubResource(((xsltStylesheetPtr)ctxt)->doc, uri);
     default:
         break;
     }
@@ -305,7 +305,7 @@ bool XSLTProcessor::transformToString(Node& sourceNode, String& mimeType, String
         m_stylesheet = nullptr;
         return false;
     }
-    RefPtr { m_stylesheet }->clearDocuments();
+    protect(m_stylesheet)->clearDocuments();
 
     int origXsltMaxDepth = xsltMaxDepth;
     xsltMaxDepth = 1000;

@@ -28,6 +28,7 @@
 
 #include "ContextDestructionObserverInlines.h"
 #include "CustomEvent.h"
+#include "EventTargetInlines.h"
 #include "MessageForTesting.h"
 #include "MessageTargetForTesting.h"
 #include <JavaScriptCore/HeapInlines.h>

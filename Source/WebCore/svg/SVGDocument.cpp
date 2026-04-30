@@ -36,6 +36,8 @@ SVGDocument::SVGDocument(LocalFrame* frame, const Settings& settings, const URL&
 {
 }
 
+SVGDocument::~SVGDocument() = default;
+
 bool SVGDocument::zoomAndPanEnabled() const
 {
     RefPtr element = DocumentSVG::rootElement(*this);

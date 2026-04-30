@@ -150,6 +150,8 @@ void InspectorCanvasAgent::internalEnable()
     {
         Locker locker { CanvasRenderingContext::instancesLock() };
         for (auto* context : CanvasRenderingContext::instances()) {
+            if (!context->isContextThread())
+                continue;
             if (!is<CanvasRenderingContext2D>(context)
                 && !is<ImageBitmapRenderingContext>(context)
 #if ENABLE(OFFSCREEN_CANVAS)

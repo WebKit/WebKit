@@ -31,6 +31,7 @@
 #include <optional>
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/core/SkBlendMode.h>
 #include <skia/core/SkRefCnt.h>
 #include <skia/gpu/ganesh/GrBackendSurface.h>
 #include <skia/gpu/ganesh/GrDirectContext.h>
@@ -45,6 +46,8 @@ namespace WebCore {
 
 class BitmapTexture;
 class GLFence;
+enum class BlendMode : uint8_t;
+enum class CompositeOperator : uint8_t;
 
 namespace SkiaUtilities {
 
@@ -81,6 +84,8 @@ std::unique_ptr<GLFence> flushAndSubmitImageWithFence(GrDirectContext*, const sk
 // synchronization. Falls back to synchronous submit if fences are not
 // supported or creation fails, and returns nullptr.
 std::unique_ptr<GLFence> flushAndSubmitWithFence(GrDirectContext*);
+
+SkBlendMode toSkiaBlendMode(BlendMode, std::optional<CompositeOperator> = std::nullopt);
 
 } // namespace SkiaUtilities
 } // namespace WebCore

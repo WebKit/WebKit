@@ -1,5 +1,0 @@
-
-PASS test SyncAccessHandle.truncate with different sizes
-PASS test SyncAccessHandle.truncate after SyncAccessHandle.write
-PASS test SyncAccessHandle.truncate resets the file position cursor
-

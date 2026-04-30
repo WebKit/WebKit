@@ -37,6 +37,7 @@
 #include "WebKitDirectoryInputStream.h"
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/HTTPParsers.h>
+#include <WebCore/HTTPStatusCodes.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/OriginAccessPatterns.h>
@@ -796,7 +797,7 @@ void NetworkDataTaskSoup::continueHTTPRedirection()
 
     m_networkLoadMetrics.hasCrossOriginRedirect = m_networkLoadMetrics.hasCrossOriginRedirect || !SecurityOrigin::create(m_currentRequest.url())->canRequest(request.url(), WebCore::EmptyOriginAccessPatterns::singleton());
 
-    if (m_response.httpStatusCode() == 307 || m_response.httpStatusCode() == 308) {
+    if (m_response.httpStatusCode() == httpStatus307TemporaryRedirect || m_response.httpStatusCode() == httpStatus308PermanentRedirect) {
         ASSERT(m_lastHTTPMethod == request.httpMethod());
         RefPtr body = m_firstRequest.httpBody();
         if (body && !body->isEmpty() && !equalLettersIgnoringASCIICase(m_lastHTTPMethod, "get"_s))
@@ -1212,7 +1213,7 @@ void NetworkDataTaskSoup::download()
     ASSERT(m_pendingDownloadLocation);
     ASSERT(!m_response.isNull());
 
-    if (m_response.httpStatusCode() >= 400) {
+    if (m_response.httpStatusCode() >= httpStatus400BadRequest) {
         didFailDownload(downloadNetworkError(m_response.url(), m_response.httpStatusText()));
         return;
     }

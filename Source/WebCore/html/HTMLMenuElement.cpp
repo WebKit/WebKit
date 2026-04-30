@@ -45,4 +45,6 @@ Ref<HTMLMenuElement> HTMLMenuElement::create(const QualifiedName& tagName, Docum
     return adoptRef(*new HTMLMenuElement(tagName, document));
 }
 
+HTMLMenuElement::~HTMLMenuElement() = default;
+
 }

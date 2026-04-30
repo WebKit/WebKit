@@ -181,6 +181,11 @@ void MatchedDeclarationsCache::add(const RenderStyle& style, const RenderStyle& 
     });
     if (addResult.iterator->value.size() < maxEntriesPerHash)
         addResult.iterator->value.append(Entry { &matchResult, RenderStyle::clonePtr(style), RenderStyle::clonePtr(parentStyle) });
+
+    // Protect against unlimited growth.
+    constexpr size_t maximumSize = 16 * 1024;
+    if (m_entries.size() > maximumSize)
+        m_entries.remove(m_entries.random());
 }
 
 void MatchedDeclarationsCache::remove(unsigned hash)

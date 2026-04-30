@@ -42,6 +42,7 @@ class RemoteDOMWindow;
 class RemoteFrameClient;
 class RemoteFrameView;
 class WeakPtrImplWithEventTargetData;
+class ResourceTiming;
 
 enum class AdvancedPrivacyProtections : uint16_t;
 enum class AutoplayPolicy : uint8_t;
@@ -90,6 +91,7 @@ public:
 
     void updateScrollingMode() final;
     void reportMixedContentViolation(bool blocked, const URL& target) const final;
+    void addResourceTimingFromChild(ResourceTiming&&);
 
     String debugDescription() const final;
     const SecurityOrigin& frameDocumentSecurityOriginOrOpaque() const;

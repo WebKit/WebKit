@@ -1,5 +1,5 @@
 
 FAIL track element data: URL No CORS null is not an object (evaluating 't.track.cues.length')
-FAIL track element data: URL anonymous assert_unreached: got error event Reached unreachable code
-FAIL track element data: URL use-credentials assert_unreached: got error event Reached unreachable code
+FAIL track element data: URL anonymous null is not an object (evaluating 't.track.cues.length')
+FAIL track element data: URL use-credentials null is not an object (evaluating 't.track.cues.length')
 

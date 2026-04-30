@@ -587,6 +587,9 @@ std::pair<RefPtr<WebBackForwardListItem>, size_t> WebBackForwardList::itemStarti
     if (itemIndex >= m_entries.size())
         return { nullptr, 0 };
 
+    auto startingItem = itemAtIndexWithoutSkipping(startingIndex);
+    RELEASE_ASSERT(startingItem.first);
+
     auto item = itemAtIndexWithoutSkipping(itemIndex);
 
 #if PLATFORM(COCOA)
@@ -601,37 +604,27 @@ std::pair<RefPtr<WebBackForwardListItem>, size_t> WebBackForwardList::itemStarti
     // A -> A#a (no userInteraction) -> B -> B#a (no user interaction) -> B#b (no user interaction)
     // If we're on B and navigate back, we don't want to skip anything and load A#a.
     // However, if we're on A and navigate forward, we do want to skip items and end up on B#b.
-    if (direction == NavigationDirection::Backward && !currentItem()->wasCreatedByJSWithoutUserInteraction()) {
-        // The exception to the above is that if the entire list of back items is missing user interaction,
-        // they should all be ignored. For example:
-        // A (no userInteraction) -> B (no userInteraction) -> C*
-        // From the API perspective, C should be item 0, and going back is not an option.
-        // This happens e.g. with new windows that undergo a series of JS driven client redirects.
-        // See https://bugs.webkit.org/show_bug.cgi?id=310243
+    // The forward logic comes later.
+    if (direction == NavigationDirection::Backward && !startingItem.first->wasCreatedByJSWithoutUserInteraction())
+        return item;
 
-        auto itemToReturn = item;
-        do {
-            if (item.first->wasCreatedByJSWithoutUserInteraction()) {
-                if (item.second)
-                    item = itemAtIndexWithoutSkipping(item.second - 1);
-                else {
-                    // We reached the beginning of the list and still didn't find an item with user interaction,
-                    // therefore we are returning nothing.
-                    itemToReturn = { };
-                    break;
-                }
-            } else
-                break;
-        } while (true);
-
-        return itemToReturn;
+    // If every item from this point back to the start of the list was created by JS without user interaction,
+    // we ignore them all.
+    if (direction == NavigationDirection::Backward && startingItem.first->wasCreatedByJSWithoutUserInteraction()) {
+        auto innerItem = item;
+        while (innerItem.first->wasCreatedByJSWithoutUserInteraction()) {
+            if (innerItem.second)
+                innerItem = itemAtIndexWithoutSkipping(innerItem.second - 1);
+            else
+                return { };
+            ASSERT(innerItem.first);
+        }
     }
 
     // For example:
     // Yahoo -> Yahoo#a (no userInteraction) -> Google -> Google#a (no user interaction) -> Google#b (no user interaction)
     // If we are on Google#b and navigate backwards, we want to skip over Google#a and Google, to end up on Yahoo#a.
     // If we are on Yahoo#a and navigate forwards, we want to skip over Google and Google#a, to end up on Google#b.
-
     auto originalitem = item;
     while (item.first->wasCreatedByJSWithoutUserInteraction()) {
         itemIndex += delta;
@@ -897,7 +890,7 @@ FrameState* WebBackForwardList::findFrameStateInItem(WebCore::BackForwardItemIde
     return &childFrameItem->frameState();
 }
 
-String WebBackForwardList::loggingString()
+String WebBackForwardList::loggingString() const
 {
     StringBuilder builder;
 

@@ -233,7 +233,7 @@ public:
     PREFERRED_TYPE(TextBoxTrim) unsigned textBoxTrim : 2;
     PREFERRED_TYPE(OverflowAnchor) unsigned overflowAnchor : 1;
     PREFERRED_TYPE(PositionTryOrder) unsigned positionTryOrder : 3;
-    PREFERRED_TYPE(PositionVisibility) unsigned positionVisibility : 3;
+    PREFERRED_TYPE(PositionVisibility) unsigned positionVisibility : 5;
     PREFERRED_TYPE(FieldSizing) unsigned fieldSizing : 1;
     PREFERRED_TYPE(bool) unsigned nativeAppearanceDisabled : 1;
 #if HAVE(CORE_MATERIAL)

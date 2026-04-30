@@ -26,6 +26,7 @@
 #include "config.h"
 #include <wtf/AvailableMemory.h>
 
+#include <array>
 #include <mutex>
 #include <wtf/PageBlock.h>
 #include <wtf/text/ParsingUtilities.h>
@@ -198,14 +199,10 @@ MemoryStatus memoryStatus()
     struct kinfo_proc info;
     size_t infolen = sizeof(info);
 
-    int mib[4];
-    mib[0] = CTL_KERN;
-    mib[1] = KERN_PROC;
-    mib[2] = KERN_PROC_PID;
-    mib[3] = getpid();
+    std::array<int, 4> mib { CTL_KERN, KERN_PROC, KERN_PROC_PID, getpid() };
 
     size_t memoryFootprint = 0;
-    if (!sysctl(mib, 4, &info, &infolen, nullptr, 0))
+    if (!sysctl(mib.data(), mib.size(), &info, &infolen, nullptr, 0))
         memoryFootprint = static_cast<size_t>(info.ki_rssize) * pageSize();
 #endif
 

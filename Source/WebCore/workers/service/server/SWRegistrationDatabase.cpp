@@ -83,7 +83,7 @@ static constexpr std::array<ASCIILiteral, 4> swRegistrationUpdatesV2 {
 
 static constexpr int currentSWRegistrationVersion = 2;
 
-static String databaseFilePath(const String& directory)
+String SWRegistrationDatabase::databaseFilePath(const String& directory)
 {
     if (directory.isEmpty())
         return emptyString();
@@ -179,6 +179,10 @@ ASCIILiteral SWRegistrationDatabase::statementString(StatementType type) const
     switch (type) {
     case StatementType::GetAllRecords:
         return "SELECT * FROM Records;"_s;
+    case StatementType::GetRecordsByTopOrigin:
+        return "SELECT * FROM Records WHERE topOrigin = ?;"_s;
+    case StatementType::GetAllTopOrigins:
+        return "SELECT DISTINCT topOrigin, origin FROM Records;"_s;
     case StatementType::CountAllRecords:
         return "SELECT COUNT(*) FROM Records;"_s;
     case StatementType::InsertRecord:
@@ -362,28 +366,64 @@ std::optional<Vector<ServiceWorkerContextData>> SWRegistrationDatabase::importRe
         RELEASE_LOG_ERROR(ServiceWorker, "SWRegistrationDatabase::importRegistrations failed on creating statement (%d) - %s", m_database->lastError(), m_database->lastErrorMsg());
         return std::nullopt;
     }
-    CheckedPtr statement = sqlStatement.get();
 
+    return collectRegistrationsFromStatement(*sqlStatement.get());
+}
+
+std::optional<Vector<ServiceWorkerContextData>> SWRegistrationDatabase::importRegistrations(const SecurityOriginData& topOrigin)
+{
+    if (!prepareDatabase(ShouldCreateIfNotExists::No))
+        return std::nullopt;
+
+    if (!m_database) {
+        deleteAllFiles();
+        return Vector<ServiceWorkerContextData> { };
+    }
+
+    auto sqlStatement = cachedStatement(StatementType::GetRecordsByTopOrigin);
+    if (!sqlStatement) {
+        RELEASE_LOG_ERROR(ServiceWorker, "SWRegistrationDatabase::importRegistrations(topOrigin) failed on creating statement (%d) - %s", m_database->lastError(), m_database->lastErrorMsg());
+        return std::nullopt;
+    }
+
+    CheckedPtr statement = sqlStatement.get();
+    if (statement->bindText(1, topOrigin.databaseIdentifier()) != SQLITE_OK) {
+        RELEASE_LOG_ERROR(ServiceWorker, "SWRegistrationDatabase::importRegistrations(topOrigin) failed to bind topOrigin");
+        return std::nullopt;
+    }
+
+    auto result = collectRegistrationsFromStatement(*statement);
+    if (result.isEmpty()) {
+        // No registrations for this origin; clean up the database file if it has no records for any origin.
+        if (auto count = recordsCount(); count && !count.value())
+            deleteAllFiles();
+    }
+
+    return result;
+}
+
+Vector<ServiceWorkerContextData> SWRegistrationDatabase::collectRegistrationsFromStatement(SQLiteStatement& statement)
+{
     Vector<ServiceWorkerContextData> registrations;
-    int result = statement->step();
-    for (; result == SQLITE_ROW; result = statement->step()) {
-        auto key = ServiceWorkerRegistrationKey::fromDatabaseKey(statement->columnText(0));
+    int result = statement.step();
+    for (; result == SQLITE_ROW; result = statement.step()) {
+        auto key = ServiceWorkerRegistrationKey::fromDatabaseKey(statement.columnText(0));
         if (!key) {
             RELEASE_LOG_ERROR(ServiceWorker, "SWRegistrationDatabase::importRegistrations failed to decode service worker registration key");
             continue;
         }
-    
-        auto originURL = URL { statement->columnText(1) };
-        auto scopePath = statement->columnText(2);
+
+        auto originURL = URL { statement.columnText(1) };
+        auto scopePath = statement.columnText(2);
         auto scopeURL = URL { originURL, scopePath };
-        auto topOrigin = SecurityOriginData::fromDatabaseIdentifier(statement->columnText(3));
-        auto lastUpdateCheckTime = WallTime::fromRawSeconds(statement->columnDouble(4));
-        auto updateViaCache = convertStringToUpdateViaCache(statement->columnText(5));
-        auto scriptURL = URL { statement->columnText(6) };
-        auto workerType = convertStringToWorkerType(statement->columnText(7));
+        auto topOrigin = SecurityOriginData::fromDatabaseIdentifier(statement.columnText(3));
+        auto lastUpdateCheckTime = WallTime::fromRawSeconds(statement.columnDouble(4));
+        auto updateViaCache = convertStringToUpdateViaCache(statement.columnText(5));
+        auto scriptURL = URL { statement.columnText(6) };
+        auto workerType = convertStringToWorkerType(statement.columnText(7));
 
         std::optional<ContentSecurityPolicyResponseHeaders> contentSecurityPolicy;
-        auto contentSecurityPolicyDataSpan = statement->columnBlobAsSpan(8);
+        auto contentSecurityPolicyDataSpan = statement.columnBlobAsSpan(8);
         if (contentSecurityPolicyDataSpan.size()) {
             WTF::Persistence::Decoder cspDecoder(contentSecurityPolicyDataSpan);
             cspDecoder >> contentSecurityPolicy;
@@ -394,7 +434,7 @@ std::optional<Vector<ServiceWorkerContextData>> SWRegistrationDatabase::importRe
         }
 
         std::optional<CrossOriginEmbedderPolicy> coep;
-        auto coepDataSpan = statement->columnBlobAsSpan(9);
+        auto coepDataSpan = statement.columnBlobAsSpan(9);
         if (coepDataSpan.size()) {
             WTF::Persistence::Decoder coepDecoder(coepDataSpan);
             coepDecoder >> coep;
@@ -404,10 +444,10 @@ std::optional<Vector<ServiceWorkerContextData>> SWRegistrationDatabase::importRe
             }
         }
 
-        auto referrerPolicy = statement->columnText(10);
+        auto referrerPolicy = statement.columnText(10);
 
         MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript> scriptResourceMap;
-        auto scriptResourceMapDataSpan = statement->columnBlobAsSpan(11);
+        auto scriptResourceMapDataSpan = statement.columnBlobAsSpan(11);
         if (scriptResourceMapDataSpan.size()) {
             WTF::Persistence::Decoder scriptResourceMapDecoder(scriptResourceMapDataSpan);
             std::optional<HashMap<URL, ImportedScriptAttributes>> scriptResourceMapWithoutScripts;
@@ -420,7 +460,7 @@ std::optional<Vector<ServiceWorkerContextData>> SWRegistrationDatabase::importRe
                 scriptResourceMap.add(WTF::move(url), ServiceWorkerContextData::ImportedScript { ScriptBuffer(), WTF::move(attrs.responseURL), WTF::move(attrs.mimeType) });
         }
 
-        auto certificateInfoDataSpan = statement->columnBlobAsSpan(12);
+        auto certificateInfoDataSpan = statement.columnBlobAsSpan(12);
         std::optional<CertificateInfo> certificateInfo;
         WTF::Persistence::Decoder certificateInfoDecoder(certificateInfoDataSpan);
         certificateInfoDecoder >> certificateInfo;
@@ -429,7 +469,7 @@ std::optional<Vector<ServiceWorkerContextData>> SWRegistrationDatabase::importRe
             continue;
         }
 
-        auto navigationPreloadStateDataSpan = statement->columnBlobAsSpan(13);
+        auto navigationPreloadStateDataSpan = statement.columnBlobAsSpan(13);
         std::optional<NavigationPreloadState> navigationPreloadState;
 
         WTF::Persistence::Decoder navigationPreloadStateDecoder(navigationPreloadStateDataSpan);
@@ -439,7 +479,7 @@ std::optional<Vector<ServiceWorkerContextData>> SWRegistrationDatabase::importRe
             continue;
         }
 
-        auto routesDataSpan = statement->columnBlobAsSpan(14);
+        auto routesDataSpan = statement.columnBlobAsSpan(14);
         std::optional<Vector<ServiceWorkerRoute>> routes;
 
         if (routesDataSpan.size()) {
@@ -477,6 +517,43 @@ std::optional<Vector<ServiceWorkerContextData>> SWRegistrationDatabase::importRe
         RELEASE_LOG_ERROR(Storage, "SWRegistrationDatabase::importRegistrations failed on executing statement (%d) - %s", m_database->lastError(), m_database->lastErrorMsg());
 
     return registrations;
+}
+
+std::optional<HashSet<ClientOrigin>> SWRegistrationDatabase::importOrigins()
+{
+    if (!prepareDatabase(ShouldCreateIfNotExists::No))
+        return std::nullopt;
+
+    if (!m_database) {
+        deleteAllFiles();
+        return HashSet<ClientOrigin> { };
+    }
+
+    auto sqlStatement = cachedStatement(StatementType::GetAllTopOrigins);
+    if (!sqlStatement) {
+        RELEASE_LOG_ERROR(ServiceWorker, "SWRegistrationDatabase::importOrigins failed on creating statement (%d) - %s", m_database->lastError(), m_database->lastErrorMsg());
+        return std::nullopt;
+    }
+    CheckedPtr statement = sqlStatement.get();
+
+    HashSet<ClientOrigin> origins;
+    int result = statement->step();
+    for (; result == SQLITE_ROW; result = statement->step()) {
+        auto topOrigin = SecurityOriginData::fromDatabaseIdentifier(statement->columnText(0));
+        if (!topOrigin)
+            continue;
+        auto clientOrigin = SecurityOriginData::fromURL(URL { statement->columnText(1) });
+        origins.add(ClientOrigin { WTF::move(*topOrigin), WTF::move(clientOrigin) });
+    }
+
+    if (result != SQLITE_DONE)
+        RELEASE_LOG_ERROR(Storage, "SWRegistrationDatabase::importOrigins failed on executing statement (%d) - %s", m_database->lastError(), m_database->lastErrorMsg());
+
+    // Clean up the database file if it exists but contains no registrations.
+    if (origins.isEmpty())
+        deleteAllFiles();
+
+    return origins;
 }
 
 std::optional<Vector<ServiceWorkerScripts>> SWRegistrationDatabase::updateRegistrations(const Vector<ServiceWorkerContextData>& registrationsToUpdate, const Vector<ServiceWorkerRegistrationKey>& registrationsToDelete)
@@ -519,6 +596,8 @@ std::optional<Vector<ServiceWorkerScripts>> SWRegistrationDatabase::updateRegist
             return std::nullopt;
         }
         CheckedPtr statement = sqlStatement.get();
+
+        ASSERT_WITH_MESSAGE(!data.serviceWorkerPageIdentifier, "We should not be saving extensions service workers to disk");
 
         WTF::Persistence::Encoder cspEncoder;
         cspEncoder << data.contentSecurityPolicy;

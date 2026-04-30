@@ -180,7 +180,7 @@ void WorkerStorageConnection::didGetDirectory(uint64_t callbackIdentifier, Excep
         return callback(Exception { ExceptionCode::InvalidStateError });
     releaseConnectionScope.release();
 
-    Ref workerFileSystemStorageConnection = scope->getFileSystemStorageConnection(Ref { *mainThreadFileSystemStorageConnection });
+    Ref workerFileSystemStorageConnection = scope->getFileSystemStorageConnection(protect(*mainThreadFileSystemStorageConnection));
     callback(StorageConnection::DirectoryInfo { result.returnValue().first, workerFileSystemStorageConnection });
 }
 

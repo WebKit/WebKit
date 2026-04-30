@@ -29,6 +29,7 @@
 #include "IIRFilterNode.h"
 
 #include "BaseAudioContext.h"
+#include "EventTargetInlines.h"
 #include "ExceptionCode.h"
 #include "ExceptionOr.h"
 #include "IIRFilter.h"

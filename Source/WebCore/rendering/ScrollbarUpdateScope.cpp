@@ -28,6 +28,7 @@
 
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
+#include "RenderBoxInlines.h"
 #include "RenderLayerScrollableArea.h"
 #include "ScrollAnchoringController.h"
 

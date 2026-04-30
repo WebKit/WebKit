@@ -269,7 +269,7 @@ vector<void*> prepareToTestDLCDecommitThenStuff(unsigned numHeaps)
     for (size_t index = 0; index < numHeaps; ++index) {
         pas_page_base* page = nullptr;
         for (size_t objectIndex = pas_segregated_page_number_of_objects(
-                 512, BMALLOC_HEAP_CONFIG.small_segregated_config, pas_segregated_page_exclusive_role);
+                 512, BMALLOC_HEAP_CONFIG.small_segregated_config);
              objectIndex--;) {
             void* ptr = bmalloc_iso_allocate(heaps + index, pas_non_compact_allocation_mode);
             CHECK(ptr);
@@ -467,13 +467,10 @@ void addTLCDecommitTests()
         ADD_TEST(testChaosThenDecommit(10000, 48, 100, 1000, 600000000, 3000000));
         ADD_TEST(testChaosThenDecommit(10000, 48, 100, 10000, 600000000, 3000000));
 
-        {
-            ForceExclusives forceExclusives;
-            ADD_TEST(testTLCDecommitThenDeallocate(6666));
-            ADD_TEST(testTLCDecommitThenFlush(6666));
-            ADD_TEST(testTLCDecommitThenDestroy(6666));
-            ADD_TEST(testTLCDecommitThenDestroyInThread(6666));
-        }
+        ADD_TEST(testTLCDecommitThenDeallocate(6666));
+        ADD_TEST(testTLCDecommitThenFlush(6666));
+        ADD_TEST(testTLCDecommitThenDestroy(6666));
+        ADD_TEST(testTLCDecommitThenDestroyInThread(6666));
     }
 
     {

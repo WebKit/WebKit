@@ -32,6 +32,7 @@
 
 #include <dirent.h>
 #include <sys/statvfs.h>
+#include <wtf/Function.h>
 #include <wtf/text/MakeString.h>
 
 namespace WTF {
@@ -117,6 +118,14 @@ Vector<String> listDirectorySub(const String& path, bool fullPath)
 Vector<String> listDirectory(const String& path)
 {
     return listDirectorySub(path, false);
+}
+
+void traverseDirectory(const String& path, NOESCAPE const Function<void(const String&, FileType)>& function)
+{
+    for (auto& fileName : listDirectory(path)) {
+        auto type = fileTypePotentiallyFollowingSymLinks(pathByAppendingComponent(path, fileName), ShouldFollowSymbolicLinks::No).value_or(FileType::Regular);
+        function(fileName, type);
+    }
 }
 
 bool deleteNonEmptyDirectory(const String& path)

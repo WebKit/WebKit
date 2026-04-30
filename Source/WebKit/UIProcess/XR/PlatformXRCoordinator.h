@@ -72,8 +72,8 @@ public:
 #endif
 
 #if ENABLE(WEBXR_LAYERS)
-    using CreateQuadCallback = CompletionHandler<void(std::optional<PlatformXR::LayerInfo>)>;
-    virtual void createQuadLayer(WebCore::IntSize, PlatformXR::LayerLayout, CreateQuadCallback&&) = 0;
+    using CreateCompositionLayerCallback = CompletionHandler<void(std::optional<PlatformXR::LayerInfo>)>;
+    virtual void createCompositionLayer(PlatformXR::CompositionLayerType, WebCore::IntSize, PlatformXR::LayerLayout, CreateCompositionLayerCallback&&) { };
 #endif
 
     // Session creation/termination.

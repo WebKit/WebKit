@@ -57,12 +57,8 @@ function waitForAnimationEnd(getValue) {
 
 
 function waitForEvent(eventTarget, type) {
-  return new Promise((resolve, reject) => {
-    const eventListener = (evt) => {
-      eventTarget.removeEventListener('scroll', eventListener);
-      resolve(evt);
-    };
-    eventTarget.addEventListener(type, eventListener);
+  return new Promise(resolve => {
+    eventTarget.addEventListener(type, resolve, { once: true });
   });
 }
 
@@ -72,13 +68,6 @@ function waitForScrollEvent(eventTarget) {
 
 function waitForWheelEvent(eventTarget) {
   return waitForEvent(eventTarget, 'wheel');
-}
-
-// TODO: Update tests to replace call to this method with calls to
-// waitForScrollTo, since this method does not test that scrolling has in fact
-// stopped.
-function waitForScrollEnd(eventTarget, getValue, targetValue) {
-  return waitForScrollTo(eventTarget, getValue, targetValue);
 }
 
 function waitForScrollTo(eventTarget, getValue, targetValue) {
@@ -93,5 +82,18 @@ function waitForScrollTo(eventTarget, getValue, targetValue) {
       resolve();
     else
       eventTarget.addEventListener('scroll', scrollListener);
+  });
+}
+
+function waitForNextFrame() {
+  return new Promise(resolve => {
+    const start = performance.now();
+    requestAnimationFrame(frameTime => {
+      if (frameTime < start) {
+        requestAnimationFrame(resolve);
+      } else {
+        resolve();
+      }
+    });
   });
 }

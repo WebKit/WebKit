@@ -58,6 +58,7 @@
 #include "Snippet.h"
 #include "StackAlignment.h"
 #include "StructureInlines.h"
+#include <array>
 #include <wtf/CommaPrinter.h>
 #include <wtf/ListDump.h>
 
@@ -68,11 +69,11 @@ namespace JSC { namespace DFG {
 static constexpr bool dumpOSRAvailabilityData = false;
 
 // Creates an array of stringized names.
-static constexpr ASCIILiteral dfgOpNames[] = {
+static constexpr auto dfgOpNames = std::to_array<ASCIILiteral>({
 #define STRINGIZE_DFG_OP_ENUM(opcode, flags) #opcode ## _s ,
     FOR_EACH_DFG_OP(STRINGIZE_DFG_OP_ENUM)
 #undef STRINGIZE_DFG_OP_ENUM
-};
+});
 
 Graph::Graph(VM& vm, Plan& plan)
     : m_vm(vm)

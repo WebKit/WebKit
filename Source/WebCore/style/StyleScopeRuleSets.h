@@ -75,7 +75,6 @@ public:
     RuleSet* styleForDeclarationOrigin(DeclarationOrigin);
 
     const RuleFeatureSet& features() const LIFETIME_BOUND;
-    RuleSet* scopeBreakingHasPseudoClassInvalidationRuleSet() const { return m_scopeBreakingHasPseudoClassInvalidationRuleSet.get(); }
 
     const Vector<InvalidationRuleSet>* idInvalidationRuleSets(const AtomString&) const LIFETIME_BOUND;
     const Vector<InvalidationRuleSet>* classInvalidationRuleSets(const AtomString&) const LIFETIME_BOUND;
@@ -126,7 +125,6 @@ private:
 
     Resolver& m_styleResolver;
     mutable RuleFeatureSet m_features;
-    mutable RefPtr<RuleSet> m_scopeBreakingHasPseudoClassInvalidationRuleSet;
     mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_idInvalidationRuleSets;
     mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_classInvalidationRuleSets;
     mutable HashMap<AtomString, std::unique_ptr<Vector<InvalidationRuleSet>>> m_attributeInvalidationRuleSets;

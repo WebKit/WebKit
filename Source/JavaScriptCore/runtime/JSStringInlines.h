@@ -221,6 +221,81 @@ std::optional<size_t> JSString::tryFindOneChar(JSGlobalObject*, char16_t charact
     return WTF::notFound;
 }
 
+std::optional<size_t> JSString::tryFindLastOneChar(JSGlobalObject*, char16_t character, unsigned& startPosition) const
+{
+    ASSERT(isRope());
+
+    // Reverse counterpart of tryFindOneChar: walk the rope structure without resolving it
+    // and return the last occurrence of `character` at or before `startPosition` (inclusive).
+    // nullopt means the rope structure is too complex to walk; in that case `startPosition`
+    // is updated to mark the latest position known not to contain the character (so the
+    // caller can resolve only the remaining prefix).
+
+    auto scanSubstring = [&](const JSRopeString* substringRope, unsigned fiberLength, unsigned offset) -> std::optional<size_t> {
+        JSString* base = substringRope->substringBase();
+        ASSERT(!base->isRope());
+        ASSERT(startPosition >= offset);
+        if (!fiberLength)
+            return std::nullopt;
+        unsigned localStart = startPosition >= offset + fiberLength ? fiberLength - 1 : startPosition - offset;
+        StringView view = StringView(base->valueInternal()).substring(substringRope->substringOffset(), fiberLength);
+        size_t result = view.reverseFind(character, localStart);
+        if (result != WTF::notFound)
+            return offset + result;
+        return std::nullopt;
+    };
+
+    if (isSubstring()) {
+        auto result = scanSubstring(static_cast<const JSRopeString*>(this), length(), 0);
+        return result ? result : std::optional<size_t>(WTF::notFound);
+    }
+
+    const JSRopeString* rope = static_cast<const JSRopeString*>(this);
+    unsigned fiberLengths[JSRopeString::s_maxInternalRopeLength] { };
+    JSString* fibers[JSRopeString::s_maxInternalRopeLength] { };
+    unsigned fiberCount = 0;
+    for (unsigned i = 0; i < JSRopeString::s_maxInternalRopeLength; ++i) {
+        JSString* fiber = rope->fiber(i);
+        if (!fiber)
+            break;
+        fibers[fiberCount] = fiber;
+        fiberLengths[fiberCount] = fiber->length();
+        ++fiberCount;
+    }
+
+    unsigned totalLength = length();
+
+    // Walk fibers in reverse order so we return the largest matching index.
+    unsigned offset = totalLength;
+    for (unsigned i = fiberCount; i-- > 0;) {
+        unsigned fiberLength = fiberLengths[i];
+        offset -= fiberLength;
+
+        if (!fiberLength)
+            continue;
+        if (offset > startPosition)
+            continue; // fiber is entirely past `startPosition`.
+
+        JSString* fiber = fibers[i];
+        if (!fiber->isRope()) {
+            unsigned localStart = startPosition >= offset + fiberLength ? fiberLength - 1 : startPosition - offset;
+            size_t result = StringView(fiber->valueInternal()).reverseFind(character, localStart);
+            if (result != WTF::notFound)
+                return offset + result;
+        } else if (fiber->isSubstring()) {
+            if (auto result = scanSubstring(static_cast<const JSRopeString*>(fiber), fiberLength, offset))
+                return result;
+        } else {
+            // Bail out but update startPosition so the caller only needs to scan
+            // [0, offset + fiberLength - 1].
+            startPosition = std::min(startPosition, offset + fiberLength - 1);
+            return std::nullopt;
+        }
+    }
+
+    return WTF::notFound;
+}
+
 ALWAYS_INLINE std::optional<char16_t> JSString::tryGetCharAt(JSGlobalObject*, unsigned index) const
 {
     ASSERT(isRope());

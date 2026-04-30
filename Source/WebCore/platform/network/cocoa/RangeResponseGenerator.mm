@@ -26,9 +26,9 @@
 #import "config.h"
 #import "RangeResponseGenerator.h"
 
+#import "HTTPParsers.h"
 #import "HTTPStatusCodes.h"
 #import "NetworkLoadMetrics.h"
-#import "ParsedRequestRange.h"
 #import "PlatformMediaResourceLoader.h"
 #import "ResourceResponse.h"
 #import "SharedBuffer.h"
@@ -45,12 +45,14 @@ namespace WebCore {
 struct RangeResponseGeneratorDataTaskData final : public CanMakeWeakPtr<RangeResponseGeneratorDataTaskData>, public CanMakeThreadSafeCheckedPtr<RangeResponseGeneratorDataTaskData> {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(RangeResponseGeneratorDataTaskData);
     WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(RangeResponseGeneratorDataTaskData);
-    RangeResponseGeneratorDataTaskData(ParsedRequestRange&& range)
-        : range(WTF::move(range))
-        , nextByteToGiveBufferIndex(range.begin) { }
+    RangeResponseGeneratorDataTaskData(uint64_t begin, uint64_t end)
+        : begin(begin)
+        , end(end)
+        , nextByteToGiveBufferIndex(begin) { }
 
-    ParsedRequestRange range;
-    size_t nextByteToGiveBufferIndex { 0 };
+    uint64_t begin { 0 };
+    uint64_t end { 0 };
+    uint64_t nextByteToGiveBufferIndex { 0 };
     enum class ResponseState : uint8_t { NotSynthesizedYet, WaitingForSession, SessionCalledCompletionHandler } responseState { ResponseState::NotSynthesizedYet };
 };
 
@@ -95,11 +97,18 @@ HashMap<String, std::unique_ptr<RangeResponseGenerator::Data>>& RangeResponseGen
     IGNORE_CLANG_WARNINGS_END
 }
 
-static ResourceResponse synthesizedResponseForRange(const ResourceResponse& originalResponse, const ParsedRequestRange& parsedRequestRange, std::optional<size_t> totalContentLength)
+// AVFoundation always sends closed ranges (e.g., "bytes=0-1"), so reject the others.
+static std::optional<std::pair<uint64_t, uint64_t>> resolvedRange(StringView rangeHeader)
 {
-    auto begin = parsedRequestRange.begin;
-    auto end = parsedRequestRange.end;
+    auto httpRange = parseRange(rangeHeader, RangeAllowWhitespace::No);
+    if (!httpRange || !httpRange->start || !httpRange->end)
+        return { };
 
+    return { { *httpRange->start, *httpRange->end } };
+}
+
+static ResourceResponse synthesizedResponseForRange(const ResourceResponse& originalResponse, uint64_t begin, uint64_t end, std::optional<size_t> totalContentLength)
+{
     auto newContentRange = makeString("bytes "_s, begin, '-', end, '/', (totalContentLength ? makeString(*totalContentLength) : "*"_s));
     auto newContentLength = makeString(end - begin + 1);
 
@@ -107,7 +116,7 @@ static ResourceResponse synthesizedResponseForRange(const ResourceResponse& orig
     newResponse.setHTTPHeaderField(HTTPHeaderName::ContentRange, newContentRange);
     newResponse.setHTTPHeaderField(HTTPHeaderName::ContentLength, newContentLength);
     newResponse.setHTTPStatusCode(httpStatus206PartialContent);
-    
+
     // Values from setHTTPStatusCode and setHTTPHeaderField are not reflected in the newly generated response without this.
     newResponse.initNSURLResponse();
 
@@ -126,15 +135,15 @@ void RangeResponseGenerator::removeTask(WebCoreNSURLSessionDataTask *task)
     data->taskData.remove(task);
 }
 
-void RangeResponseGenerator::giveResponseToTaskIfBytesInRangeReceived(WebCoreNSURLSessionDataTask *task, const ParsedRequestRange& range, std::optional<size_t> expectedContentLength, const Data& data)
+void RangeResponseGenerator::giveResponseToTaskIfBytesInRangeReceived(WebCoreNSURLSessionDataTask *task, std::optional<size_t> expectedContentLength, const Data& data)
 {
     assertIsCurrent(m_targetDispatcher);
-    auto bufferSize = data.buffer.size();
-    if (bufferSize < range.begin)
-        return;
-
     CheckedPtr taskData = data.taskData.get(task);
     if (!taskData)
+        return;
+
+    auto bufferSize = data.buffer.size();
+    if (bufferSize < taskData->begin)
         return;
 
     auto giveBytesToTask = [task = retainPtr(task), buffer = protect(data.buffer.buffer()), bufferSize, weakTaskData = WeakPtr { *taskData }, weakGenerator = ThreadSafeWeakPtr { *this }, targetQueue = m_targetDispatcher] {
@@ -144,20 +153,19 @@ void RangeResponseGenerator::giveResponseToTaskIfBytesInRangeReceived(WebCoreNSU
         CheckedPtr taskData = weakTaskData.get();
         if (!taskData)
             return;
-        auto& range = taskData->range;
         auto& byteIndex = taskData->nextByteToGiveBufferIndex;
         while (true) {
             if (byteIndex >= bufferSize)
                 break;
             auto bufferView = buffer->getSomeData(byteIndex);
-            if (!bufferView.size() || byteIndex > range.end)
+            if (!bufferView.size() || byteIndex > taskData->end)
                 break;
 
-            size_t bytesFromThisViewToDeliver = std::min(bufferView.size(), range.end - byteIndex + 1);
+            size_t bytesFromThisViewToDeliver = std::min(static_cast<uint64_t>(bufferView.size()), taskData->end - byteIndex + 1);
             byteIndex += bytesFromThisViewToDeliver;
             [task resource:nullptr receivedData:SharedBufferDataView(bufferView, bytesFromThisViewToDeliver).createSharedBuffer()->createNSData()];
         }
-        if (byteIndex >= range.end) {
+        if (byteIndex >= taskData->end) {
             [task resourceFinished:nullptr metrics:NetworkLoadMetrics { }];
             // This can be called while we are currently iterating data.taskData in giveResponseToTasksWithFinishedRanges,
             // as such we can't remove the task from the hash table yet. Queue a task to process deletion.
@@ -170,7 +178,7 @@ void RangeResponseGenerator::giveResponseToTaskIfBytesInRangeReceived(WebCoreNSU
 
     switch (taskData->responseState) {
     case RangeResponseGeneratorDataTaskData::ResponseState::NotSynthesizedYet: {
-        auto response = synthesizedResponseForRange(data.originalResponse, range, expectedContentLength);
+        auto response = synthesizedResponseForRange(data.originalResponse, taskData->begin, taskData->end, expectedContentLength);
         [task resource:nullptr receivedResponse:response completionHandler:[giveBytesToTask = WTF::move(giveBytesToTask), taskData = WeakPtr { *taskData }, task = retainPtr(task)] (WebCore::ShouldContinuePolicyCheck shouldContinue) mutable {
             if (taskData)
                 taskData->responseState = RangeResponseGeneratorDataTaskData::ResponseState::SessionCalledCompletionHandler;
@@ -208,7 +216,7 @@ void RangeResponseGenerator::giveResponseToTasksWithFinishedRanges(Data& data)
     auto expectedContentLength = expectedContentLengthFromData(data);
 
     for (auto& pair : data.taskData)
-        giveResponseToTaskIfBytesInRangeReceived(pair.key.get(), pair.value->range, expectedContentLength, data);
+        giveResponseToTaskIfBytesInRangeReceived(pair.key.get(), expectedContentLength, data);
 }
 
 bool RangeResponseGenerator::willHandleRequest(WebCoreNSURLSessionDataTask *task, NSURLRequest *request)
@@ -221,13 +229,14 @@ bool RangeResponseGenerator::willHandleRequest(WebCoreNSURLSessionDataTask *task
     if (!data)
         return false;
 
-    auto range = ParsedRequestRange::parse([request valueForHTTPHeaderField:@"Range"]);
+    auto range = resolvedRange(String([request valueForHTTPHeaderField:@"Range"]));
     if (!range)
         return false;
 
     auto expectedContentLength = expectedContentLengthFromData(*data);
-    data->taskData.add(task, makeUnique<RangeResponseGeneratorDataTaskData>(WTF::move(*range)));
-    giveResponseToTaskIfBytesInRangeReceived(task, *range, expectedContentLength, *data);
+    auto [begin, end] = *range;
+    data->taskData.add(task, makeUnique<RangeResponseGeneratorDataTaskData>(begin, end));
+    giveResponseToTaskIfBytesInRangeReceived(task, expectedContentLength, *data);
 
     return true;
 }
@@ -316,15 +325,17 @@ bool RangeResponseGenerator::willSynthesizeRangeResponses(WebCoreNSURLSessionDat
     if (!response.httpHeaderField(HTTPHeaderName::ContentRange).isEmpty())
         return false;
 
-    auto parsedRequestRange = ParsedRequestRange::parse([originalRequest valueForHTTPHeaderField:@"Range"]);
-    if (!parsedRequestRange)
+    auto range = resolvedRange(String([originalRequest valueForHTTPHeaderField:@"Range"]));
+    if (!range)
         return false;
+
+    auto [begin, end] = *range;
 
     resource.setClient(adoptRef(new MediaResourceClient(*this, originalRequest.get().URL)));
 
     m_map.ensure(originalRequest.get().URL.absoluteString, [&] {
         return makeUnique<Data>(response, resource);
-    }).iterator->value->taskData.add(task, makeUnique<RangeResponseGeneratorDataTaskData>(WTF::move(*parsedRequestRange)));
+    }).iterator->value->taskData.add(task, makeUnique<RangeResponseGeneratorDataTaskData>(begin, end));
 
     return true;
 }

@@ -70,7 +70,7 @@ Vector<ContentFilter::Type>& ContentFilter::types()
     return types;
 }
 
-RefPtr<ContentFilter> ContentFilter::create(ContentFilterClient& client, bool isMainFrameLoad)
+RefPtr<ContentFilter> ContentFilter::create(ContentFilterClient& client, IsMainFrameLoad isMainFrameLoad)
 {
     PlatformContentFilter::FilterParameters params;
 #if HAVE(WEBCONTENTRESTRICTIONS)
@@ -78,8 +78,8 @@ RefPtr<ContentFilter> ContentFilter::create(ContentFilterClient& client, bool is
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
         client.webContentRestrictionsConfigurationPath(),
 #endif
-        // If we load a mainframe, the filter implementation expects the mainDocumentURL to be null.
-        isMainFrameLoad ? URL { } : client.mainDocumentURL(),
+        isMainFrameLoad,
+        client.mainDocumentURL()
     };
 #else
     UNUSED_PARAM(isMainFrameLoad);
@@ -192,7 +192,10 @@ void ContentFilter::continueAfterWillSendRequest(ResourceRequest&& request, cons
             contentFilterCallbackAggregator->didReceivePlatformContentFilterDecision(platformContentFilter, WTF::move(urlString));
         };
 
-        ASSERT(platformContentFilter->needsMoreData());
+        if (!platformContentFilter->needsMoreData()) {
+            completion({ });
+            continue;
+        }
         platformContentFilter->willSendRequest(ResourceRequest { request }, redirectResponse, WTF::move(completion));
     }
 }

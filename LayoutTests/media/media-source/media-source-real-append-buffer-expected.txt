@@ -1,0 +1,17 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer('video/mp4; codecs="avc1.4d401e"'))
+RUN(sourceBuffer.appendBuffer(initData))
+EXPECTED (sourceBuffer.updating == 'true') OK
+EVENT(updateend)
+EXPECTED (sourceBuffer.updating == 'false') OK
+RUN(sourceBuffer.appendBuffer(mediaData))
+EXPECTED (sourceBuffer.updating == 'true') OK
+EVENT(updateend)
+EXPECTED (sourceBuffer.updating == 'false') OK
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '0') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '4') OK
+END OF TEST
+

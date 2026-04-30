@@ -2316,7 +2316,7 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef FOR_EACH
 
 #define TYPE Style::PositionVisibilityValue
-#define FOR_EACH(CASE) CASE(AnchorsValid) CASE(AnchorsVisible) CASE(NoOverflow)
+#define FOR_EACH(CASE) CASE(AnchorsValid) CASE(AnchorValid) CASE(AnchorsVisible) CASE(AnchorVisible) CASE(NoOverflow)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH

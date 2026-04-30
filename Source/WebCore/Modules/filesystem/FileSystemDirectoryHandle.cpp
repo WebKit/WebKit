@@ -30,6 +30,7 @@
 #include "FileSystemHandleCloseScope.h"
 #include "FileSystemStorageConnection.h"
 #include "JSDOMConvertInterface.h"
+#include "JSDOMConvertNullable.h"
 #include "JSDOMConvertSequences.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMPromiseDeferred.h"
@@ -101,7 +102,7 @@ void FileSystemDirectoryHandle::removeEntry(const String& name, const FileSystem
     });
 }
 
-void FileSystemDirectoryHandle::resolve(const FileSystemHandle& handle, DOMPromiseDeferred<IDLSequence<IDLUSVString>>&& promise)
+void FileSystemDirectoryHandle::resolve(const FileSystemHandle& handle, DOMPromiseDeferred<IDLNullable<IDLSequence<IDLUSVString>>>&& promise)
 {
     if (isClosed())
         return promise.reject(Exception { ExceptionCode::InvalidStateError, "Handle is closed"_s });

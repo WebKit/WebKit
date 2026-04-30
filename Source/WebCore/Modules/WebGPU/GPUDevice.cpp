@@ -29,6 +29,7 @@
 #include "ContextDestructionObserverInlines.h"
 #include "DOMPromiseProxy.h"
 #include "EventNames.h"
+#include "EventTargetInlines.h"
 #include "GPUAdapterInfo.h"
 #include "GPUBindGroup.h"
 #include "GPUBindGroupDescriptor.h"
@@ -687,21 +688,33 @@ bool GPUDevice::addEventListener(const AtomString& eventType, Ref<EventListener>
 {
     auto result = EventTarget::addEventListener(eventType, WTF::move(eventListener), options);
 #if PLATFORM(COCOA)
-    if (eventType == WebCore::eventNames().uncapturederrorEvent) {
-        m_backing->resolveUncapturedErrorEvent([eventType, pendingActivity = makePendingActivity(*this), weakThis = WeakPtr { *this }](bool hasUncapturedError, std::optional<WebGPU::Error>&& error) {
-            RefPtr protectedThis = weakThis.get();
-            if (!protectedThis || !hasUncapturedError)
-                return;
-
-            RefPtr context = protectedThis->scriptExecutionContext();
-            if (!context)
-                return;
-
-            queueTaskToDispatchEvent(*protectedThis, TaskSource::WebGPU, GPUUncapturedErrorEvent::create(WebCore::eventNames().uncapturederrorEvent, GPUUncapturedErrorEventInit { .error = createGPUErrorFromWebGPUError(error) }));
-        });
-    }
+    if (eventType == WebCore::eventNames().uncapturederrorEvent)
+        listenForUncapturedErrors();
 #endif
     return result;
+}
+
+void GPUDevice::listenForUncapturedErrors()
+{
+    if (m_listeningForUncapturedErrors)
+        return;
+#if PLATFORM(COCOA)
+    m_listeningForUncapturedErrors = true;
+    m_backing->resolveUncapturedErrorEvent([pendingActivity = makePendingActivity(*this), weakThis = WeakPtr { *this }](bool hasUncapturedError, std::optional<WebGPU::Error>&& error) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis || !hasUncapturedError)
+            return;
+
+        protectedThis->m_listeningForUncapturedErrors = false;
+
+        RefPtr context = protectedThis->scriptExecutionContext();
+        if (!context)
+            return;
+
+        queueTaskToDispatchEvent(*protectedThis, TaskSource::WebGPU, GPUUncapturedErrorEvent::create(WebCore::eventNames().uncapturederrorEvent, GPUUncapturedErrorEventInit { .error = createGPUErrorFromWebGPUError(error) }));
+        protectedThis->listenForUncapturedErrors();
+    });
+#endif
 }
 
 #if ENABLE(VIDEO)

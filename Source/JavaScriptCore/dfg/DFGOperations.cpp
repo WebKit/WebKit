@@ -51,6 +51,7 @@
 #include "Interpreter.h"
 #include "InterpreterInlines.h"
 #include "IntlCollator.h"
+#include "IntlObjectInlines.h"
 #include "JITCode.h"
 #include "JITWorklist.h"
 #include "JSArrayBufferConstructor.h"
@@ -466,6 +467,26 @@ JSC_DEFINE_JIT_OPERATION(operationCreatePromise, JSCell*, (JSGlobalObject* globa
     Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, promiseStructure, constructor, globalObject->promiseConstructor());
     OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
     OPERATION_RETURN(scope, JSPromise::create(vm, structure));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationNewResolvedPromise, JSCell*, (JSGlobalObject* globalObject, EncodedJSValue encodedValue))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
+    promise->resolve(globalObject, vm, JSValue::decode(encodedValue));
+    OPERATION_RETURN(scope, promise);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationNewRejectedPromise, JSCell*, (JSGlobalObject* globalObject, EncodedJSValue encodedValue))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    OPERATION_RETURN(scope, JSPromise::rejectedPromise(globalObject, JSValue::decode(encodedValue)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationCreateGenerator, JSCell*, (JSGlobalObject* globalObject, JSObject* constructor))
@@ -3329,6 +3350,12 @@ JSC_DEFINE_JIT_OPERATION(operationStringLocaleCompare, UCPUStrictInt32, (JSGloba
     auto that = argument->view(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, 0);
 
+    if (globalObject->canDoASCIIUCADUCETLocaleCompare() && string->is8Bit() && that->is8Bit()) {
+        auto result = compareASCIIWithUCADUCET(string->span8(), that->span8());
+        if (result)
+            OPERATION_RETURN(scope, toUCPUStrictInt32(*result));
+    }
+
     auto* collator = globalObject->defaultCollator();
 
     OPERATION_RETURN(scope, toUCPUStrictInt32(collator->compareStrings(globalObject, string, that)));
@@ -3342,10 +3369,13 @@ JSC_DEFINE_JIT_OPERATION(operationStringIndexOf, UCPUStrictInt32, (JSGlobalObjec
 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    auto otherView = argument->view(globalObject);
+    OPERATION_RETURN_IF_EXCEPTION(scope, 0);
+
+    unsigned argumentLength = otherView->length();
+
     unsigned pos = 0;
-    if (argument->length() == 1 && base->isRope() && base->length() >= JSString::minLengthForRopeWalk) {
-        auto otherView = argument->view(globalObject);
-        OPERATION_RETURN_IF_EXCEPTION(scope, 0);
+    if (argumentLength == 1 && base->isRope() && base->length() >= JSString::minLengthForRopeWalk) {
         if (auto result = base->tryFindOneChar(globalObject, otherView[0], pos)) {
             if (*result != notFound)
                 OPERATION_RETURN(scope, toUCPUStrictInt32(static_cast<int32_t>(*result)));
@@ -3355,9 +3385,6 @@ JSC_DEFINE_JIT_OPERATION(operationStringIndexOf, UCPUStrictInt32, (JSGlobalObjec
     }
 
     auto thisView = base->view(globalObject);
-    OPERATION_RETURN_IF_EXCEPTION(scope, 0);
-
-    auto otherView = argument->view(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, 0);
 
     size_t result = thisView->find(vm.adaptiveStringSearcherTables(), otherView, pos);
@@ -3401,17 +3428,19 @@ JSC_DEFINE_JIT_OPERATION(operationStringIndexOfWithIndex, UCPUStrictInt32, (JSGl
 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    auto otherView = argument->view(globalObject);
+    OPERATION_RETURN_IF_EXCEPTION(scope, 0);
+
     int32_t length = base->length();
+    unsigned argumentLength = otherView->length();
     unsigned pos = 0;
     if (position >= 0)
         pos = std::min<uint32_t>(position, length);
 
-    if (static_cast<unsigned>(length) < argument->length() + pos)
+    if (static_cast<unsigned>(length) < static_cast<uint64_t>(argumentLength) + pos)
         OPERATION_RETURN(scope, toUCPUStrictInt32(-1));
 
-    if (argument->length() == 1 && base->isRope() && base->length() >= JSString::minLengthForRopeWalk) {
-        auto otherView = argument->view(globalObject);
-        OPERATION_RETURN_IF_EXCEPTION(scope, 0);
+    if (argumentLength == 1 && base->isRope() && base->length() >= JSString::minLengthForRopeWalk) {
         if (auto result = base->tryFindOneChar(globalObject, otherView[0], pos)) {
             if (*result != notFound)
                 OPERATION_RETURN(scope, toUCPUStrictInt32(static_cast<int32_t>(*result)));
@@ -3421,9 +3450,6 @@ JSC_DEFINE_JIT_OPERATION(operationStringIndexOfWithIndex, UCPUStrictInt32, (JSGl
     }
 
     auto thisView = base->view(globalObject);
-    OPERATION_RETURN_IF_EXCEPTION(scope, 0);
-
-    auto otherView = argument->view(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope, 0);
 
     size_t result = thisView->find(vm.adaptiveStringSearcherTables(), otherView, pos);
@@ -3464,6 +3490,140 @@ JSC_DEFINE_JIT_OPERATION(operationStringIndexOfWithIndexWithOneChar, UCPUStrictI
     if (result == notFound)
         OPERATION_RETURN(scope, toUCPUStrictInt32(-1));
     OPERATION_RETURN(scope, toUCPUStrictInt32(result));
+}
+
+static ALWAYS_INLINE UCPUStrictInt32 stringLastIndexOfOneCharOperation(JSGlobalObject* globalObject, ThrowScope& scope, JSString* base, char16_t character, unsigned startPosition)
+{
+    ASSERT(base->length() >= 1);
+    ASSERT(startPosition < base->length());
+
+    if (base->isRope() && base->length() >= JSString::minLengthForRopeWalk) {
+        if (auto result = base->tryFindLastOneChar(globalObject, character, startPosition)) {
+            if (*result != notFound)
+                return toUCPUStrictInt32(static_cast<int32_t>(*result));
+            return toUCPUStrictInt32(-1);
+        }
+        // nullopt: bail out, fall through to resolve. startPosition has been narrowed.
+    }
+
+    auto thisView = base->view(globalObject);
+    RETURN_IF_EXCEPTION(scope, toUCPUStrictInt32(0));
+
+    size_t result = thisView->reverseFind(character, startPosition);
+    if (result == notFound)
+        return toUCPUStrictInt32(-1);
+    return toUCPUStrictInt32(result);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationStringLastIndexOf, UCPUStrictInt32, (JSGlobalObject* globalObject, JSString* base, JSString* argument))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto otherView = argument->view(globalObject);
+    OPERATION_RETURN_IF_EXCEPTION(scope, 0);
+
+    unsigned length = base->length();
+    unsigned argumentLength = otherView->length();
+    if (length < argumentLength)
+        OPERATION_RETURN(scope, toUCPUStrictInt32(-1));
+
+    unsigned startPosition = length - argumentLength;
+
+    if (argumentLength == 1)
+        OPERATION_RETURN(scope, stringLastIndexOfOneCharOperation(globalObject, scope, base, otherView[0], startPosition));
+
+    auto thisView = base->view(globalObject);
+    OPERATION_RETURN_IF_EXCEPTION(scope, 0);
+
+    size_t result;
+    if (!startPosition)
+        result = thisView->startsWith(otherView) ? 0 : notFound;
+    else
+        result = thisView->reverseFind(otherView, startPosition);
+    if (result == notFound)
+        OPERATION_RETURN(scope, toUCPUStrictInt32(-1));
+    OPERATION_RETURN(scope, toUCPUStrictInt32(result));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationStringLastIndexOfWithOneChar, UCPUStrictInt32, (JSGlobalObject* globalObject, JSString* base, int32_t character))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    unsigned length = base->length();
+    if (!length)
+        OPERATION_RETURN(scope, toUCPUStrictInt32(-1));
+
+    unsigned startPosition = length - 1;
+    OPERATION_RETURN(scope, stringLastIndexOfOneCharOperation(globalObject, scope, base, static_cast<char16_t>(character), startPosition));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationStringLastIndexOfWithIndex, UCPUStrictInt32, (JSGlobalObject* globalObject, JSString* base, JSString* argument, int32_t position))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto otherView = argument->view(globalObject);
+    OPERATION_RETURN_IF_EXCEPTION(scope, 0);
+
+    unsigned length = base->length();
+    unsigned argumentLength = otherView->length();
+    if (length < argumentLength)
+        OPERATION_RETURN(scope, toUCPUStrictInt32(-1));
+
+    unsigned maxStart = length - argumentLength;
+    unsigned startPosition;
+    if (position < 0)
+        startPosition = 0;
+    else
+        startPosition = std::min<uint32_t>(position, maxStart);
+
+    if (argumentLength == 1)
+        OPERATION_RETURN(scope, stringLastIndexOfOneCharOperation(globalObject, scope, base, otherView[0], startPosition));
+
+    auto thisView = base->view(globalObject);
+    OPERATION_RETURN_IF_EXCEPTION(scope, 0);
+
+    size_t result;
+    if (!startPosition)
+        result = thisView->startsWith(otherView) ? 0 : notFound;
+    else
+        result = thisView->reverseFind(otherView, startPosition);
+    if (result == notFound)
+        OPERATION_RETURN(scope, toUCPUStrictInt32(-1));
+    OPERATION_RETURN(scope, toUCPUStrictInt32(result));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationStringLastIndexOfWithIndexWithOneChar, UCPUStrictInt32, (JSGlobalObject* globalObject, JSString* base, int32_t position, int32_t character))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    unsigned length = base->length();
+    if (!length)
+        OPERATION_RETURN(scope, toUCPUStrictInt32(-1));
+
+    unsigned maxStart = length - 1;
+    unsigned startPosition;
+    if (position < 0)
+        startPosition = 0;
+    else
+        startPosition = std::min<uint32_t>(position, maxStart);
+
+    OPERATION_RETURN(scope, stringLastIndexOfOneCharOperation(globalObject, scope, base, static_cast<char16_t>(character), startPosition));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationStringStartsWith, bool, (JSGlobalObject* globalObject, JSString* base, JSString* prefix))

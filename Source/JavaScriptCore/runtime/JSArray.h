@@ -107,6 +107,7 @@ public:
     void pushInline(JSGlobalObject*, JSValue);
     JS_EXPORT_PRIVATE void push(JSGlobalObject*, JSValue);
     JS_EXPORT_PRIVATE JSValue pop(JSGlobalObject*);
+    JSValue fastShift(VM&);
 
     static JSArray* fastSlice(JSGlobalObject*, JSObject* source, uint64_t startIndex, uint64_t count);
 

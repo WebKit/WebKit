@@ -39,6 +39,7 @@
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/ScriptArguments.h>
+#include <WebCore/HTTPStatusCodes.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
@@ -76,7 +77,7 @@ void WebConsoleAgent::frameWindowDiscarded(LocalDOMWindow& window)
 
 void WebConsoleAgent::didReceiveResponse(ResourceLoaderIdentifier requestIdentifier, const ResourceResponse& response)
 {
-    if (response.httpStatusCode() >= 400) {
+    if (response.httpStatusCode() >= httpStatus400BadRequest) {
         auto message = makeString("Failed to load resource: the server responded with a status of "_s, response.httpStatusCode(), " ("_s, ScriptArguments::truncateStringForConsoleMessage(response.httpStatusText()), ')');
         addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::Network, MessageType::Log, MessageLevel::Error, message, response.url().string(), 0, 0, nullptr, requestIdentifier.toUInt64()));
     }

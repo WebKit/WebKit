@@ -114,7 +114,6 @@ pas_heap_runtime_config jit_heap_runtime_config = {
     .sharing_mode = pas_share_pages,
     .statically_allocated = true,
     .is_part_of_heap = true,
-    .directory_size_bound_for_partial_views = 0,
     .directory_size_bound_for_baseline_allocators = 0,
     .directory_size_bound_for_no_view_cache = 0,
     .max_segregated_object_size = 2000,
@@ -145,9 +144,8 @@ pas_page_base* jit_page_header_for_boundary_remote(pas_enumerator* enumerator, v
 }
 
 void* jit_small_segregated_allocate_page(
-    pas_segregated_heap* heap, pas_physical_memory_transaction* transaction, pas_segregated_page_role role)
+    pas_segregated_heap* heap, pas_physical_memory_transaction* transaction)
 {
-    PAS_ASSERT(role == pas_segregated_page_exclusive_role);
     PAS_UNUSED_PARAM(heap);
     PAS_UNUSED_PARAM(transaction);
     return (void*)allocate_from_fresh(
@@ -163,8 +161,7 @@ pas_page_base* jit_small_segregated_create_page_header(
     result = pas_page_header_table_add(
         &jit_small_page_header_table,
         JIT_SMALL_PAGE_SIZE,
-        pas_segregated_page_header_size(JIT_HEAP_CONFIG.small_segregated_config,
-                                        pas_segregated_page_exclusive_role),
+        pas_segregated_page_header_size(JIT_HEAP_CONFIG.small_segregated_config),
         boundary);
     pas_heap_lock_unlock_conditionally(heap_lock_hold_mode);
     return result;
@@ -177,15 +174,6 @@ void jit_small_destroy_page_header(pas_page_base* page, pas_lock_hold_mode heap_
                                  JIT_SMALL_PAGE_SIZE,
                                  page);
     pas_heap_lock_unlock_conditionally(heap_lock_hold_mode);
-}
-
-pas_segregated_shared_page_directory* jit_small_segregated_shared_page_directory_selector(
-    pas_segregated_heap* heap, pas_segregated_size_directory* directory)
-{
-    PAS_UNUSED_PARAM(heap);
-    PAS_UNUSED_PARAM(directory);
-    PAS_ASSERT(!"Not implemented");
-    return NULL;
 }
 
 void* jit_small_bitfit_allocate_page(
@@ -321,41 +309,6 @@ void* jit_prepare_to_enumerate(pas_enumerator* enumerator)
         return NULL;
     
     return result;
-}
-
-bool jit_heap_config_for_each_shared_page_directory(
-    pas_segregated_heap* heap,
-    bool (*callback)(pas_segregated_shared_page_directory* directory,
-                     void* arg),
-    void* arg)
-{
-    PAS_UNUSED_PARAM(heap);
-    PAS_UNUSED_PARAM(callback);
-    PAS_UNUSED_PARAM(arg);
-    return true;
-}
-
-bool jit_heap_config_for_each_shared_page_directory_remote(
-    pas_enumerator* enumerator,
-    pas_segregated_heap* heap,
-    bool (*callback)(pas_enumerator* enumerator,
-                     pas_segregated_shared_page_directory* directory,
-                     void* arg),
-    void* arg)
-{
-    PAS_UNUSED_PARAM(enumerator);
-    PAS_UNUSED_PARAM(heap);
-    PAS_UNUSED_PARAM(callback);
-    PAS_UNUSED_PARAM(arg);
-    return true;
-}
-
-void jit_heap_config_dump_shared_page_directory_arg(
-    pas_stream* stream, pas_segregated_shared_page_directory* directory)
-{
-    PAS_UNUSED_PARAM(stream);
-    PAS_UNUSED_PARAM(directory);
-    PAS_ASSERT_NOT_REACHED();
 }
 
 void jit_heap_config_add_fresh_memory(pas_range range)

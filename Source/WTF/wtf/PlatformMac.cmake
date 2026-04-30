@@ -140,3 +140,5 @@ list(APPEND WTF_SOURCES
     ${WTF_DERIVED_SOURCES_DIR}/mach_excServer.c
     ${WTF_DERIVED_SOURCES_DIR}/mach_excUser.c
 )
+
+ADD_WEBKIT_PREFIX_HEADERS(WTF ../WTFPrefix.h)

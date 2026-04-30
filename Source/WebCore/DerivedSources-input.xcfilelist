@@ -443,7 +443,10 @@ $(PROJECT_DIR)/Modules/credentialmanagement/CredentialCreationOptions.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/CredentialMediationRequirement.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/CredentialRequestOptions.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/CredentialsContainer.idl
+$(PROJECT_DIR)/Modules/credentialmanagement/FederatedCredentialRequestOptions.idl
+$(PROJECT_DIR)/Modules/credentialmanagement/IdentityCredentialRequestOptions.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/Navigator+Credentials.idl
+$(PROJECT_DIR)/Modules/credentialmanagement/OTPCredentialRequestOptions.idl
 $(PROJECT_DIR)/Modules/encryptedmedia/MediaKeyEncryptionScheme.idl
 $(PROJECT_DIR)/Modules/encryptedmedia/MediaKeyMessageEvent.idl
 $(PROJECT_DIR)/Modules/encryptedmedia/MediaKeyMessageEventInit.idl
@@ -1142,8 +1145,8 @@ $(PROJECT_DIR)/Modules/webxr/WebXRRenderState+Layers.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRRenderState.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRRigidTransform.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRSession+AR.idl
-$(PROJECT_DIR)/Modules/webxr/WebXRSession+Layers.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRSession+HitTest.idl
+$(PROJECT_DIR)/Modules/webxr/WebXRSession+Layers.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRSession.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRSpace.idl
 $(PROJECT_DIR)/Modules/webxr/WebXRSystem.idl

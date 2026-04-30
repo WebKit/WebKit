@@ -244,10 +244,13 @@ static CGFloat rollAngleOrDefault(UITouch *touch, bool shouldReadRollAngle)
 {
     auto locationInWindow = [touch locationInView:nil];
     auto locationInRootView = [[self view] convertPoint:locationInWindow fromView:nil];
+    auto previousLocationInWindow = [touch previousLocationInView:nil];
+    auto previousLocationInRootView = [[self view] convertPoint:previousLocationInWindow fromView:nil];
     RetainPtr contentView = [self contentView];
 
     WebKit::WKTouchPoint touchPoint;
     touchPoint.locationInRootViewCoordinates = locationInRootView;
+    touchPoint.previousLocationInRootViewCoordinates = previousLocationInRootView;
     touchPoint.locationInViewport = mapRootViewToViewport(locationInRootView, contentView.get());
     touchPoint.identifier = parentTouchPoint.identifier;
     touchPoint.phase = touch.phase;
@@ -328,7 +331,10 @@ static CGFloat rollAngleOrDefault(UITouch *touch, bool shouldReadRollAngle)
         auto& touchPoint = _lastTouchEvent.touchPoints[touchIndex];
         auto locationInWindow = [touch locationInView:nil];
         auto locationInRootView = [[self view] convertPoint:locationInWindow fromView:nil];
+        auto previousLocationInWindow = [touch previousLocationInView:nil];
+        auto previousLocationInRootView = [[self view] convertPoint:previousLocationInWindow fromView:nil];
         touchPoint.locationInRootViewCoordinates = locationInRootView;
+        touchPoint.previousLocationInRootViewCoordinates = previousLocationInRootView;
         touchPoint.locationInViewport = mapRootViewToViewport(locationInRootView, contentView.get());
         touchPoint.identifier = [associatedIdentifier unsignedIntValue];
         touchPoint.phase = touch.phase;

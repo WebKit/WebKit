@@ -62,7 +62,8 @@ extension WKStageModeInteractionDriver {
 
     // MARK: ObjC Exposed API
     var interactionContainerRef: REEntityRef {
-        interactionContainer.coreEntity
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=313180
+        unsafe interactionContainer.coreEntity
     }
 
     var stageModeInteractionInProgress: Bool {
@@ -77,7 +78,8 @@ extension WKStageModeInteractionDriver {
         self.turntableInteractionContainer.name = "WebKit:TurntableContainerEntity"
         self.delegate = delegate
 
-        let containerEntity = Entity.fromCore(container)
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=313180
+        let containerEntity = unsafe Entity.fromCore(container)
         self.interactionContainer.setParent(containerEntity, preservingWorldTransform: true)
         self.turntableInteractionContainer.setPosition(self.interactionContainer.position(relativeTo: nil), relativeTo: nil)
         self.turntableInteractionContainer.setParent(self.interactionContainer, preservingWorldTransform: true)
@@ -86,7 +88,8 @@ extension WKStageModeInteractionDriver {
     func setContainerTransformInPortal() {
         // Configure entity hierarchy after we have correctly positioned the model
         interactionContainer.setPosition(modelEntity.interactionPivotPoint, relativeTo: nil)
-        modelEntity.setParentCore(turntableInteractionContainer.coreEntity, preservingWorldTransform: true)
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=313180
+        unsafe modelEntity.setParentCore(turntableInteractionContainer.coreEntity, preservingWorldTransform: true)
     }
 
     func removeInteractionContainerFromSceneOrParent() {
@@ -159,10 +162,12 @@ extension WKStageModeInteractionDriver {
 
     private func applySimulatorState() {
         let pitchRotation = Rotation3D(angle: .init(radians: simulator.currentPitch), axis: .x)
-        interactionContainer.orientation = pitchRotation.quaternion.quatf
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=313180
+        interactionContainer.orientation = unsafe pitchRotation.quaternion.quatf
 
         let yawRotation = Rotation3D(angle: .init(radians: simulator.currentYaw), axis: .y)
-        turntableInteractionContainer.orientation = yawRotation.quaternion.quatf
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=313180
+        turntableInteractionContainer.orientation = unsafe yawRotation.quaternion.quatf
     }
 }
 

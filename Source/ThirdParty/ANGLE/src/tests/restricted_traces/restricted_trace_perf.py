@@ -271,6 +271,8 @@ def run_trace(trace, args, screenshot_device_dir):
         flags += ['--fixed-test-time-with-warmup', args.fixedtime]
     if args.minimizegpuwork:
         flags.append('--minimize-gpu-work')
+    if args.skip_blit_in_offscreen:
+        flags.append('--skip-blit-in-offscreen')
     if screenshot_device_dir != None:
         flags += ['--screenshot-dir', screenshot_device_dir]
     if args.screenshot_frame != '':
@@ -1899,6 +1901,11 @@ def main():
     parser.add_argument(
         '--minimizegpuwork',
         help='Whether to run with minimized GPU work',
+        action='store_true',
+        default=False)
+    parser.add_argument(
+        '--skip-blit-in-offscreen',
+        help='skip blit operation in offscreen mode',
         action='store_true',
         default=False)
     parser.add_argument('--output-tag', help='Tag for output files.')

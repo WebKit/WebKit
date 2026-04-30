@@ -38,6 +38,10 @@
 #include <sys/sysctl.h>
 #endif
 
+#if OS(WINDOWS)
+#include <processthreadsapi.h>
+#endif
+
 #if OS(LINUX)
 #include <asm/hwcap.h>
 #if __has_include(<sys/auxv.h>)
@@ -675,6 +679,34 @@ void MacroAssemblerARM64::collectCPUFeatures()
         s_frintCheckState = checkCPU("hw.optional.arm.FEAT_FRINTTS");
         s_sha3CheckState = checkCPU("hw.optional.arm.FEAT_SHA3");
         s_dotProdCheckState = checkCPU("hw.optional.arm.FEAT_DotProd");
+    });
+#endif
+
+#if OS(WINDOWS)
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [] {
+        // https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-isprocessorfeaturepresent
+#if !defined(PF_ARM_V81_ATOMIC_INSTRUCTIONS_AVAILABLE)
+#define PF_ARM_V81_ATOMIC_INSTRUCTIONS_AVAILABLE 34
+#endif
+#if !defined(PF_ARM_V82_DP_INSTRUCTIONS_AVAILABLE)
+#define PF_ARM_V82_DP_INSTRUCTIONS_AVAILABLE 43
+#endif
+#if !defined(PF_ARM_V83_JSCVT_INSTRUCTIONS_AVAILABLE)
+#define PF_ARM_V83_JSCVT_INSTRUCTIONS_AVAILABLE 44
+#endif
+#if !defined(PF_ARM_SHA3_INSTRUCTIONS_AVAILABLE)
+#define PF_ARM_SHA3_INSTRUCTIONS_AVAILABLE 64
+#endif
+#if !defined(PF_ARM_V82_FP16_INSTRUCTIONS_AVAILABLE)
+#define PF_ARM_V82_FP16_INSTRUCTIONS_AVAILABLE 67
+#endif
+        s_lseCheckState = IsProcessorFeaturePresent(PF_ARM_V81_ATOMIC_INSTRUCTIONS_AVAILABLE) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+        s_jscvtCheckState = IsProcessorFeaturePresent(PF_ARM_V83_JSCVT_INSTRUCTIONS_AVAILABLE) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+        s_float16CheckState = IsProcessorFeaturePresent(PF_ARM_V82_FP16_INSTRUCTIONS_AVAILABLE) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+        s_sha3CheckState = IsProcessorFeaturePresent(PF_ARM_SHA3_INSTRUCTIONS_AVAILABLE) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+        s_dotProdCheckState = IsProcessorFeaturePresent(PF_ARM_V82_DP_INSTRUCTIONS_AVAILABLE) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+        // FRINT has no Windows PF_ constant for now.
     });
 #endif
 

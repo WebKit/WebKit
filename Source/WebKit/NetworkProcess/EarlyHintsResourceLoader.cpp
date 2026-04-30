@@ -31,6 +31,7 @@
 #include "PreconnectTask.h"
 #include "WebPageMessages.h"
 #include <WebCore/ContentSecurityPolicy.h>
+#include <WebCore/HTTPStatusCodes.h>
 #include <WebCore/LinkHeader.h>
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
@@ -65,7 +66,7 @@ void EarlyHintsResourceLoader::enqueueSecurityPolicyViolationEvent(SecurityPolic
 
 void EarlyHintsResourceLoader::handleEarlyHintsResponse(ResourceResponse&& response)
 {
-    RELEASE_ASSERT(response.httpStatusCode() == 103);
+    RELEASE_ASSERT(response.httpStatusCode() == httpStatus103EarlyHints);
 
     if (!m_loader)
         return;

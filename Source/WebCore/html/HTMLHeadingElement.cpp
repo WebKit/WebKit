@@ -40,6 +40,8 @@ Ref<HTMLHeadingElement> HTMLHeadingElement::create(const QualifiedName& tagName,
     return adoptRef(*new HTMLHeadingElement(tagName, document));
 }
 
+HTMLHeadingElement::~HTMLHeadingElement() = default;
+
 unsigned HTMLHeadingElement::level() const
 {
     auto& tag = tagQName();

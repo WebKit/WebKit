@@ -25,10 +25,10 @@
 
 #pragma once
 
-#include "LoaderMalloc.h"
-#include "NetworkLoadMetrics.h"
-#include "ResourceLoadTiming.h"
-#include "ServerTiming.h"
+#include <WebCore/LoaderMalloc.h>
+#include <WebCore/NetworkLoadMetrics.h>
+#include <WebCore/ResourceLoadTiming.h>
+#include <WebCore/ServerTiming.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -53,6 +53,7 @@ public:
     const NetworkLoadMetrics& networkLoadMetrics() const LIFETIME_BOUND { return m_networkLoadMetrics; }
     NetworkLoadMetrics& networkLoadMetrics() LIFETIME_BOUND { return m_networkLoadMetrics; }
     Vector<Ref<PerformanceServerTiming>> populateServerTiming() const;
+    const Vector<ServerTiming>& serverTiming() const LIFETIME_BOUND { return m_serverTiming; }
     bool isSameOriginRequest() const { return m_isSameOriginRequest; }
     ResourceTiming isolatedCopy() const &;
     ResourceTiming isolatedCopy() &&;
@@ -61,16 +62,10 @@ public:
     void overrideInitiatorType(const String& type) { m_initiatorType = type; }
     bool isLoadedFromServiceWorker() const { return m_isLoadedFromServiceWorker; }
 
+    WEBCORE_EXPORT ResourceTiming(URL&&, String&& initiatorType, ResourceLoadTiming&&, NetworkLoadMetrics&&, Vector<ServerTiming>&&, bool isLoadedFromServiceWorker, bool isSameOriginRequest);
+
 private:
     ResourceTiming(const URL&, const String& initiator, const ResourceLoadTiming&, const NetworkLoadMetrics&, const ResourceResponse&, const SecurityOrigin&);
-    ResourceTiming(URL&& url, String&& initiatorType, const ResourceLoadTiming& resourceLoadTiming, NetworkLoadMetrics&& networkLoadMetrics, Vector<ServerTiming>&& serverTiming)
-        : m_url(WTF::move(url))
-        , m_initiatorType(WTF::move(initiatorType))
-        , m_resourceLoadTiming(resourceLoadTiming)
-        , m_networkLoadMetrics(WTF::move(networkLoadMetrics))
-        , m_serverTiming(WTF::move(serverTiming))
-    {
-    }
 
     URL m_url;
     String m_initiatorType;

@@ -239,9 +239,12 @@ AccessibilityObject* AccessibilityNodeObject::nextSibling() const
 
 AccessibilityObject* AccessibilityNodeObject::ownerParentObject() const
 {
+    if (!anyObjectHasAriaOwns())
+        return nullptr;
+
     auto owners = this->owners();
     AX_ASSERT(owners.size() <= 1);
-    return owners.size() ? dynamicDowncast<AccessibilityObject>(owners.first().get()) : nullptr;
+    return owners.size() ? dynamicDowncast<AccessibilityObject>(owners.first().unsafeGet()) : nullptr;
 }
 
 AccessibilityObject* AccessibilityNodeObject::parentObject() const
@@ -362,6 +365,14 @@ LayoutRect AccessibilityNodeObject::boundingBoxRect() const
 
         if (!contentsRect.isEmpty())
             return contentsRect;
+    }
+
+    // If the geometry manager has a cached rect for this object (e.g., from
+    // drawFocusIfNeeded for canvas fallback elements), use it directly. The
+    // cached rect is already in document-relative coordinates.
+    if (CheckedPtr cache = axObjectCache()) {
+        if (std::optional cachedRect = cache->cachedBoundsForID(objectID()))
+            return LayoutRect(*cachedRect);
     }
 
     // Non-display:contents AccessibilityNodeObjects have no mechanism to return a size or position.
@@ -3117,7 +3128,7 @@ void AccessibilityNodeObject::setColumnIndex(unsigned index)
 AccessibilityNodeObject* AccessibilityNodeObject::parentRow() const
 {
     RefPtr parent = isTableCell() ? parentObjectUnignored() : nullptr;
-    return parent && parent->isExposedTableRow() ? dynamicDowncast<AccessibilityRenderObject>(parent.get()) : nullptr;
+    return parent && parent->isExposedTableRow() ? dynamicDowncast<AccessibilityRenderObject>(parent.unsafeGet()) : nullptr;
 }
 
 #if USE(ATSPI)

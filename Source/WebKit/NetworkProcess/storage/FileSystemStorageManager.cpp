@@ -29,6 +29,7 @@
 #include "FileSystemStorageError.h"
 #include "FileSystemStorageHandleRegistry.h"
 #include "WebFileSystemStorageConnectionMessages.h"
+#include <wtf/FileSystem.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -202,6 +203,18 @@ bool FileSystemStorageManager::releaseLockForFile(const String& path)
     }
     m_lockMap.remove(iterator);
     return true;
+}
+
+bool FileSystemStorageManager::hasActiveLock(const String& path) const
+{
+    auto prefix = makeString(path, FileSystem::pathSeparator);
+    for (auto& [lockedPath, lock] : m_lockMap) {
+        if (lock.state == Lock::State::Open)
+            continue;
+        if (lockedPath == path || lockedPath.startsWith(prefix))
+            return true;
+    }
+    return false;
 }
 
 void FileSystemStorageManager::close()

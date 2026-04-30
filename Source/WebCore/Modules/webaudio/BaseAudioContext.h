@@ -206,6 +206,9 @@ public:
     // In AudioNode::decrementConnectionCount() a tryLock() is used for calling decrementConnectionCountWithLock(), but if it fails keep track here.
     void addDeferredDecrementConnectionCount(AudioNode*);
 
+    // In AudioNode::deref() a tryLock() is used for calling derefWithLock(), but if it fails keep track here.
+    void addDeferredDeref(const AudioNode*);
+
     // Only accessed when the graph lock is held.
     void markSummingJunctionDirty(AudioSummingJunction*);
     void markAudioNodeOutputDirty(AudioNodeOutput*);
@@ -274,6 +277,7 @@ private:
 
     // In the audio thread at the start of each render cycle, we'll call handleDeferredDecrementConnectionCounts().
     void handleDeferredDecrementConnectionCounts();
+    void handleDeferredDerefs();
 
     // EventTarget
     enum EventTargetInterfaceType eventTargetInterface() const final;
@@ -360,6 +364,7 @@ private:
     Vector<CheckedPtr<AudioNode>> m_renderingAutomaticPullNodes;
     // Only accessed in the audio thread.
     Vector<CheckedPtr<AudioNode>> m_deferredBreakConnectionList;
+    Vector<CheckedPtr<AudioNode>> m_deferredDerefList;
     Vector<Vector<DOMPromiseDeferred<void>>> m_stateReactions;
 
     const Ref<AudioListener> m_listener;

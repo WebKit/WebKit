@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="match" href="deep-nesting-with-transforms-expected.html">
+<meta name="fuzzy" content="maxDifference=0-5; totalPixels=0-64" />
+<style>body { margin: 0; }</style>
+</head>
+<body>
+<!-- Tests deeply nested containers where transforms exist at various levels,
+     creating layers at different depths. Non-layer children at each level
+     must interleave correctly with their layered siblings.
+     Shapes deliberately overlap so paint order is visually verifiable. -->
+<svg width="400" height="200" viewBox="0 0 400 200">
+  <g>
+    <rect x="5" y="5" width="390" height="190" fill="#f8f9fa" rx="5"/>
+
+    <g style="transform: translate(10px, 10px);">
+      <rect x="0" y="0" width="170" height="170" fill="#dee2e6" rx="3"/>
+
+      <g>
+        <rect x="10" y="10" width="80" height="80" fill="#ff6b6b"/>
+        <rect x="50" y="30" width="80" height="80" fill="#51cf66" style="transform: rotate(-5deg);"/>
+        <rect x="10" y="70" width="80" height="80" fill="#339af0"/>
+        <rect x="50" y="90" width="80" height="80" fill="#fcc419" style="transform: rotate(5deg);"/>
+      </g>
+    </g>
+
+    <g style="transform: translate(200px, 10px);">
+      <rect x="0" y="0" width="170" height="170" fill="#e9ecef" rx="3"/>
+      <rect x="10" y="10" width="80" height="80" fill="#845ef7"/>
+      <rect x="50" y="30" width="80" height="80" fill="#20c997" style="transform: rotate(-3deg);"/>
+      <rect x="10" y="70" width="80" height="80" fill="#f06595"/>
+      <rect x="50" y="90" width="80" height="80" fill="#fab005" style="transform: rotate(3deg);"/>
+    </g>
+  </g>
+</svg>
+</body>
+</html>

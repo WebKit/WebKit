@@ -32,3 +32,8 @@ SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, OTSVG)
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, OTSVG, OTSVGTableCreateFromData, OTSVGTableRef, (CFDataRef svgTable, unsigned unitsPerEm, CGFloat fontSize), (svgTable, unitsPerEm, fontSize))
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, OTSVG, OTSVGTableGetDocumentIndexForGlyph, CFIndex, (OTSVGTableRef table, CGGlyph glyph), (table, glyph))
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, OTSVG, OTSVGTableRelease, void, (OTSVGTableRef table), (table))
+
+#if HAVE(CORE_TEXT_GLYPHHASCOMPLEXCOLOR_FUNCTION)
+SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, CoreText)
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, CoreText, CTFontHasComplexColorFormatForGlyph, bool, (CTFontRef font, CGGlyph glyph), (font, glyph))
+#endif

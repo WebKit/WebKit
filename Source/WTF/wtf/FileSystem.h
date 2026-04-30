@@ -130,6 +130,7 @@ WTF_EXPORT_PRIVATE bool setExcludedFromBackup(const String&, bool); // Returns t
 WTF_EXPORT_PRIVATE bool markPurgeable(const String&);
 
 WTF_EXPORT_PRIVATE Vector<String> listDirectory(const String& path); // Returns file names, not full paths.
+WTF_EXPORT_PRIVATE void traverseDirectory(const String& path, NOESCAPE const Function<void(const String& fileName, FileType)>&);
 
 WTF_EXPORT_PRIVATE CString fileSystemRepresentation(const String&);
 #if !PLATFORM(WIN)

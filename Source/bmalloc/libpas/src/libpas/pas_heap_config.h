@@ -54,14 +54,12 @@ struct pas_heap_config;
 struct pas_heap_runtime_config;
 struct pas_heap_type;
 struct pas_large_heap;
-struct pas_segregated_shared_page_directory;
 struct pas_stream;
 typedef struct pas_heap pas_heap;
 typedef struct pas_heap_config pas_heap_config;
 typedef struct pas_heap_runtime_config pas_heap_runtime_config;
 typedef struct pas_heap_type pas_heap_type;
 typedef struct pas_large_heap pas_large_heap;
-typedef struct pas_segregated_shared_page_directory pas_segregated_shared_page_directory;
 typedef struct pas_stream pas_stream;
 
 typedef void (*pas_heap_config_activate_callback)(void);
@@ -77,19 +75,6 @@ typedef pas_aligned_allocation_result (*pas_heap_config_aligned_allocator)(
     pas_large_heap* large_heap,
     const pas_heap_config* config);
 typedef void* (*pas_heap_config_prepare_to_enumerate)(pas_enumerator* enumerator);
-typedef bool (*pas_heap_config_for_each_shared_page_directory)(
-    pas_segregated_heap* heap,
-    bool (*callback)(pas_segregated_shared_page_directory* directory, void* arg),
-    void* arg);
-typedef bool (*pas_heap_config_for_each_shared_page_directory_remote)(
-    pas_enumerator* enumerator,
-    pas_segregated_heap* heap,
-    bool (*callback)(pas_enumerator* enumerator,
-                     pas_segregated_shared_page_directory* directory,
-                     void* arg),
-    void* arg);
-typedef void (*pas_heap_config_dump_shared_page_directory_arg)(
-    pas_stream* stream, pas_segregated_shared_page_directory* directory);
 
 typedef pas_allocation_result
 (*pas_heap_config_specialized_local_allocator_try_allocate_small_segregated_slow)(
@@ -188,12 +173,6 @@ struct pas_heap_config {
 
     /* The enumerator uses this to prepare itself for enumerating the active heap config. */
     pas_heap_config_prepare_to_enumerate prepare_to_enumerate;
-
-    /* Gives you a way to iterate over the shared page directories that a heap uses. Note that multiple
-       heaps may have the same shared page directories. */
-    pas_heap_config_for_each_shared_page_directory for_each_shared_page_directory;
-    pas_heap_config_for_each_shared_page_directory_remote for_each_shared_page_directory_remote;
-    pas_heap_config_dump_shared_page_directory_arg dump_shared_page_directory_arg;
 
     pas_heap_config_specialized_local_allocator_try_allocate_small_segregated_slow specialized_local_allocator_try_allocate_small_segregated_slow;
     pas_heap_config_specialized_local_allocator_try_allocate_medium_segregated_with_free_bits specialized_local_allocator_try_allocate_medium_segregated_with_free_bits;

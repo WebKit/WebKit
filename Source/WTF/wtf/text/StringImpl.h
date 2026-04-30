@@ -228,12 +228,14 @@ private:
     static constexpr const unsigned s_hashFlag8BitBuffer = 1u << 2;
     static constexpr const unsigned s_hashMaskBufferOwnership = (1u << 0) | (1u << 1);
 
+public:
     enum StringKind {
         StringNormal = 0u, // non-symbol, non-atomic
         StringAtom = s_hashFlagStringKindIsAtom, // non-symbol, atomic
         StringSymbol = s_hashFlagStringKindIsSymbol, // symbol, non-atomic
     };
 
+private:
     // Create a normal 8-bit string with internal storage (BufferInternal).
     enum Force8Bit { Force8BitConstructor };
     StringImpl(unsigned length, Force8Bit);
@@ -729,11 +731,17 @@ template<typename CharacterType> inline size_t reverseFind(std::span<const Chara
         return notFound;
     if (start >= characters.size())
         start = characters.size() - 1;
-    while (characters[start] != matchCharacter) {
-        if (!start--)
-            return notFound;
-    }
-    return start;
+    size_t searchLength = start + 1;
+    const CharacterType* result;
+    if constexpr (sizeof(CharacterType) == 1)
+        result = std::bit_cast<const CharacterType*>(reverseFind8(std::bit_cast<const uint8_t*>(characters.data()), static_cast<uint8_t>(matchCharacter), searchLength));
+    else if constexpr (sizeof(CharacterType) == 2)
+        result = std::bit_cast<const CharacterType*>(reverseFind16(std::bit_cast<const uint16_t*>(characters.data()), static_cast<uint16_t>(matchCharacter), searchLength));
+    else
+        result = std::bit_cast<const CharacterType*>(reverseFind32(std::bit_cast<const uint32_t*>(characters.data()), static_cast<uint32_t>(matchCharacter), searchLength));
+    if (!result)
+        return notFound;
+    return result - characters.data();
 }
 
 ALWAYS_INLINE size_t reverseFind(std::span<const char16_t> characters, Latin1Character matchCharacter, size_t start)
@@ -1477,7 +1485,7 @@ inline Expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8Conver
         return makeUnexpected(UTF8ConversionError::OutOfMemory);
 
     size_t bufferSize = characters.size() * 3;
-    bufferVector.grow(bufferSize);
+    bufferVector.resize(bufferSize);
     auto convertedSize = utf8ForCharactersIntoBuffer(characters, mode, bufferVector);
     if (!convertedSize)
         return makeUnexpected(convertedSize.error());

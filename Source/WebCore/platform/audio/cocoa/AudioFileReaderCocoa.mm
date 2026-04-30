@@ -482,7 +482,7 @@ std::unique_ptr<AudioFileReaderData> AudioFileReader::demuxWebMData(std::span<co
     parser->setDidParseInitializationDataCallback([&](SourceBufferParserWebM::InitializationSegment&& init) {
         for (auto& audioTrack : init.audioTracks) {
             if (audioTrack.track) {
-                audioTrackId = RefPtr { audioTrack.track }->id();
+                audioTrackId = protect(audioTrack.track)->id();
                 // FIXME: Use downcast instead.
                 track = unsafeRefPtrDowncast<AudioTrackPrivateWebM>(audioTrack.track);
                 return;

@@ -1518,7 +1518,7 @@ private:
     bool m_forceStereoDecoding { false };
 
     using ScreenPropertiesChangedObserver = Observer<void(PlatformDisplayID)>;
-    Ref<ScreenPropertiesChangedObserver> m_screenPropertiesChangedObserver;
+    RefPtr<ScreenPropertiesChangedObserver> m_screenPropertiesChangedObserver;
 
 #if PLATFORM(MAC)
     bool m_screenReserved { false };

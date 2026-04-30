@@ -46,6 +46,7 @@ typedef struct _GstWebRTCRTPTransceiver GstWebRTCRTPTransceiver;
 typedef struct _GstRTPHeaderExtension GstRTPHeaderExtension;
 typedef struct _GstWebRTCICE GstWebRTCICE;
 typedef struct _GstWebRTCICEStream GstWebRTCICEStream;
+typedef struct _GstWebRTCSCTPTransport GstWebRTCSCTPTransport;
 
 #endif // USE(GSTREAMER_WEBRTC)
 
@@ -65,15 +66,15 @@ WTF_DEFINE_GREF_TRAITS_INLINE(GstBufferPool, gst_object_ref_sink, gst_object_unr
 WTF_DEFINE_GREF_TRAITS_INLINE(WebKitVideoSink, gst_object_ref_sink, gst_object_unref, g_object_is_floating)
 WTF_DEFINE_GREF_TRAITS_INLINE(WebKitWebSrc, gst_object_ref_sink, gst_object_unref, g_object_is_floating)
 
-WTF_DEFINE_GREF_TRAITS_INLINE(GstObject, gst_object_ref, gst_object_unref, g_object_is_floating)
-WTF_DEFINE_GREF_TRAITS_INLINE(GstStream, gst_object_ref, gst_object_unref, g_object_is_floating)
-WTF_DEFINE_GREF_TRAITS_INLINE(GstStreamCollection, gst_object_ref, gst_object_unref, g_object_is_floating)
-WTF_DEFINE_GREF_TRAITS_INLINE(GstClock, gst_object_ref, gst_object_unref, g_object_is_floating)
-WTF_DEFINE_GREF_TRAITS_INLINE(GstDeviceMonitor, gst_object_ref, gst_object_unref, g_object_is_floating)
-WTF_DEFINE_GREF_TRAITS_INLINE(GstDeviceProvider, gst_object_ref, gst_object_unref, g_object_is_floating)
-WTF_DEFINE_GREF_TRAITS_INLINE(GstDeviceProviderFactory, gst_object_ref, gst_object_unref, g_object_is_floating)
-WTF_DEFINE_GREF_TRAITS_INLINE(GstDevice, gst_object_ref, gst_object_unref, g_object_is_floating)
-WTF_DEFINE_GREF_TRAITS_INLINE(GstTracer, gst_object_ref, gst_object_unref, g_object_is_floating)
+WTF_DEFINE_GREF_TRAITS_INLINE_ASSERT_ON_FLOATING_REF(GstObject, gst_object_ref_sink, gst_object_unref, g_object_is_floating, true)
+WTF_DEFINE_GREF_TRAITS_INLINE_ASSERT_ON_FLOATING_REF(GstStream, gst_object_ref_sink, gst_object_unref, g_object_is_floating, true)
+WTF_DEFINE_GREF_TRAITS_INLINE_ASSERT_ON_FLOATING_REF(GstStreamCollection, gst_object_ref_sink, gst_object_unref, g_object_is_floating, true)
+WTF_DEFINE_GREF_TRAITS_INLINE_ASSERT_ON_FLOATING_REF(GstClock, gst_object_ref_sink, gst_object_unref, g_object_is_floating, true)
+WTF_DEFINE_GREF_TRAITS_INLINE_ASSERT_ON_FLOATING_REF(GstDeviceMonitor, gst_object_ref_sink, gst_object_unref, g_object_is_floating, true)
+WTF_DEFINE_GREF_TRAITS_INLINE_ASSERT_ON_FLOATING_REF(GstDeviceProvider, gst_object_ref_sink, gst_object_unref, g_object_is_floating, true)
+WTF_DEFINE_GREF_TRAITS_INLINE_ASSERT_ON_FLOATING_REF(GstDeviceProviderFactory, gst_object_ref_sink, gst_object_unref, g_object_is_floating, true)
+WTF_DEFINE_GREF_TRAITS_INLINE_ASSERT_ON_FLOATING_REF(GstDevice, gst_object_ref_sink, gst_object_unref, g_object_is_floating, true)
+WTF_DEFINE_GREF_TRAITS_INLINE_ASSERT_ON_FLOATING_REF(GstTracer, gst_object_ref_sink, gst_object_unref, g_object_is_floating, true)
 
 WTF_DEFINE_GREF_TRAITS_INLINE(GstCaps, gst_caps_ref, gst_caps_unref)
 WTF_DEFINE_GREF_TRAITS_INLINE(GstContext, gst_context_ref, gst_context_unref)
@@ -97,14 +98,21 @@ WTF_DECLARE_GREF_TRAITS(GstEGLImage)
 #endif
 
 #if USE(GSTREAMER_WEBRTC)
-WTF_DEFINE_GREF_TRAITS_INLINE(GstWebRTCRTPReceiver, gst_object_ref, gst_object_unref, g_object_is_floating)
-WTF_DEFINE_GREF_TRAITS_INLINE(GstWebRTCRTPSender, gst_object_ref, gst_object_unref, g_object_is_floating)
-WTF_DEFINE_GREF_TRAITS_INLINE(GstWebRTCRTPTransceiver, gst_object_ref, gst_object_unref, g_object_is_floating)
-WTF_DEFINE_GREF_TRAITS_INLINE(GstWebRTCDTLSTransport, gst_object_ref, gst_object_unref, g_object_is_floating)
-WTF_DEFINE_GREF_TRAITS_INLINE(GstWebRTCICETransport, gst_object_ref, gst_object_unref, g_object_is_floating)
-WTF_DEFINE_GREF_TRAITS_INLINE(GstWebRTCICEStream, gst_object_ref, gst_object_unref, g_object_is_floating)
-WTF_DEFINE_GREF_TRAITS_INLINE(GstRTPHeaderExtension, gst_object_ref, gst_object_unref, g_object_is_floating)
-WTF_DEFINE_GREF_TRAITS_INLINE(GstWebRTCICE, gst_object_ref, gst_object_unref, g_object_is_floating)
+WTF_DEFINE_GREF_TRAITS_INLINE_ASSERT_ON_FLOATING_REF(GstWebRTCRTPReceiver, gst_object_ref_sink, gst_object_unref, g_object_is_floating, true)
+WTF_DEFINE_GREF_TRAITS_INLINE_ASSERT_ON_FLOATING_REF(GstWebRTCRTPSender, gst_object_ref_sink, gst_object_unref, g_object_is_floating, true)
+WTF_DEFINE_GREF_TRAITS_INLINE_ASSERT_ON_FLOATING_REF(GstWebRTCRTPTransceiver, gst_object_ref_sink, gst_object_unref, g_object_is_floating, true)
+#if GST_CHECK_VERSION(1, 28, 1)
+WTF_DEFINE_GREF_TRAITS_INLINE_ASSERT_ON_FLOATING_REF(GstWebRTCDTLSTransport, gst_object_ref_sink, gst_object_unref, g_object_is_floating, true)
+WTF_DEFINE_GREF_TRAITS_INLINE_ASSERT_ON_FLOATING_REF(GstWebRTCICETransport, gst_object_ref_sink, gst_object_unref, g_object_is_floating, true)
+WTF_DEFINE_GREF_TRAITS_INLINE_ASSERT_ON_FLOATING_REF(GstWebRTCSCTPTransport, gst_object_ref_sink, gst_object_unref, g_object_is_floating, true)
+#else
+WTF_DEFINE_GREF_TRAITS_INLINE(GstWebRTCDTLSTransport, gst_object_ref, gst_object_unref)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstWebRTCICETransport, gst_object_ref, gst_object_unref)
+WTF_DEFINE_GREF_TRAITS_INLINE(GstWebRTCSCTPTransport, gst_object_ref, gst_object_unref)
+#endif
+WTF_DEFINE_GREF_TRAITS_INLINE_ASSERT_ON_FLOATING_REF(GstWebRTCICEStream, gst_object_ref_sink, gst_object_unref, g_object_is_floating, true)
+WTF_DEFINE_GREF_TRAITS_INLINE_ASSERT_ON_FLOATING_REF(GstRTPHeaderExtension, gst_object_ref_sink, gst_object_unref, g_object_is_floating, true)
+WTF_DEFINE_GREF_TRAITS_INLINE_ASSERT_ON_FLOATING_REF(GstWebRTCICE, gst_object_ref_sink, gst_object_unref, g_object_is_floating, true)
 
 WTF_DEFINE_GREF_TRAITS_INLINE(GstPromise, gst_promise_ref, gst_promise_unref)
 

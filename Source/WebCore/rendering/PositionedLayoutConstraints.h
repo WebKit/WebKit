@@ -95,6 +95,8 @@ public:
 
 private:
     bool NODELETE containingCoordsAreFlipped() const;
+    bool isOrthogonalToContainingBlockWithFlippedParent() const;
+    bool isParentOpposingContainingBlock() const;
 
     void captureInsets();
     void captureGridArea();
@@ -111,6 +113,7 @@ private:
     CheckedRef<const RenderBox> m_renderer;
     CheckedPtr<const RenderBoxModelObject> m_container;
     const WritingMode m_containingWritingMode;
+    const WritingMode m_parentWritingMode;
     const WritingMode m_writingMode;
     const LogicalBoxAxis m_selfAxis;
     const LogicalBoxAxis m_containingAxis;

@@ -33,30 +33,13 @@
 PAS_BEGIN_EXTERN_C;
 
 #define PAS_SEGREGATED_PAGE_CONFIG_TLC_SPECIALIZATION_DEFINITIONS(lower_case_page_config_name, page_config_value) \
-    PAS_NEVER_INLINE pas_allocation_result \
-    lower_case_page_config_name ## _specialized_local_allocator_try_allocate_in_primordial_partial_view( \
-        pas_local_allocator* allocator, pas_allocation_mode allocation_mode) \
-    { \
-        return pas_local_allocator_try_allocate_in_primordial_partial_view( \
-            allocator, allocation_mode, (page_config_value)); \
-    } \
-    \
-    PAS_NEVER_INLINE bool lower_case_page_config_name ## _specialized_local_allocator_start_allocating_in_primordial_partial_view( \
-        pas_local_allocator* allocator, \
-        pas_allocation_mode allocation_mode, \
-        pas_segregated_partial_view* partial, \
-        pas_segregated_size_directory* size_directory) \
-    { \
-        return pas_local_allocator_start_allocating_in_primordial_partial_view( \
-            allocator, allocation_mode, partial, size_directory, (page_config_value)); \
-    } \
-    \
     PAS_NEVER_INLINE bool lower_case_page_config_name ## _specialized_local_allocator_refill( \
         pas_local_allocator* allocator, \
         pas_allocation_mode allocation_mode, \
         pas_allocator_counts* counts) \
     { \
-        return pas_local_allocator_refill_with_known_config(allocator, allocation_mode, counts, (page_config_value)); \
+        PAS_UNUSED_PARAM(allocation_mode); \
+        return pas_local_allocator_refill_with_known_config(allocator, counts, (page_config_value)); \
     } \
     \
     void lower_case_page_config_name ## _specialized_local_allocator_return_memory_to_page( \
@@ -66,8 +49,9 @@ PAS_BEGIN_EXTERN_C;
         pas_segregated_size_directory* directory, \
         pas_lock_hold_mode heap_lock_hold_mode) \
     { \
+        PAS_UNUSED_PARAM(heap_lock_hold_mode); \
         pas_local_allocator_return_memory_to_page( \
-            allocator, view, page, directory, heap_lock_hold_mode, (page_config_value)); \
+            allocator, view, page, directory, (page_config_value)); \
     } \
     \
     struct pas_dummy

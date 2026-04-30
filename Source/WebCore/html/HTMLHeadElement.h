@@ -34,6 +34,8 @@ public:
     static Ref<HTMLHeadElement> create(Document&);
     static Ref<HTMLHeadElement> create(const QualifiedName&, Document&);
 
+    ~HTMLHeadElement();
+
 private:
     HTMLHeadElement(const QualifiedName&, Document&);
 };

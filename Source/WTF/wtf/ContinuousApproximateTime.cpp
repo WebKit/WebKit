@@ -37,20 +37,6 @@ ContinuousApproximateTime ContinuousApproximateTime::fromWallTime(WallTime wallT
     return now() + (wallTime - WallTime::now());
 }
 
-WallTime ContinuousApproximateTime::approximateWallTime() const
-{
-    if (isInfinity())
-        return WallTime::fromRawSeconds(m_value);
-    return *this - now() + WallTime::now();
-}
-
-MonotonicTime ContinuousApproximateTime::approximateMonotonicTime() const
-{
-    if (isInfinity())
-        return MonotonicTime::fromRawSeconds(m_value);
-    return *this - now() + MonotonicTime::now();
-}
-
 void ContinuousApproximateTime::dump(PrintStream& out) const
 {
     out.print("ContinuousApproximate(", m_value, " sec)");

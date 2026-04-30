@@ -21,6 +21,7 @@
 #pragma once
 
 #include "PropertyTable.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

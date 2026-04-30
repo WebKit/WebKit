@@ -56,17 +56,19 @@ public:
     };
 
     WebPlatformTouchPoint() = default;
-    WebPlatformTouchPoint(unsigned identifier, WebCore::DoublePoint locationInRootView, WebCore::DoublePoint locationInViewport, State phase)
+    WebPlatformTouchPoint(unsigned identifier, WebCore::DoublePoint locationInRootView, WebCore::DoublePoint previousLocationInRootView, WebCore::DoublePoint locationInViewport, State phase)
         : m_identifier(identifier)
         , m_locationInRootView(locationInRootView)
+        , m_previousLocationInRootView(previousLocationInRootView)
         , m_locationInViewport(locationInViewport)
         , m_phase(phase)
     {
     }
 #if ENABLE(IOS_TOUCH_EVENTS)
-    WebPlatformTouchPoint(unsigned identifier, WebCore::DoublePoint locationInRootView, WebCore::DoublePoint locationInViewport, State phase, double radiusX, double radiusY, double rotationAngle, double twist, double force, double altitudeAngle, double azimuthAngle, TouchType touchType)
+    WebPlatformTouchPoint(unsigned identifier, WebCore::DoublePoint locationInRootView, WebCore::DoublePoint previousLocationInRootView, WebCore::DoublePoint locationInViewport, State phase, double radiusX, double radiusY, double rotationAngle, double twist, double force, double altitudeAngle, double azimuthAngle, TouchType touchType)
         : m_identifier(identifier)
         , m_locationInRootView(locationInRootView)
+        , m_previousLocationInRootView(previousLocationInRootView)
         , m_locationInViewport(locationInViewport)
         , m_phase(phase)
         , m_radiusX(radiusX)
@@ -83,6 +85,7 @@ public:
 
     unsigned identifier() const { return m_identifier; }
     WebCore::DoublePoint locationInRootView() const { return m_locationInRootView; }
+    WebCore::DoublePoint previousLocationInRootView() const { return m_previousLocationInRootView; }
     WebCore::DoublePoint locationInViewport() const { return m_locationInViewport; }
     State phase() const { return m_phase; }
     State state() const { return phase(); }
@@ -112,6 +115,7 @@ public:
 private:
     unsigned m_identifier { 0 };
     WebCore::DoublePoint m_locationInRootView;
+    WebCore::DoublePoint m_previousLocationInRootView;
     WebCore::DoublePoint m_locationInViewport;
     State m_phase { State::Released };
 #if ENABLE(IOS_TOUCH_EVENTS)

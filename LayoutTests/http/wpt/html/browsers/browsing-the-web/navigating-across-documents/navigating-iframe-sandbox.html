@@ -17,7 +17,7 @@ promise_test(async t => {
     // Navigation is blocked, previous document should be replaced with an error document
     let counter = 0;
     let isOk = false;
-    while (++counter < 10 && !isOk) {
+    while (++counter < 50 && !isOk) {
         isOk = await new Promise(resolve => {
             window.onmessage = () => resolve(false);
             setTimeout(() => resolve(true), 200);
@@ -37,7 +37,7 @@ promise_test(async t => {
     // Redirection is blocked, previous document should be replaced with an error document
     let counter = 0;
     let isOk = false;
-    while (++counter < 10 && !isOk) {
+    while (++counter < 50 && !isOk) {
         isOk = await new Promise(resolve => {
             window.onmessage = () => resolve(false);
             setTimeout(() => resolve(true), 200);

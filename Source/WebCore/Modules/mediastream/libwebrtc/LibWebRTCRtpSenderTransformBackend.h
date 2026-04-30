@@ -45,6 +45,7 @@ private:
     // RTCRtpTransformBackend
     void setTransformableFrameCallback(Callback&&) final;
     bool requestKeyFrame(const String&) final;
+    void detachFromOwningBackend() final;
 
     bool m_isRegistered { false };
     const Ref<webrtc::RtpSenderInterface> m_rtcSender;

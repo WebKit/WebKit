@@ -155,7 +155,7 @@ void RemoteAudioVideoRendererProxyManager::create(RemoteAudioVideoRendererIdenti
             protectedThis->m_gpuConnectionToWebProcess.get()->connection().send(Messages::AudioVideoRendererRemoteMessageReceiver::EffectiveRateChanged(protectedThis->stateFor(identifier)), identifier);
     });
 
-    context.renderer->setTimeObserver(100_ms, [weakThis = WeakPtr { *this }, identifier](const MediaTime&) {
+    context.renderer->setTimeObserver(remoteAudioVideoRendererUpdateInterval, [weakThis = WeakPtr { *this }, identifier](const MediaTime&) {
         if (RefPtr protectedThis = weakThis.get(); protectedThis && protectedThis->m_renderers.contains(identifier))
             protectedThis->m_gpuConnectionToWebProcess.get()->connection().send(Messages::AudioVideoRendererRemoteMessageReceiver::StateUpdate(protectedThis->stateFor(identifier)), identifier);
     });
@@ -353,20 +353,26 @@ void RemoteAudioVideoRendererProxyManager::notifyWhenErrorOccurs(RemoteAudioVide
 // SynchronizerInterface
 void RemoteAudioVideoRendererProxyManager::play(RemoteAudioVideoRendererIdentifier identifier, std::optional<MonotonicTime> hostTime)
 {
-    if (RefPtr renderer = rendererFor(identifier))
+    if (RefPtr renderer = rendererFor(identifier)) {
         renderer->play(hostTime);
+        m_gpuConnectionToWebProcess.get()->connection().send(Messages::AudioVideoRendererRemoteMessageReceiver::StateUpdate(stateFor(identifier)), identifier);
+    }
 }
 
 void RemoteAudioVideoRendererProxyManager::pause(RemoteAudioVideoRendererIdentifier identifier, std::optional<MonotonicTime> hostTime)
 {
-    if (RefPtr renderer = rendererFor(identifier))
+    if (RefPtr renderer = rendererFor(identifier)) {
         renderer->pause(hostTime);
+        m_gpuConnectionToWebProcess.get()->connection().send(Messages::AudioVideoRendererRemoteMessageReceiver::StateUpdate(stateFor(identifier)), identifier);
+    }
 }
 
 void RemoteAudioVideoRendererProxyManager::setRate(RemoteAudioVideoRendererIdentifier identifier, double rate)
 {
-    if (RefPtr renderer = rendererFor(identifier))
+    if (RefPtr renderer = rendererFor(identifier)) {
         renderer->setRate(rate);
+        m_gpuConnectionToWebProcess.get()->connection().send(Messages::AudioVideoRendererRemoteMessageReceiver::StateUpdate(stateFor(identifier)), identifier);
+    }
 }
 
 void RemoteAudioVideoRendererProxyManager::stall(RemoteAudioVideoRendererIdentifier identifier)
@@ -573,10 +579,12 @@ RemoteAudioVideoRendererState RemoteAudioVideoRendererProxyManager::stateFor(Rem
     if (!renderer)
         return { };
     return {
-        .currentTime = renderer->currentTime(),
+        .timeUpdateData = {
+            .currentTime = renderer->currentTime(),
+            .effectiveRate = renderer->timeIsProgressing() ? renderer->effectiveRate() : 0.0,
+            .wallTime = MonotonicTime::now(),
+        },
         .paused = renderer->paused(),
-        .timeIsProgressing = renderer->timeIsProgressing(),
-        .effectiveRate = renderer->effectiveRate(),
         .videoPlaybackQualityMetrics = renderer->videoPlaybackQualityMetrics()
     };
 }

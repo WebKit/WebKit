@@ -25,10 +25,8 @@
     document.execCommand("Delete");
 
     var result = (document.scrollingElement.scrollTop == 1000) ? "SUCCESS" : "FAILURE";
-    if (window.testRunner) {
+    alert(result);
+    if (window.testRunner)
       testRunner.notifyDone();
-      document.write(result);
-    } else
-      alert(result);
   }
 </script>

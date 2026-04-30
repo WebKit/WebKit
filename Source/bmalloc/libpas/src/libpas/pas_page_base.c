@@ -39,8 +39,7 @@ size_t pas_page_base_header_size(const pas_page_base_config* config,
     case pas_page_config_kind_segregated:
         PAS_ASSERT(pas_page_kind_get_config_kind(page_kind) == pas_page_config_kind_segregated);
         return pas_segregated_page_header_size(
-            *pas_page_base_config_get_segregated(config),
-            pas_page_kind_get_segregated_role(page_kind));
+            *pas_page_base_config_get_segregated(config));
     case pas_page_config_kind_bitfit:
         PAS_ASSERT(pas_page_kind_get_config_kind(page_kind) == pas_page_config_kind_bitfit);
         return pas_bitfit_page_header_size(*pas_page_base_config_get_bitfit(config));

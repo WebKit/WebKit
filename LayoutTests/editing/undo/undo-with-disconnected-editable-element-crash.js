@@ -14,7 +14,12 @@ window.parent.onwebkitanimationiteration = () => {
         document.execCommand("fontSize",false,98);
         document.execCommand("undo",false,null);
         document.execCommand("redo",false,null);
-        testRunner.notifyDone();
+        setTimeout(() => {
+            document.open();
+            document.write('<!DOCTYPE html>');
+            document.close();
+            testRunner.notifyDone();
+        }, 0);
     });
     olElement.compact = true;
 

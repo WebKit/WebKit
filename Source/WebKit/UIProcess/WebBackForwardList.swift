@@ -699,6 +699,11 @@ final class WebBackForwardList {
             return (nil, 0)
         }
 
+        let startingItemResult = itemAtIndexWithoutSkipping(index: startingIndex)
+        guard let startingItem = startingItemResult.item else {
+            preconditionFailure("Starting item should always exist")
+        }
+
         let maybeItem = itemAtIndexWithoutSkipping(index: itemIndex)
 
         #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS) || os(visionOS)
@@ -715,34 +720,26 @@ final class WebBackForwardList {
         // A -> A#a (no userInteraction) -> B -> B#a (no user interaction) -> B#b (no user interaction)
         // If we're on B and navigate back, we don't want to skip anything and load A#a.
         // However, if we're on A and navigate forward, we do want to skip items and end up on B#b.
-        // swift-format-ignore: NeverForceUnwrap
-        if direction == Direction.backward && !currentItem()!.wasCreatedByJSWithoutUserInteraction() {
-            // The exception to the above is that if the entire list of back items is missing user interaction,
-            // they should all be ignored. For example:
-            // A (no userInteraction) -> B (no userInteraction) -> C*
-            // From the API perspective, C should be item 0, and going back is not an option.
-            // This happens e.g. with new windows that undergo a series of JS driven client redirects.
-            // See https://bugs.webkit.org/show_bug.cgi?id=310243
-            let itemToReturn = maybeItem
-            var checkItem = maybeItem
-            while true {
-                guard let checkItemUnwrapped = checkItem.item, checkItemUnwrapped.wasCreatedByJSWithoutUserInteraction() else {
-                    break
-                }
-                guard checkItem.index > 0 else {
-                    // We reached the beginning of the list and still didn't find an item with user interaction,
-                    // therefore we are returning nothing.
+        // The forward logic comes later.
+        if direction == .backward && !startingItem.wasCreatedByJSWithoutUserInteraction() {
+            return maybeItem
+        }
+
+        // If every item from this point back to the start of the list was created by JS without user interaction,
+        // we ignore them all.
+        if direction == .backward && startingItem.wasCreatedByJSWithoutUserInteraction() {
+            var innerItem = maybeItem
+            while let innerItemUnwrapped = innerItem.item, innerItemUnwrapped.wasCreatedByJSWithoutUserInteraction() {
+                guard innerItem.index > 0 else {
                     return (nil, 0)
                 }
-
-                checkItem = itemAtIndexWithoutSkipping(index: checkItem.index - 1)
+                innerItem = itemAtIndexWithoutSkipping(index: innerItem.index - 1)
+                assert(innerItem.item != nil)
             }
-            return itemToReturn
         }
 
         let (definiteItem, index) = maybeItem
         guard let definiteItem else {
-            // Matches C++ by not asserting in release mode until past the above two 'if's
             preconditionFailure("Should have an item by now")
         }
         var item = (item: definiteItem, index: index)

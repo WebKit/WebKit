@@ -31,6 +31,7 @@
 
 #include "DataCue.h"
 #include "Document.h"
+#include "EventTargetInlines.h"
 #include "ExceptionOr.h"
 #include "InbandTextTrackPrivate.h"
 #include "TextTrackList.h"

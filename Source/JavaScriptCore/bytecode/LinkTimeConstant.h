@@ -61,14 +61,15 @@ class JSGlobalObject;
     v(resolvePromiseWithFirstResolvingFunctionCallCheck, nullptr) \
     v(rejectPromiseWithFirstResolvingFunctionCallCheck, nullptr) \
     v(fulfillPromiseWithFirstResolvingFunctionCallCheck, nullptr) \
+    v(newResolvedPromise, nullptr) \
+    v(newRejectedPromise, nullptr) \
     v(resolveWithInternalMicrotaskForAsyncAwait, nullptr) \
     v(asyncGeneratorQueueEnqueue, nullptr) \
     v(asyncGeneratorQueueDequeueResolve, nullptr) \
     v(asyncGeneratorQueueDequeueReject, nullptr) \
     v(driveAsyncFunction, nullptr) \
     v(newHandledRejectedPromise, nullptr) \
-    v(promiseEmptyOnFulfilled, nullptr) \
-    v(promiseEmptyOnRejected, nullptr) \
+    v(promiseReturnUndefinedOnFulfilled, nullptr) \
     v(promiseResolve, nullptr) \
     v(promiseReject, nullptr) \
     v(performPromiseThen, nullptr) \
@@ -82,9 +83,7 @@ class JSGlobalObject;
     v(isResizableOrGrowableSharedTypedArrayView, nullptr) \
     v(typedArrayFromFast, nullptr) \
     v(isDetached, nullptr) \
-    v(isBoundFunction, nullptr) \
     v(isFinite, nullptr) \
-    v(hasInstanceBoundFunction, nullptr) \
     v(instanceOf, nullptr) \
     v(BuiltinLog, nullptr) \
     v(BuiltinDescribe, nullptr) \
@@ -95,7 +94,6 @@ class JSGlobalObject;
     v(defaultPromiseThen, nullptr) \
     v(repeatCharacter, nullptr) \
     v(isArray, nullptr) \
-    v(isArraySlow, nullptr) \
     v(Set, nullptr) \
     v(Map, nullptr) \
     v(importInRealm, nullptr) \

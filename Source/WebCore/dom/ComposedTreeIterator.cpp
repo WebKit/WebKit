@@ -55,4 +55,24 @@ String composedTreeAsText(ContainerNode& root, ComposedTreeAsTextMode mode)
     return stream.release();
 }
 
+String composedTreeAsTextFromNode(ContainerNode& root, Node& startNode)
+{
+    TextStream stream;
+    auto descendants = composedTreeDescendants(root);
+    for (auto it = descendants.at(startNode), end = descendants.end(); it != end; ++it) {
+        writeIndent(stream, it.depth());
+
+        if (is<Text>(*it)) {
+            stream << "#text\n";
+            continue;
+        }
+        Ref element = downcast<Element>(*it);
+        stream << element->localName();
+        if (element->shadowRoot())
+            stream << " (shadow root)";
+        stream << "\n";
+    }
+    return stream.release();
+}
+
 }

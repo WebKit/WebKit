@@ -30,6 +30,7 @@
 #include "DFGCommon.h"
 #include "FPRInfo.h"
 #include "GPRInfo.h"
+#include "Reg.h"
 
 namespace JSC { namespace DFG {
 

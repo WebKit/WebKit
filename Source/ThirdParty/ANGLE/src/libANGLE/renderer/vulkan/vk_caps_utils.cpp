@@ -1380,6 +1380,9 @@ void Renderer::ensureCapsInitialized() const
     // GL_QCOM_texture_lod_bias
     mNativeExtensions.textureLodBiasQCOM = true;
 
+    // GL_EXT_texture_lod_bias
+    mNativeExtensions.textureLodBiasEXT = true;
+
     // GL_ANGLE_shader_pixel_local_storage
     //
     // NOTE:
@@ -1510,6 +1513,10 @@ void Renderer::ensureCapsInitialized() const
 
     // GL_OES_compressed_paletted_texture
     mNativeExtensions.compressedPalettedTextureOES = true;
+
+    // Limits for texture and buffer allocations
+    mNativeLimitations.maxBufferBytes  = static_cast<size_t>(mMaxMemoryAllocationSize);
+    mNativeLimitations.maxTextureBytes = static_cast<size_t>(mMaxMemoryAllocationSize);
 
     // Log any missing extensions required for GLES 3.2.
     LogMissingExtensionsForGLES32(mNativeExtensions);

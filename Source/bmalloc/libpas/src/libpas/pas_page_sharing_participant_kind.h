@@ -33,7 +33,6 @@ PAS_BEGIN_EXTERN_C;
 
 enum pas_page_sharing_participant_kind {
     pas_page_sharing_participant_null,
-    pas_page_sharing_participant_segregated_shared_page_directory,
     pas_page_sharing_participant_segregated_size_directory,
     pas_page_sharing_participant_bitfit_directory,
     pas_page_sharing_participant_large_sharing_pool
@@ -50,8 +49,6 @@ pas_page_sharing_participant_kind_select_for_segregated_directory(
     switch (directory_kind) {
     case pas_segregated_size_directory_kind:
         return pas_page_sharing_participant_segregated_size_directory;
-    case pas_segregated_shared_page_directory_kind:
-        return pas_page_sharing_participant_segregated_shared_page_directory;
     }
     PAS_ASSERT_NOT_REACHED();
     return pas_page_sharing_participant_null;
@@ -63,8 +60,6 @@ pas_page_sharing_participant_kind_get_string(pas_page_sharing_participant_kind k
     switch (kind) {
     case pas_page_sharing_participant_null:
         return "null";
-    case pas_page_sharing_participant_segregated_shared_page_directory:
-        return "segregated_shared_page_directory";
     case pas_page_sharing_participant_segregated_size_directory:
         return "segregated_size_directory";
     case pas_page_sharing_participant_bitfit_directory:

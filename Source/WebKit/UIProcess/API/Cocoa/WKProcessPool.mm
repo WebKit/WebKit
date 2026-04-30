@@ -112,6 +112,11 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return self;
 }
 
++ (instancetype)_processPoolWithConfiguration:(_WKProcessPoolConfiguration *)configuration
+{
+    return adoptNS([[self alloc] _initWithConfiguration:configuration]).autorelease();
+}
+
 - (instancetype)init
 {
     return [self _initWithConfiguration:adoptNS([[_WKProcessPoolConfiguration alloc] init]).get()];

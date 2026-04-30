@@ -555,7 +555,9 @@ void Buffer::onStateChange(const Context *context, angle::SubjectMessage message
 
     // Apply the change directly on current context's current vertex array. All other vertex arrays
     // requires a buffer rebind in order to pick up the change.
-    context->onBufferChanged(this, message,
+    bool isUsedInTransformFeedback = mState.mTransformFeedbackGenericBindingCount > 0 ||
+                                     mState.mTransformFeedbackIndexedBindingCount > 0;
+    context->onBufferChanged(this, message, isUsedInTransformFeedback,
                              mVertexArrayBufferBindingMaskAndContext.getBufferBindingMask(context));
 }
 
@@ -567,7 +569,10 @@ void Buffer::onContentsChange(const Context *context)
         static_cast<Texture *>(contentsObserver.observer)->onBufferContentsChange();
     }
 
+    bool isUsedInTransformFeedback = mState.mTransformFeedbackGenericBindingCount > 0 ||
+                                     mState.mTransformFeedbackIndexedBindingCount > 0;
     context->onBufferChanged(this, angle::SubjectMessage::ContentsChanged,
+                             isUsedInTransformFeedback,
                              mVertexArrayBufferBindingMaskAndContext.getBufferBindingMask(context));
 }
 

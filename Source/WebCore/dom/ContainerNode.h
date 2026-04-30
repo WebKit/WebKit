@@ -47,8 +47,8 @@ public:
     bool hasChildNodes() const { return m_firstChild; }
     bool hasOneChild() const { return m_firstChild && m_firstChild == m_lastChild; }
 
-    bool directChildNeedsStyleRecalc() const { return hasStyleFlag(NodeStyleFlag::DirectChildNeedsStyleResolution); }
-    void setDirectChildNeedsStyleRecalc() { setStyleFlag(NodeStyleFlag::DirectChildNeedsStyleResolution); }
+    bool directChildNeedsStyleRecalc() const { return hasStateFlag(StateFlag::DirectChildNeedsStyleResolution); }
+    void setDirectChildNeedsStyleRecalc() { setStateFlag(StateFlag::DirectChildNeedsStyleResolution); }
 
     WEBCORE_EXPORT unsigned NODELETE countChildNodes() const;
     WEBCORE_EXPORT Node* NODELETE traverseToChildAt(unsigned) const;

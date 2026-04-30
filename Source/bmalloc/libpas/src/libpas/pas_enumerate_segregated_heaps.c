@@ -38,10 +38,7 @@
 #include "pas_root.h"
 #include "pas_segregated_exclusive_view.h"
 #include "pas_segregated_size_directory.h"
-#include "pas_segregated_partial_view.h"
-#include "pas_segregated_shared_handle.h"
-#include "pas_segregated_shared_view.h"
-#include "pas_shared_handle_or_page_boundary_inlines.h"
+#include "pas_thread_local_cache.h"
 #include "pas_thread_local_cache_layout.h"
 #include "pas_thread_local_cache_node.h"
 
@@ -132,7 +129,6 @@ PAS_CREATE_HASHTABLE(local_allocator_map,
 
 struct enumeration_context {
     local_allocator_map allocators;
-    pas_ptr_hash_set shared_page_directories;
     pas_ptr_hash_set objects_in_deallocation_log;
 };
 
@@ -169,39 +165,6 @@ static bool for_each_view(pas_enumerator* enumerator,
     }
     
     return true;
-}
-
-static bool collect_shared_page_directories_shared_page_directory_callback(
-    pas_enumerator* enumerator,
-    pas_segregated_shared_page_directory* directory,
-    void* arg)
-{
-    enumeration_context* context;
-
-    context = arg;
-
-    pas_ptr_hash_set_set(
-        &context->shared_page_directories, directory, NULL, &enumerator->allocation_config);
-
-    return true;
-}
-
-static bool collect_shared_page_directories_heap_callback(
-    pas_enumerator* enumerator,
-    pas_heap* heap,
-    void* arg)
-{
-    enumeration_context* context;
-    const pas_heap_config* config;
-
-    context = arg;
-
-    config = pas_heap_config_kind_get_config(heap->config_kind);
-    PAS_ASSERT_WITH_DETAIL(config);
-
-    return config->for_each_shared_page_directory_remote(
-        enumerator, &heap->segregated_heap,
-        collect_shared_page_directories_shared_page_directory_callback, context);
 }
 
 static void record_page_payload_and_meta(pas_enumerator* enumerator,
@@ -345,7 +308,7 @@ static bool enumerate_exclusive_view(pas_enumerator* enumerator,
     PAS_ASSERT_WITH_DETAIL(page);
 
     page = pas_enumerator_pin_remote(
-        enumerator, page, pas_segregated_page_header_size(*page_config, pas_segregated_page_exclusive_role));
+        enumerator, page, pas_segregated_page_header_size(*page_config));
     if (!page)
         return false;
 
@@ -381,177 +344,6 @@ static bool enumerate_exclusive_view(pas_enumerator* enumerator,
     return true;
 }
 
-static bool enumerate_shared_view(pas_enumerator* enumerator,
-                                  pas_segregated_shared_view* view,
-                                  pas_segregated_shared_page_directory* directory,
-                                  enumeration_context* context)
-{
-    const pas_segregated_page_config* page_config;
-    pas_shared_handle_or_page_boundary shared_handle_or_page_boundary;
-    pas_segregated_shared_handle* shared_handle;
-    uintptr_t page_boundary;
-    pas_segregated_page* page;
-
-    PAS_UNUSED_PARAM(context);
-
-    page_config = pas_segregated_page_config_kind_get_config(directory->base.page_config_kind);
-
-    page = NULL;
-    shared_handle_or_page_boundary = view->shared_handle_or_page_boundary;
-    if (pas_is_wrapped_shared_handle(shared_handle_or_page_boundary)) {
-        shared_handle = pas_unwrap_shared_handle_no_liveness_checks(shared_handle_or_page_boundary);
-        shared_handle = pas_enumerator_read_compact(enumerator, shared_handle);
-        page_boundary = (uintptr_t)shared_handle->page_boundary;
-        if (view->is_owned) {
-            page = (pas_segregated_page*)page_config->base.page_header_for_boundary_remote(
-                enumerator, (void*)page_boundary);
-            PAS_ASSERT_WITH_DETAIL(page);
-
-            page = pas_enumerator_pin_remote(
-                enumerator, page,
-                pas_segregated_page_header_size(*page_config, pas_segregated_page_shared_role));
-            if (!page)
-                return false;
-        }
-    } else {
-        shared_handle = NULL;
-        page_boundary = (uintptr_t)pas_unwrap_page_boundary(shared_handle_or_page_boundary);
-    }
-
-    if (!page_boundary) {
-        PAS_ASSERT_WITH_DETAIL(!view->is_owned);
-        return true;
-    }
-
-    if (verbose)
-        pas_log("Enumerating shared view of shared page %p\n", (void*)page_boundary);
-
-    pas_enumerator_exclude_accounted_pages(
-        enumerator, (void*)page_boundary, page_config->base.page_size);
-    
-    if (view->is_owned) {
-        uintptr_t payload_begin;
-        uintptr_t payload_end;
-        
-        PAS_ASSERT_WITH_DETAIL(page);
-        
-        payload_begin = pas_round_up_to_power_of_2(page_config->shared_payload_offset,
-                                                   pas_segregated_page_config_min_align(*page_config));
-        payload_end = pas_segregated_page_config_payload_end_offset_for_role(
-            *page_config, pas_segregated_page_shared_role);
-        
-        record_page_payload_and_meta(enumerator,
-                                     page_config,
-                                     page_boundary,
-                                     page,
-                                     payload_begin,
-                                     payload_end);
-
-        pas_enumerator_unpin_remote(enumerator, page);
-    }
-
-    return true;
-}
-
-static bool enumerate_partial_view(pas_enumerator* enumerator,
-                                   pas_segregated_partial_view* view,
-                                   enumeration_context* context)
-{
-    pas_segregated_size_directory* directory;
-    const pas_segregated_page_config* page_config;
-    pas_segregated_shared_view* shared_view;
-    pas_shared_handle_or_page_boundary shared_handle_or_page_boundary;
-    pas_segregated_shared_handle* shared_handle;
-    uintptr_t page_boundary;
-    pas_segregated_page* page;
-    pas_full_alloc_bits full_alloc_bits;
-    local_allocator_node* allocator_node;
-    pas_local_allocator* allocator;
-
-    if (!view->is_attached_to_shared_handle)
-        return true;
-
-    directory = pas_compact_segregated_size_directory_ptr_load_remote(enumerator, &view->directory);
-    page_config = pas_segregated_page_config_kind_get_config(directory->base.page_config_kind);
-
-    shared_view = pas_compact_segregated_shared_view_ptr_load_remote(enumerator, &view->shared_view);
-    PAS_ASSERT_WITH_DETAIL(shared_view);
-    if (!shared_view->is_owned)
-        return true;
-
-    shared_handle_or_page_boundary = shared_view->shared_handle_or_page_boundary;
-    shared_handle = pas_unwrap_shared_handle_no_liveness_checks(shared_handle_or_page_boundary);
-    shared_handle = pas_enumerator_read_compact(enumerator, shared_handle);
-    page_boundary = (uintptr_t)shared_handle->page_boundary;
-
-    if (verbose)
-        pas_log("Enumerating partial view of shared page %p\n", (void*)page_boundary);
-
-    allocator = NULL;
-    for (allocator_node = local_allocator_map_get(&context->allocators, page_boundary).head;
-         allocator_node;
-         allocator_node = allocator_node->next) {
-        pas_segregated_view allocator_view;
-
-        allocator_view = pas_enumerator_read_compact(enumerator, allocator_node->allocator->view);
-
-        if (verbose) {
-            pas_log("Considering allocator %p (allocator_view = %p, view = %p)\n",
-                    allocator_node->allocator, allocator_view, view);
-        }
-        
-        if (pas_segregated_view_get_ptr(allocator_view) == view) {
-            allocator = allocator_node->allocator;
-            break;
-        }
-    }
-
-    if (verbose)
-        pas_log("Found allocator = %p\n", allocator);
-
-    /* This is so weird: the size we pass is only valid when view->alloc_bits is pointing at the
-       local_allocator's bits. But that's the only time that load_remote will go down the path where it needs
-       to know the size. So, it's fine, I guess. */
-    full_alloc_bits.bits = pas_lenient_compact_unsigned_ptr_load_remote(
-        enumerator, &view->alloc_bits, pas_segregated_page_config_num_alloc_bytes(*page_config));
-    full_alloc_bits.word_index_begin = view->alloc_bits_offset;
-    full_alloc_bits.word_index_end = view->alloc_bits_offset + view->alloc_bits_size;
-
-    page = (pas_segregated_page*)page_config->base.page_header_for_boundary_remote(
-        enumerator, (void*)page_boundary);
-    PAS_ASSERT_WITH_DETAIL(page);
-
-    page = pas_enumerator_pin_remote(
-        enumerator, page, pas_segregated_page_header_size(*page_config, pas_segregated_page_shared_role));
-    if (!page)
-        return false;
-
-    record_page_objects(
-        enumerator, context, directory, page_config, page_boundary, page, allocator, &full_alloc_bits);
-
-    pas_enumerator_unpin_remote(enumerator, page);
-
-    return true;
-}
-
-typedef struct {
-    enumeration_context* context;
-    pas_segregated_shared_page_directory* directory;
-} shared_page_directory_view_data;
-
-static bool shared_page_directory_view_callback(pas_enumerator* enumerator,
-                                                pas_segregated_view view,
-                                                void* arg)
-{
-    shared_page_directory_view_data* data;
-
-    data = arg;
-
-    PAS_ASSERT_WITH_DETAIL(pas_segregated_view_get_kind(view) == pas_segregated_shared_view_kind);
-
-    return enumerate_shared_view(
-        enumerator, pas_segregated_view_get_ptr(view), data->directory, data->context);
-}
 
 static bool size_directory_view_callback(pas_enumerator* enumerator,
                                          pas_segregated_view view,
@@ -565,9 +357,6 @@ static bool size_directory_view_callback(pas_enumerator* enumerator,
     case pas_segregated_exclusive_view_kind:
     case pas_segregated_ineligible_exclusive_view_kind:
         return enumerate_exclusive_view(enumerator, pas_segregated_view_get_ptr(view), context);
-
-    case pas_segregated_partial_view_kind:
-        return enumerate_partial_view(enumerator, pas_segregated_view_get_ptr(view), context);
 
     default:
         pas_log("Invalid view kind in size directory: %s\n",
@@ -635,10 +424,8 @@ bool pas_enumerate_segregated_heaps(pas_enumerator* enumerator)
     pas_thread_local_cache_layout_segment* tlc_layout_first_segment;
     enumeration_context context;
     pas_baseline_allocator* baseline_allocator_table_ptr;
-    size_t index;
 
     local_allocator_map_construct(&context.allocators);
-    pas_ptr_hash_set_construct(&context.shared_page_directories);
     pas_ptr_hash_set_construct(&context.objects_in_deallocation_log);
 
     if (!pas_enumerator_copy_remote(
@@ -680,7 +467,7 @@ bool pas_enumerate_segregated_heaps(pas_enumerator* enumerator)
 
         for (index = PAS_DEALLOCATION_LOG_SIZE; index--;) {
             uintptr_t object =
-                tlc->deallocation_log[index] & ~PAS_SEGREGATED_PAGE_CONFIG_KIND_AND_ROLE_MASK;
+                tlc->deallocation_log[index] & ~PAS_SEGREGATED_PAGE_CONFIG_KIND_MASK;
             if (object) {
                 pas_ptr_hash_set_set(
                     &context.objects_in_deallocation_log, (void*)object,
@@ -788,22 +575,6 @@ bool pas_enumerate_segregated_heaps(pas_enumerator* enumerator)
             consider_allocator(enumerator, &context, &baseline_allocator_table[index].u.allocator);
     }
 
-    if (!pas_enumerator_for_each_heap(enumerator, collect_shared_page_directories_heap_callback, &context))
-        return false;
-
-    for (index = pas_ptr_hash_set_entry_index_end(&context.shared_page_directories); index--;) {
-        pas_segregated_shared_page_directory* directory;
-        shared_page_directory_view_data data;
-
-        directory = *pas_ptr_hash_set_entry_at_index(&context.shared_page_directories, index);
-        if (pas_ptr_hash_set_entry_is_empty_or_deleted(directory))
-            continue;
-
-        data.context = &context;
-        data.directory = directory;
-        if (!for_each_view(enumerator, &directory->base, shared_page_directory_view_callback, &data))
-            return false;
-    }
     
     if (!pas_enumerator_for_each_heap(enumerator, enumerate_segregated_heap_callback, &context))
         return false;

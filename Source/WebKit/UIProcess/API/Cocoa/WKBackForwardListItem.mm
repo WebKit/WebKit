@@ -79,6 +79,11 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     return nullptr;
 }
 
+- (NSString *)_loggingStringForTesting
+{
+    return protect(*_item)->loggingString().createNSString().autorelease();
+}
+
 - (CGPoint)_scrollPosition
 {
     Ref frameState = protect(*_item)->mainFrameState();

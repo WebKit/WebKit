@@ -29,6 +29,7 @@
 #if ENABLE(WEBXR)
 
 #include "Document.h"
+#include "EventTargetInlines.h"
 #include "ExceptionOr.h"
 #include "WebXRFrame.h"
 #include "WebXRRigidTransform.h"

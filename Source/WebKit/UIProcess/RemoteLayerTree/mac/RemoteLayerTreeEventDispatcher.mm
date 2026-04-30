@@ -38,6 +38,7 @@
 #import "WebEventConversion.h"
 #import "WebPageProxy.h"
 #import <QuartzCore/CALayer.h>
+#import <QuartzCore/CATransaction.h>
 #import <WebCore/PlatformWheelEvent.h>
 #import <WebCore/ScrollingCoordinatorTypes.h>
 #import <WebCore/ScrollingNodeID.h>
@@ -225,7 +226,7 @@ void RemoteLayerTreeEventDispatcher::handleWheelEvent(const WebWheelEvent& wheel
 void RemoteLayerTreeEventDispatcher::scrollingThreadHandleWheelEvent(const WebWheelEvent& webWheelEvent, RectEdges<WebCore::RubberBandingBehavior> rubberBandableEdges)
 {
     ASSERT(ScrollingThread::isCurrentThread());
-    
+
     auto continueEventHandlingOnMainThread = [protectedThis = Ref { *this }](WheelEventHandlingResult handlingResult) {
         RunLoop::mainSingleton().dispatch([protectedThis, handlingResult] {
             protectedThis->continueWheelEventHandling(handlingResult);
@@ -248,18 +249,21 @@ void RemoteLayerTreeEventDispatcher::scrollingThreadHandleWheelEvent(const WebWh
         // Wait for the web process to respond to the event, preventing the next event from being handled until we get a response or time out,
         // allowing us to know if this gesture should be come non-blocking.
         scrollingTree->waitForEventDefaultHandlingCompletion(platformWheelEvent);
+        [CATransaction flush];
         return;
     }
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
     if (m_momentumEventDispatcher->handleWheelEvent(m_pageIdentifier, webWheelEvent, rubberBandableEdges)) {
         continueEventHandlingOnMainThread(WheelEventHandlingResult::handled(processingSteps));
+        [CATransaction flush];
         return;
     }
 #endif
 
     auto handlingResult = internalHandleWheelEvent(platformWheelEvent, processingSteps);
     continueEventHandlingOnMainThread(handlingResult);
+    [CATransaction flush];
 }
 
 void RemoteLayerTreeEventDispatcher::continueWheelEventHandling(WheelEventHandlingResult handlingResult)
@@ -324,6 +328,7 @@ void RemoteLayerTreeEventDispatcher::wheelEventHandlingCompleted(const PlatformW
                 protect(scrollingCoordinator->webPageProxy())->wheelEventHandlingCompleted(wasHandled || result.wasHandled);
         });
 
+        [CATransaction flush];
     });
 }
 
@@ -468,7 +473,7 @@ void RemoteLayerTreeEventDispatcher::didRefreshDisplay(PlatformDisplayID display
     }
 #endif
 
-    auto needsAnimationUpdate = false;
+    auto needsUpdateLayerPositionsAndAnimations = false;
     {
         Locker locker { m_scrollingTreeLock };
 
@@ -477,10 +482,7 @@ void RemoteLayerTreeEventDispatcher::didRefreshDisplay(PlatformDisplayID display
 
         scrollingTree->displayDidRefresh(displayID);
 
-        if (m_state != SynchronizationState::Idle) {
-            scrollingTree->tryToApplyLayerPositions();
-            needsAnimationUpdate = true;
-        }
+        needsUpdateLayerPositionsAndAnimations = m_state != SynchronizationState::Idle;
 
         switch (m_state) {
         case SynchronizationState::Idle: {
@@ -495,9 +497,22 @@ void RemoteLayerTreeEventDispatcher::didRefreshDisplay(PlatformDisplayID display
             break;
         }
     }
+
+    if (needsUpdateLayerPositionsAndAnimations)
+        updateLayerPositionsAndAnimations();
+}
+
+void RemoteLayerTreeEventDispatcher::updateLayerPositionsAndAnimations()
+{
+    if (auto scrollingTree = this->scrollingTree())
+        scrollingTree->tryToApplyLayerPositions();
+
+    // Commit scroll position changes before updating animation effects, so the
+    // render server sees a consistent scroll position + presentation modifier values.
+    [CATransaction flush];
+
 #if ENABLE(THREADED_ANIMATIONS)
-    if (needsAnimationUpdate)
-        updateAnimations();
+    updateAnimations();
 #endif
 }
 
@@ -518,12 +533,7 @@ void RemoteLayerTreeEventDispatcher::scheduleDelayedRenderingUpdateDetectionTime
 void RemoteLayerTreeEventDispatcher::delayedRenderingUpdateDetectionTimerFired()
 {
     ASSERT(ScrollingThread::isCurrentThread());
-
-    if (auto scrollingTree = this->scrollingTree())
-        scrollingTree->tryToApplyLayerPositions();
-#if ENABLE(THREADED_ANIMATIONS)
-    updateAnimations();
-#endif
+    updateLayerPositionsAndAnimations();
 }
 
 void RemoteLayerTreeEventDispatcher::waitForRenderingUpdateCompletionOrTimeout()
@@ -560,11 +570,7 @@ void RemoteLayerTreeEventDispatcher::waitForRenderingUpdateCompletionOrTimeout()
         // so we give up trying to sync with the main thread and update layers here on the scrolling thread.
         // Dispatch to allow for the scrolling thread to handle any outstanding wheel events before we commit layers.
         ScrollingThread::dispatch([protectedThis = Ref { *this }]() {
-            if (auto scrollingTree = protectedThis->scrollingTree())
-                scrollingTree->tryToApplyLayerPositions();
-#if ENABLE(THREADED_ANIMATIONS)
-            protectedThis->updateAnimations();
-#endif
+            protectedThis->updateLayerPositionsAndAnimations();
         });
         tracePoint(ScrollingThreadRenderUpdateSyncEnd, 1);
     } else
@@ -674,8 +680,10 @@ RefPtr<const RemoteAnimationTimeline> RemoteLayerTreeEventDispatcher::timeline(c
         if (auto* timeline = m_monotonicTimelineRegistry->get(timelineID))
             return timeline;
     }
+
     if (auto scrollingTree = this->scrollingTree())
         return scrollingTree->timeline(timelineID);
+
     return nullptr;
 }
 

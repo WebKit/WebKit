@@ -57,6 +57,9 @@
 #include "StyleSheetContents.h"
 #include "StyledElement.h"
 #include "UserAgentStyle.h"
+#if ENABLE(VIDEO)
+#include "UserAgentParts.h"
+#endif
 #include <ranges>
 #include <wtf/SetForScope.h>
 
@@ -491,7 +494,7 @@ void ElementRuleCollector::collectMatchingUserAgentPartRules(const MatchRequest&
 
     auto& rules = matchRequest.ruleSet;
 #if ENABLE(VIDEO)
-    if (element().isWebVTTElement())
+    if (element().isWebVTTElement() || element().userAgentPart() == UserAgentParts::cue())
         collectMatchingRulesForList(&rules.cuePseudoRules(), matchRequest);
 #endif
     if (auto& part = element().userAgentPart(); !part.isEmpty())

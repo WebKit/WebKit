@@ -36,6 +36,7 @@
 #include "InspectorResourceUtilities.h"
 #include "ResourceResponse.h"
 #include "TextResourceDecoder.h"
+#include <WebCore/HTTPStatusCodes.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/Base64.h>
 
@@ -300,7 +301,7 @@ NetworkResourcesData::ResourceData const* NetworkResourcesData::dataForURL(const
     
     for (auto* resourceData : resources()) {
         // responseTimestamp is checked so that we only grab the most recent response for the URL, instead of potentionally getting a more stale response.
-        if (resourceData->url() == url && resourceData->httpStatusCode() != 304 && (!mostRecentResourceData || (resourceData->responseTimestamp() > mostRecentResourceData->responseTimestamp())))
+        if (resourceData->url() == url && resourceData->httpStatusCode() != httpStatus304NotModified && (!mostRecentResourceData || (resourceData->responseTimestamp() > mostRecentResourceData->responseTimestamp())))
             mostRecentResourceData = resourceData;
     }
     

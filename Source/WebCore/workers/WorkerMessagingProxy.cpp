@@ -398,8 +398,12 @@ void WorkerMessagingProxy::workerThreadCreated(DedicatedWorkerThread& workerThre
 void WorkerMessagingProxy::workerObjectDestroyed()
 {
     m_workerObject = nullptr;
-    if (!m_scriptExecutionContextIdentifier)
+    if (!m_scriptExecutionContextIdentifier) {
+        m_mayBeDestroyed = true;
+        m_queuedEarlyTasks.clear();
+        deref();
         return;
+    }
 
     ScriptExecutionContext::postTaskTo(*m_scriptExecutionContextIdentifier, [this, protectedThis = Ref { *this }](auto&) {
         m_mayBeDestroyed = true;
@@ -457,6 +461,8 @@ void WorkerMessagingProxy::workerGlobalScopeDestroyedInternal()
     m_askedToTerminate = true;
 
     m_inspectorProxy->workerTerminated();
+
+    m_queuedEarlyTasks.clear();
 
     if (RefPtr workerGlobalScope = dynamicDowncast<WorkerGlobalScope>(m_scriptExecutionContext); workerGlobalScope && m_workerThread)
         workerGlobalScope->thread()->removeChildThread(Ref { *m_workerThread });

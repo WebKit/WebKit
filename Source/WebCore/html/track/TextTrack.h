@@ -54,6 +54,7 @@ public:
     void ref() const override { TrackBase::ref(); }
     void deref() const override { TrackBase::deref(); }
     USING_CAN_MAKE_WEAKPTR(EventTarget);
+    WebCoreOpaqueRoot opaqueRoot() const final { return TrackBase::opaqueRoot(); }
 
     void didMoveToNewDocument(Document& newDocument) final;
 

@@ -74,7 +74,6 @@
 #include "CSSPositionValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSProperty.h"
-#include "CSSPropertyIdentifierValue.h"
 #include "CSSQuadValue.h"
 #include "CSSRatioValue.h"
 #include "CSSRayValue.h"
@@ -209,8 +208,6 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSPositionYValue>(*this));
     case Primitive:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSPrimitiveValue>(*this));
-    case PropertyIdentifier:
-        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSPropertyIdentifierValue>(*this));
     case Quad:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSQuadValue>(*this));
     case Ratio:
@@ -389,7 +386,6 @@ Ref<DeprecatedCSSOMValue> CSSValue::createDeprecatedCSSOMWrapper(CSSStyleDeclara
     case CustomIdent:
     case FontFamilyName:
     case Keyword:
-    case PropertyIdentifier:
     case Quad:
     case Rect:
     case URL:

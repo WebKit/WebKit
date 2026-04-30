@@ -465,6 +465,8 @@ public:
     unsigned numLocals() const { return m_numLocals; }
     unsigned localSizeToAlloc() const { return m_localSizeToAlloc; }
     unsigned rethrowSlots() const { return m_numRethrowSlotsToAlloc; }
+    unsigned maxFrameSizeInV128() const { return m_maxFrameSizeInV128; }
+    unsigned maxCalleeStackSize() const { return m_maxCalleeStackSize; }
 
     const Vector<FunctionSpaceIndex>& callTargets() const LIFETIME_BOUND { return m_callTargets; }
     unsigned numCallProfiles() const { return m_callTargets.size(); }
@@ -502,6 +504,7 @@ private:
     unsigned m_numLocals;
     unsigned m_numArgumentsOnStack;
     unsigned m_maxFrameSizeInV128;
+    unsigned m_maxCalleeStackSize;
     mutable unsigned m_codeHash { 0 };
 
     IPIntTierUpCounter m_tierUpCounter;

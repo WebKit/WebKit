@@ -382,9 +382,9 @@ TEST(FullscreenVideoTextRecognition, NoOverlayInstalledAfterSeekAndExitingFullsc
     Util::run(&doneWaiting);
 }
 
+// FIXME when webkit.org/b/313031 is resolved
 #if PLATFORM(MAC)
-
-TEST(FullscreenVideoTextRecognition, NoOverlayInstalledAfterExitingVideoFullscreenViaEscape)
+TEST(FullscreenVideoTextRecognition, DISABLED_NoOverlayInstalledAfterExitingVideoFullscreenViaEscape)
 {
     auto webView = [FullscreenVideoTextRecognitionWebView createForVideoFullscreen];
     [webView loadVideoSource:@"test.mp4"];
@@ -407,7 +407,8 @@ TEST(FullscreenVideoTextRecognition, NoOverlayInstalledAfterExitingVideoFullscre
     Util::run(&doneWaiting);
 }
 
-TEST(FullscreenVideoTextRecognition, NoOverlayInstalledAfterSeekAndExitingVideoFullscreenViaEscape)
+// FIXME when webkit.org/b/313031 is resolved
+TEST(FullscreenVideoTextRecognition, DISABLED_NoOverlayInstalledAfterSeekAndExitingVideoFullscreenViaEscape)
 {
     auto webView = [FullscreenVideoTextRecognitionWebView createForVideoFullscreen];
     [webView loadVideoSource:@"test.mp4"];
@@ -441,8 +442,8 @@ TEST(FullscreenVideoTextRecognition, NoOverlayInstalledAfterSeekAndExitingVideoF
 
 #endif // PLATFORM(MAC)
 
-#if PLATFORM(IOS_FAMILY)
-
+// FIXME when webkit.org/b/312934 is resolved for Release.
+#if PLATFORM(IOS_FAMILY) && !defined(NDEBUG)
 TEST(FullscreenVideoTextRecognition, NoOverlayInstalledAfterExitingNativeVideoFullscreen)
 {
     auto configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];

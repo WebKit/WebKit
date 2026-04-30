@@ -579,7 +579,7 @@ void WebExtensionContext::tabsRemove(Vector<WebExtensionTabIdentifier> tabIdenti
     auto tabs = tabIdentifiers.map([&](auto& tabIdentifier) -> RefPtr<WebExtensionTab> {
         RefPtr tab = getTab(tabIdentifier);
         if (!tab) {
-            completionHandler(toWebExtensionError(@"tabs.remove()", nullString(), @"tab '%llu' was not found", tabIdentifier.toUInt64()));
+            completionHandler(toWebExtensionError(@"tabs.remove()", nullString(), makeString("tab '"_s, tabIdentifier.toUInt64(), "' was not found"_s)));
             return nullptr;
         }
 
@@ -630,7 +630,7 @@ void WebExtensionContext::tabsExecuteScript(WebPageProxyIdentifier webPageProxyI
             RetainPtr filePath = parameters.files.value().first().createNSString();
             scriptData = sourcePairForResource(filePath.get(), *this);
             if (!scriptData) {
-                completionHandler(toWebExtensionError(apiName, nullString(), @"Invalid resource: %@", filePath.get()));
+                completionHandler(toWebExtensionError(apiName, nullString(), makeString("Invalid resource: "_s, String(filePath.get()))));
                 return;
             }
         }

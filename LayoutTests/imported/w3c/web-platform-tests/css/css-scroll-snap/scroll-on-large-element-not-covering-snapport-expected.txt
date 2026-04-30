@@ -1,0 +1,4 @@
+12345
+
+FAIL snaps to bottom edge of large snap area that doesn't cover the snap port. assert_equals: expected 880 but got 80
+

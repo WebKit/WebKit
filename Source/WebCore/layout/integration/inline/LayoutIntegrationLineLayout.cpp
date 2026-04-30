@@ -291,7 +291,7 @@ LineLayout* LineLayout::containing(RenderObject& renderer)
                 CheckedPtr containingBlock = renderer.parent();
                 if (is<RenderInline>(containingBlock))
                     containingBlock = containingBlock->containingBlock();
-                return dynamicDowncast<RenderBlockFlow>(containingBlock.get());
+                return dynamicDowncast<RenderBlockFlow>(containingBlock.unsafeGet());
             }
             if (renderer.isFloating()) {
                 // Note that containigBlock() on boxes in top layer (i.e. dialog) may return incorrect result during style change even with not-yet-updated style.

@@ -35,6 +35,7 @@
 #include "JSDOMConvertSequences.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMPromiseDeferred.h"
+#include "Settings.h"
 #include <wtf/SetForScope.h>
 
 
@@ -139,6 +140,15 @@ JSValue JSCustomElementRegistry::define(JSGlobalObject& lexicalGlobalObject, Cal
     if (disconnectedCallback)
         elementInterface->setDisconnectedCallback(disconnectedCallback);
     RETURN_IF_EXCEPTION(scope, { });
+
+    RefPtr document = dynamicDowncast<Document>(registry.scriptExecutionContext());
+    bool moveBeforeEnabled = document && document->settings().moveBeforeEnabled();
+    if (moveBeforeEnabled) {
+        auto* connectedMoveCallback = getCustomElementCallback(lexicalGlobalObject, prototypeObject, Identifier::fromString(vm, "connectedMoveCallback"_s));
+        if (connectedMoveCallback)
+            elementInterface->setConnectedMoveCallback(connectedMoveCallback);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
 
     auto* adoptedCallback = getCustomElementCallback(lexicalGlobalObject, prototypeObject, Identifier::fromString(vm, "adoptedCallback"_s));
     if (adoptedCallback)

@@ -2285,7 +2285,12 @@ TEST(WKWebExtension, ExternallyConnectableParsing)
     // FIXME: <https://webkit.org/b/269299> Add more tests for externally_connectable "ids" keys.
 }
 
+// FIXME when rdar://175897544 is resolved.
+#if PLATFORM(MAC)
+TEST(WKWebExtension, DISABLED_LoadFromDirectory)
+#else
 TEST(WKWebExtension, LoadFromDirectory)
+#endif
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } }
@@ -2375,7 +2380,12 @@ TEST(WKWebExtension, LoadFromZipArchiveWithParentDirectory)
     [manager run];
 }
 
+// FIXME when rdar://175897544 is resolved.
+#if PLATFORM(MAC)
+TEST(WKWebExtension, DISABLED_LoadFromChromeExtensionArchive)
+#else
 TEST(WKWebExtension, LoadFromChromeExtensionArchive)
+#endif
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } }

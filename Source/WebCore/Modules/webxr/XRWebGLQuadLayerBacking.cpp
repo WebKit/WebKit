@@ -63,7 +63,7 @@ ExceptionOr<Ref<XRWebGLQuadLayerBacking>> XRWebGLQuadLayerBacking::create(WebXRS
 
     auto [ quadLayerSize, quadLayerLayout ] = computeQuadLayerData(init);
 
-    auto layerInfo = device->createQuadLayer(quadLayerSize, quadLayerLayout);
+    auto layerInfo = device->createCompositionLayer(PlatformXR::CompositionLayerType::Quad, quadLayerSize, quadLayerLayout);
     if (!layerInfo)
         return Exception { ExceptionCode::OperationError, "Unable to create a quad layer."_s };
 

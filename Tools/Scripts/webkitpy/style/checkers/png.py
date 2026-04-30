@@ -42,7 +42,7 @@ class PNGChecker(object):
         self._fs = self._host.filesystem
         self._detector = scm or SCMDetector(self._fs, self._host.executive).detect_scm_system(self._fs.getcwd())
 
-    def check(self, inline=None):
+    def check(self, inline=None, line_numbers=None):
         errorstr = ""
         config_file_path = ""
         detection = self._detector.display_name()

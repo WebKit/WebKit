@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-remove</title>
+    <script src="mp4-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Real-MP4 equivalent of media-source-remove.html
+    // Tests SourceBuffer.remove() with sync frame boundaries through the real parser pipeline.
+    // Remove samples [0, 2) should remove up to the next sync frame at PTS=4.
+
+    var source;
+    var sourceBuffer;
+    var initData;
+    var mediaData;
+
+    async function runTest() {
+        findMediaElement();
+
+        if (!MediaSource.isTypeSupported(MP4.VIDEO_TYPE)) {
+            failTest(`${MP4.VIDEO_TYPE} is not supported`);
+            return;
+        }
+
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+
+        run(`sourceBuffer = source.addSourceBuffer('${MP4.VIDEO_TYPE}')`);
+
+        // Init segment with timescale=1000 (milliseconds)
+        initData = MP4.initSegment({
+            timescale: 1000,
+            tracks: [{ id: 1, type: 'video', timescale: 1000 }]
+        });
+        run('sourceBuffer.appendBuffer(initData)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        // 8 samples, 1 second each. Sync frames at PTS=0 and PTS=4.
+        mediaData = MP4.mediaSegment({
+            sequenceNumber: 1,
+            tracks: [{
+                id: 1,
+                type: 'video',
+                baseDecodeTime: 0,
+                samples: [
+                    { duration: 1000, compositionTimeOffset: 0, isSync: true },
+                    { duration: 1000, compositionTimeOffset: 0, isSync: false },
+                    { duration: 1000, compositionTimeOffset: 0, isSync: false },
+                    { duration: 1000, compositionTimeOffset: 0, isSync: false },
+                    { duration: 1000, compositionTimeOffset: 0, isSync: true },
+                    { duration: 1000, compositionTimeOffset: 0, isSync: false },
+                    { duration: 1000, compositionTimeOffset: 0, isSync: false },
+                    { duration: 1000, compositionTimeOffset: 0, isSync: false },
+                ]
+            }]
+        });
+        run('sourceBuffer.appendBuffer(mediaData)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Verify full range before removal
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.start(0)', 0, 0.01);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', 8, 0.01);
+
+        // Remove [0, 2) — should remove samples 0-3 (up to next sync frame at 4)
+        run('sourceBuffer.remove(0, 2)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        // After removal, buffered should start at the sync frame at PTS=4
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpected('sourceBuffer.buffered.start(0)', 4);
+
+        endTest();
+    }
+
+    </script>
+</head>
+<body onload="runTest()">
+    <div>Tests SourceBuffer.remove() with real MP4 data. Removes [0, 2) and verifies that removal extends to the next sync frame boundary at PTS=4.</div>
+    <video></video>
+</body>
+</html>

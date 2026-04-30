@@ -96,7 +96,7 @@ private:
 // at points where replaced elements break up the text flow. The text is delivered in
 // the chunks it's already stored in, to avoid copying any text.
 
-bool NODELETE shouldEmitNewlinesBeforeAndAfterNode(Node&);
+bool NODELETE shouldEmitNewlinesBeforeAndAfterNode(Node&, bool emitsNewlinesPerInnerTextSpec = false);
 
 class TextIterator {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(TextIterator, WEBCORE_EXPORT);

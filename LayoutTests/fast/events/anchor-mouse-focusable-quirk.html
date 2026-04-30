@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<!-- Test for the anchor mouse-focusability quirk on thesaurus.com and dictionary.com.
+     Anchor elements with href but no explicit tabindex are normally not mouse-focusable.
+     The quirk makes them focusable on click for these specific sites. -->
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<a id="link" href="#">Click me</a>
+<script>
+description("Tests that the anchor mouse-focusability quirk works on thesaurus.com and dictionary.com, but not on unrelated sites.");
+
+var link = document.getElementById("link");
+
+function clickLink() {
+    let rect = link.getBoundingClientRect();
+    eventSender.mouseMoveTo(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+// Test 1: thesaurus.com — anchor should become focused on click.
+document.activeElement?.blur();
+window.internals.setTopDocumentURLForQuirks("https://www.thesaurus.com");
+clickLink();
+shouldBe("document.activeElement", "link");
+
+// Test 2: dictionary.com — anchor should become focused on click.
+document.activeElement?.blur();
+window.internals.setTopDocumentURLForQuirks("https://www.dictionary.com");
+clickLink();
+shouldBe("document.activeElement", "link");
+
+// Test 3: unrelated site — anchor should NOT become focused on click.
+document.activeElement?.blur();
+window.internals.setTopDocumentURLForQuirks("https://www.example.com");
+clickLink();
+shouldNotBe("document.activeElement", "link");
+</script>
+</body>
+</html>

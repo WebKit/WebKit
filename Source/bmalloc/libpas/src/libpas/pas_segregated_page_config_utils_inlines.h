@@ -50,31 +50,6 @@ typedef struct {
         ((pas_basic_segregated_page_config_definitions_arguments){__VA_ARGS__}).page_config.base, \
         ((pas_basic_segregated_page_config_definitions_arguments){__VA_ARGS__}).header_table); \
     \
-    pas_segregated_shared_page_directory* \
-    name ## _page_config_select_shared_page_directory( \
-        pas_segregated_heap* heap, pas_segregated_size_directory* size_directory) \
-    { \
-        PAS_UNUSED_PARAM(size_directory); \
-        \
-        pas_basic_segregated_page_config_definitions_arguments arguments = \
-            (pas_basic_segregated_page_config_definitions_arguments){__VA_ARGS__}; \
-        \
-        pas_shared_page_directory_by_size* directory_by_size; \
-        pas_segregated_shared_page_directory* directory; \
-        \
-        PAS_ASSERT(arguments.page_config.base.is_enabled); \
-        \
-        directory_by_size = pas_basic_heap_page_caches_get_shared_page_directories( \
-            ((pas_basic_heap_runtime_config*)heap->runtime_config)->page_caches, \
-            arguments.page_config.variant); \
-        \
-        directory = pas_shared_page_directory_by_size_get( \
-            directory_by_size, size_directory->object_size, \
-            (const pas_segregated_page_config*)arguments.page_config.base.page_config_ptr); \
-        \
-        return directory; \
-    } \
-    \
     struct pas_dummy
 
 PAS_END_EXTERN_C;

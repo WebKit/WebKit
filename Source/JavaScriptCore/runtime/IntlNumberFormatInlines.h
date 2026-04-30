@@ -27,11 +27,12 @@
 
 #include "BuiltinNames.h"
 #include "IntlNumberFormat.h"
-#include "IntlPluralRules.h"
 #include "IntlObjectInlines.h"
+#include "IntlPluralRules.h"
 #include "JSBigIntInlines.h"
 #include "JSGlobalObject.h"
 #include "JSGlobalObjectFunctions.h"
+#include "JSObjectInlines.h"
 #include <wtf/Range.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

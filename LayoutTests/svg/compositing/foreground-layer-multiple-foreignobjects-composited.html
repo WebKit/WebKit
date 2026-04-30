@@ -1,0 +1,26 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<html>
+<head>
+<meta name="fuzzy" content="maxDifference=0-1; totalPixels=0-100" />
+<style>
+    html, body { margin: 0; padding: 0; }
+    svg { width: 400px; height: 200px; }
+</style>
+</head>
+<body>
+<!-- Test: Multiple foreignObject elements with composited HTML content,
+     with non-composited SVG rects between them. Tests the gap scenario
+     with foreignObject-based compositing. -->
+<svg viewBox="0 0 400 200">
+    <rect x="10" y="10" width="50" height="50" fill="blue"/>
+    <foreignObject x="70" y="10" width="50" height="50">
+        <div xmlns="http://www.w3.org/1999/xhtml" style="will-change: transform; width: 50px; height: 50px; background: green;"></div>
+    </foreignObject>
+    <rect x="130" y="10" width="50" height="50" fill="red"/>
+    <foreignObject x="190" y="10" width="50" height="50">
+        <div xmlns="http://www.w3.org/1999/xhtml" style="will-change: transform; width: 50px; height: 50px; background: orange;"></div>
+    </foreignObject>
+    <rect x="250" y="10" width="50" height="50" fill="purple"/>
+</svg>
+</body>
+</html>

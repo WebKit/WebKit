@@ -31,6 +31,8 @@
 #include "InterpreterInlines.h"
 #include "JSAsyncFromSyncIterator.h"
 #include "JSCInlines.h"
+#include "JSMap.h"
+#include "JSSet.h"
 #include "ObjectConstructor.h"
 #include "VMEntryScopeInlines.h"
 
@@ -426,10 +428,7 @@ ASCIILiteral getIteratorErrorMessage(IterableValidationResult result, JSValue it
 
 IterationMode getIterationMode(VM&, JSGlobalObject* globalObject, JSValue iterable, JSValue symbolIterator)
 {
-    if (!isJSArray(iterable))
-        return IterationMode::Generic;
-
-    if (!globalObject->arrayIteratorProtocolWatchpointSet().isStillValid())
+    if (!iterable.isCell()) [[unlikely]]
         return IterationMode::Generic;
 
     // This is correct because we just checked the watchpoint is still valid.
@@ -437,12 +436,39 @@ IterationMode getIterationMode(VM&, JSGlobalObject* globalObject, JSValue iterab
     if (!symbolIteratorFunction)
         return IterationMode::Generic;
 
-    // We don't want to allocate the values function just to check if it's the same as our function so we use the concurrent accessor.
-    // FIXME: This only works for arrays from the same global object as ourselves but we should be able to support any pairing.
-    if (globalObject->arrayProtoValuesFunctionConcurrently() != symbolIteratorFunction)
-        return IterationMode::Generic;
+    if (isJSArray(iterable)) {
+        if (!globalObject->arrayIteratorProtocolWatchpointSet().isStillValid())
+            return IterationMode::Generic;
 
-    return IterationMode::FastArray;
+        // We don't want to allocate the values function just to check if it's the same as our function so we use the concurrent accessor.
+        // FIXME: This only works for arrays from the same global object as ourselves but we should be able to support any pairing.
+        if (globalObject->arrayProtoValuesFunctionConcurrently() != symbolIteratorFunction)
+            return IterationMode::Generic;
+
+        return IterationMode::FastArray;
+    }
+
+    if (dynamicDowncast<JSMap>(iterable.asCell())) {
+        if (!globalObject->mapIteratorProtocolWatchpointSet().isStillValid())
+            return IterationMode::Generic;
+
+        if (globalObject->mapProtoEntriesFunctionConcurrently() != symbolIteratorFunction)
+            return IterationMode::Generic;
+
+        return IterationMode::FastMap;
+    }
+
+    if (dynamicDowncast<JSSet>(iterable.asCell())) {
+        if (!globalObject->setIteratorProtocolWatchpointSet().isStillValid())
+            return IterationMode::Generic;
+
+        if (globalObject->setProtoValuesFunctionConcurrently() != symbolIteratorFunction)
+            return IterationMode::Generic;
+
+        return IterationMode::FastSet;
+    }
+
+    return IterationMode::Generic;
 }
 
 IterationMode getIterationMode(VM&, JSGlobalObject* globalObject, JSValue iterable)

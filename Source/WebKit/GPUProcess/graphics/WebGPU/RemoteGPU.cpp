@@ -317,6 +317,29 @@ void RemoteGPU::createModelBacking(unsigned width, unsigned height, const WebMod
 #if ENABLE(GPU_PROCESS_MODEL)
     assertIsCurrent(workQueue());
 
+    constexpr auto max2dTextureSize = 16384;
+    MESSAGE_CHECK(width <= max2dTextureSize && height <= max2dTextureSize);
+    auto& inputSpecularTexture = specularTexture;
+    auto& inputDiffuseTexture = diffuseTexture;
+    {
+#define loadData(...) { }
+        WEBMODEL_WEB_MODEL_PLAYER_DECLARE_DIFFUSE_AND_SPECULAR_TEXTURES
+#undef loadData
+#define equalIgnoringDataContents(a, b, dataSize) \
+            a.data.size() == dataSize && \
+            a.width == b.width && \
+            a.height == b.height && \
+            a.depth == b.depth && \
+            a.textureType == b.textureType && \
+            a.pixelFormat == b.pixelFormat && \
+            a.mipmapLevelCount == b.mipmapLevelCount && \
+            a.arrayLength == b.arrayLength && \
+            a.textureUsage == b.textureUsage
+
+        MESSAGE_CHECK(equalIgnoringDataContents(inputDiffuseTexture, diffuseTexture, 49152));
+        MESSAGE_CHECK(equalIgnoringDataContents(inputSpecularTexture, specularTexture, 1048572));
+#undef equalIgnoringDataContents
+    }
     Ref objectHeap = m_modelObjectHeap.get();
 
     auto gpuProcessConnection = m_gpuConnectionToWebProcess.get();

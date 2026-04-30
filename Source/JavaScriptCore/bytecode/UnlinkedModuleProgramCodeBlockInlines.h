@@ -25,10 +25,10 @@
 
 #pragma once
 
-namespace JSC {
-
 #include "StructureCreateInlines.h"
 #include "UnlinkedModuleProgramCodeBlock.h"
+
+namespace JSC {
 
 inline Structure* UnlinkedModuleProgramCodeBlock::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
 {

@@ -1197,15 +1197,16 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
     if (m_response.isInHTTPFamily()) {
         int status = m_response.httpStatusCode(); // Status may be zero when loading substitute data, in particular from a WebArchive.
         if (status) {
-            if (status < httpStatus200OK || status >= httpStatus300MultipleChoices) {
+            if (!isHttpOkStatus(status)) {
                 if (RefPtr owner = dynamicDowncast<HTMLObjectElement>(frame->ownerElement())) {
                     owner->renderFallbackContent();
                     // object elements are no longer rendered after we fallback, so don't
                     // keep trying to process data from their load
                     cancelMainResourceLoad(protect(frameLoader())->cancelledError(m_request));
                 }
-            } else if (status == httpStatus204NoContent || status == httpStatus205ResetContent) {
-                // 204/205 responses should abort navigation without changing the document.
+            } else if (isHttpNullBodyStatus(status)) {
+                // Implementing step 21 of https://fetch.spec.whatwg.org/#main-fetch.
+                // null-body responses should abort navigation without changing the document.
                 stopLoadingForPolicyChange();
                 return;
             }
@@ -1364,12 +1365,19 @@ void DocumentLoader::commitData(const SharedBuffer& data)
         }
         // Call receivedFirstData() exactly once per load. We should only reach this point multiple times
         // for multipart loads, and FrameLoader::isMultipartReplacing() will be true after the first time.
+        bool frameHadNoTreeParent = frame && !frame->tree().parent();
         if (!isMultipartReplacingLoad())
             protect(frameLoader())->receivedFirstData();
 
         // The load could be canceled under receivedFirstData(), which makes delegate calls and even sometimes dispatches DOM events.
         if (!isLoading())
             return;
+
+        // Under site isolation, receivedFirstData() commits the provisional frame into the
+        // frame tree via commitProvisionalFrame(), setting the correct parent. Re-register
+        // the service worker client so ancestorOrigins reflects the updated frame tree.
+        if (m_canUseServiceWorkers && frameHadNoTreeParent && frame->tree().parent())
+            document->updateServiceWorkerClientData();
 
         if (RefPtr window = document->window()) {
             window->prewarmLocalStorageIfNecessary();
@@ -1972,7 +1980,7 @@ URL DocumentLoader::urlForHistory() const
 
 bool DocumentLoader::urlForHistoryReflectsFailure() const
 {
-    return m_substituteData.isValid() || m_response.httpStatusCode() >= 400;
+    return m_substituteData.isValid() || m_response.httpStatusCode() >= httpStatus400BadRequest;
 }
 
 URL DocumentLoader::documentURL() const
@@ -2204,7 +2212,7 @@ void DocumentLoader::startLoadingMainResource()
     // Always filter in WK1
     contentFilterInDocumentLoader() = frame && frame->view() && frame->view()->platformWidget();
     if (contentFilterInDocumentLoader())
-        m_contentFilter = !m_substituteData.isValid() ? ContentFilter::create(*this, IS_MAIN_FRAME) : nullptr;
+        m_contentFilter = !m_substituteData.isValid() ? ContentFilter::create(*this, IS_MAIN_FRAME ? IsMainFrameLoad::Yes : IsMainFrameLoad::No) : nullptr;
 #endif
 
     auto url = m_request.url();

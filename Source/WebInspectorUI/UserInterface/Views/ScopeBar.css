@@ -104,10 +104,6 @@
     outline-offset: -1px;
 }
 
-.scope-bar > li.multiple:not(.selected) > select {
-    display: none;
-}
-
 .scope-bar > li.multiple > .arrows {
     width: 5px;
     height: 12px;

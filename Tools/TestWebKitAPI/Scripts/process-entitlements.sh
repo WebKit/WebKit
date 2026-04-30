@@ -57,6 +57,7 @@ function process_mac_testwebkitapi_entitlements()
 
         plistbuddy Add :com.apple.hid.manager.user-access-device bool YES
         plistbuddy Add :com.apple.private.hid.client.event-filter bool YES
+        plistbuddy Add :com.apple.private.hid.client.event-dispatch.internal bool YES
     fi
 }
 

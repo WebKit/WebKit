@@ -26,6 +26,7 @@
 #pragma once
 
 #include "StructureChain.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

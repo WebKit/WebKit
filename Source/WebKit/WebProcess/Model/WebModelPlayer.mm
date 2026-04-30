@@ -34,6 +34,7 @@
 #import "ModelProcessModelPlayerTransformState.h"
 #import "ModelTypes.h"
 #import "RemoteGPUProxy.h"
+#import "RemoteMeshProxy.h"
 #import "WKStageModeOrbitSimulator.h"
 #import <WebCore/Document.h>
 #import <WebCore/DocumentEventLoop.h>
@@ -190,30 +191,7 @@ void WebModelPlayer::load(WebCore::Model& modelSource, WebCore::LayoutSize size)
     size.scale(document->deviceScaleFactor());
     m_currentPixelSize = WebCore::IntSize(size.width().toUnsigned(), size.height().toUnsigned());
 
-    WebModel::ImageAsset diffuseTexture {
-        .data = loadData(adoptCF(static_cast<CFStringRef>(@"modelDefaultDiffuseData"))),
-        .width = 64,
-        .height = 64,
-        .depth = 1,
-        .textureType = WebCore::WebGPU::TextureViewDimension::Cube,
-        .pixelFormat = WebCore::WebGPU::TextureFormat::R16float,
-        .mipmapLevelCount = 1,
-        .arrayLength = 6,
-        .textureUsage = WebCore::WebGPU::TextureUsage::TextureBinding,
-        .swizzle = { }
-    };
-    WebModel::ImageAsset specularTexture {
-        .data = loadData(adoptCF(static_cast<CFStringRef>(@"modelDefaultSpecularData"))),
-        .width = 256,
-        .height = 256,
-        .depth = 1,
-        .textureType = WebCore::WebGPU::TextureViewDimension::Cube,
-        .pixelFormat = WebCore::WebGPU::TextureFormat::R16float,
-        .mipmapLevelCount = 9,
-        .arrayLength = 6,
-        .textureUsage = WebCore::WebGPU::TextureUsage::TextureBinding,
-        .swizzle = { }
-    };
+    WEBMODEL_WEB_MODEL_PLAYER_DECLARE_DIFFUSE_AND_SPECULAR_TEXTURES
 
     m_currentModel = static_cast<RemoteGPUProxy&>(gpu->backing()).createModelBacking(m_currentPixelSize.width(), m_currentPixelSize.height(), diffuseTexture, specularTexture, [protectedThis = protect(*this)] (Vector<MachSendRight>&& surfaceHandles) {
         if (surfaceHandles.size())
@@ -422,18 +400,6 @@ void WebModelPlayer::setAnimationCurrentTime(Seconds, CompletionHandler<void(boo
 {
 }
 
-void WebModelPlayer::hasAudio(CompletionHandler<void(std::optional<bool>&&)>&&)
-{
-}
-
-void WebModelPlayer::isMuted(CompletionHandler<void(std::optional<bool>&&)>&&)
-{
-}
-
-void WebModelPlayer::setIsMuted(bool, CompletionHandler<void(bool success)>&&)
-{
-}
-
 void WebModelPlayer::updateScene()
 {
 }
@@ -617,10 +583,7 @@ bool WebModelPlayer::supportsTransform(WebCore::TransformationMatrix transformat
     if (m_stageMode != WebCore::StageModeOperation::None)
         return false;
 
-    if (RefPtr currentModel = m_currentModel)
-        return currentModel->supportsTransform(transformationMatrix);
-
-    return false;
+    return RemoteMeshProxy::supportsTransform(transformationMatrix);
 }
 
 void WebModelPlayer::play(bool playing)

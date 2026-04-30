@@ -477,6 +477,71 @@ ALWAYS_INLINE std::optional<uint8_t> findFirstNonZeroIndex(simde_uint64x2_t valu
 #endif
 }
 
+ALWAYS_INLINE std::optional<uint8_t> findLastNonZeroIndex(simde_uint8x16_t value)
+{
+#if CPU(X86_64)
+    auto raw = simde_uint8x16_to_m128i(value);
+    uint16_t mask = simde_mm_movemask_epi8(raw);
+    if (!mask)
+        return std::nullopt;
+    return 15 - std::countl_zero(mask);
+#else
+    if (!isNonZero(value))
+        return std::nullopt;
+    constexpr simde_uint8x16_t indexMask { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+    return simde_vmaxvq_u8(simde_vandq_u8(indexMask, value));
+#endif
+}
+
+ALWAYS_INLINE std::optional<uint8_t> findLastNonZeroIndex(simde_uint16x8_t value)
+{
+#if CPU(X86_64)
+    auto raw = simde_uint16x8_to_m128i(value);
+    uint16_t mask = simde_mm_movemask_epi8(raw);
+    if (!mask)
+        return std::nullopt;
+    return (15 - std::countl_zero(mask)) >> 1;
+#else
+    if (!isNonZero(value))
+        return std::nullopt;
+    constexpr simde_uint16x8_t indexMask { 0, 1, 2, 3, 4, 5, 6, 7 };
+    return simde_vmaxvq_u16(simde_vandq_u16(indexMask, value));
+#endif
+}
+
+ALWAYS_INLINE std::optional<uint8_t> findLastNonZeroIndex(simde_uint32x4_t value)
+{
+#if CPU(X86_64)
+    auto raw = simde_uint32x4_to_m128i(value);
+    uint16_t mask = simde_mm_movemask_epi8(raw);
+    if (!mask)
+        return std::nullopt;
+    return (15 - std::countl_zero(mask)) >> 2;
+#else
+    if (!isNonZero(value))
+        return std::nullopt;
+    constexpr simde_uint32x4_t indexMask { 0, 1, 2, 3 };
+    return simde_vmaxvq_u32(simde_vandq_u32(indexMask, value));
+#endif
+}
+
+ALWAYS_INLINE std::optional<uint8_t> findLastNonZeroIndex(simde_uint64x2_t value)
+{
+#if CPU(X86_64)
+    auto raw = simde_uint64x2_to_m128i(value);
+    uint16_t mask = simde_mm_movemask_epi8(raw);
+    if (!mask)
+        return std::nullopt;
+    return (15 - std::countl_zero(mask)) >> 3;
+#else
+    simde_uint32x2_t reducedMask = simde_vmovn_u64(value);
+    if (!simde_vget_lane_u64(simde_vreinterpret_u64_u32(reducedMask), 0))
+        return std::nullopt;
+    constexpr simde_uint32x2_t indexMask { 0, 1 };
+    return simde_vmaxv_u32(simde_vand_u32(indexMask, reducedMask));
+#endif
+}
+
 template<Latin1Character character, Latin1Character... characters>
 ALWAYS_INLINE simde_uint8x16_t equal(simde_uint8x16_t input)
 {
@@ -625,6 +690,38 @@ ALWAYS_INLINE const CharacterType* find(std::span<const CharacterType> span, con
     for (; cursor != end; ++cursor) {
         auto character = *cursor;
         if (scalarMatch(character))
+            return cursor;
+    }
+    return end;
+}
+
+template<typename CharacterType, size_t threshold = SIMD::stride<CharacterType>>
+ALWAYS_INLINE const CharacterType* reverseFind(std::span<const CharacterType> span, const auto& vectorMatch, const auto& scalarMatch)
+{
+    constexpr size_t stride = SIMD::stride<CharacterType>;
+    using UnsignedType = SameSizeUnsignedInteger<CharacterType>;
+    static_assert(threshold >= stride);
+    const auto* begin = span.data();
+    const auto* end = std::to_address(span.end());
+    if (span.size() >= threshold) {
+        size_t remaining = span.size();
+        while (remaining >= stride) {
+            remaining -= stride;
+            const auto* cursor = begin + remaining;
+            if (auto index = vectorMatch(SIMD::load(std::bit_cast<const UnsignedType*>(cursor))))
+                return cursor + index.value();
+        }
+        if (remaining) {
+            if (auto index = vectorMatch(SIMD::load(std::bit_cast<const UnsignedType*>(begin))))
+                return begin + index.value();
+        }
+        return end;
+    }
+
+    const auto* cursor = end;
+    while (cursor != begin) {
+        --cursor;
+        if (scalarMatch(*cursor))
             return cursor;
     }
     return end;

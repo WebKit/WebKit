@@ -100,20 +100,50 @@ private:
 
 #if ENABLE(WEBXR_LAYERS)
 
-class OpenXRQuadLayer final: public OpenXRLayer  {
+class OpenXRCompositionLayer : public OpenXRLayer {
+    WTF_MAKE_TZONE_ALLOCATED(OpenXRCompositionLayer);
+    WTF_MAKE_NONCOPYABLE(OpenXRCompositionLayer);
+public:
+    std::optional<PlatformXR::FrameData::LayerData> startFrame() = 0;
+    Vector<XrCompositionLayerBaseHeader*> endFrame(const PlatformXR::DeviceLayer&, XrSpace, const Vector<XrView>&) = 0;
+
+protected:
+    OpenXRCompositionLayer(UniqueRef<OpenXRSwapchain>&&, PlatformXR::LayerLayout);
+
+    PlatformXR::LayerLayout m_layout;
+};
+
+class OpenXRQuadLayer final : public OpenXRCompositionLayer {
     WTF_MAKE_TZONE_ALLOCATED(OpenXRQuadLayer);
     WTF_MAKE_NONCOPYABLE(OpenXRQuadLayer);
 public:
     static std::unique_ptr<OpenXRQuadLayer> create(std::unique_ptr<OpenXRSwapchain>&&, PlatformXR::LayerLayout);
+
+    std::optional<PlatformXR::FrameData::LayerData> startFrame() override;
+    Vector<XrCompositionLayerBaseHeader*> endFrame(const PlatformXR::DeviceLayer&, XrSpace, const Vector<XrView>&) override;
+
 private:
     explicit OpenXRQuadLayer(UniqueRef<OpenXRSwapchain>&&, PlatformXR::LayerLayout);
 
-    std::optional<PlatformXR::FrameData::LayerData> startFrame() final;
-    Vector<XrCompositionLayerBaseHeader*> endFrame(const PlatformXR::DeviceLayer&, XrSpace, const Vector<XrView>&) final;
-
     Vector<XrCompositionLayerQuad> m_layers;
-    PlatformXR::LayerLayout m_layout;
 };
+
+#if defined(XR_KHR_composition_layer_equirect2)
+class OpenXREquirectLayer final : public OpenXRCompositionLayer {
+    WTF_MAKE_TZONE_ALLOCATED(OpenXREquirectLayer);
+    WTF_MAKE_NONCOPYABLE(OpenXREquirectLayer);
+public:
+    static std::unique_ptr<OpenXREquirectLayer> create(std::unique_ptr<OpenXRSwapchain>&&, PlatformXR::LayerLayout);
+
+    std::optional<PlatformXR::FrameData::LayerData> startFrame() override;
+    Vector<XrCompositionLayerBaseHeader*> endFrame(const PlatformXR::DeviceLayer&, XrSpace, const Vector<XrView>&) override;
+
+private:
+    explicit OpenXREquirectLayer(UniqueRef<OpenXRSwapchain>&&, PlatformXR::LayerLayout);
+
+    Vector<XrCompositionLayerEquirect2KHR> m_layers;
+};
+#endif
 
 #endif
 

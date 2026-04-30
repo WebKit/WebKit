@@ -32,6 +32,7 @@
 #include "DocumentLoader.h"
 #include "LoaderStrategy.h"
 #include "PlatformStrategies.h"
+#include <WebCore/HTTPStatusCodes.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 
@@ -142,7 +143,7 @@ void NetscapePlugInStreamLoader::didReceiveResponse(ResourceResponse&& response,
             return;
 
         // Status code can be null when serving from a Web archive.
-        if (response.httpStatusCode() && (response.httpStatusCode() < 100 || response.httpStatusCode() >= 400))
+        if (response.httpStatusCode() && (response.httpStatusCode() < httpStatus100Continue || response.httpStatusCode() >= httpStatus400BadRequest))
             cancel(platformStrategies()->loaderStrategy()->fileDoesNotExistError(response));
     });
 }

@@ -30,6 +30,7 @@
 #include "ContainerNodeInlines.h"
 #include "DOMTokenList.h"
 #include "DocumentPage.h"
+#include "DocumentQuirks.h"
 #include "DocumentSecurityOrigin.h"
 #include "ElementAncestorIteratorInlines.h"
 #include "EventHandler.h"
@@ -110,7 +111,7 @@ bool HTMLAnchorElement::isMouseFocusable() const
 {
 #if !(PLATFORM(GTK) || PLATFORM(WPE))
     // Only allow links with tabIndex or contentEditable to be mouse focusable.
-    if (isLink())
+    if (isLink() && !protect(document())->quirks().needsAnchorToBeMouseFocusable())
         return HTMLElement::supportsFocus();
 #endif
 

@@ -3350,12 +3350,23 @@ void WebPage::shrinkToFitContent(ZoomToInitialScale zoomToInitialScale)
 
     m_viewportConfiguration.setIsKnownToLayOutWiderThanViewport(true);
     double originalMinimumDeviceWidth = m_viewportConfiguration.minimumEffectiveDeviceWidth();
-    if (changeMinimumEffectiveDeviceWidth(std::min(maximumExpandedLayoutWidth, originalContentWidth)) && view->contentsWidth() - scaledViewWidth() > originalHorizontalOverflowAmount) {
-        changeMinimumEffectiveDeviceWidth(originalMinimumDeviceWidth);
-        m_viewportConfiguration.setIsKnownToLayOutWiderThanViewport(false);
+
+    bool didChangeMinimumEffectiveDeviceWidth = changeMinimumEffectiveDeviceWidth(std::min(maximumExpandedLayoutWidth, originalContentWidth));
+
+    if (didChangeMinimumEffectiveDeviceWidth) {
+        bool hasResponsiveMetaViewportTag = m_viewportConfiguration.viewportArguments().widthWasExplicit && m_viewportConfiguration.viewportArguments().width == ViewportArguments::ValueDeviceWidth;
+
+        if (view->contentsWidth() - scaledViewWidth() > originalHorizontalOverflowAmount) {
+            changeMinimumEffectiveDeviceWidth(originalMinimumDeviceWidth);
+            m_viewportConfiguration.setIsKnownToLayOutWiderThanViewport(false);
+            if (hasResponsiveMetaViewportTag && m_viewportConfiguration.layoutWidth() != m_lastShrinkToFitLayoutWidth)
+                mainDocument->addConsoleMessage(MessageSource::Rendering, MessageLevel::Warning, "This page has a responsive meta viewport tag. The page content is wider than the viewport but resizing causes the page overflow to be worse."_s);
+        } else if (hasResponsiveMetaViewportTag && m_viewportConfiguration.layoutWidth() != m_lastShrinkToFitLayoutWidth)
+            mainDocument->addConsoleMessage(MessageSource::Rendering, MessageLevel::Warning, "This page has a responsive meta viewport tag. The page content is wider than the viewport. The page will be scaled to fit."_s);
     }
 
-    // FIXME (197429): Consider additionally logging an error message to the console if a responsive meta viewport tag was used.
+    m_lastShrinkToFitLayoutWidth = m_viewportConfiguration.layoutWidth();
+
     RELEASE_LOG(ViewportSizing, "Shrink-to-fit: content width %d => %d; layout width %d => %d", originalContentWidth, view->contentsWidth(), originalLayoutWidth, m_viewportConfiguration.layoutWidth());
     viewportConfigurationChanged(zoomToInitialScale);
 }
@@ -4293,7 +4304,7 @@ void WebPage::hardwareKeyboardAvailabilityChanged(HardwareKeyboardState state)
 
     protect(m_page)->didUpdateHardwareKeyboardAttachment(m_keyboardIsAttached);
 
-    if (RefPtr focusedFrame = m_page->focusController().focusedLocalFrame())
+    if (RefPtr focusedFrame = m_page->focusController().localFocusedFrame())
         focusedFrame->eventHandler().capsLockStateMayHaveChanged();
 }
 

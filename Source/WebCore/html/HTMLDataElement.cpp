@@ -46,4 +46,6 @@ inline HTMLDataElement::HTMLDataElement(const QualifiedName& tagName, Document& 
     ASSERT(hasTagName(dataTag));
 }
 
+HTMLDataElement::~HTMLDataElement() = default;
+
 } // namespace WebCore.

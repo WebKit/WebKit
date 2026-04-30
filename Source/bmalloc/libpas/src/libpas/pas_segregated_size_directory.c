@@ -159,8 +159,7 @@ void pas_segregated_size_directory_finish_creation(pas_segregated_size_directory
 
     if (!heap->runtime_config->directory_size_bound_for_baseline_allocators)
         pas_segregated_size_directory_create_tlc_allocator(directory);
-    if (!heap->runtime_config->directory_size_bound_for_partial_views)
-        pas_segregated_size_directory_enable_exclusive_views(directory);
+    pas_segregated_size_directory_enable_exclusive_views(directory);
     if (!heap->runtime_config->directory_size_bound_for_no_view_cache)
         pas_segregated_size_directory_create_tlc_view_cache(directory);
 }
@@ -533,8 +532,7 @@ static pas_segregated_view take_first_eligible_direct_create_new_view_callback(
 
     runtime_config = size_directory->heap->runtime_config;
 
-    if (config->index >= runtime_config->directory_size_bound_for_partial_views)
-        pas_segregated_size_directory_enable_exclusive_views(size_directory);
+    pas_segregated_size_directory_enable_exclusive_views(size_directory);
 
     if (config->index >= runtime_config->directory_size_bound_for_baseline_allocators)
         pas_segregated_size_directory_create_tlc_allocator(size_directory);
@@ -542,20 +540,12 @@ static pas_segregated_view take_first_eligible_direct_create_new_view_callback(
     if (config->index >= runtime_config->directory_size_bound_for_no_view_cache)
         pas_segregated_size_directory_create_tlc_view_cache(size_directory);
 
-    if (pas_segregated_size_directory_are_exclusive_views_enabled(size_directory)) {
-        view = pas_segregated_exclusive_view_as_view_non_null(
-            pas_segregated_exclusive_view_create(size_directory, config->index));
-        if (verbose) {
-            pas_log("%p: created exclusive %p.\n",
-                    size_directory, pas_segregated_view_get_ptr(view));
-        }
-    } else {
-        view = pas_segregated_partial_view_as_view_non_null(
-            pas_segregated_partial_view_create(size_directory, config->index));
-        if (verbose) {
-            pas_log("%p: created partial %p.\n",
-                    size_directory, pas_segregated_view_get_ptr(view));
-        }
+    PAS_ASSERT(pas_segregated_size_directory_are_exclusive_views_enabled(size_directory));
+    view = pas_segregated_exclusive_view_as_view_non_null(
+        pas_segregated_exclusive_view_create(size_directory, config->index));
+    if (verbose) {
+        pas_log("%p: created exclusive %p.\n",
+                size_directory, pas_segregated_view_get_ptr(view));
     }
 
     if (verbose) {

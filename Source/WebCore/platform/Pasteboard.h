@@ -102,7 +102,7 @@ struct PasteboardWebContent {
     HashMap<WebCore::FrameIdentifier, Ref<WebCore::LegacyWebArchive>> localFrameArchives;
     Vector<WebCore::FrameIdentifier> remoteFrameIdentifiers;
 #endif
-#if PLATFORM(GTK) || PLATFORM(WPE)
+#if PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(HAIKU)
     String contentOrigin;
     bool canSmartCopyOrDelete;
     String text;
@@ -119,7 +119,7 @@ struct PasteboardURL {
 #if PLATFORM(MAC)
     String userVisibleForm;
 #endif
-#if PLATFORM(GTK) || PLATFORM(WPE)
+#if PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(HAIKU)
     String markup;
 #endif
 };

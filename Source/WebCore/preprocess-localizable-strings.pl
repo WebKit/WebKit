@@ -28,9 +28,7 @@ use lib "$FindBin::Bin/bindings/scripts";
 use Getopt::Long;
 
 my $defines;
-my $preprocessor;
-GetOptions('defines=s' => \$defines,
-           'preprocessor=s' => \$preprocessor);
+GetOptions('defines=s' => \$defines);
 
 my $out = $ARGV[0];
 shift;
@@ -42,7 +40,7 @@ for my $in (@ARGV) {
 
     my $text;
     require preprocessor;
-    $text = join('', applyPreprocessor($in, $defines, $preprocessor, "YES"));
+    $text = join('', applyPreprocessor($in, $defines, "YES"));
 
     print OUT $text;
 }

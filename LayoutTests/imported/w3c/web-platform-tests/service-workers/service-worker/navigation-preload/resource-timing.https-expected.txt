@@ -1,4 +1,4 @@
 
 
-FAIL Navigation Preload Resource Timing. assert_greater_than: transferSize must greater then encodedBodySize. expected a number greater than 0 but got 0
+FAIL Navigation Preload Resource Timing. assert_greater_than_equal: domainLookupStart >= requestStart of https://web-platform.test:9443/service-workers/service-worker/navigation-preload/resources/resource-timing-scope.py?type=redirect expected a number greater than or equal to 17 but got 0
 

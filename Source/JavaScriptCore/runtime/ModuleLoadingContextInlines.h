@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ModuleLoadingContext.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

@@ -32,6 +32,7 @@
 #include "StyleLengthWrapper+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
+#include <numeric>
 
 namespace WebCore {
 namespace Style {
@@ -64,12 +65,8 @@ auto Blending<SVGStrokeDasharray>::blend(const SVGStrokeDasharray& a, const SVGS
         return context.progress < 0.5 ? a : b;
 
     auto resultLength = aLength;
-    if (aLength != bLength) {
-        if (!remainder(std::max(aLength, bLength), std::min(aLength, bLength)))
-            resultLength = std::max(aLength, bLength);
-        else
-            resultLength = aLength * bLength;
-    }
+    if (aLength != bLength)
+        resultLength = std::lcm(aLength, bLength);
 
     return SVGStrokeDasharrayList::createWithSizeFromGenerator(resultLength, [&](auto i) {
         return Style::blend(a[i % aLength], b[i % bLength], context);

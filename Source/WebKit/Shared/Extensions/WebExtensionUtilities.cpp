@@ -138,69 +138,6 @@ void serializeToMultipleJSONStrings(Ref<JSON::Object> jsonObject, Function<void(
         chunkCallback(currentJSON->toJSONString());
 }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
-WTF_ATTRIBUTE_PRINTF(1, 0)
-static String formatString(const char* format, va_list arguments)
-{
-    va_list args;
-    va_copy(args, arguments);
-
-ALLOW_NONLITERAL_FORMAT_BEGIN
-
-#if PLATFORM(COCOA)
-    auto cfFormat = adoptCF(CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, format, kCFStringEncodingUTF8, kCFAllocatorNull));
-    auto cfResult = adoptCF(CFStringCreateWithFormatAndArguments(0, 0, cfFormat.get(), args));
-    va_end(args);
-    return cfResult.get();
-#endif
-
-#if PLATFORM(WIN)
-    int len = _vscwprintf(format, args);
-    Vector<wchar_t> buffer(len + 1);
-    _vsnwprintf(buffer.data(), len + 1, format, args);
-    va_end(args);
-    return { buffer.data() };
-#else
-    char ch;
-    int result = vsnprintf(&ch, 1, format, args);
-
-    if (!result) {
-        va_end(args);
-        return emptyString();
-    }
-
-    if (result < 0) {
-        va_end(args);
-        return nullString();
-    }
-
-    Vector<char, 256> buffer;
-    buffer.grow(result + 1);
-
-    vsnprintf(buffer.mutableSpan().data(), buffer.size(), format, args);
-    va_end(args);
-
-    return StringImpl::create(buffer.subspan(0, buffer.size() - 1));
-#endif
-
-ALLOW_NONLITERAL_FORMAT_END
-}
-
-WTF_ATTRIBUTE_PRINTF(1, 0)
-static String formatString(const char* format, ...)
-{
-    va_list args;
-    va_start(args, format);
-ALLOW_NONLITERAL_FORMAT_BEGIN
-    auto result = formatString(format, args);
-ALLOW_NONLITERAL_FORMAT_END
-    va_end(args);
-    return result;
-}
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-
 static inline String lowercaseFirst(const String& input)
 {
     return !input.isEmpty() ? makeString(input.left(1).convertToASCIILowercase(), input.substring(1, input.length())) : input;
@@ -211,22 +148,13 @@ static inline String uppercaseFirst(const String& input)
     return !input.isEmpty() ? makeString(input.left(1).convertToASCIIUppercase(), input.substring(1, input.length())) : input;
 }
 
-String toErrorString(const String& callingAPIName, const String& sourceKey, String underlyingErrorString, ...)
+String toErrorString(const String& callingAPIName, const String& sourceKey, const String& underlyingErrorString)
 {
     ASSERT(!underlyingErrorString.isEmpty());
 
-    va_list arguments;
-    va_start(arguments, underlyingErrorString);
-
-ALLOW_NONLITERAL_FORMAT_BEGIN
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    String formattedUnderlyingErrorString = formatString(underlyingErrorString.utf8().data(), arguments).trim([](char16_t character) -> bool {
+    String formattedUnderlyingErrorString = underlyingErrorString.trim([](char16_t character) -> bool {
         return character == '.';
     });
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-ALLOW_NONLITERAL_FORMAT_END
-
-    va_end(arguments);
 
     String source = sourceKey;
 
@@ -236,19 +164,13 @@ ALLOW_NONLITERAL_FORMAT_END
     }
 
     if (!callingAPIName.isEmpty() && !source.isEmpty())
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-        return formatString("Invalid call to %s. The '%s' value is invalid, because %s.", callingAPIName.utf8().data(), source.utf8().data(), lowercaseFirst(formattedUnderlyingErrorString).utf8().data());
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        return makeString("Invalid call to "_s, callingAPIName, ". The '"_s, source, "' value is invalid, because "_s, lowercaseFirst(formattedUnderlyingErrorString), "."_s);
 
     if (callingAPIName.isEmpty() && !source.isEmpty())
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-        return formatString("The '%s' value is invalid, because %s.", source.utf8().data(), lowercaseFirst(formattedUnderlyingErrorString).utf8().data());
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        return makeString("The '"_s, source, "' value is invalid, because "_s, lowercaseFirst(formattedUnderlyingErrorString), "."_s);
 
     if (!callingAPIName.isEmpty())
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-        return formatString("Invalid call to %s. %s.", callingAPIName.utf8().data(), uppercaseFirst(formattedUnderlyingErrorString).utf8().data());
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        return makeString("Invalid call to "_s, callingAPIName, ". "_s, uppercaseFirst(formattedUnderlyingErrorString), "."_s);
 
     return formattedUnderlyingErrorString;
 }

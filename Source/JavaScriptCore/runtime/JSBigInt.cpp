@@ -911,6 +911,56 @@ void JSBigInt::multiplySpecialLow(std::span<const Digit> xSpan, std::span<const 
     }
 }
 
+// For the needs of cachedMod, computes only product digits from startPosition and onward.
+// result[startPosition] corresponds to product digit startPosition.
+// The accumulator state (next, carry, nextCarry) from positions below startPosition is
+// lost, so the computed digits are an *approximate* value.
+void JSBigInt::multiplySpecialHigh(std::span<const Digit> xSpan, std::span<const Digit> ySpan, std::span<Digit> resultSpan, size_t startPosition)
+{
+    RELEASE_ASSERT(xSpan.size() >= ySpan.size());
+    RELEASE_ASSERT(ySpan.size() >= 1);
+    size_t fullSize = xSpan.size() + ySpan.size();
+    RELEASE_ASSERT(startPosition < fullSize);
+    RELEASE_ASSERT(resultSpan.size() >= fullSize);
+
+    const auto* x = xSpan.data();
+    const auto* y = ySpan.data();
+    auto* result = resultSpan.data();
+
+    Digit next = 0, nextCarry = 0, carry = 0;
+
+    size_t i = startPosition;
+
+    // Expanding phase: i < ySpan.size(), j ranges 0..i.
+    for (; i < ySpan.size(); i++) {
+        Digit temp = 0;
+        Digit zi = digitAdd(next, carry, temp);
+        next = nextCarry + temp;
+        carry = 0;
+        nextCarry = 0;
+        MULTIPLY_BODY(0, i);
+    }
+
+    // Shrinking phase: i >= ySpan.size(), j range is clipped.
+    size_t loopEnd = xSpan.size() + ySpan.size() - 2;
+    for (; i <= loopEnd; i++) {
+        size_t maxXIndex = std::min<size_t>(i, xSpan.size() - 1);
+        size_t maxYIndex = ySpan.size() - 1;
+        size_t minXIndex = i - maxYIndex;
+        Digit temp = 0;
+        Digit zi = digitAdd(next, carry, temp);
+        next = nextCarry + temp;
+        carry = 0;
+        nextCarry = 0;
+        MULTIPLY_BODY(minXIndex, maxXIndex);
+    }
+
+    // Final carry digit.
+    Digit temp = 0;
+    result[i] = digitAdd(next, carry, temp);
+    ASSERT(!temp);
+}
+
 #undef MULTIPLY_BODY
 
 template <typename BigIntImpl1, typename BigIntImpl2>
@@ -1606,6 +1656,9 @@ JSValue JSBigInt::unaryMinus(JSGlobalObject* globalObject, JSBigInt* x)
 // Given divisor B with n digits, the inverse has n+1 digits.
 // Uses V8's bit-negation trick to avoid a (2n+1)-digit dividend:
 //   A = ~(B << n) ≈ 2^(2n) - B*2^n - 1, then Inv = A/B + 2^n (undo the subtraction).
+//
+// This is computing I in Algorithm 2.5 in the following reference.
+// R. P. Brent and P. Zimmermann, Modern Computer Arithmetic. Cambridge, U.K.: Cambridge University Press, 2010.
 void JSBigInt::cachedModMakeInverse(VM& vm, std::span<const Digit> b)
 {
     size_t n = b.size();
@@ -1653,6 +1706,7 @@ void JSBigInt::cachedModMakeInverse(VM& vm, std::span<const Digit> b)
 // Cached modulo: R = A mod B, using precomputed inverse Inv.
 // A must have between n and 2n digits (where n = B.size()).
 // Returns the normalized result span within r.
+// R. P. Brent and P. Zimmermann, Modern Computer Arithmetic. Cambridge, U.K.: Cambridge University Press, 2010.
 std::span<const JSBigInt::Digit> JSBigInt::cachedMod(VM& vm, std::span<Digit> r, std::span<const Digit> a, std::span<const Digit> b)
 {
     size_t n = b.size();
@@ -1663,19 +1717,75 @@ std::span<const JSBigInt::Digit> JSBigInt::cachedMod(VM& vm, std::span<Digit> r,
     r = r.first(n);
     auto inv = vm.m_bigIntCachedInverse.span().first(n + 1);
 
-    // Step 1: Compute full product A * Inv into scratch.
+    // Step 1: Compute only the high digits of A * Inv via multiplySpecialHigh.
+    //
+    // Longhand multiplication of A (m digits) x Inv (k = n+1 digits):
+    // Each a_j * i_r produces a two-digit result (H:L). The low part L
+    // goes to column j+r, the high part H carries into column j+r+1.
+    //
+    // Example: n = 2, A = (a3 a2 a1 a0), Inv = (i2 i1 i0).
+    //
+    //        +------+------+------+------+------+------+------+
+    //        | col6 | col5 | col4 | col3 | col2 | col1 | col0 |
+    //        +------+------+------+------+------+------+------+
+    //  A*i0  |      |      |      | a3i0 | a2i0 | a1i0 | a0i0 |
+    //  A*i1  |      |      | a3i1 | a2i1 | a1i1 | a0i1 |      |
+    //  A*i2  |      | a3i2 | a2i2 | a1i2 | a0i2 |      |      |
+    //        +------+------+------+------+------+------+------+
+    //  Sum   |  P6  |  P5  |  P4  |  P3  |  P2  |  P1  |  P0  |
+    //        +------+------+------+------+------+------+------+
+    //        |<-- Q = floor(P/B^(2n)) -->|      |             |
+    //        |<--- multiplySpecialHigh -------->|<-- skip --->|
+    //                                           ^
+    //                                      startPos = 2
+    //
+    // The code accumulates columns left-to-right. Three registers carry
+    // state from column i to column i+1:
+    //
+    //     next      <= B-1  (accumulated high parts, one full Digit)
+    //     carry     <= 1    (overflow bit from low-part additions)
+    //     nextCarry <= 1    (overflow bit from high-part additions)
+    //
+    // multiplySpecialHigh starts at column startPos with these zeroed,
+    // losing the carry from columns [0..startPos-1]. All pair-sums
+    // within columns >= startPos are exact; only the incoming carry
+    // is lost.
+    //
+    // Error bound (general n, s = startPos = 2n-2):
+    //
+    //   Lost value E = (next + carry) * B^s + nextCarry * B^(s+1)
+    //              E <= B * B^s + 1 * B^(s+1) = 2 * B^(s+1)
+    //   With s = 2n-2:  E <= 2 * B^(2n-1)
+    //
+    //   True quotient:  Q_true   = floor(P     / B^(2n))
+    //   Our quotient:   Q_approx = floor((P-E) / B^(2n))
+    //
+    //   Write P = Q_true * B^(2n) + R,  0 <= R < B^(2n).
+    //
+    //     If R >= E:  P-E = Q_true * B^(2n) + (R-E)
+    //                 => Q_approx = Q_true               (error = 0)
+    //
+    //     If R < E:   P-E = (Q_true-1) * B^(2n) + (B^(2n) + R - E)
+    //                 Since E <= 2*B^(2n-1) < B^(2n) (because B >= 4),
+    //                 the remainder B^(2n) + R - E >= 0.
+    //                 => Q_approx = Q_true - 1           (error = 1)
+    //
+    //   Therefore: 0 <= Q_true - Q_approx <= 1.
+    //   Step 5's corrective loop handles Q being off by 1.
+    size_t startPos = 2 * n - 2;
     size_t scratchSpace = a.size() + inv.size();
     Vector<Digit, 64> scratch(scratchSpace);
     if (a.size() >= inv.size())
-        multiplyTextbook(a, inv, scratch.mutableSpan());
+        multiplySpecialHigh(a, inv, scratch.mutableSpan(), startPos);
     else
-        multiplyTextbook(inv, a, scratch.mutableSpan());
+        multiplySpecialHigh(inv, a, scratch.mutableSpan(), startPos);
 
     // Step 2: Extract estimated quotient Q from position 2n in the product.
+    // This means right-shifting 2n digits.
     auto qSpan = scratch.span().subspan(2 * n);
 
     // Step 3: Compute product_low = B * Q (only low n+1 digits needed).
-    // Reuse the low part of scratch for product_low (overlapping the full product).
+    // Reuse the low part of scratch for product_low (no overlap with qSpan).
     auto productLow = scratch.mutableSpan().first(n + 1);
     multiplySpecialLow(b, qSpan, productLow);
 

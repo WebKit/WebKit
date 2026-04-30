@@ -550,10 +550,10 @@ void InspectorInstrumentation::willLayoutImpl(InstrumentingAgents& instrumenting
         pageTimelineAgent->willLayout();
 }
 
-void InspectorInstrumentation::didLayoutImpl(InstrumentingAgents& instrumentingAgents, const Vector<FloatQuad>& layoutAreas)
+void InspectorInstrumentation::didLayoutImpl(InstrumentingAgents& instrumentingAgents, const RenderElement& layoutRoot, const Vector<FloatQuad>& layoutAreas)
 {
     if (CheckedPtr pageTimelineAgent = instrumentingAgents.trackingPageTimelineAgent())
-        pageTimelineAgent->didLayout(layoutAreas);
+        pageTimelineAgent->didLayout(layoutRoot, layoutAreas);
     if (CheckedPtr pageAgent = instrumentingAgents.enabledPageAgent())
         pageAgent->didLayout();
 }

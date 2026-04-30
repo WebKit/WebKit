@@ -37,6 +37,7 @@
 #include "BlobPart.h"
 #include "BlobURL.h"
 #include "ContextDestructionObserverInlines.h"
+#include "EventTargetInlines.h"
 #include "File.h"
 #include "JSDOMConvertBufferSource.h"
 #include "JSDOMConvertStrings.h"

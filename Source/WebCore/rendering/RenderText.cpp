@@ -90,6 +90,14 @@ using namespace WTF::Unicode;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderText);
 
+bool isDutchLocale(const AtomString& locale)
+{
+    return locale.length() >= 2
+        && isASCIIAlphaCaselessEqual(locale[0], 'n')
+        && isASCIIAlphaCaselessEqual(locale[1], 'l')
+        && (locale.length() == 2 || locale[2] == '-');
+}
+
 struct SameSizeAsRenderText : public RenderObject {
 #if ENABLE(TEXT_AUTOSIZING)
     float candidateTextSize;
@@ -223,12 +231,70 @@ static inline size_t capitalizeCharacter(String textContent, unsigned startChara
     return capitalize(content.data(), capitalizedContentLength);
 }
 
-String capitalize(const String& string)
+// Titlecase the first letter of a word using ICU's locale-aware u_strToTitle.
+// CSS capitalize only uppercases the first letter; u_strToTitle also lowercases
+// the rest. We determine the titlecased prefix and return only that.
+static size_t capitalizeWordWithLocale(const String& textContent, unsigned startOffset, unsigned endOffset, const AtomString& locale, StringBuilder& output)
 {
-    return capitalize(string, ' ');
+    auto localeUTF8 = locale.string().utf8();
+    unsigned wordLength = std::min(endOffset, textContent.length()) - startOffset;
+    if (!wordLength)
+        return 0;
+
+    const char16_t* wordData;
+    Vector<char16_t, 32> wordBuffer;
+    if (textContent.is8Bit()) {
+        wordBuffer.resize(wordLength);
+        auto wordSpan = wordBuffer.mutableSpan();
+        for (unsigned i = 0; i < wordLength; ++i)
+            wordSpan[i] = textContent[startOffset + i];
+        wordData = wordSpan.data();
+    } else
+        wordData = textContent.span16().subspan(startOffset, wordLength).data();
+
+    Vector<char16_t, 32> titlecased(wordLength + 4);
+    UErrorCode status = U_ZERO_ERROR;
+    auto realLength = u_strToTitle(titlecased.mutableSpan().data(), titlecased.size(), wordData, wordLength, nullptr, localeUTF8.data(), &status);
+    if (U_FAILURE(status)) {
+        if (status != U_BUFFER_OVERFLOW_ERROR)
+            return 0;
+        titlecased.grow(realLength);
+        status = U_ZERO_ERROR;
+        u_strToTitle(titlecased.mutableSpan().data(), titlecased.size(), wordData, wordLength, nullptr, localeUTF8.data(), &status);
+        if (U_FAILURE(status))
+            return 0;
+    }
+
+    // Find the titlecased prefix: the initial run of non-lowercase alphabetic characters.
+    // For Dutch "ij" with locale "nl", this is 2 ("IJ"). For most words, this is 1.
+    // This assumes the titlecased prefix is BMP-only with no combining marks, which
+    // holds for Dutch IJ. If extended to other locales, use U16_NEXT for surrogate
+    // pairs and handle combining marks.
+    size_t prefixLength = 0;
+    for (size_t i = 0; i < static_cast<size_t>(realLength); ++i) {
+        ASSERT(!U16_IS_SURROGATE(titlecased[i]));
+        auto type = u_charType(titlecased[i]);
+        if (type == U_LOWERCASE_LETTER)
+            break;
+        ASSERT(type != U_NON_SPACING_MARK && type != U_COMBINING_SPACING_MARK);
+        if (U_MASK(type) & U_GC_L_MASK)
+            prefixLength = i + 1;
+    }
+
+    if (!prefixLength)
+        return 0;
+
+    for (size_t i = 0; i < prefixLength; ++i)
+        output.append(static_cast<UChar>(titlecased[i]));
+    return prefixLength;
 }
 
-String capitalize(const String& string, char32_t previousCharacter)
+String capitalize(const String& string, const AtomString& locale)
+{
+    return capitalize(string, ' ', locale);
+}
+
+String capitalize(const String& string, char32_t previousCharacter, const AtomString& locale)
 {
     int32_t length = string.length();
     auto& stringImpl = *string.impl();
@@ -250,6 +316,11 @@ String capitalize(const String& string, char32_t previousCharacter)
     if (!breakIterator)
         return string;
 
+    bool isDutch = isDutchLocale(locale);
+    auto needsLocaleAwareTitlecase = [&](char16_t firstCharOfWord) {
+        return isDutch && isASCIIAlphaCaselessEqual(firstCharOfWord, 'i');
+    };
+
     StringBuilder result;
     result.reserveCapacity(length);
 
@@ -257,7 +328,13 @@ String capitalize(const String& string, char32_t previousCharacter)
     for (int32_t endOfWord = ubrk_next(breakIterator); endOfWord != UBRK_DONE; startOfWord = endOfWord, endOfWord = ubrk_next(breakIterator)) {
         // Do not try to titlecase the previous content.
         if (startOfWord >= previousCharacterLength) {
-            auto capitalizedContentLength = capitalizeCharacter(string, startOfWord - previousCharacterLength, result);
+            auto startOffset = startOfWord - previousCharacterLength;
+            auto endOffset = endOfWord - previousCharacterLength;
+            size_t capitalizedContentLength;
+            if (needsLocaleAwareTitlecase(stringImpl[startOffset]))
+                capitalizedContentLength = capitalizeWordWithLocale(string, startOffset, endOffset, locale, result);
+            else
+                capitalizedContentLength = capitalizeCharacter(string, startOffset, result);
             for (int32_t i = startOfWord + capitalizedContentLength; i < endOfWord; ++i)
                 result.append(stringImpl[i - previousCharacterLength]);
         } else {
@@ -1691,7 +1768,7 @@ String applyTextTransform(const RenderStyle& style, const String& text, char32_t
     // https://w3c.github.io/csswg-drafts/css-text/#text-transform-order
     auto modified = text;
     if (transform.contains(Style::TextTransformValue::Capitalize))
-        modified = capitalize(modified, previousCharacter); // FIXME: Need to take locale into account.
+        modified = capitalize(modified, previousCharacter, Style::toPlatform(style.computedLocale()));
     else if (transform.contains(Style::TextTransformValue::Uppercase))
         modified = modified.convertToUppercaseWithLocale(Style::toPlatform(style.computedLocale()));
     else if (transform.contains(Style::TextTransformValue::Lowercase))
@@ -1813,6 +1890,7 @@ static void invalidateLineLayoutPathOnContentChangeIfNeeded(RenderText& renderer
         container->invalidateLineLayout(RenderBlockFlow::InvalidationReason::ContentChange);
         return;
     }
+
     if (!inlineLayout->updateTextContent(renderer, offset, oldLength))
         container->invalidateLineLayout(RenderBlockFlow::InvalidationReason::ContentChange);
 }
@@ -1846,8 +1924,13 @@ void RenderText::updateRenderedText(const String& text)
 void RenderText::updateRenderedText()
 {
     updateRenderedText(originalText());
-    if (CheckedPtr container = LayoutIntegration::LineLayout::blockContainer(*this))
+    auto invalidateLineLayoutIfNeeded = [&] {
+        CheckedPtr container = LayoutIntegration::LineLayout::blockContainer(*this);
+        if (!container || !container->inlineLayout())
+            return;
         container->invalidateLineLayout(RenderBlockFlow::InvalidationReason::ContentChange);
+    };
+    invalidateLineLayoutIfNeeded();
 }
 
 void RenderText::setText(const String& newContent, bool force)

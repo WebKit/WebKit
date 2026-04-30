@@ -549,6 +549,12 @@ ANGLE_INLINE bool ValidateBindBuffer(const Context *context,
         return false;
     }
 
+    if (context->isWebGL() && !ValidateWebGLBufferBinding(context, entryPoint, target, buffer))
+    {
+        // Error already generated
+        return false;
+    }
+
     return true;
 }
 

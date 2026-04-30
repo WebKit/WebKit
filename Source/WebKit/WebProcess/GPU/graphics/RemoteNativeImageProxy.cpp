@@ -60,8 +60,7 @@ Ref<RemoteNativeImageProxy> RemoteNativeImageProxy::create(const IntSize& size, 
 }
 
 RemoteNativeImageProxy::RemoteNativeImageProxy(const IntSize& size, PlatformColorSpace&& colorSpace, bool hasAlpha, WeakRef<RemoteResourceCacheProxy>&& resourceCache)
-    : NativeImage(nullptr)
-    , m_resourceCache(WTF::move(resourceCache))
+    : m_resourceCache(WTF::move(resourceCache))
     , m_size(size)
     , m_colorSpace(WTF::move(colorSpace))
     , m_hasAlpha(hasAlpha)

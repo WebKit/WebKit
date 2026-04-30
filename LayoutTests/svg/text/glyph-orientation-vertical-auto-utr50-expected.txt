@@ -1,0 +1,24 @@
+一
+月
+A
+z
+§
+×
+℃
+°
+—
+…
+A一§°
+
+PASS CJK ideograph U+4E00 is upright (VO=U)
+PASS CJK ideograph U+6708 is upright (VO=U)
+PASS Latin A is sideways (VO=R)
+PASS Latin z is sideways (VO=R)
+PASS U+00A7 SECTION SIGN is upright (EAW=A, VO=U)
+PASS U+00D7 MULTIPLICATION SIGN is upright (EAW=A, VO=U)
+PASS U+2103 DEGREE CELSIUS is upright (EAW=A, VO=U)
+PASS U+00B0 DEGREE SIGN is sideways (EAW=A, VO=R)
+PASS U+2014 EM DASH is sideways (EAW=A, VO=R)
+PASS U+2026 HORIZONTAL ELLIPSIS is sideways (EAW=A, VO=R)
+PASS Mixed string: per-character orientation matches UTR#50
+

@@ -120,12 +120,13 @@ MediaTime MediaPlayerPrivateRemote::TimeProgressEstimator::currentTime() const
 MediaTime MediaPlayerPrivateRemote::TimeProgressEstimator::currentTimeWithLockHeld() const
 {
     assertIsHeld(m_lock);
-    if (!m_timeIsProgressing || m_forceUseCachedTime)
+    auto rate = m_effectiveRate.load();
+    if (!rate || m_forceUseCachedTime)
         return m_cachedMediaTime;
 
-    auto calculatedCurrentTime = m_cachedMediaTime + MediaTime::createWithDouble(m_rate * (MonotonicTime::now() - m_cachedMediaTimeQueryTime).seconds());
+    auto calculatedCurrentTime = m_cachedMediaTime + MediaTime::createWithDouble(rate * (MonotonicTime::now() - m_cachedMediaTimeQueryTime).seconds());
     calculatedCurrentTime = std::min(std::max(calculatedCurrentTime, MediaTime::zeroTime()), protect(m_parent)->duration());
-    if (m_rate >= 0)
+    if (rate >= 0)
         calculatedCurrentTime = std::max(m_lastReturnedTime.value_or(calculatedCurrentTime), calculatedCurrentTime);
     else
         calculatedCurrentTime = std::min(m_lastReturnedTime.value_or(calculatedCurrentTime), calculatedCurrentTime);
@@ -153,18 +154,19 @@ void MediaPlayerPrivateRemote::TimeProgressEstimator::forceUseOfCachedTimeUntilN
 
 bool MediaPlayerPrivateRemote::TimeProgressEstimator::timeIsProgressing() const
 {
-    return m_timeIsProgressing;
+    return m_effectiveRate.load();
 }
 
 void MediaPlayerPrivateRemote::TimeProgressEstimator::pause()
 {
     Locker locker { m_lock };
-    if (!m_timeIsProgressing)
+    auto rate = m_effectiveRate.load();
+    if (!rate)
         return;
     auto now = MonotonicTime::now();
-    m_cachedMediaTime += MediaTime::createWithDouble(m_rate * (now - m_cachedMediaTimeQueryTime).value());
+    m_cachedMediaTime += MediaTime::createWithDouble(rate * (now - m_cachedMediaTimeQueryTime).value());
     m_cachedMediaTimeQueryTime = now;
-    m_timeIsProgressing = false;
+    m_effectiveRate = 0;
 }
 
 void MediaPlayerPrivateRemote::TimeProgressEstimator::setTime(const MediaTimeUpdateData& timeData)
@@ -172,8 +174,8 @@ void MediaPlayerPrivateRemote::TimeProgressEstimator::setTime(const MediaTimeUpd
     Locker locker { m_lock };
     m_cachedMediaTime = timeData.currentTime;
     m_cachedMediaTimeQueryTime = timeData.wallTime;
-    m_timeIsProgressing = timeData.timeIsProgressing;
-    if (!m_timeIsProgressing)
+    m_effectiveRate = timeData.effectiveRate;
+    if (!timeData.effectiveRate)
         m_lastReturnedTime.reset();
     m_forceUseCachedTime = false;
 }
@@ -181,7 +183,7 @@ void MediaPlayerPrivateRemote::TimeProgressEstimator::setTime(const MediaTimeUpd
 void MediaPlayerPrivateRemote::TimeProgressEstimator::setRate(double value)
 {
     Locker locker { m_lock };
-    m_rate = value;
+    m_effectiveRate = value;
 }
 
 MediaPlayerPrivateRemote::MediaPlayerPrivateRemote(MediaPlayer& player, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, MediaPlayerIdentifier playerIdentifier, RemoteMediaPlayerManager& manager)
@@ -516,7 +518,7 @@ void MediaPlayerPrivateRemote::muteChanged(bool muted)
 
 void MediaPlayerPrivateRemote::seeked(MediaTimeUpdateData&& timeData)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, "currentTime:", timeData.currentTime, " timeIsProgressing:", timeData.timeIsProgressing);
+    ALWAYS_LOG(LOGIDENTIFIER, "currentTime:", timeData.currentTime, " effectiveRate:", timeData.effectiveRate);
     m_seeking = false;
     m_currentTimeEstimator.setTime(timeData);
     if (RefPtr player = m_player.get())
@@ -525,7 +527,7 @@ void MediaPlayerPrivateRemote::seeked(MediaTimeUpdateData&& timeData)
 
 void MediaPlayerPrivateRemote::timeChanged(RemoteMediaPlayerState&& state, MediaTimeUpdateData&& timeData)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, "currentTime:", timeData.currentTime, " timeIsProgressing:", timeData.timeIsProgressing);
+    ALWAYS_LOG(LOGIDENTIFIER, "currentTime:", timeData.currentTime, " effectiveRate:", timeData.effectiveRate);
     updateCachedState(WTF::move(state));
     m_currentTimeEstimator.setTime(timeData);
     if (RefPtr player = m_player.get())
@@ -546,7 +548,7 @@ bool MediaPlayerPrivateRemote::seeking() const
 
 void MediaPlayerPrivateRemote::rateChanged(double rate, MediaTimeUpdateData&& timeData)
 {
-    INFO_LOG(LOGIDENTIFIER, "rate:", rate, " currentTime:", timeData.currentTime, " timeIsProgressing:", timeData.timeIsProgressing);
+    INFO_LOG(LOGIDENTIFIER, "rate:", rate, " currentTime:", timeData.currentTime, " effectiveRate:", timeData.effectiveRate);
     m_rate = rate;
     m_currentTimeEstimator.setRate(rate);
     m_currentTimeEstimator.setTime(timeData);
@@ -559,7 +561,7 @@ void MediaPlayerPrivateRemote::rateChanged(double rate, MediaTimeUpdateData&& ti
 
 void MediaPlayerPrivateRemote::playbackStateChanged(bool paused, MediaTimeUpdateData&& timeData)
 {
-    INFO_LOG(LOGIDENTIFIER, "currentTime:", timeData.currentTime, " timeIsProgressing:", timeData.timeIsProgressing);
+    INFO_LOG(LOGIDENTIFIER, "currentTime:", timeData.currentTime, " effectiveRate:", timeData.effectiveRate);
     m_cachedState.paused = paused;
     m_currentTimeEstimator.setTime(timeData);
     if (RefPtr player = m_player.get())
@@ -589,7 +591,7 @@ void MediaPlayerPrivateRemote::sizeChanged(WebCore::FloatSize naturalSize)
 
 void MediaPlayerPrivateRemote::currentTimeChanged(MediaTimeUpdateData&& timeData)
 {
-    INFO_LOG(LOGIDENTIFIER, "currentTime:", timeData.currentTime, " timeIsProgressing:", timeData.timeIsProgressing, " seeking:", bool(m_seeking));
+    INFO_LOG(LOGIDENTIFIER, "currentTime:", timeData.currentTime, " effectiveRate:", timeData.effectiveRate, " seeking:", bool(m_seeking));
     if (m_seeking)
         return;
     auto oldCachedTime = m_currentTimeEstimator.cachedTime();
@@ -601,7 +603,7 @@ void MediaPlayerPrivateRemote::currentTimeChanged(MediaTimeUpdateData&& timeData
     m_currentTimeEstimator.setTime(timeData);
 
     if (reverseJump
-        || (timeData.timeIsProgressing != oldTimeIsProgressing && timeData.currentTime != oldCachedTime && !m_cachedState.paused)) {
+        || (timeData.timeIsProgressing() != oldTimeIsProgressing && timeData.currentTime != oldCachedTime && !m_cachedState.paused)) {
         if (RefPtr player = m_player.get())
             player->timeChanged();
     }

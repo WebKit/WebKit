@@ -27,6 +27,9 @@
 #include "config.h"
 #include "StylePositionTryFallback.h"
 
+#include "CSSKeywordValue.h"
+#include "CSSPropertyParserConsumer+Anchor.h"
+#include "CSSValuePair.h"
 #include "StyleBuilderChecking.h"
 #include "StyleCustomIdent.h"
 #include "StyleKeyword+CSSValueConversion.h"
@@ -146,16 +149,27 @@ auto CSSValueConversion<PositionTryFallback>::operator()(BuilderState& state, co
     };
 }
 
+static Ref<CSSValue> computedPositionAreaValue(const PositionTryFallback::PositionArea& value)
+{
+    RefPtr cssValue = RefPtr { value.properties }->getPropertyCSSValue(CSSPropertyPositionArea);
+    if (auto* pair = dynamicDowncast<CSSValuePair>(*cssValue)) {
+        auto dim1 = downcast<CSSKeywordValue>(pair->first()).valueID();
+        auto dim2 = downcast<CSSKeywordValue>(pair->second()).valueID();
+        return CSSPropertyParserHelpers::valueForPositionArea(dim1, dim2, CSSPropertyParserHelpers::ValueType::Computed).releaseNonNull();
+    }
+    return cssValue.releaseNonNull();
+}
+
 auto CSSValueCreation<PositionTryFallback::PositionArea>::operator()(CSSValuePool&, const RenderStyle&, const PositionTryFallback::PositionArea& value) -> Ref<CSSValue>
 {
-    return RefPtr { value.properties }->getPropertyCSSValue(CSSPropertyPositionArea).releaseNonNull();
+    return computedPositionAreaValue(value);
 }
 
 // MARK: - Serialization
 
 void Serialize<PositionTryFallback::PositionArea>::operator()(StringBuilder& builder, const CSS::SerializationContext& context, const RenderStyle&, const PositionTryFallback::PositionArea& value)
 {
-    builder.append(RefPtr { value.properties }->getPropertyCSSValue(CSSPropertyPositionArea)->cssText(context));
+    builder.append(computedPositionAreaValue(value)->cssText(context));
 }
 
 // MARK: - Logging

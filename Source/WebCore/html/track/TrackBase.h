@@ -78,7 +78,7 @@ public:
     void setTrackList(TrackListBase&);
     void clearTrackList();
     TrackListBase* NODELETE trackList() const;
-    WebCoreOpaqueRoot opaqueRoot();
+    WebCoreOpaqueRoot NODELETE opaqueRoot() const;
 
     virtual bool enabled() const = 0;
 

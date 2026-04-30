@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AsyncFromSyncIteratorPrototype.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

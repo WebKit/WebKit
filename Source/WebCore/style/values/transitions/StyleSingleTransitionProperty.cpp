@@ -49,10 +49,7 @@ auto CSSValueConversion<SingleTransitionProperty>::operator()(BuilderState& stat
         }
     }
 
-    if (RefPtr customIdentValue = dynamicDowncast<CSSCustomIdentValue>(value))
-        return toStyleFromCSSValue<CustomIdent>(state, *customIdentValue);
-
-    return toStyleFromCSSValue<PropertyIdentifier>(state, value);
+    return toStyleFromCSSValue<CustomIdent>(state, value);
 }
 
 } // namespace Style

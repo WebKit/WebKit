@@ -1,9 +1,10 @@
 Test that Runtime.executionContextCreated events are correctly dispatched for frame targets under site isolation.
 
 
+
 == Running test suite: SiteIsolation.Runtime.ExecutionContextCreated
--- Running test case: SiteIsolation.Runtime.ExecutionContextCreated.OnFrameTargetAdded
-PASS: Should receive an ExecutionContext from the event.
+-- Running test case: SiteIsolation.Runtime.ExecutionContextCreated.StaticIframe
+PASS: Should have an ExecutionContext.
 PASS: ExecutionContext should have a positive numeric id.
 PASS: ExecutionContext should have a name string.
 ExecutionContext type: normal
@@ -19,4 +20,7 @@ PASS: Should have at least 2 frame targets (main frame + cross-origin iframe).
 PASS: Execution context id should be unique.
 PASS: Execution context id should be unique.
 PASS: Should have at least 2 unique context ids.
+
+-- Running test case: SiteIsolation.Runtime.ExecutionContextCreated.DynamicIframeReceivesContext
+PASS: Dynamically added cross-origin iframe should have an ExecutionContext.
 

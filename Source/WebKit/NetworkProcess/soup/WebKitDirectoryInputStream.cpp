@@ -93,13 +93,7 @@ static GBytes* webkitDirectoryInputStreamCreateRow(WebKitDirectoryInputStream *s
     GUniquePtr<char> path(g_build_filename(stream->priv->uri.data(), escapedName.get(), nullptr));
     GUniquePtr<char> formattedSize(g_file_info_get_file_type(info) == G_FILE_TYPE_REGULAR ? g_format_size(g_file_info_get_size(info)) : nullptr);
     GUniquePtr<char> formattedName(g_file_info_get_file_type(info) == G_FILE_TYPE_DIRECTORY ? g_strdup_printf("1.%s", path.get()) : g_strdup_printf("%s", path.get()));
-#if GLIB_CHECK_VERSION (2, 61, 2)
     GRefPtr<GDateTime> modificationTime = adoptGRef(g_file_info_get_modification_date_time(info));
-#else
-    GTimeVal modified;
-    g_file_info_get_modification_time(info, &modified);
-    GRefPtr<GDateTime> modificationTime = adoptGRef(g_date_time_new_from_timeval_local(&modified));
-#endif
     GUniquePtr<char> formattedTime(g_date_time_format(modificationTime.get(), "%X"));
     GUniquePtr<char> formattedDate(g_date_time_format(modificationTime.get(), "%x"));
 

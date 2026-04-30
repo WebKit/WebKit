@@ -27,6 +27,7 @@
 #pragma once
 
 #include "GeneratorFunctionPrototype.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

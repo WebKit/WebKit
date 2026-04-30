@@ -151,7 +151,7 @@ static NSString * const portsKey = @"ports";
         ASSERT([rawValue isKindOfClass:NSString.class]);
 
         if (!(_value = [NSRegularExpression regularExpressionWithPattern:rawValue options:0 error:nil])) {
-            *outErrorMessage = toErrorString(nullString(), originAndPathMatchesKey, @"'%@' is not a valid regular expression", rawValue).createNSString().autorelease();
+            *outErrorMessage = toErrorString(nullString(), originAndPathMatchesKey, makeString("'"_s, String(rawValue), "' is not a valid regular expression"_s)).createNSString().autorelease();
             return nil;
         }
 
@@ -179,7 +179,7 @@ static NSString * const portsKey = @"ports";
             if (NSNumber *number = dynamic_objc_cast<NSNumber>(portOrRange)) {
                 NSInteger integerValue = number.integerValue;
                 if (integerValue < 0 || integerValue > maximumPortNumber) {
-                    *outErrorMessage = toErrorString(nullString(), portsKey, @"'%zd' is not a valid port", integerValue).createNSString().autorelease();
+                    *outErrorMessage = toErrorString(nullString(), portsKey, makeString("'"_s, integerValue, "' is not a valid port"_s)).createNSString().autorelease();
                     return nil;
                 }
 
@@ -193,7 +193,7 @@ static NSString * const portsKey = @"ports";
                 for (NSNumber *number in rangeArray) {
                     NSInteger integerValue = number.integerValue;
                     if (integerValue < 0 || integerValue > maximumPortNumber) {
-                        *outErrorMessage = toErrorString(nullString(), portsKey, @"'%zd' is not a valid port", integerValue).createNSString().autorelease();
+                        *outErrorMessage = toErrorString(nullString(), portsKey, makeString("'"_s, integerValue, "' is not a valid port"_s)).createNSString().autorelease();
                         return nil;
                     }
                 }
@@ -201,7 +201,7 @@ static NSString * const portsKey = @"ports";
                 NSUInteger firstPort = rangeArray[0].unsignedIntegerValue;
                 NSUInteger lastPort = rangeArray[1].unsignedIntegerValue;
                 if (firstPort >= lastPort) {
-                    *outErrorMessage = toErrorString(nullString(), portsKey, @"'%zd-%zd' is not a valid port range", firstPort, lastPort).createNSString().autorelease();
+                    *outErrorMessage = toErrorString(nullString(), portsKey, makeString("'"_s, firstPort, "-"_s, lastPort, "' is not a valid port range"_s)).createNSString().autorelease();
                     return nil;
                 }
 

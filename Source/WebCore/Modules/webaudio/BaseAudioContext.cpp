@@ -222,6 +222,10 @@ void BaseAudioContext::uninitialize()
 
     {
         Locker locker { graphLock() };
+        // Process any deferred operations from the last render quantum that couldn't be
+        // processed in handlePostRenderTasks() due to lock contention.
+        handleDeferredDecrementConnectionCounts();
+        handleDeferredDerefs();
         // This should have been called from handlePostRenderTasks() at the end of rendering.
         // However, in case of lock contention, the tryLock() call could have failed in handlePostRenderTasks(),
         // leaving nodes in m_referencedSourceNodes. Now that the audio thread is gone, make sure we deref those nodes
@@ -566,6 +570,15 @@ void BaseAudioContext::addDeferredDecrementConnectionCount(AudioNode* node)
     m_deferredBreakConnectionList.append(node);
 }
 
+void BaseAudioContext::addDeferredDeref(const AudioNode* node)
+{
+    ASSERT(isAudioThread());
+    // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+    // explicitly allow the following allocation(s).
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+    m_deferredDerefList.append(const_cast<AudioNode*>(node));
+}
+
 void BaseAudioContext::handlePreRenderTasks(const AudioIOPosition& outputPosition)
 {
     ASSERT(isAudioThread());
@@ -604,6 +617,7 @@ void BaseAudioContext::handlePostRenderTasks()
 
     // Take care of finishing any derefs where the tryLock() failed previously.
     handleDeferredDecrementConnectionCounts();
+    handleDeferredDerefs();
 
     // Dynamically clean up nodes which are no longer needed.
     derefFinishedSourceNodes();
@@ -622,11 +636,19 @@ void BaseAudioContext::handlePostRenderTasks()
 
 void BaseAudioContext::handleDeferredDecrementConnectionCounts()
 {
-    ASSERT(isAudioThread() && isGraphOwner());
+    ASSERT(isGraphOwner());
     for (auto& node : m_deferredBreakConnectionList)
         node->decrementConnectionCountWithLock();
-    
+
     m_deferredBreakConnectionList.clear();
+}
+
+void BaseAudioContext::handleDeferredDerefs()
+{
+    ASSERT(isGraphOwner());
+    for (auto& node : m_deferredDerefList)
+        node->derefWithLock();
+    m_deferredDerefList.clear();
 }
 
 void BaseAudioContext::addTailProcessingNode(AudioNode& node)
@@ -779,6 +801,14 @@ void BaseAudioContext::deleteMarkedNodes()
 
     while (m_nodesToDelete.size()) {
         CheckedPtr node = m_nodesToDelete.takeLast();
+
+        // A node may have been re-referenced (via ref() or incrementConnectionCount()) after being
+        // marked for deletion. This can happen when ref() on the audio thread couldn't acquire the
+        // graph lock to unmark the node. Re-check before deleting.
+        if (node->hasReferences()) {
+            node->clearIsMarkedForDeletion();
+            continue;
+        }
 
         // Before deleting the node, clear out any AudioNodeInputs from m_dirtySummingJunctions.
         unsigned numberOfInputs = node->numberOfInputs();

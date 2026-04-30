@@ -81,8 +81,6 @@ public:
     using Source = ResourceResponseSource;
     static constexpr unsigned bitWidthOfSource = 4;
 
-    static bool isRedirectionStatusCode(int code) { return code == 301 || code == 302 || code == 303 || code == 307 || code == 308; }
-
     using CrossThreadData = ResourceResponseData;
 
     WEBCORE_EXPORT CrossThreadData crossThreadData() const;

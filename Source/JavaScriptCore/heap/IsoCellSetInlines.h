@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AtomIndices.h"
+#include "HeapCellInlines.h"
 #include "IsoCellSet.h"
 #include "MarkedBlockInlines.h"
 

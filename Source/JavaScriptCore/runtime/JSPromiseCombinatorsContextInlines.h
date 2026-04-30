@@ -27,6 +27,7 @@
 
 #include "JSPromiseCombinatorsContext.h"
 #include "Structure.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

@@ -122,7 +122,9 @@ using JSResizableOrGrowableSharedBigUint64Array = JSGenericResizableOrGrowableSh
     macro(JSPromise, JSType::JSPromiseType, JSType::JSPromiseType) \
     macro(JSPromiseCombinatorsContext, JSType::JSPromiseCombinatorsContextType, JSType::JSPromiseCombinatorsContextType) \
     macro(JSPromiseCombinatorsGlobalContext, JSType::JSPromiseCombinatorsGlobalContextType, JSType::JSPromiseCombinatorsGlobalContextType) \
-    macro(JSPromiseReaction, JSType::JSPromiseReactionType, JSType::JSPromiseReactionType) \
+    macro(JSPromiseReaction, JSType::JSSlimPromiseReactionType, JSType::JSFullPromiseReactionType) \
+    macro(JSSlimPromiseReaction, JSType::JSSlimPromiseReactionType, JSType::JSSlimPromiseReactionType) \
+    macro(JSFullPromiseReaction, JSType::JSFullPromiseReactionType, JSType::JSFullPromiseReactionType) \
     macro(JSGlobalProxy, JSType::GlobalProxyType, JSType::GlobalProxyType) \
     macro(JSSet, JSType::JSSetType, JSType::JSSetType) \
     macro(JSMap, JSType::JSMapType, JSType::JSMapType) \

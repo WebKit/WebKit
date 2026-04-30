@@ -200,6 +200,7 @@ typedef enum {
 + (CATransactionPhase)currentPhase;
 + (void)synchronize;
 + (uint32_t)currentState;
++ (void)setDefaultDisableRunLoopObserverCommits:(BOOL)flag;
 @end
 
 @interface CALayerHost : CALayer

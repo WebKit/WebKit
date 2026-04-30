@@ -49,7 +49,7 @@ static bool NODELETE requiresSupportedNetworks(unsigned version, const ApplePayR
 
 static Vector<String> convertAndValidate(Document& document, unsigned version, const Vector<String>& supportedNetworks, const PaymentCoordinator& paymentCoordinator)
 {
-    return WTF::compactMap(supportedNetworks, [document = Ref { document }, paymentCoordinator = Ref { paymentCoordinator }, version](const auto& supportedNetwork) {
+    return WTF::compactMap(supportedNetworks, [document = protect(document), paymentCoordinator = protect(paymentCoordinator), version](const auto& supportedNetwork) {
         auto validatedNetwork = paymentCoordinator->validatedPaymentNetwork(document, version, supportedNetwork);
         if (!validatedNetwork)
             document->addConsoleMessage(MessageSource::PaymentRequest, MessageLevel::Warning, makeString("'"_s, supportedNetwork, "' is not a valid payment network."_s));

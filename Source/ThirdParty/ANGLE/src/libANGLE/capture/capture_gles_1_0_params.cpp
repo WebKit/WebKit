@@ -135,7 +135,8 @@ void CaptureGetTexEnviv_params(const State &glState,
                                GLint *params,
                                ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    int count = GetTextureEnvParameterCount(pnamePacked);
+    CaptureMemory(params, count * sizeof(GLint), paramCapture);
 }
 
 void CaptureGetTexEnvxv_params(const State &glState,
@@ -144,7 +145,8 @@ void CaptureGetTexEnvxv_params(const State &glState,
                                GLfixed *params,
                                ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    int count = GetTextureEnvParameterCount(pnamePacked);
+    CaptureMemory(params, count * sizeof(GLfixed), paramCapture);
 }
 
 void CaptureGetTexParameterxv_params(const State &glState,
@@ -285,7 +287,8 @@ void CaptureTexEnviv_params(const State &glState,
                             const GLint *params,
                             ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    int count = GetTextureEnvParameterCount(pnamePacked);
+    CaptureMemory(params, count * sizeof(GLint), paramCapture);
 }
 
 void CaptureTexEnvxv_params(const State &glState,
@@ -294,7 +297,8 @@ void CaptureTexEnvxv_params(const State &glState,
                             const GLfixed *params,
                             ParamCapture *paramCapture)
 {
-    CaptureMemory(params, sizeof(GLfixed), paramCapture);
+    int count = GetTextureEnvParameterCount(pnamePacked);
+    CaptureMemory(params, count * sizeof(GLfixed), paramCapture);
 }
 
 void CaptureTexParameterxv_params(const State &glState,

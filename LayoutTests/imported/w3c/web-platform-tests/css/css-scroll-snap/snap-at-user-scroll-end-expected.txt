@@ -1,3 +1,3 @@
 
-PASS Tests that window should snap at user scroll end.
+FAIL Tests that window should snap at user scroll end. assert_approx_equals: window.scrollX should be at snapped position. expected 408 +/- 0.5 but got 508
 

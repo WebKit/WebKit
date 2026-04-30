@@ -33,6 +33,7 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "SecurityOrigin.h"
+#include <WebCore/HTTPStatusCodes.h>
 #include <cstdint>
 #include <wtf/Condition.h>
 #include <wtf/DataMutex.h>
@@ -1046,7 +1047,7 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
         && (contentLength = parseInteger<uint64_t>(response.httpHeaderField(HTTPHeaderName::ContentLength))))
         length = contentLength.value();
 
-    if (length > 0 && members->requestedPosition && response.httpStatusCode() == 206)
+    if (length > 0 && members->requestedPosition && response.httpStatusCode() == httpStatus206PartialContent)
         length += members->requestedPosition;
 
     GUniquePtr<GstStructure> httpHeaders(gst_structure_new_empty("http-headers"));
@@ -1077,7 +1078,7 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
     members->pendingHttpHeadersMessage = adoptGRef(gst_message_new_element(GST_OBJECT_CAST(src.get()), gst_structure_copy(httpHeaders.get())));
     members->pendingHttpHeadersEvent = adoptGRef(gst_event_new_custom(GST_EVENT_CUSTOM_DOWNSTREAM_STICKY, httpHeaders.release()));
 
-    if (response.httpStatusCode() >= 400) {
+    if (response.httpStatusCode() >= httpStatus400BadRequest) {
         GST_ELEMENT_ERROR(src.get(), RESOURCE, READ, ("R%u: Received %d HTTP error code", m_requestNumber, response.httpStatusCode()), (nullptr));
         members->doesHaveEOS = true;
         members->responseCondition.notifyOne();
@@ -1087,7 +1088,7 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
 
     if (members->requestedPosition) {
         // Seeking ... we expect a 206 == PARTIAL_CONTENT
-        if (response.httpStatusCode() != 206) {
+        if (response.httpStatusCode() != httpStatus206PartialContent) {
             // Range request completely failed.
             GST_ELEMENT_ERROR(src.get(), RESOURCE, READ, ("R%u: Received unexpected %d HTTP status code for range request", m_requestNumber, response.httpStatusCode()), (nullptr));
             members->doesHaveEOS = true;

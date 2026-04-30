@@ -34,6 +34,8 @@
 
 namespace JSC {
 
+class ConservativeRoots;
+
 // Orchestrates incremental slice-by-slice return for JSPI to pass the result of a
 // resolved promise through a series of synchronous code frames, with the value produced
 // by that code ultimately used to resolve another promise. "Pinball" because instead of
@@ -61,18 +63,20 @@ public:
 
     Vector<std::unique_ptr<EvacuatedStackSlice>>& slices() LIFETIME_BOUND { return m_slices; }
     std::unique_ptr<EvacuatedStackSlice> takeTopSlice() { return m_slices.takeLast(); }
+    EvacuatedStackSlice* topSlice() { return m_slices.last().get(); }
     bool hasSlices() const { return !m_slices.isEmpty(); }
 
     CPURegister* calleeSaves() { return m_calleeSaves; }
 
     void assimilate(PinballCompletion*);
+    void gatherConservativeRoots(ConservativeRoots&);
 
     DECLARE_INFO;
     DECLARE_VISIT_CHILDREN;
 
 private:
     PinballCompletion(VM&, Structure*, Vector<std::unique_ptr<EvacuatedStackSlice>>&& slices, CPURegister* calleeSaves, JSPromise* resultPromise);
-    ~PinballCompletion();
+    ~PinballCompletion() = default;
 
     Vector<std::unique_ptr<EvacuatedStackSlice>> m_slices;
     CPURegister m_calleeSaves[NUMBER_OF_CALLEE_SAVES_REGISTERS];

@@ -477,6 +477,22 @@ void MediaPlayerPrivateAVFoundationObjC::cancelLoad()
     tearDownVideoRendering();
 
     [[NSNotificationCenter defaultCenter] removeObserver:m_objcObserver];
+
+    // Remove all KVO observers BEFORE disconnecting the observer object.
+    if (m_avPlayerItem) {
+        for (NSString *keyName in itemKVOProperties())
+            [m_avPlayerItem removeObserver:m_objcObserver.get() forKeyPath:keyName];
+    }
+
+    if (m_avPlayer) {
+        for (NSString *keyName in playerKVOProperties())
+            [m_avPlayer removeObserver:m_objcObserver.get() forKeyPath:keyName];
+        setShouldObserveTimeControlStatus(false);
+    }
+
+    for (AVPlayerItemTrack *track in m_cachedTracks.get())
+        [track removeObserver:m_objcObserver.get() forKeyPath:@"enabled"];
+
     [m_objcObserver disconnect];
 
     // Tell our observer to do nothing when our cancellation of pending loading calls its completion handler.
@@ -507,21 +523,13 @@ void MediaPlayerPrivateAVFoundationObjC::cancelLoad()
         m_metadataOutput = nil;
     }
 
-    if (m_avPlayerItem) {
-        for (NSString *keyName in itemKVOProperties())
-            [m_avPlayerItem removeObserver:m_objcObserver.get() forKeyPath:keyName];
-
+    if (m_avPlayerItem)
         m_avPlayerItem = nil;
-    }
+
     if (m_avPlayer) {
         if (m_timeObserver)
             [m_avPlayer removeTimeObserver:m_timeObserver];
         m_timeObserver = nil;
-
-        for (NSString *keyName in playerKVOProperties())
-            [m_avPlayer removeObserver:m_objcObserver forKeyPath:keyName];
-
-        setShouldObserveTimeControlStatus(false);
 
         [m_avPlayer replaceCurrentItemWithPlayerItem:nil];
 #if !PLATFORM(IOS_FAMILY)
@@ -557,8 +565,6 @@ void MediaPlayerPrivateAVFoundationObjC::cancelLoad()
     m_cachedDuration = MediaTime::zeroTime();
     m_buffered.clear();
 
-    for (AVPlayerItemTrack *track in m_cachedTracks.get())
-        [track removeObserver:m_objcObserver.get() forKeyPath:@"enabled"];
     m_cachedTracks = nullptr;
     m_chapterTracks.clear();
 
@@ -4476,7 +4482,7 @@ NSArray* playerKVOProperties()
         id newValue = [change valueForKey:NSKeyValueChangeNewKey];
         auto seekableTimeRanges = RetainPtr<NSArray> { newValue };
 
-        RefPtr { m_backgroundQueue }->dispatch([seekableTimeRanges = WTF::move(seekableTimeRanges), playerItem = RetainPtr<AVPlayerItem> { object }, queueTaskOnEventLoopWithPlayer] mutable {
+        protect(m_backgroundQueue)->dispatch([seekableTimeRanges = WTF::move(seekableTimeRanges), playerItem = RetainPtr<AVPlayerItem> { object }, queueTaskOnEventLoopWithPlayer] mutable {
             auto seekableTimeRangesLastModifiedTime = [playerItem seekableTimeRangesLastModifiedTime];
             auto liveUpdateInterval = [playerItem liveUpdateInterval];
             queueTaskOnEventLoopWithPlayer([seekableTimeRanges = WTF::move(seekableTimeRanges), seekableTimeRangesLastModifiedTime, liveUpdateInterval](auto& player) mutable {

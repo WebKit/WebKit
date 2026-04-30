@@ -29,6 +29,8 @@ namespace WebCore {
 
 // https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
 
+constexpr auto httpStatus100Continue = 100;
+constexpr auto httpStatus101SwitchingProtocols = 101;
 constexpr auto httpStatus103EarlyHints = 103;
 
 constexpr auto httpStatus200OK = 200;
@@ -50,8 +52,22 @@ constexpr auto httpStatus403Forbidden = 403;
 constexpr auto httpStatus407ProxyAuthenticationRequired = 407;
 constexpr auto httpStatus416RangeNotSatisfiable = 416;
 
+// https://fetch.spec.whatwg.org/#null-body-status
+ALWAYS_INLINE bool isHttpNullBodyStatus(int code) { return code == httpStatus101SwitchingProtocols || code == httpStatus103EarlyHints || code == httpStatus204NoContent || code == httpStatus205ResetContent || code == httpStatus304NotModified; }
+
+// https://fetch.spec.whatwg.org/#ok-status
+ALWAYS_INLINE bool isHttpOkStatus(int code) { return code >= httpStatus200OK && code < httpStatus300MultipleChoices; }
+
+// https://fetch.spec.whatwg.org/#range-status
+ALWAYS_INLINE bool isHttpRangeStatus(int code) { return code == httpStatus206PartialContent || code == httpStatus416RangeNotSatisfiable; }
+
+// https://fetch.spec.whatwg.org/#redirect-status
+ALWAYS_INLINE bool isHttpRedirectStatus(int code) { return code == httpStatus301MovedPermanently || code == httpStatus302Found || code == httpStatus303SeeOther || code == httpStatus307TemporaryRedirect || code == httpStatus308PermanentRedirect; }
+
 } // namespace WebCore
 
+using WebCore::httpStatus100Continue;
+using WebCore::httpStatus101SwitchingProtocols;
 using WebCore::httpStatus103EarlyHints;
 
 using WebCore::httpStatus200OK;
@@ -72,3 +88,7 @@ using WebCore::httpStatus401Unauthorized;
 using WebCore::httpStatus403Forbidden;
 using WebCore::httpStatus407ProxyAuthenticationRequired;
 using WebCore::httpStatus416RangeNotSatisfiable;
+using WebCore::isHttpNullBodyStatus;
+using WebCore::isHttpOkStatus;
+using WebCore::isHttpRangeStatus;
+using WebCore::isHttpRedirectStatus;

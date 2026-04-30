@@ -33,6 +33,9 @@
 
 #if ENABLE(VIDEO)
 
+#include <wtf/text/AtomString.h>
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
 
 class WebVTTTokenTypes {

@@ -254,6 +254,7 @@ class GLES1Renderer final : angle::NonCopyable
         UniformLocation textureEnvColorLoc;
         UniformLocation rgbScaleLoc;
         UniformLocation alphaScaleLoc;
+        UniformLocation lodBiasLoc;
 
         // Alpha test
         UniformLocation alphaTestRefLoc;
@@ -308,6 +309,7 @@ class GLES1Renderer final : angle::NonCopyable
         std::array<Vec4Uniform, kTexUnitCount> texEnvColors;
         std::array<GLfloat, kTexUnitCount> texEnvRgbScales;
         std::array<GLfloat, kTexUnitCount> texEnvAlphaScales;
+        std::array<GLfloat, kTexUnitCount> texEnvLodBiases;
 
         // Lighting
         std::array<Vec4Uniform, kLightCount> lightAmbients;

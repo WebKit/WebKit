@@ -1045,8 +1045,6 @@ select {
     -webkit-rtl-ordering: logical;
 }
 
-/* FIXME: Implement revert-rule CSS keyword so we can de-duplicate some of this. */
-
 select:-internal-uses-menulist {
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     padding-inline: -internal-auto-base(0.4em, 0.5em);
@@ -1080,27 +1078,11 @@ select:-internal-uses-menulist {
 }
 
 select:-internal-uses-menulist:enabled:hover {
-#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
-#if defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION
-    background-color: -internal-auto-base(rgba(0, 0, 0, 0.04), color-mix(currentColor 10%, transparent));
-#else
-    background-color: -internal-auto-base(-apple-system-opaque-secondary-fill, color-mix(currentColor 10%, transparent));
-#endif /* defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION */
-#else
-    background-color: -internal-auto-base(Canvas, color-mix(currentColor 10%, transparent));
-#endif /* defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY */
+    background-color: -internal-auto-base(revert-rule, color-mix(currentColor 10%, transparent));
 }
 
 select:-internal-uses-menulist:enabled:active {
-#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
-#if defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION
-    background-color: -internal-auto-base(rgba(0, 0, 0, 0.04), color-mix(currentColor 20%, transparent));
-#else
-    background-color: -internal-auto-base(-apple-system-opaque-secondary-fill, color-mix(currentColor 20%, transparent));
-#endif /* defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION */
-#else
-    background-color: -internal-auto-base(Canvas, color-mix(currentColor 20%, transparent));
-#endif /* defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY */
+    background-color: -internal-auto-base(revert-rule, color-mix(currentColor 20%, transparent));
 }
 
 select:-internal-uses-menulist:disabled {
@@ -1147,17 +1129,14 @@ select::picker-icon {
     inset: auto;
     min-inline-size: -internal-auto-base(unset, anchor-size(self-inline));
     min-block-size: 1lh;
-    /* Go to the edge of the viewport, and add scrollbars if needed. */
     max-block-size: stretch;
     overflow: auto;
-    /* Below and span-right, by default. */
-    position-area: -internal-auto-base(unset, block-end span-inline-end);
+    position-area: -internal-auto-base(unset, self-block-end span-self-inline-end);
     position-try-order: -internal-auto-base(unset, most-block-size);
     position-try-fallbacks: -internal-auto-base(unset, {
-        block-start span-inline-end,   /* First try above and span-right. */
-        block-end span-inline-start,   /* Then below but span-left. */
-        block-start span-inline-start }); /* Then above and span-left. */
-
+        self-block-start span-self-inline-end,
+        self-block-end span-self-inline-start,
+        self-block-start span-self-inline-start });
     display: -internal-auto-base(contents, none);
 }
 
@@ -1203,9 +1182,13 @@ select option:not(:checked)::checkmark {
     visibility: hidden;
 }
 
-select optgroup {
+optgroup {
     display: block;
     font-weight: bolder;
+}
+
+option {
+    display: block;
 }
 
 select optgroup option {

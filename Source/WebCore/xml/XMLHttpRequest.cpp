@@ -1097,7 +1097,7 @@ void XMLHttpRequest::dispatchEvent(Event& event)
 {
     RELEASE_ASSERT(!scriptExecutionContext()->activeDOMObjectsAreSuspended());
 
-    if (m_userGestureToken && RefPtr { m_userGestureToken }->hasExpired(UserGestureToken::maximumIntervalForUserGestureForwardingForFetch()))
+    if (m_userGestureToken && protect(m_userGestureToken)->hasExpired(UserGestureToken::maximumIntervalForUserGestureForwardingForFetch()))
         m_userGestureToken = nullptr;
 
     if (readyState() != DONE || !m_userGestureToken || !m_userGestureToken->processingUserGesture()) {

@@ -25,11 +25,14 @@
 
 #pragma once
 
+#include "CallLinkInfo.h"
 #include "ErrorInstance.h"
+#include "ExceptionHelpers.h"
 #include "FrameTracers.h"
+#include "FunctionCodeBlock.h"
+#include "JSObjectInlines.h"
 #include "LLIntEntrypoint.h"
 #include "Repatch.h"
-
 #include "VMTrapsInlines.h"
 
 namespace JSC {

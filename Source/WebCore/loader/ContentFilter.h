@@ -53,7 +53,7 @@ class ContentFilter : public RefCounted<ContentFilter> {
 public:
     template <typename T> static void addType() { types().append(type<T>()); }
 
-    WEBCORE_EXPORT static RefPtr<ContentFilter> create(ContentFilterClient&, bool isMainFrameLoad);
+    WEBCORE_EXPORT static RefPtr<ContentFilter> create(ContentFilterClient&, IsMainFrameLoad);
     WEBCORE_EXPORT ~ContentFilter();
 
     static constexpr ASCIILiteral urlScheme() { return "x-apple-content-filter"_s; }

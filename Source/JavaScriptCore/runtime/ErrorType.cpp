@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ErrorType.h"
 
+#include <array>
 #include <wtf/PrintStream.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -39,11 +40,11 @@ ASCIILiteral errorTypeName(ErrorType errorType)
 
 ASCIILiteral errorTypeName(ErrorTypeWithExtension errorType)
 {
-    static const ASCIILiteral errorTypeNames[] = {
+    static constexpr auto errorTypeNames = std::to_array<ASCIILiteral>({
 #define DECLARE_ERROR_TYPES_STRING(name) #name ""_s,
         JSC_ERROR_TYPES_WITH_EXTENSION(DECLARE_ERROR_TYPES_STRING)
 #undef DECLARE_ERROR_TYPES_STRING
-    };
+    });
     return errorTypeNames[static_cast<unsigned>(errorType)];
 }
 

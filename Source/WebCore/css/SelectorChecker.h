@@ -38,6 +38,7 @@
 namespace WebCore {
 
 class CSSSelector;
+struct CompiledSelector;
 class Element;
 class RenderScrollbar;
 class RenderStyle;
@@ -128,6 +129,7 @@ public:
 
     static bool isCommonPseudoClassSelector(const CSSSelector*);
     static bool attributeSelectorMatches(const Element&, const QualifiedName&, const AtomString& attributeValue, const CSSSelector&);
+    static void clearCompiledHasArgumentSelectors();
 
     enum LinkMatchMask { MatchDefault = 0, MatchLink = 1, MatchVisited = 2, MatchAll = MatchLink | MatchVisited };
     static unsigned determineLinkMatchType(const CSSSelector&, const StyleRuleScope* = nullptr);
@@ -138,7 +140,8 @@ private:
     MatchResult matchRecursively(CheckingContext&, LocalContext&, EnumSet<PseudoElementType>&) const;
     bool checkOne(CheckingContext&, LocalContext&, MatchType&) const;
     bool matchSelectorList(CheckingContext&, const LocalContext&, const Element&, const CSSSelectorList&) const;
-    bool matchHasPseudoClass(CheckingContext&, const Element&, const CSSSelector&) const;
+    bool matchHasPseudoClass(CheckingContext&, const Element&, const CSSSelectorList&) const;
+    bool matchHasArgumentSelector(CheckingContext&, const Element&, const CSSSelector&, CompiledSelector*) const;
 
     bool NODELETE checkScrollbarPseudoClass(const CheckingContext&, const Element&, const CSSSelector&) const;
     bool NODELETE checkViewTransitionPseudoClass(const CheckingContext&, const Element&, const CSSSelector&) const;

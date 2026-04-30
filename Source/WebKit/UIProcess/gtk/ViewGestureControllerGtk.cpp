@@ -33,6 +33,7 @@
 #include "WebPageProxy.h"
 #include <WebCore/Scrollbar.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
+#include <array>
 
 namespace WebKit {
 using namespace WebCore;
@@ -60,13 +61,13 @@ static const float swipeOverlayBorderOpacity = 0.05;
 static const float swipeOverlayOutlineOpacity = 0.05;
 static const float swipeOverlayDimmingOpacity = 0.12;
 static const float swipeOverlayShadowWidth = 57;
-static const GskColorStop swipeOverlayShadowStops[] = {
+static constexpr auto swipeOverlayShadowStops = std::to_array<GskColorStop>({
     { 0,     { 0, 0, 0, 0.08  } },
     { 0.125, { 0, 0, 0, 0.053 } },
     { 0.428, { 0, 0, 0, 0.026 } },
     { 0.714, { 0, 0, 0, 0.01  } },
     { 1,     { 0, 0, 0, 0     } }
-};
+});
 #endif
 
 static bool isEventStop(PlatformGtkScrollData* event)
@@ -523,7 +524,7 @@ void ViewGestureController::snapshot(GtkSnapshot* snapshot, GskRenderNode* pageR
     gtk_snapshot_append_color(snapshot, &outline, &outlineRect);
     gtk_snapshot_push_opacity(snapshot, shadowOpacity);
     gtk_snapshot_append_linear_gradient(snapshot, &shadowRect, &shadowStart, &shadowEnd,
-        swipeOverlayShadowStops, G_N_ELEMENTS(swipeOverlayShadowStops));
+        swipeOverlayShadowStops.data(), swipeOverlayShadowStops.size());
     gtk_snapshot_pop(snapshot);
 
     gtk_snapshot_pop(snapshot);

@@ -138,7 +138,7 @@ void ReportingObserver::appendQueuedReportIfCorrectType(const Ref<Report>& repor
     ASSERT(m_reportingScope && scriptExecutionContext() == m_reportingScope->scriptExecutionContext());
 
     // Step 4.3.4: Queue a task to § 4.4
-    queueTaskKeepingObjectAlive(*this, TaskSource::Reporting, [protectedCallback = Ref { m_callback }](ReportingObserver& observer) {
+    queueTaskKeepingObjectAlive(*this, TaskSource::Reporting, [protectedCallback = protect(m_callback)](ReportingObserver& observer) {
         RefPtr context = observer.scriptExecutionContext();
         ASSERT(context);
         if (!context)

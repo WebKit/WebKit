@@ -78,12 +78,6 @@ String MainFrameData::description() const
     ts.dumpProperty("avoidsUnsafeArea"_s, avoidsUnsafeArea);
     ts.dumpProperty("isInStableState"_s, isInStableState);
 
-    if (editorState) {
-        TextStream::GroupScope scope(ts);
-        ts << "EditorState"_s;
-        ts << *editorState;
-    }
-
     ts.endGroup();
 
     return ts.release();
@@ -98,6 +92,12 @@ String RemoteLayerTreeCommitBundle::description() const
 
     ts.dumpProperty("transactionID"_s, transactionID);
     ts.dumpProperty("startTime"_s, startTime.secondsSinceEpoch().milliseconds());
+
+    if (editorState) {
+        TextStream::GroupScope scope(ts);
+        ts << "EditorState"_s;
+        ts << *editorState;
+    }
 
     ts.endGroup();
 

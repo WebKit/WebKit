@@ -205,21 +205,21 @@ void OpcodeStats::resetLastInstruction()
 
 #endif
 
-static const unsigned metadataSizes[] = {
+static constexpr auto metadataSizes = std::to_array<unsigned>({
 
 #define METADATA_SIZE(size) size,
     FOR_EACH_BYTECODE_METADATA_SIZE(METADATA_SIZE)
 #undef METADATA_SIZE
 
-};
+});
 
-static const unsigned metadataAlignments[] = {
+static constexpr auto metadataAlignments = std::to_array<unsigned>({
 
 #define METADATA_ALIGNMENT(size) size,
     FOR_EACH_BYTECODE_METADATA_ALIGNMENT(METADATA_ALIGNMENT)
 #undef METADATA_ALIGNMENT
 
-};
+});
 
 unsigned metadataSize(OpcodeID opcodeID)
 {

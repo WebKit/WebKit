@@ -63,23 +63,6 @@ static bool NODELETE isSiblingOrSubject(MatchElement::Relation relation)
     return false;
 }
 
-static bool NODELETE isSiblingOrSubject(MatchElement::HasRelation relation)
-{
-    switch (relation) {
-    case MatchElement::HasRelation::DirectSibling:
-    case MatchElement::HasRelation::IndirectSibling:
-        return true;
-    case MatchElement::HasRelation::Child:
-    case MatchElement::HasRelation::Descendant:
-    case MatchElement::HasRelation::SiblingChild:
-    case MatchElement::HasRelation::SiblingDescendant:
-    case MatchElement::HasRelation::ScopeBreaking:
-        return false;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 RuleAndSelector::RuleAndSelector(const RuleData& ruleData)
     : styleRule(&ruleData.styleRule())
     , selectorIndex(ruleData.selectorIndex())
@@ -202,6 +185,11 @@ MatchElement::HasRelation computeHasArgumentRelation(const CSSSelector& hasSelec
     return toHasRelation(relation);
 }
 
+static bool isSiblingCombinator(CSSSelector::Relation relation)
+{
+    return relation == CSSSelector::Relation::DirectAdjacent || relation == CSSSelector::Relation::IndirectAdjacent;
+}
+
 static MatchElement computeSubSelectorMatchElement(MatchElement matchElement, const CSSSelector& selector, const CSSSelector& childSelector)
 {
     if (selector.match() == CSSSelector::Match::PseudoClass) {
@@ -233,11 +221,37 @@ static MatchElement computeSubSelectorMatchElement(MatchElement matchElement, co
     return matchElement;
 }
 
+// Returns true if a combinator inside :is()/:not() within :has() can match elements outside the
+// :has() scope. We use this to decide if a nested entry can be associated with a scope selector
+// to bound invalidation traversal.
+static bool isHasScopeBreakingCombinator(CSSSelector::Relation relation, MatchElement::HasRelation hasRelation)
+{
+    if (relation == CSSSelector::Relation::DescendantSpace)
+        return true;
+    if (relation == CSSSelector::Relation::Child)
+        return hasRelation != MatchElement::HasRelation::Child;
+    if (isSiblingCombinator(relation)) {
+        switch (hasRelation) {
+        case MatchElement::HasRelation::DirectSibling:
+        case MatchElement::HasRelation::IndirectSibling:
+            return true;
+        case MatchElement::HasRelation::Child:
+        case MatchElement::HasRelation::Descendant:
+        case MatchElement::HasRelation::SiblingChild:
+        case MatchElement::HasRelation::SiblingDescendant:
+            return false;
+        }
+    }
+    return false;
+}
+
 struct RuleFeatureSet::RecursiveCollectionContext {
     MatchElement matchElement { MatchElement::Relation::Subject, { } };
     IsNegation isNegation { IsNegation::No };
-    CanBreakScope canBreakScope { CanBreakScope::No };
     const CSSSelector* outerCompoundSelector { nullptr };
+    const CSSSelector* hasPseudoClass { nullptr };
+    bool isNestedInLogicalCombination { false };
+    bool crossedScopeBreakingCombinator { false };
 };
 
 void RuleFeatureSet::collectFeaturesFromSelector(SelectorFeatures& selectorFeatures, const CSSSelector& selector, MatchElement matchElement)
@@ -245,13 +259,48 @@ void RuleFeatureSet::collectFeaturesFromSelector(SelectorFeatures& selectorFeatu
     recursivelyCollectFeaturesFromSelector(selectorFeatures, selector, { matchElement });
 }
 
-DoesBreakScope RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& selectorFeatures, const CSSSelector& firstSelector, const RecursiveCollectionContext& context)
+void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& selectorFeatures, const CSSSelector& firstSelector, const RecursiveCollectionContext& context)
 {
     auto matchElement = context.matchElement;
-    auto doesBreakScope = DoesBreakScope::No;
     const CSSSelector* selector = &firstSelector;
+    bool isRightmostCompound = true;
+    bool crossedScopeBreakingCombinator = context.crossedScopeBreakingCombinator;
+
+    // When walking a :has() argument chain, emit hasPseudoClasses entries for compounds
+    // at sibling combinator boundaries or containing positional pseudo-classes.
+    // Child mutations can break sibling adjacency and change positional matching,
+    // so ChildChangeInvalidation needs entries keyed on these compounds.
+    // At the direct :has() argument level, also emit for the rightmost compound.
+    // Inside nested :is()/:not(), only emit at sibling/positional boundaries to avoid excessive entries.
+    auto collectHasPseudoClassFeatureIfNeeded = [&] {
+        if (!context.hasPseudoClass || selector->match() == CSSSelector::Match::HasScope)
+            return;
+        if (!isRightmostCompound || context.isNestedInLogicalCombination) {
+            auto compoundIsAffectedByChildMutation = [&] {
+                if (isSiblingCombinator(selector->relation()))
+                    return true;
+                for (auto* simple = selector; simple; simple = simple->precedingInCompound()) {
+                    if (simple->match() == CSSSelector::Match::PseudoClass && pseudoClassIsRelativeToSiblings(simple->pseudoClass()))
+                        return true;
+                }
+                return false;
+            };
+            if (!compoundIsAffectedByChildMutation())
+                return;
+        }
+        // Entries inside nested :is()/:not() can only match elements outside the :has() scope if
+        // we crossed a combinator that reaches outside (e.g. descendant inside :is, or sibling
+        // inside :is when :has() itself is in sibling/subject position). Otherwise the matched
+        // element is always within the scope subtree and the scope selector can bound traversal.
+        auto scopeSource = [&] -> const CSSSelector* {
+            if (context.isNestedInLogicalCombination && crossedScopeBreakingCombinator)
+                return nullptr;
+            return context.outerCompoundSelector ? context.outerCompoundSelector : context.hasPseudoClass;
+        }();
+        selectorFeatures.hasPseudoClasses.append({ selector, matchElement, context.isNegation, scopeSource });
+    };
+
     while (true) {
-        auto canBreakScope = context.canBreakScope;
         if (selector->match() == CSSSelector::Match::Id) {
             idsInRules.add(selector->value());
             if (matchElement.relation == MatchElement::Relation::Parent || matchElement.relation == MatchElement::Relation::Ancestor)
@@ -271,11 +320,9 @@ DoesBreakScope RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFe
             bool isLogicalCombination = isLogicalCombinationPseudoClass(selector->pseudoClass());
             if (!isLogicalCombination)
                 selectorFeatures.pseudoClasses.append({ selector, matchElement, context.isNegation });
-
-            // Check for the :has(:is(foo bar)) case. In this case `foo` can match elements outside the :has() scope.
-            if (isLogicalCombination && matchElement.hasRelation)
-                canBreakScope = CanBreakScope::Yes;
         }
+
+        collectHasPseudoClassFeatureIfNeeded();
 
         if (const CSSSelectorList* selectorList = selector->selectorList()) {
             auto subSelectorIsNegation = context.isNegation;
@@ -285,24 +332,22 @@ DoesBreakScope RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFe
             for (auto& subSelector : *selectorList) {
                 auto subResult = computeSubSelectorMatchElement(matchElement, *selector, subSelector);
 
-                RecursiveCollectionContext subContext { subResult, subSelectorIsNegation, canBreakScope, context.outerCompoundSelector };
+                RecursiveCollectionContext subContext { subResult, subSelectorIsNegation, context.outerCompoundSelector, context.hasPseudoClass, context.isNestedInLogicalCombination, crossedScopeBreakingCombinator };
 
                 // When entering a logical combination (not :has() itself), record the outer compound
                 // so nested :has() can use it for scope selector extraction.
+                // Mark as nested so only sibling boundary entries are emitted, not rightmost.
                 if (selector->match() == CSSSelector::Match::PseudoClass && isLogicalCombinationPseudoClass(selector->pseudoClass()) && selector->pseudoClass() != CSSSelector::PseudoClass::Has) {
                     if (!subContext.outerCompoundSelector)
                         subContext.outerCompoundSelector = selector;
+                    if (subContext.hasPseudoClass)
+                        subContext.isNestedInLogicalCombination = true;
                 }
 
-                auto pseudoClassDoesBreakScope = recursivelyCollectFeaturesFromSelector(selectorFeatures, subSelector, subContext);
+                if (selector->match() == CSSSelector::Match::PseudoClass && selector->pseudoClass() == CSSSelector::PseudoClass::Has)
+                    subContext.hasPseudoClass = selector;
 
-                if (selector->match() == CSSSelector::Match::PseudoClass && selector->pseudoClass() == CSSSelector::PseudoClass::Has) {
-                    auto scopeSource = context.outerCompoundSelector ? context.outerCompoundSelector : selector;
-                    selectorFeatures.hasPseudoClasses.append({ &subSelector, subResult, context.isNegation, pseudoClassDoesBreakScope, scopeSource });
-                }
-
-                if (pseudoClassDoesBreakScope == DoesBreakScope::Yes)
-                    doesBreakScope = DoesBreakScope::Yes;
+                recursivelyCollectFeaturesFromSelector(selectorFeatures, subSelector, subContext);
             }
         }
 
@@ -310,34 +355,15 @@ DoesBreakScope RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFe
             break;
 
         auto relation = selector->relation();
-        matchElement.relation = computeNextRelation(matchElement.relation, relation);
+        isRightmostCompound = false;
 
-        // Detect scope-breaking inside :has() arguments.
-        // When inside :has() and a logical combinator like :is() allows scope breaking,
-        // combinators can reach outside the :has() scope.
-        if (matchElement.hasRelation && *matchElement.hasRelation != MatchElement::HasRelation::ScopeBreaking && context.canBreakScope == CanBreakScope::Yes) {
-            if (relation == CSSSelector::Relation::DescendantSpace || relation == CSSSelector::Relation::Child) {
-                // For :has(> :is(.x > .y)), the child combinator inside :is() is still scoped to the direct child's tree.
-                // Only mark as scope-breaking if the has argument isn't a direct child, or the combinator is a descendant space.
-                if (matchElement.hasRelation != MatchElement::HasRelation::Child || relation != CSSSelector::Relation::Child) {
-                    matchElement.hasRelation = MatchElement::HasRelation::ScopeBreaking;
-                    doesBreakScope = DoesBreakScope::Yes;
-                }
-            }
-            if (relation == CSSSelector::Relation::IndirectAdjacent || relation == CSSSelector::Relation::DirectAdjacent) {
-                // :has(~ :is(.x ~ .y)) — sibling combinator inside :is() when :has() has sibling traversal.
-                // Widens to any-sibling search and is scope-breaking (elements outside :has() scope can be affected).
-                if (isSiblingOrSubject(*matchElement.hasRelation)) {
-                    matchElement.hasRelation = MatchElement::HasRelation::ScopeBreaking;
-                    doesBreakScope = DoesBreakScope::Yes;
-                }
-            }
-        }
+        if (context.isNestedInLogicalCombination && matchElement.hasRelation && isHasScopeBreakingCombinator(relation, *matchElement.hasRelation))
+            crossedScopeBreakingCombinator = true;
+
+        matchElement.relation = computeNextRelation(matchElement.relation, relation);
 
         selector = selector->precedingInComplexSelector();
     };
-
-    return doesBreakScope;
 }
 
 PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::PseudoClass pseudoClass, InvalidationKeyType keyType, const AtomString& keyString)
@@ -489,7 +515,7 @@ void RuleFeatureSet::collectFeatures(CollectionContext& collectionContext, const
     }
 
     for (auto& entry : selectorFeatures.hasPseudoClasses) {
-        auto& [selector, matchElement, isNegation, doesBreakScope, hasPseudoClass] = entry;
+        auto& [selector, matchElement, isNegation, hasPseudoClass] = entry;
         // The selector argument points to a selector inside :has() selector list instead of :has() itself.
         auto& featureVector = *hasPseudoClassRules.ensure(makePseudoClassInvalidationKey(CSSSelector::PseudoClass::Has, *selector), [] {
             return makeUnique<Vector<RuleFeatureWithInvalidationSelector>>();
@@ -500,11 +526,8 @@ void RuleFeatureSet::collectFeatures(CollectionContext& collectionContext, const
             matchElement,
             isNegation,
             CSSSelectorList::makeCopyingComplexSelector(*selector),
-            CSSSelectorParser::makeHasScopeSelector(*hasPseudoClass)
+            hasPseudoClass ? CSSSelectorParser::makeHasScopeSelector(*hasPseudoClass) : CSSSelectorList { }
         });
-
-        if (doesBreakScope == DoesBreakScope::Yes)
-            scopeBreakingHasPseudoClassRules.append({ ruleData });
 
         setUsesRelation(matchElement.relation);
         usesHasPseudoClass = true;
@@ -561,7 +584,6 @@ void RuleFeatureSet::add(const RuleFeatureSet& other)
     pseudoClasses.addAll(other.pseudoClasses);
 
     addMap(hasPseudoClassRules, other.hasPseudoClassRules);
-    scopeBreakingHasPseudoClassRules.appendVector(other.scopeBreakingHasPseudoClassRules);
 
     for (size_t i = 0; i < usedRelations.size(); ++i)
         usedRelations[i] = usedRelations[i] || other.usedRelations[i];
@@ -589,7 +611,6 @@ void RuleFeatureSet::clear()
     idRules.clear();
     classRules.clear();
     hasPseudoClassRules.clear();
-    scopeBreakingHasPseudoClassRules.clear();
     classesAffectingHost.clear();
     attributeRules.clear();
     attributesAffectingHost.clear();
@@ -603,7 +624,6 @@ void RuleFeatureSet::clear()
 
 void RuleFeatureSet::shrinkToFit()
 {
-    scopeBreakingHasPseudoClassRules.shrinkToFit();
     for (auto& rules : idRules.values())
         rules->shrinkToFit();
     for (auto& rules : classRules.values())

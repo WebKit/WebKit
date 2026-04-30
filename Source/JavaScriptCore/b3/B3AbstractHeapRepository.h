@@ -117,6 +117,7 @@ namespace JSC::B3 {
     macro(JSGlobalObject_regExpGlobalData_cachedResult_result_end, JSGlobalObject::regExpGlobalDataOffset() + RegExpGlobalData::offsetOfCachedResult() + RegExpCachedResult::offsetOfResult() + OBJECT_OFFSETOF(MatchResult, end), Mutability::Mutable) \
     macro(JSGlobalObject_regExpGlobalData_cachedResult_reified, JSGlobalObject::regExpGlobalDataOffset() + RegExpGlobalData::offsetOfCachedResult() + RegExpCachedResult::offsetOfReified(), Mutability::Mutable) \
     macro(JSGlobalObject_regExpGlobalData_cachedResult_oneCharacterMatch, JSGlobalObject::regExpGlobalDataOffset() + RegExpGlobalData::offsetOfCachedResult() + RegExpCachedResult::offsetOfOneCharacterMatch(), Mutability::Mutable) \
+    macro(JSGlobalObject_canDoASCIIUCADUCETLocaleCompare, JSGlobalObject::offsetOfCanDoASCIIUCADUCETLocaleCompare(), Mutability::Mutable) \
     macro(JSGlobalProxy_target, JSGlobalProxy::targetOffset(), Mutability::Mutable) \
     macro(JSObject_butterfly, JSObject::butterflyOffset(), Mutability::Mutable) \
     macro(JSPropertyNameEnumerator_cachedInlineCapacity, JSPropertyNameEnumerator::cachedInlineCapacityOffset(), Mutability::Mutable) \

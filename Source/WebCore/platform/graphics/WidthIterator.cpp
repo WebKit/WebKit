@@ -454,7 +454,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
             continue;
 
         if (rtl())
-            characterToWrite = u_charMirror(characterToWrite);
+            characterToWrite = mirrorCharacterIfNeeded(characterToWrite);
 
         Glyph glyph = glyphData.glyph;
         if (glyphData.font.get() != advanceInternalState.nextRangeFont || character != characterToWrite)

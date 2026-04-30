@@ -163,6 +163,13 @@ class FramebufferVk : public FramebufferImpl
     bool isFoveationEnabled() { return mFoveationState.isFoveated(); }
 
     const vk::ImageHelper *getImageWithTileMemory() const;
+    void onTileMemoryFallback(ContextVk *contextVk)
+    {
+        // Invalidate cached objects associated with depth/stencil attachment. They will gets
+        // recreated from Framebuffer::startNewRenderPass.
+        mCachedAttachmentsInfo.clear();
+        releaseCurrentFramebuffer(contextVk);
+    }
 
   private:
     enum class ClearWithCommand

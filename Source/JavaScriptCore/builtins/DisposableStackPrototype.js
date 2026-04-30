@@ -50,13 +50,6 @@ function createDisposableResource(value, isAsync /* , method */)
     return { value, method };
 }
 
-@linkTimeConstant
-function createSuppressedError(error, suppressed)
-{
-    'use strict';
-    return new @SuppressedError(error, suppressed);
-}
-
 // https://tc39.es/proposal-explicit-resource-management/#sec-getdisposemethod
 @linkTimeConstant
 function getDisposeMethod(value)

@@ -1633,12 +1633,7 @@ TEST(SOAuthorizationRedirect, SOAuthorizationLoadPolicyIgnore)
     EXPECT_WK_STREQ(testURL.get().absoluteString, finalURL);
 }
 
-// FIXME when webkit.org/b/312290 is resolved.
-#if PLATFORM(MAC) && !defined(NDEBUG)
-TEST(SOAuthorizationRedirect, DISABLED_SOAuthorizationLoadPolicyAllowAsync)
-#else
 TEST(SOAuthorizationRedirect, SOAuthorizationLoadPolicyAllowAsync)
-#endif
 {
     resetState();
     SWIZZLE_SOAUTH(PAL::getSOAuthorizationClassSingleton());
@@ -2228,6 +2223,41 @@ TEST(SOAuthorizationPopUp, InterceptionCancel)
     Util::run(&allMessagesReceived);
 }
 
+TEST(SOAuthorizationPopUp, InterceptionCancelAfterClose)
+{
+    resetState();
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClassSingleton());
+
+    RetainPtr baseURL = [NSBundle.test_resourcesBundle URLForResource:@"simple2" withExtension:@"html"];
+    RetainPtr testURL = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
+    auto testHtml = generateOpenerHTML(openerTemplate, testURL.get().absoluteString);
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[]]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+    RetainPtr delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
+    configureSOAuthorizationWebView(webView.get(), delegate.get());
+
+    [webView loadHTMLString:testHtml.createNSString().get() baseURL:baseURL.get()];
+    Util::run(&navigationCompleted);
+
+    [webView evaluateJavaScript: @"clickMe()" completionHandler:nil];
+    Util::run(&authorizationPerformed);
+    checkAuthorizationOptions(true, "file://"_s, 1);
+    EXPECT_TRUE(policyForAppSSOPerformed);
+
+    @autoreleasepool {
+        [webView _close];
+        webView = nullptr;
+    }
+
+    @autoreleasepool {
+        [gDelegate authorizationDidCancel:gAuthorization];
+    }
+}
+
 TEST(SOAuthorizationPopUp, InterceptionSucceedCloseByItself)
 {
     resetState();
@@ -2616,7 +2646,13 @@ TEST(SOAuthorizationPopUp, SOAuthorizationLoadPolicyIgnore)
     EXPECT_TRUE(policyForAppSSOPerformed);
 }
 
+// FIXME when webkit.org/b/312290 is resolved.
+#if PLATFORM(MAC)
+TEST(SOAuthorizationPopUp, DISABLED_SOAuthorizationLoadPolicyAllowAsync)
+#else
 TEST(SOAuthorizationPopUp, SOAuthorizationLoadPolicyAllowAsync)
+#endif
+
 {
     resetState();
     SWIZZLE_SOAUTH(PAL::getSOAuthorizationClassSingleton());

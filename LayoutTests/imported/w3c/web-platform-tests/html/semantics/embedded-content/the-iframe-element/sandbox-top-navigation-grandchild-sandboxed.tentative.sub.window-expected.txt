@@ -1,0 +1,3 @@
+
+PASS A fully sandboxed same-origin grandchild can't navigate top
+

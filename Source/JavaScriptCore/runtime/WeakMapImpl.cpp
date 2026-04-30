@@ -28,6 +28,7 @@
 #include "WeakMapImpl.h"
 
 #include "AuxiliaryBarrierInlines.h"
+#include "JSCJSValueInlines.h"
 #include "SlotVisitorInlines.h"
 #include "WeakMapImplInlines.h"
 

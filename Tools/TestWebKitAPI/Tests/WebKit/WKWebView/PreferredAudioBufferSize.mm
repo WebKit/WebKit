@@ -30,8 +30,8 @@
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
 #import "Helpers/cocoa/TestWKWebView.h"
-#import "WebCoreTestSupport.h"
 #import <JavaScriptCore/JSContext.h>
+#import <WebCoreTestSupport/WebCoreTestSupport.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/_WKFullscreenDelegate.h>

@@ -40,6 +40,7 @@
 #elif OS(HAIKU)
 #include <wtf/haiku/CurrentProcessMemoryStatus.h>
 #elif OS(FREEBSD)
+#include <array>
 #include <sys/sysctl.h>
 #include <sys/types.h>
 #include <sys/user.h>
@@ -122,13 +123,9 @@ static size_t processMemoryUsage()
     struct kinfo_proc info;
     size_t infolen = sizeof(info);
 
-    int mib[4];
-    mib[0] = CTL_KERN;
-    mib[1] = KERN_PROC;
-    mib[2] = KERN_PROC_PID;
-    mib[3] = getpid();
+    std::array<int, 4> mib { CTL_KERN, KERN_PROC, KERN_PROC_PID, getpid() };
 
-    if (sysctl(mib, 4, &info, &infolen, nullptr, 0))
+    if (sysctl(mib.data(), mib.size(), &info, &infolen, nullptr, 0))
         return 0;
 
     return static_cast<size_t>(info.ki_rssize - info.ki_tsize) * pageSize;

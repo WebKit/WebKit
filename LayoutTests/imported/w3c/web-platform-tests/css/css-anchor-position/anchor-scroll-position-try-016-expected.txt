@@ -1,0 +1,5 @@
+
+PASS Initially, anchored is at top left position
+PASS Scroll to end of page, anchored should be at bottom left position
+PASS Scroll back to top of page, anchored should be at top left position
+

@@ -248,16 +248,23 @@ JSPromise* JSPromise::rejectWithCaughtException(JSGlobalObject* globalObject, Th
 
 void JSPromise::performPromiseThen(VM& vm, JSGlobalObject* globalObject, JSValue onFulfilled, JSValue onRejected, JSValue promiseOrCapability)
 {
-    if (!onFulfilled.isCallable())
-        onFulfilled = globalObject->promiseEmptyOnFulfilledFunction();
-
-    if (!onRejected.isCallable())
-        onRejected = globalObject->promiseEmptyOnRejectedFunction();
+    bool fulfilledCallable = onFulfilled.isCallable();
+    bool rejectedCallable = onRejected.isCallable();
 
     JSValue reactionsOrResult = this->reactionsOrResult();
     switch (status()) {
     case JSPromise::Status::Pending: {
-        auto* reaction = JSPromiseReaction::create(vm, promiseOrCapability, onFulfilled, onRejected, jsUndefined(), reactionsOrResult ? uncheckedDowncast<JSPromiseReaction>(reactionsOrResult) : nullptr);
+        JSPromiseReaction* existing = reactionsOrResult ? uncheckedDowncast<JSPromiseReaction>(reactionsOrResult) : nullptr;
+        JSPromiseReaction* reaction;
+        if (fulfilledCallable && !rejectedCallable)
+            reaction = JSSlimPromiseReaction::create(vm, promiseOrCapability, onFulfilled, true, existing);
+        else if (!fulfilledCallable && rejectedCallable)
+            reaction = JSSlimPromiseReaction::create(vm, promiseOrCapability, onRejected, false, existing);
+        else if (fulfilledCallable) {
+            ASSERT(rejectedCallable);
+            reaction = JSFullPromiseReaction::create(vm, promiseOrCapability, onFulfilled, onRejected, jsUndefined(), existing);
+        } else
+            reaction = JSSlimPromiseReaction::create(vm, promiseOrCapability, InternalMicrotask::PromiseResolveWithoutHandlerJob, jsUndefined(), existing);
         setReactionsOrResult(vm, reaction);
         markAsHandled();
         break;
@@ -265,12 +272,18 @@ void JSPromise::performPromiseThen(VM& vm, JSGlobalObject* globalObject, JSValue
     case JSPromise::Status::Rejected: {
         if (!isHandled())
             globalObject->globalObjectMethodTable()->promiseRejectionTracker(globalObject, this, JSPromiseRejectionOperation::Handle);
-        globalObject->queueMicrotask(vm, InternalMicrotask::PromiseReactionJob, static_cast<uint8_t>(Status::Rejected), promiseOrCapability, onRejected, reactionsOrResult);
+        if (rejectedCallable)
+            globalObject->queueMicrotask(vm, InternalMicrotask::PromiseReactionJob, static_cast<uint8_t>(Status::Rejected), promiseOrCapability, onRejected, reactionsOrResult);
+        else
+            globalObject->queueMicrotask(vm, InternalMicrotask::PromiseResolveWithoutHandlerJob, static_cast<uint8_t>(Status::Rejected), promiseOrCapability, reactionsOrResult, jsUndefined());
         markAsHandled();
         break;
     }
     case JSPromise::Status::Fulfilled: {
-        globalObject->queueMicrotask(vm, InternalMicrotask::PromiseReactionJob, static_cast<uint8_t>(Status::Fulfilled), promiseOrCapability, onFulfilled, reactionsOrResult);
+        if (fulfilledCallable)
+            globalObject->queueMicrotask(vm, InternalMicrotask::PromiseReactionJob, static_cast<uint8_t>(Status::Fulfilled), promiseOrCapability, onFulfilled, reactionsOrResult);
+        else
+            globalObject->queueMicrotask(vm, InternalMicrotask::PromiseResolveWithoutHandlerJob, static_cast<uint8_t>(Status::Fulfilled), promiseOrCapability, reactionsOrResult, jsUndefined());
         break;
     }
     }
@@ -281,8 +294,7 @@ void JSPromise::performPromiseThenWithInternalMicrotask(VM& vm, JSGlobalObject* 
     JSValue reactionsOrResult = this->reactionsOrResult();
     switch (status()) {
     case JSPromise::Status::Pending: {
-        JSValue encodedTask = jsNumber(static_cast<int32_t>(task));
-        auto* reaction = JSPromiseReaction::create(vm, promise, encodedTask, encodedTask, context, reactionsOrResult ? uncheckedDowncast<JSPromiseReaction>(reactionsOrResult) : nullptr);
+        auto* reaction = JSSlimPromiseReaction::create(vm, promise, task, context, reactionsOrResult ? uncheckedDowncast<JSPromiseReaction>(reactionsOrResult) : nullptr);
         setReactionsOrResult(vm, reaction);
         markAsHandled();
         break;
@@ -559,16 +571,36 @@ void JSPromise::triggerPromiseReactions(VM& vm, JSGlobalObject* globalObject, St
 
     auto queue = [&](JSPromiseReaction* reaction) ALWAYS_INLINE_LAMBDA {
         JSValue promise = reaction->promise();
-        JSValue handler = isResolved ? reaction->onFulfilled() : reaction->onRejected();
-        JSValue context = reaction->context();
-        JSValue arg = argument;
         InternalMicrotask task = InternalMicrotask::PromiseReactionJob;
-        if (handler.isInt32()) {
-            task = static_cast<InternalMicrotask>(handler.asInt32());
-            handler = arg;
-            arg = context;
-        } else
-            ASSERT(context.isUndefinedOrNull());
+        JSValue handler;
+        JSValue arg = argument;
+
+        switch (reaction->type()) {
+        case JSSlimPromiseReactionType: {
+            auto* slimReaction = uncheckedDowncast<JSSlimPromiseReaction>(reaction);
+            if (auto internalTask = slimReaction->internalMicrotask(); internalTask != InternalMicrotask::None) {
+                task = internalTask;
+                handler = argument;
+                arg = slimReaction->handlerOrContext();
+            } else if (slimReaction->isFulfillHandler() == isResolved)
+                handler = slimReaction->handlerOrContext();
+            else {
+                task = InternalMicrotask::PromiseResolveWithoutHandlerJob;
+                handler = argument;
+                arg = jsUndefined();
+            }
+            break;
+        }
+        case JSFullPromiseReactionType: {
+            auto* fullReaction = uncheckedDowncast<JSFullPromiseReaction>(reaction);
+            handler = isResolved ? fullReaction->onFulfilled() : fullReaction->onRejected();
+            ASSERT(fullReaction->context().isUndefinedOrNull());
+            break;
+        }
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+
         globalObject->queueMicrotask(vm, task, static_cast<uint8_t>(status), promise, handler, arg);
     };
 

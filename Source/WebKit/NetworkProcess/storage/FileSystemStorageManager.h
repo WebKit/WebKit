@@ -55,6 +55,7 @@ public:
     enum class LockType : bool { Exclusive, Shared };
     bool acquireLockForFile(const String& path, LockType);
     bool releaseLockForFile(const String& path);
+    bool hasActiveLock(const String& path) const;
     void requestSpace(uint64_t spaceRequested, CompletionHandler<void(bool)>&&);
 
 private:

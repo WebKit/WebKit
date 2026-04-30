@@ -60,6 +60,8 @@ Ref<HTMLAudioElement> HTMLAudioElement::createForLegacyFactoryFunction(Document&
     return element;
 }
 
+HTMLAudioElement::~HTMLAudioElement() = default;
+
 }
 
 #endif

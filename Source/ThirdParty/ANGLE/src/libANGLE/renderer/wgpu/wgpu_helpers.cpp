@@ -223,8 +223,6 @@ angle::Result ImageHelper::flushSingleLevelUpdates(ContextWgpu *contextWgpu,
                 // TODO(anglebug.com/389145696): copyExtent just always copies to the whole level.
                 // Should support smaller regions.
                 dst.origin = WGPUOrigin3D{0, 0, srcUpdate.layerIndex};
-                // Updating multiple layers at once maybe not currently supported.
-                ASSERT(srcUpdate.layerCount == 1);
                 copyExtent.depthOrArrayLayers = srcUpdate.layerCount;
 
                 if (!encoder.has_value())
@@ -342,8 +340,8 @@ angle::Result ImageHelper::stageTextureUpload(ContextWgpu *contextWgpu,
     ANGLE_TRY(bufferHelper.unmap());
 
     WGPUTexelCopyBufferLayout textureDataLayout = WGPU_TEXEL_COPY_BUFFER_LAYOUT_INIT;
-    textureDataLayout.bytesPerRow             = outputRowPitch;
-    textureDataLayout.rowsPerImage            = outputDepthPitch;
+    textureDataLayout.bytesPerRow               = outputRowPitch;
+    textureDataLayout.rowsPerImage              = glExtents.height;
 
     GLint layerIndex = index.hasLayer() ? index.getLayerIndex() : 0;
 
@@ -644,10 +642,12 @@ angle::Result ImageHelper::createTextureView(
     }
     WGPUTextureViewDescriptor textureViewDesc = WGPU_TEXTURE_VIEW_DESCRIPTOR_INIT;
     textureViewDesc.aspect                    = aspect;
-    textureViewDesc.baseArrayLayer  = layerIndex;
-    textureViewDesc.arrayLayerCount = arrayLayerCount;
-    textureViewDesc.baseMipLevel    = toWgpuLevel(targetLevel).get();
-    textureViewDesc.mipLevelCount   = levelCount;
+    textureViewDesc.baseArrayLayer =
+        (mTextureDescriptor.dimension == WGPUTextureDimension_3D) ? 0 : layerIndex;
+    textureViewDesc.arrayLayerCount =
+        (mTextureDescriptor.dimension == WGPUTextureDimension_3D) ? 1 : arrayLayerCount;
+    textureViewDesc.baseMipLevel  = toWgpuLevel(targetLevel).get();
+    textureViewDesc.mipLevelCount = levelCount;
     if (!desiredViewDimension.valid())
     {
         switch (mTextureDescriptor.dimension)

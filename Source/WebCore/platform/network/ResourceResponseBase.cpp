@@ -31,6 +31,7 @@
 #include "DataURLDecoder.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
+#include "HTTPStatusCodes.h"
 #include "IPAddressSpace.h"
 #include "MIMETypeRegistry.h"
 #include "ParsedContentRange.h"
@@ -365,8 +366,7 @@ bool ResourceResponseBase::isNosniff() const
 
 bool ResourceResponseBase::isSuccessful() const
 {
-    int code = httpStatusCode();
-    return code >= 200 && code < 300;
+    return isHttpOkStatus(httpStatusCode());
 }
 
 int ResourceResponseBase::httpStatusCode() const
@@ -388,7 +388,7 @@ void ResourceResponseBase::setHTTPStatusCode(int statusCode)
 
 bool ResourceResponseBase::isRedirection() const
 {
-    return isRedirectionStatusCode(m_httpStatusCode);
+    return isHttpRedirectStatus(m_httpStatusCode);
 }
 
 const String& ResourceResponseBase::httpStatusText() const

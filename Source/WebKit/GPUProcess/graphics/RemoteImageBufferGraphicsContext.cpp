@@ -68,18 +68,13 @@ void RemoteImageBufferGraphicsContext::drawImageBuffer(RenderingResourceIdentifi
     MESSAGE_CHECK(sourceImage);
     bool selfCopy = false;
     if (sourceImage == m_imageBuffer.ptr() && sourceImage->renderingMode() == RenderingMode::Accelerated) {
-        RefPtr selfCopySourceImage = m_renderingBackend->createImageBufferForSelfCopy(sourceImage);
-        if (selfCopySourceImage) {
-            selfCopySourceImage->context().drawImageBuffer(m_imageBuffer, FloatPoint { }, { CompositeOperator::Copy });
-            sourceImage = selfCopySourceImage;
-            selfCopy = true;
-        }
+        sourceImage = sourceImage->clone();
+        sourceImage->flushDrawingContext();
+        selfCopy = true;
     }
     context().drawImageBuffer(*sourceImage, destinationRect, srcRect, options);
-    if (selfCopy) {
-        m_imageBuffer->submitDrawingCommands();
-        m_renderingBackend->returnImageBufferForSelfCopy(WTF::move(sourceImage));
-    }
+    if (selfCopy)
+        m_imageBuffer->flushDrawingContext();
 }
 
 } // namespace WebKit

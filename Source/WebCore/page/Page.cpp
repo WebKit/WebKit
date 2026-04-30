@@ -444,7 +444,10 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_isUtilityPage(isUtilityPageChromeClient(chrome().client()))
     , m_performanceMonitor(isUtilityPage() ? nullptr : makeUniqueWithoutRefCountedCheck<PerformanceMonitor>(*this))
     , m_lowPowerModeNotifier(makeUniqueRef<LowPowerModeNotifier>([this](bool isLowPowerModeEnabled) { handleLowPowerModeChange(isLowPowerModeEnabled); }))
-    , m_thermalMitigationNotifier(makeUniqueRef<ThermalMitigationNotifier>([this](bool thermalMitigationEnabled) { handleThermalMitigationChange(thermalMitigationEnabled); }))
+    , m_thermalMitigationNotifier(ThermalMitigationNotifier::create([weakThis = WeakPtr { *this }](bool thermalMitigationEnabled) {
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->handleThermalMitigationChange(thermalMitigationEnabled);
+    }))
     , m_performanceLogging(makeUniqueRef<PerformanceLogging>(*this))
 #if PLATFORM(MAC) && (ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION))
     , m_servicesOverlayController(makeUniqueRefWithoutRefCountedCheck<ServicesOverlayController>(*this))
@@ -855,11 +858,10 @@ void Page::setMainFrame(Ref<Frame>&& frame)
 {
     m_mainFrame = WTF::move(frame);
 
-    RefPtr<Document> document;
-    if (RefPtr localFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get()))
-        document = localFrame->document();
-
-    m_topDocumentSyncData = document ? document->syncData() : DocumentSyncData::create();
+    if (RefPtr localFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get())) {
+        if (RefPtr document = localFrame->document())
+            m_topDocumentSyncData = document->syncData();
+    }
 
     // Notify the web page that the frame changed, so that we can re-intitialize the remote token.
     chrome().client().mainFrameDidChange();
@@ -990,13 +992,6 @@ void Page::updateTopDocumentSyncData(const DocumentSyncSerializationData& data)
 
 void Page::updateTopDocumentSyncData(Ref<DocumentSyncData>&& data)
 {
-    if (auto* localFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get())) {
-        // Prefer the main LocalFrame document's data, but if the main LocalFrame
-        // has no document, accept the remote pushed data.
-        if (localFrame->document())
-            return;
-    }
-
     m_topDocumentSyncData = WTF::move(data);
 }
 
@@ -1198,7 +1193,7 @@ Page::FindStringData Page::findString(const String& target, FindOptions options,
     CanWrap canWrap = options.contains(FindOption::WrapAround) ? CanWrap::Yes : CanWrap::No;
     RefPtr frame = m_focusController->focusedFrame() ? m_focusController->focusedFrame() : m_mainFrame.ptr();
     RefPtr startFrame = frame;
-    RefPtr focusedLocalFrame = dynamicDowncast<LocalFrame>(frame);
+    RefPtr localFocusedFrame = dynamicDowncast<LocalFrame>(frame);
     do {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
         if (!localFrame) {
@@ -1208,8 +1203,8 @@ Page::FindStringData Page::findString(const String& target, FindOptions options,
         auto foundRange = protect(localFrame->editor())->findString(target, (options - FindOption::WrapAround) | FindOption::StartInSelection);
         if (foundRange) {
             if (!options.contains(FindOption::DoNotSetSelection)) {
-                if (focusedLocalFrame && localFrame != focusedLocalFrame)
-                    protect(focusedLocalFrame->selection())->clear();
+                if (localFocusedFrame && localFrame != localFocusedFrame)
+                    protect(localFocusedFrame->selection())->clear();
                 m_focusController->setFocusedFrame(localFrame.get());
             }
             return { std::make_optional(localFrame->frameID()), foundRange };
@@ -1219,15 +1214,15 @@ Page::FindStringData Page::findString(const String& target, FindOptions options,
 
     // Search contents of startFrame, on the other side of the selection that we did earlier.
     // We cheat a bit and just research with wrap on
-    if (canWrap == CanWrap::Yes && focusedLocalFrame && !focusedLocalFrame->selection().isNone()) {
+    if (canWrap == CanWrap::Yes && localFocusedFrame && !localFocusedFrame->selection().isNone()) {
         if (didWrap)
             *didWrap = DidWrap::Yes;
-        auto foundRange = protect(focusedLocalFrame->editor())->findString(target, options | FindOption::WrapAround | FindOption::StartInSelection);
+        auto foundRange = protect(localFocusedFrame->editor())->findString(target, options | FindOption::WrapAround | FindOption::StartInSelection);
         if (!options.contains(FindOption::DoNotSetSelection))
             m_focusController->setFocusedFrame(frame.get());
         if (!foundRange)
             return { std::nullopt, std::nullopt };
-        return { std::make_optional(focusedLocalFrame->frameID()), foundRange };
+        return { std::make_optional(localFocusedFrame->frameID()), foundRange };
     }
 
     return { std::nullopt, std::nullopt };
@@ -2198,9 +2193,13 @@ void Page::syncLocalFrameInfoToRemote()
             for (RefPtr child = frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
                 auto visibleRect = frameView->visibleRectOfChild(*child.get());
                 float usedZoom = frame.usedZoomForChild(*child);
-                bool useDarkAppearance = frameView->ownerElementOfChildFrameUsesDarkAppearance(*child);
+                auto frameOwnerElementAppearance = frameView->appearanceOfOwnerElementOfChildFrame(*child);
 
-                childrenFrameLayoutInfo.add(child->frameID(), RemoteFrameLayoutInfo { .visibleRectInParent = visibleRect, .usedZoom = usedZoom, .useDarkAppearance = useDarkAppearance });
+                childrenFrameLayoutInfo.add(child->frameID(), RemoteFrameLayoutInfo {
+                    .visibleRectInParent = visibleRect,
+                    .usedZoom = usedZoom,
+                    .ownerElementAppearance = frameOwnerElementAppearance
+                });
             }
 
             frame.loader().client().broadcastChildrenFrameLayoutInfoToOtherProcesses(childrenFrameLayoutInfo);

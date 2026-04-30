@@ -27,10 +27,12 @@
 
 #include "JSCell.h"
 #include "JSPromise.h"
-#include "ModuleGraphLoadingState.h"
 
 namespace JSC {
 
+// Wraps the dynamic-import target promise for top-level dynamic loadModule. Acts as the
+// host-defined "payload" passed back via FinishLoadingImportedModule, and additionally
+// holds the AND-join state used to combine loadPromise and statePromise.
 class ModuleLoaderPayload final : public JSCell {
     friend class LLIntOffsetsExtractor;
 public:
@@ -40,9 +42,6 @@ public:
     DECLARE_EXPORT_INFO;
     DECLARE_VISIT_CHILDREN;
 
-    static constexpr DestructionMode needsDestruction = NeedsDestruction;
-    static void destroy(JSCell*);
-
     template<typename CellType, SubspaceAccess mode>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {
@@ -50,29 +49,27 @@ public:
     }
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
-    static ModuleLoaderPayload* create(VM&, ModuleGraphLoadingState*);
     static ModuleLoaderPayload* create(VM&, JSPromise*);
 
-    ModuleGraphLoadingState* getState() const;
-    JSPromise* getPromise() const;
-    bool isState() const;
-    bool isPromise() const;
-    JSPromise* underlyingPromise() const;
+    JSPromise* promise() const { return m_promise.get(); }
 
-    JSValue fulfillment() const;
-    void fulfillment(VM&, JSValue);
+    JSValue fulfillment() const { return m_fulfillment.get(); }
+    void setFulfillment(VM& vm, JSValue value) { m_fulfillment.set(vm, this, value); }
 
-    bool decrementRemaining();
+    bool decrementRemaining()
+    {
+        ASSERT(m_remainingFulfillments > 0);
+        return !--m_remainingFulfillments;
+    }
 
 private:
-    ModuleLoaderPayload(VM&, Structure*, ModuleGraphLoadingState*);
     ModuleLoaderPayload(VM&, Structure*, JSPromise*);
 
     void finishCreation(VM&);
 
-    const Variant<WriteBarrier<ModuleGraphLoadingState>, WriteBarrier<JSPromise>> m_payload;
+    WriteBarrier<JSPromise> m_promise;
     WriteBarrier<Unknown> m_fulfillment;
-    int m_remainingFulfillments { 2 };
+    uint8_t m_remainingFulfillments { 2 };
 };
 
 } // namespace JSC

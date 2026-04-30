@@ -45,6 +45,7 @@
 #include "VMEntryScopeInlines.h"
 #include <algorithm>
 #include <wtf/Assertions.h>
+#include <wtf/MathExtras.h>
 #include <wtf/StdMap.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -204,11 +205,11 @@ static inline uint64_t argumentClampedIndexFromStartOrEnd(JSGlobalObject* global
     if (indexDouble < 0) {
         if constexpr (relativeNegativeIndex == RelativeNegativeIndex::Yes) {
             indexDouble += length;
-            return indexDouble < 0 ? 0 : static_cast<uint64_t>(indexDouble);
+            return indexDouble < 0 ? 0 : truncateDoubleToUint64(indexDouble);
         } else
             return 0;
     }
-    return indexDouble > length ? length : static_cast<uint64_t>(indexDouble);
+    return indexDouble > length ? length : truncateDoubleToUint64(indexDouble);
 }
 
 static inline int64_t argumentUnclampedIndexFromStartOrEnd(JSGlobalObject* globalObject, JSValue value, uint64_t length, uint64_t undefinedValue = 0)
@@ -228,7 +229,7 @@ static inline int64_t argumentUnclampedIndexFromStartOrEnd(JSGlobalObject* globa
         indexDouble += length;
     if (std::isinf(indexDouble)) [[unlikely]]
         return std::signbit(indexDouble) ? std::numeric_limits<int64_t>::min() : std::numeric_limits<int64_t>::max();
-    return static_cast<int64_t>(indexDouble);
+    return truncateDoubleToInt64(indexDouble);
 }
 
 ALWAYS_INLINE JSString* fastArrayJoin(JSGlobalObject* globalObject, JSObject* thisObject, StringView separator, unsigned length)
@@ -695,7 +696,16 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncShift, (JSGlobalObject* globalObject, Cal
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSObject* thisObj = callFrame->thisValue().toThis(globalObject, ECMAMode::strict()).toObject(globalObject);
+
+    JSValue thisValue = callFrame->thisValue().toThis(globalObject, ECMAMode::strict());
+
+    if (isJSArray(thisValue)) [[likely]] {
+        JSValue result = asArray(thisValue)->fastShift(vm);
+        if (result)
+            RELEASE_AND_RETURN(scope, JSValue::encode(result));
+    }
+
+    JSObject* thisObj = thisValue.toObject(globalObject);
     EXCEPTION_ASSERT(!!scope.exception() == !thisObj);
     if (!thisObj) [[unlikely]]
         return encodedJSValue();
@@ -1229,13 +1239,10 @@ ALWAYS_INLINE JSValue fastIndexOf(JSGlobalObject* globalObject, VM& vm, JSArray*
             if (result)
                 return jsNumber(result - data);
         } else {
-            do {
-                ASSERT(index < length);
-                // Array#lastIndexOf uses `===` semantics (not UncheckedKeyHashMap isEqual semantics).
-                // And the hole never matches against Int32 value.
-                if (searchInt32 == data[index].get())
-                    return jsNumber(index);
-            } while (index--);
+            EncodedJSValue encodedSearchElement = JSValue::encode(searchInt32);
+            auto* result = std::bit_cast<const WriteBarrier<Unknown>*>(WTF::reverseFind64(std::bit_cast<const uint64_t*>(data), encodedSearchElement, static_cast<uint64_t>(index) + 1));
+            if (result)
+                return jsNumber(result - data);
         }
         return jsNumber(-1);
     }
@@ -1261,6 +1268,13 @@ ALWAYS_INLINE JSValue fastIndexOf(JSGlobalObject* globalObject, VM& vm, JSArray*
                     return jsNumber(index);
             }
         } else {
+            if (searchElement.isObject()) {
+                auto* result = std::bit_cast<const WriteBarrier<Unknown>*>(WTF::reverseFind64(std::bit_cast<const uint64_t*>(data), JSValue::encode(searchElement), static_cast<uint64_t>(index) + 1));
+                if (result)
+                    return jsNumber(result - data);
+                return jsNumber(-1);
+            }
+
             do {
                 ASSERT(index < length);
                 JSValue value = data[index].get();
@@ -1414,7 +1428,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncLastIndexOf, (JSGlobalObject* globalObjec
                     return JSValue::encode(jsNumber(-1));
             }
             if (fromDouble < length)
-                index = static_cast<uint64_t>(fromDouble);
+                index = truncateDoubleToUint64(fromDouble);
         }
     }
 
@@ -2199,7 +2213,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncFlat, (JSGlobalObject* globalObject, Call
                     return 0;
                 if (std::isinf(depthDouble)) [[unlikely]]
                     return std::numeric_limits<uint64_t>::max();
-                return static_cast<uint64_t>(depthDouble);
+                return truncateDoubleToUint64(depthDouble);
             }();
             RETURN_IF_EXCEPTION(scope, { });
         }

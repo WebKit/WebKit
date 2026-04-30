@@ -914,6 +914,8 @@ angle::Result IncompleteTextureSet::getIncompleteTexture(
     {
         // Call a specialized clear function to init a multisample texture.
         ANGLE_TRY(multisampleInitializer->initializeMultisampleTextureToBlack(context, t.get()));
+        // The above initialization is invisible to the front-end
+        t->setInitState(gl::InitState::Initialized);
     }
     else if (type == gl::TextureType::Buffer)
     {

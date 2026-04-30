@@ -27,11 +27,13 @@
 #include <WebCore/NodeFilter.h>
 #include <WebCore/ScriptWrappable.h>
 #include <WebCore/Traversal.h>
+#include <wtf/Lock.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
+class WebCoreOpaqueRoot;
 template<typename> class ExceptionOr;
 
 class TreeWalker final : public ScriptWrappable, public RefCounted<TreeWalker>, public NodeIteratorBase {
@@ -44,6 +46,8 @@ public:
 
     Node& currentNode() { return m_current.get(); }
     const Node& currentNode() const { return m_current.get(); }
+
+    WebCoreOpaqueRoot opaqueRootForCurrentNodeInGCThread() const;
 
     WEBCORE_EXPORT void setCurrentNode(Node&);
 
@@ -60,9 +64,10 @@ private:
 
     enum class SiblingTraversalType { Previous, Next };
     template<SiblingTraversalType> ExceptionOr<Node*> traverseSiblings();
-    
+
     Node* setCurrent(Ref<Node>&&);
 
+    mutable Lock m_currentLock;
     Ref<Node> m_current;
 };
 

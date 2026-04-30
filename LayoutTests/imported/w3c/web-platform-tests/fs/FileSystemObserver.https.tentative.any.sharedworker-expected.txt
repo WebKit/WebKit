@@ -1,0 +1,20 @@
+
+Harness Error (FAIL), message = Test named 'Creating a file through FileSystemDirectoryHandle.getFileHandle is reported as an "appeared" event if in scope' specified 2 'cleanup' functions, and 1 failed.
+
+FAIL Creating a FileSystemObserver from a supported global succeeds assert_unreached: Reached unreachable code
+FAIL Calling unobserve() without a corresponding observe() shouldn't throw promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: FileSystemObserver"
+FAIL unobserve() is idempotent promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: FileSystemObserver"
+FAIL Calling disconnect() without observing shouldn't throw promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: FileSystemObserver"
+FAIL disconnect() is idempotent promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: FileSystemObserver"
+FAIL observe() fails when file does not exist promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: FileSystemObserver"
+FAIL observe() fails when directory does not exist promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: FileSystemObserver"
+FAIL Creating a file through FileSystemDirectoryHandle.getFileHandle is reported as an "appeared" event if in scope promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: FileSystemObserver"
+NOTRUN Removing a file through FileSystemFileHandle.remove is reported as an "disappeared" event if in scope
+NOTRUN Events outside the watch scope are not sent to the observer's callback
+NOTRUN Moving a file through FileSystemFileHandle.move is reported as a "moved" event if destination and source are in scope
+NOTRUN Moving a file through FileSystemFileHandle.move is not reported if destination and source are not in scope
+NOTRUN Moving a file through FileSystemFileHandle.move is reported as a "appeared" event if only destination is in scope
+NOTRUN Moving a file through FileSystemFileHandle.move is reported as a "disappeared" event if only source is in scope
+NOTRUN Observations stop after disconnect()
+NOTRUN Observations stop for all observed handles after disconnect()
+

@@ -182,7 +182,7 @@ void ServiceWorkerGlobalScope::prepareForDestruction()
 
     auto ongoingFetchTasks = std::exchange(m_ongoingFetchTasks, { });
     for (auto& task : ongoingFetchTasks.values())
-        RefPtr { task.client }->contextIsStopping();
+        protect(task.client)->contextIsStopping();
 
     WorkerGlobalScope::prepareForDestruction();
 }

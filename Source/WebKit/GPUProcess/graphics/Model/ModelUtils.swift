@@ -21,7 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE_GPU_PROCESS_MODEL && canImport(RealityCoreTextureProcessing, _version: 19)
+#if ENABLE_GPU_PROCESS_MODEL && canImport(RealityCoreTextureProcessing, _version: 19) && canImport(_USDKit_RealityKit, _version: 42)
 
 import DirectResource
 import Metal
@@ -108,31 +108,22 @@ extension _Proto_LowLevelMeshResource_v1.Descriptor {
     }
 }
 
+@_lifetime(buffer: copy buffer)
+private func copyDataIntoBuffer(_ buffer: inout MutableRawSpan, from data: Data) {
+    // unsafe used here as that is the method for populating a MTLBuffer
+    unsafe buffer.withUnsafeMutableBytes { unsafe $0.copyBytes(from: data) }
+}
+
 extension _Proto_LowLevelMeshResource_v1 {
     func replaceVertexData(_ vertexData: [Data]) {
         for (vertexBufferIndex, vertexData) in vertexData.enumerated() {
-            let bufferSizeInByte = vertexData.bytes.byteCount
-            self.replaceVertices(at: vertexBufferIndex) { vertexBytes in
-                // FIXME: (rdar://164559261) understand/document/remove unsafety
-                unsafe vertexBytes.withUnsafeMutableBytes { ptr in
-                    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
-                    // swift-format-ignore: NeverForceUnwrap
-                    unsafe vertexData.copyBytes(to: ptr.baseAddress!.assumingMemoryBound(to: UInt8.self), count: bufferSizeInByte)
-                }
-            }
+            self.replaceVertices(at: vertexBufferIndex) { copyDataIntoBuffer(&$0, from: vertexData) }
         }
     }
 
     func replaceIndexData(_ indexData: Data?) {
         if let indexData = indexData {
-            self.replaceIndices { indicesBytes in
-                // FIXME: (rdar://164559261) understand/document/remove unsafety
-                unsafe indicesBytes.withUnsafeMutableBytes { ptr in
-                    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
-                    // swift-format-ignore: NeverForceUnwrap
-                    unsafe indexData.copyBytes(to: ptr.baseAddress!.assumingMemoryBound(to: UInt8.self), count: ptr.count)
-                }
-            }
+            self.replaceIndices { copyDataIntoBuffer(&$0, from: indexData) }
         }
     }
 

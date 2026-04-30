@@ -487,6 +487,11 @@ public:
 
     inline AXObjectCache* axObjectCache() const;
 
+    // This exists to enable an optimization in ownerParentObject(), which is called as part of parentObject(),
+    // one of our hottest functions. If no object has an owns-relationship (which is the most common case -- at
+    // the time of writing, 86% of all page loads don't use aria-owns a single time), we can fast-path exit ownerParentObject().
+    inline bool anyObjectHasAriaOwns() const;
+
     static AccessibilityObject* anchorElementForNode(Node&);
     static AccessibilityObject* headingElementForNode(Node*);
     virtual Element* anchorElement() const { return nullptr; }

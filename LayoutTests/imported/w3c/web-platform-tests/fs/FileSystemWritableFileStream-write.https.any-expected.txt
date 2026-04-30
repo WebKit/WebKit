@@ -8,6 +8,7 @@ PASS write() called consecutively appends
 PASS write() WriteParams without position and string appends
 PASS write() WriteParams without position and blob appends
 PASS write() called with a string and a valid offset
+PASS write() called with a string and a valid offset after seek
 PASS write() called with a blob and a valid offset
 PASS write() called with an offset beyond the end of the file
 PASS write() with an empty string to an empty file
@@ -27,4 +28,6 @@ PASS WriteParams: write missing data param
 PASS WriteParams: write null data param
 PASS WriteParams: seek missing position param
 PASS write() with an invalid blob to an empty file should reject
+PASS an errored writable stream releases its lock
+PASS an errored writable stream should reject the next write call
 

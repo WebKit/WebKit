@@ -143,7 +143,7 @@ public:
     WTFLogChannel& NODELETE logChannel() const final;
 #endif
 
-    WebCoreOpaqueRoot NODELETE opaqueRoot();
+    WebCoreOpaqueRoot NODELETE opaqueRoot() const final;
 
     virtual bool isManaged() const { return false; }
     void memoryPressure();

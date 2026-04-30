@@ -1,8 +1,12 @@
 let serviceWorkerHasReceivedState = false;
 let worker = null;
 let remainingAttempts = 1000; // We try for 10 seconds before timing out.
+let didFinish = false;
 
 navigator.serviceWorker.addEventListener("message", async function(event) {
+    if (didFinish)
+        return;
+
     if (!serviceWorkerHasReceivedState) {
         if (!event.data) {
             log("FAIL: service worker did not receive the state");
@@ -35,6 +39,7 @@ navigator.serviceWorker.addEventListener("message", async function(event) {
     log("PASS: service worker lost the state and responded the postMessage after process termination");
     clearInterval(handle);
     finishSWTest();
+    didFinish = true;
 });
 
 async function doTest()

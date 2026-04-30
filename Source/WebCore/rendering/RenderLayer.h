@@ -51,6 +51,7 @@
 #include <WebCore/PaintFrequencyTracker.h>
 #include <WebCore/PaintInfo.h>
 #include <WebCore/RenderBox.h>
+#include <WebCore/RenderLayerSVGAdditions.h>
 #include <WebCore/RenderObjectDocument.h>
 #include <WebCore/RenderPtr.h>
 #include <WebCore/RenderSVGModelObject.h>
@@ -468,6 +469,7 @@ public:
     inline bool isPaintingResourceLayerForSVG() const;
     inline RenderSVGHiddenContainer* enclosingHiddenOrResourceContainerForSVG() const;
     void paintResourceLayerForSVG(GraphicsContext&, const AffineTransform&);
+    void dirtyChildrenInDOMOrderForSVG();
     bool shouldSkipRepaintAfterLayoutForSVG() const;
     bool hasFailedFilterForSVG() const;
     bool shouldSkipHitTestForSVG() const;
@@ -1029,6 +1031,13 @@ private:
     bool setupClipPathIfNeededForSVG(OptionSet<PaintLayerFlag>&);
     bool paintForegroundForFragmentsForSVG(const LayerFragments&, GraphicsContext&, const LayerPaintingInfo&, OptionSet<PaintBehavior>, RenderObject*);
 
+    void collectChildrenInDOMOrderForSVG();
+    // Returns true if this subtree contains any child that must be painted as
+    // an independent list entry (layered children or transformed non-layer
+    // children), signaling that the parent needs a "split" entry.
+    bool appendChildrenInDOMOrderForSVG(RenderElement& parent, LayoutSize ancestorOffset, bool& anyNonZeroZIndex);
+    const Vector<SVGPaintOrderLayerItem>& childrenInDOMOrderForSVG();
+
     void dirtyPaintOrderListsOnChildChange(RenderLayer&);
 
     bool shouldBeNormalFlowOnly() const;
@@ -1503,7 +1512,9 @@ private:
     struct SVGData {
         WTF_MAKE_STRUCT_TZONE_ALLOCATED(SVGData);
         bool isPaintingResourceLayer { false };
+        bool childrenInDOMOrderDirty { true };
         SingleThreadWeakPtr<RenderSVGHiddenContainer> enclosingHiddenOrResourceContainer;
+        Vector<SVGPaintOrderLayerItem> childrenInDOMOrder;
     };
     std::unique_ptr<SVGData> m_svgData;
 

@@ -6,7 +6,7 @@
 <body>
 <script>
 directory_test(async (t, root) => {
-  const handle = await createEmptyFile(t, 'test1', root);
+  const handle = await createEmptyFile('test1', root);
   const stream = await handle.createWritable();
 
   if (window.internals)
@@ -20,7 +20,7 @@ directory_test(async (t, root) => {
 }, 'Abort the stream');
 
 directory_test(async (t, root) => {
-  const handle = await createEmptyFile(t, 'test2', root);
+  const handle = await createEmptyFile('test2', root);
   const stream = await handle.createWritable();
 
   if (window.internals)

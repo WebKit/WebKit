@@ -71,6 +71,7 @@ TokenPreloadScanner::TagId TokenPreloadScanner::tagIdFor(const HTMLToken::DataVe
         { "script"_s, TagId::Script },
         { "source"_s, TagId::Source },
         { "style"_s, TagId::Style },
+        { "svg"_s, TagId::Svg },
         { "template"_s, TagId::Template },
         { "video"_s, TagId::Video },
     }) };
@@ -97,6 +98,7 @@ ASCIILiteral TokenPreloadScanner::initiatorFor(TagId tagId)
     case TagId::Template:
     case TagId::Meta:
     case TagId::Picture:
+    case TagId::Svg:
         ASSERT_NOT_REACHED();
         return "unknown"_s;
     }
@@ -347,6 +349,7 @@ private:
         case TagId::Style:
         case TagId::Template:
         case TagId::Picture:
+        case TagId::Svg:
         case TagId::Unknown:
             break;
         }
@@ -402,6 +405,7 @@ private:
         case TagId::Base:
         case TagId::Template:
         case TagId::Picture:
+        case TagId::Svg:
             break;
         }
         ASSERT_NOT_REACHED();
@@ -488,6 +492,8 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<Pr
             m_inStyle = false;
         } else if (tagId == TagId::Picture && !m_pictureSourceState.isEmpty())
             m_pictureSourceState.removeLast();
+        else if (tagId == TagId::Svg && m_foreignContentCount)
+            --m_foreignContentCount;
 
         return;
     }
@@ -524,6 +530,15 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<Pr
             m_pictureSourceState.append(false);
             return;
         }
+        if (tagId == TagId::Svg) {
+            ++m_foreignContentCount;
+            return;
+        }
+
+        // In SVG foreign content, <script> uses href/xlink:href, not src.
+        // Don't speculatively preload scripts inside SVG.
+        if (m_foreignContentCount && tagId == TagId::Script)
+            return;
 
         StartTagScanner scanner(document, tagId, m_deviceScaleFactor);
         scanner.processAttributes(token.attributes(), m_pictureSourceState);

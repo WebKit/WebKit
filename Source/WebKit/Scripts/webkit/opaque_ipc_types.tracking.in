@@ -374,6 +374,7 @@
 }
 
 [UnsafeWrapper] RetainPtr<CFDataRef> {
+    [Legacy] StructureParam WebCore::ShareableGainMap.m_metadata
     [Legacy] StructureParam WebCore::MultiRepresentationHEICAttachmentData.data
     [Legacy] StructureParam WebCore::TextAttachmentFileWrapper.data
 

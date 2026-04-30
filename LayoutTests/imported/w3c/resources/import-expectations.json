@@ -180,7 +180,7 @@
     "web-platform-tests/eyedropper": "skip",
     "web-platform-tests/fenced-frame": "skip",
     "web-platform-tests/fetch": "import",
-    "web-platform-tests/file-system-access": "import",
+    "web-platform-tests/file-system-access": "skip",
     "web-platform-tests/fledge": "skip",
     "web-platform-tests/focus": "import",
     "web-platform-tests/font-access": "skip",

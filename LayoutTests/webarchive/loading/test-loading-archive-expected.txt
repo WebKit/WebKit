@@ -9,4 +9,5 @@ frame "<!--frame1-->" - didHandleOnloadEventsForFrame
 main frame - didHandleOnloadEventsForFrame
 frame "<!--frame1-->" - didFinishLoadForFrame
 main frame - didFinishLoadForFrame
+resources/helloworld.webarchive - didFinishLoading
  This tests that doing a "normal load" of a webarchive (not using loadArchive) does not cause a cancelled error to be called.

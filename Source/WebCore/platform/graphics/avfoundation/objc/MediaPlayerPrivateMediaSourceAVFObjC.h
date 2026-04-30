@@ -337,6 +337,8 @@ private:
 
     static Ref<AudioVideoRenderer> createRenderer(LoggerHelper&, HTMLMediaElementIdentifier, MediaPlayerIdentifier);
 
+    void dispatchToRendererQueue(Function<void(AudioVideoRenderer&)>&&);
+
     const ThreadSafeWeakPtr<MediaPlayer> m_player;
     RefPtr<MediaSourcePrivateAVFObjC> m_mediaSourcePrivate; // set on load, immutable after.
 

@@ -31,9 +31,6 @@
 #include "pas_physical_memory_transaction.h"
 #include "pas_segregated_exclusive_view_inlines.h"
 #include "pas_segregated_page_inlines.h"
-#include "pas_segregated_partial_view.h"
-#include "pas_segregated_partial_view_inlines.h"
-#include "pas_segregated_shared_view_inlines.h"
 #include "pas_segregated_view.h"
 
 #if LIBPAS_ENABLED
@@ -59,15 +56,10 @@ pas_segregated_view_will_start_allocating(pas_segregated_view view,
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
 
     pas_segregated_exclusive_view* exclusive;
-    pas_segregated_partial_view* partial;
     pas_segregated_view ineligible_owning_view;
     pas_segregated_size_directory* size_directory;
     pas_segregated_directory* size_directory_base;
     pas_lock_hold_mode heap_lock_hold_mode;
-    pas_segregated_shared_page_directory* shared_page_directory;
-    pas_segregated_heap* heap;
-    pas_segregated_shared_view* shared_view;
-    pas_segregated_shared_handle* shared_handle;
 
     switch (pas_segregated_view_get_kind(view)) {
     case pas_segregated_exclusive_view_kind:
@@ -123,8 +115,7 @@ pas_segregated_view_will_start_allocating(pas_segregated_view view,
                         pas_heap_lock_lock_conditionally(heap_lock_hold_mode);
                         exclusive->page_boundary = page_config.page_allocator(
                             size_directory->heap,
-                            heap_lock_hold_mode ? NULL : &transaction,
-                            pas_segregated_page_exclusive_role);
+                            heap_lock_hold_mode ? NULL : &transaction);
                         if (exclusive->page_boundary) {
                             if (verbose) {
                                 pas_log("Creating page header for new exclusive page, boundary = %p.\n",
@@ -132,8 +123,7 @@ pas_segregated_view_will_start_allocating(pas_segregated_view view,
                             }
                             page_config.base.create_page_header(
                                 exclusive->page_boundary,
-                                pas_page_kind_for_segregated_variant_and_role(
-                                    page_config.variant, pas_segregated_page_exclusive_role),
+                                pas_page_kind_for_segregated_variant(page_config.variant),
                                 pas_lock_is_held);
                         }
                         pas_heap_lock_unlock_conditionally(heap_lock_hold_mode);
@@ -195,8 +185,7 @@ pas_segregated_view_will_start_allocating(pas_segregated_view view,
                 }
                 page_config.base.create_page_header(
                     exclusive->page_boundary,
-                    pas_page_kind_for_segregated_variant_and_role(
-                        page_config.variant, pas_segregated_page_exclusive_role),
+                    pas_page_kind_for_segregated_variant(page_config.variant),
                     heap_lock_hold_mode);
             
                 pas_compiler_fence();
@@ -232,97 +221,6 @@ pas_segregated_view_will_start_allocating(pas_segregated_view view,
         return view;
     }
         
-    case pas_segregated_partial_view_kind: {
-        partial = pas_segregated_view_get_partial(view);
-    
-        size_directory = pas_compact_segregated_size_directory_ptr_load_non_null(&partial->directory);
-        size_directory_base = &size_directory->base;
-        heap = size_directory->heap;
-        shared_page_directory = page_config.shared_page_directory_selector(heap, size_directory);
-        heap_lock_hold_mode = pas_segregated_page_config_heap_lock_hold_mode(page_config);
-
-        shared_view = pas_compact_segregated_shared_view_ptr_load(&partial->shared_view);
-        if (!shared_view) {
-            /* We have a primordial partial view! Let the local allocator worry about it. There's
-               nothing we can do since we don't really have enough information. This path has to do
-               this careful dance where it atomically picks a shared view and allocates something
-               from it, and then that something has to be immediately shoved into the local
-               allocator. */
-            return view;
-        }
-
-        pas_lock_lock_conditionally(&shared_view->commit_lock, heap_lock_hold_mode);
-
-        shared_handle = pas_segregated_shared_view_commit_page_if_necessary(
-            shared_view, heap, shared_page_directory, partial, page_config);
-
-        if (!shared_handle) {
-            /* This means OOM */
-            pas_lock_unlock_conditionally(&shared_view->commit_lock, heap_lock_hold_mode);
-            return NULL;
-        }
-
-        if (!partial->is_attached_to_shared_handle) {
-            unsigned* full_alloc_bits;
-            unsigned begin_word_index;
-            unsigned end_word_index;
-            unsigned word_index;
-        
-            full_alloc_bits = pas_lenient_compact_unsigned_ptr_load_compact_non_null(&partial->alloc_bits);
-        
-            begin_word_index = partial->alloc_bits_offset;
-            end_word_index = begin_word_index + partial->alloc_bits_size;
-        
-            if (page_config.sharing_shift == PAS_BITVECTOR_WORD_SHIFT) {
-                for (word_index = begin_word_index; word_index < end_word_index; ++word_index) {
-                    if (full_alloc_bits[word_index]) {
-                        PAS_ASSERT(!pas_compact_atomic_segregated_partial_view_ptr_load(
-                                       shared_handle->partial_views + word_index));
-                        pas_compact_atomic_segregated_partial_view_ptr_store(
-                            shared_handle->partial_views + word_index, partial);
-                    }
-                }
-            } else {
-                for (word_index = begin_word_index; word_index < end_word_index; ++word_index) {
-                    unsigned full_alloc_word;
-                
-                    full_alloc_word = full_alloc_bits[word_index];
-                    if (!full_alloc_word)
-                        continue;
-                
-                    pas_segregated_partial_view_tell_shared_handle_for_word_general_case(
-                        partial, shared_handle, word_index, full_alloc_word, page_config.sharing_shift);
-                }
-            }
-        
-            pas_lock_lock(&shared_view->ownership_lock);
-            partial->is_attached_to_shared_handle = true;
-            pas_lock_unlock(&shared_view->ownership_lock);
-        }
-
-        if (page_config.base.page_size > page_config.base.granule_size) {
-            /* We always manage partial commit of medium pages under the commit lock. Otherwise,
-               multiple runs of this function could interleave in weird ways. */
-            pas_segregated_page* page;
-            pas_lock* held_lock;
-
-            page = pas_segregated_page_for_boundary(shared_handle->page_boundary, page_config);
-            held_lock = NULL;
-        
-            pas_segregated_page_switch_lock(page, &held_lock, page_config);
-            pas_segregated_page_commit_fully(
-                page, &held_lock, pas_commit_fully_holding_page_and_commit_locks);
-            pas_lock_switch(&held_lock, NULL);
-        }
-
-        /* At this point the shared handle knows about this partial view and this partial view
-           is ineligible. This acts as a hold on the shared view: even if we release the commit
-           lock, that shared view cannot be decommitted, even though it may be empty. */
-
-        pas_lock_unlock_conditionally(&shared_view->commit_lock, heap_lock_hold_mode);
-
-        return view;
-    }
     default:
         PAS_ASSERT_NOT_REACHED();
         return NULL;
@@ -337,7 +235,6 @@ pas_segregated_view_did_stop_allocating(pas_segregated_view view,
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
 
     bool should_notify_eligibility;
-    bool should_notify_emptiness;
 
     if (verbose)
         pas_log("Did stop allocating in view %p, page %p.\n", view, page);
@@ -366,86 +263,6 @@ pas_segregated_view_did_stop_allocating(pas_segregated_view view,
         pas_segregated_exclusive_view_did_stop_allocating(
             exclusive, pas_compact_segregated_size_directory_ptr_load_non_null(&exclusive->directory),
             page, page_config, should_notify_eligibility);
-        return;
-    }
-    case pas_segregated_partial_view_kind: {
-        pas_segregated_partial_view* partial_view;
-        pas_segregated_shared_view* shared_view;
-        pas_segregated_shared_handle* shared_handle;
-        pas_segregated_size_directory* size_directory;
-        pas_segregated_directory* size_directory_base;
-        pas_segregated_shared_page_directory* shared_page_directory;
-        pas_segregated_directory* shared_page_directory_base;
-        bool should_consider_emptiness;
-
-        if (verbose)
-            pas_log("It's partial.\n");
-
-        partial_view = (pas_segregated_partial_view*)pas_segregated_view_get_ptr(view);
-        
-        shared_view = pas_compact_segregated_shared_view_ptr_load_non_null(&partial_view->shared_view);
-        size_directory =
-            pas_compact_segregated_size_directory_ptr_load_non_null(&partial_view->directory);
-        size_directory_base = &size_directory->base;
-        shared_handle = pas_unwrap_shared_handle(shared_view->shared_handle_or_page_boundary,
-                                                 page_config);
-        shared_page_directory = shared_handle->directory;
-        shared_page_directory_base = &shared_page_directory->base;
-
-        if (verbose)
-            pas_log("Stopping allocation in partial %p, shared %p.\n", partial_view, shared_view);
-
-        PAS_ASSERT(partial_view->is_in_use_for_allocation);
-        if (page->lock_ptr)
-            pas_lock_assert_held(page->lock_ptr);
-
-        should_notify_eligibility = false;
-        should_notify_emptiness = false;
-    
-        should_consider_emptiness = shared_view->is_in_use_for_allocation_count == 1;
-
-        if (should_consider_emptiness) {
-            should_notify_emptiness =
-                pas_segregated_page_qualifies_for_decommit(
-                    page, page_config);
-        }
-
-        if (partial_view->eligibility_notification_has_been_deferred) {
-            if (verbose)
-                pas_log("Eligibility notification has been deferred.\n");
-            partial_view->eligibility_notification_has_been_deferred = false;
-            should_notify_eligibility = true;
-        }
-
-        partial_view->is_in_use_for_allocation = false;
-    
-        PAS_ASSERT(shared_view->is_in_use_for_allocation_count);
-        shared_view->is_in_use_for_allocation_count--;
-
-        if (should_notify_eligibility) {
-            if (verbose)
-                pas_log("Telling directory that %p is eligible.\n", partial_view);
-
-            /* View must know that we are eligible first. */
-            PAS_ASSERT(partial_view->eligibility_has_been_noted);
-
-            pas_segregated_directory_view_did_become_eligible(
-                size_directory_base, pas_segregated_partial_view_as_view_non_null(partial_view));
-
-            /* At this point some other thread may be holding onto this page without holding the
-               page lock. */
-        }
-
-        if (should_notify_emptiness) {
-            PAS_ASSERT(!shared_view->is_in_use_for_allocation_count);
-            if (verbose) {
-                pas_log("Notifying emptiness on shared %p after stopping partial %p.\n",
-                        shared_view, partial_view);
-            }
-            pas_segregated_directory_view_did_become_empty(
-                shared_page_directory_base,
-                pas_segregated_shared_view_as_view_non_null(shared_view));
-        }
         return;
     }
     default:

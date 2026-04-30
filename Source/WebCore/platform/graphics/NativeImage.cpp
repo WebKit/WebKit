@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,24 +37,33 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeImage);
 
 #if !USE(CG) && !USE(SKIA)
-RefPtr<NativeImage> NativeImage::create(PlatformImagePtr&& platformImage)
+RefPtr<NativeImage> NativeImage::create(PlatformImagePtr&& platformImage, std::optional<GainMap>&& gainMap)
 {
     if (!platformImage)
         return nullptr;
-    return adoptRef(*new NativeImage(WTF::move(platformImage)));
+    return adoptRef(*new NativeImage(WTF::move(platformImage), WTF::move(gainMap)));
 }
 
-RefPtr<NativeImage> NativeImage::createTransient(PlatformImagePtr&& image)
+RefPtr<NativeImage> NativeImage::create(PlatformImagePtr&& platformImage)
 {
-    return create(WTF::move(image));
+    return create(WTF::move(platformImage), std::nullopt);
+}
+
+RefPtr<NativeImage> NativeImage::createTransient(PlatformImagePtr&& platformImage)
+{
+    return create(WTF::move(platformImage));
 }
 #endif
 
+NativeImage::NativeImage() = default;
+
 #if !USE(SKIA)
-NativeImage::NativeImage(PlatformImagePtr&& platformImage)
+NativeImage::NativeImage(PlatformImagePtr&& platformImage, std::optional<GainMap>&& gainMap)
     : m_platformImage(WTF::move(platformImage))
+    , m_gainMap(WTF::move(gainMap))
 {
     computeHeadroom();
+    ASSERT_IMPLIES(m_gainMap, m_headroom == Headroom::None);
 }
 #endif
 
@@ -69,6 +78,11 @@ const PlatformImagePtr& NativeImage::platformImage() const
     return m_platformImage;
 }
 
+const std::optional<GainMap>& NativeImage::gainMap() const
+{
+    return m_gainMap;
+}
+
 bool NativeImage::hasHDRContent() const
 {
     return colorSpace().usesITUR_2100TF();
@@ -79,6 +93,7 @@ void NativeImage::replacePlatformImage(PlatformImagePtr&& platformImage) const
     ASSERT(platformImage);
     m_platformImage = WTF::move(platformImage);
     computeHeadroom();
+    ASSERT_IMPLIES(m_gainMap, m_headroom == Headroom::None);
 }
 
 #if !USE(CG)

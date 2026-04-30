@@ -1,0 +1,4 @@
+Box 1Box 2Box 3
+
+FAIL scroller prefers nested area over area aligned in both axes. assert_equals: scroller followed box2 in y axis after layout change expected 100 but got 0
+

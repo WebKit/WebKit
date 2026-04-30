@@ -37,6 +37,7 @@
 #include "Observable.h"
 #include "ReducerCallback.h"
 #include "ScriptExecutionContext.h"
+#include "ScriptWrappableInlines.h"
 #include "SubscribeOptions.h"
 #include "Subscriber.h"
 #include "SubscriberCallback.h"
@@ -61,7 +62,8 @@ private:
 
         if (!m_accumulator) {
             m_index++;
-            m_accumulator.setWeakly(*globalObject, value);
+            auto* owner = subscriber() ? subscriber()->wrapper() : nullptr;
+            m_accumulator.set(*globalObject, owner, value);
             return;
         }
 
@@ -80,8 +82,10 @@ private:
             Ref { m_signal }->signalAbort(value);
         }
 
-        if (result.type() == CallbackResultType::Success)
-            m_accumulator.setWeakly(*globalObject, result.releaseReturnValue());
+        if (result.type() == CallbackResultType::Success) {
+            auto* owner = subscriber() ? subscriber()->wrapper() : nullptr;
+            m_accumulator.set(*globalObject, owner, result.releaseReturnValue());
+        }
     }
 
     void error(JSC::JSValue value) final
@@ -114,8 +118,9 @@ private:
         , m_promise(WTF::move(promise))
     {
         if (!initialValue.isUndefined()) [[unlikely]] {
+            auto* owner = subscriber() ? subscriber()->wrapper() : nullptr;
             if (auto* globalObject = context.globalObject())
-                m_accumulator.setWeakly(*globalObject, initialValue);
+                m_accumulator.set(*globalObject, owner, initialValue);
         }
     }
 

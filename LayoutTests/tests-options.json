@@ -3935,9 +3935,6 @@
     "imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_allow_downloads.sub.tentative.html": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_allow_downloads_without_user_activation.sub.tentative.html": [
-        "slow"
-    ],
     "imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox_002.htm": [
         "slow"
     ],

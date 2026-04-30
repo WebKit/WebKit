@@ -30,6 +30,7 @@
 #include "ChromeClient.h"
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "EventTargetInlines.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "LocalFrame.h"

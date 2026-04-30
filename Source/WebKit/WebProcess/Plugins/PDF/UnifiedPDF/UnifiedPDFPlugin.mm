@@ -118,6 +118,7 @@
 #include <algorithm>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/Scope.h>
+#include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/cocoa/TypeCastsCocoa.h>
 #include <wtf/spi/darwin/OSVariantSPI.h>
@@ -1650,6 +1651,7 @@ void UnifiedPDFPlugin::createScrollbarsController()
         return;
 
     page->chrome().client().ensureScrollbarsController(*page, *this);
+    updateScrollbarOverlayStyle();
 }
 
 DelegatedScrollingMode UnifiedPDFPlugin::scrollingMode() const
@@ -1709,6 +1711,24 @@ void UnifiedPDFPlugin::scrollbarStyleChanged(WebCore::ScrollbarStyle, bool force
         return;
 
     updateLayout();
+}
+
+void UnifiedPDFPlugin::updateScrollbarOverlayStyle()
+{
+    if (!isFullMainFramePlugin())
+        return;
+
+    RefPtr page = this->page();
+    if (!page)
+        return;
+
+    using enum WebCore::ScrollbarOverlayStyle;
+    setScrollbarOverlayStyle(page->useDarkAppearance() ? Light : Default);
+
+    if (m_scrollingNodeID) {
+        if (RefPtr scrollingCoordinator = page->scrollingCoordinator())
+            scrollingCoordinator->setScrollingNodeScrollableAreaGeometry(*m_scrollingNodeID, *this);
+    }
 }
 
 void UnifiedPDFPlugin::updateScrollbars()
@@ -4921,6 +4941,8 @@ void UnifiedPDFPlugin::effectiveAppearanceDidChange()
 
     if (RefPtr rootLayer = m_rootLayer)
         rootLayer->setBackgroundColor(pluginBackgroundColor());
+
+    updateScrollbarOverlayStyle();
 }
 
 ViewportConfiguration::Parameters UnifiedPDFPlugin::viewportParameters()

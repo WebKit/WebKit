@@ -22,6 +22,7 @@
 
 #include <JavaScriptCore/EnumerationMode.h>
 #include <JavaScriptCore/Identifier.h>
+#include <JavaScriptCore/VM.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 

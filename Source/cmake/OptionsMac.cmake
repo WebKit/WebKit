@@ -21,6 +21,7 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_MINIBROWSER PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_APPLICATION_MANIFEST PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_ASYNC_SCROLLING PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_ATTACHMENT_ELEMENT PRIVATE ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_AV1 PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_AVF_CAPTIONS PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_CACHE_PARTITIONING PRIVATE ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_CONTENT_EXTENSIONS PRIVATE ON)
@@ -134,14 +135,15 @@ WEBKIT_OPTION_END()
 
 set(SWIFT_REQUIRED ON)
 
-# FIXME: AV1 decoding requires dav1d which uses meson and isn't built by CMake yet.
-SET_AND_EXPOSE_TO_BUILD(ENABLE_AV1 OFF)
-
 # Flatten output to match Xcode's layout for run-webkit-tests compatibility.
 # webkitpy/port/driver.py expects WebKitTestRunner, ImageDiff, and frameworks in the same dir.
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
+# Don't relink dependents when a shared library they link against is rebuilt.
+# Xcode's EAGER_LINKING achieves the same effect.
+set(CMAKE_LINK_DEPENDS_NO_SHARED ON)
 
 # Avoid collision between flat-output executables and DerivedSources dirs of the same name.
 set(WebKitTestRunner_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/DerivedSources/WebKitTestRunner")
@@ -171,13 +173,13 @@ set(ENABLE_WEBKIT_LEGACY ON)
 set(ENABLE_WEBKIT ON)
 
 set(bmalloc_LIBRARY_TYPE OBJECT)
-# WTF must be SHARED on Mac because the Mac port builds multiple frameworks
-# (JSC, WebCore, WebKit, WebGPU) that all need WTF. OBJECT would duplicate
-# WTF's static state in each framework, causing crashes. Other ports (GTK/WPE)
-# use OBJECT because they produce a single libwebkit.so.
+# bmalloc and WTF objects are absorbed into the JavaScriptCore dylib
+# (mirrors Xcode's -force_load libWTF.a / libbmalloc.a). Downstream
+# frameworks link JavaScriptCore only; WEBKIT_FRAMEWORK's LINKED_INTO
+# tracking redirects WTF/bmalloc references there.
 # PAL must be STATIC (not OBJECT) because it has Swift CryptoKit sources and
 # OBJECT libraries don't produce .swiftmodule files.
-set(WTF_LIBRARY_TYPE SHARED)
+set(WTF_LIBRARY_TYPE OBJECT)
 set(JavaScriptCore_LIBRARY_TYPE SHARED)
 set(PAL_LIBRARY_TYPE STATIC)
 set(WebCore_LIBRARY_TYPE SHARED)
@@ -211,6 +213,22 @@ if (_sdk_version)
     if (_sdk_major_minor AND (NOT CMAKE_OSX_DEPLOYMENT_TARGET OR CMAKE_OSX_DEPLOYMENT_TARGET VERSION_LESS _sdk_major_minor))
         set(CMAKE_OSX_DEPLOYMENT_TARGET "${_sdk_major_minor}" CACHE STRING "Minimum macOS version" FORCE)
         message(WARNING "Deployment target auto-set to SDK version: ${CMAKE_OSX_DEPLOYMENT_TARGET} (SPI header guards require this)")
+    endif ()
+endif ()
+
+# CMake's Swift link rule passes -sdk but not -target, so swiftc falls back to
+# its built-in default deployment target while clang honors
+# CMAKE_OSX_DEPLOYMENT_TARGET. That mismatch produces an ld warning per object.
+# Pass -target explicitly so the Swift driver and clang agree.
+if (CMAKE_OSX_DEPLOYMENT_TARGET)
+    list(LENGTH CMAKE_OSX_ARCHITECTURES _arch_count)
+    if (_arch_count EQUAL 1)
+        set(_swift_arch "${CMAKE_OSX_ARCHITECTURES}")
+    elseif (_arch_count EQUAL 0)
+        set(_swift_arch "${CMAKE_SYSTEM_PROCESSOR}")
+    endif ()
+    if (_swift_arch)
+        string(APPEND CMAKE_Swift_FLAGS " -target ${_swift_arch}-apple-macosx${CMAKE_OSX_DEPLOYMENT_TARGET}")
     endif ()
 endif ()
 
@@ -305,6 +323,17 @@ if (CMAKE_CXX_COMPILER_LAUNCHER OR CMAKE_C_COMPILER_LAUNCHER)
     string(APPEND CMAKE_CXX_FLAGS " -fno-record-command-line")
     string(APPEND CMAKE_OBJC_FLAGS " -fno-record-command-line")
     string(APPEND CMAKE_OBJCXX_FLAGS " -fno-record-command-line")
+endif ()
+
+# The mac-asan preset's binaryDir is .../ASan. If CMakeCache.txt is lost and
+# ninja's auto-reconfigure bootstraps a fresh cache, ENABLE_SANITIZERS silently
+# defaults to empty and the whole tree rebuilds without instrumentation. Fail
+# loudly instead so the recovery command is obvious.
+get_filename_component(_bindir_name "${CMAKE_BINARY_DIR}" NAME)
+if (_bindir_name STREQUAL "ASan" AND NOT ENABLE_SANITIZERS MATCHES "address")
+    message(FATAL_ERROR
+        "Build directory '${CMAKE_BINARY_DIR}' is an ASan tree but ENABLE_SANITIZERS='${ENABLE_SANITIZERS}'. "
+        "CMakeCache.txt was likely deleted or never configured via the preset. Re-run: cmake --preset mac-asan")
 endif ()
 
 # Mac-specific sanitizer flags — mirror Configurations/Sanitizers.xcconfig.

@@ -29,7 +29,10 @@
 #if ENABLE(WEB_AUTHN)
 
 #include <WebCore/DigitalCredentialRequestOptions.h>
+#include <WebCore/FederatedCredentialRequestOptions.h>
+#include <WebCore/IdentityCredentialRequestOptions.h>
 #include <WebCore/MediationRequirement.h>
+#include <WebCore/OTPCredentialRequestOptions.h>
 #include <WebCore/PublicKeyCredentialRequestOptions.h>
 #include <wtf/RefCounted.h>
 
@@ -41,6 +44,10 @@ using CredentialMediationRequirement = MediationRequirement;
 struct CredentialRequestOptions {
     MediationRequirement mediation;
     RefPtr<AbortSignal> signal;
+    bool password { false };
+    std::optional<FederatedCredentialRequestOptions> federated;
+    std::optional<IdentityCredentialRequestOptions> identity;
+    std::optional<OTPCredentialRequestOptions> otp;
     std::optional<PublicKeyCredentialRequestOptions> publicKey;
 #if ENABLE(WEB_AUTHN)
     std::optional<DigitalCredentialRequestOptions> digital;

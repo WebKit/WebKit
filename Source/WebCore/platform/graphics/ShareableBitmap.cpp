@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,6 +58,7 @@ ShareableBitmapConfiguration::ShareableBitmapConfiguration(const IntSize& size, 
 ShareableBitmapConfiguration::ShareableBitmapConfiguration(const IntSize& size, std::optional<DestinationColorSpace> colorSpace, Headroom headroom, bool isOpaque, unsigned bitsPerComponent, unsigned bytesPerPixel, unsigned bytesPerRow
 #if USE(CG)
     , CGBitmapInfo bitmapInfo
+    , std::optional<ShareableGainMap>&& shareableGainMap
 #endif
 )
     : m_size(size)
@@ -69,6 +70,7 @@ ShareableBitmapConfiguration::ShareableBitmapConfiguration(const IntSize& size, 
     , m_bytesPerRow(bytesPerRow)
 #if USE(CG)
     , m_bitmapInfo(bitmapInfo)
+    , m_shareableGainMap(WTF::move(shareableGainMap))
 #endif
 #if USE(SKIA)
     , m_imageInfo(SkImageInfo::MakeN32Premul(size.width(), size.height(), this->colorSpace().platformColorSpace()))
@@ -170,7 +172,7 @@ auto ShareableBitmap::createReadOnlyHandle() const -> std::optional<Handle>
     return createHandle(SharedMemory::Protection::ReadOnly);
 }
 
-ShareableBitmap::ShareableBitmap(ShareableBitmapConfiguration configuration, Ref<SharedMemory>&& sharedMemory)
+ShareableBitmap::ShareableBitmap(const ShareableBitmapConfiguration& configuration, Ref<SharedMemory>&& sharedMemory)
     : m_configuration(configuration)
     , m_sharedMemory(WTF::move(sharedMemory))
 {

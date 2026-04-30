@@ -38,7 +38,7 @@
 
 /* Threads */
 
-typedef PINIT_ONCE pthread_once_t;
+typedef INIT_ONCE pthread_once_t;
 
 struct pthread_attr_t_internal { };
 typedef struct pthread_attr_t_internal * pthread_attr_t;

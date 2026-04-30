@@ -69,6 +69,10 @@ extension WKWebViewConfiguration {
         #if ENABLE_MODEL_ELEMENT_IMMERSIVE
         self.allowsImmersiveEnvironments = wrapped.allowsImmersiveEnvironments
         #endif
+
+        if let processPool = wrapped.processPool {
+            self.processPool = processPool
+        }
     }
 }
 

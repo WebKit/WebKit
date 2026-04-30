@@ -35,6 +35,7 @@
 #include "CSSViewTransitionRule.h"
 #include "DeclarationOrigin.h"
 #include "DocumentInlines.h"
+#include "DocumentPage.h"
 #include "ExtensionStyleSheets.h"
 #include "FrameLoader.h"
 #include "HTMLNames.h"
@@ -157,19 +158,6 @@ void ScopeRuleSets::collectRulesFromUserStyleSheets(const Vector<Ref<CSSStyleShe
     }
 }
 
-template<typename Rules>
-RefPtr<RuleSet> makeRuleSet(const Rules& rules)
-{
-    size_t size = rules.size();
-    if (!size)
-        return nullptr;
-    auto ruleSet = RuleSet::create();
-    for (size_t i = 0; i < size; ++i)
-        ruleSet->addRule(*rules[i].styleRule, rules[i].selectorIndex, rules[i].selectorListIndex);
-    ruleSet->shrinkToFit();
-    return ruleSet;
-}
-
 void ScopeRuleSets::resetAuthorStyle()
 {
     m_isAuthorStyleDefined = true;
@@ -290,8 +278,6 @@ void ScopeRuleSets::collectFeatures() const
         m_features.add(m_authorStyle->features());
     if (RefPtr userStyle = this->userStyle())
         m_features.add(userStyle->features());
-
-    m_scopeBreakingHasPseudoClassInvalidationRuleSet = makeRuleSet(m_features.scopeBreakingHasPseudoClassRules);
 
     m_idInvalidationRuleSets.clear();
     m_classInvalidationRuleSets.clear();

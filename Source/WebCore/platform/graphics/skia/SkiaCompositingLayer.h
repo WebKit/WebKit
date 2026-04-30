@@ -50,10 +50,10 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 class CoordinatedAnimatedBackingStoreClient;
-class CoordinatedBackingStore;
 class CoordinatedImageBackingStore;
 class CoordinatedPlatformLayerBuffer;
 class FilterOperations;
+class SkiaBackingStore;
 
 class SkiaCompositingLayer final : public RefCountedAndCanMakeWeakPtr<SkiaCompositingLayer> {
     WTF_MAKE_TZONE_ALLOCATED(SkiaCompositingLayer);
@@ -76,6 +76,7 @@ public:
     void setContentsClippingRect(const FloatRoundedRect& rect) { m_contentsClippingRect = rect; }
     void setContentsRectClipsDescendants(bool clips) { m_contentsRectClipsDescendants = clips; }
     void setOpacity(float);
+    void setBlendMode(BlendMode);
     void setContentsRect(const FloatRect& rect) { m_contentsRect = rect; }
     void setAnimations(const TextureMapperAnimations& animations) { m_animations = animations; }
     void setContentsTiling(const FloatSize& size, const FloatSize& phase) { m_contentsTiling = { size, phase }; }
@@ -117,7 +118,7 @@ private:
     bool hasVisualContent() const;
     Ref<SkiaCompositingLayer> backdropRoot();
 
-    bool computeTransformsAndAnimations(RefPtr<SkiaCompositingLayer>, MonotonicTime);
+    bool computeTransformsAndAnimations(const TransformationMatrix& parentTransform, const TransformationMatrix& futureParentTransform, MonotonicTime);
 
     struct PaintContext {
         explicit PaintContext(std::optional<Damage>& damage)
@@ -126,6 +127,7 @@ private:
         }
 
         float opacity { 1 };
+        std::optional<SkBlendMode> blendMode;
         IntSize offset;
         sk_sp<SkColorFilter> colorFilter;
         TransformationMatrix accumulatedReplicaTransform;
@@ -213,12 +215,13 @@ private:
     bool m_contentsRectClipsDescendants { false };
     FloatRoundedRect m_contentsClippingRect;
     float m_opacity { 1 };
-    SkPath m_clipPath;
+    std::optional<SkBlendMode> m_blendMode;
+    std::optional<SkPath> m_clipPath;
     sk_sp<SkImage> m_maskImage;
     RefPtr<SkiaCompositingLayer> m_mask;
     RefPtr<SkiaCompositingLayer> m_replica;
     WeakPtr<SkiaCompositingLayer> m_replicatedLayer;
-    RefPtr<CoordinatedBackingStore> m_backingStore;
+    std::unique_ptr<SkiaBackingStore> m_backingStore;
     RefPtr<CoordinatedAnimatedBackingStoreClient> m_animatedBackingStoreClient;
     RefPtr<CoordinatedImageBackingStore> m_imageBackingStore;
     std::unique_ptr<CoordinatedPlatformLayerBuffer> m_contentsBuffer;
@@ -231,13 +234,12 @@ private:
         FloatRoundedRect clipRect;
     } m_backdrop;
     bool m_isBackdropRoot { false };
+    bool m_shouldBlend { false };
     TextureMapperAnimations m_animations;
     std::optional<AnimationsState> m_animationsState;
     struct {
         TransformationMatrix combined;
-        TransformationMatrix combinedForChildren;
         TransformationMatrix futureCombined;
-        TransformationMatrix futureCombinedForChildren;
     } m_transforms;
 #if ENABLE(DAMAGE_TRACKING)
     std::shared_ptr<Damage> m_sharedFrameDamage;

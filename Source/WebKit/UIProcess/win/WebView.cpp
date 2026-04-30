@@ -51,6 +51,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Region.h>
 #include <WebCore/WindowMessageBroadcaster.h>
+#include <array>
 #include <commctrl.h>
 #include <wtf/FileSystem.h>
 #include <wtf/SoftLinking.h>
@@ -768,15 +769,15 @@ bool WebView::shouldInitializeTrackPointHack()
         return shouldCreateScrollbars;
 
     hasRunTrackPointCheck = true;
-    const wchar_t* trackPointKeys[] = {
+    constexpr auto trackPointKeys = std::to_array<const wchar_t*>({
         L"Software\\Lenovo\\TrackPoint",
         L"Software\\Lenovo\\UltraNav",
         L"Software\\Alps\\Apoint\\TrackPoint",
         L"Software\\Synaptics\\SynTPEnh\\UltraNavUSB",
         L"Software\\Synaptics\\SynTPEnh\\UltraNavPS2"
-    };
+    });
 
-    for (size_t i = 0; i < std::size(trackPointKeys); ++i) {
+    for (size_t i = 0; i < trackPointKeys.size(); ++i) {
         HKEY trackPointKey;
         int readKeyResult = ::RegOpenKeyExW(HKEY_CURRENT_USER, trackPointKeys[i], 0, KEY_READ, &trackPointKey);
         ::RegCloseKey(trackPointKey);

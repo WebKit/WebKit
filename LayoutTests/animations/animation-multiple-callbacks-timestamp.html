@@ -9,10 +9,12 @@
         var timestamp2 = 0;
         var currentFrame = 0;
         const MaxFrames = 10;
+        var didFinishTest = false;
 
         function doAnimation1(timestamp)
         {
             if (++currentFrame > MaxFrames) {
+                didFinishTest = true;
                 finishJSTest();
                 return;
             }
@@ -24,6 +26,9 @@
 
         function doAnimation2(timestamp)
         {
+            if (didFinishTest)
+                return;
+
             timestamp2 = timestamp;
             shouldBe("Math.round(timestamp1)", "Math.round(timestamp2)");
         }

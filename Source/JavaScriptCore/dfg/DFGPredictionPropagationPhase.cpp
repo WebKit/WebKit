@@ -1204,7 +1204,8 @@ private:
             break;
         }
 
-        case StringIndexOf: {
+        case StringIndexOf:
+        case StringLastIndexOf: {
             setPrediction(SpecInt32Only);
             break;
         }
@@ -1346,6 +1347,11 @@ private:
         }
 
         case CreatePromise:
+            setPrediction(SpecPromiseObject);
+            break;
+
+        case NewResolvedPromise:
+        case NewRejectedPromise:
             setPrediction(SpecPromiseObject);
             break;
 

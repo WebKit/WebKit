@@ -1,0 +1,9 @@
+(event region
+        (rect (0,0) width=800 height=600)
+      (touch event listener region: asynchronousDispatchRegion:
+        (rect (8,56) width=150 height=150)
+eventSpecificSynchronousDispatchRegions: eventName: mousemove eventRect:
+        (rect (8,56) width=150 height=150)
+
+      )
+    )

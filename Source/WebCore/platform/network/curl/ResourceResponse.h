@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <WebCore/HTTPStatusCodes.h>
 #include <WebCore/ResourceResponseBase.h>
 
 namespace WebCore {
@@ -51,11 +52,11 @@ public:
 
     WEBCORE_EXPORT ResourceResponse(CurlResponse&);
 
-    bool isMovedPermanently() const { return httpStatusCode() == 301; };
-    bool isFound() const { return httpStatusCode() == 302; }
-    bool isSeeOther() const { return httpStatusCode() == 303; }
-    bool isUnauthorized() const { return httpStatusCode() == 401; }
-    bool isProxyAuthenticationRequired() const { return httpStatusCode() == 407; }
+    bool isMovedPermanently() const { return httpStatusCode() == httpStatus301MovedPermanently; };
+    bool isFound() const { return httpStatusCode() == httpStatus302Found; }
+    bool isSeeOther() const { return httpStatusCode() == httpStatus303SeeOther; }
+    bool isUnauthorized() const { return httpStatusCode() == httpStatus401Unauthorized; }
+    bool isProxyAuthenticationRequired() const { return httpStatusCode() == httpStatus407ProxyAuthenticationRequired; }
 
 private:
     friend class ResourceResponseBase;

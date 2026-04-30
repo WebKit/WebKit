@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "EventNames.h"
+#include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "HTMLBodyElement.h"
 #include "HTMLHeadElement.h"
@@ -43,6 +44,7 @@
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
 #include "RawDataDocumentParser.h"
+#include "RenderStyle+GettersInlines.h"
 #include "UserScriptTypes.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>

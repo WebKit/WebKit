@@ -35,6 +35,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fs/script-tests/FileSystemFileHandle-create-sync-access-handle.js
 /LayoutTests/imported/w3c/web-platform-tests/fs/script-tests/FileSystemFileHandle-getFile.js
 /LayoutTests/imported/w3c/web-platform-tests/fs/script-tests/FileSystemFileHandle-move.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/script-tests/FileSystemObserver-writable-file-stream.js
+/LayoutTests/imported/w3c/web-platform-tests/fs/script-tests/FileSystemObserver.js
 /LayoutTests/imported/w3c/web-platform-tests/fs/script-tests/FileSystemSyncAccessHandle-flush.js
 /LayoutTests/imported/w3c/web-platform-tests/fs/script-tests/FileSystemWritableFileStream-piped.js
 /LayoutTests/imported/w3c/web-platform-tests/fs/script-tests/FileSystemWritableFileStream-write.js

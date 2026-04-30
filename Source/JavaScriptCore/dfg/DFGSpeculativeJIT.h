@@ -1792,6 +1792,7 @@ public:
     void compileStringCodePointAt(Node*);
     void compileStringLocaleCompare(Node*);
     void compileStringIndexOf(Node*);
+    void compileStringLastIndexOf(Node*);
     void compileStringStartsOrEndsWith(Node*);
     void compileDateGet(Node*);
     void compileDateSet(Node*);
@@ -1805,6 +1806,8 @@ public:
     void compileResolvePromiseFirstResolving(Node*);
     void compileRejectPromiseFirstResolving(Node*);
     void compileFulfillPromiseFirstResolving(Node*);
+    void compileNewResolvedPromise(Node*);
+    void compileNewRejectedPromise(Node*);
     void compilePromiseResolve(Node*);
     void compilePromiseReject(Node*);
     void compilePromiseThen(Node*);

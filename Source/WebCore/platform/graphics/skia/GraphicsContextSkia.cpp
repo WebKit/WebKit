@@ -182,82 +182,6 @@ void GraphicsContextSkia::drawRect(const FloatRect& rect, float borderThickness)
     m_canvas.drawRegion(region, strokePaint);
 }
 
-static SkBlendMode toSkiaBlendMode(CompositeOperator operation, BlendMode blendMode)
-{
-    switch (blendMode) {
-    case BlendMode::Normal:
-        switch (operation) {
-        case CompositeOperator::Clear:
-            return SkBlendMode::kClear;
-        case CompositeOperator::Copy:
-            return SkBlendMode::kSrc;
-        case CompositeOperator::SourceOver:
-            return SkBlendMode::kSrcOver;
-        case CompositeOperator::SourceIn:
-            return SkBlendMode::kSrcIn;
-        case CompositeOperator::SourceOut:
-            return SkBlendMode::kSrcOut;
-        case CompositeOperator::SourceAtop:
-            return SkBlendMode::kSrcATop;
-        case CompositeOperator::DestinationOver:
-            return SkBlendMode::kDstOver;
-        case CompositeOperator::DestinationIn:
-            return SkBlendMode::kDstIn;
-        case CompositeOperator::DestinationOut:
-            return SkBlendMode::kDstOut;
-        case CompositeOperator::DestinationAtop:
-            return SkBlendMode::kDstATop;
-        case CompositeOperator::XOR:
-            return SkBlendMode::kXor;
-        case CompositeOperator::PlusLighter:
-            return SkBlendMode::kPlus;
-        case CompositeOperator::PlusDarker:
-            notImplemented();
-            return SkBlendMode::kSrcOver;
-        case CompositeOperator::Difference:
-            return SkBlendMode::kDifference;
-        }
-        break;
-    case BlendMode::Multiply:
-        return SkBlendMode::kMultiply;
-    case BlendMode::Screen:
-        return SkBlendMode::kScreen;
-    case BlendMode::Overlay:
-        return SkBlendMode::kOverlay;
-    case BlendMode::Darken:
-        return SkBlendMode::kDarken;
-    case BlendMode::Lighten:
-        return SkBlendMode::kLighten;
-    case BlendMode::ColorDodge:
-        return SkBlendMode::kColorDodge;
-    case BlendMode::ColorBurn:
-        return SkBlendMode::kColorBurn;
-    case BlendMode::HardLight:
-        return SkBlendMode::kHardLight;
-    case BlendMode::SoftLight:
-        return SkBlendMode::kSoftLight;
-    case BlendMode::Difference:
-        return SkBlendMode::kDifference;
-    case BlendMode::Exclusion:
-        return SkBlendMode::kExclusion;
-    case BlendMode::Hue:
-        return SkBlendMode::kHue;
-    case BlendMode::Saturation:
-        return SkBlendMode::kSaturation;
-    case BlendMode::Color:
-        return SkBlendMode::kColor;
-    case BlendMode::Luminosity:
-        return SkBlendMode::kLuminosity;
-    case BlendMode::PlusLighter:
-        return SkBlendMode::kPlus;
-    case BlendMode::PlusDarker:
-        notImplemented();
-        break;
-    }
-
-    return SkBlendMode::kSrcOver;
-}
-
 static SkSamplingOptions toSkSamplingOptions(InterpolationQuality quality)
 {
     switch (quality) {
@@ -319,7 +243,7 @@ void GraphicsContextSkia::drawNativeImage(const NativeImage& nativeImage, const 
 
     SkPaint paint = createFillPaint();
     paint.setAlphaf(alpha());
-    paint.setBlendMode(toSkiaBlendMode(options.compositeOperator(), options.blendMode()));
+    paint.setBlendMode(SkiaUtilities::toSkiaBlendMode(options.blendMode(), options.compositeOperator()));
     bool inExtraTransparencyLayer = false;
     auto clampingConstraint = options.strictImageClamping() == StrictImageClamping::Yes ? SkCanvas::kStrict_SrcRectConstraint : SkCanvas::kFast_SrcRectConstraint;
 
@@ -631,7 +555,7 @@ SkPaint GraphicsContextSkia::createFillPaint() const
     SkPaint paint;
     paint.setAntiAlias(shouldAntialias());
     paint.setStyle(SkPaint::kFill_Style);
-    paint.setBlendMode(toSkiaBlendMode(compositeMode().operation, blendMode()));
+    paint.setBlendMode(SkiaUtilities::toSkiaBlendMode(blendMode(), compositeMode().operation));
     return paint;
 }
 
@@ -652,7 +576,7 @@ SkPaint GraphicsContextSkia::createStrokePaint() const
     SkPaint paint;
     paint.setAntiAlias(shouldAntialias());
     paint.setStyle(SkPaint::kStroke_Style);
-    paint.setBlendMode(toSkiaBlendMode(compositeMode().operation, blendMode()));
+    paint.setBlendMode(SkiaUtilities::toSkiaBlendMode(blendMode(), compositeMode().operation));
     paint.setStrokeCap(m_skiaState.stroke.cap);
     paint.setStrokeJoin(m_skiaState.stroke.join);
     paint.setStrokeMiter(m_skiaState.stroke.miter);
@@ -922,7 +846,7 @@ void GraphicsContextSkia::saveLayer(float opacity, CompositeMode compositeMode)
 
     SkPaint paint;
     paint.setAlphaf(opacity);
-    paint.setBlendMode(toSkiaBlendMode(compositeMode.operation, compositeMode.blendMode));
+    paint.setBlendMode(SkiaUtilities::toSkiaBlendMode(compositeMode.blendMode, compositeMode.operation));
     if (m_enableStateReplayTracking) [[unlikely]]
         currentState.layerPaint = paint;
 
@@ -1180,7 +1104,7 @@ void GraphicsContextSkia::drawPattern(const NativeImage& nativeImage, const Floa
     auto samplingOptions = toSkSamplingOptions(m_state.imageInterpolationQuality());
 
     SkPaint paint = createFillPaint();
-    paint.setBlendMode(toSkiaBlendMode(options.compositeOperator(), options.blendMode()));
+    paint.setBlendMode(SkiaUtilities::toSkiaBlendMode(options.blendMode(), options.compositeOperator()));
 
     auto size = nativeImage.size();
     if (spacing.isZero() && tileRect.size() == size) {

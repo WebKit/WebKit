@@ -28,6 +28,7 @@
 #if ENABLE(B3_JIT)
 
 #include "AirOpcode.h"
+#include "B3Type.h"
 
 namespace JSC::B3::Air {
 

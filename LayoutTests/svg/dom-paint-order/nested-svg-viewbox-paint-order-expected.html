@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>body { margin: 0; }</style>
+</head>
+<body>
+<!-- Reference: HTML divs replicating the nested SVG viewBox paint order.
+     First nested SVG: x=20 y=20 160x160, viewBox 0 0 100 100, scale=1.6
+     Second nested SVG: x=200 y=20 160x160, viewBox 0 0 200 200, scale=0.8 -->
+
+<!-- Outer background -->
+<div style="position: absolute; overflow: hidden; width: 400px; height: 200px; background: #fafafa;">
+
+  <!-- First nested viewport: offset (20,20), scale 1.6x -->
+  <div style="position: absolute; left: 20px; top: 20px; width: 160px; height: 160px; overflow: hidden;">
+    <!-- rect 0,0 100x100 → 0,0 160x160 -->
+    <div style="position: absolute; left: 0; top: 0; width: 160px; height: 160px; background: #e8f5e9;"></div>
+    <!-- circle cx=30 cy=30 r=25 → bbox (5,5,50,50) → (8,8) 80x80 -->
+    <div style="position: absolute; left: 8px; top: 8px; width: 80px; height: 80px; background: #4caf50; border-radius: 50%;"></div>
+    <!-- circle cx=70 cy=70 r=25 scale(0.8) → bbox (45,45,50,50) → (72,72) 80x80, origin at container (0,0) -->
+    <div style="position: absolute; left: 72px; top: 72px; width: 80px; height: 80px; background: #81c784; border-radius: 50%; transform: scale(0.8); transform-origin: -72px -72px;"></div>
+    <!-- rect 10,60 30x30 → (16,96) 48x48 -->
+    <div style="position: absolute; left: 16px; top: 96px; width: 48px; height: 48px; background: #388e3c;"></div>
+  </div>
+
+  <!-- Second nested viewport: offset (200,20), scale 0.8x -->
+  <div style="position: absolute; left: 200px; top: 20px; width: 160px; height: 160px; overflow: hidden;">
+    <!-- rect 0,0 200x200 → 0,0 160x160 -->
+    <div style="position: absolute; left: 0; top: 0; width: 160px; height: 160px; background: #e3f2fd;"></div>
+    <!-- rect 10,10 80x80 → (8,8) 64x64 -->
+    <div style="position: absolute; left: 8px; top: 8px; width: 64px; height: 64px; background: #1976d2;"></div>
+    <!-- rect 50,50 80x80 rotate(10deg) → (40,40) 64x64, origin at container (0,0) -->
+    <div style="position: absolute; left: 40px; top: 40px; width: 64px; height: 64px; background: #42a5f5; transform: rotate(10deg); transform-origin: -40px -40px;"></div>
+    <!-- rect 100,10 80x80 → (80,8) 64x64 -->
+    <div style="position: absolute; left: 80px; top: 8px; width: 64px; height: 64px; background: #90caf9;"></div>
+    <!-- rect 60,100 80x80 → (48,80) 64x64 -->
+    <div style="position: absolute; left: 48px; top: 80px; width: 64px; height: 64px; background: #0d47a1;"></div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -46,6 +46,7 @@
 #include <wtf/DataLog.h>
 #include <wtf/Lock.h>
 #include <wtf/NumberOfCores.h>
+#include <wtf/SetForScope.h>
 #include <wtf/StdMap.h>
 #include <wtf/Threading.h>
 #include <wtf/WTFProcess.h>
@@ -2960,6 +2961,331 @@ void testStorePairClobberMemoryLoad()
 #endif
 #endif
 
+// Test loop-aware live range splitting.
+// Fast tmps create register pressure to steer which side spills.
+// 18 of 32 combinations tested (excludes infeasible and redundant cases).
+template<bool nonLoopSpilled, bool loopSpilled, bool hasDef, bool liveAtHeader, bool liveAtExit>
+void testSplitAroundLoop()
+{
+    SetForScope splitAroundLoopsScope(Options::airGreedyRegAllocSplitAroundLoops(), true);
+    SetForScope loopFractionScope(Options::airGreedyRegAllocLoopSplitMaxLoopFraction(), 1.0);
+    unsigned numRegs = 8;
+    unsigned numAcrossLoopTmps = 4;
+
+    // Fast tmps steer which side spills by consuming registers in specific regions.
+    unsigned numFastTmpsOutsideLoop = 0;
+    unsigned numFastTmpsInsideLoop = 0;
+
+    if (nonLoopSpilled)
+        numFastTmpsOutsideLoop = numRegs - 1;
+    if (loopSpilled)
+        numFastTmpsInsideLoop = numRegs - 1;
+
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    {
+        Vector<Reg> allRegs = code.regsInPriorityOrder(GP);
+        for (size_t i = numRegs; i < allRegs.size(); ++i)
+            code.pinRegister(allRegs[i]);
+    }
+
+    BasicBlock* root = code.addBlock();
+    BasicBlock* header = code.addBlock(10.0);
+    BasicBlock* body = code.addBlock(10.0);
+    BasicBlock* exit = code.addBlock();
+
+    Vector<Tmp> tmps;
+    for (unsigned i = 0; i < numAcrossLoopTmps; ++i)
+        tmps.append(code.newTmp(GP));
+
+    Vector<Tmp> fastTmpsOutside;
+    for (unsigned i = 0; i < numFastTmpsOutsideLoop; ++i) {
+        Tmp ft = code.newTmp(GP);
+        code.addFastTmp(ft);
+        fastTmpsOutside.append(ft);
+    }
+    Vector<Tmp> fastTmpsInside;
+    for (unsigned i = 0; i < numFastTmpsInsideLoop; ++i) {
+        Tmp ft = code.newTmp(GP);
+        code.addFastTmp(ft);
+        fastTmpsInside.append(ft);
+    }
+
+    Tmp counter = code.newTmp(GP);
+    Tmp sum = code.newTmp(GP);
+
+    // Root: define tmps, optional pre-loop use, fast tmps, counter.
+    root->append(Move, nullptr, Arg::imm(0), sum);
+    for (unsigned i = 0; i < numAcrossLoopTmps; ++i)
+        loadConstant(root, static_cast<intptr_t>(i + 1), tmps[i]);
+    if (!liveAtHeader) {
+        // Pre-loop use creates a separate range not connected to the loop.
+        for (unsigned i = 0; i < numAcrossLoopTmps; ++i)
+            root->append(Add64, nullptr, tmps[i], sum);
+    }
+    for (unsigned i = 0; i < numFastTmpsOutsideLoop; ++i)
+        loadConstant(root, static_cast<intptr_t>(100 + i), fastTmpsOutside[i]);
+    for (unsigned i = 0; i < numFastTmpsOutsideLoop; ++i)
+        root->append(Add64, nullptr, fastTmpsOutside[i], sum);
+    loadConstant(root, static_cast<intptr_t>(5), counter);
+    root->append(Jump, nullptr);
+    root->setSuccessors(header);
+
+    // Header: branch to body or exit.
+    header->append(Branch32, nullptr, Arg::relCond(MacroAssembler::GreaterThan), counter, Arg::imm(0));
+    header->setSuccessors(body, exit);
+
+    // Body: fast tmps, optional fresh def, read tmps, optional modify, decrement.
+    for (unsigned i = 0; i < numFastTmpsInsideLoop; ++i)
+        body->append(Move, nullptr, counter, fastTmpsInside[i]);
+
+    if (!liveAtHeader) {
+        // Fresh def not connected to pre-loop range.
+        for (unsigned i = 0; i < numAcrossLoopTmps; ++i) {
+            body->append(Move, nullptr, counter, tmps[i]);
+            body->append(Add64, nullptr, Arg::imm(i + 1), tmps[i]);
+        }
+    }
+
+    for (unsigned i = 0; i < numAcrossLoopTmps; ++i)
+        body->append(Add64, nullptr, tmps[i], sum);
+
+    if (hasDef) {
+        for (unsigned i = 0; i < numAcrossLoopTmps; ++i)
+            body->append(Add64, nullptr, counter, tmps[i]);
+    }
+
+    for (unsigned i = 0; i < numFastTmpsInsideLoop; ++i)
+        body->append(Add64, nullptr, fastTmpsInside[i], sum);
+
+    body->append(Sub32, nullptr, Arg::imm(1), counter);
+    body->append(Jump, nullptr);
+    body->setSuccessors(header);
+
+    // Exit: optional redef, read tmps, fast tmps, return sum.
+    if (!liveAtExit) {
+        // Post-loop redef creates a separate range not connected to the loop.
+        for (unsigned i = 0; i < numAcrossLoopTmps; ++i)
+            loadConstant(exit, static_cast<intptr_t>(i + 1), tmps[i]);
+    }
+    for (unsigned i = 0; i < numAcrossLoopTmps; ++i)
+        exit->append(Add64, nullptr, tmps[i], sum);
+    for (unsigned i = 0; i < numFastTmpsOutsideLoop; ++i)
+        loadConstant(exit, static_cast<intptr_t>(200 + i), fastTmpsOutside[i]);
+    for (unsigned i = 0; i < numFastTmpsOutsideLoop; ++i)
+        exit->append(Add64, nullptr, fastTmpsOutside[i], sum);
+    exit->append(Move, nullptr, sum, Tmp(GPRInfo::returnValueGPR));
+    exit->append(Ret64, nullptr, Tmp(GPRInfo::returnValueGPR));
+
+    // Compute expected result.
+    int64_t expected = 0;
+
+    for (unsigned i = 0; i < numFastTmpsOutsideLoop; ++i)
+        expected += static_cast<int64_t>(100 + i);
+
+    if (!liveAtHeader) {
+        for (unsigned i = 0; i < numAcrossLoopTmps; ++i)
+            expected += static_cast<int64_t>(i + 1);
+    }
+
+    {
+        int64_t tmpVals[4];
+        for (unsigned i = 0; i < numAcrossLoopTmps; ++i)
+            tmpVals[i] = static_cast<int64_t>(i + 1);
+
+        for (int c = 5; c >= 1; --c) {
+            if (!liveAtHeader) {
+                for (unsigned i = 0; i < numAcrossLoopTmps; ++i)
+                    tmpVals[i] = c + static_cast<int64_t>(i + 1);
+            }
+            for (unsigned i = 0; i < numAcrossLoopTmps; ++i)
+                expected += tmpVals[i];
+            if (hasDef) {
+                for (unsigned i = 0; i < numAcrossLoopTmps; ++i)
+                    tmpVals[i] += c;
+            }
+            for (unsigned i = 0; i < numFastTmpsInsideLoop; ++i)
+                expected += c;
+        }
+
+        if (liveAtExit) {
+            for (unsigned i = 0; i < numAcrossLoopTmps; ++i)
+                expected += tmpVals[i];
+        }
+    }
+
+    if (!liveAtExit) {
+        for (unsigned i = 0; i < numAcrossLoopTmps; ++i)
+            expected += static_cast<int64_t>(i + 1);
+    }
+
+    for (unsigned i = 0; i < numFastTmpsOutsideLoop; ++i)
+        expected += static_cast<int64_t>(200 + i);
+
+    auto runResult = compileAndRun<int64_t>(proc);
+    CHECK(runResult == expected);
+}
+
+void testSplitAroundLoopNoInLoopUses()
+{
+    SetForScope splitAroundLoopsScope(Options::airGreedyRegAllocSplitAroundLoops(), true);
+    SetForScope loopFractionScope(Options::airGreedyRegAllocLoopSplitMaxLoopFraction(), 1.0);
+    // Tmps defined before loop, not used inside, used after. loopTmp has zero cost and spills.
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    unsigned numRegs = 8;
+    unsigned numAcrossLoopTmps = 4;
+    unsigned numFastTmpsInsideLoop = numRegs - 1;
+
+    {
+        Vector<Reg> allRegs = code.regsInPriorityOrder(GP);
+        for (size_t i = numRegs; i < allRegs.size(); ++i)
+            code.pinRegister(allRegs[i]);
+    }
+
+    BasicBlock* root = code.addBlock();
+    BasicBlock* header = code.addBlock(10.0);
+    BasicBlock* body = code.addBlock(10.0);
+    BasicBlock* exit = code.addBlock();
+
+    Vector<Tmp> tmps;
+    for (unsigned i = 0; i < numAcrossLoopTmps; ++i) {
+        Tmp tmp = code.newTmp(GP);
+        tmps.append(tmp);
+        loadConstant(root, static_cast<intptr_t>(i + 1), tmp);
+    }
+
+    Vector<Tmp> fastTmpsInside;
+    for (unsigned i = 0; i < numFastTmpsInsideLoop; ++i) {
+        Tmp ft = code.newTmp(GP);
+        code.addFastTmp(ft);
+        fastTmpsInside.append(ft);
+    }
+
+    Tmp counter = code.newTmp(GP);
+    Tmp sum = code.newTmp(GP);
+    root->append(Move, nullptr, Arg::imm(0), sum);
+    loadConstant(root, static_cast<intptr_t>(5), counter);
+    root->append(Jump, nullptr);
+    root->setSuccessors(header);
+
+    header->append(Branch32, nullptr, Arg::relCond(MacroAssembler::GreaterThan), counter, Arg::imm(0));
+    header->setSuccessors(body, exit);
+
+    for (unsigned i = 0; i < numFastTmpsInsideLoop; ++i)
+        body->append(Move, nullptr, counter, fastTmpsInside[i]);
+    for (unsigned i = 0; i < numFastTmpsInsideLoop; ++i)
+        body->append(Add64, nullptr, fastTmpsInside[i], sum);
+    body->append(Sub32, nullptr, Arg::imm(1), counter);
+    body->append(Jump, nullptr);
+    body->setSuccessors(header);
+
+    for (unsigned i = 0; i < numAcrossLoopTmps; ++i)
+        exit->append(Add64, nullptr, tmps[i], sum);
+    exit->append(Move, nullptr, sum, Tmp(GPRInfo::returnValueGPR));
+    exit->append(Ret64, nullptr, Tmp(GPRInfo::returnValueGPR));
+
+    // 7*(5+4+3+2+1) + (1+2+3+4) = 105 + 10 = 115
+    CHECK(compileAndRun<int64_t>(proc) == 115);
+}
+
+template<bool criticalEntry>
+void testSplitAroundLoopCriticalEdge()
+{
+    SetForScope splitAroundLoopsScope(Options::airGreedyRegAllocSplitAroundLoops(), true);
+    SetForScope loopFractionScope(Options::airGreedyRegAllocLoopSplitMaxLoopFraction(), 1.0);
+    // criticalEntry=true: root→header AND root→altExit (critical entry edge).
+    // criticalEntry=false: exit has predecessors from both loop and non-loop (critical exit edge).
+    // Loop splitting is prevented by the critical edge; verify correctness without it.
+
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    unsigned numRegs = 8;
+    unsigned numAcrossLoopTmps = 4;
+    unsigned numFastTmps = numRegs - 1;
+
+    {
+        Vector<Reg> allRegs = code.regsInPriorityOrder(GP);
+        for (size_t i = numRegs; i < allRegs.size(); ++i)
+            code.pinRegister(allRegs[i]);
+    }
+
+    BasicBlock* root = code.addBlock();
+    BasicBlock* header = code.addBlock(10.0);
+    BasicBlock* body = code.addBlock(10.0);
+    BasicBlock* exit = code.addBlock();
+
+    Vector<Tmp> tmps;
+    for (unsigned i = 0; i < numAcrossLoopTmps; ++i) {
+        Tmp tmp = code.newTmp(GP);
+        tmps.append(tmp);
+        loadConstant(root, static_cast<intptr_t>(i + 1), tmp);
+    }
+
+    Vector<Tmp> fastTmps;
+    for (unsigned i = 0; i < numFastTmps; ++i) {
+        Tmp ft = code.newTmp(GP);
+        code.addFastTmp(ft);
+        fastTmps.append(ft);
+        loadConstant(root, static_cast<intptr_t>(100 + i), ft);
+    }
+
+    Tmp counter = code.newTmp(GP);
+    Tmp arg = code.newTmp(GP);
+    Tmp sum = code.newTmp(GP);
+    root->append(Move, nullptr, Arg::imm(0), sum);
+    for (unsigned i = 0; i < numFastTmps; ++i)
+        root->append(Add64, nullptr, fastTmps[i], sum);
+    root->append(Move, nullptr, Tmp(GPRInfo::argumentGPR0), arg);
+    loadConstant(root, static_cast<intptr_t>(5), counter);
+
+    if (criticalEntry) {
+        // root→header AND root→altExit: critical entry edge.
+        BasicBlock* altExit = code.addBlock();
+        root->append(Branch32, nullptr, Arg::relCond(MacroAssembler::GreaterThan), arg, Arg::imm(0));
+        root->setSuccessors(header, altExit);
+        altExit->append(Move, nullptr, Arg::imm(0), Tmp(GPRInfo::returnValueGPR));
+        for (unsigned i = 0; i < numAcrossLoopTmps; ++i)
+            altExit->append(Add64, nullptr, tmps[i], Tmp(GPRInfo::returnValueGPR));
+        altExit->append(Ret64, nullptr, Tmp(GPRInfo::returnValueGPR));
+    } else {
+        // root→preheader→header, root→exit: exit has non-loop predecessor.
+        BasicBlock* preheader = code.addBlock();
+        root->append(Branch32, nullptr, Arg::relCond(MacroAssembler::GreaterThan), arg, Arg::imm(0));
+        root->setSuccessors(preheader, exit);
+        preheader->append(Jump, nullptr);
+        preheader->setSuccessors(header);
+    }
+
+    header->append(Branch32, nullptr, Arg::relCond(MacroAssembler::GreaterThan), counter, Arg::imm(0));
+    header->setSuccessors(body, exit);
+
+    for (unsigned i = 0; i < numAcrossLoopTmps; ++i)
+        body->append(Add64, nullptr, tmps[i], sum);
+    body->append(Sub32, nullptr, Arg::imm(1), counter);
+    body->append(Jump, nullptr);
+    body->setSuccessors(header);
+
+    for (unsigned i = 0; i < numFastTmps; ++i)
+        loadConstant(exit, static_cast<intptr_t>(200 + i), fastTmps[i]);
+    for (unsigned i = 0; i < numFastTmps; ++i)
+        exit->append(Add64, nullptr, fastTmps[i], sum);
+
+    for (unsigned i = 0; i < numAcrossLoopTmps; ++i)
+        exit->append(Add64, nullptr, tmps[i], sum);
+    exit->append(Move, nullptr, sum, Tmp(GPRInfo::returnValueGPR));
+    exit->append(Ret64, nullptr, Tmp(GPRInfo::returnValueGPR));
+
+    // arg=1: 721 (pre fast) + 50 (loop) + 10 (tmps) + 1421 (post fast) = 2202
+    // arg=0: altExit returns 10, or exit returns 2152 (no loop iterations)
+    auto compilation = compile(proc);
+    CHECK(invoke<int64_t>(*compilation, static_cast<int64_t>(1)) == 2202);
+    CHECK(invoke<int64_t>(*compilation, static_cast<int64_t>(0)) == (criticalEntry ? 10 : 2152));
+}
+
 #define PREFIX "O", Options::defaultB3OptLevel(), ": "
 
 #define RUN(test) do {                                 \
@@ -3087,6 +3413,31 @@ void run(const char* filter)
     RUN(testStorePairClobberMemoryLoad());
 #endif
 #endif
+
+    // testSplitAroundLoop<nonLoopSpilled, loopSpilled, hasDef, liveAtHeader, liveAtExit>()
+    RUN((testSplitAroundLoop<false, true,  false, true,  true>()));
+    RUN((testSplitAroundLoop<false, true,  true,  true,  true>()));
+    RUN((testSplitAroundLoop<false, true,  false, true,  false>()));
+    RUN((testSplitAroundLoop<false, true,  true,  true,  false>()));
+    RUN((testSplitAroundLoop<false, false, false, true,  true>()));
+    RUN((testSplitAroundLoop<false, false, true,  true,  true>()));
+    RUN((testSplitAroundLoop<false, false, false, true,  false>()));
+    RUN((testSplitAroundLoop<false, false, true,  true,  false>()));
+    RUN((testSplitAroundLoop<true,  false, false, true,  true>()));
+    RUN((testSplitAroundLoop<true,  false, true,  true,  true>()));
+    RUN((testSplitAroundLoop<true,  false, false, true,  false>()));
+    RUN((testSplitAroundLoop<true,  false, true,  true,  false>()));
+    RUN((testSplitAroundLoop<false, true,  true,  false, true>()));
+    RUN((testSplitAroundLoop<false, true,  true,  false, false>()));
+    RUN((testSplitAroundLoop<false, false, true,  false, true>()));
+    RUN((testSplitAroundLoop<false, false, true,  false, false>()));
+    RUN((testSplitAroundLoop<true,  false, true,  false, true>()));
+    RUN((testSplitAroundLoop<true,  true,  true,  true,  true>()));
+
+    // Loop-aware splitting: standalone tests.
+    RUN(testSplitAroundLoopNoInLoopUses());
+    RUN((testSplitAroundLoopCriticalEdge<true>()));
+    RUN((testSplitAroundLoopCriticalEdge<false>()));
 
     if (tasks.isEmpty())
         usage();

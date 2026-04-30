@@ -72,6 +72,7 @@
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "StyleTreeResolverInlines.h"
+#include "SVGElement.h"
 #include "Text.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include "ViewTransition.h"
@@ -1251,6 +1252,10 @@ void TreeResolver::resetDescendantStyleRelations(Element& element, DescendantsTo
         break;
     case DescendantsToResolve::All:
         element.resetAllDescendantStyleRelations();
+        if (&element == m_document->documentElement())
+            m_isFullDocumentStyleRebuild = true;
+        if (m_isFullDocumentStyleRebuild)
+            element.resetHasSiblingFlags();
         break;
     };
 }
@@ -1361,8 +1366,11 @@ void TreeResolver::resolveComposedTree()
         resumeDescendantResolutionIfNeeded(element.get(), changes, descendantsToResolve);
 
         bool shouldIterateChildren = [&] {
-            // display::none, no need to resolve descendants.
             if (!style)
+                return false;
+
+            // Some elements like certain SVG containers create renderers even with display::none, so their descendants still need style resolution.
+            if (style->display() == DisplayType::None && !element->rendererIsNeeded(*style))
                 return false;
 
             // Style resolution will be resumed after the container or anchor-positioned element has been resolved.
@@ -1859,7 +1867,7 @@ void TreeResolver::updateForPositionVisibility(RenderStyle& style, const Styleab
         if (!anchored)
             return false;
 
-        if (style.positionVisibility().contains(PositionVisibilityValue::AnchorsVisible)) {
+        if (style.positionVisibility().contains(PositionVisibilityValue::AnchorsVisible) || style.positionVisibility().contains(PositionVisibilityValue::AnchorVisible)) {
             // "If the box has a default anchor box but that anchor box is invisible or clipped by intervening boxes, the box’s visibility property computes to force-hidden."
             if (AnchorPositionEvaluator::isDefaultAnchorInvisibleOrClippedByInterveningBoxes(*anchored))
                 return true;
@@ -1868,7 +1876,7 @@ void TreeResolver::updateForPositionVisibility(RenderStyle& style, const Styleab
             if (AnchorPositionEvaluator::overflowsInsetModifiedContainingBlock(*anchored))
                 return true;
         }
-        if (style.positionVisibility().contains(PositionVisibilityValue::AnchorsValid)) {
+        if (style.positionVisibility().contains(PositionVisibilityValue::AnchorsValid) || style.positionVisibility().contains(PositionVisibilityValue::AnchorValid)) {
             auto* anchorPositionedState = m_treeResolutionState.anchorPositionedStates.get(styleable);
             if (anchorPositionedState) {
                 for (auto& anchorElement : anchorPositionedState->anchorElements.values()) {

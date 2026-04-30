@@ -174,6 +174,7 @@ inline CapabilityLevel canCompile(Node* node)
     case StringCodePointAt:
     case StringFromCharCode:
     case StringIndexOf:
+    case StringLastIndexOf:
     case StringStartsWith:
     case StringEndsWith:
     case AllocatePropertyStorage:
@@ -501,6 +502,8 @@ inline CapabilityLevel canCompile(Node* node)
     case ResolvePromiseFirstResolving:
     case RejectPromiseFirstResolving:
     case FulfillPromiseFirstResolving:
+    case NewResolvedPromise:
+    case NewRejectedPromise:
     case PromiseResolve:
     case PromiseReject:
     case PromiseThen:

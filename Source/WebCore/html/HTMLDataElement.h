@@ -35,6 +35,8 @@ class HTMLDataElement final : public HTMLElement {
 public:
     static Ref<HTMLDataElement> create(const QualifiedName&, Document&);
 
+    ~HTMLDataElement();
+
 private:
     HTMLDataElement(const QualifiedName&, Document&);
 };

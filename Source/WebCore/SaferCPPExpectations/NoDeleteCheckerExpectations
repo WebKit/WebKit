@@ -18,3 +18,5 @@ page/EventHandler.cpp
 [ iOS ] page/Quirks.cpp
 page/text-extraction/TextExtraction.cpp
 rendering/RenderGeometryMap.cpp
+rendering/svg/RenderSVGHiddenContainer.cpp
+rendering/svg/legacy/LegacyRenderSVGHiddenContainer.cpp

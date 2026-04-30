@@ -22517,6 +22517,22 @@ void main()
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
+// Verify that missing fragment output components are zero-initialized
+TEST_P(WebGL2GLSLTest, InitMissingFragmentOutputComponents)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+layout(location = 0) out float outColor;
+void main()
+{
+    outColor = 1.0;
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor(255, 0, 0, 0));
+}
+
 // Test highp int scalar + vec
 TEST_P(GLSLTest_ES3, IntVecOperatorOverloadingAdd1)
 {
@@ -24075,6 +24091,27 @@ TEST_P(WebGLGLSLTest, ComplexExpression)
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), fs.str().c_str());
     drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(127, 127, 127, 127), 1);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Regression test for a transformation bug where a function has |return| only in dead code.
+TEST_P(GLSLTest_ES3, EmptyBodyAfterPrunedIfWithReturn)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+out vec4 color;
+
+int foo() {
+    if (false) { return 1; }
+}
+
+void main() {
+    color = vec4(float(foo()), 0, 1, 1);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.0f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
     ASSERT_GL_NO_ERROR();
 }
 }  // anonymous namespace

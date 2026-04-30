@@ -27,6 +27,7 @@
 #pragma once
 
 #include "JSGeneratorFunction.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

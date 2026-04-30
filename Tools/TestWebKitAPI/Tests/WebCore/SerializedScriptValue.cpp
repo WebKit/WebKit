@@ -30,7 +30,6 @@
 #include <WebCore/IDBBindingUtilities.h>
 #include <WebCore/IDBValue.h>
 #include <WebCore/ParsedContentRange.h>
-#include <WebCore/ParsedRequestRange.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/ThreadSafeDataBuffer.h>
 #include <wtf/text/WTFString.h>

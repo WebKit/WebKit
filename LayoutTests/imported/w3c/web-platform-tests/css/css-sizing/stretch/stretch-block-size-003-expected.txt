@@ -21,29 +21,17 @@ PASS .test 1
 PASS .test 2
 PASS .test 3
 PASS .test 4
-FAIL .test 5 assert_equals:
-<div class="test vlr" data-expected-width="41"></div>
-width expected 41 but got 10
-FAIL .test 6 assert_equals:
-<div class="test vrl" data-expected-width="41"></div>
-width expected 41 but got 10
+PASS .test 5
+PASS .test 6
 PASS .test 7
 PASS .test 8
 PASS .test 9
 PASS .test 10
-FAIL .test 11 assert_equals:
-<div class="test vlr" data-expected-width="55"></div>
-width expected 55 but got 10
-FAIL .test 12 assert_equals:
-<div class="test vrl" data-expected-width="55"></div>
-width expected 55 but got 10
+PASS .test 11
+PASS .test 12
 PASS .test 13
-FAIL .test 14 assert_equals:
-<div class="test vlr" data-expected-width="55"></div>
-width expected 55 but got 10
-FAIL .test 15 assert_equals:
-<div class="test vrl" data-expected-width="55"></div>
-width expected 55 but got 10
+PASS .test 14
+PASS .test 15
 PASS .test 16
 PASS .test 17
 PASS .test 18
@@ -51,29 +39,17 @@ PASS .test 19
 PASS .test 20
 PASS .test 21
 PASS .test 22
-FAIL .test 23 assert_equals:
-<div class="test vlr" data-expected-width="41" style="box-sizing: border-box;"></div>
-width expected 41 but got 10
-FAIL .test 24 assert_equals:
-<div class="test vrl" data-expected-width="41" style="box-sizing: border-box;"></div>
-width expected 41 but got 10
+PASS .test 23
+PASS .test 24
 PASS .test 25
 PASS .test 26
 PASS .test 27
 PASS .test 28
-FAIL .test 29 assert_equals:
-<div class="test vlr" data-expected-width="55" style="box-sizing: border-box;"></div>
-width expected 55 but got 10
-FAIL .test 30 assert_equals:
-<div class="test vrl" data-expected-width="55" style="box-sizing: border-box;"></div>
-width expected 55 but got 10
+PASS .test 29
+PASS .test 30
 PASS .test 31
-FAIL .test 32 assert_equals:
-<div class="test vlr" data-expected-width="55" style="box-sizing: border-box;"></div>
-width expected 55 but got 10
-FAIL .test 33 assert_equals:
-<div class="test vrl" data-expected-width="55" style="box-sizing: border-box;"></div>
-width expected 55 but got 10
+PASS .test 32
+PASS .test 33
 PASS .test 34
 PASS .test 35
 PASS .test 36

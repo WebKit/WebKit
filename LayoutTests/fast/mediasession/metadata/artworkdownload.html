@@ -13,6 +13,7 @@ promise_test((test) => {
     return internals.loadArtworkImage(IMAGE_SRC).then((data) => {
         assert_equals(data.codedWidth, 16);
         assert_equals(data.codedHeight, 16);
+        data.close();
     });
 }, "ensure loading artwork image method operates properly");
 

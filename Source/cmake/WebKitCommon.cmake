@@ -55,7 +55,7 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     list(FIND ALL_PORTS ${PORT} RET)
     if (${RET} EQUAL -1)
         if (APPLE)
-            set(PORT "Mac")
+            set(PORT "Mac" CACHE STRING "choose which WebKit port to build (one of ${ALL_PORTS})" FORCE)
         else ()
             message(FATAL_ERROR "Please choose which WebKit port to build (one of ${ALL_PORTS})")
         endif ()
@@ -395,15 +395,20 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
             VERBATIM
         )
         # compile_commands.json
-        add_custom_target(UpdateCompileCommandsSymlink
-            ALL
+        set(_compile_commands_symlink_stamp ${CMAKE_BINARY_DIR}/DeveloperTools/compile_commands_symlink.stamp)
+        add_custom_command(
+            OUTPUT ${_compile_commands_symlink_stamp}
             DEPENDS ${CMAKE_BINARY_DIR}/DeveloperTools/compile_commands.json
                     ${CMAKE_SOURCE_DIR}/update-compile-commands-symlink.conf
             COMMAND ${Python_EXECUTABLE}
                     ${TOOLS_DIR}/clangd/update-compile-commands-symlink
                     ${CMAKE_SOURCE_DIR}/compile_commands.json
                     ${CMAKE_SOURCE_DIR}/update-compile-commands-symlink.conf
+            COMMAND ${CMAKE_COMMAND} -E touch ${_compile_commands_symlink_stamp}
             VERBATIM
+        )
+        add_custom_target(UpdateCompileCommandsSymlink ALL
+            DEPENDS ${_compile_commands_symlink_stamp}
         )
         # .clangd
         add_custom_command(

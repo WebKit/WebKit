@@ -32,20 +32,6 @@
 
 namespace WTF {
 
-WallTime ContinuousTime::approximateWallTime() const
-{
-    if (isInfinity())
-        return WallTime::fromRawSeconds(m_value);
-    return *this - now() + WallTime::now();
-}
-
-MonotonicTime ContinuousTime::approximateMonotonicTime() const
-{
-    if (isInfinity())
-        return MonotonicTime::fromRawSeconds(m_value);
-    return *this - now() + MonotonicTime::now();
-}
-
 void ContinuousTime::dump(PrintStream& out) const
 {
     out.print("Continuous(", m_value, " sec)");

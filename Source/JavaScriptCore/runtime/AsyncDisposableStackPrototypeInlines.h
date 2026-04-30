@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AsyncDisposableStackPrototype.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

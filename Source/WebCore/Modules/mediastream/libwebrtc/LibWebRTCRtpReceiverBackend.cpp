@@ -96,6 +96,8 @@ LibWebRTCRtpReceiverBackend::LibWebRTCRtpReceiverBackend(Ref<webrtc::RtpReceiver
 
 LibWebRTCRtpReceiverBackend::~LibWebRTCRtpReceiverBackend()
 {
+    if (RefPtr transformBackend = m_transformBackend)
+        transformBackend->detachFromOwningBackend();
     m_rtcReceiver->SetObserver(nullptr);
 }
 

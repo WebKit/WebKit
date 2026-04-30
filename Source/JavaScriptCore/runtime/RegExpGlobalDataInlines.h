@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include "GetVM.h"
+#include "JSGlobalObject.h"
+#include "RegExp.h"
 #include "RegExpGlobalData.h"
 
 namespace JSC {

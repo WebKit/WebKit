@@ -27,6 +27,7 @@
 #pragma once
 
 #include "BigIntConstructor.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

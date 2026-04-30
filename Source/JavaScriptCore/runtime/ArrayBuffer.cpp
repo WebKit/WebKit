@@ -459,7 +459,20 @@ void ArrayBuffer::setAssociatedWasmMemory(Wasm::Memory* memory)
 void ArrayBuffer::refreshAfterWasmMemoryGrow(Wasm::Memory* memory)
 {
     ASSERT(isWasmMemory());
+
+    void* oldData = m_contents.data();
     m_contents.refreshAfterWasmMemoryGrow(memory);
+    void* newData = m_contents.data();
+    if (newData == oldData)
+        return;
+
+    // JSArrayBufferViews (typed arrays) effectively cache their buffer's data pointer.
+    for (size_t i = numberOfIncomingReferences(); i--;) {
+        JSCell* cell = incomingReferenceAt(i);
+        auto* view = dynamicDowncast<JSArrayBufferView>(cell);
+        if (view)
+            view->refreshVector(newData);
+    }
 }
 
 void ArrayBuffer::setSharingMode(ArrayBufferSharingMode newSharingMode)
@@ -764,6 +777,7 @@ void ArrayBufferContents::refreshAfterWasmMemoryGrow(Wasm::Memory* memory)
     ASSERT(isResizableNonShared());
     // If the memory is BoundChecking, the memory's handle is replaced with a different one when it grows.
     m_memoryHandle = memory->handle();
+    m_data = memory->basePointer();
     m_sizeInBytes = m_memoryHandle->size();
 #else
     UNUSED_PARAM(memory);

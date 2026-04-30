@@ -355,7 +355,7 @@ void WebGLRenderingContext::addMembersToOpaqueRoots(JSC::AbstractSlotVisitor& vi
     WebGLRenderingContextBase::addMembersToOpaqueRoots(visitor);
 
     Locker locker { objectGraphLock() };
-    addWebCoreOpaqueRoot(visitor, RefPtr { m_activeQuery.get() }.get());
+    addWebCoreOpaqueRoot(visitor, protect(m_activeQuery.get()).get());
 }
 
 WebCoreOpaqueRoot root(const WebGLExtension<WebGLRenderingContext>* extension)

@@ -33,6 +33,7 @@
 #include "config.h"
 #include "CanvasRenderingContext2D.h"
 
+#include "AXObjectCache.h"
 #include "CSSFilterRenderer.h"
 #include "CSSFontSelector.h"
 #include "CSSPropertyNames.h"
@@ -48,6 +49,7 @@
 #include "NodeRenderStyle.h"
 #include "Path2D.h"
 #include "PixelFormat.h"
+#include "RenderReplaced.h"
 #include "RenderTheme.h"
 #include "RenderWidget.h"
 #include "ResourceLoadObserver.h"
@@ -169,6 +171,31 @@ void CanvasRenderingContext2D::drawFocusIfNeededInternal(const Path& path, Eleme
     auto zoomFactor = canvasStyle ? canvasStyle->usedZoom() : 1.f;
     context->drawFocusRing(path, 1, RenderTheme::singleton().focusRingColor(protect(element.document())->styleColorOptions(canvasStyle)), zoomFactor);
     didDrawEntireCanvas();
+
+    if (CheckedPtr cache = element.document().existingAXObjectCache()) {
+        auto pathBounds = path.boundingRect();
+        auto canvasBounds = state().transform.mapRect(pathBounds);
+
+        // Map from canvas backing-store coordinates into the canvas
+        // renderer's local coordinate space. replacedContentRect() gives
+        // the area where canvas content is actually rendered, accounting
+        // for object-fit and object-position.
+        float backingWidth = static_cast<float>(canvas->width());
+        float backingHeight = static_cast<float>(canvas->height());
+        if (backingWidth && backingHeight) {
+            if (CheckedPtr replaced = dynamicDowncast<RenderReplaced>(canvas->renderer())) {
+                auto contentRect = replaced->replacedContentRect();
+                canvasBounds = FloatRect(
+                    contentRect.x() + canvasBounds.x() * contentRect.width() / backingWidth,
+                    contentRect.y() + canvasBounds.y() * contentRect.height() / backingHeight,
+                    canvasBounds.width() * contentRect.width() / backingWidth,
+                    canvasBounds.height() * contentRect.height() / backingHeight
+                );
+            }
+        }
+
+        cache->deferCanvasFocusPathBoundsUpdate(element, canvas.get(), canvasBounds);
+    }
 }
 
 void CanvasRenderingContext2D::setFont(const String& newFont)

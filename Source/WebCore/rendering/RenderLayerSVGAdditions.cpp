@@ -22,13 +22,17 @@
 #include "CSSFilterRenderer.h"
 #include "ReferencedSVGResources.h"
 #include "RenderAncestorIterator.h"
+#include "RenderDescendantIterator.h"
+#include "RenderElementInlines.h"
 #include "RenderLayerFilters.h"
 #include "RenderLayerInlines.h"
 #include "RenderLayerModelObject.h"
 #include "RenderLayerSVGAdditionsInlines.h"
+#include "RenderObjectInlines.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGHiddenContainer.h"
 #include "RenderSVGModelObject.h"
+#include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceContainer.h"
 #include "RenderSVGRoot.h"
@@ -174,6 +178,132 @@ void RenderLayer::updateAncestorDependentStateForSVG()
     ASSERT(m_svgData);
     ASSERT(renderer().document().settings().layerBasedSVGEngineEnabled());
     m_svgData->enclosingHiddenOrResourceContainer = ancestorsOfType<RenderSVGHiddenContainer>(renderer()).first();
+}
+
+void RenderLayer::dirtyChildrenInDOMOrderForSVG()
+{
+    ASSERT(m_svgData);
+    m_svgData->childrenInDOMOrder.shrink(0); // Use shrink(0) instead of clear() to retain our capacity.
+    m_svgData->childrenInDOMOrderDirty = true;
+}
+
+void RenderLayer::collectChildrenInDOMOrderForSVG()
+{
+    ASSERT(m_svgData);
+    m_svgData->childrenInDOMOrderDirty = false;
+    m_svgData->childrenInDOMOrder.shrink(0); // Use shrink(0) instead of clear() to retain our capacity.
+
+    bool anyNonZeroZIndex = false;
+    appendChildrenInDOMOrderForSVG(renderer(), { }, anyNonZeroZIndex);
+
+    // Sort by z-index; for equal z-index, stable_sort preserves DOM order.
+    // Skip entirely when no child uses z-index — collection order already matches DOM order.
+    if (anyNonZeroZIndex) {
+        std::stable_sort(m_svgData->childrenInDOMOrder.begin(), m_svgData->childrenInDOMOrder.end(),
+            [](const SVGPaintOrderLayerItem& a, const SVGPaintOrderLayerItem& b) {
+                return a.zIndex < b.zIndex;
+            });
+    }
+}
+
+// Recursively collect children, splitting non-layered containers that have
+// layered descendants to ensure proper DOM-order interleaving. Returns true
+// if any layered child was found in this subtree.
+bool RenderLayer::appendChildrenInDOMOrderForSVG(RenderElement& parent, LayoutSize ancestorOffset, bool& anyNonZeroZIndex)
+{
+    auto& allChildren = m_svgData->childrenInDOMOrder;
+    bool hasIndependentlyPaintedDescendant = false;
+    for (CheckedRef child : childrenOfType<RenderElement>(parent)) {
+        // Never directly paint children of <defs>, <linearGradient>, etc.
+        if (child->isRenderSVGHiddenContainer())
+            continue;
+
+        if (child->hasSelfPaintingLayer()) {
+            CheckedRef layerModelObject = downcast<RenderLayerModelObject>(child.get());
+            CheckedRef childLayer = *layerModelObject->layer();
+            int zIndex = childLayer->zIndex();
+            if (zIndex)
+                anyNonZeroZIndex = true;
+            allChildren.append(SVGPaintOrderLayerItem::makeLayered(child.get(), childLayer.get(), zIndex));
+            hasIndependentlyPaintedDescendant = true;
+            continue;
+        }
+
+        // Transformed non-layer children are painted atomically by the consumer:
+        // its transform is applied and children are painted recursively.
+        if (child->isTransformed()) {
+            allChildren.append(SVGPaintOrderLayerItem::makeAtomic(child.get(), ancestorOffset));
+            hasIndependentlyPaintedDescendant = true;
+            continue;
+        }
+
+        // Leaf nodes (no children) are always painted atomically.
+        if (!child->firstChild()) {
+            allChildren.append(SVGPaintOrderLayerItem::makeAtomic(child.get(), ancestorOffset));
+            continue;
+        }
+
+        // Compute the offset that this child contributes to its descendants.
+        LayoutSize childOffset = ancestorOffset;
+        if (CheckedPtr svgModel = dynamicDowncast<RenderSVGModelObject>(child.get()))
+            childOffset += toLayoutSize(svgModel->currentSVGLayoutLocation());
+
+        // We don't yet know whether this non-layered container has any
+        // independently painted descendants (layered or transformed non-layer
+        // children), so recurse speculatively and decide what to keep based on
+        // the result.
+        //
+        // Example:
+        //   <g id="A">
+        //     <rect id="r1"/>
+        //     <g id="B" style="z-index: 5; opacity: 0.5;"/>   <!-- layered -->
+        //     <rect id="r2"/>
+        //   </g>
+        //
+        //   When recursing into A, the inner walk visits r1 (leaf, append), then B
+        //   (layered, append, mark independently-painted), then r2 (leaf, append).
+        //   The speculative segment is now [r1, B, r2] and
+        //   subtreeHasIndependentlyPaintedDescendant=true, so we fall into Case B
+        //   and additionally append A with the split flag. After z-sort the final
+        //   list is [r1, r2, A(split), B] — B last because z=5. The consumer then
+        //   paints r1 and r2 at A's offset, then A(split) which paints only A's
+        //   own outline (no child recursion), then B on top. Without the split
+        //   flag, A's normal paint would recurse into r1/B/r2 and all three would
+        //   be painted twice — once via A's recursion, once via their own list
+        //   entries.
+        //
+        // Case A — no independently painted descendants: the subtree paints
+        // atomically as part of the container's own normal paint walk. Discard
+        // the speculative entries (shrink to startIndex) and append a single
+        // entry for the container. Without the shrink, A's normal recursive
+        // paint would visit children that are still present in the list,
+        // causing the same double-paint problem.
+        //
+        // Case B — independently painted descendants exist: keep their entries
+        // (so they sort into the overall z-order) and append a "split" entry
+        // for the container itself. The consumer paints only the container's
+        // own non-content contribution (outlines) and skips child recursion,
+        // since each independently painted descendant is painted from the
+        // sorted list.
+        size_t startIndex = allChildren.size();
+        bool subtreeHasIndependentlyPaintedDescendant = appendChildrenInDOMOrderForSVG(child.get(), childOffset, anyNonZeroZIndex);
+        if (subtreeHasIndependentlyPaintedDescendant) {
+            allChildren.append(SVGPaintOrderLayerItem::makeOutlineOnly(child.get(), ancestorOffset));
+            hasIndependentlyPaintedDescendant = true;
+        } else {
+            allChildren.shrink(startIndex);
+            allChildren.append(SVGPaintOrderLayerItem::makeAtomic(child.get(), ancestorOffset));
+        }
+    }
+    return hasIndependentlyPaintedDescendant;
+}
+
+const Vector<SVGPaintOrderLayerItem>& RenderLayer::childrenInDOMOrderForSVG()
+{
+    ASSERT(m_svgData);
+    if (m_svgData->childrenInDOMOrderDirty)
+        collectChildrenInDOMOrderForSVG();
+    return m_svgData->childrenInDOMOrder;
 }
 
 } // namespace WebCore

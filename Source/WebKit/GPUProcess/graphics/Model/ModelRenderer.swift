@@ -21,19 +21,13 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE_GPU_PROCESS_MODEL && canImport(RealityCoreTextureProcessing, _version: 19)
+#if ENABLE_GPU_PROCESS_MODEL && canImport(RealityCoreTextureProcessing, _version: 19) && canImport(_USDKit_RealityKit, _version: 42)
 
 import QuartzCore
 import USDKit
 @_spi(UsdLoaderAPI) import _USDKit_RealityKit
 @_spi(RealityCoreRendererAPI) @_spi(Private) import RealityKit
 import simd
-
-internal struct CameraTransform {
-    var rotation: simd_quatf
-    var translation: simd_float3
-    var scale: simd_float3
-}
 
 class Renderer {
     let device: any MTLDevice
@@ -77,7 +71,7 @@ class Renderer {
             configuration: .init(
                 output: .init(colorPixelFormat: colorPixelFormat),
                 rasterSampleCount: rasterSampleCount,
-                enableTonemap: false,
+                enableTonemap: true,
                 enableColorMatch: colorSpace != nil,
                 hasTransparentContent: false
             ),
@@ -127,19 +121,29 @@ class Renderer {
         commandBuffer.commit()
     }
 
-    internal func setFOV(_ fovYRadians: Float) {
+    func setFOV(_ fovYRadians: Float) {
         fovY = fovYRadians
     }
 
-    internal func setBackgroundColor(_ color: simd_float3) {
+    func setBackgroundColor(_ color: simd_float3) {
         clearColor = MTLClearColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.0)
     }
 
-    internal func setCameraTransform(_ transform: CameraTransform) {
-        pose = .init(
-            translation: transform.translation,
-            rotation: transform.rotation,
-        )
+    func setCameraTransformForModelTransform(_ modelTransform: simd_float4x4) {
+        // To keep the model stationary while achieving the same visual result as applying
+        // modelTransform to the model, derive the equivalent camera pose by composing the
+        // inverse model transform with the default camera matrix.
+        var defaultCameraMatrix = matrix_identity_float4x4
+        defaultCameraMatrix.columns.3 = [0, 0, Self.cameraDistance, 1]
+        let cameraMatrix = simd_inverse(modelTransform) * defaultCameraMatrix
+
+        let col0 = simd_float3(cameraMatrix.columns.0.x, cameraMatrix.columns.0.y, cameraMatrix.columns.0.z)
+        let col1 = simd_float3(cameraMatrix.columns.1.x, cameraMatrix.columns.1.y, cameraMatrix.columns.1.z)
+        let col2 = simd_float3(cameraMatrix.columns.2.x, cameraMatrix.columns.2.y, cameraMatrix.columns.2.z)
+        let scale = simd_float3(simd_length(col0), simd_length(col1), simd_length(col2))
+        let rotation = simd_quatf(simd_float3x3(col0 / scale.x, col1 / scale.y, col2 / scale.z))
+        let translation = simd_float3(cameraMatrix.columns.3.x, cameraMatrix.columns.3.y, cameraMatrix.columns.3.z)
+        pose = .init(translation: translation, rotation: rotation)
     }
 }
 

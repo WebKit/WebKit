@@ -123,10 +123,6 @@ public:
     virtual void animationCurrentTime(CompletionHandler<void(std::optional<Seconds>&&)>&&) = 0;
     virtual void setAnimationCurrentTime(Seconds, CompletionHandler<void(bool success)>&&) = 0;
 
-    virtual void hasAudio(CompletionHandler<void(std::optional<bool>&&)>&&) = 0;
-    virtual void isMuted(CompletionHandler<void(std::optional<bool>&&)>&&) = 0;
-    virtual void setIsMuted(bool, CompletionHandler<void(bool success)>&&) = 0;
-
 #if ENABLE(MODEL_ELEMENT_ACCESSIBILITY)
     virtual ModelPlayerAccessibilityChildren accessibilityChildren() = 0;
 #endif

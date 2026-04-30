@@ -41,6 +41,8 @@ public:
     static Ref<HTMLAudioElement> create(const QualifiedName&, Document&, bool);
     static Ref<HTMLAudioElement> createForLegacyFactoryFunction(Document&, const AtomString& src);
 
+    ~HTMLAudioElement();
+
 private:
     HTMLAudioElement(const QualifiedName&, Document&, bool);
 

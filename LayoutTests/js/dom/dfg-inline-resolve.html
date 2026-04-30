@@ -38,8 +38,10 @@
                     var div = document.createElement('div');
                     document.body.appendChild(div);
                     div.innerHTML = text;
-                    if (self.testRunner)
+                    if (self.testRunner) {
                         testRunner.notifyDone();
+                        return;
+                    }
                 }
                 ++counts[0];
                 callPrintFoo();

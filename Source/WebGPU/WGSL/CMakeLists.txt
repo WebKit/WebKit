@@ -213,7 +213,7 @@ target_include_directories(WGSLCore PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/AST
     ${CMAKE_CURRENT_SOURCE_DIR}/Metal)
-target_link_libraries(WGSLCore PUBLIC WebKit::WTF WebKit::bmalloc)
+target_link_libraries(WGSLCore PUBLIC WebKit::JavaScriptCore)
 add_dependencies(WGSLCore wgsl-types)
 
 if (DEVELOPER_MODE_CXX_FLAGS)

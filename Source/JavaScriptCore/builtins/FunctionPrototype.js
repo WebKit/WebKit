@@ -41,18 +41,3 @@ function apply(thisValue, argumentValues)
 
     return this.@apply(thisValue, argumentValues);
 }
-
-@overriddenName="[Symbol.hasInstance]"
-function symbolHasInstance(value)
-{
-    "use strict";
-
-    if (!@isCallable(this))
-        return false;
-
-    if (@isBoundFunction(this))
-        return @hasInstanceBoundFunction(this, value);
-
-    var target = this.prototype;
-    return @instanceOf(value, target);
-}

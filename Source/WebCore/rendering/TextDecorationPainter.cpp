@@ -203,8 +203,7 @@ void TextDecorationPainter::paintBackgroundDecorations(const RenderStyle& style,
             strokeWavyTextDecoration(m_context, paintRect, m_isPrinting, decorationGeometry.wavyStrokeParameters, strokeStyle);
         else if (decoration == Style::TextDecorationLine::Flag::Underline || decoration == Style::TextDecorationLine::Flag::Overline) {
             if ((style.textDecorationSkipInk() == TextDecorationSkipInk::Auto
-                || style.textDecorationSkipInk() == TextDecorationSkipInk::All)
-                && !m_writingMode.isVerticalTypographic()) {
+                || style.textDecorationSkipInk() == TextDecorationSkipInk::All)) {
                 if (!m_context.paintingDisabled()) {
                     auto underlineBoundingBox = m_context.computeUnderlineBoundsForText(paintRect, m_isPrinting);
                     auto intersections = m_font.lineSegmentsForIntersectionsWithRect(textRun, decorationGeometry.textOrigin, underlineBoundingBox);

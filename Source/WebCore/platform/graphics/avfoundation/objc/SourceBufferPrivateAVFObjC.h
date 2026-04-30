@@ -173,7 +173,7 @@ private:
 
     void setTrackChangeCallbacks(const InitializationSegment&, bool initialized);
 
-    void NODELETE maybeUpdateNeedsVideoLayer();
+    void maybeUpdateNeedsVideoLayer();
 
     void ensureWeakOnDispatcher(Function<void(SourceBufferPrivateAVFObjC&)>&&);
     void callOnMainThreadWithPlayer(Function<void(MediaPlayerPrivateMediaSourceAVFObjC&)>&&);

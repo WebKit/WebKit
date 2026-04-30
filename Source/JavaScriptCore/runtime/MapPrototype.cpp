@@ -48,7 +48,7 @@ static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncGetOrInsert);
 static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncGetOrInsertComputed);
 static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncValues);
 static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncKeys);
-static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncEntries);
+JSC_DECLARE_HOST_FUNCTION(mapProtoFuncEntries);
 
 static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncSize);
     
@@ -65,7 +65,7 @@ void MapPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectWithoutTransition(vm, vm.propertyNames->deleteKeyword, deleteFunc, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().deletePrivateName(), deleteFunc, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
-    JSFunction* entries = JSFunction::create(vm, globalObject, 0, vm.propertyNames->builtinNames().entriesPublicName().string(), mapProtoFuncEntries, ImplementationVisibility::Public, JSMapEntriesIntrinsic);
+    JSFunction* entries = globalObject->mapProtoEntriesFunction();
     putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().entriesPublicName(), entries, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().entriesPrivateName(), entries, static_cast<unsigned>(PropertyAttribute::DontEnum));
 

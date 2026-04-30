@@ -6375,6 +6375,18 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/gc.log || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/index.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/packed-refs.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/packed-refs.new || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/HEAD.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/config.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/FETCH_HEAD.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
             ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git rebase --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
             ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git am --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
@@ -6407,6 +6419,18 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', r'del .git\gc.log || exit 0'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
+            ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', r'del .git\index.lock || exit 0'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', r'del .git\packed-refs.lock || exit 0'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', r'del .git\packed-refs.new || exit 0'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', r'del .git\HEAD.lock || exit 0'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', r'del .git\config.lock || exit 0'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', r'del .git\FETCH_HEAD.lock || exit 0'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
             ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', 'git rebase --abort || exit 0'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
             ExpectShell(command=['bash', '--posix', '-o', 'pipefail', '-c', 'git am --abort || exit 0'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
@@ -6437,6 +6461,18 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
 
         self.expectRemoteCommands(
             ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/gc.log || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/index.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/packed-refs.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/packed-refs.new || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/HEAD.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/config.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/FETCH_HEAD.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
             ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git rebase --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
@@ -6469,6 +6505,18 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/gc.log || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/index.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/packed-refs.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/packed-refs.new || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/HEAD.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/config.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/FETCH_HEAD.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
             ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git rebase --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
             ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git am --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
@@ -6500,6 +6548,18 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
 
         self.expectRemoteCommands(
             ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/gc.log || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/index.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/packed-refs.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/packed-refs.new || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/HEAD.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/config.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
+            .log('stdio', stdout=''),
+            ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm -f .git/FETCH_HEAD.lock || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),
             ExpectShell(command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'git rebase --abort || true'], workdir='wkdir', timeout=300, log_environ=False).exit(0)
             .log('stdio', stdout=''),

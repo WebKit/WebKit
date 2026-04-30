@@ -1,0 +1,4 @@
+
+FAIL Closing a FileSystemWritableFileStream that's modified the file produces a "modified" event promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: FileSystemObserver"
+FAIL All FileSystemWritableFileStream methods that aren't closed don't produce events promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: FileSystemObserver"
+

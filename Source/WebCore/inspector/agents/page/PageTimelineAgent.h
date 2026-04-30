@@ -50,7 +50,7 @@ public:
     // InspectorInstrumentation
     void didInvalidateLayout();
     void willLayout();
-    void didLayout(const Vector<FloatQuad>&);
+    void didLayout(const RenderElement&, const Vector<FloatQuad>&);
     void willComposite();
     void didComposite();
     void willPaint();

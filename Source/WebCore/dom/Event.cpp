@@ -31,10 +31,12 @@
 #include "EventTargetInlines.h"
 #include "InspectorInstrumentation.h"
 #include "JSDOMGlobalObject.h"
+#include "JSNodeCustomInlines.h"
 #include "LocalDOMWindow.h"
 #include "Performance.h"
 #include "ScriptWrappableInlines.h"
 #include "UserGestureIndicator.h"
+#include "WebCoreOpaqueRootInlines.h"
 #include "WorkerGlobalScope.h"
 #include <wtf/HexNumber.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -136,7 +138,10 @@ void Event::setTarget(RefPtr<EventTarget>&& target)
     if (m_target == target)
         return;
 
-    m_target = WTF::move(target);
+    {
+        Locker targetLocker { m_targetLock };
+        m_target = WTF::move(target);
+    }
     if (m_target)
         receivedTarget();
 }
@@ -205,6 +210,16 @@ void Event::resetAfterDispatch()
 
     InspectorInstrumentation::eventDidResetAfterDispatch(*this);
 }
+
+template<typename Visitor>
+void Event::visitInGCThread(Visitor& visitor)
+{
+    Locker targetLocker { m_targetLock };
+    addWebCoreOpaqueRoot(visitor, dynamicDowncast<Node>(m_target.get()));
+}
+
+template void Event::visitInGCThread(JSC::AbstractSlotVisitor&);
+template void Event::visitInGCThread(JSC::SlotVisitor&);
 
 String Event::debugDescription() const
 {

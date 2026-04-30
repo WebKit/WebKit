@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2013-2020 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,6 +28,7 @@
 
 #include "SMILTime.h"
 #include "SVGElement.h"
+#include <wtf/Deque.h>
 #include <wtf/HashSet.h>
 
 namespace WebCore {
@@ -106,6 +107,8 @@ public:
     bool hasConditionsConnected() const { return m_conditionsConnected; }
     
     void dispatchPendingEvent(SMILEventSender*, const AtomString& eventType);
+
+    unsigned lastDispatchedRepeatIteration() const { return m_lastDispatchedRepeatIteration; }
 
 protected:
     enum ActiveState { Inactive, Active, Frozen };
@@ -217,6 +220,10 @@ private:
     mutable SMILTime m_cachedMin;
     mutable SMILTime m_cachedMax;
 
+    // FIXME: Remove once TimeEvent carries the repeat iteration count directly (webkit.org/b/313717).
+    Deque<unsigned> m_pendingRepeatIterations;
+    unsigned m_lastDispatchedRepeatIteration { 0 };
+
     friend class ConditionEventListener;
 };
 
@@ -228,5 +235,10 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGSMILElement)
     {
         auto* svgElement = dynamicDowncast<WebCore::SVGElement>(node);
         return svgElement && isType(*svgElement);
+    }
+    static bool isType(const WebCore::EventTarget& target)
+    {
+        auto* node = dynamicDowncast<WebCore::Node>(target);
+        return node && isType(*node);
     }
 SPECIALIZE_TYPE_TRAITS_END()

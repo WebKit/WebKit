@@ -486,7 +486,7 @@ static MediaTimeUpdateData timeUpdateData(const MediaPlayer& player, MediaTime t
 {
     return {
         time,
-        player.timeIsProgressing(),
+        player.timeIsProgressing() ? player.effectiveRate() : 0.0,
         MonotonicTime::now()
     };
 }

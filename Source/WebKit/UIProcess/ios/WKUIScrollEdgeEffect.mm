@@ -119,7 +119,7 @@ enum class HiddenScrollEdgeEffectSource : uint8_t {
 - (void)setStyle:(UIScrollEdgeEffectStyle *)style
 {
     BOOL wasUsingHardStyle = _usesHardStyle;
-    _usesHardStyle = [style isEqual:UIScrollEdgeEffectStyle.hardStyle];
+    _usesHardStyle = ![style isEqual:UIScrollEdgeEffectStyle.softStyle] && ![style isEqual:UIScrollEdgeEffectStyle.automaticStyle];
 
     [protect(_effect) setStyle:style];
 

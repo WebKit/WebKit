@@ -28,6 +28,7 @@
 #include "CacheableIdentifier.h"
 #include "DFGRegisteredStructure.h"
 #include "HeapCell.h"
+#include "Operands.h"
 #include "PrivateFieldPutKind.h"
 #include <JavaScriptCore/ECMAMode.h>
 #include <wtf/OptionSet.h>
@@ -35,7 +36,11 @@
 
 #if ENABLE(DFG_JIT)
 
-namespace JSC { namespace DFG {
+namespace JSC {
+
+class StructureSet;
+
+namespace DFG {
 
 // This type used in passing an immediate argument to Node constructor;
 // distinguishes an immediate value (typically an index into a CodeBlock data structure - 
@@ -65,6 +70,7 @@ struct OpInfo {
     uint64_t m_value;
 };
 
-} } // namespace JSC::DFG
+} // namespace DFG
+} // namespace JSC
 
 #endif // ENABLE(DFG_JIT)

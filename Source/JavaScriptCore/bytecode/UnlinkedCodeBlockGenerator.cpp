@@ -31,12 +31,19 @@
 #include "InstructionStream.h"
 #include "JSCJSValueInlines.h"
 #include "PreciseJumpTargets.h"
+#include "StrongInlines.h"
 #include "UnlinkedMetadataTableInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(UnlinkedCodeBlockGenerator);
+
+UnlinkedCodeBlockGenerator::UnlinkedCodeBlockGenerator(VM& vm, UnlinkedCodeBlock* codeBlock)
+    : m_vm(vm)
+    , m_codeBlock(vm, codeBlock)
+{
+}
 
 void UnlinkedCodeBlockGenerator::addExpressionInfo(unsigned instructionOffset, unsigned divot, unsigned startOffset, unsigned endOffset, LineColumn lineColumn)
 {

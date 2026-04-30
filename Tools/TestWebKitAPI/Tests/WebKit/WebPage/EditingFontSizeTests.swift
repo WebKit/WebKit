@@ -48,7 +48,7 @@ struct EditingFontSizeTests {
         )
 
         // 13px matches legacy font size 2 ("small") when the default font size is 16 (the default).
-        try webView._setFont(#require(NSFont(name: "Helvetica", size: 13)), sender: nil)
+        webView._setFont(NSFont(name: "Helvetica", size: 13), sender: nil)
 
         let innerHTML = try #require(await page.callJavaScript("return document.getElementById('target').innerHTML") as? String)
         // The markup should contain a <font> element with size="2" for legacy compatibility.
@@ -59,11 +59,10 @@ struct EditingFontSizeTests {
         // Change the default font size so <font size="2"> alone would resolve to 10px.
         webView.configuration.preferences._defaultFontSize = 12
 
-        let computedSize = try #require(
-            await page.callJavaScript(
+        let computedSize =
+            try await page.callJavaScript(
                 "return getComputedStyle(document.getElementById('target').querySelector('[style]')).fontSize"
             ) as? String
-        )
         #expect(computedSize == "13px")
     }
 }

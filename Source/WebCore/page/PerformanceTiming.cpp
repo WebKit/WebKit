@@ -389,7 +389,7 @@ unsigned long long PerformanceTiming::monotonicTimeToIntegerMilliseconds(Monoton
     ASSERT(timeStamp.secondsSinceEpoch().seconds() >= 0);
     if (!timeStamp)
         return 0;
-    Seconds reduced = Performance::reduceTimeResolution(timeStamp.approximateWallTime().secondsSinceEpoch());
+    Seconds reduced = Performance::reduceTimeResolution(timeStamp.approximate<WallTime>().secondsSinceEpoch());
     return static_cast<unsigned long long>(reduced.milliseconds());
 }
 

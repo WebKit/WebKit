@@ -27,8 +27,13 @@ namespace WTF {
 
 AtomStringTable::~AtomStringTable()
 {
-    for (const auto& string : m_table)
-        string->setIsAtom(false);
+    for (const auto& string : m_table) {
+        // Static strings are immortal and their atom flag was set at construction
+        // time (via StringImpl::StringAtom), not by setIsAtom(). Skip them here
+        // since setIsAtom() asserts !isStatic().
+        if (!string->isStatic())
+            string->setIsAtom(false);
+    }
 }
 
 }

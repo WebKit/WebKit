@@ -194,6 +194,9 @@ public:
     bool isShowingActionPopup() { return m_showingActionPopup; };
     void setShowingActionPopup(bool isOpen) { m_showingActionPopup = isOpen; };
 
+    bool markDidRemoveStaleExtensionWebsiteData();
+    HashSet<String> activeExtensionURLs() const;
+
 #ifdef __OBJC__
     WKWebExtensionController *wrapper() const { return (WKWebExtensionController *)API::ObjectImpl<API::Object::Type::WebExtensionController>::wrapper(); }
     WKWebExtensionControllerDelegatePrivate *delegate() const { return (WKWebExtensionControllerDelegatePrivate *)protect(wrapper()).get().delegate; }
@@ -282,6 +285,7 @@ private:
     UserContentControllerProxySet m_allNonPrivateUserContentControllers;
     UserContentControllerProxySet m_allPrivateUserContentControllers;
     WebExtensionURLSchemeHandlerMap m_registeredSchemeHandlers;
+    bool m_didRemoveStaleExtensionWebsiteData { false };
 
     bool m_freshlyCreated : 1 { true };
 #ifdef NDEBUG

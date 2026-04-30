@@ -37,6 +37,7 @@
 #include <WebCore/HTMLMediaElementIdentifier.h>
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/MediaSampleConverter.h>
+#include <WebCore/MediaTimeUpdateData.h>
 #include <wtf/Forward.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/RefPtr.h>
@@ -98,6 +99,28 @@ public:
         void layerHostingContextChanged(RemoteAudioVideoRendererState, WebCore::HostingContext&&, const WebCore::FloatSize&);
 #endif
         ThreadSafeWeakPtr<AudioVideoRendererRemote> m_parent;
+    };
+
+    class TimeProgressEstimator final {
+    public:
+        MediaTime currentTime() const;
+        bool timeIsProgressing() const;
+        double effectiveRate() const { return m_effectiveRate.load(); }
+        void setTime(const WebCore::MediaTimeUpdateData&);
+        void setRate(double);
+        void pause();
+        void setStallCap(const MediaTime&);
+        void clearStallCap();
+
+    private:
+        static constexpr Seconds kUpdateInterval = remoteAudioVideoRendererUpdateInterval;
+        mutable Lock m_lock;
+        MediaTime m_cachedTime WTF_GUARDED_BY_LOCK(m_lock);
+        MonotonicTime m_wallTime WTF_GUARDED_BY_LOCK(m_lock);
+        std::atomic<double> m_effectiveRate { 0 };
+        bool m_forceUseCachedTime WTF_GUARDED_BY_LOCK(m_lock) { false };
+        mutable std::optional<MediaTime> m_lastReturnedTime WTF_GUARDED_BY_LOCK(m_lock);
+        std::optional<MediaTime> m_stallCap WTF_GUARDED_BY_LOCK(m_lock);
     };
 
 private:
@@ -245,7 +268,12 @@ private:
     std::atomic<bool> m_shutdown { false };
 
     mutable Lock m_lock;
-    RemoteAudioVideoRendererState m_state WTF_GUARDED_BY_LOCK(m_lock);
+    struct CachedState {
+        bool paused { false };
+        std::optional<WebCore::VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics;
+    };
+    CachedState m_cachedState WTF_GUARDED_BY_LOCK(m_lock);
+    TimeProgressEstimator m_timeEstimator;
 
     Function<void(WebCore::PlatformMediaError)> m_errorCallback WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     Function<void()> m_firstFrameAvailableCallback WTF_GUARDED_BY_CAPABILITY(queueSingleton());

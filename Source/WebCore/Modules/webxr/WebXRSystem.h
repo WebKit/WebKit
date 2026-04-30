@@ -138,7 +138,7 @@ private:
         Vector<Device::ViewData> views(XRSessionMode) const final;
         std::optional<PlatformXR::LayerInfo> createLayerProjection(uint32_t, uint32_t, bool) final { return std::nullopt; }
 #if ENABLE(WEBXR_LAYERS)
-        std::optional<PlatformXR::LayerInfo> createQuadLayer(IntSize, PlatformXR::LayerLayout) final { return std::nullopt; }
+        std::optional<PlatformXR::LayerInfo> createCompositionLayer(PlatformXR::CompositionLayerType, IntSize, PlatformXR::LayerLayout) final { return std::nullopt; }
 #endif
         void deleteLayer(PlatformXR::LayerHandle) final { }
 #if ENABLE(WEBXR_HIT_TEST)

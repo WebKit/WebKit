@@ -29,6 +29,11 @@ if (USE_XDGMIME)
     add_subdirectory(ThirdParty/xdgmime)
 endif ()
 
+# dav1d must be declared before libwebrtc and WebCore so target_link_libraries can resolve it.
+if (ENABLE_AV1)
+    add_subdirectory(ThirdParty/dav1d)
+endif ()
+
 if (USE_LIBWEBRTC)
     add_subdirectory(ThirdParty/libwebrtc)
     include_directories(${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/libwebrtc)

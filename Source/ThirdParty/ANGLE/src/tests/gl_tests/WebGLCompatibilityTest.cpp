@@ -1831,7 +1831,7 @@ void main()
     };
 
     GLBuffer indexBuffer;
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertexBuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(kIndexData), kIndexData, GL_DYNAMIC_DRAW);
 
     EXPECT_GL_NO_ERROR();
@@ -4229,6 +4229,90 @@ TEST_P(WebGLCompatibilityTest, DepthStencilAttachment)
     EXPECT_GL_ERROR(GL_INVALID_ENUM);
 }
 
+// Test the WebGL buffer binding rules. Index buffers cannot be bound to GPU writeable bindings and
+// vice versa
+TEST_P(WebGLCompatibilityTest, BufferBindingTypeRules)
+{
+    {
+        GLBuffer buffer;
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer);
+        EXPECT_GL_NO_ERROR();
+
+        glBindBuffer(GL_ARRAY_BUFFER, buffer);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+        if (getClientMajorVersion() > 2)
+        {
+            glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, buffer);
+            EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+            glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 1, buffer);
+            EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+            glBindBuffer(GL_UNIFORM_BUFFER, buffer);
+            EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+            // CopyRead and CopyWrite are allowed
+            glBindBuffer(GL_COPY_READ_BUFFER, buffer);
+            EXPECT_GL_NO_ERROR();
+
+            glBindBuffer(GL_COPY_WRITE_BUFFER, buffer);
+            EXPECT_GL_NO_ERROR();
+        }
+    }
+
+    {
+        GLBuffer buffer;
+        glBindBuffer(GL_ARRAY_BUFFER, buffer);
+        EXPECT_GL_NO_ERROR();
+
+        if (getClientMajorVersion() > 2)
+        {
+            // Other buffer types can be bound freely
+            glBindBuffer(GL_UNIFORM_BUFFER, buffer);
+            EXPECT_GL_NO_ERROR();
+
+            glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 1, buffer);
+            EXPECT_GL_NO_ERROR();
+        }
+
+        // ... except to element array buffer bindings
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    }
+}
+
+// Cannot copy between buffers of different WebGL types
+TEST_P(WebGL2CompatibilityTest, CopyBufferSubDataBufferTypeRules)
+{
+    GLBuffer elementArrayBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 128, nullptr, GL_STATIC_DRAW);
+
+    GLBuffer arrayBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, arrayBuffer);
+    glBufferData(GL_ARRAY_BUFFER, 128, nullptr, GL_STATIC_DRAW);
+
+    GLBuffer uniformBuffer;
+    glBindBuffer(GL_UNIFORM_BUFFER, uniformBuffer);
+    glBufferData(GL_UNIFORM_BUFFER, 128, nullptr, GL_STATIC_DRAW);
+
+    glCopyBufferSubData(GL_ELEMENT_ARRAY_BUFFER, GL_ARRAY_BUFFER, 0, 0, 128);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glCopyBufferSubData(GL_ARRAY_BUFFER, GL_ELEMENT_ARRAY_BUFFER, 0, 0, 128);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glCopyBufferSubData(GL_ELEMENT_ARRAY_BUFFER, GL_UNIFORM_BUFFER, 0, 0, 128);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glCopyBufferSubData(GL_UNIFORM_BUFFER, GL_ELEMENT_ARRAY_BUFFER, 0, 0, 128);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glCopyBufferSubData(GL_UNIFORM_BUFFER, GL_ARRAY_BUFFER, 0, 0, 128);
+    EXPECT_GL_NO_ERROR();
+}
+
 // Verify framebuffer attachments return expected types when in an inconsistant state.
 TEST_P(WebGLCompatibilityTest, FramebufferAttachmentConsistancy)
 {
@@ -4275,6 +4359,45 @@ TEST_P(WebGLCompatibilityTest, FramebufferAttachmentConsistancy)
 
     EXPECT_GL_NO_ERROR();
     EXPECT_GLENUM_EQ(GL_RENDERBUFFER, attachmentType);
+}
+
+// The WebGL javascript API has no map functionality but ANGLE still exposes the Map entrypoints
+// since they can be used for other internal operations. Verify you cannot draw with a mapped
+// buffer.
+TEST_P(WebGL2CompatibilityTest, MappedArrayBufferValidation)
+{
+    constexpr char kVS[] =
+        R"(attribute float a_pos;
+void main()
+{
+    gl_Position = vec4(a_pos, a_pos, a_pos, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, essl1_shaders::fs::Red());
+    GLint posLocation = glGetAttribLocation(program, "a_pos");
+    ASSERT_NE(-1, posLocation);
+    glUseProgram(program);
+
+    GLBuffer buffer;
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    glBufferData(GL_ARRAY_BUFFER, 16, nullptr, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(posLocation);
+    glVertexAttribPointer(posLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 0,
+                          reinterpret_cast<const void *>(12));
+    glDrawArrays(GL_POINTS, 0, 4);
+    ASSERT_GL_NO_ERROR();
+
+    glMapBufferRange(GL_ARRAY_BUFFER, 0, 16, GL_MAP_READ_BIT);
+    EXPECT_GL_NO_ERROR();
+
+    glDrawArrays(GL_POINTS, 0, 4);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glUnmapBuffer(GL_ARRAY_BUFFER);
+    EXPECT_GL_NO_ERROR();
+    glDrawArrays(GL_POINTS, 0, 4);
+    EXPECT_GL_NO_ERROR();
 }
 
 // This tests that rendering feedback loops works as expected with WebGL 2.
@@ -7207,8 +7330,7 @@ void main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     std::vector<GLColor> greenData(8 * 8, GLColor::green);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 8, 8, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                    greenData.data());
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 8, 8, 0, GL_RGBA, GL_UNSIGNED_BYTE, greenData.data());
     ASSERT_GL_NO_ERROR();
 
     glActiveTexture(GL_TEXTURE0);
@@ -7221,12 +7343,118 @@ void main()
 
     // In WebGL, drawing with a sampler/texture format mismatch must fail.
     GLubyte texData[8 * 8 * 2] = {};
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_R16UI, 8, 8, 0, GL_RED_INTEGER, GL_UNSIGNED_SHORT,
-                    texData);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_R16UI, 8, 8, 0, GL_RED_INTEGER, GL_UNSIGNED_SHORT, texData);
     ASSERT_GL_NO_ERROR();
 
     drawQuad(program, "a_position", 0.5f, 1.0f, true);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
+// Test that drawing GL_POINTS without setting gl_PointSize in the vertex shader
+// renders points with a default size of 1.0 pixel.
+TEST_P(WebGLCompatibilityTest, PointSizeDefaultWhenNotSet)
+{
+    constexpr char kVSWithoutPointSize[] =
+        R"(attribute vec2 a_position;
+void main()
+{
+    gl_Position = vec4(a_position, 0.0, 1.0);
+})";
+
+    constexpr char kVSWithPointSize[] =
+        R"(attribute vec2 a_position;
+void main()
+{
+    gl_PointSize = 1.0;
+    gl_Position = vec4(a_position, 0.0, 1.0);
+})";
+    constexpr char kVSWithPointSize0[] =
+        R"(attribute vec2 a_position;
+void main()
+{
+    gl_PointSize = 0.0;
+    gl_Position = vec4(a_position, 0.0, 1.0);
+})";
+    constexpr char kVSWithPointSizeVarying[] =
+        R"(attribute vec2 a_position;
+varying float p;
+void main()
+{
+    gl_PointSize = p;
+    gl_Position = vec4(a_position, 0.0, 1.0);
+})";
+
+    constexpr char kFS[] =
+        R"(precision mediump float;
+void main()
+{
+    gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(programWithoutPointSize, kVSWithoutPointSize, kFS);
+    ANGLE_GL_PROGRAM(programWithPointSize, kVSWithPointSize, kFS);
+    ANGLE_GL_PROGRAM(programWithPointSize0, kVSWithPointSize0, kFS);
+    ANGLE_GL_PROGRAM(programWithPointSizeVarying, kVSWithPointSizeVarying, kFS);
+
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+
+    // Place points at pixels (1,1), (w-2,1), (1,h-2), (w-2,h-2).
+    // NDC for pixel center: (pixel + 0.5) / size * 2.0 - 1.0.
+    const int px0 = 1;
+    const int py0 = 1;
+    const int px1 = w - 2;
+    const int py1 = h - 2;
+
+    const GLfloat vertices[] = {
+        (px0 + 0.5f) / w * 2.0f - 1.0f, (py0 + 0.5f) / h * 2.0f - 1.0f,
+        (px1 + 0.5f) / w * 2.0f - 1.0f, (py0 + 0.5f) / h * 2.0f - 1.0f,
+        (px0 + 0.5f) / w * 2.0f - 1.0f, (py1 + 0.5f) / h * 2.0f - 1.0f,
+        (px1 + 0.5f) / w * 2.0f - 1.0f, (py1 + 0.5f) / h * 2.0f - 1.0f,
+    };
+
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    struct Subcase
+    {
+        GLuint program;
+        const char *description;
+    } subcases[] = {
+        {programWithoutPointSize, "without gl_PointSize"},
+        {programWithPointSize, "with gl_PointSize = 1.0"},
+        {programWithPointSize0, "with gl_PointSize = 0.0"},
+        {programWithPointSizeVarying, "with gl_PointSize = v (unassigned varying == 0.0)"}};
+
+    for (const auto &subcase : subcases)
+    {
+        SCOPED_TRACE(testing::Message() << subcase.description);
+        glUseProgram(subcase.program);
+
+        GLint posLocation = glGetAttribLocation(subcase.program, "a_position");
+        ASSERT_NE(-1, posLocation);
+        glVertexAttribPointer(posLocation, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+        glEnableVertexAttribArray(posLocation);
+
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        glDrawArrays(GL_POINTS, 0, 4);
+        EXPECT_GL_NO_ERROR();
+
+        // Each point should be exactly 1 pixel.
+        EXPECT_PIXEL_COLOR_EQ(px0, py0, GLColor::green);
+        EXPECT_PIXEL_COLOR_EQ(px1, py0, GLColor::green);
+        EXPECT_PIXEL_COLOR_EQ(px0, py1, GLColor::green);
+        EXPECT_PIXEL_COLOR_EQ(px1, py1, GLColor::green);
+
+        // Neighbors should be black, confirming point size is 1.
+        EXPECT_PIXEL_COLOR_EQ(px0 - 1, py0, GLColor::black);
+        EXPECT_PIXEL_COLOR_EQ(px0 + 1, py0, GLColor::black);
+        EXPECT_PIXEL_COLOR_EQ(px0, py0 - 1, GLColor::black);
+        EXPECT_PIXEL_COLOR_EQ(px0, py0 + 1, GLColor::black);
+    }
 }
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(WebGLCompatibilityTest);

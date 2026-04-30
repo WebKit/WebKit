@@ -943,11 +943,6 @@ bool LocalFrameView::isScrollSnapInProgress() const
     return false;
 }
 
-void LocalFrameView::updateScrollingCoordinatorScrollSnapProperties() const
-{
-    renderView()->compositor().updateScrollSnapPropertiesWithFrameView(*this);
-}
-
 bool LocalFrameView::flushCompositingStateForThisFrame(const LocalFrame& rootFrameForFlush)
 {
     CheckedPtr renderView = this->renderView();
@@ -1131,8 +1126,12 @@ void LocalFrameView::obscuredContentInsetsDidChange(const FloatBoxExtent& newObs
             tiledBacking->setObscuredContentInsets(newObscuredContentInsets);
     }
 
-    if (RefPtr page = m_frame->page())
+    if (RefPtr page = m_frame->page()) {
         page->chrome().client().setNeedsFixedContainerEdgesUpdate();
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+        page->chrome().client().scheduleAccessibilityFrameGeometryUpdate();
+#endif
+    }
 }
 
 void LocalFrameView::topContentDirectionDidChange()
@@ -2152,17 +2151,26 @@ std::optional<LayoutRect> LocalFrameView::visibleRectOfChild(const Frame& child)
     return rects.transform([] (const auto& repaintRects) { return repaintRects.clippedOverflowRect; });
 }
 
-bool LocalFrameView::ownerElementOfChildFrameUsesDarkAppearance(const Frame& child) const
+OptionSet<FrameOwnerElementAppearance> LocalFrameView::appearanceOfOwnerElementOfChildFrame(const Frame& child) const
 {
     RefPtr childOwnerRenderer = child.ownerRenderer();
     if (!childOwnerRenderer)
-        return false;
+        return { };
 
     // Ensure |child| is a child of this frame.
     ASSERT(child.tree().parent()->frameID() == m_frame->frameID());
     ASSERT(childOwnerRenderer->frame().frameID() == m_frame->frameID());
 
-    return childOwnerRenderer->useDarkAppearance();
+    OptionSet<FrameOwnerElementAppearance> result;
+    if (childOwnerRenderer->useDarkAppearance())
+        result |= FrameOwnerElementAppearance::IsDark;
+#if ENABLE(DARK_MODE_CSS)
+    // FIXME: does <meta name="color-scheme"> counts as explicitly set too?
+    if (childOwnerRenderer->style().hasExplicitlySetColorScheme())
+        result |= FrameOwnerElementAppearance::ExplicitlySet;
+#endif
+
+    return result;
 }
 
 LayoutRect LocalFrameView::rectForFixedPositionLayout() const
@@ -7269,10 +7277,8 @@ IntSize LocalFrameView::totalScrollbarSpace() const
 
 int LocalFrameView::insetForLeftScrollbarSpace() const
 {
-    if (scrollbarGutterStyle().isStableBothEdges())
+    if (scrollbarGutterStyle().isStableBothEdges() || shouldPlaceVerticalScrollbarOnLeft())
         return scrollbarGutterWidth();
-    if (shouldPlaceVerticalScrollbarOnLeft())
-        return verticalScrollbar() ? verticalScrollbar()->occupiedWidth() : 0;
     return 0;
 }
 

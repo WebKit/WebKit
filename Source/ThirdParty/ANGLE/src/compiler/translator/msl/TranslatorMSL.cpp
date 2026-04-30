@@ -1249,12 +1249,21 @@ bool TranslatorMSL::translateImpl(TInfoSinkBase &sink,
     else if (getShaderType() == GL_VERTEX_SHADER)
     {
         DeclareRightBeforeMain(*root, *BuiltInVariable::gl_Position());
-
-        if (FindSymbolNode(root, BuiltInVariable::gl_PointSize()->name()))
+        // Always declare gl_PointSize to get [[point_size]] defined in case
+        // client draws with GL_POINTS.
         {
-            const TVariable *pointSize = static_cast<const TVariable *>(
-                getSymbolTable().findBuiltIn(ImmutableString("gl_PointSize"), getShaderVersion()));
+
+            const TVariable *pointSize = getShaderVersion() >= 300
+                                             ? BuiltInVariable::gl_PointSize300()
+                                             : BuiltInVariable::gl_PointSize();
             DeclareRightBeforeMain(*root, *pointSize);
+            TIntermBinary *defaultPointSize =
+                new TIntermBinary(TOperator::EOpAssign, new TIntermSymbol(pointSize),
+                                  CreateFloatNode(1.0f, pointSize->getType().getPrecision()));
+            if (!RunAtTheBeginningOfShader(this, root, defaultPointSize))
+            {
+                return false;
+            }
         }
 
         // Append a macro for transform feedback substitution prior to modifying depth.

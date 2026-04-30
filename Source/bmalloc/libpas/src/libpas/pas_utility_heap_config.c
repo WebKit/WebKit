@@ -44,46 +44,15 @@ PAS_HEAP_CONFIG_SPECIALIZATION_DEFINITIONS(
     pas_utility_heap_config, PAS_UTILITY_HEAP_CONFIG);
 
 void* pas_utility_heap_allocate_page(
-    pas_segregated_heap* heap, pas_physical_memory_transaction* transaction, pas_segregated_page_role role)
+    pas_segregated_heap* heap, pas_physical_memory_transaction* transaction)
 {
     PAS_UNUSED_PARAM(heap);
     PAS_ASSERT(!transaction);
-    PAS_ASSERT(role == pas_segregated_page_exclusive_role);
     return (void*)pas_compact_bootstrap_free_heap_try_allocate_with_alignment(
         PAS_SMALL_PAGE_DEFAULT_SIZE,
         pas_alignment_create_traditional(PAS_SMALL_PAGE_DEFAULT_SIZE),
         "pas_utility_heap/page",
         pas_delegate_allocation).begin;
-}
-
-pas_segregated_shared_page_directory*
-pas_utility_heap_shared_page_directory_selector(pas_segregated_heap* heap,
-                                                pas_segregated_size_directory* directory)
-{
-    PAS_UNUSED_PARAM(heap);
-    PAS_UNUSED_PARAM(directory);
-    PAS_ASSERT(!"Not implemented");
-    return NULL;
-}
-
-bool pas_utility_heap_config_for_each_shared_page_directory(
-    pas_segregated_heap* heap,
-    bool (*callback)(pas_segregated_shared_page_directory* directory,
-                     void* arg),
-    void* arg)
-{
-    PAS_ASSERT(heap == &pas_utility_segregated_heap);
-    PAS_UNUSED_PARAM(callback);
-    PAS_UNUSED_PARAM(arg);
-    return true;
-}
-
-void pas_utility_heap_config_dump_shared_page_directory_arg(
-    pas_stream* stream, pas_segregated_shared_page_directory* directory)
-{
-    PAS_UNUSED_PARAM(stream);
-    PAS_UNUSED_PARAM(directory);
-    PAS_ASSERT_NOT_REACHED();
 }
 
 PAS_END_EXTERN_C;

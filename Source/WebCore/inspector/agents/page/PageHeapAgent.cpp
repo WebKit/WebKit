@@ -30,6 +30,7 @@
 #include "JSCustomElementInterface.h"
 #include "JSElement.h"
 #include "JSNode.h"
+#include <JavaScriptCore/HeapCellInlines.h>
 #include <JavaScriptCore/JSFunction.h>
 #include <wtf/TZoneMallocInlines.h>
 

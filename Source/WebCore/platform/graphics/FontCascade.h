@@ -347,6 +347,7 @@ private:
 
 bool shouldSynthesizeSmallCaps(bool, const Font*, char32_t, std::optional<char32_t>, FontVariantCaps, bool);
 std::optional<char32_t> capitalized(char32_t);
+inline char32_t mirrorCharacterIfNeeded(char32_t); // Defined in FontCascadeInlines.h
 
 WTF::TextStream& operator<<(WTF::TextStream&, const FontCascade&);
 

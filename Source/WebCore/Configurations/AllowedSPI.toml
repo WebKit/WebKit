@@ -95,6 +95,13 @@ symbols = [
     "MACaptionAppearanceCopyPreviewText",
 ]
 
+[[temporary-usage]]
+request = "rdar://175714562"
+cleanup = "rdar://175714562"
+symbols = [
+    "CGImageApplyHDRGainMap",
+]
+
 [[not-web-essential]]
 request = "rdar://168411469"
 symbols = [
@@ -139,4 +146,12 @@ cleanup = "rdar://173046822"
 classes = [
     "_WTTextEffectManager",
     "_WTTextPreview",
+]
+
+[[temporary-usage]]
+requires = [ "HAVE_CORE_TEXT_GLYPHHASCOMPLEXCOLOR_FUNCTION" ]
+request = "rdar://168960112"
+cleanup = "rdar://170480216"
+symbols = [
+    "CTFontHasComplexColorFormatForGlyph",
 ]

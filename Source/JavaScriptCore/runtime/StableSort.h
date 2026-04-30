@@ -261,10 +261,17 @@ static ALWAYS_INLINE size_t gallopRight(VM& vm, const ElementType& key, const El
     return offset;
 }
 
+// webkit.org/b/313694 : Workaround GCC 13 slowness building this.
+#if COMPILER(GCC) && GCC_VERSION < 140000
+#define MAYBE_ALWAYS_INLINE inline
+#else
+#define MAYBE_ALWAYS_INLINE ALWAYS_INLINE
+#endif
+
 static constexpr size_t minGallopThreshold = 7;
 
 template<typename ElementType, typename Functor>
-static ALWAYS_INLINE void mergePowersortRuns(VM& vm, std::span<ElementType> dst, std::span<const ElementType> src, size_t srcIndex1, size_t srcEnd1, size_t srcIndex2, size_t srcEnd2, const Functor& comparator, size_t& minGallop)
+static MAYBE_ALWAYS_INLINE void mergePowersortRuns(VM& vm, std::span<ElementType> dst, std::span<const ElementType> src, size_t srcIndex1, size_t srcEnd1, size_t srcIndex2, size_t srcEnd2, const Functor& comparator, size_t& minGallop)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 

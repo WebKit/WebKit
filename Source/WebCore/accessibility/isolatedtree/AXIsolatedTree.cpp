@@ -28,7 +28,6 @@
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 #include "AXIsolatedTree.h"
 
-#include "AccessibilityNodeObjectInlines.h"
 #include "AXAttributeCacheScope.h"
 #include "AXGeometryManager.h"
 #include "AXIsolatedObject.h"
@@ -39,8 +38,9 @@
 #include "AXTreeStore.h"
 #include "AXTreeStoreInlines.h"
 #include "AXUtilities.h"
-#include "AccessibilityObjectInlines.h"
 #include "AccessibilityNodeObject.h"
+#include "AccessibilityNodeObjectInlines.h"
+#include "AccessibilityObjectInlines.h"
 #include "AccessibilityScrollView.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -49,6 +49,7 @@
 #include "FrameSelection.h"
 #include "HTMLNames.h"
 #include "LocalFrameView.h"
+#include "Logging.h"
 #include <wtf/MonotonicTime.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
@@ -1261,20 +1262,20 @@ void AXIsolatedTree::setSelectedTextMarkerRange(AXTextMarkerRange&& range)
 }
 
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
-void AXIsolatedTree::setFrameGeometry(AXFrameGeometry&& geometry, IntPoint scrollPosition)
+void AXIsolatedTree::setFrameGeometry(AXFrameGeometry&& geometry, IntPoint viewOriginScrollPosition)
 {
     Locker locker { m_changeLogLock };
     m_pendingFrameGeometry = WTF::move(geometry);
-    m_pendingFrameScrollPosition = scrollPosition;
+    m_pendingFrameViewOriginScrollPosition = viewOriginScrollPosition;
 }
 
 void AXIsolatedTree::updateFrameGeometryAndScrollPositionIfNeeded(AXObjectCache& cache)
 {
     if (std::optional geometry = cache.getAndUpdateFrameGeometry()) {
-        IntPoint scrollPosition;
+        IntPoint viewOriginScrollPosition;
         if (CheckedPtr view = cache.document()->view())
-            scrollPosition = view->scrollPosition();
-        setFrameGeometry(AXFrameGeometry { *geometry }, scrollPosition);
+            viewOriginScrollPosition = IntPoint(view->documentScrollPositionRelativeToViewOrigin());
+        setFrameGeometry(AXFrameGeometry { *geometry }, viewOriginScrollPosition);
     }
 }
 #endif
@@ -1678,8 +1679,8 @@ void AXIsolatedTree::applyPendingChangesLocked()
         m_frameGeometry = std::exchange(m_pendingFrameGeometry, std::nullopt).value();
         m_hasReceivedFrameGeometry = true;
     }
-    if (m_pendingFrameScrollPosition)
-        m_frameScrollPosition = std::exchange(m_pendingFrameScrollPosition, std::nullopt).value();
+    if (m_pendingFrameViewOriginScrollPosition)
+        m_frameViewOriginScrollPosition = std::exchange(m_pendingFrameViewOriginScrollPosition, std::nullopt).value();
 #endif
 
     // Do this at the end because it requires looking up the root node by ID, so doing it at the end

@@ -74,10 +74,18 @@ void WebSWRegistrationStore::closeFiles(CompletionHandler<void()>&& callback)
         callback();
 }
 
-void WebSWRegistrationStore::importRegistrations(CompletionHandler<void(std::optional<Vector<WebCore::ServiceWorkerContextData>>&&)>&& callback)
+void WebSWRegistrationStore::importRegistrationsForOrigin(const WebCore::SecurityOriginData& topOrigin, CompletionHandler<void(std::optional<Vector<WebCore::ServiceWorkerContextData>>&&)>&& callback)
 {
-    if (RefPtr manager = m_manager.get())
-        manager->importServiceWorkerRegistrations(WTF::move(callback));
+    if (RefPtr manager = m_manager)
+        manager->importServiceWorkerRegistrationsForOrigin(topOrigin, WTF::move(callback));
+    else
+        callback(std::nullopt);
+}
+
+void WebSWRegistrationStore::importOriginList(CompletionHandler<void(std::optional<HashSet<WebCore::ClientOrigin>>&&)>&& callback)
+{
+    if (RefPtr manager = m_manager)
+        manager->importServiceWorkerOriginList(WTF::move(callback));
     else
         callback(std::nullopt);
 }

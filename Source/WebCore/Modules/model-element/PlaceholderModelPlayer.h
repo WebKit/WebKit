@@ -98,9 +98,6 @@ private:
     void NODELETE animationDuration(CompletionHandler<void(std::optional<Seconds>&&)>&&) final;
     void NODELETE animationCurrentTime(CompletionHandler<void(std::optional<Seconds>&&)>&&) final;
     void NODELETE setAnimationCurrentTime(Seconds, CompletionHandler<void(bool success)>&&) final;
-    void NODELETE hasAudio(CompletionHandler<void(std::optional<bool>&&)>&&) final;
-    void NODELETE isMuted(CompletionHandler<void(std::optional<bool>&&)>&&) final;
-    void NODELETE setIsMuted(bool, CompletionHandler<void(bool success)>&&) final;
 #if ENABLE(MODEL_ELEMENT_ACCESSIBILITY)
     ModelPlayerAccessibilityChildren accessibilityChildren() final;
 #endif

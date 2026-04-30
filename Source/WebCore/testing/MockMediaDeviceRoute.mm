@@ -142,6 +142,16 @@ void MockMediaDeviceRoute::setTimeRange(const MockMediaDeviceRoute::TimeRange& t
     [m_platformRoute setTimeRange:CMTimeRangeMake(start, duration)];
 }
 
+float MockMediaDeviceRoute::volume() const
+{
+    return [m_platformRoute volume];
+}
+
+void MockMediaDeviceRoute::setVolume(float volume)
+{
+    [m_platformRoute setVolume:volume];
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)

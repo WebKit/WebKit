@@ -1693,7 +1693,7 @@ T* findUnignoredChild(T& object, F&& matches)
 {
     for (auto child : object.unignoredChildren()) {
         if (matches(child))
-            return downcast<T>(child.ptr());
+            return downcast<T>(child.unsafePtr());
     }
     return nullptr;
 }

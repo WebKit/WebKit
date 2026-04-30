@@ -1274,9 +1274,12 @@ void VulkanHelper::writePixels(VkImage dstImage,
                                const void *pixels,
                                size_t pixelsSize)
 {
-    ASSERT(imageFormat == VK_FORMAT_B8G8R8A8_UNORM || imageFormat == VK_FORMAT_R8G8B8A8_UNORM);
+    ASSERT(imageFormat == VK_FORMAT_B8G8R8A8_UNORM || imageFormat == VK_FORMAT_R8G8B8A8_UNORM ||
+           imageFormat == VK_FORMAT_R4G4B4A4_UNORM_PACK16);
     ASSERT(imageExtent.depth == 1);
-    ASSERT(pixelsSize == 4 * imageExtent.width * imageExtent.height);
+
+    uint32_t pixelSize = imageFormat == VK_FORMAT_R4G4B4A4_UNORM_PACK16 ? 2 : 4;
+    ASSERT(pixelsSize == pixelSize * imageExtent.width * imageExtent.height);
 
     VkBufferCreateInfo bufferCreateInfo = {
         /* .sType = */ VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,

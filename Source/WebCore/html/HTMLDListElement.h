@@ -32,6 +32,8 @@ class HTMLDListElement final : public HTMLElement {
 public:
     static Ref<HTMLDListElement> create(const QualifiedName&, Document&);
 
+    ~HTMLDListElement();
+
 private:
     HTMLDListElement(const QualifiedName&, Document&);
 };

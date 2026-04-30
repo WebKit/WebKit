@@ -40,7 +40,6 @@
 #include "CSSNumericFactory.h"
 #include "CSSOMKeywordValue.h"
 #include "CSSParser.h"
-#include "CSSPropertyIdentifierValue.h"
 #include "CSSPropertyParser.h"
 #include "CSSSerializationContext.h"
 #include "CSSShorthandSubstitutionValue.h"
@@ -293,8 +292,6 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Document& docum
         return upcast<CSSStyleValue>(CSSOMKeywordValue::rectifyKeywordish(keywordValue->cssText(CSS::defaultSerializationContext())));
     } else if (auto* customIdentValue = dynamicDowncast<CSSCustomIdentValue>(cssValue))
         return upcast<CSSStyleValue>(CSSOMKeywordValue::rectifyKeywordish(customIdentValue->cssText(CSS::defaultSerializationContext())));
-    else if (auto* propertyIdentifierValue = dynamicDowncast<CSSPropertyIdentifierValue>(cssValue))
-        return upcast<CSSStyleValue>(CSSOMKeywordValue::rectifyKeywordish(propertyIdentifierValue->cssText(CSS::defaultSerializationContext())));
     else if (auto* imageValue = dynamicDowncast<CSSImageValue>(cssValue))
         return Ref<CSSStyleValue> { CSSStyleImageValue::create(const_cast<CSSImageValue&>(*imageValue), document) };
     else if (auto* referenceValue = dynamicDowncast<CSSSubstitutionValue>(cssValue))

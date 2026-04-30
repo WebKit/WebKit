@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBXR) && ENABLE(WEBXR_HANDS)
 
+#include "EventTargetInlines.h"
 #include "WebXRFrame.h"
 #include "WebXRHand.h"
 #include "WebXRRigidTransform.h"

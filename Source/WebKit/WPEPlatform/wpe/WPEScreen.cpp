@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WPEScreen.h"
 
+#include <array>
 #include <wtf/glib/WTFGType.h>
 
 #if USE(LIBDRM)
@@ -204,8 +205,8 @@ static std::optional<uint32_t> findCrtc(WPEScreen* screen, int fd)
 
 static void wpeScreenTryEnsureSyncObserver(WPEScreen* screen)
 {
-    drmDevicePtr devices[64];
-    const int devicesNum = drmGetDevices2(0, devices, std::size(devices));
+    std::array<drmDevicePtr, 64> devices;
+    const int devicesNum = drmGetDevices2(0, devices.data(), devices.size());
     if (devicesNum <= 0)
         return;
 
@@ -225,7 +226,7 @@ static void wpeScreenTryEnsureSyncObserver(WPEScreen* screen)
         } else
             g_debug("WPEScreen %u: Failed to find a CRTC for device %s", screen->priv->id, devices[i]->nodes[DRM_NODE_PRIMARY]);
     }
-    drmFreeDevices(devices, devicesNum);
+    drmFreeDevices(devices.data(), devicesNum);
 
     if (!screen->priv->syncObserver)
         g_debug("WPEScreen %u: Could not create a WPEScreenSyncObserverDRM", screen->priv->id);

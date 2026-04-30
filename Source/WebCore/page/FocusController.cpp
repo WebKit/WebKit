@@ -481,7 +481,7 @@ void FocusController::setFocusedFrame(Frame* frame, BroadcastFocusedFrame broadc
     bool shouldBroadcast = broadcast == BroadcastFocusedFrame::Yes;
     m_isChangingFocusedFrame = true;
 
-    RefPtr oldFrame { focusedLocalFrame() };
+    RefPtr oldFrame { localFocusedFrame() };
     RefPtr newFrame { dynamicDowncast<LocalFrame>(frame) };
 
     m_focusedFrame = frame;
@@ -528,7 +528,7 @@ void FocusController::setFocusedFrame(Frame* frame, BroadcastFocusedFrame broadc
 
 LocalFrame* FocusController::focusedOrMainFrame() const
 {
-    if (auto* frame = focusedLocalFrame())
+    if (auto* frame = localFocusedFrame())
         return frame;
     if (auto* localMainFrame = m_page->localMainFrame())
         return localMainFrame;
@@ -551,7 +551,7 @@ void FocusController::setFocusedInternal(bool focused)
     if (!focusedFrame())
         setFocusedFrame(protect(m_page->mainFrame()).ptr());
 
-    RefPtr focusedFrame = focusedLocalFrame();
+    RefPtr focusedFrame = localFocusedFrame();
     if (focusedFrame && focusedFrame->view()) {
         protect(focusedFrame->selection())->setFocused(focused);
         dispatchEventsOnWindowAndFocusedElement(protect(focusedFrame->document()).get(), focused);
@@ -578,7 +578,12 @@ FocusableElementSearchResult FocusController::findFocusableElementContinuingFrom
     if (!ownerElement)
         return { nullptr };
 
-    auto findResult = findFocusableElementAcrossFocusScope(direction, FocusNavigationScope::scopeOf(*ownerElement), ownerElement.get(), focusEventData, shouldFocusElement);
+    return findFocusableElementContinuingFromOwnerElement(direction, *ownerElement, focusEventData, shouldFocusElement);
+}
+
+FocusableElementSearchResult FocusController::findFocusableElementContinuingFromOwnerElement(FocusDirection direction, Element& ownerElement, const FocusEventData& focusEventData, ShouldFocusElement shouldFocusElement)
+{
+    auto findResult = findFocusableElementAcrossFocusScope(direction, FocusNavigationScope::scopeOf(ownerElement), &ownerElement, focusEventData, shouldFocusElement);
 
     if (findResult.continuedSearchInRemoteFrame == ContinuedSearchInRemoteFrame::Yes)
         return findResult;
@@ -593,7 +598,6 @@ FocusableElementSearchResult FocusController::findFocusableElementContinuingFrom
         }
 
         // Chrome doesn't want focus, so we should wrap focus.
-        // FIXME: We probably want to travel up the document tree
         RefPtr localTopDocument = m_page->localTopDocument();
         if (!localTopDocument)
             return findResult;
@@ -602,6 +606,12 @@ FocusableElementSearchResult FocusController::findFocusableElementContinuingFrom
 
         if (!findResult.element)
             return findResult;
+    }
+
+    if (shouldFocusElement == ShouldFocusElement::Yes) {
+        RefPtr element = findResult.element;
+        setFocusedFrame(element->document().frame());
+        element->focus({ { }, { }, SelectionRestorationMode::SelectAll, direction, { }, { }, FocusVisibility::Visible });
     }
 
     return findResult;
@@ -616,8 +626,24 @@ FocusableElementSearchResult FocusController::findFocusableElementDescendingInto
     RefPtr element = startingElement;
     while (RefPtr owner = dynamicDowncast<HTMLFrameOwnerElement>(element)) {
         if (RefPtr remoteFrame = dynamicDowncast<RemoteFrame>(owner->contentFrame())) {
-            remoteFrame->client().findFocusableElementDescendingIntoRemoteFrame(direction, focusEventData, shouldFocusElement, [](FoundElementInRemoteFrame) {
-                // FIXME: Implement sibling frame search by continuing here.
+            remoteFrame->client().findFocusableElementDescendingIntoRemoteFrame(direction, focusEventData, shouldFocusElement, [weakPage = WeakPtr { m_page.get() }, weakOwner = WeakPtr { *owner }, shouldFocusElement](FoundElementInRemoteFrame found) {
+                if (found == FoundElementInRemoteFrame::Yes)
+                    return;
+
+                RefPtr page = weakPage.get();
+                if (!page)
+                    return;
+
+                RefPtr ownerElement = weakOwner.get();
+                if (!ownerElement)
+                    return;
+
+                // The remote frame has no focusable elements. Focus the frame itself,
+                // matching the behavior of local empty iframes (see findFocusableElementInDocumentOrderStartingWithFrame).
+                if (shouldFocusElement == ShouldFocusElement::Yes) {
+                    ownerElement->document().setFocusedElement(nullptr);
+                    page->focusController().setFocusedFrame(ownerElement->contentFrame());
+                }
             });
 
             return { nullptr, ContinuedSearchInRemoteFrame::Yes };
@@ -865,14 +891,16 @@ FocusableElementSearchResult FocusController::findFocusableElementAcrossFocusSco
             [&](const RefPtr<Frame>& frame) -> FocusableElementSearchResult {
                 switch (frame->frameType()) {
                 case Frame::FrameType::Remote: {
-                    if (!currentNode)
-                        return { };
-                    RefPtr currentFrame = currentNode->document().frame();
+                    RefPtr<LocalFrame> currentFrame;
+                    if (currentNode)
+                        currentFrame = currentNode->document().frame();
+                    else if (RefPtr firstNode = scope.firstNodeInScope())
+                        currentFrame = protect(firstNode->document())->frame();
                     if (!currentFrame)
                         return { };
                     if (shouldFocusElement == ShouldFocusElement::Yes) {
                         clearSelectionIfNeeded(currentFrame.get(), nullptr, nullptr);
-                        currentNode->document().setFocusedElement(nullptr);
+                        currentFrame->document()->setFocusedElement(nullptr);
                     }
                     downcast<RemoteFrame>(*frame).client().findFocusableElementContinuingFromFrame(direction, currentFrame->frameID(), focusEventData, shouldFocusElement);
                     return { nullptr, ContinuedSearchInRemoteFrame::Yes };
@@ -1030,14 +1058,14 @@ Element* FocusController::nextFocusableElementOrScopeOwner(const FocusNavigation
                 if (isFocusableElementOrScopeOwner(*element, focusEventData) && shadowAdjustedTabIndex(*element, focusEventData) >= 0)
                     return element.unsafeGet();
             }
+        } else {
+            // First try to find a node with the same tabindex as start that comes after start in the scope.
+            if (auto* winner = findElementWithExactTabIndex(scope, RefPtr { scope.nextInScope(start) }.get(), startTabIndex, focusEventData, FocusDirection::Forward))
+                return winner;
+
+            if (!startTabIndex)
+                return nullptr; // We've reached the last node in the document with a tabindex of 0. This is the end of the tabbing order.
         }
-
-        // First try to find a node with the same tabindex as start that comes after start in the scope.
-        if (auto* winner = findElementWithExactTabIndex(scope, RefPtr { scope.nextInScope(start) }.get(), startTabIndex, focusEventData, FocusDirection::Forward))
-            return winner;
-
-        if (!startTabIndex)
-            return nullptr; // We've reached the last node in the document with a tabindex of 0. This is the end of the tabbing order.
     }
 
     // Look for the first Element in the scope that:
@@ -1078,10 +1106,13 @@ Element* FocusController::previousFocusableElementOrScopeOwner(const FocusNaviga
             if (isFocusableElementOrScopeOwner(*element, focusEventData) && shadowAdjustedTabIndex(*element, focusEventData) >= 0)
                 return element.unsafeGet();
         }
+    } else {
+        if (auto* winner = findElementWithExactTabIndex(scope, startingNode.get(), startingTabIndex, focusEventData, FocusDirection::Backward))
+            return winner;
     }
 
-    if (auto* winner = findElementWithExactTabIndex(scope, startingNode.get(), startingTabIndex, focusEventData, FocusDirection::Backward))
-        return winner;
+    if (startingTabIndex < 0)
+        return nullptr;
 
     // There are no nodes before start with the same tabindex as start, so look for a node that:
     // 1) has the highest non-zero tabindex (that is less than start's tabindex), and
@@ -1135,8 +1166,8 @@ bool FocusController::setFocusedElement(Element* element, Frame* newFocusedFrame
 {
     ASSERT(broadcast == BroadcastFocusedElement::Yes || (!element && is<RemoteFrame>(newFocusedFrame)));
 
-    RefPtr newFocusedLocalFrame { dynamicDowncast<LocalFrame>(newFocusedFrame) };
-    RefPtr oldFocusedFrame = focusedLocalFrame();
+    RefPtr newLocalFocusedFrame { dynamicDowncast<LocalFrame>(newFocusedFrame) };
+    RefPtr oldFocusedFrame = localFocusedFrame();
     if (m_focusedFrameBeforeRemoteFocusBroadcast && broadcast == BroadcastFocusedElement::No)
         oldFocusedFrame = std::exchange(m_focusedFrameBeforeRemoteFocusBroadcast, nullptr).get();
     RefPtr oldDocument = oldFocusedFrame ? oldFocusedFrame->document() : nullptr;
@@ -1148,8 +1179,8 @@ bool FocusController::setFocusedElement(Element* element, Frame* newFocusedFrame
             page->chrome().client().elementDidRefocus(*element, options);
             return true;
         }
-        if (newFocusedLocalFrame) {
-            RefPtr newFocusedDocument = newFocusedLocalFrame->document();
+        if (newLocalFocusedFrame) {
+            RefPtr newFocusedDocument = newLocalFocusedFrame->document();
             if (newFocusedDocument && newFocusedDocument != oldDocument)
                 newFocusedDocument->setFocusedElement(nullptr, broadcast);
         }
@@ -1161,13 +1192,13 @@ bool FocusController::setFocusedElement(Element* element, Frame* newFocusedFrame
         return false;
 
     if (shouldClearSelectionWhenChangingFocusedElement(page, WTF::move(oldFocusedElement), element))
-        clearSelectionIfNeeded(oldFocusedFrame.get(), newFocusedLocalFrame.get(), element);
+        clearSelectionIfNeeded(oldFocusedFrame.get(), newLocalFocusedFrame.get(), element);
 
     if (!element) {
         if (oldDocument)
             oldDocument->setFocusedElement(nullptr, broadcast);
-        if (newFocusedLocalFrame) {
-            RefPtr newFocusedDocument = newFocusedLocalFrame->document();
+        if (newLocalFocusedFrame) {
+            RefPtr newFocusedDocument = newLocalFocusedFrame->document();
             if (newFocusedDocument && newFocusedDocument != oldDocument)
                 newFocusedDocument->setFocusedElement(nullptr, broadcast);
         }
@@ -1185,7 +1216,7 @@ bool FocusController::setFocusedElement(Element* element, Frame* newFocusedFrame
     if (oldDocument && oldDocument != newDocument.ptr())
         oldDocument->setFocusedElement(nullptr, broadcast);
 
-    if (newFocusedLocalFrame && !newFocusedLocalFrame->page()) {
+    if (newLocalFocusedFrame && !newLocalFocusedFrame->page()) {
         setFocusedFrame(nullptr);
         return false;
     }
@@ -1238,7 +1269,7 @@ void FocusController::setActiveInternal(bool active)
     if (RefPtr focusedOrMainFrame = this->focusedOrMainFrame())
         focusedOrMainFrame->selection().pageActivationChanged();
 
-    RefPtr focusedFrame = focusedLocalFrame();
+    RefPtr focusedFrame = localFocusedFrame();
     if (focusedFrame && isFocused())
         dispatchEventsOnWindowAndFocusedElement(protect(focusedFrame->document()).get(), active);
 }
@@ -1334,7 +1365,7 @@ static void updateFocusCandidateIfNeeded(FocusDirection direction, const FocusCa
 
 void FocusController::findFocusCandidateInContainer(const ContainerNode& container, const LayoutRect& startingRect, FocusDirection direction, const FocusEventData& focusEventData, FocusCandidate& closest)
 {
-    RefPtr focusedNode = (focusedLocalFrame() && focusedLocalFrame()->document()) ? focusedLocalFrame()->document()->focusedElement() : nullptr;
+    RefPtr focusedNode = (localFocusedFrame() && localFocusedFrame()->document()) ? localFocusedFrame()->document()->focusedElement() : nullptr;
 
     RefPtr element = ElementTraversal::firstWithin(container);
     FocusCandidate current;
@@ -1364,7 +1395,7 @@ void FocusController::findFocusCandidateInContainer(const ContainerNode& contain
 
     // The variable 'candidateCount' keeps track of the number of nodes traversed in a given container.
     // If we have more than one container in a page then the total number of nodes traversed is equal to the sum of nodes traversed in each container.
-    RefPtr focusedFrame = focusedLocalFrame();
+    RefPtr focusedFrame = localFocusedFrame();
     if (focusedFrame && focusedFrame->document()) {
         candidateCount += focusedFrame->document()->page()->lastSpatialNavigationCandidateCount();
         focusedFrame->document()->page()->setLastSpatialNavigationCandidateCount(candidateCount);
@@ -1465,7 +1496,7 @@ bool FocusController::advanceFocusDirectionally(FocusDirection direction, const 
     }
 
     ASSERT(container);
-    RefPtr focusedFrame = focusedLocalFrame();
+    RefPtr focusedFrame = localFocusedFrame();
     if (focusedFrame && focusedFrame->document())
         focusedDocument->page()->setLastSpatialNavigationCandidateCount(0);
 

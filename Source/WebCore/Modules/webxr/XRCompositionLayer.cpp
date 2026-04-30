@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBXR_LAYERS)
 
+#include "EventTargetInlines.h"
 #include "WebGLOpaqueTexture.h"
 #include "WebXRSession.h"
 #include "XRLayerBacking.h"

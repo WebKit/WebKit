@@ -29,6 +29,7 @@
 #include "ChromeClient.h"
 #include "ComposedTreeAncestorIterator.h"
 #include "DocumentPage.h"
+#include "DocumentQuirks.h"
 #include "Element.h"
 #include "EventHandler.h"
 #include "EventNames.h"

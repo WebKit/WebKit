@@ -28,6 +28,7 @@
 #include "YarrErrorCode.h"
 
 #include "Error.h"
+#include <array>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -37,7 +38,7 @@ ASCIILiteral errorMessage(ErrorCode error)
 {
 #define REGEXP_ERROR_PREFIX "Invalid regular expression: "
     // The order of this array must match the ErrorCode enum.
-    static const ASCIILiteral errorMessages[] = {
+    static constexpr auto errorMessages = std::to_array<ASCIILiteral>({
         { },                                                                          // NoError
 
         // The following are hard errors.
@@ -75,7 +76,7 @@ ASCIILiteral errorMessage(ErrorCode error)
 
         // The following are NOT hard errors.
         REGEXP_ERROR_PREFIX "too many nested disjunctions"_s,                         // TooManyDisjunctions
-    };
+    });
 
     return errorMessages[static_cast<unsigned>(error)];
 }

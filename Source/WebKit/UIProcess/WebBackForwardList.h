@@ -103,7 +103,7 @@ public:
     FrameState* findFrameStateInItem(WebCore::BackForwardItemIdentifier, WebCore::FrameIdentifier, uint64_t);
     void updateFrameIdentifier(WebCore::FrameIdentifier oldFrameID, WebCore::FrameIdentifier newFrameID);
 
-    String loggingString();
+    String loggingString() const;
 
 private:
     explicit WebBackForwardList(WebPageProxy&);

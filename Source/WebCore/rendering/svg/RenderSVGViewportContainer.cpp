@@ -156,9 +156,10 @@ void RenderSVGViewportContainer::updateLayerTransform()
         hasCurrentViewEmptyViewBox = useSVGSVGElement->currentView().hasEmptyViewBox();
     if (useSVGSVGElement->hasAttribute(SVGNames::viewBoxAttr) || !hasCurrentViewEmptyViewBox) {
         // An empty viewBox disables the rendering -- dirty the visible descendant status!
-        if (useSVGSVGElement->hasEmptyViewBox() && hasCurrentViewEmptyViewBox)
-            layer()->dirtyVisibleContentStatus();
-        else if (!useSVGSVGElement->viewBox().isEmpty() || !hasCurrentViewEmptyViewBox) {
+        if (useSVGSVGElement->hasEmptyViewBox() && hasCurrentViewEmptyViewBox) {
+            if (hasLayer())
+                layer()->dirtyVisibleContentStatus();
+        } else if (!useSVGSVGElement->viewBox().isEmpty() || !hasCurrentViewEmptyViewBox) {
             if (auto viewBoxTransform = viewBoxToViewTransform(useSVGSVGElement, viewportSize); !viewBoxTransform.isIdentity()) {
                 if (m_supplementalLayerTransform.isIdentity())
                     m_supplementalLayerTransform = viewBoxTransform;

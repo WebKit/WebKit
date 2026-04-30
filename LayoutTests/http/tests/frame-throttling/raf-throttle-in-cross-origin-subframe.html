@@ -22,70 +22,58 @@
         'same' : undefined,
     }
 
-    var messageHandler;
-    var messagesReceived = 0;
+    var frameLoadCount = 0;
 
-    function interactWithSubframes()
+    function queryThrottleState(frame, id)
     {
-        UIHelper.activateAt(crossOriginFrame.offsetLeft + 20, crossOriginFrame.offsetTop + 20).then(function() {
-            debug("Interacted with cross-origin frame");
-            UIHelper.activateAt(sameOriginFrame.offsetLeft + 20, sameOriginFrame.offsetTop + 20).then(function() {
-                debug("Interacted with same-origin frame");
-                messageHandler = checkUnthrottledAfterInteraction;
-                messagesReceived = 0;
-                crossOriginFrame.contentWindow.postMessage("report-throttle-cross", "*");
-                sameOriginFrame.contentWindow.postMessage("report-throttle-same", "*");
-            });
+        return new Promise(function(resolve) {
+            function handler(message) {
+                var re = /throttled\[(\w+)\]: ((\w+)(\|\w+)*|\[Unthrottled\])/;
+                var match = re.exec(message.data);
+                if (match && match[1] === id) {
+                    window.removeEventListener("message", handler);
+                    debug("Received message: " + message.data);
+                    throttledState[id] = match[2];
+                    resolve();
+                }
+            }
+            window.addEventListener("message", handler);
+            frame.contentWindow.postMessage("report-throttle-" + id, "*");
         });
     }
 
-    function runTest()
+    async function runTest()
     {
         crossOriginFrame = document.getElementById("cross-origin-frame");
         sameOriginFrame = document.getElementById("same-origin-frame");
 
         debug("Checking that requestAnimationFrame is throttled in cross origin frame");
-        
-        messageHandler = checkInitiallyThrottled;
-        messagesReceived = 0;
-        crossOriginFrame.contentWindow.postMessage("report-throttle-cross", "*");
-        sameOriginFrame.contentWindow.postMessage("report-throttle-same", "*");
-    }
 
-    function checkInitiallyThrottled()
-    {
-        shouldBeEqualToString("throttledState['cross']", "NonInteractiveCrossOriginFrame");
+        await queryThrottleState(crossOriginFrame, "cross");
+        await queryThrottleState(sameOriginFrame, "same");
+        shouldBeEqualToString("throttledState['cross']", "NonInteractedCrossOriginFrame");
         shouldBeEqualToString("throttledState['same']", "[Unthrottled]");
-        interactWithSubframes();
-    }
 
-    function checkUnthrottledAfterInteraction()
-    {
+        await UIHelper.activateAt(crossOriginFrame.offsetLeft + 20, crossOriginFrame.offsetTop + 20);
+        debug("Interacted with cross-origin frame");
+        await UIHelper.activateAt(sameOriginFrame.offsetLeft + 20, sameOriginFrame.offsetTop + 20);
+        debug("Interacted with same-origin frame");
+
+        await queryThrottleState(crossOriginFrame, "cross");
+        await queryThrottleState(sameOriginFrame, "same");
         shouldBeEqualToString("throttledState['cross']", "[Unthrottled]");
         shouldBeEqualToString("throttledState['same']", "[Unthrottled]");
+
         finishJSTest();
     }
 
     window.onmessage = function(message)
     {
-        debug("Received message: " + message.data);
         if (message.data === "frameload") {
-            if (++messagesReceived == 2)
+            debug("Received message: " + message.data);
+            if (++frameLoadCount == 2)
                 runTest();
-            return;
         }
-
-        var re = /throttled\[(\w+)\]: ((\w+)(\|\w+)*|\[Unthrottled\])/;
-        var match = re.exec(message.data);
-        if (match) {
-            frameID = match[1];
-            throttledState[frameID] = match[2];
-            if (++messagesReceived == 2)
-                messageHandler();
-            return;
-        }
-        
-        debug("Failed to handle message " + message.data);
     }
     </script>
 </head>

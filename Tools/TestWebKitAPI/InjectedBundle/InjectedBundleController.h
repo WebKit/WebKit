@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include <WebKit/WKBundle.h>
 #include <WebKit/WKRetainPtr.h>
 #include <map>
@@ -65,3 +67,5 @@ private:
 };
 
 } // namespace TestWebKitAPI
+
+#endif // __cplusplus

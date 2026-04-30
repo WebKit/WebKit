@@ -995,13 +995,13 @@ unsigned AbstractModuleRecord::innerModuleEvaluation(JSGlobalObject* globalObjec
     // 4. Assert: module.[[Status]] is LINKED.
     ASSERT(module->status() == Status::Linked);
     // 5. Set module.[[Status]] to EVALUATING.
-    module->status(Status::Evaluating);
+    module->setStatus(Status::Evaluating);
     // 6. Let moduleIndex be index.
     unsigned moduleIndex = index;
     // 7. Set module.[[DFSAncestorIndex]] to index.
-    module->dfsAncestorIndex(index);
+    module->setDFSAncestorIndex(index);
     // 8. Set module.[[PendingAsyncDependencies]] to 0.
-    module->pendingAsyncDependencies(0);
+    module->setPendingAsyncDependencies(0);
     // 9. Set index to index + 1.
     ++index;
     // 10. Append module to stack.
@@ -1025,7 +1025,7 @@ unsigned AbstractModuleRecord::innerModuleEvaluation(JSGlobalObject* globalObjec
             // 11.c.iii. If requiredModule.[[Status]] is EVALUATING, then
             if (cyclic->status() == Status::Evaluating) {
                 // 11.c.iii.1. Set module.[[DFSAncestorIndex]] to min(module.[[DFSAncestorIndex]], requiredModule.[[DFSAncestorIndex]]).
-                module->dfsAncestorIndex(std::min(module->dfsAncestorIndex(), cyclic->dfsAncestorIndex()));
+                module->setDFSAncestorIndex(std::min(module->dfsAncestorIndex(), cyclic->dfsAncestorIndex()));
             // 11.c.iv. Else,
             } else {
                 // 11.c.iv.1. Set requiredModule to requiredModule.[[CycleRoot]].
@@ -1042,7 +1042,7 @@ unsigned AbstractModuleRecord::innerModuleEvaluation(JSGlobalObject* globalObjec
             // 11.c.v. If requiredModule.[[AsyncEvaluationOrder]] is an integer, then
             if (cyclic->asyncEvaluationOrder().hasOrder()) {
                 // 11.c.v.1. Set module.[[PendingAsyncDependencies]] to module.[[PendingAsyncDependencies]] + 1.
-                module->pendingAsyncDependencies(module->pendingAsyncDependencies().value() + 1);
+                module->setPendingAsyncDependencies(module->pendingAsyncDependencies().value() + 1);
                 // 11.c.v.2. Append module to requiredModule.[[AsyncParentModules]].
                 cyclic->appendAsyncParentModule(vm, module);
             }
@@ -1053,7 +1053,7 @@ unsigned AbstractModuleRecord::innerModuleEvaluation(JSGlobalObject* globalObjec
         // 12.a. Assert: module.[[AsyncEvaluationOrder]] is UNSET.
         ASSERT(module->asyncEvaluationOrder().isUnset());
         // 12.b. Set module.[[AsyncEvaluationOrder]] to IncrementModuleAsyncEvaluationCount().
-        module->asyncEvaluationOrder(vm.incrementModuleAsyncEvaluationCount());
+        module->setAsyncEvaluationOrder(vm.incrementModuleAsyncEvaluationCount());
         // 12.c. If module.[[PendingAsyncDependencies]] = 0, perform ExecuteAsyncModule(module).
         if (std::optional<int> deps = module->pendingAsyncDependencies(); deps && !*deps) {
             module->executeAsync(globalObject);
@@ -1085,14 +1085,14 @@ unsigned AbstractModuleRecord::innerModuleEvaluation(JSGlobalObject* globalObjec
             ASSERT(cyclic->asyncEvaluationOrder().hasOrder() || cyclic->asyncEvaluationOrder().isUnset());
             // 16.b.v. If requiredModule.[[AsyncEvaluationOrder]] is UNSET, set requiredModule.[[Status]] to EVALUATED.
             if (cyclic->asyncEvaluationOrder().isUnset()) {
-                cyclic->status(Status::Evaluated);
+                cyclic->setStatus(Status::Evaluated);
             // 16.b.vi. Otherwise, set requiredModule.[[Status]] to EVALUATING-ASYNC.
             } else
-                cyclic->status(Status::EvaluatingAsync);
+                cyclic->setStatus(Status::EvaluatingAsync);
             // 16.b.vii. If requiredModule and module are the same Module Record, set done to true.
             done = requiredModule == module;
             // 16.b.viii. Set requiredModule.[[CycleRoot]] to module.
-            requiredModule->cycleRoot(vm, module);
+            requiredModule->setCycleRoot(vm, module);
         } while (!done);
     }
     // 17. Return index.
@@ -1127,11 +1127,11 @@ unsigned AbstractModuleRecord::innerModuleLinking(JSGlobalObject* globalObject, 
     // 3. Assert: module.[[Status]] is UNLINKED.
     ASSERT(module->status() == Status::Unlinked);
     // 4. Set module.[[Status]] to LINKING.
-    module->status(Status::Linking);
+    module->setStatus(Status::Linking);
     // 5. Let moduleIndex be index.
     unsigned moduleIndex = index;
     // 6. Set module.[[DFSAncestorIndex]] to index.
-    module->dfsAncestorIndex(index);
+    module->setDFSAncestorIndex(index);
     // 7. Set index to index + 1.
     ++index;
     // 8. Append module to stack.
@@ -1159,7 +1159,7 @@ unsigned AbstractModuleRecord::innerModuleLinking(JSGlobalObject* globalObject, 
             // 9.c.iii. If requiredModule.[[Status]] is LINKING, then
             if (status == Status::Linking) {
                 // 9.c.iii.1. Set module.[[DFSAncestorIndex]] to min(module.[[DFSAncestorIndex]], requiredModule.[[DFSAncestorIndex]]).
-                module->dfsAncestorIndex(std::min(module->dfsAncestorIndex(), requiredCyclic->dfsAncestorIndex()));
+                module->setDFSAncestorIndex(std::min(module->dfsAncestorIndex(), requiredCyclic->dfsAncestorIndex()));
             }
         }
     }
@@ -1184,7 +1184,7 @@ unsigned AbstractModuleRecord::innerModuleLinking(JSGlobalObject* globalObject, 
             // 13.b.iii. Assert: requiredModule is a Cyclic Module Record.
             auto* cyclic = uncheckedDowncast<CyclicModuleRecord>(requiredModule);
             // 13.b.iv. Set requiredModule.[[Status]] to LINKED.
-            cyclic->status(Status::Linked);
+            cyclic->setStatus(Status::Linked);
             // 13.b.v. If requiredModule and module are the same Module Record, set done to true.
             done = requiredModule == module;
         } while (!done);
@@ -1219,17 +1219,17 @@ ScriptFetchParameters::Type AbstractModuleRecord::moduleType() const
     return ScriptFetchParameters::None;
 }
 
-void AbstractModuleRecord::cycleRoot(VM& vm, CyclicModuleRecord* newRoot)
+void AbstractModuleRecord::setCycleRoot(VM& vm, CyclicModuleRecord* newRoot)
 {
     m_cycleRoot.set(vm, this, newRoot);
 }
 
-void AbstractModuleRecord::topLevelCapability(VM& vm, JSPromise* promise)
+void AbstractModuleRecord::setTopLevelCapability(VM& vm, JSPromise* promise)
 {
     m_topLevelCapability.set(vm, this, promise);
 }
 
-void AbstractModuleRecord::hasTLA(bool has)
+void AbstractModuleRecord::setHasTLA(bool has)
 {
     m_hasTLA = has;
 }

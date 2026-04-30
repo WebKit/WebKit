@@ -22,10 +22,10 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
-header: "MediaPlayerPrivateRemote.h"
-[CustomHeader] struct WebKit::MediaTimeUpdateData {
+header: <WebCore/MediaTimeUpdateData.h>
+[CustomHeader] struct WebCore::MediaTimeUpdateData {
     MediaTime currentTime;
-    bool timeIsProgressing;
+    double effectiveRate;
     MonotonicTime wallTime;
 };
 

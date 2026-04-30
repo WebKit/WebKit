@@ -973,7 +973,7 @@ void XMLDocumentParser::endElementNs()
                 scriptElement->registerImportMap(ScriptSourceCode(scriptElement->scriptContent(), scriptElement->sourceTaintedOrigin(), URL(document->url()), m_scriptStartPosition, JSC::SourceProviderSourceType::ImportMap));
         } else if (scriptElement->willBeParserExecuted() && scriptElement->loadableScript()) {
             m_pendingScript = PendingScript::create(*scriptElement, *protect(scriptElement->loadableScript()));
-            RefPtr { m_pendingScript }->setClient(*this);
+            protect(m_pendingScript)->setClient(*this);
 
             // m_pendingScript will be nullptr if script was already loaded and setClient() executed it.
             if (m_pendingScript)
@@ -1045,7 +1045,7 @@ void XMLDocumentParser::processingInstruction(const xmlChar* target, const xmlCh
 
     pi->setCreatedByParser(true);
 
-    RefPtr { *m_currentNode }->parserAppendChild(pi);
+    protect(*m_currentNode)->parserAppendChild(pi);
 
     pi->setCreatedByParser(false);
 
@@ -1072,7 +1072,7 @@ void XMLDocumentParser::cdataBlock(std::span<const xmlChar> s)
     if (!updateLeafTextNode())
         return;
 
-    RefPtr { *m_currentNode }->parserAppendChild(CDATASection::create(protect(m_currentNode->document()), toString(s)));
+    protect(*m_currentNode)->parserAppendChild(CDATASection::create(protect(m_currentNode->document()), toString(s)));
 }
 
 void XMLDocumentParser::comment(const xmlChar* s)
@@ -1088,7 +1088,7 @@ void XMLDocumentParser::comment(const xmlChar* s)
     if (!updateLeafTextNode())
         return;
 
-    RefPtr { *m_currentNode }->parserAppendChild(Comment::create(protect(m_currentNode->document()), toString(s)));
+    protect(*m_currentNode)->parserAppendChild(Comment::create(protect(m_currentNode->document()), toString(s)));
 }
 
 enum StandaloneInfo {

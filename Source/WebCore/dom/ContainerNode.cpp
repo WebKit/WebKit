@@ -31,6 +31,7 @@
 #include "CommonAtomStrings.h"
 #include "CommonVM.h"
 #include "ContainerNodeAlgorithms.h"
+#include "CustomElementReactionQueue.h"
 #include "DocumentInlines.h"
 #include "DocumentQuirks.h"
 #include "Editor.h"
@@ -1460,7 +1461,12 @@ ExceptionOr<void> ContainerNode::moveBefore(Node& node, RefPtr<Node>&& refChild)
         }
     }
 
-    // FIXME(281223): Implement the rest of this function.
+    if (isConnected()) {
+        for (RefPtr inclusiveDescendant = &node; inclusiveDescendant; inclusiveDescendant = NodeTraversal::next(*inclusiveDescendant, &node)) {
+            if (RefPtr element = dynamicDowncast<Element>(*inclusiveDescendant); element && element->isDefinedCustomElement())
+                CustomElementReactionQueue::enqueueConnectedMoveCallbackIfNeeded(*element);
+        }
+    }
 
     return { };
 }

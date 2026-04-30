@@ -29,7 +29,7 @@ for key in sorted(request.keys()):
 sys.stdout.write(
     '<script>\n'
     'if (window.testRunner)\n'
-    '   testRunner.notifyDone();\n'
+    '   setTimeout(() => testRunner.notifyDone(), 0);\n'
     '</script>\n'
     '</body>\n'
     '</html>\n'

@@ -151,6 +151,8 @@ JSValue BigIntNode::jsValue(BytecodeGenerator& generator) const
 
 // ------------------------------ NumberNode ----------------------------------
 
+JSValue NumberNode::jsValue(BytecodeGenerator&) const { return jsNumber(m_value); }
+
 RegisterID* NumberNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     if (dst == generator.ignoredResult())
@@ -3847,6 +3849,25 @@ RegisterID* OptionalChainNode::emitBytecode(BytecodeGenerator& generator, Regist
     return finalDest.unsafeGet();
 }
 
+void OptionalChainNode::emitBytecodeInConditionContext(BytecodeGenerator& generator, Label& trueTarget, Label& falseTarget, FallThroughMode fallThroughMode)
+{
+    if (needsDebugHook()) [[unlikely]]
+        generator.emitDebugHook(this);
+
+    if (m_expr->isDeleteNode()) {
+        ExpressionNode::emitBytecodeInConditionContext(generator, trueTarget, falseTarget, fallThroughMode);
+        return;
+    }
+
+    // Short-circuiting produces undefined, which is falsy. Route the optional
+    // chain bail-out straight to falseTarget instead of materializing undefined.
+    if (m_isOutermost)
+        generator.pushOptionalChainTarget(falseTarget);
+    generator.emitNodeInConditionContext(m_expr, trueTarget, falseTarget, fallThroughMode);
+    if (m_isOutermost)
+        generator.discardOptionalChainTarget();
+}
+
 // ------------------------------ ConditionalNode ------------------------------
 
 RegisterID* ConditionalNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
@@ -5516,12 +5537,38 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
             // - catch: Reject promise with the exception
             // - finally: Resolve promise with completion value and return promise
             //
-            // The finally block always resolves and returns the promise. Since promise
-            // resolution only takes effect on the first call, calling resolve after
-            // reject (from the catch block) is a no-op.
-
+            // try {
+            //     body
+            //     transfer completion-value with completion-type = normal / return
+            // } catch (error) {
+            //     transfer error with completion-type = throw
+            // } finally {
+            //     get value with completion-type
+            //     if (completion-type === throw)
+            //         return @newRejectedPromise(completion-value);
+            //     return @newResolvedPromise(completion-value);
+            // }
             if (generator.parseMode() == SourceParseMode::AsyncArrowFunctionMode && generator.isThisUsedInInnerArrowFunction())
                 generator.emitLoadThisFromArrowFunctionLexicalEnvironment();
+
+            // If async function is just used for a signaling, not having a body, then just convert it to @newResolvedPromise(undefined).
+            //
+            //     Turn this: async function empty() { }
+            //     Into this: function empty() { return @newResolvedPromise(undefined); }
+            //
+            if (isEmptyBody()) {
+                ASSERT(!usingDeclarationCount());
+                ASSERT(!hasAwaitUsingDeclaration());
+                RefPtr<RegisterID> newResolvedPromise = generator.moveLinkTimeConstant(nullptr, LinkTimeConstant::newResolvedPromise);
+                CallArguments resolveArgs(generator, nullptr, 1);
+                generator.emitLoad(resolveArgs.thisRegister(), jsUndefined());
+                generator.emitLoad(resolveArgs.argumentRegister(0), jsUndefined());
+                RefPtr<RegisterID> result = generator.newTemporary();
+                generator.emitCall(result.get(), newResolvedPromise.get(), NoExpectedFunction, resolveArgs, divot, divot, divot, DebuggableCall::No);
+                generator.emitWillLeaveCallFrameDebugHook();
+                generator.emitReturn(result.get());
+                break;
+            }
 
             // Set up finally context to capture return values from the body.
             // When a return statement is hit, it stores the value in completionValueRegister
@@ -5531,10 +5578,11 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
             generator.pushFinallyControlFlowScope(finallyContext);
             generator.emitLoad(finallyContext.completionValueRegister(), jsUndefined());
 
-            // Try block. Finally handler puts return value to completionValueRegister.
+            // Try block. FinallyContext routes `return V` to finally with completionType=Return
+            // and completionValue=V. Normal fallthrough keeps completionType=Normal (its initial value).
             Ref<Label> catchLabel = generator.newLabel();
             Ref<Label> tryStartLabel = generator.newEmittedLabel();
-            TryData* tryData = generator.pushTry(tryStartLabel.get(), catchLabel.get(), HandlerType::Catch);
+            TryData* tryData = generator.pushTry(tryStartLabel.get(), catchLabel.get(), HandlerType::Finally);
             generator.emitBodyWithUsingIfNeeded(usingDeclarationCount(), hasAwaitUsingDeclaration(),
                 scopedLambda<void(BytecodeGenerator&)>([&](BytecodeGenerator& generator) {
                     emitStatementsBytecode(generator, generator.ignoredResult());
@@ -5544,43 +5592,43 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
             Ref<Label> tryEndLabel = generator.newEmittedLabel();
             generator.popTry(tryData, tryEndLabel.get());
 
-            // Catch block. Reject promise with the exception.
+            // Catch handler. Runtime populates completionValueRegister with the thrown value
+            // and completionTypeRegister with CompletionType::Throw.
             generator.emitLabel(catchLabel.get());
-            RefPtr<RegisterID> thrownValue = generator.newTemporary();
-            generator.emitOutOfLineCatchHandler(thrownValue.get(), finallyContext.completionTypeRegister(), tryData);
-
-            // Push try for catch block pointing to finally (for exceptions in catch).
-            TryData* catchTryData = generator.pushTry(catchLabel.get(), finallyLabel.get(), HandlerType::Finally);
-            {
-                RefPtr<RegisterID> rejectPromise = generator.moveLinkTimeConstant(nullptr, LinkTimeConstant::rejectPromiseWithFirstResolvingFunctionCallCheck);
-                CallArguments rejectArgs(generator, nullptr, 2);
-                generator.emitLoad(rejectArgs.thisRegister(), jsUndefined());
-                generator.move(rejectArgs.argumentRegister(0), generator.promiseRegister());
-                generator.move(rejectArgs.argumentRegister(1), thrownValue.get());
-                generator.emitCallIgnoreResult(generator.newTemporary(), rejectPromise.get(), NoExpectedFunction, rejectArgs, divot, divot, divot, DebuggableCall::No);
-            }
-
-            // Catch handled the exception, set completion type to Normal.
-            generator.emitLoad(finallyContext.completionTypeRegister(), CompletionType::Normal);
-            generator.popTry(catchTryData, finallyLabel.get());
+            generator.emitOutOfLineCatchHandler(finallyContext.completionValueRegister(), finallyContext.completionTypeRegister(), tryData);
 
             generator.popFinallyControlFlowScope();
 
-            // Emit out-of-line finally handler for exceptions thrown in catch block.
-            generator.emitOutOfLineFinallyHandler(finallyContext.completionValueRegister(), finallyContext.completionTypeRegister(), catchTryData);
-
-            // Finally block. Resolve promise with completion value and return promise.
+            // Dispatch on completionType: Throw -> rejected, else -> resolved.
             generator.emitLabel(finallyLabel.get());
             {
-                RefPtr<RegisterID> resolvePromise = generator.moveLinkTimeConstant(nullptr, LinkTimeConstant::resolvePromiseWithFirstResolvingFunctionCallCheck);
-                CallArguments resolveArgs(generator, nullptr, 2);
-                generator.emitLoad(resolveArgs.thisRegister(), jsUndefined());
-                generator.move(resolveArgs.argumentRegister(0), generator.promiseRegister());
-                generator.move(resolveArgs.argumentRegister(1), finallyContext.completionValueRegister());
-                generator.emitCallIgnoreResult(generator.newTemporary(), resolvePromise.get(), NoExpectedFunction, resolveArgs, divot, divot, divot, DebuggableCall::No);
+                Ref<Label> resolveCase = generator.newLabel();
+                RefPtr<RegisterID> throwType = generator.emitLoad(nullptr, jsNumber(static_cast<int32_t>(CompletionType::Throw)));
+                generator.emitJumpIfFalse(generator.emitEqualityOp<OpStricteq>(generator.newTemporary(), finallyContext.completionTypeRegister(), throwType.get()), resolveCase.get());
+
+                {
+                    RefPtr<RegisterID> newRejectedPromise = generator.moveLinkTimeConstant(nullptr, LinkTimeConstant::newRejectedPromise);
+                    CallArguments rejectArgs(generator, nullptr, 1);
+                    generator.emitLoad(rejectArgs.thisRegister(), jsUndefined());
+                    generator.move(rejectArgs.argumentRegister(0), finallyContext.completionValueRegister());
+                    RefPtr<RegisterID> result = generator.newTemporary();
+                    generator.emitCall(result.get(), newRejectedPromise.get(), NoExpectedFunction, rejectArgs, divot, divot, divot, DebuggableCall::No);
+                    generator.emitWillLeaveCallFrameDebugHook();
+                    generator.emitReturn(result.get());
+                }
+
+                generator.emitLabel(resolveCase.get());
+                {
+                    RefPtr<RegisterID> newResolvedPromise = generator.moveLinkTimeConstant(nullptr, LinkTimeConstant::newResolvedPromise);
+                    CallArguments resolveArgs(generator, nullptr, 1);
+                    generator.emitLoad(resolveArgs.thisRegister(), jsUndefined());
+                    generator.move(resolveArgs.argumentRegister(0), finallyContext.completionValueRegister());
+                    RefPtr<RegisterID> result = generator.newTemporary();
+                    generator.emitCall(result.get(), newResolvedPromise.get(), NoExpectedFunction, resolveArgs, divot, divot, divot, DebuggableCall::No);
+                    generator.emitWillLeaveCallFrameDebugHook();
+                    generator.emitReturn(result.get());
+                }
             }
-            generator.emitDebugHook(WillLeaveCallFrame, JSTextPosition(lastLine(), startOffset(), lineStartOffset()));
-            generator.emitReturn(generator.promiseRegister());
             break;
         }
 

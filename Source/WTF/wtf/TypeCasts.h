@@ -86,7 +86,7 @@ using match_constness_t =
     typename std::conditional_t<std::is_const_v<Reference>, typename std::add_const_t<T>, typename std::remove_const_t<T>>;
 
 template<typename Target, typename Source>
-inline match_constness_t<Source, Target>& uncheckedDowncast(Source& source)
+inline match_constness_t<Source, Target>& uncheckedDowncast(Source& source LIFETIME_BOUND)
 {
     static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
     static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
@@ -95,7 +95,7 @@ inline match_constness_t<Source, Target>& uncheckedDowncast(Source& source)
 }
 
 template<typename Target, typename Source>
-inline match_constness_t<Source, Target>* uncheckedDowncast(Source* source)
+inline match_constness_t<Source, Target>* uncheckedDowncast(Source* source LIFETIME_BOUND)
 {
     static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
     static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
@@ -104,7 +104,7 @@ inline match_constness_t<Source, Target>* uncheckedDowncast(Source* source)
 }
 
 template<typename Target, typename Source>
-inline match_constness_t<Source, Target>& downcast(Source& source)
+inline match_constness_t<Source, Target>& downcast(Source& source LIFETIME_BOUND)
 {
     static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
     static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
@@ -113,7 +113,7 @@ inline match_constness_t<Source, Target>& downcast(Source& source)
 }
 
 template<typename Target, typename Source>
-inline match_constness_t<Source, Target>* downcast(Source* source)
+inline match_constness_t<Source, Target>* downcast(Source* source LIFETIME_BOUND)
 {
     static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
     static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
@@ -122,7 +122,7 @@ inline match_constness_t<Source, Target>* downcast(Source* source)
 }
 
 template<typename Target, typename Source>
-inline match_constness_t<Source, Target>* dynamicDowncast(Source& source)
+inline match_constness_t<Source, Target>* dynamicDowncast(Source& source LIFETIME_BOUND)
 {
     static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
     static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
@@ -130,7 +130,7 @@ inline match_constness_t<Source, Target>* dynamicDowncast(Source& source)
 }
 
 template<typename Target, typename Source>
-inline match_constness_t<Source, Target>* dynamicDowncast(Source* source)
+inline match_constness_t<Source, Target>* dynamicDowncast(Source* source LIFETIME_BOUND)
 {
     static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
     static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");

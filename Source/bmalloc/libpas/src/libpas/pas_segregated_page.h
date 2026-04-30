@@ -95,10 +95,6 @@ struct pas_segregated_page {
        
        ineligible_exclusive: same as exclusive, but eligibility has not been noted.
        
-       shared_handle: it's shared by the shared page directory and possibly some number of view
-           directories. Eligibility is noted by whether the partial directories appear in the
-           eligibility table.
-    
        Note that in both cases, this field kinda implicitly gives us a "eligibility_has_been_noted"
        field. Here's what that means. Eligible = has at least one free object.
        
@@ -139,11 +135,8 @@ extern PAS_API bool pas_segregated_page_deallocate_should_verify_granules;
          sizeof(uint64_t)))
 
 static PAS_ALWAYS_INLINE size_t pas_segregated_page_header_size(
-    pas_segregated_page_config page_config,
-    pas_segregated_page_role role)
+    pas_segregated_page_config page_config)
 {
-    PAS_UNUSED_PARAM(role); /* This is passed here in anticipation of a time when the header size can vary
-                               based on role. */
     return PAS_SEGREGATED_PAGE_HEADER_SIZE(
         page_config.num_alloc_bits,
         page_config.base.page_size / page_config.base.granule_size);
@@ -153,7 +146,6 @@ static PAS_ALWAYS_INLINE unsigned
 pas_segregated_page_offset_from_page_boundary_to_first_object_for_hugging_mode(
     unsigned object_size,
     pas_segregated_page_config page_config,
-    pas_segregated_page_role role,
     pas_segregated_page_hugging_mode mode)
 {
     PAS_ASSERT(pas_is_aligned(object_size, pas_segregated_page_config_min_align(page_config)));
@@ -162,23 +154,22 @@ pas_segregated_page_offset_from_page_boundary_to_first_object_for_hugging_mode(
     switch (mode) {
     case pas_segregated_page_hug_left:
         return (unsigned)(
-            ((pas_segregated_page_config_payload_offset_for_role(page_config, role) + object_size - 1) /
+            ((pas_segregated_page_config_payload_offset(page_config) + object_size - 1) /
              object_size) * object_size);
     case pas_segregated_page_hug_right:
         return (unsigned)(
-            page_config.base.page_size - 
+            page_config.base.page_size -
             ((page_config.base.page_size
-              - pas_segregated_page_config_payload_offset_for_role(page_config, role))
+              - pas_segregated_page_config_payload_offset(page_config))
              / object_size) * object_size);
     }
     return 0;
 }
 
-static PAS_ALWAYS_INLINE unsigned 
+static PAS_ALWAYS_INLINE unsigned
 pas_segregated_page_offset_from_page_boundary_to_end_of_last_object_for_hugging_mode(
     unsigned object_size,
     pas_segregated_page_config page_config,
-    pas_segregated_page_role role,
     pas_segregated_page_hugging_mode mode)
 {
     PAS_ASSERT(pas_is_aligned(object_size, pas_segregated_page_config_min_align(page_config)));
@@ -187,13 +178,13 @@ pas_segregated_page_offset_from_page_boundary_to_end_of_last_object_for_hugging_
     switch (mode) {
     case pas_segregated_page_hug_left:
         return (unsigned)(
-            (pas_segregated_page_config_payload_end_offset_for_role(page_config, role) / object_size)
+            (pas_segregated_page_config_payload_end_offset(page_config) / object_size)
             * object_size);
     case pas_segregated_page_hug_right:
         return (unsigned)(
             page_config.base.page_size -
             ((page_config.base.page_size -
-              pas_segregated_page_config_payload_end_offset_for_role(page_config, role) +
+              pas_segregated_page_config_payload_end_offset(page_config) +
               object_size - 1) /
              object_size) * object_size);
     }
@@ -203,32 +194,28 @@ pas_segregated_page_offset_from_page_boundary_to_end_of_last_object_for_hugging_
 static PAS_ALWAYS_INLINE unsigned pas_segregated_page_useful_object_payload_size_for_hugging_mode(
     unsigned object_size,
     pas_segregated_page_config page_config,
-    pas_segregated_page_role role,
     pas_segregated_page_hugging_mode mode)
 {
     return
         pas_segregated_page_offset_from_page_boundary_to_end_of_last_object_for_hugging_mode(
             object_size,
             page_config,
-            role,
             mode) -
         pas_segregated_page_offset_from_page_boundary_to_first_object_for_hugging_mode(
             object_size,
             page_config,
-            role,
             mode);
 }
 
 static PAS_ALWAYS_INLINE pas_segregated_page_hugging_mode
 pas_segregated_page_best_hugging_mode(unsigned object_size,
-                                      pas_segregated_page_config page_config,
-                                      pas_segregated_page_role role)
+                                      pas_segregated_page_config page_config)
 {
     if (pas_segregated_page_useful_object_payload_size_for_hugging_mode(
-            object_size, page_config, role,
+            object_size, page_config,
             pas_segregated_page_hug_left) >=
         pas_segregated_page_useful_object_payload_size_for_hugging_mode(
-            object_size, page_config, role,
+            object_size, page_config,
             pas_segregated_page_hug_right))
         return pas_segregated_page_hug_left;
     return pas_segregated_page_hug_right;
@@ -240,46 +227,44 @@ pas_segregated_page_offset_from_page_boundary_to_first_object_exclusive(
     pas_segregated_page_config page_config)
 {
     return pas_segregated_page_offset_from_page_boundary_to_first_object_for_hugging_mode(
-        object_size, page_config, pas_segregated_page_exclusive_role,
-        pas_segregated_page_best_hugging_mode(object_size, page_config, pas_segregated_page_exclusive_role));
+        object_size, page_config,
+        pas_segregated_page_best_hugging_mode(object_size, page_config));
 }
 
-static PAS_ALWAYS_INLINE unsigned 
+static PAS_ALWAYS_INLINE unsigned
 pas_segregated_page_offset_from_page_boundary_to_end_of_last_object_exclusive(
     unsigned object_size,
     pas_segregated_page_config page_config)
 {
     return pas_segregated_page_offset_from_page_boundary_to_end_of_last_object_for_hugging_mode(
-        object_size, page_config, pas_segregated_page_exclusive_role,
-        pas_segregated_page_best_hugging_mode(object_size, page_config, pas_segregated_page_exclusive_role));
+        object_size, page_config,
+        pas_segregated_page_best_hugging_mode(object_size, page_config));
 }
 
 static PAS_ALWAYS_INLINE unsigned
 pas_segregated_page_useful_object_payload_size(unsigned object_size,
-                                               pas_segregated_page_config page_config,
-                                               pas_segregated_page_role role)
+                                               pas_segregated_page_config page_config)
 {
     return pas_segregated_page_useful_object_payload_size_for_hugging_mode(
-        object_size, page_config, role, pas_segregated_page_best_hugging_mode(object_size, page_config, role));
+        object_size, page_config, pas_segregated_page_best_hugging_mode(object_size, page_config));
 }
 
 static PAS_ALWAYS_INLINE unsigned
 pas_segregated_page_number_of_objects(unsigned object_size,
-                                      pas_segregated_page_config page_config,
-                                      pas_segregated_page_role role)
+                                      pas_segregated_page_config page_config)
 {
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_SEGREGATED_HEAPS);
     unsigned result;
-    
-    result = pas_segregated_page_useful_object_payload_size(object_size, page_config, role) / object_size;
-    
+
+    result = pas_segregated_page_useful_object_payload_size(object_size, page_config) / object_size;
+
     if (verbose) {
         pas_log("first object offset = %u\n", pas_segregated_page_offset_from_page_boundary_to_first_object_exclusive(object_size, page_config));
         pas_log("end of last object offset = %u\n", pas_segregated_page_offset_from_page_boundary_to_end_of_last_object_exclusive(object_size, page_config));
-        pas_log("payload offset = %zu\n", pas_segregated_page_config_payload_offset_for_role(page_config, role));
+        pas_log("payload offset = %zu\n", pas_segregated_page_config_payload_offset(page_config));
         pas_log("object_size = %u, so number_of_objects = %u\n", object_size, result);
     }
-    
+
     return result;
 }
 
@@ -287,17 +272,16 @@ PAS_API extern double pas_segregated_page_extra_wasteage_handicap_for_config_var
 
 static PAS_ALWAYS_INLINE double
 pas_segregated_page_bytes_dirtied_per_object(unsigned object_size,
-                                             pas_segregated_page_config page_config,
-                                             pas_segregated_page_role role)
+                                             pas_segregated_page_config page_config)
 {
     double extra_handicap;
 
     PAS_ASSERT((unsigned)page_config.variant < PAS_NUM_SEGREGATED_PAGE_CONFIG_VARIANTS);
     extra_handicap = pas_segregated_page_extra_wasteage_handicap_for_config_variant[
         page_config.variant];
-    
+
     return (double)page_config.base.page_size /
-        pas_segregated_page_number_of_objects(object_size, page_config, role) *
+        pas_segregated_page_number_of_objects(object_size, page_config) *
         page_config.wasteage_handicap * extra_handicap;
 }
 

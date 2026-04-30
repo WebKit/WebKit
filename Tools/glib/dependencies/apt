@@ -60,6 +60,7 @@ PACKAGES=(
     libmanette-0.2-dev
     libnghttp2-dev
     libopenjp2-7-dev
+    libopenxr-dev
     libpng-dev
     libseccomp-dev
     libsqlite3-dev

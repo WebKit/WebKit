@@ -232,6 +232,7 @@
 #include <WebCore/DigitalCredentialsProtocols.h>
 #include <WebCore/DigitalCredentialsRequestData.h>
 #include <WebCore/DigitalCredentialsResponseData.h>
+#include <WebCore/DocumentSyncData.h>
 #include <WebCore/DragController.h>
 #include <WebCore/DragData.h>
 #include <WebCore/DragEventTargetData.h>
@@ -264,6 +265,7 @@
 #include <WebCore/PermissionDescriptor.h>
 #include <WebCore/PermissionState.h>
 #include <WebCore/PlatformEvent.h>
+#include <WebCore/ProcessIdentifier.h>
 #include <WebCore/ProcessSwapDisposition.h>
 #include <WebCore/PublicSuffixStore.h>
 #include <WebCore/Quirks.h>
@@ -272,6 +274,7 @@
 #include <WebCore/RemoteUserInputEventData.h>
 #include <WebCore/RenderEmbeddedObject.h>
 #include <WebCore/ResourceLoadStatistics.h>
+#include <WebCore/ResourceTiming.h>
 #include <WebCore/RunJavaScriptParameters.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
@@ -471,6 +474,10 @@
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
 #include "RemoteAudioSessionConfiguration.h"
 #include "RemoteMediaSessionManagerProxy.h"
+#endif
+
+#if HAVE(ENHANCED_SECURITY_LINKS)
+#include "EnhancedSecurityLinkUtilities.h"
 #endif
 
 #define MESSAGE_CHECK(process, assertion) MESSAGE_CHECK_BASE(assertion, process->connection())
@@ -1839,7 +1846,9 @@ void WebPageProxy::initializeWebPage(const Site& site, WebCore::SandboxFlags eff
         if (!internals().processInheritedFromOpener)
             return browsingContextGroup->ensureProcessForSite(site, site, process, preferences);
 
-        ASSERT(openerFrame);
+        if (!openerFrame)
+            return browsingContextGroup->ensureProcessForSite(site, site, process, preferences);
+
         Ref openerFrameProcess = openerFrame->frameProcess();
         ASSERT(openerFrameProcess->process() == m_legacyMainFrameProcess.get());
         return openerFrameProcess;
@@ -3236,7 +3245,7 @@ void WebPageProxy::updateActivityState()
 
 void WebPageProxy::activityStateDidChange(OptionSet<ActivityState> mayHaveChanged, ActivityStateChangeDispatchMode dispatchMode, ActivityStateChangeReplyMode replyMode)
 {
-    LOG_WITH_STREAM(ActivityState, stream << "WebPageProxy " << identifier() << " activityStateDidChange - mayHaveChanged " << mayHaveChanged);
+    WEBPAGEPROXY_RELEASE_LOG(ActivityState, "activityStateDidChange: mayHaveChanged=%d", mayHaveChanged.toRaw());
 
     RefPtr pageClient = this->pageClient();
 
@@ -3330,10 +3339,12 @@ void WebPageProxy::dispatchActivityStateChange()
     internals().activityStateChangeTimer.stop();
 #endif
 
-    if (!hasRunningProcess())
+    if (!hasRunningProcess()) {
+        WEBPAGEPROXY_RELEASE_LOG(ActivityState, "dispatchActivityStateChange: Not dispatching because there is no running process");
         return;
+    }
 
-    LOG_WITH_STREAM(ActivityState, stream << "WebPageProxy " << identifier() << " dispatchActivityStateChange - potentiallyChangedActivityStateFlags " << internals().potentiallyChangedActivityStateFlags);
+    WEBPAGEPROXY_RELEASE_LOG(ActivityState, "dispatchActivityStateChange: potentiallyChangedActivityStateFlags=%d", internals().potentiallyChangedActivityStateFlags.toRaw());
 
     // If the visibility state may have changed, then so may the visually idle & occluded agnostic state.
     if (internals().potentiallyChangedActivityStateFlags & ActivityState::IsVisible)
@@ -3346,7 +3357,7 @@ void WebPageProxy::dispatchActivityStateChange()
     auto changed = internals().activityState ^ previousActivityState;
 
     if (changed)
-        LOG_WITH_STREAM(ActivityState, stream << "WebPageProxy " << identifier() << " dispatchActivityStateChange: state changed from " << previousActivityState << " to " << internals().activityState);
+        WEBPAGEPROXY_RELEASE_LOG(ActivityState, "dispatchActivityStateChange: state changed from %d to %d", previousActivityState.toRaw(), internals().activityState.toRaw());
 
     if ((changed & ActivityState::WindowIsActive) && isViewWindowActive())
         updateCurrentModifierState();
@@ -3633,17 +3644,22 @@ void WebPageProxy::setBaseWritingDirection(WritingDirection direction)
 
 const EditorState& WebPageProxy::editorState() const
 {
+    if (RefPtr frame = focusedFrame()) {
+        if (RefPtr remotePageProxy = protect(m_browsingContextGroup)->remotePageInProcess(*this, protect(frame->process())))
+            return remotePageProxy->editorState();
+    }
+
     return internals().editorState;
 }
 
 bool WebPageProxy::hasSelectedRange() const
 {
-    return internals().editorState.selectionType == WebCore::SelectionType::Range;
+    return editorState().selectionType == WebCore::SelectionType::Range;
 }
 
 bool WebPageProxy::isContentEditable() const
 {
-    return internals().editorState.isContentEditable;
+    return editorState().isContentEditable;
 }
 
 void WebPageProxy::updateFontAttributesAfterEditorStateChange()
@@ -5367,7 +5383,7 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
 
     Ref browsingContextGroup = browsingContextGroupForNavigation(frame, navigation, websiteDataStore, processSwapRequestedByClient);
     if (frame.isMainFrame() && preferences->enhancedSecurityHeuristicsEnabled())
-        internals().enhancedSecurityTracker.trackNavigation(navigation, hasOpenedPage());
+        internals().enhancedSecurityTracker.trackNavigation(navigation, hasOpenedPage(), websitePolicies.get(), preferences.get(), sourceURL, internals().pageLoadState.httpFallbackInProgress());
 
     auto enhancedSecurity = currentEnhancedSecurityState(websitePolicies.get());
 
@@ -5479,6 +5495,8 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
             loadParameters.isHandledByAboutSchemeHandler = m_aboutSchemeHandler->canHandleURL(loadParameters.request.url());
             if (auto& action = navigation->lastNavigationAction())
                 loadParameters.requester = action->requester;
+            if (navigation->currentRequestIsRedirect())
+                loadParameters.originalRequest = navigation->originalRequest();
 
             processNavigatingTo->send(Messages::WebPage::LoadRequest(WTF::move(loadParameters)), webPageIDInProcess(processNavigatingTo));
         }
@@ -5814,6 +5832,8 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
             loadParameters.requester = action->requester;
             loadParameters.hadUserGesture = action->userGestureTokenIdentifier.has_value();
         }
+        if (navigation.currentRequestIsRedirect())
+            loadParameters.originalRequest = navigation.originalRequest();
 
         if (isPendingInitialHistoryItem)
             frame.setIsPendingInitialHistoryItem(true);
@@ -8227,10 +8247,17 @@ void WebPageProxy::observeAndCreateRemoteSubframesInOtherProcesses(WebFrameProxy
     });
 }
 
+void WebPageProxy::setTopDocumentSyncData(Ref<WebCore::DocumentSyncData>&& data)
+{
+    m_topDocumentSyncData = WTF::move(data);
+}
+
 void WebPageProxy::broadcastDocumentSyncData(IPC::Connection& connection, const WebCore::DocumentSyncSerializationData& data)
 {
     Ref process = WebProcessProxy::fromConnection(connection);
     // FIXME: Check that the sending process is allowed to write the specified property.
+    if (RefPtr topDocumentSyncData = m_topDocumentSyncData)
+        topDocumentSyncData->update(data);
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         if (webProcess == process)
             return;
@@ -8240,6 +8267,7 @@ void WebPageProxy::broadcastDocumentSyncData(IPC::Connection& connection, const 
 
 void WebPageProxy::broadcastAllDocumentSyncData(IPC::Connection& connection, Ref<WebCore::DocumentSyncData>&& data)
 {
+    m_topDocumentSyncData = data.copyRef();
     Ref process = WebProcessProxy::fromConnection(connection);
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         if (webProcess == process)
@@ -8746,6 +8774,11 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL&, API::Navigation&, bool for
 
 void WebPageProxy::decidePolicyForNavigationActionAsync(IPC::Connection& connection, NavigationActionData&& data, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
 {
+    if (auto pending = std::exchange(m_pendingBlobURLReleaseForOldPage, std::nullopt)) {
+        if (RefPtr oldProcess = pending->oldProcess.get())
+            oldProcess->send(Messages::WebPage::ReleaseKeptBlobURLForNewWindowNavigation(), pending->oldPageID);
+    }
+
     RefPtr frame = WebFrameProxy::webFrame(data.frameInfo.frameID);
     if (!frame)
         return completionHandler({ });
@@ -9742,6 +9775,12 @@ void WebPageProxy::createNewPage(IPC::Connection& connection, WindowFeatures&& w
         // When site isolation is enabled, blobs get a dedicated process if its opener process is cross-site from the main process.
         if (navigationDataForNewProcess && (protect(preferences())->siteIsolationEnabled() || !openedBlobURL))  {
             bool isRequestFromClientOrUserInput = navigationDataForNewProcess->isRequestFromClientOrUserInput;
+
+            if (openedBlobURL) {
+                newPage->m_pendingBlobURLReleaseForOldPage = PendingBlobURLReleaseForOldPage { process, webPageIDInProcess(process) };
+                auto topOrigin = m_mainFrame ? std::optional(SecurityOriginData::fromURL(m_mainFrame->url())) : std::nullopt;
+                process->send(Messages::WebPage::KeepBlobURLAliveForNewWindowNavigation(request.url(), topOrigin), webPageIDInProcess(process), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+            }
 
             reply(std::nullopt, std::nullopt);
             newPage->loadRequest(WTF::move(request), shouldOpenExternalURLsPolicy, NavigationUpgradeToHTTPSBehavior::BasedOnPolicy, WTF::move(navigationDataForNewProcess), nullptr, isRequestFromClientOrUserInput);
@@ -12228,15 +12267,15 @@ void WebPageProxy::didReceiveEvent(IPC::Connection* connection, WebEventType eve
     }
 }
 
-void WebPageProxy::editorStateChanged(EditorState&& editorState)
+void WebPageProxy::editorStateChanged(IPC::Connection& connection, EditorState&& editorState)
 {
     // FIXME: This should not merge VisualData; they should only be merged
     // if the drawing area says to.
-    if (updateEditorState(WTF::move(editorState), ShouldMergeVisualEditorState::Yes))
+    if (updateEditorState(connection, WTF::move(editorState), ShouldMergeVisualEditorState::Yes))
         dispatchDidUpdateEditorState();
 }
 
-bool WebPageProxy::updateEditorState(EditorState&& newEditorState, ShouldMergeVisualEditorState shouldMergeVisualEditorState)
+bool WebPageProxy::updateEditorState(IPC::Connection& connection, EditorState&& newEditorState, ShouldMergeVisualEditorState shouldMergeVisualEditorState)
 {
     if (RefPtr pageClient = this->pageClient())
         pageClient->reconcileEnclosingScrollViewContentOffset(newEditorState);
@@ -12246,8 +12285,15 @@ bool WebPageProxy::updateEditorState(EditorState&& newEditorState, ShouldMergeVi
         shouldMergeVisualEditorState = (!drawingArea || !drawingArea->shouldCoalesceVisualEditorStateUpdates()) ? ShouldMergeVisualEditorState::Yes : ShouldMergeVisualEditorState::No;
     }
 
-    bool isStaleEditorState = newEditorState.identifier < internals().editorState.identifier;
-    bool shouldKeepExistingVisualEditorState = shouldMergeVisualEditorState == ShouldMergeVisualEditorState::No && internals().editorState.hasVisualData();
+    Ref newEditorStateWebProcess = WebProcessProxy::fromConnection(connection);
+    bool newEditorStateIsFromProcessWithCurrentlyFocusedFrame = !m_focusedFrame || m_focusedFrame->process() == newEditorStateWebProcess;
+
+    auto* currentEditorState = &internals().editorState;
+    if (RefPtr remotePageProxy = protect(m_browsingContextGroup)->remotePageInProcess(*this, newEditorStateWebProcess))
+        currentEditorState = &remotePageProxy->editorState();
+
+    bool isStaleEditorState = newEditorState.identifier < currentEditorState->identifier;
+    bool shouldKeepExistingVisualEditorState = shouldMergeVisualEditorState == ShouldMergeVisualEditorState::No && currentEditorState->hasVisualData();
     bool shouldMergeNewVisualEditorState = shouldMergeVisualEditorState == ShouldMergeVisualEditorState::Yes && newEditorState.hasVisualData();
 
 #if PLATFORM(MAC)
@@ -12256,16 +12302,16 @@ bool WebPageProxy::updateEditorState(EditorState&& newEditorState, ShouldMergeVi
 
     std::optional<EditorState> oldEditorState;
     if (!isStaleEditorState) {
-        oldEditorState = std::exchange(internals().editorState, WTF::move(newEditorState));
         if (shouldKeepExistingVisualEditorState)
-            internals().editorState.visualData = oldEditorState->visualData;
+            newEditorState.visualData = currentEditorState->visualData;
+        oldEditorState = std::exchange(*currentEditorState, WTF::move(newEditorState));
     } else if (shouldMergeNewVisualEditorState) {
-        oldEditorState = internals().editorState;
-        internals().editorState.visualData = WTF::move(newEditorState.visualData);
+        oldEditorState = *currentEditorState;
+        currentEditorState->visualData = WTF::move(newEditorState.visualData);
     }
 
-    if (oldEditorState) {
-        didUpdateEditorState(*oldEditorState, internals().editorState);
+    if (oldEditorState && newEditorStateIsFromProcessWithCurrentlyFocusedFrame) {
+        didUpdateEditorState(*oldEditorState, editorState());
         return true;
     }
 
@@ -14419,6 +14465,15 @@ Color WebPageProxy::platformUnderPageBackgroundColor() const
 
 #endif // !PLATFORM(COCOA)
 
+void WebPageProxy::setCanShortCircuitHorizontalWheelEvents(bool canShortCircuitHorizontalWheelEvents)
+{
+    if (m_canShortCircuitHorizontalWheelEvents == canShortCircuitHorizontalWheelEvents)
+        return;
+
+    m_canShortCircuitHorizontalWheelEventsForMainFrameProcess = canShortCircuitHorizontalWheelEvents;
+    updateCanShortCircuitHorizontalWheelEvents();
+}
+
 bool WebPageProxy::willHandleHorizontalScrollEvents() const
 {
     return !m_canShortCircuitHorizontalWheelEvents;
@@ -14788,6 +14843,12 @@ void WebPageProxy::setViewportSizeForCSSViewportUnits(const FloatSize& viewportS
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
 
+static void textCheckerStateChanged()
+{
+    for (auto& processPool : WebProcessPool::allProcessPools())
+        processPool->textCheckerStateChanged();
+}
+
 void WebPageProxy::toggleSmartInsertDelete()
 {
     if (TextChecker::isTestingMode())
@@ -14796,32 +14857,42 @@ void WebPageProxy::toggleSmartInsertDelete()
 
 void WebPageProxy::toggleAutomaticQuoteSubstitution()
 {
-    if (TextChecker::isTestingMode())
+    if (TextChecker::isTestingMode()) {
         TextChecker::setAutomaticQuoteSubstitutionEnabled(!TextChecker::state().contains(TextCheckerState::AutomaticQuoteSubstitutionEnabled));
+        textCheckerStateChanged();
+    }
 }
 
 void WebPageProxy::toggleAutomaticLinkDetection()
 {
-    if (TextChecker::isTestingMode())
+    if (TextChecker::isTestingMode()) {
         TextChecker::setAutomaticLinkDetectionEnabled(!TextChecker::state().contains(TextCheckerState::AutomaticLinkDetectionEnabled));
+        textCheckerStateChanged();
+    }
 }
 
 void WebPageProxy::toggleAutomaticDashSubstitution()
 {
-    if (TextChecker::isTestingMode())
+    if (TextChecker::isTestingMode()) {
         TextChecker::setAutomaticDashSubstitutionEnabled(!TextChecker::state().contains(TextCheckerState::AutomaticDashSubstitutionEnabled));
+        textCheckerStateChanged();
+    }
 }
 
 void WebPageProxy::toggleSmartLists()
 {
-    if (TextChecker::isTestingMode())
+    if (TextChecker::isTestingMode()) {
         TextChecker::setSmartListsEnabled(!TextChecker::state().contains(TextCheckerState::SmartListsEnabled));
+        textCheckerStateChanged();
+    }
 }
 
 void WebPageProxy::toggleAutomaticTextReplacement()
 {
-    if (TextChecker::isTestingMode())
+    if (TextChecker::isTestingMode()) {
         TextChecker::setAutomaticTextReplacementEnabled(!TextChecker::state().contains(TextCheckerState::AutomaticTextReplacementEnabled));
+        textCheckerStateChanged();
+    }
 }
 
 #endif
@@ -15062,7 +15133,7 @@ void WebPageProxy::insertTextAsync(const String& text, const EditingRange& repla
     if (!hasRunningProcess())
         return;
 
-    send(Messages::WebPage::InsertTextAsync(text, replacementRange, WTF::move(options)));
+    sendToProcessContainingFrame(focusedOrMainFrame()->frameID(), Messages::WebPage::InsertTextAsync(text, replacementRange, WTF::move(options)));
 }
 
 void WebPageProxy::hasMarkedText(CompletionHandler<void(bool)>&& callback)
@@ -17376,6 +17447,9 @@ void WebPageProxy::beginEnhancedSecurityLinkCheck(const URL& url, API::Navigatio
         }
     };
 
+    if (!hasURLsRequiringEnhancedSecurityCheck())
+        return completionHandler(false);
+
     if (RefPtr networkProcess = websiteDataStore().networkProcessIfExists())
         networkProcess->sendWithAsyncReply(Messages::NetworkProcess::IsEnhancedSecurityLink(url), WTF::move(completionHandler));
 }
@@ -17563,6 +17637,11 @@ void WebPageProxy::dispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier
         return;
 
     sendToProcessContainingFrame(parentFrame->frameID(), Messages::WebPage::DispatchLoadEventToFrameOwnerElement(frameID));
+}
+
+void WebPageProxy::addResourceTimingFromSubframe(WebCore::FrameIdentifier parentFrameID, WebCore::ResourceTiming&& resourceTiming)
+{
+    sendToProcessContainingFrame(parentFrameID, Messages::WebPage::AddResourceTimingFromSubframe(parentFrameID, WTF::move(resourceTiming)));
 }
 
 void WebPageProxy::broadcastFocusedFrameToOtherProcesses(IPC::Connection& connection, std::optional<WebCore::FrameIdentifier>&& frameID)
@@ -18118,6 +18197,15 @@ void WebPageProxy::networkRequestsInProgressDidChange()
     Ref pageLoadState = internals().pageLoadState;
     auto transaction = pageLoadState->transaction();
     pageLoadState->setNetworkRequestsInProgress(transaction, hasNetworkRequestsInProgress);
+}
+
+void WebPageProxy::updateCanShortCircuitHorizontalWheelEvents()
+{
+    bool canShortCircuit = m_canShortCircuitHorizontalWheelEventsForMainFrameProcess;
+    protect(browsingContextGroup())->forEachRemotePage(*this, [canShortCircuit = &canShortCircuit](auto& remotePageProxy) {
+        *canShortCircuit = *canShortCircuit && remotePageProxy.canShortCircuitHorizontalWheelEvents();
+    });
+    m_canShortCircuitHorizontalWheelEvents = canShortCircuit;
 }
 
 void WebPageProxy::takeActivitiesOnRemotePage(RemotePageProxy& remotePage)

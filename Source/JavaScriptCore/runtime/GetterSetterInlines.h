@@ -23,6 +23,7 @@
 #pragma once
 
 #include "GetterSetter.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

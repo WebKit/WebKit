@@ -1,3 +1,3 @@
 
-PASS autoplay with slow text tracks
+FAIL autoplay with slow text tracks TypeError: null is not an object (evaluating 'track.track.cues.length')
 

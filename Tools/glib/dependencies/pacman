@@ -38,6 +38,7 @@ PACKAGES=(
     make
     ninja
     openjpeg2
+    openxr
     patch
     perl-file-copy-recursive
     pkg-config

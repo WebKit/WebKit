@@ -240,7 +240,7 @@ void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) con
 
 void WebPage::handleAcceptedCandidate(WebCore::TextCheckingResult acceptedCandidate)
 {
-    if (RefPtr frame = m_page->focusController().focusedLocalFrame())
+    if (RefPtr frame = m_page->focusController().localFocusedFrame())
         protect(frame->editor())->handleAcceptedCandidate(acceptedCandidate);
 }
 

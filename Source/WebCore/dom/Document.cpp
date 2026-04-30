@@ -3621,7 +3621,7 @@ void Document::willBeRemovedFromFrame()
 
     commonTeardown();
 
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
     if (!m_touchEventTargets.isEmptyIgnoringNullReferences() && parentDocument())
         protect(parentDocument())->didRemoveEventTargetNode(*this);
 #endif
@@ -5141,9 +5141,7 @@ bool Document::isNavigationBlockedByThirdPartyIFrameRedirectBlocking(const Navig
     // Also require the parent that set the sandbox to be same-origin with the target.
     bool sandboxIsFromElementAttribute = !requester.sandboxFlags.isEmpty() && requester.frameSandboxFlags == requester.sandboxFlags;
     if (sandboxIsFromElementAttribute) {
-        RefPtr targetOrigin = targetFrame.frameDocumentSecurityOrigin();
-        bool parentIsFirstParty = requester.parentFrameSecurityOrigin && targetOrigin && requester.parentFrameSecurityOrigin->isSameOriginDomain(*targetOrigin);
-        if (parentIsFirstParty)
+        if (requester.parentOriginIsSameAsTopOrigin)
             return false;
     }
 
@@ -6647,7 +6645,7 @@ bool Document::setFocusedElement(Element* newFocusedElement, const FocusOptions&
         cache->onFocusChange(oldFocusedElement.get(), newFocusedElement);
 
     if (RefPtr page = this->page())
-        page->chrome().focusedElementChanged(protect(focusedElement()).get(), page->focusController().focusedLocalFrame(), options, broadcast);
+        page->chrome().focusedElementChanged(protect(focusedElement()).get(), page->focusController().localFocusedFrame(), options, broadcast);
 
     return true;
 }
@@ -8423,12 +8421,14 @@ bool Document::isSecureContext() const
         return true;
 
     for (RefPtr frame = m_frame->tree().parent(); frame; frame = frame->tree().parent()) {
-        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
-        if (!localFrame)
-            continue;
-        Ref<Document> ancestorDocument = *localFrame->document();
-        if (!isDocumentSecure(ancestorDocument))
-            return false;
+        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame)) {
+            Ref<Document> ancestorDocument = *localFrame->document();
+            if (!isDocumentSecure(ancestorDocument))
+                return false;
+        } else if (RefPtr securityOrigin = frame->frameDocumentSecurityOrigin()) {
+            if (!securityOrigin->isPotentiallyTrustworthy())
+                return false;
+        }
     }
 
     return isDocumentSecure(*this);
@@ -9231,7 +9231,7 @@ unsigned Document::wheelEventHandlerCount() const
 
 void Document::didAddTouchEventHandler(Node& handler)
 {
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
     m_touchEventTargets.add(handler);
 
     if (auto* parent = parentDocument()) {
@@ -9251,7 +9251,7 @@ void Document::didAddTouchEventHandler(Node& handler)
 
 void Document::didRemoveTouchEventHandler(Node& handler, EventHandlerRemoval removalMode)
 {
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
     removeHandlerFromSet(m_touchEventTargets, handler, removalMode);
 
     if (auto* parent = parentDocument())
@@ -9269,7 +9269,7 @@ void Document::didRemoveTouchEventHandler(Node& handler, EventHandlerRemoval rem
 
 void Document::didRemoveEventTargetNode(Node& handler)
 {
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
     if (m_touchEventTargets.removeAll(handler)) {
         if ((&handler == this || m_touchEventTargets.isEmptyIgnoringNullReferences()) && parentDocument())
             protect(parentDocument())->didRemoveEventTargetNode(*this);
@@ -9425,10 +9425,10 @@ void Document::startTrackingStyleRecalcs()
     m_styleRecalcCount = 0;
 }
 
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
 bool Document::hasTouchEventHandlers() const
 {
-#if ENABLE(TOUCH_EVENT_REGIONS)
+#if ENABLE(TOUCH_EVENTS) && ENABLE(TOUCH_EVENT_REGIONS)
     return !m_touchEventTargets.isEmptyIgnoringNullReferences()
         || !m_touchEventHandlerCounts.isEmptyIgnoringNullReferences();
 #else

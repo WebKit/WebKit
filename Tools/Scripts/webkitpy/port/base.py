@@ -305,6 +305,14 @@ class Port(object):
                 return group
         return None
 
+    def filter_api_tests_by_allowlist(self, tests):
+        """Split API tests into allowlisted (parallel) and non-allowlisted (system) groups.
+
+        Default implementation: all tests are allowlisted (no system shard).
+        Override in platform-specific ports to implement allowlist filtering.
+        """
+        return tests, []
+
     def check_build(self):
         """This routine is used to ensure that the build is up to date
         and all the needed binaries are present."""

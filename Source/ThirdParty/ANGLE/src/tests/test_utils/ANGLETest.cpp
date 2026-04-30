@@ -621,7 +621,8 @@ void ANGLETestBase::initOSWindow()
         return;
     }
 
-    // On Linux we must keep the test windows visible. On Windows or Metal it doesn't seem to need it.
+    // On Linux we must keep the test windows visible. On Windows or Metal it doesn't seem to need
+    // it.
     setWindowVisible(getOSWindow(), !(IsWindows() || IsMac() || IsIOS()));
 
     switch (mCurrentParams->driver)
@@ -1677,6 +1678,11 @@ void ANGLETestBase::setClientArraysEnabled(bool enabled)
 void ANGLETestBase::setRobustResourceInit(bool enabled)
 {
     mFixture->configParams.robustResourceInit = enabled;
+}
+
+void ANGLETestBase::setPbuffer(bool enabled)
+{
+    mFixture->configParams.pbuffer = enabled;
 }
 
 void ANGLETestBase::setMutableRenderBuffer(bool enabled)

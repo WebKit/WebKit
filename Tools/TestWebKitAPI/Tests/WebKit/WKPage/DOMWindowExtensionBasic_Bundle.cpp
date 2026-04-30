@@ -115,7 +115,7 @@ void DOMWindowExtensionBasic::frameLoadFinished(WKBundleFrameRef frame)
         m_finishedOneMainFrameLoad = true;
 
     char body[16384];
-    sprintf(body, "%s finished loading", mainFrame ? "Main frame" : "Subframe");
+    snprintf(body, sizeof(body), "%s finished loading", mainFrame ? "Main frame" : "Subframe");
     
     // Only consider load finished for the main frame
     const char* name = mainFrame ? "DidFinishLoadForMainFrame" : "DidFinishLoadForFrame";
@@ -130,7 +130,7 @@ void DOMWindowExtensionBasic::frameLoadFinished(WKBundleFrameRef frame)
 void DOMWindowExtensionBasic::sendExtensionStateMessage()
 {
     char body[16384];
-    sprintf(body, "Extension states:\n%s - %s\n%s - %s\n%s - %s\n%s - %s\n%s - %s\n%s - %s",
+    snprintf(body, sizeof(body), "Extension states:\n%s - %s\n%s - %s\n%s - %s\n%s - %s\n%s - %s\n%s - %s",
         m_extensionRecords[0].name, stateNames[m_extensionRecords[0].state],
         m_extensionRecords[1].name, stateNames[m_extensionRecords[1].state],
         m_extensionRecords[2].name, stateNames[m_extensionRecords[2].state],

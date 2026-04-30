@@ -156,7 +156,8 @@ void WebRTCVideoDecoderVTB::setVideoFormat(RetainPtr<CMVideoFormatDescriptionRef
 
 void WebRTCVideoDecoderVTB::flush()
 {
-    protect(m_decoder)->flush();
+    if (RefPtr decoder = m_decoder)
+        decoder->flush();
     if (RefPtr queue = m_queue)
         queue->flush(m_callback.get());
 }

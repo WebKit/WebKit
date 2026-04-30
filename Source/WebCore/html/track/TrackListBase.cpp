@@ -58,12 +58,12 @@ void TrackListBase::didMoveToNewDocument(Document& newDocument)
         track->didMoveToNewDocument(newDocument);
 }
 
-WebCoreOpaqueRoot TrackListBase::opaqueRoot()
+WebCoreOpaqueRoot TrackListBase::opaqueRoot() const
 {
     // Cannot ref the observer as this gets called on a GC thread.
     SUPPRESS_UNCOUNTED_LOCAL if (auto* rootObserver = m_opaqueRootObserver.get())
         return (*rootObserver)();
-    return WebCoreOpaqueRoot { this };
+    return WebCoreOpaqueRoot { const_cast<TrackListBase*>(this) };
 }
 
 unsigned TrackListBase::length() const

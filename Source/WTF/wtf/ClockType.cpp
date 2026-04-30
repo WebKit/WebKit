@@ -48,6 +48,9 @@ void printInternal(PrintStream& out, ClockType type)
     case ClockType::ContinuousApproximate:
         out.print("ContinuousApproximate");
         return;
+    case ClockType::UnbarrieredMonotonic:
+        out.print("UnbarrieredMonotonic");
+        return;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

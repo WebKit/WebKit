@@ -332,6 +332,9 @@ void InjectedBundle::setAllowedHosts(WKDictionaryRef settings)
 
 void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode testingMode)
 {
+    if (auto jscOpts = stringValue(settings, "JSCOptions"))
+        JSC::Options::setOptions(toWTFString(jscOpts).utf8().data());
+
     m_dumpPixels = booleanValue(settings, "DumpPixels");
     m_timeout = Seconds::fromMilliseconds(uint64Value(settings, "Timeout"));
 

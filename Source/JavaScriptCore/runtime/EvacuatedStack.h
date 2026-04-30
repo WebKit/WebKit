@@ -28,7 +28,9 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include <JavaScriptCore/CallFrame.h>
+#include <JavaScriptCore/ExecutableAllocator.h>
 #include <JavaScriptCore/JSGlobalObject.h>
+#include <JavaScriptCore/Options.h>
 #include <JavaScriptCore/Register.h>
 #include <JavaScriptCore/VMEntryRecord.h>
 
@@ -66,12 +68,9 @@ public:
     CallFrame* implant(Register* base, CallFrame* previousFrame);
 
     // The PC to return to to enter the top (logically) frame of the slice.
-    // The value as it was on the original stack--if PAC is in use, signed by 'pacibsp'.
+    // On ARM64E, signed with this slice's address as the discriminator.
+    // (Other PCs in the slice use their frame record address as the discriminator.)
     const void* entryPC() const { return m_entryPC; };
-
-    // The address of the original frame that contained entryPC. Saved for authenticating entryPC.
-    // 'void*' because the frame does not exist anymore--do not dereference!
-    const void* entryPCFrame() const { return m_entryPCFrame; }
 
     void dump(PrintStream& out) const;
 
@@ -80,10 +79,8 @@ private:
 
     EvacuatedStackSlice(std::span<Register> stackSpan, Vector<unsigned>&& frameOffsets, const CallFrame* frameToReturnFromForEntry);
 
-    const Register* m_originalBase;
     Vector<unsigned> m_frameOffsets;
     const void* m_entryPC;
-    const void* m_entryPCFrame;
 };
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -95,9 +92,29 @@ inline std::span<Register> EvacuatedStackSlice::slots()
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-// Authenticate 'returnPC' assuming is was stored in a frame pointed at by 'originalFP', and
-// re-sign it so it can be used in a frame pointed at by 'newFP'.
-void* NODELETE relocateReturnPC(void* returnPC, const CallerFrameAndPC* originalFP, const CallerFrameAndPC* newFP);
+extern "C" void* SYSV_ABI relocateJITReturnPC(const void* codePtr, const void* oldSignatureSP, const void* newSignatureSP);
+
+ALWAYS_INLINE void* relocateReturnPC(void* returnPC, const void* originalDiscriminator, const void* newDiscriminator)
+{
+#if CPU(ARM64E)
+    if (Options::useJITCage() && isJITPC(removeCodePtrTag(returnPC)))
+        return relocateJITReturnPC(returnPC, originalDiscriminator, newDiscriminator);
+    return ptrauth_auth_and_resign(returnPC, ptrauth_key_asib, originalDiscriminator, ptrauth_key_asib, newDiscriminator);
+#else
+    UNUSED_PARAM(originalDiscriminator);
+    UNUSED_PARAM(newDiscriminator);
+    return returnPC;
+#endif
+}
+
+ALWAYS_INLINE const void* saltedDiscriminator(const void* address)
+{
+#if CPU(ARM64E)
+    return reinterpret_cast<const void*>(ptrauth_blend_discriminator(address, ptrauth_string_discriminator("EvacuatedStackSlice")));
+#else
+    return address;
+#endif
+}
 
 // An abstract class with a set of utilities for implementing a concrete stack slicer.
 // A stack slicer is a class driven by a StackVisitor via a StackSlicerFunctor. It

@@ -1,0 +1,5 @@
+Top LeftTop RightOuterI1I2I3I4
+
+FAIL snap container selects innermost area as snap target assert_equals: scroller followed inner4 in y axis after layout change expected 250 but got 150
+FAIL snap container follows selected snap target after layout change (the pre-existing snap target should not be overriden because of the innermost area) assert_equals: scroller followed outer in y axis after layout change expected 500 but got 400
+

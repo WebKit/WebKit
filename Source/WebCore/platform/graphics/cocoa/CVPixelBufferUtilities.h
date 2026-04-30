@@ -39,7 +39,11 @@ RetainPtr<CVPixelBufferRef> createScratchCVPixelBuffer(unsigned width, unsigned 
 
 RetainPtr<CVPixelBufferRef> createScratchMetalCompatibleCVPixelBuffer(unsigned width, unsigned height, OSType pixelFormat, CGColorSpaceRef = nullptr);
 
+RetainPtr<CVPixelBufferRef> createScratchMetalCompatibleCVPixelBuffer(CVPixelBufferRef, CGColorSpaceRef = nullptr);
+
 RetainPtr<CVPixelBufferRef> createScratchMetalCompatibleCVPixelBuffer(const ShareableCVPixelBuffer&, CGColorSpaceRef = nullptr);
+
+RetainPtr<CVPixelBufferRef> createMetalCompatibleCVPixelBufferFromImage(PlatformImagePtr);
 
 #if ENABLE(DUMP_GAIN_MAP_IMAGES)
 void CVPixelBufferDumpToFile(CVPixelBufferRef, const String& name);

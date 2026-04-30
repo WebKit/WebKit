@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>body { height: 10000px; }</style>
+</head>
+<body>
+<script>
+window.jsTestIsAsync = true;
+
+var output = "This test verifies that the scroll area position remains correct after scrolling when a content inset is active.\n\n";
+
+var scrollArea, webArea, scrollAreaYBeforeScroll, initialWebAreaY;
+if (window.accessibilityController) {
+    setTimeout(async () => {
+        await waitForFrameGeometryReady();
+
+        scrollArea = accessibilityController.rootElement;
+        webArea = scrollArea.childAtIndex(0);
+
+        // Set the content inset and wait for the geometry update to propagate.
+        initialWebAreaY = webArea.y;
+        await testRunner.setObscuredContentInsets(100, 0, 0, 0);
+        await waitFor(() => webArea.y !== initialWebAreaY);
+
+        scrollAreaYBeforeScroll = scrollArea.y;
+        let webAreaYBeforeScroll = webArea.y;
+
+        // Scroll and verify the scroll area position stays fixed.
+        window.scrollTo(0, 500);
+        await waitFor(() => webArea.y !== webAreaYBeforeScroll);
+
+        output += expect("scrollArea.y", "scrollAreaYBeforeScroll");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

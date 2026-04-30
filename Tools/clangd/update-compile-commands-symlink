@@ -55,17 +55,9 @@ class Config:
 
 
 def update_symlink_with_path(symlink_path: Path, target_str: str):
-    try:
-        current_target = os.readlink(symlink_path)
-        symlink_exists = True
-    except FileNotFoundError:
-        current_target = None
-        symlink_exists = False
-
-    if symlink_exists and current_target != target_str:
+    if os.path.lexists(symlink_path):
         os.remove(symlink_path)
-    if not symlink_exists or current_target != target_str:
-        os.symlink(target_str, symlink_path)
+    os.symlink(target_str, symlink_path)
 
 
 def update_symlink_from_candidates(symlink_path: Path, config_path: Path):

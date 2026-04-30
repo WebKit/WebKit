@@ -743,7 +743,8 @@ bool RenderView::shouldPaintBaseBackground() const
             // iframes should fill with a base color if the used color scheme of the
             // element and the used color scheme of the embedded document’s root
             // element do not match.
-            if (frameView->useDarkAppearance() != parentFrameView->ownerElementOfChildFrameUsesDarkAppearance(frameView->frame()))
+            bool useDarkAppearance = parentFrameView->appearanceOfOwnerElementOfChildFrame(frameView->frame()).contains(FrameOwnerElementAppearance::IsDark);
+            if (frameView->useDarkAppearance() != useDarkAppearance)
                 return !frameView->isTransparent();
         }
     }

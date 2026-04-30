@@ -39,6 +39,7 @@
 #import "SharedBuffer.h"
 #import "UTIUtilities.h"
 #import <AVFoundation/AVAssetResourceLoader.h>
+#import <WebCore/HTTPStatusCodes.h>
 #import <objc/runtime.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/LoggerHelper.h>
@@ -399,7 +400,7 @@ bool WebCoreAVFResourceLoader::responseReceived(const String& mimeType, int stat
 
     ALWAYS_LOG(LOGIDENTIFIER, "status: ", status, ", range: ", contentRange.firstBytePosition(), "-", contentRange.lastBytePosition(), "/", contentRange.instanceLength(), ", expectedContentLength: ", expectedContentLength);
 
-    if (status && (status < 200 || status > 299)) {
+    if (status && !isHttpOkStatus(status)) {
         [m_avRequest finishLoadingWithError:0];
         return true;
     }

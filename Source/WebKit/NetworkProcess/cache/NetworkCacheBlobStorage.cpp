@@ -197,7 +197,7 @@ BlobStorage::Blob BlobStorage::get(const String& path)
 #if ENABLE(NETWORK_CACHE_BLOB_STORAGE_MEMORY_CACHE)
     if (m_memoryCache) {
         if (auto blob = m_memoryCache->get(path))
-            return copyBlob(*blob);
+            return WTF::move(*blob);
     }
 #endif
 

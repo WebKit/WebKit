@@ -25,6 +25,7 @@
 #pragma once
 
 #include <JavaScriptCore/HeapCellInlines.h>
+#include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSCJSValueStructure.h>
 #include <JavaScriptCore/SlotVisitorInlines.h>
 #include <JavaScriptCore/WeakInlines.h>
@@ -104,14 +105,16 @@ inline void JSValueInWrappedObject::setWeakly(RefPtr<DOMWrapperWorld>&& world, J
 inline void JSValueInWrappedObject::set(JSC::JSGlobalObject& globalObject, const JSC::JSCell* owner, JSC::JSValue value)
 {
     setValueInternal(value);
-    globalObject.vm().writeBarrier(owner, value);
+    if (owner)
+        globalObject.vm().writeBarrier(owner, value);
     setWorld(globalObject);
 }
 
 inline void JSValueInWrappedObject::set(RefPtr<DOMWrapperWorld>&& world, JSC::VM& vm, const JSC::JSCell* owner, JSC::JSValue value)
 {
     setValueInternal(value);
-    vm.writeBarrier(owner, value);
+    if (owner)
+        vm.writeBarrier(owner, value);
     setWorld(WTF::move(world));
 }
 

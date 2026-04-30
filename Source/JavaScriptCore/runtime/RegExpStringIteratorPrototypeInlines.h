@@ -27,6 +27,7 @@
 #pragma once
 
 #include "RegExpStringIteratorPrototype.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

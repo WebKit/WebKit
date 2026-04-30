@@ -39,7 +39,7 @@ typedef (WebGLRenderingContext or WebGL2RenderingContext) WebXRWebGLRenderingCon
     [CallWith=CurrentScriptExecutionContext] XRProjectionLayer createProjectionLayer(optional XRProjectionLayerInit init = {});
     [CallWith=CurrentScriptExecutionContext] XRQuadLayer createQuadLayer(optional XRQuadLayerInit init = {});
     XRCylinderLayer createCylinderLayer(optional XRCylinderLayerInit init = {});
-    XREquirectLayer createEquirectLayer(optional XREquirectLayerInit init = {});
+    [CallWith=CurrentScriptExecutionContext] XREquirectLayer createEquirectLayer(optional XREquirectLayerInit init = {});
     XRCubeLayer createCubeLayer(optional XRCubeLayerInit init = {});
 
     XRWebGLSubImage getSubImage(XRCompositionLayer layer, WebXRFrame frame, optional XREye eye = "none");

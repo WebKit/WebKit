@@ -2,7 +2,7 @@
 
 Harness Error (TIMEOUT), message = null
 
-FAIL Permissions-Policy header digital-credentials-create=() disallows the top-level document. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL Permissions-Policy header digital-credentials-create=() disallows the top-level document. promise_rejects_dom: function "function() { throw e; }" threw object "NotSupportedError: No credential type was specified." that is not a DOMException NotAllowedError: property "code" is equal to 9, expected 0
 FAIL Permissions-Policy header digital-credentials-create=() disallows same-origin iframes. assert_false: Digital Credential API expected false got undefined
 TIMEOUT Permissions-Policy header digital-credentials-create=() cannot be overridden using the allow attribute. Test timed out
 

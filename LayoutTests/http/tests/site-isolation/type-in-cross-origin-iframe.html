@@ -1,0 +1,50 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+</head>
+<body>
+<script>
+description("Tests that focusing an input field inside a cross-origin iframe brings up the keyboard and allows typing when site isolation is enabled.");
+jsTestIsAsync = true;
+
+window.addEventListener("message", async (event) => {
+    if (event.data.type === "inputValue") {
+        window.typedValue = event.data.value;
+        shouldBeEqualToString("typedValue", "hello");
+        finishJSTest();
+    }
+});
+
+async function runTest() {
+    const iframe = document.getElementById("frame");
+    const iframeRect = iframe.getBoundingClientRect();
+
+    const inputCenter = await new Promise(resolve => {
+        window.addEventListener("message", (event) => {
+            if (event.data.type === "inputRect")
+                resolve(event.data);
+        }, { once: true });
+        iframe.contentWindow.postMessage({ type: "getInputRect" }, "*");
+    });
+
+    const clickX = iframeRect.left + inputCenter.x;
+    const clickY = iframeRect.top + inputCenter.y;
+
+    await UIHelper.activateAt(clickX, clickY);
+    await UIHelper.waitForKeyboardToShow();
+    testPassed("Keyboard is visible after tapping input in cross-origin iframe.");
+
+    for (const character of "hello") {
+        await UIHelper.typeCharacter(character);
+        await UIHelper.ensurePresentationUpdate();
+    }
+
+    iframe.contentWindow.postMessage({ type: "getInputValue" }, "*");
+}
+</script>
+<iframe id="frame" width="300" height="100" src="http://localhost:8000/site-isolation/resources/text-input.html"
+onload="runTest()"></iframe>
+</body>
+</html>

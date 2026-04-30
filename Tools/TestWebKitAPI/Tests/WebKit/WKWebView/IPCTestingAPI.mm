@@ -661,8 +661,8 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
     NSDictionary *expectedDictionary = @{
         @"isOptionSet" : @1,
         @"size" : @1,
-        @"validValues" : @[@1, @2],
-        @"valueMap" : @[@{@"value": @1, @"name": @"ComputeSizes"}, @{@"value": @2, @"name": @"DoNotCreateProcesses"}]
+        @"validValues" : @[@1, @2, @4],
+        @"valueMap" : @[@{@"value": @1, @"name": @"ComputeSizes"}, @{@"value": @2, @"name": @"DoNotCreateProcesses"}, @{@"value": @4, @"name": @"IncludeAllOrigins"}]
     };
     NSDictionary *enumInfo = [webView objectByEvaluatingJavaScript:@"IPC.serializedEnumInfo"];
     EXPECT_TRUE([enumInfo[@"WebKit::WebsiteDataFetchOption"] isEqualToDictionary:expectedDictionary]);

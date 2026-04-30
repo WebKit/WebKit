@@ -215,7 +215,7 @@ void WorkerFileSystemStorageConnection::resolve(FileSystemHandleIdentifier ident
     });
 }
 
-void WorkerFileSystemStorageConnection::didResolve(CallbackIdentifier callbackIdentifier, ExceptionOr<Vector<String>>&& result)
+void WorkerFileSystemStorageConnection::didResolve(CallbackIdentifier callbackIdentifier, ExceptionOr<std::optional<Vector<String>>>&& result)
 {
     if (auto callback = m_resolveCallbacks.take(callbackIdentifier))
         callback(WTF::move(result));

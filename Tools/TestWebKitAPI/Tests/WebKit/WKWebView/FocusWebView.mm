@@ -290,6 +290,55 @@ TEST(FocusWebView, FocusNavigationIntoFrameWithNestedRemoteFrameSiteIsolation)
     runFocusNavigationIntoFrameWithNestedRemoteFrameTest(true);
 }
 
+TEST(FocusWebView, MultipleFramesSomeUnfocusable)
+{
+    auto exampleHTML = "<body>"
+        "<input id='input'>"
+        "<iframe src='https://webkit.org/webkitframe'></iframe>"
+        "<iframe src='https://apple.com/appleframe'></iframe>"
+        "</body>"_s;
+
+    auto focusableIframeHTML = "<script>"
+        "onload = () => {"
+        "    document.getElementById('iframeInput').addEventListener('focusin', (e) => {"
+        "        alert(window.origin + ' focused');"
+        "    });"
+        "};"
+        "</script>"
+        "<input id='iframeInput' type='text' value='Iframe Input'>"
+        "</body>"_s;
+
+    auto unfocusableIframeHTML = "<script>"
+        "</body>"_s;
+
+    HTTPServer server({
+        { "/example"_s, { exampleHTML } },
+        { "/webkitframe"_s, { unfocusableIframeHTML } },
+        { "/appleframe"_s, { focusableIframeHTML } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+
+    auto [webView, navigationDelegate, uiDelegate] = makeWebViewAndDelegates(WTF::move(configuration));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView evaluateJavaScript:@""
+        "let i = document.getElementById('input');"
+        "i.addEventListener('focusin', (e) => {"
+        "    alert('main frame focused');"
+        "});"
+        "i.focus()" completionHandler:nil];
+
+    EXPECT_WK_STREQ([uiDelegate waitForAlert], "main frame focused");
+    // First tab enters the empty webkit.org iframe (no focusable elements, but
+    // the frame itself is a valid focus target). Second tab advances past it.
+    [webView typeCharacter:'\t'];
+    [webView typeCharacter:'\t'];
+
+    EXPECT_WK_STREQ([uiDelegate waitForAlert], "https://apple.com focused");
+}
+
 TEST(FocusWebView, DoNotFocusWebViewWhenUnparented)
 {
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];

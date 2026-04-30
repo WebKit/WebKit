@@ -210,6 +210,19 @@ unsigned RenderListItem::itemCountForOrderedList(const HTMLOListElement& list)
     return itemCount;
 }
 
+int RenderListItem::startForReversedOrderedList(const HTMLOListElement& list)
+{
+    ASSERT(list.isReversed() && !list.hasExplicitStart());
+    size_t itemsBefore = 0;
+    for (CheckedPtr item = firstListItem(list); item; item = nextListItem(list, *item)) {
+        auto directives = item->style().usedCounterDirectives().map.get("list-item"_s);
+        if (directives.setValue)
+            return itemsBefore + *directives.setValue;
+        ++itemsBefore;
+    }
+    return list.start();
+}
+
 void RenderListItem::updateValueNow() const
 {
     RefPtr list = enclosingList(*this);
@@ -246,6 +259,8 @@ void RenderListItem::updateValueNow() const
             auto listDirectives = list->renderer()->style().usedCounterDirectives().map.get("list-item"_s);
             if (listDirectives.resetValue)
                 startValue = *listDirectives.resetValue;
+            else if (orderedList && orderedList->isReversed() && !orderedList->hasExplicitStart())
+                startValue = startForReversedOrderedList(*orderedList) - defaultIncrement;
             else
                 startValue = orderedList ? orderedList->start() - defaultIncrement : 0;
         }

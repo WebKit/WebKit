@@ -33,6 +33,7 @@
 #include <WebCore/PasteboardCustomData.h>
 #include <WebCore/SelectionData.h>
 #include <WebCore/SharedBuffer.h>
+#include <array>
 #include <gtk/gtk.h>
 #include <wtf/RefCounted.h>
 #include <wtf/glib/GRefPtr.h>
@@ -133,8 +134,8 @@ public:
     {
         RefPtr protectedThis = RefPtr { this };
         m_completionHandler = WTF::move(completionHandler);
-        const char* mimeTypes[] = { format, nullptr };
-        gdk_clipboard_read_async(m_clipboard, mimeTypes, G_PRIORITY_DEFAULT, m_cancellable.get(), [](GObject* clipboard, GAsyncResult* result, gpointer userData) {
+        auto mimeTypes = std::to_array<const char*>({ format, nullptr });
+        gdk_clipboard_read_async(m_clipboard, mimeTypes.data(), G_PRIORITY_DEFAULT, m_cancellable.get(), [](GObject* clipboard, GAsyncResult* result, gpointer userData) {
             auto task = adoptRef(static_cast<ClipboardTask*>(userData));
             GUniqueOutPtr<GError> error;
             GRefPtr<GInputStream> inputStream = adoptGRef(gdk_clipboard_read_finish(GDK_CLIPBOARD(clipboard), result, nullptr, &error.outPtr()));

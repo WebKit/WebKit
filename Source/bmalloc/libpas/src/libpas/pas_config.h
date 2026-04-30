@@ -89,6 +89,33 @@
 #define PAS_ENABLE_MTE (PAS_USE_APPLE_INTERNAL_SDK && __PAS_ARM64E && !PAS_ASAN_ENABLED)
 #endif /* PAS_ENABLE_MTE */
 
+/* PAS_USE_SYMMETRIC_PAGE_ALLOCATION controls whether pas_page_malloc_commit /
+ * pas_page_malloc_decommit use a strictly symmetric primitive pair. When set, the
+ * strict "decommit" API is expected to be paired with a matching "commit" before
+ * re-access - violating that invariant will fault. When unset, both sides use the
+ * asymmetric model, thus commit side does not need explicit calls.
+ *
+ * This is used only on Windows as asymmetric manner is better: this is driven by
+ * the actual demand access while symmetric manner is pre-committing region.
+ * However Windows has commit-charge limit while Linux / Darwin etc. do not and it is
+ * accounting memory region even if it is not having backing physical pages.
+ *
+ * The "without_mprotect" variants of the page malloc API take an explicit
+ * is_symmetric argument — they serve both symmetric callers (pas_thread_local_cache,
+ * which pairs commit/decommit via ensure_committed + a pages_committed bitvector)
+ * and asymmetric callers (pas_expendable_memory, which reads decommitted memory
+ * without a matching commit and detects the decommit via a version + zero-check
+ * scheme). The _without_mprotect name refers only to skipping PAS_MPROTECT_DECOMMITTED
+ * test-mode poisoning; symmetry is orthogonal and chosen per call site.
+ */
+#ifndef PAS_USE_SYMMETRIC_PAGE_ALLOCATION
+#if PAS_OS(WINDOWS)
+#define PAS_USE_SYMMETRIC_PAGE_ALLOCATION 1
+#else
+#define PAS_USE_SYMMETRIC_PAGE_ALLOCATION 0
+#endif
+#endif /* PAS_USE_SYMMETRIC_PAGE_ALLOCATION */
+
 #define PAS_RISCV __PAS_RISCV
 
 #define PAS_ADDRESS_BITS                 48

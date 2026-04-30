@@ -34,6 +34,8 @@ namespace WebCore {
 class FloatRect;
 class TransformationMatrix;
 
+static constexpr size_t cOverlapRegionConsolidationThreshold = 4;
+
 enum class ComputeOverlapRegionMode : uint8_t {
     Intersection,
     Union,

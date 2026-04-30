@@ -32,6 +32,8 @@ class HTMLMenuElement final : public HTMLElement {
 public:
     static Ref<HTMLMenuElement> create(const QualifiedName&, Document&);
 
+    ~HTMLMenuElement();
+
 private:
     HTMLMenuElement(const QualifiedName&, Document&);
 };

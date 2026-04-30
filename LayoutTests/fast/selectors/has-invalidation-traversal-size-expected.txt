@@ -1,21 +1,21 @@
 :has(> .trigger) with compound peer .c1
   Traversal count: 7
 :has(.trigger) with compound peer .c2
-  Traversal count: 14
-:has(> .trigger) without compound peer
+  Traversal count: 13
+:has(> .trigger3) without compound peer
   Traversal count: 7
 :has(> .trigger) in non-subject position with compound peer .c4
-  Traversal count: 14
-:has(+ .trigger) with compound peer .c5
-  Traversal count: 3
-:has(:is(.trigger + .other)) with compound peer .c6
   Traversal count: 7
+:has(+ .trigger) with compound peer .c5
+  Traversal count: 1
+:has(:is(.trigger + .other)) with compound peer .c6
+  Traversal count: 14
 :has(.trigger) non-subject with scope-bounded traversal .c7
-  Traversal count: 14
+  Traversal count: 7
 :not(:has(.trigger)) inside :not() with compound peer .c8
-  Traversal count: 14
+  Traversal count: 7
 :is(:has(.trigger)) inside :is() with compound peer .c9
-  Traversal count: 14
+  Traversal count: 7
 :is(.other :has(.trigger)) inside :is() with complex selector and compound peer .c10
-  Traversal count: 14
+  Traversal count: 7
 

@@ -27,6 +27,7 @@
 
 #include "DeferTermination.h"
 #include "Heap.h"
+#include "LazyProperty.h"
 #include "VMTraps.h"
 #include <wtf/StdLibExtras.h>
 

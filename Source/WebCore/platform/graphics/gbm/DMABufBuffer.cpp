@@ -30,11 +30,8 @@
 #include "CoordinatedPlatformLayerBuffer.h"
 #include "GBMVersioning.h"
 #include "GLDisplay.h"
-#include "MemoryMappedGPUBuffer.h"
 #include <atomic>
 #include <drm_fourcc.h>
-#include <fcntl.h>
-#include <xf86drm.h>
 
 #if USE(LIBEPOXY)
 #include <epoxy/egl.h>
@@ -93,7 +90,7 @@ std::optional<DMABufBufferAttributes> DMABufBufferAttributes::fromGBMBufferObjec
     attributes.modifier = enableModifiers == EnableModifiers::Yes ? gbm_bo_get_modifier(bo) : DRM_FORMAT_MOD_INVALID;
 
     for (int i = 0; i < planeCount; ++i) {
-        int fd = MemoryMappedGPUBuffer::exportFDForPlane(bo, i);
+        int fd = gbm_bo_get_fd_for_plane(bo, i);
         if (fd < 0) {
             LOG_ERROR("DMABufBufferAttributes::fromGBMBufferObject(), failed to export dma-buf for plane %d", i);
             return std::nullopt;

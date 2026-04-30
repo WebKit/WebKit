@@ -1339,6 +1339,7 @@ std::optional<TypedChild> parseCalcFunction(CSSParserTokenRange& tokens, CSSValu
             return { };
         if (state.propertyParserState.currentProperty == CSSPropertyInvalid)
             return { };
+        state.requiresConversionData = true;
         return consumeZeroArguments<SiblingCount>(tokens, depth, state);
 
     case CSSValueSiblingIndex:
@@ -1351,6 +1352,7 @@ std::optional<TypedChild> parseCalcFunction(CSSParserTokenRange& tokens, CSSValu
             return { };
         if (state.propertyParserState.currentProperty == CSSPropertyInvalid)
             return { };
+        state.requiresConversionData = true;
         return consumeZeroArguments<SiblingIndex>(tokens, depth, state);
 
     case CSSValueAnchor:

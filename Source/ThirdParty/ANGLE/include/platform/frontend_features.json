@@ -249,6 +249,20 @@
                 "Force every context into debug mode as if EGL_CONTEXT_OPENGL_DEBUG_BIT_KHR was used."
             ],
             "issue": "https://anglebug.com/423956139"
+        },
+        {
+            "name": "limit_max_buffer_bytes_to_1MB",
+            "category": "Features",
+            "description": [
+                "Force a max buffer size of 1MB for testing."
+            ]
+        },
+        {
+            "name": "limit_max_texture_bytes_to_1MB",
+            "category": "Features",
+            "description": [
+                "Force a max image size of 1MB for testing."
+            ]
         }
     ]
 }

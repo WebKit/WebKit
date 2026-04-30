@@ -1234,7 +1234,10 @@ extension WebGPU.CommandEncoder {
                 mtlAttachment.depthPlane = texture.is3DTexture() ? Int(depthSliceOrArrayLayer) : 0
                 mtlAttachment.slice = 0
                 mtlAttachment.loadAction = loadAction(loadOp: attachment.loadOp)
-                mtlAttachment.storeAction = storeAction(storeOp: attachment.storeOp, hasResolveTarget: attachment.resolveTarget != nil)
+                mtlAttachment.storeAction = storeAction(
+                    storeOp: attachment.storeOp,
+                    hasResolveTarget: attachment.resolveTarget != nil || attachment.resolveTexture != nil
+                )
 
                 zeroColorTargets = false
                 var textureToClear: (any MTLTexture)? = nil

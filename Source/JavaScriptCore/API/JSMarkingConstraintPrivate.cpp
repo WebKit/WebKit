@@ -27,6 +27,7 @@
 #include "JSMarkingConstraintPrivate.h"
 
 #include "APICast.h"
+#include "JSCellInlines.h"
 #include "SimpleMarkingConstraint.h"
 
 using namespace JSC;

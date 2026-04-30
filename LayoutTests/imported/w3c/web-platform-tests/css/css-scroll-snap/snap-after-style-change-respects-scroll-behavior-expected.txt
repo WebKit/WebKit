@@ -1,0 +1,4 @@
+
+
+FAIL Dynamically enabling scroll-snap should trigger a smooth scroll if scroll-behavior is smooth. assert_equals: Scroller should be at the initial test position. expected 160 but got 13
+

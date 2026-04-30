@@ -4,7 +4,6 @@ PASS cx and cy presentation attributes supported on ellipse element
 PASS x, y, width, and height presentation attributes supported on foreignObject element
 PASS x, y, width, and height presentation attributes supported on image element
 PASS x, y, width, and height presentation attributes supported on rect element
-PASS x, y, width, and height presentation attributes supported on svg element
 PASS r presentation attribute supported on circle element
 PASS rx and ry presentation attributes supported on ellipse element
 PASS rx and ry presentation attributes supported on rect element
@@ -25,4 +24,5 @@ FAIL gradientTransform presentation attribute supported on radialGradient assert
 PASS transform presentation attribute not supported on pattern or gradient elements
 PASS patternTransform presentation attribute not supported on g or gradient elements
 PASS gradientTransform presentation attribute not supported on g or pattern elements
+FAIL width and height presentation attributes not supported on inner svg element assert_false: Presentation attribute width="1" should not be supported on svg element expected false got true
 

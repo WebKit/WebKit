@@ -60,18 +60,51 @@ RetainPtr<CVPixelBufferRef> createScratchMetalCompatibleCVPixelBuffer(unsigned w
 {
     RetainPtr attributes = adoptCF(CFDictionaryCreateMutable(nullptr, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     RetainPtr surfaceProperties = adoptCF(CFDictionaryCreateMutable(nullptr, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-    CFDictionarySetValue(attributes.get(), kCVPixelBufferIOSurfacePropertiesKey, surfaceProperties.get());
-    CFDictionarySetValue(attributes.get(), kCVPixelBufferMetalCompatibilityKey, kCFBooleanTrue);
-
+    CFDictionarySetValue(attributes, kCVPixelBufferIOSurfacePropertiesKey, surfaceProperties);
+    CFDictionarySetValue(attributes, kCVPixelBufferMetalCompatibilityKey, kCFBooleanTrue);
     return createScratchCVPixelBuffer(width, height, pixelFormat, attributes, colorSpace);
+}
+
+RetainPtr<CVPixelBufferRef> createScratchMetalCompatibleCVPixelBuffer(CVPixelBufferRef pixelBuffer, CGColorSpaceRef colorSpace)
+{
+    unsigned width = CVPixelBufferGetWidth(pixelBuffer);
+    unsigned height = CVPixelBufferGetHeight(pixelBuffer);
+    OSType pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer);
+    return createScratchMetalCompatibleCVPixelBuffer(width, height, pixelFormat, colorSpace);
 }
 
 RetainPtr<CVPixelBufferRef> createScratchMetalCompatibleCVPixelBuffer(const ShareableCVPixelBuffer& pixelBuffer, CGColorSpaceRef colorSpace)
 {
     unsigned width = pixelBuffer.configuration().width();
     unsigned height = pixelBuffer.configuration().height();
-    ShareableCVPixelFormat pixelFormat = pixelBuffer.configuration().pixelFormat();
-    return createScratchMetalCompatibleCVPixelBuffer(width, height, toCVPixelFormat(pixelFormat), colorSpace);
+    OSType pixelFormat = toCVPixelFormat(pixelBuffer.configuration().pixelFormat());
+    return createScratchMetalCompatibleCVPixelBuffer(width, height, pixelFormat, colorSpace);
+}
+
+RetainPtr<CVPixelBufferRef> createMetalCompatibleCVPixelBufferFromImage(PlatformImagePtr platformImage)
+{
+    unsigned width = CGImageGetWidth(platformImage);
+    unsigned height = CGImageGetHeight(platformImage);
+    RetainPtr colorSpace = CGImageGetColorSpace(platformImage);
+
+    RetainPtr pixelBuffer = createScratchMetalCompatibleCVPixelBuffer(width, height, kCVPixelFormatType_32BGRA);
+    if (!pixelBuffer)
+        return nullptr;
+
+    CVPixelBufferLockBaseAddress(pixelBuffer, 0);
+    {
+        unsigned destinationBytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer);
+        auto* destinationBaseAddress = static_cast<uint8_t*>(CVPixelBufferGetBaseAddress(pixelBuffer));
+
+        // kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst => BGRA layout
+        auto bitmapInfo = static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Little) | static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedFirst);
+
+        RetainPtr context = adoptCF(CGBitmapContextCreate(destinationBaseAddress, width, height, 8, destinationBytesPerRow, colorSpace, bitmapInfo));
+        CGContextDrawImage(context, CGRectMake(0, 0, static_cast<CGFloat>(width), static_cast<CGFloat>(height)), platformImage);
+    }
+    CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
+
+    return WTF::move(pixelBuffer);
 }
 
 #if ENABLE(DUMP_GAIN_MAP_IMAGES)

@@ -391,13 +391,9 @@ Expected<PageCount, GrowFailReason> Memory::grow(VM& vm, PageCount delta)
     return oldPageCount;
 }
 
-bool Memory::fill(uint64_t offset, uint8_t targetValue, uint64_t count)
+bool Memory::fill(uint32_t offset, uint8_t targetValue, uint32_t count)
 {
-    bool doesOverflow = addressType().is64Bit()
-        ? sumOverflows<uint64_t>(offset, count)
-        : sumOverflows<uint32_t>(offset, count);
-
-    if (doesOverflow)
+    if (sumOverflows<uint32_t>(offset, count))
         return false;
 
     if (offset + count > m_handle->size())
@@ -407,20 +403,13 @@ bool Memory::fill(uint64_t offset, uint8_t targetValue, uint64_t count)
     return true;
 }
 
-bool Memory::copy(uint64_t dstAddress, uint64_t srcAddress, uint64_t count)
+bool Memory::copy(uint32_t dstAddress, uint32_t srcAddress, uint32_t count)
 {
-    bool srcAndCountOverflows = addressType().is64Bit()
-        ? sumOverflows<uint64_t>(srcAddress, count)
-        : sumOverflows<uint32_t>(srcAddress, count);
-    bool dstAndCountOverflows = addressType().is64Bit()
-        ? sumOverflows<uint64_t>(dstAddress, count)
-        : sumOverflows<uint32_t>(dstAddress, count);
-
-    if (srcAndCountOverflows || dstAndCountOverflows)
+    if (sumOverflows<uint32_t>(dstAddress, count) || sumOverflows<uint32_t>(srcAddress, count))
         return false;
 
-    const uint64_t lastDstAddress = dstAddress + count;
-    const uint64_t lastSrcAddress = srcAddress + count;
+    const uint32_t lastDstAddress = dstAddress + count;
+    const uint32_t lastSrcAddress = srcAddress + count;
 
     if (lastDstAddress > size() || lastSrcAddress > size())
         return false;

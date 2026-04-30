@@ -437,16 +437,25 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
     networkLoadMetrics().hasCrossOriginRedirect = networkLoadMetrics().hasCrossOriginRedirect || !WebCore::SecurityOrigin::create(request.url())->canRequest(redirectResponse.url(), WebCore::EmptyOriginAccessPatterns::singleton());
 
     const auto& previousRequest = m_previousRequest.isNull() ? m_firstRequest : m_previousRequest;
-    if (redirectResponse.httpStatusCode() == httpStatus307TemporaryRedirect || redirectResponse.httpStatusCode() == httpStatus308PermanentRedirect) {
-        ASSERT(m_lastHTTPMethod == request.httpMethod());
+    auto status = redirectResponse.httpStatusCode();
+
+    // NSURLSession strips the request body on all redirects. Reattach it when
+    // the redirect should preserve the method and body: 307/308 always, and
+    // 301/302 for non-POST methods (POST is converted to GET per spec).
+    bool shouldPreserveBody = (status == httpStatus307TemporaryRedirect || status == httpStatus308PermanentRedirect)
+        || ((status == httpStatus301MovedPermanently || status == httpStatus302Found) && !equalLettersIgnoringASCIICase(previousRequest.httpMethod(), "post"_s));
+
+    if (shouldPreserveBody) {
+        if (status == httpStatus307TemporaryRedirect || status == httpStatus308PermanentRedirect)
+            ASSERT(m_lastHTTPMethod == request.httpMethod());
         RefPtr body = previousRequest.httpBody();
         if (body && !body->isEmpty() && !equalLettersIgnoringASCIICase(m_lastHTTPMethod, "get"_s))
             request.setHTTPBody(WTF::move(body));
-        
+
         String originalContentType = previousRequest.httpContentType();
         if (!originalContentType.isEmpty())
             request.setHTTPHeaderField(WebCore::HTTPHeaderName::ContentType, originalContentType);
-    } else if (redirectResponse.httpStatusCode() == httpStatus303SeeOther) { // FIXME: (rdar://problem/13706454).
+    } else if (status == httpStatus303SeeOther) { // FIXME: (rdar://problem/13706454).
         if (equalLettersIgnoringASCIICase(previousRequest.httpMethod(), "head"_s))
             request.setHTTPMethod("HEAD"_s);
 

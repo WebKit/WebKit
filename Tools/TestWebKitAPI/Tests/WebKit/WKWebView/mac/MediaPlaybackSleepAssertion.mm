@@ -28,12 +28,12 @@
 #if JSC_OBJC_API_ENABLED
 
 #import "Helpers/PlatformUtilities.h"
-#import "WebCoreTestSupport.h"
 #import <Carbon/Carbon.h>
 #import <IOKit/pwr_mgt/IOPMLib.h>
 #import <JavaScriptCore/JSCConfig.h>
 #import <JavaScriptCore/JSContext.h>
 #import <WebCore/Settings.h>
+#import <WebCoreTestSupport/WebCoreTestSupport.h>
 #import <WebKit/WebKitLegacy.h>
 #import <wtf/RetainPtr.h>
 

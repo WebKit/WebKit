@@ -70,19 +70,38 @@ class DarwinPort(ApplePort):
             pass
         return sorted(list(allowlist))
 
-    def _should_use_system_shard(self, shard_name):
-        """Check if a shard should be placed in the system shard based on the allowlist."""
-        allowlist = self._load_api_test_suite_allowlist()
-        return shard_name not in allowlist
+    @memoized
+    def _allowlist_as_set(self):
+        """Return the allowlist as a set for efficient lookups."""
+        return set(self._load_api_test_suite_allowlist())
+
+    def is_test_allowlisted(self, test_name):
+        """Check if a test is allowlisted (exact match or suite match).
+
+        A test is allowlisted if:
+        1. Its full name (BINARY.SUITE.TESTCASE) is in the allowlist, OR
+        2. Its suite prefix (BINARY.SUITE) is in the allowlist
+        """
+        allowlist = self._allowlist_as_set()
+        # Check exact match (test name in allowlist)
+        if test_name in allowlist:
+            return True
+        # Check suite match (BINARY.SUITE prefix in allowlist)
+        suite_prefix = '.'.join(test_name.split('.')[:-1])
+        return suite_prefix in allowlist
+
+    def filter_api_tests_by_allowlist(self, tests):
+        """Split API tests into allowlisted (parallel) and non-allowlisted (system) groups."""
+        allowlisted = []
+        non_allowlisted = []
+        for t in tests:
+            if self.is_test_allowlisted(t):
+                allowlisted.append(t)
+            else:
+                non_allowlisted.append(t)
+        return allowlisted, non_allowlisted
 
     def sharding_groups(self, suite=None):
-        if suite == 'api-tests':
-            groups = {}
-
-            # Add system group - test-parallel-safety groups will be created dynamically in runner.py
-            groups['system'] = lambda shard: '__WEBKIT_TEST_PARALLEL_SAFETY_SHARD_' not in shard.name and self._should_use_system_shard(shard.name)
-
-            return groups
         return {
             'media': lambda shard: 'media' in shard.name or 'webaudio' in shard.name,
         }

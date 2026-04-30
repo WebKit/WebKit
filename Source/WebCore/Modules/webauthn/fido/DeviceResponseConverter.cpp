@@ -150,7 +150,7 @@ static std::optional<AuthenticationExtensionsClientOutputs> parseAuthenticatorDa
 
             auto decryptedResponse = pin::HmacSecretResponse::parse(
                 hmacSecretRequest->protocol(),
-                Ref { hmacSecretRequest->sharedKey() }.get(),
+                protect(hmacSecretRequest->sharedKey()).get(),
                 encryptedOutput
             );
 

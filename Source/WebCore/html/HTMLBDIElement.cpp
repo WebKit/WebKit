@@ -38,6 +38,8 @@ Ref<HTMLBDIElement> HTMLBDIElement::create(const QualifiedName& name, Document& 
     return adoptRef(*new HTMLBDIElement(name, document));
 }
 
+HTMLBDIElement::~HTMLBDIElement() = default;
+
 HTMLBDIElement::HTMLBDIElement(const QualifiedName& name, Document& document)
     : HTMLElement(name, document)
 {

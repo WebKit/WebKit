@@ -47,6 +47,11 @@ LibWebRTCRtpSenderTransformBackend::LibWebRTCRtpSenderTransformBackend(Ref<webrt
 
 LibWebRTCRtpSenderTransformBackend::~LibWebRTCRtpSenderTransformBackend() = default;
 
+void LibWebRTCRtpSenderTransformBackend::detachFromOwningBackend()
+{
+    m_rtcSender->SetFrameTransformer(nullptr);
+}
+
 void LibWebRTCRtpSenderTransformBackend::setTransformableFrameCallback(Callback&& callback)
 {
     setInputCallback(WTF::move(callback));

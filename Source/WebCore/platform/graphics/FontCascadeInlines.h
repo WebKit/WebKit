@@ -31,6 +31,7 @@
 
 #include <WebCore/FontCascade.h>
 #include <WebCore/FontCascadeFonts.h>
+#include <unicode/uchar.h>
 #include <wtf/text/CharacterProperties.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -79,7 +80,10 @@ inline float FontCascade::tabWidth(const Font& font, const TabSize& tabSize, flo
     if (!baseTabWidth)
         result = letterSpacing();
     else {
-        result = baseTabWidth - fmodf(position, baseTabWidth);
+        auto remainder = fmodf(position, baseTabWidth);
+        if (remainder < 0)
+            remainder += baseTabWidth;
+        result = baseTabWidth - remainder;
         if (result < font.spaceWidth() / 2)
             result += baseTabWidth;
     }
@@ -120,6 +124,16 @@ inline bool FontCascade::isInvisibleReplacementObjectCharacter(char32_t characte
     return WTF::CocoaApplication::isAppleBooks();
 #else
     return false;
+#endif
+}
+
+inline char32_t mirrorCharacterIfNeeded(char32_t character)
+{
+#if HAVE(CORE_TEXT_BIDI_MIRRORING)
+    // CTFontShapeGlyphs applies Bidi_Mirroring_Glyph automatically when shaping with kCTFontShapeRightToLeft.
+    return character;
+#else
+    return u_charMirror(character);
 #endif
 }
 

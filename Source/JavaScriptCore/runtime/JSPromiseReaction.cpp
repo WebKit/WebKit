@@ -33,13 +33,6 @@ namespace JSC {
 
 const ClassInfo JSPromiseReaction::s_info = { "PromiseReaction"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSPromiseReaction) };
 
-JSPromiseReaction* JSPromiseReaction::create(VM& vm, JSValue promise, JSValue onFulfilled, JSValue onRejected, JSValue context, JSPromiseReaction* next)
-{
-    JSPromiseReaction* result = new (NotNull, allocateCell<JSPromiseReaction>(vm)) JSPromiseReaction(vm, vm.promiseReactionStructure.get(), promise, onFulfilled, onRejected, context, next);
-    result->finishCreation(vm);
-    return result;
-}
-
 template<typename Visitor>
 void JSPromiseReaction::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
@@ -47,17 +40,85 @@ void JSPromiseReaction::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_promise);
-    visitor.append(thisObject->m_onFulfilled);
-    visitor.append(thisObject->m_onRejected);
-    visitor.append(thisObject->m_context);
-    visitor.append(thisObject->m_next);
-}
-
-Structure* JSPromiseReaction::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-{
-    return Structure::create(vm, globalObject, prototype, TypeInfo(JSPromiseReactionType, StructureFlags), info());
+    visitor.appendUnbarriered(thisObject->m_next.pointer());
 }
 
 DEFINE_VISIT_CHILDREN(JSPromiseReaction);
+
+JSValue JSPromiseReaction::tryGetContext(JSValue reactionsValue)
+{
+    if (auto* slim = dynamicDowncast<JSSlimPromiseReaction>(reactionsValue)) {
+        if (slim->internalMicrotask() != InternalMicrotask::None)
+            return slim->handlerOrContext();
+        return { };
+    }
+    if (auto* full = dynamicDowncast<JSFullPromiseReaction>(reactionsValue))
+        return full->context();
+    return { };
+}
+
+// JSSlimPromiseReaction
+
+const ClassInfo JSSlimPromiseReaction::s_info = { "SlimPromiseReaction"_s, &JSPromiseReaction::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSSlimPromiseReaction) };
+
+JSSlimPromiseReaction* JSSlimPromiseReaction::create(VM& vm, JSValue promise, JSValue handler, bool isFulfill, JSPromiseReaction* next)
+{
+    JSSlimPromiseReaction* result = new (NotNull, allocateCell<JSSlimPromiseReaction>(vm)) JSSlimPromiseReaction(vm, vm.slimPromiseReactionStructure.get(), promise, handler, next, InternalMicrotask::None, isFulfill);
+    result->finishCreation(vm);
+    return result;
+}
+
+JSSlimPromiseReaction* JSSlimPromiseReaction::create(VM& vm, JSValue promise, InternalMicrotask task, JSValue context, JSPromiseReaction* next)
+{
+    ASSERT(task != InternalMicrotask::None);
+    JSSlimPromiseReaction* result = new (NotNull, allocateCell<JSSlimPromiseReaction>(vm)) JSSlimPromiseReaction(vm, vm.slimPromiseReactionStructure.get(), promise, context, next, task, false);
+    result->finishCreation(vm);
+    return result;
+}
+
+template<typename Visitor>
+void JSSlimPromiseReaction::visitChildrenImpl(JSCell* cell, Visitor& visitor)
+{
+    auto* thisObject = uncheckedDowncast<JSSlimPromiseReaction>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    Base::visitChildren(thisObject, visitor);
+    visitor.append(thisObject->m_handlerOrContext);
+}
+
+Structure* JSSlimPromiseReaction::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(JSSlimPromiseReactionType, StructureFlags), info());
+}
+
+DEFINE_VISIT_CHILDREN(JSSlimPromiseReaction);
+
+// JSFullPromiseReaction
+
+const ClassInfo JSFullPromiseReaction::s_info = { "FullPromiseReaction"_s, &JSPromiseReaction::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFullPromiseReaction) };
+
+JSFullPromiseReaction* JSFullPromiseReaction::create(VM& vm, JSValue promise, JSValue onFulfilled, JSValue onRejected, JSValue context, JSPromiseReaction* next)
+{
+    JSFullPromiseReaction* result = new (NotNull, allocateCell<JSFullPromiseReaction>(vm)) JSFullPromiseReaction(vm, vm.fullPromiseReactionStructure.get(), promise, onFulfilled, onRejected, context, next);
+    result->finishCreation(vm);
+    return result;
+}
+
+template<typename Visitor>
+void JSFullPromiseReaction::visitChildrenImpl(JSCell* cell, Visitor& visitor)
+{
+    auto* thisObject = uncheckedDowncast<JSFullPromiseReaction>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    Base::visitChildren(thisObject, visitor);
+    visitor.append(thisObject->m_onFulfilled);
+    visitor.append(thisObject->m_onRejected);
+    visitor.append(thisObject->m_context);
+}
+
+Structure* JSFullPromiseReaction::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(JSFullPromiseReactionType, StructureFlags), info());
+}
+
+DEFINE_VISIT_CHILDREN(JSFullPromiseReaction);
 
 } // namespace JSC

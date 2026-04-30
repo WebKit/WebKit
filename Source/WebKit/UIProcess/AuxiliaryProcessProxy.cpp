@@ -38,6 +38,7 @@
 #include "WebPageProxyIdentifier.h"
 #include "WebProcessProxy.h"
 #include <algorithm>
+#include <array>
 #include <ranges>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
@@ -505,9 +506,9 @@ bool AuxiliaryProcessProxy::platformIsBeingDebugged() const
         return false;
 
     struct kinfo_proc info;
-    int mib[] = { CTL_KERN, KERN_PROC, KERN_PROC_PID, processID() };
+    std::array mib { CTL_KERN, KERN_PROC, KERN_PROC_PID, processID() };
     size_t size = sizeof(info);
-    if (sysctl(mib, std::size(mib), &info, &size, nullptr, 0) == -1)
+    if (sysctl(mib.data(), mib.size(), &info, &size, nullptr, 0) == -1)
         return false;
 
     return info.kp_proc.p_flag & P_TRACED;

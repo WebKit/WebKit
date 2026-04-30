@@ -154,6 +154,45 @@
 
         }, `All queued 'takePhoto()' and 'applyConstraints()' calls should resolve or reject`);
 
+        promise_test(async (test) => {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { width : 320 } });
+            test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
+            const [track] = stream.getVideoTracks();
+            const imageCapture = new ImageCapture(track);
+
+            const promises = [];
+            for (let i = 0; i < 10; i++)
+                promises.push(imageCapture.takePhoto());
+
+            const blobs = await Promise.all(promises);
+            assert_equals(blobs.length, 10, "all 10 takePhoto() calls resolved");
+            for (let i = 0; i < blobs.length; i++)
+                assert_true(blobs[i] instanceof Blob, `result ${i} is a Blob`);
+
+        }, `All 10 rapidly queued 'takePhoto()' calls should resolve`);
+
+        promise_test(async (test) => {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { width : 320 } });
+            test.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
+            const [track] = stream.getVideoTracks();
+            const imageCapture = new ImageCapture(track);
+
+            const photoPromises = [];
+            const constraintPromises = [];
+            for (let i = 0; i < 5; i++) {
+                photoPromises.push(imageCapture.takePhoto());
+                constraintPromises.push(track.applyConstraints({ width: i % 2 === 0 ? 320 : 640 }));
+            }
+
+            const blobs = await Promise.all(photoPromises);
+            await Promise.all(constraintPromises);
+
+            assert_equals(blobs.length, 5, "all 5 takePhoto() calls resolved");
+            for (let i = 0; i < blobs.length; i++)
+                assert_true(blobs[i] instanceof Blob, `photo ${i} is a Blob`);
+
+        }, `Interleaved 'takePhoto()' and 'applyConstraints()' calls should all resolve`);
+
     </script>
 </body>
 </html>

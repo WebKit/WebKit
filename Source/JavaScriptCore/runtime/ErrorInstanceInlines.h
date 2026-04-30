@@ -21,6 +21,7 @@
 #pragma once
 
 #include "ErrorInstance.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

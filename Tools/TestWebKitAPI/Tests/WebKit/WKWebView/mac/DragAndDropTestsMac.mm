@@ -399,10 +399,27 @@ TEST(DragAndDropTests, DragLocationForImageInScrolledSubframe)
     [simulator runFrom:NSMakePoint(100, 100) to:NSMakePoint(200, 200)];
 
     CGPoint dragLocation = [simulator initialDragImageLocationInView];
-    EXPECT_TRUE(NSPointInRect(dragLocation, [webView bounds]));
+    EXPECT_NEAR(dragLocation.x, 0, 20);
+    EXPECT_NEAR(dragLocation.y, 0, 20);
 
     RetainPtr dragTypes = [[[simulator draggingInfo] draggingPasteboard] types];
     EXPECT_TRUE([dragTypes containsObject:UTTypePNG.identifier]);
+}
+
+TEST(DragAndDropTests, DragPreviewOriginForImage)
+{
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400)]);
+    RetainPtr webView = [simulator webView];
+    [webView synchronouslyLoadTestPageNamed:@"image-and-contenteditable"];
+
+    auto imageMidpoint = [webView getElementMidpoint:@"#source"];
+    NSPoint dragStart = imageMidpoint.value();
+    [simulator runFrom:dragStart to:NSMakePoint(dragStart.x, dragStart.y + 200)];
+
+    // A missing flipped-coordinate adjustment (rdar://175267103) would
+    // shift the preview down by the image height, placing the origin below.
+    NSPoint previewOrigin = [simulator initialDragImageLocationInView];
+    EXPECT_LT(previewOrigin.y, dragStart.y);
 }
 
 TEST(DragAndDropTests, DragEnterAndLeaveRelatedTarget)

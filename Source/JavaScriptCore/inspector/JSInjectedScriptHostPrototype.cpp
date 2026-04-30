@@ -28,6 +28,7 @@
 
 #include "JSCInlines.h"
 #include "JSInjectedScriptHost.h"
+#include "StructureCreateInlines.h"
 
 namespace Inspector {
 
@@ -329,6 +330,11 @@ JSC_DEFINE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionGetInternalPropert
         return throwVMTypeError(globalObject, scope);
 
     return JSValue::encode(castedThis->getInternalProperties(globalObject, callFrame));
+}
+
+Structure* JSInjectedScriptHostPrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
 } // namespace Inspector

@@ -33,9 +33,11 @@
 #include "ImageBuffer.h"
 #include "ImageUtilities.h"
 #include "InspectorBackendClient.h"
+#include "InspectorDOMAgent.h"
 #include "InstrumentingAgents.h"
 #include "Page.h"
 #include "PageInspectorController.h"
+#include "RenderElementInlines.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
 #include "TimelineRecordFactory.h"
@@ -197,7 +199,7 @@ void PageTimelineAgent::willLayout()
     pushCurrentRecord(JSON::Object::create(), TimelineRecordType::Layout, true);
 }
 
-void PageTimelineAgent::didLayout(const Vector<FloatQuad>& layoutAreas)
+void PageTimelineAgent::didLayout(const RenderElement& layoutRoot, const Vector<FloatQuad>& layoutAreas)
 {
     auto* entry = lastRecordEntry();
     if (!entry)
@@ -205,8 +207,22 @@ void PageTimelineAgent::didLayout(const Vector<FloatQuad>& layoutAreas)
 
     ASSERT(entry->type == TimelineRecordType::Layout);
     ASSERT(!layoutAreas.isEmpty());
-    if (!layoutAreas.isEmpty())
-        TimelineRecordFactory::appendLayoutRoot(entry->data.get(), layoutAreas[0]);
+
+    RefPtr<Node> node = layoutRoot.element();
+
+    if (layoutRoot.isRenderView())
+        node = &layoutRoot.document();
+    else if (layoutRoot.isBeforeOrAfterContent())
+        node = layoutRoot.generatingElement();
+    else if (layoutRoot.isAnonymous())
+        node = layoutRoot.parent()->element();
+
+    Inspector::Protocol::DOM::NodeId nodeID = 0;
+    if (CheckedPtr domAgent = Ref { m_instrumentingAgents.get() }->persistentDOMAgent())
+        nodeID = domAgent->pushNodeToFrontend(node);
+
+    if (nodeID && !layoutAreas.isEmpty())
+        TimelineRecordFactory::appendLayoutRoot(entry->data.get(), nodeID, layoutAreas[0]);
 
     didCompleteCurrentRecord(TimelineRecordType::Layout);
 }

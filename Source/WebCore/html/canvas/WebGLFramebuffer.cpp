@@ -62,11 +62,11 @@ static void entryDetachAndClear(WebGLFramebuffer::AttachmentEntry& entry, const 
             renderbuffer = nullptr;
         },
         [&](WebGLFramebuffer::TextureAttachment& textureAttachment) {
-            RefPtr { textureAttachment.texture }->onDetached(locker, gl);
+            protect(textureAttachment.texture)->onDetached(locker, gl);
             textureAttachment.texture = nullptr;
         },
         [&](WebGLFramebuffer::TextureLayerAttachment& layerAttachment) {
-            RefPtr { layerAttachment.texture }->onDetached(locker, gl);
+            protect(layerAttachment.texture)->onDetached(locker, gl);
             layerAttachment.texture = nullptr;
         }
     );

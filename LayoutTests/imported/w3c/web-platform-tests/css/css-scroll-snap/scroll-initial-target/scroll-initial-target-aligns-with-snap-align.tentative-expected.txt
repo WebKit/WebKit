@@ -1,0 +1,3 @@
+
+FAIL scroll-initial-target aligns with scroll-snap-align assert_equals: scroller is vertically scrolled to target expected 400 but got 0
+

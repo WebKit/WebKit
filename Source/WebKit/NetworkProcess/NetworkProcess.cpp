@@ -135,6 +135,7 @@
 #endif
 
 #if HAVE(WEBCONTENTRESTRICTIONS)
+#include <WebCore/MockParentalControlsURLFilter.h>
 #include <WebCore/ParentalControlsURLFilter.h>
 #endif
 
@@ -3156,6 +3157,12 @@ void NetworkProcess::resetServiceWorkerFetchTimeoutForTesting(CompletionHandler<
     completionHandler();
 }
 
+void NetworkProcess::clearCrossOriginPreflightResultCacheForTesting(CompletionHandler<void()>&& completionHandler)
+{
+    CrossOriginPreflightResultCache::singleton().clear();
+    completionHandler();
+}
+
 void NetworkProcess::terminateIdleServiceWorkers(WebCore::ProcessIdentifier processIdentifier, CompletionHandler<void()>&& callback)
 {
     if (RefPtr connection = webProcessConnection(processIdentifier))
@@ -3448,6 +3455,13 @@ void NetworkProcess::allowEvaluatedURL(const WebCore::ParentalControlsURLFilterP
 #else
     filter->allowURL(parameters.urlToAllow, WTF::move(completionHandler));
 #endif
+}
+
+void NetworkProcess::installMockParentalControlsURLFilterForTesting(Vector<URL>&& blockedURLs, CompletionHandler<void()>&& completionHandler)
+{
+    Ref mock = WebCore::MockParentalControlsURLFilter::create(WTF::move(blockedURLs));
+    WebCore::ParentalControlsURLFilter::setFilterForTesting(WTF::move(mock));
+    completionHandler();
 }
 #endif
 

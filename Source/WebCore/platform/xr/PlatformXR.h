@@ -486,6 +486,11 @@ struct FrameData {
 };
 
 #if ENABLE(WEBXR_LAYERS)
+enum class CompositionLayerType : uint8_t {
+    Quad,
+    Equirect,
+};
+
 enum class LayerLayout : uint8_t {
     Mono,
     StereoLeftRight,
@@ -512,6 +517,14 @@ struct DeviceLayer {
         FrameData::Pose poseInLocalSpace;
     };
     std::optional<QuadLayerData> quadLayerData;
+    struct EquirectLayerData {
+        float radius;
+        float centralHorizontalAngle;
+        float upperVerticalAngle;
+        float lowerVerticalAngle;
+        FrameData::Pose poseInLocalSpace;
+    };
+    std::optional<EquirectLayerData> equirectLayerData;
 #endif
 };
 
@@ -554,7 +567,7 @@ public:
     virtual void initializeReferenceSpace(ReferenceSpaceType) = 0;
     virtual std::optional<LayerInfo> createLayerProjection(uint32_t width, uint32_t height, bool alpha) = 0;
 #if ENABLE(WEBXR_LAYERS)
-    virtual std::optional<LayerInfo> createQuadLayer(WebCore::IntSize, LayerLayout) = 0;
+    virtual std::optional<LayerInfo> createCompositionLayer(CompositionLayerType, WebCore::IntSize, LayerLayout) = 0;
 #endif
     virtual void deleteLayer(LayerHandle) = 0;
 

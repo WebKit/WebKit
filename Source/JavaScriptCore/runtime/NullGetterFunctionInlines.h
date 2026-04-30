@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include "NullGetterFunction.h"
+#include "StructureCreateInlines.h"
+
 namespace JSC {
 
 inline Structure* NullGetterFunction::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)

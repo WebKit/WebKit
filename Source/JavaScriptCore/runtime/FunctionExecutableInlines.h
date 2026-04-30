@@ -28,6 +28,7 @@
 #include "FunctionExecutable.h"
 #include "InferredValueInlines.h"
 #include "ScriptExecutableInlines.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

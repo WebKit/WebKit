@@ -86,6 +86,7 @@
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
+#include <WebCore/HTTPStatusCodes.h>
 #include <wtf/JSONValues.h>
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
@@ -500,7 +501,7 @@ void InspectorNetworkAgent::didReceiveResponse(ResourceLoaderIdentifier identifi
     auto resourceResponse = buildObjectForResourceResponse(realResponse ? *realResponse : response, resourceLoader);
     ASSERT(resourceResponse);
 
-    bool isNotModified = response.httpStatusCode() == 304;
+    bool isNotModified = response.httpStatusCode() == httpStatus304NotModified;
 
     RefPtr<CachedResource> cachedResource;
     if (auto* subresourceLoader = dynamicDowncast<SubresourceLoader>(resourceLoader); subresourceLoader && !isNotModified)

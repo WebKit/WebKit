@@ -98,10 +98,8 @@ static inline pas_object_kind pas_object_kind_for_page_kind(pas_page_kind page_k
 {
     switch (page_kind) {
     case pas_small_exclusive_segregated_page_kind:
-    case pas_small_shared_segregated_page_kind:
         return pas_small_segregated_object_kind;
     case pas_medium_exclusive_segregated_page_kind:
-    case pas_medium_shared_segregated_page_kind:
         return pas_medium_segregated_object_kind;
     case pas_small_bitfit_page_kind:
         return pas_small_bitfit_object_kind;

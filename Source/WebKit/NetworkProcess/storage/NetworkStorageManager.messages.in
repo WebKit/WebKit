@@ -39,7 +39,7 @@
     [EnabledBy=FileSystemEnabled] GetFileHandle(WebCore::FileSystemHandleIdentifier identifier, String name, bool createIfNecessary) -> (Expected<WebCore::FileSystemHandleIdentifier, WebKit::FileSystemStorageError> result)
     [EnabledBy=FileSystemEnabled] GetDirectoryHandle(WebCore::FileSystemHandleIdentifier identifier, String name, bool createIfNecessary) -> (Expected<WebCore::FileSystemHandleIdentifier, WebKit::FileSystemStorageError> result)
     [EnabledBy=FileSystemEnabled] RemoveEntry(WebCore::FileSystemHandleIdentifier identifier, String name, bool deleteRecursively) -> (std::optional<WebKit::FileSystemStorageError> result)
-    [EnabledBy=FileSystemEnabled] Resolve(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier targetIdentifier) -> (Expected<Vector<String>, WebKit::FileSystemStorageError> result)
+    [EnabledBy=FileSystemEnabled] Resolve(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier targetIdentifier) -> (Expected<std::optional<Vector<String>>, WebKit::FileSystemStorageError> result)
     [EnabledBy=FileSystemEnabled] Move(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier destinationIdentifier, String newName) -> (std::optional<WebKit::FileSystemStorageError> result)
     [EnabledBy=FileSystemEnabled] GetFile(WebCore::FileSystemHandleIdentifier identifier) -> (Expected<String, WebKit::FileSystemStorageError> result)
     [EnabledBy=FileSystemEnabled] CreateSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier) -> (Expected<WebKit::FileSystemSyncAccessHandleInfo, WebKit::FileSystemStorageError> result)

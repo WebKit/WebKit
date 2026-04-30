@@ -486,6 +486,7 @@
 		BC952F1D11F3C652003398B4 /* JSTestRunner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTestRunner.cpp; sourceTree = "<group>"; };
 		BC952F1E11F3C652003398B4 /* JSTestRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTestRunner.h; sourceTree = "<group>"; };
 		BC99A4841208901A007E9F08 /* StringFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringFunctions.h; sourceTree = "<group>"; };
+		BC99A4841208901B007E9F08 /* ExternalURLBlockingHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExternalURLBlockingHelpers.h; sourceTree = "<group>"; };
 		BCC997A011D3C8F60017BCA2 /* InjectedBundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundle.cpp; sourceTree = "<group>"; };
 		BCC997A111D3C8F60017BCA2 /* InjectedBundle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundle.h; sourceTree = "<group>"; };
 		BCC997A211D3C8F60017BCA2 /* InjectedBundlePage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePage.cpp; sourceTree = "<group>"; };
@@ -1052,6 +1053,7 @@
 				378D442213346D00006A777B /* config.h */,
 				510E2F3827741F8300809333 /* DataFunctions.h */,
 				9338D1BE250BD9DD00E827F6 /* DictionaryFunctions.h */,
+				BC99A4841208901B007E9F08 /* ExternalURLBlockingHelpers.h */,
 				BC99A4841208901A007E9F08 /* StringFunctions.h */,
 				9B36A270209453A0003E0651 /* WhatToDump.h */,
 			);

@@ -366,7 +366,7 @@ std::optional<ResourceError> validateCrossOriginResourcePolicy(CrossOriginEmbedd
 
 std::optional<ResourceError> validateRangeRequestedFlag(const ResourceRequest& request, const ResourceResponse& response)
 {
-    if (response.isRangeRequested() && (response.httpStatusCode() == httpStatus206PartialContent || response.httpStatusCode() == httpStatus416RangeNotSatisfiable) && response.type() == ResourceResponse::Type::Opaque && !request.hasHTTPHeaderField(HTTPHeaderName::Range))
+    if (response.isRangeRequested() && isHttpRangeStatus(response.httpStatusCode()) && response.type() == ResourceResponse::Type::Opaque && !request.hasHTTPHeaderField(HTTPHeaderName::Range))
         return ResourceError({ }, 0, response.url(), { }, ResourceError::Type::General);
     return std::nullopt;
 }

@@ -740,9 +740,23 @@ static FetchMetadataSite computeFetchMetadataSiteInternal(const ResourceRequest&
     return FetchMetadataSite::CrossSite;
 }
 
-FetchMetadataSite CachedResourceLoader::computeFetchMetadataSite(const ResourceRequest& request, CachedResource::Type type, FetchOptions::Mode mode, const LocalFrame& frame, bool isDirectlyUserInitiatedRequest)
+FetchMetadataSite CachedResourceLoader::computeFetchMetadataSite(const ResourceRequest& request, CachedResource::Type type, FetchOptions::Mode mode, const LocalFrame& frame, bool isDirectlyUserInitiatedRequest, const DocumentLoader* documentLoader)
 {
-    return computeFetchMetadataSiteInternal(request, type, mode, nullptr, &frame, FetchMetadataSite::SameOrigin, isDirectlyUserInitiatedRequest);
+    auto site = computeFetchMetadataSiteInternal(request, type, mode, nullptr, &frame, FetchMetadataSite::SameOrigin, isDirectlyUserInitiatedRequest);
+
+    // When a main resource load continues in a new process after a server redirect caused a process
+    // swap, the redirect history is lost. Account for the pre-redirect URL to correctly degrade
+    // the Sec-Fetch-Site value.
+    if (type == CachedResource::Type::MainResource && documentLoader
+        && documentLoader->isContinuingLoadAfterProvisionalLoadStarted()
+        && documentLoader->originalURL() != request.url()) {
+        ResourceRequest originalRequest { URL { documentLoader->originalURL() } };
+        auto originalSite = computeFetchMetadataSiteInternal(originalRequest, type, mode, nullptr, &frame, FetchMetadataSite::SameOrigin, false);
+        Ref originalOrigin = SecurityOrigin::create(documentLoader->originalURL());
+        site = computeFetchMetadataSiteAfterRedirection(request, type, mode, originalOrigin.get(), originalSite, false);
+    }
+
+    return site;
 }
 
 FetchMetadataSite CachedResourceLoader::computeFetchMetadataSiteAfterRedirection(const ResourceRequest& request, CachedResource::Type type, FetchOptions::Mode mode, const SecurityOrigin& originalOrigin, FetchMetadataSite originalSite, bool isDirectlyUserInitiatedRequest)
@@ -1003,7 +1017,7 @@ void CachedResourceLoader::updateHTTPRequestHeaders(FrameLoader& frameLoader, Ca
     // all of them or none.
     Ref frame = frameLoader.frame();
     if (shouldUpdateFetchMetadata(frame, request.resourceRequest(), type, request.options().mode)) {
-        auto site = computeFetchMetadataSite(request.resourceRequest(), type, request.options().mode, frame, frame->isMainFrame() && m_documentLoader && m_documentLoader->isRequestFromClientOrUserInput());
+        auto site = computeFetchMetadataSite(request.resourceRequest(), type, request.options().mode, frame, frame->isMainFrame() && m_documentLoader && m_documentLoader->isRequestFromClientOrUserInput(), m_documentLoader.get());
         updateRequestFetchMetadataHeaders(request.resourceRequest(), request.options(), site);
     }
     request.updateUserAgentHeader(frameLoader);

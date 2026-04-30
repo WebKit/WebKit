@@ -148,17 +148,13 @@ static bool shouldUseGet(const ResourceRequestBase& request, const ResourceRespo
     return redirectResponse.httpStatusCode() == httpStatus303SeeOther;
 }
 
-// https://fetch.spec.whatwg.org/#concept-http-redirect-fetch Step 11
+// https://fetch.spec.whatwg.org/#concept-http-redirect-fetch
 void ResourceRequestBase::redirectAsGETIfNeeded(const ResourceRequestBase &redirectRequest, const ResourceResponse& redirectResponse)
 {
     if (shouldUseGet(redirectRequest, redirectResponse)) {
         setHTTPMethod("GET"_s);
         setHTTPBody(nullptr);
-        m_requestData.m_httpHeaderFields.remove(HTTPHeaderName::ContentLength);
-        m_requestData.m_httpHeaderFields.remove(HTTPHeaderName::ContentLanguage);
-        m_requestData.m_httpHeaderFields.remove(HTTPHeaderName::ContentEncoding);
-        m_requestData.m_httpHeaderFields.remove(HTTPHeaderName::ContentLocation);
-        clearHTTPContentType();
+        m_requestData.m_httpHeaderFields.removeRequestBodyHeaders();
     }
 }
 

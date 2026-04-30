@@ -56,7 +56,7 @@ void PlatformXRSystem::createLayerProjection(IPC::Connection&, uint32_t width, u
 }
 
 #if ENABLE(WEBXR_LAYERS)
-void PlatformXRSystem::createQuadLayer(IPC::Connection&, WebCore::IntSize size, PlatformXR::LayerLayout layout, CompletionHandler<void(std::optional<PlatformXR::LayerInfo>)>&& reply)
+void PlatformXRSystem::createCompositionLayer(IPC::Connection&, PlatformXR::CompositionLayerType type, WebCore::IntSize size, PlatformXR::LayerLayout layout, CompletionHandler<void(std::optional<PlatformXR::LayerInfo>)>&& reply)
 {
     ASSERT(RunLoop::isMain());
 
@@ -66,7 +66,7 @@ void PlatformXRSystem::createQuadLayer(IPC::Connection&, WebCore::IntSize size, 
         return;
     }
     if (auto* xrCoordinator = PlatformXRSystem::xrCoordinator())
-        xrCoordinator->createQuadLayer(size, layout, WTF::move(reply));
+        xrCoordinator->createCompositionLayer(type, size, layout, WTF::move(reply));
     else
         reply(std::nullopt);
 }

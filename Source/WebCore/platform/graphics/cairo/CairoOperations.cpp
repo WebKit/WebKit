@@ -49,6 +49,7 @@
 #include "Path.h"
 #include "ShadowBlur.h"
 #include <algorithm>
+#include <array>
 #include <cairo.h>
 #include <numbers>
 
@@ -452,8 +453,8 @@ void setStrokeThickness(GraphicsContextCairo& platformContext, float strokeThick
 
 void setStrokeStyle(GraphicsContextCairo& platformContext, StrokeStyle strokeStyle)
 {
-    static const double dashPattern[] = { 5.0, 5.0 };
-    static const double dotPattern[] = { 1.0, 1.0 };
+    static constexpr auto dashPattern = std::to_array<double>({ 5.0, 5.0 });
+    static constexpr auto dotPattern = std::to_array<double>({ 1.0, 1.0 });
 
     cairo_t* cr = platformContext.cr();
     switch (strokeStyle) {
@@ -468,10 +469,10 @@ void setStrokeStyle(GraphicsContextCairo& platformContext, StrokeStyle strokeSty
         cairo_set_dash(cr, 0, 0, 0);
         break;
     case StrokeStyle::DottedStroke:
-        cairo_set_dash(cr, dotPattern, 2, 0);
+        cairo_set_dash(cr, dotPattern.data(), dotPattern.size(), 0);
         break;
     case StrokeStyle::DashedStroke:
-        cairo_set_dash(cr, dashPattern, 2, 0);
+        cairo_set_dash(cr, dashPattern.data(), dashPattern.size(), 0);
         break;
     }
 }

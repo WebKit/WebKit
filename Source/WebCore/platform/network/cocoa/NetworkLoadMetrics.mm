@@ -34,7 +34,7 @@ namespace WebCore {
 static MonotonicTime dateToMonotonicTime(NSDate *date)
 {
     if (auto interval = date.timeIntervalSince1970)
-        return WallTime::fromRawSeconds(interval).approximateMonotonicTime();
+        return WallTime::fromRawSeconds(interval).approximate<MonotonicTime>();
     return { };
 }
 

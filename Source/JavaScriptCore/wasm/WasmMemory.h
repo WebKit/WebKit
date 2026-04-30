@@ -89,8 +89,8 @@ public:
     MemoryMode mode() const { return m_handle->mode(); }
 
     Expected<PageCount, GrowFailReason> grow(VM&, PageCount);
-    bool fill(uint64_t, uint8_t, uint64_t);
-    bool copy(uint64_t, uint64_t, uint64_t);
+    bool fill(uint32_t, uint8_t, uint32_t);
+    bool copy(uint32_t, uint32_t, uint32_t);
     bool init(uint64_t, const uint8_t*, uint32_t);
 
     void registerInstance(JSWebAssemblyInstance&);

@@ -36,20 +36,26 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
-RefPtr<NativeImage> NativeImage::create(PlatformImagePtr&& platformImage, GrDirectContext* grContext)
+RefPtr<NativeImage> NativeImage::create(PlatformImagePtr&& platformImage, std::optional<GainMap>&& gainMap, GrDirectContext* grContext)
 {
     if (!platformImage)
         return nullptr;
-    return adoptRef(*new NativeImage(WTF::move(platformImage), grContext));
+    return adoptRef(*new NativeImage(WTF::move(platformImage), WTF::move(gainMap), grContext));
 }
 
-RefPtr<NativeImage> NativeImage::createTransient(PlatformImagePtr&& image, GrDirectContext* grContext)
+RefPtr<NativeImage> NativeImage::create(PlatformImagePtr&& platformImage, GrDirectContext* grContext)
 {
-    return create(WTF::move(image), grContext);
+    return create(WTF::move(platformImage), std::nullopt, grContext);
 }
 
-NativeImage::NativeImage(PlatformImagePtr&& platformImage, GrDirectContext* grContext)
+RefPtr<NativeImage> NativeImage::createTransient(PlatformImagePtr&& platformImage, GrDirectContext* grContext)
+{
+    return create(WTF::move(platformImage), grContext);
+}
+
+NativeImage::NativeImage(PlatformImagePtr&& platformImage, std::optional<GainMap>&& gainMap, GrDirectContext* grContext)
     : m_platformImage(WTF::move(platformImage))
+    , m_gainMap(WTF::move(gainMap))
     , m_grContext(grContext)
 {
     ASSERT(!m_platformImage->isTextureBacked() || m_grContext);

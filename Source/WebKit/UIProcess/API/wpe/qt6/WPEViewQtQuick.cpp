@@ -29,6 +29,7 @@
 #include "WPEQtView.h"
 
 #include <epoxy/egl.h>
+#include <wtf/SortedArrayMap.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
@@ -37,6 +38,9 @@
 #include <QOpenGLFunctions>
 #include <QQuickWindow>
 #include <QSGTexture>
+#include <QCursor>
+
+#include <string_view>
 
 /**
  * WPEViewQtQuick:
@@ -75,6 +79,60 @@ static gboolean wpeViewQtQuickRenderBuffer(WPEView* view, WPEBuffer* buffer, con
     return TRUE;
 }
 
+static QCursor webCursorNameToQCursor(const char* name)
+{
+    // https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/cursor
+    // https://doc.qt.io/qt-6/qcursor.html
+    // Unsupported in Qt:
+    // context-menu, cell, all-scroll, zoom-in, zoom-out
+    // Limited:
+    // vertical-text (fallback to text),
+    // no-drop (fallback to forbidden),
+    // all single-direction resizes (fallback to double-direction resizes)
+    using namespace std::literals;
+    static constexpr SortedArrayMap shapeMap { std::to_array<std::pair<std::string_view, Qt::CursorShape>>({
+        { "alias"sv, Qt::DragLinkCursor },
+        { "col-resize"sv, Qt::SplitHCursor },
+        { "copy"sv, Qt::DragCopyCursor },
+        { "crosshair"sv, Qt::CrossCursor },
+        { "default"sv, Qt::ArrowCursor },
+        { "e-resize"sv, Qt::SizeHorCursor },
+        { "ew-resize"sv, Qt::SizeHorCursor },
+        { "grab"sv, Qt::OpenHandCursor },
+        { "grabbing"sv, Qt::ClosedHandCursor },
+        { "help"sv, Qt::WhatsThisCursor },
+        { "move"sv, Qt::DragMoveCursor },
+        { "n-resize"sv, Qt::SizeVerCursor },
+        { "ne-resize"sv, Qt::SizeBDiagCursor },
+        { "nesw-resize"sv, Qt::SizeBDiagCursor },
+        { "no-drop"sv, Qt::ForbiddenCursor },
+        { "none"sv, Qt::BlankCursor },
+        { "not-allowed"sv, Qt::ForbiddenCursor },
+        { "ns-resize"sv, Qt::SizeVerCursor },
+        { "nw-resize"sv, Qt::SizeFDiagCursor },
+        { "nwse-resize"sv, Qt::SizeFDiagCursor },
+        { "pointer"sv, Qt::PointingHandCursor },
+        { "progress"sv, Qt::BusyCursor },
+        { "row-resize"sv, Qt::SplitVCursor },
+        { "s-resize"sv, Qt::SizeVerCursor },
+        { "se-resize"sv, Qt::SizeFDiagCursor },
+        { "sw-resize"sv, Qt::SizeBDiagCursor },
+        { "text"sv, Qt::IBeamCursor },
+        { "vertical-text"sv, Qt::IBeamCursor },
+        { "w-resize"sv, Qt::SizeHorCursor },
+        { "wait"sv, Qt::WaitCursor },
+    }) };
+    auto shape = shapeMap.get(std::string_view(name), Qt::ArrowCursor);
+    return QCursor(shape);
+}
+
+static void wpeViewQtQuickSetCursorFromName(WPEView* view, const char* name)
+{
+    auto* priv = WPE_VIEW_QTQUICK(view)->priv;
+    QCursor cursor = webCursorNameToQCursor(name);
+    priv->wpeQtView->setCursor(cursor);
+}
+
 static void wpe_view_qtquick_class_init(WPEViewQtQuickClass* viewQtQuickClass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(viewQtQuickClass);
@@ -82,6 +140,7 @@ static void wpe_view_qtquick_class_init(WPEViewQtQuickClass* viewQtQuickClass)
 
     WPEViewClass* viewClass = WPE_VIEW_CLASS(viewQtQuickClass);
     viewClass->render_buffer = wpeViewQtQuickRenderBuffer;
+    viewClass->set_cursor_from_name = wpeViewQtQuickSetCursorFromName;
 }
 
 WPEView* wpe_view_qtquick_new(WPEDisplayQtQuick* display)
@@ -285,9 +344,22 @@ void wpe_view_dispatch_wheel_event(WPEViewQtQuick *view, QWheelEvent *event)
 {
     auto position = event->position().toPoint();
     auto numPixels = event->pixelDelta();
-
+    double scrollX = 0;
+    double scrollY = 0;
+    auto hasPreciseDeltas = !numPixels.isNull();
+    if (hasPreciseDeltas) {
+        scrollX = numPixels.x();
+        scrollY = numPixels.y();
+    } else {
+        // Qt gives 120 for the wheel scroll of one tick
+        // In WebEventFactoryWPE.cpp, it accepts number of ticks
+        // for wheel events and convert it to pixels.
+        auto angleDelta = event->angleDelta().toPointF() / 120;
+        scrollX = angleDelta.x();
+        scrollY = angleDelta.y();
+    }
     auto* wpeEvent = wpe_event_scroll_new(WPE_VIEW(view), WPE_INPUT_SOURCE_MOUSE, event->timestamp(),
-        modifiersFromEvent(event), numPixels.x(), numPixels.y(), FALSE, FALSE, position.x(), position.y());
+        modifiersFromEvent(event), scrollX, scrollY, hasPreciseDeltas, FALSE, position.x(), position.y());
     wpe_view_event(WPE_VIEW(view), wpeEvent);
     wpe_event_unref(wpeEvent);
 }

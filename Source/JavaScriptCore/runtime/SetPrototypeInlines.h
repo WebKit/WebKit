@@ -26,6 +26,7 @@
 #pragma once
 
 #include "JSGlobalObject.h"
+#include "JSSet.h"
 #include "SetPrototype.h"
 
 namespace JSC {

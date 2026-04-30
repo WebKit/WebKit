@@ -36,7 +36,7 @@ class JSWebAssemblyInstance;
 namespace Wasm {
 
 Expected<void, String> parseExtendedConstExpr(std::span<const uint8_t>, size_t, size_t&, ModuleInformation&, Type);
-Expected<uint64_t, String> evaluateExtendedConstExpr(const Vector<uint8_t>&, JSWebAssemblyInstance*, const ModuleInformation&, Type);
+Expected<uint64_t, String> evaluateExtendedConstExpr(const ModuleInformation::ConstantExpressionAndSourceOffset&, JSWebAssemblyInstance*, const ModuleInformation&, Type);
 
 } } // namespace JSC::Wasm
 

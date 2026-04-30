@@ -110,6 +110,15 @@ static inline bool shouldSkipForFirstLetter(char32_t c)
     return deprecatedIsSpaceOrNewline(c) || c == noBreakSpace || isPunctuationForFirstLetter(c);
 }
 
+static bool isDutchIJDigraph(const String& text, unsigned offset)
+{
+    if (offset + 1 >= text.length())
+        return false;
+    auto first = text[offset];
+    auto second = text[offset + 1];
+    return (first == 'i' && second == 'j') || (first == 'I' && second == 'J');
+}
+
 static bool supportsFirstLetter(RenderBlock& block)
 {
     if (is<RenderButton>(block))
@@ -147,8 +156,8 @@ void RenderTreeBuilder::FirstLetter::updateAfterDescendants(RenderBlock& block)
     // to update it — unless the first letter text is stale because a new text node was
     // inserted before it in the DOM. In that case, reset the remaining fragment to its
     // full text (which tears down the old first-letter) and let createRenderers rebuild.
-    if (CheckedPtr anonymousFirstLetterContainer = dynamicDowncast<RenderBoxModelObject>(firstLetter->parent()); anonymousFirstLetterContainer && anonymousFirstLetterContainer->style().pseudoElementType() == PseudoElementType::FirstLetter) {
-        CheckedPtr remainingText = anonymousFirstLetterContainer->firstLetterRemainingText();
+    if (WeakPtr anonymousFirstLetterContainer = dynamicDowncast<RenderBoxModelObject>(firstLetter->parent()); anonymousFirstLetterContainer && anonymousFirstLetterContainer->style().pseudoElementType() == PseudoElementType::FirstLetter) {
+        WeakPtr remainingText = anonymousFirstLetterContainer->firstLetterRemainingText();
         auto isFirstLetterStale = [&] {
             if (!remainingText)
                 return false;
@@ -176,7 +185,7 @@ void RenderTreeBuilder::FirstLetter::updateAfterDescendants(RenderBlock& block)
             auto [newFirstLetter, container] = block.firstLetterAndContainer();
             ASSERT(container == firstLetterContainer);
             ASSERT(is<RenderText>(newFirstLetter));
-            if (CheckedPtr renderer = dynamicDowncast<RenderText>(newFirstLetter))
+            if (WeakPtr renderer = dynamicDowncast<RenderText>(newFirstLetter))
                 createRenderers(*renderer);
             return;
         }
@@ -282,6 +291,10 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderText& currentTextChil
 
         // Account for first grapheme cluster.
         length += numCodeUnitsInGraphemeClusters(StringView(oldText).substring(length), 1);
+
+        // In Dutch, "ij" is a digraph treated as a single letter for ::first-letter.
+        if (length < oldText.length() && isDutchLocale(currentTextChild.style().fontDescription().specifiedLocale()) && isDutchIJDigraph(oldText, length - 1))
+            length += numCodeUnitsInGraphemeClusters(StringView(oldText).substring(length), 1);
 
         // Keep looking for whitespace and allowed punctuation, but avoid
         // accumulating just whitespace into the :first-letter.

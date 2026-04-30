@@ -132,8 +132,8 @@ private:
 
     String m_locale;
     String m_dataLocale;
-    String m_calendar;
-    String m_numberingSystem;
+    mutable String m_calendar;
+    mutable String m_numberingSystem;
     TimeZone m_timeZone;
     // Time zone string returned by resolvedOptions().timeZone. Per spec this is
     // [[Identifier]] (the case-normalized accepted form, e.g. "Asia/Calcutta"),

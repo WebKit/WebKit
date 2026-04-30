@@ -217,8 +217,6 @@ inline JSFunction* JSGlobalObject::evalFunction() const { return uncheckedDownca
 inline JSFunction* JSGlobalObject::throwTypeErrorFunction() const { return uncheckedDowncast<JSFunction>(linkTimeConstant(LinkTimeConstant::throwTypeErrorFunction)); }
 inline JSFunction* JSGlobalObject::iteratorProtocolFunction() const { return uncheckedDowncast<JSFunction>(linkTimeConstant(LinkTimeConstant::performIteration)); }
 inline JSFunction* JSGlobalObject::promiseProtoThenFunction() const { return uncheckedDowncast<JSFunction>(linkTimeConstant(LinkTimeConstant::defaultPromiseThen)); }
-inline JSFunction* JSGlobalObject::promiseEmptyOnFulfilledFunction() const { return uncheckedDowncast<JSFunction>(linkTimeConstant(LinkTimeConstant::promiseEmptyOnFulfilled)); }
-inline JSFunction* JSGlobalObject::promiseEmptyOnRejectedFunction() const { return uncheckedDowncast<JSFunction>(linkTimeConstant(LinkTimeConstant::promiseEmptyOnRejected)); }
 inline JSFunction* JSGlobalObject::regExpProtoExecFunction() const { return uncheckedDowncast<JSFunction>(linkTimeConstant(LinkTimeConstant::regExpBuiltinExec)); }
 inline JSFunction* JSGlobalObject::stringProtoSubstringFunction() const { return uncheckedDowncast<JSFunction>(linkTimeConstant(LinkTimeConstant::stringSubstring)); }
 inline JSFunction* JSGlobalObject::performProxyObjectHasFunction() const { return m_performProxyObjectHasFunction.get(); }

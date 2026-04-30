@@ -317,7 +317,7 @@ WK_EXCLUDED_WEBPUSHD_SANDBOX_NO = com.apple.WebKit.webpushd.relocatable.mac.sb
 WK_EXCLUDED_WEBPUSHD_SANDBOX_YES = com.apple.WebKit.webpushd.mac.sb
 
 WK_EXCLUDED_SWIFT_IN_FILE_NAMES = $(WK_EXCLUDED_SWIFT_IN_FILE_NAMES_$(USE_INTERNAL_SDK));
-WK_EXCLUDED_SWIFT_IN_FILE_NAMES_ = NSGlassEffectView+Extras.swift UIWindowScene+Extras.swift WKWebView+WKBannerViewOverlay.swift WKWebView+SystemTextExtraction.swift GPUProcess/graphics/Model/*.swift;
+WK_EXCLUDED_SWIFT_IN_FILE_NAMES_ = NSGlassEffectView+Extras.swift UIWindowScene+Extras.swift WKWebView+WKBannerViewOverlay.swift WKWebView+SystemTextExtraction.swift TestWebKitAPILibraryAdditions.swift GPUProcess/graphics/Model/*.swift;
 
 EXCLUDED_EXTENSION_SOURCE_FILE_NAMES = Shared/AuxiliaryProcessExtensions/*;
 

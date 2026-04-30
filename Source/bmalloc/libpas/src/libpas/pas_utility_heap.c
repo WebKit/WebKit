@@ -40,7 +40,6 @@ pas_heap_runtime_config pas_utility_heap_runtime_config = {
     .sharing_mode = pas_share_pages,
     .statically_allocated = true,
     .is_part_of_heap = false,
-    .directory_size_bound_for_partial_views = PAS_UTILITY_BOUND_FOR_PARTIAL_VIEWS,
     .directory_size_bound_for_baseline_allocators = PAS_UTILITY_BOUND_FOR_BASELINE_ALLOCATORS,
     .directory_size_bound_for_no_view_cache = PAS_UTILITY_BOUND_FOR_NO_VIEW_CACHE,
     .max_segregated_object_size = PAS_UTILITY_MAX_SEGREGATED_OBJECT_SIZE,
@@ -167,7 +166,7 @@ void pas_utility_heap_deallocate(void* ptr)
 
     pas_segregated_page_deallocate(
         begin, NULL, pas_segregated_deallocation_direct_mode, NULL,
-        PAS_UTILITY_HEAP_CONFIG.small_segregated_config, pas_segregated_page_exclusive_role);
+        PAS_UTILITY_HEAP_CONFIG.small_segregated_config);
 }
 
 size_t pas_utility_heap_get_num_free_bytes(void)

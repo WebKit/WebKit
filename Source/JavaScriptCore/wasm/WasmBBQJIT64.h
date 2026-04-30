@@ -113,13 +113,10 @@ auto BBQJIT::emitCheckAndPrepareAndMaterializePointerApply(Value pointer, uint64
     case MemoryMode::BoundsChecking: {
         // We're not using signal handling only when the memory is not shared.
         // Regardless of signaling, we must check that no memory access exceeds the current memory size.
-        if (m_info.memory(memoryIndex).isMemory64()) {
-            if (boundary) {
-                m_jit.move(TrustedImmPtr(boundary), wasmScratchGPR);
-                Jump overflow = m_jit.branchAddPtr(ResultCondition::Carry, pointerLocation.asGPR(), wasmScratchGPR);
-                recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, overflow);
-            } else
-                m_jit.move(pointerLocation.asGPR(), wasmScratchGPR);
+        if (m_info.memory(memoryIndex).isMemory64() && boundary) {
+            m_jit.move(TrustedImmPtr(boundary), wasmScratchGPR);
+            Jump overflow = m_jit.branchAddPtr(ResultCondition::Carry, pointerLocation.asGPR(), wasmScratchGPR);
+            recordJumpToThrowException(ExceptionType::OutOfBoundsMemoryAccess, overflow);
         } else {
             m_jit.zeroExtend32ToWord(pointerLocation.asGPR(), wasmScratchGPR);
             if (boundary)
@@ -552,7 +549,8 @@ void BBQJIT::emitCCall(Func function, std::span<const Value> arguments)
     RefPtr<TypeDefinition> functionType = TypeInformation::typeDefinitionForFunction(resultTypes, argumentTypes);
     CallInformation callInfo = wasmCallingConvention().callInformationFor(*functionType, CallRole::Caller);
     Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(callInfo.headerAndArgumentStackSizeInBytes);
-    m_maxCalleeStackSize = std::max<int>(calleeStackSize, m_maxCalleeStackSize);
+    m_maxCalleeStackSizeForValidation = std::max<uint32_t>(calleeStackSize, m_maxCalleeStackSizeForValidation);
+    ASSERT(static_cast<uint32_t>(alignedFrameSize(m_maxCalleeStackSizeForValidation + m_frameSizeForValidation)) <= m_frameSize);
 
     // Prepare wasm operation calls.
     m_jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
@@ -581,7 +579,8 @@ void BBQJIT::emitCCall(Func function, std::span<const Value> arguments, Value& r
     RefPtr<TypeDefinition> functionType = TypeInformation::typeDefinitionForFunction(resultTypes, argumentTypes);
     CallInformation callInfo = wasmCallingConvention().callInformationFor(*functionType, CallRole::Caller);
     Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(callInfo.headerAndArgumentStackSizeInBytes);
-    m_maxCalleeStackSize = std::max<int>(calleeStackSize, m_maxCalleeStackSize);
+    m_maxCalleeStackSizeForValidation = std::max<uint32_t>(calleeStackSize, m_maxCalleeStackSizeForValidation);
+    ASSERT(static_cast<uint32_t>(alignedFrameSize(m_maxCalleeStackSizeForValidation + m_frameSizeForValidation)) <= m_frameSize);
 
     // Prepare wasm operation calls.
     m_jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);

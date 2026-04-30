@@ -77,7 +77,12 @@ TEST(WKWebExtensionAPIAlarms, Errors)
     Util::loadAndRunExtension(alarmsManifest, @{ @"background.js": backgroundScript });
 }
 
+// FIXME when rdar://174495016 is resolved.
+#if PLATFORM(MAC)
+TEST(WKWebExtensionAPIAlarms, DISABLED_DelaySingleShot)
+#else
 TEST(WKWebExtensionAPIAlarms, DelaySingleShot)
+#endif
 {
     auto *backgroundScript = Util::constructScript(@[
         // Setup
@@ -156,7 +161,7 @@ TEST(WKWebExtensionAPIAlarms, DelayRepeating)
 }
 
 // FIXME when webkit.org/b/311933 is resolved.
-#if PLATFORM(MAC) && !defined(NDEBUG)
+#if PLATFORM(MAC)
 TEST(WKWebExtensionAPIAlarms, DISABLED_WhenSingleShot)
 #else
 TEST(WKWebExtensionAPIAlarms, WhenSingleShot)

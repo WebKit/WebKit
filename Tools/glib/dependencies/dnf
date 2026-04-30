@@ -45,6 +45,7 @@ PACKAGES=(
     ninja-build
     openjpeg2-devel
     openssl-devel
+    openxr-devel
     opus-devel
     patch
     perl-autouse

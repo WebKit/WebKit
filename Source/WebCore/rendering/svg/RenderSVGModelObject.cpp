@@ -76,6 +76,14 @@ void RenderSVGModelObject::updateFromStyle()
     updateHasSVGTransformFlags();
 }
 
+void RenderSVGModelObject::updateLocalTransform()
+{
+    TransformationMatrix transform;
+    auto referenceBoxRect = transformReferenceBoxRect(style());
+    applyTransform(transform, style(), referenceBoxRect, Style::TransformResolver::allTransformOperations);
+    m_localTransform = transform.toAffineTransform();
+}
+
 LayoutRect RenderSVGModelObject::overflowClipRect(const LayoutPoint&, OverlayScrollbarSizeRelevancy, PaintPhase) const
 {
     ASSERT_NOT_REACHED();
@@ -283,8 +291,9 @@ bool RenderSVGModelObject::checkEnclosure(RenderElement* renderer, const FloatRe
 LayoutSize RenderSVGModelObject::cachedSizeForOverflowClip() const
 {
     ASSERT(hasNonVisibleOverflow());
-    ASSERT(hasLayer());
-    return layer()->size();
+    if (hasLayer())
+        return layer()->size();
+    return currentSVGLayoutRect().size();
 }
 
 bool RenderSVGModelObject::applyCachedClipAndScrollPosition(RepaintRects& rects, const RenderLayerModelObject* container, VisibleRectContext context) const
@@ -326,6 +335,21 @@ Path RenderSVGModelObject::computeClipPath(AffineTransform& transform) const
 void RenderSVGModelObject::paintSVGOutline(PaintInfo& paintInfo, const LayoutPoint& adjustedPaintOffset)
 {
     paintOutline(paintInfo, LayoutRect(adjustedPaintOffset, borderBoxRectEquivalent().size()));
+}
+
+void RenderSVGModelObject::updateLayerTransform()
+{
+    // Transform-origin depends on box size, so we need to update the layer transform after layout.
+    if (hasLayer()) {
+        RenderLayerModelObject::updateLayerTransform();
+        return;
+    }
+    // Non-layered SVG renderers cache their transform in m_localTransform (via applyTransform()).
+    // Subclasses like RenderSVGViewportContainer compute supplemental transforms (viewBox, zoom, pan)
+    // in their updateLayerTransform() override before calling the base. We must refresh the cached
+    // local transform so that coordinate mapping (e.g. for scalingFactor computation) picks up
+    // the supplemental transform.
+    updateLocalTransform();
 }
 
 } // namespace WebCore

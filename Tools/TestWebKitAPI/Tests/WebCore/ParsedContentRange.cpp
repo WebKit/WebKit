@@ -26,7 +26,6 @@
 #include "config.h"
 
 #include <WebCore/ParsedContentRange.h>
-#include <WebCore/ParsedRequestRange.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;
@@ -96,31 +95,4 @@ TEST(WebCore, ParsedContentRangeToString)
     ASSERT_STREQ("", ParsedContentRange().headerValue().utf8().data());
 }
 
-TEST(WebCore, ParsedRequestRange)
-{
-    Vector<String> failureCases {
-        { },
-        emptyString(),
-        "abc"_s,
-        "bytes="_s,
-        "bytes=-"_s,
-        "bytes=abc-"_s,
-        "bytes=1-abc"_s,
-        "bytes=2-1"_s,
-        "bytes=1-"_s,
-        "bytes=-1"_s,
-        "bytes=1-999999999999999999999999"_s
-    };
-    for (const auto& input : failureCases)
-        EXPECT_EQ(std::nullopt, ParsedRequestRange::parse(input));
-
-    auto compare = [] (const String& input, std::optional<size_t> begin, std::optional<size_t> end) {
-        auto range = ParsedRequestRange::parse(input);
-        EXPECT_NE(std::nullopt, range);
-        
-    };
-    compare("bytes=1-1"_s, 1, 1);
-    compare("bytes=1-2"_s, 1, 2);
-}
-
-}
+} // namespace TestWebKitAPI

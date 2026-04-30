@@ -25,7 +25,10 @@
 
 #pragma once
 
+#include "JSObjectInlines.h"
+#include "MarkedVector.h"
 #include "ObjectConstructor.h"
+#include "StructureCreateInlines.h"
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 

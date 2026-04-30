@@ -247,7 +247,7 @@ void MediaCapabilities::decodingInfo(ScriptExecutionContext& context, MediaDecod
     // 5. In parallel, run the create a MediaCapabilitiesInfo algorithm with configuration and resolve p with its result.
     // 6. Return p.
 
-    PlatformMediaEngineConfigurationFactory::DecodingConfigurationCallback callback = [promise = WTF::move(promise), context = Ref { context }](PlatformMediaCapabilitiesDecodingInfo&& info) mutable {
+    PlatformMediaEngineConfigurationFactory::DecodingConfigurationCallback callback = [promise = WTF::move(promise), context = protect(context)](PlatformMediaCapabilitiesDecodingInfo&& info) mutable {
         context->eventLoop().queueTask(TaskSource::MediaElement, [promise = WTF::move(promise), info = WTF::move(info)] mutable {
             promise->resolve<IDLDictionary<MediaCapabilitiesDecodingInfo>>(fromPlatform(WTF::move(info)));
         });
@@ -304,7 +304,7 @@ void MediaCapabilities::encodingInfo(ScriptExecutionContext& context, MediaEncod
     // 5. In parallel, run the create a MediaCapabilitiesInfo algorithm with configuration and resolve p with its result.
     // 6. Return p.
 
-    PlatformMediaEngineConfigurationFactory::EncodingConfigurationCallback callback = [promise = WTF::move(promise), context = Ref { context }](PlatformMediaCapabilitiesEncodingInfo&& info) mutable {
+    PlatformMediaEngineConfigurationFactory::EncodingConfigurationCallback callback = [promise = WTF::move(promise), context = protect(context)](PlatformMediaCapabilitiesEncodingInfo&& info) mutable {
         context->eventLoop().queueTask(TaskSource::MediaElement, [promise = WTF::move(promise), info = WTF::move(info)] () mutable {
             promise->resolve<IDLDictionary<MediaCapabilitiesEncodingInfo>>(fromPlatform(WTF::move(info)));
         });

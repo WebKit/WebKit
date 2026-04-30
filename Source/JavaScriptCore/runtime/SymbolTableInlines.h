@@ -26,6 +26,7 @@
 #pragma once
 
 #include "InferredValueInlines.h"
+#include "StructureCreateInlines.h"
 #include "SymbolTable.h"
 
 namespace JSC {

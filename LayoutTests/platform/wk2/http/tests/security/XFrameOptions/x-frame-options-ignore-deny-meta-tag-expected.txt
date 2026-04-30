@@ -3,6 +3,7 @@ http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta
 http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe.html - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe.html, http status code 200>
 CONSOLE MESSAGE: The X-Frame-Option 'deny' supplied in a <meta> element was ignored. X-Frame-Options may only be provided by an HTTP header sent with the document.
 CONSOLE MESSAGE: PASS: Could read contentWindow.location.href
+http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe.html - didFinishLoading
 There should be content in the iframe below
 
 

@@ -182,7 +182,6 @@ public:
     virtual bool isRubberBandInProgress(std::optional<ScrollingNodeID>) const { return false; }
     virtual bool isUserScrollInProgress(std::optional<ScrollingNodeID>) const { return false; }
     virtual bool isScrollSnapInProgress(std::optional<ScrollingNodeID>) const { return false; }
-    virtual void updateScrollSnapPropertiesWithFrameView(const LocalFrameView&) { }
     virtual void setScrollPinningBehavior(ScrollPinningBehavior) { }
     virtual bool hasSubscrollers(FrameIdentifier) const { return false; }
 

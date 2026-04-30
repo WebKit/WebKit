@@ -1,0 +1,5 @@
+
+PASS scroll-snap-align: start
+FAIL scroll-snap-align: end assert_equals: expected 120 but got 108
+FAIL scroll-snap-align: center assert_equals: expected 180 but got 228
+

@@ -32,6 +32,7 @@
 #include "DestinationColorSpace.h"
 #include "GradientColorStops.h"
 #include "SampledGradientBuilder.h"
+#include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/HashMap.h>
 #include <wtf/TinyLRUCache.h>
 

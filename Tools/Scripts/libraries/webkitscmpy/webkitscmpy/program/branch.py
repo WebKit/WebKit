@@ -120,10 +120,9 @@ class Branch(Command):
         return None
 
     @classmethod
-    def main(cls, args, repository, why=None, redact=False, target_remote='fork', **kwargs):
-        if not isinstance(repository, local.Git):
-            sys.stderr.write("Can only 'branch' on a native Git repository\n")
-            return 1
+    def ensure_issue(cls, args, repository, why=None, redact=False):
+        if not args.issue:
+            args.issue = repository.config().get('branch.{}.bug'.format(repository.branch))
 
         if not args.issue:
             if Tracker.instance() and getattr(args, 'update_issue', True):
@@ -150,7 +149,6 @@ class Branch(Command):
                     Tracker.instance().credentials(required=True, validate=True)
                 description = Terminal.input('Issue description: ')
 
-                # Asking for a radar here will prevent race conditions with the bug importer
                 needs_radar = any([isinstance(tracker, radar.Tracker) and tracker.radarclient() for tracker in Tracker._trackers])
                 radar_cc_default = repository.config().get('webkitscmpy.cc-radar', 'true') == 'true'
                 if not getattr(args, 'defaults', None) and needs_radar and not isinstance(Tracker.instance(), radar.Tracker):
@@ -176,7 +174,7 @@ class Branch(Command):
                 )
                 if not issue:
                     sys.stderr.write('Failed to create new issue\n')
-                    return 1
+                    return None, 1
                 print("Created '{}'".format(issue))
                 if issue and issue.title and not redact and not issue.redacted and not issue.tracker.hide_title:
                     args.issue = cls.to_branch_name(issue.title)
@@ -191,7 +189,20 @@ class Branch(Command):
             args._title = issue.title
         if issue:
             args._bug_urls = Commit.bug_urls(issue)
-        elif not (repository or local.Scm).DEV_BRANCHES.match(args.issue):
+
+        return issue, 0
+
+    @classmethod
+    def main(cls, args, repository, why=None, redact=False, target_remote='fork', **kwargs):
+        if not isinstance(repository, local.Git):
+            sys.stderr.write("Can only 'branch' on a native Git repository\n")
+            return 1
+
+        issue, result = cls.ensure_issue(args, repository, why=why, redact=redact)
+        if result:
+            return result
+
+        if not issue and not (repository or local.Scm).DEV_BRANCHES.match(args.issue):
             # Support creating a branch from PR or revert when update_issue is False
             args.issue = cls.to_branch_name(args.issue)
 

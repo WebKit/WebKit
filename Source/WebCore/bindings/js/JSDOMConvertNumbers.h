@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/JSGlobalObjectInlines.h>
 #include <JavaScriptCore/PureNaN.h>
 #include <WebCore/IDLTypes.h>
 #include <WebCore/JSDOMConvertBase.h>

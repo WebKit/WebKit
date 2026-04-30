@@ -66,6 +66,8 @@ RemoteScrollingTreeMac::RemoteScrollingTreeMac(RemoteScrollingCoordinatorProxy& 
     ScrollingThread::dispatch([protectedThis = Ref { *this }]() {
         if ([CATransaction respondsToSelector:@selector(setDisableImplicitTransactionMainThreadAssert:)])
             [CATransaction setDisableImplicitTransactionMainThreadAssert:YES];
+
+        [CATransaction setDefaultDisableRunLoopObserverCommits:YES];
     });
 }
 

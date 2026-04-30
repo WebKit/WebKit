@@ -46,4 +46,6 @@ inline HTMLTimeElement::HTMLTimeElement(const QualifiedName& tagName, Document& 
     ASSERT(hasTagName(timeTag));
 }
 
+HTMLTimeElement::~HTMLTimeElement() = default;
+
 } // namespace WebCore.

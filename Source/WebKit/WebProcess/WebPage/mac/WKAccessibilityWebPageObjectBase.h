@@ -79,7 +79,7 @@ class AXIsolatedTree;
 - (id)accessibilityRootObjectWrapper:(WebCore::LocalFrame*)frame;
 - (id)accessibilityFocusedUIElement;
 - (WebCore::IntPoint)accessibilityRemoteFrameOffset;
-- (WebCore::LocalFrame *)focusedLocalFrame;
+- (WebCore::LocalFrame *)localFocusedFrame;
 - (NSUInteger)remoteTokenHash;
 
 - (BOOL)shouldFallbackToWebContentAXObjectForMainFramePlugin;

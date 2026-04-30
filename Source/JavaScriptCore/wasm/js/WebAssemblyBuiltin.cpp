@@ -33,6 +33,7 @@
 #include "JSWebAssemblyArrayInlines.h"
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyRuntimeError.h"
+#include "OperationsInlines.h"
 #include <wtf/Vector.h>
 #include <wtf/text/MakeString.h>
 

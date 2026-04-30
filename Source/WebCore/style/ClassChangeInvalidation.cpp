@@ -113,8 +113,6 @@ void ClassChangeInvalidation::computeInvalidation(const SpaceSplitString& oldCla
         m_element->invalidateStyle();
 
     auto invalidateBeforeAndAfterChange = [](const InvalidationRuleSet& ruleSet) {
-        if (ruleSet.matchElement.hasRelation == MatchElement::HasRelation::ScopeBreaking)
-            return true;
         switch (ruleSet.matchElement.relation) {
         case MatchElement::Relation::AnySibling:
         case MatchElement::Relation::ParentAnySibling:

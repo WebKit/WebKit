@@ -345,21 +345,6 @@ void ModelProcessModelPlayer::setAnimationCurrentTime(Seconds currentTime, Compl
     completionHandler(false);
 }
 
-void ModelProcessModelPlayer::hasAudio(CompletionHandler<void(std::optional<bool>&&)>&& completionHandler)
-{
-    completionHandler(std::nullopt);
-}
-
-void ModelProcessModelPlayer::isMuted(CompletionHandler<void(std::optional<bool>&&)>&& completionHandler)
-{
-    completionHandler(std::nullopt);
-}
-
-void ModelProcessModelPlayer::setIsMuted(bool isMuted, CompletionHandler<void(bool success)>&& completionHandler)
-{
-    completionHandler(false);
-}
-
 WebCore::ModelPlayerAccessibilityChildren ModelProcessModelPlayer::accessibilityChildren()
 {
     return { };

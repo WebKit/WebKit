@@ -287,7 +287,6 @@ using WebKit::PageData::TransactionCallbackID = IPC::AsyncReplyID;
     bool isInStableState;
     WebCore::InteractiveWidget viewportMetaTagInteractiveWidget;
 
-    std::optional<WebKit::EditorState> editorState;
 #if PLATFORM(IOS_FAMILY)
     std::optional<uint64_t> dynamicViewportSizeUpdateID;
 #endif
@@ -299,6 +298,8 @@ struct WebKit::RemoteLayerTreeCommitBundle {
     Vector<WebKit::RemoteLayerTreeCommitBundle::RootFrameData> transactions;
     WebKit::PageData pageData;
     std::optional<WebKit::MainFrameData> mainFrameData;
+
+    std::optional<WebKit::EditorState> editorState;
     
     WebKit::TransactionID transactionID;
     MonotonicTime startTime;

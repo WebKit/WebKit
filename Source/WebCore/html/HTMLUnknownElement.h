@@ -42,6 +42,8 @@ public:
         return adoptRef(*new HTMLUnknownElement(tagName, document));
     }
 
+    ~HTMLUnknownElement();
+
 private:
     HTMLUnknownElement(const QualifiedName& tagName, Document& document)
         : HTMLElement(tagName, document, TypeFlag::IsUnknownElement)

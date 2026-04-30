@@ -29,7 +29,6 @@
 #include "pas_full_alloc_bits.h"
 #include "pas_segregated_exclusive_view.h"
 #include "pas_segregated_page_config.h"
-#include "pas_segregated_partial_view.h"
 #include "pas_segregated_size_directory.h"
 #include "pas_segregated_view.h"
 
@@ -51,41 +50,13 @@ pas_full_alloc_bits_create_for_exclusive(
 }
 
 static PAS_ALWAYS_INLINE pas_full_alloc_bits
-pas_full_alloc_bits_create_for_partial_but_not_primordial(pas_segregated_view view)
-{
-    pas_segregated_partial_view* partial_view;
-    
-    partial_view = pas_segregated_view_get_partial(view);
-
-    return pas_full_alloc_bits_create(
-        pas_lenient_compact_unsigned_ptr_load_compact_non_null(&partial_view->alloc_bits),
-        partial_view->alloc_bits_offset,
-        partial_view->alloc_bits_offset + partial_view->alloc_bits_size);
-}
-
-static PAS_ALWAYS_INLINE pas_full_alloc_bits
-pas_full_alloc_bits_create_for_partial(pas_segregated_view view)
-{
-    pas_segregated_partial_view* partial_view;
-    
-    partial_view = pas_segregated_view_get_partial(view);
-
-    return pas_full_alloc_bits_create(
-        pas_lenient_compact_unsigned_ptr_load(&partial_view->alloc_bits),
-        partial_view->alloc_bits_offset,
-        partial_view->alloc_bits_offset + partial_view->alloc_bits_size);
-}
-
-static PAS_ALWAYS_INLINE pas_full_alloc_bits
 pas_full_alloc_bits_create_for_view_and_directory(
     pas_segregated_view view,
     pas_segregated_size_directory* directory,
     pas_segregated_page_config page_config)
 {
-    if (pas_segregated_view_is_some_exclusive(view))
-        return pas_full_alloc_bits_create_for_exclusive(directory, page_config);
-
-    return pas_full_alloc_bits_create_for_partial(view);
+    PAS_ASSERT(pas_segregated_view_is_some_exclusive(view));
+    return pas_full_alloc_bits_create_for_exclusive(directory, page_config);
 }
 
 static PAS_ALWAYS_INLINE pas_full_alloc_bits
@@ -93,14 +64,11 @@ pas_full_alloc_bits_create_for_view(
     pas_segregated_view view,
     pas_segregated_page_config page_config)
 {
-    if (pas_segregated_view_is_some_exclusive(view)) {
-        pas_segregated_size_directory* size_directory;
-        size_directory = pas_compact_segregated_size_directory_ptr_load_non_null(
-            &pas_segregated_view_get_exclusive(view)->directory);
-        return pas_full_alloc_bits_create_for_exclusive(size_directory, page_config);
-    }
-
-    return pas_full_alloc_bits_create_for_partial(view);
+    PAS_ASSERT(pas_segregated_view_is_some_exclusive(view));
+    pas_segregated_size_directory* size_directory;
+    size_directory = pas_compact_segregated_size_directory_ptr_load_non_null(
+        &pas_segregated_view_get_exclusive(view)->directory);
+    return pas_full_alloc_bits_create_for_exclusive(size_directory, page_config);
 }
 
 PAS_END_EXTERN_C;

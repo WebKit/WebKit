@@ -132,6 +132,21 @@ inline RefPtr<ArrayBufferView> JSArrayBufferView::toWrappedAllowSharedAndResizab
     return nullptr;
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
+inline void JSArrayBufferView::refreshVector(void* newData)
+{
+    // We ensure that the vector is really there because these notifications are delivered to
+    // incoming references of a buffer, and an incoming reference from a view to a buffer remains in
+    // place even after a view detaches.
+    if (hasVector()) {
+        void* newVectorPtr = static_cast<uint8_t*>(newData) + byteOffsetRaw();
+        m_vector.setWithoutBarrier(newVectorPtr);
+    }
+}
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 template<typename Getter>
 bool isArrayBufferViewOutOfBounds(JSArrayBufferView* view, Getter& getter)
 {

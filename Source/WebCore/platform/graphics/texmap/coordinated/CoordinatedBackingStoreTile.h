@@ -25,12 +25,6 @@
 #include "IntRect.h"
 #include <wtf/Vector.h>
 
-#if USE(SKIA)
-WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
-#include <skia/core/SkImage.h>
-WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
-#endif
-
 namespace WebCore {
 class BitmapTexture;
 class CoordinatedTileBuffer;
@@ -56,18 +50,11 @@ public:
 
     bool canBePainted() const { return !!m_texture; }
 
-#if USE(SKIA)
-    const sk_sp<SkImage>& ensureSkImage();
-#endif
-
 private:
     RefPtr<BitmapTexture> m_texture;
     Vector<Update> m_updates;
     float m_scale { 1. };
     FloatRect m_rect;
-#if USE(SKIA)
-    sk_sp<SkImage> m_cachedSkImage;
-#endif
 };
 
 } // namespace WebCore

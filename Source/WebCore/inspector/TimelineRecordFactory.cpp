@@ -177,8 +177,9 @@ Ref<JSON::Object> TimelineRecordFactory::createScreenshotData(const String& imag
     return data;
 }
 
-void TimelineRecordFactory::appendLayoutRoot(JSON::Object& data, const FloatQuad& quad)
+void TimelineRecordFactory::appendLayoutRoot(JSON::Object& data, Inspector::Protocol::DOM::NodeId nodeId, const FloatQuad& quad)
 {
+    data.setInteger("nodeId"_s, nodeId);
     data.setArray("root"_s, createQuad(quad));
 }
 

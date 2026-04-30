@@ -33,6 +33,8 @@
 namespace WebCore {
 
 class GradientColorStops;
+struct GradientColorStop;
+using GradientColorStopVector = Vector<GradientColorStop, 2>;
 
 class GradientRendererCG {
 public:
@@ -44,7 +46,7 @@ public:
 
     const std::optional<DestinationColorSpace>& colorSpace() const { return m_colorSpace; }
 
-    static RetainPtr<CGGradientRef> createGradientBySampling(ColorInterpolationMethod, const GradientColorStops::StopVector&, const std::optional<DestinationColorSpace>& = { });
+    static RetainPtr<CGGradientRef> createGradientBySampling(ColorInterpolationMethod, const GradientColorStopVector&, const std::optional<DestinationColorSpace>& = { });
 
 private:
     using Gradient = RetainPtr<CGGradientRef>;

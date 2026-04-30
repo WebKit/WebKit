@@ -43,4 +43,6 @@ Ref<HTMLParamElement> HTMLParamElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new HTMLParamElement(tagName, document));
 }
 
+HTMLParamElement::~HTMLParamElement() = default;
+
 }

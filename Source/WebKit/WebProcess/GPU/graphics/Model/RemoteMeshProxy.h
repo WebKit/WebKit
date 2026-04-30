@@ -62,6 +62,7 @@ public:
     virtual ~RemoteMeshProxy();
 
     RemoteGPUProxy& root() const { return m_root; }
+    static bool supportsTransform(const WebCore::TransformationMatrix&);
 
 private:
     friend class ModelDowncastConvertToBackingContext;
@@ -104,7 +105,6 @@ private:
 #if PLATFORM(COCOA)
     std::optional<WebModel::Float4x4> entityTransform() const final;
 #endif
-    bool supportsTransform(const WebCore::TransformationMatrix&) const final;
     void setScale(float) final;
     void setFOV(float);
     void setBackgroundColor(const WebModel::Float3&) final;

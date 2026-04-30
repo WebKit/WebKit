@@ -43,4 +43,6 @@ Ref<HTMLDirectoryElement> HTMLDirectoryElement::create(const QualifiedName& tagN
     return adoptRef(*new HTMLDirectoryElement(tagName, document));
 }
 
+HTMLDirectoryElement::~HTMLDirectoryElement() = default;
+
 }

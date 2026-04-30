@@ -320,7 +320,7 @@ public:
     bool hasCachedSVGResource() const { return m_hasCachedSVGResource; }
 
     bool isAnonymousBlock() const;
-    bool isAnonymousForPercentageResolution() const { return isAnonymous() && !isViewTransitionPseudo(); }
+    bool shouldSkipForPercentageResolution() const { return isAnonymous() && !isViewTransitionPseudo() && !isRenderView(); }
     inline bool isBlockBox() const;
     inline bool isBlockLevelBox() const;
     inline bool isBlockContainer() const;
@@ -365,6 +365,8 @@ protected:
 
     virtual void styleWillChange(Style::Difference, const RenderStyle& newStyle);
     virtual void styleDidChange(Style::Difference, const RenderStyle* oldStyle);
+
+    void dirtyEnclosingLayerSVGChildrenIfNeeded();
 
     void insertedIntoTree() override;
     void willBeRemovedFromTree() override;

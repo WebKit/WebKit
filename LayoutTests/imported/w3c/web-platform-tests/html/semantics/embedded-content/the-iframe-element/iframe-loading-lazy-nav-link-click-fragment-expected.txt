@@ -1,0 +1,4 @@
+
+
+FAIL Navigating iframe loading='lazy' before it is loaded: link click (fragment) Error: assert_equals: expected "about:blank#fragment" but got "http://web-platform.test:8800/html/semantics/embedded-content/the-iframe-element/support/blank.htm?src"
+

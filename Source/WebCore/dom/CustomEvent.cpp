@@ -66,9 +66,7 @@ void CustomEvent::initCustomEvent(JSC::JSGlobalObject& globalObject, const AtomS
 
     initEvent(type, canBubble, cancelable);
 
-    // FIXME: This code is wrong: we should emit a write-barrier. Otherwise, GC can collect it.
-    // https://bugs.webkit.org/show_bug.cgi?id=236353
-    m_detail.setWeakly(globalObject, detail);
+    m_detail.set(globalObject, wrapper(), detail);
     m_cachedDetail.clear();
 }
 

@@ -166,13 +166,13 @@ public:
     bool hasTLA() const { return m_hasTLA; }
 
     JSPromise* topLevelCapability() const { return m_topLevelCapability.get(); }
-    void cycleRoot(VM&, CyclicModuleRecord*);
-    void asyncEvaluationOrder(AsyncEvaluationOrder newOrder) { m_asyncEvaluationOrder = newOrder; }
-    void pendingAsyncDependencies(std::optional<int> newDependencies) { m_pendingAsyncDependencies = newDependencies; }
+    void setCycleRoot(VM&, CyclicModuleRecord*);
+    void setAsyncEvaluationOrder(AsyncEvaluationOrder newOrder) { m_asyncEvaluationOrder = newOrder; }
+    void setPendingAsyncDependencies(std::optional<int> newDependencies) { m_pendingAsyncDependencies = newDependencies; }
 
     void appendAsyncParentModule(VM&, AbstractModuleRecord*);
-    void topLevelCapability(VM&, JSPromise*);
-    void hasTLA(bool);
+    void setTopLevelCapability(VM&, JSPromise*);
+    void setHasTLA(bool);
 
     void dump();
 

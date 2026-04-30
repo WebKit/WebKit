@@ -32,6 +32,7 @@
 #include "CGUtilities.h"
 #include "GraphicsContextCG.h"
 #include "PathStream.h"
+#include <array>
 #include <mutex>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/NeverDestroyed.h>
@@ -588,9 +589,9 @@ static RetainPtr<CGContextRef> createScratchContext()
     auto consumer = adoptCF(CGDataConsumerCreate(0, &callbacks));
     auto context = adoptCF(CGPDFContextCreate(consumer.get(), 0, 0));
 
-    CGFloat black[4] = { 0, 0, 0, 1 };
-    CGContextSetFillColor(context.get(), black);
-    CGContextSetStrokeColor(context.get(), black);
+    constexpr std::array<CGFloat, 4> black { 0, 0, 0, 1 };
+    CGContextSetFillColor(context.get(), black.data());
+    CGContextSetStrokeColor(context.get(), black.data());
 
     return context;
 }

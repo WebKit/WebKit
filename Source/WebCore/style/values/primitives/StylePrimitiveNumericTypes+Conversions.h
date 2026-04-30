@@ -370,19 +370,27 @@ template<auto R, typename V> struct ToStyle<CSS::UnevaluatedCalc<CSS::AnglePerce
 
         ASSERT(simplifiedCalc->category() == CSS::Category::AnglePercentage || simplifiedCalc->category() == CSS::Category::Angle || simplifiedCalc->category() == CSS::Category::Percentage);
 
-        if (simplifiedCalc->category() == CSS::Category::Angle)
-            return canonicalize(CSS::AngleRaw<R, V> { To::Dimension::unit, simplifiedCalc->doubleValue(rest...) }, std::forward<Rest>(rest)...);
+        if (simplifiedCalc->category() == CSS::Category::Angle) {
+            auto doubleValue = simplifiedCalc->doubleValue(rest...);
+            return canonicalize(CSS::AngleRaw<R, V> { To::Dimension::unit, doubleValue }, std::forward<Rest>(rest)...);
+        }
 
         if (simplifiedCalc->category() == CSS::Category::Percentage) {
-            if (WTF::holdsAlternative<CSSCalc::Percentage>(simplifiedCalc->tree().root))
-                return canonicalize(CSS::PercentageRaw<R, V> { simplifiedCalc->doubleValue(rest...) }, std::forward<Rest>(rest)...);
+            if (WTF::holdsAlternative<CSSCalc::Percentage>(simplifiedCalc->tree().root)) {
+                auto doubleValue = simplifiedCalc->doubleValue(rest...);
+                return canonicalize(CSS::PercentageRaw<R, V> { doubleValue }, std::forward<Rest>(rest)...);
+            }
             return typename To::Calc { simplifiedCalc->createCalculationValue(std::forward<Rest>(rest)...) };
         }
 
-        if (!simplifiedCalc->tree().type.percentHint)
-            return canonicalize(CSS::AngleRaw<R, V> { To::Dimension::unit, simplifiedCalc->doubleValue(rest...) }, std::forward<Rest>(rest)...);
-        if (WTF::holdsAlternative<CSSCalc::Percentage>(simplifiedCalc->tree().root))
-            return canonicalize(CSS::PercentageRaw<R, V> { simplifiedCalc->doubleValue(rest...) }, std::forward<Rest>(rest)...);
+        if (!simplifiedCalc->tree().type.percentHint) {
+            auto doubleValue = simplifiedCalc->doubleValue(rest...);
+            return canonicalize(CSS::AngleRaw<R, V> { To::Dimension::unit, doubleValue }, std::forward<Rest>(rest)...);
+        }
+        if (WTF::holdsAlternative<CSSCalc::Percentage>(simplifiedCalc->tree().root)) {
+            auto doubleValue = simplifiedCalc->doubleValue(rest...);
+            return canonicalize(CSS::PercentageRaw<R, V> { doubleValue }, std::forward<Rest>(rest)...);
+        }
         return typename To::Calc { simplifiedCalc->createCalculationValue(std::forward<Rest>(rest)...) };
     }
 };
@@ -404,19 +412,27 @@ template<auto R, typename V> struct ToStyle<CSS::UnevaluatedCalc<CSS::LengthPerc
 
         ASSERT(simplifiedCalc->category() == CSS::Category::LengthPercentage || simplifiedCalc->category() == CSS::Category::Length || simplifiedCalc->category() == CSS::Category::Percentage);
 
-        if (simplifiedCalc->category() == CSS::Category::Length)
-            return canonicalize(CSS::LengthRaw<R, V> { To::Dimension::unit, simplifiedCalc->doubleValue(rest...) }, std::forward<Rest>(rest)...);
+        if (simplifiedCalc->category() == CSS::Category::Length) {
+            auto doubleValue = simplifiedCalc->doubleValue(rest...);
+            return canonicalize(CSS::LengthRaw<R, V> { To::Dimension::unit, doubleValue }, std::forward<Rest>(rest)...);
+        }
 
         if (simplifiedCalc->category() == CSS::Category::Percentage) {
-            if (WTF::holdsAlternative<CSSCalc::Percentage>(simplifiedCalc->tree().root))
-                return canonicalize(CSS::PercentageRaw<R, V> { simplifiedCalc->doubleValue(rest...) }, std::forward<Rest>(rest)...);
+            if (WTF::holdsAlternative<CSSCalc::Percentage>(simplifiedCalc->tree().root)) {
+                auto doubleValue = simplifiedCalc->doubleValue(rest...);
+                return canonicalize(CSS::PercentageRaw<R, V> { doubleValue }, std::forward<Rest>(rest)...);
+            }
             return typename To::Calc { simplifiedCalc->createCalculationValue(std::forward<Rest>(rest)...) };
         }
 
-        if (!simplifiedCalc->tree().type.percentHint)
-            return canonicalize(CSS::LengthRaw<R, V> { To::Dimension::unit, simplifiedCalc->doubleValue(rest...) }, std::forward<Rest>(rest)...);
-        if (WTF::holdsAlternative<CSSCalc::Percentage>(simplifiedCalc->tree().root))
-            return canonicalize(CSS::PercentageRaw<R, V> { simplifiedCalc->doubleValue(rest...) }, std::forward<Rest>(rest)...);
+        if (!simplifiedCalc->tree().type.percentHint) {
+            auto doubleValue = simplifiedCalc->doubleValue(rest...);
+            return canonicalize(CSS::LengthRaw<R, V> { To::Dimension::unit, doubleValue }, std::forward<Rest>(rest)...);
+        }
+        if (WTF::holdsAlternative<CSSCalc::Percentage>(simplifiedCalc->tree().root)) {
+            auto doubleValue = simplifiedCalc->doubleValue(rest...);
+            return canonicalize(CSS::PercentageRaw<R, V> { doubleValue }, std::forward<Rest>(rest)...);
+        }
         return typename To::Calc { simplifiedCalc->createCalculationValue(std::forward<Rest>(rest)...) };
     }
 };

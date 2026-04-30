@@ -38,7 +38,7 @@ namespace WebCore::Style::Interpolation {
 class Client;
 
 struct Context : BlendingContext {
-    const Client& client;
+    SUPPRESS_FORWARD_DECL_MEMBER const Client& client;
     AnimatableCSSProperty property;
 
     Context(const AnimatableCSSProperty& property, double progress, bool isDiscrete, CompositeOperation compositeOperation, IterationCompositeOperation iterationCompositeOperation, double currentIteration, const Client& client)

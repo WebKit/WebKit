@@ -42,12 +42,70 @@
 #include "LocalFrame.h"
 #include "Navigator.h"
 #include "Page.h"
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 
 CredentialsContainer::CredentialsContainer(WeakPtr<Document, WeakPtrImplWithEventTargetData>&& document)
     : m_document(WTF::move(document))
 {
+}
+
+// https://w3c.github.io/webappsec-credential-management/#credential-type-registry
+static bool checkCredentialTypeCombinations(const CredentialRequestOptions& options, CredentialPromise& promise)
+{
+    enum class CredentialType : uint8_t {
+        Password  = 1 << 0,
+        Federated = 1 << 1,
+        Identity  = 1 << 2,
+        OTP       = 1 << 3,
+        PublicKey = 1 << 4,
+        Digital   = 1 << 5,
+    };
+
+    OptionSet<CredentialType> requestedTypes;
+    if (options.password)
+        requestedTypes.add(CredentialType::Password);
+    if (options.federated)
+        requestedTypes.add(CredentialType::Federated);
+    if (options.identity)
+        requestedTypes.add(CredentialType::Identity);
+    if (options.otp)
+        requestedTypes.add(CredentialType::OTP);
+    if (options.publicKey)
+        requestedTypes.add(CredentialType::PublicKey);
+    if (options.digital)
+        requestedTypes.add(CredentialType::Digital);
+
+    if (requestedTypes.isEmpty()) {
+        promise.reject(Exception { ExceptionCode::NotSupportedError, "No credential type was specified."_s });
+        return false;
+    }
+
+    // NOTE: allowedWith() must be symmetric — if type A lists B, then B must
+    // also list A. Asymmetry causes inconsistent rejection depending on
+    // iteration order. See https://w3c.github.io/webappsec-credential-management/#credential-type-registry
+    auto allowedWith = [](CredentialType type) -> OptionSet<CredentialType> {
+        switch (type) {
+        case CredentialType::Password:  return { CredentialType::Federated };
+        case CredentialType::Federated: return { CredentialType::Password };
+        case CredentialType::Identity:
+        case CredentialType::OTP:
+        case CredentialType::PublicKey:
+        case CredentialType::Digital:   return { };
+        }
+        ASSERT_NOT_REACHED();
+        return { };
+    };
+
+    for (auto type : requestedTypes) {
+        auto others = requestedTypes - type;
+        if (!others.isEmpty() && !allowedWith(type).containsAll(others)) {
+            promise.reject(Exception { ExceptionCode::NotSupportedError, "The credential type combination is not supported."_s });
+            return false;
+        }
+    }
+    return true;
 }
 
 template<typename Options>
@@ -70,15 +128,8 @@ static bool performCommonChecks(const Document& document, const Options& options
 
     if constexpr (std::is_same_v<Options, CredentialRequestOptions>) {
 #if ENABLE(WEB_AUTHN)
-        if (!options.publicKey && !options.digital) {
-            promise.reject(Exception { ExceptionCode::NotSupportedError, "Missing request type."_s });
+        if (!checkCredentialTypeCombinations(options, promise))
             return false;
-        }
-
-        if (options.publicKey && options.digital) {
-            promise.reject(Exception { ExceptionCode::NotSupportedError, "Only one request type is supported at a time."_s });
-            return false;
-        }
 #else
         if (!options.publicKey) {
             promise.reject(Exception { ExceptionCode::NotSupportedError, "Missing request type."_s });
@@ -93,8 +144,7 @@ static bool performCommonChecks(const Document& document, const Options& options
 
 void CredentialsContainer::get(CredentialRequestOptions&& options, CredentialPromise&& promise)
 {
-    // The following implements https://www.w3.org/TR/credential-management-1/#algorithm-request as of 4 August 2017
-    // with enhancement from 14 November 2017 Editor's Draft.
+    // https://w3c.github.io/webappsec-credential-management/#algorithm-request
     RefPtr document = this->document();
     if (!document) {
         promise.reject(Exception { ExceptionCode::NotSupportedError });
@@ -112,6 +162,12 @@ void CredentialsContainer::get(CredentialRequestOptions&& options, CredentialPro
 #endif
         return;
     }
+
+    if (!options.publicKey) {
+        promise.resolve(nullptr);
+        return;
+    }
+
     document->page()->authenticatorCoordinator().discoverFromExternalSource(*document, WTF::move(options), WTF::move(promise));
 }
 
@@ -142,7 +198,7 @@ void CredentialsContainer::isCreate(CredentialCreationOptions&& options, Credent
         return;
     }
 
-    promise.resolve(nullptr);
+    promise.reject(Exception { ExceptionCode::NotSupportedError, "No credential type was specified."_s });
 }
 
 void CredentialsContainer::preventSilentAccess(DOMPromiseDeferred<void>&& promise) const

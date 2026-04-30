@@ -11,7 +11,14 @@
     function objectOnLoad() {
         document.execCommand("insertUnorderedList", false);
         document.execCommand("italic", false);
-        document.body.innerHTML = "<p> Tests inserting list followed by an edit command. The test passes if WebKit doesn't crash or hit an assertion.</p>";
-        testRunner.notifyDone();
+    }
+    
+    window.onload = () => {
+        requestAnimationFrame(() => {
+            setTimeout(() => {
+                document.body.innerHTML = "<p> Tests inserting list followed by an edit command. The test passes if WebKit doesn't crash or hit an assertion.</p>";
+                testRunner.notifyDone();
+            }, 0);
+        });
     }
 </script>

@@ -53,7 +53,7 @@ class ImageEGL final : public ImageGL
 
     GLenum mNativeInternalFormat;
 
-    EGLImage mImage;
+    std::shared_ptr<EGLImage> mImage;
 };
 
 }  // namespace rx

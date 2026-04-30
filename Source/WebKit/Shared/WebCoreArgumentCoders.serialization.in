@@ -2196,10 +2196,15 @@ class WebCore::LayoutRect {
     WebCore::LayoutSize m_size;
 };
 
+[OptionSet] enum class WebCore::FrameOwnerElementAppearance : uint8_t {
+    IsDark,
+    ExplicitlySet
+};
+
 struct WebCore::RemoteFrameLayoutInfo {
     std::optional<WebCore::LayoutRect> visibleRectInParent;
     float usedZoom;
-    bool useDarkAppearance;
+    OptionSet<WebCore::FrameOwnerElementAppearance> ownerElementAppearance;
 };
 
 header: <WebCore/VP9Utilities.h>
@@ -3984,9 +3989,9 @@ enum class WebCore::ScrollSnapStop : bool;
     float offset;
     WebCore::ScrollSnapStop stop;
     bool hasSnapAreaLargerThanViewport;
-    Markable<WebCore::NodeIdentifier> snapTargetID;
     bool isFocused;
-    Vector<uint64_t> snapAreaIndices;
+    Markable<WebCore::NodeIdentifier> snapTargetID;
+    Vector<size_t, 1> snapAreaIndices;
 };
 
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -4805,7 +4810,7 @@ struct WebCore::NavigationRequester {
     bool hasLoadedThirdPartyScript;
     bool hasLoadedThirdPartyFrame;
     bool hasHadUserInteraction;
-    RefPtr<WebCore::SecurityOrigin> parentFrameSecurityOrigin;
+    bool parentOriginIsSameAsTopOrigin;
 };
 
 struct WebCore::PolicyContainer {
@@ -6849,6 +6854,7 @@ header: <WebCore/TextExtractionTypes.h>
     String autocomplete;
     String pattern;
     String name;
+    String value;
     std::optional<int> minLength;
     std::optional<int> maxLength;
     bool isRequired;
@@ -7486,6 +7492,32 @@ header: <WebCore/NetworkLoadMetrics.h>
     bool isProxyConnection;
 }
 
+header: <WebCore/ResourceLoadTiming.h>
+class WebCore::ResourceLoadTiming {
+    MonotonicTime startTime();
+    MonotonicTime endTime();
+}
+
+header: <WebCore/ServerTiming.h>
+struct WebCore::ServerTiming {
+    String name;
+    double duration;
+    String description;
+    bool durationSet;
+    bool descriptionSet;
+}
+
+header: <WebCore/ResourceTiming.h>
+[CustomHeader] class WebCore::ResourceTiming {
+    URL url();
+    String initiatorType();
+    WebCore::ResourceLoadTiming resourceLoadTiming();
+    WebCore::NetworkLoadMetrics networkLoadMetrics();
+    Vector<WebCore::ServerTiming> serverTiming();
+    bool isLoadedFromServiceWorker();
+    bool isSameOriginRequest();
+}
+
 struct WebCore::DisplayUpdate {
     unsigned updateIndex;
     WebCore::FramesPerSecond updatesPerSecond;
@@ -7940,6 +7972,7 @@ header: <WebCore/WebCodecsEncodedAudioChunk.h>
 
 #if USE(LIBRICE)
 header: <WebCore/RiceGatherResult.h>
+using WebCore::RiceSocket = std::pair<String, WebCore::RTCIceProtocol>;
 [CustomHeader] struct WebCore::RiceGatherResult {
     HashMap<WebCore::RiceSocket, String> addresses;
     Vector<WebCore::RiceSocket> turnAddresses;
@@ -8537,11 +8570,18 @@ header: <WebCore/ShareableCVPixelBuffer.h>
 [CustomHeader, RefCounted] class WebCore::ShareableCVPixelBufferWithPlanarBytes {
     WebCore::ShareableCVPixelBufferConfiguration m_configuration;
     Vector<Ref<WebCore::ShareableCVPixelBufferBytes>> m_planes;
-};
+}
 
 [CustomHeader, RefCounted] class WebCore::ShareableCVPixelBuffer subclasses {
     WebCore::ShareableCVPixelBufferWithBytes
     WebCore::ShareableCVPixelBufferWithPlanarBytes
+}
+
+header: <WebCore/ShareableGainMap.h>
+[CreateUsing=create] class WebCore::ShareableGainMap {
+    RetainPtr<CFDataRef> m_metadata;
+    Ref<WebCore::ShareableCVPixelBuffer> m_gainMapShareablePixelBuffer;
+    WebCore::DestinationColorSpace m_colorSpace;
 }
 
 #endif
@@ -8557,6 +8597,7 @@ header: <WebCore/ShareableBitmap.h>
     [Validator='[&]() { std::remove_cvref_t<decltype(*bytesPerRow)> bytesForWidth; return WTF::safeMultiply(m_size->width(), *bytesPerPixel, bytesForWidth) && *bytesPerRow >= bytesForWidth; }()'] unsigned bytesPerRow();
 #if USE(CG)
     CGBitmapInfo m_bitmapInfo;
+    std::optional<WebCore::ShareableGainMap> m_shareableGainMap;
 #endif
 }
 
@@ -8847,6 +8888,7 @@ enum class WebCore::CDMInstanceAllowDistinctiveIdentifiers : bool
 #endif
 
 #if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
+header: <WebCore/LegacyCDMSession.h>
 using WebCore::LegacyCDMSessionClient::MediaKeyErrorCode = unsigned short
 #endif
 

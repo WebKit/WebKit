@@ -45,6 +45,7 @@ int gSleepBetweenTrialMs           = 0;
 bool gNoFinish                     = false;
 bool gRetraceMode                  = false;
 bool gMinimizeGPUWork              = false;
+bool gSkipBlitInOffscreen          = false;
 bool gTraceTestValidation          = false;
 const char *gPerfCounters          = nullptr;
 const char *gUseANGLE              = nullptr;
@@ -96,6 +97,7 @@ bool TraceTestArg(int *argc, char **argv, int argIndex)
            ParseFlag("--offscreen", argc, argv, argIndex, &gOffscreen) ||
            ParseFlag("--vsync", argc, argv, argIndex, &gVsync) ||
            ParseFlag("--minimize-gpu-work", argc, argv, argIndex, &gMinimizeGPUWork) ||
+           ParseFlag("--skip-blit-in-offscreen", argc, argv, argIndex, &gSkipBlitInOffscreen) ||
            ParseCStringArg("--trace-interpreter", argc, argv, argIndex, &gTraceInterpreter) ||
            ParseIntArg("--screenshot-frame", argc, argv, argIndex, &gScreenshotFrame) ||
            ParseIntArg("--fps-limit", argc, argv, argIndex, &gFpsLimit) ||

@@ -311,9 +311,11 @@ class [[nodiscard]] ScopedEXTTextureNorm16ReadbackWorkaround
         ContextGL *contextGL              = GetImplAs<ContextGL>(context);
         const angle::FeaturesGL &features = GetFeaturesGL(context);
 
+        // This workaround does not work if the destination is a Pixel Buffer Object.
         enabled = features.readPixelsUsingImplementationColorReadFormatForNorm16.enabled &&
                   type == GL_UNSIGNED_SHORT && originalReadFormat == GL_RGBA &&
-                  (format == GL_RED || format == GL_RG);
+                  (format == GL_RED || format == GL_RG) &&
+                  context->getState().getTargetBuffer(gl::BufferBinding::PixelPack) == nullptr;
 
         clientPixels = pixels;
 

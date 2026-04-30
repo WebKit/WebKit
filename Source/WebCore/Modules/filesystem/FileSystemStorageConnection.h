@@ -52,7 +52,7 @@ public:
 
     using SameEntryCallback = CompletionHandler<void(ExceptionOr<bool>&&)>;
     using GetHandleCallback = CompletionHandler<void(ExceptionOr<Ref<FileSystemHandleCloseScope>>&&)>;
-    using ResolveCallback = CompletionHandler<void(ExceptionOr<Vector<String>>&&)>;
+    using ResolveCallback = CompletionHandler<void(ExceptionOr<std::optional<Vector<String>>>&&)>;
     struct SyncAccessHandleInfo {
         FileSystemSyncAccessHandleIdentifier identifier;
         FileSystem::FileHandle file;

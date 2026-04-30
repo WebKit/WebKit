@@ -31,12 +31,13 @@
 #include "CurlContext.h"
 #include "CurlResponse.h"
 #include "HTTPParsers.h"
+#include <array>
 
 namespace WebCore {
 
 static bool isAppendableHeader(const String &key)
 {
-    static constexpr ASCIILiteral appendableHeaders[] = {
+    static constexpr auto appendableHeaders = std::to_array<ASCIILiteral>({
         "access-control-allow-headers"_s,
         "access-control-allow-methods"_s,
         "access-control-allow-origin"_s,
@@ -64,7 +65,7 @@ static bool isAppendableHeader(const String &key)
         "via"_s,
         "warning"_s,
         "www-authenticate"_s
-    };
+    });
 
     // Custom headers start with 'X-', and need no further checking.
     if (startsWithLettersIgnoringASCIICase(key, "x-"_s))

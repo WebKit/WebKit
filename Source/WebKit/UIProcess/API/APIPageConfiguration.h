@@ -117,6 +117,7 @@ public:
 
     Ref<PageConfiguration> copy() const;
     void copyDataFrom(const PageConfiguration&);
+    void ensureLazyInitializedRefsAreInitialized();
 
     struct OpenerInfo {
         Ref<WebKit::WebProcessProxy> process;
@@ -501,7 +502,8 @@ private:
         template<typename T, Ref<T>(*initializer)()> class LazyInitializedRef {
         public:
             LazyInitializedRef() = default;
-            void operator=(const LazyInitializedRef& other) { m_value = other.get(); }
+            LazyInitializedRef(const LazyInitializedRef&) = default;
+            void operator=(const LazyInitializedRef& other) { m_value = other.m_value; }
             void operator=(RefPtr<T>&& t) { m_value = WTF::move(t); }
             T& get() const
             {

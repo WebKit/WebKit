@@ -36,6 +36,8 @@ public:
     static Ref<HTMLSpanElement> create(Document&);
     static Ref<HTMLSpanElement> create(const QualifiedName&, Document&);
 
+    ~HTMLSpanElement();
+
 private:
     HTMLSpanElement(const QualifiedName&, Document&);
 };

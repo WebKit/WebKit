@@ -9564,8 +9564,16 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
             _shouldRestoreSelection = NO;
         }
     } else {
-        if (_lastSiblingBeforeSelectionHighlight != [self _siblingBeforeSelectionHighlight])
-            [_textInteractionWrapper prepareToMoveSelectionContainer:self._selectionContainerViewInternal];
+        RetainPtr container = [self _selectionContainerViewInternal];
+        RetainPtr selectionHighlightContainer = [[_textInteractionWrapper selectionHighlightView] superview];
+        BOOL siblingChanged = _lastSiblingBeforeSelectionHighlight != [self _siblingBeforeSelectionHighlight];
+        BOOL parentChanged = editorState.isEditableOrRanged() && selectionHighlightContainer != container;
+        if (!siblingChanged && parentChanged)
+            RELEASE_LOG(TextInteraction, "Selection highlight view was reparented");
+
+        if (siblingChanged || parentChanged)
+            [_textInteractionWrapper prepareToMoveSelectionContainer:container.get()];
+
         [self _updateSelectionViewsIfNeeded];
     }
 
@@ -14454,7 +14462,7 @@ static inline WKTextAnimationType toWKTextAnimationType(WebCore::TextAnimationTy
 
 - (UIView *)_selectionContainerViewInternal
 {
-    if (_cachedSelectionContainerView)
+    if ([protect(_cachedSelectionContainerView) window])
         return _cachedSelectionContainerView;
 
     _cachedSelectionContainerView = [&] -> UIView * {
@@ -14466,7 +14474,7 @@ static inline WKTextAnimationType toWKTextAnimationType(WebCore::TextAnimationTy
             return self;
 
         RetainPtr enclosingView = [self _viewForLayerID:page->editorState().visualData->enclosingLayerID];
-        if (!enclosingView)
+        if (![enclosingView window])
             return self;
 
         for (UIView *selectedView in self.allViewsIntersectingSelectionRange) {

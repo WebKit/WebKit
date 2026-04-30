@@ -14,7 +14,10 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/document-getters-return-null-for-cross-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-allowed-schemas.sub.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-change-src-2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-change-src.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-dimension.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-document-under-content-visibility-focus.html
@@ -31,6 +34,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-in-object-fallback-image.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-in-object-fallback-subdocument.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-in-object-fallback.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-javascript-url.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-named-attribute-detached-context-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-network-error.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-01-expected.html

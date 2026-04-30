@@ -632,7 +632,7 @@ class CompressedTextureFormatsTest : public ANGLETest<CompressedTextureTestParam
     {
         // ETC2/EAC formats always pass validation on ES3 contexts but in some cases fail in drivers
         // because their emulation is not implemented for OpenGL renderer.
-        // https://crbug.com/angleproject/6300
+        // https://anglebug.com/42264819
         if (mAlwaysOnES3)
         {
             ANGLE_SKIP_TEST_IF(getClientMajorVersion() >= 3 &&

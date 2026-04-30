@@ -34,6 +34,8 @@ public:
     WEBCORE_EXPORT static Ref<HTMLHtmlElement> create(Document&);
     static Ref<HTMLHtmlElement> create(const QualifiedName&, Document&);
 
+    ~HTMLHtmlElement();
+
 private:
     HTMLHtmlElement(const QualifiedName&, Document&);
 };

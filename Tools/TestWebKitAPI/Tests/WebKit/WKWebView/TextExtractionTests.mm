@@ -1175,7 +1175,7 @@ TEST(TextExtractionTests, DelayedSafeBrowsingWarningBlocksTextExtraction)
         [DelayedLookupContext methodForSelector:@selector(sharedLookupContext)]
     };
 
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:^{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:[&] {
         RetainPtr configuration = server.httpsProxyConfiguration();
         RetainPtr preferences = [configuration preferences];
         [preferences setFraudulentWebsiteWarningEnabled:YES];

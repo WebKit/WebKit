@@ -95,6 +95,7 @@ class ProtectionSpace;
 class RegistrableDomain;
 class RTCPeerConnectionHandler;
 class ResourceError;
+class ResourceTiming;
 class SecurityOrigin;
 class SharedBuffer;
 class SubstituteData;

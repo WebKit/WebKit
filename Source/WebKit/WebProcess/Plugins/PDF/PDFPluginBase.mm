@@ -919,6 +919,13 @@ float PDFPluginBase::deviceScaleFactor() const
     return 1;
 }
 
+bool PDFPluginBase::useDarkAppearance() const
+{
+    if (RefPtr page = this->page())
+        return page->useDarkAppearance();
+    return false;
+}
+
 void PDFPluginBase::scrollbarStyleChanged(ScrollbarStyle style, bool forceUpdate)
 {
     if (!forceUpdate)

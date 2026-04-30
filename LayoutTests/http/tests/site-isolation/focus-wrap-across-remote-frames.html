@@ -1,0 +1,62 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<html>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("Tests Tab focus navigation into a cross-origin iframe, and that focus relinquishes to chrome after the last element.");
+jsTestIsAsync = true;
+
+function waitForActiveElementTagName(expected) {
+    return new Promise((resolve, reject) => {
+        let attempts = 0;
+        function check() {
+            if (document.activeElement && document.activeElement.tagName === expected) {
+                resolve();
+                return;
+            }
+            if (++attempts > 100) {
+                reject(new Error(`Timed out waiting for activeElement.tagName to be '${expected}', was '${document.activeElement ? document.activeElement.tagName : "null"}'`));
+                return;
+            }
+            setTimeout(check, 50);
+        }
+        check();
+    });
+}
+</script>
+
+<body>
+<input type="text" id="outerInput" placeholder="Outer frame input">
+<iframe id="testIframe" src="http://localhost:8000/site-isolation/resources/focus-wrap-iframe.html"></iframe>
+
+<script>
+async function runTest() {
+    testRunner?.dumpAsText();
+    await UIHelper.setHardwareKeyboardAttached(true);
+
+    shouldBe("document.activeElement.tagName", "'BODY'");
+
+    // Focus the outer input.
+    document.getElementById('outerInput').focus();
+    shouldBe("document.activeElement.id", "'outerInput'");
+    testPassed("Outer input focused");
+
+    // Tab into the cross-origin iframe.
+    await UIHelper.keyDown("\t");
+    await waitForActiveElementTagName('IFRAME');
+    shouldBe("document.activeElement.tagName", "'IFRAME'");
+    testPassed("Tab moved focus into iframe");
+
+    // Tab again — focus should relinquish to chrome (leave the web view).
+    await UIHelper.keyDown("\t");
+    await waitForActiveElementTagName('BODY');
+    shouldBe("document.activeElement.tagName", "'BODY'");
+    testPassed("Tab relinquished focus to chrome");
+
+    finishJSTest();
+}
+
+window.addEventListener('load', runTest);
+</script>
+</body>
+</html>

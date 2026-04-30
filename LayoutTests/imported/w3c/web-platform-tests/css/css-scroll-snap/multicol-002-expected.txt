@@ -1,0 +1,5 @@
+
+FAIL start assert_equals: expected 340 but got 240
+FAIL end assert_equals: expected 250 but got 160
+FAIL center assert_equals: expected 295 but got 180
+

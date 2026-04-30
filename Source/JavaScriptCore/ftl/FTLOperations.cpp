@@ -98,12 +98,22 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationPopulateObjectInOSR, void, (JSGlobalO
             JSValue value = JSValue::decode(values[i]);
             unsigned index = property.location().info();
 
-            array->putDirectIndex(globalObject, index, value);
+            // When a double array element's Phi resolves to PNaN (the hole default), the OSR exit
+            // compiler boxes it as jsNumber(NaN). To preserve hole semantics for double Arrays,
+            // store PNaN directly instead of going through putDirectIndex which would trigger a
+            // double-to-contiguous conversion. This is safe because values written to sunk double
+            // arrays use DoubleRepRealUse (proven non-NaN), so any NaN here must be the hole
+            // sentinel and is not user-visible.
+            if (hasDouble(array->indexingType()) && value.isNumber() && std::isnan(value.asNumber())) [[unlikely]]
+                array->butterfly()->contiguousDouble().atUnsafe(index) = PNaN;
+            else
+                array->putDirectIndex(globalObject, index, value);
+
             scope.assertNoExceptionExceptTermination();
         }
 
         // This might be unnecessary because operationMaterializeObjectInOSR does DeferGCForAWhile but its better to be safe.
-        if (hasContiguous(materialization->indexingType()))
+        if (hasContiguous(array->indexingType()) || hasAnyArrayStorage(array->indexingType()))
             vm.writeBarrier(array);
         break;
     }

@@ -41,10 +41,10 @@
 #include "CachedCSSStyleSheet.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "ComposedTreeIterator.h"
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
 #include "DocumentLoader.h"
-#include "FrameInlines.h"
 #include "DocumentPrefetcher.h"
 #include "DocumentQuirks.h"
 #include "DocumentResourceLoader.h"
@@ -63,6 +63,7 @@
 #include "FocusController.h"
 #include "FrameConsoleClient.h"
 #include "FrameDestructionObserver.h"
+#include "FrameInlines.h"
 #include "FrameInspectorController.h"
 #include "FrameLoader.h"
 #include "FrameSelection.h"
@@ -126,6 +127,7 @@
 #include "UserScript.h"
 #include "UserTypingGestureIndicator.h"
 #include "VisibleUnits.h"
+#include "WindowProxy.h"
 #include "markup.h"
 #include "runtime_root.h"
 #include <JavaScriptCore/APICast.h>
@@ -1329,6 +1331,11 @@ void LocalFrame::frameWasDisconnectedFromOwner() const
 {
     if (!m_doc)
         return;
+
+    for (auto& jsWindowProxy : windowProxy().jsWindowProxiesAsVector()) {
+        if (auto* jsDOMWindow = dynamicDowncast<JSDOMWindowBase>(jsWindowProxy->window()))
+            jsDOMWindow->setAssociatedContextIsFullyActive(false);
+    }
 
     protect(document())->willBeRemovedFromFrame();
 }

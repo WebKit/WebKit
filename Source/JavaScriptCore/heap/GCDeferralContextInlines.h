@@ -27,6 +27,7 @@
 
 #include "GCDeferralContext.h"
 #include "Heap.h"
+#include "VM.h"
 
 namespace JSC {
 

@@ -62,6 +62,7 @@ class SourceFile:
         self.unifiable = True
         self.file_index = file_index
         self._non_arc = False
+        self._header_group: Optional[str] = None
         self._derived: Optional[bool] = None
         self._args = args
 
@@ -74,6 +75,8 @@ class SourceFile:
                     self.unifiable = False
                 elif attribute == 'nonARC':
                     self._non_arc = True
+                elif attribute.startswith('header:'):
+                    self._header_group = attribute[7:]
                 else:
                     raise RuntimeError("unknown attribute: " + attribute)
             file_line = file_line[:attribute_start]
@@ -87,6 +90,9 @@ class SourceFile:
                 self.bundle_manager_key = '.nonARC-mm'
             else:
                 raise RuntimeError("used @nonARC with source file that does not have a .mm extension")
+        if self._header_group:
+            ext = self.path.suffix.lstrip('.')
+            self.bundle_manager_key = f'.header-{self._header_group}-{ext}'
 
     def sort_key(self):
         return self.path.parent.parts, self.file_index, self.path.name
@@ -222,6 +228,8 @@ def parse_args():
                         help='Use global sequential numbers for Obj-C bundle filenames and set the limit on the number.')
     parser.add_argument('--max-non-arc-obj-c-bundle-count', type=int, default=None,
                         help='Use global sequential numbers for non-ARC Obj-C bundle filenames and set the limit on the number.')
+    parser.add_argument('--max-header-bundle-count', type=int, default=None,
+                        help='Use global sequential numbers for header-grouped bundle filenames and set the limit on the number.')
     parser.add_argument('--max-bundle-size', type=int, default=8,
                         help='The number of files to merge into a single bundle (default: 8).')
     parser.add_argument('--dense-bundle-filter', action='append', default=[],
@@ -303,6 +311,19 @@ def main() -> None:
 
         log(args, "Found {} source files in {}".format(len(result), path))
         source_files.extend(result)
+
+    # Create BundleManagers for any @header: groups discovered in source files.
+    header_keys_seen = set()
+    for sf in source_files:
+        if sf._header_group:
+            header_keys_seen.add(sf.bundle_manager_key)
+    for key in sorted(header_keys_seen):
+        # Extract extension from key like '.header-RenderStyleGetters-cpp'
+        parts = key.split('-')
+        ext = parts[-1]  # 'cpp' or 'mm'
+        header_group = '-'.join(parts[1:-1])  # 'RenderStyleGetters'
+        suffix = f'-header-{header_group}.{ext}'
+        bundle_managers[key] = BundleManager(ext, suffix, args.max_header_bundle_count, args, generated_sources, output_sources)
 
     log(args, "Found sources: {}".format(sorted(source_files, key=SourceFile.sort_key)))
 

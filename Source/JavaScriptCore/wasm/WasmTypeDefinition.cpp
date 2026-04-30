@@ -38,6 +38,7 @@
 #include "WebAssemblyFunctionBase.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/ReferenceWrapperVector.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -1219,6 +1220,55 @@ bool Type::definitelyIsWasmGCObjectOrNull() const
     if (def.is<Wasm::ArrayType>())
         return true;
     return false;
+}
+
+static inline TypeHash typeHash(const TypeDefinition& typeDef)
+{
+    return TypeHash { const_cast<TypeDefinition&>(typeDef) };
+}
+
+WebAssemblyGCTypeDependencies::WebAssemblyGCTypeDependencies(const Ref<const TypeDefinition>& unexpandedType)
+{
+    WorkList work;
+    SUPPRESS_UNCHECKED_ARG work.append(unexpandedType->expand());
+    while (!work.isEmpty())
+        SUPPRESS_UNCHECKED_ARG process(work.takeLast(), work);
+    m_typeDefinitions.add(typeHash(unexpandedType));
+}
+
+inline static void appendToWorkIfNeeded(Type type, WebAssemblyGCTypeDependencies::WorkList& work)
+{
+    if (isRefWithTypeIndex(type)) {
+        SUPPRESS_UNCHECKED_LOCAL const auto& referencedType = TypeInformation::get(type.index).expand();
+        work.append(referencedType);
+    }
+}
+
+void WebAssemblyGCTypeDependencies::process(const TypeDefinition& typeDef, WorkList& work)
+{
+    if (m_typeDefinitions.contains(typeHash(typeDef)))
+        return;
+    m_typeDefinitions.add(typeHash(typeDef));
+
+    if (typeDef.is<StructType>()) {
+        SUPPRESS_UNCHECKED_LOCAL auto* structType = typeDef.as<StructType>();
+        for (unsigned i = 0; i < structType->fieldCount(); ++i)
+            process(structType->field(i), work);
+    } else if (typeDef.is<ArrayType>()) {
+        process(typeDef.as<ArrayType>()->elementType(), work);
+    } else if (typeDef.is<FunctionSignature>()) {
+        SUPPRESS_UNCHECKED_LOCAL auto* signature = typeDef.as<FunctionSignature>();
+        for (unsigned i = 0; i < signature->argumentCount(); ++i)
+            appendToWorkIfNeeded(signature->argumentType(i), work);
+        for (unsigned i = 0; i < signature->returnCount(); ++i)
+            appendToWorkIfNeeded(signature->returnType(i), work);
+    }
+}
+
+void WebAssemblyGCTypeDependencies::process(FieldType fieldType, WorkList& work)
+{
+    if (fieldType.type.is<Type>())
+        appendToWorkIfNeeded(fieldType.type.as<Type>(), work);
 }
 
 } } // namespace JSC::Wasm

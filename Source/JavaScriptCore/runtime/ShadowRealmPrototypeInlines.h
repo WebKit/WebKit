@@ -27,6 +27,7 @@
 #pragma once
 
 #include "ShadowRealmPrototype.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

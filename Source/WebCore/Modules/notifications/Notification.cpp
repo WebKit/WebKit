@@ -404,7 +404,7 @@ auto Notification::permission(ScriptExecutionContext& context) -> Permission
 
 void Notification::requestPermission(Document& document, RefPtr<NotificationPermissionCallback>&& callback, Ref<DeferredPromise>&& promise)
 {
-    auto resolvePromiseAndCallback = [document = Ref { document }, callback = WTF::move(callback), promise = WTF::move(promise)](Permission permission) mutable {
+    auto resolvePromiseAndCallback = [document = protect(document), callback = WTF::move(callback), promise = WTF::move(promise)](Permission permission) mutable {
         protect(document->eventLoop())->queueTask(TaskSource::DOMManipulation, [callback = WTF::move(callback), promise = WTF::move(promise), permission]() mutable {
             if (callback)
                 callback->invoke(permission);

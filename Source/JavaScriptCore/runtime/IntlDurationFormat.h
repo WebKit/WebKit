@@ -90,7 +90,7 @@ public:
 
     const UnitData* units() const { return m_units; }
     unsigned fractionalDigits() const { return m_fractionalDigits; }
-    const String& numberingSystem() const LIFETIME_BOUND { return m_numberingSystem; }
+    const String& numberingSystem() const LIFETIME_BOUND;
     const CString& dataLocaleWithExtensions() const LIFETIME_BOUND { return m_dataLocaleWithExtensions; }
 
 private:
@@ -103,7 +103,8 @@ private:
 
     std::unique_ptr<UListFormatter, UListFormatterDeleter> m_listFormat;
     String m_locale;
-    String m_numberingSystem;
+    String m_dataLocale;
+    mutable String m_numberingSystem;
     CString m_dataLocaleWithExtensions;
     unsigned m_fractionalDigits { 0 };
     Style m_style { Style::Long };

@@ -26,7 +26,7 @@ import OSLog
 import WebKit
 import simd
 
-#if ENABLE_GPU_PROCESS_MODEL && canImport(RealityCoreTextureProcessing, _version: 19)
+#if ENABLE_GPU_PROCESS_MODEL && canImport(RealityCoreTextureProcessing, _version: 19) && canImport(_USDKit_RealityKit, _version: 42)
 @_spi(UsdLoaderAPI) import _USDKit_RealityKit
 @_spi(RealityCoreRendererAPI) import RealityKit
 @_spi(RealityCoreTextureProcessingAPI) import RealityCoreTextureProcessing
@@ -444,8 +444,6 @@ extension WKBridgeReceiver {
     @nonobjc
     fileprivate var meshToMeshInstances: [WKBridgeTypedResourceId: [_Proto_LowLevelMeshInstance_v1]] = [:]
     @nonobjc
-    fileprivate var meshTransforms: [WKBridgeTypedResourceId: [simd_float4x4]] = [:]
-    @nonobjc
     fileprivate var rotationAngle: Float = 0
 
     @nonobjc
@@ -467,9 +465,6 @@ extension WKBridgeReceiver {
     fileprivate var textureHashesAndResources: [WKBridgeTypedResourceId: (String, _Proto_LowLevelTextureResource_v1)] = [:]
 
     @nonobjc
-    fileprivate var modelTransform: simd_float4x4
-
-    @nonobjc
     fileprivate var dontCaptureAgain: Bool = false
 
     @nonobjc
@@ -484,11 +479,23 @@ extension WKBridgeReceiver {
         enum UpdateType {
             // First time mesh update, should add mesh instances to the scene
             case newMesh
+            // Transform update on existing mesh, should only update the transform on relevant mesh instances
+            case transformUpdate([simd_float4x4])
         }
 
         let identifier: WKBridgeTypedResourceId
         let type: UpdateType
         var updatedInstances: [_Proto_LowLevelMeshInstance_v1]
+
+        init(identifier: WKBridgeTypedResourceId, type: UpdateType, updatedInstances: [_Proto_LowLevelMeshInstance_v1]) {
+            self.identifier = identifier
+            self.type = type
+            self.updatedInstances = updatedInstances
+
+            if case .transformUpdate(let newTransforms) = type {
+                assert(newTransforms.count == updatedInstances.count)
+            }
+        }
     }
 
     init(
@@ -503,7 +510,6 @@ extension WKBridgeReceiver {
         self.textureProcessingContext = _Proto_LowLevelTextureProcessingContext_v1(device: configuration.device)
         self.commandQueue = configuration.commandQueue
         self.deformationSystem = try _Proto_LowLevelDeformationSystem_v1.make(configuration.device, configuration.commandQueue).get()
-        modelTransform = matrix_identity_float4x4
         let meshInstances = try configuration.renderContext.makeMeshInstanceArray(renderTargets: [configuration.renderTarget], count: 16)
         self.meshInstancePool = MeshInstancePool(renderContext: configuration.renderContext, meshInstances: meshInstances)
         let lightingFunction = configuration.renderContext.makePhysicallyBasedLightingFunction()
@@ -548,7 +554,8 @@ extension WKBridgeReceiver {
         self.fallbackTexture = makeFallBackTextureResource(
             renderContext,
             commandQueue: configuration.commandQueue,
-            device: configuration.device
+            device: configuration.device,
+            memoryOwner: configuration.appRenderer.memoryOwner
         )
     }
 
@@ -560,19 +567,6 @@ extension WKBridgeReceiver {
 
     @objc(renderWithTexture:commandBuffer:)
     func render(with texture: any MTLTexture, commandBuffer: any MTLCommandBuffer) {
-        for (identifier, meshes) in meshToMeshInstances {
-            let originalTransforms = meshTransforms[identifier]
-            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
-            // swift-format-ignore: NeverForceUnwrap
-
-            for (index, meshInstance) in meshes.enumerated() {
-                // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
-                // swift-format-ignore: NeverForceUnwrap
-                let computedTransform = modelTransform * originalTransforms![index]
-                meshInstance.setTransform(.single(computedTransform))
-            }
-        }
-
         // animate
         if !meshResourceToDeformationContext.isEmpty {
             let commandBuffer = self.commandQueue.makeCommandBuffer()!
@@ -789,7 +783,6 @@ extension WKBridgeReceiver {
                 if meshData.instanceTransformsCount > 0 {
                     if meshToMeshInstances[identifier] == nil {
                         meshToMeshInstances[identifier] = []
-                        meshTransforms[identifier] = []
 
                         var deferredMeshUpdate = DeferredMeshUpdate(identifier: identifier, type: .newMesh, updatedInstances: [])
 
@@ -819,8 +812,8 @@ extension WKBridgeReceiver {
                                 indexCount: meshData.parts[partIndex].indexCount,
                                 primitive: meshData.parts[partIndex].topology,
                                 windingOrder: .counterClockwise,
-                                boundsMin: -.one,
-                                boundsMax: .one
+                                boundsMin: meshData.parts[partIndex].boundsMin,
+                                boundsMax: meshData.parts[partIndex].boundsMax
                             )
 
                             for instanceTransform in meshData.instanceTransforms {
@@ -838,9 +831,6 @@ extension WKBridgeReceiver {
                                 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
                                 // swift-format-ignore: NeverForceUnwrap
                                 meshToMeshInstances[identifier]!.append(meshInstance)
-                                // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
-                                // swift-format-ignore: NeverForceUnwrap
-                                meshTransforms[identifier]!.append(instanceTransform)
                                 deferredMeshUpdate.updatedInstances.append(meshInstance)
                             }
                         }
@@ -850,14 +840,26 @@ extension WKBridgeReceiver {
                         // Update transforms otherwise
                         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
                         // swift-format-ignore: NeverForceUnwrap
+                        var newTransforms: [simd_float4x4] = []
+                        var updatedInstances: [_Proto_LowLevelMeshInstance_v1] = []
+
                         let partCount = meshToMeshInstances[identifier]!.count / meshData.instanceTransforms.count
                         for (instanceIndex, instanceTransform) in meshData.instanceTransforms.enumerated() {
                             for partIndex in 0..<partCount {
                                 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=305857
                                 // swift-format-ignore: NeverForceUnwrap
-                                meshTransforms[identifier]![instanceIndex * partCount + partIndex] = instanceTransform
+                                let meshInstance = meshToMeshInstances[identifier]![instanceIndex * meshData.parts.count + partIndex]
+                                updatedInstances.append(meshInstance)
+                                newTransforms.append(instanceTransform)
                             }
                         }
+
+                        let deferredMeshUpdate = DeferredMeshUpdate(
+                            identifier: identifier,
+                            type: .transformUpdate(newTransforms),
+                            updatedInstances: updatedInstances
+                        )
+                        deferredMeshUpdates.append(deferredMeshUpdate)
                     }
                 }
 
@@ -873,6 +875,10 @@ extension WKBridgeReceiver {
                     for newMeshInstance in deferredUpdate.updatedInstances {
                         try meshInstancePool.add(newMeshInstance)
                     }
+                case .transformUpdate(let newTransforms):
+                    for (instanceIndex, meshInstance) in deferredUpdate.updatedInstances.enumerated() {
+                        meshInstance.setTransform(.single(newTransforms[instanceIndex]))
+                    }
                 }
             }
         } catch {
@@ -882,7 +888,7 @@ extension WKBridgeReceiver {
 
     @objc(setTransform:)
     func setTransform(_ transform: simd_float4x4) {
-        modelTransform = transform
+        appRenderer.setCameraTransformForModelTransform(transform)
     }
 
     func setFOV(_ fovY: Float) {
@@ -1580,9 +1586,7 @@ private func makeConstantSGNode(from constant: WKBridgeConstantContainer) throws
         let comps =
             (0..<n).map { CGFloat(values[$0].number.floatValue) }
             + (n == 3 ? [CGFloat(1.0)] : [])
-        let cs = CGColorSpace(name: CGColorSpace.extendedLinearSRGB)
-        return cs.flatMap { unsafe CGColor(colorSpace: $0, components: comps) }
-            ?? CGColor(red: comps[0], green: comps[1], blue: comps[2], alpha: comps.count > 3 ? comps[3] : 1)
+        return CGColor(red: comps[0], green: comps[1], blue: comps[2], alpha: comps.count > 3 ? comps[3] : 1)
     }
 
     switch constant.constant {
@@ -1899,11 +1903,6 @@ private func fromWKBridgeConstant(_ constant: WKBridgeConstantContainer) -> _Pro
             CGFloat(values[2].number.floatValue),
             1.0,
         ]
-        if let cs = CGColorSpace(name: CGColorSpace.extendedLinearSRGB),
-            let color = unsafe CGColor(colorSpace: cs, components: components3)
-        {
-            return .cgColor3(color)
-        }
         return .cgColor3(CGColor(red: components3[0], green: components3[1], blue: components3[2], alpha: 1.0))
     case .cgColor4:
         guard values.count >= 4 else {
@@ -1917,11 +1916,6 @@ private func fromWKBridgeConstant(_ constant: WKBridgeConstantContainer) -> _Pro
             CGFloat(values[2].number.floatValue),
             CGFloat(values[3].number.floatValue),
         ]
-        if let cs = CGColorSpace(name: CGColorSpace.extendedLinearSRGB),
-            let color = unsafe CGColor(colorSpace: cs, components: components4)
-        {
-            return .cgColor4(color)
-        }
         return .cgColor4(CGColor(red: components4[0], green: components4[1], blue: components4[2], alpha: components4[3]))
     case .color4f:
         // USD/MaterialX color4f or color4h — encoded as 4 raw floats without CGColor clamping.
@@ -1935,11 +1929,6 @@ private func fromWKBridgeConstant(_ constant: WKBridgeConstantContainer) -> _Pro
             CGFloat(values[2].number.floatValue),
             CGFloat(values[3].number.floatValue),
         ]
-        if let cs = CGColorSpace(name: CGColorSpace.extendedLinearSRGB),
-            let color = unsafe CGColor(colorSpace: cs, components: components4f)
-        {
-            return .cgColor4(color)
-        }
         return .cgColor4(CGColor(red: components4f[0], green: components4f[1], blue: components4f[2], alpha: components4f[3]))
     case .color3f:
         // USD/MaterialX color3f or color3h — encoded as 3 raw floats without CGColor clamping.
@@ -1953,11 +1942,6 @@ private func fromWKBridgeConstant(_ constant: WKBridgeConstantContainer) -> _Pro
             CGFloat(values[2].number.floatValue),
             1.0,
         ]
-        if let cs = CGColorSpace(name: CGColorSpace.extendedLinearSRGB),
-            let color = unsafe CGColor(colorSpace: cs, components: components3f)
-        {
-            return .cgColor3(color)
-        }
         return .cgColor3(CGColor(red: components3f[0], green: components3f[1], blue: components3f[2], alpha: 1.0))
     @unknown default:
         fatalError("fromWKBridgeConstant: unhandled constant type \(constant.constant) for '\(constant.name)'")
@@ -2257,7 +2241,8 @@ extension WKBridgeModelLoader {
 private func makeFallBackTextureResource(
     _ renderContext: any _Proto_LowLevelRenderContext_v1,
     commandQueue: any MTLCommandQueue,
-    device: any MTLDevice
+    device: any MTLDevice,
+    memoryOwner: task_id_token_t
 ) -> _Proto_LowLevelTextureResource_v1 {
     // Create 1x1 white fallback texture
     let fallbackDescriptor = _Proto_LowLevelTextureResource_v1.Descriptor(
@@ -2274,11 +2259,7 @@ private func makeFallBackTextureResource(
     // White color: RGBA = (255, 255, 255, 255)
     let whitePixel: [UInt8] = [255, 255, 255, 255]
 
-    // Create staging buffer for white pixel data
-    let stagingBuffer = unsafe whitePixel.withUnsafeBytes { bytes in
-        // swift-format-ignore: NeverForceUnwrap
-        unsafe device.makeBuffer(bytes: bytes.baseAddress!, length: bytes.count, options: .storageModeShared)!
-    }
+    let stagingBuffer = device.makeBuffer(fromSpan: whitePixel.span, length: whitePixel.count, memoryOwner: memoryOwner)
 
     // Create command buffer to upload white pixel data
     // swift-format-ignore: NeverForceUnwrap

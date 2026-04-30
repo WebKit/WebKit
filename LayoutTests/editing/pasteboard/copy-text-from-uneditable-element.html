@@ -33,7 +33,7 @@ addEventListener("load", async () => {
     result.addEventListener("paste", event => {
         setTimeout(() => {
             shouldBeEqualToString("result.value", "foo");
-            finishJSTest();
+            setTimeout(() => finishJSTest(), 0);
         }, 0);
         doneWithPaste = true;
     });

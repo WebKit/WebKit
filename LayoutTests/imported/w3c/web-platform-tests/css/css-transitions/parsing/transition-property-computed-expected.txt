@@ -1,4 +1,12 @@
 
-PASS Property transition-property value 'left, top, right, bottom'
+PASS Property transition-property value 'none'
+PASS Property transition-property value 'all'
+PASS Property transition-property value 'one'
+PASS Property transition-property value 'one-two-three'
 PASS Property transition-property value 'one, two, three'
+PASS Property transition-property value 'width, all'
+PASS Property transition-property value 'width, top, width'
+PASS Property transition-property value 'all, top, all'
+PASS Property transition-property value 'ALL, INVALID, SYNTAX, SRC'
+PASS Property transition-property value 'left, top, right, bottom'
 

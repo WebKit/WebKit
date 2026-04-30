@@ -54,6 +54,7 @@
 
 /* Begin PBXBuildFile section */
 		07275CBC2D01398C002315A5 /* _WebKit_SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07275CBB2D01398C002315A5 /* _WebKit_SwiftUI.framework */; };
+		07792FA62F9D9AE9009EF126 /* WebProcessPlugInWithInternals.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1798B8422433647000764BD /* WebProcessPlugInWithInternals.mm */; };
 		143DDE9820C9018B007F76FA /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 574F55D0204D471C002948C6 /* Security.framework */; };
 		1AEDE22613E5E7E700E62FE8 /* InjectedBundleControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AEDE22413E5E7A000E62FE8 /* InjectedBundleControllerMac.mm */; };
 		3A5DDAF528D1638A004DA950 /* libicucore.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A5DDAF428D1638A004DA950 /* libicucore.tbd */; };
@@ -129,7 +130,6 @@
 		7B9FC5D628A5326A007570E7 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F4FFAA01ED3D0DE00F7111F /* ImageIO.framework */; };
 		93F56DA71E5F9174003EDE84 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C83E0331D0A5F2700FEBCF3 /* libicucore.dylib */; };
 		97A826852DF8B677004EA039 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC90964D1255620C00083756 /* JavaScriptCore.framework */; };
-		97A826862DF8B677004EA039 /* JavaScriptCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BC90964D1255620C00083756 /* JavaScriptCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		97DAA8D02DF70B91004B3040 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97DAA8CF2DF70B91004B3040 /* Metal.framework */; };
 		A13EBBAA1B87428D00097110 /* WebProcessPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = A13EBBA91B87428D00097110 /* WebProcessPlugIn.mm */; };
 		A176D24B2D6D2A4E00C63915 /* GPUExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = A176D2472D6D295400C63915 /* GPUExtension.appex */; platformFilters = (ios, xros, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -374,15 +374,6 @@
 			);
 			name = "Product Dependencies";
 		};
-		97A826872DF8B677004EA039 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			dstPath = "";
-			dstSubfolder = Frameworks;
-			files = (
-				97A826862DF8B677004EA039 /* JavaScriptCore.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-		};
 		97FB42742E1D629F00C63F41 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			dstPath = shaders;
@@ -579,6 +570,7 @@
 			membershipExceptions = (
 				WebKit/WebPage/AppKitGesturesTests.swift,
 				WebKit/WebPage/EditingFontSizeTests.swift,
+				WebKit/WebPage/JavaScriptExpressionTests.swift,
 				WebKit/WebPage/URLSchemeHandlerTests.swift,
 				WebKit/WebPage/WebPageNavigationTests.swift,
 				WebKit/WebPage/WebPageTests.swift,
@@ -597,7 +589,11 @@
 				"cocoa/Bundle+Extras.swift",
 				"cocoa/Foundation+Extras.swift",
 				cocoa/HTTPServer.mm,
+				cocoa/HTTPServer.swift,
+				cocoa/JavaScriptMessages.swift,
+				cocoa/JavaScriptTypes.swift,
 				cocoa/SmartListsSupport.swift,
+				cocoa/StdLibExtras.swift,
 				"cocoa/SwiftUI+Extras.swift",
 				cocoa/TestCocoaImageAndCocoaColor.mm,
 				cocoa/TestContextMenuDriver.mm,
@@ -607,6 +603,8 @@
 				cocoa/UtilitiesCocoa.mm,
 				cocoa/WebExtensionUtilities.mm,
 				"cocoa/WebPage+Extras.swift",
+				"cocoa/WebPageConfiguration+Extras.swift",
+				"cocoa/WebPage+JavaScriptExpression.swift",
 				cocoa/WebTransportServer.mm,
 				Counters.cpp,
 				GraphicsTestUtilities.cpp,
@@ -1078,6 +1076,7 @@
 				WebKit/WKWebView/NowPlayingMetadataObserver.mm,
 				WebKit/WKWebView/NowPlayingSession.mm,
 				WebKit/WKWebView/OrthogonalFlowAvailableSize.mm,
+				WebKit/WKWebView/ParentalControlsContentFilteringTests.mm,
 				WebKit/WKWebView/SmartLists.mm,
 				WebKit/WKWebView/SpatialAudioExperience.mm,
 				WebKit/WKWebView/WebRTC.mm,
@@ -1115,6 +1114,7 @@
 				WTF/ScopedLambda.cpp = "-fno-elide-constructors";
 				WTF/cocoa/RetainPtrARC.mm = "-fobjc-arc";
 				WTF/cocoa/RetainPtrHashingCocoaARC.mm = "-fobjc-arc";
+				WTF/cocoa/RetainRefARC.mm = "-fobjc-arc";
 				WTF/cocoa/TypeCastsCocoaARC.mm = "-fobjc-arc";
 				WTF/darwin/OSObjectPtrCocoaARC.mm = "-fobjc-arc";
 				WTF/darwin/TypeCastsOSObjectCocoaARC.mm = "-fobjc-arc";
@@ -1130,6 +1130,7 @@
 				WTF/BumpPointerAllocator.cpp,
 				WTF/cf/RetainPtr.cpp,
 				WTF/cf/RetainPtrHashing.cpp,
+				WTF/cf/RetainRef.cpp,
 				WTF/cf/StringCF.cpp,
 				WTF/cf/VectorCF.cpp,
 				WTF/CharacterProperties.cpp,
@@ -1143,6 +1144,8 @@
 				WTF/cocoa/RetainPtrARC.mm,
 				WTF/cocoa/RetainPtrHashingCocoa.mm,
 				WTF/cocoa/RetainPtrHashingCocoaARC.mm,
+				WTF/cocoa/RetainRef.mm,
+				WTF/cocoa/RetainRefARC.mm,
 				WTF/cocoa/TextStreamCocoa.cpp,
 				WTF/cocoa/TextStreamCocoa.mm,
 				WTF/cocoa/TypeCastsCocoa.mm,
@@ -1312,6 +1315,7 @@
 			membershipExceptions = (
 				WebKit/WebPage/AppKitGesturesTests.swift,
 				WebKit/WebPage/EditingFontSizeTests.swift,
+				WebKit/WebPage/JavaScriptExpressionTests.swift,
 				WebKit/WebPage/URLSchemeHandlerTests.swift,
 				WebKit/WebPage/WebPageNavigationTests.swift,
 				WebKit/WebPage/WebPageTests.swift,
@@ -1481,6 +1485,7 @@
 				"WGSL/shaders/fuzz-130088292.wgsl",
 				"WGSL/shaders/fuzz-130092499.wgsl",
 				"WGSL/shaders/fuzz-133788509.wgsl",
+				"WGSL/shaders/fuzz-166715941.wgsl",
 				"WGSL/shaders/global-constant-vector.wgsl",
 				"WGSL/shaders/global-ordering.wgsl",
 				"WGSL/shaders/global-same-binding.wgsl",
@@ -1910,7 +1915,6 @@
 				3A15783D28D1505B00142DB1 /* Product Dependencies */,
 				3A15783F28D1505B00142DB1 /* Sources */,
 				3A15784628D1505B00142DB1 /* Frameworks */,
-				97A826872DF8B677004EA039 /* Embed Frameworks */,
 				97FB42742E1D629F00C63F41 /* CopyFiles */,
 			);
 			buildRules = (
@@ -2440,6 +2444,7 @@
 				5CABDBC12735C9BD00B88BCB /* UnifiedSource49-nonARC.mm in Sources */,
 				5CABDBC02735C9BD00B88BCB /* UnifiedSource50-nonARC.mm in Sources */,
 				5CABDBC22735C9BE00B88BC0 /* UnifiedSource51-nonARC.mm in Sources */,
+				07792FA62F9D9AE9009EF126 /* WebProcessPlugInWithInternals.mm in Sources */,
 			);
 		};
 		8DD76F990486AA7600D96B5E /* Sources */ = {

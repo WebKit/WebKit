@@ -36,6 +36,7 @@
 namespace WebKit {
 
 struct WKTouchPoint {
+    CGPoint previousLocationInRootViewCoordinates;
     CGPoint locationInRootViewCoordinates;
     CGPoint locationInViewport;
     unsigned identifier { 0 };

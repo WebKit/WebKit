@@ -37,6 +37,7 @@
 #include "ObjectConstructor.h"
 #include "ParseInt.h"
 #include "RegExpConstructor.h"
+#include "RegExpConstructorInlines.h"
 #include "RegExpGlobalDataInlines.h"
 #include "RegExpObjectInlines.h"
 #include "StringPrototypeInlines.h"
@@ -150,7 +151,7 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("codePointAt"_s, stringProtoFuncCodePointAt, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public, StringPrototypeCodePointAtIntrinsic);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("concat"_s, stringProtoFuncConcat, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public, StringPrototypeConcatIntrinsic);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().indexOfPublicName(), stringProtoFuncIndexOf, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public, StringPrototypeIndexOfIntrinsic);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("lastIndexOf"_s, stringProtoFuncLastIndexOf, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("lastIndexOf"_s, stringProtoFuncLastIndexOf, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public, StringPrototypeLastIndexOfIntrinsic);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("replace"_s, stringProtoFuncReplace, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public, StringPrototypeReplaceIntrinsic);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("replaceAll"_s, stringProtoFuncReplaceAll, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public, StringPrototypeReplaceAllIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("repeat"_s, stringProtoFuncRepeat, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
@@ -629,9 +630,13 @@ JSC_DEFINE_HOST_FUNCTION(builtinStringIndexOfInternal, (JSGlobalObject* globalOb
 
 JSC_DEFINE_HOST_FUNCTION(stringProtoFuncLastIndexOf, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
+    // https://tc39.es/ecma262/#sec-string.prototype.lastindexof
+
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    // 1. Let thisValue be the this value.
+    // 2. Perform ? RequireObjectCoercible(thisValue).
     JSValue thisValue = callFrame->thisValue();
     if (!checkObjectCoercible(thisValue)) [[unlikely]]
         return throwVMTypeError(globalObject, scope);
@@ -639,34 +644,70 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncLastIndexOf, (JSGlobalObject* globalObje
     JSValue a0 = callFrame->argument(0);
     JSValue a1 = callFrame->argument(1);
 
+    // 3. Let str be ? ToString(thisValue).
     JSString* thisJSString = thisValue.toString(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    unsigned len = thisJSString->length();
+    RETURN_IF_EXCEPTION(scope, { });
+
+    // 4. Let searchStr be ? ToString(searchString).
     JSString* otherJSString = a0.toString(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    RETURN_IF_EXCEPTION(scope, { });
 
-    double dpos = a1.toIntegerPreserveNaN(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    unsigned startPosition;
-    if (dpos < 0)
-        startPosition = 0;
-    else if (!(dpos <= len)) // true for NaN
-        startPosition = len;
-    else
-        startPosition = static_cast<unsigned>(dpos);
+    auto otherView = otherJSString->view(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
 
-    if (len < otherJSString->length())
+    // 5. Let numPos be ? ToNumber(position).
+    // 6. Assert: If position is undefined, then numPos is NaN.
+    // 7. If numPos is NaN, let pos be +∞; else let pos be ! ToIntegerOrInfinity(numPos).
+    // 8. Let len be the length of str.
+    // 9. Let searchLen be the length of searchStr.
+    // 10. If len < searchLen, return -1.
+    // 11. Let start be the result of clamping pos between 0 and len - searchLen.
+    double numPos = a1.toIntegerPreserveNaN(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    unsigned len = thisJSString->length();
+    unsigned otherLen = otherView->length();
+    if (len < otherLen)
         return JSValue::encode(jsNumber(-1));
 
-    auto thisString = thisJSString->value(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    auto otherString = otherJSString->value(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    unsigned maxStart = len - otherLen;
+    unsigned startPosition;
+    if (numPos < 0)
+        startPosition = 0;
+    else if (!(numPos <= maxStart)) // true for NaN
+        startPosition = maxStart;
+    else
+        startPosition = static_cast<unsigned>(numPos);
+
+    // Now, startPosition is in [0, maxStart(len - otherLen)].
+    if (otherLen == 1) {
+        char16_t character = otherView[0];
+        if (thisJSString->isRope() && len >= JSString::minLengthForRopeWalk) {
+            if (auto result = thisJSString->tryFindLastOneChar(globalObject, character, startPosition)) {
+                if (*result != notFound)
+                    return JSValue::encode(jsNumber(*result));
+                return JSValue::encode(jsNumber(-1));
+            }
+            // nullopt: bail out, fall through to resolve. startPosition has been narrowed.
+        }
+
+        auto thisView = thisJSString->view(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        size_t result = thisView->reverseFind(character, startPosition);
+        if (result == notFound)
+            return JSValue::encode(jsNumber(-1));
+        return JSValue::encode(jsNumber(result));
+    }
+
+    auto thisView = thisJSString->view(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
     size_t result;
     if (!startPosition)
-        result = thisString->startsWith(otherString) ? 0 : notFound;
+        result = thisView->startsWith(otherView) ? 0 : notFound;
     else
-        result = thisString->reverseFind(otherString, startPosition);
+        result = thisView->reverseFind(otherView, startPosition);
     if (result == notFound)
         return JSValue::encode(jsNumber(-1));
     return JSValue::encode(jsNumber(result));
@@ -1768,10 +1809,27 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncConcat, (JSGlobalObject* globalObject, C
     return JSValue::encode(ropeBuilder.release());
 }
 
+static constexpr unsigned maxPatternLengthForFlatRepeat = 8;
+static constexpr unsigned maxResultLengthForFlatRepeat = 1024;
+
 enum class PadKind : uint8_t {
     PadStart,
     PadEnd
 };
+
+template<typename CharacterType>
+static void fillBufferWithPattern(std::span<CharacterType> buffer, StringView pattern)
+{
+    unsigned fillLength = buffer.size();
+    unsigned initialCopyLength = std::min(pattern.length(), fillLength);
+    pattern.left(initialCopyLength).getCharacters(buffer.first(initialCopyLength));
+    unsigned copied = initialCopyLength;
+    while (copied < fillLength) {
+        unsigned copyLen = std::min(copied, fillLength - copied);
+        memcpySpan(buffer.subspan(copied, copyLen), buffer.first(copyLen));
+        copied += copyLen;
+    }
+}
 
 template<typename CharacterType>
 static JSString* createFillerString(JSGlobalObject* globalObject, StringView fillStringView, unsigned fillLength)
@@ -1786,15 +1844,32 @@ static JSString* createFillerString(JSGlobalObject* globalObject, StringView fil
         return nullptr;
     }
 
-    unsigned fillStringLength = fillStringView.length();
-    unsigned initialCopyLength = std::min(fillStringLength, fillLength);
-    fillStringView.left(initialCopyLength).getCharacters(buffer.first(initialCopyLength));
-    unsigned copied = initialCopyLength;
-    while (copied < fillLength) {
-        unsigned copyLen = std::min(copied, fillLength - copied);
-        memcpySpan(buffer.subspan(copied, copyLen), buffer.first(copyLen));
-        copied += copyLen;
+    fillBufferWithPattern(buffer, fillStringView);
+    RELEASE_AND_RETURN(scope, jsString(vm, impl.releaseNonNull()));
+}
+
+template<typename CharacterType, PadKind padKind>
+static JSString* createPaddedString(JSGlobalObject* globalObject, StringView thisView, StringView fillStringView, unsigned maxLength, unsigned fillLength)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    std::span<CharacterType> buffer;
+    auto impl = StringImpl::tryCreateUninitialized(maxLength, buffer);
+    if (!impl) [[unlikely]] {
+        throwOutOfMemoryError(globalObject, scope);
+        return nullptr;
     }
+
+    unsigned stringLength = thisView.length();
+    if constexpr (padKind == PadKind::PadStart) {
+        fillBufferWithPattern(buffer.first(fillLength), fillStringView);
+        thisView.getCharacters(buffer.last(stringLength));
+    } else {
+        thisView.getCharacters(buffer.first(stringLength));
+        fillBufferWithPattern(buffer.last(fillLength), fillStringView);
+    }
+
     RELEASE_AND_RETURN(scope, jsString(vm, impl.releaseNonNull()));
 }
 
@@ -1841,6 +1916,16 @@ static JSValue padString(JSGlobalObject* globalObject, CallFrame* callFrame)
 
     unsigned fillLength = maxLength - stringLength;
 
+    if (maxLength <= maxResultLengthForFlatRepeat) {
+        auto thisView = thisString->view(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+        StringView fillStringView(fillString);
+        scope.release();
+        if (thisView->is8Bit() && fillString.is8Bit())
+            return createPaddedString<Latin1Character, padKind>(globalObject, thisView, fillStringView, maxLength, fillLength);
+        return createPaddedString<char16_t, padKind>(globalObject, thisView, fillStringView, maxLength, fillLength);
+    }
+
     unsigned fillStringLength = fillString.length();
     JSString* fillerString;
 
@@ -1861,9 +1946,7 @@ static JSValue padString(JSGlobalObject* globalObject, CallFrame* callFrame)
         if (checkedTotalLength.hasOverflowed() || checkedTotalLength > JSString::MaxLength) [[unlikely]]
             return throwOutOfMemoryError(globalObject, scope);
 
-        constexpr unsigned maxFillStringLength = 8;
-        constexpr unsigned maxFillerResultLength = 1024;
-        if (fillStringLength <= maxFillStringLength && fillLength <= maxFillerResultLength) {
+        if (fillStringLength <= maxPatternLengthForFlatRepeat && fillLength <= maxResultLengthForFlatRepeat) {
             // Short string optimization: build sequential buffer
             StringView fillStringView(fillString);
             if (fillString.is8Bit())
@@ -2017,9 +2100,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncRepeat, (JSGlobalObject* globalObject, C
         return JSValue::encode(throwOutOfMemoryError(globalObject, scope));
     unsigned resultLength = checkedResultLength;
 
-    constexpr unsigned maxStringLength = 8;
-    constexpr unsigned maxResultLength = 1024;
-    if (stringLength <= maxStringLength) {
+    if (stringLength <= maxPatternLengthForFlatRepeat) {
         auto view = thisString->view(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
 
@@ -2035,7 +2116,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncRepeat, (JSGlobalObject* globalObject, C
 
         // Even if the string length is not single, if the resulting string length is small,
         // allocating a sequential buffer and fill with the repeated string for efficiency.
-        if (resultLength <= maxResultLength) {
+        if (resultLength <= maxResultLengthForFlatRepeat) {
             scope.release();
             if (view->is8Bit())
                 return JSValue::encode(repeatString<Latin1Character>(globalObject, view, repeatCount));

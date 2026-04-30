@@ -698,7 +698,7 @@ public:
     NSRect unionRectInVisibleSelectedRangeInScreen() const;
     NSRect documentVisibleRectInScreen() const;
 
-    bool NODELETE isContentRichlyEditable() const;
+    bool isContentRichlyEditable() const;
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
     void insertMultiRepresentationHEIC(NSData *, NSString *);
@@ -753,7 +753,7 @@ public:
     NSTouchBar *makeTouchBar();
     void updateTouchBar();
     NSTouchBar *currentTouchBar() const LIFETIME_BOUND { return m_currentTouchBar.get(); }
-    NSCandidateListTouchBarItem *NODELETE candidateListTouchBarItem() const;
+    NSCandidateListTouchBarItem *candidateListTouchBarItem() const;
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
     WebCore::PlatformPlaybackSessionInterface* playbackSessionInterface() const;
     bool isPictureInPictureActive();
@@ -767,7 +767,7 @@ public:
 #endif
     void nowPlayingMediaTitleAndArtist(void(^completionHandler)(NSString *, NSString *));
 
-    NSTouchBar *NODELETE textTouchBar() const;
+    NSTouchBar *textTouchBar() const;
     void dismissTextTouchBarPopoverItemWithIdentifier(NSString *);
 
     bool clientWantsMediaPlaybackControlsView() const { return m_clientWantsMediaPlaybackControlsView; }
@@ -888,7 +888,7 @@ private:
     void updateMediaTouchBar();
 
     bool useMediaPlaybackControlsView() const;
-    bool NODELETE isRichlyEditableForTouchBar() const;
+    bool isRichlyEditableForTouchBar() const;
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     void installImageAnalysisOverlayView(RetainPtr<VKCImageAnalysis>&&);
@@ -986,7 +986,7 @@ private:
     int32_t processImageAnalyzerRequest(CocoaImageAnalyzerRequest *, CompletionHandler<void(RetainPtr<CocoaImageAnalysis>&&, NSError *)>&&);
 #endif
 
-    std::optional<EditorState::PostLayoutData> NODELETE postLayoutDataForContentEditable();
+    std::optional<EditorState::PostLayoutData> postLayoutDataForContentEditable();
 
     WeakObjCPtr<WKWebView> m_view;
     const UniqueRef<PageClient> m_pageClient;

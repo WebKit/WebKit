@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="match" href="nested-group-split-containers-expected.html">
+<style>body { margin: 0; }</style>
+</head>
+<body>
+<!-- Tests that non-layered <g> containers with layered descendants are properly
+     "split" so that their children interleave with layers in DOM order.
+     This exercises the split container logic in collectSVGChildrenInDOMOrder.
+     Shapes deliberately overlap so paint order is visually verifiable. -->
+<svg width="400" height="200" viewBox="0 0 400 200">
+  <g>
+    <!-- Non-layer child of outer group -->
+    <rect x="10" y="20" width="90" height="90" fill="#e74c3c"/>
+
+    <!-- Layer child (CSS transform) overlapping the red rect -->
+    <rect x="50" y="40" width="90" height="90" fill="#3498db" style="transform: scale(0.95);"/>
+
+    <!-- Inner group: another split container with layered descendants -->
+    <g>
+      <!-- Non-layer child overlapping the blue rect -->
+      <circle cx="155" cy="70" r="45" fill="#2ecc71"/>
+
+      <!-- Layer child overlapping the green circle -->
+      <circle cx="185" cy="85" r="45" fill="#9b59b6" style="transform: rotate(5deg);"/>
+
+      <!-- Non-layer child overlapping the purple circle -->
+      <ellipse cx="230" cy="65" rx="50" ry="40" fill="#f39c12"/>
+    </g>
+
+    <!-- Non-layer child after inner group, overlapping the orange ellipse -->
+    <rect x="255" y="30" width="90" height="90" fill="#1abc9c"/>
+  </g>
+</svg>
+</body>
+</html>

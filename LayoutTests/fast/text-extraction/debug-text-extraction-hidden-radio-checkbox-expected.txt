@@ -1,0 +1,29 @@
+-- texttree
+
+root
+    form autocomplete=on name=verification
+        'Choose a verification method:'
+        input radio label='Text me a code' name=method value=sms
+        'Text me a code'
+        input radio checked label='Email me a code' name=method value=email
+        'Email me a code'
+        input checkbox label='Remember this device' name=remember value=yes
+        'Remember this device This label has a display:none input'
+        button 'Next'
+
+-- html
+
+<body>
+    <form autocomplete='on' name='verification'>
+        Choose a verification method:
+        <input type='radio' label='Text me a code' name='method' value='sms'>
+        Text me a code
+        <input type='radio' label='Email me a code' name='method' value='email'>
+        Email me a code
+        <input type='checkbox' label='Remember this device' name='remember' value='yes'>
+        Remember this device This label has a display:none input
+        <button>Next</button>
+    </form>
+</body>
+
+

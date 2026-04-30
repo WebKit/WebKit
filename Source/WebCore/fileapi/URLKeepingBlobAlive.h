@@ -35,11 +35,11 @@ namespace WebCore {
 class URLKeepingBlobAlive {
 public:
     URLKeepingBlobAlive() = default;
-    URLKeepingBlobAlive(const URL&, const std::optional<SecurityOriginData>& = std::nullopt);
+    WEBCORE_EXPORT URLKeepingBlobAlive(const URL&, const std::optional<SecurityOriginData>& = std::nullopt);
     WEBCORE_EXPORT ~URLKeepingBlobAlive();
 
     URLKeepingBlobAlive(URLKeepingBlobAlive&&) = default;
-    URLKeepingBlobAlive& operator=(URLKeepingBlobAlive&&);
+    WEBCORE_EXPORT URLKeepingBlobAlive& operator=(URLKeepingBlobAlive&&);
 
     URLKeepingBlobAlive(const URLKeepingBlobAlive&) = delete;
     URLKeepingBlobAlive& operator=(const URLKeepingBlobAlive&) = delete;
@@ -49,7 +49,7 @@ public:
     bool isEmpty() const { return m_url.isEmpty(); }
     std::optional<SecurityOriginData> topOrigin() const { return m_topOrigin; }
 
-    void clear();
+    WEBCORE_EXPORT void clear();
 
     // We do not introduce a && version since it might break the register/unregister balance.
     [[nodiscard]] WEBCORE_EXPORT URLKeepingBlobAlive isolatedCopy() const;

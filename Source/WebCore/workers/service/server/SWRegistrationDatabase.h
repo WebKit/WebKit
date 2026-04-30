@@ -27,15 +27,19 @@
 
 #include <WebCore/ServiceWorkerTypes.h>
 #include <WebCore/ServiceWorkerUpdateViaCache.h>
+#include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
+class SecurityOriginData;
 class ServiceWorkerRegistrationKey;
 class SQLiteDatabase;
 class SQLiteStatement;
 class SQLiteStatementAutoResetScope;
 class SWScriptStorage;
+
+struct ClientOrigin;
 struct ServiceWorkerContextData;
 
 class SWRegistrationDatabase {
@@ -45,8 +49,12 @@ public:
 
     WEBCORE_EXPORT SWRegistrationDatabase(const String& path);
     WEBCORE_EXPORT ~SWRegistrationDatabase();
+
+    WEBCORE_EXPORT static String databaseFilePath(const String& directory);
     
     WEBCORE_EXPORT std::optional<Vector<ServiceWorkerContextData>> importRegistrations();
+    WEBCORE_EXPORT std::optional<Vector<ServiceWorkerContextData>> importRegistrations(const SecurityOriginData& topOrigin);
+    WEBCORE_EXPORT std::optional<HashSet<ClientOrigin>> importOrigins();
     WEBCORE_EXPORT std::optional<Vector<ServiceWorkerScripts>> updateRegistrations(const Vector<ServiceWorkerContextData>&, const Vector<ServiceWorkerRegistrationKey>&);
     WEBCORE_EXPORT std::optional<ServiceWorkerScripts> retrieveWorkerScripts(ServiceWorkerIdentifier, const ServiceWorkerRegistrationKey&, const URL& mainScriptURL, const Vector<URL>& importedScriptURLs);
     WEBCORE_EXPORT void deleteAllFiles();
@@ -56,6 +64,8 @@ private:
     SWScriptStorage& scriptStorage();
     enum class StatementType : uint8_t {
         GetAllRecords,
+        GetRecordsByTopOrigin,
+        GetAllTopOrigins,
         CountAllRecords,
         InsertRecord,
         DeleteRecord,
@@ -68,6 +78,7 @@ private:
     bool ensureValidRecordsTable();
     std::optional<uint64_t> recordsCount();
     std::optional<Vector<ServiceWorkerContextData>> importRegistrationsImpl();
+    Vector<ServiceWorkerContextData> collectRegistrationsFromStatement(SQLiteStatement&);
     std::optional<Vector<ServiceWorkerScripts>> updateRegistrationsImpl(const Vector<ServiceWorkerContextData>&, const Vector<ServiceWorkerRegistrationKey>&);
 
     String m_directory;

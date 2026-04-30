@@ -13,7 +13,6 @@
 #include "common/debug.h"
 #include "libANGLE/ImageIndex.h"
 #include "libANGLE/renderer/d3d/ImageD3D.h"
-#include "libANGLE/renderer/d3d/d3d11/MappedSubresourceVerifier11.h"
 #include "libANGLE/renderer/d3d/d3d11/renderer11_utils.h"
 
 namespace gl
@@ -115,7 +114,6 @@ class Image11 : public ImageD3D
     DXGI_FORMAT mDXGIFormat;
     TextureHelper11 mStagingTexture;
     unsigned int mStagingSubresource;
-    MappedSubresourceVerifier11 mStagingTextureSubresourceVerifier;
 
     bool mRecoverFromStorage;
     TextureStorage11 *mAssociatedStorage;

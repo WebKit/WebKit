@@ -28,6 +28,7 @@
 
 #include <WebCore/RiceUtilities.h>
 #include <WebCore/RiceVersioning.h>
+#include <array>
 #include <rice-io.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/StdLibExtras.h>
@@ -397,7 +398,7 @@ void RiceBackend::gatherSocketAddresses(ScriptExecutionContextIdentifier identif
 
     g_source_set_callback(source.get(), static_cast<GSourceFunc>([](auto userData) -> gboolean {
         RiceIoRecv recv;
-        uint8_t data[16384];
+        std::array<uint8_t, 16384> data;
 
         auto sourceData = reinterpret_cast<RecvSourceData*>(userData);
         RefPtr backend = sourceData->backend.get();
@@ -409,7 +410,7 @@ void RiceBackend::gatherSocketAddresses(ScriptExecutionContextIdentifier identif
             return G_SOURCE_CONTINUE;
 
         while (true) {
-            rice_sockets_recv(sockets.get(), data, 16384, &recv);
+            rice_sockets_recv(sockets.get(), data.data(), data.size(), &recv);
             switch (recv.tag) {
             case RICE_IO_RECV_WOULD_BLOCK:
                 rice_recv_clear(&recv);
@@ -418,7 +419,7 @@ void RiceBackend::gatherSocketAddresses(ScriptExecutionContextIdentifier identif
                 auto from = riceAddressToString(recv.data.from);
                 auto to = riceAddressToString(recv.data.to);
                 auto protocol = toRTCIceProtocol(recv.data.transport);
-                auto handle = SharedMemoryHandle::createCopy(unsafeMakeSpan(data, recv.data.len), SharedMemoryProtection::ReadOnly);
+                auto handle = SharedMemoryHandle::createCopy(std::span { data }.first(recv.data.len), SharedMemoryProtection::ReadOnly);
                 if (!handle) [[unlikely]]
                     break;
                 backend->notifyIncomingData(sourceData->streamId, protocol, WTF::move(from), WTF::move(to), WTF::move(*handle));
@@ -460,6 +461,10 @@ void RiceBackend::setSocketTypeOfService(unsigned streamId, unsigned value)
 
 void RiceBackend::allocateSocket(unsigned streamId, unsigned componentId, WebCore::RTCIceProtocol protocol, const String& from, const String& to)
 {
+    // FIXME: TCP sockets support requires further debugging. For now keep it disabled to un-tangle post-commit bots.
+    // https://bugs.webkit.org/show_bug.cgi?id=313710
+    return;
+
     if (protocol == WebCore::RTCIceProtocol::Udp)
         return;
 

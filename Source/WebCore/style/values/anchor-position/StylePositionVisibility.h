@@ -34,7 +34,9 @@ namespace Style {
 
 enum class PositionVisibilityValue : uint8_t {
     AnchorsValid,
+    AnchorValid,
     AnchorsVisible,
+    AnchorVisible,
     NoOverflow,
 };
 

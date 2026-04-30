@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<table style="border-spacing: 0">
+  <tbody>
+    <tr>
+      <td>
+        <table style="border-spacing: 0">
+          <tbody>
+            <tr>
+              <td>
+                <h3>BRANCHES</h3>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <table style="border-spacing: 0">
+                  <tbody>
+                    <tr>
+                      <td><span>foo/bar/174211843</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td>Second row content</td>
+    </tr>
+  </tbody>
+</table>
+
+<script>
+var output = "This tests that attributedStringForTextMarkerRange returns the correct text for line ranges inside nested tables where the range crosses table boundaries.\n\n";
+
+if (window.accessibilityController) {
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    var webAreaRange = webArea.textMarkerRangeForElement(webArea);
+    var currentMarker = webArea.startTextMarkerForTextMarkerRange(webAreaRange);
+
+    // Get line 0 (the heading), then advance to line 1 (the branch name
+    // inside nested tables whose line range crosses a tbody boundary).
+    var lineRange = webArea.lineTextMarkerRangeForTextMarker(currentMarker);
+    var lineEnd = webArea.endTextMarkerForTextMarkerRange(lineRange);
+    currentMarker = webArea.nextTextMarker(lineEnd);
+    lineRange = webArea.lineTextMarkerRangeForTextMarker(currentMarker);
+
+    var lineString = webArea.stringForTextMarkerRange(lineRange).trim();
+    output += expect("lineString", "'foo/bar/174211843'");
+
+    var attributedString = webArea.attributedStringForTextMarkerRange(lineRange).trim();
+    output += expect("attributedString.includes('foo/bar/174211843')", "true");
+
+    debug(output);
+}
+</script>
+</body>
+</html>

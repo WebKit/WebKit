@@ -27,6 +27,7 @@
 
 #include "config.h"
 #include "RenderMathMLFraction.h"
+#include "RenderBlockInlines.h"
 
 #if ENABLE(MATHML)
 

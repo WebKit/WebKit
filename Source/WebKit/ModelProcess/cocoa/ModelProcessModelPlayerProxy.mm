@@ -853,21 +853,6 @@ void ModelProcessModelPlayerProxy::setAnimationCurrentTime(Seconds currentTime, 
     completionHandler(false);
 }
 
-void ModelProcessModelPlayerProxy::hasAudio(CompletionHandler<void(std::optional<bool>&&)>&& completionHandler)
-{
-    completionHandler(std::nullopt);
-}
-
-void ModelProcessModelPlayerProxy::isMuted(CompletionHandler<void(std::optional<bool>&&)>&& completionHandler)
-{
-    completionHandler(std::nullopt);
-}
-
-void ModelProcessModelPlayerProxy::setIsMuted(bool isMuted, CompletionHandler<void(bool success)>&& completionHandler)
-{
-    completionHandler(false);
-}
-
 WebCore::ModelPlayerAccessibilityChildren ModelProcessModelPlayerProxy::accessibilityChildren()
 {
     return { };

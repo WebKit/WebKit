@@ -164,10 +164,6 @@ void RemoteRenderingBackend::workQueueUninitialize()
     // Make sure we destroy the ResourceCache on the WorkQueue since it gets populated on the WorkQueue.
     m_remoteResourceCache.releaseAllResources();
 
-    if (m_imageBufferForSelfCopyTimer)
-        m_imageBufferForSelfCopyTimer->stop();
-    m_imageBufferForSelfCopyTimer = nullptr;
-
     Ref streamConnection = m_streamConnection;
     streamConnection->stopReceivingMessages(Messages::RemoteRenderingBackend::messageReceiverName(), m_renderingBackendIdentifier.toUInt64());
     streamConnection->invalidate();
@@ -311,6 +307,13 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::allocateImageBuffer(const FloatSize&
 void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferFormat pixelFormat, RenderingResourceIdentifier identifier, RemoteGraphicsContextIdentifier contextIdentifier)
 {
     assertIsCurrent(workQueue());
+
+    // Verify DisplayList rendering mode is only used when RemoteSnapshotting is enabled
+    if (renderingMode == RenderingMode::DisplayList) {
+        auto prefs = sharedPreferencesForWebProcess();
+        MESSAGE_CHECK(prefs && prefs->remoteSnapshottingEnabled, "RemoteSnapshotting is not enabled");
+    }
+
     RefPtr<ImageBuffer> imageBuffer = allocateImageBuffer(logicalSize, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat, { });
     if (!imageBuffer) {
         RELEASE_LOG(RemoteLayerBuffers, "[renderingBackend=%" PRIu64 "] RemoteRenderingBackend::createImageBuffer - failed to allocate image buffer %" PRIu64, m_renderingBackendIdentifier.toUInt64(), identifier.toUInt64());
@@ -322,41 +325,6 @@ void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, Ren
     }
     auto result = m_remoteImageBuffers.add(identifier, RemoteImageBuffer::create(imageBuffer.releaseNonNull(), identifier, contextIdentifier, *this));
     MESSAGE_CHECK(result.isNewEntry, "Duplicate ImageBuffers");
-}
-
-RefPtr<ImageBuffer> RemoteRenderingBackend::createImageBufferForSelfCopy(ImageBuffer* source)
-{
-    assertIsCurrent(workQueue());
-    RefPtr imageBuffer = std::exchange(m_imageBufferForSelfCopy, nullptr);
-    if (m_imageBufferForSelfCopyTimer)
-        m_imageBufferForSelfCopyTimer->stop();
-
-    if (imageBuffer
-        && imageBuffer->logicalSize().width() >= source->logicalSize().width()
-        && imageBuffer->logicalSize().height() >= source->logicalSize().height()
-        && imageBuffer->renderingMode() == source->renderingMode()
-        && imageBuffer->renderingPurpose() == source->renderingPurpose()
-        && imageBuffer->resolutionScale() == source->resolutionScale()
-        && imageBuffer->colorSpace() == source->colorSpace()
-        && imageBuffer->pixelFormat() == source->pixelFormat())
-        return imageBuffer;
-
-    return allocateImageBuffer(source->logicalSize(), source->renderingMode(), source->renderingPurpose(), source->resolutionScale(), source->colorSpace(), { source->pixelFormat() }, { });
-}
-
-void RemoteRenderingBackend::returnImageBufferForSelfCopy(RefPtr<ImageBuffer>&& buffer)
-{
-    assertIsCurrent(workQueue());
-    m_imageBufferForSelfCopy = WTF::move(buffer);
-    if (!m_imageBufferForSelfCopyTimer)
-        m_imageBufferForSelfCopyTimer = makeUnique<Timer>(*this, &RemoteRenderingBackend::cleanupImageBufferForSelfCopy);
-    m_imageBufferForSelfCopyTimer->startOneShot(200_ms);
-}
-
-void RemoteRenderingBackend::cleanupImageBufferForSelfCopy()
-{
-    assertIsCurrent(workQueue());
-    m_imageBufferForSelfCopy = nullptr;
 }
 
 void RemoteRenderingBackend::releaseImageBuffer(RenderingResourceIdentifier identifier)
@@ -629,6 +597,7 @@ void RemoteRenderingBackend::markSurfacesVolatile(MarkSurfacesAsVolatileRequestI
         RefPtr<RemoteImageBufferSet> remoteImageBufferSet = m_remoteImageBufferSets.get(identifier.first);
 
         MESSAGE_CHECK(remoteImageBufferSet, "BufferSet is being marked volatile before being created");
+        MESSAGE_CHECK(!remoteImageBufferSet->isPreparingForDisplay(), "BufferSet is being marked volatile while preparing for display");
 
         OptionSet<BufferInSetType> volatileBuffers;
         if (!remoteImageBufferSet->makeBuffersVolatile(identifier.second, volatileBuffers, forcePurge))

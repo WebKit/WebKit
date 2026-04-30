@@ -27,6 +27,7 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "B3FrequentedBlock.h"
 #include "FTLAbbreviatedTypes.h"
 #include "FTLWeight.h"
 

@@ -67,7 +67,6 @@ public:
 #endif
 
     WEBCORE_EXPORT void setActiveScrollSnapIndices(ScrollingNodeID, std::optional<unsigned> horizontalIndex, std::optional<unsigned> verticalIndex);
-    WEBCORE_EXPORT void updateScrollSnapPropertiesWithFrameView(const LocalFrameView&) override;
 
     WEBCORE_EXPORT void updateIsMonitoringWheelEventsForFrameView(const LocalFrameView&) override;
 

@@ -27,7 +27,7 @@ PACKAGES+=(
     libvorbis
     libvpx
     libxkbcommon
-    luajit
+    libunwind
     mesa
     mesa-libgl
     opus

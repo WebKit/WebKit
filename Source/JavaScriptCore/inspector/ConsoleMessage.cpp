@@ -41,6 +41,7 @@
 #include "ScriptCallFrame.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
+#include "StrongInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace Inspector {

@@ -4553,7 +4553,6 @@ void addIsoHeapPageSharingTests()
         });
     
     InstallVerifier installVerifier;
-    ForceExclusives forceExclusives;
     ForceTLAs forceTLAs;
     DisableBitfit disableBitfit;
     

@@ -26,10 +26,10 @@
 #include "config.h"
 
 #include "Helpers/PlatformUtilities.h"
-#include "WebCoreTestSupport.h"
 #include <JavaScriptCore/InitializeThreading.h>
 #include <WebCore/ParserContentPolicy.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <WebCoreTestSupport/WebCoreTestSupport.h>
 #include <libxml/parser.h>
 
 namespace TestWebKitAPI {

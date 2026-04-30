@@ -1,0 +1,3 @@
+
+FAIL targeted box is selected snap target. assert_equals: expected "9," but got "0,,Can't find variable: n,Can't find variable: n,Can't find variable: n,Can't find variable: n,Can't find variable: n,Can't find variable: n,Can't find variable: n,Can't find variable: n,Can't find variable: n"
+

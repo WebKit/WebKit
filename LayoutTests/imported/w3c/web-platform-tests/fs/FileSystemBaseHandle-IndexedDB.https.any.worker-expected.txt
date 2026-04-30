@@ -4,4 +4,5 @@ FAIL Store handle in IndexedDB and read from new transaction. promise_test: Unha
 FAIL Store handles and blobs in IndexedDB. promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
 FAIL Store handle in IndexedDB and read using a cursor. promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
 FAIL Store handle in IndexedDB using inline keys. promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL Store and retrieve the root directory from IndexedDB. promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
 

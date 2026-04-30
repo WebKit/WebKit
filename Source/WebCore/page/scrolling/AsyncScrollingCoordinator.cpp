@@ -1386,15 +1386,6 @@ bool AsyncScrollingCoordinator::isScrollSnapInProgress(std::optional<ScrollingNo
     return false;
 }
 
-void AsyncScrollingCoordinator::updateScrollSnapPropertiesWithFrameView(const LocalFrameView& frameView)
-{
-    if (RefPtr node = dynamicDowncast<ScrollingStateFrameScrollingNode>(stateNodeForScrollableArea(frameView))) {
-        setStateScrollingNodeSnapOffsetsAsFloat(*node, frameView.snapOffsetsInfo(), page()->deviceScaleFactor());
-        node->setCurrentHorizontalSnapPointIndex(frameView.currentHorizontalSnapPointIndex());
-        node->setCurrentVerticalSnapPointIndex(frameView.currentVerticalSnapPointIndex());
-    }
-}
-
 void AsyncScrollingCoordinator::reportExposedUnfilledArea(MonotonicTime timestamp, unsigned unfilledArea)
 {
     if (RefPtr page = this->page(); page && page->performanceLoggingClient())

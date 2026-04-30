@@ -38,6 +38,7 @@ class ResourceTiming;
 class ResourceTimingInformation {
 public:
     static bool shouldAddResourceTiming(CachedResource&);
+    static WEBCORE_EXPORT void addResourceTimingToDocument(Document&, ResourceTiming&&);
 
     void addResourceTiming(CachedResource&, Document&, ResourceTiming&&);
     void removeResourceTiming(CachedResource&);

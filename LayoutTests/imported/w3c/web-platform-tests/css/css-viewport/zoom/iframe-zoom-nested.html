@@ -28,19 +28,18 @@ iframe {
 
 <body>
 <script>
-const totalLeafIframes = 4;
+let loadedCount = 0;
 
-addEventListener("load", () => {
-  let loadedCount = 0;
-  addEventListener("message", ({ data }) => {
-    // We need to wait for the nested iframe (leaf.html) to load, in addition
-    // to the top-level iframe (nested-iframe.html).
-    if (data != "leaf_loaded") return;
-      loadedCount += 1;
-      if (loadedCount == totalLeafIframes) {
-        takeScreenshot();
-      }
-  });
+// Register message listener immediately (not inside load handler) to avoid
+// missing leaf_loaded messages that arrive before the window load event.
+addEventListener("message", ({ data }) => {
+  // We need to wait for the nested iframe (leaf.html) to load, in addition
+  // to the top-level iframe (nested-iframe.html).
+  if (data != "leaf_loaded") return;
+  loadedCount += 1;
+  if (loadedCount == document.querySelectorAll('iframe').length) {
+    takeScreenshot();
+  }
 });
 </script>
 <iframe id="baseline" src="resources/nested-iframe.html" scrolling="no"></iframe>

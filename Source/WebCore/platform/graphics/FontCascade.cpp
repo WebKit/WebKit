@@ -459,7 +459,7 @@ GlyphData FontCascade::glyphDataForCharacter(char32_t c, bool mirror, FontVarian
     }
 
     if (mirror)
-        c = u_charMirror(c);
+        c = mirrorCharacterIfNeeded(c);
 
     auto emojiPolicy = resolvedEmojiPolicy.value_or(resolveEmojiPolicy(m_fontDescription.variantEmoji(), c));
 
@@ -1855,6 +1855,9 @@ private:
 
 Path GlyphToPathTranslator::path()
 {
+    // Upright glyphs in vertical text need per-glyph translations from CoreText that we don't have here.
+    if (m_fontData->platformData().orientation() == FontOrientation::Vertical)
+        return { };
     Path path = Ref { m_fontData }->pathForGlyph(m_glyphBuffer.glyphAt(m_index));
     path.transform(m_translation);
     return path;

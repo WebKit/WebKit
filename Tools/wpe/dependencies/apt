@@ -36,6 +36,7 @@ PACKAGES+=(
     libxcb-xkb-dev
     libxkbcommon-dev
     libxrandr-dev
+    libunwind-dev
 
     # These are dependencies necessary for building Cog.
     libxcb-cursor-dev

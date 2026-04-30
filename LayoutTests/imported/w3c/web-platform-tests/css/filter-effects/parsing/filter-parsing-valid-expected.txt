@@ -33,6 +33,7 @@ PASS e.style['filter'] = "drop-shadow(rgb(4, 5, 6) calc(1px) 2px 0px)" should se
 PASS e.style['filter'] = "drop-shadow(rgb(4, 5, 6) calc(10px + (5px * sign(2cqw - 10px))) 2px 0px)" should set the property value
 PASS e.style['filter'] = "grayscale(0)" should set the property value
 PASS e.style['filter'] = "grayscale(300%)" should set the property value
+PASS e.style['filter'] = "grayscale(calc(101% * sign(1em - 1px)))" should set the property value
 PASS e.style['filter'] = "grayscale()" should set the property value
 PASS e.style['filter'] = "grayscale(calc(3))" should set the property value
 PASS e.style['filter'] = "grayscale(calc(300%))" should set the property value

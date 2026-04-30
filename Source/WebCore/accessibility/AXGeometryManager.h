@@ -25,24 +25,28 @@
 
 #pragma once
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 #include <WebCore/AXCoreObject.h>
 #include <WebCore/IntRectHash.h>
 #include <WebCore/Path.h>
 #include <wtf/Lock.h>
-#include <wtf/MonotonicTime.h>
 #include <wtf/RefCounted.h>
 #include <wtf/ThreadSafeRefCounted.h>
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+#include <wtf/MonotonicTime.h>
+#endif
 
 namespace WebCore {
 
 class AXObjectCache;
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 struct HitTestCacheEntry {
     IntPoint hitPoint;
     AXID resultID;
     MonotonicTime expirationTime;
 };
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AXGeometryManager);
 class AXGeometryManager final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AXGeometryManager> {
@@ -57,24 +61,26 @@ public:
     }
     ~AXGeometryManager();
 
-    void willUpdateObjectRegions();
-    void scheduleObjectRegionsUpdate(bool /* scheduleImmediately */);
-
     // Returns true if the given rect was cached.
     bool cacheRectIfNeeded(AXID, IntRect&&);
     // std::nullopt if there is no cached rect for the given ID (i.e. because it hasn't been cached yet via paint or otherwise, or cannot be painted / cached at all).
-    std::optional<IntRect> NODELETE cachedRectForID(AXID);
+    std::optional<IntRect> NODELETE cachedRectForID(AXID) const;
 
     void cachePathForID(AXID, std::unique_ptr<Path>&&);
     std::optional<Path> cachedPathForID(AXID);
 
     void remove(AXID axID);
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    void willUpdateObjectRegions();
+    void scheduleObjectRegionsUpdate(bool /* scheduleImmediately */);
+
     std::optional<AXID> cachedHitTestResult(const IntPoint& screenPoint);
     void cacheHitTestResult(AXID resultID, const IntPoint& hitPoint);
     void expandHitTestCacheAroundPoint(const IntPoint& center, AXTreeID);
     void invalidateHitTestCacheForID(AXID);
     void clearHitTestCache();
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
 #if PLATFORM(MAC)
     void initializePrimaryScreenRect();
@@ -82,25 +88,28 @@ public:
 #endif
 
 private:
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void updateObjectRegionsTimerFired() { scheduleRenderingUpdate(); }
     void scheduleRenderingUpdate();
+    void incrementProbeGeneration() { m_probeGeneration++; }
+    uint64_t currentProbeGeneration() const { return m_probeGeneration.load(); }
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
     // The cache that owns this instance.
     const WeakPtr<AXObjectCache> m_cache;
     HashMap<AXID, IntRect> m_cachedRects;
-    Timer m_updateObjectRegionsTimer;
-
     Lock m_cachedPathsLock;
     // Accessed by the main-thread for writing, and by the accessibility thread for reading.
     HashMap<AXID, std::unique_ptr<Path>> m_cachedPaths WTF_GUARDED_BY_LOCK(m_cachedPathsLock);
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    Timer m_updateObjectRegionsTimer;
     Lock m_hitTestCacheLock;
     static constexpr size_t HitTestCacheSize = 32;
     Vector<HitTestCacheEntry, HitTestCacheSize> m_hitTestCache WTF_GUARDED_BY_LOCK(m_hitTestCacheLock);
 
     std::atomic<uint64_t> m_probeGeneration { 0 };
-    void incrementProbeGeneration() { m_probeGeneration++; }
-    uint64_t currentProbeGeneration() const { return m_probeGeneration.load(); }
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
 #if PLATFORM(MAC)
     FloatRect m_primaryScreenRect WTF_GUARDED_BY_LOCK(m_primaryScreenRectLock);
@@ -109,5 +118,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)

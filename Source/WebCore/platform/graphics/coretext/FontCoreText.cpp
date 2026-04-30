@@ -41,6 +41,7 @@
 #include "SharedBuffer.h"
 #include <CoreText/CoreText.h>
 #include <float.h>
+#include <pal/cf/CoreTextSoftLink.h>
 #include <pal/spi/cf/CoreTextSPI.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <unicode/uchar.h>
@@ -950,13 +951,18 @@ Font::ComplexColorFormatGlyphs& Font::glyphsWithComplexColorFormat() const
                 return m_glyphsWithComplexColorFormat.value();
             }
         }
+        m_glyphsWithComplexColorFormat = ComplexColorFormatGlyphs::createWithNoRelevantTables();
     }
-    m_glyphsWithComplexColorFormat = ComplexColorFormatGlyphs::createWithNoRelevantTables();
     return m_glyphsWithComplexColorFormat.value();
 }
 
 bool Font::glyphHasComplexColorFormat(Glyph glyphID) const
 {
+#if HAVE(CORE_TEXT_GLYPHHASCOMPLEXCOLOR_FUNCTION)
+    if (PAL::canLoad_CoreText_CTFontHasComplexColorFormatForGlyph())
+        return PAL::softLink_CoreText_CTFontHasComplexColorFormatForGlyph(protect(ctFont()).get(), glyphID);
+#endif
+
     if (auto svgTable = otSVGTable().table) {
         if (PAL::softLinkOTSVGOTSVGTableGetDocumentIndexForGlyph(svgTable, glyphID) != kCFNotFound)
             return true;

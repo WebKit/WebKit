@@ -513,6 +513,14 @@ void GStreamerRegistryScanner::initializeDecoders(const GStreamerRegistryScanner
         // MPEG-2 Part 3 Audio just defines minor extensions of MP3 adding support for more channels and bitrates.
         // GStreamer still considers it mpegversion=1, leaving mpegversion=2 for AAC (MPEG-2 Part 7 Advanced Audio Coding).
         m_decoderCodecMap.add("mp4a.69"_s, result); // Audio ISO/IEC 13818-3 (MPEG-2 Part 3 Audio)
+        // MPEG-1 Audio can be carried inside MPEG-4 Audio, for which there are standard-defined MPEG-4
+        // Audio Object Type (AOT) allocated. This is esoteric in practice and it has very limited player support.
+        // More commonly, some media manifests for MP3 in MP4 mistakingly use these MPEG-4 AOTs in their codec
+        // strings despite the MP4 bytestream actually using the (much more widely supported) MPEG-1 Object Type Indication(s)
+        // described above.
+        m_decoderCodecMap.add("mp4a.40.32"_s, result); // AOT 32: Layer-1
+        m_decoderCodecMap.add("mp4a.40.33"_s, result); // AOT 33: Layer-2
+        m_decoderCodecMap.add("mp4a.40.34"_s, result); // AOT 34: Layer-3
     }
 
     audioMpegSupported |= isContainerTypeSupported(Configuration::Decoding, "audio/mp4"_s);

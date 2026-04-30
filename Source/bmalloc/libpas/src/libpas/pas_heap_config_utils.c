@@ -41,64 +41,6 @@ void pas_heap_config_utils_null_activate(void)
 {
 }
 
-bool pas_heap_config_utils_for_each_shared_page_directory(
-    pas_segregated_heap* heap,
-    bool (*callback)(pas_segregated_shared_page_directory* directory,
-                     void* arg),
-    void* arg)
-{
-    pas_segregated_page_config_variant variant;
-    pas_basic_heap_runtime_config* runtime_config;
-
-    runtime_config = (pas_basic_heap_runtime_config*)heap->runtime_config;
-
-    for (PAS_EACH_SEGREGATED_PAGE_CONFIG_VARIANT_ASCENDING(variant)) {
-        if (!pas_shared_page_directory_by_size_for_each(
-                pas_basic_heap_page_caches_get_shared_page_directories(
-                    runtime_config->page_caches, variant),
-                callback, arg))
-            return false;
-    }
-
-    return true;
-}
-
-bool pas_heap_config_utils_for_each_shared_page_directory_remote(
-    pas_enumerator* enumerator,
-    pas_segregated_heap* heap,
-    bool (*callback)(pas_enumerator* enumerator,
-                     pas_segregated_shared_page_directory* directory,
-                     void* arg),
-    void* arg)
-{
-    pas_basic_heap_runtime_config runtime_config;
-    pas_basic_heap_page_caches page_caches;
-    pas_segregated_page_config_variant variant;
-
-    if (!pas_enumerator_copy_remote(
-            enumerator,
-            &runtime_config,
-            heap->runtime_config,
-            sizeof(pas_basic_heap_runtime_config)))
-        return false;
-
-    if (!pas_enumerator_copy_remote(
-            enumerator,
-            &page_caches,
-            runtime_config.page_caches,
-            sizeof(pas_basic_heap_page_caches)))
-        return false;
-
-    for (PAS_EACH_SEGREGATED_PAGE_CONFIG_VARIANT_ASCENDING(variant)) {
-        if (!pas_shared_page_directory_by_size_for_each_remote(
-                pas_basic_heap_page_caches_get_shared_page_directories(&page_caches, variant),
-                enumerator, callback, arg))
-            return false;
-    }
-
-    return true;
-}
-
 pas_aligned_allocation_result
 pas_heap_config_utils_allocate_aligned(
     size_t size,

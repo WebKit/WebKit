@@ -693,19 +693,30 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
 
     {
         String calendar = resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Ca)];
-        if (auto mapped = mapICUCalendarKeywordToBCP47(calendar))
-            calendar = WTF::move(mapped.value());
-
+        if (!calendar.isNull()) {
+            if (auto mapped = mapICUCalendarKeywordToBCP47(calendar))
+                calendar = WTF::move(mapped.value());
+            // Handling "islamicc" candidate for backward compatibility.
+            if (calendar == "islamicc"_s)
+                calendar = "islamic-civil"_s;
+        }
         m_calendar = WTF::move(calendar);
-        // Handling "islamicc" candidate for backward compatibility.
-        if (m_calendar == "islamicc"_s)
-            m_calendar = "islamic-civil"_s;
     }
 
     hourCycle = parseHourCycle(resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Hc)]);
     m_numberingSystem = resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Nu)];
     m_dataLocale = resolved.dataLocale;
-    CString dataLocaleWithExtensions = makeString(m_dataLocale, "-u-ca-"_s, m_calendar, "-nu-"_s, m_numberingSystem).utf8();
+
+    StringBuilder localeBuilder;
+    localeBuilder.append(m_dataLocale);
+    if (!m_calendar.isNull() || !m_numberingSystem.isNull()) {
+        localeBuilder.append("-u"_s);
+        if (!m_calendar.isNull())
+            localeBuilder.append("-ca-"_s, m_calendar);
+        if (!m_numberingSystem.isNull())
+            localeBuilder.append("-nu-"_s, m_numberingSystem);
+    }
+    CString dataLocaleWithExtensions = localeBuilder.toString().utf8();
 
     JSValue tzValue = jsUndefined();
     if (options) {
@@ -1152,6 +1163,11 @@ JSObject* IntlDateTimeFormat::resolvedOptions(JSGlobalObject* globalObject) cons
 {
     VM& vm = globalObject->vm();
 
+    if (m_calendar.isNull())
+        m_calendar = defaultCalendarForLocale(m_dataLocale);
+    if (m_numberingSystem.isNull())
+        m_numberingSystem = defaultNumberingSystemForLocale(m_dataLocale);
+
     JSObject* options = constructEmptyObject(globalObject);
     options->putDirect(vm, vm.propertyNames->locale, jsNontrivialString(vm, m_locale));
     options->putDirect(vm, vm.propertyNames->calendar, jsNontrivialString(vm, m_calendar));
@@ -1405,9 +1421,16 @@ UDateIntervalFormat* IntlDateTimeFormat::createDateIntervalFormatIfNecessary(JSG
     // While the pattern is including right HourCycle patterns, UDateIntervalFormat does not follow.
     // We need to enforce HourCycle by setting "hc" extension if it is specified.
     StringBuilder localeBuilder;
-    localeBuilder.append(m_dataLocale, "-u-ca-"_s, m_calendar, "-nu-"_s, m_numberingSystem);
-    if (m_hourCycle != HourCycle::None)
-        localeBuilder.append("-hc-"_s, hourCycleString(m_hourCycle));
+    localeBuilder.append(m_dataLocale);
+    if (!m_calendar.isNull() || !m_numberingSystem.isNull() || m_hourCycle != HourCycle::None) {
+        localeBuilder.append("-u"_s);
+        if (!m_calendar.isNull())
+            localeBuilder.append("-ca-"_s, m_calendar);
+        if (!m_numberingSystem.isNull())
+            localeBuilder.append("-nu-"_s, m_numberingSystem);
+        if (m_hourCycle != HourCycle::None)
+            localeBuilder.append("-hc-"_s, hourCycleString(m_hourCycle));
+    }
     CString dataLocaleWithExtensions = localeBuilder.toString().utf8();
 
     UErrorCode status = U_ZERO_ERROR;

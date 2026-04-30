@@ -62,7 +62,7 @@ public:
     static Ref<JSON::Object> createPaintData(const FloatQuad&);
     static Ref<JSON::Object> createScreenshotData(const String& imageData);
 
-    static void appendLayoutRoot(JSON::Object& data, const FloatQuad&);
+    static void appendLayoutRoot(JSON::Object& data, Inspector::Protocol::DOM::NodeId, const FloatQuad&);
 
 private:
     TimelineRecordFactory() { }

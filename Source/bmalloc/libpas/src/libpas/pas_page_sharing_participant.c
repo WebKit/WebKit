@@ -35,7 +35,6 @@
 #include "pas_large_sharing_pool.h"
 #include "pas_page_sharing_pool.h"
 #include "pas_segregated_size_directory.h"
-#include "pas_segregated_shared_page_directory.h"
 #include "pas_segregated_size_directory.h"
 
 pas_page_sharing_participant
@@ -62,7 +61,6 @@ pas_page_sharing_participant_get_payload(pas_page_sharing_participant participan
     case pas_page_sharing_participant_null:
         PAS_ASSERT(!"Null participant has no payload.");
         return NULL;
-    case pas_page_sharing_participant_segregated_shared_page_directory:
     case pas_page_sharing_participant_segregated_size_directory: {
         pas_page_sharing_participant_payload* result;
         if (verbose)
@@ -100,7 +98,6 @@ uint64_t pas_page_sharing_participant_get_use_epoch(pas_page_sharing_participant
     case pas_page_sharing_participant_null:
         PAS_ASSERT(!"Null participant has no use epoch.");
         return 0;
-    case pas_page_sharing_participant_segregated_shared_page_directory:
     case pas_page_sharing_participant_segregated_size_directory:
         return pas_segregated_directory_get_use_epoch(ptr);
     case pas_page_sharing_participant_bitfit_directory:
@@ -131,7 +128,6 @@ pas_page_sharing_participant_get_parent_pool(pas_page_sharing_participant partic
     case pas_page_sharing_participant_null:
         PAS_ASSERT(!"Cannot get null participant's parent.");
         return NULL;
-    case pas_page_sharing_participant_segregated_shared_page_directory:
     case pas_page_sharing_participant_segregated_size_directory:
     case pas_page_sharing_participant_bitfit_directory:
         return &pas_physical_page_sharing_pool;
@@ -152,7 +148,6 @@ bool pas_page_sharing_participant_is_eligible(pas_page_sharing_participant parti
     case pas_page_sharing_participant_null:
         PAS_ASSERT(!"Cannot check if null participant is eligible.");
         return false;
-    case pas_page_sharing_participant_segregated_shared_page_directory:
     case pas_page_sharing_participant_segregated_size_directory:
         return !!pas_segregated_directory_get_last_empty_plus_one(ptr).value;
     case pas_page_sharing_participant_bitfit_directory:
@@ -182,11 +177,6 @@ pas_page_sharing_participant_take_least_recently_used(
         
     case pas_page_sharing_participant_segregated_size_directory:
         return pas_segregated_size_directory_take_last_empty(
-            ptr, decommit_log, heap_lock_hold_mode);
-
-    case pas_page_sharing_participant_segregated_shared_page_directory:
-        PAS_ASSERT(decommit_log);
-        return pas_segregated_shared_page_directory_take_last_empty(
             ptr, decommit_log, heap_lock_hold_mode);
 
     case pas_page_sharing_participant_bitfit_directory:

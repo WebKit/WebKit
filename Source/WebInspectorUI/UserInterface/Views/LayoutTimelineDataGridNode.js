@@ -61,7 +61,7 @@ WI.LayoutTimelineDataGridNode = class LayoutTimelineDataGridNode extends WI.Time
         case "name":
             cell.classList.add(...this.iconClassNames());
 
-            if (this.record.eventType == WI.LayoutTimelineRecord.EventType.LargestContentfulPaint) {
+            if (this.record.eventType == WI.LayoutTimelineRecord.EventType.Layout || this.record.eventType == WI.LayoutTimelineRecord.EventType.LargestContentfulPaint) {
                 let fragment = document.createDocumentFragment();
                 fragment.append(value);
 

@@ -65,13 +65,13 @@ static ExceptionOr<Vector<ListedChild>> listDirectoryWithMetadata(const String& 
     if (FileSystem::fileType(fullPath) != FileSystem::FileType::Directory)
         return Exception { ExceptionCode::NotFoundError, "Path no longer exists or is no longer a directory"_s };
 
-    auto childNames = FileSystem::listDirectory(fullPath);
-    return WTF::compactMap(WTF::move(childNames), [&](auto&& childName) -> std::optional<ListedChild> {
+    Vector<ListedChild> result;
+    FileSystem::traverseDirectory(fullPath, [&](const String& childName, FileSystem::FileType type) {
         auto childPath = FileSystem::pathByAppendingComponent(fullPath, childName);
-        if (auto fileType = fileTypeIgnoringHiddenFiles(childPath))
-            return ListedChild { WTF::move(childName), *fileType };
-        return std::nullopt;
+        if (!FileSystem::isHiddenFile(childPath))
+            result.append(ListedChild { childName, type });
     });
+    return result;
 }
 
 static ExceptionOr<Vector<Ref<FileSystemEntry>>> toFileSystemEntries(ScriptExecutionContext& context, DOMFileSystem& fileSystem, ExceptionOr<Vector<ListedChild>>&& listedChildren, const String& parentVirtualPath)

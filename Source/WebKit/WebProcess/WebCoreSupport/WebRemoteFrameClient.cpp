@@ -252,6 +252,12 @@ void WebRemoteFrameClient::reportMixedContentViolation(bool blocked, const URL& 
         page->send(Messages::WebPageProxy::ReportMixedContentViolation(m_frame->frameID(), blocked, target));
 }
 
+void WebRemoteFrameClient::addResourceTimingFromChild(WebCore::ResourceTiming&& resourceTiming)
+{
+    if (RefPtr page = m_frame->page())
+        page->send(Messages::WebPageProxy::AddResourceTimingFromSubframe(m_frame->frameID(), WTF::move(resourceTiming)));
+}
+
 void WebRemoteFrameClient::findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirection direction, const WebCore::FocusEventData& focusEventData, WebCore::ShouldFocusElement shouldFocusElement, CompletionHandler<void(WebCore::FoundElementInRemoteFrame)>&& completionHandler)
 {
     m_frame->sendWithAsyncReply(Messages::WebFrameProxy::FindFocusableElementDescendingIntoRemoteFrame(direction, focusEventData, shouldFocusElement), WTF::move(completionHandler));

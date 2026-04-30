@@ -748,7 +748,7 @@ std::optional<BlobStorage::Blob> Storage::storeBodyAsBlob(WriteOperationIdentifi
 
     addWriteOperationActivity(identifier);
 
-    RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }, blob = WTF::move(blob), identifier] {
+    RunLoop::mainSingleton().dispatch([this, protectedThis = Ref { *this }, blob, identifier] {
         assertIsMainThread();
 
         auto* writeOperation = m_activeWriteOperations.get(identifier);

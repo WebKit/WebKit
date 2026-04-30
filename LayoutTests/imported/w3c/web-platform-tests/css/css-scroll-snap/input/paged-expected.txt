@@ -1,0 +1,23 @@
+This tests what happens when you perform a paging scroll (e.g. space bar or page down key) with mandatory scroll snap.
+
+When snapped to this page, pressing page down should not skip page 2.
+
+This page should not be skipped by paging scroll operations.
+
+We must stop at this page before going to page 4.
+
+Pages 4, 5, and 6 should be a single snap stop on page 5.
+
+This should be the snapped page when paging. The next page operation should jump to page 7.
+
+The next page is further than a page away, but there are no closer snap points so it should be scrolled to next.
+
+The last page
+
+
+FAIL Doesn't skip past small snappable content assert_array_equals: expected property 0 to be 2 but got 3 (expected array [2] got [3])
+FAIL Doesn't skip past large snappable content assert_array_equals: lengths differ, expected array [3] length 1, got [4, 5] length 2
+FAIL Scrolls multiple smaller items into view assert_array_equals: lengths differ, expected array [4, 5, 6] length 3, got [5, 6] length 2
+FAIL Scrolls past items currently in view assert_array_equals: expected property 0 to be 7 but got 8 (expected array [7] got [8])
+PASS Scrolls more than a page if necessary
+

@@ -152,21 +152,16 @@ float SVGTextLayoutEngineBaseline::calculateGlyphOrientationAngle(bool isVertica
     if (isVerticalText) {
         return Style::valueRepresentation(style.glyphOrientationVertical(),
             [&](const CSS::Keyword::Auto&) {
-                // Spec: Fullwidth ideographic and fullwidth Latin text will be set with a glyph-orientation of 0-degrees.
-                // Text which is not fullwidth will be set with a glyph-orientation of 90-degrees.
-                // FIXME: There's not an accurate way to tell if text is fullwidth by looking at a single character.
-                switch (static_cast<UEastAsianWidth>(u_getIntPropertyValue(character, UCHAR_EAST_ASIAN_WIDTH))) {
-                case U_EA_NEUTRAL:
-                case U_EA_HALFWIDTH:
-                case U_EA_NARROW:
-                    return 90.0f;
-                case U_EA_AMBIGUOUS:
-                case U_EA_FULLWIDTH:
-                case U_EA_WIDE:
+                auto verticalOrientation = static_cast<UVerticalOrientation>(u_getIntPropertyValue(character, UCHAR_VERTICAL_ORIENTATION));
+                switch (verticalOrientation) {
+                case U_VO_UPRIGHT:
+                case U_VO_TRANSFORMED_UPRIGHT:
                     return 0.0f;
+                case U_VO_ROTATED:
+                case U_VO_TRANSFORMED_ROTATED:
+                    return 90.0f;
                 }
-                ASSERT_NOT_REACHED();
-                return 0.0f;
+                RELEASE_ASSERT_NOT_REACHED();
             },
             [](const Style::Angle<>& angle) {
                 return Style::evaluate<float>(angle);

@@ -26,6 +26,7 @@ typedef double DOMHighResTimeStamp;
     ExportToWrappedFunction,
     Exposed=*,
     JSCustomHeader,
+    JSCustomMarkFunction,
 ] interface Event {
     constructor([AtomString] DOMString type, optional EventInit eventInitDict = {});
 

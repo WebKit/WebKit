@@ -27,8 +27,8 @@
 
 #include "Helpers/PlatformUtilities.h"
 #include "Helpers/cocoa/TestNSBundleExtras.h"
-#include "WebCoreTestSupport.h"
 #include <WebCore/MediaPlayerPrivateAVFoundationObjC.h>
+#include <WebCoreTestSupport/WebCoreTestSupport.h>
 #include <wtf/Identified.h>
 
 namespace TestWebKitAPI {

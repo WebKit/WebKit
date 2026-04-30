@@ -111,10 +111,19 @@ bool ConditionEventListener::operator==(const EventListener& listener) const
     return false;
 }
 
-void ConditionEventListener::handleEvent(ScriptExecutionContext&, Event&)
+void ConditionEventListener::handleEvent(ScriptExecutionContext&, Event& event)
 {
-    if (RefPtr animation = m_animation.get())
-        animation->addInstanceTime(m_condition->m_beginOrEnd, animation->elapsed() + m_condition->m_offset);
+    RefPtr animation = m_animation.get();
+    if (!animation)
+        return;
+
+    if (m_condition->m_repeats >= 0) {
+        RefPtr sourceElement = dynamicDowncast<SVGSMILElement>(event.target());
+        if (!sourceElement || sourceElement->lastDispatchedRepeatIteration() != static_cast<unsigned>(m_condition->m_repeats))
+            return;
+    }
+
+    animation->addInstanceTime(m_condition->m_beginOrEnd, animation->elapsed() + m_condition->m_offset);
 }
 
 SVGSMILElement::Condition::Condition(Type type, BeginOrEnd beginOrEnd, const String& baseID, const AtomString& name, SMILTime offset, int repeats)
@@ -256,6 +265,8 @@ void SVGSMILElement::reset()
     m_lastPercent = 0;
     m_lastRepeat = 0;
     m_nextProgressTime = 0;
+    m_pendingRepeatIterations.clear();
+    m_lastDispatchedRepeatIteration = 0;
     resolveFirstInterval();
 }
 
@@ -344,19 +355,39 @@ SMILTime SVGSMILElement::parseClockValue(StringView data)
     if (parse == indefiniteAtom())
         return SMILTime::indefinite();
 
+    // SMIL Seconds must be 2DIGIT ("." DIGIT+)? per the spec.
+    auto hasValidSecondsFormat = [](const StringView& seconds) {
+        if (seconds.length() < 2 || !isASCIIDigit(seconds[0]) || !isASCIIDigit(seconds[1]))
+            return false;
+        if (seconds.length() > 2 && (seconds[2] != '.' || seconds.length() < 4))
+            return false;
+        return true;
+    };
+
     double result = 0;
     size_t doublePointOne = parse.find(':');
-    size_t doublePointTwo = parse.find(':', doublePointOne + 1);
-    if (doublePointOne == 2 && doublePointTwo == 5 && parse.length() >= 8) {
-        auto hours = parseInteger<uint8_t>(parse.left(2));
-        auto minutes = parseInteger<uint8_t>(parse.substring(3, 2));
-        auto seconds = parseNumber(parse.substring(6));
+    size_t doublePointTwo = doublePointOne != notFound ? parse.find(':', doublePointOne + 1) : notFound;
+    if (doublePointOne != notFound && doublePointTwo != notFound) {
+        // Full-clock-value: Hours ":" Minutes ":" Seconds ("." Fraction)?
+        // Hours is DIGIT+ (one or more digits), Minutes and Seconds are 2DIGIT.
+        if (!doublePointOne || doublePointTwo != doublePointOne + 3)
+            return SMILTime::unresolved();
+        auto hours = parseInteger<unsigned>(parse.left(doublePointOne));
+        auto minutes = parseInteger<uint8_t>(parse.substring(doublePointOne + 1, 2));
+        auto secondsString = parse.substring(doublePointTwo + 1);
+        if (!hasValidSecondsFormat(secondsString))
+            return SMILTime::unresolved();
+        auto seconds = parseNumber(secondsString);
         if (!hours || !minutes || *minutes > 59 || !seconds || *seconds >= 60)
             return SMILTime::unresolved();
         result = *hours * 60 * 60 + *minutes * 60 + *seconds;
     } else if (doublePointOne == 2 && doublePointTwo == notFound && parse.length() >= 5) {
+        // Partial-clock-value: Minutes ":" Seconds ("." Fraction)?
         auto minutes = parseInteger<uint8_t>(parse.left(2));
-        auto seconds = parseNumber(parse.substring(3));
+        auto secondsString = parse.substring(3);
+        if (!hasValidSecondsFormat(secondsString))
+            return SMILTime::unresolved();
+        auto seconds = parseNumber(secondsString);
         if (!minutes || *minutes > 59 || !seconds || *seconds >= 60)
             return SMILTime::unresolved();
         result = *minutes * 60 + *seconds;
@@ -418,13 +449,13 @@ bool SVGSMILElement::parseCondition(StringView value, BeginOrEnd beginOrEnd)
     Condition::Type type;
     int repeats = -1;
     if (nameView.startsWith("repeat("_s) && nameView.endsWith(')')) {
-        // FIXME: For repeat events we just need to add the data carrying TimeEvent class and fire the events at appropiate times.
+        // FIXME: For repeat events we just need to add the data carrying TimeEvent class and fire the events at appropriate times (webkit.org/b/313717).
         auto parsedRepeat = parseInteger<unsigned>(nameView.substring(7, nameView.length() - 8));
         if (!parsedRepeat)
             return false;
         // FIXME: By assigning an unsigned to a signed, this can turn large integers into negative numbers.
         repeats = *parsedRepeat;
-        nameString = "repeat"_s;
+        nameString = eventNames().repeatEventEvent;
         type = Condition::EventBase;
     } else if (nameView == "begin"_s || nameView == "end"_s) {
         if (baseID.isEmpty())
@@ -1164,8 +1195,10 @@ bool SVGSMILElement::progress(SMILTime elapsed, SVGSMILElement& firstAnimation, 
 
         // Only send repeat events here during normal animation run.
         // When seekToTime is true, all repeat events are handled in the seekToTime block below.
-        if (!seekToTime && repeat && repeat != m_lastRepeat)
+        if (!seekToTime && repeat && repeat != m_lastRepeat) {
+            m_pendingRepeatIterations.append(repeat);
             smilEventSender().dispatchEventSoon(*this, eventNames().repeatEventEvent);
+        }
 
         updateAnimation(percent, repeat);
         m_lastPercent = percent;
@@ -1190,11 +1223,15 @@ bool SVGSMILElement::progress(SMILTime elapsed, SVGSMILElement& firstAnimation, 
             // We intentionally dispatch repeat - 1 events here because the first repeat
             // event (for the initial loop) is sent elsewhere during continuous animation run.
             // If repeat == 1, no events are dispatched here.
-            for (unsigned i = 0; i < repeat - 1; ++i)
+            for (unsigned i = 1; i < repeat; ++i) {
+                m_pendingRepeatIterations.append(i);
                 smilEventSender().dispatchEventSoon(*this, eventNames().repeatEventEvent);
+            }
 
-            if (m_activeState == Inactive)
+            if (m_activeState == Inactive) {
+                m_pendingRepeatIterations.append(repeat);
                 smilEventSender().dispatchEventSoon(*this, eventNames().repeatEventEvent);
+            }
         }
     }
 
@@ -1264,6 +1301,9 @@ void SVGSMILElement::endedActiveInterval()
 void SVGSMILElement::dispatchPendingEvent(SMILEventSender* eventSender, const AtomString& eventType)
 {
     ASSERT_UNUSED(eventSender, eventSender == &smilEventSender());
+    if (eventType == eventNames().repeatEventEvent && !m_pendingRepeatIterations.isEmpty())
+        m_lastDispatchedRepeatIteration = m_pendingRepeatIterations.takeFirst();
+
     dispatchEvent(Event::create(eventType, Event::CanBubble::No, Event::IsCancelable::No));
 }
 

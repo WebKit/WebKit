@@ -177,6 +177,10 @@ static WebCore::FloatSize toRawPlatformDelta(WebCore::FloatSize delta)
 
     bool _mouseTrackingHasSentMouseDown;
     WebCore::FloatPoint _mouseTrackingStartLocationInWindow;
+
+    RetainPtr<NSPressGestureRecognizer> _dragPressGestureRecognizer;
+    RetainPtr<NSDraggingSession> _gestureDraggingSession;
+    bool _dragGestureHasSentMouseDown;
 }
 
 #if __has_include(<WebKitAdditions/WKAppKitGestureControllerAdditionsImpl.mm>)
@@ -207,6 +211,7 @@ static WebCore::FloatSize toRawPlatformDelta(WebCore::FloatSize delta)
     [self setUpSingleClickGestureRecognizer];
     [self setUpDoubleClickGestureRecognizer];
     [self setUpSecondaryClickGestureRecognizer];
+    [self setUpDragPressGestureRecognizer];
 }
 
 - (void)setUpPanGestureRecognizer
@@ -268,6 +273,7 @@ static WebCore::FloatSize toRawPlatformDelta(WebCore::FloatSize delta)
     [webView addGestureRecognizer:_singleClickGestureRecognizer.get()];
     [webView addGestureRecognizer:_doubleClickGestureRecognizer.get()];
     [webView addGestureRecognizer:_secondaryClickGestureRecognizer.get()];
+    [webView addGestureRecognizer:_dragPressGestureRecognizer.get()];
 }
 
 - (void)enableGesturesIfNeeded
@@ -277,6 +283,7 @@ static WebCore::FloatSize toRawPlatformDelta(WebCore::FloatSize delta)
     [self enableGestureIfNeeded:_singleClickGestureRecognizer.get()];
     [self enableGestureIfNeeded:_doubleClickGestureRecognizer.get()];
     [self enableGestureIfNeeded:_secondaryClickGestureRecognizer.get()];
+    [self enableGestureIfNeeded:_dragPressGestureRecognizer.get()];
 }
 
 - (void)enableGestureIfNeeded:(NSGestureRecognizer *)gesture
@@ -431,6 +438,9 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 - (void)mouseTrackingGestureRecognized:(NSGestureRecognizer *)gesture
 {
+    if (_dragGestureHasSentMouseDown)
+        return;
+
     CheckedPtr viewImpl = _viewImpl.get();
     if (!viewImpl)
         return;
@@ -511,6 +521,85 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         _mouseTrackingHasSentMouseDown = false;
         break;
 
+    default:
+        break;
+    }
+}
+
+#pragma mark - Drag Press Gesture
+
+- (void)setUpDragPressGestureRecognizer
+{
+    _dragPressGestureRecognizer = adoptNS([[NSPressGestureRecognizer alloc] initWithTarget:self action:@selector(dragPressGestureRecognized:)]);
+    [self configureForDragPress:_dragPressGestureRecognizer.get()];
+    [_dragPressGestureRecognizer setDelegate:self];
+    [_dragPressGestureRecognizer setName:@"WKDragPressGesture"];
+}
+
+- (void)dragPressGestureRecognized:(NSGestureRecognizer *)gesture
+{
+    CheckedPtr viewImpl = _viewImpl.get();
+    if (!viewImpl)
+        return;
+
+    RefPtr page = _page.get();
+    if (!page)
+        return;
+
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(page->logIdentifier(), "%@", gesture);
+
+    if (_dragPressGestureRecognizer != gesture)
+        return;
+
+    if (viewImpl->ignoresAllEvents()) {
+        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(page->logIdentifier(), "Ignored gesture");
+        return;
+    }
+
+    ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+    auto modifierFlags = [gesture modifierFlags];
+    ALLOW_NEW_API_WITHOUT_GUARDS_END
+    NSPoint locationInWindow = [gesture locationInView:nil];
+    auto windowNumber = viewImpl->windowNumber();
+    auto timestamp = GetCurrentEventTime();
+
+    switch (gesture.state) {
+    case NSGestureRecognizerStateBegan: {
+        [self _handleClickCancelled];
+        _dragGestureHasSentMouseDown = false;
+
+        RetainPtr mouseDown = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:locationInWindow modifierFlags:modifierFlags timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:0 clickCount:1 pressure:1.0];
+        viewImpl->mouseDown(mouseDown.get(), WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
+        _dragGestureHasSentMouseDown = true;
+        break;
+    }
+    case NSGestureRecognizerStateChanged: {
+        if (!_dragGestureHasSentMouseDown)
+            break;
+        if (_gestureDraggingSession)
+            [_gestureDraggingSession updateDragWithGesture:gesture];
+        else {
+            RetainPtr mouseDragged = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDragged location:locationInWindow modifierFlags:modifierFlags timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:0 clickCount:1 pressure:1.0];
+            viewImpl->mouseDragged(mouseDragged.get(), WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
+        }
+        break;
+    }
+    case NSGestureRecognizerStateEnded:
+    case NSGestureRecognizerStateCancelled:
+    case NSGestureRecognizerStateFailed: {
+        if (!_dragGestureHasSentMouseDown)
+            break;
+        if (_gestureDraggingSession)
+            [_gestureDraggingSession updateDragWithGesture:gesture];
+
+        RetainPtr mouseUp = [NSEvent mouseEventWithType:NSEventTypeLeftMouseUp location:locationInWindow modifierFlags:modifierFlags timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:0 clickCount:1 pressure:0.0];
+        viewImpl->mouseUp(mouseUp.get(), WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
+
+        // We do not clear gesture drag state here since startDrag() may still be in flight via IPC.
+        // State is cleared in draggingSessionEnded: (normal completion) or in startDrag() when
+        // beginDraggingSessionWithItems:gesture: returns nil (gesture ended before session started).
+        break;
+    }
     default:
         break;
     }
@@ -810,6 +899,36 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(page->logIdentifier(), "Interrupted momentum scrolling");
 }
 
+#pragma mark - Drag Gesture State
+
+- (NSGestureRecognizer *)activeDragGestureRecognizer
+{
+    if (_dragGestureHasSentMouseDown)
+        return _dragPressGestureRecognizer.get();
+    return nil;
+}
+
+- (void)setGestureDraggingSession:(NSDraggingSession *)session
+{
+    _gestureDraggingSession = session;
+}
+
+- (void)clearGestureDragState
+{
+    _gestureDraggingSession = nil;
+    _dragGestureHasSentMouseDown = false;
+}
+
+- (void)reset
+{
+    [self clearGestureDragState];
+    [self _handleClickCancelled];
+    _mouseTrackingHasSentMouseDown = false;
+    _isMomentumActive = false;
+    _latestClickID.reset();
+    _layerTreeTransactionIdAtLastInteractionStart.reset();
+}
+
 #pragma mark - NSGestureRecognizerDelegate
 
 static BOOL isBuiltInScrollViewPanGestureRecognizer(NSGestureRecognizer *recognizer)
@@ -834,6 +953,12 @@ static inline bool isSamePair(NSGestureRecognizer *a, NSGestureRecognizer *b, NS
         return YES;
 
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _mouseTrackingGestureRecognizer.get(), _panGestureRecognizer.get()))
+        return YES;
+
+    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _dragPressGestureRecognizer.get(), _singleClickGestureRecognizer.get()))
+        return YES;
+
+    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _dragPressGestureRecognizer.get(), _mouseTrackingGestureRecognizer.get()))
         return YES;
 
     if (gestureRecognizer == _singleClickGestureRecognizer

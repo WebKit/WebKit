@@ -122,7 +122,7 @@ const Vector<Ref<SpeechSynthesisVoice>>& SpeechSynthesis::getVoices()
     RefPtr speechSynthesisClient = m_speechSynthesisClient.get();
     auto& voiceList = speechSynthesisClient ? speechSynthesisClient->voiceList() : protect(ensurePlatformSpeechSynthesizer())->voiceList();
     m_voiceList = voiceList.map([](auto& voice) {
-        return SpeechSynthesisVoice::create(Ref { voice });
+        return SpeechSynthesisVoice::create(protect(voice));
     });
 
     return *m_voiceList;
@@ -150,7 +150,7 @@ bool SpeechSynthesis::paused() const
 void SpeechSynthesis::startSpeakingImmediately(SpeechSynthesisUtterance& utterance)
 {
     utterance.setStartTime(MonotonicTime::now());
-    m_currentSpeechUtterance = makeUnique<SpeechSynthesisUtteranceActivity>(Ref { utterance });
+    m_currentSpeechUtterance = makeUnique<SpeechSynthesisUtteranceActivity>(protect(utterance));
     m_isPaused = false;
 
     if (RefPtr speechSynthesisClient = m_speechSynthesisClient.get())

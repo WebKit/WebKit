@@ -27,6 +27,7 @@
 #pragma once
 
 #include "JSSourceCode.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

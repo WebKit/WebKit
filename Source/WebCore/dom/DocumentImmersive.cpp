@@ -28,8 +28,19 @@
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
 
+#include "Chrome.h"
+#include "ChromeClient.h"
+#include "DocumentPage.h"
+#include "Event.h"
+#include "EventNames.h"
 #include "HTMLModelElement.h"
+#include "JSDOMPromiseDeferred.h"
+#include "LocalDOMWindow.h"
+#include "Logging.h"
+#include "NodeDocument.h"
+#include "Page.h"
 #include "PseudoClassChangeInvalidation.h"
+#include "Settings.h"
 
 namespace WebCore {
 

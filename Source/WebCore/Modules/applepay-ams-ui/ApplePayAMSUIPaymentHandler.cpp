@@ -142,7 +142,7 @@ ExceptionOr<void> ApplePayAMSUIPaymentHandler::show(Document&)
 
 void ApplePayAMSUIPaymentHandler::hide()
 {
-    Ref { page() }->abortApplePayAMSUISession(*this);
+    protect(page())->abortApplePayAMSUISession(*this);
 }
 
 void ApplePayAMSUIPaymentHandler::canMakePayment(Document& document, Function<void(bool)>&& completionHandler)
@@ -171,7 +171,7 @@ ExceptionOr<void> ApplePayAMSUIPaymentHandler::complete(Document&, std::optional
 
 ExceptionOr<void> ApplePayAMSUIPaymentHandler::retry(PaymentValidationErrors&&)
 {
-    return show(Ref { document() }.get());
+    return show(protect(document()).get());
 }
 
 } // namespace WebCore

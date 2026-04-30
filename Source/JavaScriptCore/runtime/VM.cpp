@@ -49,7 +49,6 @@
 #include "Disassembler.h"
 #include "DoublePredictionFuzzerAgent.h"
 #include "ErrorInstance.h"
-#include "EvacuatedStack.h"
 #include "EvalCodeBlockInlines.h"
 #include "EvalExecutableInlines.h"
 #include "Exception.h"
@@ -65,6 +64,7 @@
 #include "IncrementalSweeper.h"
 #include "Interpreter.h"
 #include "IntlCache.h"
+#include "IntlObject.h"
 #include "JITCode.h"
 #include "JITOperationList.h"
 #include "JITSizeStatistics.h"
@@ -336,7 +336,8 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     pinballCompletionStructure.setWithoutWriteBarrier(PinballCompletion::createStructure(*this, nullptr, jsNull()));
 #endif
     moduleProgramExecutableStructure.setWithoutWriteBarrier(ModuleProgramExecutable::createStructure(*this, nullptr, jsNull()));
-    promiseReactionStructure.setWithoutWriteBarrier(JSPromiseReaction::createStructure(*this, nullptr, jsNull()));
+    slimPromiseReactionStructure.setWithoutWriteBarrier(JSSlimPromiseReaction::createStructure(*this, nullptr, jsNull()));
+    fullPromiseReactionStructure.setWithoutWriteBarrier(JSFullPromiseReaction::createStructure(*this, nullptr, jsNull()));
     jsMicrotaskDispatcherStructure.setWithoutWriteBarrier(JSMicrotaskDispatcher::createStructure(*this, nullptr, jsNull()));
     moduleLoaderStructure.setWithoutWriteBarrier(JSModuleLoader::createStructure(*this, nullptr, jsNull()));
     moduleRegistryEntryStructure.setWithoutWriteBarrier(ModuleRegistryEntry::createStructure(*this, nullptr, jsNull()));
@@ -511,6 +512,9 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
 
     Config::finalize();
+
+    if (!isInMiniMode())
+        initializeAvailableTimeZones();
 
     // We must set this at the end only after the VM is fully initialized.
     WTF::storeStoreFence();
@@ -1200,21 +1204,6 @@ void VM::scanSideState(ConservativeRoots& roots) const
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif // ENABLE(DFG_JIT)
 
-#if ENABLE(WEBASSEMBLY)
-
-void VM::gatherEvacuatedStackRoots(ConservativeRoots& roots)
-{
-    ASSERT(heap.worldIsStopped());
-    for (auto* slice : m_evacuatedStackSlices) {
-        std::span<Register> slots = slice->slots();
-        roots.add(slots.data(), slots.data() + slots.size());
-    }
-    for (const auto& span : m_evacuatedCalleeSaves)
-        roots.add(span.data(), span.data() + span.size());
-}
-
-#endif // ENABLE(WEBASSEMBLY)
-
 void VM::pushCheckpointOSRSideState(std::unique_ptr<CheckpointOSRExitSideState>&& payload)
 {
     ASSERT(currentThreadIsHoldingAPILock());
@@ -1569,32 +1558,6 @@ bool VM::isScratchBuffer(void* ptr)
     return false;
 }
 
-void VM::addEvacuatedStackSlice(EvacuatedStackSlice* slice)
-{
-    ASSERT(currentThreadIsHoldingAPILock());
-    m_evacuatedStackSlices.append(slice);
-}
-
-void VM::removeEvacuatedStackSlice(EvacuatedStackSlice* slice)
-{
-    ASSERT(currentThreadIsHoldingAPILock());
-    m_evacuatedStackSlices.removeAll(slice);
-}
-
-void VM::addEvacuatedCalleeSaves(std::span<CPURegister> span)
-{
-    ASSERT(currentThreadIsHoldingAPILock());
-    m_evacuatedCalleeSaves.constructAndAppend(span);
-}
-
-void VM::removeEvacuatedCalleeSaves(std::span<CPURegister> span)
-{
-    ASSERT(currentThreadIsHoldingAPILock());
-    m_evacuatedCalleeSaves.removeAllMatching([&](const std::span<CPURegister>& existing) {
-        return existing.data() == span.data() && existing.size() == span.size();
-    });
-}
-
 Ref<Waiter> VM::syncWaiter()
 {
     return m_syncWaiter;
@@ -1880,7 +1843,8 @@ void VM::visitAggregateImpl(Visitor& visitor)
     visitor.append(webAssemblyCalleeGroupStructure);
 #endif
     visitor.append(moduleProgramExecutableStructure);
-    visitor.append(promiseReactionStructure);
+    visitor.append(slimPromiseReactionStructure);
+    visitor.append(fullPromiseReactionStructure);
     visitor.append(jsMicrotaskDispatcherStructure);
     visitor.append(moduleLoaderStructure);
     visitor.append(moduleRegistryEntryStructure);

@@ -32,6 +32,7 @@
 #include <WebCore/SQLiteStatement.h>
 #include <WebCore/SQLiteTransaction.h>
 #include <WebCore/SuddenTermination.h>
+#include <array>
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
 
@@ -286,14 +287,14 @@ void StorageAreaSync::migrateItemTableIfNeeded()
     }
 
     // alter table for backward compliance, change the value type from TEXT to BLOB.
-    static const ASCIILiteral commands[] = {
+    static constexpr auto commands = std::to_array<ASCIILiteral>({
         "DROP TABLE IF EXISTS ItemTable2"_s,
         "CREATE TABLE ItemTable2 (key TEXT UNIQUE ON CONFLICT REPLACE, value BLOB NOT NULL ON CONFLICT FAIL)"_s,
         "INSERT INTO ItemTable2 SELECT * from ItemTable"_s,
         "DROP TABLE ItemTable"_s,
         "ALTER TABLE ItemTable2 RENAME TO ItemTable"_s,
         { },
-    };
+    });
 
     SQLiteTransaction transaction(m_database.get(), false);
     transaction.begin();

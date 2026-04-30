@@ -1,0 +1,6 @@
+
+FAIL display:none scroll-initial-target becomes display:block assert_equals: outer-container is scrolled to scroll-initial-target expected 1020 but got 0
+FAIL intermediate overflow:visible container becomes overflow:scroll assert_equals: outer-container is scrolled to scroll-initial-target expected 1020 but got 0
+FAIL outer scroll-initial-target takes precedence over inner assert_equals: outer-container is scrolled to scroll-initial-target expected 1020 but got 0
+FAIL scroll containers can also be scroll-initial-targets assert_equals: outer-container is scrolled to scroll-initial-target expected 1020 but got 0
+

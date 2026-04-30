@@ -37,6 +37,7 @@ const ClassInfo FunctionPrototype::s_info = { "Function"_s, &Base::s_info, nullp
 
 static JSC_DECLARE_HOST_FUNCTION(functionProtoFuncToString);
 static JSC_DECLARE_HOST_FUNCTION(functionProtoFuncBind);
+static JSC_DECLARE_HOST_FUNCTION(functionProtoFuncSymbolHasInstance);
 static JSC_DECLARE_HOST_FUNCTION(callFunctionPrototype);
 
 static JSC_DECLARE_CUSTOM_GETTER(argumentsGetter);
@@ -71,7 +72,7 @@ void FunctionPrototype::addFunctionProperties(VM& vm, JSGlobalObject* globalObje
     putDirectCustomGetterSetterWithoutTransition(vm, vm.propertyNames->arguments, CustomGetterSetter::create(vm, argumentsGetter, callerAndArgumentsSetter), PropertyAttribute::DontEnum | PropertyAttribute::CustomAccessor);
     putDirectCustomGetterSetterWithoutTransition(vm, vm.propertyNames->caller, CustomGetterSetter::create(vm, callerGetter, callerAndArgumentsSetter), PropertyAttribute::DontEnum | PropertyAttribute::CustomAccessor);
 
-    *hasInstanceSymbolFunction = JSFunction::create(vm, globalObject, functionPrototypeSymbolHasInstanceCodeGenerator(vm), globalObject);
+    *hasInstanceSymbolFunction = JSFunction::create(vm, globalObject, 1, "[Symbol.hasInstance]"_s, functionProtoFuncSymbolHasInstance, ImplementationVisibility::Public);
     putDirectWithoutTransition(vm, vm.propertyNames->hasInstanceSymbol, *hasInstanceSymbolFunction, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 
@@ -101,6 +102,38 @@ JSC_DEFINE_HOST_FUNCTION(functionProtoFuncToString, (JSGlobalObject* globalObjec
     }
 
     return throwVMTypeError(globalObject, scope);
+}
+
+// https://tc39.es/ecma262/#sec-function.prototype-@@hasinstance
+JSC_DEFINE_HOST_FUNCTION(functionProtoFuncSymbolHasInstance, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue();
+
+    // 1. If IsCallable(constructor) is false, return false.
+    if (!thisValue.isCallable())
+        return JSValue::encode(jsBoolean(false));
+
+    JSValue instance = callFrame->argument(0);
+
+    // 2. If constructor has a [[BoundTargetFunction]] internal slot, then
+    if (auto* boundFunction = dynamicDowncast<JSBoundFunction>(thisValue)) {
+        // 2.a. Let boundConstructor be constructor.[[BoundTargetFunction]].
+        // 2.b. Return ? InstanceofOperator(instance, boundConstructor).
+        RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(boundFunction->targetFunction()->hasInstance(globalObject, instance))));
+    }
+
+    // 3. If instance is not an Object, return false.
+    if (!instance.isObject())
+        return JSValue::encode(jsBoolean(false));
+
+    JSObject* thisObject = asObject(thisValue);
+    JSValue prototype = thisObject->get(globalObject, vm.propertyNames->prototype);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(JSObject::defaultHasInstance(globalObject, instance, prototype))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionProtoFuncBind, (JSGlobalObject* globalObject, CallFrame* callFrame))

@@ -4767,17 +4767,6 @@ FloatSize RenderThemeCocoa::inflateRectForInteractionRegion(const RenderElement&
         return { cssBorderWidth, cssBorderWidth };
     }
 
-    // These values were chosen to match UIKit.
-    auto appearance = box.style().usedAppearance();
-    if (appearance == StyleAppearance::SliderThumbHorizontal || appearance == StyleAppearance::SliderThumbVertical) {
-        static constexpr float thumbMinDimension = 48;
-        static constexpr float thumbHitAreaExpansion = 12.5;
-        if (rect.width() < thumbMinDimension || rect.height() < thumbMinDimension) {
-            rect.inflate(thumbHitAreaExpansion);
-            return { thumbHitAreaExpansion, thumbHitAreaExpansion };
-        }
-    }
-
     return { 0, 0 };
 }
 

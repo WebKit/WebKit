@@ -50,11 +50,7 @@ public:
 
     DECLARE_VISIT_CHILDREN;
     
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-    {
-        DollarVMAssertScope assertScope;
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
-    }
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     static JSDollarVM* create(VM& vm, Structure* structure)
     {

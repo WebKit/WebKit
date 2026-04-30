@@ -334,6 +334,44 @@ static void runHttpLocalhostLoad(bool useSiteIsolation)
 }
 TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpLocalhostLoad)
 
+// MARK: - HTTPS First Upgrade Tests
+
+static void runHttpsFirstUpgradeDisablesEnhancedSecurity(bool useSiteIsolation)
+{
+    HTTPServer plaintextServer({
+        { "http://example.internal/"_s, { "<script>alert('insecure-page')</script>"_s } },
+    });
+
+    HTTPServer secureServer({
+        { "/"_s, { "<script>alert('upgraded-page')</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto webView = enhancedSecurityTestConfiguration(&plaintextServer, &secureServer, useSiteIsolation);
+
+    [webView configuration].defaultWebpagePreferences._networkConnectionIntegrityPolicy |= _WKWebsiteNetworkConnectionIntegrityPolicyHTTPSFirst;
+
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"http://example.internal/", {
+        { "upgraded-page"_s, ExpectedEnhancedSecurity::Disabled }
+    });
+}
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpsFirstUpgradeDisablesEnhancedSecurity)
+
+static void runHttpsFirstFailureEnablesEnhancedSecurity(bool useSiteIsolation)
+{
+    HTTPServer plaintextServer({
+        { "http://example.internal/"_s, { "<script>alert('insecure-page')</script>"_s } },
+    });
+
+    auto webView = enhancedSecurityTestConfiguration(&plaintextServer, nullptr, useSiteIsolation);
+
+    [webView configuration].defaultWebpagePreferences._networkConnectionIntegrityPolicy |= _WKWebsiteNetworkConnectionIntegrityPolicyHTTPSFirst;
+
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"http://example.internal/", {
+        { "insecure-page"_s, ExpectedEnhancedSecurity::Enabled }
+    });
+}
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpsFirstFailureEnablesEnhancedSecurity)
+
 // MARK: - Frame Tests
 
 static void runHttpEmbeddingHttpIframe(bool useSiteIsolation)

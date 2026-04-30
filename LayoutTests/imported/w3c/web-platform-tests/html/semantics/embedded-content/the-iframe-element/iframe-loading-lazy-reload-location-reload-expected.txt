@@ -1,0 +1,4 @@
+
+
+PASS Reloading iframe loading='lazy' before it is loaded: location.reload
+

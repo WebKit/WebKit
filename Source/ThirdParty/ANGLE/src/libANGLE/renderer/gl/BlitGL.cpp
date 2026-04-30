@@ -157,6 +157,7 @@ angle::Result SetClearState(StateManagerGL *stateManager,
     }
     if (stencilClear)
     {
+        stateManager->setStencilFrontWritemask(static_cast<GLuint>(-1));
         stateManager->setClearStencil(0);
         *outClearMask |= GL_STENCIL_BUFFER_BIT;
     }

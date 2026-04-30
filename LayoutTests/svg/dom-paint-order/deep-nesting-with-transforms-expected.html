@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>body { margin: 0; }</style>
+</head>
+<body>
+<!-- Reference: HTML divs replicating the deep nesting with transforms.
+     Outer SVG is 400x200 viewBox 1:1.
+     Left group: translate(10,10), right group: translate(200,10).
+     Rotated rects use transform-origin mapped to their group's local origin. -->
+<div style="position: absolute; overflow: hidden; width: 400px; height: 200px;">
+  <!-- Background rect (5,5) 390x190 -->
+  <div style="position: absolute; left: 5px; top: 5px; width: 390px; height: 190px; background: #f8f9fa; border-radius: 5px;"></div>
+
+  <!-- Left group: translate(10,10) — group origin at page (10,10) -->
+  <div style="position: absolute; left: 10px; top: 10px; width: 170px; height: 170px; background: #dee2e6; border-radius: 3px;"></div>
+  <div style="position: absolute; left: 20px; top: 20px; width: 80px; height: 80px; background: #ff6b6b;"></div>
+  <div style="position: absolute; left: 60px; top: 40px; width: 80px; height: 80px; background: #51cf66; transform: rotate(-5deg); transform-origin: -50px -30px;"></div>
+  <div style="position: absolute; left: 20px; top: 80px; width: 80px; height: 80px; background: #339af0;"></div>
+  <div style="position: absolute; left: 60px; top: 100px; width: 80px; height: 80px; background: #fcc419; transform: rotate(5deg); transform-origin: -50px -90px;"></div>
+
+  <!-- Right group: translate(200,10) — group origin at page (200,10) -->
+  <div style="position: absolute; left: 200px; top: 10px; width: 170px; height: 170px; background: #e9ecef; border-radius: 3px;"></div>
+  <div style="position: absolute; left: 210px; top: 20px; width: 80px; height: 80px; background: #845ef7;"></div>
+  <div style="position: absolute; left: 250px; top: 40px; width: 80px; height: 80px; background: #20c997; transform: rotate(-3deg); transform-origin: -50px -30px;"></div>
+  <div style="position: absolute; left: 210px; top: 80px; width: 80px; height: 80px; background: #f06595;"></div>
+  <div style="position: absolute; left: 250px; top: 100px; width: 80px; height: 80px; background: #fab005; transform: rotate(3deg); transform-origin: -50px -90px;"></div>
+</div>
+</body>
+</html>

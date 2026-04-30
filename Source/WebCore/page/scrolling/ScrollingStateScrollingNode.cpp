@@ -668,6 +668,9 @@ void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, OptionSet<Scrol
         ts.dumpProperty("Scrolling on main thread because:"_s, ScrollingCoordinator::synchronousScrollingReasonsAsText(m_synchronousScrollingReasons));
 #endif
 
+    if (m_useDarkAppearanceForScrollbars)
+        ts.dumpProperty("uses dark appearance for scrollbars"_s, m_useDarkAppearanceForScrollbars);
+
     if (m_isMonitoringWheelEvents)
         ts.dumpProperty("expects wheel event test trigger"_s, m_isMonitoringWheelEvents);
 

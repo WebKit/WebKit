@@ -25,7 +25,10 @@
 
 #pragma once
 
+#include "JSCJSValueBigInt.h"
+#include "JSCJSValueInlines.h"
 #include "JSWeakSet.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

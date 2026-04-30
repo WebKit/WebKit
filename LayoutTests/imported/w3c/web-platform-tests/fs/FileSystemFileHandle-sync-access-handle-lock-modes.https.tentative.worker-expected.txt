@@ -1,0 +1,41 @@
+
+FAIL A sync access handle opens in readwrite mode by default assert_equals: expected (string) "readwrite" but got (undefined) undefined
+FAIL An access handle in readwrite mode has a mode property equal to readwrite assert_equals: expected (string) "readwrite" but got (undefined) undefined
+FAIL An access handle in readwrite mode takes a lock that is exclusive assert_throws_dom: function "() => {
+      throw e;
+    }" threw object "InvalidStateError: The object is in an invalid state." that is not a DOMException NoModificationAllowedError: property "code" is equal to 11, expected 7
+PASS An access handle in readwrite mode is writable
+PASS When there's an open access handle in readwrite mode on a file, can open another access handle in readwrite on a different file
+FAIL When there's an open access handle in readwrite mode on a file, cannot open another access handle in readwrite on that same file promise_rejects_dom: function "function() { throw e; }" threw object "InvalidStateError: The object is in an invalid state." that is not a DOMException NoModificationAllowedError: property "code" is equal to 11, expected 7
+FAIL After an access handle in readwrite mode on a file has been closed, can open another access handle in readwrite on the same file promise_rejects_dom: function "function() { throw e; }" threw object "InvalidStateError: The object is in an invalid state." that is not a DOMException NoModificationAllowedError: property "code" is equal to 11, expected 7
+PASS When there's an open access handle in readwrite mode on a file, can open another access handle in read-only on a different file
+FAIL When there's an open access handle in readwrite mode on a file, cannot open another access handle in read-only on that same file promise_rejects_dom: function "function() { throw e; }" threw object "InvalidStateError: The object is in an invalid state." that is not a DOMException NoModificationAllowedError: property "code" is equal to 11, expected 7
+FAIL After an access handle in readwrite mode on a file has been closed, can open another access handle in read-only on the same file promise_rejects_dom: function "function() { throw e; }" threw object "InvalidStateError: The object is in an invalid state." that is not a DOMException NoModificationAllowedError: property "code" is equal to 11, expected 7
+PASS When there's an open access handle in readwrite mode on a file, can open another access handle in readwrite-unsafe on a different file
+FAIL When there's an open access handle in readwrite mode on a file, cannot open another access handle in readwrite-unsafe on that same file promise_rejects_dom: function "function() { throw e; }" threw object "InvalidStateError: The object is in an invalid state." that is not a DOMException NoModificationAllowedError: property "code" is equal to 11, expected 7
+FAIL After an access handle in readwrite mode on a file has been closed, can open another access handle in readwrite-unsafe on the same file promise_rejects_dom: function "function() { throw e; }" threw object "InvalidStateError: The object is in an invalid state." that is not a DOMException NoModificationAllowedError: property "code" is equal to 11, expected 7
+FAIL An access handle in read-only mode has a mode property equal to read-only assert_equals: expected (string) "read-only" but got (undefined) undefined
+FAIL An access handle in read-only mode takes a lock that is shared assert_throws_dom: function "() => {
+      throw e;
+    }" threw object "InvalidStateError: The object is in an invalid state." that is not a DOMException NoModificationAllowedError: property "code" is equal to 11, expected 7
+FAIL An access handle in read-only mode is not writable assert_equals: expected "not writable" but got "writable"
+PASS When there's an open access handle in read-only mode on a file, can open another access handle in readwrite on a different file
+FAIL When there's an open access handle in read-only mode on a file, cannot open another access handle in readwrite on that same file promise_rejects_dom: function "function() { throw e; }" threw object "InvalidStateError: The object is in an invalid state." that is not a DOMException NoModificationAllowedError: property "code" is equal to 11, expected 7
+FAIL After all access handles in read-only mode on a file has been closed, can open another access handle in readwrite on the same file promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+PASS When there's an open access handle in read-only mode on a file, can open another access handle in read-only on a different file
+PASS When there's an open access handle in read-only mode on a file, can open another access handle in readwrite-unsafe on a different file
+FAIL When there's an open access handle in read-only mode on a file, cannot open another access handle in readwrite-unsafe on that same file promise_rejects_dom: function "function() { throw e; }" threw object "InvalidStateError: The object is in an invalid state." that is not a DOMException NoModificationAllowedError: property "code" is equal to 11, expected 7
+FAIL After all access handles in read-only mode on a file has been closed, can open another access handle in readwrite-unsafe on the same file promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+FAIL An access handle in readwrite-unsafe mode has a mode property equal to readwrite-unsafe assert_equals: expected (string) "readwrite-unsafe" but got (undefined) undefined
+FAIL An access handle in readwrite-unsafe mode takes a lock that is shared assert_throws_dom: function "() => {
+      throw e;
+    }" threw object "InvalidStateError: The object is in an invalid state." that is not a DOMException NoModificationAllowedError: property "code" is equal to 11, expected 7
+PASS An access handle in readwrite-unsafe mode is writable
+PASS When there's an open access handle in readwrite-unsafe mode on a file, can open another access handle in readwrite on a different file
+FAIL When there's an open access handle in readwrite-unsafe mode on a file, cannot open another access handle in readwrite on that same file promise_rejects_dom: function "function() { throw e; }" threw object "InvalidStateError: The object is in an invalid state." that is not a DOMException NoModificationAllowedError: property "code" is equal to 11, expected 7
+FAIL After all access handles in readwrite-unsafe mode on a file has been closed, can open another access handle in readwrite on the same file promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+PASS When there's an open access handle in readwrite-unsafe mode on a file, can open another access handle in read-only on a different file
+FAIL When there's an open access handle in readwrite-unsafe mode on a file, cannot open another access handle in read-only on that same file promise_rejects_dom: function "function() { throw e; }" threw object "InvalidStateError: The object is in an invalid state." that is not a DOMException NoModificationAllowedError: property "code" is equal to 11, expected 7
+FAIL After all access handles in readwrite-unsafe mode on a file has been closed, can open another access handle in read-only on the same file promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+PASS When there's an open access handle in readwrite-unsafe mode on a file, can open another access handle in readwrite-unsafe on a different file
+

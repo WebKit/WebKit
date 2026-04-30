@@ -22,6 +22,19 @@
               (bounds 352.00 288.00)
               (event region
                 (rect (0,0) width=352 height=288)
+              (touch event listener region: asynchronousDispatchRegion:
+                (rect (0,0) width=352 height=288)
+eventSpecificSynchronousDispatchRegions: eventName: pointerout eventRect:
+                (rect (0,0) width=352 height=288)
+eventSpecificSynchronousDispatchRegions: eventName: pointerleave eventRect:
+                (rect (0,0) width=352 height=288)
+eventSpecificSynchronousDispatchRegions: eventName: pointermove eventRect:
+                (rect (0,0) width=352 height=288)
+eventSpecificSynchronousDispatchRegions: eventName: pointerup eventRect:
+                (rect (0,0) width=352 height=288)
+eventSpecificSynchronousDispatchRegions: eventName: pointerdown eventRect:
+                (rect (0,0) width=352 height=288)
+
               )
               (children 1
                 (GraphicsLayer
@@ -35,6 +48,31 @@
                         (rect (8,0) width=35 height=8)
                         (rect (0,8) width=51 height=35)
                         (rect (8,43) width=35 height=8)
+                      (touch event listener region: asynchronousDispatchRegion:
+                        (rect (8,0) width=35 height=8)
+                        (rect (0,8) width=51 height=35)
+                        (rect (8,43) width=35 height=8)
+eventSpecificSynchronousDispatchRegions: eventName: pointerout eventRect:
+                        (rect (8,0) width=35 height=8)
+                        (rect (0,8) width=51 height=35)
+                        (rect (8,43) width=35 height=8)
+eventSpecificSynchronousDispatchRegions: eventName: pointerleave eventRect:
+                        (rect (8,0) width=35 height=8)
+                        (rect (0,8) width=51 height=35)
+                        (rect (8,43) width=35 height=8)
+eventSpecificSynchronousDispatchRegions: eventName: pointermove eventRect:
+                        (rect (8,0) width=35 height=8)
+                        (rect (0,8) width=51 height=35)
+                        (rect (8,43) width=35 height=8)
+eventSpecificSynchronousDispatchRegions: eventName: pointerup eventRect:
+                        (rect (8,0) width=35 height=8)
+                        (rect (0,8) width=51 height=35)
+                        (rect (8,43) width=35 height=8)
+eventSpecificSynchronousDispatchRegions: eventName: pointerdown eventRect:
+                        (rect (8,0) width=35 height=8)
+                        (rect (0,8) width=51 height=35)
+                        (rect (8,43) width=35 height=8)
+
 
                       (interaction regions [
                         (interaction (0,0) width=51 height=51)

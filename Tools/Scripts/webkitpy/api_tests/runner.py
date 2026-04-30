@@ -169,8 +169,16 @@ class Runner(object):
         if self.port.get_option('fully_parallel') and self.port.get_option('test_parallel_safety'):
             raise RuntimeError(f'Running api tests fully parallel is not compatible with test_parallel_safety')
 
+        self.printer.write_update('Filtering tests by allowlist ...')
+        # Split tests by allowlist BEFORE sharding
+        allowlisted_tests, non_allowlisted_tests = self.port.filter_api_tests_by_allowlist(tests)
+
+        if non_allowlisted_tests:
+            _log.info(f'{len(non_allowlisted_tests)} tests not in allowlist will run in system shard')
+
         self.printer.write_update('Sharding tests ...')
-        shards = Runner._shard_tests(tests, self.port.get_option('fully_parallel'))
+        # Only shard allowlisted tests for parallel execution
+        shards = Runner._shard_tests(allowlisted_tests, self.port.get_option('fully_parallel'))
 
         original_level = server_process_logger.level
         server_process_logger.setLevel(logging.CRITICAL)
@@ -213,20 +221,10 @@ class Runner(object):
             # For minimum worker calculation, use current batch size (first batch or all if unbatched)
             self._num_workers = min(workers, max(len(shards) + (len(test_parallel_safety_batches[0]) if test_parallel_safety_batches else 0), 1))
 
-            system_shards = {}
-            non_system_shards = {}
-
-            for name, tests in iteritems(shards):
-                group = self.port.group_for_shard(type('Shard', (), {'name': name})(), suite='api-tests')
-                if group == 'system' and not self.port.get_option('fully_parallel'):
-                    system_shards[name] = tests
-                else:
-                    non_system_shards[name] = tests
-
             # Process test-parallel-safety batches sequentially
             for batch_index, test_parallel_safety_batch in enumerate(test_parallel_safety_batches if test_parallel_safety_batches else [[]]):
                 if test_parallel_safety_batch:
-                    _log.info(f'Running batch {batch_index + 1}/{len(test_parallel_safety_batches)}: {len(non_system_shards)} regular shards with {len(test_parallel_safety_batch)} test-parallel-safety repeat tasks')
+                    _log.info(f'Running batch {batch_index + 1}/{len(test_parallel_safety_batches)}: {len(shards)} regular shards with {len(test_parallel_safety_batch)} test-parallel-safety repeat tasks')
 
                 non_system_groups = [group for group in mutually_exclusive_groups if group != 'system']
                 test_parallel_safety_groups = []
@@ -237,7 +235,7 @@ class Runner(object):
                         test_parallel_safety_groups.append(test_parallel_safety_group)
                         non_system_groups.append(test_parallel_safety_group)
                     batch_test_parallel_safety_count = len(test_parallel_safety_batch)
-                    batch_effective_work_count = len(non_system_shards) + batch_test_parallel_safety_count
+                    batch_effective_work_count = len(shards) + batch_test_parallel_safety_count
                     batch_workers = min(workers, max(batch_effective_work_count, 1))
                 else:
                     batch_workers = self._num_workers
@@ -254,31 +252,27 @@ class Runner(object):
                             _log.info(f'Dispatching repeat test-parallel-safety task for {test_name} to group {test_parallel_safety_group} (batch {batch_index + 1}/{len(test_parallel_safety_batches)})')
                             pool.do(run_test_parallel_safety_single_iteration, test_name, repeat=True, group=test_parallel_safety_group)
 
-                    # Run regular shards with each batch - this is the whole point of test-parallel-safety testing
-                    for name, tests in iteritems(non_system_shards):
+                    # Run regular shards
+                    for name, shard_tests in iteritems(shards):
                         if name.startswith('test-parallel-safety.'):
                             continue
 
-                        group = self.port.group_for_shard(type('Shard', (), {'name': name})(), suite='api-tests')
-                        if test_parallel_safety_batches and group == 'system':
-                            continue
-
-                        if group and group != 'system' and not self.port.get_option('fully_parallel'):
-                            pool.do(run_shard, name, *tests, group=group)
-                        else:
-                            pool.do(run_shard, name, *tests)
+                        pool.do(run_shard, name, *shard_tests)
 
                     pool.wait()
 
-            # Run system tests after all non-system tests complete (unless in test-parallel-safety mode)
-            if system_shards and not self.port.get_option('test_parallel_safety'):
+            # Run system shard tests after all parallel tests complete (unless in test-parallel-safety mode)
+            if non_allowlisted_tests and not self.port.get_option('test_parallel_safety'):
+                _log.info(f'Running {len(non_allowlisted_tests)} system shard tests sequentially')
                 with TaskPool(
-                    workers=1,  # System tests run with single worker to avoid conflicts
+                    workers=1,  # System shard tests run with single worker to avoid conflicts
                     mutually_exclusive_groups=[],
                     setup=setup_shard, setupkwargs=dict(port=self.port, devices=devices, log_limit=self.log_limit), teardown=teardown_shard,
                 ) as pool:
-                    for name, tests in iteritems(system_shards):
-                        pool.do(run_shard, name, *tests)
+                    # Group system shard tests by suite for efficiency
+                    non_allowlisted_shards = Runner._shard_tests(non_allowlisted_tests, False)
+                    for name, shard_tests in iteritems(non_allowlisted_shards):
+                        pool.do(run_shard, name, *shard_tests)
 
                     pool.wait()
             elif self.port.get_option('test_parallel_safety'):

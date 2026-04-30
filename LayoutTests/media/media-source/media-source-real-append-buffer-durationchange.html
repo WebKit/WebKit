@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-append-buffer-durationchange</title>
+    <script src="mp4-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Real-MP4 equivalent of media-source-append-buffer-durationchange.html
+    // Tests that duration changes from 0 to the sample end time after append.
+
+    var source;
+    var sourceBuffer;
+
+    async function runTest() {
+        findMediaElement();
+
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+
+        run('source.duration = 0');
+        run(`sourceBuffer = source.addSourceBuffer('${MP4.VIDEO_TYPE}')`);
+
+        var initData = MP4.initSegment({
+            timescale: 1000,
+            tracks: [{ id: 1, type: 'video', timescale: 1000 }]
+        });
+        sourceBuffer.appendBuffer(initData);
+        await waitFor(sourceBuffer, 'updateend');
+        testExpected('source.duration', 0);
+
+        // 16 samples of 1 second each — should update duration to 16
+        var samples = [];
+        for (var i = 0; i < 16; i++) {
+            samples.push({
+                duration: 1000,
+                compositionTimeOffset: 0,
+                isSync: (i % 4) === 0
+            });
+        }
+        var media = MP4.mediaSegment({
+            sequenceNumber: 1,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 0, samples: samples }]
+        });
+        sourceBuffer.appendBuffer(media);
+        await Promise.all([waitFor(sourceBuffer, 'updateend'), waitFor(video, 'durationchange')]);
+        testExpected('source.duration', 16);
+
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>

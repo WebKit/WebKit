@@ -132,7 +132,9 @@ MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC()
 
     cancelPendingSeek();
     m_seekTimer.stop();
-    m_renderer->pause();
+    dispatchToRendererQueue([](auto& renderer) {
+        renderer.pause();
+    });
 }
 
 #pragma mark -
@@ -355,7 +357,9 @@ void MediaPlayerPrivateMediaSourceAVFObjC::playInternal(std::optional<MonotonicT
     ALWAYS_LOG(LOGIDENTIFIER);
     flushVideoIfNeeded();
 
-    m_renderer->play(hostTime);
+    dispatchToRendererQueue([hostTime](auto& renderer) {
+        renderer.play(hostTime);
+    });
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::pause()
@@ -367,7 +371,9 @@ void MediaPlayerPrivateMediaSourceAVFObjC::pause()
 void MediaPlayerPrivateMediaSourceAVFObjC::pauseInternal(std::optional<MonotonicTime>&& hostTime)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    m_renderer->pause(hostTime);
+    dispatchToRendererQueue([hostTime](auto& renderer) {
+        renderer.pause(hostTime);
+    });
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::paused() const
@@ -492,7 +498,9 @@ void MediaPlayerPrivateMediaSourceAVFObjC::timeChanged()
 void MediaPlayerPrivateMediaSourceAVFObjC::stall()
 {
     assertIsMainThread();
-    m_renderer->stall();
+    dispatchToRendererQueue([](auto& renderer) {
+        renderer.stall();
+    });
     if (shouldBePlaying())
         timeChanged();
 }
@@ -550,7 +558,9 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()
 
     cancelPendingSeek();
 
-    m_renderer->stall();
+    dispatchToRendererQueue([](auto& renderer) {
+        renderer.stall();
+    });
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
@@ -576,7 +586,9 @@ void MediaPlayerPrivateMediaSourceAVFObjC::continueSeek(const MediaTime& seekTim
     ALWAYS_LOG(LOGIDENTIFIER, seekTime);
 
     m_lastSeekTime = seekTime;
-    m_renderer->prepareToSeek(seekTime)->whenSettled(RunLoop::mainSingleton(), [weakThis = WeakPtr { *this }, seekTime] (auto&& result) {
+    invokeAsync(MediaSourcePrivateAVFObjC::queueSingleton(), [renderer = m_renderer, seekTime] -> Ref<MediaTimePromise> {
+        return renderer->prepareToSeek(seekTime);
+    })->whenSettled(RunLoop::mainSingleton(), [weakThis = WeakPtr { *this }, seekTime] (auto&& result) {
         assertIsMainThread();
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
@@ -604,7 +616,9 @@ void MediaPlayerPrivateMediaSourceAVFObjC::reenqueueMediaForTimeAndFinishSeek(co
 
     GenericPromise::all({
         protect(m_mediaSourcePrivate)->reenqueueMediaForTime(seekTime),
-        m_renderer->finishSeek(seekTime)
+        invokeAsync(MediaSourcePrivateAVFObjC::queueSingleton(), [renderer = m_renderer, seekTime] -> Ref<GenericPromise> {
+            return renderer->finishSeek(seekTime);
+        })
     })->whenSettled(RunLoop::mainSingleton(), [weakThis = WeakPtr { *this }, seekTime](auto&& result) {
         assertIsMainThread();
         RefPtr protectedThis = weakThis.get();
@@ -665,7 +679,9 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setRateDouble(double rate)
     assertIsMainThread();
     // AVSampleBufferRenderSynchronizer does not support negative rate yet.
     m_rate = std::max<double>(rate, 0);
-    m_renderer->setRate(m_rate);
+    dispatchToRendererQueue([rate = m_rate](auto& renderer) {
+        renderer.setRate(rate);
+    });
 }
 
 double MediaPlayerPrivateMediaSourceAVFObjC::rate() const
@@ -759,7 +775,9 @@ void MediaPlayerPrivateMediaSourceAVFObjC::bufferedChanged()
                 return;
             if (protect(protectedThis->m_mediaSourcePrivate)->hasFutureTime(stallTime) && protectedThis->shouldBePlaying()) {
                 ALWAYS_LOG_WITH_THIS(protectedThis, logSiteIdentifier, "Data now available at ", stallTime, " resuming");
-                protectedThis->m_renderer->play(); // New data was added, resume. Can't happen in practice, action would have been cancelled once buffered changed.
+                protectedThis->dispatchToRendererQueue([](auto& renderer) {
+                    renderer.play(); // New data was added, resume. Can't happen in practice, action would have been cancelled once buffered changed.
+                });
                 return;
             }
             MediaTime now = protectedThis->currentTime();
@@ -905,6 +923,18 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setPresentationSize(const IntSize& ne
 Ref<AudioVideoRenderer> MediaPlayerPrivateMediaSourceAVFObjC::audioVideoRenderer() const
 {
     return m_renderer;
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::dispatchToRendererQueue(Function<void(AudioVideoRenderer&)>&& task)
+{
+    Ref queue = MediaSourcePrivateAVFObjC::queueSingleton();
+    if (queue->isCurrent()) {
+        task(m_renderer);
+        return;
+    }
+    queue->dispatch([renderer = m_renderer, task = WTF::move(task)] {
+        task(renderer);
+    });
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::acceleratedRenderingStateChanged()
@@ -1060,16 +1090,12 @@ void MediaPlayerPrivateMediaSourceAVFObjC::cdmInstanceAttached(CDMInstance& inst
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     m_renderer->setCDMInstance(&instance);
-
-    needsVideoLayerChanged();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::cdmInstanceDetached(CDMInstance&)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     m_renderer->setCDMInstance(nullptr);
-
-    needsVideoLayerChanged();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::attemptToDecryptWithInstance(CDMInstance&)
@@ -1127,7 +1153,9 @@ void MediaPlayerPrivateMediaSourceAVFObjC::updateStateFromReadyState()
 {
     assertIsMainThread();
     if (shouldBePlaying()) {
-        m_renderer->play();
+        dispatchToRendererQueue([](auto& renderer) {
+            renderer.play();
+        });
         timeChanged();
     } else
         stall();

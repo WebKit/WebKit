@@ -26,8 +26,9 @@
 #include "config.h"
 #include "DebuggerScope.h"
 
-#include "JSLexicalEnvironment.h"
 #include "JSCInlines.h"
+#include "JSLexicalEnvironment.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 
@@ -226,6 +227,11 @@ JSValue DebuggerScope::caughtValue(JSGlobalObject* globalObject) const
     bool success = catchEnvironment->getOwnPropertySlot(catchEnvironment, globalObject, errorName, slot);
     RELEASE_ASSERT(success && slot.isValue());
     return slot.getValue(globalObject, errorName);
+}
+
+Structure* DebuggerScope::createStructure(VM& vm, JSGlobalObject* globalObject)
+{
+    return Structure::create(vm, globalObject, jsNull(), TypeInfo(ObjectType, StructureFlags), info());
 }
 
 } // namespace JSC

@@ -119,7 +119,6 @@ public:
     bool isPositionXValue() const { return m_classType == ClassType::PositionX; }
     bool isPositionYValue() const { return m_classType == ClassType::PositionY; }
     bool isPrimitiveValue() const { return m_classType == ClassType::Primitive; }
-    bool isPropertyIdentifierValue() const { return m_classType == ClassType::PropertyIdentifier; }
     bool isQuad() const { return m_classType == ClassType::Quad; }
     bool isRatioValue() const { return m_classType == ClassType::Ratio; }
     bool isRayValue() const { return m_classType == ClassType::Ray; }
@@ -245,7 +244,6 @@ protected:
         Position,
         PositionX,
         PositionY,
-        PropertyIdentifier,
         Quad,
         Ratio,
         Ray,

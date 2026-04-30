@@ -110,6 +110,11 @@ void WKWebsiteDataStoreResetServiceWorkerFetchTimeoutForTesting(WKWebsiteDataSto
     protect(WebKit::toImpl(dataStore))->resetServiceWorkerTimeoutForTesting();
 }
 
+void WKWebsiteDataStoreClearCrossOriginPreflightResultCacheForTesting(WKWebsiteDataStoreRef dataStore)
+{
+    protect(WebKit::toImpl(dataStore))->clearCrossOriginPreflightResultCacheForTesting();
+}
+
 void WKWebsiteDataStoreSetResourceLoadStatisticsEnabled(WKWebsiteDataStoreRef dataStoreRef, bool enable)
 {
     protect(WebKit::toImpl(dataStoreRef))->setTrackingPreventionEnabled(enable);

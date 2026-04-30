@@ -68,6 +68,7 @@ void WebTouchEvent::transformToRemoteFrameCoordinates(const WebCore::RemoteFrame
 void WebPlatformTouchPoint::transformToRemoteFrameCoordinates(const WebCore::RemoteFrameGeometryTransformer& transformer)
 {
     m_locationInRootView = transformer.transformToRemoteFrameCoordinates(m_locationInRootView);
+    m_previousLocationInRootView = transformer.transformToRemoteFrameCoordinates(m_previousLocationInRootView);
 
     // When translating to the coordinate space of a site isolated iframe,
     // viewport coordinates become the same as root view coordinates because

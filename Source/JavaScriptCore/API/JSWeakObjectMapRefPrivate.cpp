@@ -28,6 +28,7 @@
 
 #include "APICast.h"
 #include "JSCallbackObject.h"
+#include "JSGlobalObjectInlines.h"
 #include "JSWeakObjectMapRefInternal.h"
 #include "WeakGCMapInlines.h"
 

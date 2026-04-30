@@ -30,6 +30,7 @@
 #if ENABLE(WEBXR)
 
 #include "ContextDestructionObserverInlines.h"
+#include "EventTargetInlines.h"
 #include "ExceptionOr.h"
 #include "HTMLCanvasElement.h"
 #include "IntSize.h"
@@ -338,6 +339,7 @@ PlatformXR::DeviceLayer WebXRWebGLLayer::endFrame()
         .blendTextureSourceAlpha = false,
         .forceMonoPresentation = false,
         .quadLayerData = std::nullopt,
+        .equirectLayerData = std::nullopt,
 #endif
 #endif
     };

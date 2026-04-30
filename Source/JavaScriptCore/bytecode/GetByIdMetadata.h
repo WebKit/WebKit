@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include "Options.h"
+#include "PropertyOffset.h"
+#include "Structure.h"
+
 namespace JSC {
 
 enum class GetByIdMode : uint8_t {

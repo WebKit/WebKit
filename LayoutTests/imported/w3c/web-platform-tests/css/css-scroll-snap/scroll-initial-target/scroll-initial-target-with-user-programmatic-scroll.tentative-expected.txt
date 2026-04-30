@@ -1,0 +1,4 @@
+
+FAIL scroll-initial-target does not override user scroll assert_approx_equals: scroll-initial-target sets initial vertical scroll position expected 200 +/- 1 but got 0
+FAIL scroll-initial-target does not override programmatic scroll assert_approx_equals: scroll-initial-target sets initial vertical scroll position expected 200 +/- 1 but got 0
+

@@ -23,6 +23,7 @@
 
 #include "Document.h"
 #include "DocumentPage.h"
+#include "FrameInlines.h"
 #include "FrameLoader.h"
 #include "HTMLFrameOwnerElement.h"
 #include "LocalFrame.h"

@@ -1613,7 +1613,7 @@ void RenderLayerScrollableArea::updateSnapOffsets()
     if (!box)
         return;
 
-    if (!hasScrollSnappedBoxes(*box)) {
+    if (!mayHaveScrollSnappedBoxes(*box)) {
         clearSnapOffsets();
         return;
     }

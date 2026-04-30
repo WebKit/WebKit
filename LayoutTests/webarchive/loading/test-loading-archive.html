@@ -10,7 +10,7 @@
         internals.setAlwaysAllowLocalWebarchive(true);
     function frameLoaded() {
         if (window.testRunner)
-            testRunner.notifyDone();
+            setTimeout(() => testRunner.notifyDone(), 0);
     }
 </script>
 <body>

@@ -216,7 +216,6 @@ void pas_all_heaps_reset_heap_ref(pas_lock_hold_mode heap_lock_hold_mode)
 }
 
 typedef struct {
-    pas_ptr_hash_set seen_shared_page_directories;
     pas_all_heaps_for_each_segregated_directory_callback callback;
     void* arg;
 } for_each_segregated_directory_data;
@@ -235,28 +234,12 @@ static bool for_each_segregated_directory_size_directory_callback(
     return data->callback(&directory->base, data->arg);
 }
 
-static bool for_each_segregated_directory_shared_page_directory_callback(
-    pas_segregated_shared_page_directory* directory, void* arg)
-{
-    for_each_segregated_directory_data* data;
-
-    data = arg;
-
-    if (pas_ptr_hash_set_set(&data->seen_shared_page_directories, directory, NULL,
-                             &pas_large_utility_free_heap_allocation_config)) {
-        /* We added a new shared page directory! */
-        
-        if (!data->callback(&directory->base, data->arg))
-            return false;
-    }
-
-    return true;
-}
-
 static bool for_each_segregated_directory_segregated_heap_callback(
     pas_segregated_heap* heap, const pas_heap_config* config, void* arg)
 {
     for_each_segregated_directory_data* data;
+
+    PAS_UNUSED_PARAM(config);
 
     data = arg;
 
@@ -264,10 +247,6 @@ static bool for_each_segregated_directory_segregated_heap_callback(
             heap, for_each_segregated_directory_size_directory_callback, data))
         return false;
 
-    if (!config->for_each_shared_page_directory(
-            heap, for_each_segregated_directory_shared_page_directory_callback, data))
-        return false;
-    
     return true;
 }
 
@@ -280,17 +259,12 @@ bool pas_all_heaps_for_each_segregated_directory(
 
     pas_heap_lock_assert_held();
     
-    pas_ptr_hash_set_construct(&data.seen_shared_page_directories);
     data.callback = callback;
     data.arg = arg;
     
     result = pas_all_heaps_for_each_segregated_heap(
         for_each_segregated_directory_segregated_heap_callback, &data);
     
-    pas_ptr_hash_set_destruct(
-        &data.seen_shared_page_directories,
-        &pas_large_utility_free_heap_allocation_config);
-
     return result;
 }
 
@@ -303,8 +277,6 @@ static void dump_directory_nicely(pas_segregated_directory* directory)
     switch (directory->directory_kind) {
     case pas_segregated_size_directory_kind:
         pas_log(", %u", ((pas_segregated_size_directory*)directory)->object_size);
-        break;
-    case pas_segregated_shared_page_directory_kind:
         break;
     }
     pas_log(")");
@@ -373,21 +345,12 @@ static bool verify_in_steady_state_segregated_directory_callback(
         
         is_payload_empty = pas_segregated_view_is_payload_empty(view);
         is_owned = pas_segregated_view_is_owned(view);
-        if (pas_segregated_view_is_partial(view)) {
-            if (!is_payload_empty && !is_owned) {
-                dump_directory_nicely(directory);
-                dump_view_nicely(index, view);
-                pas_log(": didn't expect a non-empty payload in a decommitted partial view.\n");
-                PAS_ASSERT(is_payload_empty || is_owned);
-            }
-        } else {
-            if (is_payload_empty != !is_owned) {
-                dump_directory_nicely(directory);
-                dump_view_nicely(index, view);
-                pas_log(": bad combination of is_empty_payload (%s) and is_owned (%s).\n",
-                        is_payload_empty ? "true" : "false", is_owned ? "true" : "false");
-                PAS_ASSERT(is_payload_empty == !is_owned);
-            }
+        if (is_payload_empty != !is_owned) {
+            dump_directory_nicely(directory);
+            dump_view_nicely(index, view);
+            pas_log(": bad combination of is_empty_payload (%s) and is_owned (%s).\n",
+                    is_payload_empty ? "true" : "false", is_owned ? "true" : "false");
+            PAS_ASSERT(is_payload_empty == !is_owned);
         }
     }
     
@@ -424,9 +387,6 @@ static bool compute_total_non_utility_segregated_summary_directory_callback(
 
         view = pas_segregated_directory_get(directory, index);
 
-        if (pas_segregated_view_is_partial(view))
-            continue;
-
         *result = pas_heap_summary_add(
             *result, pas_segregated_view_compute_summary(view, page_config));
     }
@@ -436,8 +396,8 @@ static bool compute_total_non_utility_segregated_summary_directory_callback(
 
 pas_heap_summary pas_all_heaps_compute_total_non_utility_segregated_summary(void)
 {
-    /* This is harder than it should be, but that's sort of inherent in the fact that we have
-       shared page directories. */
+    /* This is harder than it should be, but that's sort of inherent in the fact that we had*
+     * shared page directories. FIXME: it should be possible to simplify this now that we took those out. */
 
     pas_heap_summary result;
 

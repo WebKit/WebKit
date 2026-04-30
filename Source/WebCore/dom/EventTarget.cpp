@@ -83,6 +83,11 @@ EventTarget::~EventTarget()
         eventTargetData->clear();
 }
 
+WebCoreOpaqueRoot EventTarget::opaqueRoot() const
+{
+    return WebCoreOpaqueRoot { const_cast<EventTarget*>(this) };
+}
+
 bool EventTarget::isPaymentRequest() const
 {
     return false;

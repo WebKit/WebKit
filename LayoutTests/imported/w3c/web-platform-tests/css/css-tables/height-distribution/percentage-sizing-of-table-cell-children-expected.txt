@@ -14,7 +14,7 @@ Percentages resolve based on the final column width
 There should be a 100px blue square below:
 Percentages resolve based on the final row height
 
-There should be a blue and cyan rectangles of the same width:
+There should only be a cyan rectangle of non-zero width:
 Unresolvable percentage widths are resolved as auto in first pass (replaced elements)
 
 

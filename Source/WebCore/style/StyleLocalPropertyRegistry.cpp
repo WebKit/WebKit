@@ -25,7 +25,9 @@
 #include "config.h"
 #include "StyleLocalPropertyRegistry.h"
 
+#include "CSSCustomPropertySyntax.h"
 #include "CSSParserIdioms.h"
+#include "CSSPropertyParser.h"
 
 namespace WebCore {
 namespace Style {

@@ -29,7 +29,7 @@
 
 #import "InjectedBundleTest.h"
 
-#import "WebCoreTestSupport.h"
+#import <WebCoreTestSupport/WebCoreTestSupport.h>
 #import <WebKit/WKBundle.h>
 #import <WebKit/WKBundleFrame.h>
 #import <WebKit/WKBundlePage.h>

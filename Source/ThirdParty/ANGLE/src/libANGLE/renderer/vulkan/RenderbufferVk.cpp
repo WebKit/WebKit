@@ -394,7 +394,6 @@ void RenderbufferVk::onSubjectStateChange(angle::SubjectIndex index, angle::Subj
 {
     ASSERT(index == kRenderbufferImageSubjectIndex &&
            (message == angle::SubjectMessage::SubjectChanged ||
-            message == angle::SubjectMessage::InitializationComplete ||
             message == angle::SubjectMessage::VkImageChanged));
 
     if (message == angle::SubjectMessage::VkImageChanged)

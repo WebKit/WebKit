@@ -20,9 +20,11 @@
 
 #pragma once
 
+#include "CommonIdentifiers.h"
 #include "JSGlobalObject.h"
 #include "RegExpObject.h"
 #include "RegExpPrototype.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

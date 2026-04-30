@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "StructureCreateInlines.h"
 #include "SymbolPrototype.h"
 
 namespace JSC {

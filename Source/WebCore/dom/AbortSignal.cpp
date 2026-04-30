@@ -176,10 +176,8 @@ void AbortSignal::markAborted(JSC::JSGlobalObject& globalObject, JSC::JSValue re
     m_aborted = true;
     m_sourceSignals.clear();
 
-    // FIXME: This code is wrong: we should emit a write-barrier. Otherwise, GC can collect it.
-    // https://bugs.webkit.org/show_bug.cgi?id=236353
     ASSERT(reason);
-    m_reason.setWeakly(globalObject, reason);
+    m_reason.set(globalObject, wrapper(), reason);
 }
 
 void AbortSignal::runAbortSteps()

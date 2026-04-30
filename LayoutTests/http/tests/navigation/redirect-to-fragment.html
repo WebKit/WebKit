@@ -3,6 +3,7 @@
 <head>
 <script>
 if (window.testRunner) {
+    internals.clearMemoryCache();
     testRunner.dumpAsText();
     testRunner.dumpResourceLoadCallbacks();
     testRunner.waitUntilDone();
@@ -10,7 +11,7 @@ if (window.testRunner) {
 
 onload = function() {
     if (window.testRunner)
-        testRunner.notifyDone();
+        setTimeout(() => testRunner.notifyDone(), 0);
 }
 </script>
 </head>

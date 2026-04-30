@@ -30,6 +30,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JITExceptions.h"
+#include "JSCJSValueInlines.h"
 #include "JSWebAssemblyArrayInlines.h"
 #include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyInstance.h"
@@ -39,7 +40,6 @@
 #include "WasmIPIntGenerator.h"
 #include "WasmModuleInformation.h"
 #include "WasmTypeDefinition.h"
-#include <wtf/CheckedArithmetic.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -686,15 +686,12 @@ inline bool memoryInit(JSWebAssemblyInstance* instance, unsigned dataSegmentInde
     return instance->memoryInit(dstAddress, srcAddress, length, dataSegmentIndex, memoryIndex);
 }
 
-inline bool memoryFill(JSWebAssemblyInstance* instance, uint64_t dstAddress, uint32_t targetValue, uint64_t count, uint8_t memoryIndex)
+inline bool memoryFill(JSWebAssemblyInstance* instance, uint32_t dstAddress, uint32_t targetValue, uint32_t count, uint8_t memoryIndex)
 {
     auto* base = std::bit_cast<uint8_t*>(instance->memory(memoryIndex)->basePointer());
     uint64_t size = instance->memory(memoryIndex)->memory().size();
 
-    if (sumOverflows<uint64_t>(dstAddress, count))
-        return false;
-
-    uint64_t lastDstAddress = dstAddress + count;
+    uint64_t lastDstAddress = static_cast<uint64_t>(dstAddress) + count;
     if (lastDstAddress > size)
         return false;
 
@@ -702,21 +699,15 @@ inline bool memoryFill(JSWebAssemblyInstance* instance, uint64_t dstAddress, uin
     return true;
 }
 
-inline bool memoryCopy(JSWebAssemblyInstance* instance, uint64_t dstAddress, uint64_t srcAddress, uint64_t count, uint8_t dstMemoryIndex, uint8_t srcMemoryIndex)
+inline bool memoryCopy(JSWebAssemblyInstance* instance, uint32_t dstAddress, uint32_t srcAddress, uint32_t count, uint8_t dstMemoryIndex, uint8_t srcMemoryIndex)
 {
     auto* dstBase = std::bit_cast<uint8_t*>(instance->memory(dstMemoryIndex)->basePointer());
     uint64_t dstSize = instance->memory(dstMemoryIndex)->memory().size();
     auto* srcBase = std::bit_cast<uint8_t*>(instance->memory(srcMemoryIndex)->basePointer());
     uint64_t srcSize = instance->memory(srcMemoryIndex)->memory().size();
 
-    if (sumOverflows<uint64_t>(dstAddress, count))
-        return false;
-
-    if (sumOverflows<uint64_t>(srcAddress, count))
-        return false;
-
-    uint64_t lastDstAddress = dstAddress + count;
-    uint64_t lastSrcAddress = srcAddress + count;
+    uint64_t lastDstAddress = static_cast<uint64_t>(dstAddress) + count;
+    uint64_t lastSrcAddress = static_cast<uint64_t>(srcAddress) + count;
 
     if (lastDstAddress > dstSize || lastSrcAddress > srcSize)
         return false;
@@ -778,11 +769,9 @@ inline int32_t memoryAtomicWait32(JSWebAssemblyInstance* instance, uint64_t offs
     return waitImpl<int32_t>(vm, pointer, value, timeoutInNanoseconds);
 }
 
-inline int32_t memoryAtomicWait32(JSWebAssemblyInstance* instance, uint64_t base, uint64_t offset, int32_t value, int64_t timeoutInNanoseconds, uint8_t memoryIndex)
+inline int32_t memoryAtomicWait32(JSWebAssemblyInstance* instance, unsigned base, unsigned offset, int32_t value, int64_t timeoutInNanoseconds, uint8_t memoryIndex)
 {
-    if (sumOverflows<uint64_t>(base, offset))
-        return -1;
-    return memoryAtomicWait32(instance, base + offset, value, timeoutInNanoseconds, memoryIndex);
+    return memoryAtomicWait32(instance, static_cast<uint64_t>(base) + offset, value, timeoutInNanoseconds, memoryIndex);
 }
 
 inline int32_t memoryAtomicWait64(JSWebAssemblyInstance* instance, uint64_t offsetInMemory, int64_t value, int64_t timeoutInNanoseconds, uint8_t memoryIndex)
@@ -802,18 +791,14 @@ inline int32_t memoryAtomicWait64(JSWebAssemblyInstance* instance, uint64_t offs
     return waitImpl<int64_t>(vm, pointer, value, timeoutInNanoseconds);
 }
 
-inline int32_t memoryAtomicWait64(JSWebAssemblyInstance* instance, uint64_t base, uint64_t offset, int64_t value, int64_t timeoutInNanoseconds, uint8_t memoryIndex)
+inline int32_t memoryAtomicWait64(JSWebAssemblyInstance* instance, unsigned base, unsigned offset, int64_t value, int64_t timeoutInNanoseconds, uint8_t memoryIndex)
 {
-    if (sumOverflows<uint64_t>(base, offset))
-        return -1;
-    return memoryAtomicWait64(instance, base + offset, value, timeoutInNanoseconds, memoryIndex);
+    return memoryAtomicWait64(instance, static_cast<uint64_t>(base) + offset, value, timeoutInNanoseconds, memoryIndex);
 }
 
-inline int32_t memoryAtomicNotify(JSWebAssemblyInstance* instance, uint64_t base, uint64_t offset, int32_t countValue, uint8_t memoryIndex)
+inline int32_t memoryAtomicNotify(JSWebAssemblyInstance* instance, unsigned base, unsigned offset, int32_t countValue, uint8_t memoryIndex)
 {
-    if (sumOverflows<uint64_t>(base, offset))
-        return -1;
-    uint64_t offsetInMemory = base + offset;
+    uint64_t offsetInMemory = static_cast<uint64_t>(base) + offset;
     if (offsetInMemory & (0x4 - 1))
         return -1;
     if (memoryIndex >= instance->moduleInformation().memoryCount())

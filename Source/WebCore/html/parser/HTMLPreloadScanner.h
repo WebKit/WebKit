@@ -61,7 +61,8 @@ private:
         Style,
         Base,
         Template,
-        Picture
+        Picture,
+        Svg
     };
 
     class StartTagScanner;
@@ -82,6 +83,7 @@ private:
     Vector<bool> m_pictureSourceState;
 
     unsigned m_templateCount { 0 };
+    unsigned m_foreignContentCount { 0 };
 };
 
 class HTMLPreloadScanner {

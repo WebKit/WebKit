@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ConsoleObject.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

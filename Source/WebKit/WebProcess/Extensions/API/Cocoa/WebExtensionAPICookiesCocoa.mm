@@ -177,7 +177,7 @@ std::optional<WebExtensionAPICookies::ParsedDetails> WebExtensionAPICookies::par
 
         url = URL { urlString };
         if (!url.isValid()) {
-            *outExceptionString = toErrorString(nullString(), urlKey, @"'%@' is not a valid URL", urlString).createNSString().autorelease();
+            *outExceptionString = toErrorString(nullString(), urlKey, makeString("'"_s, String(urlString), "' is not a valid URL"_s)).createNSString().autorelease();
             return std::nullopt;
         }
     }
@@ -191,7 +191,7 @@ std::optional<WebExtensionAPICookies::ParsedDetails> WebExtensionAPICookies::par
 
         sessionID = toImpl(storeID);
         if (!sessionID) {
-            *outExceptionString = toErrorString(nullString(), storeIdKey, @"'%@' is not a valid cookie store identifier", storeID).createNSString().autorelease();
+            *outExceptionString = toErrorString(nullString(), storeIdKey, makeString("'"_s, String(storeID), "' is not a valid cookie store identifier"_s)).createNSString().autorelease();
             return std::nullopt;
         }
     }

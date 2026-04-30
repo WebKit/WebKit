@@ -47,21 +47,18 @@
           'shards': 5,
         },
       },
-      # anglebug.com/40644897 suspecting device lost caused by multiprocess
-      'win10-x64-ir-intel': {
-        'args': [
-          '--max-processes=1',
-        ],
-        'swarming': {
-          'shards': 10,
-        },
-      },
     },
     'replacements': {
       # anglebug.com/408276172 suspecting WebGPU backend flakiness caused by multiprocess
       'angle-linux-x64-intel-uhd630-rel': {
         'args': {
           '--max-processes': '1',
+        },
+      },
+      # crbug.com/506180945 low capacity in this pool
+      'angle-win-x64-intel-uhd630-rel': {
+        'args': {
+          '--gtest_filter': '-*Vulkan_SwiftShader*:*D3D9*:*WebGPU*',
         },
       },
     },
@@ -99,15 +96,6 @@
           'shards': 4,
         },
       },
-      'win10-x64-ir-intel': {
-        # anglebug.com/42263955 flaky 4x8 pixel artifacts on Win Intel
-        'args': [
-          '--flaky-retries=1',
-        ],
-        'swarming': {
-          'shards': 5,
-        },
-      },
     },
   },
   'angle_trace_perf_native_tests': {
@@ -138,23 +126,12 @@
           'shards': 4,
         },
       },
-      'win10-x64-ir-intel': {
-        'swarming': {
-          'shards': 3,
-        },
-      },
     },
   },
   'angle_white_box_tests': {
     'modifications': {
       # anglebug.com/40644897 suspecting device lost caused by multiprocess
       'angle-win-x64-intel-uhd630-rel': {
-        'args': [
-          '--max-processes=1',
-        ],
-      },
-      # anglebug.com/40644897 suspecting device lost caused by multiprocess
-      'win10-x64-ir-intel': {
         'args': [
           '--max-processes=1',
         ],

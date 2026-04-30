@@ -78,7 +78,7 @@ public:
     ExceptionOr<Ref<XRProjectionLayer>> createProjectionLayer(ScriptExecutionContext&, const XRProjectionLayerInit&);
     ExceptionOr<Ref<XRQuadLayer>> createQuadLayer(ScriptExecutionContext&, const XRQuadLayerInit&);
     ExceptionOr<Ref<XRCylinderLayer>> createCylinderLayer(const XRCylinderLayerInit&) { RELEASE_ASSERT_NOT_REACHED(); }
-    ExceptionOr<Ref<XREquirectLayer>> createEquirectLayer(const XREquirectLayerInit&) { RELEASE_ASSERT_NOT_REACHED(); }
+    ExceptionOr<Ref<XREquirectLayer>> createEquirectLayer(ScriptExecutionContext&, const XREquirectLayerInit&);
     ExceptionOr<Ref<XRCubeLayer>> createCubeLayer(const XRCubeLayerInit&) { RELEASE_ASSERT_NOT_REACHED(); }
 
     Ref<WebXRViewport> initializeViewport(IntSize, XRLayerLayout, int offset, int num);
@@ -95,6 +95,7 @@ private:
     bool depthFormatIsSupportedForProjectionLayer(GCGLenum) const;
     bool colorFormatIsSupportedForNonProjectionLayer(GCGLenum) const;
     bool depthFormatIsSupportedForNonProjectionLayer(GCGLenum) const;
+    ExceptionOr<void> validateCompositionLayerInitParameters(const XRLayerInit&) const;
     ExceptionOr<Vector<RefPtr<WebGLOpaqueTexture>>> allocateColorTexturesForProjectionLayer(XRProjectionLayer&, XRTextureType, GCGLenum textureFormat, double scaleFactor);
     ExceptionOr<Vector<RefPtr<WebGLOpaqueTexture>>> allocateDepthTexturesForProjectionLayer(XRProjectionLayer&, XRTextureType, GCGLenum textureFormat, double scaleFactor);
     ExceptionOr<Vector<RefPtr<WebGLOpaqueTexture>>> allocateColorTexturesForLayer(XRCompositionLayer&, XRTextureType, const XRLayerInit&);

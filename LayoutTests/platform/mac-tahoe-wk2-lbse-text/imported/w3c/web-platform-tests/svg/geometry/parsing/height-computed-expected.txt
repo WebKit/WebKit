@@ -22,11 +22,11 @@ PASS SVG Geometry Properties: getComputedStyle().height, <foreignObject> inline 
 FAIL SVG Geometry Properties: getComputedStyle().height, <foreignObject> inline style (pixels) assert_equals: inline style (pixels) expected "75px" but got "0px"
 FAIL SVG Geometry Properties: getComputedStyle().height, <foreignObject> inline style (percentage) assert_equals: inline style (percentage) expected "50px" but got "0px"
 PASS SVG Geometry Properties: getComputedStyle().height, <foreignObject> inline style but "display: none"
-FAIL SVG Geometry Properties: getComputedStyle().height, <svg> initial assert_equals: initial expected "100px" but got "auto"
-PASS SVG Geometry Properties: getComputedStyle().height, <svg> presentation attribute
-FAIL SVG Geometry Properties: getComputedStyle().height, <svg> inline style (auto) assert_equals: inline style (auto) expected "100px" but got "auto"
+PASS SVG Geometry Properties: getComputedStyle().height, <svg> initial
+FAIL SVG Geometry Properties: getComputedStyle().height, <svg> presentation attribute assert_equals: presentation attribute expected "auto" but got "200px"
+PASS SVG Geometry Properties: getComputedStyle().height, <svg> inline style (auto)
 PASS SVG Geometry Properties: getComputedStyle().height, <svg> inline style (pixels)
-FAIL SVG Geometry Properties: getComputedStyle().height, <svg> inline style (percentage) assert_equals: inline style (percentage) expected "50px" but got "50%"
+PASS SVG Geometry Properties: getComputedStyle().height, <svg> inline style (percentage)
 PASS SVG Geometry Properties: getComputedStyle().height, <svg> inline style but "display: none"
 PASS SVG Geometry Properties: getComputedStyle().height, <g> initial
 FAIL SVG Geometry Properties: getComputedStyle().height, <g> initial (with dummy attribute) assert_equals: initial (with dummy attribute) expected "auto" but got "42px"

@@ -6779,16 +6779,15 @@ class CleanGitRepo(steps.ShellSequence, ShellMixin):
 
     def run(self):
         self.commands = []
-        if self.getProperty('platform', '*') == 'win':
-            self.commands.append(util.ShellArg(
-                command=self.shell_command(r'del .git\gc.log || {}'.format(self.shell_exit_0())),
-                logname='stdio',
-            ))
-        else:
-            self.commands.append(util.ShellArg(
-                command=self.shell_command('rm -f .git/gc.log || {}'.format(self.shell_exit_0())),
-                logname='stdio',
-            ))
+        stale_git_files = ['gc.log', 'index.lock', 'packed-refs.lock', 'packed-refs.new', 'HEAD.lock', 'config.lock', 'FETCH_HEAD.lock']
+        for stale_file in stale_git_files:
+            if self.getProperty('platform', '*') == 'win':
+                path = r'.git\{}'.format(stale_file)
+                command = self.shell_command(r'del {} || {}'.format(path, self.shell_exit_0()))
+            else:
+                path = '.git/{}'.format(stale_file)
+                command = self.shell_command('rm -f {} || {}'.format(path, self.shell_exit_0()))
+            self.commands.append(util.ShellArg(command=command, logname='stdio'))
 
         for command in [
             self.shell_command('git rebase --abort || {}'.format(self.shell_exit_0())),

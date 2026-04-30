@@ -7,9 +7,9 @@ PASS audio/mp4 (optional)
 PASS audio/mp4; codecs="mp4a.40.2" (optional)
 PASS audio/mp4 with bogus codec
 PASS audio/mp4 with and without codecs
-NOTRUN audio/ogg (optional) audio/ogg
-NOTRUN audio/ogg; codecs="opus" (optional) audio/ogg
-NOTRUN audio/ogg; codecs="vorbis" (optional) audio/ogg
+PASS audio/ogg (optional)
+PASS audio/ogg; codecs="opus" (optional)
+PASS audio/ogg; codecs="vorbis" (optional)
 PASS audio/ogg with bogus codec
 PASS audio/ogg with and without codecs
 PASS audio/wav (optional)
@@ -32,7 +32,7 @@ PASS video/mp4 (optional)
 PASS video/mp4; codecs="mp4a.40.2" (optional)
 PASS video/mp4; codecs="avc1.42E01E" (optional)
 PASS video/mp4; codecs="avc1.4D401E" (optional)
-NOTRUN video/mp4; codecs="avc1.58A01E" (optional) video/mp4
+PASS video/mp4; codecs="avc1.58A01E" (optional)
 PASS video/mp4; codecs="avc1.64001E" (optional)
 PASS video/mp4; codecs="mp4v.20.8" (optional)
 PASS video/mp4; codecs="mp4v.20.240" (optional)

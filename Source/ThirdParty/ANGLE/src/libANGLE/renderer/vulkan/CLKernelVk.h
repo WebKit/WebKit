@@ -147,6 +147,8 @@ class CLKernelVk : public CLKernelImpl
     // Initialize the descriptor pools for this kernel resources
     angle::Result initializeDescriptorPools();
 
+    size_t getLocalMemSizeUsed(const cl::Device &device) const override;
+
   private:
     CLProgramVk *mProgram;
     CLContextVk *mContext;
@@ -170,6 +172,8 @@ class CLKernelVk : public CLKernelImpl
 
     vk::DescriptorSetArray<vk::DescriptorSetLayoutDesc> mDescriptorSetLayoutDescs;
     vk::PipelineLayoutDesc mPipelineLayoutDesc;
+
+    std::vector<size_t> mLocalMemoryArgSizes;
 };
 
 }  // namespace rx

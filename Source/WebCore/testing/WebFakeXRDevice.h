@@ -108,7 +108,7 @@ private:
     std::optional<PlatformXR::LayerHandle> createLayer(IntSize);
     std::optional<PlatformXR::LayerInfo> createLayerProjection(uint32_t width, uint32_t height, bool alpha) final;
 #if ENABLE(WEBXR_LAYERS)
-    std::optional<PlatformXR::LayerInfo> createQuadLayer(IntSize, PlatformXR::LayerLayout) final;
+    std::optional<PlatformXR::LayerInfo> createCompositionLayer(PlatformXR::CompositionLayerType, IntSize, PlatformXR::LayerLayout) final;
 #endif
     void deleteLayer(PlatformXR::LayerHandle) final;
 #if ENABLE(WEBXR_HIT_TEST)

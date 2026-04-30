@@ -141,6 +141,7 @@ private:
 
     uint32_t m_bytecodeOffset { 0 };
     unsigned m_maxFrameSizeInV128 { 0 };
+    unsigned m_maxCalleeStackSize { 0 };
     unsigned m_numLocals { 0 };
     unsigned m_numAlignedRethrowSlots { 0 };
     unsigned m_numArguments { 0 };

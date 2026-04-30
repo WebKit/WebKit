@@ -144,6 +144,7 @@ public:
 
     bool addEventListener(const AtomString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
     using EventTarget::addEventListener;
+    void listenForUncapturedErrors();
 
     using LostPromise = DOMPromiseProxy<IDLInterface<GPUDeviceLostInfo>>;
     LostPromise& lost() LIFETIME_BOUND;
@@ -188,6 +189,7 @@ private:
     const Ref<GPUAdapterInfo> m_adapterInfo;
 
     bool m_waitingForDeviceLostPromise { false };
+    bool m_listeningForUncapturedErrors { false };
 };
 
 } // namespace WebCore

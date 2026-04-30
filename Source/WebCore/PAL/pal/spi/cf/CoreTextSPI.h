@@ -262,6 +262,9 @@ CTFontUIFontType CTFontGetUIFontType(CTFontRef);
 CTFontDescriptorOptions CTFontDescriptorGetOptions(CTFontDescriptorRef);
 
 CFBitVectorRef CTFontCopyColorGlyphCoverage(CTFontRef);
+#if HAVE(CORE_TEXT_GLYPHHASCOMPLEXCOLOR_FUNCTION)
+bool CTFontHasComplexColorFormatForGlyph(CTFontRef, CGGlyph);
+#endif
 
 #if HAVE(CTFONTMANAGER_CREATEMEMORYSAFEFONTDESCRIPTORFROMDATA)
 CTFontDescriptorRef CTFontManagerCreateMemorySafeFontDescriptorFromData(CFDataRef);

@@ -34,6 +34,7 @@
 #import <wtf/CompletionHandler.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/WeakPtr.h>
 #import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/Base64.h>
 #import <wtf/text/MakeString.h>
@@ -51,8 +52,8 @@ static HashMap<String, HTTPResponse> makeRequestMap(std::initializer_list<std::p
     return map;
 }
 
-HTTPServer::RequestData::RequestData(std::initializer_list<std::pair<String, HTTPResponse>> responses)
-    : requestMap { makeRequestMap(responses) }
+HTTPServer::RequestData::RequestData(HashMap<String, HTTPResponse>&& responses)
+    : requestMap(WTF::move(responses))
 {
 }
 
@@ -165,32 +166,35 @@ RetainPtr<nw_parameters_t> HTTPServer::listenerParameters(Protocol protocol, Cer
     return parameters;
 }
 
-static void startListening(nw_listener_t listener)
+void HTTPServer::startListening(CompletionHandler<void()>&& completionHandler)
 {
-    __block bool ready = false;
-    nw_listener_set_state_changed_handler(listener, ^(nw_listener_state_t state, nw_error_t error) {
+    nw_listener_set_state_changed_handler(m_listener.get(), makeBlockPtr([completionHandler = WTF::move(completionHandler)](nw_listener_state_t state, nw_error_t error) mutable {
         ASSERT_UNUSED(error, !error);
         if (state == nw_listener_state_ready)
-            ready = true;
-    });
-    nw_listener_start(listener);
-    Util::run(&ready);
+            completionHandler();
+    }).get());
+    nw_listener_start(m_listener.get());
 }
 
-void HTTPServer::cancel()
+void HTTPServer::cancel(CompletionHandler<void()>&& completionHandler)
 {
-    __block bool cancelled = false;
-    nw_listener_set_state_changed_handler(m_listener.get(), ^(nw_listener_state_t state, nw_error_t error) {
+    nw_listener_set_state_changed_handler(m_listener.get(), makeBlockPtr([this, weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)](nw_listener_state_t state, nw_error_t error) mutable {
         ASSERT_UNUSED(error, !error);
-        if (state == nw_listener_state_cancelled)
-            cancelled = true;
-    });
-    nw_listener_cancel(m_listener.get());
-    Util::run(&cancelled);
-    m_listener = nullptr;
 
-    bool done { false };
-    terminateAllConnections([&] {
+        if (!weakThis)
+            return;
+
+        if (state == nw_listener_state_cancelled) {
+            m_listener = nullptr;
+            terminateAllConnections(WTF::move(completionHandler));
+        }
+    }).get());
+    nw_listener_cancel(m_listener.get());
+}
+
+void HTTPServer::cancel() {
+    bool done = false;
+    cancel([&] {
         done = true;
     });
     Util::run(&done);
@@ -203,8 +207,27 @@ void HTTPServer::terminateAllConnections(CompletionHandler<void()>&& completionH
         connection.terminate([aggregator] { });
 }
 
-HTTPServer::HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>> responses, Protocol protocol, CertificateVerifier&& verifier, SecIdentityRef identity, std::optional<uint16_t> port)
-    : m_requestData(adoptRef(*new RequestData(responses)))
+HTTPServer::HTTPServer(
+    std::initializer_list<std::pair<String, HTTPResponse>> responses,
+    Protocol protocol,
+    CertificateVerifier&& verifier,
+    SecIdentityRef identity,
+    std::optional<uint16_t> port,
+    DeferListening deferListening
+)
+    : HTTPServer(makeRequestMap(responses), protocol, WTF::move(verifier), identity, port, deferListening)
+{
+}
+
+HTTPServer::HTTPServer(
+    ResponseMap&& responses,
+    Protocol protocol,
+    CertificateVerifier&& verifier,
+    SecIdentityRef identity,
+    std::optional<uint16_t> port,
+    DeferListening deferListening
+)
+    : m_requestData(adoptRef(*new RequestData(WTF::move(responses))))
     , m_listener(adoptNS(nw_listener_create(listenerParameters(protocol, WTF::move(verifier), identity, port).get())))
     , m_protocol(protocol)
 {
@@ -215,7 +238,14 @@ HTTPServer::HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>> re
         nw_connection_start(connection);
         respondToRequests(Connection(connection), requestData);
     }).get());
-    startListening(m_listener.get());
+
+    if (deferListening == DeferListening::No) {
+        bool done = false;
+        startListening([&] {
+            done = true;
+        });
+        Util::run(&done);
+    }
 }
 
 HTTPServer::HTTPServer(Function<void(Connection)>&& connectionHandler, Protocol protocol)
@@ -230,7 +260,12 @@ HTTPServer::HTTPServer(Function<void(Connection)>&& connectionHandler, Protocol 
         nw_connection_start(connection);
         connectionHandler(Connection(connection));
     }).get());
-    startListening(m_listener.get());
+
+    bool done = false;
+    startListening([&] {
+        done = true;
+    });
+    Util::run(&done);
 }
 
 HTTPServer::HTTPServer(UseCoroutines, Function<ConnectionTask(Connection)>&& connectionHandler, Protocol protocol)
@@ -245,7 +280,12 @@ HTTPServer::HTTPServer(UseCoroutines, Function<ConnectionTask(Connection)>&& con
         nw_connection_start(connection);
         requestData->coroutineHandles.append(connectionHandler(Connection(connection)).handle);
     }).get());
-    startListening(m_listener.get());
+
+    bool done = false;
+    startListening([&] {
+        done = true;
+    });
+    Util::run(&done);
 }
 
 HTTPServer::~HTTPServer() = default;
@@ -706,5 +746,10 @@ Vector<uint8_t> HTTPServer::testPrivateKey()
     auto decodedPrivateKey = base64Decode(pemEncodedPrivateKey);
     return WTF::move(*decodedPrivateKey);
 }
-    
+
 } // namespace TestWebKitAPI
+
+void hashMapSet(HashMap<WTF::String, TestWebKitAPI::HTTPResponse>& map, WTF::String&& key, TestWebKitAPI::HTTPResponse&& value)
+{
+    map.set(WTF::move(key), WTF::move(value));
+}

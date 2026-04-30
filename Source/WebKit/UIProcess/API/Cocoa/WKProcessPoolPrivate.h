@@ -73,6 +73,9 @@ WK_CLASS_AVAILABLE(macos(14.5), ios(17.5), visionos(1.2))
 
 @interface WKProcessPool ()
 - (instancetype)_initWithConfiguration:(_WKProcessPoolConfiguration *)configuration __attribute__((objc_method_family(init))) NS_DESIGNATED_INITIALIZER;
+
+// FIXME: (rdar://74045576) Swift can't call the above `_init` method.
++ (instancetype)_processPoolWithConfiguration:(_WKProcessPoolConfiguration *)configuration;
 @end
 
 @interface WKProcessPool (WKPrivate)

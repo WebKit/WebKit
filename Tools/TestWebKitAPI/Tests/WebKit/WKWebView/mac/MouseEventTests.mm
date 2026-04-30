@@ -447,6 +447,190 @@ TEST(MouseEventTests, AutoscrollOnMouseDragBelowWindow)
     EXPECT_GT(scrollY, 0);
 }
 
+static NSString *overlappingWebViewsHTML = @"<!DOCTYPE html>"
+    "<html><head><style>body, html { margin: 0; width: 100%; height: 100%; } #target { width: 100%; height: 100%; }</style></head>"
+    "<body><div id='target'></div><script>"
+    "    let moveCount = 0;"
+    "    let enterCount = 0;"
+    "    let leaveCount = 0;"
+    "    let target = document.getElementById('target');"
+    "    target.addEventListener('mousemove', () => moveCount++);"
+    "    target.addEventListener('mouseenter', () => enterCount++);"
+    "    target.addEventListener('mouseleave', () => leaveCount++);"
+    "</script></body></html>";
+
+static auto setupOverlappingWebViews()
+{
+    RetainPtr bottomWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [bottomWebView synchronouslyLoadHTMLString:overlappingWebViewsHTML];
+    [bottomWebView evaluateJavaScript:@"document.body.style.backgroundColor = 'blue'" completionHandler:nil];
+
+    RetainPtr topWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(200, 0, 200, 200)]);
+    [topWebView synchronouslyLoadHTMLString:overlappingWebViewsHTML];
+    [topWebView evaluateJavaScript:@"document.body.style.backgroundColor = 'red'" completionHandler:nil];
+    [[bottomWebView window].contentView addSubview:topWebView.get()];
+
+    auto findTrackingAreaObserver = [](TestWKWebView *webView) -> id {
+        for (NSTrackingArea *area in [webView trackingAreas]) {
+            if (area.options & NSTrackingMouseMoved)
+                return area.owner;
+        }
+        return nil;
+    };
+
+    RetainPtr<id> bottomObserver = findTrackingAreaObserver(bottomWebView.get());
+    RetainPtr<id> topObserver = findTrackingAreaObserver(topWebView.get());
+
+    return std::make_tuple(bottomWebView, topWebView, bottomObserver, topObserver);
+}
+
+static void checkMouseEventCounts(TestWKWebView *view, int expectedMouseMoveCount, int expectedMouseEnterCount, int expectedMouseLeaveCount)
+{
+    [view waitForPendingMouseEvents];
+
+    EXPECT_EQ([[view objectByEvaluatingJavaScript:@"moveCount"] intValue], expectedMouseMoveCount);
+    EXPECT_EQ([[view objectByEvaluatingJavaScript:@"enterCount"] intValue], expectedMouseEnterCount);
+    EXPECT_EQ([[view objectByEvaluatingJavaScript:@"leaveCount"] intValue], expectedMouseLeaveCount);
+}
+
+TEST(MouseEventTests, OverlappingWebViewsTopViewReceivesMouseMove)
+{
+    auto [bottomWebView, topWebView, bottomObserver, topObserver] = setupOverlappingWebViews();
+
+    RetainPtr event = [bottomWebView _mouseEventWithType:NSEventTypeMouseMoved atLocation:NSMakePoint(300, 100)];
+    [bottomObserver mouseMoved:event.get()];
+    [topObserver mouseMoved:event.get()];
+
+    checkMouseEventCounts(bottomWebView, 0, 0, 0);
+    checkMouseEventCounts(topWebView, 1, 1, 0);
+}
+
+TEST(MouseEventTests, OverlappingWebViewsBottomViewReceivesMouseMove)
+{
+    auto [bottomWebView, topWebView, bottomObserver, topObserver] = setupOverlappingWebViews();
+
+    RetainPtr event = [bottomWebView _mouseEventWithType:NSEventTypeMouseMoved atLocation:NSMakePoint(100, 200)];
+    [bottomObserver mouseMoved:event.get()];
+    [topObserver mouseMoved:event.get()];
+
+    checkMouseEventCounts(bottomWebView, 1, 1, 0);
+    checkMouseEventCounts(topWebView, 0, 0, 0);
+}
+
+TEST(MouseEventTests, OverlappingWebViewsTopViewReceivesMouseEnterAndMouseExit)
+{
+    auto [bottomWebView, topWebView, bottomObserver, topObserver] = setupOverlappingWebViews();
+
+    RetainPtr enterTopViewEvent = [bottomWebView _mouseEventWithType:NSEventTypeMouseEntered atLocation:NSMakePoint(300, 100)];
+
+    [bottomObserver mouseEntered:enterTopViewEvent.get()];
+    [topObserver mouseEntered:enterTopViewEvent.get()];
+
+    checkMouseEventCounts(bottomWebView, 0, 0, 0);
+    checkMouseEventCounts(topWebView, 1, 1, 0);
+
+    RetainPtr exitTopViewEvent = [bottomWebView _mouseEventWithType:NSEventTypeMouseExited atLocation:NSMakePoint(500, 100)];
+
+    [bottomObserver mouseExited:exitTopViewEvent.get()];
+    [topObserver mouseExited:exitTopViewEvent.get()];
+
+    checkMouseEventCounts(bottomWebView, 0, 0, 0);
+    checkMouseEventCounts(topWebView, 1, 1, 1);
+}
+
+TEST(MouseEventTests, OverlappingWebViewsBottomViewReceivesMouseEnterAndMouseExit)
+{
+    auto [bottomWebView, topWebView, bottomObserver, topObserver] = setupOverlappingWebViews();
+
+    RetainPtr enterBottomViewEvent = [bottomWebView _mouseEventWithType:NSEventTypeMouseEntered atLocation:NSMakePoint(300, 300)];
+
+    [bottomObserver mouseEntered:enterBottomViewEvent.get()];
+    [topObserver mouseEntered:enterBottomViewEvent.get()];
+
+    checkMouseEventCounts(bottomWebView, 1, 1, 0);
+    checkMouseEventCounts(topWebView, 0, 0, 0);
+
+    RetainPtr exitBottomViewEvent = [bottomWebView _mouseEventWithType:NSEventTypeMouseExited atLocation:NSMakePoint(300, 500)];
+
+    [bottomObserver mouseExited:exitBottomViewEvent.get()];
+    [topObserver mouseExited:exitBottomViewEvent.get()];
+
+    checkMouseEventCounts(bottomWebView, 1, 1, 1);
+    checkMouseEventCounts(topWebView, 0, 0, 0);
+}
+
+TEST(MouseEventTests, OverlappingWebViewsTopAndBottomViewsReceiveMouseEnterAndMouseExit)
+{
+    auto [bottomWebView, topWebView, bottomObserver, topObserver] = setupOverlappingWebViews();
+
+    RetainPtr enterBottomViewEvent = [bottomWebView _mouseEventWithType:NSEventTypeMouseEntered atLocation:NSMakePoint(300, 300)];
+
+    [bottomObserver mouseEntered:enterBottomViewEvent.get()];
+    [topObserver mouseEntered:enterBottomViewEvent.get()];
+
+    checkMouseEventCounts(bottomWebView, 1, 1, 0);
+    checkMouseEventCounts(topWebView, 0, 0, 0);
+
+    RetainPtr enterTopViewEvent = [bottomWebView _mouseEventWithType:NSEventTypeMouseEntered atLocation:NSMakePoint(300, 100)];
+
+    [bottomObserver mouseEntered:enterTopViewEvent.get()];
+    [topObserver mouseEntered:enterTopViewEvent.get()];
+
+    checkMouseEventCounts(bottomWebView, 1, 1, 0);
+    checkMouseEventCounts(topWebView, 1, 1, 0);
+
+    RetainPtr moveOnBottomViewEvent = [bottomWebView _mouseEventWithType:NSEventTypeMouseMoved atLocation:NSMakePoint(300, 300)];
+
+    [bottomObserver mouseMoved:moveOnBottomViewEvent.get()];
+
+    RetainPtr exitTopViewEvent = [bottomWebView _mouseEventWithType:NSEventTypeMouseExited atLocation:NSMakePoint(300, 300)];
+
+    [topObserver mouseExited:exitTopViewEvent.get()];
+
+    checkMouseEventCounts(bottomWebView, 2, 1, 0);
+    checkMouseEventCounts(topWebView, 1, 1, 1);
+
+    RetainPtr exitBottomViewEvent = [bottomWebView _mouseEventWithType:NSEventTypeMouseExited atLocation:NSMakePoint(300, 500)];
+
+    [bottomObserver mouseExited:exitBottomViewEvent.get()];
+    [topObserver mouseExited:exitBottomViewEvent.get()];
+
+    checkMouseEventCounts(bottomWebView, 2, 1, 1);
+    checkMouseEventCounts(topWebView, 1, 1, 1);
+}
+
+TEST(MouseEventTests, MouseMoveNotForwardedWhenCoveredByOverlay)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView synchronouslyLoadHTMLString:@"<body><script>"
+        "let moveCount = 0;"
+        "addEventListener('mousemove', () => moveCount++);"
+        "</script></body>"];
+
+    RetainPtr overlay = adoptNS([[NSView alloc] initWithFrame:NSMakeRect(200, 0, 200, 400)]);
+    [[webView superview] addSubview:overlay.get() positioned:NSWindowAbove relativeTo:webView.get()];
+
+    auto findTrackingAreaObserver = [](TestWKWebView *view) -> id {
+        for (NSTrackingArea *area in [view trackingAreas]) {
+            if (area.options & NSTrackingMouseMoved)
+                return area.owner;
+        }
+        return nil;
+    };
+
+    RetainPtr<id> observer = findTrackingAreaObserver(webView.get());
+
+    RetainPtr eventOnOverlay = [webView _mouseEventWithType:NSEventTypeMouseMoved atLocation:NSMakePoint(300, 200)];
+    [observer mouseMoved:eventOnOverlay.get()];
+    [webView waitForPendingMouseEvents];
+    EXPECT_EQ([[webView objectByEvaluatingJavaScript:@"moveCount"] intValue], 0);
+
+    RetainPtr eventOnWebView = [webView _mouseEventWithType:NSEventTypeMouseMoved atLocation:NSMakePoint(100, 200)];
+    [observer mouseMoved:eventOnWebView.get()];
+    [webView waitForPendingMouseEvents];
+    EXPECT_GE([[webView objectByEvaluatingJavaScript:@"moveCount"] intValue], 1);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(MAC)

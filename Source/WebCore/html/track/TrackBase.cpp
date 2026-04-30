@@ -119,12 +119,12 @@ TrackListBase* TrackBase::trackList() const
     return m_trackList.get();
 }
 
-WebCoreOpaqueRoot TrackBase::opaqueRoot()
+WebCoreOpaqueRoot TrackBase::opaqueRoot() const
 {
     // Runs on GC thread.
     if (SUPPRESS_UNCOUNTED_LOCAL auto* trackList = this->trackList())
         return trackList->opaqueRoot();
-    return WebCoreOpaqueRoot { this };
+    return WebCoreOpaqueRoot { const_cast<TrackBase*>(this) };
 }
 
 // See: https://tools.ietf.org/html/bcp47#section-2.1

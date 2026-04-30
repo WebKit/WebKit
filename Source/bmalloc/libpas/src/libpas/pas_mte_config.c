@@ -127,7 +127,9 @@ static void pas_mte_do_initialization(void)
 
     uint64_t ldmState = 0;
     size_t sysCtlLen = sizeof(ldmState);
-    if (sysctlbyname("security.mac.lockdown_mode_state", &ldmState, &sysCtlLen, NULL, 0) >= 0 && ldmState == 1)
+    const char* lockdownModeProcName = "com.apple.WebKit.WebContent.CaptivePortal";
+    bool isLockdownModeWebContentProcess = !strncmp(getprogname(), lockdownModeProcName, strlen(lockdownModeProcName));
+    if ((sysctlbyname("security.mac.lockdown_mode_state", &ldmState, &sysCtlLen, NULL, 0) >= 0 && ldmState == 1) || isLockdownModeWebContentProcess)
         config->is_lockdown_mode = true;
     else
         config->is_lockdown_mode = false;

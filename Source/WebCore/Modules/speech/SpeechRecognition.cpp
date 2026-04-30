@@ -56,7 +56,7 @@ SpeechRecognition::SpeechRecognition(Document& document)
     : ActiveDOMObject(document)
 {
     if (RefPtr page = document.page()) {
-        lazyInitialize(m_connection, Ref { page->speechRecognitionConnection() });
+        lazyInitialize(m_connection, protect(page->speechRecognitionConnection()));
         m_connection->registerClient(*this);
     }
 }

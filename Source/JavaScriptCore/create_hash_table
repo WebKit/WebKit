@@ -353,7 +353,9 @@ sub hashValue($) {
 sub output() {
     if (!$banner) {
         $banner = 1;
-        print "// Automatically generated from $file using $0. DO NOT EDIT!\n";
+        my ($srcName) = $file =~ m|([^/]+)$|;
+        my ($selfName) = $0 =~ m|([^/]+)$|;
+        print "// Automatically generated from $srcName using $selfName. DO NOT EDIT!\n";
     }
 
     my $nameEntries = "${name}Values";

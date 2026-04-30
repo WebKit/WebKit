@@ -42,7 +42,7 @@ messages -> PlatformXRSystem {
     SubmitFrame(Vector<PlatformXR::DeviceLayer> layers)
 #endif
 #if ENABLE(WEBXR_LAYERS)
-    CreateQuadLayer(WebCore::IntSize size, PlatformXR::LayerLayout layout) -> (struct std::optional<PlatformXR::LayerInfo> info) Synchronous
+    CreateCompositionLayer(PlatformXR::CompositionLayerType type, WebCore::IntSize size, PlatformXR::LayerLayout layout) -> (struct std::optional<PlatformXR::LayerInfo> info) Synchronous
 #endif
 #if !USE(OPENXR)
     SubmitFrame()

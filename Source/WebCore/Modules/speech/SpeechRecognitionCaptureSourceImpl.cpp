@@ -67,7 +67,7 @@ SpeechRecognitionCaptureSourceImpl::SpeechRecognitionCaptureSourceImpl(SpeechRec
         nullLogger()->setEnabled(this, false);
     }
 
-    m_source->setLogger(Ref { *nullLogger() }.get(), nextLogIdentifier());
+    m_source->setLogger(protect(*nullLogger()).get(), nextLogIdentifier());
 #endif
 
     m_source->addAudioSampleObserver(*this);

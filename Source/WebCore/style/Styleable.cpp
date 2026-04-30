@@ -511,28 +511,23 @@ static bool transitionMatchesProperty(const Style::Transition& transition, const
         [&](const Style::SingleTransitionProperty::UnknownProperty&) {
             return false;
         },
+        [&](const Style::SingleTransitionProperty::CustomProperty& customProperty) {
+            if (auto* propertyToMatch = std::get_if<AtomString>(&property))
+                return *propertyToMatch == customProperty.value;
+            return false;
+        },
         [&](const Style::SingleTransitionProperty::SingleProperty& singleProperty) {
-            return WTF::switchOn(singleProperty.value,
-                [&](CSSPropertyID propertyId) {
-                    if (!std::holds_alternative<CSSPropertyID>(property))
-                        return false;
-                    auto propertyIdToMatch = std::get<CSSPropertyID>(property);
-                    auto resolvedPropertyId = CSSProperty::resolveDirectionAwareProperty(propertyId, style.writingMode());
-                    if (resolvedPropertyId == propertyIdToMatch)
+            if (auto* propertyIDToMatch = std::get_if<CSSPropertyID>(&property)) {
+                auto resolvedPropertyID = CSSProperty::resolveDirectionAwareProperty(singleProperty.propertyID, style.writingMode());
+                if (resolvedPropertyID == *propertyIDToMatch)
+                    return true;
+                for (auto longhand : shorthandForProperty(resolvedPropertyID)) {
+                    auto resolvedLonghand = CSSProperty::resolveDirectionAwareProperty(longhand, style.writingMode());
+                    if (resolvedLonghand == *propertyIDToMatch)
                         return true;
-                    for (auto longhand : shorthandForProperty(resolvedPropertyId)) {
-                        auto resolvedLonghand = CSSProperty::resolveDirectionAwareProperty(longhand, style.writingMode());
-                        if (resolvedLonghand == propertyIdToMatch)
-                            return true;
-                    }
-                    return false;
-                },
-                [&](const AtomString& customProperty) {
-                    if (!std::holds_alternative<AtomString>(property))
-                        return false;
-                    return std::get<AtomString>(property) == customProperty;
                 }
-            );
+            }
+            return false;
         }
     );
 }
@@ -557,20 +552,16 @@ static void compileTransitionPropertiesInStyle(const RenderStyle& style, CSSProp
             [&](const Style::SingleTransitionProperty::UnknownProperty&) {
                 // Do nothing.
             },
-            [&](const Style::SingleTransitionProperty::SingleProperty& property) {
-                WTF::switchOn(property.value,
-                    [&](CSSPropertyID propertyId) {
-                        auto resolvedPropertyId = CSSProperty::resolveDirectionAwareProperty(propertyId, style.writingMode());
-                        if (isShorthand(resolvedPropertyId)) {
-                            for (auto longhand : shorthandForProperty(resolvedPropertyId))
-                                transitionProperties.m_properties.set(longhand);
-                        } else if (resolvedPropertyId != CSSPropertyInvalid)
-                            transitionProperties.m_properties.set(resolvedPropertyId);
-                    },
-                    [&](const AtomString& customProperty) {
-                        transitionCustomProperties.add(customProperty);
-                    }
-                );
+            [&](const Style::SingleTransitionProperty::CustomProperty& customProperty) {
+                transitionCustomProperties.add(customProperty.value.value);
+            },
+            [&](const Style::SingleTransitionProperty::SingleProperty& singleProperty) {
+                auto resolvedPropertyID = CSSProperty::resolveDirectionAwareProperty(singleProperty.propertyID, style.writingMode());
+                if (isShorthand(resolvedPropertyID)) {
+                    for (auto longhand : shorthandForProperty(resolvedPropertyID))
+                        transitionProperties.m_properties.set(longhand);
+                } else if (resolvedPropertyID != CSSPropertyInvalid)
+                    transitionProperties.m_properties.set(resolvedPropertyID);
             }
         );
     }

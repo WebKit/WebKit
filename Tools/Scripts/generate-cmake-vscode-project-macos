@@ -1,0 +1,253 @@
+#!/usr/bin/env python3
+# Copyright (C) 2026 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+"""
+generate-cmake-vscode-project-macos
+
+Emits a VS Code multi-root workspace that wraps a CMake/Ninja build directory:
+  - One ninja build task wired as the default (Cmd-Shift-B), with $gcc/$swift
+    problem matchers so errors land in the Problems panel.
+  - For each .app bundle, a launch config that builds, launches under lldb,
+    and loads Tools/lldb/webkit_auto_attach.py -- a libproc poller that fires
+    CodeLLDB's DAP startDebugging reverse-request for every WebKit XPC service
+    spawned from this build dir, so WebContent / Networking / GPU (and every
+    per-tab respawn) appear as nested child sessions automatically. One F5.
+  - Per-executable launch configs for the single-process tools (jsc, TestWTF,
+    TestWebKitAPI, ...).
+  - clangd pointed at the build's compile_commands.json so go-to-definition,
+    hover, and find-references work across both checked-in and DerivedSources
+    code without indexing the whole workspace up front.
+
+The .code-workspace file is self-contained -- folders, settings, tasks, launch
+configs and extension recommendations are all embedded, so `open <file>` or
+`code <file>` lands in a ready-to-debug session with nothing written into the
+checkout's .vscode/.
+
+Helper logic (executable discovery, prefix-map inversion, sanitizer options,
+lldbinit) is imported from generate-cmake-xcode-project so the two front-ends
+stay in lock-step as the build evolves.
+
+Usage:
+    Tools/Scripts/generate-cmake-vscode-project-macos [build-dir]
+
+Output:
+    <build-dir>/WebKit.code-workspace
+    <build-dir>/lldbinit
+"""
+
+import argparse
+import importlib.util
+import json
+import sys
+from pathlib import Path
+
+
+def _load_sibling(name):
+    here = Path(__file__).resolve().parent
+    spec = importlib.util.spec_from_loader(
+        name, importlib.machinery.SourceFileLoader(name, str(here / name)))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+xc = _load_sibling("generate-cmake-xcode-project")
+
+
+def default_build_dir(source_dir: Path) -> Path:
+    for cfg in ("ASan", "Debug", "RelWithDebInfo", "TSan", "Release"):
+        candidate = source_dir / "WebKitBuild" / "cmake-mac" / cfg
+        if (candidate / "CMakeCache.txt").exists():
+            return candidate
+    return source_dir / "WebKitBuild" / "cmake-mac" / "ASan"
+
+
+def launch_env(build_dir: Path, is_bundle: bool):
+    """Sanitizer tuning only. The cmake-mac build bakes an absolute LC_RPATH to
+    the build dir into every executable and XPC service, so DYLD_FRAMEWORK_PATH
+    (and the __XPC_ forwarding dance run-minibrowser does for the xcodebuild
+    layout) is unnecessary -- @rpath/WebKit.framework already resolves to the
+    just-built copy."""
+    env = {}
+    asan = xc.asan_options(build_dir)
+    if asan:
+        env["ASAN_OPTIONS"] = asan
+        if is_bundle:
+            env["__XPC_ASAN_OPTIONS"] = asan
+    tsan = getattr(xc, "tsan_options", lambda _: "")(build_dir)
+    if tsan:
+        env["TSAN_OPTIONS"] = tsan
+        if is_bundle:
+            env["__XPC_TSAN_OPTIONS"] = tsan
+    return env
+
+
+def make_tasks(build_dir: Path, ninja_path: str):
+    return {
+        "version": "2.0.0",
+        "tasks": [{
+            "label": "ninja",
+            "type": "shell",
+            "command": ninja_path,
+            "args": ["-C", str(build_dir)],
+            "options": {"cwd": str(build_dir)},
+            "group": {"kind": "build", "isDefault": True},
+            "presentation": {"reveal": "always", "clear": True, "panel": "dedicated"},
+            "problemMatcher": ["$gcc", "$swiftc"],
+        }],
+    }
+
+
+def make_launch(build_dir: Path, source_dir: Path):
+    lldbinit = str(build_dir / "lldbinit")
+    auto_attach = str(source_dir / "Tools" / "lldb" / "webkit_auto_attach.py")
+    # CodeLLDB applies sourceMap before lldbinit's target.source-map; provide
+    # both so breakpoints set from the editor (sourceMap) and `source list` in
+    # the debug console (lldbinit) agree.
+    source_map = {token: real for token, real in xc.read_prefix_maps(build_dir)}
+    init_commands = [f"command source {lldbinit}"]
+
+    configs = []
+    for name, path, is_bundle in xc.discover_executables(build_dir):
+        program = str(path / "Contents" / "MacOS" / name) if is_bundle else str(path)
+        cfg = {
+            "name": name,
+            "type": "lldb",
+            "request": "launch",
+            "program": program,
+            "args": [],
+            "cwd": str(source_dir),
+            "env": launch_env(build_dir, is_bundle),
+            "initCommands": init_commands,
+            "sourceMap": source_map,
+            "preLaunchTask": "ninja",
+        }
+        if is_bundle:
+            cfg["postRunCommands"] = [f"command script import {auto_attach}"]
+            cfg["presentation"] = {"group": "1-app", "order": 0}
+        else:
+            cfg["presentation"] = {"group": "2-tool"}
+        configs.append(cfg)
+
+    return {"version": "0.2.0", "configurations": configs}
+
+
+def make_settings(build_dir: Path):
+    return {
+        # clangd reads .clangd from the first workspace folder (the repo root);
+        # --compile-commands-dir makes it look up flags in the ninja build's
+        # database instead of guessing, so headers resolve via the same -I set
+        # the compiler used.
+        "clangd.arguments": [
+            f"--compile-commands-dir={build_dir}",
+            "--header-insertion=never",
+            "--background-index",
+        ],
+        # Microsoft C/C++ IntelliSense and clangd fight over the same hover /
+        # go-to-definition providers; turn IntelliSense off but leave the
+        # extension installed for its debugger contributions.
+        "C_Cpp.intelliSenseEngine": "disabled",
+        # Do NOT set lldb.library to Xcode's LLDB.framework: CodeLLDB dlopens it
+        # and dlsyms a fixed SB API surface, and Apple's lldb periodically drops
+        # overloads upstream still has (e.g. SBFrame::GetValueForVariablePath).
+        # The bundled liblldb is ABI-matched and reads our dSYMs fine.
+        "lldb.launch.expressions": "native",
+        "files.exclude": {
+            "**/CMakeFiles": True,
+            "**/*.o": True,
+        },
+        "search.exclude": {
+            "**/LayoutTests": True,
+            "**/WebKitBuild": True,
+        },
+        "search.followSymlinks": False,
+    }
+
+
+def make_workspace(build_dir: Path, source_dir: Path, ninja_path: str):
+    folders = [{"name": "WebKit", "path": str(source_dir)}]
+    for d in sorted(build_dir.glob("*/DerivedSources")):
+        if any(d.iterdir()):
+            folders.append({"name": f"DerivedSources/{d.parent.name}", "path": str(d)})
+
+    return {
+        "folders": folders,
+        "settings": make_settings(build_dir),
+        "tasks": make_tasks(build_dir, ninja_path),
+        "launch": make_launch(build_dir, source_dir),
+        "extensions": {
+            "recommendations": [
+                "llvm-vs-code-extensions.vscode-clangd",
+                "vadimcn.vscode-lldb",
+            ],
+        },
+    }
+
+
+def main():
+    script_dir = Path(__file__).resolve().parent
+    source_dir = script_dir.parent.parent
+
+    ap = argparse.ArgumentParser(description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("build_dir", nargs="?",
+                    help="CMake binary dir (default: first configured "
+                         "WebKitBuild/cmake-mac/{Debug,RelWithDebInfo,Release,ASan})")
+    args = ap.parse_args()
+
+    if args.build_dir:
+        build_dir = Path(args.build_dir)
+        if not build_dir.is_absolute():
+            build_dir = (source_dir / build_dir).resolve()
+    else:
+        build_dir = default_build_dir(source_dir)
+
+    if not (build_dir / "CMakeCache.txt").exists():
+        sys.exit(f"error: {build_dir}/CMakeCache.txt not found -- run "
+                 f"'cmake --preset mac-asan' first")
+
+    ninja_path = xc.find_ninja()
+
+    (build_dir / "lldbinit").write_text(xc.generate_lldbinit(source_dir, build_dir))
+
+    ws = make_workspace(build_dir, source_dir, ninja_path)
+    ws_path = build_dir / "WebKit.code-workspace"
+    ws_path.write_text(json.dumps(ws, indent=4) + "\n")
+
+    n_launch = len(ws["launch"]["configurations"])
+    print(f"Generated {ws_path}")
+    print(f"  {n_launch} launch config(s)")
+    print(f"  lldbinit: {build_dir}/lldbinit")
+    print()
+    print(f"  code {ws_path}")
+    print(f"  Cmd-Shift-B  -> ninja -C {build_dir}")
+    print(f"  F5           -> ninja, launch MiniBrowser, auto-attach every XPC child")
+    print()
+    print("  # one-time: install the extensions the workspace recommends")
+    print("  code --install-extension vadimcn.vscode-lldb                  # debugger")
+    print("  code --install-extension llvm-vs-code-extensions.vscode-clangd # go-to-definition")
+
+
+if __name__ == "__main__":
+    main()

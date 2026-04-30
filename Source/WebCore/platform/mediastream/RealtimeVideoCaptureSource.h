@@ -31,6 +31,7 @@
 #include <WebCore/OrientationNotifier.h>
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/VideoPreset.h>
+#include <wtf/Deque.h>
 #include <wtf/Lock.h>
 #include <wtf/RunLoop.h>
 
@@ -51,6 +52,8 @@ public:
     Vector<VideoPresetData> presetsData();
 
     void ensureIntrinsicSizeMaintainsAspectRatio();
+
+    using RealtimeMediaSource::applyConstraints;
 
     WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
 
@@ -101,6 +104,20 @@ private:
 
     void orientationChanged(IntDegrees) override;
 
+    struct PendingPhotoCapture {
+        PhotoSettings settings;
+        UniqueRef<TakePhotoNativePromise::Producer> producer;
+    };
+    struct PendingConstraintApplication {
+        MediaConstraints constraints;
+        ApplyConstraintsHandler handler;
+    };
+    using PendingOperation = Variant<PendingPhotoCapture, PendingConstraintApplication>;
+
+    void dispatchNextOperation();
+    void applyConstraints(const MediaConstraints&, ApplyConstraintsHandler&&) override;
+    void didEnd() override;
+
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const override { return "RealtimeVideoCaptureSource"_s; }
 #endif
@@ -110,6 +127,8 @@ private:
     Deque<double> m_observedFrameTimeStamps;
     double m_observedFrameRate { 0 };
     bool m_mutedForPhotoCapture { false };
+    Deque<PendingOperation> m_pendingOperations;
+    bool m_captureInFlight { false };
 };
 
 struct SizeFrameRateAndZoom {

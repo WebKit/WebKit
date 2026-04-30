@@ -1,4 +1,5 @@
 
-FAIL isSameEntry works as expected with buckets promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storageBuckets.open')"
-FAIL getDirectory promise rejects if bucket has been deleted promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.storageBuckets.open')"
+FAIL isSameEntry works as expected with buckets promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: prepareForBucketTest"
+FAIL getDirectory promise rejects if bucket has been deleted promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: prepareForBucketTest"
+FAIL Bucket quota restricts the size of a file that can be created promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: prepareForBucketTest"
 

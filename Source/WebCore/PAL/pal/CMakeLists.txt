@@ -84,8 +84,9 @@ set(PAL_INTERFACE_DEPENDENCIES PAL_CopyHeaders)
 WEBKIT_FRAMEWORK_DECLARE(PAL)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
-if (SWIFT_REQUIRED)
+if (SWIFT_REQUIRED AND NOT (PORT STREQUAL GTK OR PORT STREQUAL WPE))
     target_sources(PAL PRIVATE
+        ${PAL_DIR}/pal/pal.swift
         ${PAL_DIR}/pal/crypto/CryptoKit+UnsafeOverlays.swift
         ${PAL_DIR}/pal/crypto/CryptoTypes.swift
         ${PAL_DIR}/pal/system/cocoa/RegexHelper.swift
@@ -113,14 +114,20 @@ if (SWIFT_REQUIRED)
         "PALSwift-Generated.h")
 
     # Also pass these options to CMake's native Swift compilation (the macro
-    # only adds them to the custom typecheck command).
+    # only adds them to the custom typecheck command). SHELL: keeps multi-token
+    # groups (-swift-version 6, -Xcc -I<path>) together; without it CMake
+    # deduplicates repeated -Xcc tokens, leaving -I paths unguarded.
+    # https://bugs.webkit.org/show_bug.cgi?id=312105
     target_compile_options(PAL PRIVATE
         "$<$<COMPILE_LANGUAGE:Swift>:-import-underlying-module>"
-        "$<$<COMPILE_LANGUAGE:Swift>:-swift-version>"
-        "$<$<COMPILE_LANGUAGE:Swift>:6>"
         "$<$<COMPILE_LANGUAGE:Swift>:-strict-memory-safety>"
-        "$<$<COMPILE_LANGUAGE:Swift>:-Xcc>"
-        "$<$<COMPILE_LANGUAGE:Swift>:-I${PAL_FRAMEWORK_HEADERS_DIR}>"
+        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-swift-version 6>"
+        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -I${PAL_FRAMEWORK_HEADERS_DIR}>"
+        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -I${CMAKE_BINARY_DIR}/WTF/Headers>"
+        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -I${CMAKE_BINARY_DIR}/ICU/Headers>"
+        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -I${CMAKE_BINARY_DIR}/bmalloc/Headers>"
+        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -I${CMAKE_BINARY_DIR}>"
+        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -I${PAL_DERIVED_SOURCES_DIR}>"
     )
 endif ()
 
@@ -143,6 +150,6 @@ WEBKIT_FRAMEWORK(PAL)
 # before compilation (they import the underlying pal module). The CopyHeaders
 # target is an interface dependency for downstream targets, but PAL itself
 # also needs it.
-if (SWIFT_REQUIRED)
+if (SWIFT_REQUIRED AND NOT (PORT STREQUAL GTK OR PORT STREQUAL WPE))
     add_dependencies(PAL PAL_CopyHeaders WTF_CopyHeaders bmalloc_CopyHeaders)
 endif ()

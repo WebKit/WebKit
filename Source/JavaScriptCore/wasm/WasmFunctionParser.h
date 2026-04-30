@@ -732,7 +732,11 @@ auto FunctionParser<Context>::load(Type memoryType) -> PartialResult
 
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "load pointer"_s);
 
-    WASM_VALIDATOR_FAIL_IF(pointer.type().kind != m_info.memory(memoryIndex).addressType().asWasmTypeKind(), m_currentOpcode, " pointer type mismatch"_s);
+    if (m_info.memory(memoryIndex).isMemory64())
+        WASM_VALIDATOR_FAIL_IF(!pointer.type().isI64(), m_currentOpcode, " pointer type mismatch"_s);
+    else
+        WASM_VALIDATOR_FAIL_IF(!pointer.type().isI32(), m_currentOpcode, " pointer type mismatch"_s);
+
     ExpressionType result;
     WASM_TRY_ADD_TO_CONTEXT(load(static_cast<LoadOpType>(m_currentOpcode), pointer, result, offset, memoryIndex));
     m_expressionStack.constructAndAppend(memoryType, result);
@@ -765,7 +769,10 @@ auto FunctionParser<Context>::store(Type memoryType) -> PartialResult
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "store value"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "store pointer"_s);
 
-    WASM_VALIDATOR_FAIL_IF(pointer.type().kind != m_info.memory(memoryIndex).addressType().asWasmTypeKind(), m_currentOpcode, " pointer type mismatch"_s);
+    if (m_info.memory(memoryIndex).isMemory64())
+        WASM_VALIDATOR_FAIL_IF(!pointer.type().isI64(), m_currentOpcode, " pointer type mismatch"_s);
+    else
+        WASM_VALIDATOR_FAIL_IF(!pointer.type().isI32(), m_currentOpcode, " pointer type mismatch"_s);
 
     WASM_VALIDATOR_FAIL_IF(value.type() != memoryType, m_currentOpcode, " value type mismatch"_s);
 
@@ -793,23 +800,16 @@ auto FunctionParser<Context>::atomicLoad(ExtAtomicOpType op, Type memoryType) ->
     WASM_VALIDATOR_FAIL_IF(!m_info.memoryCount(), "atomic instruction without memory"_s);
 
     uint32_t alignment;
-    uint64_t offset;
+    uint32_t offset;
     TypedExpression pointer;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment"_s);
     uint8_t memoryIndex;
     WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
     WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
-
-    if (m_info.memory(memoryIndex).isMemory64())
-        WASM_PARSER_FAIL_IF(!parseVarUInt64(offset), "can't get load offset"_s);
-    else {
-        uint32_t offset32;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(offset32), "can't get load offset"_s);
-        offset = offset32;
-    }
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get load offset"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "load pointer"_s);
 
-    WASM_VALIDATOR_FAIL_IF(pointer.type().kind != m_info.memory(memoryIndex).addressType().asWasmTypeKind(), static_cast<unsigned>(op), " pointer type mismatch"_s);
+    WASM_VALIDATOR_FAIL_IF(!pointer.type().isI32(), static_cast<unsigned>(op), " pointer type mismatch"_s);
 
     ExpressionType result;
     WASM_TRY_ADD_TO_CONTEXT(atomicLoad(op, memoryType, pointer, result, offset, memoryIndex));
@@ -823,25 +823,18 @@ auto FunctionParser<Context>::atomicStore(ExtAtomicOpType op, Type memoryType) -
     WASM_VALIDATOR_FAIL_IF(!m_info.memoryCount(), "atomic instruction without memory"_s);
 
     uint32_t alignment;
-    uint64_t offset;
+    uint32_t offset;
     TypedExpression value;
     TypedExpression pointer;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get store alignment"_s);
     uint8_t memoryIndex;
     WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
     WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
-    if (m_info.memory(memoryIndex).isMemory64())
-        WASM_PARSER_FAIL_IF(!parseVarUInt64(offset), "can't get store offset"_s);
-    else {
-        uint32_t offset32;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(offset32), "can't get store offset"_s);
-        offset = offset32;
-    }
-
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get store offset"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "store value"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "store pointer"_s);
 
-    WASM_VALIDATOR_FAIL_IF(pointer.type().kind != m_info.memory(memoryIndex).addressType().asWasmTypeKind(), m_currentOpcode, " pointer type mismatch"_s);
+    WASM_VALIDATOR_FAIL_IF(!pointer.type().isI32(), m_currentOpcode, " pointer type mismatch"_s);
     WASM_VALIDATOR_FAIL_IF(value.type() != memoryType, m_currentOpcode, " value type mismatch"_s);
 
     WASM_TRY_ADD_TO_CONTEXT(atomicStore(op, memoryType, pointer, value, offset, memoryIndex));
@@ -854,24 +847,18 @@ auto FunctionParser<Context>::atomicBinaryRMW(ExtAtomicOpType op, Type memoryTyp
     WASM_VALIDATOR_FAIL_IF(!m_info.memoryCount(), "atomic instruction without memory"_s);
 
     uint32_t alignment;
-    uint64_t offset;
+    uint32_t offset;
     TypedExpression pointer;
     TypedExpression value;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment"_s);
     uint8_t memoryIndex;
     WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
     WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
-    if (m_info.memory(memoryIndex).isMemory64())
-        WASM_PARSER_FAIL_IF(!parseVarUInt64(offset), "can't get load offset"_s);
-    else {
-        uint32_t offset32;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(offset32), "can't get load offset"_s);
-        offset = offset32;
-    }
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get load offset"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "value"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "pointer"_s);
 
-    WASM_VALIDATOR_FAIL_IF(pointer.type().kind != m_info.memory(memoryIndex).addressType().asWasmTypeKind(), static_cast<unsigned>(op), " pointer type mismatch"_s);
+    WASM_VALIDATOR_FAIL_IF(!pointer.type().isI32(), static_cast<unsigned>(op), " pointer type mismatch"_s);
     WASM_VALIDATOR_FAIL_IF(value.type() != memoryType, static_cast<unsigned>(op), " value type mismatch"_s);
 
     ExpressionType result;
@@ -886,7 +873,7 @@ auto FunctionParser<Context>::atomicCompareExchange(ExtAtomicOpType op, Type mem
     WASM_VALIDATOR_FAIL_IF(!m_info.memoryCount(), "atomic instruction without memory"_s);
 
     uint32_t alignment;
-    uint64_t offset;
+    uint32_t offset;
     TypedExpression pointer;
     TypedExpression expected;
     TypedExpression value;
@@ -894,18 +881,12 @@ auto FunctionParser<Context>::atomicCompareExchange(ExtAtomicOpType op, Type mem
     uint8_t memoryIndex;
     WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
     WASM_PARSER_FAIL_IF(alignment !=  memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
-    if (m_info.memory(memoryIndex).isMemory64())
-        WASM_PARSER_FAIL_IF(!parseVarUInt64(offset), "can't get load offset"_s);
-    else {
-        uint32_t offset32;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(offset32), "can't get load offset"_s);
-        offset = offset32;
-    }
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get load offset"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "value"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(expected, "expected"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "pointer"_s);
 
-    WASM_VALIDATOR_FAIL_IF(pointer.type().kind != m_info.memory(memoryIndex).addressType().asWasmTypeKind(), static_cast<unsigned>(op), " pointer type mismatch"_s);
+    WASM_VALIDATOR_FAIL_IF(!pointer.type().isI32(), static_cast<unsigned>(op), " pointer type mismatch"_s);
     WASM_VALIDATOR_FAIL_IF(expected.type() != memoryType, static_cast<unsigned>(op), " expected type mismatch"_s);
     WASM_VALIDATOR_FAIL_IF(value.type() != memoryType, static_cast<unsigned>(op), " value type mismatch"_s);
 
@@ -921,7 +902,7 @@ auto FunctionParser<Context>::atomicWait(ExtAtomicOpType op, Type memoryType) ->
     WASM_VALIDATOR_FAIL_IF(!m_info.memoryCount(), "atomic instruction without memory"_s);
 
     uint32_t alignment;
-    uint64_t offset;
+    uint32_t offset;
     TypedExpression pointer;
     TypedExpression value;
     TypedExpression timeout;
@@ -929,18 +910,12 @@ auto FunctionParser<Context>::atomicWait(ExtAtomicOpType op, Type memoryType) ->
     uint8_t memoryIndex;
     WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
     WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
-    if (m_info.memory(memoryIndex).isMemory64())
-        WASM_PARSER_FAIL_IF(!parseVarUInt64(offset), "can't get load offset"_s);
-    else {
-        uint32_t offset32;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(offset32), "can't get load offset"_s);
-        offset = offset32;
-    }
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get load offset"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(timeout, "timeout"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "value"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "pointer"_s);
 
-    WASM_VALIDATOR_FAIL_IF(pointer.type().kind != m_info.memory(memoryIndex).addressType().asWasmTypeKind(), static_cast<unsigned>(op), " pointer type mismatch"_s);
+    WASM_VALIDATOR_FAIL_IF(!pointer.type().isI32(), static_cast<unsigned>(op), " pointer type mismatch"_s);
     WASM_VALIDATOR_FAIL_IF(value.type() != memoryType, static_cast<unsigned>(op), " value type mismatch"_s);
     WASM_VALIDATOR_FAIL_IF(!timeout.type().isI64(), static_cast<unsigned>(op), " timeout type mismatch"_s);
 
@@ -956,24 +931,18 @@ auto FunctionParser<Context>::atomicNotify(ExtAtomicOpType op) -> PartialResult
     WASM_VALIDATOR_FAIL_IF(!m_info.memoryCount(), "atomic instruction without memory"_s);
 
     uint32_t alignment;
-    uint64_t offset;
+    uint32_t offset;
     TypedExpression pointer;
     TypedExpression count;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(alignment), "can't get load alignment"_s);
     uint8_t memoryIndex;
     WASM_PARSER_FAIL_IF(!parseMemoryIndexAndFixupAlignment(alignment, memoryIndex), "can't get memory index");
     WASM_PARSER_FAIL_IF(alignment != memoryLog2Alignment(op), "byte alignment "_s, 1ull << alignment, " does not match against atomic op's natural alignment "_s, 1ull << memoryLog2Alignment(op));
-    if (m_info.memory(memoryIndex).isMemory64())
-        WASM_PARSER_FAIL_IF(!parseVarUInt64(offset), "can't get load offset"_s);
-    else {
-        uint32_t offset32;
-        WASM_PARSER_FAIL_IF(!parseVarUInt32(offset32), "can't get load offset"_s);
-        offset = offset32;
-    }
+    WASM_PARSER_FAIL_IF(!parseVarUInt32(offset), "can't get load offset"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(count, "count"_s);
     WASM_TRY_POP_EXPRESSION_STACK_INTO(pointer, "pointer"_s);
 
-    WASM_VALIDATOR_FAIL_IF(pointer.type().kind != m_info.memory(memoryIndex).addressType().asWasmTypeKind(), static_cast<unsigned>(op), " pointer type mismatch"_s);
+    WASM_VALIDATOR_FAIL_IF(!pointer.type().isI32(), static_cast<unsigned>(op), " pointer type mismatch"_s);
     WASM_VALIDATOR_FAIL_IF(!count.type().isI32(), static_cast<unsigned>(op), " count type mismatch"_s); // The spec's definition is saying i64, but all implementations (including tests) are using i32. So looks like the spec is wrong.
 
     ExpressionType result;
@@ -4290,6 +4259,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         }
 #define CREATE_EXT1_CASE(name, ...) case Ext1OpType::name:
         FOR_EACH_WASM_TRUNC_SATURATED_OP(CREATE_EXT1_CASE)
+        FOR_EACH_WASM_WIDE_ARITHMETIC_OP(CREATE_EXT1_CASE)
             return { };
 #undef CREATE_EXT1_CASE
         default:

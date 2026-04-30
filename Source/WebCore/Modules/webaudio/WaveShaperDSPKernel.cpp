@@ -29,6 +29,7 @@
 #include "WaveShaperDSPKernel.h"
 
 #include "AudioUtilities.h"
+#include "EventTargetInlines.h"
 #include "WaveShaperProcessor.h"
 #include <JavaScriptCore/Float32Array.h>
 #include <algorithm>

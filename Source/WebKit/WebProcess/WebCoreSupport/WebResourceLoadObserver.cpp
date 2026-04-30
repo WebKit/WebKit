@@ -35,6 +35,7 @@
 #include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/HTMLFrameOwnerElement.h>
+#include <WebCore/HTTPStatusCodes.h>
 #include <WebCore/LocalFrameInlines.h>
 #include <WebCore/LocalFrameLoaderClient.h>
 #include <WebCore/Settings.h>
@@ -57,7 +58,7 @@ void WebResourceLoadObserver::setShouldLogUserInteraction(bool value)
 
 static bool is3xxRedirect(const ResourceResponse& response)
 {
-    return response.httpStatusCode() >= 300 && response.httpStatusCode() <= 399;
+    return response.httpStatusCode() >= httpStatus300MultipleChoices && response.httpStatusCode() < httpStatus400BadRequest;
 }
 
 WebResourceLoadObserver::WebResourceLoadObserver(ResourceLoadStatistics::IsEphemeral isEphemeral)

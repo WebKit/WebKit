@@ -40,6 +40,7 @@ class DataSegment;
 class FrameLoadRequest;
 class GraphicsContext;
 class IntSize;
+class ResourceTiming;
 class SecurityOriginData;
 
 enum class FocusDirection : uint8_t;
@@ -72,6 +73,7 @@ public:
     virtual void unfocus() = 0;
     virtual void updateScrollingMode(ScrollbarMode scrollingMode) = 0;
     virtual void reportMixedContentViolation(bool blocked, const URL& target) = 0;
+    virtual void addResourceTimingFromChild(ResourceTiming&&) = 0;
     virtual void findFocusableElementDescendingIntoRemoteFrame(FocusDirection, const FocusEventData&, ShouldFocusElement, CompletionHandler<void(FoundElementInRemoteFrame)>&&) = 0;
     virtual void findFocusableElementContinuingFromFrame(FocusDirection, WebCore::FrameIdentifier, const FocusEventData&, ShouldFocusElement) = 0;
 

@@ -145,6 +145,8 @@ WKRetainPtr<WKMutableDictionaryRef> TestInvocation::createTestSettingsDictionary
     setValue(beginTestMessageBody, "AllowedHosts", allowedHostsValue);
 #if ENABLE(VIDEO)
     setValue(beginTestMessageBody, "CaptionDisplayMode", options().captionDisplayMode().c_str());
+
+    setValue(beginTestMessageBody, "JSCOptions", options().jscOptions().c_str());
 #endif
     return beginTestMessageBody;
 }

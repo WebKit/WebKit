@@ -73,6 +73,9 @@ public:
     TimeRange timeRange() const;
     void setTimeRange(const TimeRange&);
 
+    float volume() const;
+    void setVolume(float);
+
 private:
     MockMediaDeviceRoute();
 

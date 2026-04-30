@@ -25,6 +25,7 @@
 
 import Testing
 import WebKit
+import struct _Concurrency.Task
 import struct Swift.String
 import struct Foundation.URL
 private import TestWebKitAPILibrary
@@ -181,18 +182,19 @@ struct URLSchemeHandlerTests {
     @Test
     func basicSchemeHandling() async throws {
         let html = """
-        <html>
-        <img src='testing:image'>
-        </html>
-        """.data(using: .utf8)!
+            <html>
+            <img src='testing:image'>
+            </html>
+            """
+            .data(using: .utf8)
 
-        let handler = TestURLSchemeHandler(data: html, mimeType: "text/html")
+        let handler = try TestURLSchemeHandler(data: #require(html), mimeType: "text/html")
         var configuration = WebPage.Configuration()
-        configuration.urlSchemeHandlers[URLScheme("testing")!] = handler
+        try configuration.urlSchemeHandlers[#require(URLScheme("testing"))] = handler
 
         let page = WebPage(configuration: configuration)
 
-        let url = URL(string: "testing:main")!
+        let url = try #require(URL(string: "testing:main"))
         let request = URLRequest(url: url)
 
         async let replyStream = Array(handler.replyStream.prefix(2))

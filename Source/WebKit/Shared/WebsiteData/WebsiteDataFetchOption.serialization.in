@@ -23,4 +23,5 @@
 [OptionSet] enum class WebKit::WebsiteDataFetchOption : uint8_t {
     ComputeSizes,
     DoNotCreateProcesses,
+    IncludeAllOrigins,
 };

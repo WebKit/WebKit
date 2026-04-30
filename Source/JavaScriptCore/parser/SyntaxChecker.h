@@ -27,6 +27,7 @@
 
 #include "ImplementationVisibility.h"
 #include "Lexer.h"
+#include "Nodes.h"
 #include "ParserFunctionInfo.h"
 #include "YarrSyntaxChecker.h"
 

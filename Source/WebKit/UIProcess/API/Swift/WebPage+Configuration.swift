@@ -163,6 +163,10 @@ extension WebPage {
         /// The default value of this property is `.content`.
         public var userInterfaceDirectionPolicy: WKUserInterfaceDirectionPolicy = .content
         #endif
+
+        /// The process pool to use for the page, used for testing.
+        @_spi(Testing)
+        public var processPool: WKProcessPool? = nil
     }
 }
 

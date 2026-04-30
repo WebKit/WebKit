@@ -74,6 +74,7 @@
 #include <WebCore/OriginAccessPatterns.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ReportingScope.h>
+#include <WebCore/SWServer.h>
 #include <WebCore/SameSiteInfo.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityPolicy.h>
@@ -284,7 +285,7 @@ void NetworkResourceLoader::startContentFiltering(ResourceRequest&& request, Com
 #if HAVE(BROWSERENGINEKIT_WEBCONTENTFILTER) && !HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
     WebParentalControlsURLFilter::setSharedParentalControlsURLFilterIfNecessary();
 #endif
-    m_contentFilter = ContentFilter::create(*this, isMainFrameLoad());
+    m_contentFilter = ContentFilter::create(*this, isMainFrameLoad() ? IsMainFrameLoad::Yes : IsMainFrameLoad::No);
     RefPtr contentFilter = m_contentFilter;
 #if HAVE(AUDIT_TOKEN)
     contentFilter->setHostProcessAuditToken(connectionToWebProcess().networkProcess().sourceApplicationAuditToken());
@@ -1271,13 +1272,24 @@ void NetworkResourceLoader::willSendRedirectedRequestInternal(ResourceRequest&& 
         m_firstResponseURL = redirectResponse.url();
 
 #if ENABLE(CONTENT_FILTERING)
-    if (m_contentFilter && !protect(m_contentFilter)->continueAfterWillSendRequest(redirectRequest, redirectResponse)) {
-        if (RefPtr networkLoad = std::exchange(m_networkLoad, nullptr))
-            networkLoad->clearClient();
-        return completionHandler({ });
+    if (m_contentFilter) {
+        auto redirectResponseForContentFilter = redirectResponse;
+        protect(m_contentFilter)->continueAfterWillSendRequest(WTF::move(redirectRequest), redirectResponseForContentFilter, [this, protectedThis = Ref { *this }, request = WTF::move(request), redirectResponse = WTF::move(redirectResponse), isFromServiceWorker, completionHandler = WTF::move(completionHandler)](ResourceRequest&& filteredRequest) mutable {
+            if (filteredRequest.isNull()) {
+                if (RefPtr networkLoad = std::exchange(m_networkLoad, nullptr))
+                    networkLoad->clearClient();
+                return completionHandler({ });
+            }
+            continueWillSendRedirectedRequestAfterContentFiltering(WTF::move(request), WTF::move(filteredRequest), WTF::move(redirectResponse), isFromServiceWorker, WTF::move(completionHandler));
+        });
+        return;
     }
 #endif
+    continueWillSendRedirectedRequestAfterContentFiltering(WTF::move(request), WTF::move(redirectRequest), WTF::move(redirectResponse), isFromServiceWorker, WTF::move(completionHandler));
+}
 
+void NetworkResourceLoader::continueWillSendRedirectedRequestAfterContentFiltering(ResourceRequest&& request, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse, IsFromServiceWorker isFromServiceWorker, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
+{
     std::optional<WebCore::PCM::AttributionTriggerData> privateClickMeasurementAttributionTriggerData;
     if (auto result = WebCore::PrivateClickMeasurement::parseAttributionRequest(redirectRequest.url())) {
         privateClickMeasurementAttributionTriggerData = result.value();
@@ -1479,6 +1491,15 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
     }
 
     if (shouldTryToMatchRegistrationOnRedirection(parameters().options, !!m_serviceWorkerFetchTask)) {
+        auto topOrigin = parameters().topOriginForServiceWorkers(newRequest.url());
+        if (CheckedPtr session = protect(connectionToWebProcess())->networkSession()) {
+            if (RefPtr server = session->swServer(); server && !server->isImportCompletedForOrigin(topOrigin)) {
+                server->importRegistrationsForOrigin(topOrigin, [this, protectedThis = Ref { *this }, newRequest = WTF::move(newRequest), isAllowedToAskUserForCredentials, completionHandler = WTF::move(completionHandler)]() mutable {
+                    continueWillSendRequest(WTF::move(newRequest), isAllowedToAskUserForCredentials, WTF::move(completionHandler));
+                });
+                return;
+            }
+        }
         m_serviceWorkerRegistration = { };
         m_serviceWorkerTimingInfo = { };
         setWorkerStart({ });
@@ -1820,13 +1841,6 @@ void NetworkResourceLoader::consumeSandboxExtensionsIfNeeded()
 void NetworkResourceLoader::consumeSandboxExtensions()
 {
     ASSERT(!m_didConsumeSandboxExtensions);
-
-    for (auto& handle : std::exchange(m_parameters.requestBodySandboxExtensions, { })) {
-        if (auto extension = SandboxExtension::create(WTF::move(handle))) {
-            extension->consume();
-            m_extensionsToRevoke.append(extension.releaseNonNull());
-        }
-    }
 
     if (auto handle = std::exchange(m_parameters.resourceSandboxExtension, { })) {
         if (auto extension = SandboxExtension::create(WTF::move(*handle))) {

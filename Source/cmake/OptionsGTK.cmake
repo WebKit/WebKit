@@ -314,7 +314,6 @@ if (USE_GBM)
 
     set(CMAKE_REQUIRED_LIBRARIES GBM::GBM)
     WEBKIT_CHECK_HAVE_FUNCTION(HAVE_GBM_BO_CREATE_WITH_MODIFIERS2 gbm_bo_create_with_modifiers2 gbm.h)
-    WEBKIT_CHECK_HAVE_FUNCTION(HAVE_GBM_BO_GET_FD_FOR_PLANE gbm_bo_get_fd_for_plane gbm.h)
     unset(CMAKE_REQUIRED_LIBRARIES)
 endif ()
 

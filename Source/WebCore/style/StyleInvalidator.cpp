@@ -365,13 +365,6 @@ void Invalidator::invalidateStyleWithMatchElement(Element& element, MatchElement
 
     auto hasRelation = *matchElement.hasRelation;
 
-    // HasScopeBreaking: :has(:is(.changed .a)) — invalidate entire document.
-    if (hasRelation == HasRelation::ScopeBreaking) {
-        SelectorMatchingState selectorMatchingState;
-        invalidateStyleForDescendants(*element.document().documentElement(), &selectorMatchingState);
-        return;
-    }
-
     // :has() in non-subject position.
     if (matchElement.relation != Relation::Subject) {
         if (matchElement.relation == Relation::Parent && hasRelation == HasRelation::Child) {
@@ -492,9 +485,6 @@ void Invalidator::invalidateStyleWithMatchElement(Element& element, MatchElement
         }
         break;
     }
-    case HasRelation::ScopeBreaking:
-        ASSERT_NOT_REACHED();
-        break;
     default:
         ASSERT_NOT_REACHED();
         break;
@@ -584,15 +574,6 @@ void Invalidator::invalidateWithMatchElementRuleSets(Element& element, const Mat
         invalidator.invalidateStyleWithMatchElement(element, matchElementAndRuleSet.key.key());
         element.document().incrementStyleInvalidationTraversalCountForTesting(invalidator.m_elementTraversalCount);
     }
-}
-
-void Invalidator::invalidateWithScopeBreakingHasPseudoClassRuleSet(Element& element, const RuleSet* ruleSet)
-{
-    SetForScope isInvalidating(element.styleResolver().ruleSets().isInvalidatingStyleWithRuleSets(), true);
-    Invalidator invalidator(InvalidationRuleSetVector { { ruleSet } });
-    // Scope-breaking :has() can be affected by changes anywhere, so invalidate all descendants from root.
-    SelectorMatchingState selectorMatchingState;
-    invalidator.invalidateStyleForDescendants(*element.document().documentElement(), &selectorMatchingState);
 }
 
 void Invalidator::invalidateAllStyle(Scope& scope)

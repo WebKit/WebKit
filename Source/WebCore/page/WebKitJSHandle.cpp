@@ -31,6 +31,7 @@
 #include "JSWindowProxy.h"
 #include <JavaScriptCore/JSCellInlines.h>
 #include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/StrongInlines.h>
 #include <JavaScriptCore/Weak.h>
 
 namespace WebCore {

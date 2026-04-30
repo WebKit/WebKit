@@ -26,6 +26,7 @@
 #pragma once
 
 #include "MapPrototype.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

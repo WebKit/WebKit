@@ -165,6 +165,7 @@ struct TextFormControlData {
     String autocomplete;
     String pattern;
     String name;
+    String value;
     std::optional<int> minLength;
     std::optional<int> maxLength;
     bool isRequired { false };

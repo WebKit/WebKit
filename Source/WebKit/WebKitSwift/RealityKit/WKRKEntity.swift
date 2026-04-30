@@ -65,7 +65,8 @@ extension WKRKEntity {
     class func load(from data: Data, withAttributionTaskID attributionTaskId: String?, entityMemoryLimit: Int) async -> WKRKEntity? {
         #if canImport(RealityKit, _version: "403.0.3")
         do {
-            var loadOptions = Entity.__LoadOptions()
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=313180
+            var loadOptions = unsafe Entity.__LoadOptions()
             if let attributionTaskId {
                 loadOptions.memoryAttributionID = attributionTaskId
             }
@@ -90,11 +91,13 @@ extension WKRKEntity {
 
     @nonobjc
     convenience init(_ rkEntity: Entity) {
-        self.init(coreEntity: rkEntity.coreEntity)
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=313180
+        unsafe self.init(coreEntity: rkEntity.coreEntity)
     }
 
     init(coreEntity: REEntityRef) {
-        entity = Entity.fromCore(coreEntity)
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=313180
+        entity = unsafe Entity.fromCore(coreEntity)
     }
 
     var name: String {
@@ -322,7 +325,8 @@ extension WKRKEntity {
         }
 
         guard
-            let context = CGContext(
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=313180
+            let context = unsafe CGContext(
                 data: nil,
                 width: targetWidth,
                 height: targetHeight,
@@ -365,8 +369,10 @@ extension WKRKEntity {
             )
             let environment = try await EnvironmentResource(cube: textureResource, options: .init())
 
-            if let coreEnvironmentResourceAsset = environment.coreIBLAsset?.__as(REAssetRef.self) {
-                attributionHandler(coreEnvironmentResourceAsset)
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=313180
+            if let coreEnvironmentResourceAsset = unsafe environment.coreIBLAsset?.__as(REAssetRef.self) {
+                // FIXME: https://bugs.webkit.org/show_bug.cgi?id=313180
+                unsafe attributionHandler(coreEnvironmentResourceAsset)
             }
 
             applyIBL(environment)
@@ -400,7 +406,8 @@ extension WKRKEntity {
 
     @objc(setParentCoreEntity:preservingWorldTransform:)
     func setParentCore(_ coreEntity: REEntityRef, preservingWorldTransform: Bool) {
-        let parentEntity = Entity.fromCore(coreEntity)
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=313180
+        let parentEntity = unsafe Entity.fromCore(coreEntity)
         entity.setParent(parentEntity, preservingWorldTransform: preservingWorldTransform)
     }
 

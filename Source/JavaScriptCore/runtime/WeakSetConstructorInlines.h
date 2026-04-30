@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "StructureCreateInlines.h"
 #include "WeakSetConstructor.h"
 
 namespace JSC {

@@ -64,6 +64,7 @@ test_valid_value("filter", "drop-shadow(rgb(4, 5, 6) calc(10px + (5px * sign(2cq
 
 test_valid_value("filter", "grayscale(0)");
 test_valid_value("filter", "grayscale(300%)", "grayscale(100%)");
+test_valid_value("filter", "grayscale(calc(101% * sign(1em - 1px)))");
 test_valid_value("filter", "grayscale()", ["grayscale()", "grayscale(1)"]);
 test_valid_value("filter", "grayscale(calc(3))");
 test_valid_value("filter", "grayscale(calc(300%))");

@@ -15,7 +15,7 @@ if (window.testRunner) {
 function endTest() {
     doLog("new url: " + ws.url);
     if (window.testRunner)
-        testRunner.notifyDone();
+        setTimeout(() => testRunner.notifyDone(), 0);
 }
 
 var ws = new WebSocket("ws://127.0.0.1/websocket/tests/hybi/simple");
@@ -31,9 +31,9 @@ ws.onclose = function() {
     doLog("onclose");
     endTest();
 }
-ws.onerror = function(ev) { 
-    doLog("onerror"); 
-    endTest(); 
+ws.onerror = function(ev) {
+    doLog("onerror");
+    doLog("new url: " + ws.url);
 }
 
 setTimeout(function() { 

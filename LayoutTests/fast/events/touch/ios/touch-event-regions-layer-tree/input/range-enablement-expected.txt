@@ -1,0 +1,15 @@
+(event region
+        (rect (0,0) width=800 height=600)
+      (touch event listener region: asynchronousDispatchRegion:
+        (rect (62,10) width=25 height=16)
+eventSpecificSynchronousDispatchRegions: eventName: touchmove eventRect:
+        (rect (62,10) width=25 height=16)
+eventSpecificSynchronousDispatchRegions: eventName: touchforcechange eventRect:
+        (rect (62,10) width=25 height=16)
+eventSpecificSynchronousDispatchRegions: eventName: touchend eventRect:
+        (rect (62,10) width=25 height=16)
+eventSpecificSynchronousDispatchRegions: eventName: touchstart eventRect:
+        (rect (62,10) width=25 height=16)
+
+      )
+    )

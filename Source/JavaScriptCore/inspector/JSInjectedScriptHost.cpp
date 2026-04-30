@@ -65,6 +65,7 @@
 #include "RegExpObject.h"
 #include "ScopedArguments.h"
 #include "SourceCode.h"
+#include "StructureCreateInlines.h"
 #include <wtf/Function.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/HashMap.h>
@@ -1016,6 +1017,11 @@ JSValue JSInjectedScriptHost::queryHolders(JSGlobalObject* globalObject, CallFra
     }
 
     return result;
+}
+
+Structure* JSInjectedScriptHost::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
 } // namespace Inspector

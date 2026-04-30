@@ -265,18 +265,6 @@ void PlaceholderModelPlayer::setAnimationCurrentTime(Seconds, CompletionHandler<
 {
 }
 
-void PlaceholderModelPlayer::hasAudio(CompletionHandler<void(std::optional<bool>&&)>&&)
-{
-}
-
-void PlaceholderModelPlayer::isMuted(CompletionHandler<void(std::optional<bool>&&)>&&)
-{
-}
-
-void PlaceholderModelPlayer::setIsMuted(bool, CompletionHandler<void(bool success)>&&)
-{
-}
-
 #if ENABLE(MODEL_ELEMENT_ACCESSIBILITY)
 
 ModelPlayerAccessibilityChildren PlaceholderModelPlayer::accessibilityChildren()

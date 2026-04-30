@@ -8,6 +8,7 @@
 #    pragma allow_unsafe_buffers
 #endif
 
+#include <atomic>
 #include <cctype>
 #include <map>
 
@@ -2824,7 +2825,7 @@ bool GenMetalTraverser::visitBranch(Visit, TIntermBranch *branchNode)
     return false;
 }
 
-static size_t emitMetalCallCount = 0;
+static std::atomic<size_t> emitMetalCallCount = 0;
 
 bool sh::EmitMetal(TCompiler &compiler,
                    TIntermBlock &root,

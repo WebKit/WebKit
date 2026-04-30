@@ -26,9 +26,13 @@
 #include "config.h"
 #include "DirectEvalCodeCache.h"
 
+#include "DirectEvalExecutable.h"
 #include "JSCellInlines.h"
 
 namespace JSC {
+
+DirectEvalCodeCache::DirectEvalCodeCache() = default;
+DirectEvalCodeCache::~DirectEvalCodeCache() = default;
 
 void DirectEvalCodeCache::setSlow(JSGlobalObject* globalObject, JSCell* owner, const CacheLookupKey& cacheKey, DirectEvalExecutable* evalExecutable)
 {

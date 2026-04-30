@@ -52,6 +52,7 @@
 #include <WebCore/FrameDestructionObserver.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/HTMLFormElement.h>
+#include <WebCore/HTTPStatusCodes.h>
 #include <WebCore/LocalFrameInlines.h>
 #include <WebCore/LocalFrameView.h>
 #include <glib/gi18n-lib.h>
@@ -327,7 +328,7 @@ private:
     void didReceiveResponseForResource(WebPage& page, WebFrame&, WebCore::ResourceLoaderIdentifier identifier, const ResourceResponse& response) override
     {
         // Post on the console as well to be consistent with the inspector.
-        if (response.httpStatusCode() >= 400) {
+        if (response.httpStatusCode() >= httpStatus400BadRequest) {
             String errorMessage = makeString("Failed to load resource: the server responded with a status of "_s, response.httpStatusCode(), " ("_s, response.httpStatusText(), ')');
             webkitWebPageDidSendConsoleMessage(m_webPage, MessageSource::Network, MessageLevel::Error, errorMessage, 0, response.url().string());
         }

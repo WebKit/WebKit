@@ -26,6 +26,7 @@
 #pragma once
 
 #include "JSAsyncFromSyncIterator.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

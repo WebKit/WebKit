@@ -24,6 +24,7 @@
 #pragma once
 
 #include "InternalFunction.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

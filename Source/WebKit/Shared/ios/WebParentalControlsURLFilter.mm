@@ -70,9 +70,21 @@ bool WebParentalControlsURLFilter::isEnabledImpl() const
     return [BEWebContentFilter shouldEvaluateURLs];
 }
 
-void WebParentalControlsURLFilter::isURLAllowedImpl(const URL& mainDocumentURL, const URL& url, CompletionHandler<void(bool, NSData *)>&& completionHandler)
+void WebParentalControlsURLFilter::isURLAllowedImpl(WebCore::IsMainFrameLoad isMainFrame, const URL& mainDocumentURL, const URL& url, CompletionHandler<void(bool, NSData *)>&& completionHandler)
 {
-    workQueueSingleton().dispatch([this, protectedThis = Ref { *this }, currentIsEnabled = isEnabled(), mainDocumentURL = crossThreadCopy(mainDocumentURL), url = crossThreadCopy(url), completionHandler = WTF::move(completionHandler)]() mutable {
+    // FIXME: Move this into a ifdef guard once rdar://175796135 is merged.
+    UNUSED_PARAM(isMainFrame);
+    workQueueSingleton().dispatch([this,
+        protectedThis = Ref { *this },
+        currentIsEnabled = isEnabled(),
+        mainDocumentURL = crossThreadCopy(mainDocumentURL),
+        url = crossThreadCopy(url),
+        isMainFrame,
+        completionHandler = WTF::move(completionHandler)]() mutable {
+
+        // TODO: Remove once rdar://175796135 is merged.
+        UNUSED_PARAM(isMainFrame);
+
         if (!currentIsEnabled) {
             completionHandler(true, nullptr);
             return;
@@ -83,6 +95,7 @@ void WebParentalControlsURLFilter::isURLAllowedImpl(const URL& mainDocumentURL, 
 #if __has_include(<WebKitAdditions/BEKAdditions.h>)
     if (WebCore::DeprecatedGlobalSettings::webContentRestrictionsTransitiveTrustEnabled()) {
         MAYBE_EVALUATE_URL_WITH_TRANSITIVE_TRUST
+        return;
     }
 #endif
 #endif
@@ -116,10 +129,8 @@ void WebParentalControlsURLFilter::setSharedParentalControlsURLFilterIfNecessary
 {
 #if !HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
     ASSERT(isMainRunLoop());
-    static bool initialized = false;
-    if (!initialized) {
+    if (!WebCore::ParentalControlsURLFilter::hasGlobalFilter()) {
         WebCore::ParentalControlsURLFilter::setGlobalFilter(WebParentalControlsURLFilter::create());
-        initialized = true;
     }
 #endif
 }

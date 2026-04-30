@@ -21,11 +21,6 @@
 use strict;
 use warnings;
 
-use Config;
-use IPC::Open2;
-use IPC::Open3;
-use Text::ParseWords;
-
 BEGIN {
    use Exporter   ();
    our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
@@ -36,84 +31,106 @@ BEGIN {
    @EXPORT_OK   = ();
 }
 
+# Reads a file, strips comments, and evaluates simple #if / #else / #endif
+# preprocessor directives without forking an external process.
 # Returns an array of lines.
 sub applyPreprocessor
 {
     my $fileName = shift;
     my $defines = shift;
-    my $preprocessor = shift;
     my $keepComments = shift;
+    my $stripLineComments = shift;
 
-    my @args = ();
-    if (!$preprocessor) {
-        if ($Config::Config{"osname"} eq "MSWin32") {
-            $preprocessor = $ENV{CC} || "cl";
-            push(@args, qw(/nologo /EP /TP));
-        } else {
-            $preprocessor = $ENV{CC} || (-x "/usr/bin/clang" ? "/usr/bin/clang" : "/usr/bin/gcc");
-            push(@args, qw(-E -P -x c++));
-            if ($keepComments) {
-                push(@args, qw(-C));
-            }
-        }
+    open(my $fh, '<', $fileName) or die "Failed to open $fileName";
+    local $/;
+    my $content = <$fh>;
+    close($fh);
+
+    unless ($keepComments) {
+        # Strip block comments.
+        $content =~ s|/\*.*?\*/||gs;
+        # Strip // line comments only when requested. CSS files use // in URLs
+        # so callers processing CSS must not pass $stripLineComments.
+        $content =~ s|//[^\n]*||g if $stripLineComments;
     }
 
-    if ($Config::Config{"osname"} eq "darwin") {
-        if ($ENV{ARCHS}) {
-            (my $arch, @_) = split(" ", $ENV{ARCHS});
-            my $vendor = $ENV{LLVM_TARGET_TRIPLE_VENDOR};
-            my $os = $ENV{LLVM_TARGET_TRIPLE_OS_VERSION} . ($ENV{LLVM_TARGET_TRIPLE_SUFFIX} // "");
-            push(@args, "-target", "$arch-$vendor-$os");
-        }
-        # When ARCHS is unset (CMake builds), clang defaults to the host
-        # triple, which is correct for preprocessing.
-        push(@args, "-I" . $ENV{BUILT_PRODUCTS_DIR} . "/usr/local/include") if $ENV{BUILT_PRODUCTS_DIR};
-        push(@args, "-isysroot", $ENV{SDKROOT}) if $ENV{SDKROOT};
+    if ($content !~ /^\s*#/m) {
+        return split(/^/m, $content);
     }
 
-    my @macros;
+    # The file has preprocessor directives. Evaluate simple
+    # #if defined(X) && X / #if !(defined(X) && X) / #else / #endif
+    # patterns in Perl instead of forking clang.
+    my %macros;
     if ($defines) {
-        # Remove double quotations from $defines and extract macros.
-        # For example, if $defines is ' "A=1" "B=1" C=1 ""    D  ',
-        # then it is converted into four macros -DA=1, -DB=1, -DC=1 and -DD.
-        $defines =~ s/\"//g;
-        @macros = grep { $_ } split(/\s+/, $defines); # grep skips empty macros.
-        @macros = map { "-D$_" } @macros;
+        $macros{$_} = 1 for grep { $_ } split(/\s+/, $defines =~ s/"//gr);
+    }
+    return split(/^/m, _evaluatePreprocessorDirectives($content, \%macros));
+}
+
+# Simple #if / #else / #endif evaluator. Supports:
+#   #if defined(X) && X
+#   #if defined(X)
+#   #if defined(X) && X && defined(Y) && Y  (conjunctions)
+#   #if !(defined(X) && X)                  (negation)
+#   #else
+#   #endif
+#   #endif // comment
+#   Nesting
+sub _evaluatePreprocessorDirectives
+{
+    my ($content, $macros) = @_;
+    my $output = "";
+    # Stack of [emittingBeforeThisIf, conditionWasTrue].
+    my @ifStack = ();
+    my $emitting = 1;
+
+    for my $line (split(/^/m, $content)) {
+        if ($line =~ /^\s*#\s*if\s+(.*)/) {
+            my $cond = _evaluateCondition($1, $macros);
+            push @ifStack, [$emitting, $cond];
+            $emitting = $emitting && $cond;
+        } elsif ($line =~ /^\s*#\s*else\b/) {
+            my $frame = $ifStack[-1];
+            $emitting = $frame->[0] && !$frame->[1];
+        } elsif ($line =~ /^\s*#\s*endif\b/) {
+            my $frame = pop @ifStack;
+            $emitting = $frame->[0];
+        } else {
+            $output .= $line if $emitting;
+        }
+    }
+    return $output;
+}
+
+sub _evaluateCondition
+{
+    my ($expr, $macros) = @_;
+
+    # Handle negation: "!(defined(X) && X)"
+    if ($expr =~ /^\s*!\s*\((.+)\)\s*$/) {
+        return _evaluateCondition($1, $macros) ? 0 : 1;
     }
 
-    my $pid = 0;
-    if ($Config{osname} eq "cygwin") {
-        $ENV{PATH} = "$ENV{PATH}:/cygdrive/c/cygwin/bin";
-        my @preprocessorAndFlags = shellwords($preprocessor);
-        if ($preprocessorAndFlags[0] =~ "cl.exe") {
-            $fileName = Cygwin::posix_to_win_path($fileName);
-        }
-        $preprocessorAndFlags[0] = Cygwin::win_to_posix_path($preprocessorAndFlags[0]);
-        # This call can fail if Windows rebases cygwin, so retry a few times until it succeeds.
-        for (my $tries = 0; !$pid && ($tries < 20); $tries++) {
-            eval {
-                # Suppress STDERR so that if we're using cl.exe, the output
-                # name isn't needlessly echoed.
-                use Symbol 'gensym'; my $err = gensym;
-                $pid = open3(\*PP_IN, \*PP_OUT, $err, @preprocessorAndFlags, @args, @macros, $fileName);
-                1;
-            } or do {
-                sleep 1;
-            }
-        };
-    } elsif ($Config::Config{"osname"} eq "MSWin32") {
-        # Suppress STDERR so that if we're using cl.exe, the output
-        # name isn't needlessly echoed.
-        use Symbol 'gensym'; my $err = gensym;
-        $pid = open3(\*PP_IN, \*PP_OUT, $err, $preprocessor, @args, @macros, $fileName);
-    } else {
-        $pid = open2(\*PP_OUT, \*PP_IN, shellwords($preprocessor), @args, @macros, $fileName);
+    # Handle parenthesized expression: "(defined(X) && X)"
+    if ($expr =~ /^\s*\((.+)\)\s*$/) {
+        return _evaluateCondition($1, $macros);
     }
-    close PP_IN;
-    my @documentContent = <PP_OUT>;
-    close PP_OUT;
-    waitpid($pid, 0);
-    return @documentContent;
+
+    # Handle conjunctions: "defined(X) && X && defined(Y) && Y"
+    my @parts = split(/\s*&&\s*/, $expr);
+    for my $part (@parts) {
+        $part =~ s/^\s+|\s+$//g;
+        if ($part =~ /^\(?defined\((\w+)\)\)?$/) {
+            return 0 unless $macros->{$1};
+        } elsif ($part =~ /^(\w+)$/) {
+            return 0 unless $macros->{$1};
+        } else {
+            # Unrecognized expression — conservatively treat as true.
+            next;
+        }
+    }
+    return 1;
 }
 
 1;

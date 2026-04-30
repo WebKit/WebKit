@@ -74,6 +74,90 @@ WorkQueue& AudioVideoRendererRemote::queueSingleton()
     return workQueue.get();
 }
 
+MediaTime AudioVideoRendererRemote::TimeProgressEstimator::currentTime() const
+{
+    Locker locker { m_lock };
+    MediaTime calculated;
+    auto rate = m_effectiveRate.load();
+    if (!rate || m_forceUseCachedTime)
+        calculated = m_cachedTime;
+    else {
+        auto elapsed = std::min(MonotonicTime::now() - m_wallTime, kUpdateInterval);
+        calculated = m_cachedTime + MediaTime::createWithDouble(rate * elapsed.seconds());
+    }
+    if (rate >= 0)
+        calculated = std::max(m_lastReturnedTime.value_or(calculated), calculated);
+    else
+        calculated = std::min(m_lastReturnedTime.value_or(calculated), calculated);
+    // Cap at the pending stall boundary. The renderer can't advance past a time
+    // we've explicitly asked the GPU to stall at, even if the GPU's stall IPC
+    // hasn't propagated yet. Applied after the monotonicity clamp so we can clip
+    // back from any prior overshoot.
+    if (m_stallCap)
+        calculated = std::min(calculated, *m_stallCap);
+    m_lastReturnedTime = calculated;
+    return calculated;
+}
+
+bool AudioVideoRendererRemote::TimeProgressEstimator::timeIsProgressing() const
+{
+    return m_effectiveRate.load();
+}
+
+void AudioVideoRendererRemote::TimeProgressEstimator::setTime(const MediaTimeUpdateData& data)
+{
+    Locker locker { m_lock };
+    m_cachedTime = data.currentTime;
+    m_wallTime = data.wallTime;
+    m_effectiveRate = data.effectiveRate;
+    if (!data.effectiveRate)
+        m_lastReturnedTime.reset();
+    m_forceUseCachedTime = false;
+}
+
+void AudioVideoRendererRemote::TimeProgressEstimator::setRate(double rate)
+{
+    Locker locker { m_lock };
+    auto currentRate = m_effectiveRate.load();
+    if (currentRate) {
+        auto now = MonotonicTime::now();
+        auto elapsed = std::min(now - m_wallTime, kUpdateInterval);
+        m_cachedTime += MediaTime::createWithDouble(currentRate * elapsed.seconds());
+        m_wallTime = now;
+        m_effectiveRate = rate;
+    }
+    if (!rate) {
+        m_effectiveRate = 0;
+        m_lastReturnedTime.reset();
+    }
+    m_forceUseCachedTime = true;
+}
+
+void AudioVideoRendererRemote::TimeProgressEstimator::pause()
+{
+    Locker locker { m_lock };
+    auto rate = m_effectiveRate.load();
+    if (!rate)
+        return;
+    auto now = MonotonicTime::now();
+    auto elapsed = std::min(now - m_wallTime, kUpdateInterval);
+    m_cachedTime += MediaTime::createWithDouble(rate * elapsed.seconds());
+    m_wallTime = now;
+    m_effectiveRate = 0;
+}
+
+void AudioVideoRendererRemote::TimeProgressEstimator::setStallCap(const MediaTime& time)
+{
+    Locker locker { m_lock };
+    m_stallCap = time;
+}
+
+void AudioVideoRendererRemote::TimeProgressEstimator::clearStallCap()
+{
+    Locker locker { m_lock };
+    m_stallCap.reset();
+}
+
 Ref<AudioVideoRendererRemote> AudioVideoRendererRemote::create(LoggerHelper* loggerHelper, HTMLMediaElementIdentifier mediaElementIdentifier, MediaPlayerIdentifier playerIdentifier, GPUProcessConnection& connection)
 {
     assertIsMainThread();
@@ -344,7 +428,7 @@ Ref<AudioVideoRenderer::BitmapImagePromise> AudioVideoRendererRemote::currentBit
 std::optional<VideoPlaybackQualityMetrics> AudioVideoRendererRemote::videoPlaybackQualityMetrics()
 {
     Locker locker { m_lock };
-    return m_state.videoPlaybackQualityMetrics;
+    return m_cachedState.videoPlaybackQualityMetrics;
 }
 
 PlatformLayer* AudioVideoRendererRemote::platformVideoLayer() const
@@ -390,8 +474,9 @@ void AudioVideoRendererRemote::play(std::optional<MonotonicTime> hostTime)
 {
     {
         Locker locker { m_lock };
-        m_state.paused = false;
+        m_cachedState.paused = false;
     }
+    // The GPU will reply with a StateUpdate carrying the new effective rate so the estimator can resume extrapolation without waiting for the 250ms periodic tick.
     ensureOnDispatcherWithConnection([hostTime](auto& renderer, auto& connection) {
         connection.send(Messages::RemoteAudioVideoRendererProxyManager::Play(renderer.m_identifier, hostTime), 0);
     });
@@ -401,8 +486,10 @@ void AudioVideoRendererRemote::pause(std::optional<MonotonicTime> hostTime)
 {
     {
         Locker locker { m_lock };
-        m_state.paused = true;
+        m_cachedState.paused = true;
     }
+    m_timeEstimator.pause();
+    // The GPU will reply with a StateUpdate so cached fields (videoPlaybackQualityMetrics, etc.) match its view immediately.
     ensureOnDispatcherWithConnection([hostTime](auto& renderer, auto& connection) {
         connection.send(Messages::RemoteAudioVideoRendererProxyManager::Pause(renderer.m_identifier, hostTime), 0);
     });
@@ -411,11 +498,13 @@ void AudioVideoRendererRemote::pause(std::optional<MonotonicTime> hostTime)
 bool AudioVideoRendererRemote::paused() const
 {
     Locker locker { m_lock };
-    return m_state.paused;
+    return m_cachedState.paused;
 }
 
 void AudioVideoRendererRemote::setRate(double rate)
 {
+    m_timeEstimator.setRate(rate);
+    // The GPU will reply with a StateUpdate that unfreezes the estimator (setTime clears m_forceUseCachedTime) with the real effective rate.
     ensureOnDispatcherWithConnection([rate](auto& renderer, auto& connection) {
         connection.send(Messages::RemoteAudioVideoRendererProxyManager::SetRate(renderer.m_identifier, rate), 0);
     });
@@ -423,16 +512,12 @@ void AudioVideoRendererRemote::setRate(double rate)
 
 double AudioVideoRendererRemote::effectiveRate() const
 {
-    Locker locker { m_lock };
-    return m_state.effectiveRate;
+    return m_timeEstimator.effectiveRate();
 }
 
 void AudioVideoRendererRemote::stall()
 {
-    {
-        Locker locker { m_lock };
-        m_state.effectiveRate = 0;
-    }
+    m_timeEstimator.setRate(0);
     ensureOnDispatcherWithConnection([](auto& renderer, auto& connection) {
         connection.send(Messages::RemoteAudioVideoRendererProxyManager::Stall(renderer.m_identifier), 0);
     });
@@ -454,10 +539,7 @@ void AudioVideoRendererRemote::cancelPendingSeek()
 
 Ref<MediaTimePromise> AudioVideoRendererRemote::prepareToSeek(const MediaTime& time)
 {
-    {
-        Locker locker { m_lock };
-        m_state.currentTime = time;
-    }
+    m_timeEstimator.setTime({ time, 0.0, MonotonicTime::now() });
     m_seeking = true;
     m_lastSeekTime = time;
     return invokeAsync(queueSingleton(), [protectedThis = Ref { *this }, this, time] -> Ref<MediaTimePromise> {
@@ -494,10 +576,7 @@ Ref<MediaTimePromise> AudioVideoRendererRemote::prepareToSeek(const MediaTime& t
 
 Ref<GenericPromise> AudioVideoRendererRemote::finishSeek(const MediaTime& time)
 {
-    {
-        Locker locker { m_lock };
-        m_state.currentTime = time;
-    }
+    m_timeEstimator.setTime({ time, 0.0, MonotonicTime::now() });
     ASSERT(m_seeking, "Invalid seeking state, bad API usage");
     return invokeAsync(queueSingleton(), [protectedThis = Ref { *this }, this, time] -> Ref<GenericPromise> {
         cancelPendingSeek();
@@ -662,8 +741,7 @@ void AudioVideoRendererRemote::notifyTrackNeedsReenqueuing(TrackIdentifier track
 
 bool AudioVideoRendererRemote::timeIsProgressing() const
 {
-    Locker locker { m_lock };
-    return m_state.timeIsProgressing;
+    return m_timeEstimator.timeIsProgressing();
 }
 
 void AudioVideoRendererRemote::notifyEffectiveRateChanged(Function<void(double)>&& callback)
@@ -678,12 +756,16 @@ MediaTime AudioVideoRendererRemote::currentTime() const
 {
     if (m_seeking)
         return m_lastSeekTime;
-    Locker locker { m_lock };
-    return m_state.currentTime;
+    return m_timeEstimator.currentTime();
 }
 
 void AudioVideoRendererRemote::notifyTimeReachedAndStall(const MediaTime& time, Function<void(const MediaTime&)>&& callback)
 {
+    // Cap the estimator at the boundary: the renderer cannot advance past a
+    // time we have asked the GPU to stall at, even if the StallTimeReached IPC
+    // hasn't propagated yet. Cleared when cancelTimeReachedAction or the next
+    // notifyTimeReachedAndStall replaces it.
+    m_timeEstimator.setStallCap(time);
     ensureOnDispatcherWithConnection([time, callback = WTF::move(callback)](auto& renderer, auto& connection) mutable {
         assertIsCurrent(queueSingleton());
         renderer.m_timeReachedAndStallCallback = WTF::move(callback);
@@ -693,6 +775,7 @@ void AudioVideoRendererRemote::notifyTimeReachedAndStall(const MediaTime& time, 
 
 void AudioVideoRendererRemote::cancelTimeReachedAction()
 {
+    m_timeEstimator.clearStallCap();
     ensureOnDispatcherWithConnection([](auto& renderer, auto& connection) {
         assertIsCurrent(queueSingleton());
         renderer.m_timeReachedAndStallCallback = { };
@@ -787,8 +870,10 @@ WTFLogChannel& AudioVideoRendererRemote::logChannel() const
 
 void AudioVideoRendererRemote::updateCacheState(const RemoteAudioVideoRendererState& state)
 {
+    m_timeEstimator.setTime(state.timeUpdateData);
     Locker locker { m_lock };
-    m_state = state;
+    m_cachedState.paused = state.paused;
+    m_cachedState.videoPlaybackQualityMetrics = state.videoPlaybackQualityMetrics;
 }
 
 AudioVideoRendererRemote::ReadyForMoreDataState& AudioVideoRendererRemote::readyForMoreDataState(TrackIdentifier trackIdentifier)
@@ -1065,9 +1150,10 @@ void AudioVideoRendererRemote::MessageReceiver::effectiveRateChanged(RemoteAudio
 {
     if (RefPtr parent = m_parent.get()) {
         assertIsCurrent(queueSingleton());
+        auto effectiveRate = state.timeUpdateData.effectiveRate;
         parent->updateCacheState(state);
         if (parent->m_effectiveRateChangedCallback)
-            parent->m_effectiveRateChangedCallback(state.effectiveRate);
+            parent->m_effectiveRateChangedCallback(effectiveRate);
     }
 }
 
@@ -1135,7 +1221,7 @@ void AudioVideoRendererRemote::MessageReceiver::layerHostingContextChanged(Remot
         parent->updateCacheState(state);
         parent->setLayerHostingContext(WTF::move(hostingContext));
         if (parent->m_videoLayerSizeChangedCallback)
-            parent->m_videoLayerSizeChangedCallback(state.currentTime, videoLayerSize);
+            parent->m_videoLayerSizeChangedCallback(state.timeUpdateData.currentTime, videoLayerSize);
     }
 }
 #endif

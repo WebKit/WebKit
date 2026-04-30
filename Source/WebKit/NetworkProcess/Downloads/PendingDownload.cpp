@@ -81,7 +81,7 @@ PendingDownload::PendingDownload(IPC::Connection* parentProcessConnection, Netwo
     send(Messages::DownloadProxy::DidStart(m_networkLoad->currentRequest(), suggestedName));
 
 #if HAVE(WEBCONTENTRESTRICTIONS)
-    protect(m_urlFilter)->isURLAllowed(mainDocumentURL(), m_networkLoad->currentRequest().url(), [this, protectedThis = Ref { *this }, startNetworkLoad = WTF::move(startNetworkLoad)] (bool allowed, NSData *) mutable {
+    protect(m_urlFilter)->isURLAllowed(IsMainFrameLoad::Yes, mainDocumentURL(), m_networkLoad->currentRequest().url(), [this, protectedThis = Ref { *this }, startNetworkLoad = WTF::move(startNetworkLoad)] (bool allowed, NSData *) mutable {
         if (!allowed) {
             blockDueToContentFilter(ResourceResponse { m_networkLoad->currentRequest().url(), "application/octet-stream"_s, 0, ""_s }, nullptr);
             return;
@@ -138,7 +138,7 @@ void PendingDownload::willSendRedirectedRequest(WebCore::ResourceRequest&&, WebC
 
 #if HAVE(WEBCONTENTRESTRICTIONS)
     auto requestURL = redirectRequest.url();
-    protect(m_urlFilter)->isURLAllowed(mainDocumentURL(), requestURL, [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), redirectRequest = WTF::move(redirectRequest), redirectResponse = WTF::move(redirectResponse)] (bool allowed, NSData *) mutable {
+    protect(m_urlFilter)->isURLAllowed(IsMainFrameLoad::Yes, mainDocumentURL(), requestURL, [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), redirectRequest = WTF::move(redirectRequest), redirectResponse = WTF::move(redirectResponse)] (bool allowed, NSData *) mutable {
         if (allowed) {
             sendWithAsyncReply(Messages::DownloadProxy::WillSendRequest(WTF::move(redirectRequest), WTF::move(redirectResponse)), WTF::move(completionHandler));
             return;

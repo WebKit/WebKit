@@ -31,32 +31,33 @@
 #include <JavaScriptCore/GPRInfo.h>
 #include <JavaScriptCore/JSPIContext.h>
 
-#include <memory>
-
 namespace JSC {
 
-class EvacuatedStackSlice;
 class Exception;
+class PinballCompletion;
+class CallFrame;
 class JSCallee;
 class JSFunctionWithFields;
 class JSGlobalObject;
-class Register;
 
 // Allocated on the stack by assembly entry points of fulfill and reject handlers of a suspension promise.
 // Holds all state shared by assembly and C++ code implementing the fulfillment or rejection.
 
 struct PinballHandlerContext final {
-    WTF_FORBID_HEAP_ALLOCATION;
+    WTF_FORBID_HEAP_ALLOCATION_ALLOWING_PLACEMENT_NEW;
 public:
+    PinballHandlerContext(JSGlobalObject*, CallFrame*);
+
     static constexpr size_t NumberOfWasmArgumentRegisters = GPRInfo::numberOfArgumentRegisters + FPRInfo::numberOfArgumentRegisters;
 
 #if ASSERT_ENABLED
-    size_t magic;
+    static constexpr size_t expectedMagic = 0xBA11FEED;
+    size_t magic { expectedMagic };
 #endif
     JSGlobalObject* globalObject;
     VM* vm;
     JSFunctionWithFields* handler;
-    std::unique_ptr<EvacuatedStackSlice> slice;
+    PinballCompletion* pinball;
     size_t sliceByteSize;
     JSPIContext jspiContext;
     // Callee saves to restore before entering the evacuated code (points into the PinballCompletion held by the handler).

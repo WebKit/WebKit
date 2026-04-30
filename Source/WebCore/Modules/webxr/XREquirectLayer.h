@@ -27,38 +27,60 @@
 
 #if ENABLE(WEBXR_LAYERS)
 
+#include "ExceptionOr.h"
 #include "XRCompositionLayer.h"
+#include "XREquirectLayerInit.h"
+#include <wtf/Ref.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class WebXRRigidTransform;
+class WebXRSession;
 class WebXRSpace;
+class XRLayerBacking;
 
 // https://immersive-web.github.io/layers/#xrequirectlayertype
 class XREquirectLayer : public XRCompositionLayer {
+    WTF_MAKE_TZONE_ALLOCATED(XREquirectLayer);
 public:
+    static Ref<XREquirectLayer> create(ScriptExecutionContext& scriptExecutionContext, WebXRSession& session, Ref<XRLayerBacking>&& backing, const XREquirectLayerInit& init)
+    {
+        return adoptRef(*new XREquirectLayer(scriptExecutionContext, session, WTF::move(backing), init));
+    }
+
     virtual ~XREquirectLayer();
 
-    const WebXRSpace& space() const { RELEASE_ASSERT_NOT_REACHED(); }
-    [[noreturn]] void setSpace(WebXRSpace&) { RELEASE_ASSERT_NOT_REACHED(); }
-    const WebXRRigidTransform& transform() const { RELEASE_ASSERT_NOT_REACHED(); }
-    [[noreturn]] void setTransform(WebXRRigidTransform&) { RELEASE_ASSERT_NOT_REACHED(); }
+    const WebXRSpace& space() const;
+    void setSpace(WebXRSpace&);
+    const WebXRRigidTransform& transform() const;
+    void setTransform(WebXRRigidTransform&);
 
-    float radius() const { RELEASE_ASSERT_NOT_REACHED(); }
-    [[noreturn]] void setRadius(float) { RELEASE_ASSERT_NOT_REACHED(); }
-    float centralHorizontalAngle() const { RELEASE_ASSERT_NOT_REACHED(); }
-    [[noreturn]] void setCentralHorizontalAngle(float) { RELEASE_ASSERT_NOT_REACHED(); }
-    float upperVerticalAngle() const { RELEASE_ASSERT_NOT_REACHED(); }
-    [[noreturn]] void setUpperVerticalAngle(float) { RELEASE_ASSERT_NOT_REACHED(); }
-    float lowerVerticalAngle() const { RELEASE_ASSERT_NOT_REACHED(); }
-    [[noreturn]] void setLowerVerticalAngle(float) { RELEASE_ASSERT_NOT_REACHED(); }
+    float radius() const { return m_radius; }
+    void setRadius(float radius) { m_radius = radius; setNeedsRedraw(true); }
+    float centralHorizontalAngle() const { return m_centralHorizontalAngle; }
+    void setCentralHorizontalAngle(float angle) { m_centralHorizontalAngle = angle; setNeedsRedraw(true); }
+    float upperVerticalAngle() const { return m_upperVerticalAngle; }
+    void setUpperVerticalAngle(float angle) { m_upperVerticalAngle = angle; setNeedsRedraw(true); }
+    float lowerVerticalAngle() const { return m_lowerVerticalAngle; }
+    void setLowerVerticalAngle(float angle) { m_lowerVerticalAngle = angle; setNeedsRedraw(true); }
 
 private:
+    XREquirectLayer(ScriptExecutionContext&, WebXRSession&, Ref<XRLayerBacking>&&, const XREquirectLayerInit&);
     bool isXREquirectLayer() const final { return true; }
+    void recomputePose();
+
+    RefPtr<WebXRSpace> m_space;
+    RefPtr<WebXRRigidTransform> m_transform;
+    float m_radius;
+    float m_centralHorizontalAngle;
+    float m_upperVerticalAngle;
+    float m_lowerVerticalAngle;
+    PlatformXR::FrameData::Pose m_poseInLocalSpace;
 
     // WebXRLayer.
-    [[noreturn]] void startFrame(PlatformXR::FrameData&) final { RELEASE_ASSERT_NOT_REACHED(); }
-    [[noreturn]] PlatformXR::DeviceLayer endFrame() final { RELEASE_ASSERT_NOT_REACHED(); }
+    void startFrame(PlatformXR::FrameData&) final;
+    PlatformXR::DeviceLayer endFrame() final;
 };
 
 } // namespace WebCore

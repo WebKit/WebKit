@@ -48,6 +48,16 @@ bool ResourceTimingInformation::shouldAddResourceTiming(CachedResource& resource
         && resource.options().loadedFromOpaqueSource == LoadedFromOpaqueSource::No;
 }
 
+void ResourceTimingInformation::addResourceTimingToDocument(Document& document, ResourceTiming&& resourceTiming)
+{
+    RefPtr window = document.window();
+    if (!window)
+        return;
+
+    resourceTiming.updateExposure(protect(document.securityOrigin()));
+    protect(window->performance())->addResourceTiming(WTF::move(resourceTiming));
+}
+
 void ResourceTimingInformation::addResourceTiming(CachedResource& resource, Document& document, ResourceTiming&& resourceTiming)
 {
     if (!ResourceTimingInformation::shouldAddResourceTiming(resource))
@@ -61,7 +71,7 @@ void ResourceTimingInformation::addResourceTiming(CachedResource& resource, Docu
     if (info.added == Added)
         return;
 
-    RefPtr initiatorDocument = document;
+    RefPtr initiatorDocument = &document;
     if (resource.type() == CachedResource::Type::MainResource && document.frame() && document.frame()->loader().shouldReportResourceTimingToParentFrame()) {
         initiatorDocument = document.parentDocument();
         if (initiatorDocument)

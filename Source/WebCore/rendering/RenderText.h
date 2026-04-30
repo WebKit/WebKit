@@ -268,8 +268,9 @@ private:
 
 String applyTextTransform(const RenderStyle&, const String&, char32_t previousCharacter);
 String applyTextTransform(const RenderStyle&, const String&);
-String capitalize(const String&, char32_t previousCharacter);
-String capitalize(const String&);
+String capitalize(const String&, char32_t previousCharacter, const AtomString& locale);
+String capitalize(const String&, const AtomString& locale);
+bool isDutchLocale(const AtomString&);
 TextBreakIterator::LineMode::Behavior NODELETE mapLineBreakToIteratorMode(LineBreak);
 TextBreakIterator::ContentAnalysis NODELETE mapWordBreakToContentAnalysis(WordBreak);
 

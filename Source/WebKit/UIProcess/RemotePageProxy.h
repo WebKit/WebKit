@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "EditorState.h"
 #include "MessageReceiver.h"
 #include "NavigationActionData.h"
 #include "ProcessActivityGroup.h"
@@ -118,6 +119,7 @@ public:
     void setCurrentOrientation(WebCore::ScreenOrientationType);
 
     bool hasNetworkRequestsInProgress() const { return m_hasNetworkRequestsInProgress; }
+    bool canShortCircuitHorizontalWheelEvents() const { return m_canShortCircuitHorizontalWheelEvents; }
 
     void disconnect();
 
@@ -126,6 +128,8 @@ public:
     LayerHostingContextID contextIDForVisibilityPropagationInWebProcess() const { return m_contextIDForVisibilityPropagationInWebProcess; }
 #endif
 
+    EditorState& editorState() { return m_editorState; }
+
 private:
     RemotePageProxy(WebPageProxy&, WebProcessProxy&, const WebCore::Site&, WebPageProxyMessageReceiverRegistration*, std::optional<WebCore::PageIdentifier>);
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -133,6 +137,7 @@ private:
     void isPlayingMediaDidChange(WebCore::MediaProducerMediaStateFlags);
 
     void setNetworkRequestsInProgress(bool);
+    void setCanShortCircuitHorizontalWheelEvents(bool);
 
     const WebCore::PageIdentifier m_webPageID;
     const Ref<WebProcessProxy> m_process;
@@ -157,6 +162,7 @@ private:
     WebCore::MediaProducerMediaStateFlags m_mediaState;
     RefPtr<RemotePageScreenOrientationManagerProxy> m_screenOrientationManager;
     bool m_hasNetworkRequestsInProgress { false };
+    bool m_canShortCircuitHorizontalWheelEvents { true };
 #if ASSERT_ENABLED
     bool m_disconnected { false };
 #endif
@@ -164,6 +170,7 @@ private:
     LayerHostingContextID m_contextIDForVisibilityPropagationInWebProcess { 0 };
 #endif
 
+    EditorState m_editorState;
 };
 
 }

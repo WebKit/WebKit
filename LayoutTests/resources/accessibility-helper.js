@@ -455,6 +455,52 @@ function expectRectWithVariance(expression, x, y, width, height, allowedVariance
         return `PASS: ${expression} was ${allowedVariance === 0 ? "equal" : "equal or approximately equal"} to ${expectedRect}.\n`;
 }
 
+// Draws a drawFocusIfNeeded focus ring on a canvas descendant element at the
+// given canvas-local coordinates, waits for accessibility bounds to update,
+// then verifies the reported page position and size match expectations.
+async function verifyCanvasFocusBounds({
+    canvasId, canvasDescendantId,
+    focusX, focusY, focusWidth, focusHeight,
+    expectedPageX, expectedPageY,
+    expectedWidth, expectedHeight,
+    variance = 0,
+}) {
+    var canvas = document.getElementById(canvasId);
+    var canvasContext = canvas.getContext("2d");
+    var descendant = document.getElementById(canvasDescendantId);
+
+    descendant.focus();
+
+    canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+    canvasContext.beginPath();
+    canvasContext.rect(focusX, focusY, focusWidth, focusHeight);
+    canvasContext.drawFocusIfNeeded(descendant);
+
+    var axDescendant = accessibilityController.accessibleElementById(canvasDescendantId);
+
+    await waitFor(() => {
+        return Math.abs(axDescendant.width - expectedWidth) <= variance
+            && Math.abs(axDescendant.height - expectedHeight) <= variance
+            && Math.abs(axDescendant.pageX - expectedPageX) <= variance
+            && Math.abs(axDescendant.pageY - expectedPageY) <= variance;
+    });
+
+    var output = "";
+    var checks = [
+        { name: "pageX", actual: axDescendant.pageX, expected: expectedPageX },
+        { name: "pageY", actual: axDescendant.pageY, expected: expectedPageY },
+        { name: "width", actual: axDescendant.width, expected: expectedWidth },
+        { name: "height", actual: axDescendant.height, expected: expectedHeight },
+    ];
+    for (var check of checks) {
+        if (Math.abs(check.actual - check.expected) <= variance)
+            output += `PASS: ${check.name} was ${variance === 0 ? "equal" : "equal or approximately equal"} to ${check.expected}.\n`;
+        else
+            output += `FAIL: ${check.name} was ${check.actual}, expected ${check.expected} (variance ${variance}).\n`;
+    }
+    return output;
+}
+
 async function expectAsync(expression, expectedValue) {
     if (typeof expression !== "string")
         debug("WARN: The expression arg in expectAsync should be a string.");

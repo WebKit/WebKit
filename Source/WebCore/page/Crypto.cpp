@@ -32,6 +32,7 @@
 #include "Crypto.h"
 
 #include "Document.h"
+#include "EventTargetInlines.h"
 #include "ExceptionOr.h"
 #include "SubtleCrypto.h"
 #include <JavaScriptCore/ArrayBufferView.h>

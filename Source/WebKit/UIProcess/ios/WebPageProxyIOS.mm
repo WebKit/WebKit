@@ -715,9 +715,9 @@ void WebPageProxy::moveSelectionByOffset(int32_t offset, CompletionHandler<void(
     }, webPageIDInMainFrameProcess());
 }
 
-void WebPageProxy::interpretKeyEvent(EditorState&& state, KeyEventInterpretationContext&& context, CompletionHandler<void(bool)>&& completionHandler)
+void WebPageProxy::interpretKeyEvent(IPC::Connection& connection, EditorState&& state, KeyEventInterpretationContext&& context, CompletionHandler<void(bool)>&& completionHandler)
 {
-    updateEditorState(WTF::move(state));
+    updateEditorState(connection, WTF::move(state));
     if (!hasQueuedKeyEvent()) {
         completionHandler(false);
         return;

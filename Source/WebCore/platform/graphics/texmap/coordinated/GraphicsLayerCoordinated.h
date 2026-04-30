@@ -30,6 +30,7 @@
 #include "GraphicsLayer.h"
 #include "GraphicsLayerTransform.h"
 #include "TextureMapperAnimation.h"
+#include <wtf/EnumSet.h>
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
@@ -71,6 +72,7 @@ private:
     void setPreserves3D(bool) override;
     void setBackfaceVisibility(bool) override;
     void setOpacity(float) override;
+    void setBlendMode(BlendMode) override;
     void setContentsVisible(bool) override;
     void setContentsOpaque(bool) override;
     void setContentsRect(const FloatRect&) override;
@@ -133,46 +135,47 @@ private:
     void setShowRepaintCounter(bool) override;
     void dumpAdditionalProperties(TextStream&, OptionSet<LayerTreeAsTextOptions>) const override;
 
-    enum class Change : uint64_t {
-        Geometry                     = 1LLU << 0,
-        Transform                    = 1LLU << 1,
-        ChildrenTransform            = 1LLU << 2,
-        DrawsContent                 = 1LLU << 3,
-        MasksToBounds                = 1LLU << 4,
-        Preserves3D                  = 1LLU << 5,
-        BackfaceVisibility           = 1LLU << 6,
-        Opacity                      = 1LLU << 7,
-        Children                     = 1LLU << 8,
-        ContentsVisible              = 1LLU << 9,
-        ContentsOpaque               = 1LLU << 10,
-        ContentsRect                 = 1LLU << 11,
-        ContentsRectClipsDescendants = 1LLU << 12,
-        ContentsClippingRect         = 1LLU << 13,
-        ContentsScale                = 1LLU << 14,
-        ContentsTiling               = 1LLU << 15,
-        ContentsBuffer               = 1LLU << 16,
-        ContentsBufferNeedsDisplay   = 1LLU << 17,
-        ContentsImage                = 1LLU << 18,
-        ContentsColor                = 1LLU << 19,
-        DirtyRegion                  = 1LLU << 20,
-        EventRegion                  = 1LLU << 21,
-        Shape                        = 1LLU << 22,
-        Filters                      = 1LLU << 23,
-        Mask                         = 1LLU << 24,
-        Replica                      = 1LLU << 25,
-        Backdrop                     = 1LLU << 26,
-        BackdropRect                 = 1LLU << 27,
-        BackdropRoot                 = 1LLU << 28,
-        Animations                   = 1LLU << 29,
-        TileCoverage                 = 1LLU << 30,
-        DebugIndicators              = 1LLU << 31,
+    enum class Change : uint8_t {
+        Animations,
+        Backdrop,
+        BackdropRect,
+        BackdropRoot,
+        BackfaceVisibility,
+        BlendMode,
+        Children,
+        ChildrenTransform,
+        ContentsBuffer,
+        ContentsBufferNeedsDisplay,
+        ContentsClippingRect,
+        ContentsColor,
+        ContentsImage,
+        ContentsOpaque,
+        ContentsRect,
+        ContentsRectClipsDescendants,
+        ContentsScale,
+        ContentsTiling,
+        ContentsVisible,
+        DebugIndicators,
+        DirtyRegion,
+        DrawsContent,
+        EventRegion,
+        Filters,
+        Geometry,
+        Mask,
+        MasksToBounds,
+        Opacity,
+        Preserves3D,
+        Replica,
 #if ENABLE(SCROLLING_THREAD)
-        ScrollingNode                = 1LLU << 32
+        ScrollingNode,
 #endif
+        Shape,
+        TileCoverage,
+        Transform,
     };
 
     enum class ScheduleFlush : bool { No, Yes };
-    void noteLayerPropertyChanged(OptionSet<Change>, ScheduleFlush);
+    void noteLayerPropertyChanged(EnumSet<Change>, ScheduleFlush);
     void setNeedsUpdateLayerTransform();
     std::pair<FloatPoint, float> computePositionRelativeToBase() const;
     void computePixelAlignmentIfNeeded(float pageScaleFactor, const FloatPoint& positionRelativeToBase, FloatPoint& adjustedPosition, FloatPoint& adjustedBoundsOrigin, FloatPoint3D& adjustedAnchorPoint, FloatSize& adjustedSize);
@@ -201,7 +204,7 @@ private:
     bool updateBackingStoreIfNeeded();
 
     const Ref<CoordinatedPlatformLayer> m_platformLayer;
-    OptionSet<Change> m_pendingChanges;
+    EnumSet<Change> m_pendingChanges;
     bool m_hasDescendantsWithPendingChanges { false };
     bool m_hasDescendantsWithPendingTilesCreation { false };
     bool m_hasDescendantsWithRunningTransformAnimations { false };

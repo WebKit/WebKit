@@ -1,0 +1,4 @@
+
+
+PASS Video with loading=lazy does not delay window onload event
+

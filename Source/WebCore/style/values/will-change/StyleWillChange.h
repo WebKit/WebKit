@@ -25,12 +25,12 @@
 #pragma once
 
 #include <WebCore/CSSPropertyNames.h>
-#include <WebCore/StylePropertyIdentifier.h>
+#include <WebCore/StyleCustomIdent.h>
 #include <WebCore/StyleValueTypes.h>
 #include <wtf/PointerComparison.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
-#include <wtf/Vector.h>
+#include <wtf/TrailingArray.h>
 
 namespace WebCore {
 namespace Style {
@@ -39,25 +39,44 @@ struct WillChange;
 
 // <animateable-feature>
 struct WillChangeAnimatableFeature {
-    // FIXME: This should be storing <custom-ident> for non-CSSPropertyID values to correctly implement computed value serialization.
-    // It should likely be a Variant<CSS::Keyword::ScrollPosition, CSS::Keyword::Contents, PropertyIdentifier, CustomIdentifier>;
+    // <custom-ident> values that are case-insensitive matches for a CSS property are stored
+    // as `CustomIdentWithCachedPropertyID`. `CustomIdentWithCachedPropertyID` must maintain
+    // the `CustomIdent` to serialize correctly.
+    struct CustomIdentWithCachedPropertyID {
+        CustomIdent customIdent;
+        CSSPropertyID propertyID;
 
-    enum class Feature: uint8_t {
-        ScrollPosition,
-        Contents,
-        Property,
+        template<typename... F> decltype(auto) switchOn(F&&... f) const
+        {
+            return WTF::makeVisitor(std::forward<F>(f)...)(customIdent);
+        }
+
+        bool operator==(const CustomIdentWithCachedPropertyID&) const = default;
+        bool operator==(const CustomIdent& other) const { return customIdent == other; }
+        bool operator==(CSSPropertyID other) const { return propertyID == other; }
     };
 
-    static const int numCSSPropertyIDBits = 14;
-    static_assert(cssPropertyIDEnumValueCount <= (1 << numCSSPropertyIDBits), "CSSPropertyID should fit in 14 bits");
+    Variant<CSS::Keyword::ScrollPosition, CSS::Keyword::Contents, CustomIdent, CustomIdentWithCachedPropertyID> value;
 
-    WillChangeAnimatableFeature(Feature, CSSPropertyID = CSSPropertyInvalid);
+    WillChangeAnimatableFeature(CSS::Keyword::ScrollPosition feature)
+        : value { feature }
+    {
+    }
 
-    Feature m_feature { Feature::Property };
-    unsigned m_cssPropertyID : numCSSPropertyIDBits { CSSPropertyInvalid };
+    WillChangeAnimatableFeature(CSS::Keyword::Contents feature)
+        : value { feature }
+    {
+    }
 
-    Feature feature() const { return m_feature; }
-    CSSPropertyID property() const { return feature() == Feature::Property ? static_cast<CSSPropertyID>(m_cssPropertyID) : CSSPropertyInvalid; }
+    WillChangeAnimatableFeature(CustomIdent&& feature)
+        : value { WTF::move(feature) }
+    {
+    }
+
+    WillChangeAnimatableFeature(CustomIdentWithCachedPropertyID&& feature)
+        : value { WTF::move(feature) }
+    {
+    }
 
     static bool NODELETE propertyCreatesStackingContext(CSSPropertyID);
     static bool NODELETE propertyTriggersCompositing(CSSPropertyID);
@@ -65,17 +84,12 @@ struct WillChangeAnimatableFeature {
 
     template<typename... F> decltype(auto) switchOn(F&&... f) const
     {
-        auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
+        return WTF::switchOn(value, std::forward<F>(f)...);
+    }
 
-        switch (m_feature) {
-        case Feature::ScrollPosition:
-            return visitor(CSS::Keyword::ScrollPosition { });
-        case Feature::Contents:
-            return visitor(CSS::Keyword::Contents { });
-        case Feature::Property:
-            return visitor(PropertyIdentifier { property() });
-        }
-        RELEASE_ASSERT_NOT_REACHED();
+    template<typename U> bool holdsAlternative() const
+    {
+        return std::holds_alternative<U>(value);
     }
 
     bool operator==(const WillChangeAnimatableFeature&) const = default;
@@ -83,12 +97,39 @@ struct WillChangeAnimatableFeature {
 
 // <animateable-feature>#
 struct WillChangeAnimatableFeatures {
-    using Feature = WillChangeAnimatableFeature::Feature;
-    using value_type = Vector<WillChangeAnimatableFeature, 1>::value_type;
-    using const_iterator = Vector<WillChangeAnimatableFeature, 1>::const_iterator;
+    using value_type = WillChangeAnimatableFeature;
+    using const_iterator = WillChangeAnimatableFeature*;
 
-    WillChangeAnimatableFeatures() : m_data { Data::create() } { }
-    WillChangeAnimatableFeatures(Feature feature, CSSPropertyID propertyID = CSSPropertyInvalid) : m_data { Data::create(feature, propertyID) } { }
+    WillChangeAnimatableFeatures(WillChangeAnimatableFeature&& feature)
+        : m_data { Data::create(WTF::move(feature)) }
+    {
+    }
+
+    WillChangeAnimatableFeatures(CSS::Keyword::ScrollPosition feature)
+        : WillChangeAnimatableFeatures { WillChangeAnimatableFeature { feature } }
+    {
+    }
+
+    WillChangeAnimatableFeatures(CSS::Keyword::Contents feature)
+        : WillChangeAnimatableFeatures { WillChangeAnimatableFeature { feature } }
+    {
+    }
+
+    WillChangeAnimatableFeatures(CustomIdent&& feature)
+        : WillChangeAnimatableFeatures { WillChangeAnimatableFeature { WTF::move(feature) } }
+    {
+    }
+
+    WillChangeAnimatableFeatures(WillChangeAnimatableFeature::CustomIdentWithCachedPropertyID&& feature)
+        : WillChangeAnimatableFeatures { WillChangeAnimatableFeature { WTF::move(feature) } }
+    {
+    }
+
+    template<typename SizedRange, typename Mapper>
+    static WillChangeAnimatableFeatures map(SizedRange&& range, NOESCAPE Mapper&& mapper)
+    {
+        return { Data::map(std::forward<SizedRange>(range), std::forward<Mapper>(mapper)) };
+    }
 
     bool containsScrollPosition() const { return m_data->containsScrollPosition(); }
     bool containsContents() const { return m_data->containsContents(); }
@@ -100,42 +141,57 @@ struct WillChangeAnimatableFeatures {
     bool canTriggerCompositing() const { return m_data->canTriggerCompositing(); }
     bool canTriggerCompositingOnInline() const { return m_data->canTriggerCompositingOnInline(); }
 
-    void addFeature(Feature feature, CSSPropertyID property = CSSPropertyInvalid) { m_data->addFeature(feature, property); }
-
     const_iterator begin() const { return m_data->begin(); }
     const_iterator end() const { return m_data->end(); }
 
 private:
     friend struct WillChange;
 
-    class Data : public RefCounted<Data> {
+    class Data final : public RefCounted<Data>, public TrailingArray<Data, WillChangeAnimatableFeature> {
         WTF_MAKE_TZONE_ALLOCATED(Data);
     public:
-        static Ref<Data> create() { return adoptRef(*new Data); }
-        static Ref<Data> create(Feature feature, CSSPropertyID propertyID) { return adoptRef(*new Data(feature, propertyID)); }
+        using Base = TrailingArray<Data, WillChangeAnimatableFeature>;
+
+        static Ref<Data> create(WillChangeAnimatableFeature&& feature)
+        {
+            return adoptRef(*new (NotNull, fastMalloc(Base::allocationSize(1))) Data(WTF::move(feature)));
+        }
+
+        template<typename SizedRange, typename Mapper>
+        static Ref<Data> map(SizedRange&& range, NOESCAPE Mapper&& mapper)
+        {
+            auto size = range.size();
+            return adoptRef(*new (NotNull, fastMalloc(Base::allocationSize(size))) Data(size, std::forward<SizedRange>(range), std::forward<Mapper>(mapper)));
+        }
 
         bool containsScrollPosition() const;
         bool containsContents() const;
         bool containsProperty(CSSPropertyID) const;
         bool createsContainingBlockForAbsolutelyPositioned(bool isRootElement) const;
         bool createsContainingBlockForOutOfFlowPositioned(bool isRootElement) const;
-        bool canCreateStackingContext() const { return m_canCreateStackingContext; }
         bool canBeBackdropRoot() const;
+        bool canCreateStackingContext() const { return m_canCreateStackingContext; }
         bool canTriggerCompositing() const { return m_canTriggerCompositing; }
         bool canTriggerCompositingOnInline() const { return m_canTriggerCompositingOnInline; }
 
-        void addFeature(Feature, CSSPropertyID);
-
-        const_iterator begin() const { return m_animatableFeatures.begin(); }
-        const_iterator end() const { return m_animatableFeatures.end(); }
-
-        bool NODELETE operator==(const Data&) const;
+        bool operator==(const Data&) const;
 
     private:
-        Data() { }
-        Data(Feature feature, CSSPropertyID propertyID) { addFeature(feature, propertyID); }
+        Data(WillChangeAnimatableFeature&& feature)
+            : Base(1, WTF::move(feature))
+        {
+            initializeCachedChecks();
+        }
 
-        Vector<WillChangeAnimatableFeature, 1> m_animatableFeatures;
+        template<typename SizedRange, typename Mapper>
+        Data(unsigned size, SizedRange&& range, NOESCAPE Mapper&& mapper)
+            : Base(size, std::forward<SizedRange>(range), std::forward<Mapper>(mapper))
+        {
+            initializeCachedChecks();
+        }
+
+        void initializeCachedChecks();
+
         bool m_canCreateStackingContext { false };
         bool m_canTriggerCompositing { false };
         bool m_canTriggerCompositingOnInline { false };
@@ -149,10 +205,20 @@ private:
 // <'will-change'> = auto | <animateable-feature>#
 // https://drafts.csswg.org/css-will-change/#propdef-will-change
 struct WillChange {
-    WillChange(CSS::Keyword::Auto) : m_data { nullptr} { }
-    WillChange(WillChangeAnimatableFeatures&& animateableFeatures) : m_data { WTF::move(animateableFeatures.m_data) } { }
+    WillChange(CSS::Keyword::Auto)
+        : m_data { nullptr }
+    {
+    }
 
-    WillChange(WillChangeAnimatableFeature::Feature feature, CSSPropertyID propertyID = CSSPropertyInvalid) : m_data { WillChangeAnimatableFeatures::Data::create(feature, propertyID) } { }
+    WillChange(WillChangeAnimatableFeatures&& animateableFeatures)
+        : m_data { WTF::move(animateableFeatures.m_data) }
+    {
+    }
+
+    WillChange(WillChangeAnimatableFeature&& animateableFeature)
+        : m_data { WillChangeAnimatableFeatures::Data::create(WTF::move(animateableFeature)) }
+    {
+    }
 
     bool isAuto() const { return !m_data; }
     bool isAnimateableFeatures() const { return !!m_data; }
@@ -193,5 +259,6 @@ template<> struct CSSValueConversion<WillChange> { auto operator()(BuilderState&
 } // namespace WebCore
 
 DEFINE_COMMA_SEPARATED_RANGE_LIKE_CONFORMANCE(WebCore::Style::WillChangeAnimatableFeatures)
+DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::WillChangeAnimatableFeature::CustomIdentWithCachedPropertyID);
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::WillChangeAnimatableFeature);
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::WillChange);

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ReflectObject.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

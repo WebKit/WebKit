@@ -1671,6 +1671,54 @@ private:
             break;
         }
 
+        case ArithBitAnd: {
+            if (!node->isBinaryInt32UseKind())
+                break;
+
+            // Only infer from constant operands. A constant never changes across fixpoint
+            // iterations, so the derived relationship on @node stays valid; using rangeFor()
+            // on a non-constant operand would let stale facts accumulate on @node if that
+            // operand's relationships get invalidated later.
+            auto apply = [&](int32_t constant) {
+                if (constant < 0)
+                    return;
+                // (a & C) with C >= 0 has sign bit 0 and cannot exceed C.
+                setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -1));
+                if (constant < std::numeric_limits<int32_t>::max())
+                    setRelationship(Relationship(node, m_zero, Relationship::LessThan, constant + 1));
+            };
+
+            if (node->child1()->isInt32Constant())
+                apply(node->child1()->asInt32());
+            if (node->child2()->isInt32Constant())
+                apply(node->child2()->asInt32());
+            break;
+        }
+
+        case ArithBitOr: {
+            if (!node->isBinaryInt32UseKind())
+                break;
+
+            // Same reasoning as ArithBitAnd: only rely on constant operands so derived
+            // relationships cannot go stale across fixpoint iterations.
+            auto apply = [&](int32_t constant) {
+                if (constant >= 0)
+                    return;
+                // (a | C) with C < 0 has sign bit 1, so the result is negative.
+                setRelationship(Relationship(node, m_zero, Relationship::LessThan, 0));
+                // OR on a negative number can only flip zero bits to one, which in
+                // two's complement does not decrease the value, so (a | C) >= C.
+                if (constant > std::numeric_limits<int32_t>::min())
+                    setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, constant - 1));
+            };
+
+            if (node->child1()->isInt32Constant())
+                apply(node->child1()->asInt32());
+            if (node->child2()->isInt32Constant())
+                apply(node->child2()->asInt32());
+            break;
+        }
+
         case GetArrayLength: {
             setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -1));
             switch (node->arrayMode().type()) {
@@ -1702,6 +1750,18 @@ private:
         case GetVectorLength: {
             setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -1));
             setRelationship(Relationship(node, m_zero, Relationship::LessThan, (MAX_STORAGE_VECTOR_LENGTH + 1)));
+            break;
+        }
+
+        case StringCharCodeAt: {
+            setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -1));
+            setRelationship(Relationship(node, m_zero, Relationship::LessThan, (static_cast<int32_t>(std::numeric_limits<char16_t>::max()) + 1)));
+            break;
+        }
+
+        case StringCodePointAt: {
+            setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -1));
+            setRelationship(Relationship(node, m_zero, Relationship::LessThan, (static_cast<int32_t>(0x10FFFF) + 1)));
             break;
         }
 

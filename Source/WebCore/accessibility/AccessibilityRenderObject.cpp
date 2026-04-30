@@ -416,7 +416,7 @@ Element* AccessibilityRenderObject::anchorElement() const
 
         RefPtr object = cache ? cache->getOrCreate(*node) : nullptr;
         if (object && object->isLink())
-            return dynamicDowncast<Element>(*node);
+            return dynamicDowncast<Element>(node.unsafeGet());
     }
 
     return nullptr;
@@ -2310,7 +2310,7 @@ AccessibilityObject* AccessibilityRenderObject::observableObject() const
 {
     // This allows the table to be the one who sends notifications about tables.
     if (RefPtr parentTable = parentTableIfExposedTableRow())
-        return dynamicDowncast<AccessibilityObject>(parentTable.get());
+        return dynamicDowncast<AccessibilityObject>(parentTable.unsafeGet());
 
     // Find the object going up the parent chain that is used in accessibility to monitor certain notifications.
     for (CheckedPtr renderer = this->renderer(); renderer && renderer->node(); renderer = renderer->parent()) {

@@ -51,7 +51,7 @@ struct NavigationRequester {
     bool hasLoadedThirdPartyScript { false };
     bool hasLoadedThirdPartyFrame { false };
     bool hasHadUserInteraction { false };
-    RefPtr<SecurityOrigin> parentFrameSecurityOrigin;
+    bool parentOriginIsSameAsTopOrigin { false };
 };
 
 } // namespace WebCore

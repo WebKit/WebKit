@@ -102,6 +102,15 @@ void PageConfiguration::copyDataFrom(const PageConfiguration& other)
     m_data = other.m_data;
 }
 
+void PageConfiguration::ensureLazyInitializedRefsAreInitialized()
+{
+    m_data.processPool.get();
+    m_data.userContentController.get();
+    m_data.preferences.get();
+    m_data.visitedLinkStore.get();
+    m_data.defaultWebsitePolicies.get();
+}
+
 const std::optional<WebCore::WindowFeatures>& PageConfiguration::windowFeatures() const
 {
     return m_data.windowFeatures;

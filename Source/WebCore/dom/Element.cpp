@@ -1752,7 +1752,7 @@ void Element::setScrollLeft(int newLeft)
 
     if (document->scrollingElement() == this) {
         if (RefPtr frame = documentFrameWithNonNullView()) {
-            IntPoint position(static_cast<int>(newLeft * frame->pageZoomFactor() * frame->frameScaleFactor()), frame->view()->scrollY());
+            IntPoint position(clampToInteger(newLeft * frame->pageZoomFactor() * frame->frameScaleFactor()), frame->view()->scrollY());
             protect(frame->view())->setScrollPosition(position, options);
         }
         return;
@@ -1780,7 +1780,7 @@ void Element::setScrollTop(int newTop)
 
     if (document->scrollingElement() == this) {
         if (RefPtr frame = documentFrameWithNonNullView()) {
-            IntPoint position(frame->view()->scrollX(), static_cast<int>(newTop * frame->pageZoomFactor() * frame->frameScaleFactor()));
+            IntPoint position(frame->view()->scrollX(), clampToInteger(newTop * frame->pageZoomFactor() * frame->frameScaleFactor()));
             protect(frame->view())->setScrollPosition(position, options);
         }
         return;
@@ -5818,8 +5818,6 @@ void Element::resetComputedStyle()
 void Element::resetStyleRelations()
 {
     clearStyleFlags(NodeStyleFlag::StyleAffectedByEmpty);
-    clearStyleFlags(NodeStyleFlag::AffectedByHasWithSiblingRelationship);
-    clearStyleFlags(NodeStyleFlag::AffectedByHasWithAdjacentSiblingRelationship);
     if (!hasRareData())
         return;
     elementRareData()->setChildIndex(0);
@@ -5838,10 +5836,19 @@ void Element::resetChildStyleRelations()
 void Element::resetAllDescendantStyleRelations()
 {
     resetChildStyleRelations();
-    
+
     clearStyleFlags({
         NodeStyleFlag::DescendantsAffectedByForwardPositionalRules,
         NodeStyleFlag::DescendantsAffectedByBackwardPositionalRules
+    });
+}
+
+void Element::resetHasSiblingFlags()
+{
+    clearStyleFlags({
+        NodeStyleFlag::AffectedByHasWithBackwardSiblingRelationship,
+        NodeStyleFlag::AffectedByHasWithForwardSiblingRelationship,
+        NodeStyleFlag::AffectedByHasWithAdjacentSiblingRelationship,
     });
 }
 
@@ -5989,9 +5996,7 @@ String Element::resolveURLStringIfNeeded(const String& urlString, ResolveURLs re
     case ResolveURLs::YesExcludingURLsForPrivacy: {
         if (document().shouldMaskURLForBindings(completeURL))
             return maskedURLStringForBindings.get();
-        if (!document().url().protocolIsFile())
-            return completeURL.string();
-        break;
+        return completeURL.string();
     }
 
     case ResolveURLs::NoExcludingURLsForPrivacy:

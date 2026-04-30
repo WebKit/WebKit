@@ -554,4 +554,10 @@ RouterSource SWServerWorker::defaultRouterSource() const
     return m_shouldSkipHandleFetch ? RouterSourceEnum::Network : RouterSourceEnum::FetchEvent;
 }
 
+bool SWServerWorker::shouldPersistToDisk() const
+{
+    // Do not persist service workers backing browser extensions to disk.
+    return m_registration && !m_registration->serviceWorkerPageIdentifier();
+}
+
 } // namespace WebCore

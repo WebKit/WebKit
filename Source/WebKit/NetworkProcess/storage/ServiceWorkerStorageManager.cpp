@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ServiceWorkerStorageManager.h"
 
+#include <WebCore/ClientOrigin.h>
 #include <WebCore/SWRegistrationDatabase.h>
 #include <WebCore/ServiceWorkerContextData.h>
 #include <WebCore/ServiceWorkerRegistrationKey.h>
@@ -63,6 +64,22 @@ std::optional<Vector<WebCore::ServiceWorkerContextData>> ServiceWorkerStorageMan
 {
     if (auto database = ensureDatabase())
         return database->importRegistrations();
+
+    return std::nullopt;
+}
+
+std::optional<Vector<WebCore::ServiceWorkerContextData>> ServiceWorkerStorageManager::importRegistrations(const WebCore::SecurityOriginData& topOrigin)
+{
+    if (auto database = ensureDatabase())
+        return database->importRegistrations(topOrigin);
+
+    return std::nullopt;
+}
+
+std::optional<HashSet<WebCore::ClientOrigin>> ServiceWorkerStorageManager::importOrigins()
+{
+    if (auto database = ensureDatabase())
+        return database->importOrigins();
 
     return std::nullopt;
 }

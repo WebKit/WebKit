@@ -27,7 +27,7 @@
 
 #include <JavaScriptCore/BytecodeConventions.h>
 #include <JavaScriptCore/CallFrame.h>
-#include <wtf/PrintStream.h>
+#include <wtf/Forward.h>
 
 namespace JSC {
 

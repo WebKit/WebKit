@@ -33,6 +33,7 @@
 #include "MacroAssembler.h"
 #include "MethodOfGettingAValueProfile.h"
 #include "Operands.h"
+#include "OperationResult.h"
 #include "ValueRecovery.h"
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>

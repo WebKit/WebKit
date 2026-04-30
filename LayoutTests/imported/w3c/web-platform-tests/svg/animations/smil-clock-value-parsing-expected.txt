@@ -1,3 +1,20 @@
 
-PASS SMIL clock values: out-of-range minutes/seconds validation and fractional seconds support
+PASS SMIL clock values: out-of-range minutes/seconds validation and fractional seconds support, dur="00:30:01"
+PASS SMIL clock values: out-of-range minutes/seconds validation and fractional seconds support, dur="00:59:59"
+PASS SMIL clock values: out-of-range minutes/seconds validation and fractional seconds support, dur="00:00:01.50"
+PASS SMIL clock values: out-of-range minutes/seconds validation and fractional seconds support, dur="00:01.50"
+PASS SMIL clock values: out-of-range minutes/seconds validation and fractional seconds support, dur="00:00:59.50"
+PASS SMIL clock values: out-of-range minutes/seconds validation and fractional seconds support, dur="00:59.50"
+PASS SMIL clock values: out-of-range minutes/seconds validation and fractional seconds support, dur="101:00:01"
+PASS SMIL clock values: out-of-range minutes/seconds validation and fractional seconds support, dur="01:99:01"
+PASS SMIL clock values: out-of-range minutes/seconds validation and fractional seconds support, dur="99:01"
+PASS SMIL clock values: out-of-range minutes/seconds validation and fractional seconds support, dur="01:30:99"
+PASS SMIL clock values: out-of-range minutes/seconds validation and fractional seconds support, dur="30:99"
+PASS SMIL clock values: out-of-range minutes/seconds validation and fractional seconds support, dur="00:59:59."
+PASS SMIL clock values: out-of-range minutes/seconds validation and fractional seconds support, dur="00:59:9.9"
+PASS SMIL clock values: out-of-range minutes/seconds validation and fractional seconds support, dur="00:59:.9"
+PASS SMIL clock values: out-of-range minutes/seconds validation and fractional seconds support, dur="00:59:009"
+PASS SMIL clock values: out-of-range minutes/seconds validation and fractional seconds support, dur=":30:01"
+PASS SMIL clock values: out-of-range minutes/seconds validation and fractional seconds support, dur="01::01"
+PASS SMIL clock values: out-of-range minutes/seconds validation and fractional seconds support, dur="5:30"
 

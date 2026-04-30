@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-002-expected.xht

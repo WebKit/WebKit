@@ -29,6 +29,7 @@
 #pragma once
 
 #include "JSLexicalEnvironment.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

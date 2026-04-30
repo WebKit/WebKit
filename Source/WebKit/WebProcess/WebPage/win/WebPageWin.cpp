@@ -50,6 +50,7 @@
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/UserAgent.h>
 #include <WebCore/WindowsKeyboardCodes.h>
+#include <array>
 
 namespace WebKit {
 using namespace WebCore;
@@ -117,7 +118,7 @@ struct KeyPressEntry {
     const char* name;
 };
 
-static const KeyDownEntry keyDownEntries[] = {
+static constexpr auto keyDownEntries = std::to_array<KeyDownEntry>({
     { VK_LEFT,   0,                  "MoveLeft" },
     { VK_LEFT,   ShiftKey,           "MoveLeftAndModifySelection" },
     { VK_LEFT,   CtrlKey,            "MoveWordLeft" },
@@ -174,9 +175,9 @@ static const KeyDownEntry keyDownEntries[] = {
     { VK_INSERT, ShiftKey,           "Paste" },
     { 'Z',       CtrlKey,            "Undo" },
     { 'Z',       CtrlKey | ShiftKey, "Redo" },
-};
+});
 
-static const KeyPressEntry keyPressEntries[] = {
+static constexpr auto keyPressEntries = std::to_array<KeyPressEntry>({
     { '\t',   0,                  "InsertTab" },
     { '\t',   ShiftKey,           "InsertBacktab" },
     { '\r',   0,                  "InsertNewline" },
@@ -184,7 +185,7 @@ static const KeyPressEntry keyPressEntries[] = {
     { '\r',   AltKey,             "InsertNewline" },
     { '\r',   ShiftKey,           "InsertNewline" },
     { '\r',   AltKey | ShiftKey,  "InsertNewline" },
-};
+});
 
 const char* WebPage::interpretKeyEvent(const WebCore::KeyboardEvent* evt)
 {

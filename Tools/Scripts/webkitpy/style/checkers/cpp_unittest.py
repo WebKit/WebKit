@@ -2394,6 +2394,8 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('        m_taskFunction = [callee, method, arguments...] {', '')
         self.assert_lint('int main(int argc, char* agrv [])', 'Extra space before [.  [whitespace/brackets] [5]')
         self.assert_lint('    str [strLength] = \'\\0\';', 'Extra space before [.  [whitespace/brackets] [5]')
+        self.assert_lint('define FOO [[noreturn]];', '')
+        self.assert_lint('define FOO [[return]];', 'Extra space before [.  [whitespace/brackets] [5]')
 
     def test_cpp_lambda_functions(self):
         self.assert_lint('        [&] (Type argument) {', '')

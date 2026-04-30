@@ -54,7 +54,6 @@ enum class WebKit::NavigatingToAppBoundDomain : bool;
 
     Markable<WebCore::ResourceLoaderIdentifier> identifier;
 
-    Vector<WebKit::SandboxExtensionHandle> requestBodySandboxExtensions;
     std::optional<WebKit::SandboxExtensionHandle> resourceSandboxExtension;
 
     Seconds maximumBufferingTime;

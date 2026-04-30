@@ -92,8 +92,7 @@ angle::Result StreamIndexData(ContextMtl *contextMtl,
     const size_t amount = GetIndexConvertedBufferSize(indexType, indexCount);
     GLubyte *dst        = nullptr;
     mtl::BufferSlice buffer;
-    ANGLE_TRY(
-        dynamicBuffer->allocate(contextMtl, amount, &dst, &buffer));
+    ANGLE_TRY(dynamicBuffer->allocate(contextMtl, amount, &dst, &buffer));
 
     if (indexType == gl::DrawElementsType::UnsignedByte)
     {
@@ -869,7 +868,7 @@ angle::Result VertexArrayMtl::convertIndexBuffer(const gl::Context *glContext,
     {
         // reuse the converted buffer
         size_t resultOffset = conversion->convertedOffset + alignedOffset;
-        *outIdxBuffer = mtl::BufferSlice(conversion->convertedBuffer).subslice(resultOffset);
+        *outIdxBuffer       = mtl::BufferSlice(conversion->convertedBuffer).subslice(resultOffset);
         return angle::Result::Continue;
     }
 
@@ -885,7 +884,7 @@ angle::Result VertexArrayMtl::convertIndexBuffer(const gl::Context *glContext,
                                   &streamed));
         conversion->convertedBuffer = streamed.buffer();
         conversion->convertedOffset = streamed.offset();
-        conversion->dirty = false;
+        conversion->dirty           = false;
     }
     else
     {
@@ -894,7 +893,7 @@ angle::Result VertexArrayMtl::convertIndexBuffer(const gl::Context *glContext,
     }
     // Calculate ranges for prim restart simple types.
     size_t resultOffset = conversion->convertedOffset + alignedOffset;
-    *outIdxBuffer = mtl::BufferSlice(conversion->convertedBuffer).subslice(resultOffset);
+    *outIdxBuffer       = mtl::BufferSlice(conversion->convertedBuffer).subslice(resultOffset);
 
     return angle::Result::Continue;
 }
@@ -1081,8 +1080,8 @@ angle::Result VertexArrayMtl::convertVertexBufferGPU(const gl::Context *glContex
     ContextMtl *contextMtl = mtl::GetImpl(glContext);
 
     mtl::BufferSlice newBuffer;
-    ANGLE_TRY(conversion->data.allocate(contextMtl, numVertices * targetStride, nullptr,
-                                        &newBuffer));
+    ANGLE_TRY(
+        conversion->data.allocate(contextMtl, numVertices * targetStride, nullptr, &newBuffer));
 
     GLintptr bindingOffset = binding.getOffset();
 

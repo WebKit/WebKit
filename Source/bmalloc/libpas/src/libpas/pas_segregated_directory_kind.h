@@ -34,14 +34,12 @@ PAS_BEGIN_EXTERN_C;
    
        - directory
            - size directory
-           - shared page directory
    
    Only the types at the leaves are instantiable. The pas_segregated_directory_kind enum is for
    describing the instantiable leaves. */
 
 enum pas_segregated_directory_kind {
     pas_segregated_size_directory_kind,
-    pas_segregated_shared_page_directory_kind
 };
 
 typedef enum pas_segregated_directory_kind pas_segregated_directory_kind;
@@ -52,8 +50,6 @@ static inline const char* pas_segregated_directory_kind_get_string(
     switch (kind) {
     case pas_segregated_size_directory_kind:
         return "segregated_size_directory";
-    case pas_segregated_shared_page_directory_kind:
-        return "segregated_shared_page_directory";
     }
     PAS_ASSERT_NOT_REACHED();
     return NULL;

@@ -94,10 +94,9 @@ inline LayoutUnit FloatAvoider::inlineStart() const
 
 inline LayoutUnit FloatAvoider::inlineEnd() const
 {
-    auto inlineEnd = inlineStart() + borderBoxWidth();
     if (isFloatingBox())
-        inlineEnd += marginEnd();
-    return inlineEnd;
+        return inlineStart() + marginBoxWidth();
+    return inlineStart() + borderBoxWidth();
 }
 
 }

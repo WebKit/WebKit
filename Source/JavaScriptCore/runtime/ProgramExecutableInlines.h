@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ProgramExecutable.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

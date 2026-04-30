@@ -1,8 +1,8 @@
 
-FAIL the disconnected/connected callbacks should be called when no other callback is defined assert_array_equals: lengths differ, expected array ["disconnected", "connected"] length 2, got [] length 0
-FAIL the element should stay connected during the callbacks assert_array_equals: lengths differ, expected array [true, true] length 2, got [] length 0
-FAIL When connectedMoveCallback is defined, it is called instead of disconnectedCallback/connectedCallback assert_array_equals: lengths differ, expected array ["connectedMove"] length 1, got [] length 0
-FAIL Reactions to atomic move are called in order of element, not in order of operation assert_array_equals: lengths differ, expected array ["outer disconnected", "outer connected", "inner disconnected", "inner connected"] length 4, got [] length 0
-FAIL When connectedCallback is not defined, no crash assert_array_equals: lengths differ, expected array ["disconnected"] length 1, got [] length 0
-FAIL When disconnectedCallback is not defined, no crash assert_array_equals: lengths differ, expected array ["connected"] length 1, got [] length 0
+PASS the disconnected/connected callbacks should be called when no other callback is defined
+PASS the element should stay connected during the callbacks
+PASS When connectedMoveCallback is defined, it is called instead of disconnectedCallback/connectedCallback
+PASS Reactions to atomic move are called in order of element, not in order of operation
+PASS When connectedCallback is not defined, no crash
+PASS When disconnectedCallback is not defined, no crash
 

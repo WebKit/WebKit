@@ -32,6 +32,8 @@ class HTMLHeadingElement final : public HTMLElement {
 public:
     static Ref<HTMLHeadingElement> create(const QualifiedName&, Document&);
 
+    ~HTMLHeadingElement();
+
     unsigned NODELETE level() const;
 
 private:

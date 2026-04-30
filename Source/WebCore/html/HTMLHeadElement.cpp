@@ -50,4 +50,6 @@ Ref<HTMLHeadElement> HTMLHeadElement::create(const QualifiedName& tagName, Docum
     return adoptRef(*new HTMLHeadElement(tagName, document));
 }
 
+HTMLHeadElement::~HTMLHeadElement() = default;
+
 }

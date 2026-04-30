@@ -27,9 +27,7 @@
 #include "SkiaCompositingLayer.h"
 
 #if USE(COORDINATED_GRAPHICS) && USE(SKIA)
-#include "ColorMatrix.h"
 #include "CoordinatedAnimatedBackingStoreClient.h"
-#include "CoordinatedBackingStore.h"
 #include "CoordinatedImageBackingStore.h"
 #include "CoordinatedPlatformLayerBuffer.h"
 #include "CoordinatedTileBuffer.h"
@@ -37,8 +35,11 @@
 #include "FontCache.h"
 #include "PlatformDisplay.h"
 #include "Region.h"
+#include "SkiaBackingStore.h"
 #include "SkiaCompositingLayer3DRenderingContext.h"
+#include "SkiaCompositingLayerFilters.h"
 #include "SkiaCompositingLayerOverlapRegions.h"
+#include "SkiaUtilities.h"
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkFont.h>
 #include <skia/core/SkPathBuilder.h>
@@ -105,6 +106,16 @@ void SkiaCompositingLayer::setOpacity(float opacity)
     m_opacity = opacity;
 }
 
+void SkiaCompositingLayer::setBlendMode(BlendMode blendMode)
+{
+    if (blendMode == BlendMode::Normal) {
+        m_blendMode = std::nullopt;
+        return;
+    }
+
+    m_blendMode = SkiaUtilities::toSkiaBlendMode(blendMode);
+}
+
 void SkiaCompositingLayer::setChildren(Vector<Ref<SkiaCompositingLayer>>&& newChildren)
 {
     if (m_children == newChildren)
@@ -148,25 +159,17 @@ void SkiaCompositingLayer::setUseBackingStore(bool useBackingStore, CoordinatedA
     }
 
     if (!m_backingStore)
-        m_backingStore = CoordinatedBackingStore::create();
+        m_backingStore = makeUnique<SkiaBackingStore>();
     m_animatedBackingStoreClient = animatedBackingStoreClient;
 }
 
 void SkiaCompositingLayer::updateBackingStore(CoordinatedBackingStoreProxy::Update&& update, float scale)
 {
-    ASSERT(m_backingStore);
-    m_backingStore->resize(m_size, scale);
-    for (auto tileID : update.tilesToCreate())
-        m_backingStore->createTile(tileID);
-    for (auto tileID : update.tilesToRemove())
-        m_backingStore->removeTile(tileID);
-    for (const auto& tileUpdate : update.tilesToUpdate())
-        m_backingStore->updateTile(tileUpdate.tileID, tileUpdate.dirtyRect, tileUpdate.tileRect, tileUpdate.buffer.copyRef(), { });
-
     if (m_maskImage && !update.isEmpty())
         m_maskImage = nullptr;
 
-    m_backingStore->processPendingUpdates();
+    ASSERT(m_backingStore);
+    m_backingStore->update(m_size, scale, WTF::move(update));
 }
 
 void SkiaCompositingLayer::setImageBackingStore(CoordinatedImageBackingStore* imageBackingStore)
@@ -200,78 +203,17 @@ void SkiaCompositingLayer::setReplica(RefPtr<SkiaCompositingLayer>&& replica)
         m_replica->m_replicatedLayer = this;
 }
 
-static sk_sp<SkImageFilter> createFilter(const FilterOperation& filterOperation, sk_sp<SkImageFilter> input, SkTileMode blurTileMode = SkTileMode::kDecal)
-{
-    switch (filterOperation.type()) {
-    case FilterOperation::Type::Grayscale: {
-        ColorMatrix<5, 4> matrix(grayscaleColorMatrix(downcast<BasicColorMatrixFilterOperation>(filterOperation).amount()));
-        return SkImageFilters::ColorFilter(SkColorFilters::Matrix(matrix.data().data()), input);
-    }
-    case FilterOperation::Type::Sepia: {
-        ColorMatrix<5, 4> matrix(sepiaColorMatrix(downcast<BasicColorMatrixFilterOperation>(filterOperation).amount()));
-        return SkImageFilters::ColorFilter(SkColorFilters::Matrix(matrix.data().data()), input);
-    }
-    case FilterOperation::Type::Saturate: {
-        ColorMatrix<5, 4> matrix(saturationColorMatrix(downcast<BasicColorMatrixFilterOperation>(filterOperation).amount()));
-        return SkImageFilters::ColorFilter(SkColorFilters::Matrix(matrix.data().data()), input);
-    }
-    case FilterOperation::Type::HueRotate: {
-        ColorMatrix<5, 4> matrix(hueRotateColorMatrix(downcast<BasicColorMatrixFilterOperation>(filterOperation).amount()));
-        return SkImageFilters::ColorFilter(SkColorFilters::Matrix(matrix.data().data()), input);
-    }
-    case FilterOperation::Type::Invert: {
-        const auto matrix = invertColorMatrix(downcast<BasicComponentTransferFilterOperation>(filterOperation).amount());
-        return SkImageFilters::ColorFilter(SkColorFilters::Matrix(matrix.data().data()), input);
-    }
-    case FilterOperation::Type::Opacity: {
-        const auto matrix = opacityColorMatrix(downcast<BasicComponentTransferFilterOperation>(filterOperation).amount());
-        return SkImageFilters::ColorFilter(SkColorFilters::Matrix(matrix.data().data()), input);
-    }
-    case FilterOperation::Type::Brightness: {
-        ColorMatrix<5, 4> matrix(brightnessColorMatrix(downcast<BasicComponentTransferFilterOperation>(filterOperation).amount()));
-        return SkImageFilters::ColorFilter(SkColorFilters::Matrix(matrix.data().data()), input);
-    }
-    case FilterOperation::Type::Contrast: {
-        const auto matrix = contrastColorMatrix(downcast<BasicComponentTransferFilterOperation>(filterOperation).amount());
-        return SkImageFilters::ColorFilter(SkColorFilters::Matrix(matrix.data().data()), input);
-    }
-    case FilterOperation::Type::Blur: {
-        auto sigma = downcast<BlurFilterOperation>(filterOperation).stdDeviation();
-        // FIXME: do we need to add crop rect?
-        return SkImageFilters::Blur(sigma, sigma, blurTileMode, input);
-    }
-    case FilterOperation::Type::DropShadow: {
-        auto& dropShadow = downcast<DropShadowFilterOperation>(filterOperation);
-        return SkImageFilters::DropShadow(dropShadow.x(), dropShadow.y(), dropShadow.stdDeviation(), dropShadow.stdDeviation(), dropShadow.color(), input);
-    }
-    case FilterOperation::Type::Passthrough:
-    case FilterOperation::Type::Default:
-    case FilterOperation::Type::None:
-        break;
-    }
-
-    return nullptr;
-}
-
-static sk_sp<SkImageFilter> createFilters(const FilterOperations& filterOperations, SkTileMode blurTileMode = SkTileMode::kDecal)
-{
-    sk_sp<SkImageFilter> filter;
-    for (const auto& filterOperation : filterOperations)
-        filter = createFilter(filterOperation, filter, blurTileMode);
-    return filter;
-}
-
 void SkiaCompositingLayer::setFilters(const FilterOperations& filterOperations)
 {
     if (filterOperations.isEmpty())
         m_filter = std::nullopt;
     else
-        m_filter = { createFilters(filterOperations), filterOperations.outsets() };
+        m_filter = { SkiaCompositingLayerFilters::create(filterOperations), filterOperations.outsets() };
 }
 
 void SkiaCompositingLayer::setBackdropFilters(const FilterOperations& filterOperations)
 {
-    m_backdrop.filter = createFilters(filterOperations, SkTileMode::kClamp);
+    m_backdrop.filter = SkiaCompositingLayerFilters::create(filterOperations, SkTileMode::kClamp);
 }
 
 void SkiaCompositingLayer::setBackdropFiltersRect(const FloatRoundedRect& clipRect)
@@ -392,21 +334,20 @@ std::optional<SkiaCompositingLayer::AnimationsState> SkiaCompositingLayer::syncA
     }
 #endif
     if (applicationResults.filters)
-        state.filter = { createFilters(*applicationResults.filters), applicationResults.filters->outsets() };
+        state.filter = { SkiaCompositingLayerFilters::create(*applicationResults.filters), applicationResults.filters->outsets() };
     state.isRunning = applicationResults.hasRunningAnimations;
     return state;
 }
 
-bool SkiaCompositingLayer::computeTransformsAndAnimations(RefPtr<SkiaCompositingLayer> parent, MonotonicTime time)
+bool SkiaCompositingLayer::computeTransformsAndAnimations(const TransformationMatrix& parentTransform, const TransformationMatrix& futureParentTransform, MonotonicTime time)
 {
     m_animationsState = syncAnimations(time);
     bool hasRunningAnimations = m_animationsState ? m_animationsState->isRunning : false;
 
-    if (!m_size.isEmpty() || !m_masksToBounds) {
-        TransformationMatrix parentTransform;
-        if (parent)
-            parentTransform = parent == m_parent ? parent->m_transforms.combinedForChildren : parent->m_transforms.combined;
+    TransformationMatrix combinedForChildren;
+    TransformationMatrix futureCombinedForChildren;
 
+    if (!m_size.isEmpty() || !m_masksToBounds) {
 #if ENABLE(DAMAGE_TRACKING)
         TransformationMatrix previousTransform = m_transforms.combined;
 #endif
@@ -418,36 +359,32 @@ bool SkiaCompositingLayer::computeTransformsAndAnimations(RefPtr<SkiaCompositing
             .translate3d(origin.x() + (m_position.x() - m_boundsOrigin.x()), origin.y() + (m_position.y() - m_boundsOrigin.y()), m_anchorPoint.z())
             .multiply(localTransform());
 
-        m_transforms.combinedForChildren = m_transforms.combined;
+        combinedForChildren = m_transforms.combined;
         m_transforms.combined.translate3d(-origin.x(), -origin.y(), -m_anchorPoint.z());
 
         if (isReplica())
             m_transforms.combined.translate(-m_position.x(), -m_position.y());
 
         if (!m_preserves3D)
-            m_transforms.combinedForChildren.flatten();
-        m_transforms.combinedForChildren.multiply(m_childrenTransform);
-        m_transforms.combinedForChildren.translate3d(-origin.x(), -origin.y(), -m_anchorPoint.z());
-
-        TransformationMatrix futureParentTransform;
-        if (parent)
-            futureParentTransform = parent == m_parent ? parent->m_transforms.futureCombinedForChildren : parent->m_transforms.futureCombined;
+            combinedForChildren.flatten();
+        combinedForChildren.multiply(m_childrenTransform);
+        combinedForChildren.translate3d(-origin.x(), -origin.y(), -m_anchorPoint.z());
 
         m_transforms.futureCombined = futureParentTransform;
         m_transforms.futureCombined
             .translate3d(origin.x() + (m_position.x() - m_boundsOrigin.x()), origin.y() + (m_position.y() - m_boundsOrigin.y()), m_anchorPoint.z())
             .multiply(futureLocalTransform());
 
-        m_transforms.futureCombinedForChildren = m_transforms.futureCombined;
+        futureCombinedForChildren = m_transforms.futureCombined;
         m_transforms.futureCombined.translate3d(-origin.x(), -origin.y(), -m_anchorPoint.z());
 
         if (isReplica())
             m_transforms.futureCombined.translate(-m_position.x(), -m_position.y());
 
         if (!m_preserves3D)
-            m_transforms.futureCombinedForChildren.flatten();
-        m_transforms.futureCombinedForChildren.multiply(m_childrenTransform);
-        m_transforms.futureCombinedForChildren.translate3d(-origin.x(), -origin.y(), -m_anchorPoint.z());
+            futureCombinedForChildren.flatten();
+        futureCombinedForChildren.multiply(m_childrenTransform);
+        futureCombinedForChildren.translate3d(-origin.x(), -origin.y(), -m_anchorPoint.z());
 
 #if ENABLE(DAMAGE_TRACKING)
         if (frameDamagePropagationEnabled() && previousTransform != m_transforms.combined) {
@@ -462,13 +399,18 @@ bool SkiaCompositingLayer::computeTransformsAndAnimations(RefPtr<SkiaCompositing
             m_animatedBackingStoreClient->requestBackingStoreUpdateIfNeeded(m_transforms.futureCombined);
     }
 
-    if (m_mask)
-        hasRunningAnimations |= m_mask->computeTransformsAndAnimations(m_replicatedLayer ? m_replicatedLayer.get() : this, time);
+    if (m_mask) {
+        auto& maskParent = m_replicatedLayer ? *m_replicatedLayer : *this;
+        hasRunningAnimations |= m_mask->computeTransformsAndAnimations(maskParent.m_transforms.combined, maskParent.m_transforms.futureCombined, time);
+    }
     if (m_replica)
-        hasRunningAnimations |= m_replica->computeTransformsAndAnimations(m_replica->m_replicatedLayer, time);
+        hasRunningAnimations |= m_replica->computeTransformsAndAnimations(m_replica->m_replicatedLayer->m_transforms.combined, m_replica->m_replicatedLayer->m_transforms.futureCombined, time);
 
-    for (auto& child : m_children)
-        hasRunningAnimations |= child->computeTransformsAndAnimations(this, time);
+    m_shouldBlend = !!m_blendMode;
+    for (auto& child : m_children) {
+        hasRunningAnimations |= child->computeTransformsAndAnimations(combinedForChildren, futureCombinedForChildren, time);
+        m_shouldBlend |= !!child->m_blendMode;
+    }
 
     // If the layer is invisible because of opacity and there's no opacity animation, the content won't
     // be visible ever, so triggering repaints doesn't make sense.
@@ -480,7 +422,7 @@ bool SkiaCompositingLayer::computeTransformsAndAnimations(RefPtr<SkiaCompositing
 
 bool SkiaCompositingLayer::paint(SkCanvas& canvas, std::optional<Damage>& damage)
 {
-    bool hasRunningAnimations = computeTransformsAndAnimations(nullptr, MonotonicTime::now());
+    bool hasRunningAnimations = computeTransformsAndAnimations({ }, { }, MonotonicTime::now());
     PaintContext context(damage);
     recursivePaint(canvas, context);
 
@@ -516,6 +458,8 @@ void SkiaCompositingLayer::paintSelf(SkCanvas& canvas, PaintContext& context)
     paint.setStyle(SkPaint::kFill_Style);
     paint.setAntiAlias(true);
     paint.setAlphaf(context.opacity);
+    if (context.blendMode)
+        paint.setBlendMode(*context.blendMode);
     if (context.colorFilter)
         paint.setColorFilter(context.colorFilter);
 
@@ -663,9 +607,12 @@ void SkiaCompositingLayer::paintSelfAndChildren(SkCanvas& canvas, PaintContext& 
         SkPaint paint;
         paint.setImageFilter(m_backdrop.filter);
         paint.setAlphaf(context.opacity);
+        if (context.blendMode)
+            paint.setBlendMode(*context.blendMode);
         paintWithIntermediateSurface(canvas, context, enclosingIntRect(clipTransform.mapRect(m_backdrop.clipRect.rect())), &paint, [&](SkCanvas& canvas, PaintContext& context) {
             SetForScope scopedPaintBackdropForLayer(context.paintingBackdropForLayer, this);
             SetForScope scopedOpacity(context.opacity, 1.f);
+            SetForScope scopedBlendMode(context.blendMode, std::nullopt);
             SetForScope scopedReplicaTransform(context.accumulatedReplicaTransform, TransformationMatrix());
             backdropRoot()->paintSelfAndChildren(canvas, context);
         });
@@ -679,15 +626,16 @@ void SkiaCompositingLayer::paintSelfAndChildren(SkCanvas& canvas, PaintContext& 
     bool shouldClip = (m_masksToBounds || m_contentsRectClipsDescendants) && !m_preserves3D;
     SkAutoCanvasRestore autoRestore(&canvas, shouldClip);
     if (shouldClip) {
+        TransformationMatrix clipTransform(context.accumulatedReplicaTransform);
+        clipTransform.multiply(m_transforms.combined);
         if (m_contentsRectClipsDescendants) {
             SkPathBuilder builder;
             if (m_contentsClippingRect.isRounded())
                 builder.addRRect(SkRRect(m_contentsClippingRect));
             else
                 builder.addRect(SkRect(m_contentsClippingRect.rect()));
-            canvas.clipPath(builder.detach().makeTransform(SkM44(m_transforms.combined).asM33()), true);
+            canvas.clipPath(builder.detach().makeTransform(SkM44(clipTransform).asM33()), true);
         } else {
-            auto clipTransform = m_transforms.combined;
             clipTransform.translate(m_boundsOrigin.x(), m_boundsOrigin.y());
             SkPathBuilder builder;
             builder.addRect(SkRect(effectiveLayerRect()));
@@ -782,7 +730,10 @@ void SkiaCompositingLayer::paintWithIntermediateSurface(SkCanvas& canvas, PaintC
 
 void SkiaCompositingLayer::paintSelfAndChildrenWithFilterAndMask(SkCanvas& canvas, PaintContext& context)
 {
-    const bool shouldClipPath = m_mask && !m_mask->m_clipPath.isEmpty();
+    const bool shouldClipPath = m_mask && m_mask->m_clipPath.has_value();
+    if (shouldClipPath && m_mask->m_clipPath->isEmpty())
+        return;
+
     sk_sp<SkImage> maskImage = m_mask && !shouldClipPath ? m_mask->maskImage() : nullptr;
     SkAutoCanvasRestore autoRestore(&canvas, shouldClipPath || maskImage);
     if (shouldClipPath || maskImage) {
@@ -793,7 +744,7 @@ void SkiaCompositingLayer::paintSelfAndChildrenWithFilterAndMask(SkCanvas& canva
         auto matrix = SkM44(transform).asM33();
 
         if (shouldClipPath)
-            canvas.clipPath(m_mask->m_clipPath.makeTransform(matrix), true);
+            canvas.clipPath(m_mask->m_clipPath->makeTransform(matrix), true);
         else if (auto maskShader = maskImage->makeShader({ SkFilterMode::kLinear, SkMipmapMode::kNone }, &matrix))
             canvas.clipShader(maskShader);
     }
@@ -868,7 +819,6 @@ Vector<IntRect, 1> SkiaCompositingLayer::computeConsolidatedOverlapRegionRects(c
     computeOverlapRegions(data, context.accumulatedReplicaTransform, IncludesReplica::No);
 
     auto rects = data.overlapRegion.rects();
-    static constexpr size_t cOverlapRegionConsolidationThreshold = 4;
     if (rects.size() > cOverlapRegionConsolidationThreshold) {
         rects.clear();
         rects.append(data.overlapRegion.bounds());
@@ -894,13 +844,14 @@ void SkiaCompositingLayer::recursivePaint(SkCanvas& canvas, PaintContext& contex
         return;
 
     SetForScope scopedOpacity(context.opacity, context.opacity * opacity());
+    SetForScope scopedBlendMode(context.blendMode, context.blendMode ? context.blendMode : m_blendMode);
 
     if (m_preserves3D) {
         paintUsing3DRenderingContext(canvas, context);
         return;
     }
 
-    if (opacity() < 1)
+    if (opacity() < 1 || m_shouldBlend)
         paintUsingOverlapRegions(canvas, context);
     else
         paintSelfAndChildrenWithReplicaFilterAndMask(canvas, context);
@@ -980,7 +931,6 @@ void SkiaCompositingLayer::paintUsingOverlapRegions(SkCanvas& canvas, PaintConte
     }
 
     auto overlapRects = data.overlapRegion.rects();
-    static constexpr size_t cOverlapRegionConsolidationThreshold = 4;
     if (data.nonOverlapRegion.isEmpty() && overlapRects.size() > cOverlapRegionConsolidationThreshold) {
         overlapRects.clear();
         overlapRects.append(data.overlapRegion.bounds());
@@ -988,10 +938,13 @@ void SkiaCompositingLayer::paintUsingOverlapRegions(SkCanvas& canvas, PaintConte
 
     SkPaint layerPaint;
     layerPaint.setAlphaf(context.opacity);
+    if (context.blendMode)
+        layerPaint.setBlendMode(*context.blendMode);
     for (const auto& rect : overlapRects) {
         SkAutoCanvasRestore autoRestore(&canvas, true);
         paintWithIntermediateSurface(canvas, context, rect, &layerPaint, [&](SkCanvas& canvas, PaintContext& context) {
             SetForScope scopedOpacity(context.opacity, 1);
+            SetForScope scopedBlendMode(context.blendMode, std::nullopt);
             paintSelfAndChildrenWithReplicaFilterAndMask(canvas, context);
         });
     }

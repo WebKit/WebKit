@@ -3157,6 +3157,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case StringLastIndexOf: {
+        compileStringLastIndexOf(node);
+        break;
+    }
+
     case StringStartsWith:
     case StringEndsWith: {
         compileStringStartsOrEndsWith(node);
@@ -4366,6 +4371,14 @@ void SpeculativeJIT::compile(Node* node)
 
     case FulfillPromiseFirstResolving:
         compileFulfillPromiseFirstResolving(node);
+        break;
+
+    case NewResolvedPromise:
+        compileNewResolvedPromise(node);
+        break;
+
+    case NewRejectedPromise:
+        compileNewRejectedPromise(node);
         break;
 
     case PromiseResolve:

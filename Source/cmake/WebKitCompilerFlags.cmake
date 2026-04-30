@@ -182,6 +182,9 @@ if (COMPILER_IS_GCC_OR_CLANG)
         WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-fdebug-types-section)
     endif ()
 
+    WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-gsimple-template-names)
+    WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS("-mllvm -dwarf-linkage-names=Abstract")
+
     WEBKIT_APPEND_GLOBAL_COMPILER_FLAGS(-fno-strict-aliasing)
 
     # clang-cl.exe impersonates cl.exe so some clang arguments like -fno-rtti are
@@ -412,13 +415,6 @@ if (UNIX AND NOT APPLE AND NOT ENABLED_COMPILER_SANITIZERS)
     set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-undefined ${CMAKE_SHARED_LINKER_FLAGS}")
 endif ()
 
-if (MSVC)
-    set(CODE_GENERATOR_PREPROCESSOR "\"${CMAKE_CXX_COMPILER}\" /nologo /EP /TP")
-elseif (COMPILER_IS_QCC)
-    set(CODE_GENERATOR_PREPROCESSOR "\"${CMAKE_CXX_COMPILER}\" -E -Wp,-P -x c++")
-else ()
-    set(CODE_GENERATOR_PREPROCESSOR "\"${CMAKE_CXX_COMPILER}\" -E -P -x c++")
-endif ()
 
 # Ensure that the default include system directories are added to the list of CMake implicit includes.
 # This workarounds an issue that happens when using GCC 6 and using system includes (-isystem).
@@ -445,7 +441,7 @@ if (COMPILER_IS_GCC_OR_CLANG)
 endif ()
 
 if (COMPILER_IS_GCC_OR_CLANG)
-    set(ATOMIC_TEST_SOURCE "
+    set(ATOMIC_TEST_SOURCE [=[
 #include <atomic>
 #include <optional>
 #include <stdbool.h>
@@ -471,6 +467,13 @@ if (COMPILER_IS_GCC_OR_CLANG)
 
 #define CPU(_FEATURE) (defined CPU_##_FEATURE && CPU_##_FEATURE)
 
+#if COMPILER(CLANG)
+#pragma clang optimize off
+#endif
+
+#if COMPILER(GCC)
+#pragma GCC optimize("O0")
+#endif
 
 #if COMPILER(GCC_COMPATIBLE)
 /* __LP64__ is not defined on 64bit Windows since it uses LLP64. Using __SIZEOF_POINTER__ is simpler. */
@@ -513,8 +516,9 @@ static inline bool compare_and_swap_uint64_weak(uint64_t* ptr, uint64_t old_valu
 #endif
 }
 
+std::atomic<std::optional<double>> d;
+
 int main() {
-    std::atomic<std::optional<double>> d;
     d = 0.0;
     bool y = false;
     bool expected = true;
@@ -532,19 +536,22 @@ int main() {
                   l) ? 0 : 1;
     return static_cast<int>(result + d.load().value());
 }
-    ")
+    ]=])
+    cmake_push_check_state(RESET)
+    set(CMAKE_REQUIRED_FLAGS "--std=c++17")
     check_cxx_source_compiles("${ATOMIC_TEST_SOURCE}" ATOMICS_ARE_BUILTIN)
     if (NOT ATOMICS_ARE_BUILTIN)
         set(CMAKE_REQUIRED_LIBRARIES atomic)
         check_cxx_source_compiles("${ATOMIC_TEST_SOURCE}" ATOMICS_REQUIRE_LIBATOMIC)
-        unset(CMAKE_REQUIRED_LIBRARIES)
     endif ()
+    cmake_pop_check_state()
 
     # <filesystem> vs <experimental/filesystem>
     set(FILESYSTEM_TEST_SOURCE "
         #include <filesystem>
         int main() { std::filesystem::path p1(\"\"); std::filesystem::status(p1); }
     ")
+    cmake_push_check_state(RESET)
     set(CMAKE_REQUIRED_FLAGS "--std=c++2b")
     check_cxx_source_compiles("${FILESYSTEM_TEST_SOURCE}" STD_FILESYSTEM_IS_AVAILABLE)
     if (NOT STD_FILESYSTEM_IS_AVAILABLE)
@@ -557,9 +564,8 @@ int main() {
         ")
         set(CMAKE_REQUIRED_LIBRARIES stdc++fs)
         check_cxx_source_compiles("${EXPERIMENTAL_FILESYSTEM_TEST_SOURCE}" STD_EXPERIMENTAL_FILESYSTEM_IS_AVAILABLE)
-        unset(CMAKE_REQUIRED_LIBRARIES)
     endif ()
-    unset(CMAKE_REQUIRED_FLAGS)
+    cmake_pop_check_state()
 endif ()
 
 if (NOT WTF_PLATFORM_COCOA)
@@ -588,9 +594,10 @@ if (WTF_CPU_ARM)
         set(CLANG_EXTRA_ARM_ARGS " -mthumb")
     endif ()
 
+    cmake_push_check_state(RESET)
     set(CMAKE_REQUIRED_FLAGS "${CLANG_EXTRA_ARM_ARGS}")
     CHECK_CXX_SOURCE_COMPILES("${ARM_THUMB2_TEST_SOURCE}" ARM_THUMB2_DETECTED)
-    unset(CMAKE_REQUIRED_FLAGS)
+    cmake_pop_check_state()
 
     if (ARM_THUMB2_DETECTED AND NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin"))
         string(APPEND CMAKE_C_FLAGS " ${CLANG_EXTRA_ARM_ARGS}")

@@ -19,9 +19,11 @@
 <script>
   if (window.testRunner) {
     testRunner.waitUntilDone();
-    testRunner.setUseDarkAppearanceForTesting(true);
 
     ifr.addEventListener("load", () => {
+      // testRunner.setUseDarkAppearanceForTesting() only affects loaded frames,
+      // hence we set it after the frame is loaded.
+      testRunner.setUseDarkAppearanceForTesting(true);
       testRunner.notifyDone();
     })
   }

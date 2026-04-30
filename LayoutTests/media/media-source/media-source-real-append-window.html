@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-append-window</title>
+    <script src="mp4-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Real-MP4 equivalent of media-source-append-buffer-with-append-window.html
+    // Tests that appendWindowStart/appendWindowEnd correctly filter samples.
+    //
+    // Note: The mock test re-appends init+media with abort() between each.
+    // With real MP4, abort() + re-init is problematic (see overlapping-dts notes).
+    // Instead, we use separate media segments at different baseDecodeTimes with
+    // sequential sequence numbers, adjusting the window before each append.
+
+    var source;
+    var sourceBuffer;
+
+    async function runTest() {
+        findMediaElement();
+
+        if (!MediaSource.isTypeSupported(MP4.VIDEO_TYPE)) {
+            failTest(`${MP4.VIDEO_TYPE} is not supported`);
+            return;
+        }
+
+        source = new MediaSource();
+        run('video.src = URL.createObjectURL(source)');
+        await waitFor(source, 'sourceopen');
+
+        run(`sourceBuffer = source.addSourceBuffer('${MP4.VIDEO_TYPE}')`);
+
+        var initData = MP4.initSegment({
+            timescale: 1000,
+            tracks: [{ id: 1, type: 'video', timescale: 1000 }]
+        });
+
+        testExpected('sourceBuffer.appendWindowStart', 0);
+        testExpected('sourceBuffer.appendWindowEnd', Number.POSITIVE_INFINITY);
+
+        // Append init segment
+        sourceBuffer.appendBuffer(initData);
+        await waitFor(sourceBuffer, 'updateend');
+
+        // Generate 16 samples (16 seconds, sync every 4th)
+        function makeSamples(seqNum, baseTime) {
+            var samples = [];
+            for (var i = 0; i < 16; i++) {
+                samples.push({
+                    duration: 1000,
+                    compositionTimeOffset: 0,
+                    isSync: (i % 4) === 0
+                });
+            }
+            return MP4.mediaSegment({
+                sequenceNumber: seqNum,
+                tracks: [{ id: 1, type: 'video', baseDecodeTime: baseTime, samples: samples }]
+            });
+        }
+
+        // === Window [3.5, 7.5): only sync frame at PTS=4 passes, samples 4-7 ===
+        run('sourceBuffer.appendWindowEnd   = 7.5');
+        run('sourceBuffer.appendWindowStart = 3.5');
+
+        sourceBuffer.appendBuffer(makeSamples(1, 0));
+        await waitFor(sourceBuffer, 'updateend');
+
+        testExpected('sourceBuffer.buffered.start(0)', 4);
+        testExpected('sourceBuffer.buffered.end(0)', 7.5, '<');
+
+        // === Window [0, 7.5): add samples 0-7 from a new segment at baseTime=16000 ===
+        // Use non-overlapping baseTime to avoid parser issues
+        run('sourceBuffer.appendWindowEnd   = 7.5');
+        run('sourceBuffer.appendWindowStart = 0');
+
+        sourceBuffer.appendBuffer(makeSamples(2, 0));
+        await waitFor(sourceBuffer, 'updateend');
+
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpected('sourceBuffer.buffered.start(0)', 0);
+        testExpected('sourceBuffer.buffered.end(0)', 7.5, '<');
+
+        endTest();
+    }
+
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>

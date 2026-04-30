@@ -290,6 +290,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/switch-animation-02-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/switch-animation-02.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/switching-animated-target-to-unknown-element.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/animations/syncbase-escaped-dots.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/syncbase-remove-add-while-running.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/use-animate-display-none-symbol-2-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/animations/use-animate-display-none-symbol-2.html

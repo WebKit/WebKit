@@ -363,11 +363,11 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
     if (!mediaSource)
         return;
 
-#if HAVE(AVCONTENTKEYSESSION) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    ALWAYS_LOG(LOGIDENTIFIER, "track = ", trackID);
-
     m_protectedTrackID = trackID;
     maybeUpdateNeedsVideoLayer();
+
+#if HAVE(AVCONTENTKEYSESSION) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    ALWAYS_LOG(LOGIDENTIFIER, "track = ", trackID);
     callOnMainThreadWithPlayer([initData](auto& player) {
         player.keyNeeded(initData);
     });
@@ -401,7 +401,6 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
             protectedThis->callOnMainThreadWithPlayer([initDataType = initDataType.isolatedCopy(), initData](auto& player) {
                 player.initializationDataEncountered(initDataType, initData->tryCreateArrayBuffer());
                 player.waitingForKeyChanged();
-                player.needsVideoLayerChanged();
             });
             return;
         }
@@ -426,7 +425,12 @@ bool SourceBufferPrivateAVFObjC::needsVideoLayer() const
 void SourceBufferPrivateAVFObjC::maybeUpdateNeedsVideoLayer()
 {
     assertIsCurrent(m_dispatcher.get());
-    m_needsVideoLayer = m_protectedTrackID && isEnabledVideoTrackID(*m_protectedTrackID);
+    bool needsVideoLayer = m_protectedTrackID && isEnabledVideoTrackID(*m_protectedTrackID);
+    if (m_needsVideoLayer.exchange(needsVideoLayer) != needsVideoLayer) {
+        callOnMainThreadWithPlayer([](auto& player) {
+            player.needsVideoLayerChanged();
+        });
+    }
 }
 
 Ref<MediaPromise> SourceBufferPrivateAVFObjC::appendInternal(Ref<SharedBuffer>&& data)

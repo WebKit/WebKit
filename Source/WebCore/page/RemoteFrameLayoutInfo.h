@@ -29,10 +29,18 @@
 
 namespace WebCore {
 
-// Collection of layout info regarding a (potentially remote) frame.
+enum class FrameOwnerElementAppearance : uint8_t {
+    // Whether the used color scheme of the frame embedder is dark or not.
+    // This could either come from `color-scheme` CSS property or system preference.
+    IsDark = 1 << 0,
+
+    // Whether the color scheme is explicitly set using `color-scheme` CSS property or not.
+    ExplicitlySet = 1 << 1
+};
+
+// Collection of style/layout info regarding a (potentially remote) frame.
 // This is synchronized from LocalFrame in one process to RemoteFrames
-// in other processes using FrameTreeSyncData. Currently, it is used by
-// Intersection Observer to compute the intersection rectangle from any processes.
+// in other processes using FrameTreeSyncData.
 struct RemoteFrameLayoutInfo {
     // Rectangle of the visible portion of the frame in its parent frame,
     // in the coordinate space of the document of the parent frame.
@@ -41,8 +49,7 @@ struct RemoteFrameLayoutInfo {
     // RenderStyle::usedZoom of the owner renderer of the frame.
     float usedZoom;
 
-    // useDarkAppearance of the owner renderer of the frame.
-    bool useDarkAppearance;
+    OptionSet<FrameOwnerElementAppearance> ownerElementAppearance;
 };
 
 };

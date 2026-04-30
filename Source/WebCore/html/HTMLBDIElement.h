@@ -30,6 +30,8 @@ class HTMLBDIElement final : public HTMLElement {
 public:
     static Ref<HTMLBDIElement> create(const QualifiedName&, Document&);
 
+    ~HTMLBDIElement();
+
 private:
     HTMLBDIElement(const QualifiedName&, Document&);
 };

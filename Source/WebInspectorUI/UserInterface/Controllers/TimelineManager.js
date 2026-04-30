@@ -858,6 +858,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             var layoutRecordType = sourceCodeLocation ? WI.LayoutTimelineRecord.EventType.ForcedLayout : WI.LayoutTimelineRecord.EventType.Layout;
             return new WI.LayoutTimelineRecord(layoutRecordType, startTime, endTime, stackTrace, sourceCodeLocation, {
                 quad: new WI.Quad(recordPayload.data.root),
+                domNode: WI.domManager.nodeForId(recordPayload.data.nodeId),
             });
 
         case InspectorBackend.Enum.Timeline.EventType.Paint:

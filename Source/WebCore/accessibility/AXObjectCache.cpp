@@ -413,9 +413,9 @@ AXObjectCache::AXObjectCache(LocalFrame& localFrame, Document* document)
     , m_liveRegionChangedPostTimer(*this, &AXObjectCache::liveRegionChangedNotificationPostTimerFired)
     , m_currentModalElement(nullptr)
     , m_performCacheUpdateTimer(*this, &AXObjectCache::performCacheUpdateTimerFired)
+    , m_geometryManager(AXGeometryManager::create(*this))
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     , m_buildIsolatedTreeTimer(*this, &AXObjectCache::buildIsolatedTree)
-    , m_geometryManager(AXGeometryManager::create(*this))
     , m_selectedTextRangeTimer(*this, &AXObjectCache::selectedTextRangeTimerFired, platformSelectedTextRangeDebounceInterval())
     , m_updateTreeSnapshotTimer(*this, &AXObjectCache::updateTreeSnapshotTimerFired)
 #endif
@@ -795,7 +795,7 @@ AccessibilityObject* AXObjectCache::focusedObjectForNode(Node* focusedNode)
 
     if (focus->shouldFocusActiveDescendant()) {
         if (RefPtr descendant = focus->activeDescendant())
-            return dynamicDowncast<AccessibilityObject>(descendant.get());
+            return dynamicDowncast<AccessibilityObject>(descendant.unsafeGet());
     }
 
     if (focus->isIgnored())
@@ -1091,6 +1091,11 @@ RefPtr<AXIsolatedTree> AXObjectCache::getOrCreateIsolatedTree()
     AXTRACE(makeString("AXObjectCache::getOrCreateIsolatedTree 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
     AX_ASSERT(isMainThread());
 
+    if (!isIsolatedTreeEnabled()) {
+        AX_ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
     RefPtr tree = AXIsolatedTree::treeForFrameID(m_frameID);
     if (tree) {
         if (tree->treeID() == treeID())
@@ -1194,10 +1199,10 @@ void AXObjectCache::setFrameGeometry(LocalFrame& frame, const AXFrameGeometry& g
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (RefPtr tree = AXIsolatedTree::treeForFrameID(m_frameID)) {
-        IntPoint scrollPosition;
+        IntPoint viewOriginScrollPosition;
         if (CheckedPtr view = frame.view())
-            scrollPosition = view->scrollPosition();
-        tree->setFrameGeometry(AXFrameGeometry { geometry }, scrollPosition);
+            viewOriginScrollPosition = IntPoint(view->documentScrollPositionRelativeToViewOrigin());
+        tree->setFrameGeometry(AXFrameGeometry { geometry }, viewOriginScrollPosition);
     }
 #endif
 }
@@ -3420,8 +3425,10 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
     // The remaining code in this method relies on shouldProcessAttributeChange null-checking element.
     AX_ASSERT(element);
 
-    if (relationAttributes().contains(attrName))
+    if (relationAttributes().contains(attrName)) {
+        m_elementsWithRelationAttributes.add(*element);
         updateRelations(*element, attrName);
+    }
 
     if (attrName == roleAttr)
         handleRoleChanged(*element, oldValue, newValue);
@@ -3434,6 +3441,7 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
         postNotification(element, AXNotification::DisabledStateChanged);
     else if (attrName == forAttr) {
         if (RefPtr label = dynamicDowncast<HTMLLabelElement>(element)) {
+            m_elementsWithRelationAttributes.add(*label);
             bool updatedLabelFor = updateLabelFor(*label);
 
             if (updatedLabelFor) {
@@ -4039,6 +4047,9 @@ static bool characterOffsetsInOrder(const CharacterOffset& characterOffset1, con
 {
     // FIXME: Should just be able to call treeOrder without accessibility-specific logic.
     // FIXME: Not clear why CharacterOffset needs to exist at all; we have both Position and BoundaryPoint to choose from.
+    // FIXME: This function can return incorrect results for positions spanning across nested
+    // table boundaries (e.g. a text node inside a cell vs. an ancestor tbody position), and
+    // potentially other scenarios, producing reversed ranges that in turn cause incorrect behavior.
 
     if (characterOffset1.isNull() || characterOffset2.isNull())
         return false;
@@ -5224,6 +5235,7 @@ void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
 
             if (RefPtr label = dynamicDowncast<HTMLLabelElement>(*element)) {
                 // A label was added or removed. Update its LabelFor relationships.
+                m_elementsWithRelationAttributes.add(*label);
                 handleLabelChanged(getOrCreate(*label));
             }
         }
@@ -5353,6 +5365,11 @@ void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
         handleScrollbarUpdate(scrollView);
     });
     m_deferredScrollbarUpdateChangeList.clear();
+
+    AXLOGDeferredCollection("CanvasFocusPathBoundsChanges"_s, m_deferredCanvasFocusPathBoundsChanges);
+    for (const auto& change : m_deferredCanvasFocusPathBoundsChanges)
+        handleCanvasFocusPathBoundsChange(change);
+    m_deferredCanvasFocusPathBoundsChanges.clear();
 
     for (const auto& notificationData : m_deferredNotifications)
         handleDeferredNotification(notificationData);
@@ -5832,6 +5849,41 @@ void AXObjectCache::onPaint(const RenderText& renderText, size_t lineIndex)
 }
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
+void AXObjectCache::deferCanvasFocusPathBoundsUpdate(Element& fallbackElement, HTMLCanvasElement& canvas, FloatRect bounds)
+{
+    m_deferredCanvasFocusPathBoundsChanges.append({ fallbackElement, canvas, bounds });
+    if (!m_performCacheUpdateTimer.isActive())
+        m_performCacheUpdateTimer.startOneShot(0_s);
+}
+
+std::optional<IntRect> AXObjectCache::cachedBoundsForID(AXID axID) const
+{
+    return m_geometryManager->cachedRectForID(axID);
+}
+
+void AXObjectCache::handleCanvasFocusPathBoundsChange(const CanvasFocusPathBoundsChange& change)
+{
+    RefPtr fallbackElement = change.fallbackElement.get();
+    RefPtr canvas = change.canvas.get();
+    if (!fallbackElement || !canvas)
+        return;
+
+    RefPtr axObject = getOrCreate(*fallbackElement);
+    if (!axObject)
+        return;
+
+    // change.bounds is in the canvas renderer's local coordinate space
+    // (positioned within the replacedContentRect). Map to document-absolute
+    // coordinates, which applies CSS transforms on the canvas and its ancestors.
+    auto documentRelativeBounds = FloatRect(change.bounds);
+    if (CheckedPtr renderer = canvas->renderer())
+        documentRelativeBounds = renderer->localToAbsoluteQuad(FloatQuad(documentRelativeBounds)).boundingBox();
+
+    std::ignore = m_geometryManager->cacheRectIfNeeded(axObject->objectID(), enclosingIntRect(documentRelativeBounds));
+
+    postPlatformNotification(*axObject, AXNotification::LayoutComplete);
+}
+
 void AXObjectCache::deferRecomputeIsIgnoredIfNeeded(Element* element)
 {
     if (!nodeAndRendererAreValid(element))
@@ -6242,6 +6294,7 @@ bool AXObjectCache::addRelation(AccessibilityObject* origin, AccessibilityObject
     m_relationTargets.add(targetID);
 
     if (relation == AXRelation::OwnerFor) {
+        m_hasAriaOwnsRelations = true;
         // First find and clear the old owner.
         for (auto oldOwnerIterator = m_relations.begin(); oldOwnerIterator != m_relations.end(); ++oldOwnerIterator) {
             if (oldOwnerIterator->key == originID)
@@ -6358,8 +6411,22 @@ void AXObjectCache::updateRelationsIfNeeded()
     m_relations.clear();
     m_recentlyRemovedRelations.clear();
     m_relationTargets.clear();
-    if (m_document)
-        updateRelationsForTree(m_document->rootNode());
+    m_hasAriaOwnsRelations = false;
+
+    if (!m_doneInitialRelationsBuild) {
+        if (m_document)
+            updateRelationsForTree(m_document->rootNode());
+        m_doneInitialRelationsBuild = true;
+        return;
+    }
+
+    for (Ref element : m_elementsWithRelationAttributes) {
+        if (!canHaveRelations(element.get()))
+            continue;
+        for (const auto& attribute : relationAttributes())
+            addRelation(element.get(), attribute);
+        addLabelForRelation(element.get());
+    }
 }
 
 void AXObjectCache::updateRelationsForTree(ContainerNode& rootNode)
@@ -6376,12 +6443,20 @@ void AXObjectCache::updateRelationsForTree(ContainerNode& rootNode)
                 updateRelationsForTree(*document);
         }
 
-        for (const auto& attribute : relationAttributes())
-            addRelation(element, attribute);
+        bool hasRelationAttribute = false;
+        for (const auto& attribute : relationAttributes()) {
+            if (addRelation(element, attribute) || !element->attributeWithoutSynchronization(attribute).isNull()) {
+                // Track elements even when addRelation fails to resolve a target, since the target may appear later via an id change.
+                hasRelationAttribute = true;
+            }
+        }
 
         // In addition to ARIA specified relations, there may be other relevant relations.
         // For instance, LabelFor in HTMLLabelElements.
         addLabelForRelation(element);
+
+        if (hasRelationAttribute || is<HTMLLabelElement>(element.get()))
+            m_elementsWithRelationAttributes.add(element);
     }
 }
 

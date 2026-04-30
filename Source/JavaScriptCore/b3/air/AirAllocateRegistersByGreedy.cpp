@@ -30,11 +30,15 @@
 
 #include "AirArgInlines.h"
 #include "AirCode.h"
+#include "AirDominators.h"
+#include "AirEmitShuffle.h"
+#include "AirEnsureDedicatedLoopEntryExitBlocks.h"
 #include "AirFixSpillsAfterTerminals.h"
-#include "AirPhaseInsertionSet.h"
 #include "AirInstInlines.h"
 #include "AirLiveness.h"
+#include "AirNaturalLoops.h"
 #include "AirPadInterference.h"
+#include "AirPhaseInsertionSet.h"
 #include "AirPhaseScope.h"
 #include "AirRegLiveness.h"
 #include "AirRegisterAllocatorStats.h"
@@ -71,6 +75,16 @@ public:
     Cost operator*(float scalar) const { return Cost(m_value * scalar); }
     Cost operator/(float scalar) const { return Cost(m_value / scalar); }
 
+    // Subtract other from this cost, clamping to zero. Skips non-finite values
+    // since an inf cost has lost precision and inf - inf = NaN.
+    void subtractSaturating(Cost other)
+    {
+        if (std::isfinite(m_value)) {
+            m_value -= other.m_value;
+            m_value = std::max(m_value, 0.0f);
+        }
+    }
+
     friend auto operator<=>(const Cost&, const Cost&) = default;
 
 private:
@@ -86,16 +100,21 @@ static constexpr SpillCost maxSpillableSpillCost { std::numeric_limits<float>::m
 static_assert(unspillableCost > fastTmpSpillCost);
 static_assert(unspillableCost > maxSpillableSpillCost);
 
+static constexpr unsigned maxLoopSplitDepth = 32;
+static constexpr UseDefCost zeroCostEpsilon { 1e-6f };
+
 // Phase constants used for the PhaseInsertionSet. Ensures that the fixup and spill/fill instructions
 // inserted in a particular gap end up in the correct order.
 // "MoveTo" = value flows toward the original tmp (or its spill slot).
 // "MoveFrom" = value flows away from the original tmp (or its spill slot).
 enum InsertionPhase : unsigned {
     SpillMoveTo,
+    AroundLoopExitFixup,
     ClobberMoveTo,
     IntraBlockMoveTo,
     IntraBlockMoveFrom,
     ClobberMoveFrom,
+    AroundLoopEntryFixup,
     SpillMoveFrom,
 };
 
@@ -235,7 +254,17 @@ public:
         return m_size;
     }
 
-    bool NODELETE overlaps(LiveRange& other)
+    bool NODELETE contains(Point point) const
+    {
+        for (auto& interval : m_intervals) {
+            if (interval.end() <= point)
+                continue;
+            return interval.begin() <= point;
+        }
+        return false;
+    }
+
+    bool NODELETE overlaps(const LiveRange& other) const
     {
         auto otherIter = other.intervals().begin();
         auto otherEnd = other.intervals().end();
@@ -700,6 +729,7 @@ struct TmpData {
     LiveRange liveRange;
     Coalescables coalescables;
     UseDefCost useDefCost { 0 };
+    UseDefCost cumulativeFixupCost { 0 };
     uint32_t spillSlotTableIndex { 0 };
     uint32_t splitAroundClobbersMetadataIndex : 31 { 0 };
     uint32_t hasColdUse : 1 { 0 };
@@ -707,6 +737,11 @@ struct TmpData {
     Spillability spillability { Spillability::Spillable };
     Reg preferredReg;
     Reg assigned;
+};
+
+struct LoopData {
+    LiveRange range;
+    LiveRange boundary;
 };
 
 class UseDefList {
@@ -781,6 +816,24 @@ struct IntraBlockSplitMetadata {
 
     Tmp originalTmp;
     Vector<Split> splits;
+};
+
+// AroundLoopSplitMetadata tracks a Tmp that has been split at a loop boundary.
+// The original Tmp covers the non-loop portion and the split Tmp covers the loop portion.
+struct AroundLoopSplitMetadata {
+    AroundLoopSplitMetadata(Tmp originalTmp, const NaturalLoop* loop)
+        : originalTmp(originalTmp)
+        , loop(loop) { }
+
+    void dump(PrintStream& out) const
+    {
+        out.print(originalTmp, " : AroundLoop(BB", *loop->header(), ") { ", loopTmp, " loopHasDef=", loopHasDef, " } ");
+    }
+
+    Tmp originalTmp;
+    Tmp loopTmp;
+    bool loopHasDef { false };
+    const NaturalLoop* loop { nullptr };
 };
 
 class GreedyAllocator {
@@ -881,7 +934,9 @@ public:
         });
         out.println("AroundClobbers splits:\n", listDump(m_aroundClobbersMetadata, "\n"));
         out.println("IntraBlock splits:\n", listDump(m_intraBlockMetadata, "\n"));
+        out.println("AroundLoop splits:\n", listDump(m_aroundLoopMetadata, "\n"));
         out.println("SpillSlotTable: ", pointerListDump(m_spillSlotTable));
+        out.println("Loops: ", pointerDump(m_naturalLoops.get()));
         out.println("Stats (GP):", m_stats[GP]);
         out.println("Stats (FP):", m_stats[FP]);
     }
@@ -942,14 +997,37 @@ private:
         m_stats[GP].numInsts += (tailPosition + 1) / PointOffsets::PointsPerInst;
     }
 
-    BasicBlock* findBlockContainingPoint(Point point)
+    void forEachBlockInLiveRange(const LiveRange& liveRange, const Invocable<IterationStatus(BasicBlock*)> auto& func)
+    {
+        for (auto& interval : liveRange.intervals()) {
+            size_t blockIdx = findBlockIndexContainingPoint(interval.begin());
+            while (true) {
+                BasicBlock* block = m_code[blockIdx];
+                if (func(block) == IterationStatus::Done)
+                    return;
+                Point nextHead = m_tailPoints[blockIdx] + 1;
+                if (nextHead >= interval.end())
+                    break;
+                do {
+                    ++blockIdx;
+                } while (!m_code[blockIdx]);
+            };
+        }
+    }
+
+    size_t findBlockIndexContainingPoint(Point point)
     {
         auto iter = std::lower_bound(m_tailPoints.begin(), m_tailPoints.end(), point);
         ASSERT(iter != m_tailPoints.end()); // Should ask only about legal instruction boundaries.
         size_t blockIndex = std::distance(m_tailPoints.begin(), iter);
-        BasicBlock* block = m_code[blockIndex];
-        ASSERT(positionOfHead(block) <= point && point <= positionOfTail(block));
-        return block;
+        ASSERT(m_code[blockIndex]);
+        ASSERT(positionOfHead(m_code[blockIndex]) <= point && point <= m_tailPoints[blockIndex]);
+        return blockIndex;
+    }
+
+    BasicBlock* findBlockContainingPoint(Point point)
+    {
+        return m_code[findBlockIndexContainingPoint(point)];
     }
 
     Point NODELETE positionOfHead(BasicBlock* block) const
@@ -1854,7 +1932,7 @@ private:
                 return a.cost > b.cost;
             if (a.tmp0.tmpIndex(bank) != b.tmp0.tmpIndex(bank))
                 return a.tmp0.tmpIndex(bank) < b.tmp0.tmpIndex(bank);
-            ASSERT(a.tmp1.tmpIndex(bank) != b.tmp1.tmpIndex(bank));
+            ASSERT_IMPLIES(&a != &b, a.tmp1.tmpIndex(bank) != b.tmp1.tmpIndex(bank));
             return a.tmp1.tmpIndex(bank) < b.tmp1.tmpIndex(bank);
         });
 
@@ -2017,14 +2095,8 @@ private:
                     m_stats[bank].numGroupMovesCoalesced++;
                     float freq = adjustedBlockFrequency(block);
                     TmpData& tmpData = m_map.get<bank>(tmp);
-                    // Avoid computing NaN which can happen when tmpData.useDefCost is inf and freq or 2*freq is Inf.
-                    // And if useDefCost became Inf (usually due high nesting depth) subtracting not necessarily the right thing anyway.
-                    if (std::isfinite(tmpData.useDefCost.value())) {
-                        tmpData.useDefCost -= UseDefCost(freq); // For args[0]
-                        tmpData.useDefCost -= UseDefCost(freq); // For args[1]
-                        if (tmpData.useDefCost < UseDefCost(0))
-                            tmpData.useDefCost = UseDefCost(0);
-                    }
+                    tmpData.useDefCost.subtractSaturating(UseDefCost(freq)); // For args[0]
+                    tmpData.useDefCost.subtractSaturating(UseDefCost(freq)); // For args[1]
                 }
             }
         }
@@ -2119,6 +2191,8 @@ private:
         TmpData& originalData = m_map[originalTmp];
         ensureSpillSlotTableEntry(originalData);
         m_map[splitTmp].spillSlotTableIndex = originalData.spillSlotTableIndex;
+        if (m_hasUseDefLists)
+            m_useDefLists.resize(m_code);
         return splitTmp;
     }
 
@@ -2413,7 +2487,212 @@ private:
         ASSERT(tmpData.spillCost() != unspillableCost); // Should have evicted.
         if (trySplitAroundClobbers<bank>(tmp, tmpData))
             return true;
+        if (trySplitAroundLoop<bank>(tmp, tmpData))
+            return true;
         return trySplitIntraBlock<bank>(tmp, tmpData);
+    }
+
+    void analyzeLoop(const NaturalLoop& loop)
+    {
+        // Collect boundary points for fast live-range-crosses-loop-boundary checks.
+        Vector<Point, 16> boundaryPoints;
+
+        BasicBlock* header = loop.header();
+        for (BasicBlock* pred : header->predecessors()) {
+            if (m_naturalLoops->belongsTo(pred, loop))
+                continue; // Back-edge predecessor, skip.
+            // ensureDedicatedLoopEntryExitBlocks() guarantees non-critical entry edges and dedicated exit blocks.
+            ASSERT(pred->numSuccessors() == 1 && pred->successor(0).block() == header);
+            boundaryPoints.append(positionOfTail(pred));
+        }
+
+        for (unsigned i = 0; i < loop.size(); i++) {
+            BasicBlock* loopBlock = loop.at(i);
+            for (auto& succ : loopBlock->successors()) {
+                if (m_naturalLoops->belongsTo(succ.block(), loop))
+                    continue;
+#if ASSERT_ENABLED
+                // ensureDedicatedLoopEntryExitBlocks() ensured the exit successor has only loop
+                // predecessors so it's safe to emit the fixup code in the successor block.
+                for (BasicBlock* exitPred : succ.block()->predecessors())
+                    ASSERT(m_naturalLoops->belongsTo(exitPred, loop));
+#endif
+                boundaryPoints.append(positionOfHead(succ.block()));
+            }
+        }
+
+        LoopData& loopData = m_loopData[loop.index()];
+        ASSERT(!loopData.range.size() && !loopData.boundary.size());
+
+        std::ranges::sort(boundaryPoints);
+        removeRepeatedElements(boundaryPoints);
+        LiveRange& boundary = loopData.boundary;
+        for (Point point : boundaryPoints)
+            boundary.append(Interval(point));
+
+        Vector<Interval, 32> loopIntervals;
+        for (unsigned i = 0; i < loop.size(); i++) {
+            auto block = loop.at(i);
+            loopIntervals.constructAndAppend(positionOfHead(block), positionOfTail(block) + 1);
+        }
+        std::ranges::sort(loopIntervals, [](const Interval& a, const Interval& b) {
+            return a.begin() < b.begin();
+        });
+        LiveRange& loopRange = loopData.range;
+        for (auto& interval : loopIntervals)
+            loopRange.append(interval);
+    }
+
+    void ensureLoopAnalysis()
+    {
+        if (m_naturalLoops)
+            return;
+        m_dominators = makeUnique<Dominators>(m_code);
+        m_naturalLoops = makeUnique<NaturalLoops>(m_code, *m_dominators);
+        m_loopData.resize(m_naturalLoops->numLoops());
+
+        for (unsigned i = 0; i < m_naturalLoops->numLoops(); i++)
+            analyzeLoop(m_naturalLoops->loop(i));
+    }
+
+    // Pick the outermost loop that meaningfully reduces the live range when split out.
+    // Returns the chosen loop and the non-loop remainder, or {nullptr, {}} if none qualifies.
+    std::pair<const NaturalLoop*, LiveRange> chooseLoopForSplit(const LiveRange& liveRange)
+    {
+        const NaturalLoop* resultLoop = nullptr;
+        LiveRange resultNonLoopRange;
+
+        BitVector visitedLoops;
+        Vector<const NaturalLoop*, 16> nestedLoops;
+        forEachBlockInLiveRange(liveRange, [&](BasicBlock* block) {
+            nestedLoops.shrink(0);
+            for (const NaturalLoop* loop = m_naturalLoops->innerMostLoopOf(block); loop; loop = m_naturalLoops->innerMostOuterLoop(*loop)) {
+                if (visitedLoops.get(loop->index()))
+                    break;
+                nestedLoops.append(loop);
+            }
+
+            // Iterate from outer-most to inner-most
+            for (auto* loop : std::views::reverse(nestedLoops)) {
+                ASSERT(!visitedLoops.get(loop->index()));
+                visitedLoops.set(loop->index());
+
+                auto& loopData = m_loopData[loop->index()];
+                if (liveRange.overlaps(loopData.boundary)) {
+                    // Skip loops that are too large relative to the live range since they are unlikely to improve allocation progress.
+                    if (loopData.range.size() > liveRange.size() * Options::airGreedyRegAllocLoopSplitMaxLoopFraction())
+                        continue;
+                    resultLoop = loop;
+                    resultNonLoopRange = LiveRange::subtract(liveRange, loopData.range);
+                    return IterationStatus::Done;
+                }
+            }
+            return IterationStatus::Continue;
+        });
+        return { resultLoop, WTF::move(resultNonLoopRange) };
+    }
+
+    template<Bank bank>
+    bool trySplitAroundLoop(Tmp tmp, TmpData& tmpData)
+    {
+        if (!Options::airGreedyRegAllocSplitAroundLoops())
+            return false;
+
+        // Clobber fixup references originalTmp which would be stale after loop splitting.
+        if (tmpData.splitAroundClobbersMetadataIndex)
+            return false;
+        if (tmpData.liveRange.size() < splitMinRangeSize)
+            return false;
+        if (isConstDef<bank>(tmp))
+            return false;
+        if (isLiveRangeBlockLocal(tmpData.liveRange))
+            return false;
+
+        ensureLoopAnalysis();
+        if (!m_naturalLoops->numLoops())
+            return false;
+
+        auto [loop, nonLoopRange] = chooseLoopForSplit(tmpData.liveRange);
+        if (!loop)
+            return false;
+
+        if (m_naturalLoops->loopDepth(loop->header()) > maxLoopSplitDepth)
+            return false;
+
+        auto findFirstLoopPredecessor = [this](const NaturalLoop* loop) -> BasicBlock* {
+            BasicBlock* header = loop->header();
+            for (BasicBlock* pred : header->predecessors()) {
+                if (!m_naturalLoops->belongsTo(pred, *loop))
+                    return pred;
+            }
+            ASSERT_NOT_REACHED();
+            return nullptr;
+        };
+
+        // Estimate the fixup cost: each loop invocation pays one entry + one exit move.
+        // If the cumulative fixup cost across sibling loop splits of this tmp exceeds useDefCost, bail.
+        BasicBlock* entryBlock = findFirstLoopPredecessor(loop);
+        UseDefCost fixupCost(2 * adjustedBlockFrequency(entryBlock));
+        UseDefCost totalFixupCost = tmpData.cumulativeFixupCost;
+        totalFixupCost += fixupCost;
+        if (totalFixupCost > tmpData.useDefCost)
+            return false;
+        tmpData.cumulativeFixupCost += fixupCost;
+
+        ensureUseDefLists();
+
+        Tmp loopTmp = addSplitTmp(tmp, UseDefCost(0), { });
+        // Note: addSplitTmp() may have resized m_map, invalidating the tmpData parameter.
+        TmpData& originalData = m_map.get<bank>(tmp);
+        TmpData& loopData = m_map.get<bank>(loopTmp);
+        loopData.liveRange = LiveRange::subtract(originalData.liveRange, nonLoopRange);
+        ASSERT(loopData.liveRange.size());
+
+        bool loopHasDef = false;
+        size_t cursor = 0;
+        for (Interval interval : loopData.liveRange.intervals()) {
+            do {
+                interval = forEachUseDefWithin(tmp, interval, cursor, [&](Point point, Inst& inst, BasicBlock& block) {
+                    inst.forEachTmp([&](Tmp& t, Arg::Role role, Bank, Width) {
+                        if (t != tmp)
+                            return;
+                        t = loopTmp;
+                        if (Arg::isAnyDef(role))
+                            loopHasDef = true;
+                        if (Arg::isColdUse(role))
+                            loopData.hasColdUse = true;
+                        else
+                            loopData.useDefCost += UseDefCost(block.frequency());
+                        m_useDefLists[loopTmp].add(point);
+                    });
+                });
+            } while (interval);
+        }
+
+        // originalTmp no longer live within the loop.
+        originalData.liveRange = WTF::move(nonLoopRange);
+        originalData.useDefCost.subtractSaturating(loopData.useDefCost);
+
+        m_aroundLoopMetadata.constructAndAppend(tmp, loop);
+        AroundLoopSplitMetadata& metadata = m_aroundLoopMetadata.last();
+        metadata.loopTmp = loopTmp;
+        metadata.loopHasDef = loopHasDef;
+
+        // Spill zero-cost sides directly — a register would just carry a value nothing reads,
+        // while still requiring fixup moves at loop boundaries. Epsilon handles FP rounding.
+        auto enqueueOrSpill = [&](Tmp t, TmpData& data) {
+            if (data.useDefCost < zeroCostEpsilon) {
+                spill(t, data);
+                m_stats[bank].numSplitAroundLoopZeroCostSpilled++;
+            } else
+                setStageAndEnqueue(t, data, Stage::TryAllocate);
+        };
+        enqueueOrSpill(loopTmp, loopData);
+        enqueueOrSpill(tmp, originalData);
+
+        m_stats[bank].numSplitAroundLoop++;
+        dataLogLnIf(verbose(), "Split (around loop): ", tmp, " -> loopTmp=", loopTmp, " header=BB", loop->header(), " loopHasDef=", loopHasDef);
+        return true;
     }
 
     template<Bank bank>
@@ -2495,7 +2774,7 @@ private:
         // might spill or be assigned another register.
         for (Interval hole : holeRange.intervals()) {
             BasicBlock* block = findBlockContainingPoint(hole.begin());
-            float freq = 2 * adjustedBlockFrequency(block);
+            UseDefCost freq(2 * adjustedBlockFrequency(block));
             // padInterference() ensures this.
             // FIXME: reconsider that, see https://bugs.webkit.org/show_bug.cgi?id=288122
             ASSERT(hole.begin() > positionOfHead(block));
@@ -3012,6 +3291,25 @@ private:
             insertSplitAroundClobbersFixupCode(m_aroundClobbersMetadata[i]);
         for (auto& metadata : m_intraBlockMetadata)
             insertSplitIntraBlockFixupCode(metadata);
+
+        if (Options::airGreedyRegAllocSplitAroundLoops()) {
+            HashMap<Tmp, unsigned> loopTmpToMetadataIndex;
+            for (unsigned index = 0; index < m_aroundLoopMetadata.size(); index++)
+                loopTmpToMetadataIndex.add(m_aroundLoopMetadata[index].loopTmp, index);
+
+            // Loop fixups for different Tmps may introduce register cycles. Use Shuffle to deal with potential register conflicts.
+            HashMap<BasicBlock*, Vector<ShufflePair>> loopEntryFixups;
+            HashMap<BasicBlock*, Vector<ShufflePair>> loopExitFixups;
+
+            for (auto& metadata : m_aroundLoopMetadata)
+                insertSplitAroundLoopFixupCode(metadata, loopTmpToMetadataIndex, loopEntryFixups, loopExitFixups);
+
+            for (auto& [block, shufflePairs] : loopEntryFixups)
+                m_insertionSets[block].insertInst(block->size() - 1, AroundLoopEntryFixup, createShuffle(block->at(block->size() - 1).origin, shufflePairs));
+            for (auto& [block, shufflePairs] : loopExitFixups)
+                m_insertionSets[block].insertInst(0, AroundLoopExitFixup, createShuffle(block->at(0).origin, shufflePairs));
+        }
+
         for (BasicBlock* block : m_code)
             m_insertionSets[block].execute(block);
     }
@@ -3088,6 +3386,111 @@ private:
                 m_stats[bank].numSplitIntraBlockStore++;
             }
         }
+    }
+
+    void insertSplitAroundLoopFixupCode(AroundLoopSplitMetadata& metadata, const HashMap<Tmp, unsigned>& loopTmpToMetadataIndex, HashMap<BasicBlock*, Vector<ShufflePair>>& entryFixups, HashMap<BasicBlock*, Vector<ShufflePair>>& exitFixups)
+    {
+        Tmp nonLoopTmp = metadata.originalTmp;
+        Tmp loopTmp = metadata.loopTmp;
+        const NaturalLoop& loop = *metadata.loop;
+        BasicBlock* header = loop.header();
+
+        Bank bank = nonLoopTmp.bank();
+        if (spillSlot(loopTmp))
+            m_stats[bank].numSplitAroundLoopLoopSpilled++;
+        if (spillSlot(nonLoopTmp))
+            m_stats[bank].numSplitAroundLoopNonLoopSpilled++;
+        if (spillSlot(loopTmp) && spillSlot(nonLoopTmp))
+            m_stats[bank].numSplitAroundLoopBothSpilled++;
+
+        auto argFor = [&](Tmp tmp) -> Arg {
+            StackSlot* spilled = spillSlot(tmp);
+            if (spilled)
+                return Arg::stack(spilled);
+            return tmp;
+        };
+        Arg nonLoopArg = argFor(nonLoopTmp);
+        Arg loopArg = argFor(loopTmp);
+
+        LiveRange& loopLiveRange = m_map[loopTmp].liveRange;
+        Width width = canonicalWidth(m_tmpWidth.requiredWidth(nonLoopTmp));
+
+        // Entry fixup: if either tmp got a register and the loop tmp is live at the header,
+        // transfer nonLoopTmp to loopTmp at the end of each entry edge.
+        if (nonLoopArg != loopArg && loopLiveRange.contains(positionOfHead(header))) {
+            for (BasicBlock* pred : header->predecessors()) {
+                if (m_naturalLoops->belongsTo(pred, loop))
+                    continue; // Skip back-edge predecessors.
+                // ensureDedicatedLoopEntryExitBlocks() guarantees non-critical entry edges.
+                ASSERT(pred->numSuccessors() == 1 && pred->successor(0).block() == header);
+                ASSERT(!nonLoopArg.isStack() || !loopArg.isStack());
+                entryFixups.ensure(pred, [] {
+                    return Vector<ShufflePair>();
+                }).iterator->value.append(ShufflePair(nonLoopArg, loopArg, width));
+            }
+        }
+
+        // Exit fixup: on each exit edge, transfer loopTmp to the destination nonLoopTmp.
+        // For nested loop splits, traverse outward to find the right destination.
+        IndexSet<BasicBlock*> visitedExitSuccessors;
+        for (unsigned i = 0; i < loop.size(); i++) {
+            BasicBlock* loopBlock = loop.at(i);
+            // If loopTmp isn't live at the exiting block then this block is within a nested loop that
+            // was also split. The inner fixup will handle this multi-level loop exit.
+            if (!loopLiveRange.contains(positionOfTail(loopBlock)))
+                continue;
+            for (auto& succ : loopBlock->successors()) {
+                if (m_naturalLoops->belongsTo(succ.block(), loop))
+                    continue;
+                if (!visitedExitSuccessors.add(succ.block()))
+                    continue; // Already inserted fixup for this exit successor.
+#if ASSERT_ENABLED
+                // ensureDedicatedLoopEntryExitBlocks() ensured the exit successor has only loop
+                // predecessors so it's safe to emit the fixup code in the successor block.
+                for (BasicBlock* exitPred : succ.block()->predecessors())
+                    ASSERT(m_naturalLoops->belongsTo(exitPred, loop));
+#endif
+                Point exitHead = positionOfHead(succ.block());
+                // Find the nonLoopTmp that carries the value into succ block by traversing splits outward.
+                Tmp traverseLoopTmp = loopTmp;
+                std::optional<unsigned> destSplitIndex;
+                bool anyDefsToRegisters = false;
+                while (true) {
+                    auto it = loopTmpToMetadataIndex.find(traverseLoopTmp);
+                    if (it == loopTmpToMetadataIndex.end()) {
+                        ASSERT(traverseLoopTmp != loopTmp);
+                        destSplitIndex = std::nullopt;
+                        break;
+                    }
+                    destSplitIndex = it->value;
+                    auto& splitMetadata = m_aroundLoopMetadata[*destSplitIndex];
+                    ASSERT(splitMetadata.loopTmp == traverseLoopTmp);
+                    TmpData& loopTmpData = m_map[traverseLoopTmp];
+                    anyDefsToRegisters |= loopTmpData.assigned && splitMetadata.loopHasDef;
+
+                    if (m_map[splitMetadata.originalTmp].liveRange.contains(exitHead))
+                        break;
+                    traverseLoopTmp = splitMetadata.originalTmp;
+                }
+
+                // There won't be a destSplitIndex if the original range wasn't live out of this loop. In that case,
+                // no exit fixup is needed.
+                if (destSplitIndex.has_value()) {
+                    Tmp destTmp = m_aroundLoopMetadata[*destSplitIndex].originalTmp;
+                    Arg destArg = argFor(destTmp);
+                    // If both sides spilled and the loop never wrote to a register, the
+                    // shared spill slot already holds the correct value.
+                    bool spillSlotAlreadyCoherent = destArg.isStack() && !anyDefsToRegisters;
+                    if (loopArg != destArg && !spillSlotAlreadyCoherent) {
+                        ASSERT(!loopArg.isStack() || !destArg.isStack());
+                        exitFixups.ensure(succ.block(), [] {
+                            return Vector<ShufflePair>();
+                        }).iterator->value.append(ShufflePair(loopArg, destArg, width));
+                    }
+                }
+            }
+        }
+        dataLogLnIf(verbose(), "AroundLoop fixup: nonLoop=", nonLoopTmp, " loop=", loopTmp, " header=BB", *header);
     }
 
     bool NODELETE mayBeCoalescable(Inst& inst)
@@ -3181,6 +3584,7 @@ private:
     TmpMap<UseDefList> m_useDefLists;
     Vector<AroundClobbersSplitMetadata> m_aroundClobbersMetadata;
     Vector<IntraBlockSplitMetadata> m_intraBlockMetadata;
+    Vector<AroundLoopSplitMetadata> m_aroundLoopMetadata;
     Vector<StackSlot*> m_spillSlotTable;
     IndexMap<Reg, RegisterRange> m_regRanges;
     GenerationalSet<uint8_t, SaVector> m_visited;
@@ -3193,6 +3597,9 @@ private:
     std::array<bool, numBanks> m_didSpill { };
     bool m_needsEmitSpillCode { false };
     bool m_hasUseDefLists { false };
+    std::unique_ptr<Dominators> m_dominators;
+    std::unique_ptr<NaturalLoops> m_naturalLoops;
+    Vector<LoopData> m_loopData;
 };
 
 } // namespace JSC::B3::Air::Greedy
@@ -3200,6 +3607,8 @@ private:
 void allocateRegistersByGreedy(Code& code)
 {
     PhaseScope phaseScope(code, "allocateRegistersByGreedy"_s);
+    if (Options::airGreedyRegAllocSplitAroundLoops())
+        ensureDedicatedLoopEntryExitBlocks(code);
     Greedy::GreedyAllocator allocator(code);
     allocator.run();
 }

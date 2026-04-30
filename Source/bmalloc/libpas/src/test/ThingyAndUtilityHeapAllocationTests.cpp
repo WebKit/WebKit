@@ -753,8 +753,7 @@ void testFreeListRefillSpans(unsigned prewarmObjectSize,
         objectSize,
         *pas_heap_config_segregated_page_config_ptr_for_variant(
             &thingy_heap_config,
-            variant),
-        pas_segregated_page_exclusive_role);
+            variant));
     unsigned numberOfObjectsPerSpan = numberOfObjects / numberOfSpans;
     CHECK(numberOfObjectsPerSpan >= 1);
     unsigned numberOfObjectsInLastSpan = numberOfObjects - numberOfObjectsPerSpan * (numberOfSpans - 1);
@@ -1180,8 +1179,7 @@ void testSpuriousEligibility()
     unsigned objectSize = 16;
     unsigned numberOfObjects =
         pas_segregated_page_number_of_objects(objectSize,
-                                              THINGY_HEAP_CONFIG.small_segregated_config,
-                                              pas_segregated_page_exclusive_role);
+                                              THINGY_HEAP_CONFIG.small_segregated_config);
     unsigned numberOfObjectsInFirstSpan = numberOfObjects / 2;
     unsigned numberOfObjectsInSecondSpan = numberOfObjects - numberOfObjectsInFirstSpan;
 
@@ -3259,7 +3257,6 @@ void addThingyAndUtilityHeapAllocationTests()
     // pas API outside of ADD_TEST().
     CHECK(!pas_bootstrap_free_heap.num_mapped_bytes);
 
-    ForceExclusives forceExclusives;
     ForceTLAs forceTLAs;
     EpochIsCounter epochIsCounter;
 

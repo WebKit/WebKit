@@ -1662,7 +1662,7 @@ AXIsolatedObject* findObjectWithRuns(AXIsolatedObject& start, AXDirection direct
                 exitObject(*parent);
                 current = parent;
             }
-            return downcast<AXIsolatedObject>(next.get());
+            return downcast<AXIsolatedObject>(next.unsafeGet());
         };
 
         RefPtr current = nextInPreOrder(start);
@@ -1686,7 +1686,7 @@ AXIsolatedObject* findObjectWithRuns(AXIsolatedObject& start, AXDirection direct
             const auto& children = sibling->childrenIncludingIgnored(/* updateChildrenIfNeeded */ true);
             if (children.size())
                 return downcast<AXIsolatedObject>(sibling->deepestLastChildIncludingIgnored(/* updateChildrenIfNeeded */ true));
-            return downcast<AXIsolatedObject>(sibling.get());
+            return downcast<AXIsolatedObject>(sibling.unsafeGet());
         }
         return object.parentObject();
     };

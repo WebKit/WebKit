@@ -429,8 +429,11 @@ bool styleHasDisplayTransition(const RenderStyle& style, const Element& element)
             [&](const Style::SingleTransitionProperty::UnknownProperty&) {
                 return false;
             },
+            [&](const Style::SingleTransitionProperty::CustomProperty&) {
+                return false;
+            },
             [&](const Style::SingleTransitionProperty::SingleProperty& property) {
-                if (auto* ptr = std::get_if<CSSPropertyID>(&property.value); ptr && *ptr == CSSPropertyDisplay)
+                if (property.propertyID == CSSPropertyDisplay)
                     return transition.behavior() == TransitionBehavior::AllowDiscrete;
                 return false;
             }

@@ -46,9 +46,9 @@ struct SnapOffset {
     T offset;
     ScrollSnapStop stop;
     bool hasSnapAreaLargerThanViewport;
-    Markable<NodeIdentifier> snapTargetID;
     bool isFocused;
-    Vector<uint64_t> snapAreaIndices;
+    Markable<NodeIdentifier> snapTargetID;
+    Vector<size_t, 1> snapAreaIndices;
 };
 
 template <typename UnitType, typename RectType>
@@ -103,12 +103,12 @@ WEBCORE_EXPORT std::pair<LayoutUnit, std::optional<unsigned>> LayoutScrollSnapOf
 // Update the snap offsets for this scrollable area, given the RenderBox of the scroll container, the RenderStyle
 // which defines the scroll-snap properties, and the viewport rectangle with the origin at the top left of
 // the scrolling container's border box.
-bool NODELETE hasScrollSnappedBoxes(const RenderBox& scrollingElementBox);
+bool NODELETE mayHaveScrollSnappedBoxes(const RenderBox& scrollingElementBox);
 void updateSnapOffsetsForScrollableArea(ScrollableArea&, const RenderBox& scrollingElementBox, const RenderStyle& scrollingElementStyle, LayoutRect viewportRectInBorderBoxCoordinates, WritingMode, Element*);
 
 template <typename T> WTF::TextStream& operator<<(WTF::TextStream& ts, SnapOffset<T> offset)
 {
-    ts << offset.offset << " snapTargetID: "_s <<  offset.snapTargetID << " isFocused: "_s << offset.isFocused;
+    ts << offset.offset << " snapTargetID: "_s <<  offset.snapTargetID << " isFocused: "_s << offset.isFocused << " snapAreaIndices: " << offset.snapAreaIndices;
     if (offset.stop == ScrollSnapStop::Always)
         ts << " (always)"_s;
     return ts;

@@ -1,6 +1,7 @@
 {
   "ci": {
     "angle-android-arm64-builder-rel": "ci/angle-android-arm64-builder-rel/gn-args.json",
+    "angle-linux-x64-builder-dbg": "ci/angle-linux-x64-builder-dbg/gn-args.json",
     "angle-linux-x64-builder-rel": "ci/angle-linux-x64-builder-rel/gn-args.json",
     "angle-linux-x64-trace": "ci/angle-linux-x64-trace/gn-args.json",
     "angle-mac-arm64-builder-rel": "ci/angle-mac-arm64-builder-rel/gn-args.json",
@@ -10,6 +11,7 @@
   },
   "try": {
     "angle-cq-android-arm64-rel": "try/angle-cq-android-arm64-rel/gn-args.json",
+    "angle-cq-linux-x64-dbg": "try/angle-cq-linux-x64-dbg/gn-args.json",
     "angle-cq-linux-x64-rel": "try/angle-cq-linux-x64-rel/gn-args.json",
     "angle-cq-linux-x64-trace": "try/angle-cq-linux-x64-trace/gn-args.json",
     "angle-cq-mac-arm64-rel": "try/angle-cq-mac-arm64-rel/gn-args.json",
@@ -20,6 +22,7 @@
     "angle-try-android-arm64-google-pixel4-rel": "try/angle-try-android-arm64-google-pixel4-rel/gn-args.json",
     "angle-try-android-arm64-google-pixel6-exp-rel": "try/angle-try-android-arm64-google-pixel6-exp-rel/gn-args.json",
     "angle-try-android-arm64-google-pixel6-rel": "try/angle-try-android-arm64-google-pixel6-rel/gn-args.json",
+    "angle-try-android-arm64-ir-rel": "try/angle-try-android-arm64-ir-rel/gn-args.json",
     "angle-try-android-arm64-samsung-s24-rel": "try/angle-try-android-arm64-samsung-s24-rel/gn-args.json",
     "angle-try-linux-x64-amd-rx5500xt-rel": "try/angle-try-linux-x64-amd-rx5500xt-rel/gn-args.json",
     "angle-try-linux-x64-intel-uhd630-exp-rel": "try/angle-try-linux-x64-intel-uhd630-exp-rel/gn-args.json",
@@ -38,6 +41,7 @@
     "angle-try-win-x64-intel-uhd630-exp-rel": "try/angle-try-win-x64-intel-uhd630-exp-rel/gn-args.json",
     "angle-try-win-x64-intel-uhd630-rel": "try/angle-try-win-x64-intel-uhd630-rel/gn-args.json",
     "angle-try-win-x64-intel-uhd770-rel": "try/angle-try-win-x64-intel-uhd770-rel/gn-args.json",
+    "angle-try-win-x64-ir-rel": "try/angle-try-win-x64-ir-rel/gn-args.json",
     "angle-try-win-x64-nvidia-gtx1660-exp-rel": "try/angle-try-win-x64-nvidia-gtx1660-exp-rel/gn-args.json",
     "angle-try-win-x64-nvidia-gtx1660-rel": "try/angle-try-win-x64-nvidia-gtx1660-rel/gn-args.json",
     "angle-try-win-x86-sws-rel": "try/angle-try-win-x86-sws-rel/gn-args.json"

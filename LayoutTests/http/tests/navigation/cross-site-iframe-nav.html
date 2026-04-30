@@ -19,15 +19,41 @@ window.onload = function() {
 var sameSiteShowCount = 0;
 var crossSiteShowCount = 0;
 
+var back1ExpectedEvents = null;
+
+function startWaitingForBack1() {
+    back1ExpectedEvents = { popup: false, crosssite: false };
+}
+
+function recordBack1Event(name) {
+    if (!back1ExpectedEvents)
+        return false;
+    back1ExpectedEvents[name] = true;
+    if (back1ExpectedEvents.popup && back1ExpectedEvents.crosssite) {
+        back1ExpectedEvents = null;
+        debug("Popup loaded");
+        debug("Popup pageshow: not-persisted");
+        debug("Cross-site iframe loaded");
+        testPassed("Cross-site iframe displayed twice.");
+        sendMessageToPopup("back2");
+    }
+    return true;
+}
+
 window.onmessage = (event) => dispatchMessage(event.data, {
     popup: {
-        load: () => debug("Popup loaded"),
+        load: () => {
+            if (!back1ExpectedEvents)
+                debug("Popup loaded");
+        },
         pageshow: ({arg}) => {
             if (arg !== "not-persisted") {
                 testFailed("Popup should not be loaded from back/forward cache.");
                 finishJSTest();
                 return;
             }
+            if (recordBack1Event("popup"))
+                return;
             debug("Popup pageshow: " + arg);
         },
     },
@@ -51,7 +77,10 @@ window.onmessage = (event) => dispatchMessage(event.data, {
         }
     },
     crosssite: {
-        load: () => debug("Cross-site iframe loaded"),
+        load: () => {
+            if (!back1ExpectedEvents)
+                debug("Cross-site iframe loaded");
+        },
         pageshow: ({arg}) => {
             if (arg !== "not-persisted") {
                 testFailed("Cross-site iframe should not be loaded from back/forward cache.");
@@ -64,8 +93,10 @@ window.onmessage = (event) => dispatchMessage(event.data, {
                 debug("Cross-site iframe displayed first time.");
                 sendMessageToPopup("navigate-to-other");
             } else if (crossSiteShowCount == 2) {
-                testPassed("Cross-site iframe displayed twice.");
-                sendMessageToPopup("back2");
+                if (!recordBack1Event("crosssite")) {
+                    testPassed("Cross-site iframe displayed twice.");
+                    sendMessageToPopup("back2");
+                }
             }
         }
     },
@@ -73,6 +104,7 @@ window.onmessage = (event) => dispatchMessage(event.data, {
         load: () => debug("Other page loaded"),
         pageshow: () => {
             debug("Other page displayed.");
+            startWaitingForBack1();
             sendMessageToPopup("back1");
         }
     },

@@ -446,9 +446,9 @@ public:
 
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
     AXFrameGeometry frameGeometry() const { return m_frameGeometry; }
-    IntPoint frameScrollPosition() const { return m_frameScrollPosition; }
+    IntPoint frameViewOriginScrollPosition() const { return m_frameViewOriginScrollPosition; }
     bool isFrameGeometryInitialized() const { return m_hasReceivedFrameGeometry; }
-    void setFrameGeometry(AXFrameGeometry&&, IntPoint scrollPosition);
+    void setFrameGeometry(AXFrameGeometry&&, IntPoint viewOriginScrollPosition);
     void updateFrameGeometryAndScrollPositionIfNeeded(AXObjectCache&);
 #endif
 
@@ -688,7 +688,7 @@ private:
     std::optional<AXTextMarkerRange> m_pendingSelectedTextMarkerRange WTF_GUARDED_BY_LOCK(m_changeLogLock);
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
     std::optional<AXFrameGeometry> m_pendingFrameGeometry WTF_GUARDED_BY_LOCK(m_changeLogLock);
-    std::optional<IntPoint> m_pendingFrameScrollPosition WTF_GUARDED_BY_LOCK(m_changeLogLock);
+    std::optional<IntPoint> m_pendingFrameViewOriginScrollPosition WTF_GUARDED_BY_LOCK(m_changeLogLock);
 #endif
     Markable<AXID> m_focusedNodeID;
     std::atomic<double> m_loadingProgress { 0 };
@@ -701,7 +701,7 @@ private:
     HashMap<AXID, AXRelations> m_relations;
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
     AXFrameGeometry m_frameGeometry;
-    IntPoint m_frameScrollPosition;
+    IntPoint m_frameViewOriginScrollPosition;
     bool m_hasReceivedFrameGeometry { false };
 #endif
 

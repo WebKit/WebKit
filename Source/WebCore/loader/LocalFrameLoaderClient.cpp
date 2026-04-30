@@ -28,6 +28,7 @@
 
 #include "FrameLoader.h"
 #include "LocalFrame.h"
+#include "ResourceTiming.h"
 
 namespace WebCore {
 

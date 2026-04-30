@@ -42,6 +42,7 @@
 #include "ElementInlines.h"
 #include "Event.h"
 #include "EventNames.h"
+#include "EventTargetInlines.h"
 #include "HTMLDivElement.h"
 #include "HTMLStyleElement.h"
 #include "Logging.h"
@@ -79,6 +80,8 @@ TextTrackCueBox::TextTrackCueBox(Document& document, TextTrackCue& cue)
     , m_cue(cue)
 {
 }
+
+TextTrackCueBox::~TextTrackCueBox() = default;
 
 void TextTrackCueBox::initialize()
 {

@@ -69,7 +69,6 @@ struct MatchElement {
         IndirectSibling, // :has(~ .changed)
         SiblingChild, // :has(~ .a > .changed)
         SiblingDescendant, // :has(~ .a .changed)
-        ScopeBreaking // :has(:is(.changed .a))
     };
 
     Relation relation;
@@ -81,8 +80,6 @@ struct MatchElement {
 constexpr unsigned matchRelationCount = static_cast<unsigned>(MatchElement::Relation::HostChild) + 1;
 
 enum class IsNegation : bool { No, Yes };
-enum class CanBreakScope : bool { No, Yes }; // Are we inside a logical combination pseudo-class like :is() or :not(), which if we were inside a :has(), could break out of its scope?
-enum class DoesBreakScope : bool { No, Yes }; // Did we find a logical combination pseudo-class like :is() or :not() with selector combinators that do break out of a :has() scope?
 
 // For MSVC.
 #pragma pack(push, 4)
@@ -151,7 +148,6 @@ struct RuleFeatureSet {
     HashMap<AtomString, std::unique_ptr<Vector<RuleFeatureWithInvalidationSelector>>> attributeRules;
     HashMap<PseudoClassInvalidationKey, std::unique_ptr<RuleFeatureVector>> pseudoClassRules;
     HashMap<PseudoClassInvalidationKey, std::unique_ptr<Vector<RuleFeatureWithInvalidationSelector>>> hasPseudoClassRules;
-    Vector<RuleAndSelector> scopeBreakingHasPseudoClassRules;
 
     HashSet<AtomString> classesAffectingHost;
     HashSet<AtomString> attributesAffectingHost;
@@ -168,7 +164,7 @@ struct RuleFeatureSet {
 private:
     struct SelectorFeatures {
         using InvalidationFeature = std::tuple<const CSSSelector*, MatchElement, IsNegation>;
-        using HasInvalidationFeature = std::tuple<const CSSSelector*, MatchElement, IsNegation, DoesBreakScope, const CSSSelector*>;
+        using HasInvalidationFeature = std::tuple<const CSSSelector*, MatchElement, IsNegation, const CSSSelector*>;
 
         Vector<InvalidationFeature> ids;
         Vector<InvalidationFeature> classes;
@@ -178,7 +174,7 @@ private:
     };
     struct RecursiveCollectionContext;
     void collectFeaturesFromSelector(SelectorFeatures&, const CSSSelector&, MatchElement = { MatchElement::Relation::Subject, { } });
-    DoesBreakScope recursivelyCollectFeaturesFromSelector(SelectorFeatures&, const CSSSelector&, const RecursiveCollectionContext&);
+    void recursivelyCollectFeaturesFromSelector(SelectorFeatures&, const CSSSelector&, const RecursiveCollectionContext&);
     void NODELETE collectPseudoElementFeatures(const RuleData&);
 };
 

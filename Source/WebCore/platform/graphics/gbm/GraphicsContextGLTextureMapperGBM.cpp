@@ -229,9 +229,9 @@ void GraphicsContextGLTextureMapperGBM::prepareForDisplay()
         flags.add(TextureMapperFlags::ShouldBlend);
     std::unique_ptr<CoordinatedPlatformLayerBuffer> buffer;
     if (fenceFD)
-        buffer = CoordinatedPlatformLayerBufferDMABuf::create(Ref { *m_displayBuffer.dmabuf }, flags, WTF::move(fenceFD));
+        buffer = CoordinatedPlatformLayerBufferDMABuf::create(protect(*m_displayBuffer.dmabuf), flags, WTF::move(fenceFD));
     else
-        buffer = CoordinatedPlatformLayerBufferDMABuf::create(Ref { *m_displayBuffer.dmabuf }, flags, WTF::move(fence));
+        buffer = CoordinatedPlatformLayerBufferDMABuf::create(protect(*m_displayBuffer.dmabuf), flags, WTF::move(fence));
     m_layerContentsDisplayDelegate->setDisplayBuffer(WTF::move(buffer));
 }
 

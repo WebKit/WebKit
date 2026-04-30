@@ -24,20 +24,178 @@
 #if HAVE_APPKIT_GESTURES_SUPPORT
 
 import Foundation
-import WebKit
+@_spi(WebKitAdditions_Testing) import WebKit
 import SwiftUI
 import struct Swift.String
+import struct _Concurrency.Task
+private import struct TestWebKitAPILibrary.DOMRect
 import Testing
 private import TestWebKitAPILibrary
+private import Recap
+
+private actor Recap {
+    static let shared = Recap()
+
+    func play(events: @Sendable (_ composer: any RCPEventStreamComposer) -> Void) async {
+        let eventStream: RCPSyntheticEventStream = RCPSyntheticEventStream { composer in
+            guard let composer else {
+                preconditionFailure()
+            }
+            composer.senderProperties = ._wk_trackpadSender()
+            events(composer)
+        }
+
+        await RCPInlinePlayer.play(eventStream, options: .init())
+    }
+}
 
 @MainActor
+private func convertToCoreGraphicsScreenCoordinates(rectInViewportCoordinates: DOMRect, window: NSWindow) -> CGRect {
+    guard let contentViewController = window.contentViewController else {
+        preconditionFailure()
+    }
+
+    guard let screen = window.screen else {
+        preconditionFailure()
+    }
+
+    let inViewportCoordinates = CGRect(rectInViewportCoordinates)
+
+    let inWindowCoordinates = CGRect(
+        x: inViewportCoordinates.origin.x,
+        y: contentViewController.view.frame.height - inViewportCoordinates.origin.y - inViewportCoordinates.size.height,
+        width: inViewportCoordinates.size.width,
+        height: inViewportCoordinates.size.height,
+    )
+
+    let inAppKitScreenCoordinates = window.convertToScreen(inWindowCoordinates)
+
+    let inCoreGraphicsScreenCoordinates = CGRect(
+        x: inAppKitScreenCoordinates.origin.x,
+        y: screen.frame.maxY - inAppKitScreenCoordinates.maxY,
+        width: inAppKitScreenCoordinates.width,
+        height: inAppKitScreenCoordinates.height,
+    )
+
+    return inCoreGraphicsScreenCoordinates
+}
+
+@MainActor
+@Suite(.serialized)
 struct AppKitGesturesTests {
+    private static let text = "Here's to the crazy ones."
+
+    private static let html = """
+        <div id="div" contenteditable style="font-size: 30px;">\(text)</div>
+        """
+
+    private let recap = Recap.shared
+    private let page = WebPage()
+    private let window: NSWindow
+
+    init() async throws {
+        try await self.page.load(html: Self.html).wait()
+
+        let contentSize = NSSize(width: 800, height: 600)
+
+        self.window = NSWindow(size: contentSize) { [page] in
+            WebView(page)
+        }
+
+        self.window.setFrameOrigin(.zero)
+        NSApp.activate(ignoringOtherApps: true)
+        self.window.makeKeyAndOrderFront(nil)
+    }
+
+    @Test
+    func doubleClickingInWordSelectsWord() async throws {
+        let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
+        let crazySelection = JavaScriptSelection.range(
+            base: .init(in: "div", at: crazyRange.lowerBound),
+            extent: .init(in: "div", at: crazyRange.upperBound)
+        )
+        try await page.callJavaScript(JavaScriptMessages.SetSelection(crazySelection))
+
+        let crazyBoundsInViewportCoordinates = try await page.callJavaScript(JavaScriptMessages.SelectionBoundingClientRect())
+
+        let crazyBoundsInScreenCoordinates = convertToCoreGraphicsScreenCoordinates(
+            rectInViewportCoordinates: crazyBoundsInViewportCoordinates,
+            window: window
+        )
+
+        let point = CGPoint(
+            x: crazyBoundsInScreenCoordinates.midX,
+            y: crazyBoundsInScreenCoordinates.midY
+        )
+
+        try await page.callJavaScript(JavaScriptMessages.SetSelection(in: "div", offset: 0))
+
+        await page.waitForNextPresentationUpdate()
+
+        // Recap requires this test to be ran within an app host.
+        guard NSApp.isActive else {
+            return
+        }
+
+        await recap.play { composer in
+            composer._wk_click(point)
+            composer.advanceTime(0.1)
+            composer._wk_click(point)
+        }
+
+        await page.waitForNextPresentationUpdate()
+
+        let newSelection = try await page.callJavaScript(JavaScriptMessages.GetSelection())
+
+        #expect(newSelection == crazySelection)
+    }
+
+    @Test(arguments: [0.1, 0.5, 0.9])
+    func clickingInWordChangesSelection(fractionOfWordToClick: Double) async throws {
+        let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
+        try await page.callJavaScript(JavaScriptMessages.SetSelection(in: "div", range: crazyRange))
+
+        let crazyBoundsInViewportCoordinates = try await page.callJavaScript(JavaScriptMessages.SelectionBoundingClientRect())
+
+        let crazyBoundsInScreenCoordinates = convertToCoreGraphicsScreenCoordinates(
+            rectInViewportCoordinates: crazyBoundsInViewportCoordinates,
+            window: window
+        )
+
+        let point = CGPoint(
+            x: crazyBoundsInScreenCoordinates.origin.x + (crazyBoundsInScreenCoordinates.size.width * fractionOfWordToClick),
+            y: crazyBoundsInScreenCoordinates.midY
+        )
+
+        try await page.callJavaScript(JavaScriptMessages.SetSelection(in: "div", offset: 0))
+
+        await page.waitForNextPresentationUpdate()
+
+        // Recap requires this test to be ran within an app host.
+        guard NSApp.isActive else {
+            return
+        }
+
+        await recap.play { composer in
+            composer._wk_click(point)
+        }
+
+        await page.waitForNextPresentationUpdate()
+
+        // This is a rough approximation of the heuristic the implementation uses.
+        let offset = fractionOfWordToClick < 0.2 ? crazyRange.lowerBound : crazyRange.upperBound
+
+        let newSelection = try await page.callJavaScript(JavaScriptMessages.GetSelection())
+        #expect(newSelection == .collapsed(.init(in: "div", at: offset)))
+    }
+
     @Test
     func clickingChangesSelection() async throws {
         let page = WebPage()
 
+        let text = "Here's to the crazy ones."
         let html = """
-            <div id="div" contenteditable style="font-size: 30px;">Here's to the crazy ones.</div>
+            <div id="div" contenteditable style="font-size: 30px;">\(text)</div>
             """
 
         try await page.load(html: html).wait()
@@ -51,34 +209,10 @@ struct AppKitGesturesTests {
         window.setFrameOrigin(.zero)
         window.makeKeyAndOrderFront(nil)
 
-        let selectCrazy = """
-            const textNode = document.getElementById("div").firstChild
+        let crazyRange = try #require(text.utf16Range(of: "crazy"))
+        try await page.callJavaScript(JavaScriptMessages.SetSelection(in: "div", range: crazyRange))
 
-            const range = document.createRange();
-            range.setStart(textNode, 14);
-            range.setEnd(textNode, 19);
-
-            let selection = window.getSelection();
-            selection.removeAllRanges();
-            selection.addRange(range);
-            """
-
-        try await page.callJavaScript(selectCrazy)
-
-        let getSelectionBounds = """
-            const selection = window.getSelection();
-
-            const range = selection.getRangeAt(0);
-            return range.getBoundingClientRect().toJSON();
-            """
-
-        let crazyBoundsDictionary = try await #require(page.callJavaScript(getSelectionBounds) as? [String: Double])
-        let crazyBoundsInViewportCoordinates = CGRect(
-            x: crazyBoundsDictionary["x", default: 0],
-            y: crazyBoundsDictionary["y", default: 0],
-            width: crazyBoundsDictionary["width", default: 0],
-            height: crazyBoundsDictionary["height", default: 0],
-        )
+        let crazyBoundsInViewportCoordinates = try await CGRect(page.callJavaScript(JavaScriptMessages.SelectionBoundingClientRect()))
 
         let crazyBoundsInAppKitCoordinates = CGRect(
             x: crazyBoundsInViewportCoordinates.minX,
@@ -89,19 +223,7 @@ struct AppKitGesturesTests {
 
         let middleOfCrazy = CGPoint(x: crazyBoundsInAppKitCoordinates.midX, y: crazyBoundsInAppKitCoordinates.midY)
 
-        let moveSelectionToStart = """
-            const textNode = document.getElementById("div").firstChild
-
-            const range = document.createRange();
-            range.setStart(textNode, 0);
-            range.setEnd(textNode, 0);
-
-            let selection = window.getSelection();
-            selection.removeAllRanges();
-            selection.addRange(range);
-            """
-
-        try await page.callJavaScript(moveSelectionToStart)
+        try await page.callJavaScript(JavaScriptMessages.SetSelection(in: "div", offset: 0))
 
         let waitForSelectionChange = """
             return await new Promise(resolve => {

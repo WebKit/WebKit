@@ -34,6 +34,7 @@
 #include "ContextDestructionObserverInlines.h"
 #include "DocumentPage.h"
 #include "DocumentSecurityOrigin.h"
+#include "EventTargetInlines.h"
 #include "IDLTypes.h"
 #include "JSDOMConvertBoolean.h"
 #include "JSDOMConvertInterface.h"
@@ -124,13 +125,13 @@ void WebXRSystem::ensureImmersiveXRDeviceIsSelected(CompletionHandler<void()>&& 
         }
 
         if (m_activeImmersiveSession && oldDevice && immersiveXRDevices.findIf([&](auto& entry) { return entry.ptr() == oldDevice; }) != notFound)
-            ASSERT(m_activeImmersiveDevice.get().get() == oldDevice.get());
+            ASSERT(m_activeImmersiveDevice.get() == oldDevice);
         else {
             // FIXME: implement a better UA selection mechanism if required.
             m_activeImmersiveDevice = immersiveXRDevices.first().get();
         }
 
-        if (isFirstXRDevicesEnumeration || m_activeImmersiveDevice.get().get() == oldDevice.get()) {
+        if (isFirstXRDevicesEnumeration || m_activeImmersiveDevice.get() == oldDevice) {
             return;
         }
 
@@ -632,10 +633,10 @@ void WebXRSystem::unregisterSimulatedXRDeviceForTesting(PlatformXR::Device& devi
 
     ASSERT(m_testingDevices);
     bool removed = m_immersiveDevices.remove(device);
-    ASSERT_UNUSED(removed, removed || m_inlineXRDevice.get().get() == &device);
-    if (m_activeImmersiveDevice.get().get() == &device)
+    ASSERT_UNUSED(removed, removed || m_inlineXRDevice.get() == &device);
+    if (m_activeImmersiveDevice.get() == &device)
         m_activeImmersiveDevice = nullptr;
-    if (m_inlineXRDevice.get().get() == &device)
+    if (m_inlineXRDevice.get() == &device)
         m_inlineXRDevice = m_defaultInlineDevice.get();
     m_testingDevices--;
 }

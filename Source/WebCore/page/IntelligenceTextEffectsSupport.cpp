@@ -31,6 +31,7 @@
 #include "DocumentMarkers.h"
 #include "DocumentView.h"
 #include "FloatRect.h"
+#include "GeometryUtilities.h"
 #include "RenderedDocumentMarker.h"
 #include "SimpleRange.h"
 #include "TextIndicator.h"

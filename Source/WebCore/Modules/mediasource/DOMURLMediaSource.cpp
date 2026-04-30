@@ -35,6 +35,7 @@
 
 #include "DOMURL.h"
 #include "Document.h"
+#include "EventTargetInlines.h"
 #include "MediaSource.h"
 #include <wtf/MainThread.h>
 

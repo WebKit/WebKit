@@ -29,7 +29,7 @@
 #include "LayoutScope.h"
 #include "LocalFrameViewLayoutContext.h"
 #include "RenderBlock.h"
-
+#include "RenderObjectInlines.h"
 #include <wtf/Scope.h>
 
 namespace WebCore {

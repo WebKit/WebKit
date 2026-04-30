@@ -31,6 +31,7 @@
 
 #include "CallFrame.h"
 #include "ProbeStack.h"
+#include "VirtualRegister.h"
 
 namespace JSC {
 namespace Probe {

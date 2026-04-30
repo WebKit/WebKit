@@ -26,12 +26,51 @@
 #pragma once
 
 #include "JSInternalFieldObjectImpl.h"
+#include "Microtask.h"
+#include <wtf/CompactPointerTuple.h>
+
+namespace JSC {
+class JSPromiseReaction;
+}
+WTF_ALLOW_COMPACT_POINTERS_TO_INCOMPLETE_TYPE(JSC::JSPromiseReaction);
 
 namespace JSC {
 
-class JSPromiseReaction final : public JSCell {
+class JSPromiseReaction : public JSCell {
 public:
     using Base = JSCell;
+
+    DECLARE_EXPORT_INFO;
+    DECLARE_VISIT_CHILDREN;
+
+    JSValue promise() const { return m_promise.get(); }
+    JSPromiseReaction* next() const LIFETIME_BOUND { return m_next.pointer(); }
+    InternalMicrotask internalMicrotask() const { return static_cast<InternalMicrotask>(m_next.type()); }
+
+    void setPromise(VM& vm, JSValue value) { m_promise.set(vm, this, value); }
+    void setNext(VM& vm, JSPromiseReaction* value)
+    {
+        m_next.setPointer(value);
+        vm.writeBarrier(this, value);
+    }
+
+    static JSValue tryGetContext(JSValue reactionsValue);
+
+protected:
+    JSPromiseReaction(VM& vm, Structure* structure, JSValue promise, JSPromiseReaction* next, InternalMicrotask task = InternalMicrotask::None)
+        : Base(vm, structure)
+        , m_promise(promise, WriteBarrierEarlyInit)
+        , m_next(next, static_cast<uint8_t>(task))
+    {
+    }
+
+    WriteBarrier<Unknown> m_promise;
+    CompactPointerTuple<JSPromiseReaction*, uint8_t> m_next;
+};
+
+class JSSlimPromiseReaction final : public JSPromiseReaction {
+public:
+    using Base = JSPromiseReaction;
 
     DECLARE_EXPORT_INFO;
     DECLARE_VISIT_CHILDREN;
@@ -39,43 +78,71 @@ public:
     template<typename CellType, SubspaceAccess mode>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {
-        return vm.promiseReactionSpace<mode>();
+        return vm.slimPromiseReactionSpace<mode>();
     }
 
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    static JSPromiseReaction* create(VM&, JSValue promise, JSValue onFulfilled, JSValue onRejected, JSValue context, JSPromiseReaction* next);
+    static JSSlimPromiseReaction* create(VM&, JSValue promise, JSValue handler, bool isFulfill, JSPromiseReaction* next);
+    static JSSlimPromiseReaction* create(VM&, JSValue promise, InternalMicrotask, JSValue context, JSPromiseReaction* next);
 
-    JSValue promise() const { return m_promise.get(); }
+    bool isFulfillHandler() const { return perCellBit(); }
+
+    JSValue handlerOrContext() const { return m_handlerOrContext.get(); }
+    void setHandlerOrContext(VM& vm, JSValue value) { m_handlerOrContext.set(vm, this, value); }
+
+private:
+    JSSlimPromiseReaction(VM& vm, Structure* structure, JSValue promise, JSValue handlerOrContext, JSPromiseReaction* next, InternalMicrotask task, bool isFulfill)
+        : Base(vm, structure, promise, next, task)
+        , m_handlerOrContext(handlerOrContext, WriteBarrierEarlyInit)
+    {
+        if (isFulfill)
+            setPerCellBit(true);
+    }
+
+    WriteBarrier<Unknown> m_handlerOrContext;
+};
+
+class JSFullPromiseReaction final : public JSPromiseReaction {
+public:
+    using Base = JSPromiseReaction;
+
+    DECLARE_EXPORT_INFO;
+    DECLARE_VISIT_CHILDREN;
+
+    template<typename CellType, SubspaceAccess mode>
+    static GCClient::IsoSubspace* subspaceFor(VM& vm)
+    {
+        return vm.fullPromiseReactionSpace<mode>();
+    }
+
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
+
+    static JSFullPromiseReaction* create(VM&, JSValue promise, JSValue onFulfilled, JSValue onRejected, JSValue context, JSPromiseReaction* next);
+
     JSValue onFulfilled() const { return m_onFulfilled.get(); }
     JSValue onRejected() const { return m_onRejected.get(); }
     JSValue context() const { return m_context.get(); }
-    JSPromiseReaction* next() const LIFETIME_BOUND { return m_next.get(); }
 
-    void setPromise(VM& vm, JSValue value) { m_promise.set(vm, this, value); }
     void setOnFulfilled(VM& vm, JSValue value) { m_onFulfilled.set(vm, this, value); }
     void setOnRejected(VM& vm, JSValue value) { m_onRejected.set(vm, this, value); }
     void setContext(VM& vm, JSValue value) { m_context.set(vm, this, value); }
-    void setNext(VM& vm, JSPromiseReaction* value) { m_next.setMayBeNull(vm, this, value); }
 
 private:
-    JSPromiseReaction(VM& vm, Structure* structure, JSValue promise, JSValue onFulfilled, JSValue onRejected, JSValue context, JSPromiseReaction* next)
-        : Base(vm, structure)
-        , m_promise(promise, WriteBarrierEarlyInit)
+    JSFullPromiseReaction(VM& vm, Structure* structure, JSValue promise, JSValue onFulfilled, JSValue onRejected, JSValue context, JSPromiseReaction* next)
+        : Base(vm, structure, promise, next)
         , m_onFulfilled(onFulfilled, WriteBarrierEarlyInit)
         , m_onRejected(onRejected, WriteBarrierEarlyInit)
         , m_context(context, WriteBarrierEarlyInit)
-        , m_next(next, WriteBarrierEarlyInit)
     {
     }
 
-    WriteBarrier<Unknown> m_promise;
     WriteBarrier<Unknown> m_onFulfilled;
     WriteBarrier<Unknown> m_onRejected;
     WriteBarrier<Unknown> m_context;
-    WriteBarrier<JSPromiseReaction> m_next;
 };
 
-STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSPromiseReaction);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSSlimPromiseReaction);
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSFullPromiseReaction);
 
 } // namespace JSC

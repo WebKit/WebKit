@@ -1483,6 +1483,46 @@ UNIFIED_PDF_TEST(BackgroundDoesNotAdaptToColorSchemeOnEmbeddedDocuments)
 }
 #endif
 
+static RetainPtr<NSString> pluginScrollingNodeSubstring(NSString *tree)
+{
+    NSRange range = [tree rangeOfString:@"(Plugin scrolling node"];
+    if (range.location == NSNotFound)
+        return @"";
+    return [tree substringFromIndex:range.location];
+}
+
+UNIFIED_PDF_TEST(MainFramePDFScrollbarAdaptsToDarkMode)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 600, 600) configuration:configurationForWebViewTestingUnifiedPDF().get()]);
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"multiple-pages" withExtension:@"pdf"]]];
+    [webView waitForNextPresentationUpdate];
+
+    [webView forceLightMode];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr lightModeTree = pluginScrollingNodeSubstring([webView stringByEvaluatingJavaScript:@"internals.scrollingStateTreeAsText()"]);
+    EXPECT_FALSE([lightModeTree containsString:@"uses dark appearance for scrollbars"]);
+
+    [webView forceDarkMode];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr darkModeTree = pluginScrollingNodeSubstring([webView stringByEvaluatingJavaScript:@"internals.scrollingStateTreeAsText()"]);
+    EXPECT_TRUE([darkModeTree containsString:@"uses dark appearance for scrollbars"]);
+}
+
+UNIFIED_PDF_TEST(EmbeddedPDFScrollbarDoesNotAdaptToDarkMode)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 600, 600) configuration:configurationForWebViewTestingUnifiedPDF().get()]);
+    [webView synchronouslyLoadHTMLString:@"<embed src='multiple-pages.pdf' width='600' height='600'>"];
+    [webView waitForNextPresentationUpdate];
+
+    [webView forceDarkMode];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr pluginNode = pluginScrollingNodeSubstring([webView stringByEvaluatingJavaScript:@"internals.scrollingStateTreeAsText()"]);
+    EXPECT_FALSE([pluginNode containsString:@"uses dark appearance for scrollbars"]);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(UNIFIED_PDF)

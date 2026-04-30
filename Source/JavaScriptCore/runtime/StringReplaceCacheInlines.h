@@ -26,6 +26,9 @@
 
 #pragma once
 
+#include "DeferGC.h"
+#include "Options.h"
+#include "RegExp.h"
 #include "StringReplaceCache.h"
 
 namespace JSC {

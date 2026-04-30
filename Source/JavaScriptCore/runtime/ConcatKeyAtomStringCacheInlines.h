@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CodeBlock.h"
 #include "ConcatKeyAtomStringCache.h"
 #include "Identifier.h"
 #include "SmallStrings.h"

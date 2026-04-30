@@ -601,6 +601,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteAudioDestinationManagerMessage
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SharedPreferencesForWebProcess.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SharedPreferencesForWebProcess.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SharedPreferencesForWebProcess.serialization.in
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/TestWebKitAPILibraryAdditions.swift
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/TextStyleManager.swift
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/UIWindowScene+Extras.swift
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/USDModel.swift

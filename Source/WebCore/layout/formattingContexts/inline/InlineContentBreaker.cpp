@@ -225,29 +225,30 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
                 auto firstCharacterLength = TextUtil::firstUserPerceivedCharacterLength(inlineTextItem);
                 ASSERT(firstCharacterLength > 0);
 
-                if (inlineTextItem.length() <= firstCharacterLength) {
-                    auto trailingRunIndex = [&]() -> std::optional<size_t> {
-                        // Keep the overflowing text content and the closing inline box runs together.
-                        // e.g. X</span><span>Y</span> where "X" overflows, the trailing run index is 1.
-                        auto& runs = continuousContent.runs();
-                        if (leadingTextRunIndex == runs.size() - 1)
-                            return { };
-                        for (auto runIndex = leadingTextRunIndex + 1; runIndex < runs.size(); ++runIndex) {
-                            auto& inlineItem = runs[runIndex].inlineItem;
-                            if (inlineItem.isOutOfFlow())
-                                continue;
-                            if (!inlineItem.isInlineBoxEnd())
-                                return runIndex - 1;
-                        }
-                        return { };
-                    };
-                    if (auto runToBreakAfter = trailingRunIndex())
-                        return Result { Result::Action::Break, IsEndOfLine::Yes, Result::PartialTrailingContent { *runToBreakAfter, { }, { } } };
-                    return Result { Result::Action::Keep, IsEndOfLine::Yes };
+                if (inlineTextItem.length() > firstCharacterLength) {
+                    auto partialRun = firstCharacterBreakRespectingLineStartProhibitions(inlineTextItem, leadingTextRun, lineStatus.contentLogicalRight);
+                    if (partialRun.length < inlineTextItem.length())
+                        return Result { Result::Action::Break, IsEndOfLine::Yes, Result::PartialTrailingContent { leadingTextRunIndex, partialRun, { } } };
                 }
-
-                auto partialRun = firstCharacterBreakRespectingLineStartProhibitions(inlineTextItem, leadingTextRun, lineStatus.contentLogicalRight);
-                return Result { Result::Action::Break, IsEndOfLine::Yes, Result::PartialTrailingContent { leadingTextRunIndex, partialRun, { } } };
+                // Single character or line-start prohibitions consumed the entire item — keep it as one indivisible unit.
+                auto trailingRunIndex = [&]() -> std::optional<size_t> {
+                    // Keep the overflowing text content and the closing inline box runs together.
+                    // e.g. X</span><span>Y</span> where "X" overflows, the trailing run index is 1.
+                    auto& runs = continuousContent.runs();
+                    if (leadingTextRunIndex == runs.size() - 1)
+                        return { };
+                    for (auto runIndex = leadingTextRunIndex + 1; runIndex < runs.size(); ++runIndex) {
+                        auto& inlineItem = runs[runIndex].inlineItem;
+                        if (inlineItem.isOutOfFlow())
+                            continue;
+                        if (!inlineItem.isInlineBoxEnd())
+                            return runIndex - 1;
+                    }
+                    return { };
+                };
+                if (auto runToBreakAfter = trailingRunIndex())
+                    return Result { Result::Action::Break, IsEndOfLine::Yes, Result::PartialTrailingContent { *runToBreakAfter, { }, { } } };
+                return Result { Result::Action::Keep, IsEndOfLine::Yes };
             }
             if (trailingContent->overflows && lineStatus.hasContent) {
                 // We managed to break a run with overflow but the line already has content. Let's wrap it to the next line.

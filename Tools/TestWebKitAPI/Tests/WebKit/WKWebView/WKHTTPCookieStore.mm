@@ -1115,6 +1115,7 @@ TEST(WKHTTPCookieStore, SetCookies)
         NSHTTPCookieName: @"SessionCookieName",
         NSHTTPCookieValue: @"CookieValue",
         NSHTTPCookieDomain: @"127.0.0.1",
+        NSHTTPCookieSameSitePolicy: @"none",
     }];
 
     RetainPtr<NSHTTPCookie> persistentCookie = [NSHTTPCookie cookieWithProperties:@{
@@ -1143,6 +1144,8 @@ TEST(WKHTTPCookieStore, SetCookies)
         auto sortedCookies = [cookies sortedArrayUsingComparator:sortFunction];
         EXPECT_WK_STREQ(@"PersistentCookieName", [[sortedCookies objectAtIndex:0] name]);
         EXPECT_WK_STREQ(@"SessionCookieName", [[sortedCookies objectAtIndex:1] name]);
+        if ([[sortedCookies objectAtIndex:1] sameSitePolicy])
+            EXPECT_WK_STREQ(@"none", [[sortedCookies objectAtIndex:1] sameSitePolicy]);
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);

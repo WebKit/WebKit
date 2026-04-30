@@ -26,11 +26,13 @@
 #include "config.h"
 #include "StyleWillChange.h"
 
+#include "CSSCustomIdentValue.h"
 #include "CSSKeywordValue.h"
-#include "CSSPropertyIdentifierValue.h"
+#include "CSSPropertyParser.h"
 #include "Settings.h"
 #include "StyleBuilderChecking.h"
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/ZippedRange.h>
 
 namespace WebCore {
 namespace Style {
@@ -38,20 +40,6 @@ namespace Style {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WillChangeAnimatableFeatures::Data);
 
 // MARK: WillChangeAnimatableFeature
-
-WillChangeAnimatableFeature::WillChangeAnimatableFeature(Feature willChange, CSSPropertyID willChangeProperty)
-{
-    switch (willChange) {
-    case Feature::Property:
-        ASSERT(willChangeProperty != CSSPropertyInvalid);
-        m_cssPropertyID = willChangeProperty;
-        [[fallthrough]];
-    case Feature::ScrollPosition:
-    case Feature::Contents:
-        m_feature = willChange;
-        break;
-    }
-}
 
 // "If any non-initial value of a property would create a stacking context on the element,
 // specifying that property in will-change must create a stacking context on the element."
@@ -126,24 +114,45 @@ bool WillChangeAnimatableFeature::propertyTriggersCompositingOnBoxesOnly(CSSProp
 
 // MARK: WillChangeAnimatableFeatures::Data
 
+void WillChangeAnimatableFeatures::Data::initializeCachedChecks()
+{
+    for (auto& feature : *this) {
+        if (auto* value = std::get_if<WillChangeAnimatableFeature::CustomIdentWithCachedPropertyID>(&feature.value)) {
+            auto propertyID = value->propertyID;
+
+            m_canCreateStackingContext |= WillChangeAnimatableFeature::propertyCreatesStackingContext(propertyID);
+            m_canTriggerCompositingOnInline |= WillChangeAnimatableFeature::propertyTriggersCompositing(propertyID);
+            m_canTriggerCompositing |= m_canTriggerCompositingOnInline | WillChangeAnimatableFeature::propertyTriggersCompositingOnBoxesOnly(propertyID);
+        }
+    }
+}
+
 bool WillChangeAnimatableFeatures::Data::operator==(const WillChangeAnimatableFeatures::Data& other) const
 {
-    return m_animatableFeatures == other.m_animatableFeatures;
+    return std::ranges::equal(*this, other);
 }
 
 bool WillChangeAnimatableFeatures::Data::containsScrollPosition() const
 {
-    return std::ranges::any_of(m_animatableFeatures, [](auto& feature) { return feature.feature() == Feature::ScrollPosition; });
+    return std::ranges::any_of(*this, [](auto& feature) {
+        return WTF::holdsAlternative<CSS::Keyword::ScrollPosition>(feature);
+    });
 }
 
 bool WillChangeAnimatableFeatures::Data::containsContents() const
 {
-    return std::ranges::any_of(m_animatableFeatures, [](auto& feature) { return feature.feature() == Feature::Contents; });
+    return std::ranges::any_of(*this, [](auto& feature) {
+        return WTF::holdsAlternative<CSS::Keyword::Contents>(feature);
+    });
 }
 
 bool WillChangeAnimatableFeatures::Data::containsProperty(CSSPropertyID property) const
 {
-    return std::ranges::any_of(m_animatableFeatures, [&](auto& feature) { return feature.property() == property; });
+    return std::ranges::any_of(*this, [&](auto& feature) {
+        if (auto* value = std::get_if<WillChangeAnimatableFeature::CustomIdentWithCachedPropertyID>(&feature.value))
+            return *value == property;
+        return false;
+    });
 }
 
 bool WillChangeAnimatableFeatures::Data::createsContainingBlockForAbsolutelyPositioned(bool isRootElement) const
@@ -182,69 +191,76 @@ bool WillChangeAnimatableFeatures::Data::canBeBackdropRoot() const
         || containsProperty(CSSPropertyViewTransitionName);
 }
 
-void WillChangeAnimatableFeatures::Data::addFeature(Feature feature, CSSPropertyID propertyID)
-{
-    ASSERT(feature == Feature::Property || propertyID == CSSPropertyInvalid);
-    m_animatableFeatures.append(WillChangeAnimatableFeature(feature, propertyID));
-
-    m_canCreateStackingContext |= WillChangeAnimatableFeature::propertyCreatesStackingContext(propertyID);
-    m_canTriggerCompositingOnInline |= WillChangeAnimatableFeature::propertyTriggersCompositing(propertyID);
-    m_canTriggerCompositing |= m_canTriggerCompositingOnInline | WillChangeAnimatableFeature::propertyTriggersCompositingOnBoxesOnly(propertyID);
-}
-
 // MARK: - Conversion
 
 auto CSSValueConversion<WillChange>::operator()(BuilderState& state, const CSSValue& value) -> WillChange
 {
-    // FIXME: This should also be storing <custom-ident> values that aren't valid CSSPropertyIDs for computed value serialization.
-
     if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         switch (keywordValue->valueID()) {
         case CSSValueAuto:
             return CSS::Keyword::Auto { };
         case CSSValueScrollPosition:
-            return WillChangeAnimatableFeatures { WillChangeAnimatableFeature::Feature::ScrollPosition };
+            return WillChangeAnimatableFeatures { CSS::Keyword::ScrollPosition { } };
         case CSSValueContents:
-            return WillChangeAnimatableFeatures { WillChangeAnimatableFeature::Feature::Contents };
+            return WillChangeAnimatableFeatures { CSS::Keyword::Contents { } };
         default:
+            state.setCurrentPropertyInvalidAtComputedValueTime();
             return CSS::Keyword::Auto { };
         }
     }
 
-    if (RefPtr propertyIdentifierValue = dynamicDowncast<CSSPropertyIdentifierValue>(value)) {
-        if (auto propertyID = propertyIdentifierValue->propertyIdentifier().value; isExposed(propertyID, &state.document().settings()))
-            return WillChangeAnimatableFeatures { WillChangeAnimatableFeature::Feature::Property, propertyID };
+    if (RefPtr customIdentValue = dynamicDowncast<CSSCustomIdentValue>(value)) {
+        auto customIdent = toStyle(customIdentValue->customIdent(), state);
 
-        state.setCurrentPropertyInvalidAtComputedValueTime();
-        return CSS::Keyword::Auto { };
+        // If the <custom-ident> is a case-insensitive match for a currently enabled CSS property,
+        // we store a WillChangeAnimatableFeature::CustomIdentWithCachedPropertyID, caching the
+        // property lookup.
+        if (auto propertyID = cssPropertyID(customIdent.value); propertyID && isExposed(propertyID, &state.document().settings())) {
+            return WillChangeAnimatableFeatures { WillChangeAnimatableFeature::CustomIdentWithCachedPropertyID {
+                .customIdent = WTF::move(customIdent),
+                .propertyID = propertyID,
+            } };
+        }
+
+        return WillChangeAnimatableFeatures { WTF::move(customIdent) };
     }
 
     auto list = requiredListDowncast<CSSValueList, CSSValue, 1>(state, value);
     if (!list)
         return CSS::Keyword::Auto { };
 
-    auto result = WillChangeAnimatableFeatures { };
-
-    for (Ref item : *list) {
+    return WillChangeAnimatableFeatures::map(*list, [&](auto& item) -> WillChangeAnimatableFeature {
         if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(item)) {
             switch (keywordValue->valueID()) {
             case CSSValueScrollPosition:
-                result.addFeature(WillChangeAnimatableFeature::Feature::ScrollPosition);
-                break;
+                return CSS::Keyword::ScrollPosition { };
             case CSSValueContents:
-                result.addFeature(WillChangeAnimatableFeature::Feature::Contents);
-                break;
+                return CSS::Keyword::Contents { };
             default:
-                break;
-            }
-        } else if (RefPtr propertyIdentifierValue = dynamicDowncast<CSSPropertyIdentifierValue>(item)) {
-            if (auto propertyID = propertyIdentifierValue->propertyIdentifier().value; isExposed(propertyID, &state.document().settings())) {
-                result.addFeature(WillChangeAnimatableFeature::Feature::Property, propertyID);
+                state.setCurrentPropertyInvalidAtComputedValueTime();
+                return CSS::Keyword::Contents { };
             }
         }
-    }
 
-    return result;
+        if (RefPtr customIdentValue = dynamicDowncast<CSSCustomIdentValue>(item)) {
+            auto customIdent = toStyle(customIdentValue->customIdent(), state);
+
+            // If the <custom-ident> is a case-insensitive match for a currently enabled CSS property,
+            // we store a WillChangeAnimatableFeature::CustomIdentWithCachedPropertyID, caching the
+            // property lookup.
+            if (auto propertyID = cssPropertyID(customIdent.value); propertyID && isExposed(propertyID, &state.document().settings())) {
+                return WillChangeAnimatableFeature::CustomIdentWithCachedPropertyID {
+                    .customIdent = WTF::move(customIdent),
+                    .propertyID = propertyID,
+                };
+            }
+
+            return customIdent;
+        }
+
+        state.setCurrentPropertyInvalidAtComputedValueTime();
+        return CSS::Keyword::Contents { };
+    });
 }
 
 } // namespace Style

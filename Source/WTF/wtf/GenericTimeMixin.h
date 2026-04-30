@@ -102,6 +102,22 @@ public:
         return DerivedTime::now() + relativeTimeFromNow;
     }
 
+    template<typename TargetTime>
+        requires (std::is_same_v<TargetTime, DerivedTime>)
+    inline DerivedTime approximate() const
+    {
+        return *reinterpret_cast<const DerivedTime*>(this);
+    }
+
+    template<typename TargetTime>
+        requires (std::derived_from<TargetTime, GenericTimeMixin<TargetTime>> && !std::is_same_v<TargetTime, DerivedTime>)
+    TargetTime approximate() const
+    {
+        if (isInfinity())
+            return TargetTime::fromRawSeconds(m_value);
+        return *reinterpret_cast<const DerivedTime*>(this) - DerivedTime::now() + TargetTime::now();
+    }
+
 protected:
     // This is the epoch. So, x.secondsSinceEpoch() should be the same as x - DerivedTime().
     constexpr GenericTimeMixin() = default;

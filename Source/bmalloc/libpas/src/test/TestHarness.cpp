@@ -115,15 +115,6 @@ RuntimeConfigTestScope::RuntimeConfigTestScope(
 {
 }
 
-ForceExclusives::ForceExclusives()
-    : RuntimeConfigTestScope(
-        "force-exclusives",
-        [] (pas_heap_runtime_config& runtimeConfig) {
-            runtimeConfig.directory_size_bound_for_partial_views = 0;
-        })
-{
-}
-
 ForceTLAs::ForceTLAs()
     : RuntimeConfigTestScope(
         "force-tlas",
@@ -150,17 +141,6 @@ DisableBitfit::DisableBitfit()
         "disable-bitfit",
         [] (pas_heap_runtime_config& runtimeConfig) {
             runtimeConfig.max_bitfit_object_size = 0;
-        })
-{
-}
-
-ForcePartials::ForcePartials()
-    : RuntimeConfigTestScope(
-        "force-partials",
-        [] (pas_heap_runtime_config& runtimeConfig) {
-            if (&runtimeConfig == &pas_utility_heap_runtime_config)
-                return;
-            runtimeConfig.directory_size_bound_for_partial_views = UINT8_MAX;
         })
 {
 }
@@ -874,7 +854,6 @@ int main(int argc, char** argv)
     ADD_SUITE(IsoDynamicPrimitiveHeap);
     ADD_SUITE(IsoHeapChaos);
     ADD_SUITE(IsoHeapPageSharing);
-    ADD_SUITE(IsoHeapPartialAndBaseline);
     ADD_SUITE(IsoHeapReservedMemory);
     ADD_SUITE(JITHeap);
     ADD_SUITE(LargeFreeHeap);

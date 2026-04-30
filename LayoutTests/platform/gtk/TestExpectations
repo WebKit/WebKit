@@ -64,6 +64,8 @@ imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-mode
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/voice_object/voice_white-space_nowrap.html [ Pass ]
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/voice_object/voice_white-space_pre-wrap_wrapped.html [ Pass ]
 
+imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/not_allowed_properties.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See below where to put expected failures.
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -244,8 +246,6 @@ webkit.org/b/245840 webgl/1.0.x/conformance/context/premultiplyalpha-test.html [
 webkit.org/b/245840 fast/canvas/webgl/drawingbuffer-test.html [ Failure ]
 
 # WebGL ANGLE backed flaky tests
-webkit.org/b/245840 webgl/1.0.x/conformance/extensions/oes-texture-float-with-video.html [ Timeout ]
-webkit.org/b/245840 webgl/1.0.x/conformance/extensions/oes-texture-half-float-with-video.html [ Timeout ]
 webkit.org/b/245840 fast/canvas/webgl/premultiplyalpha-test.html [ Failure ]
 webkit.org/b/245840 webgl/1.0.x/conformance/extensions/ext-float-blend.html [ Pass Failure ]
 
@@ -253,74 +253,6 @@ webkit.org/b/245840 webgl/1.0.x/conformance/extensions/ext-float-blend.html [ Pa
 webkit.org/b/251107 inspector/canvas/recording-webgl2-full.html [ Failure ]
 webkit.org/b/251107 inspector/canvas/recording-webgl2-snapshots.html [ Failure ]
 webkit.org/b/251107 webgl/2.0.y/conformance/offscreencanvas/offscreencanvas-transfer-image-bitmap.html [ Timeout ]
-
-# WebGL2 Textures failing.
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-r11f_g11f_b10f-rgb-float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-r11f_g11f_b10f-rgb-half_float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-r11f_g11f_b10f-rgb-unsigned_int_10f_11f_11f_rev.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-r16f-red-float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-r16f-red-half_float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-r32f-red-float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-r8-red-unsigned_byte.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-r8ui-red_integer-unsigned_byte.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-rg16f-rg-float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-rg16f-rg-half_float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-rg32f-rg-float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-rg8-rg-unsigned_byte.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-rg8ui-rg_integer-unsigned_byte.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-rgb16f-rgb-float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-rgb16f-rgb-half_float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-rgb32f-rgb-float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-rgb565-rgb-unsigned_byte.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-rgb565-rgb-unsigned_short_5_6_5.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-rgb5_a1-rgba-unsigned_byte.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-rgb5_a1-rgba-unsigned_short_5_5_5_1.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-rgb8-rgb-unsigned_byte.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-rgb8ui-rgb_integer-unsigned_byte.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-rgb9_e5-rgb-float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-rgb9_e5-rgb-half_float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-rgba16f-rgba-float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-rgba16f-rgba-half_float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-rgba32f-rgba-float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-rgba4-rgba-unsigned_byte.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-rgba4-rgba-unsigned_short_4_4_4_4.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-rgba8-rgba-unsigned_byte.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-rgba8ui-rgba_integer-unsigned_byte.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-srgb8-rgb-unsigned_byte.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-2d-srgb8_alpha8-rgba-unsigned_byte.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-r11f_g11f_b10f-rgb-float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-r11f_g11f_b10f-rgb-half_float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-r11f_g11f_b10f-rgb-unsigned_int_10f_11f_11f_rev.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-r16f-red-float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-r16f-red-half_float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-r32f-red-float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-r8-red-unsigned_byte.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-r8ui-red_integer-unsigned_byte.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-rg16f-rg-float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-rg16f-rg-half_float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-rg32f-rg-float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-rg8-rg-unsigned_byte.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-rg8ui-rg_integer-unsigned_byte.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-rgb16f-rgb-float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-rgb16f-rgb-half_float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-rgb32f-rgb-float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-rgb565-rgb-unsigned_byte.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-rgb565-rgb-unsigned_short_5_6_5.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-rgb5_a1-rgba-unsigned_byte.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-rgb5_a1-rgba-unsigned_short_5_5_5_1.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-rgb8-rgb-unsigned_byte.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-rgb8ui-rgb_integer-unsigned_byte.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-rgb9_e5-rgb-float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-rgb9_e5-rgb-half_float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-rgba16f-rgba-float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-rgba16f-rgba-half_float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-rgba32f-rgba-float.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-rgba4-rgba-unsigned_byte.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-rgba4-rgba-unsigned_short_4_4_4_4.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-rgba8-rgba-unsigned_byte.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-rgba8ui-rgba_integer-unsigned_byte.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-srgb8-rgb-unsigned_byte.html [ Failure ]
-webgl/2.0.0/conformance2/textures/svg_image/tex-3d-srgb8_alpha8-rgba-unsigned_byte.html [ Failure ]
 
 # No colorspaces in non-Cocoa WebGL.
 fast/canvas/webgl/colorspaces-test.html [ Failure ]
@@ -503,9 +435,6 @@ imported/w3c/web-platform-tests/css/css-text/hyphens/hyphenate-character-002.htm
 
 imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-non-integer-screeny.html [ Failure ]
 
-webkit.org/b/209727 fast/forms/placeholder-content-line-height.html [ ImageOnlyFailure ]
-webkit.org/b/209727 fast/forms/placeholder-content-center.html [ ImageOnlyFailure ]
-
 webkit.org/b/212233 fast/repaint/iframe-on-subpixel-position.html [ Failure ]
 
 webkit.org/b/214454 imported/w3c/web-platform-tests/css/css-backgrounds/background-attachment-margin-root-001.html [ ImageOnlyFailure ]
@@ -523,6 +452,8 @@ webkit.org/b/219614 inspector/css/getComputedPrimaryFontForNode.html [ Failure ]
 webkit.org/b/236298 fast/inline-block/hidpi-margin-top-with-subpixel-value-and-overflow-hidden.html [ ImageOnlyFailure ]
 
 webkit.org/b/131347 svg/custom/hidpi-masking-clipping.svg [ ImageOnlyFailure ]
+
+webkit.org/b/131934 fast/dom/Window/mozilla-focus-blur.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
@@ -751,7 +682,7 @@ webkit.org/b/252878 imported/w3c/web-platform-tests/wasm/jsapi/instance/construc
 webkit.org/b/252878 inspector/css/modify-css-property.html [ Failure Pass ]
 webkit.org/b/252878 inspector/debugger/breakpoints/resolved-dump-all-pause-locations.html [ Failure Timeout Pass ]
 webkit.org/b/252878 inspector/debugger/breakpoints/resolved-dump-each-line.html [ Failure Timeout Pass ]
-webkit.org/b/252878 webaudio/audioworket-out-of-memory.html [ Pass Timeout ]
+webkit.org/b/252878 webaudio/audioworket-out-of-memory.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/cors/remote-origin.htm [ Pass Failure ]
 
@@ -1288,9 +1219,14 @@ fast/encoding/char-encoding-mac.html [ Skip ]
 fast/replaced/pdf-as-embed-with-no-mime-type-is-not-blank.html [ Skip ]
 http/tests/inspector/network/intercept-request-main-resource.html [ Skip ]
 webgl/1.0.x/conformance/context/context-no-alpha-fbo-with-alpha.html [ Skip ]
+webgl/1.0.x/conformance/extensions/oes-texture-float-with-video.html [ Skip ]
+webgl/1.0.x/conformance/extensions/oes-texture-half-float-with-video.html [ Skip ]
 webgl/2.0.y/conformance/state/state-uneffected-after-compositing.html [ Skip ]
 webgl/2.0.y/conformance2/offscreencanvas/offscreencanvas-transfer-image-bitmap.html [ Skip ]
 webgl/2.0.y/conformance/context/context-no-alpha-fbo-with-alpha.html [ Skip ]
+webgl/2.0.y/conformance2/textures/video [ Skip ]
+webgl/2.0.y/conformance2/textures/image_bitmap_from_video [ Skip ]
+webgl/2.0.y/conformance2/textures/misc/tex-image-with-bad-args-from-dom-elements.html [ Skip ]
 
 # Flaky tests on Aug-2023
 webkit.org/b/261024 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/javascript-url-return-value-handling-dynamic.html [ Failure Pass ]
@@ -1314,6 +1250,22 @@ webkit.org/b/264680 imported/w3c/web-platform-tests/media-source/mediasource-see
 webkit.org/b/264680 inspector/heap/getPreview.html [ Failure Pass ]
 webkit.org/b/264680 scrollbars/scrollbar-selectors.html [ Pass Timeout ]
 
+# Crash due to unimplemented event type.
+imported/w3c/web-platform-tests/css/css-scroll-snap/input/snap-area-overflow-boundary-viewport-covering.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scroll-snap/overscroll-snap.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/multiple-aligned-targets/common-to-both-axes-supercedes-first-in-tree-order.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/multiple-aligned-targets/prefer-common-to-both-axes.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/multiple-aligned-targets/prefer-first-in-tree-order.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/multiple-aligned-targets/prefer-focused-element.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/multiple-aligned-targets/prefer-focused-nested-containers.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-relayout/multiple-aligned-targets/prefer-inner-target.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scroll-snap/snap-fling-in-large-area.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scroll-snap/unrelated-gesture-scroll-during-snap.html [ Skip ]
+
+imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-margin-focus.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-snap-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/initial-snap-matches-scroll.html [ Failure ]
+
 fast/dom/no-scroll-when-command-click-fragment-URL.html [ Skip ]
 
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-2.html [ Failure ]
@@ -1330,7 +1282,6 @@ imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-tr
 
 http/tests/login-status/login-status-api-getter-setter-functions.html [ Failure ]
 
-imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-root.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/overflow-auto-scrolling-with-margin-and-transform.html [ Skip ]
 
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-001.html [ ImageOnlyFailure ]
@@ -1361,10 +1312,11 @@ webkit.org/b/278719 fast/events/touch/touch-handler-count.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/touch-inside-iframe.html [ Timeout ]
 webkit.org/b/278719 fast/events/touch/touch-inside-iframe-scrolled.html [ Timeout ]
 webkit.org/b/278719 fast/events/touch/touch-slider.html [ Crash Failure ]
-webkit.org/b/278719 fast/events/touch/touch-slider-no-js-touch-listener.html [ Crash Failure ]
 webkit.org/b/278719 fast/events/touch/touch-stale-node-crash.html [ Timeout ]
 webkit.org/b/278719 imported/w3c/web-platform-tests/touch-events/idlharness.window.html [ Failure ]
 webkit.org/b/278719 imported/w3c/web-platform-tests/touch-events/touch-globaleventhandler-interface.html [ Failure ]
+
+webkit.org/b/208984 fast/events/touch/touch-slider-no-js-touch-listener.html [ Failure ]
 
 imported/w3c/web-platform-tests/css/css-view-transitions/element-is-grouping-during-animation.html [ ImageOnlyFailure Pass ]
 
@@ -1424,6 +1376,8 @@ webkit.org/b/305509 imported/w3c/web-platform-tests/css/css-pseudo/marker-animat
 webkit.org/b/305509 imported/w3c/web-platform-tests/css/css-view-transitions/start-view-transtion-skips-active.html [ Failure Pass ]
 webkit.org/b/305509 imported/w3c/web-platform-tests/event-timing/interactionid-orphan-pointerup.html [ Failure Pass ]
 
+webkit.org/b/305514 webanimations/focus-accelerated-animated-element-initially-in-overflow.html [ Failure ]
+
 # [GTK] Some SVG tests sometimes fail with a very differently sized layer
 webkit.org/b/308976 svg/filters/feMerge.svg [ Pass Failure ImageOnlyFailure ]
 webkit.org/b/308976 svg/filters/filter-on-filter-for-text.svg [ Pass Failure ImageOnlyFailure ]
@@ -1451,10 +1405,11 @@ webkit.org/b/309267 inspector/unit-tests/array-utilities.html [ Pass Failure ]
 
 [ Release ] http/tests/security/video-cross-origin-accessfailure.html [ Pass Failure ]
 [ Release ] imported/w3c/web-platform-tests/permissions/permissions-garbage-collect.https.html [ Pass Failure ]
-[ Release ] platform/gtk/fast/frames/scrolling-iframe-out-of-viewport.html [ Pass Failure ]
 [ Release ] imported/w3c/web-platform-tests/preload/prefetch-document.html [ Failure Pass ]
 [ Release ] imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-none-block.html [ Failure Pass ]
 [ Release ] fast/dom/Window/window-resize-update-scrollbars.html [ Failure Pass ]
+
+platform/gtk/fast/frames/scrolling-iframe-out-of-viewport.html [ Pass Failure ]
 
 webkit.org/b/309892 accessibility/aria-role-on-label.html [ Pass Crash ]
 webkit.org/b/309894 http/tests/inspector/target/pause-on-inline-debugger-statement.html [ Pass Timeout ]
@@ -1480,19 +1435,19 @@ webkit.org/b/311927 accessibility/combobox/gtk/combobox-collapsed-selection-chan
 
 webkit.org/b/311930 fonts/font-cache-memory-pressure-crash.html [ Failure Pass ]
 
-webkit.org/b/312269 imported/w3c/web-platform-tests/webrtc/protocol/vp8-fmtp.html [ Pass Crash ]
-webkit.org/b/312269 imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-constructor.html [ Pass Crash ]
-
 webkit.org/b/312888 inspector/debugger/async-stack-trace-basic.html [ Pass Crash ]
 webkit.org/b/312889 media/video-seek-past-end-paused.html [ Pass Timeout ]
 webkit.org/b/312892 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/window-open-self.html [ Pass Failure ]
 
-webkit.org/b/313041 inspector/debugger/async-stack-trace-truncate.html [ Pass Crash Timeout ]
-webkit.org/b/313042 media/W3C/audio/currentSrc/currentSrc_nonempty_after_adding_source_child.html [ Pass Failure ]
 webkit.org/b/313043 transitions/remove-transition-style.html [ Pass Failure ]
-webkit.org/b/313046 webgl/2.0.0/conformance2/textures/video/tex-3d-rg32f-rg-float.html [ Pass Failure ]
-webkit.org/b/313047 webgl/2.0.0/conformance2/textures/video/tex-3d-rgb5_a1-rgba-unsigned_byte.html [ Pass Failure ]
-webkit.org/b/313048 webgl/2.0.0/conformance2/textures/video/tex-3d-srgb8-rgb-unsigned_byte.html [ Pass Failure ]
-webkit.org/b/313049 webrtc/getDisplayMedia-odd-size.html [ Pass Failure Timeout Crash ]
-webkit.org/b/313050 webrtc/peer-connection-remote-audio-mute.html [ Pass Timeout ]
-webkit.org/b/313051 webrtc/video-rotation.html [ Pass Failure Timeout ]
+
+imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-005.html [ Pass Failure ]
+
+webkit.org/b/313649 editing/pasteboard/block-wrappers-necessary.html [ Failure ]
+webkit.org/b/313649 editing/pasteboard/copy-picture-and-text.html [ Failure ]
+webkit.org/b/313649 editing/pasteboard/copy-picture.html [ Failure ]
+webkit.org/b/313649 editing/pasteboard/copy-resolves-urls.html [ Failure ]
+webkit.org/b/313649 editing/pasteboard/copy-text-with-wrapped-tag.html [ Failure ]
+webkit.org/b/313649 editing/pasteboard/paste-4039777-fix.html [ Failure ]
+webkit.org/b/313649 editing/pasteboard/paste-noscript.html [ Failure ]
+webkit.org/b/313649 editing/pasteboard/reveal-selection-after-pasting-images.html [ Failure ]

@@ -47,6 +47,8 @@
 
 static const gchar **uriArguments = NULL;
 static const gchar **ignoreHosts = NULL;
+static const gchar **userScriptsAtDocumentStart = NULL;
+static const gchar **userScriptsAtDocumentEnd = NULL;
 static WebKitAutoplayPolicy autoplayPolicy = WEBKIT_AUTOPLAY_ALLOW_WITHOUT_SOUND;
 static GdkRGBA *backgroundColor;
 static gboolean editorMode;
@@ -166,6 +168,8 @@ static const GOptionEntry commandLineOptions[] =
     { "ignore-host", 0, 0, G_OPTION_ARG_STRING_ARRAY, &ignoreHosts, "Set proxy ignore hosts", "HOSTS" },
     { "ignore-tls-errors", 0, 0, G_OPTION_ARG_NONE, &ignoreTLSErrors, "Ignore TLS errors", NULL },
     { "content-filter", 0, 0, G_OPTION_ARG_FILENAME, &contentFilter, "JSON with content filtering rules", "FILE" },
+    { "user-script-at-start", 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &userScriptsAtDocumentStart, "Inject one or more user scripts at document start.", "PATH" },
+    { "user-script-at-end", 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &userScriptsAtDocumentEnd, "Inject one or more user scripts at document end.", "PATH" },
     { "enable-itp", 0, 0, G_OPTION_ARG_NONE, &enableITP, "Enable Intelligent Tracking Prevention (ITP)", NULL },
 #if !GTK_CHECK_VERSION(3, 98, 0)
     { "enable-sandbox", 0, 0, G_OPTION_ARG_NONE, &enableSandbox, "Enable web process sandbox support", NULL },
@@ -786,6 +790,19 @@ static void setupDarkMode(GtkSettings *settings)
     g_signal_connect_swapped(interfaceSettings, "changed::color-scheme", G_CALLBACK(colorSchemeChanged), settings);
 }
 
+static void addUserScript(WebKitUserContentManager *userContentManager, const gchar* userScriptPath, WebKitUserScriptInjectionTime injectionTime)
+{
+    g_autoptr(GFile) file = g_file_new_for_commandline_arg(userScriptPath);
+    g_autofree gchar *source;
+    g_autoptr(GError) error = 0;
+
+    if (g_file_load_contents(file, NULL, &source, NULL, NULL, &error)) {
+        webkit_user_content_manager_add_script(userContentManager, webkit_user_script_new(source,
+            WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES, injectionTime, NULL, NULL));
+    } else
+        g_printerr("Failed to load user script at path '%s': %s\n", userScriptPath, error->message);
+}
+
 static void activate(GApplication *application, WebKitSettings *webkitSettings)
 {
 #if GTK_CHECK_VERSION(3, 98, 0)
@@ -926,6 +943,15 @@ static void activate(GApplication *application, WebKitSettings *webkitSettings)
         g_clear_pointer(&saveData.filter, webkit_user_content_filter_unref);
         g_main_loop_unref(saveData.mainLoop);
         g_object_unref(contentFilterFile);
+    }
+
+    if (userScriptsAtDocumentStart) {
+        for (int i = 0; userScriptsAtDocumentStart[i]; i++)
+            addUserScript(userContentManager, userScriptsAtDocumentStart[i], WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_START);
+    }
+    if (userScriptsAtDocumentEnd) {
+        for (int i = 0; userScriptsAtDocumentEnd[i]; i++)
+            addUserScript(userContentManager, userScriptsAtDocumentEnd[i], WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_END);
     }
 
 #if GTK_CHECK_VERSION(3, 98, 0)

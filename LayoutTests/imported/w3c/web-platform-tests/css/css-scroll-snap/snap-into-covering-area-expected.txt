@@ -1,0 +1,4 @@
+scrollerButton
+
+FAIL snap-into-covering-area assert_equals: scroller is snapped to the bottom of the larger snap area, not the top expected 4367 but got 0
+

@@ -56,7 +56,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/egl/PlatformDisplayDefault.h
     platform/graphics/egl/PlatformDisplaySurfaceless.h
 
-    platform/graphics/gbm/GBMUtilities.h
     platform/graphics/gbm/GBMVersioning.h
     platform/graphics/gbm/PlatformDisplayGBM.h
 

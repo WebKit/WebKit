@@ -37,6 +37,8 @@
 
     [SameObject] readonly attribute GPUQueue queue;
 
+    attribute EventHandler onuncapturederror;
+
     [CallWith=CurrentScriptExecutionContext] undefined destroy();
 
     GPUBuffer createBuffer(GPUBufferDescriptor descriptor);

@@ -79,6 +79,10 @@ public:
     bool hasDisconnectedCallback() const { return !!m_disconnectedCallback; }
     void invokeDisconnectedCallback(Element&);
 
+    void setConnectedMoveCallback(JSC::JSObject*);
+    bool hasConnectedMoveCallback() const { return !!m_connectedMoveCallback; }
+    void invokeConnectedMoveCallback(Element&);
+
     void setAdoptedCallback(JSC::JSObject*);
     bool hasAdoptedCallback() const { return !!m_adoptedCallback; }
     void invokeAdoptedCallback(Element&, Document& oldDocument, Document& newDocument);
@@ -136,6 +140,7 @@ private:
     JSC::Weak<JSC::JSObject> m_constructor;
     JSC::Weak<JSC::JSObject> m_connectedCallback;
     JSC::Weak<JSC::JSObject> m_disconnectedCallback;
+    JSC::Weak<JSC::JSObject> m_connectedMoveCallback;
     JSC::Weak<JSC::JSObject> m_adoptedCallback;
     JSC::Weak<JSC::JSObject> m_attributeChangedCallback;
     JSC::Weak<JSC::JSObject> m_formAssociatedCallback;

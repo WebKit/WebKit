@@ -43,6 +43,8 @@ class ResourceRequest;
 class ResourceResponse;
 class SharedBuffer;
 
+enum class IsMainFrameLoad : bool { No, Yes };
+
 class PlatformContentFilter : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<PlatformContentFilter> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(PlatformContentFilter);
     WTF_MAKE_NONCOPYABLE(PlatformContentFilter);
@@ -82,6 +84,7 @@ public:
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
         String webContentRestrictionsConfigurationPath { };
 #endif
+        IsMainFrameLoad isMainFrameLoad;
         URL mainDocumentURL;
 #endif
     };

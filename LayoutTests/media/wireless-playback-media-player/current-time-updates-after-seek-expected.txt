@@ -1,0 +1,16 @@
+
+Test that currentTime continues to advance after a seek.
+
+RUN(internals.mockMediaDeviceRouteController.activateRoute(route))
+RUN(video.src = findMediaFile('video', '../content/test'))
+RUN(route.playbackRate = 1)
+RUN(route.timeRange = { start: 0, duration: 60 })
+RUN(video.play())
+RUN(route.ready = true)
+EVENT(canplaythrough)
+EVENT(timeupdate)
+RUN(video.currentTime = 30)
+EVENT(seeked)
+EXPECTED (video.currentTime > 30) OK
+END OF TEST
+

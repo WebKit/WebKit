@@ -745,7 +745,11 @@ class Tracker(GenericTracker):
                 comment_to_make = '<rdar://problem/{}>'.format(radar.id)
             keyword_to_add = 'InRadar'
             if not user_to_cc and comment_to_make:
-                tracked_bug = issue.references[0] if issue.references else None
+                tracked_bug = None
+                for ref in (issue.references or []):
+                    if isinstance(ref.tracker, RadarTracker):
+                        tracked_bug = ref
+                        break
                 if tracked_bug:
                     sys.stderr.write("{} already CCed '{}' and tracking a different bug\n".format(
                         self.radar_importer.name,

@@ -103,24 +103,12 @@ static float ascent(const RenderObject& renderer)
 
 static LayoutUnit usedValueOrZero(const Style::MarginEdge& marginEdge, std::optional<LayoutUnit> availableWidth, const Style::ZoomFactor& zoomFactor)
 {
-    if (auto fixed = marginEdge.tryFixed())
-        return LayoutUnit { fixed->resolveZoom(zoomFactor) };
-
-    if (marginEdge.isAuto() || !availableWidth)
-        return { };
-
-    return Style::evaluateMinimum<LayoutUnit>(marginEdge, *availableWidth, zoomFactor);
+    return marginEdge.isAuto() ? 0_lu : Style::evaluateMinimum<LayoutUnit>(marginEdge, availableWidth.value_or(0_lu), zoomFactor);
 }
 
 static LayoutUnit usedValueOrZero(const Style::PaddingEdge& paddingEdge, std::optional<LayoutUnit> availableWidth, Style::ZoomFactor usedZoom)
 {
-    if (auto fixed = paddingEdge.tryFixed())
-        return LayoutUnit { fixed->resolveZoom(usedZoom) };
-
-    if (!availableWidth)
-        return { };
-
-    return Style::evaluateMinimum<LayoutUnit>(paddingEdge, *availableWidth, usedZoom);
+    return Style::evaluateMinimum<LayoutUnit>(paddingEdge, availableWidth.value_or(0_lu), usedZoom);
 }
 
 static inline void adjustBorderForTableAndFieldset(const RenderBoxModelObject& renderer, RectEdges<LayoutUnit>& borderWidths)

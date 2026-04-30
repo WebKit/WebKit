@@ -183,6 +183,13 @@ bool WebEditorClient::substitutionsPanelIsShowing()
     return isShowing;
 }
 
+static void toggleTextCheckerState(TextCheckerState flag)
+{
+    auto state = WebProcess::singleton().textCheckerState();
+    state.set(flag, !state.contains(flag));
+    WebProcess::singleton().setTextCheckerState(state);
+}
+
 void WebEditorClient::toggleSmartInsertDelete()
 {
     if (RefPtr page = m_page.get())
@@ -199,6 +206,7 @@ bool WebEditorClient::isAutomaticQuoteSubstitutionEnabled()
 
 void WebEditorClient::toggleAutomaticQuoteSubstitution()
 {
+    toggleTextCheckerState(TextCheckerState::AutomaticQuoteSubstitutionEnabled);
     if (RefPtr page = m_page.get())
         page->send(Messages::WebPageProxy::toggleAutomaticQuoteSubstitution());
 }
@@ -210,6 +218,7 @@ bool WebEditorClient::isAutomaticLinkDetectionEnabled()
 
 void WebEditorClient::toggleAutomaticLinkDetection()
 {
+    toggleTextCheckerState(TextCheckerState::AutomaticLinkDetectionEnabled);
     if (RefPtr page = m_page.get())
         page->send(Messages::WebPageProxy::toggleAutomaticLinkDetection());
 }
@@ -224,6 +233,7 @@ bool WebEditorClient::isAutomaticDashSubstitutionEnabled()
 
 void WebEditorClient::toggleAutomaticDashSubstitution()
 {
+    toggleTextCheckerState(TextCheckerState::AutomaticDashSubstitutionEnabled);
     if (RefPtr page = m_page.get())
         page->send(Messages::WebPageProxy::toggleAutomaticDashSubstitution());
 }
@@ -238,6 +248,7 @@ bool WebEditorClient::isAutomaticTextReplacementEnabled()
 
 void WebEditorClient::toggleAutomaticTextReplacement()
 {
+    toggleTextCheckerState(TextCheckerState::AutomaticTextReplacementEnabled);
     if (RefPtr page = m_page.get())
         page->send(Messages::WebPageProxy::toggleAutomaticTextReplacement());
 }
@@ -252,6 +263,7 @@ bool WebEditorClient::isSmartListsEnabled()
 
 void WebEditorClient::toggleSmartLists()
 {
+    toggleTextCheckerState(TextCheckerState::SmartListsEnabled);
     if (RefPtr page = m_page.get())
         page->send(Messages::WebPageProxy::toggleSmartLists());
 }

@@ -12,7 +12,7 @@ window.jsTestIsAsync = true;
 window.addEventListener("unhandledrejection", (event) => {
     shouldBeTrue(`Promise.isPromise(event.promise)`);
 
-    finishJSTest();
+    setTimeout(finishJSTest, 0);
 });
 
 shouldBeTrue(`Promise.isPromise((new Blob).text())`);

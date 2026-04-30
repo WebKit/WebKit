@@ -36,6 +36,7 @@
 #include "RetrieveRecordsOptions.h"
 #include "SWServerRegistration.h"
 #include "WebCorePersistentCoders.h"
+#include <WebCore/HTTPStatusCodes.h>
 #include <algorithm>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/persistence/PersistentCoders.h>
@@ -344,7 +345,7 @@ static bool validatePartialResponse(size_t rangeStart, const ResourceResponse& p
     if (!previousLastMotified.isEmpty() && previousLastMotified != partialResponse.httpHeaderField(HTTPHeaderName::LastModified))
         return false;
 
-    if (previousResponse.httpStatusCode() == 206) {
+    if (previousResponse.httpStatusCode() == httpStatus206PartialContent) {
         auto parsedPreviousContentRange = extractContentRangeValues(previousResponse);
         if (!parsedPreviousContentRange.isValid())
             return false;
@@ -357,7 +358,7 @@ static bool validatePartialResponse(size_t rangeStart, const ResourceResponse& p
 void BackgroundFetch::Record::didReceiveResponse(ResourceResponse&& response)
 {
     bool shouldClearResponseBody = false;
-    if (response.httpStatusCode() == 206) {
+    if (response.httpStatusCode() == httpStatus206PartialContent) {
         if (!validatePartialResponse(m_responseDataSize, response, m_response)) {
             didFinish(ResourceError { String { }, 0, response.url(), "Validation of partial response failed"_s, ResourceError::Type::AccessControl });
             return;
@@ -365,7 +366,7 @@ void BackgroundFetch::Record::didReceiveResponse(ResourceResponse&& response)
     } else if (m_responseDataSize)
         shouldClearResponseBody = true;
 
-    if (!m_responseDataSize || response.httpStatusCode() != 206)
+    if (!m_responseDataSize || response.httpStatusCode() != httpStatus206PartialContent)
         m_response = response;
 
     auto callbacks = std::exchange(m_responseCallbacks, { });

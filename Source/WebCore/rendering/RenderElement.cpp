@@ -1195,6 +1195,15 @@ void RenderElement::styleDidChange(Style::Difference diff, const RenderStyle* ol
         LayoutIntegration::LineLayout::updateStyle(*this);
 }
 
+void RenderElement::dirtyEnclosingLayerSVGChildrenIfNeeded()
+{
+    ASSERT(isSVGLayerAwareRenderer());
+    if (!hasLayer() && document().settings().layerBasedSVGEngineEnabled()) {
+        if (CheckedPtr layer = enclosingLayer())
+            layer->dirtyChildrenInDOMOrderForSVG();
+    }
+}
+
 void RenderElement::insertedIntoTree()
 {
     // Keep our layer hierarchy updated. Optimize for the common case where we don't have any children
@@ -1210,6 +1219,11 @@ void RenderElement::insertedIntoTree()
         if (CheckedPtr parentLayer = layerParent())
             parentLayer->dirtyVisibleContentStatus();
     }
+
+    // Dirty the enclosing layer's SVG children list when a non-layer SVG renderer is inserted.
+    // Layer children are handled by RenderLayer::addChild -> dirtyPaintOrderListsOnChildChange.
+    if (isSVGLayerAwareRenderer())
+        dirtyEnclosingLayerSVGChildrenIfNeeded();
 
     RenderObject::insertedIntoTree();
 }
@@ -1227,6 +1241,12 @@ void RenderElement::willBeRemovedFromTree()
         if (CheckedPtr enclosingLayer = parent()->enclosingLayer())
             enclosingLayer->dirtyVisibleContentStatus();
     }
+
+    // Dirty the enclosing layer's SVG children list when a non-layer SVG renderer is removed.
+    // Layer children are handled by RenderLayer::removeChild -> dirtyPaintOrderListsOnChildChange.
+    if (isSVGLayerAwareRenderer())
+        dirtyEnclosingLayerSVGChildrenIfNeeded();
+
     // Keep our layer hierarchy updated.
     if (firstChild() || hasLayer())
         removeLayers();
@@ -2314,7 +2334,7 @@ RenderBoxModelObject* RenderElement::offsetParent() const
         current = current->parent();
     }
 
-    return dynamicDowncast<RenderBoxModelObject>(current.get());
+    return dynamicDowncast<RenderBoxModelObject>(current.unsafeGet());
 }
 
 bool RenderElement::hasViewTransitionName() const

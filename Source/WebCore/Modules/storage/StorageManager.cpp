@@ -146,7 +146,7 @@ void StorageManager::fileSystemGetDirectory(DOMPromiseDeferred<IDLInterface<File
             return promise.reject(Exception { ExceptionCode::InvalidStateError, "Context has stopped"_s });
         }
 
-        promise.resolve(FileSystemDirectoryHandle::create(*context, { }, identifier, Ref { *connection }));
+        promise.resolve(FileSystemDirectoryHandle::create(*context, { }, identifier, protect(*connection)));
     });
 }
 

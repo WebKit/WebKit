@@ -30,12 +30,35 @@
 #include "Helpers/PlatformUtilities.h"
 #include <WebCore/AudioVideoRendererAVFObjC.h>
 #include <WebCore/MediaPlayerEnums.h>
+#include <WebCore/MediaSampleAVFObjC.h>
 #include <WebCore/TrackInfo.h>
 #include <wtf/Logger.h>
+
+#include <pal/cf/CoreMediaSoftLink.h>
 
 using namespace WebCore;
 
 namespace TestWebKitAPI {
+
+static RetainPtr<CMSampleBufferRef> createVideoSampleBuffer()
+{
+    CVPixelBufferRef rawPixelBuffer = nullptr;
+    if (CVPixelBufferCreate(kCFAllocatorDefault, 16, 16, kCVPixelFormatType_32BGRA, nullptr, &rawPixelBuffer))
+        return nullptr;
+    RetainPtr pixelBuffer = adoptCF(rawPixelBuffer);
+
+    CMVideoFormatDescriptionRef rawFormatDescription = nullptr;
+    if (PAL::CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, pixelBuffer.get(), &rawFormatDescription))
+        return nullptr;
+    RetainPtr formatDescription = adoptCF(rawFormatDescription);
+
+    CMSampleTimingInfo timing = { PAL::kCMTimeInvalid, PAL::kCMTimeZero, PAL::kCMTimeInvalid };
+    CMSampleBufferRef rawSampleBuffer = nullptr;
+    if (PAL::CMSampleBufferCreateForImageBuffer(kCFAllocatorDefault, pixelBuffer.get(), true, nullptr, nullptr, formatDescription.get(), &timing, &rawSampleBuffer))
+        return nullptr;
+
+    return adoptCF(rawSampleBuffer);
+}
 
 class AudioVideoRendererAVFObjCTest : public testing::Test {
 public:
@@ -43,11 +66,14 @@ public:
     {
         Ref logger = Logger::create(this);
         renderer = AudioVideoRendererAVFObjC::create(logger, 0);
-        renderer->setPreferences({ VideoRendererPreference::PrefersDecompressionSession });
+        renderer->setPreferences({ });
         renderer->notifyWhenRequiresFlushToResume([this] {
             ++flushToResumeCount;
         });
-        renderer->addTrack(TrackInfo::TrackType::Video);
+        renderer->notifyWhenErrorOccurs([this](PlatformMediaError error) {
+            ++errorCount;
+        });
+        videoTrackId = renderer->addTrack(TrackInfo::TrackType::Video);
     }
 
     void TearDown() final
@@ -55,11 +81,20 @@ public:
         renderer = nullptr;
     }
 
-    RefPtr<AudioVideoRendererAVFObjC> renderer;
+    void enqueueVideoSample()
+    {
+        RetainPtr sampleBuffer = createVideoSampleBuffer();
+        ASSERT_TRUE(sampleBuffer);
+        renderer->enqueueSample(*videoTrackId, MediaSampleAVFObjC::create(sampleBuffer.get(), 0), { });
+    }
+
+    RefPtr<AudioVideoRenderer> renderer;
+    std::optional<AudioVideoRenderer::TrackIdentifier> videoTrackId;
     int flushToResumeCount { 0 };
+    int errorCount { 0 };
 };
 
-TEST_F(AudioVideoRendererAVFObjCTest, FlushToResumeOnVisibilityRestore)
+TEST_F(AudioVideoRendererAVFObjCTest, NoFlushWithoutEnqueuedSamples)
 {
     renderer->renderingCanBeAcceleratedChanged(true);
     Util::runFor(0.1_s);
@@ -70,11 +105,67 @@ TEST_F(AudioVideoRendererAVFObjCTest, FlushToResumeOnVisibilityRestore)
     EXPECT_EQ(flushToResumeCount, 0);
 
     renderer->renderingCanBeAcceleratedChanged(true);
-    bool callbackFired = Util::waitFor([this] {
-        return flushToResumeCount > 0;
-    });
-    EXPECT_TRUE(callbackFired);
-    EXPECT_EQ(flushToResumeCount, 1);
+    Util::runFor(0.1_s);
+    EXPECT_EQ(flushToResumeCount, 0);
+}
+
+TEST_F(AudioVideoRendererAVFObjCTest, NoFlushOnRendererDestroy)
+{
+    ASSERT_TRUE(videoTrackId.has_value());
+
+    renderer->renderingCanBeAcceleratedChanged(true);
+    Util::runFor(0.1_s);
+    EXPECT_EQ(flushToResumeCount, 0);
+
+    enqueueVideoSample();
+
+    renderer->renderingCanBeAcceleratedChanged(false);
+    Util::runFor(0.1_s);
+    EXPECT_EQ(flushToResumeCount, 0);
+    EXPECT_EQ(errorCount, 0);
+}
+
+TEST_F(AudioVideoRendererAVFObjCTest, NoFlushOnProtectedContentVisibilityCycle)
+{
+    ASSERT_TRUE(videoTrackId.has_value());
+
+    renderer->setHasProtectedVideoContent(true);
+    renderer->renderingCanBeAcceleratedChanged(true);
+    Util::runFor(0.1_s);
+    EXPECT_EQ(flushToResumeCount, 0);
+
+    enqueueVideoSample();
+
+    renderer->renderingCanBeAcceleratedChanged(false);
+    Util::runFor(0.1_s);
+    EXPECT_EQ(flushToResumeCount, 0);
+
+    renderer->renderingCanBeAcceleratedChanged(true);
+    Util::runFor(0.1_s);
+    EXPECT_EQ(flushToResumeCount, 0);
+    EXPECT_EQ(errorCount, 0);
+}
+
+TEST_F(AudioVideoRendererAVFObjCTest, NoFlushWithDecompressionSessionForProtectedContent)
+{
+    ASSERT_TRUE(videoTrackId.has_value());
+
+    renderer->setPreferences({ VideoRendererPreference::PrefersDecompressionSession, VideoRendererPreference::UseDecompressionSessionForProtectedContent });
+    renderer->setHasProtectedVideoContent(true);
+    renderer->renderingCanBeAcceleratedChanged(true);
+    Util::runFor(0.1_s);
+    EXPECT_EQ(flushToResumeCount, 0);
+
+    enqueueVideoSample();
+
+    renderer->renderingCanBeAcceleratedChanged(false);
+    Util::runFor(0.1_s);
+    EXPECT_EQ(flushToResumeCount, 0);
+
+    renderer->renderingCanBeAcceleratedChanged(true);
+    Util::runFor(0.1_s);
+    EXPECT_EQ(flushToResumeCount, 0);
+    EXPECT_EQ(errorCount, 0);
 }
 
 } // namespace TestWebKitAPI

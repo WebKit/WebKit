@@ -681,6 +681,12 @@
 		7BED4E072F98E33B00A240A7 /* GLSLValidationTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED4E002F98E33B00A240A7 /* GLSLValidationTest.cpp */; };
 		7BED4E0B2F98E35C00A240A7 /* CompilerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED4E0A2F98E35C00A240A7 /* CompilerTest.cpp */; };
 		7BED4E0C2F98E35C00A240A7 /* CompilerTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BED4E092F98E35C00A240A7 /* CompilerTest.h */; };
+		7BED5BE82F99F81200A240A7 /* TransformFeedback_unittest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED5BE72F99F81200A240A7 /* TransformFeedback_unittest.cpp */; };
+		7BED6F852F99FE0700A240A7 /* FrameCapture_mock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFD0029227449D1D002BE3BC /* FrameCapture_mock.cpp */; };
+		7BED6F862F99FE2E00A240A7 /* serialize_mock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A2C67022923766600FEDF46 /* serialize_mock.cpp */; };
+		7BED8E022F9A493200F15B70 /* AddDefaultReturnStatements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED8E012F9A493200F15B70 /* AddDefaultReturnStatements.cpp */; };
+		7BED8E042F9A493200F15B70 /* AddDefaultReturnStatements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED8E012F9A493200F15B70 /* AddDefaultReturnStatements.cpp */; };
+		7BED8E052F9A493200F15B70 /* AddDefaultReturnStatements.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BED8E002F9A493200F15B70 /* AddDefaultReturnStatements.h */; };
 		7BF554C42C81EF29002B101E /* libtranslator.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BF5549B2C81EDE0002B101E /* libtranslator.a */; };
 		7BF554C52C81EF4D002B101E /* TranslatorFuzzer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BF554A02C81EE51002B101E /* TranslatorFuzzer.cpp */; };
 		7BF554CD2C81F028002B101E /* TranslatorFuzzer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BF554A02C81EE51002B101E /* TranslatorFuzzer.cpp */; };
@@ -2220,6 +2226,9 @@
 		7BED4E002F98E33B00A240A7 /* GLSLValidationTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GLSLValidationTest.cpp; sourceTree = "<group>"; };
 		7BED4E092F98E35C00A240A7 /* CompilerTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CompilerTest.h; sourceTree = "<group>"; };
 		7BED4E0A2F98E35C00A240A7 /* CompilerTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CompilerTest.cpp; sourceTree = "<group>"; };
+		7BED5BE72F99F81200A240A7 /* TransformFeedback_unittest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TransformFeedback_unittest.cpp; sourceTree = "<group>"; };
+		7BED8E002F9A493200F15B70 /* AddDefaultReturnStatements.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddDefaultReturnStatements.h; sourceTree = "<group>"; };
+		7BED8E012F9A493200F15B70 /* AddDefaultReturnStatements.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AddDefaultReturnStatements.cpp; sourceTree = "<group>"; };
 		7BF5549B2C81EDE0002B101E /* libtranslator.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libtranslator.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BF554A02C81EE51002B101E /* TranslatorFuzzer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = TranslatorFuzzer.cpp; path = WebKit/TranslatorFuzzer.cpp; sourceTree = "<group>"; };
 		7BF554A12C81EE77002B101E /* TranslatorFuzzerCoverage.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = TranslatorFuzzerCoverage.mm; path = WebKit/TranslatorFuzzerCoverage.mm; sourceTree = "<group>"; };
@@ -3225,6 +3234,7 @@
 				A30307142305F7C3002DA972 /* trace.h */,
 				5C1DBDC31B0438D300235552 /* TransformFeedback.cpp */,
 				5C1DBDC41B0438D300235552 /* TransformFeedback.h */,
+				7BED5BE72F99F81200A240A7 /* TransformFeedback_unittest.cpp */,
 				5C1DBDC51B0438D300235552 /* Uniform.cpp */,
 				5C1DBDC61B0438D300235552 /* Uniform.h */,
 				5C1DBDC71B0438D300235552 /* validationEGL.cpp */,
@@ -3435,6 +3445,8 @@
 			children = (
 				7B359D5F2A7CED180016DC59 /* glsl */,
 				7B359D7B2A7CED8C0016DC59 /* msl */,
+				7BED8E012F9A493200F15B70 /* AddDefaultReturnStatements.cpp */,
+				7BED8E002F9A493200F15B70 /* AddDefaultReturnStatements.h */,
 				7B359DBC2A7CEDE10016DC59 /* ClampFragDepth.cpp */,
 				7B359DBD2A7CEDE10016DC59 /* ClampFragDepth.h */,
 				FF194FDE27432CC3006A97A3 /* ClampIndirectIndices.cpp */,
@@ -4525,6 +4537,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7BED8E052F9A493200F15B70 /* AddDefaultReturnStatements.h in Headers */,
 				7B359DBA2A7CEDAA0016DC59 /* AddExplicitTypeCasts.h in Headers */,
 				31CDFF5C2491848C00486F27 /* aligned_memory.h in Headers */,
 				7B19599326C3C22000C09322 /* android_util.h in Headers */,
@@ -5343,6 +5356,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7BED8E042F9A493200F15B70 /* AddDefaultReturnStatements.cpp in Sources */,
 				7B359DB52A7CEDAA0016DC59 /* AddExplicitTypeCasts.cpp in Sources */,
 				DF83E2162639FC74000825EF /* aligned_memory.cpp in Sources */,
 				7B19599426C3C22000C09322 /* android_util.cpp in Sources */,
@@ -6063,6 +6077,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7BED8E022F9A493200F15B70 /* AddDefaultReturnStatements.cpp in Sources */,
 				7BF554E22C81F198002B101E /* AddExplicitTypeCasts.cpp in Sources */,
 				7BF554E32C81F198002B101E /* aligned_memory.cpp in Sources */,
 				7BF5556F2C81F198002B101E /* angle_version_info.cpp in Sources */,
@@ -6285,6 +6300,7 @@
 				7BFAF8ED2DE6EDE400327F7F /* FixedQueue_unittest.cpp in Sources */,
 				7BFAF8E02DE6EDE400327F7F /* FixedVector_unittest.cpp in Sources */,
 				7BFAF8812DE6ECA700327F7F /* FloatLex_test.cpp in Sources */,
+				7BED6F852F99FE0700A240A7 /* FrameCapture_mock.cpp in Sources */,
 				7B8C091A2F84EC49007E37DE /* GPUTestConfig.cpp in Sources */,
 				7B8C091B2F84EC83007E37DE /* GPUTestExpectationsParser.cpp in Sources */,
 				7BFAF8E52DE6EDE400327F7F /* hash_utils_unittest.cpp in Sources */,
@@ -6299,12 +6315,14 @@
 				7BFAF8E62DE6EDE400327F7F /* Optional_unittest.cpp in Sources */,
 				7B8C091C2F84EC9D007E37DE /* OSWindow.cpp in Sources */,
 				7BFAF8F02DE6EDE400327F7F /* PoolAlloc_unittest.cpp in Sources */,
+				7BED6F862F99FE2E00A240A7 /* serialize_mock.cpp in Sources */,
 				7BFAF8F12DE6EDE400327F7F /* SimpleMutex_unittest.cpp in Sources */,
 				7BFAF8E12DE6EDE400327F7F /* span_unittest.cpp in Sources */,
 				7BFAF8E42DE6EDE400327F7F /* string_utils_unittest.cpp in Sources */,
 				7BFAF8E32DE6EDE400327F7F /* system_utils_unittest.cpp in Sources */,
 				7BFAF8F32DE6EE4500327F7F /* SystemInfo_unittest.cpp in Sources */,
 				7B8C09152F84EAB1007E37DE /* TestSuite.cpp in Sources */,
+				7BED5BE82F99F81200A240A7 /* TransformFeedback_unittest.cpp in Sources */,
 				7BFAF8C12DE6ECA700327F7F /* Type_test.cpp in Sources */,
 				7BFAF8BB2DE6ECA700327F7F /* VariablePacker_test.cpp in Sources */,
 				7BFAF8E22DE6EDE400327F7F /* vector_utils_unittest.cpp in Sources */,

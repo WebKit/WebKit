@@ -35,6 +35,7 @@
 	<key>com.apple.security.temporary-exception.shared-preference.read-only</key>
 	<array>
 		<string>com.apple.Safari.SandboxBroker</string>
+		<string>com.apple.messages.EnhancedLinkSecurity</string>
 	</array>
 </dict>
 </plist>

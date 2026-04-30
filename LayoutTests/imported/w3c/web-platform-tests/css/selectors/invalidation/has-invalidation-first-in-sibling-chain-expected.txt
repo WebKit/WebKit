@@ -6,9 +6,9 @@ PASS subject2 Initial color
 PASS #subject2 invalidated after adding first sibling
 PASS #subject2 invalidated after removing first sibling
 PASS subject3 Initial color
-FAIL #subject3 invalidated after adding first sibling assert_equals: expected "rgb(0, 128, 0)" but got "rgb(128, 128, 128)"
+PASS #subject3 invalidated after adding first sibling
 PASS #subject3 invalidated after removing first sibling
 PASS subject4 Initial color
-FAIL #subject4 invalidated after adding first sibling assert_equals: expected "rgb(144, 238, 144)" but got "rgb(128, 128, 128)"
+PASS #subject4 invalidated after adding first sibling
 PASS #subject4 invalidated after removing first sibling
 

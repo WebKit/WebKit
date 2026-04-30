@@ -1,0 +1,6 @@
+security.resize.redirect
+Resizing the canvas dimensions resets the origin-clean flag
+Actual output:
+
+FAIL Resizing the canvas dimensions resets the origin-clean flag The operation is insecure.
+

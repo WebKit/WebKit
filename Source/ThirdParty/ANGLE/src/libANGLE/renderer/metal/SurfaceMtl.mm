@@ -483,7 +483,7 @@ egl::Error WindowSurfaceMtl::initialize(const egl::Display *display)
 egl::Error WindowSurfaceMtl::swap(const gl::Context *context, SurfaceSwapFeedback *feedback)
 {
     ANGLE_TO_EGL_TRY(swapImpl(context));
-
+    feedback->swapChainImageChanged = true;
     return egl::NoError();
 }
 

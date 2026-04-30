@@ -51,7 +51,9 @@ public:
 
     // Can be called from any thread.
     AudioNode* node() const { return m_node.get(); }
-    BaseAudioContext& context() { return protect(node())->context(); }
+    // Use CheckedPtr instead of protect() (which returns a RefPtr) to avoid the ref/deref side effects
+    // that would cause deep recursion during markNodeForDeletionIfNecessary() → disconnectAll() chains.
+    BaseAudioContext& context() { return CheckedPtr { node() }->context(); }
     
     // Causes our AudioNode to process if it hasn't already for this render quantum.
     // It returns the bus containing the processed audio for this output, returning inPlaceBus if in-place processing was possible.

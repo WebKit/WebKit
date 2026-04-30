@@ -37,7 +37,6 @@ my $useDocument = "";
 my $useGenerator = "";
 my $useOutputDir = "";
 my $useOutputHeadersDir = "";
-my $preprocessor;
 my $idlAttributes;
 my $writeDependencies = 0;
 my $defines = "";
@@ -148,7 +147,6 @@ sub new
     $useGenerator = shift;
     $useOutputDir = shift;
     $useOutputHeadersDir = shift;
-    $preprocessor = shift;
     $writeDependencies = shift;
     $verbose = shift;
     $targetIdlFilePath = shift;
@@ -405,7 +403,7 @@ sub ProcessInterfaceSupplementalDependencies
         if (exists $cachedParsedDocuments{$idlFile}) {
             $document = dclone($cachedParsedDocuments{$idlFile});
         } else {
-            $document = IDLParser->new(!$verbose)->Parse($idlFile, $defines, $preprocessor, $idlAttributes);
+            $document = IDLParser->new(!$verbose)->Parse($idlFile, $defines, $idlAttributes);
             $cachedParsedDocuments{$idlFile} = dclone($document);
         }
 
@@ -488,7 +486,7 @@ sub ProcessDictionarySupplementalDependencies
         if (exists $cachedParsedDocuments{$idlFile}) {
             $document = dclone($cachedParsedDocuments{$idlFile});
         } else {
-            $document = IDLParser->new(!$verbose)->Parse($idlFile, $defines, $preprocessor, $idlAttributes);
+            $document = IDLParser->new(!$verbose)->Parse($idlFile, $defines, $idlAttributes);
             $cachedParsedDocuments{$idlFile} = dclone($document);
         }
 
@@ -541,8 +539,6 @@ sub UpdateFile
     my $fileName = shift;
     my $contents = shift;
 
-    # FIXME: We should only write content if it is different from what is in the file.
-    # But that would mean running more often the binding generator, see https://bugs.webkit.org/show_bug.cgi?id=131756
     open FH, ">", $fileName or die "Couldn't open $fileName: $!\n";
     print FH $contents;
     close FH;
@@ -669,7 +665,7 @@ sub ParseInterface
 
     # Step #2: Parse the found IDL file (in quiet mode).
     my $parser = IDLParser->new(1);
-    my $document = $parser->Parse($filename, $defines, $preprocessor, $idlAttributes);
+    my $document = $parser->Parse($filename, $defines, $idlAttributes);
 
     foreach my $interface (@{$document->interfaces}) {
         if ($interface->type->name eq $interfaceName) {
@@ -794,7 +790,7 @@ sub GetEnumByType
     if ($fileContents =~ /\benum\s+$name/gs) {
         # Parse the IDL.
         my $parser = IDLParser->new(1);
-        my $document = $parser->Parse($filename, $defines, $preprocessor, $idlAttributes);
+        my $document = $parser->Parse($filename, $defines, $idlAttributes);
 
         foreach my $enumeration (@{$document->enumerations}) {
             next unless $enumeration->type->name eq $name;
@@ -862,7 +858,7 @@ sub GetDictionaryByType
     if ($fileContents =~ /\bdictionary\s+$name/gs) {
         # Parse the IDL.
         my $parser = IDLParser->new(1);
-        my $document = $parser->Parse($filename, $defines, $preprocessor, $idlAttributes);
+        my $document = $parser->Parse($filename, $defines, $idlAttributes);
 
         foreach my $dictionary (@{$document->dictionaries}) {
             if ($dictionary->type->name eq $name) {

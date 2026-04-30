@@ -48,6 +48,7 @@
 #include "WebCodecsVideoFrame.h"
 #include "WebGPUDevice.h"
 #include <JavaScriptCore/HeapCellInlines.h>
+#include <array>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MallocSpan.h>
 
@@ -442,8 +443,8 @@ static void getImageBytesFromVideoFrame(WebGPU::Queue& backing, const RefPtr<Vid
         .width = width,
         .rowBytes = byteSpan.size() / height
     };
-    uint8_t permuteMap[4] = { 2, 1, 0, 3 };
-    vImagePermuteChannels_ARGB8888(&bgra, &bgra, permuteMap, kvImageNoFlags);
+    constexpr std::array<uint8_t, 4> permuteMap { 2, 1, 0, 3 };
+    vImagePermuteChannels_ARGB8888(&bgra, &bgra, permuteMap.data(), kvImageNoFlags);
 
     return callback(byteSpan.first(sizeInBytes), width, height);
 }

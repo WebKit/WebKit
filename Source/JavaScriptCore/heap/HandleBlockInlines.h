@@ -26,7 +26,9 @@
 #pragma once
 
 #include "HandleBlock.h"
+#include "HandleSet.h"
 #include <wtf/FastMalloc.h>
+#include <wtf/MathExtras.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 

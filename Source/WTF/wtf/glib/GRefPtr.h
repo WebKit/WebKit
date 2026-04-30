@@ -109,16 +109,20 @@ public:
     GRefPtr(T* ptr /* (transfer floating) */)
         : m_ptr(RefDerefTraits::refIfNotNull(ptr))
     {
+        // After invoking refIfNotNull, ptr must no longer be floating.
+        ASSERT(!m_ptr || !RefDerefTraits::isFloating(m_ptr));
     }
 
     GRefPtr(const GRefPtr& o)
         : m_ptr(RefDerefTraits::refIfNotNull(o.m_ptr))
     {
+        ASSERT(!m_ptr || !RefDerefTraits::isFloating(m_ptr));
     }
 
     GRefPtr(GRefPtr&& o)
         : m_ptr(o.leakRef())
     {
+        ASSERT(!m_ptr || !RefDerefTraits::isFloating(m_ptr));
     }
 
     ~GRefPtr()
@@ -128,6 +132,8 @@ public:
 
     void clear()
     {
+        // Before dereferencing, the pointer must not be floating.
+        ASSERT(!m_ptr || !RefDerefTraits::isFloating(m_ptr));
         RefDerefTraits::derefIfNotNull(std::exchange(m_ptr, nullptr));
     }
 
@@ -314,6 +320,43 @@ template<typename P> struct HashTraits<GRefPtr<P>> : SimpleClassHashTraits<GRefP
             return false; \
         } \
     };
+
+#if ASSERT_ENABLED
+#define WTF_DEFINE_GREF_TRAITS_INLINE_ASSERT_ON_FLOATING_REF(typeName, refFunc, derefFunc, isFloatingFunc, shouldBeFloatingOnCreation) \
+    template<> struct GRefPtrDefaultRefDerefTraits<typeName> { \
+        static inline typeName* refIfNotNull(typeName* ptr) \
+        { \
+            if (!ptr) [[unlikely]] \
+                return nullptr; \
+            bool wasFloating = isFloatingFunc(ptr); \
+            refFunc(ptr); \
+            ASSERT(!isFloatingFunc(ptr)); \
+            if constexpr (shouldBeFloatingOnCreation) { \
+                if (G_IS_OBJECT(ptr)) { \
+                    if (G_OBJECT(ptr)->ref_count <= 1) \
+                        ASSERT(wasFloating); \
+                    else \
+                        ASSERT(!wasFloating); \
+                } \
+            } else \
+                ASSERT(!wasFloating); \
+            return ptr; \
+        } \
+        static inline void derefIfNotNull(typeName* ptr) \
+        { \
+            if (ptr) [[likely]] \
+                derefFunc(ptr); \
+        } \
+        static inline bool isFloating(typeName* ptr) \
+        { \
+            if (ptr) [[likely]] \
+                return isFloatingFunc(ptr); \
+            return false; \
+        } \
+    };
+#else
+#define WTF_DEFINE_GREF_TRAITS_INLINE_ASSERT_ON_FLOATING_REF(typeName, refFunc, derefFunc, isFloatingFunc, shouldBeFloatingOnCreation) WTF_DEFINE_GREF_TRAITS_INLINE(typeName, refFunc, derefFunc, isFloatingFunc)
+#endif
 
 WTF_DECLARE_GREF_TRAITS(GDBusNodeInfo, WTF_EXPORT_PRIVATE)
 WTF_DECLARE_GREF_TRAITS(GResource)

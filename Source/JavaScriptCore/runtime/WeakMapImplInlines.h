@@ -26,6 +26,9 @@
 #pragma once
 
 #include "HashMapHelper.h"
+#include "JSCJSValueBigInt.h"
+#include "JSCJSValueInlines.h"
+#include "Symbol.h"
 #include "WeakMapImpl.h"
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

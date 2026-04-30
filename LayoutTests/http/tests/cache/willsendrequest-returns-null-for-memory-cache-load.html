@@ -3,6 +3,7 @@
 <head>
     <script>
         if (window.testRunner) {
+            testRunner.clearMemoryCache();
             testRunner.dumpAsText();
             testRunner.waitUntilDone();
             testRunner.dumpResourceLoadCallbacks();
@@ -14,7 +15,7 @@
             document.body.appendChild(iframe);
             iframe.onload = function() {
                 if (window.testRunner)
-                    testRunner.notifyDone();
+                    setTimeout(() => testRunner.notifyDone(), 0);
             }
             iframe.src = "resources/cached-image.html";
         }

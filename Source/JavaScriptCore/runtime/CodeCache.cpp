@@ -27,6 +27,7 @@
 #include "CodeCache.h"
 
 #include "BytecodeGenerator.h"
+#include "DirectEvalExecutable.h"
 #include "IndirectEvalExecutable.h"
 #include "ModuleProgramExecutable.h"
 #include "ProgramExecutable.h"

@@ -160,16 +160,17 @@ class PullRequest(Command):
         # Then, see if we already have a commit associated with this branch we need to modify
         has_commit = repository.commit(include_log=False, include_identifier=False).branch == repository.branch and repository.branch != repository.default_branch
         if not modified and has_commit:
-            log.info('Using committed changes...')
-            return 0
+            if not getattr(args, '_bug_urls', None) or os.environ.get('COMMIT_MESSAGE_REVERT'):
+                log.info('Using committed changes...')
+                return 0
 
         bug_urls = getattr(args, '_bug_urls', None) or ''
         if isinstance(bug_urls, (list, tuple)):
             bug_urls = '\n'.join(bug_urls)
 
         # Otherwise, we need to create a commit
-        will_amend = has_commit and args.technique == 'overwrite'
-        if not modified:
+        will_amend = has_commit and (args.technique == 'overwrite' or bool(getattr(args, '_bug_urls', None)))
+        if not modified and not will_amend:
             sys.stderr.write('No modified files\n')
             return 1
         log.info('Amending commit...' if will_amend else 'Creating commit...')
@@ -195,6 +196,22 @@ class PullRequest(Command):
             title = commits[0].message.splitlines()[0] if commits[0].message else '???'
         title = title.rstrip().lstrip()
         return title[:-5].rstrip() if title.endswith('(Part') else title
+
+    @classmethod
+    def issue_from_commits(cls, repository, source_remote, branch_point):
+        head = repository.commit(include_log=True, include_identifier=False)
+        if run([
+            repository.executable(), 'merge-base', '--is-ancestor',
+            head.hash, 'remotes/{}/{}'.format(source_remote, branch_point.branch),
+        ], capture_output=True, cwd=repository.root_path).returncode:
+            if head.issues:
+                return head.issues[0].link
+            revert_message = os.environ.get('COMMIT_MESSAGE_REVERT', '')
+            for line in revert_message.splitlines():
+                issue = Tracker.from_string(line)
+                if issue:
+                    return issue.link
+        return None
 
     @classmethod
     def check_pull_request_args(cls, repository, args):
@@ -261,13 +278,7 @@ class PullRequest(Command):
 
         if not repository.is_suitable_branch_for_pull_request(repository.branch, source_remote):
             if not args.issue:
-                head = repository.commit(include_log=True, include_identifier=False)
-                if run([
-                    repository.executable(), 'merge-base', '--is-ancestor',
-                    head.hash, 'remotes/{}/{}'.format(source_remote, branch_point.branch),
-                ], capture_output=True, cwd=repository.root_path).returncode:
-                    if head.issues:
-                        args.issue = head.issues[0].link
+                args.issue = cls.issue_from_commits(repository, source_remote, branch_point)
 
             if Branch.main(
                 args, repository,
@@ -299,6 +310,23 @@ class PullRequest(Command):
             if not issue.tracker.hide_title:
                 args._title = issue.title
             args._bug_urls = Commit.bug_urls(issue)
+
+        elif not args.issue and getattr(args, 'update_issue', True) and Tracker.instance():
+            args.issue = cls.issue_from_commits(repository, source_remote, branch_point)
+            if not args.issue:
+                issue, result = Branch.ensure_issue(args, repository, redact=source_remote != repository.default_remote)
+                if result:
+                    return None
+
+                bug_urls = getattr(args, '_bug_urls', None) or ''
+                if isinstance(bug_urls, (list, tuple)):
+                    bug_urls = '\n'.join(bug_urls)
+                title = getattr(args, '_title', None) or ''
+                cls.write_branch_variables(
+                    repository, repository.branch,
+                    title=title,
+                    bug=bug_urls,
+                )
 
         if not repository.config().get('remote.{}.url'.format(source_remote)):
             sys.stderr.write("'{}' is not a remote in this repository\n".format(source_remote))

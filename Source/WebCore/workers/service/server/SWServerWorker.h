@@ -132,6 +132,8 @@ public:
     const Site& topSite() const LIFETIME_BOUND { return m_topSite; }
     WEBCORE_EXPORT std::optional<ScriptExecutionContextIdentifier> NODELETE serviceWorkerPageIdentifier() const;
 
+    bool shouldPersistToDisk() const;
+
     WEBCORE_EXPORT SWServerToContextConnection* contextConnection();
     String userAgent() const;
 

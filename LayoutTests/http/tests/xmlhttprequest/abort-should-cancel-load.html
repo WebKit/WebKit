@@ -13,13 +13,14 @@ function runTest() {
     document.body.appendChild(console_messages);
 
     if (window.testRunner) {
+        internals.clearMemoryCache();
         testRunner.dumpResourceLoadCallbacks();
         testRunner.waitUntilDone();
         testRunner.dumpAsText();
     }
     
     f();
-    testRunner.notifyDone();
+    setTimeout(() => testRunner.notifyDone(), 0);
 }
 
 function log(message)

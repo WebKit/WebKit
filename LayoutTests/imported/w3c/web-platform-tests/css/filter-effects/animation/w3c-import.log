@@ -15,11 +15,13 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/animation/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/animation/backdrop-filter-composition-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/animation/backdrop-filter-interpolation-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/animation/backdrop-filter-interpolation-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/animation/backdrop-filter-interpolation-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/animation/backdrop-filter-interpolation-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/animation/color-interpolation-filters-no-interpolation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/animation/filter-composition-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/animation/filter-interpolation-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/animation/filter-interpolation-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/filter-effects/animation/filter-interpolation-003.html

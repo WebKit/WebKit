@@ -101,9 +101,10 @@ Vector<WebPlatformTouchPoint> NativeWebTouchEvent::extractWebTouchPoints(const W
     return event.touchPoints.map([](auto& touchPoint) {
         unsigned identifier = touchPoint.identifier;
         auto locationInRootView = positionForCGPoint(touchPoint.locationInRootViewCoordinates);
+        auto previousLocationInRootView = positionForCGPoint(touchPoint.previousLocationInRootViewCoordinates);
         auto locationInViewport = positionForCGPoint(touchPoint.locationInViewport);
         WebPlatformTouchPoint::State phase = convertTouchPhase(touchPoint.phase);
-        WebPlatformTouchPoint platformTouchPoint = WebPlatformTouchPoint(identifier, locationInRootView, locationInViewport, phase);
+        WebPlatformTouchPoint platformTouchPoint = WebPlatformTouchPoint(identifier, locationInRootView, previousLocationInRootView, locationInViewport, phase);
 #if ENABLE(IOS_TOUCH_EVENTS)
         auto radius = radiusForTouchPoint(touchPoint);
         platformTouchPoint.setRadiusX(radius);

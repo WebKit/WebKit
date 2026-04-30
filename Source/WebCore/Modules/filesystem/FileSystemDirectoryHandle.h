@@ -51,7 +51,7 @@ public:
     void getFileHandle(const String& name, const GetFileOptions&, DOMPromiseDeferred<IDLInterface<FileSystemFileHandle>>&&);
     void getDirectoryHandle(const String& name, const GetDirectoryOptions&, DOMPromiseDeferred<IDLInterface<FileSystemDirectoryHandle>>&&);
     void removeEntry(const String& name, const RemoveOptions&, DOMPromiseDeferred<void>&&);
-    void resolve(const FileSystemHandle&, DOMPromiseDeferred<IDLSequence<IDLUSVString>>&&);
+    void resolve(const FileSystemHandle&, DOMPromiseDeferred<IDLNullable<IDLSequence<IDLUSVString>>>&&);
 
     void getHandleNames(CompletionHandler<void(ExceptionOr<Vector<String>>&&)>&&);
     void getHandle(const String& name, CompletionHandler<void(ExceptionOr<Ref<FileSystemHandle>>&&)>&&);

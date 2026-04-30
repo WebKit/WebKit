@@ -1456,7 +1456,12 @@ Vector<ITPThirdPartyData> ResourceLoadStatisticsStore::aggregatedThirdPartyData(
     ASSERT(!RunLoop::isMain());
 
     Vector<ITPThirdPartyData> thirdPartyDataList;
-    const auto prevalentDomainsBindParameter = thirdPartyCookieBlockingMode() == ThirdPartyCookieBlockingMode::All ? "%"_s : "1"_s;
+    auto mode = thirdPartyCookieBlockingMode();
+    bool isBlockAll = mode == ThirdPartyCookieBlockingMode::All;
+#if ENABLE(OPT_IN_PARTITIONED_COOKIES)
+    isBlockAll = isBlockAll || mode == ThirdPartyCookieBlockingMode::AllExceptPartitioned;
+#endif
+    const auto prevalentDomainsBindParameter = isBlockAll ? "%"_s : "1"_s;
     auto sortedStatistics = m_database->prepareStatement(joinSubStatisticsForSorting());
     if (!sortedStatistics
         || sortedStatistics->bindText(1, prevalentDomainsBindParameter)

@@ -28,6 +28,8 @@
 #ifdef __cplusplus
 
 #import "Helpers/cocoa/NetworkConnection.h"
+#import <swift/bridging>
+#import <wtf/CanMakeWeakPtr.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/Forward.h>
 #import <wtf/HashMap.h>
@@ -43,11 +45,12 @@ namespace TestWebKitAPI {
 class WebTransportServer;
 struct HTTPResponse;
 
-class HTTPServer {
+class HTTPServer final : public CanMakeWeakPtr<HTTPServer> {
+    WTF_MAKE_NONCOPYABLE(HTTPServer);
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(HTTPServer);
 public:
     struct RequestData : public ThreadSafeRefCounted<RequestData, WTF::DestructionThread::MainRunLoop> {
-        RequestData(std::initializer_list<std::pair<String, HTTPResponse>>);
+        RequestData(HashMap<String, HTTPResponse>&&);
 
         size_t requestCount { 0 };
         HashMap<String, HTTPResponse> requestMap;
@@ -57,12 +60,17 @@ public:
     };
 
     enum class Protocol : uint8_t { Http, Https, HttpsWithLegacyTLS, Http2, HttpsProxy, HttpsProxyWithAuthentication };
+    enum class DeferListening : bool { No, Yes };
     using CertificateVerifier = Function<void(sec_protocol_metadata_t, sec_trust_t, sec_protocol_verify_complete_t)>;
+    using ResponseMap = HashMap<String, HTTPResponse>;
 
-    HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>>, Protocol = Protocol::Http, CertificateVerifier&& = nullptr, SecIdentityRef = nullptr, std::optional<uint16_t> port = { });
+    HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>>, Protocol = Protocol::Http, CertificateVerifier&& = nullptr, SecIdentityRef = nullptr, std::optional<uint16_t> port = { }, DeferListening = DeferListening::No);
+    HTTPServer(ResponseMap&& responses, Protocol = Protocol::Http, CertificateVerifier&& = nullptr, SecIdentityRef = nullptr, std::optional<uint16_t> port = { }, DeferListening = DeferListening::No);
     HTTPServer(Function<void(Connection)>&&, Protocol = Protocol::Http);
     enum class UseCoroutines : bool { Yes };
     HTTPServer(UseCoroutines, Function<ConnectionTask(Connection)>&&, Protocol = Protocol::Http);
+    HTTPServer(HTTPServer&&) = default;
+    HTTPServer& operator=(HTTPServer&&) = default;
     ~HTTPServer();
     uint16_t port() const;
     String origin() const;
@@ -72,6 +80,8 @@ public:
     size_t totalConnections() const;
     size_t totalRequests() const;
     String lastRequestCookies() const;
+    void startListening(CompletionHandler<void()>&&);
+    void cancel(CompletionHandler<void()>&&);
     void cancel();
     void terminateAllConnections(CompletionHandler<void()>&&);
 
@@ -94,7 +104,7 @@ private:
     Ref<RequestData> m_requestData;
     RetainPtr<nw_listener_t> m_listener;
     Protocol m_protocol { Protocol::Http };
-};
+} SWIFT_NAME(__CxxHTTPServer);
 
 struct HTTPResponse {
     enum class Behavior : uint8_t {
@@ -204,5 +214,7 @@ RetainPtr<SecCertificateRef> testCertificate();
 RetainPtr<SecIdentityRef> testIdentity();
 RetainPtr<SecIdentityRef> testIdentity2();
 void verifyCertificateAndPublicKey(SecTrustRef);
+
+void hashMapSet(HashMap<WTF::String, TestWebKitAPI::HTTPResponse>&, WTF::String&&, TestWebKitAPI::HTTPResponse&&);
 
 #endif // __cplusplus

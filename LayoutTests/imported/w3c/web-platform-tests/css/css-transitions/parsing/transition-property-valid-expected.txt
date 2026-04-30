@@ -5,5 +5,8 @@ PASS e.style['transition-property'] = "one" should set the property value
 PASS e.style['transition-property'] = "one-two-three" should set the property value
 PASS e.style['transition-property'] = "one, two, three" should set the property value
 PASS e.style['transition-property'] = "width, all" should set the property value
-FAIL e.style['transition-property'] = "ALL, INVALID, SYNTAX, SRC" should set the property value assert_equals: serialization should be canonical expected "all, INVALID, SYNTAX, SRC" but got "all, INVALID, syntax, src"
+PASS e.style['transition-property'] = "width, top, width" should set the property value
+PASS e.style['transition-property'] = "all, top, all" should set the property value
+PASS e.style['transition-property'] = "ALL, INVALID, SYNTAX, SRC" should set the property value
+PASS e.style['transition-property'] = "left, top, right, bottom" should set the property value
 

@@ -214,6 +214,12 @@ private:
 #endif
 
     void setSynchronizerRate(float, std::optional<MonotonicTime>);
+    // Returns the rate we last passed to [m_synchronizer setRate:]. Cached
+    // because [m_synchronizer rate] is heavy (dispatch_sync), and querying
+    // it can interact poorly with AVF's internal serialization of rate
+    // changes. The cached value reflects the rate we set, not the actual
+    // timebase rate.
+    float synchronizerRate() const { return m_lastSetSyncRate; }
     bool updateLastPixelBuffer();
     void maybePurgeLastPixelBuffer();
     void setNeedsPlaceholderImage(bool);
@@ -283,6 +289,10 @@ private:
 
     bool m_isPlaying { false };
     double m_rate { 1 };
+    // Cached value of the rate last passed to [m_synchronizer setRate:].
+    // Avoid querying [m_synchronizer rate] (heavy dispatch_sync) — read this
+    // via synchronizerRate() instead.
+    float m_lastSetSyncRate { 0 };
     RetainPtr<CVPixelBufferRef> m_lastPixelBuffer;
     bool m_needsPlaceholderImage { false };
 
@@ -306,6 +316,7 @@ private:
     HashMap<TrackIdentifier, AudioTrackProperties> m_audioTracksMap;
     std::optional<RequestPromise::AutoRejectProducer> m_requestVideoPromise;
     bool m_readyToRequestVideoData { true };
+    bool m_hasEverSubmittedVideoSample { false };
 
     HashMap<TrackIdentifier, TrackType> m_trackTypes;
     HashMap<TrackIdentifier, RetainPtr<AVSampleBufferAudioRenderer>> m_audioRenderers;
@@ -332,9 +343,7 @@ private:
     VideoRendererPreferences m_preferences;
     bool m_hasProtectedVideoContent { false };
     struct RendererConfiguration {
-        bool canUseDecompressionSession { false };
-        bool isProtected { false };
-        bool hasVideoTrack { false };
+        bool isRenderingCompressedVideo { false };
         bool operator==(const RendererConfiguration&) const = default;
     };
     RendererConfiguration m_previousRendererConfiguration;

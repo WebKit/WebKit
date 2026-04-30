@@ -129,10 +129,17 @@ static double get_time_in_milliseconds(void)
 {
 #if PAS_OS(WINDOWS)
     LARGE_INTEGER frequency, counter;
-    QueryPerformanceFrequency(&frequency);
-    QueryPerformanceCounter(&counter);
+    if (!QueryPerformanceFrequency(&frequency))
+        return 0.;
 
-    return (counter.QuadPart * 1000.) / frequency.QuadPart;
+    if (!QueryPerformanceCounter(&counter))
+        return 0.;
+
+    uint64_t freq = (uint64_t)frequency.QuadPart;
+    uint64_t ticks = (uint64_t)counter.QuadPart;
+    uint64_t sec_ms = (ticks / freq) * 1000ULL;
+    uint64_t frac_ms = ((ticks % freq) * 1000ULL) / freq;
+    return (double)(sec_ms + frac_ms);
 #else
     struct timeval current_time;
 

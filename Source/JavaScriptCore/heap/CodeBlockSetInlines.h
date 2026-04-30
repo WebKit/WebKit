@@ -30,6 +30,7 @@
 
 #include "CodeBlock.h"
 #include "CodeBlockSet.h"
+#include "HeapCellInlines.h"
 
 namespace JSC {
 

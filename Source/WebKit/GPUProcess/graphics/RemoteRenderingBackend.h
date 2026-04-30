@@ -58,7 +58,6 @@
 #include <WebCore/PixelFormat.h>
 #include <WebCore/ProcessIdentity.h>
 #include <WebCore/RenderingResourceIdentifier.h>
-#include <WebCore/Timer.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -136,10 +135,6 @@ public:
     RefPtr<WebCore::ImageBuffer> allocateImageBuffer(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::ImageBufferFormat, WebCore::ImageBufferCreationContext);
 
     RemoteRenderingBackendIdentifier identifier() { return m_renderingBackendIdentifier; }
-
-    RefPtr<WebCore::ImageBuffer> createImageBufferForSelfCopy(WebCore::ImageBuffer*);
-    void returnImageBufferForSelfCopy(RefPtr<WebCore::ImageBuffer>&&);
-
 private:
     friend class RemoteImageBufferSet;
     RemoteRenderingBackend(GPUConnectionToWebProcess&, RemoteRenderingBackendIdentifier, Ref<IPC::StreamServerConnection>&&);
@@ -208,8 +203,6 @@ private:
 
     void getImageBufferResourceLimitsForTesting(CompletionHandler<void(WebCore::ImageBufferResourceLimits)>&&);
 
-    void cleanupImageBufferForSelfCopy();
-
     const Ref<IPC::StreamConnectionWorkQueue> m_workQueue;
     const Ref<IPC::StreamServerConnection> m_streamConnection;
     const Ref<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
@@ -218,9 +211,6 @@ private:
     WebCore::ProcessIdentity m_resourceOwner;
     RemoteRenderingBackendIdentifier m_renderingBackendIdentifier;
     RefPtr<WebCore::SharedMemory> m_getPixelBufferSharedMemory;
-
-    RefPtr<WebCore::ImageBuffer> m_imageBufferForSelfCopy  WTF_GUARDED_BY_CAPABILITY(workQueue());
-    std::unique_ptr<WebCore::Timer> m_imageBufferForSelfCopyTimer  WTF_GUARDED_BY_CAPABILITY(workQueue());
 
     HashMap<WebCore::RenderingResourceIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteImageBuffer>> m_remoteImageBuffers WTF_GUARDED_BY_CAPABILITY(workQueue());
 

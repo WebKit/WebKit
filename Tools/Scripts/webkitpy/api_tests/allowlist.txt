@@ -1,9 +1,18 @@
-# API Test Suite Allowlist
-# 
-# This file contains test suites that are allowed to run in regular shards.
-# Test suites NOT listed here will be placed in the system shard.
-# 
-# Format: One suite name per line (BINARY.SUITE format, where SUITE can contain slashes)
+# API Test Allowlist
+#
+# Tests listed here are allowed to run in parallel (non-system shard).
+# Tests NOT listed here will be placed in the system shard and run sequentially.
+#
+# Format: Both suite-level and test-level entries are supported:
+#   - BINARY.SUITE - allowlists all tests in the suite
+#   - BINARY.SUITE.TESTCASE - allowlists a specific test
+#
+# A test is allowlisted if either:
+#   1. Its full name (BINARY.SUITE.TESTCASE) is in this list, OR
+#   2. Its suite prefix (BINARY.SUITE) is in this list
+#
+# SUITE can contain slashes for parametrized tests (e.g., WTF_Int128IntegerConversionTest/0)
+#
 TestIPC.ArgumentCoderTest/ArgumentCoderDecodingMoveCounterTest/Encoder
 TestIPC.ArgumentCoderTest/ArgumentCoderDecodingMoveCounterTest/StreamConnectionEncoder
 TestIPC.ArgumentCoderTest/ArgumentCoderEncodingCounterTest
@@ -140,6 +149,8 @@ TestWTF.WTF_IteratorRange
 TestWTF.WTF_LazyRef
 TestWTF.WTF_LazyUniqueRef
 TestWTF.WTF_ListHashSet
+TestWTF.WTF_Lock.Basic
+TestWTF.WTF_Lock.ContendedShortSection
 TestWTF.WTF_Logger
 TestWTF.WTF_Markable
 TestWTF.WTF_NakedPtr
@@ -321,7 +332,6 @@ TestWebKitAPI.ImageBufferTests/AnyScaleTest
 TestWebKitAPI.ImageBufferTests/AnyTwoImageBufferOptionsTest
 TestWebKitAPI.ImageRotationSessionVT
 TestWebKitAPI.ImmediateActionTests
-TestWebKitAPI.InAppBrowserPrivacy
 TestWebKitAPI.InjectedBundleHitTest
 TestWebKitAPI.InsertTextAlternatives
 TestWebKitAPI.IntPoint
@@ -353,7 +363,6 @@ TestWebKitAPI.NSResponderTests
 TestWebKitAPI.NSTextPlaceholder
 TestWebKitAPI.Navigation
 TestWebKitAPI.Notification
-TestWebKitAPI.NowPlayingControlsTests
 TestWebKitAPI.NowPlayingInfoArtwork
 TestWebKitAPI.OverflowScrollViewTests
 TestWebKitAPI.PAL
@@ -421,7 +430,6 @@ TestWebKitAPI.UseSystemAppearance
 TestWebKitAPI.UserContentWorld
 TestWebKitAPI.UserInterfaceIdiomUpdate
 TestWebKitAPI.VerifyUserGesture
-TestWebKitAPI.VideoPresentationMode
 TestWebKitAPI.VideoQualityDisplayCompositing
 TestWebKitAPI.Viewport
 TestWebKitAPI.VisualViewport
@@ -453,7 +461,6 @@ TestWebKitAPI.WKWebExtensionTab
 TestWebKitAPI.WKWebExtensionWindow
 TestWebKitAPI.WKWebViewAutoFillTests
 TestWebKitAPI.WKWebViewCandidateTests
-TestWebKitAPI.WKWebViewCloseAllMediaPresentationsInternal
 TestWebKitAPI.WKWebViewConfiguration
 TestWebKitAPI.WKWebViewDisableSelection
 TestWebKitAPI.WKWebViewFindString

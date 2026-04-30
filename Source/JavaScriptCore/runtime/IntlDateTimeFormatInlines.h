@@ -29,6 +29,7 @@
 #include "IntlDateTimeFormat.h"
 #include "IntlObjectInlines.h"
 #include "JSGlobalObject.h"
+#include "JSObjectInlines.h"
 
 namespace JSC  {
 

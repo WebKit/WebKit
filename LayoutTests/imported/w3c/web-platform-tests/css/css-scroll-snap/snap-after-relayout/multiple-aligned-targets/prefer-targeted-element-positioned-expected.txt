@@ -1,0 +1,7 @@
+
+FAIL prefer-targeted-element-positioned assert_equals: scroller followed target1 in y axis after layout change expected 500 but got 400
+FAIL prefer-targeted-element-positioned 1 assert_equals: scroller followed target2 in y axis after layout change expected 500 but got 400
+FAIL prefer-targeted-element-positioned 2 assert_equals: scroller followed target3 in y axis after layout change expected 500 but got 400
+FAIL prefer-targeted-element-positioned 3 assert_equals: scroller followed target4 in y axis after layout change expected 500 but got 400
+FAIL prefer-targeted-element-positioned 4 assert_equals: scroller followed target5 in y axis after layout change expected 500 but got 400
+

@@ -1,5 +1,7 @@
 add_definitions(-DBPLATFORM_MAC=1)
 
+list(APPEND bmalloc_PRIVATE_DEFINITIONS PAS_BMALLOC_HIDDEN=1)
+
 list(APPEND bmalloc_PUBLIC_HEADERS
     Configurations/module.modulemap
 )

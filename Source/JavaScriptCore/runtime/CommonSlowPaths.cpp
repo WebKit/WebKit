@@ -44,9 +44,13 @@
 #include "JSCellButterfly.h"
 #include "JSIteratorHelper.h"
 #include "JSLexicalEnvironment.h"
+#include "JSMap.h"
+#include "JSMapIterator.h"
 #include "JSPromise.h"
 #include "JSPromiseConstructor.h"
 #include "JSPropertyNameEnumerator.h"
+#include "JSSet.h"
+#include "JSSetIterator.h"
 #include "JSWithScope.h"
 #include "LLIntCommon.h"
 #include "LLIntExceptions.h"
@@ -809,6 +813,24 @@ ALWAYS_INLINE UGPRPair iteratorOpenTryFastImpl(VM& vm, JSGlobalObject* globalObj
         return encodeResult(pc, reinterpret_cast<void*>(static_cast<uintptr_t>(IterationMode::FastArray)));
     }
 
+    if (iterationMode == IterationMode::FastMap) {
+        metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastMap;
+        GET(bytecode.m_next) = JSValue();
+        auto* map = uncheckedDowncast<JSMap>(iterable);
+        iterator = JSMapIterator::create(vm, globalObject->mapIteratorStructure(), map, IterationKind::Entries);
+        PROFILE_VALUE_IN(iterator.jsValue(), m_iteratorValueProfile);
+        return encodeResult(pc, reinterpret_cast<void*>(static_cast<uintptr_t>(IterationMode::FastMap)));
+    }
+
+    if (iterationMode == IterationMode::FastSet) {
+        metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastSet;
+        GET(bytecode.m_next) = JSValue();
+        auto* set = uncheckedDowncast<JSSet>(iterable);
+        iterator = JSSetIterator::create(vm, globalObject->setIteratorStructure(), set, IterationKind::Values);
+        PROFILE_VALUE_IN(iterator.jsValue(), m_iteratorValueProfile);
+        return encodeResult(pc, reinterpret_cast<void*>(static_cast<uintptr_t>(IterationMode::FastSet)));
+    }
+
     auto validationResult = validateIterable(vm, iterable, symbolIterator);
     if (validationResult != IterableValidationResult::Valid) [[unlikely]] {
         throwTypeError(globalObject, throwScope, getIteratorErrorMessage(validationResult, iterable));
@@ -875,6 +897,35 @@ ALWAYS_INLINE UGPRPair iteratorNextTryFastImpl(VM& vm, JSGlobalObject* globalObj
             return encodeResult(pc, reinterpret_cast<void*>(IterationMode::FastArray));
         }
     }
+
+    if (auto mapIterator = dynamicDowncast<JSMapIterator>(iterator)) {
+        metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastMap;
+        auto result = mapIterator->nextWithAdvance(vm);
+        bool done = result.key.isEmpty();
+        GET(bytecode.m_done) = jsBoolean(done);
+        if (!done) {
+            JSValue value = constructArrayPair(globalObject, result.key, result.value);
+            CHECK_EXCEPTION();
+            PROFILE_VALUE_IN(value, m_valueValueProfile);
+            GET(bytecode.m_value) = value;
+        } else
+            GET(bytecode.m_value) = JSValue();
+        return encodeResult(pc, reinterpret_cast<void*>(IterationMode::FastMap));
+    }
+
+    if (auto setIterator = dynamicDowncast<JSSetIterator>(iterator)) {
+        metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastSet;
+        JSValue nextKey = setIterator->nextWithAdvance(vm);
+        bool done = nextKey.isEmpty();
+        GET(bytecode.m_done) = jsBoolean(done);
+        if (!done) {
+            PROFILE_VALUE_IN(nextKey, m_valueValueProfile);
+            GET(bytecode.m_value) = nextKey;
+        } else
+            GET(bytecode.m_value) = JSValue();
+        return encodeResult(pc, reinterpret_cast<void*>(IterationMode::FastSet));
+    }
+
     RELEASE_ASSERT_NOT_REACHED();
 }
 

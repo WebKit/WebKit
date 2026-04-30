@@ -8694,7 +8694,7 @@
                 "coordinated-value-list-property-item-type": "Style::SingleTransitionProperty",
                 "computed-style-storage-container": "opaque",
                 "computed-style-storage-path": ["m_nonInheritedData", "miscData", "transitions"],
-                "parser-grammar": "none  | <single-transition-property>#"
+                "parser-grammar": "none | <single-transition-property>#"
             },
             "specification": {
                 "category": "css-transitions",
@@ -8985,9 +8985,7 @@
                 "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::WillChange",
-                "parser-function": "consumeWillChange",
-                "parser-grammar-unused": "auto | [ scroll-position | contents | <custom-ident excluding=will-change,none,all,auto,scroll-position,contents> ]#",
-                "parser-grammar-unused-reason": "Needs support for CSS property names in the value of a property."
+                "parser-grammar": "auto | [ scroll-position | contents | <custom-ident excluding=will-change,none,all,auto,scroll-position,contents> ]#"
             },
             "specification": {
                 "category": "css-will-change",
@@ -13201,7 +13199,9 @@
             "initial": "anchors-visible",
             "values": [
                 "always",
+                "anchor-valid",
                 "anchors-valid",
+                "anchor-visible",
                 "anchors-visible",
                 "no-overflow"
             ],
@@ -13211,7 +13211,7 @@
                 "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
                 "computed-style-storage-kind": "raw",
                 "computed-style-type": "Style::PositionVisibility",
-                "parser-grammar": "always | [ anchors-valid || anchors-visible || no-overflow ]@(no-single-item-opt)"
+                "parser-grammar": "always | [ [ anchors-valid | anchor-valid ] || [ anchors-visible | anchor-visible ] || no-overflow ]@(no-single-item-opt)"
             },
             "specification": {
                 "category": "css-anchor-position",
@@ -15198,6 +15198,23 @@
                 "category": "css-contain",
                 "url": "https://drafts.csswg.org/css-contain-3/#container-name"
             }
+        },
+        "<single-transition-property>": {
+            "grammar": "all | <custom-ident excluding=all,none>",
+            "exported": true,
+            "specification": {
+                "category": "css-transitions",
+                "url": "https://drafts.csswg.org/css-transitions/#single-transition-property"
+            }
+        },
+        "<single-transition-property-or-none>": {
+            "grammar": "none | <single-transition-property>",
+            "exported": true,
+            "specification": {
+                "category": "css-transitions",
+                "url": "https://drafts.csswg.org/css-transitions/#single-transition-property"
+            },
+            "comment": "Used by the `transition` shorthand parser."
         },
         "<counter-name>": {
             "grammar": "<custom-ident excluding=none>",

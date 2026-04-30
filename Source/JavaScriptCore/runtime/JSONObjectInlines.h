@@ -26,6 +26,7 @@
 #pragma once
 
 #include "JSONObject.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

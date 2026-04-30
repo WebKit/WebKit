@@ -273,7 +273,7 @@ public:
         return adoptRef(*new data_type_name(std::forward<Args>(args)...));
     }}
     static Ref<data_type_name> create() {{ return adoptRef(*new data_type_name); }}
-    void update(const {prefix}SyncSerializationData&);
+    WEBCORE_EXPORT void update(const {prefix}SyncSerializationData&);
 """
 
 

@@ -306,6 +306,15 @@ header: <WebCore/PlatformXR.h>
 };
 
 header: <WebCore/PlatformXR.h>
+[Nested] struct PlatformXR::DeviceLayer::EquirectLayerData {
+    float radius;
+    float centralHorizontalAngle;
+    float upperVerticalAngle;
+    float lowerVerticalAngle;
+    PlatformXR::FrameData::Pose poseInLocalSpace;
+};
+
+header: <WebCore/PlatformXR.h>
 [CustomHeader] struct PlatformXR::DeviceLayer {
     PlatformXR::LayerHandle handle;
     bool visible;
@@ -315,6 +324,7 @@ header: <WebCore/PlatformXR.h>
     bool blendTextureSourceAlpha;
     bool forceMonoPresentation;
     std::optional<PlatformXR::DeviceLayer::QuadLayerData> quadLayerData;
+    std::optional<PlatformXR::DeviceLayer::EquirectLayerData> equirectLayerData;
 #endif
 };
 #endif
@@ -323,6 +333,11 @@ header: <WebCore/PlatformXR.h>
 [CustomHeader] struct PlatformXR::LayerInfo {
     PlatformXR::LayerHandle handle;
     size_t numImages;
+};
+
+enum class PlatformXR::CompositionLayerType : uint8_t {
+    Quad,
+    Equirect,
 };
 
 enum class PlatformXR::LayerLayout : uint8_t {

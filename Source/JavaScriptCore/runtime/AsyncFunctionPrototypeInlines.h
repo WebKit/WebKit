@@ -27,6 +27,7 @@
 #pragma once
 
 #include "AsyncFunctionPrototype.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

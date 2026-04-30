@@ -37,7 +37,7 @@ public:
     virtual ~RenderSVGTextPath();
 
     SVGTextPathElement& NODELETE textPathElement() const;
-    SVGGeometryElement* targetElement() const;
+    RefPtr<SVGGeometryElement> targetElement() const;
 
     Path layoutPath() const;
     const SVGLengthValue& NODELETE startOffset() const LIFETIME_BOUND;

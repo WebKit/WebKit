@@ -45,6 +45,8 @@ TimeWithDynamicClockType TimeWithDynamicClockType::now(ClockType type)
         return ContinuousTime::now();
     case ClockType::ContinuousApproximate:
         return ContinuousApproximateTime::now();
+    case ClockType::UnbarrieredMonotonic:
+        return UnbarrieredMonotonicTime::now();
     }
     RELEASE_ASSERT_NOT_REACHED();
     return TimeWithDynamicClockType();
@@ -85,19 +87,27 @@ ContinuousApproximateTime TimeWithDynamicClockType::continuousApproximateTime() 
     return ContinuousApproximateTime::fromRawSeconds(m_value);
 }
 
+UnbarrieredMonotonicTime TimeWithDynamicClockType::unbarrieredMonotonicTime() const
+{
+    RELEASE_ASSERT(m_type == ClockType::UnbarrieredMonotonic);
+    return UnbarrieredMonotonicTime::fromRawSeconds(m_value);
+}
+
 WallTime TimeWithDynamicClockType::approximateWallTime() const
 {
     switch (m_type) {
     case ClockType::Wall:
         return wallTime();
     case ClockType::Monotonic:
-        return monotonicTime().approximateWallTime();
+        return monotonicTime().approximate<WallTime>();
     case ClockType::Approximate:
-        return approximateTime().approximateWallTime();
+        return approximateTime().approximate<WallTime>();
     case ClockType::Continuous:
-        return continuousTime().approximateWallTime();
+        return continuousTime().approximate<WallTime>();
     case ClockType::ContinuousApproximate:
-        return ContinuousApproximateTime().approximateWallTime();
+        return ContinuousApproximateTime().approximate<WallTime>();
+    case ClockType::UnbarrieredMonotonic:
+        return unbarrieredMonotonicTime().approximate<WallTime>();
     }
     RELEASE_ASSERT_NOT_REACHED();
     return WallTime();
@@ -107,15 +117,17 @@ MonotonicTime TimeWithDynamicClockType::approximateMonotonicTime() const
 {
     switch (m_type) {
     case ClockType::Wall:
-        return wallTime().approximateMonotonicTime();
+        return wallTime().approximate<MonotonicTime>();
     case ClockType::Monotonic:
         return monotonicTime();
     case ClockType::Approximate:
-        return approximateTime().approximateMonotonicTime();
+        return approximateTime().approximate<MonotonicTime>();
     case ClockType::Continuous:
-        return continuousTime().approximateMonotonicTime();
+        return continuousTime().approximate<MonotonicTime>();
     case ClockType::ContinuousApproximate:
-        return ContinuousApproximateTime().approximateMonotonicTime();
+        return ContinuousApproximateTime().approximate<MonotonicTime>();
+    case ClockType::UnbarrieredMonotonic:
+        return unbarrieredMonotonicTime().approximate<MonotonicTime>();
     }
     RELEASE_ASSERT_NOT_REACHED();
     return MonotonicTime();

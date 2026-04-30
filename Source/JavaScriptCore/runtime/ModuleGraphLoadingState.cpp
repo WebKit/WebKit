@@ -60,6 +60,7 @@ void ModuleGraphLoadingState::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_promise);
+    visitor.append(thisObject->m_fulfillment);
     Locker locker { thisObject->cellLock() };
     visitor.append(thisObject->m_visited.begin(), thisObject->m_visited.end());
 }

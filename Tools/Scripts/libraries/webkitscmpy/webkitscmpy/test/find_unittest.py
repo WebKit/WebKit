@@ -408,6 +408,43 @@ Identifier: 3@trunk
         self.assertEqual(captured.stdout.getvalue(), '')
         self.assertEqual(captured.stderr.getvalue(), "Can only use the '--scope' argument on a native Git repository\n")
 
+    def test_fallback_path_no_repo(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path), mocks.local.Svn(), MockTime:
+            self.assertEqual(0, program.main(
+                args=('find', '3@main', '-q'),
+                path='/nonexistent',
+                fallback_path=self.path,
+            ))
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            '3@main | 1abe25b443e9 | 4th commit\n',
+        )
+
+    def test_fallback_path_not_used_for_webkit_repo(self):
+        marker = os.path.join(self.path, 'Tools', 'Scripts')
+        os.makedirs(marker, exist_ok=True)
+        with open(os.path.join(marker, 'git-webkit'), 'w'):
+            pass
+        with OutputCapture() as captured, mocks.local.Git(self.path), mocks.local.Svn(), MockTime:
+            self.assertEqual(0, program.main(
+                args=('find', '3@main', '-q'),
+                path=self.path,
+                fallback_path='/other/repo',
+            ))
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            '3@main | 1abe25b443e9 | 4th commit\n',
+        )
+
+    def test_fallback_path_ignored_for_info(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path), mocks.local.Svn(), MockTime:
+            self.assertEqual(1, program.main(
+                args=('info', '-q'),
+                path='/nonexistent',
+                fallback_path=self.path,
+            ))
+        self.assertEqual(captured.stderr.getvalue(), 'No repository provided\n')
+
 
 class TestInfo(testing.TestCase):
     path = '/mock/repository'

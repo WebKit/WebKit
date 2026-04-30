@@ -2,6 +2,8 @@ main frame - willPerformClientRedirectToURL: resources/javascript-url-iframe-cra
 main frame - didFinishDocumentLoadForFrame
 main frame - didFinishLoadForFrame
 main frame - didCancelClientRedirectForFrame
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
 frame "<!--frame1-->" - didFinishDocumentLoadForFrame
 frame "<!--frame1-->" - didHandleOnloadEventsForFrame
 main frame - didFinishDocumentLoadForFrame

@@ -43,6 +43,7 @@
 #include <WebCore/Pin.h>
 #include <WebCore/U2fCommandConstructor.h>
 #include <WebCore/WebAuthenticationUtils.h>
+#include <array>
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/RunLoop.h>
@@ -122,7 +123,7 @@ bool NODELETE isTerminalPinError(const CtapDeviceResponseCode& error)
 // Hash PRF input according to spec: SHA-256("WebAuthn PRF" || 0x00 || input)
 static Vector<uint8_t> hashPRFInput(const BufferSource& input)
 {
-    constexpr uint8_t prefix[] = { 'W', 'e', 'b', 'A', 'u', 't', 'h', 'n', ' ', 'P', 'R', 'F' };
+    constexpr auto prefix = std::to_array<uint8_t>({ 'W', 'e', 'b', 'A', 'u', 't', 'h', 'n', ' ', 'P', 'R', 'F' });
     constexpr uint8_t nullByte = 0x00;
     auto crypto = PAL::Crypto::CryptoDigest::create(PAL::Crypto::CryptoDigest::Algorithm::SHA_256);
     crypto->addBytes(std::span { prefix });

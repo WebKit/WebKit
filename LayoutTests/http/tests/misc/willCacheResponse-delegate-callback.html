@@ -11,7 +11,10 @@
 
         var f = document.createElement('iframe');
         f.src = "resources/willCacheResponse-success.html";
-        f.onload = function() { if (window.testRunner) testRunner.notifyDone(); }
+        f.onload = function() {
+            if (window.testRunner)
+                setTimeout(() => testRunner.notifyDone(), 0);
+        }
         document.body.appendChild(f);    
     }
 </script>

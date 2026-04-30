@@ -26,6 +26,8 @@
 #ifndef InjectedBundleTest_h
 #define InjectedBundleTest_h
 
+#ifdef __cplusplus
+
 #include "InjectedBundleController.h"
 
 namespace TestWebKitAPI {
@@ -67,5 +69,7 @@ protected:
 };
 
 } // namespace TestWebKitAPI
+
+#endif // __cplusplus
 
 #endif // InjectedBundleTest_h

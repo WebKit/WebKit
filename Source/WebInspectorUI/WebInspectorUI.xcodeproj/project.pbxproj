@@ -33,6 +33,7 @@
 		1C60FE3114E5F3CD006CD77D /* DebugRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
 		1C60FE3314E5F3CD006CD77D /* WebInspectorUIFramework.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebInspectorUIFramework.xcconfig; sourceTree = "<group>"; };
 		1C60FF1014E6D992006CD77D /* UserInterface */ = {isa = PBXFileReference; lastKnownFileType = folder; path = UserInterface; sourceTree = "<group>"; };
+		BF0A00022E18A0A10063278A /* UserInterface-input.xcfilelist */ = {isa = PBXFileReference; lastKnownFileType = text.xcfilelist; path = "UserInterface-input.xcfilelist"; sourceTree = "<group>"; };
 		1C60FF1414E6E35D006CD77D /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = en; path = Localizations/en.lproj/localizedStrings.js; sourceTree = "<group>"; };
 		1C60FF1914E73C64006CD77D /* combine-resources.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = "combine-resources.pl"; sourceTree = "<group>"; };
 		1C60FF1A14E73DCA006CD77D /* remove-console-asserts.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = "remove-console-asserts.pl"; sourceTree = "<group>"; };
@@ -84,6 +85,7 @@
 				1C60FF1514E6E39B006CD77D /* Resources */,
 				1C60FFE014E79B0F006CD77D /* Scripts */,
 				1C60FF1014E6D992006CD77D /* UserInterface */,
+				BF0A00022E18A0A10063278A /* UserInterface-input.xcfilelist */,
 				1C78EE1617611340002F6AA5 /* WebInspectorUI.c */,
 			);
 			sourceTree = "<group>";
@@ -171,8 +173,10 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
+			inputFileListPaths = (
+				"$(SRCROOT)/UserInterface-input.xcfilelist",
+			);
 			inputPaths = (
-				"$(SRCROOT)/UserInterface",
 				"$(SRCROOT)/Scripts/copy-user-interface-resources.pl",
 			);
 			name = "Copy User Interface Resources";

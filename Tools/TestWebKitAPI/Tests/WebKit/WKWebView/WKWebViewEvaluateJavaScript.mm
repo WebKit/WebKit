@@ -174,6 +174,52 @@ TEST(WKWebView, EvaluateJavaScriptErrorCases)
     TestWebKitAPI::Util::run(&isDone);
 }
 
+@interface ScriptMessageHandlerThatShouldNotReceiveAnything : NSObject <WKScriptMessageHandler>
+@end
+
+@implementation ScriptMessageHandlerThatShouldNotReceiveAnything
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
+{
+    EXPECT_FALSE(true);
+}
+@end
+
+TEST(WKWebView, MessageHandlerFromIframe)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { "<script>alert('iframe1 loaded')</script>"_s } }
+    });
+    RetainPtr handler1 = adoptNS([ScriptMessageHandlerThatShouldNotReceiveAnything new]);
+    RetainPtr handler2 = adoptNS([TestScriptMessageHandler new]);
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration.get().userContentController addScriptMessageHandler:handler1.get() name:@"testhandler1"];
+    [configuration.get().userContentController addScriptMessageHandler:handler2.get() name:@"testhandler2"];
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr html = [NSString stringWithFormat:@"<script>onload = ()=>{"
+        "var iframe1 = document.createElement('iframe');"
+        "iframe1.src = 'http://127.0.0.1:%d/';"
+        "document.body.appendChild(iframe1);"
+        "window.handler1 = iframe1.contentWindow.window.webkit.messageHandlers.testhandler1;"
+        "var iframe2 = document.createElement('iframe');"
+        "document.body.appendChild(iframe2);"
+        "window.handler2 = iframe2.contentWindow.window.webkit.messageHandlers.testhandler2;"
+        "}</script>", server.port()];
+    [webView loadHTMLString:html.get() baseURL:[NSURL URLWithString:@"http://webkit.org/"]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "iframe1 loaded");
+
+    __block bool done { false };
+    RetainPtr js1 = @"try { await window.handler1.postMessage('should fail') } catch (e) { return 'Sending resolved with exception: ' + e }; return 'sending succeeded'";
+    [webView callAsyncJavaScript:js1.get() arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
+        EXPECT_WK_STREQ(result, "Sending resolved with exception: InvalidAccessError: Failed same-origin check.");
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    RetainPtr js2 = @"window.handler2.postMessage('should succeed')";
+    [webView evaluateJavaScript:js2.get() completionHandler:nil];
+    EXPECT_WK_STREQ([handler2 waitForMessage].body, "should succeed");
+}
+
 TEST(WKWebView, WKContentWorld)
 {
     EXPECT_NULL(WKContentWorld.pageWorld.name);

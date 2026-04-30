@@ -361,6 +361,7 @@ namespace JSC { namespace DFG {
     macro(StringReplaceRegExp, NodeResultJS | NodeMustGenerate) \
     macro(StringReplaceString, NodeResultJS | NodeMustGenerate) \
     macro(StringIndexOf, NodeResultInt32) \
+    macro(StringLastIndexOf, NodeResultInt32) \
     macro(StringStartsWith, NodeResultBoolean) \
     macro(StringEndsWith, NodeResultBoolean) \
     \
@@ -646,6 +647,8 @@ namespace JSC { namespace DFG {
     macro(ResolvePromiseFirstResolving, NodeMustGenerate) \
     macro(RejectPromiseFirstResolving, NodeMustGenerate) \
     macro(FulfillPromiseFirstResolving, NodeMustGenerate) \
+    macro(NewResolvedPromise, NodeMustGenerate | NodeResultJS) \
+    macro(NewRejectedPromise, NodeMustGenerate | NodeResultJS) \
     macro(PromiseResolve, NodeMustGenerate | NodeResultJS) \
     macro(PromiseReject, NodeMustGenerate | NodeResultJS) \
     macro(PromiseThen, NodeMustGenerate | NodeResultJS) \

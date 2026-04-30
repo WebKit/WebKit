@@ -16,8 +16,7 @@ PACKAGES+=(
     # These are dependencies necessary for building the jhbuild.
     libxkbcommon-devel
     libXrandr-devel
-    luajit
-    luajit-devel
+    libunwind-devel
 
     # These are dependencies necessary for building Cog.
     libportal-devel

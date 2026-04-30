@@ -1,0 +1,7 @@
+<!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+    <!-- Test: Only one child and it is composited (edge case).
+         Primary layer paints nothing, foreground layer paints nothing,
+         all painting is done by the single composited child layer. -->
+    <rect style="will-change: transform" x="100" y="100" width="200" height="200" fill="green"/>
+</svg>

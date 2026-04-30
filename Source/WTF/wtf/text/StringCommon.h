@@ -721,6 +721,127 @@ SUPPRESS_NODELETE ALWAYS_INLINE const uint64_t* NODELETE find64(const uint64_t* 
     return nullptr;
 }
 
+SUPPRESS_NODELETE ALWAYS_INLINE const uint8_t* NODELETE reverseFind8(const uint8_t* pointer, uint8_t character, size_t length)
+{
+    constexpr size_t thresholdLength = 16;
+
+    size_t index = length;
+    size_t runway = length > thresholdLength ? length - thresholdLength : 0;
+    while (index > runway) {
+        --index;
+        if (pointer[index] == character)
+            return pointer + index;
+    }
+    if (!runway)
+        return nullptr;
+
+#if OS(LINUX) && defined(__GLIBC__)
+    return static_cast<const uint8_t*>(memrchr(pointer, character, runway));
+#else
+    auto charactersVector = SIMD::splat<uint8_t>(character);
+    auto vectorMatch = [&](auto value) ALWAYS_INLINE_LAMBDA {
+        auto mask = SIMD::equal(value, charactersVector);
+        return SIMD::findLastNonZeroIndex(mask);
+    };
+    auto scalarMatch = [&](auto current) ALWAYS_INLINE_LAMBDA {
+        return current == character;
+    };
+    auto* end = pointer + runway;
+    auto* cursor = SIMD::reverseFind<uint8_t>(std::span { pointer, end }, vectorMatch, scalarMatch);
+    if (cursor == end)
+        return nullptr;
+    return cursor;
+#endif
+}
+
+template<typename UnsignedType>
+SUPPRESS_NODELETE ALWAYS_INLINE const UnsignedType* NODELETE reverseFindImpl(const UnsignedType* pointer, UnsignedType character, size_t length)
+{
+    auto charactersVector = SIMD::splat<UnsignedType>(character);
+    auto vectorMatch = [&](auto value) ALWAYS_INLINE_LAMBDA {
+        auto mask = SIMD::equal(value, charactersVector);
+        return SIMD::findLastNonZeroIndex(mask);
+    };
+
+    auto scalarMatch = [&](auto current) ALWAYS_INLINE_LAMBDA {
+        return current == character;
+    };
+
+    constexpr size_t threshold = 32;
+    auto* end = pointer + length;
+    auto* cursor = SIMD::reverseFind<UnsignedType, threshold>(std::span { pointer, end }, vectorMatch, scalarMatch);
+    if (cursor == end)
+        return nullptr;
+    return cursor;
+}
+
+ALWAYS_INLINE const uint16_t* NODELETE reverseFind16(const uint16_t* pointer, uint16_t character, size_t length)
+{
+    return reverseFindImpl(pointer, character, length);
+}
+
+ALWAYS_INLINE const uint32_t* NODELETE reverseFind32(const uint32_t* pointer, uint32_t character, size_t length)
+{
+    return reverseFindImpl(pointer, character, length);
+}
+
+SUPPRESS_NODELETE ALWAYS_INLINE const uint64_t* NODELETE reverseFind64(const uint64_t* pointer, uint64_t character, size_t length)
+{
+    constexpr size_t scalarThreshold = 4;
+    size_t index = length;
+    size_t runway = length > scalarThreshold ? length - scalarThreshold : 0;
+    while (index > runway) {
+        --index;
+        if (pointer[index] == character)
+            return pointer + index;
+    }
+    if (!runway)
+        return nullptr;
+
+    constexpr size_t stride = SIMD::stride<uint64_t>;
+    constexpr size_t unrollFactor = 4;
+    constexpr size_t unrolledStride = stride * unrollFactor;
+
+    auto charactersVector = SIMD::splat<uint64_t>(character);
+    auto vectorMatch = [&](auto value) ALWAYS_INLINE_LAMBDA {
+        auto mask = SIMD::equal(value, charactersVector);
+        return SIMD::findLastNonZeroIndex(mask);
+    };
+
+    auto* begin = pointer;
+    auto* cursor = pointer + runway;
+
+    while (cursor >= begin + unrolledStride) {
+        cursor -= unrolledStride;
+        auto v0 = SIMD::load(cursor);
+        auto v1 = SIMD::load(cursor + stride);
+        auto v2 = SIMD::load(cursor + stride * 2);
+        auto v3 = SIMD::load(cursor + stride * 3);
+
+        if (auto idx = vectorMatch(v3))
+            return cursor + stride * 3 + idx.value();
+        if (auto idx = vectorMatch(v2))
+            return cursor + stride * 2 + idx.value();
+        if (auto idx = vectorMatch(v1))
+            return cursor + stride + idx.value();
+        if (auto idx = vectorMatch(v0))
+            return cursor + idx.value();
+    }
+
+    while (cursor >= begin + stride) {
+        cursor -= stride;
+        if (auto idx = vectorMatch(SIMD::load(cursor)))
+            return cursor + idx.value();
+    }
+
+    if (cursor > begin) {
+        if (auto idx = vectorMatch(SIMD::load(begin)))
+            return begin + idx.value();
+    }
+
+    return nullptr;
+}
+
 SUPPRESS_NODELETE ALWAYS_INLINE const double* NODELETE findNaN(const double* pointer, size_t length)
 {
     constexpr size_t scalarThreshold = 4;

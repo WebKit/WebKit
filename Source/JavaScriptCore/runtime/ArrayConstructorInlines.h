@@ -21,6 +21,7 @@
 #pragma once
 
 #include "ArrayConstructor.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

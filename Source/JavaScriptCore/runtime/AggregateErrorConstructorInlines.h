@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AggregateErrorConstructor.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

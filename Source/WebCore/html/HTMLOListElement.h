@@ -40,6 +40,7 @@ public:
     // render tree is mutated during layout.
 
     int start() const { return m_start ? m_start.value() : (m_isReversed ? itemCount() : 1); }
+    bool hasExplicitStart() const { return m_start.has_value(); }
     bool isReversed() const { return m_isReversed; }
     void itemCountChanged() { m_itemCount = std::nullopt; }
 

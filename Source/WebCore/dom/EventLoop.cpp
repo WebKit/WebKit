@@ -34,6 +34,10 @@
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#if PLATFORM(WPE)
+#include <wtf/SystemTracing.h>
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(EventLoopTask);
@@ -316,6 +320,10 @@ void EventLoop::scheduleToRunIfNeeded()
 
 void EventLoop::run(JSC::VM& vm, std::optional<ApproximateTime> deadline)
 {
+#if PLATFORM(WPE)
+    WTFBeginSignpost(this, EventLoopRun, "tasks: %zu", m_tasks.size());
+#endif
+
     microtaskQueue().setIsScheduledToRun(false);
     bool didPerformMicrotaskCheckpoint = false;
 
@@ -353,6 +361,10 @@ void EventLoop::run(JSC::VM& vm, std::optional<ApproximateTime> deadline)
     // FIXME: Remove this once everything is integrated with the event loop.
     if (!didPerformMicrotaskCheckpoint)
         performMicrotaskCheckpoint(vm);
+
+#if PLATFORM(WPE)
+    WTFEndSignpost(this, EventLoopRun);
+#endif
 }
 
 void EventLoop::clearAllTasks()

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "JSCJSValueBigInt.h"
+#include "JSCJSValueInlines.h"
 #include "JSWeakMap.h"
 #include "WeakMapImplInlines.h"
 

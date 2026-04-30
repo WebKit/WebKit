@@ -44,6 +44,7 @@
 #include "WorkerSWClientConnection.h"
 #include "WorkerScriptLoaderClient.h"
 #include "WorkerThreadableLoader.h"
+#include <WebCore/HTTPStatusCodes.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
@@ -204,7 +205,7 @@ static ResourceError constructJavaScriptMIMETypeError(const ResourceResponse& re
 
 ResourceError WorkerScriptLoader::validateWorkerResponse(const ResourceResponse& response, Source source, FetchOptions::Destination destination)
 {
-    if (response.httpStatusCode() / 100 != 2 && response.httpStatusCode())
+    if (!response.isSuccessful() && response.httpStatusCode())
         return { errorDomainWebKitInternal, 0, response.url(), "Response is not 2xx"_s, ResourceError::Type::General };
 
     if (!isScriptAllowedByNosniff(response)) {

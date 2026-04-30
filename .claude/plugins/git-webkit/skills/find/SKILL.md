@@ -1,6 +1,6 @@
 ---
 name: find-webkit-commit
-description: Convert between commit hashes and WebKit identifiers using git-webkit. Use whenever a commit hash appears in a tool result that will be shared with the user in the WebKit repository.
+description: Auto-invoke (1) to convert git commit hashes to WebKit identifiers (NNNNNN@main) and (2) to convert identifiers to commit hashes using git-webkit. Use whenever a commit hash appears in a tool result that will be shared with the user in the WebKit repository.
 user-invocable: false
 allowed-tools: Bash(git-webkit find:*), Bash(git webkit find:*), Bash(Tools/Scripts/git-webkit find:*), Bash(git-webkit log:*), Bash(git webkit log:*), Bash(Tools/Scripts/git-webkit log:*), Bash(git-webkit blame:*), Bash(git webkit blame:*), Bash(Tools/Scripts/git-webkit blame:*), Bash(git-webkit show:*), Bash(git webkit show:*), Bash(Tools/Scripts/git-webkit show:*)
 ---
@@ -48,7 +48,7 @@ These commands accept the same arguments as their git counterparts but output id
 
 ## Locating git-webkit
 
-If `git-webkit` is not in PATH, use `Tools/Scripts/git-webkit` instead (relative to the repository root).
+If `git-webkit` is not in PATH, use `/path/to/OpenSource/Tools/Scripts/git-webkit` (only for `find` subcommand), or use `Tools/Scripts/git-webkit` from within the OpenSource checkout instead.
 
 ## Rules
 
@@ -58,3 +58,5 @@ If `git-webkit` is not in PATH, use `Tools/Scripts/git-webkit` instead (relative
 4. When the user provides an identifier, you can use it directly with `git-webkit find` to get the hash if needed for git operations.
 5. Always display identifiers in backticks (e.g., `285301@main`).
 6. Never prefix `git-webkit` or `Tools/Scripts/git-webkit` with `python3`. The script is directly executable.
+7. Always invoke as `git-webkit` (hyphen), never `git webkit` (space). The space form depends on git's subcommand resolution, which requires `git-webkit` to be in PATH.
+8. Never use `git log --grep` to resolve WebKit identifiers to hashes. Cherry-picks and backports reference identifiers in their messages, producing wrong matches.

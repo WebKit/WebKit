@@ -26,6 +26,7 @@
 #pragma once
 
 #include "JSPropertyNameEnumerator.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

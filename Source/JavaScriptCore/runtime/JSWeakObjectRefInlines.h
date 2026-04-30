@@ -26,6 +26,7 @@
 #pragma once
 
 #include "JSWeakObjectRef.h"
+#include "StructureCreateInlines.h"
 
 namespace JSC {
 

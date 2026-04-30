@@ -80,9 +80,11 @@ static std::optional<double> cookieExpiry(NSHTTPCookie *cookie)
     return [expiryDate timeIntervalSince1970] * 1000.0;
 }
 
+// FIXME: This should be API.
+#define NSHTTPCookieSameSiteNone @"none"
 static Cookie::SameSitePolicy coreSameSitePolicy(NSHTTPCookieStringPolicy _Nullable policy)
 {
-    if (!policy)
+    if (!policy || [policy isEqualToString:NSHTTPCookieSameSiteNone])
         return Cookie::SameSitePolicy::None;
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     if ([policy isEqualToString:NSHTTPCookieSameSiteLax])
@@ -98,7 +100,7 @@ static NSHTTPCookieStringPolicy _Nullable NODELETE nsSameSitePolicy(Cookie::Same
 {
     switch (policy) {
     case Cookie::SameSitePolicy::None:
-        return nil;
+        return NSHTTPCookieSameSiteNone;
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     case Cookie::SameSitePolicy::Lax:
         return NSHTTPCookieSameSiteLax;
@@ -107,6 +109,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
 ALLOW_NEW_API_WITHOUT_GUARDS_END
     }
 }
+#undef NSHTTPCookieSameSiteNone
 
 Cookie::Cookie(NSHTTPCookie *cookie)
     : name { cookie.name }

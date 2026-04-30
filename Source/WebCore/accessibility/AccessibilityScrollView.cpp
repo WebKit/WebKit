@@ -26,9 +26,9 @@
 #include "config.h"
 #include "AccessibilityScrollView.h"
 
+#include "AXLocalFrame.h"
 #include "AXLoggerBase.h"
 #include "AXObjectCacheInlines.h"
-#include "AXLocalFrame.h"
 #include "AXRemoteFrame.h"
 #include "AccessibilityObjectInlines.h"
 #include "AccessibilityScrollbar.h"
@@ -36,13 +36,16 @@
 #include "ChromeClient.h"
 #include "ContainerNodeInlines.h"
 #include "DocumentView.h"
+#include "FrameDestructionObserverInlines.h"
 #include "FrameInlines.h"
 #include "HTMLFrameOwnerElement.h"
 #include "LocalFrameInlines.h"
 #include "LocalFrameView.h"
+#include "LocalFrameViewInlines.h"
 #include "Page.h"
 #include "RemoteFrameView.h"
 #include "RenderElement.h"
+#include "RenderObjectInlines.h"
 #include "Widget.h"
 
 namespace WebCore {

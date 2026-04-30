@@ -1,0 +1,4 @@
+
+FAIL Property scroll-initial-target value 'nearest' assert_true: scroll-initial-target doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-initial-target value 'none' assert_true: scroll-initial-target doesn't seem to be supported in the computed style expected true got false
+

@@ -71,7 +71,7 @@ public:
     void captureSessionEndInterruption(RetainPtr<NSNotification>);
     void deviceDisconnected(RetainPtr<NSNotification>);
 
-    AVCaptureSession* session() const { return m_session.get(); }
+    AVCaptureSession* session() const;
 
     void captureSessionIsRunningDidChange(bool);
     void captureSessionRuntimeError(RetainPtr<NSError>);
@@ -128,7 +128,7 @@ private:
 
     IntSize sizeForPreset(NSString*);
 
-    AVCaptureDevice* device() const { return m_device.get(); }
+    AVCaptureDevice* device() const;
 
     IntDegrees sensorOrientationFromVideoOutput();
 
@@ -157,9 +157,8 @@ private:
 
     void rejectPendingPhotoRequest(const String&);
     void resolvePendingPhotoRequest(Vector<uint8_t>&&, const String&);
-    RetainPtr<AVCapturePhotoSettings> photoConfiguration(const PhotoSettings&);
+    RetainPtr<AVCapturePhotoSettings> photoConfiguration(const PhotoSettings&, AVCapturePhotoOutput*);
     IntSize maxPhotoSizeForCurrentPreset(IntSize requestedSize) const;
-    IntSize maxPhotoSizeForActiveFormat(AVCaptureDeviceFormat *, IntSize) const;
     AVCapturePhotoOutput* photoOutput();
 
     RefPtr<VideoFrame> m_buffer;
@@ -169,19 +168,19 @@ private:
     IntDegrees m_deviceOrientation { 0 };
     VideoFrameRotation m_videoFrameRotation { };
 
-    std::optional<RealtimeMediaSourceSettings> m_currentSettings;
-    std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
-    std::optional<PhotoCapabilities> m_photoCapabilities;
+    std::optional<RealtimeMediaSourceSettings> m_currentSettings WTF_GUARDED_BY_CAPABILITY(RunLoop::mainSingleton());
+    std::optional<RealtimeMediaSourceCapabilities> m_capabilities WTF_GUARDED_BY_CAPABILITY(RunLoop::mainSingleton());
+    std::optional<PhotoCapabilities> m_photoCapabilities WTF_GUARDED_BY_CAPABILITY(RunLoop::mainSingleton());
     RetainPtr<WebCoreAVVideoCaptureSourceObserver> m_objcObserver;
-    RetainPtr<AVCaptureSession> m_session;
-    RetainPtr<AVCaptureDevice> m_device;
+    RetainPtr<AVCaptureSession> m_session WTF_GUARDED_BY_CAPABILITY(RunLoop::mainSingleton());
+    RetainPtr<AVCaptureDevice> m_device WTF_GUARDED_BY_CAPABILITY(RunLoop::mainSingleton());
 
     RetainPtr<AVCapturePhotoOutput> m_photoOutput WTF_GUARDED_BY_CAPABILITY(RunLoop::mainSingleton());
     std::unique_ptr<TakePhotoNativePromise::Producer> m_photoProducer WTF_GUARDED_BY_LOCK(m_photoLock);
 
     Lock m_photoLock;
-    std::optional<VideoPreset> m_currentPreset;
-    std::optional<VideoPreset> m_appliedPreset;
+    std::optional<VideoPreset> m_currentPreset WTF_GUARDED_BY_CAPABILITY(RunLoop::mainSingleton());
+    std::optional<VideoPreset> m_appliedPreset WTF_GUARDED_BY_CAPABILITY(RunLoop::mainSingleton());
 
     double m_currentFrameRate { 0 };
     double m_currentZoom { 1 };

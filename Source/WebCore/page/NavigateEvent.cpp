@@ -61,7 +61,7 @@ NavigateEvent::NavigateEvent(JSC::JSGlobalObject& globalObject, const AtomString
     , m_abortController(abortController)
 {
     Locker<JSC::JSLock> locker(commonVM().apiLock());
-    m_info.setWeakly(globalObject, init.info);
+    m_info.set(globalObject, wrapper(), init.info);
 }
 
 NavigateEvent::NavigateEvent(RefPtr<DOMWrapperWorld>&& world, const AtomString& type, Init&& init, EventIsTrusted isTrusted, AbortController* abortController)

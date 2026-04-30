@@ -293,7 +293,7 @@ selectors = [
 ]
 requires = ["PLATFORM_VISION"]
 
- [[staging]]
+[[staging]]
 request = "rdar://170178645"
 selectors = [
     { name = "screenCaptureWithEnvironment:", class = "BEProcessCapability" },

@@ -128,12 +128,14 @@ static bool avoidanceReasonIsRowPlacementRelated(GridAvoidanceReason gridAvoidan
 #endif
 
 #ifndef NDEBUG
+#undef ADD_REASON_AND_RETURN_IF_NEEDED
 #define ADD_REASON_AND_RETURN_IF_NEEDED(reason, reasons, reasonCollectionMode) { \
         reasons.add(reason); \
         if (reasonCollectionMode == ReasonCollectionMode::FirstOnly) \
             return reasons; \
     }
 #else
+#undef ADD_REASON_AND_RETURN_IF_NEEDED
 #define ADD_REASON_AND_RETURN_IF_NEEDED(reason, reasons, reasonCollectionMode) { \
         ASSERT_UNUSED(reasonCollectionMode, reasonCollectionMode == ReasonCollectionMode::FirstOnly); \
         reasons.add(reason); \
@@ -568,6 +570,7 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
 }
 
 #ifndef NDEBUG
+namespace GridCoverageInternal {
 static void printTextForSubtree(const RenderElement& renderer, size_t& charactersLeft, TextStream& stream)
 {
     for (auto& child : childrenOfType<RenderObject>(downcast<RenderElement>(renderer))) {
@@ -582,6 +585,7 @@ static void printTextForSubtree(const RenderElement& renderer, size_t& character
         printTextForSubtree(downcast<RenderElement>(child), charactersLeft, stream);
     }
 }
+} // namespace GridCoverageInternal
 
 static Vector<const RenderGrid*> collectGridsForCurrentPage()
 {
@@ -765,7 +769,7 @@ static void printLegacyGridReasons()
             continue;
         size_t printedLength = 30;
         stream << "\"";
-        printTextForSubtree(*grid, printedLength, stream);
+        GridCoverageInternal::printTextForSubtree(*grid, printedLength, stream);
         stream << "...\"";
         for (; printedLength > 0; --printedLength)
             stream << " ";

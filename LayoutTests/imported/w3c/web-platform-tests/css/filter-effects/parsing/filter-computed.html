@@ -57,7 +57,9 @@ test_computed_value("filter", "drop-shadow(rgb(4, 5, 6) calc(1px) 2px 0px)", "dr
 test_computed_value("filter", "drop-shadow(rgb(4, 5, 6) calc(10px + (sign(2cqw - 10px) * 5px)) 2px 0px)", "drop-shadow(rgb(4, 5, 6) 5px 2px 0px)");
 
 test_computed_value("filter", "grayscale(50%)", "grayscale(0.5)");
+test_computed_value("filter", "grayscale(calc(50%))", "grayscale(0.5)");
 test_computed_value("filter", "grayscale(2)", "grayscale(1)");
+test_computed_value("filter", "grayscale(calc(2))", "grayscale(1)");
 test_computed_value("filter", "grayscale()", "grayscale(1)");
 test_computed_value("filter", "grayscale(calc(3))", "grayscale(1)");
 test_computed_value("filter", "grayscale(calc(300%))", "grayscale(1)");

@@ -11,7 +11,8 @@ from scratch, and restoring the needed files with Git. Example commands:
   rm -rf Source/ThirdParty/skia/.git/
   git checkout -- \
       Source/ThirdParty/skia/README.WebKit \
-      Source/ThirdParty/skia/CMakeLists.txt
+      Source/ThirdParty/skia/CMakeLists.txt \
+      Source/ThirdParty/skia/WebKitSkiaConfig.h
   git add -A Source/ThirdParty/skia/
 
 Then check whether the updated sources require any changes to the CMake

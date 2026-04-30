@@ -59,7 +59,7 @@ static inline NSDictionary *toWebAPI(const WebExtensionAlarmParameters& alarm)
     NSMutableDictionary *result = [NSMutableDictionary dictionaryWithCapacity:3];
 
     result[nameKey] = alarm.name.createNSString().get();
-    result[scheduledTimeKey] = @(floor(alarm.nextScheduledTime.approximateWallTime().secondsSinceEpoch().milliseconds()));
+    result[scheduledTimeKey] = @(floor(alarm.nextScheduledTime.approximate<WallTime>().secondsSinceEpoch().milliseconds()));
 
     if (alarm.repeatInterval)
         result[periodInMinutesKey] = @(alarm.repeatInterval.minutes());

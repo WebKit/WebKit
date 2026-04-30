@@ -5935,7 +5935,7 @@ private:
                 break;
             }
 
-            if (value->offset())
+            if (value->offset() && ptr->type() == Int64)
                 append(Inst(Air::WasmBoundsCheck, value, ptrPlusImm, limit, pointer));
             else
                 append(Inst(Air::WasmBoundsCheck, value, ptrPlusImm, limit));

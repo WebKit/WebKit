@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "ConservativeRoots.h"
 #include "EvacuatedStack.h"
 #include "Exception.h"
 #include "JSCellInlines.h"
@@ -52,12 +53,6 @@ PinballCompletion* PinballCompletion::create(VM& vm, Vector<std::unique_ptr<Evac
 {
     Structure* structure = vm.pinballCompletionStructure.get();
     auto* instance = new (NotNull, allocateCell<PinballCompletion>(vm)) PinballCompletion(vm, structure, WTF::move(slices), calleeSaves, resultPromise);
-    for (auto& slice : instance->m_slices)
-        vm.addEvacuatedStackSlice(slice.get());
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    vm.addEvacuatedCalleeSaves(std::span(instance->m_calleeSaves, NUMBER_OF_CALLEE_SAVES_REGISTERS));
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     instance->finishCreation(vm);
     return instance;
 }
@@ -70,16 +65,6 @@ PinballCompletion::PinballCompletion(VM& vm, Structure* structure, Vector<std::u
 {
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     memcpySpan(std::span(m_calleeSaves), std::span(calleeSaves, NUMBER_OF_CALLEE_SAVES_REGISTERS));
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-}
-
-PinballCompletion::~PinballCompletion()
-{
-    VM& vm = this->vm();
-    for (auto& slice : m_slices)
-        vm.removeEvacuatedStackSlice(slice.get());
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    vm.removeEvacuatedCalleeSaves(std::span(m_calleeSaves, NUMBER_OF_CALLEE_SAVES_REGISTERS));
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
@@ -96,6 +81,19 @@ void PinballCompletion::assimilate(PinballCompletion* other)
     m_slices = WTF::move(other->m_slices);
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
+void PinballCompletion::gatherConservativeRoots(ConservativeRoots& roots)
+{
+    for (auto& slice : m_slices) {
+        std::span<Register> slots = slice->slots();
+        roots.add(slots.data(), slots.data() + slots.size());
+    }
+    roots.add(m_calleeSaves, m_calleeSaves + NUMBER_OF_CALLEE_SAVES_REGISTERS);
+}
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 template<typename Visitor>
 void PinballCompletion::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
@@ -104,8 +102,8 @@ void PinballCompletion::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     Base::visitChildren(thisObject, visitor);
 
     visitor.append(thisObject->m_resultPromise);
-    // Evacuated stack slices are registered with the VM and are added to conservative roots,
-    // so no need to do anything about them here.
+    // Evacuated stack slices and callee saves are conservatively scanned by the "Pbc"
+    // constraint in Heap::addCoreConstraints() when this cell is marked.
 }
 
 DEFINE_VISIT_CHILDREN(PinballCompletion);
@@ -150,46 +148,18 @@ extern "C" void SYSV_ABI pinballHandlerImplantSlice(PinballHandlerContext*, Regi
 extern "C" UCPURegister SYSV_ABI pinballHandlerFulfillFunctionContinue(PinballHandlerContext*);
 extern "C" void SYSV_ABI pinballHandlerFinishReject(PinballHandlerContext*);
 
-static void pinballHandlerInitContext(JSGlobalObject* globalObject, CallFrame* callFrame, PinballHandlerContext* context)
-{
-    VM& vm = globalObject->vm();
-    JSFunctionWithFields* self = uncheckedDowncast<JSFunctionWithFields>(callFrame->jsCallee());
-
-    ASSERT(callFrame->argumentCount() == 1);
-    PinballCompletion* pinball = uncheckedDowncast<PinballCompletion>(self->getField(JSFunctionWithFields::Field::PromiseHandlerPinballCompletion));
-    ASSERT(pinball->hasSlices());
-#if ASSERT_ENABLED
-    context->magic = 0xBA11FEED;
-#endif
-    context->globalObject = globalObject;
-    context->vm = &vm;
-    context->handler = self;
-    new (&context->jspiContext) JSPIContext(JSPIContext::Purpose::Completing, vm, callFrame, pinball->resultPromise());
-    new (&context->slice) std::unique_ptr<EvacuatedStackSlice>(pinball->takeTopSlice()); // context is uninitialized, can't assign
-    context->sliceByteSize = context->slice->size() * sizeof(Register);
-    ASSERT(!(context->sliceByteSize % stackAlignmentBytes())); // asm code assumes alignment is not needed
-    context->evacuatedCalleeSaves = pinball->calleeSaves();
-#if ASSERT_ENABLED
-    zeroSpan(std::span(context->arguments));
-#endif
-}
-
 void pinballHandlerInitContextForFulfill(JSGlobalObject* globalObject, CallFrame* callFrame, PinballHandlerContext* context)
 {
-    pinballHandlerInitContext(globalObject, callFrame, context);
     ASSERT(callFrame->argumentCount() == 1);
+    new (context) PinballHandlerContext(globalObject, callFrame);
     context->arguments[0] = JSValue::encode(callFrame->argument(0));
 }
 
 void pinballHandlerInitContextForReject(JSGlobalObject* globalObject, CallFrame* callFrame, PinballHandlerContext* context)
 {
-#if ASSERT_ENABLED
-    JSFunctionWithFields* self = uncheckedDowncast<JSFunctionWithFields>(callFrame->jsCallee());
-    PinballCompletion* pinball = uncheckedDowncast<PinballCompletion>(self->getField(JSFunctionWithFields::Field::PromiseHandlerPinballCompletion));
-    ASSERT(pinball->slices().size() == 1); // exceptions are only supported with slab slicing, expecting 1 slice
-#endif
-
-    pinballHandlerInitContext(globalObject, callFrame, context);
+    ASSERT(callFrame->argumentCount() == 1);
+    new (context) PinballHandlerContext(globalObject, callFrame);
+    ASSERT(context->pinball->slices().size() == 1); // exceptions are only supported with slab slicing, expecting 1 slice
     JSValue reason = callFrame->argument(0);
 
     context->zombieFrameCallee = globalObject->zombieFrameCallee();
@@ -198,20 +168,14 @@ void pinballHandlerInitContextForReject(JSGlobalObject* globalObject, CallFrame*
 
 void pinballHandlerImplantSlice(PinballHandlerContext* context, Register *base, CallFrame* sentinelFrame, CallerFrameAndPC* returnFrame)
 {
-    ASSERT(context->magic == 0xBA11FEED);
-    VM& vm = context->globalObject->vm();
-    PinballCompletion* pinball = uncheckedDowncast<PinballCompletion>(context->handler->getField(JSFunctionWithFields::Field::PromiseHandlerPinballCompletion));
+    ASSERT(context->magic == PinballHandlerContext::expectedMagic);
 
-    auto* slice = context->slice.get();
+    auto slice = context->pinball->takeTopSlice();
     CallFrame* bottommostImplantedFrame = slice->implant(base, sentinelFrame);
     returnFrame->callerFrame = bottommostImplantedFrame;
-    returnFrame->returnPC = relocateReturnPC(const_cast<void*>(slice->entryPC()), reinterpret_cast<const CallerFrameAndPC*>(slice->entryPCFrame()), returnFrame);
-
-    vm.removeEvacuatedStackSlice(slice); // the slice data is now scanned as part of the stack
-    context->slice.reset();
-    // At this point callee saves have been loaded into the registers and it is safe for the VM to forget them.
-    // We end up doing it multiple times, which is okay. Repeat removals do nothing.
-    vm.removeEvacuatedCalleeSaves(std::span(pinball->calleeSaves(), NUMBER_OF_CALLEE_SAVES_REGISTERS));
+    auto* originalDiscriminator = saltedDiscriminator(reinterpret_cast<const void*>(slice.get()));
+    auto* newDiscriminator = reinterpret_cast<const void*>(returnFrame + 1);
+    returnFrame->returnPC = relocateReturnPC(const_cast<void*>(slice->entryPC()), originalDiscriminator, newDiscriminator);
 }
 
 // After the execution of a slice returns, determine how to proceed.
@@ -221,13 +185,12 @@ void pinballHandlerImplantSlice(PinballHandlerContext* context, Register *base, 
 // false means execution completed, the result promise has been resolved, and the driver should exit.
 UCPURegister pinballHandlerFulfillFunctionContinue(PinballHandlerContext* context)
 {
-    ASSERT(context->magic == 0xBA11FEED);
-    ASSERT(!context->slice);
+    ASSERT(context->magic == PinballHandlerContext::expectedMagic);
 
     VM& vm = *context->vm;
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSPIContext& jspiContext = context->jspiContext;
-    PinballCompletion* pinball = uncheckedDowncast<PinballCompletion>(context->handler->getField(JSFunctionWithFields::Field::PromiseHandlerPinballCompletion));
+    PinballCompletion* pinball = context->pinball;
 
     if (jspiContext.completion) {
         // Computation was suspended again; the remainder of this completion should be added to the new one.
@@ -240,8 +203,7 @@ UCPURegister pinballHandlerFulfillFunctionContinue(PinballHandlerContext* contex
 
     if (pinball->hasSlices()) {
         RELEASE_ASSERT(!scope.exception()); // multi-slice completion is not yet prepared to handle exceptions; we should never encounter one at this point
-        context->slice = pinball->takeTopSlice();
-        context->sliceByteSize = context->slice->size() * sizeof(Register);
+        context->sliceByteSize = pinball->topSlice()->size() * sizeof(Register);
         return 1;
     }
 
@@ -263,13 +225,12 @@ UCPURegister pinballHandlerFulfillFunctionContinue(PinballHandlerContext* contex
 
 void pinballHandlerFinishReject(PinballHandlerContext* context)
 {
-    ASSERT(context->magic == 0xBA11FEED);
-    ASSERT(!context->slice);
+    ASSERT(context->magic == PinballHandlerContext::expectedMagic);
 
     VM& vm = *context->vm;
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
     JSPIContext& jspiContext = context->jspiContext;
-    PinballCompletion* pinball = uncheckedDowncast<PinballCompletion>(context->handler->getField(JSFunctionWithFields::Field::PromiseHandlerPinballCompletion));
+    PinballCompletion* pinball = context->pinball;
     ASSERT(!pinball->hasSlices());
 
     if (jspiContext.completion) {

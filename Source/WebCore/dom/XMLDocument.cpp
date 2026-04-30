@@ -26,6 +26,7 @@
 #include "config.h"
 #include "XMLDocument.h"
 
+#include "NodeInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -38,6 +39,8 @@ Ref<XMLDocument> XMLDocument::createXHTML(LocalFrame* frame, const Settings& set
     document->addToContextsMap();
     return document;
 }
+
+XMLDocument::~XMLDocument() = default;
 
 } // namespace WebCore
 
