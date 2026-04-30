@@ -60,6 +60,7 @@
 #include "RenderBox.h"
 #include "RenderStyle+GettersInlines.h"
 #include "RenderStyle+SettersInlines.h"
+#include "RenderStyleConstants.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "SVGElement.h"
@@ -592,6 +593,15 @@ void Adjuster::adjust(RenderStyle& style) const
             style.setUsedZIndex(CSS::Keyword::Auto { });
     } else
         style.setUsedZIndex(style.specifiedZIndex());
+
+    if (style.userSelect() == UserSelect::Auto) {
+        if (style.pseudoElementType() == PseudoElementType::Before || style.pseudoElementType() == PseudoElementType::After)
+            style.setUserSelect(UserSelect::None);
+        else if (m_parentStyle.userSelect() == UserSelect::All || m_parentStyle.userSelect() == UserSelect::None)
+            style.setUserSelect(m_parentStyle.userSelect());
+        else
+            style.setUserSelect(UserSelect::Text);
+    }
 
     if (RefPtr element = m_element) {
         // Textarea considers overflow visible as auto.

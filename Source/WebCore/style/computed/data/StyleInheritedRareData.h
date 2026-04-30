@@ -179,7 +179,6 @@ public:
     PREFERRED_TYPE(OverflowWrap) unsigned overflowWrap : 2;
     PREFERRED_TYPE(NBSPMode) unsigned nbspMode : 1;
     PREFERRED_TYPE(LineBreak) unsigned lineBreak : 3;
-    PREFERRED_TYPE(UserSelect) unsigned userSelect : 2;
     PREFERRED_TYPE(SpeakAs) unsigned speakAs : 4;
     PREFERRED_TYPE(Hyphens) unsigned hyphens : 2;
     PREFERRED_TYPE(TextCombine) unsigned textCombine : 1;

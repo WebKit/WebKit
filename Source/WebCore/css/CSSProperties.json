@@ -12209,8 +12209,8 @@
         "-webkit-user-select": {
             "animation-type": "not animatable (needs triage)",
             "animation-type-comment": "Current spec for standard 'user-select' animation type is 'discrete'",
-            "inherited": true,
-            "initial": "text",
+            "inherited": false,
+            "initial": "auto",
             "initial-comment": "Current spec for standard 'user-select' initial is 'auto'",
             "values": [
                 "auto",
@@ -12223,7 +12223,7 @@
                 "all"
             ],
             "codegen-properties": {
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "UserSelect",
                 "parser-grammar": "<<values>>"

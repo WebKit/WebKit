@@ -483,6 +483,7 @@ enum class UserDrag : uint8_t {
 // CSS3 User Select Values
 
 enum class UserSelect : uint8_t {
+    Auto,
     None,
     Text,
     All

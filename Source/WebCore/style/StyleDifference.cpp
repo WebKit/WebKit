@@ -773,7 +773,10 @@ public:
             // Don't return true; keep looking for another change.
         }
 
-        if (a.textDecorationStyle != b.textDecorationStyle || a.textDecorationColor != b.textDecorationColor || a.textDecorationThickness != b.textDecorationThickness)
+        if (a.textDecorationStyle != b.textDecorationStyle
+            || a.textDecorationColor != b.textDecorationColor
+            || a.textDecorationThickness != b.textDecorationThickness
+            || a.userSelect != b.userSelect)
             return true;
 
         return false;
@@ -783,7 +786,6 @@ public:
     {
         return a.effectiveInert != b.effectiveInert
             || a.userModify != b.userModify
-            || a.userSelect != b.userSelect
             || a.appleColorFilter != b.appleColorFilter
             || a.imageRendering != b.imageRendering
             || a.accentColor != b.accentColor
