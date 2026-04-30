@@ -25,13 +25,17 @@
 
 #import <UserNotifications/UNUserNotificationCenter.h>
 #import <WebKit/WebKit.h>
+#import <WebKit/_WKAutomationDelegate.h>
+#import <WebKit/_WKAutomationSession.h>
+#import <WebKit/_WKAutomationSessionDelegate.h>
 #import <WebKit/_WKWebsiteDataStoreDelegate.h>
 
+@class AutomationSocketServer;
 @class BrowserWindowController;
 @class ExtensionManagerWindowController;
 @class SettingsController;
 
-@interface BrowserAppDelegate : NSObject <NSApplicationDelegate, _WKWebsiteDataStoreDelegate, UNUserNotificationCenterDelegate> {
+@interface BrowserAppDelegate : NSObject <NSApplicationDelegate, _WKWebsiteDataStoreDelegate, _WKAutomationDelegate, _WKAutomationSessionDelegate, UNUserNotificationCenterDelegate> {
     NSMutableSet *_browserWindowControllers;
     SettingsController *_settingsController;
     ExtensionManagerWindowController *_extensionManagerWindowController;
@@ -46,6 +50,11 @@
     IBOutlet NSMenuItem *_newSwiftUIWindowItem;
 
     bool _openNewWindowAtStartup;
+
+    _WKAutomationSession *_automationSession;
+    BOOL _allowsRemoteAutomation;
+    uint16_t _automationPort;
+    AutomationSocketServer *_automationSocketServer;
 }
 
 - (void)didCreateBrowserWindowController:(BrowserWindowController *)controller;
@@ -60,6 +69,7 @@
 @property (readonly, nonatomic) WKUserContentController *userContentContoller;
 @property (readonly, nonatomic) SettingsController *settingsController;
 @property (readonly, nonatomic) WKPreferences *defaultPreferences;
+@property (readonly, nonatomic) BOOL allowsRemoteAutomation;
 
 @end
 

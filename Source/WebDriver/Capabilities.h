@@ -77,9 +77,11 @@ struct Capabilities {
     std::optional<Proxy> proxy;
     std::optional<String> targetAddr;
     std::optional<int> targetPort;
-#if PLATFORM(GTK) || PLATFORM(WPE)
+#if PLATFORM(GTK) || PLATFORM(WPE) || PLATFORM(COCOA)
     std::optional<String> browserBinary;
     std::optional<Vector<String>> browserArguments;
+#endif
+#if PLATFORM(GTK) || PLATFORM(WPE)
     std::optional<Vector<std::pair<String, String>>> certificates;
 #endif
 #if PLATFORM(GTK)

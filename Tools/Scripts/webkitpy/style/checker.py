@@ -429,7 +429,11 @@ _PATH_RULES_SPECIFIER = [
     ([  # MiniBrowser doesn't use WTF, but only public WebKit API.
      os.path.join('Tools', 'MiniBrowser')],
      ["-runtime/wtf_make_unique",
-      "-runtime/wtf_move"]),
+      "-runtime/wtf_move",
+      "-safercpp/dispatch_get_main_queue",
+      "-safercpp/memcpy",
+      "-safercpp/memset",
+      "-safercpp/memmove"]),
 
     ([  # Ignore formatting and whitespace issues in gmock.
      os.path.join('Source', 'ThirdParty', 'gmock')],

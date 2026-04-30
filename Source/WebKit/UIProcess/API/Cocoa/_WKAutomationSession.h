@@ -53,6 +53,14 @@ WK_CLASS_AVAILABLE(macos(10.12), ios(10.0))
 - (void)markEventAsSynthesizedForAutomation:(NSEvent *)event;
 #endif
 
+// Connect a remote automation driver to this session. The messageHandler block
+// is called whenever the session needs to send a message to the driver (responses
+// and events). This is the Obj-C equivalent of setting a FrontendChannel.
+- (void)_connectWithMessageHandler:(void (^)(NSString *message))messageHandler WK_API_AVAILABLE(macos(WK_MAC_TBA));
+
+// Dispatch an automation protocol message from the remote driver to this session.
+- (void)_dispatchMessageFromRemote:(NSString *)message WK_API_AVAILABLE(macos(WK_MAC_TBA));
+
 @end
 
 NS_ASSUME_NONNULL_END

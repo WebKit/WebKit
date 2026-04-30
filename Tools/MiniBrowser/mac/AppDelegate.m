@@ -25,6 +25,7 @@
 
 #import "AppDelegate.h"
 
+#import "AutomationSocketServer.h"
 #import "ExtensionManagerWindowController.h"
 #import "SettingsController.h"
 #import "WK1BrowserWindowController.h"
@@ -37,6 +38,7 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
+#import <WebKit/_WKAutomationSessionConfiguration.h>
 #import <WebKit/_WKFeature.h>
 #import <WebKit/_WKNotificationData.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
@@ -47,6 +49,8 @@
 static const NSString * const kURLArgumentString = @"--url";
 static const NSString * const kSiteIsolationArgumentString = @"--force-site-isolation";
 static const NSString * const kWebInspectorArgumentString = @"--web-inspector";
+static const NSString * const kAllowRemoteAutomationArgumentString = @"--allow-remote-automation";
+static const NSString * const kAutomationPortArgumentPrefix = @"--automation-port=";
 
 static NSString *sTargetURL = nil;
 
@@ -278,6 +282,18 @@ static NSNumber *_currentBadge;
 
     const NSUInteger webInspectorIndex = [args indexOfObject:kWebInspectorArgumentString];
     sOpenWebInspector = (webInspectorIndex != NSNotFound);
+
+    _allowsRemoteAutomation = [args containsObject:kAllowRemoteAutomationArgumentString];
+    if (_allowsRemoteAutomation)
+        NSLog(@"Remote automation enabled via --allow-remote-automation flag.");
+
+    // Parse --automation-port=<port> for direct TCP socket automation (no webinspectord).
+    for (NSString *arg in args) {
+        if ([arg hasPrefix:(NSString *)kAutomationPortArgumentPrefix]) {
+            _automationPort = (uint16_t)[[arg substringFromIndex:kAutomationPortArgumentPrefix.length] integerValue];
+            NSLog(@"Automation socket server will listen on port %u", _automationPort);
+        }
+    }
 }
 
 - (WKWebViewConfiguration *)defaultConfiguration
@@ -297,7 +313,13 @@ static NSNumber *_currentBadge;
             processConfiguration.usesWebProcessCache = YES;
 
         configuration.processPool = [[WKProcessPool alloc] _initWithConfiguration:processConfiguration];
+
+        if (_allowsRemoteAutomation)
+            [configuration.processPool _setAutomationDelegate:self];
 #pragma clang diagnostic pop
+
+        if (_automationSession)
+            configuration._controlledByAutomation = YES;
 
         NSArray<_WKFeature *> *features = [WKPreferences _features];
         for (_WKFeature *feature in features) {
@@ -494,6 +516,17 @@ static NSNumber *_currentBadge;
 
     [self _updateNewWindowKeyEquivalents];
 
+    // Start the automation socket server early, before any windows are created.
+    // The driver connects to this port to request an automation session, which
+    // then triggers window creation via the _WKAutomationSessionDelegate.
+    if (_allowsRemoteAutomation && _automationPort) {
+        _automationSocketServer = [[AutomationSocketServer alloc] init];
+        _automationSocketServer.delegate = (id<AutomationSocketServerDelegate>)self;
+        NSError *serverError = nil;
+        if (![_automationSocketServer startListeningOnPort:_automationPort error:&serverError])
+            NSLog(@"Failed to start automation socket server: %@", serverError);
+    }
+
     if (!_openNewWindowAtStartup)
         return;
 
@@ -658,6 +691,163 @@ static const char* windowProxyPropertyDescription(WKWindowProxyProperty property
 - (void)websiteDataStore:(WKWebsiteDataStore *)dataStore domain:(NSString *)registrableDomain didOpenDomainViaWindowOpen:(NSString *)openedRegistrableDomain withProperty:(WKWindowProxyProperty)property directly:(BOOL)directly
 {
     NSLog(@"MiniBrowser detected cross-tab WindowProxy access between parent origin %@ and child origin %@ via property %s (directlyAccessed = %d)", registrableDomain, openedRegistrableDomain, windowProxyPropertyDescription(property), directly);
+}
+
+#pragma mark - Remote Automation Support
+
+- (BOOL)allowsRemoteAutomation
+{
+    return _allowsRemoteAutomation;
+}
+
+#pragma mark _WKAutomationDelegate
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
+- (BOOL)_processPoolAllowsRemoteAutomation:(WKProcessPool *)processPool
+{
+    return _allowsRemoteAutomation;
+}
+
+- (void)_processPool:(WKProcessPool *)processPool didRequestAutomationSessionWithIdentifier:(NSString *)identifier configuration:(_WKAutomationSessionConfiguration *)configuration
+{
+    _automationSession = [[_WKAutomationSession alloc] initWithConfiguration:configuration];
+    _automationSession.sessionIdentifier = identifier;
+    _automationSession.delegate = self;
+    [processPool _setAutomationSession:_automationSession];
+
+    NSLog(@"MiniBrowser: Created automation session with identifier: %@", identifier);
+}
+
+- (NSString *)_processPoolBrowserNameForAutomation:(WKProcessPool *)processPool
+{
+    return @"MiniBrowser";
+}
+
+- (NSString *)_processPoolBrowserVersionForAutomation:(WKProcessPool *)processPool
+{
+    return [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+}
+
+#pragma clang diagnostic pop
+
+#pragma mark _WKAutomationSessionDelegate
+
+- (void)_automationSessionDidDisconnectFromRemote:(_WKAutomationSession *)automationSession
+{
+    NSLog(@"MiniBrowser: Automation session disconnected.");
+    _automationSession = nil;
+}
+
+- (void)_automationSession:(_WKAutomationSession *)automationSession requestNewWebViewWithOptions:(_WKAutomationSessionBrowsingContextOptions)options completionHandler:(void(^)(WKWebView * _Nullable))completionHandler
+{
+    WKWebViewConfiguration *configuration = [self.defaultConfiguration copy];
+    configuration._controlledByAutomation = YES;
+
+    WK2BrowserWindowController *controller = [[WK2BrowserWindowController alloc] initWithConfiguration:configuration];
+    [_browserWindowControllers addObject:controller];
+    [[controller window] makeKeyAndOrderFront:self];
+
+    completionHandler(controller.webView);
+}
+
+- (void)_automationSession:(_WKAutomationSession *)automationSession requestSwitchToWebView:(WKWebView *)webView completionHandler:(void(^)(void))completionHandler
+{
+    for (BrowserWindowController *controller in _browserWindowControllers) {
+        if ([controller isKindOfClass:[WK2BrowserWindowController class]] && [(WK2BrowserWindowController *)controller webView] == webView) {
+            [[controller window] makeKeyAndOrderFront:self];
+            break;
+        }
+    }
+    completionHandler();
+}
+
+- (void)_automationSession:(_WKAutomationSession *)automationSession requestHideWindowOfWebView:(WKWebView *)webView completionHandler:(void(^)(void))completionHandler
+{
+    [[webView window] orderOut:self];
+    completionHandler();
+}
+
+- (void)_automationSession:(_WKAutomationSession *)automationSession requestRestoreWindowOfWebView:(WKWebView *)webView completionHandler:(void(^)(void))completionHandler
+{
+    [[webView window] deminiaturize:self];
+    completionHandler();
+}
+
+- (void)_automationSession:(_WKAutomationSession *)automationSession requestMaximizeWindowOfWebView:(WKWebView *)webView completionHandler:(void(^)(void))completionHandler
+{
+    NSWindow *window = [webView window];
+    NSRect screenFrame = window.screen.visibleFrame;
+    [window setFrame:screenFrame display:YES animate:NO];
+    completionHandler();
+}
+
+- (BOOL)_automationSession:(_WKAutomationSession *)automationSession isShowingJavaScriptDialogForWebView:(WKWebView *)webView
+{
+    return NO;
+}
+
+- (void)_automationSession:(_WKAutomationSession *)automationSession dismissCurrentJavaScriptDialogForWebView:(WKWebView *)webView
+{
+}
+
+- (void)_automationSession:(_WKAutomationSession *)automationSession acceptCurrentJavaScriptDialogForWebView:(WKWebView *)webView
+{
+}
+
+- (nullable NSString *)_automationSession:(_WKAutomationSession *)automationSession messageOfCurrentJavaScriptDialogForWebView:(WKWebView *)webView
+{
+    return nil;
+}
+
+- (void)_automationSession:(_WKAutomationSession *)automationSession setUserInput:(NSString *)value forCurrentJavaScriptDialogForWebView:(WKWebView *)webView
+{
+}
+
+- (_WKAutomationSessionBrowsingContextPresentation)_automationSession:(_WKAutomationSession *)automationSession currentPresentationForWebView:(WKWebView *)webView
+{
+    return _WKAutomationSessionBrowsingContextPresentationWindow;
+}
+
+#pragma mark AutomationSocketServerDelegate
+
+- (void)automationSocketServerDidReceiveSessionRequest:(NSString *)sessionIdentifier capabilities:(NSDictionary *)capabilities
+{
+    // Create the automation session the same way the _WKAutomationDelegate callback does,
+    // but triggered by our TCP socket instead of webinspectord XPC.
+    _WKAutomationSessionConfiguration *configuration = [[_WKAutomationSessionConfiguration alloc] init];
+    _automationSession = [[_WKAutomationSession alloc] initWithConfiguration:configuration];
+    _automationSession.sessionIdentifier = sessionIdentifier;
+    _automationSession.delegate = self;
+
+    WKWebViewConfiguration *webViewConfig = [self defaultConfiguration];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    [webViewConfig.processPool _setAutomationSession:_automationSession];
+#pragma clang diagnostic pop
+
+    NSLog(@"MiniBrowser: Created automation session %@ via socket", sessionIdentifier);
+
+    // Connect the socket server's FrontendChannel to the session so responses flow back.
+    [_automationSocketServer connectToAutomationSession:_automationSession];
+}
+
+- (void)automationSocketServerDidReceiveMessageToBackend:(NSString *)message
+{
+    if (!_automationSession) {
+        NSLog(@"MiniBrowser: Received message but no automation session exists");
+        return;
+    }
+
+    // Forward the automation protocol message through the C++ bridge in AutomationSocketServer.
+    [_automationSocketServer dispatchMessageToSession:message];
+}
+
+- (void)automationSocketServerClientDidDisconnect
+{
+    NSLog(@"MiniBrowser: Automation client disconnected");
+    _automationSession = nil;
 }
 
 @end
