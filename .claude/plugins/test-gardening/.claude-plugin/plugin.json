@@ -1,0 +1,5 @@
+{
+  "name": "test-gardening",
+  "description": "Test expectation gardening, baselines, and tolerance adjustments for WebKit layout tests",
+  "version": "1.0.0"
+}
