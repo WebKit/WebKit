@@ -5192,6 +5192,9 @@
     "imported/w3c/webdriver/tests/bidi/script/evaluate/exception_details_await_promise.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}},
         "subtests": {
+            "test_exception_details_await_promise[new Error('SOME_ERROR_TEXT')-expected27]": {
+                "expected": { "all": { "status": ["PASS"] }}
+            },
             "test_exception_details_await_promise[undefined-expected0]": {
                 "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
             },
@@ -5231,7 +5234,15 @@
         }
     },
     "imported/w3c/webdriver/tests/bidi/script/evaluate/exception_details.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
+        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}},
+        "subtests": {
+            "test_exception_details[new Error('SOME_ERROR_TEXT')-expected27]": {
+                "expected": { "all": { "status": ["PASS"] }}
+            },
+            "test_invalid_script": {
+                "expected": { "all": { "status": ["PASS"] }}
+            }
+        }
     },
     "imported/w3c/webdriver/tests/bidi/script/evaluate/internal_id.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
@@ -5252,54 +5263,6 @@
                 "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
             },
             "test_params_realm_unknown": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_result_ownership_invalid_value[_UNKNOWN_]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_max_dom_depth_invalid_type[False]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_max_dom_depth_invalid_type[_UNKNOWN_]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_max_dom_depth_invalid_type[max_dom_depth2]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_max_dom_depth_invalid_type[max_dom_depth3]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_max_dom_depth_invalid_value": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_max_object_depth_invalid_type[False]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_max_object_depth_invalid_type[_UNKNOWN_]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_max_object_depth_invalid_type[max_object_depth2]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_max_object_depth_invalid_type[max_object_depth3]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_max_object_depth_invalid_value": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_include_shadow_tree_invalid_type[False]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_include_shadow_tree_invalid_type[42]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_include_shadow_tree_invalid_type[include_shadow_tree2]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_include_shadow_tree_invalid_type[include_shadow_tree3]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_include_shadow_tree_invalid_value": {
                 "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
             }
         }
