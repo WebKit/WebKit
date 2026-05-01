@@ -671,12 +671,18 @@ void MediaPlayer::loadWithNextMediaEngine(const MediaPlayerFactory* current)
     if (!engine) {
         LOG(Media, "MediaPlayer::loadWithNextMediaEngine - no media engine found for type \"%s\"", contentType().raw().utf8().data());
         m_currentMediaEngine = engine.get();
-        m_private = nullptr;
+        {
+            Locker locker { m_privateLock };
+            m_private = nullptr;
+        }
     } else if (m_currentMediaEngine.get() != engine.get()) {
         m_currentMediaEngine = engine.get();
         m_attemptedEngines.add(*engine);
         RefPtr playerPrivate = engine->createMediaEnginePlayer(*this);
-        m_private = playerPrivate;
+        {
+            Locker locker { m_privateLock };
+            m_private = playerPrivate;
+        }
         if (playerPrivate) {
             protect(client())->mediaPlayerEngineUpdated();
             playerPrivate->setMessageClientForTesting(m_internalMessageClient);
@@ -716,7 +722,10 @@ void MediaPlayer::loadWithNextMediaEngine(const MediaPlayerFactory* current)
 #endif
         playerPrivate->load(m_url, m_loadOptions);
     } else {
-        m_private = NullMediaPlayerPrivate::create(*this);
+        {
+            Locker locker { m_privateLock };
+            m_private = NullMediaPlayerPrivate::create(*this);
+        }
         CheckedPtr currentMediaEngine = m_currentMediaEngine.get();
         if (!m_activeEngineIdentifier
             && installedMediaEngines().size() > 1
@@ -940,7 +949,16 @@ bool MediaPlayer::hasVideo() const
 
 bool MediaPlayer::hasAudio() const
 {
-    return protect(m_private)->hasAudio();
+    // Called from the JSC GC thread via HTMLMediaElement::virtualHasPendingActivity ->
+    // canProduceAudio. Snapshot m_private under m_privateLock so the main thread can
+    // safely reassign or null it out concurrently. All MediaPlayerPrivateInterface
+    // subclasses are ThreadSafeRefCounted, so taking a ref under the lock is safe.
+    RefPtr<MediaPlayerPrivateInterface> playerPrivate;
+    {
+        Locker locker { m_privateLock };
+        playerPrivate = m_private;
+    }
+    return playerPrivate && playerPrivate->hasAudio();
 }
 
 PlatformLayer* MediaPlayer::platformLayer() const
@@ -1508,7 +1526,10 @@ bool MediaPlayer::attemptSniffAndReload()
         protectedThis->m_loadOptions.contentType = sniffed;
         protectedThis->m_attemptedEngines.clear();
         protectedThis->m_currentMediaEngine = nullptr;
-        protectedThis->m_private = nullptr;
+        {
+            Locker locker { protectedThis->m_privateLock };
+            protectedThis->m_private = nullptr;
+        }
         protectedThis->loadWithNextMediaEngine(nullptr);
     });
     return true;

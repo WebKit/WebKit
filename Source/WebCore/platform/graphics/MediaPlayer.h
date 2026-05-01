@@ -51,6 +51,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
+#include <wtf/Lock.h>
 #include <wtf/Logger.h>
 #include <wtf/MediaTime.h>
 #include <wtf/TZoneMalloc.h>
@@ -886,6 +887,12 @@ private:
     bool m_shouldContinueAfterKeyNeeded { false };
 #endif
     std::atomic<bool> m_isGatheringVideoFrameMetadata { false };
+    // Guards writes to m_private (and any read off the main thread). m_private's
+    // ref()/deref() are pure virtual on MediaPlayerPrivateInterface, so callers
+    // off the main thread (notably the JSC GC thread reaching MediaPlayer::hasAudio()
+    // via HTMLMediaElement::virtualHasPendingActivity -> canProduceAudio) must take
+    // this lock to safely snapshot m_private into a local RefPtr before invoking it.
+    mutable Lock m_privateLock;
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
     String m_defaultSpatialTrackingLabel;

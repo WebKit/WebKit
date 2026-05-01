@@ -25,9 +25,9 @@
 #include "DestinationColorSpace.h"
 #include "MediaPlayerPrivate.h"
 #include "PlatformLayer.h"
-#include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -37,12 +37,12 @@ class CoordinatedPlatformLayerBufferProxy;
 class MediaPlayerPrivateHolePunch
     : public MediaPlayerPrivateInterface
     , public CanMakeWeakPtr<MediaPlayerPrivateHolePunch>
-    , public RefCounted<MediaPlayerPrivateHolePunch>
+    , public ThreadSafeRefCounted<MediaPlayerPrivateHolePunch, WTF::DestructionThread::Main>
 {
     WTF_MAKE_TZONE_ALLOCATED(MediaPlayerPrivateHolePunch);
 public:
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
+    void ref() const final { ThreadSafeRefCounted::ref(); }
+    void deref() const final { ThreadSafeRefCounted::deref(); }
 
     MediaPlayerPrivateHolePunch(MediaPlayer&);
     ~MediaPlayerPrivateHolePunch();

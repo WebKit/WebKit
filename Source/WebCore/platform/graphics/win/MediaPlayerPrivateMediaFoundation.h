@@ -41,8 +41,8 @@
 
 #include <wtf/Deque.h>
 #include <wtf/Lock.h>
-#include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/win/Win32Handle.h>
@@ -52,11 +52,11 @@ namespace WebCore {
 class MediaPlayerPrivateMediaFoundation final
     : public MediaPlayerPrivateInterface
     , public CanMakeWeakPtr<MediaPlayerPrivateMediaFoundation>
-    , public RefCounted<MediaPlayerPrivateMediaFoundation> {
+    , public ThreadSafeRefCounted<MediaPlayerPrivateMediaFoundation, WTF::DestructionThread::Main> {
     WTF_MAKE_TZONE_ALLOCATED(MediaPlayerPrivateMediaFoundation);
 public:
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
+    void ref() const final { ThreadSafeRefCounted::ref(); }
+    void deref() const final { ThreadSafeRefCounted::deref(); }
 
     explicit MediaPlayerPrivateMediaFoundation(MediaPlayer&);
     ~MediaPlayerPrivateMediaFoundation();
