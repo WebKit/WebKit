@@ -94,7 +94,8 @@ public:
     template<typename U> RetainPtr(const RetainPtr<U>&);
 
     constexpr RetainPtr(RetainPtr&& o) : m_ptr(o.leakRef()) { }
-    template<typename U, typename = std::enable_if_t<std::is_convertible_v<typename RetainPtr<RetainPtrType<U>>::PtrType, PtrType>>>
+    template<typename U>
+        requires std::convertible_to<typename RetainPtr<RetainPtrType<U>>::PtrType, PtrType>
     constexpr RetainPtr(RetainPtr<U>&& o) : m_ptr(o.leakRef()) { }
     template<typename U, typename = std::enable_if_t<std::is_convertible_v<typename RetainRef<RetainPtrType<U>>::PtrType, PtrType>>>
     constexpr RetainPtr(RetainRef<U>&& o) : m_ptr(o.leakRef()) { }
@@ -162,10 +163,12 @@ private:
 #if __has_feature(objc_arc)
     // ARC will try to retain/release this value, but it looks like a tagged immediate, so retain/release ends up being a no-op -- see _objc_isTaggedPointer() in <objc-internal.h>.
     template<typename U = PtrType>
-    static constexpr std::enable_if_t<IsNSType<U> && std::is_same_v<U, PtrType>, PtrType> hashTableDeletedValue() { return (__bridge PtrType)(void*)-1; }
+        requires (IsNSType<U> && std::same_as<U, PtrType>)
+    static constexpr PtrType hashTableDeletedValue() { return (__bridge PtrType)(void*)-1; }
 
     template<typename U = PtrType>
-    static constexpr std::enable_if_t<!IsNSType<U> && std::is_same_v<U, PtrType>, PtrType> hashTableDeletedValue() { return reinterpret_cast<PtrType>(-1); }
+        requires (!IsNSType<U> && std::same_as<U, PtrType>)
+    static constexpr PtrType hashTableDeletedValue() { return reinterpret_cast<PtrType>(-1); }
 #else
     static constexpr PtrType hashTableDeletedValue() { return reinterpret_cast<PtrType>(-1); }
 #endif
