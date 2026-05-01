@@ -331,6 +331,18 @@ float FontCascade::width(const TextRun& run, SingleThreadWeakHashSet<const Font>
     if (!fallbackFonts)
         fallbackFonts = &localFallbackFonts;
 
+    TextShapingContext shapingContext { *this };
+    if (!glyphOverflow && shapingContext.hasKerningOrLigatures && !shapingContext.hasWordSpacingOrLetterSpacing
+        && !run.rtl() && !run.directionalOverride() && !run.expansion()
+        && run.length() <= ShapedTextCacheDefaults::maxTextLength
+        && !shouldUseComplexTextController(codePathToUse)
+        && isMainThread()) {
+        auto result = layoutText(codePathToUse, run, 0, run.length(), ForTextEmphasis::No);
+        if (cacheEntry)
+            cacheEntry->width = result.width;
+        return result.width;
+    }
+
     float result = width(codePathToUse, run, fallbackFonts, glyphOverflow);
     if (cacheEntry && fallbackFonts->isEmptyIgnoringNullReferences()) {
         cacheEntry->width = result;
