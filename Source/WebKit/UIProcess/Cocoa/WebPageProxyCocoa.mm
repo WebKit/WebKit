@@ -349,7 +349,6 @@ void WebPageProxy::beginSafeBrowsingCheck(const URL& url, API::Navigation& navig
                     protectedThis->setSafeBrowsingWarningShownForNavigation(navigation->navigationID());
                     protectedThis->showBrowsingWarning(WTF::move(safeBrowsingWarning));
                 }
-                protectedThis->completeSafeBrowsingCheckForModals(false);
             } else if (!navigation->safeBrowsingWarning()) {
                 RELEASE_LOG(Loading, "beginSafeBrowsingCheck: no threat, completing navigationID=%" PRIu64, navigation->navigationID().toUInt64());
                 protectedThis->completeSafeBrowsingCheckForModals(true);

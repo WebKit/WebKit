@@ -2184,6 +2184,11 @@ RefPtr<API::Navigation> WebPageProxy::loadRequest(WebCore::ResourceRequest&& req
 
     WEBPAGEPROXY_RELEASE_LOG(Loading, "loadRequest:");
 
+#if HAVE(SAFE_BROWSING)
+    for (auto& handler : std::exchange(m_deferredModalHandlers, { }))
+        handler(false);
+#endif
+
     if (m_isCallingCreateNewPage && request.url().protocolIsJavaScript()) {
         WEBPAGEPROXY_RELEASE_LOG(Loading, "loadRequest: Not loading javascript URL during createNewPage.");
         return nullptr;
@@ -7821,7 +7826,6 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
 #if HAVE(SAFE_BROWSING)
         for (auto& handler : std::exchange(m_deferredModalHandlers, { }))
             handler(false);
-        m_isSafeBrowsingCheckInProgress = false;
 #endif
     }
 
@@ -9355,9 +9359,6 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
         message = WTF::move(message),
         frameInfo,
         protectedPageClient = protect(pageClient())
-#if HAVE(SAFE_BROWSING)
-        , shouldExpectSafeBrowsingResult
-#endif
     ] (PolicyAction policyAction, API::WebsitePolicies* policies, ProcessSwapRequestedByClient processSwapRequestedByClient, std::optional<NavigatingToAppBoundDomain> isAppBoundDomain, WasNavigationIntercepted wasNavigationIntercepted) mutable {
         WEBPAGEPROXY_RELEASE_LOG(Loading, "decidePolicyForNavigationAction: listener called: frameID=%" PRIu64 ", isMainFrame=%d, navigationID=%" PRIu64  ", policyAction=%" PUBLIC_LOG_STRING ", isAppBoundDomain=%d, wasNavigationIntercepted=%d", frame->frameID().toUInt64(), frame->isMainFrame(), navigation ? navigation->navigationID().toUInt64() : 0, toString(policyAction).characters(), !!isAppBoundDomain, wasNavigationIntercepted == WasNavigationIntercepted::Yes);
 
@@ -9411,6 +9412,8 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
 #if HAVE(SAFE_BROWSING)
         bool safeBrowsingWarningAlreadyShown = navigation->hadSafeBrowsingWarning() && !navigation->safeBrowsingWarning();
         if (!safeBrowsingWarningAlreadyShown) {
+            for (auto& handler : std::exchange(m_deferredModalHandlers, { }))
+                handler(false);
             m_safeBrowsingWarningShownForNavigation = std::nullopt;
             protectedPageClient->clearBrowsingWarning();
         }
@@ -9531,10 +9534,6 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
             m_uiClient->didShowSafeBrowsingWarning();
             return;
         }
-#if HAVE(SAFE_BROWSING)
-        if (shouldExpectSafeBrowsingResult == ShouldExpectSafeBrowsingResult::Yes)
-            protectedThis->completeSafeBrowsingCheckForModals(true);
-#endif
         completionHandlerWrapper(policyAction);
 
     }, ShouldExpectSafeBrowsingResult::No, shouldExpectAppBoundDomainResult, shouldWaitForInitialLinkDecorationFilteringData, shouldWaitForSiteHasStorageCheck, shouldWaitForEnhancedSecurityLink);
@@ -9746,14 +9745,6 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
         m_openedMainFrameName = { };
     }
 
-    auto expectSafeBrowsing = ShouldExpectSafeBrowsingResult::No;
-    MonotonicTime requestStart;
-
-    if (navigation && navigation->safeBrowsingCheckOngoing()) {
-        expectSafeBrowsing = ShouldExpectSafeBrowsingResult::Yes;
-        requestStart = navigation->requestStart();
-    }
-
     Ref listener = frame->setUpPolicyListenerProxy([
         this,
         protectedThis = Ref { *this },
@@ -9892,14 +9883,7 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
         }
 #endif
         completionHandlerWrapper(policyAction);
-    }, expectSafeBrowsing , ShouldExpectAppBoundDomainResult::No, ShouldWaitForInitialLinkDecorationFilteringData::No, ShouldWaitForSiteHasStorageCheck::No, ShouldWaitForEnhancedSecurityLinkCheck::No);
-    if (expectSafeBrowsing == ShouldExpectSafeBrowsingResult::Yes && navigation) {
-        Seconds timeout = (MonotonicTime::now() - requestStart) * 1.5 + 0.25_s;
-        RunLoop::mainSingleton().dispatchAfter(timeout, [listener, navigation] mutable {
-            listener->didReceiveSafeBrowsingResults({ });
-            navigation->setSafeBrowsingCheckTimedOut();
-        });
-    }
+    }, ShouldExpectSafeBrowsingResult::No, ShouldExpectAppBoundDomainResult::No, ShouldWaitForInitialLinkDecorationFilteringData::No, ShouldWaitForSiteHasStorageCheck::No, ShouldWaitForEnhancedSecurityLinkCheck::No);
 
     if (m_policyClient)
         m_policyClient->decidePolicyForResponse(*this, *frame, response, request, canShowMIMEType, WTF::move(listener));
