@@ -4493,6 +4493,13 @@ static void performDragWithLegacyFiles(WebPageProxy& page, Box<Vector<String>>&&
     });
 }
 
+// rdar://70315587.
+#if ASSERT_ENABLED
+static constexpr auto filePromiseFulfillmentTimeout = 100_ms;
+#else
+static constexpr auto filePromiseFulfillmentTimeout = 3_s;
+#endif
+
 static bool handleLegacyFilesPromisePasteboard(id<NSDraggingInfo> draggingInfo, Box<WebCore::DragData>&& dragData, WebPageProxy& page, RetainPtr<NSView<WebViewImplDelegate>> view)
 {
     // FIXME: legacyFilesPromisePasteboardTypeSingleton() contains UTIs, not path names. Also, it's not
@@ -4510,28 +4517,62 @@ static bool handleLegacyFilesPromisePasteboard(id<NSDraggingInfo> draggingInfo, 
     auto fileNames = Box<Vector<String>>::create();
     RetainPtr dropDestination = [NSURL fileURLWithPath:dropDestinationPath.get() isDirectory:YES];
     String pasteboardName = draggingInfo.draggingPasteboard.name;
+
+    auto promiseCompleted = Box<bool>::create(false);
+
+    auto performFallbackDragOperation = [promiseCompleted, weakPage = WeakPtr { page }, dragData, pasteboardName = pasteboardName.isolatedCopy()] mutable {
+        if (*promiseCompleted)
+            return;
+        *promiseCompleted = true;
+        RefPtr protectedPage = weakPage.get();
+        if (!protectedPage)
+            return;
+        RELEASE_LOG(DragAndDrop, "File promise was not fulfilled; falling back to default drag operation.");
+        SandboxExtension::Handle sandboxExtensionHandle;
+        Vector<SandboxExtension::Handle> sandboxExtensionForUpload;
+        protectedPage->performDragOperation(*dragData, pasteboardName, WTF::move(sandboxExtensionHandle), WTF::move(sandboxExtensionForUpload));
+    };
+
+    bool foundReceivers = false;
     [draggingInfo enumerateDraggingItemsWithOptions:0 forView:view.get() classes:@[NSFilePromiseReceiver.class] searchOptions:@{ } usingBlock:makeBlockPtr([
         pasteboardName,
         dropDestination,
         fileNames,
         fileCount,
         dragData,
-        protectedPage = protect(page)
+        weakPage = WeakPtr { page },
+        promiseCompleted,
+        performFallbackDragOperation,
+        &foundReceivers
     ](NSDraggingItem *draggingItem, NSInteger idx, BOOL *stop) {
+        foundReceivers = true;
         RetainPtr queue = adoptNS([NSOperationQueue new]);
-        BlockPtr readerBlock = makeBlockPtr([protectedPage, fileNames, fileCount, dragData, pasteboardName = pasteboardName.isolatedCopy()](NSURL *fileURL, NSError *errorOrNil) mutable {
-            if (errorOrNil)
+        BlockPtr readerBlock = makeBlockPtr([weakPage, fileNames, fileCount, dragData, pasteboardName = pasteboardName.isolatedCopy(), promiseCompleted, performFallbackDragOperation](NSURL *fileURL, NSError *errorOrNil) mutable {
+            if (errorOrNil) {
+                RunLoop::mainSingleton().dispatch(WTF::move(performFallbackDragOperation));
                 return;
+            }
 
-            RunLoop::mainSingleton().dispatch([protectedPage, path = protect(fileURL.path), fileNames, fileCount, dragData, pasteboardName] mutable {
+            RunLoop::mainSingleton().dispatch([weakPage, path = protect(fileURL.path), fileNames, fileCount, dragData, pasteboardName, promiseCompleted] mutable {
+                if (*promiseCompleted)
+                    return;
                 fileNames->append(path.get());
                 if (fileNames->size() != fileCount)
                     return;
-                performDragWithLegacyFiles(protectedPage, WTF::move(fileNames), WTF::move(dragData), pasteboardName);
+                *promiseCompleted = true;
+                RefPtr protectedPage = weakPage.get();
+                if (!protectedPage)
+                    return;
+                performDragWithLegacyFiles(*protectedPage, WTF::move(fileNames), WTF::move(dragData), pasteboardName);
             });
         });
         [protect(draggingItem.item) receivePromisedFilesAtDestination:dropDestination.get() options:@{ } operationQueue:queue.get() reader:readerBlock.get()];
     }).get()];
+
+    if (!foundReceivers)
+        return false;
+
+    RunLoop::mainSingleton().dispatchAfter(filePromiseFulfillmentTimeout, WTF::move(performFallbackDragOperation));
 
     return true;
 }

@@ -38,4 +38,13 @@
 
 @end
 
+@interface UnfulfilledTestFilePromiseReceiver : NSFilePromiseReceiver
+
+- (instancetype)initWithTypeIdentifier:(NSString *)promisedTypeIdentifier NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
+
+@property (nonatomic, weak) id draggingSource;
+
+@end
+
 #endif

@@ -89,6 +89,7 @@ static RetainPtr<NSImage> defaultExternalDragImage()
     RetainPtr<NSPasteboard> _externalDragPasteboard;
     RetainPtr<NSImage> _externalDragImage;
     RetainPtr<NSArray<NSURL *>> _externalPromisedFiles;
+    RetainPtr<NSArray<NSString *>> _unfulfilledPromiseTypeIdentifiers;
     RetainPtr<NSMutableArray<_WKAttachment *>> _insertedAttachments;
     RetainPtr<NSMutableArray<_WKAttachment *>> _removedAttachments;
     RetainPtr<NSMutableArray<NSURL *>> _filePromiseDestinationURLs;
@@ -101,6 +102,7 @@ static RetainPtr<NSImage> defaultExternalDragImage()
     double _progress;
     bool _doneWaitingForDraggingSession;
     bool _doneWaitingForDrop;
+    bool _useUnfulfilledPromises;
 }
 
 @synthesize currentDragOperation = _currentDragOperation;
@@ -390,9 +392,21 @@ static RetainPtr<NSImage> defaultExternalDragImage()
     return _externalPromisedFiles.get();
 }
 
+- (BOOL)useUnfulfilledPromises
+{
+    return _useUnfulfilledPromises;
+}
+
+- (NSArray<NSString *> *)unfulfilledPromiseTypeIdentifiers
+{
+    return _unfulfilledPromiseTypeIdentifiers.get();
+}
+
 - (void)clearExternalDragInformation
 {
     _externalPromisedFiles = nil;
+    _unfulfilledPromiseTypeIdentifiers = nil;
+    _useUnfulfilledPromises = NO;
     _externalDragImage = nil;
     _externalDragPasteboard = nil;
 }
@@ -450,6 +464,15 @@ static BOOL getFilePathsAndTypeIdentifiers(NSArray<NSURL *> *fileURLs, NSArray<N
     [_externalDragPasteboard declareTypes:@[NSFilesPromisePboardType, NSFilenamesPboardType] owner:nil];
     [_externalDragPasteboard setPropertyList:types forType:NSFilesPromisePboardType];
     [_externalDragPasteboard setPropertyList:names forType:NSFilenamesPboardType];
+}
+
+- (void)writeUnfulfilledPromisedFiles:(NSArray<NSString *> *)typeIdentifiers
+{
+    _useUnfulfilledPromises = YES;
+    _unfulfilledPromiseTypeIdentifiers = typeIdentifiers;
+    _externalDragPasteboard = [NSPasteboard pasteboardWithUniqueName];
+    [_externalDragPasteboard declareTypes:@[NSFilesPromisePboardType] owner:nil];
+    [_externalDragPasteboard setPropertyList:typeIdentifiers forType:NSFilesPromisePboardType];
 }
 
 - (void)writeFiles:(NSArray<NSURL *> *)fileURLs

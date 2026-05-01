@@ -144,10 +144,13 @@ typedef NSDictionary<NSNumber *, NSValue *> *ProgressToCGPointValueMap;
 @property (nonatomic, strong) NSPasteboard *externalDragPasteboard;
 @property (nonatomic, strong) NSImage *externalDragImage;
 @property (nonatomic, readonly) NSArray<NSURL *> *externalPromisedFiles;
+@property (nonatomic, readonly) BOOL useUnfulfilledPromises;
+@property (nonatomic, readonly) NSArray<NSString *> *unfulfilledPromiseTypeIdentifiers;
 @property (nonatomic, copy) dispatch_block_t willBeginDraggingHandler;
 @property (nonatomic, copy) dispatch_block_t willEndDraggingHandler;
 
 - (void)writePromisedFiles:(NSArray<NSURL *> *)fileURLs;
+- (void)writeUnfulfilledPromisedFiles:(NSArray<NSString *> *)typeIdentifiers;
 - (void)writeFiles:(NSArray<NSURL *> *)fileURLs;
 - (NSArray<NSURL *> *)receivePromisedFiles;
 

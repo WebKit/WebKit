@@ -96,8 +96,9 @@
         return;
     }
 
+    BOOL useUnfulfilledPromises = [_dragAndDropSimulator useUnfulfilledPromises];
     RetainPtr externalPromisedFiles = [_dragAndDropSimulator externalPromisedFiles];
-    if (!externalPromisedFiles)
+    if (!externalPromisedFiles && !useUnfulfilledPromises)
         return;
 
     BOOL stop = NO;
@@ -106,6 +107,26 @@
             continue;
 
         RetainPtr promisedTypeIdentifiers = dynamic_objc_cast<NSArray>([_pasteboard propertyListForType:NSFilesPromisePboardType]);
+
+        if (useUnfulfilledPromises) {
+            NSUInteger itemIndex = 0;
+            for (NSString *typeIdentifier in promisedTypeIdentifiers.get()) {
+                RetainPtr receiver = adoptNS([[UnfulfilledTestFilePromiseReceiver alloc] initWithTypeIdentifier:typeIdentifier]);
+                [receiver setDraggingSource:_source.get().get()];
+
+#if HAVE(DRAGGING_ITEM_INIT_WITH_PASTEBOARD_ITEM)
+                RetainPtr item = adoptNS([[NSDraggingItem alloc] _initWithPasteboardItem:receiver.get() localItem:nil]);
+#else
+                RetainPtr item = adoptNS([[NSDraggingItem alloc] _initWithItem:receiver.get()]);
+#endif
+                block(item.get(), itemIndex, &stop);
+                if (stop)
+                    break;
+                itemIndex++;
+            }
+            return;
+        }
+
         RELEASE_ASSERT([promisedTypeIdentifiers count] == [externalPromisedFiles count]);
 
         for (id object in promisedTypeIdentifiers.get())

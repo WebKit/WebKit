@@ -132,4 +132,46 @@ static NSURL *copyFile(NSURL *sourceURL, NSURL *destinationDirectory, NSError **
 
 @end
 
+@implementation UnfulfilledTestFilePromiseReceiver {
+    RetainPtr<NSString> _promisedTypeIdentifier;
+    WeakObjCPtr<id> _draggingSource;
+}
+
+- (instancetype)initWithTypeIdentifier:(NSString *)promisedTypeIdentifier
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _promisedTypeIdentifier = adoptNS([promisedTypeIdentifier copy]);
+    return self;
+}
+
+- (NSArray<NSString *> *)fileTypes
+{
+    return @[ _promisedTypeIdentifier.get() ];
+}
+
+- (NSArray<NSString *> *)fileNames
+{
+    return @[ ];
+}
+
+- (id)draggingSource
+{
+    return _draggingSource.get().unsafeGet();
+}
+
+- (void)setDraggingSource:(id)draggingSource
+{
+    _draggingSource = draggingSource;
+}
+
+- (void)receivePromisedFilesAtDestination:(NSURL *)destinationDirectory options:(NSDictionary *)options operationQueue:(NSOperationQueue *)queue reader:(void (^)(NSURL *, NSError *))reader
+{
+    // Intentionally never call the reader block, simulating apps like Mail.app
+    // where the file promise is advertised but never fulfilled.
+}
+
+@end
+
 #endif // PLATFORM(MAC)

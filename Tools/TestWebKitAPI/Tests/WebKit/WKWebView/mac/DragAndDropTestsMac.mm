@@ -266,6 +266,31 @@ TEST(DragAndDropTests, DragPromisedImageFileIntoFileUpload)
     EXPECT_WK_STREQ(UTTypeGIF.identifier, filePromiseReceiver.fileTypes.firstObject);
 }
 
+TEST(DragAndDropTests, DropEventFiresWhenFilePromiseIsNeverFulfilled)
+{
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400)]);
+    auto *webView = [simulator webView];
+    [webView synchronouslyLoadTestPageNamed:@"dump-datatransfer-types"];
+
+    [simulator writeUnfulfilledPromisedFiles:@[ @"com.apple.mail.email" ]];
+    [simulator runFrom:CGPointMake(0, 0) to:CGPointMake(375, 375)];
+
+    TestWebKitAPI::Util::waitForConditionWithLogging([&] () -> bool {
+        return [webView stringByEvaluatingJavaScript:@"output.value"].length > 0;
+    }, 2, @"Expected drop event to fire via timeout fallback.");
+
+    NSString *s = [webView stringByEvaluatingJavaScript:@"output.value"];
+    BOOL success = TestWebKitAPI::Util::jsonMatchesExpectedValues(s, @{
+        @"dragover" : @{
+            @"Files": @""
+        },
+        @"drop": @{
+            @"Files": @""
+        }
+    });
+    EXPECT_TRUE(success);
+}
+
 TEST(DragAndDropTests, ReadURLWhenDroppingPromisedWebLoc)
 {
     RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400)]);
