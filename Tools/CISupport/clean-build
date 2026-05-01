@@ -23,6 +23,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import glob
 import optparse
 import os
 import shutil
@@ -52,11 +53,20 @@ def main():
     else:
         platform = options.platform.split('-', 1)[0]
 
-    webkit_build_directory = subprocess.Popen(['perl', os.path.join(os.path.dirname(__file__), "..", "Scripts", "webkit-build-directory"),
-        "--" + platform, "--" + options.configuration, '--top-level'], stdout=subprocess.PIPE).communicate()[0].strip()
+    build_directory_output = subprocess.check_output(['perl', os.path.join(os.path.dirname(__file__), "..", "Scripts", "webkit-build-directory"),
+        "--" + platform, "--" + options.configuration], encoding='utf-8').splitlines()
+    base_product_dir = build_directory_output[0]
+    configuration_product_dir = build_directory_output[1]
+    configuration_suffix = os.path.basename(configuration_product_dir)
 
-    if (os.path.isdir(webkit_build_directory)):
-        shutil.rmtree(webkit_build_directory)
+    # Also remove the matching Xcode intermediates at
+    # <base>/<Project>.build/<Configuration>-<platform>/, which would otherwise
+    # be left behind by removing only the products directory.
+    paths_to_remove = [configuration_product_dir]
+    paths_to_remove += glob.glob(os.path.join(base_product_dir, '*.build', configuration_suffix))
+    for path in paths_to_remove:
+        if os.path.isdir(path):
+            shutil.rmtree(path)
 
     subprocess.Popen(['python3', os.path.join(os.path.dirname(__file__), "..", "Scripts", "clean-webkit")])
 
