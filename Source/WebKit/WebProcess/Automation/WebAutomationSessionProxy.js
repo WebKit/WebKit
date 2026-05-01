@@ -319,7 +319,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
 
     _clearStaleNodes()
     {
-        for (var [node, identifier] of this._nodeToIdMap) {
+        for (let [node, identifier] of this._nodeToIdMap) {
             const rootNode = node.getRootNode({ composed: true });
             if (rootNode !== document) {
                 this._nodeToIdMap.delete(node);
@@ -329,7 +329,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
     }
 
     // BiDi Script utilities for W3C WebDriver BiDi specification.
-    serializeBidiRemoteValue(value, maxObjectDepth = 1, depth = 0, visitedObjects = new Set())
+    serializeBidiRemoteValue(value, maxObjectDepth = null, depth = 0, visitedObjects = new Set())
     {
         // Handle primitives.
         if (value === null) return { type: "null" };
@@ -395,8 +395,8 @@ let AutomationSessionProxy = class AutomationSessionProxy
             if (visitedObjects.has(value))
                 return { type: "object", value: {} };
 
-            // Check depth limit.
-            if (depth >= maxObjectDepth)
+            // Check depth limit (null or negative means no limit per BiDi spec).
+            if (maxObjectDepth !== null && maxObjectDepth >= 0 && depth >= maxObjectDepth)
                 return { type: "object", value: {} };
 
             visitedObjects.add(value);
