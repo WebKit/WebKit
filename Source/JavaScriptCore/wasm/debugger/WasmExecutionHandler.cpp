@@ -187,6 +187,7 @@ ExecutionHandler::ResumeMode ExecutionHandler::stopCode(Locker<Lock>& locker, St
     case StopTheWorldEvent::VMStopped:
     case StopTheWorldEvent::VMCreated:
     case StopTheWorldEvent::VMActivated:
+    case StopTheWorldEvent::WasmAtomicsWaitBlocked:
         RELEASE_ASSERT(m_debuggerState == DebuggerState::InterruptRequested || m_debuggerState == DebuggerState::SwitchRequested);
         m_breakpointManager->clearAllOneTimeBreakpoints();
         notifyDebuggerOfStop();
@@ -421,7 +422,7 @@ void ExecutionHandler::step()
         // resuming all is the right behavior.
         resumeAll = true;
     } else if (state->isStoppedAtBytecode())
-        resumeAll = stepAtBreakpoint(locker, state);
+        resumeAll = stepAtBytecode(locker, state);
     else {
         RELEASE_ASSERT(state->isStoppedAtPrologue());
         setBreakpointAtEntry(state->stopData->instance, state->stopData->callee.get(), Breakpoint::Type::Step);
@@ -442,7 +443,7 @@ void ExecutionHandler::step()
     dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][Step] Code is stopped and debugger replied");
 }
 
-bool ExecutionHandler::stepAtBreakpoint(Locker<Lock>& locker, DebugState* state)
+bool ExecutionHandler::stepAtBytecode(Locker<Lock>& locker, DebugState* state)
 {
     RELEASE_ASSERT(state->isStoppedAtBytecode());
     auto& stopData = *state->stopData;
@@ -527,8 +528,9 @@ bool ExecutionHandler::stepAtBreakpoint(Locker<Lock>& locker, DebugState* state)
         m_debuggerContinue.wait(locker); // Wait for call/throw one-time breakpoint to be registered.
     }
 
-    // If no one-time breakpoints registered, then resume all.
-    return !m_breakpointManager->hasOneTimeBreakpoints();
+    // If no one-time breakpoints registered, or stopped at memory.atomic.wait (must resumeAll
+    // so notifier threads can run), then resume all VMs instead of using RunOne.
+    return !m_breakpointManager->hasOneTimeBreakpoints() || state->isAtomicsWaitStop();
 }
 
 void ExecutionHandler::setStepIntoBreakpointForCall(VM& callerVM, CalleeBits boxedCallee, JSWebAssemblyInstance* calleeInstance)

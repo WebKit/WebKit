@@ -28,10 +28,17 @@
 #include <cstdint>
 #include <utility>
 #include <wtf/IterationStatus.h>
+#include <wtf/Seconds.h>
 
 namespace JSC {
 
 class VM;
+
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
+// How often a VM blocked in a non-JSC operation (memory.atomic.wait, sync XHR, etc.)
+// wakes to check NeedStopTheWorld and participate in STW.
+inline constexpr Seconds kDebuggerSTWCheckInterval { 0.05 };
+#endif
 
 using StopTheWorldStatus = std::pair<IterationStatus, VM*>;
 
@@ -56,6 +63,10 @@ enum class StopTheWorldEvent : uint8_t {
     //
     // The WASM program itself triggered a stop (breakpoint hit, trap, or dynamic module load).
     WasmProgramStop,
+    // A thread blocked in memory.atomic.wait32/64 cooperatively participating in STW.
+    // Unlike WasmProgramStop, clearStop() is skipped on resume so the stop data persists
+    // across multiple STW cycles while the wait is still in progress.
+    WasmAtomicsWaitBlocked,
     // Not a real stop: fired when the mutator reaches a call/throw site during step-into.
     // Signals the debugger thread to check whether a callee entry breakpoint was installed;
     // the mutator does not pause and wait for a debugger command.

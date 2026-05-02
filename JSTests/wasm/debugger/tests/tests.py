@@ -1335,6 +1335,46 @@ class MultiVMSameModuleDifferentFunctionsTestCase:
         )
 
 
+class MemoryAtomicWaitTestCase:
+    test_file = "resources/wasm/memory-atomic-wait.js"
+    extra_jsc_options = ["--useDollarVM=1"]
+
+    def execute(self):
+        self.session.cmd("th list", patterns=["thread #1", "thread #2"])
+
+        self.session.cmd("b 0x4000000000000030")
+        self.session.cmd(
+            "c",
+            patterns=[
+                "Process 1 stopped",
+                "stop reason = breakpoint",
+                "->  0x4000000000000030",
+            ],
+        )
+
+        self.session.cmd("si", patterns=["->  0x4000000000000034: end"])
+
+        self.session.cmd(
+            "c",
+            patterns=[
+                "Process 1 stopped",
+                "stop reason = breakpoint",
+                "->  0x4000000000000030: memory.atomic.wait32",
+            ],
+        )
+
+        self.session.cmd("br del -f", patterns=["All breakpoints removed. (1 breakpoint)"])
+
+
+class MemoryAtomicWaitNoTimeoutTestCase:
+    test_file = "resources/wasm/memory-atomic-wait-no-timeout.js"
+    extra_jsc_options = ["--useDollarVM=1"]
+
+    def execute(self):
+        self.session.cmd("th list", patterns=["thread #1", "thread #2"])
+        self.session.cmd("dis", patterns=["->  0x4000000000000030: memory.atomic.wait32 0"])
+
+
 class DoCatchThrowTestCase:
     test_file = "resources/swift-wasm/do-catch-throw/main.js"
 
@@ -1684,6 +1724,8 @@ ALL_TESTS = [
     SystemCallTestCase,
     MultiVMSameModuleSameFunctionTestCase,
     MultiVMSameModuleDifferentFunctionsTestCase,
+    MemoryAtomicWaitTestCase,
+    MemoryAtomicWaitNoTimeoutTestCase,
     DoCatchThrowTestCase,
     WasmWasmWasmCallStackTestCase,
     JsWasmJsWasmCallStackTestCase,

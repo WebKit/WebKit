@@ -32,6 +32,7 @@
 #include "NotificationResources.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
+#include "WorkerSTWParticipation.h"
 #include "WorkerThread.h"
 #include <wtf/threads/BinarySemaphore.h>
 
@@ -105,7 +106,7 @@ auto WorkerNotificationClient::checkPermission(ScriptExecutionContext*) -> Permi
             permission = client->checkPermission(&context);
         semaphore.signal();
     });
-    semaphore.wait();
+    waitWithSTWParticipation(semaphore, Ref { m_workerScope.get() }->vm());
     return permission;
 }
 

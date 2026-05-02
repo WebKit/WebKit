@@ -1301,7 +1301,7 @@ void IDBTransaction::putOrAddOnServer(IDBClient::TransactionOperation& operation
     // workers currently write blobs to disk synchronously.
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=157958 - Make this asynchronous after refactoring allows it.
     if (!isMainThread()) {
-        auto idbValue = value->writeBlobsToDiskForIndexedDBSynchronously(isEphemeral);
+        auto idbValue = value->writeBlobsToDiskForIndexedDBSynchronously(isEphemeral, globalObject->vm());
         if (idbValue.data().data()) {
             auto indexKeys = generateIndexKeyMapForValueIsolatedCopy(*globalObject, objectStoreInfo, keyData, idbValue);
             m_database->connectionProxy().putOrAdd(operation, WTF::move(keyData), idbValue, indexKeys, overwriteMode);

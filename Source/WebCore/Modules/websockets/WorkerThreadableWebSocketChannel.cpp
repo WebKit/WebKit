@@ -45,6 +45,7 @@
 #include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerRunLoop.h"
+#include "WorkerSTWParticipation.h"
 #include "WorkerThread.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/MainThread.h>
@@ -387,7 +388,7 @@ void WorkerThreadableWebSocketChannel::Bridge::initialize(WorkerGlobalScope& sco
         peer = mainThreadInitialize(context, workerThread.get(), workerContextIdentifier, WTF::move(workerClientWrapper), taskMode, WTF::move(provider));
         semaphore.signal();
     });
-    semaphore.wait();
+    waitWithSTWParticipation(semaphore, scope.vm());
 
     if (peer)
         m_workerClientWrapper->didCreateWebSocketChannel(peer.releaseNonNull());

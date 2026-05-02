@@ -1227,10 +1227,20 @@ WASM_IPINT_EXTERN_CPP_DECL(get_global_64, unsigned index)
 WASM_IPINT_EXTERN_CPP_DECL(memory_atomic_wait32, IPIntStackEntry* args)
 {
 #if CPU(ARM64) || CPU(X86_64)
-    uint8_t memoryIndex = args[0].i32;
-    uint64_t timeout = args[1].i64;
-    uint32_t value = args[2].i32;
-    uint64_t pointerWithOffset = args[3].i64;
+    uint8_t memoryIndex = args[4].i32;
+    uint64_t timeout = args[5].i64;
+    uint32_t value = args[6].i32;
+    uint64_t pointerWithOffset = args[7].i64;
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
+    if (Options::enableWasmDebugger()) [[unlikely]] {
+        auto* callee = std::bit_cast<Wasm::IPIntCallee*>(args[0].i64);
+        auto* callFrame = std::bit_cast<CallFrame*>(args[1].i64);
+        auto* pc = std::bit_cast<uint8_t*>(args[2].i64);
+        auto* mc = std::bit_cast<uint8_t*>(args[3].i64);
+        auto* stack = args + 4; // wasm expression stack: [memoryIndex, timeout, value, pointer+offset]
+        instance->vm().debugState()->setAtomicsWaitStopData(callee, instance, callFrame, pc, mc, stack);
+    }
+#endif
     int32_t result = Wasm::memoryAtomicWait32(instance, pointerWithOffset, value, timeout, memoryIndex);
     WASM_RETURN_TWO(std::bit_cast<void*>(static_cast<intptr_t>(result)), nullptr);
 #else
@@ -1243,10 +1253,20 @@ WASM_IPINT_EXTERN_CPP_DECL(memory_atomic_wait32, IPIntStackEntry* args)
 WASM_IPINT_EXTERN_CPP_DECL(memory_atomic_wait64, IPIntStackEntry* args)
 {
 #if CPU(ARM64) || CPU(X86_64)
-    uint8_t memoryIndex = args[0].i32;
-    uint64_t timeout = args[1].i64;
-    uint64_t value = args[2].i64;
-    uint64_t pointerWithOffset = args[3].i64;
+    uint8_t memoryIndex = args[4].i32;
+    uint64_t timeout = args[5].i64;
+    uint64_t value = args[6].i64;
+    uint64_t pointerWithOffset = args[7].i64;
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
+    if (Options::enableWasmDebugger()) [[unlikely]] {
+        auto* callee = std::bit_cast<Wasm::IPIntCallee*>(args[0].i64);
+        auto* callFrame = std::bit_cast<CallFrame*>(args[1].i64);
+        auto* pc = std::bit_cast<uint8_t*>(args[2].i64);
+        auto* mc = std::bit_cast<uint8_t*>(args[3].i64);
+        auto* stack = args + 4; // wasm expression stack: [memoryIndex, timeout, value, pointer+offset]
+        instance->vm().debugState()->setAtomicsWaitStopData(callee, instance, callFrame, pc, mc, stack);
+    }
+#endif
     int32_t result = Wasm::memoryAtomicWait64(instance, pointerWithOffset, value, timeout, memoryIndex);
     WASM_RETURN_TWO(std::bit_cast<void*>(static_cast<intptr_t>(result)), nullptr);
 #else

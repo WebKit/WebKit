@@ -83,6 +83,15 @@ DebugServer::DebugServer()
 
 bool DebugServer::start()
 {
+    // In production (browser/WebContent) and the jsc shell, start() is called exactly once
+    // from the main context — workers go through a different initialization path and never
+    // reach here. The one exception is the jsc shell with $.agent.start(): those workers
+    // share this singleton but also call start() via jsc.cpp's per-VM path. The main thread
+    // always runs first, so isInService() is already true and no concurrent start() races
+    // are possible.
+    if (isInService())
+        return true;
+
     if (!createAndBindServerSocket())
         return false;
 

@@ -10096,12 +10096,19 @@ ipintAtomicOp(_memory_atomic_wait32, macro()
     addq t1, t0
     storeq t0, (StackValueSize * 3)[sp] # replace pointer with pointer + offset
 
+    # Push callee/cfr/PC/MC for debugger; operands shift to args[4..7].
+    subq (StackValueSize * 4), sp
+    storeq ws0, (StackValueSize * 0)[sp]  # args[0] = IPIntCallee*
+    storeq cfr, (StackValueSize * 1)[sp]  # args[1] = cfr
+    storeq PC,  (StackValueSize * 2)[sp]  # args[2] = PC
+    storeq MC,  (StackValueSize * 3)[sp]  # args[3] = MC
+
     move sp, a1
 
     operationCall(macro() cCall2(_ipint_extern_memory_atomic_wait32) end)
     bilt r0, 0, _ipint_throw_OutOfBoundsMemoryAccess
 
-    addq (StackValueSize * 4), sp
+    addq (StackValueSize * 8), sp
 
     pushInt32(r0)
     loadb IPInt::AtomicMemoryAccessMetadata::instructionLength[MC], t0
@@ -10119,12 +10126,19 @@ ipintAtomicOp(_memory_atomic_wait64, macro()
     addq t1, t0
     storeq t0, (StackValueSize * 3)[sp] # replace pointer with pointer + offset
 
+    # Push callee/cfr/PC/MC for debugger; operands shift to args[4..7].
+    subq (StackValueSize * 4), sp
+    storeq ws0, (StackValueSize * 0)[sp]  # args[0] = IPIntCallee*
+    storeq cfr, (StackValueSize * 1)[sp]  # args[1] = cfr
+    storeq PC,  (StackValueSize * 2)[sp]  # args[2] = PC
+    storeq MC,  (StackValueSize * 3)[sp]  # args[3] = MC
+
     move sp, a1
 
     operationCall(macro() cCall2(_ipint_extern_memory_atomic_wait64) end)
     bilt r0, 0, _ipint_throw_OutOfBoundsMemoryAccess
 
-    addq (StackValueSize * 4), sp
+    addq (StackValueSize * 8), sp
 
     pushInt32(r0)
     loadb IPInt::AtomicMemoryAccessMetadata::instructionLength[MC], t0

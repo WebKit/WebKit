@@ -136,7 +136,7 @@ public:
     Vector<String> blobURLs() const;
     Vector<URLKeepingBlobAlive> blobHandles() const { return crossThreadCopy(m_internals.blobHandles); }
     void writeBlobsToDiskForIndexedDB(bool isEphemeral, CompletionHandler<void(IDBValue&&)>&&);
-    IDBValue writeBlobsToDiskForIndexedDBSynchronously(bool isEphemeral);
+    IDBValue writeBlobsToDiskForIndexedDBSynchronously(bool isEphemeral, JSC::VM&);
     WEBCORE_EXPORT static Ref<SerializedScriptValue> createFromWireBytes(Vector<uint8_t>&&);
     const Vector<uint8_t>& wireBytes() const LIFETIME_BOUND { return m_internals.data; }
 

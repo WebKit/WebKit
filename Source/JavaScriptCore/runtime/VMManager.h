@@ -277,7 +277,7 @@ public:
     void notifyVMDestruction(VM&);
     void notifyVMActivation(VM&);
     void notifyVMDeactivation(VM&);
-    void notifyVMStop(VM&, StopTheWorldEvent);
+    JS_EXPORT_PRIVATE void notifyVMStop(VM&, StopTheWorldEvent);
 
     void handleVMDestructionWhileWorldStopped(VM&);
 

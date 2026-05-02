@@ -31,6 +31,7 @@
 #include "FileSystemSyncAccessHandle.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
+#include "WorkerSTWParticipation.h"
 #include "WorkerThread.h"
 #include <wtf/Scope.h>
 
@@ -283,7 +284,8 @@ void WorkerFileSystemStorageConnection::createSyncAccessHandle(FileSystemHandleI
 
 void WorkerFileSystemStorageConnection::closeSyncAccessHandle(FileSystemHandleIdentifier identifier, FileSystemSyncAccessHandleIdentifier accessHandleIdentifier)
 {
-    if (!m_scope)
+    RefPtr scope = m_scope.get();
+    if (!scope)
         return;
 
     BinarySemaphore semaphore;
@@ -292,7 +294,7 @@ void WorkerFileSystemStorageConnection::closeSyncAccessHandle(FileSystemHandleId
             semaphore.signal();
         });
     });
-    semaphore.wait();
+    waitWithSTWParticipation(semaphore, scope->vm());
 }
 
 void WorkerFileSystemStorageConnection::closeSyncAccessHandle(FileSystemHandleIdentifier, FileSystemSyncAccessHandleIdentifier, EmptyCallback&&)
@@ -463,7 +465,8 @@ void WorkerFileSystemStorageConnection::move(FileSystemHandleIdentifier identifi
 
 std::optional<uint64_t> WorkerFileSystemStorageConnection::requestNewCapacityForSyncAccessHandle(FileSystemHandleIdentifier identifier, FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, uint64_t newCapacity)
 {
-    if (!m_scope)
+    RefPtr scope = m_scope.get();
+    if (!scope)
         return std::nullopt;
 
     if (!m_mainThreadConnection)
@@ -478,7 +481,7 @@ std::optional<uint64_t> WorkerFileSystemStorageConnection::requestNewCapacityFor
         };
         mainThreadConnection->requestNewCapacityForSyncAccessHandle(identifier, accessHandleIdentifier, newCapacity, WTF::move(mainThreadCallback));
     });
-    semaphore.wait();
+    waitWithSTWParticipation(semaphore, scope->vm());
     return grantedCapacity;
 }
 
