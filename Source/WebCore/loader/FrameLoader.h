@@ -166,7 +166,7 @@ public:
     void stopForBackForwardCache();
     void stop();
     void stopLoading(UnloadEventPolicy);
-    void closeURL();
+    WEBCORE_EXPORT void closeURL();
     // FIXME: clear() is trying to do too many things. We should break it down into smaller functions (ideally with fewer raw Boolean parameters).
     void clear(RefPtr<Document>&& newDocument, bool clearWindowProperties = true, bool clearScriptObjects = true, bool clearFrameView = true, Function<void()>&& handleDOMWindowCreation = nullptr);
 

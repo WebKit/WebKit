@@ -2137,8 +2137,12 @@ void WebPage::close()
     m_uiClient = makeUnique<API::InjectedBundle::PageUIClient>();
 
     m_printContext = nullptr;
-    if (RefPtr localFrame = m_mainFrame->coreLocalFrame())
+    bool hadLocalMainFrame = !!m_mainFrame->coreLocalFrame();
+    if (RefPtr localFrame = m_mainFrame->coreLocalFrame()) {
+        WEBPAGE_RELEASE_LOG(Loading, "close: detaching main local frame with %u child frames", localFrame->tree().childCount());
         localFrame->loader().detachFromParent();
+    } else
+        WEBPAGE_RELEASE_LOG(Loading, "close: main frame is not a local frame, skipping detachFromParent");
 
     if (RefPtr provisionalFrame = m_mainFrame->provisionalFrame())
         provisionalFrame->loader().detachFromParent();
@@ -2179,6 +2183,9 @@ void WebPage::close()
     stopObservingNowPlayingMetadata();
 
     String processDisplayName = m_processDisplayName;
+
+    if (hadLocalMainFrame)
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::DidCloseWebPageWithLocalMainFrame(m_identifier), 0);
 
     // The WebPage can be destroyed by this call.
     WebProcess::singleton().removeWebPage(m_identifier);

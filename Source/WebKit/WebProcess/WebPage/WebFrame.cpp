@@ -571,6 +571,9 @@ void WebFrame::removeFromTree()
         return;
     }
 
+    if (RefPtr localFrame = dynamicDowncast<LocalFrame>(coreFrame))
+        localFrame->loader().closeURL();
+
     if (RefPtr client = localFrameLoaderClient())
         client->removeStorageAccess();
 

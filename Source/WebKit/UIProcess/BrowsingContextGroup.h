@@ -87,6 +87,8 @@ public:
     void transitionPageToRemotePage(WebPageProxy&, const WebCore::Site& openerSite);
     void transitionProvisionalPageToRemotePage(ProvisionalPageProxy&, const WebCore::Site& provisionalNavigationFailureSite);
 
+    bool hasOtherPageWithMainFrameInProcess(const WebPageProxy& excludedPage, const WebProcessProxy&) const;
+
     bool NODELETE hasRemotePages(const WebPageProxy&);
 
 private:

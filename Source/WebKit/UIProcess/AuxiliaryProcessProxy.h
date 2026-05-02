@@ -314,6 +314,7 @@ private:
     RefPtr<IPC::Connection> m_connection;
     IPC::MessageReceiverMap m_messageReceiverMap;
     bool m_alwaysRunsAtBackgroundPriority { false };
+    bool m_isInProcessOfShuttingDown { false };
     bool m_didBeginResponsivenessChecks { false };
     bool m_isSuspended { false };
     const WebCore::ProcessIdentifier m_processIdentifier { WebCore::Process::generateIdentifier() };

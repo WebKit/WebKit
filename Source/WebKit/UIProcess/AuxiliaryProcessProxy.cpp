@@ -439,6 +439,10 @@ void AuxiliaryProcessProxy::replyToPendingMessages()
 
 void AuxiliaryProcessProxy::shutDownProcess()
 {
+    if (m_isInProcessOfShuttingDown)
+        return;
+    m_isInProcessOfShuttingDown = true;
+
     auto scopeExit = WTF::makeScopeExit([protectedThis = Ref { *this }] {
         protect(protectedThis->throttler())->didDisconnectFromProcess();
     });

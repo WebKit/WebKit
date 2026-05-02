@@ -324,6 +324,15 @@ void BrowsingContextGroup::transitionProvisionalPageToRemotePage(ProvisionalPage
     set.add(WTF::move(newRemotePage));
 }
 
+bool BrowsingContextGroup::hasOtherPageWithMainFrameInProcess(const WebPageProxy& excludedPage, const WebProcessProxy& process) const
+{
+    for (auto& page : m_pages) {
+        if (&page != &excludedPage && &page.legacyMainFrameProcess() == &process)
+            return true;
+    }
+    return false;
+}
+
 bool BrowsingContextGroup::hasRemotePages(const WebPageProxy& page)
 {
     auto it = m_remotePages.find(page);

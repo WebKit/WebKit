@@ -1942,23 +1942,22 @@ void WebPageProxy::close()
     struct ProcessToClose {
         const Ref<WebProcessProxy> process;
         WebCore::PageIdentifier pageID;
-        WebProcessProxy::ShutdownPreventingScopeCounter::Token shutdownPreventingScope;
     };
     Vector<ProcessToClose> processesToClose;
     forEachWebContentProcess([&](auto& process, auto pageID) {
-        processesToClose.append({
-            process,
-            pageID,
-            process.shutdownPreventingScope()
-        });
+        processesToClose.append({ process, pageID });
     });
     // Delay sending close message to next runloop cycle to avoid white flash.
+    // Don't call maybeShutDown from removeWebPage because the WebProcess needs
+    // time to process the Close message, fire unload events, and initiate keepalive
+    // fetch requests. The WebProcess sends DidCloseWebPageWithLocalMainFrame back
+    // after processing Close, which triggers maybeShutDown.
     RunLoop::currentSingleton().dispatch([processesToClose = WTF::move(processesToClose)] {
-        for (auto [process, pageID, scope] : processesToClose)
+        for (auto& [process, pageID] : processesToClose)
             protect(process)->send(Messages::WebPage::Close(), pageID);
     });
 
-    process->removeWebPage(*this, WebProcessProxy::EndsUsingDataStore::Yes);
+    process->removeWebPage(*this, WebProcessProxy::EndsUsingDataStore::Yes, WebProcessProxy::MaybeShutdownProcess::No);
     removeAllMessageReceivers();
     protect(processPool->supplement<WebNotificationManagerProxy>())->clearNotifications(this);
 

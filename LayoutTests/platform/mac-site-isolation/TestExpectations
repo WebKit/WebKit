@@ -254,8 +254,6 @@ imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.
 imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-failure-fallback.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/reload-crash.html [ Failure ]
 imported/w3c/web-platform-tests/dom/events/scrolling/scroll-cross-origin-iframes.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/api/basic/keepalive.any.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/api/redirect/redirect-keepalive.any.html [ Failure ]
 imported/w3c/web-platform-tests/FileAPI/url/url-in-tags-revoke.window.html [ Failure ]
 imported/w3c/web-platform-tests/fullscreen/rendering/fullscreen-root-block-scroll.html [ Failure ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/pageswap/pageswap-replace-with-cross-origin-redirect.sub.html [ Failure ]

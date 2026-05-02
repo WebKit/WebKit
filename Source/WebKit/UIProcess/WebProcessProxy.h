@@ -271,7 +271,8 @@ public:
     void addExistingWebPage(WebPageProxy&, BeginsUsingDataStore);
 
     enum class EndsUsingDataStore : bool { No, Yes };
-    void removeWebPage(WebPageProxy&, EndsUsingDataStore);
+    enum class MaybeShutdownProcess : bool { No, Yes };
+    void removeWebPage(WebPageProxy&, EndsUsingDataStore, MaybeShutdownProcess = MaybeShutdownProcess::Yes);
 
     void addProvisionalPageProxy(ProvisionalPageProxy&);
     void removeProvisionalPageProxy(ProvisionalPageProxy&);
@@ -679,7 +680,8 @@ private:
 
     bool canBeAddedToWebProcessCache() const;
     void shouldTerminate(CompletionHandler<void(bool)>&&);
-    
+    void didCloseWebPageWithLocalMainFrame(WebCore::PageIdentifier);
+
     void getNetworkProcessConnection(CompletionHandler<void(NetworkProcessConnectionInfo&&)>&&);
 
 #if ENABLE(GPU_PROCESS)
@@ -829,6 +831,7 @@ private:
     Expected<WebCore::Site, SiteState> m_site { std::unexpected<SiteState> { SiteState::NotYetSpecified } };
     std::optional<WebCore::Site> m_sharedProcessMainFrameSite;
     HashSet<WebCore::RegistrableDomain> m_sharedProcessDomains;
+    HashSet<WebCore::RegistrableDomain> m_domainsWithPagesBeingClosed;
     bool m_isInProcessCache { false };
 
     IsolatedProcessType m_isolatedProcessType { IsolatedProcessType::Unspecified };

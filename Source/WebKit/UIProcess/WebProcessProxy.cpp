@@ -282,6 +282,10 @@ Vector<std::pair<WebCore::ProcessIdentifier, WebCore::RegistrableDomain>> WebPro
     Vector<std::pair<WebCore::ProcessIdentifier, WebCore::RegistrableDomain>> result;
     for (Ref page : globalPages())
         result.append(std::make_pair(page->legacyMainFrameProcess().coreProcessIdentifier(), RegistrableDomain(URL(page->currentURL()))));
+    for (Ref process : allProcesses()) {
+        for (auto& domain : process->m_domainsWithPagesBeingClosed)
+            result.append(std::make_pair(process->coreProcessIdentifier(), domain));
+    }
     return result;
 }
 
@@ -912,7 +916,7 @@ void WebProcessProxy::markIsNoLongerInPrewarmedPool()
     updateRuntimeStatistics();
 }
 
-void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore endsUsingDataStore)
+void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore endsUsingDataStore, MaybeShutdownProcess maybeShutdownProcess)
 {
     if (m_isResponsive == NoOrMaybe::No)
         webPage.processDidBecomeResponsive(*this);
@@ -950,7 +954,13 @@ void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore en
     updateWasmDebuggerTarget();
 #endif
 
-    maybeShutDown();
+    if (maybeShutdownProcess == MaybeShutdownProcess::Yes)
+        maybeShutDown();
+    else {
+        auto domain = WebCore::RegistrableDomain(URL(webPage.currentURL()));
+        if (!domain.isEmpty())
+            m_domainsWithPagesBeingClosed.add(WTF::move(domain));
+    }
 }
 
 void WebProcessProxy::addVisitedLinkStoreUser(VisitedLinkStore& visitedLinkStore, WebPageProxyIdentifier pageID)
@@ -1695,6 +1705,12 @@ void WebProcessProxy::shouldTerminate(CompletionHandler<void(bool)>&& completion
         shutDown();
     }
     completionHandler(shouldTerminate);
+}
+
+void WebProcessProxy::didCloseWebPageWithLocalMainFrame(WebCore::PageIdentifier)
+{
+    m_domainsWithPagesBeingClosed.clear();
+    maybeShutDown();
 }
 
 void WebProcessProxy::updateTextCheckerState()

@@ -503,7 +503,9 @@ void ProvisionalPageProxy::didCommitLoadForFrame(IPC::Connection& connection, Fr
         // IPC + transitionPageToRemotePage() call is deferred to
         // commitProvisionalPage() so it can be skipped when the previous
         // page is BFCache-suspended (a suspended page is frozen, not remote).
-        if (frameProcessChanged && pageMainFrameProcess->frameCount() && pageMainFrameProcess->browsingContextGroup() == m_browsingContextGroup.ptr())
+        bool oldProcessStillNeeded = (pageMainFrameProcess->frameCount() && pageMainFrameProcess->browsingContextGroup() == m_browsingContextGroup.ptr())
+            || m_browsingContextGroup->hasOtherPageWithMainFrameInProcess(*page, pageMainFrameProcess->process());
+        if (frameProcessChanged && oldProcessStillNeeded)
             m_deferredRemoteTransitionSite = Site { pageMainFrame->url() };
     }
     m_provisionalLoadURL = { };

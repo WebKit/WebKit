@@ -30,6 +30,8 @@ messages -> WebProcessProxy WantsDispatchMessage {
 
     ShouldTerminate() -> (bool shouldTerminate) Synchronous
 
+    DidCloseWebPageWithLocalMainFrame(WebCore::PageIdentifier pageID)
+
     EnableSuddenTermination()
     DisableSuddenTermination()
 
