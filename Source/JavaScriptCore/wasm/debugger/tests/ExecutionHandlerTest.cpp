@@ -134,8 +134,7 @@ static void resume()
 
 static void switchTarget(VM* newDebuggee)
 {
-    uint64_t threadId = ExecutionHandler::threadId(*newDebuggee);
-    executionHandler->switchTarget(threadId);
+    executionHandler->switchTarget(newDebuggee->debugState()->vmDebugId);
     validateStop();
     CHECK(executionHandler->debuggeeVM() == newDebuggee, "Switch to new debuggee failed");
 }

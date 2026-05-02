@@ -257,6 +257,11 @@ struct DebugState {
     bool isStopped { false }; // FIXME: There is better design (rdar://174508321) for code efficiency.
     std::unique_ptr<StopData> stopData { nullptr };
 
+    // Unique VM identifier used as the thread ID in GDB RSP replies to LLDB
+    // (qThreadStopInfo, thread-pcs, etc.). Assigned once at DebugState construction;
+    // stable for the VM's lifetime regardless of which OS thread holds the JSLock.
+    uint64_t vmDebugId { 0 };
+
     // Step-into tracking (for step debugging behavior)
     StepIntoEvent stepIntoEvent;
 };

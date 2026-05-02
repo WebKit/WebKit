@@ -99,7 +99,6 @@ public:
 
     bool hasBreakpoints() const;
 
-    JS_EXPORT_PRIVATE static uint64_t threadId(const VM&);
     uint64_t debugServerThreadId() const
     {
         RELEASE_ASSERT(m_debugServerThreadId.has_value());

@@ -487,8 +487,11 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         requestEntryScopeService(EntryScopeService::TracePoints);
 
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
-    if (Options::enableWasmDebugger()) [[unlikely]]
+    if (Options::enableWasmDebugger()) [[unlikely]] {
         m_debugState = makeUnique<Wasm::DebugState>();
+        static std::atomic<uint64_t> s_nextVMId { 1 };
+        m_debugState->vmDebugId = s_nextVMId.fetch_add(1, std::memory_order_relaxed);
+    }
 #endif
 
 #if ENABLE(JIT)
