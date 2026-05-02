@@ -103,8 +103,7 @@ float BuilderState::zoomWithTextZoomFactor()
 {
     if (auto* frame = document().frame()) {
         float textZoomFactor = style().textZoom() != TextZoom::Reset ? frame->textZoomFactor() : 1.0f;
-        float usedZoom = evaluationTimeZoomEnabled(*this) ? 1.0f : style().usedZoom();
-        return usedZoom * textZoomFactor;
+        return textZoomFactor;
     }
     return cssToLengthConversionData().zoom();
 }

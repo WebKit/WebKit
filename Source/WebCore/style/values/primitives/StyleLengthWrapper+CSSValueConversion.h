@@ -77,12 +77,7 @@ template<LengthWrapperBaseDerived T> struct CSSValueConversion<T> {
                 ? builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
                 : builderState.cssToLengthConversionData();
         } else if constexpr (T::Fixed::range.zoomOptions == CSS::RangeZoomOptions::Unzoomed) {
-            if (evaluationTimeZoomEnabled(builderState))
-                return builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f, T::Fixed::range.zoomOptions);
-
-            return builderState.useSVGZoomRulesForLength()
-                ? builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
-                : builderState.cssToLengthConversionData();
+            return builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f, T::Fixed::range.zoomOptions);
         }
     }
 

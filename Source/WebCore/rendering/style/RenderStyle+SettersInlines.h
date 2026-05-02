@@ -294,11 +294,6 @@ inline void RenderStyle::setWordSpacingFromAnimation(Style::WordSpacing&& value)
 
 // MARK: - Zoom
 
-inline void RenderStyle::setEvaluationTimeZoomEnabled(bool value)
-{
-    m_computedStyle.setEvaluationTimeZoomEnabled(value);
-}
-
 inline void RenderStyle::setUseSVGZoomRulesForLength(bool value)
 {
     m_computedStyle.setUseSVGZoomRulesForLength(value);

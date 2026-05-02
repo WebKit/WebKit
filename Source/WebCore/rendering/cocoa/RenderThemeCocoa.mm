@@ -1921,9 +1921,7 @@ static bool NODELETE searchFieldCanBeCapsule(const RenderElement& box, const Flo
 static CSSToLengthConversionData conversionDataForStyle(const RenderStyle& style)
 {
     CSSToLengthConversionData conversionData(style, nullptr, nullptr, nullptr);
-    if (style.evaluationTimeZoomEnabled())
-        return conversionData.copyWithAdjustedZoom(1.0f, CSS::RangeZoomOptions::Unzoomed);
-    return conversionData;
+    return conversionData.copyWithAdjustedZoom(1.0f, CSS::RangeZoomOptions::Unzoomed);
 }
 
 static RoundedShape shapeForSearchField(const RenderElement& box, const FloatRect& rect, ShouldComputePath computePath = ShouldComputePath::Yes)

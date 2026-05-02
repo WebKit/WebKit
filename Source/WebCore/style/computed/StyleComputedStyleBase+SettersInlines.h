@@ -237,11 +237,6 @@ inline void ComputedStyleBase::setPseudoElementIdentifier(std::optional<PseudoEl
 
 // MARK: - Zoom
 
-inline void ComputedStyleBase::setEvaluationTimeZoomEnabled(bool value)
-{
-    SET(m_inheritedRareData, evaluationTimeZoomEnabled, value);
-}
-
 inline void ComputedStyleBase::setUseSVGZoomRulesForLength(bool value)
 {
     SET_NESTED(m_nonInheritedData, rareData, useSVGZoomRulesForLength, value);

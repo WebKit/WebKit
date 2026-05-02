@@ -140,10 +140,4 @@ void CSSToLengthConversionData::setUsesContainerUnits() const
         m_styleBuilderState->setUsesContainerUnits();
 }
 
-bool CSSToLengthConversionData::evaluationTimeZoomEnabled() const
-{
-    ASSERT(m_style);
-    return m_style->evaluationTimeZoomEnabled();
-}
-
 } // namespace WebCore

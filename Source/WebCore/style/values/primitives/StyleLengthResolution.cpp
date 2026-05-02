@@ -56,7 +56,7 @@ static double NODELETE adjustValueForPageZoom(double dimension, const CSSToLengt
 
     auto* style = conversionData.style();
     auto* renderView = conversionData.renderView();
-    if (!renderView || !style || !evaluationTimeZoomEnabled(*style))
+    if (!renderView || !style)
         return dimension;
 
     return dimension / renderView->pageZoomFactor();
@@ -86,12 +86,11 @@ static double NODELETE lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis
     return lengthOfViewportPhysicalAxisForLogicalAxis(logicalAxis, size, rootElement->renderStyle());
 }
 
-// Raw font metrics include the usedZoomFactor. In evaluation-time zoom mode with the Unzoomed
-// range option, normalize by usedZoomFactor so that font-relative units (ex, cap, ch, ic) scale
-// consistently with em.
+// Raw font metrics include the usedZoomFactor. With the Unzoomed range option, normalize by
+// usedZoomFactor so that font-relative units (ex, cap, ch, ic) scale consistently with em.
 static double unzoomFontMetricIfNeeded(double metric, const FontDescription& fontDescription, CSS::RangeZoomOptions rangeZoomOption)
 {
-    if (fontDescription.evaluationTimeZoomEnabled() && rangeZoomOption == CSS::RangeZoomOptions::Unzoomed) {
+    if (rangeZoomOption == CSS::RangeZoomOptions::Unzoomed) {
         if (auto usedZoomFactor = fontDescription.usedZoomFactor(); usedZoomFactor > 0)
             return metric / usedZoomFactor;
     }
@@ -229,14 +228,14 @@ double computeUnzoomedNonCalcLengthDouble(double value, CSS::LengthUnit lengthUn
 
 static double adjustZoomStateForFontRelativeUnitsIfNeeded(double value, const CSSToLengthConversionData& conversionData)
 {
-    // Apply text zoom for font-relative units when evaluationTimeZoomEnabled with unzoomed range option.
+    // Apply text zoom for font-relative units with unzoomed range option.
     // computedSizeForRangeZoomOption returns unzoomed font size when rangeZoomOption is Unzoomed,
     // so we need to multiply by text zoom to get the correct final value.
     // We explicitly use zoomWithTextZoomFactor() here instead of conversionData.zoom() because
-    // zoomWithTextZoomFactor() is guaranteed to return only the text zoom factor (not page zoom or other zoom types)
-    // when evaluationTimeZoomEnabled is true. This ensures font-relative units scale correctly with text zoom
+    // zoomWithTextZoomFactor() is guaranteed to return only the text zoom factor (not page zoom or other zoom types).
+    // This ensures font-relative units scale correctly with text zoom
     // while remaining independent of other zoom mechanisms.
-    if (conversionData.evaluationTimeZoomEnabled() && conversionData.rangeZoomOption() == CSS::RangeZoomOptions::Unzoomed) {
+    if (conversionData.rangeZoomOption() == CSS::RangeZoomOptions::Unzoomed) {
         if (CheckedPtr builderState = conversionData.styleBuilderState()) {
             auto textZoom = builderState->zoomWithTextZoomFactor();
             return value * textZoom;
@@ -249,7 +248,7 @@ double computeCanonicalNonCalcLengthDouble(double value, CSS::LengthUnit lengthU
 {
     // We are only interested in canonicalizing to `px`, not adjusting for zoom, which will be handled later. When computing font-size, zoom is not applied in the same way, so must be special cased here.
     auto computedValue = computeNonCalcLengthDouble(value, lengthUnit, conversionData);
-    if (conversionData.computingFontSize() || (conversionData.evaluationTimeZoomEnabled() && conversionData.rangeZoomOption() == CSS::RangeZoomOptions::Unzoomed))
+    if (conversionData.computingFontSize() || conversionData.rangeZoomOption() == CSS::RangeZoomOptions::Unzoomed)
         return computedValue;
 
     return computedValue / conversionData.style()->usedZoom();

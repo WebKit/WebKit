@@ -40,8 +40,6 @@ namespace Style {
 
 // Out of line to avoid inclusion of RenderStyle+GettersInlines.h
 float NODELETE adjustForZoom(float, const RenderStyle&);
-bool NODELETE evaluationTimeZoomEnabled(const RenderStyle&);
-bool NODELETE evaluationTimeZoomEnabled(const BuilderState&);
 
 // MARK: Conversion Data specialization
 
@@ -60,12 +58,7 @@ template<auto R, typename V> struct ConversionDataSpecializer<CSS::LengthRaw<R, 
                 ? state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
                 : state.cssToLengthConversionData();
         } else if constexpr (R.zoomOptions == CSS::RangeZoomOptions::Unzoomed) {
-            if (evaluationTimeZoomEnabled(state))
-                return state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f, R.zoomOptions);
-
-            return state.useSVGZoomRulesForLength()
-                ? state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
-                : state.cssToLengthConversionData();
+            return state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f, R.zoomOptions);
         }
     }
 };
@@ -78,12 +71,7 @@ template<auto R, typename V> struct ConversionDataSpecializer<CSS::LengthPercent
                 ? state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
                 : state.cssToLengthConversionData();
         } else if constexpr (R.zoomOptions == CSS::RangeZoomOptions::Unzoomed) {
-            if (evaluationTimeZoomEnabled(state))
-                return state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f, R.zoomOptions);
-
-            return state.useSVGZoomRulesForLength()
-                ? state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
-                : state.cssToLengthConversionData();
+            return state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f, R.zoomOptions);
         }
     }
 };
@@ -272,10 +260,7 @@ template<auto R, typename V> struct ToCSS<Length<R, V>> {
         if constexpr (R.zoomOptions == CSS::RangeZoomOptions::Default) {
             return CSS::LengthRaw<R, V> { value.unit, adjustForZoom(value.unresolvedValue(), style) };
         } else if constexpr (R.zoomOptions == CSS::RangeZoomOptions::Unzoomed) {
-            if (evaluationTimeZoomEnabled(style))
-                return CSS::LengthRaw<R, V> { value.unit, value.unresolvedValue() };
-
-            return CSS::LengthRaw<R, V> { value.unit, adjustForZoom(value.unresolvedValue(), style) };
+            return CSS::LengthRaw<R, V> { value.unit, value.unresolvedValue() };
         }
     }
 };

@@ -67,7 +67,6 @@ FontDescription::FontDescription()
     , m_opticalSizing(std::to_underlying(FontOpticalSizing::Auto))
     , m_shouldAllowUserInstalledFonts(std::to_underlying(AllowUserInstalledFonts::No))
     , m_shouldDisableLigaturesForSpacing(false)
-    , m_evaluationTimeZoomEnabled(false)
 {
 }
 
