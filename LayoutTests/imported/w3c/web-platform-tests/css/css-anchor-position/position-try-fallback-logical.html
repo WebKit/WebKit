@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+
+<link rel="help" href="https://github.com/w3c/csswg-drafts/issues/12869#issuecomment-3406959070">
+
+<style>
+.container {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  width: 100px;
+  height: 100px;
+  margin: 10px;
+  border: solid 3px;
+}
+
+.vrl {
+  writing-mode: vertical-rl;
+}
+
+.anchor {
+  position: absolute;
+  anchor-name: --a;
+  width: 25px;
+  height: 25px;
+  background: dodgerblue;
+}
+
+.anchored {
+  position: absolute;
+  position-anchor: --a;
+  width: 15px;
+  height: 15px;
+  background: green;
+}
+</style>
+
+<!-- Row 1: position-area + horizontal-tb container -->
+
+<div class="container">
+  <div class="anchor"></div>
+  <div class="anchored" style="
+           position-area: top right;
+           position-try-fallbacks: flip-block;
+           writing-mode: vertical-rl;"></div>
+</div>
+
+<div class="container">
+  <div class="anchor"></div>
+  <div class="anchored" style="
+           position-area: top right;
+           position-try-fallbacks: flip-block;
+           writing-mode: horizontal-tb;"></div>
+</div>
+
+<div class="container">
+  <div class="anchor"></div>
+  <div class="anchored" style="
+           position-area: bottom left;
+           position-try-fallbacks: flip-inline;
+           writing-mode: vertical-rl;"></div>
+</div>
+
+<div class="container">
+  <div class="anchor"></div>
+  <div class="anchored" style="
+           position-area: bottom left;
+           position-try-fallbacks: flip-inline;
+           writing-mode: horizontal-tb;"></div>
+</div>
+
+<!-- FIXME should test flip-start too or not?? -->
+
+<br>
+
+<!-- Row 2: position-area + vertical-rl container -->
+
+<div class="container vrl">
+  <div class="anchor"></div>
+  <div class="anchored" style="
+           position-area: bottom right;
+           position-try-fallbacks: flip-block;
+           writing-mode: vertical-rl;"></div>
+</div>
+
+<div class="container vrl">
+  <div class="anchor"></div>
+  <div class="anchored" style="
+           position-area: bottom right;
+           position-try-fallbacks: flip-block;
+           writing-mode: horizontal-tb;"></div>
+</div>
+
+<div class="container vrl">
+  <div class="anchor"></div>
+  <div class="anchored" style="
+           position-area: top left;
+           position-try-fallbacks: flip-inline;
+           writing-mode: vertical-rl;"></div>
+</div>
+
+<div class="container vrl">
+  <div class="anchor"></div>
+  <div class="anchored" style="
+           position-area: top left;
+           position-try-fallbacks: flip-inline;
+           writing-mode: horizontal-tb;"></div>
+</div>
+
+<br>
+
+<!-- Row 3: anchor() + horizontal-tb container -->
+
+<div class="container">
+  <div class="anchor"></div>
+  <div class="anchored" style="
+           bottom: anchor(top); left: anchor(right);
+           position-try-fallbacks: flip-block;
+           writing-mode: vertical-rl;"></div>
+</div>
+
+<div class="container">
+  <div class="anchor"></div>
+  <div class="anchored" style="
+           bottom: anchor(top); left: anchor(right);
+           position-try-fallbacks: flip-block;
+           writing-mode: horizontal-tb;"></div>
+</div>
+
+<div class="container">
+  <div class="anchor"></div>
+  <div class="anchored" style="
+           top: anchor(bottom); right: anchor(left);
+           position-try-fallbacks: flip-inline;
+           writing-mode: vertical-rl;"></div>
+</div>
+
+<div class="container">
+  <div class="anchor"></div>
+  <div class="anchored" style="
+           top: anchor(bottom); right: anchor(left);
+           position-try-fallbacks: flip-inline;
+           writing-mode: horizontal-tb;"></div>
+</div>
+
+<br>
+
+<!-- Row 4: anchor() + vertical-rl container -->
+
+<div class="container vrl">
+  <div class="anchor"></div>
+  <div class="anchored" style="
+           top: anchor(bottom); left: anchor(right);
+           position-try-fallbacks: flip-block;
+           writing-mode: vertical-rl;"></div>
+</div>
+
+<div class="container vrl">
+  <div class="anchor"></div>
+  <div class="anchored" style="
+           top: anchor(bottom); left: anchor(right);
+           position-try-fallbacks: flip-block;
+           writing-mode: horizontal-tb;"></div>
+</div>
+
+<div class="container vrl">
+  <div class="anchor"></div>
+  <div class="anchored" style="
+           bottom: anchor(top); right: anchor(left);
+           position-try-fallbacks: flip-inline;
+           writing-mode: vertical-rl;"></div>
+</div>
+
+<div class="container vrl">
+  <div class="anchor"></div>
+  <div class="anchored" style="
+           bottom: anchor(top); right: anchor(left);
+           position-try-fallbacks: flip-inline;
+           writing-mode: horizontal-tb;"></div>
+</div>

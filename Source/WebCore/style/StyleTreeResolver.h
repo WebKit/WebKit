@@ -249,6 +249,13 @@ private:
         std::unique_ptr<Style::ComputedStyle> currentOption() const;
     };
     HashMap<WeakStyleable, PositionOptions> m_positionOptions;
+    
+    // If an element uses position-try-fallbacks and and the specified fallbacks include tactics,
+    // the tactics uses the writing mode of the element's containing block to determine which
+    // axis to flip according to the tactic. But the render tree (to determine the containing block)
+    // is only available after one round style/layout. This holds the list of elements waiting
+    // until at least one layout has been performed before they can generate and try position options.
+    HashSet<WeakStyleable> m_positionTryElementsWaitingForLayout;
 
     HashSet<AtomString> m_changedAnchorNames;
     bool m_allAnchorNamesInvalid { false };

@@ -343,7 +343,7 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
     auto valueToApply = resolveSubstitutionFunctions(id, value);
 
     if (m_state->positionTryFallback())
-        id = AnchorPositionEvaluator::resolvePositionTryFallbackProperty(id, style.writingMode(), *m_state->positionTryFallback());
+        id = AnchorPositionEvaluator::resolvePositionTryFallbackProperty(id, *m_state->positionTryFallback());
 
     auto valueID = WebCore::valueID(valueToApply.get());
     auto valueType = [&] {

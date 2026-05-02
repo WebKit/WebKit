@@ -84,6 +84,10 @@ enum class ApplyValueType : uint8_t { Value, Initial, Inherit };
 struct BuilderPositionTryFallback {
     RefPtr<const StyleProperties> properties;
     Vector<PositionTryFallbackTactic> tactics;
+
+    // Writing mode of the containing block of the element whose position is being generated.
+    // If any flip tactics are present, this is used to determine the axis to flip.
+    WritingMode containingBlockWritingMode;
 };
 
 struct RegisteredSubstitutionAttribute {

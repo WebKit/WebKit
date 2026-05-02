@@ -77,6 +77,7 @@
 #include "ViewTransition.h"
 #include "WebAnimationTypes.h"
 #include "WebAnimationUtilities.h"
+#include "platform/BoxSides.h"
 #include <ranges>
 
 #if PLATFORM(COCOA)
@@ -1544,6 +1545,16 @@ std::unique_ptr<Update> TreeResolver::resolve()
         }
     }
 
+    for (auto& weakStyleable : m_positionTryElementsWaitingForLayout) {
+        auto styleable = weakStyleable.styleable();
+        if (!styleable)
+            continue;
+
+        styleable->element.invalidateForResumingAnchorPositionedElementResolution();
+        m_needsInterleavedLayout = true;
+    }
+    m_positionTryElementsWaitingForLayout.clear();
+
     if (!m_changedAnchorNames.isEmpty() || m_allAnchorNamesInvalid) {
         // If there are changes to the anchor names then loop through the existing anchors and see if any of them references those names.
         for (auto [weakAnchorPositioned, anchors] : m_document->styleScope().anchorPositionedToAnchorMap()) {
@@ -1644,6 +1655,11 @@ void TreeResolver::generatePositionOptionsIfNeeded(const ResolvedStyle& resolved
     if (m_positionOptions.contains(styleable))
         return;
 
+    if (!styleable.renderer()) {
+        m_positionTryElementsWaitingForLayout.add(styleable);
+        return;
+    }
+
     auto generatePositionOptions = [&] {
         ResolvedStyle clonedResolvedStyle {
             .style = Style::ComputedStyle::clonePtr(*resolvedStyle.style),
@@ -1667,6 +1683,7 @@ void TreeResolver::generatePositionOptionsIfNeeded(const ResolvedStyle& resolved
         return options;
     };
 
+    // Have to resolve the fallbacks first to catch additional anchor references.
     auto options = generatePositionOptions();
 
     // If the fallbacks contain anchor references we need to resolve the anchors first and regenerate the options.
@@ -1706,6 +1723,8 @@ std::unique_ptr<Style::ComputedStyle> TreeResolver::generatePositionOption(const
     auto builderFallback = BuilderPositionTryFallback {
         .properties = resolveFallbackProperties(),
         .tactics = fallback.ruleAndTactics.tactics->value,
+        // TreeResolver::generatePositionOptionsIfNeeded guarantees the styleable will already have a renderer.
+        .containingBlockWritingMode = styleable.renderer()->container()->style().writingMode()
     };
 
     return resolveAgainInDifferentContext(resolvedStyle, styleable, *resolutionContext.parentStyle, PropertyCascade::normalPropertyTypes(), WTF::move(builderFallback), resolutionContext);

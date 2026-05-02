@@ -214,8 +214,8 @@ public:
     static bool NODELETE isStyleTimeAnchorPositioned(const Style::ComputedStyle&);
     static bool NODELETE isLayoutTimeAnchorPositioned(const Style::ComputedStyle&);
 
-    static CSSPropertyID resolvePositionTryFallbackProperty(CSSPropertyID, WritingMode, const BuilderPositionTryFallback&);
-    static CSSValueID resolvePositionTryFallbackValueForSelfPosition(CSSPropertyID, CSSValueID, WritingMode, const BuilderPositionTryFallback&);
+    static CSSPropertyID resolvePositionTryFallbackProperty(CSSPropertyID, const BuilderPositionTryFallback&);
+    static CSSValueID resolvePositionTryFallbackValueForSelfPosition(CSSPropertyID, CSSValueID, const BuilderPositionTryFallback&);
 
     static bool overflowsInsetModifiedContainingBlock(const RenderBox& anchoredBox);
     static bool isDefaultAnchorInvisibleOrClippedByInterveningBoxes(const RenderBox& anchoredBox);
