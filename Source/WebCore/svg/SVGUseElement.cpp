@@ -49,6 +49,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "StyleDisplay.h"
+#include "TaskSource.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include "XLinkNames.h"
 #include <wtf/RobinHoodHashSet.h>
@@ -661,8 +662,11 @@ void SVGUseElement::updateExternalDocument()
     URL externalDocumentURL;
     Ref<Document> document = this->document();
     // FIXME: This early exit should be removed once the ASSERT(!url.protocolIsData()) is removed from isExternalURIReference().
-    if (document->completeURL(href()).protocolIsData())
+    if (document->completeURL(href()).protocolIsData()) {
+        setErrorOccurred(true);
+        queueTaskToDispatchEvent(TaskSource::DOMManipulation, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
         return;
+    }
     if (isConnected() && isExternalURIReference(href(), document)) {
         externalDocumentURL = document->completeURL(href());
         if (!externalDocumentURL.hasFragmentIdentifier())
