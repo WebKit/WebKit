@@ -109,7 +109,9 @@ static std::optional<std::pair<uint64_t, uint64_t>> resolvedRange(StringView ran
 
 static ResourceResponse synthesizedResponseForRange(const ResourceResponse& originalResponse, uint64_t begin, uint64_t end, std::optional<size_t> totalContentLength)
 {
-    auto newContentRange = makeString("bytes "_s, begin, '-', end, '/', (totalContentLength ? makeString(*totalContentLength) : "*"_s));
+    auto newContentRange = totalContentLength
+        ? makeString("bytes "_s, begin, '-', end, '/', *totalContentLength)
+        : makeString("bytes "_s, begin, '-', end, "/*"_s);
     auto newContentLength = makeString(end - begin + 1);
 
     ResourceResponse newResponse = originalResponse;
@@ -135,7 +137,7 @@ void RangeResponseGenerator::removeTask(WebCoreNSURLSessionDataTask *task)
     data->taskData.remove(task);
 }
 
-void RangeResponseGenerator::giveResponseToTaskIfBytesInRangeReceived(WebCoreNSURLSessionDataTask *task, std::optional<size_t> expectedContentLength, const Data& data)
+void RangeResponseGenerator::giveResponseToTaskIfBytesInRangeReceived(WebCoreNSURLSessionDataTask *task, const Data& data)
 {
     assertIsCurrent(m_targetDispatcher);
     CheckedPtr taskData = data.taskData.get(task);
@@ -178,7 +180,15 @@ void RangeResponseGenerator::giveResponseToTaskIfBytesInRangeReceived(WebCoreNSU
 
     switch (taskData->responseState) {
     case RangeResponseGeneratorDataTaskData::ResponseState::NotSynthesizedYet: {
-        auto response = synthesizedResponseForRange(data.originalResponse, taskData->begin, taskData->end, expectedContentLength);
+        std::optional<size_t> totalContentLength;
+        if (data.successfullyFinishedLoading == Data::SuccessfullyFinishedLoading::Yes)
+            totalContentLength = data.buffer.size();
+        else {
+            auto expectedContentLength = data.originalResponse.expectedContentLength();
+            if (expectedContentLength > 0 && static_cast<uint64_t>(expectedContentLength) > taskData->end)
+                totalContentLength = expectedContentLength;
+        }
+        auto response = synthesizedResponseForRange(data.originalResponse, taskData->begin, taskData->end, totalContentLength);
         [task resource:nullptr receivedResponse:response completionHandler:[giveBytesToTask = WTF::move(giveBytesToTask), taskData = WeakPtr { *taskData }, task = retainPtr(task)] (WebCore::ShouldContinuePolicyCheck shouldContinue) mutable {
             if (taskData)
                 taskData->responseState = RangeResponseGeneratorDataTaskData::ResponseState::SessionCalledCompletionHandler;
@@ -198,25 +208,12 @@ void RangeResponseGenerator::giveResponseToTaskIfBytesInRangeReceived(WebCoreNSU
     }
 }
 
-std::optional<size_t> RangeResponseGenerator::expectedContentLengthFromData(const Data& data)
-{
-    if (data.successfullyFinishedLoading == Data::SuccessfullyFinishedLoading::Yes)
-        return data.buffer.size();
-
-    // FIXME: ResourceResponseBase::expectedContentLength() should return std::optional<size_t> instead of us doing this check here.
-    auto expectedContentLength = data.originalResponse.expectedContentLength();
-    if (expectedContentLength == NSURLResponseUnknownLength)
-        return std::nullopt;
-    return expectedContentLength;
-}
-
 void RangeResponseGenerator::giveResponseToTasksWithFinishedRanges(Data& data)
 {
     assertIsCurrent(m_targetDispatcher);
-    auto expectedContentLength = expectedContentLengthFromData(data);
 
     for (auto& pair : data.taskData)
-        giveResponseToTaskIfBytesInRangeReceived(pair.key.get(), expectedContentLength, data);
+        giveResponseToTaskIfBytesInRangeReceived(pair.key.get(), data);
 }
 
 bool RangeResponseGenerator::willHandleRequest(WebCoreNSURLSessionDataTask *task, NSURLRequest *request)
@@ -233,10 +230,9 @@ bool RangeResponseGenerator::willHandleRequest(WebCoreNSURLSessionDataTask *task
     if (!range)
         return false;
 
-    auto expectedContentLength = expectedContentLengthFromData(*data);
     auto [begin, end] = *range;
     data->taskData.add(task, makeUnique<RangeResponseGeneratorDataTaskData>(begin, end));
-    giveResponseToTaskIfBytesInRangeReceived(task, expectedContentLength, *data);
+    giveResponseToTaskIfBytesInRangeReceived(task, *data);
 
     return true;
 }

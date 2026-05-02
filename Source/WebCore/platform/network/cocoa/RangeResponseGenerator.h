@@ -55,8 +55,7 @@ private:
 
     class MediaResourceClient;
     void giveResponseToTasksWithFinishedRanges(Data&);
-    void giveResponseToTaskIfBytesInRangeReceived(WebCoreNSURLSessionDataTask *, std::optional<size_t> expectedContentLength, const Data&);
-    static std::optional<size_t> expectedContentLengthFromData(const Data&);
+    void giveResponseToTaskIfBytesInRangeReceived(WebCoreNSURLSessionDataTask *, const Data&);
 
     HashMap<String, std::unique_ptr<Data>> m_map WTF_GUARDED_BY_CAPABILITY(m_targetDispatcher.get());
     const Ref<GuaranteedSerialFunctionDispatcher> m_targetDispatcher;
