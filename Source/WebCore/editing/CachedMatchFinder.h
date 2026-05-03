@@ -27,7 +27,6 @@
 
 #include "FindOptions.h"
 #include "SimpleRange.h"
-#include <wtf/CheckedPtr.h>
 #include <wtf/Function.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
@@ -52,7 +51,6 @@ private:
     struct TextRun {
         unsigned offset;
         SimpleRange range;
-        CheckedPtr<ContainerNode> scopeRoot;
     };
 
     struct TextRunCache {

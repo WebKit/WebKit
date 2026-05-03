@@ -361,7 +361,7 @@ auto CachedMatchFinder::textForScope(ContainerNode& scope, FindOptions options) 
     Vector<TextRun> runs;
     for (; !it.atEnd(); it.advance()) {
         auto textRunRange = it.range();
-        runs.append(TextRun { static_cast<unsigned>(builder.length()), textRunRange, &textRunRange.start.container->treeScope().rootNode() });
+        runs.append(TextRun { static_cast<unsigned>(builder.length()), textRunRange });
         auto text = it.text();
         if (text.is8Bit()) {
             for (auto character : text.span8())
