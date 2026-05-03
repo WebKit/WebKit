@@ -398,6 +398,7 @@ static void addParametersShared(const LocalFrame* frame, NetworkResourceLoadPara
 
     if (RefPtr document = frame->document()) {
         parameters.crossOriginEmbedderPolicy = document->crossOriginEmbedderPolicy();
+        parameters.clientIPAddressSpace = document->ipAddressSpace();
         parameters.isClearSiteDataHeaderEnabled = document->settings().clearSiteDataHTTPHeaderEnabled();
         parameters.isClearSiteDataExecutionContextEnabled = document->settings().clearSiteDataExecutionContextsSupportEnabled();
         parameters.mayBlockNetworkRequest = (!isMainFrameNavigation && document->settings().scriptTrackingPrivacyNetworkRequestBlockingLatchEnabled()) ?

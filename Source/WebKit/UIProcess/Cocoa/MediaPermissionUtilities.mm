@@ -137,6 +137,8 @@ static RetainPtr<NSString> alertMessageText(MediaPermissionReason reason, const 
         SUPPRESS_UNRETAINED_ARG return adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"“%@” Would Like to Access Motion and Orientation", @"Message for requesting access to the device motion and orientation"), visibleOrigin.get()]);
     case MediaPermissionReason::Geolocation:
         SUPPRESS_UNRETAINED_ARG return adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to use your current location?", @"Message for geolocation prompt"), visibleOrigin.get()]);
+    case MediaPermissionReason::LocalNetworkAccess:
+        SUPPRESS_UNRETAINED_ARG return adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"Allow \u201C%@\u201D to access your local network?", @"Message for local network access prompt"), visibleOrigin.get()]);
     case MediaPermissionReason::SpeechRecognition:
         SUPPRESS_UNRETAINED_ARG return adoptNS([[NSString alloc] initWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to capture your audio and use it for speech recognition?", @"Message for spechrecognition prompt"), visibleDomain(origin.host()).get()]);
     }
@@ -155,6 +157,8 @@ static RetainPtr<NSString> allowButtonText(MediaPermissionReason reason)
         return WEB_UI_STRING_KEY(@"Allow", "Allow (device motion and orientation access)", @"Button title in Device Orientation Permission API prompt").createNSString();
     case MediaPermissionReason::Geolocation:
         return WEB_UI_STRING_KEY(@"Allow", "Allow (geolocation)", @"Allow button title in geolocation prompt").createNSString();
+    case MediaPermissionReason::LocalNetworkAccess:
+        return WEB_UI_STRING_KEY(@"Allow", "Allow (local network access)", @"Allow button title in local network access prompt").createNSString();
     case MediaPermissionReason::SpeechRecognition:
         return WEB_UI_STRING_KEY(@"Allow", "Allow (speechrecognition)", @"Allow button title in speech recognition prompt").createNSString();
     }
@@ -173,6 +177,8 @@ static RetainPtr<NSString> doNotAllowButtonText(MediaPermissionReason reason)
         return WEB_UI_STRING_KEY(@"Cancel", "Cancel (device motion and orientation access)", @"Button title in Device Orientation Permission API prompt").createNSString();
     case MediaPermissionReason::Geolocation:
         return WEB_UI_STRING_KEY(@"Don’t Allow", "Don’t Allow (geolocation)", @"Disallow button title in geolocation prompt").createNSString();
+    case MediaPermissionReason::LocalNetworkAccess:
+        return WEB_UI_STRING_KEY(@"Don't Allow", "Don't Allow (local network access)", @"Disallow button title in local network access prompt").createNSString();
     case MediaPermissionReason::SpeechRecognition:
         return WEB_UI_STRING_KEY(@"Don’t Allow", "Don’t Allow (speechrecognition)", @"Disallow button title in speech recognition prompt").createNSString();
     }

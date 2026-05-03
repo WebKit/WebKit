@@ -42,26 +42,26 @@ TEST(IPAddressSpace, IPv4Loopback)
 // Test IPv4 private address ranges
 TEST(IPAddressSpace, IPv4PrivateAddresses)
 {
-    // 10.0.0.0/8 - Local Use
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://10.0.0.1/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://10.255.255.255/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://10.192.168.1:443/"_s)), WebCore::IPAddressSpace::Local);
+    // 10.0.0.0/8 - Private Use
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://10.0.0.1/"_s)), WebCore::IPAddressSpace::Private);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://10.255.255.255/"_s)), WebCore::IPAddressSpace::Private);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://10.192.168.1:443/"_s)), WebCore::IPAddressSpace::Private);
 
-    // 172.16.0.0/12 - Local Use
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://172.16.0.1/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://172.31.255.255/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://172.20.1.2:8443/"_s)), WebCore::IPAddressSpace::Local);
+    // 172.16.0.0/12 - Private Use
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://172.16.0.1/"_s)), WebCore::IPAddressSpace::Private);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://172.31.255.255/"_s)), WebCore::IPAddressSpace::Private);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://172.20.1.2:8443/"_s)), WebCore::IPAddressSpace::Private);
 
-    // Edge cases - should NOT be local
+    // Edge cases - should NOT be private
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://172.15.255.255/"_s)), WebCore::IPAddressSpace::Public);
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://172.32.0.1/"_s)), WebCore::IPAddressSpace::Public);
 
-    // 192.168.0.0/16 - Local Use
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://192.168.0.1/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://192.168.255.255/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://192.168.1.100:8080/"_s)), WebCore::IPAddressSpace::Local);
+    // 192.168.0.0/16 - Private Use
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://192.168.0.1/"_s)), WebCore::IPAddressSpace::Private);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://192.168.255.255/"_s)), WebCore::IPAddressSpace::Private);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://192.168.1.100:8080/"_s)), WebCore::IPAddressSpace::Private);
 
-    // Edge cases - should NOT be local
+    // Edge cases - should NOT be private
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://192.167.255.255/"_s)), WebCore::IPAddressSpace::Public);
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://192.169.0.1/"_s)), WebCore::IPAddressSpace::Public);
 }
@@ -69,11 +69,11 @@ TEST(IPAddressSpace, IPv4PrivateAddresses)
 // Test Carrier-Grade NAT addresses (100.64.0.0/10)
 TEST(IPAddressSpace, IPv4CarrierGradeNAT)
 {
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://100.64.0.1/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://100.127.255.255/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://100.100.100.100:443/"_s)), WebCore::IPAddressSpace::Local);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://100.64.0.1/"_s)), WebCore::IPAddressSpace::Private);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://100.127.255.255/"_s)), WebCore::IPAddressSpace::Private);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://100.100.100.100:443/"_s)), WebCore::IPAddressSpace::Private);
 
-    // Edge cases - should NOT be local
+    // Edge cases - should NOT be private
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://100.63.255.255/"_s)), WebCore::IPAddressSpace::Public);
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://100.128.0.1/"_s)), WebCore::IPAddressSpace::Public);
 }
@@ -81,11 +81,11 @@ TEST(IPAddressSpace, IPv4CarrierGradeNAT)
 // Test Link Local addresses (169.254.0.0/16)
 TEST(IPAddressSpace, IPv4LinkLocal)
 {
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://169.254.0.1/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://169.254.255.255/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://169.254.1.1:8080/"_s)), WebCore::IPAddressSpace::Local);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://169.254.0.1/"_s)), WebCore::IPAddressSpace::Private);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://169.254.255.255/"_s)), WebCore::IPAddressSpace::Private);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://169.254.1.1:8080/"_s)), WebCore::IPAddressSpace::Private);
 
-    // Edge cases - should NOT be local
+    // Edge cases - should NOT be private
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://169.253.255.255/"_s)), WebCore::IPAddressSpace::Public);
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://169.255.0.1/"_s)), WebCore::IPAddressSpace::Public);
 }
@@ -93,11 +93,11 @@ TEST(IPAddressSpace, IPv4LinkLocal)
 // Test Benchmarking addresses (198.18.0.0/15)
 TEST(IPAddressSpace, IPv4Benchmarking)
 {
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://198.18.0.1/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://198.19.255.255/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://198.18.100.50:443/"_s)), WebCore::IPAddressSpace::Local);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://198.18.0.1/"_s)), WebCore::IPAddressSpace::Private);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://198.19.255.255/"_s)), WebCore::IPAddressSpace::Private);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://198.18.100.50:443/"_s)), WebCore::IPAddressSpace::Private);
 
-    // Edge cases - should NOT be local
+    // Edge cases - should NOT be private
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://198.17.255.255/"_s)), WebCore::IPAddressSpace::Public);
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://198.20.0.1/"_s)), WebCore::IPAddressSpace::Public);
 }
@@ -122,12 +122,12 @@ TEST(IPAddressSpace, IPv6Loopback)
 // Test IPv6 Unique Local addresses (fc00::/7)
 TEST(IPAddressSpace, IPv6UniqueLocal)
 {
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[fc00::1]/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[fd00::1]/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://[fcff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]:443/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://[fdff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]:8080/"_s)), WebCore::IPAddressSpace::Local);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[fc00::1]/"_s)), WebCore::IPAddressSpace::Private);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[fd00::1]/"_s)), WebCore::IPAddressSpace::Private);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://[fcff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]:443/"_s)), WebCore::IPAddressSpace::Private);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://[fdff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]:8080/"_s)), WebCore::IPAddressSpace::Private);
 
-    // Edge cases - should NOT be local
+    // Edge cases - should NOT be private
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[fbff::1]/"_s)), WebCore::IPAddressSpace::Public);
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[fe00::1]/"_s)), WebCore::IPAddressSpace::Public);
 }
@@ -135,13 +135,13 @@ TEST(IPAddressSpace, IPv6UniqueLocal)
 // Test IPv6 Link-Local addresses (fe80::/10)
 TEST(IPAddressSpace, IPv6LinkLocal)
 {
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[fe80::1]/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[fe90::1]/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[fea0::1]/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[feb0::1]/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://[febf:ffff:ffff:ffff:ffff:ffff:ffff:ffff]:8080/"_s)), WebCore::IPAddressSpace::Local);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[fe80::1]/"_s)), WebCore::IPAddressSpace::Private);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[fe90::1]/"_s)), WebCore::IPAddressSpace::Private);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[fea0::1]/"_s)), WebCore::IPAddressSpace::Private);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[feb0::1]/"_s)), WebCore::IPAddressSpace::Private);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://[febf:ffff:ffff:ffff:ffff:ffff:ffff:ffff]:8080/"_s)), WebCore::IPAddressSpace::Private);
 
-    // Edge cases - should NOT be local
+    // Edge cases - should NOT be private
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[fe7f::1]/"_s)), WebCore::IPAddressSpace::Public);
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[fec0::1]/"_s)), WebCore::IPAddressSpace::Public);
 }
@@ -151,9 +151,9 @@ TEST(IPAddressSpace, IPv6MappedIPv4DottedDecimal)
 {
     // Local IPv4 addresses mapped to IPv6
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[::ffff:127.0.0.1]/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[::ffff:10.0.0.1]/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[::ffff:192.168.1.1]/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://[::ffff:172.16.0.1]:443/"_s)), WebCore::IPAddressSpace::Local);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[::ffff:10.0.0.1]/"_s)), WebCore::IPAddressSpace::Private);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[::ffff:192.168.1.1]/"_s)), WebCore::IPAddressSpace::Private);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://[::ffff:172.16.0.1]:443/"_s)), WebCore::IPAddressSpace::Private);
 
     // Public IPv4 addresses mapped to IPv6
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[::ffff:8.8.8.8]/"_s)), WebCore::IPAddressSpace::Public);
@@ -164,16 +164,16 @@ TEST(IPAddressSpace, IPv6MappedIPv4DottedDecimal)
 TEST(IPAddressSpace, IPv6MappedIPv4HexNotation)
 {
     // 127.0.0.1 = 0x7f000001 -> c0a8:101 represents 192.168.1.1
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[::ffff:c0a8:101]/"_s)), WebCore::IPAddressSpace::Local);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[::ffff:c0a8:101]/"_s)), WebCore::IPAddressSpace::Private);
 
     // 10.0.0.1 = 0x0a000001
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[::ffff:a00:1]/"_s)), WebCore::IPAddressSpace::Local);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[::ffff:a00:1]/"_s)), WebCore::IPAddressSpace::Private);
 
     // 8.8.8.8 = 0x08080808
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[::ffff:808:808]/"_s)), WebCore::IPAddressSpace::Public);
 
     // 172.16.0.1 = 0xac100001
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://[::ffff:ac10:1]:443/"_s)), WebCore::IPAddressSpace::Local);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://[::ffff:ac10:1]:443/"_s)), WebCore::IPAddressSpace::Private);
 }
 
 // Test IPv6 public addresses
@@ -234,16 +234,16 @@ TEST(IPAddressSpace, UtilityFunctions)
 TEST(IPAddressSpace, DifferentURLSchemes)
 {
     // HTTP and HTTPS
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://192.168.1.1/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://192.168.1.1/"_s)), WebCore::IPAddressSpace::Local);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://192.168.1.1/"_s)), WebCore::IPAddressSpace::Private);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://192.168.1.1/"_s)), WebCore::IPAddressSpace::Private);
 
     // Other schemes
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("ftp://192.168.1.1/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("ws://192.168.1.1/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("wss://192.168.1.1/"_s)), WebCore::IPAddressSpace::Local);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("ftp://192.168.1.1/"_s)), WebCore::IPAddressSpace::Private);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("ws://192.168.1.1/"_s)), WebCore::IPAddressSpace::Private);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("wss://192.168.1.1/"_s)), WebCore::IPAddressSpace::Private);
 
     // Custom schemes
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("custom://192.168.1.1/"_s)), WebCore::IPAddressSpace::Local);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("custom://192.168.1.1/"_s)), WebCore::IPAddressSpace::Private);
 
     // Public addresses with different schemes
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://8.8.8.8/"_s)), WebCore::IPAddressSpace::Public);
@@ -255,9 +255,9 @@ TEST(IPAddressSpace, URLsWithPorts)
 {
     // Local addresses with various ports
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://127.0.0.1:8080/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://192.168.1.1:443/"_s)), WebCore::IPAddressSpace::Local);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://192.168.1.1:443/"_s)), WebCore::IPAddressSpace::Private);
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://[::1]:3000/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://[fc00::1]:8443/"_s)), WebCore::IPAddressSpace::Local);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("https://[fc00::1]:8443/"_s)), WebCore::IPAddressSpace::Private);
 
     // Public addresses with ports
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://8.8.8.8:53/"_s)), WebCore::IPAddressSpace::Public);
@@ -268,22 +268,43 @@ TEST(IPAddressSpace, URLsWithPorts)
 TEST(IPAddressSpace, IPv4BoundaryConditions)
 {
     // Test exact boundaries for 172.16.0.0/12
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://172.16.0.0/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://172.31.255.255/"_s)), WebCore::IPAddressSpace::Local);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://172.16.0.0/"_s)), WebCore::IPAddressSpace::Private);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://172.31.255.255/"_s)), WebCore::IPAddressSpace::Private);
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://172.15.255.255/"_s)), WebCore::IPAddressSpace::Public);
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://172.32.0.0/"_s)), WebCore::IPAddressSpace::Public);
 
     // Test exact boundaries for 100.64.0.0/10
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://100.64.0.0/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://100.127.255.255/"_s)), WebCore::IPAddressSpace::Local);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://100.64.0.0/"_s)), WebCore::IPAddressSpace::Private);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://100.127.255.255/"_s)), WebCore::IPAddressSpace::Private);
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://100.63.255.255/"_s)), WebCore::IPAddressSpace::Public);
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://100.128.0.0/"_s)), WebCore::IPAddressSpace::Public);
 
     // Test exact boundaries for 198.18.0.0/15
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://198.18.0.0/"_s)), WebCore::IPAddressSpace::Local);
-    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://198.19.255.255/"_s)), WebCore::IPAddressSpace::Local);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://198.18.0.0/"_s)), WebCore::IPAddressSpace::Private);
+    EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://198.19.255.255/"_s)), WebCore::IPAddressSpace::Private);
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://198.17.255.255/"_s)), WebCore::IPAddressSpace::Public);
     EXPECT_EQ(WebCore::determineIPAddressSpace(URL("http://198.20.0.0/"_s)), WebCore::IPAddressSpace::Public);
+}
+
+// Test isPrivateNetworkRequest
+TEST(IPAddressSpace, IsPrivateNetworkRequest)
+{
+    // Public -> Private = private network request
+    EXPECT_TRUE(WebCore::isPrivateNetworkRequest(WebCore::IPAddressSpace::Public, WebCore::IPAddressSpace::Private));
+    // Public -> Local = private network request
+    EXPECT_TRUE(WebCore::isPrivateNetworkRequest(WebCore::IPAddressSpace::Public, WebCore::IPAddressSpace::Local));
+    // Private -> Local = private network request
+    EXPECT_TRUE(WebCore::isPrivateNetworkRequest(WebCore::IPAddressSpace::Private, WebCore::IPAddressSpace::Local));
+
+    // Same-space requests are NOT private network requests
+    EXPECT_FALSE(WebCore::isPrivateNetworkRequest(WebCore::IPAddressSpace::Public, WebCore::IPAddressSpace::Public));
+    EXPECT_FALSE(WebCore::isPrivateNetworkRequest(WebCore::IPAddressSpace::Private, WebCore::IPAddressSpace::Private));
+    EXPECT_FALSE(WebCore::isPrivateNetworkRequest(WebCore::IPAddressSpace::Local, WebCore::IPAddressSpace::Local));
+
+    // More-public target is NOT a private network request
+    EXPECT_FALSE(WebCore::isPrivateNetworkRequest(WebCore::IPAddressSpace::Private, WebCore::IPAddressSpace::Public));
+    EXPECT_FALSE(WebCore::isPrivateNetworkRequest(WebCore::IPAddressSpace::Local, WebCore::IPAddressSpace::Public));
+    EXPECT_FALSE(WebCore::isPrivateNetworkRequest(WebCore::IPAddressSpace::Local, WebCore::IPAddressSpace::Private));
 }
 
 }

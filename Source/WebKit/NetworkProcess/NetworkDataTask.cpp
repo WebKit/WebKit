@@ -32,6 +32,7 @@
 #include "NetworkLoadParameters.h"
 #include "NetworkProcess.h"
 #include "NetworkSession.h"
+#include <WebCore/IPAddressSpace.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
@@ -185,6 +186,8 @@ void NetworkDataTask::didReceiveResponse(ResourceResponse&& response, Negotiated
         response.setUsedLegacyTLS(UsedLegacyTLS::Yes);
     if (privateRelayed == PrivateRelayed::Yes)
         response.setWasPrivateRelayed(WasPrivateRelayed::Yes);
+    if (resolvedIPAddress)
+        response.setIPAddressSpace(determineIPAddressSpace(*resolvedIPAddress));
 
     if (RefPtr client = m_client.get())
         client->didReceiveResponse(WTF::move(response), negotiatedLegacyTLS, privateRelayed, WTF::move(completionHandler));

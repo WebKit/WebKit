@@ -13613,6 +13613,7 @@ bool WebPageProxy::shouldAlwaysPromptForPermission(PermissionName permissionName
     // These are not persistent permissions.
     case PermissionName::BackgroundFetch:
     case PermissionName::DisplayCapture:
+    case PermissionName::LocalNetwork:
     case PermissionName::ScreenWakeLock:
     case PermissionName::SpeakerSelection:
     case PermissionName::StorageAccess:
@@ -14153,6 +14154,36 @@ void WebPageProxy::requestNotificationPermission(const String& originString, Com
         if (allowed && protectedThis)
             protectedThis->pageWillLikelyUseNotifications();
         completionHandler(allowed);
+    });
+}
+
+void WebPageProxy::requestLocalNetworkAccessPermissionFromNetworkProcess(CompletionHandler<void(bool)>&& completionHandler)
+{
+    Ref securityOrigin = WebCore::SecurityOrigin::create(pageLoadState().activeURL());
+    auto originData = securityOrigin->data();
+
+    auto cachedResult = m_localNetworkAccessPermissions.find(originData);
+    if (cachedResult != m_localNetworkAccessPermissions.end()) {
+        completionHandler(cachedResult->value);
+        return;
+    }
+
+    auto& pendingHandlers = m_pendingLocalNetworkAccessRequests.ensure(originData, [] {
+        return Vector<CompletionHandler<void(bool)>> { };
+    }).iterator->value;
+    pendingHandlers.append(WTF::move(completionHandler));
+
+    if (pendingHandlers.size() > 1)
+        return;
+
+    m_uiClient->decidePolicyForLocalNetworkAccessPermissionRequest(*this, originData, [weakThis = WeakPtr { *this }, originData](bool granted) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        protectedThis->m_localNetworkAccessPermissions.set(originData, granted);
+        auto handlers = protectedThis->m_pendingLocalNetworkAccessRequests.take(originData);
+        for (auto& handler : handlers)
+            handler(granted);
     });
 }
 

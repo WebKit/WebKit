@@ -27,14 +27,20 @@
 
 namespace WebCore {
 
-enum class IPAddressSpace : bool {
+class IPAddress;
+
+enum class IPAddressSpace : uint8_t {
     Public,
+    Private,
     Local
 };
 
 WEBCORE_EXPORT IPAddressSpace determineIPAddressSpace(const WTF::URL&);
+WEBCORE_EXPORT IPAddressSpace determineIPAddressSpace(const IPAddress&);
 
 WEBCORE_EXPORT bool isLocalIPAddressSpace(IPAddressSpace);
 WEBCORE_EXPORT bool isLocalIPAddressSpace(const WTF::URL&);
+
+WEBCORE_EXPORT bool isPrivateNetworkRequest(IPAddressSpace source, IPAddressSpace target);
 
 } // namespace WebCore

@@ -140,11 +140,12 @@ static IPAddressSpace updateTargetAddressSpaceIfNeeded(IPAddressSpace currentAdd
     if (host.isEmpty())
         return currentAddressSpace;
 
-    if (WebCore::isLocalIPAddressSpace(url))
-        return IPAddressSpace::Local;
+    auto space = WebCore::determineIPAddressSpace(url);
+    if (space != IPAddressSpace::Public)
+        return space;
 
     if (host.endsWithIgnoringASCIICase(".local"_s))
-        return IPAddressSpace::Local;
+        return IPAddressSpace::Private;
 
     return currentAddressSpace;
 }

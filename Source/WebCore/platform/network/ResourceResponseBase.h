@@ -63,7 +63,7 @@ enum class WasPrivateRelayed : bool { No, Yes };
 static constexpr unsigned bitWidthOfWasPrivateRelayed = 1;
 static_assert(static_cast<unsigned>(WasPrivateRelayed::Yes) <= ((1U << bitWidthOfWasPrivateRelayed) - 1));
 
-static constexpr unsigned bitWidthOfIPAddressSpace = 1;
+static constexpr unsigned bitWidthOfIPAddressSpace = 2;
 static_assert(static_cast<unsigned>(IPAddressSpace::Local) <= ((1U << bitWidthOfIPAddressSpace) - 1));
 
 enum class ResourceResponseBaseType : uint8_t { Basic, Cors, Default, Error, Opaque, Opaqueredirect };
@@ -153,7 +153,7 @@ public:
     void setProxyName(String&& proxyName) { m_proxyName = WTF::move(proxyName); }
     const String& proxyName() const LIFETIME_BOUND { return m_proxyName; }
 
-    IPAddressSpace ipAddressSpace() { return m_ipAddressSpace; }
+    IPAddressSpace ipAddressSpace() const { return m_ipAddressSpace; }
     void setIPAddressSpace(IPAddressSpace ipAddressSpace) { m_ipAddressSpace = ipAddressSpace; }
 
     // These functions return parsed values of the corresponding response headers.

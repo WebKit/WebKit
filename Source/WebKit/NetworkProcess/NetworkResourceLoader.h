@@ -335,6 +335,7 @@ private:
     RefPtr<NetworkLoadChecker> m_networkLoadChecker;
     bool m_shouldRestartLoad { false };
     ResponseCompletionHandler m_responseCompletionHandler;
+    bool m_privateNetworkAccessGranted { false };
     bool m_shouldCaptureExtraNetworkLoadMetrics { false };
     bool m_isKeptAlive { false };
     std::unique_ptr<EarlyHintsResourceLoader> m_earlyHintsResourceLoader;

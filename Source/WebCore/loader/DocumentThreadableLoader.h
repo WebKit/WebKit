@@ -33,6 +33,7 @@
 
 #include "ContentSecurityPolicy.h"
 #include "CrossOriginPreflightChecker.h"
+#include "IPAddressSpace.h"
 #include "LoaderMalloc.h"
 #include "ResourceLoaderIdentifier.h"
 #include "ResourceResponse.h"
@@ -146,6 +147,8 @@ class CachedRawResource;
 
         ShouldLogError m_shouldLogError;
         std::optional<ResourceRequest> m_bypassingPreflightForServiceWorkerRequest;
+        bool m_isPrivateNetworkRequest { false };
+        std::optional<ResourceRequest> m_privateNetworkAccessRetryRequest;
     };
 
 } // namespace WebCore

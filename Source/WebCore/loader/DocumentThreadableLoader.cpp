@@ -45,6 +45,7 @@
 #include "DocumentView.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
+#include "IPAddressSpace.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorNetworkAgent.h"
 #include "LegacySchemeRegistry.h"
@@ -202,7 +203,10 @@ void DocumentThreadableLoader::makeCrossOriginAccessRequest(ResourceRequest&& re
 {
     ASSERT(m_options.mode == FetchOptions::Mode::Cors);
 
-    if ((m_options.preflightPolicy == PreflightPolicy::Consider && isSimpleCrossOriginAccessRequest(request.httpMethod(), request.httpHeaderFields())) || m_options.preflightPolicy == PreflightPolicy::Prevent || shouldPerformSecurityChecks()) {
+    if (m_document->settings().localNetworkAccessEnabled() && !m_isPrivateNetworkRequest)
+        m_privateNetworkAccessRetryRequest = request;
+
+    if ((m_options.preflightPolicy == PreflightPolicy::Consider && isSimpleCrossOriginAccessRequest(request.httpMethod(), request.httpHeaderFields()) && !m_isPrivateNetworkRequest) || m_options.preflightPolicy == PreflightPolicy::Prevent || shouldPerformSecurityChecks()) {
         if (checkURLSchemeAsCORSEnabled(request.url()))
             makeSimpleCrossOriginAccessRequest(WTF::move(request));
     } else {
@@ -220,10 +224,13 @@ void DocumentThreadableLoader::makeCrossOriginAccessRequest(ResourceRequest&& re
             return;
 
         m_simpleRequest = false;
-        if (RefPtr page = document->page(); page && CrossOriginPreflightResultCache::singleton().canSkipPreflight(page->sessionID(), document->clientOrigin(), request.url(), m_options.storedCredentialsPolicy, request.httpMethod(), request.httpHeaderFields()))
-            preflightSuccess(WTF::move(request));
-        else
-            makeCrossOriginAccessRequestWithPreflight(WTF::move(request));
+        if (!m_isPrivateNetworkRequest) {
+            if (RefPtr page = document->page(); page && CrossOriginPreflightResultCache::singleton().canSkipPreflight(page->sessionID(), document->clientOrigin(), request.url(), m_options.storedCredentialsPolicy, request.httpMethod(), request.httpHeaderFields())) {
+                preflightSuccess(WTF::move(request));
+                return;
+            }
+        }
+        makeCrossOriginAccessRequestWithPreflight(WTF::move(request));
     }
 }
 
@@ -242,6 +249,10 @@ void DocumentThreadableLoader::makeCrossOriginAccessRequestWithPreflight(Resourc
         Ref preflightChecker = CrossOriginPreflightChecker::create(*this, WTF::move(request));
         m_preflightChecker = preflightChecker.copyRef();
         preflightChecker->startPreflight();
+        return;
+    }
+    if (m_isPrivateNetworkRequest) {
+        logErrorAndFail(ResourceError(errorDomainWebKitInternal, 0, request.url(), "Synchronous local network access is not allowed"_s, ResourceError::Type::AccessControl));
         return;
     }
     CrossOriginPreflightChecker::doPreflight(*this, WTF::move(request));
@@ -385,6 +396,19 @@ void DocumentThreadableLoader::dataSent(CachedResource& resource, unsigned long 
 void DocumentThreadableLoader::responseReceived(const CachedResource& resource, const ResourceResponse& response, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT_UNUSED(resource, &resource == m_resource);
+
+    if (m_privateNetworkAccessRetryRequest && m_document->settings().localNetworkAccessEnabled()
+        && isPrivateNetworkRequest(m_document->ipAddressSpace(), response.ipAddressSpace())) {
+        clearResource();
+        auto retryRequest = *std::exchange(m_privateNetworkAccessRetryRequest, std::nullopt);
+        if (completionHandler)
+            completionHandler();
+        m_isPrivateNetworkRequest = true;
+        m_simpleRequest = false;
+        makeCrossOriginAccessRequestWithPreflight(WTF::move(retryRequest));
+        return;
+    }
+
     ResourceResponse responseWithCorrectFragmentIdentifier;
     if (response.source() != ResourceResponse::Source::ServiceWorker && response.url().fragmentIdentifier() != m_responseURL.fragmentIdentifier()) {
         responseWithCorrectFragmentIdentifier = response;

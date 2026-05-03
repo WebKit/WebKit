@@ -34,6 +34,7 @@
 #include <WebCore/CrossOriginEmbedderPolicy.h>
 #include <WebCore/FetchOptions.h>
 #include <WebCore/FetchingWorkerIdentifier.h>
+#include <WebCore/IPAddressSpace.h>
 #include <WebCore/NavigationIdentifier.h>
 #include <WebCore/NavigationRequester.h>
 #include <WebCore/ResourceLoaderIdentifier.h>
@@ -98,6 +99,7 @@ struct NetworkResourceLoadParameters {
     std::optional<WebCore::FrameIdentifier> parentFrameID { };
     bool crossOriginAccessControlCheckEnabled { true };
     URL documentURL { };
+    WebCore::IPAddressSpace clientIPAddressSpace { WebCore::IPAddressSpace::Public };
 
     bool isCrossOriginOpenerPolicyEnabled { false };
     bool isClearSiteDataHeaderEnabled { false };

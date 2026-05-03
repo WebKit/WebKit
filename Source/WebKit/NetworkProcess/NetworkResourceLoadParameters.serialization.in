@@ -76,8 +76,9 @@ enum class WebKit::NavigatingToAppBoundDomain : bool;
     bool pageHasResourceLoadClient;
     std::optional<WebCore::FrameIdentifier> parentFrameID;
     bool crossOriginAccessControlCheckEnabled;
-    
+
     URL documentURL;
+    WebCore::IPAddressSpace clientIPAddressSpace;
 
     bool isCrossOriginOpenerPolicyEnabled;
     bool isClearSiteDataHeaderEnabled;

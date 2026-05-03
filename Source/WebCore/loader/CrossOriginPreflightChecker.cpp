@@ -82,12 +82,16 @@ void CrossOriginPreflightChecker::validatePreflightResponse(DocumentThreadableLo
         return;
     }
 
-    auto result = WebCore::validatePreflightResponse(page->sessionID(), request, response, loader.options().storedCredentialsPolicy, loader.topOrigin(), loader.securityOrigin(), &CrossOriginAccessControlCheckDisabler::singleton());
+    bool privateNetworkAllowed = false;
+    auto result = WebCore::validatePreflightResponse(page->sessionID(), request, response, loader.options().storedCredentialsPolicy, loader.topOrigin(), loader.securityOrigin(), &CrossOriginAccessControlCheckDisabler::singleton(), loader.m_isPrivateNetworkRequest, &privateNetworkAllowed);
     if (!result) {
         loader.document().addConsoleMessage(MessageSource::Security, MessageLevel::Error, result.error());
         loader.preflightFailure(identifier, ResourceError(errorDomainWebKitInternal, 0, request.url(), result.error(), ResourceError::Type::AccessControl));
         return;
     }
+
+    if (loader.m_isPrivateNetworkRequest && !privateNetworkAllowed)
+        loader.document().addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "The server did not respond with Access-Control-Allow-Private-Network: true. This will be required in a future release."_s);
 
     // FIXME: <https://webkit.org/b/164889> Web Inspector: Show Preflight Request information in inspector
     // This is only showing success preflight requests and responses but we should show network events
@@ -140,7 +144,7 @@ void CrossOriginPreflightChecker::startPreflight()
     options.initiatorContext = loader->options().initiatorContext;
 
     bool includeFetchMetadata = !loader->document().quirks().shouldDisableFetchMetadata();
-    CachedResourceRequest preflightRequest(createAccessControlPreflightRequest(m_request, loader->securityOrigin(), loader->referrer(), includeFetchMetadata), options);
+    CachedResourceRequest preflightRequest(createAccessControlPreflightRequest(m_request, loader->securityOrigin(), loader->referrer(), includeFetchMetadata, loader->m_isPrivateNetworkRequest), options);
     preflightRequest.setInitiatorType(AtomString { loader->options().initiatorType });
 
     ASSERT(!m_resource);
@@ -158,7 +162,7 @@ void CrossOriginPreflightChecker::doPreflight(DocumentThreadableLoader& loader, 
         return;
 
     bool includeFetchMetadata = !loader.document().quirks().shouldDisableFetchMetadata();
-    ResourceRequest preflightRequest = createAccessControlPreflightRequest(request, loader.securityOrigin(), loader.referrer(), includeFetchMetadata);
+    ResourceRequest preflightRequest = createAccessControlPreflightRequest(request, loader.securityOrigin(), loader.referrer(), includeFetchMetadata, loader.m_isPrivateNetworkRequest);
     ResourceError error;
     ResourceResponse response;
     RefPtr<SharedBuffer> data;
