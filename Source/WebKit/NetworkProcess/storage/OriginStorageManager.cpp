@@ -518,7 +518,6 @@ String OriginStorageManager::StorageBucket::resolvedLocalStoragePath()
         return m_resolvedLocalStoragePath;
 
     if (m_level == UnifiedOriginStorageLevel::None) {
-        ASSERT(m_customLocalStoragePath.isEmpty() == m_rootPath.isEmpty());
         m_resolvedLocalStoragePath = m_customLocalStoragePath;
     } else if (!m_rootPath.isEmpty()) {
         auto localStorageDirectory = typeStoragePath(StorageType::LocalStorage);
@@ -546,7 +545,6 @@ String OriginStorageManager::StorageBucket::resolvedIDBStoragePath()
         return m_resolvedIDBStoragePath;
 
     if (m_level == UnifiedOriginStorageLevel::None) {
-        ASSERT(m_customIDBStoragePath.isEmpty() == m_rootPath.isEmpty());
         m_resolvedIDBStoragePath = m_customIDBStoragePath;
     } else {
         auto idbStoragePath = typeStoragePath(StorageType::IndexedDB);
@@ -570,7 +568,6 @@ String OriginStorageManager::StorageBucket::resolvedCacheStoragePath()
     switch (m_level) {
     case UnifiedOriginStorageLevel::None:
     case UnifiedOriginStorageLevel::Basic:
-        ASSERT(m_customCacheStoragePath.isEmpty() == m_rootPath.isEmpty());
         m_resolvedCacheStoragePath = m_customCacheStoragePath;
         break;
     case UnifiedOriginStorageLevel::Standard:

@@ -270,22 +270,12 @@ static void runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming shouldE
     EXPECT_FALSE([WKWebsiteDataStore _defaultDataStoreExists]);
 }
 
-// FIXME when webkit.org/b/313786 is resolved.
-#if PLATFORM(MAC) && !defined(NDEBUG)
-TEST(WebKit, DISABLED_WebsiteDataStoreCustomPathsWithoutPrewarming)
-#else
 TEST(WebKit, WebsiteDataStoreCustomPathsWithoutPrewarming)
-#endif
 {
     runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming::No);
 }
 
-// FIXME when webkit.org/b/313786 is resolved.
-#if PLATFORM(MAC) && !defined(NDEBUG)
-TEST(WebKit, DISABLED_WebsiteDataStoreCustomPathsWithPrewarming)
-#else
 TEST(WebKit, WebsiteDataStoreCustomPathsWithPrewarming)
-#endif
 {
     runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming::Yes);
 }
