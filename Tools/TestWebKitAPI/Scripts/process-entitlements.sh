@@ -50,6 +50,7 @@ function process_mac_testwebkitapi_entitlements()
     plistbuddy Add :com.apple.security.temporary-exception.sbpl array
     plistbuddy Add :com.apple.security.temporary-exception.sbpl:0 string '(allow mach-issue-extension (require-all (extension-class \"com.apple.webkit.extension.mach\")))'
     plistbuddy Add :com.apple.security.temporary-exception.sbpl:1 string '(allow iokit-issue-extension (require-all (extension-class \"com.apple.webkit.extension.iokit\")))'
+    plistbuddy Add :com.apple.security.temporary-exception.sbpl:2 string '(allow signal (target others))'
 
     if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
     then
@@ -59,6 +60,11 @@ function process_mac_testwebkitapi_entitlements()
         plistbuddy Add :com.apple.private.hid.client.event-filter bool YES
         plistbuddy Add :com.apple.private.hid.client.event-dispatch.internal bool YES
     fi
+
+    plistbuddy Add :com.apple.security.app-sandbox bool YES
+    plistbuddy Add :com.apple.security.network.client bool YES
+    plistbuddy Add :com.apple.security.network.server bool YES
+    plistbuddy Add :com.apple.security.temporary-exception.files.absolute-path.read-write string /private/tmp/
 }
 
 # ========================================
