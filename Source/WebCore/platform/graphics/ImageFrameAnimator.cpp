@@ -68,7 +68,7 @@ void ImageFrameAnimator::destroyDecodedData(bool destroyAll)
     static constexpr unsigned LargeAnimationCutoff = 30 * 1024 * 1024;
 
     Ref source = m_source.get();
-    if (source->decodedSize() < LargeAnimationCutoff)
+    if (!source->isLargeForDecoding() && source->decodedSize() < LargeAnimationCutoff)
         return;
 
     source->destroyDecodedData(destroyAll);

@@ -1,0 +1,13 @@
+This tests that large animated images discard old decoded frames as they animate.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.imageFrameIndex(image) is >= 0
+PASS internals.imageFrameIndex(image) is >= 1
+PASS internals.imageFrameIndex(image) is >= 2
+PASS decodedSizeAfterAnimation is >= frameBytes
+PASS decodedSizeAfterAnimation is <= frameBytes * 2
+PASS successfullyParsed is true
+
+TEST COMPLETE

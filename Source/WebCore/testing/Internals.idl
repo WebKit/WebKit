@@ -768,6 +768,7 @@ enum ContentsFormat {
     [Conditional=ACCESSIBILITY_ANIMATION_CONTROL] undefined pauseImageAnimation(HTMLImageElement element);
     unsigned long imagePendingDecodePromisesCountForTesting(HTMLImageElement element);
     undefined setClearDecoderAfterAsyncFrameRequestForTesting(HTMLImageElement element, boolean enabled);
+    unsigned long imageDecodedSizeForTesting(HTMLImageElement element);
     unsigned long imageDecodeCount(HTMLImageElement element);
     unsigned long imageBlankDrawCount(HTMLImageElement element);
     DOMString imageLastDecodingOptions(HTMLImageElement element);

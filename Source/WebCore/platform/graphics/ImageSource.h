@@ -124,6 +124,7 @@ public:
     virtual DecodingStatus frameDecodingStatusAtIndex(unsigned) const { RELEASE_ASSERT_NOT_REACHED(); return DecodingStatus::Invalid; }
 
     // Testing support
+    virtual unsigned decodedSizeForTesting() const { return 0; }
     virtual unsigned decodeCountForTesting() const { return 0; }
     virtual unsigned blankDrawCountForTesting() const { return 0; }
     virtual void setMinimumDecodingDurationForTesting(Seconds) { RELEASE_ASSERT_NOT_REACHED(); }

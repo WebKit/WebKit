@@ -1275,6 +1275,12 @@ void Internals::setClearDecoderAfterAsyncFrameRequestForTesting(HTMLImageElement
         bitmapImage->setClearDecoderAfterAsyncFrameRequestForTesting(enabled);
 }
 
+unsigned Internals::imageDecodedSizeForTesting(HTMLImageElement& element)
+{
+    auto* bitmapImage = bitmapImageFromImageElement(element);
+    return bitmapImage ? bitmapImage->decodedSizeForTesting() : 0;
+}
+
 unsigned Internals::imageDecodeCount(HTMLImageElement& element)
 {
     auto* bitmapImage = bitmapImageFromImageElement(element);

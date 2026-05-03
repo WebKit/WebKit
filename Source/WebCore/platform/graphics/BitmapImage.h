@@ -93,6 +93,7 @@ public:
     void setMinimumDecodingDurationForTesting(Seconds duration) { m_source->setMinimumDecodingDurationForTesting(duration); }
     void setClearDecoderAfterAsyncFrameRequestForTesting(bool enabled) { m_source->setClearDecoderAfterAsyncFrameRequestForTesting(enabled); }
     void setHasHDRContentForTesting() { m_source->setHasHDRContentForTesting(); }
+    unsigned decodedSizeForTesting() const { return m_source->decodedSizeForTesting(); }
     unsigned decodeCountForTesting() const { return m_source->decodeCountForTesting(); }
     unsigned blankDrawCountForTesting() const { return m_source->blankDrawCountForTesting(); }
 

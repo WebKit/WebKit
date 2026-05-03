@@ -280,6 +280,7 @@ public:
     void pauseImageAnimation(HTMLImageElement&);
     unsigned NODELETE imagePendingDecodePromisesCountForTesting(HTMLImageElement&);
     void setClearDecoderAfterAsyncFrameRequestForTesting(HTMLImageElement&, bool enabled);
+    unsigned imageDecodedSizeForTesting(HTMLImageElement&);
     unsigned imageDecodeCount(HTMLImageElement&);
     unsigned imageBlankDrawCount(HTMLImageElement&);
     AtomString imageLastDecodingOptions(HTMLImageElement&);
