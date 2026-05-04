@@ -30,8 +30,8 @@
 #include <JavaScriptCore/FullGCActivityCallback.h>
 #include <JavaScriptCore/MarkedSpace.h>
 #include <wtf/CheckedPtr.h>
-#include <wtf/MonotonicTime.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/UnbarrieredMonotonicTime.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -64,7 +64,7 @@ public:
     ~OpportunisticTaskScheduler();
 
     bool isScheduled() const { return m_runLoopObserver->isScheduled(); }
-    void rescheduleIfNeeded(MonotonicTime deadline);
+    void rescheduleIfNeeded(UnbarrieredMonotonicTime deadline);
     bool hasImminentlyScheduledWork() const { return m_imminentlyScheduledWorkCount; }
 
     [[nodiscard]] Ref<ImminentlyScheduledWorkScope> NODELETE makeScheduledWorkScope();
@@ -122,8 +122,10 @@ private:
     WeakPtr<Page> m_page;
     uint64_t m_imminentlyScheduledWorkCount { 0 };
     uint64_t m_runloopCountAfterBeingScheduled { 0 };
-    MonotonicTime m_currentDeadline;
+    UnbarrieredMonotonicTime m_currentDeadline;
     const UniqueRef<RunLoopObserver> m_runLoopObserver;
+    unsigned m_asyncResponseReceivedEpochAtStart;
+    bool m_isSelfRescheduled { false };
 };
 
 } // namespace WebCore

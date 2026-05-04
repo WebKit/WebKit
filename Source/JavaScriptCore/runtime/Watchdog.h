@@ -31,6 +31,8 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
+#define MLAM_VERBOSE 0
+
 namespace JSC {
 
 class CallFrame;

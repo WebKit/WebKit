@@ -215,6 +215,8 @@ set(WTF_PUBLIC_HEADERS
     ObjCRuntimeExtras.h
     ObjectIdentifier.h
     Observer.h
+    OpportunisticTaskContext.h
+    OpportunisticTaskSchedulerEvents.h
     OptionCountedSet.h
     OptionSet.h
     OptionalOrReference.h
@@ -382,6 +384,7 @@ set(WTF_PUBLIC_HEADERS
     UUID.h
     UnalignedAccess.h
     UnbarrieredMonotonicTime.h
+    UnbarrieredMonotonicTimeInlines.h
     UniStdExtras.h
     UnionFind.h
     UniqueArray.h
@@ -583,6 +586,7 @@ set(WTF_SOURCES
     NumberOfCores.cpp
     OSRandomSource.cpp
     ObjectIdentifier.cpp
+    OpportunisticTaskSchedulerEvents.cpp
     PageBlock.cpp
     ParallelHelperPool.cpp
     ParallelJobsGeneric.cpp

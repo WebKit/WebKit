@@ -29,6 +29,7 @@
 #include "DeferGCInlines.h"
 #include "HeapInlines.h"
 #include "MarkedBlockInlines.h"
+#include "Watchdog.h" // mlam TEST
 #include <wtf/SystemTracing.h>
 
 namespace JSC {
@@ -48,11 +49,14 @@ IncrementalSweeper::IncrementalSweeper(JSC::Heap* heap)
 {
 }
 
-void IncrementalSweeper::doWorkUntil(VM& vm, MonotonicTime deadline)
+void IncrementalSweeper::startSweepingForOpportunisticTask(VM& vm)
 {
     if (!m_currentDirectory)
         m_currentDirectory = vm.heap.objectSpace().firstDirectory();
+}
 
+void IncrementalSweeper::doWorkForOpportunisticTask(VM& vm, UnbarrieredMonotonicTime deadline)
+{
     if (m_currentDirectory)
         doSweep(vm, deadline, SweepTrigger::OpportunisticTask);
 }
@@ -64,25 +68,61 @@ void IncrementalSweeper::doWork(VM& vm)
         scheduleTimer();
         return;
     }
-    doSweep(vm, MonotonicTime::now() + sweepTimeSlice, SweepTrigger::Timer);
+    doSweep(vm, UnbarrieredMonotonicTime::now() + sweepTimeSlice, SweepTrigger::Timer);
 }
 
-void IncrementalSweeper::doSweep(VM& vm, MonotonicTime deadline, SweepTrigger trigger)
+#if MLAM_VERBOSE
+static constexpr bool mlamTraceSweep = false;
+#endif
+
+void IncrementalSweeper::doSweep(VM& vm, UnbarrieredMonotonicTime deadline, SweepTrigger trigger)
 {
     std::optional<TraceScope> traceScope;
     if (Options::useTracePoints()) [[unlikely]]
         traceScope.emplace(IncrementalSweepStart, IncrementalSweepEnd, vm.heap.size(), vm.heap.capacity());
 
+#if MLAM_VERBOSE
+    UnbarrieredMonotonicTime startTime; // mlam
+    UnbarrieredMonotonicTime endTime; // mlam
+    unsigned count = 0;
+
+    if constexpr (mlamTraceSweep)
+        startTime = UnbarrieredMonotonicTime::now(); // mlam
+#endif
     while (sweepNextBlock(vm, trigger)) {
-        if (MonotonicTime::now() < deadline)
+#if MLAM_VERBOSE
+        count++;
+        if constexpr (mlamTraceSweep)
+            endTime = UnbarrieredMonotonicTime::now(); // mlam
+#endif
+        if (UnbarrieredMonotonicTime::now() < deadline) {
+#if MLAM_VERBOSE
+            if constexpr (mlamTraceSweep) {
+                dataLogLn("    mlam IncrementalSweeper::doSweep[", count, "]: sweepNextBlock time ", (endTime - startTime).nanosecondsAs<long>(), " ns | remaining ", (deadline - endTime).nanosecondsAs<long>(), " ns");
+                startTime = UnbarrieredMonotonicTime::now(); // mlam
+            }
+#endif
             continue;
+        }
 
         if (trigger == SweepTrigger::Timer)
             scheduleTimer();
-        else
+        else {
             m_lastOpportunisticTaskDidFinishSweeping = false;
+#if MLAM_VERBOSE
+            if constexpr (mlamTraceSweep) {
+                dataLogLn("    mlam IncrementalSweeper::doSweep[", count, "]: OUT OF TIME time ", (endTime - startTime).nanosecondsAs<long>(), " ns | remaining ", (deadline - endTime).nanosecondsAs<long>(), " ns");
+            }
+#endif
+        }
         return;
     }
+#if MLAM_VERBOSE
+    if constexpr (mlamTraceSweep) {
+        endTime = UnbarrieredMonotonicTime::now(); // mlam
+        dataLogLn("    mlam IncrementalSweeper::doSweep[", count, "]: FINISHED time ", (endTime - startTime).nanosecondsAs<long>(), " ns | remaining ", (deadline - endTime).nanosecondsAs<long>(), " ns");
+    }
+#endif
     if (trigger == SweepTrigger::OpportunisticTask)
         m_lastOpportunisticTaskDidFinishSweeping = true;
 

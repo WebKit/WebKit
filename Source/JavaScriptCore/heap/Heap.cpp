@@ -97,6 +97,7 @@
 #include "VM.h"
 #include "VerifierSlotVisitorInlines.h"
 #include "WasmCallee.h"
+#include "Watchdog.h" // mlam TEST
 #include "WeakMapImplInlines.h"
 #include "WeakSetInlines.h"
 #include <algorithm>
@@ -1346,6 +1347,22 @@ void Heap::collectSync(GCRequest request)
     waitForCollection(requestCollection(request));
 }
 
+//void Heap::collectSyncWithAbortCheck(const Function<bool()>& shouldAbort, GCRequest request)
+void Heap::collectSyncWithAbortCheck(GCRequest request)
+{
+    if (!Options::useGC()) [[unlikely]]
+        return;
+
+    if constexpr (validateDFGDoesGC)
+        vm().verifyCanGC();
+
+    if (!m_isSafeToCollect)
+        return;
+
+//    waitForCollectionWithAbortCheck(shouldAbort, requestCollection(request));
+    waitForCollectionWithAbortCheck(requestCollection(request));
+}
+
 bool Heap::shouldCollectInCollectorThread(const AbstractLocker&)
 {
     RELEASE_ASSERT(m_requests.isEmpty() == (m_lastServedTicket == m_lastGrantedTicket));
@@ -2356,6 +2373,83 @@ void Heap::waitForCollection(Ticket ticket)
         [&] (const AbstractLocker&) -> bool {
             return m_lastServedTicket >= ticket;
         });
+}
+
+//void Heap::waitForCollectionWithAbortCheck(const Function<bool()>& shouldAbort, Ticket ticket)
+void Heap::waitForCollectionWithAbortCheck(Ticket ticket)
+{
+    waitForCollector(
+        [&] (const AbstractLocker&) -> bool {
+            auto& context = vm().opportunisticTaskContext();
+            auto shouldAbort = [&] -> bool {
+                if (!Options::otsDoAbortCheckInGC())
+                    return false;
+                return context.shouldAbort();
+            };
+            return m_lastServedTicket >= ticket || shouldAbort();
+        });
+}
+
+//bool Heap::incrementallyCollectSyncIfAlreadyInProgress(const Function<bool()>& shouldAbort)
+bool Heap::incrementallyCollectSyncIfAlreadyInProgress()
+{
+    ASSERT(!isDeferred());
+    if (!Options::useGC()) [[unlikely]]
+        return true; // No more GC work to do.
+
+    if constexpr (validateDFGDoesGC)
+        vm().verifyCanGC();
+
+    if (!m_isSafeToCollect)
+        return true; // No more GC work to do for now.
+
+    bool hasGCInProgress = false;
+    {
+        Locker locker { *m_threadLock };
+        hasGCInProgress = (m_lastServedTicket != m_lastGrantedTicket);
+    }
+    if (!hasGCInProgress) {
+        unsigned oldState = m_worldState.load();
+        if (oldState & needFinalizeBit) {
+#if MLAM_VERBOSE
+            dataLogLn("mlam Heap::incrementallyCollectSyncIfAlreadyInProgress: @", __LINE__, " handleNeedFinalize()");
+#endif
+            handleNeedFinalize();
+            return true; // We did do some GC work.
+        }
+        return false;
+    }
+
+#if MLAM_VERBOSE
+    dataLogLn("mlam Heap::incrementallyCollectSyncIfAlreadyInProgress:");
+#endif
+    auto& context = vm().opportunisticTaskContext();
+    auto shouldAbort = [&] -> bool {
+        if (!Options::otsDoAbortCheckInGC())
+            return false;
+        return context.shouldAbort();
+    };
+
+    unsigned spinLoopCount = 0;
+    while (!shouldAbort()) {
+        stopIfNecessary();
+        if (shouldAbort() || !m_objectSpace.isMarking())
+            break;
+
+#if MLAM_VERBOSE
+        dataLogLn("mlam Heap::incrementallyCollectSyncIfAlreadyInProgress: @", __LINE__, " drain marks");
+#endif
+        // Help with marking while the GC is in the Concurrent marking phase.
+        SlotVisitor& visitor = *m_mutatorSlotVisitor;
+        ParallelModeEnabler enabler(visitor);
+        // mlam FIXME what was the original OTS form for this?
+        auto bytesVisited = visitor.performIncrementOfDraining(Options::gcIncrementBytes());
+        if (bytesVisited)
+            spinLoopCount = 0;
+        else if (++spinLoopCount >= Options::otsIncrementalGCSpinLimit())
+            Thread::yield();
+    }
+    return true; // Did our part in GC work.
 }
 
 void Heap::sweepInFinalize()

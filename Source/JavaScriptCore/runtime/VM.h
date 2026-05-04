@@ -59,6 +59,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <wtf/Lock.h>
 #include <wtf/MallocPtr.h>
 #include <wtf/ObjectIdentifier.h>
+#include <wtf/OpportunisticTaskContext.h>
 #include <wtf/ThreadSafeRefCountedWithSuppressingSaferCPPChecking.h>
 #include <wtf/text/AdaptiveStringSearcher.h>
 
@@ -372,7 +373,8 @@ public:
     enum class SchedulerOptions : uint8_t {
         HasImminentlyScheduledWork = 1 << 0,
     };
-    JS_EXPORT_PRIVATE void performOpportunisticallyScheduledTasks(MonotonicTime deadline, OptionSet<SchedulerOptions>);
+//    JS_EXPORT_PRIVATE void performOpportunisticallyScheduledTasks(const Function<bool()>& shouldAbort, MonotonicTime deadline, OptionSet<SchedulerOptions>);
+    JS_EXPORT_PRIVATE bool performOpportunisticallyScheduledTasks(OptionSet<SchedulerOptions>);
 
     Structure* cellButterflyStructure(IndexingType indexingType) { return rawImmutableButterflyStructure(indexingType).get(); }
 
@@ -1190,6 +1192,8 @@ public:
     JS_EXPORT_PRIVATE Wasm::DebugState* NODELETE debugState();
 #endif
 
+    OpportunisticTaskContext& opportunisticTaskContext() { return m_opportunisticTaskContext; }
+
 private:
     VM(VMType, HeapType, WTF::RunLoop* = nullptr, bool* success = nullptr);
     static VM*& sharedInstanceInternal();
@@ -1327,6 +1331,7 @@ private:
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
     std::unique_ptr<Wasm::DebugState> m_debugState;
 #endif
+    OpportunisticTaskContext m_opportunisticTaskContext;
 
     Lock m_loopHintExecutionCountLock;
     UncheckedKeyHashMap<const JSInstruction*, std::pair<unsigned, std::unique_ptr<uintptr_t>>> m_loopHintExecutionCounts;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,40 +20,24 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
-#include <JavaScriptCore/JSRunLoopTimer.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/UnbarrieredMonotonicTime.h>
 
-namespace JSC {
+namespace WTF {
 
-class Heap;
-class BlockDirectory;
+inline UnbarrieredMonotonicTime UnbarrieredMonotonicTime::fromMonotonicTime(MonotonicTime monotonicTime)
+{
+    return UnbarrieredMonotonicTime(monotonicTime.secondsSinceEpoch().value());
+}
 
-class IncrementalSweeper final : public JSRunLoopTimer {
-public:
-    using Base = JSRunLoopTimer;
-    JS_EXPORT_PRIVATE explicit IncrementalSweeper(Heap*);
+inline MonotonicTime UnbarrieredMonotonicTime::toMonotonicTime()
+{
+    return MonotonicTime(secondsSinceEpoch().value());
+}
 
-    JS_EXPORT_PRIVATE void startSweeping(Heap&);
-    void doWork(VM&) final;
-    void stopSweeping();
-
-    void startSweepingForOpportunisticTask(VM&);
-    void doWorkForOpportunisticTask(VM&, UnbarrieredMonotonicTime deadline);
-    bool doneSweepingForOpportunisticTask() const { return m_lastOpportunisticTaskDidFinishSweeping; }
-
-private:
-    enum class SweepTrigger : bool { Timer, OpportunisticTask };
-    bool sweepNextBlock(VM&, SweepTrigger);
-    void doSweep(VM&, UnbarrieredMonotonicTime startTime, SweepTrigger);
-    void scheduleTimer();
-    
-    BlockDirectory* m_currentDirectory;
-    bool m_lastOpportunisticTaskDidFinishSweeping { false };
-};
-
-} // namespace JSC
+} // namespace WTF

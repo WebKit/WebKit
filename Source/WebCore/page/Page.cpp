@@ -218,12 +218,14 @@
 #include "WorkerGlobalScope.h"
 #include "WorkerOrWorkletScriptController.h"
 #include <JavaScriptCore/VM.h>
+#include <JavaScriptCore/Watchdog.h> // mlam TEST
 #include <ranges>
 #include <wtf/Borrow.h>
 #include <wtf/FileSystem.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/UnbarrieredMonotonicTimeInlines.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringHash.h>
@@ -2560,7 +2562,7 @@ void Page::renderingUpdateCompleted()
 
     if (!isUtilityPage()) {
         auto nextRenderingUpdate = m_lastRenderingUpdateTimestamp + preferredRenderingUpdateInterval();
-        protect(opportunisticTaskScheduler())->rescheduleIfNeeded(nextRenderingUpdate);
+        protect(opportunisticTaskScheduler())->rescheduleIfNeeded(UnbarrieredMonotonicTime::fromMonotonicTime(nextRenderingUpdate));
     }
 }
 
@@ -4600,6 +4602,20 @@ void Page::forEachLocalFrame(NOESCAPE const Function<void(LocalFrame&)>& functor
         functor(frame);
 }
 
+void Page::forEachLocalFrameWithIterationStatus(NOESCAPE const Function<IterationStatus(LocalFrame&)>& functor)
+{
+    Vector<Ref<LocalFrame>> frames;
+    for (RefPtr frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(*frame))
+            frames.append(localFrame.releaseNonNull());
+    }
+
+    for (auto& frame : frames) {
+        if (functor(frame) == IterationStatus::Done)
+            break;
+    }
+}
+
 void Page::forEachWindowEventLoop(NOESCAPE const Function<void(WindowEventLoop&)>& functor)
 {
     HashSet<Ref<WindowEventLoop>> windowEventLoops;
@@ -5341,35 +5357,93 @@ void Page::willChangeLocationInCompletelyLoadedSubframe()
     commonVM().heap.scheduleOpportunisticFullCollection();
 }
 
-void Page::performOpportunisticallyScheduledTasks(MonotonicTime deadline)
+//void Page::performOpportunisticallyScheduledTasks(const Function<bool()>& shouldAbort, MonotonicTime deadline)
+bool Page::performOpportunisticallyScheduledTasks()
 {
+//    if (m_opportunisticTaskScheduler->hasImminentlyScheduledWork())
+//        return;
+
     OptionSet<JSC::VM::SchedulerOptions> options;
     if (m_opportunisticTaskScheduler->hasImminentlyScheduledWork())
         options.add(JSC::VM::SchedulerOptions::HasImminentlyScheduledWork);
-    commonVM().performOpportunisticallyScheduledTasks(deadline, options);
 
-    deleteRemovedNodesAndDetachedRenderers();
+//    options.add(JSC::VM::SchedulerOptions::HasImminentlyScheduledWork);
+//    if (commonVM().performOpportunisticallyScheduledTasks(shouldAbort, deadline, options))
+    if (commonVM().performOpportunisticallyScheduledTasks(options) && JSC::Options::otsAbortIfSweepAborted())
+        return true; // mlam FIXME use enum.
+
+    if (JSC::Options::otsDeleteNodesAndDetachedRenderers())
+        return deleteRemovedNodesAndDetachedRenderers();
+    return false;
 }
 
-void Page::deleteRemovedNodesAndDetachedRenderers()
+//void Page::deleteRemovedNodesAndDetachedRenderers(const Function<bool()>& shouldAbort, MonotonicTime deadline)
+bool Page::deleteRemovedNodesAndDetachedRenderers()
 {
+    auto& context = opportunisticTaskContext();
+    if (JSC::Options::otsAbortCheckInNodeRendererCleanup() && context.shouldAbort())
+        return true;
+
+#if MLAM_VERBOSE
+    auto startTime = UnbarrieredMonotonicTime::now(); // mlam
+    auto previousStartTime = startTime; // mlam
+    auto endTime = startTime; // mlam
+#endif
     RefPtr localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
     if (!localMainFrame)
-        return;
+        return false;
     RefPtr document = localMainFrame->document();
     if (!document)
-        return;
-    forEachLocalFrame([] (LocalFrame& frame) {
+        return false; // mlam FIXME use enum.
+
+    forEachLocalFrameWithIterationStatus([&] (LocalFrame& frame) -> IterationStatus {
+        if (JSC::Options::otsAbortCheckInNodeRendererCleanup() && context.shouldAbort()) {
+#if MLAM_VERBOSE
+            dataLogLn("  mlam Page::deleteRemovedNodesAndDetachedRenderers: LOCAL FRAME time ", (endTime - previousStartTime).nanosecondsAs<long>(), " ns | remaining ", (deadline - endTime).nanosecondsAs<long>(), " ns");
+#endif
+            return IterationStatus::Done;
+        }
+
+#if MLAM_VERBOSE
+        previousStartTime = UnbarrieredMonotonicTime::now(); // mlam
+#endif
         RefPtr document = frame.document();
         if (!document)
-            return;
-        document->asyncNodeDeletionQueue().deleteNodesNow();
+            return IterationStatus::Continue;
+        if (JSC::Options::otsDeleteRemovedNodes())
+            document->asyncNodeDeletionQueue().deleteNodesNow();
+        if (JSC::Options::otsAbortCheckInNodeRendererCleanup() && context.shouldAbort()) { // mlam TEST
+#if MLAM_VERBOSE
+            dataLogLn("  mlam Page::deleteRemovedNodesAndDetachedRenderers: LOCAL FRAME @ ", __LINE__, " time ", (endTime - previousStartTime).nanosecondsAs<long>(), " ns | remaining ", (deadline - endTime).nanosecondsAs<long>(), " ns");
+#endif
+            return IterationStatus::Done;
+        }
+
         RefPtr frameView = document->view();
         if (!frameView)
-            return;
-        protect(frameView->layoutContext())->deleteDetachedRenderersNow();
-        protect(frameView->layoutContext())->deleteDetachedInlineContentNow();
+            return IterationStatus::Continue;
+        if (JSC::Options::otsDeleteDetachedRenderers())
+            protect(frameView->layoutContext())->deleteDetachedRenderersNow();
+        if (JSC::Options::otsAbortCheckInNodeRendererCleanup() && context.shouldAbort()) { // mlam TEST 3
+#if MLAM_VERBOSE
+            dataLogLn("  mlam Page::deleteRemovedNodesAndDetachedRenderers: LOCAL FRAME @ ", __LINE__, " time ", (endTime - previousStartTime).nanosecondsAs<long>(), " ns | remaining ", (deadline - endTime).nanosecondsAs<long>(), " ns");
+#endif
+            return IterationStatus::Done;
+        }
+
+        if (JSC::Options::otsDeleteDetachedInlineContent())
+            protect(frameView->layoutContext())->deleteDetachedInlineContentNow();
+#if MLAM_VERBOSE
+        endTime = UnbarrieredMonotonicTime::now(); // mlam
+        dataLogLn("  mlam Page::deleteRemovedNodesAndDetachedRenderers: LOCAL FRAME @ ", __LINE__, " time ", (endTime - startTime).nanosecondsAs<long>(), " ns");
+#endif
+        return IterationStatus::Continue;
     });
+#if MLAM_VERBOSE
+    endTime = UnbarrieredMonotonicTime::now(); // mlam
+    dataLogLn("mlam Page::deleteRemovedNodesAndDetachedRenderers: time ", (endTime - startTime).nanosecondsAs<long>(), " ns | remaining ", (deadline - endTime).nanosecondsAs<long>(), " ns");
+#endif
+    return false;
 }
 
 const String& Page::sceneIdentifier() const

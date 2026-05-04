@@ -53,8 +53,10 @@
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
+#include <wtf/IterationStatus.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OptionSet.h>
+#include <wtf/OpportunisticTaskContext.h>
 #include <wtf/Platform.h>
 #include <wtf/ProcessID.h>
 #include <wtf/Ref.h>
@@ -417,6 +419,7 @@ public:
     WEBCORE_EXPORT PluginData& pluginData();
     void clearPluginData();
 
+    OpportunisticTaskContext& opportunisticTaskContext() { return m_opportunisticTaskContext; }
     OpportunisticTaskScheduler& opportunisticTaskScheduler() const { return m_opportunisticTaskScheduler.get(); }
 
     WEBCORE_EXPORT void setCanStartMedia(bool);
@@ -1160,6 +1163,7 @@ public:
     void forEachMediaElement(NOESCAPE const Function<void(HTMLMediaElement&)>&);
     static void forEachDocumentFromMainFrame(const Frame&, NOESCAPE const Function<void(Document&)>&);
     void forEachLocalFrame(NOESCAPE const Function<void(LocalFrame&)>&);
+    void forEachLocalFrameWithIterationStatus(NOESCAPE const Function<IterationStatus(LocalFrame&)>&);
     void forEachWindowEventLoop(NOESCAPE const Function<void(WindowEventLoop&)>&);
 
     bool shouldDisableCorsForRequestTo(const URL&) const;
@@ -1239,8 +1243,10 @@ public:
     WEBCORE_EXPORT void removeRootFrame(LocalFrame&);
 
     void opportunisticallyRunIdleCallbacks(MonotonicTime deadline);
-    WEBCORE_EXPORT void performOpportunisticallyScheduledTasks(MonotonicTime deadline);
-    void deleteRemovedNodesAndDetachedRenderers();
+//    WEBCORE_EXPORT void performOpportunisticallyScheduledTasks(const Function<bool()>& shouldAbort, MonotonicTime deadline);
+    bool performOpportunisticallyScheduledTasks();
+//    void deleteRemovedNodesAndDetachedRenderers(const Function<bool()>& shouldAbort, MonotonicTime deadline);
+    bool deleteRemovedNodesAndDetachedRenderers();
     String ensureMediaKeysStorageDirectoryForOrigin(const SecurityOriginData&);
     WEBCORE_EXPORT void setMediaKeysStorageDirectory(const String&);
 
@@ -1789,6 +1795,7 @@ private:
 
     bool m_isWaitingForLoadToFinish { false };
     const Ref<OpportunisticTaskScheduler> m_opportunisticTaskScheduler;
+    OpportunisticTaskContext m_opportunisticTaskContext;
 
 #if ENABLE(IMAGE_ANALYSIS)
     using CachedTextRecognitionResult = std::pair<TextRecognitionResult, IntRect>;

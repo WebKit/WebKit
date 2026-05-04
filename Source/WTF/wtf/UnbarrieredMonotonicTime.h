@@ -31,8 +31,7 @@
 
 namespace WTF {
 
-class ContinuousTime;
-class WallTime;
+class MonotonicTime;
 class PrintStream;
 
 // A fast (where available) implementation of MonotonicTime using hardware counters
@@ -73,6 +72,9 @@ public:
 #else
     WTF_EXPORT_PRIVATE static UnbarrieredMonotonicTime now();
 #endif
+
+    static inline UnbarrieredMonotonicTime fromMonotonicTime(MonotonicTime);
+    inline MonotonicTime toMonotonicTime();
 
     WTF_EXPORT_PRIVATE void dump(PrintStream&) const;
 
