@@ -360,13 +360,13 @@ void WebProcessPool::platformInitialize(NeedsGlobalStaticInitialization needsGlo
     [WKWebInspectorPreferenceObserver sharedInstance];
 #endif
 
-    PAL::registerNotifyCallback("com.apple.WebKit.logProcessState"_s, [] {
+    PAL::registerNotifyCallback("logProcessState"_s, [] {
         for (const auto& pool : WebProcessPool::allProcessPools())
             logProcessPoolState(pool.get());
     });
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
-    PAL::registerNotifyCallback("com.apple.WebKit.restrictedDomains"_s, [] {
+    PAL::registerNotifyCallback("restrictedDomains"_s, [] {
         RestrictedOpenerDomainsController::singleton();
     });
 #endif

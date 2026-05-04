@@ -786,7 +786,7 @@ bool canUseForGridLayout(const RenderGrid& renderGrid)
 #ifndef NDEBUG
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        PAL::registerNotifyCallback("com.apple.WebKit.showLegacyGridReasons"_s, Function<void()> { printLegacyGridReasons });
+        PAL::registerNotifyCallback("showLegacyGridReasons"_s, Function<void()> { printLegacyGridReasons });
     });
 #endif
     auto reasons = gridLayoutAvoidanceReason(renderGrid, ReasonCollectionMode::FirstOnly);

@@ -47,6 +47,7 @@
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/NotificationPoint.h>
 #include <wtf/RunLoop.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -105,13 +106,6 @@ RefPtr<Cache> Cache::open(NetworkProcess& networkProcess, const String& cachePat
     return adoptRef(*new Cache(networkProcess, cachePath, storage.releaseNonNull(), options, sessionID));
 }
 
-#if PLATFORM(GTK) || PLATFORM(WPE)
-static void dumpFileChanged(Cache* cache)
-{
-    cache->dumpContentsToFile();
-}
-#endif
-
 Cache::Cache(NetworkProcess& networkProcess, const String& storageDirectory, Ref<Storage>&& storage, OptionSet<CacheOption> options, PAL::SessionID sessionID)
     : m_storage(WTF::move(storage))
     , m_networkProcess(networkProcess)
@@ -132,19 +126,13 @@ Cache::Cache(NetworkProcess& networkProcess, const String& storageDirectory, Ref
     }
 
     if (options.contains(CacheOption::RegisterNotify)) {
-#if PLATFORM(COCOA)
+#if HAVE(NOTIFICATIONPOINT)
         // Triggers with "notifyutil -p com.apple.WebKit.Cache.dump".
-        int token;
-        notify_register_dispatch("com.apple.WebKit.Cache.dump", &token, mainDispatchQueueSingleton(), ^(int) {
+        auto point = NotificationPoint::create("Cache.dump"_s, [this]() {
             dumpContentsToFile();
         });
-#endif
-#if PLATFORM(GTK) || PLATFORM(WPE)
-        // Triggers with "touch $cachePath/dump".
-        CString dumpFilePath = fileSystemRepresentation(pathByAppendingComponent(m_storage->basePathIsolatedCopy(), "dump"_s));
-        GRefPtr<GFile> dumpFile = adoptGRef(g_file_new_for_path(dumpFilePath.data()));
-        GFileMonitor* monitor = g_file_monitor_file(dumpFile.get(), G_FILE_MONITOR_NONE, nullptr, nullptr);
-        g_signal_connect_swapped(monitor, "changed", G_CALLBACK(dumpFileChanged), this);
+        if (point.has_value())
+            (void)point.value().leakRef();
 #endif
     }
 }

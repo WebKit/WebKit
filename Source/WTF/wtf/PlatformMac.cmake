@@ -44,6 +44,7 @@ list(APPEND WTF_SOURCES
     cocoa/WorkQueueCocoa.cpp
 
     darwin/LibraryPathDiagnostics.mm
+    darwin/NotificationPoint.cpp
 
     mac/FileSystemMac.mm
 

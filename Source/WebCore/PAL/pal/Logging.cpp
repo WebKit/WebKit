@@ -26,23 +26,20 @@
 #include "config.h"
 #include "Logging.h"
 
+#include <wtf/NotificationPoint.h>
 #include <wtf/text/WTFString.h>
-
-#if PLATFORM(COCOA)
-#include <notify.h>
-#include <wtf/BlockPtr.h>
-#include <wtf/darwin/DispatchExtras.h>
-#endif
 
 namespace PAL {
 
 void registerNotifyCallback(ASCIILiteral notifyID, Function<void()>&& callback)
 {
-#if PLATFORM(COCOA)
-    int token;
-    notify_register_dispatch(notifyID.characters(), &token, mainDispatchQueueSingleton(), makeBlockPtr([callback = WTF::move(callback)](int) {
+#if HAVE(NOTIFICATIONPOINT)
+    auto adapter = [callback = WTF::move(callback)]() {
         callback();
-    }).get());
+    };
+    auto point = WTF::NotificationPoint::create(notifyID, WTF::move(adapter));
+    if (point.has_value())
+        (void)point.value().leakRef();
 #else
     UNUSED_PARAM(notifyID);
     UNUSED_PARAM(callback);

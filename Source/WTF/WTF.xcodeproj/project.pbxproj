@@ -173,6 +173,7 @@
 		5FAD3AE221B9636600BEE178 /* URLHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5FAD3AE121B9636600BEE178 /* URLHelpers.cpp */; };
 		6311592628989A55006A9A12 /* LibraryPathDiagnostics.h in Headers */ = {isa = PBXBuildFile; fileRef = 6311592428989A55006A9A12 /* LibraryPathDiagnostics.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6311592728989A55006A9A12 /* LibraryPathDiagnostics.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6311592528989A55006A9A12 /* LibraryPathDiagnostics.mm */; };
+        6311592728989A8500680A12 /* NotificationPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6311592725289A8500680A24 /* NotificationPoint.cpp */; };
 		63F9BED42898D96400371416 /* CFPrivSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 63F9BED32898D96400371416 /* CFPrivSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		70A993FE1AD7151300FA615B /* SymbolRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70A993FC1AD7151300FA615B /* SymbolRegistry.cpp */; };
 		70ECA60D1B02426800449739 /* AtomStringImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70ECA60A1B02426800449739 /* AtomStringImpl.cpp */; };
@@ -345,6 +346,7 @@
 		DD3DC89327A4BF8E007E5B61 /* BackwardsGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = DCEE22041CEB9869000C2396 /* BackwardsGraph.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC89427A4BF8E007E5B61 /* MathExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472C9151A825B004123FF /* MathExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC89527A4BF8E007E5B61 /* NotFound.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CEAE5AC1EA6E10F00DB6890 /* NotFound.h */; settings = {ATTRIBUTES = (Private, ); }; };
+        DD3DC89528A4B48E007E5B61 /* NotificationPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CEAED2C1EA6E1AF00DB6890 /* NotificationPoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC89627A4BF8E007E5B61 /* SinglyLinkedList.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4730B151A825B004123FF /* SinglyLinkedList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC89727A4BF8E007E5B61 /* Markable.h in Headers */ = {isa = PBXBuildFile; fileRef = 304CA4E41375437EBE931D03 /* Markable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC89927A4BF8E007E5B61 /* ProcessID.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC4488216FE9FE100844BE9 /* ProcessID.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1444,6 +1446,7 @@
 		5FAD3AE121B9636600BEE178 /* URLHelpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLHelpers.cpp; sourceTree = "<group>"; };
 		6311592428989A55006A9A12 /* LibraryPathDiagnostics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LibraryPathDiagnostics.h; sourceTree = "<group>"; };
 		6311592528989A55006A9A12 /* LibraryPathDiagnostics.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LibraryPathDiagnostics.mm; sourceTree = "<group>"; };
+        6311592725289A8500680A24 /* NotificationPoint.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NotificationPoint.cpp; sourceTree = "<group>"; };
 		63F9BED32898D96400371416 /* CFPrivSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFPrivSPI.h; sourceTree = "<group>"; };
 		70A993FC1AD7151300FA615B /* SymbolRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolRegistry.cpp; sourceTree = "<group>"; };
 		70A993FD1AD7151300FA615B /* SymbolRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolRegistry.h; sourceTree = "<group>"; };
@@ -1485,6 +1488,7 @@
 		7CD4C26F1E2C82B900929470 /* StringConcatenateNumbers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringConcatenateNumbers.h; sourceTree = "<group>"; };
 		7CDD7FF9186D2A54007433CD /* IteratorRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IteratorRange.h; sourceTree = "<group>"; };
 		7CEAE5AC1EA6E10F00DB6890 /* NotFound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotFound.h; sourceTree = "<group>"; };
+        7CEAED2C1EA6E1AF00DB6890 /* NotificationPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationPoint.h; sourceTree = "<group>"; };
 		7CEF23EB23D1257900F8B904 /* PlatformCallingConventions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCallingConventions.h; sourceTree = "<group>"; };
 		7CFAF3C923D0AF1500D21BDD /* PlatformUse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformUse.h; sourceTree = "<group>"; };
 		7E29C33D15FFD79B00516D61 /* ObjCRuntimeExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjCRuntimeExtras.h; sourceTree = "<group>"; };
@@ -2212,6 +2216,7 @@
 				6311592428989A55006A9A12 /* LibraryPathDiagnostics.h */,
 				6311592528989A55006A9A12 /* LibraryPathDiagnostics.mm */,
 				46335BEE2E778B1300860375 /* NetworkOSObject.h */,
+                6311592725289A8500680A24 /* NotificationPoint.cpp */,
 				53FC70CE23FB950C005B1990 /* OSLogPrintStream.h */,
 				53FC70CF23FB950C005B1990 /* OSLogPrintStream.mm */,
 				449EEC7D2D93788B008E7C80 /* TypeCastsOSObject.h */,
@@ -2594,6 +2599,7 @@
 				E3E64F0B22813428001E55B4 /* Nonmovable.h */,
 				526AEC911F6B4E5C00695F5D /* NoTailCalls.h */,
 				7CEAE5AC1EA6E10F00DB6890 /* NotFound.h */,
+                7CEAED2C1EA6E1AF00DB6890 /* NotificationPoint.h */,
 				9B56058F2D9691ED00FCE33E /* NoVirtualDestructorBase.h */,
 				A8A472D5151A825B004123FF /* NumberOfCores.cpp */,
 				A8A472D6151A825B004123FF /* NumberOfCores.h */,
@@ -3753,6 +3759,7 @@
 				DD3DC96127A4BF8E007E5B61 /* NoTailCalls.h in Headers */,
 				DD3DC89527A4BF8E007E5B61 /* NotFound.h in Headers */,
 				4448265228D18CA600D916F9 /* NotificationCenterCF.h in Headers */,
+                DD3DC89528A4B48E007E5B61 /* NotificationPoint.h in Headers */,
 				9B5605902D9691ED00FCE33E /* NoVirtualDestructorBase.h in Headers */,
 				DDF306E327C08654006A526F /* NSLocaleSPI.h in Headers */,
 				DDF306E227C08654006A526F /* NSObjCRuntimeSPI.h in Headers */,
@@ -4559,6 +4566,7 @@
 				A8A473EC151A825B004123FF /* MetaAllocator.cpp in Sources */,
 				0F66B28C1DC97BAB004A1D3F /* MonotonicTime.cpp in Sources */,
 				51B07F542AB8797300E14EE9 /* NativePromise.cpp in Sources */,
+                6311592728989A8500680A12 /* NotificationPoint.cpp in Sources */,
 				5CC0EE8A2162BC2200A1A842 /* NSURLExtras.mm in Sources */,
 				A8A473F4151A825B004123FF /* NumberOfCores.cpp in Sources */,
 				465F34932CD824AF000963B1 /* ObjCRuntimeExtras.mm in Sources */,

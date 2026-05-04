@@ -570,13 +570,13 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
         });
         memoryPressureHandler.install();
 
-        PAL::registerNotifyCallback("com.apple.WebKit.logMemStats"_s, [] {
+        PAL::registerNotifyCallback("logMemStats"_s, [] {
             WebCore::logMemoryStatistics(LogMemoryStatisticsReason::DebugNotification);
         });
     }
 
 #if !RELEASE_LOG_DISABLED
-    PAL::registerNotifyCallback("com.apple.WebKit.logPageState"_s, [this, protectedThis = Ref { *this }] {
+    PAL::registerNotifyCallback("logPageState"_s, [this, protectedThis = Ref { *this }] {
         for (auto& page : m_pageMap.values()) {
             int64_t loadCommitTime = 0;
 #if USE(OS_STATE)

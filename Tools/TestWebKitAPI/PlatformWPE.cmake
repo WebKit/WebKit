@@ -17,6 +17,7 @@ set(test_main_SOURCES generic/main.cpp)
 list(APPEND TestWTF_SOURCES
     ${test_main_SOURCES}
 
+    Tests/WTF/NotificationPoint.cpp
     Tests/WTF/glib/ActivityObserver.cpp
     Tests/WTF/glib/GMallocString.cpp
     Tests/WTF/glib/GRefPtr.cpp

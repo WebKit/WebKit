@@ -69,7 +69,7 @@ MemoryCache::MemoryCache()
 
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        PAL::registerNotifyCallback("com.apple.WebKit.showMemoryCache"_s, [] {
+        PAL::registerNotifyCallback("showMemoryCache"_s, [] {
             MemoryCache::singleton().dumpStats();
             MemoryCache::singleton().dumpLRULists(true);
         });

@@ -150,6 +150,7 @@
 #include "WeakGCMapInlines.h"
 #include "WideningNumberPredictionFuzzerAgent.h"
 #include <wtf/CryptographicallyRandomNumber.h>
+#include <wtf/NotificationPoint.h>
 #include <wtf/ProcessID.h>
 #include <wtf/ReadWriteLock.h>
 #include <wtf/SimpleStats.h>
@@ -416,16 +417,13 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         pathOut.print("JSCProfile-", getCurrentProcessID(), "-", m_perBytecodeProfiler->databaseID(), ".json");
         static NeverDestroyed<CString> pathOutString = pathOut.toCString();
 
-#if PLATFORM(COCOA)
+#if HAVE(NOTIFICATIONPOINT)
         static std::once_flag registerFlag;
         std::call_once(registerFlag, [this]() {
             int pid = getpid();
-            const char* key = "com.apple.WebKit.bytecode.profiler";
             dataLogF("<BYTECODE.STAT><%d> Registering callback for dumping profiles, dumping to %s.\n", pid, pathOutString->data());
-            dataLogF("<BYTECODE.STAT><%d> Use `notifyutil -v -p %s` to dump statistics.\n", pid, key);
-
-            int token;
-            notify_register_dispatch(key, &token, mainDispatchQueueSingleton(), ^(int) {
+            auto result = NotificationPoint::create("bytecode.profiler"_s, [this]() {
+                int pid = getpid();
                 dataLogF("<BYTECODE.STAT><%d> Dumping\n", pid);
                 if (!m_perBytecodeProfiler->save(pathOutString->data()))
                     dataLogF("<BYTECODE.STAT><%d> Failed to dump to %s. Do you need to add a sandbox extension? ((allow file-write* (subpath \"/private/tmp/\")) in WebProcess.sb.in\n", pid, pathOutString->data());
@@ -433,6 +431,13 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                     dataLogF("<BYTECODE.STAT><%d> Dumped to %s\n", pid, pathOutString->data());
                 dataLogF("<BYTECODE.STAT><%d> Dumping finished\n", pid);
             });
+            if (result.has_value()) {
+                RefPtr<NotificationPoint> point = result.value();
+#if PLATFORM(COCOA)
+                dataLogF("<BYTECODE.STAT><%d> Use `notifyutil -v -p %s` to dump statistics.\n", pid, point->key().utf8().data());
+#endif
+                (void)point.leakRef();
+            }
         });
 #endif
 
