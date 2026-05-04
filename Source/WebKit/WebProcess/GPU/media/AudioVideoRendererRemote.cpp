@@ -401,7 +401,7 @@ RefPtr<NativeImage> AudioVideoRendererRemote::currentNativeImage() const
         return nullptr;
     ASSERT(gpuProcessConnection);
 
-    return protect(gpuProcessConnection->videoFrameObjectHeapProxy())->getNativeImage(*videoFrame);
+    return videoFrame->copyNativeImage();
 #else
     ASSERT_NOT_REACHED();
     return nullptr;

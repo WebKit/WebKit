@@ -173,13 +173,7 @@ void RemoteQueueProxy::setLabelInternal(const String& label)
 
 RefPtr<WebCore::NativeImage> RemoteQueueProxy::getNativeImage(WebCore::VideoFrame& videoFrame)
 {
-    RefPtr<WebCore::NativeImage> nativeImage;
-#if ENABLE(VIDEO) && PLATFORM(COCOA) && ENABLE(WEB_CODECS)
-    callOnMainRunLoopAndWait([&nativeImage, videoFrame = protect(videoFrame), videoFrameHeap = protect(m_videoFrameObjectHeapProxy)] {
-        nativeImage = videoFrameHeap->getNativeImage(videoFrame);
-    });
-#endif
-    return nativeImage;
+    return videoFrame.copyNativeImage();
 }
 
 

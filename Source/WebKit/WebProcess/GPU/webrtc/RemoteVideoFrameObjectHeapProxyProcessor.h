@@ -62,7 +62,6 @@ public:
 
     using Callback = Function<void(RetainPtr<CVPixelBufferRef>&&)>;
     void getVideoFrameBuffer(const RemoteVideoFrameProxy&, bool canUseIOSurfce, Callback&&);
-    RefPtr<WebCore::NativeImage> getNativeImage(const WebCore::VideoFrame&);
 
     ThreadSafeWeakPtrControlBlock& controlBlock() const final { return IPC::WorkQueueMessageReceiver<WTF::DestructionThread::MainRunLoop>::controlBlock(); }
     uint32_t weakRefCount() const final { return IPC::WorkQueueMessageReceiver<WTF::DestructionThread::MainRunLoop>::weakRefCount(); }

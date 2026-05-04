@@ -71,7 +71,6 @@ private:
 #if PLATFORM(COCOA)
     void getVideoFrameBuffer(RemoteVideoFrameReadReference&&, bool canSendIOSurface);
     void pixelBuffer(RemoteVideoFrameReadReference&&, CompletionHandler<void(RetainPtr<CVPixelBufferRef>)>&&);
-    void convertFrameBuffer(SharedVideoFrame&&, CompletionHandler<void(WebCore::DestinationColorSpace)>&&);
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
     void setSharedVideoFrameMemory(WebCore::SharedMemory::Handle&&);
 

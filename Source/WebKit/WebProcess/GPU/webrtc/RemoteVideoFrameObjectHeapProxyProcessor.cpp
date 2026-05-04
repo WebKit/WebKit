@@ -148,33 +148,6 @@ void RemoteVideoFrameObjectHeapProxyProcessor::newConvertedVideoFrameBuffer(std:
     m_conversionSemaphore.signal();
 }
 
-RefPtr<NativeImage> RemoteVideoFrameObjectHeapProxyProcessor::getNativeImage(const WebCore::VideoFrame& videoFrame)
-{
-    Ref connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
-
-    if (m_sharedVideoFrameWriter.isDisabled())
-        m_sharedVideoFrameWriter = { };
-
-    auto frame = m_sharedVideoFrameWriter.write(videoFrame,
-        [&](auto& semaphore) { connection->send(Messages::RemoteVideoFrameObjectHeap::SetSharedVideoFrameSemaphore { semaphore }, 0); },
-        [&](auto&& handle) { connection->send(Messages::RemoteVideoFrameObjectHeap::SetSharedVideoFrameMemory { WTF::move(handle) }, 0); });
-    if (!frame)
-        return nullptr;
-
-    auto sendResult = connection->sendSync(Messages::RemoteVideoFrameObjectHeap::ConvertFrameBuffer { WTF::move(*frame) }, 0, GPUProcessConnection::defaultTimeout);
-    if (!sendResult.succeeded()) {
-        m_sharedVideoFrameWriter.disable();
-        return nullptr;
-    }
-
-    auto [destinationColorSpace] = sendResult.takeReplyOr(DestinationColorSpace { DestinationColorSpace::SRGB().platformColorSpace() });
-
-    m_conversionSemaphore.wait();
-
-    RetainPtr pixelBuffer = std::exchange(m_convertedBuffer, { });
-    return pixelBuffer ? NativeImage::create(createImageFrom32BGRAPixelBuffer(WTF::move(pixelBuffer), RetainPtr { destinationColorSpace.platformColorSpace() }.get())) : nullptr;
-}
-
 }
 
 #endif
