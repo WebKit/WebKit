@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/gc.js"></script>
+<script>
+description("This test passes if it does not crash.");
+
+jsTestIsAsync = true;
+
+window.onload = () => {
+    let iframe = document.createElement("iframe");
+    iframe.src = "resources/navigate-with-intercept.html";
+
+    window.addEventListener("message", (e) => {
+        if (e.data !== "ready")
+            return;
+
+        // Remove the iframe so its frame detaches and JSDOMWindow is
+        // no longer a GC root.
+        iframe.remove();
+        iframe = null;
+
+        // Defer the GC to a new task so the current call stack (which may
+        // still hold transient references) is fully unwound.
+        setTimeout(() => {
+            gc();
+            gc();
+            gc();
+
+            finishJSTest();
+        }, 0);
+    });
+
+    document.body.appendChild(iframe);
+};
+</script>

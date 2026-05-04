@@ -586,7 +586,7 @@ bool Navigation::hasEntriesAndEventsDisabled() const
 {
     RefPtr window = this->window();
     RefPtr document = window->document();
-    if (!document || !document->isFullyActive())
+    if (!document || !document->isFullyActive() || document->activeDOMObjectsAreStopped())
         return true;
     if (document->loader() && document->loader()->isInitialAboutBlank())
         return true;
