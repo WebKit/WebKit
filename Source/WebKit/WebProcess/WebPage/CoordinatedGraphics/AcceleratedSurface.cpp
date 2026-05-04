@@ -466,6 +466,7 @@ void AcceleratedSurface::RenderTargetSHMImage::didRenderFrame()
     glReadPixels(0, 0, m_bitmap->size().width(), m_bitmap->size().height(), GL_BGRA, GL_UNSIGNED_BYTE, m_bitmap->mutableSpan().data());
 }
 
+#if USE(GBM)
 std::unique_ptr<AcceleratedSurface::RenderTarget> AcceleratedSurface::RenderTargetTexture::create(AcceleratedSurface& surface, const IntSize& size)
 {
     auto texture = BitmapTexture::create(size);
@@ -522,7 +523,7 @@ AcceleratedSurface::RenderTargetTexture::RenderTargetTexture(AcceleratedSurface&
 }
 
 AcceleratedSurface::RenderTargetTexture::~RenderTargetTexture() = default;
-
+#endif // USE(GBM)
 #endif // PLATFORM(GTK) || ENABLE(WPE_PLATFORM)
 
 #if USE(WPE_RENDERER)
@@ -605,9 +606,11 @@ AcceleratedSurface::SwapChain::SwapChain(AcceleratedSurface& surface)
     switch (display.type()) {
 #if PLATFORM(GTK) || ENABLE(WPE_PLATFORM)
     case PlatformDisplay::Type::Surfaceless:
+#if USE(GBM)
         if (display.eglExtensions().MESA_image_dma_buf_export && WebProcess::singleton().rendererBufferTransportMode().contains(RendererBufferTransportMode::Hardware))
             m_type = Type::Texture;
         else
+#endif
             m_type = Type::SharedMemory;
         break;
 #if USE(GBM)
@@ -764,8 +767,10 @@ std::unique_ptr<AcceleratedSurface::RenderTarget> AcceleratedSurface::SwapChain:
     case Type::EGLImage:
         return RenderTargetEGLImage::create(m_surface.get(), m_size, m_bufferFormat);
 #endif
+#if USE(GBM)
     case Type::Texture:
         return RenderTargetTexture::create(m_surface.get(), m_size);
+#endif
     case Type::SharedMemory:
         return RenderTargetSHMImage::create(m_surface.get(), m_size);
 #endif
