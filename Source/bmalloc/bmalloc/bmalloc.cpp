@@ -36,6 +36,7 @@
 #include "pas_platform.h"
 #include "pas_probabilistic_guard_malloc_allocator.h"
 #include "pas_scavenger.h"
+#include "pas_page_malloc.h"
 #include "pas_thread_local_cache.h"
 #include "pas_mte_config.h"
 #endif
@@ -208,6 +209,15 @@ void forceEnablePGM(uint16_t guardMallocRate)
     pas_probabilistic_guard_malloc_initialize_pgm_as_enabled(guardMallocRate);
 #else
     BUNUSED_PARAM(guardMallocRate);
+#endif
+}
+
+void setSoftFailableAllocationLimit(size_t size)
+{
+#if BUSE(LIBPAS)
+    pas_set_soft_failable_allocation_limit(size);
+#else
+    BUNUSED_PARAM(size);
 #endif
 }
 

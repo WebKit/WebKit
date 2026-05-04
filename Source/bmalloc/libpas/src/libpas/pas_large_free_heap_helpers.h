@@ -42,6 +42,7 @@ PAS_API extern bool pas_large_utility_free_heap_talks_to_large_sharing_pool;
 typedef pas_allocation_result (*pas_large_free_heap_helpers_memory_source)(
     size_t size,
     pas_alignment alignment,
+    bool is_failable,
     const char* name,
     pas_allocation_kind allocation_kind);
 

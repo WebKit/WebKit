@@ -34,6 +34,7 @@
 pas_allocation_result pas_bootstrap_heap_page_provider(
     size_t size,
     pas_alignment alignment,
+    bool is_failable,
     const char* name,
     pas_heap* heap,
     pas_physical_memory_transaction* transaction,
@@ -48,7 +49,7 @@ pas_allocation_result pas_bootstrap_heap_page_provider(
         pas_log("bootstreap heap page-provider allocating %zu for %s\n", size, name);
 
     pas_allocation_result retval = pas_bootstrap_free_heap_try_allocate_with_alignment(
-        size, alignment, name, pas_delegate_allocation);
+        size, alignment, is_failable, name, pas_delegate_allocation);
 
     if (verbose)
         pas_log("bootstrap heap page-provider done allocating\n");

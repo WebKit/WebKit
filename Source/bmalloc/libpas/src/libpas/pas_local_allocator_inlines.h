@@ -32,6 +32,7 @@
 #include "pas_config.h"
 #include "pas_full_alloc_bits_inlines.h"
 #include "pas_mte.h"
+#include "pas_page_malloc.h"
 #include "pas_scavenger.h"
 #include "pas_segregated_exclusive_view_inlines.h"
 #include "pas_segregated_heap_inlines.h"
@@ -999,9 +1000,9 @@ pas_local_allocator_try_allocate_small_segregated_slow_impl(
     pas_allocator_counts* counts)
 {
     PAS_ASSERT(!pas_system_heap_should_supplant_bmalloc(config.kind));
-    
+
     pas_local_allocator_commit_if_necessary(allocator, config);
-    
+
     for (;;) {
         pas_allocation_result result;
         bool refill_result;
@@ -1019,10 +1020,18 @@ pas_local_allocator_try_allocate_small_segregated_slow_impl(
 
         if (!refill_result)
             return pas_allocation_result_create_failure();
-        
+
         result = pas_local_allocator_try_allocate_inline_cases(allocator, allocation_mode, config);
-        if (result.did_succeed)
+        if (result.did_succeed) {
+            /* Gate 2: once the soft failable-allocation limit has been crossed, drain the bump
+               region so future allocations on this thread re-enter the slow path and get a fresh
+               chance to be gated by Gate 1 in pas_page_malloc_try_map_pages. */
+            if (pas_past_soft_failable_allocation_limit()) {
+                allocator->remaining = 0;
+                allocator->payload_end = 0;
+            }
             return result;
+        }
     }
 }
 
@@ -1145,8 +1154,15 @@ pas_local_allocator_try_allocate_slow_impl(pas_local_allocator* allocator,
             return pas_allocation_result_create_failure();
 
         result = config.specialized_local_allocator_try_allocate_inline_cases(allocator, allocation_mode);
-        if (result.did_succeed)
+        if (result.did_succeed) {
+            /* Gate 2: once the soft failable-allocation limit has been crossed, drain the bump
+               region so future allocations on this thread re-enter the slow path. */
+            if (pas_past_soft_failable_allocation_limit()) {
+                allocator->remaining = 0;
+                allocator->payload_end = 0;
+            }
             return result;
+        }
 
         if (verbose) {
             pas_log("Relooping in try_allocate_slow with kind = %s\n",

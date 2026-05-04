@@ -45,6 +45,7 @@ pas_simple_free_heap_helpers_try_allocate_with_manual_alignment(
     pas_heap_kind heap_kind,
     size_t size,
     pas_alignment alignment,
+    bool is_failable,
     const char* name,
     pas_allocation_kind allocation_kind,
     size_t* num_allocated_object_bytes,

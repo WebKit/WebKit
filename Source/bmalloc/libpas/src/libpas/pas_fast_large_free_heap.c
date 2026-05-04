@@ -413,6 +413,7 @@ static PAS_ALWAYS_INLINE void initialize_generic_heap_config(
 pas_allocation_result pas_fast_large_free_heap_try_allocate(pas_fast_large_free_heap* heap,
                                                             size_t size,
                                                             pas_alignment alignment,
+                                                            bool is_failable,
                                                             pas_large_free_heap_config* config)
 {
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_LARGE_HEAPS);
@@ -422,7 +423,7 @@ pas_allocation_result pas_fast_large_free_heap_try_allocate(pas_fast_large_free_
     initialize_generic_heap_config(&generic_heap_config);
     return pas_generic_large_free_heap_try_allocate(
         (pas_generic_large_free_heap*)heap,
-        size, alignment, config,
+        size, alignment, is_failable, config,
         &generic_heap_config);
 }
 

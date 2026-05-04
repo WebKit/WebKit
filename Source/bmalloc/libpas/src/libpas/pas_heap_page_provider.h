@@ -41,6 +41,7 @@ typedef struct pas_physical_memory_transaction pas_physical_memory_transaction;
 typedef pas_allocation_result (*pas_heap_page_provider)(
     size_t size,
     pas_alignment alignment,
+    bool is_failable,
     const char* name,
     pas_heap* heap, /* Can be NULL. */
     pas_physical_memory_transaction* transaction, /* Can be NULL. */

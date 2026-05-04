@@ -129,6 +129,8 @@ namespace WTF {
 WTF_EXPORT_PRIVATE void fastSetMaxSingleAllocationSize(size_t);
 #endif
 
+WTF_EXPORT_PRIVATE void fastSetSoftFailableAllocationLimit(size_t);
+
 WTF_EXPORT_PRIVATE bool isFastMallocEnabled();
 
 // These functions call CRASH() if an allocation fails.
@@ -389,6 +391,8 @@ WTF_EXPORT_PRIVATE void* mallocArray(Kind, size_t numElements, size_t elementSiz
 #if !defined(NDEBUG)
 using WTF::fastSetMaxSingleAllocationSize;
 #endif
+
+using WTF::fastSetSoftFailableAllocationLimit;
 
 template<typename T>
 struct AllowCompactPointers : std::false_type { };

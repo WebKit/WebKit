@@ -106,7 +106,7 @@ jit_heap_config_fast_megapage_kind(uintptr_t begin)
 
 static PAS_ALWAYS_INLINE pas_page_base* jit_heap_config_page_header(uintptr_t begin);
 PAS_API pas_aligned_allocation_result jit_aligned_allocator(
-    size_t size, pas_alignment alignment, pas_large_heap* large_heap, const pas_heap_config* config);
+    size_t size, pas_alignment alignment, bool is_failable, pas_large_heap* large_heap, const pas_heap_config* config);
 PAS_API void* jit_prepare_to_enumerate(pas_enumerator* enumerator);
 
 PAS_HEAP_CONFIG_SPECIALIZATION_DECLARATIONS(jit_heap_config);

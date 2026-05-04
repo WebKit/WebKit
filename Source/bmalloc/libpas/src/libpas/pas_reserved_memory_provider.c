@@ -31,10 +31,12 @@
 
 static pas_aligned_allocation_result null_aligned_allocator(size_t size,
                                                             pas_alignment alignment,
+                                                            bool is_failable,
                                                             void* arg)
 {
     PAS_UNUSED_PARAM(size);
     PAS_UNUSED_PARAM(alignment);
+    PAS_UNUSED_PARAM(is_failable);
     PAS_UNUSED_PARAM(arg);
     return pas_aligned_allocation_result_create_empty();
 }
@@ -67,6 +69,7 @@ void pas_reserved_memory_provider_construct(
 pas_allocation_result pas_reserved_memory_provider_try_allocate(
     size_t size,
     pas_alignment alignment,
+    bool is_failable,
     const char* name,
     pas_heap* heap,
     pas_physical_memory_transaction* transaction,
@@ -84,7 +87,7 @@ pas_allocation_result pas_reserved_memory_provider_try_allocate(
     initialize_config(&config);
 
     return pas_simple_large_free_heap_try_allocate(
-        &provider->free_heap, size, alignment, &config);
+        &provider->free_heap, size, alignment, is_failable, &config);
 }
 
 #endif /* LIBPAS_ENABLED */

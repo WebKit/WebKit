@@ -318,6 +318,12 @@ BEXPORT void enableMiniMode(bool forceMiniMode = false);
 BEXPORT void disableScavenger();
 BEXPORT void forceEnablePGM(uint16_t guardMallocRate);
 
+// For OOM testing. When set below SIZE_MAX, failable libpas allocations (e.g. tryFastMalloc-
+// driven paths) that would require libpas to obtain new pages from the OS will fail once
+// libpas has obtained at least this many bytes from the OS. This is a soft limit:
+// non-failable paths continue to grow past it.
+BEXPORT void setSoftFailableAllocationLimit(size_t);
+
 #if BENABLE(MALLOC_SIZE)
 inline size_t mallocSize(const void* object)
 {

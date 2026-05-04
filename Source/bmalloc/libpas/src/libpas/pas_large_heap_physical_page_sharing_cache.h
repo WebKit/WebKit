@@ -73,6 +73,7 @@ pas_large_heap_physical_page_sharing_cache_try_allocate_with_alignment(
     pas_large_heap_physical_page_sharing_cache* cache,
     size_t size,
     pas_alignment alignment,
+    bool is_failable,
     const pas_heap_config* config,
     bool should_zero);
 

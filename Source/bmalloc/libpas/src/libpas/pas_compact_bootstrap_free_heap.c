@@ -39,10 +39,12 @@
 static pas_aligned_allocation_result compact_bootstrap_source_allocate_aligned(
     size_t size,
     pas_alignment alignment,
+    bool is_failable,
     void* arg)
 {
     PAS_ASSERT(!arg);
     PAS_ASSERT(!alignment.alignment_begin);
+    PAS_UNUSED_PARAM(is_failable);
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_BOOTSTRAP_HEAPS);
 
     if (verbose)

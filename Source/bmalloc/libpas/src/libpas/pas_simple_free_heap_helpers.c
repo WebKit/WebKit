@@ -45,16 +45,17 @@ pas_simple_free_heap_helpers_try_allocate_with_manual_alignment(
     pas_heap_kind heap_kind,
     size_t size,
     pas_alignment alignment,
+    bool is_failable,
     const char* name,
     pas_allocation_kind allocation_kind,
     size_t* num_allocated_object_bytes,
     size_t* num_allocated_object_bytes_peak)
 {
     static const bool exaggerate_cost = false;
-    
+
     pas_large_free_heap_config config;
     pas_allocation_result result;
-    
+
     pas_heap_lock_assert_held();
 
     if (verbose) {
@@ -67,10 +68,11 @@ pas_simple_free_heap_helpers_try_allocate_with_manual_alignment(
        use the size that the user passed. Anything else would result in us forever forgetting
        about that that alignment slop, since the caller will pass their original size when
        freeing the object later. */
-    
+
     initialize_config(&config);
     result = pas_simple_large_free_heap_try_allocate(free_heap,
                                                      size, alignment,
+                                                     is_failable,
                                                      &config);
     if (verbose)
         pas_log("Simple allocated %p with size %zu\n", (void*)result.begin, size);
@@ -83,12 +85,13 @@ pas_simple_free_heap_helpers_try_allocate_with_manual_alignment(
 
         result = pas_simple_large_free_heap_try_allocate(free_heap,
                                                          size, alignment,
+                                                         is_failable,
                                                          &config);
     }
-    
+
     pas_did_allocate(
         (void*)result.begin, size, heap_kind, name, allocation_kind);
-    
+
     if (result.did_succeed && allocation_kind == pas_object_allocation) {
         (*num_allocated_object_bytes) += size;
         *num_allocated_object_bytes_peak = PAS_MAX(

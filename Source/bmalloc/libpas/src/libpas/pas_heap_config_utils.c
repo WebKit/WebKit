@@ -45,12 +45,13 @@ pas_aligned_allocation_result
 pas_heap_config_utils_allocate_aligned(
     size_t size,
     pas_alignment alignment,
+    bool is_failable,
     pas_large_heap* large_heap,
     const pas_heap_config* config,
     bool should_zero)
 {
     static const bool verbose = false;
-    
+
     pas_large_heap_physical_page_sharing_cache* cache;
     pas_aligned_allocation_result result;
     pas_allocation_result allocation_result;
@@ -61,7 +62,7 @@ pas_heap_config_utils_allocate_aligned(
     PAS_UNUSED_PARAM(config);
 
     pas_zero_memory(&result, sizeof(result));
-    
+
     aligned_size = pas_round_up_to_power_of_2(size, alignment.alignment);
 
     runtime_config = (pas_basic_heap_runtime_config*)
@@ -70,10 +71,10 @@ pas_heap_config_utils_allocate_aligned(
         cache = &runtime_config->page_caches->megapage_large_heap_cache;
     else
         cache = &runtime_config->page_caches->large_heap_cache;
-    
+
     allocation_result =
         pas_large_heap_physical_page_sharing_cache_try_allocate_with_alignment(
-            cache, aligned_size, alignment, config, should_zero);
+            cache, aligned_size, alignment, is_failable, config, should_zero);
     if (!allocation_result.did_succeed)
         return result;
 

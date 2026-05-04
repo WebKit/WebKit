@@ -419,6 +419,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, useImmortalObjects, false, Normal, "debugging option to keep all objects alive forever"_s) \
     v(Bool, sweepSynchronously, false, Normal, "debugging option to sweep all dead objects synchronously at GC end before resuming mutator"_s) \
     v(Unsigned, maxSingleAllocationSize, 0, Configurable, "debugging option to limit individual allocations to a max size (0 = limit not set, N = limit size in bytes)"_s) \
+    v(Size, softFailableAllocationLimit, std::numeric_limits<size_t>::max(), Configurable, "soft limit (in bytes of memory obtained from the OS by libpas): once crossed, libpas slow-path allocations from failable callers (tryFastMalloc and friends) that would need new OS pages fail; once tripped, per-thread local allocators are drained on the slow path so future allocations re-enter the slow path. Non-failable paths still grow past this limit. For OOM testing."_s) \
     \
     v(GCLogLevel, logGC, GCLogging::None, Normal, "debugging option to log GC activity (0 = None, 1 = Basic, 2 = Verbose)"_s) \
     v(Bool, useGC, true, Normal, nullptr) \

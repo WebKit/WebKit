@@ -36,6 +36,7 @@
 pas_allocation_result pas_small_medium_bootstrap_heap_page_provider(
     size_t size,
     pas_alignment alignment,
+    bool is_failable,
     const char* name,
     pas_heap* heap,
     pas_physical_memory_transaction* transaction,
@@ -52,7 +53,7 @@ pas_allocation_result pas_small_medium_bootstrap_heap_page_provider(
     PAS_PROFILE(SMALL_MEDIUM_BOOTSTRAP_ALLOCATION, heap, size, alignment, name, arg);
 
     pas_allocation_result retval = pas_small_medium_bootstrap_free_heap_try_allocate_with_alignment(
-        size, alignment, name, pas_delegate_allocation);
+        size, alignment, is_failable, name, pas_delegate_allocation);
 
     if (verbose)
         pas_log("small/medium bootstrap heap page-provider done allocating\n");

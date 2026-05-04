@@ -58,6 +58,7 @@ PAS_API pas_allocation_result
 PAS_SIMPLE_FREE_HEAP_ID(_try_allocate_with_manual_alignment)(
     size_t size,
     pas_alignment alignment,
+    bool is_failable,
     const char* name,
     pas_allocation_kind allocation_kind);
 
@@ -65,6 +66,7 @@ PAS_API pas_allocation_result
 PAS_SIMPLE_FREE_HEAP_ID(_try_allocate_with_alignment)(
     size_t size,
     pas_alignment alignment,
+    bool is_failable,
     const char* name,
     pas_allocation_kind allocation_kind);
 

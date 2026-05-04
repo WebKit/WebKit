@@ -391,13 +391,14 @@ static void merge_physical(pas_simple_large_free_heap* heap,
 static pas_allocation_result try_allocate_without_fixing(pas_simple_large_free_heap* heap,
                                                          size_t size,
                                                          pas_alignment alignment,
+                                                         bool is_failable,
                                                          pas_large_free_heap_config* config)
 {
     pas_generic_large_free_heap_config generic_heap_config;
     initialize_generic_heap_config(&generic_heap_config);
     return pas_generic_large_free_heap_try_allocate(
         (pas_generic_large_free_heap*)heap,
-        size, alignment, config,
+        size, alignment, is_failable, config,
         &generic_heap_config);
 }
 
@@ -429,6 +430,7 @@ static void fix_free_list_if_necessary(pas_simple_large_free_heap* heap,
         heap,
         new_capacity * sizeof(pas_large_free),
         pas_alignment_create_traditional(sizeof(void*)),
+        false,
         config).begin;
     PAS_ASSERT(new_free_list);
 
@@ -467,12 +469,13 @@ static void fix_free_list_if_necessary(pas_simple_large_free_heap* heap,
 pas_allocation_result pas_simple_large_free_heap_try_allocate(pas_simple_large_free_heap* heap,
                                                               size_t size,
                                                               pas_alignment alignment,
+                                                              bool is_failable,
                                                               pas_large_free_heap_config* config)
 {
     pas_allocation_result result;
-    
-    result = try_allocate_without_fixing(heap, size, alignment, config);
-    
+
+    result = try_allocate_without_fixing(heap, size, alignment, is_failable, config);
+
     fix_free_list_if_necessary(heap, config);
     
     if (verbose) {
