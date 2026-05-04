@@ -2957,6 +2957,69 @@ void testStorePairClobberMemoryLoad()
     CHECK(values1[0] == 42);
     CHECK(values1[1] == 43);
 }
+
+void testLoadPair()
+{
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+    Tmp val0 = code.newTmp(GP);
+    Tmp val1 = code.newTmp(GP);
+    root->append(Move, nullptr, Arg::addr(Tmp(GPRInfo::argumentGPR0), 0), val0);
+    root->append(Move, nullptr, Arg::addr(Tmp(GPRInfo::argumentGPR0), 8), val1);
+    root->append(Add64, nullptr, val0, val1, Tmp(GPRInfo::returnValueGPR));
+    root->append(Ret64, nullptr, Tmp(GPRInfo::returnValueGPR));
+
+    uint64_t values[2] = { 100, 200 };
+    CHECK(compileAndRun<uint64_t>(proc, values) == 300);
+}
+
+void testLoadPairEffects()
+{
+    // Loads with effects (e.g. wasm trapping loads) must not be merged into ldp.
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+    Tmp val0 = code.newTmp(GP);
+    Tmp val1 = code.newTmp(GP);
+    Inst load0(Move, nullptr, Arg::addr(Tmp(GPRInfo::argumentGPR0), 0), val0);
+    load0.kind.effects = true;
+    root->appendInst(std::move(load0));
+    Inst load1(Move, nullptr, Arg::addr(Tmp(GPRInfo::argumentGPR0), 8), val1);
+    load1.kind.effects = true;
+    root->appendInst(std::move(load1));
+    root->append(Add64, nullptr, val0, val1, Tmp(GPRInfo::returnValueGPR));
+    root->append(Ret64, nullptr, Tmp(GPRInfo::returnValueGPR));
+
+    uint64_t values[2] = { 100, 200 };
+    CHECK(compileAndRun<uint64_t>(proc, values) == 300);
+}
+
+void testLoadPairInterveningEffects()
+{
+    // An intervening instruction with effects must block load pair merging.
+    B3::Procedure proc;
+    Code& code = proc.code();
+
+    BasicBlock* root = code.addBlock();
+    Tmp val0 = code.newTmp(GP);
+    Tmp val1 = code.newTmp(GP);
+    Tmp val2 = code.newTmp(GP);
+    root->append(Move, nullptr, Arg::addr(Tmp(GPRInfo::argumentGPR0), 0), val0);
+    Inst effectfulLoad(Move, nullptr, Arg::addr(Tmp(GPRInfo::argumentGPR1), 0), val2);
+    effectfulLoad.kind.effects = true;
+    root->appendInst(std::move(effectfulLoad));
+    root->append(Move, nullptr, Arg::addr(Tmp(GPRInfo::argumentGPR0), 8), val1);
+    root->append(Add64, nullptr, val0, val1, Tmp(GPRInfo::returnValueGPR));
+    root->append(Add64, nullptr, val2, Tmp(GPRInfo::returnValueGPR), Tmp(GPRInfo::returnValueGPR));
+    root->append(Ret64, nullptr, Tmp(GPRInfo::returnValueGPR));
+
+    uint64_t values0[2] = { 100, 200 };
+    uint64_t values1[1] = { 10 };
+    CHECK(compileAndRun<uint64_t>(proc, values0, values1) == 310);
+}
 #endif
 #endif
 
@@ -3085,6 +3148,9 @@ void run(const char* filter)
     RUN(testStorePairClobber());
     RUN(testStorePairClobberMemoryStore());
     RUN(testStorePairClobberMemoryLoad());
+    RUN(testLoadPair());
+    RUN(testLoadPairEffects());
+    RUN(testLoadPairInterveningEffects());
 #endif
 #endif
 
