@@ -30,7 +30,6 @@
 #include "MessagePort.h"
 #include "MessagePortChannelProvider.h"
 #include "ScriptExecutionContext.h"
-#include "Settings.h"
 
 namespace WebCore {
 
@@ -53,7 +52,7 @@ MessageChannel::MessageChannel(ScriptExecutionContext& context)
     if (!context.activeDOMObjectsAreStopped()) {
         ASSERT(!port1().isDetached());
         ASSERT(!port2().isDetached());
-        protect(MessagePortChannelProvider::fromContext(context))->createNewMessagePortChannel(port1().identifier(), port2().identifier(), context.settingsValues().siteIsolationEnabled);
+        protect(MessagePortChannelProvider::fromContext(context))->createNewMessagePortChannel(port1().identifier(), port2().identifier());
     } else {
         ASSERT(port1().isDetached());
         ASSERT(port2().isDetached());

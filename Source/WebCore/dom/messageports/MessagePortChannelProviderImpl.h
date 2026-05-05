@@ -42,7 +42,7 @@ public:
 private:
     MessagePortChannelProviderImpl();
 
-    void createNewMessagePortChannel(const MessagePortIdentifier& local, const MessagePortIdentifier& remote, bool siteIsolationEnabled) final;
+    void createNewMessagePortChannel(const MessagePortIdentifier& local, const MessagePortIdentifier& remote) final;
     void entangleLocalPortInThisProcessToRemote(const MessagePortIdentifier& local, const MessagePortIdentifier& remote) final;
     void messagePortDisentangled(const MessagePortIdentifier& local) final;
     void messagePortClosed(const MessagePortIdentifier& local) final;

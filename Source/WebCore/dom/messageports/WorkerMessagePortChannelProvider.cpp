@@ -55,10 +55,10 @@ WorkerMessagePortChannelProvider::~WorkerMessagePortChannelProvider()
     }
 }
 
-void WorkerMessagePortChannelProvider::createNewMessagePortChannel(const MessagePortIdentifier& local, const MessagePortIdentifier& remote, bool siteIsolationEnabled)
+void WorkerMessagePortChannelProvider::createNewMessagePortChannel(const MessagePortIdentifier& local, const MessagePortIdentifier& remote)
 {
-    callOnMainThread([local, remote, siteIsolationEnabled] {
-        MessagePortChannelProvider::singleton().createNewMessagePortChannel(local, remote, siteIsolationEnabled);
+    callOnMainThread([local, remote] {
+        MessagePortChannelProvider::singleton().createNewMessagePortChannel(local, remote);
     });
 }
 

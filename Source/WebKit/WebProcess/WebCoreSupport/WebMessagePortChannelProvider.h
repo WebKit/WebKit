@@ -47,7 +47,7 @@ private:
     WebMessagePortChannelProvider();
     ~WebMessagePortChannelProvider() final;
 
-    void createNewMessagePortChannel(const WebCore::MessagePortIdentifier& local, const WebCore::MessagePortIdentifier& remote, bool siteIsolationEnabled) final;
+    void createNewMessagePortChannel(const WebCore::MessagePortIdentifier& local, const WebCore::MessagePortIdentifier& remote) final;
     void entangleLocalPortInThisProcessToRemote(const WebCore::MessagePortIdentifier& local, const WebCore::MessagePortIdentifier& remote) final;
     void messagePortDisentangled(const WebCore::MessagePortIdentifier& local) final;
     void messagePortClosed(const WebCore::MessagePortIdentifier& local) final;

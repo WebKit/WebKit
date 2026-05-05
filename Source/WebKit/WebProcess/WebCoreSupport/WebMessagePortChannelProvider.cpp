@@ -57,14 +57,12 @@ static inline IPC::Connection& networkProcessConnection()
     return WebProcess::singleton().ensureNetworkProcessConnection().connection();
 }
 
-void WebMessagePortChannelProvider::createNewMessagePortChannel(const MessagePortIdentifier& port1, const MessagePortIdentifier& port2, bool siteIsolationEnabled)
+void WebMessagePortChannelProvider::createNewMessagePortChannel(const MessagePortIdentifier& port1, const MessagePortIdentifier& port2)
 {
-    if (!siteIsolationEnabled) {
-        ASSERT(!m_inProcessPortMessages.contains(port1));
-        ASSERT(!m_inProcessPortMessages.contains(port2));
-        m_inProcessPortMessages.add(port1, Vector<MessageWithMessagePorts> { });
-        m_inProcessPortMessages.add(port2, Vector<MessageWithMessagePorts> { });
-    }
+    ASSERT(!m_inProcessPortMessages.contains(port1));
+    ASSERT(!m_inProcessPortMessages.contains(port2));
+    m_inProcessPortMessages.add(port1, Vector<MessageWithMessagePorts> { });
+    m_inProcessPortMessages.add(port2, Vector<MessageWithMessagePorts> { });
 
     protect(networkProcessConnection())->send(Messages::NetworkConnectionToWebProcess::CreateNewMessagePortChannel { port1, port2 }, 0);
 }
@@ -78,6 +76,10 @@ void WebMessagePortChannelProvider::entangleLocalPortInThisProcessToRemote(const
 
 void WebMessagePortChannelProvider::messagePortDisentangled(const MessagePortIdentifier& port)
 {
+    // The port is leaving this process. Forward any in-process messages that were queued
+    // for it via IPC so they follow the port to its new owner.
+    messagePortSentToRemote(port);
+
     protect(networkProcessConnection())->send(Messages::NetworkConnectionToWebProcess::MessagePortDisentangled { port }, 0);
 }
 
