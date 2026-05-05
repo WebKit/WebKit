@@ -53,6 +53,11 @@ if (window.accessibilityController) {
 
         await waitForFrameGeometryReady();
 
+        // Wait for element positions to be fully populated (not just frame geometry initialized).
+        await waitFor(() => {
+            return div2.x - div1.x !== 0 || div2.y - div1.y !== 0;
+        });
+
         // Check exact sizes
         output += `div1 width: ${div1.width}\n`;
         output += `div1 height: ${div1.height}\n`;
