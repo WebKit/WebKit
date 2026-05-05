@@ -135,9 +135,7 @@ endmacro()
 # On ports where OBJC/OBJCXX are not enabled languages those clauses are no-ops.
 macro(ADD_WEBKIT_PREFIX_HEADERS _target _header)
     target_precompile_headers(${_target} PRIVATE
-        "$<$<COMPILE_LANGUAGE:C,CXX,OBJC>:${CMAKE_CURRENT_SOURCE_DIR}/${_header}>")
-    target_compile_options(${_target} PRIVATE
-        "$<$<COMPILE_LANGUAGE:OBJCXX>:-include;${CMAKE_CURRENT_SOURCE_DIR}/${_header}>")
+        "$<$<COMPILE_LANGUAGE:C,CXX,OBJC,OBJCXX>:${CMAKE_CURRENT_SOURCE_DIR}/${_header}>")
 endmacro()
 
 macro(WEBKIT_FRAMEWORK_DECLARE _target)

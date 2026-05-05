@@ -1,8 +1,7 @@
 # FIXME: Remove once source files are fixed. https://bugs.webkit.org/show_bug.cgi?id=312034
 add_compile_options(-Wno-unused-parameter)
 
-target_compile_options(WebKitLegacy PRIVATE
-    "$<$<COMPILE_LANGUAGE:C,CXX,OBJC,OBJCXX>:SHELL:-include ${CMAKE_CURRENT_SOURCE_DIR}/WebKitLegacyPrefix.h>")
+ADD_WEBKIT_PREFIX_HEADERS(WebKitLegacy WebKitLegacyPrefix.h)
 
 list(APPEND WebKitLegacy_PRIVATE_LIBRARIES
     PAL

@@ -47,9 +47,6 @@ else ()
 endif ()
 unset(_webcore_fw)
 
-target_compile_options(WebCore PRIVATE
-    "$<$<COMPILE_LANGUAGE:C,CXX,OBJC,OBJCXX>:SHELL:-include ${CMAKE_CURRENT_SOURCE_DIR}/WebCorePrefix.h>")
-
 target_compile_options(WebCore PRIVATE ${WEBKIT_PRIVATE_FRAMEWORKS_COMPILE_FLAG})
 
 target_link_options(WebCore PRIVATE -weak_framework BrowserEngineKit)
