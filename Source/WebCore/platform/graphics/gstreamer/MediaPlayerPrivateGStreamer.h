@@ -325,8 +325,6 @@ protected:
 
     GstElement* videoSink() const { return m_videoSink.get(); }
 
-    void setStreamVolumeElement(GstStreamVolume*);
-
     void repaint();
     void cancelRepaint(bool destroying = false);
 
@@ -415,7 +413,6 @@ protected:
     OptionSet<TextureMapperFlags> m_textureMapperFlags;
 #endif
 
-    GRefPtr<GstStreamVolume> m_volumeElement;
     GRefPtr<GstElement> m_audioSink;
     GRefPtr<GstElement> m_videoSink;
     GRefPtr<GstElement> m_pipeline;
