@@ -2861,7 +2861,10 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
             information.autocapitalizeType = WebCore::AutocapitalizeType::Default;
         }
         information.isReadOnly = false;
-        information.hasPlainText = hasAnyPlainText(makeRangeSelectingNodeContents(*focusedElement));
+        auto range = makeRangeSelectingNodeContents(*focusedElement);
+        TextIteratorBehaviors behaviors;
+        information.value = plainText(range, behaviors, true);
+        information.hasPlainText = hasAnyPlainText(range);
     }
 
     Ref focusedElementDocument = focusedElement->document();
