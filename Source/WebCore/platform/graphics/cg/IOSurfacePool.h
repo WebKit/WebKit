@@ -89,10 +89,10 @@ private:
     static constexpr size_t defaultMaximumBytesCached { 64 * MB };
 #endif
 
-    // We'll never allow more than 1/2 of the cache to be filled with in-use surfaces, because
-    // they can't be immediately returned when requested (but will be freed up in the future).
-    static constexpr size_t maximumInUseBytes = defaultMaximumBytesCached / 2;
-    
+    // In-use surfaces are held by the compositor and cannot be freed by eviction.
+    // We cap them by count as a safety valve against unbounded growth.
+    static constexpr unsigned maximumInUseSurfaceCount { 64 };
+
     bool NODELETE shouldCacheSurface(const IOSurface&) const WTF_REQUIRES_LOCK(m_lock);
 
     void willAddSurface(IOSurface&, bool inUse) WTF_REQUIRES_LOCK(m_lock);

@@ -98,19 +98,23 @@ void IOSurfacePool::willAddSurface(IOSurface& surface, bool inUse)
 
     size_t surfaceBytes = surface.totalBytes();
 
-    evict(surfaceBytes);
-
-    m_bytesCached += surfaceBytes;
-    if (inUse)
+    if (inUse) {
         m_inUseBytesCached += surfaceBytes;
+        while (m_inUseSurfaces.size() >= maximumInUseSurfaceCount)
+            tryEvictInUseSurface();
+    } else {
+        evict(surfaceBytes);
+        m_bytesCached += surfaceBytes;
+    }
 }
 
 void IOSurfacePool::didRemoveSurface(IOSurface& surface, bool inUse)
 {
     size_t surfaceBytes = surface.totalBytes();
-    m_bytesCached -= surfaceBytes;
     if (inUse)
         m_inUseBytesCached -= surfaceBytes;
+    else
+        m_bytesCached -= surfaceBytes;
 
     m_surfaceDetails.remove(&surface);
 }
@@ -193,6 +197,8 @@ void IOSurfacePool::addSurface(std::unique_ptr<IOSurface>&& surface)
     if (!shouldCacheSurface(*surface))
         return;
 
+    collectInUseSurfaces();
+
     bool surfaceIsInUse = surface->isInUse();
 
     willAddSurface(*surface, surfaceIsInUse);
@@ -268,19 +274,8 @@ void IOSurfacePool::evict(size_t additionalSize)
     // FIXME: Perhaps purgeable surfaces should count less against the cap?
     // We don't want to end up with a ton of empty (purged) surfaces, though, as that would defeat the purpose of the pool.
     size_t targetSize = m_maximumBytesCached - additionalSize;
-
-    // Interleave eviction of old cached surfaces and more recent in-use surfaces.
-    // In-use surfaces are more recently used, but less useful in the pool, as they aren't
-    // immediately available when requested.
-    while (m_bytesCached > targetSize) {
+    while (m_bytesCached > targetSize)
         tryEvictOldestCachedSurface();
-
-        if (m_inUseBytesCached > maximumInUseBytes || m_bytesCached > targetSize)
-            tryEvictInUseSurface();
-    }
-
-    while (m_inUseBytesCached > maximumInUseBytes || m_bytesCached > targetSize)
-        tryEvictInUseSurface();
 
     DUMP_POOL_STATISTICS(stream << "IOSurfacePool::evict [" << m_poolIdentifier << "] - after evict\n" << poolStatistics());
 }
@@ -297,7 +292,10 @@ void IOSurfacePool::collectInUseSurfaces()
         if (auto it = m_surfaceDetails.find(surface); it != m_surfaceDetails.end())
             it->value.inCurrentlyUsedSurfaceCache = false;
 
-        m_inUseBytesCached -= surface->totalBytes();
+        size_t surfaceBytes = surface->totalBytes();
+        m_inUseBytesCached -= surfaceBytes;
+        evict(surfaceBytes);
+        m_bytesCached += surfaceBytes;
         insertSurfaceIntoPool(WTF::move(*surfaceIter));
     }
 
@@ -407,7 +405,8 @@ String IOSurfacePool::poolStatistics() const
     stream << "   IN USE: " << m_inUseSurfaces.size() << " surfaces for " << inUseSize / (1024.0 * 1024.0) << " MB";
 
     // FIXME: Should move consistency checks elsewhere, and always perform them in debug builds.
-    ASSERT(m_bytesCached == totalSize);
+    ASSERT(m_bytesCached == totalSize - inUseSize);
+    ASSERT(m_inUseBytesCached == inUseSize);
     ASSERT(m_bytesCached <= m_maximumBytesCached);
 
     stream << "   TOTAL: " << totalSurfaces << " surfaces for " << totalSize / (1024.0 * 1024.0) << " MB (" << totalPurgeableSize / (1024.0 * 1024.0) << " MB (" << (totalPurgeableSize * 100.0) / totalSize << "%) purgeable)\n";
