@@ -39,10 +39,19 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/input-align-right-2-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/input-align-right-2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/input-align-right-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/input-border-radius-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/input-border-radius-notref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/input-border-radius.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/input-image-content-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/input-image-inline-alt-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/input-image-inline-alt-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/input-image-inline-alt.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/input-min-bsize-centered-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/input-min-bsize-centered-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/input-min-bsize-centered.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/input-text-indent-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/input-text-indent-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/input-text-indent.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/input-type-change-from-image-1-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/input-type-change-from-image-1-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/input-type-change-from-image-1.html
@@ -55,6 +64,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/object_border_pixel-expected.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/object_border_pixel.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/picture-aspect-ratio.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/textarea-placeholder-scroll.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/textarea-scrollheight-empty.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/video-aspect-ratio.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/video-default-object-height-constrained-by-max-width-expected.xht

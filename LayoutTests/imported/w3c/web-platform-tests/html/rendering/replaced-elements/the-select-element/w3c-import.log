@@ -26,6 +26,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-1-line-height-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-1-line-height-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-1-line-height.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-adopted-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-adopted-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-adopted.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-button-min-height-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-button-min-height-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/replaced-elements/the-select-element/select-button-min-height-001.html
