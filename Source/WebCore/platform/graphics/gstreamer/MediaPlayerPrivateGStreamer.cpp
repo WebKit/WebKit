@@ -254,9 +254,6 @@ void MediaPlayerPrivateGStreamer::tearDown(bool clearMediaPlayer)
     if (m_videoSink)
         g_signal_handlers_disconnect_matched(m_videoSink.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
 
-    if (m_volumeElement)
-        g_signal_handlers_disconnect_matched(m_volumeElement.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
-
     // This will release the GStreamer thread from m_drawCondition in non AC mode in case there's an ongoing triggerRepaint call
     // waiting there, and ensure that any triggerRepaint call reaching the lock won't wait on m_drawCondition.
     cancelRepaint(true);
@@ -1999,20 +1996,22 @@ void MediaPlayerPrivateGStreamer::setVolumeDouble(double volume)
         return;
     }
 
-    if (!m_volumeElement)
+    auto streamVolume = GST_STREAM_VOLUME(m_pipeline.get());
+    if (!streamVolume)
         return;
 
     GST_DEBUG_OBJECT(pipeline(), "Setting volume: %f", volume);
-    gst_stream_volume_set_volume(m_volumeElement.get(), GST_STREAM_VOLUME_FORMAT_LINEAR, volume);
+    gst_stream_volume_set_volume(streamVolume, GST_STREAM_VOLUME_FORMAT_LINEAR, volume);
     configureMediaStreamAudioTracks();
 }
 
 float MediaPlayerPrivateGStreamer::volume() const
 {
-    if (!m_volumeElement)
+    auto streamVolume = GST_STREAM_VOLUME(m_pipeline.get());
+    if (!streamVolume)
         return 0;
 
-    auto volume = gst_stream_volume_get_volume(m_volumeElement.get(), GST_STREAM_VOLUME_FORMAT_LINEAR);
+    auto volume = gst_stream_volume_get_volume(streamVolume, GST_STREAM_VOLUME_FORMAT_LINEAR);
     GST_DEBUG_OBJECT(pipeline(), "Volume: %f", volume);
     return volume;
 }
@@ -2020,7 +2019,7 @@ float MediaPlayerPrivateGStreamer::volume() const
 void MediaPlayerPrivateGStreamer::notifyPlayerOfVolumeChange()
 {
     RefPtr player = m_player.get();
-    if (!player || !m_volumeElement)
+    if (!player)
         return;
 
     // get_volume() can return values superior to 1.0 if the user applies software user gain via
@@ -2038,7 +2037,6 @@ void MediaPlayerPrivateGStreamer::volumeChangedCallback(MediaPlayerPrivateGStrea
     if (player->isPlayerShuttingDown())
         return;
 
-    // This is called when m_volumeElement receives the notify::volume signal.
     GST_DEBUG_OBJECT(player->pipeline(), "Volume changed to: %f", player->volume());
 
     player->m_notifier->notify(MainThreadNotification::VolumeChanged, [player] {
@@ -2060,23 +2058,31 @@ void MediaPlayerPrivateGStreamer::setMuted(bool shouldMute)
 {
     GST_DEBUG_OBJECT(pipeline(), "Attempting to set muted state to %s", boolForPrinting(shouldMute));
 
-    if (!m_volumeElement || shouldMute == isMuted())
+    if (shouldMute == isMuted())
+        return;
+
+    auto streamVolume = GST_STREAM_VOLUME(m_pipeline.get());
+    if (!streamVolume)
         return;
 
     GST_INFO_OBJECT(pipeline(), "Setting muted state to %s", boolForPrinting(shouldMute));
-    g_object_set(m_volumeElement.get(), "mute", static_cast<gboolean>(shouldMute), nullptr);
+    g_object_set(streamVolume, "mute", static_cast<gboolean>(shouldMute), nullptr);
     configureMediaStreamAudioTracks();
 }
 
 void MediaPlayerPrivateGStreamer::notifyPlayerOfMute()
 {
     RefPtr player = m_player.get();
-    if (!player || !m_volumeElement)
+    if (!player)
+        return;
+
+    auto streamVolume = GST_STREAM_VOLUME(m_pipeline.get());
+    if (!streamVolume)
         return;
 
     gboolean value;
     bool isMuted;
-    g_object_get(m_volumeElement.get(), "mute", &value, nullptr);
+    g_object_get(streamVolume, "mute", &value, nullptr);
     isMuted = value;
     if (isMuted == m_isMuted)
         return;
@@ -2088,7 +2094,6 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfMute()
 
 void MediaPlayerPrivateGStreamer::muteChangedCallback(MediaPlayerPrivateGStreamer* player)
 {
-    // This is called when m_volumeElement receives the notify::mute signal.
     player->m_notifier->notify(MainThreadNotification::MuteChanged, [player] {
         player->notifyPlayerOfMute();
     });
@@ -3507,7 +3512,22 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
         gst_element_set_start_time(m_pipeline.get(), GST_CLOCK_TIME_NONE);
     }
 
-    setStreamVolumeElement(GST_STREAM_VOLUME(m_pipeline.get()));
+    auto streamVolume = GST_STREAM_VOLUME(m_pipeline.get());
+
+    // We don't set the initial volume because we trust the sink to keep it for us. See
+    // https://bugs.webkit.org/show_bug.cgi?id=118974 for more information.
+    if (!player->platformVolumeConfigurationRequired()) {
+        GST_DEBUG_OBJECT(pipeline(), "Setting stream volume to %f", player->volume());
+        gst_stream_volume_set_volume(streamVolume, GST_STREAM_VOLUME_FORMAT_LINEAR, static_cast<double>(player->volume()));
+    } else
+        GST_DEBUG_OBJECT(pipeline(), "Not setting stream volume, trusting system one");
+
+    m_isMuted = player->muted();
+    GST_DEBUG_OBJECT(pipeline(), "Setting stream muted %s", boolForPrinting(m_isMuted));
+    g_object_set(streamVolume, "mute", static_cast<gboolean>(m_isMuted), nullptr);
+
+    g_signal_connect_swapped(streamVolume, "notify::volume", G_CALLBACK(volumeChangedCallback), this);
+    g_signal_connect_swapped(streamVolume, "notify::mute", G_CALLBACK(muteChangedCallback), this);
 
     GST_INFO_OBJECT(pipeline(), "Using legacy playbin element: %s", boolForPrinting(m_isLegacyPlaybin));
 
@@ -4411,31 +4431,6 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSink()
     }
 
     return m_videoSink.get();
-}
-
-void MediaPlayerPrivateGStreamer::setStreamVolumeElement(GstStreamVolume* volume)
-{
-    RefPtr player = m_player.get();
-    if (!player)
-        return;
-
-    ASSERT(!m_volumeElement);
-    m_volumeElement = volume;
-
-    // We don't set the initial volume because we trust the sink to keep it for us. See
-    // https://bugs.webkit.org/show_bug.cgi?id=118974 for more information.
-    if (!player->platformVolumeConfigurationRequired()) {
-        GST_DEBUG_OBJECT(pipeline(), "Setting stream volume to %f", player->volume());
-        gst_stream_volume_set_volume(m_volumeElement.get(), GST_STREAM_VOLUME_FORMAT_LINEAR, static_cast<double>(player->volume()));
-    } else
-        GST_DEBUG_OBJECT(pipeline(), "Not setting stream volume, trusting system one");
-
-    m_isMuted = player->muted();
-    GST_DEBUG_OBJECT(pipeline(), "Setting stream muted %s", boolForPrinting(m_isMuted));
-    g_object_set(m_volumeElement.get(), "mute", static_cast<gboolean>(m_isMuted), nullptr);
-
-    g_signal_connect_swapped(m_volumeElement.get(), "notify::volume", G_CALLBACK(volumeChangedCallback), this);
-    g_signal_connect_swapped(m_volumeElement.get(), "notify::mute", G_CALLBACK(muteChangedCallback), this);
 }
 
 bool MediaPlayerPrivateGStreamer::updateVideoSinkStatistics()
