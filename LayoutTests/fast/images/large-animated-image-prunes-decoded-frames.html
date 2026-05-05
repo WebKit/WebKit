@@ -53,7 +53,7 @@
             if (window.internals) {
                 decodedSizeAfterAnimation = internals.imageDecodedSizeForTesting(image);
                 shouldBeGreaterThanOrEqual("decodedSizeAfterAnimation", "frameBytes");
-                shouldBeLessThanOrEqual("decodedSizeAfterAnimation", "frameBytes * 2");
+                shouldBeGreaterThanOrEqual("frameBytes * 2", "decodedSizeAfterAnimation");
             }
 
             finishJSTest();
