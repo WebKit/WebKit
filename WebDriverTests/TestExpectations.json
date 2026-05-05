@@ -5044,6 +5044,9 @@
             "test_params_result_ownership_invalid_value[result_ownership4]": {
                 "expected": { "all": { "status": ["PASS"] }}
             },
+            "test_params_result_ownership_invalid_value[_UNKNOWN_]": {
+                "expected": { "all": { "status": ["PASS"] }}
+            },
             "test_params_serialization_options_invalid_type[False]": {
                 "expected": { "all": { "status": ["PASS"] }}
             },
@@ -5192,6 +5195,9 @@
     "imported/w3c/webdriver/tests/bidi/script/evaluate/exception_details_await_promise.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}},
         "subtests": {
+            "test_exception_details_await_promise[new Error('SOME_ERROR_TEXT')-expected27]": {
+                "expected": { "all": { "status": ["PASS"] }}
+            },
             "test_exception_details_await_promise[undefined-expected0]": {
                 "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
             },
@@ -5231,7 +5237,15 @@
         }
     },
     "imported/w3c/webdriver/tests/bidi/script/evaluate/exception_details.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
+        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}},
+        "subtests": {
+            "test_exception_details[new Error('SOME_ERROR_TEXT')-expected27]": {
+                "expected": { "all": { "status": ["PASS"] }}
+            },
+            "test_invalid_script": {
+                "expected": { "all": { "status": ["PASS"] }}
+            }
+        }
     },
     "imported/w3c/webdriver/tests/bidi/script/evaluate/internal_id.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
@@ -5255,7 +5269,7 @@
                 "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
             },
             "test_params_result_ownership_invalid_value[_UNKNOWN_]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
+                "expected": { "all": { "status": ["PASS"] }}
             },
             "test_params_max_dom_depth_invalid_type[False]": {
                 "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
@@ -5437,7 +5451,11 @@
         "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/288061 - Frame context filtering not yet supported"}}
     },
     "imported/w3c/webdriver/tests/bidi/script/get_realms/sandbox.py": {
-        "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/288061 - Sandbox realm support not yet implemented"}}
+        "expected": { "all": { "status": ["PASS"] }},
+        "subtests": {
+            "test_multiple_top_level_contexts[tab]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288061 - Iframe context support not yet implemented"}}},
+            "test_multiple_top_level_contexts[window]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288061 - Iframe context support not yet implemented"}}}
+        }
     },
     "imported/w3c/webdriver/tests/bidi/script/message/message.py": {
         "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/288065"}}
@@ -5501,15 +5519,6 @@
     "imported/w3c/webdriver/tests/bidi/script/realm_destroyed/realm_destroyed.py": {
         "expected": { "all": { "status": ["PASS"]}},
         "subtests": {
-            "test_subscribe_to_one_context": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288067"}}
-            },
-            "test_sandbox[evaluate]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288067"}}
-            },
-            "test_sandbox[call_function]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288067"}}
-            },
             "test_iframe[same_origin]": {
                 "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288067"}}
             },
@@ -5527,9 +5536,6 @@
             },
             "test_reload_context": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
-            },
-            "test_subscribe_after_sandbox_creation": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288067"}}
             }
         }
     },
