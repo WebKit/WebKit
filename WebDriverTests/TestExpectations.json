@@ -5504,12 +5504,6 @@
             "test_subscribe_to_one_context": {
                 "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288067"}}
             },
-            "test_sandbox[evaluate]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288067"}}
-            },
-            "test_sandbox[call_function]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288067"}}
-            },
             "test_iframe[same_origin]": {
                 "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288067"}}
             },
