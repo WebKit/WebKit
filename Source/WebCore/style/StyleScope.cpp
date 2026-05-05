@@ -56,6 +56,7 @@
 #include "RuleSet.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGStyleElement.h"
+#include "SelectorChecker.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "StyleableInlines.h"
@@ -192,6 +193,7 @@ void Scope::clearResolver()
     RELEASE_ASSERT(!m_isUpdatingStyleResolver);
     RELEASE_ASSERT(!m_document->isResolvingTreeStyle());
 
+    SelectorChecker::clearCompiledHasArgumentSelectors();
     m_resolver = nullptr;
     customPropertyRegistry().clearRegisteredFromStylesheets();
     counterStyleRegistry().clearAuthorCounterStyles();
