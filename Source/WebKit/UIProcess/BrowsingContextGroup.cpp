@@ -123,7 +123,7 @@ RefPtr<FrameProcess> BrowsingContextGroup::processForSite(const Site& site)
 void BrowsingContextGroup::processDidTerminate(WebPageProxy& page, WebProcessProxy& process)
 {
     if (&page.siteIsolatedProcess() == &process)
-        m_pages.remove(page);
+        detachPage(page);
 }
 
 void BrowsingContextGroup::addFrameProcess(FrameProcess& process)
@@ -222,6 +222,16 @@ void BrowsingContextGroup::addPage(WebPageProxy& page)
 
         if (process->process().coreProcessIdentifier() == page.legacyMainFrameProcess().coreProcessIdentifier())
             return false;
+
+        // During BFCache restoration, the target BCG is the suspended page's original BCG,
+        // whose m_remotePages[page] entries were preserved by detachPage(). The existing
+        // RemotePageProxies already cover these (process, site) pairs — do not duplicate.
+        bool alreadyExists = std::ranges::any_of(set, [&](auto& existing) {
+            return existing->process().coreProcessIdentifier() == process->process().coreProcessIdentifier() && existing->site() == site;
+        });
+        if (alreadyExists)
+            return false;
+
         Ref processProxy = process->process();
         Ref newRemotePage = RemotePageProxy::create(page, processProxy, site);
         newRemotePage->injectPageIntoNewProcess();
@@ -245,8 +255,13 @@ void BrowsingContextGroup::addRemotePage(WebPageProxy& page, Ref<RemotePageProxy
 
 void BrowsingContextGroup::removePage(WebPageProxy& page)
 {
-    m_pages.remove(page);
+    detachPage(page);
     closeRemotePagesForPage(page);
+}
+
+void BrowsingContextGroup::detachPage(WebPageProxy& page)
+{
+    m_pages.remove(page);
 }
 
 void BrowsingContextGroup::closeRemotePagesForPage(WebPageProxy& page)
