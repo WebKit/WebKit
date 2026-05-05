@@ -28,7 +28,7 @@
 #include <JavaScriptCore/ButterflyInlines.h>
 #include <JavaScriptCore/Error.h>
 #include <JavaScriptCore/JSArrayInlines.h>
-#include <JavaScriptCore/JSFunction.h>
+#include <JavaScriptCore/JSFunctionInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/JSGlobalProxy.h>
 #include <JavaScriptCore/JSObject.h>

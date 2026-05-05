@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include <JavaScriptCore/JSCellButterfly.h>
 #include <JavaScriptCore/JSFunction.h>
+#include <JavaScriptCore/JSString.h>
 
 namespace JSC {
 
@@ -100,24 +100,7 @@ public:
     static constexpr ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(JSBoundFunction, m_length); }
     static constexpr ptrdiff_t offsetOfCanConstruct() { return OBJECT_OFFSETOF(JSBoundFunction, m_canConstruct); }
 
-    template<typename Functor>
-    void forEachBoundArg(const Functor& func)
-    {
-        unsigned length = boundArgsLength();
-        if (!length)
-            return;
-        if (length <= m_boundArgs.size()) {
-            for (unsigned index = 0; index < length; ++index) {
-                if (func(m_boundArgs[index].get()) == IterationStatus::Done)
-                    return;
-            }
-            return;
-        }
-        for (unsigned index = 0; index < length; ++index) {
-            if (func(jsCast<JSCellButterfly*>(m_boundArgs[0].get())->get(index)) == IterationStatus::Done)
-                return;
-        }
-    }
+    void forEachBoundArg(const Invocable<IterationStatus(JSValue)> auto& func);
 
     bool canConstruct()
     {

@@ -29,6 +29,7 @@
 #include "DeferTermination.h"
 #include "ExecutableBaseInlines.h"
 #include "FunctionPrototype.h"
+#include "JSBoundFunctionInlines.h"
 #include "JSCInlines.h"
 #include "VMTrapsInlines.h"
 
