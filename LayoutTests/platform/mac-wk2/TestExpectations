@@ -2296,8 +2296,6 @@ webkit.org/b/314141 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-v
 
 webkit.org/b/309850 [ Debug ] imported/w3c/web-platform-tests/uievents/mouse/mouse_boundary_events_after_removing_last_over_element.html [ Pass Failure ]
 
-webkit.org/b/314136 accessibility/mac/client/div-bounds.html [ Pass Failure ]
-
 webkit.org/b/308334 [ Debug ] http/tests/webgpu/webgpu/api/validation/gpu_external_texture_expiration.html [ Skip ]
 
 webkit.org/b/311677 [ Tahoe+ Release ] imported/w3c/web-platform-tests/svg/animations/svglength-animation-invalid-value-5.html [ Pass Failure ]
