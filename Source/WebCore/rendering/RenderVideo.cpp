@@ -349,9 +349,9 @@ bool RenderVideo::updatePlayer()
     return intrinsicSizeChanged;
 }
 
-LayoutUnit RenderVideo::computeReplacedLogicalWidth(ShouldComputePreferred shouldComputePreferred) const
+LayoutUnit RenderVideo::computeReplacedLogicalWidth(ComputePreferredLogicalWidth computePreferredLogicalWidth) const
 {
-    return computeReplacedLogicalWidthRespectingMinMaxWidth(RenderReplaced::computeReplacedLogicalWidth(shouldComputePreferred), shouldComputePreferred);
+    return computeReplacedLogicalWidthRespectingMinMaxWidth(RenderReplaced::computeReplacedLogicalWidth(computePreferredLogicalWidth), computePreferredLogicalWidth);
 }
 
 LayoutUnit RenderVideo::minimumReplacedHeight() const 

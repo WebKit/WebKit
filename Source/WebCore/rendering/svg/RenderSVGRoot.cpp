@@ -149,7 +149,7 @@ bool RenderSVGRoot::isEmbeddedThroughFrameContainingSVGDocument() const
     return frame().document()->isSVGDocument();
 }
 
-LayoutUnit RenderSVGRoot::computeReplacedLogicalWidth(ShouldComputePreferred shouldComputePreferred) const
+LayoutUnit RenderSVGRoot::computeReplacedLogicalWidth(ComputePreferredLogicalWidth computePreferredLogicalWidth) const
 {
     // When we're embedded through SVGImage (border-image/background-image/<html:img>/...) we're forced to resize to a specific size.
     if (!m_containerSize.isEmpty())
@@ -159,7 +159,7 @@ LayoutUnit RenderSVGRoot::computeReplacedLogicalWidth(ShouldComputePreferred sho
         return containingBlock()->contentBoxLogicalWidth();
 
     // Standalone SVG / SVG embedded via SVGImage (background-image/border-image/etc) / Inline SVG.
-    auto result = RenderReplaced::computeReplacedLogicalWidth(shouldComputePreferred);
+    auto result = RenderReplaced::computeReplacedLogicalWidth(computePreferredLogicalWidth);
     if (svgSVGElement().hasIntrinsicWidth())
         return result;
 
@@ -170,7 +170,7 @@ LayoutUnit RenderSVGRoot::computeReplacedLogicalWidth(ShouldComputePreferred sho
     return result;
 }
 
-LayoutUnit RenderSVGRoot::computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth) const
+LayoutUnit RenderSVGRoot::computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth, ComputePreferredLogicalWidth computePreferredLogicalWidth) const
 {
     // When we're embedded through SVGImage (border-image/background-image/<html:img>/...) we're forced to resize to a specific size.
     if (!m_containerSize.isEmpty())
@@ -180,7 +180,7 @@ LayoutUnit RenderSVGRoot::computeReplacedLogicalHeight(std::optional<LayoutUnit>
         return containingBlock()->availableLogicalHeight(AvailableLogicalHeightType::IncludeMarginBorderPadding);
 
     // Standalone SVG / SVG embedded via SVGImage (background-image/border-image/etc) / Inline SVG.
-    auto result = RenderReplaced::computeReplacedLogicalHeight(estimatedUsedWidth);
+    auto result = RenderReplaced::computeReplacedLogicalHeight(estimatedUsedWidth, computePreferredLogicalWidth);
     if (svgSVGElement().hasIntrinsicHeight())
         return result;
 
