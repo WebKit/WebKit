@@ -1543,6 +1543,8 @@ to-zero
 // progress
 random
 element-scoped
+property-scoped
+property-index-scoped
 // fixed
 sibling-count
 sibling-index

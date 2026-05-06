@@ -380,21 +380,27 @@ void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<R
 {
     WTF::switchOn(fn->sharing,
         [&](const Random::SharingOptions& options) {
-            WTF::switchOn(options.identifier,
-                [&](const Random::SharingOptions::Auto&) {
-                    // Noting to do.
-                },
-                [&](const CSS::CustomIdent& customIdent) {
-                    if (!customIdent.value.isNull()) {
-                        CSS::serializationForCSS(builder, state.serializationContext, customIdent);
-                        if (options.elementScoped)
-                            builder.append(' ', nameLiteralForSerialization(CSSValueElementScoped), ", "_s);
-                        else
-                            builder.append(", "_s);
-                    } else if (options.elementScoped)
-                        builder.append(' ', nameLiteralForSerialization(CSSValueElementScoped), ", "_s);
+            if (!options.isAuto()) {
+                bool addedSomething = false;
+                if (options.hasIdentifier()) {
+                    CSS::serializationForCSS(builder, state.serializationContext, options.key.identifier);
+                    addedSomething = true;
                 }
-            );
+                if (options.isElementScoped) {
+                    if (addedSomething)
+                        builder.append(' ');
+                    builder.append(nameLiteralForSerialization(CSSValueElementScoped));
+                    addedSomething = true;
+                }
+                if (options.hasProperty()) {
+                    if (addedSomething)
+                        builder.append(' ');
+                    builder.append(nameLiteralForSerialization(options.key.index ? CSSValuePropertyIndexScoped : CSSValuePropertyScoped));
+                    addedSomething = true;
+                }
+                if (addedSomething)
+                    builder.append(", "_s);
+            }
         },
         [&](const Random::SharingFixed& fixed) {
             builder.append(nameLiteralForSerialization(CSSValueFixed), ' ');

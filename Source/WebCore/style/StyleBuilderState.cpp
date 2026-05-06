@@ -316,12 +316,12 @@ void BuilderState::setUsesContainerUnits()
     m_style.setUsesContainerUnits();
 }
 
-double BuilderState::lookupCSSRandomBaseValue(const CSSCalc::RandomCachingKey& key, std::optional<CSS::Keyword::ElementScoped> elementScoped) const
+double BuilderState::lookupCSSRandomBaseValue(const CSSCalc::Random::SharingOptions options) const
 {
-    if (elementScoped)
-        return element()->lookupCSSRandomBaseValue(style().pseudoElementIdentifier(), key);
+    if (options.isElementScoped)
+        return element()->lookupCSSRandomBaseValue(style().pseudoElementIdentifier(), options.key);
 
-    return document().lookupCSSRandomBaseValue(key);
+    return document().lookupCSSRandomBaseValue(options.key);
 }
 
 // MARK: - Tree Counting Functions
