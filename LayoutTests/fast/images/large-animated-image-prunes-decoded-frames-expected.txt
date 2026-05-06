@@ -11,3 +11,4 @@ PASS frameBytes * 2 is >= decodedSizeAfterAnimation
 PASS successfullyParsed is true
 
 TEST COMPLETE
+
