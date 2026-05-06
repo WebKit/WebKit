@@ -327,6 +327,11 @@ void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(Vector<Resour
             return;
         }
 
+        if (statistics.isEmpty()) {
+            postTaskReply(WTF::move(completionHandler));
+            return;
+        }
+
         statisticsStore->mergeStatistics(WTF::move(statistics));
         postTaskReply(WTF::move(completionHandler));
         // We can cancel any pending request to process statistics since we're doing it synchronously below.

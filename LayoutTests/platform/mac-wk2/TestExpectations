@@ -2164,8 +2164,6 @@ webkit.org/b/312919 http/wpt/webauthn/public-key-credential-create-success-local
 webkit.org/b/312919 http/wpt/webauthn/public-key-credential-get-success-local.https.html [ Crash Failure ]
 webkit.org/b/312919 http/wpt/webauthn/public-key-credential-get-failure-local.https.html [ Crash Failure ]
 
-webkit.org/b/305508 http/tests/resourceLoadStatistics/log-cross-site-load-with-link-decoration.html [ Pass Failure ]
-
 webkit.org/b/305581 http/tests/workers/service/shownotification-allowed.html [ Pass Failure ]
 
 webkit.org/b/310052 [ Tahoe Debug arm64 ] inspector/unit-tests/array-utilities.html [ Slow ]
