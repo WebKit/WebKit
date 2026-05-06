@@ -447,9 +447,6 @@ webkit.org/b/98837 http/tests/security/svg-image-leak.html [ Skip ]
 # Timing out on Mountain Lion WK1 release sometimes
 webkit.org/b/99221 js/dom/random-array-gc-stress.html [ Pass Timeout ]
 
-# Expected to fail until WebGL extension implementation lands
-webkit.org/b/98257 fast/canvas/webgl/oes-element-index-uint.html [ Failure Pass ]
-
 webkit.org/b/107356 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
 
 # Overflowing LayoutUnits cause RenderGeometryMap assertions
@@ -473,7 +470,6 @@ webkit.org/b/112176 compositing/overflow/composited-scrolling-paint-phases.html 
 webkit.org/b/112176 compositing/overflow/scrolling-without-painting.html [ Failure Pass ]
 webkit.org/b/112176 compositing/overflow/updating-scrolling-content.html [ Failure Pass ]
 webkit.org/b/112176 fast/canvas/canvas-composite-alpha.html [ Failure Pass ]
-webkit.org/b/112176 fast/canvas/webgl/read-pixels-test.html [ Failure Pass ]
 
 # Baseline Alignment tests affected by 1px diff failures only on Mac and iOS platforms
 webkit.org/b/170293 fast/css-grid-layout/grid-align-baseline-vertical.html [ Failure ]
@@ -560,9 +556,6 @@ webkit.org/b/130972 transitions/3d/interrupted-transition.html [ Pass Failure Ti
 webkit.org/b/118153 compositing/repaint/positioned-movement.html [ Pass Failure ]
 
 webkit.org/b/131715 transitions/cancel-transition.html [ Pass Failure ]
-
-# <rdar://problem/16696298>
-webkit.org/b/131886 fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Pass Failure Timeout ]
 
 webkit.org/b/132385 compositing/repaint/repaint-on-layer-grouping-change.html [ Pass Failure ]
 
@@ -889,8 +882,6 @@ webkit.org/b/232330 [ Debug ] compositing/video/video-reflection.html [ Pass Tim
 
 # Flaky on Mac
 webkit.org/b/148435 storage/domstorage/events/basic-body-attribute.html [ Pass Failure ]
-
-webkit.org/b/149930 fast/canvas/webgl/oes-texture-float-linear.html [ Pass Failure ]
 
 # Imported Blink tests which have not been investigated.
 imported/blink/compositing/video/video-controls-layer-creation-squashing.html [ Pass ImageOnlyFailure ]
@@ -1669,23 +1660,13 @@ webkit.org/b/222692 inspector/page/empty-or-missing-resources.html [ Pass Timeou
 # webkit.org/b/223043 the following tests have issues only on Apple Silicon
 webrtc/h264-baseline.html  [ Failure Timeout ]
 
-webkit.org/b/223259 [ arm64 ] webgl/2.0.y/conformance2/textures/misc/tex-mipmap-levels.html [ Failure ]
-
 webkit.org/b/223271 [ Debug ] imported/w3c/web-platform-tests/xhr/event-upload-progress.any.worker.html [ Pass Failure ]
 
 webkit.org/b/223484 [ arm64 ] compositing/style-change/backface-visibility-change.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/223761 media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag.html [ Pass Timeout ]
-webkit.org/b/222239 fast/canvas/webgl/webgl2-texture-upload-enums.html [ Pass Failure ]
 
-# Note: Even when fixed, this bug needs to be marked as Slow in debug builds.
-webkit.org/b/222239 webgl/2.0.y/conformance2/state/gl-object-get-calls.html [ Pass Failure Slow ]
-
-webkit.org/b/222844 fast/canvas/webgl/match-page-color-space.html [ Pass ImageOnlyFailure ]
 webkit.org/b/222844 imported/blink/compositing/draws-content/webgl-simple-background.html [ Pass ImageOnlyFailure ]
-
-# ASTC may be supported on M1 macs, but we should skip it for now
-fast/canvas/webgl/webgl-compressed-texture-astc.html [ Skip ]
 
 webkit.org/b/223820 inspector/debugger/csp-exceptions.html [ Pass Failure Timeout ]
 
