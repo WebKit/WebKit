@@ -68,25 +68,8 @@ public:
         const AxisConstraint&, const GridItemSizingFunctions&,
         LayoutUnit gapSize, const StyleContentAlignmentData& usedContentAlignment);
 
-private:
-
-    static UnsizedTracks initializeTrackSizes(const TrackSizingFunctionsList&, LayoutUnit availableGridSpace);
-
-    // Flex track infrastructure
-    static FlexTracks collectFlexTracks(const UnsizedTracks&);
-    static bool hasFlexTracks(const UnsizedTracks&);
-    static double NODELETE flexFactorSum(const FlexTracks&);
-    static LayoutUnit findSizeOfFr(const UnsizedTracks&, const LayoutUnit availableSpace, const LayoutUnit gapSize);
-
-    // Expand Flexible Tracks (spec section 11.7)
-    static void expandFlexibleTracks(UnsizedTracks&, const AxisConstraint&, LayoutUnit gapSize,
-        const TrackSizingItemList&, const GridItemSizingFunctions&);
-    static void NODELETE expandFlexibleTracksForMinContent(UnsizedTracks&);
-    static void expandFlexibleTracksForMaxContent(UnsizedTracks&, const FlexTracks&, LayoutUnit gapSize,
-        const TrackSizingItemList&, const PlacedGridItemSpanList&, const TrackSizingGridItemConstraintList&, const GridItemSizingFunctions&);
-    static void expandFlexibleTracksForDefiniteLength(UnsizedTracks&, const FlexTracks&, std::optional<LayoutUnit> availableGridSpace, const LayoutUnit gapSize);
 };
 
-} // namespace WebCore
 } // namespace Layout
+} // namespace WebCore
 
