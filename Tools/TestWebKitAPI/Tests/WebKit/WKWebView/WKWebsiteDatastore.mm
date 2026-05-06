@@ -50,15 +50,17 @@ static bool usePersistentCredentialStorage = false;
 
 @implementation NavigationTestDelegate {
     bool _hasFinishedNavigation;
+    bool _isFirstChallenge;
 }
 
 - (instancetype)init
 {
     if (!(self = [super init]))
         return nil;
-    
+
     _hasFinishedNavigation = false;
-    
+    _isFirstChallenge = true;
+
     return self;
 }
 
@@ -74,9 +76,8 @@ static bool usePersistentCredentialStorage = false;
 
 - (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential *))completionHandler
 {
-    static bool firstChallenge = true;
-    if (firstChallenge) {
-        firstChallenge = false;
+    if (_isFirstChallenge) {
+        _isFirstChallenge = false;
         persistentCredential = adoptNS([[NSURLCredential alloc] initWithUser:@"username" password:@"password" persistence:(usePersistentCredentialStorage ? NSURLCredentialPersistencePermanent: NSURLCredentialPersistenceForSession)]);
         return completionHandler(NSURLSessionAuthChallengeUseCredential, persistentCredential.get());
     }
@@ -281,12 +282,7 @@ TEST(WKWebsiteDataStore, FetchNonPersistentCredentials)
     TestWebKitAPI::Util::run(&done);
 }
 
-// FIXME when webkit.org/b/309374 is resolved.
-#if PLATFORM(MAC) && !defined(NDEBUG)
-TEST(WKWebsiteDataStore, DISABLED_FetchPersistentCredentials)
-#else
 TEST(WKWebsiteDataStore, FetchPersistentCredentials)
-#endif
 {
     HTTPServer server(HTTPServer::respondWithChallengeThenOK);
 
@@ -302,6 +298,11 @@ TEST(WKWebsiteDataStore, FetchPersistentCredentials)
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]]];
     [navigationDelegate waitForDidFinishNavigation];
+
+    // Terminate the network process to clear any session-level credential copies that
+    // NSURLSession may have cached during authentication. The subsequent fetch will start
+    // a fresh network process that only sees the permanent credential in the keychain.
+    [websiteDataStore _terminateNetworkProcess];
 
     __block bool done = false;
     [websiteDataStore fetchDataRecordsOfTypes:[NSSet setWithObject:_WKWebsiteDataTypeCredentials] completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
