@@ -8575,8 +8575,6 @@ imported/w3c/web-platform-tests/css/css-highlight-api/highlight-text-across-elem
 pdf/annotations [ Skip ]
 pdf/pdf-in-iframe-with-text-annotation.html [ Skip ]
 
-webkit.org/b/312496 fast/forms/select/base/select-pagedown-pageup-vertical.html [ Pass Failure ]
-
 webkit.org/b/312499 imported/w3c/web-platform-tests/shadow-dom/reference-target/tentative/form.html [ Pass Failure ]
 
 webkit.org/b/309173 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/modulepreload-referrerpolicy.html [ Pass Failure ]

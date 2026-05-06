@@ -32,7 +32,7 @@ FAIL focusedOptionNumber() should be 100. Was 1.
 FAIL Page Up did not make progress: was 100, now 100
 FAIL focusedOptionNumber() should be 1. Was 100.
 PASS focusedOptionNumber() === pageDownTarget is true
-FAIL focusedOptionNumber() === pageUpTarget should be true. Was false.
+PASS focusedOptionNumber() === pageUpTarget is true
 PASS successfullyParsed is true
 Some tests failed.
 
