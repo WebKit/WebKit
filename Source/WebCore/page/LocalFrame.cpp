@@ -1294,17 +1294,6 @@ LocalFrame* LocalFrame::contentFrameFromWindowOrFrameElement(JSContextRef contex
     return frameOwner ? dynamicDowncast<LocalFrame>(frameOwner->contentFrame()) : nullptr;
 }
 
-void LocalFrame::documentURLOrOriginDidChange()
-{
-    if (!isMainFrame())
-        return;
-
-    RefPtr page = this->page();
-    RefPtr document = this->document();
-    if (page && document)
-        page->setMainFrameURLAndOrigin(document->url(), protect(document->securityOrigin()));
-}
-
 void LocalFrame::dispatchLoadEventToParent()
 {
     if (is<RemoteFrame>(tree().parent()))

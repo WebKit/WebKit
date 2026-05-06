@@ -871,27 +871,14 @@ void Page::setMainFrameURLAndOrigin(const URL& url, RefPtr<SecurityOrigin>&& ori
 {
     // This URL and SecurityOrigin is relevant to this Page only if it is not
     // directly hosting the local main frame.
-    RefPtr localFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
-    if (!localFrame) {
-        m_topDocumentSyncData->documentURL = url;
-
-        if (!origin)
-            origin = SecurityOrigin::create(url);
-        m_topDocumentSyncData->documentSecurityOrigin = WTF::move(origin);
-
-        return;
-    }
-
-    if (!settings().siteIsolationEnabled())
+    if (is<LocalFrame>(m_mainFrame))
         return;
 
-    // If this page is hosting the local main frame, make sure the url and origin
-    // match what we expect, then broadcast them out to other processes.
-    RELEASE_ASSERT(url == m_topDocumentSyncData->documentURL);
+    m_topDocumentSyncData->documentURL = url;
+
     if (!origin)
-        RELEASE_ASSERT(!m_topDocumentSyncData->documentSecurityOrigin);
-
-    documentSyncClient().broadcastAllDocumentSyncDataToOtherProcesses(m_topDocumentSyncData.get());
+        origin = SecurityOrigin::create(url);
+    m_topDocumentSyncData->documentSecurityOrigin = WTF::move(origin);
 }
 
 void Page::setIsClosing()
