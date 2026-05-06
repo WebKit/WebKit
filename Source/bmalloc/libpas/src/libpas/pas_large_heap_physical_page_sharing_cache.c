@@ -48,6 +48,7 @@ typedef struct {
 
 static pas_aligned_allocation_result large_aligned_allocator(size_t size,
                                                              pas_alignment alignment,
+                                                             bool is_failable,
                                                              void* arg)
 {
     static const bool verbose = false;
@@ -97,6 +98,7 @@ static pas_aligned_allocation_result large_aligned_allocator(size_t size,
     
     allocation_result = data->cache->provider(
         aligned_size, aligned_alignment,
+        is_failable,
         "pas_large_heap_physical_page_sharing_cache/chunk",
         NULL, NULL,
         data->cache->provider_arg);
@@ -162,18 +164,19 @@ pas_large_heap_physical_page_sharing_cache_try_allocate_with_alignment(
     pas_large_heap_physical_page_sharing_cache* cache,
     size_t size,
     pas_alignment alignment,
+    bool is_failable,
     const pas_heap_config* heap_config,
     bool should_zero)
 {
     static const bool verbose = false;
-    
+
     aligned_allocator_data data;
     pas_large_free_heap_config config;
-    
+
     data.cache = cache;
     data.config = heap_config;
     data.should_zero = should_zero;
-    
+
     config.type_size = 1;
     config.min_alignment = 1;
     config.aligned_allocator = large_aligned_allocator;
@@ -185,8 +188,8 @@ pas_large_heap_physical_page_sharing_cache_try_allocate_with_alignment(
         pas_log("Allocating large heap physical cache out of simple free heap %p\n",
                 &cache->free_heap);
     }
-    
-    return pas_simple_large_free_heap_try_allocate(&cache->free_heap, size, alignment, &config);
+
+    return pas_simple_large_free_heap_try_allocate(&cache->free_heap, size, alignment, is_failable, &config);
 }
 
 #endif /* LIBPAS_ENABLED */

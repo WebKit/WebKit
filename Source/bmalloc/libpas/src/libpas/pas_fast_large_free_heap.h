@@ -65,6 +65,7 @@ PAS_API pas_allocation_result
 pas_fast_large_free_heap_try_allocate(pas_fast_large_free_heap* heap,
                                       size_t size,
                                       pas_alignment alignment,
+                                      bool is_failable,
                                       pas_large_free_heap_config* config);
 
 PAS_API void pas_fast_large_free_heap_deallocate(pas_fast_large_free_heap* heap,

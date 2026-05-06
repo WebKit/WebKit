@@ -31,6 +31,7 @@
 
 #include <errno.h>
 #include <math.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #if !PAS_OS(WINDOWS)
@@ -55,6 +56,13 @@
 size_t pas_page_malloc_num_allocated_bytes;
 size_t pas_page_malloc_cached_alignment;
 size_t pas_page_malloc_cached_alignment_shift;
+
+size_t pas_soft_failable_allocation_limit = SIZE_MAX;
+
+void pas_set_soft_failable_allocation_limit(size_t size)
+{
+    pas_soft_failable_allocation_limit = size;
+}
 
 #if defined(MADV_ZERO) && PAS_OS(DARWIN)
 #define PAS_USE_MADV_ZERO 1
@@ -164,8 +172,10 @@ PAS_NEVER_INLINE size_t pas_page_malloc_alignment_shift_slow(void)
 }
 
 static void*
-pas_page_malloc_try_map_pages(size_t size, bool may_contain_small_or_medium)
+pas_page_malloc_try_map_pages(size_t size, bool may_contain_small_or_medium, bool is_failable)
 {
+    if (is_failable && pas_past_soft_failable_allocation_limit())
+        return NULL;
 
 #if PAS_OS(WINDOWS)
     PAS_PROFILE(PAGE_ALLOCATION, size, may_contain_small_or_medium, PAS_VM_TAG);
@@ -205,7 +215,7 @@ pas_page_malloc_try_map_pages(size_t size, bool may_contain_small_or_medium)
 
 pas_aligned_allocation_result
 pas_page_malloc_try_allocate_without_deallocating_padding(
-    size_t size, pas_alignment alignment, bool may_contain_small_or_medium)
+    size_t size, pas_alignment alignment, bool may_contain_small_or_medium, bool is_failable)
 {
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
@@ -240,7 +250,7 @@ pas_page_malloc_try_allocate_without_deallocating_padding(
             return result;
     }
 
-    mmap_result = pas_page_malloc_try_map_pages(mapped_size, may_contain_small_or_medium);
+    mmap_result = pas_page_malloc_try_map_pages(mapped_size, may_contain_small_or_medium, is_failable);
     if (!mmap_result)
         return result;
 

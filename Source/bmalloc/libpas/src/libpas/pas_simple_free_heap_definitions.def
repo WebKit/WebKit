@@ -35,7 +35,7 @@ pas_allocation_result PAS_SIMPLE_FREE_HEAP_ID(_try_allocate)(
     pas_allocation_kind allocation_kind)
 {
     return PAS_SIMPLE_FREE_HEAP_ID(_try_allocate_with_alignment)(
-        size, pas_alignment_create_trivial(), name, allocation_kind);
+        size, pas_alignment_create_trivial(), false, name, allocation_kind);
 }
 
 pas_allocation_result PAS_SIMPLE_FREE_HEAP_ID(_allocate)(
@@ -51,12 +51,13 @@ pas_allocation_result
 PAS_SIMPLE_FREE_HEAP_ID(_try_allocate_with_manual_alignment)(
     size_t size,
     pas_alignment alignment,
+    bool is_failable,
     const char* name,
     pas_allocation_kind allocation_kind)
 {
     return pas_simple_free_heap_helpers_try_allocate_with_manual_alignment(
         &PAS_SIMPLE_FREE_HEAP_NAME, initialize_config, PAS_SIMPLE_FREE_HEAP_ID(_kind),
-        size, alignment, name, allocation_kind,
+        size, alignment, is_failable, name, allocation_kind,
         &PAS_SIMPLE_FREE_HEAP_ID(_num_allocated_object_bytes),
         &PAS_SIMPLE_FREE_HEAP_ID(_num_allocated_object_bytes_peak));
 }
@@ -65,13 +66,14 @@ pas_allocation_result
 PAS_SIMPLE_FREE_HEAP_ID(_try_allocate_with_alignment)(
     size_t size,
     pas_alignment alignment,
+    bool is_failable,
     const char* name,
     pas_allocation_kind allocation_kind)
 {
     alignment = pas_alignment_round_up(alignment, PAS_INTERNAL_MIN_ALIGN);
 
     return PAS_SIMPLE_FREE_HEAP_ID(_try_allocate_with_manual_alignment)(
-        size, alignment, name, allocation_kind);
+        size, alignment, is_failable, name, allocation_kind);
 }
 
 pas_allocation_result PAS_SIMPLE_FREE_HEAP_ID(_allocate_with_manual_alignment)(
@@ -82,7 +84,7 @@ pas_allocation_result PAS_SIMPLE_FREE_HEAP_ID(_allocate_with_manual_alignment)(
 {
     pas_allocation_result result =
         PAS_SIMPLE_FREE_HEAP_ID(_try_allocate_with_manual_alignment)(
-            size, alignment, name, allocation_kind);
+            size, alignment, false, name, allocation_kind);
     PAS_ASSERT(result.did_succeed);
     PAS_ASSERT(result.begin);
     return result;
@@ -96,7 +98,7 @@ pas_allocation_result PAS_SIMPLE_FREE_HEAP_ID(_allocate_with_alignment)(
 {
     pas_allocation_result result =
         PAS_SIMPLE_FREE_HEAP_ID(_try_allocate_with_alignment)(
-            size, alignment, name, allocation_kind);
+            size, alignment, false, name, allocation_kind);
     PAS_ASSERT(result.did_succeed);
     PAS_ASSERT(result.begin);
     return result;

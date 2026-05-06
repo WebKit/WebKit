@@ -64,12 +64,13 @@ void* pas_fast_megapage_cache_try_allocate(
     const pas_page_base_config* config,
     pas_fast_megapage_kind kind,
     bool should_zero,
+    bool is_failable,
     pas_heap* heap,
     pas_physical_memory_transaction* transaction)
 {
     pas_megapage_cache_config cache_config;
     table_set_by_index_data data;
-    
+
     data.table = table;
     data.kind = kind;
 
@@ -81,8 +82,8 @@ void* pas_fast_megapage_cache_try_allocate(
     cache_config.table_set_by_index = table_set_by_index;
     cache_config.table_set_by_index_arg = &data;
     cache_config.should_zero = should_zero;
-    
-    return pas_megapage_cache_try_allocate(cache, &cache_config, heap, transaction);
+
+    return pas_megapage_cache_try_allocate(cache, &cache_config, is_failable, heap, transaction);
 }
 
 PAS_END_EXTERN_C;

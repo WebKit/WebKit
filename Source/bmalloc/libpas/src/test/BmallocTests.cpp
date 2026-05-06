@@ -27,6 +27,7 @@
 #include "bmalloc_heap.h"
 #include "bmalloc_heap_config.h"
 #include "pas_internal_config.h"
+#include "pas_page_malloc.h"
 
 #include <array>
 #include <cstdlib>
@@ -175,6 +176,32 @@ void testBmallocSmallIndexOverlap()
     CHECK(mem2);
 }
 
+void testSoftFailableAllocationLimitBlocksFailableLargeAllocations()
+{
+    // Set limit below current allocated bytes. Any failable allocation that triggers a
+    // new OS page request should return NULL. Non-failable (bmalloc_allocate) would still
+    // succeed because its path passes is_failable=false.
+    size_t before = pas_page_malloc_num_allocated_bytes;
+    pas_set_soft_failable_allocation_limit(before ? before - 1 : 1);
+
+    // Issue a large failable allocation that's too big to be served from existing free lists,
+    // so it must request new OS pages.
+    const size_t kBigSize = 256 * 1024 * 1024;
+    void* mem = bmalloc_try_allocate(kBigSize, pas_non_compact_allocation_mode);
+    CHECK(!mem);
+
+    // Restore the limit so other tests are unaffected.
+    pas_set_soft_failable_allocation_limit(SIZE_MAX);
+}
+
+void testSoftFailableAllocationLimitDisabledAllowsAllocation()
+{
+    // With default (SIZE_MAX) limit, failable allocations should succeed normally.
+    pas_set_soft_failable_allocation_limit(SIZE_MAX);
+    void* mem = bmalloc_try_allocate(1024, pas_non_compact_allocation_mode);
+    CHECK(mem);
+}
+
 } // anonymous namespace
 
 void addBmallocTests()
@@ -186,4 +213,6 @@ void addBmallocTests()
     ADD_TEST(testBmallocForceBitfitAfterAlloc());
     ADD_TEST(testBmallocDisableAllocationsAboveMTETaggingCeiling());
     ADD_TEST(testBmallocSmallIndexOverlap());
+    ADD_TEST(testSoftFailableAllocationLimitDisabledAllowsAllocation());
+    ADD_TEST(testSoftFailableAllocationLimitBlocksFailableLargeAllocations());
 }

@@ -40,6 +40,20 @@ PAS_API extern size_t pas_page_malloc_cached_alignment_shift;
 PAS_API extern bool pas_page_malloc_decommit_zero_fill;
 #endif /* PAS_OS(DARWIN) */
 
+/* When pas_page_malloc_num_allocated_bytes reaches this limit, failable page
+   allocations (is_failable=true) return NULL instead of obtaining new memory from the
+   OS. This is a soft limit: non-failable paths (bootstrap, scavenger metadata, the
+   non-try_ entries like bmalloc_allocate) continue to grow past it. Default is
+   SIZE_MAX, which disables the limit. */
+PAS_API extern size_t pas_soft_failable_allocation_limit;
+
+PAS_API void pas_set_soft_failable_allocation_limit(size_t size);
+
+static inline bool pas_past_soft_failable_allocation_limit(void)
+{
+    return pas_page_malloc_num_allocated_bytes >= pas_soft_failable_allocation_limit;
+}
+
 PAS_API PAS_NEVER_INLINE size_t pas_page_malloc_alignment_slow(void);
 
 static inline size_t pas_page_malloc_alignment(void)
@@ -60,7 +74,7 @@ static inline size_t pas_page_malloc_alignment_shift(void)
 
 PAS_API pas_aligned_allocation_result
 pas_page_malloc_try_allocate_without_deallocating_padding(
-    size_t size, pas_alignment alignment, bool may_contain_small_or_medium);
+    size_t size, pas_alignment alignment, bool may_contain_small_or_medium, bool is_failable);
 
 PAS_API void pas_page_malloc_deallocate(void* base, size_t size);
 

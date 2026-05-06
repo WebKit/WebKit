@@ -46,6 +46,7 @@ PAS_API void pas_reserved_memory_provider_construct(
 PAS_API pas_allocation_result pas_reserved_memory_provider_try_allocate(
     size_t size,
     pas_alignment alignment,
+    bool is_failable,
     const char* name,
     pas_heap* heap,
     pas_physical_memory_transaction* transaction,

@@ -40,6 +40,7 @@
 static pas_allocation_result allocate_from_compact_megapages(
     size_t size,
     pas_alignment alignment,
+    bool is_failable,
     const char* name,
     pas_heap* heap,
     pas_physical_memory_transaction* transaction,
@@ -49,6 +50,7 @@ static pas_allocation_result allocate_from_compact_megapages(
 
     PAS_UNUSED_PARAM(name);
     PAS_UNUSED_PARAM(arg);
+    PAS_UNUSED_PARAM(is_failable);
     PAS_ASSERT(heap);
     PAS_ASSERT(transaction);
     PAS_ASSERT(!alignment.alignment_begin);
@@ -63,6 +65,7 @@ static pas_allocation_result allocate_from_compact_megapages(
 static pas_allocation_result allocate_from_megapages(
     size_t size,
     pas_alignment alignment,
+    bool is_failable,
     const char* name,
     pas_heap* heap,
     pas_physical_memory_transaction* transaction,
@@ -72,6 +75,7 @@ static pas_allocation_result allocate_from_megapages(
     pas_megapage_cache_size cache_size = (pas_megapage_cache_size)(uintptr_t)arg;
 
     PAS_UNUSED_PARAM(name);
+    PAS_UNUSED_PARAM(is_failable);
     PAS_ASSERT(heap);
     PAS_ASSERT(transaction);
     PAS_ASSERT(!alignment.alignment_begin);

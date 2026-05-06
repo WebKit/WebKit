@@ -43,6 +43,7 @@ static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_LARGE_HEAPS);
 
 static pas_aligned_allocation_result large_utility_aligned_allocator(size_t size,
                                                                      pas_alignment alignment,
+                                                                     bool is_failable,
                                                                      void* arg)
 {
     size_t page_size;
@@ -68,6 +69,7 @@ static pas_aligned_allocation_result large_utility_aligned_allocator(size_t size
 
     allocation_result = memory_source(
         aligned_size, aligned_alignment,
+        is_failable,
         "pas_large_utility_free_heap/chunk",
         pas_delegate_allocation);
 
@@ -125,7 +127,7 @@ void* pas_large_free_heap_helpers_try_allocate_with_alignment(
     pas_heap_lock_assert_held();
     initialize_config(&config, memory_source);
     alignment = pas_alignment_round_up(alignment, PAS_INTERNAL_MIN_ALIGN);
-    result = pas_fast_large_free_heap_try_allocate(heap, size, alignment, &config);
+    result = pas_fast_large_free_heap_try_allocate(heap, size, alignment, false, &config);
     pas_did_allocate(
         (void*)result.begin, size, pas_large_utility_free_heap_kind, name, pas_object_allocation);
     if (result.did_succeed) {

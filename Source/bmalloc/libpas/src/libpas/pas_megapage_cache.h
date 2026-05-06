@@ -80,6 +80,7 @@ PAS_API void pas_megapage_cache_construct(pas_megapage_cache* cache,
 
 PAS_API void* pas_megapage_cache_try_allocate(pas_megapage_cache* cache,
                                               pas_megapage_cache_config* cache_config,
+                                              bool is_failable,
                                               pas_heap* heap,
                                               pas_physical_memory_transaction* transaction);
 

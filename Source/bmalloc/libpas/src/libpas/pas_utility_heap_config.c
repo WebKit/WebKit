@@ -51,6 +51,7 @@ void* pas_utility_heap_allocate_page(
     return (void*)pas_compact_bootstrap_free_heap_try_allocate_with_alignment(
         PAS_SMALL_PAGE_DEFAULT_SIZE,
         pas_alignment_create_traditional(PAS_SMALL_PAGE_DEFAULT_SIZE),
+        true,
         "pas_utility_heap/page",
         pas_delegate_allocation).begin;
 }

@@ -380,6 +380,8 @@ bool Options::isAvailable(Options::ID id, Options::Availability availability)
     if (id == maxSingleAllocationSizeID)
         return true;
 #endif
+    if (id == softFailableAllocationLimitID)
+        return true;
     if (id == traceLLIntExecutionID)
         return !!LLINT_TRACING;
     if (id == traceLLIntSlowPathID)
@@ -941,6 +943,8 @@ void Options::notifyOptionsChanged()
     else
         fastSetMaxSingleAllocationSize(std::numeric_limits<size_t>::max());
 #endif
+
+    fastSetSoftFailableAllocationLimit(Options::softFailableAllocationLimit());
 
     if (Options::useZombieMode()) {
         Options::sweepSynchronously() = true;

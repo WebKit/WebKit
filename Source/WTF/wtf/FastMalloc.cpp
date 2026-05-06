@@ -94,6 +94,11 @@ void fastSetMaxSingleAllocationSize(size_t size)
 
 #endif // !defined(NDEBUG)
 
+void fastSetSoftFailableAllocationLimit(size_t size)
+{
+    bmalloc::api::setSoftFailableAllocationLimit(size);
+}
+
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 char* fastStrDup(const char* src)

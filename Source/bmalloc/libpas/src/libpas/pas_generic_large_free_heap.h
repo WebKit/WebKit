@@ -174,6 +174,7 @@ pas_generic_large_free_heap_try_allocate(
     pas_generic_large_free_heap* heap,
     size_t size,
     pas_alignment alignment,
+    bool is_failable,
     pas_large_free_heap_config* config,
     pas_generic_large_free_heap_config* generic_heap_config)
 {
@@ -225,7 +226,7 @@ pas_generic_large_free_heap_try_allocate(
             generic_heap_config->dump(heap);
         }
         
-        page_allocation = config->aligned_allocator(size, alignment, config->aligned_allocator_arg);
+        page_allocation = config->aligned_allocator(size, alignment, is_failable, config->aligned_allocator_arg);
         if (!page_allocation.result) {
             if (PAS_GENERIC_LARGE_FREE_HEAP_VERBOSE >= 2)
                 pas_log("Returning failure.\n");

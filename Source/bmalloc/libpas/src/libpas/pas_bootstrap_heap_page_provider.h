@@ -33,6 +33,7 @@ PAS_BEGIN_EXTERN_C;
 PAS_API pas_allocation_result pas_bootstrap_heap_page_provider(
     size_t size,
     pas_alignment alignment,
+    bool is_failable,
     const char* name,
     pas_heap* heap,
     pas_physical_memory_transaction* transaction,

@@ -72,6 +72,7 @@ typedef pas_page_base* (*pas_heap_config_page_header_func)(uintptr_t begin);
 typedef pas_aligned_allocation_result (*pas_heap_config_aligned_allocator)(
     size_t size,
     pas_alignment alignment,
+    bool is_failable,
     pas_large_heap* large_heap,
     const pas_heap_config* config);
 typedef void* (*pas_heap_config_prepare_to_enumerate)(pas_enumerator* enumerator);

@@ -66,15 +66,16 @@ typedef struct {
 
 static pas_aligned_allocation_result aligned_allocator(size_t size,
                                                        pas_alignment alignment,
+                                                       bool is_failable,
                                                        void* arg)
 {
     aligned_allocator_data* data;
-    
+
     data = arg;
-    
+
     PAS_ASSERT(data);
-    
-    return data->aligned_allocator(size, alignment, data->heap, data->config);
+
+    return data->aligned_allocator(size, alignment, is_failable, data->heap, data->config);
 }
 
 static void initialize_config(pas_large_free_heap_config* config,
@@ -104,36 +105,37 @@ static pas_allocation_result allocate_impl(pas_large_heap* heap,
                                            pas_physical_memory_transaction* transaction)
 {
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_LARGE_HEAPS);
-    
+
     pas_allocation_result result;
     const pas_heap_type* type;
     pas_large_free_heap_config config;
     aligned_allocator_data data;
-    
+
     PAS_ASSERT(pas_is_power_of_2(*alignment));
     pas_heap_lock_assert_held();
-    
+
     type = pas_heap_for_large_heap(heap)->type;
-    
+
     if (!*size)
         *size = heap_config->get_type_size(type);
-    
+
     *alignment = PAS_MAX(*alignment, heap_config->get_type_alignment(type));
     *alignment = PAS_MAX(*alignment, heap_config->large_alignment);
-    
+
     *size = pas_round_up_to_power_of_2(*size, *alignment);
-    
+
     if (verbose) {
         pas_log("large heap allocating large object of size %zu\n", *size);
         pas_log("large heap cartesian tree minimum = %p, num mapped bytes = %zu\n", pas_cartesian_tree_minimum(&heap->free_heap.tree), heap->free_heap.num_mapped_bytes);
     }
-    
+
     initialize_config(&config, &data, heap, heap_config);
-    
+
     result = pas_fast_large_free_heap_try_allocate(
         &heap->free_heap,
         *size,
         pas_alignment_create_traditional(*alignment),
+        true,
         &config);
     
     if (!result.did_succeed)

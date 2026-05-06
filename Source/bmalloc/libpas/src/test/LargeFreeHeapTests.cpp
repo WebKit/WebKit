@@ -212,8 +212,9 @@ ostream& operator<<(ostream& out, const Free& free)
     return out;
 }
 
-pas_aligned_allocation_result allocatorAdapter(size_t size, pas_alignment alignment, void* arg)
+pas_aligned_allocation_result allocatorAdapter(size_t size, pas_alignment alignment, bool is_failable, void* arg)
 {
+    PAS_UNUSED_PARAM(is_failable);
     const function<pas_aligned_allocation_result(size_t size, pas_alignment alignment)>* allocator =
         reinterpret_cast<const function<pas_aligned_allocation_result(size_t size, pas_alignment alignment)>*>(arg);
     return (*allocator)(size, alignment);
@@ -285,7 +286,7 @@ void testLargeFreeHeapImpl(HeapType* heap,
             cout << "    Allocating size = " << action.size
                  << ", alignment = " << pas_string_stream_get_string(&stream) << endl;
             pas_string_stream_destruct(&stream);
-            CHECK_EQUAL(allocateFunc(heap, action.size, action.alignment, &config).begin,
+            CHECK_EQUAL(allocateFunc(heap, action.size, action.alignment, false, &config).begin,
                         action.result);
             break;
         }
@@ -371,7 +372,7 @@ void testBootstrapHeap(const vector<Action>& actions,
 {
     static constexpr size_t slabSize = 1lu << 20;
     void* slabPtr = pas_page_malloc_try_allocate_without_deallocating_padding(
-        slabSize, alignSimple(slabSize), false).result;
+        slabSize, alignSimple(slabSize), false, false).result;
     CHECK(slabPtr);
     uintptr_t slab = reinterpret_cast<uintptr_t>(slabPtr);
     

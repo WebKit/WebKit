@@ -50,6 +50,7 @@ PAS_API void* pas_fast_megapage_cache_try_allocate(
     const pas_page_base_config* config,
     pas_fast_megapage_kind kind,
     bool should_zero,
+    bool is_failable,
     pas_heap* heap,
     pas_physical_memory_transaction* transaction);
 

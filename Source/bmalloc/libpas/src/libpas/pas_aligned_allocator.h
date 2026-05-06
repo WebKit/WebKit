@@ -33,6 +33,7 @@ PAS_BEGIN_EXTERN_C;
 
 typedef pas_aligned_allocation_result (*pas_aligned_allocator)(size_t size,
                                                                pas_alignment alignment,
+                                                               bool is_failable,
                                                                void* arg);
 
 PAS_END_EXTERN_C;

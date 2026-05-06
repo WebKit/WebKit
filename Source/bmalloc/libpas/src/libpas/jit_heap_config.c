@@ -59,10 +59,12 @@ pas_simple_large_free_heap jit_fresh_memory_heap = PAS_SIMPLE_LARGE_FREE_HEAP_IN
 
 static pas_aligned_allocation_result fresh_memory_aligned_allocator(size_t size,
                                                                     pas_alignment alignment,
+                                                                    bool is_failable,
                                                                     void *arg)
 {
     PAS_UNUSED_PARAM(size);
     PAS_UNUSED_PARAM(alignment);
+    PAS_UNUSED_PARAM(is_failable);
     PAS_ASSERT(!arg);
     return pas_aligned_allocation_result_create_empty();
 }
@@ -77,25 +79,25 @@ static void initialize_fresh_memory_config(pas_large_free_heap_config* config)
     config->deallocator_arg = NULL;
 }
 
-static pas_allocation_result allocate_from_fresh(size_t size, pas_alignment alignment)
+static pas_allocation_result allocate_from_fresh(size_t size, pas_alignment alignment, bool is_failable)
 {
     pas_large_free_heap_config config;
 
     pas_heap_lock_assert_held();
 
     initialize_fresh_memory_config(&config);
-    return pas_simple_large_free_heap_try_allocate(&jit_fresh_memory_heap, size, alignment, &config);
+    return pas_simple_large_free_heap_try_allocate(&jit_fresh_memory_heap, size, alignment, is_failable, &config);
 }
 
 static pas_allocation_result page_provider(
-    size_t size, pas_alignment alignment, const char* name,
+    size_t size, pas_alignment alignment, bool is_failable, const char* name,
     pas_heap* heap, pas_physical_memory_transaction* transaction, void* arg)
 {
     PAS_UNUSED_PARAM(name);
     PAS_UNUSED_PARAM(heap);
     PAS_UNUSED_PARAM(transaction);
     PAS_ASSERT(!arg);
-    return allocate_from_fresh(size, alignment);
+    return allocate_from_fresh(size, alignment, is_failable);
 }
 
 pas_large_heap_physical_page_sharing_cache jit_large_fresh_memory_heap = {
@@ -149,7 +151,7 @@ void* jit_small_segregated_allocate_page(
     PAS_UNUSED_PARAM(heap);
     PAS_UNUSED_PARAM(transaction);
     return (void*)allocate_from_fresh(
-        JIT_SMALL_PAGE_SIZE, pas_alignment_create_traditional(JIT_SMALL_PAGE_SIZE)).begin;
+        JIT_SMALL_PAGE_SIZE, pas_alignment_create_traditional(JIT_SMALL_PAGE_SIZE), true).begin;
 }
 
 pas_page_base* jit_small_segregated_create_page_header(
@@ -182,7 +184,7 @@ void* jit_small_bitfit_allocate_page(
     PAS_UNUSED_PARAM(heap);
     PAS_UNUSED_PARAM(transaction);
     return (void*)allocate_from_fresh(
-        JIT_SMALL_PAGE_SIZE, pas_alignment_create_traditional(JIT_SMALL_PAGE_SIZE)).begin;
+        JIT_SMALL_PAGE_SIZE, pas_alignment_create_traditional(JIT_SMALL_PAGE_SIZE), true).begin;
 }
 
 pas_page_base* jit_small_bitfit_create_page_header(
@@ -205,7 +207,7 @@ void* jit_medium_bitfit_allocate_page(
     PAS_UNUSED_PARAM(heap);
     PAS_UNUSED_PARAM(transaction);
     return (void*)allocate_from_fresh(
-        JIT_MEDIUM_PAGE_SIZE, pas_alignment_create_traditional(JIT_MEDIUM_PAGE_SIZE)).begin;
+        JIT_MEDIUM_PAGE_SIZE, pas_alignment_create_traditional(JIT_MEDIUM_PAGE_SIZE), true).begin;
 }
 
 pas_page_base* jit_medium_bitfit_create_page_header(
@@ -233,7 +235,7 @@ void jit_medium_destroy_page_header(
 }
 
 pas_aligned_allocation_result jit_aligned_allocator(
-    size_t size, pas_alignment alignment, pas_large_heap* large_heap, const pas_heap_config* config)
+    size_t size, pas_alignment alignment, bool is_failable, pas_large_heap* large_heap, const pas_heap_config* config)
 {
     pas_aligned_allocation_result result;
     size_t aligned_size;
@@ -241,13 +243,13 @@ pas_aligned_allocation_result jit_aligned_allocator(
 
     PAS_UNUSED_PARAM(large_heap);
     PAS_UNUSED_PARAM(config);
-    
+
     pas_zero_memory(&result, sizeof(result));
 
     aligned_size = pas_round_up_to_power_of_2(size, alignment.alignment);
 
     allocation_result = pas_large_heap_physical_page_sharing_cache_try_allocate_with_alignment(
-        &jit_large_fresh_memory_heap, aligned_size, alignment, config, false);
+        &jit_large_fresh_memory_heap, aligned_size, alignment, is_failable, config, false);
     if (!allocation_result.did_succeed)
         return result;
 
