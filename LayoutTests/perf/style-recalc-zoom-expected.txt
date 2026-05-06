@@ -1,0 +1,3 @@
+Tests that per-element memory cost of zoomed elements vs unzoomed elements is below 200 bytes.
+PASS
+

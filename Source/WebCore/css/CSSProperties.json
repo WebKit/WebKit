@@ -245,7 +245,7 @@
             ],
             "codegen-properties": {
                 "settings-flag": "accentColorEnabled",
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::AccentColor",
                 "color-property": true,
@@ -374,10 +374,10 @@
                 "color-property-traits-color-custom": true,
                 "color-property-traits-visited-link-color-custom": true,
                 "style-extractor-custom": true,
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::CaretColor",
-                "computed-style-visited-link-storage-path": ["m_inheritedRareData"],
+                "computed-style-visited-link-storage-path": ["m_inheritedRareData", "cssData"],
                 "parser-grammar": "auto | <color>"
             },
             "specification": {
@@ -858,7 +858,7 @@
             ],
             "codegen-properties": {
                 "computed-style-initial-constexpr": true,
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "value",
                 "computed-style-type": "Style::TextBoxEdge",
                 "parser-function": "consumeTextBoxEdge",
@@ -1494,7 +1494,7 @@
                 "style-builder-custom": "Value",
                 "computed-style-name-for-methods": "TextSizeAdjust",
                 "computed-style-initial-constexpr": true,
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "value",
                 "computed-style-type": "Style::TextSizeAdjust",
                 "parser-grammar": "auto | none | <percentage [0,inf]>"
@@ -1655,7 +1655,7 @@
             "codegen-properties": {
                 "style-builder-custom": "Value",
                 "high-priority": true,
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "TextZoom",
                 "parser-grammar": "<<values>>"
@@ -1709,7 +1709,7 @@
             "codegen-properties": {
                 "top-priority": true,
                 "top-priority-reason": "This is a top priority property to ensure that its value can be checked when determining a smart default font size', (<https://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog?rev=172861>).",
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "RubyPosition",
                 "parser-grammar": "<<values>>",
@@ -2459,7 +2459,7 @@
             ],
             "codegen-properties": {
                 "settings-flag": "cssLineClampEnabled",
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::BlockEllipsis",
                 "parser-grammar": "none | auto | <string>",
@@ -4685,7 +4685,7 @@
             ],
             "codegen-properties": {
                 "settings-flag": "supportHDRDisplayEnabled",
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::DynamicRangeLimit",
                 "parser-function": "consumeDynamicRangeLimit",
@@ -4897,7 +4897,7 @@
                 "last"
             ],
             "codegen-properties": {
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "raw",
                 "computed-style-type": "Style::HangingPunctuation",
                 "parser-grammar": "none | [ first || [ force-end | allow-end ] || last ]@(preserve-order no-single-item-opt)"
@@ -4971,7 +4971,7 @@
                 "none"
             ],
             "codegen-properties": {
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "Style::ImageOrientation",
                 "parser-grammar": "<<values>>",
@@ -5016,7 +5016,7 @@
                 }
             ],
             "codegen-properties": {
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "ImageRendering",
                 "parser-grammar": "<<values>>"
@@ -5308,7 +5308,7 @@
             "codegen-properties": {
                 "settings-flag": "cssLineFitEdgeEnabled",
                 "computed-style-initial-constexpr": true,
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "value",
                 "computed-style-type": "Style::LineFitEdge",
                 "parser-function": "consumeLineFitEdge",
@@ -5381,7 +5381,7 @@
                 "none"
             ],
             "codegen-properties": {
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::ImageOrNone",
                 "parser-grammar": "<image> | none"
@@ -5513,7 +5513,7 @@
                 "none"
             ],
             "codegen-properties": {
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::ListStyleType",
                 "parser-grammar": "<counter-style> | <string> | none",
@@ -6310,7 +6310,7 @@
                 "top-priority": true,
                 "top-priority-reason": "This is top priority since it affects 'font-size', which is 'high-priority'",
                 "computed-style-initial-constexpr": true,
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "value",
                 "computed-style-type": "Style::MathDepth",
                 "parser-grammar": "auto-add | add(<integer>) | <integer>"
@@ -6329,7 +6329,7 @@
                 "compact"
             ],
             "codegen-properties": {
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "MathShift",
                 "parser-grammar": "<<values>>"
@@ -6348,7 +6348,7 @@
                 "compact"
             ],
             "codegen-properties": {
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "MathStyle",
                 "parser-grammar": "<<values>>"
@@ -6991,7 +6991,7 @@
             "codegen-properties": {
                 "style-extractor-custom": true,
                 "computed-style-initial-constexpr": true,
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "value",
                 "computed-style-type": "Style::Orphans",
                 "parser-grammar": "<integer [1,inf]>"
@@ -7163,7 +7163,7 @@
                 "aliases": [
                     "word-wrap"
                 ],
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "OverflowWrap",
                 "parser-grammar": "<<values>>"
@@ -7712,7 +7712,7 @@
             ],
             "codegen-properties": {
                 "computed-style-initial-constexpr": true,
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "raw",
                 "computed-style-type": "Style::SVGPaintOrder",
                 "parser-function": "consumePaintOrder",
@@ -7790,7 +7790,7 @@
                 "none"
             ],
             "codegen-properties": {
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::Quotes",
                 "parser-function": "consumeQuotes",
@@ -7880,7 +7880,7 @@
                 "space-around"
             ],
             "codegen-properties": {
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "RubyAlign",
                 "parser-grammar": "<<values>>"
@@ -7900,7 +7900,7 @@
                 "none"
             ],
             "codegen-properties": {
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "RubyOverhang",
                 "parser-grammar": "<<values>>"
@@ -8080,7 +8080,7 @@
             ],
             "codegen-properties": {
                 "computed-style-name-for-methods": "CapStyle",
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "LineCap",
                 "parser-grammar": "<<values>>"
@@ -8104,7 +8104,7 @@
             ],
             "codegen-properties": {
                 "computed-style-name-for-methods": "JoinStyle",
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "LineJoin",
                 "parser-grammar": "<<values>>",
@@ -8125,7 +8125,7 @@
             "codegen-properties": {
                 "computed-style-initial-constexpr": true,
                 "computed-style-name-for-methods": "StrokeMiterLimit",
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "value",
                 "computed-style-type": "Style::StrokeMiterlimit",
                 "parser-grammar": "<number [0,inf]>",
@@ -8164,11 +8164,11 @@
                 "animation-wrapper-comment": "FIXME: Why doesn't this use VisitedAffectedStyleTypeWrapper?",
                 "animation-wrapper-requires-override-parameters": ["CSSPropertyID::CSSPropertyStrokeColor", "&ComputedStyle::strokeColor", "&ComputedStyle::setStrokeColor"],
                 "computed-style-has-explicitly-set-policy": "value-only",
-                "computed-style-has-explicitly-set-storage-path": ["m_inheritedRareData"],
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-has-explicitly-set-storage-path": ["m_inheritedRareData", "cssData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::Color",
-                "computed-style-visited-link-storage-path": ["m_inheritedRareData"],
+                "computed-style-visited-link-storage-path": ["m_inheritedRareData", "cssData"],
                 "visited-link-color-support": true,
                 "color-property": true,
                 "parser-grammar": "<color>"
@@ -8185,8 +8185,8 @@
             "initial": "1px",
             "codegen-properties": {
                 "computed-style-has-explicitly-set-policy": "value-only",
-                "computed-style-has-explicitly-set-storage-path": ["m_inheritedRareData"],
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-has-explicitly-set-storage-path": ["m_inheritedRareData", "cssData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::StrokeWidth",
                 "parser-grammar": "<length-percentage [0,inf]> | <number [0,inf]>"
@@ -8215,7 +8215,7 @@
                 }
             ],
             "codegen-properties": {
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "raw",
                 "computed-style-type": "Style::SpeakAs",
                 "parser-grammar": "none | [ [ normal | spell-out ] || digits || [ literal-punctuation | no-punctuation ] ]@(no-single-item-opt)",
@@ -8250,7 +8250,7 @@
             "initial": "8",
             "codegen-properties": {
                 "computed-style-initial-constexpr": true,
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::TabSize",
                 "parser-grammar": "<number [0,inf]> | <length [0,inf]>"
@@ -8328,7 +8328,7 @@
                 "match-parent"
             ],
             "codegen-properties": {
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "Style::TextAlignLast",
                 "parser-grammar": "<<values>>"
@@ -8393,7 +8393,7 @@
             ],
             "codegen-properties": {
                 "accepts-quirky-length": true,
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::TextIndent",
                 "parser-grammar": "<length-percentage> && hanging? && each-line?"
@@ -8423,7 +8423,7 @@
             ],
             "codegen-properties": {
                 "settings-flag": "cssTextJustifyEnabled",
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "TextJustify",
                 "parser-grammar": "<<values>>"
@@ -8459,7 +8459,7 @@
                 "none"
             ],
             "codegen-properties": {
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::TextShadows",
                 "parser-function": "consumeTextShadow",
@@ -8906,7 +8906,7 @@
             "codegen-properties": {
                 "style-extractor-custom": true,
                 "computed-style-initial-constexpr": true,
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "value",
                 "computed-style-type": "Style::Widows",
                 "parser-grammar": "<integer [1,inf]>"
@@ -9014,7 +9014,7 @@
                 "aliases": [
                     "-epub-word-break"
                 ],
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "WordBreak",
                 "parser-grammar": "<<values>>"
@@ -10138,7 +10138,7 @@
             ],
             "codegen-properties": {
                 "settings-flag": "colorFilterEnabled",
-                "computed-style-storage-path": ["m_inheritedRareData", "appleColorFilter"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData", "appleColorFilter"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::AppleColorFilter",
                 "parser-function": "consumeAppleColorFilter",
@@ -10873,7 +10873,7 @@
                 "aliases": [
                     "-webkit-hyphenate-character"
                 ],
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::HyphenateCharacter",
                 "parser-grammar": "auto | <string>"
@@ -10892,7 +10892,7 @@
             ],
             "codegen-properties": {
                 "computed-style-initial-constexpr": true,
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "value",
                 "computed-style-type": "Style::HyphenateLimitEdge",
                 "parser-grammar": "auto | <number [0,inf]>"
@@ -10908,7 +10908,7 @@
             ],
             "codegen-properties": {
                 "computed-style-initial-constexpr": true,
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "value",
                 "computed-style-type": "Style::HyphenateLimitEdge",
                 "parser-grammar": "auto | <number [0,inf]>"
@@ -10924,7 +10924,7 @@
             ],
             "codegen-properties": {
                 "computed-style-initial-constexpr": true,
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "value",
                 "computed-style-type": "Style::HyphenateLimitLines",
                 "parser-grammar": "no-limit | <number [0,inf]>"
@@ -10951,7 +10951,7 @@
                     "-epub-hyphens",
                     "-webkit-hyphens"
                 ],
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "Hyphens",
                 "parser-grammar": "<<values>>"
@@ -10999,7 +10999,7 @@
             ],
             "codegen-properties": {
                 "computed-style-initial-custom": true,
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "raw",
                 "computed-style-type": "Style::WebkitLineBoxContain",
                 "parser-grammar": "none | [ block || inline || font || glyphs || replaced || inline-box || initial-letter ]"
@@ -11018,7 +11018,7 @@
                 "edges"
             ],
             "codegen-properties": {
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "LineAlign",
                 "parser-grammar": "<<values>>"
@@ -11052,7 +11052,7 @@
                 "aliases": [
                     "-webkit-line-break"
                 ],
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "LineBreak",
                 "parser-grammar": "<<values>>"
@@ -11103,7 +11103,7 @@
                 "none"
             ],
             "codegen-properties": {
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::WebkitLineGrid",
                 "parser-grammar": "none | <custom-ident>"
@@ -11126,7 +11126,7 @@
                 "contain"
             ],
             "codegen-properties": {
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "LineSnap",
                 "parser-grammar": "<<values>>"
@@ -11330,7 +11330,7 @@
             "codegen-properties": {
                 "computed-style-initial": "initialNBSPMode",
                 "computed-style-setter": "setNBSPMode",
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "NBSPMode",
                 "parser-grammar": "<<values>>"
@@ -11354,7 +11354,7 @@
                 "enable-if": "ENABLE_DARK_MODE_CSS",
                 "computed-style-has-explicitly-set-policy": "value-only",
                 "computed-style-has-explicitly-set-storage-path": ["m_nonInheritedData", "miscData"],
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "value",
                 "computed-style-type": "Style::ColorScheme",
                 "top-priority": true,
@@ -11559,7 +11559,7 @@
             ],
             "codegen-properties": {
                 "computed-style-name-for-methods": "TextCombine",
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "TextCombine",
                 "parser-grammar": "<<values>>"
@@ -11694,7 +11694,7 @@
                 "all"
             ],
             "codegen-properties": {
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "TextDecorationSkipInk",
                 "parser-grammar": "<<values>>"
@@ -11719,7 +11719,7 @@
                 "aliases": [
                     "-webkit-text-underline-position"
                 ],
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "raw",
                 "computed-style-type": "Style::TextUnderlinePosition",
                 "parser-grammar": "auto | [ [ under | from-font ] || [ left | right ] ]@(no-single-item-opt)"
@@ -11734,7 +11734,7 @@
             "inherited": true,
             "initial": "auto",
             "codegen-properties": {
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::TextUnderlineOffset",
                 "parser-grammar": "auto | <length-percentage>"
@@ -11821,10 +11821,10 @@
                 ],
                 "visited-link-color-support": true,
                 "color-property": true,
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::Color",
-                "computed-style-visited-link-storage-path": ["m_inheritedRareData"],
+                "computed-style-visited-link-storage-path": ["m_inheritedRareData", "cssData"],
                 "parser-grammar": "<color>"
             },
             "specification": {
@@ -11841,7 +11841,7 @@
                     "-webkit-text-emphasis-position"
                 ],
                 "computed-style-initial-custom": true,
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "raw",
                 "computed-style-type": "Style::TextEmphasisPosition",
                 "parser-grammar": "[ [ over | under ] && [ right | left ]? ]@(no-single-item-opt)"
@@ -11860,7 +11860,7 @@
                     "-epub-text-emphasis-style",
                     "-webkit-text-emphasis-style"
                 ],
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::TextEmphasisStyle",
                 "parser-grammar": "none | [ [ filled | open ] || [ dot | circle | double-circle | triangle | sesame ] ] | <string>"
@@ -11877,10 +11877,10 @@
             "codegen-properties": {
                 "visited-link-color-support": true,
                 "color-property": true,
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::Color",
-                "computed-style-visited-link-storage-path": ["m_inheritedRareData"],
+                "computed-style-visited-link-storage-path": ["m_inheritedRareData", "cssData"],
                 "parser-grammar": "<color>"
             },
             "status": {
@@ -11899,7 +11899,7 @@
                 "none"
             ],
             "codegen-properties": {
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "TextSecurity",
                 "parser-grammar": "<<values>>"
@@ -11926,10 +11926,10 @@
             "codegen-properties": {
                 "visited-link-color-support": true,
                 "color-property": true,
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::Color",
-                "computed-style-visited-link-storage-path": ["m_inheritedRareData"],
+                "computed-style-visited-link-storage-path": ["m_inheritedRareData", "cssData"],
                 "parser-grammar": "<color>"
             },
             "status": {
@@ -11948,7 +11948,7 @@
             ],
             "codegen-properties": {
                 "computed-style-initial-constexpr": true,
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "value",
                 "computed-style-type": "Style::WebkitTextStrokeWidth",
                 "parser-grammar": "<line-width>"
@@ -12199,7 +12199,7 @@
                 "read-write-plaintext-only"
             ],
             "codegen-properties": {
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "UserModify",
                 "parser-grammar": "<<values>>"
@@ -12223,7 +12223,7 @@
                 "all"
             ],
             "codegen-properties": {
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "UserSelect",
                 "parser-grammar": "<<values>>"
@@ -12818,7 +12818,7 @@
             ],
             "codegen-properties": {
                 "settings-flag": "cssScrollbarColorEnabled",
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::ScrollbarColor",
                 "parser-function": "consumeScrollbarColor",
@@ -13229,7 +13229,7 @@
                 "color-property": true,
                 "computed-style-initial-custom": true,
                 "computed-style-initial-inline": false,
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::Color",
                 "computed-style-resolving-current-color-exported": true,
@@ -13248,7 +13248,7 @@
             "codegen-properties": {
                 "enable-if": "ENABLE_WEBKIT_OVERFLOW_SCROLLING_CSS_PROPERTY",
                 "settings-flag": "legacyOverflowScrollingTouchEnabled",
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "Style::WebkitOverflowScrolling",
                 "parser-grammar": "<<values>>"
@@ -13311,7 +13311,7 @@
             ],
             "codegen-properties": {
                 "enable-if": "ENABLE_WEBKIT_TOUCH_CALLOUT_CSS_PROPERTY",
-                "computed-style-storage-path": ["m_inheritedRareData"],
+                "computed-style-storage-path": ["m_inheritedRareData", "cssData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "Style::WebkitTouchCallout",
                 "parser-grammar": "<<values>>"

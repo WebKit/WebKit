@@ -55,7 +55,7 @@ struct SameSizeAsComputedStyle : CanMakeCheckedPtr<SameSizeAsComputedStyle> {
     } m_inheritedFlags;
     void* nonInheritedDataRefs[1];
     void* inheritedDataRefs[2];
-    HashMap<PseudoElementIdentifier, std::unique_ptr<RenderStyle>> pseudos;
+    void* pseudos;
     void* dataRefSvgStyle;
 
 #if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
@@ -77,10 +77,10 @@ void ComputedStyle::inheritFrom(const ComputedStyle& inheritParent)
 
 void ComputedStyle::inheritIgnoringCustomPropertiesFrom(const ComputedStyle& inheritParent)
 {
-    auto oldCustomProperties = m_inheritedRareData->customProperties;
+    auto oldCustomProperties = m_inheritedRareData->cssData->customProperties;
     inheritFrom(inheritParent);
-    if (oldCustomProperties != m_inheritedRareData->customProperties)
-        m_inheritedRareData.access().customProperties = oldCustomProperties;
+    if (oldCustomProperties != m_inheritedRareData->cssData->customProperties)
+        m_inheritedRareData.access().cssData.access().customProperties = oldCustomProperties;
 }
 
 void ComputedStyle::inheritUnicodeBidiFrom(const ComputedStyle& inheritParent)

@@ -97,8 +97,8 @@ public:
             }
 
             if (&a.inheritedRareData() != &b.inheritedRareData()) {
-                if (a.inheritedRareData().textUnderlineOffset != b.inheritedRareData().textUnderlineOffset
-                    || a.inheritedRareData().textUnderlinePosition != b.inheritedRareData().textUnderlinePosition)
+                if (a.inheritedRareData().cssData->textUnderlineOffset != b.inheritedRareData().cssData->textUnderlineOffset
+                    || a.inheritedRareData().cssData->textUnderlinePosition != b.inheritedRareData().cssData->textUnderlinePosition)
                         return true;
             }
 
@@ -109,7 +109,7 @@ public:
             return true;
 
         if (&a.inheritedRareData() != &b.inheritedRareData()
-            && a.inheritedRareData().textShadow != b.inheritedRareData().textShadow)
+            && a.inheritedRareData().cssData->textShadow != b.inheritedRareData().cssData->textShadow)
             return true;
 
         if (textDecorationsDiffer()) {
@@ -329,58 +329,62 @@ public:
     {
         ASSERT(&a != &b);
 
-        if (a.textIndent != b.textIndent
-            || a.textAlignLast != b.textAlignLast
-            || a.textJustify != b.textJustify
-            || a.textBoxEdge != b.textBoxEdge
-            || a.lineFitEdge != b.lineFitEdge
-            || a.usedZoom != b.usedZoom
-            || a.textZoom != b.textZoom
+        if (a.usedZoom != b.usedZoom
+            || a.usedContentVisibility != b.usedContentVisibility)
+            return true;
+
+        if (a.cssData.ptr() == b.cssData.ptr())
+            return false;
+
+        if (a.cssData->textIndent != b.cssData->textIndent
+            || a.cssData->textAlignLast != b.cssData->textAlignLast
+            || a.cssData->textJustify != b.cssData->textJustify
+            || a.cssData->textBoxEdge != b.cssData->textBoxEdge
+            || a.cssData->lineFitEdge != b.cssData->lineFitEdge
+            || a.cssData->textZoom != b.cssData->textZoom
     #if ENABLE(TEXT_AUTOSIZING)
-            || a.textSizeAdjust != b.textSizeAdjust
+            || a.cssData->textSizeAdjust != b.cssData->textSizeAdjust
     #endif
-            || a.wordBreak != b.wordBreak
-            || a.overflowWrap != b.overflowWrap
-            || a.nbspMode != b.nbspMode
-            || a.lineBreak != b.lineBreak
-            || a.textSecurity != b.textSecurity
-            || a.hyphens != b.hyphens
-            || a.hyphenateLimitBefore != b.hyphenateLimitBefore
-            || a.hyphenateLimitAfter != b.hyphenateLimitAfter
-            || a.hyphenateCharacter != b.hyphenateCharacter
-            || a.rubyPosition != b.rubyPosition
-            || a.rubyAlign != b.rubyAlign
-            || a.rubyOverhang != b.rubyOverhang
-            || a.textCombine != b.textCombine
-            || a.textEmphasisStyle != b.textEmphasisStyle
-            || a.textEmphasisPosition != b.textEmphasisPosition
-            || a.tabSize != b.tabSize
-            || a.lineBoxContain != b.lineBoxContain
-            || a.lineGrid != b.lineGrid
-            || a.imageOrientation != b.imageOrientation
-            || a.lineSnap != b.lineSnap
-            || a.lineAlign != b.lineAlign
-            || a.hangingPunctuation != b.hangingPunctuation
-            || a.usedContentVisibility != b.usedContentVisibility
+            || a.cssData->wordBreak != b.cssData->wordBreak
+            || a.cssData->overflowWrap != b.cssData->overflowWrap
+            || a.cssData->nbspMode != b.cssData->nbspMode
+            || a.cssData->lineBreak != b.cssData->lineBreak
+            || a.cssData->textSecurity != b.cssData->textSecurity
+            || a.cssData->hyphens != b.cssData->hyphens
+            || a.cssData->hyphenateLimitBefore != b.cssData->hyphenateLimitBefore
+            || a.cssData->hyphenateLimitAfter != b.cssData->hyphenateLimitAfter
+            || a.cssData->hyphenateCharacter != b.cssData->hyphenateCharacter
+            || a.cssData->rubyPosition != b.cssData->rubyPosition
+            || a.cssData->rubyAlign != b.cssData->rubyAlign
+            || a.cssData->rubyOverhang != b.cssData->rubyOverhang
+            || a.cssData->textCombine != b.cssData->textCombine
+            || a.cssData->textEmphasisStyle != b.cssData->textEmphasisStyle
+            || a.cssData->textEmphasisPosition != b.cssData->textEmphasisPosition
+            || a.cssData->tabSize != b.cssData->tabSize
+            || a.cssData->lineBoxContain != b.cssData->lineBoxContain
+            || a.cssData->lineGrid != b.cssData->lineGrid
+            || a.cssData->imageOrientation != b.cssData->imageOrientation
+            || a.cssData->lineSnap != b.cssData->lineSnap
+            || a.cssData->lineAlign != b.cssData->lineAlign
+            || a.cssData->hangingPunctuation != b.cssData->hangingPunctuation
     #if ENABLE(WEBKIT_OVERFLOW_SCROLLING_CSS_PROPERTY)
-            || a.overflowScrolling != b.overflowScrolling
+            || a.cssData->overflowScrolling != b.cssData->overflowScrolling
     #endif
-            || a.listStyleType != b.listStyleType
-            || a.listStyleImage != b.listStyleImage
-            || a.blockEllipsis != b.blockEllipsis)
+            || a.cssData->listStyleType != b.cssData->listStyleType
+            || a.cssData->listStyleImage != b.cssData->listStyleImage
+            || a.cssData->blockEllipsis != b.cssData->blockEllipsis)
             return true;
 
-        if (a.textStrokeWidth != b.textStrokeWidth)
+        if (a.cssData->textStrokeWidth != b.cssData->textStrokeWidth)
             return true;
 
-        // These properties affect the cached stroke bounding box rects.
-        if (a.capStyle != b.capStyle
-            || a.joinStyle != b.joinStyle
-            || a.strokeWidth != b.strokeWidth
-            || a.strokeMiterLimit != b.strokeMiterLimit)
+        if (a.cssData->capStyle != b.cssData->capStyle
+            || a.cssData->joinStyle != b.cssData->joinStyle
+            || a.cssData->strokeWidth != b.cssData->strokeWidth
+            || a.cssData->strokeMiterLimit != b.cssData->strokeMiterLimit)
             return true;
 
-        if (a.quotes != b.quotes)
+        if (a.cssData->quotes != b.cssData->quotes)
             return true;
 
         return false;
@@ -501,7 +505,7 @@ public:
         }
 
         if (static_cast<DisplayType>(a.nonInheritedFlags().display) == DisplayType::BlockFlowListItem) {
-            if (a.inheritedFlags().listStylePosition != b.inheritedFlags().listStylePosition || a.inheritedRareData().listStyleType != b.inheritedRareData().listStyleType)
+            if (a.inheritedFlags().listStylePosition != b.inheritedFlags().listStylePosition || a.inheritedRareData().cssData->listStyleType != b.inheritedRareData().cssData->listStyleType)
                 return true;
         }
 
@@ -623,7 +627,7 @@ public:
         }
 
         if (&a.inheritedRareData() != &b.inheritedRareData()
-            && a.inheritedRareData().dynamicRangeLimit != b.inheritedRareData().dynamicRangeLimit) {
+            && a.inheritedRareData().cssData->dynamicRangeLimit != b.inheritedRareData().cssData->dynamicRangeLimit) {
             return true;
         }
 
@@ -781,16 +785,21 @@ public:
 
     static bool rareInheritedDataChangeRequiresRepaint(const InheritedRareData& a, const InheritedRareData& b)
     {
-        return a.effectiveInert != b.effectiveInert
-            || a.userModify != b.userModify
-            || a.userSelect != b.userSelect
-            || a.appleColorFilter != b.appleColorFilter
-            || a.imageRendering != b.imageRendering
-            || a.accentColor != b.accentColor
+        if (a.effectiveInert != b.effectiveInert
             || a.insideDefaultButton != b.insideDefaultButton
-            || a.insideSubmitButton != b.insideSubmitButton
+            || a.insideSubmitButton != b.insideSubmitButton)
+            return true;
+
+        if (a.cssData.ptr() == b.cssData.ptr())
+            return false;
+
+        return a.cssData->userModify != b.cssData->userModify
+            || a.cssData->userSelect != b.cssData->userSelect
+            || a.cssData->appleColorFilter != b.cssData->appleColorFilter
+            || a.cssData->imageRendering != b.cssData->imageRendering
+            || a.cssData->accentColor != b.cssData->accentColor
     #if ENABLE(DARK_MODE_CSS)
-            || a.colorScheme != b.colorScheme
+            || a.cssData->colorScheme != b.cssData->colorScheme
     #endif
         ;
     }
@@ -892,14 +901,14 @@ public:
             return true;
 
         if (&a.inheritedRareData() != &b.inheritedRareData()) {
-            if (a.inheritedRareData().textDecorationSkipInk != b.inheritedRareData().textDecorationSkipInk
-                || a.inheritedRareData().textFillColor != b.inheritedRareData().textFillColor
-                || a.inheritedRareData().textStrokeColor != b.inheritedRareData().textStrokeColor
-                || a.inheritedRareData().textEmphasisColor != b.inheritedRareData().textEmphasisColor
-                || a.inheritedRareData().textEmphasisStyle != b.inheritedRareData().textEmphasisStyle
-                || a.inheritedRareData().strokeColor != b.inheritedRareData().strokeColor
-                || a.inheritedRareData().caretColor != b.inheritedRareData().caretColor
-                || a.inheritedRareData().textUnderlineOffset != b.inheritedRareData().textUnderlineOffset)
+            if (a.inheritedRareData().cssData->textDecorationSkipInk != b.inheritedRareData().cssData->textDecorationSkipInk
+                || a.inheritedRareData().cssData->textFillColor != b.inheritedRareData().cssData->textFillColor
+                || a.inheritedRareData().cssData->textStrokeColor != b.inheritedRareData().cssData->textStrokeColor
+                || a.inheritedRareData().cssData->textEmphasisColor != b.inheritedRareData().cssData->textEmphasisColor
+                || a.inheritedRareData().cssData->textEmphasisStyle != b.inheritedRareData().cssData->textEmphasisStyle
+                || a.inheritedRareData().cssData->strokeColor != b.inheritedRareData().cssData->strokeColor
+                || a.inheritedRareData().cssData->caretColor != b.inheritedRareData().cssData->caretColor
+                || a.inheritedRareData().cssData->textUnderlineOffset != b.inheritedRareData().cssData->textUnderlineOffset)
                 return true;
         }
 

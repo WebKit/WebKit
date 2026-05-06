@@ -213,7 +213,7 @@ public:
     RenderStyle* addCachedPseudoStyle(std::unique_ptr<RenderStyle>) LIFETIME_BOUND;
 
     bool hasCachedPseudoStyles() const { return m_computedStyle.hasCachedPseudoStyles(); }
-    const Style::PseudoStyleCache& cachedPseudoStyles() const LIFETIME_BOUND { return m_computedStyle.cachedPseudoStyles(); }
+    const Style::PseudoStyleCache* cachedPseudoStyles() const LIFETIME_BOUND { return m_computedStyle.cachedPseudoStyles(); }
 
     // MARK: - Custom properties
 

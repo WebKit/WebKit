@@ -99,7 +99,9 @@ std::optional<PseudoElementIdentifier> ComputedStyleBase::pseudoElementIdentifie
 
 RenderStyle* ComputedStyleBase::getCachedPseudoStyle(const PseudoElementIdentifier& pseudoElementIdentifier) const
 {
-    return m_cachedPseudoStyles.get(pseudoElementIdentifier);
+    if (!m_cachedPseudoStyles)
+        return nullptr;
+    return m_cachedPseudoStyles->get(pseudoElementIdentifier);
 }
 
 RenderStyle* ComputedStyleBase::addCachedPseudoStyle(std::unique_ptr<RenderStyle> pseudo)
@@ -110,7 +112,9 @@ RenderStyle* ComputedStyleBase::addCachedPseudoStyle(std::unique_ptr<RenderStyle
     ASSERT(pseudo->pseudoElementType());
 
     auto* result = pseudo.get();
-    m_cachedPseudoStyles.add(*result->pseudoElementIdentifier(), WTF::move(pseudo));
+    if (!m_cachedPseudoStyles)
+        m_cachedPseudoStyles = makeUnique<PseudoStyleCache>();
+    m_cachedPseudoStyles->add(*result->pseudoElementIdentifier(), WTF::move(pseudo));
     return result;
 }
 
@@ -129,8 +133,8 @@ void ComputedStyleBase::setCustomPropertyValue(Ref<const CustomProperty>&& value
 {
     auto& name = value->name();
     if (isInherited) {
-        if (RefPtr existingValue = m_inheritedRareData->customProperties->get(name); !existingValue || *existingValue != value.get())
-            m_inheritedRareData.access().customProperties.access().set(name, WTF::move(value));
+        if (RefPtr existingValue = m_inheritedRareData->cssData->customProperties->get(name); !existingValue || *existingValue != value.get())
+            m_inheritedRareData.access().cssData.access().customProperties.access().set(name, WTF::move(value));
     } else {
         if (RefPtr existingValue = m_nonInheritedData->rareData->customProperties->get(name); !existingValue || *existingValue != value.get())
             m_nonInheritedData.access().rareData.access().customProperties.access().set(name, WTF::move(value));
@@ -154,7 +158,7 @@ bool ComputedStyleBase::customPropertyValueEqual(const ComputedStyleBase& other,
 bool ComputedStyleBase::customPropertiesEqual(const ComputedStyleBase& other) const
 {
     return m_nonInheritedData->rareData->customProperties == other.m_nonInheritedData->rareData->customProperties
-        && m_inheritedRareData->customProperties == other.m_inheritedRareData->customProperties;
+        && m_inheritedRareData->cssData->customProperties == other.m_inheritedRareData->cssData->customProperties;
 }
 
 void ComputedStyleBase::deduplicateCustomProperties(const ComputedStyleBase& other)
@@ -167,7 +171,7 @@ void ComputedStyleBase::deduplicateCustomProperties(const ComputedStyleBase& oth
         properties = otherProperties;
     };
 
-    deduplicate(m_inheritedRareData, other.m_inheritedRareData);
+    deduplicate(m_inheritedRareData->cssData, other.m_inheritedRareData->cssData);
     deduplicate(m_nonInheritedData->rareData, other.m_nonInheritedData->rareData);
 }
 
