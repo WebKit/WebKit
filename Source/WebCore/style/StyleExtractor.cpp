@@ -559,10 +559,10 @@ bool Extractor::propertyMatches(CSSPropertyID propertyID, const CSSValue* value)
     return computedValue && value && computedValue->equals(*value);
 }
 
-Ref<MutableStyleProperties> Extractor::copyProperties(std::span<const CSSPropertyID> properties) const
+Ref<MutableStyleProperties> Extractor::copyProperties(std::span<const CSSPropertyID> properties, UpdateLayout updateLayout) const
 {
     auto vector = WTF::compactMap(properties, [&](auto& property) -> std::optional<CSSProperty> {
-        if (auto value = propertyValue(property))
+        if (auto value = propertyValue(property, updateLayout))
             return CSSProperty(property, value.releaseNonNull());
         return std::nullopt;
     });

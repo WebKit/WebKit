@@ -923,7 +923,11 @@ void ViewTransition::copyElementBaseProperties(RenderLayerModelObject& renderer,
     });
 
     output.overflowRect = captureOverflowRect(renderer);
-    output.properties = styleExtractor.copyProperties(transitionProperties);
+
+    // Layout is already up to date (callers invoke updateLayoutIgnorePendingStylesheets()
+    // before iterating renderers). Forcing layout here for layout-dependent properties such
+    // as backdrop-filter can rebuild the render tree and destroy `renderer`.
+    output.properties = styleExtractor.copyProperties(transitionProperties, Style::Extractor::UpdateLayout::No);
 
     CheckedRef frameView = renderer.view().frameView();
 
