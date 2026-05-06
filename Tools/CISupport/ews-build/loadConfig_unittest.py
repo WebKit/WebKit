@@ -59,8 +59,9 @@ class ConfigDotJSONTest(unittest.TestCase):
         config = self.get_config()
         valid_builder_keys = ['additionalArguments', 'architectures', 'builddir', 'configuration', 'description',
                               'defaultProperties', 'deployment_target', 'env', 'factory', 'icon', 'locks', 'name',
-                              'platform', 'properties', 'rebuild_without_change_on_builder', 'remotes', 'runTests',
-                              'shortname', 'tags', 'triggers', 'triggered_by', 'workernames', 'workerbuilddir']
+                              'platform', 'pr_column', 'properties', 'rebuild_without_change_on_builder', 'remotes', 'runTests',
+                              'safe_merge_queue', 'shortname', 'tags', 'triggers', 'triggered_by', 'workernames',
+                              'workerbuilddir']
         for builder in config.get('builders', []):
             for key in builder:
                 self.assertTrue(key in valid_builder_keys, 'Unexpected key "{}" for builder {}'.format(key, builder.get('name')))
@@ -244,6 +245,167 @@ class TestcheckValidBuilder(unittest.TestCase):
     def test_rebuild_without_change_on_builder_valid(self):
         config = {'schedulers': [{'name': 'some-trigger', 'type': 'Triggerable'}]}
         loadConfig.checkValidBuilder(config, {'name': 'macOS-Build-EWS', 'shortname': 'mac', 'configuration': 'release', 'factory': 'BuildFactory', 'platform': 'mac-sierra', 'rebuild_without_change_on_builder': True, 'triggers': ['some-trigger']})
+
+    def test_builder_with_invalid_safe_merge_queue(self):
+        with self.assertRaises(Exception) as context:
+            loadConfig.checkValidBuilder({}, {'name': 'mac-wk2', 'shortname': 'mac-wk2', 'configuration': 'release', 'factory': 'WK2Factory', 'platform': 'mac-sierra', 'safe_merge_queue': 'bogus'})
+        self.assertIn('has invalid safe_merge_queue value: bogus', context.exception.args[0])
+
+    def test_builder_with_valid_safe_merge_queue(self):
+        loadConfig.checkValidBuilder({}, {'name': 'macOS-WK2-EWS', 'shortname': 'mac-wk2', 'configuration': 'release', 'factory': 'WK2Factory', 'platform': 'mac-sierra', 'safe_merge_queue': 'macos'})
+
+    def test_builder_with_invalid_pr_column(self):
+        with self.assertRaises(Exception) as context:
+            loadConfig.checkValidBuilder({}, {'name': 'mac-wk2', 'shortname': 'mac-wk2', 'configuration': 'release', 'factory': 'WK2Factory', 'platform': 'mac-sierra', 'pr_column': 'bogus'})
+        self.assertIn('has invalid pr_column value: bogus', context.exception.args[0])
+
+    def test_builder_with_valid_pr_column(self):
+        loadConfig.checkValidBuilder({}, {'name': 'macOS-WK2-EWS', 'shortname': 'mac-wk2', 'configuration': 'release', 'factory': 'WK2Factory', 'platform': 'mac-sierra', 'pr_column': 'macos'})
+
+
+class TestcheckValidStatusBubbleOrder(unittest.TestCase):
+    def _builder(self, shortname):
+        return {'name': '{}-EWS'.format(shortname), 'shortname': shortname}
+
+    def test_missing_status_bubble_order(self):
+        config = {'builders': [self._builder('mac')]}
+        with self.assertRaises(Exception) as context:
+            loadConfig.checkValidStatusBubbleOrder(config)
+        self.assertIn('missing top-level "status_bubble_order"', context.exception.args[0])
+
+    def test_duplicate_entry(self):
+        config = {'builders': [self._builder('mac')], 'status_bubble_order': ['mac', 'mac']}
+        with self.assertRaises(Exception) as context:
+            loadConfig.checkValidStatusBubbleOrder(config)
+        self.assertIn('Duplicate entry in status_bubble_order: mac', context.exception.args[0])
+
+    def test_unknown_shortname(self):
+        config = {'builders': [self._builder('mac')], 'status_bubble_order': ['mac', 'ghost']}
+        with self.assertRaises(Exception) as context:
+            loadConfig.checkValidStatusBubbleOrder(config)
+        self.assertIn("unknown shortnames: ['ghost']", context.exception.args[0])
+
+    def test_missing_coverage(self):
+        config = {'builders': [self._builder('mac'), self._builder('ios')], 'status_bubble_order': ['mac']}
+        with self.assertRaises(Exception) as context:
+            loadConfig.checkValidStatusBubbleOrder(config)
+        self.assertIn("missing builder shortnames: ['ios']", context.exception.args[0])
+
+    def test_handler_queues_are_exempt_from_coverage(self):
+        config = {
+            'builders': [self._builder('mac'), self._builder('commit'), self._builder('merge'), self._builder('unsafe-merge'), self._builder('safe-merge')],
+            'status_bubble_order': ['mac'],
+        }
+        loadConfig.checkValidStatusBubbleOrder(config)
+
+    def test_success(self):
+        config = {'builders': [self._builder('mac'), self._builder('ios')], 'status_bubble_order': ['mac', 'ios']}
+        loadConfig.checkValidStatusBubbleOrder(config)
+
+
+class TestcheckValidPrCommentStructure(unittest.TestCase):
+    def _builder(self, shortname, pr_column='misc'):
+        b = {'name': '{}-EWS'.format(shortname), 'shortname': shortname}
+        if pr_column is not None:
+            b['pr_column'] = pr_column
+        return b
+
+    def test_missing_pr_column_on_non_handler(self):
+        config = {'builders': [self._builder('mac', pr_column=None)], 'pr_comment_misc_handlers': []}
+        with self.assertRaises(Exception) as context:
+            loadConfig.checkValidPrCommentStructure(config)
+        self.assertIn("missing required pr_column: ['mac']", context.exception.args[0])
+
+    def test_handler_queues_are_exempt(self):
+        config = {
+            'builders': [self._builder('mac'), self._builder('merge', pr_column=None), self._builder('unsafe-merge', pr_column=None)],
+            'pr_comment_misc_handlers': ['merge', 'unsafe-merge'],
+        }
+        loadConfig.checkValidPrCommentStructure(config)
+
+    def test_handler_in_list_must_be_known_handler(self):
+        config = {
+            'builders': [self._builder('mac'), self._builder('merge', pr_column=None)],
+            'pr_comment_misc_handlers': ['mac'],
+        }
+        with self.assertRaises(Exception) as context:
+            loadConfig.checkValidPrCommentStructure(config)
+        self.assertIn('pr_comment_misc_handlers entry mac is not a handler queue', context.exception.args[0])
+
+    def test_handler_must_exist_as_builder(self):
+        config = {
+            'builders': [self._builder('mac')],
+            'pr_comment_misc_handlers': ['merge'],
+        }
+        with self.assertRaises(Exception) as context:
+            loadConfig.checkValidPrCommentStructure(config)
+        self.assertIn('pr_comment_misc_handlers entry merge does not correspond to any builder', context.exception.args[0])
+
+    def test_handlers_must_be_a_list(self):
+        config = {'builders': [self._builder('mac')], 'pr_comment_misc_handlers': 'merge'}
+        with self.assertRaises(Exception) as context:
+            loadConfig.checkValidPrCommentStructure(config)
+        self.assertIn('pr_comment_misc_handlers must be a list', context.exception.args[0])
+
+    def test_success(self):
+        config = {
+            'builders': [self._builder('mac', 'macos'), self._builder('merge', pr_column=None), self._builder('unsafe-merge', pr_column=None)],
+            'pr_comment_misc_handlers': ['merge', 'unsafe-merge'],
+        }
+        loadConfig.checkValidPrCommentStructure(config)
+
+
+class TestQueueMetadata(unittest.TestCase):
+    # Legacy hardcoded lists, kept here as drift guards against accidental config.json edits.
+    # Remove once the derived values are trusted.
+    LEGACY_STATUS_BUBBLE_ORDER = [
+        'style', 'ios', 'ios-sim', 'mac', 'mac-AS-debug', 'vision', 'vision-sim', 'tv', 'tv-sim',
+        'watch', 'watch-sim', 'gtk', 'wpe', 'gtk3-libwebrtc', 'playstation', 'win', 'win-tests',
+        'ios-wk2', 'ios-wk2-wpt', 'mac-wk1', 'mac-wk2', 'mac-wk2-stress', 'mac-intel-wk2',
+        'mac-AS-debug-wk2', 'mac-safer-cpp', 'ios-safer-cpp', 'vision-wk2', 'gtk-wk2', 'wpe-wk2',
+        'api-ios', 'api-mac', 'api-mac-debug', 'api-gtk', 'api-wpe', 'bindings', 'jsc-x86-64',
+        'jsc-debug-arm64', 'jsc-armv7', 'jsc-armv7-tests', 'webkitperl', 'webkitpy', 'services',
+    ]
+    LEGACY_EMBEDDED = ['ios', 'ios-safer-cpp', 'ios-sim', 'ios-wk2', 'ios-wk2-wpt', 'api-ios', 'vision', 'vision-sim', 'vision-wk2', 'tv', 'tv-sim', 'watch', 'watch-sim']
+    LEGACY_MACOS = ['mac', 'mac-AS-debug', 'api-mac', 'api-mac-debug', 'mac-wk1', 'mac-wk2', 'mac-AS-debug-wk2', 'mac-wk2-stress', 'mac-safer-cpp', 'jsc-x86-64', 'jsc-debug-arm64']
+    LEGACY_LINUX = ['gtk', 'gtk-wk2', 'api-gtk', 'wpe', 'gtk3-libwebrtc', 'wpe-wk2', 'api-wpe']
+    LEGACY_WINDOWS = ['win']
+
+    LEGACY_PR_COLUMN = {
+        'style': 'misc', 'bindings': 'misc', 'webkitperl': 'misc', 'webkitpy': 'misc',
+        'jsc-x86-64': 'misc', 'jsc-debug-arm64': 'misc', 'services': 'misc',
+        'ios': 'embedded', 'ios-sim': 'embedded', 'ios-wk2': 'embedded', 'ios-wk2-wpt': 'embedded',
+        'api-ios': 'embedded', 'ios-safer-cpp': 'embedded', 'vision': 'embedded',
+        'vision-sim': 'embedded', 'vision-wk2': 'embedded', 'tv': 'embedded', 'tv-sim': 'embedded',
+        'watch': 'embedded', 'watch-sim': 'embedded',
+        'mac': 'macos', 'mac-AS-debug': 'macos', 'api-mac': 'macos', 'api-mac-debug': 'macos',
+        'mac-wk1': 'macos', 'mac-wk2': 'macos', 'mac-AS-debug-wk2': 'macos',
+        'mac-wk2-stress': 'macos', 'mac-intel-wk2': 'macos', 'mac-safer-cpp': 'macos',
+        'wpe': 'linux', 'wpe-wk2': 'linux', 'api-wpe': 'linux', 'gtk3-libwebrtc': 'linux',
+        'gtk': 'linux', 'gtk-wk2': 'linux', 'api-gtk': 'linux', 'playstation': 'linux',
+        'jsc-armv7': 'linux', 'jsc-armv7-tests': 'linux',
+        'win': 'windows', 'win-tests': 'windows',
+    }
+    LEGACY_MISC_HANDLERS = ['merge', 'unsafe-merge']
+
+    def setUp(self):
+        cwd = os.path.dirname(os.path.abspath(__file__))
+        loadConfig.loadBuilderConfig({}, is_test_mode_enabled=True, master_prefix_path=cwd)
+
+    def test_status_bubble_order_matches_legacy(self):
+        self.assertEqual(loadConfig.STATUS_BUBBLE_ORDER, self.LEGACY_STATUS_BUBBLE_ORDER)
+
+    def test_safe_merge_buckets_match_legacy(self):
+        self.assertEqual(set(loadConfig.SAFE_MERGE_BUCKETS['embedded']), set(self.LEGACY_EMBEDDED))
+        self.assertEqual(set(loadConfig.SAFE_MERGE_BUCKETS['macos']), set(self.LEGACY_MACOS))
+        self.assertEqual(set(loadConfig.SAFE_MERGE_BUCKETS['linux']), set(self.LEGACY_LINUX))
+        self.assertEqual(set(loadConfig.SAFE_MERGE_BUCKETS['windows']), set(self.LEGACY_WINDOWS))
+
+    def test_pr_column_by_shortname_matches_legacy(self):
+        self.assertEqual(loadConfig.PR_COLUMN_BY_SHORTNAME, self.LEGACY_PR_COLUMN)
+
+    def test_pr_comment_misc_handlers_matches_legacy(self):
+        self.assertEqual(loadConfig.PR_COMMENT_MISC_HANDLERS, self.LEGACY_MISC_HANDLERS)
 
 
 class TestcheckWorkersAndBuildersForConsistency(unittest.TestCase):

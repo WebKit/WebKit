@@ -20,16 +20,19 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import copy
 import json
 import logging
-import re
 import requests
+
+from django.utils import timezone
 
 from ews.common.buildbot import Buildbot
 from ews.models.patch import Change
-from ews.views.statusbubble import StatusBubble
-import ews.config as config
+from ews.views.bubble.compute import compute_bubble
+from ews.views.bubble.config import BUILDER_ICON, BubbleConfig
+from ews.views.bubble.fetcher import BubbleDataFetcher
+from ews.views.bubble.model import BubbleInputs
+from ews.views.bubble.render_markdown import GithubIcons, render_markdown_bubble
 import ews.common.util as util
 
 _log = logging.getLogger(__name__)
@@ -216,20 +219,23 @@ class GitHubEWS(GitHub):
     ICON_EMPTY_SPACE = u'\U00002003'
     STATUS_BUBBLE_START = u'<!--EWS-Status-Bubble-Start-->'
     STATUS_BUBBLE_END = u'<!--EWS-Status-Bubble-End-->'
-    STATUS_BUBBLE_ROWS = [['style', 'ios', 'mac', 'wpe', 'win'],  # FIXME: generate this list dynamically to have merge queue show up on top
-                          ['bindings', 'ios-sim', 'mac-AS-debug', 'wpe-wk2', 'win-tests'],
-                          ['webkitperl', 'ios-wk2', 'api-mac', 'api-wpe', ''],
-                          ['webkitpy', 'ios-wk2-wpt', 'api-mac-debug', 'gtk3-libwebrtc', ''],
-                          ['jsc-x86-64', 'api-ios', 'mac-wk1', 'gtk', ''],
-                          ['jsc-debug-arm64', 'ios-safer-cpp', 'mac-wk2', 'gtk-wk2', ''],
-                          ['services', 'vision', 'mac-AS-debug-wk2', 'api-gtk', ''],
-                          ['merge', 'vision-sim', 'mac-wk2-stress', 'playstation', ''],
-                          ['unsafe-merge', 'vision-wk2', 'mac-intel-wk2', 'jsc-armv7', ''],
-                          ['', 'tv', 'mac-safer-cpp', 'jsc-armv7-tests', ''],
-                          ['', 'tv-sim', '', '', ''],
-                          ['', 'watch', '', '', ''],
-                          ['', 'watch-sim', '', '', '']]
+    PR_COLUMN_DISPLAY_ORDER = ['misc', 'embedded', 'macos', 'linux', 'windows']
     approved_user_list_for_apple_internal_builds = []
+
+    @classmethod
+    def _compute_status_bubble_rows(cls):
+        columns = {key: [] for key in cls.PR_COLUMN_DISPLAY_ORDER}
+        columns['misc'].extend(Buildbot.pr_comment_misc_handlers)
+        for shortname in Buildbot.all_queues:
+            column = Buildbot.pr_column_by_shortname.get(shortname)
+            if column in columns:
+                columns[column].append(shortname)
+        ordered_columns = [columns[key] for key in cls.PR_COLUMN_DISPLAY_ORDER]
+        height = max((len(c) for c in ordered_columns), default=0)
+        rows = []
+        for i in range(height):
+            rows.append([col[i] if i < len(col) else '' for col in ordered_columns])
+        return rows
 
     @classmethod
     def update_approved_user_list_for_apple_internal_builds(cls):
@@ -267,7 +273,7 @@ class GitHubEWS(GitHub):
         comment = '\n\n| Misc | iOS, visionOS, tvOS & watchOS  | macOS  | Linux |  Windows |'
         comment += '\n| ----- | ---------------------- | ------- |  ----- |  --------- |'
 
-        status_bubble_rows = copy.deepcopy(self.STATUS_BUBBLE_ROWS)
+        status_bubble_rows = self._compute_status_bubble_rows()
         if include_apple_internal_builds:
             comment = comment.replace('Windows', f'Windows | {self.APPLE_INTERNAL_BUILDS_TITLE}')
             comment += ' ------ |'
@@ -310,7 +316,7 @@ class GitHubEWS(GitHub):
         return self.github_status_for_buildbot_queue(change, queue)
 
     def github_status_for_cibuild(self, change, queue):
-        name = f'{StatusBubble.BUILDER_ICON} {queue}'
+        name = f'{BUILDER_ICON} {queue}'
         builds = util.get_cibuilds_for_queue(change, queue)
         build = None
         if builds:
@@ -334,97 +340,51 @@ class GitHubEWS(GitHub):
         return f'| [{icon} {name}]({url}) '
 
     def github_status_for_buildbot_queue(self, change, queue):
-        name = queue
-        is_tester_queue = Buildbot.is_tester_queue(queue)
-        is_builder_queue = Buildbot.is_builder_queue(queue)
-        if is_tester_queue:
-            name = StatusBubble.TESTER_ICON + ' ' + name
-        if is_builder_queue:
-            name = StatusBubble.BUILDER_ICON + ' ' + name
+        cfg = BubbleConfig.from_buildbot_globals()
+        fetcher = BubbleDataFetcher(cfg)
+        parent_queue = cfg.get_parent_queue(queue)
+        builds, is_parent_build = fetcher.fetch_builds_for_queue(change, queue, parent_queue)
 
-        builds, is_parent_build = StatusBubble().get_all_builds_for_queue(change, queue, Buildbot.get_parent_queue(queue))
-        # FIXME: Handle parent build case
-        build = None
-        if builds:
-            build = builds[0]
-            builds = builds[:10]  # Limit number of builds to display in status-bubble hover over message
+        if not builds and queue in cfg.pr_comment_misc_handlers:
+            return u'| '
 
-        hover_over_text = ''
-        icon = GitHubEWS.ICON_BUILD_WAITING
-        if not build:
-            if queue in ['merge', 'unsafe-merge']:
-                return u'| '
-            if Buildbot.get_parent_queue(queue):
-                queue = Buildbot.get_parent_queue(queue)
-            queue_full_name = Buildbot.queue_name_by_shortname_mapping.get(queue)
-            url = None
-            if queue_full_name:
-                url = 'https://{}/#/builders/{}'.format(config.BUILDBOT_SERVER_HOST, queue_full_name)
-            hover_over_text = 'Waiting in queue, processing has not started yet'
-            return u'| [{icon} {name} ]({url} "{hover_over_text}") '.format(icon=icon, name=name, url=url, hover_over_text=hover_over_text)
+        # Force a "waiting" bubble for non-misc-handler queues with no build by
+        # supplying a placeholder queue position; the markdown renderer ignores
+        # the queue_position field.
+        queue_position = None if builds else cfg.unknown_queue_position
 
-        url = 'https://{}/#/builders/{}/builds/{}'.format(config.BUILDBOT_SERVER_HOST, build.builder_id, build.number)
+        inputs = BubbleInputs(
+            change=fetcher.fetch_change_snapshot(change),
+            queue=queue,
+            builds=builds,
+            is_parent_build=is_parent_build,
+            queue_position=queue_position,
+            hide_icons=False,
+            sent_to_buildbot=True,
+        )
+        data = compute_bubble(inputs, cfg, now=timezone.now())
+        if data is None:
+            return u'| '
 
-        if build.result is None:
-            if self._does_build_contains_any_failed_step(build):
-                icon = GitHubEWS.ICON_BUILD_ONGOING_WITH_FAILURES
-            else:
-                icon = GitHubEWS.ICON_BUILD_ONGOING
-            hover_over_text = 'Build is in progress. Recent messages:' + self._steps_messages(build)
-        elif build.result == Buildbot.SUCCESS:
-            if is_parent_build:
-                icon = GitHubEWS.ICON_BUILD_WAITING
-                hover_over_text = 'Waiting to run tests'
-                queue_full_name = Buildbot.queue_name_by_shortname_mapping.get(queue)
-                if queue_full_name:
-                    url = 'https://{}/#/builders/{}'.format(config.BUILDBOT_SERVER_HOST, queue_full_name)
-            else:
-                icon = GitHubEWS.ICON_BUILD_PASS
-                if is_builder_queue and is_tester_queue:
-                    hover_over_text = 'Built successfully and passed tests'
-                elif is_builder_queue:
-                    hover_over_text = 'Built successfully'
-                elif is_tester_queue:
-                    if queue == 'style':
-                        hover_over_text = 'Passed style check'
-                    else:
-                        hover_over_text = 'Passed tests'
-                else:
-                    hover_over_text = 'Pass'
-        elif build.result == Buildbot.WARNINGS:
-            icon = GitHubEWS.ICON_BUILD_PASS
-        elif build.result == Buildbot.FAILURE:
-            icon = GitHubEWS.ICON_BUILD_FAIL
-            hover_over_text = self._most_recent_failure_message(build)
-        elif build.result == Buildbot.CANCELLED:
-            icon = GitHubEWS.ICON_EMPTY_SPACE
-            name = u'~~{}~~'.format(name)
-            hover_over_text = 'Build was cancelled. Recent messages:' + self._steps_messages(build)
-        elif build.result == Buildbot.SKIPPED:
-            icon = GitHubEWS.ICON_EMPTY_SPACE
-            if re.search(r'Pull request .* doesn\'t have relevant changes', build.state_string):
-                return u'| '
-            name = u'~~{}~~'.format(name)
-            hover_over_text = 'The change is no longer eligible for processing.'
-            if re.search(r'Pull request .* is already closed', build.state_string):
-                hover_over_text += ' Pull Request was already closed when EWS attempted to process it.'
-            elif re.search(r'Hash .* on PR .* is outdated', build.state_string):
-                hover_over_text += ' Commit was outdated when EWS attempted to process it.'
-            elif re.search(r'Skipping as PR .* has skip-ews label', build.state_string):
-                hover_over_text = 'EWS skipped this build as PR had skip-ews label when EWS attempted to process it.'
-        elif build.result == Buildbot.RETRY:
-            hover_over_text = 'Build is being retried. Recent messages:' + self._steps_messages(build)
-            icon = GitHubEWS.ICON_BUILD_ONGOING
-        elif build.result == Buildbot.EXCEPTION:
-            hover_over_text = 'An unexpected error occured. Recent messages:' + self._steps_messages(build)
-            icon = GitHubEWS.ICON_BUILD_ERROR
-        else:
-            icon = GitHubEWS.ICON_BUILD_ERROR
-            hover_over_text = 'An unexpected error occured. Recent messages:' + self._steps_messages(build)
+        is_in_progress = bool(builds and builds[0].result is None)
+        return render_markdown_bubble(
+            data,
+            icons=self._github_icons(),
+            is_in_progress=is_in_progress,
+            escape=self.escape_github_markdown,
+        )
 
-        # Hover-over text comes from buildbot and can contain special characters (newlines, quotes, pipes) that break markdown, sanitize it
-        hover_over_text = self.escape_github_markdown(hover_over_text)
-        return u'| [{icon} {name}]({url} "{hover_over_text}") '.format(icon=icon, name=name, url=url, hover_over_text=hover_over_text)
+    @classmethod
+    def _github_icons(cls) -> GithubIcons:
+        return GithubIcons(
+            pass_=cls.ICON_BUILD_PASS,
+            fail=cls.ICON_BUILD_FAIL,
+            waiting=cls.ICON_BUILD_WAITING,
+            ongoing=cls.ICON_BUILD_ONGOING,
+            ongoing_with_failures=cls.ICON_BUILD_ONGOING_WITH_FAILURES,
+            error=cls.ICON_BUILD_ERROR,
+            empty=cls.ICON_EMPTY_SPACE,
+        )
 
     @classmethod
     def add_or_update_comment_for_change_id(self, sha, pr_number, pr_project=None, pr_author='', allow_new_comment=False):
@@ -466,21 +426,3 @@ class GitHubEWS(GitHub):
             new_comment_id = gh.update_or_leave_comment_on_pr(pr_number, folded_comment, repository_url=repository_url, comment_id=comment_id)
 
         return comment_id
-
-    def _steps_messages(self, build):
-        # FIXME: figure out if it is possible to have multi-line hover-over messages in GitHub UI.
-        return '; '.join([step.state_string for step in build.step_set.all().order_by('uid')])
-
-    def _does_build_contains_any_failed_step(self, build):
-        for step in build.step_set.all():
-            if step.result and step.result != Buildbot.SUCCESS and step.result != Buildbot.WARNINGS and step.result != Buildbot.SKIPPED:
-                return True
-        return False
-
-    def _most_recent_failure_message(self, build):
-        for step in build.step_set.all().order_by('-uid'):
-            if step.result == Buildbot.SUCCESS and 'retrying build' in step.state_string:
-                return step.state_string
-            if step.result == Buildbot.FAILURE:
-                return step.state_string
-        return ''

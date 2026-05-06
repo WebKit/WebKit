@@ -1,4 +1,4 @@
-# Copyright (C) 2018 Apple Inc. All rights reserved.
+# Copyright (C) 2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -19,25 +19,3 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-from __future__ import unicode_literals
-
-import logging
-
-from django.apps import AppConfig
-
-_log = logging.getLogger(__name__)
-
-
-class EwsConfig(AppConfig):
-    name = 'ews'
-
-    def ready(self):
-        # FIXME: Ensure that this method is called only once.
-        from ews.common.buildbot import Buildbot
-        from ews.fetcher import FetchLoop
-        try:
-            Buildbot.update_icons_for_queues_mapping()
-        except Exception as e:
-            _log.error('Failed to bootstrap buildbot queue metadata: {}'.format(e))
-        FetchLoop()

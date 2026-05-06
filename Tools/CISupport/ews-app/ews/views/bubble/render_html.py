@@ -1,4 +1,4 @@
-# Copyright (C) 2018 Apple Inc. All rights reserved.
+# Copyright (C) 2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -22,22 +22,37 @@
 
 from __future__ import unicode_literals
 
-import logging
+from typing import Any, Dict
 
-from django.apps import AppConfig
-
-_log = logging.getLogger(__name__)
+from ews.views.bubble.model import BubbleData
 
 
-class EwsConfig(AppConfig):
-    name = 'ews'
+def _assemble_html_details(data: BubbleData) -> str:
+    parts = []
+    if data.builder_full_name:
+        parts.append(data.builder_full_name)
+    if data.details_message:
+        parts.append(data.details_message)
+    suffix_lines = []
+    if data.os_details:
+        suffix_lines.append(data.os_details)
+    if data.build_timestamp_iso:
+        suffix_lines.append(data.build_timestamp_iso)
+    if suffix_lines:
+        parts.append('\n'.join(suffix_lines))
+    return '\n\n'.join(parts)
 
-    def ready(self):
-        # FIXME: Ensure that this method is called only once.
-        from ews.common.buildbot import Buildbot
-        from ews.fetcher import FetchLoop
-        try:
-            Buildbot.update_icons_for_queues_mapping()
-        except Exception as e:
-            _log.error('Failed to bootstrap buildbot queue metadata: {}'.format(e))
-        FetchLoop()
+
+def render_html_bubble(data: BubbleData) -> Dict[str, Any]:
+    out = {
+        'name': data.name,
+        'state': data.state,
+    }
+    if data.url:
+        out['url'] = data.url
+    details = _assemble_html_details(data)
+    if details:
+        out['details_message'] = details
+    if data.queue_position is not None:
+        out['queue_position'] = data.queue_position
+    return out
