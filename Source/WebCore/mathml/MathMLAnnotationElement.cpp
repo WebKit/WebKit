@@ -69,9 +69,6 @@ RenderPtr<RenderElement> MathMLAnnotationElement::createElementRenderer(RenderSt
 
 bool MathMLAnnotationElement::childShouldCreateRenderer(const Node& child) const
 {
-    if (document().settings().coreMathMLEnabled())
-        return MathMLElement::childShouldCreateRenderer(child);
-
     // For <annotation>, only text children are allowed.
     if (hasTagName(MathMLNames::annotationTag))
         return child.isTextNode();

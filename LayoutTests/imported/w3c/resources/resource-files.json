@@ -13457,6 +13457,7 @@
         "web-platform-tests/mathml/relations/html5-tree/unique-identifier-3-ref.html",
         "web-platform-tests/mathml/relations/text-and-math/mi-automatic-italic-with-default-font-ref.html",
         "web-platform-tests/mathml/relations/text-and-math/mo-glyph-height-with-default-font-ref.html",
+        "web-platform-tests/mathml/relations/text-and-math/non-mathml-children-in-annotation.tentative-ref.html",
         "web-platform-tests/mathml/relations/text-and-math/use-typo-metrics-1-ref.html",
         "web-platform-tests/mediacapture-record/support/MediaRecorder-iframe.html",
         "web-platform-tests/mediacapture-streams/iframe-enumerate-cleared.html",
