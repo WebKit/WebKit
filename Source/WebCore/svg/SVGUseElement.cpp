@@ -128,7 +128,9 @@ Node::NeedsPostConnectionSteps SVGUseElement::insertionSteps(InsertionType inser
 void SVGUseElement::postConnectionSteps()
 {
     SVGGraphicsElement::postConnectionSteps();
+    resetLoadEventStatus();
     updateExternalDocument();
+    invalidateShadowTree();
 }
 
 void SVGUseElement::removingSteps(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
@@ -144,6 +146,7 @@ void SVGUseElement::removingSteps(RemovalType removalType, ContainerNode& oldPar
     SVGGraphicsElement::removingSteps(removalType, oldParentOfRemovedTree);
     if (removalType.disconnectedFromDocument) {
         clearShadowTree();
+        resetLoadEventStatus();
         updateExternalDocument();
     }
 }
@@ -211,6 +214,7 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     if (SVGURIReference::isKnownAttribute(attrName)) {
+        resetLoadEventStatus();
         updateExternalDocument();
         invalidateShadowTree();
         invalidateResourceImageBuffersIfNeeded();
@@ -658,6 +662,16 @@ void SVGUseElement::notifyFinished(CachedResource& resource, const NetworkLoadMe
         SVGURIReference::dispatchLoadEvent();
 }
 
+void SVGUseElement::resetLoadEventStatus()
+{
+    // Called by the sites that (re)point this element at a resource, before updateExternalDocument()
+    // initiates a new load. Clearing these lets the new resource dispatch its own load/error event
+    // (dispatchLoadEvent() early-returns while haveFiredLoadEvent() is true) and lets
+    // haveLoadedRequiredResources() reflect the pending load instead of the previous one.
+    m_errorOccurred = false;
+    m_haveFiredLoadEvent = false;
+}
+
 void SVGUseElement::updateExternalDocument()
 {
     URL externalDocumentURL;
@@ -691,8 +705,6 @@ void SVGUseElement::updateExternalDocument()
         if (RefPtr externalDocument = m_externalDocument)
             externalDocument->addClient(*this);
     }
-
-    invalidateShadowTree();
 }
 
 }
