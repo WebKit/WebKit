@@ -410,7 +410,12 @@ public:
     // collection and then return. In weird cases, there could be multiple GC requests in the backlog
     // and this will wait for that backlog before running its GC and returning.
     JS_EXPORT_PRIVATE void collectSync(GCRequest = GCRequest());
-    
+
+//    void collectSyncWithAbortCheck(const Function<bool()>& shouldAbort, GCRequest = GCRequest());
+    void collectSyncWithAbortCheck(GCRequest = GCRequest());
+//    bool incrementallyCollectSyncIfAlreadyInProgress(const Function<bool()>& shouldAbort);
+    bool incrementallyCollectSyncIfAlreadyInProgress();
+
     JS_EXPORT_PRIVATE void collect(Synchronousness, GCRequest = GCRequest());
     
     // Like collect(), but in the case of Async this will stopIfNecessary() and in the case of
@@ -748,7 +753,9 @@ private:
     typedef uint64_t Ticket;
     Ticket requestCollection(GCRequest);
     void waitForCollection(Ticket);
-    
+//    void waitForCollectionWithAbortCheck(const Function<bool()>& shouldAbort, Ticket);
+    void waitForCollectionWithAbortCheck(Ticket);
+
     bool suspendCompilerThreads();
     void willStartCollection();
     void prepareForMarking();

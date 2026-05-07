@@ -63,6 +63,8 @@ private:
         : GenericTimeMixin<MonotonicTime>(rawValue)
     {
     }
+
+    friend class UnbarrieredMonotonicTime;
 };
 static_assert(sizeof(MonotonicTime) == sizeof(double));
 

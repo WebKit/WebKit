@@ -92,6 +92,7 @@
 		1FA47C8A152502DA00568D1B /* WebCoreThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1FA47C88152502DA00568D1B /* WebCoreThread.cpp */; };
 		231829062EF0B0D00078588C /* MemoryDump.h in Headers */ = {isa = PBXBuildFile; fileRef = 231829052EF0B0D00078588C /* MemoryDump.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		23626E7D2F42D7330007FAB7 /* InlineMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 23626E7C2F42D7330007FAB7 /* InlineMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2604010101010101010101AA /* RetainRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 2604010101010101010101AB /* RetainRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		27C793CF2C40909D000E1BE8 /* PlatformEnableWin.h in Headers */ = {isa = PBXBuildFile; fileRef = 27C793CE2C40909D000E1BE8 /* PlatformEnableWin.h */; };
 		2A0CF001302E77880086000B /* CFTypeTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A0CF001302E77880086000A /* CFTypeTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2B70468D2C6BC5F600318C0A /* StdMultimap.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B70468C2C6BC5F600318C0A /* StdMultimap.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -480,7 +481,6 @@
 		DD3DC91F27A4BF8E007E5B61 /* SortedArrayMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 93156C8D262C982200EAE27B /* SortedArrayMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC92027A4BF8E007E5B61 /* Range.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2AC5601E89F70C0001EE3F /* Range.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC92127A4BF8E007E5B61 /* RetainPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47305151A825B004123FF /* RetainPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		2604010101010101010101AA /* RetainRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 2604010101010101010101AB /* RetainRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC92227A4BF8E007E5B61 /* ThreadMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 5311BD591EA81A9600525281 /* ThreadMessage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC92327A4BF8E007E5B61 /* WorkerPool.h in Headers */ = {isa = PBXBuildFile; fileRef = E388886E20C9095100E632BC /* WorkerPool.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC92427A4BF8E007E5B61 /* MessageQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472CC151A825B004123FF /* MessageQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -978,6 +978,10 @@
 		FE9B8B1E28B1B1C70088C6E1 /* CodePtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE9B8B1D28B1B1C60088C6E1 /* CodePtr.cpp */; };
 		FEBD5A792EDAC1CE00E9E170 /* CompactPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEBD5A782EDAC1CE00E9E170 /* CompactPtr.cpp */; };
 		FEC26BF3289DBBD300639A59 /* FunctionPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC26BF2289DBBD300639A59 /* FunctionPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FECA589C2FA52E6E00527517 /* OpportunisticTaskContext.h in Headers */ = {isa = PBXBuildFile; fileRef = FECA589B2FA52E6E00527517 /* OpportunisticTaskContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FECA589E2FA532F600527517 /* UnbarrieredMonotonicTimeInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FECA589D2FA532F600527517 /* UnbarrieredMonotonicTimeInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FECA58A12FA5389900527517 /* OpportunisticTaskSchedulerEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FECA58A02FA5389900527517 /* OpportunisticTaskSchedulerEvents.cpp */; };
+		FECA58A22FA5389900527517 /* OpportunisticTaskSchedulerEvents.h in Headers */ = {isa = PBXBuildFile; fileRef = FECA589F2FA5389900527517 /* OpportunisticTaskSchedulerEvents.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEDACD3D1630F83F00C69634 /* StackStats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDACD3B1630F83F00C69634 /* StackStats.cpp */; };
 		FEEA4DF9216D7BE400AC0602 /* StackPointer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEEA4DF8216D7BE400AC0602 /* StackPointer.cpp */; };
 		FF3997412DB044E600A58E88 /* StatisticsManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF3997402DB044E600A58E88 /* StatisticsManager.cpp */; };
@@ -1306,6 +1310,7 @@
 		231829052EF0B0D00078588C /* MemoryDump.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MemoryDump.h; sourceTree = "<group>"; };
 		23626E7C2F42D7330007FAB7 /* InlineMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InlineMap.h; sourceTree = "<group>"; };
 		24F1B248619F412296D1C19C /* RandomDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RandomDevice.h; sourceTree = "<group>"; };
+		2604010101010101010101AB /* RetainRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RetainRef.h; sourceTree = "<group>"; };
 		26147B0815DDCCDC00DDB907 /* IntegerToStringConversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntegerToStringConversion.h; sourceTree = "<group>"; };
 		26299B6D17A9E5B800ADEBE5 /* Ref.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ref.h; sourceTree = "<group>"; };
 		2684D4351C000D400081D663 /* IndexSparseSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexSparseSet.h; sourceTree = "<group>"; };
@@ -1646,7 +1651,6 @@
 		A8A472FF151A825B004123FF /* RefCounted.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RefCounted.h; sourceTree = "<group>"; };
 		A8A47303151A825B004123FF /* RefPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RefPtr.h; sourceTree = "<group>"; };
 		A8A47305151A825B004123FF /* RetainPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RetainPtr.h; sourceTree = "<group>"; };
-		2604010101010101010101AB /* RetainRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RetainRef.h; sourceTree = "<group>"; };
 		A8A47306151A825B004123FF /* SegmentedVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SegmentedVector.h; sourceTree = "<group>"; };
 		A8A47307151A825B004123FF /* SentinelLinkedList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SentinelLinkedList.h; sourceTree = "<group>"; };
 		A8A47308151A825B004123FF /* SHA1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SHA1.cpp; sourceTree = "<group>"; };
@@ -2101,6 +2105,10 @@
 		FEB6B035201BE0B600B958C1 /* PointerPreparations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PointerPreparations.h; sourceTree = "<group>"; };
 		FEBD5A782EDAC1CE00E9E170 /* CompactPtr.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CompactPtr.cpp; sourceTree = "<group>"; };
 		FEC26BF2289DBBD300639A59 /* FunctionPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FunctionPtr.h; sourceTree = "<group>"; };
+		FECA589B2FA52E6E00527517 /* OpportunisticTaskContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpportunisticTaskContext.h; sourceTree = "<group>"; };
+		FECA589D2FA532F600527517 /* UnbarrieredMonotonicTimeInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnbarrieredMonotonicTimeInlines.h; sourceTree = "<group>"; };
+		FECA589F2FA5389900527517 /* OpportunisticTaskSchedulerEvents.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpportunisticTaskSchedulerEvents.h; sourceTree = "<group>"; };
+		FECA58A02FA5389900527517 /* OpportunisticTaskSchedulerEvents.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OpportunisticTaskSchedulerEvents.cpp; sourceTree = "<group>"; };
 		FEDACD3B1630F83F00C69634 /* StackStats.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackStats.cpp; sourceTree = "<group>"; };
 		FEDACD3C1630F83F00C69634 /* StackStats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackStats.h; sourceTree = "<group>"; };
 		FEEA4DF7216D608C00AC0602 /* StackPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackPointer.h; sourceTree = "<group>"; };
@@ -2610,6 +2618,9 @@
 				8348BA0D21FBC0D400FD3054 /* ObjectIdentifier.cpp */,
 				83A8AC3D1FABBE94002064AC /* ObjectIdentifier.h */,
 				CD48A87024C8A21600F5800C /* Observer.h */,
+				FECA589B2FA52E6E00527517 /* OpportunisticTaskContext.h */,
+				FECA58A02FA5389900527517 /* OpportunisticTaskSchedulerEvents.cpp */,
+				FECA589F2FA5389900527517 /* OpportunisticTaskSchedulerEvents.h */,
 				14F1EB412DDF9BFF009BBD4B /* OptionalOrReference.h */,
 				07C913F22F820E86003A09D8 /* OptionCountedSet.h */,
 				1A4656181C7FC68E00F5920F /* OptionSet.h */,
@@ -2820,6 +2831,7 @@
 				E360C7642127B85B00C90F0E /* UnalignedAccess.h */,
 				FE69838D2F9F1FD0004EA0A7 /* UnbarrieredMonotonicTime.cpp */,
 				FE69838B2F9F16BE004EA0A7 /* UnbarrieredMonotonicTime.h */,
+				FECA589D2FA532F600527517 /* UnbarrieredMonotonicTimeInlines.h */,
 				A8A4735C151A825B004123FF /* UnionFind.h */,
 				0FA6F39420CCACE900A03DCD /* UniqueArray.cpp */,
 				E300E521203D645F00DA79BE /* UniqueArray.h */,
@@ -3774,6 +3786,8 @@
 				DDF306E127C08654006A526F /* objcSPI.h in Headers */,
 				DD3DC88327A4BF8E007E5B61 /* ObjectIdentifier.h in Headers */,
 				DD3DC86027A4BF8E007E5B61 /* Observer.h in Headers */,
+				FECA589C2FA52E6E00527517 /* OpportunisticTaskContext.h in Headers */,
+				FECA58A22FA5389900527517 /* OpportunisticTaskSchedulerEvents.h in Headers */,
 				14F1EB422DDF9BFF009BBD4B /* OptionalOrReference.h in Headers */,
 				07C913F32F820E86003A09D8 /* OptionCountedSet.h in Headers */,
 				DD3DC92E27A4BF8E007E5B61 /* OptionSet.h in Headers */,
@@ -3996,6 +4010,7 @@
 				FE03831C2ABC04F700A576A2 /* TZoneMallocInlines.h in Headers */,
 				DD3DC8C927A4BF8E007E5B61 /* UnalignedAccess.h in Headers */,
 				FE69838C2F9F16BE004EA0A7 /* UnbarrieredMonotonicTime.h in Headers */,
+				FECA589E2FA532F600527517 /* UnbarrieredMonotonicTimeInlines.h in Headers */,
 				46E915222CD2E26C00C437B7 /* UnicodeExtras.h in Headers */,
 				DD28468829248DDA0009A61D /* UnifiedWebPreferences.yaml in Headers */,
 				DD3DC8A627A4BF8E007E5B61 /* UnionFind.h in Headers */,
@@ -4575,6 +4590,7 @@
 				A8A473F4151A825B004123FF /* NumberOfCores.cpp in Sources */,
 				465F34932CD824AF000963B1 /* ObjCRuntimeExtras.mm in Sources */,
 				8348BA0E21FBC0D500FD3054 /* ObjectIdentifier.cpp in Sources */,
+				FECA58A12FA5389900527517 /* OpportunisticTaskSchedulerEvents.cpp in Sources */,
 				A3EE5C3A21FFAC5F00FABD61 /* OSAllocatorPOSIX.cpp in Sources */,
 				53FC70D023FB950C005B1990 /* OSLogPrintStream.mm in Sources */,
 				A8A473F9151A825B004123FF /* OSRandomSource.cpp in Sources */,

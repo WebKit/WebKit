@@ -1920,51 +1920,92 @@ void VM::removeDebugger(Debugger& debugger)
     m_debuggers.remove(&debugger);
 }
 
-void VM::performOpportunisticallyScheduledTasks(MonotonicTime deadline, OptionSet<SchedulerOptions> options)
+//void VM::performOpportunisticallyScheduledTasks(const Function<bool()>& shouldAbort, MonotonicTime deadline, OptionSet<SchedulerOptions> options)
+bool VM::performOpportunisticallyScheduledTasks(OptionSet<SchedulerOptions> options)
 {
-    constexpr bool verbose = false;
+    static constexpr bool verbose = false;
 
+#if MLAM_VERBOSE
+    auto startTime = UnbarrieredMonotonicTime::now(); // mlam
+#endif
     dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] QUERY", " signpost:(", JSC::activeJSGlobalObjectSignpostIntervalCount.load(), ")");
     JSLockHolder locker { *this };
     if (deferredWorkTimer->hasImminentlyScheduledWork()) {
         dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] GaveUp: DeferredWorkTimer hasImminentlyScheduledWork signpost:(", JSC::activeJSGlobalObjectSignpostIntervalCount.load(), ")");
-        return;
+        return true;
     }
+
+    auto& context = opportunisticTaskContext();
+    auto deadline = context.deadline();
 
     SetForScope insideOpportunisticTaskScope { heap.m_isInOpportunisticTask, true };
     [&] {
-        auto secondsSinceEpoch = ApproximateTime::now().secondsSinceEpoch();
+        auto secondsSinceEpoch = UnbarrieredMonotonicTime::now().secondsSinceEpoch();
+//        auto secondsSinceEpoch = UnbarrieredMonotonicTime::now().secondsSinceEpoch();
         auto remainingTime = deadline.secondsSinceEpoch() - secondsSinceEpoch;
+
+//        const Function<bool()>* gcCheckAbort = &shouldAbort;
+//        Function<bool()> doNotAbort = [] { return false; };
+//        if (!Options::otsDoAbortCheckInGC())
+//            gcCheckAbort = &doNotAbort;
 
         if (options.contains(SchedulerOptions::HasImminentlyScheduledWork)) {
             dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] GaveUp: HasImminentlyScheduledWork ", remainingTime, " signpost:(", JSC::activeJSGlobalObjectSignpostIntervalCount.load(), ")");
             return;
         }
 
-        static constexpr auto minimumDelayBeforeOpportunisticFullGC = 30_ms;
-        static constexpr auto minimumDelayBeforeOpportunisticEdenGC = 10_ms;
-        static constexpr auto extraDurationToAvoidExceedingDeadlineDuringFullGC = 2_ms;
-        static constexpr auto extraDurationToAvoidExceedingDeadlineDuringEdenGC = 1_ms;
+        // If there's a GC already in progress, help move it forward instead of
+        // requesting a new one.
+        if (Options::otsIncrementalGCAssist()) {
+//            if (heap.incrementallyCollectSyncIfAlreadyInProgress(*gcCheckAbort))
+            if (heap.incrementallyCollectSyncIfAlreadyInProgress())
+                return; // Yep, one was in progress, and we did our part already.
+        }
+
+        // If we get here, there wasn't an existing GC in progress. So, consider
+        // requesting one.
+        //        static constexpr auto minimumDelayBeforeOpportunisticFullGC = 30_ms;
+        //        static constexpr auto minimumDelayBeforeOpportunisticEdenGC = 10_ms;
+        //        static constexpr auto extraDurationToAvoidExceedingDeadlineDuringFullGC = 2_ms;
+        //        static constexpr auto extraDurationToAvoidExceedingDeadlineDuringEdenGC = 1_ms;
+        auto minimumDelayBeforeOpportunisticFullGC = Seconds::fromMilliseconds(Options::otsMinDelayBeforeFullGCMS());
+        auto minimumDelayBeforeOpportunisticEdenGC = Seconds::fromMilliseconds(Options::otsMinDelayBeforeEdenGCMS());
+        auto extraDurationToAvoidExceedingDeadlineDuringFullGC = Seconds::fromMilliseconds(Options::otsFullGCDeadlineMarginMS());
+        auto extraDurationToAvoidExceedingDeadlineDuringEdenGC = Seconds::fromMilliseconds(Options::otsEdenGCDeadlineMarginMS());
 
         auto timeSinceFinishingLastFullGC = secondsSinceEpoch - heap.m_lastFullGCEndTime.secondsSinceEpoch();
-        if (timeSinceFinishingLastFullGC > minimumDelayBeforeOpportunisticFullGC && heap.m_shouldDoOpportunisticFullCollection && heap.m_totalBytesVisitedAfterLastFullCollect) {
+        if (Options::otsFullGC() && timeSinceFinishingLastFullGC > minimumDelayBeforeOpportunisticFullGC && heap.m_shouldDoOpportunisticFullCollection && heap.m_totalBytesVisitedAfterLastFullCollect) {
             auto estimatedGCDuration = (heap.lastFullGCLength() * heap.m_totalBytesVisited) / heap.m_totalBytesVisitedAfterLastFullCollect;
             if (estimatedGCDuration + extraDurationToAvoidExceedingDeadlineDuringFullGC < remainingTime) {
+#if MLAM_VERBOSE
+                constexpr bool verbose = true; // mlam TEST
+#endif
                 dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] FULL", " signpost:(", JSC::activeJSGlobalObjectSignpostIntervalCount.load(), ")");
-                heap.collectSync(CollectionScope::Full);
+//                heap.collectSyncWithAbortCheck(*gcCheckAbort, CollectionScope::Full);
+                heap.collectSyncWithAbortCheck(CollectionScope::Full);
                 return;
             }
         }
 
         auto timeSinceLastGC = secondsSinceEpoch - std::max(heap.m_lastGCEndTime, heap.m_currentGCStartTime).secondsSinceEpoch();
-        if (timeSinceLastGC > minimumDelayBeforeOpportunisticEdenGC && heap.totalBytesAllocatedThisCycle() && heap.m_bytesAllocatedBeforeLastEdenCollect) {
+        if (Options::otsSyncEdenGC() && timeSinceLastGC > minimumDelayBeforeOpportunisticEdenGC && heap.totalBytesAllocatedThisCycle() && heap.m_bytesAllocatedBeforeLastEdenCollect) {
             auto estimatedGCDuration = (heap.lastEdenGCLength() * heap.totalBytesAllocatedThisCycle()) / heap.m_bytesAllocatedBeforeLastEdenCollect;
             if (estimatedGCDuration + extraDurationToAvoidExceedingDeadlineDuringEdenGC < remainingTime) {
+#if MLAM_VERBOSE
+                constexpr bool verbose = true; // mlam TEST
+#endif
                 dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] EDEN: ", timeSinceFinishingLastFullGC, " ", timeSinceLastGC, " ", heap.m_shouldDoOpportunisticFullCollection, " ", heap.m_totalBytesVisitedAfterLastFullCollect, " ", heap.totalBytesAllocatedThisCycle(), " ", heap.m_bytesAllocatedBeforeLastEdenCollect, " ", heap.m_lastGCEndTime, " ", heap.m_currentGCStartTime, " ", (heap.lastFullGCLength() * heap.m_totalBytesVisited) / heap.m_totalBytesVisitedAfterLastFullCollect, " ", remainingTime, " ", (heap.lastEdenGCLength() * heap.totalBytesAllocatedThisCycle()) / heap.m_bytesAllocatedBeforeLastEdenCollect, " signpost:(", JSC::activeJSGlobalObjectSignpostIntervalCount.load(), ")");
-                heap.collectSync(CollectionScope::Eden);
+//                heap.collectSyncWithAbortCheck(*gcCheckAbort, CollectionScope::Eden);
+                heap.collectSyncWithAbortCheck(CollectionScope::Eden);
                 return;
-            } else if (estimatedGCDuration < 2 * remainingTime) {
-                if (heap.totalBytesAllocatedThisCycle() * 2 > heap.m_minBytesPerCycle) {
+                //            } else if (Options::otsAsyncEdenGC() && estimatedGCDuration < 2 * remainingTime) {
+                //                if (heap.totalBytesAllocatedThisCycle() * 2 > heap.m_minBytesPerCycle) {
+            } else if (Options::otsAsyncEdenGC() && estimatedGCDuration < Options::otsAsyncEdenGCDurationRatio() * remainingTime) {
+                if (heap.totalBytesAllocatedThisCycle() * Options::otsAsyncEdenGCAllocRatio() > heap.m_minBytesPerCycle) {
+#if MLAM_VERBOSE
+                    constexpr bool verbose = true; // mlam TEST
+                    dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] ASYNC EDEN: "); // mlam TEST
+#endif
                     heap.collectAsync(CollectionScope::Eden);
                     return;
                 }
@@ -1974,7 +2015,35 @@ void VM::performOpportunisticallyScheduledTasks(MonotonicTime deadline, OptionSe
         dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] GaveUp: nothing met. ", timeSinceFinishingLastFullGC, " ", timeSinceLastGC, " ", heap.m_shouldDoOpportunisticFullCollection, " ", heap.m_totalBytesVisitedAfterLastFullCollect, " ", heap.totalBytesAllocatedThisCycle(), " ", heap.m_bytesAllocatedBeforeLastEdenCollect, " ", heap.m_lastGCEndTime, " ", heap.m_currentGCStartTime, " ", (heap.lastFullGCLength() * heap.m_totalBytesVisited) / heap.m_totalBytesVisitedAfterLastFullCollect, " ", remainingTime, " ", (heap.lastEdenGCLength() * heap.totalBytesAllocatedThisCycle()) / heap.m_bytesAllocatedBeforeLastEdenCollect, " signpost:(", JSC::activeJSGlobalObjectSignpostIntervalCount.load(), ")");
     }();
 
-    heap.sweeper().doWorkUntil(*this, deadline);
+#if MLAM_VERBOSE
+    UnbarrieredMonotonicTime sweepStartTime = UnbarrieredMonotonicTime::now(); // mlam
+#endif
+
+    if (Options::otsSweep()) {
+        if (Options::otsAbortCheckBeforeSweep() && context.shouldAbort())
+            return true;
+
+        auto& sweeper = heap.sweeper();
+        sweeper.startSweepingForOpportunisticTask(*this);
+        while (!sweeper.doneSweepingForOpportunisticTask()) {
+            //        UnbarrieredMonotonicTime quantaDeadline = UnbarrieredMonotonicTime::now() + 100_us;
+            UnbarrieredMonotonicTime quantaDeadline = Options::otsSweepQuantaUS()
+                ? UnbarrieredMonotonicTime::now() + Seconds::fromMicroseconds(Options::otsSweepQuantaUS()) : deadline;
+            sweeper.doWorkForOpportunisticTask(*this, quantaDeadline);
+            if (context.shouldAbort())
+                break;
+            if (!Options::otsSweepQuantaUS()) // mlam TEST
+                break;
+        }
+    }
+
+#if MLAM_VERBOSE
+    UnbarrieredMonotonicTime endTime = UnbarrieredMonotonicTime::now(); // mlam
+    dataLogLn("  mlam VM::performOpportunisticallyScheduledTasks: BEFORE SWEEP time ", (sweepStartTime - startTime).nanosecondsAs<long>(), " ns | remaining ", (deadline - sweepStartTime).nanosecondsAs<long>(), " ns");
+    dataLogLn("  mlam VM::performOpportunisticallyScheduledTasks: AFTER SWEEP time ", (endTime - sweepStartTime).nanosecondsAs<long>(), " ns | remaining ", (deadline - endTime).nanosecondsAs<long>(), " ns | aborted ", !sweeper.doneSweepingForOpportunisticTask());
+    dataLogLn("  ==> mlam VM::performOpportunisticallyScheduledTasks: time ", (endTime - startTime).nanosecondsAs<long>(), " ns | remaining ", (deadline - endTime).nanosecondsAs<long>(), " ns");
+#endif
+    return false;
 }
 
 void VM::invalidateStructureChainIntegrity(StructureChainIntegrityEvent)

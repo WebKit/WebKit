@@ -33,6 +33,7 @@
 #include "MessageLog.h"
 #include "MessageReceiveQueues.h"
 #include "WorkQueueMessageReceiver.h"
+#include <JavaScriptCore/Options.h>
 #include <memory>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Borrow.h>
@@ -41,6 +42,7 @@
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ObjectIdentifier.h>
+#include <wtf/OpportunisticTaskSchedulerEvents.h>
 #include <wtf/RunLoop.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/Scope.h>
@@ -1362,14 +1364,19 @@ void Connection::enqueueIncomingMessage(UniqueRef<Decoder> incomingMessage)
                 Locker lock { protectedThis->m_incomingMessagesLock };
                 protectedThis->m_incomingMessages.clear();
             });
+            if (JSC::Options::otsAbortOnAsyncResponse())
+                WTF::OpportunisticTaskSchedulerEvents::notifyReceivedAsyncResponse();
             return;
         }
 #endif
 
         m_incomingMessages.append(WTF::move(incomingMessage));
 
-        if (isIncomingMessagesThrottlingEnabled() && m_incomingMessages.size() != 1)
+        if (isIncomingMessagesThrottlingEnabled() && m_incomingMessages.size() != 1) {
+            if (JSC::Options::otsAbortOnAsyncResponse())
+                WTF::OpportunisticTaskSchedulerEvents::notifyReceivedAsyncResponse();
             return;
+        }
     }
 
     if (!m_syncState)
@@ -1383,6 +1390,8 @@ void Connection::enqueueIncomingMessage(UniqueRef<Decoder> incomingMessage)
             protectedThis->dispatchOneIncomingMessage();
         });
     }
+    if (JSC::Options::otsAbortOnAsyncResponse())
+        WTF::OpportunisticTaskSchedulerEvents::notifyReceivedAsyncResponse();
 }
 
 void Connection::dispatchMessage(Decoder& decoder)

@@ -305,6 +305,46 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, disassembleBaselineForProfiler, true, Normal, nullptr) \
     v(Unsigned, abbreviateSourceCodeForProfiler, 0, Normal, nullptr) \
     \
+    v(Bool, useOpportunisticTaskScheduler, true, Normal, "mlam TEST ONLY for now") \
+    v(Unsigned, otsRetriesWhileImminentWork, 9, Normal, "mlam TEST ONLY for now") \
+    v(Unsigned, otsMaxRetriesNoImminentWork, 4, Normal, "mlam TEST ONLY for now") \
+    v(Double, otsDesiredFractionOfRenderingInterval, 0.95, Normal, "mlam TEST ONLY for now") \
+    \
+    v(Unsigned, otsRescheduleDelayMS, 8, Normal, "mlam TEST ONLY for now") \
+    v(Bool, otsRescheduleUnfinishedWork, false, Normal, "mlam TEST ONLY for now") \
+    v(Bool, otsAbortOnAsyncResponse, false, Normal, "mlam TEST ONLY for now") \
+    v(Bool, otsDoAbortCheckInGC, false, Normal, "mlam TEST ONLY for now") \
+    v(Bool, otsIncrementalGCAssist, false, Normal, "mlam TEST ONLY for now") \
+    v(Unsigned, otsIncrementalGCSpinLimit, 40, Normal, "mlam TEST ONLY for now") \
+    \
+    v(Bool, otsFullGC, true, Normal, "mlam TEST ONLY for now") \
+    v(Double, otsMinDelayBeforeFullGCMS, 30, Normal, "mlam TEST ONLY for now") \
+    v(Double, otsFullGCDeadlineMarginMS, 2, Normal, "mlam TEST ONLY for now") \
+    \
+    v(Bool, otsSyncEdenGC, true, Normal, "mlam TEST ONLY for now") \
+    v(Double, otsMinDelayBeforeEdenGCMS, 10, Normal, "mlam TEST ONLY for now") \
+    v(Double, otsEdenGCDeadlineMarginMS, 1, Normal, "mlam TEST ONLY for now") \
+    \
+    v(Bool, otsAsyncEdenGC, true, Normal, "mlam TEST ONLY for now") \
+    v(Double, otsAsyncEdenGCDurationRatio, 2, Normal, "mlam TEST ONLY for now") \
+    v(Unsigned, otsAsyncEdenGCAllocRatio, 2, Normal, "mlam TEST ONLY for now") \
+    \
+    v(Bool, otsAbortCheckBeforeSweep, false, Normal, "mlam TEST ONLY for now") \
+    v(Bool, otsSweep, true, Normal, "mlam TEST ONLY for now") \
+    v(Double, otsSweepQuantaUS, 0, Normal, "mlam TEST ONLY for now") \
+    v(Bool, otsAbortIfSweepAborted, false, Normal, "mlam TEST ONLY for now") \
+    \
+    v(Bool, otsDeleteNodesAndDetachedRenderers, true, Normal, "mlam TEST ONLY for now") \
+    v(Bool, otsAbortCheckInNodeRendererCleanup, false, Normal, "mlam TEST ONLY for now") \
+    v(Bool, otsDeleteRemovedNodes, true, Normal, "mlam TEST ONLY for now") \
+    v(Bool, otsDeleteDetachedRenderers, true, Normal, "mlam TEST ONLY for now") \
+    v(Bool, otsDeleteDetachedInlineContent, true, Normal, "mlam TEST ONLY for now") \
+    \
+    v(Double, otsFullGCTimerDelayMS, 100, Normal, "mlam TEST ONLY for now") \
+    v(Unsigned, otsFullGCDeferCountThreshold, 3, Normal, "mlam TEST ONLY for now") \
+    v(Double, otsEdenGCTimerDelayMS, 10, Normal, "mlam TEST ONLY for now") \
+    v(Unsigned, otsEdenGCDeferCountThreshold, 5, Normal, "mlam TEST ONLY for now") \
+    \
     v(Bool, useArchitectureSpecificOptimizations, true, Normal, nullptr) \
     \
     v(Bool, breakOnThrow, false, Normal, nullptr) \

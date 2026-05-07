@@ -3358,7 +3358,16 @@ ExceptionOr<void> Internals::executeOpportunisticallyScheduledTasks() const
     Document* document = contextDocument();
     if (!document || !document->page())
         return Exception { ExceptionCode::InvalidAccessError };
-    document->page()->performOpportunisticallyScheduledTasks(MonotonicTime::now());
+    Function<bool()> shouldAbort = [] {
+        return false;
+    };
+
+    // mlam FIXME
+//    auto deadline = UnbarrieredMonotonicTime::now();
+//    page->opportunisticTaskContext().initialize(deadline, m_asyncResponseReceivedEpochAtStart);
+//    commonVM().opportunisticTaskContext().initialize(deadline, m_asyncResponseReceivedEpochAtStart);
+//
+//    document->page()->performOpportunisticallyScheduledTasks();
     return { };
 }
 

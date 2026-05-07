@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,40 +20,44 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
-#include <JavaScriptCore/JSRunLoopTimer.h>
+#include <wtf/OpportunisticTaskSchedulerEvents.h>
 #include <wtf/UnbarrieredMonotonicTime.h>
 
-namespace JSC {
+namespace WTF {
 
-class Heap;
-class BlockDirectory;
-
-class IncrementalSweeper final : public JSRunLoopTimer {
+class OpportunisticTaskContext {
 public:
-    using Base = JSRunLoopTimer;
-    JS_EXPORT_PRIVATE explicit IncrementalSweeper(Heap*);
+    void initialize(UnbarrieredMonotonicTime deadline, unsigned startAsyncResponseEpoch)
+    {
+        m_deadline = deadline;
+        m_startAsyncResponseEpoch = startAsyncResponseEpoch;
+        m_didAbort = false;
+    }
 
-    JS_EXPORT_PRIVATE void startSweeping(Heap&);
-    void doWork(VM&) final;
-    void stopSweeping();
+    bool shouldAbort()
+    {
+        if (m_didAbort
+            || OpportunisticTaskSchedulerEvents::asyncResponseEpoch() != m_startAsyncResponseEpoch
+            || UnbarrieredMonotonicTime::now() > m_deadline) {
+            m_didAbort = true;
+        }
+        return m_didAbort;
+    }
 
-    void startSweepingForOpportunisticTask(VM&);
-    void doWorkForOpportunisticTask(VM&, UnbarrieredMonotonicTime deadline);
-    bool doneSweepingForOpportunisticTask() const { return m_lastOpportunisticTaskDidFinishSweeping; }
+    UnbarrieredMonotonicTime deadline() const { return m_deadline; }
+    bool didAbort() const { return m_didAbort; }
 
 private:
-    enum class SweepTrigger : bool { Timer, OpportunisticTask };
-    bool sweepNextBlock(VM&, SweepTrigger);
-    void doSweep(VM&, UnbarrieredMonotonicTime startTime, SweepTrigger);
-    void scheduleTimer();
-    
-    BlockDirectory* m_currentDirectory;
-    bool m_lastOpportunisticTaskDidFinishSweeping { false };
+    UnbarrieredMonotonicTime m_deadline;
+    unsigned m_startAsyncResponseEpoch { 0 };
+    bool m_didAbort { false };
 };
 
-} // namespace JSC
+} // namespace WTF
+
+using WTF::OpportunisticTaskContext;

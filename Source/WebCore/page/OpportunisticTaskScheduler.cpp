@@ -34,8 +34,12 @@
 #include "Settings.h"
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSGlobalObject.h>
+#include <JavaScriptCore/Options.h> // mlam TEST
+#include <JavaScriptCore/Watchdog.h> // mlam TEST
 #include <wtf/DataLog.h>
+#include <wtf/OpportunisticTaskSchedulerEvents.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/UnbarrieredMonotonicTimeInlines.h>
 
 namespace WebCore {
 
@@ -50,7 +54,7 @@ OpportunisticTaskScheduler::OpportunisticTaskScheduler(Page& page)
 
 OpportunisticTaskScheduler::~OpportunisticTaskScheduler() = default;
 
-void OpportunisticTaskScheduler::rescheduleIfNeeded(MonotonicTime deadline)
+void OpportunisticTaskScheduler::rescheduleIfNeeded(UnbarrieredMonotonicTime deadline)
 {
     RefPtr page = m_page.get();
     if (page->isWaitingForLoadToFinish() || !page->isVisibleAndActive())
@@ -62,6 +66,11 @@ void OpportunisticTaskScheduler::rescheduleIfNeeded(MonotonicTime deadline)
     if (!hasIdleCallbacks && !page->settings().opportunisticSweepingAndGarbageCollectionEnabled())
         return;
 
+#if MLAM_VERBOSE
+    if (m_isSelfRescheduled)
+        dataLogLn("mlam OpportunisticTaskScheduler::rescheduleIfNeeded: CANCEL RE-SCHEDULE");
+#endif
+    m_isSelfRescheduled = false;
     m_runloopCountAfterBeingScheduled = 0;
     m_currentDeadline = deadline;
     m_runLoopObserver->invalidate();
@@ -104,15 +113,21 @@ void OpportunisticTaskScheduler::runLoopObserverFired()
     m_runloopCountAfterBeingScheduled++;
 
     bool shouldRunTask = [&] {
-        static constexpr auto numRetriesWhileScheduledWorkIsImminent = 9;
+        if (m_isSelfRescheduled)
+            return true;
+
+//        static constexpr auto numRetriesWhileScheduledWorkIsImminent = 9;
+        uint64_t numRetriesWhileScheduledWorkIsImminent = JSC::Options::otsRetriesWhileImminentWork();
         if (hasImminentlyScheduledWork())
             return m_runloopCountAfterBeingScheduled > numRetriesWhileScheduledWorkIsImminent;
 
-        static constexpr auto maxRetriesWhenScheduledWorkIsNotImminent = 4;
+//        static constexpr auto maxRetriesWhenScheduledWorkIsNotImminent = 4;
+        uint64_t maxRetriesWhenScheduledWorkIsNotImminent = JSC::Options::otsMaxRetriesNoImminentWork();
         if (m_runloopCountAfterBeingScheduled > maxRetriesWhenScheduledWorkIsNotImminent)
             return true;
 
-        static constexpr auto desiredFractionOfRenderingInterval = 0.95;
+//        static constexpr auto desiredFractionOfRenderingInterval = 0.95;
+        double desiredFractionOfRenderingInterval = JSC::Options::otsDesiredFractionOfRenderingInterval();
         if (remainingTime > desiredFractionOfRenderingInterval * page->preferredRenderingUpdateInterval())
             return true;
 
@@ -132,15 +147,69 @@ void OpportunisticTaskScheduler::runLoopObserverFired()
         static_cast<uint64_t>(remainingTime.microseconds())
     };
 
-    auto deadline = std::exchange(m_currentDeadline, MonotonicTime { });
-    page->opportunisticallyRunIdleCallbacks(deadline);
+    auto deadline = std::exchange(m_currentDeadline, UnbarrieredMonotonicTime { });
+    m_asyncResponseReceivedEpochAtStart = WTF::OpportunisticTaskSchedulerEvents::asyncResponseEpoch();
 
-    if (!page->settings().opportunisticSweepingAndGarbageCollectionEnabled()) {
+    page->opportunisticTaskContext().initialize(deadline, m_asyncResponseReceivedEpochAtStart);
+    commonVM().opportunisticTaskContext().initialize(deadline, m_asyncResponseReceivedEpochAtStart);
+
+#if MLAM_VERBOSE
+    auto startTime = UnbarrieredMonotonicTime::now(); // mlam
+    dataLogLn("mlam OpportunisticTaskScheduler::runLoopObserverFired: OTS DEADLINE time ", (deadline - startTime).nanosecondsAs<long>(), " ns (was re-scheduled ", m_isSelfRescheduled, ") =================================================");
+#endif
+    m_isSelfRescheduled = false;
+
+    bool didAbort = false;
+//    Function<bool()> shouldAbort = [&] -> bool {
+//        if (didAbort)
+//            return true;
+//        if (JSC::Options::otsAbortOnAsyncResponse()) {
+//            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE if (WTF::OpportunisticTaskSchedulerEvents::asyncResponseEpoch() != m_asyncResponseReceivedEpochAtStart) {
+//#if MLAM_VERBOSE
+//                dataLogLn("mlam [OPPORTUNISTIC TASK] shouldAbort: ABORT due to Async Response: start ", m_asyncResponseReceivedEpochAtStart, " | current ", WTF::OpportunisticTaskSchedulerEvents::asyncResponseEpoch());
+//#endif
+//                didAbort = true;
+//                return true;
+//            }
+//        }
+//#if MLAM_VERBOSE
+//        auto current = UnbarrieredMonotonicTime::now();
+//        bool abort = current > deadline;
+//        if (abort)
+//            dataLogLn("mlam [OPPORTUNISTIC TASK] ABORT: remainder ", (deadline - current).nanosecondsAs<long>(), " ns");
+//#else
+//        bool abort = UnbarrieredMonotonicTime::now() > deadline;
+//#endif
+//        if (abort)
+//            didAbort = abort;
+//        return abort;
+//    };
+
+    page->opportunisticallyRunIdleCallbacks(deadline.toMonotonicTime());
+
+    if (!page->settings().opportunisticSweepingAndGarbageCollectionEnabled() || !JSC::Options::useOpportunisticTaskScheduler()) {
         dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] GaveUp: opportunistic sweep and GC is not enabled", " signpost:(", JSC::activeJSGlobalObjectSignpostIntervalCount.load(), ")");
         return;
     }
 
-    page->performOpportunisticallyScheduledTasks(deadline);
+    didAbort = page->performOpportunisticallyScheduledTasks();
+    if (didAbort && JSC::Options::otsRescheduleUnfinishedWork()) {
+#if MLAM_VERBOSE
+        dataLogLn("mlam OpportunisticTaskScheduler::runLoopObserverFired: RE-SCHEDULED");
+#endif
+        m_isSelfRescheduled = true;
+        m_runloopCountAfterBeingScheduled = 0;
+//        m_currentDeadline = UnbarrieredMonotonicTime::now() + 8_ms;
+        m_currentDeadline = UnbarrieredMonotonicTime::now() + Seconds::fromMilliseconds(JSC::Options::otsRescheduleDelayMS());
+        m_runLoopObserver->invalidate();
+        if (!m_runLoopObserver->isScheduled())
+            m_runLoopObserver->schedule();
+    }
+
+#if MLAM_VERBOSE
+    UnbarrieredMonotonicTime endTime = UnbarrieredMonotonicTime::now(); // mlam
+    dataLogLn("mlam OpportunisticTaskScheduler::runLoopObserverFired: Actual OTS time ", (endTime - startTime).nanosecondsAs<long>(), " ns | remainder ", (deadline - endTime).nanosecondsAs<long>(), " ns (didAbort ", didAbort, ") =================================================\n");
+#endif
 }
 
 ImminentlyScheduledWorkScope::ImminentlyScheduledWorkScope(OpportunisticTaskScheduler& scheduler)
@@ -193,8 +262,10 @@ OpportunisticTaskScheduler::FullGCActivityCallback::FullGCActivityCallback(JSC::
 // since we would like to encode more and more different heuristics for them.
 void OpportunisticTaskScheduler::FullGCActivityCallback::doCollection(JSC::VM& vm)
 {
-    constexpr Seconds delay { 100_ms };
-    constexpr unsigned deferCountThreshold = 3;
+//    constexpr Seconds delay { 100_ms };
+//    constexpr unsigned deferCountThreshold = 3;
+    Seconds delay = Seconds::fromMilliseconds(JSC::Options::otsFullGCTimerDelayMS());
+    unsigned deferCountThreshold = JSC::Options::otsFullGCDeferCountThreshold();
 
     if (isBusyForTimerBasedGC(vm)) {
         if (!m_version || m_version != vm.heap.objectSpace().markingVersion()) {
@@ -237,8 +308,10 @@ OpportunisticTaskScheduler::EdenGCActivityCallback::EdenGCActivityCallback(JSC::
 
 void OpportunisticTaskScheduler::EdenGCActivityCallback::doCollection(JSC::VM& vm)
 {
-    constexpr Seconds delay { 10_ms };
-    constexpr unsigned deferCountThreshold = 5;
+//    constexpr Seconds delay { 10_ms };
+//    constexpr unsigned deferCountThreshold = 5;
+    Seconds delay = Seconds::fromMilliseconds(JSC::Options::otsEdenGCTimerDelayMS());
+    unsigned deferCountThreshold = JSC::Options::otsEdenGCDeferCountThreshold();
 
     if (isBusyForTimerBasedGC(vm)) {
         if (!m_version || m_version != vm.heap.objectSpace().edenVersion()) {
