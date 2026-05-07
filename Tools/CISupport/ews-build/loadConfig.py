@@ -34,6 +34,14 @@ from buildbot.changes.filter import ChangeFilter
 from datetime import datetime, timezone
 from twisted.internet import defer
 
+STATUS_BUBBLE_ORDER = []
+SAFE_MERGE_BUCKETS = {'embedded': [], 'macos': [], 'linux': [], 'windows': []}
+SAFE_MERGE_QUEUE_VALUES = frozenset(SAFE_MERGE_BUCKETS)
+NON_BUBBLE_SHORTNAMES = frozenset(['commit', 'merge', 'unsafe-merge', 'safe-merge'])
+PR_COLUMN_VALUES = frozenset(['misc', 'embedded', 'macos', 'linux', 'windows'])
+PR_COLUMN_BY_SHORTNAME = {}
+PR_COMMENT_MISC_HANDLERS = []
+
 from .factories import (APITestsFactory, BindingsFactory, BuildFactory, CommitQueueFactory, Factory, GTKBuildFactory,
                         GTKTestsFactory, JSCBuildFactory, JSCBuildAndTestsFactory, JSCBuildO3AndTestsFactory, JSCTestsFactory, MergeQueueFactory, SafeMergeQueueFactory, StressTestFactory,
                         StyleFactory, TestFactory, tvOSBuildFactory, WPEBuildFactory, GTK3LibWebRTCBuildFactory, WPETestsFactory, WebKitPerlFactory, WebKitPyFactory, PlayStationBuildFactory,
@@ -62,6 +70,9 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, setup_main_schedulers=True,
 
     checkWorkersAndBuildersForConsistency(config, config['workers'], config['builders'])
     checkValidSchedulers(config, config['schedulers'])
+    checkValidStatusBubbleOrder(config)
+    checkValidPrCommentStructure(config)
+    _populateQueueMetadata(config)
 
     c['workers'] = [Worker(worker['name'], passwords.get(worker['name'], 'password'), max_builds=worker.get('max_builds', 1)) for worker in config['workers']]
     if is_test_mode_enabled:
@@ -74,6 +85,10 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, setup_main_schedulers=True,
         builder['description'] = builder.pop('shortname')
         if 'icon' in builder:
             del builder['icon']
+        if 'safe_merge_queue' in builder:
+            del builder['safe_merge_queue']
+        if 'pr_column' in builder:
+            del builder['pr_column']
         factorykwargs = {}
         for key in ['platform', 'configuration', 'architectures', 'triggers', 'remotes', 'additionalArguments', 'runTests', 'triggered_by', 'rebuild_without_change_on_builder', 'deployment_target']:
             value = builder.pop(key, None)
@@ -199,6 +214,76 @@ def checkValidBuilder(config, builder):
 
     if builder.get('rebuild_without_change_on_builder') and not builder.get('triggers'):
         raise Exception(f'rebuild_without_change_on_builder can only be set on builders with triggers. Builder: {builder["name"]}')
+
+    safe_merge_queue = builder.get('safe_merge_queue')
+    if safe_merge_queue is not None and safe_merge_queue not in SAFE_MERGE_QUEUE_VALUES:
+        raise Exception('Builder {} has invalid safe_merge_queue value: {}. Expected one of {}.'.format(
+            builder['name'], safe_merge_queue, sorted(SAFE_MERGE_QUEUE_VALUES)))
+
+    pr_column = builder.get('pr_column')
+    if pr_column is not None and pr_column not in PR_COLUMN_VALUES:
+        raise Exception('Builder {} has invalid pr_column value: {}. Expected one of {}.'.format(
+            builder['name'], pr_column, sorted(PR_COLUMN_VALUES)))
+
+
+def checkValidStatusBubbleOrder(config):
+    bubble_order = config.get('status_bubble_order')
+    if bubble_order is None:
+        raise Exception('config.json is missing top-level "status_bubble_order" array.')
+
+    seen = set()
+    for shortname in bubble_order:
+        if shortname in seen:
+            raise Exception('Duplicate entry in status_bubble_order: {}'.format(shortname))
+        seen.add(shortname)
+
+    builder_shortnames = {b.get('shortname') for b in config.get('builders', []) if b.get('shortname')}
+    unknown = seen - builder_shortnames
+    if unknown:
+        raise Exception('status_bubble_order references unknown shortnames: {}'.format(sorted(unknown)))
+
+    missing = builder_shortnames - NON_BUBBLE_SHORTNAMES - seen
+    if missing:
+        raise Exception('status_bubble_order is missing builder shortnames: {}'.format(sorted(missing)))
+
+
+def _populateQueueMetadata(config):
+    STATUS_BUBBLE_ORDER[:] = list(config.get('status_bubble_order', []))
+    for bucket_list in SAFE_MERGE_BUCKETS.values():
+        bucket_list.clear()
+    PR_COLUMN_BY_SHORTNAME.clear()
+    for builder in config.get('builders', []):
+        bucket = builder.get('safe_merge_queue')
+        if bucket in SAFE_MERGE_BUCKETS:
+            SAFE_MERGE_BUCKETS[bucket].append(builder.get('shortname'))
+        pr_column = builder.get('pr_column')
+        if pr_column in PR_COLUMN_VALUES:
+            PR_COLUMN_BY_SHORTNAME[builder.get('shortname')] = pr_column
+    PR_COMMENT_MISC_HANDLERS[:] = list(config.get('pr_comment_misc_handlers', []))
+
+
+def checkValidPrCommentStructure(config):
+    builder_shortnames = {b.get('shortname') for b in config.get('builders', []) if b.get('shortname')}
+
+    missing = []
+    for builder in config.get('builders', []):
+        shortname = builder.get('shortname')
+        if shortname in NON_BUBBLE_SHORTNAMES:
+            continue
+        if not builder.get('pr_column'):
+            missing.append(shortname)
+    if missing:
+        raise Exception('Builders missing required pr_column: {}'.format(sorted(missing)))
+
+    handlers = config.get('pr_comment_misc_handlers', [])
+    if not isinstance(handlers, list):
+        raise Exception('pr_comment_misc_handlers must be a list, got: {}'.format(type(handlers).__name__))
+    for handler in handlers:
+        if handler not in NON_BUBBLE_SHORTNAMES:
+            raise Exception('pr_comment_misc_handlers entry {} is not a handler queue. Expected one of {}.'.format(
+                handler, sorted(NON_BUBBLE_SHORTNAMES)))
+        if handler not in builder_shortnames:
+            raise Exception('pr_comment_misc_handlers entry {} does not correspond to any builder.'.format(handler))
 
 
 def checkValidSchedulers(config, schedulers):

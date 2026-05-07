@@ -39,6 +39,9 @@ class Buildbot():
     icons_for_queues_mapping = {}
     queue_name_by_shortname_mapping = {}
     builder_name_to_id_mapping = {}
+    all_queues = []
+    pr_column_by_shortname = {}
+    pr_comment_misc_handlers = []
 
     # FIXME: Auto-generate the queue's trigger relationship
     QUEUE_TRIGGERS = {
@@ -127,6 +130,15 @@ class Buildbot():
             shortname = builder.get('shortname')
             Buildbot.icons_for_queues_mapping[shortname] = builder.get('icon')
             Buildbot.queue_name_by_shortname_mapping[shortname] = builder.get('name')
+            pr_column = builder.get('pr_column')
+            if pr_column:
+                Buildbot.pr_column_by_shortname[shortname] = pr_column
+        bubble_order = config.get('status_bubble_order')
+        if bubble_order:
+            Buildbot.all_queues = list(bubble_order)
+        misc_handlers = config.get('pr_comment_misc_handlers')
+        if misc_handlers:
+            Buildbot.pr_comment_misc_handlers = list(misc_handlers)
 
     @classmethod
     def update_builder_name_to_id_mapping(cls):

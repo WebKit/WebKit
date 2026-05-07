@@ -236,39 +236,39 @@
   ],
   "builders": [
     {
-      "name": "Style-EWS", "shortname": "style", "icon": "testOnly",
+      "name": "Style-EWS", "shortname": "style", "icon": "testOnly", "pr_column": "misc",
       "factory": "StyleFactory", "platform": "*",
       "workernames": ["ews151", "ews253", "webkit-misc"]
     },
     {
-      "name": "GTK-Build-EWS", "shortname": "gtk", "icon": "buildOnly",
+      "name": "GTK-Build-EWS", "shortname": "gtk", "icon": "buildOnly", "safe_merge_queue": "linux", "pr_column": "linux",
       "factory": "GTKBuildFactory", "platform": "gtk",
       "configuration": "release", "architectures": ["x86_64"],
       "triggers": ["api-tests-gtk-ews", "gtk-wk2-tests-ews"],
       "workernames": ["aperez-gtk-ews", "csaavedra-gtk-ews", "igalia1-gtk-wk2-ews", "igalia2-gtk-wk2-ews", "igalia13-gtk-wk2-ews"]
     },
     {
-      "name": "GTK-WK2-Tests-EWS", "shortname": "gtk-wk2", "icon": "testOnly",
+      "name": "GTK-WK2-Tests-EWS", "shortname": "gtk-wk2", "icon": "testOnly", "safe_merge_queue": "linux", "pr_column": "linux",
       "factory": "GTKTestsFactory", "platform": "gtk",
       "configuration": "release",
       "triggered_by": ["gtk-build-ews"],
       "workernames": ["igalia5-gtk-wk2-ews", "igalia6-gtk-wk2-ews", "igalia7-gtk-wk2-ews", "igalia8-gtk-wk2-ews", "igalia9-gtk-wk2-ews", "igalia10-gtk-wk2-ews", "igalia11-gtk-wk2-ews", "igalia12-gtk-wk2-ews"]
     },
     {
-      "name": "iOS-26-Build-EWS", "shortname": "ios", "icon": "buildOnly",
+      "name": "iOS-26-Build-EWS", "shortname": "ios", "icon": "buildOnly", "safe_merge_queue": "embedded", "pr_column": "embedded",
       "factory": "iOSEmbeddedBuildFactory", "platform": "ios-26",
       "configuration": "release", "architectures": ["arm64"],
       "workernames": ["ews152", "ews154", "ews108", "ews109", "ews130", "ews131", "ews132", "ews133"]
     },
     {
-      "name": "iOS-26-Simulator-Build-EWS", "shortname": "ios-sim", "icon": "buildOnly",
+      "name": "iOS-26-Simulator-Build-EWS", "shortname": "ios-sim", "icon": "buildOnly", "safe_merge_queue": "embedded", "pr_column": "embedded",
       "factory": "iOSBuildFactory", "platform": "ios-simulator-26",
       "configuration": "release", "architectures": ["arm64"],
       "triggers": ["api-tests-ios-sim-ews", "ios-26-sim-wk2-tests-ews", "ios-26-sim-wpt-wk2-tests-ews"],
       "workernames": ["ews152", "ews154", "ews108", "ews130", "ews132", "ews133", "ews134", "ews135"]
     },
     {
-      "name": "iOS-26-Simulator-WK2-Tests-EWS", "shortname": "ios-wk2", "icon": "testOnly",
+      "name": "iOS-26-Simulator-WK2-Tests-EWS", "shortname": "ios-wk2", "icon": "testOnly", "safe_merge_queue": "embedded", "pr_column": "embedded",
       "factory": "iOSTestsFactory", "platform": "ios-simulator-26",
       "configuration": "release",
       "triggered_by": ["ios-26-sim-build-ews"],
@@ -276,7 +276,7 @@
       "workernames": ["ews121", "ews122", "ews123", "ews124", "ews125", "ews126", "ews184", "ews185"]
     },
     {
-      "name": "iOS-26-Simulator-WPT-WK2-Tests-EWS", "shortname": "ios-wk2-wpt", "icon": "testOnly",
+      "name": "iOS-26-Simulator-WPT-WK2-Tests-EWS", "shortname": "ios-wk2-wpt", "icon": "testOnly", "safe_merge_queue": "embedded", "pr_column": "embedded",
       "factory": "iOSTestsFactory", "platform": "ios-simulator-26",
       "configuration": "release",
       "triggered_by": ["ios-26-sim-build-ews"],
@@ -284,28 +284,28 @@
       "workernames": ["ews191", "ews192", "ews193", "ews194", "ews195", "ews196", "ews197", "ews198"]
     },
     {
-      "name": "macOS-Tahoe-Debug-Build-EWS", "shortname": "mac-AS-debug", "icon": "buildOnly",
+      "name": "macOS-Tahoe-Debug-Build-EWS", "shortname": "mac-AS-debug", "icon": "buildOnly", "safe_merge_queue": "macos", "pr_column": "macos",
       "factory": "macOSBuildOnlyFactory", "platform": "mac-tahoe",
       "configuration": "debug", "architectures": ["arm64"],
       "triggers": ["macos-tahoe-debug-api-tests-ews", "macos-tahoe-debug-wk2-tests-ews"],
       "workernames": ["ews171", "ews172", "ews173", "ews174"]
     },
     {
-      "name": "macOS-Tahoe-Debug-API-Tests-EWS", "shortname": "api-mac-debug", "icon": "testOnly",
+      "name": "macOS-Tahoe-Debug-API-Tests-EWS", "shortname": "api-mac-debug", "icon": "testOnly", "safe_merge_queue": "macos", "pr_column": "macos",
       "factory": "APITestsFactory", "platform": "mac-tahoe",
       "configuration": "debug",
       "triggered_by": ["macos-tahoe-debug-build-ews"],
       "workernames": ["ews207", "ews208", "ews209", "ews210", "ews211", "ews212", "ews213", "ews214"]
     },
     {
-      "name": "macOS-Tahoe-Debug-WK2-Tests-EWS", "shortname": "mac-AS-debug-wk2", "icon": "testOnly",
+      "name": "macOS-Tahoe-Debug-WK2-Tests-EWS", "shortname": "mac-AS-debug-wk2", "icon": "testOnly", "safe_merge_queue": "macos", "pr_column": "macos",
       "factory": "macOSWK2Factory", "platform": "mac-tahoe",
       "configuration": "debug",
       "triggered_by": ["macos-tahoe-debug-build-ews"],
       "workernames": ["ews110", "ews111", "ews114", "ews138", "ews139", "ews140", "ews175", "ews176", "ews177", "ews178", "ews179", "ews180"]
     },
     {
-      "name": "macOS-Sequoia-Release-Build-EWS", "shortname": "mac", "icon": "buildOnly",
+      "name": "macOS-Sequoia-Release-Build-EWS", "shortname": "mac", "icon": "buildOnly", "safe_merge_queue": "macos", "pr_column": "macos",
       "factory": "macOSBuildFactory", "platform": "mac-sequoia",
       "configuration": "release", "architectures": ["x86_64", "arm64"],
       "deployment_target": "15.4",
@@ -314,84 +314,84 @@
       "workernames": ["ews101", "ews102", "ews103", "ews105", "ews116", "ews117", "ews118", "ews119", "ews120", "ews141", "ews145", "ews147", "ews148", "ews161", "ews162"]
     },
     {
-      "name": "macOS-Sequoia-Release-WK1-Tests-EWS", "shortname": "mac-wk1", "icon": "testOnly",
+      "name": "macOS-Sequoia-Release-WK1-Tests-EWS", "shortname": "mac-wk1", "icon": "testOnly", "safe_merge_queue": "macos", "pr_column": "macos",
       "factory": "macOSWK1Factory", "platform": "mac-sequoia",
       "configuration": "release",
       "triggered_by": ["macos-sequoia-release-build-ews"],
       "workernames": ["ews112", "ews116"]
     },
     {
-      "name": "macOS-Sequoia-Release-WK2-Tests-EWS", "shortname": "mac-wk2", "icon": "testOnly",
+      "name": "macOS-Sequoia-Release-WK2-Tests-EWS", "shortname": "mac-wk2", "icon": "testOnly", "safe_merge_queue": "macos", "pr_column": "macos",
       "factory": "macOSWK2Factory", "platform": "mac-sequoia",
       "configuration": "release",
       "triggered_by": ["macos-sequoia-release-build-ews"],
       "workernames": ["ews104", "ews106", "ews107", "ews113", "ews115", "ews144", "ews146", "ews149", "ews169", "ews186", "ews187", "ews188", "ews189"]
     },
     {
-      "name": "macOS-Sequoia-Release-WK2-Intel-Tests-EWS", "shortname": "mac-intel-wk2", "icon": "testOnly",
+      "name": "macOS-Sequoia-Release-WK2-Intel-Tests-EWS", "shortname": "mac-intel-wk2", "icon": "testOnly", "pr_column": "macos",
       "factory": "macOSWK2Factory", "platform": "mac-sequoia",
       "configuration": "release",
       "triggered_by": ["macos-sequoia-release-build-ews"],
       "workernames": ["ews200", "ews201", "ews202", "ews203", "ews204"]
     },
     {
-      "name": "macOS-Release-WK2-Stress-Tests-EWS", "shortname": "mac-wk2-stress", "icon": "testOnly",
+      "name": "macOS-Release-WK2-Stress-Tests-EWS", "shortname": "mac-wk2-stress", "icon": "testOnly", "safe_merge_queue": "macos", "pr_column": "macos",
       "factory": "StressTestFactory", "platform": "mac-sequoia",
       "configuration": "release",
       "triggered_by": ["macos-sequoia-release-build-ews"],
       "workernames": ["ews181", "ews182"]
     },
     {
-      "name": "macOS-Safer-CPP-Checks-EWS", "shortname": "mac-safer-cpp", "icon": "buildOnly",
+      "name": "macOS-Safer-CPP-Checks-EWS", "shortname": "mac-safer-cpp", "icon": "buildOnly", "safe_merge_queue": "macos", "pr_column": "macos",
       "factory": "SaferCPPStaticAnalyzerFactory", "platform": "mac-tahoe",
       "configuration": "release", "architectures": ["arm64"],
       "workernames": ["ews237", "ews246", "ews247", "ews248", "ews249", "ews250", "ews260", "ews261", "ews262", "ews263", "ews264"]
     },
     {
-      "name": "Apple-iOS-26-Safer-CPP-Checks-EWS", "shortname": "ios-safer-cpp", "icon": "buildOnly",
+      "name": "Apple-iOS-26-Safer-CPP-Checks-EWS", "shortname": "ios-safer-cpp", "icon": "buildOnly", "safe_merge_queue": "embedded", "pr_column": "embedded",
       "factory": "SaferCPPStaticAnalyzerFactory", "platform": "ios-26",
       "configuration": "release", "architectures": ["arm64"],
       "workernames": ["ews2000", "ews2001", "ews2002", "ews2003", "ews2004", "ews2006", "ews2007", "ews2008", "ews2009", "ews2010"]
     },
     {
-      "name": "watchOS-26-Build-EWS", "shortname": "watch", "icon": "buildOnly",
+      "name": "watchOS-26-Build-EWS", "shortname": "watch", "icon": "buildOnly", "safe_merge_queue": "embedded", "pr_column": "embedded",
       "factory": "watchOSBuildFactory", "platform": "watchos-26",
       "configuration": "release", "architectures": ["arm64_32", "arm64"],
       "workernames": ["ews163", "ews164", "ews165", "ews238", "ews239"]
     },
     {
-      "name": "watchOS-26-Simulator-Build-EWS", "shortname": "watch-sim", "icon": "buildOnly",
+      "name": "watchOS-26-Simulator-Build-EWS", "shortname": "watch-sim", "icon": "buildOnly", "safe_merge_queue": "embedded", "pr_column": "embedded",
       "factory": "watchOSBuildFactory", "platform": "watchos-simulator-26",
       "configuration": "release", "architectures": ["arm64"],
       "workernames": ["ews164", "ews165", "ews166", "ews240"]
     },
     {
-      "name": "tvOS-26-Build-EWS", "shortname": "tv", "icon": "buildOnly",
+      "name": "tvOS-26-Build-EWS", "shortname": "tv", "icon": "buildOnly", "safe_merge_queue": "embedded", "pr_column": "embedded",
       "factory": "tvOSBuildFactory", "platform": "tvos-26",
       "configuration": "release", "architectures": ["arm64"],
       "workernames": ["ews167", "ews168", "ews243", "ews244"]
     },
     {
-      "name": "tvOS-26-Simulator-Build-EWS", "shortname": "tv-sim", "icon": "buildOnly",
+      "name": "tvOS-26-Simulator-Build-EWS", "shortname": "tv-sim", "icon": "buildOnly", "safe_merge_queue": "embedded", "pr_column": "embedded",
       "factory": "tvOSBuildFactory", "platform": "tvos-simulator-26",
       "configuration": "release", "architectures": ["arm64"],
       "workernames": ["ews168", "ews170", "ews245"]
     },
     {
-      "name": "visionOS-26-Build-EWS", "shortname": "vision", "icon": "buildOnly",
+      "name": "visionOS-26-Build-EWS", "shortname": "vision", "icon": "buildOnly", "safe_merge_queue": "embedded", "pr_column": "embedded",
       "factory": "visionOSEmbeddedBuildFactory", "platform": "visionos-26",
       "configuration": "release", "architectures": ["arm64"],
       "workernames": ["ews216", "ews217", "ews218", "ews219", "ews220", "ews221"]
     },
     {
-      "name": "visionOS-26-Simulator-Build-EWS", "shortname": "vision-sim", "icon": "buildOnly",
+      "name": "visionOS-26-Simulator-Build-EWS", "shortname": "vision-sim", "icon": "buildOnly", "safe_merge_queue": "embedded", "pr_column": "embedded",
       "factory": "visionOSBuildFactory", "platform": "visionos-simulator-26",
       "configuration": "release", "architectures": ["arm64"],
       "triggers": ["visionos-26-sim-wk2-tests-ews"],
       "workernames": ["ews220", "ews221", "ews222", "ews223", "ews224", "ews225"]
     },
     {
-      "name": "visionOS-26-Simulator-WK2-Tests-EWS", "shortname": "vision-wk2", "icon": "testOnly",
+      "name": "visionOS-26-Simulator-WK2-Tests-EWS", "shortname": "vision-wk2", "icon": "testOnly", "safe_merge_queue": "embedded", "pr_column": "embedded",
       "factory": "visionOSTestsFactory", "platform": "visionos-simulator-26",
       "configuration": "release",
       "triggered_by": ["visionos-26-sim-build-ews"],
@@ -399,114 +399,114 @@
       "workernames": ["ews226", "ews227", "ews228", "ews229", "ews230"]
     },
     {
-      "name": "PlayStation-Build-EWS", "shortname": "playstation", "icon": "buildOnly",
+      "name": "PlayStation-Build-EWS", "shortname": "playstation", "icon": "buildOnly", "pr_column": "linux",
       "factory": "PlayStationBuildFactory", "configuration": "release",
       "architectures": ["x86_64"], "platform": "playstation",
       "workernames": ["playstation-ews-001", "playstation-ews-002", "playstation-ews-003", "playstation-ews-004", "playstation-ews-005", "playstation-ews-006", "playstation-ews-007", "playstation-ews-008", "playstation-ews-009"]
     },
     {
-      "name": "Win-Build-EWS", "shortname": "win", "icon": "buildOnly",
+      "name": "Win-Build-EWS", "shortname": "win", "icon": "buildOnly", "safe_merge_queue": "windows", "pr_column": "windows",
       "factory": "WinBuildFactory", "configuration": "release",
       "architectures": ["x86_64"], "platform": "win",
       "triggers": ["win-tests-ews"],
       "workernames": ["wincairo-ews-001", "wincairo-ews-002", "wincairo-ews-003", "wincairo-ews-004", "win-bot-001", "win-bot-002"]
     },
     {
-      "name": "Win-Tests-EWS", "shortname": "win-tests", "icon": "testOnly",
+      "name": "Win-Tests-EWS", "shortname": "win-tests", "icon": "testOnly", "pr_column": "windows",
       "factory": "WinTestsFactory", "configuration": "release",
       "architectures": ["x86_64"], "platform": "win",
       "triggered_by": ["win-build-ews"],
       "workernames": ["win-bot-003", "win-bot-004", "win-bot-005", "win-bot-006"]
     },
     {
-      "name": "WPE-Build-EWS", "shortname": "wpe", "icon": "buildOnly",
+      "name": "WPE-Build-EWS", "shortname": "wpe", "icon": "buildOnly", "safe_merge_queue": "linux", "pr_column": "linux",
       "factory": "WPEBuildFactory", "platform": "wpe",
       "configuration": "release", "architectures": ["x86_64"],
       "triggers": ["wpe-wk2-tests-ews", "api-tests-wpe-ews"],
       "workernames": ["aperez-wpe-ews", "igalia-wpe-ews", "igalia2-wpe-ews", "igalia3-wpe-ews"]
     },
     {
-      "name": "WPE-WK2-Tests-EWS", "shortname": "wpe-wk2", "icon": "testOnly",
+      "name": "WPE-WK2-Tests-EWS", "shortname": "wpe-wk2", "icon": "testOnly", "safe_merge_queue": "linux", "pr_column": "linux",
       "factory": "WPETestsFactory", "platform": "wpe",
       "configuration": "release", "architectures": ["x86_64"],
       "triggered_by": ["wpe-build-ews"],
       "workernames": ["igalia4-wpe-ews", "igalia5-wpe-ews", "igalia6-wpe-ews", "igalia7-wpe-ews", "igalia8-wpe-ews", "igalia9-wpe-ews", "igalia10-wpe-ews", "igalia11-wpe-ews"]
     },
     {
-      "name": "GTK-GTK3-LibWebRTC-Build-EWS", "shortname": "gtk3-libwebrtc", "icon": "buildOnly",
+      "name": "GTK-GTK3-LibWebRTC-Build-EWS", "shortname": "gtk3-libwebrtc", "icon": "buildOnly", "safe_merge_queue": "linux", "pr_column": "linux",
       "factory": "GTK3LibWebRTCBuildFactory", "platform": "gtk",
       "configuration": "release", "architectures": ["x86_64"],
       "workernames": ["igalia16-wpe-ews", "igalia17-wpe-ews", "igalia18-wpe-ews", "igalia19-wpe-ews"]
     },
     {
-      "name": "JSC-Tests-EWS", "shortname": "jsc-x86-64", "icon": "buildAndTest",
+      "name": "JSC-Tests-EWS", "shortname": "jsc-x86-64", "icon": "buildAndTest", "safe_merge_queue": "macos", "pr_column": "misc",
       "factory": "JSCBuildAndTestsFactory", "platform": "mac-sequoia",
       "configuration": "release", "runTests": "true",
       "workernames": ["ews127", "ews128", "ews205", "ews206", "ews251", "ews252"]
     },
     {
-      "name": "JSC-Tests-O3-Debug-arm64-EWS", "shortname": "jsc-debug-arm64", "icon": "buildAndTest",
+      "name": "JSC-Tests-O3-Debug-arm64-EWS", "shortname": "jsc-debug-arm64", "icon": "buildAndTest", "safe_merge_queue": "macos", "pr_column": "misc",
       "factory": "JSCBuildO3AndTestsFactory", "platform": "mac-sequoia",
       "configuration": "debug", "runTests": "true",
       "workernames": ["ews136", "ews137", "ews265", "ews266"]
     },
     {
-      "name": "JSC-ARMv7-32bits-Build-EWS", "shortname": "jsc-armv7", "icon": "buildOnly",
+      "name": "JSC-ARMv7-32bits-Build-EWS", "shortname": "jsc-armv7", "icon": "buildOnly", "pr_column": "linux",
       "factory": "JSCBuildFactory", "platform": "jsc-only",
       "configuration": "release", "architectures": ["armv7"],
       "triggers": ["jsc-tests-armv7-tests-ews"],
       "workernames": ["igalia-jsc32-armv7-ews"]
     },
     {
-      "name": "JSC-ARMv7-32bits-Tests-EWS", "shortname": "jsc-armv7-tests", "icon": "testOnly",
+      "name": "JSC-ARMv7-32bits-Tests-EWS", "shortname": "jsc-armv7-tests", "icon": "testOnly", "pr_column": "linux",
       "factory": "JSCTestsFactory", "platform": "jsc-only",
       "configuration": "release", "architectures": ["armv7"],
       "workernames": ["igalia-jsc32-armv7-ews-02"]
     },
     {
-      "name": "Bindings-Tests-EWS", "shortname": "bindings", "icon": "testOnly",
+      "name": "Bindings-Tests-EWS", "shortname": "bindings", "icon": "testOnly", "pr_column": "misc",
       "factory": "BindingsFactory", "platform": "*",
       "workernames": ["ews151", "ews253", "webkit-misc"]
     },
     {
-      "name": "WebKitPy-Tests-EWS", "shortname": "webkitpy", "icon": "testOnly",
+      "name": "WebKitPy-Tests-EWS", "shortname": "webkitpy", "icon": "testOnly", "pr_column": "misc",
       "factory": "WebKitPyFactory", "platform": "*",
       "workernames": ["ews151", "ews253", "webkit-misc"]
     },
     {
-      "name": "WebKitPerl-Tests-EWS", "shortname": "webkitperl", "icon": "testOnly",
+      "name": "WebKitPerl-Tests-EWS", "shortname": "webkitperl", "icon": "testOnly", "pr_column": "misc",
       "factory": "WebKitPerlFactory", "platform": "*",
       "workernames": ["ews151", "ews253", "webkit-misc"]
     },
     {
-      "name": "API-Tests-iOS-Simulator-EWS", "shortname": "api-ios", "icon": "testOnly",
+      "name": "API-Tests-iOS-Simulator-EWS", "shortname": "api-ios", "icon": "testOnly", "safe_merge_queue": "embedded", "pr_column": "embedded",
       "factory": "APITestsFactory", "platform": "*",
       "triggered_by": ["ios-26-sim-build-ews"],
       "additionalArguments": ["--child-processes=3"],
       "workernames": ["ews156", "ews157", "ews158", "ews159", "ews160", "ews183", "ews254", "ews255", "ews256", "ews257", "ews258", "ews259"]
     },
     {
-      "name": "API-Tests-macOS-EWS", "shortname": "api-mac", "icon": "testOnly",
+      "name": "API-Tests-macOS-EWS", "shortname": "api-mac", "icon": "testOnly", "safe_merge_queue": "macos", "pr_column": "macos",
       "factory": "APITestsFactory", "platform": "mac-sequoia",
       "triggered_by": ["macos-sequoia-release-build-ews"],
       "workernames": ["ews100", "ews129", "ews142", "ews143", "ews150", "ews153", "ews155"]
     },
     {
-      "name": "API-Tests-GTK-EWS", "shortname": "api-gtk", "icon": "testOnly",
+      "name": "API-Tests-GTK-EWS", "shortname": "api-gtk", "icon": "testOnly", "safe_merge_queue": "linux", "pr_column": "linux",
       "factory": "APITestsFactory", "platform": "gtk",
       "configuration": "release",
       "triggered_by": ["gtk-build-ews"],
       "workernames": ["igalia3-gtk-wk2-ews", "igalia4-gtk-wk2-ews", "igalia14-gtk-wk2-ews", "igalia15-gtk-wk2-ews"]
     },
     {
-      "name": "API-Tests-WPE-EWS", "shortname": "api-wpe", "icon": "testOnly",
+      "name": "API-Tests-WPE-EWS", "shortname": "api-wpe", "icon": "testOnly", "safe_merge_queue": "linux", "pr_column": "linux",
       "factory": "APITestsFactory", "platform": "wpe",
       "configuration": "release", "architectures": ["x86_64"],
       "triggered_by": ["wpe-build-ews"],
       "workernames": ["igalia12-wpe-ews", "igalia13-wpe-ews", "igalia14-wpe-ews", "igalia15-wpe-ews"]
     },
     {
-      "name": "Services-EWS", "shortname": "services", "icon": "testOnly",
+      "name": "Services-EWS", "shortname": "services", "icon": "testOnly", "pr_column": "misc",
       "factory": "ServicesFactory", "platform": "*",
       "workernames": ["ews151", "ews253", "webkit-misc"]
     },
@@ -534,6 +534,15 @@
       "workernames": ["webkit-cq-01", "webkit-cq-02", "webkit-cq-03", "webkit-cq-04", "webkit-cq-05", "webkit-cq-06"]
     }
   ],
+  "status_bubble_order": [
+    "style", "ios", "ios-sim", "mac", "mac-AS-debug", "vision", "vision-sim", "tv", "tv-sim",
+    "watch", "watch-sim", "gtk", "wpe", "gtk3-libwebrtc", "playstation", "win", "win-tests",
+    "ios-wk2", "ios-wk2-wpt", "mac-wk1", "mac-wk2", "mac-wk2-stress", "mac-intel-wk2",
+    "mac-AS-debug-wk2", "mac-safer-cpp", "ios-safer-cpp", "vision-wk2", "gtk-wk2", "wpe-wk2",
+    "api-ios", "api-mac", "api-mac-debug", "api-gtk", "api-wpe", "bindings", "jsc-x86-64",
+    "jsc-debug-arm64", "jsc-armv7", "jsc-armv7-tests", "webkitperl", "webkitpy", "services"
+  ],
+  "pr_comment_misc_handlers": ["merge", "unsafe-merge"],
   "schedulers": [
     {
       "type": "Try_Userpass", "name": "try", "port": 5555,

@@ -50,7 +50,7 @@ class Status(View):
             return {}
 
         statuses = {}
-        for queue in StatusBubble.ALL_QUEUES:
+        for queue in Buildbot.all_queues:
             status = self._build_status(change, queue)
             if status:
                 statuses[queue] = status
