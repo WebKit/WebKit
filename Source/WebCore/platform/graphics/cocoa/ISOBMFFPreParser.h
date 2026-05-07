@@ -27,9 +27,9 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
-#include "FourCC.h"
-#include "PlatformMediaError.h"
-#include "SourceBufferParser.h"
+#include <WebCore/FourCC.h>
+#include <WebCore/PlatformMediaError.h>
+#include <WebCore/SourceBufferParser.h>
 #include <optional>
 #include <span>
 #include <wtf/Expected.h>
