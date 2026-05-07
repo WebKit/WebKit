@@ -186,8 +186,6 @@ overlay-region/full-page-scrolling.html [ Failure ]
 overlay-region/overlay-element.html [ Failure ]
 overlay-region/sticky.html [ Failure ]
 
-webkit.org/b/313782 interaction-region/paused-video-regions.html [ Failure ]
-
 ### END OF Triaged failures
 ###################################################################################################
 
