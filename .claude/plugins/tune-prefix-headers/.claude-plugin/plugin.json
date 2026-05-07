@@ -1,0 +1,5 @@
+{
+  "name": "tune-prefix-headers",
+  "description": "Analyzes ninja build dependencies to pick headers for WebKit prefix headers / chained PCHs",
+  "version": "1.0.0"
+}

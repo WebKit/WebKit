@@ -8,6 +8,11 @@
       "name": "git-webkit",
       "source": "./git-webkit",
       "description": "Teaches Claude to use git-webkit tools for working with the WebKit repository"
+    },
+    {
+      "name": "tune-prefix-headers",
+      "source": "./tune-prefix-headers",
+      "description": "Analyzes ninja build dependencies to pick headers for WebKit prefix headers / chained PCHs"
     }
   ]
 }
