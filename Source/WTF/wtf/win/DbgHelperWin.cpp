@@ -43,7 +43,7 @@ static void initializeSymbols(HANDLE hProc)
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [&]() {
         if (!SymInitialize(hProc, nullptr, TRUE))
-            LOG_ERROR("Failed to initialze symbol information %d", GetLastError());
+            LOG_ERROR("Failed to initialze symbol information %lu", GetLastError());
     });
 }
 
