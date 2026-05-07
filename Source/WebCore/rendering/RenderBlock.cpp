@@ -2243,10 +2243,21 @@ void RenderBlock::computePreferredLogicalWidths()
         computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth;
     } else if (shouldComputeLogicalWidthFromAspectRatio()) {
-        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = (computeLogicalWidthFromAspectRatio() - borderAndPaddingLogicalWidth());
-        m_minPreferredLogicalWidth = std::max(0_lu, m_minPreferredLogicalWidth);
-        m_maxPreferredLogicalWidth = std::max(0_lu, m_maxPreferredLogicalWidth);
-    } else 
+        // https://www.w3.org/TR/css-sizing-3/#cyclic-percentage-contribution
+        // "If the box is non-replaced, then the entire value of any max size property or
+        // preferred size property specified as an expression containing a percentage that is
+        // cyclic is treated for the purpose of calculating the box's intrinsic size contributions
+        // only as that property's initial value."
+        // We skip all percentage constraints here, not just cyclic ones. In the non-cyclic case
+        // (containing block has definite width), this is acceptable because percentage constraints
+        // will be correctly applied during the layout pass in computeLogicalWidth().
+        bool hasPercentageConstraint = style().logicalMaxWidth().isPercentOrCalculated() || style().logicalMinWidth().isPercentOrCalculated();
+        if (hasPercentageConstraint)
+            m_maxPreferredLogicalWidth = std::max(0_lu, computeUnconstrainedLogicalWidthFromAspectRatio() - borderAndPaddingLogicalWidth());
+        else
+            m_maxPreferredLogicalWidth = std::max(0_lu, computeLogicalWidthFromAspectRatio() - borderAndPaddingLogicalWidth());
+        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth;
+    } else
         computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
 
     RenderBox::computePreferredLogicalWidths(styleToUse.logicalMinWidth(), styleToUse.logicalMaxWidth(), borderAndPaddingLogicalWidth());

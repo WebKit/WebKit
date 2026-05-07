@@ -1,0 +1,40 @@
+<!doctype html>
+<meta charset="utf-8">
+<style>
+    .grid-container {
+        width: 100%;
+        display: grid;
+        justify-content: start;
+        grid-template-rows: 100px;
+    }
+    .grid-container-column {
+        width: 100%;
+        display: grid;
+        align-content: start;
+        grid-template-columns: 100px;
+    }
+    .aspect-ratio-item {
+        aspect-ratio: 1;
+        background: red;
+        height: 100px;
+        width: 100px;
+    }
+</style>
+<div class="grid-container">
+    <div class="aspect-ratio-item"></div>
+</div>
+<div class="grid-container">
+    <div class="aspect-ratio-item"></div>
+</div>
+<div class="grid-container">
+    <div class="aspect-ratio-item"></div>
+</div>
+<div class="grid-container-column">
+    <div class="aspect-ratio-item"></div>
+</div>
+<div class="grid-container-column">
+    <div class="aspect-ratio-item"></div>
+</div>
+<div class="grid-container-column">
+    <div class="aspect-ratio-item"></div>
+</div>

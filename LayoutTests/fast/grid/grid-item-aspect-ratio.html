@@ -1,0 +1,71 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="match" href="grid-item-aspect-ratio-expected.html">
+<style>
+    .grid-container {
+        width: 100%;
+        display: grid;
+        justify-content: start;
+        grid-template-rows: 100px;
+    }
+    .grid-container-column {
+        width: 100%;
+        display: grid;
+        align-content: start;
+        grid-template-columns: 100px;
+    }
+    .item-max-width {
+        aspect-ratio: 1;
+        background: red;
+        height: 100px;
+        max-width: 100%;
+    }
+    .item-min-width-percent {
+        aspect-ratio: 1;
+        background: red;
+        height: 100px;
+        min-width: 0%;
+    }
+    .item-min-width {
+        aspect-ratio: 1;
+        background: red;
+        height: 100px;
+        min-width: 0px;
+    }
+    .item-max-height {
+        aspect-ratio: 1;
+        background: red;
+        width: 100px;
+        max-height: 100%;
+    }
+    .item-min-height-percent {
+        aspect-ratio: 1;
+        background: red;
+        width: 100px;
+        min-height: 0%;
+    }
+    .item-min-height {
+        aspect-ratio: 1;
+        background: red;
+        width: 100px;
+        min-height: 0px;
+    }
+</style>
+<div class="grid-container">
+    <div class="item-max-width"></div>
+</div>
+<div class="grid-container">
+    <div class="item-min-width-percent"></div>
+</div>
+<div class="grid-container">
+    <div class="item-min-width"></div>
+</div>
+<div class="grid-container-column">
+    <div class="item-max-height"></div>
+</div>
+<div class="grid-container-column">
+    <div class="item-min-height-percent"></div>
+</div>
+<div class="grid-container-column">
+    <div class="item-min-height"></div>
+</div>

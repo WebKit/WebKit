@@ -2934,7 +2934,8 @@ template<typename Keyword> void RenderBox::computeIntrinsicKeywordLogicalWidths(
         computeIntrinsicKeywordLogicalWidths(minLogicalWidth, maxLogicalWidth);
     else {
         if (shouldComputeLogicalWidthFromAspectRatio()) {
-            minLogicalWidth = maxLogicalWidth = computeLogicalWidthFromAspectRatioInternal() - borderAndPadding;
+            maxLogicalWidth = computeUnconstrainedLogicalWidthFromAspectRatio() - borderAndPadding;
+            minLogicalWidth = maxLogicalWidth;
             if (firstChild() && style().logicalMinWidth().isAuto()) {
                 LayoutUnit minChildrenLogicalWidth;
                 LayoutUnit maxChildrenLogicalWidth;
@@ -5230,7 +5231,7 @@ bool RenderBox::shouldComputeLogicalWidthFromAspectRatio() const
     return overridingBorderBoxLogicalHeight() || shouldComputeLogicalWidthFromAspectRatioAndInsets(*this) || style().logicalHeight().isFixed() || isResolvablePercentageHeight() || isResolveableStretchSize(style().logicalHeight());
 }
 
-LayoutUnit RenderBox::computeLogicalWidthFromAspectRatioInternal() const
+LayoutUnit RenderBox::computeUnconstrainedLogicalWidthFromAspectRatio() const
 {
     ASSERT(shouldComputeLogicalWidthFromAspectRatio());
     auto computedValues = computeLogicalHeight(logicalHeight(), logicalTop());
@@ -5241,7 +5242,7 @@ LayoutUnit RenderBox::computeLogicalWidthFromAspectRatioInternal() const
 
 LayoutUnit RenderBox::computeLogicalWidthFromAspectRatio() const
 {
-    auto logicalWidth = computeLogicalWidthFromAspectRatioInternal();
+    LayoutUnit logicalWidth = computeUnconstrainedLogicalWidthFromAspectRatio();
     LayoutUnit containerWidthInInlineDirection = std::max<LayoutUnit>(0, containingBlockLogicalWidthForContent());
     return constrainLogicalWidthByMinMax(logicalWidth, containerWidthInInlineDirection, *containingBlock(), AllowIntrinsic::No);
 }
