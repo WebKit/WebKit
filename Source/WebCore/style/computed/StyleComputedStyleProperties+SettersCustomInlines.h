@@ -110,7 +110,7 @@ inline void ComputedStyleProperties::setSpecifiedZIndex(ZIndex index)
 inline void ComputedStyleProperties::setCursor(Cursor cursor)
 {
     m_inheritedFlags.cursorType = static_cast<unsigned>(cursor.predefined);
-    SET(m_inheritedRareData, cursorImages, WTF::move(cursor.images));
+    SET_NESTED(m_inheritedRareData, cssData, cursorImages, WTF::move(cursor.images));
 }
 
 // MARK: Fonts

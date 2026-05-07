@@ -392,7 +392,10 @@ void RenderTreeUpdater::updateAfterDescendants(Element& element, const Style::El
 static bool pseudoStyleCacheIsInvalid(RenderElement* renderer, RenderStyle* newStyle)
 {
     const auto& currentStyle = renderer->style();
-    for (auto& [key, value] : currentStyle.cachedPseudoStyles()) {
+    auto* cache = currentStyle.cachedPseudoStyles();
+    if (!cache)
+        return false;
+    for (auto& [key, value] : *cache) {
         auto newPseudoStyle = renderer->getUncachedPseudoStyle(*value->pseudoElementIdentifier(), newStyle, newStyle);
         if (!newPseudoStyle)
             return true;

@@ -3225,6 +3225,7 @@ style/computed/data/StyleFontData.cpp
 style/computed/data/StyleGridData.cpp
 style/computed/data/StyleGridItemData.cpp
 style/computed/data/StyleInheritedData.cpp
+style/computed/data/StyleInheritedRareCSSData.cpp
 style/computed/data/StyleInheritedRareData.cpp
 style/computed/data/StyleMarqueeData.cpp
 style/computed/data/StyleMaskBorderData.cpp

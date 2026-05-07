@@ -590,8 +590,8 @@ public:
     RenderStyle* NODELETE getCachedPseudoStyle(const PseudoElementIdentifier&) const;
     RenderStyle* addCachedPseudoStyle(std::unique_ptr<RenderStyle>);
 
-    bool hasCachedPseudoStyles() const { return !m_cachedPseudoStyles.isEmpty(); }
-    const PseudoStyleCache& cachedPseudoStyles() const LIFETIME_BOUND { return m_cachedPseudoStyles; }
+    bool hasCachedPseudoStyles() const { return m_cachedPseudoStyles && !m_cachedPseudoStyles->isEmpty(); }
+    const PseudoStyleCache* cachedPseudoStyles() const LIFETIME_BOUND { return m_cachedPseudoStyles.get(); }
 
     // MARK: - Custom properties
 
@@ -853,7 +853,7 @@ protected:
     DataRef<SVGData> m_svgData;
 
     // Associated pseudo styles
-    PseudoStyleCache m_cachedPseudoStyles;
+    std::unique_ptr<PseudoStyleCache> m_cachedPseudoStyles;
 
 #if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
     bool m_deletionHasBegun { false };

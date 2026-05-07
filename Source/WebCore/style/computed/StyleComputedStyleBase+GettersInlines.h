@@ -287,7 +287,7 @@ inline bool ComputedStyleBase::hasAnyPublicPseudoStyles() const
 
 inline const CustomPropertyData& ComputedStyleBase::inheritedCustomProperties() const
 {
-    return m_inheritedRareData->customProperties.get();
+    return m_inheritedRareData->cssData->customProperties.get();
 }
 
 inline const CustomPropertyData& ComputedStyleBase::nonInheritedCustomProperties() const

@@ -104,7 +104,7 @@ namespace Style {
 
 inline Cursor ComputedStyleProperties::cursor() const
 {
-    return { m_inheritedRareData->cursorImages, static_cast<CursorType>(m_inheritedFlags.cursorType) };
+    return { m_inheritedRareData->cssData->cursorImages, static_cast<CursorType>(m_inheritedFlags.cursorType) };
 }
 
 inline ZIndex ComputedStyleProperties::specifiedZIndex() const
