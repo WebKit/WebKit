@@ -35,6 +35,9 @@ set(bmalloc_SOURCES
     libpas/src/libpas/bmalloc_heap_iso.c
     libpas/src/libpas/bmalloc_heap_utils.c
     libpas/src/libpas/jit_heap.c
+    libpas/src/libpas/js_heap.c
+    libpas/src/libpas/js_heap_config.c
+    libpas/src/libpas/js_heap_utils.c
     libpas/src/libpas/pas_bitfit_page_config_kind.c
     libpas/src/libpas/pas_heap_config_kind.c
     libpas/src/libpas/pas_segregated_page_config_kind.c
@@ -47,6 +50,9 @@ set_source_files_properties(
     libpas/src/libpas/bmalloc_heap_iso.c
     libpas/src/libpas/bmalloc_heap_utils.c
     libpas/src/libpas/jit_heap.c
+    libpas/src/libpas/js_heap.c
+    libpas/src/libpas/js_heap_config.c
+    libpas/src/libpas/js_heap_utils.c
     libpas/src/libpas/pas_bitfit_page_config_kind.c
     libpas/src/libpas/pas_heap_config_kind.c
     libpas/src/libpas/pas_segregated_page_config_kind.c
@@ -256,6 +262,12 @@ set(bmalloc_PUBLIC_HEADERS
     libpas/src/libpas/jit_heap_config.h
     libpas/src/libpas/jit_heap_config_root_data.h
     libpas/src/libpas/jit_heap.h
+    libpas/src/libpas/js_heap.h
+    libpas/src/libpas/js_heap_config.h
+    libpas/src/libpas/js_heap_inlines.h
+    libpas/src/libpas/js_heap_innards.h
+    libpas/src/libpas/js_heap_ref.h
+    libpas/src/libpas/js_heap_utils.h
     libpas/src/libpas/minalign32_heap_config.h
     libpas/src/libpas/minalign32_heap.h
     libpas/src/libpas/pagesize64k_heap_config.h

@@ -88,6 +88,15 @@
 		AD14AD2A202529C700890E3B /* ProcessCheck.mm in Sources */ = {isa = PBXBuildFile; fileRef = AD14AD28202529B000890E3B /* ProcessCheck.mm */; };
 		BB00000003000000000000BB /* bmalloc_heap_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = BB00000004000000000000BB /* bmalloc_heap_utils.c */; };
 		BB00000007000000000000BB /* bmalloc_heap_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = BB00000008000000000000BB /* bmalloc_heap_utils.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CC00000001000000000000CC /* js_heap.c in Sources */ = {isa = PBXBuildFile; fileRef = CC00000002000000000000CC /* js_heap.c */; };
+		CC00000003000000000000CC /* js_heap.h in Headers */ = {isa = PBXBuildFile; fileRef = CC00000004000000000000CC /* js_heap.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CC00000005000000000000CC /* js_heap_config.c in Sources */ = {isa = PBXBuildFile; fileRef = CC00000006000000000000CC /* js_heap_config.c */; };
+		CC00000007000000000000CC /* js_heap_config.h in Headers */ = {isa = PBXBuildFile; fileRef = CC00000008000000000000CC /* js_heap_config.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CC00000009000000000000CC /* js_heap_inlines.h in Headers */ = {isa = PBXBuildFile; fileRef = CC0000000A000000000000CC /* js_heap_inlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CC0000000B000000000000CC /* js_heap_innards.h in Headers */ = {isa = PBXBuildFile; fileRef = CC0000000C000000000000CC /* js_heap_innards.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CC0000000D000000000000CC /* js_heap_ref.h in Headers */ = {isa = PBXBuildFile; fileRef = CC0000000E000000000000CC /* js_heap_ref.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CC0000000F000000000000CC /* js_heap_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = CC00000010000000000000CC /* js_heap_utils.c */; };
+		CC00000011000000000000CC /* js_heap_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = CC00000012000000000000CC /* js_heap_utils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C5E4C2B62E0E12F1001E806C /* VMAllocate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5E4C2B52E0E12F1001E806C /* VMAllocate.cpp */; };
 		DD4BEC2629CBA49700398E35 /* pas_large_heap_physical_page_sharing_cache.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FC40A832451498B00876DA0 /* pas_large_heap_physical_page_sharing_cache.c */; };
 		DD4BEC2729CBA49700398E35 /* pas_medium_megapage_cache.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F87004B25AF8A19000E1ABF /* pas_medium_megapage_cache.c */; };
@@ -1209,6 +1218,15 @@
 		AD14AD28202529B000890E3B /* ProcessCheck.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ProcessCheck.mm; path = bmalloc/ProcessCheck.mm; sourceTree = "<group>"; };
 		BB00000004000000000000BB /* bmalloc_heap_utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bmalloc_heap_utils.c; path = libpas/src/libpas/bmalloc_heap_utils.c; sourceTree = "<group>"; };
 		BB00000008000000000000BB /* bmalloc_heap_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bmalloc_heap_utils.h; path = libpas/src/libpas/bmalloc_heap_utils.h; sourceTree = "<group>"; };
+		CC00000002000000000000CC /* js_heap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = js_heap.c; path = libpas/src/libpas/js_heap.c; sourceTree = "<group>"; };
+		CC00000004000000000000CC /* js_heap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = js_heap.h; path = libpas/src/libpas/js_heap.h; sourceTree = "<group>"; };
+		CC00000006000000000000CC /* js_heap_config.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = js_heap_config.c; path = libpas/src/libpas/js_heap_config.c; sourceTree = "<group>"; };
+		CC00000008000000000000CC /* js_heap_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = js_heap_config.h; path = libpas/src/libpas/js_heap_config.h; sourceTree = "<group>"; };
+		CC0000000A000000000000CC /* js_heap_inlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = js_heap_inlines.h; path = libpas/src/libpas/js_heap_inlines.h; sourceTree = "<group>"; };
+		CC0000000C000000000000CC /* js_heap_innards.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = js_heap_innards.h; path = libpas/src/libpas/js_heap_innards.h; sourceTree = "<group>"; };
+		CC0000000E000000000000CC /* js_heap_ref.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = js_heap_ref.h; path = libpas/src/libpas/js_heap_ref.h; sourceTree = "<group>"; };
+		CC00000010000000000000CC /* js_heap_utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = js_heap_utils.c; path = libpas/src/libpas/js_heap_utils.c; sourceTree = "<group>"; };
+		CC00000012000000000000CC /* js_heap_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = js_heap_utils.h; path = libpas/src/libpas/js_heap_utils.h; sourceTree = "<group>"; };
 		C5E4C2B52E0E12F1001E806C /* VMAllocate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = VMAllocate.cpp; path = bmalloc/VMAllocate.cpp; sourceTree = "<group>"; };
 		DE8B13B221CC5D9F00A63FCD /* BVMTags.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BVMTags.h; path = bmalloc/BVMTags.h; sourceTree = "<group>"; };
 		E31E747F2238CA5B005D084A /* StaticPerProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StaticPerProcess.h; path = bmalloc/StaticPerProcess.h; sourceTree = "<group>"; };
@@ -1316,6 +1334,15 @@
 				0F5193EB266C42AC00483A2C /* jit_heap_config.c */,
 				0F5193E8266C42AC00483A2C /* jit_heap_config.h */,
 				0F5193EA266C42AC00483A2C /* jit_heap_config_root_data.h */,
+				CC00000002000000000000CC /* js_heap.c */,
+				CC00000004000000000000CC /* js_heap.h */,
+				CC00000006000000000000CC /* js_heap_config.c */,
+				CC00000008000000000000CC /* js_heap_config.h */,
+				CC0000000A000000000000CC /* js_heap_inlines.h */,
+				CC0000000C000000000000CC /* js_heap_innards.h */,
+				CC0000000E000000000000CC /* js_heap_ref.h */,
+				CC00000010000000000000CC /* js_heap_utils.c */,
+				CC00000012000000000000CC /* js_heap_utils.h */,
 				0F18F83D25C3467700721C2A /* minalign32_heap.c */,
 				0F18F84125C3467700721C2A /* minalign32_heap.h */,
 				0F18F84425C3467700721C2A /* minalign32_heap_config.c */,
@@ -1969,6 +1996,12 @@
 				DD4BEC2829CBA49700398E35 /* jit_heap.h in Headers */,
 				DD4BED9E29CBA49700398E35 /* jit_heap_config.h in Headers */,
 				DD4BED0429CBA49700398E35 /* jit_heap_config_root_data.h in Headers */,
+				CC00000003000000000000CC /* js_heap.h in Headers */,
+				CC00000007000000000000CC /* js_heap_config.h in Headers */,
+				CC00000009000000000000CC /* js_heap_inlines.h in Headers */,
+				CC0000000B000000000000CC /* js_heap_innards.h in Headers */,
+				CC0000000D000000000000CC /* js_heap_ref.h in Headers */,
+				CC00000011000000000000CC /* js_heap_utils.h in Headers */,
 				4426E2811C838EE0008EB042 /* Logging.h in Headers */,
 				14C8992B1CC485E70027A057 /* Map.h in Headers */,
 				DD4BEDE229CBA49700398E35 /* minalign32_heap.h in Headers */,
@@ -2493,6 +2526,9 @@
 				DD4BEC6E29CBA49700398E35 /* iso_test_heap_config.c in Sources */,
 				DD4BEC4229CBA49700398E35 /* jit_heap.c in Sources */,
 				DD4BEDEA29CBA49700398E35 /* jit_heap_config.c in Sources */,
+				CC00000001000000000000CC /* js_heap.c in Sources */,
+				CC00000005000000000000CC /* js_heap_config.c in Sources */,
+				CC0000000F000000000000CC /* js_heap_utils.c in Sources */,
 				4426E2801C838EE0008EB042 /* Logging.cpp in Sources */,
 				DD4BED5529CBA49700398E35 /* minalign32_heap.c in Sources */,
 				DD4BEDE729CBA49700398E35 /* minalign32_heap_config.c in Sources */,

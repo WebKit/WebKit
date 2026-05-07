@@ -37,10 +37,12 @@
 #include <wtf/NeverDestroyed.h>
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #if USE(LIBPAS)
-#include <bmalloc/bmalloc_heap.h>
-#include <bmalloc/bmalloc_heap_config.h>
-#include <bmalloc/bmalloc_heap_inlines.h>
-#include <bmalloc/bmalloc_heap_ref.h>
+#include <bmalloc/js_heap.h>
+#include <bmalloc/js_heap_config.h>
+#include <bmalloc/js_heap_inlines.h>
+#include <bmalloc/js_heap_ref.h>
+#include <bmalloc/js_heap_utils.h>
+#include <bmalloc/pas_page_sharing_pool.h>
 #include <bmalloc/pas_primitive_heap_ref.h>
 #elif USE(MIMALLOC)
 #include <bmalloc/mimalloc.h>
@@ -81,7 +83,7 @@ void* StructureAlignedMemoryAllocator::tryReallocateMemory(void*, size_t)
 #if USE(LIBPAS)
 
 static const bmalloc_type structureHeapType { BMALLOC_TYPE_INITIALIZER(MarkedBlock::blockSize, MarkedBlock::blockSize, "Structure Heap") };
-static pas_primitive_heap_ref structureHeap { BMALLOC_AUXILIARY_HEAP_REF_INITIALIZER(&structureHeapType, pas_bmalloc_heap_ref_kind_compact) };
+static pas_primitive_heap_ref structureHeap { JS_PRIMITIVE_HEAP_REF_INITIALIZER(&structureHeapType, pas_bmalloc_heap_ref_kind_compact) };
 
 #elif USE(MIMALLOC)
 
@@ -118,18 +120,17 @@ public:
         g_jscConfig.structureIDBase = g_jscConfig.startOfStructureHeap & ~StructureID::structureIDMask;
 
         // Don't use the first page because zero is used as the empty StructureID and the first allocation will conflict.
-        m_useSystemHeap = !bmalloc::api::isEnabled();
 #if USE(LIBPAS)
-        if (!m_useSystemHeap) [[likely]] {
+        // js_heap is a dedicated libpas heap that is always driven by libpas, independent of
+        // bmalloc::api::isEnabled() / the system-malloc supplant. This means Structure allocation
+        // keeps the libpas scavenger, segregated pages, and compact-pointer semantics even when
+        // the embedder forces bmalloc's general allocations through the system allocator.
 #if PLATFORM(PLAYSTATION)
-            // libpas isn't calling pas_page_malloc commit, so we've got to commit the region ourselves
-            // https://bugs.webkit.org/show_bug.cgi?id=292771
-            OSAllocator::commit((void *) g_jscConfig.startOfStructureHeap, MarkedBlock::blockSize, true, false);
+        // libpas isn't calling pas_page_malloc commit, so we've got to commit the region ourselves
+        // https://bugs.webkit.org/show_bug.cgi?id=292771
+        OSAllocator::commit((void *) g_jscConfig.startOfStructureHeap, MarkedBlock::blockSize, true, false);
 #endif
-            bmalloc_force_auxiliary_heap_into_reserved_memory(&structureHeap, reinterpret_cast<uintptr_t>(g_jscConfig.startOfStructureHeap) + MarkedBlock::blockSize, reinterpret_cast<uintptr_t>(g_jscConfig.startOfStructureHeap) + g_jscConfig.sizeOfStructureHeap);
-            return;
-        }
-        m_usedBlocks.set(0);
+        js_force_heap_into_reserved_memory(&structureHeap, reinterpret_cast<uintptr_t>(g_jscConfig.startOfStructureHeap) + MarkedBlock::blockSize, reinterpret_cast<uintptr_t>(g_jscConfig.startOfStructureHeap) + g_jscConfig.sizeOfStructureHeap);
 #elif USE(MIMALLOC)
         void* memory = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(g_jscConfig.startOfStructureHeap) + MarkedBlock::blockSize);
         size_t size = g_jscConfig.sizeOfStructureHeap - MarkedBlock::blockSize;
@@ -142,21 +143,17 @@ public:
 
     void* tryMallocStructureBlock()
     {
-        if (!m_useSystemHeap) [[likely]] {
 #if USE(LIBPAS)
-            void* result = bmalloc_try_allocate_auxiliary_with_alignment_inline(&structureHeap, MarkedBlock::blockSize, MarkedBlock::blockSize, pas_always_compact_allocation_mode);
-
+        void* result = js_try_allocate_with_alignment_inline(&structureHeap, MarkedBlock::blockSize, MarkedBlock::blockSize, pas_always_compact_allocation_mode);
 #if PLATFORM(PLAYSTATION)
-            // libpas isn't calling pas_page_malloc commit, so we've got to commit the region ourselves
-            // https://bugs.webkit.org/show_bug.cgi?id=292771
-            OSAllocator::commit(result, MarkedBlock::blockSize, true, false);
+        // libpas isn't calling pas_page_malloc commit, so we've got to commit the region ourselves
+        // https://bugs.webkit.org/show_bug.cgi?id=292771
+        OSAllocator::commit(result, MarkedBlock::blockSize, true, false);
 #endif
-            return result;
+        return result;
 #elif USE(MIMALLOC)
-            return mi_heap_malloc_aligned(structureHeap, MarkedBlock::blockSize, MarkedBlock::blockSize);
-#endif
-        }
-
+        return mi_heap_malloc_aligned(structureHeap, MarkedBlock::blockSize, MarkedBlock::blockSize);
+#else
         size_t freeIndex;
         {
             Locker locker(m_lock);
@@ -174,20 +171,16 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         commitBlock(block);
         return block;
+#endif
     }
 
     void freeStructureBlock(void* blockPtr)
     {
-        if (!m_useSystemHeap) [[likely]] {
 #if USE(LIBPAS)
-            bmalloc_deallocate_inline(blockPtr);
-            return;
+        js_deallocate_inline(blockPtr);
 #elif USE(MIMALLOC)
-            mi_free(blockPtr);
-            return;
-#endif
-        }
-
+        mi_free(blockPtr);
+#else
         decommitBlock(blockPtr);
         uintptr_t block = reinterpret_cast<uintptr_t>(blockPtr);
         RELEASE_ASSERT(g_jscConfig.startOfStructureHeap <= block && block < g_jscConfig.startOfStructureHeap + g_jscConfig.sizeOfStructureHeap);
@@ -195,8 +188,10 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
         Locker locker(m_lock);
         m_usedBlocks.quickClear((block - g_jscConfig.startOfStructureHeap) / MarkedBlock::blockSize);
+#endif
     }
 
+#if !USE(LIBPAS) && !USE(MIMALLOC)
     static void commitBlock(void* block)
     {
 #if OS(UNIX) && !PLATFORM(PLAYSTATION) && ASSERT_ENABLED
@@ -220,11 +215,13 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         OSAllocator::decommit(block, MarkedBlock::blockSize);
 #endif
     }
+#endif
 
 private:
+#if !USE(LIBPAS) && !USE(MIMALLOC)
     Lock m_lock;
-    bool m_useSystemHeap { true };
     BitVector m_usedBlocks;
+#endif
 };
 
 static LazyNeverDestroyed<StructureMemoryManager> s_structureMemoryManager;
