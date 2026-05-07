@@ -1,3 +1,7 @@
+Returning null for request to blob:http://127.0.0.1:8000/e953bd0e-779a-4f0f-b943-9bc1f15da5f1
+Returning null for request to http://127.0.0.1:8000/media/resources/test.mp4
+Returning null for request to http://127.0.0.1:8000/media/resources/test.mp4
+Returning null for request to blob:http://127.0.0.1:8000/e953bd0e-779a-4f0f-b943-9bc1f15da5f1
 
 Test to ensure that a media file blocked by the resource load delegate generates an error and does not block the document's 'load' event.
 

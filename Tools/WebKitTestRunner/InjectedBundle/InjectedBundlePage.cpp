@@ -870,6 +870,16 @@ static inline bool isAllowedHost(WKStringRef host)
     return InjectedBundle::singleton().isAllowedHost(host);
 }
 
+String urlForWillSendRequestReturnsNullMessage(WKURLRef url)
+{
+    auto scheme = adoptWK(WKURLCopyScheme(url));
+    if (WKStringIsEqualToUTF8CStringIgnoringCase(scheme.get(), "file"))
+        return "local resources"_s;
+
+    auto urlString = adoptWK(WKURLCopyString(url));
+    return sanitizeExternalURL(urlString.get());
+}
+
 WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t identifier, WKURLRequestRef request, WKURLResponseRef response)
 {
     auto& injectedBundle = InjectedBundle::singleton();
@@ -882,16 +892,21 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef page
         injectedBundle.outputText(stringBuilder.toString());
     }
 
-    if (testRunner && testRunner->willSendRequestReturnsNull())
-        return nullptr;
+    auto url = adoptWK(WKURLRequestCopyURL(request));
 
-    auto redirectURL = adoptWK(WKURLResponseCopyURL(response));
-    if (testRunner && testRunner->willSendRequestReturnsNullOnRedirect() && redirectURL) {
-        injectedBundle.outputText("Returning null for this redirect\n"_s);
+    if (testRunner && testRunner->willSendRequestReturnsNull()) {
+        auto output = makeString("Returning null for request to "_s, urlForWillSendRequestReturnsNullMessage(url.get()), "\n"_s);
+        injectedBundle.outputText(output);
         return nullptr;
     }
 
-    auto url = adoptWK(WKURLRequestCopyURL(request));
+    auto redirectURL = adoptWK(WKURLResponseCopyURL(response));
+    if (testRunner && testRunner->willSendRequestReturnsNullOnRedirect() && redirectURL) {
+        auto output = makeString("Returning null for redirect to "_s, urlForWillSendRequestReturnsNullMessage(redirectURL.get()), "\n"_s);
+        injectedBundle.outputText(output);
+        return nullptr;
+    }
+
     auto host = adoptWK(WKURLCopyHostName(url.get()));
     auto scheme = adoptWK(WKURLCopyScheme(url.get()));
     auto urlString = adoptWK(WKURLCopyString(url.get()));
