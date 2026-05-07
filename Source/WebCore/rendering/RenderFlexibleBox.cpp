@@ -2328,6 +2328,7 @@ LayoutUnit RenderFlexibleBox::computeCrossSizeForFlexItemUsingContainerCrossSize
         return contentBoxLogicalWidth();
 
     // Keep this sync'ed with hasDefiniteCrossSizeForFlexItem().
+    ASSERT(hasDefiniteCrossSizeForFlexItem(flexItem));
     auto definiteSizeValue = [&] {
         // Let's compute the definite size value for the flex item (value that we can resolve without running layout).
         auto isHorizontal = isHorizontalFlow();
@@ -2347,6 +2348,10 @@ LayoutUnit RenderFlexibleBox::computeCrossSizeForFlexItemUsingContainerCrossSize
         if (auto fixedMinimumSize = minimumSize.tryFixed())
             definiteValue = std::max(definiteValue, LayoutUnit { fixedMinimumSize->resolveZoom(style().usedZoomForLength()) });
 
+        if (style().boxSizing() == BoxSizing::BorderBox) {
+            auto crossAxisBorderAndPadding = isHorizontal ? borderAndPaddingLogicalHeight() : borderAndPaddingLogicalWidth();
+            return std::max({ }, definiteValue - crossAxisBorderAndPadding);
+        }
         return definiteValue;
     };
     return std::max(0_lu, definiteSizeValue() - crossAxisMarginExtentForFlexItem(flexItem));
