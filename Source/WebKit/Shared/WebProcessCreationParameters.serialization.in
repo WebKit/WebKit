@@ -70,6 +70,7 @@ using WebCore::SystemSettings::State = WebCore::SystemSettingsState;
     bool shouldEnableMemoryPressureReliefLogging;
     bool shouldSuppressMemoryPressureHandler;
     bool disableFontSubpixelAntialiasingForTesting;
+    bool canvasExportAssertionsEnabled;
     bool fullKeyboardAccessEnabled;
 #if HAVE(MOUSE_DEVICE_OBSERVATION)
     bool hasMouseDevice;

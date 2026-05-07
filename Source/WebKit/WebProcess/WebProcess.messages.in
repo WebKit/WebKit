@@ -56,6 +56,7 @@ messages -> WebProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     SetDefaultRequestTimeoutInterval(double timeoutInterval)
     SetAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
     SetDisableFontSubpixelAntialiasingForTesting(bool disable)
+    SetCanvasExportAssertionsEnabledForTesting(bool enabled)
     SetTrackingPreventionEnabled(bool enabled);
     ClearResourceLoadStatistics();
     UserPreferredLanguagesChanged(Vector<String> languages)

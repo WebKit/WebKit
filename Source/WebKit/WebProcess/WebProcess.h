@@ -610,6 +610,7 @@ private:
     void NODELETE setDefaultRequestTimeoutInterval(double);
     void NODELETE setAlwaysUsesComplexTextCodePath(bool);
     void NODELETE setDisableFontSubpixelAntialiasingForTesting(bool);
+    void NODELETE setCanvasExportAssertionsEnabledForTesting(bool);
     void setTrackingPreventionEnabled(bool);
     void clearResourceLoadStatistics();
     void flushResourceLoadStatistics();

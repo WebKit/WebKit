@@ -321,6 +321,11 @@ void WKContextSetDisableFontSubpixelAntialiasingForTesting(WKContextRef contextR
     protect(WebKit::toImpl(contextRef))->setDisableFontSubpixelAntialiasingForTesting(disable);
 }
 
+void WKContextSetCanvasExportAssertionsEnabledForTesting(WKContextRef contextRef, bool enabled)
+{
+    protect(WebKit::toImpl(contextRef))->setCanvasExportAssertionsEnabledForTesting(enabled);
+}
+
 void WKContextSetAllowAXAuthenticationForTesting(WKContextRef contextRef, bool allow)
 {
     protect(WebKit::toImpl(contextRef))->setAllowAXAuthenticationForTesting(allow);

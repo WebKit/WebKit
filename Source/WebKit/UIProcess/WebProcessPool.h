@@ -284,6 +284,7 @@ public:
 
     void setAlwaysUsesComplexTextCodePath(bool);
     void setDisableFontSubpixelAntialiasingForTesting(bool);
+    void setCanvasExportAssertionsEnabledForTesting(bool);
     
     void registerURLSchemeAsEmptyDocument(const String&);
     void registerURLSchemeAsSecure(const String&);
@@ -825,6 +826,7 @@ private:
 
     bool m_alwaysUsesComplexTextCodePath { false };
     bool m_disableFontSubpixelAntialiasingForTesting { false };
+    bool m_canvasExportAssertionsEnabledForTesting { false };
 
     Vector<String> m_fontAllowList;
 

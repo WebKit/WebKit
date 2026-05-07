@@ -807,6 +807,7 @@ private:
     String m_unsupportedPluginMode;
 
     bool m_forceComplexText { false };
+    bool m_canvasExportAssertions { false };
     bool m_shouldLogCanAuthenticateAgainstProtectionSpace { false };
     bool m_shouldLogDownloadCallbacks { false };
     bool m_shouldLogHistoryClientCallbacks { false };

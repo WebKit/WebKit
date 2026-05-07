@@ -50,6 +50,8 @@ WK_EXPORT void WKContextSetAlwaysUsesComplexTextCodePath(WKContextRef context, b
 
 WK_EXPORT void WKContextSetDisableFontSubpixelAntialiasingForTesting(WKContextRef context, bool disable);
 
+WK_EXPORT void WKContextSetCanvasExportAssertionsEnabledForTesting(WKContextRef context, bool enabled);
+
 WK_EXPORT void WKContextRegisterURLSchemeAsSecure(WKContextRef context, WKStringRef urlScheme);
 
 WK_EXPORT void WKContextRegisterURLSchemeAsBypassingContentSecurityPolicy(WKContextRef context, WKStringRef urlScheme);

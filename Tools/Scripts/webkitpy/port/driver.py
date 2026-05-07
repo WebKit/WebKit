@@ -584,6 +584,8 @@ class Driver(object):
             cmd.append('--show-cursor')
         if self._port.get_option('accessibility_isolated_tree'):
             cmd.append('--accessibility-isolated-tree')
+        if self._port.get_option('site_isolation'):
+            cmd.append('--canvas-export-assertions')
 
         for allowed_host in self._port.allowed_hosts():
             cmd.append('--allowed-host')

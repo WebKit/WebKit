@@ -917,6 +917,7 @@ void TestController::initialize(int argc, const char* argv[])
     m_gcBetweenTests = options.gcBetweenTests;
     m_shouldDumpPixelsForAllTests = options.shouldDumpPixelsForAllTests;
     m_forceComplexText = options.forceComplexText;
+    m_canvasExportAssertions = options.canvasExportAssertions;
     m_paths = options.paths;
     m_allowedHosts = options.allowedHosts;
     m_localhostAliases = options.localhostAliases;
@@ -1042,6 +1043,9 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(co
 
         WKContextSetCacheModel(m_context.get(), kWKCacheModelDocumentBrowser);
         WKContextSetDisableFontSubpixelAntialiasingForTesting(TestController::singleton().context(), true);
+
+        if (m_canvasExportAssertions)
+            WKContextSetCanvasExportAssertionsEnabledForTesting(TestController::singleton().context(), true);
 
         platformInitializeContext();
     }

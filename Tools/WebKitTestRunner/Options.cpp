@@ -190,6 +190,12 @@ static bool handleOptionLockdownMode(Options& options, const char*, const char*)
     return true;
 }
 
+static bool handleOptionCanvasExportAssertions(Options& options, const char*, const char*)
+{
+    options.canvasExportAssertions = true;
+    return true;
+}
+
 #if PLATFORM(WPE)
 static bool handleOptionWPELegacyAPI(Options& options, const char*, const char*)
 {
@@ -236,6 +242,7 @@ OptionsHandler::OptionsHandler(Options& o)
     optionList.append(Option("--webcore-logging", "Enable WebCore log channels", handleOptionWebCoreLogging, true));
     optionList.append(Option("--webkit-logging", "Enable WebKit log channels", handleOptionWebKitLogging, true));
     optionList.append(Option("--lockdown-mode", "Enable Lockdown Mode", handleOptionLockdownMode));
+    optionList.append(Option("--canvas-export-assertions", "Enable release assertions for canvas export failures", handleOptionCanvasExportAssertions));
 #if PLATFORM(WPE)
     optionList.append(Option("--wpe-legacy-api", "Use the WPE legacy API (libwpe)", handleOptionWPELegacyAPI));
 #endif

@@ -1006,6 +1006,7 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
 
     parameters.shouldAlwaysUseComplexTextCodePath = m_alwaysUsesComplexTextCodePath;
     parameters.disableFontSubpixelAntialiasingForTesting = m_disableFontSubpixelAntialiasingForTesting;
+    parameters.canvasExportAssertionsEnabled = m_canvasExportAssertionsEnabledForTesting;
 
     parameters.textCheckerState = TextChecker::state();
 
@@ -1582,6 +1583,12 @@ void WebProcessPool::setDisableFontSubpixelAntialiasingForTesting(bool disable)
 {
     m_disableFontSubpixelAntialiasingForTesting = disable;
     sendToAllProcesses(Messages::WebProcess::SetDisableFontSubpixelAntialiasingForTesting(disable));
+}
+
+void WebProcessPool::setCanvasExportAssertionsEnabledForTesting(bool enabled)
+{
+    m_canvasExportAssertionsEnabledForTesting = enabled;
+    sendToAllProcesses(Messages::WebProcess::SetCanvasExportAssertionsEnabledForTesting(enabled));
 }
 
 void WebProcessPool::registerURLSchemeAsEmptyDocument(const String& urlScheme)

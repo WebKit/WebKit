@@ -54,6 +54,7 @@
 #include "ColorSerialization.h"
 #include "DOMMatrix.h"
 #include "DOMMatrix2DInit.h"
+#include "DeprecatedGlobalSettings.h"
 #include "FloatQuad.h"
 #include "FontCascadeFonts.h"
 #include "FontCascadeInlines.h"
@@ -3349,12 +3350,17 @@ RefPtr<ImageBuffer> CanvasRenderingContext2DBase::allocateImageBuffer() const
     if (!canvasBase().validateArea())
         return nullptr;
     RefPtr scriptExecutionContext = canvasBase().scriptExecutionContext();
+    if (DeprecatedGlobalSettings::canvasExportAssertionsEnabled())
+        RELEASE_ASSERT_WITH_MESSAGE(scriptExecutionContext, "CanvasRenderingContext2DBase::allocateImageBuffer: scriptExecutionContext is null");
     if (!scriptExecutionContext)
         return nullptr;
     RenderingMode renderingMode = !willReadFrequently() && canvasBase().shouldAccelerate() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
     if (auto renderingModeForTesting = this->renderingModeForTesting())
         renderingMode = *renderingModeForTesting;
-    return ImageBuffer::create(canvasBase().size(), renderingMode, RenderingPurpose::Canvas, 1, colorSpace(), pixelFormat(), scriptExecutionContext->graphicsClient());
+    auto buffer = ImageBuffer::create(canvasBase().size(), renderingMode, RenderingPurpose::Canvas, 1, colorSpace(), pixelFormat(), scriptExecutionContext->graphicsClient());
+    if (DeprecatedGlobalSettings::canvasExportAssertionsEnabled())
+        RELEASE_ASSERT_WITH_MESSAGE(buffer, "CanvasRenderingContext2DBase::allocateImageBuffer: ImageBuffer::create() returned null (size: %dx%d, accelerated: %d)", canvasBase().size().width(), canvasBase().size().height(), renderingMode == RenderingMode::Accelerated);
+    return buffer;
 }
 
 } // namespace WebCore

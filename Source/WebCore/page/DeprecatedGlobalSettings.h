@@ -84,6 +84,9 @@ public:
     static void setAttrStyleEnabled(bool isEnabled) { singleton().m_attrStyleEnabled = isEnabled; }
     static bool attrStyleEnabled() { return singleton().m_attrStyleEnabled; }
 
+    static void setCanvasExportAssertionsEnabled(bool isEnabled) { singleton().m_canvasExportAssertionsEnabled = isEnabled; }
+    static bool canvasExportAssertionsEnabled() { return singleton().m_canvasExportAssertionsEnabled; }
+
     static void setWebSQLEnabled(bool isEnabled) { singleton().m_webSQLEnabled = isEnabled; }
     static bool webSQLEnabled() { return singleton().m_webSQLEnabled; }
 
@@ -155,6 +158,7 @@ private:
 
     bool m_isCustomPasteboardDataEnabled { false };
     bool m_attrStyleEnabled { false };
+    bool m_canvasExportAssertionsEnabled { false };
     bool m_webSQLEnabled { false };
 
 #if ENABLE(ATTACHMENT_ELEMENT)

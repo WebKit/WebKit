@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ImageUtilities.h"
 
+#include "DeprecatedGlobalSettings.h"
 #include "DestinationColorSpace.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
@@ -71,7 +72,14 @@ Vector<uint8_t> encodeData(RefPtr<ImageBuffer>&& buffer, const String& mimeType,
 {
     if (!buffer)
         return { };
-    return encodeData(buffer->copyNativeImage(), mimeType, quality);
+    auto image = buffer->copyNativeImage();
+    if (!image) {
+        auto logicalSize = buffer->logicalSize();
+        if (DeprecatedGlobalSettings::canvasExportAssertionsEnabled())
+            RELEASE_ASSERT_WITH_MESSAGE(logicalSize.area() > 4096 * 4096, "encodeData(ImageBuffer): copyNativeImage() returned null for small ImageBuffer (size: %dx%d)", static_cast<int>(logicalSize.width()), static_cast<int>(logicalSize.height()));
+        return { };
+    }
+    return encodeData(*image, mimeType, quality);
 }
 
 String encodeDataURL(const NativeImage& image, const String& mimeType, std::optional<double> quality)
@@ -93,7 +101,14 @@ String encodeDataURL(RefPtr<ImageBuffer>&& buffer, const String& mimeType, std::
 {
     if (!buffer)
         return "data:,"_s;
-    return encodeDataURL(buffer->copyNativeImage(), mimeType, quality);
+    auto image = buffer->copyNativeImage();
+    if (!image) {
+        auto logicalSize = buffer->logicalSize();
+        if (DeprecatedGlobalSettings::canvasExportAssertionsEnabled())
+            RELEASE_ASSERT_WITH_MESSAGE(logicalSize.area() > 4096 * 4096, "encodeDataURL(ImageBuffer): copyNativeImage() returned null for small ImageBuffer (size: %dx%d)", static_cast<int>(logicalSize.width()), static_cast<int>(logicalSize.height()));
+        return "data:,"_s;
+    }
+    return encodeDataURL(*image, mimeType, quality);
 }
 
 }

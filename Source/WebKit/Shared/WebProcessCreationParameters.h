@@ -128,6 +128,7 @@ struct WebProcessCreationParameters {
     bool shouldEnableMemoryPressureReliefLogging { false };
     bool shouldSuppressMemoryPressureHandler { false };
     bool disableFontSubpixelAntialiasingForTesting { false };
+    bool canvasExportAssertionsEnabled { false };
     bool fullKeyboardAccessEnabled { false };
 #if HAVE(MOUSE_DEVICE_OBSERVATION)
     bool hasMouseDevice { false };

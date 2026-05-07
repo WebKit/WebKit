@@ -684,6 +684,9 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
 
     setDisableFontSubpixelAntialiasingForTesting(parameters.disableFontSubpixelAntialiasingForTesting);
 
+    if (parameters.canvasExportAssertionsEnabled)
+        WebCore::DeprecatedGlobalSettings::setCanvasExportAssertionsEnabled(true);
+
     setMemoryCacheDisabled(parameters.memoryCacheDisabled);
 
     WebCore::DeprecatedGlobalSettings::setAttrStyleEnabled(parameters.attrStyleEnabled);
@@ -973,6 +976,11 @@ void WebProcess::setAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
 void WebProcess::setDisableFontSubpixelAntialiasingForTesting(bool disable)
 {
     WebCore::FontCascade::setDisableFontSubpixelAntialiasingForTesting(disable);
+}
+
+void WebProcess::setCanvasExportAssertionsEnabledForTesting(bool enabled)
+{
+    WebCore::DeprecatedGlobalSettings::setCanvasExportAssertionsEnabled(enabled);
 }
 
 void WebProcess::userPreferredLanguagesChanged(const Vector<String>& languages) const
