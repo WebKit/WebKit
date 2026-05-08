@@ -4495,8 +4495,8 @@ storage/indexeddb/connection-leak.html [ Failure Pass ]
 
 fast/text/font-load-data-partitioned-alphabet.html [ Failure ]
 
-imported/w3c/web-platform-tests/navigation-api [ Skip ]
-webkit.org/b/282475 http/wpt/navigation-api [ Skip ]
+imported/w3c/web-platform-tests/navigation-api/navigation-methods/traverseTo-navigates-multiple-iframes.html [ Failure ]
+imported/w3c/web-platform-tests/navigation-api/navigate-event/defer/tentative/defer-restore-callback-abort.html [ Skip ] # Crash
 
 http/tests/navigation/keyboard-events-during-provisional-subframe-navigation.html [ Failure ]
 
