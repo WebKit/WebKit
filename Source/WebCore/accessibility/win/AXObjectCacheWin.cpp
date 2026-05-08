@@ -36,6 +36,7 @@
 #include "NodeDocument.h"
 #include "Page.h"
 #include "RenderObject.h"
+#include "RenderView.h"
 
 // Provided by IAccessibleEventID.idl
 #define IA2_EVENT_DOCUMENT_LOAD_COMPLETE    261
