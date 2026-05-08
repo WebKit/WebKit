@@ -26,7 +26,7 @@
 #pragma once
 
 #import <Foundation/Foundation.h>
-#import <wtf/PlatformHave.h>
+#import <wtf/Platform.h>
 
 #if HAVE(MATERIAL_HOSTING)
 
