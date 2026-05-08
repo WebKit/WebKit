@@ -325,7 +325,6 @@ public:
     void NODELETE selfOnlyRef();
     void selfOnlyDeref();
 
-    void documentURLOrOriginDidChange();
     void dispatchLoadEventToParent();
 
     void storageAccessExceptionReceivedForDomain(const RegistrableDomain&);
