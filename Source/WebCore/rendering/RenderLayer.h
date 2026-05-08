@@ -1108,6 +1108,7 @@ private:
 
     void computeRepaintRects(const RenderLayerModelObject* repaintContainer);
     void computeRepaintRectsIncludingDescendants();
+    bool tryToCacheRepaintContainerOffset(const RenderLayerModelObject* repaintContainer);
 
     void compositingStatusChanged(LayoutUpToDate);
 
@@ -1465,6 +1466,7 @@ private:
     bool m_hasNotIsolatedBlendingDescendants : 1;
     bool m_hasNotIsolatedBlendingDescendantsStatusDirty : 1;
     bool m_repaintRectsValid : 1 { false };
+    bool m_offsetToRepaintContainerValid : 1 { false };
 
     bool m_intrinsicallyComposited : 1 { false };
     bool m_alwaysIncludedInZOrderLists : 1 { false };
@@ -1498,6 +1500,10 @@ private:
 
     // Only valid if m_repaintRectsValid is set (std::optional<> not used to avoid padding).
     RenderObject::RepaintRects m_repaintRects;
+
+    // Cached cumulative offset from renderer's parent to the repaint container.
+    // Valid when m_offsetToRepaintContainerValid is set.
+    LayoutSize m_cachedOffsetToRepaintContainer;
 
     // Our current relative or absolute position offset.
     LayoutSize m_offsetForPosition;

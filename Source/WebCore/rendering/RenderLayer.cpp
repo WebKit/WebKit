@@ -1254,8 +1254,13 @@ void RenderLayer::recursiveUpdateLayerPositions(OptionSet<UpdateLayerPositionsFl
         flags.add(SubtreeNeedsUpdate);
     }
 
-    if (updateLayerPosition(&flags, mode))
+    if (updateLayerPosition(&flags, mode)) {
         flags.add(SubtreeNeedsUpdate);
+        m_offsetToRepaintContainerValid = false;
+    }
+
+    if (flags.contains(SubtreeNeedsUpdate))
+        m_offsetToRepaintContainerValid = false;
 
 #if ASSERT_ENABLED
     if (mode == Write)
@@ -1515,12 +1520,65 @@ void RenderLayer::computeRepaintRects(const RenderLayerModelObject* repaintConta
 {
     ASSERT(!m_visibleContentStatusDirty);
 
-    if (isSubtreeVisibilityHiddenOrOpacityZero() || !isSelfPaintingLayer())
+    if (isSubtreeVisibilityHiddenOrOpacityZero() || !isSelfPaintingLayer()) {
         clearRepaintRects();
-    else
-        setRepaintRects(renderer().rectsForRepaintingAfterLayout(repaintContainer, RepaintOutlineBounds::Yes));
+        return;
+    }
 
+    if (m_offsetToRepaintContainerValid && m_repaintContainer.get() == repaintContainer) {
+        auto localRects = renderer().localRectsForRepaint(RepaintOutlineBounds::Yes);
+        if (!localRects.clippedOverflowRect.isEmpty()) {
+            if (isTransformed())
+                localRects.transform(currentTransform(), renderer().document().deviceScaleFactor());
+            if (auto* box = renderBox())
+                localRects.moveBy(box->location());
+            localRects.move(m_cachedOffsetToRepaintContainer);
+            if (localRects.outlineBoundsRect)
+                localRects.outlineBoundsRect = LayoutRect(snapRectToDevicePixels(*localRects.outlineBoundsRect, renderer().document().deviceScaleFactor()));
+        } else
+            localRects = { };
+#if ASSERT_ENABLED
+        auto expectedRects = renderer().rectsForRepaintingAfterLayout(repaintContainer, RepaintOutlineBounds::Yes);
+        ASSERT(localRects.clippedOverflowRect == expectedRects.clippedOverflowRect);
+        ASSERT(localRects.outlineBoundsRect == expectedRects.outlineBoundsRect);
+#endif
+        setRepaintRects(localRects);
+        return;
+    }
+
+    setRepaintRects(renderer().rectsForRepaintingAfterLayout(repaintContainer, RepaintOutlineBounds::Yes));
     m_repaintContainer = repaintContainer;
+    m_offsetToRepaintContainerValid = tryToCacheRepaintContainerOffset(repaintContainer);
+}
+
+bool RenderLayer::tryToCacheRepaintContainerOffset(const RenderLayerModelObject* repaintContainer)
+{
+    // The fast-path computes repaint rects by applying the renderer's own transform
+    // and location, then translating by a cached cumulative ancestor offset. This is
+    // only valid when:
+    //  - The renderer has no properties that require special coordinate mapping
+    //    (reflections, writing mode flips, in-flow positioning, widget snapping).
+    //  - Every ancestor up to repaintContainer is a layerless RenderBox in the same
+    //    writing mode — layerless guarantees no transforms, no positioning, no
+    //    overflow clipping, no reflections, no multi-column (see RenderBox::requiresLayer).
+
+    auto* box = renderBox();
+    if (!box)
+        return false;
+
+    if (box->hasReflection() || box->isWritingModeRoot() || box->style().hasInFlowPosition() || box->isRenderWidget())
+        return false;
+
+    LayoutSize offset;
+    for (auto* current = renderer().container(); current && current != repaintContainer; current = current->container()) {
+        auto* ancestor = dynamicDowncast<RenderBox>(*current);
+        if (!ancestor || ancestor->hasLayer() || ancestor->isWritingModeRoot())
+            return false;
+        offset += ancestor->locationOffset();
+    }
+
+    m_cachedOffsetToRepaintContainer = offset;
+    return true;
 }
 
 void RenderLayer::computeRepaintRectsIncludingDescendants()
