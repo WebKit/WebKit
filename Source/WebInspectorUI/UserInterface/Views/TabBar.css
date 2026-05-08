@@ -90,6 +90,11 @@ body.window-inactive .tab-bar > .border {
     padding: 0;
 }
 
+.tab-bar > .navigation-bar > .item.group > .item > img {
+    width: 16px;
+    height: 16px;
+}
+
 .tab-bar > .navigation-bar > .item.group > .item:nth-child(1 of :not(.hidden)) {
     margin-inline-start: 8px;
 }
