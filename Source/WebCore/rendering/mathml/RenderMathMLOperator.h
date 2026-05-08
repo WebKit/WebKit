@@ -63,10 +63,11 @@ public:
     virtual char32_t textContent() const;
     bool isStretchy() const { return textContent() && hasOperatorFlag(MathMLOperatorDictionary::Stretchy); }
 
-protected:
-    virtual void updateMathOperator();
     virtual LayoutUnit leadingSpace() const;
     virtual LayoutUnit trailingSpace() const;
+
+protected:
+    virtual void updateMathOperator();
     virtual LayoutUnit minSize() const;
     virtual LayoutUnit maxSize() const;
     virtual bool useMathOperator() const;

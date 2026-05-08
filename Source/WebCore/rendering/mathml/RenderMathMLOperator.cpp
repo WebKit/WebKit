@@ -179,7 +179,9 @@ void RenderMathMLOperator::stretchTo(LayoutUnit width)
     m_stretchWidth = width;
     m_mathOperator.stretchTo(style(), width);
 
-    setLogicalWidth(leadingSpace() + width + trailingSpace() + borderAndPaddingLogicalWidth());
+    if (!document().settings().coreMathMLEnabled())
+        width += leadingSpace() + trailingSpace();
+    setLogicalWidth(width + borderAndPaddingLogicalWidth());
     setLogicalHeight(m_mathOperator.ascent() + m_mathOperator.descent() + borderAndPaddingLogicalHeight());
 }
 
@@ -213,10 +215,8 @@ void RenderMathMLOperator::computePreferredLogicalWidths()
     } else
         preferredWidth = m_mathOperator.maxPreferredWidth() + borderAndPaddingLogicalWidth();
 
-    // FIXME: The spacing should be added to the whole embellished operator (https://webkit.org/b/124831).
-    // FIXME: The spacing should only be added inside (perhaps inferred) mrow (http://www.w3.org/TR/MathML/chapter3.html#presm.opspacing).
-    preferredWidth = leadingSpace() + preferredWidth + trailingSpace();
-
+    if (!document().settings().coreMathMLEnabled())
+        preferredWidth = leadingSpace() + preferredWidth + trailingSpace();
     m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth = preferredWidth;
 
     clearNeedsPreferredWidthsUpdate();
@@ -233,8 +233,11 @@ void RenderMathMLOperator::layoutBlock(RelayoutChildren relayoutChildren, Layout
 
     layoutFloatingChildren();
 
-    LayoutUnit leadingSpaceValue = leadingSpace();
-    LayoutUnit trailingSpaceValue = trailingSpace();
+    LayoutUnit leadingSpaceValue = 0, trailingSpaceValue = 0;
+    if (!document().settings().coreMathMLEnabled()) {
+        leadingSpaceValue = leadingSpace();
+        trailingSpaceValue = trailingSpace();
+    }
 
     if (useMathOperator()) {
         recomputeLogicalWidth();
@@ -342,8 +345,14 @@ void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset
     if (!useMathOperator())
         return;
 
+    LayoutUnit leadingSpaceValue = 0, trailingSpaceValue = 0;
+    if (!document().settings().coreMathMLEnabled()) {
+        leadingSpaceValue = leadingSpace();
+        trailingSpaceValue = trailingSpace();
+    }
+
     auto operatorTopLeft = paintOffset + location();
-    operatorTopLeft.move((writingMode().isBidiLTR() ? leadingSpace() : trailingSpace()) + borderLeft() + paddingLeft(), borderAndPaddingBefore());
+    operatorTopLeft.move((writingMode().isBidiLTR() ? leadingSpaceValue : trailingSpaceValue) + borderLeft() + paddingLeft(), borderAndPaddingBefore());
 
     m_mathOperator.paint(style(), info, operatorTopLeft, document().deviceScaleFactor());
 }

@@ -65,7 +65,7 @@ RenderMathMLToken::RenderMathMLToken(Type type, Document& document, RenderStyle&
 
 RenderMathMLToken::~RenderMathMLToken() = default;
 
-MathMLTokenElement& RenderMathMLToken::element()
+MathMLTokenElement& RenderMathMLToken::element() const
 {
     return static_cast<MathMLTokenElement&>(nodeForNonAnonymous());
 }
@@ -227,6 +227,11 @@ void RenderMathMLToken::paintChildren(PaintInfo& paintInfo, const LayoutPoint& p
     }
 
     RenderMathMLBlock::paintChildren(paintInfo, paintOffset, paintInfoForChild, usePrintRect);
+}
+
+bool RenderMathMLToken::isSpaceLike() const
+{
+    return element().hasTagName(MathMLNames::mtextTag);
 }
 
 }
