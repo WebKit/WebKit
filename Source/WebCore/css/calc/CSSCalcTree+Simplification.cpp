@@ -143,6 +143,28 @@ constexpr bool NODELETE magnitudeComparable(const NonCanonicalDimension&, const 
     return true;
 }
 
+// MARK: Predicate: signKnowable
+
+constexpr bool NODELETE signKnowable(const Number&, const SimplificationOptions&)
+{
+    return true;
+}
+
+static bool NODELETE signKnowable(const Percentage&, const SimplificationOptions& options)
+{
+    return !percentageResolveToDimension(options);
+}
+
+constexpr bool NODELETE signKnowable(const CanonicalDimension&, const SimplificationOptions&)
+{
+    return true;
+}
+
+static bool NODELETE signKnowable(const NonCanonicalDimension&, const SimplificationOptions& options)
+{
+    return options.conversionData.has_value();
+}
+
 // MARK: Predicate: fullyResolved
 
 constexpr bool NODELETE fullyResolved(const Number&, const SimplificationOptions&)
@@ -1304,7 +1326,7 @@ std::optional<Child> simplify(Sign& root, const SimplificationOptions& options)
 {
     return WTF::switchOn(root.a,
         [&]<Numeric T>(const T& a) -> std::optional<Child> {
-            if (!magnitudeComparable(a, options))
+            if (!signKnowable(a, options))
                 return { };
             return makeChild(Number { .value = executeMathOperation<Sign>(a.value) });
         },
