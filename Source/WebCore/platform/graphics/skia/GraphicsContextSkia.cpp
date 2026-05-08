@@ -205,11 +205,13 @@ void GraphicsContextSkia::drawNativeImage(const NativeImage& nativeImage, const 
     if (!image)
         return;
 
+#if USE(SKIA_GPU_ATLAS)
     // Collect raster images for atlas batching during recording.
     if (m_contextMode == ContextMode::RecordingMode && m_renderingMode == RenderingMode::Accelerated && !image->isTextureBacked()) {
         ASSERT(m_atlasLayoutBuilder);
         m_atlasLayoutBuilder->collectRasterImage(image);
     }
+#endif
 
     auto imageSize = nativeImage.size();
     if (options.orientation().usesWidthAsHeight())
@@ -1158,10 +1160,12 @@ void GraphicsContextSkia::beginRecording()
     ASSERT(m_contextMode == ContextMode::PaintingMode);
     m_contextMode = ContextMode::RecordingMode;
 
+#if USE(SKIA_GPU_ATLAS)
     if (m_renderingMode == RenderingMode::Accelerated)
         m_atlasLayoutBuilder = makeUnique<SkiaImageAtlasLayoutBuilder>();
     else
         ASSERT(!m_atlasLayoutBuilder);
+#endif
 }
 
 SkiaRecordingData GraphicsContextSkia::endRecording()
@@ -1171,11 +1175,13 @@ SkiaRecordingData GraphicsContextSkia::endRecording()
 
     Vector<Ref<SkiaImageAtlasLayout>> atlasLayouts;
     unsigned imageSetFingerprint = 0;
+#if USE(SKIA_GPU_ATLAS)
     if (m_atlasLayoutBuilder) {
         atlasLayouts = m_atlasLayoutBuilder->finalize();
         imageSetFingerprint = m_atlasLayoutBuilder->imageSetFingerprint();
         m_atlasLayoutBuilder = nullptr;
     }
+#endif
 
     return { WTF::move(m_imageToFenceMap), WTF::move(atlasLayouts), imageSetFingerprint };
 }

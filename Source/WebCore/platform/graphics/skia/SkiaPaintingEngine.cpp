@@ -234,6 +234,7 @@ Ref<SkiaRecordingResult> SkiaPaintingEngine::record(const GraphicsLayerCoordinat
 
     auto result = SkiaRecordingResult::create(WTF::move(picture), WTF::move(recordingData), recordRect, renderingMode, contentsOpaque, contentsScale);
 
+#if USE(SKIA_GPU_ATLAS)
     // Prepare GPU atlases on main thread before dispatching to workers.
     if (result->hasAtlasLayouts()) {
         auto fingerprint = result->imageSetFingerprint();
@@ -278,6 +279,10 @@ Ref<SkiaRecordingResult> SkiaPaintingEngine::record(const GraphicsLayerCoordinat
         m_cachedImageFingerprint = 0;
         m_cachedGPUAtlases.clear();
     }
+#else
+    m_cachedImageFingerprint = 0;
+    m_cachedGPUAtlases.clear();
+#endif
 
     return result;
 }
