@@ -1,0 +1,13 @@
+/*
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
+ */
+
+// https://wicg.github.io/scheduling-apis/#sec-scheduler
+[
+    Exposed=(Window,Worker),
+    EnabledBySetting=PrioritizedTaskSchedulingEnabled,
+    JSCustomMarkFunction
+] interface Scheduler {
+    [CallWith=CurrentScriptExecutionContext] Promise<any> postTask(SchedulerPostTaskCallback callback, optional SchedulerPostTaskOptions options = {});
+    [CallWith=CurrentScriptExecutionContext] Promise<undefined> yield();
+};

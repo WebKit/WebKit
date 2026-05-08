@@ -46,6 +46,11 @@ AbortController::AbortController(ScriptExecutionContext& context)
 {
 }
 
+AbortController::AbortController(Ref<AbortSignal>&& signal)
+    : m_signal(WTF::move(signal))
+{
+}
+
 AbortController::~AbortController() = default;
 
 void AbortController::abort(JSC::JSValue reason)

@@ -98,17 +98,24 @@ Ref<AbortSignal> AbortSignal::any(ScriptExecutionContext& context, const Vector<
     return resultSignal;
 }
 
-AbortSignal::AbortSignal(ScriptExecutionContext* context, Aborted aborted)
+AbortSignal::AbortSignal(ScriptExecutionContext* context, Aborted aborted, EventTargetTagged tag)
     : ContextDestructionObserver(context)
     , m_aborted(aborted == Aborted::Yes)
+    , m_eventTargetTag(tag)
 {
 }
 
-AbortSignal::AbortSignal(JSC::JSGlobalObject& globalObject, ScriptExecutionContext* context, Aborted aborted, JSC::JSValue reason)
+AbortSignal::AbortSignal(JSC::JSGlobalObject& globalObject, ScriptExecutionContext* context, Aborted aborted, JSC::JSValue reason, EventTargetTagged tag)
     : ContextDestructionObserver(context)
     , m_reason(globalObject, reason)
     , m_aborted(aborted == Aborted::Yes)
+    , m_eventTargetTag(tag)
 {
+}
+
+enum EventTargetInterfaceType AbortSignal::eventTargetInterface() const
+{
+    return m_eventTargetTag == EventTargetTagged::TaskSignal ? EventTargetInterfaceType::TaskSignal : EventTargetInterfaceType::AbortSignal;
 }
 
 AbortSignal::~AbortSignal() = default;

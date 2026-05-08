@@ -1,0 +1,3 @@
+
+FAIL Test scheduler.yield() from an iframe that is removed assert_unreached: Should have rejected: undefined Reached unreachable code
+

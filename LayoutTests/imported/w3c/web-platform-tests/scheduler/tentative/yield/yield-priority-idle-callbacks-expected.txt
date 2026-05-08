@@ -1,0 +1,3 @@
+
+FAIL requestIdleCallback() yields at background priority when inheriting signal assert_equals: expected "i1,uv1,uv2,y1,y2,y3,bg1,bg2,i2" but got "i1,uv1,uv2,bg1,bg2,y1,y2,y3,i2"
+

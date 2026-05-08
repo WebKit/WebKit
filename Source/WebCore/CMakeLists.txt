@@ -1593,6 +1593,9 @@ set(WebCore_NON_SVG_IDL_FILES
     page/ResizeObserverEntry.idl
     page/ResizeObserverOptions.idl
     page/ResizeObserverSize.idl
+    page/Scheduler.idl
+    page/SchedulerPostTaskCallback.idl
+    page/SchedulerPostTaskOptions.idl
     page/Screen.idl
     page/ScreenOrientation.idl
     page/ScrollBehavior.idl
@@ -1603,6 +1606,10 @@ set(WebCore_NON_SVG_IDL_FILES
     page/ShadowRealmGlobalScope.idl
     page/ShareData.idl
     page/StructuredSerializeOptions.idl
+    page/TaskController.idl
+    page/TaskPriority.idl
+    page/TaskPriorityChangeEvent.idl
+    page/TaskSignal.idl
     page/UADataValues.idl
     page/UALowEntropyJSON.idl
     page/UndoItem.idl
@@ -1617,6 +1624,7 @@ set(WebCore_NON_SVG_IDL_FILES
     page/WindowLocalStorage.idl
     page/WindowOrWorkerGlobalScope+Crypto.idl
     page/WindowOrWorkerGlobalScope+Performance.idl
+    page/WindowOrWorkerGlobalScope+Scheduler.idl
     page/WindowOrWorkerGlobalScope.idl
     page/WindowPostMessageOptions.idl
     page/WindowSessionStorage.idl

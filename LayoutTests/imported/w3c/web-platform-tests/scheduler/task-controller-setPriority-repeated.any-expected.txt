@@ -1,0 +1,4 @@
+
+FAIL TaskController.setPriority() changes the priority of all associated tasks when called repeatedly assert_equals: expected "1,2,0" but got "0,1,2"
+PASS TaskController.setPriority() changes the priority of all associated tasks when called repeatedly before tasks run
+

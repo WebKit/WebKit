@@ -10,7 +10,7 @@ if [ -z "${BUILD_SCRIPTS_DIR}" ]; then
     BUILD_SCRIPTS_DIR="${WTF_BUILD_SCRIPTS_DIR}"
 fi
 
-UnifiedSourceCppFileCount=530
+UnifiedSourceCppFileCount=540
 UnifiedSourceCFileCount=0
 UnifiedSourceMmFileCount=1
 UnifiedSourceNonARCMmFileCount=62

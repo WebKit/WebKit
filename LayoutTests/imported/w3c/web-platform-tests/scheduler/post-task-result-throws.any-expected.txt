@@ -1,0 +1,3 @@
+
+PASS Test postTask rejects the associated promise with the callback error
+

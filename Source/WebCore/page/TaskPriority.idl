@@ -1,0 +1,9 @@
+/*
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
+ */
+
+enum TaskPriority {
+    "user-blocking",
+    "user-visible",
+    "background"
+};

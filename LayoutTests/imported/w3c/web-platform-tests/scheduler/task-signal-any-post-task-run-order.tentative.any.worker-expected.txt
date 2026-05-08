@@ -1,0 +1,5 @@
+
+FAIL scheduler.postTask() tasks run in priority order with a fixed priority composite signal assert_equals: expected "UB1,UB2,UV1,UV2,B1,B2" but got "B1,B2,UV1,UV2,UB1,UB2"
+FAIL scheduler.postTask() tasks run in priority order with a dynamic priority composite signal promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL scheduler.postTask() tasks run in priority order with a composite signal whose source has fixed priority promise_test: Unhandled rejection with value: object "TypeError: Type error"
+

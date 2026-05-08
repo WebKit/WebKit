@@ -1,0 +1,10 @@
+/*
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
+ */
+
+dictionary SchedulerPostTaskOptions {
+    // Per spec the type is (TaskSignal or AbortSignal). We use AbortSignal and downcast at runtime.
+    AbortSignal signal;
+    TaskPriority priority;
+    [EnforceRange] unsigned long long delay = 0;
+};

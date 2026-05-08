@@ -51,6 +51,7 @@ PushEvent
 PushSubscriptionChangeEvent
 SubmitEvent
 ToggleEvent
+TaskPriorityChangeEvent
 TextEvent
 UIEvent
 UIEvents interfaceName=UIEvent

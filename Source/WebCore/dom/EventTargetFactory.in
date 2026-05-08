@@ -4,6 +4,7 @@ useNamespaceAsSuffix=true
 
 
 AbortSignal
+TaskSignal
 ApplePaySession conditional=APPLE_PAY
 AudioNode conditional=WEB_AUDIO
 AudioTrackList conditional=VIDEO

@@ -6361,6 +6361,20 @@ PreferSpatialAudioExperience:
   defaultsOverridable: true
   sharedPreferenceForWebProcess: true
 
+PrioritizedTaskSchedulingEnabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "Prioritized Task Scheduling"
+  humanReadableDescription: "Enable the Scheduler API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 PrivateClickMeasurementDebugModeEnabled:
   type: bool
   status: developer

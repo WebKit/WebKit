@@ -1997,7 +1997,15 @@ $(PROJECT_DIR)/page/WindowEventHandlers.idl
 $(PROJECT_DIR)/page/WindowLocalStorage.idl
 $(PROJECT_DIR)/page/WindowOrWorkerGlobalScope+Crypto.idl
 $(PROJECT_DIR)/page/WindowOrWorkerGlobalScope+Performance.idl
+$(PROJECT_DIR)/page/WindowOrWorkerGlobalScope+Scheduler.idl
 $(PROJECT_DIR)/page/WindowOrWorkerGlobalScope.idl
+$(PROJECT_DIR)/page/Scheduler.idl
+$(PROJECT_DIR)/page/SchedulerPostTaskCallback.idl
+$(PROJECT_DIR)/page/SchedulerPostTaskOptions.idl
+$(PROJECT_DIR)/page/TaskController.idl
+$(PROJECT_DIR)/page/TaskPriority.idl
+$(PROJECT_DIR)/page/TaskPriorityChangeEvent.idl
+$(PROJECT_DIR)/page/TaskSignal.idl
 $(PROJECT_DIR)/page/WindowPostMessageOptions.idl
 $(PROJECT_DIR)/page/WindowSessionStorage.idl
 $(PROJECT_DIR)/page/WorkerNavigator.idl

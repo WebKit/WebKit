@@ -1,0 +1,3 @@
+
+PASS Test that TaskSignal.onprioritychange listens for prioritychange events
+

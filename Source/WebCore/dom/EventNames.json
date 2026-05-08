@@ -202,6 +202,7 @@
     "pointerup": { "categories": ["TouchRelated", "ExtendedTouchRelated", "EventTimingEligible"], "defaultEventHandler": true },
     "popstate": { },
     "previoustrack": { },
+    "prioritychange": { },
     "processorerror": { },
     "progress": { },
     "push": { },

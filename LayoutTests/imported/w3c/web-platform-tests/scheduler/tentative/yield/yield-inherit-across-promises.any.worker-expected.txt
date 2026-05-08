@@ -1,0 +1,9 @@
+
+FAIL yield() inherits priority (string) across promises (user-blocking) assert_equals: expected "yield,subtask" but got "subtask,yield"
+FAIL yield() inherits priority (signal) across promises (user-blocking) assert_equals: expected "yield,subtask" but got "subtask,yield"
+PASS yield() inherits priority (string) across promises (background)
+PASS yield() inherits priority (signal) across promises (background)
+FAIL yield() inherits abort across promises assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL yield() inherits .then() context, not resolve context assert_equals: expected "task,continuation" but got "continuation,task"
+FAIL yield() inherits priority in queueMicrotask() assert_equals: expected "p1-start,p2-start,p2-continuation,p3,p1-continuation" but got "p1-start,p2-start,p3,p1-continuation"
+

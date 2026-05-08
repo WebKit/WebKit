@@ -1,0 +1,5 @@
+
+FAIL yield() with postTask tasks (priority) assert_equals: expected "ub1,ub2,y0,y1,y2,y3,uv1,uv2,bg1,bg2" but got "y0,ub1,ub2,uv1,uv2,bg1,bg2,y1,y2,y3"
+FAIL yield() with postTask tasks (signal) assert_equals: expected "ub1,ub2,y0,y1,y2,y3,uv1,uv2,bg1,bg2" but got "y0,ub1,ub2,uv1,uv2,bg1,bg2,y1,y2,y3"
+FAIL yield() with TaskSignal has dynamic priority assert_equals: expected "y0,y1,y2,uv1,uv2,y3,y4" but got "y0,uv1,uv2,y1,y2,y3,y4"
+
