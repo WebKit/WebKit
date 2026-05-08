@@ -37,6 +37,7 @@
 #include "RegExpObject.h"
 #include "RegExpObjectInlines.h"
 #include "RegExpPrototypeInlines.h"
+#include "StringPrototype.h"
 #include "StringRecursionChecker.h"
 #include "YarrFlags.h"
 #include <wtf/text/StringBuilder.h>
@@ -670,6 +671,23 @@ JSCell* regExpSplitFast(JSGlobalObject* globalObject, RegExpObject* regexpObject
             result->putDirectIndex(globalObject, 0, inputString);
             RETURN_IF_EXCEPTION(scope, { });
         }
+        return result;
+    }
+
+    if (regexp->specificPattern() == Yarr::SpecificPattern::Atom) {
+        const String& atomStr = regexp->atom();
+        ASSERT(!atomStr.isEmpty());
+        unsigned atomLength = atomStr.length();
+
+        JSString* separatorJSString = jsString(vm, AtomString { atomStr });
+        RETURN_IF_EXCEPTION(scope, { });
+
+        JSCell* result = stringSplitFast(globalObject, inputString, separatorJSString, limit);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        size_t lastMatchPos = input->reverseFind(atomStr);
+        if (lastMatchPos != notFound)
+            globalObject->regExpGlobalData().recordMatch(vm, globalObject, regexp, inputString, MatchResult(lastMatchPos, lastMatchPos + atomLength), false);
         return result;
     }
 
