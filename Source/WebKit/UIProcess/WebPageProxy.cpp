@@ -3265,6 +3265,15 @@ void WebPageProxy::activityStateDidChange(OptionSet<ActivityState> mayHaveChange
     RefPtr pageClient = this->pageClient();
 
     internals().potentiallyChangedActivityStateFlags.add(mayHaveChanged);
+
+#if ENABLE(VIEW_VISIBILITY_ACTIVITYSTATE_FALLBACK)
+    // In case we unexpectedly did not receive a notification from AppKit that window occlusion state changed, we implement a fallback here.
+    if (pageClient->isMainViewVisible() && !isViewVisible() && !mayHaveChanged.contains(ActivityState::IsVisible)) {
+        WEBPAGEPROXY_RELEASE_LOG(ActivityState, "activityStateDidChange: view became visible, but activity state change did not indicate that");
+        internals().potentiallyChangedActivityStateFlags.add(ActivityState::IsVisible);
+    }
+#endif // ENABLE(VIEW_VISIBILITY_ACTIVITYSTATE_FALLBACK)
+
     m_activityStateChangeWantsSynchronousReply = m_activityStateChangeWantsSynchronousReply || replyMode == ActivityStateChangeReplyMode::Synchronous;
 
     // We need to do this here instead of inside dispatchActivityStateChange() or viewIsBecomingVisible() because these don't run when the view doesn't
