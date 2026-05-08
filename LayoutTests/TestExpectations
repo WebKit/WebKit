@@ -7642,10 +7642,10 @@ imported/w3c/web-platform-tests/svg/struct/reftests/inner-svg-css-transform.svg 
 imported/w3c/web-platform-tests/svg/struct/reftests/use-event-handler-no-loss-of-events.html [ ImageOnlyFailure ]
 
 # crashes with `ASSERTION FAILED: !url.protocolIsData()`
-webkit.org/b/290285 imported/w3c/web-platform-tests/svg/struct/reftests/use-data-url-set-attributeName.tentative.svg [ Skip ]
-webkit.org/b/290285 imported/w3c/web-platform-tests/svg/struct/reftests/use-data-url-setAttribute.tentative.html [ Skip ]
-webkit.org/b/290285 imported/w3c/web-platform-tests/svg/struct/reftests/use-data-url.tentative.svg [ Skip ]
-webkit.org/b/290285 imported/w3c/web-platform-tests/svg/struct/scripted/use-load-error-events.tentative.html [ Skip ]
+webkit.org/b/290285 [ Debug ] imported/w3c/web-platform-tests/svg/struct/reftests/use-data-url-set-attributeName.tentative.svg [ Skip ]
+webkit.org/b/290285 [ Debug ] imported/w3c/web-platform-tests/svg/struct/reftests/use-data-url-setAttribute.tentative.html [ Skip ]
+webkit.org/b/290285 [ Debug ] imported/w3c/web-platform-tests/svg/struct/reftests/use-data-url.tentative.svg [ Skip ]
+webkit.org/b/290285 [ Debug ] imported/w3c/web-platform-tests/svg/struct/scripted/use-load-error-events.tentative.html [ Skip ]
 
 # This test hits an assert in debug
 webkit.org/b/290133 [ Debug ] svg/dom/SVGGeometry-isPointInFill-with-null-path.html [ Skip ]

@@ -1,0 +1,11 @@
+
+PASS 'load' and 'error' events for SVG <use>, local reference, existing
+PASS 'load' and 'error' events for SVG <use>, local reference, non-existing
+PASS 'load' and 'error' events for SVG <use>, external reference, existing
+PASS 'load' and 'error' events for SVG <use>, external data: URL reference, existing
+PASS 'load' and 'error' events for SVG <use>, external reference, non-existing
+FAIL 'load' and 'error' events for SVG <use>, external reference, existing, parse error assert_equals: Expected error event, but got load event instead expected "error" but got "load"
+PASS 'load' and 'error' events for SVG <use>, external reference, existing, changed to local reference while loading
+FAIL 'load' and 'error' events for SVG <use>, external data: URL reference, existing, changed to local reference while loading assert_equals: Expected undefined event, but got error event instead expected (undefined) undefined but got (string) "error"
+PASS 'load' and 'error' events for SVG <use>, external reference, non-existing, changed to local reference while loading
+

@@ -5509,6 +5509,12 @@ ipc/stream-sync-reply-shared-memory.html [ Skip ]
 ipc/convert-to-luminance-mask-float16.html [ Skip ]
 ipc/empty-svgfilterrenderer-expression-crash.html [ Skip ]
 
+# crashes with `ASSERTION FAILED: !url.protocolIsData()`
+webkit.org/b/290285 imported/w3c/web-platform-tests/svg/struct/reftests/use-data-url-set-attributeName.tentative.svg [ Skip ]
+webkit.org/b/290285 imported/w3c/web-platform-tests/svg/struct/reftests/use-data-url-setAttribute.tentative.html [ Skip ]
+webkit.org/b/290285 imported/w3c/web-platform-tests/svg/struct/reftests/use-data-url.tentative.svg [ Skip ]
+webkit.org/b/290285 imported/w3c/web-platform-tests/svg/struct/scripted/use-load-error-events.tentative.html [ Skip ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////
