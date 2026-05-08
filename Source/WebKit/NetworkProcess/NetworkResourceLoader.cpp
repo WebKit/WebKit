@@ -1047,6 +1047,8 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
             connectionToWebProcess().networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::ResourceLoadDidReceiveResponse(webPageProxyID(), resourceLoadInfo, response), 0);
 
         if (willWaitForContinueDidReceiveResponse) {
+            if (m_responseCompletionHandler)
+                m_responseCompletionHandler(PolicyAction::Use);
             m_responseCompletionHandler = WTF::move(completionHandler);
             return;
         }
