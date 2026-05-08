@@ -681,6 +681,7 @@ bindings/js/InternalReadableStreamDefaultReader.cpp
 bindings/js/InternalWritableStream.cpp
 bindings/js/InternalWritableStreamWriter.cpp
 bindings/js/JSAbortSignalCustom.cpp
+bindings/js/JSSchedulerCustom.cpp
 bindings/js/JSAttrCustom.cpp
 bindings/js/JSAudioBufferCustom.cpp
 bindings/js/JSAudioBufferSourceNodeCustom.cpp
@@ -2291,7 +2292,12 @@ page/WheelEventTestMonitor.cpp
 page/WindowFeatures.cpp
 page/WindowFocusAllowedIndicator.cpp
 page/WindowOrWorkerGlobalScope.cpp
+page/WindowOrWorkerGlobalScopeScheduler.cpp
 page/WorkerNavigator.cpp
+page/Scheduler.cpp
+page/TaskController.cpp
+page/TaskPriorityChangeEvent.cpp
+page/TaskSignal.cpp
 page/csp/CSPViolationReportBody.cpp
 page/csp/ContentSecurityPolicy.cpp
 page/csp/ContentSecurityPolicyDirective.cpp
@@ -4995,6 +5001,13 @@ JSSVGUseElement.cpp
 JSSVGViewElement.cpp
 JSSVGViewSpec.cpp
 JSSVGZoomAndPan.cpp
+JSScheduler.cpp
+JSSchedulerPostTaskCallback.cpp
+JSSchedulerPostTaskOptions.cpp
+JSTaskController.cpp
+JSTaskPriority.cpp
+JSTaskPriorityChangeEvent.cpp
+JSTaskSignal.cpp
 JSScreen.cpp
 JSScreenOrientation.cpp
 JSScriptProcessorNode.cpp

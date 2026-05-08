@@ -1,0 +1,3 @@
+
+PASS Test aborting a task aborts the appropriate task
+

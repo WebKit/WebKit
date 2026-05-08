@@ -39,19 +39,21 @@ namespace WebCore {
 class AbortSignal;
 class ScriptExecutionContext;
 
-class AbortController final : public ScriptWrappable, public RefCounted<AbortController> {
+class AbortController : public ScriptWrappable, public RefCounted<AbortController> {
     WTF_MAKE_TZONE_ALLOCATED(AbortController);
 public:
+    virtual bool isTaskController() const { return false; }
     static Ref<AbortController> create(ScriptExecutionContext&);
-    ~AbortController();
+    virtual ~AbortController();
 
     AbortSignal& signal() { return m_signal; }
     void abort(JSC::JSValue reason);
 
     WebCoreOpaqueRoot NODELETE opaqueRoot();
 
-private:
+protected:
     explicit AbortController(ScriptExecutionContext&);
+    explicit AbortController(Ref<AbortSignal>&&);
 
     const Ref<AbortSignal> m_signal;
 };

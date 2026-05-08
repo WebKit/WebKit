@@ -1,0 +1,3 @@
+
+FAIL Tests replacing window.scheduler with a different object Attempted to assign to readonly property.
+

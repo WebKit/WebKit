@@ -1,0 +1,5 @@
+
+PASS yield() with an aborted signal
+FAIL yield() aborted by TaskController in a separate task assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL yield() aborted by AbortController in a separate task assert_unreached: Should have rejected: undefined Reached unreachable code
+

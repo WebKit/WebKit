@@ -1,0 +1,3 @@
+
+PASS Posting a task with an aborted signal rejects with an AbortError
+

@@ -2056,6 +2056,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/RemoteFrameLayoutInfo.h
     page/RemoteFrameView.h
     page/RemoteUserInputEventData.h
+    page/Scheduler.h
     page/ScreenOrientationLockType.h
     page/ScreenOrientationType.h
     page/ScriptTrackingPrivacyCategory.h
@@ -2077,6 +2078,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/StorageBlockingPolicy.h
     page/StructuredSerializeOptions.h
     page/SystemPreviewInfo.h
+    page/TaskController.h
+    page/TaskPriorityChangeEvent.h
+    page/TaskSignal.h
     page/TextAnimationTypes.h
     page/TextDirectionSubmenuInclusionBehavior.h
     page/TextIndicator.h
@@ -2110,6 +2114,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/WheelEventTestMonitor.h
     page/WindowFeatures.h
     page/WindowOrWorkerGlobalScope.h
+    page/WindowOrWorkerGlobalScopeScheduler.h
     page/WindowPostMessageOptions.h
     page/WorkerClient.h
 

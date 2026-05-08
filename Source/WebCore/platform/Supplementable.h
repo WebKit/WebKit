@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Supplementable_h
-#define Supplementable_h
+#pragma once
 
 #include <wtf/Assertions.h>
 #include <wtf/CurrentThread.h>
@@ -81,6 +80,8 @@ public:
     virtual bool isDOMCSSRegisterCustomProperty() const { return false; }
     virtual bool isDOMWindowCaches() const { return false; }
     virtual bool isDOMWindowIndexedDatabase() const { return false; }
+    virtual bool isDOMWindowScheduler() const { return false; }
+    virtual bool isWorkerGlobalScopeScheduler() const { return false; }
     virtual bool isDOMWindowTrustedTypes() const { return false; }
     virtual bool isDeviceMotionController() const { return false; }
     virtual bool isDeviceOrientationController() const { return false; }
@@ -170,6 +171,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // Supplementable_h
-

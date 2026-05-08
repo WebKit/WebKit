@@ -1083,6 +1083,11 @@ webkit.org/b/164888 fast/shadow-dom/focus-navigation-passes-svg-use-element.html
 webkit.org/b/202497 imported/w3c/web-platform-tests/shadow-dom/focus/ [ Skip ]
 imported/w3c/web-platform-tests/shadow-dom/focus/focus-pseudo-matches-on-shadow-host.html [ Pass ]
 
+# These scheduler.yield() propagation tests rely on Tab-key focus navigation across iframes
+# via test_driver.send_keys, which is not supported on iOS and causes the tests to time out.
+imported/w3c/web-platform-tests/scheduler/tentative/yield/yield-cross-origin-propagation.html [ Skip ]
+imported/w3c/web-platform-tests/scheduler/tentative/yield/yield-same-origin-propagation.html [ Skip ]
+
 # Navigation API
 imported/w3c/web-platform-tests/navigation-api/focus-reset/basic.html [ Failure ]
 imported/w3c/web-platform-tests/navigation-api/focus-reset/multiple-intercept.html [ Failure ]

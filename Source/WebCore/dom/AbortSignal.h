@@ -42,7 +42,7 @@ class JSDOMGlobalObject;
 class ScriptExecutionContext;
 class WebCoreOpaqueRoot;
 
-class AbortSignal final : public RefCounted<AbortSignal>, public EventTarget, private ContextDestructionObserver {
+class AbortSignal : public RefCounted<AbortSignal>, public EventTarget, protected ContextDestructionObserver {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(AbortSignal, WEBCORE_EXPORT);
 public:
     static Ref<AbortSignal> create(ScriptExecutionContext*);
@@ -83,10 +83,15 @@ public:
 
     bool isDependent() const { return m_isDependent; }
 
-private:
+    enum class EventTargetTagged : uint8_t { AbortSignal, TaskSignal };
+    EventTargetTagged eventTargetTag() const { return m_eventTargetTag; }
+
+protected:
     enum class Aborted : bool { No, Yes };
-    AbortSignal(ScriptExecutionContext*, Aborted = Aborted::No);
-    AbortSignal(JSC::JSGlobalObject&, ScriptExecutionContext*, Aborted, JSC::JSValue reason);
+    AbortSignal(ScriptExecutionContext*, Aborted = Aborted::No, EventTargetTagged = EventTargetTagged::AbortSignal);
+    AbortSignal(JSC::JSGlobalObject&, ScriptExecutionContext*, Aborted, JSC::JSValue reason, EventTargetTagged = EventTargetTagged::AbortSignal);
+
+private:
 
     void setHasActiveTimeoutTimer(bool hasActiveTimeoutTimer) { m_hasActiveTimeoutTimer = hasActiveTimeoutTimer; }
 
@@ -98,7 +103,7 @@ private:
     void runAbortSteps();
 
     // EventTarget.
-    enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::AbortSignal; }
+    enum EventTargetInterfaceType eventTargetInterface() const override;
     ScriptExecutionContext* scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
@@ -114,6 +119,7 @@ private:
     bool m_hasActiveTimeoutTimer { false };
     bool m_hasAbortEventListener { false };
     bool m_isDependent { false };
+    EventTargetTagged m_eventTargetTag { EventTargetTagged::AbortSignal };
 };
 
 WebCoreOpaqueRoot NODELETE root(AbortSignal*);

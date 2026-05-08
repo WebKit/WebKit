@@ -1,0 +1,13 @@
+
+FAIL TaskSignal.any() returns a user-visible TaskSignal when no priority is specified assert_true: expected true got false
+FAIL TaskSignal.any() returns a signal with the correct priority when intialized with a string assert_equals: expected (string) "user-blocking" but got (undefined) undefined
+FAIL TaskSignal.any() returns a signal with the correct priority when intialized with a TaskSignal assert_equals: expected (string) "user-blocking" but got (undefined) undefined
+FAIL TaskSignal.any() returns a signal with dynamic priority assert_equals: expected (string) "user-blocking" but got (undefined) undefined
+FAIL Priority change events fire for composite signals assert_equals: expected 1 but got 0
+FAIL Priority change events fire for composite signals with intermediate sources assert_equals: expected (string) "user-visible" but got (undefined) undefined
+FAIL Priority change propagates to multiple dependent signals in the right order assert_equals: expected "0,1,2,3,4,5" but got ""
+PASS TaskSignal.any() does not propagate abort when not given dependent abort signals
+FAIL TaskSignal.any() propagates abort and priority assert_equals: expected (string) "background" but got (undefined) undefined
+FAIL TaskSignal.any() propagates priority after returning an aborted signal assert_true: expected true got false
+FAIL TaskSignal.any() does not fire prioritychange for dependents added during prioritychange assert_equals: expected (string) "background" but got (undefined) undefined
+

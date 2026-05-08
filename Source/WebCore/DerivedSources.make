@@ -1645,7 +1645,15 @@ JS_BINDING_IDLS := \
     $(WebCore)/page/WindowLocalStorage.idl \
     $(WebCore)/page/WindowOrWorkerGlobalScope+Crypto.idl \
     $(WebCore)/page/WindowOrWorkerGlobalScope+Performance.idl \
+    $(WebCore)/page/WindowOrWorkerGlobalScope+Scheduler.idl \
     $(WebCore)/page/WindowOrWorkerGlobalScope.idl \
+    $(WebCore)/page/Scheduler.idl \
+    $(WebCore)/page/SchedulerPostTaskCallback.idl \
+    $(WebCore)/page/SchedulerPostTaskOptions.idl \
+    $(WebCore)/page/TaskController.idl \
+    $(WebCore)/page/TaskPriority.idl \
+    $(WebCore)/page/TaskPriorityChangeEvent.idl \
+    $(WebCore)/page/TaskSignal.idl \
     $(WebCore)/page/WindowPostMessageOptions.idl \
     $(WebCore)/page/WindowSessionStorage.idl \
     $(WebCore)/page/WebKitBuffer.idl \

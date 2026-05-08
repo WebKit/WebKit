@@ -1232,26 +1232,7 @@
             "status": "In Development"
         },
         "url": "https://www.w3.org/TR/css-contain-3/#container-queries",
-        "specification": "CSS Containment Module Level 3",
         "description": "While media queries provide a method to query aspects of the user agent or device environment that a document is being displayed in (such as viewport dimensions or user preferences), container queries allow testing aspects of elements within the document (such as box dimensions or computed styles)."
-    },
-    {
-        "name": "CSS Subgrid",
-        "status": {
-            "status": "In Development"
-        },
-        "url": "https://www.w3.org/TR/css-grid-2/#subgrids",
-        "specification": "CSS Grid Layout Module Level 2",
-        "description": "Level 2 expands Grid by adding “subgrid” capabilities for nested grids to participate in the sizing of their parent grids."
-    },
-    {
-        "name": "CSS viewport-relative units",
-        "status": {
-            "status": "Supported"
-        },
-        "url": "https://drafts.csswg.org/css-values-4/#viewport-relative-lengths",
-        "specification": "CSS Values and Units Module Level 4",
-        "description": "The *vw, *vh, *vi, *vb, *vmin, *vmax units are relative to the size of the initial containing block. When the height or width of the initial containing block is changed, they are scaled accordingly."
     },
     {
         "name": "CSS Selector :any-link",
@@ -1385,6 +1366,23 @@
             "twitter": "@awfulben",
             "email": "benjamin@webkit.org"
         }
+    },
+    {
+        "name": "CSS Subgrid",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://www.w3.org/TR/css-grid-2/#subgrids",
+        "description": "Level 2 expands Grid by adding “subgrid” capabilities for nested grids to participate in the sizing of their parent grids."
+    },
+    {
+        "name": "CSS viewport-relative units",
+        "status": {
+            "status": "Supported"
+        },
+        "url": "https://drafts.csswg.org/css-values-4/#viewport-relative-lengths",
+        "specification": "CSS Values and Units Module Level 4",
+        "description": "The *vw, *vh, *vi, *vb, *vmin, *vmax units are relative to the size of the initial containing block. When the height or width of the initial containing block is changed, they are scaled accordingly."
     },
     {
         "name": "Case-insensitive attribute selectors",
@@ -1867,6 +1865,15 @@
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=211945",
         "keywords": ["requestVideoFrameCallback", "rvfc"],
         "description": "An API that can be used on a HTMLMediaElement to do per video frame processing."
+    },
+    {
+        "name": "scheduler-yield",
+        "status": {
+            "status": "In Development"
+        },
+        "url": "https://wicg.github.io/scheduling-apis/",
+        "keywords": ["scheduler", "yield", "postTask"],
+        "description": "An API for yielding and posting prioritized tasks to improve responsiveness."
     }
     ]
 }

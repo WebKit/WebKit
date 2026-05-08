@@ -1,0 +1,3 @@
+
+FAIL Test when scheduler.postTask() is passed both a signal and a priority assert_equals: expected "task1" but got "task2"
+

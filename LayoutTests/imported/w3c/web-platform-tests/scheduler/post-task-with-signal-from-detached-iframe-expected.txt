@@ -1,0 +1,3 @@
+
+PASS Test scheduler.postTask() with a signal from a detached iframe
+

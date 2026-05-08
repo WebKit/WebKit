@@ -1,0 +1,3 @@
+
+PASS Test that when scheduler.postTask() is given both a signal and priority, the signal abort is honored
+

@@ -1,0 +1,11 @@
+/*
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
+ */
+
+[
+    Exposed=(Window,Worker),
+    EnabledBySetting=PrioritizedTaskSchedulingEnabled
+] interface TaskSignal : AbortSignal {
+    readonly attribute TaskPriority priority;
+    attribute EventHandler onprioritychange;
+};

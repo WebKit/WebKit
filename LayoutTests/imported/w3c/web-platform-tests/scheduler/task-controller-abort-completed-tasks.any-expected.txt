@@ -1,0 +1,3 @@
+
+PASS Aborting completed tasks should be a no-op.
+

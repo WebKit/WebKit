@@ -1,0 +1,6 @@
+
+PASS Calling postTask with an aborted TaskSignal rejects the promise with the abort reason
+PASS Calling postTask with an aborted AbortSignal rejects the promise with the abort reason
+PASS Aborting a TaskSignal rejects the promise of a scheduled task with the abort reason
+PASS Aborting an AbortSignal rejects the promise of a scheduled task with the abort reason
+

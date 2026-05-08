@@ -1,0 +1,15 @@
+/*
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
+ */
+
+dictionary TaskPriorityChangeEventInit : EventInit {
+    required TaskPriority previousPriority;
+};
+
+[
+    Exposed=(Window,Worker),
+    EnabledBySetting=PrioritizedTaskSchedulingEnabled
+] interface TaskPriorityChangeEvent : Event {
+    constructor([AtomString] DOMString type, TaskPriorityChangeEventInit priorityChangeEventInitDict);
+    readonly attribute TaskPriority previousPriority;
+};

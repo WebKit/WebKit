@@ -294,7 +294,7 @@
     "web-platform-tests/resources/chromium": "skip",
     "web-platform-tests/sanitizer-api": "skip",
     "web-platform-tests/savedata": "skip",
-    "web-platform-tests/scheduler": "skip",
+    "web-platform-tests/scheduler": "import",
     "web-platform-tests/screen-capture": "skip",
     "web-platform-tests/screen-details": "skip",
     "web-platform-tests/screen-orientation": "import",
