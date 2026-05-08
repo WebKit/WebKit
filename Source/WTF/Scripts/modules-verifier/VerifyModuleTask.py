@@ -89,6 +89,7 @@ class VerifyModuleTask:
             "-Werror=undef-prefix",
             "-Werror=module-import-in-extern-c",
             "-ferror-limit=0",
+            "-Wno-private-header",
         ]
 
         self.other_verifier_flags = shlex.split(

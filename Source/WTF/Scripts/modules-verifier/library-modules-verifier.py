@@ -116,6 +116,7 @@ if __name__ == "__main__":
     failed = False
     with concurrent.futures.ThreadPoolExecutor() as executor:
         futures = {executor.submit(task.perform_action): task for task in verify_tasks}
+
         for future in concurrent.futures.as_completed(futures):
             task = futures[future]
             result = future.result()
