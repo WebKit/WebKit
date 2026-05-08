@@ -45,6 +45,20 @@
 // Workaround for rdar://162358154
 using SpanConstChar = std::span<const char>;
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
+// Workaround for rdar://163018821: C++ treats char and signed char as distinct types,
+// so Swift's Span<CChar> (= Span<signed char>) cannot satisfy std::span<const char>'s
+// range constructor. This shim takes raw pointer+count to avoid that mismatch.
+// reinterpret_cast<const char*> is a no-op on all Apple platforms and is well-defined
+// because char* is permitted to alias any object type.
+inline SpanConstChar makeSpanConstChar(const int8_t* data, size_t count)
+{
+    return SpanConstChar { reinterpret_cast<const char*>(data), count };
+}
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 // These can't be inline due to rdar://162531519
 void doLog(const WTF::String& msg); // rdar://168139823
 void doLoadingReleaseLog(const WTF::String& msg); // rdar://168139823
