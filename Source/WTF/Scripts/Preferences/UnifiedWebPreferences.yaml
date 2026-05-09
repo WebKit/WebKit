@@ -3465,11 +3465,11 @@ HDRAcceleratedApplyGainMapEnabled:
   humanReadableDescription: "Enable HDR Accelerated Apply GainMap"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 HTMLEnhancedSelectEnabled:
    type: bool
