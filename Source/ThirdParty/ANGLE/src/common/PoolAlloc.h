@@ -14,6 +14,8 @@
 #    pragma allow_unsafe_buffers
 #endif
 
+#include "common/platform.h"
+
 #if defined(ANGLE_WITH_ASAN) || defined(ANGLE_WITH_TSAN)
 #    define ANGLE_DISABLE_POOL_ALLOC  // Use system allocator under sanitizers for accurate detection
 #elif !defined(NDEBUG)
