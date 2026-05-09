@@ -44,6 +44,7 @@ public:
 private:
     ASCIILiteral renderName() const final { return "RenderMathMLSpace"_s; }
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const final { return false; }
+    bool isSpaceLike() const final { return true; }
     void computePreferredLogicalWidths() final;
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
     std::optional<LayoutUnit> firstLineBaseline() const final;

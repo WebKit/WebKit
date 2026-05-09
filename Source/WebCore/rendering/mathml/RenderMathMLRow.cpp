@@ -68,6 +68,24 @@ std::optional<LayoutUnit> RenderMathMLRow::firstLineBaseline() const
     return { baseline };
 }
 
+RenderMathMLOperator* RenderMathMLRow::unembellishedOperator() const
+{
+    if (!document().settings().coreMathMLEnabled())
+        return nullptr;
+    RenderMathMLBlock* embellishedOp = nullptr;
+    for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
+        auto* block = dynamicDowncast<RenderMathMLBlock>(child);
+        if (!block || block->isSpaceLike())
+            continue;
+        if (embellishedOp)
+            return nullptr;
+        embellishedOp = block;
+    }
+    if (!embellishedOp)
+        return nullptr;
+    return embellishedOp->unembellishedOperator();
+}
+
 static RenderMathMLOperator* toVerticalStretchyOperator(RenderBox* box)
 {
     if (auto* mathMLBlock = dynamicDowncast<RenderMathMLBlock>(box)) {
@@ -83,7 +101,8 @@ void RenderMathMLRow::stretchVerticalOperatorsAndLayoutChildren()
     // First calculate stretch ascent and descent.
     LayoutUnit stretchAscent, stretchDescent;
     for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
-        if (toVerticalStretchyOperator(child))
+        auto* renderOperator = toVerticalStretchyOperator(child);
+        if (renderOperator && renderOperator == child)
             continue;
         child->layoutIfNeeded();
         LayoutUnit childAscent = ascentForChild(*child) + child->marginBefore();
@@ -192,6 +211,16 @@ void RenderMathMLRow::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit)
     updateLogicalHeight();
 
     layoutOutOfFlowBoxes(relayoutChildren);
+}
+
+bool RenderMathMLRow::isSpaceLike() const
+{
+    for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
+        auto* block = dynamicDowncast<RenderMathMLBlock>(child);
+        if (!block || !block->isSpaceLike())
+            return false;
+    }
+    return true;
 }
 
 }
