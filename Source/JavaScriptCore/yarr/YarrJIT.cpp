@@ -4414,6 +4414,12 @@ class YarrGenerator final : public YarrJITInfo {
                             // already correctly incremented, if more than one then decrement as appropriate.
                             unsigned delta = alternative->m_minimumSize - beginOp->m_alternative->m_minimumSize;
                             ASSERT(delta);
+#if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS) && ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
+                            // matchStart above was advanced past a non-BMP first character via
+                            // firstCharacterAdditionalReadSize; keep index in sync so the reentry stays on a code-point boundary.
+                            if (m_useFirstNonBMPCharacterOptimization)
+                                m_jit.add32(m_regs.firstCharacterAdditionalReadSize, m_regs.index);
+#endif
                             if (delta != 1)
                                 m_jit.sub32(MacroAssembler::Imm32(delta - 1), m_regs.index);
                             m_jit.jump(beginOp->m_reentry);

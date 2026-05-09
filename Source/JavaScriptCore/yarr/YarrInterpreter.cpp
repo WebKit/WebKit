@@ -285,6 +285,14 @@ public:
             ++pos;
         }
 
+        // In Unicode mode, match attempts only start at code-point boundaries (AdvanceStringIndex).
+        void NODELETE advanceToNextPotentialMatchStart()
+        {
+            ++pos;
+            if (decodeSurrogatePairs && pos < length && U16_IS_TRAIL(input[pos]) && U16_IS_LEAD(input[pos - 1]))
+                ++pos;
+        }
+
         void NODELETE rewind(unsigned amount)
         {
             ASSERT(pos >= amount);
@@ -2068,7 +2076,7 @@ public:
                 return JSRegExpResult::NoMatch;
             }
 
-            input.next();
+            input.advanceToNextPotentialMatchStart();
 
             context->matchBegin = input.getPos();
 
