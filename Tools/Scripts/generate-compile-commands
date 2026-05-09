@@ -33,6 +33,7 @@ import os
 import sys
 import glob
 import json
+import subprocess
 import argparse
 
 # Get command line args
@@ -44,15 +45,291 @@ parser = argparse.ArgumentParser(description='Generate compile_commands.json for
                   https://docs.webkit.org/Build%%20%%26%%20Debug/BuildOptions.html#building-with-compile_commandsjson
                   """)
 
-parser.add_argument('built_products_dir', metavar='built-products-dir', help='path to the build directory containing generated compile commands (ex: WebKitBuild/Release)')
+parser.add_argument('built_products_dir', metavar='built-products-dir', nargs='?', default=None, help='path to the build directory containing generated compile commands (ex: WebKitBuild/Release)')
 parser.add_argument('--delete-invalid', action='store_true', help='Delete any invalid json file')
 parser.add_argument('--include-third-party', action='store_true', help='Include code in Source/ThirdParty')
+parser.add_argument('--hybrid', action='store_true', help='Rewrite a CMake build\'s compile_commands.json so clangd can resolve headers from the adjacent local Xcode build. Selects the cmake-mac/<Cfg> matching whichever local Xcode build (Debug or Release) is most recently built; configures that cmake preset if needed and runs ninja UpdateCompileCommandsSymlink.')
 opts = parser.parse_args()
 
 # Change to the root of WebKit Directory
 file_dir = os.path.dirname(os.path.realpath(__file__))
 base_dir = file_dir + "/../../"
 os.chdir(base_dir)
+
+# --hybrid: pick cmake-mac/<cfg> matching the most recently built local Xcode build.
+def pick_xcode_cfg():
+    best, best_mtime = 'Release', -1
+    for cfg in ('Debug', 'Release'):
+        binary = os.path.join('WebKitBuild', cfg, 'WebCore.framework/WebCore')
+        if os.path.exists(binary) and os.path.getmtime(binary) > best_mtime:
+            best, best_mtime = cfg, os.path.getmtime(binary)
+    return best
+
+if opts.built_products_dir is None:
+    if opts.hybrid:
+        opts.built_products_dir = f'WebKitBuild/cmake-mac/{pick_xcode_cfg()}'
+    else:
+        parser.error('built-products-dir is required')
+
+
+# Map WebKitBuild/cmake-<plat>/<Cfg> to a 'dev' preset name.
+def cmake_preset_for(build_dir):
+    parts = os.path.normpath(build_dir).split(os.sep)
+    if len(parts) >= 3 and parts[-3] == 'WebKitBuild' and parts[-2].startswith('cmake-'):
+        return f"{parts[-2][len('cmake-'):]}-dev-{parts[-1].lower()}"
+    return None
+
+
+# Per-cmake-target: (prefix header, source dir containing config.h).
+_PCH = {
+    'WebCore':            ('Source/WebCore/WebCorePrefix.h',                   'Source/WebCore'),
+    'WebKit':             ('Source/WebKit/WebKitPrefix.h',                     'Source/WebKit'),
+    'WebKitARC':          ('Source/WebKit/WebKitPrefix.h',                     'Source/WebKit'),
+    'WebProcess':         ('Source/WebKit/WebKitPrefix.h',                     'Source/WebKit'),
+    'NetworkProcess':     ('Source/WebKit/WebKitPrefix.h',                     'Source/WebKit'),
+    'GPUProcess':         ('Source/WebKit/WebKitPrefix.h',                     'Source/WebKit'),
+    'JavaScriptCore':     ('Source/JavaScriptCore/JavaScriptCorePrefix.h',     'Source/JavaScriptCore'),
+    'LLIntOffsetsExtractor': ('Source/JavaScriptCore/JavaScriptCorePrefix.h',  'Source/JavaScriptCore'),
+    'LLIntSettingsExtractor': ('Source/JavaScriptCore/JavaScriptCorePrefix.h', 'Source/JavaScriptCore'),
+    'WTF':                ('Source/WTF/wtf/WTFPrefix.h',                       'Source/WTF'),
+    'PAL':                ('Source/WebCore/PAL/pal/PALPrefix.h',               'Source/WebCore/PAL'),
+    'WebCoreTestSupport': ('Source/WebCore/testing/js/WebCoreTestSupportPrefix.h', 'Source/WebCore'),
+    'WebKitLegacy':       ('Source/WebKitLegacy/WebKitLegacyPrefix.h',         'Source/WebKitLegacy'),
+    'ANGLE':              ('Source/ThirdParty/ANGLE/ANGLEPrefix.h',            'Source/ThirdParty/ANGLE'),
+    'GLESv2':             ('Source/ThirdParty/ANGLE/ANGLEPrefix.h',            'Source/ThirdParty/ANGLE'),
+    'WGSLCore':           ('Source/WebGPU/WebGPU/WebGPUPrefix.h',              'Source/WebGPU/WebGPU'),
+    'wgslc':              ('Source/WebGPU/WebGPU/WebGPUPrefix.h',              'Source/WebGPU/WebGPU'),
+}
+
+
+def cmake_postprocess(cc_path):
+    real = os.path.realpath(cc_path)
+    with open(real) as f:
+        data = json.load(f)
+
+    src_root = os.path.realpath(base_dir)
+    # cmake may record paths via a symlink; use its `directory` verbatim
+    # so the str.replace() substitutions below match.
+    build_dir = data[0]['directory'] if data else os.path.realpath(opts.built_products_dir)
+    src_prefix = os.path.dirname(os.path.dirname(os.path.dirname(build_dir)))
+
+    cmake_cfg = os.path.basename(os.path.normpath(build_dir))
+    cfg_order = [cmake_cfg] if cmake_cfg in ('Release', 'Debug') else []
+    for cfg in ('Release', 'Release-iphonesimulator', 'Release-iphoneos', 'Debug'):
+        if cfg not in cfg_order:
+            cfg_order.append(cfg)
+    xcode_build = None
+    for cfg in cfg_order:
+        candidate = os.path.join(src_prefix, 'WebKitBuild', cfg)
+        if os.path.exists(os.path.join(candidate, 'WebCore.framework', 'WebCore')):
+            xcode_build = candidate
+            break
+
+    extra_includes_base = []
+    for sub in ('Source/WTF', 'Source/WebCore/PAL', 'Source/bmalloc',
+                'Source/bmalloc/libpas/src/libpas'):
+        p = os.path.join(src_root, sub)
+        if os.path.isdir(p):
+            extra_includes_base.append(f'-I{p}')
+    p = os.path.join(build_dir, 'bmalloc/Headers/bmalloc')
+    if os.path.isdir(p):
+        extra_includes_base.append(f'-I{p}')
+    # Internal SDK: `_private.h` headers the public SDK omits.
+    try:
+        sdk_platform = subprocess.run(['xcrun', '--show-sdk-platform-path'],
+                                      capture_output=True, text=True, check=True).stdout.strip()
+        internal_sdks = sorted(glob.glob(os.path.join(sdk_platform, 'Developer/SDKs/MacOSX*.Internal.sdk')))
+        if internal_sdks:
+            inc = os.path.join(internal_sdks[-1], 'usr/local/include')
+            if os.path.isdir(inc):
+                extra_includes_base.append(f'-isystem{inc}')
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        pass
+
+    xcode_ds_by_mod = {}
+    if xcode_build:
+        for mod in ('WebKit', 'WebCore', 'JavaScriptCore', 'WebKitLegacy'):
+            entries = []
+            for sub in ('', '/IPC', '/Profiling', '/ModuleMapIntermediate'):
+                p = os.path.join(xcode_build, 'DerivedSources', mod) + sub
+                if os.path.isdir(p):
+                    entries.append((sub, f'-I{p}'))
+            xcode_ds_by_mod[mod] = entries
+    # Xcode's Swift-generated headers (e.g. PALSwift-Generated.h) live at
+    # WebKitBuild/<Mod>.build/<Cfg>/<Mod>.build/DerivedSources/.
+    xcode_cfg = os.path.basename(xcode_build) if xcode_build else ''
+    for mod in ('PAL', 'WebGPU', 'WebKit'):
+        p = os.path.join(src_prefix, 'WebKitBuild', f'{mod}.build',
+                         xcode_cfg, f'{mod}.build', 'DerivedSources')
+        if os.path.isdir(p):
+            extra_includes_base.append(f'-I{p}')
+
+    # Own-module: prefer cmake's DerivedSources (inode-matched with the
+    # <Mod>/PrivateHeaders/<Mod>/*.h symlinks) so #pragma once dedups.
+    cm_ds_has_headers = {}
+    for mod in ('WebCore', 'JavaScriptCore'):
+        cm_ds = os.path.join(build_dir, mod, 'DerivedSources')
+        cm_ds_has_headers[mod] = (os.path.isdir(cm_ds) and
+                                  any(f.endswith('.h') for f in os.listdir(cm_ds)))
+
+    xcode_subs = []
+    if xcode_build:
+        for mod in ('WebCore', 'WebKit', 'JavaScriptCore', 'WebKitLegacy', 'WebGPU'):
+            for src_sub, xc in (
+                (f'/{mod}/PrivateHeaders', f'{mod}.framework/PrivateHeaders'),
+                (f'/{mod}/Headers',        f'{mod}.framework/Headers'),
+                (f'/{mod}/DerivedSources', f'DerivedSources/{mod}'),
+            ):
+                dst = os.path.join(xcode_build, xc)
+                if os.path.isdir(dst):
+                    xcode_subs.append((f'{build_dir}{src_sub}', dst))
+        xc_uli = os.path.join(xcode_build, 'usr/local/include')
+        if os.path.isdir(xc_uli):
+            for sub in ('ANGLE', 'libwebrtc'):
+                xc_sub = os.path.join(xc_uli, sub)
+                if os.path.isdir(xc_sub):
+                    xcode_subs.append((f'{build_dir}/{sub}/Headers', xc_sub))
+
+    pch_re = re.compile(r'-Xclang -include-pch -Xclang \S+\.pch')
+    inc_pch_re = re.compile(r'-Xclang -include -Xclang (\S*cmake_pch\.\S+)')
+    pch_tgt_re = re.compile(r'CMakeFiles/([^/]+)\.dir/cmake_pch')
+
+    def replace_inc_pch(m):
+        mm = pch_tgt_re.search(m.group(1))
+        if mm and mm.group(1) in _PCH:
+            full = os.path.join(src_root, _PCH[mm.group(1)][0])
+            if os.path.exists(full):
+                return f'-include {full}'
+        return ''
+
+    for entry in data:
+        cmd = entry['command']
+
+        cmd = pch_re.sub('', cmd)
+        cmd = inc_pch_re.sub(replace_inc_pch, cmd)
+        cmd = cmd.replace(' -Winvalid-pch', '')
+        cmd = re.sub(r'(?<= )-Werror(?= )', '', cmd)
+
+        # Identify owning cmake target from -DBUILDING_<Mod>; map to its
+        # source dir (_PCH) and framework name (basename of source dir).
+        own_target = next(
+            (m.group(1) for m in re.finditer(r'-DBUILDING_(\w+)\b', cmd)
+             if m.group(1) in _PCH),
+            None)
+        own_src_dir = None
+        own_mod = None
+        if own_target:
+            p = os.path.join(src_root, _PCH[own_target][1])
+            if os.path.isdir(p):
+                own_src_dir = f'-I{p}'
+            own_mod = os.path.basename(_PCH[own_target][1])
+
+        # Skip own-module PrivateHeaders/Headers subs so cmake's
+        # symlinks-to-source win (same inode as Source/<Mod>/.../X.h).
+        for src, dst in xcode_subs:
+            if own_mod and (f'/{own_mod}/PrivateHeaders' in src
+                            or f'/{own_mod}/Headers' == src.split(build_dir)[-1]):
+                continue
+            cmd = cmd.replace(src, dst)
+
+        extra_includes = list(extra_includes_base)
+        # Source/<own_mod> ahead of Source/WTF so `#include "config.h"`
+        # resolves to the per-module header. Move to front even if present.
+        if own_src_dir:
+            if own_src_dir in extra_includes:
+                extra_includes.remove(own_src_dir)
+            extra_includes.insert(0, own_src_dir)
+        for mod, entries in xcode_ds_by_mod.items():
+            for sub, flag in entries:
+                if mod == own_mod and sub == '' and cm_ds_has_headers.get(mod):
+                    extra_includes.append(f'-I{os.path.join(build_dir, mod, "DerivedSources")}')
+                    continue
+                extra_includes.append(flag)
+
+        # Hmaps to the front: WebKit.hmap's `Logging.h` must beat
+        # bmalloc/Headers/bmalloc's.
+        toks = cmd.split(' ')
+        hmap_args, other = [], []
+        i = 0
+        while i < len(toks):
+            t = toks[i]
+            if t == '-I' and i + 1 < len(toks) and toks[i+1].endswith('.hmap'):
+                hmap_args.extend([t, toks[i+1]])
+                i += 2
+                continue
+            if t.startswith('-I') and t.endswith('.hmap') and len(t) > 2:
+                hmap_args.append(t)
+                i += 1
+                continue
+            other.append(t)
+            i += 1
+        cmd = other[0] + ' ' + ' '.join(hmap_args + other[1:])
+
+        prepend = list(extra_includes)
+        # Own-module: -I cmake's forwarder dir (inode-matched to source) so
+        # `<Mod/X.h>` finds the same file as `"X.h"` and `#pragma once` /
+        # Obj-C dedup works.
+        for mod, sub in (('WebCore', 'PrivateHeaders'),
+                         ('JavaScriptCore', 'PrivateHeaders'),
+                         ('WebKit', 'Headers'),
+                         ('WebKitLegacy', 'Headers')):
+            if own_mod == mod:
+                p = os.path.join(build_dir, mod, sub)
+                if os.path.isdir(p):
+                    prepend.append(f'-I{p}')
+        if xcode_build and f'-F{xcode_build}' not in cmd and f'-F {xcode_build}' not in cmd:
+            prepend.append(f'-F{xcode_build}')
+        if prepend:
+            toks = cmd.split(' ')
+            insert_at = 1
+            while insert_at < len(toks):
+                t = toks[insert_at]
+                if (t == '-I' and insert_at + 1 < len(toks) and toks[insert_at+1].endswith('.hmap')) \
+                        or (t.startswith('-I') and t.endswith('.hmap') and len(t) > 2):
+                    insert_at += 2 if t == '-I' else 1
+                    continue
+                break
+            cmd = ' '.join(toks[:insert_at] + prepend + toks[insert_at:])
+        entry['command'] = cmd
+
+    with open(real, 'w') as f:
+        json.dump(data, f, indent=2)
+
+
+if opts.hybrid:
+    # Xcode ships cmake/ninja; let PATH find them.
+    try:
+        xcode_bin = os.path.dirname(subprocess.run(
+            ['xcrun', '-f', 'cmake'], capture_output=True, text=True, check=True
+        ).stdout.strip())
+        os.environ['PATH'] = xcode_bin + os.pathsep + os.environ.get('PATH', '')
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        pass
+
+    cmake_cache = os.path.join(opts.built_products_dir, "CMakeCache.txt")
+    build_ninja = os.path.join(opts.built_products_dir, "build.ninja")
+    preset = cmake_preset_for(opts.built_products_dir)
+    if (not os.path.exists(cmake_cache) or not os.path.exists(build_ninja)) and preset:
+        subprocess.run(["cmake", "--preset", preset], check=True)
+    if not os.path.exists(build_ninja):
+        print(f"--hybrid: no CMake build at {opts.built_products_dir}")
+        exit(1)
+    subprocess.run(["ninja", "-C", opts.built_products_dir, "UpdateCompileCommandsSymlink"],
+                   check=True)
+    # Build per-module Headers/PrivateHeaders symlinks (and the
+    # generators the latter depend on) so `<Mod/X.h>` resolves.
+    all_targets = subprocess.run(
+        ["ninja", "-C", opts.built_products_dir, "-t", "targets", "all"],
+        capture_output=True, text=True, check=True).stdout.splitlines()
+    header_syms = [
+        line.split(':', 1)[0] for line in all_targets
+        if re.match(r'^[A-Za-z]+/(Private)?Headers/[A-Za-z]+/[^:]+\.h:', line)
+    ]
+    if header_syms:
+        subprocess.run(["ninja", "-C", opts.built_products_dir] + header_syms, check=True)
+    cmake_postprocess(os.path.join(os.path.realpath(base_dir), "compile_commands.json"))
+    print("Generated Compile Commands!")
+    exit(0)
 
 # Check compile_commands folder exists
 compile_commands_dir = opts.built_products_dir + "/compile_commands/"
