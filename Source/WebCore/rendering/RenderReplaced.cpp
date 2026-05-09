@@ -867,6 +867,24 @@ void RenderReplaced::computeIntrinsicKeywordLogicalWidths(LayoutUnit& minLogical
         }
     }
     RenderBox::computeIntrinsicKeywordLogicalWidths(minLogicalWidth, maxLogicalWidth);
+
+    // When block-size is auto, the RenderBox paths above don't transfer fixed
+    // min/max block-size through the intrinsic aspect ratio. Clamp here so
+    // intrinsic keyword widths still honor min-height/max-height.
+    if (!hasIntrinsicAspectRatio() || !style().logicalHeight().isAuto())
+        return;
+
+    auto aspectRatio = computeIntrinsicAspectRatio();
+    auto& style = this->style();
+    auto clamp = [&](LayoutUnit value) {
+        if (auto fixedMaxHeight = style.logicalMaxHeight().tryFixed())
+            value = std::min(value, LayoutUnit { fixedMaxHeight->resolveZoom(style.usedZoomForLength()) * aspectRatio });
+        if (auto fixedMinHeight = style.logicalMinHeight().tryFixed())
+            value = std::max(value, LayoutUnit { fixedMinHeight->resolveZoom(style.usedZoomForLength()) * aspectRatio });
+        return value;
+    };
+    minLogicalWidth = clamp(minLogicalWidth);
+    maxLogicalWidth = clamp(maxLogicalWidth);
 }
 
 void RenderReplaced::computePreferredLogicalWidths()
