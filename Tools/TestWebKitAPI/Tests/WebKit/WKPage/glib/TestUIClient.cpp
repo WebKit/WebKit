@@ -854,7 +854,7 @@ static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
         " <img style='position:absolute; left:1; top:10' src='0xdeadbeef' width=5 height=5></img>"
         " <a style='position:absolute; left:1; top:20' href='http://www.webkitgtk.org/logo' title='WebKitGTK Logo'><img src='0xdeadbeef' width=5 height=5></img></a>"
         " <input style='position:absolute; left:1; top:30' size='10'></input>"
-        " <video style='position:absolute; left:1; top:100' width='300' height='300' controls='controls' preload='none'><source src='movie.ogg' type='video/ogg' /></video>"
+        " <video style='position:absolute; left:1; top:100' width='300' height='300' controls='controls' preload='none'><source src='movie.mp4' type='video/mp4' /></video>"
         " <p style='position:absolute; left:1; top:120' id='text_to_select'>Lorem ipsum.</p>"
         "</body></html>";
 
@@ -915,7 +915,7 @@ static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
     g_assert_false(webkit_hit_test_result_context_is_editable(hitTestResult));
     g_assert_false(webkit_hit_test_result_context_is_scrollbar(hitTestResult));
     g_assert_false(webkit_hit_test_result_context_is_selection(hitTestResult));
-    g_assert_cmpstr(webkit_hit_test_result_get_media_uri(hitTestResult), ==, "file:///movie.ogg");
+    g_assert_cmpstr(webkit_hit_test_result_get_media_uri(hitTestResult), ==, "file:///movie.mp4");
     g_assert_cmpuint(test->m_mouseTargetModifiers, ==, 0);
 
     // Mover over input.

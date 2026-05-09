@@ -2424,6 +2424,8 @@ fast/table/table-display-types-vertical.html [ Failure ]
 # Media-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
+media/media-can-play-ogg.html [ Failure ]
+
 media/audioSession [ Skip ]
 
 webkit.org/b/292839 media/media-fullscreen-not-in-document.html [ Timeout ]

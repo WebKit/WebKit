@@ -7,9 +7,9 @@ PASS audio/mp4 (optional)
 PASS audio/mp4; codecs="mp4a.40.2" (optional)
 PASS audio/mp4 with bogus codec
 PASS audio/mp4 with and without codecs
-PASS audio/ogg (optional)
-PASS audio/ogg; codecs="opus" (optional)
-PASS audio/ogg; codecs="vorbis" (optional)
+NOTRUN audio/ogg (optional) audio/ogg
+NOTRUN audio/ogg; codecs="opus" (optional) audio/ogg
+NOTRUN audio/ogg; codecs="vorbis" (optional) audio/ogg
 PASS audio/ogg with bogus codec
 PASS audio/ogg with and without codecs
 PASS audio/wav (optional)
@@ -40,12 +40,12 @@ PASS video/mp4 codecs subset
 PASS video/mp4 codecs order
 PASS video/mp4 with bogus codec
 PASS video/mp4 with and without codecs
-PASS video/ogg (optional)
-PASS video/ogg; codecs="opus" (optional)
-PASS video/ogg; codecs="vorbis" (optional)
-PASS video/ogg; codecs="theora" (optional)
-PASS video/ogg codecs subset
-PASS video/ogg codecs order
+NOTRUN video/ogg (optional) video/ogg
+NOTRUN video/ogg; codecs="opus" (optional) video/ogg
+NOTRUN video/ogg; codecs="vorbis" (optional) video/ogg
+NOTRUN video/ogg; codecs="theora" (optional) video/ogg
+NOTRUN video/ogg codecs subset video/ogg
+NOTRUN video/ogg codecs order video/ogg
 PASS video/ogg with bogus codec
 PASS video/ogg with and without codecs
 PASS video/webm (optional)

@@ -671,7 +671,9 @@ void GStreamerRegistryScanner::initializeDecoders(const GStreamerRegistryScanner
 
     fillMimeTypeSetFromCapsMapping(factories, mapping);
 
-    if (factories.hasElementForMediaType(ElementFactories::Type::Demuxer, "application/ogg"_s)) {
+    auto value = CStringView::unsafeFromUTF8(g_getenv("WEBKIT_GST_CAN_PLAY_OGG"));
+    bool isOggAllowed = value.isEmpty() ? true : (WTF::equalLettersIgnoringASCIICase(value.span(), "true"_s) || WTF::equalLettersIgnoringASCIICase(value.span(), "1"_s));
+    if (isOggAllowed && factories.hasElementForMediaType(ElementFactories::Type::Demuxer, "application/ogg"_s)) {
         m_decoderMimeTypeSet.add("application/ogg"_s);
 
         if (vorbisSupported) {
