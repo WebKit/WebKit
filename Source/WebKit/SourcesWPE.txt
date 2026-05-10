@@ -114,10 +114,8 @@ UIProcess/LegacySessionStateCodingNone.cpp
 UIProcess/ViewSnapshotStore.cpp
 UIProcess/WebGrammarDetail.cpp
 UIProcess/WebMemoryPressureHandler.cpp @no-unify
-UIProcess/WebViewportAttributes.cpp
 
 UIProcess/API/C/WKGrammarDetail.cpp
-UIProcess/API/C/WKViewportAttributes.cpp
 
 UIProcess/API/C/glib/WKContextConfigurationGlib.cpp
 UIProcess/API/C/glib/WKTextCheckerGLib.cpp
