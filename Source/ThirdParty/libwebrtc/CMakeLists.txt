@@ -178,7 +178,6 @@ list(APPEND webrtc_SOURCES
     Source/webrtc/api/audio/audio_processing_statistics.cc
     Source/webrtc/api/audio/builtin_audio_processing_builder.cc
     Source/webrtc/api/audio/channel_layout.cc
-    Source/webrtc/api/audio/create_audio_device_module.cc
     Source/webrtc/api/audio/echo_canceller3_config.cc
     Source/webrtc/api/audio/echo_canceller3_factory.cc
     Source/webrtc/api/audio/echo_detector_creator.cc
@@ -609,7 +608,6 @@ list(APPEND webrtc_SOURCES
     Source/webrtc/modules/audio_device/audio_device_buffer.cc
     Source/webrtc/modules/audio_device/audio_device_data_observer.cc
     Source/webrtc/modules/audio_device/audio_device_generic.cc
-    Source/webrtc/modules/audio_device/audio_device_impl.cc
     Source/webrtc/modules/audio_device/audio_device_name.cc
     Source/webrtc/modules/audio_device/dummy/audio_device_dummy.cc
     Source/webrtc/modules/audio_device/dummy/file_audio_device.cc
@@ -2075,8 +2073,16 @@ if (APPLE)
         Source/webrtc/webkit_sdk/objc/components/video_codec/RTCVideoEncoderH264.mm
         Source/webrtc/modules/video_coding/codecs/vp9/vp9.cc
         Source/webrtc/common_video/h265/h265_common.cc
-        Source/webrtc/modules/audio_device/mac/audio_device_mac.cc
-        Source/webrtc/modules/audio_device/mac/audio_mixer_manager_mac.cc
+    )
+    if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+        list(APPEND webrtc_SOURCES
+            Source/webrtc/api/audio/create_audio_device_module.cc
+            Source/webrtc/modules/audio_device/audio_device_impl.cc
+            Source/webrtc/modules/audio_device/mac/audio_device_mac.cc
+            Source/webrtc/modules/audio_device/mac/audio_mixer_manager_mac.cc
+        )
+    endif ()
+    list(APPEND webrtc_SOURCES
 
         Source/webrtc/modules/third_party/portaudio/pa_ringbuffer.c
 
@@ -2327,7 +2333,6 @@ target_compile_definitions(webrtc PRIVATE
   WEBRTC_CODEC_RED
   WEBRTC_HAVE_DCSCTP
   WEBRTC_HAVE_SCTP
-  WEBRTC_INCLUDE_INTERNAL_AUDIO_DEVICE
   WEBRTC_INTELLIGIBILITY_ENHANCER=0
   WEBRTC_NS_FLOAT
   WEBRTC_OPUS_SUPPORT_120MS_PTIME=0
@@ -2369,7 +2374,11 @@ if (APPLE)
     target_compile_definitions(webrtc PRIVATE
         WEBRTC_ARCH_LITTLE_ENDIAN
         WEBRTC_MAC
+        WEBRTC_POSIX
     )
+    if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+        target_compile_definitions(webrtc PRIVATE WEBRTC_INCLUDE_INTERNAL_AUDIO_DEVICE)
+    endif ()
 else ()
     target_compile_definitions(webrtc PRIVATE
         SCTP_PROCESS_LEVEL_LOCKS

@@ -829,15 +829,22 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         endif ()
 
         set(_swift_private_frameworks_flag "")
-        if (CMAKE_SYSTEM_NAME STREQUAL "iOS" AND CMAKE_OSX_SYSROOT)
+        if ((CMAKE_SYSTEM_NAME STREQUAL "iOS" OR CMAKE_SYSTEM_NAME STREQUAL "visionOS") AND CMAKE_OSX_SYSROOT)
             set(_swift_private_frameworks_flag
                 -Xcc -iframework${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks
+                -F ${CMAKE_BINARY_DIR}
                 -F ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks
             )
             if (EXISTS "${CMAKE_OSX_SYSROOT}/usr/local/include/unicode_private.modulemap")
                 list(APPEND _swift_private_frameworks_flag
                     -Xcc -isystem${CMAKE_OSX_SYSROOT}/usr/local/include
                     -Xcc -fmodule-map-file=${CMAKE_OSX_SYSROOT}/usr/local/include/unicode_private.modulemap
+                )
+            endif ()
+            set(_vfs_overlay "${CMAKE_BINARY_DIR}/swift-vfs-overlay.yaml")
+            if (EXISTS "${_vfs_overlay}")
+                list(APPEND _swift_private_frameworks_flag
+                    -Xcc -ivfsoverlay -Xcc ${_vfs_overlay}
                 )
             endif ()
         endif ()

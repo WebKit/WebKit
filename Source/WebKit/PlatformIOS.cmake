@@ -251,6 +251,12 @@ add_custom_command(
 add_custom_target(WebKit_PrivateModuleMap DEPENDS "${_private_modulemap_output}")
 add_dependencies(WebKit WebKit_PrivateModuleMap)
 
+set(_textinput_private_modulemap "${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks/TextInput.framework/Modules/module.private.modulemap")
+set(_empty_modulemap "${CMAKE_BINARY_DIR}/empty-module.private.modulemap")
+if (NOT EXISTS "${_empty_modulemap}")
+    file(WRITE "${_empty_modulemap}" "")
+endif ()
+
 file(WRITE "${CMAKE_BINARY_DIR}/swift-vfs-overlay.yaml"
 "{
   \"version\": 0,
@@ -275,6 +281,21 @@ file(WRITE "${CMAKE_BINARY_DIR}/swift-vfs-overlay.yaml"
       \"name\": \"${CMAKE_OSX_SYSROOT}/System/Library/Frameworks/WebKit.framework/Modules/module.private.modulemap\",
       \"type\": \"file\",
       \"external-contents\": \"${CMAKE_BINARY_DIR}/WebKit/Modules/module.private.modulemap\"
+    },
+    {
+      \"name\": \"${_textinput_private_modulemap}\",
+      \"type\": \"file\",
+      \"external-contents\": \"${_empty_modulemap}\"
+    },
+    {
+      \"name\": \"${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks/WebKitLegacy.framework/Modules/module.modulemap\",
+      \"type\": \"file\",
+      \"external-contents\": \"${_empty_modulemap}\"
+    },
+    {
+      \"name\": \"${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks/WebKitLegacy.framework/Modules/module.private.modulemap\",
+      \"type\": \"file\",
+      \"external-contents\": \"${_empty_modulemap}\"
     }
   ]
 }
@@ -1199,6 +1220,9 @@ with open(sys.argv[2], 'wb') as f:
     endif ()
     if (EXISTS "${CMAKE_BINARY_DIR}/generated-stubs")
         list(APPEND _sb_include_flags -I ${CMAKE_BINARY_DIR}/generated-stubs)
+    endif ()
+    if (CMAKE_OSX_SYSROOT AND EXISTS "${CMAKE_OSX_SYSROOT}/usr/local/include")
+        list(APPEND _sb_include_flags -isystem ${CMAKE_OSX_SYSROOT}/usr/local/include)
     endif ()
 
     set(WebKit_SB_FILES "")

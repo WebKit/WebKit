@@ -436,7 +436,7 @@ if (ENABLE_WEBKIT)
             Helpers/cocoa/UtilitiesCocoa.mm
             InjectedBundle/mac/InjectedBundleControllerMac.mm
         )
-        if (NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")
+        if (NOT CMAKE_SYSTEM_NAME STREQUAL "iOS" AND NOT CMAKE_SYSTEM_NAME STREQUAL "visionOS")
             list(APPEND TestWebKitAPIInjectedBundle_SOURCES
                 Helpers/mac/PlatformUtilitiesMac.mm
             )

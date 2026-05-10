@@ -1217,7 +1217,7 @@ if (APPLE)
     WEBKIT_ADD_TARGET_CXX_FLAGS(WebKit -fobjc-weak)
 endif ()
 
-if ("${PORT}" STREQUAL "Mac" OR "${PORT}" STREQUAL "IOS")
+if ("${PORT}" STREQUAL "Mac" OR "${PORT}" STREQUAL "IOS" OR "${PORT}" STREQUAL "XROS")
     WEBKIT_DEFINE_XPC_SERVICES()
 else ()
     if (NOT ANDROID)
