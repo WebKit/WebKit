@@ -41,6 +41,7 @@
 #include "Logging.h"
 #include "MediaPlayerPrivateGStreamer.h"
 #include "MediaPlayerPrivateGStreamerMSE.h"
+#include "MediaSourcePrivateClient.h"
 #include "MediaSourceTrackGStreamer.h"
 #include "NotImplemented.h"
 #include "SourceBufferPrivateGStreamer.h"

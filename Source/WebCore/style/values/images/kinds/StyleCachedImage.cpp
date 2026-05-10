@@ -231,54 +231,27 @@ bool CachedImage::errorOccurred() const
     return m_cachedImage->errorOccurred();
 }
 
-FloatSize CachedImage::imageSize(const RenderElement* renderer, float multiplier, WebCore::CachedImage::SizeType sizeType) const
+FloatSize CachedImage::imageSize(const RenderElement* renderer, float multiplier, WebCore::CachedImage::SizeType sizeType, FloatSize defaultObjectSize) const
 {
-    if (isRenderSVGResource(renderer))
-        return m_containerSize;
+    if (isRenderSVGResource(renderer)) {
+        FloatSize size = floorSizeToDevicePixels(LayoutSize(m_containerSize), renderer ? protect(renderer->document())->deviceScaleFactor() : 1);
+        if (multiplier != 1.0f)
+            size.scale(multiplier);
+        return size;
+    }
     if (!m_cachedImage)
         return { };
     float density = 1.0f;
     if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer))
         density = renderImage->imageDevicePixelRatio();
-    return m_cachedImage->imageSizeForRenderer(renderer, multiplier, sizeType, density) / m_scaleFactor;
+    return m_cachedImage->imageSizeForRenderer(renderer, multiplier, sizeType, density, defaultObjectSize) / m_scaleFactor;
 }
 
-bool CachedImage::imageHasRelativeWidth() const
+bool CachedImage::imageHasIntrinsicAspectRatio() const
 {
     if (!m_cachedImage)
         return false;
-    return m_cachedImage->imageHasRelativeWidth();
-}
-
-bool CachedImage::imageHasRelativeHeight() const
-{
-    if (!m_cachedImage)
-        return false;
-    return m_cachedImage->imageHasRelativeHeight();
-}
-
-bool CachedImage::imageHasNaturalAspectRatio() const
-{
-    if (!m_cachedImage)
-        return false;
-    return m_cachedImage->imageHasNaturalAspectRatio();
-}
-
-void CachedImage::computeIntrinsicDimensions(const RenderElement* renderer, float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio)
-{
-    // In case of an SVG resource, we should return the container size.
-    if (isRenderSVGResource(renderer)) {
-        FloatSize size = floorSizeToDevicePixels(LayoutSize(m_containerSize), renderer ? protect(renderer->document())->deviceScaleFactor() : 1);
-        intrinsicWidth = size.width();
-        intrinsicHeight = size.height();
-        intrinsicRatio = size;
-        return;
-    }
-
-    if (!m_cachedImage)
-        return;
-
-    m_cachedImage->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
+    return m_cachedImage->imageHasIntrinsicAspectRatio();
 }
 
 bool CachedImage::usesImageContainerSize() const

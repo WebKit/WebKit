@@ -61,8 +61,7 @@ public:
 
     void setContainerContext(const IntSize&, const URL&);
 
-    bool imageHasRelativeWidth() const { return m_styleImage && m_styleImage->imageHasRelativeWidth(); }
-    bool imageHasRelativeHeight() const { return m_styleImage && m_styleImage->imageHasRelativeHeight(); }
+    bool imageUsesContainerSize() const { return m_styleImage && m_styleImage->usesImageContainerSize(); }
 
     inline LayoutSize imageSize(float multiplier) const { return imageSize(multiplier, CachedImage::UsedSize); }
     inline LayoutSize intrinsicSize(float multiplier) const { return imageSize(multiplier, CachedImage::IntrinsicSize); }

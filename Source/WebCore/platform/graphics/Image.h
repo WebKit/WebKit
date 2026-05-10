@@ -52,6 +52,8 @@ class Timer;
 
 enum class CompositeOperator : uint8_t;
 
+inline constexpr FloatSize defaultCSSIntrinsicSize { 300, 150 };
+
 // This class gets notified when an image creates or destroys decoded frames and when it advances animation frames.
 class ImageObserver;
 
@@ -98,11 +100,7 @@ public:
     virtual bool usesContainerSize() const { return false; }
     virtual bool hasIntrinsicWidth() const { return true; }
     virtual bool hasIntrinsicHeight() const { return true; }
-    // FIXME: hasRelativeWidth/Height should be deduplicated with hasIntrinsicWidth/Height.
-    virtual bool hasRelativeWidth() const { return false; }
-    virtual bool hasRelativeHeight() const { return false; }
-    virtual void computeIntrinsicDimensions(float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio);
-    virtual bool hasNaturalAspectRatio() const { return true; }
+    virtual bool hasIntrinsicAspectRatio() const;
 
     virtual FloatSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const = 0;
     virtual FloatSize sourceSize(ImageOrientation = ImageOrientation::Orientation::FromImage) const;

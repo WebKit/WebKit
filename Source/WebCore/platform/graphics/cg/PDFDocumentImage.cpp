@@ -61,13 +61,6 @@ FloatSize PDFDocumentImage::size(ImageOrientation) const
     return expandedCropBoxSize;
 }
 
-void PDFDocumentImage::computeIntrinsicDimensions(float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio)
-{
-    // FIXME: If we want size negotiation with PDF documents as-image, this is the place to implement it (https://bugs.webkit.org/show_bug.cgi?id=12095).
-    Image::computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
-    intrinsicRatio = FloatSize();
-}
-
 EncodedDataStatus PDFDocumentImage::dataChanged(bool allDataReceived)
 {
     ASSERT(!m_document);

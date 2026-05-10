@@ -105,7 +105,7 @@ void GeneratedImage::evictCachedGeneratedImage(FloatSize size)
     m_images.remove(size);
 }
 
-FloatSize GeneratedImage::imageSize(const RenderElement* renderer, float multiplier, WebCore::CachedImage::SizeType) const
+FloatSize GeneratedImage::imageSize(const RenderElement* renderer, float multiplier, WebCore::CachedImage::SizeType, FloatSize) const
 {
     if (!m_fixedSize)
         return m_containerSize;
@@ -128,15 +128,6 @@ FloatSize GeneratedImage::imageSize(const RenderElement* renderer, float multipl
         height = std::max<float>(1 / deviceScaleFactor, height);
 
     return { width, height };
-}
-
-void GeneratedImage::computeIntrinsicDimensions(const RenderElement* renderer, float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio)
-{
-    // At a zoom level of 1 the image is guaranteed to have a device pixel size.
-    FloatSize size = floorSizeToDevicePixels(LayoutSize(this->imageSize(renderer, 1)), renderer ? protect(renderer->document())->deviceScaleFactor() : 1);
-    intrinsicWidth = size.width();
-    intrinsicHeight = size.height();
-    intrinsicRatio = size;
 }
 
 // MARK: Client support.

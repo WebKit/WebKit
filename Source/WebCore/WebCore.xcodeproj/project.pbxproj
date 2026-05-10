@@ -12448,7 +12448,6 @@
 		4FA65A6A1108ABED002615E0 /* MathMLSpaceElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLSpaceElement.h; sourceTree = "<group>"; };
 		4FAB48641643A66D00F70C07 /* ElementRareData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ElementRareData.cpp; sourceTree = "<group>"; };
 		4FAB48661643A67E00F70C07 /* NodeRareData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeRareData.cpp; sourceTree = "<group>"; };
-		4FB390AC15EF61F3007AD51F /* GeneratedImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeneratedImage.cpp; sourceTree = "<group>"; };
 		501BAAA813950E2C00F7ACEB /* WindRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WindRule.h; sourceTree = "<group>"; };
 		504AACCB1834455900E3D9BC /* InspectorNodeFinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorNodeFinder.cpp; sourceTree = "<group>"; };
 		504AACCC1834455900E3D9BC /* InspectorNodeFinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorNodeFinder.h; sourceTree = "<group>"; };
@@ -36565,7 +36564,6 @@
 				72C9B6512F9994AD0070F060 /* GainMap.h */,
 				7B7363A62EA761A000770085 /* GCGLExtension.h */,
 				3A2FE8CE2978CC7800BA1D92 /* GCGLSpan.h */,
-				4FB390AC15EF61F3007AD51F /* GeneratedImage.cpp */,
 				BC23F0DA0DAFF4A4009FDC91 /* GeneratedImage.h */,
 				0FB6252C18DE1B1500A07C05 /* GeometryUtilities.cpp */,
 				0FB6252D18DE1B1500A07C05 /* GeometryUtilities.h */,

@@ -68,9 +68,7 @@ public:
 
     void setContainerContextForClient(const CachedImageClient&, const LayoutSize&, float, const URL&);
     bool usesImageContainerSize() const { return m_image && m_image->usesContainerSize(); }
-    bool imageHasNaturalAspectRatio() const { return m_image && m_image->hasNaturalAspectRatio(); }
-    bool imageHasRelativeWidth() const { return m_image && m_image->hasRelativeWidth(); }
-    bool imageHasRelativeHeight() const { return m_image && m_image->hasRelativeHeight(); }
+    bool imageHasIntrinsicAspectRatio() const { return m_image && m_image->hasIntrinsicAspectRatio(); }
 
     void updateBuffer(const FragmentedSharedBuffer&) override;
     void finishLoading(const FragmentedSharedBuffer*, const NetworkLoadMetrics&) override;
@@ -81,9 +79,8 @@ public:
     };
     WEBCORE_EXPORT FloatSize imageSizeForRenderer(const RenderElement*) const;
     // This method takes a zoom multiplier that can be used to increase the natural size of the image by the zoom.
-    LayoutSize imageSizeForRenderer(const RenderElement*, float multiplier, SizeType = UsedSize, float density = 1.0f) const;
-    LayoutSize unclampedImageSizeForRenderer(const RenderElement*, float multiplier, SizeType = UsedSize, float density = 1.0f) const;
-    void computeIntrinsicDimensions(float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio);
+    LayoutSize imageSizeForRenderer(const RenderElement*, float multiplier, SizeType = UsedSize, float density = 1.0f, FloatSize defaultObjectSize = defaultCSSIntrinsicSize) const;
+    LayoutSize unclampedImageSizeForRenderer(const RenderElement*, float multiplier, SizeType = UsedSize, float density = 1.0f, FloatSize defaultObjectSize = defaultCSSIntrinsicSize) const;
 
     bool hasHDRContent() const;
 
@@ -106,7 +103,7 @@ public:
     bool allowsAnimation(const Image&) const;
 
 private:
-    FloatSize internalImageSizeForRenderer(const RenderElement*, float multiplier, SizeType, float density) const;
+    FloatSize internalImageSizeForRenderer(const RenderElement*, float multiplier, SizeType, float density, FloatSize defaultObjectSize) const;
 
     void clear();
 

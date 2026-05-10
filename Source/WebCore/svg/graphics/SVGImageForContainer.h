@@ -46,12 +46,9 @@ public:
     FloatSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const final;
 
     bool usesContainerSize() const final { return m_image->usesContainerSize(); }
-    bool hasRelativeWidth() const final { return m_image->hasRelativeWidth(); }
-    bool hasRelativeHeight() const final { return m_image->hasRelativeHeight(); }
-    void computeIntrinsicDimensions(float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio) final
-    {
-        protect(m_image)->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
-    }
+    bool hasIntrinsicWidth() const final { return m_image->hasIntrinsicWidth(); }
+    bool hasIntrinsicHeight() const final { return m_image->hasIntrinsicHeight(); }
+    bool hasIntrinsicAspectRatio() const final { return m_image->hasIntrinsicAspectRatio(); }
 
     ImageDrawResult draw(GraphicsContext&, const FloatRect&, const FloatRect&, ImagePaintingOptions = { }) final;
 

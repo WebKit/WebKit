@@ -852,12 +852,12 @@ template<typename Layer> LayoutSize BackgroundPainter::calculateFillTileSize(con
 
             // If one of the values is auto we have to use the appropriate
             // scale to maintain our aspect ratio.
-            bool hasNaturalAspectRatio = image && image->imageHasNaturalAspectRatio();
+            bool hasIntrinsicAspectRatio = image && image->imageHasIntrinsicAspectRatio();
             if (layerWidth.isAuto() && !layerHeight.isAuto()) {
-                if (hasNaturalAspectRatio && imageIntrinsicSize.height())
+                if (hasIntrinsicAspectRatio && imageIntrinsicSize.height())
                     tileSize.setWidth(imageIntrinsicSize.width() * tileSize.height() / imageIntrinsicSize.height());
             } else if (!layerWidth.isAuto() && layerHeight.isAuto()) {
-                if (hasNaturalAspectRatio && imageIntrinsicSize.width())
+                if (hasIntrinsicAspectRatio && imageIntrinsicSize.width())
                     tileSize.setHeight(imageIntrinsicSize.height() * tileSize.width() / imageIntrinsicSize.width());
             } else if (layerWidth.isAuto() && layerHeight.isAuto()) {
                 // If both width and height are auto, use the image's intrinsic size.

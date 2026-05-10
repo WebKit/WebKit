@@ -1540,7 +1540,7 @@ static LayoutSize size(CachedImage* cachedImage, RenderElement* renderer, ImageS
     if (!cachedImage)
         return { };
     LayoutSize size = cachedImage->imageSizeForRenderer(renderer, 1.0f); // FIXME: Not sure about this.
-    if (auto* renderImage = dynamicDowncast<RenderImage>(renderer); sizeType == ImageSizeType::AfterDevicePixelRatio && renderImage && cachedImage->image() && !cachedImage->image()->hasRelativeWidth())
+    if (auto* renderImage = dynamicDowncast<RenderImage>(renderer); sizeType == ImageSizeType::AfterDevicePixelRatio && renderImage && cachedImage->image() && cachedImage->image()->hasIntrinsicWidth())
         size.scale(renderImage->imageDevicePixelRatio());
     return size;
 }
@@ -2243,7 +2243,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(C
 ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(HTMLImageElement& imageElement, bool repeatX, bool repeatY)
 {
     RefPtr cachedImage = imageElement.cachedImage();
-    
+
     // If the image loading hasn't started or the image is not complete, it is not fully decodable.
     if (!cachedImage || !imageElement.complete())
         return nullptr;
@@ -2255,11 +2255,8 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(H
         return Exception { ExceptionCode::InvalidStateError };
 
     // Image may have a zero-width or a zero-height.
-    float intrinsicWidth = 0;
-    float intrinsicHeight = 0;
-    FloatSize intrinsicRatio;
-    cachedImage->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
-    if (intrinsicWidth == 0 || intrinsicHeight == 0)
+    RefPtr image = cachedImage->image();
+    if (!image || !image->hasIntrinsicWidth() || !image->hasIntrinsicHeight() || !image->hasIntrinsicAspectRatio())
         return nullptr;
 
     return createPattern(*cachedImage, protect(imageElement.renderer()).get(), repeatX, repeatY);
@@ -2281,11 +2278,8 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(S
         return nullptr;
 
     // Image may have a zero-width or a zero-height.
-    float intrinsicWidth = 0;
-    float intrinsicHeight = 0;
-    FloatSize intrinsicRatio;
-    cachedImage->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
-    if (intrinsicWidth == 0 || intrinsicHeight == 0)
+    RefPtr image = cachedImage->image();
+    if (!image || !image->hasIntrinsicWidth() || !image->hasIntrinsicHeight() || !image->hasIntrinsicAspectRatio())
         return nullptr;
 
     return createPattern(*cachedImage, protect(imageElement.renderer()).get(), repeatX, repeatY);
