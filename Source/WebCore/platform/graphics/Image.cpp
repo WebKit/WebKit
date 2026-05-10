@@ -233,9 +233,9 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRec
     ASSERT_IMPLIES(isBitmapImage(), !hasSolidColor());
 
     FloatSize intrinsicTileSize = size();
-    if (hasRelativeWidth())
+    if (!hasIntrinsicWidth())
         intrinsicTileSize.setWidth(scaledTileSize.width());
-    if (hasRelativeHeight())
+    if (!hasIntrinsicHeight())
         intrinsicTileSize.setHeight(scaledTileSize.height());
 
     FloatSize scale(scaledTileSize / intrinsicTileSize);
@@ -403,11 +403,9 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& dstRect
     return ImageDrawResult::DidDraw;
 }
 
-void Image::computeIntrinsicDimensions(float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio)
+bool Image::hasIntrinsicAspectRatio() const
 {
-    intrinsicRatio = size();
-    intrinsicWidth = intrinsicRatio.width();
-    intrinsicHeight = intrinsicRatio.height();
+    return !size().isEmpty();
 }
 
 FloatSize Image::sourceSize(ImageOrientation orientation) const

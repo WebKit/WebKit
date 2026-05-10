@@ -120,28 +120,11 @@ bool MultiImage::errorOccurred() const
     return m_selectedImage && m_selectedImage->errorOccurred();
 }
 
-FloatSize MultiImage::imageSize(const RenderElement* renderer, float multiplier, WebCore::CachedImage::SizeType sizeType) const
+FloatSize MultiImage::imageSize(const RenderElement* renderer, float multiplier, WebCore::CachedImage::SizeType sizeType, FloatSize defaultObjectSize) const
 {
     if (!m_selectedImage)
         return { };
-    return m_selectedImage->imageSize(renderer, multiplier, sizeType);
-}
-
-bool MultiImage::imageHasRelativeWidth() const
-{
-    return m_selectedImage && m_selectedImage->imageHasRelativeWidth();
-}
-
-bool MultiImage::imageHasRelativeHeight() const
-{
-    return m_selectedImage && m_selectedImage->imageHasRelativeHeight();
-}
-
-void MultiImage::computeIntrinsicDimensions(const RenderElement* element, float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio)
-{
-    if (!m_selectedImage)
-        return;
-    m_selectedImage->computeIntrinsicDimensions(element, intrinsicWidth, intrinsicHeight, intrinsicRatio);
+    return m_selectedImage->imageSize(renderer, multiplier, sizeType, defaultObjectSize);
 }
 
 bool MultiImage::usesImageContainerSize() const

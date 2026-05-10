@@ -100,10 +100,10 @@ RefPtr<SVGSVGElement> SVGImage::rootElement() const
     return DocumentSVG::rootElement(*localMainFrame->document());
 }
 
-FloatSize SVGImage::resolvedIntrinsicSize(float density) const
+FloatSize SVGImage::resolvedIntrinsicSize(float density, FloatSize defaultObjectSize) const
 {
-    constexpr float defaultWidth = 300;
-    constexpr float defaultHeight = 150;
+    float defaultWidth = defaultObjectSize.width();
+    float defaultHeight = defaultObjectSize.height();
 
     RefPtr rootElement = this->rootElement();
     if (!rootElement)
@@ -114,7 +114,7 @@ FloatSize SVGImage::resolvedIntrinsicSize(float density) const
     if (!viewBox.isEmpty())
         aspectRatio = viewBox.width() / viewBox.height();
 
-    constexpr float defaultRatio = defaultWidth / defaultHeight;
+    float defaultRatio = defaultWidth / defaultHeight;
     float width = defaultWidth;
     float height = defaultHeight;
 
@@ -217,7 +217,7 @@ IntSize SVGImage::containerSize() const
 
     // Use the default CSS intrinsic size if the above failed.
     if (currentSize.isEmpty())
-        return IntSize(300, 150);
+        return IntSize(defaultCSSIntrinsicSize);
 
     return IntSize(currentSize);
 }
@@ -424,38 +424,16 @@ bool SVGImage::hasIntrinsicHeight() const
     return rootElement && rootElement->hasIntrinsicHeight();
 }
 
-bool SVGImage::hasRelativeWidth() const
-{
-    // FIXME: Delete this function and replace all the calls to it with !hasIntrinsicWidth().
-    return false;
-}
-
-bool SVGImage::hasRelativeHeight() const
-{
-    // FIXME: Delete this function and replace all the calls to it with !hasIntrinsicHeight().
-    return false;
-}
-
-bool SVGImage::hasNaturalAspectRatio() const
+bool SVGImage::hasIntrinsicAspectRatio() const
 {
     RefPtr rootElement = this->rootElement();
     if (!rootElement)
         return false;
-    return rootElement->hasIntrinsicDimensions();
-}
 
-void SVGImage::computeIntrinsicDimensions(float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio)
-{
-    RefPtr rootElement = this->rootElement();
-    if (!rootElement)
-        return;
+    if (!rootElement->viewBox().isEmpty())
+        return true;
 
-    intrinsicWidth = rootElement->intrinsicWidth();
-    intrinsicHeight = rootElement->intrinsicHeight();
-
-    intrinsicRatio = rootElement->viewBox().size();
-    if (intrinsicRatio.isEmpty())
-        intrinsicRatio = FloatSize { intrinsicWidth, intrinsicHeight };
+    return rootElement->intrinsicWidth() > 0 && rootElement->intrinsicHeight() > 0;
 }
 
 void SVGImage::startAnimationTimerFired()

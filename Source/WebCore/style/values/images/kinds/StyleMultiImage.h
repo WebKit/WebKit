@@ -69,10 +69,7 @@ private:
     void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
     bool isLoaded(const RenderElement*) const final;
     bool errorOccurred() const final;
-    FloatSize imageSize(const RenderElement*, float multiplier, WebCore::CachedImage::SizeType = WebCore::CachedImage::UsedSize) const final;
-    bool imageHasRelativeWidth() const final;
-    bool imageHasRelativeHeight() const final;
-    void computeIntrinsicDimensions(const RenderElement*, float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio) final;
+    FloatSize imageSize(const RenderElement*, float multiplier, WebCore::CachedImage::SizeType = WebCore::CachedImage::UsedSize, FloatSize defaultObjectSize = defaultCSSIntrinsicSize) const final;
     bool usesImageContainerSize() const final;
     void setContainerContextForRenderer(const RenderElement&, const FloatSize&, float, const WTF::URL& = WTF::URL());
     void addClient(RenderElement&) final;

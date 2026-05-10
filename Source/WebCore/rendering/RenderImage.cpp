@@ -943,8 +943,8 @@ FloatSize RenderImage::computeIntrinsicSize() const
     ASSERT(!shouldApplySizeContainment());
     auto intrinsicSize = RenderReplaced::computeIntrinsicSize();
 
-    // Our intrinsicSize is empty if we're rendering generated images with relative width/height. Figure out the right intrinsic size to use.
-    if (intrinsicSize.isEmpty() && (imageResource().imageHasRelativeWidth() || imageResource().imageHasRelativeHeight())) {
+    // Our intrinsicSize is empty if we're rendering an image that uses its container size (e.g. a generated image without a fixed size). Figure out the right intrinsic size to use.
+    if (intrinsicSize.isEmpty() && imageResource().imageUsesContainerSize()) {
         RenderObject* containingBlock = isOutOfFlowPositioned() ? container() : this->containingBlock();
         if (auto* box = dynamicDowncast<RenderBox>(*containingBlock)) {
             intrinsicSize.setWidth(box->contentBoxLogicalWidth());

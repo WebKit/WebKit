@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include "DestinationColorSpace.h"
 #include "ImageSource.h"
+#include "NativeImage.h"
 
 namespace WebCore {
 

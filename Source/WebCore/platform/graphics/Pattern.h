@@ -32,6 +32,7 @@
 
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 #if USE(CG)
 typedef struct CGPattern* CGPatternRef;

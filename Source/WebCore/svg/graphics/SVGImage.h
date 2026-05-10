@@ -61,8 +61,7 @@ public:
 
     bool hasIntrinsicWidth() const final;
     bool hasIntrinsicHeight() const final;
-    bool hasRelativeWidth() const final;
-    bool hasRelativeHeight() const final;
+    bool hasIntrinsicAspectRatio() const final;
 
     // Start the animation from the beginning.
     void startAnimation() final;
@@ -77,7 +76,7 @@ public:
     Page* internalPage() { return m_page.get(); }
     WEBCORE_EXPORT RefPtr<SVGSVGElement> rootElement() const;
 
-    FloatSize resolvedIntrinsicSize(float density = 1.0f) const;
+    FloatSize resolvedIntrinsicSize(float density = 1.0f, FloatSize defaultObjectSize = defaultCSSIntrinsicSize) const;
 
     RefPtr<NativeImage> nativeImage(const FloatSize&, const DestinationColorSpace& = DestinationColorSpace::SRGB());
 
@@ -92,8 +91,6 @@ private:
     void setContainerSize(const FloatSize&) final;
     IntSize containerSize() const;
     bool usesContainerSize() const final { return true; }
-    void computeIntrinsicDimensions(float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio) final;
-    bool hasNaturalAspectRatio() const final;
 
     void reportApproximateMemoryCost() const;
     EncodedDataStatus dataChanged(bool allDataReceived) final;

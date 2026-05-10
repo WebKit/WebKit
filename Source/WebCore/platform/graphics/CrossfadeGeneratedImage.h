@@ -41,8 +41,9 @@ public:
 
     void setContainerSize(const FloatSize&) override { }
     bool usesContainerSize() const override { return false; }
-    bool hasRelativeWidth() const override { return false; }
-    bool hasRelativeHeight() const override { return false; }
+    bool hasIntrinsicWidth() const override { return true; }
+    bool hasIntrinsicHeight() const override { return true; }
+    bool hasIntrinsicAspectRatio() const override { return true; }
 
     FloatSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const override { return m_crossfadeSize; }
 

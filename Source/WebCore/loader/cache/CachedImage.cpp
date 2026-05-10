@@ -308,7 +308,7 @@ void CachedImage::setContainerContextForClient(const CachedImageClient& client, 
     m_svgImageCache->setContainerContextForClient(client, containerSize, containerZoom, imageURL);
 }
 
-FloatSize CachedImage::internalImageSizeForRenderer(const RenderElement* renderer, float multiplier, SizeType sizeType, float density) const
+FloatSize CachedImage::internalImageSizeForRenderer(const RenderElement* renderer, float multiplier, SizeType sizeType, float density, FloatSize defaultObjectSize) const
 {
     RefPtr image = m_image;
     if (!image)
@@ -321,7 +321,7 @@ FloatSize CachedImage::internalImageSizeForRenderer(const RenderElement* rendere
             // system via setContainerContextForClient), so density does not apply.
             size = m_svgImageCache->imageSizeForRenderer(renderer);
         } else
-            size = svgImage->resolvedIntrinsicSize(density);
+            size = svgImage->resolvedIntrinsicSize(density, defaultObjectSize);
         if (multiplier != 1.0f)
             size.scale(multiplier);
         return size;
@@ -336,8 +336,8 @@ FloatSize CachedImage::internalImageSizeForRenderer(const RenderElement* rendere
         imageSize = image->size(renderer ? renderer->imageOrientation() : ImageOrientation(ImageOrientation::Orientation::FromImage));
 
     float scaleFactor = multiplier * density;
-    float widthScale = image->hasRelativeWidth() ? 1.0f : scaleFactor;
-    float heightScale = image->hasRelativeHeight() ? 1.0f : scaleFactor;
+    float widthScale = image->hasIntrinsicWidth() ? scaleFactor : 1.0f;
+    float heightScale = image->hasIntrinsicHeight() ? scaleFactor : 1.0f;
     if (widthScale != 1.0f || heightScale != 1.0f)
         imageSize.scale(widthScale, heightScale);
     return imageSize;
@@ -345,32 +345,26 @@ FloatSize CachedImage::internalImageSizeForRenderer(const RenderElement* rendere
 
 FloatSize CachedImage::imageSizeForRenderer(const RenderElement* renderer) const
 {
-    return internalImageSizeForRenderer(renderer, 1.0f, UsedSize, 1.0f);
+    return internalImageSizeForRenderer(renderer, 1.0f, UsedSize, 1.0f, defaultCSSIntrinsicSize);
 }
 
-LayoutSize CachedImage::unclampedImageSizeForRenderer(const RenderElement* renderer, float multiplier, SizeType sizeType, float density) const
+LayoutSize CachedImage::unclampedImageSizeForRenderer(const RenderElement* renderer, float multiplier, SizeType sizeType, float density, FloatSize defaultObjectSize) const
 {
-    return LayoutSize(internalImageSizeForRenderer(renderer, multiplier, sizeType, density));
+    return LayoutSize(internalImageSizeForRenderer(renderer, multiplier, sizeType, density, defaultObjectSize));
 }
 
-LayoutSize CachedImage::imageSizeForRenderer(const RenderElement* renderer, float multiplier, SizeType sizeType, float density) const
+LayoutSize CachedImage::imageSizeForRenderer(const RenderElement* renderer, float multiplier, SizeType sizeType, float density, FloatSize defaultObjectSize) const
 {
-    auto imageSize = unclampedImageSizeForRenderer(renderer, multiplier, sizeType, density);
-    if (imageSize.isEmpty() || multiplier == 1.0f)
+    auto floatSize = internalImageSizeForRenderer(renderer, multiplier, sizeType, density, defaultObjectSize);
+    LayoutSize imageSize(floatSize);
+    if (floatSize.isEmpty() || multiplier == 1.0f)
         return imageSize;
 
     // Don't let images that have a width/height >= 1 shrink below 1 when zoomed.
-    LayoutSize minimumSize(imageSize.width() > 0 ? 1 : 0, imageSize.height() > 0 ? 1 : 0);
-    imageSize.clampToMinimumSize(minimumSize);
+    imageSize.clampToMinimumSize({ 1, 1 });
 
     ASSERT(multiplier != 1.0f || (imageSize.width().fraction() == 0.0f && imageSize.height().fraction() == 0.0f));
     return imageSize;
-}
-
-void CachedImage::computeIntrinsicDimensions(float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio)
-{
-    if (RefPtr image = m_image)
-        image->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
 }
 
 bool CachedImage::hasHDRContent() const
