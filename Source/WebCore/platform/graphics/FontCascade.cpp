@@ -38,6 +38,7 @@
 #include "TextShapingResultAndDisplayList.h"
 #include "WidthIterator.h"
 #include <ranges>
+#include <unicode/ubrk.h>
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
@@ -45,7 +46,9 @@
 #include <wtf/SortedArrayMap.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/AtomStringHash.h>
+#include <wtf/text/CharacterProperties.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/TextBreakIterator.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -1213,49 +1216,78 @@ std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(std::sp
         ++count;
         isAfterExpansion = true;
     }
-    if (direction == TextDirection::LTR) {
-        for (size_t i = 0; i < characters.size(); ++i) {
-            char32_t character = characters[i];
-            if (treatAsSpace(character)) {
-                ++count;
-                isAfterExpansion = true;
-                continue;
-            }
-            if (U16_IS_LEAD(character) && i + 1 < characters.size() && U16_IS_TRAIL(characters[i + 1])) {
-                character = U16_GET_SUPPLEMENTARY(character, characters[i + 1]);
-                ++i;
-            }
-            if (canExpandAroundIdeographsInComplexText() && isCJKIdeographOrSymbol(character)) {
-                if (!isAfterExpansion)
-                    ++count;
-                ++count;
-                isAfterExpansion = true;
-                continue;
-            }
-            isAfterExpansion = false;
-        }
-    } else {
-        for (size_t i = characters.size(); i > 0; --i) {
-            char32_t character = characters[i - 1];
-            if (treatAsSpace(character)) {
-                ++count;
-                isAfterExpansion = true;
-                continue;
-            }
-            if (U16_IS_TRAIL(character) && i > 1 && U16_IS_LEAD(characters[i - 2])) {
-                character = U16_GET_SUPPLEMENTARY(characters[i - 2], character);
-                --i;
-            }
-            if (canExpandAroundIdeographsInComplexText() && isCJKIdeographOrSymbol(character)) {
-                if (!isAfterExpansion)
-                    ++count;
-                ++count;
-                isAfterExpansion = true;
-                continue;
-            }
-            isAfterExpansion = false;
+
+    // Fast path: when no character can participate in a multi-codepoint grapheme
+    // cluster, the legacy codepoint loop produces the same result as the cluster
+    // iterator. Anything below U+0300 is neither a surrogate, a combining mark,
+    // a ZWJ, a variation selector, nor any other default-ignorable code point, so
+    // surrogate merging and default-ignorable handling are both no-ops. Avoiding
+    // NonSharedCharacterBreakIterator keeps the common line-layout case allocation-free.
+    bool mayFormMultiCodepointClusters = false;
+    for (auto character : characters) {
+        if (character >= 0x0300) {
+            mayFormMultiCodepointClusters = true;
+            break;
         }
     }
+
+    auto visitCodepoint = [&](char32_t character) {
+        if (treatAsSpace(character)) {
+            ++count;
+            isAfterExpansion = true;
+            return;
+        }
+        if (canExpandAroundIdeographsInComplexText() && isCJKIdeographOrSymbol(character)) {
+            if (!isAfterExpansion)
+                ++count;
+            ++count;
+            isAfterExpansion = true;
+            return;
+        }
+        if (!isDefaultIgnorableCodePoint(character))
+            isAfterExpansion = false;
+    };
+
+    if (!mayFormMultiCodepointClusters) {
+        auto simpleLoop = [&](const auto& range) {
+            for (auto character : range)
+                visitCodepoint(character);
+        };
+        if (direction == TextDirection::LTR)
+            simpleLoop(characters);
+        else
+            simpleLoop(characters | std::views::reverse);
+    } else {
+        // Iterate in grapheme clusters so multi-codepoint sequences (e.g. emoji
+        // ZWJ sequences) contribute a single expansion opportunity rather than
+        // one per codepoint.
+        auto visitCluster = [&](size_t clusterStart) {
+            char32_t character = characters[clusterStart];
+            if (U16_IS_LEAD(character) && clusterStart + 1 < characters.size() && U16_IS_TRAIL(characters[clusterStart + 1]))
+                character = U16_GET_SUPPLEMENTARY(character, characters[clusterStart + 1]);
+            visitCodepoint(character);
+        };
+
+        NonSharedCharacterBreakIterator clusterIterator { StringView { characters } };
+        if (direction == TextDirection::LTR) {
+            int32_t start = 0;
+            int32_t length = static_cast<int32_t>(characters.size());
+            while (start < length) {
+                visitCluster(static_cast<size_t>(start));
+                int32_t next = ubrk_following(clusterIterator, start);
+                if (next == UBRK_DONE)
+                    break;
+                start = next;
+            }
+        } else {
+            int32_t start = ubrk_preceding(clusterIterator, static_cast<int32_t>(characters.size()));
+            while (start != UBRK_DONE) {
+                visitCluster(static_cast<size_t>(start));
+                start = ubrk_preceding(clusterIterator, start);
+            }
+        }
+    }
+
     if (!isAfterExpansion && expansionBehavior.right == ExpansionBehavior::Behavior::Force) {
         ++count;
         isAfterExpansion = true;

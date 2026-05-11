@@ -25,7 +25,10 @@
  */
 
 #include "config.h"
-#include <WebCore/FontCascade.h>
+#include <WebCore/FontCascadeInlines.h>
+#include <WebCore/TextFlags.h>
+#include <WebCore/WritingMode.h>
+#include <wtf/text/WTFString.h>
 
 namespace TestWebKitAPI {
 
@@ -129,4 +132,32 @@ TEST(FontCascadeTest, characterRangeCodePath_NonSurrogates)
     // U+FE20 through U+FE2F Combining half marks
     testCodePathRange({ 0xFE20, 0xFE2F, CodePath::Complex });
 }
+
+// Emoji ZWJ sequences (e.g. U+1F635 U+200D U+1F4AB, "face with spiral eyes")
+// are a single grapheme cluster and must contribute only two expansion
+// opportunities under text-align: justify — one before the cluster, one
+// after. Iterating UTF-16 code units instead would count the inner emoji
+// codepoints as extra ideograph-or-symbol boundaries and inflate the count.
+TEST(FontCascadeTest, ExpansionOpportunityCountEmojiZWJ)
+{
+    String source(u"a\U0001F635\u200D\U0001F4ABz");
+
+    // Only ports that expand around ideographs in complex text participate
+    // in the CJK/symbol classification path — elsewhere no ideograph
+    // opportunities are counted, regardless of cluster boundaries.
+#if PLATFORM(COCOA)
+    constexpr unsigned expectedCount = 2u;
+#else
+    constexpr unsigned expectedCount = 0u;
+#endif
+
+    auto ltr = FontCascade::expansionOpportunityCount(StringView(source), TextDirection::LTR, ExpansionBehavior::defaultBehavior());
+    EXPECT_EQ(expectedCount, ltr.first);
+    EXPECT_FALSE(ltr.second);
+
+    auto rtl = FontCascade::expansionOpportunityCount(StringView(source), TextDirection::RTL, ExpansionBehavior::defaultBehavior());
+    EXPECT_EQ(expectedCount, rtl.first);
+    EXPECT_FALSE(rtl.second);
 }
+
+} // namespace TestWebKitAPI
