@@ -220,7 +220,6 @@ public:
     bool handleNeedContextMessage(GstMessage*);
 
     void handleStreamCollectionMessage(GstMessage*);
-    void handleSyncErrorMessage(GstMessage*);
     void handleMessage(GstMessage*);
 
     void triggerRepaint(GRefPtr<GstSample>&&);
@@ -361,8 +360,10 @@ protected:
     bool isPipelineWaitingPreroll(GstState current, GstState pending, GstStateChangeReturn) const;
     bool isPipelineWaitingPreroll() const;
 
-    void didEnd();
+    virtual void didEnd();
+    void tearDown(bool clearMediaPlayer);
 
+    URL m_url;
     Ref<MainThreadNotifier<MainThreadNotification>> m_notifier;
     ThreadSafeWeakPtr<MediaPlayer> m_player;
     String m_referrer;
@@ -447,8 +448,6 @@ protected:
 #endif
 
     std::optional<GstVideoDecoderPlatform> m_videoDecoderPlatform;
-    bool m_ignoreErrors { false };
-    Atomic<unsigned> m_queuedSyncErrors { 0 };
 
     TrackIDHashMap<Ref<AudioTrackPrivateGStreamer>> m_audioTracks;
     TrackIDHashMap<Ref<VideoTrackPrivateGStreamer>> m_videoTracks;
@@ -496,7 +495,6 @@ private:
         Function<void()> m_task = Function<void()>();
     };
 
-    void tearDown(bool clearMediaPlayer);
     bool isPlayerShuttingDown() const { return m_isPlayerShuttingDown.load(); }
     MediaTime maxTimeLoaded() const;
     bool setVideoSourceOrientation(ImageOrientation);
@@ -573,6 +571,8 @@ private:
     void initializationDataEncountered(InitData&&);
     InitData parseInitDataFromProtectionMessage(GstMessage*);
     bool waitForCDMAttachment();
+
+    GRefPtr<GstContext> m_cdmContext;
 #endif
 
 #if ENABLE(MEDIA_TELEMETRY)
@@ -614,7 +614,6 @@ private:
 
     bool m_hasWebKitWebSrcSentEOS { false };
     mutable unsigned long long m_totalBytes { 0 };
-    URL m_url;
     bool m_shouldPreservePitch { false };
     bool m_isLegacyPlaybin;
 #if ENABLE(MEDIA_STREAM)

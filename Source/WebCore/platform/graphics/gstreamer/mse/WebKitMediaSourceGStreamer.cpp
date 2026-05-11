@@ -616,12 +616,19 @@ static void webKitMediaSrcLoop(void* userData)
             GST_DEBUG_OBJECT(pad, "First buffer on this pad was pushed (ret = %s).", gst_flow_get_name(result));
             dumpPipeline("first-frame-after"_s, stream);
         }
-IGNORE_WARNINGS_BEGIN("cast-align")
+        IGNORE_WARNINGS_BEGIN("cast-align");
     } else if (GST_IS_EVENT(object.get())) {
         // EOS events and other enqueued events are also sent unlocked so they can react to flushes if necessary.
         GRefPtr<GstEvent> event = GRefPtr<GstEvent>(GST_EVENT(object.leakRef()));
-IGNORE_WARNINGS_END
+        IGNORE_WARNINGS_END;
 
+        if (GST_EVENT_TYPE(event.get()) == GST_EVENT_EOS && !streamingMembers->hasPushedFirstBuffer) {
+            // parsebin emits errors if it receives EOS without prior buffer and those errors bubble
+            // up to our media player, leading to false-positive errors. Even if this parsebin
+            // behavior is acceptable in the general case, it is problematic for MSE.
+            GST_DEBUG_OBJECT(pad, "Ignoring EOS on non-prerolled pad");
+            return;
+        }
         streamingMembers.unlockEarly();
         GST_DEBUG_OBJECT(pad, "Pushing event downstream: %" GST_PTR_FORMAT, event.get());
         bool eventHandled = gst_pad_push_event(pad, GRefPtr<GstEvent>(event).leakRef());
