@@ -2,7 +2,7 @@ set_property(DIRECTORY . PROPERTY FOLDER "ANGLE")
 
 if (APPLE)
     set(is_apple TRUE)
-    if (CMAKE_SYSTEM_NAME STREQUAL "iOS")
+    if (CMAKE_SYSTEM_NAME STREQUAL "iOS" OR CMAKE_SYSTEM_NAME STREQUAL "visionOS")
         set(is_ios TRUE)
     else ()
         set(is_mac TRUE)

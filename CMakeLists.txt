@@ -8,57 +8,24 @@
 
 cmake_minimum_required(VERSION 3.20)
 
+include(${CMAKE_CURRENT_SOURCE_DIR}/Source/cmake/AppleDeviceCrossCompile.cmake)
+
 if (PORT STREQUAL "IOS")
-    set(CMAKE_SYSTEM_NAME iOS)
-    if (NOT CMAKE_OSX_SYSROOT)
-        if (DEFINED ENV{SDKROOT} AND EXISTS "$ENV{SDKROOT}")
-            set(CMAKE_OSX_SYSROOT "$ENV{SDKROOT}" CACHE PATH "iOS SDK path" FORCE)
-        else ()
-            if (CMAKE_IOS_SIMULATOR)
-                set(_sdk_name "iphonesimulator.internal")
-                set(_sdk_name_fallback "iphonesimulator")
-            else ()
-                set(_sdk_name "iphoneos.internal")
-                set(_sdk_name_fallback "iphoneos")
-            endif ()
-            execute_process(COMMAND xcrun --sdk ${_sdk_name} --show-sdk-path
-                OUTPUT_VARIABLE _ios_sysroot
-                OUTPUT_STRIP_TRAILING_WHITESPACE
-                RESULT_VARIABLE _internal_sdk_result
-                ERROR_QUIET)
-            if (NOT _internal_sdk_result EQUAL 0 OR NOT _ios_sysroot)
-                execute_process(COMMAND xcrun --sdk ${_sdk_name_fallback} --show-sdk-path
-                    OUTPUT_VARIABLE _ios_sysroot
-                    OUTPUT_STRIP_TRAILING_WHITESPACE
-                    ERROR_QUIET)
-            endif ()
-            if (_ios_sysroot)
-                set(CMAKE_OSX_SYSROOT "${_ios_sysroot}" CACHE PATH "iOS SDK path" FORCE)
-            endif ()
-        endif ()
-    endif ()
-
-    if (NOT CMAKE_OSX_ARCHITECTURES)
-        if (CMAKE_OSX_SYSROOT MATCHES "\\.Internal\\.sdk$" AND NOT CMAKE_OSX_SYSROOT MATCHES "[Ss]imulator")
-            execute_process(COMMAND uname -m
-                OUTPUT_VARIABLE _host_arch
-                OUTPUT_STRIP_TRAILING_WHITESPACE)
-            if (_host_arch STREQUAL "arm64")
-                set(CMAKE_OSX_ARCHITECTURES "arm64e" CACHE STRING "Target architecture" FORCE)
-                message(STATUS "iOS: arm64e enabled (internal device SDK detected)")
-            endif ()
-        else ()
-            set(CMAKE_OSX_ARCHITECTURES "arm64" CACHE STRING "Target architecture" FORCE)
-        endif ()
-    endif ()
-
-    if (NOT CMAKE_OSX_DEPLOYMENT_TARGET)
-        set(CMAKE_OSX_DEPLOYMENT_TARGET "18.0" CACHE STRING "Minimum iOS version" FORCE)
-    endif ()
-
-    if (NOT CMAKE_SYSTEM_PROCESSOR)
-        set(CMAKE_SYSTEM_PROCESSOR "aarch64" CACHE STRING "Target processor" FORCE)
-    endif ()
+    webkit_setup_apple_device_cross_compile(
+        SYSTEM_NAME iOS
+        SDK_NAME "iphoneos"
+        SDK_NAME_SIMULATOR "iphonesimulator"
+        DEFAULT_DEPLOYMENT_TARGET "18.0"
+        SUPPORTS_ARM64E
+    )
+elseif (PORT STREQUAL "XROS")
+    webkit_setup_apple_device_cross_compile(
+        SYSTEM_NAME visionOS
+        SDK_NAME "xros"
+        SDK_NAME_SIMULATOR "xrsimulator"
+        DEFAULT_DEPLOYMENT_TARGET "2.0"
+        SUPPORTS_ARM64E
+    )
 endif ()
 
 project(WebKit LANGUAGES C CXX)
@@ -77,36 +44,45 @@ include(WebKitCommon)
 if (SWIFT_REQUIRED)
     cmake_policy(SET CMP0157 NEW)
 
-    # CMake omits -target for swiftc during iOS cross-compilation.
-    if (PORT STREQUAL "IOS" AND NOT CMAKE_Swift_COMPILER_TARGET)
-        if (CMAKE_OSX_SYSROOT MATCHES "[Ss]imulator")
-            set(CMAKE_Swift_COMPILER_TARGET "${CMAKE_OSX_ARCHITECTURES}-apple-ios${CMAKE_OSX_DEPLOYMENT_TARGET}-simulator" CACHE STRING "Swift target triple" FORCE)
-        else ()
-            set(CMAKE_Swift_COMPILER_TARGET "${CMAKE_OSX_ARCHITECTURES}-apple-ios${CMAKE_OSX_DEPLOYMENT_TARGET}" CACHE STRING "Swift target triple" FORCE)
+    # CMake omits -target for swiftc during cross-compilation to Apple devices.
+    if (PORT STREQUAL "IOS" OR PORT STREQUAL "XROS")
+        if (PORT STREQUAL "IOS")
+            set(_swift_os_name "ios")
+        elseif (PORT STREQUAL "XROS")
+            set(_swift_os_name "xros")
         endif ()
-    endif ()
 
-    if (PORT STREQUAL "IOS")
-        execute_process(COMMAND xcrun --show-sdk-platform-path
-            OUTPUT_VARIABLE _ios_platform_path
-            OUTPUT_STRIP_TRAILING_WHITESPACE
-            ERROR_QUIET)
-        if (_ios_platform_path)
-            execute_process(COMMAND find "${_ios_platform_path}" -name swiftc -path "*/xctoolchain/*" -type f -print -quit
-                OUTPUT_VARIABLE _ios_swiftc
-                OUTPUT_STRIP_TRAILING_WHITESPACE
-                ERROR_QUIET)
-            if (_ios_swiftc AND NOT _ios_swiftc STREQUAL CMAKE_Swift_COMPILER)
-                set(CMAKE_Swift_COMPILER "${_ios_swiftc}" CACHE FILEPATH "Swift compiler" FORCE)
-                message(STATUS "iOS: using platform-specific Swift compiler: ${_ios_swiftc}")
+        if (NOT CMAKE_Swift_COMPILER_TARGET)
+            if (CMAKE_OSX_SYSROOT MATCHES "[Ss]imulator")
+                set(CMAKE_Swift_COMPILER_TARGET "${CMAKE_OSX_ARCHITECTURES}-apple-${_swift_os_name}${CMAKE_OSX_DEPLOYMENT_TARGET}-simulator" CACHE STRING "Swift target triple" FORCE)
+            else ()
+                set(CMAKE_Swift_COMPILER_TARGET "${CMAKE_OSX_ARCHITECTURES}-apple-${_swift_os_name}${CMAKE_OSX_DEPLOYMENT_TARGET}" CACHE STRING "Swift target triple" FORCE)
             endif ()
         endif ()
+
+        execute_process(COMMAND xcrun --show-sdk-platform-path
+            OUTPUT_VARIABLE _platform_path
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            ERROR_QUIET)
+        if (_platform_path)
+            execute_process(COMMAND find "${_platform_path}" -name swiftc -path "*/xctoolchain/*" -type f -print -quit
+                OUTPUT_VARIABLE _platform_swiftc
+                OUTPUT_STRIP_TRAILING_WHITESPACE
+                ERROR_QUIET)
+            if (_platform_swiftc AND NOT _platform_swiftc STREQUAL CMAKE_Swift_COMPILER)
+                set(CMAKE_Swift_COMPILER "${_platform_swiftc}" CACHE FILEPATH "Swift compiler" FORCE)
+                message(STATUS "${PORT}: using platform-specific Swift compiler: ${_platform_swiftc}")
+            endif ()
+        endif ()
+        unset(_platform_path)
+        unset(_platform_swiftc)
+        unset(_swift_os_name)
     endif ()
 
     enable_language(Swift)
 
     # -F causes Swift to find C++23 framework headers in implicit module builds.
-    if (PORT STREQUAL "IOS")
+    if (PORT STREQUAL "IOS" OR PORT STREQUAL "XROS")
         set(CMAKE_Swift_FRAMEWORK_SEARCH_FLAG "-Xcc -iquote")
     endif ()
 

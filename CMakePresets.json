@@ -352,6 +352,32 @@
             "name": "wpe-dev-debug",
             "displayName": "WPE Development Debug",
             "inherits": ["wpe-debug", "dev"]
+        },
+        {
+            "name": "xros",
+            "hidden": true,
+            "generator": "Ninja",
+            "cacheVariables": {
+                "PORT": {
+                    "type": "STRING",
+                    "value": "XROS"
+                }
+            },
+            "environment": {
+                "CCACHE_CONFIGPATH": "${sourceDir}/Tools/ccache/ccache-webkit.conf",
+                "CCACHE_BASEDIR": "${sourceDir}"
+            }
+        },
+        {
+            "name": "xros-debug",
+            "displayName": "visionOS Debug",
+            "inherits": ["xros", "debug"],
+            "binaryDir": "WebKitBuild/cmake-xros/Debug"
+        },
+        {
+            "name": "xros-dev-debug",
+            "displayName": "visionOS Development (Debug, ccache, compile_commands)",
+            "inherits": ["xros-debug", "dev"]
         }
     ],
     "buildPresets": [
@@ -474,6 +500,16 @@
             "name": "ios-sim-dev-release",
             "displayName": "iOS Simulator Development Release",
             "configurePreset": "ios-sim-dev-release"
+        },
+        {
+            "name": "xros-debug",
+            "displayName": "visionOS Debug",
+            "configurePreset": "xros-debug"
+        },
+        {
+            "name": "xros-dev-debug",
+            "displayName": "visionOS Development Debug",
+            "configurePreset": "xros-dev-debug"
         }
     ]
 }

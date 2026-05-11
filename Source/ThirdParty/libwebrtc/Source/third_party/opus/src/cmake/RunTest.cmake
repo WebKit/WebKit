@@ -50,6 +50,11 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "iOS")
 
   message(FATAL_ERROR "Error CTest is not supported on iOS")
 
+elseif(CMAKE_SYSTEM_NAME STREQUAL "visionOS")
+  # CTest doesn't support visionOS
+
+  message(FATAL_ERROR "Error CTest is not supported on visionOS")
+
 else()
   # for other platforms just execute test binary on host
 
