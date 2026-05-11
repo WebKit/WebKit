@@ -175,7 +175,8 @@ void SourceBufferPrivateGStreamer::flush(TrackID trackId)
     if (!player)
         return;
     GST_DEBUG_OBJECT(player->pipeline(), "Source element has emitted tracks, let it handle the flush, which may cause a pipeline flush as well. trackId = '%" PRIu64 "'", track->id());
-    webKitMediaSrcFlush(player->webKitMediaSrc(), track->id());
+    if (auto source = player->webKitMediaSrc())
+        webKitMediaSrcFlush(source, track->id());
 }
 
 void SourceBufferPrivateGStreamer::enqueueSample(Ref<MediaSample>&& sample, TrackID trackId)
