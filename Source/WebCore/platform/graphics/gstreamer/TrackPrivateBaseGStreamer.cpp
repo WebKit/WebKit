@@ -156,6 +156,11 @@ TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(ThreadSafeWeakPtr<MediaPlay
     m_data->installUpdateConfigurationHandlers();
 }
 
+TrackPrivateBaseGStreamer::~TrackPrivateBaseGStreamer()
+{
+    disconnect();
+}
+
 void TrackPrivateBaseGStreamer::setPad(GRefPtr<GstPad>&& pad)
 {
     m_data->setPad(WTF::move(pad));

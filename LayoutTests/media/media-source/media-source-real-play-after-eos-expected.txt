@@ -1,0 +1,16 @@
+
+EVENT(sourceopen)
+EVENT(updateend)
+EVENT(updateend)
+RUN(source.endOfStream())
+EXPECTED (source.readyState == 'ended') OK
+EVENT(seeked)
+EVENT(ended)
+EVENT(updateend)
+RUN(source.endOfStream())
+EXPECTED (source.readyState == 'ended') OK
+EXPECTED (source.duration == '8') OK
+EVENT(seeked)
+EVENT(ended)
+END OF TEST
+
