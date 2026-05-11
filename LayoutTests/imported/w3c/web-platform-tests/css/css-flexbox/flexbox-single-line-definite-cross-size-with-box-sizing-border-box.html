@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="author" title="Sammy Gill" href="mailto:sammy.gill@apple.com">
+<link rel="help" href="https://drafts.csswg.org/css-flexbox-1/#algo-main-item">
+<link rel="help" href="https://drafts.csswg.org/css-flexbox-1/#definite-sizes">
+<link rel="match" href="flexbox-single-line-definite-cross-size-with-box-sizing-border-box-ref.html">
+<meta name="assert" content="Definite cross size of a single line flex container is the container's content box cross size which is used to size a flex item with a preferred aspect ratio.">
+<style>
+.flexbox {
+  display: flex;
+  width: min-content;
+  height: 200px;
+  border: 50px solid green;
+  box-sizing: border-box;
+}
+.item {
+  aspect-ratio: 1;
+  background-color: green;
+}
+</style>
+</head>
+<body>
+<p>This test passes if you see a 200x200 green <strong>square</strong>.</p>
+<div class="flexbox">
+  <div class="item"></div>
+</div>
+</body>
+</html>
