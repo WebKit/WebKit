@@ -68,6 +68,8 @@ public:
 
     void didCompileFunction(StreamingPlan&);
 
+    JS_EXPORT_PRIVATE JSGlobalObject* globalObjectIfActive();
+
 private:
     JS_EXPORT_PRIVATE StreamingCompiler(VM&, CompilerMode, JSGlobalObject*, JSPromise*, JSObject* importObject, std::optional<WebAssemblyCompileOptions>&&, const SourceCode&, String wasmSourceURL);
 
@@ -75,6 +77,7 @@ private:
     void didFinishParsing() final;
     void didComplete() WTF_REQUIRES_LOCK(m_lock);
     void completeIfNecessary() WTF_REQUIRES_LOCK(m_lock);
+    RefPtr<DeferredWorkTimer::TicketData> takeTicketIfActive();
 
     VM& m_vm;
     CompilerMode m_compilerMode;
@@ -84,7 +87,7 @@ private:
     std::optional<WebAssemblyCompileOptions> m_compileOptions;
     Lock m_lock;
     unsigned m_remainingCompilationRequests { 0 };
-    DeferredWorkTimer::Ticket m_ticket;
+    ThreadSafeWeakPtr<DeferredWorkTimer::TicketData> m_ticket;
     const Ref<Wasm::ModuleInformation> m_info;
     StreamingParser m_parser;
     RefPtr<EntryPlan> m_plan;
