@@ -63,8 +63,10 @@ endfunction()
 # Use AT&T syntax for inline asm
 MSVC_ADD_COMPILE_OPTIONS(/clang:-masm=att)
 
-# Create pdb files for debugging purposes, also for Release builds
-MSVC_ADD_COMPILE_OPTIONS(/Zi /GS)
+# Create pdb files for debugging purposes, also for Release builds.
+# /sdl enables additional security checks on top of /GS, including
+# `#pragma strict_gs_check(push, on)` applied to every function.
+MSVC_ADD_COMPILE_OPTIONS(/Zi /GS /sdl)
 
 # Disable ICF (identical code folding) optimization,
 # as it makes it unsafe to pointer-compare functions with identical definitions.

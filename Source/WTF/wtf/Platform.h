@@ -136,15 +136,9 @@
 
 /* FIXME: Any remaining use of TARGET_OS_IPHONE should be removed outside of Apple only files and replaced with OS() checks. */
 /* Set TARGET_OS_IPHONE to 0 by default to allow using it as a guard
- * in cross-platform the same way as it is used in OS(DARWIN) code. */ 
+ * in cross-platform the same way as it is used in OS(DARWIN) code. */
 #if !defined(TARGET_OS_IPHONE) && !OS(DARWIN)
 #define TARGET_OS_IPHONE 0
-#endif
-
-/* FIXME: This does not belong in Platform.h and should instead be included in another mechanism (compiler option, prefix header, config.h, etc) */
-#if COMPILER(MSVC)
-/* Enable strict runtime stack buffer checks. */
-#pragma strict_gs_check(on)
 #endif
 
 /* FIXME: This does not belong in Platform.h and should instead be included in another mechanism (prefix header, config.h, etc) */
