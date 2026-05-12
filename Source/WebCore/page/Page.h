@@ -1541,7 +1541,7 @@ private:
 
     float m_pageScaleFactor { 1 };
     float m_zoomedOutPageScaleFactor { 0 };
-    float m_deviceScaleFactor { 1 };
+    float m_deviceScaleFactor { 2.0f };
     float m_viewScaleFactor { 1 };
 
     FloatBoxExtent m_obscuredContentInsets;
