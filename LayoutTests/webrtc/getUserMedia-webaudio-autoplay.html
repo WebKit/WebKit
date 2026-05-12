@@ -53,6 +53,7 @@ promise_test((test) => {
         var node = context.createBufferSource();
         node.connect(context.destination);
         node.start();
+        stream.getTracks().forEach(track => track.stop());
     });
 }, "Ensuring autoplay works when starting an audio node and getUserMedia is on");
 
@@ -65,7 +66,7 @@ promise_test((test) => {
 
         var node = context.createBufferSource();
         node.connect(context.destination);
-        return context.resume();
+        return context.resume().finally(() => stream.getTracks().forEach(track => track.stop()));
     });
 }, "Ensuring autoplay works when resuming audio context and getUserMedia is on");
         </script>
