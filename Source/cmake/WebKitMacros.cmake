@@ -208,8 +208,38 @@ endmacro()
 function(WEBKIT_ADD_PREFIX_HEADER_WITH_PARENT _target _base_target _header _parent_header)
     if (COMPILER_IS_CLANG)
         string(JOIN "," _lang_genex ${ARGN})
+        # Emit the base target's prefix header into cmake_pch.hxx ahead of the
+        # subtarget's. The chained -include-pch below already provides its
+        # contents via the AST when the PCH is loaded, but a compiler launcher
+        # (sccache/ccache/icecream) that preprocesses without honoring -Xclang
+        # -include-pch falls back to -include cmake_pch.hxx alone. Without the
+        # base prefix in that file, the leaf prefix's heavy includes see
+        # neither cmakeconfig.h nor the libc headers the base prefix provides.
         target_precompile_headers(${_target} PRIVATE
+            "$<$<COMPILE_LANGUAGE:${_lang_genex}>:${CMAKE_CURRENT_SOURCE_DIR}/${_parent_header}>"
             "$<$<COMPILE_LANGUAGE:${_lang_genex}>:${CMAKE_CURRENT_SOURCE_DIR}/${_header}>")
+        # CMake rewrites cmake_pch.hxx at generate time when this header list
+        # changes, but ninja's depfile-recorded .pch dependency on the .hxx is
+        # not re-evaluated on the regenerate-restart pass, so an incremental
+        # build over a tree with the old .pch compiles TUs against it and
+        # clang fails with "modified since the precompiled header was built".
+        # Track the header list ourselves and remove the stale .pch when it
+        # changes so ninja must rebuild it.
+        set(_pch_dir "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${_target}.dir")
+        set(_pch_sig "${_parent_header};${_header}")
+        if (EXISTS "${_pch_dir}/.pch-header-list")
+            file(READ "${_pch_dir}/.pch-header-list" _old_pch_sig)
+        else ()
+            set(_old_pch_sig "")
+        endif ()
+        if (NOT _old_pch_sig STREQUAL _pch_sig)
+            file(GLOB _stale_pch "${_pch_dir}/cmake_pch.*.pch" "${_pch_dir}/cmake_pch.*.gch")
+            if (_stale_pch)
+                file(REMOVE ${_stale_pch})
+            endif ()
+            file(MAKE_DIRECTORY "${_pch_dir}")
+            file(WRITE "${_pch_dir}/.pch-header-list" "${_pch_sig}")
+        endif ()
         if (APPLE)
             # FIXME: Upstream clang does not appear to propagate parent-PCH state to consumers
             # of the child PCH (webkit.org/b/314763). Until that is root-caused, build the child
@@ -273,7 +303,7 @@ macro(WEBKIT_DEFINE_SUBTARGET_WITH_PREFIX _target _subtarget)
             else ()
                 target_link_libraries(${_target} INTERFACE "${_subobjects}")
             endif ()
-            WEBKIT_ADD_PREFIX_HEADER_WITH_PARENT(${_subtarget} ${_target} ${_arg_PREFIX} "" ${_arg_PREFIX_LANGUAGES})
+            WEBKIT_ADD_PREFIX_HEADER_WITH_PARENT(${_subtarget} ${_target} ${_arg_PREFIX} ${_target}Prefix.h ${_arg_PREFIX_LANGUAGES})
         endif ()
     endif ()
     unset(_arg_PREFIX)
