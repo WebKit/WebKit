@@ -8891,6 +8891,7 @@ TEST(SiteIsolation, MultiProcessBFCacheGoForward)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/a"]]];
     [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
     [webView objectByEvaluatingJavaScript:@"window.__bfcacheMarker_a = true"];
+    [webView objectByEvaluatingJavaScript:@"window.__bfcacheMarker = true" inFrame:[webView firstChildFrame]];
 
     checkFrameTreesInProcesses(webView.get(), {
         { "https://a.com"_s, { { RemoteFrame } } },
@@ -8902,6 +8903,7 @@ TEST(SiteIsolation, MultiProcessBFCacheGoForward)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://c.com/c"]]];
     [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
     [webView objectByEvaluatingJavaScript:@"window.__bfcacheMarker_c = true"];
+    [webView objectByEvaluatingJavaScript:@"window.__bfcacheMarker = true" inFrame:[webView firstChildFrame]];
 
     checkFrameTreesInProcesses(webView.get(), {
         { "https://c.com"_s, { { RemoteFrame } } },
@@ -8915,6 +8917,21 @@ TEST(SiteIsolation, MultiProcessBFCacheGoForward)
     [navigationDelegate waitForDidFinishNavigation];
     EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.__bfcacheMarker_a ? true : false"] boolValue]);
 
+    // Wait for the cross-process iframe's frame tree to be fully
+    // reconstructed before asserting on iframe state. waitForDidFinishNavigation
+    // only waits for the main frame, and waitForDidFinishLoadInSubframe does
+    // not fire during BFCache restore.
+    Vector<ExpectedFrameTree> expectedAfterGoBack = {
+        { "https://a.com"_s, { { RemoteFrame } } },
+        { RemoteFrame, { { "https://b.com"_s } } },
+    };
+    while (!frameTreesMatch(frameTrees(webView.get()).get(), Vector<ExpectedFrameTree> { expectedAfterGoBack }))
+        TestWebKitAPI::Util::spinRunLoop();
+
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.__bfcacheMarker ? true : false" inFrame:[webView firstChildFrame]] boolValue]);
+
+    checkFrameTreesInProcesses(webView.get(), WTF::move(expectedAfterGoBack));
+
     // Step 4: Go forward (navigate to C again) — this triggers the bug.
     // goToBackForwardItem is sent to a.com's process but
     // m_mainFrame->coreLocalFrame() is null, causing a silent bail-out.
@@ -8923,6 +8940,17 @@ TEST(SiteIsolation, MultiProcessBFCacheGoForward)
 
     EXPECT_WK_STREQ(@"https://c.com/c", [webView URL].absoluteString);
     EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.__bfcacheMarker_c ? true : false"] boolValue]);
+
+    Vector<ExpectedFrameTree> expectedAfterGoForward = {
+        { "https://c.com"_s, { { RemoteFrame } } },
+        { RemoteFrame, { { "https://a.com"_s } } },
+    };
+    while (!frameTreesMatch(frameTrees(webView.get()).get(), Vector<ExpectedFrameTree> { expectedAfterGoForward }))
+        TestWebKitAPI::Util::spinRunLoop();
+
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.__bfcacheMarker ? true : false" inFrame:[webView firstChildFrame]] boolValue]);
+
+    checkFrameTreesInProcesses(webView.get(), WTF::move(expectedAfterGoForward));
 }
 
 TEST(SiteIsolation, MultiProcessBFCacheSameSiteNavAfterRestore)
