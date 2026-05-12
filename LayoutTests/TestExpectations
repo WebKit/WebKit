@@ -5607,7 +5607,6 @@ imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-
 # CSS will-change failures
 webkit.org/b/225035 imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-002.html [ ImageOnlyFailure ]
 webkit.org/b/224899 imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-005.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-z-index-4.html [ ImageOnlyFailure ]
 
 # Needs display box support.
 fast/layoutformattingcontext/ [ Skip ]

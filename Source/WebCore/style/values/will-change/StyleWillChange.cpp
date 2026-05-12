@@ -43,7 +43,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WillChangeAnimatableFeatures::Data);
 
 // "If any non-initial value of a property would create a stacking context on the element,
 // specifying that property in will-change must create a stacking context on the element."
-bool WillChangeAnimatableFeature::propertyCreatesStackingContext(CSSPropertyID property)
+bool WillChangeAnimatableFeature::propertyCreatesStackingContext(CSSPropertyID property, AllowsZIndex allowsZIndex)
 {
     switch (property) {
     case CSSPropertyPerspective:
@@ -59,7 +59,6 @@ bool WillChangeAnimatableFeature::propertyCreatesStackingContext(CSSPropertyID p
     case CSSPropertyWebkitMask:
     case CSSPropertyOpacity:
     case CSSPropertyPosition:
-    case CSSPropertyZIndex:
     case CSSPropertyWebkitBoxReflect:
     case CSSPropertyMixBlendMode:
     case CSSPropertyIsolation:
@@ -75,6 +74,8 @@ bool WillChangeAnimatableFeature::propertyCreatesStackingContext(CSSPropertyID p
     case CSSPropertyViewTransitionName:
     case CSSPropertyContain:
         return true;
+    case CSSPropertyZIndex:
+        return allowsZIndex == AllowsZIndex::Yes;
     default:
         return false;
     }
@@ -120,11 +121,19 @@ void WillChangeAnimatableFeatures::Data::initializeCachedChecks()
         if (auto* value = std::get_if<WillChangeAnimatableFeature::CustomIdentWithCachedPropertyID>(&feature.value)) {
             auto propertyID = value->propertyID;
 
-            m_canCreateStackingContext |= WillChangeAnimatableFeature::propertyCreatesStackingContext(propertyID);
             m_canTriggerCompositingOnInline |= WillChangeAnimatableFeature::propertyTriggersCompositing(propertyID);
             m_canTriggerCompositing |= m_canTriggerCompositingOnInline | WillChangeAnimatableFeature::propertyTriggersCompositingOnBoxesOnly(propertyID);
         }
     }
+}
+
+bool WillChangeAnimatableFeatures::Data::canCreateStackingContext(WillChangeAnimatableFeature::AllowsZIndex allowsZIndex) const
+{
+    return std::ranges::any_of(*this, [allowsZIndex](auto& feature) {
+        if (auto* value = std::get_if<WillChangeAnimatableFeature::CustomIdentWithCachedPropertyID>(&feature.value))
+            return WillChangeAnimatableFeature::propertyCreatesStackingContext(value->propertyID, allowsZIndex);
+        return false;
+    });
 }
 
 bool WillChangeAnimatableFeatures::Data::operator==(const WillChangeAnimatableFeatures::Data& other) const

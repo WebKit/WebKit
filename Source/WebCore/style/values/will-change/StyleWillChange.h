@@ -78,7 +78,9 @@ struct WillChangeAnimatableFeature {
     {
     }
 
-    static bool NODELETE propertyCreatesStackingContext(CSSPropertyID);
+    enum class AllowsZIndex : bool { No, Yes };
+
+    static bool NODELETE propertyCreatesStackingContext(CSSPropertyID, AllowsZIndex);
     static bool NODELETE propertyTriggersCompositing(CSSPropertyID);
     static bool NODELETE propertyTriggersCompositingOnBoxesOnly(CSSPropertyID);
 
@@ -136,7 +138,7 @@ struct WillChangeAnimatableFeatures {
     bool containsProperty(CSSPropertyID property) const { return m_data->containsProperty(property); }
     bool createsContainingBlockForAbsolutelyPositioned(bool isRootElement) const { return m_data->createsContainingBlockForAbsolutelyPositioned(isRootElement); }
     bool createsContainingBlockForOutOfFlowPositioned(bool isRootElement) const { return m_data->createsContainingBlockForOutOfFlowPositioned(isRootElement); }
-    bool canCreateStackingContext() const { return m_data->canCreateStackingContext(); }
+    bool canCreateStackingContext(WillChangeAnimatableFeature::AllowsZIndex allowsZIndex) const { return m_data->canCreateStackingContext(allowsZIndex); }
     bool canBeBackdropRoot() const { return m_data->canBeBackdropRoot(); }
     bool canTriggerCompositing() const { return m_data->canTriggerCompositing(); }
     bool canTriggerCompositingOnInline() const { return m_data->canTriggerCompositingOnInline(); }
@@ -170,7 +172,7 @@ private:
         bool createsContainingBlockForAbsolutelyPositioned(bool isRootElement) const;
         bool createsContainingBlockForOutOfFlowPositioned(bool isRootElement) const;
         bool canBeBackdropRoot() const;
-        bool canCreateStackingContext() const { return m_canCreateStackingContext; }
+        bool canCreateStackingContext(WillChangeAnimatableFeature::AllowsZIndex) const;
         bool canTriggerCompositing() const { return m_canTriggerCompositing; }
         bool canTriggerCompositingOnInline() const { return m_canTriggerCompositingOnInline; }
 
@@ -192,7 +194,6 @@ private:
 
         void initializeCachedChecks();
 
-        bool m_canCreateStackingContext { false };
         bool m_canTriggerCompositing { false };
         bool m_canTriggerCompositingOnInline { false };
     };
@@ -237,7 +238,7 @@ struct WillChange {
     bool containsProperty(CSSPropertyID property) const { return m_data && m_data->containsProperty(property); }
     bool createsContainingBlockForAbsolutelyPositioned(bool isRootElement) const { return m_data && m_data->createsContainingBlockForAbsolutelyPositioned(isRootElement); }
     bool createsContainingBlockForOutOfFlowPositioned(bool isRootElement) const { return m_data && m_data->createsContainingBlockForOutOfFlowPositioned(isRootElement); }
-    bool canCreateStackingContext() const { return m_data && m_data->canCreateStackingContext(); }
+    bool canCreateStackingContext(WillChangeAnimatableFeature::AllowsZIndex allowsZIndex) const { return m_data && m_data->canCreateStackingContext(allowsZIndex); }
     bool canBeBackdropRoot() const { return m_data && m_data->canBeBackdropRoot(); }
     bool canTriggerCompositing() const { return m_data && m_data->canTriggerCompositing(); }
     bool canTriggerCompositingOnInline() const { return m_data && m_data->canTriggerCompositingOnInline(); }

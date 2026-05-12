@@ -46,7 +46,9 @@
         function doTest()
         {
             for (value of willChangeValues) {
-                makeStackingElement('opacity', value.stacking ? '0.999999' : '1');
+                // z-index: auto; isn't eligible for a stacking context by default.
+                var isStacking = value.property === 'z-index' ? false : value.stacking;
+                makeStackingElement('opacity', isStacking ? '0.999999' : '1');
             }
         }
         

@@ -824,7 +824,7 @@ bool RenderInline::requiresLayer() const
     return isInFlowPositioned()
         || createsGroup()
         || hasClipPath()
-        || style().willChange().canCreateStackingContext()
+        || style().willChange().canCreateStackingContext(Style::WillChangeAnimatableFeature::AllowsZIndex::No)
         || hasRunningAcceleratedAnimations()
         || requiresRenderingConsolidationForViewTransition();
 }

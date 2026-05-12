@@ -378,7 +378,7 @@ static UnicodeBidi NODELETE forceBidiIsolationForRuby(UnicodeBidi unicodeBidi)
     return UnicodeBidi::Isolate;
 }
 
-static bool shouldTreatAutoZIndexAsZero(const RenderStyle& style)
+static bool shouldTreatAutoZIndexAsZero(const RenderStyle& style, const RenderStyle* parentBoxStyle)
 {
     return !style.opacity().isOpaque()
         || style.hasTransformRelatedProperty()
@@ -394,7 +394,7 @@ static bool shouldTreatAutoZIndexAsZero(const RenderStyle& style)
         || style.isolation() != Isolation::Auto
         || style.position() == PositionType::Sticky
         || style.position() == PositionType::Fixed
-        || style.willChange().canCreateStackingContext();
+        || style.willChange().canCreateStackingContext((style.position() != PositionType::Static || (parentBoxStyle && parentBoxStyle->display().isFlexibleOrGridFormattingContextBox())) ? WillChangeAnimatableFeature::AllowsZIndex::Yes : WillChangeAnimatableFeature::AllowsZIndex::No);
 }
 
 void Adjuster::adjustFromBuilder(RenderStyle& style)
@@ -403,7 +403,7 @@ void Adjuster::adjustFromBuilder(RenderStyle& style)
     // This allows copy-on-write to trigger before caching.
 
     if (style.specifiedZIndex().isAuto()) {
-        if (shouldTreatAutoZIndexAsZero(style))
+        if (shouldTreatAutoZIndexAsZero(style, nullptr))
             style.setUsedZIndex(0);
     } else if (style.position() != PositionType::Static)
         style.setUsedZIndex(style.specifiedZIndex());
@@ -585,7 +585,7 @@ void Adjuster::adjust(RenderStyle& style) const
     if (hasAutoSpecifiedZIndex) {
         if ((m_element && m_document->documentElement() == m_element.get())
             || hasTransformRelatedProperty(style, m_element.get(), m_parentStyle)
-            || shouldTreatAutoZIndexAsZero(style)
+            || shouldTreatAutoZIndexAsZero(style, &m_parentBoxStyle)
             || isInTopLayerOrBackdrop(style, m_element.get()))
             style.setUsedZIndex(0);
         else

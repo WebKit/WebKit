@@ -1478,7 +1478,7 @@ void KeyframeEffect::computeStackingContextImpact()
 {
     m_triggersStackingContext = false;
     for (auto property : m_blendingKeyframes.properties()) {
-        if (std::holds_alternative<CSSPropertyID>(property) && Style::WillChangeAnimatableFeature::propertyCreatesStackingContext(std::get<CSSPropertyID>(property))) {
+        if (std::holds_alternative<CSSPropertyID>(property) && Style::WillChangeAnimatableFeature::propertyCreatesStackingContext(std::get<CSSPropertyID>(property), Style::WillChangeAnimatableFeature::AllowsZIndex::Yes)) {
             m_triggersStackingContext = true;
             break;
         }

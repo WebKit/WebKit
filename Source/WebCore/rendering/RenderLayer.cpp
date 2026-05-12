@@ -624,7 +624,7 @@ static bool canCreateStackingContext(const RenderLayer& layer)
         || renderer.style().isolation() != Isolation::Auto
         || renderer.shouldApplyPaintContainment()
         || !renderer.style().usedZIndex().isAuto()
-        || renderer.style().willChange().canCreateStackingContext()
+        || renderer.style().willChange().canCreateStackingContext(Style::WillChangeAnimatableFeature::AllowsZIndex::No)
         || layer.establishesTopLayer();
 }
 
