@@ -175,6 +175,11 @@ public:
         return m_buffer;
     }
 
+    RefPtr<ImageBuffer> imageBufferForCrossProcessSerialization() const final
+    {
+        return m_buffer;
+    }
+
     size_t memoryCost() const final
     {
         return m_buffer->memoryCost();

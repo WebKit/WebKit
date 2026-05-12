@@ -133,6 +133,9 @@ private:
     using Internals = SerializedScriptValueInternals;
     friend struct IPC::ArgumentCoder<Internals>;
 
+    Internals& internals() LIFETIME_BOUND { return *m_internals; }
+    const Internals& internals() const LIFETIME_BOUND { return *m_internals; }
+
     static Ref<SerializedScriptValue> create(Internals&& internals)
     {
         return adoptRef(*new SerializedScriptValue(WTF::move(internals)));

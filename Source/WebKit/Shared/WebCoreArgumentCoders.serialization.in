@@ -7985,7 +7985,19 @@ using WebCore::RiceSocket = std::pair<String, WebCore::RTCIceProtocol>;
 };
 #endif
 
-headers: <JavaScriptCore/WasmModule.h> <WebCore/ImageBitmap.h> <WebCore/MessagePort.h> <WebCore/OffscreenCanvas.h>
+headers: "DetachedImageBitmapIPC.h" <JavaScriptCore/WasmModule.h> <WebCore/ImageBitmap.h> <WebCore/MessagePort.h> <WebCore/OffscreenCanvas.h>
+
+[CustomHeader, RValue] struct WebKit::DetachedImageBitmapIPCData {
+    WebCore::ImageBuffer::Parameters parameters;
+    WebCore::RenderingMode renderingMode;
+    WebCore::AffineTransform baseTransform;
+    uint64_t memoryCost;
+    WebKit::ImageBufferBackendHandle handle;
+    bool originClean;
+    bool premultiplyAlpha;
+    bool forciblyPremultiplyAlpha;
+};
+
 struct WebCore::SerializedScriptValueInternals {
     Vector<uint8_t> data;
     std::unique_ptr<Vector<JSC::ArrayBufferContents>> arrayBufferContentsArray;
@@ -7997,6 +8009,7 @@ struct WebCore::SerializedScriptValueInternals {
     Vector<Ref<WebCore::WebCodecsEncodedAudioChunkStorage>> serializedAudioChunks;
 #endif
     uint64_t exposedMessagePortCount;
+    Vector<std::optional<WebCore::DetachedImageBitmap>> detachedImageBitmaps;
     [NotSerialized] Vector<WebCore::FileSystemHandleTransferToken> fileSystemHandleTransferTokens;
 #if ENABLE(WEB_CODECS)
     [NotSerialized] Vector<WebCore::WebCodecsVideoFrameData> serializedVideoFrames;
@@ -8014,7 +8027,6 @@ struct WebCore::SerializedScriptValueInternals {
     [NotSerialized] Vector<std::unique_ptr<WebCore::MediaStreamTrackHandle::DataHolder>> detachedMediaStreamTrackHandles;
 #endif
     [NotSerialized] std::unique_ptr<Vector<JSC::ArrayBufferContents>> sharedBufferContentsArray;
-    [NotSerialized] Vector<std::optional<WebCore::DetachedImageBitmap>> detachedImageBitmaps;
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
     [NotSerialized] Vector<std::unique_ptr<WebCore::DetachedOffscreenCanvas>> detachedOffscreenCanvases;
     [NotSerialized] Vector<Ref<WebCore::OffscreenCanvas>> inMemoryOffscreenCanvases;

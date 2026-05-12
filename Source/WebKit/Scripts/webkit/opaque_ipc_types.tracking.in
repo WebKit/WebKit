@@ -499,10 +499,15 @@
 [UnsafeWrapper] std::optional<WebKit::ImageBufferBackendHandle> {
     [Legacy] MessageParam RemoteImageBufferProxy.DidCreateBackend handle
     [Legacy] MessageParamReply WebPage.TakeSnapshot image
+    [NeedsReview] MessageParamReply RemoteRenderingBackend.CreateSerializedImageBufferHandle handle
     [Legacy] StructureParam WebKit::RemoteLayerBackingStoreProperties.m_bufferHandle
     [Legacy] StructureParam WebKit::BufferSetBackendHandle.bufferHandle
     [Legacy] StructureParam WebKit::ImageBufferSetPrepareBufferForDisplayOutputData.backendHandle
     [Legacy] StructureParam WebKit::WCBackingStore.handle()
+}
+
+[UnsafeWrapper] WebKit::ImageBufferBackendHandle {
+    [NeedsReview] StructureParam WebKit::DetachedImageBitmapIPCData.handle
 }
 
 [UnsafeWrapper] UniqueRef<WebKit::ObjectValue> {

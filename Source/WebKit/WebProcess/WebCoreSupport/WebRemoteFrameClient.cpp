@@ -27,6 +27,7 @@
 #include "WebRemoteFrameClient.h"
 
 #include "MessageSenderInlines.h"
+#include "DetachedImageBitmapIPC.h"
 #include "RemoteDisplayListRecorderProxy.h"
 #include "WebFrameProxyMessages.h"
 #include "WebMessagePortChannelProvider.h"
@@ -92,8 +93,12 @@ void WebRemoteFrameClient::postMessageToRemote(FrameIdentifier source, const Sec
     for (auto& port : message.transferredPorts)
         WebMessagePortChannelProvider::singleton().messagePortSentToRemote(port.first);
 
-    if (RefPtr page = m_frame->page())
-        page->send(Messages::WebPageProxy::PostMessageToRemote(source, sourceOrigin, target, targetOrigin, message));
+    RefPtr page = m_frame->page();
+    if (!page)
+        return;
+
+    ScopedCrossProcessImageBitmapEncoding scopedEncoding { &page->ensureRemoteRenderingBackendProxy() };
+    page->send(Messages::WebPageProxy::PostMessageToRemote(source, sourceOrigin, target, targetOrigin, message));
 }
 
 void WebRemoteFrameClient::changeLocation(FrameLoadRequest&& request)

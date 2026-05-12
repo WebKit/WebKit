@@ -54,6 +54,7 @@
 #include "RemoteImageBufferProxy.h"
 #include "RemoteRenderingBackendProxy.h"
 #include "RemoteTextDetectorProxy.h"
+#include "SendableSerializedImageBuffer.h"
 #include "SharedBufferReference.h"
 #include "UserData.h"
 #include "WebColorChooser.h"
@@ -1146,6 +1147,9 @@ RefPtr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize& size, Re
 
 RefPtr<ImageBuffer> WebChromeClient::sinkIntoImageBuffer(std::unique_ptr<SerializedImageBuffer> imageBuffer)
 {
+    if (is<SendableSerializedImageBuffer>(imageBuffer))
+        return materializeImageBufferFromHandle(downcast<SendableSerializedImageBuffer>(*imageBuffer));
+
     if (!is<RemoteSerializedImageBufferProxy>(imageBuffer))
         return SerializedImageBuffer::sinkIntoImageBuffer(WTF::move(imageBuffer));
 

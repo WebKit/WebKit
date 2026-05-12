@@ -28,10 +28,13 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEB_AUDIO) && PLATFORM(COCOA)
 
+#include <WebCore/MediaPlayer.h>
+
 #include "GPUProcessConnection.h"
 #include "Logging.h"
 #include "RemoteAudioSourceProviderManager.h"
 #include "RemoteMediaPlayerProxyMessages.h"
+#include "WebProcess.h"
 
 namespace WebCore {
 #if !RELEASE_LOG_DISABLED

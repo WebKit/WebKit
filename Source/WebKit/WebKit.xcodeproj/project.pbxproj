@@ -6942,6 +6942,8 @@
 		723C90A22A377AB400038126 /* PathSegment.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = PathSegment.serialization.in; sourceTree = "<group>"; };
 		72440D33287CCC0500FADBC4 /* RemoteImageBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteImageBuffer.cpp; sourceTree = "<group>"; };
 		72440D3A287CF58900FADBC4 /* RemoteImageBufferProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteImageBufferProxy.cpp; sourceTree = "<group>"; };
+		CDD2B05F2EC5F0000038E843 /* SendableSerializedImageBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SendableSerializedImageBuffer.cpp; sourceTree = "<group>"; };
+		CDD2B0602EC5F0000038E843 /* SendableSerializedImageBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SendableSerializedImageBuffer.h; sourceTree = "<group>"; };
 		724DCF21284862FC0026ACF4 /* ImageBufferShareableAllocator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBufferShareableAllocator.h; sourceTree = "<group>"; };
 		724DCF22284862FC0026ACF4 /* ImageBufferShareableAllocator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferShareableAllocator.cpp; sourceTree = "<group>"; };
 		726952DF2B7F4636009E5F0C /* WebExtensionAPIWebPageRuntime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionAPIWebPageRuntime.h; sourceTree = "<group>"; };
@@ -7553,6 +7555,8 @@
 		99036AE423A958740000B06A /* APIDebuggableInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIDebuggableInfo.cpp; sourceTree = "<group>"; };
 		99036AE723A970870000B06A /* DebuggableInfoData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggableInfoData.h; sourceTree = "<group>"; };
 		99036AE823A970870000B06A /* DebuggableInfoData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DebuggableInfoData.cpp; sourceTree = "<group>"; };
+		CDD3C0902EC600000038E843 /* DetachedImageBitmapIPC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DetachedImageBitmapIPC.cpp; sourceTree = "<group>"; };
+		CDD3C0912EC600000038E843 /* DetachedImageBitmapIPC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetachedImageBitmapIPC.h; sourceTree = "<group>"; };
 		990657311F323CBF00944F9C /* FindNodes.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = FindNodes.js; sourceTree = "<group>"; };
 		990657321F323CBF00944F9C /* FormElementClear.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = FormElementClear.js; sourceTree = "<group>"; };
 		990657331F323CBF00944F9C /* ElementDisplayed.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = ElementDisplayed.js; sourceTree = "<group>"; };
@@ -10280,6 +10284,8 @@
 				5C2C6FA627C958FC00CCDA9E /* DataTaskIdentifier.h */,
 				99036AE823A970870000B06A /* DebuggableInfoData.cpp */,
 				99036AE723A970870000B06A /* DebuggableInfoData.h */,
+				CDD3C0902EC600000038E843 /* DetachedImageBitmapIPC.cpp */,
+				CDD3C0912EC600000038E843 /* DetachedImageBitmapIPC.h */,
 				0F189CAB24749F2F00E58D81 /* DisplayLinkObserverID.h */,
 				2D7FD190223C730F007887F1 /* DocumentEditingContext.h */,
 				2D7FD191223C7310007887F1 /* DocumentEditingContext.mm */,
@@ -14496,6 +14502,8 @@
 				72B53158253C1E4D0049295A /* RemoteResourceCacheProxy.h */,
 				7BDC880D2E72D80500C7A37F /* RemoteSnapshotRecorderProxy.cpp */,
 				7BDC880C2E72D80500C7A37F /* RemoteSnapshotRecorderProxy.h */,
+				CDD2B05F2EC5F0000038E843 /* SendableSerializedImageBuffer.cpp */,
+				CDD2B0602EC5F0000038E843 /* SendableSerializedImageBuffer.h */,
 			);
 			path = graphics;
 			sourceTree = "<group>";

@@ -279,6 +279,11 @@ public:
     WEBCORE_EXPORT static RefPtr<ImageBuffer> sinkIntoImageBuffer(std::unique_ptr<SerializedImageBuffer>, GraphicsClient* = nullptr);
 
     virtual bool isRemoteSerializedImageBufferProxy() const { return false; }
+    virtual bool isSendableSerializedImageBuffer() const { return false; }
+
+    // Returns the locally-readable ImageBuffer for subclasses that hold one (e.g. DefaultSerializedImageBuffer).
+    // Used to extract an IPC-safe backend handle before cross-process transfer.
+    virtual RefPtr<ImageBuffer> imageBufferForCrossProcessSerialization() const { return nullptr; }
 
 protected:
     virtual RefPtr<ImageBuffer> sinkIntoImageBuffer() = 0;

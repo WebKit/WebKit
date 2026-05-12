@@ -286,7 +286,6 @@ imported/w3c/web-platform-tests/webcodecs/video-frame-serialization.any.html [ F
 imported/w3c/web-platform-tests/webcodecs/video-frame-serialization.any.worker.html [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/videoFrame-serialization.crossAgentCluster.https.html [ Failure ]
 imported/w3c/web-platform-tests/webmessaging/Channel_postMessage_Blob.any.html [ Failure ]
-imported/w3c/web-platform-tests/webmessaging/postMessage_cross_domain_image_transfer_2d.sub.htm [ Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html [ Failure ]
 imported/w3c/web-platform-tests/websockets/back-forward-cache-with-closed-websocket-connection-ccns.tentative.window.html [ Failure ]
 imported/w3c/web-platform-tests/websockets/back-forward-cache-with-closed-websocket-connection.window.html [ Failure ]

@@ -224,6 +224,7 @@ Shared/BlobDataFileReferenceWithSandboxExtension.cpp
 Shared/CacheModel.cpp
 Shared/ContextMenuContextData.cpp
 Shared/DebuggableInfoData.cpp
+Shared/DetachedImageBitmapIPC.cpp
 Shared/EditingRange.cpp
 Shared/EditorState.cpp
 Shared/FrameInfoData.cpp
@@ -817,6 +818,7 @@ WebProcess/GPU/graphics/RemoteNativeImageProxy.cpp
 WebProcess/GPU/graphics/RemoteSnapshotRecorderProxy.cpp
 WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp
 WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp
+WebProcess/GPU/graphics/SendableSerializedImageBuffer.cpp
 WebProcess/GPU/media/AudioTrackPrivateRemote.cpp
 WebProcess/GPU/media/AudioVideoRendererRemote.cpp
 WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp

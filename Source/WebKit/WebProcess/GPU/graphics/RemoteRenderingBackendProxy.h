@@ -109,6 +109,7 @@ public:
     void transferImageBuffer(std::unique_ptr<RemoteSerializedImageBufferProxy>, WebCore::ImageBuffer&);
     std::unique_ptr<RemoteSerializedImageBufferProxy> moveToSerializedBuffer(RemoteImageBufferProxy&);
     Ref<RemoteImageBufferProxy> moveToImageBuffer(RemoteSerializedImageBufferProxy&);
+    std::optional<ImageBufferBackendHandle> createSerializedImageBufferHandle(RemoteSerializedImageBufferIdentifier);
 
     bool isCached(const WebCore::ImageBuffer&) const;
 

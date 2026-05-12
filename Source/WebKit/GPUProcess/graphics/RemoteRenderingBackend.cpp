@@ -32,6 +32,7 @@
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcess.h"
 #include "GPUProcessProxyMessages.h"
+#include "ImageBufferBackendHandleSharing.h"
 #include "ImageBufferShareableBitmapBackend.h"
 #include "Logging.h"
 #include "PrepareBackingStoreBuffersData.h"
@@ -213,6 +214,35 @@ void RemoteRenderingBackend::moveToImageBuffer(RemoteSerializedImageBufferIdenti
     imageBuffer->transferToNewContext(creationContext);
     auto result = m_remoteImageBuffers.add(imageBufferIdentifier, RemoteImageBuffer::create(imageBuffer.releaseNonNull(), imageBufferIdentifier, contextIdentifier, *this));
     MESSAGE_CHECK(result.isNewEntry, "Duplicate ImageBuffer");
+}
+
+void RemoteRenderingBackend::createSerializedImageBufferHandle(RemoteSerializedImageBufferIdentifier identifier, CompletionHandler<void(std::optional<ImageBufferBackendHandle>)>&& completionHandler)
+{
+    assertIsCurrent(workQueue());
+    std::optional<ImageBufferBackendHandle> handle;
+    if (RefPtr imageBuffer = m_sharedResourceCache->takeSerializedImageBuffer(identifier)) {
+        // Always materialize as a ShareableBitmap (SharedMemory) so the receiver doesn't need
+        // IOKit access. Receiver WebContent processes that delegate all rendering to the GPU
+        // process have ProcessCapabilities::canUseAcceleratedBuffers() == false and cannot
+        // map an IOSurface from a MachSendRight.
+        if (RefPtr nativeImage = imageBuffer->copyNativeImage()) {
+            RefPtr<WebCore::ShareableBitmap> bitmap;
+#if USE(CG)
+            bitmap = WebCore::ShareableBitmap::createFromImagePixels(*nativeImage);
+#endif
+            if (!bitmap)
+                bitmap = WebCore::ShareableBitmap::createFromImageDraw(*nativeImage, WebCore::DestinationColorSpace { nativeImage->colorSpace() });
+            if (bitmap) {
+                if (auto bitmapHandle = bitmap->createHandle()) {
+                    if (sharedResourceCache().resourceOwner())
+                        bitmapHandle->setOwnershipOfMemory(sharedResourceCache().resourceOwner(), WebCore::MemoryLedger::Graphics);
+                    handle = ImageBufferBackendHandle { WTF::move(*bitmapHandle) };
+                }
+            }
+        }
+        m_sharedResourceCache->addSerializedImageBuffer(identifier, imageBuffer.releaseNonNull());
+    }
+    completionHandler(WTF::move(handle));
 }
 
 void RemoteRenderingBackend::createSnapshotRecorder(RemoteSnapshotRecorderIdentifier identifier, RemoteSnapshotIdentifier snapshotIdentifier)

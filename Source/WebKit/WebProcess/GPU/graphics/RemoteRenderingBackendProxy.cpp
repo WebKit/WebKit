@@ -339,6 +339,15 @@ Ref<RemoteImageBufferProxy> RemoteRenderingBackendProxy::moveToImageBuffer(Remot
     return result;
 }
 
+std::optional<ImageBufferBackendHandle> RemoteRenderingBackendProxy::createSerializedImageBufferHandle(RemoteSerializedImageBufferIdentifier identifier)
+{
+    auto sendResult = sendSync(Messages::RemoteRenderingBackend::CreateSerializedImageBufferHandle(identifier));
+    if (!sendResult.succeeded())
+        return std::nullopt;
+    auto [handle] = sendResult.takeReply();
+    return handle;
+}
+
 UniqueRef<RemoteSnapshotRecorderProxy> RemoteRenderingBackendProxy::createSnapshotRecorder(RemoteSnapshotIdentifier snapshotIdentifier)
 {
     auto recorder = makeUniqueRef<RemoteSnapshotRecorderProxy>(*this);

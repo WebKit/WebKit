@@ -4815,8 +4815,14 @@ private:
             return JSValue();
         }
 
-        if (!m_imageBitmaps[index] && m_detachedImageBitmaps.at(index))
+        if (!m_imageBitmaps[index]) {
+            if (!m_detachedImageBitmaps.at(index)) {
+                SERIALIZE_TRACE("FAIL deserialize");
+                fail();
+                return JSValue();
+            }
             m_imageBitmaps[index] = ImageBitmap::create(*protect(executionContext(m_lexicalGlobalObject)).get(), WTF::move(*m_detachedImageBitmaps.at(index)));
+        }
 
         RefPtr bitmap = m_imageBitmaps[index];
         if (!bitmap)
@@ -6915,6 +6921,7 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
         , .serializedAudioChunks = WTF::move(serializedAudioChunks)
 #endif
         , .exposedMessagePortCount = exposedMessagePortsCount
+        , .detachedImageBitmaps = WTF::move(detachedImageBitmaps)
         , .fileSystemHandleTransferTokens = WTF::move(fileSystemHandleTransferTokens)
 #if ENABLE(WEB_CODECS)
         , .serializedVideoFrames = WTF::move(serializedVideoFrameData)
@@ -6932,7 +6939,6 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
         , .detachedMediaStreamTrackHandles = WTF::move(detachedMediaStreamTrackHandleStorages)
 #endif
         , .sharedBufferContentsArray = WTF::move(sharedBuffers)
-        , .detachedImageBitmaps = WTF::move(detachedImageBitmaps)
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         , .detachedOffscreenCanvases = WTF::move(detachedCanvases)
         , .inMemoryOffscreenCanvases = WTF::move(inMemoryOffscreenCanvases)

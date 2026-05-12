@@ -86,6 +86,7 @@ struct SerializedScriptValueInternals {
     Vector<Ref<WebCodecsEncodedAudioChunkStorage>> serializedAudioChunks { };
 #endif
     uint64_t exposedMessagePortCount { 0 };
+    Vector<std::optional<DetachedImageBitmap>> detachedImageBitmaps { };
     Vector<FileSystemHandleTransferToken> fileSystemHandleTransferTokens { };
 #if ENABLE(WEB_CODECS)
     Vector<WebCodecsVideoFrameData> serializedVideoFrames { };
@@ -103,7 +104,6 @@ struct SerializedScriptValueInternals {
     Vector<std::unique_ptr<MediaStreamTrackHandleDataHolder>> detachedMediaStreamTrackHandles { };
 #endif
     std::unique_ptr<ArrayBufferContentsArray> sharedBufferContentsArray { nullptr };
-    Vector<std::optional<DetachedImageBitmap>> detachedImageBitmaps { };
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
     Vector<std::unique_ptr<DetachedOffscreenCanvas>> detachedOffscreenCanvases { };
     Vector<Ref<OffscreenCanvas>> inMemoryOffscreenCanvases { };

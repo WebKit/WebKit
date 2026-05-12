@@ -73,12 +73,20 @@ template<typename> class ExceptionOr;
 
 class DetachedImageBitmap {
 public:
-    DetachedImageBitmap(DetachedImageBitmap&&);
+    WEBCORE_EXPORT DetachedImageBitmap(UniqueRef<SerializedImageBuffer>, bool originClean, bool premultiplyAlpha, bool forciblyPremultiplyAlpha);
+    WEBCORE_EXPORT DetachedImageBitmap(DetachedImageBitmap&&);
     WEBCORE_EXPORT ~DetachedImageBitmap();
-    DetachedImageBitmap& operator=(DetachedImageBitmap&&);
+    WEBCORE_EXPORT DetachedImageBitmap& operator=(DetachedImageBitmap&&);
     size_t memoryCost() const;
+
+    bool originClean() const { return m_originClean; }
+    bool premultiplyAlpha() const { return m_premultiplyAlpha; }
+    bool forciblyPremultiplyAlpha() const { return m_forciblyPremultiplyAlpha; }
+
+    SerializedImageBuffer& serializedImageBuffer() LIFETIME_BOUND { return m_bitmap; }
+    const SerializedImageBuffer& serializedImageBuffer() const LIFETIME_BOUND { return m_bitmap; }
+
 private:
-    DetachedImageBitmap(UniqueRef<SerializedImageBuffer>, bool originClean, bool premultiplyAlpha, bool forciblyPremultiplyAlpha);
     UniqueRef<SerializedImageBuffer> m_bitmap;
     bool m_originClean : 1 { false };
     bool m_premultiplyAlpha : 1 { false };
