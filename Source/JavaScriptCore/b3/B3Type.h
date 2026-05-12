@@ -104,6 +104,7 @@ inline constexpr TypeKind simdB3ScalarTypeKind(SIMDLane lane)
         RELEASE_ASSERT_NOT_REACHED();
         return Int64;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 inline Type simdB3ScalarType(SIMDLane lane)
