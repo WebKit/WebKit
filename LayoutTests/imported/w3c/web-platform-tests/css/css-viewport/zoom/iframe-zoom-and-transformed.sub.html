@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+
+<title>iframe in an element with CSS zoom and transformed (to trigger composited layer)</title>
+<link rel="author" title="Kiet Ho" href="mailto:kiet.ho@apple.com">
+<link rel="match" href="iframe-zoom-and-transformed-ref.html">
+
+<style>
+.iframe {
+  border: none;
+  width: 128px;
+  height: 64px;
+  transform: translateZ(0);
+  zoom: 4;
+}
+</style>
+
+<p>Text passes if the border around the pink box appears sharp, and the iframes do not scroll.</p>
+<iframe class="iframe" src="resources/leaf.html"></iframe>
+<iframe class="iframe" src="http://{{hosts[alt][]}}:{{ports[http][0]}}/css/css-viewport/zoom/resources/leaf.html"></iframe>
