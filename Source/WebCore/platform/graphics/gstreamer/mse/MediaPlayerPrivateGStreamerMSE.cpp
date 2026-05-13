@@ -415,7 +415,18 @@ void MediaPlayerPrivateGStreamerMSE::propagateReadyStateToPlayer()
 
 void MediaPlayerPrivateGStreamerMSE::mediaSourceHasRetrievedAllData()
 {
+    GST_DEBUG_OBJECT(pipeline(), "MediaSource has retrieved all data");
     setNetworkState(MediaPlayer::NetworkState::Loaded);
+
+    RefPtr mediaSourcePrivate = m_mediaSourcePrivate;
+    if (!mediaSourcePrivate)
+        return;
+
+    if (!mediaSourcePrivate->isEnded())
+        return;
+
+    GST_DEBUG_OBJECT(pipeline(), "MediaSource is ended");
+    timeChanged(MediaTime::invalidTime());
 }
 
 void MediaPlayerPrivateGStreamerMSE::didPreroll()
@@ -655,15 +666,19 @@ MediaTime MediaPlayerPrivateGStreamerMSE::maxTimeSeekable() const
 
 bool MediaPlayerPrivateGStreamerMSE::timeIsProgressing() const
 {
-    if (!m_mediaSourcePrivate)
-        return false;
-
-    bool isPaused = paused();
     const auto currentTime = this->currentTime();
-    bool hasFutureTime = m_mediaSourcePrivate->hasFutureTime(currentTime);
-    bool isProgressing = !isPaused && hasFutureTime;
-    GST_DEBUG_OBJECT(pipeline(), "Is paused: %s, has future time for %f: %s, time is progressing: %s", boolForPrinting(isPaused), currentTime.toDouble(), boolForPrinting(hasFutureTime), boolForPrinting(isProgressing));
-    return isProgressing;
+    auto result = !paused() && currentTime.isValid() && currentTime != m_cachedCurrentTime;
+    if (m_cachedCurrentTime.isValid() && !result) {
+        auto oldReadyState = m_readyState;
+        m_readyState = MediaPlayer::ReadyState::HaveMetadata;
+        RefPtr player = m_player.get();
+        if (player && oldReadyState != m_readyState)
+            player->readyStateChanged();
+    }
+
+    m_cachedCurrentTime = currentTime;
+    GST_DEBUG_OBJECT(pipeline(), "Time is progressing: %s", boolForPrinting(result));
+    return result;
 }
 
 void MediaPlayerPrivateGStreamerMSE::notifyActiveSourceBuffersChanged()

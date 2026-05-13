@@ -5564,8 +5564,6 @@ ipc/empty-svgfilterrenderer-expression-crash.html [ Skip ]
 
 webkit.org/b/314373 media/media-source/media-source-real-webm-fastseek.html [ Failure ]
 webkit.org/b/314373 media/media-source/media-source-real-webm-remove.html [ Failure ]
-# test timeout, skip it for now
-webkit.org/b/314643 media/media-source/media-source-duration-truncation-ended.html [ Skip ]
 
 webkit.org/b/314491 imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/messagechannel.any.serviceworker.html [ Crash ]
 # End: Common failures between GTK and WPE.
