@@ -45,7 +45,6 @@ public:
 
     void scheduleDisplayRefreshCallbacksForMonotonicAnimations();
     void pauseDisplayRefreshCallbacksForMonotonicAnimations();
-    void highImpactMonotonicAnimationsWereRemoved();
 
     UIView *viewWithLayerIDForTesting(WebCore::PlatformLayerIdentifier) const;
 

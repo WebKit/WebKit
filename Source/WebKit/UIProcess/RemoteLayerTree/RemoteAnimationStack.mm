@@ -30,6 +30,8 @@
 
 #import "RemoteAnimationUtilities.h"
 #import "RemoteProgressBasedTimeline.h"
+#import <WebCore/FloatRect.h>
+#import <WebCore/TransformationMatrix.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/TZoneMallocInlines.h>
 
@@ -198,7 +200,7 @@ void RemoteAnimationStack::applyEffects() const
 }
 #endif
 
-void RemoteAnimationStack::applyEffectsFromMainThread(PlatformLayer *layer, bool backdropRootIsOpaque) const
+void RemoteAnimationStack::applyEffectsFromMainThread(PlatformLayer *layer, bool backdropRootIsOpaque)
 {
     auto computedValues = computeValues();
 
@@ -211,6 +213,9 @@ void RemoteAnimationStack::applyEffectsFromMainThread(PlatformLayer *layer, bool
     if (m_affectedLayerProperties.contains(LayerProperty::Transform)) {
         auto computedTransform = computedValues.computedTransformationMatrix(m_bounds);
         [layer setTransform:computedTransform];
+#if PLATFORM(IOS_FAMILY)
+        updateAnimatedBounds(computedTransform);
+#endif
     }
 }
 
@@ -250,6 +255,59 @@ bool RemoteAnimationStack::isDependentOnScrollingNodeWithID(WebCore::ScrollingNo
         RefPtr progressBasedTimeline = dynamicDowncast<RemoteProgressBasedTimeline>(animation->timeline());
         return progressBasedTimeline && progressBasedTimeline->source() == scrollingNodeID;
     });
+}
+
+#if PLATFORM(IOS_FAMILY)
+void RemoteAnimationStack::updateAnimatedBounds(const WebCore::TransformationMatrix& transform)
+{
+    ASSERT(m_affectedLayerProperties.contains(LayerProperty::Transform));
+
+    // FIXME: We may want to cache whether we have some time-dependent animations at all.
+    if (!isTimeDependent()) {
+        m_animatedBounds.clear();
+        return;
+    }
+
+    auto now = MonotonicTime::now();
+
+    // Prune all items recorded over a second ago.
+    auto pruneDelay = 100_ms;
+    while (!m_animatedBounds.isEmpty() && now - m_animatedBounds[0].first > pruneDelay)
+        m_animatedBounds.removeAt(0);
+
+    m_animatedBounds.append({ now, transform.mapRect(m_bounds) });
+}
+#endif
+
+bool RemoteAnimationStack::hasHighImpact() const
+{
+#if PLATFORM(IOS_FAMILY)
+    auto size = m_animatedBounds.size();
+    if (size < 2)
+        return false;
+
+    ASSERT(m_affectedLayerProperties.contains(LayerProperty::Transform));
+
+    auto& a = m_animatedBounds[size - 2];
+    auto& b = m_animatedBounds[size - 1];
+    auto elapsedTime = b.first - a.first;
+
+    // We want to determine if we're traveling at more than 90pt / seconds.
+    auto minDelta = 90 * elapsedTime.seconds();
+    auto& aBounds = a.second;
+    auto& bBounds = b.second;
+
+    if (std::abs(aBounds.x() - bBounds.x()) >= minDelta)
+        return true;
+    if (std::abs(aBounds.y() - bBounds.y()) >= minDelta)
+        return true;
+    if (std::abs(aBounds.maxX() - bBounds.maxX()) >= minDelta)
+        return true;
+    if (std::abs(aBounds.maxY() - bBounds.maxY()) >= minDelta)
+        return true;
+#endif
+
+    return false;
 }
 
 Ref<JSON::Object> RemoteAnimationStack::toJSONForTesting() const

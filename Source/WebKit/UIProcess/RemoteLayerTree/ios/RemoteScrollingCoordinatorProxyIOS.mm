@@ -796,8 +796,6 @@ void RemoteScrollingCoordinatorProxyIOS::animationsWereRemovedFromNode(RemoteLay
     m_animatedNodeLayerIDs.remove(node.layerID());
     if (m_animatedNodeLayerIDs.isEmpty() || !m_monotonicTimelineRegistry || m_monotonicTimelineRegistry->isEmpty())
         protect(drawingAreaIOS())->pauseDisplayRefreshCallbacksForMonotonicAnimations();
-    else if (node.hasHighImpactMonotonicAnimations())
-        protect(drawingAreaIOS())->highImpactMonotonicAnimationsWereRemoved();
 }
 
 void RemoteScrollingCoordinatorProxyIOS::updateTimelinesRegistration(WebCore::ProcessIdentifier processIdentifier, const WebCore::AcceleratedTimelinesUpdate& timelinesUpdate, MonotonicTime now)

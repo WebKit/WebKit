@@ -339,7 +339,6 @@ public:
         String property;
         double speed;
         bool isThreaded;
-        bool hasHighImpact;
     };
     struct ScrollingNodeID {
         uint64_t nodeIdentifier;

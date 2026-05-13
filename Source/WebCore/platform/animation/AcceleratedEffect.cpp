@@ -590,14 +590,6 @@ bool AcceleratedEffect::animatesTransformRelatedProperty() const
     return m_animatedProperties.containsAny(transformRelatedAcceleratedProperties);
 }
 
-bool AcceleratedEffect::hasHighImpact() const
-{
-    // FIXME: This is just an initial implementation. A logical next step would be to
-    // compute the distance traveled over time and only mark effects with distance traveled
-    // over a certain threshold (over 60px, 90px, 120px per second?) as high impact.
-    return animatesTransformRelatedProperty();
-}
-
 const KeyframeInterpolation::Keyframe& AcceleratedEffect::keyframeAtIndex(size_t index) const
 {
     ASSERT(index < m_keyframes.size());

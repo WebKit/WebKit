@@ -362,8 +362,11 @@ void RemoteLayerTreeDrawingAreaProxyIOS::didRefreshDisplay()
         RefPtr page = this->page();
         if (!page)
             return;
+        CheckedPtr scrollingCoordinatorProxy = page->scrollingCoordinatorProxy();
         if (auto displayID = page->displayID())
-            protect(page->scrollingCoordinatorProxy())->displayDidRefresh(*displayID);
+            scrollingCoordinatorProxy->displayDidRefresh(*displayID);
+        m_hasHighImpactMonotonicAnimations = scrollingCoordinatorProxy->hasHighImpactMonotonicAnimations();
+        scheduleDisplayLinkAndSetFrameRate();
     }
 }
 
@@ -382,20 +385,7 @@ void RemoteLayerTreeDrawingAreaProxyIOS::pauseDisplayRefreshCallbacks()
 void RemoteLayerTreeDrawingAreaProxyIOS::scheduleDisplayRefreshCallbacksForMonotonicAnimations()
 {
     m_needsDisplayRefreshCallbacksForMonotonicAnimations = true;
-    if (!m_hasHighImpactMonotonicAnimations) {
-        if (RefPtr page = this->page())
-            m_hasHighImpactMonotonicAnimations = protect(page->scrollingCoordinatorProxy())->hasHighImpactMonotonicAnimations();
-    }
     scheduleDisplayLinkAndSetFrameRate();
-}
-
-void RemoteLayerTreeDrawingAreaProxyIOS::highImpactMonotonicAnimationsWereRemoved()
-{
-    if (!m_hasHighImpactMonotonicAnimations)
-        return;
-
-    if (RefPtr page = this->page())
-        m_hasHighImpactMonotonicAnimations = protect(page->scrollingCoordinatorProxy())->hasHighImpactMonotonicAnimations();
 }
 
 void RemoteLayerTreeDrawingAreaProxyIOS::pauseDisplayRefreshCallbacksForMonotonicAnimations()

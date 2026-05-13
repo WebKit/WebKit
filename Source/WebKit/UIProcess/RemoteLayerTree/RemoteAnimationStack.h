@@ -43,6 +43,11 @@ OBJC_CLASS CAPresentationModifierGroup;
 OBJC_CLASS CAPresentationModifier;
 #endif
 
+namespace WebCore {
+class FloatRect;
+class TransformationMatrix;
+}
+
 namespace WebKit {
 
 using RemoteAnimations = Vector<Ref<RemoteAnimation>>;
@@ -62,12 +67,12 @@ public:
     void applyEffects() const;
 #endif
 
-    void applyEffectsFromMainThread(PlatformLayer*, bool backdropRootIsOpaque) const;
+    void applyEffectsFromMainThread(PlatformLayer*, bool backdropRootIsOpaque);
 
     bool isDependentOnScrollingNodeWithID(WebCore::ScrollingNodeID) const;
     bool hasTimeBasedAnimations() const { return m_hasTimeBasedAnimations; }
     bool hasProgressBasedAnimations() const { return m_hasProgressBasedAnimations; }
-
+    bool hasHighImpact() const;
     void clear(PlatformLayer*);
 
     Ref<JSON::Object> toJSONForTesting() const;
@@ -76,7 +81,9 @@ private:
     explicit RemoteAnimationStack(RemoteAnimations&&, WebCore::AcceleratedEffectValues&&, WebCore::FloatRect);
 
     WebCore::AcceleratedEffectValues computeValues() const;
-
+#if PLATFORM(IOS_FAMILY)
+    void updateAnimatedBounds(const WebCore::TransformationMatrix&);
+#endif
 #if PLATFORM(MAC)
     const WebCore::FilterOperations* longestFilterList() const;
 #endif
@@ -92,6 +99,10 @@ private:
     RemoteAnimations m_animations;
     WebCore::AcceleratedEffectValues m_baseValues;
     WebCore::FloatRect m_bounds;
+
+#if PLATFORM(IOS_FAMILY)
+    Vector<std::pair<MonotonicTime, WebCore::FloatRect>> m_animatedBounds;
+#endif
 
 #if PLATFORM(MAC)
     RetainPtr<CAPresentationModifierGroup> m_presentationModifierGroup;
