@@ -31,6 +31,7 @@ messages -> WebFrame {
     DestroyProvisionalFrame();
     FindFocusableElementDescendingIntoRemoteFrame(enum:uint8_t WebCore::FocusDirection direction, struct WebCore::FocusEventData focusEventData, enum:bool WebCore::ShouldFocusElement shouldFocusElement) -> (enum:bool WebCore::FoundElementInRemoteFrame foundElement)
     FindFocusableElementContinuingFromFrame(enum:uint8_t WebCore::FocusDirection direction, WebCore::FrameIdentifier frameIdentifer, struct WebCore::FocusEventData focusEventData, enum:bool WebCore::ShouldFocusElement shouldFocusElement)
+    DispatchBeforeUnloadInRemoteFrame(WebCore::FrameIdentifier frameBeingNavigated) -> (bool shouldClose)
     TakeSnapshotOfNode(WebCore::JSHandleIdentifier identifier) -> (std::optional<WebCore::ShareableBitmapHandle> snapshot);
 
     ConnectInspector(Inspector::FrontendChannel::ConnectionType connectionType)

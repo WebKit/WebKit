@@ -1666,6 +1666,14 @@ void WebFrame::findFocusableElementContinuingFromFrame(WebCore::FocusDirection d
     }
 }
 
+void WebFrame::dispatchBeforeUnloadInRemoteFrame(WebCore::FrameIdentifier frameBeingNavigated, CompletionHandler<void(bool)>&& completionHandler)
+{
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame)
+        return completionHandler(true);
+    localFrame->loader().shouldCloseForCrossProcessNavigation(frameBeingNavigated, WTF::move(completionHandler));
+}
+
 static RefPtr<Node> NODELETE nodeFromJSHandleIdentifier(JSHandleIdentifier identifier)
 {
     auto* object = WebKitJSHandle::objectForIdentifier(identifier);

@@ -84,6 +84,7 @@ class NetworkingContext;
 class Node;
 class Page;
 class PolicyChecker;
+class RemoteFrame;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
@@ -302,6 +303,8 @@ public:
     bool quickRedirectComing() const { return m_quickRedirectComing; }
 
     WEBCORE_EXPORT bool shouldClose();
+    WEBCORE_EXPORT void shouldClose(CompletionHandler<void(bool)>&&);
+    WEBCORE_EXPORT void shouldCloseForCrossProcessNavigation(FrameIdentifier frameBeingNavigated, CompletionHandler<void(bool)>&&);
 
     enum class PageDismissalType { None, BeforeUnload, PageHide, Unload };
     PageDismissalType pageDismissalEventBeingDispatched() const { return m_pageDismissalEventBeingDispatched; }
@@ -413,10 +416,12 @@ private:
 
     SubstituteData defaultSubstituteDataForURL(const URL&);
 
-    bool dispatchBeforeUnloadEvent(Chrome&, FrameLoader* frameLoaderBeingNavigated);
+    bool dispatchBeforeUnloadEvent(Chrome&, FrameLoader* frameLoaderBeingNavigated, FrameIdentifier frameBeingNavigated);
+    bool dispatchBeforeUnloadOnLocalDescendants(Page&, FrameIdentifier frameBeingNavigated, NOESCAPE const Function<void(RemoteFrame&)>& onRemoteChild = { });
     void dispatchUnloadEvents(UnloadEventPolicy);
 
-    void continueLoadAfterNavigationPolicy(const ResourceRequest&, const FormSubmission*, NavigationPolicyDecision, AllowNavigationToInvalidURL, ShouldRestoreFromBackForwardCache = ShouldRestoreFromBackForwardCache::Unspecified);
+    void continueLoadAfterNavigationPolicy(const ResourceRequest&, const FormSubmission*, NavigationPolicyDecision, AllowNavigationToInvalidURL, ShouldRestoreFromBackForwardCache = ShouldRestoreFromBackForwardCache::Unspecified, CompletionHandler<void()>&& = [] { });
+    void continueLoadAfterShouldClose(const ResourceRequest&, const FormSubmission*, NavigationPolicyDecision, AllowNavigationToInvalidURL, ShouldRestoreFromBackForwardCache, bool shouldCloseResult, bool navigateEventAborted, bool urlIsDisallowed, CompletionHandler<void()>&&);
     void continueLoadAfterNewWindowPolicy(ResourceRequest&&, RefPtr<const FormSubmission>&&, const AtomString& frameName, const NavigationAction&, ShouldContinuePolicyCheck, AllowNavigationToInvalidURL, NewFrameOpenerPolicy);
     void continueFragmentScrollAfterNavigationPolicy(const ResourceRequest&, const SecurityOrigin* requesterOrigin, bool shouldContinue, NavigationHistoryBehavior);
 

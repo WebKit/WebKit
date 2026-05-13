@@ -75,6 +75,7 @@ public:
     virtual void findFocusableElementDescendingIntoRemoteFrame(FocusDirection, const FocusEventData&, ShouldFocusElement, CompletionHandler<void(FoundElementInRemoteFrame)>&&) = 0;
     virtual void findFocusableElementContinuingFromFrame(FocusDirection, WebCore::FrameIdentifier, const FocusEventData&, ShouldFocusElement) = 0;
     virtual void dispatchCrossOriginBeforeUnloadCheck(const SecurityOriginData& navigatingFrameOrigin) = 0;
+    virtual void dispatchBeforeUnloadInRemoteFrame(WebCore::FrameIdentifier frameBeingNavigated, CompletionHandler<void(bool)>&&) = 0;
 
     virtual bool isWebRemoteFrameClient() const { return false; }
     virtual ~RemoteFrameClient() { }

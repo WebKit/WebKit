@@ -314,6 +314,7 @@ private:
 
     void findFocusableElementDescendingIntoRemoteFrame(WebCore::FocusDirection, const WebCore::FocusEventData&, WebCore::ShouldFocusElement, CompletionHandler<void(WebCore::FoundElementInRemoteFrame)>&&);
     void findFocusableElementContinuingFromFrame(WebCore::FocusDirection, WebCore::FrameIdentifier, const WebCore::FocusEventData&, WebCore::ShouldFocusElement);
+    void dispatchBeforeUnloadInRemoteFrame(WebCore::FrameIdentifier frameBeingNavigated, CompletionHandler<void(bool)>&&);
 
     CheckedRef<FrameInspectorTarget> ensureInspectorTarget();
 

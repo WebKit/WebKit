@@ -150,6 +150,7 @@
 #include "WindowFeatures.h"
 #include "XMLDocumentParser.h"
 #include <ranges>
+#include <wtf/CallbackAggregator.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
@@ -1992,15 +1993,14 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
     cancelPendingAsyncBackForwardNavigation();
 
     if (shouldTreatCurrentLoadAsContinuingLoad()) {
-        continueLoadAfterNavigationPolicy(loader->request(), formSubmission.get(), NavigationPolicyDecision::ContinueLoad, allowNavigationToInvalidURL, shouldRestoreFromBackForwardCache);
+        continueLoadAfterNavigationPolicy(loader->request(), formSubmission.get(), NavigationPolicyDecision::ContinueLoad, allowNavigationToInvalidURL, shouldRestoreFromBackForwardCache, completionHandlerCaller.release());
         return;
     }
 
     auto policyDecisionMode = loader->triggeringAction().isFromNavigationAPI() ? PolicyDecisionMode::Synchronous : PolicyDecisionMode::Asynchronous;
     RELEASE_ASSERT(!isBackForwardLoadType(policyChecker().loadType()) || history().provisionalItem());
     policyChecker().checkNavigationPolicy(ResourceRequest(loader->request()), ResourceResponse { } /* redirectResponse */, loader, WTF::move(formSubmission), [this, protectedThis = Ref { *this }, allowNavigationToInvalidURL, shouldRestoreFromBackForwardCache, completionHandler = completionHandlerCaller.release()] (const ResourceRequest& request, WeakPtr<const FormSubmission>&& weakFormSubmission, NavigationPolicyDecision navigationPolicyDecision) mutable {
-        continueLoadAfterNavigationPolicy(request, RefPtr { weakFormSubmission.get() }.get(), navigationPolicyDecision, allowNavigationToInvalidURL, shouldRestoreFromBackForwardCache);
-        completionHandler();
+        continueLoadAfterNavigationPolicy(request, RefPtr { weakFormSubmission.get() }.get(), navigationPolicyDecision, allowNavigationToInvalidURL, shouldRestoreFromBackForwardCache, WTF::move(completionHandler));
     }, policyDecisionMode, determineNavigationType(type, NavigationHistoryBehavior::Auto));
 }
 
@@ -3911,6 +3911,38 @@ void FrameLoader::scrollToFragmentWithParentBoundary(const URL& url, bool isNewN
     }
 }
 
+bool FrameLoader::dispatchBeforeUnloadOnLocalDescendants(Page& page, FrameIdentifier frameBeingNavigated, NOESCAPE const Function<void(RemoteFrame&)>& onRemoteChild)
+{
+    Ref frame = m_frame.get();
+
+    // Store all references to each subframe in advance since beforeunload's event handler may modify frame
+    Vector<Ref<LocalFrame>, 16> targetFrames;
+    targetFrames.append(frame.copyRef());
+    for (RefPtr child = frame->tree().firstChild(); child; child = child->tree().traverseNext(frame.ptr())) {
+        if (RefPtr localChild = dynamicDowncast<LocalFrame>(*child)) {
+            targetFrames.append(localChild.releaseNonNull());
+            continue;
+        }
+        if (!onRemoteChild)
+            continue;
+        if (RefPtr remoteChild = dynamicDowncast<RemoteFrame>(*child)) {
+            RefPtr parent = child->tree().parent();
+            if (parent && is<LocalFrame>(*parent))
+                onRemoteChild(*remoteChild);
+        }
+    }
+
+    NavigationDisabler navigationDisabler(frame.ptr());
+    UnloadCountIncrementer unloadCountIncrementer(protect(frame->document()).get());
+    for (Ref target : targetFrames) {
+        if (!target->tree().isDescendantOf(frame.ptr()))
+            continue;
+        if (!target->loader().dispatchBeforeUnloadEvent(page.chrome(), this, frameBeingNavigated))
+            return false;
+    }
+    return true;
+}
+
 bool FrameLoader::shouldClose()
 {
     Ref frame = m_frame.get();
@@ -3920,40 +3952,56 @@ bool FrameLoader::shouldClose()
     if (!page->chrome().canRunBeforeUnloadConfirmPanel())
         return true;
 
-    // Store all references to each subframe in advance since beforeunload's event handler may modify frame
-    Vector<Ref<Frame>, 16> targetFrames;
-    targetFrames.append(frame.copyRef());
-    for (RefPtr child = frame->tree().firstChild(); child; child = child->tree().traverseNext(frame.ptr()))
-        targetFrames.append(*child);
-
-    bool shouldClose = false;
-    {
-        NavigationDisabler navigationDisabler(frame.ptr());
-        UnloadCountIncrementer UnloadCountIncrementer(protect(frame->document()).get());
-        size_t i;
-
-        for (i = 0; i < targetFrames.size(); i++) {
-            if (!targetFrames[i]->tree().isDescendantOf(frame.ptr()))
-                continue;
-            if (RefPtr localTargetFrame = dynamicDowncast<LocalFrame>(targetFrames[i])) {
-                if (!localTargetFrame->loader().dispatchBeforeUnloadEvent(page->chrome(), this))
-                    break;
-            } else if (RefPtr remoteTargetFrame = dynamicDowncast<RemoteFrame>(targetFrames[i])) {
-                if (RefPtr document = frame->document())
-                    remoteTargetFrame->client().dispatchCrossOriginBeforeUnloadCheck(document->securityOrigin().data());
-                continue;
-            }
-        }
-
-        if (i == targetFrames.size())
-            shouldClose = true;
-    }
-
+    bool shouldClose = dispatchBeforeUnloadOnLocalDescendants(*page, frame->frameID());
     if (!shouldClose)
         m_submittedFormURL = URL();
 
     m_currentNavigationHasShownBeforeUnloadConfirmPanel = false;
     return shouldClose;
+}
+
+void FrameLoader::shouldClose(CompletionHandler<void(bool)>&& completionHandler)
+{
+    shouldCloseForCrossProcessNavigation(m_frame->frameID(), WTF::move(completionHandler));
+}
+
+void FrameLoader::shouldCloseForCrossProcessNavigation(FrameIdentifier frameBeingNavigated, CompletionHandler<void(bool)>&& completionHandler)
+{
+    Ref frame = m_frame.get();
+    RefPtr page = frame->page();
+    if (!page)
+        return completionHandler(true);
+
+    if (!page->chrome().canRunBeforeUnloadConfirmPanel())
+        return completionHandler(true);
+
+    Vector<Ref<RemoteFrame>> remoteDescendants;
+    bool localShouldClose = dispatchBeforeUnloadOnLocalDescendants(*page, frameBeingNavigated, [&](RemoteFrame& remoteChild) {
+        remoteDescendants.append(remoteChild);
+    });
+
+    if (!localShouldClose) {
+        m_submittedFormURL = URL();
+        m_currentNavigationHasShownBeforeUnloadConfirmPanel = false;
+        return completionHandler(true);
+    }
+
+    if (remoteDescendants.isEmpty()) {
+        m_currentNavigationHasShownBeforeUnloadConfirmPanel = false;
+        return completionHandler(true);
+    }
+
+    Ref aggregator = SuccessCallbackAggregator::create([weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)](bool result) mutable {
+        if (RefPtr protectedThis = weakThis.get()) {
+            if (!result)
+                protectedThis->m_submittedFormURL = URL();
+            protectedThis->m_currentNavigationHasShownBeforeUnloadConfirmPanel = false;
+        }
+        completionHandler(result);
+    });
+
+    for (Ref remoteFrame : remoteDescendants)
+        remoteFrame->client().dispatchBeforeUnloadInRemoteFrame(frameBeingNavigated, aggregator->chain());
 }
 
 void FrameLoader::dispatchUnloadEvents(UnloadEventPolicy unloadEventPolicy)
@@ -4033,7 +4081,7 @@ static bool NODELETE shouldAskForNavigationConfirmation(Document& document, cons
     return userDidInteractWithPage && (event.defaultPrevented() || !event.returnValue().isEmpty());
 }
 
-bool FrameLoader::dispatchBeforeUnloadEvent(Chrome& chrome, FrameLoader* frameLoaderBeingNavigated)
+bool FrameLoader::dispatchBeforeUnloadEvent(Chrome& chrome, FrameLoader* frameLoaderBeingNavigated, FrameIdentifier frameBeingNavigated)
 {
     RefPtr window = m_frame->document()->window();
     if (!window)
@@ -4042,7 +4090,7 @@ bool FrameLoader::dispatchBeforeUnloadEvent(Chrome& chrome, FrameLoader* frameLo
     RefPtr document = m_frame->document();
     if (!document->bodyOrFrameset())
         return true;
-    
+
     Ref beforeUnloadEvent = BeforeUnloadEvent::create();
 
     {
@@ -4061,36 +4109,37 @@ bool FrameLoader::dispatchBeforeUnloadEvent(Chrome& chrome, FrameLoader* frameLo
 
     // If the navigating FrameLoader has already shown a beforeunload confirmation panel for the current navigation attempt,
     // this frame is not allowed to cause another one to be shown.
-    if (frameLoaderBeingNavigated->m_currentNavigationHasShownBeforeUnloadConfirmPanel) {
+    if (frameLoaderBeingNavigated && frameLoaderBeingNavigated->m_currentNavigationHasShownBeforeUnloadConfirmPanel) {
         document->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Blocked attempt to show multiple beforeunload confirmation dialogs for the same navigation."_s);
         return true;
     }
 
     // We should only display the beforeunload dialog for an iframe if its SecurityOrigin matches all
-    // ancestor frame SecurityOrigins up through the navigating FrameLoader.
-    if (frameLoaderBeingNavigated != this) {
-        RefPtr parentFrame = dynamicDowncast<LocalFrame>(m_frame->tree().parent());
+    // ancestor frame SecurityOrigins up through the navigating frame.
+    if (m_frame->frameID() != frameBeingNavigated) {
+        RefPtr parentFrame = m_frame->tree().parent();
         while (parentFrame) {
-            RefPtr parentDocument = parentFrame->document();
-            if (!parentDocument)
+            RefPtr parentOrigin = parentFrame->frameDocumentSecurityOrigin();
+            if (!parentOrigin)
                 return true;
-            if (RefPtr document = m_frame->document(); !document || !protect(document->securityOrigin())->isSameOriginDomain(protect(parentDocument->securityOrigin()))) {
+            if (RefPtr document = m_frame->document(); !document || !protect(document->securityOrigin())->isSameOriginDomain(*parentOrigin)) {
                 document->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Blocked attempt to show beforeunload confirmation dialog on behalf of a frame with different security origin. Protocols, domains, and ports must match."_s);
                 return true;
             }
-            
-            if (&parentFrame->loader() == frameLoaderBeingNavigated)
+
+            if (parentFrame->frameID() == frameBeingNavigated)
                 break;
-            
-            parentFrame = dynamicDowncast<LocalFrame>(parentFrame->tree().parent());
+
+            parentFrame = parentFrame->tree().parent();
         }
-        
-        // The navigatingFrameLoader should always be in our ancestory.
+
+        // The navigating frame should always be in our ancestry.
         ASSERT(parentFrame);
-        ASSERT(&parentFrame->loader() == frameLoaderBeingNavigated);
+        ASSERT(parentFrame->frameID() == frameBeingNavigated);
     }
 
-    frameLoaderBeingNavigated->m_currentNavigationHasShownBeforeUnloadConfirmPanel = true;
+    if (frameLoaderBeingNavigated)
+        frameLoaderBeingNavigated->m_currentNavigationHasShownBeforeUnloadConfirmPanel = true;
 
     String text = document->displayStringModifiedByEncoding(beforeUnloadEvent->returnValue());
     return chrome.runBeforeUnloadConfirmPanel(WTF::move(text), protect(m_frame));
@@ -4132,7 +4181,7 @@ void FrameLoader::executeJavaScriptURL(const URL& url, const NavigationAction& a
     m_quickRedirectComing = false;
 }
 
-void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& request, const FormSubmission* formSubmission, NavigationPolicyDecision navigationPolicyDecision, AllowNavigationToInvalidURL allowNavigationToInvalidURL, ShouldRestoreFromBackForwardCache shouldRestoreFromBackForwardCache)
+void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& request, const FormSubmission* formSubmission, NavigationPolicyDecision navigationPolicyDecision, AllowNavigationToInvalidURL allowNavigationToInvalidURL, ShouldRestoreFromBackForwardCache shouldRestoreFromBackForwardCache, CompletionHandler<void()>&& completionHandler)
 {
     // If we loaded an alternate page to replace an unreachableURL, we'll get in here with a
     // nil policyDataSource because loading the alternate page will have passed
@@ -4143,10 +4192,6 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
 
     bool urlIsDisallowed = allowNavigationToInvalidURL == AllowNavigationToInvalidURL::No && !request.url().isValid();
 
-    // For Navigation API traversal navigation, dispatch navigate event AFTER beforeunload.
-    bool navigateEventAborted = false;
-    bool shouldCloseResult = true;
-
     if (m_pendingNavigationAPIItem) {
         // Check if this will be a BFCache load - if so, defer navigate event until after restoration
         bool willLoadFromBFCache = false;
@@ -4154,23 +4199,42 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
             willLoadFromBFCache = true;
 
         // Only call shouldClose() early for Navigation API traversals
-        shouldCloseResult = shouldClose();
-
-        if (shouldCloseResult && !willLoadFromBFCache) {
-            // For non-BFCache traversals, dispatch navigate event now
-            if (RefPtr window = frame->document()->window()) {
-                if (RefPtr navigation = window->navigation(); navigation->frame()) {
-                    if (navigation->dispatchTraversalNavigateEvent(Ref { *m_pendingNavigationAPIItem }) == Navigation::DispatchResult::Aborted)
-                        navigateEventAborted = true;
+        shouldClose([this, protectedThis = Ref { *this }, request, formSubmission = RefPtr { formSubmission }, navigationPolicyDecision, allowNavigationToInvalidURL, shouldRestoreFromBackForwardCache, urlIsDisallowed, willLoadFromBFCache, completionHandler = WTF::move(completionHandler)](bool shouldCloseResult) mutable {
+            bool navigateEventAborted = false;
+            if (shouldCloseResult && !willLoadFromBFCache) {
+                // For non-BFCache traversals, dispatch navigate event now
+                if (RefPtr window = m_frame->document()->window()) {
+                    if (RefPtr navigation = window->navigation(); navigation->frame()) {
+                        if (navigation->dispatchTraversalNavigateEvent(Ref { *m_pendingNavigationAPIItem }) == Navigation::DispatchResult::Aborted)
+                            navigateEventAborted = true;
+                    }
                 }
-            }
 
-            m_pendingNavigationAPIItem = nullptr;
-        }
-    } else {
-        // For non-Navigation API traversals, use original behavior with short-circuit evaluation
-        shouldCloseResult = (navigationPolicyDecision == NavigationPolicyDecision::ContinueLoad && !urlIsDisallowed) ? shouldClose() : false;
+                m_pendingNavigationAPIItem = nullptr;
+            }
+            continueLoadAfterShouldClose(request, formSubmission.get(), navigationPolicyDecision, allowNavigationToInvalidURL, shouldRestoreFromBackForwardCache, shouldCloseResult, navigateEventAborted, urlIsDisallowed, WTF::move(completionHandler));
+        });
+        return;
     }
+
+    // For non-Navigation API traversals, use original behavior with short-circuit evaluation
+    if (navigationPolicyDecision == NavigationPolicyDecision::ContinueLoad && !urlIsDisallowed) {
+        shouldClose([this, protectedThis = Ref { *this }, request, formSubmission = RefPtr { formSubmission }, navigationPolicyDecision, allowNavigationToInvalidURL, shouldRestoreFromBackForwardCache, urlIsDisallowed, completionHandler = WTF::move(completionHandler)](bool shouldCloseResult) mutable {
+            continueLoadAfterShouldClose(request, formSubmission.get(), navigationPolicyDecision, allowNavigationToInvalidURL, shouldRestoreFromBackForwardCache, shouldCloseResult, false, urlIsDisallowed, WTF::move(completionHandler));
+        });
+        return;
+    }
+
+    continueLoadAfterShouldClose(request, formSubmission, navigationPolicyDecision, allowNavigationToInvalidURL, shouldRestoreFromBackForwardCache, false, false, urlIsDisallowed, WTF::move(completionHandler));
+}
+
+void FrameLoader::continueLoadAfterShouldClose(const ResourceRequest& request, const FormSubmission* formSubmission, NavigationPolicyDecision navigationPolicyDecision, AllowNavigationToInvalidURL allowNavigationToInvalidURL, ShouldRestoreFromBackForwardCache shouldRestoreFromBackForwardCache, bool shouldCloseResult, bool navigateEventAborted, bool urlIsDisallowed, CompletionHandler<void()>&& outerCompletionHandler)
+{
+#if RELEASE_LOG_DISABLED
+    UNUSED_PARAM(allowNavigationToInvalidURL);
+#endif
+    Ref frame = m_frame.get();
+    CompletionHandlerCallingScope completionHandlerCaller(WTF::move(outerCompletionHandler));
 
     bool canContinue = navigationPolicyDecision == NavigationPolicyDecision::ContinueLoad && shouldCloseResult && !navigateEventAborted && !urlIsDisallowed;
     bool isTargetItem = frame->loader().history().provisionalItem() ? frame->loader().history().provisionalItem()->isTargetItem() : false;

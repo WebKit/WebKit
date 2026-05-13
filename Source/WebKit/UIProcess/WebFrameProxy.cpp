@@ -1015,6 +1015,14 @@ void WebFrameProxy::findFocusableElementContinuingFromFrame(WebCore::FocusDirect
     send(Messages::WebFrame::FindFocusableElementContinuingFromFrame(direction, frameID, focusEventData, shouldFocusElement));
 }
 
+void WebFrameProxy::dispatchBeforeUnloadInRemoteFrame(WebCore::FrameIdentifier frameBeingNavigated, CompletionHandler<void(bool)>&& completionHandler)
+{
+    if (!m_page)
+        return completionHandler(true);
+
+    sendWithAsyncReply(Messages::WebFrame::DispatchBeforeUnloadInRemoteFrame(frameBeingNavigated), WTF::move(completionHandler));
+}
+
 std::optional<SharedPreferencesForWebProcess> WebFrameProxy::sharedPreferencesForWebProcess() const
 {
     return process().sharedPreferencesForWebProcess();

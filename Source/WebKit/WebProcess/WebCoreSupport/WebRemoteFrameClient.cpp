@@ -289,4 +289,9 @@ void WebRemoteFrameClient::dispatchCrossOriginBeforeUnloadCheck(const WebCore::S
         page->send(Messages::WebPageProxy::DispatchCrossOriginBeforeUnloadCheckForFrame(m_frame->frameID(), navigatingFrameOrigin));
 }
 
+void WebRemoteFrameClient::dispatchBeforeUnloadInRemoteFrame(WebCore::FrameIdentifier frameBeingNavigated, CompletionHandler<void(bool)>&& completionHandler)
+{
+    m_frame->sendWithAsyncReply(Messages::WebFrameProxy::DispatchBeforeUnloadInRemoteFrame(frameBeingNavigated), WTF::move(completionHandler));
+}
+
 }
