@@ -327,14 +327,18 @@ class SingleTestRunner(object):
                 fs.dirname(self._test_name),
             )
         elif rebaselining:
-            # The directory containing the existing baseline or the generic path.
-            output_dir = fs.dirname(
-                port.expected_filename(
-                    self._test_name,
-                    extension,
-                    device_type=device_type,
-                )
-            )
+            # The directory containing the existing baseline or the test's own directory.
+            test = self._test_input.test
+            extension_to_path = {
+                '.txt': test.expected_text_path,
+                '.png': test.expected_image_path,
+                '.wav': test.expected_audio_path,
+            }
+            expected_path = extension_to_path.get(extension)
+            if expected_path:
+                output_dir = fs.dirname(expected_path)
+            else:
+                output_dir = fs.dirname(port.abspath_for_test(self._test_name))
         elif extension == ".png" or (
             extension == ".txt" and _render_tree_dump_pattern.match(string_utils.decode(data, target_type=str))
         ):
