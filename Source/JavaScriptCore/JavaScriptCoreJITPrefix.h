@@ -29,6 +29,12 @@
 
 #include <wtf/Platform.h>
 
+#if !OS(DARWIN)
+// On non-Apple, PCH chaining is not used; include the base prefix directly so
+// this PCH is self-contained and all required types and macros are available.
+#include "JavaScriptCorePrefix.h"
+#endif
+
 #ifdef __cplusplus
 #undef new
 #undef delete

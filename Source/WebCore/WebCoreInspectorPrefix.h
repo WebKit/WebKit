@@ -23,9 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* Chained on top of WebCorePrefix.h; do not include that file here -- the
-   base PCH supplies it. Anchors below are headers that >=80% of inspector/
-   TUs include and that are not already in the base PCH closure. */
+/* On Apple, chained on top of WebCorePrefix.h (base PCH supplies Platform.h
+   and cmakeconfig.h). On non-Apple, compiled as a standalone PCH — include
+   WebCorePrefix.h directly so cmakeconfig.h is processed before Platform.h
+   pulls in PlatformEnable.h defaults, and ENABLE() macros are correct. */
+
+#if defined(HAVE_CONFIG_H) && HAVE_CONFIG_H && defined(BUILDING_WITH_CMAKE)
+#include "cmakeconfig.h"
+#endif
+
+#include <wtf/Platform.h>
+
+#if !OS(DARWIN)
+// On non-Apple, PCH chaining is not used; include the base prefix directly so
+// this PCH is self-contained and all required types and macros are available.
+#include "WebCorePrefix.h"
+#endif
 
 #ifdef __cplusplus
 #undef new

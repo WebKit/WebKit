@@ -23,9 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* Chained on top of WebKitPrefix.h; do not include that file here -- the
-   base PCH supplies it. Anchors below are headers that >=80% of UIProcess/
-   TUs include and that are not already in the base PCH closure. */
+/* On Apple, chained on top of WebKitPrefix.h (base PCH supplies Platform.h).
+   On non-Apple, compiled as a standalone PCH — include Platform.h directly so
+   macros like CPU() are available to all UIProcess TUs. */
+
+#if defined(HAVE_CONFIG_H) && HAVE_CONFIG_H && defined(BUILDING_WITH_CMAKE)
+#include "cmakeconfig.h"
+#endif
+
+#include <wtf/Platform.h>
 
 #ifdef __cplusplus
 #undef new
