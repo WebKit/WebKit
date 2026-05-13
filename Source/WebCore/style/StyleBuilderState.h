@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "CSSCalcTree.h"
 #include "CSSToLengthConversionData.h"
 #include "Document.h"
 #include "FontTaggedSettings.h"
@@ -45,10 +46,6 @@ class FontCascadeDescription;
 class FontSelectionValue;
 class StyleResolver;
 struct CSSRegisteredCustomProperty;
-
-namespace CSSCalc {
-struct RandomCachingKey;
-}
 
 namespace Style {
 
@@ -176,7 +173,7 @@ public:
     void NODELETE setUsesViewportUnits();
     void NODELETE setUsesContainerUnits();
 
-    double lookupCSSRandomBaseValue(const CSSCalc::RandomCachingKey&, std::optional<CSS::Keyword::ElementScoped>) const;
+    double lookupCSSRandomBaseValue(const CSSCalc::Random::SharingOptions) const;
 
     // Accessors for sibling information used by the sibling-count() and sibling-index() CSS functions.
     unsigned NODELETE siblingCount();

@@ -253,25 +253,9 @@ std::optional<double> evaluate(const IndirectNode<Random>& root, const Evaluatio
     auto randomBaseValue = WTF::switchOn(root->sharing,
         [&](const Random::SharingOptions& sharingOptions) -> std::optional<double> {
             CheckedPtr builderState = options.conversionData->styleBuilderState();
-
-            if (sharingOptions.elementScoped.has_value() && !builderState->element())
+            if (sharingOptions.isElementScoped && !builderState->element())
                 return { };
-
-            return WTF::switchOn(sharingOptions.identifier,
-                [&](const Random::SharingOptions::Auto& autoValue) {
-                    return builderState->lookupCSSRandomBaseValue(
-                        autoValue,
-                        sharingOptions.elementScoped
-                    );
-                },
-                [&](const CSS::CustomIdent& customIdent) {
-                    return builderState->lookupCSSRandomBaseValue(
-                        Style::toStyle(customIdent, *builderState),
-                        sharingOptions.elementScoped
-                    );
-                }
-            );
-
+            return builderState->lookupCSSRandomBaseValue(sharingOptions);
         },
         [&](const Random::SharingFixed& sharingFixed) -> std::optional<double> {
             return WTF::switchOn(sharingFixed.value,

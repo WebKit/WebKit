@@ -26,6 +26,7 @@
 
 #include <JavaScriptCore/Forward.h>
 #include <WebCore/AXTextStateChangeIntent.h>
+#include <WebCore/CSSCalcRandomCachingKey.h>
 #include <WebCore/ContainerNode.h>
 #include <WebCore/EventOptions.h>
 #include <WebCore/FocusOptions.h>
@@ -163,10 +164,6 @@ enum class ContentRelevancy : uint8_t {
     IsInTopLayer = 1 << 2,
     Selected = 1 << 3,
 };
-
-namespace CSSCalc {
-struct RandomCachingKey;
-}
 
 namespace CSS {
 struct SerializationContext;

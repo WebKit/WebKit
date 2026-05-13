@@ -28,6 +28,7 @@
 #pragma once
 
 #include <WebCore/AsyncNodeDeletionQueue.h>
+#include <WebCore/CSSCalcRandomCachingKey.h>
 #include <WebCore/Color.h>
 #include <WebCore/ContainerNode.h>
 #include <WebCore/ContextDestructionObserver.h>
@@ -373,7 +374,6 @@ using PlatformDisplayID = uint32_t;
 
 namespace CSSCalc {
 class RandomCachingKeyMap;
-struct RandomCachingKey;
 }
 
 namespace Style {

@@ -27,6 +27,7 @@
 #include "CSSCalcTree.h"
 
 #include "CSSCalcTree+Serialization.h"
+#include "CSSPropertyParserState.h"
 #include "CSSSerializationContext.h"
 #include "CSSUnits.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -67,6 +68,44 @@ WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Sin);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Sqrt);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Sum);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Tan);
+
+
+bool Random::SharingOptions::isBlank() const
+{
+    /*
+        static const SharingOptions blank;
+        return *this == blank;
+    */
+    return !hasIdentifier()
+        && !hasProperty()
+        && key.index == 0
+        && !isElementScoped;
+}
+
+bool Random::SharingOptions::isAuto() const
+{
+    return !hasIdentifier()
+        && hasProperty()
+        && key.index != 0
+        && isElementScoped;
+}
+
+void Random::SharingOptions::setProperty(CSS::PropertyParserState& state)
+{
+    key.property = state.currentProperty;
+}
+
+void Random::SharingOptions::setPropertyIndex(CSS::PropertyParserState& state)
+{
+    key.property = state.currentProperty;
+    key.index = state.cssRandomFunctionCount;
+}
+
+Random::SharingOptions::SharingOptions(CSS::PropertyParserState& state)
+    : isElementScoped(true)
+{
+    setPropertyIndex(state);
+}
 
 bool isNumeric(const Child& root)
 {

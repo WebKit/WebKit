@@ -37,6 +37,10 @@
 
 namespace WebCore {
 
+namespace CSS {
+struct PropertyParserState;
+}
+
 namespace Style {
 enum class AnchorSizeDimension : uint8_t;
 }
@@ -751,22 +755,32 @@ struct Sign {
     bool operator==(const Sign&) const = default;
 };
 
+
+
 // Random Function - https://drafts.csswg.org/css-values-5/#random
 struct Random {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Random);
     static constexpr auto id = CSSValueRandom;
 
-    // <random-value-sharing> = [ [ auto | <dashed-ident> ] || element-scoped ] | fixed <number [0,1]>
+    // <random-value-sharing> = auto | <dashed-ident> || element-scoped || [ property-scoped | property-index-scoped ] | fixed <number [0,1]>
     struct SharingOptions {
-        struct Auto {
-            CSSPropertyID property;
-            unsigned index;
-
-            bool operator==(const Auto&) const = default;
+        struct Key {
+            CSS::CustomIdent identifier;
+            CSSPropertyID property { CSSPropertyInvalid };
+            unsigned index { 0 }; // 1 = first
+            bool operator==(const Key&) const = default;
         };
-        Variant<Auto, CSS::CustomIdent> identifier;
-        std::optional<CSS::Keyword::ElementScoped> elementScoped;
+        Key key;
+        bool isElementScoped { false };
 
+        bool isBlank() const;
+        bool isAuto() const;
+        bool hasIdentifier() const { return !key.identifier.value.isNull(); }
+        bool hasProperty() const { return key.property != CSSPropertyInvalid; }
+        void setProperty(CSS::PropertyParserState&);
+        void setPropertyIndex(CSS::PropertyParserState&);
+        SharingOptions(CSS::PropertyParserState&); // Constructs auto state.
+        SharingOptions() { }
         bool operator==(const SharingOptions&) const = default;
     };
     struct SharingFixed {

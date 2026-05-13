@@ -34,71 +34,11 @@
 namespace WebCore {
 namespace CSSCalc {
 
-struct RandomCachingKey {
-    using Identifier = Variant<
-        Random::SharingOptions::Auto,
-        Style::CustomIdent,
-        WTF::HashTableDeletedValueType,
-        WTF::HashTableEmptyValueType
-    >;
-    Identifier identifier;
-
-    RandomCachingKey(const Random::SharingOptions::Auto& identifier)
-        : identifier { identifier }
-    {
-    }
-
-    RandomCachingKey(Random::SharingOptions::Auto&& identifier)
-        : identifier { WTF::move(identifier) }
-    {
-    }
-
-    RandomCachingKey(const Style::CustomIdent& identifier)
-        : identifier { identifier }
-    {
-    }
-
-    RandomCachingKey(Style::CustomIdent&& identifier)
-        : identifier { WTF::move(identifier) }
-    {
-    }
-
-    RandomCachingKey(Variant<Random::SharingOptions::Auto, Style::CustomIdent>&& identifier)
-        : identifier { convertToIdentifier(WTF::move(identifier)) }
-    {
-    }
-
-    RandomCachingKey(const Variant<Random::SharingOptions::Auto, Style::CustomIdent>& identifier)
-        : identifier { convertToIdentifier(identifier) }
-    {
-    }
-
-    explicit RandomCachingKey(WTF::HashTableDeletedValueType)
-        : identifier { WTF::HashTableDeletedValue }
-    {
-    }
-
-    explicit RandomCachingKey(WTF::HashTableEmptyValueType)
-        : identifier { WTF::HashTableEmptyValue }
-    {
-    }
-
-    bool isHashTableDeletedValue() const { return std::holds_alternative<WTF::HashTableDeletedValueType>(identifier); }
-    bool isHashTableEmptyValue() const { return std::holds_alternative<WTF::HashTableEmptyValueType>(identifier); }
-
-    bool operator==(const RandomCachingKey&) const = default;
-
-private:
-    static Identifier convertToIdentifier(Variant<Random::SharingOptions::Auto, Style::CustomIdent>&& identifier)
-    {
-        return WTF::switchOn(WTF::move(identifier), [](auto&& alternative) { return Identifier { WTF::move(alternative) }; });
-    }
-
-    static Identifier convertToIdentifier(const Variant<Random::SharingOptions::Auto, Style::CustomIdent>& identifier)
-    {
-        return WTF::switchOn(identifier, [](const auto& alternative) { return Identifier { alternative }; });
-    }
-};
+using RandomCachingKey = Variant<
+    Random::SharingOptions::Key,
+    WTF::HashTableDeletedValueType,
+    WTF::HashTableEmptyValueType
+>;
 
 } // namespace CSSCalc
 } // namespace WebCore
@@ -106,25 +46,18 @@ private:
 namespace WTF {
 
 struct CSSCalcRandomCachingKeyHash {
-    static unsigned hash(const WebCore::CSSCalc::RandomCachingKey& key)
+    static unsigned hash(const WebCore::CSSCalc::RandomCachingKey& value)
     {
+        if (!std::holds_alternative<WebCore::CSSCalc::Random::SharingOptions::Key>(value)) {
+            RELEASE_ASSERT_NOT_REACHED();
+            return 0;
+        }
+        auto key = std::get<WebCore::CSSCalc::Random::SharingOptions::Key>(value);
+
         Hasher hasher;
-        add(hasher, key.identifier.index());
-        WTF::switchOn(key.identifier,
-            [&](const WebCore::CSSCalc::Random::SharingOptions::Auto& autoValue) {
-                add(hasher, autoValue.property);
-                add(hasher, autoValue.index);
-            },
-            [&](const WebCore::Style::CustomIdent& customIdent) {
-                add(hasher, customIdent);
-            },
-            [](const WTF::HashTableDeletedValueType&) {
-                RELEASE_ASSERT_NOT_REACHED();
-            },
-            [](const WTF::HashTableEmptyValueType&) {
-                RELEASE_ASSERT_NOT_REACHED();
-            }
-        );
+        add(hasher, key.property);
+        add(hasher, key.index);
+        add(hasher, key.identifier);
         return hasher.hash();
     }
     static bool equal(const WebCore::CSSCalc::RandomCachingKey& a, const WebCore::CSSCalc::RandomCachingKey& b) { return a == b; }
@@ -133,9 +66,9 @@ struct CSSCalcRandomCachingKeyHash {
 
 template<> struct HashTraits<WebCore::CSSCalc::RandomCachingKey> : GenericHashTraits<WebCore::CSSCalc::RandomCachingKey> {
     static WebCore::CSSCalc::RandomCachingKey emptyValue() { return WebCore::CSSCalc::RandomCachingKey(HashTableEmptyValue); }
-    static bool isEmptyValue(const WebCore::CSSCalc::RandomCachingKey& value) { return value.isHashTableEmptyValue(); }
+    static bool isEmptyValue(const WebCore::CSSCalc::RandomCachingKey& slot) { return std::holds_alternative<WTF::HashTableEmptyValueType>(slot); }
     static void constructDeletedValue(WebCore::CSSCalc::RandomCachingKey& slot) { new (NotNull, &slot) WebCore::CSSCalc::RandomCachingKey(HashTableDeletedValue); }
-    static bool isDeletedValue(const WebCore::CSSCalc::RandomCachingKey& slot) { return slot.isHashTableDeletedValue(); }
+    static bool isDeletedValue(const WebCore::CSSCalc::RandomCachingKey& slot) { return std::holds_alternative<WTF::HashTableDeletedValueType>(slot); }
 
     static const bool hasIsEmptyValueFunction = true;
     static const bool emptyValueIsZero = false;

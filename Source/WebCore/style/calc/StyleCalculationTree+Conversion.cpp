@@ -225,29 +225,11 @@ auto toStyle(const CSSCalc::Random::Sharing& randomSharing, const ToStyleConvers
     return WTF::switchOn(randomSharing,
         [&](const CSSCalc::Random::SharingOptions& sharingOptions) -> Random::Fixed {
             CheckedPtr builderState = options.evaluation.conversionData->styleBuilderState();
-
-            if (!sharingOptions.elementScoped.has_value()) {
-                ASSERT(builderState->element());
+            if (sharingOptions.isElementScoped && !builderState->element()) {
+                ASSERT_NOT_REACHED();
+                return { };
             }
-
-            return WTF::switchOn(sharingOptions.identifier,
-                [&](const CSSCalc::Random::SharingOptions::Auto& autoValue) {
-                    return Random::Fixed {
-                        builderState->lookupCSSRandomBaseValue(
-                            autoValue,
-                            sharingOptions.elementScoped
-                        )
-                    };
-                },
-                [&](const CSS::CustomIdent& customIdent) {
-                    return Random::Fixed {
-                        builderState->lookupCSSRandomBaseValue(
-                            Style::toStyle(customIdent, *builderState),
-                            sharingOptions.elementScoped
-                        )
-                    };
-                }
-            );
+            return Random::Fixed { builderState->lookupCSSRandomBaseValue(sharingOptions) };
         },
         [&](const CSSCalc::Random::SharingFixed& sharingFixed) -> Random::Fixed {
             return WTF::switchOn(sharingFixed.value,

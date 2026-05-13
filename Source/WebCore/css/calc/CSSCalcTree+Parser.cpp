@@ -677,73 +677,79 @@ static std::optional<Random::SharingFixed> consumeOptionalRandomSharingFixed(CSS
     };
 }
 
-static Random::SharingOptions::Auto NODELETE makeRandomSharingAuto(ParserState& state)
-{
-    return {
-        .property = state.propertyParserState.currentProperty,
-        .index = state.propertyParserState.cssRandomFunctionCount
-    };
-}
-
 static std::optional<Random::SharingOptions> consumeOptionalRandomSharingOptions(CSSParserTokenRange& tokens, ParserState& state)
 {
-    // <random-value-sharing> = [ auto | <dashed-ident> ] || element-scoped | fixed <number [0,1]>
+    // <random-cache-key> = <dashed-ident> || element-scoped || [ property-scoped | property-index-scoped ]
 
-    std::optional<Variant<Random::SharingOptions::Auto, CSS::CustomIdent>> identifier;
-    std::optional<CSS::Keyword::ElementScoped> elementScoped;
+    Random::SharingOptions options;
 
     CSSParserTokenRangeGuard guard { tokens };
 
     auto consumeIdentifier = [&] -> bool {
-        if (identifier)
+        if (options.hasIdentifier())
             return false;
-        if (tokens.peek().id() == CSSValueAuto) {
-            tokens.consumeIncludingWhitespace();
-            identifier = makeRandomSharingAuto(state);
-            return true;
-        }
         if (auto dashedIdent = CSSPropertyParserHelpers::consumeUnresolvedDashedIdent(tokens, state.propertyParserState)) {
-            identifier = WTF::move(*dashedIdent);
+            options.key.identifier = WTF::move(*dashedIdent);
             return true;
         }
         return false;
     };
     auto consumeElementScoped = [&] -> bool {
-        if (elementScoped)
+        if (options.isElementScoped)
             return false;
         if (tokens.peek().id() == CSSValueElementScoped) {
             tokens.consumeIncludingWhitespace();
-            elementScoped = CSS::Keyword::ElementScoped { };
+            options.isElementScoped = true;
+            return true;
+        }
+        return false;
+    };
+    auto consumePropertyScoped = [&] -> bool {
+        if (options.hasProperty())
+            return false;
+        if (tokens.peek().id() == CSSValuePropertyScoped) {
+            tokens.consumeIncludingWhitespace();
+            options.setProperty(state.propertyParserState);
+            return true;
+        }
+        return false;
+    };
+    auto consumePropertyIndexScoped = [&] -> bool {
+        if (options.hasProperty())
+            return false;
+        if (tokens.peek().id() == CSSValuePropertyIndexScoped) {
+            tokens.consumeIncludingWhitespace();
+            options.setPropertyIndex(state.propertyParserState);
             return true;
         }
         return false;
     };
 
-    for (unsigned i = 0; i < 2; ++i) {
-        if (consumeIdentifier() || consumeElementScoped())
+    for (unsigned i = 0; i < 3; ++i) {
+        if (consumeIdentifier() || consumeElementScoped() || consumePropertyScoped() || consumePropertyIndexScoped())
             continue;
         break;
     }
 
-    if (!identifier && !elementScoped)
+    if (options.isBlank())
         return { };
 
     guard.commit();
 
-    return Random::SharingOptions {
-        .identifier = identifier.value_or(CSS::CustomIdent { nullAtom() }),
-        .elementScoped = elementScoped
-    };
+    return options;
 }
 
 static std::optional<Random::Sharing> consumeOptionalRandomSharing(CSSParserTokenRange& tokens, ParserState& state)
 {
-    // <random-value-sharing> = [ auto | <dashed-ident> ] || element-scoped | fixed <number [0,1]>
+    // <random-key> = auto | <random-cache-key> | fixed <number [0,1]>
 
     if (tokens.peek().id() == CSSValueFixed) {
         if (auto fixed = consumeOptionalRandomSharingFixed(tokens, state))
             return Random::Sharing { WTF::move(*fixed) };
         return { };
+    } else if (tokens.peek().id() == CSSValueAuto) {
+        tokens.consumeIncludingWhitespace();
+        return Random::SharingOptions { state.propertyParserState };
     } else {
         if (auto options = consumeOptionalRandomSharingOptions(tokens, state))
             return Random::Sharing { WTF::move(*options) };
@@ -753,7 +759,7 @@ static std::optional<Random::Sharing> consumeOptionalRandomSharing(CSSParserToke
 
 static std::optional<TypedChild> consumeRandom(CSSParserTokenRange& tokens, int depth, ParserState& state)
 {
-    // <random()> = random( <random-value-sharing>? , <calc-sum>, <calc-sum>, <calc-sum>? )
+    // <random()> = random( <random-key>? , <calc-sum>, <calc-sum>, <calc-sum>? )
 
     if (!state.propertyParserState.context.cssRandomFunctionEnabled)
         return { };
@@ -769,24 +775,21 @@ static std::optional<TypedChild> consumeRandom(CSSParserTokenRange& tokens, int 
 
     using Op = Random;
 
-    std::optional<Random::Sharing> sharing;
+    ++state.propertyParserState.cssRandomFunctionCount;
+    Random::Sharing sharing;
     if (auto optionalSharing = consumeOptionalRandomSharing(tokens, state)) {
         if (!CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(tokens)) {
             LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - missing comma after <random-value-sharing>");
             return { };
         }
 
-        sharing = WTF::move(optionalSharing);
+        sharing = WTF::move(*optionalSharing);
     } else {
-        sharing = Random::SharingOptions {
-            .identifier = makeRandomSharingAuto(state),
-            .elementScoped = CSS::Keyword::ElementScoped { },
-        };
+        sharing = Random::SharingOptions { state.propertyParserState };
     }
 
     // Increment the random function count early, but after processing the the sharing production to
     // ensure that any nested random() functions in the <calc-sum> productions have an incremented value.
-    ++state.propertyParserState.cssRandomFunctionCount;
 
     auto min = parseCalcSum(tokens, depth, state);
     if (!min) {
@@ -834,7 +837,7 @@ static std::optional<TypedChild> consumeRandom(CSSParserTokenRange& tokens, int 
 
         state.requiresConversionData = true;
 
-        Op op { WTF::move(*sharing), WTF::move(min->child), WTF::move(max->child), std::nullopt };
+        Op op { WTF::move(sharing), WTF::move(min->child), WTF::move(max->child), std::nullopt };
 
         if (auto* simplificationOptions = state.simplificationOptions) {
             if (auto replacement = simplify(op, *simplificationOptions))
@@ -889,7 +892,7 @@ static std::optional<TypedChild> consumeRandom(CSSParserTokenRange& tokens, int 
 
     state.requiresConversionData = true;
 
-    Op op { WTF::move(*sharing), WTF::move(min->child), WTF::move(max->child), WTF::move(step->child) };
+    Op op { WTF::move(sharing), WTF::move(min->child), WTF::move(max->child), WTF::move(step->child) };
 
     if (auto* simplificationOptions = state.simplificationOptions) {
         if (auto replacement = simplify(op, *simplificationOptions))
