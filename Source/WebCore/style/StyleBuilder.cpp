@@ -119,6 +119,20 @@ void Builder::applyAllProperties()
     adjustAfterApplying();
 }
 
+void Builder::addCustomPropertyFilterBit(const AtomString& name)
+{
+    m_customPropertyFilter |= ComputedStyleBase::maskForCustomPropertyName(name);
+}
+
+void Builder::commitCustomPropertyState()
+{
+    auto& style = m_state->style();
+    if (m_customPropertyFilter)
+        style.setCustomPropertyFilter(m_customPropertyFilter);
+    if (m_declaresInheritedCustomProperty)
+        style.setDeclaresInheritedCustomProperty();
+}
+
 // Top priority properties affect resolution of high priority properties.
 void Builder::applyTopPriorityProperties()
 {
@@ -441,10 +455,14 @@ void Builder::applyCustomProperty(const AtomString& name, Variant<Ref<const Styl
 {
     auto& style = m_state->style();
 
+    addCustomPropertyFilterBit(name);
+
     auto registeredCustomProperty = m_state->registeredProperty(name);
 
     auto applyValue = [&](Ref<const CustomProperty>&& valueToApply) {
         bool isInherited = !registeredCustomProperty || registeredCustomProperty->inherits;
+        if (isInherited)
+            m_declaresInheritedCustomProperty = true;
         state().style().setCustomPropertyValue(WTF::move(valueToApply), isInherited);
     };
 

@@ -254,6 +254,12 @@ InheritedRareData::~InheritedRareData() = default;
 
 bool InheritedRareData::operator==(const InheritedRareData& o) const
 {
+    return equalIgnoringCustomProperties(o)
+        && customProperties == o.customProperties;
+}
+
+bool InheritedRareData::equalIgnoringCustomProperties(const InheritedRareData& o) const
+{
     return usedZoom == o.usedZoom
         && deviceScaleFactor == o.deviceScaleFactor
         && textStrokeWidth == o.textStrokeWidth
@@ -349,7 +355,6 @@ bool InheritedRareData::operator==(const InheritedRareData& o) const
         && strokeWidth == o.strokeWidth
         && strokeColor == o.strokeColor
         && visitedLinkStrokeColor == o.visitedLinkStrokeColor
-        && customProperties == o.customProperties
         && listStyleImage == o.listStyleImage
         && listStyleType == o.listStyleType
         && blockEllipsis == o.blockEllipsis

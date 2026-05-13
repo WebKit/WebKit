@@ -65,6 +65,7 @@
 #include "StyleAdjuster.h"
 #include "StyleBuilder.h"
 #include "StyleComputedStyle+SettersInlines.h"
+#include "StyleCustomPropertyData.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleOriginatedTimelinesController.h"
 #include "StylePositionTryFallbackTactic.h"
@@ -279,7 +280,7 @@ static bool affectsRenderedSubtree(Element& element, const Style::ComputedStyle&
     return false;
 }
 
-auto TreeResolver::computeDescendantsToResolve(const ElementUpdate& update, const Style::ComputedStyle* existingStyle, Validity validity) const -> DescendantsToResolve
+auto TreeResolver::computeDescendantsToResolve(ElementUpdate& update, const Style::ComputedStyle* existingStyle, Validity validity) const -> DescendantsToResolve
 {
     if (parent().descendantsToResolve == DescendantsToResolve::All)
         return DescendantsToResolve::All;
@@ -296,8 +297,10 @@ auto TreeResolver::computeDescendantsToResolve(const ElementUpdate& update, cons
             }
             return false;
         }();
-        if (customPropertyInStyleContainerQueryChanged)
+        if (customPropertyInStyleContainerQueryChanged) {
+            update.changes.add(Change::Container);
             return DescendantsToResolve::All;
+        }
     }
 
     if (update.changes.containsAny({ Change::Container, Change::Renderer }))
@@ -305,6 +308,11 @@ auto TreeResolver::computeDescendantsToResolve(const ElementUpdate& update, cons
 
     if (update.changes.containsAny(inheritedChanges()))
         return DescendantsToResolve::Children;
+
+    if (update.changes.contains(Change::InheritedCustomProperty)) {
+        ASSERT(!update.changes.containsAny(inheritedChanges()));
+        return DescendantsToResolve::Children;
+    }
 
     if (update.changes.contains(Change::NonInherited))
         return DescendantsToResolve::ChildrenWithExplicitInherit;
@@ -1053,6 +1061,7 @@ std::unique_ptr<Style::ComputedStyle> TreeResolver::resolveAgainInDifferentConte
     };
 
     styleBuilder.applyAllProperties();
+    styleBuilder.commitCustomPropertyState();
 
     if (newStyle->display() == DisplayType::None)
         return nullptr;
@@ -1091,6 +1100,7 @@ HashSet<AnimatableCSSProperty> TreeResolver::applyCascadeAfterAnimation(Style::C
     };
 
     styleBuilder.applyAllProperties();
+    styleBuilder.commitCustomPropertyState();
 
     return styleBuilder.overriddenAnimatedProperties();
 }
@@ -1330,13 +1340,36 @@ void TreeResolver::resolveComposedTree()
 
         auto changes = OptionSet<Change> { };
         auto descendantsToResolve = DescendantsToResolve::None;
+        uint32_t changedCustomPropertyFilter = 0;
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
         bool didAXUpdateFontSubtree = parent.didAXUpdateFontSubtree;
         bool didAXUpdateTextColorSubtree = parent.didAXUpdateTextColorSubtree;
 #endif
         auto resolutionType = determineResolutionType(element.get(), style, parent.descendantsToResolve, parent.changes);
-        if (resolutionType) {
+        auto canTakeCustomPropertyFastPath = [&] {
+            return parent.changedCustomPropertyFilter
+                && parent.changes.containsOnly(Change::InheritedCustomProperty)
+                && parent.descendantsToResolve == DescendantsToResolve::Children
+                && style
+                && !style->hasPseudoElementStyles()
+                && !element->needsStyleRecalc()
+                && !element->hasKeyframeEffects({ })
+                && !(style->customPropertyFilter() & parent.changedCustomPropertyFilter)
+                && !style->declaresInheritedCustomProperty();
+        };
+
+        if (canTakeCustomPropertyFastPath()) {
+            auto clonedStyle = Style::ComputedStyle::clonePtr(*style);
+            clonedStyle->setInheritedCustomPropertiesFrom(parent.style);
+            ElementUpdate elementUpdate { WTF::move(clonedStyle), Change::InheritedCustomProperty };
+            changes = Change::InheritedCustomProperty;
+            descendantsToResolve = DescendantsToResolve::Children;
+            changedCustomPropertyFilter = parent.changedCustomPropertyFilter;
+            style = elementUpdate.style.get();
+            m_update->addElement(element.get(), parent.element, WTF::move(elementUpdate));
+            clearNeedsStyleResolution(element.get());
+        } else if (resolutionType) {
             element->resetComputedStyle();
 
             if (*resolutionType == ResolutionType::Full)
@@ -1358,6 +1391,11 @@ void TreeResolver::resolveComposedTree()
                     didAXUpdateTextColorSubtree = cache->onTextColorChange(element.get(), style, elementUpdate.style.get());
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
             }
+
+            if (parent.changedCustomPropertyFilter)
+                changedCustomPropertyFilter = parent.changedCustomPropertyFilter;
+            else if (elementUpdate.changes.contains(Change::InheritedCustomProperty) && style && elementUpdate.style)
+                changedCustomPropertyFilter = elementUpdate.style->inheritedCustomProperties().changedCustomPropertiesFilter(style->inheritedCustomProperties());
 
             style = elementUpdate.style.get();
             changes = elementUpdate.changes;
@@ -1414,6 +1452,8 @@ void TreeResolver::resolveComposedTree()
 #else
         pushParent(element.get(), *style, changes, descendantsToResolve, isInDisplayNoneTree ? IsInDisplayNoneTree::Yes : IsInDisplayNoneTree::No);
 #endif
+        if (changedCustomPropertyFilter)
+            m_parentStack.last().changedCustomPropertyFilter = changedCustomPropertyFilter;
         it.traverseNext();
     }
 

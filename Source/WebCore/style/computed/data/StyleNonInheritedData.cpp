@@ -49,6 +49,8 @@ NonInheritedData::NonInheritedData()
 
 NonInheritedData::NonInheritedData(const NonInheritedData& other)
     : RefCounted<NonInheritedData>()
+    , customPropertyFilter(other.customPropertyFilter)
+    , declaresInheritedCustomProperty(other.declaresInheritedCustomProperty)
     , boxData(other.boxData)
     , backgroundData(other.backgroundData)
     , surroundData(other.surroundData)

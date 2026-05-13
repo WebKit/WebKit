@@ -1,0 +1,37 @@
+Custom property fast path must not drop or stale an element's own/inherited custom properties when an ancestor's custom property changes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(mid).getPropertyValue('--mine').trim() is "99px"
+PASS getComputedStyle(leaf).width is "99px"
+PASS getComputedStyle(mid).getPropertyValue('--mine').trim() is "99px"
+PASS getComputedStyle(leaf).width is "99px"
+PASS getComputedStyle(d5).getPropertyValue('--p1').trim() is "1px"
+PASS getComputedStyle(d5).getPropertyValue('--p2').trim() is "2px"
+PASS getComputedStyle(d5).getPropertyValue('--p3').trim() is "3px"
+PASS getComputedStyle(d5).getPropertyValue('--p4').trim() is "4px"
+PASS getComputedStyle(d5).getPropertyValue('--own').trim() is "50px"
+PASS getComputedStyle(d5).width is "50px"
+PASS getComputedStyle(d5).getPropertyValue('--p1').trim() is "1px"
+PASS getComputedStyle(d5).getPropertyValue('--p2').trim() is "222px"
+PASS getComputedStyle(d5).getPropertyValue('--p3').trim() is "3px"
+PASS getComputedStyle(d5).getPropertyValue('--p4').trim() is "4px"
+PASS getComputedStyle(d5).getPropertyValue('--own').trim() is "50px"
+PASS getComputedStyle(d5).width is "50px"
+PASS getComputedStyle(refDirect).width is "5px"
+PASS getComputedStyle(refFallback).width is "5px"
+PASS getComputedStyle(refChained).width is "5px"
+PASS getComputedStyle(refShorthand).marginTop is "5px"
+PASS getComputedStyle(refDirect).width is "77px"
+PASS getComputedStyle(refFallback).width is "77px"
+PASS getComputedStyle(refChained).width is "77px"
+PASS getComputedStyle(refShorthand).marginTop is "77px"
+PASS genBefore.offsetHeight is 30
+PASS genAfter.offsetHeight is 40
+PASS genBefore.offsetHeight is 30
+PASS genAfter.offsetHeight is 40
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

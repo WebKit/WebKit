@@ -60,6 +60,11 @@ public:
     BuilderState& state() { return m_state; }
     const MatchResult& matchResult() const { return m_cascade.matchResult(); }
 
+    void addCustomPropertyFilterBit(const AtomString& name);
+    uint32_t customPropertyFilter() const { return m_customPropertyFilter; }
+    bool declaresInheritedCustomProperty() const { return m_declaresInheritedCustomProperty; }
+    void commitCustomPropertyState();
+
     ValueOrReference<HashSet<AnimatableCSSProperty>> overriddenAnimatedProperties() const { return m_cascade.overriddenAnimatedProperties(); }
 
 private:
@@ -96,6 +101,8 @@ private:
     HashMap<RollbackCascadeKey, std::unique_ptr<const PropertyCascade>> m_rollbackCascades;
 
     const UniqueRef<BuilderState> m_state;
+    uint32_t m_customPropertyFilter { 0 };
+    bool m_declaresInheritedCustomProperty { false };
 };
 
 }

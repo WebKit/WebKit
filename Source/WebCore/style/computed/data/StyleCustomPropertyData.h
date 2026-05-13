@@ -44,6 +44,7 @@ public:
     Ref<CustomPropertyData> copy() const { return adoptRef(*new CustomPropertyData(*this)); }
 
     bool operator==(const CustomPropertyData&) const;
+    uint32_t changedCustomPropertiesFilter(const CustomPropertyData&) const;
 
 #if !LOG_DISABLED
     void dumpDifferences(TextStream&, const CustomPropertyData&) const;
