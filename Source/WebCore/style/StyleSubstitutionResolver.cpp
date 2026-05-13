@@ -341,7 +341,7 @@ bool SubstitutionResolver::substituteDashedFunction(StringView functionName, CSS
 
     // Tokens reference resolvedResult's string backing; keep it alive until CSSVariableData re-captures.
     tokens.appendVector(resolvedResult->tokens());
-    m_intermediateCustomProperties.append(WTF::move(resolvedResult));
+    m_intermediateCustomProperties.append(resolvedResult.releaseNonNull());
     return true;
 }
 
