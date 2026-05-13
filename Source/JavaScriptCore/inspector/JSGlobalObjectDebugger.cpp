@@ -65,7 +65,7 @@ void JSGlobalObjectDebugger::runEventLoopWhilePaused()
 {
     JSC::Debugger::runEventLoopWhilePaused();
 
-    JSC::JSAPIGlobalObject* apiGlobal = jsDynamicCast<JSC::JSAPIGlobalObject*>(&m_globalObject);
+    JSC::JSAPIGlobalObject* apiGlobal = dynamicDowncast<JSC::JSAPIGlobalObject>(&m_globalObject);
     JSContextRef contextRef = toRef(&m_globalObject);
 
     // Invoke pause-event callback with Paused event

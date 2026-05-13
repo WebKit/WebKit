@@ -257,7 +257,7 @@ JSObjectRef JSObjectMakeTypeError(JSContextRef ctx, JSStringRef message, JSValue
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSObject* result = createTypeError(globalObject, message ? message->string() : String());
 
@@ -496,7 +496,7 @@ void JSObjectSetAsyncIterator(JSContextRef ctx, JSObjectRef object, JSValueRef v
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSObject* jsObject = toJS(object);
     JSValue jsValue = toJS(globalObject, value);
@@ -519,7 +519,7 @@ void JSObjectSetIterator(JSContextRef ctx, JSObjectRef object, JSValueRef value,
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSObject* jsObject = toJS(object);
     JSValue jsValue = toJS(globalObject, value);

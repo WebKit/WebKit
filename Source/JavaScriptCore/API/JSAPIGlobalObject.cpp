@@ -44,6 +44,7 @@
 #include <span>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <wtf/DataLog.h>
 #include <wtf/FileHandle.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MappedFileData.h>
@@ -100,7 +101,7 @@ static bool fetchModuleFromLocalFileSystem(const URL& fileURL, Vector& buffer)
     FILE* f = fopen(pathName.data(), "rb");
 #endif
     if (!f) {
-        fprintf(stderr, "Could not open module: %s\n", fileName.utf8().data());
+        dataLogLn("Could not open module: ", fileName);
         return false;
     }
 
@@ -140,17 +141,19 @@ static URL currentWorkingDirectory()
     // https://msdn.microsoft.com/en-us/library/dd374081.aspx
     // https://msdn.microsoft.com/en-us/library/windows/desktop/ff381407.aspx
     Vector<wchar_t> buffer(bufferLength);
-    DWORD lengthNotIncludingNull = ::GetCurrentDirectoryW(bufferLength, buffer.data());
-    String directoryString(buffer.data(), lengthNotIncludingNull);
+    wchar_t* currentDirectory = buffer.mutableSpan().data();
+    DWORD lengthNotIncludingNull = ::GetCurrentDirectoryW(bufferLength, currentDirectory);
+    String directoryString(currentDirectory, lengthNotIncludingNull);
     // We don't support network path like \\host\share\<path name>.
     if (directoryString.startsWith("\\\\"_s))
         return { };
 
 #else
     Vector<char> buffer(PATH_MAX);
-    if (!getcwd(buffer.data(), PATH_MAX))
+    char* currentDirectory = buffer.mutableSpan().data();
+    if (!getcwd(currentDirectory, PATH_MAX))
         return { };
-    String directoryString = String::fromUTF8(buffer.data());
+    String directoryString = String::fromUTF8(currentDirectory);
 #endif
     if (directoryString.isEmpty())
         return { };
@@ -390,7 +393,7 @@ const GlobalObjectMethodTable* JSAPIGlobalObject::globalObjectMethodTable()
 
 void JSAPIGlobalObject::reportUncaughtExceptionAtEventLoop(JSGlobalObject* globalObject, Exception* exception)
 {
-    auto* globalObjectImpl = jsCast<JSAPIGlobalObject*>(globalObject);
+    auto* globalObjectImpl = uncheckedDowncast<JSAPIGlobalObject>(globalObject);
     if (globalObjectImpl->uncaughtExceptionAtEventLoop) {
         JSContextRef contextRef = toRef(globalObject);
         globalObjectImpl->uncaughtExceptionAtEventLoop(contextRef, toRef(globalObject, exception->value()));
@@ -461,7 +464,7 @@ Identifier JSAPIGlobalObject::moduleLoaderResolve(JSGlobalObject* globalObject, 
     if (key.isSymbol())
         return key;
 
-    auto* apiGlobalObject = jsCast<JSAPIGlobalObject*>(globalObject);
+    auto* apiGlobalObject = uncheckedDowncast<JSAPIGlobalObject>(globalObject);
     if (apiGlobalObject->hasAPIModuleLoaderResolve()) {
         String specifier = key.impl();
         if (apiGlobalObject->api_moduleLoader.disableBuiltinFileSystemLoader || !isFileModule(specifier)) {
@@ -541,7 +544,7 @@ JSPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject, JS
     RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
 
     URL moduleURL({ }, moduleKey);
-    auto* apiGlobalObject = jsCast<JSAPIGlobalObject*>(globalObject);
+    auto* apiGlobalObject = uncheckedDowncast<JSAPIGlobalObject>(globalObject);
 
     if (apiGlobalObject->isSyntheticModuleKey(moduleKey) && apiGlobalObject->hasAPIModuleLoaderEvaluate()) {
         auto sourceCode = JSSourceCode::create(vm, jscSource(String(), SourceOrigin { moduleURL }, String { moduleKey }, TextPosition(), SourceProviderSourceType::Module));
@@ -583,7 +586,7 @@ JSPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject, JS
     if (!fetchModuleFromLocalFileSystem(moduleURL, buffer))
         RELEASE_AND_RETURN(scope, rejectWithError(createError(globalObject, makeString("Could not open file '"_s, moduleKey, "'."_s))));
 
-    if (attributes && attributes->type() == ScriptFetchParameters::Type::JSON) {
+    if ((attributes && attributes->type() == ScriptFetchParameters::Type::JSON) || moduleKey.endsWith(".json"_s)) {
         auto source = SourceCode(StringSourceProvider::create(stringFromUTF(buffer), SourceOrigin { moduleURL }, WTF::move(moduleKey), SourceTaintedOrigin::Untainted, TextPosition(), SourceProviderSourceType::JSON));
         auto sourceCode = JSSourceCode::create(vm, WTF::move(source));
         scope.release();
@@ -602,7 +605,7 @@ JSObject* JSAPIGlobalObject::moduleLoaderCreateImportMetaProperties(JSGlobalObje
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* apiGlobalObject = jsCast<JSAPIGlobalObject*>(globalObject);
+    auto* apiGlobalObject = uncheckedDowncast<JSAPIGlobalObject>(globalObject);
     if (apiGlobalObject->hasAPIModuleLoaderCreateImportMetaProperties()) {
         JSContextRef contextRef = toRef(globalObject);
         JSObjectRef object = apiGlobalObject->api_moduleLoader.moduleLoaderCreateImportMetaProperties(contextRef, toRef(globalObject, key), toRef(globalObject, jsUndefined()));

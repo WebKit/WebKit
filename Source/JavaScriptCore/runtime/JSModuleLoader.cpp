@@ -1016,7 +1016,7 @@ JSPromise* JSModuleLoader::makeModule(JSGlobalObject* globalObject, const Identi
     JSPromise* promise = JSPromise::create(vm, globalObject->promiseStructure());
     promise->markAsHandled();
 
-    if (auto* apiGlobalObject = jsDynamicCast<JSAPIGlobalObject*>(globalObject); apiGlobalObject && apiGlobalObject->isSyntheticModuleKey(moduleKey.string())) {
+    if (auto* apiGlobalObject = dynamicDowncast<JSAPIGlobalObject>(globalObject); apiGlobalObject && apiGlobalObject->isSyntheticModuleKey(moduleKey.string())) {
         if (!apiGlobalObject->hasAPIModuleLoaderEvaluate()) {
             promise->reject(vm, globalObject, createError(globalObject, makeString("Synthetic module '"_s, moduleKey.string(), "' does not have an evaluate callback."_s)));
             RELEASE_AND_RETURN(scope, promise);
@@ -1038,7 +1038,7 @@ JSPromise* JSModuleLoader::makeModule(JSGlobalObject* globalObject, const Identi
         Vector<Identifier, 4> exportNames;
         MarkedArgumentBuffer exportValues;
 
-        JSObject* exportObject = jsCast<JSObject*>(value);
+        JSObject* exportObject = uncheckedDowncast<JSObject>(value);
         PropertyNameArrayBuilder propertyNames(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
         JSObject::getOwnPropertyNames(exportObject, globalObject, propertyNames, DontEnumPropertiesMode::Exclude);
         RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));

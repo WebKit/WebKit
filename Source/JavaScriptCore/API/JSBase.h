@@ -107,7 +107,7 @@ extern "C" {
 @param ctx The execution context to use.
 @param keyValue A JSValue containing the module specifier to resolve.
 @param referrerValue A JSValue containing the referrer URL.
-@param scriptFetcher A JSValue containing the script fetcher.
+@param scriptFetcher Reserved for future script fetcher support. Currently undefined for API callbacks.
 @result A JSString containing the resolved module specifier.
 */
 typedef JSStringRef
@@ -119,10 +119,7 @@ typedef JSStringRef
 @abstract The callback invoked when evaluating a module.
 @param ctx The execution context to use.
 @param key A JSValue containing the module specifier to evaluate.
-@param scriptFetcher A JSValue containing the script fetcher.
-@param sentValue A JSValue containing the value to send to the module.
-@param resumeMode A JSValue containing the resume mode.
-@result A JSValue containing the result of evaluating the module.
+@result A JSObject containing the synthetic module exports. String-named own properties are exported; symbols are ignored.
 */
 typedef JSValueRef
 (*JSModuleLoaderEvaluate) (JSContextRef ctx, JSValueRef key);
@@ -132,8 +129,8 @@ typedef JSValueRef
 @abstract The callback invoked when fetching a module.
 @param ctx The execution context to use.
 @param key A JSValue containing the module specifier to fetch.
-@param attributesValue A JSValue containing the attributes.
-@param scriptFetcher A JSValue containing the script fetcher.
+@param attributesValue Reserved for future import-attributes support. Currently undefined for API callbacks.
+@param scriptFetcher Reserved for future script fetcher support. Currently undefined for API callbacks.
 @result A JSStringRef containing the fetched module.
 */
 typedef JSStringRef
@@ -144,7 +141,7 @@ typedef JSStringRef
 @abstract The callback invoked when creating import meta properties.
 @param ctx The execution context to use.
 @param key A JSValue containing the module specifier.
-@param scriptFetcher A JSValue containing the script fetcher.
+@param scriptFetcher Reserved for future script fetcher support. Currently undefined for API callbacks.
 @result A JSObjectRef containing the import meta properties.
 */
 typedef JSObjectRef
@@ -250,7 +247,7 @@ JS_EXPORT void JSLoadModuleFromSource(JSContextRef ctx, JSStringRef module, JSSt
 @abstract Links and evaluates a module.
 @param ctx The execution context to use.
 @param moduleKey A JSString containing the module key to link and evaluate.
-@result The JSValue that results from evaluating the module, or NULL if an exception is thrown.
+@result A Promise for module evaluation, or NULL if evaluation could not start.
 */
 JS_EXPORT JSValueRef JSLinkAndEvaluateModule(JSContextRef ctx, JSStringRef moduleKey);
 
@@ -268,8 +265,7 @@ typedef void (*JSModuleEvaluationCallback)(JSContextRef ctx, JSValueRef moduleNa
 @abstract Sets the synthetic module keys.
 @param ctx The execution context to use.
 @param argumentCount The number of keys.
-@param keys An array of JSString containing the keys.
-@param exception A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
+@param keys An array of caller-owned JSString values containing the keys. The strings are not retained or released by this function.
 */
 JS_EXPORT void JSSetSyntheticModuleKeys(JSContextRef ctx, size_t argumentCount, const JSStringRef keys[]);
 

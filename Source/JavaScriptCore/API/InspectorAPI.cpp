@@ -1,14 +1,14 @@
 #include "config.h"
 #include "InspectorAPI.h"
-#include "API/JSContextRefInternal.h"
+#include "JSContextRefInternal.h"
 #include "APICast.h"
 #include <inspector/InspectorFrontendChannel.h>
 #include <memory>
 
 #include "JSAPIGlobalObject.h"
 #include "JSGlobalObject.h"
+#include "JSGlobalObjectDebuggable.h"
 #include "JSCInlines.h"
-#include "JSLock.h"
 #include "JSRemoteInspector.h"
 #include "JSRemoteInspectorServer.h"
 
@@ -51,9 +51,7 @@ void JSInspectorSetCallback(JSGlobalContextRef context, InspectorMessageCallback
     if (!globalObject)
         return;
 
-    auto& inspectorController = globalObject->inspectorController();
-
-    JSC::JSAPIGlobalObject* apiGlobal = jsCast<JSC::JSAPIGlobalObject*>(globalObject);
+    JSC::JSAPIGlobalObject* apiGlobal = uncheckedDowncast<JSC::JSAPIGlobalObject>(globalObject);
     if (!apiGlobal)
         return;
 
@@ -61,13 +59,13 @@ void JSInspectorSetCallback(JSGlobalContextRef context, InspectorMessageCallback
 
     // Disconnect existing frontend if present
     if (auto* existingChannel = apiGlobal->frontendChannel()) {
-        inspectorController.disconnectFrontend(*existingChannel);
+        globalObject->inspectorDebuggable().disconnect(*existingChannel);
         apiGlobal->clearFrontendChannel();
     }
 
     if (callback) {
         auto channel = std::make_unique<Inspector::RustFrontendChannel>(*apiGlobal);
-        inspectorController.connectFrontend(*channel, false, false);
+        globalObject->inspectorDebuggable().connect(*channel, false, false);
         apiGlobal->setFrontendChannel(std::move(channel));
     }
 
@@ -86,16 +84,7 @@ void JSInspectorSendMessage(JSGlobalContextRef context, const char* message)
     if (!globalObject)
         return;
 
-    // IMPORTANT: JSLockHolder is required before calling dispatchMessageFromFrontend.
-    // This ensures proper thread safety and VM state management.
-    // Without this lock, debugger commands like Debugger.enable can cause hangs
-    // because the VM state is not properly managed during heap iteration and
-    // code recompilation that occurs when the debugger attaches.
-    // See JSGlobalObjectDebuggable::dispatchMessageFromRemote for reference.
-    JSC::JSLockHolder locker(&globalObject->vm());
-
-    auto& inspectorController = globalObject->inspectorController();
-    inspectorController.dispatchMessageFromFrontend(WTF::String::fromUTF8(message));
+    globalObject->inspectorDebuggable().dispatchMessageFromRemote(WTF::String::fromUTF8(message));
 }
 
 void JSInspectorDisconnect(JSGlobalContextRef context)
@@ -107,13 +96,12 @@ void JSInspectorDisconnect(JSGlobalContextRef context)
     if (!globalObject)
         return;
 
-    JSC::JSAPIGlobalObject* apiGlobal = jsCast<JSC::JSAPIGlobalObject*>(globalObject);
+    JSC::JSAPIGlobalObject* apiGlobal = uncheckedDowncast<JSC::JSAPIGlobalObject>(globalObject);
     if (!apiGlobal)
         return;
 
     if (auto* channel = apiGlobal->frontendChannel()) {
-        auto& inspectorController = globalObject->inspectorController();
-        inspectorController.disconnectFrontend(*channel);
+        globalObject->inspectorDebuggable().disconnect(*channel);
         apiGlobal->clearFrontendChannel();
     }
 
@@ -134,7 +122,7 @@ bool JSInspectorIsConnected(JSGlobalContextRef context)
     if (!globalObject)
         return false;
 
-    JSC::JSAPIGlobalObject* apiGlobal = jsCast<JSC::JSAPIGlobalObject*>(globalObject);
+    JSC::JSAPIGlobalObject* apiGlobal = uncheckedDowncast<JSC::JSAPIGlobalObject>(globalObject);
     if (!apiGlobal)
         return false;
 
@@ -152,7 +140,7 @@ void JSInspectorSetPauseEventCallback(
     if (!globalObject)
         return;
 
-    JSC::JSAPIGlobalObject* apiGlobal = jsCast<JSC::JSAPIGlobalObject*>(globalObject);
+    JSC::JSAPIGlobalObject* apiGlobal = uncheckedDowncast<JSC::JSAPIGlobalObject>(globalObject);
     if (!apiGlobal)
         return;
 

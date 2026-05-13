@@ -43,6 +43,7 @@
 #include "ObjectConstructor.h"
 #include "OpaqueJSString.h"
 #include "SourceCode.h"
+#include <wtf/StdLibExtras.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
 #include "JSGlobalObjectInspectorController.h"
@@ -109,7 +110,7 @@ void JSSetAPIModuleLoader(JSContextRef ctx, JSAPIModuleLoader moduleLoader)
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
 
-    JSAPIGlobalObject* thisObject = jsCast<JSAPIGlobalObject*>(globalObject);
+    JSAPIGlobalObject* thisObject = uncheckedDowncast<JSAPIGlobalObject>(globalObject);
     thisObject->api_moduleLoader = moduleLoader;
 }
 
@@ -226,11 +227,9 @@ void JSSetSyntheticModuleKeys(JSContextRef ctx, size_t argumentCount, const JSSt
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
 
-    JSAPIGlobalObject* thisObject = jsCast<JSAPIGlobalObject*>(globalObject);
-    for (size_t i = 0; i < argumentCount; ++i) {
-        thisObject->registerSyntheticModuleKey(arguments[i]->string());
-        arguments[i]->deref();
-    }
+    JSAPIGlobalObject* thisObject = uncheckedDowncast<JSAPIGlobalObject>(globalObject);
+    for (auto argument : unsafeMakeSpan(arguments, argumentCount))
+        thisObject->registerSyntheticModuleKey(argument->string());
 }
 
 void JSLoadAndEvaluateModule(JSContextRef ctx, JSStringRef filename, JSValueRef* exception)
@@ -251,7 +250,7 @@ void JSLoadAndEvaluateModule(JSContextRef ctx, JSStringRef filename, JSValueRef*
 
     JSFunction* rejectHandler = JSNativeStdFunction::create(vm, globalObject, 1, String(), [exception, filename](JSGlobalObject* globalObject, CallFrame* callFrame) {
         *exception = toRef(globalObject, callFrame->argument(0));
-        auto* globalObjectImpl = jsCast<JSAPIGlobalObject*>(globalObject);
+        auto* globalObjectImpl = uncheckedDowncast<JSAPIGlobalObject>(globalObject);
         if (globalObjectImpl->uncaughtExceptionHandler) {
             JSContextRef contextRef = toRef(globalObject);
             globalObjectImpl->uncaughtExceptionHandler(contextRef, filename, toRef(globalObject, callFrame->argument(0)));

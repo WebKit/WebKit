@@ -272,7 +272,7 @@ void* JSValueGetTypedArrayBytesPtrFromValue(JSContextRef ctx, JSValueRef valueRe
     JSValue value = toJS(globalObject, valueRef);
     JSObject* object = value.getObject();
 
-    if (JSArrayBufferView* typedArray = jsDynamicCast<JSArrayBufferView*>(object)) {
+    if (JSArrayBufferView* typedArray = dynamicDowncast<JSArrayBufferView>(object)) {
         if (ArrayBuffer* buffer = typedArray->possiblySharedBuffer()) {
             buffer->pinAndLock();
             if (offset)
@@ -294,7 +294,7 @@ bool JSObjectIsDetachedBuffer(JSContextRef ctx, JSObjectRef objectRef, JSValueRe
     JSLockHolder locker(vm);
     JSObject* object = toJS(objectRef);
 
-    JSArrayBuffer* thisObject = jsDynamicCast<JSArrayBuffer*>(object);
+    JSArrayBuffer* thisObject = dynamicDowncast<JSArrayBuffer>(object);
     if (!thisObject) {
         setException(ctx, exception, createTypeError(globalObject, "JSObjectIsDetachedBuffer expects object to be an Array Buffer object"_s));
         return false;
@@ -375,14 +375,14 @@ JSValueRef JSValueFastUFT8Encoding(JSContextRef ctx, JSValueRef value, JSValueRe
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
     JSValue jsValue = toJS(globalObject, value);
     auto string = jsValue.toWTFString(globalObject);
     if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
         return nullptr;
 
-    auto expectedUtf8 = string.tryGetUTF8([&](std::span<const char> span) {
+    auto expectedUtf8 = string.tryGetUTF8([&](std::span<const char8_t> span) {
         return spanReinterpretCast<const uint8_t>(span);
     });
 
@@ -399,7 +399,7 @@ JSValueRef JSValueFastUFT8Encoding(JSContextRef ctx, JSValueRef value, JSValueRe
         return nullptr;
     }
 
-    return toRef(JSArrayBuffer::create(vm, globalObject->arrayBufferStructure(ArrayBufferSharingMode::Default), WTFMove(buffer)));
+    return toRef(JSArrayBuffer::create(vm, globalObject->arrayBufferStructure(ArrayBufferSharingMode::Default), WTF::move(buffer)));
 }
 
 void* JSObjectGetArrayBufferBytesPtr(JSContextRef ctx, JSObjectRef objectRef, JSValueRef* exception)

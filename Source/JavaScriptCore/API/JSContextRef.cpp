@@ -40,6 +40,7 @@
 #include "StackVisitor.h"
 #include "StrongInlines.h"
 #include "Watchdog.h"
+#include <wtf/MainThread.h>
 #include <wtf/text/StringBuilder.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -59,6 +60,18 @@ static constexpr int32_t webkitFirstVersionWithConcurrentGlobalContexts = 0x2100
 #endif
 
 using namespace JSC;
+
+#if OS(LINUX)
+namespace {
+
+__attribute__((constructor)) static void initializeJSCAPIMainThread()
+{
+    // JSC C API embedders may enter from worker threads before any WebKit process initializer runs.
+    WTF::initializeMainThread();
+}
+
+} // namespace
+#endif
 
 // From the API's perspective, a context group remains alive iff
 //     (a) it has been JSContextGroupRetained
@@ -214,7 +227,7 @@ void JSContextSetSharedData(JSContextRef ctx, void* data)
         ASSERT_NOT_REACHED();
         return;
     }
-    
+
     JSGlobalObject* globalObject = toJS(ctx);
     globalObject->sharedData = data;
 }
@@ -225,7 +238,7 @@ void* JSContextGetSharedData(JSContextRef ctx)
         ASSERT_NOT_REACHED();
         return nullptr;
     }
-    
+
     JSGlobalObject* globalObject = toJS(ctx);
     return globalObject->sharedData;
 }
@@ -330,7 +343,7 @@ void JSGlobalContextSetUncaughtExceptionAtEventLoopCallback(JSGlobalContextRef c
     }
 
     JSGlobalObject* globalObject = toJS(ctx);
-    JSAPIGlobalObject* thisObject = jsCast<JSAPIGlobalObject*>(globalObject);
+    JSAPIGlobalObject* thisObject = uncheckedDowncast<JSAPIGlobalObject>(globalObject);
     thisObject->uncaughtExceptionAtEventLoop = callback;
 }
 
@@ -342,7 +355,7 @@ void JSGlobalContextSetUncaughtExceptionHandler(JSGlobalContextRef ctx, JSUncaug
     }
 
     JSGlobalObject* globalObject = toJS(ctx);
-    JSAPIGlobalObject* thisObject = jsCast<JSAPIGlobalObject*>(globalObject);
+    JSAPIGlobalObject* thisObject = uncheckedDowncast<JSAPIGlobalObject>(globalObject);
     thisObject->uncaughtExceptionHandler = handler;
 }
 
@@ -567,4 +580,3 @@ JSStringRef JSContextGroupTakeSamplesFromSamplingProfiler(JSContextGroupRef grou
     return nullptr;
 #endif
 }
-
