@@ -25,13 +25,16 @@
 #include "config.h"
 #include "MediaQueryEvaluator.h"
 
+#include "CSSFontSelector.h"
 #include "CSSToLengthConversionData.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "DocumentView.h"
-#include "FontCascade.h"
+#include "FontCascadeInlines.h"
 #include "MediaQuery.h"
 #include "MediaQueryFeatures.h"
+#include "RenderStyle+GettersInlines.h"
 #include "RenderView.h"
+#include "Settings.h"
 #include "StyleFontSizeFunctions.h"
 
 namespace WebCore {
@@ -79,14 +82,40 @@ bool MediaQueryEvaluator::evaluate(const MediaQuery& query) const
         if (!document)
             return m_staticMediaConditionResult;
 
-        CheckedPtr rootElementStyle = m_rootElementStyle;
-        if (!rootElementStyle)
-            return m_staticMediaConditionResult;
+//        /* Former codepath */
+//        CheckedPtr rootElementStyle = m_rootElementStyle;
+//        if (!rootElementStyle)
+//            return m_staticMediaConditionResult;
 
         if (!document->view() || !document->documentElement())
             return EvaluationResult::Unknown;
 
-        FeatureEvaluationContext context { *document, { *rootElementStyle, rootElementStyle.get(), nullptr, document->renderView(), nullptr, CSS::RangeZoomOptions::Unzoomed }, nullptr };
+//        /* Attempt 1 */
+//        document->fontSelector().incrementIsComputingRootStyleFont();
+//        initialStyle.fontCascade().update(&document->fontSelector());
+//        initialStyle.fontCascade().primaryFont();
+//        document->fontSelector().decrementIsComputingRootStyleFont();
+
+//        /* Attempt 2 */
+//        auto& initialStyle = RenderStyle::defaultStyleSingleton();
+
+        /* Attempt 3 */
+        auto initialStyle = RenderStyle::create();
+
+        FontCascadeDescription fontDescription;
+        fontDescription.setOneFamily(WebCore::FontFamily { standardFamily, FontFamilyKind::Generic });
+        fontDescription.setKeywordSizeFromIdentifier(CSSValueMedium);
+
+        auto size = Style::fontSizeForKeyword(CSSValueMedium, false, *document);
+        fontDescription.setSpecifiedSize(size);
+        auto computedFontSize = Style::computedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), false, initialStyle.computedStyle(), *document);
+        fontDescription.setComputedSize(computedFontSize.size, computedFontSize.usedZoomFactor);
+
+        fontDescription.setShouldAllowUserInstalledFonts(document->settings().shouldAllowUserInstalledFonts() ? AllowUserInstalledFonts::Yes : AllowUserInstalledFonts::No);
+        initialStyle.setFontDescription(WTF::move(fontDescription));
+
+
+        FeatureEvaluationContext context { *document, { initialStyle, &initialStyle, nullptr, document->renderView(), nullptr, CSS::RangeZoomOptions::Unzoomed }, nullptr };
         return evaluateCondition(*query.condition, context);
     }();
 
