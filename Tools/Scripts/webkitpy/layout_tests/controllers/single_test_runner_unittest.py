@@ -24,6 +24,7 @@ import os
 import unittest
 
 from webkitpy.common.host_mock import MockHost
+from webkitpy.layout_tests import run_webkit_tests
 from webkitpy.layout_tests.controllers.single_test_runner import SingleTestRunner
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models.test_input import Test, TestInput
@@ -154,6 +155,69 @@ class SingleTestRunnerTest(unittest.TestCase):
         self.assertEqual(timeouts, ['30000'])
         timeouts, _ = self._run_with_expected_failure_time_out({test_expectations.FAIL}, [DriverOutput('FAIL\n', None, None, None, test_time=1)], baseline=None, extra_args=['--no-new-test-results'])
         self.assertEqual(timeouts, ['6000'])
+
+    def test_save_baseline_data_rebaselining_uses_test_model_path(self):
+        # When rebaselining, the output directory for a new .txt baseline
+        # comes from test.expected_text_path, which the finder may have
+        # resolved to an existing .webarchive baseline rather than a .txt
+        # one -- the directory should still be correct either way.
+        host = MockHost()
+        options, _ = run_webkit_tests.parse_args([])
+        port = TestPort(host, options=options)
+        fs = port.host.filesystem
+        expected_dir = fs.join(port.layout_tests_dir(), 'platform/test-mac-leopard/passes')
+        test = Test(
+            'passes/text.html',
+            expected_text_path=fs.join(expected_dir, 'text-expected.webarchive'),
+        )
+        runner = SingleTestRunner(
+            port, port._options, 'layout-test-results', '', TestDriver(), TestInput(test), True
+        )
+        runner._driver.host = host
+
+        runner._save_baseline_data(b'new text', '.txt', rebaselining=True)
+
+        self.assertIn(fs.join(expected_dir, 'text-expected.txt'), fs.written_files)
+
+    def test_save_baseline_data_rebaselining_maps_each_extension_to_its_own_path(self):
+        host = MockHost()
+        options, _ = run_webkit_tests.parse_args([])
+        port = TestPort(host, options=options)
+        fs = port.host.filesystem
+        d = port.layout_tests_dir()
+        dirs = {
+            '.txt': fs.join(d, 'platform/test-mac-leopard/txt-dir'),
+            '.png': fs.join(d, 'platform/test-mac-leopard/png-dir'),
+            '.wav': fs.join(d, 'platform/test-mac-leopard/wav-dir'),
+        }
+        test = Test(
+            'passes/text.html',
+            expected_text_path=fs.join(dirs['.txt'], 'text-expected.txt'),
+            expected_image_path=fs.join(dirs['.png'], 'text-expected.png'),
+            expected_audio_path=fs.join(dirs['.wav'], 'text-expected.wav'),
+        )
+        for extension, expected_dir in dirs.items():
+            with self.subTest(extension=extension):
+                runner = SingleTestRunner(
+                    port, port._options, 'layout-test-results', '', TestDriver(), TestInput(test), True
+                )
+                runner._driver.host = host
+                runner._save_baseline_data(b'new data', extension, rebaselining=True)
+                self.assertIn(fs.join(expected_dir, 'text-expected' + extension), fs.written_files)
+
+    def test_save_baseline_data_rebaselining_without_existing_baseline(self):
+        host = MockHost()
+        options, _ = run_webkit_tests.parse_args([])
+        port = TestPort(host, options=options)
+        fs = port.host.filesystem
+        runner = SingleTestRunner(
+            port, port._options, 'layout-test-results', '', TestDriver(), TestInput(Test('passes/text.html')), True
+        )
+        runner._driver.host = host
+
+        runner._save_baseline_data(b'new text', '.txt', rebaselining=True)
+
+        self.assertIn(fs.join(port.layout_tests_dir(), 'passes/text-expected.txt'), fs.written_files)
 
     def test_fuzzy_matching_values(self):
         single_test_runner = self._make_test_runner('fuzzy-test.html')
