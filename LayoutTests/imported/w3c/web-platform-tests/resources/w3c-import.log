@@ -21,6 +21,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/resources/blank.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/channel.sub.js
 /LayoutTests/imported/w3c/web-platform-tests/resources/check-layout-th.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/example.pdf
 /LayoutTests/imported/w3c/web-platform-tests/resources/idlharness.js
 /LayoutTests/imported/w3c/web-platform-tests/resources/idlharness.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/resources/out-of-scope-test.js
@@ -43,3 +44,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/resources/testharness.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/resources/testharnessreport.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/resources/web-bluetooth-bidi-test.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/web-extensions-helper.js
