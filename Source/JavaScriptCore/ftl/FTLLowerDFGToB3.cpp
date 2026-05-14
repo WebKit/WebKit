@@ -10586,7 +10586,17 @@ IGNORE_CLANG_WARNINGS_END
         LValue array = lowCell(m_node->child1());
         LValue length = m_out.zeroExt(lowInt32(m_node->child2()), pointerType());
 
-        IndexedAbstractHeap& sourceHeap = m_node->arrayMode().type() == Array::Int32 ? m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties;
+        Array::Type arrayType = m_node->arrayMode().type();
+        IndexedAbstractHeap& sourceHeap = [&]() -> IndexedAbstractHeap& {
+            switch (arrayType) {
+            case Array::Int32:
+                return m_heaps.indexedInt32Properties;
+            case Array::Double:
+                return m_heaps.indexedDoubleProperties;
+            default:
+                return m_heaps.indexedContiguousProperties;
+            }
+        }();
 
         LBasicBlock slowCase = m_out.newBlock();
         LBasicBlock acquired = m_out.newBlock();
@@ -10616,11 +10626,19 @@ IGNORE_CLANG_WARNINGS_END
         m_out.branch(m_out.aboveOrEqual(index, length), unsure(continuation), unsure(loopBody));
 
         m_out.appendTo(loopBody, storeSlot);
-        LValue value = m_out.load64(m_out.baseIndex(sourceHeap, butterfly, index));
+        LValue value;
+        LValue isHole;
+        if (arrayType == Array::Double) {
+            LValue doubleValue = m_out.loadDouble(m_out.baseIndex(sourceHeap, butterfly, index));
+            isHole = m_out.doubleNotEqualOrUnordered(doubleValue, doubleValue);
+            value = boxDouble(doubleValue);
+        } else {
+            value = m_out.load64(m_out.baseIndex(sourceHeap, butterfly, index));
+            isHole = m_out.isZero64(value);
+            if (arrayType == Array::Contiguous)
+                isHole = m_out.bitOr(isHole, m_out.equal(value, m_out.constInt64(JSValue::encode(jsUndefined()))));
+        }
         ValueFromBlock holeResult = m_out.anchor(m_out.constIntPtr(std::bit_cast<void*>(vm().m_sortScratchSentinel.get())));
-        LValue isHole = m_out.isZero64(value);
-        if (m_node->arrayMode().type() == Array::Contiguous)
-            isHole = m_out.bitOr(isHole, m_out.equal(value, m_out.constInt64(JSValue::encode(jsUndefined()))));
         m_out.branch(isHole, rarely(continuation), usually(storeSlot));
 
         m_out.appendTo(storeSlot, continuation);
@@ -10639,7 +10657,17 @@ IGNORE_CLANG_WARNINGS_END
         LValue scratch = lowCell(m_node->child2());
         LValue length = m_out.zeroExt(lowInt32(m_node->child3()), pointerType());
 
-        IndexedAbstractHeap& targetHeap = m_node->arrayMode().type() == Array::Int32 ? m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties;
+        Array::Type arrayType = m_node->arrayMode().type();
+        IndexedAbstractHeap& targetHeap = [&]() -> IndexedAbstractHeap& {
+            switch (arrayType) {
+            case Array::Int32:
+                return m_heaps.indexedInt32Properties;
+            case Array::Double:
+                return m_heaps.indexedDoubleProperties;
+            default:
+                return m_heaps.indexedContiguousProperties;
+            }
+        }();
 
         LBasicBlock commitHeader = m_out.newBlock();
         LBasicBlock commitBody = m_out.newBlock();
@@ -10658,7 +10686,10 @@ IGNORE_CLANG_WARNINGS_END
 
         m_out.appendTo(commitBody, continuation);
         LValue value = m_out.load64(m_out.baseIndex(m_heaps.indexedContiguousProperties, scratch, index, JSValue(), JSCellButterfly::offsetOfData()));
-        m_out.store64(value, m_out.baseIndex(targetHeap, butterfly, index));
+        if (arrayType == Array::Double)
+            m_out.storeDouble(unboxDouble(value), m_out.baseIndex(targetHeap, butterfly, index));
+        else
+            m_out.store64(value, m_out.baseIndex(targetHeap, butterfly, index));
         LValue nextIndex = m_out.add(index, m_out.intPtrOne);
         m_out.addIncomingToPhi(index, m_out.anchor(nextIndex));
         m_out.jump(commitHeader);

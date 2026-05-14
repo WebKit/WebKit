@@ -11606,12 +11606,12 @@ template<typename ChecksFunctor, typename SetResultFunctor>
 auto ByteCodeParser::handleArraySort(Node* callee, Operand resultOperand, CallVariant variant, int registerOffset, int argumentCountIncludingThis, BytecodeIndex osrExitIndex, SpeculatedType prediction, const ChecksFunctor& insertChecks, const SetResultFunctor& setResult) -> CallOptimizationResult
 {
     // Inline Array.prototype.sort(comparator) when:
-    //   - receiver is an original-structure JSArray with Undecided / Int32 / Contiguous indexing, and
+    //   - receiver is an original-structure JSArray with Undecided / Int32 / Double / Contiguous indexing, and
     //   - comparator is callable (CellUse speculation; non-callable cells throw TypeError from the Call just like the spec requires).
     //
     // Strategy:
     //   * ArrayWithUndecided -> length is 0, return the receiver.
-    //   * Int32 / Contiguous -> dispatch on runtime length:
+    //   * Int32 / Double / Contiguous -> dispatch on runtime length:
     //       length > 16  -> fallback DirectCall to arrayProtoFuncSort. Avoids re-deopt loops
     //         or hot sort sites with large arrays.
     //       length <= 16 -> three-phase pipeline over a 16-slot JSCellButterfly scratch:
@@ -11657,6 +11657,9 @@ auto ByteCodeParser::handleArraySort(Node* callee, Operand resultOperand, CallVa
         break;
     case Array::Int32:
         indexingType = ArrayWithInt32;
+        break;
+    case Array::Double:
+        indexingType = ArrayWithDouble;
         break;
     case Array::Contiguous:
         indexingType = ArrayWithContiguous;

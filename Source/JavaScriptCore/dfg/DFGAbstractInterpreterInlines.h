@@ -3844,6 +3844,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         case Array::Int32:
             setNonCellTypeForNode(node, SpecInt32Only);
             break;
+        case Array::Double:
+            setNonCellTypeForNode(node, SpecDoubleReal);
+            break;
         default:
             makeBytecodeTopForNode(node);
             break;

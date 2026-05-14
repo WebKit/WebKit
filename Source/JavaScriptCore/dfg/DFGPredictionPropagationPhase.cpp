@@ -1340,6 +1340,9 @@ private:
             case Array::Int32:
                 setPrediction(SpecInt32Only);
                 break;
+            case Array::Double:
+                setPrediction(SpecDoubleReal);
+                break;
             default:
                 setPrediction(SpecBytecodeTop);
                 break;
