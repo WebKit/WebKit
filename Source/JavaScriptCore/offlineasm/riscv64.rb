@@ -34,9 +34,9 @@
 # x2  => sp (through alias sp) (RISC-V stack pointer register)
 # x3  => not used (RISC-V global pointer register)
 # x4  => not used (RISC-V thread pointer register)
-# x5  => not used
-# x6  => ws0
-# x7  => ws1
+# x5  => t8
+# x6  => t9, ws0
+# x7  => t10, ws1
 # x8  => cfr (through alias fp) (RISC-V frame pointer register)
 # x9  => csr0
 # x10 => t0, a0, wa0, r0
@@ -57,8 +57,8 @@
 # x25 => csr8 (numberTag)
 # x26 => csr9 (notCellMask)
 # x27 => csr10
-# x28 => scratch register
-# x29 => scratch register
+# x28 => t11, ws2, scratch register
+# x29 => t12, ws3, scratch register
 # x30 => scratch register
 # x31 => scratch register
 #
@@ -70,8 +70,8 @@
 # f3  => ft3
 # f4  => ft4
 # f5  => ft5
-# f6  => not used
-# f7  => not used
+# f6  => ft6
+# f7  => ft7
 # f8  => csfr0
 # f9  => csfr1
 # f10 => fa0, wfa0
@@ -170,10 +170,16 @@ class RegisterID
             'x16'
         when 't7', 'a7', 'wa7'
             'x17'
-        when 'ws0'
+        when 't8'
+            'x5'
+        when 't9', 'ws0'
             'x6'
-        when 'ws1'
+        when 't10', 'ws1'
             'x7'
+        when 't11', 'ws2'
+            'x28'
+        when 't12', 'ws3'
+            'x29'
         when 'csr0'
             'x9'
         when 'csr1'
@@ -223,6 +229,10 @@ class FPRegisterID
             'f4'
         when 'ft5'
             'f5'
+        when 'ft6'
+            'f6'
+        when 'ft7'
+            'f7'
         when 'csfr0'
             'f8'
         when 'csfr1'
@@ -273,6 +283,81 @@ class SpecialRegister
     def riscv64Operand
         @name
     end
+end
+
+# x28/x29 have fixed offlineasm names and are also scratch registers, so
+# temporaries must not be allocated to them across a fixed use of the same GPR.
+def riscv64FixedScratchGPRMentions(list, registers)
+    scratchGPRs = registers.map {
+        | register |
+        register.riscv64Operand
+    }
+
+    mentions = Hash.new {
+        | hash, register |
+        hash[register] = []
+    }
+    list.each_with_index {
+        | node, index |
+        (node.filter(RegisterID) + node.filter(SpecialRegister)).uniq.each {
+            | register |
+            name = register.riscv64Operand
+            mentions[name] << index if scratchGPRs.include? name
+        }
+    }
+    mentions
+end
+
+def riscv64RegisterMentionedInRange(mentions, firstMention, lastMention)
+    mentions.any? {
+        | mention |
+        mention >= firstMention && mention <= lastMention
+    }
+end
+
+def riscv64AssignRegistersToTemporaries(list, kind, registers)
+    return assignRegistersToTemporaries(list, kind, registers) unless kind == :gpr
+
+    list.each_with_index {
+        | node, index |
+        node.filter(Tmp).uniq.each {
+            | tmp |
+            tmp.mention! index if tmp.kind == kind
+        }
+    }
+
+    fixedScratchGPRMentions = riscv64FixedScratchGPRMentions(list, registers)
+    freeRegisters = registers.dup
+    list.each_with_index {
+        | node, index |
+        tmpList = node.filter(Tmp).uniq
+        tmpList.each {
+            | tmp |
+            if tmp.kind == kind and tmp.firstMention == index
+                candidates = freeRegisters.reject {
+                    | register |
+                    mentions = fixedScratchGPRMentions[register.riscv64Operand]
+                    riscv64RegisterMentionedInRange(mentions, tmp.firstMention, tmp.lastMention)
+                }
+                raise "Could not allocate register to temporary at #{node.codeOriginString}" if candidates.empty?
+                tmp.register = candidates.last
+                freeRegisters.delete(tmp.register)
+            end
+        }
+        tmpList.each {
+            | tmp |
+            if tmp.kind == kind and tmp.lastMention == index
+                freeRegisters.push tmp.register
+                raise "Register allocation inconsistency at #{node.codeOriginString}" if freeRegisters.size > registers.size
+            end
+        }
+        freeRegisters.sort_by! { |register| registers.find_index(register) }
+    }
+
+    list.map {
+        | node |
+        node.replaceTemporariesWithRegisters(kind)
+    }
 end
 
 class Immediate
@@ -1568,7 +1653,7 @@ class Sequence
 
         result = riscv64GenerateWASMPlaceholders(result)
 
-        result = assignRegistersToTemporaries(result, :gpr, RISCV64_EXTRA_GPRS)
+        result = riscv64AssignRegistersToTemporaries(result, :gpr, RISCV64_EXTRA_GPRS)
         result = assignRegistersToTemporaries(result, :fpr, RISCV64_EXTRA_FPRS)
         return result
     end
