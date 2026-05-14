@@ -295,6 +295,16 @@ def _build_podman_create_args(pinned_version):
     if os.path.isdir(dconf_dir):
         args += _bind_mount(dconf_dir, dconf_dir)
 
+    # coredumpctl: share the coredump store and journal so `coredumpctl` works
+    # inside the container. Crashes inside the container are caught by the
+    # host's core_pattern handler (systemd-coredump), which writes to
+    # /var/lib/systemd/coredump; without these mounts the files and their
+    # journal metadata are invisible to tools running in the container.
+    if os.path.isdir('/var/lib/systemd/coredump'):
+        args += _bind_mount('/var/lib/systemd/coredump', '/var/lib/systemd/coredump')
+    if os.path.isdir('/var/log/journal'):
+        args += _bind_mount('/var/log/journal', '/var/log/journal', options='ro,rslave')
+
     # Host runtime dir is exposed as /host/run so Wayland / PipeWire / flatpak
     # sockets can be symlinked into the container's XDG_RUNTIME_DIR per exec.
     if os.path.isdir(xdg):
