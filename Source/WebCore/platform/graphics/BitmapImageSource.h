@@ -63,6 +63,7 @@ public:
     bool isAnimationAllowed() const;
 
     // Decoding & animation
+    bool isLargeForDecoding() const final;
     bool isPendingDecodingAtIndex(unsigned index, SubsamplingLevel, const DecodingOptions&) const;
     void destroyNativeImageAtIndex(unsigned index, std::optional<DecodingDestination> = std::nullopt);
     void imageFrameAtIndexAvailable(unsigned index, ImageAnimatingState, DecodingStatus);
@@ -124,7 +125,6 @@ private:
 
     // Decoding
     DecodingDestination preferredDecodingDestination(GraphicsContext&, ImagePaintingOptions) const final;
-    bool isLargeForDecoding() const final;
     bool NODELETE isDecodingWorkQueueIdle() const;
     bool isCompatibleWithOptionsAtIndex(unsigned index, SubsamplingLevel, const DecodingOptions&) const;
     void stopDecodingWorkQueue() final;
@@ -200,6 +200,7 @@ private:
     long long expectedContentLength() const;
 
     // Testing support
+    unsigned decodedSizeForTesting() const final { return m_decodedSize; }
     unsigned decodeCountForTesting() const final { return m_decodeCountForTesting; }
     unsigned blankDrawCountForTesting() const final { return m_blankDrawCountForTesting; }
     void setMinimumDecodingDurationForTesting(Seconds) final;

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <img id="image">
+    <canvas id="canvas" width="100" height="100"></canvas>
+    <script>
+        function drawFrame(expectedFrameIndex, shouldWaitForNextFrame)
+        {
+            return new Promise((resolve) => {
+                let context = canvas.getContext("2d");
+                context.drawImage(image, 0, 0, 100, 100, 0, 0, canvas.width, canvas.height);
+
+                if (window.internals) {
+                    shouldBeGreaterThanOrEqual("internals.imageFrameIndex(image)", expectedFrameIndex.toString());
+                    if (shouldWaitForNextFrame)
+                        image.addEventListener("webkitImageFrameReady", resolve, { once: true });
+                    else
+                        resolve();
+                    return;
+                }
+
+                setTimeout(resolve, 40);
+            });
+        }
+
+        async function drawFrames()
+        {
+            await drawFrame(0, true);
+            await drawFrame(1, true);
+            await drawFrame(2, false);
+        }
+
+        description("This tests that large animated images discard old decoded frames as they animate.");
+        jsTestIsAsync = true;
+
+        var image = document.getElementById("image");
+        var canvas = document.getElementById("canvas");
+        var frameBytes = 400 * 400 * 4;
+        var decodedSizeAfterAnimation;
+
+        image.onload = async () => {
+            if (window.internals) {
+                internals.clearMemoryCache();
+                internals.settings.setAnimatedImageDebugCanvasDrawingEnabled(true);
+                internals.settings.setWebkitImageReadyEventEnabled(true);
+            }
+
+            await drawFrames();
+
+            if (window.internals) {
+                decodedSizeAfterAnimation = internals.imageDecodedSizeForTesting(image);
+                shouldBeGreaterThanOrEqual("decodedSizeAfterAnimation", "frameBytes");
+                shouldBeGreaterThanOrEqual("frameBytes * 2", "decodedSizeAfterAnimation");
+            }
+
+            finishJSTest();
+        };
+
+        image.src = "resources/animated-red-green-blue-400x400.gif";
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
