@@ -34,6 +34,14 @@ HitTestLocation::HitTestLocation(const LayoutPoint& point)
 {
 }
 
+HitTestLocation::HitTestLocation(const FloatPoint& point)
+    : m_point { flooredLayoutPoint(point) }
+    , m_boundingBox { LayoutRect { m_point, LayoutSize { 1, 1 } } }
+    , m_transformedPoint { point }
+    , m_transformedRect { m_boundingBox }
+{
+}
+
 HitTestLocation::HitTestLocation(const FloatPoint& point, const FloatQuad& quad, RectBased rectBased)
     : m_point { flooredLayoutPoint(point) }
     , m_boundingBox { quad.enclosingBoundingBox() }

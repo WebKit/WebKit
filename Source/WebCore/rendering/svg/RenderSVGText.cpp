@@ -655,25 +655,34 @@ bool RenderSVGText::nodeAtFloatPoint(const HitTestRequest& request, HitTestResul
 {
     ASSERT(!document().settings().layerBasedSVGEngineEnabled());
 
+    // <text> has no background to hit-test; only the painted glyphs in the foreground phase are hittable.
+    if (hitTestAction != HitTestAction::Foreground)
+        return false;
+
+    static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
+
+    SVGVisitedRendererTracking recursionTracking(s_visitedSet);
+    if (recursionTracking.isVisiting(*this))
+        return false;
+
+    SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
+
+    FloatPoint localPoint = valueOrDefault(localToParentTransform().inverse()).mapPoint(pointInParent);
+    if (!SVGRenderSupport::pointInClippingArea(*this, localPoint))
+        return false;
+
+    HitTestLocation hitTestLocation { localPoint };
+
+    // Descend unconditionally: hitTestInlineChildren enforces per-tspan fill/stroke/visibility,
+    // so <text fill=none>/visibility=hidden must not gate out differently-styled descendants.
+    if (RenderBlock::nodeAtPoint(request, result, hitTestLocation, LayoutPoint(), hitTestAction))
+        return true;
+
     PointerEventsHitRules hitRules(PointerEventsHitRules::HitTestingTargetType::SVGText, request, usedPointerEvents());
-    if (request.isVisibleForStyle(style()) || !hitRules.requireVisible) {
-        if ((hitRules.canHitStroke && (!style().stroke().isNone() || !hitRules.requireStroke))
-            || (hitRules.canHitFill && (!style().fill().isNone() || !hitRules.requireFill))) {
-            static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
-
-            SVGVisitedRendererTracking recursionTracking(s_visitedSet);
-            if (recursionTracking.isVisiting(*this))
-                return false;
-
-            SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
-
-            FloatPoint localPoint = valueOrDefault(localToParentTransform().inverse()).mapPoint(pointInParent);
-            if (!SVGRenderSupport::pointInClippingArea(*this, localPoint))
-                return false;
-
-            HitTestLocation hitTestLocation(LayoutPoint(flooredIntPoint(localPoint)));
-            return RenderBlock::nodeAtPoint(request, result, hitTestLocation, LayoutPoint(), hitTestAction);
-        }
+    if (hitRules.canHitBoundingBox && objectBoundingBox().contains(localPoint)) {
+        updateHitTestResult(result, LayoutPoint { localPoint });
+        if (result.addNodeToListBasedTestResult(protect(nodeForHitTest()).get(), request, hitTestLocation) == HitTestProgress::Stop)
+            return true;
     }
 
     return false;
@@ -748,7 +757,7 @@ bool RenderSVGText::hitTestInlineChildren(const HitTestRequest& request, HitTest
                 if (!fragmentTransform.isIdentity())
                     fragmentQuad = fragmentTransform.mapQuad(fragmentQuad);
 
-                if (!fragmentQuad.containsPoint(locationInContainer.point()))
+                if (!fragmentQuad.containsPoint(locationInContainer.transformedPoint()))
                     continue;
 
                 renderer.updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));
