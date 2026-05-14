@@ -110,7 +110,6 @@ set(WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/API/C/WKUserMediaPermissionCheck.h
     UIProcess/API/C/WKUserMediaPermissionRequest.h
     UIProcess/API/C/WKUserScriptRef.h
-    UIProcess/API/C/WKViewportAttributes.h
     UIProcess/API/C/WKWebsiteDataStoreConfigurationRef.h
     UIProcess/API/C/WKWebsiteDataStoreRef.h
     UIProcess/API/C/WKWebsitePolicies.h
