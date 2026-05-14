@@ -30,6 +30,7 @@
 #include "CSSFontFaceSet.h"
 #include "CachedResourceHandle.h"
 #include "Font.h"
+#include "FontGenericFamilies.h"
 #include "FontSelector.h"
 #include "ScriptExecutionContext.h"
 #include "StyleRule.h"
@@ -48,6 +49,25 @@ class CSSSegmentedFontFace;
 class CSSValueList;
 class CachedFont;
 class ScriptExecutionContext;
+struct SettingsValues;
+
+// Snapshot of the Settings subset that CSSFontSelector consults during font
+// resolution. Captured per-CSSFontSelector at construction and refreshed when
+// any of these settings change. Designed to serve as an equality key for
+// cross-document MatchedDeclarationsCache sharing (rdar://173598541).
+struct FontSettings {
+    FontSettings() = default;
+    explicit FontSettings(const SettingsValues&);
+
+    bool operator==(const FontSettings&) const;
+
+    FontGenericFamilies fontGenericFamilies;
+    bool fontFallbackPrefersPictographs { false };
+    // FIXME (rdar://173598541): webAPIStatisticsEnabled has no webcoreOnChange
+    // hook so this snapshot is not refreshed if the setting is toggled at
+    // runtime. Acceptable for now (research-only flag, defaults off).
+    bool webAPIStatisticsEnabled { false };
+};
 
 class CSSFontSelector final : public FontSelector, public CSSFontFaceClient, public ActiveDOMObject {
 public:
@@ -88,6 +108,13 @@ public:
     bool isCSSFontSelector() const final { return true; }
 
     ScriptExecutionContext* scriptExecutionContext() const { return m_context.get(); }
+
+    // Snapshot of the Settings subset consumed by font resolution. Refreshed
+    // whenever any of those settings change (see SettingsBase.cpp). Reads on
+    // the resolution path go through this rather than touching m_context.
+    const FontSettings& fontSettings() const LIFETIME_BOUND { return m_fontSettings; }
+    bool isSimpleFontResolutionEquivalentTo(const FontSelector&) const final;
+    void refreshFontSettings();
 
     FontFaceSet* NODELETE fontFaceSetIfExists();
     FontFaceSet& fontFaceSet();
@@ -156,6 +183,8 @@ private:
     bool m_isStopped { false };
 
     WebKitFontFamilyNames::FamilyNamesList<AtomString> m_fontFamilyNames;
+
+    FontSettings m_fontSettings;
 };
 
 } // namespace WebCore

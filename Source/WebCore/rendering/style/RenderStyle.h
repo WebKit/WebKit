@@ -75,6 +75,7 @@ public:
     bool operator==(const RenderStyle&) const;
 
     bool inheritedEqual(const RenderStyle&) const;
+    bool inheritedEqualForMDC(const RenderStyle&) const;
     bool nonInheritedEqual(const RenderStyle&) const;
     bool fastPathInheritedEqual(const RenderStyle&) const;
     bool nonFastPathInheritedEqual(const RenderStyle&) const;

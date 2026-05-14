@@ -27,9 +27,11 @@
 #include "SettingsBase.h"
 
 #include "BackForwardCache.h"
+#include "CSSFontSelector.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DOMTimer.h"
+#include "Document.h"
 #include "DocumentResourceLoader.h"
 #include "DocumentView.h"
 #include "FontCache.h"
@@ -59,8 +61,17 @@ static void invalidateAfterGenericFamilyChange(Page* page)
     FontCascadeCache::forCurrentThread().invalidate();
     SystemFontDatabase::singleton().invalidate();
 
-    if (page)
-        page->setNeedsRecalcStyleInAllFrames();
+    if (!page)
+        return;
+
+    // Refresh per-document FontSettings snapshots before triggering restyle so
+    // CSSFontSelector reads see the new values during the recalc.
+    page->forEachDocument([](Document& document) {
+        if (RefPtr selector = document.fontSelectorIfExists())
+            selector->refreshFontSettings();
+    });
+
+    page->setNeedsRecalcStyleInAllFrames();
 }
 
 SettingsBase::SettingsBase(Page* page)

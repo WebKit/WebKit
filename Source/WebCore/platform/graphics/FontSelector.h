@@ -73,6 +73,12 @@ public:
 
     virtual bool isSimpleFontSelectorForDescription() const = 0;
 
+    // True when both this selector and `other` are simple selectors that
+    // produce identical font resolution. Enables MatchedDeclarationsCache
+    // entries to be reused across documents without requiring shared
+    // selector identity. Non-CSS subclasses return false. See rdar://173598541.
+    virtual bool isSimpleFontResolutionEquivalentTo(const FontSelector&) const { return false; }
+
     virtual bool isCSSFontSelector() const { return false; }
 
 };

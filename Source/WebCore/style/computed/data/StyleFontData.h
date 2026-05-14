@@ -43,6 +43,7 @@ public:
     Ref<FontData> copy() const;
 
     bool operator==(const FontData&) const;
+    bool equalsForMDC(const FontData&) const;
 
 #if !LOG_DISABLED
     void dumpDifferences(TextStream&, const FontData&) const;

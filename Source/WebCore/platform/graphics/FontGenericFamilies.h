@@ -53,6 +53,8 @@ public:
     FontGenericFamilies isolatedCopy() const &;
     FontGenericFamilies isolatedCopy() &&;
 
+    bool operator==(const FontGenericFamilies&) const;
+
     const String& standardFontFamily(UScriptCode = USCRIPT_COMMON) const;
     const String& fixedFontFamily(UScriptCode = USCRIPT_COMMON) const;
     const String& serifFontFamily(UScriptCode = USCRIPT_COMMON) const;

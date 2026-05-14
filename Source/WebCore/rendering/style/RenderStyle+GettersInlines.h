@@ -45,6 +45,11 @@ inline bool RenderStyle::inheritedEqual(const RenderStyle& other) const
     return m_computedStyle.inheritedEqual(other.m_computedStyle);
 }
 
+inline bool RenderStyle::inheritedEqualForMDC(const RenderStyle& other) const
+{
+    return m_computedStyle.inheritedEqualForMDC(other.m_computedStyle);
+}
+
 inline bool RenderStyle::nonInheritedEqual(const RenderStyle& other) const
 {
     return m_computedStyle.nonInheritedEqual(other.m_computedStyle);

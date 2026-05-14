@@ -92,6 +92,28 @@ bool InheritedData::nonFastPathInheritedEqual(const InheritedData& other) const
         && borderVerticalSpacing == other.borderVerticalSpacing;
 }
 
+bool InheritedData::inheritedEqualForMDC(const InheritedData& other) const
+{
+    if (lineHeight != other.lineHeight)
+        return false;
+#if ENABLE(TEXT_AUTOSIZING)
+    if (specifiedLineHeight != other.specifiedLineHeight)
+        return false;
+#endif
+    if (borderHorizontalSpacing != other.borderHorizontalSpacing || borderVerticalSpacing != other.borderVerticalSpacing)
+        return false;
+    if (color != other.color || visitedLinkColor != other.visitedLinkColor)
+        return false;
+    // FontData comparison is the only difference vs. InheritedData::operator==:
+    // we fall through to fontCascade.equalsForMDC, which treats two simple
+    // FontCascades with equal FontSettings as equivalent.
+    if (fontData.ptr() == other.fontData.ptr())
+        return true;
+    Ref myFontData { *fontData };
+    Ref otherFontData { *other.fontData };
+    return myFontData->equalsForMDC(otherFontData);
+}
+
 void InheritedData::fastPathInheritFrom(const InheritedData& inheritParent)
 {
     color = inheritParent.color;

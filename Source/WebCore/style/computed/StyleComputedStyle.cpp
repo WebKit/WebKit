@@ -147,6 +147,23 @@ bool ComputedStyle::inheritedEqual(const ComputedStyle& other) const
         && m_inheritedRareData == other.m_inheritedRareData;
 }
 
+bool ComputedStyle::inheritedEqualForMDC(const ComputedStyle& other) const
+{
+    if (m_inheritedFlags != other.m_inheritedFlags)
+        return false;
+    if (m_inheritedRareData != other.m_inheritedRareData)
+        return false;
+    if (m_svgData.ptr() != other.m_svgData.ptr() && !m_svgData->inheritedEqual(other.m_svgData))
+        return false;
+    // Diverges from inheritedEqual here: fall through to InheritedData's
+    // MDC-specific equality, which treats two simple-selector FontCascades
+    // with equal FontSettings as equivalent. All other fields compared
+    // identically to inheritedEqual.
+    if (m_inheritedData.ptr() == other.m_inheritedData.ptr())
+        return true;
+    return m_inheritedData->inheritedEqualForMDC(*other.m_inheritedData);
+}
+
 bool ComputedStyle::nonInheritedEqual(const ComputedStyle& other) const
 {
     return m_nonInheritedFlags == other.m_nonInheritedFlags

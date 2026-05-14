@@ -48,6 +48,7 @@ public:
     bool operator==(const ComputedStyle&) const;
 
     bool inheritedEqual(const ComputedStyle&) const;
+    bool inheritedEqualForMDC(const ComputedStyle&) const;
     bool nonInheritedEqual(const ComputedStyle&) const;
     bool NODELETE fastPathInheritedEqual(const ComputedStyle&) const;
     bool nonFastPathInheritedEqual(const ComputedStyle&) const;

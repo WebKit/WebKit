@@ -94,6 +94,18 @@ FontGenericFamilies FontGenericFamilies::isolatedCopy() &&
     return copy;
 }
 
+bool FontGenericFamilies::operator==(const FontGenericFamilies& other) const
+{
+    return m_standardFontFamilyMap == other.m_standardFontFamilyMap
+        && m_serifFontFamilyMap == other.m_serifFontFamilyMap
+        && m_fixedFontFamilyMap == other.m_fixedFontFamilyMap
+        && m_sansSerifFontFamilyMap == other.m_sansSerifFontFamilyMap
+        && m_cursiveFontFamilyMap == other.m_cursiveFontFamilyMap
+        && m_fantasyFontFamilyMap == other.m_fantasyFontFamilyMap
+        && m_pictographFontFamilyMap == other.m_pictographFontFamilyMap
+        && m_mathFontFamilyMap == other.m_mathFontFamilyMap;
+}
+
 const String& FontGenericFamilies::standardFontFamily(UScriptCode script) const
 {
     return genericFontFamilyForScript(m_standardFontFamilyMap, script);

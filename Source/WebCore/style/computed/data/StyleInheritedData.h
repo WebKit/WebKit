@@ -47,6 +47,8 @@ public:
 
     bool operator==(const InheritedData&) const;
 
+    bool inheritedEqualForMDC(const InheritedData&) const;
+
 #if !LOG_DISABLED
     void dumpDifferences(TextStream&, const InheritedData&) const;
 #endif
