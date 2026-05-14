@@ -59,6 +59,7 @@
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
 #include "CSSVariableData.h"
+#include "CSSWideKeyword.h"
 #include "ExceptionOr.h"
 #include "RenderStyle.h"
 #include "ScriptWrappableInlines.h"
@@ -328,6 +329,14 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Document& docum
             break;
         }
     } else if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(cssValue)) {
+        // For `will-change`, only `auto` and the CSS-wide keywords reify as CSSKeywordValue;
+        // other valid CSS values such as `scroll-position` and `contents` fall back to the base
+        // CSSStyleValue wrapper, matching Blink.
+        if (propertyID && *propertyID == CSSPropertyWillChange) {
+            auto keyword = keywordValue->keyword().value;
+            if (keyword != CSSValueAuto && !isCSSWideKeyword(keyword))
+                return Ref<CSSStyleValue> { CSSStyleValue::create(Ref(const_cast<CSSValue&>(cssValue))) };
+        }
         return WebCore::reifyValue(keywordValue->keyword());
     } else if (auto* customIdentValue = dynamicDowncast<CSSCustomIdentValue>(cssValue))
         return WebCore::reifyValue(customIdentValue->customIdent());
