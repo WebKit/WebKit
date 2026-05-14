@@ -26,22 +26,19 @@
 
 import argparse
 import logging
-import os
 import sys
 import subprocess
 
 from webkitcorepy import string_utils, run
-from webkitbugspy import Tracker, bugzilla
+from webkitbugspy import bugzilla
 from webkitscmpy import local
 
 from webkitpy.common.host import Host
-from webkitpy.common.net.bugzilla import Bugzilla
 from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.w3c.wpt_linter import WPTLinter
 from webkitpy.w3c.common import WPT_GH_ORG, WPT_GH_REPO_NAME, WPT_GH_URL, WPTPaths
 from webkitpy.common.memoized import memoized
 
-from urllib.error import HTTPError
 
 _log = logging.getLogger(__name__)
 
@@ -53,46 +50,28 @@ EXCLUDED_FILE_SUFFIXES = ['-expected.txt', '-expected.html', '-expected.xht', '-
 
 
 class WebPlatformTestExporter(object):
-    def __init__(self, host, options, bugzillaClass=Bugzilla, WPTLinterClass=WPTLinter, WKRepository=None):
+    def __init__(self, host, options):
         self._host = host
         self._filesystem = host.filesystem
         self._options = options
-        self._linter = WPTLinterClass
 
         self._host.initialize_scm()
 
-        self._bugzilla = bugzillaClass()
-        self._bug_id = options.bug_id
-        self._bug = None
-
-        issue = None
         repo_path = WebKitFinder(self._filesystem).webkit_base()
-        self._repository = WKRepository or local.Git(repo_path)
+        self._repository = local.Git(repo_path)
 
-        if not self._bug_id:
-            if options.attachment_id:
-                self._bug_id = self._bugzilla.bug_id_for_attachment_id(options.attachment_id)  # FIXME: Dependency on webkitpy.bugzilla should be removed when patch workflow is disabled
-            elif options.git_commit:
-                commit = self._repository.find(options.git_commit)
-                issue = next((issue for issue in commit.issues if isinstance(issue.tracker, bugzilla.Tracker)), None)
-                if not issue:
-                    raise ValueError('Unable to find associated bug. Please provide a bug id using `--bug`.')
-                self._bug_id = issue.id
-                self._options.git_commit = commit.hash
+        if not options.git_commit:
+            raise ValueError('A git commit must be provided using `--git-commit`.')
 
-        if not self._bug_id:
-            raise ValueError('Unable to find associated bug. Please provide a bug id using `--bug`.')
-        elif Tracker.instance() and (isinstance(self._bug_id, int) or string_utils.decode(self._bug_id).isnumeric()):
-            issue = Tracker.instance().issue(int(self._bug_id))
-        else:
-            issue = Tracker.from_string(self._bug_id)
-        if issue:
-            self._bug_id = issue.id
-            self._bug = issue
+        commit = self._repository.find(options.git_commit)
+        issue = next((issue for issue in commit.issues if isinstance(issue.tracker, bugzilla.Tracker)), None)
+        if not issue:
+            raise ValueError('Unable to find associated bug from commit.')
+        self._bug_id = issue.id
+        self._bug = issue
+        self._options.git_commit = commit.hash
 
-        self._commit_message = options.message
-        if not self._commit_message:
-            self._commit_message = f'WebKit export of {issue.link}' if issue else 'Export made from a WebKit repository'
+        self._commit_message = options.message or f'WebKit export of {issue.link}'
 
     @property
     def username(self):
@@ -128,10 +107,7 @@ class WebPlatformTestExporter(object):
     @property
     @memoized
     def _branch_name(self):
-        if not self._bug_id:
-            commit = self._repository.find(self._options.git_commit)
-            commit_hash = commit.hash[:7] if commit else '0'
-        return f"wpt-export-for-webkit-{(str(self._bug_id) if self._bug_id else commit_hash)}"
+        return f"wpt-export-for-webkit-{self._bug_id}"
 
     @property
     @memoized
@@ -223,7 +199,7 @@ class WebPlatformTestExporter(object):
         self._remote = self._init_wpt_remote()
         if not self._remote:
             return 1
-        self._linter = self._linter(repository_directory)
+        self._linter = WPTLinter(repository_directory)
         return True
 
     def clean(self):
@@ -245,7 +221,7 @@ class WebPlatformTestExporter(object):
         try:
             output = self._run_wpt_git(['apply', '--index', patch, '-3'], stderr=subprocess.STDOUT)
             if output.returncode:
-                _log.error(f'Failed to apply patch!')
+                _log.error('Failed to apply patch!')
                 _log.error(f"{output.stdout.decode('utf-8', 'replace')}")
                 return False
         except Exception as e:
@@ -346,7 +322,7 @@ class WebPlatformTestExporter(object):
             return 1
 
         if not self._get_wpt_repository():
-            _log.error(f'Could not find WPT repository')
+            _log.error('Could not find WPT repository')
             return 1
 
         _log.info('Fetching web-platform-tests repository')
@@ -403,10 +379,10 @@ class WebPlatformTestExporter(object):
 
 def parse_args(args):
     description = f"""Script to generate a pull request to W3C web-platform-tests repository
-    'Tools/Scripts/export-w3c-test-changes -c -g HEAD -b XYZ' will do the following:
+    'Tools/Scripts/export-w3c-test-changes -c -g HEAD' will do the following:
     - Clone web-platform-tests repository if not done already and set it up for pushing branches. By default, the repository will be cloned into the parent directory of your WebKit checkout (e.g. ~/WebKit/../wpt).
-    - Gather WebKit bug id XYZ bug and changes to apply to web-platform-tests repository based on the HEAD commit
-    - Create a remote branch named webkit-XYZ on https://github.com/USERNAME/{WPT_GH_REPO_NAME}.git repository based on the locally applied patch.
+    - Gather the bug and changes to apply to web-platform-tests repository based on the HEAD commit
+    - Create a remote branch on https://github.com/USERNAME/{WPT_GH_REPO_NAME}.git repository based on the locally applied patch.
        * {WPT_GH_URL}.git should have already been cloned to https://github.com/USERNAME/{WPT_GH_REPO_NAME}.git.
     - Make the related pull request on {WPT_GH_URL}.git repository.
     - Clean the local Git repository
@@ -420,8 +396,6 @@ def parse_args(args):
     parser = argparse.ArgumentParser(prog='export-w3c-test-changes ...', description=description, formatter_class=argparse.RawDescriptionHelpFormatter)
 
     parser.add_argument('-g', '--git-commit', dest='git_commit', default=None, help='Git commit to apply')
-    parser.add_argument('-b', '--bug', dest='bug_id', default=None, help='Bug ID or URL to search for patch')
-    parser.add_argument('-a', '--attachment', dest='attachment_id', default=None, help='Attachment ID to search for patch')
     parser.add_argument('-bn', '--branch-name', dest='public_branch_name', default=None, help='Branch name to push to')
     parser.add_argument('-m', '--message', dest='message', default=None, help='Commit message')
     parser.add_argument('-r', '--remote', dest='repository_remote', default=None, help='repository origin to use to push')
