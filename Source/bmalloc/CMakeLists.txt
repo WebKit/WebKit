@@ -139,6 +139,7 @@ set(bmalloc_C_SOURCES
     libpas/src/libpas/pas_large_heap_physical_page_sharing_cache.c
     libpas/src/libpas/pas_large_map.c
     libpas/src/libpas/pas_large_sharing_pool.c
+    libpas/src/libpas/pas_low_memory_mode.c
     libpas/src/libpas/pas_large_utility_free_heap.c
     libpas/src/libpas/pas_lenient_compact_unsigned_ptr.c
     libpas/src/libpas/pas_local_allocator.c
@@ -435,6 +436,7 @@ set(bmalloc_PUBLIC_HEADERS
     libpas/src/libpas/pas_large_virtual_range.h
     libpas/src/libpas/pas_large_virtual_range_min_heap.h
     libpas/src/libpas/pas_lenient_compact_ptr.h
+    libpas/src/libpas/pas_low_memory_mode.h
     libpas/src/libpas/pas_lenient_compact_unsigned_ptr.h
     libpas/src/libpas/pas_local_allocator_config_kind.h
     libpas/src/libpas/pas_local_allocator.h

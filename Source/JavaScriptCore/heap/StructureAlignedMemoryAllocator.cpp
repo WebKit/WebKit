@@ -42,6 +42,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <bmalloc/js_heap_inlines.h>
 #include <bmalloc/js_heap_ref.h>
 #include <bmalloc/js_heap_utils.h>
+#include <bmalloc/pas_low_memory_mode.h>
 #include <bmalloc/pas_page_sharing_pool.h>
 #include <bmalloc/pas_primitive_heap_ref.h>
 #elif USE(MIMALLOC)
@@ -125,6 +126,15 @@ public:
         // bmalloc::api::isEnabled() / the system-malloc supplant. This means Structure allocation
         // keeps the libpas scavenger, segregated pages, and compact-pointer semantics even when
         // the embedder forces bmalloc's general allocations through the system allocator.
+        //
+        // Tell libpas to bring itself up in low-memory mode if either signal is present:
+        //   - bmalloc has been routed through system malloc (e.g. Malloc=X is set), or
+        //   - VM mini mode is on (--useJIT=false / --forceMiniVMMode=true).
+        // Both indicate the embedder cares about footprint right now. We must set this before
+        // js_force_heap_into_reserved_memory below, since that triggers libpas's first
+        // allocations (immortal heap, utility heap, ...).
+        if (!bmalloc::api::isEnabled() || !Options::useJIT() || Options::forceMiniVMMode()) [[unlikely]]
+            pas_low_memory_mode = true;
 #if PLATFORM(PLAYSTATION)
         // libpas isn't calling pas_page_malloc commit, so we've got to commit the region ourselves
         // https://bugs.webkit.org/show_bug.cgi?id=292771

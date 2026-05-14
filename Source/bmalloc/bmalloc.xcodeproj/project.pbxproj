@@ -119,6 +119,8 @@
 		DD4BEC3829CBA49700398E35 /* pas_dyld_state.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FC4098A2451496000876DA0 /* pas_dyld_state.c */; };
 		DD4BEC3929CBA49700398E35 /* pas_enumerator_region.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F87002025AF89C8000E1ABF /* pas_enumerator_region.c */; };
 		DD4BEC3A29CBA49700398E35 /* pas_lock.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FC40BD9245243A400876DA0 /* pas_lock.c */; };
+		00B2D9170A2C4F6F901A5A3F /* pas_low_memory_mode.c in Sources */ = {isa = PBXBuildFile; fileRef = 66C67F94484E46AFA274F417 /* pas_low_memory_mode.c */; };
+		5F4149A30D6B44CDAAFA76C5 /* pas_low_memory_mode.h in Headers */ = {isa = PBXBuildFile; fileRef = 9E18B50E1BD14E0881AE0E8F /* pas_low_memory_mode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD4BEC3B29CBA49700398E35 /* pas_aligned_allocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FC4092B2451494300876DA0 /* pas_aligned_allocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD4BEC3C29CBA49700398E35 /* pas_enumerate_bitfit_heaps.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F87FFD025AF897C000E1ABF /* pas_enumerate_bitfit_heaps.c */; };
 		DD4BEC3D29CBA49700398E35 /* pas_expendable_memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C48133E27406A3E006CAB55 /* pas_expendable_memory.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1041,6 +1043,7 @@
 		0FC40A892451498C00876DA0 /* pas_page_malloc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pas_page_malloc.c; path = libpas/src/libpas/pas_page_malloc.c; sourceTree = "<group>"; };
 		0FC40A8A2451498C00876DA0 /* pas_reserved_memory_provider.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pas_reserved_memory_provider.c; path = libpas/src/libpas/pas_reserved_memory_provider.c; sourceTree = "<group>"; };
 		0FC40A8B2451498C00876DA0 /* pas_lock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_lock.h; path = libpas/src/libpas/pas_lock.h; sourceTree = "<group>"; };
+		9E18B50E1BD14E0881AE0E8F /* pas_low_memory_mode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_low_memory_mode.h; path = libpas/src/libpas/pas_low_memory_mode.h; sourceTree = "<group>"; };
 		0FC40A8C2451498C00876DA0 /* pas_first_level_tiny_large_map_entry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_first_level_tiny_large_map_entry.h; path = libpas/src/libpas/pas_first_level_tiny_large_map_entry.h; sourceTree = "<group>"; };
 		0FC40A8D2451498C00876DA0 /* pas_heap_config_kind.def */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = pas_heap_config_kind.def; path = libpas/src/libpas/pas_heap_config_kind.def; sourceTree = "<group>"; };
 		0FC40A8E2451498C00876DA0 /* pas_heap_ref_prefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_heap_ref_prefix.h; path = libpas/src/libpas/pas_heap_ref_prefix.h; sourceTree = "<group>"; };
@@ -1131,6 +1134,7 @@
 		0FC40AF62451499400876DA0 /* pas_segregated_size_directory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_segregated_size_directory.h; path = libpas/src/libpas/pas_segregated_size_directory.h; sourceTree = "<group>"; };
 		0FC40AF82451499400876DA0 /* pas_primitive_heap_ref.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pas_primitive_heap_ref.h; path = libpas/src/libpas/pas_primitive_heap_ref.h; sourceTree = "<group>"; };
 		0FC40BD9245243A400876DA0 /* pas_lock.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pas_lock.c; path = libpas/src/libpas/pas_lock.c; sourceTree = "<group>"; };
+		66C67F94484E46AFA274F417 /* pas_low_memory_mode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pas_low_memory_mode.c; path = libpas/src/libpas/pas_low_memory_mode.c; sourceTree = "<group>"; };
 		0FD557321F7EDB7B00B1F0A3 /* HeapKind.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HeapKind.cpp; path = bmalloc/HeapKind.cpp; sourceTree = "<group>"; };
 		1413E460189DCE1E00546D68 /* BInline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BInline.h; path = bmalloc/BInline.h; sourceTree = "<group>"; };
 		1413E468189EEDE400546D68 /* BAssert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BAssert.h; path = bmalloc/BAssert.h; sourceTree = "<group>"; };
@@ -1633,6 +1637,8 @@
 				0FC40AA42451498E00876DA0 /* pas_lock_free_read_ptr_ptr_hashtable.h */,
 				0FC40AD72451499100876DA0 /* pas_log.c */,
 				0FC40AC12451499000876DA0 /* pas_log.h */,
+				66C67F94484E46AFA274F417 /* pas_low_memory_mode.c */,
+				9E18B50E1BD14E0881AE0E8F /* pas_low_memory_mode.h */,
 				E3696A3A28F6C48B00C2F2D4 /* pas_malloc_stack_logging.c */,
 				E3696A3B28F6C48B00C2F2D4 /* pas_malloc_stack_logging.h */,
 				F39CF9AC2E70E40900EB3567 /* pas_mar_crash_reporter_report.h */,
@@ -2215,6 +2221,7 @@
 				DD4BEDDD29CBA49700398E35 /* pas_lock.h in Headers */,
 				DD4BECC929CBA49700398E35 /* pas_lock_free_read_ptr_ptr_hashtable.h in Headers */,
 				DD4BEDFA29CBA49700398E35 /* pas_log.h in Headers */,
+				5F4149A30D6B44CDAAFA76C5 /* pas_low_memory_mode.h in Headers */,
 				DD4BED2B29CBA49700398E35 /* pas_malloc_stack_logging.h in Headers */,
 				F39CF9AD2E70E41400EB3567 /* pas_mar_crash_reporter_report.h in Headers */,
 				F39CF9A82E70CA3600EB3567 /* pas_mar_registry.h in Headers */,
@@ -2612,6 +2619,7 @@
 				DD4BEC3A29CBA49700398E35 /* pas_lock.c in Sources */,
 				DD4BECF229CBA49700398E35 /* pas_lock_free_read_ptr_ptr_hashtable.c in Sources */,
 				DD4BECD429CBA49700398E35 /* pas_log.c in Sources */,
+				00B2D9170A2C4F6F901A5A3F /* pas_low_memory_mode.c in Sources */,
 				DD4BEC4629CBA49700398E35 /* pas_malloc_stack_logging.c in Sources */,
 				F34D74BA2E71E80D00024262 /* pas_mar_registry.c in Sources */,
 				F34D74B92E71E80200024262 /* pas_mar_report_crash.c in Sources */,
