@@ -139,6 +139,8 @@ private:
     MediaPlayer::NetworkState m_mediaSourceNetworkState = MediaPlayer::NetworkState::Empty;
 
     bool m_playbackStateChangedNotificationPending { false };
+
+    mutable MediaTime m_cachedCurrentTime { MediaTime::invalidTime() };
 };
 
 } // namespace WebCore
