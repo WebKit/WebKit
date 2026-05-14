@@ -24,7 +24,7 @@
 #if HAVE_APPKIT_GESTURES_SUPPORT
 
 import Foundation
-@_spi(WebKitAdditions_Testing) @_spi(Testing) import WebKit
+@_spi(WebKitAdditions_Testing) @_spi(Testing) @_spi(CrossImportOverlay) import WebKit
 import SwiftUI
 import struct Swift.String
 import struct _Concurrency.Task
@@ -234,6 +234,72 @@ struct AppKitGesturesTests {
         #expect(newSelection == .collapsed(.init(in: "div", at: offset)))
     }
 
+    @Test(.bug("rdar://170502266"))
+    func scrollOverNonScrollableWebViewPropagatesToEnclosingScrollView() async throws {
+        let windowSize = NSSize(width: 800, height: 600)
+        let documentHeight: CGFloat = 2000
+        let page = WebPage()
+        let webView = page.backingWebView
+        webView.frame = NSRect(x: 0, y: 0, width: windowSize.width, height: windowSize.height)
+
+        let documentView = FlippedDocumentView(
+            frame: NSRect(x: 0, y: 0, width: windowSize.width, height: documentHeight)
+        )
+        documentView.addSubview(webView)
+
+        let scrollView = NSScrollView(frame: NSRect(origin: .zero, size: windowSize))
+        scrollView.hasVerticalScroller = true
+        scrollView.hasHorizontalScroller = false
+        scrollView.documentView = documentView
+
+        let scrollViewController = NSViewController()
+        scrollViewController.view = scrollView
+        let scrollWindow = NSWindow(contentViewController: scrollViewController)
+        scrollWindow.setContentSize(windowSize)
+        scrollWindow.setFrameOrigin(.zero)
+        NSApp.activate(ignoringOtherApps: true)
+        scrollWindow.makeKeyAndOrderFront(nil)
+
+        try await page.load(html: "<body style='margin:0'>not scrollable</body>").wait()
+        await page.waitForNextPresentationUpdate()
+
+        // Recap requires this test to be ran within an app host.
+        guard NSApp.isActive else {
+            return
+        }
+
+        let viewportInDOMCoords = try #require(
+            DOMRect(decodedRepresentation: [
+                "x": 0.0,
+                "y": 0.0,
+                "width": Double(webView.frame.width),
+                "height": Double(webView.frame.height),
+            ])
+        )
+        let viewportInCGScreen = convertToCoreGraphicsScreenCoordinates(
+            rectInViewportCoordinates: viewportInDOMCoords,
+            window: scrollWindow
+        )
+
+        let dragDistance: CGFloat = 100
+        let center = viewportInCGScreen.center
+        let startPoint = CGPoint(x: center.x, y: center.y + dragDistance / 2)
+        let endPoint = CGPoint(x: center.x, y: center.y - dragDistance / 2)
+
+        let initialDocumentVisibleRect = scrollView.documentVisibleRect
+
+        await recap.play { composer in
+            composer.drag(withStart: startPoint, end: endPoint, duration: 0.5)
+            composer.advanceTime(0.1)
+            composer._wk_mouseUp()
+        }
+
+        await page.waitForNextPresentationUpdate()
+
+        // The test passes if the outer scroller scrolled.
+        #expect(scrollView.documentVisibleRect.origin != initialDocumentVisibleRect.origin)
+    }
+
     @Test
     func clickingChangesSelection() async throws {
         try await loadHTML(contentEditable: true)
@@ -337,6 +403,10 @@ extension AppKitGesturesTests {
 
         return screenCoordinates
     }
+}
+
+private final class FlippedDocumentView: NSView {
+    override var isFlipped: Bool { true }
 }
 
 #endif // HAVE_APPKIT_GESTURES_SUPPORT
