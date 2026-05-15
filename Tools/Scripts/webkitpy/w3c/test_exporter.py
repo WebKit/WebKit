@@ -29,7 +29,7 @@ import logging
 import sys
 import subprocess
 
-from webkitcorepy import string_utils, run
+from webkitcorepy import arguments, string_utils, run
 from webkitbugspy import bugzilla
 from webkitscmpy import local
 from webkitscmpy.program.pull_request import PullRequest as PullRequestProgram
@@ -210,7 +210,15 @@ class WebPlatformTestExporter(object):
 
     def create_branch_with_patch(self, patch):
         _log.info('Applying patch to web-platform-tests branch ' + self._branch_name)
-        if self._run_wpt_git(['checkout', '-B', self._branch_name]).returncode:
+        branch_exists = not self._run_wpt_git(['show-ref', '--verify', '--quiet', f'refs/heads/{self._branch_name}']).returncode
+        if branch_exists:
+            if not self._options.delete_existing:
+                _log.error(f'Local branch {self._branch_name} already exists. Use --delete-existing to overwrite.')
+                return False
+            if self._run_wpt_git(['checkout', '-B', self._branch_name]).returncode:
+                _log.error(f'Failed to create branch {self._branch_name}')
+                return False
+        elif self._run_wpt_git(['checkout', '-b', self._branch_name]).returncode:
             _log.error(f'Failed to create branch {self._branch_name}')
             return False
 
@@ -256,9 +264,24 @@ class WebPlatformTestExporter(object):
 
     def push_to_wpt_fork(self):
         _log.info(f'Pushing branch {self._branch_name} to {self._wpt_fork_remote}...')
-        if self._run_wpt_git(['push', self._wpt_fork_remote, self._branch_name + ':' + self._public_branch_name, '-f']).returncode:
-            _log.error('Failed to push to WPT fork')
-            return 1
+        refspec = self._branch_name + ':' + self._public_branch_name
+        result = self._run_wpt_git(['push', '--porcelain', self._wpt_fork_remote, refspec], capture_output=True)
+        if result.returncode:
+            if result.returncode >= 128:
+                _log.error('Failed to push to WPT fork')
+                return None
+            stdout = result.stdout or b''
+            if any(line.startswith(b'!') for line in stdout.splitlines()):
+                if not self._options.delete_existing:
+                    _log.error(f'Remote branch {self._public_branch_name} already exists. Use --delete-existing to overwrite.')
+                    return None
+                retry = self._run_wpt_git(['push', '--porcelain', self._wpt_fork_remote, refspec, '-f'], capture_output=True)
+                if retry.returncode:
+                    _log.error('Failed to push to WPT fork')
+                    return None
+            else:
+                _log.error('Failed to push to WPT fork')
+                return None
         _log.info(f'Branch available at {self._wpt_fork_branch_github_url}')
         return True
 
@@ -410,6 +433,12 @@ def parse_args(args):
     parser.add_argument('--no-clean', action='store_false', dest='clean', help='Do not clean up.')
     parser.add_argument('--clean-on-failure', action='store_true', dest='clean_on_failure', help='Do not clean up on failure.')
     parser.add_argument('--dry-run', action='store_true', dest='dry_run', default=False, help='Create local branch and commit but do not push to remote.')
+    parser.add_argument(
+        '--delete-existing', '--no-delete-existing',
+        dest='delete_existing', default=False,
+        action=arguments.NoAction,
+        help='Allow overwriting an existing local branch or force-pushing to an existing remote branch.',
+    )
 
     options, args = parser.parse_known_args(args)
 

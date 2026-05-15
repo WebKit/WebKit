@@ -61,6 +61,7 @@ class Git(mocks.Subprocess):
         self.remote = remote or 'git@example.org:mock/{}'.format(os.path.basename(path))
         self.detached = detached or False
         self.is_worktree = is_worktree
+        self.push_error = None
 
         self.tags = tags or {}
 
@@ -633,6 +634,14 @@ nothing to commit, working tree clean
                 self.executable, 'add', re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.add(args[2]),
+            ), mocks.Subprocess.Route(
+                self.executable, 'show-ref', '--verify', '--quiet', re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.show_ref_verify(args[4]),
+            ), mocks.Subprocess.Route(
+                self.executable, 'push', '--porcelain', re.compile(r'.+'), re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.push_porcelain(args[3], args[4], force='-f' in args),
             ), mocks.Subprocess.Route(
                 self.executable, 'push', '-f', re.compile(r'.+'), re.compile(r'.+'),
                 cwd=self.path,
@@ -1325,6 +1334,30 @@ nothing to commit, working tree clean
             self.remotes[remote_branch] = self.commits[branch][:]
         elif remote_branch in self.remotes:
             del self.remotes[remote_branch]
+        return mocks.ProcessCompletion(returncode=0)
+
+    def show_ref_verify(self, ref):
+        branch = ref.replace('refs/heads/', '')
+        if branch in self.commits:
+            return mocks.ProcessCompletion(returncode=0)
+        return mocks.ProcessCompletion(returncode=1)
+
+    def push_porcelain(self, remote, refspec, force=False):
+        if self.push_error is not None:
+            return mocks.ProcessCompletion(returncode=self.push_error)
+
+        local_branch = refspec.split(':')[0]
+        remote_ref = refspec.split(':')[-1] if ':' in refspec else local_branch
+        remote_branch = '{}/{}'.format(remote, remote_ref)
+
+        if not force and remote_branch in self.remotes:
+            return mocks.ProcessCompletion(
+                returncode=1,
+                stdout='!\trefs/heads/{ref}:refs/heads/{ref}\t[rejected] (non-fast-forward)\n'.format(ref=remote_ref),
+            )
+
+        if local_branch in self.commits:
+            self.remotes[remote_branch] = self.commits[local_branch][:]
         return mocks.ProcessCompletion(returncode=0)
 
     def _fetch_with_refspec(self, refspecs):
