@@ -214,7 +214,6 @@ http/tests/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame.htm
 http/tests/security/XFrameOptions/x-frame-options-ancestors-same-origin-deny.html [ Failure ]
 http/tests/security/XFrameOptions/x-frame-options-multiple-headers-sameorigin-deny.html [ Failure ]
 http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html [ Failure ]
-http/tests/security/cross-origin-local-storage.html [ Failure ]
 http/tests/site-isolation/inspector/debugger/pause-in-cross-origin-iframe.html [ Pass ]
 http/tests/site-isolation/inspector/debugger/scriptParsed-frame-target.html [ Pass ]
 http/tests/site-isolation/inspector/debugger/setBreakpoint-cross-origin-iframe.html [ Pass ]
