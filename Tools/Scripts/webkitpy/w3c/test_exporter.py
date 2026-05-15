@@ -32,6 +32,7 @@ import subprocess
 from webkitcorepy import string_utils, run
 from webkitbugspy import bugzilla
 from webkitscmpy import local
+from webkitscmpy.program.pull_request import PullRequest as PullRequestProgram
 
 from webkitpy.common.host import Host
 from webkitpy.common.webkit_finder import WebKitFinder
@@ -209,14 +210,9 @@ class WebPlatformTestExporter(object):
 
     def create_branch_with_patch(self, patch):
         _log.info('Applying patch to web-platform-tests branch ' + self._branch_name)
-        try:
-            self._run_wpt_git(['checkout', '-b', self._branch_name])
-        except Exception as e:
-            _log.warning(e)
-            _log.info('Retrying to create the branch')
-            if self._run_wpt_git(['show-ref', '--quiet', '--verify', f'refs/heads/{self._branch_name}']):
-                self._run_wpt_git(['branch', '-D', self._branch_name])
-            self._run_wpt_git(['checkout', '-b', self._branch_name])
+        if self._run_wpt_git(['checkout', '-B', self._branch_name]).returncode:
+            _log.error(f'Failed to create branch {self._branch_name}')
+            return False
 
         try:
             output = self._run_wpt_git(['apply', '--index', patch, '-3'], stderr=subprocess.STDOUT)
@@ -292,9 +288,18 @@ class WebPlatformTestExporter(object):
         return pr
 
     def create_wpt_pull_request(self, remote_branch_name, title, body):
-        _log.info(f"\nCreating pull-request for '{remote_branch_name}'...")
+        existing_pr = PullRequestProgram.find_existing_pull_request(self._wpt_repo, self._remote, branch=self._public_branch_name)
 
-        # FIXME: If the pull request/branch exists, we should give the option to overwrite or rebase - https://bugs.webkit.org/show_bug.cgi?id=295350
+        if existing_pr and existing_pr.opened:
+            _log.info(f"\nUpdating pull-request for '{remote_branch_name}'...")
+            pr = self._remote.pull_requests.update(pull_request=existing_pr, title=title, body=body)
+            if not pr:
+                _log.error(f"Failed to update pull-request for '{self._wpt_repo.branch}'\n")
+                return None
+            print(f"Updated '{pr}'!")
+            return pr
+
+        _log.info(f"\nCreating pull-request for '{remote_branch_name}'...")
         pr = self._remote.pull_requests.create(
             title=title,
             body=body,
@@ -303,7 +308,6 @@ class WebPlatformTestExporter(object):
         if not pr:
             _log.error(f"Failed to create pull-request for '{self._wpt_repo.branch}'\n")
             return None
-
         print(f"Created '{pr}'!")
         return pr
 
@@ -390,7 +394,6 @@ def parse_args(args):
     - As a dry run, one can start by running the script without -c. This will only create the branch on the user public GitHub repository.
     - By default, the script will create an https remote URL that will require a password-based authentication to GitHub. If you are using an SSH key, please use the --remote-url option.
     FIXME:
-    - The script is not yet able to update an existing pull request.
     - Need a way to monitor the progress of the pull request so that status of all pending pull requests can be done at import time.
     """
     parser = argparse.ArgumentParser(prog='export-w3c-test-changes ...', description=description, formatter_class=argparse.RawDescriptionHelpFormatter)

@@ -459,7 +459,7 @@ nothing to commit, working tree clean
                 self.executable, 'checkout', '-B', re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs:
-                    mocks.ProcessCompletion(returncode=0) if self.checkout(args[3], source=args[4] if len(args) > 4 else None, create=False, force=True) else mocks.ProcessCompletion(returncode=1)
+                    mocks.ProcessCompletion(returncode=0) if self.checkout(args[3], source=args[4] if len(args) > 4 else None, create=True, force=True) else mocks.ProcessCompletion(returncode=1)
             ), mocks.Subprocess.Route(
                 self.executable, 'checkout', re.compile(r'.+'),
                 cwd=self.path,
@@ -948,9 +948,19 @@ nothing to commit, working tree clean
         if create:
             if commit:
                 if force:
-                    self.head = commit
-                    self.detached = something not in self.commits.keys()
-                    return True
+                    if source == something:
+                        # checkout -B branch (no start-point): reset to current HEAD
+                        del self.commits[something]
+                        # Fall through to create branch from current HEAD
+                    else:
+                        # checkout -B branch start-point: reset branch to start-point
+                        self.head = commit
+                        self.detached = False
+                        return True
+                else:
+                    return False
+            elif source != something:
+                # Source was explicitly provided but doesn't exist: fail
                 return False
             self.commits[something] = [Commit.from_json(Commit.Encoder().default(self.head))]
             # Copy one more to create a bridge commit
