@@ -8663,6 +8663,14 @@
    },
    {
       "emails" : [
+         "webkit-opensource-integration@apple.com"
+      ],
+      "github" : "webkit-opensource-integration",
+      "name" : "WebKit Opensource Integration",
+      "status" : "committer"
+   },
+   {
+      "emails" : [
          "webkit.review.bot@gmail.com"
       ],
       "name" : "WebKit Review Bot",
