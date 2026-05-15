@@ -851,6 +851,18 @@ extension WebPage {
             public let textColor: Swift.String
         }
 
+        /// The visual data associated with an editor state.
+        @_spi(Testing)
+        public struct VisualData: Sendable, Equatable {
+            /// The caret rect at the start of the current selection, in document coordinates.
+            @_spi(Testing)
+            public let caretRectAtStart: CGRect
+
+            /// The caret rect at the end of the current selection, in document coordinates.
+            @_spi(Testing)
+            public let caretRectAtEnd: CGRect
+        }
+
         /// A type of selection.
         @_spi(Testing)
         public enum SelectionType: Int, Sendable, Equatable {
@@ -871,6 +883,10 @@ extension WebPage {
         /// The post-layout data of the editor state, if any.
         @_spi(Testing)
         public let postLayoutData: PostLayoutData?
+
+        /// The visual data of the editor state, if any.
+        @_spi(Testing)
+        public let visualData: VisualData?
     }
 
     // SPI for testing.
@@ -906,19 +922,42 @@ extension WebPage.EditorStateSnapshot {
         // swift-format-ignore: NeverForceUnwrap
         self.selectionType = SelectionType(rawValue: dictionary["selection-type"] as! SelectionType.RawValue)!
 
-        guard let postLayoutData = dictionary["post-layout-data"] as? Bool, postLayoutData else {
+        if let hasPostLayoutData = dictionary["post-layout-data"] as? Bool, hasPostLayoutData {
+            // The Objective-C interface this is converting from is not able to express at compile-time that these are guaranteed.
+            // swift-format-ignore: NeverForceUnwrap
+            self.postLayoutData = .init(
+                bold: dictionary["bold"] as! Bool,
+                italic: dictionary["italic"] as! Bool,
+                underline: dictionary["underline"] as! Bool,
+                textAlignment: NSTextAlignment(rawValue: dictionary["text-alignment"] as! Int)!,
+                textColor: dictionary["text-color"] as! String
+            )
+        } else {
             self.postLayoutData = nil
-            return
         }
 
+        if let hasVisualData = dictionary["visual-data"] as? Bool, hasVisualData {
+            // The Objective-C interface this is converting from is not able to express at compile-time that these are guaranteed.
+            // swift-format-ignore: NeverForceUnwrap
+            self.visualData = .init(
+                caretRectAtStart: CGRect(caretRectDictionary: dictionary["caret-rect-at-start"] as! [String: NSNumber]),
+                caretRectAtEnd: CGRect(caretRectDictionary: dictionary["caret-rect-at-end"] as! [String: NSNumber])
+            )
+        } else {
+            self.visualData = nil
+        }
+    }
+}
+
+extension CGRect {
+    fileprivate init(caretRectDictionary dictionary: [String: NSNumber]) {
         // The Objective-C interface this is converting from is not able to express at compile-time that these are guaranteed.
         // swift-format-ignore: NeverForceUnwrap
-        self.postLayoutData = .init(
-            bold: dictionary["bold"] as! Bool,
-            italic: dictionary["italic"] as! Bool,
-            underline: dictionary["underline"] as! Bool,
-            textAlignment: NSTextAlignment(rawValue: dictionary["text-alignment"] as! Int)!,
-            textColor: dictionary["text-color"] as! String
+        self.init(
+            x: dictionary["x"]!.doubleValue,
+            y: dictionary["y"]!.doubleValue,
+            width: dictionary["width"]!.doubleValue,
+            height: dictionary["height"]!.doubleValue
         )
     }
 }

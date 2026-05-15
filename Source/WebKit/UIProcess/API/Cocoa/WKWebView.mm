@@ -2326,24 +2326,45 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
     });
 }
 
+static RetainPtr<NSDictionary> dictionaryRepresentationForCaretRect(const WebCore::IntRect& rect)
+{
+    return @{
+        @"x": @(rect.x()),
+        @"y": @(rect.y()),
+        @"width": @(rect.width()),
+        @"height": @(rect.height()),
+    };
+}
+
 static RetainPtr<NSDictionary> dictionaryRepresentationForEditorState(const WebKit::EditorState& state)
 {
-    if (!state.hasPostLayoutData())
-        return @{
-            @"post-layout-data" : @NO,
-            @"selection-type": @(static_cast<NSInteger>(state.selectionType)),
-        };
+    RetainPtr<NSMutableDictionary> result = adoptNS([[NSMutableDictionary alloc] init]);
+    [result setObject:@(static_cast<NSInteger>(state.selectionType)) forKey:@"selection-type"];
 
-    auto& postLayoutData = *state.postLayoutData;
-    return @{
-        @"post-layout-data" : @YES,
-        @"selection-type": @(static_cast<NSInteger>(state.selectionType)),
-        @"bold": postLayoutData.typingAttributes.contains(WebKit::TypingAttribute::Bold) ? @YES : @NO,
-        @"italic": postLayoutData.typingAttributes.contains(WebKit::TypingAttribute::Italics) ? @YES : @NO,
-        @"underline": postLayoutData.typingAttributes.contains(WebKit::TypingAttribute::Underline) ? @YES : @NO,
-        @"text-alignment": @(nsTextAlignment(static_cast<WebKit::TextAlignment>(postLayoutData.textAlignment))),
-        @"text-color": serializationForCSS(postLayoutData.textColor).createNSString().get()
-    };
+    if (state.hasPostLayoutData()) {
+        auto& postLayoutData = *state.postLayoutData;
+        [result addEntriesFromDictionary:@{
+            @"post-layout-data": @YES,
+            @"bold": postLayoutData.typingAttributes.contains(WebKit::TypingAttribute::Bold) ? @YES : @NO,
+            @"italic": postLayoutData.typingAttributes.contains(WebKit::TypingAttribute::Italics) ? @YES : @NO,
+            @"underline": postLayoutData.typingAttributes.contains(WebKit::TypingAttribute::Underline) ? @YES : @NO,
+            @"text-alignment": @(nsTextAlignment(static_cast<WebKit::TextAlignment>(postLayoutData.textAlignment))),
+            @"text-color": serializationForCSS(postLayoutData.textColor).createNSString().get(),
+        }];
+    } else
+        [result setObject:@NO forKey:@"post-layout-data"];
+
+    if (state.hasVisualData()) {
+        auto& visualData = *state.visualData;
+        [result addEntriesFromDictionary:@{
+            @"visual-data": @YES,
+            @"caret-rect-at-start": dictionaryRepresentationForCaretRect(visualData.caretRectAtStart).get(),
+            @"caret-rect-at-end": dictionaryRepresentationForCaretRect(visualData.caretRectAtEnd).get(),
+        }];
+    } else
+        [result setObject:@NO forKey:@"visual-data"];
+
+    return result;
 }
 
 static NSTextAlignment NODELETE nsTextAlignment(WebKit::TextAlignment alignment)
