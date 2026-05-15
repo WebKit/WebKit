@@ -7239,6 +7239,8 @@ void WebPageProxy::preferencesDidChange()
             webProcess.send(Messages::WebPage::PreferencesDidChange(preferencesStore(), sharedPreferencesVersion), pageID);
     });
 
+    // Shared and service worker processes maintain their own preferences snapshot; propagate changes so newly launched workers pick up the updated values.
+    protect(m_configuration->processPool())->updatePreferencesForRemoteWorkers(preferencesStore());
     websiteDataStore().propagateSettingUpdates();
 }
 

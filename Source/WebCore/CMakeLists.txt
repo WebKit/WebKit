@@ -2113,6 +2113,7 @@ set(WebCore_SUPPLEMENTAL_IDL_FILES
     page/DOMWindow+VisualViewport.idl
     page/Navigator+UserActivation.idl
     page/NavigatorCookies.idl
+    page/NavigatorGlobalPrivacyControl.idl
     page/NavigatorID.idl
     page/NavigatorLanguage.idl
     page/NavigatorOnLine.idl

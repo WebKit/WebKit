@@ -273,6 +273,11 @@ void CachedResourceRequest::updateAcceptEncodingHeader()
     m_resourceRequest.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::AcceptEncoding, "identity"_s);
 }
 
+void CachedResourceRequest::updateGlobalPrivacyControlHeader()
+{
+    m_resourceRequest.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::SecGPC, "1"_s);
+}
+
 void CachedResourceRequest::removeFragmentIdentifierIfNeeded()
 {
     URL url = MemoryCache::removeFragmentIdentifierIfNeeded(m_resourceRequest.url());

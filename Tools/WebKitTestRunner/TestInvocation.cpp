@@ -39,6 +39,7 @@
 #include <WebKit/WKHTTPCookieStoreRef.h>
 #include <WebKit/WKInspector.h>
 #include <WebKit/WKPagePrivate.h>
+#include <WebKit/WKPreferencesRefPrivate.h>
 #include <WebKit/WKRetainPtr.h>
 #include <WebKit/WKWebsiteDataStoreRef.h>
 #include <climits>
@@ -1320,6 +1321,16 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetHasMouseDeviceForTesting")) {
         TestController::singleton().setHasMouseDeviceForTesting((booleanValue(messageBody)));
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "GetGlobalPrivacyControl")) {
+        bool value = WKPreferencesGetBoolValueForKeyForTesting(TestController::singleton().platformPreferences(), toWK("GlobalPrivacyControlEnabled").get());
+        return adoptWK(WKBooleanCreate(value)).leakRef();
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetGlobalPrivacyControl")) {
+        WKPreferencesSetBoolValueForKeyForTesting(TestController::singleton().platformPreferences(), booleanValue(messageBody), toWK("GlobalPrivacyControlEnabled").get());
         return nullptr;
     }
 

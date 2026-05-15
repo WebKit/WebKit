@@ -90,6 +90,7 @@ Reporting-Endpoints
 Sec-Fetch-Dest
 Sec-Fetch-Mode
 Sec-Fetch-Site
+Sec-GPC
 Sec-Purpose
 Sec-Speculation-Tags
 Speculation-Rules

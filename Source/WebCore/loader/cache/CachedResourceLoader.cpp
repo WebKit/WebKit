@@ -1026,6 +1026,8 @@ void CachedResourceLoader::updateHTTPRequestHeaders(FrameLoader& frameLoader, Ca
         request.updateCacheModeIfNeeded(cachePolicy(type, request.resourceRequest().url()));
     request.updateAccordingCacheMode();
     request.updateAcceptEncodingHeader();
+    if (frame->settings().globalPrivacyControlEnabled())
+        request.updateGlobalPrivacyControlHeader();
 }
 
 static FetchOptions::Destination NODELETE destinationForType(CachedResource::Type type, LocalFrame& frame)

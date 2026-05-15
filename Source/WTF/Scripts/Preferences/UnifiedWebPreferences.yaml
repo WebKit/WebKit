@@ -3413,6 +3413,20 @@ GetUserMediaRequiresFocus:
     WebCore:
       default: true
 
+GlobalPrivacyControlEnabled:
+  type: bool
+  status: testable
+  category: privacy
+  humanReadableName: "Global Privacy Control"
+  humanReadableDescription: "Enable Global Privacy Control (GPC) signal"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 GoogleAntiFlickerOptimizationQuirkEnabled:
   type: bool
   status: mature

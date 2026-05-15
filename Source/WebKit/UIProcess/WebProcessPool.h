@@ -417,6 +417,7 @@ public:
     void serviceWorkerProcessCrashed(WebProcessProxy&, ProcessTerminationReason);
 
     void updateRemoteWorkerUserAgent(const String& userAgent);
+    void updatePreferencesForRemoteWorkers(const WebPreferencesStore&);
     Ref<WebUserContentControllerProxy> userContentControllerForRemoteWorkers();
     static void establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType, WebCore::Site&&, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID, WebCore::CrossOriginEmbedderPolicyValue, CompletionHandler<void(WebCore::ProcessIdentifier)>&&);
 

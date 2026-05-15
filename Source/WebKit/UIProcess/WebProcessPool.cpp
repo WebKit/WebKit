@@ -1409,6 +1409,13 @@ void WebProcessPool::updateRemoteWorkerUserAgent(const String& userAgent)
         workerProcess->setRemoteWorkerUserAgent(m_remoteWorkerUserAgent);
 }
 
+void WebProcessPool::updatePreferencesForRemoteWorkers(const WebPreferencesStore& store)
+{
+    m_remoteWorkerPreferences = store;
+    for (Ref workerProcess : remoteWorkerProcesses())
+        workerProcess->updateRemoteWorkerPreferencesStore(store);
+}
+
 void WebProcessPool::pageBeginUsingWebsiteDataStore(WebPageProxy& page, WebsiteDataStore& dataStore)
 {
     RELEASE_ASSERT(RunLoop::isMain());

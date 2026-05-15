@@ -89,6 +89,7 @@ public:
     void setAcceptHeaderIfNone(CachedResource::Type);
     void updateAccordingCacheMode();
     void updateAcceptEncodingHeader();
+    void updateGlobalPrivacyControlHeader();
     void NODELETE updateCacheModeIfNeeded(CachePolicy);
 
     void NODELETE disableCachingIfNeeded();

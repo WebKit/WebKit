@@ -1,0 +1,14 @@
+
+PASS Expected Sec-GPC value (true) is on the document fetch
+PASS Expected Sec-GPC value (true) is on the image fetch
+PASS Expected Sec-GPC value (true) is on the script fetch
+PASS Expected Sec-GPC value (true) is on the iframe fetch
+PASS Expected Sec-GPC value (true) is on the framed image fetch
+PASS Expected Sec-GPC value (true) is on the framed script fetch
+PASS Expected Sec-GPC value (false) is on the document fetch
+PASS Expected Sec-GPC value (false) is on the image fetch
+PASS Expected Sec-GPC value (false) is on the script fetch
+PASS Expected Sec-GPC value (false) is on the iframe fetch
+PASS Expected Sec-GPC value (false) is on the framed image fetch
+PASS Expected Sec-GPC value (false) is on the framed script fetch
+

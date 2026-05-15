@@ -457,6 +457,7 @@ WK_EXPORT bool WKPreferencesGetColorFilterEnabled(WKPreferencesRef);
 WK_EXPORT void WKPreferencesSetPunchOutWhiteBackgroundsInDarkMode(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetPunchOutWhiteBackgroundsInDarkMode(WKPreferencesRef);
 
+WK_EXPORT bool WKPreferencesGetBoolValueForKeyForTesting(WKPreferencesRef, WKStringRef key);
 
 // The following are all deprecated and do nothing. They should be removed when possible.
 

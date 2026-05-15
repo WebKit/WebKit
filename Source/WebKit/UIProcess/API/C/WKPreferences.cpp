@@ -1620,6 +1620,11 @@ bool WKPreferencesGetPunchOutWhiteBackgroundsInDarkMode(WKPreferencesRef prefere
     return protect(toImpl(preferencesRef))->punchOutWhiteBackgroundsInDarkMode();
 }
 
+bool WKPreferencesGetBoolValueForKeyForTesting(WKPreferencesRef preferencesRef, WKStringRef key)
+{
+    return toImpl(preferencesRef)->store().getBoolValueForKey(toWTFString(key));
+}
+
 void WKPreferencesSetCaptureAudioInUIProcessEnabled(WKPreferencesRef, bool)
 {
 }

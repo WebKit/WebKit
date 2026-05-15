@@ -403,6 +403,9 @@ public:
     void setStatisticsCacheMaxAgeCap(double seconds);
     bool hasStatisticsIsolatedSession(JSStringRef hostName);
 
+    void setGlobalPrivacyControl(bool);
+    bool getGlobalPrivacyControl();
+
     // Injected bundle form client.
     void installTextDidChangeInTextFieldCallback(JSContextRef, JSValueRef callback);
     void textDidChangeInTextFieldCallback();

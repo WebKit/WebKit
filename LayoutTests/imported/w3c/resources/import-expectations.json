@@ -192,6 +192,7 @@
     "web-platform-tests/generic-sensor": "skip",
     "web-platform-tests/geolocation": "import",
     "web-platform-tests/geolocation-sensor": "skip",
+    "web-platform-tests/gpc": "import",
     "web-platform-tests/graphics-aam": "skip",
     "web-platform-tests/graphics-aria": "import",
     "web-platform-tests/gyroscope": "skip",

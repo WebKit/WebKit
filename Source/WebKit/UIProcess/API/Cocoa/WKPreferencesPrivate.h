@@ -140,6 +140,8 @@ typedef NS_ENUM(NSInteger, _WKPitchCorrectionAlgorithm) {
 
 @property (nonatomic, setter=_setTextExtractionEnabled:) BOOL _textExtractionEnabled WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 
+@property (nonatomic, setter=_setGlobalPrivacyControlEnabled:) BOOL _globalPrivacyControlEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 + (NSArray<_WKFeature *> *)_features WK_API_AVAILABLE(macos(13.3), ios(16.4));
 - (BOOL)_isEnabledForFeature:(_WKFeature *)feature WK_API_AVAILABLE(macos(10.12), ios(10.0));
 - (void)_setEnabled:(BOOL)value forFeature:(_WKFeature *)feature WK_API_AVAILABLE(macos(10.12), ios(10.0));

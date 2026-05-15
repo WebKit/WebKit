@@ -40,4 +40,5 @@ Navigator includes NavigatorServiceWorker;
 Navigator includes NavigatorShare;
 Navigator includes NavigatorStorage;
 Navigator includes NavigatorGPU;
+Navigator includes NavigatorGlobalPrivacyControl;
 [EnabledByQuirk=needsNavigatorUserAgentData] Navigator includes NavigatorUA;

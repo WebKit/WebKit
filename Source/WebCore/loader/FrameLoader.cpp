@@ -3527,6 +3527,9 @@ void FrameLoader::updateRequestAndAddExtraFields(Frame& targetFrame, ResourceReq
 
     applyUserAgentIfNeeded(request);
 
+    if (page && page->settings().globalPrivacyControlEnabled())
+        request.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::SecGPC, "1"_s);
+
     if (isMainResource)
         request.setHTTPHeaderField(HTTPHeaderName::Accept, CachedResourceRequest::acceptHeaderValueFromType(CachedResource::Type::MainResource, request.url().protocolIsSecure()));
 

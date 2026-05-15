@@ -2169,6 +2169,25 @@
          */
         clear_display_features: function(context=null) {
             return window.test_driver_internal.clear_display_features(context);
+        },
+
+        /**
+         * Gets the current Global Privacy Control (GPC) setting.
+         *
+         * @returns {Promise<{gpc: boolean}>} Fulfilled with the current GPC state.
+         */
+        get_global_privacy_control: function(context=null) {
+            return window.test_driver_internal.get_global_privacy_control(context);
+        },
+
+        /**
+         * Sets the Global Privacy Control (GPC) setting.
+         *
+         * @param {boolean} value - The GPC value to set.
+         * @returns {Promise<{gpc: boolean}>} Fulfilled with the new GPC state.
+         */
+        set_global_privacy_control: function(value, context=null) {
+            return window.test_driver_internal.set_global_privacy_control(value, context);
         }
     };
 

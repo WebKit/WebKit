@@ -1584,6 +1584,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/page/NavigatorUABrandVersion.idl \
     $(WebCore)/page/NavigatorUAData.idl \
     $(WebCore)/page/Navigator+LoginStatus.idl \
+    $(WebCore)/page/NavigatorGlobalPrivacyControl.idl \
     $(WebCore)/page/Navigator+UserActivation.idl \
     $(WebCore)/page/NavigatorCookies.idl \
     $(WebCore)/page/NavigatorID.idl \

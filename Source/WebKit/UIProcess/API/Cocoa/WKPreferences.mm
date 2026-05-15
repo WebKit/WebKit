@@ -875,6 +875,16 @@ static WebCore::EditableLinkBehavior NODELETE toEditableLinkBehavior(_WKEditable
     return protect(*_preferences)->textExtractionEnabled();
 }
 
+- (BOOL)_globalPrivacyControlEnabled
+{
+    return _preferences->globalPrivacyControlEnabled();
+}
+
+- (void)_setGlobalPrivacyControlEnabled:(BOOL)enabled
+{
+    _preferences->setGlobalPrivacyControlEnabled(enabled);
+}
+
 - (void)_setColorFilterEnabled:(BOOL)enabled
 {
     protect(*_preferences)->setColorFilterEnabled(enabled);

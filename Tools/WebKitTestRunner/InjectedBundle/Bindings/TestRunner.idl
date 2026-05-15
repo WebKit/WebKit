@@ -206,6 +206,10 @@ interface TestRunner {
     // Screen Wake Lock
     undefined setScreenWakeLockPermission(boolean value);
 
+    // Global Privacy Control
+    undefined setGlobalPrivacyControl(boolean value);
+    boolean getGlobalPrivacyControl();
+
     // MediaStream
     undefined setCameraPermission(boolean value);
     undefined setMicrophonePermission(boolean value);

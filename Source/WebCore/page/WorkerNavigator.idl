@@ -43,3 +43,4 @@ WorkerNavigator includes NavigatorServiceWorker;
 WorkerNavigator includes NavigatorStorage;
 WorkerNavigator includes NavigatorGPU;
 WorkerNavigator includes NavigatorUA;
+WorkerNavigator includes NavigatorGlobalPrivacyControl;

@@ -1928,6 +1928,7 @@ $(PROJECT_DIR)/page/NavigationNavigationType.idl
 $(PROJECT_DIR)/page/NavigationTransition.idl
 $(PROJECT_DIR)/page/Navigator+LoginStatus.idl
 $(PROJECT_DIR)/page/Navigator+UserActivation.idl
+$(PROJECT_DIR)/page/NavigatorGlobalPrivacyControl.idl
 $(PROJECT_DIR)/page/Navigator.idl
 $(PROJECT_DIR)/page/NavigatorCookies.idl
 $(PROJECT_DIR)/page/NavigatorID.idl
