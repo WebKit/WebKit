@@ -2991,16 +2991,9 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
 
         ScratchRegisterAllocator::PreservedState preservedState = allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
 
-        CCallHelpers::JumpList notString;
         GPRReg propertyGPR = m_propertyCache.propertyGPR();
-        if (!m_propertyCache.propertyIsString) {
-            slowCases.append(jit.branchIfNotCell(propertyGPR));
-            slowCases.append(jit.branchIfNotString(propertyGPR));
-        }
 
-        jit.loadPtr(CCallHelpers::Address(propertyGPR, JSString::offsetOfValue()), scratch4GPR);
-        slowCases.append(jit.branchIfRopeStringImpl(scratch4GPR));
-        slowCases.append(jit.branchTest32(CCallHelpers::Zero, CCallHelpers::Address(scratch4GPR, StringImpl::flagsOffset()), CCallHelpers::TrustedImm32(StringImpl::flagIsAtom())));
+        slowCases.append(jit.loadCacheableIdentifierImpl(propertyGPR, scratch4GPR, m_propertyCache.propertyIsString, m_propertyCache.propertyIsSymbol));
 
         slowCases.append(jit.loadMegamorphicProperty(vm, baseGPR, scratch4GPR, nullptr, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR));
 
@@ -3169,14 +3162,7 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
 
         CCallHelpers::JumpList notString;
         GPRReg propertyGPR = m_propertyCache.propertyGPR();
-        if (!m_propertyCache.propertyIsString) {
-            slowCases.append(jit.branchIfNotCell(propertyGPR));
-            slowCases.append(jit.branchIfNotString(propertyGPR));
-        }
-
-        jit.loadPtr(CCallHelpers::Address(propertyGPR, JSString::offsetOfValue()), scratch4GPR);
-        slowCases.append(jit.branchIfRopeStringImpl(scratch4GPR));
-        slowCases.append(jit.branchTest32(CCallHelpers::Zero, CCallHelpers::Address(scratch4GPR, StringImpl::flagsOffset()), CCallHelpers::TrustedImm32(StringImpl::flagIsAtom())));
+        slowCases.append(jit.loadCacheableIdentifierImpl(propertyGPR, scratch4GPR, m_propertyCache.propertyIsString, m_propertyCache.propertyIsSymbol));
 
         slowCases.append(jit.hasMegamorphicProperty(vm, baseGPR, scratch4GPR, nullptr, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR));
 
@@ -3208,14 +3194,8 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
 
         CCallHelpers::JumpList notString;
         GPRReg propertyGPR = m_propertyCache.propertyGPR();
-        if (!m_propertyCache.propertyIsString) {
-            slowCases.append(jit.branchIfNotCell(propertyGPR));
-            slowCases.append(jit.branchIfNotString(propertyGPR));
-        }
 
-        jit.loadPtr(CCallHelpers::Address(propertyGPR, JSString::offsetOfValue()), scratch4GPR);
-        slowCases.append(jit.branchIfRopeStringImpl(scratch4GPR));
-        slowCases.append(jit.branchTest32(CCallHelpers::Zero, CCallHelpers::Address(scratch4GPR, StringImpl::flagsOffset()), CCallHelpers::TrustedImm32(StringImpl::flagIsAtom())));
+        slowCases.append(jit.loadCacheableIdentifierImpl(propertyGPR, scratch4GPR, m_propertyCache.propertyIsString, m_propertyCache.propertyIsSymbol));
 
         auto [slow, reallocating] = jit.storeMegamorphicProperty(vm, baseGPR, scratch4GPR, nullptr, valueRegs.payloadGPR(), scratchGPR, scratch2GPR, scratch3GPR);
         slowCases.append(WTF::move(slow));

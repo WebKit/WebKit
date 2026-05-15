@@ -771,6 +771,34 @@ AssemblyHelpers::JumpList AssemblyHelpers::hasMegamorphicProperty(VM& vm, GPRReg
 }
 #endif
 
+AssemblyHelpers::JumpList AssemblyHelpers::loadCacheableIdentifierImpl(GPRReg propertyGPR, GPRReg destGPR, bool propertyIsString, bool propertyIsSymbol, bool canBeRope)
+{
+    JumpList slowCases;
+    if (propertyIsString) {
+        loadPtr(Address(propertyGPR, JSString::offsetOfValue()), destGPR);
+        if (canBeRope)
+            slowCases.append(branchIfRopeStringImpl(destGPR));
+        slowCases.append(branchTest32(Zero, Address(destGPR, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIsAtom())));
+    } else if (propertyIsSymbol)
+        loadPtr(Address(propertyGPR, Symbol::offsetOfSymbolImpl()), destGPR);
+    else {
+        slowCases.append(branchIfNotCell(propertyGPR));
+        auto isString = branchIfString(propertyGPR);
+        slowCases.append(branchIfNotSymbol(propertyGPR));
+        loadPtr(Address(propertyGPR, Symbol::offsetOfSymbolImpl()), destGPR);
+        auto done = jump();
+
+        isString.link(this);
+        loadPtr(Address(propertyGPR, JSString::offsetOfValue()), destGPR);
+        if (canBeRope)
+            slowCases.append(branchIfRopeStringImpl(destGPR));
+        slowCases.append(branchTest32(Zero, Address(destGPR, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIsAtom())));
+
+        done.link(this);
+    }
+    return slowCases;
+}
+
 void AssemblyHelpers::emitNonNullDecodeZeroExtendedStructureID(RegisterID source, RegisterID dest)
 {
 #if CPU(ADDRESS64)
