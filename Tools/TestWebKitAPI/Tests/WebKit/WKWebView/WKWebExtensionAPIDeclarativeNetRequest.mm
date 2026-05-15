@@ -37,6 +37,9 @@
 
 namespace TestWebKitAPI {
 
+static NSString *declarativeNetRequestPermisisonKey = @"declarativeNetRequest";
+static NSString *declarativeNetRequestWithHostAccessPermisisonKey = @"declarativeNetRequestWithHostAccess";
+
 TEST(WKWebExtensionAPIDeclarativeNetRequest, BlockedLoadTest)
 {
     TestWebKitAPI::HTTPServer server({
@@ -778,7 +781,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RemoveDynamicRules)
     Util::loadAndRunExtension(declarativeNetRequestManifest, @{ @"background.js": backgroundScript  });
 }
 
-static void runRedirectRule(bool useEnhancedSecurity)
+static void runRedirectRule(bool useEnhancedSecurity, NSString *permission)
 {
     auto *pageScript = Util::constructScript(@[
         @"<script>",
@@ -821,7 +824,7 @@ static void runRedirectRule(bool useEnhancedSecurity)
 
         @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
 
-        @"permissions": @[ @"declarativeNetRequestWithHostAccess" ],
+        @"permissions": @[ permission ],
         @"host_permissions": @[ @"*://localhost/*" ],
 
         @"declarative_net_request": @{
@@ -873,17 +876,22 @@ static void runRedirectRule(bool useEnhancedSecurity)
     [manager run];
 }
 
-TEST(WKWebExtensionAPIDeclarativeNetRequest, RedirectRule)
+TEST(WKWebExtensionAPIDeclarativeNetRequest, RedirectRuleWithHostAccessPermission)
 {
-    runRedirectRule(false);
+    runRedirectRule(false, declarativeNetRequestWithHostAccessPermisisonKey);
 }
 
 TEST(WKWebExtensionAPIDeclarativeNetRequest, RedirectRuleWithEnhancedSecurity)
 {
-    runRedirectRule(true);
+    runRedirectRule(true, declarativeNetRequestWithHostAccessPermisisonKey);
 }
 
-TEST(WKWebExtensionAPIDeclarativeNetRequest, RedirectRuleWithoutHostAccessPermission)
+TEST(WKWebExtensionAPIDeclarativeNetRequest, RedirectRuleWithDeclarativeNetRequestPermission)
+{
+    runRedirectRule(false, declarativeNetRequestPermisisonKey);
+}
+
+static void runRedirectRuleWithoutPermission(NSString *permission)
 {
     auto *pageScript = Util::constructScript(@[
         @"<script>",
@@ -926,7 +934,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RedirectRuleWithoutHostAccessPermis
 
         @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
 
-        @"permissions": @[ @"declarativeNetRequestWithHostAccess" ],
+        @"permissions": @[ permission ],
         @"host_permissions": @[ @"*://localhost/*" ],
 
         @"declarative_net_request": @{
@@ -949,7 +957,11 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RedirectRuleWithoutHostAccessPermis
 
     auto manager = Util::loadExtension(manifest, resources);
 
-    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusDeniedExplicitly forPermission:WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess];
+    if ([permission isEqualToString:declarativeNetRequestPermisisonKey])
+        [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusDeniedExplicitly forPermission:WKWebExtensionPermissionDeclarativeNetRequest];
+    else
+        [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusDeniedExplicitly forPermission:WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess];
+
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
     [manager runUntilTestMessage:@"Load Tab"];
@@ -959,7 +971,17 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RedirectRuleWithoutHostAccessPermis
     [manager run];
 }
 
-TEST(WKWebExtensionAPIDeclarativeNetRequest, RedirectRuleWithoutHostPermission)
+TEST(WKWebExtensionAPIDeclarativeNetRequest, RedirectRuleWithoutHostAccessPermission)
+{
+    runRedirectRuleWithoutPermission(declarativeNetRequestWithHostAccessPermisisonKey);
+}
+
+TEST(WKWebExtensionAPIDeclarativeNetRequest, RedirectRuleWithoutDeclarativeNetRequestPermission)
+{
+    runRedirectRuleWithoutPermission(declarativeNetRequestPermisisonKey);
+}
+
+static void runRedirectRuleWithoutHostPermission(NSString *permission)
 {
     auto *pageScript = Util::constructScript(@[
         @"<script>",
@@ -1002,7 +1024,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RedirectRuleWithoutHostPermission)
 
         @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
 
-        @"permissions": @[ @"declarativeNetRequestWithHostAccess" ],
+        @"permissions": @[ permission ],
         @"host_permissions": @[ @"*://localhost/*" ],
 
         @"declarative_net_request": @{
@@ -1032,7 +1054,17 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RedirectRuleWithoutHostPermission)
     [manager run];
 }
 
-TEST(WKWebExtensionAPIDeclarativeNetRequest, ModifyHeadersRule)
+TEST(WKWebExtensionAPIDeclarativeNetRequest, RedirectRuleWithHostAccessPermissionWithoutHostPermission)
+{
+    runRedirectRuleWithoutHostPermission(declarativeNetRequestWithHostAccessPermisisonKey);
+}
+
+TEST(WKWebExtensionAPIDeclarativeNetRequest, RedirectRuleWithDeclarativeNetRequestPermissionWithoutHostPermission)
+{
+    runRedirectRuleWithoutHostPermission(declarativeNetRequestPermisisonKey);
+}
+
+static void runModifyHeadersRule(NSString *permission)
 {
     auto *pageScript = Util::constructScript(@[
         @"<script>",
@@ -1076,7 +1108,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, ModifyHeadersRule)
 
         @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
 
-        @"permissions": @[ @"declarativeNetRequestWithHostAccess" ],
+        @"permissions": @[ permission ],
         @"host_permissions": @[ @"*://localhost/*" ],
 
         @"declarative_net_request": @{
@@ -1098,6 +1130,97 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, ModifyHeadersRule)
     };
 
     auto manager = Util::loadExtension(manifest, resources);
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager runUntilTestMessage:@"Load Tab"];
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIDeclarativeNetRequest, ModifyHeadersRuleWithHostAccessPermission)
+{
+    runModifyHeadersRule(declarativeNetRequestWithHostAccessPermisisonKey);
+}
+
+TEST(WKWebExtensionAPIDeclarativeNetRequest, ModifyHeadersRuleWithDeclarativeNetRequestPermission)
+{
+    runModifyHeadersRule(declarativeNetRequestPermisisonKey);
+}
+
+static void runModifyHeadersRuleWithoutPermission(NSString *permission)
+{
+    auto *pageScript = Util::constructScript(@[
+        @"<script>",
+        @"  browser.test.assertEq(document.referrer, '')",
+
+        @"  browser.test.notifyPass()",
+        @"</script>"
+    ]);
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, pageScript } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+
+    auto *rules = @[@{
+        @"id": @1,
+        @"priority": @1,
+
+        @"action": @{
+            @"type": @"modifyHeaders",
+            @"requestHeaders": @[ @{
+                @"header": @"Referer",
+                @"operation": @"set",
+                @"value": @"https://example.com/"
+            } ]
+        },
+
+        @"condition": @{
+            @"urlFilter": @"localhost",
+            @"resourceTypes": @[ @"main_frame" ]
+        }
+    }];
+
+    auto *manifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1",
+
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+
+        @"permissions": @[ permission ],
+        @"host_permissions": @[ @"*://localhost/*" ],
+
+        @"declarative_net_request": @{
+            @"rule_resources": @[ @{
+                @"id": @"modifyHeadersRule",
+                @"enabled": @YES,
+                @"path": @"rules.json"
+            } ]
+        }
+    };
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.sendMessage('Load Tab')"
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"rules.json": rules
+    };
+
+    auto manager = Util::loadExtension(manifest, resources);
+
+    if ([permission isEqualToString:declarativeNetRequestPermisisonKey])
+        [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusDeniedExplicitly forPermission:WKWebExtensionPermissionDeclarativeNetRequest];
+    else
+        [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusDeniedExplicitly forPermission:WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess];
 
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
@@ -1110,82 +1233,15 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, ModifyHeadersRule)
 
 TEST(WKWebExtensionAPIDeclarativeNetRequest, ModifyHeadersRuleWithoutHostAccessPermission)
 {
-    auto *pageScript = Util::constructScript(@[
-        @"<script>",
-        @"  browser.test.assertEq(document.referrer, '')",
-
-        @"  browser.test.notifyPass()",
-        @"</script>"
-    ]);
-
-    TestWebKitAPI::HTTPServer server({
-        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, pageScript } },
-    }, TestWebKitAPI::HTTPServer::Protocol::Http);
-
-    auto *urlRequest = server.requestWithLocalhost();
-
-    auto *rules = @[@{
-        @"id": @1,
-        @"priority": @1,
-
-        @"action": @{
-            @"type": @"modifyHeaders",
-            @"requestHeaders": @[ @{
-                @"header": @"Referer",
-                @"operation": @"set",
-                @"value": @"https://example.com/"
-            } ]
-        },
-
-        @"condition": @{
-            @"urlFilter": @"localhost",
-            @"resourceTypes": @[ @"main_frame" ]
-        }
-    }];
-
-    auto *manifest = @{
-        @"manifest_version": @3,
-
-        @"name": @"Test",
-        @"description": @"Test",
-        @"version": @"1",
-
-        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
-
-        @"permissions": @[ @"declarativeNetRequestWithHostAccess" ],
-        @"host_permissions": @[ @"*://localhost/*" ],
-
-        @"declarative_net_request": @{
-            @"rule_resources": @[ @{
-                @"id": @"modifyHeadersRule",
-                @"enabled": @YES,
-                @"path": @"rules.json"
-            } ]
-        }
-    };
-
-    auto *backgroundScript = Util::constructScript(@[
-        @"browser.test.sendMessage('Load Tab')"
-    ]);
-
-    auto *resources = @{
-        @"background.js": backgroundScript,
-        @"rules.json": rules
-    };
-
-    auto manager = Util::loadExtension(manifest, resources);
-
-    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusDeniedExplicitly forPermission:WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess];
-    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
-
-    [manager runUntilTestMessage:@"Load Tab"];
-
-    [manager.get().defaultTab.webView loadRequest:urlRequest];
-
-    [manager run];
+    runModifyHeadersRuleWithoutPermission(declarativeNetRequestWithHostAccessPermisisonKey);
 }
 
-TEST(WKWebExtensionAPIDeclarativeNetRequest, ModifyHeadersRuleWithoutHostPermission)
+TEST(WKWebExtensionAPIDeclarativeNetRequest, ModifyHeadersRuleWithoutDeclarativeNetRequestPermission)
+{
+    runModifyHeadersRuleWithoutPermission(declarativeNetRequestPermisisonKey);
+}
+
+static void runModifyHeadersRuleWithoutHostPermission(NSString *permission)
 {
     auto *pageScript = Util::constructScript(@[
         @"<script>",
@@ -1229,7 +1285,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, ModifyHeadersRuleWithoutHostPermiss
 
         @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
 
-        @"permissions": @[ @"declarativeNetRequestWithHostAccess" ],
+        @"permissions": @[ permission ],
         @"host_permissions": @[ @"*://localhost/*" ],
 
         @"declarative_net_request": @{
@@ -1257,6 +1313,16 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, ModifyHeadersRuleWithoutHostPermiss
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
     [manager run];
+}
+
+TEST(WKWebExtensionAPIDeclarativeNetRequest, ModifyHeadersRuleWithHostAccessPermissionWithoutHostPermission)
+{
+    runModifyHeadersRuleWithoutHostPermission(declarativeNetRequestWithHostAccessPermisisonKey);
+}
+
+TEST(WKWebExtensionAPIDeclarativeNetRequest, ModifyHeadersRuleWithDeclarativeNetRequestPermissionWithoutHostPermission)
+{
+    runModifyHeadersRuleWithoutHostPermission(declarativeNetRequestPermisisonKey);
 }
 
 TEST(WKWebExtensionAPIDeclarativeNetRequest, MainFrameAllowAllRequests)
