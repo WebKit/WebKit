@@ -8906,14 +8906,6 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
         m_openedMainFrameName = { };
     }
 
-    auto expectSafeBrowsing = ShouldExpectSafeBrowsingResult::No;
-    MonotonicTime requestStart;
-
-    if (navigation && navigation->safeBrowsingCheckOngoing()) {
-        expectSafeBrowsing = ShouldExpectSafeBrowsingResult::Yes;
-        requestStart = navigation->requestStart();
-    }
-
     Ref listener = frame->setUpPolicyListenerProxy([
         this,
         protectedThis = Ref { *this },
@@ -9042,14 +9034,7 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
         }
 #endif
         completionHandlerWrapper(policyAction);
-    }, expectSafeBrowsing , ShouldExpectAppBoundDomainResult::No, ShouldWaitForInitialLinkDecorationFilteringData::No, ShouldWaitForSiteHasStorageCheck::No);
-    if (expectSafeBrowsing == ShouldExpectSafeBrowsingResult::Yes && navigation) {
-        Seconds timeout = (MonotonicTime::now() - requestStart) * 1.5 + 0.25_s;
-        RunLoop::mainSingleton().dispatchAfter(timeout, [listener, navigation] mutable {
-            listener->didReceiveSafeBrowsingResults({ });
-            navigation->setSafeBrowsingCheckTimedOut();
-        });
-    }
+    }, ShouldExpectSafeBrowsingResult::No, ShouldExpectAppBoundDomainResult::No, ShouldWaitForInitialLinkDecorationFilteringData::No, ShouldWaitForSiteHasStorageCheck::No);
 
     if (m_policyClient)
         m_policyClient->decidePolicyForResponse(*this, *frame, response, request, canShowMIMEType, WTF::move(listener));
