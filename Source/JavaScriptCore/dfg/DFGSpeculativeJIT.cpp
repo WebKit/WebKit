@@ -6413,11 +6413,7 @@ void SpeculativeJIT::compileArithRounding(Node* node)
             case ArithRound: {
                 FPRTemporary result(this);
                 FPRReg resultFPR = result.fpr();
-                if (producesInteger(node->arithRoundingMode()) && !shouldCheckNegativeZero(node->arithRoundingMode())) {
-                    move64ToDouble(TrustedImm64(std::bit_cast<uint64_t>(0.5)), resultFPR);
-                    addDouble(valueFPR, resultFPR);
-                    floorDouble(resultFPR, resultFPR);
-                } else {
+                {
                     ceilDouble(valueFPR, resultFPR);
 
                     FPRTemporary scratch(this);
