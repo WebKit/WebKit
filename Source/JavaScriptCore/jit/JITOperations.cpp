@@ -912,7 +912,7 @@ static ALWAYS_INLINE JSValue inByValMegamorphic(JSGlobalObject* globalObject, VM
     constexpr bool verbose = false;
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!baseValue.isObject() || !(subscript.isString() && CacheableIdentifier::isCacheableIdentifierCell(subscript))) [[unlikely]] {
+    if (!baseValue.isObject() || !CacheableIdentifier::isCacheableIdentifierCell(subscript)) [[unlikely]] {
         dataLogLnIf(verbose, " ", __LINE__);
         if (propertyCache && propertyCache->considerRepatchingCacheMegamorphic(vm)) {
             repatchInBySlowPathCall(callFrame->codeBlock(), *propertyCache, InByKind::ByVal);
@@ -2038,7 +2038,7 @@ ALWAYS_INLINE static void putByValMegamorphic(JSGlobalObject* globalObject, VM& 
     auto scope = DECLARE_THROW_SCOPE(vm);
     bool isStrict = kind == PutByKind::ByValStrict;
 
-    if (!baseValue.isObject() || !(subscript.isString() && CacheableIdentifier::isCacheableIdentifierCell(subscript))) [[unlikely]] {
+    if (!baseValue.isObject() || !CacheableIdentifier::isCacheableIdentifierCell(subscript)) [[unlikely]] {
         if (propertyCache && propertyCache->considerRepatchingCacheMegamorphic(vm))
             repatchPutBySlowPathCall(callFrame->codeBlock(), *propertyCache, kind);
         scope.release();
@@ -3684,7 +3684,7 @@ static ALWAYS_INLINE JSValue getByValMegamorphic(JSGlobalObject* globalObject, V
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!baseValue.isObject() || !(subscript.isString() && CacheableIdentifier::isCacheableIdentifierCell(subscript))) [[unlikely]] {
+    if (!baseValue.isObject() || !CacheableIdentifier::isCacheableIdentifierCell(subscript)) [[unlikely]] {
         if (propertyCache && propertyCache->considerRepatchingCacheMegamorphic(vm))
             repatchGetBySlowPathCall(callFrame->codeBlock(), *propertyCache, kind);
         if (kind == GetByKind::ByVal)

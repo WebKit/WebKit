@@ -8109,28 +8109,45 @@ void SpeculativeJIT::compileGetByIdWithThisMegamorphic(Node* node)
 void SpeculativeJIT::compileGetByValMegamorphic(Node* node)
 {
     SpeculateCellOperand base(this, m_graph.child(node, 0));
-    SpeculateCellOperand subscript(this, m_graph.child(node, 1));
+    UseKind subscriptUseKind = m_graph.child(node, 1).useKind();
+    std::optional<SpeculateCellOperand> subscriptAsCell;
+    std::optional<JSValueOperand> subscriptAsValue;
+    GPRReg subscriptGPR;
+    if (subscriptUseKind == UntypedUse) {
+        subscriptAsValue.emplace(this, m_graph.child(node, 1));
+        subscriptGPR = subscriptAsValue->gpr();
+    } else {
+        ASSERT(subscriptUseKind == StringUse || subscriptUseKind == SymbolUse);
+        subscriptAsCell.emplace(this, m_graph.child(node, 1));
+        subscriptGPR = subscriptAsCell->gpr();
+    }
     GPRTemporary scratch1(this);
     GPRTemporary scratch2(this);
     GPRTemporary scratch3(this);
     GPRTemporary scratch4(this);
 
     GPRReg baseGPR = base.gpr();
-    GPRReg subscriptGPR = subscript.gpr();
     GPRReg scratch1GPR = scratch1.gpr();
     GPRReg scratch2GPR = scratch2.gpr();
     GPRReg scratch3GPR = scratch3.gpr();
     GPRReg scratch4GPR = scratch4.gpr();
 
     speculateObject(m_graph.child(node, 0), baseGPR);
-    speculateString(m_graph.child(node, 1), subscriptGPR);
+    bool propertyIsString = subscriptUseKind == StringUse;
+    bool propertyIsSymbol = subscriptUseKind == SymbolUse;
+    if (propertyIsString)
+        speculateString(m_graph.child(node, 1), subscriptGPR);
+    else if (propertyIsSymbol)
+        speculateSymbol(m_graph.child(node, 1), subscriptGPR);
+    else {
+        auto& subscriptValue = m_state.forNode(m_graph.child(node, 1));
+        if (subscriptValue.isType(SpecString))
+            propertyIsString = true;
+        else if (subscriptValue.isType(SpecSymbol))
+            propertyIsSymbol = true;
+    }
 
-    JumpList slowCases;
-
-    loadPtr(Address(subscriptGPR, JSString::offsetOfValue()), scratch4GPR);
-    if (canBeRope(m_graph.child(node, 1)))
-        slowCases.append(branchIfRopeStringImpl(scratch4GPR));
-    slowCases.append(branchTest32(Zero, Address(scratch4GPR, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIsAtom())));
+    JumpList slowCases = loadCacheableIdentifierImpl(subscriptGPR, scratch4GPR, propertyIsString, propertyIsSymbol, !propertyIsSymbol && canBeRope(m_graph.child(node, 1)));
 
     slowCases.append(loadMegamorphicProperty(vm(), baseGPR, scratch4GPR, nullptr, scratch3GPR, scratch1GPR, scratch2GPR, scratch3GPR));
     addSlowPathGenerator(slowPathCall(slowCases, this, operationGetByValMegamorphicGeneric, scratch3GPR, LinkableConstant::globalObject(*this, node), baseGPR, subscriptGPR));
@@ -8190,27 +8207,44 @@ void SpeculativeJIT::compileInByIdMegamorphic(Node* node)
 void SpeculativeJIT::compileInByValMegamorphic(Node* node)
 {
     SpeculateCellOperand base(this, m_graph.child(node, 0));
-    SpeculateCellOperand subscript(this, m_graph.child(node, 1));
+    UseKind subscriptUseKind = m_graph.child(node, 1).useKind();
+    std::optional<SpeculateCellOperand> subscriptAsCell;
+    std::optional<JSValueOperand> subscriptAsValue;
+    GPRReg subscriptGPR;
+    if (subscriptUseKind == UntypedUse) {
+        subscriptAsValue.emplace(this, m_graph.child(node, 1));
+        subscriptGPR = subscriptAsValue->gpr();
+    } else {
+        ASSERT(subscriptUseKind == StringUse || subscriptUseKind == SymbolUse);
+        subscriptAsCell.emplace(this, m_graph.child(node, 1));
+        subscriptGPR = subscriptAsCell->gpr();
+    }
     GPRTemporary scratch1(this);
     GPRTemporary scratch2(this);
     GPRTemporary scratch3(this);
     GPRTemporary scratch4(this);
 
     GPRReg baseGPR = base.gpr();
-    GPRReg subscriptGPR = subscript.gpr();
     GPRReg scratch1GPR = scratch1.gpr();
     GPRReg scratch2GPR = scratch2.gpr();
     GPRReg scratch3GPR = scratch3.gpr();
     GPRReg scratch4GPR = scratch4.gpr();
 
-    speculateString(m_graph.child(node, 1), subscriptGPR);
+    bool propertyIsString = subscriptUseKind == StringUse;
+    bool propertyIsSymbol = subscriptUseKind == SymbolUse;
+    if (propertyIsString)
+        speculateString(m_graph.child(node, 1), subscriptGPR);
+    else if (propertyIsSymbol)
+        speculateSymbol(m_graph.child(node, 1), subscriptGPR);
+    else {
+        auto& subscriptValue = m_state.forNode(m_graph.child(node, 1));
+        if (subscriptValue.isType(SpecString))
+            propertyIsString = true;
+        else if (subscriptValue.isType(SpecSymbol))
+            propertyIsSymbol = true;
+    }
 
-    JumpList slowCases;
-
-    loadPtr(Address(subscriptGPR, JSString::offsetOfValue()), scratch4GPR);
-    if (canBeRope(m_graph.child(node, 1)))
-        slowCases.append(branchIfRopeStringImpl(scratch4GPR));
-    slowCases.append(branchTest32(Zero, Address(scratch4GPR, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIsAtom())));
+    JumpList slowCases = loadCacheableIdentifierImpl(subscriptGPR, scratch4GPR, propertyIsString, propertyIsSymbol, !propertyIsSymbol && canBeRope(m_graph.child(node, 1)));
 
     slowCases.append(hasMegamorphicProperty(vm(), baseGPR, scratch4GPR, nullptr, scratch3GPR, scratch1GPR, scratch2GPR, scratch3GPR));
     addSlowPathGenerator(slowPathCall(slowCases, this, operationInByValMegamorphicGeneric, scratch3GPR, LinkableConstant::globalObject(*this, node), baseGPR, subscriptGPR));
@@ -8447,7 +8481,18 @@ void SpeculativeJIT::compilePutByIdMegamorphic(Node* node)
 void SpeculativeJIT::compilePutByValMegamorphic(Node* node)
 {
     SpeculateCellOperand base(this, m_graph.child(node, 0));
-    SpeculateCellOperand subscript(this, m_graph.child(node, 1));
+    UseKind subscriptUseKind = m_graph.child(node, 1).useKind();
+    std::optional<SpeculateCellOperand> subscriptAsCell;
+    std::optional<JSValueOperand> subscriptAsValue;
+    GPRReg subscriptGPR;
+    if (subscriptUseKind == UntypedUse) {
+        subscriptAsValue.emplace(this, m_graph.child(node, 1));
+        subscriptGPR = subscriptAsValue->gpr();
+    } else {
+        ASSERT(subscriptUseKind == StringUse || subscriptUseKind == SymbolUse);
+        subscriptAsCell.emplace(this, m_graph.child(node, 1));
+        subscriptGPR = subscriptAsCell->gpr();
+    }
     JSValueOperand value(this, m_graph.child(node, 2));
     GPRTemporary scratch1(this);
     GPRTemporary scratch2(this);
@@ -8455,21 +8500,27 @@ void SpeculativeJIT::compilePutByValMegamorphic(Node* node)
     GPRTemporary scratch4(this);
 
     GPRReg baseGPR = base.gpr();
-    GPRReg subscriptGPR = subscript.gpr();
     JSValueRegs valueRegs = value.jsValueRegs();
     GPRReg scratch1GPR = scratch1.gpr();
     GPRReg scratch2GPR = scratch2.gpr();
     GPRReg scratch3GPR = scratch3.gpr();
     GPRReg scratch4GPR = scratch4.gpr();
 
-    speculateString(m_graph.child(node, 1), subscriptGPR);
+    bool propertyIsString = subscriptUseKind == StringUse;
+    bool propertyIsSymbol = subscriptUseKind == SymbolUse;
+    if (propertyIsString)
+        speculateString(m_graph.child(node, 1), subscriptGPR);
+    else if (propertyIsSymbol)
+        speculateSymbol(m_graph.child(node, 1), subscriptGPR);
+    else {
+        auto& subscriptValue = m_state.forNode(m_graph.child(node, 1));
+        if (subscriptValue.isType(SpecString))
+            propertyIsString = true;
+        else if (subscriptValue.isType(SpecSymbol))
+            propertyIsSymbol = true;
+    }
 
-    JumpList slowCases;
-
-    loadPtr(Address(subscriptGPR, JSString::offsetOfValue()), scratch4GPR);
-    if (canBeRope(m_graph.child(node, 1)))
-        slowCases.append(branchIfRopeStringImpl(scratch4GPR));
-    slowCases.append(branchTest32(Zero, Address(scratch4GPR, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIsAtom())));
+    JumpList slowCases = loadCacheableIdentifierImpl(subscriptGPR, scratch4GPR, propertyIsString, propertyIsSymbol, !propertyIsSymbol && canBeRope(m_graph.child(node, 1)));
 
     auto [slow, reallocating] = storeMegamorphicProperty(vm(), baseGPR, scratch4GPR, nullptr, valueRegs.payloadGPR(), scratch1GPR, scratch2GPR, scratch3GPR);
     slowCases.append(WTF::move(slow));

@@ -1271,7 +1271,12 @@ private:
             case Array::Generic:
                 if (node->op() == GetByValMegamorphic) {
                     fixEdge<ObjectUse>(m_graph.child(node, 0));
-                    fixEdge<StringUse>(m_graph.child(node, 1));
+                    if (m_graph.child(node, 1)->shouldSpeculateString())
+                        fixEdge<StringUse>(m_graph.child(node, 1));
+                    else if (m_graph.child(node, 1)->shouldSpeculateSymbol())
+                        fixEdge<SymbolUse>(m_graph.child(node, 1));
+                    else
+                        fixEdge<UntypedUse>(m_graph.child(node, 1));
                     break;
                 }
 
@@ -1406,7 +1411,12 @@ private:
             Edge& child2 = m_graph.varArgChild(node, 1);
             node->setArrayMode(ArrayMode(Array::Generic, node->arrayMode().action()));
             fixEdge<CellUse>(child1);
-            fixEdge<StringUse>(child2);
+            if (child2->shouldSpeculateString())
+                fixEdge<StringUse>(child2);
+            else if (child2->shouldSpeculateSymbol())
+                fixEdge<SymbolUse>(child2);
+            else
+                fixEdge<UntypedUse>(child2);
             break;
         }
 
@@ -2594,7 +2604,12 @@ private:
 
             if (node->op() == InByValMegamorphic) {
                 node->setArrayMode(node->arrayMode().withType(Array::Generic));
-                fixEdge<StringUse>(node->child2());
+                if (node->child2()->shouldSpeculateString())
+                    fixEdge<StringUse>(node->child2());
+                else if (node->child2()->shouldSpeculateSymbol())
+                    fixEdge<SymbolUse>(node->child2());
+                else
+                    fixEdge<UntypedUse>(node->child2());
             }
             fixEdge<CellUse>(node->child1());
             break;

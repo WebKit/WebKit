@@ -4521,8 +4521,24 @@ private:
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         LValue object = lowObject(m_graph.child(m_node, 0));
-        LValue subscript = lowString(m_graph.child(m_node, 1));
-        bool needsRopeCase = canBeRope(m_graph.child(m_node, 1));
+        UseKind subscriptUseKind = m_graph.child(m_node, 1).useKind();
+        bool propertyIsString = subscriptUseKind == StringUse;
+        bool propertyIsSymbol = subscriptUseKind == SymbolUse;
+
+        LValue subscript;
+        if (propertyIsString)
+            subscript = lowString(m_graph.child(m_node, 1));
+        else if (propertyIsSymbol)
+            subscript = lowSymbol(m_graph.child(m_node, 1));
+        else {
+            subscript = lowJSValue(m_graph.child(m_node, 1));
+            auto& subscriptValue = m_state.forNode(m_graph.child(m_node, 1));
+            if (subscriptValue.isType(SpecString))
+                propertyIsString = true;
+            else if (subscriptValue.isType(SpecSymbol))
+                propertyIsSymbol = true;
+        }
+        bool needsRopeCase = !propertyIsSymbol && canBeRope(m_graph.child(m_node, 1));
 
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
         patchpoint->appendSomeRegister(object);
@@ -4558,12 +4574,7 @@ private:
             GPRReg scratch3GPR = params.gpScratch(2);
             GPRReg scratch4GPR = params.gpScratch(3);
 
-            CCallHelpers::JumpList slowCases;
-
-            jit.loadPtr(CCallHelpers::Address(subscriptGPR, JSString::offsetOfValue()), scratch4GPR);
-            if (needsRopeCase)
-                slowCases.append(jit.branchIfRopeStringImpl(scratch4GPR));
-            slowCases.append(jit.branchTest32(CCallHelpers::Zero, CCallHelpers::Address(scratch4GPR, StringImpl::flagsOffset()), CCallHelpers::TrustedImm32(StringImpl::flagIsAtom())));
+            CCallHelpers::JumpList slowCases = jit.loadCacheableIdentifierImpl(subscriptGPR, scratch4GPR, propertyIsString, propertyIsSymbol, needsRopeCase);
 
             slowCases.append(jit.loadMegamorphicProperty(state->vm(), baseGPR, scratch4GPR, nullptr, resultGPR, scratch1GPR, scratch2GPR, scratch3GPR));
             CCallHelpers::Label doneForSlow = jit.label();
@@ -5130,9 +5141,25 @@ private:
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         LValue cell = lowCell(m_graph.child(m_node, 0));
-        LValue subscript = lowString(m_graph.child(m_node, 1));
+        UseKind subscriptUseKind = m_graph.child(m_node, 1).useKind();
+        bool propertyIsString = subscriptUseKind == StringUse;
+        bool propertyIsSymbol = subscriptUseKind == SymbolUse;
+
+        LValue subscript;
+        if (propertyIsString)
+            subscript = lowString(m_graph.child(m_node, 1));
+        else if (propertyIsSymbol)
+            subscript = lowSymbol(m_graph.child(m_node, 1));
+        else {
+            subscript = lowJSValue(m_graph.child(m_node, 1));
+            auto& subscriptValue = m_state.forNode(m_graph.child(m_node, 1));
+            if (subscriptValue.isType(SpecString))
+                propertyIsString = true;
+            else if (subscriptValue.isType(SpecSymbol))
+                propertyIsSymbol = true;
+        }
         LValue value = lowJSValue(m_graph.child(m_node, 2));
-        bool needsRopeCase = canBeRope(m_graph.child(m_node, 1));
+        bool needsRopeCase = !propertyIsSymbol && canBeRope(m_graph.child(m_node, 1));
 
         PatchpointValue* patchpoint = m_out.patchpoint(Void);
         patchpoint->appendSomeRegister(cell);
@@ -5169,12 +5196,7 @@ private:
             GPRReg scratch3GPR = params.gpScratch(2);
             GPRReg scratch4GPR = params.gpScratch(3);
 
-            CCallHelpers::JumpList slowCases;
-
-            jit.loadPtr(CCallHelpers::Address(subscriptGPR, JSString::offsetOfValue()), scratch4GPR);
-            if (needsRopeCase)
-                slowCases.append(jit.branchIfRopeStringImpl(scratch4GPR));
-            slowCases.append(jit.branchTest32(CCallHelpers::Zero, CCallHelpers::Address(scratch4GPR, StringImpl::flagsOffset()), CCallHelpers::TrustedImm32(StringImpl::flagIsAtom())));
+            CCallHelpers::JumpList slowCases = jit.loadCacheableIdentifierImpl(subscriptGPR, scratch4GPR, propertyIsString, propertyIsSymbol, needsRopeCase);
 
             CCallHelpers::JumpList slow, reallocating;
             std::tie(slow, reallocating) = jit.storeMegamorphicProperty(state->vm(), baseGPR, scratch4GPR, nullptr, valueGPR, scratch1GPR, scratch2GPR, scratch3GPR);
@@ -16897,8 +16919,24 @@ IGNORE_CLANG_WARNINGS_END
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         LValue cell = lowCell(m_graph.child(m_node, 0));
-        LValue subscript = lowString(m_graph.child(m_node, 1));
-        bool needsRopeCase = canBeRope(m_graph.child(m_node, 1));
+        UseKind subscriptUseKind = m_graph.child(m_node, 1).useKind();
+        bool propertyIsString = subscriptUseKind == StringUse;
+        bool propertyIsSymbol = subscriptUseKind == SymbolUse;
+
+        LValue subscript;
+        if (propertyIsString)
+            subscript = lowString(m_graph.child(m_node, 1));
+        else if (propertyIsSymbol)
+            subscript = lowSymbol(m_graph.child(m_node, 1));
+        else {
+            subscript = lowJSValue(m_graph.child(m_node, 1));
+            auto& subscriptValue = m_state.forNode(m_graph.child(m_node, 1));
+            if (subscriptValue.isType(SpecString))
+                propertyIsString = true;
+            else if (subscriptValue.isType(SpecSymbol))
+                propertyIsSymbol = true;
+        }
+        bool needsRopeCase = !propertyIsSymbol && canBeRope(m_graph.child(m_node, 1));
 
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
         patchpoint->appendSomeRegister(cell);
@@ -16934,12 +16972,7 @@ IGNORE_CLANG_WARNINGS_END
             GPRReg scratch3GPR = params.gpScratch(2);
             GPRReg scratch4GPR = params.gpScratch(3);
 
-            CCallHelpers::JumpList slowCases;
-
-            jit.loadPtr(CCallHelpers::Address(subscriptGPR, JSString::offsetOfValue()), scratch4GPR);
-            if (needsRopeCase)
-                slowCases.append(jit.branchIfRopeStringImpl(scratch4GPR));
-            slowCases.append(jit.branchTest32(CCallHelpers::Zero, CCallHelpers::Address(scratch4GPR, StringImpl::flagsOffset()), CCallHelpers::TrustedImm32(StringImpl::flagIsAtom())));
+            CCallHelpers::JumpList slowCases = jit.loadCacheableIdentifierImpl(subscriptGPR, scratch4GPR, propertyIsString, propertyIsSymbol, needsRopeCase);
 
             slowCases.append(jit.hasMegamorphicProperty(state->vm(), baseGPR, scratch4GPR, nullptr, resultGPR, scratch1GPR, scratch2GPR, scratch3GPR));
             CCallHelpers::Label doneForSlow = jit.label();
