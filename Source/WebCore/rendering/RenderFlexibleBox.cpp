@@ -2541,8 +2541,7 @@ Overflow RenderFlexibleBox::crossAxisOverflowForFlexItem(const RenderBox& flexIt
 
 bool RenderFlexibleBox::flexItemHasPercentHeightDescendants(const RenderBox& renderer) const
 {
-    // FIXME: This function can be removed soon after webkit.org/b/204318 is fixed. Evaluate whether the
-    // skipContainingBlockForPercentHeightCalculation() check below should be moved to the caller in that case.
+    // FIXME: This function can be removed soon after webkit.org/b/204318 is fixed.
     CheckedPtr renderBlock = dynamicDowncast<RenderBlock>(renderer);
     if (!renderBlock)
         return false;

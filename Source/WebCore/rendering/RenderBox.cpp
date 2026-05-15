@@ -3822,7 +3822,7 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeContentA
     );
 }
 
-bool RenderBox::skipContainingBlockForPercentHeightCalculation(const RenderBox& containingBlock, bool isPerpendicularWritingMode) const
+bool RenderBox::skipContainingBlockForPercentageOrStretchHeightCalculation(const RenderBox& containingBlock, bool isPerpendicularWritingMode) const
 {
     // Flow threads for multicol or paged overflow should be skipped. They are invisible to the DOM,
     // and percent heights of children should be resolved against the multicol or paged container.
@@ -3892,7 +3892,7 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computePercenta
     const RenderBox* containingBlockChild = this;
     LayoutUnit rootMarginBorderPaddingHeight;
     bool isHorizontal = isHorizontalWritingMode();
-    while (containingBlock && !is<RenderView>(*containingBlock) && skipContainingBlockForPercentHeightCalculation(*containingBlock, isHorizontal != containingBlock->isHorizontalWritingMode())) {
+    while (containingBlock && !is<RenderView>(*containingBlock) && skipContainingBlockForPercentageOrStretchHeightCalculation(*containingBlock, isHorizontal != containingBlock->isHorizontalWritingMode())) {
         if (containingBlock->isBody() || containingBlock->isDocumentElementRenderer())
             rootMarginBorderPaddingHeight += containingBlock->marginBefore() + containingBlock->marginAfter() + containingBlock->borderAndPaddingLogicalHeight();
         skippedAutoHeightContainingBlock = true;
@@ -5195,7 +5195,24 @@ bool RenderBox::containingBlockHasDefiniteBlockSize() const
     if (isOrthogonal(*this, *containingBlock))
         return true;
 
-    // The containing block has a directly resolvable height (fixed, percentage, etc.)
+    // Walk past containing blocks that percentage and stretch height resolution skip.
+    bool isHorizontal = isHorizontalWritingMode();
+    while (containingBlock && !is<RenderView>(*containingBlock)
+        && skipContainingBlockForPercentageOrStretchHeightCalculation(*containingBlock, isHorizontal != containingBlock->isHorizontalWritingMode()))
+        containingBlock = containingBlock->containingBlock();
+    if (!containingBlock)
+        return false;
+
+    // The walk may have landed on a perpendicular ancestor; orthogonal containing
+    // blocks always have a definite block size (their inline axis is definite).
+    if (isOrthogonal(*this, *containingBlock))
+        return true;
+
+    // RenderView always has a definite block size (the viewport).
+    if (is<RenderView>(*containingBlock))
+        return true;
+
+    // The (resolved) containing block has a directly resolvable height (fixed, percentage, etc.).
     if (containingBlock->hasDefiniteLogicalHeight() || containingBlock->stretchesToViewport())
         return true;
 

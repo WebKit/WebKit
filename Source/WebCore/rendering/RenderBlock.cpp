@@ -2961,7 +2961,7 @@ std::optional<LayoutUnit> RenderBlock::availableLogicalHeightForPercentageComput
 {
     // For anonymous blocks that are skipped during percentage height calculation,
     // we consider them to have an indefinite height.
-    if (skipContainingBlockForPercentHeightCalculation(*this, false))
+    if (skipContainingBlockForPercentageOrStretchHeightCalculation(*this, false))
         return { };
 
     auto availableHeight = [&]() -> std::optional<LayoutUnit> {
