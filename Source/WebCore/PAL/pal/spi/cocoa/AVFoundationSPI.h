@@ -261,6 +261,11 @@ typedef NS_ENUM(NSInteger, AVExternalContentProtectionStatus) {
 @interface AVContentKeyRequest (AVContentKeyRequest_PendingProtectionStatus)
 - (AVExternalContentProtectionStatus)externalContentProtectionStatus;
 @end
+#if HAVE(AVCONTENTKEY_EXTERNALCONTENTPROTECTIONSTATUS)
+@interface AVContentKey (AVContentKey_ExternalContentProtectionStatus)
+@property (nonatomic, readonly) AVExternalContentProtectionStatus externalContentProtectionStatus;
+@end
+#endif
 #endif // HAVE(AVCONTENTKEYREQUEST_PENDING_PROTECTION_STATUS)
 
 #endif // HAVE(AVCONTENTKEYSESSION)

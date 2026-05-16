@@ -68,13 +68,6 @@ static const size_t kMaximumDeviceIdentifierSeedSize = 20;
 @interface WebCoreFPSContentKeySessionDelegate : NSObject <AVContentKeySessionDelegate>
 @end
 
-#if HAVE(AVCONTENTKEY_EXTERNALCONTENTPROTECTIONSTATUS)
-// FIXME (118150407): Remove staging code once -[AVContentKey externalContentProtectionStatus] is available in SDKs used by WebKit builders
-@interface AVContentKey (Staging_113213892)
-@property (readonly) AVExternalContentProtectionStatus externalContentProtectionStatus;
-@end
-#endif
-
 @implementation WebCoreFPSContentKeySessionDelegate {
     WeakPtr<WebCore::AVContentKeySessionDelegateClient> _parent;
 }
@@ -185,16 +178,14 @@ static const size_t kMaximumDeviceIdentifierSeedSize = 20;
     if (RefPtr parent = _parent.get())
         parent->externalProtectionStatusDidChangeForContentKey(contentKey);
 }
-#endif
-
-// FIXME (118150407): Once -[AVContentKey externalContentProtectionStatus] is available in SDKs used by WebKit builders,
-// only implement this optional delegate method when !HAVE(AVCONTENTKEY_EXTERNALCONTENTPROTECTIONSTATUS)
+#else
 - (void)contentKeySession:(AVContentKeySession *)session externalProtectionStatusDidChangeForContentKeyRequest:(AVContentKeyRequest *)keyRequest
 {
     UNUSED_PARAM(session);
     if (RefPtr parent = _parent.get())
         parent->externalProtectionStatusDidChangeForContentKeyRequest(keyRequest);
 }
+#endif
 
 @end
 
@@ -1674,12 +1665,11 @@ std::optional<CDMKeyStatus> CDMInstanceSessionFairPlayStreamingAVFObjC::protecti
     if (!contentKey)
         return std::nullopt;
 
-    // FIXME (118150407): Remove staging code once -[AVContentKey externalContentProtectionStatus] is available in SDKs used by WebKit builders
-    if ([contentKey respondsToSelector:@selector(externalContentProtectionStatus)])
-        return keyStatusForContentProtectionStatus([contentKey externalContentProtectionStatus]);
+    return keyStatusForContentProtectionStatus([contentKey externalContentProtectionStatus]);
+#else
+    return keyStatusForContentProtectionStatus([request externalContentProtectionStatus]);
 #endif
 
-    return keyStatusForContentProtectionStatus([request externalContentProtectionStatus]);
 #else
 
 #if HAVE(AVCONTENTKEYSESSIONWILLOUTPUTBEOBSCURED)
