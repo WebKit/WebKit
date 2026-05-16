@@ -96,7 +96,9 @@
 		CC0000000B000000000000CC /* js_heap_innards.h in Headers */ = {isa = PBXBuildFile; fileRef = CC0000000C000000000000CC /* js_heap_innards.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CC0000000D000000000000CC /* js_heap_ref.h in Headers */ = {isa = PBXBuildFile; fileRef = CC0000000E000000000000CC /* js_heap_ref.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CC0000000F000000000000CC /* js_heap_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = CC00000010000000000000CC /* js_heap_utils.c */; };
+		117E89DE578546189B56536E /* js_marked_block_heap.c in Sources */ = {isa = PBXBuildFile; fileRef = 9887CA058416412BAA2D5C9C /* js_marked_block_heap.c */; };
 		CC00000011000000000000CC /* js_heap_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = CC00000012000000000000CC /* js_heap_utils.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FF5D77CFCE3A4E43AC542626 /* js_marked_block_heap.h in Headers */ = {isa = PBXBuildFile; fileRef = E0E03795F3BB4E21A62F6542 /* js_marked_block_heap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C5E4C2B62E0E12F1001E806C /* VMAllocate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5E4C2B52E0E12F1001E806C /* VMAllocate.cpp */; };
 		DD4BEC2629CBA49700398E35 /* pas_large_heap_physical_page_sharing_cache.c in Sources */ = {isa = PBXBuildFile; fileRef = 0FC40A832451498B00876DA0 /* pas_large_heap_physical_page_sharing_cache.c */; };
 		DD4BEC2729CBA49700398E35 /* pas_medium_megapage_cache.c in Sources */ = {isa = PBXBuildFile; fileRef = 0F87004B25AF8A19000E1ABF /* pas_medium_megapage_cache.c */; };
@@ -1231,6 +1233,8 @@
 		CC0000000E000000000000CC /* js_heap_ref.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = js_heap_ref.h; path = libpas/src/libpas/js_heap_ref.h; sourceTree = "<group>"; };
 		CC00000010000000000000CC /* js_heap_utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = js_heap_utils.c; path = libpas/src/libpas/js_heap_utils.c; sourceTree = "<group>"; };
 		CC00000012000000000000CC /* js_heap_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = js_heap_utils.h; path = libpas/src/libpas/js_heap_utils.h; sourceTree = "<group>"; };
+		9887CA058416412BAA2D5C9C /* js_marked_block_heap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = js_marked_block_heap.c; path = libpas/src/libpas/js_marked_block_heap.c; sourceTree = "<group>"; };
+		E0E03795F3BB4E21A62F6542 /* js_marked_block_heap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = js_marked_block_heap.h; path = libpas/src/libpas/js_marked_block_heap.h; sourceTree = "<group>"; };
 		C5E4C2B52E0E12F1001E806C /* VMAllocate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = VMAllocate.cpp; path = bmalloc/VMAllocate.cpp; sourceTree = "<group>"; };
 		DE8B13B221CC5D9F00A63FCD /* BVMTags.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BVMTags.h; path = bmalloc/BVMTags.h; sourceTree = "<group>"; };
 		E31E747F2238CA5B005D084A /* StaticPerProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StaticPerProcess.h; path = bmalloc/StaticPerProcess.h; sourceTree = "<group>"; };
@@ -1347,6 +1351,8 @@
 				CC0000000E000000000000CC /* js_heap_ref.h */,
 				CC00000010000000000000CC /* js_heap_utils.c */,
 				CC00000012000000000000CC /* js_heap_utils.h */,
+				9887CA058416412BAA2D5C9C /* js_marked_block_heap.c */,
+				E0E03795F3BB4E21A62F6542 /* js_marked_block_heap.h */,
 				0F18F83D25C3467700721C2A /* minalign32_heap.c */,
 				0F18F84125C3467700721C2A /* minalign32_heap.h */,
 				0F18F84425C3467700721C2A /* minalign32_heap_config.c */,
@@ -2008,6 +2014,7 @@
 				CC0000000B000000000000CC /* js_heap_innards.h in Headers */,
 				CC0000000D000000000000CC /* js_heap_ref.h in Headers */,
 				CC00000011000000000000CC /* js_heap_utils.h in Headers */,
+				FF5D77CFCE3A4E43AC542626 /* js_marked_block_heap.h in Headers */,
 				4426E2811C838EE0008EB042 /* Logging.h in Headers */,
 				14C8992B1CC485E70027A057 /* Map.h in Headers */,
 				DD4BEDE229CBA49700398E35 /* minalign32_heap.h in Headers */,
@@ -2536,6 +2543,7 @@
 				CC00000001000000000000CC /* js_heap.c in Sources */,
 				CC00000005000000000000CC /* js_heap_config.c in Sources */,
 				CC0000000F000000000000CC /* js_heap_utils.c in Sources */,
+				117E89DE578546189B56536E /* js_marked_block_heap.c in Sources */,
 				4426E2801C838EE0008EB042 /* Logging.cpp in Sources */,
 				DD4BED5529CBA49700398E35 /* minalign32_heap.c in Sources */,
 				DD4BEDE729CBA49700398E35 /* minalign32_heap_config.c in Sources */,
