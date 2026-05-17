@@ -68,7 +68,7 @@ TEST(WebKit, AttrStyle)
 
     isDone = false;
     [webView evaluateJavaScript:@"document.body.getAttributeNode('marginheight').style.cssText" completionHandler:^(NSString *result, NSError *error) {
-        EXPECT_STREQ("margin-bottom: 20px; margin-top: 20px;", result.UTF8String);
+        EXPECT_STREQ("margin-top: 20px; margin-bottom: 20px;", result.UTF8String);
         isDone = true;
     }];
     TestWebKitAPI::Util::run(&isDone);

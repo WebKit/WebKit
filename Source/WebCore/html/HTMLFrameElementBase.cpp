@@ -141,6 +141,13 @@ void HTMLFrameElementBase::attributeChanged(const QualifiedName& name, const Ato
     else if (name == marginwidthAttr || name == marginheightAttr) {
         if (RefPtr contentDocument = this->contentDocument()) {
             if (RefPtr body = contentDocument->body()) {
+                // https://html.spec.whatwg.org/multipage/rendering.html#the-page
+                // The container frame element's marginwidth has lower precedence than
+                // the body's leftmargin (same for marginheight vs topmargin), so don't
+                // propagate if the body already has the lower-precedence body attribute.
+                auto& fallbackAttr = name == marginwidthAttr ? leftmarginAttr : topmarginAttr;
+                if (body->hasAttributeWithoutSynchronization(fallbackAttr))
+                    return;
                 if (newValue.isNull())
                     body->removeAttribute(name);
                 else
