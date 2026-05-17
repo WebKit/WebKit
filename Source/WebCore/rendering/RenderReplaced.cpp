@@ -606,7 +606,10 @@ LayoutRect RenderReplaced::replacedContentRect(const LayoutSize& intrinsicSize) 
 
 std::optional<double> RenderReplaced::preferredAspectRatio() const
 {
-    return preferredAspectRatioAsSize().aspectRatioDouble();
+    auto preferredSize = preferredAspectRatioAsSize();
+    if (preferredSize.isEmpty())
+        return std::nullopt;
+    return preferredSize.aspectRatioDouble();
 }
 
 FloatSize RenderReplaced::preferredAspectRatioAsSize() const
@@ -624,7 +627,8 @@ FloatSize RenderReplaced::preferredAspectRatioAsSize() const
         return preferredAspectRatio;
 
     // After supporting contain-intrinsic-size, the intrinsicSize of size containment is not always empty.
-    if (intrinsicSize.isEmpty() || shouldApplySizeContainment())
+    // A video that is still using its default 300x150 object size must not contribute an aspect ratio.
+    if (intrinsicSize.isEmpty() || shouldApplySizeContainment() || isVideoWithDefaultObjectSize(this))
         return preferredAspectRatio;
 
     return intrinsicSize;
