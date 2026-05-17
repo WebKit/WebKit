@@ -33,8 +33,6 @@
 #define DUMP_PROPERTYMAP_STATS 0
 #define DUMP_PROPERTYMAP_COLLISIONS 0
 
-#define PROPERTY_MAP_DELETED_ENTRY_KEY ((UniquedStringImpl*)1)
-
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
@@ -145,12 +143,6 @@ public:
     // Number of slots in the property storage array in use, included deletedOffsets.
     unsigned propertyStorageSize() const;
 
-    // Used to maintain a list of unused entries in the property storage.
-    void clearDeletedOffsets();
-    bool hasDeletedOffset();
-    PropertyOffset takeDeletedOffset();
-    void addDeletedOffset(PropertyOffset);
-    
     PropertyOffset nextOffset(PropertyOffset inlineCapacity);
 
     // Copy this PropertyTable, ensuring the copy has at least the capacity provided.
@@ -175,11 +167,31 @@ private:
 
     void finishCreation(VM&);
 
+    // Used to maintain a list of unused entries in the property storage.
+    bool hasDeletedOffset();
+    PropertyOffset takeDeletedOffset();
+
     // Used to insert a value known not to be in the table, and where we know capacity to be available.
     template<typename Index, typename Entry>
     void reinsert(Index*, Entry*, const ValueType& entry);
 
     static bool canFitInCompact(const ValueType& entry) { return entry.offset() <= UINT8_MAX; }
+
+    // A tombstone's key encodes its next-deleted entry index as ((nextIndex << 1) | 1).
+    // A live key's low bit is always clear (UniquedStringImpl is pointer-aligned).
+    static bool isDeletedKey(KeyType key)
+    {
+        return std::bit_cast<uintptr_t>(key) & 1;
+    }
+    static KeyType encodeDeletedKey(unsigned nextIndex)
+    {
+        return std::bit_cast<KeyType>((static_cast<uintptr_t>(nextIndex) << 1) | 1);
+    }
+    static unsigned decodeNextDeletedIndex(KeyType key)
+    {
+        ASSERT(isDeletedKey(key));
+        return static_cast<unsigned>(std::bit_cast<uintptr_t>(key) >> 1);
+    }
 
     // Rehash the table. Used to grow, or to recover deleted slots.
     void rehash(VM&, unsigned newCapacity, bool canStayCompact);
@@ -284,22 +296,22 @@ private:
     static constexpr uintptr_t isCompactFlag = 0x1;
     static constexpr uintptr_t indexVectorMask = ~isCompactFlag;
 
-    unsigned m_indexSize;
-    unsigned m_indexMask;
-    uintptr_t m_indexVector;
-    unsigned m_keyCount;
-    unsigned m_deletedCount;
-    std::unique_ptr<Vector<PropertyOffset>> m_deletedOffsets;
+    unsigned m_indexSize { 0 };
+    unsigned m_keyCount { 0 };
+    uintptr_t m_indexVector { 0 };
+    unsigned m_deletedCount { 0 };
+    unsigned m_deletedListHead { EmptyEntryIndex };
 
     static constexpr unsigned MinimumTableSize = 16;
     static_assert(MinimumTableSize >= 16, "compact index is uint8_t and we should keep 16 byte aligned entries after this array");
 };
+static_assert(sizeof(PropertyTable) <= 32, "PropertyTable needs to be very small");
 
 template<typename Index, typename Entry>
 PropertyTable::FindResult PropertyTable::findImpl(const Index* indexVector, const Entry* table, const KeyType& key)
 {
     unsigned hash = IdentifierRepHash::hash(key);
-    unsigned indexMask = m_indexMask;
+    unsigned indexMask = m_indexSize - 1;
     unsigned probeCount = 0;
     unsigned index = hash & indexMask;
 
@@ -313,7 +325,6 @@ PropertyTable::FindResult PropertyTable::findImpl(const Index* indexVector, cons
             return FindResult { entryIndex, index, invalidOffset, 0 };
         const auto& entry = table[entryIndex - 1];
         if (key == entry.key()) {
-            ASSERT(!m_deletedOffsets || !m_deletedOffsets->contains(entry.offset()));
             return FindResult { entryIndex, index, entry.offset(), entry.attributes() };
         }
 
@@ -344,7 +355,7 @@ inline std::tuple<PropertyOffset, unsigned> PropertyTable::get(const KeyType& ke
 {
     ASSERT(key);
     ASSERT(key->isAtom() || key->isSymbol());
-    ASSERT(key != PROPERTY_MAP_DELETED_ENTRY_KEY);
+    ASSERT(!isDeletedKey(key));
 
     if (!m_keyCount)
         return std::tuple { invalidOffset, 0 };
@@ -355,8 +366,6 @@ inline std::tuple<PropertyOffset, unsigned> PropertyTable::get(const KeyType& ke
 
 [[nodiscard]] inline std::tuple<PropertyOffset, unsigned, bool> PropertyTable::add(VM& vm, const ValueType& entry)
 {
-    ASSERT(!m_deletedOffsets || !m_deletedOffsets->contains(entry.offset()));
-
     // Look for a value with a matching key already in the array.
     FindResult result = find(entry.key());
     if (result.offset != invalidOffset)
@@ -401,12 +410,14 @@ inline void PropertyTable::remove(VM& vm, KeyType key, unsigned entryIndex, unsi
     ++propertyTableStats->numRemoves;
 #endif
 
-    // Replace this one element with the deleted sentinel. Also clear out
-    // the entry so we can iterate all the entries as needed.
+    // Replace this index slot with the deleted sentinel and tombstone the entry, encoding
+    // the next-deleted entry index into the entry's key. The entry's offset is preserved
+    // so it can be reused by a future nextOffset() call.
     withIndexVector([&](auto* vector) {
         vector[index] = deletedEntryIndex();
-        tableFromIndexVector(vector)[entryIndex - 1].setKey(PROPERTY_MAP_DELETED_ENTRY_KEY);
+        tableFromIndexVector(vector)[entryIndex - 1].setKey(encodeDeletedKey(m_deletedListHead));
     });
+    m_deletedListHead = entryIndex;
     key->deref();
 
     ASSERT(m_keyCount >= 1);
@@ -450,30 +461,41 @@ inline bool PropertyTable::isEmpty() const
 
 inline unsigned PropertyTable::propertyStorageSize() const
 {
-    return size() + (m_deletedOffsets ? m_deletedOffsets->size() : 0);
-}
-
-inline void PropertyTable::clearDeletedOffsets()
-{
-    m_deletedOffsets = nullptr;
+    // Walk the deleted linked list to count reusable offsets. This is only used by debug
+    // consistency checks and is bounded by the rehash threshold (~25% of m_indexSize),
+    // and is O(1) in the steady state when no deletions are pending.
+    unsigned available = 0;
+    if (m_deletedListHead != EmptyEntryIndex) {
+        withIndexVector([&](const auto* vector) {
+            const auto* table = tableFromIndexVector(vector);
+            unsigned head = m_deletedListHead;
+            while (head != EmptyEntryIndex) {
+                const auto& entry = table[head - 1];
+                ASSERT(isDeletedKey(entry.key()));
+                head = decodeNextDeletedIndex(entry.key());
+                ++available;
+            }
+        });
+    }
+    return size() + available;
 }
 
 inline bool PropertyTable::hasDeletedOffset()
 {
-    return m_deletedOffsets && !m_deletedOffsets->isEmpty();
+    return m_deletedListHead != EmptyEntryIndex;
 }
 
 inline PropertyOffset PropertyTable::takeDeletedOffset()
 {
-    return m_deletedOffsets->takeLast();
-}
-
-inline void PropertyTable::addDeletedOffset(PropertyOffset offset)
-{
-    if (!m_deletedOffsets)
-        m_deletedOffsets = makeUnique<Vector<PropertyOffset>>();
-    ASSERT(!m_deletedOffsets->contains(offset));
-    m_deletedOffsets->append(offset);
+    ASSERT(m_deletedListHead != EmptyEntryIndex);
+    unsigned entryIndex = m_deletedListHead;
+    return withIndexVector([&](auto* vector) -> PropertyOffset {
+        auto& entry = tableFromIndexVector(vector)[entryIndex - 1];
+        ASSERT(isDeletedKey(entry.key()));
+        PropertyOffset offset = entry.offset();
+        m_deletedListHead = decodeNextDeletedIndex(entry.key());
+        return offset;
+    });
 }
 
 inline PropertyOffset PropertyTable::nextOffset(PropertyOffset inlineCapacity)
@@ -498,10 +520,7 @@ inline PropertyTable* PropertyTable::copy(VM& vm, unsigned newCapacity)
 #ifndef NDEBUG
 inline size_t PropertyTable::sizeInMemory()
 {
-    size_t result = sizeof(PropertyTable) + dataSize(isCompact());
-    if (m_deletedOffsets)
-        result += (m_deletedOffsets->capacity() * sizeof(PropertyOffset));
-    return result;
+    return sizeof(PropertyTable) + dataSize(isCompact());
 }
 #endif
 
@@ -517,7 +536,7 @@ inline void PropertyTable::reinsert(Index* indexVector, Entry* table, const Valu
     ASSERT(canInsert(entry));
 
     unsigned hash = IdentifierRepHash::hash(entry.key());
-    unsigned indexMask = m_indexMask;
+    unsigned indexMask = m_indexSize - 1;
     unsigned probeCount = 0;
     unsigned index = hash & indexMask;
 
@@ -550,12 +569,17 @@ inline void PropertyTable::rehash(VM& vm, unsigned newCapacity, bool canStayComp
     bool oldIsCompact = oldIndexVector & isCompactFlag;
     unsigned oldIndexSize = m_indexSize;
     unsigned oldUsedCount = usedCount();
+    unsigned oldDeletedListHead = m_deletedListHead;
     size_t oldDataSize = dataSize(oldIsCompact, oldIndexSize);
 
-    m_indexSize = sizeForCapacity(newCapacity);
-    m_indexMask = m_indexSize - 1;
+    // Conservative bound: usedCount() = keyCount + deletedCount may include orphan tombstones
+    // (created by renumberPropertyOffsets()) that we will drop, but counting only the active
+    // list entries would require an extra walk just to size the table. The over-estimate at most
+    // pushes us past the next power-of-two boundary in sizeForCapacity().
+    m_indexSize = sizeForCapacity(std::max(newCapacity, m_keyCount + m_deletedCount));
     m_keyCount = 0;
     m_deletedCount = 0;
+    m_deletedListHead = EmptyEntryIndex;
 
     // Once table gets non-compact, we do not change it back to compact again.
     // This is because some of property offset can be larger than UINT8_MAX already.
@@ -564,13 +588,38 @@ inline void PropertyTable::rehash(VM& vm, unsigned newCapacity, bool canStayComp
     withIndexVector([&](auto* vector) {
         auto* table = tableFromIndexVector(vector);
         withIndexVector(oldIndexVector, [&](const auto* oldVector) {
-            const auto* oldCursor = tableFromIndexVector(oldVector, oldIndexSize);
+            const auto* oldTable = tableFromIndexVector(oldVector, oldIndexSize);
+
+            // Reinsert live entries; this compacts them to entry indices 1..keyCount.
+            const auto* oldCursor = oldTable;
             const auto* oldEnd = oldCursor + oldUsedCount;
             for (; oldCursor != oldEnd; ++oldCursor) {
-                if (oldCursor->key() == PROPERTY_MAP_DELETED_ENTRY_KEY)
+                if (isDeletedKey(oldCursor->key()))
                     continue;
                 ASSERT(canInsert(*oldCursor));
                 reinsert(vector, table, *oldCursor);
+            }
+
+            // Walk the old linked list once and rebuild it forward in the new table using a tail
+            // pointer. This preserves LIFO order without staging offsets in a separate buffer.
+            unsigned newTail = EmptyEntryIndex;
+            unsigned head = oldDeletedListHead;
+            while (head != EmptyEntryIndex) {
+                ASSERT(isDeletedKey(oldTable[head - 1].key()));
+                PropertyOffset offset = oldTable[head - 1].offset();
+                unsigned next = decodeNextDeletedIndex(oldTable[head - 1].key());
+
+                unsigned entryIndex = usedCount() + 1;
+                ASSERT(entryIndex - 1 < tableCapacity() + 1);
+                table[entryIndex - 1] = ValueType(encodeDeletedKey(EmptyEntryIndex), offset, /* attributes */ 0);
+                if (newTail == EmptyEntryIndex)
+                    m_deletedListHead = entryIndex;
+                else
+                    table[newTail - 1].setKey(encodeDeletedKey(entryIndex));
+                newTail = entryIndex;
+                ++m_deletedCount;
+
+                head = next;
             }
         });
     });
@@ -588,7 +637,7 @@ inline unsigned PropertyTable::deletedEntryIndex() const { return tableCapacity(
 template<typename T>
 inline T* PropertyTable::skipDeletedEntries(T* valuePtr, T* endValuePtr)
 {
-    while (valuePtr < endValuePtr && valuePtr->key() == PROPERTY_MAP_DELETED_ENTRY_KEY)
+    while (valuePtr < endValuePtr && isDeletedKey(valuePtr->key()))
         ++valuePtr;
     return valuePtr;
 }
@@ -651,7 +700,7 @@ inline void PropertyTable::forEachProperty(const Functor& functor) const
         const auto* cursor = tableFromIndexVector(vector);
         const auto* end = tableEndFromIndexVector(vector);
         for (; cursor != end; ++cursor) {
-            if (cursor->key() == PROPERTY_MAP_DELETED_ENTRY_KEY)
+            if (isDeletedKey(cursor->key()))
                 continue;
             if (functor(*cursor) == IterationStatus::Done)
                 return;

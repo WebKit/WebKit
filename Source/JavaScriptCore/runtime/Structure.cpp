@@ -499,8 +499,8 @@ PropertyTable* Structure::materializePropertyTable(VM& vm, bool setPropertyTable
         case TransitionKind::PropertyDeletion: {
             auto [offset, attributes] = table->take(vm, structure->m_transitionPropertyName.get());
             ASSERT_UNUSED(offset, offset != invalidOffset);
+            ASSERT_UNUSED(offset, offset == structure->transitionOffset());
             UNUSED_VARIABLE(attributes);
-            table->addDeletedOffset(structure->transitionOffset());
             break;
         }
         case TransitionKind::PropertyAttributeChange: {
