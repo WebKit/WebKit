@@ -71,7 +71,7 @@ std::unique_ptr<LayerTreeHost> LayerTreeHost::create(WebPage& webPage)
 LayerTreeHost::LayerTreeHost(WebPage& webPage)
     : m_webPage(webPage)
     , m_sceneState(CoordinatedSceneState::create())
-    , m_skiaPaintingEngine(SkiaPaintingEngine::create())
+    , m_skiaPaintingEngine(SkiaPaintingEngine::create(webPage.corePage()->settings().useSkiaForComposition() ? UseSkiaForComposition::Yes : UseSkiaForComposition::No))
 {
     {
         auto& rootLayer = m_sceneState->rootLayer();

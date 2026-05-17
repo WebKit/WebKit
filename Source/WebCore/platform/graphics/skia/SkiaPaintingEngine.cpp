@@ -75,7 +75,8 @@ static bool canPerformAcceleratedRendering()
     return ProcessCapabilities::canUseAcceleratedBuffers() && PlatformDisplay::sharedDisplay().skiaGLContext();
 }
 
-SkiaPaintingEngine::SkiaPaintingEngine()
+SkiaPaintingEngine::SkiaPaintingEngine(UseSkiaForComposition useSkiaForComposition)
+    : m_useSkiaForComposition(useSkiaForComposition)
 {
     if (canPerformAcceleratedRendering()) {
         if (auto numberOfGPUThreads = numberOfGPUPaintingThreads())
@@ -90,9 +91,9 @@ SkiaPaintingEngine::SkiaPaintingEngine()
 
 SkiaPaintingEngine::~SkiaPaintingEngine() = default;
 
-std::unique_ptr<SkiaPaintingEngine> SkiaPaintingEngine::create()
+std::unique_ptr<SkiaPaintingEngine> SkiaPaintingEngine::create(UseSkiaForComposition useSkiaForComposition)
 {
-    return makeUnique<SkiaPaintingEngine>();
+    return makeUnique<SkiaPaintingEngine>(useSkiaForComposition);
 }
 
 void SkiaPaintingEngine::paintIntoGraphicsContext(const GraphicsLayer& layer, GraphicsContext& context, const IntRect& dirtyRect, bool contentsOpaque, float contentsScale) const
@@ -126,7 +127,12 @@ Ref<CoordinatedTileBuffer> SkiaPaintingEngine::createBuffer(RenderingMode render
         return CoordinatedAcceleratedTileBuffer::create(BitmapTexturePool::singleton().acquireTexture(size, textureFlags));
     }
 
-    return CoordinatedUnacceleratedTileBuffer::create(size, contentsOpaque ? CoordinatedTileBuffer::NoFlags : CoordinatedTileBuffer::SupportsAlpha);
+    // The Skia compositor uploads CPU tiles via SkSurface::writePixels() into RGBA
+    // textures, so render them directly as RGBA to avoid a per-pixel BGRA->RGBA
+    // conversion on every upload. The TextureMapper compositor keeps BGRA, since it
+    // uploads raw and swizzles in the sampling shader.
+    auto pixelFormat = m_useSkiaForComposition == UseSkiaForComposition::Yes ? PixelFormat::RGBA8 : PixelFormat::BGRA8;
+    return CoordinatedUnacceleratedTileBuffer::create(size, contentsOpaque ? CoordinatedTileBuffer::NoFlags : CoordinatedTileBuffer::SupportsAlpha, pixelFormat);
 }
 
 RefPtr<SkiaGPUAtlas> SkiaPaintingEngine::createAtlas(const SkiaImageAtlasLayout& layout, AtlasUploadCondition& uploadCondition, bool& needsUploadFence)

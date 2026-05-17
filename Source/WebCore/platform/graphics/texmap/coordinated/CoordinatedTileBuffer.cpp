@@ -112,15 +112,17 @@ void CoordinatedTileBuffer::waitUntilPaintingComplete()
     });
 }
 
-Ref<CoordinatedTileBuffer> CoordinatedUnacceleratedTileBuffer::create(const IntSize& size, Flags flags)
+Ref<CoordinatedTileBuffer> CoordinatedUnacceleratedTileBuffer::create(const IntSize& size, Flags flags, PixelFormat pixelFormat)
 {
-    return adoptRef(*new CoordinatedUnacceleratedTileBuffer(size, flags));
+    return adoptRef(*new CoordinatedUnacceleratedTileBuffer(size, flags, pixelFormat));
 }
 
-CoordinatedUnacceleratedTileBuffer::CoordinatedUnacceleratedTileBuffer(const IntSize& size, Flags flags)
+CoordinatedUnacceleratedTileBuffer::CoordinatedUnacceleratedTileBuffer(const IntSize& size, Flags flags, PixelFormat pixelFormat)
     : CoordinatedTileBuffer(flags)
     , m_size(size)
+    , m_pixelFormat(pixelFormat)
 {
+    ASSERT(pixelFormat == PixelFormat::BGRA8 || pixelFormat == PixelFormat::RGBA8);
     const auto checkedArea = size.area() * 4;
     m_data = MallocSpan<unsigned char>::tryZeroedMalloc(checkedArea);
 
@@ -146,7 +148,8 @@ bool CoordinatedUnacceleratedTileBuffer::tryEnsureSurface()
     if (m_surface)
         return true;
 
-    auto imageInfo = SkImageInfo::Make(m_size.width(), m_size.height(), kBGRA_8888_SkColorType, kPremul_SkAlphaType, SkColorSpace::MakeSRGB());
+    auto colorType = m_pixelFormat == PixelFormat::RGBA8 ? kRGBA_8888_SkColorType : kBGRA_8888_SkColorType;
+    auto imageInfo = SkImageInfo::Make(m_size.width(), m_size.height(), colorType, kPremul_SkAlphaType, SkColorSpace::MakeSRGB());
     // FIXME: ref buffer and unref on release proc?
     auto properties = FontRenderOptions::singleton().createSurfaceProps();
     m_surface = SkSurfaces::WrapPixels(imageInfo, data(), imageInfo.minRowBytes64(), &properties);

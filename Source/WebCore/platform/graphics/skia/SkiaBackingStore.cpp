@@ -180,7 +180,8 @@ void SkiaBackingStore::Tile::update(const IntRect& dirtyRect, const IntRect& til
         }
     } else if (tryEnsureSurface(tileRect.size(), buffer)) {
         auto& unacceleratedBuffer = static_cast<CoordinatedUnacceleratedTileBuffer&>(buffer);
-        auto imageInfo = SkImageInfo::Make(dirtyRect.width(), dirtyRect.height(), kBGRA_8888_SkColorType, kPremul_SkAlphaType, SkColorSpace::MakeSRGB());
+        auto colorType = unacceleratedBuffer.pixelFormat() == PixelFormat::RGBA8 ? kRGBA_8888_SkColorType : kBGRA_8888_SkColorType;
+        auto imageInfo = SkImageInfo::Make(dirtyRect.width(), dirtyRect.height(), colorType, kPremul_SkAlphaType, SkColorSpace::MakeSRGB());
         SkPixmap pixmap(imageInfo, unacceleratedBuffer.data(), unacceleratedBuffer.stride());
         m_surface->writePixels(pixmap, dirtyRect.x(), dirtyRect.y());
     }

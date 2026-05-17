@@ -77,7 +77,7 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage, WebCore::PlatformDisplayID displa
 #if USE(CAIRO)
     , m_paintingEngine(Cairo::PaintingEngine::create())
 #elif USE(SKIA)
-    , m_skiaPaintingEngine(SkiaPaintingEngine::create())
+    , m_skiaPaintingEngine(SkiaPaintingEngine::create(UseSkiaForComposition::No))
 #endif
 {
     {

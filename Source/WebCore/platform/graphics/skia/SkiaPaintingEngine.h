@@ -45,14 +45,16 @@ class SkiaImageAtlasLayout;
 class SkiaRecordingResult;
 enum class RenderingMode : uint8_t;
 
+enum class UseSkiaForComposition : bool { No, Yes };
+
 class SkiaPaintingEngine {
     WTF_MAKE_TZONE_ALLOCATED(SkiaPaintingEngine);
     WTF_MAKE_NONCOPYABLE(SkiaPaintingEngine);
 public:
-    SkiaPaintingEngine();
+    explicit SkiaPaintingEngine(UseSkiaForComposition);
     ~SkiaPaintingEngine();
 
-    static std::unique_ptr<SkiaPaintingEngine> create();
+    static std::unique_ptr<SkiaPaintingEngine> create(UseSkiaForComposition);
 
     static unsigned numberOfCPUPaintingThreads();
     static unsigned numberOfGPUPaintingThreads();
@@ -71,6 +73,8 @@ private:
     void paintIntoGraphicsContext(const GraphicsLayer&, GraphicsContext&, const IntRect&, bool contentsOpaque, float contentsScale) const;
     RefPtr<SkiaGPUAtlas> createAtlas(const SkiaImageAtlasLayout&, AtlasUploadCondition&, bool& needsUploadFence);
     bool tryReuseCachedAtlases(SkiaRecordingResult&, unsigned fingerprint);
+
+    UseSkiaForComposition m_useSkiaForComposition { UseSkiaForComposition::No };
 
     RefPtr<WorkerPool> m_paintingWorkerPool;
     RefPtr<WorkQueue> m_uploadWorkQueue;

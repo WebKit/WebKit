@@ -104,7 +104,7 @@ private:
 
 class CoordinatedUnacceleratedTileBuffer final : public CoordinatedTileBuffer {
 public:
-    WEBCORE_EXPORT static Ref<CoordinatedTileBuffer> create(const IntSize&, Flags);
+    WEBCORE_EXPORT static Ref<CoordinatedTileBuffer> create(const IntSize&, Flags, PixelFormat = PixelFormat::BGRA8);
     WEBCORE_EXPORT virtual ~CoordinatedUnacceleratedTileBuffer();
 
     int stride() const { return m_size.width() * 4; }
@@ -112,10 +112,10 @@ public:
     const unsigned char* data() const { return m_data.span().data(); }
     unsigned char* data() { return m_data.mutableSpan().data(); }
 
-    PixelFormat pixelFormat() const { return PixelFormat::BGRA8; }
+    PixelFormat pixelFormat() const { return m_pixelFormat; }
 
 private:
-    CoordinatedUnacceleratedTileBuffer(const IntSize&, Flags);
+    CoordinatedUnacceleratedTileBuffer(const IntSize&, Flags, PixelFormat);
 
     bool isBackedByOpenGL() const final { return false; }
     IntSize size() const final { return m_size; }
@@ -126,6 +126,7 @@ private:
 
     MallocSpan<unsigned char> m_data;
     IntSize m_size;
+    PixelFormat m_pixelFormat { PixelFormat::BGRA8 };
 
     enum class PaintingState {
         InProgress,
