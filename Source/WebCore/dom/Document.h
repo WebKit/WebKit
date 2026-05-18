@@ -1699,6 +1699,8 @@ public:
     void setActiveSpeechRecognition(SpeechRecognition*);
     MediaProducerMediaStateFlags mediaState() const { return m_mediaState; }
     void noteUserInteractionWithMediaElement();
+    bool hasUserInitiatedMediaUnmute() const { return m_hasUserInitiatedMediaUnmute; }
+    void setHasUserInitiatedMediaUnmute() { m_hasUserInitiatedMediaUnmute = true; }
     bool NODELETE isCapturing() const;
     WEBCORE_EXPORT void updateIsPlayingMedia();
 
@@ -2771,6 +2773,7 @@ private:
     bool m_mayHaveRenderedSVGRootElements { false };
 
     bool m_userHasInteractedWithMediaElement { false };
+    bool m_hasUserInitiatedMediaUnmute { false };
 
     bool m_hasEverHadSelectionInsideTextFormControl { false };
 

@@ -483,6 +483,14 @@ Expected<void, MediaPlaybackDenialExplanation> MediaElementSession::playbackStat
         && mainFrameDocument->quirks().needsPerDocumentAutoplayBehavior())
         return { };
 
+    if (mainFrameDocument
+        && mainFrameDocument->quirks().shouldAllowUnmutedAutoplayAfterUserUnmute()) {
+        if (RefPtr page = document->page()) {
+            if (page->hasValidUnmuteAuthorizationForOrigin(document->securityOrigin().data()))
+                return { };
+        }
+    }
+
     if (m_restrictions & RequireUserGestureForVideoRateChange && element->isVideo() && !document->processingUserGestureForMedia())
         return makeUnexpectedDenial(MediaPlaybackDenialReason::UserGestureRequired, "User gesture required for video rate change"_s);
 

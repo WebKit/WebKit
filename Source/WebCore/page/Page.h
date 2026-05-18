@@ -1075,6 +1075,10 @@ public:
     bool allowsPlaybackControlsForAutoplayingAudio() const { return m_allowsPlaybackControlsForAutoplayingAudio; }
     void setAllowsPlaybackControlsForAutoplayingAudio(bool allowsPlaybackControlsForAutoplayingAudio) { m_allowsPlaybackControlsForAutoplayingAudio = allowsPlaybackControlsForAutoplayingAudio; }
 
+    void setLastUnmuteAuthorization(const SecurityOriginData&);
+    void clearLastUnmuteAuthorization() { m_lastUnmuteAuthorization = std::nullopt; }
+    bool hasValidUnmuteAuthorizationForOrigin(const SecurityOriginData&) const;
+
     IDBClient::IDBConnectionToServer& idbConnection();
     WEBCORE_EXPORT IDBClient::IDBConnectionToServer* NODELETE optionalIDBConnection();
     WEBCORE_EXPORT void clearIDBConnection();
@@ -1673,6 +1677,12 @@ private:
 
     bool m_allowsMediaDocumentInlinePlayback { false };
     bool m_allowsPlaybackControlsForAutoplayingAudio { false };
+
+    struct UnmuteAuthorization {
+        SecurityOriginData origin;
+        MonotonicTime timestamp;
+    };
+    std::optional<UnmuteAuthorization> m_lastUnmuteAuthorization;
     bool m_showAllPlugins { false };
     bool m_controlledByAutomation { false };
     bool m_resourceCachingDisabledByWebInspector { false };

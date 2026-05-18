@@ -259,6 +259,7 @@ struct QuirksData {
         NeedsChromeOSNavigatorUserAgentQuirk,
         ShouldSendFakeTouchForceChangeEvent,
 #endif
+        ShouldAllowUnmutedAutoplayAfterUserUnmuteQuirk,
         ShouldLimitHLSPlaybackRate,
         ShouldDeferIntersectionObserversDuringResize,
         ShouldSuppressHLSSubtitles,

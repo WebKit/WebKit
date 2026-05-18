@@ -321,6 +321,14 @@ bool Quirks::shouldAutoplayWebAudioForArbitraryUserGesture() const
     return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::ShouldAutoplayWebAudioForArbitraryUserGestureQuirk);
 }
 
+// cbssports.com rdar://171214502
+bool Quirks::shouldAllowUnmutedAutoplayAfterUserUnmute() const
+{
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+
+    return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::ShouldAllowUnmutedAutoplayAfterUserUnmuteQuirk);
+}
+
 // youtube.com https://bugs.webkit.org/show_bug.cgi?id=195598
 bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
 {
@@ -2739,14 +2747,21 @@ static void handleATTQuirks(QuirksData& quirksData, const URL& /* quirksURL */, 
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldUseLegacySelectPopoverDismissalBehaviorInDataActivationQuirk);
 }
 
+#endif // PLATFORM(IOS_FAMILY)
+
 static void handleCBSSportsQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL& /* documentURL */)
 {
     QUIRKS_EARLY_RETURN_IF_NOT_DOMAIN("cbssports.com"_s);
 
     quirksData.isCBSSports = true;
+#if PLATFORM(IOS_FAMILY)
     // Remove this once rdar://139478801 is resolved.
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk);
+#endif
+    quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldAllowUnmutedAutoplayAfterUserUnmuteQuirk);
 }
+
+#if PLATFORM(IOS_FAMILY)
 
 static void handleCNNQuirks(QuirksData& quirksData, const URL& /* quirksURL */, const String& quirksDomainString, const URL&  /* documentURL */)
 {
@@ -3884,8 +3899,8 @@ void Quirks::determineRelevantQuirks()
         { "bing"_s, &handleBingQuirks },
         { "bungalow"_s, &handleBungalowQuirks },
         { "capitalgroup"_s, &handleCapitalGroupQuirks },
-#if PLATFORM(IOS_FAMILY)
         { "cbssports"_s, &handleCBSSportsQuirks },
+#if PLATFORM(IOS_FAMILY)
         { "cnn"_s, &handleCNNQuirks },
         { "digitaltrends"_s, &handleDigitalTrendsQuirks },
         { "discord"_s, &handleDiscordQuirks },

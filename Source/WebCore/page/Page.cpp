@@ -5960,6 +5960,24 @@ bool Page::requiresUserGestureForVideoPlayback() const
     return m_settings->requiresUserGestureForVideoPlayback();
 }
 
+static constexpr Seconds unmuteAuthorizationTimeout = 30_min;
+
+void Page::setLastUnmuteAuthorization(const SecurityOriginData& origin)
+{
+    m_lastUnmuteAuthorization = UnmuteAuthorization { origin, MonotonicTime::now() };
+}
+
+bool Page::hasValidUnmuteAuthorizationForOrigin(const SecurityOriginData& origin) const
+{
+    if (!m_lastUnmuteAuthorization)
+        return false;
+
+    if (MonotonicTime::now() - m_lastUnmuteAuthorization->timestamp > unmuteAuthorizationTimeout)
+        return false;
+
+    return RegistrableDomain(m_lastUnmuteAuthorization->origin) == RegistrableDomain(origin);
+}
+
 static RefPtr<PlatformMediaSessionManager>& NODELETE mediaSessionManagerSingleton()
 {
     static NeverDestroyed<RefPtr<PlatformMediaSessionManager>> manager;
