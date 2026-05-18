@@ -97,4 +97,16 @@ for (var i = 0; i < testLoopCount; i++) {
     shouldBe(str.substring(0, 0), "");
     shouldBe(str.substring(0, -0), "");
     shouldBe(str.substring(-0, 0), "");
+
+    // rope strings (force ConcatString path)
+    const rope = "foo" + (i & 1 ? "bar" : "baz");
+    shouldBe(rope.substring(0, 3), "foo");
+    shouldBe(rope.substring(3, 6), i & 1 ? "bar" : "baz");
+    shouldBe(rope.substring(2, 3), "o");
+    shouldBe(rope.substring(-3, 3), "foo");
+    shouldBe(rope.substring(2, 100), i & 1 ? "obar" : "obaz");
+    shouldBe(rope.substring(100, 2), i & 1 ? "obar" : "obaz");
+    shouldBe(rope.substring(100), "");
+    shouldBe(rope.substring(2, -1), "fo");
+    shouldBe(rope.substring(2, 2), "");
 }

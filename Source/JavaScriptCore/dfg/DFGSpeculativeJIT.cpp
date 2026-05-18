@@ -1791,35 +1791,90 @@ void SpeculativeJIT::compileStringSlice(Node* node)
 void SpeculativeJIT::compileStringSubstring(Node* node)
 {
     SpeculateCellOperand string(this, node->child1());
-
     SpeculateInt32Operand start(this, node->child2());
-    if (node->child3()) {
-        SpeculateInt32Operand end(this, node->child3());
-
-        GPRReg stringGPR = string.gpr();
-        GPRReg startGPR = start.gpr();
-        GPRReg endGPR = end.gpr();
-
-        speculateString(node->child1(), stringGPR);
-
-        flushRegisters();
-        GPRFlushedCallResult result(this);
-        GPRReg resultGPR = result.gpr();
-        callOperation(operationStringSubstringWithEnd, resultGPR, LinkableConstant::globalObject(*this, node), stringGPR, startGPR, endGPR);
-        cellResult(resultGPR, node);
-        return;
-    }
+    std::optional<SpeculateInt32Operand> end;
+    GPRTemporary temp(this);
+    GPRTemporary temp2(this);
+    GPRTemporary startIndex(this);
 
     GPRReg stringGPR = string.gpr();
     GPRReg startGPR = start.gpr();
+    GPRReg endGPR = InvalidGPRReg;
+    if (node->child3()) {
+        end.emplace(this, node->child3());
+        endGPR = end->gpr();
+    }
+    GPRReg tempGPR = temp.gpr();
+    GPRReg temp2GPR = temp2.gpr();
+    GPRReg startIndexGPR = startIndex.gpr();
 
     speculateString(node->child1(), stringGPR);
 
-    flushRegisters();
-    GPRFlushedCallResult result(this);
-    GPRReg resultGPR = result.gpr();
-    callOperation(operationStringSubstring, resultGPR, LinkableConstant::globalObject(*this, node), stringGPR, startGPR);
-    cellResult(resultGPR, node);
+    loadPtr(Address(stringGPR, JSString::offsetOfValue()), tempGPR);
+    Jump isRope;
+    if (canBeRope(node->child1()))
+        isRope = branchIfRopeStringImpl(tempGPR);
+    load32(Address(tempGPR, StringImpl::lengthMemoryOffset()), temp2GPR);
+
+    emitPopulateSubstringIndex(node->child2(), startGPR, temp2GPR, startIndexGPR);
+    if (endGPR != InvalidGPRReg)
+        emitPopulateSubstringIndex(node->child3(), endGPR, temp2GPR, tempGPR);
+    else
+        move(temp2GPR, tempGPR);
+
+    // Swap so startIndexGPR = min, tempGPR = max. temp2GPR (length) is no longer needed.
+    move(startIndexGPR, temp2GPR);
+    moveConditionally32(LessThan, tempGPR, startIndexGPR, tempGPR, startIndexGPR, startIndexGPR);
+    moveConditionally32(GreaterThan, temp2GPR, tempGPR, temp2GPR, tempGPR, tempGPR);
+
+    sub32(startIndexGPR, tempGPR);
+
+    JumpList doneCases;
+    JumpList slowCases;
+
+    VM& vm = this->vm();
+
+    auto nonEmptyCase = branchTest32(NonZero, tempGPR);
+    loadLinkableConstant(LinkableConstant(*this, jsEmptyString(vm)), tempGPR);
+    doneCases.append(jump());
+
+    nonEmptyCase.link(this);
+    // Inline single-character fast path when size == 1.
+    slowCases.append(branch32(NotEqual, tempGPR, TrustedImm32(1)));
+
+    // Refill StringImpl* here.
+    loadPtr(Address(stringGPR, JSString::offsetOfValue()), temp2GPR);
+    loadPtr(Address(temp2GPR, StringImpl::dataOffset()), tempGPR);
+
+    zeroExtend32ToWord(startIndexGPR, startIndexGPR);
+    auto is16Bit = branchTest32(Zero, Address(temp2GPR, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIs8Bit()));
+
+    load8(BaseIndex(tempGPR, startIndexGPR, TimesOne, 0), tempGPR);
+    auto cont8Bit = jump();
+
+    is16Bit.link(this);
+    load16(BaseIndex(tempGPR, startIndexGPR, TimesTwo, 0), tempGPR);
+
+    auto bigCharacter = branch32(Above, tempGPR, TrustedImm32(maxSingleCharacterString));
+
+    cont8Bit.link(this);
+
+    lshift32(TrustedImm32(sizeof(void*) == 4 ? 2 : 3), tempGPR);
+    addPtr(TrustedImmPtr(vm.smallStrings.singleCharacterStrings()), tempGPR);
+    loadPtr(Address(tempGPR), tempGPR);
+
+    addSlowPathGenerator(slowPathCall(bigCharacter, this, operationSingleCharacterString, tempGPR, TrustedImmPtr(&vm), tempGPR));
+    addSlowPathGenerator(slowPathCall(slowCases, this, operationStringSubstr, tempGPR, LinkableConstant::globalObject(*this, node), stringGPR, startIndexGPR, tempGPR));
+
+    if (isRope.isSet()) {
+        if (endGPR != InvalidGPRReg)
+            addSlowPathGenerator(slowPathCall(isRope, this, operationStringSubstringWithEnd, tempGPR, LinkableConstant::globalObject(*this, node), stringGPR, startGPR, endGPR));
+        else
+            addSlowPathGenerator(slowPathCall(isRope, this, operationStringSubstring, tempGPR, LinkableConstant::globalObject(*this, node), stringGPR, startGPR));
+    }
+
+    doneCases.link(this);
+    cellResult(tempGPR, node);
 }
 
 void SpeculativeJIT::compileStringSubstr(Node* node)
@@ -9927,6 +9982,23 @@ void SpeculativeJIT::emitPopulateSliceIndex(Edge& target, std::optional<GPRReg> 
     move(lengthGPR, resultGPR);
 
     done.link(this);
+}
+
+void SpeculativeJIT::emitPopulateSubstringIndex(Edge& target, GPRReg indexGPR, GPRReg lengthGPR, GPRReg resultGPR)
+{
+    if (target->isInt32Constant()) {
+        int32_t value = target->asInt32();
+        if (value <= 0) {
+            move(TrustedImm32(0), resultGPR);
+            return;
+        }
+        move(TrustedImm32(value), resultGPR);
+        moveConditionally32(LessThan, lengthGPR, resultGPR, lengthGPR, resultGPR, resultGPR);
+        return;
+    }
+
+    moveConditionally32(LessThan, indexGPR, lengthGPR, indexGPR, lengthGPR, resultGPR);
+    moveConditionally32(LessThan, resultGPR, TrustedImm32(0), TrustedImm32(0), resultGPR, resultGPR);
 }
 
 void SpeculativeJIT::compileArraySlice(Node* node)
