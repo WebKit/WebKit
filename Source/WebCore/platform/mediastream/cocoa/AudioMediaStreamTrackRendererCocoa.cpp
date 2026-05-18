@@ -112,13 +112,12 @@ void AudioMediaStreamTrackRendererCocoa::reset()
 
 void AudioMediaStreamTrackRendererCocoa::setAudioOutputDevice(const String& deviceID)
 {
-    auto registeredDataSource = m_registeredDataSource;
+    ASSERT(isMainThread());
 
-    setRegisteredDataSource(nullptr);
+    if (RefPtr registeredDataSource = std::exchange(m_registeredDataSource, nullptr))
+        rendererUnit().removeSource(m_deviceID, *registeredDataSource);
 
     m_deviceID = deviceID;
-    setRegisteredDataSource(WTF::move(registeredDataSource));
-
     m_shouldRecreateDataSource = true;
 }
 
@@ -126,7 +125,7 @@ void AudioMediaStreamTrackRendererCocoa::setRegisteredDataSource(RefPtr<AudioSam
 {
     ASSERT(isMainThread());
 
-    if (RefPtr registeredDataSource = m_registeredDataSource)
+    if (RefPtr registeredDataSource = std::exchange(m_registeredDataSource, nullptr))
         rendererUnit().removeSource(m_deviceID, *registeredDataSource);
 
     if (!m_outputDescription)
@@ -177,7 +176,7 @@ void AudioMediaStreamTrackRendererCocoa::pushSamples(const MediaTime& sampleTime
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->setRegisteredDataSource(WTF::move(newSource));
         });
-        m_dataSource = dataSource;
+        m_dataSource = WTF::move(dataSource);
         m_shouldRecreateDataSource = false;
     }
 
