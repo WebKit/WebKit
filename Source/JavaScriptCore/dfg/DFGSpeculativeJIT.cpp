@@ -14820,6 +14820,72 @@ void SpeculativeJIT::compileMapIteratorValue(Node* node)
 
 void SpeculativeJIT::compileMapIterationNext(Node* node)
 {
+#if USE(JSVALUE64)
+    bool isMap = node->bucketOwnerType() == BucketOwnerType::Map;
+
+    SpeculateCellOperand mapStorage(this, node->child1());
+    SpeculateInt32Operand entry(this, node->child2());
+    GPRTemporary scratch1(this);
+    GPRTemporary scratch2(this);
+    GPRTemporary result(this);
+
+    GPRReg mapStorageGPR = mapStorage.gpr();
+    GPRReg entryGPR = entry.gpr();
+    GPRReg scratchGPR1 = scratch1.gpr();
+    GPRReg scratchGPR2 = scratch2.gpr();
+    GPRReg resultGPR = result.gpr();
+
+    speculateCellButterfly(node->child1(), mapStorageGPR);
+
+    uint8_t entrySize = isMap ? JSMap::Helper::EntrySize : JSSet::Helper::EntrySize;
+    uint32_t capacityIndex = isMap ? JSMap::Helper::capacityIndex() : JSSet::Helper::capacityIndex();
+    uint32_t hashTableStartIndex = isMap ? JSMap::Helper::hashTableStartIndex() : JSSet::Helper::hashTableStartIndex();
+    uint32_t iterationEntryIndex = isMap ? JSMap::Helper::iterationEntryIndex() : JSSet::Helper::iterationEntryIndex();
+
+    JITCompiler::JumpList slowCases;
+    JITCompiler::JumpList notFound;
+    JITCompiler::JumpList doneCases;
+
+    notFound.append(branchLinkableConstant(JITCompiler::Equal, mapStorageGPR, LinkableConstant(*this, vm().orderedHashTableSentinel())));
+
+    // Check if storage is obsolete.
+    load64(Address(mapStorageGPR, JSCellButterfly::offsetOfData() + (isMap ? JSMap::Helper::aliveEntryCountIndex() : JSSet::Helper::aliveEntryCountIndex()) * sizeof(uint64_t)), scratchGPR1);
+    slowCases.append(branchIfNotInt32(JSValueRegs { scratchGPR1 }));
+
+    // entryKeyIndex = hashTableStartIndex + capacity + entry * entrySize
+    load32(Address(mapStorageGPR, JSCellButterfly::offsetOfData() + capacityIndex * sizeof(uint64_t)), scratchGPR2);
+    add32(TrustedImm32(hashTableStartIndex), scratchGPR2);
+    if (entrySize == 3) {
+        lshift32(entryGPR, TrustedImm32(1), scratchGPR1);
+        add32(entryGPR, scratchGPR1);
+    } else if (entrySize == 2)
+        add32(entryGPR, entryGPR, scratchGPR1);
+    add32(scratchGPR1, scratchGPR2);
+    move(entryGPR, scratchGPR1);
+
+    auto loopStart = label();
+    load64(BaseIndex(mapStorageGPR, scratchGPR2, TimesEight, JSCellButterfly::offsetOfData()), resultGPR);
+    notFound.append(branchTest64(JITCompiler::Zero, resultGPR));
+    auto found = branchLinkableConstant(JITCompiler::NotEqual, resultGPR, LinkableConstant(*this, vm().orderedHashTableDeletedValue()));
+    add32(TrustedImm32(1), scratchGPR1);
+    add32(TrustedImm32(entrySize), scratchGPR2);
+    jump().linkTo(loopStart, this);
+
+    found.link(this);
+    // The iterationEntry slot is not initialized by tryCreate, so write the full int32-encoded JSValue.
+    boxInt32(scratchGPR1, JSValueRegs { scratchGPR1 });
+    store64(scratchGPR1, Address(mapStorageGPR, JSCellButterfly::offsetOfData() + iterationEntryIndex * sizeof(uint64_t)));
+    move(mapStorageGPR, resultGPR);
+    doneCases.append(jump());
+
+    notFound.link(this);
+    loadLinkableConstant(LinkableConstant(*this, vm().orderedHashTableSentinel()), resultGPR);
+
+    addSlowPathGenerator(slowPathCall(slowCases, this, isMap ? operationMapIterationNext : operationSetIterationNext, NeedToSpill, ExceptionCheckRequirement::CheckNotNeeded, resultGPR, LinkableConstant::globalObject(*this, node), mapStorageGPR, entryGPR));
+
+    doneCases.link(this);
+    cellResult(resultGPR, node);
+#else
     SpeculateCellOperand mapStorage(this, node->child1());
     SpeculateInt32Operand entry(this, node->child2());
 
@@ -14836,53 +14902,85 @@ void SpeculativeJIT::compileMapIterationNext(Node* node)
     else
         callOperation(operationSetIterationNext, resultRegs, LinkableConstant::globalObject(*this, node), mapStorageGPR, entryGPR);
     cellResult(resultRegs.payloadGPR(), node);
+#endif
 }
 
 void SpeculativeJIT::compileMapIterationEntry(Node* node)
 {
+    bool isMap = node->bucketOwnerType() == BucketOwnerType::Map;
+
     SpeculateCellOperand mapStorage(this, node->child1());
+    GPRTemporary scratch1(this);
+    GPRTemporary scratch2(this);
+
     GPRReg mapStorageGPR = mapStorage.gpr();
+    auto resultRegs = JSValueRegs::withTwoAvailableRegs(scratch1.gpr(), scratch2.gpr());
 
     speculateCellButterfly(node->child1(), mapStorageGPR);
 
-    flushRegisters();
-    JSValueRegsFlushedCallResult result(this);
-    JSValueRegs resultRegs = result.regs();
-    if (node->bucketOwnerType() == BucketOwnerType::Map)
-        callOperation(operationMapIterationEntry, resultRegs, LinkableConstant::globalObject(*this, node), mapStorageGPR);
-    else
-        callOperation(operationSetIterationEntry, resultRegs, LinkableConstant::globalObject(*this, node), mapStorageGPR);
+    uint32_t iterationEntryIndex = isMap ? JSMap::Helper::iterationEntryIndex() : JSSet::Helper::iterationEntryIndex();
+    loadValue(Address(mapStorageGPR, JSCellButterfly::offsetOfData() + iterationEntryIndex * sizeof(uint64_t)), resultRegs);
     jsValueResult(resultRegs, node);
 }
 
 void SpeculativeJIT::compileMapIterationEntryKey(Node* node)
 {
+    bool isMap = node->bucketOwnerType() == BucketOwnerType::Map;
+
     SpeculateCellOperand mapStorage(this, node->child1());
+    GPRTemporary scratch1(this);
+    GPRTemporary scratch2(this);
+
     GPRReg mapStorageGPR = mapStorage.gpr();
+    GPRReg scratchGPR1 = scratch1.gpr();
+    GPRReg scratchGPR2 = scratch2.gpr();
+    auto resultRegs = JSValueRegs::withTwoAvailableRegs(scratchGPR1, scratchGPR2);
 
     speculateCellButterfly(node->child1(), mapStorageGPR);
 
-    flushRegisters();
-    JSValueRegsFlushedCallResult result(this);
-    JSValueRegs resultRegs = result.regs();
-    if (node->bucketOwnerType() == BucketOwnerType::Map)
-        callOperation(operationMapIterationEntryKey, resultRegs, LinkableConstant::globalObject(*this, node), mapStorageGPR);
-    else
-        callOperation(operationSetIterationEntryKey, resultRegs, LinkableConstant::globalObject(*this, node), mapStorageGPR);
+    uint32_t iterationEntryIndex = isMap ? JSMap::Helper::iterationEntryIndex() : JSSet::Helper::iterationEntryIndex();
+    uint32_t capacityIndex = isMap ? JSMap::Helper::capacityIndex() : JSSet::Helper::capacityIndex();
+    uint32_t hashTableStartIndex = isMap ? JSMap::Helper::hashTableStartIndex() : JSSet::Helper::hashTableStartIndex();
+    load32(Address(mapStorageGPR, JSCellButterfly::offsetOfData() + iterationEntryIndex * sizeof(uint64_t)), scratchGPR1);
+    if (isMap) {
+        static_assert(JSMap::Helper::EntrySize == 3);
+        lshift32(scratchGPR1, TrustedImm32(1), scratchGPR2);
+        add32(scratchGPR1, scratchGPR2);
+    } else {
+        static_assert(JSSet::Helper::EntrySize == 2);
+        add32(scratchGPR1, scratchGPR1, scratchGPR2);
+    }
+    load32(Address(mapStorageGPR, JSCellButterfly::offsetOfData() + capacityIndex * sizeof(uint64_t)), scratchGPR1);
+    add32(scratchGPR1, scratchGPR2);
+    add32(TrustedImm32(hashTableStartIndex), scratchGPR2);
+
+    loadValue(BaseIndex(mapStorageGPR, scratchGPR2, TimesEight, JSCellButterfly::offsetOfData()), resultRegs);
     jsValueResult(resultRegs, node);
 }
 
 void SpeculativeJIT::compileMapIterationEntryValue(Node* node)
 {
+    ASSERT(node->bucketOwnerType() == BucketOwnerType::Map);
     SpeculateCellOperand mapStorage(this, node->child1());
+    GPRTemporary scratch1(this);
+    GPRTemporary scratch2(this);
+
     GPRReg mapStorageGPR = mapStorage.gpr();
+    GPRReg scratchGPR1 = scratch1.gpr();
+    GPRReg scratchGPR2 = scratch2.gpr();
+    auto resultRegs = JSValueRegs::withTwoAvailableRegs(scratchGPR1, scratchGPR2);
 
     speculateCellButterfly(node->child1(), mapStorageGPR);
 
-    flushRegisters();
-    JSValueRegsFlushedCallResult result(this);
-    JSValueRegs resultRegs = result.regs();
-    callOperation(operationMapIterationEntryValue, resultRegs, LinkableConstant::globalObject(*this, node), mapStorageGPR);
+    load32(Address(mapStorageGPR, JSCellButterfly::offsetOfData() + JSMap::Helper::iterationEntryIndex() * sizeof(uint64_t)), scratchGPR1);
+    static_assert(JSMap::Helper::EntrySize == 3);
+    lshift32(scratchGPR1, TrustedImm32(1), scratchGPR2);
+    add32(scratchGPR1, scratchGPR2);
+    load32(Address(mapStorageGPR, JSCellButterfly::offsetOfData() + JSMap::Helper::capacityIndex() * sizeof(uint64_t)), scratchGPR1);
+    add32(scratchGPR1, scratchGPR2);
+    add32(TrustedImm32(JSMap::Helper::hashTableStartIndex() + /* value offset */ 1), scratchGPR2);
+
+    loadValue(BaseIndex(mapStorageGPR, scratchGPR2, TimesEight, JSCellButterfly::offsetOfData()), resultRegs);
     jsValueResult(resultRegs, node);
 }
 

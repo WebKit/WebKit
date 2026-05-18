@@ -13,7 +13,7 @@ var globalSum = 0;
     var set = createSet(COUNT);
     var sum = 0;
 
-    for (var i = 0; i < 1e2; ++i) {
+    for (var i = 0; i < 5e2; ++i) {
         sum = 0;
         set.forEach(function (item) {
             sum += item;
