@@ -19,7 +19,7 @@ var shouldAutoDump = true;
             endOffset = endContainer.childNodes.length;
 
         const pre = document.createElement('pre');
-        const result = serializeAttributedString(textInputController.legacyAttributedString(startContainer, startOffset, endContainer, endOffset));
+        const result = (window.internals && internals.nsAttributedStringDescription) ? internals.nsAttributedStringDescription(startContainer, startOffset, endContainer, endOffset) : "<missing internals.nsAttributedStringDescription>";
         pre.textContent = 'Input:\n' + markup + '\n\nOutput:\n' + result;
 
         document.body.innerHTML = '';

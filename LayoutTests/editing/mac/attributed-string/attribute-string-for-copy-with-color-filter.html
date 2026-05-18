@@ -20,11 +20,10 @@
         var target = document.getElementById("target");
         target.focus();
 
-        var attributedString = textInputController.legacyAttributedString(target.firstChild, 2, target.firstChild, 4);
-        var serializedString = serializeAttributedString(attributedString);
-        log(serializedString);
+        var attributedString = internals.nsAttributedStringDescription(target.firstChild, 2, target.firstChild, 4);
+        log(attributedString);
 
         target.parentNode.removeChild(target);
     } else
-        log("This test can only run in DumpRenderTree.");
+        log("This test can only run in DumpRenderTree or WebKitTestRunner.");
 </script>
