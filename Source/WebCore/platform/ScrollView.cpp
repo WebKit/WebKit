@@ -177,12 +177,8 @@ void ScrollView::setCanHaveScrollbars(bool canScroll)
 
 void ScrollView::setCanBlitOnScroll(bool b)
 {
-    if (platformWidget()) {
+    if (platformWidget())
         platformSetCanBlitOnScroll(b);
-        return;
-    }
-
-    m_canBlitOnScroll = b;
 }
 
 bool ScrollView::canBlitOnScroll() const
@@ -190,7 +186,7 @@ bool ScrollView::canBlitOnScroll() const
     if (platformWidget())
         return platformCanBlitOnScroll();
 
-    return m_canBlitOnScroll;
+    return true;
 }
 
 void ScrollView::setPaintsEntireContents(bool paintsEntireContents)

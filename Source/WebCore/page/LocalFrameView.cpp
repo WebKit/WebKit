@@ -1322,8 +1322,6 @@ void LocalFrameView::didLayout(SingleThreadWeakPtr<RenderElement> layoutRoot, bo
     m_frame->invalidateContentEventRegionsIfNeeded(LocalFrame::InvalidateContentEventRegionsReason::Layout);
     document->invalidateRenderingDependentRegions();
 
-    updateCanBlitOnScrollRecursively();
-
     updateScrollGeometryContentSize();
 
     handleDeferredScrollUpdateAfterContentSizeChange();
@@ -1603,15 +1601,9 @@ bool LocalFrameView::useSlowRepaintsIfNotOverlapped() const
     return useSlowRepaints(false);
 }
 
-void LocalFrameView::updateCanBlitOnScrollRecursively()
+bool LocalFrameView::canBlitOnScroll() const
 {
-    for (RefPtr<Frame> frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
-        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
-        if (!localFrame)
-            continue;
-        if (RefPtr view = localFrame->view())
-            view->setCanBlitOnScroll(!view->useSlowRepaints());
-    }
+    return !useSlowRepaints();
 }
 
 bool LocalFrameView::usesCompositedScrolling() const
@@ -1708,7 +1700,8 @@ NativeScrollbarVisibility LocalFrameView::verticalNativeScrollbarVisibility() co
 void LocalFrameView::setCannotBlitToWindow()
 {
     m_cannotBlitToWindow = true;
-    updateCanBlitOnScrollRecursively();
+    if (platformWidget())
+        setCanBlitOnScroll(!useSlowRepaints());
 }
 
 void LocalFrameView::addSlowRepaintObject(RenderElement& renderer)
@@ -1727,7 +1720,8 @@ void LocalFrameView::addSlowRepaintObject(RenderElement& renderer)
     if (hadSlowRepaintObjects)
         return;
 
-    updateCanBlitOnScrollRecursively();
+    if (platformWidget())
+        setCanBlitOnScroll(!useSlowRepaints());
 }
 
 void LocalFrameView::removeSlowRepaintObject(RenderElement& renderer)
@@ -1745,7 +1739,8 @@ void LocalFrameView::removeSlowRepaintObject(RenderElement& renderer)
         return;
 
     m_slowRepaintObjects = nullptr;
-    updateCanBlitOnScrollRecursively();
+    if (platformWidget())
+        setCanBlitOnScroll(!useSlowRepaints());
 }
 
 bool LocalFrameView::hasSlowRepaintObject(const RenderElement& renderer) const
@@ -1771,7 +1766,7 @@ void LocalFrameView::addViewportConstrainedObject(RenderLayerModelObject& object
     if (!m_viewportConstrainedObjects->contains(object)) {
         m_viewportConstrainedObjects->add(object);
         if (platformWidget())
-            updateCanBlitOnScrollRecursively();
+            setCanBlitOnScroll(!useSlowRepaints());
 
         if (RefPtr scrollingCoordinator = this->scrollingCoordinator())
             scrollingCoordinator->frameViewFixedObjectsDidChange(*this);
@@ -1789,9 +1784,8 @@ void LocalFrameView::removeViewportConstrainedObject(RenderLayerModelObject& obj
         if (RefPtr scrollingCoordinator = this->scrollingCoordinator())
             scrollingCoordinator->frameViewFixedObjectsDidChange(*this);
 
-        // FIXME: In addFixedObject() we only call this if there's a platform widget,
-        // why isn't the same check being made here?
-        updateCanBlitOnScrollRecursively();
+        if (platformWidget())
+            setCanBlitOnScroll(!useSlowRepaints());
 
         if (RefPtr<Page> page = m_frame->page())
             page->chrome().client().didAddOrRemoveViewportConstrainedObjects();
@@ -2993,7 +2987,8 @@ void LocalFrameView::setIsOverlapped(bool isOverlapped)
         return;
 
     m_isOverlapped = isOverlapped;
-    updateCanBlitOnScrollRecursively();
+    if (platformWidget())
+        setCanBlitOnScroll(!useSlowRepaints());
 }
 
 void LocalFrameView::setContentIsOpaque(bool contentIsOpaque)
@@ -3002,7 +2997,8 @@ void LocalFrameView::setContentIsOpaque(bool contentIsOpaque)
         return;
 
     m_contentIsOpaque = contentIsOpaque;
-    updateCanBlitOnScrollRecursively();
+    if (platformWidget())
+        setCanBlitOnScroll(!useSlowRepaints());
 }
 
 void LocalFrameView::restoreScrollbar()

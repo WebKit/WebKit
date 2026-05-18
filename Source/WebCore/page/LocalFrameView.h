@@ -790,6 +790,7 @@ private:
     explicit LocalFrameView(LocalFrame&);
 
     bool isLocalFrameView() const final { return true; }
+    bool canBlitOnScroll() const final;
     bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) final;
     void scrollContentsSlowPath(const IntRect& updateRect) final;
 
@@ -815,7 +816,6 @@ private:
     friend class RenderWidget;
     bool useSlowRepaints(bool considerOverlap = true) const;
     bool useSlowRepaintsIfNotOverlapped() const;
-    void updateCanBlitOnScrollRecursively();
     bool shouldLayoutAfterContentsResized() const;
     
     void cancelScheduledScrollToFocusedElement();

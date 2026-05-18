@@ -182,7 +182,7 @@ public:
     // Whether or not a scroll view will blit visible contents when it is scrolled. Blitting is disabled in situations
     // where it would cause rendering glitches (such as with fixed backgrounds or when the view is partially transparent).
     void setCanBlitOnScroll(bool);
-    bool canBlitOnScroll() const;
+    virtual bool canBlitOnScroll() const;
 
     // There are at least three types of contentInset. Usually we just care about WebCoreInset, which is the inset
     // that is set on a Page that requires WebCore to move its layers to accomodate the inset. However, there are platform
@@ -584,10 +584,6 @@ private:
 
     bool m_prohibitsScrolling { false };
     bool m_allowsUnclampedScrollPosition { false };
-
-    // This bool is unused on Mac OS because we directly ask the platform widget
-    // whether it is safe to blit on scroll.
-    bool m_canBlitOnScroll { true };
 
     bool m_scrollbarsSuppressed { false };
     bool m_inUpdateScrollbars { false };
