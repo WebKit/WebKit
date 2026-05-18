@@ -162,7 +162,7 @@ void AudioMediaStreamTrackRendererUnit::Unit::close()
 void AudioMediaStreamTrackRendererUnit::Unit::addSource(Ref<AudioSampleDataSource>&& source)
 {
 #if !RELEASE_LOG_DISABLED
-    protect(source->logger())->logAlways(LogWebRTC, "AudioMediaStreamTrackRendererUnit::addSource ", source->logIdentifier());
+    protect(source->logger())->logAlways(LogWebRTC, "AudioMediaStreamTrackRendererUnit::Unit::addSource ", source->logIdentifier());
 #endif
     assertIsMainThread();
 
@@ -183,7 +183,7 @@ void AudioMediaStreamTrackRendererUnit::Unit::addSource(Ref<AudioSampleDataSourc
 bool AudioMediaStreamTrackRendererUnit::Unit::removeSource(AudioSampleDataSource& source)
 {
 #if !RELEASE_LOG_DISABLED
-    protect(source.logger())->logAlways(LogWebRTC, "AudioMediaStreamTrackRendererUnit::removeSource ", source.logIdentifier());
+    protect(source.logger())->logAlways(LogWebRTC, "AudioMediaStreamTrackRendererUnit::Unit::removeSource ", source.logIdentifier());
 #endif
     assertIsMainThread();
 
@@ -223,7 +223,7 @@ void AudioMediaStreamTrackRendererUnit::Unit::retrieveFormatDescription(Completi
 void AudioMediaStreamTrackRendererUnit::Unit::start()
 {
     assertIsMainThread();
-    RELEASE_LOG(WebRTC, "AudioMediaStreamTrackRendererUnit::start");
+    RELEASE_LOG(WebRTC, "AudioMediaStreamTrackRendererUnit::Unit::start");
 
     m_internalUnit->start();
 }
@@ -231,14 +231,14 @@ void AudioMediaStreamTrackRendererUnit::Unit::start()
 void AudioMediaStreamTrackRendererUnit::Unit::stop()
 {
     assertIsMainThread();
-    RELEASE_LOG(WebRTC, "AudioMediaStreamTrackRendererUnit::stop");
+    RELEASE_LOG(WebRTC, "AudioMediaStreamTrackRendererUnit::Unit::stop");
 
     m_internalUnit->stop();
 }
 
 void AudioMediaStreamTrackRendererUnit::Unit::reset()
 {
-    RELEASE_LOG(WebRTC, "AudioMediaStreamTrackRendererUnit::reset");
+    RELEASE_LOG(WebRTC, "AudioMediaStreamTrackRendererUnit::Unit::reset");
     if (!isMainThread()) {
         callOnMainThread([weakThis = ThreadSafeWeakPtr { *this }] {
             if (RefPtr strongThis = weakThis.get())
