@@ -327,16 +327,18 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
         setNeedsLayout();
     }
 
-    if (newImage != imageResource().imagePtr() || !newImage)
+    if (newImage != imageResource().imagePtr())
         return;
 
-    // At a zoom level of 1 the image is guaranteed to have an integer size.
-    incrementVisuallyNonEmptyPixelCountIfNeeded(flooredIntSize(imageResource().imageSize(1.0f)));
+    if (newImage) {
+        // At a zoom level of 1 the image is guaranteed to have an integer size.
+        incrementVisuallyNonEmptyPixelCountIfNeeded(flooredIntSize(imageResource().imageSize(1.0f)));
+    }
 
     ImageSizeChangeType imageSizeChange = ImageSizeChangeNone;
 
     // Set image dimensions, taking into account the size of the alt text.
-    if (imageResource().errorOccurred()) {
+    if (imageResource().errorOccurred() || !newImage) {
         if (!m_altText.isEmpty() && document().hasPendingStyleRecalc()) {
             ASSERT(element());
             if (element()) {

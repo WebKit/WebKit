@@ -1,0 +1,20 @@
+
+Test repaint when an <img>'s src is cleared. The renderer's box should collapse to its no-image size and the previously painted region should be invalidated. webkit.org/b/314993
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+(repaint rects
+  (rect 100 100 200 200)
+  (rect 0 104 800 200)
+  (rect 0 0 800 304)
+  (rect 0 320 800 70)
+  (rect 0 120 800 70)
+  (rect 0 190 800 200)
+  (rect 0 206 800 200)
+)
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
