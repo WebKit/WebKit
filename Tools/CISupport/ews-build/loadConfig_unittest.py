@@ -57,7 +57,7 @@ class ConfigDotJSONTest(unittest.TestCase):
 
     def test_builder_keys(self):
         config = self.get_config()
-        valid_builder_keys = ['additionalArguments', 'architectures', 'builddir', 'configuration', 'description',
+        valid_builder_keys = ['additionalArguments', 'allowed_base_branches', 'architectures', 'builddir', 'configuration', 'description',
                               'defaultProperties', 'deployment_target', 'env', 'factory', 'icon', 'locks', 'name',
                               'platform', 'properties', 'rebuild_without_change_on_builder', 'remotes', 'runTests',
                               'shortname', 'tags', 'triggers', 'triggered_by', 'workernames', 'workerbuilddir']
@@ -244,6 +244,32 @@ class TestcheckValidBuilder(unittest.TestCase):
     def test_rebuild_without_change_on_builder_valid(self):
         config = {'schedulers': [{'name': 'some-trigger', 'type': 'Triggerable'}]}
         loadConfig.checkValidBuilder(config, {'name': 'macOS-Build-EWS', 'shortname': 'mac', 'configuration': 'release', 'factory': 'BuildFactory', 'platform': 'mac-sierra', 'rebuild_without_change_on_builder': True, 'triggers': ['some-trigger']})
+
+    def test_allowed_base_branches_absent(self):
+        loadConfig.checkValidBuilder({}, {'name': 'macOS-Build-EWS', 'shortname': 'mac', 'configuration': 'release', 'factory': 'BuildFactory', 'platform': 'mac-sierra'})
+
+    def test_allowed_base_branches_valid(self):
+        loadConfig.checkValidBuilder({}, {'name': 'macOS-Build-EWS', 'shortname': 'mac', 'configuration': 'release', 'factory': 'BuildFactory', 'platform': 'mac-sierra', 'allowed_base_branches': ['main', 'safari-*-branch']})
+
+    def test_allowed_base_branches_not_a_list(self):
+        with self.assertRaises(Exception) as context:
+            loadConfig.checkValidBuilder({}, {'name': 'macOS-Build-EWS', 'shortname': 'mac', 'configuration': 'release', 'factory': 'BuildFactory', 'platform': 'mac-sierra', 'allowed_base_branches': 'main'})
+        self.assertEqual(context.exception.args, ('allowed_base_branches must be a non-empty list of glob strings. Builder: macOS-Build-EWS',))
+
+    def test_allowed_base_branches_empty_list(self):
+        with self.assertRaises(Exception) as context:
+            loadConfig.checkValidBuilder({}, {'name': 'macOS-Build-EWS', 'shortname': 'mac', 'configuration': 'release', 'factory': 'BuildFactory', 'platform': 'mac-sierra', 'allowed_base_branches': []})
+        self.assertEqual(context.exception.args, ('allowed_base_branches must be a non-empty list of glob strings. Builder: macOS-Build-EWS',))
+
+    def test_allowed_base_branches_empty_entry(self):
+        with self.assertRaises(Exception) as context:
+            loadConfig.checkValidBuilder({}, {'name': 'macOS-Build-EWS', 'shortname': 'mac', 'configuration': 'release', 'factory': 'BuildFactory', 'platform': 'mac-sierra', 'allowed_base_branches': ['main', '']})
+        self.assertEqual(context.exception.args, ('allowed_base_branches must contain non-empty glob strings. Builder: macOS-Build-EWS',))
+
+    def test_allowed_base_branches_non_string_entry(self):
+        with self.assertRaises(Exception) as context:
+            loadConfig.checkValidBuilder({}, {'name': 'macOS-Build-EWS', 'shortname': 'mac', 'configuration': 'release', 'factory': 'BuildFactory', 'platform': 'mac-sierra', 'allowed_base_branches': ['main', 123]})
+        self.assertEqual(context.exception.args, ('allowed_base_branches must contain non-empty glob strings. Builder: macOS-Build-EWS',))
 
 
 class TestcheckWorkersAndBuildersForConsistency(unittest.TestCase):

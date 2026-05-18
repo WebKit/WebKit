@@ -6801,6 +6801,61 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_property('fast_commit_queue', None, 'fast_commit_queue is unexpectedly set')
         return rc
 
+    def test_allowed_base_branches_exact_match(self):
+        self.setup_step(ValidateChange(verifyBugClosed=False))
+        ValidateChange.get_pr_json = lambda x, pull_request, repository_url=None, retry=None: self.get_pr(pr_number=pull_request)
+        self.setProperty('github.number', '1234')
+        self.setProperty('repository', 'https://github.com/WebKit/WebKit')
+        self.setProperty('github.head.sha', '7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('allowed_base_branches', ['main'])
+        self.expect_outcome(result=SUCCESS, state_string='Validated change')
+        return self.run_step()
+
+    def test_allowed_base_branches_no_match(self):
+        self.setup_step(ValidateChange(verifyBugClosed=False))
+        ValidateChange.get_pr_json = lambda x, pull_request, repository_url=None, retry=None: self.get_pr(pr_number=pull_request)
+        self.setProperty('github.number', '1234')
+        self.setProperty('repository', 'https://github.com/WebKit/WebKit')
+        self.setProperty('github.head.sha', '7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c')
+        self.setProperty('github.base.ref', 'safari-7620-branch')
+        self.setProperty('allowed_base_branches', ['main'])
+        self.expect_outcome(result=FAILURE, state_string="Base branch 'safari-7620-branch' is not allowed for this builder")
+        return self.run_step()
+
+    def test_allowed_base_branches_glob_match(self):
+        self.setup_step(ValidateChange(verifyBugClosed=False))
+        ValidateChange.get_pr_json = lambda x, pull_request, repository_url=None, retry=None: self.get_pr(pr_number=pull_request)
+        self.setProperty('github.number', '1234')
+        self.setProperty('repository', 'https://github.com/WebKit/WebKit')
+        self.setProperty('github.head.sha', '7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c')
+        self.setProperty('github.base.ref', 'safari-7620-branch')
+        self.setProperty('allowed_base_branches', ['safari-*-branch'])
+        self.expect_outcome(result=SUCCESS, state_string='Validated change')
+        return self.run_step()
+
+    def test_allowed_base_branches_multi_pattern_no_match(self):
+        self.setup_step(ValidateChange(verifyBugClosed=False))
+        ValidateChange.get_pr_json = lambda x, pull_request, repository_url=None, retry=None: self.get_pr(pr_number=pull_request)
+        self.setProperty('github.number', '1234')
+        self.setProperty('repository', 'https://github.com/WebKit/WebKit')
+        self.setProperty('github.head.sha', '7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c')
+        self.setProperty('github.base.ref', 'webkitgtk-2.44')
+        self.setProperty('allowed_base_branches', ['main', 'safari-*-branch'])
+        self.expect_outcome(result=FAILURE, state_string="Base branch 'webkitgtk-2.44' is not allowed for this builder")
+        return self.run_step()
+
+    def test_allowed_base_branches_overrides_factory_branches(self):
+        self.setup_step(ValidateChange(verifyBugClosed=False, branches=[r'main']))
+        ValidateChange.get_pr_json = lambda x, pull_request, repository_url=None, retry=None: self.get_pr(pr_number=pull_request)
+        self.setProperty('github.number', '1234')
+        self.setProperty('repository', 'https://github.com/WebKit/WebKit')
+        self.setProperty('github.head.sha', '7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c')
+        self.setProperty('github.base.ref', 'safari-7620-branch')
+        self.setProperty('allowed_base_branches', ['safari-*-branch'])
+        self.expect_outcome(result=SUCCESS, state_string='Validated change')
+        return self.run_step()
+
 
 class TestRetrievePRDataFromLabel(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
