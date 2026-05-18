@@ -1,20 +1,20 @@
 [submitproject "filter"]
     includedSubdirectoryPatterns = .sourcefilters
     includedSubdirectoryPatterns = Configurations/
-    includedSubdirectoryPatterns = Source/
-    includedSubdirectoryPatterns = WebKitLibraries/SDKs/*.internal-additions.sdk/
+    includedSubdirectoryPatterns = Source/bmalloc/
+    includedSubdirectoryPatterns = Source/JavaScriptCore/
+    includedSubdirectoryPatterns = Source/WebCore/
+    includedSubdirectoryPatterns = Source/WebDriver/
+    includedSubdirectoryPatterns = Source/WebGPU/
+    includedSubdirectoryPatterns = Source/WebInspectorUI/
+    includedSubdirectoryPatterns = Source/WebKit/
+    includedSubdirectoryPatterns = Source/WebKitLegacy/
+    includedSubdirectoryPatterns = Source/WTF/
+    includedSubdirectoryPatterns = Source/ThirdParty/ANGLE/
+    includedSubdirectoryPatterns = Source/ThirdParty/libwebrtc/
     excludedSubdirectoryPatterns = Source/ThirdParty/libwebrtc/Source/third_party/boringssl/src/util
     excludedSubdirectoryPatterns = Source/ThirdParty/libwebrtc/Source/webrtc/examples
-    excludedSubdirectoryPatterns = Source/ThirdParty/capstone
-    excludedSubdirectoryPatterns = Source/ThirdParty/d3flamegraphjs
-    excludedSubdirectoryPatterns = Source/ThirdParty/d3js
-    excludedSubdirectoryPatterns = Source/ThirdParty/gmock
-    excludedSubdirectoryPatterns = Source/ThirdParty/gtest
-    excludedSubdirectoryPatterns = Source/ThirdParty/libsysprof-capture
-    excludedSubdirectoryPatterns = Source/ThirdParty/qunit
-    excludedSubdirectoryPatterns = Source/ThirdParty/skia
-    excludedSubdirectoryPatterns = Source/ThirdParty/unifdef
-    excludedSubdirectoryPatterns = Source/ThirdParty/xdgmime
     excludedSubdirectoryPatterns = Source/*/SaferCPPExpectations/
+    includedSubdirectoryPatterns = WebKitLibraries/SDKs/*.internal-additions.sdk/
 [submitproject "gitmodules"]
     enabled = false
