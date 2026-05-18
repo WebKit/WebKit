@@ -594,6 +594,7 @@ if (ENABLE_WPE_QT_API)
     list(APPEND WPE_QT_API_INSTALLED_HEADERS
         ${WEBKIT_DIR}/UIProcess/API/wpe/qt6/WPEQtView.h
         ${WEBKIT_DIR}/UIProcess/API/wpe/qt6/WPEQtViewLoadRequest.h
+        ${WEBKIT_DIR}/UIProcess/API/wpe/qt6/WPEQtViewContextMenuRequest.h
     )
 
     # FIXME: This should be MODULE, but tests link directly against it. Abusing
@@ -606,6 +607,7 @@ if (ENABLE_WPE_QT_API)
         UIProcess/API/wpe/qt6/WPEQmlExtensionPlugin.cpp
         UIProcess/API/wpe/qt6/WPEQtView.cpp
         UIProcess/API/wpe/qt6/WPEQtViewLoadRequest.cpp
+        UIProcess/API/wpe/qt6/WPEQtViewContextMenuRequest.cpp
     )
     set_target_properties(qtwpe PROPERTIES
         OUTPUT_NAME qtwpe
