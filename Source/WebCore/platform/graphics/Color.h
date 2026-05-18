@@ -439,7 +439,11 @@ inline Color::~Color()
 {
     if (isOutOfLine())
         asOutOfLine().deref();
+<<<<<<< HEAD
     secureZeroBytes(m_colorAndFlags);
+=======
+    secureMemsetSpan(singleElementSpan(m_colorAndFlags), 0);
+>>>>>>> ff676342841b ([MTE] Harden `WebCore::Color` and `WebCore::Color::OutOfLineComponents` objects)
 }
 
 inline bool Color::isValid() const
