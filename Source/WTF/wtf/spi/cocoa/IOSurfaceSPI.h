@@ -51,7 +51,9 @@ typedef struct __IOSurface *IOSurfaceRef;
 #endif
 
 #ifdef __OBJC__
+#if !PLATFORM(WATCHOS) || PLATFORM(IOS_FAMILY_SIMULATOR) || USE(APPLE_INTERNAL_SDK)
 #import <IOSurface/IOSurfaceObjC.h>
+#endif
 #endif
 
 WTF_EXTERN_C_BEGIN
