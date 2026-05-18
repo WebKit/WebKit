@@ -645,6 +645,29 @@ void DocumentLoader::redirectReceived(ResourceRequest&& request, const ResourceR
     });
 }
 
+bool DocumentLoader::isFormActionAllowedByRequesterCSP(const URL& postRedirectURL, const ResourceResponse& redirectResponse) const
+{
+    // form-action only applies to form submissions.
+    auto navigationType = m_triggeringAction.type();
+    bool isFormSubmission = (navigationType == NavigationType::FormSubmitted) || (navigationType == NavigationType::FormResubmitted);
+    if (!isFormSubmission)
+        return true;
+
+    const auto& requester = m_triggeringAction.requester();
+    if (!requester)
+        return false;
+
+    // If the initiator document is in this process, use its live CSP object.
+    if (RefPtr initiatorDocument = Document::allDocumentsMap().get(requester->documentIdentifier))
+        return protect(initiatorDocument->contentSecurityPolicy())->allowFormAction(postRedirectURL, std::nullopt, ContentSecurityPolicy::RedirectResponseReceived::Yes, redirectResponse.url());
+
+    // Otherwise, reconstruct CSP from the headers captured at submission time.
+    // FIXME: standalone CSP has no client/document, so securitypolicyviolation events and console messages don't fire on this path.
+    ContentSecurityPolicy initiatorCSP(URL { requester->url }, nullptr, nullptr);
+    initiatorCSP.didReceiveHeaders(requester->policyContainer.contentSecurityPolicyResponseHeaders, String { }, ContentSecurityPolicy::ReportParsingErrors::No);
+    return initiatorCSP.allowFormAction(postRedirectURL, std::nullopt, ContentSecurityPolicy::RedirectResponseReceived::Yes, redirectResponse.url());
+}
+
 void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
     // Note that there are no asserts here as there are for the other callbacks. This is due to the
@@ -658,7 +681,7 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
         DOCUMENTLOADER_RELEASE_LOG("willSendRequest: With no provisional document loader");
 
     bool didReceiveRedirectResponse = !redirectResponse.isNull();
-    if (!protect(frameLoader())->checkIfFormActionAllowedByCSP(newRequest.url(), didReceiveRedirectResponse, redirectResponse.url())) {
+    if (didReceiveRedirectResponse && !isFormActionAllowedByRequesterCSP(newRequest.url(), redirectResponse)) {
         DOCUMENTLOADER_RELEASE_LOG("willSendRequest: canceling - form action not allowed by CSP");
         cancelMainResourceLoad(protect(frameLoader())->cancelledError(newRequest));
         return completionHandler(WTF::move(newRequest));

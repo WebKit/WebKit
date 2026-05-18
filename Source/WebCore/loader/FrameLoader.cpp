@@ -4328,7 +4328,7 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(ResourceRequest&& request,
         mainFrame->document()->setReferrerPolicy(frame->document()->referrerPolicy());
     }
 
-    NavigationAction newAction { protect(frame->document()).releaseNonNull(), request, InitiatedByMainFrame::Unknown, action.isRequestFromClientOrUserInput(), NavigationType::Other, action.shouldOpenExternalURLsPolicy(), nullptr, action.downloadAttribute() };
+    NavigationAction newAction { protect(frame->document()).releaseNonNull(), request, InitiatedByMainFrame::Unknown, action.isRequestFromClientOrUserInput(), action.type(), action.shouldOpenExternalURLsPolicy(), nullptr, action.downloadAttribute() };
     newAction.setShouldReplaceDocumentIfJavaScriptURL(action.shouldReplaceDocumentIfJavaScriptURL());
     mainFrameLoader->loadWithNavigationAction(WTF::move(request), WTF::move(newAction), FrameLoadType::Standard, WTF::move(formSubmission), allowNavigationToInvalidURL, ShouldTreatAsContinuingLoad::No);
 }
