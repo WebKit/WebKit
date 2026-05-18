@@ -1,3 +1,4 @@
+Returning null for request to local resources
 Tests that there is no crash when the client blocks a resource load.
 
 

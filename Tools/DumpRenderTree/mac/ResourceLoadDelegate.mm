@@ -157,6 +157,28 @@ BOOL canAuthenticateServerTrustAgainstProtectionSpace(NSString *host)
     return isLocalhost(host) || gTestRunner->localhostAliases().contains(host.UTF8String) || (gTestRunner->allowAnyHTTPSCertificateForAllowedHosts() && isAllowedHost(host));
 }
 
+String sanitizeExternalURL(NSURL *url)
+{
+    String result = [url absoluteString];
+    replace(result, JSC::Yarr::RegularExpression("\\?key=[-0123456789abcdefABCDEF]+"_s), "?key=GENERATED_KEY"_s);
+    replace(result, JSC::Yarr::RegularExpression("&key=[-0123456789abcdefABCDEF]+"_s), "&key=GENERATED_KEY"_s);
+    replace(result, JSC::Yarr::RegularExpression("%3Fkey%3D[-0123456789abcdefABCDEF]+"_s), "%3Fkey%3DGENERATED_KEY"_s);
+    replace(result, JSC::Yarr::RegularExpression("%26key%3D[-0123456789abcdefABCDEF]+"_s), "%26key%3DGENERATED_KEY"_s);
+    replace(result, JSC::Yarr::RegularExpression("%253Fkey%253D[-0123456789abcdefABCDEF]+"_s), "%253Fkey%253DGENERATED_KEY"_s);
+    replace(result, JSC::Yarr::RegularExpression("%2526key%253D[-0123456789abcdefABCDEF]+"_s), "%2526key%253DGENERATED_KEY"_s);
+    replace(result, JSC::Yarr::RegularExpression("reportID=[-0123456789abcdefABCDEF]+"_s), "reportID=GENERATED_REPORT_ID"_s);
+    return result;
+}
+
+String urlForWillSendRequestReturnsNullMessage(NSURL *url)
+{
+    NSString *scheme = [url scheme];
+    if ([scheme caseInsensitiveCompare:@"file"])
+        return "local resources"_s;
+
+    return sanitizeExternalURL(url);
+}
+
 -(NSURLRequest *)webView: (WebView *)wv resource:identifier willSendRequest: (NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse fromDataSource:(WebDataSource *)dataSource
 {
     if (!done && gTestRunner->dumpResourceLoadCallbacks()) {
@@ -165,15 +187,18 @@ BOOL canAuthenticateServerTrustAgainstProtectionSpace(NSString *host)
         printf("%s\n", [string UTF8String]);
     }
 
-    if (!done && gTestRunner->willSendRequestReturnsNull())
-        return nil;
+    NSURL *url = [request URL];
 
-    if (!done && gTestRunner->willSendRequestReturnsNullOnRedirect() && redirectResponse) {
-        printf("Returning null for this redirect\n");
+    if (!done && gTestRunner->willSendRequestReturnsNull()) {
+        printf("Returning null for request to %s\n", urlForWillSendRequestReturnsNullMessage(url).utf8().data());
         return nil;
     }
 
-    NSURL *url = [request URL];
+    if (!done && gTestRunner->willSendRequestReturnsNullOnRedirect() && redirectResponse) {
+        printf("Returning null for redirect to %s\n", urlForWillSendRequestReturnsNullMessage(url).utf8().data());
+        return nil;
+    }
+
     NSString *host = [url host];
     if (host && (NSOrderedSame == [[url scheme] caseInsensitiveCompare:@"http"] || NSOrderedSame == [[url scheme] caseInsensitiveCompare:@"https"])) {
         NSString *testURL = [NSString stringWithUTF8String:gTestRunner->testURL().c_str()];
@@ -182,9 +207,7 @@ BOOL canAuthenticateServerTrustAgainstProtectionSpace(NSString *host)
         if ([lowercaseTestURL hasPrefix:@"http:"] || [lowercaseTestURL hasPrefix:@"https:"])
             testHost = [[NSURL URLWithString:testURL] host];
         if (!isLocalhost(host) && !hostIsUsedBySomeTestsToGenerateError(host) && !isAllowedHost(host) && (!testHost || isLocalhost(testHost))) {
-            String blockedURL = [url absoluteString];
-            replace(blockedURL, JSC::Yarr::RegularExpression("&key=[^&]+&"_s), "&key=GENERATED_KEY&"_s);
-            replace(blockedURL, JSC::Yarr::RegularExpression("reportID=[-0123456789abcdefABCDEF]+"_s), "reportID=GENERATED_REPORT_ID"_s);
+            auto blockedURL = sanitizeExternalURL(url);
             auto script = makeString("console.log('Blocked access to external URL "_s, blockedURL, "');"_s);
             auto scriptRef = adopt(JSStringCreateWithUTF8CString(script.utf8().data()));
             JSGlobalContextRef jsContext = [mainFrame globalContext];
