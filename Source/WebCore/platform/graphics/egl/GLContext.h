@@ -94,6 +94,7 @@ public:
     WEBCORE_EXPORT bool makeContextCurrent();
     bool unmakeContextCurrent();
     WEBCORE_EXPORT void swapBuffers();
+    void abandonContext() { m_abandoned = true; }
     GCGLContext platformContext() const;
 
     struct GLExtensions {
@@ -179,6 +180,7 @@ private:
     mutable unsigned m_version { 0 };
     EGLContext m_context { nullptr };
     EGLSurface m_surface { nullptr };
+    bool m_abandoned { false };
     EGLConfig m_config { nullptr };
 #if USE(WPE_RENDERER)
     struct wpe_renderer_backend_egl_offscreen_target* m_wpeTarget { nullptr };

@@ -451,6 +451,9 @@ GLContext::GLContext(GLDisplay& display, EGLContext context, EGLSurface surface,
 
 GLContext::~GLContext()
 {
+    if (m_abandoned)
+        return;
+
     if (auto display = m_display.get()) {
         EGLDisplay eglDisplay = display->eglDisplay();
         if (m_context) {

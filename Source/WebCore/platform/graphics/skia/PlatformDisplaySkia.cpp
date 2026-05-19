@@ -244,7 +244,9 @@ public:
     ~SkiaGLContext()
     {
         if (m_skiaGLContext) {
-            m_skiaGLContext->makeContextCurrent();
+            if (m_skiaGrContext)
+                m_skiaGrContext->abandonContext();
+            m_skiaGLContext->abandonContext();
             m_skiaGrContext = nullptr;
             m_skiaGLContext = nullptr;
         }
