@@ -36,6 +36,7 @@
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include "WebsiteDataStore.h"
+#include <wtf/HashSet.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -65,6 +66,53 @@ void WebBackForwardCache::deref() const
 inline void WebBackForwardCache::removeOldestEntry()
 {
     ASSERT(!m_itemsWithCachedPage.isEmptyIgnoringNullReferences());
+
+    // Walk the list in insertion order looking for an entry whose loss does
+    // not terminate a cached process. Two kinds of entry qualify:
+    //   - An entry without a SuspendedPageProxy: there is no cached process
+    //     to keep alive in the first place.
+    //   - A non-first holder of a SuspendedPageProxy already recorded in
+    //     oldestItems: SPPs are shared across entries in the same process
+    //     (see addEntry(item, Ref<SuspendedPageProxy>&&)), so the previously
+    //     recorded first holder shares its SPP with this entry and is safe
+    //     to evict — the SPP stays alive on this entry and the process is
+    //     not closed.
+    // Returning the first holder rather than the current item preserves the
+    // "oldest" semantic for the SPP-shared case: when we discover a duplicate
+    // at position p, the recorded first holder is at some position p' < p.
+    // Single pass with O(1) HashMap lookups, so the policy is O(N) overall.
+    HashMap<SuspendedPageProxy*, WebBackForwardListItem*> oldestItems;
+    auto findEvictableItem = [&oldestItems] (WebBackForwardListItem& item) -> WebBackForwardListItem* {
+        RefPtr entry = item.backForwardCacheEntry();
+        if (!entry)
+            return nullptr;
+
+        RefPtr suspendedPage = entry->suspendedPage();
+        if (!suspendedPage)
+            return &item;
+    
+        if (auto result = oldestItems.add(suspendedPage.get(), &item); !result.isNewEntry) {
+            ASSERT(result.iterator->value);
+            return result.iterator->value;
+        }
+
+        return nullptr;
+    };
+
+    for (auto& item : m_itemsWithCachedPage) {
+        if (RefPtr evictableItem = findEvictableItem(item)) {
+            m_itemsWithCachedPage.remove(*evictableItem);
+            evictableItem->setBackForwardCacheEntry(nullptr);
+            return;
+        }
+    }
+
+    // Fallback: every entry holds an exclusively-owned SuspendedPageProxy.
+    // Surface this so SPP leaks (entries whose target navigation never
+    // consumed them) become visible. Under normal navigation patterns SPPs
+    // are short-lived, so a frequent fallback firing is a smell worth
+    // tracing.
+    RELEASE_LOG_ERROR(BackForwardCache, "WebBackForwardCache::removeOldestEntry: every entry holds an exclusive SuspendedPageProxy; evicting the oldest, which will close a cached process. This may indicate an SPP that was never consumed.");
     if (RefPtr item = m_itemsWithCachedPage.tryTakeFirst())
         item->setBackForwardCacheEntry(nullptr);
 }

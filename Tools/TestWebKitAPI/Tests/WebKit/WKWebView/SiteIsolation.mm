@@ -9028,4 +9028,70 @@ TEST(SiteIsolation, MultiProcessBFCacheSameSiteNavAfterRestore)
     }
 }
 
+TEST(SiteIsolation, MultiProcessBFCacheSuspendedPageProxySurvivesCapacityPressure)
+{
+    // Capacity-based eviction in WebBackForwardCache should not close a
+    // process-suspended cross-site cached page (held by a SuspendedPageProxy
+    // with no other holder) when an evictable entry exists in the cache.
+    //
+    // SPPs are shared across entries in the same process, so a same-site
+    // cached page in a process that later acquires an SPP becomes
+    // "SPP-shared" — its eviction does not terminate the cached process and
+    // is therefore preferable over evicting the sole holder of an SPP for a
+    // different process.
+    //
+    // Sequence (capacity = 2 in tests):
+    //   1. Load a.com/a              entries: []
+    //   2. Load b.com/b1 cross-site  entries: [a(SPP_a)]
+    //   3. Load b.com/b2 same-site   entries: [a(SPP_a), b1]   (b1 non-SPP)
+    //   4. Load c.com/c cross-site
+    //      - SPP_b created for b's process; b1 receives SPP_b via sharing.
+    //      - addEntry pushes capacity to 3 → eviction.
+    //        ・Naive FIFO would evict a (oldest, sole holder of SPP_a)
+    //          and close a's process, losing a's BFCache state.
+    //        ・The share-aware policy walks for an entry whose loss is
+    //          non-fatal: a is sole-holder (skip), b1 shares SPP_b with b2
+    //          (evictable). b1 is evicted; a's SPP_a is preserved.
+    //
+    // Going back through c → b2 → b1 → a, the BFCache marker installed on a
+    // before any navigation must survive only if a's SuspendedPageProxy was
+    // not evicted.
+    HTTPServer server({
+        { "/a"_s, { "page a"_s } },
+        { "/b1"_s, { "page b1"_s } },
+        { "/b2"_s, { "page b2"_s } },
+        { "/c"_s, { "page c"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto *configuration = server.httpsProxyConfiguration();
+    enableFeature(configuration, @"MultiProcessBackForwardCacheEnabled");
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/a"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView objectByEvaluatingJavaScript:@"window.__bfcacheMarker_a = true"];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://b.com/b1"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://b.com/b2"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://c.com/c"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [webView goBack];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ(@"https://b.com/b2", [webView URL].absoluteString);
+
+    [webView goBack];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ(@"https://b.com/b1", [webView URL].absoluteString);
+
+    [webView goBack];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ(@"https://a.com/a", [webView URL].absoluteString);
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.__bfcacheMarker_a ? true : false"] boolValue]);
+}
+
 }
