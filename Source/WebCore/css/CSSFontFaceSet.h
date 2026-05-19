@@ -89,7 +89,7 @@ public:
 
     size_t facesPartitionIndex() const { return m_facesPartitionIndex; }
 
-    ExceptionOr<Vector<std::reference_wrapper<CSSFontFace>>> matchingFacesExcludingPreinstalledFonts(ScriptExecutionContext&, const String& font, const String& text);
+    ExceptionOr<Vector<Ref<CSSFontFace>>> matchingFacesExcludingPreinstalledFonts(ScriptExecutionContext&, const String& font, const String& text);
 
     // FIXME: Should this be implemented?
     void updateStyleIfNeeded(CSSFontFace&) final { }
