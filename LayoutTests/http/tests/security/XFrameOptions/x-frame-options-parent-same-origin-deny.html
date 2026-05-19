@@ -2,21 +2,18 @@
     if (window.testRunner) {
         testRunner.dumpAsText();
         testRunner.dumpChildFramesAsText();
-        testRunner.dumpResourceLoadCallbacks();
         testRunner.waitUntilDone();
     }
 
     function checkIfDone() {
         try {
-            var url = document.querySelector('iframe').contentWindow.location.href;
-            if (url)
-                console.log("FAIL: Could read contentWindow.location.href");
-            else
-                throw null;
+            document.querySelector('iframe').contentWindow.location.href;
+            console.log("FAIL: Could read contentWindow.location.href");
         } catch (e) {
-            if (e)
-                console.log(e);
-            console.log("PASS: Could not read contentWindow.location.href");
+            if (e instanceof DOMException && e.name === "SecurityError")
+                console.log("PASS: Access to blocked frame threw SecurityError");
+            else
+                console.log("FAIL: Unexpected error: " + e);
         }
         testRunner.notifyDone();
     }

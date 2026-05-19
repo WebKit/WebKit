@@ -210,8 +210,6 @@ http/tests/privateClickMeasurement/store-private-click-measurement-nested.html [
 http/tests/resourceLoadStatistics/omit-document-referrer-nested-third-party-iframe-ephemeral.html [ Failure ]
 http/tests/resourceLoadStatistics/omit-document-referrer-third-party-iframe-ephemeral.html [ Failure ]
 http/tests/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame.html [ Failure ]
-http/tests/security/XFrameOptions/x-frame-options-multiple-headers-sameorigin-deny.html [ Failure ]
-http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html [ Failure ]
 http/tests/site-isolation/inspector/debugger/pause-in-cross-origin-iframe.html [ Pass ]
 http/tests/site-isolation/inspector/debugger/scriptParsed-frame-target.html [ Pass ]
 http/tests/site-isolation/inspector/debugger/setBreakpoint-cross-origin-iframe.html [ Pass ]
