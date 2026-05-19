@@ -31,7 +31,7 @@ import os
 import os.path
 
 from webkitpy.common.system.executive import ScriptError
-from webkitpy.port.base import Port
+from webkitpy.layout_tests.controllers.layout_test_finder import LayoutTestFinder
 from webkitpy.tool.servers.reflectionhandler import ReflectionHandler
 
 from http.server import ThreadingHTTPServer
@@ -166,33 +166,32 @@ def _move_test_baselines(test_file, extensions_to_move, source_platform, destina
 
 
 def get_test_baselines(test_file, test_config):
-    # FIXME: This seems like a hack. This only seems used to access the Port.expected_baselines logic.
-    class AllPlatformsPort(Port):
-        def __init__(self, host):
-            super(AllPlatformsPort, self).__init__(host, 'mac')
-            self._platforms_by_directory = dict([(self._webkit_baseline_path(p), p) for p in test_config.platforms])
-
-        def baseline_search_path(self, **kwargs):
-            return list(self._platforms_by_directory.keys())
-
-        def platform_from_directory(self, directory):
-            return self._platforms_by_directory[directory]
-
-    host = test_config.host
-    host.initialize_scm()
-    all_platforms_port = AllPlatformsPort(host)
+    fs = test_config.filesystem
+    layout_tests_directory = test_config.layout_tests_directory
+    all_baseline_search_paths = [fs.join(layout_tests_directory, 'platform', p) for p in test_config.platforms]
+    platforms_by_directory = {
+        fs.normpath(fs.realpath(path)): platform
+        for path, platform in zip(all_baseline_search_paths, test_config.platforms)
+    }
+    normalized_layout_tests_directory = fs.normpath(fs.realpath(layout_tests_directory))
+    finder = LayoutTestFinder(
+        fs,
+        layout_tests_directory,
+        test_config.test_port.baseline_search_path(),
+        all_baseline_search_paths=all_baseline_search_paths,
+    )
 
     all_test_baselines = {}
     for baseline_extension in ('.txt', '.png'):
-        test_baselines = test_config.test_port.expected_baselines(test_file, baseline_extension)
-        baselines = all_platforms_port.expected_baselines(test_file, baseline_extension, all_baselines=True)
+        test_baselines = finder.baselines_for_test(test_file, baseline_extension)
+        baselines = finder.all_baselines_for_test(test_file, baseline_extension)
         for platform_directory, expected_filename in baselines:
             if not platform_directory:
                 continue
-            if platform_directory == test_config.layout_tests_directory:
+            if platform_directory == normalized_layout_tests_directory:
                 platform = 'base'
             else:
-                platform = all_platforms_port.platform_from_directory(platform_directory)
+                platform = platforms_by_directory[platform_directory]
             platform_baselines = all_test_baselines.setdefault(platform, {})
             was_used_for_test = (platform_directory, expected_filename) in test_baselines
             platform_baselines[baseline_extension] = was_used_for_test

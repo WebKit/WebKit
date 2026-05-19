@@ -22,6 +22,7 @@
 
 import logging
 import ntpath
+import os
 import posixpath
 import unittest
 from collections import OrderedDict
@@ -1091,4 +1092,238 @@ class WptTestsForPathWindowsTests(PyFakefsWindowsTestCaseMixin, WptTestsForPathT
 
 
 class WptTestsForPathMacOSTests(PyFakefsMacOSTestCaseMixin, WptTestsForPathTestsBase, unittest.TestCase):
+    pass
+
+
+class AllBaselinesForTestTestsBase(object):
+    def setUp(self):
+        self.setUpPyfakefs()
+        host = MockHost(create_stub_repository_files=True, filesystem=FileSystem())
+        add_unit_tests_to_mock_filesystem(host.filesystem)
+        self.port = TestPort(host)
+        self._filesystem = self.port.host.filesystem
+        self.layout_tests_dir = self.port.layout_tests_dir()
+
+    def tearDown(self):
+        self.port = None
+        self._filesystem = None
+
+    def test_emulated_os(self):
+        self.assertEqual(self.fs.os, self.fs_os)
+        expected_sep = "\\" if self.fs_os == OSType.WINDOWS else "/"
+        self.assertEqual(self._filesystem.sep, expected_sep)
+
+    def _make_finder(self, baseline_search_paths, all_baseline_search_paths=None):
+        return LayoutTestFinder(
+            self._filesystem,
+            self.layout_tests_dir,
+            baseline_search_paths,
+            all_baseline_search_paths=all_baseline_search_paths,
+        )
+
+    def test_all_baselines_found_in_multiple_platform_dirs(self):
+        """Baseline files in multiple platform dirs are all returned."""
+        fs = self._filesystem
+        platform_a = self._filesystem.join(self.layout_tests_dir, 'platform', 'test-mac-leopard')
+        platform_b = self._filesystem.join(self.layout_tests_dir, 'platform', 'test-mac-snowleopard')
+        fs.maybe_make_directory(fs.join(platform_a, 'fast'))
+        fs.maybe_make_directory(fs.join(platform_b, 'fast'))
+        fs.write_binary_file(fs.join(platform_a, 'fast', 'foo-expected.txt'), b'a')
+        fs.write_binary_file(fs.join(platform_b, 'fast', 'foo-expected.txt'), b'b')
+
+        finder = self._make_finder(
+            baseline_search_paths=[platform_a],
+            all_baseline_search_paths=[platform_a, platform_b],
+        )
+        result = finder.all_baselines_for_test('fast/foo.html', '.txt')
+        self.assertEqual(result, [
+            (platform_a, 'fast/foo-expected.txt'),
+            (platform_b, 'fast/foo-expected.txt'),
+        ])
+
+    def test_all_baselines_not_found_returns_none_platform_dir(self):
+        """When no baseline file exists, returns [(None, baseline_filename)]."""
+        finder = self._make_finder(
+            baseline_search_paths=self.port.baseline_search_path(),
+        )
+        result = finder.all_baselines_for_test('fast/nonexistent.html', '.txt')
+        self.assertEqual(result, [(None, 'fast/nonexistent-expected.txt')])
+
+    def test_all_baselines_defaults_to_baseline_search_paths(self):
+        """When all_baseline_search_paths is None, defaults to baseline_search_paths."""
+        finder = self._make_finder(
+            baseline_search_paths=self.port.baseline_search_path(),
+        )
+        self.assertEqual(finder.all_baseline_search_paths, finder.baseline_search_paths)
+
+    def test_all_baselines_variant_sanitization(self):
+        """Variant in test_name is sanitized in the baseline filename."""
+        fs = self._filesystem
+        platform_dir = self._filesystem.join(self.layout_tests_dir, 'platform', 'test-mac-leopard')
+        fs.maybe_make_directory(fs.join(platform_dir, 'fast'))
+        # ?foo=bar variant: variant[1:] = 'foo=bar', sanitized with [|* <>:/%] -> 'foo=bar'
+        # so baseline filename is 'fast/foo_foo=bar-expected.txt'
+        baseline_name = 'fast/foo_foo=bar-expected.txt'
+        fs.write_binary_file(
+            fs.join(platform_dir, 'fast', 'foo_foo=bar-expected.txt'), b'x'
+        )
+
+        finder = self._make_finder(
+            baseline_search_paths=[platform_dir],
+            all_baseline_search_paths=[platform_dir],
+        )
+        result = finder.all_baselines_for_test('fast/foo.html?foo=bar', '.txt')
+        self.assertEqual(result, [
+            (platform_dir, baseline_name),
+        ])
+
+
+    def test_all_baselines_percent_encoded_variant(self):
+        """A variant that was percent-encoded at discovery is sanitized to '_'
+        in the baseline's filename: '?a%20b' -> 'a_20b'."""
+        fs = self._filesystem
+        platform_dir = fs.join(self.layout_tests_dir, 'platform', 'test-mac-leopard')
+        fs.maybe_make_directory(fs.join(platform_dir, 'fast'))
+        fs.write_binary_file(fs.join(platform_dir, 'fast', 'foo_a_20b-expected.txt'), b'x')
+
+        finder = self._make_finder(baseline_search_paths=[platform_dir], all_baseline_search_paths=[platform_dir])
+        self.assertEqual(
+            finder.all_baselines_for_test('fast/foo.html?a%20b', '.txt'),
+            [(platform_dir, 'fast/foo_a_20b-expected.txt')],
+        )
+        # The unvarianted baseline is a different file.
+        self.assertEqual(
+            finder.all_baselines_for_test('fast/foo.html', '.txt'),
+            [(None, 'fast/foo-expected.txt')],
+        )
+
+    def test_all_baselines_includes_the_generic_directory_last(self):
+        fs = self._filesystem
+        platform_dir = fs.join(self.layout_tests_dir, 'platform', 'test-mac-leopard')
+        fs.maybe_make_directory(fs.join(platform_dir, 'fast'))
+        fs.maybe_make_directory(fs.join(self.layout_tests_dir, 'fast'))
+        fs.write_binary_file(fs.join(platform_dir, 'fast', 'foo-expected.txt'), b'a')
+        fs.write_binary_file(fs.join(self.layout_tests_dir, 'fast', 'foo-expected.txt'), b'b')
+
+        finder = self._make_finder(baseline_search_paths=[platform_dir], all_baseline_search_paths=[platform_dir])
+        self.assertEqual(
+            finder.all_baselines_for_test('fast/foo.html', '.txt'),
+            [(platform_dir, 'fast/foo-expected.txt'), (self.layout_tests_dir, 'fast/foo-expected.txt')],
+        )
+
+    def test_all_baseline_search_paths_are_normalized_through_symlinks(self):
+        if self.fs_os == OSType.WINDOWS:
+            self.skipTest("pyfakefs doesn't resolve symlinks in realpath() under Windows emulation")
+        fs = self._filesystem
+        real_dir = fs.join(self.layout_tests_dir, 'platform', 'real-platform')
+        link_dir = fs.join(self.layout_tests_dir, 'platform', 'linked-platform')
+        fs.maybe_make_directory(fs.join(real_dir, 'fast'))
+        os.symlink(real_dir, link_dir)
+        fs.write_binary_file(fs.join(real_dir, 'fast', 'foo-expected.txt'), b'a')
+
+        finder = self._make_finder(baseline_search_paths=[real_dir], all_baseline_search_paths=[link_dir])
+        self.assertEqual(finder.all_baseline_search_paths, [real_dir])
+        # The reported directory is the real one, so callers can compare it
+        # against paths they normalize the same way.
+        self.assertEqual(
+            finder.all_baselines_for_test('fast/foo.html', '.txt'),
+            [(real_dir, 'fast/foo-expected.txt')],
+        )
+
+
+class AllBaselinesForTestLinuxTests(PyFakefsLinuxTestCaseMixin, AllBaselinesForTestTestsBase, unittest.TestCase):
+    pass
+
+
+class AllBaselinesForTestWindowsTests(PyFakefsWindowsTestCaseMixin, AllBaselinesForTestTestsBase, unittest.TestCase):
+    pass
+
+
+class AllBaselinesForTestMacOSTests(PyFakefsMacOSTestCaseMixin, AllBaselinesForTestTestsBase, unittest.TestCase):
+    pass
+
+
+class BaselinesForTestTestsBase(object):
+    def setUp(self):
+        self.setUpPyfakefs()
+        host = MockHost(create_stub_repository_files=True, filesystem=FileSystem())
+        add_unit_tests_to_mock_filesystem(host.filesystem)
+        self.port = TestPort(host)
+        self._filesystem = self.port.host.filesystem
+        self.layout_tests_dir = self.port.layout_tests_dir()
+
+    def tearDown(self):
+        self.port = None
+        self._filesystem = None
+
+    def test_emulated_os(self):
+        self.assertEqual(self.fs.os, self.fs_os)
+        expected_sep = "\\" if self.fs_os == OSType.WINDOWS else "/"
+        self.assertEqual(self._filesystem.sep, expected_sep)
+
+    def _make_finder(self, baseline_search_paths):
+        return LayoutTestFinder(
+            self._filesystem,
+            self.layout_tests_dir,
+            baseline_search_paths,
+        )
+
+    def test_baselines_found_in_first_platform_dir(self):
+        """Baseline found in first matching platform dir is returned (early exit)."""
+        fs = self._filesystem
+        platform_a = fs.join(self.layout_tests_dir, 'platform', 'test-mac-leopard')
+        platform_b = fs.join(self.layout_tests_dir, 'platform', 'test-mac-snowleopard')
+        fs.maybe_make_directory(fs.join(platform_a, 'fast'))
+        fs.maybe_make_directory(fs.join(platform_b, 'fast'))
+        fs.write_binary_file(fs.join(platform_a, 'fast', 'foo-expected.txt'), b'a')
+        fs.write_binary_file(fs.join(platform_b, 'fast', 'foo-expected.txt'), b'b')
+
+        finder = self._make_finder(baseline_search_paths=[platform_a, platform_b])
+        result = finder.baselines_for_test('fast/foo.html', '.txt')
+        # Only the first match is returned.
+        self.assertEqual(result, [(platform_a, 'fast/foo-expected.txt')])
+
+    def test_baselines_not_found_returns_none_platform_dir(self):
+        """When no baseline file exists, returns [(None, baseline_filename)]."""
+        finder = self._make_finder(
+            baseline_search_paths=self.port.baseline_search_path(),
+        )
+        result = finder.baselines_for_test('fast/nonexistent.html', '.txt')
+        self.assertEqual(result, [(None, 'fast/nonexistent-expected.txt')])
+
+    def test_baselines_fall_back_to_the_generic_directory(self):
+        fs = self._filesystem
+        platform_dir = fs.join(self.layout_tests_dir, 'platform', 'test-mac-leopard')
+        fs.maybe_make_directory(fs.join(platform_dir, 'fast'))
+        fs.maybe_make_directory(fs.join(self.layout_tests_dir, 'fast'))
+        fs.write_binary_file(fs.join(self.layout_tests_dir, 'fast', 'foo-expected.png'), b'b')
+
+        finder = self._make_finder(baseline_search_paths=[platform_dir])
+        self.assertEqual(
+            finder.baselines_for_test('fast/foo.html', '.png'),
+            [(self.layout_tests_dir, 'fast/foo-expected.png')],
+        )
+
+    def test_baselines_with_variant(self):
+        fs = self._filesystem
+        platform_dir = fs.join(self.layout_tests_dir, 'platform', 'test-mac-leopard')
+        fs.maybe_make_directory(fs.join(platform_dir, 'fast'))
+        fs.write_binary_file(fs.join(platform_dir, 'fast', 'foo_a_20b-expected.txt'), b'a')
+
+        finder = self._make_finder(baseline_search_paths=[platform_dir])
+        self.assertEqual(
+            finder.baselines_for_test('fast/foo.html?a%20b', '.txt'),
+            [(platform_dir, 'fast/foo_a_20b-expected.txt')],
+        )
+
+
+class BaselinesForTestLinuxTests(PyFakefsLinuxTestCaseMixin, BaselinesForTestTestsBase, unittest.TestCase):
+    pass
+
+
+class BaselinesForTestWindowsTests(PyFakefsWindowsTestCaseMixin, BaselinesForTestTestsBase, unittest.TestCase):
+    pass
+
+
+class BaselinesForTestMacOSTests(PyFakefsMacOSTestCaseMixin, BaselinesForTestTestsBase, unittest.TestCase):
     pass

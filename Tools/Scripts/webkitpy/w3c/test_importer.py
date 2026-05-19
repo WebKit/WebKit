@@ -390,9 +390,6 @@ class TestImporter(object):
         # tests, so it can't identify which baselines under destination_directory
         # are still live. Use LayoutTestFinder_New with test routes that
         # treats destination_directory as a WPT root.
-        # FIXME (Task 14): Migrate test_importer fully to LayoutTestFinder_New;
-        # this is the minimum-viable shim to make orphan-baseline cleanup
-        # correct for templated tests today.
         layout_tests_dir = self.port.layout_tests_dir()
         dest_rel = self.filesystem.relpath(
             self.destination_directory, layout_tests_dir
@@ -405,6 +402,7 @@ class TestImporter(object):
             layout_tests_dir,
             self.port.baseline_search_path(),
             test_routes=test_routes,
+            all_baseline_search_paths=list(self.port.all_baseline_search_paths()),
         )
         tests = list(finder.get_tests([directory]))
         baselines_for_tests = {
@@ -412,8 +410,8 @@ class TestImporter(object):
                 platform_dir or self.port.layout_tests_dir(), baseline_filename
             )
             for test in tests
-            for platform_dir, baseline_filename in self.port.expected_baselines(
-                test.test_path, ".txt", all_baselines=True
+            for platform_dir, baseline_filename in finder.all_baselines_for_test(
+                test.test_path, ".txt"
             )
         }
         for relative_path in self.filesystem.files_under(directory, file_filter=self._is_baseline):
