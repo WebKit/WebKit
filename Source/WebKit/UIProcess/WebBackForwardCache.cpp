@@ -65,6 +65,34 @@ void WebBackForwardCache::deref() const
 inline void WebBackForwardCache::removeOldestEntry()
 {
     ASSERT(!m_itemsWithCachedPage.isEmptyIgnoringNullReferences());
+
+    // Prefer to evict non-SuspendedPageProxy entries first. SPP-bearing entries
+    // hold a process-suspended cross-site cached page that gets consumed by
+    // takeSuspendedPage during back/forward navigation; capacity-based
+    // eviction would close the cached process and lose the cached state
+    // before the user can navigate to it. Other entries carry only frame
+    // metadata and can be safely evicted — the underlying
+    // WebCore::BackForwardCache entry lives in the WebProcess and only has
+    // its own per-process capacity limit to honor.
+    RefPtr<WebBackForwardListItem> oldestNonSuspendedEntry;
+    for (RefPtr item : m_itemsWithCachedPage) {
+        RefPtr entry = item->backForwardCacheEntry();
+        if (entry && !entry->suspendedPage()) {
+            oldestNonSuspendedEntry = item;
+            break;
+        }
+    }
+    if (oldestNonSuspendedEntry) {
+        m_itemsWithCachedPage.remove(*oldestNonSuspendedEntry);
+        oldestNonSuspendedEntry->setBackForwardCacheEntry(nullptr);
+        return;
+    }
+
+    // Fallback: every entry holds an SPP. Surface this so SPP leaks (entries
+    // whose target navigation never consumed them) become visible. Under
+    // normal navigation patterns SPPs are short-lived, so a frequent fallback
+    // is a smell worth tracing.
+    RELEASE_LOG_ERROR(BackForwardCache, "WebBackForwardCache::removeOldestEntry: evicting an SPP-bearing entry because no non-SPP entries are available; this may indicate an SPP that was never consumed");
     if (RefPtr item = m_itemsWithCachedPage.tryTakeFirst())
         item->setBackForwardCacheEntry(nullptr);
 }
