@@ -9249,7 +9249,7 @@ IGNORE_CLANG_WARNINGS_END
         // We don't need memory barriers since we just fast-created the activation, so the
         // activation must be young.
         m_out.storePtr(scope, fastObject, m_heaps.JSScope_next);
-        m_out.storePtr(weakPointer(table), fastObject, m_heaps.JSSymbolTableObject_symbolTable);
+        m_out.storePtr(weakPointer(table), fastObject, m_heaps.JSLexicalEnvironment_symbolTable);
 
         for (unsigned i = 0; i < table->scopeSize(); ++i) {
             m_out.store64(
@@ -18998,7 +18998,7 @@ IGNORE_CLANG_WARNINGS_END
             JSLexicalEnvironment::allocationSize(table), structure, m_out.intPtrZero, slowPath);
 
         m_out.storePtr(scope, fastObject, m_heaps.JSScope_next);
-        m_out.storePtr(weakPointer(table), fastObject, m_heaps.JSSymbolTableObject_symbolTable);
+        m_out.storePtr(weakPointer(table), fastObject, m_heaps.JSLexicalEnvironment_symbolTable);
 
 
         ValueFromBlock fastResult = m_out.anchor(fastObject);

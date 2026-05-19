@@ -24,18 +24,21 @@
 #pragma once
 
 #include <JavaScriptCore/DeferredWorkTimer.h>
-#include <JavaScriptCore/JSSegmentedVariableObject.h>
+#include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/JSScope.h>
 #include <JavaScriptCore/LazyClassStructure.h>
 #include <JavaScriptCore/Microtask.h>
 #include <JavaScriptCore/RegExpGlobalData.h>
 #include <JavaScriptCore/RuntimeFlags.h>
 #include <JavaScriptCore/SourceTaintedOrigin.h>
 #include <JavaScriptCore/StructureCache.h>
+#include <JavaScriptCore/SymbolTable.h>
 #include <JavaScriptCore/Watchpoint.h>
 #include <JavaScriptCore/WeakGCMap.h>
 #include <JavaScriptCore/WeakGCSet.h>
 #include <wtf/FixedVector.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/SegmentedVector.h>
 #include <wtf/WeakPtr.h>
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -226,8 +229,16 @@ FOR_EACH_WEBASSEMBLY_CONSTRUCTOR_TYPE(DECLARE_SIMPLE_BUILTIN_TYPE)
 
 #undef DECLARE_SIMPLE_BUILTIN_TYPE
 
-class JSGlobalObject : public JSSegmentedVariableObject {
+class JSGlobalObject : public JSNonFinalObject {
 private:
+    // m_next must be the first own field so it lands at scopeChainNextOffset.
+    WriteBarrier<JSObject> m_next;
+    WriteBarrier<SymbolTable> m_symbolTable;
+    SegmentedVector<WriteBarrier<Unknown>, 16> m_variables;
+#if ASSERT_ENABLED
+    bool m_alreadyDestroyed { false };
+#endif
+
     // m_vm must be a pointer (instead of a reference) because the JSCLLIntOffsetsExtractor
     // cannot handle it being a reference.
     VM* const m_vm;
@@ -244,7 +255,7 @@ public:
     WriteBarrier<JSObject> m_globalThis;
 
     WriteBarrier<JSGlobalLexicalEnvironment> m_globalLexicalEnvironment;
-    WriteBarrier<JSScope> m_globalScopeExtension;
+    WriteBarrier<JSObject> m_globalScopeExtension;
     WriteBarrier<JSCallee> m_globalCallee;
     WriteBarrier<JSCallee> m_zombieFrameCallee;
     WriteBarrier<JSCallee> m_evalCallee;
@@ -689,8 +700,8 @@ public:
     inline void createRareDataIfNeeded();
         
 public:
-    using Base = JSSegmentedVariableObject;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable | OverridesGetOwnPropertySlot | OverridesPut | IsImmutablePrototypeExoticObject;
+    using Base = JSNonFinalObject;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnSpecialPropertyNames | HasStaticPropertyTable | OverridesGetOwnPropertySlot | OverridesPut | IsImmutablePrototypeExoticObject;
 
     static constexpr DestructionMode needsDestruction = NeedsDestruction;
     template<typename CellType, SubspaceAccess mode>
@@ -703,6 +714,27 @@ public:
     JS_EXPORT_PRIVATE static JSGlobalObject* createWithCustomMethodTable(VM&, Structure*, const GlobalObjectMethodTable*);
 
     DECLARE_EXPORT_INFO;
+
+    JSObject* next() { return m_next.get(); }
+    static constexpr ptrdiff_t offsetOfNext() { return OBJECT_OFFSETOF(JSGlobalObject, m_next); }
+
+    SymbolTable* symbolTable() const LIFETIME_BOUND { return m_symbolTable.get(); }
+    static constexpr ptrdiff_t offsetOfSymbolTable() { return OBJECT_OFFSETOF(JSGlobalObject, m_symbolTable); }
+    void setSymbolTable(VM&, SymbolTable*);
+
+    bool isValidScopeOffset(ScopeOffset offset)
+    {
+        return !!offset && offset.offset() < m_variables.size();
+    }
+    WriteBarrier<Unknown>& variableAt(ScopeOffset offset) { return m_variables[offset.offset()]; }
+    JS_EXPORT_PRIVATE ScopeOffset findVariableIndex(void*);
+    WriteBarrier<Unknown>* assertVariableIsInThisObject(WriteBarrier<Unknown>* variablePointer)
+    {
+        if (ASSERT_ENABLED)
+            findVariableIndex(variablePointer);
+        return variablePointer;
+    }
+    JS_EXPORT_PRIVATE ScopeOffset addVariables(unsigned numberOfVariablesToAdd, JSValue);
 
     bool hasDebugger() const { return m_debugger; }
     bool NODELETE hasInteractiveDebugger() const;
@@ -733,10 +765,13 @@ public:
     JS_EXPORT_PRIVATE static void destroy(JSCell*);
 
     DECLARE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE);
+    JS_EXPORT_PRIVATE static void analyzeHeap(JSCell*, HeapAnalyzer&);
 
     JS_EXPORT_PRIVATE static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
     JS_EXPORT_PRIVATE static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
     JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
+    JS_EXPORT_PRIVATE static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&);
+    JS_EXPORT_PRIVATE static void getOwnSpecialPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArrayBuilder&, DontEnumPropertiesMode);
 
     bool canDeclareGlobalFunction(const Identifier&);
     template<BindingCreationContext> void createGlobalFunctionBinding(const Identifier&);
@@ -744,11 +779,11 @@ public:
     inline bool canDeclareGlobalVar(const Identifier&);
     template<BindingCreationContext> inline void createGlobalVarBinding(const Identifier&);
 
-    inline JSScope* globalScope();
+    inline JSObject* globalScope();
     JSGlobalLexicalEnvironment* globalLexicalEnvironment() LIFETIME_BOUND { return m_globalLexicalEnvironment.get(); }
 
-    JSScope* globalScopeExtension() LIFETIME_BOUND { return m_globalScopeExtension.get(); }
-    void setGlobalScopeExtension(JSScope*);
+    JSObject* globalScopeExtension() LIFETIME_BOUND { return m_globalScopeExtension.get(); }
+    void setGlobalScopeExtension(JSObject*);
     void NODELETE clearGlobalScopeExtension();
 
     JSCallee* globalCallee() LIFETIME_BOUND { return m_globalCallee.get(); }
@@ -1307,13 +1342,8 @@ private:
 #endif
 };
 
-inline JSObject* JSScope::globalThis()
-{ 
-    return realm()->globalThis();
-}
-
 inline JSObject* JSGlobalObject::globalThis() const
-{ 
+{
     return m_globalThis.get();
 }
 
@@ -1321,6 +1351,9 @@ ALWAYS_INLINE VM& getVM(JSGlobalObject* globalObject)
 {
     return globalObject->vm();
 }
+
+static_assert(JSGlobalObject::offsetOfNext() == sizeof(JSObjectWithButterfly),
+    "JSGlobalObject::m_next must be the first own field, immediately after the butterfly.");
 
 } // namespace JSC
 

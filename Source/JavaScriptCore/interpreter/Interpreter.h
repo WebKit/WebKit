@@ -80,7 +80,6 @@ using JSOrWasmInstruction = Variant<const JSInstruction*, uintptr_t /* IPIntOffs
     class JSAsyncFunctionGenerator;
     class JSGenerator;
     class JSObject;
-    class JSScope;
     class SourceCode;
     class StackFrame;
     class StackVisitor;
@@ -153,7 +152,7 @@ using JSOrWasmInstruction = Variant<const JSInstruction*, uintptr_t /* IPIntOffs
         JSValue executeModuleProgram(JSModuleRecord*, ModuleProgramExecutable*, JSGlobalObject*, JSModuleEnvironment*, JSValue sentValue, JSValue resumeMode);
         JSValue executeCall(JSObject* function, const CallData&, JSValue thisValue, JSCell* context, const ArgList&);
         JSObject* executeConstruct(JSObject* function, const CallData&, const ArgList&, JSValue newTarget);
-        JSValue executeEval(EvalExecutable*, JSValue thisValue, JSScope*);
+        JSValue executeEval(EvalExecutable*, JSValue thisValue, JSObject*);
 
         void getArgumentsData(CallFrame*, JSFunction*&, ptrdiff_t& firstParameterIndex, Register*& argv, int& argc);
 
@@ -190,7 +189,7 @@ using JSOrWasmInstruction = Variant<const JSInstruction*, uintptr_t /* IPIntOffs
 #endif // ENABLE(COMPUTED_GOTO_OPCODES)
     };
 
-    JSValue eval(CallFrame*, JSValue thisValue, JSScope*, CodeBlock* callerBaselineCodeBlock, BytecodeIndex, LexicallyScopedFeatures);
+    JSValue eval(CallFrame*, JSValue thisValue, JSObject*, CodeBlock* callerBaselineCodeBlock, BytecodeIndex, LexicallyScopedFeatures);
 
     inline CallFrame* calleeFrameForVarargs(CallFrame*, unsigned numUsedStackSlots, unsigned argumentCountIncludingThis);
 

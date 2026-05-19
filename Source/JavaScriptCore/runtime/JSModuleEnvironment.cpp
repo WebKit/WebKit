@@ -37,7 +37,7 @@ namespace JSC {
 const ClassInfo JSModuleEnvironment::s_info = { "JSModuleEnvironment"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSModuleEnvironment) };
 
 JSModuleEnvironment* JSModuleEnvironment::create(
-    VM& vm, Structure* structure, JSScope* currentScope, SymbolTable* symbolTable, JSValue initialValue, AbstractModuleRecord* moduleRecord)
+    VM& vm, Structure* structure, JSObject* currentScope, SymbolTable* symbolTable, JSValue initialValue, AbstractModuleRecord* moduleRecord)
 {
     // JSLexicalEnvironment has the storage to store the variable slots after the its class storage.
     // Because the offset of the variable slots are fixed in the JSLexicalEnvironment, inheritting these class and adding new member field is not allowed,

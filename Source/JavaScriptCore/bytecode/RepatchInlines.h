@@ -167,7 +167,7 @@ ALWAYS_INLINE void* linkFor(VM& vm, JSCell* owner, CallFrame* calleeFrame, CallL
     }
 
     JSFunction* callee = uncheckedDowncast<JSFunction>(calleeAsFunctionCell);
-    JSScope* scope = callee->scopeUnchecked();
+    JSObject* scope = callee->scopeUnchecked();
     ExecutableBase* executable = callee->executable();
 
     CodePtr<JSEntryPtrTag> codePtr;
@@ -245,7 +245,7 @@ ALWAYS_INLINE void* virtualForWithFunction(VM& vm, JSCell* owner, CallFrame* cal
     }
 
     JSFunction* function = uncheckedDowncast<JSFunction>(calleeAsFunctionCell);
-    JSScope* scope = function->scopeUnchecked();
+    JSObject* scope = function->scopeUnchecked();
     ExecutableBase* executable = function->executable();
 
     DeferTraps deferTraps(vm); // We can't jettison if we're going to call this CodeBlock.

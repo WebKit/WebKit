@@ -3642,12 +3642,12 @@ void LOLJIT::emit_op_resolve_scope(const JSInstruction* currentInstruction)
         unsigned localScopeDepth = bytecode.metadata(m_profiledCodeBlock).m_localScopeDepth;
         if (localScopeDepth < 8) {
             for (unsigned index = 0; index < localScopeDepth; ++index)
-                loadPtr(Address(destRegs.payloadGPR(), JSScope::offsetOfNext()), destRegs.payloadGPR());
+                loadPtr(Address(destRegs.payloadGPR(), scopeChainNextOffset), destRegs.payloadGPR());
         } else {
             ASSERT(localScopeDepth >= 8);
             load32FromMetadata(bytecode, Metadata::offsetOfLocalScopeDepth(), s_scratch);
             auto loop = label();
-            loadPtr(Address(destRegs.payloadGPR(), JSScope::offsetOfNext()), destRegs.payloadGPR());
+            loadPtr(Address(destRegs.payloadGPR(), scopeChainNextOffset), destRegs.payloadGPR());
             branchSub32(NonZero, s_scratch, TrustedImm32(1), s_scratch).linkTo(loop, this);
         }
     } else {
@@ -3822,7 +3822,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> LOLJIT::generateOpResolveScopeThunk(VM& vm
 
         Label loop = jit.label();
         Jump done = jit.branchTest32(Zero, scratch1GPR);
-        jit.loadPtr(Address(returnValueGPR, JSScope::offsetOfNext()), returnValueGPR);
+        jit.loadPtr(Address(returnValueGPR, scopeChainNextOffset), returnValueGPR);
         jit.sub32(TrustedImm32(1), scratch1GPR);
         jit.jump().linkTo(loop, &jit);
         done.link(&jit);
@@ -3833,7 +3833,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> LOLJIT::generateOpResolveScopeThunk(VM& vm
         switch (resolveType) {
         case GlobalProperty:
         case GlobalPropertyWithVarInjectionChecks: {
-            // JSScope::constantScopeForCodeBlock() loads codeBlock->globalObject().
+            // constantScopeForCodeBlock() loads codeBlock->globalObject().
             loadGlobalObject(jit, scratch2GPR);
             doVarInjectionCheck(needsVarInjectionChecks(resolveType), scratch2GPR);
             jit.load32(Address(metadataGPR, Metadata::offsetOfGlobalLexicalBindingEpoch()), scratch1GPR);
@@ -3846,7 +3846,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> LOLJIT::generateOpResolveScopeThunk(VM& vm
         case GlobalVarWithVarInjectionChecks:
         case GlobalLexicalVar:
         case GlobalLexicalVarWithVarInjectionChecks: {
-            // JSScope::constantScopeForCodeBlock() loads codeBlock->globalObject() for GlobalVar*,
+            // constantScopeForCodeBlock() loads codeBlock->globalObject() for GlobalVar*,
             // and codeBlock->globalObject()->globalLexicalEnvironment() for GlobalLexicalVar*.
             loadGlobalObject(jit, scratch2GPR);
             doVarInjectionCheck(needsVarInjectionChecks(resolveType), scratch2GPR);

@@ -419,8 +419,6 @@
 		0F8F2B96172E04A3007DBDA5 /* FTLLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F8F2B94172E049E007DBDA5 /* FTLLink.h */; };
 		0F8F2B9A172F0501007DBDA5 /* DFGDesiredIdentifiers.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F8F2B98172F04FD007DBDA5 /* DFGDesiredIdentifiers.h */; };
 		0F8F94411667633200D61971 /* CodeBlockHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F8F943E1667632D00D61971 /* CodeBlockHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F919D0D157EE0A2004A4E7D /* JSSymbolTableObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F919D0A157EE09D004A4E7D /* JSSymbolTableObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F919D11157F332C004A4E7D /* JSSegmentedVariableObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F919D0F157F3327004A4E7D /* JSSegmentedVariableObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F919D2615853CE3004A4E7D /* Watchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F919D2315853CDE004A4E7D /* Watchpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F9327521C20BCBA00CF6564 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F0EB6105C86C6B00E6DF1B /* Foundation.framework */; };
 		0F9327531C20BCBA00CF6564 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
@@ -3366,10 +3364,6 @@
 		0F8F943F1667632D00D61971 /* CodeType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CodeType.cpp; sourceTree = "<group>"; };
 		0F8F94431667635200D61971 /* JITCode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITCode.cpp; sourceTree = "<group>"; };
 		0F8F9445166764EE00D61971 /* CodeOrigin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CodeOrigin.cpp; sourceTree = "<group>"; };
-		0F919D09157EE09D004A4E7D /* JSSymbolTableObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSymbolTableObject.cpp; sourceTree = "<group>"; };
-		0F919D0A157EE09D004A4E7D /* JSSymbolTableObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSymbolTableObject.h; sourceTree = "<group>"; };
-		0F919D0E157F3327004A4E7D /* JSSegmentedVariableObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSegmentedVariableObject.cpp; sourceTree = "<group>"; };
-		0F919D0F157F3327004A4E7D /* JSSegmentedVariableObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSegmentedVariableObject.h; sourceTree = "<group>"; };
 		0F919D2215853CDE004A4E7D /* Watchpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Watchpoint.cpp; sourceTree = "<group>"; };
 		0F919D2315853CDE004A4E7D /* Watchpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Watchpoint.h; sourceTree = "<group>"; };
 		0F919D2715856770004A4E7D /* SymbolTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolTable.cpp; sourceTree = "<group>"; };
@@ -9173,8 +9167,6 @@
 				534638701E70CF3D00F12AC1 /* JSRunLoopTimer.h */,
 				14874AE115EBDE4A002E3587 /* JSScope.cpp */,
 				14874AE215EBDE4A002E3587 /* JSScope.h */,
-				0F919D0E157F3327004A4E7D /* JSSegmentedVariableObject.cpp */,
-				0F919D0F157F3327004A4E7D /* JSSegmentedVariableObject.h */,
 				A7299D9B17D12837005F5FF9 /* JSSet.cpp */,
 				A7299D9C17D12837005F5FF9 /* JSSet.h */,
 				FEF5B4282628B5240016E776 /* JSSetInlines.h */,
@@ -9192,8 +9184,6 @@
 				276B38FB2A71D2B200252F4E /* JSStringIteratorInlines.h */,
 				2600B5A4152BAAA70091EE5F /* JSStringJoiner.cpp */,
 				2600B5A5152BAAA70091EE5F /* JSStringJoiner.h */,
-				0F919D09157EE09D004A4E7D /* JSSymbolTableObject.cpp */,
-				0F919D0A157EE09D004A4E7D /* JSSymbolTableObject.h */,
 				70ECA6001AFDBEA200449739 /* JSTemplateObjectDescriptor.cpp */,
 				70ECA6011AFDBEA200449739 /* JSTemplateObjectDescriptor.h */,
 				276B38B02A71D25900252F4E /* JSTemplateObjectDescriptorInlines.h */,
@@ -12240,7 +12230,6 @@
 				53EE01B8218F7EFF00AD1F8D /* JSScriptInternal.h in Headers */,
 				A7C0C4AC168103020017011D /* JSScriptRefPrivate.h in Headers */,
 				14D01A7721FB351F00BC54E9 /* JSScriptSourceProvider.h in Headers */,
-				0F919D11157F332C004A4E7D /* JSSegmentedVariableObject.h in Headers */,
 				A7299D9E17D12837005F5FF9 /* JSSet.h in Headers */,
 				FEF5B4292628B5240016E776 /* JSSetInlines.h in Headers */,
 				A790DD70182F499700588807 /* JSSetIterator.h in Headers */,
@@ -12253,7 +12242,6 @@
 				BC18C4280E16F5CD00B34460 /* JSStringRef.h in Headers */,
 				BC18C4290E16F5CD00B34460 /* JSStringRefCF.h in Headers */,
 				1A28D4A8177B71C80007FA3C /* JSStringRefPrivate.h in Headers */,
-				0F919D0D157EE0A2004A4E7D /* JSSymbolTableObject.h in Headers */,
 				70ECA6061AFDBEA200449739 /* JSTemplateObjectDescriptor.h in Headers */,
 				276B38D52A71D26400252F4E /* JSTemplateObjectDescriptorInlines.h in Headers */,
 				AD5C36EA1F75AD6A000BCAAF /* JSToWasm.h in Headers */,

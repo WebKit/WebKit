@@ -43,7 +43,6 @@ types [
     :JSGlobalObject,
     :JSModuleEnvironment,
     :JSObject,
-    :JSScope,
     :JSType,
     :JSValue,
     :ResultType,
@@ -483,7 +482,7 @@ op :resolve_scope,
              lexicalEnvironment: WriteBarrierBase[JSCell], # lexicalEnvironment && type == ModuleVar
              symbolTable: WriteBarrierBase[SymbolTable], # lexicalEnvironment && type != ModuleVar
 
-             constantScope: WriteBarrierBase[JSScope],
+             constantScope: WriteBarrierBase[JSObject],
 
              # written from the slow path
              globalLexicalEnvironment: WriteBarrierBase[JSGlobalLexicalEnvironment],

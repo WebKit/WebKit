@@ -8439,7 +8439,7 @@ void SpeculativeJIT::compileSkipScope(Node* node)
 {
     SpeculateCellOperand scope(this, node->child1());
     GPRTemporary result(this, Reuse, scope);
-    loadPtr(Address(scope.gpr(), JSScope::offsetOfNext()), result.gpr());
+    loadPtr(Address(scope.gpr(), scopeChainNextOffset), result.gpr());
     cellResult(result.gpr(), node);
 }
 
@@ -9022,7 +9022,7 @@ void SpeculativeJIT::compileCreateActivation(Node* node)
         
     // Don't need a memory barriers since we just fast-created the activation, so the
     // activation must be young.
-    storePtr(scopeGPR, Address(resultGPR, JSScope::offsetOfNext()));
+    storePtr(scopeGPR, Address(resultGPR, scopeChainNextOffset));
     storeLinkableConstant(LinkableConstant(*this, node->cellOperand()->cell()), Address(resultGPR, JSLexicalEnvironment::offsetOfSymbolTable()));
 
     // Must initialize all members to undefined or the TDZ empty value.

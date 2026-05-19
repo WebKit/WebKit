@@ -132,8 +132,8 @@ namespace JSC::B3 {
     macro(JSRopeString_fiber0, JSRopeString::offsetOfFiber0(), Mutability::Mutable) \
     macro(JSRopeString_fiber1, JSRopeString::offsetOfFiber1(), Mutability::Mutable) \
     macro(JSRopeString_fiber2, JSRopeString::offsetOfFiber2(), Mutability::Mutable) \
-    macro(JSScope_next, JSScope::offsetOfNext(), Mutability::Immutable) \
-    macro(JSSymbolTableObject_symbolTable, JSSymbolTableObject::offsetOfSymbolTable(), Mutability::Mutable) \
+    macro(JSScope_next, scopeChainNextOffset, Mutability::Immutable) \
+    macro(JSLexicalEnvironment_symbolTable, JSLexicalEnvironment::offsetOfSymbolTable(), Mutability::Mutable) \
     macro(JSWebAssemblyArray_size, JSWebAssemblyArray::offsetOfSize(), Mutability::Immutable) \
     macro(JSWebAssemblyInstance_cachedTable0Buffer, JSWebAssemblyInstance::offsetOfCachedTable0Buffer(), Mutability::Mutable) \
     macro(JSWebAssemblyInstance_cachedTable0Length, JSWebAssemblyInstance::offsetOfCachedTable0Length(), Mutability::Mutable) \

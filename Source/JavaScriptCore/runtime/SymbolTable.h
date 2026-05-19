@@ -751,9 +751,9 @@ public:
     DebuggerLocation NODELETE debuggerLocation();
     void collectDebuggerInfo(CodeBlock*);
     
-    InferredValue<JSScope>& singleton() LIFETIME_BOUND { return m_singleton; }
+    InferredValue<JSObject>& singleton() LIFETIME_BOUND { return m_singleton; }
 
-    void notifyCreation(VM& vm, JSScope* scope, const char* reason)
+    void notifyCreation(VM& vm, JSObject* scope, const char* reason)
     {
         m_singleton.notifyWrite(vm, this, scope, reason);
     }
@@ -807,7 +807,7 @@ private:
 
     WriteBarrier<ScopedArgumentsTable> m_arguments;
     WriteBarrier<SymbolTable> m_clonedFrom;
-    InferredValue<JSScope> m_singleton;
+    InferredValue<JSObject> m_singleton;
     
     std::unique_ptr<LocalToEntryVec> m_localToEntry;
 };

@@ -248,7 +248,7 @@ inline ToThisResult isToThisAnIdentity(ECMAMode ecmaMode, AbstractValue& valueFo
     if (JSValue value = valueForNode.value()) {
         if (value.isCell()) {
             if (value.asCell()->isObject()) {
-                if (value.asCell()->inherits<JSScope>()) {
+                if (value.asCell()->isObject() && isScopeChainCell(asObject(value))) {
                     if (ecmaMode.isStrict())
                         return ToThisResult::Undefined;
                     return ToThisResult::GlobalThis;
@@ -273,8 +273,8 @@ inline ToThisResult isToThisAnIdentity(ECMAMode ecmaMode, AbstractValue& valueFo
             if (type.isObject() && (FirstScopeType <= type.type() && type.type() <= LastScopeType))
                 overridesToThis = true;
 
-            // If all the structures are JSScope's ones, we know the details of JSScope::toThis() operation.
-            allStructuresAreJSScope &= structure->classInfoForCells()->isSubClassOf(JSScope::info());
+            allStructuresAreJSScope &= (structure->typeInfo().type() == GlobalObjectType
+                || (FirstScopeType <= structure->typeInfo().type() && structure->typeInfo().type() <= LastScopeType));
         });
 
         // This is correct for strict mode even if this can have non objects, since the right semantics is Identity.
@@ -4329,9 +4329,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case SkipScope: {
         if (JSValue child = forNode(node->child1()).value()) {
-            if (JSScope* scope = dynamicDowncast<JSScope>(child)) {
-                if (JSScope* nextScope = scope->next()) {
-                    setConstant(node, *m_graph.freeze(JSValue(nextScope)));
+            if (child.isCell() && isNonGlobalScopeChainCell(asObject(child))) {
+                JSObject* scope = asObject(child);
+                if (JSObject* nextScopeObj = nextScope(scope)) {
+                    setConstant(node, *m_graph.freeze(JSValue(nextScopeObj)));
                     break;
                 }
             }

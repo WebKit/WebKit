@@ -1140,7 +1140,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_push_with_scope)
     JSObject* newScope = GET_C(bytecode.m_newScope).jsValue().toObject(globalObject);
     CHECK_EXCEPTION();
 
-    JSScope* currentScope = callFrame->uncheckedR(bytecode.m_currentScope).Register::scope();
+    JSObject* currentScope = callFrame->uncheckedR(bytecode.m_currentScope).Register::scope();
     RETURN(JSWithScope::create(vm, globalObject, currentScope, newScope));
 }
 
@@ -1149,8 +1149,8 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_resolve_scope_for_hoisting_func_decl_in_ev
     BEGIN();
     auto bytecode = pc->as<OpResolveScopeForHoistingFuncDeclInEval>();
     const Identifier& ident = codeBlock->identifier(bytecode.m_property);
-    JSScope* scope = callFrame->uncheckedR(bytecode.m_scope).Register::scope();
-    JSValue resolvedScope = JSScope::resolveScopeForHoistingFuncDeclInEval(globalObject, scope, ident);
+    JSObject* scope = callFrame->uncheckedR(bytecode.m_scope).Register::scope();
+    JSValue resolvedScope = resolveScopeForHoistingFuncDeclInEval(globalObject, scope, ident);
 
     CHECK_EXCEPTION();
 
@@ -1163,8 +1163,8 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_resolve_scope)
     auto bytecode = pc->as<OpResolveScope>();
     auto& metadata = bytecode.metadata(codeBlock);
     const Identifier& ident = codeBlock->identifier(bytecode.m_var);
-    JSScope* scope = callFrame->uncheckedR(bytecode.m_scope).Register::scope();
-    JSObject* resolvedScope = JSScope::resolve(globalObject, scope, ident);
+    JSObject* scope = callFrame->uncheckedR(bytecode.m_scope).Register::scope();
+    JSObject* resolvedScope = resolveScope(globalObject, scope, ident);
     // Proxy can throw an error here, e.g. Proxy in with statement's @unscopables.
     CHECK_EXCEPTION();
 

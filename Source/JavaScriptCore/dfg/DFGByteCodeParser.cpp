@@ -7425,7 +7425,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             if (metadata.m_toThisStatus != ToThisOK
                 || !cachedStructure
                 || !cachedStructure->classInfoForCells()->isSubClassOf(JSObject::info())
-                || cachedStructure->classInfoForCells()->isSubClassOf(JSScope::info())
+                || (FirstScopeType <= cachedStructure->typeInfo().type() && cachedStructure->typeInfo().type() <= LastScopeType)
                 || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)
                 || (op1->op() == GetLocal && op1->variableAccessData()->structureCheckHoistingFailed())) {
                 set(bytecode.m_srcDst, addToGraph(ToThis, OpInfo(bytecode.m_ecmaMode), OpInfo(getPrediction()), op1));
@@ -9491,7 +9491,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
             ResolveType resolveType;
             unsigned depth;
-            JSScope* constantScope = nullptr;
+            JSObject* constantScope = nullptr;
             JSCell* lexicalEnvironment = nullptr;
             SymbolTable* symbolTable = nullptr;
             {
@@ -9545,7 +9545,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             case GlobalLexicalVar:
             case GlobalLexicalVarWithVarInjectionChecks: {
                 RELEASE_ASSERT(constantScope);
-                RELEASE_ASSERT(constantScope == JSScope::constantScopeForCodeBlock(resolveType, m_inlineStackTop->m_codeBlock));
+                RELEASE_ASSERT(constantScope == constantScopeForCodeBlock(resolveType, m_inlineStackTop->m_codeBlock));
                 set(bytecode.m_dst, weakJSConstant(constantScope));
                 addToGraph(Phantom, get(bytecode.m_scope));
                 break;
@@ -9568,16 +9568,21 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 // spurious recompiles in dead-but-foldable code.
 
                 if (symbolTable) {
-                    if (JSScope* scope = symbolTable->singleton().inferredValue()) {
+                    if (JSObject* scope = symbolTable->singleton().inferredValue()) {
                         m_graph.watchpoints().addLazily(m_graph, symbolTable);
                         set(bytecode.m_dst, weakJSConstant(scope));
                         break;
                     }
                 }
-                if (JSScope* scope = localBase->dynamicCastConstant<JSScope*>()) {
-                    for (unsigned n = depth; n--;)
-                        scope = scope->next();
-                    set(bytecode.m_dst, weakJSConstant(scope));
+                if (JSObject* scope = localBase->dynamicCastConstant<JSObject*>(); scope && isScopeChainCell(scope)) {
+                    JSObject* current = scope;
+                    for (unsigned n = depth; n--;) {
+                        if (current && isNonGlobalScopeChainCell(current))
+                            current = nextScope(current);
+                        else
+                            break;
+                    }
+                    set(bytecode.m_dst, weakJSConstant(current));
                     break;
                 }
                 for (unsigned n = depth; n--;)
@@ -9669,12 +9674,16 @@ void ByteCodeParser::parseBlock(unsigned limit)
             case GlobalLexicalVar:
             case GlobalLexicalVarWithVarInjectionChecks: {
                 addToGraph(Phantom, get(bytecode.m_scope));
-                WatchpointSet* watchpointSet;
+                WatchpointSet* watchpointSet = nullptr;
                 ScopeOffset offset;
-                JSSegmentedVariableObject* scopeObject = uncheckedDowncast<JSSegmentedVariableObject>(JSScope::constantScopeForCodeBlock(resolveType, m_inlineStackTop->m_codeBlock));
+                bool isGlobalVar = (resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks);
+                JSObject* constantScope = constantScopeForCodeBlock(resolveType, m_inlineStackTop->m_codeBlock);
+                JSGlobalObject* globalObjectScope = isGlobalVar ? uncheckedDowncast<JSGlobalObject>(constantScope) : nullptr;
+                JSGlobalLexicalEnvironment* lexEnvScope = isGlobalVar ? nullptr : uncheckedDowncast<JSGlobalLexicalEnvironment>(constantScope);
+                SymbolTable* scopeSymbolTable = isGlobalVar ? globalObjectScope->symbolTable() : lexEnvScope->symbolTable();
                 {
-                    ConcurrentJSLocker locker(scopeObject->symbolTable()->m_lock);
-                    SymbolTableEntry entry = scopeObject->symbolTable()->get(locker, uid);
+                    ConcurrentJSLocker locker(scopeSymbolTable->m_lock);
+                    SymbolTableEntry entry = scopeSymbolTable->get(locker, uid);
                     watchpointSet = entry.watchpointSet();
                     offset = entry.scopeOffset();
                 }
@@ -9710,17 +9719,17 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     // of the variable (that is, the value we'd like to constant fold to). There may be
                     // other stores that happen after that, but those stores will invalidate the
                     // watchpoint set and also the compilation.
-                    
+
                     // Note that we need to use the operand, which is a direct pointer at the global,
                     // rather than looking up the global by doing variableAt(offset). That's because the
-                    // internal data structures of JSSegmentedVariableObject are not thread-safe even
+                    // internal data structures of the segmented variable storage are not thread-safe even
                     // though accessing the global itself is. The segmentation involves a vector spine
                     // that resizes with malloc/free, so if new globals unrelated to the one we are
                     // reading are added, we might access freed memory if we do variableAt().
                     WriteBarrier<Unknown>* pointer = std::bit_cast<WriteBarrier<Unknown>*>(operand);
-                    
-                    ASSERT(scopeObject->findVariableIndex(pointer) == offset);
-                    
+
+                    ASSERT(isGlobalVar ? globalObjectScope->findVariableIndex(pointer) == offset : lexEnvScope->findVariableIndex(pointer) == offset);
+
                     JSValue value = pointer->get();
                     if (value) {
                         m_graph.watchpoints().addLazily(*watchpointSet);
@@ -9728,7 +9737,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                         break;
                     }
                 }
-                
+
                 SpeculatedType prediction = getPrediction();
                 NodeType nodeType;
                 if (resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks)
@@ -9860,9 +9869,13 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 if (resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks)
                     m_graph.watchpoints().addLazily(globalObject->varReadOnlyWatchpointSet());
 
-                JSSegmentedVariableObject* scopeObject = uncheckedDowncast<JSSegmentedVariableObject>(JSScope::constantScopeForCodeBlock(resolveType, m_inlineStackTop->m_codeBlock));
+                bool isGlobalVar = (resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks);
+                JSObject* scopeObject = constantScopeForCodeBlock(resolveType, m_inlineStackTop->m_codeBlock);
+                SymbolTable* scopeSymbolTable = isGlobalVar
+                    ? uncheckedDowncast<JSGlobalObject>(scopeObject)->symbolTable()
+                    : uncheckedDowncast<JSGlobalLexicalEnvironment>(scopeObject)->symbolTable();
                 if (watchpoints) {
-                    SymbolTableEntry entry = scopeObject->symbolTable()->get(uid);
+                    SymbolTableEntry entry = scopeSymbolTable->get(uid);
                     ASSERT_UNUSED(entry, watchpoints == entry.watchpointSet());
                 }
                 Node* valueNode = get(bytecode.m_value);

@@ -390,7 +390,7 @@ JSValue JSInjectedScriptHost::getInternalProperties(JSGlobalObject* globalObject
         return array;
     }
     if (JSArrowFunction* arrowFunction = dynamicDowncast<JSArrowFunction>(value)) {
-        if (JSScope* jsScope = arrowFunction->scope()) {
+        if (JSObject* jsScope = arrowFunction->scope()) {
             unsigned index = 0;
             JSArray* array = constructEmptyArray(globalObject, nullptr);
             RETURN_IF_EXCEPTION(scope, JSValue());

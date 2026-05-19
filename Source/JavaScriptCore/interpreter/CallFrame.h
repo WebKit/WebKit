@@ -49,7 +49,6 @@ using JSInstruction = BaseInstruction<JSOpcodeTraits>;
     class CallFrame;
     class Interpreter;
     class JSCallee;
-    class JSScope;
     class SourceOrigin;
     class VirtualRegister;
 
@@ -204,7 +203,7 @@ using JSInstruction = BaseInstruction<JSOpcodeTraits>;
         CodeBlock* codeBlock() const;
         CodeBlock** addressOfCodeBlock() const { return std::bit_cast<CodeBlock**>(this + static_cast<int>(CallFrameSlot::codeBlock)); }
         inline SUPPRESS_ASAN CodeBlock* unsafeCodeBlock() const;
-        inline JSScope* scope(int scopeRegisterOffset) const;
+        inline JSObject* scope(int scopeRegisterOffset) const;
 
         // Global object in which the currently executing code was defined.
         // Differs from VM::deprecatedVMEntryGlobalObject() during function calls across web browser frames.
@@ -275,7 +274,7 @@ using JSInstruction = BaseInstruction<JSOpcodeTraits>;
         void NODELETE setCurrentVPC(const JSInstruction*);
 
         void setCallerFrame(CallFrame* frame) { callerFrameAndPC().callerFrame = frame; }
-        inline void setScope(int scopeRegisterOffset, JSScope*);
+        inline void setScope(int scopeRegisterOffset, JSObject*);
 
         // Read a register from the codeframe (or constant from the CodeBlock).
         Register& r(VirtualRegister);

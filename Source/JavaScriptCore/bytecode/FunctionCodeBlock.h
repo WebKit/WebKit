@@ -54,7 +54,7 @@ public:
         return instance;
     }
 
-    static FunctionCodeBlock* create(VM& vm, FunctionExecutable* ownerExecutable, UnlinkedFunctionCodeBlock* unlinkedCodeBlock, JSScope* scope)
+    static FunctionCodeBlock* create(VM& vm, FunctionExecutable* ownerExecutable, UnlinkedFunctionCodeBlock* unlinkedCodeBlock, JSObject* scope)
     {
         FunctionCodeBlock* instance = new (NotNull, allocateCell<FunctionCodeBlock>(vm))
             FunctionCodeBlock(vm, vm.functionCodeBlockStructure.get(), ownerExecutable, unlinkedCodeBlock, scope);
@@ -71,7 +71,7 @@ private:
     {
     }
 
-    FunctionCodeBlock(VM& vm, Structure* structure, FunctionExecutable* ownerExecutable, UnlinkedFunctionCodeBlock* unlinkedCodeBlock, JSScope* scope)
+    FunctionCodeBlock(VM& vm, Structure* structure, FunctionExecutable* ownerExecutable, UnlinkedFunctionCodeBlock* unlinkedCodeBlock, JSObject* scope)
         : CodeBlock(vm, structure, ownerExecutable, unlinkedCodeBlock, scope)
     {
     }

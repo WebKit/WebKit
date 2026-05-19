@@ -2742,7 +2742,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewRegExpStringIterator, JSCell*, (VM* vmPoint
     OPERATION_RETURN(scope, JSRegExpStringIterator::createWithInitialValues(vm, structure));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationCreateActivationDirect, JSCell*, (VM* vmPointer, Structure* structure, JSScope* jsScope, SymbolTable* table, EncodedJSValue initialValueEncoded))
+JSC_DEFINE_JIT_OPERATION(operationCreateActivationDirect, JSCell*, (VM* vmPointer, Structure* structure, JSObject* jsScope, SymbolTable* table, EncodedJSValue initialValueEncoded))
 {
     VM& vm = *vmPointer;
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -5526,25 +5526,25 @@ JSC_DEFINE_JIT_OPERATION(operationProcessTypeProfilerLogDFG, void, (VM* vmPointe
     OPERATION_RETURN(scope);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationResolveScopeForHoistingFuncDeclInEval, EncodedJSValue, (JSGlobalObject* globalObject, JSScope* jsScope, UniquedStringImpl* impl))
+JSC_DEFINE_JIT_OPERATION(operationResolveScopeForHoistingFuncDeclInEval, EncodedJSValue, (JSGlobalObject* globalObject, JSObject* jsScope, UniquedStringImpl* impl))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
         
-    JSValue resolvedScope = JSScope::resolveScopeForHoistingFuncDeclInEval(globalObject, jsScope, Identifier::fromUid(vm, impl));
+    JSValue resolvedScope = resolveScopeForHoistingFuncDeclInEval(globalObject, jsScope, Identifier::fromUid(vm, impl));
     OPERATION_RETURN(scope, JSValue::encode(resolvedScope));
 }
     
-JSC_DEFINE_JIT_OPERATION(operationResolveScope, JSCell*, (JSGlobalObject* globalObject, JSScope* jsScope, UniquedStringImpl* impl))
+JSC_DEFINE_JIT_OPERATION(operationResolveScope, JSCell*, (JSGlobalObject* globalObject, JSObject* jsScope, UniquedStringImpl* impl))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* resolvedScope = JSScope::resolve(globalObject, jsScope, Identifier::fromUid(vm, impl));
+    JSObject* resolvedScope = resolveScope(globalObject, jsScope, Identifier::fromUid(vm, impl));
     OPERATION_RETURN(scope, resolvedScope);
 }
 
@@ -6131,7 +6131,7 @@ JSC_DEFINE_JIT_OPERATION(operationLinkDirectCall, void, (DirectCallLinkInfo* cal
 
     CodeSpecializationKind kind = callLinkInfo->specializationKind();
 
-    JSScope* jsScope = callee->scopeUnchecked();
+    JSObject* jsScope = callee->scopeUnchecked();
     ExecutableBase* executable = callee->executable();
 
     // FIXME: Support wasm IC.

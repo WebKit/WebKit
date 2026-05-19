@@ -34,7 +34,7 @@ namespace JSC {
 namespace LOL {
 
 // These are only valid to use from the LOLJIT since they directly use the bytecode stream.
-JSC_DECLARE_JIT_OPERATION(operationResolveScopeForLOL, EncodedJSValue, (CallFrame*, unsigned bytecodeOffset, JSScope* environment));
+JSC_DECLARE_JIT_OPERATION(operationResolveScopeForLOL, EncodedJSValue, (CallFrame*, unsigned bytecodeOffset, JSObject* environment));
 JSC_DECLARE_JIT_OPERATION(operationGetFromScopeForLOL, EncodedJSValue, (CallFrame*, unsigned bytecodeOffset, JSObject* environment));
 JSC_DECLARE_JIT_OPERATION(operationPutToScopeForLOL, void, (CallFrame*, unsigned bytecodeOffset, JSObject* environment, JSValue value));
 

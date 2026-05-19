@@ -1255,7 +1255,7 @@ void JIT::emit_op_get_parent_scope(const JSInstruction* currentInstruction)
     auto bytecode = currentInstruction->as<OpGetParentScope>();
     VirtualRegister currentScope = bytecode.m_scope;
     emitGetVirtualRegisterPayload(currentScope, regT0);
-    loadPtr(Address(regT0, JSScope::offsetOfNext()), regT0);
+    loadPtr(Address(regT0, scopeChainNextOffset), regT0);
     boxCell(regT0, jsRegT10);
     emitPutVirtualRegister(bytecode.m_dst, jsRegT10);
 }

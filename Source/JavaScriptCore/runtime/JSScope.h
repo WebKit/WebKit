@@ -20,124 +20,222 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
 #include <JavaScriptCore/GetPutInfo.h>
 #include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/JSType.h>
+#include <JavaScriptCore/PropertyDescriptor.h>
+#include <JavaScriptCore/SymbolTable.h>
+#include <JavaScriptCore/ThrowScope.h>
 #include <JavaScriptCore/VariableEnvironment.h>
+#include <JavaScriptCore/VariableWriteFireDetail.h>
 
 namespace JSC {
 
 class ScopeChainIterator;
-class SymbolTable;
 class WatchpointSet;
 
 using TDZEnvironment = UncheckedKeyHashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash>;
 
-class JSScope : public JSNonFinalObject {
-public:
-    using Base = JSNonFinalObject;
-    static constexpr unsigned StructureFlags = Base::StructureFlags;
+// Uniform offset of m_next across every scope-chain participant.
+static constexpr ptrdiff_t scopeChainNextOffset = 16;
 
-    template<typename, SubspaceAccess>
-    static void subspaceFor(VM&)
-    {
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-
-    DECLARE_EXPORT_INFO;
-
-    friend class LLIntOffsetsExtractor;
-    static size_t offsetOfNext();
-
-    static JSObject* NODELETE objectAtScope(JSScope*);
-
-    static JSObject* resolve(JSGlobalObject*, JSScope*, const Identifier&);
-    static JSValue resolveScopeForHoistingFuncDeclInEval(JSGlobalObject*, JSScope*, const Identifier&);
-    static ResolveOp abstractResolve(JSGlobalObject*, size_t depthOffset, JSScope*, const Identifier&, GetOrPut, ResolveType, InitializationMode);
-
-    static bool hasConstantScope(ResolveType);
-    static JSScope* NODELETE constantScopeForCodeBlock(ResolveType, CodeBlock*);
-
-    static void collectClosureVariablesUnderTDZ(JSScope*, TDZEnvironment& result, PrivateNameEnvironment&);
-
-    DECLARE_VISIT_CHILDREN;
-
-    bool NODELETE isVarScope();
-    bool NODELETE isLexicalScope();
-    bool NODELETE isModuleScope();
-    bool NODELETE isCatchScope();
-    bool NODELETE isCatchScopeWithSimpleParameter();
-    bool NODELETE isFunctionNameScopeObject();
-
-    bool NODELETE isNestedLexicalScope();
-
-    ScopeChainIterator begin();
-    ScopeChainIterator end();
-    JSScope* next();
-
-    JSObject* globalThis();
-
-    SymbolTable* NODELETE symbolTable();
-
-protected:
-    JSScope(VM&, Structure*, JSScope* next);
-
-    template<typename ReturnPredicateFunctor, typename SkipPredicateFunctor>
-    static JSObject* resolve(JSGlobalObject*, JSScope*, const Identifier&, ReturnPredicateFunctor, SkipPredicateFunctor);
-
-private:
-    WriteBarrier<JSScope> m_next;
-};
-
-inline JSScope::JSScope(VM& vm, Structure* structure, JSScope* next)
-    : Base(vm, structure)
-    , m_next(next, WriteBarrierEarlyInit)
+ALWAYS_INLINE bool isScopeChainCell(const JSObject* object)
 {
+    JSType t = object->type();
+    if (t == GlobalObjectType)
+        return true;
+    return static_cast<uint32_t>(t) - FirstScopeType <= LastScopeType - FirstScopeType;
 }
+
+ALWAYS_INLINE bool isNonGlobalScopeChainCell(const JSObject* object)
+{
+    JSType t = object->type();
+    return static_cast<uint32_t>(t) - FirstScopeType <= LastScopeType - FirstScopeType;
+}
+
+JS_EXPORT_PRIVATE JSObject* objectAtScope(JSObject*);
+JSObject* nextScope(JSObject*);
+SymbolTable* scopeSymbolTable(JSObject*);
+bool isVarScope(JSObject*);
+bool isLexicalScope(JSObject*);
+bool isModuleScope(JSObject*);
+bool isCatchScope(JSObject*);
+bool isCatchScopeWithSimpleParameter(JSObject*);
+bool isFunctionNameScopeObject(JSObject*);
+bool isNestedLexicalScope(JSObject*);
+
+JSObject* resolveScope(JSGlobalObject*, JSObject*, const Identifier&);
+JSValue resolveScopeForHoistingFuncDeclInEval(JSGlobalObject*, JSObject*, const Identifier&);
+ResolveOp abstractResolveScope(JSGlobalObject*, size_t depthOffset, JSObject*, const Identifier&, GetOrPut, ResolveType, InitializationMode);
+
+bool hasConstantScope(ResolveType);
+JSObject* constantScopeForCodeBlock(ResolveType, CodeBlock*);
+
+void collectClosureVariablesUnderTDZ(JSObject*, TDZEnvironment& result, PrivateNameEnvironment&);
 
 class ScopeChainIterator {
 public:
-    ScopeChainIterator(JSScope* node)
+    ScopeChainIterator(JSObject* node)
         : m_node(node)
     {
     }
 
-    JSObject* get() const { return JSScope::objectAtScope(m_node); }
-    JSObject* operator->() const { return JSScope::objectAtScope(m_node); }
-    JSScope* scope() const { return m_node; }
+    JSObject* get() const { return objectAtScope(m_node); }
+    JSObject* operator->() const { return objectAtScope(m_node); }
+    JSObject* scope() const { return m_node; }
 
-    ScopeChainIterator& operator++() { m_node = m_node->next(); return *this; }
+    ScopeChainIterator& operator++()
+    {
+        if (m_node && isNonGlobalScopeChainCell(m_node))
+            m_node = nextScope(m_node);
+        else
+            m_node = nullptr;
+        return *this;
+    }
 
     // postfix ++ intentionally omitted
 
     friend bool operator==(const ScopeChainIterator&, const ScopeChainIterator&) = default;
 
 private:
-    JSScope* m_node;
+    JSObject* m_node;
 };
 
-inline ScopeChainIterator JSScope::begin()
+inline ScopeChainIterator scopeBegin(JSObject* scope) { return ScopeChainIterator(scope); }
+inline ScopeChainIterator scopeEnd() { return ScopeChainIterator(nullptr); }
+
+// Duck-typed: any class exposing symbolTable()/variableAt()/isValidScopeOffset() works.
+
+template<typename SymbolTableObjectType>
+inline bool symbolTableGet(
+    SymbolTableObjectType* object, PropertyName propertyName, PropertySlot& slot)
 {
-    return ScopeChainIterator(this); 
+    SymbolTable& symbolTable = *object->symbolTable();
+    ConcurrentJSLocker locker(symbolTable.m_lock);
+    SymbolTable::Map::iterator iter = symbolTable.find(locker, propertyName.uid());
+    if (iter == symbolTable.end(locker))
+        return false;
+    SymbolTableEntry::Fast entry = iter->value;
+    ASSERT(!entry.isNull());
+
+    ScopeOffset offset = entry.scopeOffset();
+    // Defend against the inspector asking for a var after it has been optimized out.
+    if (!object->isValidScopeOffset(offset))
+        return false;
+
+    slot.setValue(object, entry.getAttributes() | PropertyAttribute::DontDelete, object->variableAt(offset).get());
+    return true;
 }
 
-inline ScopeChainIterator JSScope::end()
-{ 
-    return ScopeChainIterator(nullptr); 
-}
-
-inline JSScope* JSScope::next()
-{ 
-    return m_next.get();
-}
-
-inline size_t JSScope::offsetOfNext()
+template<typename SymbolTableObjectType>
+inline bool symbolTableGet(
+    SymbolTableObjectType* object, PropertyName propertyName, SymbolTableEntry& entry, PropertyDescriptor& descriptor)
 {
-    return OBJECT_OFFSETOF(JSScope, m_next);
+    SymbolTable& symbolTable = *object->symbolTable();
+    ConcurrentJSLocker locker(symbolTable.m_lock);
+    SymbolTable::Map::iterator iter = symbolTable.find(locker, propertyName.uid());
+    if (iter == symbolTable.end(locker))
+        return false;
+    entry = iter->value;
+    ASSERT(!entry.isNull());
+
+    ScopeOffset offset = entry.scopeOffset();
+    // Defend against the inspector asking for a var after it has been optimized out.
+    if (!object->isValidScopeOffset(offset))
+        return false;
+
+    descriptor.setDescriptor(object->variableAt(offset).get(), entry.getAttributes() | PropertyAttribute::DontDelete);
+    return true;
+}
+
+template<typename SymbolTableObjectType>
+ALWAYS_INLINE void symbolTablePutTouchWatchpointSet(VM& vm, SymbolTableObjectType* object, PropertyName propertyName, JSValue value, WriteBarrierBase<Unknown>* reg, WatchpointSet* set)
+{
+    reg->set(vm, object, value);
+    if (set)
+        VariableWriteFireDetail::touch(vm, set, object, propertyName);
+}
+
+template<typename SymbolTableObjectType>
+ALWAYS_INLINE void symbolTablePutInvalidateWatchpointSet(VM& vm, SymbolTableObjectType* object, PropertyName propertyName, JSValue value, WriteBarrierBase<Unknown>* reg, WatchpointSet* set)
+{
+    reg->set(vm, object, value);
+    if (set)
+        set->invalidate(vm, VariableWriteFireDetail(object, propertyName)); // Don't mess around - if we had found this statically, we would have invalidated it.
+}
+
+enum class SymbolTablePutMode {
+    Touch,
+    Invalidate
+};
+
+template<SymbolTablePutMode symbolTablePutMode, typename SymbolTableObjectType>
+inline bool symbolTablePut(SymbolTableObjectType* object, JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, bool shouldThrowReadOnlyError, bool ignoreReadOnlyErrors, bool& putResult)
+{
+    VM& vm = getVM(globalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    WatchpointSet* set = nullptr;
+    WriteBarrierBase<Unknown>* reg;
+    {
+        SymbolTable& symbolTable = *object->symbolTable();
+        // FIXME: This is very suspicious. We shouldn't need a GC-safe lock here.
+        // https://bugs.webkit.org/show_bug.cgi?id=134601
+        GCSafeConcurrentJSLocker locker(symbolTable.m_lock, vm);
+        SymbolTable::Map::iterator iter = symbolTable.find(locker, propertyName.uid());
+        if (iter == symbolTable.end(locker))
+            return false;
+        bool wasFat;
+        SymbolTableEntry::Fast fastEntry = iter->value.getFast(wasFat);
+        ASSERT(!fastEntry.isNull());
+        if (fastEntry.isReadOnly() && !ignoreReadOnlyErrors) {
+            if (shouldThrowReadOnlyError)
+                throwTypeError(globalObject, scope, ReadonlyPropertyWriteError);
+            putResult = false;
+            return true;
+        }
+
+        ScopeOffset offset = fastEntry.scopeOffset();
+
+        // Defend against the inspector asking for a var after it has been optimized out.
+        if (!object->isValidScopeOffset(offset))
+            return false;
+
+        set = iter->value.watchpointSet();
+        reg = &object->variableAt(offset);
+    }
+    // I'd prefer we not hold lock while executing barriers, since I prefer to reserve
+    // the right for barriers to be able to trigger GC. And I don't want to hold VM
+    // locks while GC'ing.
+    if (symbolTablePutMode == SymbolTablePutMode::Invalidate)
+        symbolTablePutInvalidateWatchpointSet(vm, object, propertyName, value, reg, set);
+    else
+        symbolTablePutTouchWatchpointSet(vm, object, propertyName, value, reg, set);
+    putResult = true;
+    return true;
+}
+
+template<typename SymbolTableObjectType>
+inline bool symbolTablePutTouchWatchpointSet(
+    SymbolTableObjectType* object, JSGlobalObject* globalObject, PropertyName propertyName, JSValue value,
+    bool shouldThrowReadOnlyError, bool ignoreReadOnlyErrors, bool& putResult)
+{
+    ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(object));
+    return symbolTablePut<SymbolTablePutMode::Touch>(object, globalObject, propertyName, value, shouldThrowReadOnlyError, ignoreReadOnlyErrors, putResult);
+}
+
+template<typename SymbolTableObjectType>
+inline bool symbolTablePutInvalidateWatchpointSet(
+    SymbolTableObjectType* object, JSGlobalObject* globalObject, PropertyName propertyName, JSValue value,
+    bool shouldThrowReadOnlyError, bool ignoreReadOnlyErrors, bool& putResult)
+{
+    ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(object));
+    return symbolTablePut<SymbolTablePutMode::Invalidate>(object, globalObject, propertyName, value, shouldThrowReadOnlyError, ignoreReadOnlyErrors, putResult);
 }
 
 } // namespace JSC

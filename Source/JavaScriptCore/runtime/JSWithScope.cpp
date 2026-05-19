@@ -33,7 +33,7 @@ namespace JSC {
 const ClassInfo JSWithScope::s_info = { "WithScope"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWithScope) };
 
 JSWithScope* JSWithScope::create(
-    VM& vm, JSGlobalObject* globalObject, JSScope* next, JSObject* object)
+    VM& vm, JSGlobalObject* globalObject, JSObject* next, JSObject* object)
 {
     Structure* structure = globalObject->withScopeStructure();
     JSWithScope* withScope = new (NotNull, allocateCell<JSWithScope>(vm)) JSWithScope(vm, structure, object, next);
@@ -48,6 +48,7 @@ void JSWithScope::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_object);
+    visitor.append(thisObject->m_next);
 }
 
 DEFINE_VISIT_CHILDREN(JSWithScope);
@@ -57,9 +58,10 @@ Structure* JSWithScope::createStructure(VM& vm, JSGlobalObject* globalObject, JS
     return Structure::create(vm, globalObject, proto, TypeInfo(WithScopeType, StructureFlags), info());
 }
 
-JSWithScope::JSWithScope(VM& vm, Structure* structure, JSObject* object, JSScope* next)
-    : Base(vm, structure, next)
+JSWithScope::JSWithScope(VM& vm, Structure* structure, JSObject* object, JSObject* next)
+    : Base(vm, structure)
     , m_object(object, WriteBarrierEarlyInit)
+    , m_next(next, WriteBarrierEarlyInit)
 {
 }
 

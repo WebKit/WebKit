@@ -111,21 +111,24 @@ namespace JSC {
     macro(DataViewType, SpecDataViewObject) \
     /* End JSArrayBufferView types. */ \
     \
-    /* JSScope <- JSWithScope */ \
-    /*         <- StrictEvalActivation */ \
-    /*         <- JSSymbolTableObject  <- JSLexicalEnvironment      <- JSModuleEnvironment */ \
-    /*                                 <- JSSegmentedVariableObject <- JSGlobalLexicalEnvironment */ \
-    /*                                                              <- JSGlobalObject */ \
-    /* Start JSScope types. */ \
+    /* Scope-chain participants:                                                */ \
+    /*   JSWithScope, StrictEvalActivation                                      */ \
+    /*   JSLexicalEnvironment <- JSModuleEnvironment                            */ \
+    /*   JSGlobalLexicalEnvironment                                             */ \
+    /*   JSGlobalObject (chain root; separate hierarchy)                        */ \
+    /* Start scope types. */ \
     /* Start environment record types. */ \
     macro(GlobalObjectType, SpecObjectOther) \
+    /* Start butterfly-less types (range used by JSObject::butterfly() for nullification). */ \
     macro(GlobalLexicalEnvironmentType, SpecObjectOther) \
     macro(LexicalEnvironmentType, SpecObjectOther) \
     macro(ModuleEnvironmentType, SpecObjectOther) \
     macro(StrictEvalActivationType, SpecObjectOther) \
     /* End environment record types. */ \
     macro(WithScopeType, SpecObjectOther) \
-    /* End JSScope types. */ \
+    /* End scope types. */ \
+    macro(WebAssemblyGCObjectType, SpecObjectOther) \
+    /* End butterfly-less types. */ \
     \
     macro(AsyncDisposableStackType, SpecObjectOther) \
     macro(DisposableStackType, SpecObjectOther) \
@@ -153,7 +156,6 @@ namespace JSC {
     macro(JSWeakSetType, SpecWeakSetObject) \
     macro(WebAssemblyModuleType, SpecObjectOther) \
     macro(WebAssemblyInstanceType, SpecObjectOther) \
-    macro(WebAssemblyGCObjectType, SpecObjectOther) \
     /* Start StringObjectType types. */ \
     macro(StringObjectType, SpecStringObject) \
     /* We do not want to accept String.prototype in StringObjectUse, so that we do not include it as SpecStringObject. */ \
@@ -181,8 +183,13 @@ static constexpr uint32_t LastTypedArrayTypeExcludingDataView = LastTypedArrayTy
 static constexpr uint32_t FirstObjectType = ObjectType;
 static constexpr uint32_t LastObjectType = MaxJSType;
 
-static constexpr uint32_t FirstScopeType = GlobalObjectType;
+static constexpr uint32_t FirstScopeType = GlobalLexicalEnvironmentType;
 static constexpr uint32_t LastScopeType = WithScopeType;
+
+// Butterfly-less types form a contiguous range so JSObject::butterfly() can
+// branchlessly nullify via a single range check.
+static constexpr uint32_t FirstButterflylessObjectType = GlobalLexicalEnvironmentType;
+static constexpr uint32_t LastButterflylessObjectType = WebAssemblyGCObjectType;
 
 static constexpr uint32_t NumberOfTypedArrayTypes = LastTypedArrayType - FirstTypedArrayType + 1;
 static constexpr uint32_t NumberOfTypedArrayTypesExcludingDataView = NumberOfTypedArrayTypes - 1;

@@ -102,7 +102,7 @@
 
 namespace JSC {
 
-JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain, CodeBlock* callerBaselineCodeBlock, BytecodeIndex bytecodeIndex, LexicallyScopedFeatures lexicallyScopedFeatures)
+JSValue eval(CallFrame* callFrame, JSValue thisValue, JSObject* callerScopeChain, CodeBlock* callerBaselineCodeBlock, BytecodeIndex bytecodeIndex, LexicallyScopedFeatures lexicallyScopedFeatures)
 {
     JSGlobalObject* globalObject = callerBaselineCodeBlock->globalObject();
 
@@ -190,7 +190,7 @@ JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain,
         
         TDZEnvironment variablesUnderTDZ;
         PrivateNameEnvironment privateNameEnvironment;
-        JSScope::collectClosureVariablesUnderTDZ(callerScopeChain, variablesUnderTDZ, privateNameEnvironment);
+        collectClosureVariablesUnderTDZ(callerScopeChain, variablesUnderTDZ, privateNameEnvironment);
         SourceTaintedOrigin sourceTaintedOrigin = computeNewSourceTaintedOriginFromStack(vm, callFrame);
 
         UnlinkedCodeBlock* callerUnlinkedCodeBlock = callerBaselineCodeBlock->unlinkedCodeBlock();
@@ -989,7 +989,7 @@ JSValue Interpreter::executeProgram(const SourceCode& source, JSGlobalObject*, J
 {
     VM& vm = this->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSScope* scope = thisObj->realm()->globalScope();
+    JSObject* scope = thisObj->realm()->globalScope();
     JSGlobalObject* globalObject = scope->realm();
     JSCallee* globalCallee = globalObject->globalCallee();
 
@@ -1068,7 +1068,7 @@ JSValue Interpreter::executeProgram(const SourceCode& source, JSGlobalObject*, J
                     if (i == 0) {
                         RELEASE_ASSERT(baseObject == globalObject);
 
-                        auto doGet = [&] (JSSegmentedVariableObject* scope) {
+                        auto doGet = [&] (JSObject* scope) {
                             PropertySlot slot(scope, PropertySlot::InternalMethodType::Get);
                             if (scope->getPropertySlot(globalObject, JSONPPath[i].m_pathEntryName, slot))
                                 return slot.getValue(globalObject, JSONPPath[i].m_pathEntryName);
@@ -1238,7 +1238,7 @@ ALWAYS_INLINE JSValue Interpreter::executeCallImpl(VM& vm, JSObject* function, c
     ASSERT(!vm.isCollectorBusyOnCurrentThread());
 
     bool isJSCall = callData.type == CallData::Type::JS;
-    JSScope* functionScope = nullptr;
+    JSObject* functionScope = nullptr;
     FunctionExecutable* functionExecutable = nullptr;
     TaggedNativeFunction nativeFunction;
     JSGlobalObject* globalObject = nullptr;
@@ -1334,7 +1334,7 @@ JSObject* Interpreter::executeConstruct(JSObject* constructor, const CallData& c
     ASSERT(!vm.isCollectorBusyOnCurrentThread());
 
     bool isJSConstruct = (constructData.type == CallData::Type::JS);
-    JSScope* scope = nullptr;
+    JSObject* scope = nullptr;
     size_t argsCount = 1 + args.size(); // implicit "this" parameter
 
     JSGlobalObject* globalObject;
@@ -1431,7 +1431,7 @@ CodeBlock* Interpreter::prepareForMicrotaskCall(MicrotaskCall& microtaskCall, JS
     return newCodeBlock;
 }
 
-JSValue Interpreter::executeEval(EvalExecutable* eval, JSValue thisValue, JSScope* scope)
+JSValue Interpreter::executeEval(EvalExecutable* eval, JSValue thisValue, JSObject* scope)
 {
     VM& vm = this->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -1454,24 +1454,27 @@ JSValue Interpreter::executeEval(EvalExecutable* eval, JSValue thisValue, JSScop
     auto functionHoistingCandidates = eval->functionHoistingCandidates();
 
     if (!variables.empty() || !topLevelFunctionDecls.empty() || !functionHoistingCandidates.empty()) {
-        JSScope* variableObject = nullptr;
+        JSObject* variableObject = nullptr;
         if ((!variables.empty() || !topLevelFunctionDecls.empty()) && eval->isInStrictContext()) {
             scope = StrictEvalActivation::create(vm, globalObject->strictEvalActivationStructure(), scope);
             variableObject = scope;
         } else {
-            for (JSScope* node = scope; ; node = node->next()) {
+            JSObject* node = scope;
+            while (true) {
                 RELEASE_ASSERT(node);
-                if (node->isGlobalObject()) {
+                if (node->type() == GlobalObjectType) {
                     variableObject = node;
                     break;
                 }
-                if (node->isJSLexicalEnvironment()) {
-                    JSLexicalEnvironment* lexicalEnvironment = uncheckedDowncast<JSLexicalEnvironment>(node);
+                JSObject* asScope = node;
+                if (asScope->isJSLexicalEnvironment()) {
+                    JSLexicalEnvironment* lexicalEnvironment = uncheckedDowncast<JSLexicalEnvironment>(asScope);
                     if (lexicalEnvironment->symbolTable()->scopeType() == SymbolTable::ScopeType::VarScope) {
-                        variableObject = node;
+                        variableObject = asScope;
                         break;
                     }
                 }
+                node = nextScope(asScope);
             }
             if (variableObject->structure()->isUncacheableDictionary())
                 variableObject->flattenDictionaryObject(vm);
@@ -1488,12 +1491,12 @@ JSValue Interpreter::executeEval(EvalExecutable* eval, JSValue thisValue, JSScop
 
         auto functionDecls = codeBlock->functionDecls();
         BatchedTransitionOptimizer optimizer(vm, variableObject);
-        if (variableObject->next() && !eval->isInStrictContext())
+        if (!variableObject->isGlobalObject() && !eval->isInStrictContext())
             variableObject->realm()->varInjectionWatchpointSet().fireAll(vm, "Executed eval, fired VarInjection watchpoint");
 
         if (!eval->isInStrictContext()) {
             for (auto& ident : variables) {
-                JSValue resolvedScope = JSScope::resolveScopeForHoistingFuncDeclInEval(globalObject, scope, ident);
+                JSValue resolvedScope = resolveScopeForHoistingFuncDeclInEval(globalObject, scope, ident);
                 RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
                 if (resolvedScope.isUndefined())
                     return throwSyntaxError(globalObject, throwScope, makeString("Can't create duplicate variable in eval: '"_s, StringView(ident.impl()), '\''));
@@ -1501,7 +1504,7 @@ JSValue Interpreter::executeEval(EvalExecutable* eval, JSValue thisValue, JSScop
 
             for (auto& slot : functionDecls) {
                 FunctionExecutable* function = slot.get();
-                JSValue resolvedScope = JSScope::resolveScopeForHoistingFuncDeclInEval(globalObject, scope, function->name());
+                JSValue resolvedScope = resolveScopeForHoistingFuncDeclInEval(globalObject, scope, function->name());
                 RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
                 if (resolvedScope.isUndefined())
                     return throwSyntaxError(globalObject, throwScope, makeString("Can't create duplicate variable in eval: '"_s, StringView(function->name().impl()), '\''));
@@ -1541,7 +1544,7 @@ JSValue Interpreter::executeEval(EvalExecutable* eval, JSValue thisValue, JSScop
 
         if (!eval->isInStrictContext()) {
             for (auto& ident : functionHoistingCandidates) {
-                JSValue resolvedScope = JSScope::resolveScopeForHoistingFuncDeclInEval(globalObject, scope, ident);
+                JSValue resolvedScope = resolveScopeForHoistingFuncDeclInEval(globalObject, scope, ident);
                 RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
                 if (!resolvedScope.isUndefined()) {
                     if (isGlobalVariableEnvironment) {

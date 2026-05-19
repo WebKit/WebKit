@@ -27,16 +27,58 @@
 #include "StrictEvalActivation.h"
 
 #include "JSCInlines.h"
+#include "ObjectConstructor.h"
 
 namespace JSC {
 
-STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(StrictEvalActivation);
-
 const ClassInfo StrictEvalActivation::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(StrictEvalActivation) };
 
-StrictEvalActivation::StrictEvalActivation(VM& vm, Structure* structure, JSScope* currentScope)
-    : Base(vm, structure, currentScope)
+StrictEvalActivation::StrictEvalActivation(VM& vm, Structure* structure, JSObject* currentScope)
+    : Base(vm, structure)
+    , m_next(currentScope, WriteBarrierEarlyInit)
 {
+}
+
+template<typename Visitor>
+void StrictEvalActivation::visitChildrenImpl(JSCell* cell, Visitor& visitor)
+{
+    auto* thisObject = uncheckedDowncast<StrictEvalActivation>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    Base::visitChildren(thisObject, visitor);
+    visitor.append(thisObject->m_bindingStorage);
+    visitor.append(thisObject->m_next);
+}
+
+DEFINE_VISIT_CHILDREN(StrictEvalActivation);
+
+JSObject* StrictEvalActivation::ensureBindingStorage(JSGlobalObject* globalObject)
+{
+    if (auto* existing = m_bindingStorage.get())
+        return existing;
+    VM& vm = globalObject->vm();
+    JSObject* storage = constructEmptyObject(vm, globalObject->nullPrototypeObjectStructure());
+    m_bindingStorage.set(vm, this, storage);
+    return storage;
+}
+
+bool StrictEvalActivation::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
+{
+    auto* thisObject = uncheckedDowncast<StrictEvalActivation>(object);
+    if (JSObject* storage = thisObject->bindingStorage()) {
+        if (storage->getOwnPropertySlot(storage, globalObject, propertyName, slot)) {
+            slot.setThisValue(JSValue(thisObject));
+            return true;
+        }
+    }
+    return false;
+}
+
+bool StrictEvalActivation::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
+{
+    auto* thisObject = uncheckedDowncast<StrictEvalActivation>(cell);
+    JSObject* storage = thisObject->ensureBindingStorage(globalObject);
+    storage->putDirect(globalObject->vm(), propertyName, value, slot);
+    return true;
 }
 
 bool StrictEvalActivation::deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&)

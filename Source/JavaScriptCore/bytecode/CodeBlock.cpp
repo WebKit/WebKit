@@ -344,7 +344,7 @@ void CodeBlock::finishCreation(VM& vm, CopyParsedBlockTag, CodeBlock& other)
     }
 }
 
-CodeBlock::CodeBlock(VM& vm, Structure* structure, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlinkedCodeBlock, JSScope* scope)
+CodeBlock::CodeBlock(VM& vm, Structure* structure, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlinkedCodeBlock, JSObject* scope)
     : JSCell(vm, structure)
     , m_globalObject(scope->realm(), WriteBarrierEarlyInit)
     , m_shouldAlwaysBeInlined(true)
@@ -394,7 +394,7 @@ CodeBlock::CodeBlock(VM& vm, Structure* structure, ScriptExecutable* ownerExecut
 // inside UnlinkedCodeBlock. Also, Baseline JIT code is shared between all CodeBlocks of an UnlinkedCodeBlock,
 // so the bytecode must remain the same between CodeBlocks sharing an UnlinkedCodeBlock.
 bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlinkedCodeBlock,
-    JSScope* scope)
+    JSObject* scope)
 {
     Base::finishCreation(vm);
 
@@ -565,7 +565,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
             const Identifier& ident = identifier(bytecode.m_var);
             RELEASE_ASSERT(bytecode.m_resolveType != ResolvedClosureVar);
 
-            ResolveOp op = JSScope::abstractResolve(m_globalObject.get(), bytecode.m_localScopeDepth, scope, ident, Get, bytecode.m_resolveType, InitializationMode::NotInitialization);
+            ResolveOp op = abstractResolveScope(m_globalObject.get(), bytecode.m_localScopeDepth, scope, ident, Get, bytecode.m_resolveType, InitializationMode::NotInitialization);
 
             metadata.m_resolveType = op.type;
             metadata.m_localScopeDepth = op.depth;
@@ -577,7 +577,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
                     metadata.m_lexicalEnvironment.set(vm, this, op.lexicalEnvironment);
                 } else
                     metadata.m_symbolTable.set(vm, this, op.lexicalEnvironment->symbolTable());
-            } else if (JSScope* constantScope = JSScope::constantScopeForCodeBlock(op.type, this)) {
+            } else if (JSObject* constantScope = constantScopeForCodeBlock(op.type, this)) {
                 metadata.m_constantScope.set(vm, this, constantScope);
                 if (op.type == GlobalProperty || op.type == GlobalPropertyWithVarInjectionChecks)
                     metadata.m_globalLexicalBindingEpoch = m_globalObject->globalLexicalBindingEpoch();
@@ -598,7 +598,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
             }
 
             const Identifier& ident = identifier(bytecode.m_var);
-            ResolveOp op = JSScope::abstractResolve(m_globalObject.get(), bytecode.m_localScopeDepth, scope, ident, Get, bytecode.m_getPutInfo.resolveType(), InitializationMode::NotInitialization);
+            ResolveOp op = abstractResolveScope(m_globalObject.get(), bytecode.m_localScopeDepth, scope, ident, Get, bytecode.m_getPutInfo.resolveType(), InitializationMode::NotInitialization);
 
             metadata.m_getPutInfo = GetPutInfo(bytecode.m_getPutInfo.resolveMode(), op.type, bytecode.m_getPutInfo.initializationMode(), bytecode.m_getPutInfo.ecmaMode());
             if (op.type == ModuleVar)
@@ -636,7 +636,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 
             const Identifier& ident = identifier(bytecode.m_var);
             metadata.m_watchpointSet = nullptr;
-            ResolveOp op = JSScope::abstractResolve(m_globalObject.get(), bytecode.m_symbolTableOrScopeDepth.scopeDepth(), scope, ident, Put, bytecode.m_getPutInfo.resolveType(), bytecode.m_getPutInfo.initializationMode());
+            ResolveOp op = abstractResolveScope(m_globalObject.get(), bytecode.m_symbolTableOrScopeDepth.scopeDepth(), scope, ident, Put, bytecode.m_getPutInfo.resolveType(), bytecode.m_getPutInfo.initializationMode());
 
             metadata.m_getPutInfo = GetPutInfo(bytecode.m_getPutInfo.resolveMode(), op.type, bytecode.m_getPutInfo.initializationMode(), bytecode.m_getPutInfo.ecmaMode());
             if (op.type == GlobalVar || op.type == GlobalVarWithVarInjectionChecks || op.type == GlobalLexicalVar || op.type == GlobalLexicalVarWithVarInjectionChecks)
@@ -668,7 +668,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
                 unsigned localScopeDepth = bytecode.m_symbolTableOrScopeDepth.scopeDepth();
                 // Even though type profiling may be profiling either a Get or a Put, we can always claim a Get because
                 // we're abstractly "read"ing from a JSScope.
-                ResolveOp op = JSScope::abstractResolve(m_globalObject.get(), localScopeDepth, scope, ident, Get, bytecode.m_resolveType, InitializationMode::NotInitialization);
+                ResolveOp op = abstractResolveScope(m_globalObject.get(), localScopeDepth, scope, ident, Get, bytecode.m_resolveType, InitializationMode::NotInitialization);
 
                 if (op.type == ClosureVar || op.type == ModuleVar)
                     symbolTable = op.lexicalEnvironment->symbolTable();

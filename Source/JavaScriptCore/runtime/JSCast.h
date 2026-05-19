@@ -142,11 +142,8 @@ using JSResizableOrGrowableSharedBigUint64Array = JSGenericResizableOrGrowableSh
     macro(ClonedArguments, JSType::ClonedArgumentsType, JSType::ClonedArgumentsType) \
     macro(JSGlobalObject, JSType::GlobalObjectType, JSType::GlobalObjectType) \
     macro(JSGlobalLexicalEnvironment, JSType::GlobalLexicalEnvironmentType, JSType::GlobalLexicalEnvironmentType) \
-    macro(JSSegmentedVariableObject, JSType::GlobalObjectType, JSType::GlobalLexicalEnvironmentType) \
     macro(JSModuleEnvironment, JSType::ModuleEnvironmentType, JSType::ModuleEnvironmentType) \
     macro(JSLexicalEnvironment, JSType::LexicalEnvironmentType, JSType::ModuleEnvironmentType) \
-    macro(JSSymbolTableObject, JSType::GlobalObjectType, JSType::ModuleEnvironmentType) \
-    macro(JSScope, FirstScopeType, LastScopeType) \
     macro(StringObject, JSType::StringObjectType, JSType::DerivedStringObjectType) \
     macro(ShadowRealmObject, JSType::ShadowRealmType, JSType::ShadowRealmType) \
     macro(JSDataView, JSType::DataViewType, JSType::DataViewType) \

@@ -25,15 +25,18 @@
 
 #pragma once
 
-#include <JavaScriptCore/JSSegmentedVariableObject.h>
+#include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/JSScope.h>
+#include <JavaScriptCore/SymbolTable.h>
+#include <wtf/SegmentedVector.h>
 
 namespace JSC {
 
-class JSGlobalLexicalEnvironment final : public JSSegmentedVariableObject {
+class JSGlobalLexicalEnvironment final : public JSObject {
 public:
-    using Base = JSSegmentedVariableObject;
+    using Base = JSObject;
 
-    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesPut;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetOwnSpecialPropertyNames | OverridesPut;
 
     template<typename CellType, SubspaceAccess mode>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
@@ -41,7 +44,30 @@ public:
         return &vm.globalLexicalEnvironmentSpace();
     }
 
-    static JSGlobalLexicalEnvironment* create(VM& vm, Structure* structure, JSScope* parentScope)
+    static constexpr DestructionMode needsDestruction = NeedsDestruction;
+
+    SymbolTable* symbolTable() const LIFETIME_BOUND { return m_symbolTable.get(); }
+    static constexpr ptrdiff_t offsetOfSymbolTable() { return OBJECT_OFFSETOF(JSGlobalLexicalEnvironment, m_symbolTable); }
+
+    bool isValidScopeOffset(ScopeOffset offset)
+    {
+        return !!offset && offset.offset() < m_variables.size();
+    }
+
+    WriteBarrier<Unknown>& variableAt(ScopeOffset offset) { return m_variables[offset.offset()]; }
+
+    JS_EXPORT_PRIVATE ScopeOffset findVariableIndex(void*);
+
+    WriteBarrier<Unknown>* assertVariableIsInThisObject(WriteBarrier<Unknown>* variablePointer)
+    {
+        if (ASSERT_ENABLED)
+            findVariableIndex(variablePointer);
+        return variablePointer;
+    }
+
+    JS_EXPORT_PRIVATE ScopeOffset addVariables(unsigned numberOfVariablesToAdd, JSValue);
+
+    static JSGlobalLexicalEnvironment* create(VM& vm, Structure* structure, JSObject* parentScope)
     {
         JSGlobalLexicalEnvironment* result =
             new (NotNull, allocateCell<JSGlobalLexicalEnvironment>(vm)) JSGlobalLexicalEnvironment(vm, structure, parentScope);
@@ -52,22 +78,46 @@ public:
 
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
     static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
+    static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&);
+    static void getOwnSpecialPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArrayBuilder&, DontEnumPropertiesMode);
 
     static void destroy(JSCell*);
-    static constexpr DestructionMode needsDestruction = NeedsDestruction;
 
     bool isEmpty() const { return !symbolTable()->size(); }
     bool isConstVariable(UniquedStringImpl*);
 
     DECLARE_INFO;
+    DECLARE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE);
+    JS_EXPORT_PRIVATE static void analyzeHeap(JSCell*, HeapAnalyzer&);
 
     inline static Structure* createStructure(VM&, JSGlobalObject*);
 
+    JSObject* next() const { return m_next.get(); }
+
 private:
-    JSGlobalLexicalEnvironment(VM& vm, Structure* structure, JSScope* scope)
-        : Base(vm, structure, scope)
+    JSGlobalLexicalEnvironment(VM&, Structure*, JSObject*);
+    ~JSGlobalLexicalEnvironment();
+
+    void finishCreation(VM&);
+
+    void setSymbolTable(VM& vm, SymbolTable* symbolTable)
     {
+        ASSERT(!m_symbolTable);
+        symbolTable->notifyCreation(vm, this, "Allocated a scope");
+        m_symbolTable.set(vm, this, symbolTable);
     }
+
+    WriteBarrier<SymbolTable> m_symbolTable;
+    WriteBarrier<JSObject> m_next;
+    SegmentedVector<WriteBarrier<Unknown>, 16> m_variables;
+#ifndef NDEBUG
+    bool m_alreadyDestroyed { false };
+#endif
+
+public:
+    static constexpr ptrdiff_t offsetOfNext() { return OBJECT_OFFSETOF(JSGlobalLexicalEnvironment, m_next); }
 };
+
+static_assert(JSGlobalLexicalEnvironment::offsetOfNext() == scopeChainNextOffset, "JSGlobalLexicalEnvironment::m_next must live at scopeChainNextOffset");
 
 } // namespace JSC

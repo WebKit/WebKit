@@ -390,7 +390,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, HeapCell*, (J
     case PhantomNewAsyncFunction: {
         // Figure out what the executable and activation are
         FunctionExecutable* executable = nullptr;
-        JSScope* activation = nullptr;
+        JSObject* activation = nullptr;
         for (unsigned i = materialization->properties().size(); i--;) {
             const ExitPropertyValue& property = materialization->properties()[i];
             if (property.location() == PromotedLocationDescriptor(FunctionExecutablePLoc)) {
@@ -398,8 +398,9 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, HeapCell*, (J
                 executable = uncheckedDowncast<FunctionExecutable>(JSValue::decode(values[i]));
             }
             if (property.location() == PromotedLocationDescriptor(FunctionActivationPLoc)) {
-                RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits<JSScope>());
-                activation = uncheckedDowncast<JSScope>(JSValue::decode(values[i]));
+                JSCell* cell = JSValue::decode(values[i]).asCell();
+                RELEASE_ASSERT(cell->isObject() && isScopeChainCell(uncheckedDowncast<JSObject>(cell)));
+                activation = uncheckedDowncast<JSObject>(JSValue::decode(values[i]));
             }
         }
         RELEASE_ASSERT(executable && activation);
@@ -418,13 +419,14 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, HeapCell*, (J
 
     case PhantomCreateActivation: {
         // Figure out what the scope and symbol table are
-        JSScope* scope = nullptr;
+        JSObject* scope = nullptr;
         SymbolTable* table = nullptr;
         for (unsigned i = materialization->properties().size(); i--;) {
             const ExitPropertyValue& property = materialization->properties()[i];
             if (property.location() == PromotedLocationDescriptor(ActivationScopePLoc)) {
-                RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits<JSScope>());
-                scope = uncheckedDowncast<JSScope>(JSValue::decode(values[i]));
+                JSCell* cell = JSValue::decode(values[i]).asCell();
+                RELEASE_ASSERT(cell->isObject() && isScopeChainCell(uncheckedDowncast<JSObject>(cell)));
+                scope = uncheckedDowncast<JSObject>(JSValue::decode(values[i]));
             } else if (property.location() == PromotedLocationDescriptor(ActivationSymbolTablePLoc)) {
                 RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits<SymbolTable>());
                 table = uncheckedDowncast<SymbolTable>(JSValue::decode(values[i]));

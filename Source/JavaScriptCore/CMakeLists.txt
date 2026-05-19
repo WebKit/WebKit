@@ -1257,7 +1257,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSRemoteFunction.h
     runtime/JSRunLoopTimer.h
     runtime/JSScope.h
-    runtime/JSSegmentedVariableObject.h
     runtime/JSSet.h
     runtime/JSSetInlines.h
     runtime/JSSetIterator.h
@@ -1271,7 +1270,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSStringIterator.h
     runtime/JSStringIteratorInlines.h
     runtime/JSStringJoiner.h
-    runtime/JSSymbolTableObject.h
     runtime/JSTemplateObjectDescriptor.h
     runtime/JSType.h
     runtime/JSTypeInfo.h

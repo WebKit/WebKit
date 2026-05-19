@@ -42,10 +42,27 @@ void JSLexicalEnvironment::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     auto* thisObject = uncheckedDowncast<JSLexicalEnvironment>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
+    visitor.append(thisObject->m_symbolTable);
+    visitor.append(thisObject->m_next);
     visitor.appendValuesHidden(thisObject->variables(), thisObject->symbolTable()->scopeSize());
+    if (auto* slot = thisObject->evalInjectionStorageSlot())
+        visitor.append(*slot);
 }
 
 DEFINE_VISIT_CHILDREN(JSLexicalEnvironment);
+
+JSObject* JSLexicalEnvironment::ensureEvalInjectionStorage(JSGlobalObject* globalObject)
+{
+    ASSERT(symbolTable()->usesSloppyEval());
+    auto* slot = evalInjectionStorageSlot();
+    ASSERT(slot);
+    if (auto* existing = slot->get())
+        return existing;
+    VM& vm = globalObject->vm();
+    JSObject* storage = constructEmptyObject(vm, globalObject->nullPrototypeObjectStructure());
+    slot->set(vm, this, storage);
+    return storage;
+}
 
 void JSLexicalEnvironment::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 {
@@ -88,6 +105,9 @@ void JSLexicalEnvironment::getOwnSpecialPropertyNames(JSObject* object, JSGlobal
             propertyNames.add(Identifier::fromUid(vm, it->key.get()));
         }
     }
+
+    if (JSObject* injectionStorage = thisObject->evalInjectionStorage())
+        injectionStorage->methodTable()->getOwnSpecialPropertyNames(injectionStorage, globalObject, propertyNames, mode);
 }
 
 bool JSLexicalEnvironment::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
@@ -97,15 +117,14 @@ bool JSLexicalEnvironment::getOwnPropertySlot(JSObject* object, JSGlobalObject* 
     if (symbolTableGet(thisObject, propertyName, slot))
         return true;
 
-    VM& vm = globalObject->vm();
-    unsigned attributes;
-    if (JSValue value = thisObject->getDirect(vm, propertyName, attributes)) {
-        RELEASE_ASSERT(!(attributes & PropertyAttribute::Accessor));
-        slot.setValue(thisObject, attributes, value);
-        return true;
+    if (JSObject* injectionStorage = thisObject->evalInjectionStorage()) {
+        if (injectionStorage->getOwnPropertySlot(injectionStorage, globalObject, propertyName, slot)) {
+            slot.setThisValue(JSValue(thisObject));
+            return true;
+        }
     }
 
-    // We don't call through to JSObject because there's no way to give a 
+    // We don't call through to JSObject because there's no way to give a
     // lexical environment object getter properties or a prototype.
     ASSERT(!thisObject->structure()->hasAnyKindOfGetterSetterProperties());
     ASSERT(thisObject->getPrototypeDirect().isNull());
@@ -117,17 +136,26 @@ bool JSLexicalEnvironment::put(JSCell* cell, JSGlobalObject* globalObject, Prope
     JSLexicalEnvironment* thisObject = uncheckedDowncast<JSLexicalEnvironment>(cell);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
 
-    bool shouldThrowReadOnlyError = slot.isStrictMode() || thisObject->isLexicalScope();
+    bool shouldThrowReadOnlyError = slot.isStrictMode() || isLexicalScope(thisObject);
     bool ignoreReadOnlyErrors = false;
     bool putResult = false;
     if (symbolTablePutInvalidateWatchpointSet(thisObject, globalObject, propertyName, value, shouldThrowReadOnlyError, ignoreReadOnlyErrors, putResult))
         return putResult;
 
-    // We don't call through to JSObject because __proto__ and getter/setter 
+    // putDirect (not dispatched put) — otherwise PutPropertySlot routes the write
+    // back to the activation as receiver instead of the side storage.
+    if (thisObject->symbolTable()->usesSloppyEval()) {
+        JSObject* injectionStorage = thisObject->ensureEvalInjectionStorage(globalObject);
+        VM& vm = globalObject->vm();
+        injectionStorage->putDirect(vm, propertyName, value, slot);
+        return true;
+    }
+
+    // We don't call through to JSObject because __proto__ and getter/setter
     // properties are non-standard extensions that other implementations do not
     // expose in the lexicalEnvironment object.
     ASSERT(!thisObject->structure()->hasAnyKindOfGetterSetterProperties());
-    return thisObject->putOwnDataProperty(globalObject->vm(), propertyName, value, slot);
+    return false;
 }
 
 bool JSLexicalEnvironment::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, DeletePropertySlot& slot)
@@ -135,6 +163,12 @@ bool JSLexicalEnvironment::deleteProperty(JSCell* cell, JSGlobalObject* globalOb
     VM& vm = globalObject->vm();
     if (propertyName == vm.propertyNames->arguments)
         return false;
+
+    auto* thisObject = uncheckedDowncast<JSLexicalEnvironment>(cell);
+    if (JSObject* injectionStorage = thisObject->evalInjectionStorage()) {
+        if (injectionStorage->methodTable()->deleteProperty(injectionStorage, globalObject, propertyName, slot))
+            return true;
+    }
 
     return Base::deleteProperty(cell, globalObject, propertyName, slot);
 }

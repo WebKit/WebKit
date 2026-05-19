@@ -128,7 +128,7 @@ static GRefPtr<JSCContext> jscContextForObject(JSC::JSObject* jsObject)
         return nullptr;
     if (jsObject->isGlobalObject()) {
         if (auto* globalScopeExtension = globalObject->globalScopeExtension())
-            globalObject = JSC::JSScope::objectAtScope(globalScopeExtension)->realm();
+            globalObject = JSC::objectAtScope(globalScopeExtension)->realm();
     }
     return jscContextGetOrCreate(toGlobalRef(globalObject));
 }

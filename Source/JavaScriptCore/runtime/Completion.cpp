@@ -165,7 +165,7 @@ JSValue evaluateWithScopeExtension(JSGlobalObject* globalObject, const SourceCod
     VM& vm = globalObject->vm();
 
     if (scopeExtensionObject) {
-        JSScope* ignoredPreviousScope = globalObject->globalScope();
+        JSObject* ignoredPreviousScope = globalObject->globalScope();
         globalObject->setGlobalScopeExtension(JSWithScope::create(vm, globalObject, ignoredPreviousScope, scopeExtensionObject));
     }
 

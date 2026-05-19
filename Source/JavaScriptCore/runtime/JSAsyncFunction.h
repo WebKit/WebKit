@@ -40,10 +40,10 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    static JSAsyncFunction* create(VM&, JSGlobalObject*, FunctionExecutable*, JSScope*);
-    static JSAsyncFunction* create(VM&, JSGlobalObject*, FunctionExecutable*, JSScope*, Structure*);
-    static JSAsyncFunction* createWithInvalidatedReallocationWatchpoint(VM&, JSGlobalObject*, FunctionExecutable*, JSScope*);
-    static JSAsyncFunction* createWithInvalidatedReallocationWatchpoint(VM&, JSGlobalObject*, FunctionExecutable*, JSScope*, Structure*);
+    static JSAsyncFunction* create(VM&, JSGlobalObject*, FunctionExecutable*, JSObject*);
+    static JSAsyncFunction* create(VM&, JSGlobalObject*, FunctionExecutable*, JSObject*, Structure*);
+    static JSAsyncFunction* createWithInvalidatedReallocationWatchpoint(VM&, JSGlobalObject*, FunctionExecutable*, JSObject*);
+    static JSAsyncFunction* createWithInvalidatedReallocationWatchpoint(VM&, JSGlobalObject*, FunctionExecutable*, JSObject*, Structure*);
 
     static size_t allocationSize(Checked<size_t> inlineCapacity)
     {
@@ -54,9 +54,9 @@ public:
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
 private:
-    JSAsyncFunction(VM&, FunctionExecutable*, JSScope*, Structure*);
+    JSAsyncFunction(VM&, FunctionExecutable*, JSObject*, Structure*);
 
-    static JSAsyncFunction* createImpl(VM&, FunctionExecutable*, JSScope*, Structure*);
+    static JSAsyncFunction* createImpl(VM&, FunctionExecutable*, JSObject*, Structure*);
 };
 static_assert(sizeof(JSAsyncFunction) == sizeof(JSFunction), "Some subclasses of JSFunction should be the same size to share IsoSubspace");
 

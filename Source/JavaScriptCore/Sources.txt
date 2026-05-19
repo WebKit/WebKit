@@ -969,14 +969,12 @@ runtime/JSRegExpStringIterator.cpp
 runtime/JSRemoteFunction.cpp
 runtime/JSRunLoopTimer.cpp
 runtime/JSScope.cpp
-runtime/JSSegmentedVariableObject.cpp
 runtime/JSSet.cpp
 runtime/JSSetIterator.cpp
 runtime/JSSourceCode.cpp
 runtime/JSString.cpp
 runtime/JSStringIterator.cpp
 runtime/JSStringJoiner.cpp
-runtime/JSSymbolTableObject.cpp
 runtime/JSTemplateObjectDescriptor.cpp
 runtime/JSType.cpp
 runtime/JSTypedArrayConstructors.cpp

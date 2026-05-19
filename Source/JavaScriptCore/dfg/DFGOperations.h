@@ -255,7 +255,7 @@ JSC_DECLARE_JIT_OPERATION(operationAddHeapBigInt, EncodedJSValue, (JSGlobalObjec
 JSC_DECLARE_JIT_OPERATION(operationBitRShiftHeapBigInt, EncodedJSValue, (JSGlobalObject*, JSCell* op1, JSCell* op2));
 JSC_DECLARE_JIT_OPERATION(operationBitXorHeapBigInt, EncodedJSValue, (JSGlobalObject*, JSCell* op1, JSCell* op2));
 JSC_DECLARE_JIT_OPERATION(operationSameValue, size_t, (JSGlobalObject*, EncodedJSValue, EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationCreateActivationDirect, JSCell*, (VM*, Structure*, JSScope*, SymbolTable*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationCreateActivationDirect, JSCell*, (VM*, Structure*, JSObject*, SymbolTable*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationCreateDirectArguments, JSCell*, (VM*, Structure*, uint32_t length, uint32_t minCapacity));
 JSC_DECLARE_JIT_OPERATION(operationCreateDirectArgumentsDuringExit, JSCell*, (VM*, InlineCallFrame*, JSFunction*, uint32_t argumentCount));
 JSC_DECLARE_JIT_OPERATION(operationCreateScopedArguments, JSCell*, (JSGlobalObject*, Structure*, Register* argumentStart, uint32_t length, JSFunction* callee, JSLexicalEnvironment*));
@@ -441,8 +441,8 @@ JSC_DECLARE_JIT_OPERATION(operationCreateImmutableButterfly, JSCell*, (JSGlobalO
 JSC_DECLARE_JIT_OPERATION(operationNewArrayWithSpeciesInt32, JSObject*, (JSGlobalObject*, int32_t, JSObject*, IndexingType));
 JSC_DECLARE_JIT_OPERATION(operationNewArrayWithSpecies, JSObject*, (JSGlobalObject*, EncodedJSValue, JSObject*, IndexingType));
 
-JSC_DECLARE_JIT_OPERATION(operationResolveScope, JSCell*, (JSGlobalObject*, JSScope*, UniquedStringImpl*));
-JSC_DECLARE_JIT_OPERATION(operationResolveScopeForHoistingFuncDeclInEval, EncodedJSValue, (JSGlobalObject*, JSScope*, UniquedStringImpl*));
+JSC_DECLARE_JIT_OPERATION(operationResolveScope, JSCell*, (JSGlobalObject*, JSObject*, UniquedStringImpl*));
+JSC_DECLARE_JIT_OPERATION(operationResolveScopeForHoistingFuncDeclInEval, EncodedJSValue, (JSGlobalObject*, JSObject*, UniquedStringImpl*));
 JSC_DECLARE_JIT_OPERATION(operationGetDynamicVar, EncodedJSValue, (JSGlobalObject*, JSObject* scope, UniquedStringImpl*, unsigned));
 JSC_DECLARE_JIT_OPERATION(operationPutDynamicVarStrict, void, (JSGlobalObject*, JSObject* scope, EncodedJSValue, UniquedStringImpl*, unsigned));
 JSC_DECLARE_JIT_OPERATION(operationPutDynamicVarSloppy, void, (JSGlobalObject*, JSObject* scope, EncodedJSValue, UniquedStringImpl*, unsigned));

@@ -40,7 +40,6 @@ class CallFrame;
 class CodeBlock;
 class JSArray;
 class JSObject;
-class JSScope;
 class LLIntOffsetsExtractor;
 class VM;
 
@@ -88,7 +87,7 @@ public:
             return std::bit_cast<JSObject*>(static_cast<intptr_t>(unlikelyValue + 1));
         }
         
-        static Packet prologue(JSObject* callee, CallFrame* frame, CallFrame* callerFrame, JSScope* scope)
+        static Packet prologue(JSObject* callee, CallFrame* frame, CallFrame* callerFrame, JSObject* scope)
         {
             Packet result;
             result.callee = callee;
@@ -98,7 +97,7 @@ public:
             return result;
         }
         
-        static Packet tail(CallFrame* frame, JSValue thisValue, JSScope* scope, CodeBlock* codeBlock, CallSiteIndex callSiteIndex)
+        static Packet tail(CallFrame* frame, JSValue thisValue, JSObject* scope, CodeBlock* codeBlock, CallSiteIndex callSiteIndex)
         {
             Packet result;
             result.callee = tailMarker();
@@ -130,7 +129,7 @@ public:
         JSObject* callee { nullptr };
         CallFrame* frame { nullptr };
         CallFrame* callerFrame { nullptr };
-        SUPPRESS_FORWARD_DECL_MEMBER JSScope* scope { nullptr };
+        SUPPRESS_FORWARD_DECL_MEMBER JSObject* scope { nullptr };
         SUPPRESS_FORWARD_DECL_MEMBER CodeBlock* codeBlock { nullptr };
         CallSiteIndex callSiteIndex;
     };
@@ -140,7 +139,7 @@ public:
         {
         }
         
-        Frame(JSObject* callee, CallFrame* frame, bool isTailDeleted, JSValue thisValue = JSValue(), JSScope* scope = nullptr, CodeBlock* codeBlock = nullptr, CallSiteIndex callSiteIndex = CallSiteIndex())
+        Frame(JSObject* callee, CallFrame* frame, bool isTailDeleted, JSValue thisValue = JSValue(), JSObject* scope = nullptr, CodeBlock* codeBlock = nullptr, CallSiteIndex callSiteIndex = CallSiteIndex())
             : callee(callee)
             , frame(frame)
             , thisValue(thisValue)
@@ -161,7 +160,7 @@ public:
         JSObject* callee { nullptr };
         CallFrame* frame { nullptr };
         JSValue thisValue { JSValue() };
-        SUPPRESS_FORWARD_DECL_MEMBER JSScope* scope { nullptr };
+        SUPPRESS_FORWARD_DECL_MEMBER JSObject* scope { nullptr };
         SUPPRESS_FORWARD_DECL_MEMBER CodeBlock* codeBlock { nullptr };
         CallSiteIndex callSiteIndex;
         bool isTailDeleted { false };
