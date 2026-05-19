@@ -312,7 +312,7 @@ void RenderListItem::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     RenderBlockFlow::paint(paintInfo, paintOffset);
 
     if (auto* marker = markerRenderer(); marker && marker->shouldPaintInAssociatedListItemLayer())
-        marker->paintFromAssociatedListItemLayer(paintInfo, paintOffsetForMarkerFromAssociatedListItem(*marker, *this, paintOffset));
+        marker->paintFromAssociatedListItemLayer(paintInfo, paintOffsetForMarkerFromAssociatedListItem(*marker, *this, paintOffset + location()));
 }
 
 String RenderListItem::markerTextWithoutSuffix() const

@@ -100,6 +100,8 @@ bool RenderListMarker::shouldPaintInAssociatedListItemLayer() const
     }
 
     for (auto* ancestor = parent(); ancestor && ancestor != associatedListItem; ancestor = ancestor->parent()) {
+        if (auto* box = dynamicDowncast<RenderBox>(*ancestor); box && box->hasNonVisibleOverflow())
+            return true;
         if (!ancestor->hasSelfPaintingLayer())
             continue;
         if (ancestor->isRenderFragmentedFlow())
