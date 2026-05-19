@@ -131,7 +131,7 @@ class _FileSystemSourceFile(SourceFile):
 
 
 class LayoutTestFinder(object):
-    def __init__(self, fs, layout_tests_base_dir, baseline_search_paths, test_routes=None):
+    def __init__(self, fs, layout_tests_base_dir, baseline_search_paths, test_routes=None, all_baseline_search_paths=None):
         """Find layout tests.
 
         :param FileSystem fs: the current filesystem object
@@ -142,12 +142,19 @@ class LayoutTestFinder(object):
         :param Optional[List[ServerRoute]] test_routes: the server routes
             (see: Port.test_routes()); each test_file_dir is compared as a
             string against "/"-separated test names
+        :param Optional[List[str]] all_baseline_search_paths: the full set of baseline
+            search paths across all platforms (see: Port.all_baseline_search_paths()).
+            If None, defaults to baseline_search_paths. Used by all_baselines_for_test().
         """
         self.fs = fs
 
         layout_tests_base_dir = fs.normpath(fs.realpath(layout_tests_base_dir))
         baseline_search_paths = [
             fs.normpath(fs.realpath(bsp)) for bsp in baseline_search_paths
+        ]
+        all_baseline_search_paths = all_baseline_search_paths or baseline_search_paths
+        self.all_baseline_search_paths = [
+            fs.normpath(fs.realpath(bsp)) for bsp in all_baseline_search_paths
         ]
 
         self.layout_tests_base_dir = layout_tests_base_dir
@@ -164,6 +171,50 @@ class LayoutTestFinder(object):
         )
 
         self.w3c_support_dirs, self.w3c_support_files = self._load_w3c_resource_data()
+
+    def baselines_for_test(self, test_name, suffix):
+        """Return baseline files for test_name using baseline_search_paths (current platform).
+
+        Like Port.expected_baselines(test_name, suffix, all_baselines=False) — returns only
+        the first matching baseline found, then stops.
+
+        :param str test_name: relative test path (may include variant)
+        :param str suffix: file suffix including dot (e.g. '.txt', '.png')
+        :returns: list of (platform_dir, baseline_filename) pairs. platform_dir is
+            None if no file was found anywhere.
+        """
+        assert suffix.startswith('.')
+        baseline_filename = TestResultWriter.expected_filename(test_name, self.fs, suffix=suffix[1:])
+
+        search_paths = list(self.baseline_search_paths) + [self.layout_tests_base_dir]
+        for platform_dir in search_paths:
+            if self.fs.exists(self.fs.join(platform_dir, baseline_filename)):
+                return [(platform_dir, baseline_filename)]
+
+        return [(None, baseline_filename)]
+
+    def all_baselines_for_test(self, test_name, suffix):
+        """Return all baseline files for test_name across all_baseline_search_paths.
+
+        Mirrors Port.expected_baselines(test_name, suffix, all_baselines=True).
+
+        :param str test_name: relative test path (may include variant, e.g. 'dir/foo.html?var')
+        :param str suffix: file suffix including dot (e.g. '.txt', '.png')
+        :returns: list of (platform_dir, baseline_filename) pairs. platform_dir is
+            None if no file was found anywhere (same convention as Port.expected_baselines).
+        """
+        assert suffix.startswith('.')
+        # TestResultWriter.expected_filename handles variant sanitization internally
+        baseline_filename = TestResultWriter.expected_filename(test_name, self.fs, suffix=suffix[1:])
+
+        baselines = []
+        for platform_dir in list(self.all_baseline_search_paths) + [self.layout_tests_base_dir]:
+            if self.fs.exists(self.fs.join(platform_dir, baseline_filename)):
+                baselines.append((platform_dir, baseline_filename))
+
+        if not baselines:
+            baselines.append((None, baseline_filename))
+        return baselines
 
     def _load_w3c_resource_data(self):
         w3c_path = self.fs.join(

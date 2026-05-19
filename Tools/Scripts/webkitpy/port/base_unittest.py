@@ -37,6 +37,7 @@ from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.executive_mock import MockExecutive2
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.common.host_mock import MockHost
+from webkitpy.layout_tests.controllers.layout_test_finder import LayoutTestFinder
 from webkitpy.port import Port
 from webkitpy.port.config import Config
 from webkitpy.port.test import add_unit_tests_to_mock_filesystem, TestPort
@@ -161,9 +162,16 @@ class PortTest(unittest.TestCase):
         port.default_baseline_search_path = lambda **kwargs: ['LayoutTests/platform/foo']
         test_file = 'fast/test.html'
 
+        def make_finder(port):
+            return LayoutTestFinder(
+                port._filesystem,
+                port.layout_tests_dir(),
+                port.baseline_search_path(),
+            )
+
         # No additional platform directory
         self.assertEqual(
-            port.expected_baselines(test_file, '.txt'),
+            make_finder(port).baselines_for_test(test_file, '.txt'),
             [(None, 'fast/test-expected.txt')])
         self.assertEqual(port.baseline_path(), 'LayoutTests/platform/foo')
 
@@ -171,14 +179,14 @@ class PortTest(unittest.TestCase):
         port._options.additional_platform_directory = ['/tmp/local-baselines']
         port._filesystem.write_text_file('/tmp/local-baselines/fast/test-expected.txt', 'foo')
         self.assertEqual(
-            port.expected_baselines(test_file, '.txt'),
+            make_finder(port).baselines_for_test(test_file, '.txt'),
             [('/tmp/local-baselines', 'fast/test-expected.txt')])
         self.assertEqual(port.baseline_path(), '/tmp/local-baselines')
 
         # Multiple additional platform directories
         port._options.additional_platform_directory = ['/foo', '/tmp/local-baselines']
         self.assertEqual(
-            port.expected_baselines(test_file, '.txt'),
+            make_finder(port).baselines_for_test(test_file, '.txt'),
             [('/tmp/local-baselines', 'fast/test-expected.txt')])
         self.assertEqual(port.baseline_path(), '/foo')
 
