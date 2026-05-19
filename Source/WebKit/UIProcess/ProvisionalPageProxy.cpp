@@ -736,7 +736,11 @@ void ProvisionalPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::D
 
     if (decoder.messageName() == Messages::WebBackForwardList::BackForwardUpdateItem::name()) {
         if (RefPtr page = m_page.get())
+<<<<<<< HEAD
             page->backForwardListMessageReceiver().didReceiveMessage(connection, decoder);
+=======
+            page->backForwardList().didReceiveProvisionalMessage(connection, decoder);
+>>>>>>> 6b53aa44e133 (MESSAGE_CHECK URLs passed in to WebBackForwardListItem backForwardUpdateItem and backForwardSetChildItem)
         return;
     }
 
