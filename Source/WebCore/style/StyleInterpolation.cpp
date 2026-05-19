@@ -191,6 +191,10 @@ static void interpolateCustomProperty(const AtomString& customProperty, RenderSt
 
     bool isInherited = client.document()->customPropertyRegistry().isInherited(customProperty);
     destination.setCustomPropertyValue(interpolatedCustomProperty(from, to, *fromValue, *toValue, context), isInherited);
+    if (isInherited)
+        destination.mutableInheritedCustomProperties().setHasAnimatedProperties();
+    else
+        destination.mutableNonInheritedCustomProperties().setHasAnimatedProperties();
 }
 
 static bool syntaxValuesRequireInterpolationForAccumulativeIteration(const CustomProperty::Value& a, const CustomProperty::Value& b, bool isList)

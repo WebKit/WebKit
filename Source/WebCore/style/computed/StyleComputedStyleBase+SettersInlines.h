@@ -73,6 +73,11 @@ inline void ComputedStyleBase::setUsesTreeCountingFunctions()
     m_nonInheritedFlags.useTreeCountingFunctions = true;
 }
 
+inline void ComputedStyleBase::setUsesCustomPropertyReferences()
+{
+    m_nonInheritedFlags.usesCustomPropertyReferences = true;
+}
+
 inline void ComputedStyleBase::setInsideLink(InsideLink insideLink)
 {
     m_inheritedFlags.insideLink = static_cast<unsigned>(insideLink);

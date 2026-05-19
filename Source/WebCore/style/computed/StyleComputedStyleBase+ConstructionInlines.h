@@ -79,6 +79,7 @@ inline ComputedStyleBase::ComputedStyleBase(CreateDefaultStyleTag)
     m_nonInheritedFlags.usesViewportUnits = false;
     m_nonInheritedFlags.usesContainerUnits = false;
     m_nonInheritedFlags.useTreeCountingFunctions = false;
+    m_nonInheritedFlags.usesCustomPropertyReferences = false;
     m_nonInheritedFlags.hasExplicitlyInheritedProperties = false;
     m_nonInheritedFlags.disallowsFastPathInheritance = false;
     m_nonInheritedFlags.emptyState = false;
@@ -128,6 +129,7 @@ inline void ComputedStyleBase::NonInheritedFlags::copyNonInheritedFrom(const Non
     usesViewportUnits = other.usesViewportUnits;
     usesContainerUnits = other.usesContainerUnits;
     useTreeCountingFunctions = other.useTreeCountingFunctions;
+    usesCustomPropertyReferences = other.usesCustomPropertyReferences;
     hasExplicitlyInheritedProperties = other.hasExplicitlyInheritedProperties;
     disallowsFastPathInheritance = other.disallowsFastPathInheritance;
 }

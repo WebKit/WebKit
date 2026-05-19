@@ -97,6 +97,9 @@ public:
     inline bool useTreeCountingFunctions() const;
     inline void setUsesTreeCountingFunctions();
 
+    inline bool usesCustomPropertyReferences() const;
+    inline void setUsesCustomPropertyReferences();
+
     inline InsideLink insideLink() const;
     inline void setInsideLink(InsideLink);
 
@@ -485,6 +488,9 @@ public:
     inline bool affectsTransform() const;
 
     // MARK: - Underlying ComputedStyle
+
+    inline Style::CustomPropertyData& mutableInheritedCustomProperties();
+    inline Style::CustomPropertyData& mutableNonInheritedCustomProperties();
 
     Style::ComputedStyle& computedStyle() LIFETIME_BOUND { return m_computedStyle; }
     const Style::ComputedStyle& computedStyle() const LIFETIME_BOUND { return m_computedStyle; }

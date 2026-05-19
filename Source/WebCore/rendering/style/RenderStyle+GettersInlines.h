@@ -90,6 +90,16 @@ inline bool RenderStyle::fontCascadeEqual(const RenderStyle& other) const
     return m_computedStyle.fontCascadeEqual(other.m_computedStyle);
 }
 
+inline Style::CustomPropertyData& RenderStyle::mutableInheritedCustomProperties()
+{
+    return m_computedStyle.mutableInheritedCustomProperties();
+}
+
+inline Style::CustomPropertyData& RenderStyle::mutableNonInheritedCustomProperties()
+{
+    return m_computedStyle.mutableNonInheritedCustomProperties();
+}
+
 inline bool RenderStyle::scrollSnapDataEquivalent(const RenderStyle& other) const
 {
     return m_computedStyle.scrollSnapDataEquivalent(other.m_computedStyle);
@@ -110,6 +120,11 @@ inline bool RenderStyle::usesContainerUnits() const
 inline bool RenderStyle::useTreeCountingFunctions() const
 {
     return m_computedStyle.useTreeCountingFunctions();
+}
+
+inline bool RenderStyle::usesCustomPropertyReferences() const
+{
+    return m_computedStyle.usesCustomPropertyReferences();
 }
 
 inline InsideLink RenderStyle::insideLink() const

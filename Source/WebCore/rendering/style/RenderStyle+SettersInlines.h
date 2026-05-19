@@ -92,6 +92,11 @@ inline void RenderStyle::setUsesTreeCountingFunctions()
     m_computedStyle.setUsesTreeCountingFunctions();
 }
 
+inline void RenderStyle::setUsesCustomPropertyReferences()
+{
+    m_computedStyle.setUsesCustomPropertyReferences();
+}
+
 inline void RenderStyle::setInsideLink(InsideLink insideLink)
 {
     m_computedStyle.setInsideLink(insideLink);

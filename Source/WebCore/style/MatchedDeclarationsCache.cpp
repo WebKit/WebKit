@@ -102,8 +102,11 @@ bool MatchedDeclarationsCache::isCacheable(const Element& element, const RenderS
     if (element.hasRandomCachingKeyMap())
         return false;
 
-    // FIXME: counter-style: we might need to resolve cache like for fontSelector here (rdar://103018993).
+    if (style.usesCustomPropertyReferences() && (style.inheritedCustomProperties().hasAnimatedProperties()
+        || style.nonInheritedCustomProperties().hasAnimatedProperties()))
+        return false;
 
+    // FIXME: counter-style: we might need to resolve cache like for fontSelector here (rdar://103018993).
     return true;
 }
 
@@ -124,6 +127,9 @@ unsigned MatchedDeclarationsCache::computeHash(const MatchResult& matchResult, c
 {
     if (matchResult.isCompletelyNonCacheable)
         return 0;
+
+    if (inheritedCustomProperties.hasAnimatedProperties())
+        return AlreadyHashed::avoidDeletedValue(WTF::computeHash(matchResult));
 
     if (matchResult.userAgentDeclarations.isEmpty() && matchResult.userDeclarations.isEmpty()) {
         bool allNonCacheable = std::ranges::all_of(matchResult.authorDeclarations, [](auto& matchedProperties) {
@@ -150,7 +156,7 @@ std::optional<MatchedDeclarationsCache::Result> MatchedDeclarationsCache::find(u
         if (!matchResult.cacheablePropertiesEqual(*entry.matchResult))
             continue;
 
-        if (&entry.parentRenderStyle->inheritedCustomProperties() != &inheritedCustomProperties)
+        if (!parentStyle.inheritedCustomProperties().hasAnimatedProperties() && &entry.parentRenderStyle->inheritedCustomProperties() != &inheritedCustomProperties)
             continue;
 
         if (parentStyle.inheritedEqual(*entry.parentRenderStyle))

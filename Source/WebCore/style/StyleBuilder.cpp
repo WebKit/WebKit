@@ -571,6 +571,8 @@ Ref<CSSValue> Builder::resolveSubstitutionFunctions(CSSPropertyID propertyID, CS
     if (!value.hasSubstitutionFunctions())
         return value;
 
+    m_state->style().setUsesCustomPropertyReferences();
+
     SubstitutionResolver substitutionResolver(*this);
 
     auto variableValue = [&]() -> RefPtr<CSSValue> {
