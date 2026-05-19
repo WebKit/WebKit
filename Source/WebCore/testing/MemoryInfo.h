@@ -32,6 +32,7 @@
 
 #include "CommonVM.h"
 #include <JavaScriptCore/VM.h>
+#include <wtf/MemoryFootprint.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -42,16 +43,19 @@ public:
 
     size_t usedJSHeapSize() const { return m_usedJSHeapSize; }
     size_t totalJSHeapSize() const { return m_totalJSHeapSize; }
+    size_t memoryFootprint() const { return m_memoryFootprint; }
 
 private:
     MemoryInfo()
         : m_usedJSHeapSize(commonVM().heap.size())
         , m_totalJSHeapSize(commonVM().heap.capacity())
+        , m_memoryFootprint(WTF::memoryFootprint())
     {
     }
 
     size_t m_usedJSHeapSize;
     size_t m_totalJSHeapSize;
+    size_t m_memoryFootprint;
 };
 
 } // namespace WebCore

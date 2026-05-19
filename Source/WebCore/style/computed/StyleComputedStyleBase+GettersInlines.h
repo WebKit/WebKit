@@ -119,6 +119,11 @@ inline bool ComputedStyleBase::colorIsCurrentColorForHighlight() const
     return m_inheritedData->colorIsCurrentColorForHighlight;
 }
 
+inline bool ComputedStyleBase::usesCustomPropertyReferences() const
+{
+    return m_nonInheritedFlags.usesCustomPropertyReferences;
+}
+
 inline InsideLink ComputedStyleBase::insideLink() const
 {
     return static_cast<InsideLink>(m_inheritedFlags.insideLink);
@@ -495,6 +500,16 @@ inline CursorType ComputedStyleBase::cursorType() const
 inline const PageSize& ComputedStyleBase::pageSize() const
 {
     return m_nonInheritedData->rareData->pageSize;
+}
+
+inline Style::CustomPropertyData& ComputedStyleBase::mutableInheritedCustomProperties()
+{
+    return m_inheritedRareData.access().customProperties.access();
+}
+
+inline Style::CustomPropertyData& ComputedStyleBase::mutableNonInheritedCustomProperties()
+{
+    return m_nonInheritedData.access().rareData.access().customProperties.access();
 }
 
 } // namespace Style

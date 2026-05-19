@@ -324,6 +324,9 @@ fast/frames/frame-append-body-child-crash.html [ Slow ]
 [ Debug ] fast/frames/lots-of-objects.html [ Slow ]
 [ Debug ] fast/frames/lots-of-iframes.html [ Slow ]
 
+# This test intentionally waits ~5 seconds while trying overloading MatchedDeclarationsCache.
+memory/bug-315656-matched-declarations-cache-overload.html [ Slow ]
+
 # This test is failing in all major browser engines as of Sept 2022. The reason is that the Reporting-Endpoints header
 # is served on the parent of the reporting frame, not the reporting frame.
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-endpoint.https.html
