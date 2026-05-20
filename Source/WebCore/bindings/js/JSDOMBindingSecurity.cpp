@@ -32,6 +32,7 @@
 #include "LocalFrameInlines.h"
 #include "NodeDocument.h"
 #include "RemoteDOMWindow.h"
+#include "RemoteFrame.h"
 #include "SecurityOrigin.h"
 #include <JavaScriptCore/TopExceptionScope.h>
 #include <wtf/text/MakeString.h>
@@ -149,10 +150,24 @@ bool BindingSecurity::shouldAllowAccessToDOMWindow(JSC::JSGlobalObject* lexicalG
     return target && shouldAllowAccessToDOMWindow(lexicalGlobalObject, *target, reportingOption);
 }
 
+static bool isSameOriginRemoteWindowAccess(JSC::JSGlobalObject& lexicalGlobalObject, DOMWindow& window)
+{
+    RefPtr remoteWindow = dynamicDowncast<RemoteDOMWindow>(window);
+    if (!remoteWindow)
+        return false;
+    RefPtr remoteFrame = remoteWindow->frame();
+    if (!remoteFrame)
+        return false;
+    auto& active = activeDOMWindow(lexicalGlobalObject);
+    return protect(active.document()->securityOrigin())->isSameOriginDomain(remoteFrame->frameDocumentSecurityOriginOrOpaque());
+}
+
 bool BindingSecurity::shouldAllowAccessToDOMWindow(JSC::JSGlobalObject* lexicalGlobalObject, DOMWindow* window, SecurityReportingOption reportingOption)
 {
     auto* localWindow = dynamicDowncast<LocalDOMWindow>(window);
     if (window && !localWindow) {
+        if (isSameOriginRemoteWindowAccess(*lexicalGlobalObject, *window))
+            return true;
         reportErrorAccessingRemoteFrame(lexicalGlobalObject, *window, reportingOption);
         return false;
     }
@@ -163,6 +178,8 @@ bool BindingSecurity::shouldAllowAccessToDOMWindow(JSC::JSGlobalObject& lexicalG
 {
     auto* localWindow = dynamicDowncast<LocalDOMWindow>(window);
     if (window && !localWindow) {
+        if (isSameOriginRemoteWindowAccess(lexicalGlobalObject, *window))
+            return true;
         message = remoteFrameAccessError(&lexicalGlobalObject, *window);
         return false;
     }
