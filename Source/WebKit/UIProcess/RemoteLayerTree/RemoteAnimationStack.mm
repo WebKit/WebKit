@@ -31,6 +31,7 @@
 #import "RemoteAnimationUtilities.h"
 #import "RemoteProgressBasedTimeline.h"
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/SystemTracing.h>
 #import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -172,6 +173,8 @@ void RemoteAnimationStack::applyEffects() const
 {
     if (!m_presentationModifierGroup)
         return;
+
+    TraceScope scope(UpdateThreadedAnimationsStart, UpdateThreadedAnimationsEnd);
 
     auto computedValues = computeValues();
 
