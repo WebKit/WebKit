@@ -299,7 +299,7 @@ void RenderBlock::styleWillChange(Style::Difference diff, const RenderStyle& new
     setBlockLevelReplacedOrAtomicInline(newStyle.display().isInlineType());
     if (oldStyle) {
         removeOutOfFlowBoxesIfNeededOnStyleChange(*this, *oldStyle, newStyle);
-        if (isLegend() && oldStyle->floating() == Float::None && newStyle.floating() != Float::None)
+        if (isLegend() && (oldStyle->isFlexOrGridItem() || oldStyle->floating() == Float::None) && (!newStyle.isFlexOrGridItem() && newStyle.floating() != Float::None))
             setIsExcludedFromNormalLayout(false);
     }
     RenderBox::styleWillChange(diff, newStyle);
@@ -1336,7 +1336,7 @@ bool RenderBlock::establishesIndependentFormattingContextIgnoringDisplayType(con
             && style.overflowX() != Overflow::Visible;
     };
 
-    return style.floating() != Float::None
+    return (!style.isFlexOrGridItem() && style.floating() != Float::None)
         || style.hasOutOfFlowPosition()
         || isBlockBoxWithPotentiallyScrollableOverflow()
         || style.usedContain().contains(Style::ContainValue::Layout)

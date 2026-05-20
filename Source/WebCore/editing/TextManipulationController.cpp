@@ -346,7 +346,7 @@ static bool isEnclosingItemBoundaryElement(const Element& element)
             return true;
 
         auto floating = renderer->style().floating();
-        if (isListItem && (floating == Float::Left || floating == Float::Right))
+        if (isListItem && !renderer->style().isFlexOrGridItem() && (floating == Float::Left || floating == Float::Right))
             return true;
 
         for (RefPtr parent = element.parentElement(); parent; parent = parent->parentElement()) {

@@ -102,6 +102,11 @@ inline void RenderStyle::setIsLink(bool isLink)
     m_computedStyle.setIsLink(isLink);
 }
 
+inline void RenderStyle::setIsFlexOrGridItem(bool isFlexOrGridItem)
+{
+    m_computedStyle.setIsFlexOrGridItem(isFlexOrGridItem);
+}
+
 inline void RenderStyle::setEmptyState(bool emptyState)
 {
     m_computedStyle.setEmptyState(emptyState);

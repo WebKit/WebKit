@@ -758,7 +758,7 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
             // Mutate using the CSSOM wrapper so we get the same event behavior as a script.
             if (isBlock(*element))
                 element->cssomStyle().setPropertyInternal(CSSPropertyDisplay, "inline"_s, IsImportant::No);
-            if (element->renderer() && element->renderer()->style().floating() != Float::None)
+            if (element->renderer() && !element->renderer()->style().isFlexOrGridItem() && element->renderer()->style().floating() != Float::None)
                 element->cssomStyle().setPropertyInternal(CSSPropertyFloat, noneAtom(), IsImportant::No);
         }
     }

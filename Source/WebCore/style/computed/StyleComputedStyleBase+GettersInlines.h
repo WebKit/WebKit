@@ -124,6 +124,11 @@ inline bool ComputedStyleBase::isLink() const
     return m_nonInheritedFlags.isLink;
 }
 
+inline bool ComputedStyleBase::isFlexOrGridItem() const
+{
+    return m_nonInheritedFlags.isFlexOrGridItem;
+}
+
 inline bool ComputedStyleBase::emptyState() const
 {
     return m_nonInheritedFlags.emptyState;

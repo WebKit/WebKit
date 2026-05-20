@@ -640,9 +640,9 @@ void RenderTreeBuilder::normalizeTreeAfterStyleChange(RenderElement& renderer, R
     if (!renderer.parent())
         return;
 
-    bool wasFloating = oldStyle.floating() != Float::None;
+    bool wasFloating = !oldStyle.isFlexOrGridItem() && oldStyle.floating() != Float::None;
     bool wasOutOfFlowPositioned = oldStyle.hasOutOfFlowPosition();
-    bool isFloating = renderer.style().floating() != Float::None;
+    bool isFloating = !renderer.style().isFlexOrGridItem() && renderer.style().floating() != Float::None;
     bool isOutOfFlowPositioned = renderer.style().hasOutOfFlowPosition();
     bool startsAffectingParent = false;
     bool noLongerAffectsParent = false;
@@ -852,7 +852,7 @@ void RenderTreeBuilder::removeAnonymousWrappersForInlineChildrenIfNeeded(RenderE
     // otherwise we can proceed to stripping solitary anonymous wrappers from the inlines.
     std::optional<bool> shouldAllChildrenBeInline;
     for (auto* current = blockParent->firstChild(); current; current = current->nextSibling()) {
-        if (current->style().floating() != Float::None || current->style().hasOutOfFlowPosition())
+        if ((!current->style().isFlexOrGridItem() && current->style().floating() != Float::None) || current->style().hasOutOfFlowPosition())
             continue;
 
         if (!is<RenderBlock>(*current))

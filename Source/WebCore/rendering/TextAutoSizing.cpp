@@ -128,6 +128,7 @@ unsigned TextAutoSizingHashTranslator::hash(const RenderStyle& style)
     hash ^= std::to_underlying(style.boxDirection());
     hash ^= std::to_underlying(style.rtlOrdering());
     hash ^= std::to_underlying(style.position());
+    hash ^= static_cast<unsigned>(style.isFlexOrGridItem());
     hash ^= std::to_underlying(style.floating());
     hash ^= std::to_underlying(style.textOverflow());
     return hash;
@@ -154,6 +155,7 @@ bool TextAutoSizingHashTranslator::equal(const RenderStyle& styleA, const Render
         && styleA.boxDirection() == styleB.boxDirection()
         && styleA.rtlOrdering() == styleB.rtlOrdering()
         && styleA.position() == styleB.position()
+        && styleA.isFlexOrGridItem() == styleB.isFlexOrGridItem()
         && styleA.floating() == styleB.floating()
         && styleA.textOverflow() == styleB.textOverflow();
 }

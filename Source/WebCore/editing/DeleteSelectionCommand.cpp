@@ -100,7 +100,7 @@ static bool NODELETE isSpecialHTMLElement(const Node& node)
     if (renderer->style().display().isTableBox())
         return true;
 
-    if (renderer->style().floating() != Float::None)
+    if (!renderer->style().isFlexOrGridItem() && renderer->style().floating() != Float::None)
         return true;
 
     if (renderer->style().position() != PositionType::Static)

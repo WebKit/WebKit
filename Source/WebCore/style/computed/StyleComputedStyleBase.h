@@ -477,6 +477,9 @@ public:
     inline bool isLink() const;
     inline void setIsLink(bool);
 
+    inline bool isFlexOrGridItem() const;
+    inline void setIsFlexOrGridItem(bool);
+
     inline bool emptyState() const;
     inline void setEmptyState(bool);
 
@@ -757,6 +760,7 @@ public:
         PREFERRED_TYPE(bool) unsigned firstChildState : 1;
         PREFERRED_TYPE(bool) unsigned lastChildState : 1;
         PREFERRED_TYPE(bool) unsigned isLink : 1;
+        PREFERRED_TYPE(bool) unsigned isFlexOrGridItem : 1;
         PREFERRED_TYPE(PseudoElementType) unsigned pseudoElementType : PseudoElementTypeBits;
         unsigned pseudoBits : PublicPseudoIDBits;
         unsigned textDecorationLine : TextDecorationLineBits; // Text decorations defined *only* by this element. PREFERRED_TYPE elided to avoid header inclusion.

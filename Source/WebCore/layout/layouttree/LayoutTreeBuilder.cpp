@@ -205,7 +205,7 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const ElementBox& parentContai
             // on the table box and not the table wrapper box.
             auto tableWrapperBoxStyle = RenderStyle::createAnonymousStyleWithDisplay(parentContainer.style(), renderer.style().display() == Style::DisplayType::BlockTable ? Style::DisplayType::BlockFlow : Style::DisplayType::InlineFlow);
             tableWrapperBoxStyle.setPosition(renderer.style().position());
-            tableWrapperBoxStyle.setFloating(renderer.style().floating());
+            tableWrapperBoxStyle.setFloating(!renderer.style().isFlexOrGridItem() ? renderer.style().floating() : Float::None);
 
             tableWrapperBoxStyle.setInsetBox(Style::InsetBox { renderer.style().insetBox() });
             tableWrapperBoxStyle.setMarginBox(Style::MarginBox { renderer.style().marginBox() });

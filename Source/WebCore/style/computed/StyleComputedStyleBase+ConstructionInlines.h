@@ -85,6 +85,7 @@ inline ComputedStyleBase::ComputedStyleBase(CreateDefaultStyleTag)
     m_nonInheritedFlags.firstChildState = false;
     m_nonInheritedFlags.lastChildState = false;
     m_nonInheritedFlags.isLink = false;
+    m_nonInheritedFlags.isFlexOrGridItem = false;
     m_nonInheritedFlags.pseudoElementType = 0;
     m_nonInheritedFlags.pseudoBits = 0;
 
@@ -130,6 +131,7 @@ inline void ComputedStyleBase::NonInheritedFlags::copyNonInheritedFrom(const Non
     useTreeCountingFunctions = other.useTreeCountingFunctions;
     hasExplicitlyInheritedProperties = other.hasExplicitlyInheritedProperties;
     disallowsFastPathInheritance = other.disallowsFastPathInheritance;
+    isFlexOrGridItem = other.isFlexOrGridItem;
 }
 
 } // namespace Style

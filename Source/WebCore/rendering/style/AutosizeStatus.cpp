@@ -64,7 +64,7 @@ auto AutosizeStatus::compute(const RenderStyle& style) -> AutosizeStatus
     if (style.overflowX() == Overflow::Hidden)
         result.add(Fields::OverflowXHidden);
 
-    if (style.floating() != Float::None)
+    if (!style.isFlexOrGridItem() && style.floating() != Float::None)
         result.add(Fields::Floating);
 
     return AutosizeStatus(result);

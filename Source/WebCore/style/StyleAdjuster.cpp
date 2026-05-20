@@ -135,7 +135,7 @@ static void addIntrinsicMargins(RenderStyle& style)
 
 static bool shouldInheritTextDecorationsInEffect(const RenderStyle& style, const Element* element)
 {
-    if (style.floating() != Float::None || style.hasOutOfFlowPosition())
+    if ((!style.isFlexOrGridItem() && style.floating() != Float::None) || style.hasOutOfFlowPosition())
         return false;
 
     // Media elements have a special rendering where the media controls do not use a proper containing
@@ -425,7 +425,7 @@ void Adjuster::adjustFirstLetterStyle(RenderStyle& style)
         return;
 
     // Force inline display (except for floating first-letters).
-    style.setDisplayMaintainingOriginalDisplay(style.floating() != Float::None ? DisplayType::BlockFlow : DisplayType::InlineFlow);
+    style.setDisplayMaintainingOriginalDisplay(!style.isFlexOrGridItem() && style.floating() != Float::None ? DisplayType::BlockFlow : DisplayType::InlineFlow);
 }
 
 void Adjuster::adjustFirstLineStyle(RenderStyle& style)
@@ -474,7 +474,7 @@ void Adjuster::adjust(RenderStyle& style) const
             style.setPosition(PositionType::Absolute);
 
         // Absolute/fixed positioned elements, floating elements and the document element need block-like outside display.
-        if (style.hasOutOfFlowPosition() || style.floating() != Float::None || (m_element && m_document->documentElement() == m_element.get()))
+        if (style.hasOutOfFlowPosition() || (!style.isFlexOrGridItem() && style.floating() != Float::None) || (m_element && m_document->documentElement() == m_element.get()))
             style.setDisplayMaintainingOriginalDisplay(style.display().blockified());
 
         adjustFirstLetterStyle(style);
@@ -522,12 +522,12 @@ void Adjuster::adjust(RenderStyle& style) const
         }
 
         if (m_parentBoxStyle.display().isDeprecatedFlexibleBox())
-            style.setFloating(Float::None);
+            style.setIsFlexOrGridItem(true);
 
         // https://www.w3.org/TR/css-display/#transformations
         // "A parent with a grid or flex display value blockifies the box’s display type."
         if (m_parentBoxStyle.display().isFlexibleOrGridFormattingContextBox()) {
-            style.setFloating(Float::None);
+            style.setIsFlexOrGridItem(true);
             style.setDisplayMaintainingOriginalDisplay(style.display().blockified());
         }
 

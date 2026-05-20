@@ -54,7 +54,7 @@ static std::optional<RenderStyle> styleForFirstLetter(const RenderElement& first
     auto firstLetterStyle = RenderStyle::clone(*style);
 
     // If we have an initial letter drop that is >= 1, then we need to force floating to be on.
-    if (firstLetterStyle.initialLetter().drop() >= 1 && firstLetterStyle.floating() == Float::None)
+    if (firstLetterStyle.initialLetter().drop() >= 1 && !firstLetterStyle.isFlexOrGridItem() && firstLetterStyle.floating() == Float::None)
         firstLetterStyle.setFloating(firstLetterStyle.writingMode().isBidiLTR() ? Float::Left : Float::Right);
 
     // We have to compute the correct font-size for the first-letter if it has an initial letter height set.
@@ -90,7 +90,7 @@ static std::optional<RenderStyle> styleForFirstLetter(const RenderElement& first
 
     firstLetterStyle.setPseudoElementIdentifier({ { PseudoElementType::FirstLetter } });
     // Force inline display (except for floating first-letters).
-    firstLetterStyle.setDisplay(firstLetterStyle.floating() != Float::None ? Style::DisplayType::BlockFlow : Style::DisplayType::InlineFlow);
+    firstLetterStyle.setDisplay(!firstLetterStyle.isFlexOrGridItem() && firstLetterStyle.floating() != Float::None ? Style::DisplayType::BlockFlow : Style::DisplayType::InlineFlow);
     // CSS2 says first-letter can't be positioned.
     firstLetterStyle.setPosition(PositionType::Static);
 

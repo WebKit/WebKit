@@ -434,6 +434,7 @@ void ComputedStyleBase::NonInheritedFlags::dumpDifferences(TextStream& ts, const
     LOG_IF_DIFFERENT(firstChildState);
     LOG_IF_DIFFERENT(lastChildState);
     LOG_IF_DIFFERENT(isLink);
+    LOG_IF_DIFFERENT(isFlexOrGridItem);
 
     LOG_IF_DIFFERENT_WITH_CAST(PseudoId, pseudoElementType);
     LOG_IF_DIFFERENT_WITH_CAST(unsigned, pseudoBits);

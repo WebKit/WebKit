@@ -122,6 +122,11 @@ inline bool RenderStyle::isLink() const
     return m_computedStyle.isLink();
 }
 
+inline bool RenderStyle::isFlexOrGridItem() const
+{
+    return m_computedStyle.isFlexOrGridItem();
+}
+
 inline bool RenderStyle::emptyState() const
 {
     return m_computedStyle.emptyState();
