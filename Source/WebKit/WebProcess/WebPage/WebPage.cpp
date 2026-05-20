@@ -7512,6 +7512,7 @@ void WebPage::resetFocusedElementForFrame(WebFrame* frame)
     if (frame->isMainFrame() || m_focusedElement->document().frame() == frame->coreLocalFrame()) {
 #if PLATFORM(IOS_FAMILY)
         m_sendAutocorrectionContextAfterFocusingElement = false;
+        m_hasDispatchedFocusedElementInformation = false;
         send(Messages::WebPageProxy::ElementDidBlur());
 #elif PLATFORM(MAC)
         send(Messages::WebPageProxy::SetEditableElementIsFocused(false));
@@ -7528,12 +7529,30 @@ void WebPage::elementDidRefocus(Element& element, const FocusOptions& options)
         scheduleFullEditorStateUpdate();
 }
 
-bool WebPage::shouldDispatchUpdateAfterFocusingElement(const Element& element) const
+bool WebPage::shouldDispatchUpdateAfterFocusingElement(const Element& element, const FocusOptions& options) const
 {
     if (m_focusedElement == &element || m_recentlyBlurredElement == &element) {
 #if PLATFORM(IOS_FAMILY)
-        return !m_isShowingInputViewForFocusedElement;
+        if (m_isShowingInputViewForFocusedElement)
+            return false;
+        // Same-element refocus from a JS `.focus()` call (FocusTrigger::Bindings)
+        // while no input view is showing and the user is not interacting: skip
+        // the layoutIfNeeded() + ~50-field IPC if the UI process already has
+        // valid FocusedElementInformation and no tracked invalidation is
+        // pending. The trigger gate is essential — DOM-internal refocus paths
+        // (e.g. FrameSelection::setFocusedElementIfNeeded after
+        // selectPositionAtPoint, or dispatchEventsOnWindowAndFocusedElement on
+        // activity-state restoration) use FocusTrigger::Other and must keep
+        // dispatching so input-session policy callbacks fire.
+        if (m_focusedElement == &element
+            && m_hasDispatchedFocusedElementInformation
+            && !m_updateFocusedElementInformationTimer.isActive()
+            && !m_userIsInteracting
+            && options.trigger == FocusTrigger::Bindings)
+            return false;
+        return true;
 #else
+        UNUSED_PARAM(options);
         return false;
 #endif
     }
@@ -7564,7 +7583,7 @@ void WebPage::elementDidFocus(Element& element, const FocusOptions& options)
     m_updateFocusedElementInformationTimer.stop();
 #endif
 
-    if (!shouldDispatchUpdateAfterFocusingElement(element)) {
+    if (!shouldDispatchUpdateAfterFocusingElement(element, options)) {
         updateInputContextAfterBlurringAndRefocusingElementIfNeeded(element);
         m_focusedElement = element;
         m_recentlyBlurredElement = nullptr;
@@ -7605,6 +7624,7 @@ void WebPage::elementDidFocus(Element& element, const FocusOptions& options)
 
         information->preventScroll = options.preventScroll;
         send(Messages::WebPageProxy::ElementDidFocus(information.value(), m_userIsInteracting, m_recentlyBlurredElement, m_lastActivityStateChanges, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+        m_hasDispatchedFocusedElementInformation = true;
 #elif PLATFORM(MAC)
         // FIXME: This can be unified with the iOS code above by bringing ElementDidFocus to macOS.
         // This also doesn't take other noneditable controls into account, such as input type color.
@@ -7631,6 +7651,7 @@ void WebPage::elementDidBlur(WebCore::Element& element)
         m_hasPendingInputContextUpdateAfterBlurringAndRefocusingElement = false;
 #if PLATFORM(IOS_FAMILY)
         m_sendAutocorrectionContextAfterFocusingElement = false;
+        m_hasDispatchedFocusedElementInformation = false;
 #endif
     }
 }

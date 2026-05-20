@@ -2661,7 +2661,7 @@ private:
 
     void cancelCurrentInteractionInformationRequest();
 
-    bool NODELETE shouldDispatchUpdateAfterFocusingElement(const WebCore::Element&) const;
+    bool NODELETE shouldDispatchUpdateAfterFocusingElement(const WebCore::Element&, const WebCore::FocusOptions&) const;
 
     void updateMockAccessibilityElementAfterCommittingLoad();
 
@@ -3125,6 +3125,7 @@ private:
 
     bool m_isShowingInputViewForFocusedElement { false };
     bool m_wasShowingInputViewForFocusedElementDuringLastPotentialTap { false };
+    bool m_hasDispatchedFocusedElementInformation { false };
 
     enum class SelectionAnchor : bool { Start, End };
     SelectionAnchor m_selectionAnchor { SelectionAnchor::Start };
