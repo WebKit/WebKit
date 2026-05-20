@@ -8466,12 +8466,6 @@ imported/w3c/web-platform-tests/css/CSS2/normal-flow/width-014.xht [ ImageOnlyFa
 webkit.org/b/303341 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-intrinsic-size-001.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/303507 http/tests/xmlhttprequest/origin-exact-matching.html [ Timeout ]
-webkit.org/b/303507 [ Release ] inspector/animation/nameChanged.html [ Timeout ]
-webkit.org/b/303507 [ Release ] inspector/audit/basic-error.html [ Timeout ]
-webkit.org/b/303507 [ Release ] inspector/canvas/console-record-offscreen-webgl.html [ Timeout ]
-webkit.org/b/303507 [ Release ] inspector/dom/customElementState.html [ Timeout ]
-webkit.org/b/303507 [ Release ] inspector/injected-script/observable.html [ Timeout ]
-webkit.org/b/303507 [ Release ] inspector/page/filter-cookies-for-domain.html [ Timeout ]
 
 # webkit.org/b/303639 Mass-marking flaky tests
 compositing/backing/page-scale-overlap-in-iframe.html [ Pass Failure ]
@@ -8545,16 +8539,7 @@ imported/w3c/web-platform-tests/css/cssom-view/window-scrollBy-display-change.ht
 webkit.org/b/260310 imported/w3c/web-platform-tests/css/cssom-view/scrollIntoView-sideways-rl-writing-mode.html [ Failure ]
 webkit.org/b/260310 imported/w3c/web-platform-tests/css/cssom-view/scrollIntoView-sideways-rl-writing-mode-and-rtl-direction.html [ Failure ]
 
-webkit.org/b/306998 [ Debug ] inspector/animation/nameChanged.html [ Skip ]
-webkit.org/b/306998 [ Debug ] inspector/audit/basic-error.html [ Skip ]
-webkit.org/b/306998 [ Debug ] inspector/canvas/console-record-offscreen-webgl.html [ Skip ]
-webkit.org/b/306998 [ Debug ] inspector/dom/customElementState.html [ Skip ]
-webkit.org/b/306998 [ Debug ] inspector/injected-script/observable.html [ Skip ]
-webkit.org/b/306998 [ Debug ] inspector/page/filter-cookies-for-domain.html [ Skip ]
-
 webkit.org/b/309600 [ Release arm64 ] http/tests/xmlhttprequest/chunked-progress-event-expectedLength.html [ Pass Failure ]
-
-webkit.org/b/307091 inspector/network/intercept-aborted-request.html [ Skip ]
 
 webkit.org/b/310132 imported/w3c/web-platform-tests/intersection-observer/target-in-different-window.html [ Pass Failure ]
 
@@ -8611,7 +8596,6 @@ fast/forms/textarea/textarea-state-restore.html [ Pass Timeout ]
 fast/table/double-height-table-no-tbody.html [ Skip ]
 fast/text/bidi-text-and-partial-layout-crash.html [ Skip ]
 [ Debug ] fast/text/zero-height-first-line-assert.html [ Skip ]
-[ Debug ] inspector/debugger/paused-scopes.html [ Skip ]
 media/video-size.html [ Pass Failure ]
 svg/custom/ellipse-radius-auto-dynamic.svg [ Skip ]
 svg/custom/rect-radius-auto-dynamic.svg [ Skip ]
