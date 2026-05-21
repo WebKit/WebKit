@@ -74,9 +74,7 @@ usage() if $showHelp;
 
 setConfiguration();
 
-my @privateFrameworks = qw(WebCore WebGPU WebKitLegacy);
 my @publicFrameworks = qw(JavaScriptCore WebKit);
-my @extensions = qw(GPUExtension NetworkingExtension WebContentCaptivePortalExtension WebContentEnhancedSecurityExtension WebContentExtension);
 my $packagedRootBasePath = usesCryptexPath() ? "/System/Cryptexes/OS/" : "/";
 $packagedRootBasePath = "$packagedRootBasePath" . "System/iOSSupport/" if isMacCatalystWebKit();
 my $privateInstallPath = "$packagedRootBasePath" . "System/Library/PrivateFrameworks";
@@ -94,6 +92,18 @@ my $archiveName = "webkit-$configuration-$platform";
 my $archivePath = "$productDir/$archiveName.tar.gz";
 my ($fh, $tempArchiveName) = tempfile( "/tmp/$archiveName-XXXXXXX");
 
+my @privateFrameworks = ();
+my @embeddedFrameworks = ();
+my @extensions = ();
+
+if ($platform eq 'macosx') {
+    @privateFrameworks = qw(WebGPU);
+    @embeddedFrameworks = qw(WebCore WebKitLegacy);
+} else {
+    @privateFrameworks = qw(WebCore WebGPU WebKitLegacy);
+    @extensions = qw(GPUExtension NetworkingExtension WebContentCaptivePortalExtension WebContentEnhancedSecurityExtension WebContentExtension);
+}
+
 system 'mkdir', '-p', $stagingPrivatePath;
 system 'mkdir', '-p', $stagingPublicPath;
 system 'mkdir', '-p', $stagingExtensionsPath;
@@ -108,6 +118,12 @@ foreach my $framework (@publicFrameworks) {
     print "Copying Public $framework from $productDir ...\n";
     system 'cp', '-LpR', $productDir . "/$framework.framework", "$stagingPublicPath/";
     die "Check to see that you have built $framework for $configuration-$platform" if $?;
+}
+
+foreach my $embeddedframework (@embeddedFrameworks) {
+    print "Copying embedded $embeddedframework from $productDir ...\n";
+    system 'cp', '-LpR', $productDir . "/$embeddedframework.framework", "$stagingPublicPath/WebKit.framework/Frameworks/";
+    die "Check to see that you have built $embeddedframework for $configuration-$platform" if $?;
 }
 
 foreach my $extension (@extensions) {
