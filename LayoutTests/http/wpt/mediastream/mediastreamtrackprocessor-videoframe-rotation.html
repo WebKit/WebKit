@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Transfer MediaStreamTrack to dedicated worker</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<video id=video autplay playsinline></video>
+<script>
+
+async function createWorker(script)
+{
+    script += "self.postMessage('ready');";
+    const blob = new Blob([script], { type: 'text/javascript' });
+    const url = URL.createObjectURL(blob);
+    const worker = new Worker(url);
+    await new Promise(resolve => worker.onmessage = () => {
+        resolve();
+    });
+    URL.revokeObjectURL(url);
+    return worker;
+}
+
+async function videoFrameFromMediaStreamTrackProcessor(track)
+{
+    const worker = await createWorker(`
+        self.onmessage = async (event) => {
+            const generator = new VideoTrackGenerator();
+            const processor = new MediaStreamTrackProcessor({ track: event.data });
+            const data = await processor.readable.getReader().read();
+            self.postMessage(data.value, [data.value]);
+            event.track.stop();
+        }
+    `);
+    worker.postMessage(track, [track]);
+    return new Promise(resolve => worker.onmessage = e => resolve(e.data));
+}
+
+async function waitForVideoSize(video, width, height, testName, count)
+{
+    if (video.videoWidth === width && video.videoHeight === height)
+        return Promise.resolve("video has expected size");
+
+    if (count === undefined)
+        count = 0;
+    if (++count > 20) {
+        if (!testName)
+            testName = "waitForVideoSize";
+        return Promise.reject(testName + " timed out, expected " + width + "x"+ height + " but got " + video.videoWidth + "x" + video.videoHeight);
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 100));
+    return waitForVideoSize(video, width, height, testName, count);
+}
+
+
+promise_test(async test => {
+    video.srcObject = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } });
+    await video.play();
+
+    const track = video.srcObject.getVideoTracks()[0];
+    const frame1 = await videoFrameFromMediaStreamTrackProcessor(track.clone());
+    test.add_cleanup(() => frame1.close());
+
+    assert_equals(frame1.visibleRect.width, track.getSettings().width, "frame1 visible width");
+    assert_equals(frame1.visibleRect.height, track.getSettings().height, "frame1 visible height");
+    assert_equals(frame1.displayWidth, track.getSettings().width, "frame1 display width");
+    assert_equals(frame1.displayHeight, track.getSettings().height, "frame1 display height");
+
+    if (window.internals)
+        window.internals.setCameraMediaStreamTrackOrientation(track, 90);
+    if (window.testRunner)
+        testRunner.setMockCameraOrientation(90);
+
+    await waitForVideoSize(video, 480, 640);
+
+    const frame2 = await videoFrameFromMediaStreamTrackProcessor(track.clone());
+    assert_equals(frame2.visibleRect.width, frame1.visibleRect.height, "visibleRect2.width");
+    assert_equals(frame2.visibleRect.height, frame1.visibleRect.width, "visibleRect2.height");
+    assert_equals(frame2.displayWidth, frame1.displayHeight, "display width 2");
+    assert_equals(frame2.displayHeight, frame1.displayWidth, "display height 2");
+}, "Check visible rect for rotated frames");
+</script>
+</body>
+</html>

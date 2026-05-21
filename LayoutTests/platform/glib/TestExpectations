@@ -2869,6 +2869,8 @@ fast/mediastream/get-user-media-constraints.html [ Failure ]
 fast/mediastream/get-user-media-ideal-constraints.html [ Failure ]
 fast/mediastream/image-capture-grabFrame.html [ Failure ]
 
+http/wpt/mediastream/mediastreamtrackprocessor-videoframe-rotation.html [ Failure ]
+
 # No AudioSession category handling in WPE/GTK ports.
 fast/mediastream/microphone-interruption-and-audio-session.html [ Skip ]
 http/tests/webrtc/audioSessionInFrames.html [ Failure ]

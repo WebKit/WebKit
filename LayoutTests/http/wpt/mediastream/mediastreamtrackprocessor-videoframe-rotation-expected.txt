@@ -1,0 +1,4 @@
+
+
+PASS Check visible rect for rotated frames
+
