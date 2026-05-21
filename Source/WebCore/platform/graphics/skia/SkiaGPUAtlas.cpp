@@ -75,27 +75,35 @@ RefPtr<SkiaGPUAtlas> SkiaGPUAtlas::create(const SkiaImageAtlasLayout& layout, Re
 
 void SkiaGPUAtlas::uploadImages()
 {
-    Vector<uint8_t> conversionBuffer;
+    // The atlas's storage byte order is locked at creation: kBGRA on contexts with
+    // GL_EXT_texture_format_BGRA8888, kRGBA otherwise (UseBGRALayout was sanitized
+    // away). Each upload must match the storage byte order - every entry shares one
+    // m_pixelFormat, and BitmapTexture::updateContents asserts on partial-region
+    // pixel-format changes. So the fast path is "source already matches storage";
+    // the slow path is an SkImage::readPixels conversion for the rare mismatched
+    // entry. On each platform, the typical source colorType already matches storage
+    // (BGRA on BGRA-capable, RGBA on the sanitized path), so we hit the fast path.
+    const bool storageIsBGRA = m_atlasTexture->flags().contains(BitmapTexture::Flags::UseBGRALayout);
+    const SkColorType storageColorType = storageIsBGRA ? kBGRA_8888_SkColorType : kRGBA_8888_SkColorType;
 
-    // Returns pixel data for atlas upload — either a zero-copy reference to the original
-    // pixels (fast path) or a converted sRGB copy (for non-sRGB images).
-    auto pixelDataInSRGB = [&conversionBuffer](const sk_sp<SkImage>& image) -> std::optional<std::pair<const void*, size_t>> {
+    Vector<uint8_t> conversionBuffer;
+    auto pixelsMatchingStorage = [&](const sk_sp<SkImage>& image) -> std::optional<std::pair<const void*, size_t>> {
         SkPixmap pixmap;
         if (!image->peekPixels(&pixmap))
             return std::nullopt;
 
-        if (auto* colorSpace = image->colorSpace(); !colorSpace || colorSpace->isSRGB())
+        auto* colorSpace = image->colorSpace();
+        if (image->colorType() == storageColorType && (!colorSpace || colorSpace->isSRGB()))
             return std::pair { pixmap.addr(), pixmap.rowBytes() };
 
-        // Convert to sRGB using Skia's built-in color space conversion.
-        auto srgbInfo = SkImageInfo::Make(image->width(), image->height(), image->colorType(), image->alphaType(), SkColorSpace::MakeSRGB());
-        size_t srgbRowBytes = srgbInfo.minRowBytes();
-        conversionBuffer.resize(srgbInfo.computeMinByteSize());
+        auto dstInfo = SkImageInfo::Make(image->width(), image->height(), storageColorType, image->alphaType(), SkColorSpace::MakeSRGB());
+        size_t dstRowBytes = dstInfo.minRowBytes();
+        conversionBuffer.resize(dstInfo.computeMinByteSize());
 
-        if (!image->readPixels(static_cast<GrDirectContext*>(nullptr), srgbInfo, conversionBuffer.mutableSpan().data(), srgbRowBytes, 0, 0))
+        if (!image->readPixels(static_cast<GrDirectContext*>(nullptr), dstInfo, conversionBuffer.mutableSpan().data(), dstRowBytes, 0, 0))
             return std::nullopt;
 
-        return std::pair { static_cast<const void*>(conversionBuffer.mutableSpan().data()), srgbRowBytes };
+        return std::pair { static_cast<const void*>(conversionBuffer.mutableSpan().data()), dstRowBytes };
     };
 
 #if USE(GBM)
@@ -105,7 +113,7 @@ void SkiaGPUAtlas::uploadImages()
             RELEASE_ASSERT_WITH_MESSAGE(writeScope, "Failed to map GPU buffer for atlas upload");
 
             for (const auto& entry : m_layout->entries()) {
-                if (auto pixels = pixelDataInSRGB(entry.rasterImage))
+                if (auto pixels = pixelsMatchingStorage(entry.rasterImage))
                     gpuBuffer->updateContents(*writeScope, pixels->first, entry.atlasRect, pixels->second);
             }
 
@@ -114,9 +122,10 @@ void SkiaGPUAtlas::uploadImages()
     }
 #endif
 
-    // GL fallback: use BitmapTexture::updateContents() per entry.
+    // GL fallback: pass the atlas's logical pixelFormat (BGRA8) so the compositor's
+    // draw-time R<->B swap shader fires on contexts where storage was forced to RGBA.
     for (const auto& entry : m_layout->entries()) {
-        if (auto pixels = pixelDataInSRGB(entry.rasterImage))
+        if (auto pixels = pixelsMatchingStorage(entry.rasterImage))
             m_atlasTexture->updateContents(pixels->first, entry.atlasRect, IntPoint::zero(), pixels->second, PixelFormat::BGRA8);
     }
 }

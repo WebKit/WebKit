@@ -31,7 +31,9 @@
 #include "CoordinatedTileBuffer.h"
 #include "PlatformDisplay.h"
 #include "SkiaPaintingEngine.h"
+#include "SkiaUtilities.h"
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/core/SkColorFilter.h>
 #include <skia/core/SkColorSpace.h>
 #include <skia/gpu/ganesh/GrBackendSurface.h>
 #include <skia/gpu/ganesh/SkImageGanesh.h>
@@ -77,6 +79,9 @@ void SkiaBackingStore::paintToCanvas(SkCanvas& canvas, const SkPaint& paint)
     FloatRect layerRect = { { }, m_size };
 
     auto tilePaint = paint;
+    if (needsBGRAToRGBASwap())
+        tilePaint.setColorFilter(SkiaUtilities::composeFilterWithRedBlueSwap(paint.refColorFilter()));
+
     for (auto& tile : m_tiles.values()) {
         if (canvas.quickReject(tile.rect()))
             continue;
@@ -175,6 +180,18 @@ sk_sp<SkImage> SkiaBackingStore::Tile::image()
         m_cachedImage = SkImages::BorrowTextureFrom(grContext, backendTexture, kTopLeft_GrSurfaceOrigin, colorType, kPremul_SkAlphaType, SkColorSpace::MakeSRGB());
     }
     return m_cachedImage;
+}
+
+bool SkiaBackingStore::needsBGRAToRGBASwap() const
+{
+    // Rendering mode (accelerated vs. unaccelerated) and BGRA-extension
+    // availability are both process-global, so every tile in this backing
+    // store agrees on the swap state. Inspecting any textured tile suffices.
+    for (const auto& tile : m_tiles.values()) {
+        if (const auto& texture = tile.texture())
+            return texture->needsBGRAToRGBASwap();
+    }
+    return false;
 }
 
 } // namespace WebCore

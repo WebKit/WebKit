@@ -304,6 +304,11 @@ sk_sp<SkImage> CoordinatedPlatformLayerBufferVideo::skiaImage()
 
     return nullptr;
 }
+
+bool CoordinatedPlatformLayerBufferVideo::needsBGRAToRGBASwap() const
+{
+    return m_buffer && m_buffer->needsBGRAToRGBASwap();
+}
 #endif
 
 } // namespace WebCore

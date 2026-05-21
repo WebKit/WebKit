@@ -92,6 +92,7 @@ public:
     const IntSize& size() const { return m_size; };
     size_t sizeInBytes() const;
     OptionSet<Flags> flags() const { return m_flags; }
+    PixelFormat pixelFormat() const { return m_pixelFormat; }
     bool isOpaque() const { return !m_flags.contains(Flags::SupportsAlpha); }
 
     void bindAsSurface();
@@ -114,6 +115,7 @@ public:
     void copyFromExternalTexture(GLuint sourceTextureID, const IntRect& targetRect, const IntSize& sourceOffset);
 
     OptionSet<TextureMapperFlags> colorConvertFlags() const;
+    bool needsBGRAToRGBASwap() const;
 
 #if USE(SKIA)
     GrBackendTexture createSkiaBackendTexture() const;

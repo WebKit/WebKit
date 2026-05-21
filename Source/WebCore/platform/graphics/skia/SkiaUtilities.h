@@ -37,6 +37,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/gpu/ganesh/GrDirectContext.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
+class SkColorFilter;
 class SkImage;
 class SkSurface;
 class SkSurfaceProps;
@@ -82,6 +83,11 @@ std::unique_ptr<GLFence> flushAndSubmitImageWithFence(GrDirectContext*, const sk
 std::unique_ptr<GLFence> flushAndSubmitWithFence(GrDirectContext*);
 
 SkBlendMode toSkiaBlendMode(BlendMode, std::optional<CompositeOperator> = std::nullopt);
+
+// Returns a filter that applies an R<->B channel swap on top of `base` (or just
+// the swap if `base` is null). Composition order means the swap runs first, so
+// it operates on the raw texel order (BGRA bytes uploaded into an RGBA texture).
+sk_sp<SkColorFilter> composeFilterWithRedBlueSwap(const sk_sp<SkColorFilter>& base);
 
 } // namespace SkiaUtilities
 } // namespace WebCore

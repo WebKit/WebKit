@@ -72,6 +72,7 @@ Ref<BitmapTexture> BitmapTexturePool::acquireTexture(const IntSize& size, Option
 {
     ASSERT(GLContextWrapper::currentContext());
     Locker locker { m_lock };
+    auto requestedPixelFormat = flags.contains(BitmapTexture::Flags::UseBGRALayout) ? PixelFormat::BGRA8 : PixelFormat::RGBA8;
     Entry* selectedEntry = std::find_if(m_textures.begin(), m_textures.end(), [&](Entry& entry) {
         return entry.texture->refCount() == 1
             && entry.texture->size() == size
@@ -80,7 +81,7 @@ Ref<BitmapTexture> BitmapTexturePool::acquireTexture(const IntSize& size, Option
             && entry.texture->flags().contains(BitmapTexture::Flags::ForceLinearBuffer) == flags.contains(BitmapTexture::Flags::ForceLinearBuffer)
             && entry.texture->flags().contains(BitmapTexture::Flags::ForceVivanteSuperTiledBuffer) == flags.contains(BitmapTexture::Flags::ForceVivanteSuperTiledBuffer)
 #endif
-            && entry.texture->flags().contains(BitmapTexture::Flags::UseBGRALayout) == flags.contains(BitmapTexture::Flags::UseBGRALayout)
+            && entry.texture->pixelFormat() == requestedPixelFormat
             && entry.texture->flags().contains(BitmapTexture::Flags::DepthBuffer) == flags.contains(BitmapTexture::Flags::DepthBuffer)
             && entry.texture->flags().contains(BitmapTexture::Flags::NearestFiltering) == flags.contains(BitmapTexture::Flags::NearestFiltering);
     });

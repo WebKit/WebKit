@@ -47,6 +47,7 @@ private:
 
 #if USE(SKIA)
     sk_sp<SkImage> skiaImage() override;
+    bool needsBGRAToRGBASwap() const override;
 #endif
 
     RefPtr<BitmapTexture> m_texture;

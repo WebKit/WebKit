@@ -67,6 +67,8 @@ public:
 
 #if USE(SKIA)
     virtual sk_sp<SkImage> skiaImage() { return nullptr; }
+
+    virtual bool needsBGRAToRGBASwap() const { return false; }
 #endif
 
 protected:

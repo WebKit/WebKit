@@ -34,6 +34,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <wtf/HashMap.h>
 
 namespace WebCore {
+class BitmapTexture;
 class CoordinatedTileBuffer;
 
 class SkiaBackingStore {
@@ -62,6 +63,7 @@ private:
         void update(const IntRect& dirtyRect, const IntRect& tileRect, CoordinatedTileBuffer&);
         const FloatRect& rect() const LIFETIME_BOUND { return m_rect; }
         sk_sp<SkImage> image();
+        const RefPtr<BitmapTexture>& texture() const LIFETIME_BOUND { return m_texture; }
 
     private:
         void ensureTexture(const IntSize&, CoordinatedTileBuffer&);
@@ -71,6 +73,8 @@ private:
         RefPtr<BitmapTexture> m_texture;
         sk_sp<SkImage> m_cachedImage;
     };
+
+    bool needsBGRAToRGBASwap() const;
 
     HashMap<uint32_t, Tile> m_tiles;
     FloatSize m_size;

@@ -129,12 +129,20 @@ bool CoordinatedPlatformLayerBufferNativeImage::tryEnsureBuffer(UseSkiaForCompos
     if (useSkiaForCompositing == UseSkiaForCompositing::Yes) {
         auto& display = PlatformDisplay::sharedDisplay();
         GLContext::ScopedGLContextCurrent scopedCurrent(*display.skiaGLContext());
+
+        // Use BGRA storage only when the GL extension is available and the
+        // source pixmap is already BGRA. Otherwise fall back to RGBA - Skia's
+        // writePixels handles any channel-order conversion during upload.
+        auto* glContext = GLContext::current();
+        const bool useBGRA = glContext && glContext->glExtensions().EXT_texture_format_BGRA8888 && image->imageInfo().colorType() == kBGRA_8888_SkColorType;
+        const SkColorType surfaceColorType = useBGRA ? kBGRA_8888_SkColorType : kRGBA_8888_SkColorType;
+
         GrGLTextureInfo externalTexture;
         externalTexture.fTarget = GL_TEXTURE_2D;
         externalTexture.fID = texture->id();
-        externalTexture.fFormat = image->imageInfo().colorType() == kRGBA_8888_SkColorType ? GL_RGBA8 : GL_BGRA8_EXT;
+        externalTexture.fFormat = useBGRA ? GL_BGRA8_EXT : GL_RGBA8;
         auto backendTexture = GrBackendTextures::MakeGL(texture->size().width(), texture->size().height(), skgpu::Mipmapped::kNo, externalTexture);
-        auto surface = SkSurfaces::WrapBackendTexture(display.skiaGrContext(), backendTexture, kTopLeft_GrSurfaceOrigin, 0, image->imageInfo().colorType(), SkColorSpace::MakeSRGB(), nullptr);
+        auto surface = SkSurfaces::WrapBackendTexture(display.skiaGrContext(), backendTexture, kTopLeft_GrSurfaceOrigin, 0, surfaceColorType, SkColorSpace::MakeSRGB(), nullptr);
         if (!surface)
             return false;
 
@@ -166,6 +174,11 @@ sk_sp<SkImage> CoordinatedPlatformLayerBufferNativeImage::skiaImage()
         return nullptr;
 
     return m_buffer->skiaImage();
+}
+
+bool CoordinatedPlatformLayerBufferNativeImage::needsBGRAToRGBASwap() const
+{
+    return m_buffer && m_buffer->needsBGRAToRGBASwap();
 }
 #endif
 

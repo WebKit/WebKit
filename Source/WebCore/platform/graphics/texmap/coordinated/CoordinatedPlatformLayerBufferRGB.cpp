@@ -85,8 +85,6 @@ sk_sp<SkImage> CoordinatedPlatformLayerBufferRGB::skiaImage()
 {
     waitForContentsIfNeeded();
 
-    ASSERT(!m_texture || !m_texture->colorConvertFlags().contains(TextureMapperFlags::ShouldConvertTextureBGRAToRGBA));
-
     auto* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
     ASSERT(grContext);
     GrGLTextureInfo externalTexture;
@@ -96,6 +94,11 @@ sk_sp<SkImage> CoordinatedPlatformLayerBufferRGB::skiaImage()
     auto backendTexture = GrBackendTextures::MakeGL(m_size.width(), m_size.height(), skgpu::Mipmapped::kNo, externalTexture);
     auto origin = m_flags.contains(TextureMapperFlags::ShouldFlipTexture) ? kBottomLeft_GrSurfaceOrigin : kTopLeft_GrSurfaceOrigin;
     return SkImages::BorrowTextureFrom(grContext, backendTexture, origin, kRGBA_8888_SkColorType, kPremul_SkAlphaType, sRGBColorSpaceSingleton());
+}
+
+bool CoordinatedPlatformLayerBufferRGB::needsBGRAToRGBASwap() const
+{
+    return m_texture && m_texture->needsBGRAToRGBASwap();
 }
 #endif
 

@@ -29,17 +29,19 @@
 #if USE(SKIA)
 
 #include "BitmapTexture.h"
+#include "ColorMatrix.h"
 #include "ColorSpaceSkia.h"
 #include "GLFence.h"
 #include "GraphicsTypes.h"
 #include "NotImplemented.h"
 #include "PlatformDisplay.h"
-
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/core/SkColorFilter.h>
 #include <skia/gpu/ganesh/SkImageGanesh.h>
 #include <skia/gpu/ganesh/SkSurfaceGanesh.h>
 #include <skia/gpu/ganesh/gl/GrGLBackendSurface.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+#include <wtf/NeverDestroyed.h>
 
 #if USE(LIBEPOXY)
 #include <epoxy/gl.h>
@@ -198,6 +200,14 @@ SkBlendMode toSkiaBlendMode(BlendMode blendMode, std::optional<CompositeOperator
     }
 
     return SkBlendMode::kSrcOver;
+}
+
+sk_sp<SkColorFilter> composeFilterWithRedBlueSwap(const sk_sp<SkColorFilter>& base)
+{
+    static NeverDestroyed<sk_sp<SkColorFilter>> swap {
+        SkColorFilters::Matrix(swapRedBlueMatrix().data().data())
+    };
+    return base ? base->makeComposed(swap.get()) : swap.get();
 }
 
 } // namespace SkiaUtilities

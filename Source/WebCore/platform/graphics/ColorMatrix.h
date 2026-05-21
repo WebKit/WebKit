@@ -174,6 +174,16 @@ constexpr ColorMatrix<3, 3> saturationColorMatrix(float amount)
     };
 }
 
+constexpr ColorMatrix<5, 4> swapRedBlueMatrix()
+{
+    return ColorMatrix<5, 4> {
+        0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+    };
+}
+
 // NOTE: hueRotateColorMatrix is not constexpr due to use of cos/sin which are not constexpr yet.
 inline ColorMatrix<3, 3> hueRotateColorMatrix(float angleInDegrees)
 {

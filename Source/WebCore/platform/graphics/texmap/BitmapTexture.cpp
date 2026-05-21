@@ -72,6 +72,25 @@ static const GLenum s_pixelDataType = GL_UNSIGNED_BYTE;
 
 namespace WebCore {
 
+// Without EXT_texture_format_BGRA8888, GL_BGRA{,8_EXT} cannot be used as a 2D
+// texture's internal format. Drop UseBGRALayout from the storage flags so the
+// texture is allocated as GL_RGBA; callers must independently keep m_pixelFormat
+// set to BGRA8 so colorConvertFlags() requests a draw-time R<->B swap.
+static OptionSet<BitmapTexture::Flags> sanitizeFlagsForGLContext(OptionSet<BitmapTexture::Flags> flags)
+{
+    if (flags.contains(BitmapTexture::Flags::UseBGRALayout)) {
+        auto* glContext = GLContext::current();
+        if (!glContext || !glContext->glExtensions().EXT_texture_format_BGRA8888)
+            flags.remove(BitmapTexture::Flags::UseBGRALayout);
+    }
+    return flags;
+}
+
+static PixelFormat pixelFormatForFlags(OptionSet<BitmapTexture::Flags> flags)
+{
+    return flags.contains(BitmapTexture::Flags::UseBGRALayout) ? PixelFormat::BGRA8 : PixelFormat::RGBA8;
+}
+
 void BitmapTexture::determineRenderTargetAndBinding()
 {
     if (m_flags.contains(Flags::ExternalOESRenderTarget)) {
@@ -86,7 +105,10 @@ void BitmapTexture::determineRenderTargetAndBinding()
 
 GLenum BitmapTexture::textureFormat() const
 {
-    return m_flags.contains(Flags::UseBGRALayout) ? GL_BGRA : GL_RGBA;
+    if (!m_flags.contains(Flags::UseBGRALayout))
+        return GL_RGBA;
+    ASSERT(GLContext::current() && GLContext::current()->glExtensions().EXT_texture_format_BGRA8888);
+    return GL_BGRA;
 }
 
 GLenum depthBufferFormat()
@@ -99,9 +121,9 @@ GLenum depthBufferFormat()
 }
 
 BitmapTexture::BitmapTexture(const IntSize& size, OptionSet<Flags> flags)
-    : m_flags(flags)
+    : m_flags(sanitizeFlagsForGLContext(flags))
     , m_size(size)
-    , m_pixelFormat(flags.contains(Flags::UseBGRALayout) ? PixelFormat::BGRA8 : PixelFormat::RGBA8)
+    , m_pixelFormat(pixelFormatForFlags(flags))
 {
     determineRenderTargetAndBinding();
 
@@ -111,17 +133,17 @@ BitmapTexture::BitmapTexture(const IntSize& size, OptionSet<Flags> flags)
 #if USE(GBM)
     if (m_flags.contains(Flags::BackedByDMABuf)) {
         OptionSet<MemoryMappedGPUBuffer::BufferFlag> bufferFlags;
-        if (flags.contains(Flags::ForceLinearBuffer)) {
-            ASSERT(!flags.contains(Flags::ForceVivanteSuperTiledBuffer));
+        if (m_flags.contains(Flags::ForceLinearBuffer)) {
+            ASSERT(!m_flags.contains(Flags::ForceVivanteSuperTiledBuffer));
             bufferFlags.add(MemoryMappedGPUBuffer::BufferFlag::ForceLinear);
         }
 
-        if (flags.contains(Flags::ForceVivanteSuperTiledBuffer)) {
-            ASSERT(!flags.contains(Flags::ForceLinearBuffer));
+        if (m_flags.contains(Flags::ForceVivanteSuperTiledBuffer)) {
+            ASSERT(!m_flags.contains(Flags::ForceLinearBuffer));
             bufferFlags.add(MemoryMappedGPUBuffer::BufferFlag::ForceVivanteSuperTiled);
         }
 
-        if (flags.contains(Flags::UseBGRALayout))
+        if (m_flags.contains(Flags::UseBGRALayout))
             bufferFlags.add(MemoryMappedGPUBuffer::BufferFlag::UseBGRALayout);
 
         m_memoryMappedGPUBuffer = MemoryMappedGPUBuffer::create(m_size, bufferFlags);
@@ -203,8 +225,9 @@ bool BitmapTexture::allocateTextureFromMemoryMappedGPUBuffer()
 
 #if USE(GBM) || OS(ANDROID)
 BitmapTexture::BitmapTexture(EGLImage image, const IntSize& size, OptionSet<Flags> flags)
-    : m_flags(flags)
+    : m_flags(sanitizeFlagsForGLContext(flags))
     , m_size(size)
+    , m_pixelFormat(pixelFormatForFlags(flags))
 {
     determineRenderTargetAndBinding();
 
@@ -246,9 +269,9 @@ void BitmapTexture::reset(const IntSize& size, OptionSet<Flags> flags)
     RELEASE_ASSERT(m_flags.contains(Flags::BackedByDMABuf) == flags.contains(Flags::BackedByDMABuf));
 #endif
 
-    m_flags = flags;
+    m_flags = sanitizeFlagsForGLContext(flags);
     m_shouldClear = true;
-    m_pixelFormat = flags.contains(Flags::UseBGRALayout) ? PixelFormat::BGRA8 : PixelFormat::RGBA8;
+    m_pixelFormat = pixelFormatForFlags(flags);
     m_filterOperation = nullptr;
 
     if (!flags.contains(Flags::DepthBuffer)) {
@@ -585,6 +608,11 @@ OptionSet<TextureMapperFlags> BitmapTexture::colorConvertFlags() const
 #else
     return TextureMapperFlags::ShouldConvertTextureARGBToRGBA;
 #endif
+}
+
+bool BitmapTexture::needsBGRAToRGBASwap() const
+{
+    return colorConvertFlags().contains(TextureMapperFlags::ShouldConvertTextureBGRAToRGBA);
 }
 
 #if USE(SKIA)

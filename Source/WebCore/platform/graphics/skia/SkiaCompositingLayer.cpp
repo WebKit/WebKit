@@ -42,6 +42,7 @@
 #include "SkiaCompositingLayerOverlapRegions.h"
 #include "SkiaUtilities.h"
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/core/SkColorFilter.h>
 #include <skia/core/SkFont.h>
 #include <skia/core/SkPathBuilder.h>
 #include <skia/core/SkRRect.h>
@@ -481,6 +482,7 @@ void SkiaCompositingLayer::paintSelf(SkCanvas& canvas, PaintContext& context)
         }
 
         sk_sp<SkImage> image;
+        bool needsBGRAToRGBASwap = false;
 
         if (m_contentsBuffer) {
             if (is<CoordinatedPlatformLayerBufferHolePunch>(*m_contentsBuffer)) {
@@ -490,11 +492,15 @@ void SkiaCompositingLayer::paintSelf(SkCanvas& canvas, PaintContext& context)
 #endif
                 paint.setColor(SK_ColorTRANSPARENT);
                 canvas.drawRect(SkRect(m_contentsRect), paint);
-            } else
+            } else {
                 image = m_contentsBuffer->skiaImage();
+                needsBGRAToRGBASwap = m_contentsBuffer->needsBGRAToRGBASwap();
+            }
         } else if (auto* buffer = m_imageBackingStore->buffer()) {
             image = buffer->skiaImage();
-            if (!m_contentsTiling.size.isEmpty()) {
+            // The image backing store always wraps a NativeImage uploaded via
+            // surface->writePixels into an RGBA-storage texture, so no swap.
+            if (image && !m_contentsTiling.size.isEmpty()) {
                 sk_sp<SkImage> tileImage = std::exchange(image, nullptr);
                 SkMatrix matrix;
                 matrix.setScale(m_contentsTiling.size.width() / tileImage->width(), m_contentsTiling.size.height() / tileImage->height());
@@ -505,6 +511,8 @@ void SkiaCompositingLayer::paintSelf(SkCanvas& canvas, PaintContext& context)
         }
 
         if (image) {
+            if (needsBGRAToRGBASwap)
+                paint.setColorFilter(SkiaUtilities::composeFilterWithRedBlueSwap(paint.refColorFilter()));
             canvas.drawImageRect(image, SkRect::MakeSize(SkSize::Make(image->dimensions())), SkRect(m_contentsRect),
                 SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kNone), &paint, SkCanvas::kFast_SrcRectConstraint);
         }
