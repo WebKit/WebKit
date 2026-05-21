@@ -3709,6 +3709,7 @@ public:
         }
     }
 
+<<<<<<< HEAD
     GetByStatus::LookupMode propertyLookupMode()
     {
         switch (op()) {
@@ -3725,6 +3726,8 @@ public:
         }
     }
 
+=======
+>>>>>>> b07dca9615f1 ([JSC] GetByStatus::computeFor should not walk proto chain for direct property access)
     unsigned numberOfArgumentsToSkip()
     {
         ASSERT(hasNumberOfArgumentsToSkip());
