@@ -208,6 +208,18 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
     frameLoader->setOutgoingReferrer(url);
     frame->setDocument(document.copyRef());
 
+    // whatwg/html#11454: carry sticky activation over same-origin navigations,
+    // except when the redirect chain crossed origins (A -> B -> A).
+    if (previousWindow && existingDocument) {
+        RefPtr documentLoader = frameLoader->documentLoader();
+        bool hadCrossOriginRedirect = documentLoader && documentLoader->hasCrossOriginRedirect();
+        if (RefPtr newWindow = document->window()) {
+            Ref previousOrigin = existingDocument->securityOrigin();
+            Ref targetOrigin = SecurityOrigin::create(url);
+            newWindow->carryOverStickyActivationFromPreviousWindow(*previousWindow, previousOrigin, targetOrigin, hadCrossOriginRedirect);
+        }
+    }
+
     if (m_decoder)
         document->setDecoder(m_decoder.copyRef());
     if (ownerDocument) {
