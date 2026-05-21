@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,22 +29,22 @@
 
 namespace JSC {
 
-class TemporalCalendarPrototype;
+class TemporalZonedDateTimePrototype;
 
-class TemporalCalendarConstructor final : public InternalFunction {
+class TemporalZonedDateTimeConstructor final : public InternalFunction {
 public:
     using Base = InternalFunction;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
-    static TemporalCalendarConstructor* create(VM&, Structure*, TemporalCalendarPrototype*);
+    static TemporalZonedDateTimeConstructor* create(VM&, Structure*, TemporalZonedDateTimePrototype*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
 private:
-    TemporalCalendarConstructor(VM&, Structure*);
-    void finishCreation(VM&, TemporalCalendarPrototype*);
+    TemporalZonedDateTimeConstructor(VM&, Structure*);
+    void finishCreation(VM&, TemporalZonedDateTimePrototype*);
 };
-STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(TemporalCalendarConstructor, InternalFunction);
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(TemporalZonedDateTimeConstructor, InternalFunction);
 
 } // namespace JSC

@@ -31,6 +31,9 @@
 #include "IntlDateTimeFormat.h"
 #include "JSCInlines.h"
 #include "TemporalInstant.h"
+#include "TemporalObject.h"
+#include "TemporalZonedDateTime.h"
+#include <wtf/text/MakeString.h>
 
 namespace JSC {
 
@@ -40,6 +43,7 @@ static JSC_DECLARE_HOST_FUNCTION(temporalInstantPrototypeFuncUntil);
 static JSC_DECLARE_HOST_FUNCTION(temporalInstantPrototypeFuncSince);
 static JSC_DECLARE_HOST_FUNCTION(temporalInstantPrototypeFuncRound);
 static JSC_DECLARE_HOST_FUNCTION(temporalInstantPrototypeFuncEquals);
+static JSC_DECLARE_HOST_FUNCTION(temporalInstantPrototypeFuncToZonedDateTimeISO);
 static JSC_DECLARE_HOST_FUNCTION(temporalInstantPrototypeFuncToString);
 static JSC_DECLARE_HOST_FUNCTION(temporalInstantPrototypeFuncToJSON);
 static JSC_DECLARE_HOST_FUNCTION(temporalInstantPrototypeFuncToLocaleString);
@@ -57,18 +61,19 @@ const ClassInfo TemporalInstantPrototype::s_info = { "Temporal.Instant"_s, &Base
 
 /* Source for TemporalInstantPrototype.lut.h
 @begin instantPrototypeTable
-  add                temporalInstantPrototypeFuncAdd                  DontEnum|Function 1
-  subtract           temporalInstantPrototypeFuncSubtract             DontEnum|Function 1
-  until              temporalInstantPrototypeFuncUntil                DontEnum|Function 1
-  since              temporalInstantPrototypeFuncSince                DontEnum|Function 1
-  round              temporalInstantPrototypeFuncRound                DontEnum|Function 1
-  equals             temporalInstantPrototypeFuncEquals               DontEnum|Function 1
-  toString           temporalInstantPrototypeFuncToString             DontEnum|Function 0
-  toJSON             temporalInstantPrototypeFuncToJSON               DontEnum|Function 0
-  toLocaleString     temporalInstantPrototypeFuncToLocaleString       DontEnum|Function 0
-  valueOf            temporalInstantPrototypeFuncValueOf              DontEnum|Function 0
-  epochMilliseconds  temporalInstantPrototypeGetterEpochMilliseconds  DontEnum|ReadOnly|CustomAccessor
-  epochNanoseconds   temporalInstantPrototypeGetterEpochNanoseconds   DontEnum|ReadOnly|CustomAccessor
+  add                  temporalInstantPrototypeFuncAdd                  DontEnum|Function 1
+  subtract             temporalInstantPrototypeFuncSubtract             DontEnum|Function 1
+  until                temporalInstantPrototypeFuncUntil                DontEnum|Function 1
+  since                temporalInstantPrototypeFuncSince                DontEnum|Function 1
+  round                temporalInstantPrototypeFuncRound                DontEnum|Function 1
+  equals               temporalInstantPrototypeFuncEquals               DontEnum|Function 1
+  toZonedDateTimeISO   temporalInstantPrototypeFuncToZonedDateTimeISO   DontEnum|Function 1
+  toString             temporalInstantPrototypeFuncToString             DontEnum|Function 0
+  toJSON               temporalInstantPrototypeFuncToJSON               DontEnum|Function 0
+  toLocaleString       temporalInstantPrototypeFuncToLocaleString       DontEnum|Function 0
+  valueOf              temporalInstantPrototypeFuncValueOf              DontEnum|Function 0
+  epochMilliseconds    temporalInstantPrototypeGetterEpochMilliseconds  DontEnum|ReadOnly|CustomAccessor
+  epochNanoseconds     temporalInstantPrototypeGetterEpochNanoseconds   DontEnum|ReadOnly|CustomAccessor
 @end
 */
 
@@ -256,11 +261,10 @@ JSC_DEFINE_HOST_FUNCTION(temporalInstantPrototypeFuncToLocaleString, (JSGlobalOb
     IntlDateTimeFormat* formatter = IntlDateTimeFormat::create(vm, globalObject->dateTimeFormatStructure());
     RETURN_IF_EXCEPTION(scope, { });
 
-    formatter->initializeDateTimeFormat(globalObject, callFrame->argument(0), callFrame->argument(1), IntlDateTimeFormat::RequiredComponent::Any, IntlDateTimeFormat::Defaults::Date);
+    formatter->initializeDateTimeFormat(globalObject, callFrame->argument(0), callFrame->argument(1), IntlDateTimeFormat::RequiredComponent::Any, IntlDateTimeFormat::Defaults::All);
     RETURN_IF_EXCEPTION(scope, { });
 
-    // FIXME: change IntlDateTimeFormat to use epochNanoseconds
-    RELEASE_AND_RETURN(scope, JSValue::encode(formatter->format(globalObject, instant->exactTime().epochMilliseconds())));
+    RELEASE_AND_RETURN(scope, JSValue::encode(formatter->format(globalObject, instant->exactTime().epochMilliseconds(), IntlDateTimeFormat::TemporalFieldKind::Instant)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(temporalInstantPrototypeFuncValueOf, (JSGlobalObject* globalObject, CallFrame*))
@@ -269,6 +273,40 @@ JSC_DEFINE_HOST_FUNCTION(temporalInstantPrototypeFuncValueOf, (JSGlobalObject* g
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     return throwVMTypeError(globalObject, scope, "Temporal.Instant.prototype.valueOf must not be called. To compare Instant values, use Temporal.Instant.compare"_s);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal.instant.prototype.tozoneddatetimeiso
+JSC_DEFINE_HOST_FUNCTION(temporalInstantPrototypeFuncToZonedDateTimeISO, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    TemporalInstant* instant = dynamicDowncast<TemporalInstant>(callFrame->thisValue());
+    if (!instant)
+        return throwVMTypeError(globalObject, scope, "Temporal.Instant.prototype.toZonedDateTimeISO called on value that's not an Instant"_s);
+
+    JSValue arg = callFrame->argument(0);
+    if (!arg.isString()) {
+        throwTypeError(globalObject, scope, "Temporal.Instant.prototype.toZonedDateTimeISO requires a string time zone identifier"_s);
+        return { };
+    }
+
+    String tzString = asString(arg)->value(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto tz = ISO8601::parseTemporalTimeZoneIdentifier(tzString);
+    if (!tz) {
+        throwRangeError(globalObject, scope, makeString("'"_s, ellipsizeAt(100, tzString), "' is not a valid time zone identifier"_s));
+        return { };
+    }
+
+    String tzId;
+    if (auto namedTz = intlAvailableNamedTimeZone(tzString))
+        tzId = namedTz->identifier;
+    else
+        tzId = tz->toString();
+    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalZonedDateTime::create(vm, globalObject->zonedDateTimeStructure(),
+        instant->exactTime(), *tz, WTF::move(tzId), "iso8601"_s)));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(temporalInstantPrototypeGetterEpochMilliseconds, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))

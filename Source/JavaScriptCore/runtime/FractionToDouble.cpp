@@ -192,7 +192,6 @@ static double fractionToDoubleSlow(const Int128& numerator, const Int128& denomi
 double fractionToDouble(const Int128& numerator, const Int128& denominator)
 {
     ASSERT(denominator > 0);
-
     if (!numerator)
         return 0;
     if (denominator == 1)

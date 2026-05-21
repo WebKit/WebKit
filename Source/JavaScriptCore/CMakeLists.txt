@@ -112,8 +112,6 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/StringPrototype.cpp
     runtime/SymbolConstructor.cpp
     runtime/SymbolPrototype.cpp
-    runtime/TemporalCalendarConstructor.cpp
-    runtime/TemporalCalendarPrototype.cpp
     runtime/TemporalDurationConstructor.cpp
     runtime/TemporalDurationPrototype.cpp
     runtime/TemporalInstantConstructor.cpp
@@ -132,6 +130,8 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/TemporalPlainYearMonthPrototype.cpp
     runtime/TemporalTimeZoneConstructor.cpp
     runtime/TemporalTimeZonePrototype.cpp
+    runtime/TemporalZonedDateTimeConstructor.cpp
+    runtime/TemporalZonedDateTimePrototype.cpp
 
     wasm/js/JSWebAssembly.cpp
     wasm/js/WebAssemblyArrayConstructor.cpp
@@ -1138,6 +1138,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/Float32Array.h
     runtime/Float64Array.h
     runtime/Forward.h
+    runtime/FractionToDouble.h
     runtime/FunctionConstructor.h
     runtime/FunctionExecutable.h
     runtime/FunctionExecutableDump.h
@@ -1425,8 +1426,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/SyntheticModuleRecord.h
     runtime/TemplateObjectDescriptor.h
     runtime/TemporalCalendar.h
-    runtime/TemporalCalendarConstructor.h
-    runtime/TemporalCalendarPrototype.h
     runtime/TemporalDuration.h
     runtime/TemporalDurationConstructor.h
     runtime/TemporalDurationPrototype.h
@@ -1453,6 +1452,9 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/TemporalTimeZone.h
     runtime/TemporalTimeZoneConstructor.h
     runtime/TemporalTimeZonePrototype.h
+    runtime/TemporalZonedDateTime.h
+    runtime/TemporalZonedDateTimeConstructor.h
+    runtime/TemporalZonedDateTimePrototype.h
     runtime/TestRunnerUtils.h
     runtime/ThrowScope.h
     runtime/ToNativeFromValue.h

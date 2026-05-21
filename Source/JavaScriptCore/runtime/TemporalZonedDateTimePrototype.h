@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-class TemporalCalendarPrototype final : public JSNonFinalObject {
+class TemporalZonedDateTimePrototype final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
@@ -37,17 +37,17 @@ public:
     template<typename CellType, SubspaceAccess>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {
-        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(TemporalCalendarPrototype, Base);
+        STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(TemporalZonedDateTimePrototype, Base);
         return &vm.plainObjectSpace();
     }
 
-    static TemporalCalendarPrototype* create(VM&, JSGlobalObject*, Structure*);
+    static TemporalZonedDateTimePrototype* create(VM&, JSGlobalObject*, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
 private:
-    TemporalCalendarPrototype(VM&, Structure*);
+    TemporalZonedDateTimePrototype(VM&, Structure*);
     void finishCreation(VM&, JSGlobalObject*);
 };
 

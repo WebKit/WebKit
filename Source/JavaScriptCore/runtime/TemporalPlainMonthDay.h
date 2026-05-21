@@ -25,9 +25,8 @@
 
 #pragma once
 
+#include <JavaScriptCore/CalendarICUBridge.h>
 #include <JavaScriptCore/ISO8601.h>
-#include <JavaScriptCore/LazyProperty.h>
-#include <JavaScriptCore/TemporalCalendar.h>
 
 namespace JSC {
 
@@ -50,8 +49,10 @@ public:
     static TemporalPlainMonthDay* from(JSGlobalObject*, JSValue, JSValue);
     static TemporalPlainMonthDay* from(JSGlobalObject*, WTF::String);
 
-    TemporalCalendar* calendar() LIFETIME_BOUND { return m_calendar.get(this); }
     ISO8601::PlainMonthDay plainMonthDay() const { return m_plainMonthDay; }
+    String calendarId() const { return TemporalCore::calendarIDToString(m_calendarID).toString(); }
+    CalendarID calendarID() const { return m_calendarID; }
+    void setCalendarId(WTF::StringView id) { m_calendarID = TemporalCore::calendarIDFromString(id); }
 
 #define JSC_DEFINE_TEMPORAL_PLAIN_MONTH_DAY_FIELD(name, capitalizedName) \
     decltype(auto) name() const { return m_plainMonthDay.name(); }
@@ -65,10 +66,8 @@ public:
     String toString(JSGlobalObject*, JSValue options) const;
     String toString() const
     {
-        return ISO8601::temporalMonthDayToString(m_plainMonthDay, ""_s);
+        return ISO8601::temporalMonthDayToString(m_plainMonthDay, "auto"_s, TemporalCore::calendarIDToString(m_calendarID));
     }
-
-    DECLARE_VISIT_CHILDREN;
 
 private:
     TemporalPlainMonthDay(VM&, Structure*, ISO8601::PlainMonthDay&&);
@@ -79,7 +78,7 @@ private:
     static ISO8601::PlainMonthDay fromObject(JSGlobalObject*, JSObject*);
 
     ISO8601::PlainMonthDay m_plainMonthDay;
-    LazyProperty<TemporalPlainMonthDay, TemporalCalendar> m_calendar;
+    CalendarID m_calendarID { 0 };
 };
 
 } // namespace JSC

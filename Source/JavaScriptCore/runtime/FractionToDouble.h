@@ -40,6 +40,7 @@ static constexpr Int128 absInt128(const Int128& value)
 // Use when spec guarantees the divisor fits in 53 bits (e.g. TotalTimeDuration:
 // all unit lengths ≤ nsPerDay = 8.64e13 < 2^53).
 double fractionToDouble(const Int128& numerator, double denominator);
+double fractionToDouble(const Int128& numerator, const Int128& denominator);
 
 // Denominator is an Int128 — handles denominators that exceed 2^53.
 // Use when the denominator may be year-scale epoch-ns (e.g. NudgeToCalendarUnit:

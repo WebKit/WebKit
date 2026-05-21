@@ -30,8 +30,7 @@
 #include "JSObjectInlines.h"
 #include "ObjectPrototype.h"
 #include "Rounding.h"
-#include "TemporalCalendarConstructor.h"
-#include "TemporalCalendarPrototype.h"
+#include "TemporalCalendar.h"
 #include "TemporalDurationConstructor.h"
 #include "TemporalDurationPrototype.h"
 #include "TemporalInstantConstructor.h"
@@ -43,6 +42,7 @@
 #include "TemporalPlainDateTime.h"
 #include "TemporalPlainDateTimeConstructor.h"
 #include "TemporalPlainDateTimePrototype.h"
+#include "TemporalPlainMonthDay.h"
 #include "TemporalPlainMonthDayConstructor.h"
 #include "TemporalPlainMonthDayPrototype.h"
 #include "TemporalPlainTime.h"
@@ -51,8 +51,9 @@
 #include "TemporalPlainYearMonth.h"
 #include "TemporalPlainYearMonthConstructor.h"
 #include "TemporalPlainYearMonthPrototype.h"
-#include "TemporalTimeZoneConstructor.h"
-#include "TemporalTimeZonePrototype.h"
+#include "TemporalZonedDateTime.h"
+#include "TemporalZonedDateTimeConstructor.h"
+#include "TemporalZonedDateTimePrototype.h"
 #include <wtf/Int128.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -62,13 +63,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(TemporalObject);
-
-static JSValue createCalendarConstructor(VM& vm, JSObject* object)
-{
-    TemporalObject* temporalObject = uncheckedDowncast<TemporalObject>(object);
-    JSGlobalObject* globalObject = temporalObject->realm();
-    return TemporalCalendarConstructor::create(vm, TemporalCalendarConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), uncheckedDowncast<TemporalCalendarPrototype>(globalObject->calendarStructure()->storedPrototypeObject()));
-}
 
 static JSValue createNowObject(VM& vm, JSObject* object)
 {
@@ -126,11 +120,11 @@ static JSValue createPlainYearMonthConstructor(VM& vm, JSObject* object)
     return TemporalPlainYearMonthConstructor::create(vm, TemporalPlainYearMonthConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), uncheckedDowncast<TemporalPlainYearMonthPrototype>(globalObject->plainYearMonthStructure()->storedPrototypeObject()));
 }
 
-static JSValue createTimeZoneConstructor(VM& vm, JSObject* object)
+static JSValue createZonedDateTimeConstructor(VM& vm, JSObject* object)
 {
     TemporalObject* temporalObject = uncheckedDowncast<TemporalObject>(object);
-    JSGlobalObject* globalObject = temporalObject->realm();
-    return TemporalTimeZoneConstructor::create(vm, TemporalTimeZoneConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), uncheckedDowncast<TemporalTimeZonePrototype>(globalObject->timeZoneStructure()->storedPrototypeObject()));
+    auto* globalObject = temporalObject->realm();
+    return TemporalZonedDateTimeConstructor::create(vm, TemporalZonedDateTimeConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), uncheckedDowncast<TemporalZonedDateTimePrototype>(globalObject->zonedDateTimeStructure()->storedPrototypeObject()));
 }
 
 } // namespace JSC
@@ -141,7 +135,6 @@ namespace JSC {
 
 /* Source for TemporalObject.lut.h
 @begin temporalObjectTable
-  Calendar       createCalendarConstructor       DontEnum|PropertyCallback
   Duration       createDurationConstructor       DontEnum|PropertyCallback
   Instant        createInstantConstructor        DontEnum|PropertyCallback
   Now            createNowObject                 DontEnum|PropertyCallback
@@ -150,7 +143,7 @@ namespace JSC {
   PlainTime      createPlainTimeConstructor      DontEnum|PropertyCallback
   PlainMonthDay  createPlainMonthDayConstructor  DontEnum|PropertyCallback
   PlainYearMonth createPlainYearMonthConstructor DontEnum|PropertyCallback
-  TimeZone       createTimeZoneConstructor       DontEnum|PropertyCallback
+  ZonedDateTime  createZonedDateTimeConstructor  DontEnum|PropertyCallback
 @end
 */
 
@@ -197,7 +190,9 @@ WTF::String ellipsizeAt(unsigned maxLength, const WTF::String& string)
 PropertyName temporalUnitPluralPropertyName(VM& vm, TemporalUnit unit)
 {
     switch (unit) {
-#define JSC_TEMPORAL_UNIT_PLURAL_PROPERTY_NAME(name, capitalizedName) case TemporalUnit::capitalizedName: return vm.propertyNames->name##s;
+#define JSC_TEMPORAL_UNIT_PLURAL_PROPERTY_NAME(name, capitalizedName) \
+    case TemporalUnit::capitalizedName:                               \
+        return vm.propertyNames->name##s;
         JSC_TEMPORAL_UNITS(JSC_TEMPORAL_UNIT_PLURAL_PROPERTY_NAME)
 #undef JSC_TEMPORAL_UNIT_PLURAL_PROPERTY_NAME
     }
@@ -208,7 +203,9 @@ PropertyName temporalUnitPluralPropertyName(VM& vm, TemporalUnit unit)
 PropertyName temporalUnitSingularPropertyName(VM& vm, TemporalUnit unit)
 {
     switch (unit) {
-#define JSC_TEMPORAL_UNIT_SINGULAR_PROPERTY_NAME(name, capitalizedName) case TemporalUnit::capitalizedName: return vm.propertyNames->name;
+#define JSC_TEMPORAL_UNIT_SINGULAR_PROPERTY_NAME(name, capitalizedName) \
+    case TemporalUnit::capitalizedName:                                 \
+        return vm.propertyNames->name;
         JSC_TEMPORAL_UNITS(JSC_TEMPORAL_UNIT_SINGULAR_PROPERTY_NAME)
 #undef JSC_TEMPORAL_UNIT_SINGULAR_PROPERTY_NAME
     }
@@ -254,10 +251,9 @@ std::optional<TemporalUnit> temporalUnitType(StringView unit)
         return TemporalUnit::Microsecond;
     if (singular == "nanosecond"_s)
         return TemporalUnit::Nanosecond;
-    
+
     return std::nullopt;
 }
-
 
 // https://tc39.es/proposal-temporal/#sec-temporal-gettemporalunitvaluedoption
 Variant<TemporalAuto, std::optional<TemporalUnit>> getTemporalUnitValuedOption(JSGlobalObject* globalObject, JSObject* options, PropertyName key)
@@ -307,7 +303,6 @@ void validateTemporalUnitValue(JSGlobalObject* globalObject, Variant<TemporalAut
 // dividend must be a double because the maximum rounding increment for nanoseconds
 // is greater than UINT32_MAX
 // Therefore, rounding increment must be a double as well
-// https://tc39.es/proposal-temporal/#sec-validatetemporalroundingincrement
 void validateTemporalRoundingIncrement(JSGlobalObject* globalObject, double increment, std::optional<double> dividend, Inclusivity isInclusive)
 {
     auto result = TemporalCore::validateTemporalRoundingIncrement(increment, dividend, isInclusive);
@@ -494,10 +489,7 @@ PrecisionData secondsStringPrecision(JSGlobalObject* globalObject, JSObject* opt
 // https://tc39.es/proposal-temporal/#sec-temporal-totemporalroundingmode
 RoundingMode temporalRoundingMode(JSGlobalObject* globalObject, JSObject* options, RoundingMode fallback)
 {
-    return intlOption<RoundingMode>(globalObject, options, globalObject->vm().propertyNames->roundingMode, {
-        { "ceil"_s, RoundingMode::Ceil }, { "floor"_s, RoundingMode::Floor }, { "expand"_s, RoundingMode::Expand }, { "trunc"_s, RoundingMode::Trunc },
-        { "halfCeil"_s, RoundingMode::HalfCeil }, { "halfFloor"_s, RoundingMode::HalfFloor }, { "halfExpand"_s, RoundingMode::HalfExpand }, { "halfTrunc"_s, RoundingMode::HalfTrunc }, { "halfEven"_s, RoundingMode::HalfEven }
-        }, "roundingMode must be \"ceil\", \"floor\", \"expand\", \"trunc\", \"halfCeil\", \"halfFloor\", \"halfExpand\", \"halfTrunc\", or \"halfEven\""_s, fallback);
+    return intlOption<RoundingMode>(globalObject, options, globalObject->vm().propertyNames->roundingMode, { { "ceil"_s, RoundingMode::Ceil }, { "floor"_s, RoundingMode::Floor }, { "expand"_s, RoundingMode::Expand }, { "trunc"_s, RoundingMode::Trunc }, { "halfCeil"_s, RoundingMode::HalfCeil }, { "halfFloor"_s, RoundingMode::HalfFloor }, { "halfExpand"_s, RoundingMode::HalfExpand }, { "halfTrunc"_s, RoundingMode::HalfTrunc }, { "halfEven"_s, RoundingMode::HalfEven } }, "roundingMode must be \"ceil\", \"floor\", \"expand\", \"trunc\", \"halfCeil\", \"halfFloor\", \"halfExpand\", \"halfTrunc\", or \"halfEven\""_s, fallback);
 }
 
 void formatSecondsStringFraction(StringBuilder& builder, unsigned fraction, std::tuple<Precision, unsigned> precision)
@@ -587,8 +579,100 @@ TemporalOverflow toTemporalOverflow(JSGlobalObject* globalObject, JSValue val)
 String toTemporalCalendarName(JSGlobalObject* globalObject, JSObject* options)
 {
     return intlOption<String>(globalObject, options, globalObject->vm().propertyNames->calendarName,
-        { { ""_s, ""_s }, { "always"_s, "always"_s } },
-        "calendarName must be empty or \"always\""_s, ""_s);
+        { { "auto"_s, "auto"_s }, { "always"_s, "always"_s }, { "never"_s, "never"_s }, { "critical"_s, "critical"_s } },
+        "calendarName must be \"auto\", \"always\", \"never\", or \"critical\""_s, "auto"_s);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-totemporalcalendar
+// Converts a JSValue (calendar ID string or Temporal date-like object) to a
+// canonical calendar identifier string (e.g., "iso8601", "gregory").
+// Accepts temporal date strings with [u-ca=...] annotations.
+// Throws TypeError for non-string non-Temporal-object inputs.
+// Throws RangeError for unrecognized calendar identifiers.
+String toTemporalCalendarIdentifier(JSGlobalObject* globalObject, JSValue calendarLike)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (calendarLike.isString()) {
+        auto calendarString = calendarLike.toWTFString(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        // Fast path: direct calendar ID (case-insensitive).
+        if (auto calendarId = isBuiltinCalendar(calendarString))
+            return intlAvailableCalendars()[*calendarId];
+
+        // Try parsing as a temporal date string to extract the [u-ca=...] annotation.
+        // Order: Date, then YearMonth, then MonthDay. YearMonth before MonthDay to
+        // avoid the MonthDay parser asserting on year-looking strings like "2020-01".
+        auto parsed = ISO8601::parseCalendarDateTime(calendarString, TemporalDateFormat::Date);
+        if (!parsed)
+            parsed = ISO8601::parseCalendarDateTime(calendarString, TemporalDateFormat::YearMonth);
+        if (!parsed)
+            parsed = ISO8601::parseCalendarDateTime(calendarString, TemporalDateFormat::MonthDay);
+        if (!parsed) {
+            // Per spec ParseTemporalCalendarString, also try TemporalTimeString.
+            // A time string with no calendar annotation returns "iso8601".
+            auto parsedTime = ISO8601::parseCalendarTime(calendarString);
+            if (!parsedTime) {
+                throwRangeError(globalObject, scope, makeString("invalid calendar identifier: "_s, calendarString));
+                return { };
+            }
+            auto& calAnnotation = std::get<2>(parsedTime.value());
+            if (!calAnnotation)
+                return "iso8601"_s;
+            if (auto calendarId = isBuiltinCalendar(StringView(*calAnnotation)))
+                return intlAvailableCalendars()[*calendarId];
+            throwRangeError(globalObject, scope, makeString("invalid calendar identifier: "_s, StringView(*calAnnotation)));
+            return { };
+        }
+        auto& calendarAnnotation = std::get<3>(parsed.value());
+        if (!calendarAnnotation)
+            return "iso8601"_s;
+        if (auto calendarId = isBuiltinCalendar(StringView(*calendarAnnotation)))
+            return intlAvailableCalendars()[*calendarId];
+        throwRangeError(globalObject, scope, makeString("invalid calendar identifier: "_s, StringView(*calendarAnnotation)));
+        return { };
+    }
+
+    // Fast path: read [[Calendar]] from Temporal date-like objects without invoking
+    // the "calendar" property getter (per spec ToTemporalCalendar step 1.b).
+    if (calendarLike.isObject()) {
+        JSObject* obj = asObject(calendarLike);
+        if (obj->inherits<TemporalPlainDate>())
+            return uncheckedDowncast<TemporalPlainDate>(obj)->calendarId();
+        if (obj->inherits<TemporalPlainDateTime>())
+            return uncheckedDowncast<TemporalPlainDateTime>(obj)->calendarId();
+        if (obj->inherits<TemporalPlainYearMonth>())
+            return uncheckedDowncast<TemporalPlainYearMonth>(obj)->calendarId();
+        if (obj->inherits<TemporalPlainMonthDay>())
+            return uncheckedDowncast<TemporalPlainMonthDay>(obj)->calendarId();
+        if (obj->inherits<TemporalZonedDateTime>())
+            return uncheckedDowncast<TemporalZonedDateTime>(obj)->calendarId();
+    }
+
+    throwTypeError(globalObject, scope, "calendar argument must be a string or a Temporal date-like object"_s);
+    return { };
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-totemporaldisambiguation
+TemporalDisambiguation toTemporalDisambiguation(JSGlobalObject* globalObject, JSObject* options)
+{
+    return intlOption<TemporalDisambiguation>(globalObject, options, globalObject->vm().propertyNames->disambiguation,
+        { { "compatible"_s, TemporalDisambiguation::Compatible }, { "earlier"_s, TemporalDisambiguation::Earlier },
+            { "later"_s, TemporalDisambiguation::Later }, { "reject"_s, TemporalDisambiguation::Reject } },
+        "disambiguation must be one of \"compatible\", \"earlier\", \"later\", or \"reject\""_s,
+        TemporalDisambiguation::Compatible);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-totemporaloffset
+TemporalOffsetDisambiguation toTemporalOffset(JSGlobalObject* globalObject, JSObject* options, TemporalOffsetDisambiguation fallback)
+{
+    return intlOption<TemporalOffsetDisambiguation>(globalObject, options, globalObject->vm().propertyNames->offset,
+        { { "use"_s, TemporalOffsetDisambiguation::Use }, { "prefer"_s, TemporalOffsetDisambiguation::Prefer },
+            { "ignore"_s, TemporalOffsetDisambiguation::Ignore }, { "reject"_s, TemporalOffsetDisambiguation::Reject } },
+        "offset must be one of \"use\", \"prefer\", \"ignore\", or \"reject\""_s,
+        fallback);
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-rejectobjectwithcalendarortimezone
@@ -597,27 +681,37 @@ void rejectObjectWithCalendarOrTimeZone(JSGlobalObject* globalObject, JSObject* 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // FIXME: Also support PlainMonthDay, PlainYearMonth, ZonedDateTime.
     if (object->inherits<TemporalPlainDate>()
         || object->inherits<TemporalPlainDateTime>()
-        || object->inherits<TemporalPlainTime>()) {
+        || object->inherits<TemporalPlainTime>()
+        || object->inherits<TemporalPlainMonthDay>()
+        || object->inherits<TemporalPlainYearMonth>()
+        || object->inherits<TemporalZonedDateTime>()) {
         throwTypeError(globalObject, scope, "argument object must not have calendar or timeZone property"_s);
         return;
     }
 
-    auto calendar = object->get(globalObject, vm.propertyNames->calendar);    
+    auto calendar = object->get(globalObject, vm.propertyNames->calendar);
     RETURN_IF_EXCEPTION(scope, void());
     if (!calendar.isUndefined()) {
         throwTypeError(globalObject, scope, "argument object must not have calendar property"_s);
         return;
     }
 
-    auto timeZone = object->get(globalObject, vm.propertyNames->timeZone);    
+    auto timeZone = object->get(globalObject, vm.propertyNames->timeZone);
     RETURN_IF_EXCEPTION(scope, void());
     if (!timeZone.isUndefined()) {
         throwTypeError(globalObject, scope, "argument object must not have timeZone property"_s);
         return;
     }
+}
+
+void throwTemporalError(JSGlobalObject* globalObject, ThrowScope& scope, const TemporalError& error)
+{
+    if (error.kind == TemporalErrorKind::RangeError)
+        throwRangeError(globalObject, scope, error.message);
+    else
+        throwTypeError(globalObject, scope, error.message);
 }
 
 } // namespace JSC

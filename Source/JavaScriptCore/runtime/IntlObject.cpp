@@ -2088,7 +2088,7 @@ static const HashMap<String, TimeZoneID, ASCIICaseInsensitiveHash>& intlAvailabl
         // aliases ("ACT", "AET", ...) for the same reason availableNamedTimeZone-
         // Identifier did before.
         UErrorCode status = U_ZERO_ERROR;
-        auto enumeration = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucal_openTimeZones(&status));
+        auto enumeration = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucal_openTimeZoneIDEnumeration(UCAL_ZONE_TYPE_ANY, nullptr, nullptr, &status));
         ASSERT(U_SUCCESS(status));
         while (true) {
             status = U_ZERO_ERROR;
@@ -2112,6 +2112,25 @@ static const HashMap<String, TimeZoneID, ASCIICaseInsensitiveHash>& intlAvailabl
             if (primaryEntry == table.end())
                 continue;
             table.add(createImmortalThreadSafeString(nameView), primaryEntry->value);
+        }
+
+        // Add IANA TZDB primary zones that ICU4C may not enumerate on all platforms
+        // (e.g., POSIX-style and 3-letter zones). Per IANA TZDB these are primary zones.
+        // temporal_rs/V8 support them via their compiled-in tzdb; we add them manually.
+        static constexpr ASCIILiteral kMissingPrimaryZones[] = {
+            "CET"_s, "CST6CDT"_s, "EET"_s, "EST"_s, "EST5EDT"_s,
+            "HST"_s, "MET"_s, "MST"_s, "MST7MDT"_s, "PST8PDT"_s, "WET"_s
+        };
+        for (auto zoneId : kMissingPrimaryZones) {
+            if (table.find<ASCIICaseInsensitiveStringViewHashTranslator>(StringView(zoneId)) != table.end())
+                continue; // Already in index
+            String primary = toPrimaryIanaTimeZoneIdentifier(zoneId);
+            if (primary.isNull())
+                continue;
+            auto primaryEntry = table.find(primary);
+            if (primaryEntry == table.end())
+                continue;
+            table.add(String(StringImpl::createStaticStringImpl(zoneId.span())), primaryEntry->value);
         }
 
         index.construct(WTF::move(table));

@@ -265,7 +265,6 @@
 #include "SymbolPrototypeInlines.h"
 #include "SyntheticModuleRecord.h"
 #include "TemporalCalendar.h"
-#include "TemporalCalendarPrototype.h"
 #include "TemporalDuration.h"
 #include "TemporalDurationPrototype.h"
 #include "TemporalInstant.h"
@@ -283,6 +282,8 @@
 #include "TemporalPlainYearMonthPrototype.h"
 #include "TemporalTimeZone.h"
 #include "TemporalTimeZonePrototype.h"
+#include "TemporalZonedDateTime.h"
+#include "TemporalZonedDateTimePrototype.h"
 #include "TopExceptionScope.h"
 #include "VMTrapsInlines.h"
 #include "WaiterListManager.h"
@@ -1192,7 +1193,7 @@ void JSGlobalObject::init(VM& vm)
     m_typedArrayProto.initLater(
         [] (const Initializer<JSTypedArrayViewPrototype>& init) {
             init.set(JSTypedArrayViewPrototype::create(init.vm, init.owner, JSTypedArrayViewPrototype::createStructure(init.vm, init.owner, init.owner->m_objectPrototype.get())));
-            
+
             // Make sure that the constructor gets initialized, too.
             init.owner->m_typedArraySuperConstructor.get(init.owner);
         });
@@ -1203,7 +1204,7 @@ void JSGlobalObject::init(VM& vm)
             prototype->putDirectWithoutTransition(init.vm, init.vm.propertyNames->constructor, constructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
             init.set(constructor);
         });
-    
+
 #define INIT_TYPED_ARRAY_LATER(type) \
     m_typedArray ## type.initLater( \
         [] (LazyClassStructure::Initializer& init) { \
@@ -1222,7 +1223,7 @@ void JSGlobalObject::init(VM& vm)
         });
     FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(INIT_TYPED_ARRAY_LATER)
 #undef INIT_TYPED_ARRAY_LATER
-    
+
     m_typedArrayDataView.initLater(
         [] (LazyClassStructure::Initializer& init) {
             init.setPrototype(JSDataViewPrototype::create(init.vm, init.global, JSDataViewPrototype::createStructure(init.vm, init.global, init.global->m_objectPrototype.get())));
@@ -1253,9 +1254,9 @@ void JSGlobalObject::init(VM& vm)
         [] (const Initializer<Structure>& init) {
             init.set(JSWithScope::createStructure(init.vm, init.owner, jsNull()));
         });
-    
+
     m_nullPrototypeObjectStructure.set(vm, this, JSFinalObject::createStructure(vm, this, jsNull(), JSFinalObject::defaultInlineCapacity));
-    
+
     m_callbackFunctionStructure.initLater(
         [] (const Initializer<Structure>& init) {
             init.set(JSCallbackFunction::createStructure(init.vm, init.owner, init.owner->m_functionPrototype.get()));
@@ -1297,7 +1298,7 @@ void JSGlobalObject::init(VM& vm)
         });
 #endif
     m_arrayPrototype.set(vm, this, ArrayPrototype::create(vm, this, ArrayPrototype::createStructure(vm, this, m_objectPrototype.get())));
-    
+
     m_originalArrayStructureForIndexingShape[arrayIndexFromIndexingType(UndecidedShape)].set(vm, this, JSArray::createStructure(vm, this, m_arrayPrototype.get(), ArrayWithUndecided));
     m_originalArrayStructureForIndexingShape[arrayIndexFromIndexingType(Int32Shape)].set(vm, this, JSArray::createStructure(vm, this, m_arrayPrototype.get(), ArrayWithInt32));
 
@@ -1427,10 +1428,10 @@ void JSGlobalObject::init(VM& vm)
         m_ ## lowerName ## Prototype.set(vm, this, capitalName##Prototype::create(vm, this, capitalName##Prototype::createStructure(vm, this, m_ ## prototypeBase ## Prototype.get()))); \
         m_ ## properName ## Structure.set(vm, this, instanceType::createStructure(vm, this, m_ ## lowerName ## Prototype.get())); \
     }
-    
+
     FOR_EACH_SIMPLE_BUILTIN_TYPE(CREATE_PROTOTYPE_FOR_SIMPLE_TYPE)
     FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(CREATE_PROTOTYPE_FOR_SIMPLE_TYPE)
-    
+
 #undef CREATE_PROTOTYPE_FOR_SIMPLE_TYPE
 
 #define CREATE_PROTOTYPE_FOR_LAZY_TYPE(capitalName, lowerName, properName, instanceType, jsName, prototypeBase, featureFlag) if (featureFlag) {  \
@@ -1441,11 +1442,11 @@ void JSGlobalObject::init(VM& vm)
             init.setConstructor(capitalName ## Constructor::create(init.vm, capitalName ## Constructor::createStructure(init.vm, init.global, init.global->m_functionPrototype.get()), uncheckedDowncast<capitalName ## Prototype>(init.prototype))); \
         }); \
     }
-    
+
     FOR_EACH_LAZY_BUILTIN_TYPE(CREATE_PROTOTYPE_FOR_LAZY_TYPE)
 
 #undef CREATE_PROTOTYPE_FOR_LAZY_TYPE
-    
+
     // Constructors
 
     ObjectConstructor* objectConstructor = ObjectConstructor::create(vm, this, ObjectConstructor::createStructure(vm, this, m_functionPrototype.get()), m_objectPrototype.get());
@@ -1476,7 +1477,7 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
         m_ ## lowerName ## Prototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, lowerName ## Constructor, static_cast<unsigned>(PropertyAttribute::DontEnum)); \
 
     FOR_EACH_SIMPLE_BUILTIN_TYPE(CREATE_CONSTRUCTOR_FOR_SIMPLE_TYPE)
-    
+
 #undef CREATE_CONSTRUCTOR_FOR_SIMPLE_TYPE
 
     m_promiseConstructor.set(vm, this, promiseConstructor);
@@ -1543,13 +1544,13 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     m_asyncGeneratorPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, m_asyncGeneratorFunctionPrototype.get(), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
     m_asyncGeneratorFunctionPrototype->putDirectWithoutTransition(vm, vm.propertyNames->prototype, m_asyncGeneratorPrototype.get(), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
     m_asyncGeneratorStructure.set(vm, this, JSAsyncGenerator::createStructure(vm, this, m_asyncGeneratorPrototype.get()));
-    
+
     m_objectPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, objectConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
     m_functionPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, functionConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
     m_arrayPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, arrayConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
     m_regExpPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, regExpConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
     m_shadowRealmPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, shadowRealmConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    
+
     putDirectWithoutTransition(vm, vm.propertyNames->Object, objectConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->Function, functionConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->Array, arrayConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
@@ -1760,13 +1761,6 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     putDirectWithoutTransition(vm, vm.propertyNames->Intl, intl, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
     if (Options::useTemporal()) {
-        m_calendarStructure.initLater(
-            [] (const Initializer<Structure>& init) {
-                JSGlobalObject* globalObject = init.owner;
-                TemporalCalendarPrototype* calendarPrototype = TemporalCalendarPrototype::create(init.vm, globalObject, TemporalCalendarPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
-                init.set(TemporalCalendar::createStructure(init.vm, globalObject, calendarPrototype));
-            });
-
         m_durationStructure.initLater(
             [] (const Initializer<Structure>& init) {
                 JSGlobalObject* globalObject = init.owner;
@@ -1821,6 +1815,13 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
                 JSGlobalObject* globalObject = init.owner;
                 TemporalTimeZonePrototype* timeZonePrototype = TemporalTimeZonePrototype::create(init.vm, globalObject, TemporalTimeZonePrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
                 init.set(TemporalTimeZone::createStructure(init.vm, globalObject, timeZonePrototype));
+            });
+
+        m_zonedDateTimeStructure.initLater(
+            [] (const Initializer<Structure>& init) {
+                auto* globalObject = init.owner;
+                auto* zonedDateTimePrototype = TemporalZonedDateTimePrototype::create(init.vm, globalObject, TemporalZonedDateTimePrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
+                init.set(TemporalZonedDateTime::createStructure(init.vm, globalObject, zonedDateTimePrototype));
             });
 
         TemporalObject* temporal = TemporalObject::create(vm, TemporalObject::createStructure(vm, this));
@@ -2211,7 +2212,7 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     }
 
     initStaticGlobals(vm);
-    
+
     if (Options::useDollarVM()) [[unlikely]]
         exposeDollarVM(vm);
 
@@ -2466,12 +2467,12 @@ void JSGlobalObject::addSymbolTableEntry(const Identifier& ident)
 {
     ConcurrentJSLocker locker(symbolTable()->m_lock);
     ASSERT(!symbolTable()->contains(locker, ident.impl()));
-    
+
     ScopeOffset offset = symbolTable()->takeNextScopeOffset(locker);
     SymbolTableEntry newEntry(VarOffset(offset), 0);
     newEntry.prepareToWatch();
     symbolTable()->add(locker, ident.impl(), WTF::move(newEntry));
-    
+
     ScopeOffset offsetForAssert = addVariables(1, jsUndefined());
     RELEASE_ASSERT(offsetForAssert == offset);
 }
@@ -2787,7 +2788,7 @@ void JSGlobalObject::clearStructureCache(VM& vm)
 void JSGlobalObject::haveABadTime(VM& vm)
 {
     ASSERT(&vm == &this->vm());
-    
+
     if (isHavingABadTime())
         return;
 
@@ -2850,7 +2851,7 @@ void JSGlobalObject::haveABadTime(VM& vm)
     // bad time, and convert all affected objects to SlowPutArrayStorage.
 
     fireWatchpointAndMakeAllArrayStructuresSlowPut(vm); // Step 1 above.
-    
+
     Vector<JSObject*> foundObjects;
     ObjectsWithBrokenIndexingFinder<BadTimeFinderMode::SingleGlobal> finder(foundObjects, this);
     {
@@ -2923,7 +2924,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 template<typename Visitor>
 void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
-{ 
+{
     JSGlobalObject* thisObject = uncheckedDowncast<JSGlobalObject>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
@@ -2977,7 +2978,6 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     thisObject->m_dateTimeFormatStructure.visit(visitor);
     thisObject->m_numberFormatStructure.visit(visitor);
 
-    thisObject->m_calendarStructure.visit(visitor);
     thisObject->m_durationStructure.visit(visitor);
     thisObject->m_instantStructure.visit(visitor);
     thisObject->m_plainDateStructure.visit(visitor);
@@ -2986,6 +2986,7 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     thisObject->m_plainTimeStructure.visit(visitor);
     thisObject->m_plainYearMonthStructure.visit(visitor);
     thisObject->m_timeZoneStructure.visit(visitor);
+    thisObject->m_zonedDateTimeStructure.visit(visitor);
 
     visitor.append(thisObject->m_nullGetterFunction);
     visitor.append(thisObject->m_nullSetterFunction);
@@ -3143,7 +3144,7 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
         thisObject->lazyTypedArrayStructure(indexToTypedArrayType(i)).visit(visitor);
         thisObject->lazyResizableOrGrowableSharedTypedArrayStructure(indexToTypedArrayType(i)).visit(visitor);
     }
-    
+
     visitor.append(thisObject->m_arraySpeciesGetterSetter);
     visitor.append(thisObject->m_typedArraySpeciesGetterSetter);
     visitor.append(thisObject->m_arrayBufferSpeciesGetterSetter);
@@ -3203,7 +3204,7 @@ void JSGlobalObject::addStaticGlobals(std::span<GlobalPropertyInfo> globals)
         // We won't be able to declare a global lexical variable with the sanem name to
         // the static globals because configurable = false.
         ASSERT(global.attributes & PropertyAttribute::DontDelete);
-        
+
         WatchpointSet* watchpointSet = nullptr;
         WriteBarrierBase<Unknown>* variable = nullptr;
         {
@@ -3769,8 +3770,8 @@ void JSGlobalObject::setDebugger(Debugger* debugger)
         vm().ensureShadowChicken();
 }
 
-bool JSGlobalObject::hasInteractiveDebugger() const 
-{ 
+bool JSGlobalObject::hasInteractiveDebugger() const
+{
     return m_debugger && m_debugger->isInteractivelyDebugging();
 }
 

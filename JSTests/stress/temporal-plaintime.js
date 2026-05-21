@@ -146,7 +146,7 @@ shouldBe(String(Temporal.PlainTime.from('2007-01-09 03:24:30[u-ca=japanese]')), 
     shouldBe(Temporal.PlainTime.from(dateTime).toString(), time.toString());
 
     shouldBe(time.toJSON(), time.toString());
-    shouldBe(time.toLocaleString(), time.toString());
+    shouldBe(typeof time.toLocaleString(), 'string');
 }
 {
     let time = Temporal.PlainTime.from({
@@ -242,9 +242,6 @@ let failures = [
     "1995-12-07T03:24:30+01:00[-/_]",
     "1995-12-07T03:24:30+01:00[_/-]",
     "1995-12-07T03:24:30+01:00[CocoaCappuccinoMatcha]",
-    "1995-12-07T03:24:30+01:00[Etc/GMT+50]",
-    "1995-12-07T03:24:30+01:00[Etc/GMT+0]",
-    "1995-12-07T03:24:30+01:00[Etc/GMT0]",
     "1995-12-07T03:24:30+10:20:30.0123456789",
     "1995-12-07 03:24:30+01:00[Etc/GMT\u221201]",
     "1995-12-07 03:24:30+01:00[+02:00:00.0123456789]",
@@ -276,13 +273,6 @@ for (let text of failures) {
     let three = Temporal.PlainTime.from('01:24:05');
     let sorted = [one, two, three].sort(Temporal.PlainTime.compare);
     shouldBe(sorted.join(' '), `01:24:00 01:24:05 03:24:00`);
-}
-
-shouldBe(String(Temporal.PlainTime.from("20:34").calendar), `iso8601`);
-shouldBe(Temporal.PlainTime.from("20:34").calendar instanceof Temporal.Calendar, true);
-{
-    let time = Temporal.PlainTime.from("20:34");
-    shouldBe(time.calendar, time.calendar);
 }
 
 {
@@ -332,7 +322,12 @@ shouldThrow(() => {
 }, TypeError);
 {
     let time = Temporal.PlainTime.from('19:39:09.068346205');
-    shouldBe(JSON.stringify(time.getISOFields()), `{"calendar":"iso8601","isoHour":19,"isoMicrosecond":346,"isoMillisecond":68,"isoMinute":39,"isoNanosecond":205,"isoSecond":9}`);
+    shouldBe(time.hour, 19);
+    shouldBe(time.minute, 39);
+    shouldBe(time.second, 9);
+    shouldBe(time.millisecond, 68);
+    shouldBe(time.microsecond, 346);
+    shouldBe(time.nanosecond, 205);
 }
 {
     let max = 1 ** 53;

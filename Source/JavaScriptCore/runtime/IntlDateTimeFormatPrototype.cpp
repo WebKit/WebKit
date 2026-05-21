@@ -33,6 +33,12 @@
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "TemporalInstant.h"
+#include "TemporalPlainDate.h"
+#include "TemporalPlainDateTime.h"
+#include "TemporalPlainMonthDay.h"
+#include "TemporalPlainTime.h"
+#include "TemporalPlainYearMonth.h"
+#include "TemporalZonedDateTime.h"
 #include <wtf/DateMath.h>
 
 namespace JSC {
@@ -87,25 +93,169 @@ void IntlDateTimeFormatPrototype::finishCreation(VM& vm, JSGlobalObject* globalO
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
+struct DateTimeValueRecord {
+    double value;
+    IntlDateTimeFormat::TemporalFieldKind kind;
+};
+
+static bool isTemporalObject(JSValue x)
+{
+    return dynamicDowncast<TemporalInstant>(x)
+        || dynamicDowncast<TemporalPlainDate>(x)
+        || dynamicDowncast<TemporalPlainDateTime>(x)
+        || dynamicDowncast<TemporalPlainTime>(x)
+        || dynamicDowncast<TemporalPlainYearMonth>(x)
+        || dynamicDowncast<TemporalPlainMonthDay>(x)
+        || dynamicDowncast<TemporalZonedDateTime>(x);
+}
+
+static bool sameTemporalType(JSValue x, JSValue y)
+{
+    if (!isTemporalObject(x) || !isTemporalObject(y))
+        return false;
+    if (dynamicDowncast<TemporalInstant>(x) && !dynamicDowncast<TemporalInstant>(y))
+        return false;
+    if (dynamicDowncast<TemporalPlainDate>(x) && !dynamicDowncast<TemporalPlainDate>(y))
+        return false;
+    if (dynamicDowncast<TemporalPlainDateTime>(x) && !dynamicDowncast<TemporalPlainDateTime>(y))
+        return false;
+    if (dynamicDowncast<TemporalPlainTime>(x) && !dynamicDowncast<TemporalPlainTime>(y))
+        return false;
+    if (dynamicDowncast<TemporalPlainYearMonth>(x) && !dynamicDowncast<TemporalPlainYearMonth>(y))
+        return false;
+    if (dynamicDowncast<TemporalPlainMonthDay>(x) && !dynamicDowncast<TemporalPlainMonthDay>(y))
+        return false;
+    if (dynamicDowncast<TemporalZonedDateTime>(x) && !dynamicDowncast<TemporalZonedDateTime>(y))
+        return false;
+    return true;
+}
+
+static String getTemporalCalendarId(JSValue x)
+{
+    if (auto* pd = dynamicDowncast<TemporalPlainDate>(x))
+        return pd->calendarId();
+    if (auto* pdt = dynamicDowncast<TemporalPlainDateTime>(x))
+        return pdt->calendarId();
+    if (auto* pym = dynamicDowncast<TemporalPlainYearMonth>(x))
+        return pym->calendarId();
+    if (auto* pmd = dynamicDowncast<TemporalPlainMonthDay>(x))
+        return pmd->calendarId();
+    return String();
+}
+
+static bool temporalCalendarMatchesICUCalendar(StringView temporalId, const String& icuCalId)
+{
+    return IntlDateTimeFormat::calendarMatchesICU(temporalId, icuCalId);
+}
+
 // HandleDateTimeValue ( dateTimeFormat, x )
 // https://tc39.es/proposal-temporal/#sec-temporal-handledatetimevalue
-static double handleDateTimeValue(JSGlobalObject* globalObject, JSValue x)
+static DateTimeValueRecord handleDateTimeValue(JSGlobalObject* globalObject, const IntlDateTimeFormat* dtf, JSValue x)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (x.isUndefined())
-        RELEASE_AND_RETURN(scope, dateNowImpl().toNumber(globalObject));
+    using Kind = IntlDateTimeFormat::TemporalFieldKind;
+    using Style = IntlDateTimeFormat::DateTimeStyle;
 
-    // FIXME:
-    //  - Add all of the other Temporal types
-    //  - Work in epoch nanoseconds
-    //  - Return UDateFormat and UDateIntervalFormat depending on the type
-    TemporalInstant* instant = dynamicDowncast<TemporalInstant>(x);
-    if (instant)
-        return instant->exactTime().epochMilliseconds();
+    if (x.isUndefined()) {
+        double now = dateNowImpl().toNumber(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+        return { now, IntlDateTimeFormat::TemporalFieldKind::None };
+    }
 
-    RELEASE_AND_RETURN(scope, WTF::timeClip(x.toNumber(globalObject)));
+    if (auto* instant = dynamicDowncast<TemporalInstant>(x))
+        return { static_cast<double>(instant->exactTime().epochMilliseconds()), IntlDateTimeFormat::TemporalFieldKind::Instant };
+
+    if (dynamicDowncast<TemporalZonedDateTime>(x)) {
+        throwTypeError(globalObject, scope, "Temporal.ZonedDateTime is not supported in Intl.DateTimeFormat; use toLocaleString() or convert to PlainDateTime first"_s);
+        return { };
+    }
+
+    // Helpers for style validation per V8/spec.
+    auto rejectTimeOnlyStyle = [&]() -> bool {
+        if (dtf && dtf->dateStyle() == Style::None && dtf->timeStyle() != Style::None) {
+            throwTypeError(globalObject, scope, "Cannot format a date-only Temporal object with a time-only DateTimeFormat (timeStyle without dateStyle)"_s);
+            return true;
+        }
+        return false;
+    };
+    auto rejectDateOnlyStyle = [&]() -> bool {
+        if (dtf && dtf->dateStyle() != Style::None && dtf->timeStyle() == Style::None) {
+            throwTypeError(globalObject, scope, "Cannot format a time-only Temporal object with a date-only DateTimeFormat (dateStyle without timeStyle)"_s);
+            return true;
+        }
+        return false;
+    };
+
+    auto validateCalendar = [&](StringView calendarId, Kind kind) -> bool {
+        if (!dtf || calendarId == "iso8601"_s)
+            return false;
+        if ((kind == Kind::PlainDate || kind == Kind::PlainDateTime) && calendarId == "iso8601"_s)
+            return false;
+        if (!temporalCalendarMatchesICUCalendar(calendarId, dtf->ensureCalendar())) {
+            throwRangeError(globalObject, scope, "Temporal object's calendar does not match DateTimeFormat calendar"_s);
+            return true;
+        }
+        return false;
+    };
+
+    if (auto* plainDate = dynamicDowncast<TemporalPlainDate>(x)) {
+        if (rejectTimeOnlyStyle())
+            return { };
+        if (validateCalendar(plainDate->calendarId(), Kind::PlainDate))
+            return { };
+        auto et = ISO8601::ExactTime::fromISOPartsAndOffset(
+            plainDate->year(), plainDate->month(), plainDate->day(), 12, 0, 0, 0, 0, 0, 0);
+        return { static_cast<double>(et.epochMilliseconds()), Kind::PlainDate };
+    }
+
+    if (auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(x)) {
+        if (validateCalendar(plainDateTime->calendarId(), Kind::PlainDateTime))
+            return { };
+        auto d = plainDateTime->plainDate();
+        auto t = plainDateTime->plainTime();
+        auto et = ISO8601::ExactTime::fromISOPartsAndOffset(
+            d.year(), d.month(), d.day(), t.hour(), t.minute(), t.second(),
+            t.millisecond(), t.microsecond(), t.nanosecond(), 0);
+        return { static_cast<double>(et.epochMilliseconds()), Kind::PlainDateTime };
+    }
+
+    if (auto* plainTime = dynamicDowncast<TemporalPlainTime>(x)) {
+        if (rejectDateOnlyStyle())
+            return { };
+        auto t = plainTime->plainTime();
+        auto et = ISO8601::ExactTime::fromISOPartsAndOffset(
+            1970, 1, 1, t.hour(), t.minute(), t.second(),
+            t.millisecond(), t.microsecond(), t.nanosecond(), 0);
+        return { static_cast<double>(et.epochMilliseconds()), Kind::PlainTime };
+    }
+
+    if (auto* yearMonth = dynamicDowncast<TemporalPlainYearMonth>(x)) {
+        if (rejectTimeOnlyStyle())
+            return { };
+        if (validateCalendar(yearMonth->calendarId(), Kind::PlainYearMonth))
+            return { };
+        auto et = ISO8601::ExactTime::fromISOPartsAndOffset(
+            yearMonth->year(), yearMonth->month(), 1, 12, 0, 0, 0, 0, 0, 0);
+        return { static_cast<double>(et.epochMilliseconds()), Kind::PlainYearMonth };
+    }
+
+    if (auto* monthDay = dynamicDowncast<TemporalPlainMonthDay>(x)) {
+        if (rejectTimeOnlyStyle())
+            return { };
+        if (validateCalendar(monthDay->calendarId(), Kind::PlainMonthDay))
+            return { };
+        auto md = monthDay->plainMonthDay();
+        auto& d = md.isoPlainDate();
+        auto et = ISO8601::ExactTime::fromISOPartsAndOffset(
+            d.year(), d.month(), d.day(), 12, 0, 0, 0, 0, 0, 0);
+        return { static_cast<double>(et.epochMilliseconds()), Kind::PlainMonthDay };
+    }
+
+    double clipped = WTF::timeClip(x.toNumber(globalObject));
+    RETURN_IF_EXCEPTION(scope, { });
+    return { clipped, IntlDateTimeFormat::TemporalFieldKind::None };
 }
 
 JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatFuncFormatDateTime, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -116,14 +266,14 @@ JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatFuncFormatDateTime, (JSGlobalObject* 
     // https://tc39.github.io/ecma402/#sec-formatdatetime
 
     IntlDateTimeFormat* format = dynamicDowncast<IntlDateTimeFormat>(callFrame->thisValue());
-    if (!format) [[unlikely]]
-        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.format called on value that's not a DateTimeFormat"_s));
+    if (!format)
+        [[unlikely]] return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.format called on value that's not a DateTimeFormat"_s));
 
     JSValue date = callFrame->argument(0);
-    double value = handleDateTimeValue(globalObject, date);
+    auto record = handleDateTimeValue(globalObject, format, date);
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(format->format(globalObject, value)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(format->format(globalObject, record.value, record.kind)));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(intlDateTimeFormatPrototypeGetterFormat, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
@@ -136,8 +286,8 @@ JSC_DEFINE_CUSTOM_GETTER(intlDateTimeFormatPrototypeGetterFormat, (JSGlobalObjec
     auto* dtf = IntlDateTimeFormat::unwrapForOldFunctions(globalObject, JSValue::decode(thisValue));
     RETURN_IF_EXCEPTION(scope, { });
     // 2. ReturnIfAbrupt(dtf).
-    if (!dtf) [[unlikely]]
-        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.format called on value that's not a DateTimeFormat"_s));
+    if (!dtf)
+        [[unlikely]] return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.format called on value that's not a DateTimeFormat"_s));
 
     JSBoundFunction* boundFormat = dtf->boundFormat();
     // 3. If the [[boundFormat]] internal slot of this DateTimeFormat object is undefined,
@@ -169,14 +319,14 @@ JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatPrototypeFuncFormatToParts, (JSGlobal
 
     // Do not use unwrapForOldFunctions.
     auto* dateTimeFormat = dynamicDowncast<IntlDateTimeFormat>(callFrame->thisValue());
-    if (!dateTimeFormat) [[unlikely]]
-        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.formatToParts called on value that's not a DateTimeFormat"_s));
+    if (!dateTimeFormat)
+        [[unlikely]] return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.formatToParts called on value that's not a DateTimeFormat"_s));
 
     JSValue date = callFrame->argument(0);
-    double value = handleDateTimeValue(globalObject, date);
+    auto record = handleDateTimeValue(globalObject, dateTimeFormat, date);
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->formatToParts(globalObject, value)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->formatToParts(globalObject, record.value, record.kind)));
 }
 
 // http://tc39.es/proposal-intl-DateTimeFormat-formatRange/#sec-intl.datetimeformat.prototype.formatRange
@@ -187,8 +337,8 @@ JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatPrototypeFuncFormatRange, (JSGlobalOb
 
     // Do not use unwrapForOldFunctions.
     auto* dateTimeFormat = dynamicDowncast<IntlDateTimeFormat>(callFrame->thisValue());
-    if (!dateTimeFormat) [[unlikely]]
-        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.formatRange called on value that's not a DateTimeFormat"_s));
+    if (!dateTimeFormat)
+        [[unlikely]] return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.formatRange called on value that's not a DateTimeFormat"_s));
 
     JSValue startDateValue = callFrame->argument(0);
     JSValue endDateValue = callFrame->argument(1);
@@ -196,12 +346,31 @@ JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatPrototypeFuncFormatRange, (JSGlobalOb
     if (startDateValue.isUndefined() || endDateValue.isUndefined())
         return throwVMTypeError(globalObject, scope, "startDate or endDate is undefined"_s);
 
-    double startDate = handleDateTimeValue(globalObject, startDateValue);
+    // Spec: ToDateTimeFormattable converts non-Temporal values to numbers first.
+    if (!isTemporalObject(startDateValue)) {
+        startDateValue = jsNumber(startDateValue.toNumber(globalObject));
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+    if (!isTemporalObject(endDateValue)) {
+        endDateValue = jsNumber(endDateValue.toNumber(globalObject));
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    if (isTemporalObject(startDateValue) || isTemporalObject(endDateValue)) {
+        if (!sameTemporalType(startDateValue, endDateValue))
+            return throwVMTypeError(globalObject, scope, "formatRange requires both arguments to be the same Temporal type"_s);
+        auto startCal = getTemporalCalendarId(startDateValue);
+        auto endCal = getTemporalCalendarId(endDateValue);
+        if (!startCal.isNull() && !endCal.isNull() && startCal != endCal)
+            return throwVMRangeError(globalObject, scope, "formatRange requires both arguments to have the same calendar"_s);
+    }
+
+    auto startRecord = handleDateTimeValue(globalObject, dateTimeFormat, startDateValue);
     RETURN_IF_EXCEPTION(scope, { });
-    double endDate = handleDateTimeValue(globalObject, endDateValue);
+    auto endRecord = handleDateTimeValue(globalObject, dateTimeFormat, endDateValue);
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->formatRange(globalObject, startDate, endDate)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->formatRange(globalObject, startRecord.value, endRecord.value, startRecord.kind)));
 }
 
 // http://tc39.es/proposal-intl-DateTimeFormat-formatRange/#sec-intl.datetimeformat.prototype.formatRangeToParts
@@ -212,8 +381,8 @@ JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatPrototypeFuncFormatRangeToParts, (JSG
 
     // Do not use unwrapForOldFunctions.
     auto* dateTimeFormat = dynamicDowncast<IntlDateTimeFormat>(callFrame->thisValue());
-    if (!dateTimeFormat) [[unlikely]]
-        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.formatRangeToParts called on value that's not a DateTimeFormat"_s));
+    if (!dateTimeFormat)
+        [[unlikely]] return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.formatRangeToParts called on value that's not a DateTimeFormat"_s));
 
     JSValue startDateValue = callFrame->argument(0);
     JSValue endDateValue = callFrame->argument(1);
@@ -221,12 +390,30 @@ JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatPrototypeFuncFormatRangeToParts, (JSG
     if (startDateValue.isUndefined() || endDateValue.isUndefined())
         return throwVMTypeError(globalObject, scope, "startDate or endDate is undefined"_s);
 
-    double startDate = handleDateTimeValue(globalObject, startDateValue);
+    if (!isTemporalObject(startDateValue)) {
+        startDateValue = jsNumber(startDateValue.toNumber(globalObject));
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+    if (!isTemporalObject(endDateValue)) {
+        endDateValue = jsNumber(endDateValue.toNumber(globalObject));
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    if (isTemporalObject(startDateValue) || isTemporalObject(endDateValue)) {
+        if (!sameTemporalType(startDateValue, endDateValue))
+            return throwVMTypeError(globalObject, scope, "formatRangeToParts requires both arguments to be the same Temporal type"_s);
+        auto startCal = getTemporalCalendarId(startDateValue);
+        auto endCal = getTemporalCalendarId(endDateValue);
+        if (!startCal.isNull() && !endCal.isNull() && startCal != endCal)
+            return throwVMRangeError(globalObject, scope, "formatRangeToParts requires both arguments to have the same calendar"_s);
+    }
+
+    auto startRecord = handleDateTimeValue(globalObject, dateTimeFormat, startDateValue);
     RETURN_IF_EXCEPTION(scope, { });
-    double endDate = handleDateTimeValue(globalObject, endDateValue);
+    auto endRecord = handleDateTimeValue(globalObject, dateTimeFormat, endDateValue);
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->formatRangeToParts(globalObject, startDate, endDate)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->formatRangeToParts(globalObject, startRecord.value, endRecord.value, startRecord.kind)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatPrototypeFuncResolvedOptions, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -238,8 +425,8 @@ JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatPrototypeFuncResolvedOptions, (JSGlob
 
     auto* dateTimeFormat = IntlDateTimeFormat::unwrapForOldFunctions(globalObject, callFrame->thisValue());
     RETURN_IF_EXCEPTION(scope, { });
-    if (!dateTimeFormat) [[unlikely]]
-        return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.resolvedOptions called on value that's not a DateTimeFormat"_s));
+    if (!dateTimeFormat)
+        [[unlikely]] return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.resolvedOptions called on value that's not a DateTimeFormat"_s));
 
     RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->resolvedOptions(globalObject)));
 }

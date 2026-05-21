@@ -53,8 +53,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSPromisePrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSWebAssembly.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JavaScriptCore_BUILTINS_DEPENDENCIES_LIST
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/KeywordLookup.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/LexerUnicodePropertyTables.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/Lexer.lut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/LexerUnicodePropertyTables.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/MapConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/NumberConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/NumberPrototype.lut.h
@@ -68,8 +68,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/StringConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/StringPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/SymbolConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/SymbolPrototype.lut.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalCalendarConstructor.lut.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalCalendarPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalDurationConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalDurationPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalInstantConstructor.lut.h
@@ -88,6 +86,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalPlainYearMonthConstr
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalPlainYearMonthPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalTimeZoneConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalTimeZonePrototype.lut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalZonedDateTimeConstructor.lut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalZonedDateTimePrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/UnicodePatternTables.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WasmOMGIRGeneratorInlines.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/WasmOps.h

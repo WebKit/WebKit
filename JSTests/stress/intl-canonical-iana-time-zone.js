@@ -5,7 +5,7 @@
 // [[Identifier]] (case-normalized accepted form) — not [[PrimaryIdentifier]].
 // The canonicalization to the IANA primary still happens internally for ICU
 // formatting (so legacy aliases produce the same formatted output as their
-// primary), and it is observable through Temporal.TimeZone.id.
+// primary), and it is observable through Temporal.ZonedDateTime.prototype.equals().
 
 function shouldBe(actual, expected) {
     if (actual !== expected)
@@ -87,9 +87,9 @@ for (const tz of legacy) {
     new Date(0).toLocaleString("en", { timeZone: tz });
 }
 
-// Temporal.TimeZone uses the same hashmap-backed TimeZoneID lookup as Intl, so
-// legacy aliases must also be accepted there. Unlike Intl.DateTimeFormat,
-// Temporal.TimeZone.id surfaces the canonicalized primary identifier.
+// Temporal.ZonedDateTime uses the same hashmap-backed TimeZoneID lookup as Intl, so
+// legacy aliases must also be accepted there. ZonedDateTime.prototype.equals() uses
+// TimeZoneEquals internally, which recognises legacy ↔ primary as the same timezone.
 if (typeof Temporal !== "undefined") {
     const pairs = [
         ["Asia/Calcutta",          "Asia/Kolkata"],
@@ -104,7 +104,6 @@ if (typeof Temporal !== "undefined") {
         ["Zulu",                   "UTC"],
     ];
     for (const [legacy, primary] of pairs) {
-        shouldBe(new Temporal.TimeZone(legacy).id, primary);
-        shouldBe(Temporal.TimeZone.from(legacy).id, primary);
+        shouldBeTrue(new Temporal.ZonedDateTime(0n, legacy).equals(new Temporal.ZonedDateTime(0n, primary)));
     }
 }

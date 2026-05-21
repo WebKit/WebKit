@@ -34,6 +34,7 @@
 #include "TemporalCalendar.h"
 #include "TemporalObject.h"
 #include <cstdint>
+#include <wtf/DataLog.h>
 #include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
 
@@ -354,8 +355,12 @@ TemporalResult<ResolvedCalendarDate> monthDayFromFields(CalendarID calendarId, c
     static const int32_t chineseEpochOffset = chineseExtYear1972 - 1972;
     auto calStr = calendarIDToString(calendarId);
     bool isChineseOrDangi = (calStr == "chinese"_s || calStr == "dangi"_s);
-    if (!fields.year && isChineseOrDangi)
+    if (!fields.year && isChineseOrDangi) {
+        dataLogLn("[TemporalDebug] calendarMonthDayFromFields: cal=", calStr,
+            " ecmaRefYear=", (int)year, " chineseExtYear1972=", (int)chineseExtYear1972,
+            " offset=", (int)chineseEpochOffset, " finalYear=", (int)(year + chineseEpochOffset));
         year += chineseEpochOffset;
+    }
     std::optional<StringView> era;
     if (fields.era)
         era = StringView(*fields.era);

@@ -29,6 +29,7 @@ info: |
            e. Increment n by 1.
     5. Return result.
 locale: [en-US, de-AT]
+features: [Temporal]
 ---*/
 
 function findPart(parts, expectedType) {

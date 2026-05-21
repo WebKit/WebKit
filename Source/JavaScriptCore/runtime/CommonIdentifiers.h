@@ -116,6 +116,7 @@
     macro(descriptions) \
     macro(detached) \
     macro(detail) \
+    macro(disambiguation) \
     macro(displayName) \
     macro(done) \
     macro(dotAll) \
@@ -230,6 +231,7 @@
     macro(numberingSystem) \
     macro(numeric) \
     macro(of) \
+    macro(offset) \
     macro(omitPadding) \
     macro(opcode) \
     macro(origin) \
@@ -421,9 +423,9 @@
     macro(undefined) \
 
 namespace JSC {
-    
+
     class BuiltinNames;
-    
+
     class CommonIdentifiers {
         WTF_MAKE_NONCOPYABLE(CommonIdentifiers);
         WTF_MAKE_TZONE_ALLOCATED(CommonIdentifiers);
@@ -431,7 +433,7 @@ namespace JSC {
         CommonIdentifiers(VM&);
         ~CommonIdentifiers();
         friend class VM;
-        
+
     public:
         const BuiltinNames& builtinNames() const { return *m_builtinNames; }
         const Identifier nullIdentifier;
@@ -448,11 +450,11 @@ namespace JSC {
 #define JSC_IDENTIFIER_DECLARE_PARSER_PRIVATE_NAME(name) const Identifier name##PrivateName;
         JSC_PARSER_PRIVATE_NAMES(JSC_IDENTIFIER_DECLARE_PARSER_PRIVATE_NAME)
 #undef JSC_IDENTIFIER_DECLARE_PARSER_PRIVATE_NAME
-        
+
 #define JSC_IDENTIFIER_DECLARE_KEYWORD_NAME_GLOBAL(name) const Identifier name##Keyword;
         JSC_COMMON_IDENTIFIERS_EACH_KEYWORD(JSC_IDENTIFIER_DECLARE_KEYWORD_NAME_GLOBAL)
 #undef JSC_IDENTIFIER_DECLARE_KEYWORD_NAME_GLOBAL
-        
+
 #define JSC_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL(name) const Identifier name;
         JSC_COMMON_IDENTIFIERS_EACH_PROPERTY_NAME(JSC_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL)
 #undef JSC_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL
@@ -467,7 +469,7 @@ namespace JSC {
         JSC_COMMON_IDENTIFIERS_EACH_PRIVATE_FIELD(JSC_IDENTIFIER_DECLARE_PRIVATE_FIELD_GLOBAL)
 #undef JSC_IDENTIFIER_DECLARE_PRIVATE_FIELD_GLOBAL
 
-        // Callers of this method should make sure that identifiers given to this method 
+        // Callers of this method should make sure that identifiers given to this method
         // survive the lifetime of CommonIdentifiers and related VM.
         JS_EXPORT_PRIVATE void appendExternalName(const Identifier& publicName, const Identifier& privateName);
     };

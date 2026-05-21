@@ -26,8 +26,6 @@
 #pragma once
 
 #include <JavaScriptCore/ISO8601.h>
-#include <JavaScriptCore/LazyProperty.h>
-#include <JavaScriptCore/TemporalCalendar.h>
 
 namespace JSC {
 
@@ -55,9 +53,9 @@ public:
     static ISO8601::Duration NODELETE addTime(const ISO8601::PlainTime&, const ISO8601::Duration&);
 
     static TemporalPlainTime* from(JSGlobalObject*, JSValue, JSObject*);
+    static TemporalPlainTime* from(JSGlobalObject*, JSValue item, JSValue options);
     static int32_t NODELETE compare(const ISO8601::PlainTime&, const ISO8601::PlainTime&);
 
-    TemporalCalendar* calendar() LIFETIME_BOUND { return m_calendar.get(this); }
     ISO8601::PlainTime plainTime() const { return m_plainTime; }
 
 #define JSC_DEFINE_TEMPORAL_PLAIN_TIME_FIELD(name, capitalizedName) \
@@ -76,8 +74,6 @@ public:
     ISO8601::Duration until(JSGlobalObject*, TemporalPlainTime*, JSValue options) const;
     ISO8601::Duration since(JSGlobalObject*, TemporalPlainTime*, JSValue options) const;
 
-    DECLARE_VISIT_CHILDREN;
-
 private:
     TemporalPlainTime(VM&, Structure*, ISO8601::PlainTime&&);
     void finishCreation(VM&);
@@ -89,7 +85,6 @@ private:
     ISO8601::Duration differenceTemporalPlainTime(DifferenceOperation, JSGlobalObject*, TemporalPlainTime*, JSValue) const;
 
     ISO8601::PlainTime m_plainTime;
-    LazyProperty<TemporalPlainTime, TemporalCalendar> m_calendar;
 };
 
 } // namespace JSC

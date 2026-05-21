@@ -112,7 +112,21 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainYearMonth, (JSGlobalObject* globa
     if (argumentCount < 2) [[unlikely]]
         return throwVMRangeError(globalObject, scope, "Temporal.PlainYearMonth requires at least two arguments"_s);
 
-    // Argument 2 is calendar -- ignored for now. FIXME
+    // Stage 4: optional calendarId at argument index 2 — must be a String or undefined.
+    String calId = "iso8601"_s;
+    if (argumentCount > 2) {
+        JSValue calendarArg = callFrame->uncheckedArgument(2);
+        if (!calendarArg.isUndefined()) {
+            if (!calendarArg.isString())
+                return throwVMTypeError(globalObject, scope, "calendarId must be a string"_s);
+            auto rawCalendarId = asString(calendarArg)->value(globalObject);
+            RETURN_IF_EXCEPTION(scope, { });
+            auto canonicalized = isBuiltinCalendar(rawCalendarId);
+            if (!canonicalized)
+                return throwVMRangeError(globalObject, scope, "invalid calendar ID"_s);
+            calId = intlAvailableCalendars().at(*canonicalized);
+        }
+    }
 
     double referenceDay = 1;
     if (argumentCount > 3) {
@@ -138,7 +152,11 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainYearMonth, (JSGlobalObject* globa
     if (!isInBounds<int32_t>(referenceDay)) [[unlikely]]
         return throwVMRangeError(globalObject, scope, "reference day is out of range"_s);
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainYearMonth::tryCreateIfValid(globalObject, structure, ISO8601::PlainDate(static_cast<int32_t>(isoYear), static_cast<unsigned>(isoMonth), static_cast<unsigned>(referenceDay)))));
+    auto* result = TemporalPlainYearMonth::tryCreateIfValid(globalObject, structure, ISO8601::PlainDate(static_cast<int32_t>(isoYear), static_cast<unsigned>(isoMonth), static_cast<unsigned>(referenceDay)));
+    RETURN_IF_EXCEPTION(scope, { });
+    if (result && calId != "iso8601"_s)
+        result->setCalendarId(calId);
+    return JSValue::encode(result);
 }
 
 JSC_DEFINE_HOST_FUNCTION(callTemporalPlainYearMonth, (JSGlobalObject* globalObject, CallFrame*))
@@ -179,7 +197,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthConstructorFuncCompare, (JSGlobal
     auto* two = TemporalPlainYearMonth::from(globalObject, callFrame->argument(1), jsUndefined());
     RETURN_IF_EXCEPTION(scope, { });
 
-    return JSValue::encode(jsNumber(TemporalCalendar::isoDateCompare(
+    return JSValue::encode(jsNumber(TemporalCore::isoDateCompare(
         one->plainYearMonth().isoPlainDate(), two->plainYearMonth().isoPlainDate())));
 }
 

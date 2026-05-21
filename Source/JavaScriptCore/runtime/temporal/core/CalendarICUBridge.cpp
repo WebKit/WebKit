@@ -30,6 +30,8 @@
 #include "ISOArithmetic.h"
 #include "IntlObject.h"
 #include <unicode/ucal.h>
+#include <unicode/uvernum.h>
+#include <wtf/DataLog.h>
 #include <wtf/DateMath.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
@@ -83,21 +85,33 @@ static std::unique_ptr<UCalendar, ICUDeleter<ucal_close>> openCalendar(CalendarI
 int32_t chineseCalendarExtendedYearFor1972()
 {
     static int32_t cached = []() -> int32_t {
-        auto cal = openCalendar(chineseCalendarID());
-        if (!cal)
-            return 1972; // fallback: assume ISO-proleptic
-        // Use ucal_setMillis with a precomputed ISO epoch time — NOT ucal_setDateTime which
-        // sets calendar-native fields (not ISO fields) on a non-Gregorian calendar.
-        // ISO 1972-02-15 00:00:00 UTC = 66,960,000,000 ms from Unix epoch (1970-01-01).
         static constexpr double iso1972Feb15EpochMs = 66960000000.0;
-        UErrorCode status = U_ZERO_ERROR;
-        ucal_setMillis(cal.get(), iso1972Feb15EpochMs, &status);
-        int32_t extYear = ucal_get(cal.get(), UCAL_EXTENDED_YEAR, &status);
-        if (U_FAILURE(status))
-            return 1972; // fallback: assume ISO-proleptic
-        // Return the raw EXTENDED_YEAR: 1972 on ISO-proleptic ICU,
-        // epoch-based year (whatever the current ICU uses) on older Apple ICU.
-        return extYear;
+
+        // Log ICU version first so we can correlate behaviour with ICU build.
+        UVersionInfo versionArray;
+        u_getVersion(versionArray);
+        dataLogLn("[TemporalDebug] ICU version: ", (int)versionArray[0], ".", (int)versionArray[1],
+            ".", (int)versionArray[2], ".", (int)versionArray[3],
+            "  compile-time major=", U_ICU_VERSION_MAJOR_NUM);
+
+        auto probeCalendar = [](CalendarID calId, const char* name) -> int32_t {
+            auto cal = openCalendar(calId);
+            if (!cal) {
+                dataLogLn("[TemporalDebug] probe ", name, ": openCalendar failed");
+                return -1;
+            }
+            UErrorCode st = U_ZERO_ERROR;
+            ucal_setMillis(cal.get(), iso1972Feb15EpochMs, &st);
+            int32_t y = ucal_get(cal.get(), UCAL_EXTENDED_YEAR, &st);
+            dataLogLn("[TemporalDebug] probe ", name, ": setMillis_status=", (int)st, " EXTENDED_YEAR=", (int)y, " get_status=", (int)st);
+            return U_FAILURE(st) ? -1 : y;
+        };
+
+        int32_t chineseYear = probeCalendar(chineseCalendarID(), "chinese");
+        int32_t dangiYear   = probeCalendar(dangiCalendarID(),   "dangi");
+        int32_t result = chineseYear < 0 ? 1972 : chineseYear;
+        dataLogLn("[TemporalDebug] chineseCalendarExtendedYearFor1972: chinese=", (int)chineseYear, " dangi=", (int)dangiYear, " returning=", (int)result);
+        return result;
     }();
     return cached;
 }
@@ -1254,6 +1268,12 @@ int32_t ecmaReferenceYear(CalendarID calendarId, uint8_t monthNumber, bool isLea
 //   4. Return result.
 TemporalResult<ISO8601::PlainDate> calendarDateFromFields(CalendarID calendarId, int32_t year, uint8_t month, uint8_t day, std::optional<StringView> era, std::optional<int32_t> eraYear, std::optional<ParsedMonthCode> monthCode, TemporalOverflow overflow)
 {
+    bool isChineseOrDangi = (calendarId == chineseCalendarID() || calendarId == dangiCalendarID());
+    if (isChineseOrDangi)
+        dataLogLn("[TemporalDebug] calendarDateFromFields ENTER: cal=", (calendarId == dangiCalendarID() ? "dangi" : "chinese"),
+            " year=", (int)year, " month=", (int)month, " day=", (int)day,
+            " monthCode=", monthCode ? (int)monthCode->monthNumber : -1,
+            " isLeap=", monthCode ? (int)monthCode->isLeapMonth : 0);
     auto cal = openCalendar(calendarId);
     if (!cal)
         return makeUnexpected(rangeError("Failed to open ICU calendar"_s));
@@ -1471,7 +1491,11 @@ TemporalResult<ISO8601::PlainDate> calendarDateFromFields(CalendarID calendarId,
     // flag and lands on the non-leap version of the month, which is the correct constrain
     // behavior. No explicit fallback is needed.
 
-    return isoDateFromCalendar(cal.get());
+    auto isoResult = isoDateFromCalendar(cal.get());
+    if (isChineseOrDangi)
+        dataLogLn("[TemporalDebug] calendarDateFromFields EXIT: cal=", (calendarId == dangiCalendarID() ? "dangi" : "chinese"),
+            " isoYear=", (int)isoResult.year(), " isoMonth=", (int)isoResult.month(), " isoDay=", (int)isoResult.day());
+    return isoResult;
 }
 
 } // namespace TemporalCore

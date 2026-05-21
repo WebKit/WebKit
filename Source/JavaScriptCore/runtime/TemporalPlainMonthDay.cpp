@@ -26,13 +26,12 @@
 #include "config.h"
 #include "TemporalPlainMonthDay.h"
 
+#include "CalendarFields.h"
+#include "CalendarICUBridge.h"
 #include "IntlObjectInlines.h"
 #include "JSCInlines.h"
-#include "LazyPropertyInlines.h"
-#include "TemporalDuration.h"
+#include "TemporalCalendar.h"
 #include "TemporalPlainDate.h"
-#include "TemporalPlainDateTime.h"
-#include "VMTrapsInlines.h"
 
 namespace JSC {
 
@@ -53,6 +52,7 @@ Structure* TemporalPlainMonthDay::createStructure(VM& vm, JSGlobalObject* global
 TemporalPlainMonthDay::TemporalPlainMonthDay(VM& vm, Structure* structure, ISO8601::PlainMonthDay&& plainMonthDay)
     : Base(vm, structure)
     , m_plainMonthDay(WTF::move(plainMonthDay))
+    , m_calendarID(iso8601CalendarID())
 {
 }
 
@@ -60,26 +60,7 @@ void TemporalPlainMonthDay::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-    m_calendar.initLater(
-        [] (const auto& init) {
-            VM& vm = init.vm;
-            auto* plainMonthDay = init.owner;
-            auto* globalObject = plainMonthDay->realm();
-            auto* calendar = TemporalCalendar::create(vm, globalObject->calendarStructure(), iso8601CalendarID());
-            init.set(calendar);
-        });
 }
-
-template<typename Visitor>
-void TemporalPlainMonthDay::visitChildrenImpl(JSCell* cell, Visitor& visitor)
-{
-    Base::visitChildren(cell, visitor);
-
-    auto* thisObject = uncheckedDowncast<TemporalPlainMonthDay>(cell);
-    thisObject->m_calendar.visit(visitor);
-}
-
-DEFINE_VISIT_CHILDREN(TemporalPlainMonthDay);
 
 // CreateTemporalMonthDay ( isoDate, calendar [, newTarget ]
 // https://tc39.es/proposal-temporal/#sec-temporal-createtemporalmonthday
@@ -116,7 +97,7 @@ String TemporalPlainMonthDay::toString(JSGlobalObject* globalObject, JSValue opt
     String calendarName = toTemporalCalendarName(globalObject, options);
     RETURN_IF_EXCEPTION(scope, { });
 
-    return ISO8601::temporalMonthDayToString(m_plainMonthDay, calendarName);
+    return ISO8601::temporalMonthDayToString(m_plainMonthDay, calendarName, TemporalCore::calendarIDToString(m_calendarID));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plainmonthday.from
@@ -145,34 +126,48 @@ TemporalPlainMonthDay* TemporalPlainMonthDay::from(JSGlobalObject* globalObject,
         return result;
     }
 
-    JSObject* options = intlGetOptionsObject(globalObject, optionsValue);
-    RETURN_IF_EXCEPTION(scope, { });
-
+    // For property bags, fields must be read before options validation (spec order).
     if (itemValue.isObject()) {
-        if (itemValue.inherits<TemporalPlainMonthDay>())
-            return uncheckedDowncast<TemporalPlainMonthDay>(itemValue);
+        if (itemValue.inherits<TemporalPlainMonthDay>()) {
+            auto* existing = uncheckedDowncast<TemporalPlainMonthDay>(itemValue);
+            auto* cloned = TemporalPlainMonthDay::create(vm, globalObject->plainMonthDayStructure(), existing->plainMonthDay());
+            if (existing->calendarId() != "iso8601"_s && !existing->calendarId().isEmpty())
+                cloned->setCalendarId(String(existing->calendarId()));
+            return cloned;
+        }
 
-        if (itemValue.inherits<TemporalPlainMonthDay>())
-            return TemporalPlainMonthDay::create(vm, globalObject->plainMonthDayStructure(), uncheckedDowncast<TemporalPlainMonthDay>(itemValue)->plainMonthDay());
-
-        JSObject* calendar = TemporalCalendar::getTemporalCalendarWithISODefault(globalObject, itemValue);
+        String calendarId;
+        auto fields = readCalendarFieldsFromObject(globalObject, asObject(itemValue), calendarId, FieldSetType::MonthDay);
         RETURN_IF_EXCEPTION(scope, { });
 
-        // FIXME: Implement after fleshing out Temporal.Calendar.
-        if (!calendar->inherits<TemporalCalendar>() || !uncheckedDowncast<TemporalCalendar>(calendar)->isISO8601()) [[unlikely]] {
-            throwRangeError(globalObject, scope, "unimplemented: from non-ISO8601 calendar"_s);
+        // Options validated AFTER fields (spec order).
+        JSObject* opts = nullptr;
+        if (!optionsValue.isUndefined()) {
+            if (!optionsValue.isObject()) {
+                throwTypeError(globalObject, scope, "options must be an object"_s);
+                return { };
+            }
+            opts = asObject(optionsValue);
+        }
+        auto overflow = TemporalOverflow::Constrain;
+        if (opts) {
+            overflow = toTemporalOverflow(globalObject, opts);
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+
+        auto resolved = TemporalCore::monthDayFromFields(TemporalCore::calendarIDFromString(calendarId), fields, overflow);
+        if (!resolved) {
+            if (resolved.error().kind == TemporalErrorKind::TypeError)
+                throwTypeError(globalObject, scope, String(resolved.error().message));
+            else
+                throwRangeError(globalObject, scope, String(resolved.error().message));
             return { };
         }
 
-        Variant<JSObject*, TemporalOverflow> optionsOrOverflow = TemporalOverflow::Constrain;
-        if (options)
-            optionsOrOverflow = options;
-        auto overflow = TemporalOverflow::Constrain;
-        auto plainMonthDay = TemporalCalendar::isoDateFromFields(globalObject, asObject(itemValue), TemporalDateFormat::MonthDay, optionsOrOverflow, overflow);
-        RETURN_IF_EXCEPTION(scope, { });
-
-        auto plainDate = ISO8601::PlainDate(1972, plainMonthDay.month(), plainMonthDay.day());
-        return TemporalPlainMonthDay::create(vm, globalObject->plainMonthDayStructure(), WTF::move(plainDate));
+        auto* result = TemporalPlainMonthDay::create(vm, globalObject->plainMonthDayStructure(), WTF::move(resolved->isoDate));
+        if (resolved->calendarId != "iso8601"_s)
+            result->setCalendarId(resolved->calendarId);
+        return result;
     }
 
     throwTypeError(globalObject, scope, "can only convert to PlainMonthDay from object or string values"_s);
@@ -191,14 +186,78 @@ TemporalPlainMonthDay* TemporalPlainMonthDay::from(JSGlobalObject* globalObject,
     auto dateTime = ISO8601::parseCalendarDateTime(string, TemporalDateFormat::MonthDay);
     if (dateTime) {
         auto [plainDate, plainTimeOptional, timeZoneOptional, calendarOptional] = WTF::move(dateTime.value());
-        if (calendarOptional && StringView(calendarOptional.value()) != String::fromLatin1("iso8601")) [[unlikely]] {
+        // MM-DD short format only valid with iso8601. Full dates with non-ISO are allowed.
+        bool looksLikeShortForm = false;
+        {
+            unsigned digitGroups = 0;
+            bool inDigits = false;
+            for (unsigned j = 0; j < string.length() && string[j] != '['; j++) {
+                if (isASCIIDigit(string[j])) {
+                    if (!inDigits) {
+                        digitGroups++;
+                        inDigits = true;
+                    }
+                } else
+                    inDigits = false;
+            }
+            looksLikeShortForm = (digitGroups <= 2);
+        }
+        if (looksLikeShortForm && calendarOptional && !WTF::equalIgnoringASCIICase(StringView(*calendarOptional), "iso8601"_s)) [[unlikely]] {
             throwRangeError(globalObject, scope,
-                "MM-DD format is only valid with iso8601 calendar"_s);
+                "PlainMonthDay string must use iso8601 calendar"_s);
             return { };
         }
-        auto dateWithoutYear = ISO8601::PlainDate(1972, plainDate.month(), plainDate.day());
-        if (!(timeZoneOptional && timeZoneOptional->m_z))
-            RELEASE_AND_RETURN(scope, TemporalPlainMonthDay::tryCreateIfValid(globalObject, globalObject->plainMonthDayStructure(), WTF::move(dateWithoutYear)));
+        String calendarId = "iso8601"_s;
+        if (calendarOptional) {
+            auto rawCal = StringView(*calendarOptional).convertToASCIILowercase();
+            auto canonicalized = isBuiltinCalendar(rawCal);
+            if (!canonicalized) [[unlikely]] {
+                throwRangeError(globalObject, scope, makeString("'"_s, rawCal, "' is not a valid calendar identifier"_s));
+                return { };
+            }
+            calendarId = intlAvailableCalendars().at(*canonicalized);
+        }
+        // For non-ISO calendars, validate the full date is within ISO limits.
+        // The MonthDay parser may truncate the year, so check the original parsed year.
+        if (calendarId != "iso8601"_s) {
+            // Re-parse as Date to get the full year.
+            auto dateParse = ISO8601::parseCalendarDateTime(string, TemporalDateFormat::Date);
+            int32_t fullYear = plainDate.year();
+            if (dateParse)
+                fullYear = std::get<0>(dateParse.value()).year();
+            if (!ISO8601::isYearWithinLimits(fullYear) || !ISO8601::isDateTimeWithinLimits(fullYear, plainDate.month(), plainDate.day(), 12, 0, 0, 0, 0, 0)) {
+                throwRangeError(globalObject, scope, "Date is not within ISO date time limits"_s);
+                return { };
+            }
+        }
+        if (!(timeZoneOptional && timeZoneOptional->m_z)) {
+            if (calendarId != "iso8601"_s && !looksLikeShortForm) {
+                // Non-ISO full date string: re-parse to get actual ISO date, then
+                // resolve calendar monthCode+day and find reference ISO year.
+                // Matches temporal_rs from_parsed() steps 12-14.
+                auto fullDateTime = ISO8601::parseCalendarDateTime(string, TemporalDateFormat::Date);
+                if (fullDateTime) {
+                    auto& fullDate = std::get<0>(fullDateTime.value());
+                    if (ISO8601::isYearWithinLimits(fullDate.year())) {
+                        auto resolved = TemporalCore::plainMonthDayFromISODate(TemporalCore::calendarIDFromString(calendarId), fullDate, TemporalOverflow::Constrain);
+                        if (!resolved) {
+                            throwRangeError(globalObject, scope, String(resolved.error().message));
+                            return { };
+                        }
+                        auto* result = TemporalPlainMonthDay::create(vm, globalObject->plainMonthDayStructure(), WTF::move(resolved->isoDate));
+                        if (resolved->calendarId != "iso8601"_s)
+                            result->setCalendarId(resolved->calendarId);
+                        return result;
+                    }
+                }
+            }
+            auto dateWithoutYear = ISO8601::PlainDate(1972, plainDate.month(), plainDate.day());
+            auto* result = TemporalPlainMonthDay::tryCreateIfValid(globalObject, globalObject->plainMonthDayStructure(), WTF::move(dateWithoutYear));
+            RETURN_IF_EXCEPTION(scope, { });
+            if (result && calendarId != "iso8601"_s)
+                result->setCalendarId(calendarId);
+            return result;
+        }
     }
 
     throwRangeError(globalObject, scope,
@@ -215,21 +274,79 @@ ISO8601::PlainDate TemporalPlainMonthDay::with(JSGlobalObject* globalObject, JSO
     rejectObjectWithCalendarOrTimeZone(globalObject, temporalMonthDayLike);
     RETURN_IF_EXCEPTION(scope, { });
 
-    if (!calendar()->isISO8601()) [[unlikely]] {
-        throwRangeError(globalObject, scope, "unimplemented: with non-ISO8601 calendar"_s);
-        return { };
-    }
-
-    auto [y, m, d, optionalMonthCode, overflow, any] =
-        TemporalPlainDate::mergeDateFields(globalObject, temporalMonthDayLike, optionsValue,
-            1972, month(), day());
+    // Read partial fields from user object FIRST (spec requires fields before options).
+    // Use a separate outCalendarId since readCalendarFieldsFromObject resets it.
+    String calId = TemporalCore::calendarIDToString(m_calendarID).toString();
+    String outCalendarId;
+    auto partialFields = readCalendarFieldsFromObject(globalObject, temporalMonthDayLike, outCalendarId, FieldSetType::MonthDay, /* skipCalendarRead */ true);
     RETURN_IF_EXCEPTION(scope, { });
-    if (any == TemporalAnyProperties::None) [[unlikely]] {
+    if (!partialFields.day && !partialFields.month && !partialFields.monthCode
+        && !partialFields.year && !partialFields.era && !partialFields.eraYear) {
         throwTypeError(globalObject, scope, "Object must contain at least one Temporal date property"_s);
         return { };
     }
 
-    RELEASE_AND_RETURN(scope, TemporalCalendar::monthDayFromFields(globalObject, y, m, d, optionalMonthCode, overflow));
+    // Read options AFTER reading fields (spec order).
+    JSObject* options = intlGetOptionsObject(globalObject, optionsValue);
+    RETURN_IF_EXCEPTION(scope, { });
+    TemporalOverflow overflow = toTemporalOverflow(globalObject, options);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    // Merge per temporal_rs PlainMonthDay::with():
+    // - day: user's day OR current calendar day (not ISO day)
+    // - monthCode: user's month/monthCode, or fall back to current PMD's monthCode
+    TemporalCore::CalendarFieldsIn merged;
+
+    // Get current calendar day (not ISO day) for fallback.
+    uint8_t currentCalDay = static_cast<uint8_t>(m_plainMonthDay.day()); // ISO day fallback
+    auto calID = m_calendarID;
+    if (!TemporalCore::calendarIsISO(calID)) {
+        auto dayResult = TemporalCore::calendarDay(calID, m_plainMonthDay.isoPlainDate());
+        if (dayResult)
+            currentCalDay = *dayResult;
+    }
+    merged.day = partialFields.day.has_value() ? partialFields.day : std::optional<uint8_t>(currentCalDay);
+
+    if (partialFields.month.has_value())
+        merged.month = partialFields.month;
+    if (partialFields.monthCode)
+        merged.monthCode = partialFields.monthCode;
+    // Pass year/era/eraYear from partial to enable overflow validation in monthDayFromFields.
+    if (partialFields.year)
+        merged.year = partialFields.year;
+    if (partialFields.era)
+        merged.era = partialFields.era;
+    if (partialFields.eraYear)
+        merged.eraYear = partialFields.eraYear;
+    if (!partialFields.month.has_value() && !partialFields.monthCode) {
+        // Fall back to current PMD's monthCode (from stored ISO date via calendar).
+        if (!TemporalCore::calendarIsISO(calID)) {
+            auto mcStr = TemporalCore::calendarMonthCode(calID, m_plainMonthDay.isoPlainDate());
+            if (!mcStr) {
+                throwRangeError(globalObject, scope, String(mcStr.error().message));
+                return { };
+            }
+            merged.monthCode = ISO8601::parseMonthCode(*mcStr);
+        } else
+            merged.month = std::optional<uint32_t>(m_plainMonthDay.month());
+    }
+
+    // For non-ISO PMD.with(): providing only month ordinal (no monthCode) is insufficient
+    // because month ordinals depend on the year. Require monthCode per temporal_rs.
+    if (!TemporalCore::calendarIsISO(calID) && merged.month.has_value() && !merged.monthCode) {
+        throwTypeError(globalObject, scope, "monthCode is required for non-ISO calendar PlainMonthDay.with()"_s);
+        return { };
+    }
+
+    auto resolved = TemporalCore::monthDayFromFields(calID, merged, overflow);
+    if (!resolved) {
+        if (resolved.error().kind == TemporalErrorKind::TypeError)
+            throwTypeError(globalObject, scope, String(resolved.error().message));
+        else
+            throwRangeError(globalObject, scope, String(resolved.error().message));
+        return { };
+    }
+    return resolved->isoDate;
 }
 
 String TemporalPlainMonthDay::monthCode() const

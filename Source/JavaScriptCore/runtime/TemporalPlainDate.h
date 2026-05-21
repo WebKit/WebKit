@@ -25,9 +25,9 @@
 
 #pragma once
 
+#include <JavaScriptCore/CalendarICUBridge.h>
 #include <JavaScriptCore/ISO8601.h>
-#include <JavaScriptCore/LazyProperty.h>
-#include <JavaScriptCore/TemporalCalendar.h>
+#include <JavaScriptCore/IntlObject.h>
 
 namespace JSC {
 
@@ -42,7 +42,9 @@ public:
     }
 
     static TemporalPlainDate* create(VM&, Structure*, ISO8601::PlainDate&&);
+    static TemporalPlainDate* create(VM&, Structure*, ISO8601::PlainDate&&, String&&);
     static TemporalPlainDate* tryCreateIfValid(JSGlobalObject*, Structure*, ISO8601::PlainDate&&);
+    static TemporalPlainDate* tryCreateIfValid(JSGlobalObject*, Structure*, ISO8601::PlainDate&&, String&& calendarId);
     static TemporalPlainDate* tryCreateIfValid(JSGlobalObject*, Structure*, ISO8601::Duration&&);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
@@ -55,9 +57,12 @@ public:
     static std::optional<int32_t> toYear(JSGlobalObject*, JSObject*);
     std::tuple<std::optional<int32_t>, std::optional<ParsedMonthCode>, std::optional<int32_t>> static toYearMonth(JSGlobalObject*, JSObject*);
     static TemporalPlainDate* from(JSGlobalObject*, JSValue, Variant<JSObject*, TemporalOverflow>);
+    static TemporalPlainDate* from(JSGlobalObject*, JSValue item, JSValue options);
 
-    TemporalCalendar* calendar() LIFETIME_BOUND { return m_calendar.get(this); }
     ISO8601::PlainDate plainDate() const { return m_plainDate; }
+    String calendarId() const { return TemporalCore::calendarIDToString(m_calendarID).toString(); }
+    CalendarID calendarID() const { return m_calendarID; }
+    void setCalendarId(StringView id) { m_calendarID = TemporalCore::calendarIDFromString(id); }
 
 #define JSC_DEFINE_TEMPORAL_PLAIN_DATE_FIELD(name, capitalizedName) \
     decltype(auto) name() const { return m_plainDate.name(); }
@@ -70,20 +75,17 @@ public:
     uint8_t dayOfWeek() const;
     uint16_t dayOfYear() const;
     uint8_t weekOfYear() const;
+    int32_t yearOfWeek() const;
 
     String toString(JSGlobalObject*, JSValue options) const;
-    String toString() const
-    {
-        return ISO8601::temporalDateToString(m_plainDate);
-    }
+    String toString() const;
 
     ISO8601::Duration until(JSGlobalObject*, TemporalPlainDate*, JSValue options);
     ISO8601::Duration since(JSGlobalObject*, TemporalPlainDate*, JSValue options);
 
-    DECLARE_VISIT_CHILDREN;
-
 private:
     TemporalPlainDate(VM&, Structure*, ISO8601::PlainDate&&);
+    TemporalPlainDate(VM&, Structure*, ISO8601::PlainDate&&, String&&);
     void finishCreation(VM&);
 
     template<typename CharacterType>
@@ -94,7 +96,7 @@ private:
         TemporalPlainDate*, TemporalUnit, TemporalUnit, RoundingMode, double);
 
     ISO8601::PlainDate m_plainDate;
-    LazyProperty<TemporalPlainDate, TemporalCalendar> m_calendar;
+    CalendarID m_calendarID { 0 };
 };
 
 } // namespace JSC

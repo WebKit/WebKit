@@ -27,6 +27,8 @@
 #include "config.h"
 #include "TemporalDurationPrototype.h"
 
+#include "DurationArithmetic.h"
+#include "IntlDurationFormat.h"
 #include "JSCInlines.h"
 #include "TemporalDuration.h"
 
@@ -124,7 +126,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalDurationPrototypeFuncWith, (JSGlobalObject* glo
     auto* duration = dynamicDowncast<TemporalDuration>(callFrame->thisValue());
     if (!duration)
         return throwVMTypeError(globalObject, scope, "Temporal.Duration.prototype.with called on value that's not a Duration"_s);
-    
+
     JSValue durationLike = callFrame->argument(0);
     if (!durationLike.isObject())
         return throwVMTypeError(globalObject, scope, "First argument to Temporal.Duration.prototype.with must be an object"_s);
@@ -144,7 +146,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalDurationPrototypeFuncNegated, (JSGlobalObject* 
     if (!duration)
         return throwVMTypeError(globalObject, scope, "Temporal.Duration.prototype.negated called on value that's not a Duration"_s);
 
-    return JSValue::encode(TemporalDuration::create(vm, globalObject->durationStructure(), duration->negated()));
+    return JSValue::encode(TemporalDuration::create(vm, globalObject->durationStructure(), TemporalCore::negateDuration(duration->duration())));
 }
 
 JSC_DEFINE_HOST_FUNCTION(temporalDurationPrototypeFuncAbs, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -156,7 +158,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalDurationPrototypeFuncAbs, (JSGlobalObject* glob
     if (!duration)
         return throwVMTypeError(globalObject, scope, "Temporal.Duration.prototype.abs called on value that's not a Duration"_s);
 
-    return JSValue::encode(TemporalDuration::create(vm, globalObject->durationStructure(), duration->abs()));
+    return JSValue::encode(TemporalDuration::create(vm, globalObject->durationStructure(), TemporalCore::absDuration(duration->duration())));
 }
 
 JSC_DEFINE_HOST_FUNCTION(temporalDurationPrototypeFuncAdd, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -248,7 +250,6 @@ JSC_DEFINE_HOST_FUNCTION(temporalDurationPrototypeFuncToJSON, (JSGlobalObject* g
     RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, duration->toString(globalObject))));
 }
 
-// This will be part of the ECMA-402 Intl.DurationFormat proposal; until then, we just follow ECMA-262 in mimicking toJSON.
 JSC_DEFINE_HOST_FUNCTION(temporalDurationPrototypeFuncToLocaleString, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
@@ -258,7 +259,14 @@ JSC_DEFINE_HOST_FUNCTION(temporalDurationPrototypeFuncToLocaleString, (JSGlobalO
     if (!duration)
         return throwVMTypeError(globalObject, scope, "Temporal.Duration.prototype.toLocaleString called on value that's not a Duration"_s);
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, duration->toString(globalObject))));
+    auto* formatter = IntlDurationFormat::create(vm, globalObject->durationFormatStructure());
+    formatter->initializeDurationFormat(globalObject, callFrame->argument(0), callFrame->argument(1));
+    RETURN_IF_EXCEPTION(scope, { });
+
+    ISO8601::Duration dur(duration->years(), duration->months(), duration->weeks(), duration->days(),
+        duration->hours(), duration->minutes(), duration->seconds(),
+        duration->milliseconds(), Int128(duration->microseconds()), Int128(duration->nanoseconds()));
+    RELEASE_AND_RETURN(scope, JSValue::encode(formatter->format(globalObject, dur)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(temporalDurationPrototypeFuncValueOf, (JSGlobalObject* globalObject, CallFrame*))

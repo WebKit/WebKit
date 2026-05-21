@@ -76,10 +76,25 @@ public:
     enum class HourCycle : uint8_t { None, H11, H12, H23, H24 };
 
     void initializeDateTimeFormat(JSGlobalObject*, JSValue locales, JSValue options, RequiredComponent, Defaults);
+    enum class TemporalFieldKind : uint8_t {
+        None, // Non-Temporal (legacy Date)
+        Instant, // Temporal.Instant — all fields, formatter's timezone
+        ZonedDateTime, // Temporal.ZonedDateTime — all fields + timezone name
+        PlainDate, // Date fields only, GMT
+        PlainDateTime, // Date + time fields, GMT
+        PlainTime, // Time fields only, GMT
+        PlainYearMonth, // Year + month fields, GMT
+        PlainMonthDay, // Month + day fields, GMT
+    };
+
     JSValue format(JSGlobalObject*, double value) const;
+    JSValue format(JSGlobalObject*, double value, TemporalFieldKind) const;
     JSValue formatToParts(JSGlobalObject*, double value, JSString* sourceType = nullptr) const;
+    JSValue formatToParts(JSGlobalObject*, double value, TemporalFieldKind, JSString* sourceType = nullptr) const;
     JSValue formatRange(JSGlobalObject*, double startDate, double endDate);
+    JSValue formatRange(JSGlobalObject*, double startDate, double endDate, TemporalFieldKind);
     JSValue formatRangeToParts(JSGlobalObject*, double startDate, double endDate);
+    JSValue formatRangeToParts(JSGlobalObject*, double startDate, double endDate, TemporalFieldKind);
     JSObject* resolvedOptions(JSGlobalObject*) const;
 
     JSBoundFunction* boundFormat() const LIFETIME_BOUND { return m_boundFormat.get(); }
@@ -91,6 +106,20 @@ public:
 
     const IntlDateTimeFormatImpl& impl() const LIFETIME_BOUND { return *m_impl; }
     void setImpl(Ref<const IntlDateTimeFormatImpl>&& impl) { m_impl = WTF::move(impl); }
+
+    enum class TimeZoneName : uint8_t { None, Short, Long, ShortOffset, LongOffset, ShortGeneric, LongGeneric };
+    enum class DateTimeStyle : uint8_t { None, Full, Long, Medium, Short };
+
+    DateTimeStyle dateStyle() const;
+    DateTimeStyle timeStyle() const;
+    TimeZoneName timeZoneName() const;
+    const String& ensureCalendar() const;
+    const String& ensureNumberingSystem() const;
+
+    static bool calendarMatchesICU(StringView temporalId, const String& icuCalId);
+
+    using UDateFormatDeleter = ICUDeleter<udat_close>;
+    std::unique_ptr<UDateFormat, UDateFormatDeleter> createTemporalFormatter(TemporalFieldKind) const;
 
 private:
     friend class IntlDateTimeFormatImpl;
@@ -111,8 +140,6 @@ private:
     enum class Hour : uint8_t { None, TwoDigit, Numeric };
     enum class Minute : uint8_t { None, TwoDigit, Numeric };
     enum class Second : uint8_t { None, TwoDigit, Numeric };
-    enum class TimeZoneName : uint8_t { None, Short, Long, ShortOffset, LongOffset, ShortGeneric, LongGeneric };
-    enum class DateTimeStyle : uint8_t { None, Full, Long, Medium, Short };
 
     static void NODELETE setFormatsFromPattern(IntlDateTimeFormatImpl&, StringView);
     static ASCIILiteral hourCycleString(HourCycle);
@@ -131,7 +158,7 @@ private:
     static HourCycle NODELETE hourCycleFromSymbol(char16_t);
     static HourCycle parseHourCycle(const String&);
     static void NODELETE replaceHourCycleInSkeleton(Vector<char16_t, 32>&, bool hour12);
-    static void NODELETE replaceHourCycleInPattern(Vector<char16_t, 32>&, HourCycle);
+    static void replaceHourCycleInPattern(Vector<char16_t, 32>&, HourCycle, bool allowSingleDigit = false);
     static String buildSkeleton(Weekday, Era, Year, Month, Day, TriState, HourCycle, Hour, DayPeriod, Minute, Second, unsigned, TimeZoneName);
 
     WriteBarrier<JSBoundFunction> m_boundFormat;
@@ -170,6 +197,7 @@ public:
     IntlDateTimeFormat::TimeZoneName m_timeZoneName { IntlDateTimeFormat::TimeZoneName::None };
     IntlDateTimeFormat::DateTimeStyle m_dateStyle { IntlDateTimeFormat::DateTimeStyle::None };
     IntlDateTimeFormat::DateTimeStyle m_timeStyle { IntlDateTimeFormat::DateTimeStyle::None };
+    bool m_hasExplicitComponents { false };
     std::unique_ptr<UDateFormat, UDateFormatDeleter> m_dateFormat;
 
 private:

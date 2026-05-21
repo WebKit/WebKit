@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <JavaScriptCore/CalendarFields.h>
+#include <JavaScriptCore/CalendarICUBridge.h>
 #include <JavaScriptCore/Error.h>
 #include <JavaScriptCore/ISO8601.h>
 #include <JavaScriptCore/JSGlobalObject.h>
@@ -50,13 +52,15 @@ public:
     DECLARE_INFO;
 
     template<AddOrSubtract>
-    static ISO8601::PlainYearMonth addDurationToYearMonth(JSGlobalObject*, ISO8601::PlainYearMonth, ISO8601::Duration, TemporalOverflow);
+    static ISO8601::PlainYearMonth addDurationToYearMonth(JSGlobalObject*, ISO8601::PlainYearMonth, ISO8601::Duration, TemporalOverflow, CalendarID calendarID);
 
     static TemporalPlainYearMonth* from(JSGlobalObject*, JSValue, JSValue);
     static TemporalPlainYearMonth* from(JSGlobalObject*, StringView);
 
-    TemporalCalendar* calendar() LIFETIME_BOUND { return m_calendar.get(this); }
     ISO8601::PlainYearMonth plainYearMonth() const { return m_plainYearMonth; }
+    String calendarId() const { return TemporalCore::calendarIDToString(m_calendarID).toString(); }
+    CalendarID calendarID() const { return m_calendarID; }
+    void setCalendarId(WTF::StringView id) { m_calendarID = TemporalCore::calendarIDFromString(id); }
 
 #define JSC_DEFINE_TEMPORAL_PLAIN_YEAR_MONTH_FIELD(name, capitalizedName) \
     decltype(auto) name() const { return m_plainYearMonth.name(); }
@@ -73,8 +77,6 @@ public:
     ISO8601::Duration until(JSGlobalObject*, TemporalPlainYearMonth*, JSValue options);
     ISO8601::Duration since(JSGlobalObject*, TemporalPlainYearMonth*, JSValue options);
 
-    DECLARE_VISIT_CHILDREN;
-
 private:
     TemporalPlainYearMonth(VM&, Structure*, ISO8601::PlainYearMonth&&);
     void finishCreation(VM&);
@@ -83,7 +85,31 @@ private:
     ISO8601::Duration sinceOrUntil(JSGlobalObject*, TemporalPlainYearMonth*, JSValue);
 
     ISO8601::PlainYearMonth m_plainYearMonth;
-    LazyProperty<TemporalPlainYearMonth, TemporalCalendar> m_calendar;
+    CalendarID m_calendarID { 0 };
 };
+
+// https://tc39.es/proposal-temporal/#sec-temporal-adddurationtoyearmonth
+template<AddOrSubtract op>
+ISO8601::PlainYearMonth TemporalPlainYearMonth::addDurationToYearMonth(JSGlobalObject* globalObject, ISO8601::PlainYearMonth yearMonth, ISO8601::Duration duration, TemporalOverflow overflow, CalendarID calendarID)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if constexpr (op == AddOrSubtract::Subtract)
+        duration = -duration;
+
+    auto durationToAdd = TemporalDuration::toDateDurationRecordWithoutTime(globalObject, duration);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto result = TemporalCore::plainYearMonthAdd(calendarID, yearMonth.isoPlainDate(), durationToAdd, overflow);
+    if (!result) {
+        if (result.error().kind == TemporalErrorKind::TypeError)
+            throwTypeError(globalObject, scope, String(result.error().message));
+        else
+            throwRangeError(globalObject, scope, String(result.error().message));
+        return { };
+    }
+    return ISO8601::PlainYearMonth(WTF::move(result->isoDate));
+}
 
 } // namespace JSC

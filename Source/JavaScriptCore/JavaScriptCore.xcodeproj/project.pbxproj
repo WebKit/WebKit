@@ -795,6 +795,7 @@
 		14F79F70216EAFD200046D39 /* Opcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07950ED1D3AE00F1F681 /* Opcode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A28D4A8177B71C80007FA3C /* JSStringRefPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A28D4A7177B71C80007FA3C /* JSStringRefPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AB2A6FB9608AD5DF73332D4 /* EmbedderArrayLike.h in Headers */ = {isa = PBXBuildFile; fileRef = CC4EB98783FB499C6AD48B55 /* EmbedderArrayLike.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		22A53A81E6B4474A8AF9AF23 /* JSWebAssemblyStreamingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 157D0D1381AB430AB34617E3 /* JSWebAssemblyStreamingContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		233D76752E288A2F00EB9FFB /* basic.js in CopyFiles */ = {isa = PBXBuildFile; fileRef = 53C3D5E421ECE6CE0087FDFC /* basic.js */; };
 		233D76762E288A2F00EB9FFB /* foo.js in CopyFiles */ = {isa = PBXBuildFile; fileRef = 52D1308F221CE03A009C836C /* foo.js */; };
 		233D76882E288AD500EB9FFB /* testapi.js in CopyFiles */ = {isa = PBXBuildFile; fileRef = 233D767F2E288A8600EB9FFB /* testapi.js */; };
@@ -946,7 +947,10 @@
 		2A83638618D7D0EE0000EBCC /* EdenGCActivityCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A83638418D7D0EE0000EBCC /* EdenGCActivityCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2A83638A18D7D0FE0000EBCC /* FullGCActivityCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A83638818D7D0FE0000EBCC /* FullGCActivityCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2AA109412F8D5DE600347316 /* UnifiedSource166.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2AA109402F8D5DE600347316 /* UnifiedSource166.cpp */; };
-		FF41D81E2FA317C2001D30AA /* UnifiedSource167.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF41D81F2FA317C2001D30AA /* UnifiedSource167.cpp */; };
+		2AA109432F8D5DE600347316 /* UnifiedSource167.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2AA109422F8D5DE600347316 /* UnifiedSource167.cpp */; };
+		2AA109452F8D5DE600347316 /* UnifiedSource168.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2AA109442F8D5DE600347316 /* UnifiedSource168.cpp */; };
+		2AA109472F8D5DE600347316 /* UnifiedSource169.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2AA109462F8D5DE600347316 /* UnifiedSource169.cpp */; };
+		2AA109492F8D5DE600347316 /* UnifiedSource170.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2AA109482F8D5DE600347316 /* UnifiedSource170.cpp */; };
 		2AAAA31218BD49D100394CC8 /* TypeInfoBlob.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AAAA31018BD49D100394CC8 /* TypeInfoBlob.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2AABCDE718EF294200002096 /* GCLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AABCDE618EF294200002096 /* GCLogging.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2AACE63D18CA5A0300ED0191 /* GCActivityCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AACE63B18CA5A0300ED0191 /* GCActivityCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1783,8 +1787,6 @@
 		AD2FCC011DB58DAD00B3E736 /* WebAssemblyModuleConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = AD2FCB991DB585A600B3E736 /* WebAssemblyModuleConstructor.h */; };
 		AD2FCC031DB58DAD00B3E736 /* WebAssemblyModulePrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = AD2FCB9B1DB585A600B3E736 /* WebAssemblyModulePrototype.h */; };
 		AD2FCC051DB58DAD00B3E736 /* JSWebAssemblyModule.h in Headers */ = {isa = PBXBuildFile; fileRef = AD2FCB8D1DB5844000B3E736 /* JSWebAssemblyModule.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		22A53A81E6B4474A8AF9AF23 /* JSWebAssemblyStreamingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 157D0D1381AB430AB34617E3 /* JSWebAssemblyStreamingContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		AD5BBA1AD2AF430387EE8771 /* JSWebAssemblyStreamingContextInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 3BD7AD23E3D94016A763A0ED /* JSWebAssemblyStreamingContextInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD412B341E7B2E9E008AF157 /* WasmContext.h in Headers */ = {isa = PBXBuildFile; fileRef = AD412B321E7B2E8A008AF157 /* WasmContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD4252511E5D0E14009D2A97 /* FullCodeOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4252501E5D0DEB009D2A97 /* FullCodeOrigin.h */; };
 		AD4937C41DDBE6140077C807 /* AbstractModuleRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4937C21DDBE60A0077C807 /* AbstractModuleRecord.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1792,6 +1794,7 @@
 		AD4937D41DDD27DE0077C807 /* WebAssemblyFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4937CA1DDD27340077C807 /* WebAssemblyFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD4B1DFA1DF244E20071AE32 /* WasmBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4B1DF81DF244D70071AE32 /* WasmBinding.h */; };
 		AD5B416F1EBAFB77008EFA43 /* WasmName.h in Headers */ = {isa = PBXBuildFile; fileRef = AD5B416E1EBAFB65008EFA43 /* WasmName.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		AD5BBA1AD2AF430387EE8771 /* JSWebAssemblyStreamingContextInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 3BD7AD23E3D94016A763A0ED /* JSWebAssemblyStreamingContextInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD5C36DD1F688B65000BCAAF /* WasmJS.h in Headers */ = {isa = PBXBuildFile; fileRef = AD5C36DC1F688B5F000BCAAF /* WasmJS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD5C36E61F69EC91000BCAAF /* WasmTable.h in Headers */ = {isa = PBXBuildFile; fileRef = AD5C36E41F69EC8B000BCAAF /* WasmTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD5C36EA1F75AD6A000BCAAF /* JSToWasm.h in Headers */ = {isa = PBXBuildFile; fileRef = AD8DD6CF1F67089F0004EB52 /* JSToWasm.h */; };
@@ -2033,9 +2036,7 @@
 		E329D89F2E81F49600B63FF5 /* B3TypedPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = E329D89E2E81F49600B63FF5 /* B3TypedPointer.h */; };
 		E32AB2441DCD75F400D7533A /* MacroAssemblerHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = E380A76B1DCD7195000F89E6 /* MacroAssemblerHelpers.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E32C3C6923E94C1E00BC97C0 /* UnlinkedCodeBlockGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = E32C3C6823E94C1E00BC97C0 /* UnlinkedCodeBlockGenerator.h */; };
-		E32D4DE726DAFD4300D4533A /* TemporalCalendarPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = E32D4DE126DAFD4200D4533A /* TemporalCalendarPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E32D4DE926DAFD4300D4533A /* TemporalCalendar.h in Headers */ = {isa = PBXBuildFile; fileRef = E32D4DE326DAFD4300D4533A /* TemporalCalendar.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E32D4DEA26DAFD4300D4533A /* TemporalCalendarConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = E32D4DE426DAFD4300D4533A /* TemporalCalendarConstructor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E32D51AF2C6D0FF200B013D1 /* WasmCompilationContext.h in Headers */ = {isa = PBXBuildFile; fileRef = E32D51A52C6D0FD600B013D1 /* WasmCompilationContext.h */; };
 		E32D51B02C6D0FFC00B013D1 /* WasmOpcodeCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = E32D51A72C6D0FD600B013D1 /* WasmOpcodeCounter.h */; };
 		E32D51B12C6D100300B013D1 /* WasmSourceMappingURLSectionParser.h in Headers */ = {isa = PBXBuildFile; fileRef = E32D51A92C6D0FD600B013D1 /* WasmSourceMappingURLSectionParser.h */; };
@@ -2347,12 +2348,19 @@
 		FF356CFA2FA9837C00213929 /* TemporalObject.h in Headers */ = {isa = PBXBuildFile; fileRef = F6F1501A2693D33E004B98EF /* TemporalObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FF356D302FA9DACE00213929 /* TemporalCoreTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF356D2F2FA9DACE00213929 /* TemporalCoreTest.cpp */; };
 		FF41590C28FF3C6B00F80B96 /* WaiterListManager.h in Headers */ = {isa = PBXBuildFile; fileRef = FF41590B28FF3C6B00F80B96 /* WaiterListManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FF6273A52FAD56220098B5A3 /* InstantCore.h in Headers */ = {isa = PBXBuildFile; fileRef = FF62739F2FAD56220098B5A3 /* InstantCore.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FF6273A62FAD56220098B5A3 /* Rounding.h in Headers */ = {isa = PBXBuildFile; fileRef = FF6273A32FAD56220098B5A3 /* Rounding.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FF6273A72FAD56220098B5A3 /* ISOArithmetic.h in Headers */ = {isa = PBXBuildFile; fileRef = FF6273A12FAD56220098B5A3 /* ISOArithmetic.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FF6273A82FAD56220098B5A3 /* CalendarArithmetic.h in Headers */ = {isa = PBXBuildFile; fileRef = FF62739D2FAD56220098B5A3 /* CalendarArithmetic.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FF629DA32FAE9B500098B5A3 /* CalendarICUBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = FF629D9B2FAE9B500098B5A3 /* CalendarICUBridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FF629DA42FAE9B500098B5A3 /* TimeZoneICUBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = FF629D9E2FAE9B500098B5A3 /* TimeZoneICUBridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FF41C9EA2FA2F010001D30AA /* CalendarICUBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = FF41C9DC2FA2F010001D30AA /* CalendarICUBridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FF41C9EB2FA2F010001D30AA /* Rounding.h in Headers */ = {isa = PBXBuildFile; fileRef = FF41C9E22FA2F010001D30AA /* Rounding.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FF41C9EC2FA2F010001D30AA /* DurationArithmetic.h in Headers */ = {isa = PBXBuildFile; fileRef = FF41C9DE2FA2F010001D30AA /* DurationArithmetic.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FF41C9ED2FA2F010001D30AA /* ISOArithmetic.h in Headers */ = {isa = PBXBuildFile; fileRef = FF41C9E02FA2F010001D30AA /* ISOArithmetic.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FF41C9EE2FA2F010001D30AA /* CalendarFields.h in Headers */ = {isa = PBXBuildFile; fileRef = FF41C9DA2FA2F010001D30AA /* CalendarFields.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FF41C9F22FA2F010001D30AA /* TimeZoneICUBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = FF41C9E62FA2F010001D30AA /* TimeZoneICUBridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FF41C9FA2FA2F02B001D30AA /* CalendarArithmetic.h in Headers */ = {isa = PBXBuildFile; fileRef = FF41C9D82FA2F010001D30AA /* CalendarArithmetic.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FF41CA0D2FA2F0D9001D30AA /* TemporalZonedDateTimeConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = FF41CA092FA2F0D9001D30AA /* TemporalZonedDateTimeConstructor.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FF41CA0E2FA2F0D9001D30AA /* TemporalZonedDateTime.h in Headers */ = {isa = PBXBuildFile; fileRef = FF41CA072FA2F0D9001D30AA /* TemporalZonedDateTime.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FF41CA132FA2F0D9001D30AA /* TemporalZonedDateTimePrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = FF41CA0B2FA2F0D9001D30AA /* TemporalZonedDateTimePrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FF41D81C2FA317C2001D30AA /* PlainDateTimeCore.h in Headers */ = {isa = PBXBuildFile; fileRef = FF41D8182FA317C2001D30AA /* PlainDateTimeCore.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FF41D81D2FA317C2001D30AA /* ZonedDateTimeCore.h in Headers */ = {isa = PBXBuildFile; fileRef = FF41D81A2FA317C2001D30AA /* ZonedDateTimeCore.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FF41D8212FA31E11001D30AA /* InstantCore.h in Headers */ = {isa = PBXBuildFile; fileRef = FF41D8202FA31E11001D30AA /* InstantCore.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FF6A4D7E2E663147001FB92C /* WasmModuleDebugInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = FF6A4D7D2E663147001FB92C /* WasmModuleDebugInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFA2E02A2EA16F37006661A3 /* ControlFlowTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFA2E0222EA16F37006661A3 /* ControlFlowTests.cpp */; };
 		FFA2E02C2EA16F37006661A3 /* SpecialTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFA2E0242EA16F37006661A3 /* SpecialTests.cpp */; };
@@ -2375,10 +2383,6 @@
 		FFE88B9E2EC96CA700C9F5E2 /* ExecutionHandlerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFE88B9D2EC96CA700C9F5E2 /* ExecutionHandlerTest.cpp */; };
 		FFF3373F2BCDF1240070D04B /* JSCBytecodeCacheVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = FFF3373E2BCDF1240070D04B /* JSCBytecodeCacheVersion.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFF4D5A32CE304CD006EA634 /* DeferredWorkTimerInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FFF4D5A22CE304C2006EA634 /* DeferredWorkTimerInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FFF79F9A2FB2F1B2003FF02A /* PlainDateTimeCore.h in Headers */ = {isa = PBXBuildFile; fileRef = FFF79F962FB2F1B2003FF02A /* PlainDateTimeCore.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FFF79F9B2FB2F1B2003FF02A /* CalendarFields.h in Headers */ = {isa = PBXBuildFile; fileRef = FFF79F922FB2F1B2003FF02A /* CalendarFields.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FFF79F9C2FB2F1B2003FF02A /* ZonedDateTimeCore.h in Headers */ = {isa = PBXBuildFile; fileRef = FFF79F982FB2F1B2003FF02A /* ZonedDateTimeCore.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FFF79F9D2FB2F1B2003FF02A /* DurationArithmetic.h in Headers */ = {isa = PBXBuildFile; fileRef = FFF79F942FB2F1B2003FF02A /* DurationArithmetic.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFFAF8CB2EC97B2B00042238 /* TestScripts.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFFAF8CA2EC97B2B00042238 /* TestScripts.cpp */; };
 		FFFAF8CE2EC9A7C000042238 /* ExecutionHandlerTestSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFFAF8CD2EC9A7C000042238 /* ExecutionHandlerTestSupport.cpp */; };
 /* End PBXBuildFile section */
@@ -4046,6 +4050,7 @@
 		14F7256314EE265E00B1652B /* WeakHandleOwner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakHandleOwner.cpp; sourceTree = "<group>"; };
 		14F7256414EE265E00B1652B /* WeakHandleOwner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakHandleOwner.h; sourceTree = "<group>"; };
 		14F79F6E216EAD5000046D39 /* MetadataTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetadataTable.cpp; sourceTree = "<group>"; };
+		157D0D1381AB430AB34617E3 /* JSWebAssemblyStreamingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSWebAssemblyStreamingContext.h; path = js/JSWebAssemblyStreamingContext.h; sourceTree = "<group>"; };
 		169948EDE68D4054B01EF797 /* DefinePropertyAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefinePropertyAttributes.h; sourceTree = "<group>"; };
 		184E6FFC399E45AABE309649 /* WasmTypeSectionState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmTypeSectionState.cpp; sourceTree = "<group>"; };
 		1879510614C540FFB561C124 /* JSModuleLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSModuleLoader.cpp; sourceTree = "<group>"; };
@@ -4243,7 +4248,10 @@
 		2A83638718D7D0FE0000EBCC /* FullGCActivityCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FullGCActivityCallback.cpp; sourceTree = "<group>"; };
 		2A83638818D7D0FE0000EBCC /* FullGCActivityCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FullGCActivityCallback.h; sourceTree = "<group>"; };
 		2AA109402F8D5DE600347316 /* UnifiedSource166.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource166.cpp; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource166.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
-		FF41D81F2FA317C2001D30AA /* UnifiedSource167.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource167.cpp; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource167.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2AA109422F8D5DE600347316 /* UnifiedSource167.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource167.cpp; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource167.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2AA109442F8D5DE600347316 /* UnifiedSource168.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource168.cpp; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource168.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2AA109462F8D5DE600347316 /* UnifiedSource169.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource169.cpp; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource169.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2AA109482F8D5DE600347316 /* UnifiedSource170.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnifiedSource170.cpp; path = "DerivedSources/JavaScriptCore/unified-sources/UnifiedSource170.cpp"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2AAAA31018BD49D100394CC8 /* TypeInfoBlob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeInfoBlob.h; sourceTree = "<group>"; };
 		2AABCDE618EF294200002096 /* GCLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCLogging.h; sourceTree = "<group>"; };
 		2AACE63A18CA5A0300ED0191 /* GCActivityCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCActivityCallback.cpp; sourceTree = "<group>"; };
@@ -4296,6 +4304,7 @@
 		3910AB832F3203AD00BAA633 /* IntlSegmentDataObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntlSegmentDataObject.h; sourceTree = "<group>"; };
 		39E4D7232F32F0D500F3045F /* IntlPartObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IntlPartObject.cpp; sourceTree = "<group>"; };
 		39E4D7242F32F0DB00F3045F /* IntlPartObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntlPartObject.h; sourceTree = "<group>"; };
+		3BD7AD23E3D94016A763A0ED /* JSWebAssemblyStreamingContextInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSWebAssemblyStreamingContextInlines.h; path = js/JSWebAssemblyStreamingContextInlines.h; sourceTree = "<group>"; };
 		412952731D2CF6AC00E78B89 /* builtins_generate_internals_wrapper_header.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_generate_internals_wrapper_header.py; sourceTree = "<group>"; };
 		412952741D2CF6AC00E78B89 /* builtins_generate_internals_wrapper_implementation.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_generate_internals_wrapper_implementation.py; sourceTree = "<group>"; };
 		412952751D2CF6AC00E78B89 /* builtins_generate_wrapper_header.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = builtins_generate_wrapper_header.py; sourceTree = "<group>"; };
@@ -5607,9 +5616,6 @@
 		AD1CF06816DCAB2D00B97123 /* PropertyTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyTable.cpp; sourceTree = "<group>"; };
 		AD2FCB8C1DB5844000B3E736 /* JSWebAssemblyModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSWebAssemblyModule.cpp; path = js/JSWebAssemblyModule.cpp; sourceTree = "<group>"; };
 		AD2FCB8D1DB5844000B3E736 /* JSWebAssemblyModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSWebAssemblyModule.h; path = js/JSWebAssemblyModule.h; sourceTree = "<group>"; };
-		B70E7542B2EE4D83B39A9855 /* JSWebAssemblyStreamingContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSWebAssemblyStreamingContext.cpp; path = js/JSWebAssemblyStreamingContext.cpp; sourceTree = "<group>"; };
-		157D0D1381AB430AB34617E3 /* JSWebAssemblyStreamingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSWebAssemblyStreamingContext.h; path = js/JSWebAssemblyStreamingContext.h; sourceTree = "<group>"; };
-		3BD7AD23E3D94016A763A0ED /* JSWebAssemblyStreamingContextInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSWebAssemblyStreamingContextInlines.h; path = js/JSWebAssemblyStreamingContextInlines.h; sourceTree = "<group>"; };
 		AD2FCB981DB585A600B3E736 /* WebAssemblyModuleConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyModuleConstructor.cpp; path = js/WebAssemblyModuleConstructor.cpp; sourceTree = "<group>"; };
 		AD2FCB991DB585A600B3E736 /* WebAssemblyModuleConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAssemblyModuleConstructor.h; path = js/WebAssemblyModuleConstructor.h; sourceTree = "<group>"; };
 		AD2FCB9A1DB585A600B3E736 /* WebAssemblyModulePrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyModulePrototype.cpp; path = js/WebAssemblyModulePrototype.cpp; sourceTree = "<group>"; };
@@ -5694,6 +5700,7 @@
 		ADE802971E08F1C90058DE78 /* WebAssemblyLinkErrorPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAssemblyLinkErrorPrototype.h; path = js/WebAssemblyLinkErrorPrototype.h; sourceTree = "<group>"; };
 		ADE8029D1E08F2260058DE78 /* WebAssemblyLinkErrorConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyLinkErrorConstructor.cpp; path = js/WebAssemblyLinkErrorConstructor.cpp; sourceTree = "<group>"; };
 		AEDA37D0C69F462084E47142 /* WeakInlinesLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakInlinesLight.h; sourceTree = "<group>"; };
+		B70E7542B2EE4D83B39A9855 /* JSWebAssemblyStreamingContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSWebAssemblyStreamingContext.cpp; path = js/JSWebAssemblyStreamingContext.cpp; sourceTree = "<group>"; };
 		BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ToolExecutable.xcconfig; sourceTree = "<group>"; };
 		DD8A31502F17A00000000001 /* LLIntExtractor.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = LLIntExtractor.xcconfig; sourceTree = "<group>"; };
 		BC02E9040E1839DB000F9297 /* ErrorConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorConstructor.cpp; sourceTree = "<group>"; };
@@ -5969,11 +5976,7 @@
 		E329D89E2E81F49600B63FF5 /* B3TypedPointer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = B3TypedPointer.h; path = b3/B3TypedPointer.h; sourceTree = "<group>"; };
 		E32C3C6823E94C1E00BC97C0 /* UnlinkedCodeBlockGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnlinkedCodeBlockGenerator.h; sourceTree = "<group>"; };
 		E32D4DE026DAFD4200D4533A /* TemporalCalendar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporalCalendar.cpp; sourceTree = "<group>"; };
-		E32D4DE126DAFD4200D4533A /* TemporalCalendarPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalCalendarPrototype.h; sourceTree = "<group>"; };
-		E32D4DE226DAFD4200D4533A /* TemporalCalendarPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporalCalendarPrototype.cpp; sourceTree = "<group>"; };
 		E32D4DE326DAFD4300D4533A /* TemporalCalendar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalCalendar.h; sourceTree = "<group>"; };
-		E32D4DE426DAFD4300D4533A /* TemporalCalendarConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalCalendarConstructor.h; sourceTree = "<group>"; };
-		E32D4DE526DAFD4300D4533A /* TemporalCalendarConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporalCalendarConstructor.cpp; sourceTree = "<group>"; };
 		E32D51A52C6D0FD600B013D1 /* WasmCompilationContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmCompilationContext.h; sourceTree = "<group>"; };
 		E32D51A72C6D0FD600B013D1 /* WasmOpcodeCounter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmOpcodeCounter.h; sourceTree = "<group>"; };
 		E32D51A82C6D0FD600B013D1 /* WasmOpcodeCounter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmOpcodeCounter.cpp; sourceTree = "<group>"; };
@@ -6552,18 +6555,32 @@
 		FF356D2E2FA9DACE00213929 /* TemporalCoreTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TemporalCoreTest.h; path = API/tests/TemporalCoreTest.h; sourceTree = "<group>"; };
 		FF356D2F2FA9DACE00213929 /* TemporalCoreTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = TemporalCoreTest.cpp; path = API/tests/TemporalCoreTest.cpp; sourceTree = "<group>"; };
 		FF41590B28FF3C6B00F80B96 /* WaiterListManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaiterListManager.h; sourceTree = "<group>"; };
-		FF62739D2FAD56220098B5A3 /* CalendarArithmetic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CalendarArithmetic.h; sourceTree = "<group>"; };
-		FF62739E2FAD56220098B5A3 /* CalendarArithmetic.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CalendarArithmetic.cpp; sourceTree = "<group>"; };
-		FF62739F2FAD56220098B5A3 /* InstantCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InstantCore.h; sourceTree = "<group>"; };
-		FF6273A02FAD56220098B5A3 /* InstantCore.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InstantCore.cpp; sourceTree = "<group>"; };
-		FF6273A12FAD56220098B5A3 /* ISOArithmetic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ISOArithmetic.h; sourceTree = "<group>"; };
-		FF6273A22FAD56220098B5A3 /* ISOArithmetic.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ISOArithmetic.cpp; sourceTree = "<group>"; };
-		FF6273A32FAD56220098B5A3 /* Rounding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Rounding.h; sourceTree = "<group>"; };
-		FF6273A42FAD56220098B5A3 /* Rounding.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Rounding.cpp; sourceTree = "<group>"; };
-		FF629D9B2FAE9B500098B5A3 /* CalendarICUBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CalendarICUBridge.h; sourceTree = "<group>"; };
-		FF629D9C2FAE9B500098B5A3 /* CalendarICUBridge.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CalendarICUBridge.cpp; sourceTree = "<group>"; };
-		FF629D9E2FAE9B500098B5A3 /* TimeZoneICUBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TimeZoneICUBridge.h; sourceTree = "<group>"; };
-		FF629D9F2FAE9B500098B5A3 /* TimeZoneICUBridge.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TimeZoneICUBridge.cpp; sourceTree = "<group>"; };
+		FF41C9D82FA2F010001D30AA /* CalendarArithmetic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CalendarArithmetic.h; sourceTree = "<group>"; };
+		FF41C9D92FA2F010001D30AA /* CalendarArithmetic.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CalendarArithmetic.cpp; sourceTree = "<group>"; };
+		FF41C9DA2FA2F010001D30AA /* CalendarFields.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CalendarFields.h; sourceTree = "<group>"; };
+		FF41C9DB2FA2F010001D30AA /* CalendarFields.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CalendarFields.cpp; sourceTree = "<group>"; };
+		FF41C9DC2FA2F010001D30AA /* CalendarICUBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CalendarICUBridge.h; sourceTree = "<group>"; };
+		FF41C9DD2FA2F010001D30AA /* CalendarICUBridge.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CalendarICUBridge.cpp; sourceTree = "<group>"; };
+		FF41C9DE2FA2F010001D30AA /* DurationArithmetic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DurationArithmetic.h; sourceTree = "<group>"; };
+		FF41C9DF2FA2F010001D30AA /* DurationArithmetic.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DurationArithmetic.cpp; sourceTree = "<group>"; };
+		FF41C9E02FA2F010001D30AA /* ISOArithmetic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ISOArithmetic.h; sourceTree = "<group>"; };
+		FF41C9E12FA2F010001D30AA /* ISOArithmetic.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ISOArithmetic.cpp; sourceTree = "<group>"; };
+		FF41C9E22FA2F010001D30AA /* Rounding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Rounding.h; sourceTree = "<group>"; };
+		FF41C9E32FA2F010001D30AA /* Rounding.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Rounding.cpp; sourceTree = "<group>"; };
+		FF41C9E62FA2F010001D30AA /* TimeZoneICUBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TimeZoneICUBridge.h; sourceTree = "<group>"; };
+		FF41C9E72FA2F010001D30AA /* TimeZoneICUBridge.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TimeZoneICUBridge.cpp; sourceTree = "<group>"; };
+		FF41CA072FA2F0D9001D30AA /* TemporalZonedDateTime.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TemporalZonedDateTime.h; sourceTree = "<group>"; };
+		FF41CA082FA2F0D9001D30AA /* TemporalZonedDateTime.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TemporalZonedDateTime.cpp; sourceTree = "<group>"; };
+		FF41CA092FA2F0D9001D30AA /* TemporalZonedDateTimeConstructor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TemporalZonedDateTimeConstructor.h; sourceTree = "<group>"; };
+		FF41CA0A2FA2F0D9001D30AA /* TemporalZonedDateTimeConstructor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TemporalZonedDateTimeConstructor.cpp; sourceTree = "<group>"; };
+		FF41CA0B2FA2F0D9001D30AA /* TemporalZonedDateTimePrototype.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TemporalZonedDateTimePrototype.h; sourceTree = "<group>"; };
+		FF41CA0C2FA2F0D9001D30AA /* TemporalZonedDateTimePrototype.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TemporalZonedDateTimePrototype.cpp; sourceTree = "<group>"; };
+		FF41D8182FA317C2001D30AA /* PlainDateTimeCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlainDateTimeCore.h; sourceTree = "<group>"; };
+		FF41D8192FA317C2001D30AA /* PlainDateTimeCore.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PlainDateTimeCore.cpp; sourceTree = "<group>"; };
+		FF41D81A2FA317C2001D30AA /* ZonedDateTimeCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZonedDateTimeCore.h; sourceTree = "<group>"; };
+		FF41D81B2FA317C2001D30AA /* ZonedDateTimeCore.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ZonedDateTimeCore.cpp; sourceTree = "<group>"; };
+		FF41D8202FA31E11001D30AA /* InstantCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InstantCore.h; sourceTree = "<group>"; };
+		FF41D8222FA31F6B001D30AA /* InstantCore.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InstantCore.cpp; sourceTree = "<group>"; };
 		FF6A4D7D2E663147001FB92C /* WasmModuleDebugInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmModuleDebugInfo.h; sourceTree = "<group>"; };
 		FFA2E0212EA16F37006661A3 /* BinaryTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BinaryTests.cpp; sourceTree = "<group>"; };
 		FFA2E0222EA16F37006661A3 /* ControlFlowTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ControlFlowTests.cpp; sourceTree = "<group>"; };
@@ -6600,14 +6617,6 @@
 		FFF3373D2BCDF1240070D04B /* JSCBytecodeCacheVersion.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSCBytecodeCacheVersion.cpp; sourceTree = "<group>"; };
 		FFF3373E2BCDF1240070D04B /* JSCBytecodeCacheVersion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSCBytecodeCacheVersion.h; sourceTree = "<group>"; };
 		FFF4D5A22CE304C2006EA634 /* DeferredWorkTimerInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeferredWorkTimerInlines.h; sourceTree = "<group>"; };
-		FFF79F922FB2F1B2003FF02A /* CalendarFields.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CalendarFields.h; sourceTree = "<group>"; };
-		FFF79F932FB2F1B2003FF02A /* CalendarFields.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CalendarFields.cpp; sourceTree = "<group>"; };
-		FFF79F942FB2F1B2003FF02A /* DurationArithmetic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DurationArithmetic.h; sourceTree = "<group>"; };
-		FFF79F952FB2F1B2003FF02A /* DurationArithmetic.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DurationArithmetic.cpp; sourceTree = "<group>"; };
-		FFF79F962FB2F1B2003FF02A /* PlainDateTimeCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlainDateTimeCore.h; sourceTree = "<group>"; };
-		FFF79F972FB2F1B2003FF02A /* PlainDateTimeCore.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PlainDateTimeCore.cpp; sourceTree = "<group>"; };
-		FFF79F982FB2F1B2003FF02A /* ZonedDateTimeCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZonedDateTimeCore.h; sourceTree = "<group>"; };
-		FFF79F992FB2F1B2003FF02A /* ZonedDateTimeCore.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ZonedDateTimeCore.cpp; sourceTree = "<group>"; };
 		FFFAF8C92EC97B2B00042238 /* TestScripts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestScripts.h; sourceTree = "<group>"; };
 		FFFAF8CA2EC97B2B00042238 /* TestScripts.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestScripts.cpp; sourceTree = "<group>"; };
 		FFFAF8CC2EC9A7C000042238 /* ExecutionHandlerTestSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExecutionHandlerTestSupport.h; sourceTree = "<group>"; };
@@ -8213,7 +8222,10 @@
 				538F15DA368FBBB600D601C4 /* UnifiedSource164.cpp */,
 				538F15DF368FBBB600D601C4 /* UnifiedSource165.cpp */,
 				2AA109402F8D5DE600347316 /* UnifiedSource166.cpp */,
-				FF41D81F2FA317C2001D30AA /* UnifiedSource167.cpp */,
+				2AA109422F8D5DE600347316 /* UnifiedSource167.cpp */,
+				2AA109442F8D5DE600347316 /* UnifiedSource168.cpp */,
+				2AA109462F8D5DE600347316 /* UnifiedSource169.cpp */,
+				2AA109482F8D5DE600347316 /* UnifiedSource170.cpp */,
 			);
 			path = "unified-sources";
 			sourceTree = "<group>";
@@ -9538,10 +9550,6 @@
 				70ECA6041AFDBEA200449739 /* TemplateObjectDescriptor.h */,
 				E32D4DE026DAFD4200D4533A /* TemporalCalendar.cpp */,
 				E32D4DE326DAFD4300D4533A /* TemporalCalendar.h */,
-				E32D4DE526DAFD4300D4533A /* TemporalCalendarConstructor.cpp */,
-				E32D4DE426DAFD4300D4533A /* TemporalCalendarConstructor.h */,
-				E32D4DE226DAFD4200D4533A /* TemporalCalendarPrototype.cpp */,
-				E32D4DE126DAFD4200D4533A /* TemporalCalendarPrototype.h */,
 				A3C7EDB126B0DB36004C34C5 /* TemporalDuration.cpp */,
 				A3C7EDB326B0DB37004C34C5 /* TemporalDuration.h */,
 				A3C7EDB226B0DB37004C34C5 /* TemporalDurationConstructor.cpp */,
@@ -9594,6 +9602,12 @@
 				E30E8A5126DE2E4800DA4915 /* TemporalTimeZoneConstructor.h */,
 				E30E8A4C26DE2E4700DA4915 /* TemporalTimeZonePrototype.cpp */,
 				E30E8A4E26DE2E4700DA4915 /* TemporalTimeZonePrototype.h */,
+				FF41CA082FA2F0D9001D30AA /* TemporalZonedDateTime.cpp */,
+				FF41CA072FA2F0D9001D30AA /* TemporalZonedDateTime.h */,
+				FF41CA0A2FA2F0D9001D30AA /* TemporalZonedDateTimeConstructor.cpp */,
+				FF41CA092FA2F0D9001D30AA /* TemporalZonedDateTimeConstructor.h */,
+				FF41CA0C2FA2F0D9001D30AA /* TemporalZonedDateTimePrototype.cpp */,
+				FF41CA0B2FA2F0D9001D30AA /* TemporalZonedDateTimePrototype.h */,
 				0FA2C17917D7CF84009D015F /* TestRunnerUtils.cpp */,
 				0FA2C17A17D7CF84009D015F /* TestRunnerUtils.h */,
 				FE2E6A7A1D6EA5FE0060F896 /* ThrowScope.cpp */,
@@ -10914,28 +10928,28 @@
 		FF356CF52FA9832600213929 /* core */ = {
 			isa = PBXGroup;
 			children = (
-				FF62739E2FAD56220098B5A3 /* CalendarArithmetic.cpp */,
-				FF62739D2FAD56220098B5A3 /* CalendarArithmetic.h */,
-				FFF79F932FB2F1B2003FF02A /* CalendarFields.cpp */,
-				FFF79F922FB2F1B2003FF02A /* CalendarFields.h */,
-				FF629D9C2FAE9B500098B5A3 /* CalendarICUBridge.cpp */,
-				FF629D9B2FAE9B500098B5A3 /* CalendarICUBridge.h */,
-				FFF79F952FB2F1B2003FF02A /* DurationArithmetic.cpp */,
-				FFF79F942FB2F1B2003FF02A /* DurationArithmetic.h */,
-				FF6273A02FAD56220098B5A3 /* InstantCore.cpp */,
-				FF62739F2FAD56220098B5A3 /* InstantCore.h */,
-				FF6273A22FAD56220098B5A3 /* ISOArithmetic.cpp */,
-				FF6273A12FAD56220098B5A3 /* ISOArithmetic.h */,
-				FFF79F972FB2F1B2003FF02A /* PlainDateTimeCore.cpp */,
-				FFF79F962FB2F1B2003FF02A /* PlainDateTimeCore.h */,
-				FF6273A42FAD56220098B5A3 /* Rounding.cpp */,
-				FF6273A32FAD56220098B5A3 /* Rounding.h */,
+				FF41C9D92FA2F010001D30AA /* CalendarArithmetic.cpp */,
+				FF41C9D82FA2F010001D30AA /* CalendarArithmetic.h */,
+				FF41C9DB2FA2F010001D30AA /* CalendarFields.cpp */,
+				FF41C9DA2FA2F010001D30AA /* CalendarFields.h */,
+				FF41C9DD2FA2F010001D30AA /* CalendarICUBridge.cpp */,
+				FF41C9DC2FA2F010001D30AA /* CalendarICUBridge.h */,
+				FF41C9DF2FA2F010001D30AA /* DurationArithmetic.cpp */,
+				FF41C9DE2FA2F010001D30AA /* DurationArithmetic.h */,
+				FF41D8222FA31F6B001D30AA /* InstantCore.cpp */,
+				FF41D8202FA31E11001D30AA /* InstantCore.h */,
+				FF41C9E12FA2F010001D30AA /* ISOArithmetic.cpp */,
+				FF41C9E02FA2F010001D30AA /* ISOArithmetic.h */,
+				FF41D8192FA317C2001D30AA /* PlainDateTimeCore.cpp */,
+				FF41D8182FA317C2001D30AA /* PlainDateTimeCore.h */,
+				FF41C9E32FA2F010001D30AA /* Rounding.cpp */,
+				FF41C9E22FA2F010001D30AA /* Rounding.h */,
 				FF356CF32FA9832600213929 /* TemporalCoreTypes.h */,
 				FF356CF42FA9832600213929 /* TemporalEnums.h */,
-				FF629D9F2FAE9B500098B5A3 /* TimeZoneICUBridge.cpp */,
-				FF629D9E2FAE9B500098B5A3 /* TimeZoneICUBridge.h */,
-				FFF79F992FB2F1B2003FF02A /* ZonedDateTimeCore.cpp */,
-				FFF79F982FB2F1B2003FF02A /* ZonedDateTimeCore.h */,
+				FF41C9E72FA2F010001D30AA /* TimeZoneICUBridge.cpp */,
+				FF41C9E62FA2F010001D30AA /* TimeZoneICUBridge.h */,
+				FF41D81B2FA317C2001D30AA /* ZonedDateTimeCore.cpp */,
+				FF41D81A2FA317C2001D30AA /* ZonedDateTimeCore.h */,
 			);
 			path = core;
 			sourceTree = "<group>";
@@ -11363,9 +11377,9 @@
 				1409ECC1225E178C00BEDD54 /* CachePayload.h in Headers */,
 				1409ECC0225E178100BEDD54 /* CacheUpdate.h in Headers */,
 				0FEC3C601F379F5300F59B6C /* CagedBarrierPtr.h in Headers */,
-				FF6273A82FAD56220098B5A3 /* CalendarArithmetic.h in Headers */,
-				FFF79F9B2FB2F1B2003FF02A /* CalendarFields.h in Headers */,
-				FF629DA32FAE9B500098B5A3 /* CalendarICUBridge.h in Headers */,
+				FF41C9FA2FA2F02B001D30AA /* CalendarArithmetic.h in Headers */,
+				FF41C9EE2FA2F010001D30AA /* CalendarFields.h in Headers */,
+				FF41C9EA2FA2F010001D30AA /* CalendarICUBridge.h in Headers */,
 				BC18C3ED0E16F5CD00B34460 /* CallData.h in Headers */,
 				0F64B27A1A7957B2006E4E66 /* CallEdge.h in Headers */,
 				796DAA2B1E89CCD6005DF24A /* CalleeBits.h in Headers */,
@@ -11682,7 +11696,7 @@
 				E35CA1541DBC3A5C00F83516 /* DOMJITHeapRange.h in Headers */,
 				E350708A1DC49BBF0089BCD6 /* DOMJITSignature.h in Headers */,
 				A70447EE17A0BD7000F5898E /* DumpContext.h in Headers */,
-				FFF79F9D2FB2F1B2003FF02A /* DurationArithmetic.h in Headers */,
+				FF41C9EC2FA2F010001D30AA /* DurationArithmetic.h in Headers */,
 				145FF2C8243BB9D600569E71 /* ECMAMode.h in Headers */,
 				2A83638618D7D0EE0000EBCC /* EdenGCActivityCallback.h in Headers */,
 				1AB2A6FB9608AD5DF73332D4 /* EmbedderArrayLike.h in Headers */,
@@ -11947,7 +11961,7 @@
 				0F49E9AA20AB4D00001CA0AA /* InstanceOfAccessCase.h in Headers */,
 				0FB399BF20AF6B3F0017E213 /* InstanceOfStatus.h in Headers */,
 				0FB399C020AF6B430017E213 /* InstanceOfVariant.h in Headers */,
-				FF6273A52FAD56220098B5A3 /* InstantCore.h in Headers */,
+				FF41D8212FA31E11001D30AA /* InstantCore.h in Headers */,
 				14A4680C216FA565000D2B1A /* Instruction.h in Headers */,
 				14C25B9E216EA36A00137764 /* InstructionStream.h in Headers */,
 				A7A8AF3B17ADB5F3005AB174 /* Int16Array.h in Headers */,
@@ -12005,7 +12019,7 @@
 				860BD801148EA6F200112B2F /* Intrinsic.h in Headers */,
 				534E03541E53BD2900213F64 /* IntrinsicGetterAccessCase.h in Headers */,
 				A38CA59E26DD84DE00C8D84C /* ISO8601.h in Headers */,
-				FF6273A72FAD56220098B5A3 /* ISOArithmetic.h in Headers */,
+				FF41C9ED2FA2F010001D30AA /* ISOArithmetic.h in Headers */,
 				0FB467801FDDA6F1003FCB09 /* IsoCellSet.h in Headers */,
 				0FB467811FDDA6F7003FCB09 /* IsoCellSetInlines.h in Headers */,
 				E3BF1BAE238AAEDB003A1C2B /* IsoHeapCellType.h in Headers */,
@@ -12477,7 +12491,7 @@
 				A5AB49DD1BEC8086007020FB /* PerGlobalObjectWrapperWorld.h in Headers */,
 				23A356912E9790F40039C82A /* PinballCompletion.h in Headers */,
 				F04DFCBEDED74A4E92B8A9DA /* PinballHandlerContext.h in Headers */,
-				FFF79F9A2FB2F1B2003FF02A /* PlainDateTimeCore.h in Headers */,
+				FF41D81C2FA317C2001D30AA /* PlainDateTimeCore.h in Headers */,
 				0FE834181A6EF97B00D04847 /* PolymorphicCallStubRoutine.h in Headers */,
 				521131F71F82BF14007CCEEE /* PolyProtoAccessChain.h in Headers */,
 				0F070A4B1D543A98006E7232 /* PreciseAllocation.h in Headers */,
@@ -12585,7 +12599,7 @@
 				FE9F3FB92613C7890069E89F /* ResourceExhaustion.h in Headers */,
 				869EBCB70E8C6D4A008722CC /* ResultType.h in Headers */,
 				FE3B642F25D6FB4D001ADDB4 /* RootMarkReason.h in Headers */,
-				FF6273A62FAD56220098B5A3 /* Rounding.h in Headers */,
+				FF41C9EB2FA2F010001D30AA /* Rounding.h in Headers */,
 				0F2C63AA1E4FA42E00C13839 /* RunningScope.h in Headers */,
 				70B0A9D11A9B66460001306A /* RuntimeFlags.h in Headers */,
 				52C0611F1AA51E1C00B4ADBA /* RuntimeType.h in Headers */,
@@ -12724,8 +12738,6 @@
 				07CEB6A22EF90E4B008DCDEC /* TargetAssemblerDefinitions.h in Headers */,
 				70ECA6091AFDBEA200449739 /* TemplateObjectDescriptor.h in Headers */,
 				E32D4DE926DAFD4300D4533A /* TemporalCalendar.h in Headers */,
-				E32D4DEA26DAFD4300D4533A /* TemporalCalendarConstructor.h in Headers */,
-				E32D4DE726DAFD4300D4533A /* TemporalCalendarPrototype.h in Headers */,
 				FF356CF82FA9832600213929 /* TemporalCoreTypes.h in Headers */,
 				A3C7EDB926B0DB38004C34C5 /* TemporalDuration.h in Headers */,
 				A3C7EDBA26B0DB38004C34C5 /* TemporalDurationConstructor.h in Headers */,
@@ -12753,12 +12765,15 @@
 				E30E8A5626DE2E4800DA4915 /* TemporalTimeZone.h in Headers */,
 				E30E8A5726DE2E4800DA4915 /* TemporalTimeZoneConstructor.h in Headers */,
 				E30E8A5426DE2E4800DA4915 /* TemporalTimeZonePrototype.h in Headers */,
+				FF41CA0E2FA2F0D9001D30AA /* TemporalZonedDateTime.h in Headers */,
+				FF41CA0D2FA2F0D9001D30AA /* TemporalZonedDateTimeConstructor.h in Headers */,
+				FF41CA132FA2F0D9001D30AA /* TemporalZonedDateTimePrototype.h in Headers */,
 				0F44A7B420BF68D90022B171 /* TerminatedCodeOrigin.h in Headers */,
 				0FA2C17C17D7CF84009D015F /* TestRunnerUtils.h in Headers */,
 				FE3422121D6B81C30032BE88 /* ThrowScope.h in Headers */,
 				0F572D4F16879FDD00E57FBD /* ThunkGenerator.h in Headers */,
 				A7386556118697B400540279 /* ThunkGenerators.h in Headers */,
-				FF629DA42FAE9B500098B5A3 /* TimeZoneICUBridge.h in Headers */,
+				FF41C9F22FA2F010001D30AA /* TimeZoneICUBridge.h in Headers */,
 				141448CD13A1783700F5BA1A /* TinyBloomFilter.h in Headers */,
 				0F55989817C86C5800A1E543 /* ToNativeFromValue.h in Headers */,
 				FE80C1971D775CDD008510C0 /* TopExceptionScope.h in Headers */,
@@ -12996,7 +13011,7 @@
 				86704B8A12DBA33700A9FE7B /* YarrPattern.h in Headers */,
 				86704B4312DB8A8100A9FE7B /* YarrSyntaxChecker.h in Headers */,
 				659CDA5B1F6753F200D3E53F /* YarrUnicodeProperties.h in Headers */,
-				FFF79F9C2FB2F1B2003FF02A /* ZonedDateTimeCore.h in Headers */,
+				FF41D81D2FA317C2001D30AA /* ZonedDateTimeCore.h in Headers */,
 				E390287D2DD1E7D90083D675 /* Zydis.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -14262,7 +14277,10 @@
 				538F15DA268FBBB600D601C4 /* UnifiedSource164.cpp in Sources */,
 				538F15DF268FBBB600D601C4 /* UnifiedSource165.cpp in Sources */,
 				2AA109412F8D5DE600347316 /* UnifiedSource166.cpp in Sources */,
-				FF41D81E2FA317C2001D30AA /* UnifiedSource167.cpp in Sources */,
+				2AA109432F8D5DE600347316 /* UnifiedSource167.cpp in Sources */,
+				2AA109452F8D5DE600347316 /* UnifiedSource168.cpp in Sources */,
+				2AA109472F8D5DE600347316 /* UnifiedSource169.cpp in Sources */,
+				2AA109492F8D5DE600347316 /* UnifiedSource170.cpp in Sources */,
 				E3C091E929B07D4C00CD6D97 /* WasmBBQJIT.cpp in Sources */,
 				4615E46B2B5849F4001D4D53 /* WasmBBQJIT64.cpp in Sources */,
 				642D20D52B476A2E0030545E /* WasmIPIntSlowPaths.cpp in Sources */,

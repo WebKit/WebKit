@@ -252,7 +252,7 @@ std::optional<Duration> parseDuration(StringView string)
 
 enum class Second60Mode { Accept, Reject };
 template<typename CharacterType>
-static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>& buffer, Second60Mode second60Mode, bool parseSubMinutePrecision = true)
+static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>& buffer, Second60Mode second60Mode, bool parseSubMinutePrecision = true, bool* outHasSeconds = nullptr)
 {
     // https://tc39.es/proposal-temporal/#prod-TimeSpec
     // TimeSpec :
@@ -320,6 +320,8 @@ static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>
     if (!parseSubMinutePrecision)
         return std::nullopt;
 
+    if (outHasSeconds)
+        *outHasSeconds = true;
     unsigned second = 0;
     if (buffer.lengthRemaining() < 2)
         return std::nullopt;
@@ -371,7 +373,7 @@ static std::optional<PlainTime> parseTimeSpec(StringParsingBuffer<CharacterType>
 }
 
 template<typename CharacterType>
-static std::optional<int64_t> parseUTCOffset(StringParsingBuffer<CharacterType>& buffer, bool parseSubMinutePrecision = true)
+static std::optional<int64_t> parseUTCOffset(StringParsingBuffer<CharacterType>& buffer, bool parseSubMinutePrecision = true, bool* outHasSubMinutePrecision = nullptr)
 {
     // UTCOffset[SubMinutePrecision] :
     //     ASCIISign Hour
@@ -398,7 +400,8 @@ static std::optional<int64_t> parseUTCOffset(StringParsingBuffer<CharacterType>&
     } else
         return std::nullopt;
 
-    auto plainTime = parseTimeSpec(buffer, Second60Mode::Reject, parseSubMinutePrecision);
+    bool hasSeconds = false;
+    auto plainTime = parseTimeSpec(buffer, Second60Mode::Reject, parseSubMinutePrecision, &hasSeconds);
     if (!plainTime)
         return std::nullopt;
 
@@ -408,6 +411,9 @@ static std::optional<int64_t> parseUTCOffset(StringParsingBuffer<CharacterType>&
     int64_t millisecond = plainTime->millisecond();
     int64_t microsecond = plainTime->microsecond();
     int64_t nanosecond = plainTime->nanosecond();
+
+    if (outHasSubMinutePrecision)
+        *outHasSubMinutePrecision = hasSeconds;
 
     return (nsPerHour * hour + nsPerMinute * minute + nsPerSecond * second + nsPerMillisecond * millisecond + nsPerMicrosecond * microsecond + nanosecond) * factor;
 }
@@ -644,51 +650,12 @@ static std::optional<Variant<Vector<Latin1Character>, int64_t>> parseTimeZoneAnn
         buffer.advance();
         return offset.value();
     }
-    case 'E': {
-        // "Etc/GMT+20" and "]" => length is 11.
-        if (buffer.lengthRemaining() >= 11) {
-            if (buffer[0] == 'E' && buffer[1] == 't' && buffer[2] == 'c' && buffer[3] == '/' && buffer[4] == 'G' && buffer[5] == 'M' && buffer[6] == 'T') {
-                auto signCharacter = buffer[7];
-                // Not including minusSign since it is ASCIISign.
-                if (signCharacter == '+' || signCharacter == '-') {
-                    // Etc/GMT+01 is UTC-01:00. This sign is intentionally inverted.
-                    // https://en.wikipedia.org/wiki/Tz_database#Area
-                    int64_t factor = signCharacter == '+' ? -1 : 1;
-                    int64_t hour = 0;
-                    auto firstHourCharacter = buffer[8];
-                    if (firstHourCharacter >= '0' && firstHourCharacter <= '2') {
-                        auto secondHourCharacter = buffer[9];
-                        if (isASCIIDigit(secondHourCharacter)) {
-                            hour = (secondHourCharacter - '0') + 10 * (firstHourCharacter - '0');
-                            if (hour < 24 && buffer[10] == ']') {
-                                buffer.advanceBy(11);
-                                return nsPerHour * hour * factor;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        [[fallthrough]];
-    }
     default: {
-        // TZLeadingChar :
-        //     Alpha
-        //     .
-        //     _
-        //
-        // TZChar :
-        //     Alpha
-        //     .
-        //     -
-        //     _
-        //
-        // TimeZoneIANANameComponent :
-        //     TZLeadingChar TZChar[opt] TZChar[opt] TZChar[opt] TZChar[opt] TZChar[opt] TZChar[opt] TZChar[opt] TZChar[opt] TZChar[opt] TZChar[opt] TZChar[opt] TZChar[opt] TZChar[opt] but not one of . or ..
-        //
-        // TimeZoneIANAName :
-        //     TimeZoneIANANameComponent
-        //     TimeZoneIANAName / TimeZoneIANANameComponent
+        // Per ixdtf grammar.rs (is_tz_leading_char, is_tz_char):
+        // TZLeadingChar : Alpha | _ | .
+        // TZChar : TZLeadingChar | DecimalDigit | - | +
+        // No special handling for Etc/GMT±N — parsed as regular IANA names.
+        // TimeZoneIANAName : TimeZoneIANANameComponent (/ TimeZoneIANANameComponent)*
 
         unsigned nameLength = 0;
         {
@@ -697,7 +664,7 @@ static std::optional<Variant<Vector<Latin1Character>, int64_t>> parseTimeZoneAnn
                 auto character = buffer[index];
                 if (character == ']')
                     break;
-                if (!isASCIIAlpha(character) && character != '.' && character != '_' && character != '-' && character != '/')
+                if (!isASCIIAlpha(character) && !isASCIIDigit(character) && character != '.' && character != '_' && character != '-' && character != '+' && character != '/')
                     return std::nullopt;
             }
             if (!index)
@@ -738,7 +705,7 @@ static std::optional<Variant<Vector<Latin1Character>, int64_t>> parseTimeZoneAnn
                 continue;
             }
 
-            if (!(isASCIIAlpha(character) || character == '.' || character == '_' || character == '-'))
+            if (!(isASCIIAlpha(character) || isASCIIDigit(character) || character == '.' || character == '_' || character == '-' || character == '+'))
                 return std::nullopt;
         }
         if (isLeadingCharacterInNameComponent)
@@ -781,16 +748,17 @@ static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<Character
     // https://tc39.es/proposal-temporal/#prod-TimeZoneUTCOffsetSign
     case '+':
     case '-': {
-        auto offset = parseUTCOffset(buffer);
+        bool hasSubMinute = false;
+        auto offset = parseUTCOffset(buffer, true, &hasSubMinute);
         if (!offset)
             return std::nullopt;
         if (!buffer.atEnd() && *buffer == '[' && canBeTimeZone(buffer, *buffer)) {
             auto timeZone = parseTimeZoneAnnotation(buffer);
             if (!timeZone)
                 return std::nullopt;
-            return TimeZoneRecord { false, offset.value(), WTF::move(timeZone.value()) };
+            return TimeZoneRecord { false, offset.value(), WTF::move(timeZone.value()), hasSubMinute };
         }
-        return TimeZoneRecord { false, offset.value(), { } };
+        return TimeZoneRecord { false, offset.value(), { }, hasSubMinute };
     }
     // TimeZoneBracketedAnnotation
     // https://tc39.es/proposal-temporal/#prod-TimeZoneBracketedAnnotation
@@ -1030,7 +998,11 @@ static bool NODELETE canBeYear(StringParsingBuffer<CharacterType>& buffer)
         if (!isASCIIDigit(buffer[i]))
             return false;
     }
-    return true;
+    // The character after the 4-digit year must be '-' or a digit (for YYYY-MM or YYYYMMDD).
+    // If it is '[' (timezone annotation start), the 4 digits are MMDD, not a year.
+    // e.g. "1118[+01:00]" — buffer[4]='[' → not a year, treat as MMDD.
+    auto following = buffer[4 + start];
+    return isASCIIDigit(following) || following == '-';
 }
 
 template<typename CharacterType>
@@ -1151,7 +1123,11 @@ static std::optional<PlainDate> NODELETE parseDate(StringParsingBuffer<Character
     } else
         return std::nullopt;
 
-    if (format == TemporalDateFormat::YearMonth && buffer.atEnd()) {
+    // For YearMonth format: return after year+month. If we used a hyphen separator
+    // and the next char is not '-', there is no day component (e.g. "2020-01[u-ca=..."],
+    // "2020-01", "2020-01Z"). For compact format (splitByHyphen=false), fall through
+    // so the day digits (e.g. "18" in "19761118T...") are consumed correctly.
+    if (format == TemporalDateFormat::YearMonth && (buffer.atEnd() || (splitByHyphen && *buffer != '-'))) {
         if (!isYearWithinLimits(year)) [[unlikely]]
             year = outOfRangeYear;
         return PlainDate(year, month, 1);
@@ -1217,6 +1193,15 @@ static std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::option
             return std::nullopt;
         auto [plainTime, timeZone] = WTF::move(plainTimeAndTimeZone.value());
         return std::tuple { WTF::move(plainDate.value()), WTF::move(plainTime), WTF::move(timeZone) };
+    }
+
+    if (!buffer.atEnd() && *buffer == '[' && canBeTimeZone(buffer, *buffer)) {
+        // DateTime : Date TimeZoneAnnotation  (no time separator) — e.g. "2020-01-01[+09:00]"
+        // Only bracket annotations are valid after a bare date; bare UTC offsets (Z, +HH:MM) require a time.
+        auto timeZone = parseTimeZone(buffer);
+        if (!timeZone)
+            return std::nullopt;
+        return std::tuple { WTF::move(plainDate.value()), std::nullopt, WTF::move(timeZone) };
     }
 
     if (canBeTimeZone(buffer, *buffer))
@@ -1314,12 +1299,20 @@ static bool NODELETE isAmbiguousCalendarTime(StringParsingBuffer<CharacterType>&
     if (toASCIIUpper(*buffer) == 'T')
         return false;
 
-    // The string is known to be valid as `TimeSpec TimeZone[opt]`, so DateExtendedYear and TwoDashes are not possible.
-    // Actual possibilities are `DateFourDigitYear -[opt] DateMonth` and `DateMonth -[opt] DateDay`, i.e. YYYY-MM, YYYYMM, MM-DD, MMDD.
+    // The string is known to be valid as `TimeSpec TimeZone[opt] Calendar[opt]`.
+    // The ambiguity check compares the time-spec PREFIX against date patterns.
+    // Timezone/calendar annotations follow the spec portion, so we must check only
+    // the spec-length prefix — not the full string. Scan forward to find where the
+    // spec ends: the first '[' or 'Z'/'z' starts a timezone/calendar annotation.
+    unsigned specLength = 0;
+    while (specLength < length && buffer[specLength] != '[' && toASCIIUpper(buffer[specLength]) != 'Z')
+        specLength++;
+
+    // Actual ambiguous possibilities are YYYY-MM, YYYYMM, MM-DD, MMDD.
     ASSERT(isASCIIDigit(buffer[0]) && isASCIIDigit(buffer[1]));
 
     unsigned monthPartLength = 2;
-    switch (length) {
+    switch (specLength) {
     case 7:
         if (!isASCIIDigit(buffer[2]) || !isASCIIDigit(buffer[3]) || buffer[4] != '-' || !isASCIIDigit(buffer[5]) || !isASCIIDigit(buffer[6]))
             return false;
@@ -1349,7 +1342,10 @@ static bool NODELETE isAmbiguousCalendarTime(StringParsingBuffer<CharacterType>&
         return false;
 
     buffer.advanceBy(monthPartLength);
-    if (buffer.hasCharactersRemaining()) {
+    // Check for a DD component only when the next character is a digit.
+    // After advancing past MM, the buffer may point at a '[' or '+'/'-' from a
+    // timezone annotation rather than actual day digits — guard with isASCIIDigit.
+    if (buffer.hasCharactersRemaining() && isASCIIDigit(buffer[0])) {
         unsigned day = (buffer[0] - '0') * 10 + (buffer[1] - '0');
         if (!day || day > daysInMonth(month))
             return false;
@@ -1367,8 +1363,10 @@ std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>, std::optional
         return result;
     });
 
-    // Without a calendar, we need to verify that the parse isn't ambiguous with DateSpecYearMonth or DateSpecMonthDay.
-    if (tuple && !std::get<2>(tuple.value())) {
+    // Verify the parse isn't ambiguous with DateSpecYearMonth or DateSpecMonthDay.
+    // A calendar annotation does NOT resolve ambiguity — "2021-12[u-ca=iso8601]" is
+    // still ambiguous (year-month vs time). Only a T prefix makes it unambiguous.
+    if (tuple) {
         if (readCharactersForParsing(string, [](auto buffer) -> bool { return isAmbiguousCalendarTime(buffer); }))
             return std::nullopt;
     }
@@ -1394,6 +1392,18 @@ std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<Time
             return std::nullopt;
         return result;
     });
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-parsetimezoneidentifier
+// Strict version: accepts only a bare UTC offset or a bare IANA timezone name.
+// Does NOT accept full datetime strings with embedded timezone identifiers.
+std::optional<TimeZone> parseTimeZoneIdentifierStrict(StringView string)
+{
+    if (auto offset = parseUTCOffset(string, false))
+        return TimeZone::fromUTCOffset(*offset);
+    if (auto tzId = parseTimeZoneName(string))
+        return TimeZone::fromID(*tzId);
+    return std::nullopt;
 }
 
 std::optional<ExactTime> parseInstant(StringView string)
@@ -1473,6 +1483,27 @@ uint8_t weekOfYear(PlainDate plainDate)
     }
 
     return week;
+}
+
+// Returns the ISO week-date year that this date belongs to.
+// This differs from the calendar year when the date falls in week 1 of the
+// next year (→ year+1) or in week 52/53 of the previous year (→ year-1).
+// https://tc39.es/proposal-temporal/#sec-temporal-isoweekyear
+int32_t yearOfWeek(PlainDate plainDate)
+{
+    int32_t dayOfYear = ISO8601::dayOfYear(plainDate);
+    int32_t dayOfWeek = ISO8601::dayOfWeek(plainDate);
+
+    int32_t week = (dayOfYear - dayOfWeek + 10) / 7;
+    if (week <= 0)
+        return plainDate.year() - 1;
+
+    if (week == 53) {
+        if ((daysInYear(plainDate.year()) - dayOfYear) < (4 - dayOfWeek))
+            return plainDate.year() + 1;
+    }
+
+    return plainDate.year();
 }
 
 static constexpr uint8_t daysInMonths[2][12] = {
@@ -1600,23 +1631,39 @@ String temporalDateToString(PlainDate plainDate)
     return temporalDateToString(plainDate.year(), plainDate.month(), plainDate.day());
 }
 
-String temporalYearMonthToString(PlainYearMonth plainYearMonth, StringView calendarName)
+String temporalYearMonthToString(PlainYearMonth plainYearMonth, StringView calendarName, StringView calendarId)
 {
-    if (calendarName == "always"_s) {
-        // FIXME: Include the correct calendar ID when calendars are fully implemented.
-        return makeString(temporalDateToString(plainYearMonth.isoPlainDate()), "[u-ca=iso8601]"_s);
+    auto calId = calendarId.isEmpty() ? "iso8601"_s : calendarId.toString();
+    bool isNonISO = calId != "iso8601"_s;
+    if (calendarName == "never"_s) {
+        if (isNonISO)
+            return temporalDateToString(plainYearMonth.isoPlainDate());
+        return temporalDateToString(plainYearMonth.year(), plainYearMonth.month());
     }
+    if (calendarName == "always"_s)
+        return makeString(temporalDateToString(plainYearMonth.isoPlainDate()), "[u-ca="_s, calId, ']');
+    if (calendarName == "critical"_s)
+        return makeString(temporalDateToString(plainYearMonth.isoPlainDate()), "[!u-ca="_s, calId, ']');
+    if (isNonISO)
+        return makeString(temporalDateToString(plainYearMonth.isoPlainDate()), "[u-ca="_s, calId, ']');
     return temporalDateToString(plainYearMonth.year(), plainYearMonth.month());
 }
 
-String temporalMonthDayToString(PlainMonthDay plainMonthDay, StringView calendarName)
+String temporalMonthDayToString(PlainMonthDay plainMonthDay, StringView calendarName, StringView calendarId)
 {
-    if (calendarName == "always"_s) {
-        // FIXME: print the correct calendar ID when calendars are fully implemented
-        auto first = temporalDateToString(plainMonthDay.isoPlainDate());
-        return makeString(first, "[u-ca=iso8601]"_s);
+    auto calId = calendarId.isEmpty() ? "iso8601"_s : calendarId.toString();
+    bool isNonISO = calId != "iso8601"_s;
+    if (calendarName == "never"_s) {
+        if (isNonISO)
+            return temporalDateToString(plainMonthDay.isoPlainDate());
+        return makeString(pad('0', 2, plainMonthDay.month()), '-', pad('0', 2, plainMonthDay.day()));
     }
-
+    if (calendarName == "always"_s)
+        return makeString(temporalDateToString(plainMonthDay.isoPlainDate()), "[u-ca="_s, calId, ']');
+    if (calendarName == "critical"_s)
+        return makeString(temporalDateToString(plainMonthDay.isoPlainDate()), "[!u-ca="_s, calId, ']');
+    if (isNonISO)
+        return makeString(temporalDateToString(plainMonthDay.isoPlainDate()), "[u-ca="_s, calId, ']');
     return makeString(pad('0', 2, plainMonthDay.month()), '-', pad('0', 2, plainMonthDay.day()));
 }
 
@@ -1876,28 +1923,6 @@ static Int128 roundTemporalInstant(Int128 ns, unsigned increment, TemporalUnit u
     return TemporalCore::roundNumberToIncrementAsIfPositive(ns, incrementNs, roundingMode);
 }
 
-// https://tc39.es/proposal-temporal/#sec-validatetemporalroundingincrement
-static void validateTemporalRoundingIncrement(JSGlobalObject* globalObject, unsigned increment,
-    Int128 dividend, Inclusivity inclusive)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    Int128 maximum = 0;
-    switch (inclusive) {
-    case Inclusivity::Inclusive:
-        maximum = dividend;
-        break;
-    case Inclusivity::Exclusive:
-        ASSERT(dividend > 1);
-        maximum = dividend - 1;
-        break;
-    }
-    if (increment > maximum)
-        throwRangeError(globalObject, scope, "Rounding increment exceeds maximum value"_s);
-    else if (dividend % increment)
-        throwRangeError(globalObject, scope, "Rounding increment does not divide evenly into maximum value"_s);
-}
 
 // https://tc39.es/proposal-temporal/#sec-temporal.instant.prototype.round
 // (Steps 10-17 only)
@@ -1918,7 +1943,7 @@ ExactTime ExactTime::round(JSGlobalObject* globalObject, unsigned increment,
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
-    validateTemporalRoundingIncrement(globalObject, increment, maximum, Inclusivity::Inclusive);
+    validateTemporalRoundingIncrement(globalObject, static_cast<double>(increment), static_cast<double>(maximum), Inclusivity::Inclusive);
     RETURN_IF_EXCEPTION(scope, { });
     auto roundedNs = roundTemporalInstant(m_epochNanoseconds, increment, unit, roundingMode);
     return ExactTime { roundedNs };

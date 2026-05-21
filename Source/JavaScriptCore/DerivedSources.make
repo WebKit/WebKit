@@ -203,8 +203,6 @@ OBJECT_LUT_HEADERS = \
     StringPrototype.lut.h \
     SymbolConstructor.lut.h \
     SymbolPrototype.lut.h \
-    TemporalCalendarConstructor.lut.h \
-    TemporalCalendarPrototype.lut.h \
     TemporalDurationConstructor.lut.h \
     TemporalDurationPrototype.lut.h \
     TemporalInstantConstructor.lut.h \
@@ -223,6 +221,8 @@ OBJECT_LUT_HEADERS = \
     TemporalPlainYearMonthPrototype.lut.h \
     TemporalTimeZoneConstructor.lut.h \
     TemporalTimeZonePrototype.lut.h \
+    TemporalZonedDateTimeConstructor.lut.h \
+    TemporalZonedDateTimePrototype.lut.h \
     WebAssemblyArrayConstructor.lut.h \
     WebAssemblyArrayPrototype.lut.h \
     WebAssemblyCompileErrorConstructor.lut.h \

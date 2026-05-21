@@ -28,6 +28,7 @@
 
 #include "IntlObjectInlines.h"
 #include "JSCInlines.h"
+#include "TemporalCalendar.h"
 #include "TemporalPlainMonthDay.h"
 #include "TemporalPlainMonthDayPrototype.h"
 
@@ -110,10 +111,22 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainMonthDay, (JSGlobalObject* global
     if (argumentCount < 2)
         return throwVMRangeError(globalObject, scope, "Temporal.PlainMonthDay requires at least two arguments"_s);
 
-    // Argument 2 is calendar -- ignored for now. FIXME
+    // Stage 4: optional calendarId at argument index 2. Undefined means "iso8601".
+    String calId = "iso8601"_s;
+    if (argumentCount > 2 && !callFrame->uncheckedArgument(2).isUndefined()) {
+        JSValue calArg = callFrame->uncheckedArgument(2);
+        if (!calArg.isString())
+            return throwVMTypeError(globalObject, scope, "calendar must be a string"_s);
+        auto rawCalendarId = asString(calArg)->value(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+        auto canonicalized = isBuiltinCalendar(rawCalendarId);
+        if (!canonicalized)
+            return throwVMRangeError(globalObject, scope, "invalid calendar ID"_s);
+        calId = intlAvailableCalendars().at(*canonicalized);
+    }
 
     double referenceYear = 1972; // First ISO leap year after the epoch
-    if (argumentCount > 3) {
+    if (argumentCount > 3 && !callFrame->uncheckedArgument(3).isUndefined()) {
         auto value = callFrame->uncheckedArgument(3).toIntegerWithTruncation(globalObject);
         if (!std::isfinite(value))
             return throwVMRangeError(globalObject, scope, "Temporal.PlainMonthDay reference year must be finite"_s);
@@ -121,7 +134,11 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainMonthDay, (JSGlobalObject* global
         RETURN_IF_EXCEPTION(scope, { });
     }
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainMonthDay::tryCreateIfValid(globalObject, structure, ISO8601::PlainDate(referenceYear, isoMonth, isoDay))));
+    auto* result = TemporalPlainMonthDay::tryCreateIfValid(globalObject, structure, ISO8601::PlainDate(referenceYear, isoMonth, isoDay));
+    RETURN_IF_EXCEPTION(scope, { });
+    if (result && calId != "iso8601"_s)
+        result->setCalendarId(calId);
+    return JSValue::encode(result);
 }
 
 JSC_DEFINE_HOST_FUNCTION(callTemporalPlainMonthDay, (JSGlobalObject* globalObject, CallFrame*))

@@ -209,7 +209,7 @@ constexpr bool typeExposedByDefault = true;
     macro(WebAssemblySuspendError, webAssemblySuspendError, webAssemblySuspendError, ErrorInstance,             SuspendError, error,  typeExposedByDefault) \
     macro(WebAssemblySuspending,   webAssemblySuspending,   webAssemblySuspending,   JSFunctionWithFields,   Suspending, object, typeExposedByDefault) \
     macro(WebAssemblyTable,        webAssemblyTable,        webAssemblyTable,        JSWebAssemblyTable,        Table,        object, typeExposedByDefault) \
-    macro(WebAssemblyTag,          webAssemblyTag,          webAssemblyTag,          JSWebAssemblyTag,          Tag,          object, typeExposedByDefault) 
+    macro(WebAssemblyTag,          webAssemblyTag,          webAssemblyTag,          JSWebAssemblyTag,          Tag,          object, typeExposedByDefault)
 #else
 #define FOR_EACH_WEBASSEMBLY_CONSTRUCTOR_TYPE(macro)
 #endif // ENABLE(WEBASSEMBLY)
@@ -293,7 +293,6 @@ public:
     LazyClassStructure m_dateTimeFormatStructure;
     LazyClassStructure m_numberFormatStructure;
 
-    LazyProperty<JSGlobalObject, Structure> m_calendarStructure;
     LazyProperty<JSGlobalObject, Structure> m_durationStructure;
     LazyProperty<JSGlobalObject, Structure> m_instantStructure;
     LazyProperty<JSGlobalObject, Structure> m_plainDateStructure;
@@ -302,6 +301,7 @@ public:
     LazyProperty<JSGlobalObject, Structure> m_plainTimeStructure;
     LazyProperty<JSGlobalObject, Structure> m_plainYearMonthStructure;
     LazyProperty<JSGlobalObject, Structure> m_timeZoneStructure;
+    LazyProperty<JSGlobalObject, Structure> m_zonedDateTimeStructure;
 
     WriteBarrier<NullGetterFunction> m_nullGetterFunction;
     WriteBarrier<NullSetterFunction> m_nullSetterFunction;
@@ -450,7 +450,7 @@ public:
     FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(DEFINE_STORAGE_FOR_SIMPLE_TYPE_STRUCTURE)
     FOR_EACH_SIMPLE_BUILTIN_TYPE(DEFINE_STORAGE_FOR_SIMPLE_TYPE_PROTOTYPE)
     FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(DEFINE_STORAGE_FOR_SIMPLE_TYPE_PROTOTYPE)
-    
+
 #if ENABLE(WEBASSEMBLY)
     LazyProperty<JSGlobalObject, Structure> m_webAssemblyModuleRecordStructure;
     LazyProperty<JSGlobalObject, Structure> m_webAssemblyFunctionStructure;
@@ -474,7 +474,7 @@ public:
 
     LazyProperty<JSGlobalObject, JSTypedArrayViewPrototype> m_typedArrayProto;
     LazyProperty<JSGlobalObject, JSTypedArrayViewConstructor> m_typedArraySuperConstructor;
-    
+
 #define DECLARE_TYPED_ARRAY_TYPE_STRUCTURE(name) \
     LazyClassStructure m_typedArray ## name; \
     LazyProperty<JSGlobalObject, Structure> m_resizableOrGrowableSharedTypedArray ## name ## Structure;
@@ -687,7 +687,7 @@ public:
     const GlobalObjectMethodTable* m_globalObjectMethodTable;
 
     inline void createRareDataIfNeeded();
-        
+
 public:
     using Base = JSSegmentedVariableObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable | OverridesGetOwnPropertySlot | OverridesPut | IsImmutablePrototypeExoticObject;
@@ -754,7 +754,7 @@ public:
     JSCallee* globalCallee() LIFETIME_BOUND { return m_globalCallee.get(); }
     JSCallee* evalCallee() LIFETIME_BOUND { return m_evalCallee.get(); }
 
-    // The following accessors return pristine values, even if a script 
+    // The following accessors return pristine values, even if a script
     // replaces the global object's associated property.
 
     GetterSetter* arraySpeciesGetterSetter() const LIFETIME_BOUND { return m_arraySpeciesGetterSetter.get(); }
@@ -827,7 +827,7 @@ public:
     GetterSetter* regExpProtoUnicodeGetter() const;
     GetterSetter* regExpProtoUnicodeSetsGetter() const;
     GetterSetter* throwTypeErrorArgumentsCalleeGetterSetter() const LIFETIME_BOUND { return m_throwTypeErrorArgumentsCalleeGetterSetter.get(this); }
-    
+
     JSModuleLoader* moduleLoader() const LIFETIME_BOUND { return m_moduleLoader.get(this); }
 
     ObjectPrototype* objectPrototype() const LIFETIME_BOUND { return m_objectPrototype.get(); }
@@ -881,12 +881,12 @@ public:
     }
     Structure* arrayStructureForIndexingTypeDuringAllocation(JSGlobalObject* globalObject, IndexingType indexingType, JSValue newTarget) const;
     inline Structure* arrayStructureForProfileDuringAllocation(JSGlobalObject*, ArrayAllocationProfile*, JSValue newTarget) const;
-        
+
     bool isOriginalArrayStructure(Structure* structure)
     {
         return originalArrayStructureForIndexingType(structure->indexingMode() | IsArray) == structure;
     }
-        
+
     Structure* booleanObjectStructure() const { return m_booleanObjectStructure.get(this); }
     Structure* callbackConstructorStructure() const { return m_callbackConstructorStructure.get(this); }
     Structure* callbackFunctionStructure() const { return m_callbackFunctionStructure.get(this); }
@@ -1015,7 +1015,6 @@ public:
     JSObject* numberFormatConstructor() LIFETIME_BOUND { return m_numberFormatStructure.constructor(this); }
     JSObject* numberFormatPrototype() LIFETIME_BOUND { return m_numberFormatStructure.prototype(this); }
 
-    Structure* calendarStructure() { return m_calendarStructure.get(this); }
     Structure* durationStructure() { return m_durationStructure.get(this); }
     Structure* instantStructure() { return m_instantStructure.get(this); }
     Structure* plainDateStructure() { return m_plainDateStructure.get(this); }
@@ -1024,6 +1023,7 @@ public:
     Structure* plainTimeStructure() { return m_plainTimeStructure.get(this); }
     Structure* plainYearMonthStructure() { return m_plainYearMonthStructure.get(this); }
     Structure* timeZoneStructure() { return m_timeZoneStructure.get(this); }
+    Structure* zonedDateTimeStructure() { return m_zonedDateTimeStructure.get(this); }
 
     JS_EXPORT_PRIVATE void setInspectable(bool);
     JS_EXPORT_PRIVATE bool inspectable() const;
@@ -1137,7 +1137,7 @@ public:
     {
         return m_havingABadTimeWatchpointSet->hasBeenInvalidated();
     }
-        
+
     void haveABadTime(VM&);
 
     void notifyArrayBufferDetaching()
@@ -1148,7 +1148,7 @@ public:
     }
 
     void clearStructureCache(VM&);
-        
+
     static bool objectPrototypeIsSaneConcurrently(Structure* objectPrototypeStructure);
     bool arrayPrototypeChainIsSaneConcurrently(Structure* arrayPrototypeStructure, Structure* objectPrototypeStructure);
     bool stringPrototypeChainIsSaneConcurrently(Structure* stringPrototypeStructure, Structure* objectPrototypeStructure);
@@ -1308,12 +1308,12 @@ private:
 };
 
 inline JSObject* JSScope::globalThis()
-{ 
+{
     return realm()->globalThis();
 }
 
 inline JSObject* JSGlobalObject::globalThis() const
-{ 
+{
     return m_globalThis.get();
 }
 

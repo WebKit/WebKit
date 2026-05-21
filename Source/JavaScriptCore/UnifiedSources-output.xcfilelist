@@ -77,6 +77,9 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/unified-sources/UnifiedSourc
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/unified-sources/UnifiedSource165.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/unified-sources/UnifiedSource166.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/unified-sources/UnifiedSource167.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/unified-sources/UnifiedSource168.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/unified-sources/UnifiedSource169.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/unified-sources/UnifiedSource170.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/unified-sources/UnifiedSource17.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/unified-sources/UnifiedSource18.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/unified-sources/UnifiedSource19.cpp

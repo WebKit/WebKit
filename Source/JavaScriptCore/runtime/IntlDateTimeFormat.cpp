@@ -36,6 +36,7 @@
 #include "JSDateMath.h"
 #include "ObjectConstructor.h"
 #include <unicode/ucal.h>
+#include <unicode/udatpg.h>
 #include <unicode/uenum.h>
 #include <wtf/Range.h>
 #include <wtf/text/MakeString.h>
@@ -126,6 +127,10 @@ void IntlDateTimeFormat::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN(IntlDateTimeFormat);
 
+IntlDateTimeFormat::DateTimeStyle IntlDateTimeFormat::dateStyle() const { return m_impl->m_dateStyle; }
+IntlDateTimeFormat::DateTimeStyle IntlDateTimeFormat::timeStyle() const { return m_impl->m_timeStyle; }
+IntlDateTimeFormat::TimeZoneName IntlDateTimeFormat::timeZoneName() const { return m_impl->m_timeZoneName; }
+
 void IntlDateTimeFormat::setBoundFormat(VM& vm, JSBoundFunction* format)
 {
     m_boundFormat.set(vm, this, format);
@@ -177,6 +182,7 @@ Vector<String> IntlDateTimeFormat::localeData(const String& locale, RelevantExte
         break;
     default:
         ASSERT_NOT_REACHED();
+        break;
     }
     return keyLocaleData;
 }
@@ -423,7 +429,7 @@ inline void IntlDateTimeFormat::replaceHourCycleInSkeleton(Vector<char16_t, 32>&
     }
 }
 
-inline void IntlDateTimeFormat::replaceHourCycleInPattern(Vector<char16_t, 32>& pattern, HourCycle hourCycle)
+inline void IntlDateTimeFormat::replaceHourCycleInPattern(Vector<char16_t, 32>& pattern, HourCycle hourCycle, bool allowSingleDigit)
 {
     char16_t hourFromHourCycle = 'H';
     switch (hourCycle) {
@@ -443,6 +449,8 @@ inline void IntlDateTimeFormat::replaceHourCycleInPattern(Vector<char16_t, 32>& 
         return;
     }
 
+    bool is24Hour = (hourCycle == HourCycle::H23 || hourCycle == HourCycle::H24);
+
     for (unsigned i = 0, length = pattern.size(); i < length; ++i) {
         auto& character = pattern[i];
 
@@ -457,8 +465,35 @@ inline void IntlDateTimeFormat::replaceHourCycleInPattern(Vector<char16_t, 32>& 
         case 'H':
         case 'k':
             character = hourFromHourCycle;
+            // For h23/h24, pad single-digit hour to two digits unless the caller
+            // explicitly requested hour: 'numeric' (allowSingleDigit = true).
+            if (is24Hour && !allowSingleDigit
+                && (!i || (pattern[i - 1] != 'H' && pattern[i - 1] != 'K' && pattern[i - 1] != 'h' && pattern[i - 1] != 'k'))) {
+                unsigned hourCount = 1;
+                while (i + hourCount < length && (pattern[i + hourCount] == 'K' || pattern[i + hourCount] == 'h' || pattern[i + hourCount] == 'H' || pattern[i + hourCount] == 'k'))
+                    hourCount++;
+                if (hourCount == 1) {
+                    pattern.insert(i + 1, hourFromHourCycle);
+                    length++;
+                    i++;
+                }
+            }
+            break;
+        case 'a':
+            // Remove AM/PM indicator for 24-hour cycles (H/k).
+            if (is24Hour)
+                character = 0; // mark for removal
             break;
         }
+    }
+    // Remove marked characters (AM/PM when using 24-hour).
+    if (is24Hour) {
+        pattern.removeAllMatching([](char16_t ch) {
+            return !ch;
+        });
+        // Trim trailing spaces.
+        while (!pattern.isEmpty() && pattern.last() == ' ')
+            pattern.removeLast();
     }
 }
 
@@ -806,6 +841,8 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     intlStringOption(globalObject, options, vm.propertyNames->formatMatcher, { "basic"_s, "best fit"_s }, "formatMatcher must be either \"basic\" or \"best fit\""_s, "best fit"_s);
     RETURN_IF_EXCEPTION(scope, void());
 
+    impl->m_hasExplicitComponents = (weekday != Weekday::None || year != Year::None || month != Month::None || day != Day::None || dayPeriod != DayPeriod::None || hour != Hour::None || minute != Minute::None || second != Second::None || fractionalSecondDigits);
+
     impl->m_dateStyle = intlOption<DateTimeStyle>(globalObject, options, vm.propertyNames->dateStyle, { { "full"_s, DateTimeStyle::Full }, { "long"_s, DateTimeStyle::Long }, { "medium"_s, DateTimeStyle::Medium }, { "short"_s, DateTimeStyle::Short } }, "dateStyle must be \"full\", \"long\", \"medium\", or \"short\""_s, DateTimeStyle::None);
     RETURN_IF_EXCEPTION(scope, void());
 
@@ -819,7 +856,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
         //     ii. Let p be opt.[[<prop>]].
         //     iii. If p is not undefined, then
         //         1. Throw a TypeError exception.
-        if (weekday != Weekday::None || era != Era::None || year != Year::None || month != Month::None || day != Day::None || dayPeriod != DayPeriod::None || hour != Hour::None || minute != Minute::None || second != Second::None || fractionalSecondDigits != 0 || timeZoneName != TimeZoneName::None) {
+        if (weekday != Weekday::None || era != Era::None || year != Year::None || month != Month::None || day != Day::None || dayPeriod != DayPeriod::None || hour != Hour::None || minute != Minute::None || second != Second::None || fractionalSecondDigits || timeZoneName != TimeZoneName::None) {
             throwTypeError(globalObject, scope, "dateStyle and timeStyle may not be used with other DateTimeFormat options"_s);
             return;
         }
@@ -920,7 +957,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
             // i. For each property name prop of « "dayPeriod", "hour", "minute", "second", "fractionalSecondDigits" », do
             //     1. Let value be formatOptions.[[<prop>]].
             //     2. If value is not undefined, let needDefaults be false.
-            if (dayPeriod != DayPeriod::None || hour != Hour::None || minute != Minute::None || second != Second::None || fractionalSecondDigits != 0)
+            if (dayPeriod != DayPeriod::None || hour != Hour::None || minute != Minute::None || second != Second::None || fractionalSecondDigits)
                 needDefaults = false;
         }
 
@@ -946,8 +983,10 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     }
 
     // After generating pattern from skeleton, we need to change h11 vs. h12 and h23 vs. h24 if hourCycle is specified.
+    // Pass allowSingleDigit=true only when hour: 'numeric' was explicitly requested — the skeleton then has a single H,
+    // and the user wants single-digit output (e.g. "0:00" not "00:00").
     if (hourCycle != HourCycle::None)
-        replaceHourCycleInPattern(patternBuffer, hourCycle);
+        replaceHourCycleInPattern(patternBuffer, hourCycle, hour == Hour::Numeric);
 
     StringView pattern(patternBuffer.span());
     setFormatsFromPattern(impl, pattern);
@@ -983,6 +1022,42 @@ ASCIILiteral IntlDateTimeFormat::hourCycleString(HourCycle hourCycle)
     }
     ASSERT_NOT_REACHED();
     return { };
+}
+
+// Lazy getter: resolves the locale's default calendar on first call.
+// m_calendar stays null until needed, preserving the construction-time perf
+// optimization from https://bugs.webkit.org/show_bug.cgi?id=313197.
+const String& IntlDateTimeFormat::ensureCalendar() const
+{
+    if (m_impl->m_calendar.isNull())
+        m_impl->m_calendar = defaultCalendarForLocale(m_impl->m_dataLocale);
+    return m_impl->m_calendar;
+}
+
+const String& IntlDateTimeFormat::ensureNumberingSystem() const
+{
+    if (m_impl->m_numberingSystem.isNull())
+        m_impl->m_numberingSystem = defaultNumberingSystemForLocale(m_impl->m_dataLocale);
+    return m_impl->m_numberingSystem;
+}
+
+bool IntlDateTimeFormat::calendarMatchesICU(StringView temporalId, const String& icuCalId)
+{
+    if (temporalId == icuCalId)
+        return true;
+    if (temporalId == "gregory"_s && icuCalId == "gregorian"_s)
+        return true;
+    if (temporalId == "gregorian"_s && icuCalId == "gregory"_s)
+        return true;
+    if (temporalId == "ethioaa"_s && (icuCalId == "ethiopic-amete-alem"_s || icuCalId == "ethioaa"_s))
+        return true;
+    if (temporalId == "ethiopic-amete-alem"_s && (icuCalId == "ethioaa"_s || icuCalId == "ethiopic-amete-alem"_s))
+        return true;
+    if (temporalId == "islamicc"_s && (icuCalId == "islamic-civil"_s || icuCalId == "islamicc"_s))
+        return true;
+    if (temporalId == "islamic-civil"_s && (icuCalId == "islamicc"_s || icuCalId == "islamic-civil"_s))
+        return true;
+    return false;
 }
 
 ASCIILiteral IntlDateTimeFormat::weekdayString(Weekday weekday)
@@ -1262,6 +1337,370 @@ static void NODELETE replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(Contain
 // https://tc39.es/ecma402/#sec-formatdatetime
 JSValue IntlDateTimeFormat::format(JSGlobalObject* globalObject, double value) const
 {
+    return format(globalObject, value, TemporalFieldKind::None);
+}
+
+static HashSet<char16_t> allowedFieldsForKind(IntlDateTimeFormat::TemporalFieldKind kind)
+{
+    HashSet<char16_t> allowed;
+    auto addDate = [&]() {
+        for (auto c : { 'E', 'c', 'G', 'y', 'M', 'L', 'd' })
+            allowed.add(c);
+    };
+    auto addTime = [&]() {
+        for (auto c : { 'h', 'H', 'k', 'K', 'j', 'm', 's', 'B', 'b', 'a', 'S' })
+            allowed.add(c);
+    };
+
+    switch (kind) {
+    case IntlDateTimeFormat::TemporalFieldKind::PlainDate:
+        addDate();
+        break;
+    case IntlDateTimeFormat::TemporalFieldKind::PlainDateTime:
+        addDate();
+        addTime();
+        break;
+    case IntlDateTimeFormat::TemporalFieldKind::PlainTime:
+        addTime();
+        break;
+    case IntlDateTimeFormat::TemporalFieldKind::PlainYearMonth:
+        for (auto c : { 'G', 'y', 'M', 'L' })
+            allowed.add(c);
+        break;
+    case IntlDateTimeFormat::TemporalFieldKind::PlainMonthDay:
+        for (auto c : { 'M', 'L', 'd' })
+            allowed.add(c);
+        break;
+    default:
+        break;
+    }
+    return allowed;
+}
+
+// Create a cloned UDateFormat with pattern filtered for the given Temporal kind,
+// and timezone set to GMT. Returns nullptr if no relevant fields remain (caller should throw).
+std::unique_ptr<UDateFormat, IntlDateTimeFormat::UDateFormatDeleter> IntlDateTimeFormat::createTemporalFormatter(TemporalFieldKind kind) const
+{
+    UErrorCode status = U_ZERO_ERROR;
+
+    // Get current pattern and extract skeleton.
+    Vector<char16_t, 32> patternBuf;
+    callBufferProducingFunction(udat_toPattern, m_impl->m_dateFormat.get(), false, patternBuf);
+
+    // Extract skeleton from pattern, then filter the skeleton.
+    Vector<char16_t, 32> skeleton;
+    callBufferProducingFunction(udatpg_getSkeleton, nullptr,
+        reinterpret_cast<const UChar*>(patternBuf.span().data()), patternBuf.size(), skeleton);
+
+    auto allowed = allowedFieldsForKind(kind);
+
+    // For Instant/ZonedDateTime, keep the existing pattern. Only add time defaults
+    // when the user didn't provide any explicit component options and no style is set.
+    // For dateStyle/timeStyle, use the pattern as-is (V8 keeps the full style pattern).
+    if (kind == TemporalFieldKind::Instant || kind == TemporalFieldKind::ZonedDateTime) {
+        // If dateStyle or timeStyle is set, use the main formatter's pattern directly.
+        // For Instant, this means dateStyle="short" → date-only output (matching V8).
+        if (m_impl->m_dateStyle != DateTimeStyle::None || m_impl->m_timeStyle != DateTimeStyle::None) {
+            auto tempFormat = std::unique_ptr<UDateFormat, UDateFormatDeleter>(
+                udat_clone(m_impl->m_dateFormat.get(), &status));
+            if (U_FAILURE(status))
+                return nullptr;
+            if (kind == TemporalFieldKind::ZonedDateTime && m_impl->m_timeStyle != DateTimeStyle::None) {
+                // For ZDT with time displayed, ensure timezone name is present.
+                // When only dateStyle is set (no timeStyle), the date-only pattern
+                // should match Date.toLocaleString output exactly (no TZ suffix).
+                Vector<char16_t, 32> curPattern;
+                callBufferProducingFunction(udat_toPattern, tempFormat.get(), false, curPattern);
+                bool hasTz = false;
+                for (auto ch : curPattern) {
+                    if (ch == 'z' || ch == 'O' || ch == 'v') {
+                        hasTz = true;
+                        break;
+                    }
+                }
+                if (!hasTz) {
+                    // Append short timezone to pattern
+                    curPattern.append(' ');
+                    curPattern.append('z');
+                    udat_applyPattern(tempFormat.get(), false,
+                        reinterpret_cast<const UChar*>(curPattern.span().data()), curPattern.size());
+                }
+            }
+            return tempFormat;
+        }
+
+        // For component-based formatters, if user provided explicit components,
+        // use the main formatter's pattern directly (V8's Inherit::kAll copies all options).
+        if (m_impl->m_hasExplicitComponents) {
+            auto tempFormat = std::unique_ptr<UDateFormat, UDateFormatDeleter>(
+                udat_clone(m_impl->m_dateFormat.get(), &status));
+            if (U_FAILURE(status))
+                return nullptr;
+            if (kind == TemporalFieldKind::ZonedDateTime) {
+                // ZDT with explicit components: keep timezone if user requested it,
+                // but DON'T add default timezone. V8 only adds 'z' in the defaults path.
+            }
+            // Instant: keep pattern as-is (all user options including timezone name).
+            return tempFormat;
+        }
+
+        // No explicit components, no dateStyle/timeStyle — add date+time defaults.
+        Vector<char16_t, 32> instantSkeleton;
+        HashSet<char16_t> tzChars;
+        for (auto c : { 'z', 'O', 'v' })
+            tzChars.add(c);
+        bool hasTzField = false;
+        for (auto ch : skeleton) {
+            instantSkeleton.append(ch);
+            if (tzChars.contains(ch))
+                hasTzField = true;
+        }
+
+        // Add default date+time fields.
+        HashSet<char16_t> existingChars;
+        for (auto ch : instantSkeleton)
+            existingChars.add(ch);
+        for (auto c : { 'y', 'M', 'd', 'j', 'm', 's' }) {
+            if (!existingChars.contains(c))
+                instantSkeleton.append(c);
+        }
+
+        Vector<char16_t, 32> finalSkeleton;
+        if (kind == TemporalFieldKind::Instant) {
+            // Instant: keep all fields including timezone if user requested it.
+            finalSkeleton = WTF::move(instantSkeleton);
+        } else {
+            finalSkeleton = WTF::move(instantSkeleton);
+            if (!hasTzField)
+                finalSkeleton.append('z');
+        }
+
+        auto generator = std::unique_ptr<UDateTimePatternGenerator, ICUDeleter<udatpg_close>>(
+            udatpg_open(m_impl->m_dataLocale.utf8().data(), &status));
+        if (U_FAILURE(status))
+            return nullptr;
+        Vector<char16_t, 32> bestPattern;
+        status = callBufferProducingFunction(udatpg_getBestPatternWithOptions, generator.get(),
+            reinterpret_cast<const UChar*>(finalSkeleton.span().data()), finalSkeleton.size(),
+            UDATPG_MATCH_HOUR_FIELD_LENGTH, bestPattern);
+        if (U_FAILURE(status) || bestPattern.isEmpty())
+            return nullptr;
+
+        // Apply the user's hour cycle (from hour12/hourCycle option) to the generated pattern.
+        // udatpg_getBestPatternWithOptions uses locale defaults, not the user's hour cycle.
+        if (m_impl->m_hourCycle != HourCycle::None)
+            replaceHourCycleInPattern(bestPattern, m_impl->m_hourCycle);
+
+        auto tempFormat = std::unique_ptr<UDateFormat, UDateFormatDeleter>(
+            udat_clone(m_impl->m_dateFormat.get(), &status));
+        if (U_FAILURE(status))
+            return nullptr;
+        udat_applyPattern(tempFormat.get(), false,
+            reinterpret_cast<const UChar*>(bestPattern.span().data()), bestPattern.size());
+        return tempFormat;
+    }
+
+    Vector<char16_t, 32> filteredSkeleton;
+    for (auto ch : skeleton) {
+        if (allowed.contains(ch))
+            filteredSkeleton.append(ch);
+    }
+
+    // Strip timezone chars (z, O, v) from plain type skeletons.
+    {
+        Vector<char16_t, 32> noTzSkeleton;
+        for (auto ch : filteredSkeleton) {
+            if (ch != 'z' && ch != 'O' && ch != 'v')
+                noTzSkeleton.append(ch);
+        }
+        filteredSkeleton = WTF::move(noTzSkeleton);
+    }
+
+    // For PlainDate/PlainDateTime with ONLY dateStyle (no timeStyle):
+    // The main formatter already has a date-only pattern — clone it directly.
+    // This ensures toLocaleString matches Date.prototype.toLocaleString output exactly.
+    if ((kind == TemporalFieldKind::PlainDate || kind == TemporalFieldKind::PlainDateTime)
+        && m_impl->m_dateStyle != DateTimeStyle::None && m_impl->m_timeStyle == DateTimeStyle::None) {
+        if (filteredSkeleton.isEmpty())
+            return nullptr;
+        auto tempFormat = std::unique_ptr<UDateFormat, UDateFormatDeleter>(
+            udat_clone(m_impl->m_dateFormat.get(), &status));
+        if (U_FAILURE(status))
+            return nullptr;
+        static const UChar gmtTz[] = { 'G', 'M', 'T', 0 };
+        auto* tempCal = const_cast<UCalendar*>(udat_getCalendar(tempFormat.get()));
+        ucal_setTimeZone(tempCal, gmtTz, 3, &status);
+        return tempFormat;
+    }
+
+    // For dateStyle/timeStyle, regenerate from filtered skeleton using the
+    // formatter's calendar to preserve calendar-specific patterns (e.g., iso8601).
+    if (m_impl->m_dateStyle != DateTimeStyle::None || m_impl->m_timeStyle != DateTimeStyle::None) {
+        if (filteredSkeleton.isEmpty())
+            return nullptr;
+
+        // Use the formatter's locale with calendar for the generator.
+        auto baseUtf8 = m_impl->m_dataLocale.utf8();
+        String dataLocaleWithCal = String::fromUTF8(baseUtf8.data());
+        if (!dataLocaleWithCal.contains("calendar"_s) && !m_impl->m_calendar.isEmpty()) {
+            if (dataLocaleWithCal.contains('@'))
+                dataLocaleWithCal = makeString(dataLocaleWithCal, ";calendar="_s, m_impl->m_calendar);
+            else
+                dataLocaleWithCal = makeString(dataLocaleWithCal, "@calendar="_s, m_impl->m_calendar);
+        }
+
+        auto generator = std::unique_ptr<UDateTimePatternGenerator, ICUDeleter<udatpg_close>>(
+            udatpg_open(dataLocaleWithCal.utf8().data(), &status));
+        if (U_FAILURE(status))
+            return nullptr;
+        Vector<char16_t, 32> bestPattern;
+        status = callBufferProducingFunction(udatpg_getBestPatternWithOptions, generator.get(),
+            reinterpret_cast<const UChar*>(filteredSkeleton.span().data()), filteredSkeleton.size(),
+            UDATPG_MATCH_HOUR_FIELD_LENGTH, bestPattern);
+        if (U_FAILURE(status) || bestPattern.isEmpty())
+            return nullptr;
+
+        auto tempFormat = std::unique_ptr<UDateFormat, UDateFormatDeleter>(
+            udat_clone(m_impl->m_dateFormat.get(), &status));
+        if (U_FAILURE(status))
+            return nullptr;
+        udat_applyPattern(tempFormat.get(), false,
+            reinterpret_cast<const UChar*>(bestPattern.span().data()), bestPattern.size());
+        auto* tempCal = const_cast<UCalendar*>(udat_getCalendar(tempFormat.get()));
+        static const UChar gmtTz[] = { 'G', 'M', 'T', 0 };
+        ucal_setTimeZone(tempCal, gmtTz, 3, &status);
+        return tempFormat;
+    }
+
+    if (filteredSkeleton.isEmpty()) {
+        if (m_impl->m_hasExplicitComponents)
+            return nullptr;
+
+        // Choose hour character based on resolved hourCycle (not locale default 'j').
+        char16_t hourChar = 'j'; // default: locale-dependent
+        switch (m_impl->m_hourCycle) {
+        case HourCycle::H11: hourChar = 'K'; break;
+        case HourCycle::H12: hourChar = 'h'; break;
+        case HourCycle::H23: hourChar = 'H'; break;
+        case HourCycle::H24: hourChar = 'k'; break;
+        default: break;
+        }
+
+        switch (kind) {
+        case TemporalFieldKind::PlainTime:
+            filteredSkeleton.append(hourChar);
+            for (auto c : { 'm', 's' })
+                filteredSkeleton.append(c);
+            break;
+        case TemporalFieldKind::PlainDate:
+        case TemporalFieldKind::PlainDateTime:
+            for (auto c : { 'y', 'M', 'd' })
+                filteredSkeleton.append(c);
+            if (kind == TemporalFieldKind::PlainDateTime) {
+                filteredSkeleton.append(hourChar);
+                for (auto c : { 'm', 's' })
+                    filteredSkeleton.append(c);
+            }
+            break;
+        case TemporalFieldKind::PlainYearMonth:
+            for (auto c : { 'y', 'M' })
+                filteredSkeleton.append(c);
+            break;
+        case TemporalFieldKind::PlainMonthDay:
+            for (auto c : { 'M', 'd' })
+                filteredSkeleton.append(c);
+            break;
+        default:
+            return nullptr;
+        }
+    }
+
+    // For PlainDateTime: ensure both date and time fields are present.
+    // If the DTF only has date fields, add default time fields (and vice versa).
+    if (kind == TemporalFieldKind::PlainDateTime && !filteredSkeleton.isEmpty()) {
+        HashSet<char16_t> timeChars;
+        for (auto c : { 'h', 'H', 'k', 'K', 'j', 'm', 's' })
+            timeChars.add(c);
+        HashSet<char16_t> dateChars;
+        for (auto c : { 'y', 'M', 'L', 'd', 'E', 'c' })
+            dateChars.add(c);
+        bool hasTime = false, hasDate = false;
+        for (auto ch : filteredSkeleton) {
+            if (timeChars.contains(ch))
+                hasTime = true;
+            if (dateChars.contains(ch))
+                hasDate = true;
+        }
+        if (!hasTime && !m_impl->m_hasExplicitComponents) {
+            char16_t hourChar = 'j';
+            switch (m_impl->m_hourCycle) {
+            case HourCycle::H11: hourChar = 'K'; break;
+            case HourCycle::H12: hourChar = 'h'; break;
+            case HourCycle::H23: hourChar = 'H'; break;
+            case HourCycle::H24: hourChar = 'k'; break;
+            default: break;
+            }
+            filteredSkeleton.append(hourChar);
+            for (auto c : { 'm', 's' })
+                filteredSkeleton.append(c);
+        }
+        if (!hasDate && !m_impl->m_hasExplicitComponents) {
+            for (auto c : { 'y', 'M', 'd' })
+                filteredSkeleton.append(c);
+        }
+    }
+
+    // Generate a locale-appropriate pattern from the filtered skeleton.
+    auto generator = std::unique_ptr<UDateTimePatternGenerator, ICUDeleter<udatpg_close>>(
+        udatpg_open(m_impl->m_dataLocale.utf8().data(), &status));
+    if (U_FAILURE(status))
+        return nullptr;
+
+    Vector<char16_t, 32> bestPattern;
+    status = callBufferProducingFunction(udatpg_getBestPatternWithOptions, generator.get(),
+        reinterpret_cast<const UChar*>(filteredSkeleton.span().data()), filteredSkeleton.size(),
+        UDATPG_MATCH_HOUR_FIELD_LENGTH, bestPattern);
+    if (U_FAILURE(status) || bestPattern.isEmpty())
+        return nullptr;
+
+    // Fix up hour character in the pattern to match the resolved hourCycle.
+    // udatpg_getBestPattern may normalize h24('k') to h23('H') or h11('K') to h12('h').
+    if (m_impl->m_hourCycle != HourCycle::None) {
+        char16_t wantHour = 0;
+        switch (m_impl->m_hourCycle) {
+        case HourCycle::H11: wantHour = 'K'; break;
+        case HourCycle::H12: wantHour = 'h'; break;
+        case HourCycle::H23: wantHour = 'H'; break;
+        case HourCycle::H24: wantHour = 'k'; break;
+        default: break;
+        }
+        if (wantHour) {
+            for (auto& ch : bestPattern) {
+                if (ch == 'h' || ch == 'H' || ch == 'k' || ch == 'K')
+                    ch = wantHour;
+            }
+        }
+    }
+
+    // Clone the formatter and apply the generated pattern.
+    auto tempFormat = std::unique_ptr<UDateFormat, UDateFormatDeleter>(
+        udat_clone(m_impl->m_dateFormat.get(), &status));
+    if (U_FAILURE(status))
+        return nullptr;
+
+    udat_applyPattern(tempFormat.get(), false,
+        reinterpret_cast<const UChar*>(bestPattern.span().data()), bestPattern.size());
+
+    // Set timezone to GMT for plain types.
+    auto* tempCal = const_cast<UCalendar*>(udat_getCalendar(tempFormat.get()));
+    static const UChar gmtTz[] = { 'G', 'M', 'T', 0 };
+    ucal_setTimeZone(tempCal, gmtTz, 3, &status);
+
+    return tempFormat;
+}
+
+JSValue IntlDateTimeFormat::format(JSGlobalObject* globalObject, double value, TemporalFieldKind kind) const
+{
     ASSERT(m_impl->m_dateFormat);
 
     VM& vm = globalObject->vm();
@@ -1269,6 +1708,21 @@ JSValue IntlDateTimeFormat::format(JSGlobalObject* globalObject, double value) c
 
     if (!std::isfinite(value))
         return throwRangeError(globalObject, scope, "date value is not finite in DateTimeFormat format()"_s);
+
+    bool needsTemporalFormatter = (kind != TemporalFieldKind::None);
+
+    if (needsTemporalFormatter) {
+        auto tempFormat = createTemporalFormatter(kind);
+        if (!tempFormat)
+            return throwTypeError(globalObject, scope, "DateTimeFormat has no fields applicable to this Temporal type"_s);
+
+        Vector<char16_t, 32> result;
+        auto fmtStatus = callBufferProducingFunction(udat_format, tempFormat.get(), value, result, nullptr);
+        if (U_FAILURE(fmtStatus))
+            return throwTypeError(globalObject, scope, "failed to format date value"_s);
+        replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(result);
+        return jsString(vm, String(WTF::move(result)));
+    }
 
     Vector<char16_t, 32> result;
     auto status = callBufferProducingFunction(udat_format, m_impl->m_dateFormat.get(), value, result, nullptr);
@@ -1401,6 +1855,70 @@ JSValue IntlDateTimeFormat::formatToParts(JSGlobalObject* globalObject, double v
         }
     }
 
+    return parts;
+}
+
+JSValue IntlDateTimeFormat::formatToParts(JSGlobalObject* globalObject, double value, TemporalFieldKind kind, JSString* sourceType) const
+{
+    if (kind == TemporalFieldKind::None)
+        return formatToParts(globalObject, value, sourceType);
+
+    ASSERT(m_impl->m_dateFormat);
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!std::isfinite(value))
+        return throwRangeError(globalObject, scope, "date value is not finite in DateTimeFormat formatToParts()"_s);
+
+    auto tempFormat = createTemporalFormatter(kind);
+    if (!tempFormat)
+        return throwTypeError(globalObject, scope, "DateTimeFormat has no fields applicable to this Temporal type"_s);
+
+    UErrorCode status = U_ZERO_ERROR;
+    auto fields = std::unique_ptr<UFieldPositionIterator, UFieldPositionIteratorDeleter>(ufieldpositer_open(&status));
+    if (U_FAILURE(status))
+        return throwTypeError(globalObject, scope, "failed to open field position iterator"_s);
+
+    Vector<char16_t, 32> result;
+    status = callBufferProducingFunction(udat_formatForFields, tempFormat.get(), value, result, fields.get());
+    if (U_FAILURE(status))
+        return throwTypeError(globalObject, scope, "failed to format date value"_s);
+    replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(result);
+
+    JSArray* parts = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
+    if (!parts)
+        return throwOutOfMemoryError(globalObject, scope);
+
+    StringView resultStringView(result.span());
+    auto literalString = jsNontrivialString(vm, "literal"_s);
+
+    int32_t resultLength = result.size();
+    int32_t previousEndIndex = 0;
+    int32_t beginIndex = 0;
+    int32_t endIndex = 0;
+    while (previousEndIndex < resultLength) {
+        auto fieldType = ufieldpositer_next(fields.get(), &beginIndex, &endIndex);
+        if (fieldType < 0)
+            beginIndex = endIndex = resultLength;
+        if (previousEndIndex < beginIndex) {
+            auto val = jsString(vm, resultStringView.substring(previousEndIndex, beginIndex - previousEndIndex));
+            JSObject* part = sourceType
+                ? createIntlPartObjectWithSource(globalObject, literalString, val, sourceType)
+                : createIntlPartObject(globalObject, literalString, val);
+            parts->push(globalObject, part);
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+        previousEndIndex = endIndex;
+        if (fieldType >= 0) {
+            auto type = jsNontrivialString(vm, partTypeString(UDateFormatField(fieldType)));
+            auto val = jsString(vm, resultStringView.substring(beginIndex, endIndex - beginIndex));
+            JSObject* part = sourceType
+                ? createIntlPartObjectWithSource(globalObject, type, val, sourceType)
+                : createIntlPartObject(globalObject, type, val);
+            parts->push(globalObject, part);
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+    }
     return parts;
 }
 
@@ -1539,6 +2057,240 @@ static bool dateFieldsPracticallyEqual(const UFormattedValue* formattedValue, UE
         return false;
 
     return !hasSpan;
+}
+
+JSValue IntlDateTimeFormat::formatRange(JSGlobalObject* globalObject, double startDate, double endDate, TemporalFieldKind kind)
+{
+    if (kind == TemporalFieldKind::None)
+        return formatRange(globalObject, startDate, endDate);
+
+    ASSERT(m_impl->m_dateFormat);
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!std::isfinite(startDate) || !std::isfinite(endDate)) {
+        throwRangeError(globalObject, scope, "date value is not finite in DateTimeFormat formatRange()"_s);
+        return { };
+    }
+
+    auto tempFormat = createTemporalFormatter(kind);
+    if (!tempFormat) {
+        throwTypeError(globalObject, scope, "DateTimeFormat has no fields applicable to this Temporal type"_s);
+        return { };
+    }
+
+    // Extract skeleton from temporal formatter's pattern for interval format.
+    Vector<char16_t, 32> tempPattern;
+    callBufferProducingFunction(udat_toPattern, tempFormat.get(), false, tempPattern);
+    Vector<char16_t, 32> tempSkeleton;
+    callBufferProducingFunction(udatpg_getSkeleton, nullptr,
+        reinterpret_cast<const UChar*>(tempPattern.span().data()), tempPattern.size(), tempSkeleton);
+
+    bool isPlain = (kind != TemporalFieldKind::Instant && kind != TemporalFieldKind::ZonedDateTime);
+    String tzForInterval = isPlain ? "GMT"_s : m_impl->m_timeZone.toICUString();
+    StringView tzView(tzForInterval);
+
+    StringBuilder localeBuilder;
+    localeBuilder.append(m_impl->m_dataLocale, "-u-ca-"_s, ensureCalendar(), "-nu-"_s, ensureNumberingSystem());
+    if (m_impl->m_hourCycle != HourCycle::None)
+        localeBuilder.append("-hc-"_s, hourCycleString(m_impl->m_hourCycle));
+    CString localeWithExt = localeBuilder.toString().utf8();
+
+    UErrorCode status = U_ZERO_ERROR;
+    auto intervalFormat = std::unique_ptr<UDateIntervalFormat, UDateIntervalFormatDeleter>(
+        udtitvfmt_open(localeWithExt.data(), tempSkeleton.span().data(), tempSkeleton.size(),
+            tzView.upconvertedCharacters(), tzView.length(), &status));
+    if (U_FAILURE(status)) {
+        throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+        return { };
+    }
+
+    auto result = formattedValueFromDateRange(*intervalFormat, *tempFormat.get(), startDate, endDate, status);
+    if (U_FAILURE(status)) {
+        throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+        return { };
+    }
+
+    auto formattedValue = udtitvfmt_resultAsValue(result.get(), &status);
+    if (U_FAILURE(status)) {
+        throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+        return { };
+    }
+
+    int32_t length;
+    const UChar* chars = ufmtval_getString(formattedValue, &length, &status);
+    if (U_FAILURE(status)) {
+        throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+        return { };
+    }
+
+    Vector<char16_t, 32> resultChars(std::span(reinterpret_cast<const char16_t*>(chars), length));
+    replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(resultChars);
+
+    if (dateFieldsPracticallyEqual(formattedValue, status)) {
+        Vector<char16_t, 32> singleResult;
+        auto singleStatus = callBufferProducingFunction(udat_format, tempFormat.get(), startDate, singleResult, nullptr);
+        if (U_SUCCESS(singleStatus)) {
+            replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(singleResult);
+            return jsString(vm, String(WTF::move(singleResult)));
+        }
+    }
+
+    return jsString(vm, String(WTF::move(resultChars)));
+}
+
+JSValue IntlDateTimeFormat::formatRangeToParts(JSGlobalObject* globalObject, double startDate, double endDate, TemporalFieldKind kind)
+{
+    if (kind == TemporalFieldKind::None)
+        return formatRangeToParts(globalObject, startDate, endDate);
+
+    ASSERT(m_impl->m_dateFormat);
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!std::isfinite(startDate) || !std::isfinite(endDate)) {
+        throwRangeError(globalObject, scope, "date value is not finite in DateTimeFormat formatRangeToParts()"_s);
+        return { };
+    }
+
+    auto tempFormat = createTemporalFormatter(kind);
+    if (!tempFormat) {
+        throwTypeError(globalObject, scope, "DateTimeFormat has no fields applicable to this Temporal type"_s);
+        return { };
+    }
+
+    Vector<char16_t, 32> tempPattern;
+    callBufferProducingFunction(udat_toPattern, tempFormat.get(), false, tempPattern);
+    Vector<char16_t, 32> tempSkeleton;
+    callBufferProducingFunction(udatpg_getSkeleton, nullptr,
+        reinterpret_cast<const UChar*>(tempPattern.span().data()), tempPattern.size(), tempSkeleton);
+
+    bool isPlain = (kind != TemporalFieldKind::Instant && kind != TemporalFieldKind::ZonedDateTime);
+    String tzForInterval = isPlain ? "GMT"_s : m_impl->m_timeZone.toICUString();
+    StringView tzView(tzForInterval);
+
+    StringBuilder localeBuilder;
+    localeBuilder.append(m_impl->m_dataLocale, "-u-ca-"_s, ensureCalendar(), "-nu-"_s, ensureNumberingSystem());
+    if (m_impl->m_hourCycle != HourCycle::None)
+        localeBuilder.append("-hc-"_s, hourCycleString(m_impl->m_hourCycle));
+    CString localeWithExt = localeBuilder.toString().utf8();
+
+    UErrorCode status = U_ZERO_ERROR;
+    auto intervalFormat = std::unique_ptr<UDateIntervalFormat, UDateIntervalFormatDeleter>(
+        udtitvfmt_open(localeWithExt.data(), tempSkeleton.span().data(), tempSkeleton.size(),
+            tzView.upconvertedCharacters(), tzView.length(), &status));
+    if (U_FAILURE(status)) {
+        throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+        return { };
+    }
+
+    auto result = formattedValueFromDateRange(*intervalFormat, *tempFormat.get(), startDate, endDate, status);
+    if (U_FAILURE(status)) {
+        throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+        return { };
+    }
+
+    auto formattedValue = udtitvfmt_resultAsValue(result.get(), &status);
+    if (U_FAILURE(status)) {
+        throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+        return { };
+    }
+
+    if (dateFieldsPracticallyEqual(formattedValue, status)) {
+        auto sourceType = jsNontrivialString(vm, "shared"_s);
+        RELEASE_AND_RETURN(scope, formatToParts(globalObject, startDate, kind, sourceType));
+    }
+
+    int32_t length;
+    const UChar* chars = ufmtval_getString(formattedValue, &length, &status);
+    if (U_FAILURE(status)) {
+        throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+        return { };
+    }
+
+    // Normalize narrow no-break space (U+202F) and thin space (U+2009) to regular space (U+0020),
+    // matching V8/SpiderMonkey behavior (see replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace comment).
+    Vector<char16_t> normalizedChars(std::span(chars, length));
+    replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(normalizedChars);
+
+    JSArray* parts = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
+    if (!parts)
+        return throwOutOfMemoryError(globalObject, scope);
+
+    auto iterator = std::unique_ptr<UConstrainedFieldPosition, ICUDeleter<ucfpos_close>>(ucfpos_open(&status));
+    if (U_FAILURE(status))
+        return throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+
+    auto startRangeString = jsNontrivialString(vm, "startRange"_s);
+    auto endRangeString = jsNontrivialString(vm, "endRange"_s);
+    auto sharedString = jsNontrivialString(vm, "shared"_s);
+    auto literalString = jsNontrivialString(vm, "literal"_s);
+
+    WTF::Range<int32_t> startRange { -1, -1 };
+    WTF::Range<int32_t> endRange { -1, -1 };
+    Vector<std::tuple<int32_t, int32_t, UDateFormatField, JSString*>> fields;
+
+    while (true) {
+        bool hasNext = ufmtval_nextPosition(formattedValue, iterator.get(), &status);
+        if (U_FAILURE(status))
+            return throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+        if (!hasNext)
+            break;
+
+        int32_t category = ucfpos_getCategory(iterator.get(), &status);
+        if (U_FAILURE(status))
+            return throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+
+        int32_t beginIndex, endIndex;
+        ucfpos_getIndexes(iterator.get(), &beginIndex, &endIndex, &status);
+        if (U_FAILURE(status))
+            return throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+
+        if (category == UFIELD_CATEGORY_DATE_INTERVAL_SPAN) {
+            int32_t field = ucfpos_getField(iterator.get(), &status);
+            if (!field)
+                startRange = { beginIndex, endIndex };
+            else
+                endRange = { beginIndex, endIndex };
+        } else if (category == UFIELD_CATEGORY_DATE) {
+            int32_t field = ucfpos_getField(iterator.get(), &status);
+            fields.append({ beginIndex, endIndex, static_cast<UDateFormatField>(field), nullptr });
+        }
+    }
+
+    StringView resultStringView(normalizedChars.span());
+    int32_t previousEndIndex = 0;
+
+    auto sourceForIndex = [&](int32_t index) -> JSString* {
+        if (startRange.begin() >= 0 && index >= startRange.begin() && index < startRange.end())
+            return startRangeString;
+        if (endRange.begin() >= 0 && index >= endRange.begin() && index < endRange.end())
+            return endRangeString;
+        return sharedString;
+    };
+
+    for (auto& [beginIndex, endIndex, fieldType, _] : fields) {
+        if (previousEndIndex < beginIndex) {
+            auto val = jsString(vm, resultStringView.substring(previousEndIndex, beginIndex - previousEndIndex));
+            auto* source = sourceForIndex(previousEndIndex);
+            parts->push(globalObject, createIntlPartObjectWithSource(globalObject, literalString, val, source));
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+        auto type = jsNontrivialString(vm, partTypeString(fieldType));
+        auto val = jsString(vm, resultStringView.substring(beginIndex, endIndex - beginIndex));
+        auto* source = sourceForIndex(beginIndex);
+        parts->push(globalObject, createIntlPartObjectWithSource(globalObject, type, val, source));
+        RETURN_IF_EXCEPTION(scope, { });
+        previousEndIndex = endIndex;
+    }
+    if (previousEndIndex < length) {
+        auto val = jsString(vm, resultStringView.substring(previousEndIndex, length - previousEndIndex));
+        auto* source = sourceForIndex(previousEndIndex);
+        parts->push(globalObject, createIntlPartObjectWithSource(globalObject, literalString, val, source));
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    return parts;
 }
 
 JSValue IntlDateTimeFormat::formatRange(JSGlobalObject* globalObject, double startDate, double endDate)
