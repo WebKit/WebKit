@@ -136,8 +136,9 @@ function keepaliveRedirectTest(desc, {
     iframe.src = getKeepAliveAndRedirectIframeUrl(
         tokenToStash, origin1, origin2, withPreflight);
     document.body.appendChild(iframe);
+    const messagePromise = getTokenFromMessage();
     await iframeLoaded(iframe);
-    assert_equals(await getTokenFromMessage(), tokenToStash);
+    assert_equals(await messagePromise, tokenToStash);
     if (unloadIframe) {
       iframe.remove();
     }
