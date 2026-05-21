@@ -271,6 +271,18 @@ CONTENT OF TEST
         self.verify_prefixed_properties(converted, test_content[0])
         self.verify_prefixed_property_values(converted, test_content[1])
 
+    def test_no_conversion_when_prefixed_already_present(self):
+        """ Tests that a property is not prefixed when the -webkit- version is already in the same CSS block """
+        css = """.foo {
+    -webkit-user-select: none;
+    user-select: none;
+}"""
+        converter = _W3CTestConverter(DUMMY_PATH, DUMMY_FILENAME, None)
+        with OutputCapture():
+            result = converter.add_webkit_prefix_to_unprefixed_properties_and_values(css)
+        self.assertEqual(len(result[0]), 0, 'No properties should be converted when webkit version is already present')
+        self.assertEqual(result[2].count('-webkit-user-select'), 1, 'Should not produce duplicate -webkit-user-select')
+
     def test_convert_attributes_if_needed(self):
         """ Tests convert_attributes_if_needed() using a reference file that has some relative src paths """
 

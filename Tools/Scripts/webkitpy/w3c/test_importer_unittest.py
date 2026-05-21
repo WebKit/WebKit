@@ -170,6 +170,32 @@ class TestImporterTest(unittest.TestCase):
         self.assertTrue('src="/resources/testharness.js"' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.html'))
         self.assertTrue('src="/resources/testharness.js"' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/css/t/test.html'))
 
+    def test_no_duplicate_webkit_prefix_when_both_forms_present(self):
+        """ End-to-end check: importing a WPT test that already has both -webkit-user-select and user-select must not produce two -webkit-user-select declarations. """
+        upstream_test = '''<!DOCTYPE html>
+<html><head>
+<script src="/resources/testharness.js"></script>
+<style>
+.foo {
+    -webkit-user-select: none;
+    user-select: none;
+}
+</style>
+</head><body></body></html>'''
+
+        FAKE_FILES = {
+            f'{FAKE_WPT_DIR}/t/test.html': upstream_test,
+            '/mock-checkout/Source/WebCore/css/CSSProperties.json': '{"properties": {"-webkit-user-select": {"values": ["auto", "text", "none", "all"]}}}',
+            '/mock-checkout/Source/WebCore/css/CSSValueKeywords.in': '',
+        }
+        FAKE_FILES.update(FAKE_RESOURCES)
+
+        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '--no-clean-dest-dir', '-d', 'w3c'], FAKE_FILES)
+
+        imported = fs.read_text_file('/mock-checkout/LayoutTests/w3c/web-platform-tests/t/test.html')
+        self.assertEqual(imported.count('-webkit-user-select'), 1, 'Imported test should not have duplicate -webkit-user-select')
+        self.assertIn('user-select: none;', imported, 'Standard user-select declaration should be preserved')
+
     def test_skip_test_import_download(self):
         FAKE_FILES = {}
         FAKE_FILES.update(FAKE_RESOURCES)
