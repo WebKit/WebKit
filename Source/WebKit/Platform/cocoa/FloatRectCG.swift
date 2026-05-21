@@ -21,11 +21,14 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+#if canImport(WebKit_Internal)
+import WebKit_Internal
+#endif
+
 #if HAVE_APPKIT_GESTURES_SUPPORT
 
 import Foundation
 import WebCore_Private
-import WebKit_Internal // FIXME: This shouldn't be needed
 
 extension CGRect {
     /// Creates a `CGRect` from a `FloatRect`.

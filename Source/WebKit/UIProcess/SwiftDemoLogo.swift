@@ -21,10 +21,13 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+#if canImport(WebKit_Internal)
+import WebKit_Internal
+#endif
+
 #if ENABLE_SWIFT_DEMO_URI_SCHEME
 
 import Foundation
-import WebKit_Internal
 
 extension Data {
     var bytes: [UInt8] {

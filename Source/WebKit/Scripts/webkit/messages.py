@@ -2072,7 +2072,9 @@ def generate_swift_message_handler(receiver):
         result.append('#if %s\n' % convert_enable_macros_to_swift_syntax(receiver.condition))
     if receiver.swift_receiver_build_enabled_by:
         result.append('#if ENABLE_%s\n' % (receiver.swift_receiver_build_enabled_by))
+    result.append('#if canImport(WebKit_Internal)\n')
     result.append('import WebKit_Internal\n')
+    result.append('#endif\n')
     if receiver.condition:
         result.append('#endif\n')
     if receiver.swift_receiver_build_enabled_by:

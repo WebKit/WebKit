@@ -22,7 +22,9 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
+#if canImport(WebKit_Internal)
 import WebKit_Internal
+#endif
 
 final class TestWithSwiftWeakRef {
     private weak var target: TestWithSwift?

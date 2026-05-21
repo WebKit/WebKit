@@ -21,11 +21,14 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+#if canImport(WebKit_Internal)
+import WebKit_Internal
+#endif
+
 #if HAVE_CORE_ANIMATION_SEPARATED_LAYERS
 
 import os
 @_weakLinked import RealityKit
-import WebKit_Internal
 
 extension WKSeparatedImageView {
     func startImage3DGeneration() -> Task<Void, any Error> {

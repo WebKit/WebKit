@@ -3460,7 +3460,8 @@
 		073EFBB72D0F448500FAE7CF /* Foundation+Extras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Foundation+Extras.swift"; sourceTree = "<group>"; };
 		074021602DDA651600BAEC91 /* GroupActivities_SPI.swiftinterface */ = {isa = PBXFileReference; lastKnownFileType = text; path = GroupActivities_SPI.swiftinterface; sourceTree = "<group>"; };
 		0744720525E5BD020054B231 /* MediaOverridesForTesting.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaOverridesForTesting.h; sourceTree = "<group>"; };
-		0744DA532CE05F9500AACC81 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
+		0744DA532CE05F9500AACC81 /* WebKitSwiftBridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebKitSwiftBridgingHeader.h; sourceTree = "<group>"; };
+		0744DA542CE05F9500AACC81 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		074A6FC52D5F1DEA0027F958 /* KeyEventInterpretationContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = KeyEventInterpretationContext.h; sourceTree = "<group>"; };
 		074A6FC62D5F1DEA0027F958 /* KeyEventInterpretationContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = KeyEventInterpretationContext.cpp; sourceTree = "<group>"; };
 		074A6FC82D5F20190027F958 /* KeyEventInterpretationContext.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = KeyEventInterpretationContext.serialization.in; sourceTree = "<group>"; };
@@ -9529,7 +9530,8 @@
 		0744DA522CE05F5300AACC81 /* Internal */ = {
 			isa = PBXGroup;
 			children = (
-				0744DA532CE05F9500AACC81 /* module.modulemap */,
+				0744DA542CE05F9500AACC81 /* module.modulemap */,
+				0744DA532CE05F9500AACC81 /* WebKitInternalBridgingHeader.h */,
 				07EF24BE2E309EFE004429B6 /* WebKitInternalCxx.h */,
 			);
 			path = Internal;
@@ -12529,6 +12531,7 @@
 				93E05E3F282CD55F000B69EB /* ProcessStateMonitor.mm */,
 				F499BAA12947C1A4001241D6 /* RevealFocusedElementDeferrer.h */,
 				F499BAA22947C1A4001241D6 /* RevealFocusedElementDeferrer.mm */,
+				E356F167BD56265F1999866F /* ScrollPerfIntervalState.h */,
 				2DAF06D418BD1A470081CEB1 /* SmartMagnificationController.h */,
 				2DAF06D818BD23BA0081CEB1 /* SmartMagnificationController.messages.in */,
 				2DAF06D518BD1A470081CEB1 /* SmartMagnificationController.mm */,
@@ -12553,7 +12556,6 @@
 				F4DF72102B0C324F009A4522 /* WKBaseScrollView.h */,
 				F4DF72112B0C324F009A4522 /* WKBaseScrollView.mm */,
 				F4F0C48A2B2E5405006F226C /* WKBrowserEngineDefinitions.h */,
-				E356F167BD56265F1999866F /* ScrollPerfIntervalState.h */,
 				0FCB4E3C18BBE044000FCFC9 /* WKContentView.h */,
 				0FCB4E3D18BBE044000FCFC9 /* WKContentView.mm */,
 				0FCB4E6A18BBF26A000FCFC9 /* WKContentViewInteraction.h */,
@@ -18751,6 +18753,7 @@
 				E4D54D0421F1D72D007E3C36 /* ScrollingTreeFrameScrollingNodeRemoteIOS.h in Headers */,
 				0F931C1C18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.h in Headers */,
 				0F931C1C18C5711900DBB8D4 /* ScrollingTreeScrollingNodeDelegateIOS.h in Headers */,
+				0EBD18373218B9B6D3181E75 /* ScrollPerfIntervalState.h in Headers */,
 				51D130541382EAC000351EDD /* SecItemRequestData.h in Headers */,
 				51D130561382EAC000351EDD /* SecItemResponseData.h in Headers */,
 				86EB7204298D310A00C1DC77 /* SecItemShim.h in Headers */,
@@ -19271,7 +19274,6 @@
 				7CD5EBBB1746A83E000C1C45 /* WKBaseMac.h in Headers */,
 				F4DF72122B0C3A8C009A4522 /* WKBaseScrollView.h in Headers */,
 				F4F0C48B2B2E541B006F226C /* WKBrowserEngineDefinitions.h in Headers */,
-				0EBD18373218B9B6D3181E75 /* ScrollPerfIntervalState.h in Headers */,
 				BCBAAC73144E619E0053F82F /* WKBrowsingContextController.h in Headers */,
 				3788A05C14743C90006319E5 /* WKBrowsingContextControllerPrivate.h in Headers */,
 				BCBAACF41452324F0053F82F /* WKBrowsingContextGroup.h in Headers */,

@@ -70,18 +70,15 @@ set(GPUProcess_SOURCES Shared/EntryPointUtilities/Cocoa/AuxiliaryProcessMain.cpp
 set(WebProcess_INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR})
 set(NetworkProcess_INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR})
 
-# WebBackForwardList.swift and friends need the full C++ WebKit_Internal module
-# (WebPageProxy, SessionState, WebBackForwardListSwiftUtilities, ...) so use the
-# source-tree map directly. The earlier ObjC-only stripped map is insufficient
-# once ENABLE_BACK_FORWARD_LIST_SWIFT pulls in C++ interop.
-set(WebKit_SWIFT_INTEROP_MODULE_PATH "${WEBKIT_DIR}/Modules/Internal")
+# The Mac port uses the default WebKit_SWIFT_BRIDGING_HEADER set in
+# Source/WebKit/CMakeLists.txt (Modules/Internal/WebKitSwiftBridgingHeader.h).
 
 # WebCore_Private.modulemap in-tree is a `framework module` that umbrellas the
 # Xcode framework's PrivateHeaders/. CMake stages those headers as a flat
 # directory instead, and umbrellaing it pulls in headers (ANGLEHeaders.h etc.)
 # whose own dependencies aren't on the Swift Clang importer's search path.
 # Expose only what WebBackForwardList.swift names directly; the rest of the
-# WebCore:: types it uses are reachable transitively via WebKit_Internal headers.
+# WebCore:: types it uses are reachable transitively via the bridging header.
 set(WebKit_CMAKE_MODULEMAP_DIR "${CMAKE_BINARY_DIR}/WebKit/SwiftModules")
 file(MAKE_DIRECTORY "${WebKit_CMAKE_MODULEMAP_DIR}")
 file(CONFIGURE OUTPUT "${WebKit_CMAKE_MODULEMAP_DIR}/module.modulemap" CONTENT
@@ -97,7 +94,7 @@ file(CONFIGURE OUTPUT "${WebKit_CMAKE_MODULEMAP_DIR}/module.modulemap" CONTENT
 # Must go in WebKit_COMPILE_OPTIONS (applied after -warnings-as-errors in _WEBKIT_TARGET_SETUP).
 list(APPEND WebKit_COMPILE_OPTIONS "$<$<COMPILE_LANGUAGE:Swift>:-no-warnings-as-errors>")
 
-# The full WebKit_Internal C++ module pulls in WebPageProxy.h and friends, which
+# The bridging header transitively reaches WebPageProxy.h and friends, which
 # quote-include across the entire WebKit/WebCore/JSC private header set. Mirror
 # the C++ target's include directories to swiftc's Clang importer so those
 # resolve. cmakeconfig.h is force-included because the headers assume the

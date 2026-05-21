@@ -21,11 +21,14 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+#if canImport(WebKit_Internal)
+internal import WebKit_Internal
+#endif
+
 #if ENABLE_PDF_HUD
 
 public import AppKit
 public import Foundation
-internal import WebKit_Internal
 private import pal.spi.mac.NSImageSPI
 private import wtf.SPI.darwin.OSVariantSPI
 

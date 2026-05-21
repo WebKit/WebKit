@@ -21,6 +21,10 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+#if canImport(WebKit_Internal)
+import WebKit_Internal
+#endif
+
 #if compiler(>=6.2.3)
 
 // FIXME (rdar://164119356): Move parts of StdLibExtras.swift into WTF
@@ -28,7 +32,6 @@
 // irrespective of BACK_FORWARD_LIST_SWIFT
 #if ENABLE_BACK_FORWARD_LIST_SWIFT
 
-import WebKit_Internal
 import wtf
 
 /// Conform any WTF::Ref<T> to this protocol to get useful extensions.

@@ -23,7 +23,9 @@
 //
 
 #if ENABLE_SWIFT_TEST_CONDITION
+#if canImport(WebKit_Internal)
 import WebKit_Internal
+#endif
 #endif
 
 #if ENABLE_SWIFT_TEST_CONDITION

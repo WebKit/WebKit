@@ -958,9 +958,20 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         GET_WEBKIT_CONFIG_VARIABLES(_swift_definitions)
         list(TRANSFORM _swift_definitions PREPEND "-D")
         set(_swift_options ${_swift_definitions})
-        # Other options needed by Swift for C++ interop, including the location
-        # of the modulemap and hader for WebKit's internal "APIs" which we
-        # make available from C++ to Swift.
+        # Other options needed by Swift for C++ interop. An optional 5th
+        # positional argument supplies a bridging header (passed via
+        # `-internal-import-bridging-header` to keep the bridged symbols at
+        # internal visibility, matching SWIFT_BRIDGING_HEADER_IS_INTERNAL=YES
+        # on the Xcode build). Targets without a bridging header simply omit
+        # the argument.
+        set(_optional_bridging_header "${ARGV4}")
+        if (NOT "${_optional_bridging_header}" STREQUAL "")
+            # `-enable-library-evolution` is paired with the bridging header so
+            # the typecheck and main Swift compile use the same ABI semantics
+            # (and to silence swiftc's "internal bridging headers without
+            # library evolution can cause instability" warning).
+            list(APPEND _swift_options "-internal-import-bridging-header" "${_optional_bridging_header}" "-enable-library-evolution")
+        endif ()
         # By default the interop module dir goes on Clang's include search path
         # (-Xcc -I) so the C++ interop importer can find module.modulemap there.
         # Targets where the modulemap must remain Swift-only (e.g. WebKit, whose
@@ -977,10 +988,12 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         # apinotes version is keyed off the effective Swift language mode, so
         # this also keeps PAL/WebGPU/WebKit on the same module-cache hash.
         list(APPEND _swift_options "-swift-version" "6")
-        if (${_target}_SWIFT_INTEROP_MODULE_PATH_SWIFT_ONLY)
-            list(APPEND _swift_options "-I${_interop_module_path}")
-        else ()
-            list(APPEND _swift_options "-Xcc" "-I${_interop_module_path}")
+        if (NOT "${_interop_module_path}" STREQUAL "")
+            if (${_target}_SWIFT_INTEROP_MODULE_PATH_SWIFT_ONLY)
+                list(APPEND _swift_options "-I${_interop_module_path}")
+            else ()
+                list(APPEND _swift_options "-Xcc" "-I${_interop_module_path}")
+            endif ()
         endif ()
         # InternalImportsByDefault keeps unqualified `import Foo` from re-exporting Foo's
         # types through the module's public interface. WebGPU/PAL want this; WebKit has

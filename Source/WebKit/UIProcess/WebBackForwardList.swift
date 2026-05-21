@@ -21,12 +21,15 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+#if canImport(WebKit_Internal)
+import WebKit_Internal
+#endif
+
 #if compiler(>=6.2.3)
 
 #if ENABLE_BACK_FORWARD_LIST_SWIFT
 
 import WebCore_Private
-import WebKit_Internal
 import wtf
 
 // A note on swift-format-ignore: NeverForceUnwrap:

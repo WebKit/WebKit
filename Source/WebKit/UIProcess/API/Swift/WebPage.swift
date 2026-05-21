@@ -21,12 +21,15 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+#if canImport(WebKit_Internal)
+import WebKit_Internal
+#endif
+
 #if ENABLE_SWIFTUI
 
 public import Foundation
 public import Observation
 import WebKit_Private
-import WebKit_Internal
 
 /// An object that controls and manages the behavior of interactive web content.
 ///

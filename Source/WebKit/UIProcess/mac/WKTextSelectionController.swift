@@ -21,10 +21,13 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+#if canImport(WebKit_Internal)
+import WebKit_Internal
+#endif
+
 #if HAVE_APPKIT_GESTURES_SUPPORT
 
 import Foundation
-import WebKit_Internal
 import AppKit
 import WebCore_Private
 private import CxxStdlib

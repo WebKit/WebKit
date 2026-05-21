@@ -1367,3 +1367,7 @@ std::optional<Vector<ArgumentDescription>> messageReplyArgumentDescriptions(Mess
 } // namespace WebKit
 
 #endif // ENABLE(IPC_TESTING_API) || !LOG_DISABLED
+
+} // namespace WebKit
+
+#endif // ENABLE(IPC_TESTING_API) || !LOG_DISABLED

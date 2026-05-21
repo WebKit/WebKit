@@ -16,6 +16,7 @@ set(WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/GPUProcess/media"
     "${WEBKIT_DIR}/GPUProcess/webrtc"
     "${WEBKIT_DIR}/ModelProcess"
+    "${WEBKIT_DIR}/ModelProcess/cocoa"
     "${WEBKIT_DIR}/NetworkProcess"
     "${WEBKIT_DIR}/NetworkProcess/Authentication"
     "${WEBKIT_DIR}/NetworkProcess/Classifier"
@@ -838,16 +839,21 @@ set(WebKit_GENERATED_SERIALIZERS_SUFFIX cpp)
 # WK*Private headers that conflicts with the WebKit_Private framework module.
 set(WebKit_SWIFT_INTEROP_MODULE_PATH "${WEBKIT_DIR}/Modules/Internal")
 set(WebKit_SWIFT_INTEROP_MODULE_PATH_SWIFT_ONLY TRUE)
+# Default Swift bridging header for C++↔Swift interop. Platform files may
+# override this. The header itself uses per-platform guards on individual
+# #imports so that non-Apple ports can keep using it.
+set(WebKit_SWIFT_BRIDGING_HEADER "${WEBKIT_DIR}/Modules/Internal/WebKitSwiftBridgingHeader.h")
 
 WEBKIT_FRAMEWORK_DECLARE(WebKit)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 WEBKIT_ADD_TARGET_UNSAFE_BUFFER_WARNINGS(WebKit)
 
-# The full WebKit_Internal C++ module pulls in WebPageProxy.h and friends, which
-# quote-include across the entire WebKit/WebCore/JSC private header set. Mirror
-# the C++ target's include directories to swiftc's Clang importer so those
-# resolve. cmakeconfig.h is force-included because the headers assume the
-# project's prefix header has already defined ENABLE()/HAVE() values.
+# WebKit's Swift sources reach into WebPageProxy.h and friends, which
+# quote-include across the entire WebKit/WebCore/JSC private header set.
+# Mirror the C++ target's include directories to swiftc's Clang importer so
+# the bridging header (and the headers it #imports) resolve. cmakeconfig.h
+# is force-included because the headers assume the project's prefix header
+# has already defined ENABLE()/HAVE() values.
 set(WebKit_SWIFT_CLANG_INCLUDE_DIRS
     ${CMAKE_BINARY_DIR}
     ${WebKit_FRAMEWORK_HEADERS_DIR}
@@ -941,8 +947,9 @@ if (SWIFT_REQUIRED)
 endif ()
 
 WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER(WebKit WebKit
-    "${WebKit_SWIFT_INTEROP_MODULE_PATH}"
-    "${WebKit_DERIVED_SOURCES_DIR}/WebKit-Swift-CPP.h")
+    ""
+    "${WebKit_DERIVED_SOURCES_DIR}/WebKit-Swift-CPP.h"
+    "${WebKit_SWIFT_BRIDGING_HEADER}")
 
 if (WebKit_PUBLIC_FRAMEWORK_HEADERS)
     WEBKIT_COPY_FILES(WebKit_CopyHeaders

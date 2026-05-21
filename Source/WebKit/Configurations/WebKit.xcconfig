@@ -84,8 +84,24 @@ BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 SWIFT_INSTALL_OBJC_HEADER = NO;
 SWIFT_LIBRARY_LEVEL = api;
 
+// On SDKs after 26, use a bridging header; SDKs 26 and earlier don't support
+// bridging headers for framework targets, so a module map is used instead.
+WK_USE_INTERNAL_BRIDGING_HEADER = YES;
+WK_USE_INTERNAL_BRIDGING_HEADER[sdk=*26*] = ;
+
+// Bridging-header approach (post-26 SDKs): SWIFT_BRIDGING_HEADER_IS_INTERNAL keeps
+// these symbols visible only to the framework's own Swift sources.
+SWIFT_OBJC_BRIDGING_HEADER = $(SWIFT_OBJC_BRIDGING_HEADER_$(WK_USE_INTERNAL_BRIDGING_HEADER));
+SWIFT_OBJC_BRIDGING_HEADER_YES = $(SRCROOT)/Modules/Internal/WebKitSwiftBridgingHeader.h;
+SWIFT_BRIDGING_HEADER_IS_INTERNAL = $(SWIFT_BRIDGING_HEADER_IS_INTERNAL_$(WK_USE_INTERNAL_BRIDGING_HEADER));
+SWIFT_BRIDGING_HEADER_IS_INTERNAL_YES = YES;
+
+// Module-map approach (SDK 26 and earlier): add Modules/Internal to the Swift search path.
+SWIFT_INCLUDE_PATHS_INTERNAL_MODULE = $(SWIFT_INCLUDE_PATHS_INTERNAL_MODULE_$(WK_USE_INTERNAL_BRIDGING_HEADER));
+SWIFT_INCLUDE_PATHS_INTERNAL_MODULE_ = $(SRCROOT)/Modules/Internal;
+
 // Use handwritten SPI modules on public SDKs.
-SWIFT_INCLUDE_PATHS = $(SRCROOT)/Modules/Internal $(SWIFT_INCLUDE_PATHS_$(USE_INTERNAL_SDK));
+SWIFT_INCLUDE_PATHS = $(SWIFT_INCLUDE_PATHS_INTERNAL_MODULE) $(SWIFT_INCLUDE_PATHS_$(USE_INTERNAL_SDK));
 SWIFT_INCLUDE_PATHS_ = $(SRCROOT)/Platform/spi/visionos $(SRCROOT)/Platform/spi/ios $(SRCROOT)/Platform/spi/Cocoa $(SRCROOT)/Platform/spi/Cocoa/Modules $(inherited);
 
 OTHER_CPLUSPLUSFLAGS = $(inherited) -fmodules -fno-cxx-modules;

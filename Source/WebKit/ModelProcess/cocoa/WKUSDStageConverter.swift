@@ -23,10 +23,12 @@
 
 import Foundation
 import os
+#if canImport(WebKit_Internal)
+import WebKit_Internal
+#endif
 
 #if ENABLE_MODEL_PROCESS
 
-import WebKit_Internal
 
 #if canImport(_USDKit_RealityKit)
 

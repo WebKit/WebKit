@@ -32,6 +32,7 @@
 #include "ResponsivenessTimer.h"
 #include <WebCore/ProcessIdentifier.h>
 #include <memory>
+#include <variant>
 #include <wtf/CheckedRef.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>

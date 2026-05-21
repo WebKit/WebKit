@@ -56,8 +56,10 @@
 #include "WebPageProxy.h"
 
 #ifdef __OBJC__
+#include "WKNavigationDelegate.h"
 #include "WKSeparatedImageView.h"
 #include "WKUIDelegatePrivate.h"
+#include "WKURLSchemeHandler.h"
 #endif
 
 #if USE(APPLE_INTERNAL_SDK)

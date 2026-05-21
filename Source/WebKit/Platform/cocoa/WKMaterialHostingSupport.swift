@@ -21,9 +21,12 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+#if canImport(WebKit_Internal)
+import WebKit_Internal
+#endif
+
 #if HAVE_MATERIAL_HOSTING
 
-import WebKit_Internal
 
 #if USE_APPLE_INTERNAL_SDK
 #if canImport(UIKit)

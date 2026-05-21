@@ -21,10 +21,13 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+#if canImport(WebKit_Internal)
+import WebKit_Internal
+#endif
+
 #if HAVE_MOUSE_DEVICE_OBSERVATION
 
 @_weakLinked import GameController
-import WebKit_Internal
 
 @objc
 @implementation
