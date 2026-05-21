@@ -3709,6 +3709,22 @@ public:
         }
     }
 
+    GetByStatus::LookupMode propertyLookupMode()
+    {
+        switch (op()) {
+        case GetByIdDirect:
+        case GetByIdDirectFlush:
+        case GetPrivateNameById:
+            return GetByStatus::LookupMode::Direct;
+        case GetById:
+        case GetByIdFlush:
+        case GetByIdMegamorphic:
+            return GetByStatus::LookupMode::Normal;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
     unsigned numberOfArgumentsToSkip()
     {
         ASSERT(hasNumberOfArgumentsToSkip());
