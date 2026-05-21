@@ -1065,6 +1065,20 @@ CSSCornerShapeEnabled:
     WebCore:
       default: false
 
+CSSCornersShorthandEnabled:
+  type: bool
+  category: css
+  status: testable
+  humanReadableName: "CSS corner and corner-* shorthands"
+  humanReadableDescription: "Enable support for the CSS `corner` and per-corner shorthand properties combining border-radius and corner-shape."
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSCounterStyleAtRuleImageSymbolsEnabled:
   type: bool
   status: testable

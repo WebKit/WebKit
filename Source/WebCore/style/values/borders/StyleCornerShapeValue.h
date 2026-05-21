@@ -25,6 +25,8 @@
 #pragma once
 
 #include <WebCore/StylePrimitiveNumericTypes.h>
+#include <cmath>
+#include <limits>
 
 namespace WebCore {
 
@@ -33,20 +35,41 @@ class RenderStyle;
 
 namespace Style {
 
-// NOTE: the keyword value "infinity" is represented as the standard double value `std::numeric_limits<double>::infinity()`.
-using SuperellipseFunction = FunctionNotation<CSSValueSuperellipse, Number<CSS::Nonnegative>>;
+// NOTE: the stored `superellipse.value` is the spec `superellipse parameter`
+// (https://drafts.csswg.org/css-borders-4/#superellipse-parameter), which is
+// logarithmic. The visible curve exponent is `2 ^ superellipse.value`. Keyword
+// shapes map to these spec parameters:
+//   round     => superellipse(1)    [exponent 2]
+//   bevel     => superellipse(0)    [exponent 1]
+//   scoop     => superellipse(-1)   [exponent 0.5]
+//   squircle  => superellipse(2)    [exponent 4]
+//   square    => superellipse(+inf) [exponent +inf] (also accepted as `straight`)
+//   notch     => superellipse(-inf) [exponent 0]
+using SuperellipseFunction = FunctionNotation<CSSValueSuperellipse, Number<CSS::All>>;
 
 // https://drafts.csswg.org/css-borders-4/#typedef-corner-shape-value
 struct CornerShapeValue {
     SuperellipseFunction superellipse;
 
-    constexpr CornerShapeValue(CSS::Keyword::Round) : superellipse { 2.0 } { }
-    constexpr CornerShapeValue(CSS::Keyword::Scoop) : superellipse { 0.5 } { }
-    constexpr CornerShapeValue(CSS::Keyword::Bevel) : superellipse { 1.0 } { }
-    constexpr CornerShapeValue(CSS::Keyword::Notch) : superellipse { 0.0 } { }
+    constexpr CornerShapeValue(CSS::Keyword::Round) : superellipse { 1.0 } { }
+    constexpr CornerShapeValue(CSS::Keyword::Scoop) : superellipse { -1.0 } { }
+    constexpr CornerShapeValue(CSS::Keyword::Bevel) : superellipse { 0.0 } { }
+    constexpr CornerShapeValue(CSS::Keyword::Notch) : superellipse { -std::numeric_limits<double>::infinity() } { }
+    constexpr CornerShapeValue(CSS::Keyword::Square) : superellipse { std::numeric_limits<double>::infinity() } { }
     constexpr CornerShapeValue(CSS::Keyword::Straight) : superellipse { std::numeric_limits<double>::infinity() } { }
-    constexpr CornerShapeValue(CSS::Keyword::Squircle) : superellipse { 4.0 } { }
+    constexpr CornerShapeValue(CSS::Keyword::Squircle) : superellipse { 2.0 } { }
     constexpr CornerShapeValue(SuperellipseFunction value) : superellipse { value } { }
+
+    // Convenience: returns the actual curve exponent (2^parameter).
+    constexpr double exponent() const
+    {
+        auto s = superellipse->value;
+        if (s == std::numeric_limits<double>::infinity())
+            return std::numeric_limits<double>::infinity();
+        if (s == -std::numeric_limits<double>::infinity())
+            return 0.0;
+        return std::pow(2.0, s);
+    }
 
     template<typename F> decltype(auto) switchOn(F&& functor) const
     {
@@ -58,8 +81,8 @@ struct CornerShapeValue {
             return functor(CSS::Keyword::Bevel { });
         if (*this == CornerShapeValue(CSS::Keyword::Notch { }))
             return functor(CSS::Keyword::Notch { });
-        if (*this == CornerShapeValue(CSS::Keyword::Straight { }))
-            return functor(CSS::Keyword::Straight { });
+        if (*this == CornerShapeValue(CSS::Keyword::Square { }))
+            return functor(CSS::Keyword::Square { });
         if (*this == CornerShapeValue(CSS::Keyword::Squircle { }))
             return functor(CSS::Keyword::Squircle { });
         return functor(superellipse);
