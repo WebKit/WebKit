@@ -891,3 +891,9 @@
     (allow mach-lookup
         (global-name "com.apple.imagent.EnhancedLinkSecurityStore")))
 #endif
+
+(when (defined? 'asr-parser-enter)
+    (with-filter (asr-parser-domain ASR_DOMAIN_IMAGES)
+        (deny asr-parser-enter)
+        (allow asr-parser-enter
+           (asr-parser-name "com.apple.imageio.png"))))
