@@ -30,6 +30,9 @@
 #include "RenderButton.h"
 #include "RenderInline.h"
 #include "RenderObjectDocument.h"
+#include "RenderSVGInline.h"
+#include "RenderSVGInlineText.h"
+#include "RenderSVGInlineTextFragment.h"
 #include "RenderSVGText.h"
 #include "RenderStyle+SettersInlines.h"
 #include "RenderTable.h"
@@ -125,9 +128,18 @@ static bool supportsFirstLetter(RenderBlock& block)
         return true;
     if (!is<RenderBlockFlow>(block))
         return false;
-    if (is<RenderSVGText>(block))
-        return false;
     return block.canHaveGeneratedChildren();
+}
+
+// SVG-context dispatch helper. Returns true when the first-letter wrapper
+// must use SVG-aware renderer types (RenderSVGInline + RenderSVGInlineTextFragment)
+// rather than the HTML defaults, because the originating block participates
+// in SVG text layout.
+static bool isInSVGTextContext(const RenderElement& container)
+{
+    return container.isRenderSVGInline()
+        || container.isRenderSVGText()
+        || RenderSVGText::locateRenderSVGTextAncestor(container);
 }
 
 RenderTreeBuilder::FirstLetter::FirstLetter(RenderTreeBuilder& builder)
@@ -206,6 +218,13 @@ void RenderTreeBuilder::FirstLetter::cleanupOnDestroy(RenderTextFragment& textFr
     m_builder.destroy(*textFragment.firstLetter(), CanCollapseAnonymousBlock::No);
 }
 
+void RenderTreeBuilder::FirstLetter::cleanupOnDestroy(RenderSVGInlineTextFragment& textFragment)
+{
+    if (!textFragment.firstLetter())
+        return;
+    m_builder.destroy(*textFragment.firstLetter(), CanCollapseAnonymousBlock::No);
+}
+
 void RenderTreeBuilder::FirstLetter::updateStyle(RenderBlock& firstLetterBlock, RenderObject& currentChild)
 {
     RenderElement* firstLetter = currentChild.parent();
@@ -227,10 +246,14 @@ void RenderTreeBuilder::FirstLetter::updateStyle(RenderBlock& firstLetterBlock, 
     }
 
     // The first-letter renderer needs to be replaced. Create a new renderer of the right type.
+    bool useSVGRenderers = isInSVGTextContext(firstLetterContainer);
     RenderPtr<RenderBoxModelObject> newFirstLetter;
-    if (pseudoStyle->display() == Style::DisplayType::InlineFlow)
-        newFirstLetter = createRenderer<RenderInline>(RenderObject::Type::Inline, firstLetterBlock.document(), WTF::move(*pseudoStyle));
-    else
+    if (pseudoStyle->display() == Style::DisplayType::InlineFlow) {
+        if (useSVGRenderers)
+            newFirstLetter = createRenderer<RenderSVGInline>(RenderObject::Type::SVGInline, firstLetterBlock.document(), WTF::move(*pseudoStyle));
+        else
+            newFirstLetter = createRenderer<RenderInline>(RenderObject::Type::Inline, firstLetterBlock.document(), WTF::move(*pseudoStyle));
+    } else
         newFirstLetter = createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, firstLetterBlock.document(), WTF::move(*pseudoStyle));
     newFirstLetter->initializeStyle();
     newFirstLetter->setIsFirstLetter();
@@ -247,7 +270,10 @@ void RenderTreeBuilder::FirstLetter::updateStyle(RenderBlock& firstLetterBlock, 
     m_builder.destroy(*firstLetter);
     if (remainingText) {
         // Replace the old renderer with the new one.
-        remainingText->setFirstLetter(*newFirstLetter);
+        if (auto* htmlFragment = dynamicDowncast<RenderTextFragment>(remainingText.get()))
+            htmlFragment->setFirstLetter(*newFirstLetter);
+        else if (auto* svgFragment = dynamicDowncast<RenderSVGInlineTextFragment>(remainingText.get()))
+            svgFragment->setFirstLetter(*newFirstLetter);
         newFirstLetter->setFirstLetterRemainingText(*remainingText);
     }
     m_builder.attach(firstLetterContainer, WTF::move(newFirstLetter), nextSibling.get());
@@ -268,10 +294,15 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderText& currentTextChil
     if (!pseudoStyle)
         return;
 
+    bool useSVGRenderers = isInSVGTextContext(*firstLetterContainer);
+
     RenderPtr<RenderBoxModelObject> newFirstLetter;
-    if (pseudoStyle->display() == Style::DisplayType::InlineFlow)
-        newFirstLetter = createRenderer<RenderInline>(RenderObject::Type::Inline, currentTextChild.document(), WTF::move(*pseudoStyle));
-    else
+    if (pseudoStyle->display() == Style::DisplayType::InlineFlow) {
+        if (useSVGRenderers)
+            newFirstLetter = createRenderer<RenderSVGInline>(RenderObject::Type::SVGInline, currentTextChild.document(), WTF::move(*pseudoStyle));
+        else
+            newFirstLetter = createRenderer<RenderInline>(RenderObject::Type::Inline, currentTextChild.document(), WTF::move(*pseudoStyle));
+    } else
         newFirstLetter = createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, currentTextChild.document(), WTF::move(*pseudoStyle));
     newFirstLetter->initializeStyle();
     newFirstLetter->setIsFirstLetter();
@@ -319,27 +350,43 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderText& currentTextChil
 
         // Construct a text fragment for the text after the first letter.
         // This text fragment might be empty.
-        RenderPtr<RenderTextFragment> newRemainingText;
-        if (textNode) {
+        RenderPtr<RenderText> newRemainingText;
+        if (useSVGRenderers) {
+            if (textNode) {
+                newRemainingText = createRenderer<RenderSVGInlineTextFragment>(*textNode, oldText, length, oldText.length() - length);
+                textNode->setRenderer(newRemainingText.get());
+            } else
+                newRemainingText = createRenderer<RenderSVGInlineTextFragment>(m_builder.m_view.document(), oldText, length, oldText.length() - length);
+        } else if (textNode) {
             newRemainingText = createRenderer<RenderTextFragment>(*textNode, oldText, length, oldText.length() - length);
             textNode->setRenderer(newRemainingText.get());
         } else
             newRemainingText = createRenderer<RenderTextFragment>(m_builder.m_view.document(), oldText, length, oldText.length() - length);
 
-        RenderTextFragment& remainingText = *newRemainingText;
+        RenderText& remainingText = *newRemainingText;
         ASSERT_UNUSED(hasInlineWrapperForDisplayContents, hasInlineWrapperForDisplayContents == inlineWrapperForDisplayContents.get());
         remainingText.setInlineWrapperForDisplayContents(inlineWrapperForDisplayContents.get());
         m_builder.attach(*textContentParent, WTF::move(newRemainingText), beforeChild.get());
 
         // FIXME: Make attach the final step so that we don't need to keep firstLetter around.
         auto& firstLetter = *newFirstLetter;
-        remainingText.setFirstLetter(firstLetter);
-        firstLetter.setFirstLetterRemainingText(remainingText);
+        if (auto* htmlFragment = dynamicDowncast<RenderTextFragment>(remainingText)) {
+            htmlFragment->setFirstLetter(firstLetter);
+            firstLetter.setFirstLetterRemainingText(*htmlFragment);
+        } else if (auto* svgFragment = dynamicDowncast<RenderSVGInlineTextFragment>(remainingText)) {
+            svgFragment->setFirstLetter(firstLetter);
+            firstLetter.setFirstLetterRemainingText(*svgFragment);
+        }
         m_builder.attach(*firstLetterContainer, WTF::move(newFirstLetter), &remainingText);
 
         // Construct text fragment for the first letter.
-        auto letter = createRenderer<RenderTextFragment>(m_builder.m_view.document(), oldText, 0, length);
-        m_builder.attach(firstLetter, WTF::move(letter));
+        if (useSVGRenderers) {
+            auto letter = createRenderer<RenderSVGInlineTextFragment>(m_builder.m_view.document(), oldText, 0, length);
+            m_builder.attach(firstLetter, WTF::move(letter));
+        } else {
+            auto letter = createRenderer<RenderTextFragment>(m_builder.m_view.document(), oldText, 0, length);
+            m_builder.attach(firstLetter, WTF::move(letter));
+        }
     }
 }
 

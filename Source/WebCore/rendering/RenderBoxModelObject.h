@@ -57,6 +57,7 @@ class BorderShape;
 class GraphicsContext;
 class Image;
 class ImageBuffer;
+class RenderText;
 class RenderTextFragment;
 class StickyPositionViewportConstraints;
 class TransformationMatrix;
@@ -230,8 +231,8 @@ public:
     void paintMaskForTextFillBox(GraphicsContext&, const FloatRect&, const InlineIterator::InlineBoxIterator&, const LayoutRect&);
 
     // For RenderBlocks and RenderInlines with m_style->pseudoElementType() == PseudoElementType::FirstLetter, this tracks their remaining text fragments
-    RenderTextFragment* NODELETE firstLetterRemainingText() const;
-    void setFirstLetterRemainingText(RenderTextFragment&);
+    RenderText* NODELETE firstLetterRemainingText() const;
+    void setFirstLetterRemainingText(RenderText&);
     void clearFirstLetterRemainingText();
 
     enum class ScaleByUsedZoom : bool { No, Yes };

@@ -482,16 +482,23 @@ void RenderSVGText::layoutCharactersInTextBoxes(const InlineIterator::InlineBoxI
             continue;
         }
 
-        // Skip generated content.
-        RefPtr node = child->renderer().node();
-        if (!node)
-            continue;
+        // Skip generated content (e.g. ::before / ::after) but traverse into
+        // anonymous first-letter wrappers, whose descendants need layout.
+        auto& renderer = child->renderer();
+        RefPtr node = renderer.node();
+        bool isFirstLetterWrapper = false;
+        if (!node) {
+            CheckedPtr boxModelRenderer = dynamicDowncast<RenderBoxModelObject>(renderer);
+            isFirstLetterWrapper = boxModelRenderer && boxModelRenderer->isFirstLetter();
+            if (!isFirstLetterWrapper)
+                continue;
+        }
 
         auto inlineBox = dynamicDowncast<InlineIterator::InlineBox>(*child);
         if (!inlineBox)
             continue;
 
-        bool isTextPath = node->hasTagName(SVGNames::textPathTag);
+        bool isTextPath = node && node->hasTagName(SVGNames::textPathTag);
         if (isTextPath) {
             // Build text chunks for all <textPath> children, using the line layout algorithm.
             // This is needeed as text-anchor is just an additional startOffset for text paths.
@@ -527,9 +534,12 @@ FloatRect RenderSVGText::layoutChildBoxes(LegacyInlineFlowBox* start, SVGTextFra
             textBox->setLogicalWidth(boxRect.width());
             textBox->setLogicalHeight(boxRect.height());
         } else {
-            // Skip generated content.
-            if (!child->renderer().node())
-                continue;
+            // Skip generated content but traverse into anonymous first-letter wrappers.
+            if (!child->renderer().node()) {
+                CheckedPtr boxModelRenderer = dynamicDowncast<RenderBoxModelObject>(child->renderer());
+                if (!boxModelRenderer || !boxModelRenderer->isFirstLetter())
+                    continue;
+            }
 
             auto& flowBox = downcast<SVGInlineFlowBox>(*child);
             layoutChildBoxes(&flowBox, fragmentMap);

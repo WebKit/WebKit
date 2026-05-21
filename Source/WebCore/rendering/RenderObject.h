@@ -202,6 +202,7 @@ public:
         SVGImage,
         SVGInline,
         SVGInlineText,
+        SVGInlineTextFragment,
         SVGPath,
         SVGRect,
         SVGResourceClipper,
@@ -571,7 +572,8 @@ public:
     bool isRenderSVGTextPath() const { return type() == Type::SVGTextPath; }
     bool isRenderSVGTSpan() const { return type() == Type::SVGTSpan; }
     bool isRenderSVGInline() const { return type() == Type::SVGInline || type() == Type::SVGTSpan || type() == Type::SVGTextPath; }
-    bool isRenderSVGInlineText() const { return type() == Type::SVGInlineText; }
+    bool isRenderSVGInlineText() const { return type() == Type::SVGInlineText || type() == Type::SVGInlineTextFragment; }
+    bool isRenderSVGInlineTextFragment() const { return type() == Type::SVGInlineTextFragment; }
     bool isLegacyRenderSVGImage() const { return type() == Type::LegacySVGImage; }
     bool isRenderSVGImage() const { return type() == Type::SVGImage; }
     bool isLegacyRenderSVGForeignObject() const { return type() == Type::LegacySVGForeignObject; }

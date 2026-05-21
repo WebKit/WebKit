@@ -492,6 +492,7 @@ rendering/svg/RenderSVGBlock.cpp
 rendering/svg/RenderSVGImage.cpp
 rendering/svg/RenderSVGInline.cpp
 rendering/svg/RenderSVGInlineText.cpp
+rendering/svg/RenderSVGInlineTextFragment.cpp
 rendering/svg/RenderSVGModelObject.cpp
 rendering/svg/RenderSVGPath.cpp
 rendering/svg/RenderSVGResourceClipper.cpp

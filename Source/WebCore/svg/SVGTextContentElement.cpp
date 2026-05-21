@@ -223,8 +223,10 @@ const SVGTextContentElement* SVGTextContentElement::elementFromRenderer(const Re
     if (!renderer->isRenderSVGText() && !renderer->isRenderSVGInline())
         return nullptr;
 
+    // Anonymous wrappers (e.g. ::first-letter on SVG <text>) have no DOM element.
     auto* element = downcast<SVGElement>(renderer->node());
-    ASSERT(element);
+    if (!element)
+        return nullptr;
     return dynamicDowncast<SVGTextContentElement>(element);
 }
 

@@ -219,8 +219,10 @@ void SVGTextLayoutEngine::layoutInlineTextBox(InlineIterator::SVGTextBoxIterator
 {
     auto& text = textBox->renderer();
     ASSERT(text.parent());
-    ASSERT(text.parent()->element());
-    ASSERT(text.parent()->element()->isSVGElement());
+    // The direct parent may be an anonymous ::first-letter wrapper (no DOM element);
+    // the SVG ancestor element lives further up the tree.
+    ASSERT(text.parent()->isAnonymous() || text.parent()->element());
+    ASSERT(text.parent()->isAnonymous() || text.parent()->element()->isSVGElement());
 
     const RenderStyle& style = text.style();
 

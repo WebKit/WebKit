@@ -63,6 +63,7 @@
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderObjectInlines.h"
+#include "RenderSVGInlineTextFragment.h"
 #include "RenderStyle+GettersInlines.h"
 #include "RenderTableCell.h"
 #include "RenderTextControlSingleLine.h"
@@ -914,6 +915,8 @@ unsigned convertOffsetInTextFragmentToNodeOffset(const RenderObject& renderer, u
 {
     if (auto* textFragment = dynamicDowncast<RenderTextFragment>(renderer); textFragment && textFragment->firstLetter())
         return offset + textFragment->start();
+    if (auto* svgFragment = dynamicDowncast<RenderSVGInlineTextFragment>(renderer); svgFragment && svgFragment->firstLetter())
+        return offset + svgFragment->start();
     return offset;
 }
 
@@ -921,6 +924,8 @@ unsigned convertNodeOffsetToOffsetInTextFragment(const RenderObject& renderer, u
 {
     if (auto* textFragment = dynamicDowncast<RenderTextFragment>(renderer); textFragment && textFragment->firstLetter() && offset >= textFragment->start())
         return offset - textFragment->start();
+    if (auto* svgFragment = dynamicDowncast<RenderSVGInlineTextFragment>(renderer); svgFragment && svgFragment->firstLetter() && offset >= svgFragment->start())
+        return offset - svgFragment->start();
     return offset;
 }
 

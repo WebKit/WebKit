@@ -3089,6 +3089,7 @@ rendering/svg/RenderSVGHiddenContainer.cpp
 rendering/svg/RenderSVGImage.cpp @header:RenderStyleGetters
 rendering/svg/RenderSVGInline.cpp @header:RenderStyleGetters
 rendering/svg/RenderSVGInlineText.cpp @header:RenderStyleGetters
+rendering/svg/RenderSVGInlineTextFragment.cpp @header:RenderStyleGetters
 rendering/svg/RenderSVGModelObject.cpp @header:RenderStyleGetters
 rendering/svg/RenderSVGPath.cpp @header:RenderStyleGetters
 rendering/svg/RenderSVGRect.cpp @header:RenderStyleGetters

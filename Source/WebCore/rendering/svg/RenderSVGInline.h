@@ -32,8 +32,11 @@ class RenderSVGInline : public RenderInline {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGInline);
 public:
     RenderSVGInline(Type, SVGGraphicsElement&, RenderStyle&&);
+    RenderSVGInline(Type, Document&, RenderStyle&&);
     virtual ~RenderSVGInline();
 
+    // Precondition: !isAnonymous(). The CSS ::first-letter mechanism creates
+    // anonymous RenderSVGInline wrappers — those have no DOM graphics element.
     inline SVGGraphicsElement& graphicsElement() const;
 
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;

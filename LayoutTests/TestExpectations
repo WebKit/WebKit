@@ -2394,7 +2394,6 @@ imported/w3c/web-platform-tests/svg/render/reftests/blending-001.svg [ ImageOnly
 imported/w3c/web-platform-tests/svg/layout/svg-foreign-relayout-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/layout/svg-foreign-relayout-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/text-clipped-offscreen-move-onscreen.html [ Skip ]
-imported/w3c/web-platform-tests/svg/text/reftests/first-letter.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/text-context-fill.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/animations/slider-switch.html [ Skip ]
 imported/w3c/web-platform-tests/svg/animations/cyclic-syncbase-2.html [ Skip ]
@@ -2590,7 +2589,13 @@ webkit.org/b/139155 imported/mozilla/svg/dynamic-textPath-03.svg [ ImageOnlyFail
 webkit.org/b/139155 imported/mozilla/svg/dynamic-pattern-01.svg [ ImageOnlyFailure ]
 webkit.org/b/139155 imported/mozilla/svg/dynamic-use-01.svg [ ImageOnlyFailure ]
 webkit.org/b/139155 imported/mozilla/svg/dynamic-use-03.svg [ ImageOnlyFailure ]
-webkit.org/b/139183 imported/mozilla/svg/text/pseudo-first-letter.svg [ ImageOnlyFailure ]
+# pseudo-first-letter-2.svg: leading combining mark (U+0301) without a preceding
+# base. WebKit's shouldSkipForFirstLetter() treats Mn marks as letters and the
+# split renders the bare mark in a separate fragment from its base 't', leaving
+# the mark with no shaping context. Per CSS Pseudo-Elements 4 §3.2 the "first
+# typographic letter unit" should not be a defective combining sequence — fix
+# is generic to first-letter, not SVG-specific. Tracked as follow-up.
+imported/mozilla/svg/text/pseudo-first-letter-2.svg [ ImageOnlyFailure ]
 webkit.org/b/139184 imported/mozilla/svg/text/pseudo-first-line.svg [ ImageOnlyFailure ]
 webkit.org/b/139184 imported/mozilla/svg/text/simple-multiline-anchor-end.svg [ ImageOnlyFailure ]
 webkit.org/b/139184 imported/mozilla/svg/text/simple-multiline-number.svg [ ImageOnlyFailure ]

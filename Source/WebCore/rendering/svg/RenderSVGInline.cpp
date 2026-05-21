@@ -46,6 +46,12 @@ RenderSVGInline::RenderSVGInline(Type type, SVGGraphicsElement& element, RenderS
     ASSERT(isRenderSVGInline());
 }
 
+RenderSVGInline::RenderSVGInline(Type type, Document& document, RenderStyle&& style)
+    : RenderInline(type, document, WTF::move(style))
+{
+    ASSERT(isRenderSVGInline());
+}
+
 RenderSVGInline::~RenderSVGInline() = default;
 
 std::unique_ptr<LegacyInlineFlowBox> RenderSVGInline::createInlineFlowBox()
@@ -186,6 +192,10 @@ void RenderSVGInline::styleDidChange(Style::Difference diff, const RenderStyle* 
 
 bool RenderSVGInline::needsHasSVGTransformFlags() const
 {
+    // Anonymous wrappers (e.g. ::first-letter) have no SVGGraphicsElement, so
+    // they cannot carry SVG transform attributes.
+    if (isAnonymous())
+        return false;
     return graphicsElement().hasTransformRelatedAttributes();
 }
 
