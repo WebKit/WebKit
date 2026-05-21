@@ -55,6 +55,7 @@ template <typename, ShouldStrongDestructorGrabLock> class Strong;
 namespace WebCore {
 
 class CloseWatcherManager;
+class SecurityOrigin;
 class SecurityOriginData;
 struct ScrollToOptions;
 struct UserGestureTokenData;
@@ -152,6 +153,11 @@ public:
     void notifyActivated(MonotonicTime);
     WEBCORE_EXPORT bool hasTransientActivation() const;
     bool hasStickyActivation() const;
+
+    // whatwg/html#11454: same-origin navigation preserves sticky activation;
+    // suppressed if the redirect chain crossed origins. |previousOrigin| is
+    // passed in because the previous document may already be detached.
+    void carryOverStickyActivationFromPreviousWindow(const LocalDOMWindow& previousWindow, const SecurityOrigin& previousOrigin, const SecurityOrigin& targetOrigin, bool hadCrossOriginRedirect);
     WEBCORE_EXPORT bool consumeTransientActivation();
     WEBCORE_EXPORT bool NODELETE hasHistoryActionActivation() const;
     WEBCORE_EXPORT bool NODELETE consumeHistoryActionUserActivation();

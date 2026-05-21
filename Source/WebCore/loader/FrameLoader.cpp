@@ -2824,6 +2824,13 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
     Ref document = *cachedFrame.document();
     ASSERT(document->window());
 
+    // Snapshot the previous page before clear() detaches it; used for
+    // sticky-activation carry-over below.
+    RefPtr previousWindow = m_frame->window();
+    RefPtr<SecurityOrigin> previousOrigin;
+    if (RefPtr previousDocument = m_frame->document())
+        previousOrigin = &previousDocument->securityOrigin();
+
     clear(document.ptr(), true, true, cachedFrame.isMainFrame());
 
     document->attachToCachedFrame(cachedFrame);
@@ -2860,6 +2867,16 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
     frame->setDocument(document.copyRef());
 
     protect(document->window())->resumeFromBackForwardCache();
+
+    // whatwg/html#11454 bfcache reactivation: carry sticky activation from a
+    // same-origin previous page onto the cached window. No network load, so
+    // the redirect-chain suppressor does not apply.
+    if (previousWindow && previousOrigin && previousWindow.get() != document->window()) {
+        if (RefPtr cachedWindow = document->window()) {
+            Ref targetOrigin = document->securityOrigin();
+            cachedWindow->carryOverStickyActivationFromPreviousWindow(*previousWindow, *previousOrigin, targetOrigin, /* hadCrossOriginRedirect */ false);
+        }
+    }
 
     updateFirstPartyForCookies();
 

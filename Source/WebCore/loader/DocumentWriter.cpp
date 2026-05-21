@@ -47,6 +47,7 @@
 #include "LocalFrameView.h"
 #include "MIMETypeRegistry.h"
 #include "Navigation.h"
+#include "NetworkLoadMetrics.h"
 #include "Page.h"
 #include "PluginDocument.h"
 #include "RawDataDocumentParser.h"
@@ -207,6 +208,21 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
 
     frameLoader->setOutgoingReferrer(url);
     frame->setDocument(document.copyRef());
+
+    // whatwg/html#11454: carry sticky activation over same-origin navigations,
+    // except when the redirect chain crossed origins (A -> B -> A).
+    if (previousWindow && existingDocument) {
+        bool hadCrossOriginRedirect = false;
+        if (RefPtr documentLoader = frameLoader->documentLoader()) {
+            if (auto* metrics = documentLoader->response().deprecatedNetworkLoadMetricsOrNull())
+                hadCrossOriginRedirect = metrics->hasCrossOriginRedirect;
+        }
+        if (RefPtr newWindow = document->window()) {
+            Ref previousOrigin = existingDocument->securityOrigin();
+            Ref targetOrigin = SecurityOrigin::create(url);
+            newWindow->carryOverStickyActivationFromPreviousWindow(*previousWindow, previousOrigin, targetOrigin, hadCrossOriginRedirect);
+        }
+    }
 
     if (m_decoder)
         document->setDecoder(m_decoder.copyRef());
