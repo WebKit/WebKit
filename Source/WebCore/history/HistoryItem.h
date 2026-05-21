@@ -34,6 +34,7 @@
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PolicyContainer.h>
+#include <WebCore/SecurityOriginData.h>
 #include <memory>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Platform.h>
@@ -237,6 +238,11 @@ public:
     const std::optional<PolicyContainer>& policyContainer() const LIFETIME_BOUND { return m_policyContainer; }
     void setPolicyContainer(const PolicyContainer& policyContainer) { m_policyContainer = policyContainer; }
 
+    const std::optional<SecurityOriginData>& initiatorOrigin() const LIFETIME_BOUND { return m_initiatorOrigin; }
+    void setInitiatorOrigin(const std::optional<SecurityOriginData>& initiatorOrigin) { m_initiatorOrigin = initiatorOrigin; }
+    bool wasEverPopulatedViaCrossOriginRedirects() const { return m_wasEverPopulatedViaCrossOriginRedirects; }
+    void markPopulatedViaCrossOriginRedirects() { m_wasEverPopulatedViaCrossOriginRedirects = true; }
+
 private:
     WEBCORE_EXPORT HistoryItem(Client&, const String& urlString, const String& title, const String& alternateTitle, std::optional<BackForwardItemIdentifier>, std::optional<BackForwardFrameItemIdentifier>);
 
@@ -307,6 +313,8 @@ private:
     BackForwardItemIdentifier m_itemID;
     BackForwardFrameItemIdentifier m_frameItemID;
     std::optional<PolicyContainer> m_policyContainer;
+    std::optional<SecurityOriginData> m_initiatorOrigin;
+    bool m_wasEverPopulatedViaCrossOriginRedirects { false };
     const Ref<Client> m_client;
 };
 

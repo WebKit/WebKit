@@ -148,6 +148,27 @@ Ref<Document> DocumentWriter::createDocument(const URL& url, std::optional<Scrip
     return DOMImplementation::createDocument(m_mimeType, frame.ptr(), frame->settings(), url, documentIdentifier);
 }
 
+static void carryOverStickyActivation(FrameLoader& frameLoader, Document& newDocument, const LocalDOMWindow& previousWindow, const Document& previousDocument, const URL& newDocumentURL)
+{
+    RefPtr newWindow = newDocument.window();
+    if (!newWindow)
+        return;
+
+    RefPtr documentLoader = frameLoader.documentLoader();
+    RefPtr targetItem = frameLoader.history().currentItem();
+    RefPtr<SecurityOrigin> entryInitiatorOrigin;
+    if (targetItem && targetItem->initiatorOrigin())
+        entryInitiatorOrigin = targetItem->initiatorOrigin()->securityOrigin();
+
+    Ref previousOrigin = previousDocument.securityOrigin();
+    Ref targetOrigin = SecurityOrigin::create(newDocumentURL);
+    newWindow->carryOverStickyActivationFromPreviousWindow(previousWindow, previousOrigin, targetOrigin,
+        documentLoader && documentLoader->hasCrossOriginRedirect(),
+        isReload(frameLoader.loadType()),
+        entryInitiatorOrigin.get(),
+        targetItem && targetItem->wasEverPopulatedViaCrossOriginRedirects());
+}
+
 bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* ownerDocument, std::optional<ScriptExecutionContextIdentifier> documentIdentifier, const NavigationAction* triggeringAction)
 {
     // We grab a local copy of the URL because it's easy for callers to supply
@@ -215,6 +236,9 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
 
     frameLoader->setOutgoingReferrer(url);
     frame->setDocument(document.copyRef());
+
+    if (previousWindow && existingDocument)
+        carryOverStickyActivation(frameLoader, document, *previousWindow, *existingDocument, url);
 
     if (m_decoder)
         document->setDecoder(m_decoder.copyRef());

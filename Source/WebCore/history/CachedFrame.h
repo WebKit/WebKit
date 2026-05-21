@@ -53,6 +53,7 @@ public:
     FrameView* view() const { return m_view.get(); }
     const URL& url() const LIFETIME_BOUND { return m_url; }
     bool isMainFrame() { return m_isMainFrame; }
+    bool documentWasCreatedViaCrossOriginRedirects() const;
 
 protected:
     CachedFrameBase(Frame&);

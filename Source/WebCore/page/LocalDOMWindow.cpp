@@ -1688,6 +1688,31 @@ void LocalDOMWindow::revokeForcedActivation(UserGestureTokenIdentifier grantingT
     });
 }
 
+void LocalDOMWindow::carryOverStickyActivationFromPreviousWindow(const LocalDOMWindow& previousWindow, const SecurityOrigin& previousOrigin, const SecurityOrigin& targetOrigin, bool targetDocumentWasCreatedViaCrossOriginRedirects, bool isReload, const SecurityOrigin* entryInitiatorOrigin, bool entryWasEverPopulatedViaCrossOriginRedirects)
+{
+    RefPtr frame = this->frame();
+    if (!frame || !frame->settings().stickyUserActivationAcrossSameOriginNavigationsEnabled())
+        return;
+
+    if (!previousWindow.hasStickyActivation())
+        return;
+
+    if (!previousOrigin.isSameOriginAs(targetOrigin))
+        return;
+
+    if (targetDocumentWasCreatedViaCrossOriginRedirects)
+        return;
+
+    if (!isReload) {
+        if (!entryInitiatorOrigin || !entryInitiatorOrigin->isSameOriginAs(targetOrigin))
+            return;
+        if (entryWasEverPopulatedViaCrossOriginRedirects)
+            return;
+    }
+
+    m_hasStickyActivation = true;
+}
+
 // https://html.spec.whatwg.org/multipage/interaction.html#consume-history-action-user-activation
 bool LocalDOMWindow::consumeHistoryActionUserActivation()
 {

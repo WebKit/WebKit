@@ -33,6 +33,7 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PolicyContainer.h>
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
@@ -119,6 +120,8 @@ public:
     bool wasRestoredFromSession { false };
     WebCore::IsInitialAboutBlank isInitialAboutBlank { WebCore::IsInitialAboutBlank::No };
     std::optional<WebCore::PolicyContainer> policyContainer;
+    std::optional<WebCore::SecurityOriginData> initiatorOrigin;
+    bool wasEverPopulatedViaCrossOriginRedirects { false };
 
     // FIXME: These should not be per frame.
 #if PLATFORM(IOS_FAMILY)
@@ -138,14 +141,14 @@ private:
     // This is used to help debug <rdar://problem/48634553>.
     FrameState();
 
-    FrameState(String&& urlString, String&& originalURLString, String&& referrer, AtomString&& target, std::optional<WebCore::FrameIdentifier>, std::optional<Vector<uint8_t>>&& stateObjectData, int64_t documentSequenceNumber, int64_t itemSequenceNumber, std::optional<WTF::UUID> navigationAPIKey, WebCore::IntPoint scrollPosition, bool shouldRestoreScrollPosition, float pageScaleFactor, std::optional<HTTPBody>&&, std::optional<WebCore::BackForwardItemIdentifier>, std::optional<WebCore::BackForwardFrameItemIdentifier>, String&& title, WebCore::ShouldOpenExternalURLsPolicy, RefPtr<WebCore::SerializedScriptValue>&& sessionStateObject, bool wasCreatedByJSWithoutUserInteraction, bool wasRestoredFromSession, WebCore::IsInitialAboutBlank, std::optional<WebCore::PolicyContainer>&&,
+    FrameState(String&& urlString, String&& originalURLString, String&& referrer, AtomString&& target, std::optional<WebCore::FrameIdentifier>, std::optional<Vector<uint8_t>>&& stateObjectData, int64_t documentSequenceNumber, int64_t itemSequenceNumber, std::optional<WTF::UUID> navigationAPIKey, WebCore::IntPoint scrollPosition, bool shouldRestoreScrollPosition, float pageScaleFactor, std::optional<HTTPBody>&&, std::optional<WebCore::BackForwardItemIdentifier>, std::optional<WebCore::BackForwardFrameItemIdentifier>, String&& title, WebCore::ShouldOpenExternalURLsPolicy, RefPtr<WebCore::SerializedScriptValue>&& sessionStateObject, bool wasCreatedByJSWithoutUserInteraction, bool wasRestoredFromSession, WebCore::IsInitialAboutBlank, std::optional<WebCore::PolicyContainer>&&, std::optional<WebCore::SecurityOriginData>&&, bool wasEverPopulatedViaCrossOriginRedirects,
 #if PLATFORM(IOS_FAMILY)
         WebCore::FloatRect exposedContentRect, WebCore::IntRect unobscuredContentRect, WebCore::FloatSize minimumLayoutSizeInScrollViewCoordinates, WebCore::IntSize contentSize, bool scaleIsInitial, WebCore::FloatBoxExtent obscuredInsets,
 #endif
         Vector<Ref<FrameState>>&& children, Vector<AtomString>&& documentState
     );
 
-    FrameState(const String& urlString, const String& originalURLString, const String& referrer, const AtomString& target, std::optional<WebCore::FrameIdentifier>, std::optional<Vector<uint8_t>> stateObjectData, int64_t documentSequenceNumber, int64_t itemSequenceNumber, std::optional<WTF::UUID> navigationAPIKey, WebCore::IntPoint scrollPosition, bool shouldRestoreScrollPosition, float pageScaleFactor, const std::optional<HTTPBody>&, std::optional<WebCore::BackForwardItemIdentifier>, std::optional<WebCore::BackForwardFrameItemIdentifier>, const String& title, WebCore::ShouldOpenExternalURLsPolicy, RefPtr<WebCore::SerializedScriptValue>&& sessionStateObject, bool wasCreatedByJSWithoutUserInteraction, bool wasRestoredFromSession, WebCore::IsInitialAboutBlank, const std::optional<WebCore::PolicyContainer>&,
+    FrameState(const String& urlString, const String& originalURLString, const String& referrer, const AtomString& target, std::optional<WebCore::FrameIdentifier>, std::optional<Vector<uint8_t>> stateObjectData, int64_t documentSequenceNumber, int64_t itemSequenceNumber, std::optional<WTF::UUID> navigationAPIKey, WebCore::IntPoint scrollPosition, bool shouldRestoreScrollPosition, float pageScaleFactor, const std::optional<HTTPBody>&, std::optional<WebCore::BackForwardItemIdentifier>, std::optional<WebCore::BackForwardFrameItemIdentifier>, const String& title, WebCore::ShouldOpenExternalURLsPolicy, RefPtr<WebCore::SerializedScriptValue>&& sessionStateObject, bool wasCreatedByJSWithoutUserInteraction, bool wasRestoredFromSession, WebCore::IsInitialAboutBlank, const std::optional<WebCore::PolicyContainer>&, const std::optional<WebCore::SecurityOriginData>&, bool wasEverPopulatedViaCrossOriginRedirects,
 #if PLATFORM(IOS_FAMILY)
         WebCore::FloatRect exposedContentRect, WebCore::IntRect unobscuredContentRect, WebCore::FloatSize minimumLayoutSizeInScrollViewCoordinates, WebCore::IntSize contentSize, bool scaleIsInitial, WebCore::FloatBoxExtent obscuredInsets,
 #endif
