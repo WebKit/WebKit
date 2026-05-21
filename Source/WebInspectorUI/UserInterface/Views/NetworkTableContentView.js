@@ -1377,7 +1377,6 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         });
 
         this._statusColumn = new WI.TableColumn("status", WI.UIString("Status"), {
-            hidden: true,
             minWidth: 50,
             maxWidth: 50,
             align: "left",
