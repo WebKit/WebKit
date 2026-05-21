@@ -93,6 +93,14 @@ std::optional<FloatRect> SVGRenderSupport::computeFloatVisibleRectInContainer(co
     // Translate to coords in our parent renderer, and then call computeFloatVisibleRectInContainer() on our parent.
     adjustedRect = renderer.localToParentTransform().mapRect(adjustedRect);
 
+    // If the parent applies a filter, the filter's output covers its full filter region whenever any
+    // input changes. Expand the propagated rect to that region so child-driven invalidations dirty
+    // the entire filter output, not just the child's local box.
+    if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(parent)) {
+        if (CheckedPtr filter = resources->filter())
+            adjustedRect.unite(filter->resourceBoundingBox(parent, context.repaintRectCalculation()));
+    }
+
     return parent.computeFloatVisibleRectInContainer(adjustedRect, container, context);
 }
 

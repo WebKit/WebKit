@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SVG filter ancestor must repaint its full filter region when a child's CSS transform animates (expected)</title>
+  <style>
+    body { margin: 0; background: white; }
+  </style>
+</head>
+<body>
+  <svg width="300" height="100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="f" filterUnits="userSpaceOnUse" x="0" y="0" width="300" height="100">
+        <feGaussianBlur stdDeviation="2"/>
+      </filter>
+    </defs>
+    <g filter="url(#f)">
+      <rect width="50" height="50" fill="red" style="transform: translateX(100px)"/>
+    </g>
+  </svg>
+</body>
+</html>
