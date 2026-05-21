@@ -119,6 +119,10 @@ private:
     String serializeCommonValue(unsigned startIndex, unsigned count) const;
     String serializePair() const;
     String serializeQuad() const;
+    String serializeCornerSingle() const;
+    String serializeCornerPair() const;
+    String serializeCornerQuad() const;
+    String serializeOneCorner(unsigned radiusIndex, unsigned shapeIndex) const;
 
     String serializeLayered() const;
     String serializeCoordinatingListPropertyGroup() const;
@@ -343,7 +347,35 @@ String ShorthandSerializer::serialize()
     case CSSPropertyScrollMarginInline:
     case CSSPropertyScrollPaddingBlock:
     case CSSPropertyScrollPaddingInline:
+    case CSSPropertyCornerTopShape:
+    case CSSPropertyCornerRightShape:
+    case CSSPropertyCornerBottomShape:
+    case CSSPropertyCornerLeftShape:
+    case CSSPropertyCornerBlockStartShape:
+    case CSSPropertyCornerBlockEndShape:
+    case CSSPropertyCornerInlineStartShape:
+    case CSSPropertyCornerInlineEndShape:
         return serializePair();
+    case CSSPropertyCornerTopLeft:
+    case CSSPropertyCornerTopRight:
+    case CSSPropertyCornerBottomLeft:
+    case CSSPropertyCornerBottomRight:
+    case CSSPropertyCornerStartStart:
+    case CSSPropertyCornerStartEnd:
+    case CSSPropertyCornerEndStart:
+    case CSSPropertyCornerEndEnd:
+        return serializeCornerSingle();
+    case CSSPropertyCornerTop:
+    case CSSPropertyCornerRight:
+    case CSSPropertyCornerBottom:
+    case CSSPropertyCornerLeft:
+    case CSSPropertyCornerBlockStart:
+    case CSSPropertyCornerBlockEnd:
+    case CSSPropertyCornerInlineStart:
+    case CSSPropertyCornerInlineEnd:
+        return serializeCornerPair();
+    case CSSPropertyCorner:
+        return serializeCornerQuad();
     case CSSPropertyBlockStep:
     case CSSPropertyBorderBlockEnd:
     case CSSPropertyBorderBlockStart:
@@ -517,6 +549,83 @@ String ShorthandSerializer::serializeQuad() const
 {
     ASSERT(length() == 4);
     return Quad::serialize(serializeLonghandValue(0), serializeLonghandValue(1), serializeLonghandValue(2), serializeLonghandValue(3));
+}
+
+static bool cornerShorthandRadiusIsZero(const CSSValue& value)
+{
+    auto* pair = dynamicDowncast<CSSValuePair>(value);
+    if (!pair)
+        return false;
+    auto isZero = [](const CSSValue& v) {
+        auto* primitive = dynamicDowncast<CSSPrimitiveValue>(v);
+        return primitive && primitive->isLength() && !primitive->resolveAsLengthDeprecated();
+    };
+    return isZero(pair->first()) && isZero(pair->second());
+}
+
+static bool cornerShorthandShapeIsRound(const CSSValue& value)
+{
+    auto* keyword = dynamicDowncast<CSSKeywordValue>(value);
+    return keyword && keyword->valueID() == CSSValueRound;
+}
+
+String ShorthandSerializer::serializeOneCorner(unsigned radiusIndex, unsigned shapeIndex) const
+{
+    RefPtr radius = m_longhandValues[radiusIndex];
+    RefPtr shape = m_longhandValues[shapeIndex];
+    if (!radius || !shape)
+        return String();
+    if (cornerShorthandRadiusIsZero(*radius) && cornerShorthandShapeIsRound(*shape))
+        return "normal"_s;
+    auto radiusStr = serializeLonghandValue(radiusIndex);
+    auto shapeStr = serializeLonghandValue(shapeIndex);
+    return makeString(radiusStr, ' ', shapeStr);
+}
+
+String ShorthandSerializer::serializeCornerSingle() const
+{
+    ASSERT(length() == 2);
+    return serializeOneCorner(0, 1);
+}
+
+String ShorthandSerializer::serializeCornerPair() const
+{
+    ASSERT(length() == 4);
+    auto first = serializeOneCorner(0, 1);
+    auto second = serializeOneCorner(2, 3);
+    if (first.isNull() || second.isNull())
+        return String();
+    if (first == second)
+        return first;
+    return makeString(first, " / "_s, second);
+}
+
+String ShorthandSerializer::serializeCornerQuad() const
+{
+    ASSERT(length() == 8);
+    std::array<String, 4> corners {
+        serializeOneCorner(0, 1),
+        serializeOneCorner(2, 3),
+        serializeOneCorner(4, 5),
+        serializeOneCorner(6, 7),
+    };
+    for (const auto& s : corners) {
+        if (s.isNull())
+            return String();
+    }
+    bool showBL = corners[1] != corners[3];
+    bool showBR = showBL || corners[0] != corners[2];
+    bool showTR = showBR || corners[0] != corners[1];
+
+    StringBuilder result;
+    result.append(corners[0]);
+    if (showTR)
+        result.append(" / "_s, corners[1]);
+    if (showBR)
+        result.append(" / "_s, corners[2]);
+    if (showBL)
+        result.append(" / "_s, corners[3]);
+    return result.toString();
 }
 
 class LayerValues {

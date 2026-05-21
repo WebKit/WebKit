@@ -34,7 +34,7 @@ class RenderStyle;
 namespace Style {
 
 // NOTE: the keyword value "infinity" is represented as the standard double value `std::numeric_limits<double>::infinity()`.
-using SuperellipseFunction = FunctionNotation<CSSValueSuperellipse, Number<CSS::Nonnegative>>;
+using SuperellipseFunction = FunctionNotation<CSSValueSuperellipse, Number<CSS::All>>;
 
 // https://drafts.csswg.org/css-borders-4/#typedef-corner-shape-value
 struct CornerShapeValue {

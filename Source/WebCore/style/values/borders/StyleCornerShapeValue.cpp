@@ -72,14 +72,14 @@ auto CSSValueConversion<CornerShapeValue>::operator()(BuilderState& state, const
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(superellipseDescriptor)) {
         switch (keywordValue->valueID()) {
         case CSSValueInfinity:
-            return { SuperellipseFunction { Number<CSS::Nonnegative>(std::numeric_limits<double>::infinity()) } };
+            return { SuperellipseFunction { Number<CSS::All>(std::numeric_limits<double>::infinity()) } };
         default:
             state.setCurrentPropertyInvalidAtComputedValueTime();
-            return { SuperellipseFunction { Number<CSS::Nonnegative>(std::numeric_limits<double>::infinity()) } };
+            return { SuperellipseFunction { Number<CSS::All>(std::numeric_limits<double>::infinity()) } };
         }
     }
 
-    return { SuperellipseFunction { toStyleFromCSSValue<Number<CSS::Nonnegative>>(state, superellipseDescriptor) } };
+    return { SuperellipseFunction { toStyleFromCSSValue<Number<CSS::All>>(state, superellipseDescriptor) } };
 }
 
 // MARK: - Blending
