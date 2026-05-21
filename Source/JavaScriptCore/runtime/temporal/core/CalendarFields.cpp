@@ -34,7 +34,6 @@
 #include "TemporalCalendar.h"
 #include "TemporalObject.h"
 #include <cstdint>
-#include <wtf/DataLog.h>
 #include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
 
@@ -344,22 +343,14 @@ TemporalResult<ResolvedCalendarDate> monthDayFromFields(CalendarID calendarId, c
     } else
         RELEASE_ASSERT_NOT_REACHED();
 
-    // ecmaReferenceYear returns ISO proleptic years (e.g., 1972).
-    // Chinese and Dangi are lunisolar calendars sharing the same ICU code path (chnsecal.cpp).
-    // On older Apple ICU, UCAL_EXTENDED_YEAR uses epoch-based counting instead of ISO years.
-    // We probe what year ICU assigns to ISO 1972-02-15 (Chinese New Year 1972), then use
-    //   chineseEpochOffset = probe_year - 1972
-    // where probe_year = 1972 on modern ICU (offset = 0, no-op) or the epoch-based year on
-    // older Apple ICU (offset = that year - 1972).
-    static const int32_t chineseExtYear1972 = chineseCalendarExtendedYearFor1972();
-    static const int32_t chineseEpochOffset = chineseExtYear1972 - 1972;
+    // ecmaReferenceYear returns ISO proleptic years (e.g. 1972). Chinese and Dangi are
+    // lunisolar calendars but use different epochs: Chinese 2637 BCE, Dangi 2333 BCE.
+    // On ICU ≥76 UCAL_EXTENDED_YEAR is epoch-based, so we probe each calendar separately.
     auto calStr = calendarIDToString(calendarId);
     bool isChineseOrDangi = (calStr == "chinese"_s || calStr == "dangi"_s);
     if (!fields.year && isChineseOrDangi) {
-        dataLogLn("[TemporalDebug] calendarMonthDayFromFields: cal=", calStr,
-            " ecmaRefYear=", (int)year, " chineseExtYear1972=", (int)chineseExtYear1972,
-            " offset=", (int)chineseEpochOffset, " finalYear=", (int)(year + chineseEpochOffset));
-        year += chineseEpochOffset;
+        int32_t extYear1972 = lunarCalendarExtendedYearFor1972(calendarId);
+        year += extYear1972 - 1972;
     }
     std::optional<StringView> era;
     if (fields.era)
@@ -390,8 +381,10 @@ TemporalResult<ResolvedCalendarDate> monthDayFromFields(CalendarID calendarId, c
             auto resolvedMonthCode = ISO8601::parseMonthCode(resolvedFields->monthCode);
             if (resolvedMonthCode) {
                 int32_t refYear = ecmaReferenceYear(calendarId, resolvedMonthCode->monthNumber, resolvedMonthCode->isLeapMonth, resolvedFields->day);
-                if (isChineseOrDangi && chineseEpochOffset)
-                    refYear += chineseEpochOffset;
+                if (isChineseOrDangi) {
+                    int32_t extYear1972 = lunarCalendarExtendedYearFor1972(calendarId);
+                    refYear += extYear1972 - 1972;
+                }
                 auto refResult = calendarDateFromFields(calendarId, refYear, resolvedFields->month, resolvedFields->day, std::nullopt, std::nullopt, resolvedMonthCode, TemporalOverflow::Constrain);
                 if (refResult)
                     return ResolvedCalendarDate { *refResult, calendarIDToString(calendarId).toString() };

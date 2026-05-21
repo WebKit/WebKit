@@ -124,7 +124,10 @@ static constexpr int32_t ecmaRefYearNotInCalendar = INT32_MIN + 1;
 
 int32_t ecmaReferenceYear(CalendarID, uint8_t monthNumber, bool isLeapMonth, uint8_t day);
 
-int32_t JS_EXPORT_PRIVATE chineseCalendarExtendedYearFor1972();
+// Returns UCAL_EXTENDED_YEAR for the given lunisolar calendar at ISO 1972-02-15.
+// Chinese uses epoch 2637 BCE → returns 4609 on ICU ≥76; 1972 on ISO-proleptic builds.
+// Dangi uses epoch 2333 BCE → returns 4305 on ICU ≥76; 1972 on ISO-proleptic builds.
+int32_t JS_EXPORT_PRIVATE lunarCalendarExtendedYearFor1972(CalendarID);
 
 TemporalResult<ISO8601::PlainDate> JS_EXPORT_PRIVATE calendarDateFromFields(CalendarID, int32_t year, uint8_t month, uint8_t day, std::optional<StringView> era, std::optional<int32_t> eraYear, std::optional<ParsedMonthCode>, TemporalOverflow);
 
