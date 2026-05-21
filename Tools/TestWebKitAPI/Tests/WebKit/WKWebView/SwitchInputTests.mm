@@ -27,7 +27,11 @@
 
 #if PLATFORM(COCOA)
 
+<<<<<<< HEAD:Tools/TestWebKitAPI/Tests/WebKit/WKWebView/SwitchInputTests.mm
 #import "Helpers/ios/IOSMouseEventTestHarness.h"
+=======
+#import "IOSMouseEventTestHarness.h"
+>>>>>>> 2c99c891b64c (Haptic feedback for <input type=checkbox switch> can be triggered with a programmatic click on an associated label):Tools/TestWebKitAPI/Tests/WebKitCocoa/SwitchInputTests.mm
 #import "InstanceMethodSwizzler.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
