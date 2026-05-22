@@ -164,6 +164,7 @@ ALWAYS_INLINE int RegExp::matchInline(JSGlobalObject* nullOrGlobalObject, VM& vm
         }
 
         if (result == static_cast<int>(Yarr::JSRegExpResult::JITCodeFailure)) {
+<<<<<<< HEAD
             // Punt to the bytecode interpreter. Only the mutator may compile bytecode; the compiler
             // thread must use the bytecode that already exists, and bails out if there is no
             // bytecode.
@@ -174,6 +175,16 @@ ALWAYS_INLINE int RegExp::matchInline(JSGlobalObject* nullOrGlobalObject, VM& vm
             }
             if (!m_regExpBytecode)
                 return -1;
+=======
+            // JIT'ed code couldn't handle expression, so punt back to the interpreter.
+            if constexpr (matchFrom == Yarr::MatchFrom::CompilerThread) {
+                if (!m_regExpBytecode)
+                    return -1;
+            }
+            byteCodeCompileIfNecessary(&vm);
+            if (m_state == ParseError)
+                return throwError();
+>>>>>>> bfb699d9b999 ([JSC] Make RegExp::byteCodeCompileIfNecessary threadsafe)
             {
                 Yarr::MatchingContextHolder regExpContext(vm, this, matchFrom);
                 result = Yarr::interpret(m_regExpBytecode.get(), s, startOffset, reinterpret_cast<unsigned*>(offsetVector));
@@ -294,6 +305,7 @@ ALWAYS_INLINE MatchResult RegExp::matchInline(JSGlobalObject* nullOrGlobalObject
         if (result.start != static_cast<size_t>(Yarr::JSRegExpResult::JITCodeFailure))
             return result;
 
+<<<<<<< HEAD
         // Punt to the bytecode interpreter. Only the mutator may compile bytecode; the compiler
         // thread must use the bytecode that already exists, and bails out if there is no
         // bytecode.
@@ -304,6 +316,16 @@ ALWAYS_INLINE MatchResult RegExp::matchInline(JSGlobalObject* nullOrGlobalObject
         }
         if (!m_regExpBytecode)
             return MatchResult::failed();
+=======
+        // JIT'ed code couldn't handle expression, so punt back to the interpreter.
+        if constexpr (matchFrom == Yarr::MatchFrom::CompilerThread) {
+            if (!m_regExpBytecode)
+                return MatchResult::failed();
+        }
+        byteCodeCompileIfNecessary(&vm);
+        if (m_state == ParseError)
+            return throwError();
+>>>>>>> bfb699d9b999 ([JSC] Make RegExp::byteCodeCompileIfNecessary threadsafe)
     }
 #endif
 
