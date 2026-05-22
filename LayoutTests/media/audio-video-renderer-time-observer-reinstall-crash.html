@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AudioVideoRenderer time-observer reinstall during first tick should not crash the GPU process</title>
+<script src="video-test.js"></script>
+<script>
+    async function init()
+    {
+        findMediaElement();
+
+        video.src = "content/test-vp8.webm";
+        video.muted = true;
+
+        run('video.play()');
+        await waitFor(video, 'playing');
+        await testExpectedEventually('video.currentTime', 0, '>');
+
+        endTest();
+    }
+</script>
+</head>
+<body onload="init();">
+    <video></video>
+</body>
+</html>

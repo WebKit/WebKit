@@ -581,11 +581,16 @@ void AudioVideoRendererAVFObjC::setTimeObserver(Seconds interval, Function<void(
         __block ThreadSafeWeakPtr weakThis = *this;
         m_timeChangedObserver = [m_synchronizer addPeriodicTimeObserverForInterval:PAL::toCMTime(MediaTime::createWithSeconds(interval)) queue:mainDispatchQueueSingleton() usingBlock:^(CMTime time) {
             if (RefPtr protectedThis = weakThis.get()) {
-                if (!protectedThis->m_currentTimeDidChangeCallback)
+                // The callback may re-enter setTimeObserver(); move m_currentTimeDidChangeCallback to the stack so re-assignment doesn't free it while it is still running.
+                auto callback = std::exchange(protectedThis->m_currentTimeDidChangeCallback, { });
+                if (!callback)
                     return;
 
                 auto clampedTime = CMTIME_IS_NUMERIC(time) ? protectedThis->clampTimeToLastSeekTime(PAL::toMediaTime(time)) : MediaTime::zeroTime();
-                protectedThis->m_currentTimeDidChangeCallback(clampedTime);
+                callback(clampedTime);
+
+                if (!protectedThis->m_currentTimeDidChangeCallback)
+                    protectedThis->m_currentTimeDidChangeCallback = WTF::move(callback);
             }
         }];
     }

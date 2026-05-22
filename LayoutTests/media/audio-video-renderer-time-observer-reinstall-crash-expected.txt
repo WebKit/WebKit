@@ -1,0 +1,6 @@
+
+RUN(video.play())
+EVENT(playing)
+EXPECTED (video.currentTime > '0') OK
+END OF TEST
+
