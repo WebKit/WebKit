@@ -43,6 +43,7 @@
 				7BF5558A2C81F438002B101E /* PBXTargetDependency */,
 				7BF5558C2C81F438002B101E /* PBXTargetDependency */,
 				7BF554C32C81EF03002B101E /* PBXTargetDependency */,
+				AE0001000000000000000002 /* PBXTargetDependency */,
 			);
 			name = "Tools (ANGLE)";
 			productName = "Tools (ANGLE)";
@@ -1386,6 +1387,214 @@
 		FFD002AE2746E560002BE3BC /* egl_stubs_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD002A92746E55F002BE3BC /* egl_stubs_autogen.h */; };
 		FFD002AF2746E560002BE3BC /* egl_ext_stubs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFD002AA2746E55F002BE3BC /* egl_ext_stubs.cpp */; };
 		FFD002B02746E560002BE3BC /* entry_points_gles_3_1_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD002AB2746E55F002BE3BC /* entry_points_gles_3_1_autogen.h */; };
+		AE0000140000000000000000 /* ActiveTextureCacheTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4EA2DE59CFF00327F7F /* ActiveTextureCacheTest.cpp */; };
+		AE0000150000000000000000 /* AdvancedBlendTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4EE2DE59D8D00327F7F /* AdvancedBlendTest.cpp */; };
+		AE0000160000000000000000 /* angle_end2end_tests_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BB971C32DE457E100455D13 /* angle_end2end_tests_main.cpp */; };
+		AE0000170000000000000000 /* angle_test_configs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4B12DE494CF00327F7F /* angle_test_configs.cpp */; };
+		AE0000180000000000000000 /* angle_test_instantiate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4B22DE494CF00327F7F /* angle_test_instantiate.cpp */; };
+		AE0000190000000000000000 /* angle_test_instantiate_apple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4B32DE494CF00327F7F /* angle_test_instantiate_apple.mm */; };
+		AE00001A0000000000000000 /* angle_test_platform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4B42DE494CF00327F7F /* angle_test_platform.cpp */; };
+		AE00001B0000000000000000 /* ANGLETest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4B52DE494CF00327F7F /* ANGLETest.cpp */; };
+		AE00001C0000000000000000 /* AtomicCounterBufferTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4EF2DE59D8D00327F7F /* AtomicCounterBufferTest.cpp */; };
+		AE00001D0000000000000000 /* AttributeLayoutTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4F02DE59D8D00327F7F /* AttributeLayoutTest.cpp */; };
+		AE00001E0000000000000000 /* BaseInstanceOverflowTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED4DFB2F98E33B00A240A7 /* BaseInstanceOverflowTest.cpp */; };
+		AE00001F0000000000000000 /* BindGeneratesResourceTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4F12DE59D8D00327F7F /* BindGeneratesResourceTest.cpp */; };
+		AE0000200000000000000000 /* BindUniformLocationTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4F22DE59D8D00327F7F /* BindUniformLocationTest.cpp */; };
+		AE0000210000000000000000 /* BlendFuncExtendedTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4F32DE59D8D00327F7F /* BlendFuncExtendedTest.cpp */; };
+		AE0000220000000000000000 /* BlendIntegerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4F42DE59D8D00327F7F /* BlendIntegerTest.cpp */; };
+		AE0000230000000000000000 /* BlendMinMaxTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4F52DE59D8D00327F7F /* BlendMinMaxTest.cpp */; };
+		AE0000240000000000000000 /* BlendPackedTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4F62DE59D8D00327F7F /* BlendPackedTest.cpp */; };
+		AE0000250000000000000000 /* BlitFramebufferANGLETest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4F72DE59D8D00327F7F /* BlitFramebufferANGLETest.cpp */; };
+		AE0000260000000000000000 /* BlobCacheTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4F82DE59D8D00327F7F /* BlobCacheTest.cpp */; };
+		AE0000270000000000000000 /* BPTCCompressedTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4F92DE59D8D00327F7F /* BPTCCompressedTextureTest.cpp */; };
+		AE0000280000000000000000 /* BufferDataTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4FA2DE59D8D00327F7F /* BufferDataTest.cpp */; };
+		AE0000290000000000000000 /* BufferPoolTestMetal.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BED4DFC2F98E33B00A240A7 /* BufferPoolTestMetal.mm */; };
+		AE00002A0000000000000000 /* BuiltinVariableTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4FB2DE59D8D00327F7F /* BuiltinVariableTest.cpp */; };
+		AE00002B0000000000000000 /* ClearTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4AE2DE4903000327F7F /* ClearTest.cpp */; };
+		AE00002C0000000000000000 /* ClientArraysTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF50A2DE59DA000327F7F /* ClientArraysTest.cpp */; };
+		AE00002D0000000000000000 /* ClipControlTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF50B2DE59DA000327F7F /* ClipControlTest.cpp */; };
+		AE00002E0000000000000000 /* ClipDistanceTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF50C2DE59DA000327F7F /* ClipDistanceTest.cpp */; };
+		AE00002F0000000000000000 /* ColorMaskTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF50D2DE59DA000327F7F /* ColorMaskTest.cpp */; };
+		AE0000300000000000000000 /* CompressedTextureFormatsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF50E2DE59DA000327F7F /* CompressedTextureFormatsTest.cpp */; };
+		AE0000310000000000000000 /* ComputeShaderTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF50F2DE59DA000327F7F /* ComputeShaderTest.cpp */; };
+		AE0000320000000000000000 /* ContextLostTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5102DE59DA000327F7F /* ContextLostTest.cpp */; };
+		AE0000330000000000000000 /* ContextNoErrorTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5112DE59DA000327F7F /* ContextNoErrorTest.cpp */; };
+		AE0000340000000000000000 /* CopyCompressedTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5122DE59DA000327F7F /* CopyCompressedTextureTest.cpp */; };
+		AE0000350000000000000000 /* CopyTexImageTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5132DE59DA000327F7F /* CopyTexImageTest.cpp */; };
+		AE0000360000000000000000 /* CopyTexture3DTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5142DE59DA000327F7F /* CopyTexture3DTest.cpp */; };
+		AE0000370000000000000000 /* CopyTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5152DE59DA000327F7F /* CopyTextureTest.cpp */; };
+		AE0000380000000000000000 /* CubeMapTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5162DE59DA000327F7F /* CubeMapTextureTest.cpp */; };
+		AE0000390000000000000000 /* DebugMarkerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5242DE59DB800327F7F /* DebugMarkerTest.cpp */; };
+		AE00003A0000000000000000 /* DebugTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5252DE59DB800327F7F /* DebugTest.cpp */; };
+		AE00003B0000000000000000 /* DepthStencilFormatsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5262DE59DB800327F7F /* DepthStencilFormatsTest.cpp */; };
+		AE00003C0000000000000000 /* DepthStencilTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5272DE59DB800327F7F /* DepthStencilTest.cpp */; };
+		AE00003D0000000000000000 /* DepthWriteTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5282DE59DB800327F7F /* DepthWriteTest.cpp */; };
+		AE00003E0000000000000000 /* DifferentStencilMasksTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5292DE59DB800327F7F /* DifferentStencilMasksTest.cpp */; };
+		AE00003F0000000000000000 /* DiscardFramebufferEXTTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF52A2DE59DB800327F7F /* DiscardFramebufferEXTTest.cpp */; };
+		AE0000400000000000000000 /* DrawBaseVertexBaseInstanceTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF52B2DE59DB800327F7F /* DrawBaseVertexBaseInstanceTest.cpp */; };
+		AE0000410000000000000000 /* DrawBaseVertexVariantsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF52C2DE59DB800327F7F /* DrawBaseVertexVariantsTest.cpp */; };
+		AE0000420000000000000000 /* DrawBuffersTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF52D2DE59DB800327F7F /* DrawBuffersTest.cpp */; };
+		AE0000430000000000000000 /* DrawElementsIndirectTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF52E2DE59DB800327F7F /* DrawElementsIndirectTest.cpp */; };
+		AE0000440000000000000000 /* DrawElementsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF52F2DE59DB800327F7F /* DrawElementsTest.cpp */; };
+		AE0000450000000000000000 /* DrawRangeElementsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5302DE59DB800327F7F /* DrawRangeElementsTest.cpp */; };
+		AE0000460000000000000000 /* DXT1CompressedTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5312DE59DB800327F7F /* DXT1CompressedTextureTest.cpp */; };
+		AE0000470000000000000000 /* DXTSRGBCompressedTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5322DE59DB800327F7F /* DXTSRGBCompressedTextureTest.cpp */; };
+		AE0000480000000000000000 /* EGLBackwardsCompatibleContextTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6212DE5A13800327F7F /* EGLBackwardsCompatibleContextTest.cpp */; };
+		AE0000490000000000000000 /* EGLBlobCacheTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6222DE5A13800327F7F /* EGLBlobCacheTest.cpp */; };
+		AE00004A0000000000000000 /* EGLBufferAgeTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6232DE5A13800327F7F /* EGLBufferAgeTest.cpp */; };
+		AE00004B0000000000000000 /* EGLChooseConfigTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6242DE5A13800327F7F /* EGLChooseConfigTest.cpp */; };
+		AE00004C0000000000000000 /* EGLContextASANTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6252DE5A13800327F7F /* EGLContextASANTest.cpp */; };
+		AE00004D0000000000000000 /* EGLContextCompatibilityTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6262DE5A13800327F7F /* EGLContextCompatibilityTest.cpp */; };
+		AE00004E0000000000000000 /* EGLContextSharingTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6272DE5A13800327F7F /* EGLContextSharingTest.cpp */; };
+		AE00004F0000000000000000 /* EGLCreateContextAttribsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6282DE5A13800327F7F /* EGLCreateContextAttribsTest.cpp */; };
+		AE0000500000000000000000 /* EGLDebugTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6292DE5A13800327F7F /* EGLDebugTest.cpp */; };
+		AE0000510000000000000000 /* EGLDisplaySelectionTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF62B2DE5A13800327F7F /* EGLDisplaySelectionTest.cpp */; };
+		AE0000520000000000000000 /* EGLDisplayTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF62C2DE5A13800327F7F /* EGLDisplayTest.cpp */; };
+		AE0000530000000000000000 /* EGLFeatureControlTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF62D2DE5A13800327F7F /* EGLFeatureControlTest.cpp */; };
+		AE0000540000000000000000 /* EGLIOSurfaceClientBufferTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF62E2DE5A13800327F7F /* EGLIOSurfaceClientBufferTest.cpp */; };
+		AE0000550000000000000000 /* EGLLockSurface3Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF62F2DE5A13800327F7F /* EGLLockSurface3Test.cpp */; };
+		AE0000560000000000000000 /* EGLMemoryUsageReportTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6302DE5A13800327F7F /* EGLMemoryUsageReportTest.cpp */; };
+		AE0000570000000000000000 /* EGLMultiContextTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6312DE5A13800327F7F /* EGLMultiContextTest.cpp */; };
+		AE0000580000000000000000 /* EGLNoConfigContextTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6322DE5A13800327F7F /* EGLNoConfigContextTest.cpp */; };
+		AE0000590000000000000000 /* EGLNoErrorTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6332DE5A13800327F7F /* EGLNoErrorTest.cpp */; };
+		AE00005A0000000000000000 /* EGLPrintEGLinfoTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6352DE5A13800327F7F /* EGLPrintEGLinfoTest.cpp */; };
+		AE00005B0000000000000000 /* EGLProgramCacheControlTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6362DE5A13800327F7F /* EGLProgramCacheControlTest.cpp */; };
+		AE00005C0000000000000000 /* EGLProtectedContentTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6372DE5A13800327F7F /* EGLProtectedContentTest.cpp */; };
+		AE00005D0000000000000000 /* EGLQueryContextTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6382DE5A13800327F7F /* EGLQueryContextTest.cpp */; };
+		AE00005E0000000000000000 /* EGLReadinessCheckTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6392DE5A13800327F7F /* EGLReadinessCheckTest.cpp */; };
+		AE00005F0000000000000000 /* EGLRecordableTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF63A2DE5A13800327F7F /* EGLRecordableTest.cpp */; };
+		AE0000600000000000000000 /* EGLRobustnessTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF63B2DE5A13800327F7F /* EGLRobustnessTest.cpp */; };
+		AE0000610000000000000000 /* EGLSurfacelessContextTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF63D2DE5A13800327F7F /* EGLSurfacelessContextTest.cpp */; };
+		AE0000620000000000000000 /* EGLSurfaceTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF63E2DE5A13800327F7F /* EGLSurfaceTest.cpp */; };
+		AE0000630000000000000000 /* EGLSyncTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6402DE5A13800327F7F /* EGLSyncTest.cpp */; };
+		AE0000640000000000000000 /* EGLSyncTestMetalSharedEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6412DE5A13800327F7F /* EGLSyncTestMetalSharedEvent.mm */; };
+		AE0000650000000000000000 /* EGLWaitUntilWorkScheduledTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6422DE5A13800327F7F /* EGLWaitUntilWorkScheduledTest.cpp */; };
+		AE0000660000000000000000 /* End2EndTestsSourcesPlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B820C762DE9956000DAC5E4 /* End2EndTestsSourcesPlatform.cpp */; };
+		AE0000670000000000000000 /* ErrorMessages.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5432DE59DCD00327F7F /* ErrorMessages.cpp */; };
+		AE0000680000000000000000 /* ETCTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5442DE59DCD00327F7F /* ETCTextureTest.cpp */; };
+		AE0000690000000000000000 /* ExternalBufferTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5452DE59DCD00327F7F /* ExternalBufferTest.cpp */; };
+		AE00006A0000000000000000 /* ExternalWrapTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5462DE59DCD00327F7F /* ExternalWrapTest.cpp */; };
+		AE00006B0000000000000000 /* FenceSyncTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5472DE59DCD00327F7F /* FenceSyncTests.cpp */; };
+		AE00006C0000000000000000 /* FloatingPointSurfaceTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5482DE59DCD00327F7F /* FloatingPointSurfaceTest.cpp */; };
+		AE00006D0000000000000000 /* FormatPrintTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5492DE59DCD00327F7F /* FormatPrintTest.cpp */; };
+		AE00006E0000000000000000 /* FragDepthTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF54A2DE59DCD00327F7F /* FragDepthTest.cpp */; };
+		AE00006F0000000000000000 /* FramebufferFetchTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF54B2DE59DCD00327F7F /* FramebufferFetchTest.cpp */; };
+		AE0000700000000000000000 /* FramebufferMixedSamplesTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF54C2DE59DCD00327F7F /* FramebufferMixedSamplesTest.cpp */; };
+		AE0000710000000000000000 /* FramebufferRenderMipmapTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF54E2DE59DCD00327F7F /* FramebufferRenderMipmapTest.cpp */; };
+		AE0000720000000000000000 /* FramebufferTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF54F2DE59DCD00327F7F /* FramebufferTest.cpp */; };
+		AE0000730000000000000000 /* FrameCapture_mock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BB973A32DE48DEE00455D13 /* FrameCapture_mock.cpp */; };
+		AE0000740000000000000000 /* GeometryShaderTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5502DE59DCD00327F7F /* GeometryShaderTest.cpp */; };
+		AE0000750000000000000000 /* GetTexLevelParameterTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5522DE59DCD00327F7F /* GetTexLevelParameterTest.cpp */; };
+		AE0000760000000000000000 /* gl_enum_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF66D2DE5AA3500327F7F /* gl_enum_utils.cpp */; };
+		AE0000770000000000000000 /* gl_enum_utils_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF66F2DE5AA3500327F7F /* gl_enum_utils_autogen.cpp */; };
+		AE0000780000000000000000 /* GLSLConstantFoldingTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED4DFE2F98E33B00A240A7 /* GLSLConstantFoldingTest.cpp */; };
+		AE0000790000000000000000 /* GLSLOutputTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED4DFF2F98E33B00A240A7 /* GLSLOutputTest.cpp */; };
+		AE00007A0000000000000000 /* GLSLTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5632DE59E0900327F7F /* GLSLTest.cpp */; };
+		AE00007B0000000000000000 /* GLSLUBTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B8EC83E2DF1BC9100105EB6 /* GLSLUBTest.cpp */; };
+		AE00007C0000000000000000 /* GLSLValidationTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BED4E002F98E33B00A240A7 /* GLSLValidationTest.cpp */; };
+		AE00007D0000000000000000 /* GPUTestConfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4D72DE49CE200327F7F /* GPUTestConfig.cpp */; };
+		AE00007E0000000000000000 /* GPUTestExpectationsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4DD2DE49CE200327F7F /* GPUTestExpectationsParser.cpp */; };
+		AE00007F0000000000000000 /* GPUTestExpectationsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4EC2DE59D5700327F7F /* GPUTestExpectationsTest.cpp */; };
+		AE0000800000000000000000 /* ImageTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5642DE59E0900327F7F /* ImageTest.cpp */; };
+		AE0000810000000000000000 /* ImageTestMetal.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7B8EC83F2DF1BC9100105EB6 /* ImageTestMetal.mm */; };
+		AE0000820000000000000000 /* IncompatibleTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5662DE59E0900327F7F /* IncompatibleTextureTest.cpp */; };
+		AE0000830000000000000000 /* IncompleteTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5672DE59E0900327F7F /* IncompleteTextureTest.cpp */; };
+		AE0000840000000000000000 /* IndexBufferOffsetTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5682DE59E0900327F7F /* IndexBufferOffsetTest.cpp */; };
+		AE0000850000000000000000 /* IndexedPointsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5692DE59E0900327F7F /* IndexedPointsTest.cpp */; };
+		AE0000860000000000000000 /* InstancingTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF56A2DE59E0900327F7F /* InstancingTest.cpp */; };
+		AE0000870000000000000000 /* KTXCompressedTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF56B2DE59E0900327F7F /* KTXCompressedTextureTest.cpp */; };
+		AE0000880000000000000000 /* libEGL_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BB9723C2DE4827800455D13 /* libEGL_autogen.cpp */; };
+		AE0000890000000000000000 /* libGLESv2_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BB972342DE480F000455D13 /* libGLESv2_autogen.cpp */; };
+		AE00008A0000000000000000 /* LineLoopTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF56C2DE59E0900327F7F /* LineLoopTest.cpp */; };
+		AE00008B0000000000000000 /* LinkAndRelinkTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF56D2DE59E0900327F7F /* LinkAndRelinkTest.cpp */; };
+		AE00008C0000000000000000 /* MatrixTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF56E2DE59E0900327F7F /* MatrixTest.cpp */; };
+		AE00008D0000000000000000 /* MaxTextureSizeTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF56F2DE59E0900327F7F /* MaxTextureSizeTest.cpp */; };
+		AE00008E0000000000000000 /* MemoryBarrierTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5702DE59E0900327F7F /* MemoryBarrierTest.cpp */; };
+		AE00008F0000000000000000 /* MemoryObjectTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5712DE59E0900327F7F /* MemoryObjectTest.cpp */; };
+		AE0000900000000000000000 /* MemorySizeTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5722DE59E0900327F7F /* MemorySizeTest.cpp */; };
+		AE0000910000000000000000 /* MipmapTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5732DE59E0900327F7F /* MipmapTest.cpp */; };
+		AE0000920000000000000000 /* MultiDrawTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5742DE59E0900327F7F /* MultiDrawTest.cpp */; };
+		AE0000930000000000000000 /* MultisampleCompatibilityTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5752DE59E0900327F7F /* MultisampleCompatibilityTest.cpp */; };
+		AE0000940000000000000000 /* MultisampledRenderToTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5762DE59E0900327F7F /* MultisampledRenderToTextureTest.cpp */; };
+		AE0000950000000000000000 /* MultisampleTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5772DE59E0900327F7F /* MultisampleTest.cpp */; };
+		AE0000960000000000000000 /* MultithreadingTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5782DE59E0900327F7F /* MultithreadingTest.cpp */; };
+		AE0000970000000000000000 /* MultiThreadSteps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF66A2DE5A8F100327F7F /* MultiThreadSteps.cpp */; };
+		AE0000980000000000000000 /* ObjectAllocationTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF57A2DE59E0900327F7F /* ObjectAllocationTest.cpp */; };
+		AE0000990000000000000000 /* OcclusionQueriesTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF57B2DE59E0900327F7F /* OcclusionQueriesTest.cpp */; };
+		AE00009A0000000000000000 /* OSWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BB971EB2DE468FE00455D13 /* OSWindow.cpp */; };
+		AE00009B0000000000000000 /* PackUnpackTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF57C2DE59E0900327F7F /* PackUnpackTest.cpp */; };
+		AE00009C0000000000000000 /* ParallelShaderCompileTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF57D2DE59E0900327F7F /* ParallelShaderCompileTest.cpp */; };
+		AE00009D0000000000000000 /* PBOExtensionTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF57E2DE59E0900327F7F /* PBOExtensionTest.cpp */; };
+		AE00009E0000000000000000 /* PbufferTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF57F2DE59E0900327F7F /* PbufferTest.cpp */; };
+		AE00009F0000000000000000 /* PixelLocalStorageTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5802DE59E0900327F7F /* PixelLocalStorageTest.cpp */; };
+		AE0000A00000000000000000 /* PixmapTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5812DE59E0900327F7F /* PixmapTest.cpp */; };
+		AE0000A10000000000000000 /* PointSpritesTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5822DE59E0900327F7F /* PointSpritesTest.cpp */; };
+		AE0000A20000000000000000 /* PolygonModeTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5832DE59E0900327F7F /* PolygonModeTest.cpp */; };
+		AE0000A30000000000000000 /* PolygonOffsetClampTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5842DE59E0900327F7F /* PolygonOffsetClampTest.cpp */; };
+		AE0000A40000000000000000 /* ProgramInterfaceTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5862DE59E0900327F7F /* ProgramInterfaceTest.cpp */; };
+		AE0000A50000000000000000 /* ProgramParameterTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5872DE59E0900327F7F /* ProgramParameterTest.cpp */; };
+		AE0000A60000000000000000 /* ProgramPipelineTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5882DE59E0900327F7F /* ProgramPipelineTest.cpp */; };
+		AE0000A70000000000000000 /* ProvokingVertexTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5892DE59E0900327F7F /* ProvokingVertexTest.cpp */; };
+		AE0000A80000000000000000 /* PVRTCCompressedTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF58A2DE59E0900327F7F /* PVRTCCompressedTextureTest.cpp */; };
+		AE0000A90000000000000000 /* QueryObjectValidation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF58B2DE59E0900327F7F /* QueryObjectValidation.cpp */; };
+		AE0000AA0000000000000000 /* ReadOnlyFeedbackLoopTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF58C2DE59E0900327F7F /* ReadOnlyFeedbackLoopTest.cpp */; };
+		AE0000AB0000000000000000 /* ReadPixelsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF58D2DE59E0900327F7F /* ReadPixelsTest.cpp */; };
+		AE0000AC0000000000000000 /* RenderbufferMultisampleTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF58E2DE59E0900327F7F /* RenderbufferMultisampleTest.cpp */; };
+		AE0000AD0000000000000000 /* RenderDoc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4D32DE49C3B00327F7F /* RenderDoc.cpp */; };
+		AE0000AE0000000000000000 /* RendererTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF58F2DE59E0900327F7F /* RendererTest.cpp */; };
+		AE0000AF0000000000000000 /* RequestExtensionTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5902DE59E0900327F7F /* RequestExtensionTest.cpp */; };
+		AE0000B00000000000000000 /* RobustBufferAccessBehaviorTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5912DE59E0900327F7F /* RobustBufferAccessBehaviorTest.cpp */; };
+		AE0000B10000000000000000 /* RobustClientMemoryTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5922DE59E0900327F7F /* RobustClientMemoryTest.cpp */; };
+		AE0000B20000000000000000 /* RobustFragmentShaderOutputTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5932DE59E0900327F7F /* RobustFragmentShaderOutputTest.cpp */; };
+		AE0000B30000000000000000 /* RobustResourceInitTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5942DE59E0900327F7F /* RobustResourceInitTest.cpp */; };
+		AE0000B40000000000000000 /* S3TCTextureSizesTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5952DE59E0900327F7F /* S3TCTextureSizesTest.cpp */; };
+		AE0000B50000000000000000 /* SamplersTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5962DE59E0900327F7F /* SamplersTest.cpp */; };
+		AE0000B60000000000000000 /* SampleVariablesTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5972DE59E0900327F7F /* SampleVariablesTest.cpp */; };
+		AE0000B70000000000000000 /* SemaphoreTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5982DE59E0900327F7F /* SemaphoreTest.cpp */; };
+		AE0000B80000000000000000 /* serialize_mock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BB973A92DE48EB000455D13 /* serialize_mock.cpp */; };
+		AE0000B90000000000000000 /* ShaderAlgorithmTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5992DE59E0900327F7F /* ShaderAlgorithmTest.cpp */; };
+		AE0000BA0000000000000000 /* ShaderBinaryTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF59A2DE59E0900327F7F /* ShaderBinaryTest.cpp */; };
+		AE0000BB0000000000000000 /* ShaderInterpTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF59B2DE59E0900327F7F /* ShaderInterpTest.cpp */; };
+		AE0000BC0000000000000000 /* ShaderMultisampleInterpolation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF59C2DE59E0900327F7F /* ShaderMultisampleInterpolation.cpp */; };
+		AE0000BD0000000000000000 /* ShaderNonConstGlobalInitializerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF59D2DE59E0900327F7F /* ShaderNonConstGlobalInitializerTest.cpp */; };
+		AE0000BE0000000000000000 /* ShaderOpTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF59E2DE59E0900327F7F /* ShaderOpTest.cpp */; };
+		AE0000BF0000000000000000 /* ShaderStorageBufferTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF59F2DE59E0900327F7F /* ShaderStorageBufferTest.cpp */; };
+		AE0000C00000000000000000 /* ShadingRateQcomTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5A02DE59E0900327F7F /* ShadingRateQcomTest.cpp */; };
+		AE0000C10000000000000000 /* ShadowSamplerFunctionsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5A12DE59E0900327F7F /* ShadowSamplerFunctionsTest.cpp */; };
+		AE0000C20000000000000000 /* SimpleOperationTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5A22DE59E0900327F7F /* SimpleOperationTest.cpp */; };
+		AE0000C30000000000000000 /* SixteenBppTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5A32DE59E0900327F7F /* SixteenBppTextureTest.cpp */; };
+		AE0000C40000000000000000 /* SRGBFramebufferTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5A42DE59E0900327F7F /* SRGBFramebufferTest.cpp */; };
+		AE0000C50000000000000000 /* SRGBTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5A52DE59E0900327F7F /* SRGBTextureTest.cpp */; };
+		AE0000C60000000000000000 /* StateChangeTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5A62DE59E0900327F7F /* StateChangeTest.cpp */; };
+		AE0000C70000000000000000 /* SwizzleTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5A72DE59E0900327F7F /* SwizzleTest.cpp */; };
+		AE0000C80000000000000000 /* system_info_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6662DE5A7A200327F7F /* system_info_util.cpp */; };
+		AE0000C90000000000000000 /* TestSuite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B8C09082F7E843B007E37DE /* TestSuite.cpp */; };
+		AE0000CA0000000000000000 /* TextureExternalUpdateTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5A92DE59E0900327F7F /* TextureExternalUpdateTest.cpp */; };
+		AE0000CB0000000000000000 /* TextureFixedRateCompressionTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5AA2DE59E0900327F7F /* TextureFixedRateCompressionTest.cpp */; };
+		AE0000CC0000000000000000 /* TextureMultisampleTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5AB2DE59E0900327F7F /* TextureMultisampleTest.cpp */; };
+		AE0000CD0000000000000000 /* TextureRectangleTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5AC2DE59E0900327F7F /* TextureRectangleTest.cpp */; };
+		AE0000CE0000000000000000 /* TextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5AD2DE59E0900327F7F /* TextureTest.cpp */; };
+		AE0000CF0000000000000000 /* TextureUploadFormatTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5AE2DE59E0900327F7F /* TextureUploadFormatTest.cpp */; };
+		AE0000D00000000000000000 /* TiledRenderingTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5AF2DE59E0900327F7F /* TiledRenderingTest.cpp */; };
+		AE0000D10000000000000000 /* TimeoutDrawTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5B02DE59E0900327F7F /* TimeoutDrawTest.cpp */; };
+		AE0000D20000000000000000 /* TimerQueriesTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5B12DE59E0900327F7F /* TimerQueriesTest.cpp */; };
+		AE0000D30000000000000000 /* TransformFeedbackTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5B22DE59E0900327F7F /* TransformFeedbackTest.cpp */; };
+		AE0000D40000000000000000 /* UniformBufferTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5B32DE59E0900327F7F /* UniformBufferTest.cpp */; };
+		AE0000D50000000000000000 /* UniformTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5B42DE59E0900327F7F /* UniformTest.cpp */; };
+		AE0000D60000000000000000 /* UnpackAlignmentTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5B52DE59E0900327F7F /* UnpackAlignmentTest.cpp */; };
+		AE0000D70000000000000000 /* UnpackRowLength.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5B62DE59E0900327F7F /* UnpackRowLength.cpp */; };
+		AE0000D80000000000000000 /* VertexAttributeTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5B72DE59E0900327F7F /* VertexAttributeTest.cpp */; };
+		AE0000D90000000000000000 /* ViewportTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF5B82DE59E0900327F7F /* ViewportTest.cpp */; };
+		AE0000DA0000000000000000 /* WebGLCompatibilityTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF60F2DE59E2300327F7F /* WebGLCompatibilityTest.cpp */; };
+		AE0000DB0000000000000000 /* WebGLCompressedTextureAvailabilityTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6102DE59E2300327F7F /* WebGLCompressedTextureAvailabilityTest.cpp */; };
+		AE0000DC0000000000000000 /* WebGLFramebufferTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6112DE59E2300327F7F /* WebGLFramebufferTest.cpp */; };
+		AE0000DD0000000000000000 /* WebGLReadOutsideFramebufferTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6122DE59E2300327F7F /* WebGLReadOutsideFramebufferTest.cpp */; };
+		AE0000DE0000000000000000 /* WEBGLVideoTextureTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF6132DE59E2300327F7F /* WEBGLVideoTextureTest.cpp */; };
+		AE0000DF0000000000000000 /* libANGLE.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BB972002DE47B8A00455D13 /* libANGLE.a */; };
+		AE0000E00000000000000000 /* libgtest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BDE1EFA2DED923F007E43DC /* libgtest.a */; };
+		AE0000E10000000000000000 /* libutils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BFAF8232DE6EADC00327F7F /* libutils.a */; };
+		AE0000130000000000000000 /* ANGLEEnd2EndTestsAppLaunch.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AE0000050000000000000000 /* ANGLEEnd2EndTestsAppLaunch.storyboard */; };
+		AE0000F10000000000000000 /* angle_end2end_tests_expectations.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = AE0000F00000000000000000 /* angle_end2end_tests_expectations.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -1544,6 +1753,27 @@
 			remoteGlobalIDString = FFDA50C4269F845100AE11E2;
 			remoteInfo = ANGLEMetalLib;
 		};
+		AE0000100000000000000000 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7BFAF76C2DE6EADC00327F7F;
+			remoteInfo = utils;
+		};
+		AE0000120000000000000000 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7BB971FF2DE47B8A00455D13;
+			remoteInfo = "ANGLE (static)";
+		};
+		AE0001000000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AE00000A0000000000000000;
+			remoteInfo = ANGLEEnd2EndTestsApp;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -1609,6 +1839,17 @@
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 1;
+		};
+		AE0000F20000000000000000 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "src/tests";
+			dstSubfolderSpec = 7;
+			files = (
+				AE0000F10000000000000000 /* angle_end2end_tests_expectations.txt in CopyFiles */,
+			);
+			name = "Copy Test Expectations";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -2762,6 +3003,13 @@
 		FFD002AB2746E55F002BE3BC /* entry_points_gles_3_1_autogen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = entry_points_gles_3_1_autogen.h; sourceTree = "<group>"; };
 		FFDA50D6269F9E5800AE11E2 /* create_mtl_internal_shaders.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = create_mtl_internal_shaders.py; sourceTree = "<group>"; };
 		FFE0D91526A0B4E80071ADAE /* AngleMetalLib.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AngleMetalLib.xcconfig; sourceTree = "<group>"; };
+		AE0000010000000000000000 /* ANGLEEnd2EndTestsApp.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ANGLEEnd2EndTestsApp.xcconfig; sourceTree = "<group>"; };
+		AE0000020000000000000000 /* ANGLEEnd2EndTestsApp-iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "ANGLEEnd2EndTestsApp-iOS.entitlements"; sourceTree = "<group>"; };
+		AE0000030000000000000000 /* ANGLEEnd2EndTestsApp-iOS-simulator.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "ANGLEEnd2EndTestsApp-iOS-simulator.entitlements"; sourceTree = "<group>"; };
+		AE0000040000000000000000 /* ANGLEEnd2EndTestsAppInfo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = ANGLEEnd2EndTestsAppInfo.plist; path = WebKit/ANGLEEnd2EndTestsAppInfo.plist; sourceTree = "<group>"; };
+		AE0000050000000000000000 /* ANGLEEnd2EndTestsAppLaunch.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ANGLEEnd2EndTestsAppLaunch.storyboard; path = WebKit/ANGLEEnd2EndTestsAppLaunch.storyboard; sourceTree = "<group>"; };
+		AE0000060000000000000000 /* ANGLEEnd2EndTestsApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ANGLEEnd2EndTestsApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AE0000F00000000000000000 /* angle_end2end_tests_expectations.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = angle_end2end_tests_expectations.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2852,6 +3100,16 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AE0000080000000000000000 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AE0000DF0000000000000000 /* libANGLE.a in Frameworks */,
+				AE0000E00000000000000000 /* libgtest.a in Frameworks */,
+				AE0000E10000000000000000 /* libutils.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3675,6 +3933,9 @@
 				31CDFDEE24917F8900486F27 /* ANGLE-dynamic.xcconfig */,
 				7BB972052DE47BDC00455D13 /* ANGLE-static.xcconfig */,
 				7BB971C82DE463A800455D13 /* ANGLEEnd2EndTests.xcconfig */,
+				AE0000030000000000000000 /* ANGLEEnd2EndTestsApp-iOS-simulator.entitlements */,
+				AE0000020000000000000000 /* ANGLEEnd2EndTestsApp-iOS.entitlements */,
+				AE0000010000000000000000 /* ANGLEEnd2EndTestsApp.xcconfig */,
 				FFE0D91526A0B4E80071ADAE /* AngleMetalLib.xcconfig */,
 				7B9829372E0EB05200F1E9FB /* ANGLETranslator.xcconfig */,
 				7BF554C62C81EFF9002B101E /* ANGLETranslatorFuzzer.xcconfig */,
@@ -3713,6 +3974,8 @@
 			isa = PBXGroup;
 			children = (
 				7B359DF52A7CF7AF0016DC59 /* angle_commit.h */,
+				AE0000040000000000000000 /* ANGLEEnd2EndTestsAppInfo.plist */,
+				AE0000050000000000000000 /* ANGLEEnd2EndTestsAppLaunch.storyboard */,
 				7B359DF62A7CF7AF0016DC59 /* ANGLEShaderProgramVersion.h */,
 				7B820C762DE9956000DAC5E4 /* End2EndTestsSourcesPlatform.cpp */,
 				7B037F9529E98CF200D23E74 /* SourcesPlatform-mm.mm */,
@@ -3849,6 +4112,7 @@
 				7BB973AB2DE48EE300455D13 /* gl_tests */,
 				7BFAF4D52DE49CBA00327F7F /* test_expectations */,
 				7BFAF4B02DE4947900327F7F /* test_utils */,
+				AE0000F00000000000000000 /* angle_end2end_tests_expectations.txt */,
 				7BB971C32DE457E100455D13 /* angle_end2end_tests_main.cpp */,
 				7BFAF92B2DE6F99B00327F7F /* angle_unittest_main.cpp */,
 				7BFAF92C2DE6F99B00327F7F /* angle_unittests_utils.h */,
@@ -4319,6 +4583,7 @@
 				7BFAF7692DE6E9D900327F7F /* ANGLEUnitTests */,
 				7BFAF8232DE6EADC00327F7F /* libutils.a */,
 				7B533A8F2E0A933D0069B90F /* ANGLETranslator */,
+				AE0000060000000000000000 /* ANGLEEnd2EndTestsApp.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -5174,6 +5439,28 @@
 			productName = ANGLEMetalLib;
 			productType = "com.apple.product-type.metal-library";
 		};
+		AE00000A0000000000000000 /* ANGLEEnd2EndTestsApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AE00000B0000000000000000 /* Build configuration list for PBXNativeTarget "ANGLEEnd2EndTestsApp" */;
+			buildPhases = (
+				AE0000070000000000000000 /* Sources */,
+				AE0000080000000000000000 /* Frameworks */,
+				AE0000090000000000000000 /* Resources */,
+				AE0000F20000000000000000 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AE00000F0000000000000000 /* PBXTargetDependency */,
+				AE0000110000000000000000 /* PBXTargetDependency */,
+			);
+			name = ANGLEEnd2EndTestsApp;
+			packageProductDependencies = (
+			);
+			productName = ANGLEEnd2EndTestsApp;
+			productReference = AE0000060000000000000000 /* ANGLEEnd2EndTestsApp.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -5244,6 +5531,7 @@
 				7BE4AA532DE4544900A16F7E /* ANGLEEnd2EndTests */,
 				7BFAF6882DE6E9D900327F7F /* ANGLEUnitTests */,
 				7B533A852E0A933D0069B90F /* ANGLETranslator */,
+				AE00000A0000000000000000 /* ANGLEEnd2EndTestsApp */,
 			);
 		};
 /* End PBXProject section */
@@ -5253,6 +5541,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AE0000090000000000000000 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AE0000130000000000000000 /* ANGLEEnd2EndTestsAppLaunch.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6349,6 +6645,216 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AE0000070000000000000000 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AE0000140000000000000000 /* ActiveTextureCacheTest.cpp in Sources */,
+				AE0000150000000000000000 /* AdvancedBlendTest.cpp in Sources */,
+				AE0000160000000000000000 /* angle_end2end_tests_main.cpp in Sources */,
+				AE0000170000000000000000 /* angle_test_configs.cpp in Sources */,
+				AE0000180000000000000000 /* angle_test_instantiate.cpp in Sources */,
+				AE0000190000000000000000 /* angle_test_instantiate_apple.mm in Sources */,
+				AE00001A0000000000000000 /* angle_test_platform.cpp in Sources */,
+				AE00001B0000000000000000 /* ANGLETest.cpp in Sources */,
+				AE00001C0000000000000000 /* AtomicCounterBufferTest.cpp in Sources */,
+				AE00001D0000000000000000 /* AttributeLayoutTest.cpp in Sources */,
+				AE00001E0000000000000000 /* BaseInstanceOverflowTest.cpp in Sources */,
+				AE00001F0000000000000000 /* BindGeneratesResourceTest.cpp in Sources */,
+				AE0000200000000000000000 /* BindUniformLocationTest.cpp in Sources */,
+				AE0000210000000000000000 /* BlendFuncExtendedTest.cpp in Sources */,
+				AE0000220000000000000000 /* BlendIntegerTest.cpp in Sources */,
+				AE0000230000000000000000 /* BlendMinMaxTest.cpp in Sources */,
+				AE0000240000000000000000 /* BlendPackedTest.cpp in Sources */,
+				AE0000250000000000000000 /* BlitFramebufferANGLETest.cpp in Sources */,
+				AE0000260000000000000000 /* BlobCacheTest.cpp in Sources */,
+				AE0000270000000000000000 /* BPTCCompressedTextureTest.cpp in Sources */,
+				AE0000280000000000000000 /* BufferDataTest.cpp in Sources */,
+				AE0000290000000000000000 /* BufferPoolTestMetal.mm in Sources */,
+				AE00002A0000000000000000 /* BuiltinVariableTest.cpp in Sources */,
+				AE00002B0000000000000000 /* ClearTest.cpp in Sources */,
+				AE00002C0000000000000000 /* ClientArraysTest.cpp in Sources */,
+				AE00002D0000000000000000 /* ClipControlTest.cpp in Sources */,
+				AE00002E0000000000000000 /* ClipDistanceTest.cpp in Sources */,
+				AE00002F0000000000000000 /* ColorMaskTest.cpp in Sources */,
+				AE0000300000000000000000 /* CompressedTextureFormatsTest.cpp in Sources */,
+				AE0000310000000000000000 /* ComputeShaderTest.cpp in Sources */,
+				AE0000320000000000000000 /* ContextLostTest.cpp in Sources */,
+				AE0000330000000000000000 /* ContextNoErrorTest.cpp in Sources */,
+				AE0000340000000000000000 /* CopyCompressedTextureTest.cpp in Sources */,
+				AE0000350000000000000000 /* CopyTexImageTest.cpp in Sources */,
+				AE0000360000000000000000 /* CopyTexture3DTest.cpp in Sources */,
+				AE0000370000000000000000 /* CopyTextureTest.cpp in Sources */,
+				AE0000380000000000000000 /* CubeMapTextureTest.cpp in Sources */,
+				AE0000390000000000000000 /* DebugMarkerTest.cpp in Sources */,
+				AE00003A0000000000000000 /* DebugTest.cpp in Sources */,
+				AE00003B0000000000000000 /* DepthStencilFormatsTest.cpp in Sources */,
+				AE00003C0000000000000000 /* DepthStencilTest.cpp in Sources */,
+				AE00003D0000000000000000 /* DepthWriteTest.cpp in Sources */,
+				AE00003E0000000000000000 /* DifferentStencilMasksTest.cpp in Sources */,
+				AE00003F0000000000000000 /* DiscardFramebufferEXTTest.cpp in Sources */,
+				AE0000400000000000000000 /* DrawBaseVertexBaseInstanceTest.cpp in Sources */,
+				AE0000410000000000000000 /* DrawBaseVertexVariantsTest.cpp in Sources */,
+				AE0000420000000000000000 /* DrawBuffersTest.cpp in Sources */,
+				AE0000430000000000000000 /* DrawElementsIndirectTest.cpp in Sources */,
+				AE0000440000000000000000 /* DrawElementsTest.cpp in Sources */,
+				AE0000450000000000000000 /* DrawRangeElementsTest.cpp in Sources */,
+				AE0000460000000000000000 /* DXT1CompressedTextureTest.cpp in Sources */,
+				AE0000470000000000000000 /* DXTSRGBCompressedTextureTest.cpp in Sources */,
+				AE0000480000000000000000 /* EGLBackwardsCompatibleContextTest.cpp in Sources */,
+				AE0000490000000000000000 /* EGLBlobCacheTest.cpp in Sources */,
+				AE00004A0000000000000000 /* EGLBufferAgeTest.cpp in Sources */,
+				AE00004B0000000000000000 /* EGLChooseConfigTest.cpp in Sources */,
+				AE00004C0000000000000000 /* EGLContextASANTest.cpp in Sources */,
+				AE00004D0000000000000000 /* EGLContextCompatibilityTest.cpp in Sources */,
+				AE00004E0000000000000000 /* EGLContextSharingTest.cpp in Sources */,
+				AE00004F0000000000000000 /* EGLCreateContextAttribsTest.cpp in Sources */,
+				AE0000500000000000000000 /* EGLDebugTest.cpp in Sources */,
+				AE0000510000000000000000 /* EGLDisplaySelectionTest.cpp in Sources */,
+				AE0000520000000000000000 /* EGLDisplayTest.cpp in Sources */,
+				AE0000530000000000000000 /* EGLFeatureControlTest.cpp in Sources */,
+				AE0000540000000000000000 /* EGLIOSurfaceClientBufferTest.cpp in Sources */,
+				AE0000550000000000000000 /* EGLLockSurface3Test.cpp in Sources */,
+				AE0000560000000000000000 /* EGLMemoryUsageReportTest.cpp in Sources */,
+				AE0000570000000000000000 /* EGLMultiContextTest.cpp in Sources */,
+				AE0000580000000000000000 /* EGLNoConfigContextTest.cpp in Sources */,
+				AE0000590000000000000000 /* EGLNoErrorTest.cpp in Sources */,
+				AE00005A0000000000000000 /* EGLPrintEGLinfoTest.cpp in Sources */,
+				AE00005B0000000000000000 /* EGLProgramCacheControlTest.cpp in Sources */,
+				AE00005C0000000000000000 /* EGLProtectedContentTest.cpp in Sources */,
+				AE00005D0000000000000000 /* EGLQueryContextTest.cpp in Sources */,
+				AE00005E0000000000000000 /* EGLReadinessCheckTest.cpp in Sources */,
+				AE00005F0000000000000000 /* EGLRecordableTest.cpp in Sources */,
+				AE0000600000000000000000 /* EGLRobustnessTest.cpp in Sources */,
+				AE0000610000000000000000 /* EGLSurfacelessContextTest.cpp in Sources */,
+				AE0000620000000000000000 /* EGLSurfaceTest.cpp in Sources */,
+				AE0000630000000000000000 /* EGLSyncTest.cpp in Sources */,
+				AE0000640000000000000000 /* EGLSyncTestMetalSharedEvent.mm in Sources */,
+				AE0000650000000000000000 /* EGLWaitUntilWorkScheduledTest.cpp in Sources */,
+				AE0000660000000000000000 /* End2EndTestsSourcesPlatform.cpp in Sources */,
+				AE0000670000000000000000 /* ErrorMessages.cpp in Sources */,
+				AE0000680000000000000000 /* ETCTextureTest.cpp in Sources */,
+				AE0000690000000000000000 /* ExternalBufferTest.cpp in Sources */,
+				AE00006A0000000000000000 /* ExternalWrapTest.cpp in Sources */,
+				AE00006B0000000000000000 /* FenceSyncTests.cpp in Sources */,
+				AE00006C0000000000000000 /* FloatingPointSurfaceTest.cpp in Sources */,
+				AE00006D0000000000000000 /* FormatPrintTest.cpp in Sources */,
+				AE00006E0000000000000000 /* FragDepthTest.cpp in Sources */,
+				AE00006F0000000000000000 /* FramebufferFetchTest.cpp in Sources */,
+				AE0000700000000000000000 /* FramebufferMixedSamplesTest.cpp in Sources */,
+				AE0000710000000000000000 /* FramebufferRenderMipmapTest.cpp in Sources */,
+				AE0000720000000000000000 /* FramebufferTest.cpp in Sources */,
+				AE0000730000000000000000 /* FrameCapture_mock.cpp in Sources */,
+				AE0000740000000000000000 /* GeometryShaderTest.cpp in Sources */,
+				AE0000750000000000000000 /* GetTexLevelParameterTest.cpp in Sources */,
+				AE0000760000000000000000 /* gl_enum_utils.cpp in Sources */,
+				AE0000770000000000000000 /* gl_enum_utils_autogen.cpp in Sources */,
+				AE0000780000000000000000 /* GLSLConstantFoldingTest.cpp in Sources */,
+				AE0000790000000000000000 /* GLSLOutputTest.cpp in Sources */,
+				AE00007A0000000000000000 /* GLSLTest.cpp in Sources */,
+				AE00007B0000000000000000 /* GLSLUBTest.cpp in Sources */,
+				AE00007C0000000000000000 /* GLSLValidationTest.cpp in Sources */,
+				AE00007D0000000000000000 /* GPUTestConfig.cpp in Sources */,
+				AE00007E0000000000000000 /* GPUTestExpectationsParser.cpp in Sources */,
+				AE00007F0000000000000000 /* GPUTestExpectationsTest.cpp in Sources */,
+				AE0000800000000000000000 /* ImageTest.cpp in Sources */,
+				AE0000810000000000000000 /* ImageTestMetal.mm in Sources */,
+				AE0000820000000000000000 /* IncompatibleTextureTest.cpp in Sources */,
+				AE0000830000000000000000 /* IncompleteTextureTest.cpp in Sources */,
+				AE0000840000000000000000 /* IndexBufferOffsetTest.cpp in Sources */,
+				AE0000850000000000000000 /* IndexedPointsTest.cpp in Sources */,
+				AE0000860000000000000000 /* InstancingTest.cpp in Sources */,
+				AE0000870000000000000000 /* KTXCompressedTextureTest.cpp in Sources */,
+				AE0000880000000000000000 /* libEGL_autogen.cpp in Sources */,
+				AE0000890000000000000000 /* libGLESv2_autogen.cpp in Sources */,
+				AE00008A0000000000000000 /* LineLoopTest.cpp in Sources */,
+				AE00008B0000000000000000 /* LinkAndRelinkTest.cpp in Sources */,
+				AE00008C0000000000000000 /* MatrixTest.cpp in Sources */,
+				AE00008D0000000000000000 /* MaxTextureSizeTest.cpp in Sources */,
+				AE00008E0000000000000000 /* MemoryBarrierTest.cpp in Sources */,
+				AE00008F0000000000000000 /* MemoryObjectTest.cpp in Sources */,
+				AE0000900000000000000000 /* MemorySizeTest.cpp in Sources */,
+				AE0000910000000000000000 /* MipmapTest.cpp in Sources */,
+				AE0000920000000000000000 /* MultiDrawTest.cpp in Sources */,
+				AE0000930000000000000000 /* MultisampleCompatibilityTest.cpp in Sources */,
+				AE0000940000000000000000 /* MultisampledRenderToTextureTest.cpp in Sources */,
+				AE0000950000000000000000 /* MultisampleTest.cpp in Sources */,
+				AE0000960000000000000000 /* MultithreadingTest.cpp in Sources */,
+				AE0000970000000000000000 /* MultiThreadSteps.cpp in Sources */,
+				AE0000980000000000000000 /* ObjectAllocationTest.cpp in Sources */,
+				AE0000990000000000000000 /* OcclusionQueriesTest.cpp in Sources */,
+				AE00009A0000000000000000 /* OSWindow.cpp in Sources */,
+				AE00009B0000000000000000 /* PackUnpackTest.cpp in Sources */,
+				AE00009C0000000000000000 /* ParallelShaderCompileTest.cpp in Sources */,
+				AE00009D0000000000000000 /* PBOExtensionTest.cpp in Sources */,
+				AE00009E0000000000000000 /* PbufferTest.cpp in Sources */,
+				AE00009F0000000000000000 /* PixelLocalStorageTest.cpp in Sources */,
+				AE0000A00000000000000000 /* PixmapTest.cpp in Sources */,
+				AE0000A10000000000000000 /* PointSpritesTest.cpp in Sources */,
+				AE0000A20000000000000000 /* PolygonModeTest.cpp in Sources */,
+				AE0000A30000000000000000 /* PolygonOffsetClampTest.cpp in Sources */,
+				AE0000A40000000000000000 /* ProgramInterfaceTest.cpp in Sources */,
+				AE0000A50000000000000000 /* ProgramParameterTest.cpp in Sources */,
+				AE0000A60000000000000000 /* ProgramPipelineTest.cpp in Sources */,
+				AE0000A70000000000000000 /* ProvokingVertexTest.cpp in Sources */,
+				AE0000A80000000000000000 /* PVRTCCompressedTextureTest.cpp in Sources */,
+				AE0000A90000000000000000 /* QueryObjectValidation.cpp in Sources */,
+				AE0000AA0000000000000000 /* ReadOnlyFeedbackLoopTest.cpp in Sources */,
+				AE0000AB0000000000000000 /* ReadPixelsTest.cpp in Sources */,
+				AE0000AC0000000000000000 /* RenderbufferMultisampleTest.cpp in Sources */,
+				AE0000AD0000000000000000 /* RenderDoc.cpp in Sources */,
+				AE0000AE0000000000000000 /* RendererTest.cpp in Sources */,
+				AE0000AF0000000000000000 /* RequestExtensionTest.cpp in Sources */,
+				AE0000B00000000000000000 /* RobustBufferAccessBehaviorTest.cpp in Sources */,
+				AE0000B10000000000000000 /* RobustClientMemoryTest.cpp in Sources */,
+				AE0000B20000000000000000 /* RobustFragmentShaderOutputTest.cpp in Sources */,
+				AE0000B30000000000000000 /* RobustResourceInitTest.cpp in Sources */,
+				AE0000B40000000000000000 /* S3TCTextureSizesTest.cpp in Sources */,
+				AE0000B50000000000000000 /* SamplersTest.cpp in Sources */,
+				AE0000B60000000000000000 /* SampleVariablesTest.cpp in Sources */,
+				AE0000B70000000000000000 /* SemaphoreTest.cpp in Sources */,
+				AE0000B80000000000000000 /* serialize_mock.cpp in Sources */,
+				AE0000B90000000000000000 /* ShaderAlgorithmTest.cpp in Sources */,
+				AE0000BA0000000000000000 /* ShaderBinaryTest.cpp in Sources */,
+				AE0000BB0000000000000000 /* ShaderInterpTest.cpp in Sources */,
+				AE0000BC0000000000000000 /* ShaderMultisampleInterpolation.cpp in Sources */,
+				AE0000BD0000000000000000 /* ShaderNonConstGlobalInitializerTest.cpp in Sources */,
+				AE0000BE0000000000000000 /* ShaderOpTest.cpp in Sources */,
+				AE0000BF0000000000000000 /* ShaderStorageBufferTest.cpp in Sources */,
+				AE0000C00000000000000000 /* ShadingRateQcomTest.cpp in Sources */,
+				AE0000C10000000000000000 /* ShadowSamplerFunctionsTest.cpp in Sources */,
+				AE0000C20000000000000000 /* SimpleOperationTest.cpp in Sources */,
+				AE0000C30000000000000000 /* SixteenBppTextureTest.cpp in Sources */,
+				AE0000C40000000000000000 /* SRGBFramebufferTest.cpp in Sources */,
+				AE0000C50000000000000000 /* SRGBTextureTest.cpp in Sources */,
+				AE0000C60000000000000000 /* StateChangeTest.cpp in Sources */,
+				AE0000C70000000000000000 /* SwizzleTest.cpp in Sources */,
+				AE0000C80000000000000000 /* system_info_util.cpp in Sources */,
+				AE0000C90000000000000000 /* TestSuite.cpp in Sources */,
+				AE0000CA0000000000000000 /* TextureExternalUpdateTest.cpp in Sources */,
+				AE0000CB0000000000000000 /* TextureFixedRateCompressionTest.cpp in Sources */,
+				AE0000CC0000000000000000 /* TextureMultisampleTest.cpp in Sources */,
+				AE0000CD0000000000000000 /* TextureRectangleTest.cpp in Sources */,
+				AE0000CE0000000000000000 /* TextureTest.cpp in Sources */,
+				AE0000CF0000000000000000 /* TextureUploadFormatTest.cpp in Sources */,
+				AE0000D00000000000000000 /* TiledRenderingTest.cpp in Sources */,
+				AE0000D10000000000000000 /* TimeoutDrawTest.cpp in Sources */,
+				AE0000D20000000000000000 /* TimerQueriesTest.cpp in Sources */,
+				AE0000D30000000000000000 /* TransformFeedbackTest.cpp in Sources */,
+				AE0000D40000000000000000 /* UniformBufferTest.cpp in Sources */,
+				AE0000D50000000000000000 /* UniformTest.cpp in Sources */,
+				AE0000D60000000000000000 /* UnpackAlignmentTest.cpp in Sources */,
+				AE0000D70000000000000000 /* UnpackRowLength.cpp in Sources */,
+				AE0000D80000000000000000 /* VertexAttributeTest.cpp in Sources */,
+				AE0000D90000000000000000 /* ViewportTest.cpp in Sources */,
+				AE0000DA0000000000000000 /* WebGLCompatibilityTest.cpp in Sources */,
+				AE0000DB0000000000000000 /* WebGLCompressedTextureAvailabilityTest.cpp in Sources */,
+				AE0000DC0000000000000000 /* WebGLFramebufferTest.cpp in Sources */,
+				AE0000DD0000000000000000 /* WebGLReadOutsideFramebufferTest.cpp in Sources */,
+				AE0000DE0000000000000000 /* WEBGLVideoTextureTest.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -6441,6 +6947,21 @@
 			isa = PBXTargetDependency;
 			target = FFDA50C4269F845100AE11E2 /* ANGLEMetalLib */;
 			targetProxy = FF194FF52744331A006A97A3 /* PBXContainerItemProxy */;
+		};
+		AE00000F0000000000000000 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7BFAF76C2DE6EADC00327F7F /* utils */;
+			targetProxy = AE0000100000000000000000 /* PBXContainerItemProxy */;
+		};
+		AE0000110000000000000000 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7BB971FF2DE47B8A00455D13 /* ANGLE (static) */;
+			targetProxy = AE0000120000000000000000 /* PBXContainerItemProxy */;
+		};
+		AE0001000000000000000002 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AE00000A0000000000000000 /* ANGLEEnd2EndTestsApp */;
+			targetProxy = AE0001000000000000000001 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -6780,6 +7301,27 @@
 			};
 			name = Production;
 		};
+		AE00000C0000000000000000 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AE0000010000000000000000 /* ANGLEEnd2EndTestsApp.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		AE00000D0000000000000000 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AE0000010000000000000000 /* ANGLEEnd2EndTestsApp.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		AE00000E0000000000000000 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AE0000010000000000000000 /* ANGLEEnd2EndTestsApp.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -6939,6 +7481,16 @@
 				FFDA50C8269F845100AE11E2 /* Debug */,
 				FFDA50C9269F845100AE11E2 /* Release */,
 				FFDA50CA269F845100AE11E2 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		AE00000B0000000000000000 /* Build configuration list for PBXNativeTarget "ANGLEEnd2EndTestsApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AE00000C0000000000000000 /* Debug */,
+				AE00000D0000000000000000 /* Release */,
+				AE00000E0000000000000000 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

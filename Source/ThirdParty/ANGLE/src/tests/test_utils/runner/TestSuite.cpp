@@ -1217,9 +1217,12 @@ TestSuite::TestSuite(int *argc, char **argv, std::function<void()> registerTests
 #if defined(ANGLE_ENABLE_METAL)
         // Metal does not support toggling per-context debug layers for tests.
         SetEnvironmentVar("MTL_DEBUG_LAYER", "1");
+        // Shader validation is not working for simulator.
+#if !TARGET_OS_SIMULATOR
         SetEnvironmentVar("MTL_SHADER_VALIDATION", "1");
         SetEnvironmentVar("MTL_SHADER_VALIDATION_ABORT_ON_FAULT", "1");
         SetEnvironmentVar("MTL_SHADER_VALIDATION_REPORT_TO_STDERR", "1");
+#endif
 #endif
     }
 
