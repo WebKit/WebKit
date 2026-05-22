@@ -46,7 +46,6 @@ platform/cocoa/SearchPopupMenuCocoa.mm
 platform/cocoa/UserAgentCocoa.mm
 platform/cocoa/WebAVPlayerLayer.mm
 [ Mac ] platform/gamepad/mac/HIDGamepadElement.cpp
-platform/graphics/BitmapImageDescriptor.cpp
 platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm
 platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm
 platform/graphics/avfoundation/FormatDescriptionUtilities.cpp

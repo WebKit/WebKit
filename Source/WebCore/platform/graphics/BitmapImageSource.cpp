@@ -64,13 +64,13 @@ ImageDecoder* BitmapImageSource::decoder(FragmentedSharedBuffer* data) const
     if (!m_decoder)
         return nullptr;
 
-    m_decoder->setEncodedDataStatusChangeCallback([weakThis = ThreadSafeWeakPtr { *this }] (auto status) {
+    protect(m_decoder)->setEncodedDataStatusChangeCallback([weakThis = ThreadSafeWeakPtr { *this }] (auto status) {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->encodedDataStatusChanged(status);
     });
 
     if (auto expectedContentLength = this->expectedContentLength())
-        m_decoder->setExpectedContentSize(expectedContentLength);
+        protect(m_decoder)->setExpectedContentSize(expectedContentLength);
 
     return m_decoder.get();
 }
@@ -103,10 +103,10 @@ void BitmapImageSource::encodedDataStatusChanged(EncodedDataStatus status)
     ASSERT(m_decoder);
 
     if (status >= EncodedDataStatus::SizeAvailable)
-        m_frames.resizeToFit(m_decoder->frameCount());
+        m_frames.resizeToFit(protect(m_decoder)->frameCount());
 
     if (auto imageObserver = this->imageObserver())
-        imageObserver->encodedDataStatusChanged(*m_bitmapImage, status);
+        imageObserver->encodedDataStatusChanged(protect(*m_bitmapImage), status);
 }
 
 EncodedDataStatus BitmapImageSource::dataChanged(FragmentedSharedBuffer* data, bool allDataReceived)
@@ -162,7 +162,7 @@ void BitmapImageSource::decodedSizeChanged(long long decodedSize)
         return;
 
     if (auto imageObserver = this->imageObserver())
-        imageObserver->decodedSizeChanged(*m_bitmapImage, decodedSize);
+        imageObserver->decodedSizeChanged(protect(*m_bitmapImage), decodedSize);
 }
 
 void BitmapImageSource::decodedSizeIncreased(unsigned decodedSize)
@@ -220,7 +220,7 @@ bool BitmapImageSource::canDestroyDecodedData() const
         return true;
 
     if (auto imageObserver = this->imageObserver())
-        return imageObserver->canDestroyDecodedData(*m_bitmapImage);
+        return imageObserver->canDestroyDecodedData(protect(*m_bitmapImage));
 
     return true;
 }
@@ -240,7 +240,7 @@ void BitmapImageSource::clearFrameBufferCache()
     if (!m_decoder)
         return;
 
-    m_decoder->clearFrameBufferCache(currentFrameIndex());
+    protect(m_decoder)->clearFrameBufferCache(currentFrameIndex());
 }
 
 EncodedDataStatus BitmapImageSource::setData(FragmentedSharedBuffer* data, bool allDataReceived)
@@ -262,7 +262,7 @@ void BitmapImageSource::resetData()
     m_decoder = nullptr;
 
     if (m_bitmapImage)
-        setData(m_bitmapImage->data(), m_allDataReceived);
+        setData(protect(m_bitmapImage->data()), m_allDataReceived);
 }
 
 void BitmapImageSource::dataReplaced(FragmentedSharedBuffer* data)
@@ -325,7 +325,7 @@ bool BitmapImageSource::isAnimationAllowed() const
 
     // ImageObserver may disallow animation.
     if (auto imageObserver = this->imageObserver())
-        return imageObserver->allowsAnimation(*m_bitmapImage);
+        return imageObserver->allowsAnimation(protect(*m_bitmapImage));
 
     return true;
 }
@@ -364,7 +364,7 @@ void BitmapImageSource::stopDecodingWorkQueue()
     if (!m_workQueue || !m_workQueue->isIdle())
         return;
 
-    m_workQueue->stop();
+    protect(m_workQueue)->stop();
 }
 
 bool BitmapImageSource::isPendingDecodingAtIndex(unsigned index, SubsamplingLevel subsamplingLevel, const DecodingOptions& options) const
@@ -372,7 +372,7 @@ bool BitmapImageSource::isPendingDecodingAtIndex(unsigned index, SubsamplingLeve
     if (!m_workQueue)
         return false;
 
-    return m_workQueue->isPendingDecodingAtIndex(index, subsamplingLevel, options);
+    return protect(m_workQueue)->isPendingDecodingAtIndex(index, subsamplingLevel, options);
 }
 
 std::optional<DecodingDestination> BitmapImageSource::compatibleDecodingDestinationWithOptionsAtIndex(unsigned index, SubsamplingLevel subsamplingLevel, const DecodingOptions& options) const
@@ -435,7 +435,7 @@ void BitmapImageSource::imageFrameAtIndexAvailable(unsigned index, ImageAnimatin
         return;
 
     if (auto imageObserver = this->imageObserver())
-        imageObserver->imageFrameAvailable(*m_bitmapImage, animatingState, nullptr, decodingStatus);
+        imageObserver->imageFrameAvailable(protect(*m_bitmapImage), animatingState, nullptr, decodingStatus);
 }
 
 void BitmapImageSource::imageFrameDecodeAtIndexHasFinished(unsigned index, ImageAnimatingState animatingState, DecodingStatus decodingStatus)
@@ -486,10 +486,10 @@ void BitmapImageSource::cacheMetadataAtIndex(unsigned index, SubsamplingLevel su
 
     auto& frame = m_frames[index];
 
-    m_decoder->fetchFrameMetaDataAtIndex(index, subsamplingLevel, options, frame);
+    protect(m_decoder)->fetchFrameMetaDataAtIndex(index, subsamplingLevel, options, frame);
 
     if (repetitionCount())
-        frame.m_duration = m_decoder->frameDurationAtIndex(index);
+        frame.m_duration = protect(m_decoder)->frameDurationAtIndex(index);
 }
 
 void BitmapImageSource::cacheNativeImageAtIndex(unsigned index, SubsamplingLevel subsamplingLevel, const DecodingOptions& options, Ref<NativeImage>&& nativeImage)
@@ -552,7 +552,7 @@ DecodingStatus BitmapImageSource::requestNativeImageAtIndex(unsigned index, Subs
 
     LOG(Images, "BitmapImageSource::%s - %p - url: %s. Decoding for frame at index = %d will be requested.", __FUNCTION__, this, sourceUTF8().data(), index);
 
-    workQueue().dispatch({ index, subsamplingLevel, animatingState, options });
+    protect(workQueue())->dispatch({ index, subsamplingLevel, animatingState, options });
 
     if (m_clearDecoderAfterAsyncFrameRequestForTesting)
         resetData();
@@ -602,7 +602,7 @@ Expected<Ref<NativeImage>, DecodingStatus> BitmapImageSource::nativeImageAtIndex
     else {
         auto decodingOptions = DecodingOptions { DecodingMode::Synchronous, decodingDestination };
 
-        auto result = m_decoder->createNativeImageAtIndex(index, subsamplingLevel, decodingOptions);
+        auto result = protect(m_decoder)->createNativeImageAtIndex(index, subsamplingLevel, decodingOptions);
         if (!result)
             return makeUnexpected(DecodingStatus::Invalid);
 
@@ -717,7 +717,7 @@ void BitmapImageSource::setHasHDRContentForTesting()
     m_hasHDRContentForTesting = true;
 
     if (auto imageObserver = this->imageObserver())
-        imageObserver->imageContentChanged(*m_bitmapImage);
+        imageObserver->imageContentChanged(protect(*m_bitmapImage));
 }
 
 DecodingStatus BitmapImageSource::frameDecodingStatusAtIndex(unsigned index) const
@@ -732,17 +732,17 @@ RefPtr<ImageObserver> BitmapImageSource::imageObserver() const
 
 String BitmapImageSource::mimeType() const
 {
-    return m_bitmapImage ? m_bitmapImage->mimeType() : emptyString();
+    return m_bitmapImage ? protect(m_bitmapImage)->mimeType() : emptyString();
 }
 
 long long BitmapImageSource::expectedContentLength() const
 {
-    return m_bitmapImage ? m_bitmapImage->expectedContentLength() : 0;
+    return m_bitmapImage ? protect(m_bitmapImage)->expectedContentLength() : 0;
 }
 
 CString BitmapImageSource::sourceUTF8() const
 {
-    return m_bitmapImage ? m_bitmapImage->sourceUTF8() : ""_s;
+    return m_bitmapImage ? protect(m_bitmapImage)->sourceUTF8() : ""_s;
 }
 
 void BitmapImageSource::setMinimumDecodingDurationForTesting(Seconds duration)
@@ -755,7 +755,7 @@ void BitmapImageSource::dump(TextStream& ts) const
     ts.dumpProperty("source-utf8"_s, sourceUTF8());
 
     if (m_workQueue)
-        m_workQueue->dump(ts);
+        protect(m_workQueue)->dump(ts);
 
     if (m_frameAnimator)
         m_frameAnimator->dump(ts);

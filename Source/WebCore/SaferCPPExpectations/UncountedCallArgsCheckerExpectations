@@ -454,8 +454,6 @@ platform/animation/AcceleratedEffectValues.cpp
 platform/cocoa/PlaybackSessionModelMediaElement.mm
 platform/cocoa/VideoPresentationModelVideoElement.mm
 platform/encryptedmedia/CDMProxy.h
-platform/graphics/BitmapImage.cpp
-platform/graphics/BitmapImageSource.cpp
 platform/graphics/DisplayRefreshMonitorManager.h
 platform/graphics/FontCache.cpp
 platform/graphics/FontRanges.cpp

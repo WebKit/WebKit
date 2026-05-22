@@ -71,12 +71,12 @@ BitmapImage::BitmapImage(Ref<NativeImage>&& image)
 
 EncodedDataStatus BitmapImage::dataChanged(bool allDataReceived)
 {
-    return m_source->dataChanged(data(), allDataReceived);
+    return m_source->dataChanged(protect(data()), allDataReceived);
 }
 
 void BitmapImage::dataReplaced()
 {
-    return m_source->dataReplaced(data());
+    return m_source->dataReplaced(protect(data()));
 }
 
 void BitmapImage::destroyDecodedData(bool destroyAll)
