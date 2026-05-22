@@ -596,6 +596,7 @@
 		E3096D4C2A82357800BC4CA0 /* pas_allocation_result.c in Sources */ = {isa = PBXBuildFile; fileRef = E3096D4B2A82357800BC4CA0 /* pas_allocation_result.c */; };
 		E3AA9B8328C724D8005DF9D6 /* pas_darwin_spi.h in Headers */ = {isa = PBXBuildFile; fileRef = E3AA9B8228C724D8005DF9D6 /* pas_darwin_spi.h */; };
 		F30C5BE42E8F33E4006CA1E9 /* MARTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F30C5BE32E8F33E4006CA1E9 /* MARTests.cpp */; };
+		F30C5BE42E8F33E4006CA1F9 /* MTETests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F30C5BE32E8F33E4006CA1F9 /* MTETests.cpp */; };
 		F3EFAABC2E90316400A1EDE0 /* pas_mar_registry.c in Sources */ = {isa = PBXBuildFile; fileRef = F3EFAAB92E90316400A1EDE0 /* pas_mar_registry.c */; };
 		F3EFAABD2E90316400A1EDE0 /* pas_mar_report_crash.c in Sources */ = {isa = PBXBuildFile; fileRef = F3EFAABB2E90316400A1EDE0 /* pas_mar_report_crash.c */; };
 		F3EFAABE2E90316400A1EDE0 /* pas_mar_crash_reporter_report.h in Headers */ = {isa = PBXBuildFile; fileRef = F3EFAAB72E90316400A1EDE0 /* pas_mar_crash_reporter_report.h */; };
@@ -1116,6 +1117,7 @@
 		0FC681C9210F7C9F003C6A13 /* pas_thread_local_cache.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_thread_local_cache.c; sourceTree = "<group>"; };
 		0FC681CA210F7C9F003C6A13 /* pas_thread_local_cache_layout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_thread_local_cache_layout.h; sourceTree = "<group>"; };
 		0FC681DB210FAC4B003C6A13 /* test_pas */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test_pas; sourceTree = BUILT_PRODUCTS_DIR; };
+		0FC681E2210FAC4B003C6A13 /* test_pas.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = test_pas.entitlements; sourceTree = "<group>"; };
 		0FC681EA210FEDB5003C6A13 /* TestHarness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestHarness.h; sourceTree = "<group>"; };
 		0FC681EB21127A16003C6A13 /* TestHarness.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestHarness.cpp; sourceTree = "<group>"; };
 		0FC681EE2114D983003C6A13 /* pas_all_heaps.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_all_heaps.c; sourceTree = "<group>"; };
@@ -1319,6 +1321,7 @@
 		E3096D4B2A82357800BC4CA0 /* pas_allocation_result.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_allocation_result.c; sourceTree = "<group>"; };
 		E3AA9B8228C724D8005DF9D6 /* pas_darwin_spi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_darwin_spi.h; sourceTree = "<group>"; };
 		F30C5BE32E8F33E4006CA1E9 /* MARTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MARTests.cpp; sourceTree = "<group>"; };
+		F30C5BE32E8F33E4006CA1F9 /* MTETests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MTETests.cpp; sourceTree = "<group>"; };
 		F3EFAAB72E90316400A1EDE0 /* pas_mar_crash_reporter_report.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pas_mar_crash_reporter_report.h; sourceTree = "<group>"; };
 		F3EFAAB82E90316400A1EDE0 /* pas_mar_registry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pas_mar_registry.h; sourceTree = "<group>"; };
 		F3EFAAB92E90316400A1EDE0 /* pas_mar_registry.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pas_mar_registry.c; sourceTree = "<group>"; };
@@ -1440,6 +1443,7 @@
 				0FEA45BE236CDAED00B5A375 /* LockFreeReadPtrPtrHashtableTests.cpp */,
 				2CB9B15C278F861B003A8C1B /* LotsOfHeapsAndThreads.cpp */,
 				F30C5BE32E8F33E4006CA1E9 /* MARTests.cpp */,
+				F30C5BE32E8F33E4006CA1F9 /* MTETests.cpp */,
 				2C734C8F277680EF0017BFFE /* MemalignTests.cpp */,
 				0FD22D0722CD8A7500B21841 /* MinHeapTests.cpp */,
 				2B2A589B2742D815005EE07C /* PGMTests.cpp */,
@@ -2001,6 +2005,7 @@
 		3A6CA64E21012895003EFDBF = {
 			isa = PBXGroup;
 			children = (
+				0FC681E2210FAC4B003C6A13 /* test_pas.entitlements */,
 				3A6CA65921012895003EFDBF /* src */,
 				3A6CA65821012895003EFDBF /* Products */,
 				3A6CA66621012BAB003EFDBF /* Frameworks */,
@@ -2713,6 +2718,7 @@
 				0FEA45BF236CDAED00B5A375 /* LockFreeReadPtrPtrHashtableTests.cpp in Sources */,
 				2CB9B15D278F861B003A8C1B /* LotsOfHeapsAndThreads.cpp in Sources */,
 				F30C5BE42E8F33E4006CA1E9 /* MARTests.cpp in Sources */,
+				F30C5BE42E8F33E4006CA1F9 /* MTETests.cpp in Sources */,
 				2C734C90277680EF0017BFFE /* MemalignTests.cpp in Sources */,
 				0FD22D0822CD8A7500B21841 /* MinHeapTests.cpp in Sources */,
 				2B2A589C2742D815005EE07C /* PGMTests.cpp in Sources */,
@@ -3241,6 +3247,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++23";
 				CLANG_ENABLE_MODULES = NO;
 				CLANG_ENABLE_MODULE_DEBUGGING = NO;
+				CODE_SIGN_ENTITLEMENTS = test_pas.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -3259,6 +3266,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++23";
 				CLANG_ENABLE_MODULES = NO;
 				CLANG_ENABLE_MODULE_DEBUGGING = NO;
+				CODE_SIGN_ENTITLEMENTS = test_pas.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"OS_UNFAIR_LOCK_INLINE=1",

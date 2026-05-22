@@ -38,6 +38,7 @@
 #include "pas_epoch.h"
 #include "pas_fd_stream.h"
 #include "pas_heap.h"
+#include "pas_mte_config.h"
 #include "pas_segregated_page.h"
 #include "pas_segregated_page_config.h"
 #include "pas_segregated_size_directory.h"
@@ -141,6 +142,18 @@ DisableBitfit::DisableBitfit()
         "disable-bitfit",
         [] (pas_heap_runtime_config& runtimeConfig) {
             runtimeConfig.max_bitfit_object_size = 0;
+        })
+{
+}
+
+ForceSegregated::ForceSegregated()
+    : RuntimeConfigTestScope(
+        "force-segregated",
+        [] (pas_heap_runtime_config& runtimeConfig) {
+            if (&runtimeConfig != &pas_utility_heap_runtime_config) {
+                runtimeConfig.max_segregated_object_size = UINT_MAX;
+                runtimeConfig.max_bitfit_object_size = 0;
+            }
         })
 {
 }
@@ -377,6 +390,7 @@ void addLockFreeReadPtrPtrHashtableTests();
 void addLotsOfHeapsAndThreadsTests();
 void addMARTests();
 void addMemalignTests();
+void addMTETests();
 void addMinHeapTests();
 void addPGMTests();
 void addRaceTests();
@@ -873,6 +887,13 @@ int main(int argc, char** argv)
     ADD_SUITE(TSD);
     ADD_SUITE(Utils);
     ADD_SUITE(ViewCache);
+#if defined(PAS_USE_OPENSOURCE_MTE) && PAS_USE_OPENSOURCE_MTE
+#if PAS_ENABLE_MTE
+    pas_mte_ensure_initialized();
+    if (PAS_USE_MTE)
+        ADD_SUITE(MTE);
+#endif
+#endif
 
     ParsedArguments args = parseArguments(argc, argv);
 
