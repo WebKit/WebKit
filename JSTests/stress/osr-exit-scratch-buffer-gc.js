@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 //@ skip if $architecture == "arm"
+=======
+>>>>>>> 6c8c0aa26b94 ([JSC] Scan OSR exits' ScratchBuffers)
 // @requireOptions("--useConcurrentJIT=0", "--useZombieMode=1", "--slowPathAllocsBetweenGCs=16")
 
 function opt(s) {
