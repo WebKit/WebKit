@@ -81,6 +81,7 @@ struct pas_root {
     uintptr_t* compact_heap_reservation_base;
     size_t* compact_heap_reservation_size;
     size_t* compact_heap_reservation_guard_size;
+    size_t compact_heap_reservation_available_size; /* Unused */
     size_t* compact_heap_reservation_bump;
     pas_enumerable_range_list* enumerable_page_malloc_page_list;
     pas_enumerable_range_list* large_heap_physical_page_sharing_cache_page_list;
