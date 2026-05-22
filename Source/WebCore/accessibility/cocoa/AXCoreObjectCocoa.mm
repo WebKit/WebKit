@@ -501,6 +501,61 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::crossFrameSortedDescenda
     return results;
 }
 
+// Walk from the AX tree root to `marker`, counting characters. Works on
+// either the main thread (via SimpleRange) or the secondary AX thread (via
+// the isolated tree's character walk).
+static unsigned offsetFromRootForMarker(const AXTextMarker& marker)
+{
+    if (!marker.isValid())
+        return 0;
+    if (!isMainThread())
+        return marker.offsetFromRoot();
+    return makeNSRange(AXTextMarkerRange { marker, marker }.simpleRange()).location;
+}
+
+std::optional<AXTextMarkerRange> AXCoreObject::intersectionWithSelectionRange() const
+{
+    auto objectRange = textMarkerRange();
+    if (!objectRange)
+        return std::nullopt;
+    auto selectionRange = selectedTextMarkerRange();
+    if (!selectionRange)
+        return std::nullopt;
+    auto intersection = objectRange.intersectionWith(selectionRange);
+    if (!intersection.has_value())
+        return std::nullopt;
+
+    // If the intersection's endpoints are already anchored to this object,
+    // their characterOffsets are already in element-local coordinates and
+    // no root walks are needed.
+    if (intersection->start().objectID() == objectID()
+        && intersection->end().objectID() == objectID()
+        && intersection->start().treeID() == treeID()
+        && intersection->end().treeID() == treeID())
+        return intersection;
+
+    // The AX text marker APIs that surface a marker as an integer (e.g.
+    // AXIndexForTextMarker / offsetFromRoot) report the offset relative to
+    // the AX tree root, not relative to this object. To return an
+    // AXTextMarkerRange whose endpoints are expressed in element-local
+    // character offsets — which is what callers of
+    // AXIntersectionWithSelectionRange expect from an attribute named
+    // "intersection ... range [for this element]" — convert the intersection
+    // endpoints to offsets within this object's range and rebuild the range
+    // anchored to this object.
+    unsigned objectStartFromRoot = offsetFromRootForMarker(objectRange.start());
+    unsigned intersectionStartFromRoot = offsetFromRootForMarker(intersection->start());
+    unsigned intersectionEndFromRoot = intersection->isCollapsed()
+        ? intersectionStartFromRoot
+        : offsetFromRootForMarker(intersection->end());
+
+    if (intersectionStartFromRoot < objectStartFromRoot
+        || intersectionEndFromRoot < intersectionStartFromRoot)
+        return std::nullopt;
+
+    return { { treeID(), objectID(), intersectionStartFromRoot - objectStartFromRoot, intersectionEndFromRoot - objectStartFromRoot } };
+}
+
 namespace Accessibility {
 
 PlatformRoleMap createPlatformRoleMap()

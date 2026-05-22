@@ -1247,6 +1247,16 @@ public:
 #endif
 #if PLATFORM(MAC)
     virtual AXTextMarkerRange selectedTextMarkerRange() const = 0;
+
+    // The intersection of the global selection with this object's text range,
+    // expressed as an AXTextMarkerRange whose endpoints are anchored to this
+    // object with element-local character offsets (so the result's
+    // characterRange() and the underlying markers' characterOffset are
+    // 0-based within this object's text content). Returns std::nullopt if
+    // the selection does not intersect this object's range. Works in both
+    // isolated-tree and non-isolated-tree modes via virtual dispatch on the
+    // underlying range accessors.
+    std::optional<AXTextMarkerRange> intersectionWithSelectionRange() const;
 #endif
 
     virtual IntRect boundsForRange(const SimpleRange&) const = 0;

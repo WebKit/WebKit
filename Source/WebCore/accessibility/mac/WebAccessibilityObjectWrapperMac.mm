@@ -1509,9 +1509,7 @@ static id handleElementBusyAttribute(WebAccessibilityObjectWrapper*, AXCoreObjec
 
 static id handleIntersectionWithSelectionRangeAttribute(WebAccessibilityObjectWrapper *, AXCoreObject& backingObject)
 {
-    auto objectRange = backingObject.textMarkerRange();
-    auto selectionRange = backingObject.selectedTextMarkerRange();
-    auto intersection = selectionRange.intersectionWith(objectRange);
+    auto intersection = backingObject.intersectionWithSelectionRange();
     if (!intersection.has_value())
         return nil;
 
