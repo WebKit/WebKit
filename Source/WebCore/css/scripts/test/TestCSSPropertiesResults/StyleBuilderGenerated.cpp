@@ -435,6 +435,8 @@ void BuilderGenerated::applyProperty(CSSPropertyID id, BuilderState& builderStat
         break;
     case CSSPropertyID::CSSPropertyTestCustomExtractor:
         break;
+    case CSSPropertyID::CSSPropertyTestDirectlyReferencingProperty:
+        break;
     case CSSPropertyID::CSSPropertyTestFunctionBoundedParameters:
         break;
     case CSSPropertyID::CSSPropertyTestFunctionFixedParameters:
@@ -730,6 +732,10 @@ void BuilderGenerated::applyProperty(CSSPropertyID id, BuilderState& builderStat
     case CSSPropertyID::CSSPropertyTestUsingSharedRule:
         break;
     case CSSPropertyID::CSSPropertyTestUsingSharedRuleExported:
+        break;
+    case CSSPropertyID::CSSPropertyTestUsingSharedRuleMultipleTimes:
+        break;
+    case CSSPropertyID::CSSPropertyTestUsingSharedRuleReferencingProperty:
         break;
     case CSSPropertyID::CSSPropertyTestUsingSharedRuleWithOverrideFunction:
         break;

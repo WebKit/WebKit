@@ -889,7 +889,7 @@ RefPtr<StyleRuleFontFeatureValuesBlock> CSSParser::consumeFontFeatureValuesRuleB
 
 RefPtr<StyleRuleFontFeatureValues> CSSParser::consumeFontFeatureValuesRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
 {
-    // @font-feature-values <family-name># { <declaration-list> }
+    // @font-feature-values <font-family-name># { <declaration-list> }
 
     auto originalPrelude = prelude;
     auto fontFamilies = CSSPropertyParserHelpers::consumeFontFeatureValuesPreludeFamilyNameList(prelude, m_context);

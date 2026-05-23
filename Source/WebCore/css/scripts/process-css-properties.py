@@ -865,18 +865,14 @@ class StylePropertyCodeGenProperties:
             for entry_name in ["parser-function", "skip-parser"]:
                 if entry_name in json_value:
                     raise Exception(f"{key_path} can't have both 'parser-grammar' and '{entry_name}'.")
-            grammar = Grammar.from_string(parsing_context, f"{key_path}", name, json_value["parser-grammar"])
-            grammar.perform_fixups(parsing_context.parsed_shared_grammar_rules)
-            json_value["parser-grammar"] = grammar
+            json_value["parser-grammar"] = Grammar.from_string(parsing_context, f"{key_path}", name, json_value["parser-grammar"])
 
         if json_value.get("parser-grammar-unused"):
             if "parser-grammar-unused-reason" not in json_value:
                 raise Exception(f"{key_path} must have 'parser-grammar-unused-reason' specified when using 'parser-grammar-unused'.")
             # If we have a "parser-grammar-unused" specified, we still process it to ensure that at least it is syntactically valid, we just
             # won't actually use it for generation.
-            grammar = Grammar.from_string(parsing_context, f"{key_path}", name, json_value["parser-grammar-unused"])
-            grammar.perform_fixups(parsing_context.parsed_shared_grammar_rules)
-            json_value["parser-grammar-unused"] = grammar
+            json_value["parser-grammar-unused"] = Grammar.from_string(parsing_context, f"{key_path}", name, json_value["parser-grammar-unused"])
 
         if json_value.get("parser-grammar-unused-reason"):
             if "parser-grammar-unused" not in json_value:
@@ -972,9 +968,9 @@ class StyleProperty:
             json_value["values"] = list(filter(lambda value: value is not None, map(lambda value: Value.from_json(parsing_context, f"{key_path}.{name}", value), json_value["values"])))
 
             if codegen_properties.parser_grammar:
-                codegen_properties.parser_grammar.perform_fixups_for_values_references(json_value["values"])
+                codegen_properties.parser_grammar.perform_fixups_for_values_reference_terms(json_value["values"])
             elif codegen_properties.parser_grammar_unused:
-                codegen_properties.parser_grammar_unused.perform_fixups_for_values_references(json_value["values"])
+                codegen_properties.parser_grammar_unused.perform_fixups_for_values_reference_terms(json_value["values"])
 
             if codegen_properties.parser_grammar:
                 codegen_properties.parser_grammar.check_against_values(json_value.get("values", []))
@@ -1493,18 +1489,14 @@ class DescriptorCodeGenProperties:
             for entry_name in ["parser-function", "skip-parser", "longhands"]:
                 if entry_name in json_value:
                     raise Exception(f"{key_path} can't have both 'parser-grammar' and '{entry_name}.")
-            grammar = Grammar.from_string(parsing_context, f"{key_path}", name, json_value["parser-grammar"])
-            grammar.perform_fixups(parsing_context.parsed_shared_grammar_rules)
-            json_value["parser-grammar"] = grammar
+            json_value["parser-grammar"] = Grammar.from_string(parsing_context, f"{key_path}", name, json_value["parser-grammar"])
 
         if json_value.get("parser-grammar-unused"):
             if "parser-grammar-unused-reason" not in json_value:
                 raise Exception(f"{key_path} must have 'parser-grammar-unused-reason' specified when using 'parser-grammar-unused'.")
             # If we have a "parser-grammar-unused" specified, we still process it to ensure that at least it is syntactically valid, we just
             # won't actually use it for generation.
-            grammar = Grammar.from_string(parsing_context, f"{key_path}", name, json_value["parser-grammar-unused"])
-            grammar.perform_fixups(parsing_context.parsed_shared_grammar_rules)
-            json_value["parser-grammar-unused"] = grammar
+            json_value["parser-grammar-unused"] = Grammar.from_string(parsing_context, f"{key_path}", name, json_value["parser-grammar-unused"])
 
         if json_value.get("parser-grammar-unused-reason"):
             if "parser-grammar-unused" not in json_value:
@@ -1564,9 +1556,9 @@ class Descriptor:
             json_value["values"] = list(filter(lambda value: value is not None, map(lambda value: Value.from_json(parsing_context, f"{key_path}.{name}", value), json_value["values"])))
 
             if codegen_properties.parser_grammar:
-                codegen_properties.parser_grammar.perform_fixups_for_values_references(json_value["values"])
+                codegen_properties.parser_grammar.perform_fixups_for_values_reference_terms(json_value["values"])
             elif codegen_properties.parser_grammar_unused:
-                codegen_properties.parser_grammar_unused.perform_fixups_for_values_references(json_value["values"])
+                codegen_properties.parser_grammar_unused.perform_fixups_for_values_reference_terms(json_value["values"])
 
             if codegen_properties.parser_grammar:
                 codegen_properties.parser_grammar.check_against_values(json_value.get("values", []))
@@ -2097,9 +2089,14 @@ class ReferenceTerm:
             BuiltinSchema.RangeParameter('value-range')),
         BuiltinSchema.Entry('resolution',
             BuiltinSchema.RangeParameter('value-range')),
+        BuiltinSchema.Entry('flex',
+            BuiltinSchema.RangeParameter('value-range')),
         BuiltinSchema.Entry('number-or-percentage-resolved-to-number',
             BuiltinSchema.RangeParameter('value-range')),
         BuiltinSchema.Entry('position'),
+        BuiltinSchema.Entry('position-x'),
+        BuiltinSchema.Entry('position-y'),
+        BuiltinSchema.Entry('ratio'),
         BuiltinSchema.Entry('color',
             BuiltinSchema.StringParameter('allowed-types', mappings=ALLOWED_COLOR_TYPES_MAPPINGS, default=['absolute', 'current', 'system'])),
         BuiltinSchema.Entry('image',
@@ -2113,6 +2110,7 @@ class ReferenceTerm:
         BuiltinSchema.Entry('feature-tag-value'),
         BuiltinSchema.Entry('variation-tag-value'),
         BuiltinSchema.Entry('unicode-range-token'),
+        BuiltinSchema.Entry('declaration-value'),
     )
 
     class StringParameter:
@@ -2200,14 +2198,21 @@ class ReferenceTerm:
         assert(type(node) is BNFReferenceNode)
         return ReferenceTerm(node.name, node.is_internal, node.is_function_reference, [ReferenceTerm.Parameter.from_node(attribute) for attribute in node.attributes], annotation=node.annotation)
 
-    def perform_fixups(self, all_rules):
-        # Replace a reference with the term it references if it can be found.
-        name_for_lookup = str(self)
-        if name_for_lookup in all_rules.rules_by_name:
-            return all_rules.rules_by_name[name_for_lookup].grammar.root_term.perform_fixups(all_rules)
-        return self
+    def perform_fixups_for_named_reference_terms(self, fixup_context):
+        # Builtins and reference terms with `override_function` set (e.g. root nodes for SharedGrammarRules
+        # that have a "grammar-function" defined) don't participate in fixup.
+        if self.is_builtin or self.override_function:
+            return self
 
-    def perform_fixups_for_values_references(self, values):
+        # Similarly, "<<values>>" style reference terms don't participate in this round of fixup,
+        # but rather will resolved in `perform_fixups_for_values_reference_terms()`.
+        if self.is_internal and self.name.name == "values":
+            return self
+
+        # All other reference nodes get replaced with terms of the production they reference.
+        return fixup_context.resolve_reference_term_with_name(str(self))
+
+    def perform_fixups_for_values_reference_terms(self, values):
         # NOTE: The actual name in the grammar is "<<values>>", which we store as is_internal + 'values'.
         if self.is_internal and self.name.name == "values":
             return MatchOneTerm.from_values(values)
@@ -2247,10 +2252,10 @@ class LiteralTerm:
         assert(type(node) is BNFLiteralNode)
         return LiteralTerm(node.value)
 
-    def perform_fixups(self, all_rules):
+    def perform_fixups_for_named_reference_terms(self, fixup_context):
         return self
 
-    def perform_fixups_for_values_references(self, values):
+    def perform_fixups_for_values_reference_terms(self, values):
         return self
 
     @property
@@ -2306,10 +2311,10 @@ class KeywordTerm:
         assert(type(node) is BNFKeywordNode)
         return KeywordTerm(ValueKeywordName(node.keyword), annotation=node.annotation)
 
-    def perform_fixups(self, all_rules):
+    def perform_fixups_for_named_reference_terms(self, fixup_context):
         return self
 
-    def perform_fixups_for_values_references(self, values):
+    def perform_fixups_for_values_reference_terms(self, values):
         return self
 
     @property
@@ -2380,15 +2385,15 @@ class MatchOneTerm:
     def from_values(values):
         return MatchOneTerm(list(compact_map(lambda value: value.keyword_term, values)))
 
-    def perform_fixups(self, all_rules):
-        self.subterms = MatchOneTerm.simplify(subterm.perform_fixups(all_rules) for subterm in self.subterms)
+    def perform_fixups_for_named_reference_terms(self, fixup_context):
+        self.subterms = MatchOneTerm.simplify(subterm.perform_fixups_for_named_reference_terms(fixup_context) for subterm in self.subterms)
 
         if len(self.subterms) == 1:
             return self.subterms[0]
         return self
 
-    def perform_fixups_for_values_references(self, values):
-        self.subterms = MatchOneTerm.simplify(subterm.perform_fixups_for_values_references(values) for subterm in self.subterms)
+    def perform_fixups_for_values_reference_terms(self, values):
+        self.subterms = MatchOneTerm.simplify(subterm.perform_fixups_for_values_reference_terms(values) for subterm in self.subterms)
 
         if len(self.subterms) == 1:
             return self.subterms[0]
@@ -2497,15 +2502,15 @@ class MatchOneOrMoreAnyOrderTerm:
         assert(type(node) is BNFGroupingNode)
         return MatchOneOrMoreAnyOrderTerm(list(compact_map(lambda member: Term.from_node(member), node.members)), node.kind, node.annotation)
 
-    def perform_fixups(self, all_rules):
-        self.subterms = [subterm.perform_fixups(all_rules) for subterm in self.subterms]
+    def perform_fixups_for_named_reference_terms(self, fixup_context):
+        self.subterms = [subterm.perform_fixups_for_named_reference_terms(fixup_context) for subterm in self.subterms]
 
         if len(self.subterms) == 1:
             return self.subterms[0]
         return self
 
-    def perform_fixups_for_values_references(self, values):
-        self.subterms = [subterm.perform_fixups_for_values_references(values) for subterm in self.subterms]
+    def perform_fixups_for_values_reference_terms(self, values):
+        self.subterms = [subterm.perform_fixups_for_values_reference_terms(values) for subterm in self.subterms]
 
         if len(self.subterms) == 1:
             return self.subterms[0]
@@ -2575,15 +2580,15 @@ class MatchAllOrderedTerm:
         assert(type(node) is BNFGroupingNode)
         return MatchAllOrderedTerm(list(compact_map(lambda member: Term.from_node(member), node.members)), node.kind, node.annotation)
 
-    def perform_fixups(self, all_rules):
-        self.subterms = [subterm.perform_fixups(all_rules) for subterm in self.subterms]
+    def perform_fixups_for_named_reference_terms(self, fixup_context):
+        self.subterms = [subterm.perform_fixups_for_named_reference_terms(fixup_context) for subterm in self.subterms]
 
         if len(self.subterms) == 1:
             return self.subterms[0]
         return self
 
-    def perform_fixups_for_values_references(self, values):
-        self.subterms = [subterm.perform_fixups_for_values_references(values) for subterm in self.subterms]
+    def perform_fixups_for_values_reference_terms(self, values):
+        self.subterms = [subterm.perform_fixups_for_values_reference_terms(values) for subterm in self.subterms]
 
         if len(self.subterms) == 1:
             return self.subterms[0]
@@ -2656,15 +2661,15 @@ class MatchAllAnyOrderTerm:
         assert(type(node) is BNFGroupingNode)
         return MatchAllAnyOrderTerm(list(compact_map(lambda member: Term.from_node(member), node.members)), node.kind, node.annotation)
 
-    def perform_fixups(self, all_rules):
-        self.subterms = [subterm.perform_fixups(all_rules) for subterm in self.subterms]
+    def perform_fixups_for_named_reference_terms(self, fixup_context):
+        self.subterms = [subterm.perform_fixups_for_named_reference_terms(fixup_context) for subterm in self.subterms]
 
         if len(self.subterms) == 1:
             return self.subterms[0]
         return self
 
-    def perform_fixups_for_values_references(self, values):
-        self.subterms = [subterm.perform_fixups_for_values_references(values) for subterm in self.subterms]
+    def perform_fixups_for_values_reference_terms(self, values):
+        self.subterms = [subterm.perform_fixups_for_values_reference_terms(values) for subterm in self.subterms]
 
         if len(self.subterms) == 1:
             return self.subterms[0]
@@ -2717,12 +2722,12 @@ class OptionalTerm:
     def wrapping_term(subterm, *, annotation):
         return OptionalTerm(subterm, annotation=annotation)
 
-    def perform_fixups(self, all_rules):
-        self.subterm = self.subterm.perform_fixups(all_rules)
+    def perform_fixups_for_named_reference_terms(self, fixup_context):
+        self.subterm = self.subterm.perform_fixups_for_named_reference_terms(fixup_context)
         return self
 
-    def perform_fixups_for_values_references(self, values):
-        self.subterm = self.subterm.perform_fixups_for_values_references(values)
+    def perform_fixups_for_values_reference_terms(self, values):
+        self.subterm = self.subterm.perform_fixups_for_values_reference_terms(values)
         return self
 
     @property
@@ -2798,12 +2803,12 @@ class UnboundedRepetitionTerm:
     def wrapping_term(term, *, separator, min, annotation):
         return UnboundedRepetitionTerm(term, separator=separator, min=min, annotation=annotation)
 
-    def perform_fixups(self, all_rules):
-        self.repeated_term = self.repeated_term.perform_fixups(all_rules)
+    def perform_fixups_for_named_reference_terms(self, fixup_context):
+        self.repeated_term = self.repeated_term.perform_fixups_for_named_reference_terms(fixup_context)
         return self
 
-    def perform_fixups_for_values_references(self, values):
-        self.repeated_term = self.repeated_term.perform_fixups_for_values_references(values)
+    def perform_fixups_for_values_reference_terms(self, values):
+        self.repeated_term = self.repeated_term.perform_fixups_for_values_reference_terms(values)
         return self
 
     @property
@@ -2882,12 +2887,12 @@ class BoundedRepetitionTerm:
     def wrapping_term(term, *, separator, min, max, annotation):
         return BoundedRepetitionTerm(term, separator=separator, min=min, max=max, annotation=annotation)
 
-    def perform_fixups(self, all_rules):
-        self.repeated_term = self.repeated_term.perform_fixups(all_rules)
+    def perform_fixups_for_named_reference_terms(self, fixup_context):
+        self.repeated_term = self.repeated_term.perform_fixups_for_named_reference_terms(fixup_context)
         return self
 
-    def perform_fixups_for_values_references(self, values):
-        self.repeated_term = self.repeated_term.perform_fixups_for_values_references(values)
+    def perform_fixups_for_values_reference_terms(self, values):
+        self.repeated_term = self.repeated_term.perform_fixups_for_values_reference_terms(values)
         return self
 
     @property
@@ -2941,12 +2946,12 @@ class FunctionTerm:
         assert(type(node) is BNFFunctionNode)
         return FunctionTerm(ValueKeywordName(node.name), Term.from_node(node.parameter_group), annotation=node.annotation)
 
-    def perform_fixups(self, all_rules):
-        self.parameter_group_term = self.parameter_group_term.perform_fixups(all_rules)
+    def perform_fixups_for_named_reference_terms(self, fixup_context):
+        self.parameter_group_term = self.parameter_group_term.perform_fixups_for_named_reference_terms(fixup_context)
         return self
 
-    def perform_fixups_for_values_references(self, values):
-        self.parameter_group_term = self.parameter_group_term.perform_fixups_for_values_references(values)
+    def perform_fixups_for_values_reference_terms(self, values):
+        self.parameter_group_term = self.parameter_group_term.perform_fixups_for_values_reference_terms(values)
         return self
 
     @property
@@ -2976,15 +2981,15 @@ class Grammar:
         assert(type(string) is str)
         return Grammar(name, Term.from_node(BNFParser(parsing_context, key_path, string).parse()))
 
-    def perform_fixups(self, all_rules):
-        self.root_term = self.root_term.perform_fixups(all_rules)
+    def perform_fixups_for_named_reference_terms(self, fixup_context):
+        self.root_term = self.root_term.perform_fixups_for_named_reference_terms(fixup_context)
 
-    def perform_fixups_for_values_references(self, values):
-        self.root_term = self.root_term.perform_fixups_for_values_references(values)
+    def perform_fixups_for_values_reference_terms(self, values):
+        self.root_term = self.root_term.perform_fixups_for_values_reference_terms(values)
 
     def check_against_values(self, values):
         if self.has_non_builtin_reference_terms:
-            # If the grammar has any  non-builtin references, the grammar is incomplete and this check cannot be performed.
+            # If the grammar has any non-builtin references, the grammar is incomplete and this check cannot be performed.
             return
 
         keywords_supported_by_grammar = self.supported_keywords
@@ -3089,8 +3094,8 @@ class SharedGrammarRule:
 
         return SharedGrammarRule(name, **json_value)
 
-    def perform_fixups(self, all_rules):
-        self.grammar.perform_fixups(all_rules)
+    def perform_fixups_for_named_reference_terms(self, fixup_context):
+        self.grammar.perform_fixups_for_named_reference_terms(fixup_context)
 
 
 # Shared grammar rules used to aid in defining property specific grammars.
@@ -3099,8 +3104,6 @@ class SharedGrammarRules:
         self.rules = rules
         self.rules_by_name = {rule.name: rule for rule in rules}
         self._all = None
-
-        self._perform_fixups()
 
     def __str__(self):
         return "SharedGrammarRules"
@@ -3112,17 +3115,60 @@ class SharedGrammarRules:
     def from_json(parsing_context, key_path, json_value):
         return SharedGrammarRules(list(compact_map(lambda item: SharedGrammarRule.from_json(parsing_context, key_path, item[0], item[1]), json_value.items())))
 
-    # Updates any references to other rules with a direct reference to the rule object.
-    def _perform_fixups(self):
-        for rule in self.rules:
-            rule.perform_fixups(self)
-
     # Returns the set of all shared property rules sorted by name.
     @property
     def all(self):
         if not self._all:
             self._all = sorted(self.rules, key=lambda rule: rule.name)
         return self._all
+
+
+# Context used when resolving references between grammar rules.
+class GrammarReferenceFixupContext:
+    def __init__(self, parsing_context):
+        self._parsing_context = parsing_context
+        self._cycle_detector = set()
+
+    # Performs grammar reference fixups on all shared grammar rules, properties and descriptors.
+    def fixup(self):
+        for rule in self._parsing_context.parsed_shared_grammar_rules.rules:
+            rule.perform_fixups_for_named_reference_terms(self)
+
+        for property in self._parsing_context.parsed_properties_and_descriptors.all_properties_and_descriptors:
+            if property.codegen_properties.parser_grammar:
+                property.codegen_properties.parser_grammar.perform_fixups_for_named_reference_terms(self)
+
+    @property
+    def _shared_grammar_rules_by_name(self):
+        return self._parsing_context.parsed_shared_grammar_rules.rules_by_name
+
+    @property
+    def _properties_by_name(self):
+        return self._parsing_context.parsed_properties_and_descriptors.style_properties.properties_by_name
+
+    # Resolves quoted reference terms (e.g. <'foo'>) against style property grammars
+    # and non-quoted reference terms (e.g. <foo>) against shared rule grammars.
+    def resolve_reference_term_with_name(self, name):
+        if name in self._cycle_detector:
+            raise Exception(f"Grammar reference cycle detected trying to resolve {name}.")
+
+        if name.startswith("<'") and name.endswith("'>"):
+            if match := self._properties_by_name[name[2:-2]]:
+                if match.codegen_properties.parser_grammar:
+                    self._cycle_detector.add(name)
+                    replacement = match.codegen_properties.parser_grammar.root_term.perform_fixups_for_named_reference_terms(self)
+                    self._cycle_detector.remove(name)
+                    return replacement
+
+                raise Exception(f"Grammar reference term {name} references {match} which has no defined grammar.")
+        else:
+            if match := self._shared_grammar_rules_by_name.get(name):
+                self._cycle_detector.add(name)
+                replacement = match.grammar.root_term.perform_fixups_for_named_reference_terms(self)
+                self._cycle_detector.remove(name)
+                return replacement
+
+        raise Exception(f"No grammars found when trying to resolve {name}.")
 
 
 class ParsingContext:
@@ -3146,10 +3192,8 @@ class ParsingContext:
         self.parsed_shared_grammar_rules = None
         self.parsed_properties_and_descriptors = None
 
-    def parse_shared_grammar_rules(self):
+    def parse(self):
         self.parsed_shared_grammar_rules = SharedGrammarRules.from_json(self, "$shared-grammar-rules", self.json_value["shared-grammar-rules"])
-
-    def parse_properties_and_descriptors(self):
         self.parsed_properties_and_descriptors = PropertiesAndDescriptors.from_json(self, properties_json_value=self.json_value["properties"], descriptors_json_value=self.json_value["descriptors"])
 
     def is_enabled(self, *, conditional):
@@ -9401,8 +9445,6 @@ class TermGeneratorReferenceTerm(TermGenerator):
                 return f"CSSPrimitiveValueResolver<CSS::Percentage<{builtin.value_range}>>::consumeAndResolve({range_string}, {state_string})"
             elif isinstance(builtin, BuiltinNumberOrPercentageResolvedToNumberConsumer):
                 return f"consumePercentageDividedBy100OrNumber({range_string}, {state_string})"
-            elif isinstance(builtin, BuiltinPositionConsumer):
-                return f"consumePosition({range_string}, {state_string})"
             elif isinstance(builtin, BuiltinColorConsumer):
                 if builtin.allowed_types:
                     return f"consumeColor({range_string}, {state_string}, {{ .allowedColorTypes = {{ {builtin.allowed_types} }} }})"
@@ -9462,11 +9504,19 @@ class TermGeneratorReferenceTerm(TermGenerator):
                 return True
             elif isinstance(builtin, BuiltinPositionConsumer):
                 return True
+            elif isinstance(builtin, BuiltinPositionXConsumer):
+                return True
+            elif isinstance(builtin, BuiltinPositionYConsumer):
+                return True
+            elif isinstance(builtin, BuiltinRatioConsumer):
+                return True
             elif isinstance(builtin, BuiltinColorConsumer):
                 return True
             elif isinstance(builtin, BuiltinImageConsumer):
                 return True
             elif isinstance(builtin, BuiltinResolutionConsumer):
+                return True
+            elif isinstance(builtin, BuiltinFlexConsumer):
                 return True
             elif isinstance(builtin, BuiltinStringConsumer):
                 return False
@@ -9482,6 +9532,8 @@ class TermGeneratorReferenceTerm(TermGenerator):
                 return True
             elif isinstance(builtin, BuiltinUnicodeRangeTokenConsumer):
                 return False
+            elif isinstance(builtin, BuiltinDeclarationValueConsumer):
+                return True
             else:
                 raise Exception(f"Unknown builtin type used: {builtin.name.name}")
         else:
@@ -11424,8 +11476,10 @@ def main():
         properties_json = json.load(properties_file)
 
     parsing_context = ParsingContext(properties_json, defines_string=args.defines, parsing_for_codegen=True, check_unused_grammars_values=args.check_unused_grammars_values, verbose=args.verbose)
-    parsing_context.parse_shared_grammar_rules()
-    parsing_context.parse_properties_and_descriptors()
+    parsing_context.parse()
+
+    grammar_reference_fixup_context = GrammarReferenceFixupContext(parsing_context)
+    grammar_reference_fixup_context.fixup()
 
     if args.verbose:
         print(f"{len(parsing_context.parsed_shared_grammar_rules.rules)} shared grammar rules active for code generation")

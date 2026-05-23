@@ -35,6 +35,7 @@ partial interface CSSStyleProperties {
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testColorAllowsTypesAbsolute;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testColorPropertyWithVisitedLinkSupport;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testCustomExtractor;
+    [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testDirectlyReferencingProperty;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testFunctionBoundedParameters;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testFunctionFixedParameters;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testFunctionNoParameters;
@@ -127,6 +128,8 @@ partial interface CSSStyleProperties {
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testUrlWithNoModifiers;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testUsingSharedRule;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testUsingSharedRuleExported;
+    [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testUsingSharedRuleMultipleTimes;
+    [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testUsingSharedRuleReferencingProperty;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString testUsingSharedRuleWithOverrideFunction;
 
     // For each CSS property property that is a supported CSS property and that begins
@@ -167,6 +170,7 @@ partial interface CSSStyleProperties {
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-color-allows-types-absolute;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-color-property-with-visited-link-support;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-custom-extractor;
+    [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-directly-referencing-property;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-function-bounded-parameters;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-function-fixed-parameters;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-function-no-parameters;
@@ -259,6 +263,8 @@ partial interface CSSStyleProperties {
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-url-with-no-modifiers;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-using-shared-rule;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-using-shared-rule-exported;
+    [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-using-shared-rule-multiple-times;
+    [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-using-shared-rule-referencing-property;
     [CEReactions=Needed, DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString test-using-shared-rule-with-override-function;
 
     // Non-standard. Special case properties starting with -epub- like is done for

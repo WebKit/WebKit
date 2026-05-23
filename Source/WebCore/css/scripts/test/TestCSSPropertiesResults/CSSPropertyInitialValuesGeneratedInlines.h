@@ -25,6 +25,7 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyID::CSSPropertyTestAnimationWrapperAccelerationAlways:
     case CSSPropertyID::CSSPropertyTestAnimationWrapperAccelerationThreadedOnly:
     case CSSPropertyID::CSSPropertyTestCustomExtractor:
+    case CSSPropertyID::CSSPropertyTestDirectlyReferencingProperty:
     case CSSPropertyID::CSSPropertyTestHighPriority:
     case CSSPropertyID::CSSPropertyTestLogicalPropertyGroupPhysicalHorizontal:
     case CSSPropertyID::CSSPropertyTestLogicalPropertyGroupPhysicalVertical:
@@ -48,6 +49,8 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyID::CSSPropertyTestTopPriority:
     case CSSPropertyID::CSSPropertyTestUsingSharedRule:
     case CSSPropertyID::CSSPropertyTestUsingSharedRuleExported:
+    case CSSPropertyID::CSSPropertyTestUsingSharedRuleMultipleTimes:
+    case CSSPropertyID::CSSPropertyTestUsingSharedRuleReferencingProperty:
     case CSSPropertyID::CSSPropertyTestUsingSharedRuleWithOverrideFunction:
         return InitialNumericValue { 0, CSSUnitType::CSS_NUMBER };
     case CSSPropertyID::CSSPropertyTestColor:

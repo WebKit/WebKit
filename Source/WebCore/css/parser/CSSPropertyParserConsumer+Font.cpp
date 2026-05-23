@@ -263,14 +263,17 @@ static AtomString concatenateFamilyName(CSSParserTokenRange& range)
         }
         builder.append(range.consumeIncludingWhitespace().value());
     }
-    // <family-name> can't contain unquoted generic families
+    // <font-family-name> can't contain unquoted generic families
     if (!addedSpace && (!isValidCustomIdentifier(firstToken.id()) || !genericFontFamily(firstToken.id()).isNull()))
         return nullAtom();
     return builder.toAtomString();
 }
 
-static AtomString consumeFamilyNameUnresolved(CSSParserTokenRange& range)
+static AtomString consumeFontFamilyNameUnresolved(CSSParserTokenRange& range)
 {
+    // <font-family-name> = <string> | <custom-ident>+
+    // https://drafts.csswg.org/css-fonts-4/#font-family-name-syntax
+
     if (range.peek().type() == StringToken)
         return range.consumeIncludingWhitespace().value().toAtomString();
     if (range.peek().type() != IdentToken)
@@ -278,14 +281,23 @@ static AtomString consumeFamilyNameUnresolved(CSSParserTokenRange& range)
     return concatenateFamilyName(range);
 }
 
-static std::optional<CSSValueID> consumeGenericFamilyUnresolved(CSSParserTokenRange& range)
+static std::optional<CSSValueID> consumeGenericFontFamilyUnresolved(CSSParserTokenRange& range)
 {
-    return consumeIdentRaw<CSSValueSerif, CSSValueSansSerif, CSSValueCursive, CSSValueFantasy, CSSValueMonospace, CSSValueWebkitBody, CSSValueWebkitPictograph, CSSValueSystemUi, CSSValueMath>(range);
+    return consumeIdentRaw<CSSValueSerif, CSSValueSansSerif, CSSValueSystemUi, CSSValueCursive, CSSValueFantasy, CSSValueMath, CSSValueMonospace, CSSValueWebkitBody, CSSValueWebkitPictograph>(range);
 }
 
-static RefPtr<CSSValue> consumeGenericFamily(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+RefPtr<CSSValue> consumeGenericFontFamily(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
-    if (auto familyName = consumeGenericFamilyUnresolved(range)) {
+    // <generic-font-family> = serif | sans-serif | system-ui | cursive | fantasy | math | monospace | -webkit-body | -webkit-pictograph
+    // https://drafts.csswg.org/css-fonts-4/#typedef-generic-font-family
+
+    // FIXME: Current grammar in the spec is:
+    //   <generic-font-family> = <generic-font-script-specific>| <generic-font-complete> | <generic-font-incomplete>
+    //   <generic-font-script-specific> = generic(fangsong) | generic(kai) | generic(khmer-mul) |  generic(nastaliq)
+    //   <generic-font-complete> = serif | sans-serif | system-ui | cursive | fantasy | math | monospace
+    //   <generic-font-incomplete> = ui-serif | ui-sans-serif | ui-monospace | ui-rounded
+
+    if (auto familyName = consumeGenericFontFamilyUnresolved(range)) {
         // FIXME: Remove special case for system-ui.
         if (*familyName == CSSValueSystemUi)
             return state.pool.createFontFamilyNameValue(nameLiteral(*familyName));
@@ -296,15 +308,15 @@ static RefPtr<CSSValue> consumeGenericFamily(CSSParserTokenRange& range, CSS::Pr
 
 static std::optional<UnresolvedFontFamily> consumeFontFamilyUnresolved(CSSParserTokenRange& range)
 {
-    // <'font-family'> = [ <family-name> | <generic-family> ]#
+    // <'font-family'> = [ <font-family-name> | <generic-font-family> ]#
     // https://drafts.csswg.org/css-fonts-4/#font-family-prop
 
     UnresolvedFontFamily list;
     do {
-        if (auto ident = consumeGenericFamilyUnresolved(range))
+        if (auto ident = consumeGenericFontFamilyUnresolved(range))
             list.append({ *ident });
         else {
-            auto familyName = consumeFamilyNameUnresolved(range);
+            auto familyName = consumeFontFamilyNameUnresolved(range);
             if (familyName.isNull())
                 return std::nullopt;
             list.append({ familyName });
@@ -313,26 +325,15 @@ static std::optional<UnresolvedFontFamily> consumeFontFamilyUnresolved(CSSParser
     return list;
 }
 
-RefPtr<CSSValue> consumeFamilyName(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+RefPtr<CSSValue> consumeFontFamilyName(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
-    // https://drafts.csswg.org/css-fonts-4/#family-name-syntax
+    // <font-family-name> = <string> | <custom-ident>+
+    // https://drafts.csswg.org/css-fonts-4/#font-family-name-syntax
 
-    auto familyName = consumeFamilyNameUnresolved(range);
+    auto familyName = consumeFontFamilyNameUnresolved(range);
     if (familyName.isNull())
         return nullptr;
     return state.pool.createFontFamilyNameValue(familyName);
-}
-
-RefPtr<CSSValue> consumeFontFamily(CSSParserTokenRange& range, CSS::PropertyParserState& state)
-{
-    // <'font-family'> = [ <family-name> | <generic-family> ]#
-    // https://drafts.csswg.org/css-fonts-4/#font-family-prop
-
-    return consumeListSeparatedBy<',', OneOrMore>(range, [&](auto& range) -> RefPtr<CSSValue> {
-        if (auto parsedValue = consumeGenericFamily(range, state))
-            return parsedValue;
-        return consumeFamilyName(range, state);
-    });
 }
 
 // MARK: - 'font-size'
@@ -572,7 +573,7 @@ static RefPtr<CSSFontFaceSrcResourceValue> consumeFontFaceSrcURI(CSSParserTokenR
 
 static RefPtr<CSSValue> consumeFontFaceSrcLocal(CSSParserTokenRange& range, CSS::PropertyParserState&)
 {
-    // <font-src-local>     = local( <family-name> )
+    // <font-src-local>     = local( <font-family-name> )
     // https://drafts.csswg.org/css-fonts-4/#typedef-font-src
 
     CSSParserTokenRange args = consumeFunction(range);
@@ -597,7 +598,7 @@ RefPtr<CSSValueList> consumeFontFaceSrc(CSSParserTokenRange& range, CSS::Propert
 
     // <font-src>           = <font-src-uri> | <font-src-local>
     // <font-src-uri>       = <url> [ format( <font-format> ) ]? [ tech( <font-tech># ) ]?
-    // <font-src-local>     = local( <family-name> )
+    // <font-src-local>     = local( <font-family-name> )
 
     // <font-format>        = <string> | collection | embedded-opentype | opentype | svg | truetype | woff | woff2
     // <font-tech>          = <font-features-tech> | <color-font-tech> | variations | palettes | incremental
@@ -966,12 +967,12 @@ RefPtr<CSSValue> parseFontFaceFontWeight(const String& string, ScriptExecutionCo
 
 Vector<AtomString> consumeFontFeatureValuesPreludeFamilyNameList(CSSParserTokenRange& range, const CSSParserContext&)
 {
-    // <prelude-family-name-list> = <family-name>#
+    // <prelude-family-name-list> = <font-family-name>#
     // https://drafts.csswg.org/css-fonts/#font-feature-values-syntax
 
     Vector<AtomString> result;
     do {
-        auto name = consumeFamilyNameUnresolved(range);
+        auto name = consumeFontFamilyNameUnresolved(range);
         if (name.isNull())
             return { };
 

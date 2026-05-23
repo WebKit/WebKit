@@ -640,9 +640,7 @@
                 "computed-style-storage-container": "opaque",
                 "computed-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                 "computed-style-type": "Style::FontFamilies",
-                "parser-function": "consumeFontFamily",
-                "parser-grammar-unused": "[ <family-name> | <generic-family> | <-webkit-generic-family> ]#",
-                "parser-grammar-unused-reason": "Needs support for primitive <family-name>."
+                "parser-grammar": "[ <font-family-name> | <generic-font-family> ]#"
             },
             "specification": {
                 "category": "css-fonts",
@@ -12457,7 +12455,7 @@
                     "scroll-margin-block-end"
                 ],
                 "shorthand-pattern": "CoalescingPair",
-                "parser-grammar-unused": "<'scroll-left'>{1,2}",
+                "parser-grammar-unused": "<length>{1,2}",
                 "parser-grammar-unused-reason": "Needs support for shorthand grammars."
             },
             "specification": {
@@ -12472,7 +12470,7 @@
                     "scroll-margin-inline-end"
                 ],
                 "shorthand-pattern": "CoalescingPair",
-                "parser-grammar-unused": "<'scroll-left'>{1,2}",
+                "parser-grammar-unused": "<length>{1,2}",
                 "parser-grammar-unused-reason": "Needs support for shorthand grammars."
             },
             "specification": {
@@ -13557,7 +13555,7 @@
         "@font-face": {
             "font-family": {
                 "codegen-properties": {
-                    "parser-grammar": "<family-name>",
+                    "parser-grammar": "<font-family-name>",
                     "parser-exported": true
                 },
                 "specification": {
@@ -13692,7 +13690,7 @@
                 "codegen-properties": {
                     "parser-function": "consumeFontFaceSrc",
                     "parser-grammar-unused": "<font-src-list>",
-                    "parser-grammar-unused-reason": "Needs support for primitive <family-name>."
+                    "parser-grammar-unused-reason": "Needs support for CSSFontFaceSrcResourceValue and CSSFontFaceSrcLocalValue creation."
                 },
                 "specification": {
                     "category": "css-fonts-4",
@@ -13723,7 +13721,7 @@
         "@font-palette-values": {
             "font-family": {
                 "codegen-properties": {
-                    "parser-grammar": "<family-name>#@(no-single-item-opt)"
+                    "parser-grammar": "<font-family-name>#@(no-single-item-opt)"
                 },
                 "specification": {
                     "category": "css-fonts-4",
@@ -13919,6 +13917,11 @@
             "shortname": "CSS Display",
             "longname": "CSS Display Module",
             "url": "https://www.w3.org/TR/css-display-3/"
+        },
+        "css-easing": {
+            "shortname": "CSS Easing Functions",
+            "longname": "CSS Easing Functions Module",
+            "url": "https://drafts.csswg.org/css-easing/"
         },
         "css-filters": {
             "shortname": "CSS Filter Effects",
@@ -14236,16 +14239,24 @@
                 "url": "https://drafts.csswg.org/css-fonts-4/#east-asian-width-values"
             }
         },
-        "<generic-family>": {
-            "grammar": "serif | sans-serif | cursive | fantasy | monospace | system-ui | emoji | math | fangsong | ui-serif | ui-sans-serif | ui-monospace | ui-rounded",
+        "<generic-font-family>": {
+            "grammar-function": "consumeGenericFontFamily",
+            "grammar-unused": "serif | sans-serif | system-ui | cursive | fantasy | math | monospace | -webkit-body | -webkit-pictograph",
+            "grammar-unused-reason": "Needs support for special handling for `system-ui`.",
+            "grammar-comment": "Current spec grammar is '<generic-font-script-specific> | <generic-font-complete> | <generic-font-incomplete>'",
             "specification": {
                 "category": "css-fonts-4",
-                "url": "https://drafts.csswg.org/css-fonts-4/#generic-font-families"
+                "url": "https://drafts.csswg.org/css-fonts-4/#typedef-generic-font-family"
             }
         },
-        "<-webkit-generic-family>": {
-            "grammar": "-webkit-body",
-            "status": "non-standard"
+        "<font-family-name>": {
+            "grammar-function": "consumeFontFamilyName",
+            "grammar-unused": "<string> | <custom-ident>+",
+            "grammar-unused-reason": "Needs support for creating CSSFontFamilyNameValue values.",
+            "specification": {
+                "category": "css-fonts-4",
+                "url": "https://drafts.csswg.org/css-fonts-4/#typedef-generic-font-family"
+            }
         },
         "<gap-gutter>": {
             "grammar": "normal | <length-percentage [0,inf]>",
@@ -14481,6 +14492,15 @@
                 "url": "https://www.w3.org/TR/css-backgrounds-3/#background-repeat"
             }
         },
+        "<repeat-style>": {
+            "grammar-function": "consumeRepeatStyle",
+            "grammar-unused": "repeat-x | repeat-y | [ repeat | space | round | no-repeat ]{1,2}",
+            "grammar-unused-reason": "Needs support for creating CSSBackgroundRepeatValue values.",
+            "specification": {
+                "category": "css-backgrounds",
+                "url": "https://www.w3.org/TR/css-backgrounds-3/#typedef-repeat-style"
+            }
+        },
         "<single-background-position-x>": {
             "grammar": "<position-x>",
             "exported": true,
@@ -14492,6 +14512,15 @@
             "exported": true,
             "status": "non-standard",
             "comment": "Internally used to represent vertical part of standard <bg-position>"
+        },
+        "<single-background-size>": {
+            "grammar-function": "consumeSingleBackgroundSize",
+            "grammar-unused": "[ <length-percentage [0,inf]> | auto ]{1,2} | cover | contain",
+            "grammar-unused-reason": "Needs support for transforming parsed input to minimal form.",
+            "specification": {
+                "category": "css-backgrounds",
+                "url": "https://www.w3.org/TR/css-backgrounds-3/#typedef-bg-size"
+            }
         },
         "<single-mask-clip>": {
             "grammar": "<box> | no-clip",
@@ -14542,6 +14571,16 @@
                 "category": "css-masking",
                 "url": "https://drafts.fxtf.org/css-masking-1/#propdef-mask-mode"
             }
+        },
+        "<single-mask-size>": {
+            "grammar-function": "consumeSingleMaskSize",
+            "grammar-unused": "[ <length-percentage [0,inf]> | auto ]{1,2} | cover | contain",
+            "grammar-unused-reason": "Needs support for transforming parsed input to minimal form.",
+            "specification": {
+                "category": "css-masking",
+                "url": "https://drafts.csswg.org/css-masking-1/#propdef-mask-size"
+            },
+            "comment": "CSS Masking defines this as using <bg-size>, the same production used by what we call <single-background-size>, but we currently implement slightly different canonicalizations so it needs its own production."
         },
         "<single-webkit-background-clip>": {
             "grammar": "<-webkit-clip-box>",
@@ -14616,6 +14655,15 @@
             "specification": {
                 "category": "css-animations",
                 "url": "https://www.w3.org/TR/css-animations-1/#typedef-single-animation-iteration-count"
+            }
+        },
+        "<keyframes-name>": {
+            "grammar-function": "consumeKeyframesName",
+            "grammar-unused": "<custom-ident> | <string>",
+            "grammar-unused-reason": "Needs support for converting some <string> values to <custom-ident> values.",
+            "specification": {
+                "category": "css-animations",
+                "url": "https://www.w3.org/TR/css-animations-1/#typedef-keyframes-name"
             }
         },
         "<single-animation-name>": {
@@ -14801,6 +14849,27 @@
                 "url": "https://www.w3.org/TR/css-grid-1/#typedef-auto-track-list"
             }
         },
+        "<auto-repeat>": {
+            "grammar": "repeat( [ auto-fill | auto-fit ] , [ <line-names>? <fixed-size> ]+ <line-names>? )",
+            "specification": {
+                "category": "css-grid",
+                "url": "https://www.w3.org/TR/css-grid-1/#typedef-auto-repeat"
+            }
+        },
+        "<fixed-repeat>": {
+            "grammar": "repeat( [ <integer [1,inf]> ] , [ <line-names>? <fixed-size> ]+ <line-names>? )",
+            "specification": {
+                "category": "css-grid",
+                "url": "https://www.w3.org/TR/css-grid-1/#typedef-fixed-repeat"
+            }
+        },
+        "<track-repeat>": {
+            "grammar": "repeat( [ <integer [1,inf]> ] , [ <line-names>? <track-size> ]+ <line-names>? )",
+            "specification": {
+                "category": "css-grid",
+                "url": "https://www.w3.org/TR/css-grid-1/#typedef-track-repeat"
+            }
+        },
         "<explicit-track-list>": {
             "grammar": "[ <line-names>? <track-size> ]+ <line-names>?",
             "specification": {
@@ -14823,21 +14892,21 @@
             }
         },
         "<track-breadth>": {
-            "grammar": "<length-percentage> | <flex> | min-content | max-content | auto",
+            "grammar": "<length-percentage [0,inf]> | <flex [0,inf]> | min-content | max-content | auto",
             "specification": {
                 "category": "css-grid",
                 "url": "https://www.w3.org/TR/css-grid-1/#typedef-track-breadth"
             }
         },
         "<inflexible-breadth>": {
-            "grammar": "<length-percentage> | min-content | max-content | auto",
+            "grammar": "<length-percentage [0,inf]> | min-content | max-content | auto",
             "specification": {
                 "category": "css-grid",
                 "url": "https://www.w3.org/TR/css-grid-1/#typedef-inflexible-breadth"
             }
         },
         "<fixed-breadth>": {
-            "grammar": "<length-percentage>",
+            "grammar": "<length-percentage [0,inf]>",
             "specification": {
                 "category": "css-grid",
                 "url": "https://www.w3.org/TR/css-grid-1/#typedef-fixed-breadth"
@@ -15255,7 +15324,7 @@
             }
         },
         "<font-src>": {
-            "grammar": "[ <url> [ format( <font-format> ) ]? [ tech( <font-tech># ) ]? ] | local( <family-name> )",
+            "grammar": "[ <url> [ format( <font-format> ) ]? [ tech( <font-tech># ) ]? ] | local( <font-family-name> )",
             "specification": {
                 "category": "css-fonts-4",
                 "url": "https://drafts.csswg.org/css-fonts-4/#typedef-font-src"
@@ -15295,6 +15364,24 @@
             "specification": {
                 "category": "css-fonts-4",
                 "url": "https://drafts.csswg.org/css-fonts-4/#feature-value-name-value"
+            }
+        },
+        "<easing-function>": {
+            "grammar-function": "consumeEasingFunction",
+            "grammar-unused": "linear | ease | ease-in | ease-out | ease-in-out | step-start | step-end | <linear()> | <cubic-bezier()> | <steps()> | <spring()>@(settings-flag=springTimingFunctionEnabled)",
+            "grammar-unused-reason": "Needs support for the strong value representation.",
+            "specification": {
+                "category": "css-easing",
+                "url": "https://drafts.csswg.org/css-easing/#typedef-easing-function"
+            }
+        },
+        "<path()>": {
+            "grammar-function": "consumePath",
+            "grammar-unused": "path( <'fill-rule'>? , <string> )",
+            "grammar-unused-reason": "Needs support for the strong value representation.",
+            "specification": {
+                "category": "css-shapes",
+                "url": "https://drafts.csswg.org/css-shapes/#funcdef-basic-shape-path"
             }
         }
     }
