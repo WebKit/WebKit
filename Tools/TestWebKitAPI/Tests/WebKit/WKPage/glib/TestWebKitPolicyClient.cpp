@@ -172,6 +172,7 @@ static void testNavigationPolicy(PolicyClientTest* test, gconstpointer)
     g_assert_cmpint(webkit_navigation_action_get_modifiers(navigationAction), ==, 0);
     g_assert_false(webkit_navigation_action_is_redirect(navigationAction));
     g_assert_null(webkit_navigation_action_get_frame_name(navigationAction));
+    g_assert_true(webkit_navigation_action_is_for_main_frame(navigationAction));
     WebKitURIRequest* request = webkit_navigation_action_get_request(navigationAction);
     g_assert_cmpstr(webkit_uri_request_get_uri(request), ==, "http://webkitgtk.org/");
 
@@ -290,6 +291,8 @@ static void testNewWindowPolicy(PolicyClientTest* test, gconstpointer)
     WebKitNavigationPolicyDecision* decision = WEBKIT_NAVIGATION_POLICY_DECISION(test->m_previousPolicyDecision.get());
     WebKitNavigationAction* navigationAction = webkit_navigation_policy_decision_get_navigation_action(decision);
     g_assert_cmpstr(webkit_navigation_action_get_frame_name(navigationAction), ==, "_blank");
+    // A new top-level browsing context is itself a main frame, so this is TRUE.
+    g_assert_true(webkit_navigation_action_is_for_main_frame(navigationAction));
 
     // Using a short timeout is a bit ugly here, but it's hard to get around because if we block
     // the new window signal we cannot halt the main loop in the create callback. If we
@@ -317,8 +320,84 @@ static void serverCallback(SoupServer* server, SoupServerMessage* message, const
     } else if (g_str_equal(path, "/redirect")) {
         soup_server_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY, nullptr);
         soup_message_headers_append(soup_server_message_get_response_headers(message), "Location", "/");
+    } else if (g_str_equal(path, "/iframe-parent")) {
+        static const char* iframeParentHTML = "<html><body>Parent<iframe src='/iframe-child'></iframe></body></html>";
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
+        auto* responseBody = soup_server_message_get_response_body(message);
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, iframeParentHTML, strlen(iframeParentHTML));
+        soup_message_body_complete(responseBody);
+    } else if (g_str_equal(path, "/iframe-child")) {
+        static const char* iframeChildHTML = "<html><body>Child</body></html>";
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
+        auto* responseBody = soup_server_message_get_response_body(message);
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, iframeChildHTML, strlen(iframeChildHTML));
+        soup_message_body_complete(responseBody);
     } else
         soup_server_message_set_status(message, SOUP_STATUS_NOT_FOUND, nullptr);
+}
+
+class NavigationActionForMainFrameTest: public WebViewTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(NavigationActionForMainFrameTest);
+
+    static gboolean decidePolicyCallback(WebKitWebView*, WebKitPolicyDecision* decision, WebKitPolicyDecisionType type, NavigationActionForMainFrameTest* test)
+    {
+        if (type != WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION)
+            return FALSE;
+
+        auto* navigationDecision = WEBKIT_NAVIGATION_POLICY_DECISION(decision);
+        auto* navigationAction = webkit_navigation_policy_decision_get_navigation_action(navigationDecision);
+        auto* request = webkit_navigation_action_get_request(navigationAction);
+        bool isForMainFrame = webkit_navigation_action_is_for_main_frame(navigationAction);
+        test->m_decisions.append({ CString(webkit_uri_request_get_uri(request)), isForMainFrame });
+        return FALSE;
+    }
+
+    NavigationActionForMainFrameTest()
+    {
+        g_signal_connect(m_webView.get(), "decide-policy", G_CALLBACK(decidePolicyCallback), this);
+    }
+
+    bool findDecisionForURI(const CString& uri) const
+    {
+        for (const auto& decision : m_decisions) {
+            if (decision.first == uri)
+                return decision.second;
+        }
+        g_assert_not_reached();
+        return false;
+    }
+
+    bool hasDecisionForURI(const CString& uri) const
+    {
+        for (const auto& decision : m_decisions) {
+            if (decision.first == uri)
+                return true;
+        }
+        return false;
+    }
+
+    Vector<std::pair<CString, bool>> m_decisions;
+};
+
+static void testNavigationActionForMainFrame(NavigationActionForMainFrameTest* test, gconstpointer)
+{
+    auto parentURI = kServer->getURIForPath("/iframe-parent");
+    auto childURI = kServer->getURIForPath("/iframe-child");
+
+    test->loadURI(parentURI.data());
+    test->waitUntilLoadFinished();
+
+    // The iframe's navigation policy decision is dispatched while the parent
+    // document is being parsed, so it should already be recorded by the time
+    // the main frame's load-finished signal fires. If not, give it a moment.
+    if (!test->hasDecisionForURI(childURI))
+        test->wait(1);
+
+    g_assert_true(test->hasDecisionForURI(parentURI));
+    g_assert_true(test->findDecisionForURI(parentURI));
+    g_assert_true(test->hasDecisionForURI(childURI));
+    g_assert_false(test->findDecisionForURI(childURI));
 }
 
 static void testAutoplayPolicy(PolicyClientTest* test, gconstpointer)
@@ -364,6 +443,7 @@ void beforeAll()
     PolicyClientTest::add("WebKitPolicyClient", "navigation-policy", testNavigationPolicy);
     PolicyClientTest::add("WebKitPolicyClient", "response-policy", testResponsePolicy);
     PolicyClientTest::add("WebKitPolicyClient", "autoplay-policy", testAutoplayPolicy);
+    NavigationActionForMainFrameTest::add("WebKitPolicyClient", "navigation-action-for-main-frame", testNavigationActionForMainFrame);
     // WARNING: This test must come last, it uses racey constructs that
     // interfere nondeterminisically with any test running after it.
     // https://bugs.webkit.org/show_bug.cgi?id=213190
