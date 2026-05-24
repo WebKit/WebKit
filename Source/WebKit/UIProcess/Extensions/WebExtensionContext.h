@@ -72,7 +72,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Identified.h>
-#include <wtf/ListHashSet.h>
+#include <wtf/OrderedHashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
@@ -1065,7 +1065,7 @@ private:
     WallTime m_nextGrantedPermissionMatchPatternsExpirationDate { WallTime::nan() };
     WallTime m_nextDeniedPermissionMatchPatternsExpirationDate { WallTime::nan() };
 
-    ListHashSet<URL> m_cachedPermissionURLs;
+    OrderedHashSet<URL> m_cachedPermissionURLs;
     HashMap<URL, PermissionState> m_cachedPermissionStates;
 
     size_t m_pendingPermissionRequests { 0 };

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WPEGamepadManager.h"
 
-#include <wtf/ListHashSet.h>
+#include <wtf/OrderedHashSet.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
 
@@ -35,7 +35,7 @@
  *
  */
 struct _WPEGamepadManagerPrivate {
-    ListHashSet<GRefPtr<WPEGamepad>> gamepads;
+    OrderedHashSet<GRefPtr<WPEGamepad>> gamepads;
 };
 
 WEBKIT_DEFINE_ABSTRACT_TYPE(WPEGamepadManager, wpe_gamepad_manager, G_TYPE_OBJECT)

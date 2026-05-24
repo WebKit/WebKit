@@ -40,8 +40,8 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SubstituteData.h>
-#include <wtf/ListHashSet.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/OrderedHashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/Variant.h>
 
@@ -248,7 +248,7 @@ private:
     std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> m_originatorAdvancedPrivacyProtections;
     MonotonicTime m_requestStart { MonotonicTime::now() };
     RefPtr<WebKit::BrowsingWarning> m_safeBrowsingWarning;
-    ListHashSet<size_t> m_ongoingSafeBrowsingChecks;
+    OrderedHashSet<size_t> m_ongoingSafeBrowsingChecks;
     RefPtr<WebKit::FrameProcess> m_pendingSharedProcess;
     RefPtr<WebKit::FrameState> m_backForwardFrameState;
 };
