@@ -45,6 +45,9 @@ for (var i = 0; i < testLoopCount; i++) {
     shouldBe(Math.sumPrecise([-Infinity]), -Infinity);
     shouldBe(Math.sumPrecise([-Infinity, -Infinity]), -Infinity);
 
+    shouldBe(Math.sumPrecise([Number.MAX_VALUE]), Number.MAX_VALUE);
+    shouldBe(Math.sumPrecise([-Number.MAX_VALUE]), -Number.MAX_VALUE);
+
     shouldBe(Math.sumPrecise([]), -0);
     shouldBe(Math.sumPrecise([-0]), -0);
     shouldBe(Math.sumPrecise([-0, -0]), -0);
