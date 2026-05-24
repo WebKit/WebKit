@@ -39,7 +39,6 @@
 #include "RenderStyle+SettersInlines.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
-#include "UnicodeBidi.h"
 #include <wtf/StackStats.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -65,26 +64,16 @@ RenderListItem::~RenderListItem()
 
 RenderStyle RenderListItem::computeMarkerStyle() const
 {
-    if (!is<PseudoElement>(element())) {
-        if (auto markerStyle = getCachedPseudoStyle({ PseudoElementType::Marker }, &style()))
-            return RenderStyle::clone(*markerStyle);
-    }
+    if (auto markerStyle = getCachedPseudoStyle({ PseudoElementType::Marker }, &style()))
+        return RenderStyle::clone(*markerStyle);
+
+    if (auto* markerStyle = style().getCachedPseudoStyle({ PseudoElementType::Marker }))
+        return RenderStyle::clone(*markerStyle);
 
     // The marker always inherits from the list item, regardless of where it might end
     // up (e.g., in some deeply nested line box). See CSS3 spec.
     auto markerStyle = RenderStyle::create();
     markerStyle.inheritFrom(style());
-
-    // In the case of a ::before or ::after pseudo-element, we manually apply the properties
-    // otherwise set in the user-agent stylesheet since we don't support ::before::marker or
-    // ::after::marker. See bugs.webkit.org/b/218897.
-    auto fontDescription = style().fontDescription();
-    fontDescription.setVariantNumericSpacing(FontVariantNumericSpacing::TabularNumbers);
-    markerStyle.setFontDescription(WTF::move(fontDescription));
-    markerStyle.setUnicodeBidi(UnicodeBidi::Isolate);
-    markerStyle.setWhiteSpaceCollapse(WhiteSpaceCollapse::Preserve);
-    markerStyle.setTextWrapMode(TextWrapMode::NoWrap);
-    markerStyle.setTextTransform({ });
     return markerStyle;
 }
 

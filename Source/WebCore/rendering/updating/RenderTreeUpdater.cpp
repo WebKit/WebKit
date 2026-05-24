@@ -895,9 +895,8 @@ void RenderTreeUpdater::tearDownRenderersInternal(Element& root, TeardownType te
             GeneratedContent::removeAfterPseudoElement(element.get(), builder);
 
             if (!is<PseudoElement>(element.get())) {
-                // ::before and ::after cannot have a ::marker pseudo-element addressable via
-                // CSS selectors, and as such cannot possibly have animations on them. Additionally,
-                // we cannot create a Styleable with a PseudoElement.
+                // FIXME: Now that ::before::marker and ::after::marker are supported,
+                // we should handle animations on them too. See webkit.org/b/218897.
                 if (auto* renderListItem = dynamicDowncast<RenderListItem>(element->renderer())) {
                     if (renderListItem->markerRenderer())
                         Styleable(element.get(), Style::PseudoElementIdentifier { PseudoElementType::Marker }).cancelStyleOriginatedAnimations();

@@ -574,6 +574,11 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element
             if (auto firstLetterStyle = resolveAncestorFirstLetterPseudoElement(element, elementUpdate, beforeAfterContext))
                 animatedUpdate.style->addCachedPseudoStyle(WTF::move(firstLetterStyle->style));
         }
+        if (animatedUpdate.style->display() == DisplayType::BlockFlowListItem) {
+            auto markerContext = makeResolutionContextForPseudoElement(animatedUpdate, { PseudoElementType::Marker });
+            if (auto markerStyle = scope().resolver->styleForPseudoElement(element, PseudoElementType::Marker, markerContext))
+                animatedUpdate.style->addCachedPseudoStyle(WTF::move(markerStyle->style));
+        }
     }
 
     return animatedUpdate;
