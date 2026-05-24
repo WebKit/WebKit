@@ -1949,18 +1949,18 @@ TEST(WKBackForwardList, BackButtonWorksAfterUserClickFromJSCreatedPage)
 @public
     NSUInteger _itemAddedCount;
     BOOL _lastAddedItemFlag;
-    BOOL _didNavigate;
+    bool _didNavigate;
 }
 
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
-    _didNavigate = YES;
+    _didNavigate = true;
 }
 
 - (void)_webView:(WKWebView *)webView navigation:(WKNavigation *)navigation didSameDocumentNavigation:(_WKSameDocumentNavigationType)navigationType
 {
     if (navigationType == _WKSameDocumentNavigationTypeSessionStatePush || navigationType == _WKSameDocumentNavigationTypeSessionStatePop)
-        _didNavigate = YES;
+        _didNavigate = true;
 }
 
 - (void)_webView:(WKWebView *)webView backForwardListItemAdded:(WKBackForwardListItem *)itemAdded removed:(NSArray<WKBackForwardListItem *> *)itemsRemoved
@@ -1990,7 +1990,7 @@ TEST(WKBackForwardList, ItemAddedDelegateObservesUserGestureFlagAtCallbackTime)
     // The initial load fired one callback for the first item (flag=NO). Reset to track the next.
     delegate.get()->_itemAddedCount = 0;
     delegate.get()->_lastAddedItemFlag = NO;
-    delegate.get()->_didNavigate = NO;
+    delegate.get()->_didNavigate = false;
 
     [webView _evaluateJavaScriptWithoutUserGesture:@"location.hash = '#a';" completionHandler:nil];
     TestWebKitAPI::Util::run(&delegate.get()->_didNavigate);
