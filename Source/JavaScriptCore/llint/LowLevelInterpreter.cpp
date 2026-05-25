@@ -520,13 +520,30 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 // the jsc_llint_begin and jsc_llint_end labels help lldb_webkit.py find the
 // start and end of the llint instruction range quickly.
 
+// On RISC-V, the linker (mold) relaxes `auipc + jalr/addi` pairs into single
+// `j`/`addi`-via-gp instructions, shrinking IPInt opcode handlers by 4 bytes
+// each. The `.balignw 256` padding that follows each handler is not recomputed
+// after relaxation, so consecutive `ipint_*_validate` labels end up 252 bytes
+// apart instead of 256, and `IPInt::initialize()`'s `VALIDATE_IPINT_OPCODE`
+// asserts fire. Suppress relaxation across the entire LLInt asm to keep all
+// 256-byte-aligned dispatch slots intact.
+#if CPU(RISCV64)
+#define OFFLINE_ASM_BEGIN_OPTIONS ".option push\n.option norelax\n"
+#define OFFLINE_ASM_END_OPTIONS ".option pop\n"
+#else
+#define OFFLINE_ASM_BEGIN_OPTIONS ""
+#define OFFLINE_ASM_END_OPTIONS ""
+#endif
+
 #define OFFLINE_ASM_BEGIN   __asm__( \
+    OFFLINE_ASM_BEGIN_OPTIONS \
     OFFLINE_ASM_GLOBAL_LABEL_IMPL(jsc_llint_begin, OFFLINE_ASM_NO_ALT_ENTRY_DIRECTIVE, OFFLINE_ASM_ALIGN4B, HIDE_SYMBOL) \
     OFFLINE_ASM_BEGIN_SPACER
 
 #define OFFLINE_ASM_END \
     OFFLINE_ASM_BEGIN_SPACER \
     OFFLINE_ASM_GLOBAL_LABEL_IMPL(jsc_llint_end, OFFLINE_ASM_NO_ALT_ENTRY_DIRECTIVE, OFFLINE_ASM_ALIGN4B, HIDE_SYMBOL) \
+    OFFLINE_ASM_END_OPTIONS \
 );
 
 #if ENABLE(LLINT_EMBEDDED_OPCODE_ID)
