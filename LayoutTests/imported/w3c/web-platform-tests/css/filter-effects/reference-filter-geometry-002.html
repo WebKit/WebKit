@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="help" href="https://drafts.csswg.org/filter-effects/#FilterEffectsRegion">
+<link rel="help" href="https://github.com/w3c/csswg-drafts/issues/13964">
+<link rel="match" href="reference/reference-filter-geometry-002-ref.html">
+<meta name="assert" content="Tests that the SVG filter region is computed relative to the border box of the target element when filterUnits are `userSpaceOnUse`">
+<style>
+    body {
+        margin: 0;
+    }
+    .box {
+        position: relative;
+        margin: 50px;
+        width: 400px;
+        height: 300px;
+        background-color: green;
+        filter: url(#test);
+    }
+
+    .child {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        background-color: green;
+    }
+
+    .topleft {
+        top: -50px;
+        left: -50px;
+    }
+
+    .bottomright {
+        top: 250px;
+        left: 350px;
+    }
+
+    svg {
+        position: absolute;
+    }
+</style>
+</head>
+<body>
+  <svg width="0" height="0">
+    <filter id="test" color-interpolation-filters="sRGB" x="0%" y="0%" width="100%" height="100%" primitiveUnits="objectBoundingBox" filterUnits="userSpaceOnUse">
+      <feFlood flood-color="blue" flood-opacity="0.2" result="wash"/>
+      <feFlood x="0" y="0" width="0.2" height="0.25" flood-color="orange" flood-opacity="0.5" result="topleft"/>
+      <feFlood x="0.8" y="0.75" width="0.3" height="0.3" flood-color="orange" flood-opacity="0.5" result="bottomRight"/>
+      <feMerge>
+        <feMergeNode in="SourceGraphic" />
+        <feMergeNode in="wash" />
+        <feMergeNode in="topleft" />
+        <feMergeNode in="bottomRight" />
+      </feMerge>
+    </filter>
+  </svg>
+  <div class="box">
+    <div class="child topleft"></div>
+    <div class="child bottomright"></div>
+  </div>
+</body>
+</html>

@@ -902,6 +902,8 @@ webkit.org/b/261024 js/cached-window-properties.html [ Pass Timeout ]
 webrtc/vp8-then-h264.html [ Pass ]
 
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-filter.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/filter-effects/reference-filter-geometry-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/filter-effects/reference-filter-geometry-003.html [ ImageOnlyFailure ]
 
 # Flaky tests Nov2023
 webkit.org/b/264680 imported/w3c/web-platform-tests/webcodecs/videoFrame-construction.crossOriginSource.sub.html [ Failure Pass ]

@@ -129,9 +129,11 @@ RefPtr<Filter> CanvasRenderingContext2D::createFilter(const FloatRect& bounds) c
     auto filterRegion = bounds + toFloatBoxExtent(outsets);
 
     auto preferredFilterRenderingModes = page->preferredFilterRenderingModes(*context);
-    auto filter = CSSFilterRenderer::create(*renderer, state().filter, {
+    auto filter = CSSFilterRenderer::create(*renderer, state().filter, FilterGeometry {
             .referenceBox = bounds,
+            .objectBoundingBoxReferenceBox = bounds,
             .filterRegion = filterRegion,
+            .primitiveUserSpaceOffset = { },
             .scale = { 1, 1 },
         }, preferredFilterRenderingModes, { }, *context);
     if (!filter)

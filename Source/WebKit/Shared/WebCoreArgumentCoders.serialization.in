@@ -7686,7 +7686,9 @@ class WebCore::FilterOperations {
 header: <WebCore/Filter.h>
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::FilterGeometry {
     WebCore::FloatRect referenceBox;
+    WebCore::FloatRect objectBoundingBoxReferenceBox;
     WebCore::FloatRect filterRegion;
+    WebCore::FloatPoint primitiveUserSpaceOffset;
     WebCore::FloatSize scale;
 }
 

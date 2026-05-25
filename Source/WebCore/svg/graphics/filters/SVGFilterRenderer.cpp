@@ -108,6 +108,12 @@ static std::optional<std::tuple<SVGFilterEffectGraph, FilterEffectGeometryMap>> 
 
         if (auto flags = effectElement->effectGeometryFlags()) {
             auto effectBoundaries = SVGLengthContext::resolveRectangle(contextElement, effectElement.get(), filter.primitiveUnits(), filter.referenceBox());
+            // For primitiveUnits=userSpaceOnUse, resolveRectangle ignores viewport.location and
+            // returns coordinates in raw user space. Translate into the inner filter's
+            // coordinate system. Zero for SVG-element-applied filters (rendering happens in
+            // user space); equals the box origin for CSS-referenced filters on HTML elements.
+            if (filter.primitiveUnits() == SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
+                effectBoundaries.move(toFloatSize(filter.primitiveUserSpaceOffset()));
             effectGeometryMap.add(*effect, FilterEffectGeometry(effectBoundaries, flags));
         }
 
@@ -320,10 +326,9 @@ RefPtr<FilterImage> SVGFilterRenderer::apply(const Filter&, FilterImage& sourceI
 
     // Per the SVG spec, standard inputs (SourceGraphic, SourceAlpha, etc.) use
     // the filter region as their default primitive subregion. The source image
-    // may come from an outer CSSFilterRenderer whose filter region is the
-    // element's bounding box, which is smaller than this SVG filter's region.
-    // Adjust the primitive subregion to match the SVG filter region so that
-    // downstream effects (e.g., feOffset) are not incorrectly clipped.
+    // may come from an outer CSSFilterRenderer whose filter region differs from
+    // this SVG filter's region. Re-tag the source's primitive subregion to
+    // match the SVG filter region so downstream effects aren't incorrectly clipped.
     if (RefPtr input = FilterImage::create(filterRegion(), sourceImage, results.allocator()))
         return apply(input.get(), results);
 

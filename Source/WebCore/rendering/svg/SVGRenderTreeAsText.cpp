@@ -458,9 +458,11 @@ void writeSVGResourceContainer(TextStream& ts, const LegacyRenderSVGResourceCont
         ts << '\n';
         // Creating a placeholder filter which is passed to the builder.
         Ref filterElement = filter->filterElement();
-        auto placeholderFilter = SVGFilterRenderer::create(filterElement.ptr(), filterElement, {
+        auto placeholderFilter = SVGFilterRenderer::create(filterElement.ptr(), filterElement, FilterGeometry {
                 .referenceBox = { },
+                .objectBoundingBoxReferenceBox = { },
                 .filterRegion = { },
+                .primitiveUserSpaceOffset = { },
                 .scale = { 1, 1},
             }, FilterRenderingMode::Software, { }, NullGraphicsContext());
         if (placeholderFilter) {

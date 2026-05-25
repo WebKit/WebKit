@@ -76,7 +76,7 @@ public:
     // Per render
     LayoutRect repaintRect() const { return m_repaintRect; }
 
-    GraphicsContext* beginFilterEffect(RenderElement&, GraphicsContext&, OptionSet<PaintBehavior>, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect, const LayoutRect& clipRect, NOESCAPE const Function<void(GraphicsContext&)>& applyAdditionalDestinationClip = { });
+    GraphicsContext* beginFilterEffect(RenderElement&, GraphicsContext&, OptionSet<PaintBehavior>, const LayoutRect& filterBoxRect, const LayoutRect& objectBoundingBoxFilterRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect, const LayoutRect& clipRect, NOESCAPE const Function<void(GraphicsContext&)>& applyAdditionalDestinationClip = { });
     void applyFilterEffect(GraphicsContext& destinationContext);
 
 private:
