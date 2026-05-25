@@ -802,7 +802,10 @@ void Options::notifyOptionsChanged()
     Options::forceUnlinkedDFG() = false;
     Options::useWasmSIMD() = false;
     Options::useWasmIPInt() = false;
-#if !CPU(ARM_THUMB2)
+#if !CPU(ARM_THUMB2) && !CPU(RISCV64)
+    // RISCV64 has BBQJIT (WEBASSEMBLY_BBQJIT enabled in PlatformEnable.h);
+    // wasm SIMD and IPInt are still off above, so BBQJIT is the only wasm
+    // tier on this architecture.
     Options::useBBQJIT() = false;
 #endif
 #endif
