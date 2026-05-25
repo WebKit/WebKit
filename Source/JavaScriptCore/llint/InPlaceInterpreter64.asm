@@ -51,11 +51,11 @@ end
 
 # Dispatch target bases
 
-if ARM64 or ARM64E or X86_64
+if ARM64 or ARM64E or X86_64 or RISCV64
 const ipint_dispatch_base = _ipint_unreachable
 end
 
-if ARM64 or ARM64E
+if ARM64 or ARM64E or RISCV64
 const ipint_gc_dispatch_base = _ipint_struct_new
 const ipint_conversion_dispatch_base = _ipint_i32_trunc_sat_f32_s
 const ipint_simd_dispatch_base = _ipint_simd_v128_load_mem
@@ -77,7 +77,7 @@ elsif X86_64
     addq t1, t0
     jmp t0
 else
-    error
+    break
 end
 end
 
@@ -1777,7 +1777,7 @@ ipintOp(_i32_div_s, macro()
     elsif ARM64 or ARM64E or RISCV64
         divis t1, t0
     else
-        error
+        break
     end
     pushInt32(t0)
     advancePC(1)
@@ -1796,7 +1796,7 @@ ipintOp(_i32_div_u, macro()
     elsif ARM64 or ARM64E or RISCV64
         divi t1, t0
     else
-        error
+        break
     end
     pushInt32(t0)
     advancePC(1)
@@ -1829,7 +1829,7 @@ ipintOp(_i32_rem_s, macro()
     elsif RISCV64
         remis t0, t1, t2
     else
-        error
+        break
     end
 
 .ipint_i32_rem_s_return:
@@ -1854,7 +1854,7 @@ ipintOp(_i32_rem_u, macro()
     elsif RISCV64
         remi t0, t1, t2
     else
-        error
+        break
     end
     pushInt32(t2)
     advancePC(1)
@@ -2034,7 +2034,7 @@ ipintOp(_i64_div_s, macro()
     elsif ARM64 or ARM64E or RISCV64
         divqs t1, t0
     else
-        error
+        break
     end
     pushInt64(t0)
     advancePC(1)
@@ -2053,7 +2053,7 @@ ipintOp(_i64_div_u, macro()
     elsif ARM64 or ARM64E or RISCV64
         divq t1, t0
     else
-        error
+        break
     end
     pushInt64(t0)
     advancePC(1)
@@ -2086,7 +2086,7 @@ ipintOp(_i64_rem_s, macro()
     elsif RISCV64
         remqs t0, t1, t2
     else
-        error
+        break
     end
 
 .ipint_i64_rem_s_return:
@@ -2111,7 +2111,7 @@ ipintOp(_i64_rem_u, macro()
     elsif RISCV64
         remq t0, t1, t2
     else
-        error
+        break
     end
     pushInt64(t2)
     advancePC(1)
@@ -9040,7 +9040,7 @@ macro doI32AtomicLoad(mem, dst)
     if ARM64 or ARM64E or X86_64
         atomicloadi [mem], dst
     else
-        error
+        break
     end
 end
 
@@ -9049,7 +9049,7 @@ macro doI64AtomicLoad(mem, dst)
     if ARM64 or ARM64E or X86_64
         atomicloadq [mem], dst
     else
-        error
+        break
     end
 end
 
@@ -9058,7 +9058,7 @@ macro doI32AtomicLoad8(mem, dst)
     if ARM64 or ARM64E or X86_64
         atomicloadb [mem], dst
     else
-        error
+        break
     end
 end
 
@@ -9067,7 +9067,7 @@ macro doI32AtomicLoad16(mem, dst)
     if ARM64 or ARM64E or X86_64
         atomicloadh [mem], dst
     else
-        error
+        break
     end
 end
 
@@ -9076,7 +9076,7 @@ macro doI64AtomicLoad8(mem, dst)
     if ARM64 or ARM64E or X86_64
         atomicloadb [mem], dst
     else
-        error
+        break
     end
 end
 
@@ -9085,7 +9085,7 @@ macro doI64AtomicLoad16(mem, dst)
     if ARM64 or ARM64E or X86_64
         atomicloadh [mem], dst
     else
-        error
+        break
     end
 end
 
@@ -9094,7 +9094,7 @@ macro doI64AtomicLoad32(mem, dst)
     if ARM64 or ARM64E or X86_64
         atomicloadi [mem], dst
     else
-        error
+        break
     end
 end
 
@@ -9110,7 +9110,7 @@ macro doI32AtomicStore(mem, val, memCopy, scratch)
             move value, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9126,7 +9126,7 @@ macro doI64AtomicStore(mem, val, memCopy, scratch)
             move value, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9142,7 +9142,7 @@ macro doI32AtomicStore8(mem, val, memCopy, scratch)
             move value, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9158,7 +9158,7 @@ macro doI32AtomicStore16(mem, val, memCopy, scratch)
             move value, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9174,7 +9174,7 @@ macro doI64AtomicStore8(mem, val, memCopy, scratch)
             move value, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9190,7 +9190,7 @@ macro doI64AtomicStore16(mem, val, memCopy, scratch)
             move value, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9206,7 +9206,7 @@ macro doI64AtomicStore32(mem, val, memCopy, scratch)
             move value, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9223,7 +9223,7 @@ macro doI32AtomicRmwAdd(mem, val, memCopy, scratch)
             addi value, oldValue, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9240,7 +9240,7 @@ macro doI64AtomicRmwAdd(mem, val, memCopy, scratch)
             addq value, oldValue, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9258,7 +9258,7 @@ macro doI32AtomicRmwAdd8(mem, val, memCopy, scratch)
             addi value, oldValue, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9276,7 +9276,7 @@ macro doI32AtomicRmwAdd16(mem, val, memCopy, scratch)
             addi value, oldValue, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9294,7 +9294,7 @@ macro doI64AtomicRmwAdd8(mem, val, memCopy, scratch)
             addi value, oldValue, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9312,7 +9312,7 @@ macro doI64AtomicRmwAdd16(mem, val, memCopy, scratch)
             addi value, oldValue, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9330,7 +9330,7 @@ macro doI64AtomicRmwAdd32(mem, val, memCopy, scratch)
             addi value, oldValue, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9349,7 +9349,7 @@ macro doI32AtomicRmwSub(mem, val, memCopy, scratch)
             subi oldValue, value, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9368,7 +9368,7 @@ macro doI64AtomicRmwSub(mem, val, memCopy, scratch)
             subq oldValue, value, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9388,7 +9388,7 @@ macro doI32AtomicRmwSub8(mem, val, memCopy, scratch)
             subi oldValue, value, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9408,7 +9408,7 @@ macro doI32AtomicRmwSub16(mem, val, memCopy, scratch)
             subi oldValue, value, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9428,7 +9428,7 @@ macro doI64AtomicRmwSub8(mem, val, memCopy, scratch)
             subi oldValue, value, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9448,7 +9448,7 @@ macro doI64AtomicRmwSub16(mem, val, memCopy, scratch)
             subi oldValue, value, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9468,7 +9468,7 @@ macro doI64AtomicRmwSub32(mem, val, memCopy, scratch)
             subi oldValue, value, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9487,7 +9487,7 @@ macro doI32AtomicRmwAnd(mem, val, memCopy, scratch)
             andi value, oldValue, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9506,7 +9506,7 @@ macro doI64AtomicRmwAnd(mem, val, memCopy, scratch)
             andq value, oldValue, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9525,7 +9525,7 @@ macro doI32AtomicRmwAnd8(mem, val, memCopy, scratch)
             andi value, oldValue, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9544,7 +9544,7 @@ macro doI32AtomicRmwAnd16(mem, val, memCopy, scratch)
             andi value, oldValue, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9563,7 +9563,7 @@ macro doI64AtomicRmwAnd8(mem, val, memCopy, scratch)
             andi value, oldValue, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9582,7 +9582,7 @@ macro doI64AtomicRmwAnd16(mem, val, memCopy, scratch)
             andi value, oldValue, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9601,7 +9601,7 @@ macro doI64AtomicRmwAnd32(mem, val, memCopy, scratch)
             andi value, oldValue, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9619,7 +9619,7 @@ macro doI32AtomicRmwOr(mem, val, memCopy, scratch)
             ori value, oldValue, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9637,7 +9637,7 @@ macro doI64AtomicRmwOr(mem, val, memCopy, scratch)
             orq value, oldValue, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9655,7 +9655,7 @@ macro doI32AtomicRmwOr8(mem, val, memCopy, scratch)
             ori value, oldValue, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9673,7 +9673,7 @@ macro doI32AtomicRmwOr16(mem, val, memCopy, scratch)
             ori value, oldValue, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9691,7 +9691,7 @@ macro doI64AtomicRmwOr8(mem, val, memCopy, scratch)
             ori value, oldValue, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9709,7 +9709,7 @@ macro doI64AtomicRmwOr16(mem, val, memCopy, scratch)
             ori value, oldValue, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9727,7 +9727,7 @@ macro doI64AtomicRmwOr32(mem, val, memCopy, scratch)
             ori value, oldValue, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9745,7 +9745,7 @@ macro doI32AtomicRmwXor(mem, val, memCopy, scratch)
             xori value, oldValue, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9763,7 +9763,7 @@ macro doI64AtomicRmwXor(mem, val, memCopy, scratch)
             xorq value, oldValue, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9781,7 +9781,7 @@ macro doI32AtomicRmwXor8(mem, val, memCopy, scratch)
             xori value, oldValue, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9799,7 +9799,7 @@ macro doI32AtomicRmwXor16(mem, val, memCopy, scratch)
             xori value, oldValue, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9817,7 +9817,7 @@ macro doI64AtomicRmwXor8(mem, val, memCopy, scratch)
             xori value, oldValue, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9835,7 +9835,7 @@ macro doI64AtomicRmwXor16(mem, val, memCopy, scratch)
             xori value, oldValue, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9853,7 +9853,7 @@ macro doI64AtomicRmwXor32(mem, val, memCopy, scratch)
             xori value, oldValue, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9871,7 +9871,7 @@ macro doI32AtomicRmwXchg(mem, val, memCopy, scratch)
             move value, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9889,7 +9889,7 @@ macro doI64AtomicRmwXchg(mem, val, memCopy, scratch)
             move value, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9907,7 +9907,7 @@ macro doI32AtomicRmwXchg8(mem, val, memCopy, scratch)
             move value, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9925,7 +9925,7 @@ macro doI32AtomicRmwXchg16(mem, val, memCopy, scratch)
             move value, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9943,7 +9943,7 @@ macro doI64AtomicRmwXchg8(mem, val, memCopy, scratch)
             move value, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9961,7 +9961,7 @@ macro doI64AtomicRmwXchg16(mem, val, memCopy, scratch)
             move value, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9979,7 +9979,7 @@ macro doI64AtomicRmwXchg32(mem, val, memCopy, scratch)
             move value, newValue
         end)
     else
-        error
+        break
     end
 end
 
@@ -9993,7 +9993,7 @@ macro doI32AtomicCmpxchg(mem, expected, newVal, memCopy, scratch)
     elsif ARM64
         weakCASExchangeInt(memCopy, newVal, mem, scratch, expected)
     else
-        error
+        break
     end
 end
 
@@ -10006,7 +10006,7 @@ macro doI64AtomicCmpxchg(mem, expected, newVal, memCopy, scratch)
     elsif ARM64
         weakCASExchangeQuad(memCopy, newVal, mem, scratch, expected)
     else
-        error
+        break
     end
 end
 
@@ -10020,7 +10020,7 @@ macro doI32AtomicCmpxchg8(mem, expected, newVal, memCopy, scratch)
     elsif ARM64
         weakCASExchangeByte(memCopy, newVal, mem, scratch, expected)
     else
-        error
+        break
     end
 end
 
@@ -10034,7 +10034,7 @@ macro doI32AtomicCmpxchg16(mem, expected, newVal, memCopy, scratch)
     elsif ARM64
         weakCASExchangeHalf(memCopy, newVal, mem, scratch, expected)
     else
-        error
+        break
     end
 end
 
@@ -10048,7 +10048,7 @@ macro doI64AtomicCmpxchg8(mem, expected, newVal, memCopy, scratch)
     elsif ARM64
         weakCASExchangeByte(memCopy, newVal, mem, scratch, expected)
     else
-        error
+        break
     end
 end
 
@@ -10062,7 +10062,7 @@ macro doI64AtomicCmpxchg16(mem, expected, newVal, memCopy, scratch)
     elsif ARM64
         weakCASExchangeHalf(memCopy, newVal, mem, scratch, expected)
     else
-        error
+        break
     end
 end
 
@@ -10076,7 +10076,7 @@ macro doI64AtomicCmpxchg32(mem, expected, newVal, memCopy, scratch)
     elsif ARM64
         weakCASExchangeInt(memCopy, newVal, mem, scratch, expected)
     else
-        error
+        break
     end
 end
 
@@ -10742,7 +10742,7 @@ macro weakCASExchangeByte(mem, value, expected, scratch, scratch2)
     .done:
         move scratch2, expected
     else
-        error
+        break
     end
 end
 
@@ -10762,7 +10762,7 @@ macro weakCASExchangeHalf(mem, value, expected, scratch, scratch2)
     .done:
         move scratch2, expected
     else
-        error
+        break
     end
 end
 
@@ -10782,7 +10782,7 @@ macro weakCASExchangeInt(mem, value, expected, scratch, scratch2)
     .done:
         move scratch2, expected
     else
-        error
+        break
     end
 end
 
@@ -10802,7 +10802,7 @@ macro weakCASExchangeQuad(mem, value, expected, scratch, scratch2)
     .done:
         move scratch2, expected
     else
-        error
+        break
     end
 end
 
@@ -12790,7 +12790,7 @@ argumINTAlign(_a1)
     argumINTDispatch()
 
 argumINTAlign(_a2)
-if ARM64 or ARM64E or X86_64
+if ARM64 or ARM64E or X86_64 or RISCV64
     storeq wa2, [argumINTDst]
     subp LocalSize, argumINTDst
     argumINTDispatch()
@@ -12800,7 +12800,7 @@ end
 
 
 argumINTAlign(_a3)
-if ARM64 or ARM64E or X86_64
+if ARM64 or ARM64E or X86_64 or RISCV64
     storeq wa3, [argumINTDst]
     subp LocalSize, argumINTDst
     argumINTDispatch()
@@ -12809,7 +12809,7 @@ else
 end
 
 argumINTAlign(_a4)
-if ARM64 or ARM64E or X86_64
+if ARM64 or ARM64E or X86_64 or RISCV64
     storeq wa4, [argumINTDst]
     subp LocalSize, argumINTDst
     argumINTDispatch()
@@ -12818,7 +12818,7 @@ else
 end
 
 argumINTAlign(_a5)
-if ARM64 or ARM64E or X86_64
+if ARM64 or ARM64E or X86_64 or RISCV64
     storeq wa5, [argumINTDst]
     subp LocalSize, argumINTDst
     argumINTDispatch()
@@ -12827,7 +12827,7 @@ else
 end
 
 argumINTAlign(_a6)
-if ARM64 or ARM64E
+if ARM64 or ARM64E or RISCV64
     storeq wa6, [argumINTDst]
     subp LocalSize, argumINTDst
     argumINTDispatch()
@@ -12836,7 +12836,7 @@ else
 end
 
 argumINTAlign(_a7)
-if ARM64 or ARM64E
+if ARM64 or ARM64E or RISCV64
     storeq wa7, [argumINTDst]
     subp LocalSize, argumINTDst
     argumINTDispatch()
