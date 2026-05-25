@@ -122,6 +122,12 @@ def riscv64OperandTypes(operands)
             else
                 raise "Invalid Tmp operand #{op.kind}"
             end
+        elsif op.is_a? VecRegisterID
+            # Vector registers are aliased to single FPRs on RISC-V (no V
+            # extension); treat them as FPRegisterID for validation so the
+            # existing [Address, FPRegisterID] / [FPRegisterID, Address]
+            # patterns match loadv/storev/pushv/popv operands.
+            FPRegisterID
         else
             op.class
         end
@@ -269,6 +275,40 @@ class FPRegisterID
             'f27'
         else
             raise "Bad register name #{@name} at #{codeOriginString}"
+        end
+    end
+end
+
+class VecRegisterID
+    # Pseudo-vector registers v0..v7 (and lane variants) for the IPInt
+    # interpreter, which stores every wasm operand-stack value in a
+    # 16-byte slot regardless of type. RISC-V baseline rv64gc has no V
+    # extension and no 128-bit register, so each v-reg is aliased to a
+    # single 64-bit FPR (the low half of the slot); pushv/popv/loadv/
+    # storev below operate on 16-byte slots but only move 8 bytes of
+    # payload. Safe because wasm SIMD is gated off at runtime
+    # (Options::useWasmSIMD = false on RISCV64) so the upper 8 bytes
+    # are pure padding.
+    def riscv64Operand
+        case @name
+        when 'v0', 'v0_b', 'v0_h', 'v0_i', 'v0_q'
+            'f0'
+        when 'v1', 'v1_b', 'v1_h', 'v1_i', 'v1_q'
+            'f1'
+        when 'v2', 'v2_b', 'v2_h', 'v2_i', 'v2_q'
+            'f2'
+        when 'v3', 'v3_b', 'v3_h', 'v3_i', 'v3_q'
+            'f3'
+        when 'v4', 'v4_b', 'v4_h', 'v4_i', 'v4_q'
+            'f4'
+        when 'v5', 'v5_b', 'v5_h', 'v5_i', 'v5_q'
+            'f5'
+        when 'v6', 'v6_b', 'v6_h', 'v6_i', 'v6_q'
+            'f6'
+        when 'v7', 'v7_b', 'v7_h', 'v7_i', 'v7_q'
+            'f7'
+        else
+            raise "Bad vector register name #{@name} at #{codeOriginString}"
         end
     end
 end
@@ -651,6 +691,43 @@ def riscv64LowerOperation(list)
         newList << Instruction.new(node.codeOrigin, "rv_addi", [sp, Immediate.new(node.codeOrigin, size), sp])
     end
 
+    # pushv / popv reserve 16 bytes per operand because the IPInt wasm
+    # operand stack uses 16-byte slots uniformly. RISC-V baseline rv64gc
+    # has no V extension, so each v-reg is aliased to a single 64-bit FPR;
+    # only the low 8 bytes are written/read, the upper 8 bytes are pure
+    # padding (wasm SIMD is disabled at runtime on this arch).
+    def emitPushv(newList, node)
+        sp = RegisterID.forName(node.codeOrigin, 'sp')
+        size = 16 * node.operands.size
+        newList << Instruction.new(node.codeOrigin, "rv_addi", [sp, Immediate.new(node.codeOrigin, -size), sp])
+        node.operands.reverse.each_with_index {
+            | op, index |
+            offset = size - 16 * (index + 1)
+            newList << Instruction.new(node.codeOrigin, "rv_fsd", [op, Address.new(node.codeOrigin, sp, Immediate.new(node.codeOrigin, offset))])
+        }
+    end
+
+    def emitPopv(newList, node)
+        sp = RegisterID.forName(node.codeOrigin, 'sp')
+        size = 16 * node.operands.size
+        node.operands.each_with_index {
+            | op, index |
+            offset = size - 16 * (index + 1)
+            newList << Instruction.new(node.codeOrigin, "rv_fld", [Address.new(node.codeOrigin, sp, Immediate.new(node.codeOrigin, offset)), op])
+        }
+        newList << Instruction.new(node.codeOrigin, "rv_addi", [sp, Immediate.new(node.codeOrigin, size), sp])
+    end
+
+    def emitLoadv(newList, node)
+        riscv64ValidateOperands(node.operands, [Address, FPRegisterID])
+        newList << Instruction.new(node.codeOrigin, "rv_fld", node.operands)
+    end
+
+    def emitStorev(newList, node)
+        riscv64ValidateOperands(node.operands, [FPRegisterID, Address])
+        newList << Instruction.new(node.codeOrigin, "rv_fsd", node.operands)
+    end
+
     def emitAdditionOperation(newList, node, operation, size)
         operands = node.operands
         if operands.size == 2
@@ -790,38 +867,56 @@ def riscv64LowerOperation(list)
     def emitBitExtensionOperation(newList, node, extension, fromSize, toSize)
         raise "Invalid operand types" unless riscv64OperandTypes(node.operands) == [RegisterID, RegisterID]
 
-        if [[:s, :i, :p], [:s, :i, :q]].include? [extension, fromSize, toSize]
-            newList << Instruction.new(node.codeOrigin, "rv_sext.w", node.operands)
-            return
-        end
-
         source = node.operands[0]
         dest = node.operands[1]
 
-        if [[:z, :i, :p], [:z, :i, :q]].include? [extension, fromSize, toSize]
+        # On RISC-V :p (pointer) is the same width as :q (64-bit).
+        targetSize = (toSize == :p) ? :q : toSize
+
+        case [extension, fromSize, targetSize]
+        when [:s, :i, :q]
+            newList << Instruction.new(node.codeOrigin, "rv_sext.w", [source, dest])
+            return
+        when [:s, :i, :i]
+            # Already an i32 in canonical RISC-V form (low 32 bits = value,
+            # upper 32 bits = sign-extension of bit 31). sext.w re-normalises
+            # in case the source was produced by a non-canonical sequence.
+            newList << Instruction.new(node.codeOrigin, "rv_sext.w", [source, dest])
+            return
+        when [:z, :i, :q]
+            newList << Instruction.new(node.codeOrigin, "rv_slli", [source, Immediate.new(node.codeOrigin, 32), dest])
+            newList << Instruction.new(node.codeOrigin, "rv_srli", [dest, Immediate.new(node.codeOrigin, 32), dest])
+            return
+        when [:z, :i, :i]
+            # Lower 32 bits of source already hold the value; clearing the
+            # upper 32 bits gives the :i canonical representation.
             newList << Instruction.new(node.codeOrigin, "rv_slli", [source, Immediate.new(node.codeOrigin, 32), dest])
             newList << Instruction.new(node.codeOrigin, "rv_srli", [dest, Immediate.new(node.codeOrigin, 32), dest])
             return
         end
 
-        raise "Invalid zero extension" unless extension == :s
-        case [fromSize, toSize]
-        when [:b, :i]
+        case [extension, fromSize, targetSize]
+        when [:s, :b, :i]
             newList << Instruction.new(node.codeOrigin, "rv_slli", [source, Immediate.new(node.codeOrigin, 56), dest])
             newList << Instruction.new(node.codeOrigin, "rv_srai", [dest, Immediate.new(node.codeOrigin, 24), dest])
             newList << Instruction.new(node.codeOrigin, "rv_srli", [dest, Immediate.new(node.codeOrigin, 32), dest])
-        when [:b, :q]
+        when [:s, :b, :q]
             newList << Instruction.new(node.codeOrigin, "rv_slli", [source, Immediate.new(node.codeOrigin, 56), dest])
             newList << Instruction.new(node.codeOrigin, "rv_srai", [dest, Immediate.new(node.codeOrigin, 56), dest])
-        when [:h, :i]
+        when [:s, :h, :i]
             newList << Instruction.new(node.codeOrigin, "rv_slli", [source, Immediate.new(node.codeOrigin, 48), dest])
             newList << Instruction.new(node.codeOrigin, "rv_srai", [dest, Immediate.new(node.codeOrigin, 16), dest])
             newList << Instruction.new(node.codeOrigin, "rv_srli", [dest, Immediate.new(node.codeOrigin, 32), dest])
-        when [:h, :q]
+        when [:s, :h, :q]
             newList << Instruction.new(node.codeOrigin, "rv_slli", [source, Immediate.new(node.codeOrigin, 48), dest])
             newList << Instruction.new(node.codeOrigin, "rv_srai", [dest, Immediate.new(node.codeOrigin, 48), dest])
+        when [:z, :b, :i], [:z, :b, :q]
+            newList << Instruction.new(node.codeOrigin, "rv_andi", [source, Immediate.new(node.codeOrigin, 0xff), dest])
+        when [:z, :h, :i], [:z, :h, :q]
+            newList << Instruction.new(node.codeOrigin, "rv_slli", [source, Immediate.new(node.codeOrigin, 48), dest])
+            newList << Instruction.new(node.codeOrigin, "rv_srli", [dest, Immediate.new(node.codeOrigin, 48), dest])
         else
-            raise "Invalid bit-extension combination"
+            raise "Invalid bit-extension combination #{[extension, fromSize, toSize]}"
         end
     end
 
@@ -882,6 +977,14 @@ def riscv64LowerOperation(list)
                 emitPush(newList, node)
             when "pop"
                 emitPop(newList, node)
+            when "pushv"
+                emitPushv(newList, node)
+            when "popv"
+                emitPopv(newList, node)
+            when "loadv"
+                emitLoadv(newList, node)
+            when "storev"
+                emitStorev(newList, node)
             when /^(add|sub)(i|p|q)$/
                 emitAdditionOperation(newList, node, $1.to_sym, $2.to_sym)
             when /^(mul|div|rem)(i|p|q)(s?)$/
@@ -1543,8 +1646,7 @@ def riscv64GenerateWASMPlaceholders(list)
         if node.is_a? Instruction
             case node.opcode
             when "loadlinkacqb", "loadlinkacqh", "loadlinkacqi", "loadlinkacqq",
-                 "storecondrelb", "storecondrelh", "storecondreli", "storecondrelq",
-                 "loadv", "storev"
+                 "storecondrelb", "storecondrelh", "storecondreli", "storecondrelq"
                 newList << Instruction.new(node.codeOrigin, "rv_ebreak", [], "WebAssembly placeholder for opcode #{node.opcode}")
             else
                 newList << node
@@ -1570,6 +1672,7 @@ class Sequence
                 false
             end
         }
+        result = riscLowerMalformedAddressesDouble(result)
         result = riscv64LowerMisplacedAddresses(result)
         result = riscLowerMisplacedAddresses(result)
         result = riscv64LowerAddressLoads(result)
