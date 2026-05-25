@@ -36,6 +36,20 @@
     template<typename... Args> void methodName(Args&&...) { }
 #define MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD_WITH_RETURN(methodName, returnType) \
     template<typename... Args> returnType methodName(Args&&...) { return { }; }
+// Atomic / FP-minmax / SIMD methods needed by BBQJIT for which no native
+// RISC-V code generation exists yet. These are deliberately runtime-fatal
+// rather than silent noops: wasm shared memory and SIMD are gated off on
+// RISCV64 (useSharedArrayBuffer / useWasmSIMD), so the BBQJIT codegen for
+// atomic and SIMD wasm opcodes must never run. If something does reach
+// these, we want to know with a loud crash, not a silent miscompilation.
+#define MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(methodName) \
+    template<typename... Args> void methodName(Args&&...) { RELEASE_ASSERT_NOT_REACHED(); }
+#define MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD_WITH_RETURN(methodName, returnType) \
+    template<typename... Args> returnType methodName(Args&&...) \
+    { \
+        RELEASE_ASSERT_NOT_REACHED(); \
+        return { }; \
+    }
 
 namespace JSC {
 
@@ -852,6 +866,123 @@ public:
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(rotateRight32);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(rotateRight64);
 
+    // Scalar BBQJIT primitives: fused shift/add and rotate-left, used by the
+    // wasm bytecode-to-machine-code path. RISC-V's baseline rv64gc has no
+    // rotate instruction (Zbb's rolw/rol would do it in one), so synthesize
+    // via shift + shift + or.
+    void addLeftShift64(RegisterID n, RegisterID m, TrustedImm32 amount, RegisterID d)
+    {
+        auto temp = temps<Data>();
+        m_assembler.slliInsn(temp.data(), m, uint32_t(amount.m_value & 63));
+        m_assembler.addInsn(d, n, temp.data());
+    }
+
+    void multiplyAddZeroExtend32(RegisterID mulLeft, RegisterID mulRight, RegisterID summand, RegisterID dest)
+    {
+        auto temp = temps<Data>();
+        m_assembler.mulwInsn(temp.data(), mulLeft, mulRight);
+        m_assembler.maskRegister<32>(temp.data());
+        m_assembler.addInsn(dest, summand, temp.data());
+    }
+
+    void rotateLeft32(RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        int32_t shift = imm.m_value & 31;
+        if (!shift) {
+            if (src != dest)
+                move(src, dest);
+            m_assembler.maskRegister<32>(dest);
+            return;
+        }
+        auto temp = temps<Data, Memory>();
+        m_assembler.slliwInsn(temp.data(), src, uint32_t(shift));
+        m_assembler.srliwInsn(temp.memory(), src, uint32_t(32 - shift));
+        m_assembler.orInsn(dest, temp.data(), temp.memory());
+        m_assembler.maskRegister<32>(dest);
+    }
+
+    void rotateLeft32(RegisterID src, RegisterID shift, RegisterID dest)
+    {
+        auto temp = temps<Data, Memory>();
+        m_assembler.addiInsn(temp.data(), RISCV64Registers::zero, Imm::I<32>());
+        m_assembler.subInsn(temp.data(), temp.data(), shift);
+        m_assembler.sllwInsn(temp.memory(), src, shift);
+        m_assembler.srlwInsn(temp.data(), src, temp.data());
+        m_assembler.orInsn(dest, temp.memory(), temp.data());
+        m_assembler.maskRegister<32>(dest);
+    }
+
+    void rotateLeft64(RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        int32_t shift = imm.m_value & 63;
+        if (!shift) {
+            if (src != dest)
+                move(src, dest);
+            return;
+        }
+        auto temp = temps<Data, Memory>();
+        m_assembler.slliInsn(temp.data(), src, uint32_t(shift));
+        m_assembler.srliInsn(temp.memory(), src, uint32_t(64 - shift));
+        m_assembler.orInsn(dest, temp.data(), temp.memory());
+    }
+
+    void rotateLeft64(RegisterID src, RegisterID shift, RegisterID dest)
+    {
+        auto temp = temps<Data, Memory>();
+        m_assembler.addiInsn(temp.data(), RISCV64Registers::zero, Imm::I<64>());
+        m_assembler.subInsn(temp.data(), temp.data(), shift);
+        m_assembler.sllInsn(temp.memory(), src, shift);
+        m_assembler.srlInsn(temp.data(), src, temp.data());
+        m_assembler.orInsn(dest, temp.memory(), temp.data());
+    }
+
+    // Integer divide / modulo via the RISC-V M extension (in rv64gc).
+    // The 32-bit forms produce a sign-extended result; mask to 32 bits.
+    void div32(RegisterID dividend, RegisterID divisor, RegisterID dest)
+    {
+        m_assembler.divwInsn(dest, dividend, divisor);
+        m_assembler.maskRegister<32>(dest);
+    }
+
+    void uDiv32(RegisterID dividend, RegisterID divisor, RegisterID dest)
+    {
+        m_assembler.divuwInsn(dest, dividend, divisor);
+        m_assembler.maskRegister<32>(dest);
+    }
+
+    void div64(RegisterID dividend, RegisterID divisor, RegisterID dest)
+    {
+        m_assembler.divInsn(dest, dividend, divisor);
+    }
+
+    void uDiv64(RegisterID dividend, RegisterID divisor, RegisterID dest)
+    {
+        m_assembler.divuInsn(dest, dividend, divisor);
+    }
+
+    // dest = minuend - (mulLeft * mulRight). Used by wasm i32/i64 rem
+    // (rem == lhs - (lhs/rhs) * rhs). RISC-V has no fused mul-sub.
+    void multiplySub32(RegisterID mulLeft, RegisterID mulRight, RegisterID minuend, RegisterID dest)
+    {
+        auto temp = temps<Data>();
+        m_assembler.mulwInsn(temp.data(), mulLeft, mulRight);
+        m_assembler.subwInsn(dest, minuend, temp.data());
+        m_assembler.maskRegister<32>(dest);
+    }
+
+    void multiplySub64(RegisterID mulLeft, RegisterID mulRight, RegisterID minuend, RegisterID dest)
+    {
+        auto temp = temps<Data>();
+        m_assembler.mulInsn(temp.data(), mulLeft, mulRight);
+        m_assembler.subInsn(dest, minuend, temp.data());
+    }
+
+    // uint32 -> single-precision float, fcvt.s.wu (one instruction).
+    void convertUInt32ToFloat(RegisterID src, FPRegisterID dest)
+    {
+        m_assembler.fcvtInsn<RISCV64Assembler::FCVTType::S, RISCV64Assembler::FCVTType::WU>(dest, src);
+    }
+
     void load8(Address address, RegisterID dest)
     {
         auto resolution = resolveAddress(address, lazyTemp<Memory>());
@@ -1438,6 +1569,73 @@ public:
     void transferPtr(BaseIndex src, BaseIndex dest)
     {
         transfer64(src, dest);
+    }
+
+    // 8- and 16-bit mem-to-mem transfers, and Address->BaseIndex
+    // variants of the existing widths, needed by BBQJIT (wasm
+    // struct copy / memory init etc.). Implemented in the same shape
+    // as the existing transfer32 / transfer64: load to a scratch
+    // register, store from it.
+    void transfer8(Address src, Address dest)
+    {
+        auto temp = temps<Data>();
+        load8(src, temp.data());
+        store8(temp.data(), dest);
+    }
+
+    void transfer8(BaseIndex src, BaseIndex dest)
+    {
+        auto temp = temps<Data>();
+        load8(src, temp.data());
+        store8(temp.data(), dest);
+    }
+
+    void transfer8(Address src, BaseIndex dest)
+    {
+        auto temp = temps<Data>();
+        load8(src, temp.data());
+        store8(temp.data(), dest);
+    }
+
+    void transfer16(Address src, Address dest)
+    {
+        auto temp = temps<Data>();
+        load16(src, temp.data());
+        store16(temp.data(), dest);
+    }
+
+    void transfer16(BaseIndex src, BaseIndex dest)
+    {
+        auto temp = temps<Data>();
+        load16(src, temp.data());
+        store16(temp.data(), dest);
+    }
+
+    void transfer16(Address src, BaseIndex dest)
+    {
+        auto temp = temps<Data>();
+        load16(src, temp.data());
+        store16(temp.data(), dest);
+    }
+
+    void transfer32(Address src, BaseIndex dest)
+    {
+        auto temp = temps<Data>();
+        load32(src, temp.data());
+        store32(temp.data(), dest);
+    }
+
+    void transfer64(Address src, BaseIndex dest)
+    {
+        auto temp = temps<Data>();
+        load64(src, temp.data());
+        store64(temp.data(), dest);
+    }
+
+    void transferVector(Address src, BaseIndex dest)
+    {
+        loadVector(src, fpTempRegister);
+        storeVector(fpTempRegister, dest);
     }
 
     void storePair32(RegisterID src1, RegisterID src2, RegisterID dest)
@@ -2165,6 +2363,116 @@ public:
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorMulSat);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorDotProduct);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorSwizzle);
+    // Additional vector noop stubs needed by BBQJIT (kept unreachable via
+    // useWasmSIMD = false on RISCV64; see Options.cpp).
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(compareFloatingPointVectorUnordered);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(moveZeroToVector);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorAbsInt64);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorConvertLowSignedInt32);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorConvertLowUnsignedInt32);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorConvertUnsigned);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorExtaddPairwiseUnsignedInt16);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorExtractPair);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorHorizontalAdd);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorLoad8Splat);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorSshl);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorSshr8);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorUshl);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorUshr8);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorSwizzle2);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorTruncSatSignedFloat64);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorTruncSatUnsignedFloat32);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorTruncSatUnsignedFloat64);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorUnsignedMax);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorUnsignedMin);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorUnzipEven);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorZipUpper);
+
+    // Wasm atomics: the RISC-V A extension is available (the OpenWrt -march
+    // baseline is rv64gc, i.e. includes A), but the AMO/LR/SC instruction
+    // emitters in RISCV64Assembler.h have not been added yet. Stub the
+    // BBQJIT atomic API with hard-fault unimplemented methods: at runtime
+    // wasm shared memory is gated off via useSharedArrayBuffer = false, so
+    // wasm atomic opcodes are unreachable, and these stubs only ever exist
+    // for compile-time completeness. Filling these in (and adding the
+    // matching RISCV64Assembler.h emitters) is a follow-up that unlocks the
+    // wasm threads proposal on RISCV64.
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(loadLinkAcq8);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(loadLinkAcq16);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(loadLinkAcq32);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(loadLinkAcq64);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(storeCondRel8);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(storeCondRel16);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(storeCondRel32);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(storeCondRel64);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD_WITH_RETURN(branchAtomicStrongCAS8, Jump);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD_WITH_RETURN(branchAtomicStrongCAS16, Jump);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD_WITH_RETURN(branchAtomicStrongCAS32, Jump);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD_WITH_RETURN(branchAtomicStrongCAS64, Jump);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchg8);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchg16);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchg32);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchg64);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgAdd8);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgAdd16);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgAdd32);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgAdd64);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgClear8);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgClear16);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgClear32);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgClear64);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgOr8);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgOr16);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgOr32);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgOr64);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgXor8);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgXor16);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgXor32);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgXor64);
+    // atomicStrongCAS{N}: the non-branching CAS overloads used by BBQJIT
+    // when the caller only needs success/failure in resultGPR (rather
+    // than a JIT-emitted branch). Same runtime-unreachable rationale as
+    // branchAtomicStrongCAS{N} above.
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicStrongCAS8);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicStrongCAS16);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicStrongCAS32);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicStrongCAS64);
+    // Additional SIMD vector noop stubs uncovered by enabling BBQJIT.
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorSplat);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorUshl8);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorSshr);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorUshr);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorMulLow);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorMulHigh);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorFusedMulAdd);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorFusedNegMulAdd);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorLoad16Splat);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorLoad32Splat);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorLoad64Splat);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorLoad8Lane);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorLoad16Lane);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorLoad32Lane);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorLoad64Lane);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorStore8Lane);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorStore16Lane);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorStore32Lane);
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorStore64Lane);
+    // vectorExtractLane / vectorReplaceLane: by-value templated stubs.
+    // The MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD form uses
+    // Args&& forwarding references; binding a SIMDInfo::lane /
+    // SIMDInfo::signMode bit-field to a non-const reference is
+    // ill-formed, so use by-value template parameters instead.
+    // (The SIMD type names are not visible in this header without
+    // pulling in <JavaScriptCore/SIMDInfo.h>, which we avoid for
+    // pure stubs.) Same unreachability rationale as the other SIMD
+    // stubs: useWasmSIMD = false on RISCV64.
+    template<typename T1, typename T2, typename T3, typename T4>
+    void vectorExtractLane(T1, T2, T3, T4) { }
+    template<typename T1, typename T2, typename T3, typename T4, typename T5>
+    void vectorExtractLane(T1, T2, T3, T4, T5) { }
+    template<typename T1, typename T2, typename T3, typename T4>
+    void vectorReplaceLane(T1, T2, T3, T4) { }
+    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(move128ToVector);
 
     template<PtrTag resultTag, PtrTag locationTag>
     static CodePtr<resultTag> readCallTarget(CodeLocationCall<locationTag> call)
@@ -3533,6 +3841,26 @@ public:
     void absDouble(FPRegisterID src, FPRegisterID dest)
     {
         m_assembler.fsgnjxInsn<64>(dest, src, src);
+    }
+
+    void floatMin(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        m_assembler.fminInsn<32>(dest, op1, op2);
+    }
+
+    void floatMax(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        m_assembler.fmaxInsn<32>(dest, op1, op2);
+    }
+
+    void doubleMin(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        m_assembler.fminInsn<64>(dest, op1, op2);
+    }
+
+    void doubleMax(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        m_assembler.fmaxInsn<64>(dest, op1, op2);
     }
 
     void ceilFloat(FPRegisterID src, FPRegisterID dest)
