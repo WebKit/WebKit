@@ -2452,55 +2452,169 @@ public:
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorUnzipEven);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorZipUpper);
 
-    // Wasm atomics: the RISC-V A extension is available (the OpenWrt -march
-    // baseline is rv64gc, i.e. includes A), but the AMO/LR/SC instruction
-    // emitters in RISCV64Assembler.h have not been added yet. Stub the
-    // BBQJIT atomic API with hard-fault unimplemented methods: at runtime
-    // wasm shared memory is gated off via useSharedArrayBuffer = false, so
-    // wasm atomic opcodes are unreachable, and these stubs only ever exist
-    // for compile-time completeness. Filling these in (and adding the
-    // matching RISCV64Assembler.h emitters) is a follow-up that unlocks the
-    // wasm threads proposal on RISCV64.
+    // RV64A standard A-extension (always present in rv64gc): real impls
+    // for 32/64-bit primitives. 8/16-bit primitives stay UNIMPLEMENTED
+    // because base RV64A has no byte/half AMOs (Zabha is optional, not
+    // in rv64gc); BBQJIT routes 8/16 atomic ops through the
+    // WasmIPIntSlowPaths.cpp C helpers (GCC __atomic_* builtins, which
+    // expand to LR.W byte-mask loops -- properly atomic on rv64gc).
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(loadLinkAcq8);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(loadLinkAcq16);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(loadLinkAcq32);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(loadLinkAcq64);
+    void loadLinkAcq32(Address address, RegisterID dest)
+    {
+        ASSERT(!address.offset);
+        m_assembler.lr_wInsn(dest, address.base, { Assembler::MemoryAccess::Acquire });
+    }
+    void loadLinkAcq64(Address address, RegisterID dest)
+    {
+        ASSERT(!address.offset);
+        m_assembler.lr_dInsn(dest, address.base, { Assembler::MemoryAccess::Acquire });
+    }
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(storeCondRel8);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(storeCondRel16);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(storeCondRel32);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(storeCondRel64);
+    void storeCondRel32(RegisterID value, Address address, RegisterID status)
+    {
+        ASSERT(!address.offset);
+        m_assembler.sc_wInsn(status, address.base, value, { Assembler::MemoryAccess::Release });
+    }
+    void storeCondRel64(RegisterID value, Address address, RegisterID status)
+    {
+        ASSERT(!address.offset);
+        m_assembler.sc_dInsn(status, address.base, value, { Assembler::MemoryAccess::Release });
+    }
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD_WITH_RETURN(branchAtomicStrongCAS8, Jump);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD_WITH_RETURN(branchAtomicStrongCAS16, Jump);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD_WITH_RETURN(branchAtomicStrongCAS32, Jump);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD_WITH_RETURN(branchAtomicStrongCAS64, Jump);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchg8);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchg16);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchg32);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchg64);
+    void atomicXchg32(RegisterID value, Address address, RegisterID result)
+    {
+        ASSERT(!address.offset);
+        m_assembler.amoswap_wInsn(result, address.base, value,
+            { Assembler::MemoryAccess::Acquire, Assembler::MemoryAccess::Release });
+    }
+    void atomicXchg64(RegisterID value, Address address, RegisterID result)
+    {
+        ASSERT(!address.offset);
+        m_assembler.amoswap_dInsn(result, address.base, value,
+            { Assembler::MemoryAccess::Acquire, Assembler::MemoryAccess::Release });
+    }
+    // 2-arg X86-style overloads (input-and-result in the same register).
+    // Live only in BBQJIT's isX86_64() branch, which is never taken at
+    // runtime on RISC-V; provided so the source still compiles.
+    void atomicXchg32(RegisterID valueAndResult, Address address) { atomicXchg32(valueAndResult, address, valueAndResult); }
+    void atomicXchg64(RegisterID valueAndResult, Address address) { atomicXchg64(valueAndResult, address, valueAndResult); }
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgAdd8);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgAdd16);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgAdd32);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgAdd64);
+    void atomicXchgAdd32(RegisterID value, Address address, RegisterID result)
+    {
+        ASSERT(!address.offset);
+        m_assembler.amoadd_wInsn(result, address.base, value,
+            { Assembler::MemoryAccess::Acquire, Assembler::MemoryAccess::Release });
+    }
+    void atomicXchgAdd64(RegisterID value, Address address, RegisterID result)
+    {
+        ASSERT(!address.offset);
+        m_assembler.amoadd_dInsn(result, address.base, value,
+            { Assembler::MemoryAccess::Acquire, Assembler::MemoryAccess::Release });
+    }
+    void atomicXchgAdd32(RegisterID valueAndResult, Address address) { atomicXchgAdd32(valueAndResult, address, valueAndResult); }
+    void atomicXchgAdd64(RegisterID valueAndResult, Address address) { atomicXchgAdd64(valueAndResult, address, valueAndResult); }
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgClear8);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgClear16);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgClear32);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgClear64);
+    // atomicXchgClear is "atomic AND NOT": no AMOANDN in base A; xori-1 + AMOAND.
+    void atomicXchgClear32(RegisterID value, Address address, RegisterID result)
+    {
+        ASSERT(!address.offset);
+        auto t = temps<Data>();
+        m_assembler.xoriInsn(t.data(), value, Imm::I<-1>());
+        m_assembler.amoand_wInsn(result, address.base, t.data(),
+            { Assembler::MemoryAccess::Acquire, Assembler::MemoryAccess::Release });
+    }
+    void atomicXchgClear64(RegisterID value, Address address, RegisterID result)
+    {
+        ASSERT(!address.offset);
+        auto t = temps<Data>();
+        m_assembler.xoriInsn(t.data(), value, Imm::I<-1>());
+        m_assembler.amoand_dInsn(result, address.base, t.data(),
+            { Assembler::MemoryAccess::Acquire, Assembler::MemoryAccess::Release });
+    }
+    void atomicXchgClear32(RegisterID valueAndResult, Address address) { atomicXchgClear32(valueAndResult, address, valueAndResult); }
+    void atomicXchgClear64(RegisterID valueAndResult, Address address) { atomicXchgClear64(valueAndResult, address, valueAndResult); }
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgOr8);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgOr16);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgOr32);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgOr64);
+    void atomicXchgOr32(RegisterID value, Address address, RegisterID result)
+    {
+        ASSERT(!address.offset);
+        m_assembler.amoor_wInsn(result, address.base, value,
+            { Assembler::MemoryAccess::Acquire, Assembler::MemoryAccess::Release });
+    }
+    void atomicXchgOr64(RegisterID value, Address address, RegisterID result)
+    {
+        ASSERT(!address.offset);
+        m_assembler.amoor_dInsn(result, address.base, value,
+            { Assembler::MemoryAccess::Acquire, Assembler::MemoryAccess::Release });
+    }
+    void atomicXchgOr32(RegisterID valueAndResult, Address address) { atomicXchgOr32(valueAndResult, address, valueAndResult); }
+    void atomicXchgOr64(RegisterID valueAndResult, Address address) { atomicXchgOr64(valueAndResult, address, valueAndResult); }
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgXor8);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgXor16);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgXor32);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicXchgXor64);
-    // atomicStrongCAS{N}: the non-branching CAS overloads used by BBQJIT
-    // when the caller only needs success/failure in resultGPR (rather
-    // than a JIT-emitted branch). Same runtime-unreachable rationale as
-    // branchAtomicStrongCAS{N} above.
+    void atomicXchgXor32(RegisterID value, Address address, RegisterID result)
+    {
+        ASSERT(!address.offset);
+        m_assembler.amoxor_wInsn(result, address.base, value,
+            { Assembler::MemoryAccess::Acquire, Assembler::MemoryAccess::Release });
+    }
+    void atomicXchgXor64(RegisterID value, Address address, RegisterID result)
+    {
+        ASSERT(!address.offset);
+        m_assembler.amoxor_dInsn(result, address.base, value,
+            { Assembler::MemoryAccess::Acquire, Assembler::MemoryAccess::Release });
+    }
+    void atomicXchgXor32(RegisterID valueAndResult, Address address) { atomicXchgXor32(valueAndResult, address, valueAndResult); }
+    void atomicXchgXor64(RegisterID valueAndResult, Address address) { atomicXchgXor64(valueAndResult, address, valueAndResult); }
+    // atomicStrongCAS{32,64}(expectedAndResult, newValue, address):
+    // Loads *address into expectedAndResult; if old == caller's expected,
+    // stores newValue. Same external contract as ARM64-LSE casa. Caller
+    // checks expectedAndResult == old-expected to detect success.
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicStrongCAS8);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicStrongCAS16);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicStrongCAS32);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_UNIMPLEMENTED_METHOD(atomicStrongCAS64);
+    void atomicStrongCAS32(RegisterID expectedAndResult, RegisterID newValue, Address address)
+    {
+        ASSERT(!address.offset);
+        auto t = temps<Data, Memory>();
+        Label loop = label();
+        m_assembler.lr_wInsn(t.data(), address.base, { Assembler::MemoryAccess::Acquire });
+        m_assembler.addiwInsn(t.memory(), expectedAndResult, Imm::I<0>());
+        Jump mismatch = makeBranch(NotEqual, t.data(), t.memory());
+        m_assembler.sc_wInsn(t.memory(), address.base, newValue, { Assembler::MemoryAccess::Release });
+        Jump scFail = makeBranch(NotEqual, t.memory(), RISCV64Registers::zero);
+        scFail.linkTo(loop, this);
+        mismatch.link(this);
+        m_assembler.addiInsn(expectedAndResult, t.data(), Imm::I<0>());
+    }
+    void atomicStrongCAS64(RegisterID expectedAndResult, RegisterID newValue, Address address)
+    {
+        ASSERT(!address.offset);
+        auto t = temps<Data, Memory>();
+        Label loop = label();
+        m_assembler.lr_dInsn(t.data(), address.base, { Assembler::MemoryAccess::Acquire });
+        Jump mismatch = makeBranch(NotEqual, t.data(), expectedAndResult);
+        m_assembler.sc_dInsn(t.memory(), address.base, newValue, { Assembler::MemoryAccess::Release });
+        Jump scFail = makeBranch(NotEqual, t.memory(), RISCV64Registers::zero);
+        scFail.linkTo(loop, this);
+        mismatch.link(this);
+        m_assembler.addiInsn(expectedAndResult, t.data(), Imm::I<0>());
+    }
+    // 5-arg StatusCondition form (X86-style). Live only in BBQJIT's
+    // isX86_64() branch -- on RISC-V the surrounding code exits via
+    // an earlier `return;` so this never runs at runtime. Provide a
+    // viable overload so the source still compiles.
+    void atomicStrongCAS32(StatusCondition, RegisterID, RegisterID, Address, RegisterID)
+        { RELEASE_ASSERT_NOT_REACHED(); }
+    void atomicStrongCAS64(StatusCondition, RegisterID, RegisterID, Address, RegisterID)
+        { RELEASE_ASSERT_NOT_REACHED(); }
     // Additional SIMD vector noop stubs uncovered by enabling BBQJIT.
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorSplat);
     MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(vectorUshl8);

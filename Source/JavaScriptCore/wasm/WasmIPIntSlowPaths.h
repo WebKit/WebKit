@@ -143,6 +143,46 @@ WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_atomic_wait32, IPIntStackEntry*);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_atomic_wait64, IPIntStackEntry*);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(memory_atomic_notify, IPIntStackEntry*);
 
+// Slow-path atomic ops. The IPInt asm on architectures lacking direct
+// offlineasm atomic primitives (currently RISC-V64) routes here. The asm
+// caller passes the already-bounds-checked, page-aligned host pointer.
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_load8, uint64_t address);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_load16, uint64_t address);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_load32, uint64_t address);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_load64, uint64_t address);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_store8, uint64_t address, uint64_t value);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_store16, uint64_t address, uint64_t value);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_store32, uint64_t address, uint64_t value);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_store64, uint64_t address, uint64_t value);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_rmw_add8, uint64_t address, uint64_t value);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_rmw_add16, uint64_t address, uint64_t value);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_rmw_add32, uint64_t address, uint64_t value);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_rmw_add64, uint64_t address, uint64_t value);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_rmw_sub8, uint64_t address, uint64_t value);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_rmw_sub16, uint64_t address, uint64_t value);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_rmw_sub32, uint64_t address, uint64_t value);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_rmw_sub64, uint64_t address, uint64_t value);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_rmw_and8, uint64_t address, uint64_t value);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_rmw_and16, uint64_t address, uint64_t value);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_rmw_and32, uint64_t address, uint64_t value);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_rmw_and64, uint64_t address, uint64_t value);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_rmw_or8, uint64_t address, uint64_t value);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_rmw_or16, uint64_t address, uint64_t value);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_rmw_or32, uint64_t address, uint64_t value);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_rmw_or64, uint64_t address, uint64_t value);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_rmw_xor8, uint64_t address, uint64_t value);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_rmw_xor16, uint64_t address, uint64_t value);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_rmw_xor32, uint64_t address, uint64_t value);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_rmw_xor64, uint64_t address, uint64_t value);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_rmw_xchg8, uint64_t address, uint64_t value);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_rmw_xchg16, uint64_t address, uint64_t value);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_rmw_xchg32, uint64_t address, uint64_t value);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_rmw_xchg64, uint64_t address, uint64_t value);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_rmw_cmpxchg8, uint64_t address, uint64_t expected, uint64_t replacement);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_rmw_cmpxchg16, uint64_t address, uint64_t expected, uint64_t replacement);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_rmw_cmpxchg32, uint64_t address, uint64_t expected, uint64_t replacement);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(atomic_rmw_cmpxchg64, uint64_t address, uint64_t expected, uint64_t replacement);
+
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(check_stack_and_vm_traps, void* candidateNewStackPointer, Wasm::IPIntCallee*, CallFrame*);
 WASM_IPINT_EXTERN_CPP_DECL(handle_debugger_trap_if_needed, CallFrame*, Register*);
 

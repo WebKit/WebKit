@@ -1832,6 +1832,37 @@ public:
     void remwInsn(RegisterID rd, RegisterID rs1, RegisterID rs2) { insn(RISCV64Instructions::REMW::construct(rd, rs1, rs2)); }
     void remuwInsn(RegisterID rd, RegisterID rs1, RegisterID rs2) { insn(RISCV64Instructions::REMUW::construct(rd, rs1, rs2)); }
 
+    // RV{32,64}A standard A-extension (always present in rv64gc).
+    // For sequential consistency pass { Acquire, Release } (.aqrl).
+    void lr_wInsn(RegisterID rd, RegisterID rs1, std::initializer_list<RISCV64Instructions::MemoryAccess> aqrl)
+        { insn(RISCV64Instructions::LR_W::construct(rd, rs1, RegisterID::zero, aqrl)); }
+    void lr_dInsn(RegisterID rd, RegisterID rs1, std::initializer_list<RISCV64Instructions::MemoryAccess> aqrl)
+        { insn(RISCV64Instructions::LR_D::construct(rd, rs1, RegisterID::zero, aqrl)); }
+    void sc_wInsn(RegisterID rd, RegisterID rs1, RegisterID rs2, std::initializer_list<RISCV64Instructions::MemoryAccess> aqrl)
+        { insn(RISCV64Instructions::SC_W::construct(rd, rs1, rs2, aqrl)); }
+    void sc_dInsn(RegisterID rd, RegisterID rs1, RegisterID rs2, std::initializer_list<RISCV64Instructions::MemoryAccess> aqrl)
+        { insn(RISCV64Instructions::SC_D::construct(rd, rs1, rs2, aqrl)); }
+    void amoswap_wInsn(RegisterID rd, RegisterID rs1, RegisterID rs2, std::initializer_list<RISCV64Instructions::MemoryAccess> aqrl)
+        { insn(RISCV64Instructions::AMOSWAP_W::construct(rd, rs1, rs2, aqrl)); }
+    void amoswap_dInsn(RegisterID rd, RegisterID rs1, RegisterID rs2, std::initializer_list<RISCV64Instructions::MemoryAccess> aqrl)
+        { insn(RISCV64Instructions::AMOSWAP_D::construct(rd, rs1, rs2, aqrl)); }
+    void amoadd_wInsn(RegisterID rd, RegisterID rs1, RegisterID rs2, std::initializer_list<RISCV64Instructions::MemoryAccess> aqrl)
+        { insn(RISCV64Instructions::AMOADD_W::construct(rd, rs1, rs2, aqrl)); }
+    void amoadd_dInsn(RegisterID rd, RegisterID rs1, RegisterID rs2, std::initializer_list<RISCV64Instructions::MemoryAccess> aqrl)
+        { insn(RISCV64Instructions::AMOADD_D::construct(rd, rs1, rs2, aqrl)); }
+    void amoxor_wInsn(RegisterID rd, RegisterID rs1, RegisterID rs2, std::initializer_list<RISCV64Instructions::MemoryAccess> aqrl)
+        { insn(RISCV64Instructions::AMOXOR_W::construct(rd, rs1, rs2, aqrl)); }
+    void amoxor_dInsn(RegisterID rd, RegisterID rs1, RegisterID rs2, std::initializer_list<RISCV64Instructions::MemoryAccess> aqrl)
+        { insn(RISCV64Instructions::AMOXOR_D::construct(rd, rs1, rs2, aqrl)); }
+    void amoand_wInsn(RegisterID rd, RegisterID rs1, RegisterID rs2, std::initializer_list<RISCV64Instructions::MemoryAccess> aqrl)
+        { insn(RISCV64Instructions::AMOAND_W::construct(rd, rs1, rs2, aqrl)); }
+    void amoand_dInsn(RegisterID rd, RegisterID rs1, RegisterID rs2, std::initializer_list<RISCV64Instructions::MemoryAccess> aqrl)
+        { insn(RISCV64Instructions::AMOAND_D::construct(rd, rs1, rs2, aqrl)); }
+    void amoor_wInsn(RegisterID rd, RegisterID rs1, RegisterID rs2, std::initializer_list<RISCV64Instructions::MemoryAccess> aqrl)
+        { insn(RISCV64Instructions::AMOOR_W::construct(rd, rs1, rs2, aqrl)); }
+    void amoor_dInsn(RegisterID rd, RegisterID rs1, RegisterID rs2, std::initializer_list<RISCV64Instructions::MemoryAccess> aqrl)
+        { insn(RISCV64Instructions::AMOOR_D::construct(rd, rs1, rs2, aqrl)); }
+
     using FCVTType = RISCV64Instructions::FCVTType;
     using FMVType = RISCV64Instructions::FMVType;
 

@@ -1390,6 +1390,11 @@ public:
     template<typename Functor>
     void emitAtomicOpGeneric(ExtAtomicOpType op, Address address, Location old, Location cur, const Functor& functor);
 
+#if CPU(RISCV64) && USE(JSVALUE64)
+    template<typename Functor>
+    void emitAtomicOpGenericRISCV64ByteMask(ExtAtomicOpType, Address, GPRReg oldGPR, GPRReg scratchGPR, Location valueLocation, const Functor&);
+#endif
+
     [[nodiscard]] Value emitAtomicLoadOp(ExtAtomicOpType loadOp, Type valueType, Location pointer, uint64_t uoffset);
 
     [[nodiscard]] PartialResult atomicLoad(ExtAtomicOpType loadOp, Type valueType, ExpressionType pointer, ExpressionType& result, uint64_t uoffset, uint8_t memoryIndex);
