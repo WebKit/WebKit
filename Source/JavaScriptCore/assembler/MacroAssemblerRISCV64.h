@@ -572,36 +572,51 @@ public:
 
     void countTrailingZeros32(RegisterID src, RegisterID dest)
     {
-        auto temp = temps<Data>();
-        m_assembler.addiInsn(dest, RISCV64Registers::zero, Imm::I<32>());
+        // Previously used slli (64-bit left shift) on a zero-extended 32-bit
+        // value, looking for temp == 0. That never zeros the value until the
+        // set bits fall off bit 63 - so dest decremented past zero and
+        // returned a negative result for any nonzero src. Use the more
+        // direct "right-shift and test bit 0" loop, which terminates in at
+        // most 32 iterations.
+        auto temp = temps<Data, Memory>();
         m_assembler.zeroExtend<32>(temp.data(), src);
+        m_assembler.addiInsn(dest, RISCV64Registers::zero, Imm::I<32>());
 
-        JumpList zero(makeBranch(Equal, temp.data(), RISCV64Registers::zero));
+        JumpList done(makeBranch(Equal, temp.data(), RISCV64Registers::zero));
+
+        m_assembler.addiInsn(dest, RISCV64Registers::zero, Imm::I<0>());
 
         Label loop = label();
-        m_assembler.slliInsn<1>(temp.data(), temp.data());
-        m_assembler.addiInsn(dest, dest, Imm::I<-1>());
-        zero.append(makeBranch(Equal, temp.data(), RISCV64Registers::zero));
+        m_assembler.andiInsn(temp.memory(), temp.data(), Imm::I<1>());
+        done.append(makeBranch(NotEqual, temp.memory(), RISCV64Registers::zero));
+        m_assembler.srliInsn<1>(temp.data(), temp.data());
+        m_assembler.addiInsn(dest, dest, Imm::I<1>());
         jump().linkTo(loop, this);
 
-        zero.link(this);
+        done.link(this);
     }
 
     void countTrailingZeros64(RegisterID src, RegisterID dest)
     {
-        auto temp = temps<Data>();
-        m_assembler.addiInsn(dest, RISCV64Registers::zero, Imm::I<64>());
+        // Same fix as countTrailingZeros32 for the 64-bit case: scan from
+        // bit 0 upward using right-shift + andi 1, instead of left-shifting
+        // until the value falls off the register.
+        auto temp = temps<Data, Memory>();
         m_assembler.addiInsn(temp.data(), src, Imm::I<0>());
+        m_assembler.addiInsn(dest, RISCV64Registers::zero, Imm::I<64>());
 
-        JumpList zero(makeBranch(Equal, temp.data(), RISCV64Registers::zero));
+        JumpList done(makeBranch(Equal, temp.data(), RISCV64Registers::zero));
+
+        m_assembler.addiInsn(dest, RISCV64Registers::zero, Imm::I<0>());
 
         Label loop = label();
-        m_assembler.slliInsn<1>(temp.data(), temp.data());
-        m_assembler.addiInsn(dest, dest, Imm::I<-1>());
-        zero.append(makeBranch(Equal, temp.data(), RISCV64Registers::zero));
+        m_assembler.andiInsn(temp.memory(), temp.data(), Imm::I<1>());
+        done.append(makeBranch(NotEqual, temp.memory(), RISCV64Registers::zero));
+        m_assembler.srliInsn<1>(temp.data(), temp.data());
+        m_assembler.addiInsn(dest, dest, Imm::I<1>());
         jump().linkTo(loop, this);
 
-        zero.link(this);
+        done.link(this);
     }
 
     void byteSwap16(RegisterID reg)
