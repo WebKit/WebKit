@@ -1164,6 +1164,11 @@ private:
 #elif CPU(ARM64)
         RegisterFP = 29,
         RegisterLR = 30,
+#elif CPU(RISCV64)
+        // RISC-V psABI: DWARF register numbers match x0..x31, so the frame
+        // pointer s0/x8 is 8 and the return-address register ra/x1 is 1.
+        RegisterFP = 8,
+        RegisterLR = 1,
 #else
         RegisterFP = 7,
         RegisterLR = 14,
