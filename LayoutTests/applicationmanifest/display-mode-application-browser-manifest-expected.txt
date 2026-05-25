@@ -1,0 +1,7 @@
+(display-mode: application): true
+(display-mode: browser): true
+(display-mode: standalone): false
+(display-mode: minimal-ui): false
+(display-mode: fullscreen): false
+(display-mode): true
+

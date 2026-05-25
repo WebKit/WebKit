@@ -1,0 +1,30 @@
+<script>
+    if (window.testRunner) testRunner.dumpAsText();
+</script>
+<pre id="output"></pre>
+<script>
+    const output = document.getElementById("output");
+    const queries = [
+        "(display-mode: application)",
+        "(display-mode: browser)",
+        "(display-mode: standalone)",
+        "(display-mode: application) and (display-mode: standalone)",
+        "(display-mode)",
+    ];
+
+    function report(heading) {
+        output.append(`${heading}\n`);
+        for (const query of queries)
+            output.append(`${query}: ${matchMedia(query).matches}\n`);
+    }
+
+    report("No manifest, Standalone setting off");
+    if (window.internals) {
+        internals.settings.setStandalone(true);
+        try {
+            report("No manifest, Standalone setting on");
+        } finally {
+            internals.settings.setStandalone(false);
+        }
+    }
+</script>

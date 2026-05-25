@@ -1,0 +1,33 @@
+Standalone setting off. Top level: application=false
+
+
+Same-origin iframe (origin http://127.0.0.1:8000): application=false notApplication=true standalone=false
+
+
+Cross-origin iframe (origin http://localhost:8000): application=false notApplication=true standalone=false
+
+
+Sandboxed same-origin iframe (origin null): application=false notApplication=true standalone=false
+
+
+data: URL iframe (origin null): application=false notApplication=true standalone=false
+
+
+Same-origin grandchild under a cross-origin iframe (origin http://127.0.0.1:8000): application=false notApplication=true standalone=false
+
+Standalone setting on. Top level: application=true
+
+
+Same-origin iframe (origin http://127.0.0.1:8000): application=true notApplication=false standalone=true
+
+
+Cross-origin iframe (origin http://localhost:8000): application=true notApplication=false standalone=true
+
+
+Sandboxed same-origin iframe (origin null): application=true notApplication=false standalone=true
+
+
+data: URL iframe (origin null): application=true notApplication=false standalone=true
+
+
+Same-origin grandchild under a cross-origin iframe (origin http://127.0.0.1:8000): application=true notApplication=false standalone=true
