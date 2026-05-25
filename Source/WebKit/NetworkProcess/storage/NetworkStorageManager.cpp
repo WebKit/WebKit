@@ -503,6 +503,9 @@ void NetworkStorageManager::donePrepareForEviction(const std::optional<HashMap<W
 {
     assertIsCurrent(workQueue());
 
+    if (m_closed)
+        return;
+
     HashMap<WebCore::SecurityOriginData, AccessRecord> originRecords;
     uint64_t totalUsage = 0;
     for (auto& origin : getAllOrigins()) {
