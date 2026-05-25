@@ -438,6 +438,17 @@ void RemoteGraphicsContext::drawNativeImage(RenderingResourceIdentifier imageIde
     context().drawNativeImage(*image, destRect, srcRect, options);
 }
 
+void RemoteGraphicsContext::drawNativeImageWithTransformAndAlpha(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options, std::optional<AffineTransform> ctm, std::optional<float> alpha)
+{
+    if (ctm)
+        context().setCTM(*ctm);
+    if (alpha)
+        context().setAlpha(*alpha);
+    RefPtr image = resourceCache().cachedNativeImage(imageIdentifier);
+    MESSAGE_CHECK(image);
+    context().drawNativeImage(*image, destRect, srcRect, options);
+}
+
 void RemoteGraphicsContext::drawSystemImage(Ref<SystemImage>&& systemImage, const FloatRect& destinationRect)
 {
 #if USE(SYSTEM_PREVIEW)
