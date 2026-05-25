@@ -270,7 +270,7 @@ void MediaPlayerPrivateGStreamer::tearDown(bool clearMediaPlayer)
     // The change to GST_STATE_NULL state is always synchronous. So after this gets executed we don't need to worry
     // about handlers running in the GStreamer thread.
     if (m_pipeline) {
-        unregisterPipeline(m_pipeline);
+        unregisterPipeline(m_originalPipelineName);
         gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
 
         auto bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
@@ -278,6 +278,10 @@ void MediaPlayerPrivateGStreamer::tearDown(bool clearMediaPlayer)
         disconnectSimpleBusMessageCallback(m_pipeline.get());
         g_signal_handlers_disconnect_matched(m_pipeline.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
 
+        m_source = nullptr;
+        m_videoSink = nullptr;
+        m_audioSink = nullptr;
+        m_textSink = nullptr;
         m_pipeline = nullptr;
     }
 
@@ -1377,8 +1381,9 @@ void MediaPlayerPrivateGStreamer::elementIdChanged(const String& elementId) cons
     auto currentName = String(objectName.span());
     auto tokens = currentName.split('-');
     auto newName = makeString(tokens[0], '-', elementId, '-', tokens.last());
-    GST_DEBUG_OBJECT(m_pipeline.get(), "Renaming to %s", newName.utf8().data());
-    gst_object_set_name(GST_OBJECT_CAST(m_pipeline.get()), newName.utf8().data());
+    auto nameCString = newName.utf8();
+    GST_DEBUG_OBJECT(m_pipeline.get(), "Renaming to %s", nameCString.data());
+    gst_object_set_name(GST_OBJECT_CAST(m_pipeline.get()), nameCString.data());
 }
 
 void MediaPlayerPrivateGStreamer::handleTextSample(GRefPtr<GstSample>&& sample, TrackID streamId)
@@ -3480,7 +3485,9 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
 
     static Atomic<uint32_t> pipelineId;
 
-    m_pipeline = makeGStreamerElement(playbinName, makeString(type, '-', elementId, '-', pipelineId.exchangeAdd(1)));
+    // Keep track of the original pipeline name because the MediaElement might be renamed, leading to the pipeline being renamed as well.
+    m_originalPipelineName = makeString(type, '-', elementId, '-', pipelineId.exchangeAdd(1));
+    m_pipeline = makeGStreamerElement(playbinName, m_originalPipelineName);
     if (!m_pipeline) {
         GST_WARNING("%s not found, make sure to install gst-plugins-base", playbinName.characters());
         loadingFailed(MediaPlayer::NetworkState::FormatError, MediaPlayer::ReadyState::HaveNothing, true);
@@ -3491,7 +3498,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
     auto identifier = makeString(LOGIDENTIFIER.objectIdentifier);
     GST_INFO_OBJECT(m_pipeline.get(), "WebCore logs identifier for this pipeline is: %s", identifier.convertToASCIIUppercase().ascii().data());
 #endif
-    registerActivePipeline(m_pipeline);
+    registerActivePipeline(m_pipeline, m_originalPipelineName);
 
     if (isMediaStream) {
         auto clock = adoptGRef(gst_system_clock_obtain());

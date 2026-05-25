@@ -421,6 +421,8 @@ protected:
     GRefPtr<GstElement> m_pipeline;
     IntSize m_size;
 
+    String m_originalPipelineName;
+
     MediaPlayer::ReadyState m_readyState { MediaPlayer::ReadyState::HaveNothing };
     mutable MediaPlayer::NetworkState m_networkState { MediaPlayer::NetworkState::Empty };
 

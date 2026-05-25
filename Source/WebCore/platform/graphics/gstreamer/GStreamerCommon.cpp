@@ -645,11 +645,15 @@ static HashMap<String, GRefPtr<GstElement>>& activePipelinesMap()
     return activePipelines.get();
 }
 
-void registerActivePipeline(const GRefPtr<GstElement>& pipeline)
+void registerActivePipeline(const GRefPtr<GstElement>& pipeline, const String& pipelineName)
 {
-    auto name = GMallocString::unsafeAdoptFromUTF8(gst_object_get_name(GST_OBJECT_CAST(pipeline.get())));
+    String key = pipelineName;
+    if (key.isEmpty()) {
+        auto name = GMallocString::unsafeAdoptFromUTF8(gst_object_get_name(GST_OBJECT_CAST(pipeline.get())));
+        key = name.span();
+    }
     Locker locker { s_activePipelinesMapLock };
-    activePipelinesMap().add(name.span(), GRefPtr<GstElement>(pipeline));
+    activePipelinesMap().add(key, GRefPtr<GstElement>(pipeline));
 }
 
 void unregisterPipeline(const GRefPtr<GstElement>& pipeline)
@@ -657,6 +661,12 @@ void unregisterPipeline(const GRefPtr<GstElement>& pipeline)
     auto name = GMallocString::unsafeAdoptFromUTF8(gst_object_get_name(GST_OBJECT_CAST(pipeline.get())));
     Locker locker { s_activePipelinesMapLock };
     activePipelinesMap().remove(name.span());
+}
+
+void unregisterPipeline(const String& pipelineName)
+{
+    Locker locker { s_activePipelinesMapLock };
+    activePipelinesMap().remove(pipelineName);
 }
 
 void WebCoreLogObserver::didLogMessage(const WTFLogChannel& channel, WTFLogLevel level, Vector<JSONLogValue>&& values)

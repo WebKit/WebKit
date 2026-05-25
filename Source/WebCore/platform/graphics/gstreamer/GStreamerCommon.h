@@ -341,8 +341,9 @@ GRefPtr<GstBuffer> wrapSpanData(const std::span<const uint8_t>&);
 
 std::optional<unsigned> gstGetAutoplugSelectResult(ASCIILiteral);
 
-void registerActivePipeline(const GRefPtr<GstElement>&);
+void registerActivePipeline(const GRefPtr<GstElement>&, const String& = emptyString());
 void unregisterPipeline(const GRefPtr<GstElement>&);
+void unregisterPipeline(const String&);
 
 class WebCoreLogObserver : public Logger::Observer {
     WTF_MAKE_TZONE_ALLOCATED(WebCoreLogObserver);
