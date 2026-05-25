@@ -415,10 +415,10 @@ layer at (0,0) size 785x2816
             RenderTableCell {TD} at (36,24) size 32x20 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 30x18
                 text run at (1,1) width 30: "Data"
-      RenderBlock {P} at (0,2676) size 769x35
-        RenderInline {A} at (0,17) size 88x17 [color=#0000EE]
+      RenderBlock {P} at (0,2676) size 769x36
+        RenderInline {A} at (0,16) size 88x19 [color=#0000EE]
           RenderImage {IMG} at (0,0) size 88x31
-      RenderBlock {P} at (0,2726) size 769x19
+      RenderBlock {P} at (0,2727) size 769x19
         RenderText {#text} at (0,0) size 58x18
           text run at (0,0) width 58: "(Back to "
         RenderInline {A} at (58,0) size 157x18 [color=#0000EE]
@@ -431,7 +431,7 @@ layer at (0,0) size 785x2816
             text run at (222,0) width 83: "David Baron"
         RenderText {#text} at (304,0) size 6x18
           text run at (304,0) width 6: ")"
-      RenderBlock {P} at (0,2760) size 769x19
+      RenderBlock {P} at (0,2761) size 769x19
         RenderInline {A} at (0,0) size 33x18 [color=#0000EE]
           RenderText {#text} at (0,0) size 33x18
             text run at (0,0) width 33: "LDB"

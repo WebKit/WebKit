@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 502: "This tests that typing in a scrolled textarea does not cause unnecessary scrolling."
         RenderBR {BR} at (502,0) size 0x18
         RenderText {#text} at (0,0) size 0x0
-        RenderBR {BR} at (201,136) size 0x17
+        RenderBR {BR} at (201,135) size 0x19
       RenderBlock {DIV} at (0,150) size 784x0
 layer at (8,26) size 201x132 clip at (9,27) size 184x130 scrollY 249 scrollHeight 382
   RenderTextControl {TEXTAREA} at (0,18) size 201x132 [bgcolor=#FFFFFF] [border: (1px solid #000000)]

@@ -27,9 +27,9 @@ layer at (0,0) size 800x302
         RenderInline {code} at (709,3) size 40x16
           RenderText {#text} at (709,3) size 40x16
             text run at (709,3) width 40: "<svg>"
-        RenderText {#text} at (0,19) size 742x35
-          text run at (0,19) width 742: "element is the element at the root of an SVG fragment. For the following test to pass, the green SVG square should be"
-          text run at (0,37) width 623: "rendered aligned to the top-left of the red CSS-rendered square, which is 10 pixels wider and taller."
+        RenderText {#text} at (0,18) size 742x37
+          text run at (0,18) width 742: "element is the element at the root of an SVG fragment. For the following test to pass, the green SVG square should be"
+          text run at (0,36) width 623: "rendered aligned to the top-left of the red CSS-rendered square, which is 10 pixels wider and taller."
       RenderBlock {p} at (0,128) size 784x19
         RenderText {#text} at (0,0) size 27x18
           text run at (0,0) width 27: "See "

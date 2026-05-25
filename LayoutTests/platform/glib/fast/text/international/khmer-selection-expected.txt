@@ -1,6 +1,6 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x121
+layer at (0,0) size 800x120
   RenderBlock {HTML} at (0,0) size 800x121
     RenderBody {BODY} at (8,16) size 784x89
       RenderBlock {P} at (0,0) size 784x18
@@ -41,6 +41,6 @@ layer at (0,0) size 800x121
         RenderInline {TT} at (702,21) size 81x16
           RenderText {#text} at (702,21) size 81x16
             text run at (702,21) width 81: "test_shell"
-        RenderText {#text} at (0,37) size 252x17
-          text run at (0,37) width 252: "shouldn't trigger any assertions or crash."
+        RenderText {#text} at (0,36) size 252x19
+          text run at (0,36) width 252: "shouldn't trigger any assertions or crash."
 caret: position 0 of child 0 {#text} of child 0 {B} of child 1 {NOBR} of child 1 {P} of body

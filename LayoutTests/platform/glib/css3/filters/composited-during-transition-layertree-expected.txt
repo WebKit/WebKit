@@ -20,7 +20,7 @@
         )
         (GraphicsLayer
           (position 18.00 245.00)
-          (bounds 160.00 90.00)
+          (bounds 160.00 91.00)
         )
         (GraphicsLayer
           (position 18.00 358.00)

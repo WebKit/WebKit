@@ -1,8 +1,8 @@
 layer at (0,0) size 785x2273
   RenderView at (0,0) size 785x600
 layer at (0,0) size 785x2273
-  RenderBlock {HTML} at (0,0) size 785x2273
-    RenderBody {BODY} at (8,16) size 769x2209 [bgcolor=#FFFFFF]
+  RenderBlock {HTML} at (0,0) size 785x2274
+    RenderBody {BODY} at (8,16) size 769x2210 [bgcolor=#FFFFFF]
       RenderBlock {P} at (0,0) size 769x18
         RenderText {#text} at (0,0) size 165x18
           text run at (0,0) width 165: "This page is part of the "
@@ -22,12 +22,12 @@ layer at (0,0) size 785x2273
         RenderText {#text} at (617,0) size 4x18
           text run at (617,0) width 4: "."
       RenderBlock {DIV} at (0,34) size 769x0 [bgcolor=#009900]
-      RenderBlock {OL} at (0,34) size 769x2175
+      RenderBlock {OL} at (0,34) size 769x2176
         RenderListItem {LI} at (40,0) size 616x244 [bgcolor=#AAAAAA]
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 584x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 584x107 [bgcolor=#FFFFFF]
-            RenderListMarker at (-33,7) size 17x17: "1"
+            RenderListMarker at (-33,6) size 17x18: "1"
             RenderText {#text} at (6,10) size 137x90
               text run at (6,10) width 137: "div :last-child {"
               text run at (142,10) width 1: " "
@@ -43,12 +43,12 @@ layer at (0,0) size 785x2273
             RenderText {#text} at (0,0) size 572x36
               text run at (0,0) width 572: "The CSS selector should match the inner div element, because it is the only child"
               text run at (0,18) width 165: "of the outer div element"
-        RenderListItem {LI} at (40,291) size 616x259 [bgcolor=#AAAAAA]
+        RenderListItem {LI} at (40,291) size 616x260 [bgcolor=#AAAAAA]
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#990000]
             RenderBlock {BLOCKQUOTE} at (0,0) size 584x0
             RenderBlock {DIV} at (0,0) size 584x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 584x122 [bgcolor=#FFFFFF]
-            RenderListMarker at (-33,7) size 17x17: "2"
+            RenderListMarker at (-33,6) size 17x18: "2"
             RenderText {#text} at (6,10) size 225x105
               text run at (6,10) width 137: "div :last-child {"
               text run at (142,10) width 1: " "
@@ -70,7 +70,7 @@ layer at (0,0) size 785x2273
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 584x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 584x122 [bgcolor=#FFFFFF]
-            RenderListMarker at (-33,7) size 17x17: "3"
+            RenderListMarker at (-33,6) size 17x18: "3"
             RenderText {#text} at (6,10) size 209x105
               text run at (6,10) width 137: "div :last-child {"
               text run at (142,10) width 1: " "
@@ -117,12 +117,12 @@ layer at (0,0) size 785x2273
               text run at (0,18) width 173: "of the outer div element. "
               text run at (173,18) width 348: "Regular text is not an element, so it should not be"
               text run at (0,36) width 307: "considered when determining the last child."
-        RenderListItem {LI} at (40,1261) size 616x259 [bgcolor=#AAAAAA]
+        RenderListItem {LI} at (40,1261) size 616x260 [bgcolor=#AAAAAA]
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#009900]
             RenderBlock {DIV} at (0,0) size 584x24
             RenderBlock {BLOCKQUOTE} at (0,24) size 584x0 [bgcolor=#990000]
           RenderBlock {PRE} at (16,53) size 584x122 [bgcolor=#FFFFFF]
-            RenderListMarker at (-33,7) size 17x17: "5"
+            RenderListMarker at (-33,6) size 17x18: "5"
             RenderText {#text} at (6,10) size 225x105
               text run at (6,10) width 137: "div :last-child {"
               text run at (142,10) width 1: " "
@@ -145,7 +145,7 @@ layer at (0,0) size 785x2273
             RenderBlock {DIV} at (0,0) size 584x0
             RenderBlock {DIV} at (0,0) size 584x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 584x152 [bgcolor=#FFFFFF]
-            RenderListMarker at (-33,7) size 17x17: "6"
+            RenderListMarker at (-33,6) size 17x18: "6"
             RenderText {#text} at (6,10) size 481x135
               text run at (6,10) width 137: "div :last-child {"
               text run at (142,10) width 1: " "
@@ -166,12 +166,12 @@ layer at (0,0) size 785x2273
             RenderText {#text} at (0,0) size 567x36
               text run at (0,0) width 567: "The CSS selector should match the div element that is inserted by the Javascript"
               text run at (0,18) width 39: "code."
-        RenderListItem {LI} at (40,1904) size 616x271 [bgcolor=#AAAAAA]
+        RenderListItem {LI} at (40,1904) size 616x272 [bgcolor=#AAAAAA]
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#009900]
             RenderBlock {DIV} at (0,0) size 584x24
             RenderBlock {DIV} at (0,24) size 584x0 [bgcolor=#990000]
           RenderBlock {PRE} at (16,53) size 584x152 [bgcolor=#FFFFFF]
-            RenderListMarker at (-33,7) size 17x17: "7"
+            RenderListMarker at (-33,6) size 17x18: "7"
             RenderText {#text} at (6,10) size 481x135
               text run at (6,10) width 137: "div :last-child {"
               text run at (142,10) width 1: " "

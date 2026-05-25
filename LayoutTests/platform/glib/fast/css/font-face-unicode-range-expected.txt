@@ -53,7 +53,7 @@ layer at (0,0) size 800x600
               text run at (178,1) width 112: "RSTUVWX"
           RenderText {#text} at (290,0) size 22x18
             text run at (290,0) width 22: "YZ"
-      RenderBlock {DIV} at (0,413) size 784x89 [border: (1px solid #000000)]
+      RenderBlock {DIV} at (0,412) size 784x89 [border: (1px solid #000000)]
         RenderBlock {P} at (9,17) size 766x20
           RenderText {#text} at (0,0) size 302x18
             text run at (0,0) width 302: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"

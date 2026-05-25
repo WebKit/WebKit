@@ -1,8 +1,8 @@
 layer at (0,0) size 785x885
   RenderView at (0,0) size 785x600
 layer at (0,0) size 785x822
-  RenderBlock {HTML} at (0,0) size 785x822
-    RenderBody {BODY} at (8,8) size 242x799 [border: (1px dashed #C0C0C0)]
+  RenderBlock {HTML} at (0,0) size 785x823
+    RenderBody {BODY} at (8,8) size 242x800 [border: (1px dashed #C0C0C0)]
       RenderBlock {P} at (1,17) size 240x48
         RenderText {#text} at (0,-1) size 237x50
           text run at (0,0) width 237: "The following six blue boxes must be"
@@ -41,7 +41,7 @@ layer at (0,0) size 785x822
                   RenderSVGRoot {svg} at (0,0) size 176x44
                     RenderSVGRect {rect} at (0,0) size 176x44 [stroke={[type=SOLID] [color=#008000] [stroke width=12.00]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=1000.00] [height=250.00]
                     RenderSVGPath {path} at (26,8) size 124x28 [fill={[type=SOLID] [color=#008000]}] [data="M 500 50 L 150 200 L 850 200 Z"]
-      RenderTable {TABLE} at (1,623) size 240x79
+      RenderTable {TABLE} at (1,623) size 240x80
         RenderTableSection {TBODY} at (0,0) size 240x79
           RenderTableRow {TR} at (0,0) size 240x79
             RenderTableCell {TD} at (0,0) size 240x79 [r=0 c=0 rs=1 cs=1]
@@ -52,7 +52,7 @@ layer at (0,0) size 785x822
                   RenderSVGRoot {svg} at (0,0) size 176x44
                     RenderSVGRect {rect} at (0,0) size 176x44 [stroke={[type=SOLID] [color=#008000] [stroke width=12.00]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=1000.00] [height=250.00]
                     RenderSVGPath {path} at (26,8) size 124x28 [fill={[type=SOLID] [color=#008000]}] [data="M 500 50 L 150 200 L 850 200 Z"]
-      RenderBlock (floating) {P} at (1,798) size 240x16
+      RenderBlock (floating) {P} at (1,798) size 240x17
         RenderEmbeddedObject {OBJECT} at (16,0) size 208x76 [bgcolor=#FF0000] [border: (16px solid #0000FF)]
           layer at (0,0) size 176x44
             RenderView at (0,0) size 176x44

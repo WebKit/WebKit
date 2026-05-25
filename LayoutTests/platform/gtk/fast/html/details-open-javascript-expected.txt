@@ -13,8 +13,8 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 0x0
       RenderBlock {DETAILS} at (0,42) size 784x19
         RenderListItem {SUMMARY} at (0,0) size 784x19
-          RenderListMarker at (0,1) size 16x17: "\x{25B6}"
-          RenderText {#text} at (16,1) size 48x17
-            text run at (16,1) width 48: "details2"
+          RenderListMarker at (0,0) size 16x18: "\x{25B6}"
+          RenderText {#text} at (16,0) size 48x19
+            text run at (16,0) width 48: "details2"
 layer at (11,29) size 186x18
   RenderBlock {DIV} at (3,3) size 186x18

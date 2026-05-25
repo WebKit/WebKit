@@ -6,9 +6,9 @@ layer at (0,0) size 800x322
       RenderBlock {DIV} at (0,0) size 784x28
         RenderBlock {DETAILS} at (0,0) size 784x28
           RenderListItem {SUMMARY} at (0,0) size 784x28
-            RenderListMarker at (0,1) size 25x26: "\x{25B6}"
-            RenderText {#text} at (25,1) size 94x26
-              text run at (25,1) width 94: "Summary"
+            RenderListMarker at (0,0) size 25x27: "\x{25B6}"
+            RenderText {#text} at (25,0) size 94x28
+              text run at (25,0) width 94: "Summary"
       RenderBlock {DIV} at (0,28) size 27x125
         RenderBlock {DETAILS} at (0,0) size 27x125
           RenderListItem {SUMMARY} at (0,0) size 27x125
@@ -18,9 +18,9 @@ layer at (0,0) size 800x322
       RenderBlock {DIV} at (0,153) size 784x28
         RenderBlock {DETAILS} at (0,0) size 784x28
           RenderListItem {SUMMARY} at (0,0) size 784x28
-            RenderListMarker at (0,1) size 25x26: "\x{25B6}"
-            RenderText {#text} at (25,1) size 94x26
-              text run at (25,1) width 94: "Summary"
+            RenderListMarker at (0,0) size 25x27: "\x{25B6}"
+            RenderText {#text} at (25,0) size 94x28
+              text run at (25,0) width 94: "Summary"
       RenderBlock {DIV} at (0,181) size 27x125
         RenderBlock {DETAILS} at (0,0) size 27x125
           RenderListItem {SUMMARY} at (0,0) size 27x125

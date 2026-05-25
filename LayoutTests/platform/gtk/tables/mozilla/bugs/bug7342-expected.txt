@@ -21,24 +21,24 @@ layer at (0,0) size 800x600
                     RenderTableSection {TBODY} at (1,1) size 90x118
                       RenderTableRow {TR} at (0,2) size 90x30
                         RenderTableCell {TD} at (2,4) size 86x25 [bgcolor=#CCCCCC] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-                          RenderInline {A} at (3,6) size 61x18 [color=#660099]
-                            RenderInline {B} at (3,6) size 61x18
-                              RenderText {#text} at (3,6) size 61x18
-                                text run at (3,4) width 61: "Netscape"
+                          RenderInline {A} at (3,5) size 61x19 [color=#660099]
+                            RenderInline {B} at (3,5) size 61x19
+                              RenderText {#text} at (3,5) size 61x19
+                                text run at (3,3) width 61: "Netscape"
                           RenderText {#text} at (0,0) size 0x0
                       RenderTableRow {TR} at (0,33) size 90x30
                         RenderTableCell {TD} at (2,36) size 86x25 [bgcolor=#FFFFFF] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
-                          RenderInline {A} at (3,6) size 57x18 [color=#660099]
-                            RenderInline {B} at (3,6) size 57x18
-                              RenderText {#text} at (3,6) size 57x18
-                                text run at (3,4) width 57: "Infoseek"
+                          RenderInline {A} at (3,5) size 57x19 [color=#660099]
+                            RenderInline {B} at (3,5) size 57x19
+                              RenderText {#text} at (3,5) size 57x19
+                                text run at (3,3) width 57: "Infoseek"
                           RenderText {#text} at (0,0) size 0x0
                       RenderTableRow {TR} at (0,65) size 90x25
                         RenderTableCell {TD} at (2,65) size 86x25 [bgcolor=#FFFFFF] [border: (1px inset #000000)] [r=2 c=0 rs=1 cs=1]
-                          RenderInline {A} at (3,4) size 78x17 [color=#660099]
-                            RenderInline {B} at (3,4) size 78x17
-                              RenderText {#text} at (3,4) size 78x17
-                                text run at (3,4) width 78: "LookSmart"
+                          RenderInline {A} at (3,3) size 78x19 [color=#660099]
+                            RenderInline {B} at (3,3) size 78x19
+                              RenderText {#text} at (3,3) size 78x19
+                                text run at (3,3) width 78: "LookSmart"
                           RenderText {#text} at (0,0) size 0x0
                       RenderTableRow {TR} at (0,92) size 90x24
                         RenderTableCell {TD} at (2,92) size 86x24 [bgcolor=#FFFFFF] [border: (1px inset #000000)] [r=3 c=0 rs=1 cs=1]

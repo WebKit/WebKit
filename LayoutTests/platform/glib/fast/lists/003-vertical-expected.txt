@@ -5,32 +5,32 @@ layer at (0,0) size 459x600
     RenderBody {BODY} at (16,8) size 302x584
       RenderBlock (floating) {DIV} at (0,0) size 443x351
         RenderBlock {P} at (16,0) size 73x351
-          RenderText {#text} at (0,0) size 36x319
+          RenderText {#text} at (0,0) size 37x319
             text run at (0,0) width 320: "This test case illustrates incorrect positioning of list"
-            text run at (19,0) width 92: "items within a "
+            text run at (18,0) width 93: "items within a "
           RenderInline {CODE} at (21,92) size 16x136
             RenderText {#text} at (18,92) size 15x136
-              text run at (18,92) width 136: "text-align: right"
-          RenderText {#text} at (19,228) size 17x71
-            text run at (19,228) width 71: " div after a "
+              text run at (18,92) width 137: "text-align: right"
+          RenderText {#text} at (18,228) size 19x71
+            text run at (18,228) width 72: " div after a "
           RenderInline {CODE} at (21,0) size 34x347
             RenderText {#text} at (18,0) size 34x347
-              text run at (18,299) width 48: "float:"
+              text run at (18,299) width 49: "float:"
               text run at (36,0) width 33: "left"
           RenderText {#text} at (37,32) size 18x31
-            text run at (37,32) width 32: " div. "
-          RenderInline {A} at (37,62) size 17x193 [color=#0000EE]
+            text run at (37,32) width 31: " div. "
+          RenderInline {A} at (36,62) size 19x193 [color=#0000EE]
             RenderText {#text} at (37,62) size 18x193
               text run at (37,62) width 193: "Screenshot of correct behavior"
           RenderText {#text} at (37,254) size 18x9
             text run at (37,254) width 9: "; "
-          RenderInline {A} at (37,0) size 36x346 [color=#0000EE]
+          RenderInline {A} at (36,0) size 37x346 [color=#0000EE]
             RenderText {#text} at (37,0) size 36x346
               text run at (37,262) width 84: "screenshot of"
               text run at (55,0) width 38: "Safari"
           RenderText {#text} at (55,37) size 18x4
             text run at (55,37) width 5: "."
-        RenderBlock {P} at (105,0) size 54x351
+        RenderBlock {P} at (104,0) size 55x351
           RenderText {#text} at (0,0) size 36x304
             text run at (0,0) width 305: "This bug only occurs on pages with a standards-"
             text run at (18,0) width 151: "compliant DOCTYPE. "
@@ -40,11 +40,11 @@ layer at (0,0) size 459x600
               text run at (36,0) width 77: "DOCTYPE"
           RenderText {#text} at (36,76) size 18x4
             text run at (36,76) width 5: "."
-        RenderBlock {OL} at (175,0) size 252x351
+        RenderBlock {OL} at (174,0) size 253x351
           RenderListItem {LI} at (0,40) size 36x311
             RenderListMarker at (0,-16) size 18x16: "1"
             RenderText {#text} at (0,0) size 36x302
-              text run at (0,0) width 160: "New larger PowerBook. "
+              text run at (0,0) width 159: "New larger PowerBook. "
               text run at (0,158) width 144: "Still 1 GHz, but with a"
               text run at (18,0) width 145: "17-inch screen. $3299."
           RenderListItem {LI} at (36,40) size 36x311

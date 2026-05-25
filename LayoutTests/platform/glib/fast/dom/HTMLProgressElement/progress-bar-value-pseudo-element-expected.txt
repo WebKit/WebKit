@@ -24,7 +24,7 @@ layer at (0,0) size 800x600
             RenderBlock {DIV} at (3,13) size 154x0
         RenderListItem {LI} at (40,36) size 744x31
           RenderListMarker at (-17,12) size 7x18: bullet
-          RenderText {#text} at (0,12) size 133x18
+          RenderText {#text} at (0,12) size 133x19
             text run at (0,12) width 133: "Progress style (size): "
           RenderBlock {PROGRESS} at (133,0) size 300x30
             RenderBlock {DIV} at (0,0) size 300x30
@@ -51,7 +51,7 @@ layer at (0,0) size 800x600
             RenderBlock {DIV} at (0,16) size 160x0
         RenderListItem {LI} at (40,102) size 744x31
           RenderListMarker at (-17,12) size 7x18: bullet
-          RenderText {#text} at (0,12) size 188x18
+          RenderText {#text} at (0,12) size 188x19
             text run at (0,12) width 188: "Styling for all three elements: "
           RenderBlock {PROGRESS} at (188,0) size 160x30 [bgcolor=#0000FF] [border: (3px solid #000066)]
             RenderBlock {DIV} at (3,3) size 154x24

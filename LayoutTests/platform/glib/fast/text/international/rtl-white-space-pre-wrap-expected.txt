@@ -30,7 +30,7 @@ layer at (0,0) size 800x600
           text run at (150,28) width 41 RTL: "\x{5DE}\x{5D9}\x{5E5}!"
       RenderBlock (anonymous) at (0,152) size 784x80
         RenderBR {BR} at (0,0) size 0x18
-        RenderBR {BR} at (199,66) size 0x17
+        RenderBR {BR} at (199,65) size 0x19
       RenderBlock {DIV} at (0,232) size 191x56 [bgcolor=#FFFF00]
         RenderText {#text} at (-6,0) size 197x56
           text run at (-5,0) width 196 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC}? \x{5E9}\x{5EA}\x{5D4} "

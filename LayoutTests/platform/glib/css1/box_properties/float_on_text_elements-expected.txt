@@ -25,7 +25,7 @@ layer at (0,0) size 785x2706
       RenderBlock (anonymous) at (0,126) size 769x87
         RenderImage {IMG} at (0,72) size 15x15
         RenderText {#text} at (0,0) size 0x0
-        RenderBR {BR} at (15,73) size 0x17
+        RenderBR {BR} at (15,72) size 0x19
       RenderBlock (floating) {P} at (0,231) size 385x108 [bgcolor=#FFFF00]
         RenderText {#text} at (0,0) size 385x108
           text run at (0,0) width 385: "This paragraph is floated to the left and the orange square"
@@ -37,7 +37,7 @@ layer at (0,0) size 785x2706
       RenderBlock (anonymous) at (0,231) size 769x108
         RenderImage {IMG} at (384,0) size 16x15
         RenderText {#text} at (0,0) size 0x0
-        RenderBR {BR} at (399,1) size 1x17
+        RenderBR {BR} at (399,0) size 1x19
       RenderBlock (floating) {P} at (384,357) size 385x108 [bgcolor=#FFFF00]
         RenderText {#text} at (0,0) size 385x108
           text run at (0,0) width 385: "This paragraph is floated to the right (using a STYLE"
@@ -49,7 +49,7 @@ layer at (0,0) size 785x2706
       RenderBlock (anonymous) at (0,357) size 769x108
         RenderImage {IMG} at (0,0) size 15x15
         RenderText {#text} at (0,0) size 0x0
-        RenderBR {BR} at (15,1) size 0x17
+        RenderBR {BR} at (15,0) size 0x19
       RenderBlock {P} at (0,483) size 769x54
         RenderBlock (floating) {SPAN} at (0,0) size 48x37 [bgcolor=#C0C0C0]
           RenderText {#text} at (0,0) size 21x37
@@ -166,8 +166,8 @@ layer at (0,0) size 785x2706
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x1353
             RenderTableCell {TD} at (0,689) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,668) size 4x17
-                text run at (4,5) width 4: " "
+              RenderText {#text} at (4,667) size 4x19
+                text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 755x1353 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock (floating) {P} at (4,4) size 374x36 [bgcolor=#FFFF00]
                 RenderText {#text} at (0,0) size 374x36
@@ -191,7 +191,7 @@ layer at (0,0) size 785x2706
               RenderBlock (anonymous) at (4,130) size 747x87
                 RenderImage {IMG} at (0,72) size 15x15
                 RenderText {#text} at (0,0) size 0x0
-                RenderBR {BR} at (15,73) size 0x17
+                RenderBR {BR} at (15,72) size 0x19
               RenderBlock (floating) {P} at (4,235) size 374x108 [bgcolor=#FFFF00]
                 RenderText {#text} at (0,0) size 374x108
                   text run at (0,0) width 374: "This paragraph is floated to the left and the orange square"
@@ -203,7 +203,7 @@ layer at (0,0) size 785x2706
               RenderBlock (anonymous) at (4,235) size 747x108
                 RenderImage {IMG} at (373,0) size 16x15
                 RenderText {#text} at (0,0) size 0x0
-                RenderBR {BR} at (388,1) size 1x17
+                RenderBR {BR} at (388,0) size 1x19
               RenderBlock (floating) {P} at (377,361) size 374x108 [bgcolor=#FFFF00]
                 RenderText {#text} at (0,0) size 374x108
                   text run at (0,0) width 374: "This paragraph is floated to the right (using a STYLE"
@@ -215,7 +215,7 @@ layer at (0,0) size 785x2706
               RenderBlock (anonymous) at (4,361) size 747x108
                 RenderImage {IMG} at (0,0) size 15x15
                 RenderText {#text} at (0,0) size 0x0
-                RenderBR {BR} at (15,1) size 0x17
+                RenderBR {BR} at (15,0) size 0x19
               RenderBlock {P} at (4,487) size 747x72
                 RenderBlock (floating) {SPAN} at (0,0) size 48x37 [bgcolor=#C0C0C0]
                   RenderText {#text} at (0,0) size 21x37

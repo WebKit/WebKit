@@ -7,10 +7,10 @@ layer at (0,0) size 800x202
         RenderText {#text} at (0,0) size 380x18
           text run at (0,0) width 380: "You should not see any pixel artifacts around the reflections."
       RenderBlock (anonymous) at (0,34) size 784x144
-        RenderText {#text} at (140,126) size 4x17
-          text run at (140,126) width 4: " "
-        RenderText {#text} at (284,126) size 4x17
-          text run at (284,126) width 4: " "
+        RenderText {#text} at (140,125) size 4x19
+          text run at (140,125) width 4: " "
+        RenderText {#text} at (284,125) size 4x19
+          text run at (284,125) width 4: " "
         RenderText {#text} at (0,0) size 0x0
 layer at (28,70) size 100x100
   RenderBlock {DIV} at (20,20) size 100x100 [bgcolor=#000000]

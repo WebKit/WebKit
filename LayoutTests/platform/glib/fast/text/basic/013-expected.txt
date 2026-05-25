@@ -32,9 +32,9 @@ layer at (0,0) size 800x268
         RenderInline {CODE} at (508,3) size 112x16
           RenderText {#text} at (508,3) size 112x16
             text run at (508,3) width 112: "letter-spacing"
-        RenderText {#text} at (0,0) size 781x36
+        RenderText {#text} at (0,0) size 781x37
           text run at (620,0) width 161: " CSS attribute that should"
-          text run at (0,19) width 296: "be inherited. This was discovered in Safari 1.0."
+          text run at (0,18) width 296: "be inherited. This was discovered in Safari 1.0."
       RenderBlock {DIV} at (0,110) size 784x121
         RenderBlock {P} at (0,0) size 784x18
           RenderText {#text} at (0,0) size 131x18

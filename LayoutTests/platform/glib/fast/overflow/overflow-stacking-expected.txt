@@ -8,9 +8,9 @@ layer at (0,0) size 785x602
           text run at (0,0) width 739: "Make sure that overflow:auto/hidden/scroll blocks interleave their background and foreground with other overlapping"
           text run at (0,18) width 164: "blocks in the normal flow."
       RenderBlock {DIV} at (0,286) size 300x300 [bgcolor=#FFFF00]
-        RenderText {#text} at (0,1) size 174x108
-          text run at (0,1) width 168: "This text"
-          text run at (0,56) width 174: "overlaps."
+        RenderText {#text} at (0,0) size 174x110
+          text run at (0,0) width 168: "This text"
+          text run at (0,55) width 174: "overlaps."
 layer at (8,44) size 300x300 clip at (8,44) size 285x300 scrollHeight 846
   RenderBlock {DIV} at (0,36) size 300x300 [bgcolor=#00FF00]
     RenderText {#text} at (0,0) size 76x18

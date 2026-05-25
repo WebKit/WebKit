@@ -29,20 +29,20 @@ layer at (0,0) size 800x600
           RenderInline {TT} at (526,28) size 25x16
             RenderText {#text} at (526,28) size 25x16
               text run at (526,28) width 25: "two"
-        RenderText {#text} at (25,25) size 713x36
+        RenderText {#text} at (25,25) size 713x37
           text run at (551,25) width 187: ", which should result in a thin"
-          text run at (25,44) width 374: "solid border on each side of each box in the inline element. "
-          text run at (399,44) width 103: "There is also an "
-        RenderInline {SPAN} at (502,44) size 183x17
-          RenderText {#text} at (502,44) size 143x17
-            text run at (502,44) width 143: "inline element of class "
+          text run at (25,43) width 374: "solid border on each side of each box in the inline element. "
+          text run at (399,43) width 103: "There is also an "
+        RenderInline {SPAN} at (502,43) size 183x19
+          RenderText {#text} at (502,43) size 143x19
+            text run at (502,43) width 143: "inline element of class "
           RenderInline {TT} at (645,47) size 40x15
             RenderText {#text} at (645,47) size 40x15
               text run at (645,47) width 40: "three"
-        RenderText {#text} at (25,44) size 707x36
-          text run at (685,44) width 47: ", which"
+        RenderText {#text} at (25,43) size 707x37
+          text run at (685,43) width 47: ", which"
           text run at (25,62) width 387: "should have no border width because no border style was set."
-      RenderTable {TABLE} at (0,231) size 784x141 [border: (1px outset #000000)]
+      RenderTable {TABLE} at (0,230) size 784x142 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 782x139
           RenderTableRow {TR} at (0,0) size 782x26
             RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
@@ -51,8 +51,8 @@ layer at (0,0) size 800x600
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 782x113
             RenderTableCell {TD} at (0,69) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,48) size 4x17
-                text run at (4,5) width 4: " "
+              RenderText {#text} at (4,47) size 4x19
+                text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 770x113 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 762x105 [border: (25px solid #000000)]
                 RenderText {#text} at (25,25) size 172x18
@@ -69,18 +69,18 @@ layer at (0,0) size 800x600
                   RenderInline {TT} at (526,28) size 25x16
                     RenderText {#text} at (526,28) size 25x16
                       text run at (526,28) width 25: "two"
-                RenderText {#text} at (25,25) size 685x36
+                RenderText {#text} at (25,25) size 685x37
                   text run at (551,25) width 159: ", which should result in a"
-                  text run at (25,44) width 402: "thin solid border on each side of each box in the inline element. "
-                  text run at (427,44) width 103: "There is also an "
-                RenderInline {SPAN} at (530,44) size 183x17
-                  RenderText {#text} at (530,44) size 143x17
-                    text run at (530,44) width 143: "inline element of class "
+                  text run at (25,43) width 402: "thin solid border on each side of each box in the inline element. "
+                  text run at (427,43) width 103: "There is also an "
+                RenderInline {SPAN} at (530,43) size 183x19
+                  RenderText {#text} at (530,43) size 143x19
+                    text run at (530,43) width 143: "inline element of class "
                   RenderInline {TT} at (673,47) size 40x15
                     RenderText {#text} at (673,47) size 40x15
                       text run at (673,47) width 40: "three"
-                RenderText {#text} at (25,44) size 692x36
-                  text run at (713,44) width 4: ","
+                RenderText {#text} at (25,43) size 692x37
+                  text run at (713,43) width 4: ","
                   text run at (25,62) width 430: "which should have no border width because no border style was set."
 layer at (8,100) size 784x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,92) size 784x2 [color=#808080] [border: (1px inset #808080)]

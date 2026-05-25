@@ -7,9 +7,9 @@ layer at (0,0) size 800x37
         RenderFlexibleBox {DIV} at (18,4) size 125x12
           RenderBlock {DIV} at (11,0) size 103x12
       RenderText {#text} at (0,0) size 0x0
-layer at (37,13) size 103x12
-  RenderBlock {DIV} at (29,4) size 103x12 [color=#A9A9A9]
-    RenderText {#text} at (0,0) size 88x12
+layer at (37,12) size 103x12
+  RenderBlock {DIV} at (29,3) size 103x13 [color=#A9A9A9]
+    RenderText {#text} at (0,-1) size 88x14
       text run at (0,0) width 88: "Search for Events"
 layer at (37,13) size 103x12
   RenderBlock {DIV} at (0,0) size 103x12

@@ -7,12 +7,12 @@ layer at (0,0) size 800x600
         text run at (0,0) width 678: "Make sure that floating overflow:auto/hidden/scroll blocks stack properly with other floats at the same level."
       RenderText {#text} at (0,0) size 0x0
       RenderBlock (floating) {DIV} at (250,18) size 300x300 [bgcolor=#FFFF00]
-        RenderText {#text} at (0,1) size 245x273
-          text run at (0,1) width 203: "This block"
-          text run at (0,56) width 245: "should be on"
-          text run at (0,111) width 183: "top of the"
-          text run at (0,166) width 173: "overflow"
-          text run at (0,221) width 118: "block."
+        RenderText {#text} at (0,0) size 245x275
+          text run at (0,0) width 203: "This block"
+          text run at (0,55) width 245: "should be on"
+          text run at (0,110) width 183: "top of the"
+          text run at (0,165) width 173: "overflow"
+          text run at (0,220) width 118: "block."
 layer at (8,26) size 300x300 clip at (8,26) size 285x300 scrollHeight 846
   RenderBlock (floating) {DIV} at (0,18) size 300x300 [bgcolor=#00FF00]
     RenderText {#text} at (0,0) size 76x18

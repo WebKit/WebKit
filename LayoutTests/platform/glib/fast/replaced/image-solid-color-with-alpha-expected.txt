@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 283: "The two squares should have the same color:"
       RenderBlock (anonymous) at (0,68) size 784x54
         RenderImage {IMG} at (0,0) size 50x50
-        RenderText {#text} at (50,36) size 4x17
-          text run at (50,36) width 4: " "
+        RenderText {#text} at (50,35) size 4x19
+          text run at (50,35) width 4: " "
         RenderImage {IMG} at (54,0) size 50x50
         RenderText {#text} at (0,0) size 0x0

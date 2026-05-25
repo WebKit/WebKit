@@ -19,8 +19,8 @@ layer at (0,0) size 400x400
         RenderSVGPath {line} at (9,9) size 381x1 [stroke={[type=LINEAR-GRADIENT] [id="h_stroke_gradient"]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=380.00] [y2=0.00]
         RenderSVGPath {line} at (9,9) size 1x26 [stroke={[type=LINEAR-GRADIENT] [id="v_stroke_gradient"]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=-0.50] [x2=0.00] [y2=25.00]
       RenderSVGText {text} at (2,-4) size 323x23 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 323x22
-          chunk 1 text run 1 at (2.00,14.40) startOffset 0 endOffset 40 width 323.00: "This is hanging from the top-left corner"
+        RenderSVGInlineText {#text} at (0,0) size 323x23
+          chunk 1 text run 1 at (2.00,14.26) startOffset 0 endOffset 40 width 323.00: "This is hanging from the top-left corner"
     RenderSVGForeignObject {foreignObject} at (10,45) size 380x150
       RenderBlock {html} at (0,16) size 380x126
         RenderBody {body} at (8,0) size 364x126
@@ -31,14 +31,14 @@ layer at (0,0) size 400x400
             RenderInline {code} at (286,21) size 48x16
               RenderText {#text} at (286,21) size 48x16
                 text run at (286,21) width 48: "<text>"
-            RenderText {#text} at (0,18) size 361x36
+            RenderText {#text} at (0,18) size 361x37
               text run at (334,18) width 27: " and"
-              text run at (0,37) width 23: "the "
+              text run at (0,36) width 23: "the "
             RenderInline {code} at (23,40) size 48x15
               RenderText {#text} at (23,40) size 48x15
                 text run at (23,40) width 48: "<rect>"
-            RenderText {#text} at (71,37) size 272x17
-              text run at (71,37) width 272: " are located at the same coordinates and the"
+            RenderText {#text} at (71,36) size 272x19
+              text run at (71,36) width 272: " are located at the same coordinates and the"
             RenderInline {code} at (0,58) size 48x16
               RenderText {#text} at (0,58) size 48x16
                 text run at (0,58) width 48: "<text>"
@@ -49,12 +49,12 @@ layer at (0,0) size 400x400
                 text run at (159,58) width 56: "hanging"
             RenderText {#text} at (215,55) size 78x18
               text run at (215,55) width 78: " value for its"
-            RenderInline {code} at (0,77) size 136x15
-              RenderText {#text} at (0,77) size 136x15
-                text run at (0,77) width 136: "dominant-baseline"
-            RenderText {#text} at (136,74) size 59x17
-              text run at (136,74) width 59: " attribute."
-          RenderBlock {p} at (0,108) size 364x18
+            RenderInline {code} at (0,76) size 136x16
+              RenderText {#text} at (0,76) size 136x16
+                text run at (0,76) width 136: "dominant-baseline"
+            RenderText {#text} at (136,73) size 59x19
+              text run at (136,73) width 59: " attribute."
+          RenderBlock {p} at (0,107) size 364x19
             RenderInline {a} at (0,0) size 91x18 [color=#800000]
               RenderText {#text} at (0,0) size 91x18
                 text run at (0,0) width 91: "Antoine Quint"

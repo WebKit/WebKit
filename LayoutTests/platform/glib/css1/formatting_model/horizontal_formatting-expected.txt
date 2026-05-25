@@ -1,6 +1,6 @@
-layer at (0,0) size 785x727
+layer at (0,0) size 785x726
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x727
+layer at (0,0) size 785x726
   RenderBlock {HTML} at (0,0) size 785x727
     RenderBody {BODY} at (8,8) size 769x703 [bgcolor=#CCCCCC]
       RenderBlock {P} at (10,0) size 759x18
@@ -56,10 +56,10 @@ layer at (0,0) size 785x727
         RenderInline {CODE} at (224,21) size 32x16
           RenderText {#text} at (224,21) size 32x16
             text run at (224,21) width 32: "auto"
-        RenderText {#text} at (0,18) size 369x54
+        RenderText {#text} at (0,18) size 369x55
           text run at (256,18) width 76: " and thus be"
-          text run at (0,37) width 369: "expanded to 50% and it should only occupy the left half of"
-          text run at (0,55) width 83: "the viewport."
+          text run at (0,36) width 369: "expanded to 50% and it should only occupy the left half of"
+          text run at (0,54) width 83: "the viewport."
       RenderBlock {P} at (0,684) size 769x19 [bgcolor=#808080]
         RenderText {#text} at (0,0) size 632x18
           text run at (0,0) width 632: "Because this paragraph has width 100%, the auto margins become zero, so it should not be centered."

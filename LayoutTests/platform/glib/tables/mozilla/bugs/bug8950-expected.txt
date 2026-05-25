@@ -22,8 +22,8 @@ layer at (0,0) size 800x600
                               RenderText {#text} at (2,2) size 20x18
                                 text run at (2,2) width 20: "bar"
                             RenderTableCell {TD} at (28,14) size 595x23 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
-                              RenderText {#text} at (286,15) size 23x17
-                                text run at (286,3) width 23: "baz"
+                              RenderText {#text} at (286,14) size 23x19
+                                text run at (286,2) width 23: "baz"
                           RenderTableRow {TR} at (0,51) size 625x134
                             RenderTableCell {TD} at (2,51) size 24x22 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
                               RenderText {#text} at (2,2) size 19x18
@@ -93,8 +93,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (341,18) size 212x18
           text run at (341,18) width 212: ", the outer table reflows to 300px,"
         RenderBR {BR} at (553,18) size 0x18
-        RenderText {#text} at (0,37) size 303x17
-          text run at (0,37) width 303: "clipping the middle (500px) table in the process."
+        RenderText {#text} at (0,36) size 303x19
+          text run at (0,36) width 303: "clipping the middle (500px) table in the process."
       RenderTable {TABLE} at (0,337) size 300x29 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 298x26
           RenderTableRow {TR} at (0,2) size 298x22

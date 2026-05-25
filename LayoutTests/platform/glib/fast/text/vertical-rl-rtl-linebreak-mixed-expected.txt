@@ -9,5 +9,5 @@ layer at (0,0) size 800x234
           text run at (0,18) width 67: "difference."
       RenderBlock {DIV} at (0,52) size 98x159
         RenderText {#text} at (0,2) size 46x157
-          text run at (0,2) width 156 RTL: "\x{5D0}\x{5E0}\x{5D9} \x{5D7}\x{5EA}\x{5D5}\x{5DC}. \x{5D0}\x{5D9}\x{5DF}"
-          text run at (23,86) width 72 RTL: "\x{5DC}\x{5D9} \x{5E9}\x{5DD}."
+          text run at (0,2) width 157 RTL: "\x{5D0}\x{5E0}\x{5D9} \x{5D7}\x{5EA}\x{5D5}\x{5DC}. \x{5D0}\x{5D9}\x{5DF}"
+          text run at (23,86) width 73 RTL: "\x{5DC}\x{5D9} \x{5E9}\x{5DD}."

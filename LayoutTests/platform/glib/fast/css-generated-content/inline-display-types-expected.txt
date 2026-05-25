@@ -46,7 +46,7 @@ layer at (0,0) size 800x600
             text run at (29,18) width 47: "content"
         RenderBR {BR} at (75,18) size 1x18
         RenderInline {SPAN} at (0,36) size 76x18
-          RenderTable at (0,36) size 30x18
+          RenderTable at (0,36) size 30x19
             RenderTableSection (anonymous) at (0,0) size 30x18
               RenderTableRow (anonymous) at (0,0) size 30x18
                 RenderTableCell (anonymous) at (0,0) size 30x18 [r=0 c=0 rs=1 cs=1]

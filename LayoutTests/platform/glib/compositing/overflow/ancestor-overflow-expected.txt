@@ -1,20 +1,20 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x429
-  RenderBlock {HTML} at (0,0) size 800x429
-    RenderBody {BODY} at (8,16) size 784x405
+  RenderBlock {HTML} at (0,0) size 800x430
+    RenderBody {BODY} at (8,16) size 784x406
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 458x18
           text run at (0,0) width 458: "Test overflow clipping of composited elements in various configurations."
-      RenderBlock (anonymous) at (0,34) size 784x371
-        RenderText {#text} at (182,168) size 4x17
-          text run at (182,168) width 4: " "
-        RenderText {#text} at (368,168) size 4x17
-          text run at (368,168) width 4: " "
-        RenderBR {BR} at (554,168) size 0x17
-        RenderText {#text} at (182,353) size 4x18
+      RenderBlock (anonymous) at (0,34) size 784x372
+        RenderText {#text} at (182,167) size 4x19
+          text run at (182,167) width 4: " "
+        RenderText {#text} at (368,167) size 4x19
+          text run at (368,167) width 4: " "
+        RenderBR {BR} at (554,167) size 0x19
+        RenderText {#text} at (182,353) size 4x19
           text run at (182,353) width 4: " "
-        RenderText {#text} at (368,353) size 4x18
+        RenderText {#text} at (368,353) size 4x19
           text run at (368,353) width 4: " "
         RenderText {#text} at (0,0) size 0x0
 layer at (28,70) size 142x142 clip at (29,71) size 140x140 scrollWidth 142 scrollHeight 171

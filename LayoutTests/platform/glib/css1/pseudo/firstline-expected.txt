@@ -37,10 +37,10 @@ layer at (0,0) size 785x656
         RenderInline {CODE} at (165,39) size 80x16
           RenderText {#text} at (165,39) size 80x16
             text run at (165,39) width 80: "small-caps"
-        RenderText {#text} at (0,36) size 754x36
+        RenderText {#text} at (0,36) size 754x37
           text run at (245,36) width 225: " is not supported by your browser). "
           text run at (470,36) width 284: "This is extra text included for the purposes of"
-          text run at (0,55) width 395: "making the paragraph long enough to have more than one line."
+          text run at (0,54) width 395: "making the paragraph long enough to have more than one line."
       RenderTable {TABLE} at (0,372) size 769x268 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 767x266
           RenderTableRow {TR} at (0,0) size 767x26
@@ -50,8 +50,8 @@ layer at (0,0) size 785x656
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x240
             RenderTableCell {TD} at (0,132) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,111) size 4x18
-                text run at (4,5) width 4: " "
+              RenderText {#text} at (4,110) size 4x19
+                text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 755x240 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 747x54
                 RenderText {#text} at (0,0) size 743x54
@@ -75,9 +75,9 @@ layer at (0,0) size 785x656
                 RenderInline {CODE} at (229,39) size 80x16
                   RenderText {#text} at (229,39) size 80x16
                     text run at (229,39) width 80: "small-caps"
-                RenderText {#text} at (0,36) size 741x36
+                RenderText {#text} at (0,36) size 741x37
                   text run at (309,36) width 225: " is not supported by your browser). "
                   text run at (534,36) width 207: "This is extra text included for the"
-                  text run at (0,55) width 472: "purposes of making the paragraph long enough to have more than one line."
+                  text run at (0,54) width 472: "purposes of making the paragraph long enough to have more than one line."
 layer at (8,115) size 769x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,107) size 769x2 [color=#808080] [border: (1px inset #808080)]

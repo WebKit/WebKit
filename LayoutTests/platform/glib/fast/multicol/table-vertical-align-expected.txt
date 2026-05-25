@@ -7,43 +7,43 @@ layer at (8,8) size 769x350
   RenderBlock {DIV} at (0,0) size 769x350
     RenderMultiColumnSet at (0,0) size 769x350
 layer at (8,8) size 377x1179 backgroundClip at (0,0) size 1562x1010 clip at (0,0) size 1562x1010
-  RenderMultiColumnFlowThread at (0,0) size 377x1179
-    RenderTable {TABLE} at (0,0) size 377x1179 [border: (1px outset #000000)]
-      RenderTableSection {TBODY} at (1,1) size 375x1177
-        RenderTableRow {TR} at (0,0) size 375x1177
-          RenderTableCell {TD} at (0,44) size 141x1133 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
-            RenderText {#text} at (11,55) size 105x36
+  RenderMultiColumnFlowThread at (0,0) size 377x1180
+    RenderTable {TABLE} at (0,0) size 377x1180 [border: (1px outset #000000)]
+      RenderTableSection {TBODY} at (1,1) size 375x1178
+        RenderTableRow {TR} at (0,0) size 375x1178
+          RenderTableCell {TD} at (0,44) size 141x1134 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
+            RenderText {#text} at (11,55) size 105x37
               text run at (11,11) width 105: "This cell has lots"
               text run at (11,29) width 44: "of text."
-            RenderBR {BR} at (55,73) size 0x18
-            RenderText {#text} at (11,91) size 105x36
+            RenderBR {BR} at (55,73) size 0x19
+            RenderText {#text} at (11,91) size 105x37
               text run at (11,47) width 105: "This cell has lots"
               text run at (11,65) width 44: "of text."
-            RenderBR {BR} at (55,109) size 0x18
-            RenderText {#text} at (11,127) size 105x36
+            RenderBR {BR} at (55,109) size 0x19
+            RenderText {#text} at (11,127) size 105x37
               text run at (11,83) width 105: "This cell has lots"
               text run at (11,101) width 44: "of text."
-            RenderBR {BR} at (55,145) size 0x18
-            RenderText {#text} at (11,163) size 105x36
+            RenderBR {BR} at (55,145) size 0x19
+            RenderText {#text} at (11,163) size 105x37
               text run at (11,119) width 105: "This cell has lots"
               text run at (11,137) width 44: "of text."
-            RenderBR {BR} at (55,181) size 0x18
-            RenderText {#text} at (11,199) size 105x36
+            RenderBR {BR} at (55,181) size 0x19
+            RenderText {#text} at (11,199) size 105x37
               text run at (11,155) width 105: "This cell has lots"
               text run at (11,173) width 44: "of text."
-            RenderBR {BR} at (55,217) size 0x18
-            RenderText {#text} at (11,235) size 105x36
+            RenderBR {BR} at (55,217) size 0x19
+            RenderText {#text} at (11,235) size 105x37
               text run at (11,191) width 105: "This cell has lots"
               text run at (11,209) width 44: "of text."
-            RenderBR {BR} at (55,253) size 0x18
-            RenderText {#text} at (11,271) size 105x36
+            RenderBR {BR} at (55,253) size 0x19
+            RenderText {#text} at (11,271) size 105x37
               text run at (11,227) width 105: "This cell has lots"
               text run at (11,245) width 44: "of text."
-            RenderBR {BR} at (55,289) size 0x18
-            RenderText {#text} at (11,307) size 105x36
+            RenderBR {BR} at (55,289) size 0x19
+            RenderText {#text} at (11,307) size 105x37
               text run at (11,263) width 105: "This cell has lots"
               text run at (11,281) width 44: "of text."
-            RenderBR {BR} at (55,325) size 0x18
+            RenderBR {BR} at (55,325) size 0x19
             RenderText {#text} at (11,349) size 105x36
               text run at (11,305) width 105: "This cell has lots"
               text run at (11,323) width 44: "of text."

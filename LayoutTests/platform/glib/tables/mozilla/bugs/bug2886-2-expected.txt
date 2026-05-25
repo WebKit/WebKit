@@ -7,11 +7,11 @@ layer at (0,0) size 800x271
         RenderTableSection {TBODY} at (0,0) size 313x84
           RenderTableRow {TR} at (0,2) size 313x22
             RenderTableCell {TH} at (2,2) size 142x22 [color=#CC0000] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,3) size 28x16
-                text run at (0,3) width 28: "17.6 "
-              RenderInline {A} at (27,3) size 115x16 [color=#3333FF]
-                RenderText {#text} at (27,3) size 115x16
-                  text run at (27,3) width 115: "Table Border Test 2"
+              RenderText {#text} at (0,2) size 28x17
+                text run at (0,2) width 28: "17.6 "
+              RenderInline {A} at (27,2) size 115x17 [color=#3333FF]
+                RenderText {#text} at (27,2) size 115x17
+                  text run at (27,2) width 115: "Table Border Test 2"
             RenderTableCell {TD} at (145,2) size 21x22 [color=#FFFF00] [bgcolor=#CC0000] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (0,0) size 12x21
                 text run at (0,0) width 12: "B"
@@ -35,8 +35,8 @@ layer at (0,0) size 800x271
                 text run at (0,0) width 47: "CSS2"
           RenderTableRow {TR} at (0,25) size 313x34
             RenderTableCell {TH} at (2,25) size 142x34 [color=#CC0000] [border: (12px solid #FFFFF5) none] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (72,15) size 70x16
-                text run at (72,15) width 70: "Tests Y (+1)"
+              RenderText {#text} at (72,14) size 70x17
+                text run at (72,14) width 70: "Tests Y (+1)"
             RenderTableCell {TD} at (145,25) size 21x34 [color=#FFFFFF] [bgcolor=#009900] [border: (12px solid #FFFFF5) none] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (0,12) size 20x21
                 text run at (0,12) width 20: "31"
@@ -58,8 +58,8 @@ layer at (0,0) size 800x271
             RenderTableCell {TD} at (263,35) size 48x13 [border: (12px solid #FFFFF5) none] [r=1 c=7 rs=1 cs=1]
           RenderTableRow {TR} at (0,60) size 313x22
             RenderTableCell {TH} at (2,60) size 142x22 [color=#CC0000] [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (79,3) size 63x16
-                text run at (79,3) width 63: "Tests N (0)"
+              RenderText {#text} at (79,2) size 63x17
+                text run at (79,2) width 63: "Tests N (0)"
             RenderTableCell {TD} at (145,60) size 21x22 [color=#FFFFFF] [bgcolor=#000099] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (0,0) size 10x21
                 text run at (0,0) width 10: "4"

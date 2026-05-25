@@ -204,12 +204,12 @@ layer at (20,20) size 644x433
                   RenderBlock {P} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (41,334) size 582x98 [color=#808080]
-        RenderText {#text} at (0,1) size 115x18
-          text run at (0,1) width 115: "To pass the test,"
+        RenderText {#text} at (0,0) size 115x19
+          text run at (0,0) width 115: "To pass the test,"
         RenderBlock (floating) {SPAN} at (562,0) size 20x20 [bgcolor=#FFFFFF]
-        RenderText {#text} at (0,1) size 561x56
-          text run at (114,1) width 447: " a browser must use its default settings, the animation has to be"
-          text run at (0,20) width 560: "smooth, the score has to end on 100/100, and the final page has to look exactly,"
+        RenderText {#text} at (0,0) size 561x57
+          text run at (114,0) width 447: " a browser must use its default settings, the animation has to be"
+          text run at (0,19) width 560: "smooth, the score has to end on 100/100, and the final page has to look exactly,"
           text run at (0,39) width 131: "pixel for pixel, like "
         RenderInline {A} at (131,39) size 168x18 [color=#0000FF]
           RenderText {#text} at (131,39) size 168x18
@@ -226,10 +226,10 @@ layer at (131,84) size 300x150
           RenderBlock {P} at (0,0) size 284x0
 layer at (17,18) size 80x33
   RenderBlock (positioned) {A} at (17,18) size 80x33 [color=#FFFFFF]
-    RenderText {#text} at (0,0) size 71x33
+    RenderText {#text} at (0,-1) size 71x35
       text run at (0,0) width 67: "YOU SHOULD"
-      text run at (0,11) width 71: "NOT SEE THIS"
-      text run at (0,22) width 35: "AT ALL"
+      text run at (0,10) width 71: "NOT SEE THIS"
+      text run at (0,21) width 35: "AT ALL"
 layer at (638,18) size 20x20
   RenderBlock (positioned) at (638,18) size 20x20 [color=#FFFFFF] [bgcolor=#FF00FF]
     RenderText at (0,0) size 20x20

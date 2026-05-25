@@ -3,7 +3,7 @@ Actual: (89, 18)
 Expected: (89, 18)
 
 translate transform target
-Actual: (289, 267)
+Actual: (289, 266)
 Expected: (289, 267)
 
 vertical left-to-right writing mode target
@@ -12,7 +12,7 @@ Expected: (18, 311)
 
 right-to-left direction target
 Actual: (129, 514)
-Expected: (129, 515)
+Expected: (129, 514)
 
 This tests that press targets the receiving elements center point.
 

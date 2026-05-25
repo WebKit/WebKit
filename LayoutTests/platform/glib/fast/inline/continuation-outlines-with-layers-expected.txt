@@ -10,22 +10,22 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,148) size 784x59
       RenderBlock {DIV} at (0,222) size 784x60
       RenderBlock {DIV} at (0,300) size 784x23
-layer at (8,50) size 784x95
-  RenderInline (relative positioned) {SPAN} at (0,0) size 784x95
+layer at (8,50) size 784x96
+  RenderInline (relative positioned) {SPAN} at (0,0) size 784x96
     RenderText {#text} at (0,0) size 98x18
       text run at (0,0) width 98: "Content before."
     RenderBlock {H3} at (0,36) size 784x23
       RenderText {#text} at (0,0) size 143x22
         text run at (0,0) width 143: "Bold with margin."
-    RenderText {#text} at (0,77) size 82x18
+    RenderText {#text} at (0,77) size 82x19
       text run at (0,77) width 82: "Content after"
 layer at (8,164) size 784x59
   RenderInline (relative positioned) {SPAN} at (0,0) size 784x59
     RenderBlock {H3} at (0,0) size 784x22
       RenderText {#text} at (0,0) size 144x22
         text run at (0,0) width 144: "No content before."
-    RenderText {#text} at (0,41) size 86x18
-      text run at (0,41) width 86: "Content after."
+    RenderText {#text} at (0,40) size 86x19
+      text run at (0,40) width 86: "Content after."
 layer at (8,239) size 784x59
   RenderInline (relative positioned) {SPAN} at (0,0) size 784x59
     RenderText {#text} at (0,0) size 94x18

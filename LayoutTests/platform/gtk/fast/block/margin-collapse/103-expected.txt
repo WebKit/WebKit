@@ -1,6 +1,6 @@
-layer at (0,0) size 785x1803
+layer at (0,0) size 785x1802
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1803
+layer at (0,0) size 785x1802
   RenderBlock {HTML} at (0,0) size 785x1803
     RenderBody {BODY} at (8,20) size 769x1763 [bgcolor=#A6A972]
       RenderBlock {DIV} at (83,0) size 603x1763 [bgcolor=#FDFDE9] [border: (1px solid #000000)]
@@ -22,7 +22,7 @@ layer at (0,0) size 785x1803
           RenderBlock {P} at (20,93) size 560x21 [color=#333333]
             RenderText {#text} at (0,2) size 453x16
               text run at (0,2) width 453: "Please take the time to carefully review and complete the following questions."
-          RenderBlock {FORM} at (20,138) size 560x1406
+          RenderBlock {FORM} at (20,138) size 560x1405
             RenderBlock {H2} at (0,0) size 560x16 [color=#333333]
               RenderText {#text} at (0,0) size 182x16
                 text run at (0,0) width 182: "PERSONAL INFORMATION"
@@ -81,29 +81,29 @@ layer at (0,0) size 785x1803
                 text run at (0,2) width 219: "Your research is primarily focused on:"
             RenderBlock {SPAN} at (325,308) size 180x21 [color=#333333]
               RenderBlock {INPUT} at (2,3) size 12x12 [color=#000000]
-              RenderText {#text} at (16,3) size 32x15
-                text run at (16,3) width 32: "Texts"
+              RenderText {#text} at (16,2) size 32x16
+                text run at (16,2) width 32: "Texts"
             RenderBlock {SPAN} at (325,328) size 180x22 [color=#333333]
               RenderBlock {INPUT} at (2,3) size 12x12 [color=#000000]
-              RenderText {#text} at (16,3) size 131x15
-                text run at (16,3) width 131: "Performance materials"
+              RenderText {#text} at (16,2) size 131x16
+                text run at (16,2) width 131: "Performance materials"
             RenderBlock {SPAN} at (325,349) size 180x21 [color=#333333]
               RenderBlock {INPUT} at (2,3) size 12x12 [color=#000000]
-              RenderText {#text} at (16,3) size 18x15
-                text run at (16,3) width 18: "n/a"
+              RenderText {#text} at (16,2) size 18x16
+                text run at (16,2) width 18: "n/a"
             RenderBlock {H2} at (0,394) size 560x17 [color=#333333]
               RenderText {#text} at (0,0) size 335x16
                 text run at (0,0) width 335: "INTERNET SHAKESPEARE EDITIONS QUESTIONS"
             RenderBlock (floating) {SPAN} at (0,420) size 325x21 [color=#333333]
               RenderText {#text} at (0,2) size 317x16
                 text run at (0,2) width 317: "Have you used UVic's Internet Shakespeare Editions?"
-            RenderBlock {SPAN} at (325,420) size 180x22 [color=#333333]
-              RenderText {#text} at (0,3) size 22x15
-                text run at (0,3) width 22: "Yes"
+            RenderBlock {SPAN} at (325,420) size 180x21 [color=#333333]
+              RenderText {#text} at (0,2) size 22x16
+                text run at (0,2) width 22: "Yes"
               RenderBlock {INPUT} at (23,3) size 13x12 [color=#000000]
-              RenderText {#text} at (37,3) size 22x15
-                text run at (37,3) width 5: " "
-                text run at (41,3) width 18: "No"
+              RenderText {#text} at (37,2) size 22x16
+                text run at (37,2) width 5: " "
+                text run at (41,2) width 18: "No"
               RenderBlock {INPUT} at (60,3) size 13x12 [color=#000000]
               RenderText {#text} at (0,0) size 0x0
             RenderBlock {P} at (0,454) size 560x21 [color=#333333]
@@ -129,7 +129,7 @@ layer at (0,0) size 785x1803
             RenderBlock {H2} at (0,703) size 560x17 [color=#333333]
               RenderText {#text} at (0,0) size 264x16
                 text run at (0,0) width 264: "TOOLS IN DEVELOPMENT QUESTIONS"
-            RenderBlock {P} at (0,733) size 560x61 [color=#333333]
+            RenderBlock {P} at (0,732) size 560x61 [color=#333333]
               RenderText {#text} at (0,2) size 548x56
                 text run at (0,2) width 446: "We are in the process of both making new material available and developing "
                 text run at (445,2) width 103: "new tools to view"
@@ -165,18 +165,18 @@ layer at (441,302) size 180x18
   RenderBlock {DIV} at (3,3) size 180x18
 layer at (441,326) size 180x18
   RenderBlock {DIV} at (3,3) size 180x18
-layer at (113,846) size 506x106 clip at (114,847) size 504x104
+layer at (113,845) size 506x106 clip at (114,846) size 504x104
   RenderTextControl {TEXTAREA} at (0,572) size 506x107 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 500x18
-layer at (113,1133) size 506x106 clip at (114,1134) size 504x104
+layer at (113,1132) size 506x106 clip at (114,1133) size 504x104
   RenderTextControl {TEXTAREA} at (0,859) size 506x107 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 500x18
-layer at (113,1264) size 506x106 clip at (114,1265) size 504x104
+layer at (113,1263) size 506x106 clip at (114,1264) size 504x104
   RenderTextControl {TEXTAREA} at (0,990) size 506x107 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 500x18
-layer at (113,1395) size 506x106 clip at (114,1396) size 504x104
+layer at (113,1394) size 506x106 clip at (114,1395) size 504x104
   RenderTextControl {TEXTAREA} at (0,1121) size 506x107 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 500x18
-layer at (113,1572) size 506x106 clip at (114,1573) size 504x104
+layer at (113,1571) size 506x106 clip at (114,1572) size 504x104
   RenderTextControl {TEXTAREA} at (0,1298) size 506x107 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 500x18

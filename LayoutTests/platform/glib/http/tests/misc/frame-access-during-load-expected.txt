@@ -17,7 +17,7 @@ layer at (0,0) size 800x600
               RenderBody {BODY} at (8,8) size 284x24
                 RenderText {#text} at (0,0) size 71x18
                   text run at (0,0) width 71: "SUCCESS"
-        RenderBR {BR} at (300,26) size 0x17
+        RenderBR {BR} at (300,25) size 0x19
         RenderIFrame {IFRAME} at (0,40) size 300x40
           layer at (0,0) size 300x40
             RenderView at (0,0) size 300x40
@@ -26,7 +26,7 @@ layer at (0,0) size 800x600
               RenderBody {BODY} at (8,8) size 284x24
                 RenderText {#text} at (0,0) size 71x18
                   text run at (0,0) width 71: "SUCCESS"
-        RenderBR {BR} at (300,66) size 0x17
+        RenderBR {BR} at (300,65) size 0x19
         RenderText {#text} at (0,80) size 164x18
           text run at (0,80) width 164: "[object HTMLDocument]"
         RenderBR {BR} at (164,80) size 0x18

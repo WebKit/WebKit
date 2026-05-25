@@ -11,18 +11,18 @@ layer at (0,0) size 800x600
         RenderInline {CODE} at (282,39) size 32x16
           RenderText {#text} at (282,39) size 32x16
             text run at (282,39) width 32: "<TD>"
-        RenderText {#text} at (0,36) size 772x36
+        RenderText {#text} at (0,36) size 772x37
           text run at (314,36) width 458: " in any single rows [i.e., all rows in the top table want to span 9 cells, but"
-          text run at (0,55) width 159: "the maximum number of "
+          text run at (0,54) width 159: "the maximum number of "
         RenderInline {CODE} at (159,58) size 32x15
           RenderText {#text} at (159,58) size 32x15
             text run at (159,58) width 32: "<TD>"
-        RenderText {#text} at (191,55) size 107x17
-          text run at (191,55) width 107: " in any row is 8]."
-      RenderBlock {P} at (0,89) size 784x18
+        RenderText {#text} at (191,54) size 107x19
+          text run at (191,54) width 107: " in any row is 8]."
+      RenderBlock {P} at (0,88) size 784x19
         RenderText {#text} at (0,0) size 484x18
           text run at (0,0) width 484: "This condition leads to the 'white gap' (in builds of 5.0 for jun04 and before)."
-      RenderTable {TABLE} at (0,123) size 784x82 [border: (1px outset #000000)]
+      RenderTable {TABLE} at (0,122) size 784x83 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 782x80
           RenderTableRow {TR} at (0,0) size 782x20
             RenderTableCell {TD} at (0,0) size 98x20 [bgcolor=#999999] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
@@ -103,12 +103,12 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (586,60) size 196x20 [bgcolor=#999999] [border: (1px inset #000000)] [r=3 c=7 rs=1 cs=2]
               RenderText {#text} at (1,1) size 8x18
                 text run at (1,1) width 8: "8"
-      RenderBlock {P} at (0,221) size 784x36
+      RenderBlock {P} at (0,220) size 784x37
         RenderText {#text} at (0,0) size 756x36
           text run at (0,0) width 424: "This is the same table as above, but instead the cells in column two "
           text run at (424,0) width 332: "are requesting colspans of (1,2,1,5) respectively (i.e.,"
           text run at (0,18) width 478: "excess requests have been 'normalized' away). There is no more 'white gap'."
-      RenderTable {TABLE} at (0,273) size 784x82 [border: (1px outset #000000)]
+      RenderTable {TABLE} at (0,272) size 784x83 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 782x80
           RenderTableRow {TR} at (0,0) size 782x20
             RenderTableCell {TD} at (0,0) size 98x20 [bgcolor=#999999] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]

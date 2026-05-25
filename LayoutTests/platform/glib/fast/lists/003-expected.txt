@@ -11,16 +11,16 @@ layer at (0,0) size 800x351
             RenderText {#text} at (0,3) size 455x34
               text run at (415,3) width 40: "text-"
               text run at (0,22) width 96: "align: right"
-          RenderText {#text} at (96,19) size 71x17
-            text run at (96,19) width 71: " div after a "
+          RenderText {#text} at (96,18) size 71x19
+            text run at (96,18) width 71: " div after a "
           RenderInline {CODE} at (167,22) size 88x15
             RenderText {#text} at (167,22) size 88x15
               text run at (167,22) width 88: "float: left"
-          RenderText {#text} at (255,19) size 31x17
-            text run at (255,19) width 31: " div. "
-          RenderInline {A} at (0,19) size 419x36 [color=#0000EE]
-            RenderText {#text} at (0,19) size 419x36
-              text run at (285,19) width 134: "Screenshot of correct"
+          RenderText {#text} at (255,18) size 31x19
+            text run at (255,18) width 31: " div. "
+          RenderInline {A} at (0,18) size 419x37 [color=#0000EE]
+            RenderText {#text} at (0,18) size 419x37
+              text run at (285,18) width 134: "Screenshot of correct"
               text run at (0,37) width 55: "behavior"
           RenderText {#text} at (55,37) size 8x18
             text run at (55,37) width 8: "; "
@@ -29,7 +29,7 @@ layer at (0,0) size 800x351
               text run at (63,37) width 124: "screenshot of Safari"
           RenderText {#text} at (187,37) size 4x18
             text run at (187,37) width 4: "."
-        RenderBlock {P} at (0,87) size 471x36
+        RenderBlock {P} at (0,86) size 471x37
           RenderText {#text} at (0,0) size 450x18
             text run at (0,0) width 450: "This bug only occurs on pages with a standards-compliant DOCTYPE."
           RenderInline {A} at (0,18) size 260x18 [color=#0000EE]
@@ -37,7 +37,7 @@ layer at (0,0) size 800x351
               text run at (0,18) width 260: "View this test case without a DOCTYPE"
           RenderText {#text} at (259,18) size 5x18
             text run at (259,18) width 5: "."
-        RenderBlock {OL} at (0,139) size 471x180
+        RenderBlock {OL} at (0,138) size 471x181
           RenderListItem {LI} at (40,0) size 431x36
             RenderListMarker at (-16,0) size 16x18: "1"
             RenderText {#text} at (0,0) size 402x36

@@ -8,7 +8,7 @@ layer at (0,0) size 800x301
           text run at (0,0) width 393: "These images should all look the same, square not rectangular."
       RenderBlock {P} at (0,34) size 784x68
         RenderImage {IMG} at (0,0) size 64x64
-      RenderBlock {P} at (0,117) size 784x68
+      RenderBlock {P} at (0,117) size 784x69
         RenderImage {IMG} at (0,0) size 64x64
       RenderBlock {P} at (0,201) size 784x68
         RenderImage {IMG} at (0,0) size 64x64

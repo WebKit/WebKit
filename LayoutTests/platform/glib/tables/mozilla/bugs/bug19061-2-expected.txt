@@ -7,38 +7,38 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 151x22
           text run at (0,0) width 151: "Thead/Tfoot/Tbody"
       RenderBlock {PRE} at (0,40) size 784x100
-        RenderInline {FONT} at (0,0) size 318x99
-          RenderText {#text} at (0,0) size 6x11
+        RenderInline {FONT} at (0,-1) size 318x101
+          RenderText {#text} at (0,-1) size 6x13
             text run at (0,0) width 6: " "
             text run at (6,0) width 0: " "
-          RenderInline {B} at (0,11) size 30x11
-            RenderText {#text} at (0,11) size 30x11
-              text run at (0,11) width 30: "thead"
-          RenderText {#text} at (0,11) size 318x22
-            text run at (30,11) width 78: " Row 1;      "
-            text run at (108,11) width 0: " "
-            text run at (0,22) width 318: "      background-color: cyan;     text-align: center;"
-          RenderBR {BR} at (318,22) size 0x11
-          RenderText {#text} at (0,33) size 0x11
-            text run at (0,33) width 0: " "
-          RenderInline {B} at (0,44) size 30x11
-            RenderText {#text} at (0,44) size 30x11
-              text run at (0,44) width 30: "tbody"
-          RenderText {#text} at (0,44) size 312x22
-            text run at (30,44) width 78: " Rows 2,3,4; "
-            text run at (108,44) width 0: " "
-            text run at (0,55) width 312: "      background-color: #9999ff;  text-align: right;"
-          RenderBR {BR} at (312,55) size 0x11
-          RenderText {#text} at (0,66) size 0x11
-            text run at (0,66) width 0: " "
-          RenderInline {B} at (0,77) size 30x11
-            RenderText {#text} at (0,77) size 30x11
-              text run at (0,77) width 30: "tfoot"
-          RenderText {#text} at (0,77) size 318x22
-            text run at (30,77) width 78: " Rows 5, 6;  "
-            text run at (108,77) width 0: " "
-            text run at (0,88) width 318: "      background-color: #ff99ff;  text-align: center;"
-            text run at (318,88) width 0: " "
+          RenderInline {B} at (0,10) size 30x13
+            RenderText {#text} at (0,10) size 30x13
+              text run at (0,10) width 30: "thead"
+          RenderText {#text} at (0,10) size 318x24
+            text run at (30,10) width 78: " Row 1;      "
+            text run at (108,10) width 0: " "
+            text run at (0,21) width 318: "      background-color: cyan;     text-align: center;"
+          RenderBR {BR} at (318,21) size 0x13
+          RenderText {#text} at (0,32) size 0x13
+            text run at (0,32) width 0: " "
+          RenderInline {B} at (0,43) size 30x13
+            RenderText {#text} at (0,43) size 30x13
+              text run at (0,43) width 30: "tbody"
+          RenderText {#text} at (0,43) size 312x24
+            text run at (30,43) width 78: " Rows 2,3,4; "
+            text run at (108,43) width 0: " "
+            text run at (0,54) width 312: "      background-color: #9999ff;  text-align: right;"
+          RenderBR {BR} at (312,54) size 0x13
+          RenderText {#text} at (0,65) size 0x13
+            text run at (0,65) width 0: " "
+          RenderInline {B} at (0,76) size 30x13
+            RenderText {#text} at (0,76) size 30x13
+              text run at (0,76) width 30: "tfoot"
+          RenderText {#text} at (0,76) size 318x24
+            text run at (30,76) width 78: " Rows 5, 6;  "
+            text run at (108,76) width 0: " "
+            text run at (0,87) width 318: "      background-color: #ff99ff;  text-align: center;"
+            text run at (318,87) width 0: " "
       RenderTable {TABLE} at (0,152) size 784x211 [border: (1px outset #000000)]
         RenderTableSection {THEAD} at (1,1) size 782x38 [bgcolor=#00FFFF]
           RenderTableRow {TR} at (0,4) size 782x30

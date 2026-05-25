@@ -1,8 +1,8 @@
 layer at (0,0) size 785x1217
   RenderView at (0,0) size 785x600
 layer at (0,0) size 785x1217
-  RenderBlock {HTML} at (0,0) size 785x1217
-    RenderBody {BODY} at (8,16) size 769x1193
+  RenderBlock {HTML} at (0,0) size 785x1218
+    RenderBody {BODY} at (8,16) size 769x1194
       RenderBlock {P} at (0,0) size 769x18
         RenderText {#text} at (0,0) size 161x18
           text run at (0,0) width 161: "div, span, nested div/span"
@@ -106,58 +106,58 @@ layer at (0,0) size 785x1217
         RenderText {#text} at (0,0) size 29x18
           text run at (0,0) width 29: "ruby"
       RenderBlock {DIV} at (0,866) size 769x30 [border: (1px solid #000000)]
-        RenderInline {RUBY} at (2,11) size 23x17
-          RenderInline (generated) at (2,11) size 23x17
-            RenderText {#text} at (2,11) size 23x17
-              text run at (2,11) width 23: "abc"
+        RenderInline {RUBY} at (2,10) size 23x19
+          RenderInline (generated) at (2,10) size 23x19
+            RenderText {#text} at (2,10) size 23x19
+              text run at (2,10) width 23: "abc"
           RenderBlock {RT} at (2,1) size 23x10
             RenderText {#text} at (5,0) size 12x10
               text run at (5,0) width 12: "def"
-        RenderText {#text} at (25,11) size 5x17
-          text run at (25,11) width 5: " "
-        RenderInline {RUBY} at (31,11) size 23x17
-          RenderInline (generated) at (31,11) size 23x17
-            RenderText {#text} at (31,11) size 23x17
-              text run at (31,11) width 23: "abc"
+        RenderText {#text} at (25,10) size 5x19
+          text run at (25,10) width 5: " "
+        RenderInline {RUBY} at (31,10) size 23x19
+          RenderInline (generated) at (31,10) size 23x19
+            RenderText {#text} at (31,10) size 23x19
+              text run at (31,10) width 23: "abc"
           RenderBlock {RT} at (31,1) size 23x10
             RenderText {#text} at (5,0) size 12x10
               text run at (5,0) width 12 RTL: "def"
-        RenderText {#text} at (54,11) size 5x17
-          text run at (54,11) width 5: " "
-        RenderInline {RUBY} at (60,11) size 23x17
-          RenderInline (generated) at (60,11) size 23x17
-            RenderText {#text} at (60,11) size 23x17
-              text run at (60,11) width 23: "abc"
-        RenderText {#text} at (83,11) size 5x17
-          text run at (83,11) width 5: " "
-        RenderInline {RUBY} at (89,11) size 13x17
-          RenderInline (generated) at (89,11) size 13x17
+        RenderText {#text} at (54,10) size 5x19
+          text run at (54,10) width 5: " "
+        RenderInline {RUBY} at (60,10) size 23x19
+          RenderInline (generated) at (60,10) size 23x19
+            RenderText {#text} at (60,10) size 23x19
+              text run at (60,10) width 23: "abc"
+        RenderText {#text} at (83,10) size 5x19
+          text run at (83,10) width 5: " "
+        RenderInline {RUBY} at (89,10) size 13x19
+          RenderInline (generated) at (89,10) size 13x19
           RenderBlock {RT} at (89,1) size 13x10
             RenderText {#text} at (0,0) size 12x10
               text run at (0,0) width 12: "def"
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {RUBY} at (104,11) size 23x17
-          RenderInline (generated) at (104,11) size 23x17
-            RenderInline {RB} at (104,11) size 23x17
-              RenderText {#text} at (104,11) size 23x17
-                text run at (104,11) width 23: "abc"
-        RenderText {#text} at (127,11) size 5x17
-          text run at (127,11) width 5: " "
-        RenderInline {RUBY} at (133,11) size 23x17
-          RenderInline (generated) at (133,11) size 23x17
-            RenderInline {RB} at (133,11) size 23x17
-              RenderText {#text} at (133,11) size 23x17
-                text run at (133,11) width 23: "abc"
+        RenderInline {RUBY} at (104,10) size 23x19
+          RenderInline (generated) at (104,10) size 23x19
+            RenderInline {RB} at (104,10) size 23x19
+              RenderText {#text} at (104,10) size 23x19
+                text run at (104,10) width 23: "abc"
+        RenderText {#text} at (127,10) size 5x19
+          text run at (127,10) width 5: " "
+        RenderInline {RUBY} at (133,10) size 23x19
+          RenderInline (generated) at (133,10) size 23x19
+            RenderInline {RB} at (133,10) size 23x19
+              RenderText {#text} at (133,10) size 23x19
+                text run at (133,10) width 23: "abc"
           RenderBlock {RT} at (133,1) size 23x10
             RenderText {#text} at (5,0) size 12x10
               text run at (5,0) width 12: "def"
-        RenderText {#text} at (156,11) size 5x17
-          text run at (156,11) width 5: " "
-        RenderInline {RUBY} at (162,11) size 23x17
-          RenderInline (generated) at (162,11) size 23x17
-            RenderInline {RB} at (162,11) size 23x17
-              RenderText {#text} at (162,11) size 23x17
-                text run at (162,11) width 23: "abc"
+        RenderText {#text} at (156,10) size 5x19
+          text run at (156,10) width 5: " "
+        RenderInline {RUBY} at (162,10) size 23x19
+          RenderInline (generated) at (162,10) size 23x19
+            RenderInline {RB} at (162,10) size 23x19
+              RenderText {#text} at (162,10) size 23x19
+                text run at (162,10) width 23: "abc"
           RenderBlock {RT} at (162,1) size 23x10
             RenderText {#text} at (5,0) size 12x10
               text run at (5,0) width 12: "def"
@@ -184,7 +184,7 @@ layer at (0,0) size 785x1217
             RenderTableCell {TD} at (2,24) size 39x20 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (13,1) size 25x18
                 text run at (13,1) width 25: "opq"
-      RenderTable {DIV} at (1,1012) size 145x57 [border: (1px solid #000000)]
+      RenderTable {DIV} at (1,1013) size 145x57 [border: (1px solid #000000)]
         RenderBlock {DIV} at (0,0) size 144x18
           RenderText {#text} at (0,0) size 144x18
             text run at (0,0) width 144: "AnonymousTableRow"
@@ -203,10 +203,10 @@ layer at (0,0) size 785x1217
             RenderTableCell {DIV} at (0,18) size 75x18 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (50,0) size 25x18
                 text run at (50,0) width 25: "opq"
-      RenderBlock {P} at (0,1084) size 769x19
+      RenderBlock {P} at (0,1085) size 769x19
         RenderText {#text} at (0,0) size 515x18
           text run at (0,0) width 515: "Anonymous TABLE, TABLE_ROW, TABLE_ROW_GROUP, TABLE_CELL"
-      RenderBlock {DIV} at (0,1118) size 769x75 [border: (1px solid #000000)]
+      RenderBlock {DIV} at (0,1119) size 769x75 [border: (1px solid #000000)]
         RenderTable at (1,1) size 24x72
           RenderTableSection (anonymous) at (0,18) size 24x36
             RenderTableRow {DIV} at (0,0) size 24x18

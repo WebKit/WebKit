@@ -33,14 +33,14 @@ layer at (0,0) size 800x600
               RenderBlock {DIV} at (0,0) size 30x40
                 RenderBlock {DIV} at (0,0) size 8x40
             RenderBlock {DIV} at (0,40) size 30x0
-          RenderText {#text} at (30,22) size 4x18
+          RenderText {#text} at (30,22) size 4x19
             text run at (30,22) width 4: " "
           RenderBlock {METER} at (34,0) size 30x40
             RenderBlock {DIV} at (0,0) size 30x40
               RenderBlock {DIV} at (0,0) size 30x40
                 RenderBlock {DIV} at (0,0) size 14x40
             RenderBlock {DIV} at (0,40) size 30x0
-          RenderText {#text} at (64,22) size 4x18
+          RenderText {#text} at (64,22) size 4x19
             text run at (64,22) width 4: " "
           RenderBlock {METER} at (68,0) size 30x40
             RenderBlock {DIV} at (0,0) size 30x40
@@ -74,9 +74,9 @@ layer at (0,0) size 800x600
                 RenderBlock {DIV} at (0,0) size 80x16
                   RenderBlock {DIV} at (0,0) size 64x16
               RenderBlock {DIV} at (0,16) size 80x0
-            RenderText {#text} at (110,8) size 73x18
+            RenderText {#text} at (110,8) size 73x19
               text run at (110,8) width 73: " has margin"
-      RenderBlock {H2} at (3,178) size 778x19
+      RenderBlock {H2} at (3,179) size 778x19
         RenderText {#text} at (0,0) size 224x18
           text run at (0,0) width 224: "Providing bar and/or value styles"
       RenderBlock {DIV} at (0,200) size 784x167 [bgcolor=#EEEEEE]
@@ -139,7 +139,7 @@ layer at (0,0) size 800x600
       RenderBlock {H2} at (3,369) size 778x19
         RenderText {#text} at (0,0) size 156x18
           text run at (0,0) width 156: "Providing appearances"
-      RenderBlock {DIV} at (0,390) size 784x40 [bgcolor=#EEEEEE]
+      RenderBlock {DIV} at (0,390) size 784x41 [bgcolor=#EEEEEE]
         RenderBlock {UL} at (3,0) size 778x40
           RenderListItem {LI} at (43,0) size 732x18
             RenderBlock {METER} at (0,1) size 80x17

@@ -1,8 +1,8 @@
 layer at (0,0) size 785x886
   RenderView at (0,0) size 785x600
 layer at (0,0) size 785x886
-  RenderBlock {HTML} at (0,0) size 785x887
-    RenderBody {BODY} at (8,21) size 769x841
+  RenderBlock {HTML} at (0,0) size 785x886
+    RenderBody {BODY} at (8,21) size 769x840
       RenderBlock {H1} at (0,0) size 769x74
         RenderText {#text} at (0,0) size 749x74
           text run at (0,0) width 749: "Problem: Safari improperly handles generated content"
@@ -38,9 +38,9 @@ layer at (0,0) size 785x886
         RenderInline {CODE} at (553,3) size 9x16
           RenderText {#text} at (553,3) size 9x16
             text run at (553,3) width 9: "p"
-        RenderText {#text} at (0,0) size 741x36
+        RenderText {#text} at (0,0) size 741x37
           text run at (561,0) width 180: " (paragraph) tag, after which"
-          text run at (0,19) width 501: "we'd like to insert generated content. One way to do so would be the following:"
+          text run at (0,18) width 501: "we'd like to insert generated content. One way to do so would be the following:"
       RenderBlock {PRE} at (20,199) size 749x16 [color=#FF0000]
         RenderInline {CODE} at (0,0) size 456x15
           RenderText {#text} at (0,0) size 456x15

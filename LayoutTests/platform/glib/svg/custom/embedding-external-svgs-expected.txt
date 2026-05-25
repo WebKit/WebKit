@@ -1,11 +1,11 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x326
-  RenderBlock {html} at (0,0) size 800x326
-    RenderBody {body} at (0,16) size 800x294 [bgcolor=#BBBBBB]
+  RenderBlock {html} at (0,0) size 800x327
+    RenderBody {body} at (0,16) size 800x295 [bgcolor=#BBBBBB]
       RenderBlock {p} at (50,0) size 750x44
-        RenderText {#text} at (0,26) size 239x17
-          text run at (0,26) width 239: "SVG in a \"transparent\" EMBED tag: "
+        RenderText {#text} at (0,25) size 239x19
+          text run at (0,25) width 239: "SVG in a \"transparent\" EMBED tag: "
         RenderEmbeddedObject {embed} at (239,0) size 40x40
           layer at (0,0) size 40x40
             RenderView at (0,0) size 40x40
@@ -50,16 +50,16 @@ layer at (0,0) size 800x326
                 RenderSVGContainer {use} at (7,1) size 12x14 [transform={m=((0.87,-0.50)(0.50,0.87)) t=(-9.15,15.85)}]
                   RenderSVGViewportContainer {svg} at (7,1) size 12x14
                     RenderSVGPath {polygon} at (7,1) size 12x14 [fill={[type=SOLID] [color=#000000] [opacity=0.50]}] [points="22 0 28 0 23 15 23 15"]
-      RenderBlock {p} at (50,59) size 750x34
-        RenderText {#text} at (0,16) size 134x17
-          text run at (0,16) width 134: "SVG in an IMG tag: "
+      RenderBlock {p} at (50,59) size 750x35
+        RenderText {#text} at (0,15) size 134x19
+          text run at (0,15) width 134: "SVG in an IMG tag: "
         RenderImage {img} at (134,0) size 30x30
-      RenderBlock {p} at (50,109) size 750x18
+      RenderBlock {p} at (50,109) size 750x19
         RenderText {#text} at (0,0) size 186x18
           text run at (0,0) width 186: "SVG in a background-image:"
       RenderBlock {p} at (50,201) size 750x44
-        RenderText {#text} at (0,26) size 199x17
-          text run at (0,26) width 199: "SVG in a \"transparent\" iframe: "
+        RenderText {#text} at (0,25) size 199x19
+          text run at (0,25) width 199: "SVG in a \"transparent\" iframe: "
         RenderIFrame {iframe} at (199,0) size 40x40
           layer at (0,0) size 40x40
             RenderView at (0,0) size 40x40
@@ -104,9 +104,9 @@ layer at (0,0) size 800x326
                 RenderSVGContainer {use} at (7,1) size 12x14 [transform={m=((0.87,-0.50)(0.50,0.87)) t=(-9.15,15.85)}]
                   RenderSVGViewportContainer {svg} at (7,1) size 12x14
                     RenderSVGPath {polygon} at (7,1) size 12x14 [fill={[type=SOLID] [color=#000000] [opacity=0.50]}] [points="22 0 28 0 23 15 23 15"]
-      RenderBlock {p} at (50,260) size 750x34
-        RenderText {#text} at (0,16) size 40x17
-          text run at (0,16) width 40: "Inline "
+      RenderBlock {p} at (50,260) size 750x35
+        RenderText {#text} at (0,15) size 40x19
+          text run at (0,15) width 40: "Inline "
         RenderSVGRoot {svg:svg} at (90,276) size 30x31
           RenderSVGContainer {svg:g} at (90,276) size 30x31
             RenderSVGPath {svg:polygon} at (103,276) size 4x9 [fill={[type=SOLID] [color=#000000] [opacity=0.04]}] [points="22 0 28 0 27 12 23 12"]
@@ -123,4 +123,4 @@ layer at (0,0) size 800x326
             RenderSVGPath {svg:polygon} at (95,277) size 8x10 [transform={m=((0.87,-0.50)(0.50,0.87)) t=(-9.15,15.85)}] [fill={[type=SOLID] [color=#000000] [opacity=0.50]}] [points="22 0 28 0 27 12 23 12"]
         RenderText {#text} at (0,0) size 0x0
 layer at (250,111) size 42x42
-  RenderBlock (relative positioned) {div} at (0,143) size 42x42 [border: (1px solid #AAAAAA)]
+  RenderBlock (relative positioned) {div} at (0,143) size 42x43 [border: (1px solid #AAAAAA)]

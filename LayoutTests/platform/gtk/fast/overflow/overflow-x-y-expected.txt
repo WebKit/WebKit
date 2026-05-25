@@ -7,8 +7,8 @@ layer at (0,0) size 785x600
         RenderText {#text} at (0,0) size 312x18
           text run at (0,0) width 312: "The body should always have a vertical scrollbar."
       RenderBlock (anonymous) at (0,218) size 769x61
-        RenderText {#text} at (201,43) size 4x17
-          text run at (201,43) width 4: " "
+        RenderText {#text} at (201,42) size 4x19
+          text run at (201,42) width 4: " "
         RenderText {#text} at (0,0) size 0x0
 layer at (8,26) size 300x100 clip at (8,26) size 285x100 scrollHeight 324
   RenderBlock {DIV} at (0,18) size 300x100
