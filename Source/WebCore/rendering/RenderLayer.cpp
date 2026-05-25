@@ -3748,7 +3748,30 @@ GraphicsContext* RenderLayer::setupFilters(GraphicsContext& destinationContext, 
     LayoutRect filterRepaintRect = paintingFilters->dirtySourceRect();
     filterRepaintRect.move(offsetFromRoot);
 
-    auto rootRelativeBounds = calculateLayerBounds(paintingInfo.rootLayer, offsetFromRoot, { RenderLayer::PreserveAncestorFlags, RenderLayer::IncludeDescendantTransforms });
+    // The ink overflow bounds of the element and its descendants. This sizes the filter's source image and
+    // output, so that overflowing content isn't clipped for filter functions like blur() and drop-shadow().
+    auto layerBounds = calculateLayerBounds(paintingInfo.rootLayer, offsetFromRoot, { RenderLayer::PreserveAncestorFlags, RenderLayer::IncludeDescendantTransforms });
+
+    // The reference box for SVG reference filters is the border box (the bounding client rects for split inlines),
+    // for both filterUnits="userSpaceOnUse" and filterUnits="objectBoundingBox". For SVG elements, it's the object bounding box.
+    // https://github.com/w3c/csswg-drafts/issues/13964
+    auto referenceBox = layerBounds;
+    if (CheckedPtr boxModelObject = dynamicDowncast<RenderBoxModelObject>(renderer())) {
+        // The border box of a box, or the union of the fragments (bounding client rects) of a split inline.
+        // These are in the coordinate space of the renderer's layer, whose origin is the containing block's for an inline.
+        FloatRect borderBoxRects;
+        for (auto& rect : boxModelObject->localBorderBoxRects())
+            borderBoxRects.unite(rect);
+        referenceBox = LayoutRect { borderBoxRects };
+        referenceBox.move(offsetFromRoot);
+    }
+
+    LOG_WITH_STREAM(Filters, stream << "RenderLayer " << this << " setupFilters: objectBoundingBox " << renderer().objectBoundingBox()
+        << " offsetFromRoot " << offsetFromRoot
+        << " referenceBox " << referenceBox
+        << " layerBounds " << layerBounds
+        << " paintDirtyRect " << paintingInfo.paintDirtyRect
+        << " backgroundRect " << backgroundRect.rect());
 
     // When the filter is applied via a transparency layer directly on the destination context (e.g. CG drop-shadow),
     // the switcher doesn't consult applyFilters's clipToRect path, so the ancestor border-radius clip would be lost.
@@ -3760,7 +3783,7 @@ GraphicsContext* RenderLayer::setupFilters(GraphicsContext& destinationContext, 
         };
     }
 
-    GraphicsContext* filterContext = paintingFilters->beginFilterEffect(renderer(), destinationContext, paintingInfo.paintBehavior, enclosingIntRect(rootRelativeBounds), enclosingIntRect(paintingInfo.paintDirtyRect), enclosingIntRect(filterRepaintRect),
+    GraphicsContext* filterContext = paintingFilters->beginFilterEffect(renderer(), destinationContext, paintingInfo.paintBehavior, enclosingIntRect(referenceBox), enclosingIntRect(layerBounds), enclosingIntRect(paintingInfo.paintDirtyRect), enclosingIntRect(filterRepaintRect),
         backgroundRect.rect(), applyAdditionalDestinationClip);
     if (!filterContext)
         return nullptr;

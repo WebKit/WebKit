@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="help" href="https://drafts.csswg.org/filter-effects/#FilterEffectsRegion">
+<link rel="help" href="https://github.com/w3c/csswg-drafts/issues/13964">
+<link rel="match" href="reference/reference-filter-geometry-004-ref.html">
+<meta name="assert" content="Tests that a filter region specified with `objectBoundingBox` units is resolved relative to the border box of the target element, and can extend beyond the border box to cover the element's ink overflow">
+<style>
+    body {
+        margin: 0;
+    }
+    .box {
+        margin: 120px;
+        position: relative;
+        width: 400px;
+        height: 320px;
+        background-color: green;
+        filter: url(#test);
+    }
+
+    .child {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        background-color: green;
+    }
+
+    .topleft {
+        top: -50px;
+        left: -50px;
+    }
+
+    .bottomright {
+        top: 270px;
+        left: 350px;
+    }
+
+    svg {
+        position: absolute;
+    }
+</style>
+</head>
+<body>
+  <svg width="0" height="0">
+    <filter id="test" color-interpolation-filters="sRGB" x="-25%" y="-25%" width="150%" height="150%" primitiveUnits="objectBoundingBox" filterUnits="objectBoundingBox">
+      <feFlood flood-color="blue" flood-opacity="0.2" result="wash"/>
+      <feFlood x="-0.125" y="-0.15625" width="0.25" height="0.3125" flood-color="orange" flood-opacity="0.5" result="topleft"/>
+      <feFlood x="0.875" y="0.84375" width="0.25" height="0.3125" flood-color="orange" flood-opacity="0.5" result="bottomRight"/>
+      <feMerge>
+        <feMergeNode in="SourceGraphic" />
+        <feMergeNode in="wash" />
+        <feMergeNode in="topleft" />
+        <feMergeNode in="bottomRight" />
+      </feMerge>
+    </filter>
+  </svg>
+  <div class="box">
+    <div class="child topleft"></div>
+    <div class="child bottomright"></div>
+  </div>
+</body>
+</html>

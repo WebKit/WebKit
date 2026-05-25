@@ -151,11 +151,17 @@ IntOutsets RenderLayerFilters::calculateOutsets(RenderElement& renderer, const F
     return CSSFilterRenderer::calculateOutsets(renderer, filter, targetBoundingBox);
 }
 
-GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, GraphicsContext& context, OptionSet<PaintBehavior> paintBehavior, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect, const LayoutRect& clipRect, NOESCAPE const Function<void(GraphicsContext&)>& applyAdditionalDestinationClip)
+GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, GraphicsContext& context, OptionSet<PaintBehavior> paintBehavior, const LayoutRect& filterBoxRect, const LayoutRect& layerBounds, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect, const LayoutRect& clipRect, NOESCAPE const Function<void(GraphicsContext&)>& applyAdditionalDestinationClip)
 {
     auto preferredFilterRenderingModes = renderer.page().preferredFilterRenderingModes(context);
     auto outsets = calculateOutsets(renderer, filterBoxRect);
 
+    LOG_WITH_STREAM(Filters, stream << "RenderLayerFilters " << this << " beginFilterEffect: filterBoxRect " << filterBoxRect
+        << " layerBounds " << layerBounds
+        << " dirtyRect " << dirtyRect << " layerRepaintRect " << layerRepaintRect
+        << " clipRect " << clipRect << " outsets " << outsets);
+
+    // FIXME: This isn't the "filter region" per spec; this is affeted by dirty rect.
     auto dirtyFilterRegion = dirtyRect;
     auto filterRegion = dirtyRect;
 
@@ -173,7 +179,7 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
             dirtyFilterRegion.expand(flippedOutsets);
         }
 
-        dirtyFilterRegion = intersection(filterBoxRect, dirtyFilterRegion);
+        dirtyFilterRegion = intersection(layerBounds, dirtyFilterRegion);
         // Nothing to filter when the target doesn't overlap the dirty rect.
         if (dirtyFilterRegion.isEmpty())
             return nullptr;
@@ -204,8 +210,12 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
     auto geometry = FilterGeometry {
         .referenceBox = referenceBox,
         .filterRegion = filterRegion,
+        .primitiveUserSpaceOffset = { },
         .scale = filterScale,
     };
+
+    LOG_WITH_STREAM(Filters, stream << "RenderLayerFilters " << this << " beginFilterEffect: referenceBox " << geometry.referenceBox 
+        << " filterRegion " << geometry.filterRegion << " scale " << geometry.scale);
 
     bool hasUpdatedBackingStore = false;
     if (!m_filter || geometryReferenceGeometryChanged(m_filter->geometry(), geometry)

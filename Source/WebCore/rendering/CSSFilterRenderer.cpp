@@ -134,7 +134,22 @@ static RefPtr<SVGFilterRenderer> createReferenceFilter(const CSSFilterRenderer& 
     RefPtr contextElement = dynamicDowncast<SVGElement>(renderer.element());
 
     auto geometry = filter.geometry();
-    geometry.filterRegion = SVGLengthContext::resolveRectangle(contextElement.get(), *filterElement, filterElement->filterUnits(), filter.referenceBox());
+    auto referenceBox = geometry.referenceBox;
+
+    // For primitiveUnits=userSpaceOnUse, primitive x/y resolved by SVGLengthContext are in
+    // raw user space (origin 0,0). Translate them by the box origin so they match painting
+    // coords (where the inner filter operates).
+    geometry.primitiveUserSpaceOffset = referenceBox.location();
+
+    // Resolve filter x/y/w/h per filterUnits, producing a filterRegion in painting coords.
+    // The reference box is the border box for both filterUnits values.
+    // https://github.com/w3c/csswg-drafts/issues/13964
+    if (filterElement->filterUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
+        geometry.filterRegion = SVGLengthContext::resolveRectangle(contextElement.get(), *filterElement, filterElement->filterUnits(), referenceBox);
+    else {
+        geometry.filterRegion = SVGLengthContext::resolveRectangle(contextElement.get(), *filterElement, filterElement->filterUnits(), FloatRect({ }, referenceBox.size()));
+        geometry.filterRegion.moveBy(referenceBox.location());
+    }
     if (geometry.filterRegion.isEmpty())
         return nullptr;
 
