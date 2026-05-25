@@ -32,7 +32,11 @@ namespace WebCore {
 template<typename Visitor>
 void JSXPathResult::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
+<<<<<<< HEAD
     wrapped().visitAdditionalChildrenInGCThread(visitor);
+=======
+    wrapped().visitAdditionalChildren(visitor);
+>>>>>>> 97ed68c66545 (Race condition in JSXPathResult::visitAdditionalChildren during GC)
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSXPathResult);

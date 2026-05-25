@@ -70,6 +70,9 @@ public:
     template<typename Visitor>
     void visitAdditionalChildrenInGCThread(Visitor&);
 
+    template<typename Visitor>
+    void visitAdditionalChildren(Visitor&);
+
 private:
     XPathResult(Document&, const XPath::Value&);
 

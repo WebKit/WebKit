@@ -39,6 +39,7 @@ namespace WebCore {
 XPathResult::XPathResult(Document& document, const XPath::Value& value)
     : m_value(value)
 {
+<<<<<<< HEAD
     WTF::switchOn(m_value,
         [&](bool) {
             m_resultType = BOOLEAN_TYPE;
@@ -60,6 +61,30 @@ XPathResult::XPathResult(Document& document, const XPath::Value& value)
             m_domTreeVersion = document.domTreeVersion();
         }
     );
+=======
+    switch (m_value.type()) {
+    case XPath::Value::Type::Boolean:
+        m_resultType = BOOLEAN_TYPE;
+        return;
+    case XPath::Value::Type::Number:
+        m_resultType = NUMBER_TYPE;
+        return;
+    case XPath::Value::Type::String:
+        m_resultType = STRING_TYPE;
+        return;
+    case XPath::Value::Type::NodeSet:
+        m_resultType = UNORDERED_NODE_ITERATOR_TYPE;
+        m_nodeSetPosition = 0;
+        {
+            Locker locker { m_nodeSetLock };
+            m_nodeSet = m_value.toNodeSet();
+        }
+        m_document = document;
+        m_domTreeVersion = document.domTreeVersion();
+        return;
+    }
+    ASSERT_NOT_REACHED();
+>>>>>>> 97ed68c66545 (Race condition in JSXPathResult::visitAdditionalChildren during GC)
 }
 
 XPathResult::~XPathResult()
@@ -72,9 +97,15 @@ XPathResult::~XPathResult()
     ASSERT(valueNodeSet.size() == m_nodeSet.size());
     HashSet<const Node*> set;
     for (auto& node : m_nodeSet)
+<<<<<<< HEAD
         set.add(node.ptr());
     for (auto& node : valueNodeSet)
         ASSERT(set.contains(node.ptr()));
+=======
+        set.add(node.get());
+    for (auto& node : valueNodeSet)
+        ASSERT(set.contains(node.get()));
+>>>>>>> 97ed68c66545 (Race condition in JSXPathResult::visitAdditionalChildren during GC)
 #endif
 }
 
@@ -205,13 +236,21 @@ ExceptionOr<Node*> XPathResult::snapshotItem(unsigned index)
 }
 
 template<typename Visitor>
+<<<<<<< HEAD
 void XPathResult::visitAdditionalChildrenInGCThread(Visitor& visitor)
+=======
+void XPathResult::visitAdditionalChildren(Visitor& visitor)
+>>>>>>> 97ed68c66545 (Race condition in JSXPathResult::visitAdditionalChildren during GC)
 {
     Locker locker { m_nodeSetLock };
     for (auto& node : m_nodeSet)
         addWebCoreOpaqueRoot(visitor, node.get());
 }
 
+<<<<<<< HEAD
 DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(XPathResult);
+=======
+DEFINE_VISIT_ADDITIONAL_CHILDREN(XPathResult);
+>>>>>>> 97ed68c66545 (Race condition in JSXPathResult::visitAdditionalChildren during GC)
 
 } // namespace WebCore
