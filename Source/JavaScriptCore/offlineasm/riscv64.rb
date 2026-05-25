@@ -34,9 +34,9 @@
 # x2  => sp (through alias sp) (RISC-V stack pointer register)
 # x3  => not used (RISC-V global pointer register)
 # x4  => not used (RISC-V thread pointer register)
-# x5  => not used
-# x6  => ws0
-# x7  => ws1
+# x5  => t8
+# x6  => t9
+# x7  => not used
 # x8  => cfr (through alias fp) (RISC-V frame pointer register)
 # x9  => csr0
 # x10 => t0, a0, wa0, r0
@@ -70,8 +70,8 @@
 # f3  => ft3
 # f4  => ft4
 # f5  => ft5
-# f6  => not used
-# f7  => not used
+# f6  => ft6
+# f7  => ft7
 # f8  => csfr0
 # f9  => csfr1
 # f10 => fa0, wfa0
@@ -170,10 +170,10 @@ class RegisterID
             'x16'
         when 't7', 'a7', 'wa7'
             'x17'
-        when 'ws0'
+        when 't8'
+            'x5'
+        when 't9'
             'x6'
-        when 'ws1'
-            'x7'
         when 'csr0'
             'x9'
         when 'csr1'
@@ -223,6 +223,10 @@ class FPRegisterID
             'f4'
         when 'ft5'
             'f5'
+        when 'ft6'
+            'f6'
+        when 'ft7'
+            'f7'
         when 'csfr0'
             'f8'
         when 'csfr1'
@@ -392,6 +396,22 @@ def riscv64LowerOperandIntoRegisterAndSignExtend(newList, node, operand, size, f
 
     riscv64LowerEmitSignExtension(newList, node, size, source, destination)
     destination
+end
+
+def riscv64LowerTransfer(list)
+    newList = []
+    list.each {
+        | node |
+        if node.is_a?(Instruction) and ["transferi", "transferp", "transferq"].include?(node.opcode)
+            size = node.opcode[-1, 1]
+            tmp = Tmp.new(node.codeOrigin, :gpr)
+            newList << Instruction.new(node.codeOrigin, "load#{size}", [node.operands[0], tmp])
+            newList << Instruction.new(node.codeOrigin, "store#{size}", [tmp, node.operands[1]])
+        else
+            newList << node
+        end
+    }
+    newList
 end
 
 def riscv64LowerMisplacedAddresses(list)
@@ -1541,6 +1561,7 @@ class Sequence
         result = @list
 
         result = riscDropTags(result)
+        result = riscv64LowerTransfer(result)
         result = riscLowerMalformedAddresses(result) {
             | node, address |
             if address.is_a? Address

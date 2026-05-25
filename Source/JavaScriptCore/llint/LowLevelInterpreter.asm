@@ -365,6 +365,52 @@ elsif X86_64
     const wfa7 = ft7
 
     const fr = fa0
+elsif RISCV64
+    const a0 = t0
+    const a1 = t1
+    const a2 = t2
+    const a3 = t3
+    const a4 = t4
+    const a5 = t5
+    const a6 = t6
+    const a7 = t7
+
+    const wa0 = a0
+    const wa1 = a1
+    const wa2 = a2
+    const wa3 = a3
+    const wa4 = a4
+    const wa5 = a5
+    const wa6 = a6
+    const wa7 = a7
+
+    # RISCV64 uses all eight argument GPRs (a0-a7 == t0-t7); the only
+    # non-argument temporaries left for the WebAssembly scratch
+    # registers are t8 and t9. ws2/ws3 are unavailable, matching the
+    # X86_64 configuration above.
+    const ws0 = t8
+    const ws1 = t9
+    const ws2 = invalidGPR
+    const ws3 = invalidGPR
+
+    const r0 = a0
+    const r1 = a1
+
+    const fa0 = ft0
+    const fa1 = ft1
+    const fa2 = ft2
+    const fa3 = ft3
+
+    const wfa0 = fa0
+    const wfa1 = fa1
+    const wfa2 = fa2
+    const wfa3 = fa3
+    const wfa4 = ft4
+    const wfa5 = ft5
+    const wfa6 = ft6
+    const wfa7 = ft7
+
+    const fr = fa0
 else
     const a0 = t0
     const a1 = t1
