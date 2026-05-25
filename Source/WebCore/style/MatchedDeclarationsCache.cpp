@@ -46,6 +46,8 @@
 namespace WebCore {
 namespace Style {
 
+WTF::SharedCacheBudget MatchedDeclarationsCache::s_budget(MatchedDeclarationsCacheDefaults::maximumSharedSize);
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MatchedDeclarationsCache);
 
 MatchedDeclarationsCache::MatchedDeclarationsCache(const Resolver& owner)
@@ -189,32 +191,37 @@ void MatchedDeclarationsCache::add(const Style::ComputedStyle& style, const Styl
         addResult.iterator->value.append(Entry { &matchResult, Style::ComputedStyle::clonePtr(style), Style::ComputedStyle::clonePtr(parentStyle) });
 
     // Protect against unlimited growth.
-#if PLATFORM(WPE)
-    constexpr size_t maximumSize = 1024;
-#else
-    constexpr size_t maximumSize = 16 * 1024;
-#endif
-    if (m_entries.size() > maximumSize)
+
+    if (addResult.isNewEntry && !s_budget.acquireCacheEntry())
         m_entries.remove(m_entries.random());
+
+    if (m_entries.size() > MatchedDeclarationsCacheDefaults::maximumSize) {
+        m_entries.remove(m_entries.random());
+        s_budget.releaseCacheEntries(1);
+    }
 }
 
 void MatchedDeclarationsCache::remove(unsigned hash)
 {
-    m_entries.remove(hash);
+    if (m_entries.remove(hash))
+        s_budget.releaseCacheEntries(1);
 }
 
 void MatchedDeclarationsCache::invalidate()
 {
+    s_budget.releaseCacheEntries(m_entries.size());
     m_entries.clear();
 }
 
 template<typename Callback>
 void MatchedDeclarationsCache::removeAllMatching(const Callback& matches)
 {
+    auto sizeBefore = m_entries.size();
     m_entries.removeIf([&](auto& keyValue) {
         keyValue.value.removeAllMatching(matches);
         return keyValue.value.isEmpty();
     });
+    s_budget.releaseCacheEntries(sizeBefore - m_entries.size());
 }
 
 void MatchedDeclarationsCache::clearEntriesAffectedByViewportUnits()

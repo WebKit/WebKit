@@ -352,6 +352,8 @@
 		DD3DC88927A4BF8E007E5B61 /* LEBDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 539EB0621D55284200C82EF7 /* LEBDecoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5301A2E52EE0C1A4009B4C3D /* LEBEncoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 5301A2E42EE0C1A4009B4C3D /* LEBEncoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC88A27A4BF8E007E5B61 /* WeakRandomNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472FC151A825B004123FF /* WeakRandomNumber.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3A2A4C66B42845F9A6B511DD /* SharedCacheBudget.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DF831AE934D3494EBFA2C /* SharedCacheBudget.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C7B2D5A40AD843ABB1BD70D1 /* SharedCacheBudget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8463AED9EBB24497BB3A42AD /* SharedCacheBudget.cpp */; };
 		DD3DC88B27A4BF8E007E5B61 /* SharedTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEB3DCE1BB5D684009D7AAD /* SharedTask.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC88C27A4BF8E007E5B61 /* EnumTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEA88E11D6BBCF400E5AD64 /* EnumTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC88D27A4BF8E007E5B61 /* RobinHoodHashSet.h in Headers */ = {isa = PBXBuildFile; fileRef = E32561122611B5B600A72CC5 /* RobinHoodHashSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1247,6 +1249,8 @@
 		0FE164691B6FFC9600400E7C /* Lock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Lock.h; sourceTree = "<group>"; };
 		0FE4479A1B7AAA03009498EB /* WordLock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WordLock.cpp; sourceTree = "<group>"; };
 		0FE4479B1B7AAA03009498EB /* WordLock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WordLock.h; sourceTree = "<group>"; };
+		8463AED9EBB24497BB3A42AD /* SharedCacheBudget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedCacheBudget.cpp; sourceTree = "<group>"; };
+		B36DF831AE934D3494EBFA2C /* SharedCacheBudget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedCacheBudget.h; sourceTree = "<group>"; };
 		0FEB3DCE1BB5D684009D7AAD /* SharedTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedTask.h; sourceTree = "<group>"; };
 		0FEB3DD01BB7366B009D7AAD /* ParallelVectorIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParallelVectorIterator.h; sourceTree = "<group>"; };
 		0FEC3C4F1F323C6800F59B6C /* CagedPtr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CagedPtr.h; sourceTree = "<group>"; };
@@ -2781,6 +2785,8 @@
 				A8A4731A151A825B004123FF /* SetForScope.h */,
 				A8A47308151A825B004123FF /* SHA1.cpp */,
 				A8A47309151A825B004123FF /* SHA1.h */,
+				8463AED9EBB24497BB3A42AD /* SharedCacheBudget.cpp */,
+				B36DF831AE934D3494EBFA2C /* SharedCacheBudget.h */,
 				0FEB3DCE1BB5D684009D7AAD /* SharedTask.h */,
 				862A8D32278DE74A0014120C /* SignedPtr.h */,
 				E38C82682BECAE9D0071EF52 /* SIMDHelpers.h */,
@@ -3956,6 +3962,7 @@
 				C519C3672D36CE220064418F /* SequesteredMalloc.h in Headers */,
 				DD3DC88627A4BF8E007E5B61 /* SetForScope.h in Headers */,
 				DD3DC8BB27A4BF8E007E5B61 /* SHA1.h in Headers */,
+				3A2A4C66B42845F9A6B511DD /* SharedCacheBudget.h in Headers */,
 				DD3DC88B27A4BF8E007E5B61 /* SharedTask.h in Headers */,
 				DDF307F227C086EA006A526F /* Signals.h in Headers */,
 				DD03059327B5DA0D00344002 /* SignedPtr.h in Headers */,
@@ -4711,6 +4718,7 @@
 				C519C3612D36CCD90064418F /* SequesteredImmortalHeap.cpp in Sources */,
 				C519C3692D36CE2E0064418F /* SequesteredMalloc.cpp in Sources */,
 				A8A47421151A825B004123FF /* SHA1.cpp in Sources */,
+				C7B2D5A40AD843ABB1BD70D1 /* SharedCacheBudget.cpp in Sources */,
 				5311BD531EA71CAD00525281 /* Signals.cpp in Sources */,
 				E39664762C7198AA00F91F3A /* SIMDUTF.cpp in Sources */,
 				A748745217A0BDAE00FA04CB /* SixCharacterHash.cpp in Sources */,
