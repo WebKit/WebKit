@@ -1,0 +1,5 @@
+
+
+PASS select should support :open pseudo selector.
+FAIL select :open and :not(:open) should invalidate correctly. assert_equals: The style rules from :open should apply when the select is open. expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+

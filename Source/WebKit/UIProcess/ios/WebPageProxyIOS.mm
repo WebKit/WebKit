@@ -1093,6 +1093,11 @@ void WebPageProxy::setSelectElementIsOpen(std::optional<WebCore::FrameIdentifier
     sendToProcessContainingFrame(frameID, Messages::WebPage::SetSelectElementIsOpen(context, isOpen));
 }
 
+void WebPageProxy::setSelectElementIsOpen(const WebCore::ElementContext& context, bool isOpen)
+{
+    protect(legacyMainFrameProcess())->send(Messages::WebPage::SetSelectElementIsOpen(context, isOpen), webPageIDInMainFrameProcess());
+}
+
 void WebPageProxy::didPerformDictionaryLookup(const DictionaryPopupInfo& dictionaryPopupInfo)
 {
     if (RefPtr pageClient = this->pageClient())

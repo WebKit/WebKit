@@ -5690,6 +5690,7 @@ imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customiz
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-option-arrow-scroll.optional.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-option-hover-styles.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-tabindex-order.html [ Skip ]
+<<<<<<< HEAD
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-events.optional.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-events-2.optional.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-keyboard-behavior.optional.html [ Skip ]
@@ -5712,6 +5713,9 @@ imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customiz
 
 # Newly imported WPT tests that are timing out on iOS.
 imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-activate-keyup-prevented.html [ Skip ]
+=======
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-events-2.optional.html [ Skip ]
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-tab-navigation.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/click/auxclick_event.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/click/click_event_target_child_parent.html [ Skip ]

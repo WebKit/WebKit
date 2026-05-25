@@ -1,7 +1,14 @@
 
 
+<<<<<<< HEAD
 PASS Behavior of Home for customizable-<select>
 PASS Behavior of End for customizable-<select>
 PASS Behavior of PageUp for customizable-<select>
 PASS Behavior of PageDown for customizable-<select>
+=======
+FAIL Behavior of Home for customizable-<select> assert_true: expected true got false
+FAIL Behavior of End for customizable-<select> assert_true: expected true got false
+FAIL Behavior of PageUp for customizable-<select> assert_true: expected true got false
+FAIL Behavior of PageDown for customizable-<select> assert_true: expected true got false
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 

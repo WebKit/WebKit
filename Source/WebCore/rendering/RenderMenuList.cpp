@@ -58,9 +58,89 @@ RenderMenuList::RenderMenuList(HTMLSelectElement& element, RenderStyle&& style)
     ASSERT(isRenderMenuList());
 }
 
+<<<<<<< HEAD
 RenderMenuList::~RenderMenuList() = default;
 
 HTMLSelectElement& NODELETE RenderMenuList::selectElement() const
+=======
+void RenderMenuList::setInnerRenderer(RenderBlock& innerRenderer)
+{
+    ASSERT(!m_innerBlock.get());
+    m_innerBlock = innerRenderer;
+    adjustInnerStyle();
+}
+
+void RenderMenuList::adjustInnerStyle()
+{
+    auto& innerStyle = m_innerBlock->mutableStyle();
+    innerStyle.setFlexGrow(1);
+    innerStyle.setFlexShrink(1);
+    // min-width: 0; is needed for correct shrinking.
+    innerStyle.setLogicalMinWidth(0_css_px);
+    // Use margin:auto instead of align-items:center to get safe centering, i.e.
+    // when the content overflows, treat it the same as align-items: flex-start.
+    // But we only do that for the cases where html.css would otherwise use center.
+    if (style().alignItems().isCenter()) {
+        innerStyle.setMarginBefore(CSS::Keyword::Auto { });
+        innerStyle.setMarginAfter(CSS::Keyword::Auto { });
+        innerStyle.setAlignSelf(CSS::Keyword::FlexStart { });
+    }
+
+    auto paddingBox = theme().popupInternalPaddingBox(style());
+    if (!writingMode().isHorizontal())
+        paddingBox = { paddingBox.left(), paddingBox.top(), paddingBox.right(), paddingBox.bottom() };
+
+    innerStyle.setPaddingBox(WTF::move(paddingBox));
+
+    if (document().page()->chrome().selectItemWritingDirectionIsNatural()) {
+        // Items in the popup will not respect the CSS text-align and direction properties,
+        // so we must adjust our own style to match.
+        innerStyle.setTextAlign(Style::TextAlign::Left);
+        TextDirection direction = (m_buttonText && m_buttonText->text().defaultWritingDirection() == U_RIGHT_TO_LEFT) ? TextDirection::RTL : TextDirection::LTR;
+        innerStyle.setDirection(direction);
+#if PLATFORM(IOS_FAMILY)
+    } else if (document().page()->chrome().selectItemAlignmentFollowsMenuWritingDirection()) {
+        innerStyle.setTextAlign(writingMode().isBidiLTR() ? Style::TextAlign::Left : Style::TextAlign::Right);
+        TextDirection direction;
+        UnicodeBidi unicodeBidi;
+        if (selectElement().multiple() && selectedOptionCount(*this) != 1) {
+            direction = (m_buttonText && m_buttonText->text().defaultWritingDirection() == U_RIGHT_TO_LEFT) ? TextDirection::RTL : TextDirection::LTR;
+            unicodeBidi = UnicodeBidi::Normal;
+        } else if (m_optionStyle) {
+            direction = m_optionStyle->writingMode().bidiDirection();
+            unicodeBidi = m_optionStyle->unicodeBidi();
+        } else {
+            direction = style().writingMode().bidiDirection();
+            unicodeBidi = style().unicodeBidi();
+        }
+
+        innerStyle.setDirection(direction);
+        innerStyle.setUnicodeBidi(unicodeBidi);
+    }
+#else
+    } else if (m_optionStyle && document().page()->chrome().selectItemAlignmentFollowsMenuWritingDirection()) {
+        if ((m_optionStyle->writingMode().bidiDirection() != innerStyle.writingMode().bidiDirection()
+            || m_optionStyle->unicodeBidi() != innerStyle.unicodeBidi()))
+            m_innerBlock->setNeedsLayoutAndPreferredWidthsUpdate();
+        innerStyle.setTextAlign(writingMode().isBidiLTR() ? Style::TextAlign::Left : Style::TextAlign::Right);
+        innerStyle.setDirection(m_optionStyle->writingMode().bidiDirection());
+        innerStyle.setUnicodeBidi(m_optionStyle->unicodeBidi());
+    }
+#endif // !PLATFORM(IOS_FAMILY)
+
+    if (m_innerBlock && m_innerBlock->layoutBox()) {
+        if (auto* inlineFormattingContextRoot = dynamicDowncast<RenderBlockFlow>(*m_innerBlock); inlineFormattingContextRoot && inlineFormattingContextRoot->inlineLayout())
+            inlineFormattingContextRoot->inlineLayout()->rootStyleWillChange(*inlineFormattingContextRoot, innerStyle);
+        if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*m_innerBlock))
+            lineLayout->styleWillChange(*m_innerBlock, innerStyle, Style::DifferenceResult::Layout);
+        LayoutIntegration::LineLayout::updateStyle(*m_innerBlock);
+        for (auto& child : childrenOfType<RenderText>(*m_innerBlock))
+            LayoutIntegration::LineLayout::updateStyle(child);
+    }
+}
+
+HTMLSelectElement& RenderMenuList::selectElement() const
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 {
     return downcast<HTMLSelectElement>(nodeForNonAnonymous());
 }
@@ -111,6 +191,31 @@ void RenderMenuList::updateFromElement()
         updateOptionsWidth();
         m_needsOptionsWidthUpdate = false;
     }
+<<<<<<< HEAD
+=======
+
+#if !PLATFORM(IOS_FAMILY)
+    if (!selectElement().popupIsVisible())
+#endif
+        setTextFromOption(selectElement().selectedIndex());
+}
+
+void RenderMenuList::setTextFromOption(int optionIndex)
+{
+    const auto& listItems = selectElement().listItems();
+    int size = listItems.size();
+
+    int i = selectElement().optionToListIndex(optionIndex);
+    String text = emptyString();
+    if (i >= 0 && i < size) {
+        if (RefPtr option = dynamicDowncast<HTMLOptionElement>(*listItems[i])) {
+            text = option->textIndentedToRespectGroupLabel();
+            auto* style = option->computedStyleForEditability();
+            m_optionStyle = style ? RenderStyle::clonePtr(*style) : nullptr;
+        }
+    }
+
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 #if PLATFORM(IOS_FAMILY)
     // iOS border-radius hack.
     setNeedsLayout();
@@ -189,6 +294,34 @@ void RenderMenuList::computePreferredLogicalWidths()
     clearNeedsPreferredWidthsUpdate();
 }
 
+<<<<<<< HEAD
+=======
+void RenderMenuList::didSetSelectedIndex(int listIndex)
+{
+    didUpdateActiveOption(selectElement().listToOptionIndex(listIndex));
+}
+
+void RenderMenuList::didUpdateActiveOption(int optionIndex)
+{
+    if (!AXObjectCache::accessibilityEnabled())
+        return;
+
+    CheckedPtr axCache = document().existingAXObjectCache();
+    if (!axCache)
+        return;
+
+    if (m_lastActiveIndex == optionIndex)
+        return;
+    m_lastActiveIndex = optionIndex;
+
+    int listIndex = selectElement().optionToListIndex(optionIndex);
+    if (listIndex < 0 || listIndex >= static_cast<int>(selectElement().listItems().size()))
+        return;
+
+    axCache->onSelectedOptionChanged(*this, optionIndex);
+}
+
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 void RenderMenuList::getItemBackgroundColor(unsigned listIndex, Color& itemBackgroundColor, bool& itemHasCustomBackgroundColor) const
 {
     const auto& listItems = selectElement().listItems();
@@ -245,7 +378,10 @@ LayoutUnit RenderMenuList::clientPaddingRight() const
 
     return paddingRight();
 }
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 
 #if PLATFORM(IOS_FAMILY)
 void RenderMenuList::layout()

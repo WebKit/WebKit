@@ -1,5 +1,10 @@
 invoker
 
+<<<<<<< HEAD
 PASS Buttons in the popover should be rendered and should not close the popover when clicked.
 FAIL Non-interactive content in the popover should not close the popover when clicked. assert_true: Clicking non-interactive, non-option content should not close the popover. expected true got false
+=======
+FAIL Buttons in the popover should be rendered and should not close the popover when clicked. promise_test: Unhandled rejection with value: object "Error: element click intercepted error"
+FAIL Non-interactive content in the popover should not close the popover when clicked. assert_false: Select should be closed at the start of the test. expected false got true
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 

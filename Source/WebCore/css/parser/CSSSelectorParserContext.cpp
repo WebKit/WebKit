@@ -73,7 +73,12 @@ void add(Hasher& hasher, const CSSSelectorParserContext& context)
         context.cssPickerPseudoElementEnabled,
         context.htmlEnhancedSelectEnabled,
         context.targetTextPseudoElementEnabled,
+<<<<<<< HEAD
         context.cssAppearanceBaseEnabled,
+=======
+        context.thumbAndTrackPseudoElementsEnabled,
+        context.viewTransitionsEnabled,
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
         context.webkitMediaTextTrackDisplayQuirkEnabled,
         context.openPseudoClassEnabled
     );

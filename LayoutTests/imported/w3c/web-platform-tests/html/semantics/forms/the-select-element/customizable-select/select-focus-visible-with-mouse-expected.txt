@@ -1,6 +1,10 @@
 
 
+<<<<<<< HEAD
 FAIL Select should not match :focus-visible when using mouse. assert_equals: Nothing should be :focus-visible after picking an option. expected null but got Element node <select>
   <option>option</option>
 </select>
+=======
+FAIL Select should not match :focus-visible when using mouse. assert_true: select should open after clicking it. expected true got false
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 

@@ -125,7 +125,10 @@ CSSParserContext::CSSParserContext(const Settings& settings)
     , cssInternalAutoBaseParsingEnabled { settings.cssInternalAutoBaseParsingEnabled() }
     , cssMathDepthEnabled { settings.cssMathDepthEnabled() }
     , openPseudoClassEnabled { settings.openPseudoClassEnabled() }
+<<<<<<< HEAD
     , cssAttrSubstitutionFunctionEnabled { settings.cssAttrSubstitutionFunctionEnabled() }
+=======
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
     , propertySettings { CSSPropertySettings { settings } }
 {
 }
@@ -152,6 +155,7 @@ void add(Hasher& hasher, const CSSParserContext& context)
 #if ENABLE(SERVICE_CONTROLS)
         context.imageControlsEnabled,
 #endif
+<<<<<<< HEAD
         context.colorLayersEnabled,
         context.cssPickerPseudoElementEnabled,
         context.targetTextPseudoElementEnabled,
@@ -174,6 +178,26 @@ void add(Hasher& hasher, const CSSParserContext& context)
         context.cssAttrSubstitutionFunctionEnabled
     );
     add(hasher, context.baseURL, context.charset, context.propertySettings, context.mode, context.enclosingRuleType, bits);
+=======
+        | context.colorLayersEnabled                        << 17
+        | context.contrastColorEnabled                      << 18
+        | context.targetTextPseudoElementEnabled            << 19
+        | context.cssProgressFunctionEnabled                << 20
+        | context.cssRandomFunctionEnabled                  << 21
+        | context.cssTreeCountingFunctionsEnabled           << 22
+        | context.cssURLModifiersEnabled                    << 23
+        | context.cssURLIntegrityModifierEnabled            << 24
+        | context.cssAxisRelativePositionKeywordsEnabled    << 25
+        | context.cssDynamicRangeLimitMixEnabled            << 26
+        | context.cssConstrainedDynamicRangeLimitEnabled    << 27
+        | context.cssTextDecorationLineErrorValues          << 28
+        | context.cssTextTransformMathAutoEnabled           << 29
+        | context.cssInternalAutoBaseParsingEnabled         << 30
+        | context.cssTextTransformMathAutoEnabled           << 31;
+    uint32_t bits2 = context.cssMathDepthEnabled            << 0
+        | context.openPseudoClassEnabled                    << 1;
+    add(hasher, context.baseURL, context.charset, context.propertySettings, context.mode, bits, bits2);
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 }
 
 void CSSParserContext::setUASheetMode()

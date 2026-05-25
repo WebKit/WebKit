@@ -58,7 +58,10 @@
 #include "LocalizedStrings.h"
 #include "NodeRenderStyle.h"
 #include "PlatformKeyboardEvent.h"
+<<<<<<< HEAD
 #include "PlatformRenderTheme.h"
+=======
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 #include "PseudoClassChangeInvalidation.h"
 #include "RenderLayer.h"
 #include "RenderLayerScrollableArea.h"
@@ -311,7 +314,11 @@ RenderPtr<RenderElement> TextFieldInputType::createInputRenderer(RenderStyle&& s
 {
     ASSERT(element());
     // FIXME: https://github.com/llvm/llvm-project/pull/142471 Moving style is not unsafe.
+<<<<<<< HEAD
     SUPPRESS_UNCOUNTED_ARG return createRenderer<RenderTextControlSingleLine>(RenderObject::Type::TextControlSingleLine, *protect(element()), WTF::move(style));
+=======
+    SUPPRESS_UNCOUNTED_ARG return createRenderer<RenderTextControlSingleLine>(RenderObject::Type::TextControlSingleLine, *protectedElement(), WTF::move(style));
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 }
 
 bool TextFieldInputType::shouldHaveSpinButton() const

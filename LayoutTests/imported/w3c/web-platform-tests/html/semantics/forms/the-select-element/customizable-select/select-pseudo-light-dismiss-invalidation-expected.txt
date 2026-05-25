@@ -1,4 +1,8 @@
   option
 
+<<<<<<< HEAD
 PASS select should not match :open when light dismissed.
+=======
+FAIL select should not match :open when light dismissed. assert_equals: The select should match :open when opened. expected "rgb(255, 0, 0)" but got "rgb(0, 255, 0)"
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 

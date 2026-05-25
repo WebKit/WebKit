@@ -48,7 +48,10 @@
 #include "HTMLInputElement.h"
 #include "HTMLOptionElement.h"
 #include "InputTypeNames.h"
+<<<<<<< HEAD
 #include "PlatformRenderTheme.h"
+=======
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 #include "PseudoClassChangeInvalidation.h"
 #include "RenderTheme.h"
 #include "RenderView.h"

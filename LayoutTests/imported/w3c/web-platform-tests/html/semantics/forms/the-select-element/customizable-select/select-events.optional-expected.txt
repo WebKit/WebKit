@@ -1,6 +1,11 @@
 
 Click
 
+<<<<<<< HEAD
 FAIL Events, implicit button assert_array_equals: after showing, events from test_driver.click lengths differ, expected array ["pointerdown on select at select. open: false.", "pointerdown on select at wrapper. open: false.", "mousedown on select at select. open: false.", "mousedown on select at wrapper. open: false.", "focusin on option1 at select. open: true.", "focusin on option1 at wrapper. open: true.", "pointerup on select at select. open: true.", "pointerup on select at wrapper. open: true.", "mouseup on select at select. open: true.", "mouseup on select at wrapper. open: true.", "click on select at select. open: true.", "click on select at wrapper. open: true."] length 12, got ["pointerdown on select at select. open: false.", "pointerdown on select at wrapper. open: false.", "mousedown on select at select. open: false.", "mousedown on select at wrapper. open: false.", "focusin on select at select. open: false.", "focusin on select at wrapper. open: false.", "focusout on select at select. open: true.", "focusout on select at wrapper. open: true.", "focusin on option1 at select. open: true.", "focusin on option1 at wrapper. open: true.", "pointerup on select at select. open: true.", "pointerup on select at wrapper. open: true.", "mouseup on select at select. open: true.", "mouseup on select at wrapper. open: true.", "click on select at select. open: true.", "click on select at wrapper. open: true."] length 16
+=======
+
+FAIL Events, implicit button assert_true: expected true got false
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 FAIL Events, explicit button assert_true: expected true got false
 

@@ -377,11 +377,15 @@ void HTMLDialogElement::removingSteps(RemovalType removalType, ContainerNode& ol
 void HTMLDialogElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+<<<<<<< HEAD
     Ref document = this->document();
+=======
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
     if (name == openAttr) {
         auto isOpen = !newValue.isNull();
         Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClass::Open, isOpen);
         m_isOpen = isOpen;
+<<<<<<< HEAD
 
         if (document->settings().closedbyAttributeEnabled()) {
             if (!document->isFullyActive())
@@ -426,6 +430,11 @@ void HTMLDialogElement::cleanupSteps()
 #endif
 }
 
+=======
+    }
+}
+
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 void HTMLDialogElement::setIsModal(bool newValue)
 {
     if (m_isModal == newValue)
@@ -442,4 +451,12 @@ void HTMLDialogElement::queueDialogToggleEventTask(ToggleState oldState, ToggleS
     RefPtr { m_toggleEventTask }->queue(oldState, newState, source);
 }
 
+<<<<<<< HEAD
+=======
+bool HTMLDialogElement::isOpen() const
+{
+    return m_isOpen;
+}
+
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 }

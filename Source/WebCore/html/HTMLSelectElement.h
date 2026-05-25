@@ -125,11 +125,16 @@ public:
 
     bool popupIsVisible() const { return m_popupIsVisible; }
     WEBCORE_EXPORT void setPopupIsVisible(bool);
+<<<<<<< HEAD
     std::optional<FloatPoint> lastPopupLocationForTesting() const { return m_lastPopupLocationForTesting; }
 
     bool NODELETE isOpen() const;
 
     void didUpdateActiveOption(int optionIndex);
+=======
+
+    bool isOpen() const;
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 
     // PopupMenuClient methods
     void valueChanged(unsigned listIndex, bool fireOnChange = true) override;
@@ -291,10 +296,13 @@ private:
 
     void didDetachRenderers() final;
 
+<<<<<<< HEAD
     void didAddUserAgentShadowRoot(ShadowRoot&) final;
 
     void showPickerInternal();
 
+=======
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
     // TypeAheadDataSource functions.
     int indexOfSelectedOption() const final;
     int optionCount() const final;
@@ -315,19 +323,26 @@ private:
     bool m_allowsNonContiguousSelection;
     bool m_isCapturingMouseEvents { false };
     mutable bool m_shouldRecalcListItems;
+<<<<<<< HEAD
     unsigned m_selectedContentDescendantCount { 0 };
 
     std::optional<int> m_lastActiveIndex;
 
     WeakPtr<HTMLSlotElement, WeakPtrImplWithEventTargetData> m_buttonSlot;
     WeakPtr<SelectPopoverElement, WeakPtrImplWithEventTargetData> m_popover;
+=======
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 
 #if !PLATFORM(IOS_FAMILY)
     RefPtr<PopupMenu> m_popup;
 #endif
+<<<<<<< HEAD
     std::optional<FloatPoint> m_lastPopupLocationForTesting;
     bool m_popupIsVisible { false };
     bool m_wasBaseAppearance { false };
+=======
+    bool m_popupIsVisible { false };
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 };
 
 } // namespace

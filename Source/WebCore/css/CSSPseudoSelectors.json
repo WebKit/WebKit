@@ -197,9 +197,12 @@
         "open": {
             "settings-flag": "openPseudoClassEnabled"
         },
+<<<<<<< HEAD
         "optimum": {
             "settings-flag": "cssAppearanceBaseEnabled"
         },
+=======
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
         "optional": {},
         "out-of-range": {},
         "past": {

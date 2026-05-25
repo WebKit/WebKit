@@ -34,6 +34,10 @@
 #include "AccessibilityMenuListPopup.h"
 #include "FrameDestructionObserverInlines.h"
 #include "HTMLSelectElement.h"
+<<<<<<< HEAD
+=======
+#include "RenderMenuList.h"
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 #include "RenderObjectDocument.h"
 #include <wtf/Scope.h>
 
@@ -65,12 +69,18 @@ bool AccessibilityMenuList::press()
     RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(element());
     auto notification = AXNotification::PressDidFail;
     if (selectElement && !selectElement->isDisabledFormControl()) {
+<<<<<<< HEAD
         // Note that hiding or showing the popup could trigger JS.
+=======
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
         if (selectElement->popupIsVisible())
             selectElement->hidePopup();
         else
             selectElement->showPopup();
+<<<<<<< HEAD
 
+=======
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
         notification = AXNotification::PressDidSucceed;
     }
     if (CheckedPtr cache = axObjectCache())

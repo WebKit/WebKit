@@ -2,6 +2,12 @@
 one
 two
 
+<<<<<<< HEAD
 PASS defaultbutton: Synthetic events should not trigger behaviors of select element.
 PASS custombutton: Synthetic events should not trigger behaviors of select element.
+=======
+
+FAIL defaultbutton: Synthetic events should not trigger behaviors of select element. assert_true: Select should open after a real click occurs. expected true got false
+FAIL custombutton: Synthetic events should not trigger behaviors of select element. assert_false: Synthetic mouse/pointer events should not open the picker. expected false got true
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 

@@ -15,6 +15,17 @@ Chimpanzee
 Ostrich
 Wolf
 
+<<<<<<< HEAD
 FAIL In dialog mode the first focusable element should get focus. assert_equals: The anchor should be focused. expected Element node <a id="interactive1" href="https://www.example.com/">Elep... but got Element node <option id="option1">Tiger</option>
 FAIL In dialog mode tab should not close the picker. assert_false: The select should initially be closed. expected false got true
+=======
+FAIL In dialog mode the first focusable element should get focus. assert_equals: The anchor should be focused. expected Element node <a id="interactive1" href="https://www.example.com/">Elep... but got Element node <select id="target">
+  <div></div>
+  <span></span>
+  <a i...
+FAIL In dialog mode tab should not close the picker. assert_equals: The anchor should be focused. expected Element node <a id="interactive1" href="https://www.example.com/">Elep... but got Element node <select id="target">
+  <div></div>
+  <span></span>
+  <a i...
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 

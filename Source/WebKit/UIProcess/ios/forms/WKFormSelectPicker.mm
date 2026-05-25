@@ -697,11 +697,17 @@ static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuO
 
 - (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willDisplayMenuForConfiguration:(UIContextMenuConfiguration *)configuration animator:(id <UIContextMenuInteractionAnimating>)animator
 {
+<<<<<<< HEAD
     RetainPtr view = _view.get();
     if (RefPtr page = [view page]) {
         auto& focusedInfo = [view focusedElementInformation];
         page->setSelectElementIsOpen(focusedInfo.frameID(), focusedInfo.elementContext, true);
     }
+=======
+    RetainPtr view = _view;
+    if (RefPtr page = [view page])
+        page->setSelectElementIsOpen([view focusedElementInformation].elementContext, true);
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 
     [animator addCompletion:[weakSelf = WeakObjCPtr<WKSelectPicker>(self)] {
         auto strongSelf = weakSelf.get();
@@ -712,11 +718,18 @@ static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuO
 
 - (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willEndForConfiguration:(UIContextMenuConfiguration *)configuration animator:(id <UIContextMenuInteractionAnimating>)animator
 {
+<<<<<<< HEAD
     RetainPtr view = _view.get();
     auto& focusedInfo = [view focusedElementInformation];
     auto elementContext = focusedInfo.elementContext;
     if (RefPtr page = [view page])
         page->setSelectElementIsOpen(focusedInfo.frameID(), elementContext, false);
+=======
+    RetainPtr view = _view;
+    auto elementContext = [view focusedElementInformation].elementContext;
+    if (RefPtr page = [view page])
+        page->setSelectElementIsOpen(elementContext, false);
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 
     _isAnimatingContextMenuDismissal = YES;
     [animator addCompletion:[weakSelf = WeakObjCPtr<WKSelectPicker>(self), elementContext] {
@@ -736,12 +749,19 @@ static constexpr auto removeLineLimitForChildrenMenuOption = static_cast<UIMenuO
         return;
 
     _selectContextMenuPresenter = nullptr;
+<<<<<<< HEAD
     RetainPtr view = _view.get();
     [view _removeContextMenuHintContainerIfPossible];
     if (RefPtr page = [view page]) {
         auto& focusedInfo = [view focusedElementInformation];
         page->setSelectElementIsOpen(focusedInfo.frameID(), focusedInfo.elementContext, false);
     }
+=======
+    RetainPtr view = _view;
+    [view _removeContextMenuHintContainerIfPossible];
+    if (RefPtr page = [view page])
+        page->setSelectElementIsOpen([view focusedElementInformation].elementContext, false);
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 
     if (!_isAnimatingContextMenuDismissal)
         [[view webView] _didDismissContextMenu];

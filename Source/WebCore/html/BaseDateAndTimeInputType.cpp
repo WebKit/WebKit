@@ -271,7 +271,11 @@ ValueOrReference<String> BaseDateAndTimeInputType::sanitizeValue(const String& p
     return proposedValue;
 }
 
+<<<<<<< HEAD
 bool BaseDateAndTimeInputType::valueMissing(StringView value) const
+=======
+bool BaseDateAndTimeInputType::valueMissing(const String& value) const
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 {
     ASSERT(element());
     return protect(element())->isMutable() && element()->isRequired() && value.isEmpty();
@@ -640,6 +644,12 @@ void BaseDateAndTimeInputType::didChooseValue(StringView value)
 {
     ASSERT(element());
     protect(element())->setValue(value.toString(), DispatchInputAndChangeEvent);
+}
+
+void BaseDateAndTimeInputType::didEndChooser()
+{
+    m_dateTimeChooser = nullptr;
+    setPopupIsVisible(false);
 }
 
 void BaseDateAndTimeInputType::didEndChooser()

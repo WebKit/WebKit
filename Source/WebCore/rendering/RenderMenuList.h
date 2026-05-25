@@ -35,7 +35,6 @@ class RenderMenuList final : public RenderFlexibleBox {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMenuList);
 public:
     RenderMenuList(HTMLSelectElement&, RenderStyle&&);
-    virtual ~RenderMenuList();
 
     HTMLSelectElement& NODELETE selectElement() const;
 
@@ -54,12 +53,19 @@ public:
 
     void getItemBackgroundColor(unsigned listIndex, Color&, bool& itemHasCustomBackgroundColor) const;
 
+<<<<<<< HEAD
 #if PLATFORM(WIN)
+=======
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
     LayoutUnit clientPaddingLeft() const;
     LayoutUnit clientPaddingRight() const;
 #endif
 
+<<<<<<< HEAD
     void updateFromElement() final;
+=======
+    void setTextFromOption(int optionIndex);
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 
 private:
     void element() const = delete;
@@ -85,6 +91,13 @@ private:
 
     bool m_needsOptionsWidthUpdate;
     int m_optionsWidth;
+<<<<<<< HEAD
+=======
+
+    std::optional<int> m_lastActiveIndex;
+
+    std::unique_ptr<RenderStyle> m_optionStyle;
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 };
 
 } // namespace WebCore

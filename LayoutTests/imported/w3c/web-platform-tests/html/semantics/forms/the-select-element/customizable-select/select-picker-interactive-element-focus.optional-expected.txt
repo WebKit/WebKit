@@ -2,7 +2,11 @@ invokerbutton
 option
 
 
+<<<<<<< HEAD
 FAIL Clicking interactive elements inside the select picker should focus them. assert_equals: button expected Element node <button id="button">button</button> but got Element node <select>
   <button>invoker</button>
   <button id="button"...
+=======
+FAIL Clicking interactive elements inside the select picker should focus them. assert_true: select should open after being clicked. expected true got false
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 

@@ -4059,6 +4059,11 @@ imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/grouped-kind-of-widget-fallback-border-top-left-radius-001.html [ ImageOnlyFailure ]
 
 # Customizable select feature.
+<<<<<<< HEAD
+=======
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select-in-page/customizable-select-in-page-keyboard-behavior.tentative.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select-in-page/customizable-select-in-page-mouse-behavior.tentative.html [ Skip ]
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-listbox-touch.optional.html [ Skip ]
 

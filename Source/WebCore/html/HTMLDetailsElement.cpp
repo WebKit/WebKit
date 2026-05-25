@@ -35,7 +35,10 @@
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
 #include "PseudoClassChangeInvalidation.h"
+<<<<<<< HEAD
 #include "ScriptDisallowedScope.h"
+=======
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 #include "ShadowRoot.h"
 #include "ShouldNotFireMutationEventsScope.h"
 #include "SlotAssignment.h"

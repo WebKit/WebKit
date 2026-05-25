@@ -88,7 +88,10 @@ struct CSSParserContext {
     bool webkitMediaTextTrackDisplayQuirkEnabled : 1 { false };
     bool cssMathDepthEnabled : 1 { false };
     bool openPseudoClassEnabled : 1 { false };
+<<<<<<< HEAD
     bool cssAttrSubstitutionFunctionEnabled : 1 { false };
+=======
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 
     // Settings, those affecting properties.
     CSSPropertySettings propertySettings;

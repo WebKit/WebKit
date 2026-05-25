@@ -1286,12 +1286,15 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
         case CSSSelector::PseudoClass::InternalMediaDocument:
             return isMediaDocument(element);
 
+<<<<<<< HEAD
         case CSSSelector::PseudoClass::InternalSelectPopover:
             return matchesSelectPopoverPseudoClass(element);
 
         case CSSSelector::PseudoClass::InternalUsesMenulist:
             return matchesUsesMenulistPseudoClass(element);
 
+=======
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
         case CSSSelector::PseudoClass::Open:
             return matchesOpenPseudoClass(element);
 

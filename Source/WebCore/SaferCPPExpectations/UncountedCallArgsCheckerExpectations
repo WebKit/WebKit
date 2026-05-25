@@ -297,6 +297,12 @@ html/MediaController.cpp
 html/MediaElementSession.cpp
 html/ModelDocument.cpp
 html/OffscreenCanvas.cpp
+<<<<<<< HEAD
+=======
+[ iOS ] html/TextFieldInputType.cpp
+[ Mac ] html/RangeInputType.cpp
+[ Mac ] html/ResetInputType.cpp
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 html/ValidatedFormListedElement.cpp
 html/ValidationMessage.cpp
 html/canvas/CanvasFilterContextSwitcher.cpp

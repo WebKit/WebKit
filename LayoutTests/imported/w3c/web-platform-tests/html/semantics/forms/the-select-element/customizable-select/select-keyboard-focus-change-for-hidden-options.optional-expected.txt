@@ -3,5 +3,9 @@ alpha
 charlie
 foxtrot
 
+<<<<<<< HEAD
 PASS Hidden options should be skipped when changing focus using the up and down keys.
+=======
+FAIL Hidden options should be skipped when changing focus using the up and down keys. assert_true: The select should be open after pressing space. expected true got false
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 

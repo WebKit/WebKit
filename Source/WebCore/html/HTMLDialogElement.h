@@ -75,6 +75,7 @@ private:
     void setIsModal(bool newValue);
     bool supportsFocus() const final;
 
+<<<<<<< HEAD
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
     void postConnectionSteps() final;
 
@@ -87,6 +88,13 @@ private:
     bool m_isModal { false };
     bool m_isOpen { false };
     bool m_isRequestingToClose { false };
+=======
+    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
+
+    String m_returnValue;
+    bool m_isModal { false };
+    bool m_isOpen { false };
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_previouslyFocusedElement;
 
     RefPtr<ToggleEventTask> m_toggleEventTask;

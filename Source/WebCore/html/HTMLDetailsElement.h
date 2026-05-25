@@ -41,7 +41,11 @@ public:
 
     void queueDetailsToggleEventTask(ToggleState oldState, ToggleState newState);
 
+<<<<<<< HEAD
     bool NODELETE isOpen() const;
+=======
+    bool isOpen() const;
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 
 private:
     HTMLDetailsElement(const QualifiedName&, Document&);
@@ -61,7 +65,10 @@ private:
     WeakPtr<HTMLSummaryElement, WeakPtrImplWithEventTargetData> m_defaultSummary;
     RefPtr<HTMLSlotElement> m_defaultSlot;
     bool m_isOpen { false };
+<<<<<<< HEAD
     bool m_shouldCloseElementAfterInsertion { false };
+=======
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 
     RefPtr<ToggleEventTask> m_toggleEventTask;
 };

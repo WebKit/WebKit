@@ -1,4 +1,8 @@
 
 
+<<<<<<< HEAD
 PASS Validate <option> is focusable when is a descendant of <select>
+=======
+FAIL Validate <option> is focusable when is a descendant of <select> assert_true: expected true got false
+>>>>>>> f76d6df54e60 (Implement CSS :open pseudo-class)
 
