@@ -129,6 +129,7 @@ enum class MediaQueryDynamicDependency : uint8_t  {
     Viewport = 1 << 0,
     Appearance = 1 << 1,
     Accessibility = 1 << 2,
+    ApplicationContext = 1 << 3,
 };
 
 struct FeatureEvaluationContext {

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<title>application-context media feature in iframe</title>
+<script>
+window.addEventListener("message", e => {
+    if (e.data !== "report")
+        return;
+    e.source.postMessage({
+        origin: self.origin,
+        application: window.matchMedia("(application-context: application)").matches,
+        none: window.matchMedia("(application-context: none)").matches,
+    }, "*");
+});
+</script>

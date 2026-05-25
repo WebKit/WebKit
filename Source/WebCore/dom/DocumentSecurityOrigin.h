@@ -35,4 +35,19 @@ inline bool Document::isSameOriginAsTopDocument() const
     return protect(securityOrigin())->isSameOriginAs(protect(topOrigin()));
 }
 
+inline bool Document::isSameOriginAsAllAncestors() const
+{
+    if (isTopDocument())
+        return true;
+
+    Ref securityOrigin = this->securityOrigin();
+    for (RefPtr parentDocument = this->parentDocument(); parentDocument; parentDocument = parentDocument->parentDocument()) {
+        if (!securityOrigin->equal(protect(parentDocument->securityOrigin())))
+            break;
+        if (parentDocument->isTopDocument())
+            return true;
+    }
+    return false;
+}
+
 }

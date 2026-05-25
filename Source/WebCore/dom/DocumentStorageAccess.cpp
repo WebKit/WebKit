@@ -85,21 +85,6 @@ void DocumentStorageAccess::hasStorageAccess(Document& document, Ref<DeferredPro
     storageAccess->hasStorageAccess(WTF::move(promise));
 }
 
-static bool hasSameOriginAsAllAncestors(const Document& document)
-{
-    if (document.isTopDocument())
-        return true;
-
-    Ref securityOrigin = document.securityOrigin();
-    for (RefPtr parentDocument = document.parentDocument(); parentDocument; parentDocument = parentDocument->parentDocument()) {
-        if (!securityOrigin->equal(protect(parentDocument->securityOrigin())))
-            break;
-        if (parentDocument->isTopDocument())
-            return true;
-    }
-    return false;
-}
-
 std::optional<bool> DocumentStorageAccess::hasStorageAccessQuickCheck()
 {
     Ref document = m_document.get();
@@ -113,7 +98,7 @@ std::optional<bool> DocumentStorageAccess::hasStorageAccessQuickCheck()
     if (!frame || document->securityOrigin().isOpaque())
         return false;
 
-    if (hasSameOriginAsAllAncestors(document))
+    if (document->isSameOriginAsAllAncestors())
         return true;
 
     if (!frame->page())
@@ -194,7 +179,7 @@ std::optional<StorageAccessQuickResult> DocumentStorageAccess::requestStorageAcc
     if (!frame || securityOrigin->isOpaque() || !isAllowedToRequestStorageAccess())
         return StorageAccessQuickResult::Reject;
 
-    if (hasSameOriginAsAllAncestors(document))
+    if (document->isSameOriginAsAllAncestors())
         return StorageAccessQuickResult::Grant;
 
     if (securityOrigin->isSameSiteAs(protect(document->topOrigin())))

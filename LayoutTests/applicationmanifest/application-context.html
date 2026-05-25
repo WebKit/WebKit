@@ -1,0 +1,103 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+<style>
+.probe { display: none; }
+@media (application-context: application)       { .application { display: inline; } }
+@media (application-context: none)              { .none { display: inline; } }
+@media (not (application-context: application)) { .not-application { display: inline; } }
+@media (application-context)                    { .boolean { display: inline; } }
+@media (application-context: bogus)             { .bogus { display: inline; } }
+</style>
+<body>
+<span class="probe application"></span>
+<span class="probe none"></span>
+<span class="probe not-application"></span>
+<span class="probe boolean"></span>
+<span class="probe bogus"></span>
+<pre id="output"></pre>
+<script>
+const log = msg => document.getElementById("output").append(msg + "\n");
+
+const cssClasses = ["application", "none", "not-application", "boolean", "bogus"];
+function reportCSS(label) {
+    log("=== CSS @media (" + label + ") ===");
+    for (const name of cssClasses)
+        log("." + name + " visible: " + (getComputedStyle(document.querySelector("." + name)).display !== "none"));
+}
+
+const queries = [
+    "(application-context: application)",
+    "(application-context: none)",
+    "(not (application-context: application))",
+    "(application-context)",
+];
+function reportMatchMedia(label) {
+    log("=== matchMedia (" + label + ") ===");
+    for (const query of queries)
+        log(query + ": " + matchMedia(query).matches);
+}
+
+reportCSS("default: standalone=false");
+reportMatchMedia("default: standalone=false");
+// Undefined identifiers never match. The boolean shorthand `(application-context)`
+// is false when the value is `none` (browser context) and true otherwise, per the
+// generic identifier rule (a value of `none` is false in boolean context).
+log("(application-context: bogus): " + matchMedia("(application-context: bogus)").matches);
+
+if (!window.internals) {
+    if (window.testRunner) testRunner.notifyDone();
+} else {
+    // Subscribe before any toggles. Keep the lists alive so change events fire.
+    const events = [];
+    const trackers = ["application", "none", ""].map(value => {
+        const query = value ? "(application-context: " + value + ")" : "(application-context)";
+        const mql = matchMedia(query);
+        mql.addEventListener("change", event => events.push(query + "->" + event.matches));
+        return mql;
+    });
+
+    // Per HTML, MediaQueryList `change` events are reported during "update the
+    // rendering", not synchronously from the setter. Await a rendering update
+    // after each toggle so each transition is reported before the next read.
+    const renderingUpdate = () => new Promise(resolve => requestAnimationFrame(resolve));
+
+    (async () => {
+        try {
+            internals.settings.setStandalone(true);
+            await renderingUpdate();
+            reportMatchMedia("after setStandalone(true)");
+            reportCSS("after setStandalone(true)");
+
+            internals.settings.setStandalone(false);
+            await renderingUpdate();
+            reportMatchMedia("after setStandalone(false)");
+
+            // Non-screen media is always `none`, regardless of standalone.
+            internals.settings.setStandalone(true);
+            internals.setPrinting(800, 600);
+            await renderingUpdate();
+            reportMatchMedia("standalone=true, print media");
+
+            if (internals.settings.setMediaTypeOverride) {
+                internals.settings.setMediaTypeOverride("speech");
+                await renderingUpdate();
+                reportMatchMedia("standalone=true, speech media");
+            }
+
+            log("=== change events fired ===");
+            events.forEach(log);
+        } finally {
+            // Reset settings mutated above so state doesn't leak to later tests.
+            internals.settings.setStandalone(false);
+            if (internals.settings.setMediaTypeOverride)
+                internals.settings.setMediaTypeOverride("screen");
+            if (window.testRunner) testRunner.notifyDone();
+        }
+    })();
+}
+</script>
+</body>

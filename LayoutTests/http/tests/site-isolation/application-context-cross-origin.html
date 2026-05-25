@@ -1,0 +1,98 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<title>application-context media feature: cross-origin iframe with site isolation</title>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const SAME_ORIGIN = "http://127.0.0.1:8000/applicationmanifest/resources/application-context-iframe.html";
+const CROSS_ORIGIN = "http://localhost:8000/applicationmanifest/resources/application-context-iframe.html";
+
+function log(msg) {
+    const p = document.createElement("p");
+    p.textContent = msg;
+    document.body.appendChild(p);
+}
+
+async function getReport(iframe) {
+    return new Promise(resolve => {
+        const handler = e => {
+            if (e.source !== iframe.contentWindow)
+                return;
+            window.removeEventListener("message", handler);
+            resolve(e.data);
+        };
+        window.addEventListener("message", handler);
+        iframe.contentWindow.postMessage("report", "*");
+    });
+}
+
+function loadIframe(src) {
+    return new Promise(resolve => {
+        const iframe = document.createElement("iframe");
+        iframe.src = src;
+        iframe.onload = () => resolve(iframe);
+        document.body.appendChild(iframe);
+    });
+}
+
+async function run() {
+    try {
+        if (!window.internals) {
+            log("FAIL: internals not available");
+            return;
+        }
+
+        // === standalone=false ===
+        log("Parent standalone=false. Parent (application-context: application): " + window.matchMedia("(application-context: application)").matches);
+
+        const sameOriginFrame1 = await loadIframe(SAME_ORIGIN);
+        const sameOriginReport1 = await getReport(sameOriginFrame1);
+        log("Same-origin iframe (standalone=false, " + sameOriginReport1.origin + "):");
+        log("  (application-context: application) = " + sameOriginReport1.application + " (expected: false)");
+        log("  (application-context: none) = " + sameOriginReport1.none + " (expected: true)");
+
+        const crossOriginFrame1 = await loadIframe(CROSS_ORIGIN);
+        const crossOriginReport1 = await getReport(crossOriginFrame1);
+        log("Cross-origin iframe (standalone=false, " + crossOriginReport1.origin + "):");
+        log("  (application-context: application) = " + crossOriginReport1.application + " (expected: false)");
+        log("  (application-context: none) = " + crossOriginReport1.none + " (expected: true)");
+
+        // === standalone=true ===
+        internals.settings.setStandalone(true);
+        log("Parent standalone=true. Parent (application-context: application): " + window.matchMedia("(application-context: application)").matches);
+
+        const sameOriginFrame2 = await loadIframe(SAME_ORIGIN);
+        const sameOriginReport2 = await getReport(sameOriginFrame2);
+        log("Same-origin iframe (standalone=true, " + sameOriginReport2.origin + "):");
+        log("  (application-context: application) = " + sameOriginReport2.application + " (expected: true)");
+        log("  (application-context: none) = " + sameOriginReport2.none + " (expected: false)");
+
+        const crossOriginFrame2 = await loadIframe(CROSS_ORIGIN);
+        const crossOriginReport2 = await getReport(crossOriginFrame2);
+        log("Cross-origin iframe (standalone=true, " + crossOriginReport2.origin + "):");
+        log("  (application-context: application) = " + crossOriginReport2.application + " (expected: false)");
+        log("  (application-context: none) = " + crossOriginReport2.none + " (expected: true)");
+
+        // A -> B (cross-origin, remote under site isolation) -> A' (same origin
+        // as top). A' is same origin with the top but nested inside a
+        // cross-origin ancestor, so it must evaluate to `none`. This exercises
+        // the remote-frame path where the parent document is out of process.
+        const nestedEmbedder = await loadIframe("http://localhost:8000/applicationmanifest/resources/application-context-nested-embedder.html");
+        const nestedReport = await getReport(nestedEmbedder);
+        log("Same-origin-as-top grandchild under cross-origin parent (standalone=true, " + nestedReport.origin + "):");
+        log("  (application-context: application) = " + nestedReport.application + " (expected: false)");
+        log("  (application-context: none) = " + nestedReport.none + " (expected: true)");
+    } catch (e) {
+        log("ERROR: " + e.message);
+    } finally {
+        if (window.testRunner) testRunner.notifyDone();
+    }
+}
+
+run();
+</script>
+</body>

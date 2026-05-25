@@ -165,6 +165,13 @@ void DocumentScope::evaluateMediaQueriesForAppearanceChange()
     });
 }
 
+void DocumentScope::evaluateMediaQueriesForApplicationContextChange()
+{
+    evaluateMediaQueries([] (Resolver& resolver) {
+        return resolver.evaluateDynamicMediaQueries();
+    });
+}
+
 auto DocumentScope::collectResolverScopes() -> ResolverScopes
 {
     ResolverScopes resolverScopes;

@@ -31,6 +31,7 @@
 #include "DocumentLoader.h"
 #include "DocumentPage.h"
 #include "DocumentQuirks.h"
+#include "DocumentSecurityOrigin.h"
 #include "DocumentView.h"
 #include "FrameDestructionObserverInlines.h"
 #include "LocalFrame.h"
@@ -769,6 +770,30 @@ static const IdentifierSchema& displayModeFeatureSchema()
     };
     return schema;
 }
+
+static const IdentifierSchema& applicationContextFeatureSchema()
+{
+    static MainThreadNeverDestroyed<IdentifierSchema> schema {
+        "application-context"_s,
+        FixedVector { CSSValueNone, CSSValueApplication },
+        MediaQueryDynamicDependency::ApplicationContext,
+        [](auto& context) {
+            if (!context.document->isSameOriginAsAllAncestors())
+                return MatchingIdentifiers { CSSValueNone };
+            RefPtr frame = context.document->frame();
+            if (!frame)
+                return MatchingIdentifiers { CSSValueNone };
+            RefPtr view = frame->view();
+            if (!view || view->mediaType() != screenAtom())
+                return MatchingIdentifiers { CSSValueNone };
+            // Settings is per-Page, so every frame (including site-isolated
+            // children) reads the same standalone bit the top-level context set.
+            bool standalone = frame->settings().standalone();
+            return MatchingIdentifiers { standalone ? CSSValueApplication : CSSValueNone };
+        }
+    };
+    return schema;
+}
 #endif
 
 static const IdentifierSchema& overflowBlockFeatureSchema()
@@ -1014,6 +1039,11 @@ const FeatureSchema& width()
 }
 
 #if ENABLE(APPLICATION_MANIFEST)
+const FeatureSchema& applicationContext()
+{
+    return applicationContextFeatureSchema();
+}
+
 const FeatureSchema& displayMode()
 {
     return displayModeFeatureSchema();
@@ -1075,6 +1105,7 @@ Vector<const FeatureSchema*> allSchemas()
         &videoPlayableInline(),
         &width(),
 #if ENABLE(APPLICATION_MANIFEST)
+        &applicationContext(),
         &displayMode(),
 #endif
 #if ENABLE(DARK_MODE_CSS)

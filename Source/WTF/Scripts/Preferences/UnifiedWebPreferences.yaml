@@ -8451,6 +8451,7 @@ Standalone:
   type: bool
   status: embedder
   webKitLegacyPreferenceKey: WebKitStandalonePreferenceKey
+  webcoreOnChange: standaloneChanged
   defaultValue:
     WebKitLegacy:
       default: false
