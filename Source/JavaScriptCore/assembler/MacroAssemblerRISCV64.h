@@ -4708,6 +4708,7 @@ private:
     void testFinalize(ResultCondition cond, RegisterID src, RegisterID dest)
     {
         switch (cond) {
+        case Carry:
         case Overflow:
         case Signed:
         case PositiveOrZero:
