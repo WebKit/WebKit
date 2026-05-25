@@ -1350,6 +1350,123 @@ WASM_IPINT_EXTERN_CPP_DECL(ref_func, unsigned index)
     IPINT_RETURN(Wasm::refFunc(instance, index));
 }
 
+// ------------------------------------------------------------------
+// Slow-path atomic ops (currently used by IPInt on RISC-V64; rv64gc
+// does include the A-extension but offlineasm's atomicloadq /
+// atomicxchg* family has no RISC-V backend yet, so we route through C
+// helpers using __atomic_* builtins. The asm caller passes the
+// already-bounds-checked, alignment-checked host pointer.
+//
+// All ops are __ATOMIC_SEQ_CST, matching the wasm spec.
+// ------------------------------------------------------------------
+
+WASM_IPINT_EXTERN_CPP_DECL(atomic_load8, uint64_t address)
+{
+    UNUSED_PARAM(instance);
+    uint8_t v = __atomic_load_n(reinterpret_cast<uint8_t*>(address), __ATOMIC_SEQ_CST);
+    WASM_RETURN_TWO(std::bit_cast<void*>(static_cast<uintptr_t>(v)), nullptr);
+}
+
+WASM_IPINT_EXTERN_CPP_DECL(atomic_load16, uint64_t address)
+{
+    UNUSED_PARAM(instance);
+    uint16_t v = __atomic_load_n(reinterpret_cast<uint16_t*>(address), __ATOMIC_SEQ_CST);
+    WASM_RETURN_TWO(std::bit_cast<void*>(static_cast<uintptr_t>(v)), nullptr);
+}
+
+WASM_IPINT_EXTERN_CPP_DECL(atomic_load32, uint64_t address)
+{
+    UNUSED_PARAM(instance);
+    uint32_t v = __atomic_load_n(reinterpret_cast<uint32_t*>(address), __ATOMIC_SEQ_CST);
+    WASM_RETURN_TWO(std::bit_cast<void*>(static_cast<uintptr_t>(v)), nullptr);
+}
+
+WASM_IPINT_EXTERN_CPP_DECL(atomic_load64, uint64_t address)
+{
+    UNUSED_PARAM(instance);
+    uint64_t v = __atomic_load_n(reinterpret_cast<uint64_t*>(address), __ATOMIC_SEQ_CST);
+    WASM_RETURN_TWO(std::bit_cast<void*>(static_cast<uintptr_t>(v)), nullptr);
+}
+
+WASM_IPINT_EXTERN_CPP_DECL(atomic_store8, uint64_t address, uint64_t value)
+{
+    UNUSED_PARAM(instance);
+    __atomic_store_n(reinterpret_cast<uint8_t*>(address), static_cast<uint8_t>(value), __ATOMIC_SEQ_CST);
+    WASM_RETURN_TWO(nullptr, nullptr);
+}
+
+WASM_IPINT_EXTERN_CPP_DECL(atomic_store16, uint64_t address, uint64_t value)
+{
+    UNUSED_PARAM(instance);
+    __atomic_store_n(reinterpret_cast<uint16_t*>(address), static_cast<uint16_t>(value), __ATOMIC_SEQ_CST);
+    WASM_RETURN_TWO(nullptr, nullptr);
+}
+
+WASM_IPINT_EXTERN_CPP_DECL(atomic_store32, uint64_t address, uint64_t value)
+{
+    UNUSED_PARAM(instance);
+    __atomic_store_n(reinterpret_cast<uint32_t*>(address), static_cast<uint32_t>(value), __ATOMIC_SEQ_CST);
+    WASM_RETURN_TWO(nullptr, nullptr);
+}
+
+WASM_IPINT_EXTERN_CPP_DECL(atomic_store64, uint64_t address, uint64_t value)
+{
+    UNUSED_PARAM(instance);
+    __atomic_store_n(reinterpret_cast<uint64_t*>(address), value, __ATOMIC_SEQ_CST);
+    WASM_RETURN_TWO(nullptr, nullptr);
+}
+
+#define IPINT_RMW_OP(name, builtin, type)                                                                 \
+WASM_IPINT_EXTERN_CPP_DECL(name, uint64_t address, uint64_t value)                                        \
+{                                                                                                         \
+    UNUSED_PARAM(instance);                                                                               \
+    type prev = builtin(reinterpret_cast<type*>(address), static_cast<type>(value), __ATOMIC_SEQ_CST);    \
+    WASM_RETURN_TWO(std::bit_cast<void*>(static_cast<uintptr_t>(prev)), nullptr);                         \
+}
+
+IPINT_RMW_OP(atomic_rmw_add8,  __atomic_fetch_add, uint8_t)
+IPINT_RMW_OP(atomic_rmw_add16, __atomic_fetch_add, uint16_t)
+IPINT_RMW_OP(atomic_rmw_add32, __atomic_fetch_add, uint32_t)
+IPINT_RMW_OP(atomic_rmw_add64, __atomic_fetch_add, uint64_t)
+IPINT_RMW_OP(atomic_rmw_sub8,  __atomic_fetch_sub, uint8_t)
+IPINT_RMW_OP(atomic_rmw_sub16, __atomic_fetch_sub, uint16_t)
+IPINT_RMW_OP(atomic_rmw_sub32, __atomic_fetch_sub, uint32_t)
+IPINT_RMW_OP(atomic_rmw_sub64, __atomic_fetch_sub, uint64_t)
+IPINT_RMW_OP(atomic_rmw_and8,  __atomic_fetch_and, uint8_t)
+IPINT_RMW_OP(atomic_rmw_and16, __atomic_fetch_and, uint16_t)
+IPINT_RMW_OP(atomic_rmw_and32, __atomic_fetch_and, uint32_t)
+IPINT_RMW_OP(atomic_rmw_and64, __atomic_fetch_and, uint64_t)
+IPINT_RMW_OP(atomic_rmw_or8,   __atomic_fetch_or,  uint8_t)
+IPINT_RMW_OP(atomic_rmw_or16,  __atomic_fetch_or,  uint16_t)
+IPINT_RMW_OP(atomic_rmw_or32,  __atomic_fetch_or,  uint32_t)
+IPINT_RMW_OP(atomic_rmw_or64,  __atomic_fetch_or,  uint64_t)
+IPINT_RMW_OP(atomic_rmw_xor8,  __atomic_fetch_xor, uint8_t)
+IPINT_RMW_OP(atomic_rmw_xor16, __atomic_fetch_xor, uint16_t)
+IPINT_RMW_OP(atomic_rmw_xor32, __atomic_fetch_xor, uint32_t)
+IPINT_RMW_OP(atomic_rmw_xor64, __atomic_fetch_xor, uint64_t)
+IPINT_RMW_OP(atomic_rmw_xchg8,  __atomic_exchange_n, uint8_t)
+IPINT_RMW_OP(atomic_rmw_xchg16, __atomic_exchange_n, uint16_t)
+IPINT_RMW_OP(atomic_rmw_xchg32, __atomic_exchange_n, uint32_t)
+IPINT_RMW_OP(atomic_rmw_xchg64, __atomic_exchange_n, uint64_t)
+#undef IPINT_RMW_OP
+
+#define IPINT_CMPXCHG_OP(name, type)                                                                      \
+WASM_IPINT_EXTERN_CPP_DECL(name, uint64_t address, uint64_t expected, uint64_t replacement)               \
+{                                                                                                         \
+    UNUSED_PARAM(instance);                                                                               \
+    type exp = static_cast<type>(expected);                                                               \
+    type rep = static_cast<type>(replacement);                                                            \
+    __atomic_compare_exchange_n(reinterpret_cast<type*>(address), &exp, rep, /*weak=*/false,              \
+                                __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);                                      \
+    WASM_RETURN_TWO(std::bit_cast<void*>(static_cast<uintptr_t>(exp)), nullptr);                          \
+}
+
+IPINT_CMPXCHG_OP(atomic_rmw_cmpxchg8,  uint8_t)
+IPINT_CMPXCHG_OP(atomic_rmw_cmpxchg16, uint16_t)
+IPINT_CMPXCHG_OP(atomic_rmw_cmpxchg32, uint32_t)
+IPINT_CMPXCHG_OP(atomic_rmw_cmpxchg64, uint64_t)
+#undef IPINT_CMPXCHG_OP
+
 extern "C" void SYSV_ABI wasm_log_crash(CallFrame*, JSWebAssemblyInstance* instance)
 {
     dataLogLn("Reached IPInt code that should never have been executed.");
