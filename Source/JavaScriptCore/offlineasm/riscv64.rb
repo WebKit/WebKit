@@ -217,22 +217,32 @@ end
 class FPRegisterID
     def riscv64Operand
         case @name
+        # The LLInt convention assumes that ft0..ft7 are the platform's
+        # FP argument registers (used as scratches between calls). On X86
+        # and ARM64 the FP temp and FP arg registers happen to coincide
+        # (xmm0-7 / q0-7). RISC-V's ABI splits them: ft0..ft7 = f0..f7 are
+        # temps, fa0..fa7 = f10..f17 are args. To keep LLInt's wfa* aliases
+        # (which chain wfa0 -> fa0 -> ft0) resolving to the wasm arg FPRs,
+        # we map offlineasm's ft0..ft7 directly to physical f10..f17 here.
+        # Physical f0..f7 become unreachable from offlineasm, but JSC's
+        # C++-side FPRInfo still uses them as fpRegT8..fpRegT15 (the JIT
+        # and offlineasm don't share register state across call boundaries).
         when 'ft0'
-            'f0'
+            'f10'
         when 'ft1'
-            'f1'
+            'f11'
         when 'ft2'
-            'f2'
+            'f12'
         when 'ft3'
-            'f3'
+            'f13'
         when 'ft4'
-            'f4'
+            'f14'
         when 'ft5'
-            'f5'
+            'f15'
         when 'ft6'
-            'f6'
+            'f16'
         when 'ft7'
-            'f7'
+            'f17'
         when 'csfr0'
             'f8'
         when 'csfr1'
