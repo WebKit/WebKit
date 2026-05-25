@@ -859,8 +859,72 @@ public:
         m_assembler.srliInsn(dest, src, uint32_t(imm.m_value & ((1 << 6) - 1)));
     }
 
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(rotateRight32);
-    MACRO_ASSEMBLER_RISCV64_TEMPLATED_NOOP_METHOD(rotateRight64);
+    // rotateRight32/64: native rv64gc has no rotate instruction (Zbb's
+    // rorw/ror would do it in one), so synthesise via shift + shift + or.
+    // These are called by BBQJIT's I32Rotl/I32Rotr/I64Rotl/I64Rotr handlers
+    // on every non-x86 path (the rotl variants are routed through
+    // rotateRight32 with a negated shift, so a broken or missing
+    // rotateRight* silently miscompiles both rotr and rotl).
+    void rotateRight32(RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        int32_t shift = imm.m_value & 31;
+        if (!shift) {
+            if (src != dest)
+                move(src, dest);
+            m_assembler.maskRegister<32>(dest);
+            return;
+        }
+        auto temp = temps<Data, Memory>();
+        m_assembler.srliwInsn(temp.data(), src, uint32_t(shift));
+        m_assembler.slliwInsn(temp.memory(), src, uint32_t(32 - shift));
+        m_assembler.orInsn(dest, temp.data(), temp.memory());
+        m_assembler.maskRegister<32>(dest);
+    }
+
+    void rotateRight32(RegisterID src, RegisterID shift, RegisterID dest)
+    {
+        auto temp = temps<Data, Memory>();
+        m_assembler.addiInsn(temp.data(), RISCV64Registers::zero, Imm::I<32>());
+        m_assembler.subInsn(temp.data(), temp.data(), shift);
+        m_assembler.srlwInsn(temp.memory(), src, shift);
+        m_assembler.sllwInsn(temp.data(), src, temp.data());
+        m_assembler.orInsn(dest, temp.memory(), temp.data());
+        m_assembler.maskRegister<32>(dest);
+    }
+
+    void rotateRight64(RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        int32_t shift = imm.m_value & 63;
+        if (!shift) {
+            if (src != dest)
+                move(src, dest);
+            return;
+        }
+        auto temp = temps<Data, Memory>();
+        m_assembler.srliInsn(temp.data(), src, uint32_t(shift));
+        m_assembler.slliInsn(temp.memory(), src, uint32_t(64 - shift));
+        m_assembler.orInsn(dest, temp.data(), temp.memory());
+    }
+
+    void rotateRight64(RegisterID src, RegisterID shift, RegisterID dest)
+    {
+        auto temp = temps<Data, Memory>();
+        m_assembler.addiInsn(temp.data(), RISCV64Registers::zero, Imm::I<64>());
+        m_assembler.subInsn(temp.data(), temp.data(), shift);
+        m_assembler.srlInsn(temp.memory(), src, shift);
+        m_assembler.sllInsn(temp.data(), src, temp.data());
+        m_assembler.orInsn(dest, temp.memory(), temp.data());
+    }
+
+    // Two-operand in-place variants used by MacroAssembler.h convenience
+    // wrappers (e.g. urshiftPtr / rolPtr / FastRotation::apply). These were
+    // matched by the previous templated NOOP overload and silently did
+    // nothing; forward to the three-operand form so callers see the real
+    // rotate.
+    void rotateRight32(TrustedImm32 imm, RegisterID srcDst) { rotateRight32(srcDst, imm, srcDst); }
+    void rotateRight64(TrustedImm32 imm, RegisterID srcDst) { rotateRight64(srcDst, imm, srcDst); }
+    void rotateRight32(RegisterID shift, RegisterID srcDst) { rotateRight32(srcDst, shift, srcDst); }
+    void rotateRight64(RegisterID shift, RegisterID srcDst) { rotateRight64(srcDst, shift, srcDst); }
 
     // Scalar BBQJIT primitives: fused shift/add and rotate-left, used by the
     // wasm bytecode-to-machine-code path. RISC-V's baseline rv64gc has no
