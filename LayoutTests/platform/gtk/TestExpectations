@@ -1249,7 +1249,6 @@ imported/w3c/web-platform-tests/css/css-scroll-snap/snap-fling-in-large-area.htm
 imported/w3c/web-platform-tests/css/css-scroll-snap/unrelated-gesture-scroll-during-snap.html [ Skip ]
 
 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-margin-focus.html [ Failure ]
-imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-snap-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/initial-snap-matches-scroll.html [ Failure ]
 
 fast/dom/no-scroll-when-command-click-fragment-URL.html [ Skip ]
@@ -1365,9 +1364,6 @@ webkit.org/b/308976 svg/filters/filter-on-filter-for-text.svg [ Pass Failure Ima
 http/tests/media/hls/hls-audio-description-track-kind.html [ Skip ]
 
 webkit.org/b/306384 editing/pasteboard/copy-crash.html [ Timeout ]
-webkit.org/b/306384 fast/css/object-fit/object-fit-shrink.html [ ImageOnlyFailure ]
-webkit.org/b/306384 fast/css/object-position/object-position-img.html [ ImageOnlyFailure ]
-webkit.org/b/306384 fast/table/row-background-image.html [ ImageOnlyFailure ]
 webkit.org/b/306384 imported/w3c/web-platform-tests/quirks/line-height-in-list-item.html [ ImageOnlyFailure ]
 webkit.org/b/306384 scrollbars/corner-resizer-window-inactive.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/quirks/tables-inherit-color-from-body-quirk-001.html [ ImageOnlyFailure ]
