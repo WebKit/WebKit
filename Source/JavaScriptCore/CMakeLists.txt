@@ -635,7 +635,10 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     assembler/MacroAssemblerARMv7.h
     assembler/MacroAssemblerCodeRef.h
     assembler/MacroAssemblerHelpers.h
+    assembler/MacroAssemblerRISCV64.h
     assembler/MacroAssemblerX86_64.h
+    assembler/RISCV64Assembler.h
+    assembler/RISCV64Registers.h
     assembler/MaxFrameExtentForSlowPathCall.h
     assembler/OSCheck.h
     assembler/Printer.h
