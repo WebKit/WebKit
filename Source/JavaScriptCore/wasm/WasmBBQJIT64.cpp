@@ -3652,6 +3652,11 @@ void NODELETE BBQJIT::notifyFunctionUsesSIMD()
     clobber(ARM64Registers::q28);
     clobber(ARM64Registers::q29);
     ScratchScope<0, 0> scratches(*this, Location::fromFPR(ARM64Registers::q28), Location::fromFPR(ARM64Registers::q29));
+#else
+    // Other architectures (e.g. RISCV64) have no wasm SIMD codegen and
+    // never reach this function at runtime (useWasmSIMD is forced off).
+    // Declare scratches so the if-constexpr(isX86()) block below parses.
+    ScratchScope<0, 1> scratches(*this);
 #endif
     Location aLocation = loadIfNecessary(a);
     Location bLocation = loadIfNecessary(b);
@@ -3709,6 +3714,11 @@ void NODELETE BBQJIT::notifyFunctionUsesSIMD()
     // Clobber and preserve RCX on x86, since we need it to do shifts.
     clobber(shiftRCX);
     ScratchScope<2, 2> scratches(*this, Location::fromGPR(shiftRCX));
+#elif !CPU(ARM64)
+    // RISCV64 / other archs: no wasm SIMD codegen exists; this function
+    // is unreachable at runtime via useWasmSIMD = false. Declare a
+    // ScratchScope so the X86-only sub-block below still parses.
+    ScratchScope<2, 2> scratches(*this);
 #endif
     Location srcLocation = loadIfNecessary(src);
     Location shiftLocation;
