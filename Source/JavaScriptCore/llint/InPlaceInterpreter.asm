@@ -637,6 +637,11 @@ macro forEachWasmArgumentGPR(fn)
         fn(2, wa2, wa3)
         fn(4, wa4, wa5)
         fn(6, wa6, wa7)
+    elsif RISCV64
+        fn(0, wa0, wa1)
+        fn(2, wa2, wa3)
+        fn(4, wa4, wa5)
+        fn(6, wa6, wa7)
     elsif JSVALUE64
         fn(0, wa0, wa1)
         fn(2, wa2, wa3)
