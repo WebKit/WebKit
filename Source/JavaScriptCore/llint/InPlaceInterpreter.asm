@@ -2743,4 +2743,20 @@ unimplementedInstruction(_i32_atomic_rmw16_cmpxchg_u)
 unimplementedInstruction(_i64_atomic_rmw8_cmpxchg_u)
 unimplementedInstruction(_i64_atomic_rmw16_cmpxchg_u)
 unimplementedInstruction(_i64_atomic_rmw32_cmpxchg_u)
+
+# LowLevelInterpreter.asm captures the addresses of these labels via
+# 'lla' / equivalent for the IPInt call sequence, so they have to exist
+# at link time on architectures that enable WEBASSEMBLY but have no
+# IPInt implementation. They should never be reached at run time.
+_wasm_trampoline_wasm_ipint_call:
+_wasm_trampoline_wasm_ipint_call_wide16:
+_wasm_trampoline_wasm_ipint_call_wide32:
+_wasm_trampoline_wasm_ipint_tail_call:
+_wasm_trampoline_wasm_ipint_tail_call_wide16:
+_wasm_trampoline_wasm_ipint_tail_call_wide32:
+
+_wasm_ipint_call_return_location:
+_wasm_ipint_call_return_location_wide16:
+_wasm_ipint_call_return_location_wide32:
+    crash()
 end
