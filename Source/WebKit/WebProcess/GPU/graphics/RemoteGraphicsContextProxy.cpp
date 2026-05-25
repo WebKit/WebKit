@@ -443,11 +443,11 @@ void RemoteGraphicsContextProxy::drawLine(const FloatPoint& point1, const FloatP
     send(Messages::RemoteGraphicsContext::DrawLine(point1, point2));
 }
 
-void RemoteGraphicsContextProxy::drawLinesForText(const FloatPoint& point, float thickness, std::span<const FloatSegment> lineSegments, bool printing, bool doubleLines, StrokeStyle style)
+void RemoteGraphicsContextProxy::drawLinesForText(const FloatPoint& point, float thickness, std::span<const FloatSegment> lineSegments, bool printing, bool doubleLines, StrokeStyle style, std::optional<float> phaseOriginX)
 {
     sendPendingDrawsIfNecessary();
     appendStateChangeItemIfNecessary();
-    send(Messages::RemoteGraphicsContext::DrawLinesForText(point, thickness, lineSegments, printing, doubleLines, style));
+    send(Messages::RemoteGraphicsContext::DrawLinesForText(point, thickness, lineSegments, printing, doubleLines, style, phaseOriginX));
 }
 
 void RemoteGraphicsContextProxy::drawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)

@@ -123,7 +123,7 @@ private:
     void drawSystemImage(WebCore::SystemImage&, const WebCore::FloatRect&) final;
     void drawRect(const WebCore::FloatRect&, float) final;
     void drawLine(const WebCore::FloatPoint& point1, const WebCore::FloatPoint& point2) final;
-    void drawLinesForText(const WebCore::FloatPoint&, float thickness, std::span<const WebCore::FloatSegment>, bool isPrinting, bool doubleLines, WebCore::StrokeStyle) final;
+    void drawLinesForText(const WebCore::FloatPoint&, float thickness, std::span<const WebCore::FloatSegment>, bool isPrinting, bool doubleLines, WebCore::StrokeStyle, std::optional<float> phaseOriginX = std::nullopt) final;
     void drawDotsForDocumentMarker(const WebCore::FloatRect&, WebCore::DocumentMarkerLineStyle) final;
     void drawEllipse(const WebCore::FloatRect&) final;
     void drawPath(const WebCore::Path&) final;

@@ -436,19 +436,20 @@ void DrawLine::dump(TextStream& ts, OptionSet<AsTextFlag>) const
     ts.dumpProperty("point-2"_s, point2());
 }
 
-DrawLinesForText::DrawLinesForText(const FloatPoint& point, std::span<const FloatSegment> lineSegments, float thickness, bool printing, bool doubleLines, StrokeStyle style)
+DrawLinesForText::DrawLinesForText(const FloatPoint& point, std::span<const FloatSegment> lineSegments, float thickness, bool printing, bool doubleLines, StrokeStyle style, std::optional<float> phaseOriginX)
     : m_point(point)
     , m_lineSegments(lineSegments)
     , m_thickness(thickness)
     , m_printing(printing)
     , m_doubleLines(doubleLines)
     , m_style(style)
+    , m_phaseOriginX(phaseOriginX)
 {
 }
 
 void DrawLinesForText::apply(GraphicsContext& context) const
 {
-    context.drawLinesForText(m_point, m_thickness, m_lineSegments, m_printing, m_doubleLines, m_style);
+    context.drawLinesForText(m_point, m_thickness, m_lineSegments, m_printing, m_doubleLines, m_style, m_phaseOriginX);
 }
 
 void DrawLinesForText::dump(TextStream& ts, OptionSet<AsTextFlag>) const

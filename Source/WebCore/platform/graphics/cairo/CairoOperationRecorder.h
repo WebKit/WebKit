@@ -75,7 +75,7 @@ private:
 
     void drawRect(const WebCore::FloatRect&, float) override;
     void drawLine(const WebCore::FloatPoint&, const WebCore::FloatPoint&) override;
-    void drawLinesForText(const WebCore::FloatPoint&, float thickness, std::span<const WebCore::FloatSegment>, bool, bool, WebCore::StrokeStyle) override;
+    void drawLinesForText(const WebCore::FloatPoint&, float thickness, std::span<const WebCore::FloatSegment>, bool, bool, WebCore::StrokeStyle, std::optional<float> phaseOriginX = std::nullopt) override;
     void drawDotsForDocumentMarker(const WebCore::FloatRect&, WebCore::DocumentMarkerLineStyle) override;
     void drawEllipse(const WebCore::FloatRect&) override;
 

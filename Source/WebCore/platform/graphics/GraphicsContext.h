@@ -311,10 +311,11 @@ public:
     WEBCORE_EXPORT void drawDisplayList(const DisplayList::DisplayList&);
     WEBCORE_EXPORT virtual void drawDisplayList(const DisplayList::DisplayList&, ControlFactory&);
     WEBCORE_EXPORT FloatRect computeUnderlineBoundsForText(const FloatRect&, bool printing);
-    WEBCORE_EXPORT void drawLineForText(const FloatRect&, bool isPrinting, bool doubleLines = false, StrokeStyle = StrokeStyle::SolidStroke);
+    WEBCORE_EXPORT void drawLineForText(const FloatRect&, bool isPrinting, bool doubleLines = false, StrokeStyle = StrokeStyle::SolidStroke, std::optional<float> phaseOriginX = std::nullopt);
     // The `origin` defines the line origin point.
     // The `lineSegments` defines the start and end offset of each segment along the line.
-    virtual void drawLinesForText(const FloatPoint& origin, float thickness, std::span<const FloatSegment> lineSegments, bool isPrinting, bool doubleLines, StrokeStyle) = 0;
+    // `phaseOriginX` (in `origin`'s space) anchors the dotted/dashed pattern phase; unset resets it per call. Pass the decorating box's visual minX for continuous decoration across paint calls.
+    virtual void drawLinesForText(const FloatPoint& origin, float thickness, std::span<const FloatSegment> lineSegments, bool isPrinting, bool doubleLines, StrokeStyle, std::optional<float> phaseOriginX = std::nullopt) = 0;
     virtual void drawDotsForDocumentMarker(const FloatRect&, DocumentMarkerLineStyle) = 0;
 
     // Transparency Layers
@@ -396,7 +397,7 @@ protected:
 #endif
         Color strokeColor;
     };
-    RectsAndStrokeColor computeRectsAndStrokeColorForLinesForText(const FloatPoint& origin, float thickness, std::span<const FloatSegment>, bool isPrinting, bool doubleLines, StrokeStyle);
+    RectsAndStrokeColor computeRectsAndStrokeColorForLinesForText(const FloatPoint& origin, float thickness, std::span<const FloatSegment>, bool isPrinting, bool doubleLines, StrokeStyle, std::optional<float> phaseOriginX = std::nullopt);
 
     GraphicsContextState m_state;
 private:

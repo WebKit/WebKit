@@ -282,10 +282,10 @@ void RecorderImpl::drawLine(const FloatPoint& point1, const FloatPoint& point2)
     m_items.append(DrawLine(point1, point2));
 }
 
-void RecorderImpl::drawLinesForText(const FloatPoint& point, float thickness, std::span<const FloatSegment> lineSegments, bool printing, bool doubleLines, StrokeStyle style)
+void RecorderImpl::drawLinesForText(const FloatPoint& point, float thickness, std::span<const FloatSegment> lineSegments, bool printing, bool doubleLines, StrokeStyle style, std::optional<float> phaseOriginX)
 {
     appendStateChangeItemIfNecessary();
-    m_items.append(DrawLinesForText(point, lineSegments, thickness, printing, doubleLines, style));
+    m_items.append(DrawLinesForText(point, lineSegments, thickness, printing, doubleLines, style, phaseOriginX));
 }
 
 void RecorderImpl::drawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)

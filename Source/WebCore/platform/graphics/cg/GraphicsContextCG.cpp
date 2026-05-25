@@ -1463,9 +1463,9 @@ FloatRect GraphicsContextCG::roundToDevicePixels(const FloatRect& rect) const
     return cgRoundToDevicePixelsNonIdentity(deviceMatrix, rect);
 }
 
-void GraphicsContextCG::drawLinesForText(const FloatPoint& origin, float thickness, std::span<const FloatSegment> lineSegments, bool isPrinting, bool doubleLines, StrokeStyle strokeStyle)
+void GraphicsContextCG::drawLinesForText(const FloatPoint& origin, float thickness, std::span<const FloatSegment> lineSegments, bool isPrinting, bool doubleLines, StrokeStyle strokeStyle, std::optional<float> phaseOriginX)
 {
-    auto [rects, color] = computeRectsAndStrokeColorForLinesForText(origin, thickness, lineSegments, isPrinting, doubleLines, strokeStyle);
+    auto [rects, color] = computeRectsAndStrokeColorForLinesForText(origin, thickness, lineSegments, isPrinting, doubleLines, strokeStyle, phaseOriginX);
     if (rects.isEmpty())
         return;
     bool changeFillColor = fillColor() != color;

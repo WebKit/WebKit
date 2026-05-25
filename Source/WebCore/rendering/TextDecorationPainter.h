@@ -72,6 +72,9 @@ public:
         float linethroughCenter { 0.f };
         float clippingOffset { 0.f };
         WavyStrokeParameters wavyStrokeParameters;
+        // Anchors dotted/dashed phase across the multiple text-boxes a single decorating box can produce
+        // on a line (bidi runs, nested inline fragments). std::nullopt = phase resets per call.
+        std::optional<float> phaseOriginX;
     };
     void paintBackgroundDecorations(const Style::ComputedStyle&, const TextRun&, const BackgroundDecorationGeometry&, Style::TextDecorationLine, const Styles&, float deviceScaleFactor);
 
@@ -81,6 +84,7 @@ public:
         float textDecorationThickness { 0.f };
         float linethroughCenter { 0.f };
         WavyStrokeParameters wavyStrokeParameters;
+        std::optional<float> phaseOriginX;
     };
     void paintForegroundDecorations(const ForegroundDecorationGeometry&, const Styles&);
 

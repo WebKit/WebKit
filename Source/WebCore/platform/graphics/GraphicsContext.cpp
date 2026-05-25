@@ -569,10 +569,10 @@ void GraphicsContext::strokeEllipseAsPath(const FloatRect& ellipse)
     strokePath(path);
 }
 
-void GraphicsContext::drawLineForText(const FloatRect& rect, bool isPrinting, bool doubleUnderlines, StrokeStyle style)
+void GraphicsContext::drawLineForText(const FloatRect& rect, bool isPrinting, bool doubleUnderlines, StrokeStyle style, std::optional<float> phaseOriginX)
 {
     FloatSegment line[1] { { 0, rect.width() } };
-    drawLinesForText(rect.location(), rect.height(), line, isPrinting, doubleUnderlines, style);
+    drawLinesForText(rect.location(), rect.height(), line, isPrinting, doubleUnderlines, style, phaseOriginX);
 }
 
 void GraphicsContext::drawDisplayList(const DisplayList::DisplayList& displayList)
@@ -676,7 +676,7 @@ Vector<FloatPoint> GraphicsContext::centerLineAndCutOffCorners(bool isVerticalLi
     return { point1, point2 };
 }
 
-auto GraphicsContext::computeRectsAndStrokeColorForLinesForText(const FloatPoint& point, float thickness, std::span<const FloatSegment> lineSegments, bool isPrinting, bool doubleLines, StrokeStyle strokeStyle) -> RectsAndStrokeColor
+auto GraphicsContext::computeRectsAndStrokeColorForLinesForText(const FloatPoint& point, float thickness, std::span<const FloatSegment> lineSegments, bool isPrinting, bool doubleLines, StrokeStyle strokeStyle, std::optional<float> phaseOriginX) -> RectsAndStrokeColor
 {
 #if USE(CG)
     auto makeRect = [](float x, float y, float width, float height) -> CGRect {
@@ -714,8 +714,12 @@ auto GraphicsContext::computeRectsAndStrokeColorForLinesForText(const FloatPoint
     }
 
     if (dashWidth) {
+        // phaseOriginX anchors the dot/dash pattern so successive paint calls in one decorating box share a phase; unset resets at bounds.x() (per-call, non-decoration callers).
+        auto phaseOrigin = phaseOriginX.value_or(bounds.x());
+        // bounds.x() is device-snapped but phaseOrigin is unsnapped, so clamp the residual non-negative for the modulo math below; the sub-pixel offset is invisible.
+        auto offsetIntoPhase = std::max(0.f, bounds.x() - phaseOrigin);
         for (const auto& lineSegment : lineSegments) {
-            auto left = lineSegment.begin;
+            auto left = lineSegment.begin + offsetIntoPhase;
             auto width = lineSegment.length();
             auto doubleWidth = 2 * dashWidth;
             auto quotient = truncateDoubleToInt32(left / doubleWidth);
@@ -726,7 +730,7 @@ auto GraphicsContext::computeRectsAndStrokeColorForLinesForText(const FloatPoint
 
             for (auto j = startParticle; j < endParticle; ++j) {
                 auto actualDashWidth = dashWidth;
-                auto dashStart = bounds.x() + j * doubleWidth;
+                auto dashStart = phaseOrigin + j * doubleWidth;
 
                 if (j == startParticle && startOffset > 0 && startOffset < dashWidth) {
                     actualDashWidth -= startOffset;
