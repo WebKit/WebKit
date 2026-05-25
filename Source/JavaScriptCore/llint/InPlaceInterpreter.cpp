@@ -77,7 +77,7 @@ do { \
 
 void initialize()
 {
-#if !ENABLE(C_LOOP) && (CPU(ADDRESS64) && (CPU(ARM64) || CPU(X86_64)))
+#if !ENABLE(C_LOOP) && (CPU(ADDRESS64) && (CPU(ARM64) || CPU(X86_64) || CPU(RISCV64)))
 
 #define INIT_IPINT_BASE_POINTER(basePointerName, targetAddress) \
     g_opcodeConfig.basePointerName = removeCodePtrTag(reinterpret_cast<void*>(targetAddress));
@@ -101,7 +101,7 @@ void initialize()
 
 void verifyInitialization()
 {
-#if !ENABLE(C_LOOP) && (CPU(ADDRESS64) && (CPU(ARM64) || CPU(X86_64)))
+#if !ENABLE(C_LOOP) && (CPU(ADDRESS64) && (CPU(ARM64) || CPU(X86_64) || CPU(RISCV64)))
 
 #define VERIFY_IPINT_BASE_POINTER(basePointerName, targetAddress) \
     RELEASE_ASSERT(g_opcodeConfig.basePointerName == removeCodePtrTag(reinterpret_cast<void*>(targetAddress)));
