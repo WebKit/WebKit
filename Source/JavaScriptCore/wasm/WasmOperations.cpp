@@ -133,8 +133,17 @@ JSC_DEFINE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildFrame, JSToWasmCallee
 
             dataLogLnIf(WasmOperationsInternal::verbose, "* Register Arg ", i, " ", dst);
 
-            if (type.isI32() || type.isF32())
+            if (type.isI32())
                 value = static_cast<uint64_t>(static_cast<uint32_t>(value));
+            else if (type.isF32()) {
+                // Pack as NaN-boxed single (high 32 = 0xFFFFFFFF) so that
+                // the shared trampoline's loadDouble into the FPR yields a
+                // properly NaN-boxed single. Otherwise on architectures
+                // that enforce NaN-boxing for single-precision ops
+                // (RV64GC), the wasm body's subsequent flw/fsw on the f-arg
+                // sees the canonical NaN instead of the actual f32 value.
+                value = static_cast<uint64_t>(static_cast<uint32_t>(value)) | 0xFFFFFFFF00000000ULL;
+            }
             *access.operator()<uint64_t>(registerSpace, dst) = value;
         }
     }
