@@ -235,6 +235,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "ShouldPartitionCookie.h"
+#include "SocketProvider.h"
 #include "SourceBuffer.h"
 #include "SpeechSynthesisUtterance.h"
 #include "SpellChecker.h"
@@ -6860,6 +6861,23 @@ void Internals::whenServiceWorkerIsTerminated(ServiceWorker& worker, DOMPromiseD
 {
     return ServiceWorkerProvider::singleton().serviceWorkerConnection().whenServiceWorkerIsTerminatedForTesting(worker.identifier(), [promise = WTF::move(promise)]() mutable {
         promise.resolve();
+    });
+}
+
+void Internals::numberOfWebSocketChannelsInNetworkProcess(DOMPromiseDeferred<IDLUnsignedLong>&& promise)
+{
+    RefPtr document = contextDocument();
+    if (!document) {
+        promise.reject(ExceptionCode::InvalidStateError);
+        return;
+    }
+    RefPtr page = document->page();
+    if (!page) {
+        promise.reject(ExceptionCode::InvalidStateError);
+        return;
+    }
+    page->socketProvider().countWebSocketChannelsForTesting([promise = WTF::move(promise)](unsigned count) mutable {
+        promise.resolve(count);
     });
 }
 

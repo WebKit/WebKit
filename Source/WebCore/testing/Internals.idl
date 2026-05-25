@@ -1300,6 +1300,8 @@ enum ContentsFormat {
     Promise<undefined> whenServiceWorkerIsTerminated(ServiceWorker worker);
     undefined terminateWebContentProcess();
 
+    Promise<unsigned long> numberOfWebSocketChannelsInNetworkProcess();
+
 #if defined(ENABLE_APPLE_PAY) && ENABLE_APPLE_PAY
     [CallWith=CurrentDocument, Conditional=APPLE_PAY] readonly attribute MockPaymentCoordinator mockPaymentCoordinator;
 #endif

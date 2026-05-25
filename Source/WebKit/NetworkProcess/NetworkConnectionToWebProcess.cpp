@@ -542,6 +542,11 @@ void NetworkConnectionToWebProcess::removeSocketChannel(WebSocketIdentifier iden
     m_networkSocketChannels.remove(identifier);
 }
 
+void NetworkConnectionToWebProcess::countWebSocketChannelsForTesting(CompletionHandler<void(uint32_t)>&& completionHandler)
+{
+    completionHandler(static_cast<uint32_t>(m_networkSocketChannels.size()));
+}
+
 NetworkSession* NetworkConnectionToWebProcess::networkSession()
 {
     return m_networkProcess->networkSession(m_sessionID);
