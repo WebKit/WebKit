@@ -2085,6 +2085,13 @@ public:
     template<typename Args>
     void saveValuesAcrossCallAndPassArguments(const Args& arguments, const CallInformation&, const RTT& signature);
 
+    // On RISC-V the psABI requires 32-bit integer arguments to be sign-extended
+    // in their 64-bit argument registers; BBQ otherwise zero-extends them when
+    // loading from canonical i32 slots (lwu). Emit sext.w on any I32 arg that
+    // ends up in a register before a transition to a C ABI host function or
+    // wasm-to-host import. No-op on other architectures.
+    void emitSignExtendI32ArgsForCCall(const CallInformation&, const RTT& signature);
+
     void slowPathSpillBindings(const RegisterBindings&);
     void slowPathRestoreBindings(const RegisterBindings&);
     void NODELETE restoreValuesAfterCall(const CallInformation&);

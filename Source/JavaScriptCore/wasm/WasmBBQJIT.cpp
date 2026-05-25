@@ -4314,6 +4314,25 @@ void BBQJIT::slowPathRestoreBindings(const RegisterBindings& bindings)
     }
 }
 
+void BBQJIT::emitSignExtendI32ArgsForCCall(const CallInformation& callInfo, const RTT& signature)
+{
+#if CPU(RISCV64)
+    for (size_t i = 0; i < callInfo.params.size(); ++i) {
+        auto type = signature.argumentType(i);
+        if (type.kind != TypeKind::I32)
+            continue;
+        Location loc = Location::fromArgumentLocation(callInfo.params[i], type.kind);
+        if (!loc.isGPR())
+            continue;
+        // sext.w rd, rs lowers via signExtend32To64 -> rv_addiw rd, rs, 0
+        m_jit.signExtend32To64(loc.asGPR(), loc.asGPR());
+    }
+#else
+    UNUSED_PARAM(callInfo);
+    UNUSED_PARAM(signature);
+#endif
+}
+
 template<typename Args>
 void BBQJIT::saveValuesAcrossCallAndPassArguments(const Args& arguments, const CallInformation& callInfo, const RTT& signature)
 {
@@ -4567,6 +4586,7 @@ void BBQJIT::emitTailCall(FunctionSpaceIndex functionIndexSpace, const RTT& sign
     if (m_info.isImportedFunctionFromFunctionIndexSpace(functionIndexSpace)) {
         static_assert(sizeof(WasmOrJSImportableFunctionCallLinkInfo) * maxImports < std::numeric_limits<int32_t>::max());
         RELEASE_ASSERT(JSWebAssemblyInstance::offsetOfImportFunctionStub(m_module.moduleInformation(), functionIndexSpace) < std::numeric_limits<int32_t>::max());
+        emitSignExtendI32ArgsForCCall(callInfo, signature);
         m_jit.call(Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfImportFunctionStub(m_module.moduleInformation(), functionIndexSpace)), WasmEntryPtrTag);
     } else {
         // Record the callee so the callee knows to look for it in updateCallsitesToCallUs.

@@ -561,6 +561,7 @@ void BBQJIT::emitCCall(Func function, std::span<const Value> arguments)
     // Preserve caller-saved registers and other info
     prepareForExceptions();
     saveValuesAcrossCallAndPassArguments(arguments, callInfo, functionRTT.get());
+    emitSignExtendI32ArgsForCCall(callInfo, functionRTT.get());
 
     // Materialize address of native function and call register
     void* taggedFunctionPtr = tagCFunctionPtr<void*, OperationPtrTag>(function);
@@ -591,6 +592,7 @@ void BBQJIT::emitCCall(Func function, std::span<const Value> arguments, Value& r
     // Preserve caller-saved registers and other info
     prepareForExceptions();
     saveValuesAcrossCallAndPassArguments(arguments, callInfo, functionRTT.get());
+    emitSignExtendI32ArgsForCCall(callInfo, functionRTT.get());
 
     // Materialize address of native function and call register
     void* taggedFunctionPtr = tagCFunctionPtr<void*, OperationPtrTag>(function);
