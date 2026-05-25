@@ -3652,6 +3652,9 @@ void NODELETE BBQJIT::notifyFunctionUsesSIMD()
     clobber(ARM64Registers::q28);
     clobber(ARM64Registers::q29);
     ScratchScope<0, 0> scratches(*this, Location::fromFPR(ARM64Registers::q28), Location::fromFPR(ARM64Registers::q29));
+#else
+    RELEASE_ASSERT_NOT_REACHED();
+    ScratchScope<0, 1> scratches(*this);
 #endif
     Location aLocation = loadIfNecessary(a);
     Location bLocation = loadIfNecessary(b);
@@ -3709,6 +3712,9 @@ void NODELETE BBQJIT::notifyFunctionUsesSIMD()
     // Clobber and preserve RCX on x86, since we need it to do shifts.
     clobber(shiftRCX);
     ScratchScope<2, 2> scratches(*this, Location::fromGPR(shiftRCX));
+#elif !CPU(ARM64)
+    RELEASE_ASSERT_NOT_REACHED();
+    ScratchScope<2, 2> scratches(*this);
 #endif
     Location srcLocation = loadIfNecessary(src);
     Location shiftLocation;
