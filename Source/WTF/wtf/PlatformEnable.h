@@ -731,12 +731,28 @@
 #endif
 
 #if CPU(RISCV64)
+// RISCV64 wasm execution tiers:
+//   - IPInt (LLInt in-place interpreter): not ported; left disabled.
+//     LowLevelInterpreter.asm's IPInt call-trampoline labels are stubbed
+//     to crash() so the link still succeeds.
+//   - BBQJIT: enabled. The arch-conditional sites in WasmBBQJIT64.cpp
+//     that have no #else fall through to portable MacroAssembler
+//     primitives; the remaining gaps (wasm SIMD codegen, wasm atomics
+//     codegen) are addressed by gating both off at runtime:
+//       Options::useWasmSIMD = false (already set in Options.cpp for
+//       !X86_64 && !ARM64),
+//       Options::useSharedArrayBuffer = false (the default), which in
+//       turn keeps wasm atomic opcodes off the JIT codepath.
+//     MacroAssemblerRISCV64.h carries hard-fault stubs for the wasm
+//     atomic / SIMD MacroAssembler entry points so they trap loudly if
+//     the runtime gating is ever bypassed.
+//   - OMGJIT: not ported.
 #undef ENABLE_WEBASSEMBLY
 #define ENABLE_WEBASSEMBLY 1
 #undef ENABLE_WEBASSEMBLY_OMGJIT
 #define ENABLE_WEBASSEMBLY_OMGJIT 0
 #undef ENABLE_WEBASSEMBLY_BBQJIT
-#define ENABLE_WEBASSEMBLY_BBQJIT 0
+#define ENABLE_WEBASSEMBLY_BBQJIT 1
 #endif
 
 #if !defined(ENABLE_C_LOOP)
