@@ -9,7 +9,7 @@ layer at (8,8) size 512x791
       RenderText {#text} at (0,-4) size 79x37
         text run at (0,-3) width 79: "Bug 1"
     RenderBlock {P} at (0,55) size 512x207
-      RenderText {#text} at (0,2) size 494x143
+      RenderText {#text} at (0,2) size 494x142
         text run at (0,2) width 415: "Safari public beta does not support CSS absolute"
         text run at (0,32) width 494: "positioning correctly (if at all). Immediately following the"
         text run at (0,61) width 450: "text position marked by the dagger, there is a <span>"
@@ -32,7 +32,7 @@ layer at (8,8) size 512x791
         text run at (0,7) width 494: "Fonts also render substantially smaller than other browsers, which is not a good thing when"
         text run at (0,36) width 411: "you consider that most sites specify fonts that are too small in the first place."
     RenderBlock {P} at (0,532) size 512x60
-      RenderText {#text} at (0,2) size 501x55
+      RenderText {#text} at (0,2) size 501x54
         text run at (0,2) width 501: "At the very least, the preferences panel needs a default text-"
         text run at (0,32) width 490: "zoom setting to enable compatibility with other browsers."
     RenderBlock {H2} at (0,618) size 512x30
@@ -42,7 +42,7 @@ layer at (8,8) size 512x791
       RenderText {#text} at (0,2) size 64x25
         text run at (0,2) width 64: "Worse, "
       RenderInline {I} at (0,2) size 483x54
-        RenderText {#text} at (0,2) size 483x55
+        RenderText {#text} at (0,2) size 483x54
           text run at (63,2) width 420: "the \"make text bigger\" button does not scale line-"
           text run at (0,32) width 254: "height when it scales font-size"
       RenderText {#text} at (0,32) size 470x83

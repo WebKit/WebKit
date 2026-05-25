@@ -10,17 +10,17 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (0,0) size 0x18
         RenderBR {BR} at (0,18) size 0x18
       RenderBlock {P} at (0,86) size 784x28
-        RenderText {#text} at (0,10) size 155x17
-          text run at (0,10) width 155: "<ruby> is defined in the "
-        RenderInline {RUBY} at (155,10) size 120x17
-          RenderInline (generated) at (150,10) size 113x17
-            RenderText {#text} at (183,10) size 47x17
-              text run at (183,10) width 47: "HTML"
+        RenderText {#text} at (0,9) size 155x19
+          text run at (0,9) width 155: "<ruby> is defined in the "
+        RenderInline {RUBY} at (155,9) size 120x19
+          RenderInline (generated) at (150,9) size 113x19
+            RenderText {#text} at (183,9) size 47x19
+              text run at (183,9) width 47: "HTML"
           RenderBlock {RT} at (150,0) size 113x10
             RenderText {#text} at (0,0) size 112x10
               text run at (0,0) width 112: "Hyper-text Markup Language"
-          RenderInline (generated) at (262,10) size 9x17
-            RenderText {#text} at (262,10) size 9x17
-              text run at (262,10) width 9: "5"
-        RenderText {#text} at (270,10) size 5x17
-          text run at (270,10) width 5: "."
+          RenderInline (generated) at (262,9) size 9x19
+            RenderText {#text} at (262,9) size 9x19
+              text run at (262,9) width 9: "5"
+        RenderText {#text} at (270,9) size 5x19
+          text run at (270,9) width 5: "."

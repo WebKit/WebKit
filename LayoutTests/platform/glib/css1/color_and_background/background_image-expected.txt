@@ -38,10 +38,10 @@ layer at (0,0) size 800x600
         RenderInline {CODE} at (230,21) size 33x16
           RenderText {#text} at (230,21) size 33x16
             text run at (230,21) width 33: "none"
-        RenderText {#text} at (0,18) size 771x54
+        RenderText {#text} at (0,18) size 771x55
           text run at (262,18) width 503: " means that the element has no background image, allowing the parent to \"shine"
-          text run at (0,37) width 771: "through\" by default; since the parent of the words \"in this sentence\" is the paragraph, then the paragraph's image should be"
-          text run at (0,55) width 50: "visible.)"
+          text run at (0,36) width 771: "through\" by default; since the parent of the words \"in this sentence\" is the paragraph, then the paragraph's image should be"
+          text run at (0,54) width 50: "visible.)"
       RenderBlock {P} at (0,250) size 784x37
         RenderText {#text} at (0,0) size 765x36
           text run at (0,0) width 765: "This sentence should NOT be backed by a repeated green-grid image, allowing the page's background to \"shine through\""
@@ -55,7 +55,7 @@ layer at (0,0) size 800x600
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 782x185
             RenderTableCell {TD} at (0,105) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,83) size 4x18
+              RenderText {#text} at (4,83) size 4x19
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 770x185 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 762x36
@@ -83,10 +83,10 @@ layer at (0,0) size 800x600
                 RenderInline {CODE} at (258,21) size 33x16
                   RenderText {#text} at (258,21) size 33x16
                     text run at (258,21) width 33: "none"
-                RenderText {#text} at (0,18) size 750x54
+                RenderText {#text} at (0,18) size 750x55
                   text run at (290,18) width 459: " means that the element has no background image, allowing the parent to"
-                  text run at (0,37) width 750: "\"shine through\" by default; since the parent of the words \"in this sentence\" is the paragraph, then the paragraph's image"
-                  text run at (0,55) width 115: "should be visible.)"
+                  text run at (0,36) width 750: "\"shine through\" by default; since the parent of the words \"in this sentence\" is the paragraph, then the paragraph's image"
+                  text run at (0,54) width 115: "should be visible.)"
               RenderBlock {P} at (4,144) size 762x37
                 RenderText {#text} at (0,0) size 705x36
                   text run at (0,0) width 705: "This sentence should NOT be backed by a repeated green-grid image, allowing the page's background to \"shine"

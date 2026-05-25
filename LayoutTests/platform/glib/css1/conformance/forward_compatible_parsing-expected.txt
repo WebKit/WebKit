@@ -1,6 +1,6 @@
-layer at (0,0) size 785x4042
+layer at (0,0) size 785x4041
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x4042
+layer at (0,0) size 785x4041
   RenderBlock {HTML} at (0,0) size 785x4042
     RenderBody {BODY} at (8,8) size 769x4026 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 769x18
@@ -125,9 +125,9 @@ layer at (0,0) size 785x4042
         RenderInline {CODE} at (560,3) size 56x16
           RenderText {#text} at (560,3) size 56x16
             text run at (560,3) width 56: "inherit"
-        RenderText {#text} at (0,0) size 760x36
+        RenderText {#text} at (0,0) size 760x37
           text run at (616,0) width 144: " is an invalid keyword,"
-          text run at (0,19) width 520: "and in CSS2, it will cause the gray background (not the white grid) to be inherited."
+          text run at (0,18) width 520: "and in CSS2, it will cause the gray background (not the white grid) to be inherited."
       RenderBlock {P} at (0,995) size 769x19
         RenderText {#text} at (0,0) size 638x18
           text run at (0,0) width 638: "This paragraph should be black, since in CSS1, the selector is invalid, and in CSS2, it does not apply."
@@ -225,15 +225,15 @@ layer at (0,0) size 785x4042
         RenderInline {CODE} at (541,21) size 88x16
           RenderText {#text} at (541,21) size 88x16
             text run at (541,21) width 88: "highlighted"
-        RenderText {#text} at (0,18) size 758x36
+        RenderText {#text} at (0,18) size 758x37
           text run at (629,18) width 129: " is not a valid part of"
-          text run at (0,37) width 23: "the "
+          text run at (0,36) width 23: "the "
         RenderInline {CODE} at (23,40) size 32x15
           RenderText {#text} at (23,40) size 32x15
             text run at (23,40) width 32: "font"
-        RenderText {#text} at (0,37) size 720x36
-          text run at (55,37) width 178: " property, making it invalid. "
-          text run at (232,37) width 488: "Therefore, this paragraph's font should be the UA default, and match the next"
+        RenderText {#text} at (0,36) size 720x37
+          text run at (55,36) width 178: " property, making it invalid. "
+          text run at (232,36) width 488: "Therefore, this paragraph's font should be the UA default, and match the next"
           text run at (0,55) width 71: "paragraph. "
           text run at (71,55) width 190: "If this is not the case, then the "
         RenderInline {CODE} at (261,58) size 32x16
@@ -241,7 +241,7 @@ layer at (0,0) size 785x4042
             text run at (261,58) width 32: "font"
         RenderText {#text} at (293,55) size 248x18
           text run at (293,55) width 248: " declaration is being improperly parsed."
-      RenderBlock {P} at (0,1973) size 769x74
+      RenderBlock {P} at (0,1972) size 769x75
         RenderText {#text} at (0,0) size 737x18
           text run at (0,0) width 737: "The text of this paragraph should be normal (that is, it should not be underlined, overlined, stricken, or bold), because"
         RenderInline {CODE} at (0,21) size 64x16
@@ -258,15 +258,15 @@ layer at (0,0) size 785x4042
         RenderInline {CODE} at (541,21) size 88x16
           RenderText {#text} at (541,21) size 88x16
             text run at (541,21) width 88: "highlighted"
-        RenderText {#text} at (0,18) size 758x36
+        RenderText {#text} at (0,18) size 758x37
           text run at (629,18) width 129: " is not a valid part of"
-          text run at (0,37) width 23: "the "
+          text run at (0,36) width 23: "the "
         RenderInline {CODE} at (23,40) size 32x15
           RenderText {#text} at (23,40) size 32x15
             text run at (23,40) width 32: "font"
-        RenderText {#text} at (0,37) size 747x36
-          text run at (55,37) width 178: " property, making it invalid. "
-          text run at (232,37) width 515: "Therefore, this paragraph's font should be the UA default, and match the previous"
+        RenderText {#text} at (0,36) size 747x37
+          text run at (55,36) width 178: " property, making it invalid. "
+          text run at (232,36) width 515: "Therefore, this paragraph's font should be the UA default, and match the previous"
           text run at (0,55) width 71: "paragraph. "
           text run at (71,55) width 190: "If this is not the case, then the "
         RenderInline {CODE} at (261,58) size 32x16
@@ -330,8 +330,8 @@ layer at (0,0) size 785x4042
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x1558
             RenderTableCell {TD} at (0,791) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,770) size 4x18
-                text run at (4,5) width 4: " "
+              RenderText {#text} at (4,769) size 4x19
+                text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 755x1558 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 747x18 [color=#008000]
                 RenderText {#text} at (0,0) size 485x18
@@ -345,9 +345,9 @@ layer at (0,0) size 785x4042
                 RenderInline {CODE} at (560,3) size 56x16
                   RenderText {#text} at (560,3) size 56x16
                     text run at (560,3) width 56: "inherit"
-                RenderText {#text} at (0,0) size 696x36
+                RenderText {#text} at (0,0) size 696x37
                   text run at (616,0) width 80: " is an invalid"
-                  text run at (0,19) width 584: "keyword, and in CSS2, it will cause the gray background (not the white grid) to be inherited."
+                  text run at (0,18) width 584: "keyword, and in CSS2, it will cause the gray background (not the white grid) to be inherited."
               RenderBlock {P} at (4,124) size 747x19
                 RenderText {#text} at (0,0) size 638x18
                   text run at (0,0) width 638: "This paragraph should be black, since in CSS1, the selector is invalid, and in CSS2, it does not apply."
@@ -445,15 +445,15 @@ layer at (0,0) size 785x4042
                 RenderInline {CODE} at (541,21) size 88x16
                   RenderText {#text} at (541,21) size 88x16
                     text run at (541,21) width 88: "highlighted"
-                RenderText {#text} at (0,18) size 741x36
+                RenderText {#text} at (0,18) size 741x37
                   text run at (629,18) width 112: " is not a valid part"
-                  text run at (0,37) width 40: "of the "
+                  text run at (0,36) width 40: "of the "
                 RenderInline {CODE} at (40,40) size 32x15
                   RenderText {#text} at (40,40) size 32x15
                     text run at (40,40) width 32: "font"
-                RenderText {#text} at (0,37) size 737x36
-                  text run at (72,37) width 178: " property, making it invalid. "
-                  text run at (249,37) width 488: "Therefore, this paragraph's font should be the UA default, and match the next"
+                RenderText {#text} at (0,36) size 737x37
+                  text run at (72,36) width 178: " property, making it invalid. "
+                  text run at (249,36) width 488: "Therefore, this paragraph's font should be the UA default, and match the next"
                   text run at (0,55) width 71: "paragraph. "
                   text run at (71,55) width 190: "If this is not the case, then the "
                 RenderInline {CODE} at (261,58) size 32x16
@@ -461,7 +461,7 @@ layer at (0,0) size 785x4042
                     text run at (261,58) width 32: "font"
                 RenderText {#text} at (293,55) size 248x18
                   text run at (293,55) width 248: " declaration is being improperly parsed."
-              RenderBlock {P} at (4,1102) size 747x74
+              RenderBlock {P} at (4,1101) size 747x75
                 RenderText {#text} at (0,0) size 737x18
                   text run at (0,0) width 737: "The text of this paragraph should be normal (that is, it should not be underlined, overlined, stricken, or bold), because"
                 RenderInline {CODE} at (0,21) size 64x16
@@ -478,15 +478,15 @@ layer at (0,0) size 785x4042
                 RenderInline {CODE} at (541,21) size 88x16
                   RenderText {#text} at (541,21) size 88x16
                     text run at (541,21) width 88: "highlighted"
-                RenderText {#text} at (0,18) size 741x36
+                RenderText {#text} at (0,18) size 741x37
                   text run at (629,18) width 112: " is not a valid part"
-                  text run at (0,37) width 40: "of the "
+                  text run at (0,36) width 40: "of the "
                 RenderInline {CODE} at (40,40) size 32x15
                   RenderText {#text} at (40,40) size 32x15
                     text run at (40,40) width 32: "font"
-                RenderText {#text} at (0,37) size 706x36
-                  text run at (72,37) width 178: " property, making it invalid. "
-                  text run at (249,37) width 457: "Therefore, this paragraph's font should be the UA default, and match the"
+                RenderText {#text} at (0,36) size 706x37
+                  text run at (72,36) width 178: " property, making it invalid. "
+                  text run at (249,36) width 457: "Therefore, this paragraph's font should be the UA default, and match the"
                   text run at (0,55) width 129: "previous paragraph. "
                   text run at (129,55) width 190: "If this is not the case, then the "
                 RenderInline {CODE} at (319,58) size 32x16

@@ -20,17 +20,17 @@ layer at (0,0) size 800x600
           RenderTableSection {TBODY} at (0,0) size 40x37
             RenderTableRow {TR} at (0,2) size 40x33
               RenderTableCell {TD} at (2,2) size 36x33 [r=0 c=0 rs=1 cs=1]
-                RenderInline {FONT} at (0,0) size 30x33
-                  RenderText {#text} at (0,0) size 30x33
+                RenderInline {FONT} at (0,-1) size 30x35
+                  RenderText {#text} at (0,-1) size 30x35
                     text run at (0,0) width 30: "Online"
-                    text run at (0,11) width 24: "Web-"
-                    text run at (0,22) width 25: "Store"
+                    text run at (0,10) width 24: "Web-"
+                    text run at (0,21) width 25: "Store"
         RenderTable {TABLE} at (0,109) size 40x39 [bgcolor=#EEEEEE]
           RenderTableSection {TBODY} at (0,0) size 40x39
             RenderTableRow {TR} at (0,2) size 40x35
               RenderTableCell {TD} at (2,2) size 36x35 [r=0 c=0 rs=1 cs=1]
-                RenderInline {FONT} at (1,1) size 30x33
-                  RenderText {#text} at (1,1) size 30x33
-                    text run at (1,1) width 30: "Online"
-                    text run at (1,12) width 24: "Web-"
-                    text run at (1,23) width 25: "Store"
+                RenderInline {FONT} at (1,0) size 30x35
+                  RenderText {#text} at (1,0) size 30x35
+                    text run at (1,0) width 30: "Online"
+                    text run at (1,11) width 24: "Web-"
+                    text run at (1,22) width 25: "Store"

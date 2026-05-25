@@ -1,6 +1,6 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x53
+layer at (0,0) size 800x52
   RenderBlock {html} at (0,0) size 800x53
     RenderBody {body} at (8,8) size 784x37
       RenderText {#text} at (0,0) size 170x18
@@ -11,8 +11,8 @@ layer at (0,0) size 800x53
       RenderText {#text} at (394,0) size 109x18
         text run at (394,0) width 109: " in mixed content"
       RenderBR {br} at (503,0) size 0x18
-      RenderText {#text} at (0,19) size 315x17
-        text run at (0,19) width 315: "If the test passes you should see a green rectangle."
+      RenderText {#text} at (0,18) size 315x19
+        text run at (0,18) width 315: "If the test passes you should see a green rectangle."
 layer at (30,100) size 400x200
   RenderBlock (positioned) {div} at (30,100) size 400x200
     RenderSVGRoot {svg} at (30,100) size 400x200

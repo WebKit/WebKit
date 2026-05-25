@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderBlock {DL} at (0,0) size 36x584
           RenderBlock {DT} at (0,0) size 18x584
             RenderText {#text} at (0,0) size 18x153
-              text run at (0,0) width 154: "DT text is rendered here"
+              text run at (0,0) width 153: "DT text is rendered here"
           RenderBlock {DD} at (18,0) size 18x584
             RenderBlock {UL} at (0,0) size 18x584
               RenderListItem {LI} at (0,0) size 18x584

@@ -1,6 +1,6 @@
-layer at (0,0) size 785x967
+layer at (0,0) size 785x966
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x967
+layer at (0,0) size 785x966
   RenderBlock {HTML} at (0,0) size 785x967
     RenderBody {BODY} at (8,8) size 769x951 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 769x18
@@ -47,10 +47,10 @@ layer at (0,0) size 785x967
         RenderInline {STRONG} at (553,0) size 42x18
           RenderText {#text} at (553,0) size 42x18
             text run at (553,0) width 42: "unless"
-        RenderText {#text} at (0,0) size 741x36
+        RenderText {#text} at (0,0) size 741x37
           text run at (594,0) width 147: " the external style sheet"
-          text run at (0,19) width 325: "\"Alternate SS\" has been selected via the user agent."
-      RenderBlock {UL} at (0,302) size 769x56 [color=#FF0000]
+          text run at (0,18) width 325: "\"Alternate SS\" has been selected via the user agent."
+      RenderBlock {UL} at (0,301) size 769x57 [color=#FF0000]
         RenderListItem {LI} at (40,0) size 729x19 [color=#008000]
           RenderListMarker at (-17,0) size 7x18: bullet
           RenderText {#text} at (0,0) size 390x18
@@ -69,7 +69,7 @@ layer at (0,0) size 785x967
               text run at (395,3) width 184: "@import \"imptest1a.css\""
           RenderText {#text} at (579,0) size 9x18
             text run at (579,0) width 9: "]."
-        RenderListItem {LI} at (40,37) size 729x19 [color=#008000]
+        RenderListItem {LI} at (40,36) size 729x20 [color=#008000]
           RenderListMarker at (-17,0) size 7x18: bullet
           RenderText {#text} at (0,0) size 393x18
             text run at (0,0) width 393: "This sentence should be green thanks to the STYLE attribute ["
@@ -108,10 +108,10 @@ layer at (0,0) size 785x967
             text run at (129,18) width 68: "section 3.0"
         RenderText {#text} at (197,18) size 275x18
           text run at (197,18) width 275: " of the CSS1 specification for more details)."
-      RenderBlock {P} at (0,530) size 769x18 [color=#008000]
+      RenderBlock {P} at (0,529) size 769x19 [color=#008000]
         RenderText {#text} at (0,0) size 203x18
           text run at (0,0) width 203: "This paragraph should be green."
-      RenderTable {TABLE} at (0,564) size 769x387 [border: (1px outset #000000)]
+      RenderTable {TABLE} at (0,563) size 769x388 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 767x385
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
@@ -120,8 +120,8 @@ layer at (0,0) size 785x967
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x359
             RenderTableCell {TD} at (0,192) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,171) size 4x17
-                text run at (4,5) width 4: " "
+              RenderText {#text} at (4,170) size 4x19
+                text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 755x359 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 747x37
                 RenderText {#text} at (0,0) size 404x18
@@ -129,9 +129,9 @@ layer at (0,0) size 785x967
                 RenderInline {CODE} at (404,3) size 96x16
                   RenderText {#text} at (404,3) size 96x16
                     text run at (404,3) width 96: "linktest.css"
-                RenderText {#text} at (0,0) size 708x36
+                RenderText {#text} at (0,0) size 708x37
                   text run at (500,0) width 208: ", the reference to which is shown"
-                  text run at (0,19) width 42: "above."
+                  text run at (0,18) width 42: "above."
               RenderBlock {P} at (4,56) size 747x37
                 RenderText {#text} at (0,0) size 442x18
                   text run at (0,0) width 442: "This sentence should NOT be underlined due to the linked style sheet "
@@ -143,10 +143,10 @@ layer at (0,0) size 785x967
                 RenderInline {STRONG} at (553,0) size 42x18
                   RenderText {#text} at (553,0) size 42x18
                     text run at (553,0) width 42: "unless"
-                RenderText {#text} at (0,0) size 741x36
+                RenderText {#text} at (0,0) size 741x37
                   text run at (594,0) width 147: " the external style sheet"
-                  text run at (0,19) width 325: "\"Alternate SS\" has been selected via the user agent."
-              RenderBlock {UL} at (4,109) size 747x56 [color=#FF0000]
+                  text run at (0,18) width 325: "\"Alternate SS\" has been selected via the user agent."
+              RenderBlock {UL} at (4,108) size 747x57 [color=#FF0000]
                 RenderListItem {LI} at (40,0) size 707x19 [color=#008000]
                   RenderListMarker at (-17,0) size 7x18: bullet
                   RenderText {#text} at (0,0) size 390x18
@@ -165,7 +165,7 @@ layer at (0,0) size 785x967
                       text run at (395,3) width 184: "@import \"imptest1a.css\""
                   RenderText {#text} at (579,0) size 9x18
                     text run at (579,0) width 9: "]."
-                RenderListItem {LI} at (40,37) size 707x19 [color=#008000]
+                RenderListItem {LI} at (40,36) size 707x20 [color=#008000]
                   RenderListMarker at (-17,0) size 7x18: bullet
                   RenderText {#text} at (0,0) size 393x18
                     text run at (0,0) width 393: "This sentence should be green thanks to the STYLE attribute ["
@@ -204,7 +204,7 @@ layer at (0,0) size 785x967
                     text run at (129,18) width 68: "section 3.0"
                 RenderText {#text} at (197,18) size 275x18
                   text run at (197,18) width 275: " of the CSS1 specification for more details)."
-              RenderBlock {P} at (4,337) size 747x18 [color=#008000]
+              RenderBlock {P} at (4,336) size 747x19 [color=#008000]
                 RenderText {#text} at (0,0) size 203x18
                   text run at (0,0) width 203: "This paragraph should be green."
 layer at (8,205) size 769x2 clip at (0,0) size 0x0

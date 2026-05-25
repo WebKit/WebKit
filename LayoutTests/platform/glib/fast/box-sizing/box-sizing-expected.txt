@@ -37,14 +37,14 @@ layer at (0,0) size 785x954
       RenderBlock {H1} at (0,491) size 769x38
         RenderText {#text} at (0,0) size 210x37
           text run at (0,0) width 210: "Floating blocks"
-      RenderBlock (floating) {DIV} at (5,560) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
-      RenderBlock (floating) {DIV} at (35,560) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
-      RenderBlock (floating) {DIV} at (65,560) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
-      RenderBlock (floating) {DIV} at (95,560) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+      RenderBlock (floating) {DIV} at (5,559) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+      RenderBlock (floating) {DIV} at (35,559) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+      RenderBlock (floating) {DIV} at (65,559) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+      RenderBlock (floating) {DIV} at (95,559) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
         RenderBR {BR} at (6,6) size 0x18
         RenderBR {BR} at (6,24) size 0x18
         RenderBR {BR} at (6,42) size 0x18
-      RenderBlock (anonymous) at (0,550) size 769x40
+      RenderBlock (anonymous) at (0,549) size 769x41
         RenderBR {BR} at (120,0) size 0x18
       RenderBlock {H1} at (0,611) size 769x38
         RenderText {#text} at (0,0) size 210x37

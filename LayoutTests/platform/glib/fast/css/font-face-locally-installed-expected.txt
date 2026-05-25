@@ -10,10 +10,10 @@ layer at (0,0) size 800x600
         RenderInline {TT} at (553,3) size 80x16
           RenderText {#text} at (553,3) size 80x16
             text run at (553,3) width 80: "@font-face"
-        RenderText {#text} at (0,0) size 778x36
+        RenderText {#text} at (0,0) size 778x37
           text run at (633,0) width 145: " rule if they are a better"
-          text run at (0,19) width 73: "match than "
-          text run at (73,19) width 51: "the rule."
+          text run at (0,18) width 73: "match than "
+          text run at (73,18) width 51: "the rule."
       RenderBlock {P} at (0,52) size 784x19
         RenderText {#text} at (0,0) size 196x18
           text run at (0,0) width 196: "This should be Lucida Grande "
@@ -29,5 +29,5 @@ layer at (0,0) size 800x600
             text run at (139,0) width 230: "and this should be Helvetica Bold."
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,120) size 784x20
-        RenderText {#text} at (0,1) size 478x17
-          text run at (0,1) width 478: "UPPERCASE SHOULD BE MONACO and lowercase should be times."
+        RenderText {#text} at (0,0) size 478x19
+          text run at (0,0) width 478: "UPPERCASE SHOULD BE MONACO and lowercase should be times."

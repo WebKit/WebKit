@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (201,28) size 246x17
-        text run at (201,28) width 246: " This should not be part of the textarea."
+      RenderText {#text} at (201,27) size 246x19
+        text run at (201,27) width 246: " This should not be part of the textarea."
 layer at (8,8) size 201x42 clip at (9,9) size 184x40 scrollHeight 76
   RenderTextControl {TEXTAREA} at (0,0) size 201x42 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 180x72

@@ -51,13 +51,13 @@ layer at (0,0) size 800x600
             RenderBlock (anonymous) at (8,4) size 155x18
               RenderText at (0,0) size 155x18
                 text run at (0,0) width 155: "1. Set outline property"
-          RenderText {#text} at (171,4) size 4x18
+          RenderText {#text} at (171,4) size 4x19
             text run at (171,4) width 4: " "
           RenderButton {INPUT} at (175,0) size 174x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
             RenderBlock (anonymous) at (8,4) size 158x18
               RenderText at (0,0) size 158x18
                 text run at (0,0) width 158: "2. Set display property"
-          RenderText {#text} at (349,4) size 4x18
+          RenderText {#text} at (349,4) size 4x19
             text run at (349,4) width 4: " "
           RenderButton {INPUT} at (353,0) size 194x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
             RenderBlock (anonymous) at (8,4) size 178x18

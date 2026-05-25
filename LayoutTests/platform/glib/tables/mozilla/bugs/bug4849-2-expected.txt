@@ -33,9 +33,9 @@ layer at (0,0) size 800x600
                   RenderTableSection {TBODY} at (0,0) size 449x28
                     RenderTableRow {TR} at (0,2) size 449x24
                       RenderTableCell {TD} at (2,2) size 445x24 [r=0 c=0 rs=1 cs=1]
-                        RenderInline {A} at (347,5) size 97x17 [color=#0000EE]
-                          RenderText {#text} at (347,5) size 47x17
-                            text run at (347,5) width 47: "MORE"
+                        RenderInline {A} at (347,4) size 97x19 [color=#0000EE]
+                          RenderText {#text} at (347,4) size 47x19
+                            text run at (347,4) width 47: "MORE"
                           RenderImage {IMG} at (394,1) size 50x18
                         RenderText {#text} at (0,0) size 0x0
             RenderTableRow {TR} at (0,89) size 600x36

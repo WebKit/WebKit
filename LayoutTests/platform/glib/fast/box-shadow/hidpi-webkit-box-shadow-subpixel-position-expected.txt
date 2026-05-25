@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x96
-  RenderBlock {HTML} at (0,0) size 800x96
-    RenderBody {BODY} at (8,8) size 784x80
+  RenderBlock {HTML} at (0,0) size 800x97
+    RenderBody {BODY} at (8,8) size 784x81
       RenderText {#text} at (0,0) size 96x18
         text run at (0,0) width 96: "spacingspacing"
       RenderBlock {DIV} at (96,0) size 340x40
@@ -11,7 +11,7 @@ layer at (0,0) size 800x96
       RenderBR {BR} at (436,0) size 0x18
       RenderText {#text} at (0,40) size 96x18
         text run at (0,40) width 96: "spacingspacing"
-      RenderBlock {DIV} at (96,40) size 340x40
+      RenderBlock {DIV} at (96,40) size 340x41
         RenderText {#text} at (0,0) size 174x18
           text run at (0,0) width 174: "normal webkit-box-shadow"
       RenderText {#text} at (0,0) size 0x0

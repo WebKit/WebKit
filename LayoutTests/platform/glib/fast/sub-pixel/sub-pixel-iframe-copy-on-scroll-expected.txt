@@ -8,8 +8,8 @@ layer at (0,0) size 800x266
           text run at (0,0) width 496: "The iframes below should remain grey with no repaint artifacts when scrolling."
       RenderBlock {DIV} at (0,34) size 784x208
         RenderBlock {DIV} at (0,0) size 154x208
-        RenderText {#text} at (154,190) size 4x17
-          text run at (154,190) width 4: " "
+        RenderText {#text} at (154,189) size 4x19
+          text run at (154,189) width 4: " "
         RenderBlock {DIV} at (158,0) size 154x208
         RenderText {#text} at (0,0) size 0x0
 layer at (8,50) size 154x208

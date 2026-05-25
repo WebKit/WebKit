@@ -36,10 +36,10 @@ layer at (0,0) size 785x1343
         RenderInline {CODE} at (246,57) size 40x16
           RenderText {#text} at (246,57) size 40x16
             text run at (246,57) width 40: "width"
-        RenderText {#text} at (0,54) size 373x36
+        RenderText {#text} at (0,54) size 373x37
           text run at (286,54) width 57: " property"
-          text run at (0,73) width 373: "without the need for the user to resize the viewing window."
-      RenderTable {TABLE} at (0,743) size 385x584 [border: (1px outset #000000)]
+          text run at (0,72) width 373: "without the need for the user to resize the viewing window."
+      RenderTable {TABLE} at (0,742) size 385x585 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 383x582
           RenderTableRow {TR} at (0,0) size 383x26
             RenderTableCell {TD} at (0,0) size 383x26 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
@@ -48,8 +48,8 @@ layer at (0,0) size 785x1343
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 383x556
             RenderTableCell {TD} at (0,290) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,269) size 4x18
-                text run at (4,5) width 4: " "
+              RenderText {#text} at (4,268) size 4x19
+                text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 371x556 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock (anonymous) at (4,4) size 363x50
                 RenderImage {IMG} at (0,0) size 50x50
@@ -79,9 +79,9 @@ layer at (0,0) size 785x1343
                 RenderInline {CODE} at (23,147) size 40x16
                   RenderText {#text} at (23,147) size 40x16
                     text run at (23,147) width 40: "width"
-                RenderText {#text} at (0,144) size 173x54
+                RenderText {#text} at (0,144) size 173x55
                   text run at (63,144) width 109: " property without"
-                  text run at (0,163) width 144: "the need for the user to"
-                  text run at (0,181) width 173: "resize the viewing window."
+                  text run at (0,162) width 144: "the need for the user to"
+                  text run at (0,180) width 173: "resize the viewing window."
 layer at (8,100) size 769x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,92) size 769x2 [color=#808080] [border: (1px inset #808080)]

@@ -16,4 +16,4 @@ layer at (0,0) size 800x600
             text run at (18,50) width 240: "things do need to be double-checked. "
             text run at (18,289) width 233: "This list item has its left padding also"
             text run at (36,50) width 461: "set to 25 pixels, which should combine with the list's padding to make 50"
-            text run at (54,50) width 107: "pixels of margin."
+            text run at (54,50) width 106: "pixels of margin."

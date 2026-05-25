@@ -27,5 +27,5 @@ layer at (8,42) size 214x20
       text run at (226,0) width 94: "con a pariatur. "
     RenderText {#text} at (319,0) size 61x18
       text run at (319,0) width 61: "duis aute "
-layer at (224,43) size 173x18
+layer at (224,42) size 173x18
   RenderBlock (positioned) {DIV} at (20,1) size 174x18

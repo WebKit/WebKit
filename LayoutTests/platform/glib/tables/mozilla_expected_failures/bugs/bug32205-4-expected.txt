@@ -25,8 +25,8 @@ layer at (0,0) size 800x600
             RenderTableRow {TR} at (0,0) size 125x206
               RenderTableCell {TD} at (0,0) size 62x206 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                 RenderImage {IMG} at (1,1) size 10x200
-                RenderText {#text} at (11,187) size 50x17
-                  text run at (11,187) width 50: "Cell A1"
+                RenderText {#text} at (11,186) size 50x19
+                  text run at (11,186) width 50: "Cell A1"
               RenderTableCell {TD} at (62,70) size 63x65 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
                 RenderTable {TABLE} at (1,71) size 61x63 [border: (2px outset #000000)]
                   RenderTableSection {TBODY} at (2,2) size 57x58

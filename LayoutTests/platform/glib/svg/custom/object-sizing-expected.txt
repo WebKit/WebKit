@@ -36,7 +36,7 @@ layer at (0,0) size 800x391
               text run at (29,3) width 48: "object"
           RenderText {#text} at (77,0) size 270x18
             text run at (77,0) width 270: " appears in orange. Its height is set at 13em"
-        RenderListItem {li} at (40,37) size 744x18
+        RenderListItem {li} at (40,36) size 744x19
           RenderListMarker at (-17,0) size 7x18: bullet
           RenderText {#text} at (0,0) size 171x18
             text run at (0,0) width 171: "The blue line is 13em wide"

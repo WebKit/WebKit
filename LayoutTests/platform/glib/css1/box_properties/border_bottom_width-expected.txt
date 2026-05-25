@@ -51,10 +51,10 @@ layer at (0,0) size 785x879
             text run at (537,3) width 96: "border-style"
         RenderText {#text} at (633,0) size 54x18
           text run at (633,0) width 54: " was set."
-      RenderBlock {P} at (0,465) size 769x18 [bgcolor=#C0C0C0]
+      RenderBlock {P} at (0,464) size 769x19 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 203x18
           text run at (0,0) width 203: "This element has a class of zero."
-      RenderTable {TABLE} at (0,499) size 709x364 [border: (1px outset #000000)]
+      RenderTable {TABLE} at (0,498) size 709x365 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 707x362
           RenderTableRow {TR} at (0,0) size 707x26
             RenderTableCell {TD} at (0,0) size 707x26 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
@@ -62,9 +62,9 @@ layer at (0,0) size 785x879
                 RenderText {#text} at (4,4) size 161x18
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 707x336
-            RenderTableCell {TD} at (0,181) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,180) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,159) size 4x18
-                text run at (4,4) width 4: " "
+                text run at (4,5) width 4: " "
             RenderTableCell {TD} at (12,26) size 695x336 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 687x19
                 RenderText {#text} at (0,0) size 157x18
@@ -97,7 +97,7 @@ layer at (0,0) size 785x879
                     text run at (537,3) width 96: "border-style"
                 RenderText {#text} at (633,0) size 54x18
                   text run at (633,0) width 54: " was set."
-              RenderBlock {P} at (4,314) size 687x18 [bgcolor=#C0C0C0]
+              RenderBlock {P} at (4,313) size 687x19 [bgcolor=#C0C0C0]
                 RenderText {#text} at (0,0) size 203x18
                   text run at (0,0) width 203: "This element has a class of zero."
 layer at (8,145) size 769x2 clip at (0,0) size 0x0

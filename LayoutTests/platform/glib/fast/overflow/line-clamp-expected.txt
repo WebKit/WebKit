@@ -7,23 +7,23 @@ layer at (0,0) size 800x600
         text run at (0,0) width 262: "This tests the -webkit-line-clamp property"
       RenderBR {BR} at (262,0) size 0x18
       RenderBR {BR} at (0,18) size 0x18
-      RenderText {#text} at (102,96) size 4x17
-        text run at (102,96) width 4: " "
-      RenderText {#text} at (208,96) size 4x17
-        text run at (208,96) width 4: " "
-      RenderText {#text} at (314,96) size 4x17
-        text run at (314,96) width 4: " "
-      RenderText {#text} at (420,96) size 4x17
-        text run at (420,96) width 4: " "
-      RenderText {#text} at (526,96) size 4x17
-        text run at (526,96) width 4: " "
-      RenderText {#text} at (632,96) size 4x17
-        text run at (632,96) width 4: " "
+      RenderText {#text} at (102,95) size 4x19
+        text run at (102,95) width 4: " "
+      RenderText {#text} at (208,95) size 4x19
+        text run at (208,95) width 4: " "
+      RenderText {#text} at (314,95) size 4x19
+        text run at (314,95) width 4: " "
+      RenderText {#text} at (420,95) size 4x19
+        text run at (420,95) width 4: " "
+      RenderText {#text} at (526,95) size 4x19
+        text run at (526,95) width 4: " "
+      RenderText {#text} at (632,95) size 4x19
+        text run at (632,95) width 4: " "
       RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (102,224) size 4x17
-        text run at (102,224) width 4: " "
-      RenderText {#text} at (208,224) size 4x17
-        text run at (208,224) width 4: " "
+      RenderText {#text} at (102,223) size 4x19
+        text run at (102,223) width 4: " "
+      RenderText {#text} at (208,223) size 4x19
+        text run at (208,223) width 4: " "
       RenderText {#text} at (0,0) size 0x0
 layer at (8,44) size 102x74 clip at (9,45) size 100x72 scrollHeight 126
   RenderDeprecatedFlexibleBox {DIV} at (0,36) size 102x74 [border: (1px solid #808080)]

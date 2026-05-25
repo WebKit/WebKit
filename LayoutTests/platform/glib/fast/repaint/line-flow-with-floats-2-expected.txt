@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
               RenderBlock {DIV} at (0,0) size 450x50
                 RenderBlock (floating) {DIV} at (370,10) size 70x150 [bgcolor=#FFC0CB]
               RenderBlock {P} at (0,66) size 418x501 [border: (3px solid #800000)]
-                RenderText {#text} at (6,6) size 354x110
+                RenderText {#text} at (6,6) size 354x111
                   text run at (6,6) width 354: "The chief difficulty Alice found at first was in managing"
                   text run at (6,24) width 26: "her "
                   text run at (31,24) width 329: "flamingo: she succeeded in getting its body tucked"

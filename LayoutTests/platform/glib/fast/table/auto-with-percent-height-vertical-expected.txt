@@ -18,7 +18,7 @@ layer at (0,0) size 800x203
                   RenderTableRow {TR} at (2,0) size 20x74
                     RenderTableCell {TD} at (2,2) size 20x70 [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 18x68
-                        text run at (1,1) width 69: "Table Two"
+                        text run at (1,1) width 68: "Table Two"
       RenderTable {TABLE} at (16,101) size 48x70 [border: (3px solid #FF0000)]
         RenderTableSection {TBODY} at (3,3) size 42x63
           RenderTableRow {TR} at (2,0) size 38x63

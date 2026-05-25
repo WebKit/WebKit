@@ -4,13 +4,13 @@ layer at (0,0) size 800x454
   RenderBlock {HTML} at (0,0) size 800x454
     RenderBody {BODY} at (8,16) size 784x430 [color=#0000FF]
       RenderBlock {P} at (0,0) size 784x237
-        RenderInline (generated) at (0,3) size 88x159 [color=#00FFFF]
-          RenderText at (0,3) size 88x159
-            text run at (0,3) width 88: "T"
-        RenderText {#text} at (88,88) size 57x53
+        RenderInline (generated) at (0,2) size 88x161 [color=#00FFFF]
+          RenderText at (0,2) size 88x161
+            text run at (0,2) width 88: "T"
+        RenderText {#text} at (88,88) size 57x54
           text run at (88,88) width 57: "he "
-        RenderInline {STRONG} at (145,88) size 205x53
-          RenderText {#text} at (145,88) size 205x53
+        RenderInline {STRONG} at (145,88) size 205x54
+          RenderText {#text} at (145,88) size 205x54
             text run at (145,88) width 205: "first letter"
         RenderText {#text} at (0,88) size 779x95
           text run at (350,88) width 429: " of this paragraph, and"

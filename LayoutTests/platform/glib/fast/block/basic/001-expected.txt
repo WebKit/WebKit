@@ -16,13 +16,13 @@ layer at (0,0) size 800x600
             RenderBlock {H2} at (2,80) size 780x28
               RenderText {#text} at (0,0) size 193x27
                 text run at (0,0) width 193: "And another block!"
-            RenderText {#text} at (2,128) size 97x18
-              text run at (2,128) width 97: "Now more text."
-            RenderBR {BR} at (98,128) size 1x18
-            RenderText {#text} at (2,146) size 66x18
-              text run at (2,146) width 66: "This is red"
-          RenderText {#text} at (67,146) size 229x18
-            text run at (67,146) width 229: " but now only italic on the same line"
-        RenderBR {BR} at (295,146) size 1x18
-        RenderText {#text} at (2,164) size 128x18
-          text run at (2,164) width 128: "Plain line at the end."
+            RenderText {#text} at (2,127) size 97x19
+              text run at (2,127) width 97: "Now more text."
+            RenderBR {BR} at (98,127) size 1x19
+            RenderText {#text} at (2,145) size 66x19
+              text run at (2,145) width 66: "This is red"
+          RenderText {#text} at (67,145) size 229x19
+            text run at (67,145) width 229: " but now only italic on the same line"
+        RenderBR {BR} at (295,145) size 1x19
+        RenderText {#text} at (2,163) size 128x19
+          text run at (2,163) width 128: "Plain line at the end."

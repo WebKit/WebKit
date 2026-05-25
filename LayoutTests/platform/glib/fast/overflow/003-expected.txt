@@ -8,7 +8,7 @@ layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1165
       RenderText {#text} at (0,0) size 114x18
         text run at (0,0) width 114: "scottandrew.com"
     RenderBlock {description} at (11,39) size 255x11
-      RenderText {#text} at (0,0) size 162x11
+      RenderText {#text} at (0,-1) size 162x13
         text run at (0,0) width 162: "DHTML, DOM and JavaScript News"
     RenderBlock {item} at (1,60) size 265x82 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) none (1px solid #CCCCCC) none]
       RenderInline {title} at (10,11) size 192x15

@@ -7,28 +7,28 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 494x18
           text run at (0,0) width 494: "The following is a test for having non-text inline elements as base in a <ruby>."
       RenderBlock {P} at (0,34) size 784x28
-        RenderText {#text} at (0,10) size 155x17
-          text run at (0,10) width 155: "<ruby> is defined in the "
-        RenderInline {RUBY} at (155,10) size 134x17
-          RenderInline (generated) at (150,10) size 42x17
-            RenderInline {SPAN} at (159,10) size 23x17
-              RenderText {#text} at (159,10) size 23x17
-                text run at (159,10) width 23: "HT"
+        RenderText {#text} at (0,9) size 155x19
+          text run at (0,9) width 155: "<ruby> is defined in the "
+        RenderInline {RUBY} at (155,9) size 134x19
+          RenderInline (generated) at (150,9) size 42x19
+            RenderInline {SPAN} at (159,9) size 23x19
+              RenderText {#text} at (159,9) size 23x19
+                text run at (159,9) width 23: "HT"
           RenderBlock {RT} at (150,0) size 42x10
             RenderText {#text} at (0,0) size 41x10
               text run at (0,0) width 41: "Hyper-text"
-          RenderInline (generated) at (191,10) size 94x17
-            RenderInline {SPAN} at (221,10) size 15x17
-              RenderText {#text} at (221,10) size 15x17
-                text run at (221,10) width 15: "M"
-            RenderInline {SPAN} at (235,10) size 11x17
-              RenderText {#text} at (235,10) size 11x17
-                text run at (235,10) width 11: "L"
-            RenderInline {SPAN} at (245,10) size 9x17
-              RenderText {#text} at (245,10) size 9x17
-                text run at (245,10) width 9: "5"
+          RenderInline (generated) at (191,9) size 94x19
+            RenderInline {SPAN} at (221,9) size 15x19
+              RenderText {#text} at (221,9) size 15x19
+                text run at (221,9) width 15: "M"
+            RenderInline {SPAN} at (235,9) size 11x19
+              RenderText {#text} at (235,9) size 11x19
+                text run at (235,9) width 11: "L"
+            RenderInline {SPAN} at (245,9) size 9x19
+              RenderText {#text} at (245,9) size 9x19
+                text run at (245,9) width 9: "5"
           RenderBlock {RT} at (191,0) size 94x10
             RenderText {#text} at (0,0) size 93x10
               text run at (0,0) width 93: "Markup Language Lvl. 5"
-        RenderText {#text} at (279,10) size 37x17
-          text run at (279,10) width 37: " spec."
+        RenderText {#text} at (279,9) size 37x19
+          text run at (279,9) width 37: " spec."

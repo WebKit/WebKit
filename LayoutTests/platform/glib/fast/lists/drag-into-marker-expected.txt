@@ -5,12 +5,12 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,16) size 784x568
       RenderBlock {UL} at (16,0) size 752x57 [border: (1px solid #000000)]
         RenderListItem {LI} at (41,1) size 710x55
-          RenderListMarker at (-36,1) size 16x53: black square
-          RenderText {#text} at (0,1) size 107x53
-            text run at (0,1) width 107: "hello "
-          RenderInline {SPAN} at (107,1) size 112x53
-            RenderText {#text} at (107,1) size 112x53
-              text run at (107,1) width 112: "world"
+          RenderListMarker at (-36,0) size 16x54: black square
+          RenderText {#text} at (0,0) size 107x55
+            text run at (0,0) width 107: "hello "
+          RenderInline {SPAN} at (107,0) size 112x55
+            RenderText {#text} at (107,0) size 112x55
+              text run at (107,0) width 112: "world"
       RenderBlock {P} at (0,73) size 784x72
         RenderText {#text} at (0,0) size 768x72
           text run at (0,0) width 562: "This is an automated test for elementAtPoint for points over position:outside list markers. "

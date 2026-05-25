@@ -1,6 +1,6 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x307
+layer at (0,0) size 800x306
   RenderBlock {HTML} at (0,0) size 800x307
     RenderBody {BODY} at (8,8) size 784x283
       RenderBlock (anonymous) at (0,0) size 784x54
@@ -22,21 +22,21 @@ layer at (0,0) size 800x307
         RenderInline {SPAN} at (0,0) size 86x16
           RenderText {#text} at (0,0) size 86x16
             text run at (0,0) width 86: "Should be 13px"
-      RenderBlock {P} at (0,157) size 784x18
+      RenderBlock {P} at (0,156) size 784x19
         RenderInline {SPAN} at (0,2) size 86x16
           RenderText {#text} at (0,2) size 86x16
             text run at (0,2) width 86: "Should be 13px"
-      RenderBlock {P} at (0,191) size 784x20
+      RenderBlock {P} at (0,190) size 784x20
         RenderInline {TT} at (0,1) size 100x19
           RenderInline {SPAN} at (0,0) size 100x18
             RenderText {#text} at (0,0) size 100x18
               text run at (0,0) width 100: "Should be 16px"
-      RenderBlock {P} at (0,226) size 784x19
+      RenderBlock {P} at (0,225) size 784x20
         RenderInline {TT} at (0,3) size 100x16
           RenderInline {SPAN} at (0,0) size 100x18
             RenderText {#text} at (0,0) size 100x18
               text run at (0,0) width 100: "Should be 16px"
-      RenderBlock {P} at (0,261) size 784x22
+      RenderBlock {P} at (0,260) size 784x23
         RenderInline {TT} at (0,6) size 125x16
           RenderInline {SPAN} at (0,0) size 125x22
             RenderText {#text} at (0,0) size 125x22

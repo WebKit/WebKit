@@ -11,7 +11,7 @@ layer at (8,8) size 53x22
   RenderInline (relative positioned) {A} at (35,-2) size 53x22 [color=#0000EE] [border: (2px solid #FF0000)]
     RenderText {#text} at (37,0) size 49x18
       text run at (37,0) width 49: "this and"
-layer at (45,169) size 283x22
+layer at (45,168) size 283x22
   RenderBlock (positioned) {SPAN} at (2,162) size 283x22 [border: (2px solid #0000FF)]
     RenderText {#text} at (2,2) size 279x18
       text run at (2,2) width 279: "this should have correctly placed focus rings"

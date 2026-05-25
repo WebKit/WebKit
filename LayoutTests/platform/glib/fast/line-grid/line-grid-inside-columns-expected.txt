@@ -6,25 +6,25 @@ layer at (0,0) size 800x585
 layer at (8,8) size 784x504
   RenderBlock {DIV} at (0,0) size 784x504 [border: (2px solid #FF0000)]
     RenderMultiColumnSet at (2,2) size 780x500
-layer at (10,10) size 382x1538 backgroundClip at (0,0) size 1586x585 clip at (0,0) size 1586x585
+layer at (10,10) size 382x1537 backgroundClip at (0,0) size 1586x585 clip at (0,0) size 1586x585
   RenderMultiColumnFlowThread at (2,2) size 382x1538
     RenderBlock {DIV} at (0,0) size 382x1538
       RenderBlock {DIV} at (0,0) size 382x373
-        RenderText {#text} at (0,19) size 352x101
-          text run at (0,19) width 350: "All of this text even though it's smaller should be on the"
-          text run at (0,61) width 352: "36px grid. The grid should reset at the top of the second"
-          text run at (0,103) width 51: "column."
-        RenderBR {BR} at (51,103) size 0x17
-        RenderText {#text} at (0,145) size 352x101
-          text run at (0,145) width 350: "All of this text even though it's smaller should be on the"
-          text run at (0,187) width 352: "36px grid. The grid should reset at the top of the second"
-          text run at (0,229) width 51: "column."
-        RenderBR {BR} at (51,229) size 0x17
-        RenderText {#text} at (0,271) size 352x101
-          text run at (0,271) width 350: "All of this text even though it's smaller should be on the"
-          text run at (0,313) width 352: "36px grid. The grid should reset at the top of the second"
-          text run at (0,355) width 51: "column."
-        RenderBR {BR} at (51,355) size 0x17
+        RenderText {#text} at (0,18) size 352x103
+          text run at (0,18) width 350: "All of this text even though it's smaller should be on the"
+          text run at (0,60) width 352: "36px grid. The grid should reset at the top of the second"
+          text run at (0,102) width 51: "column."
+        RenderBR {BR} at (51,102) size 0x19
+        RenderText {#text} at (0,144) size 352x103
+          text run at (0,144) width 350: "All of this text even though it's smaller should be on the"
+          text run at (0,186) width 352: "36px grid. The grid should reset at the top of the second"
+          text run at (0,228) width 51: "column."
+        RenderBR {BR} at (51,228) size 0x19
+        RenderText {#text} at (0,270) size 352x103
+          text run at (0,270) width 350: "All of this text even though it's smaller should be on the"
+          text run at (0,312) width 352: "36px grid. The grid should reset at the top of the second"
+          text run at (0,354) width 51: "column."
+        RenderBR {BR} at (51,354) size 0x19
       RenderBlock {DIV} at (0,372) size 382x545
         RenderText {#text} at (0,17) size 377x191
           text run at (0,17) width 377: "All of this text even though it's smaller"
@@ -44,11 +44,11 @@ layer at (10,10) size 382x1538 backgroundClip at (0,0) size 1586x585 clip at (0,
           text run at (0,475) width 348: "should reset at the top of the second"
           text run at (0,517) width 79: "column."
         RenderBR {BR} at (79,517) size 0x27
-      RenderBlock {DIV} at (0,916) size 382x245
-        RenderText {#text} at (0,27) size 372x53
+      RenderBlock {DIV} at (0,916) size 382x246
+        RenderText {#text} at (0,27) size 372x55
           text run at (0,27) width 372: "All of this text even though it's smaller should be on the 36px grid. The grid should reset at"
           text run at (0,69) width 120: "the top of the second column."
-        RenderBR {BR} at (120,69) size 0x11
+        RenderBR {BR} at (120,69) size 0x13
         RenderText {#text} at (0,107) size 372x54
           text run at (0,107) width 372: "All of this text even though it's smaller should be on the 36px grid. The grid should reset at"
           text run at (0,149) width 120: "the top of the second column."
@@ -71,5 +71,5 @@ layer at (10,10) size 382x1538 backgroundClip at (0,0) size 1586x585 clip at (0,
         RenderText {#text} at (0,275) size 381x101
           text run at (0,275) width 381: "All of this text even though it's smaller should be on"
           text run at (0,317) width 381: "the 36px grid. The grid should reset at the top of the"
-          text run at (0,356) width 114: "second column."
-        RenderBR {BR} at (114,356) size 0x20
+          text run at (0,355) width 114: "second column."
+        RenderBR {BR} at (114,355) size 0x21

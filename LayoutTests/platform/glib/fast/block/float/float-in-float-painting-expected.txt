@@ -16,7 +16,7 @@ layer at (8,44) size 784x125
   RenderBlock {DIV} at (0,36) size 784x125
     RenderBlock (floating) {DIV} at (0,0) size 100x125
       RenderImage {IMG} at (0,0) size 100x100
-      RenderBR {BR} at (100,86) size 0x17
+      RenderBR {BR} at (100,85) size 0x19
       RenderBlock (floating) {H1} at (23,121) size 77x38
         RenderInline {A} at (0,0) size 77x37 [color=#0000EE]
           RenderText {#text} at (0,0) size 77x37

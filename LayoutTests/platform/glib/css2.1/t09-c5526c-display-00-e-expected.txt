@@ -16,17 +16,17 @@ layer at (0,0) size 800x420
               RenderBlock {P} at (10,10) size 140x10
                 RenderText {#text} at (0,-1) size 68x12
                   text run at (0,0) width 68: "the world ends"
-              RenderBlock (anonymous) at (10,20) size 140x42
-                RenderInline {FORM} at (0,0) size 140x42
+              RenderBlock (anonymous) at (10,20) size 140x43
+                RenderInline {FORM} at (0,0) size 140x43
                   RenderText {#text} at (0,0) size 0x0
-                  RenderBlock {P} at (0,0) size 140x21
-                    RenderText {#text} at (0,6) size 27x11
-                      text run at (0,6) width 27: "bang "
+                  RenderBlock {P} at (0,0) size 140x22
+                    RenderText {#text} at (0,5) size 27x13
+                      text run at (0,5) width 27: "bang "
                     RenderBlock {INPUT} at (29,3) size 12x12 [color=#000000]
                     RenderText {#text} at (0,0) size 0x0
-                  RenderBlock {P} at (0,21) size 140x21
-                    RenderText {#text} at (0,6) size 41x11
-                      text run at (0,6) width 41: "whimper "
+                  RenderBlock {P} at (0,21) size 140x22
+                    RenderText {#text} at (0,5) size 41x13
+                      text run at (0,5) width 41: "whimper "
                     RenderBlock {INPUT} at (43,3) size 12x12 [color=#000000]
                     RenderText {#text} at (0,0) size 0x0
                 RenderText {#text} at (0,0) size 0x0
@@ -45,21 +45,21 @@ layer at (0,0) size 800x420
               text run at (10,9) width 92: "sing to me, erbarme"
               text run at (10,19) width 19: "dich"
       RenderBlock {P} at (5,320) size 480x65 [color=#000000]
-        RenderText {#text} at (0,1) size 467x37
-          text run at (0,1) width 463: "This is a nonsensical document, but syntactically valid HTML 4.0. All 100%-conformant CSS1 agents"
-          text run at (0,14) width 467: "should be able to render the document elements above this paragraph indistinguishably (to the pixel)"
-          text run at (0,27) width 42: "from this "
-        RenderInline {A} at (42,27) size 94x11 [color=#999999]
-          RenderText {#text} at (42,27) size 94x11
-            text run at (42,27) width 94: "reference rendering,"
-        RenderText {#text} at (0,27) size 470x24
-          text run at (136,27) width 3: " "
-          text run at (139,27) width 331: "(except font rasterization and form widgets). All discrepancies should be"
-          text run at (0,40) width 228: "traceable to CSS1 implementation shortcomings. "
-          text run at (228,40) width 35: "Please "
-        RenderInline {A} at (263,40) size 76x11 [color=#CC0000]
-          RenderText {#text} at (263,40) size 76x11
-            text run at (263,40) width 76: "report any errors"
-        RenderText {#text} at (0,40) size 464x24
-          text run at (339,40) width 125: " you find between the CSS"
-          text run at (0,53) width 133: "and the reference rendering."
+        RenderText {#text} at (0,0) size 467x39
+          text run at (0,0) width 463: "This is a nonsensical document, but syntactically valid HTML 4.0. All 100%-conformant CSS1 agents"
+          text run at (0,13) width 467: "should be able to render the document elements above this paragraph indistinguishably (to the pixel)"
+          text run at (0,26) width 42: "from this "
+        RenderInline {A} at (42,26) size 94x13 [color=#999999]
+          RenderText {#text} at (42,26) size 94x13
+            text run at (42,26) width 94: "reference rendering,"
+        RenderText {#text} at (0,26) size 470x26
+          text run at (136,26) width 3: " "
+          text run at (139,26) width 331: "(except font rasterization and form widgets). All discrepancies should be"
+          text run at (0,39) width 228: "traceable to CSS1 implementation shortcomings. "
+          text run at (228,39) width 35: "Please "
+        RenderInline {A} at (263,39) size 76x13 [color=#CC0000]
+          RenderText {#text} at (263,39) size 76x13
+            text run at (263,39) width 76: "report any errors"
+        RenderText {#text} at (0,39) size 464x26
+          text run at (339,39) width 125: " you find between the CSS"
+          text run at (0,52) width 133: "and the reference rendering."

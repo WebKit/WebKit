@@ -1,6 +1,6 @@
-layer at (0,0) size 785x2811
+layer at (0,0) size 785x2810
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x2811
+layer at (0,0) size 785x2810
   RenderBlock {HTML} at (0,0) size 785x2811
     RenderBody {BODY} at (8,8) size 769x2795 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 769x18
@@ -91,8 +91,8 @@ layer at (0,0) size 785x2811
       RenderBlock {P} at (0,602) size 769x22
         RenderText {#text} at (0,0) size 540x21
           text run at (0,0) width 540: "This sentence should be large, but the last word in the sentence should be "
-        RenderInline {SPAN} at (539,2) size 52x18
-          RenderText {#text} at (539,2) size 52x18
+        RenderInline {SPAN} at (539,2) size 52x19
+          RenderText {#text} at (539,2) size 52x19
             text run at (539,2) width 52: "medium"
         RenderText {#text} at (590,0) size 6x21
           text run at (590,0) width 6: "."
@@ -100,8 +100,8 @@ layer at (0,0) size 785x2811
         RenderText {#text} at (0,0) size 745x54
           text run at (0,0) width 745: "This sentence should be rather large, but the last word in the sentence should"
           text run at (0,27) width 29: "be "
-        RenderInline {SPAN} at (29,34) size 51x18
-          RenderText {#text} at (29,34) size 51x18
+        RenderInline {SPAN} at (29,34) size 51x19
+          RenderText {#text} at (29,34) size 51x19
             text run at (29,34) width 51: "medium"
         RenderText {#text} at (80,27) size 6x27
           text run at (80,27) width 6: "."
@@ -115,9 +115,9 @@ layer at (0,0) size 785x2811
         RenderText {#text} at (299,37) size 8x37
           text run at (299,37) width 8: "."
       RenderBlock {P} at (0,855) size 769x111
-        RenderText {#text} at (0,1) size 695x108
-          text run at (0,1) width 695: "This sentence should be half an inch"
-          text run at (0,56) width 72: "tall."
+        RenderText {#text} at (0,0) size 695x110
+          text run at (0,0) width 695: "This sentence should be half an inch"
+          text run at (0,55) width 72: "tall."
       RenderBlock {P} at (0,1013) size 769x45
         RenderText {#text} at (0,1) size 659x42
           text run at (0,1) width 659: "This sentence should be one centimeter tall."
@@ -154,7 +154,7 @@ layer at (0,0) size 785x2811
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x1197
             RenderTableCell {TD} at (0,611) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,589) size 4x18
+              RenderText {#text} at (4,589) size 4x19
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 755x1197 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 747x18
@@ -201,8 +201,8 @@ layer at (0,0) size 785x2811
               RenderBlock {P} at (4,241) size 747x22
                 RenderText {#text} at (0,0) size 540x21
                   text run at (0,0) width 540: "This sentence should be large, but the last word in the sentence should be "
-                RenderInline {SPAN} at (539,2) size 52x18
-                  RenderText {#text} at (539,2) size 52x18
+                RenderInline {SPAN} at (539,2) size 52x19
+                  RenderText {#text} at (539,2) size 52x19
                     text run at (539,2) width 52: "medium"
                 RenderText {#text} at (590,0) size 6x21
                   text run at (590,0) width 6: "."
@@ -210,8 +210,8 @@ layer at (0,0) size 785x2811
                 RenderText {#text} at (0,0) size 745x54
                   text run at (0,0) width 745: "This sentence should be rather large, but the last word in the sentence should"
                   text run at (0,27) width 29: "be "
-                RenderInline {SPAN} at (29,34) size 51x18
-                  RenderText {#text} at (29,34) size 51x18
+                RenderInline {SPAN} at (29,34) size 51x19
+                  RenderText {#text} at (29,34) size 51x19
                     text run at (29,34) width 51: "medium"
                 RenderText {#text} at (80,27) size 6x27
                   text run at (80,27) width 6: "."
@@ -225,9 +225,9 @@ layer at (0,0) size 785x2811
                 RenderText {#text} at (346,37) size 8x37
                   text run at (346,37) width 8: "."
               RenderBlock {P} at (4,494) size 747x111
-                RenderText {#text} at (0,1) size 695x108
-                  text run at (0,1) width 695: "This sentence should be half an inch"
-                  text run at (0,56) width 72: "tall."
+                RenderText {#text} at (0,0) size 695x110
+                  text run at (0,0) width 695: "This sentence should be half an inch"
+                  text run at (0,55) width 72: "tall."
               RenderBlock {P} at (4,652) size 747x45
                 RenderText {#text} at (0,1) size 659x42
                   text run at (0,1) width 659: "This sentence should be one centimeter tall."

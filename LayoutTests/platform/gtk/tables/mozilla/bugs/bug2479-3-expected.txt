@@ -40,7 +40,7 @@ layer at (0,0) size 785x775
           RenderInline {EM} at (288,0) size 192x16
             RenderText {#text} at (288,0) size 192x16
               text run at (288,0) width 192: "does support"
-          RenderText {#text} at (0,0) size 736x32
+          RenderText {#text} at (0,0) size 736x33
             text run at (480,0) width 256: " table values on"
             text run at (0,16) width 164: "'display'. "
           RenderInline {STRONG} at (0,16) size 740x50

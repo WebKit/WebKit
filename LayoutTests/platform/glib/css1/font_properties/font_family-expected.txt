@@ -49,7 +49,7 @@ layer at (0,0) size 785x1257
         RenderText {#text} at (0,0) size 396x18
           text run at (0,0) width 396: "This sentence should be in a sans-serif font, not cursive."
       RenderBlock {P} at (0,450) size 769x18
-        RenderText {#text} at (0,0) size 550x18
+        RenderText {#text} at (0,-1) size 550x20
           text run at (0,0) width 550: "This sentence should be in a monospace font, not serif."
       RenderBlock {DIV} at (0,499) size 769x197
         RenderBlock {P} at (0,0) size 769x30
@@ -106,7 +106,7 @@ layer at (0,0) size 785x1257
                 RenderText {#text} at (0,0) size 396x18
                   text run at (0,0) width 396: "This sentence should be in a sans-serif font, not cursive."
               RenderBlock {P} at (4,254) size 747x18
-                RenderText {#text} at (0,0) size 550x18
+                RenderText {#text} at (0,-1) size 550x20
                   text run at (0,0) width 550: "This sentence should be in a monospace font, not serif."
               RenderBlock {DIV} at (4,303) size 747x197
                 RenderBlock {P} at (0,0) size 747x30

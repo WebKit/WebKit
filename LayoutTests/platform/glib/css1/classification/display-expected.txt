@@ -46,18 +46,18 @@ layer at (0,0) size 785x818
         RenderInline {CODE} at (18,21) size 120x16
           RenderText {#text} at (18,21) size 120x16
             text run at (18,21) width 120: "list-style-type"
-        RenderText {#text} at (0,18) size 720x36
+        RenderText {#text} at (0,18) size 720x37
           text run at (138,18) width 359: " is supported, there will be a square for the item marker). "
           text run at (497,18) width 223: "A 3em left margin has been applied"
-          text run at (0,37) width 376: "in order to ensure that there is space for the list-item marker."
-      RenderBlock {P} at (0,315) size 769x18
+          text run at (0,36) width 376: "in order to ensure that there is space for the list-item marker."
+      RenderBlock {P} at (0,314) size 769x19
         RenderText {#text} at (0,0) size 456x18
           text run at (0,0) width 456: "The next paragraph should be invisible (if it's visible, you'll see red text)."
-      RenderBlock {P} at (0,349) size 769x18
+      RenderBlock {P} at (0,348) size 769x19
         RenderText {#text} at (0,0) size 247x18
           text run at (0,0) width 247: "There should be no text after the colon:"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,383) size 769x54
+      RenderBlock {P} at (0,382) size 769x55
         RenderBlock (anonymous) at (0,0) size 769x18
           RenderText {#text} at (0,0) size 112x18
             text run at (0,0) width 112: "The italicized text"
@@ -67,7 +67,7 @@ layer at (0,0) size 785x818
         RenderBlock (anonymous) at (0,36) size 769x18
           RenderText {#text} at (0,0) size 203x18
             text run at (0,0) width 203: "should be a block-level element."
-      RenderTable {TABLE} at (0,453) size 769x349 [border: (1px outset #000000)]
+      RenderTable {TABLE} at (0,452) size 769x350 [border: (1px outset #000000)]
         RenderTableSection {TBODY} at (1,1) size 767x347
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=2]
@@ -76,8 +76,8 @@ layer at (0,0) size 785x818
                   text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x321
             RenderTableCell {TD} at (0,173) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,152) size 4x17
-                text run at (4,5) width 4: " "
+              RenderText {#text} at (4,151) size 4x19
+                text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 755x321 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 747x18
                 RenderText {#text} at (0,0) size 293x18
@@ -107,18 +107,18 @@ layer at (0,0) size 785x818
                 RenderInline {CODE} at (55,21) size 120x16
                   RenderText {#text} at (55,21) size 120x16
                     text run at (55,21) width 120: "list-style-type"
-                RenderText {#text} at (0,18) size 673x36
+                RenderText {#text} at (0,18) size 673x37
                   text run at (175,18) width 359: " is supported, there will be a square for the item marker). "
                   text run at (534,18) width 139: "A 3em left margin has"
-                  text run at (0,37) width 460: "been applied in order to ensure that there is space for the list-item marker."
-              RenderBlock {P} at (4,179) size 747x18
+                  text run at (0,36) width 460: "been applied in order to ensure that there is space for the list-item marker."
+              RenderBlock {P} at (4,178) size 747x19
                 RenderText {#text} at (0,0) size 456x18
                   text run at (0,0) width 456: "The next paragraph should be invisible (if it's visible, you'll see red text)."
-              RenderBlock {P} at (4,213) size 747x18
+              RenderBlock {P} at (4,212) size 747x19
                 RenderText {#text} at (0,0) size 247x18
                   text run at (0,0) width 247: "There should be no text after the colon:"
                 RenderText {#text} at (0,0) size 0x0
-              RenderBlock {P} at (4,247) size 747x54
+              RenderBlock {P} at (4,246) size 747x55
                 RenderBlock (anonymous) at (0,0) size 747x18
                   RenderText {#text} at (0,0) size 112x18
                     text run at (0,0) width 112: "The italicized text"

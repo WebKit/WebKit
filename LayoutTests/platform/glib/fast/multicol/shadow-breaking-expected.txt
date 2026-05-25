@@ -4,15 +4,15 @@ layer at (0,0) size 800x8
   RenderBlock {HTML} at (0,0) size 800x8
     RenderBody {BODY} at (8,8) size 784x0
       RenderBlock {DIV} at (0,0) size 784x0
-layer at (20,36) size 424x265
-  RenderBlock (positioned) {P} at (20,36) size 424x265 [border: (2px solid #000000)]
-    RenderMultiColumnSet at (2,2) size 420x261
-layer at (22,38) size 200x508
-  RenderMultiColumnFlowThread at (2,2) size 200x508
+layer at (20,36) size 424x266
+  RenderBlock (positioned) {P} at (20,36) size 424x266 [border: (2px solid #000000)]
+    RenderMultiColumnSet at (2,2) size 420x262
+layer at (22,38) size 200x509
+  RenderMultiColumnFlowThread at (2,2) size 200x509
     RenderBlock (floating) at (0,0) size 24x42
       RenderText at (0,1) size 24x40
         text run at (0,1) width 24: "L"
-    RenderText {#text} at (0,0) size 200x507
+    RenderText {#text} at (0,0) size 200x509
       text run at (28,0) width 172: "orem ipsum dolor sit"
       text run at (28,18) width 172: "amet, consectetur"
       text run at (0,36) width 200: "adipiscing elit. Cras pharetra"
