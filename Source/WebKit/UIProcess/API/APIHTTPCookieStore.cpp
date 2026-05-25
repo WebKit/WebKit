@@ -80,7 +80,7 @@ void HTTPCookieStore::filterAppBoundCookies(Vector<WebCore::Cookie>&& cookies, C
 
 void HTTPCookieStore::cookies(CompletionHandler<void(Vector<WebCore::Cookie>&&)>&& completionHandler)
 {
-    if (RefPtr networkProcess = networkProcessIfExists()) {
+    if (RefPtr networkProcess = networkProcessLaunchingIfNecessary()) {
         networkProcess->sendWithAsyncReply(Messages::WebCookieManager::GetAllCookies(m_sessionID), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (Vector<WebCore::Cookie>&& cookies) mutable {
             filterAppBoundCookies(WTF::move(cookies), WTF::move(completionHandler));
         });
@@ -90,7 +90,7 @@ void HTTPCookieStore::cookies(CompletionHandler<void(Vector<WebCore::Cookie>&&)>
 
 void HTTPCookieStore::cookiesForURL(WTF::URL&& url, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&& completionHandler)
 {
-    if (RefPtr networkProcess = networkProcessIfExists()) {
+    if (RefPtr networkProcess = networkProcessLaunchingIfNecessary()) {
         networkProcess->sendWithAsyncReply(Messages::WebCookieManager::GetCookies(m_sessionID, url), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (Vector<WebCore::Cookie>&& cookies) mutable {
             filterAppBoundCookies(WTF::move(cookies), WTF::move(completionHandler));
         });

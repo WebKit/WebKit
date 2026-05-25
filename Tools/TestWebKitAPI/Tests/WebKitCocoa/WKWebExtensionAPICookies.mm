@@ -28,7 +28,10 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "WebExtensionUtilities.h"
+#import <WebKit/WKHTTPCookieStorePrivate.h>
 #import <WebKit/WKWebExtensionCommand.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <signal.h>
 #import <wtf/darwin/DispatchExtras.h>
 
 namespace TestWebKitAPI {
@@ -713,6 +716,55 @@ TEST(WKWebExtensionAPICookies, ChangedEvent)
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
     [manager run];
+}
+
+TEST(WKWebExtensionAPICookies, GetAllAfterNetworkProcessTermination)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const cookies = await browser.test.assertSafeResolve(() => browser.cookies.getAll({ url: 'http://example.com/' }))",
+        @"browser.test.assertTrue(Array.isArray(cookies), 'Cookies should be an array')",
+        @"browser.test.assertEq(cookies?.length, 1, 'There should be 1 cookie')",
+        @"browser.test.assertEq(cookies[0]?.name, 'testCookie')",
+        @"browser.test.assertEq(cookies[0]?.value, 'testValue')",
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto manager = Util::loadExtension(cookiesManifest, @{ @"background.js": backgroundScript });
+
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithString:@"*://*.example.com/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+
+    auto *cookieStore = WKWebsiteDataStore.defaultDataStore.httpCookieStore;
+    auto *cookie = [NSHTTPCookie cookieWithProperties:@{
+        NSHTTPCookieName: @"testCookie",
+        NSHTTPCookieValue: @"testValue",
+        NSHTTPCookieDomain: @".example.com",
+        NSHTTPCookiePath: @"/",
+        NSHTTPCookieExpires: [NSDate dateWithTimeIntervalSinceNow:3600]
+    }];
+
+    __block bool done = false;
+    [cookieStore setCookie:cookie completionHandler:^{
+        [cookieStore _flushCookiesToDiskWithCompletionHandler:^{
+            done = true;
+        }];
+    }];
+
+    Util::run(&done);
+
+    // Kill the network process to simulate a cold start (e.g. after app relaunch). With the fix,
+    // cookies.getAll() launches the network process on demand and reads the persisted cookie.
+    kill([WKWebsiteDataStore.defaultDataStore _networkProcessIdentifier], SIGKILL);
+    Util::runFor(0.1_s);
+
+    [manager run];
+
+    done = false;
+    [cookieStore deleteCookie:cookie completionHandler:^{
+        done = true;
+    }];
+
+    Util::run(&done);
 }
 
 } // namespace TestWebKitAPI
