@@ -735,6 +735,7 @@ void ProvisionalPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::D
     }
 
     if (decoder.messageName() == Messages::WebBackForwardList::BackForwardUpdateItem::name()) {
+<<<<<<< HEAD
         if (RefPtr page = m_page.get()) {
 #if ENABLE(BACK_FORWARD_LIST_SWIFT)
             page->backForwardListMessageReceiver().didReceiveMessage(connection, decoder);
@@ -742,6 +743,10 @@ void ProvisionalPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::D
             page->backForwardList().didReceiveProvisionalMessage(connection, decoder);
 #endif
         }
+=======
+        if (RefPtr page = m_page.get())
+            page->backForwardList().didReceiveProvisionalMessage(connection, decoder);
+>>>>>>> 6b53aa44e133 (MESSAGE_CHECK URLs passed in to WebBackForwardListItem backForwardUpdateItem and backForwardSetChildItem)
         return;
     }
 

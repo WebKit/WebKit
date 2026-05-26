@@ -838,7 +838,17 @@ void WebBackForwardList::backForwardUpdateItem(IPC::Connection& connection, Ref<
     if (RefPtr webPageProxy = m_page.get()) {
         ASSERT(webPageProxy->identifier() == item->pageID() && frameState->itemID == item->identifier());
 
+<<<<<<< HEAD
         auto oldFrameID = frameItem->frameID();
+=======
+        if (!!item->backForwardCacheEntry() != frameState->hasCachedPage) {
+            if (frameState->hasCachedPage)
+            webPageProxy->protectedBackForwardCache()->addEntry(*item, process->coreProcessIdentifier());
+            else if (!item->suspendedPage())
+            webPageProxy->protectedBackForwardCache()->removeEntry(*item);
+        }
+
+>>>>>>> 6b53aa44e133 (MESSAGE_CHECK URLs passed in to WebBackForwardListItem backForwardUpdateItem and backForwardSetChildItem)
         frameItem->setFrameState(WTF::move(frameState));
         auto newFrameID = frameItem->frameID();
 
@@ -959,6 +969,7 @@ void WebBackForwardList::didReceiveProvisionalMessage(IPC::Connection& connectio
     didReceiveMessage(connection, decoder);
 }
 
+<<<<<<< HEAD
 #else // ENABLE(BACK_FORWARD_LIST_SWIFT)
 
 WebBackForwardListWrapper::WebBackForwardListWrapper(WebPageProxy& webPageProxy)
@@ -1035,6 +1046,8 @@ String WebBackForwardListWrapper::loggingString()
 
 #endif // ENABLE(BACK_FORWARD_LIST_SWIFT)
 
+=======
+>>>>>>> 6b53aa44e133 (MESSAGE_CHECK URLs passed in to WebBackForwardListItem backForwardUpdateItem and backForwardSetChildItem)
 } // namespace WebKit
 
 #if ENABLE(BACK_FORWARD_LIST_SWIFT)
