@@ -467,7 +467,7 @@ def riscv64LowerAddressLoads(list)
                 riscv64ValidateOperands(node.operands, [LabelReference, RegisterID])
                 newList << Instruction.new(node.codeOrigin, "rv_la", node.operands)
             when "pcrtoaddr"
-                riscv64ValidateOperands(node.operands, [LabelReference, RegisterID])
+                riscv64ValidateOperands(node.operands, [LabelReference, RegisterID], [LocalLabelReference, RegisterID])
                 newList << Instruction.new(node.codeOrigin, "rv_lla", node.operands)
             else
                 newList << node
@@ -600,7 +600,7 @@ def riscv64LowerOperation(list)
         case riscv64OperandTypes(node.operands)
         when [RegisterID]
             callOpcode = "jalr"
-        when [LabelReference]
+        when [LabelReference], [LocalLabelReference]
             callOpcode = "call"
         else
             riscv64RaiseMismatchedOperands(node.operands)
@@ -1589,7 +1589,7 @@ class Instruction
             riscv64ValidateOperands(operands, [LabelReference], [LocalLabelReference])
             $asm.puts "#{rvop(opcode)} #{operands[0].asmLabel}"
         when /^rv_(la|lla)$/
-            riscv64ValidateOperands(operands, [LabelReference, RegisterID])
+            riscv64ValidateOperands(operands, [LabelReference, RegisterID], [LocalLabelReference, RegisterID])
             $asm.puts "#{rvop(opcode)} #{operands[1].riscv64Operand}, #{operands[0].asmLabel}"
         when "rv_mv"
             riscv64ValidateOperands(operands, [RegisterID, RegisterID])
