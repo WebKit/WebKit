@@ -31,6 +31,8 @@
 
 #include "pas_compact_bootstrap_free_heap.h"
 #include "pas_heap_lock.h"
+#include "pas_immortal_heap.h"
+#include "pas_low_memory_mode.h"
 
 pas_compact_expendable_memory pas_compact_expendable_memory_header;
 void* pas_compact_expendable_memory_payload;
@@ -40,7 +42,21 @@ void* pas_compact_expendable_memory_allocate(size_t size,
                                              const char* name)
 {
     pas_heap_lock_assert_held();
-    
+
+    /* In low-memory mode, route the allocation through the immortal heap.
+       The expendable-memory machinery would otherwise pull in a 20 MB
+       compact_expendable_memory_payload region (whose first page becomes
+       dirty on header init) plus several 16 KB compact_bootstrap chunks the
+       first time it is touched. For short-lived libpas clients (e.g. the
+       single js_heap user under RAMification), trading scavengeability for a
+       handful of bytes in the immortal heap is a clear win, and the only
+       caller -- pas_segregated_heap.c rare-data medium_directories growth --
+       only ever stores small bookkeeping tuples here. */
+    if (pas_low_memory_mode) {
+        return pas_immortal_heap_allocate_with_alignment(
+            size, alignment, name, pas_object_allocation);
+    }
+
     PAS_ASSERT(!!pas_compact_expendable_memory_header.header.size == !!pas_compact_expendable_memory_payload);
 
     if (!pas_compact_expendable_memory_payload) {
@@ -70,7 +86,13 @@ void* pas_compact_expendable_memory_allocate(size_t size,
 bool pas_compact_expendable_memory_commit_if_necessary(void* object, size_t size)
 {
     pas_heap_lock_assert_held();
-    
+
+    /* Low-memory mode: allocations were routed through the immortal heap so
+       there's no payload to commit. The object memory is permanently
+       resident and never decommitted, so no action is needed. */
+    if (!pas_compact_expendable_memory_payload)
+        return false;
+
     PAS_ASSERT(pas_compact_expendable_memory_header.header.size);
     PAS_ASSERT(pas_compact_expendable_memory_payload);
 

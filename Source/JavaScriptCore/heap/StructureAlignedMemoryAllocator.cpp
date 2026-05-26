@@ -37,11 +37,10 @@
 #include <wtf/NeverDestroyed.h>
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #if USE(LIBPAS)
-#include <bmalloc/bmalloc_heap.h>
-#include <bmalloc/bmalloc_heap_config.h>
-#include <bmalloc/bmalloc_heap_inlines.h>
-#include <bmalloc/bmalloc_heap_ref.h>
-#include <bmalloc/pas_primitive_heap_ref.h>
+#include <bmalloc/js_marked_block_heap.h>
+#include <bmalloc/pas_large_sharing_pool.h>
+#include <bmalloc/pas_low_memory_mode.h>
+#include <bmalloc/pas_scavenger.h>
 #elif USE(MIMALLOC)
 #include <bmalloc/mimalloc.h>
 #endif
@@ -80,8 +79,12 @@ void* StructureAlignedMemoryAllocator::tryReallocateMemory(void*, size_t)
 #if CPU(ADDRESS64)
 #if USE(LIBPAS)
 
-static const bmalloc_type structureHeapType { BMALLOC_TYPE_INITIALIZER(MarkedBlock::blockSize, MarkedBlock::blockSize, "Structure Heap") };
-static pas_primitive_heap_ref structureHeap { BMALLOC_AUXILIARY_HEAP_REF_INITIALIZER(&structureHeapType, pas_bmalloc_heap_ref_kind_compact) };
+// js_marked_block_heap is a thin, fixed-size / fixed-alignment pool over the reserved
+// Structure Heap region. It's a sibling of js_heap (which remains available for future
+// arbitrary-sized allocations inside the JS heap) but skips the general-purpose libpas
+// machinery (TLC, segregated_heap, large_heap free list, sharing pool, utility heap,
+// compact_expendable) since every Structure-block allocation is identical in size and
+// alignment.
 
 #elif USE(MIMALLOC)
 
@@ -118,18 +121,31 @@ public:
         g_jscConfig.structureIDBase = g_jscConfig.startOfStructureHeap & ~StructureID::structureIDMask;
 
         // Don't use the first page because zero is used as the empty StructureID and the first allocation will conflict.
-        m_useSystemHeap = !bmalloc::api::isEnabled();
 #if USE(LIBPAS)
-        if (!m_useSystemHeap) [[likely]] {
-#if PLATFORM(PLAYSTATION)
-            // libpas isn't calling pas_page_malloc commit, so we've got to commit the region ourselves
-            // https://bugs.webkit.org/show_bug.cgi?id=292771
-            OSAllocator::commit((void *) g_jscConfig.startOfStructureHeap, MarkedBlock::blockSize, true, false);
-#endif
-            bmalloc_force_auxiliary_heap_into_reserved_memory(&structureHeap, reinterpret_cast<uintptr_t>(g_jscConfig.startOfStructureHeap) + MarkedBlock::blockSize, reinterpret_cast<uintptr_t>(g_jscConfig.startOfStructureHeap) + g_jscConfig.sizeOfStructureHeap);
-            return;
+        // js_marked_block_heap is a libpas heap dedicated to MarkedBlock-shaped
+        // (16 KB size, 16 KB alignment) Structure blocks. It shares js_heap_config
+        // with the general-purpose js_heap (kept available for future arbitrary-
+        // sized uses) but takes a direct path into pas_large_heap, skipping the
+        // TLC and segregated-heap size-class lookup that a fixed size/alignment
+        // client doesn't benefit from.
+        //
+        // Tell libpas to bring itself up in low-memory mode when Malloc=X or VM
+        // mini mode indicates the embedder cares about footprint right now.
+        if (!bmalloc::api::isEnabled() || !Options::useJIT() || Options::forceMiniVMMode()) [[unlikely]] {
+            pas_low_memory_mode = true;
+            pas_scavenger_is_enabled = false;
+            pas_large_sharing_pool_enabled = false;
         }
-        m_usedBlocks.set(0);
+#if PLATFORM(PLAYSTATION)
+        // libpas isn't calling pas_page_malloc commit, so we've got to commit the region ourselves
+        // https://bugs.webkit.org/show_bug.cgi?id=292771
+        OSAllocator::commit((void *) g_jscConfig.startOfStructureHeap, MarkedBlock::blockSize, true, false);
+#endif
+        static_assert(JS_MARKED_BLOCK_HEAP_BLOCK_SIZE == MarkedBlock::blockSize,
+            "Thin structure heap block size must match MarkedBlock::blockSize");
+        js_marked_block_heap_force_into_reserved_memory(
+            reinterpret_cast<uintptr_t>(g_jscConfig.startOfStructureHeap) + MarkedBlock::blockSize,
+            reinterpret_cast<uintptr_t>(g_jscConfig.startOfStructureHeap) + g_jscConfig.sizeOfStructureHeap);
 #elif USE(MIMALLOC)
         void* memory = reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(g_jscConfig.startOfStructureHeap) + MarkedBlock::blockSize);
         size_t size = g_jscConfig.sizeOfStructureHeap - MarkedBlock::blockSize;
@@ -142,21 +158,17 @@ public:
 
     void* tryMallocStructureBlock()
     {
-        if (!m_useSystemHeap) [[likely]] {
 #if USE(LIBPAS)
-            void* result = bmalloc_try_allocate_auxiliary_with_alignment_inline(&structureHeap, MarkedBlock::blockSize, MarkedBlock::blockSize, pas_always_compact_allocation_mode);
-
+        void* result = js_marked_block_heap_try_allocate();
 #if PLATFORM(PLAYSTATION)
-            // libpas isn't calling pas_page_malloc commit, so we've got to commit the region ourselves
-            // https://bugs.webkit.org/show_bug.cgi?id=292771
-            OSAllocator::commit(result, MarkedBlock::blockSize, true, false);
+        // libpas isn't calling pas_page_malloc commit, so we've got to commit the region ourselves
+        // https://bugs.webkit.org/show_bug.cgi?id=292771
+        OSAllocator::commit(result, MarkedBlock::blockSize, true, false);
 #endif
-            return result;
+        return result;
 #elif USE(MIMALLOC)
-            return mi_heap_malloc_aligned(structureHeap, MarkedBlock::blockSize, MarkedBlock::blockSize);
-#endif
-        }
-
+        return mi_heap_malloc_aligned(structureHeap, MarkedBlock::blockSize, MarkedBlock::blockSize);
+#else
         size_t freeIndex;
         {
             Locker locker(m_lock);
@@ -174,20 +186,16 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         commitBlock(block);
         return block;
+#endif
     }
 
     void freeStructureBlock(void* blockPtr)
     {
-        if (!m_useSystemHeap) [[likely]] {
 #if USE(LIBPAS)
-            bmalloc_deallocate_inline(blockPtr);
-            return;
+        js_marked_block_heap_deallocate(blockPtr);
 #elif USE(MIMALLOC)
-            mi_free(blockPtr);
-            return;
-#endif
-        }
-
+        mi_free(blockPtr);
+#else
         decommitBlock(blockPtr);
         uintptr_t block = reinterpret_cast<uintptr_t>(blockPtr);
         RELEASE_ASSERT(g_jscConfig.startOfStructureHeap <= block && block < g_jscConfig.startOfStructureHeap + g_jscConfig.sizeOfStructureHeap);
@@ -195,8 +203,10 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
         Locker locker(m_lock);
         m_usedBlocks.quickClear((block - g_jscConfig.startOfStructureHeap) / MarkedBlock::blockSize);
+#endif
     }
 
+#if !USE(LIBPAS) && !USE(MIMALLOC)
     static void commitBlock(void* block)
     {
 #if OS(UNIX) && !PLATFORM(PLAYSTATION) && ASSERT_ENABLED
@@ -220,11 +230,13 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         OSAllocator::decommit(block, MarkedBlock::blockSize);
 #endif
     }
+#endif
 
 private:
+#if !USE(LIBPAS) && !USE(MIMALLOC)
     Lock m_lock;
-    bool m_useSystemHeap { true };
     BitVector m_usedBlocks;
+#endif
 };
 
 static LazyNeverDestroyed<StructureMemoryManager> s_structureMemoryManager;

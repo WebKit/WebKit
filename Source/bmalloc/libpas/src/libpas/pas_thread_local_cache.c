@@ -32,6 +32,7 @@
 #include "pas_all_heap_configs.h"
 #include "pas_bitvector.h"
 #include "pas_committed_pages_vector.h"
+#include "pas_low_memory_mode.h"
 #include "pas_heap_lock.h"
 #include "pas_large_utility_free_heap.h"
 #include "pas_log.h"
@@ -296,8 +297,23 @@ pas_thread_local_cache* pas_thread_local_cache_create(void)
     pas_thread_local_cache_layout_node layout_node;
 
     allocator_index_upper_bound = pas_thread_local_cache_layout_next_allocator_index;
-    
-    thread_local_cache = allocate_cache(allocator_index_upper_bound);
+
+    /* In low-memory mode, pre-size the TLC up to the natural one-page limit
+       so we don't need to grow (and re-allocate the page) every time another
+       size_directory registers a new allocator slot. The page is the cost of
+       the TLC either way; we just avoid burning a *second* 16 KB page on the
+       grow path that was observed in trace data. */
+    unsigned initial_capacity = allocator_index_upper_bound;
+    if (pas_low_memory_mode) {
+        size_t page_size = pas_page_malloc_alignment();
+        size_t offset = PAS_OFFSETOF(pas_thread_local_cache, local_allocators);
+        if (page_size > offset) {
+            unsigned max_in_one_page = (unsigned)((page_size - offset) / 8);
+            if (initial_capacity < max_in_one_page)
+                initial_capacity = max_in_one_page;
+        }
+    }
+    thread_local_cache = allocate_cache(initial_capacity);
     
     thread_local_cache->node = pas_thread_local_cache_node_allocate();
 
@@ -400,7 +416,7 @@ pas_local_allocator_result pas_thread_local_cache_get_local_allocator_slow(
         
         index_capacity = PAS_MAX(thread_local_cache->allocator_index_capacity << 1,
                                  desired_index_upper_bound);
-        
+
         new_thread_local_cache = allocate_cache(index_capacity);
     
         if (verbose)

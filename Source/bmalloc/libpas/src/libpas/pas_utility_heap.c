@@ -31,6 +31,7 @@
 
 #include "pas_allocation_callbacks.h"
 #include "pas_local_allocator_inlines.h"
+#include "pas_low_memory_mode.h"
 #include "pas_utility_heap_config.h"
 
 pas_utility_heap_support pas_utility_heap_support_instance = PAS_UTILITY_HEAP_SUPPORT_INITIALIZER;
@@ -74,6 +75,23 @@ void* pas_utility_heap_try_allocate_with_alignment(
 
     aligned_size = pas_round_up_to_power_of_2(size, alignment);
 
+    /* In low-memory mode, route the entire utility heap through the immortal
+       heap. The utility heap is segregated -- its first call lazily allocates
+       a 54 KB pas_utility_heap_allocators table plus a 16 KB segregated page
+       per touched size class plus a pas_segregated_heap_ensure_size_directory
+       chain that pulls in expendable-memory infrastructure. None of that pays
+       off for a short-lived libpas client (e.g. the only-js_heap user under
+       RAMification): the utility heap holds bookkeeping that lives for the
+       process lifetime anyway, so leaking it into the immortal heap is fine
+       and skips 60-100 KB of fixed bring-up overhead.
+       pas_utility_heap_deallocate handles the matching no-op below. */
+    if (pas_low_memory_mode) {
+        result = pas_immortal_heap_allocate_with_alignment(
+            aligned_size, alignment, name, pas_object_allocation);
+        pas_did_allocate(result, size, pas_utility_heap_kind, name, pas_object_allocation);
+        return result;
+    }
+
     index = pas_segregated_heap_index_for_size(aligned_size, PAS_UTILITY_HEAP_CONFIG);
 
     if (index >= PAS_NUM_UTILITY_SIZE_CLASSES) {
@@ -86,7 +104,7 @@ void* pas_utility_heap_try_allocate_with_alignment(
     allocators = pas_utility_heap_support_instance.allocators;
     if (!allocators) {
         size_t index_to_init;
-        
+
         allocators = pas_immortal_heap_allocate(
             sizeof(pas_utility_heap_allocator) * PAS_NUM_UTILITY_SIZE_CLASSES,
             "pas_utility_heap_allocators",
@@ -94,7 +112,7 @@ void* pas_utility_heap_try_allocate_with_alignment(
 
         for (index_to_init = PAS_NUM_UTILITY_SIZE_CLASSES; index_to_init--;)
             allocators[index_to_init].allocator = PAS_LOCAL_ALLOCATOR_NULL_INITIALIZER;
-        
+
         pas_utility_heap_support_instance.allocators = allocators;
     }
     allocator = &allocators[index].allocator;
@@ -161,6 +179,14 @@ void pas_utility_heap_deallocate(void* ptr)
         return;
 
     pas_will_deallocate(ptr, 0, pas_utility_heap_kind, pas_object_allocation);
+
+    /* In low-memory mode allocations were routed through the immortal heap,
+       which has no free path; deallocate becomes a no-op. The matching
+       allocator (pas_utility_heap_try_allocate_with_alignment) bypasses the
+       segregated machinery entirely so it's never safe to call
+       pas_segregated_page_deallocate on the returned pointer. */
+    if (pas_low_memory_mode)
+        return;
 
     begin = (uintptr_t)ptr;
 

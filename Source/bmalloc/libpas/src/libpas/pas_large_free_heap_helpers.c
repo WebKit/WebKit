@@ -32,7 +32,9 @@
 #include "pas_allocation_callbacks.h"
 #include "pas_compute_summary_object_callbacks.h"
 #include "pas_fast_large_free_heap.h"
+#include "pas_immortal_heap.h"
 #include "pas_large_sharing_pool.h"
+#include "pas_low_memory_mode.h"
 #include "pas_page_malloc.h"
 #include "pas_page_sharing_pool.h"
 #include "pas_zero_memory.h"
@@ -125,6 +127,28 @@ void* pas_large_free_heap_helpers_try_allocate_with_alignment(
     pas_large_free_heap_config config;
     pas_allocation_result result;
     pas_heap_lock_assert_held();
+
+    /* In low-memory mode, route this heap through the immortal heap instead
+       of the page-aligned bootstrap_free_heap backing. The main client is the
+       pas_thread_local_cache: each 16 KB TLC allocation would otherwise
+       consume a full 16 KB mmap chunk from bootstrap_free_heap (along with
+       1-2 more chunks for bitvector/hashtable allocations whose alignment
+       requirements prevent coalescing into earlier chunks). Immortal allocs
+       pack freely inside the compact_heap_reservation region that libpas has
+       already reserved, so these small companions stop burning fresh pages.
+       The matching deallocation path is a no-op in low-memory mode. */
+    if (pas_low_memory_mode) {
+        void* ptr = pas_immortal_heap_allocate_with_alignment(
+            size, alignment.alignment, name, pas_object_allocation);
+        pas_did_allocate(ptr, size, pas_large_utility_free_heap_kind, name, pas_object_allocation);
+        if (ptr) {
+            (*num_allocated_object_bytes_ptr) += size;
+            (*num_allocated_object_bytes_peak_ptr) = PAS_MAX(
+                *num_allocated_object_bytes_ptr, *num_allocated_object_bytes_peak_ptr);
+        }
+        return ptr;
+    }
+
     initialize_config(&config, memory_source);
     alignment = pas_alignment_round_up(alignment, PAS_INTERNAL_MIN_ALIGN);
     result = pas_fast_large_free_heap_try_allocate(heap, size, alignment, &config);
@@ -163,6 +187,12 @@ void pas_large_free_heap_helpers_deallocate(
     pas_heap_lock_assert_held();
     if (!size)
         return;
+
+    /* Matches the low-memory allocation path above: allocations came from the
+       immortal heap, which has no free path. Treat this as a no-op. */
+    if (pas_low_memory_mode)
+        return;
+
     initialize_config(&config, memory_source);
     pas_will_deallocate(ptr, size, pas_large_utility_free_heap_kind, pas_object_allocation);
     if (pas_large_utility_free_heap_talks_to_large_sharing_pool) {

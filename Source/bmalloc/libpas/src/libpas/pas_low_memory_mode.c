@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,22 +20,15 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PAS_ALL_HEAP_CONFIGS_H
-#define PAS_ALL_HEAP_CONFIGS_H
+#include "pas_config.h"
 
-#include "bmalloc_heap_config.h"
-#include "hotbit_heap_config.h"
-#include "iso_heap_config.h"
-#include "iso_test_heap_config.h"
-#include "jit_heap_config.h"
-#include "js_heap_config.h"
-#include "minalign32_heap_config.h"
-#include "pagesize64k_heap_config.h"
-#include "pas_utility_heap_config.h"
-#include "thingy_heap_config.h"
+#if LIBPAS_ENABLED
 
-#endif /* PAS_ALL_HEAP_CONFIG_H */
+#include "pas_low_memory_mode.h"
 
+bool pas_low_memory_mode = false;
+
+#endif /* LIBPAS_ENABLED */

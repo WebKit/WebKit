@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,22 +20,26 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PAS_ALL_HEAP_CONFIGS_H
-#define PAS_ALL_HEAP_CONFIGS_H
+#ifndef PAS_LOW_MEMORY_MODE_H
+#define PAS_LOW_MEMORY_MODE_H
 
-#include "bmalloc_heap_config.h"
-#include "hotbit_heap_config.h"
-#include "iso_heap_config.h"
-#include "iso_test_heap_config.h"
-#include "jit_heap_config.h"
-#include "js_heap_config.h"
-#include "minalign32_heap_config.h"
-#include "pagesize64k_heap_config.h"
-#include "pas_utility_heap_config.h"
-#include "thingy_heap_config.h"
+#include "pas_utils.h"
 
-#endif /* PAS_ALL_HEAP_CONFIG_H */
+PAS_BEGIN_EXTERN_C;
 
+/* When true, libpas trades some performance for a smaller initial footprint:
+   - skips the eager zero-init of pas_utility_heap_allocators (~50 KB of pages
+     stay clean until each size class is actually used).
+
+   The embedder sets this before performing the first libpas allocation. JSC
+   sets it from StructureAlignedMemoryAllocator init when bmalloc has been
+   routed through system malloc (e.g. Malloc=X) or when VM mini mode is on,
+   both of which are signals that "memory matters right now". */
+PAS_API extern bool pas_low_memory_mode;
+
+PAS_END_EXTERN_C;
+
+#endif /* PAS_LOW_MEMORY_MODE_H */

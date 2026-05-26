@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,22 +20,26 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PAS_ALL_HEAP_CONFIGS_H
-#define PAS_ALL_HEAP_CONFIGS_H
+#ifndef JS_HEAP_INNARDS_H
+#define JS_HEAP_INNARDS_H
 
-#include "bmalloc_heap_config.h"
-#include "hotbit_heap_config.h"
-#include "iso_heap_config.h"
-#include "iso_test_heap_config.h"
-#include "jit_heap_config.h"
-#include "js_heap_config.h"
-#include "minalign32_heap_config.h"
-#include "pagesize64k_heap_config.h"
-#include "pas_utility_heap_config.h"
-#include "thingy_heap_config.h"
+#include "bmalloc_type.h"
+#include "pas_config.h"
+#include "pas_allocator_counts.h"
+#include "pas_dynamic_primitive_heap_map.h"
+#include "pas_heap_ref.h"
 
-#endif /* PAS_ALL_HEAP_CONFIG_H */
+#if PAS_ENABLE_BMALLOC
 
+PAS_BEGIN_EXTERN_C;
+
+PAS_API extern pas_allocator_counts js_allocator_counts;
+
+PAS_END_EXTERN_C;
+
+#endif /* PAS_ENABLE_BMALLOC */
+
+#endif /* JS_HEAP_INNARDS_H */

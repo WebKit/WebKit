@@ -55,6 +55,11 @@ PAS_API bool pas_compact_expendable_memory_commit_if_necessary(void* object, siz
 
 static inline void pas_compact_expendable_memory_note_use(void* object, size_t size)
 {
+    /* In low-memory mode pas_compact_expendable_memory_allocate routes through
+       the immortal heap and never installs a payload, so there's nothing to
+       commit/decommit and the offset arithmetic below would be invalid. */
+    if (!pas_compact_expendable_memory_payload)
+        return;
     pas_expendable_memory_note_use(
         &pas_compact_expendable_memory_header.header, pas_compact_expendable_memory_payload, object, size);
 }
@@ -62,6 +67,8 @@ static inline void pas_compact_expendable_memory_note_use(void* object, size_t s
 static PAS_ALWAYS_INLINE bool pas_compact_expendable_memory_touch(
     void* object, size_t size, pas_expendable_memory_touch_kind kind)
 {
+    if (!pas_compact_expendable_memory_payload)
+        return false;
     switch (kind) {
     case pas_expendable_memory_touch_to_note_use:
         pas_compact_expendable_memory_note_use(object, size);
