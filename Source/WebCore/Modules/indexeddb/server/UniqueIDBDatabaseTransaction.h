@@ -62,11 +62,20 @@ public:
 
     WEBCORE_EXPORT ~UniqueIDBDatabaseTransaction();
 
+<<<<<<< HEAD
     WEBCORE_EXPORT UniqueIDBDatabaseConnection* NODELETE databaseConnection() const;
     UniqueIDBDatabase* NODELETE database() const;
     const IDBTransactionInfo& info() const LIFETIME_BOUND { return m_transactionInfo; }
     WEBCORE_EXPORT bool NODELETE isVersionChange() const;
     bool NODELETE isReadOnly() const;
+=======
+    WEBCORE_EXPORT UniqueIDBDatabaseConnection* databaseConnection() const;
+    UniqueIDBDatabase* database() const;
+    CheckedPtr<UniqueIDBDatabase> checkedDatabase() const;
+    const IDBTransactionInfo& info() const { return m_transactionInfo; }
+    WEBCORE_EXPORT bool isVersionChange() const;
+    bool isReadOnly() const;
+>>>>>>> 293e2d766d11 (IndexedDB Connection/Transaction Identifier Confusion)
 
     IDBDatabaseInfo* NODELETE originalDatabaseInfo() const;
 

@@ -304,7 +304,11 @@ private:
     const SuspendableWorkQueue& workQueue() const WTF_RETURNS_CAPABILITY(m_queue.get()) { return m_queue; }
     SuspendableWorkQueue& workQueue() WTF_RETURNS_CAPABILITY(m_queue.get()) { return m_queue; }
     OriginQuotaManager::Parameters originQuotaManagerParameters(const WebCore::ClientOrigin&);
+<<<<<<< HEAD
     RefPtr<WebCore::IDBServer::UniqueIDBDatabaseTransaction> NODELETE idbTransaction(const WebCore::IDBRequestData&, IPC::Connection&);
+=======
+    RefPtr<WebCore::IDBServer::UniqueIDBDatabaseTransaction> idbTransaction(const WebCore::IDBRequestData&, IPC::Connection&);
+>>>>>>> 293e2d766d11 (IndexedDB Connection/Transaction Identifier Confusion)
     void setStorageSiteValidationEnabledInternal(bool);
     void updateAllowedSitesForConnectionInternal(IPC::Connection::UniqueID, std::optional<HashSet<WebCore::RegistrableDomain>>&&);
     bool isSiteAllowedForConnection(IPC::Connection::UniqueID, const WebCore::RegistrableDomain&) const;

@@ -1978,6 +1978,7 @@ void NetworkStorageManager::clear(IPC::Connection& connection, StorageAreaIdenti
 
 void NetworkStorageManager::openDatabase(IPC::Connection& connection, const WebCore::IDBOpenRequestData& requestData)
 {
+<<<<<<< HEAD
     auto origin = requestData.databaseIdentifier().origin();
     MESSAGE_CHECK(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), connection);
     MESSAGE_CHECK(requestData.requestIdentifier().connectionIdentifier(), connection);
@@ -1987,6 +1988,12 @@ void NetworkStorageManager::openDatabase(IPC::Connection& connection, const WebC
         return;
 
     protect(originStorageManager(origin)->idbStorageManager(*m_idbStorageRegistry, useSQLiteMemoryBackingStore()))->openDatabase(*connectionToClient, requestData);
+=======
+    RefPtr connectionToClient = m_idbStorageRegistry->ensureConnectionToClient(connection, requestData.requestIdentifier());
+    if (!connectionToClient)
+        return;
+    checkedOriginStorageManager(requestData.databaseIdentifier().origin())->checkedIDBStorageManager(*m_idbStorageRegistry)->openDatabase(*connectionToClient, requestData);
+>>>>>>> 293e2d766d11 (IndexedDB Connection/Transaction Identifier Confusion)
 }
 
 void NetworkStorageManager::openDBRequestCancelled(IPC::Connection& connection, const WebCore::IDBOpenRequestData& requestData)
@@ -1999,6 +2006,7 @@ void NetworkStorageManager::openDBRequestCancelled(IPC::Connection& connection, 
 
 void NetworkStorageManager::deleteDatabase(IPC::Connection& connection, const WebCore::IDBOpenRequestData& requestData)
 {
+<<<<<<< HEAD
     auto origin = requestData.databaseIdentifier().origin();
     MESSAGE_CHECK(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), connection);
     MESSAGE_CHECK(requestData.requestIdentifier().connectionIdentifier(), connection);
@@ -2008,6 +2016,12 @@ void NetworkStorageManager::deleteDatabase(IPC::Connection& connection, const We
         return;
 
     protect(originStorageManager(origin)->idbStorageManager(*m_idbStorageRegistry, useSQLiteMemoryBackingStore()))->deleteDatabase(*connectionToClient, requestData);
+=======
+    RefPtr connectionToClient = m_idbStorageRegistry->ensureConnectionToClient(connection, requestData.requestIdentifier());
+    if (!connectionToClient)
+        return;
+    checkedOriginStorageManager(requestData.databaseIdentifier().origin())->checkedIDBStorageManager(*m_idbStorageRegistry)->deleteDatabase(*connectionToClient, requestData);
+>>>>>>> 293e2d766d11 (IndexedDB Connection/Transaction Identifier Confusion)
 }
 
 void NetworkStorageManager::establishTransaction(IPC::Connection& ipcConnection, WebCore::IDBDatabaseConnectionIdentifier databaseConnectionIdentifier, const WebCore::IDBTransactionInfo& transactionInfo)
@@ -2080,7 +2094,11 @@ void NetworkStorageManager::didFinishHandlingVersionChangeTransaction(IPC::Conne
         databaseConnection->didFinishHandlingVersionChange(transactionIdentifier);
 }
 
+<<<<<<< HEAD
 SUPPRESS_NODELETE RefPtr<WebCore::IDBServer::UniqueIDBDatabaseTransaction> NetworkStorageManager::idbTransaction(const WebCore::IDBRequestData& requestData, IPC::Connection& connection)
+=======
+RefPtr<WebCore::IDBServer::UniqueIDBDatabaseTransaction> NetworkStorageManager::idbTransaction(const WebCore::IDBRequestData& requestData, IPC::Connection& connection)
+>>>>>>> 293e2d766d11 (IndexedDB Connection/Transaction Identifier Confusion)
 {
     return m_idbStorageRegistry->transaction(requestData.transactionIdentifier(), connection);
 }
@@ -2225,6 +2243,7 @@ void NetworkStorageManager::iterateCursor(IPC::Connection& connection, const Web
 
 void NetworkStorageManager::getAllDatabaseNamesAndVersions(IPC::Connection& connection, const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::ClientOrigin& origin)
 {
+<<<<<<< HEAD
     MESSAGE_CHECK(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), connection);
     MESSAGE_CHECK(requestIdentifier.connectionIdentifier(), connection);
 
@@ -2233,6 +2252,12 @@ void NetworkStorageManager::getAllDatabaseNamesAndVersions(IPC::Connection& conn
         return;
 
     auto result = protect(originStorageManager(origin)->idbStorageManager(*m_idbStorageRegistry, useSQLiteMemoryBackingStore()))->getAllDatabaseNamesAndVersions();
+=======
+    RefPtr connectionToClient = m_idbStorageRegistry->ensureConnectionToClient(connection, requestIdentifier);
+    if (!connectionToClient)
+        return;
+    auto result = checkedOriginStorageManager(origin)->checkedIDBStorageManager(*m_idbStorageRegistry)->getAllDatabaseNamesAndVersions();
+>>>>>>> 293e2d766d11 (IndexedDB Connection/Transaction Identifier Confusion)
     connectionToClient->didGetAllDatabaseNamesAndVersions(requestIdentifier, WTF::move(result));
 }
 

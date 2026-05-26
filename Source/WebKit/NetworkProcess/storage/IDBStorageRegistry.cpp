@@ -107,7 +107,11 @@ bool IDBStorageRegistry::isValidConnectionForIPC(WebCore::IDBServer::UniqueIDBDa
     return it->value->ipcConnection() == ipcConnection.uniqueID();
 }
 
+<<<<<<< HEAD
 SUPPRESS_NODELETE RefPtr<WebCore::IDBServer::UniqueIDBDatabaseConnection> IDBStorageRegistry::connection(WebCore::IDBDatabaseConnectionIdentifier identifier, IPC::Connection& ipcConnection)
+=======
+RefPtr<WebCore::IDBServer::UniqueIDBDatabaseConnection> IDBStorageRegistry::connection(WebCore::IDBDatabaseConnectionIdentifier identifier, IPC::Connection& ipcConnection)
+>>>>>>> 293e2d766d11 (IndexedDB Connection/Transaction Identifier Confusion)
 {
     RefPtr databaseConnection = m_connections.get(identifier);
     if (!databaseConnection)
@@ -118,7 +122,11 @@ SUPPRESS_NODELETE RefPtr<WebCore::IDBServer::UniqueIDBDatabaseConnection> IDBSto
     return databaseConnection;
 }
 
+<<<<<<< HEAD
 SUPPRESS_NODELETE RefPtr<WebCore::IDBServer::UniqueIDBDatabaseTransaction> IDBStorageRegistry::transaction(WebCore::IDBResourceIdentifier identifier, IPC::Connection& ipcConnection)
+=======
+RefPtr<WebCore::IDBServer::UniqueIDBDatabaseTransaction> IDBStorageRegistry::transaction(WebCore::IDBResourceIdentifier identifier, IPC::Connection& ipcConnection)
+>>>>>>> 293e2d766d11 (IndexedDB Connection/Transaction Identifier Confusion)
 {
     MESSAGE_CHECK_WITH_RETURN_VALUE(identifier.connectionIdentifier(), ipcConnection, nullptr);
     if (identifier.isEmpty())

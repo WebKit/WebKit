@@ -53,10 +53,17 @@ public:
     void removeConnectionToClient(IPC::Connection::UniqueID);
     void registerConnection(WebCore::IDBServer::UniqueIDBDatabaseConnection&);
     void unregisterConnection(WebCore::IDBServer::UniqueIDBDatabaseConnection&);
+<<<<<<< HEAD
     RefPtr<WebCore::IDBServer::UniqueIDBDatabaseConnection> NODELETE connection(WebCore::IDBDatabaseConnectionIdentifier, IPC::Connection&);
     void registerTransaction(WebCore::IDBServer::UniqueIDBDatabaseTransaction&);
     void unregisterTransaction(WebCore::IDBServer::UniqueIDBDatabaseTransaction&);
     RefPtr<WebCore::IDBServer::UniqueIDBDatabaseTransaction> NODELETE transaction(WebCore::IDBResourceIdentifier, IPC::Connection&);
+=======
+    RefPtr<WebCore::IDBServer::UniqueIDBDatabaseConnection> connection(WebCore::IDBDatabaseConnectionIdentifier, IPC::Connection&);
+    void registerTransaction(WebCore::IDBServer::UniqueIDBDatabaseTransaction&);
+    void unregisterTransaction(WebCore::IDBServer::UniqueIDBDatabaseTransaction&);
+    RefPtr<WebCore::IDBServer::UniqueIDBDatabaseTransaction> transaction(WebCore::IDBResourceIdentifier, IPC::Connection&);
+>>>>>>> 293e2d766d11 (IndexedDB Connection/Transaction Identifier Confusion)
 
 private:
     bool isValidConnectionForIPC(WebCore::IDBServer::UniqueIDBDatabaseConnection&, IPC::Connection&);
