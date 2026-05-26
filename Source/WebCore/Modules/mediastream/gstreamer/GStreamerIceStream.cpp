@@ -104,6 +104,7 @@ void webkitGstWebRTCIceStreamGatheringDone(const WebKitGstIceStream* ice)
 void webkitGstWebRTCIceStreamAddLocalGatheredCandidate(const WebKitGstIceStream* ice, RiceGatheredCandidate& candidate)
 {
     auto stream = WEBKIT_GST_WEBRTC_ICE_STREAM(ice);
+    GST_DEBUG_OBJECT(ice, "Local candidate gathered for stream %u on component %zu", stream->priv->streamId, candidate.candidate.component_id);
     rice_stream_add_local_gathered_candidate(stream->priv->riceStream.get(), &candidate);
 }
 

@@ -179,13 +179,15 @@ RTCRtpSendParameters GStreamerRtpSenderBackend::getParameters() const
         m_currentParameters = source->parameters();
     }, [&](const Ref<RealtimeOutgoingVideoSourceGStreamer>& source) {
         m_currentParameters = source->parameters();
-    }, [](const std::nullptr_t&) {
+    }, [&](const std::nullptr_t&) {
+        GST_DEBUG_OBJECT(m_rtcSender.get(), "No outgoing source yet, unable to retrieve parameters");
     });
 
     GST_DEBUG_OBJECT(m_rtcSender.get(), "Current parameters: %" GST_PTR_FORMAT, m_currentParameters.get());
-    if (!m_currentParameters)
+    if (!m_currentParameters) {
+        GST_DEBUG_OBJECT(m_rtcSender.get(), "Using init data: %" GST_PTR_FORMAT, m_initData.get());
         return toRTCRtpSendParameters(m_initData.get());
-
+    }
     return toRTCRtpSendParameters(m_currentParameters.get());
 }
 
