@@ -80,19 +80,22 @@ void TemporalPlainYearMonthConstructor::finishCreation(VM& vm, TemporalPlainYear
     plainYearMonthPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, this, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal.plainyearmonth
 JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainYearMonth, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    // Step 1: If NewTarget is undefined, throw TypeError — handled by JSC dispatch
+    // (callTemporalPlainYearMonth throws; this function is only reached as a constructor).
     JSObject* newTarget = asObject(callFrame->newTarget());
     Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, plainYearMonthStructure, newTarget, callFrame->jsCallee());
     RETURN_IF_EXCEPTION(scope, { });
 
-    double isoYear = 0;
-    double isoMonth = 1;
     auto argumentCount = callFrame->argumentCount();
 
+    // Step 3: Let y be ?ToIntegerWithTruncation(isoYear).
+    double isoYear = 0;
     if (argumentCount > 0) {
         auto value = callFrame->uncheckedArgument(0).toIntegerWithTruncation(globalObject);
         if (!std::isfinite(value)) [[unlikely]]
@@ -101,6 +104,8 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainYearMonth, (JSGlobalObject* globa
         RETURN_IF_EXCEPTION(scope, { });
     }
 
+    // Step 4: Let m be ?ToIntegerWithTruncation(isoMonth).
+    double isoMonth = 1;
     if (argumentCount > 1) {
         auto value = callFrame->uncheckedArgument(1).toIntegerWithTruncation(globalObject);
         if (!std::isfinite(value)) [[unlikely]]
@@ -112,33 +117,56 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainYearMonth, (JSGlobalObject* globa
     if (argumentCount < 2) [[unlikely]]
         return throwVMRangeError(globalObject, scope, "Temporal.PlainYearMonth requires at least two arguments"_s);
 
-    // Argument 2 is calendar -- ignored for now. FIXME
-
-    double referenceDay = 1;
-    if (argumentCount > 3) {
-        auto value = callFrame->uncheckedArgument(3).toIntegerWithTruncation(globalObject);
-        if (!std::isfinite(value)) [[unlikely]]
-            return throwVMRangeError(globalObject, scope, "Temporal.PlainYearMonth reference day must be finite"_s);
-        referenceDay = value;
-        RETURN_IF_EXCEPTION(scope, { });
+    // Step 5: If calendar is undefined, set calendar to "iso8601".
+    // Step 6: If calendar is not a String, throw TypeError.
+    // Step 7: Set calendar to ?CanonicalizeCalendar(calendar).
+    CalendarID calId = iso8601CalendarID();
+    if (argumentCount > 2) {
+        JSValue calendarArg = callFrame->uncheckedArgument(2);
+        if (!calendarArg.isUndefined()) {
+            if (!calendarArg.isString()) [[unlikely]]
+                return throwVMTypeError(globalObject, scope, "calendarId must be a string"_s);
+            auto rawCalendarId = asString(calendarArg)->value(globalObject);
+            RETURN_IF_EXCEPTION(scope, { });
+            auto canonicalized = isBuiltinCalendar(rawCalendarId);
+            if (!canonicalized) [[unlikely]]
+                return throwVMRangeError(globalObject, scope, "invalid calendar ID"_s);
+            calId = *canonicalized;
+        }
     }
 
-    if (!ISO8601::isValidISODate(isoYear, isoMonth, referenceDay)) [[unlikely]] {
-        return throwVMRangeError(globalObject, scope, "Temporal.PlainYearMonth: not a valid ISO date"_s);
-    };
+    // Step 8: Let ref be ?ToIntegerWithTruncation(referenceISODay).
+    // (Step 2 already defaulted referenceDay to 1 when referenceISODay is undefined.)
+    double referenceDay = 1;
+    if (argumentCount > 3) {
+        JSValue refArg = callFrame->uncheckedArgument(3);
+        if (!refArg.isUndefined()) {
+            auto value = refArg.toIntegerWithTruncation(globalObject);
+            if (!std::isfinite(value)) [[unlikely]]
+                return throwVMRangeError(globalObject, scope, "Temporal.PlainYearMonth reference day must be finite"_s);
+            referenceDay = value;
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+    }
 
-    // Duplicate code from TemporalPlainDate::toPlainDate so we can convert from
-    // double to int32_t / unsigned here
+    // Step 9: If IsValidISODate(y, m, ref) is false, throw RangeError.
+    if (!ISO8601::isValidISODate(isoYear, isoMonth, referenceDay)) [[unlikely]]
+        return throwVMRangeError(globalObject, scope, "Temporal.PlainYearMonth: not a valid ISO date"_s);
+
     if (!ISO8601::isYearWithinLimits(isoYear)) [[unlikely]]
         return throwVMRangeError(globalObject, scope, "year is out of range"_s);
-
     if (!isInBounds<int32_t>(isoMonth)) [[unlikely]]
         return throwVMRangeError(globalObject, scope, "month is out of range"_s);
-
     if (!isInBounds<int32_t>(referenceDay)) [[unlikely]]
         return throwVMRangeError(globalObject, scope, "reference day is out of range"_s);
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainYearMonth::tryCreateIfValid(globalObject, structure, ISO8601::PlainDate(static_cast<int32_t>(isoYear), static_cast<unsigned>(isoMonth), static_cast<unsigned>(referenceDay)))));
+    // Step 10: Let isoDate be CreateISODateRecord(y, m, ref).
+    // Step 11: Return ?CreateTemporalYearMonth(isoDate, calendar, NewTarget).
+    auto* result = TemporalPlainYearMonth::tryCreateIfValid(globalObject, structure, ISO8601::PlainDate(static_cast<int32_t>(isoYear), static_cast<unsigned>(isoMonth), static_cast<unsigned>(referenceDay)));
+    RETURN_IF_EXCEPTION(scope, { });
+    if (result && calId != iso8601CalendarID())
+        result->setCalendarID(calId);
+    return JSValue::encode(result);
 }
 
 JSC_DEFINE_HOST_FUNCTION(callTemporalPlainYearMonth, (JSGlobalObject* globalObject, CallFrame*))
@@ -162,7 +190,11 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthConstructorFuncFrom, (JSGlobalObj
         toTemporalOverflow(globalObject, callFrame->argument(1));
         RETURN_IF_EXCEPTION(scope, { });
 
-        RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainYearMonth::create(vm, globalObject->plainYearMonthStructure(), uncheckedDowncast<TemporalPlainYearMonth>(itemValue)->plainYearMonth())));
+        auto* src = uncheckedDowncast<TemporalPlainYearMonth>(itemValue);
+        auto* clone = TemporalPlainYearMonth::create(vm, globalObject->plainYearMonthStructure(), src->plainYearMonth());
+        if (clone && src->calendarID() != iso8601CalendarID())
+            clone->setCalendarID(src->calendarID());
+        RELEASE_AND_RETURN(scope, JSValue::encode(clone));
     }
     RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainYearMonth::from(globalObject, itemValue, callFrame->argument(1))));
 }
@@ -179,7 +211,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthConstructorFuncCompare, (JSGlobal
     auto* two = TemporalPlainYearMonth::from(globalObject, callFrame->argument(1), jsUndefined());
     RETURN_IF_EXCEPTION(scope, { });
 
-    return JSValue::encode(jsNumber(TemporalCalendar::isoDateCompare(
+    return JSValue::encode(jsNumber(TemporalCore::isoDateCompare(
         one->plainYearMonth().isoPlainDate(), two->plainYearMonth().isoPlainDate())));
 }
 

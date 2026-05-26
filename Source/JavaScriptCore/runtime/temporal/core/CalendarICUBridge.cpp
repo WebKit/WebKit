@@ -77,29 +77,32 @@ static std::unique_ptr<UCalendar, ICUDeleter<ucal_close>> openCalendar(CalendarI
     return cal;
 }
 
-// chineseCalendarExtendedYearFor1972 — probes ICU UCAL_EXTENDED_YEAR for the Chinese calendar
+// lunarCalendarExtendedYearFor1972 — probes UCAL_EXTENDED_YEAR for the given lunisolar calendar
 // at ISO 1972-02-15. Returns 1972 on ISO-proleptic ICU; epoch-based year on older Apple ICU.
-// Result is cached: ICU version is fixed for the process lifetime.
-int32_t chineseCalendarExtendedYearFor1972()
+// Chinese uses epoch 2637 BCE -> returns 4609 on ICU ≥76; Dangi uses epoch 2333 BCE -> returns 4305.
+// Result is cached per calendar: ICU version is fixed for the process lifetime.
+int32_t lunarCalendarExtendedYearFor1972(CalendarID calendarId)
 {
-    static int32_t cached = []() -> int32_t {
-        auto cal = openCalendar(chineseCalendarID());
-        if (!cal)
-            return 1972; // fallback: assume ISO-proleptic
-        // Use ucal_setMillis with a precomputed ISO epoch time — NOT ucal_setDateTime which
-        // sets calendar-native fields (not ISO fields) on a non-Gregorian calendar.
-        // ISO 1972-02-15 00:00:00 UTC = 66,960,000,000 ms from Unix epoch (1970-01-01).
-        static constexpr double iso1972Feb15EpochMs = 66960000000.0;
-        UErrorCode status = U_ZERO_ERROR;
-        ucal_setMillis(cal.get(), iso1972Feb15EpochMs, &status);
-        int32_t extYear = ucal_get(cal.get(), UCAL_EXTENDED_YEAR, &status);
-        if (U_FAILURE(status))
-            return 1972; // fallback: assume ISO-proleptic
-        // Return the raw EXTENDED_YEAR: 1972 on ISO-proleptic ICU,
-        // epoch-based year (whatever the current ICU uses) on older Apple ICU.
-        return extYear;
-    }();
-    return cached;
+    static int32_t chineseCached = INT32_MIN;
+    static int32_t dangiCached = INT32_MIN;
+    int32_t& cached = (calendarId == dangiCalendarID()) ? dangiCached : chineseCached;
+    if (cached != INT32_MIN)
+        return cached;
+    auto cal = openCalendar(calendarId);
+    if (!cal)
+        return cached = 1972; // fallback: assume ISO-proleptic
+    // Use ucal_setMillis with a precomputed ISO epoch time — NOT ucal_setDateTime which
+    // sets calendar-native fields (not ISO fields) on a non-Gregorian calendar.
+    // ISO 1972-02-15 00:00:00 UTC = 66,960,000,000 ms from Unix epoch (1970-01-01).
+    static constexpr double iso1972Feb15EpochMs = 66960000000.0;
+    UErrorCode status = U_ZERO_ERROR;
+    ucal_setMillis(cal.get(), iso1972Feb15EpochMs, &status);
+    int32_t extYear = ucal_get(cal.get(), UCAL_EXTENDED_YEAR, &status);
+    if (U_FAILURE(status))
+        return cached = 1972; // fallback: assume ISO-proleptic
+    // Return the raw EXTENDED_YEAR: 1972 on ISO-proleptic ICU,
+    // epoch-based year (whatever the current ICU uses) on older Apple ICU.
+    return cached = extYear;
 }
 
 // isoDateToEpochMs — internal: converts ISO PlainDate to epoch ms at noon UTC (avoids DST boundary issues)

@@ -33,6 +33,11 @@
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "TemporalInstant.h"
+#include "TemporalPlainDate.h"
+#include "TemporalPlainDateTime.h"
+#include "TemporalPlainMonthDay.h"
+#include "TemporalPlainTime.h"
+#include "TemporalPlainYearMonth.h"
 #include <wtf/DateMath.h>
 
 namespace JSC {
@@ -87,51 +92,184 @@ void IntlDateTimeFormatPrototype::finishCreation(VM& vm, JSGlobalObject* globalO
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
+using DateTimeValueRecord = IntlDateTimeFormat::DateTimeValueRecord;
+
+
+bool IntlDateTimeFormat::isTemporalObject(JSValue x)
+{
+    // FIXME: || dynamicDowncast<TemporalZonedDateTime>(x)
+    return dynamicDowncast<TemporalInstant>(x)
+        || dynamicDowncast<TemporalPlainDate>(x)
+        || dynamicDowncast<TemporalPlainDateTime>(x)
+        || dynamicDowncast<TemporalPlainTime>(x)
+        || dynamicDowncast<TemporalPlainYearMonth>(x)
+        || dynamicDowncast<TemporalPlainMonthDay>(x);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-sametemporaltype
+bool IntlDateTimeFormat::sameTemporalType(JSValue x, JSValue y)
+{
+    if (!isTemporalObject(x) || !isTemporalObject(y))
+        return false;
+#define CHECK(T)                                                    \
+    if ((bool)dynamicDowncast<T>(x) != (bool)dynamicDowncast<T>(y)) \
+        return false;
+    CHECK(TemporalInstant)
+    CHECK(TemporalPlainDate)
+    CHECK(TemporalPlainDateTime)
+    CHECK(TemporalPlainTime)
+    CHECK(TemporalPlainYearMonth)
+    CHECK(TemporalPlainMonthDay)
+    // FIXME: CHECK(TemporalZonedDateTime)
+#undef CHECK
+    return true;
+}
+
 // HandleDateTimeValue ( dateTimeFormat, x )
 // https://tc39.es/proposal-temporal/#sec-temporal-handledatetimevalue
-static double handleDateTimeValue(JSGlobalObject* globalObject, JSValue x)
+IntlDateTimeFormat::DateTimeValueRecord IntlDateTimeFormat::handleDateTimeValue(JSGlobalObject* globalObject, const IntlDateTimeFormat* dtf, JSValue x)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (x.isUndefined())
-        RELEASE_AND_RETURN(scope, dateNowImpl().toNumber(globalObject));
+    using Kind = IntlDateTimeFormat::TemporalFieldKind;
+    using Style = IntlDateTimeFormat::DateTimeStyle;
 
-    // FIXME:
-    //  - Add all of the other Temporal types
-    //  - Work in epoch nanoseconds
-    //  - Return UDateFormat and UDateIntervalFormat depending on the type
-    TemporalInstant* instant = dynamicDowncast<TemporalInstant>(x);
-    if (instant)
-        return instant->exactTime().epochMilliseconds();
+    // If date is undefined, let x be !Call(%Date.now%, undefined).
+    // (#sec-datetime-format-functions step 3, #sec-Intl.DateTimeFormat.prototype.formatToParts step 3)
+    if (x.isUndefined()) {
+        double now = dateNowImpl().toNumber(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+        return { now, Kind::None };
+    }
 
-    RELEASE_AND_RETURN(scope, WTF::timeClip(x.toNumber(globalObject)));
+    // HandleDateTimeTemporalXxx step 4-5: [[TemporalXxxFormat]] null -> TypeError (date-only object with time-only DTF).
+    auto rejectTimeOnlyStyle = [&]() -> bool {
+        if (dtf && dtf->dateStyle() == Style::None && dtf->timeStyle() != Style::None) [[unlikely]] {
+            throwTypeError(globalObject, scope, "Cannot format a date-only Temporal object with a time-only DateTimeFormat (timeStyle without dateStyle)"_s);
+            return true;
+        }
+        return false;
+    };
+
+    // HandleDateTimeTemporalXxx step 4-5: [[TemporalXxxFormat]] null -> TypeError (time-only object with date-only DTF).
+    auto rejectDateOnlyStyle = [&]() -> bool {
+        if (dtf && dtf->dateStyle() != Style::None && dtf->timeStyle() == Style::None) [[unlikely]] {
+            throwTypeError(globalObject, scope, "Cannot format a time-only Temporal object with a date-only DateTimeFormat (dateStyle without timeStyle)"_s);
+            return true;
+        }
+        return false;
+    };
+
+    // HandleDateTimeTemporalXxx step 1: calendar must match dateTimeFormat.[[Calendar]] or be iso8601.
+    auto validateCalendar = [&](CalendarID calendarId, Kind kind) -> bool {
+        if (!dtf || calendarId == iso8601CalendarID())
+            return false;
+        if ((kind == Kind::PlainDate || kind == Kind::PlainDateTime) && calendarId == iso8601CalendarID())
+            return false;
+        if (!IntlDateTimeFormat::calendarMatchesICU(TemporalCore::calendarIDToString(calendarId), dtf->ensureCalendar())) [[unlikely]] {
+            throwRangeError(globalObject, scope, "Temporal object's calendar does not match DateTimeFormat calendar"_s);
+            return true;
+        }
+        return false;
+    };
+
+    // Helper for date-only types (steps 2-4): rejectTimeOnly + validateCalendar + noon epochMs.
+    auto makeDateRecord = [&](CalendarID calId, Kind kind, int32_t y, uint8_t m, uint8_t d) -> DateTimeValueRecord {
+        if (rejectTimeOnlyStyle())
+            return { };
+        if (validateCalendar(calId, kind))
+            return { };
+        auto et = ISO8601::ExactTime::fromISOPartsAndOffset(y, m, d, 12, 0, 0, 0, 0, 0, 0);
+        return { static_cast<double>(et.epochMilliseconds()), kind };
+    };
+
+    // Step 2: [[InitializedTemporalDate]] -> HandleDateTimeTemporalDate.
+    // https://tc39.es/proposal-temporal/#sec-temporal-handledatetimetemporaldate
+    if (auto* plainDate = dynamicDowncast<TemporalPlainDate>(x))
+        return makeDateRecord(plainDate->calendarID(), Kind::PlainDate, plainDate->year(), plainDate->month(), plainDate->day());
+
+    // Step 3: [[InitializedTemporalYearMonth]] -> HandleDateTimeTemporalYearMonth.
+    // https://tc39.es/proposal-temporal/#sec-temporal-handledatetimetemporalyearmonth
+    if (auto* yearMonth = dynamicDowncast<TemporalPlainYearMonth>(x))
+        return makeDateRecord(yearMonth->calendarID(), Kind::PlainYearMonth, yearMonth->year(), yearMonth->month(), 1);
+
+    // Step 4: [[InitializedTemporalMonthDay]] -> HandleDateTimeTemporalMonthDay.
+    // https://tc39.es/proposal-temporal/#sec-temporal-handledatetimetemporalmonthday
+    if (auto* monthDay = dynamicDowncast<TemporalPlainMonthDay>(x)) {
+        auto md = monthDay->plainMonthDay();
+        return makeDateRecord(monthDay->calendarID(), Kind::PlainMonthDay, md.isoPlainDate().year(), md.isoPlainDate().month(), md.isoPlainDate().day());
+    }
+
+    // Step 5: [[InitializedTemporalTime]] -> HandleDateTimeTemporalTime.
+    // https://tc39.es/proposal-temporal/#sec-temporal-handledatetimetemporaltime
+    if (auto* plainTime = dynamicDowncast<TemporalPlainTime>(x)) {
+        if (rejectDateOnlyStyle())
+            return { };
+        auto t = plainTime->plainTime();
+        auto et = ISO8601::ExactTime::fromISOPartsAndOffset(
+            1970, 1, 1, t.hour(), t.minute(), t.second(),
+            t.millisecond(), t.microsecond(), t.nanosecond(), 0);
+        return { static_cast<double>(et.epochMilliseconds()), Kind::PlainTime };
+    }
+
+    // Step 6: [[InitializedTemporalDateTime]] -> HandleDateTimeTemporalDateTime.
+    // https://tc39.es/proposal-temporal/#sec-temporal-handledatetimetemporaldatetime
+    if (auto* plainDateTime = dynamicDowncast<TemporalPlainDateTime>(x)) {
+        if (validateCalendar(plainDateTime->calendarID(), Kind::PlainDateTime))
+            return { };
+        auto d = plainDateTime->plainDate();
+        auto t = plainDateTime->plainTime();
+        auto et = ISO8601::ExactTime::fromISOPartsAndOffset(
+            d.year(), d.month(), d.day(), t.hour(), t.minute(), t.second(),
+            t.millisecond(), t.microsecond(), t.nanosecond(), 0);
+        return { static_cast<double>(et.epochMilliseconds()), Kind::PlainDateTime };
+    }
+
+    // Step 7: [[InitializedTemporalInstant]] -> HandleDateTimeTemporalInstant.
+    // https://tc39.es/proposal-temporal/#sec-temporal-handledatetimetemporalinstant
+    if (auto* instant = dynamicDowncast<TemporalInstant>(x))
+        return { static_cast<double>(instant->exactTime().epochMilliseconds()), Kind::Instant };
+
+    // FIXME
+    // Step 8: Assert ZonedDateTime -> throw TypeError.
+    // if (dynamicDowncast<TemporalZonedDateTime>(x)) [[unlikely]] {
+    //     throwTypeError(globalObject, scope, "Temporal.ZonedDateTime is not supported in Intl.DateTimeFormat; use toLocaleString() or convert to PlainDateTime first"_s);
+    //     return { };
+    // }
+
+    // Step 1 (HandleDateTimeOthers): x is a Number — TimeClip.
+    // https://tc39.es/proposal-temporal/#sec-temporal-handledatetimeothers
+    double clipped = WTF::timeClip(x.toNumber(globalObject));
+    RETURN_IF_EXCEPTION(scope, { });
+    return { clipped, IntlDateTimeFormat::TemporalFieldKind::None };
 }
 
+// https://tc39.es/proposal-temporal/#sec-datetime-format-functions
 JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatFuncFormatDateTime, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    // 12.1.7 DateTime Format Functions (ECMA-402)
-    // https://tc39.github.io/ecma402/#sec-formatdatetime
 
+    // Step 1: Let dtf be F.[[DateTimeFormat]].
     IntlDateTimeFormat* format = dynamicDowncast<IntlDateTimeFormat>(callFrame->thisValue());
     if (!format) [[unlikely]]
         return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.format called on value that's not a DateTimeFormat"_s));
 
-    JSValue date = callFrame->argument(0);
-    double value = handleDateTimeValue(globalObject, date);
+    // Steps 3-5: undefined→Date.now() / ToDateTimeFormattable / FormatDateTime (#sec-formatdatetime).
+    auto record = IntlDateTimeFormat::handleDateTimeValue(globalObject, format, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(format->format(globalObject, value)));
+    // Step 5: Return ?FormatDateTime(dtf, x). (#sec-formatdatetime)
+    RELEASE_AND_RETURN(scope, JSValue::encode(format->format(globalObject, record.value, record.kind)));
 }
 
+// https://tc39.es/ecma402/#sec-intl.datetimeformat.prototype.format
 JSC_DEFINE_CUSTOM_GETTER(intlDateTimeFormatPrototypeGetterFormat, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // 12.3.3 Intl.DateTimeFormat.prototype.format (ECMA-402 2.0)
     // 1. Let dtf be this DateTimeFormat object.
     auto* dtf = IntlDateTimeFormat::unwrapForOldFunctions(globalObject, JSValue::decode(thisValue));
     RETURN_IF_EXCEPTION(scope, { });
@@ -144,7 +282,7 @@ JSC_DEFINE_CUSTOM_GETTER(intlDateTimeFormatPrototypeGetterFormat, (JSGlobalObjec
     if (!boundFormat) {
         JSGlobalObject* globalObject = dtf->realm();
         // a. Let F be a new built-in function object as defined in 12.3.4.
-        // b. The value of F’s length property is 1. (Note: F’s length property was 0 in ECMA-402 1.0)
+        // b. The value of F's length property is 1. (Note: F's length property was 0 in ECMA-402 1.0)
         JSFunction* targetObject = JSFunction::create(vm, globalObject, 1, "format"_s, intlDateTimeFormatFuncFormatDateTime, ImplementationVisibility::Public);
         // c. Let bf be BoundFunctionCreate(F, «this value»).
         boundFormat = JSBoundFunction::create(vm, globalObject, targetObject, dtf, { }, 1, jsEmptyString(vm), makeSource("format"_s, SourceOrigin(), SourceTaintedOrigin::Untainted));
@@ -159,82 +297,92 @@ JSC_DEFINE_CUSTOM_GETTER(intlDateTimeFormatPrototypeGetterFormat, (JSGlobalObjec
     return JSValue::encode(boundFormat);
 }
 
+// https://tc39.es/proposal-temporal/#sec-Intl.DateTimeFormat.prototype.formatToParts
 JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatPrototypeFuncFormatToParts, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // 15.4 Intl.DateTimeFormat.prototype.formatToParts (ECMA-402 4.0)
-    // https://tc39.github.io/ecma402/#sec-Intl.DateTimeFormat.prototype.formatToParts
-
-    // Do not use unwrapForOldFunctions.
+    // Step 1: Let dtf be this value. Step 2: RequireInternalSlot.
     auto* dateTimeFormat = dynamicDowncast<IntlDateTimeFormat>(callFrame->thisValue());
     if (!dateTimeFormat) [[unlikely]]
         return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.formatToParts called on value that's not a DateTimeFormat"_s));
 
-    JSValue date = callFrame->argument(0);
-    double value = handleDateTimeValue(globalObject, date);
+    // Steps 3-4: undefined→Date.now() / ToDateTimeFormattable handled in handleDateTimeValue.
+    auto record = IntlDateTimeFormat::handleDateTimeValue(globalObject, dateTimeFormat, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, { });
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->formatToParts(globalObject, value)));
+    // Step 5: Return ?FormatDateTimeToParts(dtf, x).
+    RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->formatToParts(globalObject, record.value, record.kind)));
 }
 
-// http://tc39.es/proposal-intl-DateTimeFormat-formatRange/#sec-intl.datetimeformat.prototype.formatRange
+// https://tc39.es/proposal-temporal/#sec-intl.datetimeformat.prototype.formatRange
 JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatPrototypeFuncFormatRange, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // Do not use unwrapForOldFunctions.
+    // Step 1: Let dtf be this value. Step 2: RequireInternalSlot.
     auto* dateTimeFormat = dynamicDowncast<IntlDateTimeFormat>(callFrame->thisValue());
     if (!dateTimeFormat) [[unlikely]]
         return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.formatRange called on value that's not a DateTimeFormat"_s));
 
-    JSValue startDateValue = callFrame->argument(0);
-    JSValue endDateValue = callFrame->argument(1);
-
-    if (startDateValue.isUndefined() || endDateValue.isUndefined())
+    // Step 3: If startDate or endDate is undefined, throw TypeError.
+    JSValue startDate = callFrame->argument(0);
+    JSValue endDate = callFrame->argument(1);
+    if (startDate.isUndefined() || endDate.isUndefined()) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "startDate or endDate is undefined"_s);
 
-    double startDate = handleDateTimeValue(globalObject, startDateValue);
-    RETURN_IF_EXCEPTION(scope, { });
-    double endDate = handleDateTimeValue(globalObject, endDateValue);
-    RETURN_IF_EXCEPTION(scope, { });
+    // Steps 4-5: ToDateTimeFormattable — non-Temporal values convert to Number.
+    if (!IntlDateTimeFormat::isTemporalObject(startDate)) {
+        startDate = jsNumber(startDate.toNumber(globalObject));
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+    if (!IntlDateTimeFormat::isTemporalObject(endDate)) {
+        endDate = jsNumber(endDate.toNumber(globalObject));
+        RETURN_IF_EXCEPTION(scope, { });
+    }
 
+    // Step 6: Return ?FormatDateTimeRange(dtf, x, y) — PartitionDateTimeRangePattern inside.
     RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->formatRange(globalObject, startDate, endDate)));
 }
 
-// http://tc39.es/proposal-intl-DateTimeFormat-formatRange/#sec-intl.datetimeformat.prototype.formatRangeToParts
+// https://tc39.es/proposal-temporal/#sec-Intl.DateTimeFormat.prototype.formatRangeToParts
 JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatPrototypeFuncFormatRangeToParts, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // Do not use unwrapForOldFunctions.
+    // Step 1: Let dtf be this value. Step 2: RequireInternalSlot.
     auto* dateTimeFormat = dynamicDowncast<IntlDateTimeFormat>(callFrame->thisValue());
     if (!dateTimeFormat) [[unlikely]]
         return JSValue::encode(throwTypeError(globalObject, scope, "Intl.DateTimeFormat.prototype.formatRangeToParts called on value that's not a DateTimeFormat"_s));
 
-    JSValue startDateValue = callFrame->argument(0);
-    JSValue endDateValue = callFrame->argument(1);
-
-    if (startDateValue.isUndefined() || endDateValue.isUndefined())
+    // Step 3: If startDate or endDate is undefined, throw TypeError.
+    JSValue startDate = callFrame->argument(0);
+    JSValue endDate = callFrame->argument(1);
+    if (startDate.isUndefined() || endDate.isUndefined()) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "startDate or endDate is undefined"_s);
 
-    double startDate = handleDateTimeValue(globalObject, startDateValue);
-    RETURN_IF_EXCEPTION(scope, { });
-    double endDate = handleDateTimeValue(globalObject, endDateValue);
-    RETURN_IF_EXCEPTION(scope, { });
+    // Steps 4-5: ToDateTimeFormattable — non-Temporal values convert to Number.
+    if (!IntlDateTimeFormat::isTemporalObject(startDate)) {
+        startDate = jsNumber(startDate.toNumber(globalObject));
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+    if (!IntlDateTimeFormat::isTemporalObject(endDate)) {
+        endDate = jsNumber(endDate.toNumber(globalObject));
+        RETURN_IF_EXCEPTION(scope, { });
+    }
 
+    // Step 6: Return ?FormatDateTimeRangeToParts(dtf, x, y) — PartitionDateTimeRangePattern inside.
     RELEASE_AND_RETURN(scope, JSValue::encode(dateTimeFormat->formatRangeToParts(globalObject, startDate, endDate)));
 }
 
+// https://tc39.es/ecma402/#sec-intl.datetimeformat.prototype.resolvedoptions
 JSC_DEFINE_HOST_FUNCTION(intlDateTimeFormatPrototypeFuncResolvedOptions, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-
-    // 12.3.5 Intl.DateTimeFormat.prototype.resolvedOptions() (ECMA-402 2.0)
 
     auto* dateTimeFormat = IntlDateTimeFormat::unwrapForOldFunctions(globalObject, callFrame->thisValue());
     RETURN_IF_EXCEPTION(scope, { });

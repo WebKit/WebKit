@@ -35,7 +35,15 @@
 #include "JSCInlines.h"
 #include "JSDateMath.h"
 #include "ObjectConstructor.h"
+#include "TemporalInstant.h"
+#include "TemporalPlainDate.h"
+#include "TemporalPlainDateTime.h"
+#include "TemporalPlainMonthDay.h"
+#include "TemporalPlainTime.h"
+#include "TemporalPlainYearMonth.h"
+// FIXME #include "TemporalZonedDateTime.h"
 #include <unicode/ucal.h>
+#include <unicode/udatpg.h>
 #include <unicode/uenum.h>
 #include <wtf/Range.h>
 #include <wtf/text/MakeString.h>
@@ -60,6 +68,12 @@ void UDateIntervalFormatDeleter::operator()(UDateIntervalFormat* formatter)
 {
     if (formatter)
         udtitvfmt_close(formatter);
+}
+
+void UFormattedDateIntervalDeleter::operator()(UFormattedDateInterval* result)
+{
+    if (result)
+        udtitvfmt_closeResult(result);
 }
 
 const ClassInfo IntlDateTimeFormat::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlDateTimeFormat) };
@@ -129,6 +143,41 @@ DEFINE_VISIT_CHILDREN(IntlDateTimeFormat);
 void IntlDateTimeFormat::setBoundFormat(VM& vm, JSBoundFunction* format)
 {
     m_boundFormat.set(vm, this, format);
+}
+
+IntlDateTimeFormat::DateTimeStyle IntlDateTimeFormat::dateStyle() const { return m_impl->m_dateStyle; }
+IntlDateTimeFormat::DateTimeStyle IntlDateTimeFormat::timeStyle() const { return m_impl->m_timeStyle; }
+IntlDateTimeFormat::TimeZoneName IntlDateTimeFormat::timeZoneName() const { return m_impl->m_timeZoneName; }
+
+const String& IntlDateTimeFormat::ensureCalendar() const
+{
+    if (m_impl->m_calendar.isNull())
+        m_impl->m_calendar = defaultCalendarForLocale(m_impl->m_dataLocale);
+    return m_impl->m_calendar;
+}
+
+const String& IntlDateTimeFormat::ensureNumberingSystem() const
+{
+    if (m_impl->m_numberingSystem.isNull())
+        m_impl->m_numberingSystem = defaultNumberingSystemForLocale(m_impl->m_dataLocale);
+    return m_impl->m_numberingSystem;
+}
+
+bool IntlDateTimeFormat::calendarMatchesICU(StringView temporalId, const String& icuCalId)
+{
+    if (temporalId == icuCalId)
+        return true;
+    // Normalize both IDs to their BCP47 canonical form and compare.
+    // mapICUCalendarKeywordToBCP47 maps ICU -> BCP47: "gregorian"->"gregory", "ethiopic-amete-alem"->"ethioaa".
+    // "islamicc" is a legacy alias for "islamic-civil" not covered by the mapping tables.
+    auto normalize = [](const String& id) -> String {
+        if (auto bcp47 = mapICUCalendarKeywordToBCP47(id))
+            return *bcp47;
+        if (id == "islamicc"_s)
+            return "islamic-civil"_s;
+        return id;
+    };
+    return normalize(temporalId.toString()) == normalize(icuCalId);
 }
 
 Vector<String> IntlDateTimeFormat::localeData(const String& locale, RelevantExtensionKey key)
@@ -423,25 +472,30 @@ inline void IntlDateTimeFormat::replaceHourCycleInSkeleton(Vector<char16_t, 32>&
     }
 }
 
+// Returns the ICU pattern character for the given hour cycle, or 'j' (locale default) for None.
+static char16_t hourCharForCycle(IntlDateTimeFormat::HourCycle hourCycle)
+{
+    switch (hourCycle) {
+    case IntlDateTimeFormat::HourCycle::H11:
+        return 'K';
+    case IntlDateTimeFormat::HourCycle::H12:
+        return 'h';
+    case IntlDateTimeFormat::HourCycle::H23:
+        return 'H';
+    case IntlDateTimeFormat::HourCycle::H24:
+        return 'k';
+    default:
+        return 'j';
+    }
+}
+
 inline void IntlDateTimeFormat::replaceHourCycleInPattern(Vector<char16_t, 32>& pattern, HourCycle hourCycle)
 {
-    char16_t hourFromHourCycle = 'H';
-    switch (hourCycle) {
-    case HourCycle::H11:
-        hourFromHourCycle = 'K';
-        break;
-    case HourCycle::H12:
-        hourFromHourCycle = 'h';
-        break;
-    case HourCycle::H23:
-        hourFromHourCycle = 'H';
-        break;
-    case HourCycle::H24:
-        hourFromHourCycle = 'k';
-        break;
-    case HourCycle::None:
+    if (hourCycle == HourCycle::None)
         return;
-    }
+    char16_t hourFromHourCycle = hourCharForCycle(hourCycle);
+
+    bool isTarget24Hour = (hourCycle == HourCycle::H23 || hourCycle == HourCycle::H24);
 
     for (unsigned i = 0, length = pattern.size(); i < length; ++i) {
         auto& character = pattern[i];
@@ -455,9 +509,26 @@ inline void IntlDateTimeFormat::replaceHourCycleInPattern(Vector<char16_t, 32>& 
         case 'K':
         case 'h':
         case 'H':
-        case 'k':
+        case 'k': {
+            char16_t originalChar = character;
             character = hourFromHourCycle;
+            // Pad single->double (e.g. H->HH) only when switching from a 12-hour char
+            // (h/K) to a 24-hour cycle, and only if this is a lone single-char symbol.
+            // createTemporalFormatter uses 'j' in the skeleton so ICU returns the locale's
+            // default h12 pattern; switching h->H without padding gives "0:00:00" at midnight.
+            auto isHourChar = [](char16_t ch) {
+                return ch == 'h' || ch == 'H' || ch == 'K' || ch == 'k';
+            };
+            bool isOrigin12Hour = (originalChar == 'h' || originalChar == 'K');
+            bool prevIsHour = i > 0 && isHourChar(pattern[i - 1]);
+            bool nextIsHour = i + 1 < length && isHourChar(pattern[i + 1]);
+            if (isTarget24Hour && isOrigin12Hour && !prevIsHour && !nextIsHour) {
+                pattern.insert(i + 1, hourFromHourCycle);
+                length++;
+                i++;
+            }
             break;
+        }
         }
     }
 }
@@ -650,7 +721,7 @@ String IntlDateTimeFormat::buildSkeleton(Weekday weekday, Era era, Year year, Mo
     return skeletonBuilder.toString();
 }
 
-// https://tc39.github.io/ecma402/#sec-initializedatetimeformat
+// https://tc39.es/proposal-temporal/#sec-initializedatetimeformat
 void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, JSValue locales, JSValue originalOptions, RequiredComponent required, Defaults defaults)
 {
     VM& vm = globalObject->vm();
@@ -672,7 +743,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     String calendar = intlStringOption(globalObject, options, vm.propertyNames->calendar, { }, { }, { });
     RETURN_IF_EXCEPTION(scope, void());
     if (!calendar.isNull()) {
-        if (!isUnicodeLocaleIdentifierType(calendar)) {
+        if (!isUnicodeLocaleIdentifierType(calendar)) [[unlikely]] {
             throwRangeError(globalObject, scope, "calendar is not a well-formed calendar value"_s);
             return;
         }
@@ -682,7 +753,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     String numberingSystem = intlStringOption(globalObject, options, vm.propertyNames->numberingSystem, { }, { }, { });
     RETURN_IF_EXCEPTION(scope, void());
     if (!numberingSystem.isNull()) {
-        if (!isUnicodeLocaleIdentifierType(numberingSystem)) {
+        if (!isUnicodeLocaleIdentifierType(numberingSystem)) [[unlikely]] {
             throwRangeError(globalObject, scope, "numberingSystem is not a well-formed numbering system value"_s);
             return;
         }
@@ -707,7 +778,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     auto resolved = resolveLocale(globalObject, availableLocales, requestedLocales, localeMatcher, localeOptions, { RelevantExtensionKey::Ca, RelevantExtensionKey::Hc, RelevantExtensionKey::Nu }, localeData);
 
     impl->m_locale = resolved.locale;
-    if (impl->m_locale.isEmpty()) {
+    if (impl->m_locale.isEmpty()) [[unlikely]] {
         throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat due to invalid locale"_s);
         return;
     }
@@ -806,6 +877,8 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     intlStringOption(globalObject, options, vm.propertyNames->formatMatcher, { "basic"_s, "best fit"_s }, "formatMatcher must be either \"basic\" or \"best fit\""_s, "best fit"_s);
     RETURN_IF_EXCEPTION(scope, void());
 
+    impl->m_hasExplicitComponents = (weekday != Weekday::None || year != Year::None || month != Month::None || day != Day::None || dayPeriod != DayPeriod::None || hour != Hour::None || minute != Minute::None || second != Second::None || fractionalSecondDigits);
+
     impl->m_dateStyle = intlOption<DateTimeStyle>(globalObject, options, vm.propertyNames->dateStyle, { { "full"_s, DateTimeStyle::Full }, { "long"_s, DateTimeStyle::Long }, { "medium"_s, DateTimeStyle::Medium }, { "short"_s, DateTimeStyle::Short } }, "dateStyle must be \"full\", \"long\", \"medium\", or \"short\""_s, DateTimeStyle::None);
     RETURN_IF_EXCEPTION(scope, void());
 
@@ -819,7 +892,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
         //     ii. Let p be opt.[[<prop>]].
         //     iii. If p is not undefined, then
         //         1. Throw a TypeError exception.
-        if (weekday != Weekday::None || era != Era::None || year != Year::None || month != Month::None || day != Day::None || dayPeriod != DayPeriod::None || hour != Hour::None || minute != Minute::None || second != Second::None || fractionalSecondDigits != 0 || timeZoneName != TimeZoneName::None) {
+        if (weekday != Weekday::None || era != Era::None || year != Year::None || month != Month::None || day != Day::None || dayPeriod != DayPeriod::None || hour != Hour::None || minute != Minute::None || second != Second::None || fractionalSecondDigits || timeZoneName != TimeZoneName::None) [[unlikely]] {
             throwTypeError(globalObject, scope, "dateStyle and timeStyle may not be used with other DateTimeFormat options"_s);
             return;
         }
@@ -857,13 +930,13 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
         String timeZoneForICU = impl->m_timeZone.toICUString();
         StringView timeZoneView(timeZoneForICU);
         auto dateFormatFromStyle = std::unique_ptr<UDateFormat, UDateFormatDeleter>(udat_open(parseUDateFormatStyle(impl->m_timeStyle), parseUDateFormatStyle(impl->m_dateStyle), dataLocaleWithExtensions.data(), timeZoneView.upconvertedCharacters(), timeZoneView.length(), nullptr, -1, &status));
-        if (U_FAILURE(status)) {
+        if (U_FAILURE(status)) [[unlikely]] {
             throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat"_s);
             return;
         }
         constexpr bool localized = false; // Aligned with how ICU SimpleDateTimeFormat::format works. We do not need to translate this to localized pattern.
         status = callBufferProducingFunction(udat_toPattern, dateFormatFromStyle.get(), localized, patternBuffer);
-        if (U_FAILURE(status)) {
+        if (U_FAILURE(status)) [[unlikely]] {
             throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat"_s);
             return;
         }
@@ -892,7 +965,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
             if (extractedHourCycle != HourCycle::None && isHour12(extractedHourCycle) != specifiedHour12) {
                 Vector<char16_t, 32> skeleton;
                 auto status = callBufferProducingFunction(udatpg_getSkeleton, nullptr, patternBuffer.span().data(), patternBuffer.size(), skeleton);
-                if (U_FAILURE(status)) {
+                if (U_FAILURE(status)) [[unlikely]] {
                     throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat"_s);
                     return;
                 }
@@ -900,7 +973,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
                 dataLogLnIf(IntlDateTimeFormatInternal::verbose, "replaced:(", StringView { skeleton.span() }, ")");
 
                 patternBuffer = vm.intlCache().getBestDateTimePattern(dataLocaleWithExtensions, skeleton.span(), status);
-                if (U_FAILURE(status)) {
+                if (U_FAILURE(status)) [[unlikely]] {
                     throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat"_s);
                     return;
                 }
@@ -939,7 +1012,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
         String skeleton = buildSkeleton(weekday, era, year, month, day, hour12, hourCycle, hour, dayPeriod, minute, second, fractionalSecondDigits, timeZoneName);
         UErrorCode status = U_ZERO_ERROR;
         patternBuffer = vm.intlCache().getBestDateTimePattern(dataLocaleWithExtensions, StringView(skeleton).upconvertedCharacters(), status);
-        if (U_FAILURE(status)) {
+        if (U_FAILURE(status)) [[unlikely]] {
             throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat"_s);
             return;
         }
@@ -957,7 +1030,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     UErrorCode status = U_ZERO_ERROR;
     String timeZoneForICU = impl->m_timeZone.toICUString();
     impl->m_dateFormat = openDateFormat(dataLocaleWithExtensions, timeZoneForICU, patternBuffer.span(), status);
-    if (U_FAILURE(status)) {
+    if (U_FAILURE(status)) [[unlikely]] {
         throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat"_s);
         return;
     }
@@ -1259,7 +1332,7 @@ static void NODELETE replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(Contain
     }
 }
 
-// https://tc39.es/ecma402/#sec-formatdatetime
+// https://tc39.es/proposal-temporal/#sec-formatdatetime
 JSValue IntlDateTimeFormat::format(JSGlobalObject* globalObject, double value) const
 {
     ASSERT(m_impl->m_dateFormat);
@@ -1342,35 +1415,31 @@ static ASCIILiteral partTypeString(UDateFormatField field)
     return "unknown"_s;
 }
 
-// https://tc39.es/ecma402/#sec-formatdatetimetoparts
-JSValue IntlDateTimeFormat::formatToParts(JSGlobalObject* globalObject, double value, JSString* sourceType) const
+static JSValue buildFormattedDateTimeParts(JSGlobalObject* globalObject, UDateFormat* format, double value, JSString* sourceType)
 {
-    ASSERT(m_impl->m_dateFormat);
-
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!std::isfinite(value))
+    if (!std::isfinite(value)) [[unlikely]]
         return throwRangeError(globalObject, scope, "date value is not finite in DateTimeFormat formatToParts()"_s);
 
     UErrorCode status = U_ZERO_ERROR;
     auto fields = std::unique_ptr<UFieldPositionIterator, UFieldPositionIteratorDeleter>(ufieldpositer_open(&status));
-    if (U_FAILURE(status))
+    if (U_FAILURE(status)) [[unlikely]]
         return throwTypeError(globalObject, scope, "failed to open field position iterator"_s);
 
     Vector<char16_t, 32> result;
-    status = callBufferProducingFunction(udat_formatForFields, m_impl->m_dateFormat.get(), value, result, fields.get());
-    if (U_FAILURE(status))
+    status = callBufferProducingFunction(udat_formatForFields, format, value, result, fields.get());
+    if (U_FAILURE(status)) [[unlikely]]
         return throwTypeError(globalObject, scope, "failed to format date value"_s);
     replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(result);
 
     JSArray* parts = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
-    if (!parts)
+    if (!parts) [[unlikely]]
         return throwOutOfMemoryError(globalObject, scope);
 
     StringView resultStringView(result.span());
     auto literalString = jsNontrivialString(vm, "literal"_s);
-
     int32_t resultLength = result.size();
     int32_t previousEndIndex = 0;
     int32_t beginIndex = 0;
@@ -1379,28 +1448,25 @@ JSValue IntlDateTimeFormat::formatToParts(JSGlobalObject* globalObject, double v
         auto fieldType = ufieldpositer_next(fields.get(), &beginIndex, &endIndex);
         if (fieldType < 0)
             beginIndex = endIndex = resultLength;
-
         if (previousEndIndex < beginIndex) {
-            auto value = jsString(vm, resultStringView.substring(previousEndIndex, beginIndex - previousEndIndex));
+            auto val = jsString(vm, resultStringView.substring(previousEndIndex, beginIndex - previousEndIndex));
             JSObject* part = sourceType
-                ? createIntlPartObjectWithSource(globalObject, literalString, value, sourceType)
-                : createIntlPartObject(globalObject, literalString, value);
+                ? createIntlPartObjectWithSource(globalObject, literalString, val, sourceType)
+                : createIntlPartObject(globalObject, literalString, val);
             parts->push(globalObject, part);
             RETURN_IF_EXCEPTION(scope, { });
         }
         previousEndIndex = endIndex;
-
         if (fieldType >= 0) {
             auto type = jsNontrivialString(vm, partTypeString(UDateFormatField(fieldType)));
-            auto value = jsString(vm, resultStringView.substring(beginIndex, endIndex - beginIndex));
+            auto val = jsString(vm, resultStringView.substring(beginIndex, endIndex - beginIndex));
             JSObject* part = sourceType
-                ? createIntlPartObjectWithSource(globalObject, type, value, sourceType)
-                : createIntlPartObject(globalObject, type, value);
+                ? createIntlPartObjectWithSource(globalObject, type, val, sourceType)
+                : createIntlPartObject(globalObject, type, val);
             parts->push(globalObject, part);
             RETURN_IF_EXCEPTION(scope, { });
         }
     }
-
     return parts;
 }
 
@@ -1417,7 +1483,7 @@ UDateIntervalFormat* IntlDateTimeFormat::createDateIntervalFormatIfNecessary(JSG
     Vector<char16_t, 32> pattern;
     {
         auto status = callBufferProducingFunction(udat_toPattern, m_impl->m_dateFormat.get(), false, pattern);
-        if (U_FAILURE(status)) {
+        if (U_FAILURE(status)) [[unlikely]] {
             throwTypeError(globalObject, scope, "failed to initialize DateIntervalFormat"_s);
             return nullptr;
         }
@@ -1426,7 +1492,7 @@ UDateIntervalFormat* IntlDateTimeFormat::createDateIntervalFormatIfNecessary(JSG
     Vector<char16_t, 32> skeleton;
     {
         auto status = callBufferProducingFunction(udatpg_getSkeleton, nullptr, pattern.span().data(), pattern.size(), skeleton);
-        if (U_FAILURE(status)) {
+        if (U_FAILURE(status)) [[unlikely]] {
             throwTypeError(globalObject, scope, "failed to initialize DateIntervalFormat"_s);
             return nullptr;
         }
@@ -1453,7 +1519,7 @@ UDateIntervalFormat* IntlDateTimeFormat::createDateIntervalFormatIfNecessary(JSG
     String timeZoneForICU = m_impl->m_timeZone.toICUString();
     StringView timeZoneView(timeZoneForICU);
     m_dateIntervalFormat = std::unique_ptr<UDateIntervalFormat, UDateIntervalFormatDeleter>(udtitvfmt_open(dataLocaleWithExtensions.data(), skeleton.span().data(), skeleton.size(), timeZoneView.upconvertedCharacters(), timeZoneView.length(), &status));
-    if (U_FAILURE(status)) {
+    if (U_FAILURE(status)) [[unlikely]] {
         throwTypeError(globalObject, scope, "failed to initialize DateIntervalFormat"_s);
         return nullptr;
     }
@@ -1463,9 +1529,9 @@ UDateIntervalFormat* IntlDateTimeFormat::createDateIntervalFormatIfNecessary(JSG
     return m_dateIntervalFormat.get();
 }
 
-static std::unique_ptr<UFormattedDateInterval, ICUDeleter<udtitvfmt_closeResult>> formattedValueFromDateRange(UDateIntervalFormat& dateIntervalFormat, const UDateFormat& dateFormat, double startDate, double endDate, UErrorCode& status)
+static std::unique_ptr<UFormattedDateInterval, UFormattedDateIntervalDeleter> formattedValueFromDateRange(UDateIntervalFormat& dateIntervalFormat, const UDateFormat& dateFormat, double startDate, double endDate, UErrorCode& status)
 {
-    auto result = std::unique_ptr<UFormattedDateInterval, ICUDeleter<udtitvfmt_closeResult>>(udtitvfmt_openResult(&status));
+    auto result = std::unique_ptr<UFormattedDateInterval, UFormattedDateIntervalDeleter>(udtitvfmt_openResult(&status));
     if (U_FAILURE(status))
         return nullptr;
 
@@ -1541,271 +1607,808 @@ static bool dateFieldsPracticallyEqual(const UFormattedValue* formattedValue, UE
     return !hasSpan;
 }
 
-JSValue IntlDateTimeFormat::formatRange(JSGlobalObject* globalObject, double startDate, double endDate)
+auto IntlDateTimeFormat::prepareDateRange(JSGlobalObject* globalObject, double& startDate, double& endDate) -> std::optional<DateRangePreamble>
 {
     ASSERT(m_impl->m_dateFormat);
-
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // http://tc39.es/proposal-intl-DateTimeFormat-formatRange/#sec-partitiondatetimerangepattern
     startDate = timeClip(startDate);
     endDate = timeClip(endDate);
-    if (std::isnan(startDate) || std::isnan(endDate)) {
+    if (std::isnan(startDate) || std::isnan(endDate)) [[unlikely]] {
         throwRangeError(globalObject, scope, "Passed date is out of range"_s);
-        return { };
+        return std::nullopt;
     }
 
     auto* dateIntervalFormat = createDateIntervalFormatIfNecessary(globalObject);
-    RETURN_IF_EXCEPTION(scope, { });
+    RETURN_IF_EXCEPTION(scope, std::nullopt);
 
     UErrorCode status = U_ZERO_ERROR;
     auto result = formattedValueFromDateRange(*dateIntervalFormat, *m_impl->m_dateFormat, startDate, endDate, status);
-    if (U_FAILURE(status)) {
+    if (U_FAILURE(status)) [[unlikely]] {
         throwTypeError(globalObject, scope, "Failed to format date interval"_s);
-        return { };
+        return std::nullopt;
     }
 
     // UFormattedValue is owned by UFormattedDateInterval. We do not need to close it.
-    auto formattedValue = udtitvfmt_resultAsValue(result.get(), &status);
-    if (U_FAILURE(status)) {
+    auto* formattedValue = udtitvfmt_resultAsValue(result.get(), &status);
+    if (U_FAILURE(status)) [[unlikely]] {
         throwTypeError(globalObject, scope, "Failed to format date interval"_s);
-        return { };
+        return std::nullopt;
     }
 
-    // If the formatted parts of startDate and endDate are the same, it is possible that the resulted string does not look like range.
-    // For example, if the requested format only includes "year" and startDate and endDate are the same year, the result just contains one year.
-    // In that case, startDate and endDate are *practically-equal* (spec term), and we generate parts as we call `formatToParts(startDate)` with
-    // `source: "shared"` additional fields.
     bool equal = dateFieldsPracticallyEqual(formattedValue, status);
-    if (U_FAILURE(status)) {
+    if (U_FAILURE(status)) [[unlikely]] {
         throwTypeError(globalObject, scope, "Failed to format date interval"_s);
-        return { };
+        return std::nullopt;
     }
 
-    if (equal)
-        RELEASE_AND_RETURN(scope, format(globalObject, startDate));
-
-    int32_t formattedStringLength = 0;
-    const char16_t* formattedStringPointer = ufmtval_getString(formattedValue, &formattedStringLength, &status);
-    if (U_FAILURE(status)) {
-        throwTypeError(globalObject, scope, "Failed to format date interval"_s);
-        return { };
-    }
-    Vector<char16_t, 32> buffer(std::span<const char16_t> { formattedStringPointer, static_cast<size_t>(formattedStringLength) });
-    replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(buffer);
-
-    return jsString(vm, String(WTF::move(buffer)));
+    return DateRangePreamble { std::unique_ptr<UFormattedDateInterval, UFormattedDateIntervalDeleter>(result.release()), formattedValue, equal };
 }
 
-JSValue IntlDateTimeFormat::formatRangeToParts(JSGlobalObject* globalObject, double startDate, double endDate)
+// https://tc39.es/proposal-temporal/#sec-partitiondatetimerangepattern
+auto IntlDateTimeFormat::partitionDateTimeRangePattern(JSGlobalObject* globalObject, JSValue xValue, JSValue yValue) -> std::optional<TemporalDateRangePreamble>
 {
     ASSERT(m_impl->m_dateFormat);
-
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // http://tc39.es/proposal-intl-DateTimeFormat-formatRange/#sec-partitiondatetimerangepattern
-    startDate = timeClip(startDate);
-    endDate = timeClip(endDate);
-    if (std::isnan(startDate) || std::isnan(endDate)) {
-        throwRangeError(globalObject, scope, "Passed date is out of range"_s);
-        return { };
+    // Step 1: SameTemporalType check.
+    if (isTemporalObject(xValue) || isTemporalObject(yValue)) [[unlikely]] {
+        if (!sameTemporalType(xValue, yValue)) [[unlikely]] {
+            throwTypeError(globalObject, scope, "formatRange requires both arguments to be the same Temporal type"_s);
+            return std::nullopt;
+        }
     }
 
-    auto* dateIntervalFormat = createDateIntervalFormatIfNecessary(globalObject);
-    RETURN_IF_EXCEPTION(scope, { });
+    // Steps 2-3: HandleDateTimeValue for x and y.
+    auto startRecord = handleDateTimeValue(globalObject, this, xValue);
+    RETURN_IF_EXCEPTION(scope, std::nullopt);
+    auto endRecord = handleDateTimeValue(globalObject, this, yValue);
+    RETURN_IF_EXCEPTION(scope, std::nullopt);
+    ASSERT(startRecord.kind == endRecord.kind);
+
+    double startMs = startRecord.value;
+    double endMs = endRecord.value;
+    auto kind = startRecord.kind;
+
+    // Non-Temporal path: delegate to prepareDateRange.
+    if (kind == TemporalFieldKind::None) {
+        // Caller handles this path separately via prepareDateRange.
+        return TemporalDateRangePreamble { nullptr, nullptr, nullptr, false, startMs, endMs, kind };
+    }
+
+    // Steps 4-20: ICU UDateIntervalFormat implements ToLocalTime, field comparison, pattern selection.
+    auto tempFormat = createTemporalFormatter(kind);
+    if (!tempFormat) [[unlikely]] {
+        throwTypeError(globalObject, scope, "DateTimeFormat has no fields applicable to this Temporal type"_s);
+        return std::nullopt;
+    }
 
     UErrorCode status = U_ZERO_ERROR;
-    auto result = formattedValueFromDateRange(*dateIntervalFormat, *m_impl->m_dateFormat, startDate, endDate, status);
-    if (U_FAILURE(status)) {
+    auto intervalFormat = createTemporalIntervalFormat(tempFormat.get(), kind, status);
+    if (U_FAILURE(status)) [[unlikely]] {
         throwTypeError(globalObject, scope, "Failed to format date interval"_s);
-        return { };
+        return std::nullopt;
     }
 
-    // UFormattedValue is owned by UFormattedDateInterval. We do not need to close it.
-    auto formattedValue = udtitvfmt_resultAsValue(result.get(), &status);
-    if (U_FAILURE(status)) {
+    auto result = formattedValueFromDateRange(*intervalFormat, *tempFormat.get(), startMs, endMs, status);
+    if (U_FAILURE(status)) [[unlikely]] {
         throwTypeError(globalObject, scope, "Failed to format date interval"_s);
-        return { };
+        return std::nullopt;
     }
 
-    auto sharedString = jsNontrivialString(vm, "shared"_s);
+    auto* formattedValue = udtitvfmt_resultAsValue(result.get(), &status);
+    if (U_FAILURE(status)) [[unlikely]] {
+        throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+        return std::nullopt;
+    }
 
-    // If the formatted parts of startDate and endDate are the same, it is possible that the resulted string does not look like range.
-    // For example, if the requested format only includes "year" and startDate and endDate are the same year, the result just contains one year.
-    // In that case, startDate and endDate are *practically-equal* (spec term), and we generate parts as we call `formatToParts(startDate)` with
-    // `source: "shared"` additional fields.
     bool equal = dateFieldsPracticallyEqual(formattedValue, status);
-    if (U_FAILURE(status)) {
+    if (U_FAILURE(status)) [[unlikely]] {
+        throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+        return std::nullopt;
+    }
+
+    return TemporalDateRangePreamble {
+        WTF::move(tempFormat),
+        std::unique_ptr<UFormattedDateInterval, UFormattedDateIntervalDeleter>(result.release()),
+        formattedValue,
+        equal,
+        startMs,
+        endMs,
+        kind
+    };
+}
+
+
+// BitSet<128> of ASCII pattern letters for each Temporal field kind.
+// constexpr: fully evaluated at compile time, zero runtime cost.
+using TemporalFieldSet = WTF::BitSet<128>;
+
+static constexpr TemporalFieldSet makeTemporalFieldSet(std::string_view chars)
+{
+    TemporalFieldSet s;
+    for (unsigned char c : chars)
+        s.set(c);
+    return s;
+}
+
+static constexpr TemporalFieldSet dateFields = makeTemporalFieldSet("EcGyMLd");
+static constexpr TemporalFieldSet timeFields = makeTemporalFieldSet("hHkKjmsBbaS");
+static constexpr TemporalFieldSet yearMonthFields = makeTemporalFieldSet("GyML");
+static constexpr TemporalFieldSet monthDayFields = makeTemporalFieldSet("MLd");
+static constexpr TemporalFieldSet dateTimeFields = [] {
+    auto s = dateFields;
+    s |= timeFields;
+    return s;
+}();
+
+static const TemporalFieldSet& allowedFieldsForKind(IntlDateTimeFormat::TemporalFieldKind kind)
+{
+    static constexpr TemporalFieldSet emptyFields;
+    switch (kind) {
+    case IntlDateTimeFormat::TemporalFieldKind::PlainDate:
+        return dateFields;
+    case IntlDateTimeFormat::TemporalFieldKind::PlainDateTime:
+        return dateTimeFields;
+    case IntlDateTimeFormat::TemporalFieldKind::PlainTime:
+        return timeFields;
+    case IntlDateTimeFormat::TemporalFieldKind::PlainYearMonth:
+        return yearMonthFields;
+    case IntlDateTimeFormat::TemporalFieldKind::PlainMonthDay:
+        return monthDayFields;
+    default:
+        return emptyFields;
+    }
+}
+
+// Lazily computes and caches the [[TemporalXxxFormat]] slot for the given Temporal type.
+// The spec computes these eagerly in CreateDateTimeFormat; we do it on demand and cache.
+std::unique_ptr<UDateFormat, IntlDateTimeFormat::UDateFormatDeleter> IntlDateTimeFormat::createTemporalFormatter(TemporalFieldKind kind) const
+{
+    ASSERT(kind != TemporalFieldKind::None);
+    auto& cached = m_impl->m_temporalFormatters[static_cast<size_t>(kind)];
+    if (cached) {
+        UErrorCode status = U_ZERO_ERROR;
+        return std::unique_ptr<UDateFormat, UDateFormatDeleter>(udat_clone(cached.get(), &status));
+    }
+
+    auto result = computeTemporalFormatter(kind);
+    if (result) {
+        UErrorCode status = U_ZERO_ERROR;
+        cached = std::unique_ptr<UDateFormat, UDateFormatDeleter>(udat_clone(result.get(), &status));
+    }
+    return result;
+}
+
+// https://tc39.es/proposal-temporal/#sec-getdatetimeformat
+// https://tc39.es/proposal-temporal/#sec-adjustdatetimestyleformat
+std::unique_ptr<UDateFormat, IntlDateTimeFormat::UDateFormatDeleter> IntlDateTimeFormat::computeTemporalFormatter(TemporalFieldKind kind) const
+{
+    UErrorCode status = U_ZERO_ERROR;
+
+    // Get current pattern and extract skeleton.
+    Vector<char16_t, 32> patternBuf;
+    callBufferProducingFunction(udat_toPattern, m_impl->m_dateFormat.get(), false, patternBuf);
+
+    // Extract skeleton from pattern, then filter the skeleton.
+    Vector<char16_t, 32> skeleton;
+    callBufferProducingFunction(udatpg_getSkeleton, nullptr, reinterpret_cast<const UChar*>(patternBuf.span().data()), patternBuf.size(), skeleton);
+
+    auto allowed = allowedFieldsForKind(kind);
+
+    // For Instant/ZonedDateTime, keep the existing pattern. Only add date+time defaults
+    // when the user provided no explicit component options and no dateStyle/timeStyle.
+    if (kind == TemporalFieldKind::Instant || kind == TemporalFieldKind::ZonedDateTime) {
+        // dateStyle/timeStyle: use the main formatter's pattern directly — the style
+        // already encodes the user's intent (e.g. dateStyle:"short" gives date-only).
+        if (m_impl->m_dateStyle != DateTimeStyle::None || m_impl->m_timeStyle != DateTimeStyle::None) {
+            auto tempFormat = std::unique_ptr<UDateFormat, UDateFormatDeleter>(udat_clone(m_impl->m_dateFormat.get(), &status));
+            if (U_FAILURE(status))
+                return nullptr;
+            if (kind == TemporalFieldKind::ZonedDateTime && m_impl->m_timeStyle != DateTimeStyle::None) {
+                // ZonedDateTime with timeStyle: ensure a timezone name field is present.
+                // dateStyle-only -> date-only pattern (no TZ suffix needed).
+                Vector<char16_t, 32> curPattern;
+                callBufferProducingFunction(udat_toPattern, tempFormat.get(), false, curPattern);
+                bool hasTz = false;
+                for (auto ch : curPattern) {
+                    if (ch == 'z' || ch == 'O' || ch == 'v') {
+                        hasTz = true;
+                        break;
+                    }
+                }
+                if (!hasTz) {
+                    curPattern.append(' ');
+                    curPattern.append('z');
+                    udat_applyPattern(tempFormat.get(), false, reinterpret_cast<const UChar*>(curPattern.span().data()), curPattern.size());
+                }
+            }
+            return tempFormat;
+        }
+
+        // Explicit components: use the main formatter's pattern as-is.
+        if (m_impl->m_hasExplicitComponents) {
+            auto tempFormat = std::unique_ptr<UDateFormat, UDateFormatDeleter>(udat_clone(m_impl->m_dateFormat.get(), &status));
+            if (U_FAILURE(status))
+                return nullptr;
+            return tempFormat;
+        }
+
+        // No explicit components, no dateStyle/timeStyle — add date+time defaults.
+        Vector<char16_t, 32> instantSkeleton;
+        static constexpr TemporalFieldSet tzChars = makeTemporalFieldSet("zOv");
+        bool hasTzField = false;
+        for (auto ch : skeleton) {
+            instantSkeleton.append(ch);
+            if (ch < 128 && tzChars.get(ch))
+                hasTzField = true;
+        }
+
+        // Add default date+time fields.
+        TemporalFieldSet existingChars;
+        for (auto ch : instantSkeleton) {
+            if (ch < 128)
+                existingChars.set(ch);
+        }
+        for (auto c : { 'y', 'M', 'd', 'j', 'm', 's' }) {
+            if (!existingChars.get(c))
+                instantSkeleton.append(c);
+        }
+
+        Vector<char16_t, 32> finalSkeleton;
+        if (kind == TemporalFieldKind::Instant) {
+            // Instant: keep all fields including timezone if user requested it.
+            finalSkeleton = WTF::move(instantSkeleton);
+        } else {
+            finalSkeleton = WTF::move(instantSkeleton);
+            if (!hasTzField)
+                finalSkeleton.append('z');
+        }
+
+        auto generator = std::unique_ptr<UDateTimePatternGenerator, ICUDeleter<udatpg_close>>(udatpg_open(m_impl->m_dataLocale.utf8().data(), &status));
+        if (U_FAILURE(status))
+            return nullptr;
+        Vector<char16_t, 32> bestPattern;
+        status = callBufferProducingFunction(udatpg_getBestPatternWithOptions, generator.get(),
+            reinterpret_cast<const UChar*>(finalSkeleton.span().data()), finalSkeleton.size(),
+            UDATPG_MATCH_HOUR_FIELD_LENGTH, bestPattern);
+        if (U_FAILURE(status) || bestPattern.isEmpty())
+            return nullptr;
+
+        // Apply the user's hour cycle (from hour12/hourCycle option) to the generated pattern.
+        // udatpg_getBestPatternWithOptions uses locale defaults, not the user's hour cycle.
+        if (m_impl->m_hourCycle != HourCycle::None)
+            replaceHourCycleInPattern(bestPattern, m_impl->m_hourCycle);
+
+        auto tempFormat = std::unique_ptr<UDateFormat, UDateFormatDeleter>(
+            udat_clone(m_impl->m_dateFormat.get(), &status));
+        if (U_FAILURE(status))
+            return nullptr;
+        udat_applyPattern(tempFormat.get(), false,
+            reinterpret_cast<const UChar*>(bestPattern.span().data()), bestPattern.size());
+        return tempFormat;
+    }
+
+    Vector<char16_t, 32> filteredSkeleton;
+    for (auto ch : skeleton) {
+        if (ch < 128 && allowed.get(ch) && ch != 'z' && ch != 'O' && ch != 'v')
+            filteredSkeleton.append(ch);
+    }
+
+    // For dateStyle-only with PlainDate/PlainDateTime: clone directly (all date fields allowed).
+    // PlainYearMonth/PlainMonthDay need field filtering so they fall through below.
+    if (m_impl->m_dateStyle != DateTimeStyle::None && m_impl->m_timeStyle == DateTimeStyle::None
+        && (kind == TemporalFieldKind::PlainDate || kind == TemporalFieldKind::PlainDateTime)) {
+        if (filteredSkeleton.isEmpty())
+            return nullptr;
+        auto tempFormat = std::unique_ptr<UDateFormat, UDateFormatDeleter>(
+            udat_clone(m_impl->m_dateFormat.get(), &status));
+        if (U_FAILURE(status))
+            return nullptr;
+        auto* tempCal = const_cast<UCalendar*>(udat_getCalendar(tempFormat.get()));
+        ucal_setTimeZone(tempCal, u"GMT", 3, &status);
+        return tempFormat;
+    }
+
+
+    if (filteredSkeleton.isEmpty()) {
+        if (m_impl->m_hasExplicitComponents)
+            return nullptr;
+        // No relevant fields from user options — inject defaults for the Temporal type.
+        char16_t hourChar = hourCharForCycle(m_impl->m_hourCycle);
+        switch (kind) {
+        case TemporalFieldKind::PlainTime:
+            filteredSkeleton.append(hourChar);
+            filteredSkeleton.append('m');
+            filteredSkeleton.append('s');
+            break;
+        case TemporalFieldKind::PlainDate:
+            for (auto c : { 'y', 'M', 'd' })
+                filteredSkeleton.append(c);
+            break;
+        case TemporalFieldKind::PlainDateTime:
+            for (auto c : { 'y', 'M', 'd' })
+                filteredSkeleton.append(c);
+            filteredSkeleton.append(hourChar);
+            filteredSkeleton.append('m');
+            filteredSkeleton.append('s');
+            break;
+        case TemporalFieldKind::PlainYearMonth:
+            for (auto c : { 'y', 'M' })
+                filteredSkeleton.append(c);
+            break;
+        case TemporalFieldKind::PlainMonthDay:
+            for (auto c : { 'M', 'd' })
+                filteredSkeleton.append(c);
+            break;
+        default:
+            return nullptr;
+        }
+    }
+
+    // PlainDateTime: if user only specified date or time fields, fill in the other half.
+    if (kind == TemporalFieldKind::PlainDateTime && !m_impl->m_hasExplicitComponents
+        && m_impl->m_dateStyle == DateTimeStyle::None && m_impl->m_timeStyle == DateTimeStyle::None) {
+        static constexpr TemporalFieldSet timeChars = makeTemporalFieldSet("hHkKjms");
+        static constexpr TemporalFieldSet dateChars = makeTemporalFieldSet("yMLdEc");
+        bool hasTime = false, hasDate = false;
+        for (auto ch : filteredSkeleton) {
+            if (ch < 128 && timeChars.get(ch))
+                hasTime = true;
+            if (ch < 128 && dateChars.get(ch))
+                hasDate = true;
+        }
+        if (!hasTime) {
+            filteredSkeleton.append(hourCharForCycle(m_impl->m_hourCycle));
+            for (auto c : { 'm', 's' })
+                filteredSkeleton.append(c);
+        }
+        if (!hasDate) {
+            for (auto c : { 'y', 'M', 'd' })
+                filteredSkeleton.append(c);
+        }
+    }
+
+    // Generate a locale-appropriate pattern. Include calendar in locale for non-ISO
+    // calendars so style-based patterns (e.g. dateStyle:"full") use the right era format.
+    String generatorLocale = String::fromUTF8(m_impl->m_dataLocale.utf8().data());
+    if (!generatorLocale.contains("calendar"_s) && !m_impl->m_calendar.isEmpty())
+        generatorLocale = makeString(generatorLocale, generatorLocale.contains('@') ? ";calendar="_s : "@calendar="_s, m_impl->m_calendar);
+
+    auto generator = std::unique_ptr<UDateTimePatternGenerator, ICUDeleter<udatpg_close>>(udatpg_open(generatorLocale.utf8().data(), &status));
+    if (U_FAILURE(status))
+        return nullptr;
+
+    Vector<char16_t, 32> bestPattern;
+    status = callBufferProducingFunction(udatpg_getBestPatternWithOptions, generator.get(),
+        reinterpret_cast<const UChar*>(filteredSkeleton.span().data()), filteredSkeleton.size(),
+        UDATPG_MATCH_HOUR_FIELD_LENGTH, bestPattern);
+    if (U_FAILURE(status) || bestPattern.isEmpty())
+        return nullptr;
+
+    // Fix up hour character — udatpg_getBestPattern may normalize h24→h23 or h11→h12.
+    if (m_impl->m_hourCycle != HourCycle::None) {
+        char16_t wantHour = hourCharForCycle(m_impl->m_hourCycle);
+        for (auto& ch : bestPattern) {
+            if (ch == 'h' || ch == 'H' || ch == 'k' || ch == 'K')
+                ch = wantHour;
+        }
+    }
+
+    auto tempFormat = std::unique_ptr<UDateFormat, UDateFormatDeleter>(udat_clone(m_impl->m_dateFormat.get(), &status));
+    if (U_FAILURE(status))
+        return nullptr;
+    udat_applyPattern(tempFormat.get(), false, reinterpret_cast<const UChar*>(bestPattern.span().data()), bestPattern.size());
+    auto* tempCal = const_cast<UCalendar*>(udat_getCalendar(tempFormat.get()));
+    ucal_setTimeZone(tempCal, u"GMT", 3, &status);
+    return tempFormat;
+}
+
+// https://tc39.es/proposal-temporal/#sec-formatdatetime
+JSValue IntlDateTimeFormat::format(JSGlobalObject* globalObject, double value, TemporalFieldKind kind) const
+{
+    if (kind == TemporalFieldKind::None)
+        return format(globalObject, value);
+
+    ASSERT(m_impl->m_dateFormat);
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!std::isfinite(value))
+        return throwRangeError(globalObject, scope, "date value is not finite in DateTimeFormat format()"_s);
+
+    auto tempFormat = createTemporalFormatter(kind);
+    if (!tempFormat) [[unlikely]]
+        return throwTypeError(globalObject, scope, "DateTimeFormat has no fields applicable to this Temporal type"_s);
+
+    Vector<char16_t, 32> result;
+    auto fmtStatus = callBufferProducingFunction(udat_format, tempFormat.get(), value, result, nullptr);
+    if (U_FAILURE(fmtStatus))
+        return throwTypeError(globalObject, scope, "failed to format date value"_s);
+    replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(result);
+    return jsString(vm, String(WTF::move(result)));
+}
+
+// https://tc39.es/proposal-temporal/#sec-formatdatetimetoparts
+JSValue IntlDateTimeFormat::formatToParts(JSGlobalObject* globalObject, double value, TemporalFieldKind kind, JSString* sourceType) const
+{
+    ASSERT(m_impl->m_dateFormat);
+    if (kind == TemporalFieldKind::None)
+        return buildFormattedDateTimeParts(globalObject, m_impl->m_dateFormat.get(), value, sourceType);
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto tempFormat = createTemporalFormatter(kind);
+    if (!tempFormat) [[unlikely]]
+        return throwTypeError(globalObject, scope, "DateTimeFormat has no fields applicable to this Temporal type"_s);
+
+    RELEASE_AND_RETURN(scope, buildFormattedDateTimeParts(globalObject, tempFormat.get(), value, sourceType));
+}
+
+std::unique_ptr<UDateIntervalFormat, UDateIntervalFormatDeleter>
+IntlDateTimeFormat::createTemporalIntervalFormat(UDateFormat* tempFormat, TemporalFieldKind kind, UErrorCode& status) const
+{
+    Vector<char16_t, 32> tempPattern;
+    callBufferProducingFunction(udat_toPattern, tempFormat, false, tempPattern);
+    Vector<char16_t, 32> tempSkeleton;
+    callBufferProducingFunction(udatpg_getSkeleton, nullptr, reinterpret_cast<const UChar*>(tempPattern.span().data()), tempPattern.size(), tempSkeleton);
+
+    bool isPlain = (kind != TemporalFieldKind::Instant && kind != TemporalFieldKind::ZonedDateTime);
+    String tzForInterval = isPlain ? "GMT"_s : m_impl->m_timeZone.toICUString();
+    StringView tzView(tzForInterval);
+
+    StringBuilder localeBuilder;
+    localeBuilder.append(m_impl->m_dataLocale, "-u-ca-"_s, ensureCalendar(), "-nu-"_s, ensureNumberingSystem());
+    if (m_impl->m_hourCycle != HourCycle::None)
+        localeBuilder.append("-hc-"_s, hourCycleString(m_impl->m_hourCycle));
+    CString localeWithExt = localeBuilder.toString().utf8();
+
+    return std::unique_ptr<UDateIntervalFormat, UDateIntervalFormatDeleter>(
+        udtitvfmt_open(localeWithExt.data(), tempSkeleton.span().data(), tempSkeleton.size(),
+        tzView.upconvertedCharacters(), tzView.length(), &status));
+}
+
+
+// https://tc39.es/proposal-temporal/#sec-formatdatetimerange
+JSValue IntlDateTimeFormat::formatRange(JSGlobalObject* globalObject, JSValue xValue, JSValue yValue)
+{
+    ASSERT(m_impl->m_dateFormat);
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto preamble = partitionDateTimeRangePattern(globalObject, xValue, yValue);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!preamble)
+        return { };
+
+    if (preamble->kind == TemporalFieldKind::None) {
+        auto nonTemporalPreamble = prepareDateRange(globalObject, preamble->startMs, preamble->endMs);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (!nonTemporalPreamble)
+            return { };
+
+        if (nonTemporalPreamble->equal)
+            RELEASE_AND_RETURN(scope, format(globalObject, preamble->startMs));
+
+        UErrorCode status = U_ZERO_ERROR;
+        int32_t formattedStringLength = 0;
+        const char16_t* formattedStringPointer = ufmtval_getString(nonTemporalPreamble->formattedValue, &formattedStringLength, &status);
+        if (U_FAILURE(status)) [[unlikely]] {
+            throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+            return { };
+        }
+        Vector<char16_t, 32> buffer(std::span<const char16_t> { formattedStringPointer, static_cast<size_t>(formattedStringLength) });
+        replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(buffer);
+        return jsString(vm, String(WTF::move(buffer)));
+    }
+
+    UErrorCode status = U_ZERO_ERROR;
+    int32_t length;
+    const UChar* chars = ufmtval_getString(preamble->formattedValue, &length, &status);
+    if (U_FAILURE(status)) [[unlikely]] {
         throwTypeError(globalObject, scope, "Failed to format date interval"_s);
         return { };
     }
 
-    if (equal)
-        RELEASE_AND_RETURN(scope, formatToParts(globalObject, startDate, sharedString));
+    Vector<char16_t, 32> resultChars(std::span(reinterpret_cast<const char16_t*>(chars), length));
+    replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(resultChars);
 
-    // ICU produces ranges for the formatted string, and we construct parts array from that.
-    // For example, startDate = Jan 3, 2019, endDate = Jan 5, 2019 with en-US locale is,
-    //
-    // Formatted string: "1/3/2019 – 1/5/2019"
-    //                    | | |  |   | | |  |
-    //                    B C |  |   F G |  |
-    //                    |   +-D+   |   +-H+
-    //                    |      |   |      |
-    //                    +--A---+   +--E---+
-    //
-    // Ranges ICU generates:
-    //     A:    (0, 8)   UFIELD_CATEGORY_DATE_INTERVAL_SPAN startRange
-    //     B:    (0, 1)   UFIELD_CATEGORY_DATE month
-    //     C:    (2, 3)   UFIELD_CATEGORY_DATE day
-    //     D:    (4, 8)   UFIELD_CATEGORY_DATE year
-    //     E:    (11, 19) UFIELD_CATEGORY_DATE_INTERVAL_SPAN endRange
-    //     F:    (11, 12) UFIELD_CATEGORY_DATE month
-    //     G:    (13, 14) UFIELD_CATEGORY_DATE day
-    //     H:    (15, 19) UFIELD_CATEGORY_DATE year
-    //
-    //  We use UFIELD_CATEGORY_DATE_INTERVAL_SPAN range to determine each part is either "startRange", "endRange", or "shared".
-    //  It is guaranteed that UFIELD_CATEGORY_DATE_INTERVAL_SPAN comes first before any other parts including that range.
-    //  For example, in the above formatted string, " – " is "shared" part. For UFIELD_CATEGORY_DATE ranges, we generate corresponding
-    //  part object with types such as "month". And non populated parts (e.g. "/") become "literal" parts.
-    //  In the above case, expected parts are,
-    //
-    //     { type: "month", value: "1", source: "startRange" },
-    //     { type: "literal", value: "/", source: "startRange" },
-    //     { type: "day", value: "3", source: "startRange" },
-    //     { type: "literal", value: "/", source: "startRange" },
-    //     { type: "year", value: "2019", source: "startRange" },
-    //     { type: "literal", value: " - ", source: "shared" },
-    //     { type: "month", value: "1", source: "endRange" },
-    //     { type: "literal", value: "/", source: "endRange" },
-    //     { type: "day", value: "5", source: "endRange" },
-    //     { type: "literal", value: "/", source: "endRange" },
-    //     { type: "year", value: "2019", source: "endRange" },
-    //
+    if (preamble->equal) {
+        Vector<char16_t, 32> singleResult;
+        auto singleStatus = callBufferProducingFunction(udat_format, preamble->tempFormat.get(), preamble->startMs, singleResult, nullptr);
+        if (U_SUCCESS(singleStatus)) {
+            replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(singleResult);
+            return jsString(vm, String(WTF::move(singleResult)));
+        }
+    }
+
+    return jsString(vm, String(WTF::move(resultChars)));
+}
+
+// https://tc39.es/proposal-temporal/#sec-formatdatetimerangetoparts
+JSValue IntlDateTimeFormat::formatRangeToParts(JSGlobalObject* globalObject, JSValue xValue, JSValue yValue)
+{
+    ASSERT(m_impl->m_dateFormat);
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto preamble = partitionDateTimeRangePattern(globalObject, xValue, yValue);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!preamble)
+        return { };
+
+    if (preamble->kind == TemporalFieldKind::None) {
+        auto nonTemporalPreamble = prepareDateRange(globalObject, preamble->startMs, preamble->endMs);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (!nonTemporalPreamble)
+            return { };
+
+        auto sharedString = jsNontrivialString(vm, "shared"_s);
+
+        if (nonTemporalPreamble->equal)
+            RELEASE_AND_RETURN(scope, formatToParts(globalObject, preamble->startMs, TemporalFieldKind::None, sharedString));
+
+        // ICU produces ranges for the formatted string, and we construct parts array from that.
+        // For example, startDate = Jan 3, 2019, endDate = Jan 5, 2019 with en-US locale is,
+        //
+        // Formatted string: "1/3/2019 – 1/5/2019"
+        //                    | | |  |   | | |  |
+        //                    B C |  |   F G |  |
+        //                    |   +-D+   |   +-H+
+        //                    |      |   |      |
+        //                    +--A---+   +--E---+
+        //
+        // Ranges ICU generates:
+        //     A:    (0, 8)   UFIELD_CATEGORY_DATE_INTERVAL_SPAN startRange
+        //     B:    (0, 1)   UFIELD_CATEGORY_DATE month
+        //     C:    (2, 3)   UFIELD_CATEGORY_DATE day
+        //     D:    (4, 8)   UFIELD_CATEGORY_DATE year
+        //     E:    (11, 19) UFIELD_CATEGORY_DATE_INTERVAL_SPAN endRange
+        //     F:    (11, 12) UFIELD_CATEGORY_DATE month
+        //     G:    (13, 14) UFIELD_CATEGORY_DATE day
+        //     H:    (15, 19) UFIELD_CATEGORY_DATE year
+        //
+        //  We use UFIELD_CATEGORY_DATE_INTERVAL_SPAN range to determine each part is either "startRange", "endRange", or "shared".
+        //  It is guaranteed that UFIELD_CATEGORY_DATE_INTERVAL_SPAN comes first before any other parts including that range.
+        //  For example, in the above formatted string, " – " is "shared" part. For UFIELD_CATEGORY_DATE ranges, we generate corresponding
+        //  part object with types such as "month". And non populated parts (e.g. "/") become "literal" parts.
+        //  In the above case, expected parts are,
+        //
+        //     { type: "month", value: "1", source: "startRange" },
+        //     { type: "literal", value: "/", source: "startRange" },
+        //     { type: "day", value: "3", source: "startRange" },
+        //     { type: "literal", value: "/", source: "startRange" },
+        //     { type: "year", value: "2019", source: "startRange" },
+        //     { type: "literal", value: " - ", source: "shared" },
+        //     { type: "month", value: "1", source: "endRange" },
+        //     { type: "literal", value: "/", source: "endRange" },
+        //     { type: "day", value: "5", source: "endRange" },
+        //     { type: "literal", value: "/", source: "endRange" },
+        //     { type: "year", value: "2019", source: "endRange" },
+        //
+
+        UErrorCode status = U_ZERO_ERROR;
+        JSArray* parts = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
+        if (!parts) {
+            throwOutOfMemoryError(globalObject, scope);
+            return { };
+        }
+
+        int32_t formattedStringLength = 0;
+        const char16_t* formattedStringPointer = ufmtval_getString(nonTemporalPreamble->formattedValue, &formattedStringLength, &status);
+        if (U_FAILURE(status)) [[unlikely]] {
+            throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+            return { };
+        }
+        Vector<char16_t, 32> buffer(std::span<const char16_t> { formattedStringPointer, static_cast<size_t>(formattedStringLength) });
+        replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(buffer);
+
+        StringView resultStringView(buffer.span());
+
+        // We care multiple categories (UFIELD_CATEGORY_DATE and UFIELD_CATEGORY_DATE_INTERVAL_SPAN).
+        // So we do not constraint iterator.
+        auto iterator = std::unique_ptr<UConstrainedFieldPosition, ICUDeleter<ucfpos_close>>(ucfpos_open(&status));
+        if (U_FAILURE(status)) [[unlikely]] {
+            throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+            return { };
+        }
+
+        auto startRangeString = jsNontrivialString(vm, "startRange"_s);
+        auto endRangeString = jsNontrivialString(vm, "endRange"_s);
+        auto literalString = jsNontrivialString(vm, "literal"_s);
+
+        WTF::Range<int32_t> startRange { -1, -1 };
+        WTF::Range<int32_t> endRange { -1, -1 };
+
+        auto createPart = [&](JSString* type, int32_t beginIndex, int32_t length) {
+            auto sourceType = [&](int32_t index) -> JSString* {
+                if (startRange.contains(index))
+                    return startRangeString;
+                if (endRange.contains(index))
+                    return endRangeString;
+                return sharedString;
+            };
+
+            auto value = jsString(vm, resultStringView.substring(beginIndex, length));
+            return createIntlPartObjectWithSource(globalObject, type, value, sourceType(beginIndex));
+        };
+
+        int32_t resultLength = resultStringView.length();
+        int32_t previousEndIndex = 0;
+        while (true) {
+            bool next = ufmtval_nextPosition(nonTemporalPreamble->formattedValue, iterator.get(), &status);
+            if (U_FAILURE(status)) [[unlikely]] {
+                throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+                return { };
+            }
+            if (!next)
+                break;
+
+            int32_t category = ucfpos_getCategory(iterator.get(), &status);
+            if (U_FAILURE(status)) [[unlikely]] {
+                throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+                return { };
+            }
+
+            int32_t fieldType = ucfpos_getField(iterator.get(), &status);
+            if (U_FAILURE(status)) [[unlikely]] {
+                throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+                return { };
+            }
+
+            int32_t beginIndex = 0;
+            int32_t endIndex = 0;
+            ucfpos_getIndexes(iterator.get(), &beginIndex, &endIndex, &status);
+            if (U_FAILURE(status)) [[unlikely]] {
+                throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+                return { };
+            }
+
+            dataLogLnIf(IntlDateTimeFormatInternal::verbose, category, " ", fieldType, " (", beginIndex, ", ", endIndex, ")");
+
+            if (category != UFIELD_CATEGORY_DATE && category != UFIELD_CATEGORY_DATE_INTERVAL_SPAN)
+                continue;
+            if (category == UFIELD_CATEGORY_DATE && fieldType < 0)
+                continue;
+
+            if (previousEndIndex < beginIndex) {
+                JSObject* part = createPart(literalString, previousEndIndex, beginIndex - previousEndIndex);
+                parts->push(globalObject, part);
+                RETURN_IF_EXCEPTION(scope, { });
+                previousEndIndex = beginIndex;
+            }
+
+            if (category == UFIELD_CATEGORY_DATE_INTERVAL_SPAN) {
+                // > The special field category UFIELD_CATEGORY_DATE_INTERVAL_SPAN is used to indicate which datetime
+                // > primitives came from which arguments: 0 means fromCalendar, and 1 means toCalendar. The span category
+                // > will always occur before the corresponding fields in UFIELD_CATEGORY_DATE in the nextPosition() iterator.
+                // from ICU comment. So, field 0 is startRange, field 1 is endRange.
+                if (!fieldType)
+                    startRange = WTF::Range<int32_t>(beginIndex, endIndex);
+                else {
+                    ASSERT(fieldType == 1);
+                    endRange = WTF::Range<int32_t>(beginIndex, endIndex);
+                }
+                continue;
+            }
+
+            ASSERT(category == UFIELD_CATEGORY_DATE);
+
+            auto type = jsNontrivialString(vm, partTypeString(UDateFormatField(fieldType)));
+            JSObject* part = createPart(type, beginIndex, endIndex - beginIndex);
+            parts->push(globalObject, part);
+            RETURN_IF_EXCEPTION(scope, { });
+            previousEndIndex = endIndex;
+        }
+
+        if (previousEndIndex < resultLength) {
+            JSObject* part = createPart(literalString, previousEndIndex, resultLength - previousEndIndex);
+            parts->push(globalObject, part);
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+
+        return parts;
+    }
+
+    UErrorCode status = U_ZERO_ERROR;
+    if (preamble->equal) {
+        auto sourceType = jsNontrivialString(vm, "shared"_s);
+        RELEASE_AND_RETURN(scope, formatToParts(globalObject, preamble->startMs, preamble->kind, sourceType));
+    }
+
+    int32_t length;
+    const UChar* chars = ufmtval_getString(preamble->formattedValue, &length, &status);
+    if (U_FAILURE(status)) [[unlikely]] {
+        throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+        return { };
+    }
+
+    // Normalize narrow no-break space (U+202F) and thin space (U+2009) to regular space (U+0020),
+    // matching V8/SpiderMonkey behavior (see replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace comment).
+    Vector<char16_t> normalizedChars(std::span(chars, length));
+    replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(normalizedChars);
 
     JSArray* parts = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
-    if (!parts) {
-        throwOutOfMemoryError(globalObject, scope);
-        return { };
-    }
+    if (!parts)
+        return throwOutOfMemoryError(globalObject, scope);
 
-    int32_t formattedStringLength = 0;
-    const char16_t* formattedStringPointer = ufmtval_getString(formattedValue, &formattedStringLength, &status);
-    if (U_FAILURE(status)) {
-        throwTypeError(globalObject, scope, "Failed to format date interval"_s);
-        return { };
-    }
-    Vector<char16_t, 32> buffer(std::span<const char16_t> { formattedStringPointer, static_cast<size_t>(formattedStringLength) });
-    replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(buffer);
-
-    StringView resultStringView(buffer.span());
-
-    // We care multiple categories (UFIELD_CATEGORY_DATE and UFIELD_CATEGORY_DATE_INTERVAL_SPAN).
-    // So we do not constraint iterator.
     auto iterator = std::unique_ptr<UConstrainedFieldPosition, ICUDeleter<ucfpos_close>>(ucfpos_open(&status));
-    if (U_FAILURE(status)) {
-        throwTypeError(globalObject, scope, "Failed to format date interval"_s);
-        return { };
-    }
+    if (U_FAILURE(status))
+        return throwTypeError(globalObject, scope, "Failed to format date interval"_s);
 
     auto startRangeString = jsNontrivialString(vm, "startRange"_s);
     auto endRangeString = jsNontrivialString(vm, "endRange"_s);
+    auto sharedString = jsNontrivialString(vm, "shared"_s);
     auto literalString = jsNontrivialString(vm, "literal"_s);
 
     WTF::Range<int32_t> startRange { -1, -1 };
     WTF::Range<int32_t> endRange { -1, -1 };
+    Vector<std::tuple<int32_t, int32_t, UDateFormatField, JSString*>> fields;
 
-    auto createPart = [&] (JSString* type, int32_t beginIndex, int32_t length) {
-        auto sourceType = [&](int32_t index) -> JSString* {
-            if (startRange.contains(index))
-                return startRangeString;
-            if (endRange.contains(index))
-                return endRangeString;
-            return sharedString;
-        };
-
-        auto value = jsString(vm, resultStringView.substring(beginIndex, length));
-        return createIntlPartObjectWithSource(globalObject, type, value, sourceType(beginIndex));
-    };
-
-    int32_t resultLength = resultStringView.length();
-    int32_t previousEndIndex = 0;
     while (true) {
-        bool next = ufmtval_nextPosition(formattedValue, iterator.get(), &status);
-        if (U_FAILURE(status)) {
-            throwTypeError(globalObject, scope, "Failed to format date interval"_s);
-            return { };
-        }
-        if (!next)
+        bool hasNext = ufmtval_nextPosition(preamble->formattedValue, iterator.get(), &status);
+        if (U_FAILURE(status))
+            return throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+        if (!hasNext)
             break;
 
         int32_t category = ucfpos_getCategory(iterator.get(), &status);
-        if (U_FAILURE(status)) {
-            throwTypeError(globalObject, scope, "Failed to format date interval"_s);
-            return { };
-        }
+        if (U_FAILURE(status))
+            return throwTypeError(globalObject, scope, "Failed to format date interval"_s);
 
-        int32_t fieldType = ucfpos_getField(iterator.get(), &status);
-        if (U_FAILURE(status)) {
-            throwTypeError(globalObject, scope, "Failed to format date interval"_s);
-            return { };
-        }
-
-        int32_t beginIndex = 0;
-        int32_t endIndex = 0;
+        int32_t beginIndex, endIndex;
         ucfpos_getIndexes(iterator.get(), &beginIndex, &endIndex, &status);
-        if (U_FAILURE(status)) {
-            throwTypeError(globalObject, scope, "Failed to format date interval"_s);
-            return { };
-        }
-
-        dataLogLnIf(IntlDateTimeFormatInternal::verbose, category, " ", fieldType, " (", beginIndex, ", ", endIndex, ")");
-
-        if (category != UFIELD_CATEGORY_DATE && category != UFIELD_CATEGORY_DATE_INTERVAL_SPAN)
-            continue;
-        if (category == UFIELD_CATEGORY_DATE && fieldType < 0)
-            continue;
-
-        if (previousEndIndex < beginIndex) {
-            JSObject* part = createPart(literalString, previousEndIndex, beginIndex - previousEndIndex);
-            parts->push(globalObject, part);
-            RETURN_IF_EXCEPTION(scope, { });
-            previousEndIndex = beginIndex;
-        }
+        if (U_FAILURE(status))
+            return throwTypeError(globalObject, scope, "Failed to format date interval"_s);
 
         if (category == UFIELD_CATEGORY_DATE_INTERVAL_SPAN) {
-            // > The special field category UFIELD_CATEGORY_DATE_INTERVAL_SPAN is used to indicate which datetime
-            // > primitives came from which arguments: 0 means fromCalendar, and 1 means toCalendar. The span category
-            // > will always occur before the corresponding fields in UFIELD_CATEGORY_DATE in the nextPosition() iterator.
-            // from ICU comment. So, field 0 is startRange, field 1 is endRange.
-            if (!fieldType)
-                startRange = WTF::Range<int32_t>(beginIndex, endIndex);
-            else {
-                ASSERT(fieldType == 1);
-                endRange = WTF::Range<int32_t>(beginIndex, endIndex);
-            }
-            continue;
+            int32_t field = ucfpos_getField(iterator.get(), &status);
+            if (!field)
+                startRange = { beginIndex, endIndex };
+            else
+                endRange = { beginIndex, endIndex };
+        } else if (category == UFIELD_CATEGORY_DATE) {
+            int32_t field = ucfpos_getField(iterator.get(), &status);
+            fields.append({ beginIndex, endIndex, static_cast<UDateFormatField>(field), nullptr });
         }
+    }
 
-        ASSERT(category == UFIELD_CATEGORY_DATE);
+    StringView resultStringView(normalizedChars.span());
+    int32_t previousEndIndex = 0;
 
-        auto type = jsNontrivialString(vm, partTypeString(UDateFormatField(fieldType)));
-        JSObject* part = createPart(type, beginIndex, endIndex - beginIndex);
-        parts->push(globalObject, part);
+    auto sourceForIndex = [&](int32_t index) -> JSString* {
+        if (startRange.begin() >= 0 && index >= startRange.begin() && index < startRange.end())
+            return startRangeString;
+        if (endRange.begin() >= 0 && index >= endRange.begin() && index < endRange.end())
+            return endRangeString;
+        return sharedString;
+    };
+
+    for (auto& [beginIndex, endIndex, fieldType, _] : fields) {
+        if (previousEndIndex < beginIndex) {
+            auto val = jsString(vm, resultStringView.substring(previousEndIndex, beginIndex - previousEndIndex));
+            auto* source = sourceForIndex(previousEndIndex);
+            parts->push(globalObject, createIntlPartObjectWithSource(globalObject, literalString, val, source));
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+        auto type = jsNontrivialString(vm, partTypeString(fieldType));
+        auto val = jsString(vm, resultStringView.substring(beginIndex, endIndex - beginIndex));
+        auto* source = sourceForIndex(beginIndex);
+        parts->push(globalObject, createIntlPartObjectWithSource(globalObject, type, val, source));
         RETURN_IF_EXCEPTION(scope, { });
         previousEndIndex = endIndex;
     }
-
-    if (previousEndIndex < resultLength) {
-        JSObject* part = createPart(literalString, previousEndIndex, resultLength - previousEndIndex);
-        parts->push(globalObject, part);
+    if (previousEndIndex < length) {
+        auto val = jsString(vm, resultStringView.substring(previousEndIndex, length - previousEndIndex));
+        auto* source = sourceForIndex(previousEndIndex);
+        parts->push(globalObject, createIntlPartObjectWithSource(globalObject, literalString, val, source));
         RETURN_IF_EXCEPTION(scope, { });
     }
 
     return parts;
 }
-
 
 } // namespace JSC
 

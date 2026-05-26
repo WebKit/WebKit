@@ -1589,9 +1589,11 @@ static bool samplingProfilerTest(void)
 #endif
     return false;
 }
-
+bool flag = true;
 int main(int argc, char* argv[])
 {
+    if (flag)
+        return testTemporalCore();
 #if OS(WINDOWS)
     // Cygwin calls SetErrorMode(SEM_FAILCRITICALERRORS), which we will inherit. This is bad for
     // testing/debugging, as it causes the post-mortem debugger not to be invoked. We reset the

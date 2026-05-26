@@ -27,6 +27,7 @@
 #pragma once
 
 #include <JavaScriptCore/ISO8601.h>
+#include <JavaScriptCore/InstantCore.h>
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/TemporalDuration.h>
 #include <JavaScriptCore/TemporalObject.h>
@@ -64,9 +65,9 @@ public:
     ISO8601::Duration difference(JSGlobalObject*, TemporalInstant*, JSValue options) const;
     ISO8601::ExactTime round(JSGlobalObject*, JSValue options) const;
     String toString(JSGlobalObject*, JSValue options) const;
-    String toString(JSObject* timeZone = nullptr, PrecisionData precision = { { Precision::Auto, 0 }, TemporalUnit::Nanosecond, 1 }) const
+    String toString(PrecisionData precision = { { Precision::Auto, 0 }, TemporalUnit::Nanosecond, 1 }) const
     {
-        return toString(exactTime(), timeZone, precision);
+        return TemporalCore::instantToString(exactTime(), std::nullopt, precision);
     }
 
 private:

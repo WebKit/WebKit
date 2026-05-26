@@ -116,6 +116,7 @@
     macro(descriptions) \
     macro(detached) \
     macro(detail) \
+    macro(disambiguation) \
     macro(displayName) \
     macro(done) \
     macro(dotAll) \
@@ -231,6 +232,7 @@
     macro(numeric) \
     macro(of) \
     macro(omitPadding) \
+    macro(offset) \
     macro(opcode) \
     macro(origin) \
     macro(osrExitSites) \

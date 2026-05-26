@@ -60,8 +60,7 @@ fields.forEach((field, i) => {
     shouldBe(pdt[field], i + 1);
 });
 
-shouldBe(pdt.calendar instanceof Temporal.Calendar, true);
-shouldBe(pdt.calendar.toString(), 'iso8601');
+shouldBe(pdt.calendarId, 'iso8601');
 {
     const dateGetters = ['monthCode', 'dayOfWeek', 'dayOfYear', 'weekOfYear', 'daysInWeek', 'daysInMonth', 'daysInYear', 'monthsInYear', 'inLeapYear'];
     const results = ['M02', 6, 34, 5, 7, 28, 365, 12, false];
@@ -71,8 +70,15 @@ shouldBe(pdt.calendar.toString(), 'iso8601');
     });
 }
 
-shouldBe(Temporal.PlainDateTime.prototype.getISOFields.length, 0);
-shouldBe(JSON.stringify(pdt.getISOFields()), `{"calendar":"iso8601","isoDay":3,"isoHour":4,"isoMicrosecond":8,"isoMillisecond":7,"isoMinute":5,"isoMonth":2,"isoNanosecond":9,"isoSecond":6,"isoYear":1}`);
+shouldBe(pdt.year, 1);
+shouldBe(pdt.month, 2);
+shouldBe(pdt.day, 3);
+shouldBe(pdt.hour, 4);
+shouldBe(pdt.minute, 5);
+shouldBe(pdt.second, 6);
+shouldBe(pdt.millisecond, 7);
+shouldBe(pdt.microsecond, 8);
+shouldBe(pdt.nanosecond, 9);
 
 shouldBe(Temporal.PlainDateTime.from.length, 1);
 shouldThrow(() => Temporal.PlainDateTime.from(), TypeError);
@@ -166,9 +172,6 @@ const badStrings = [
     "2007-01-09T03:24:30+01:00[-/_]",
     "2007-01-09T03:24:30+01:00[_/-]",
     "2007-01-09T03:24:30+01:00[CocoaCappuccinoMatcha]",
-    "2007-01-09T03:24:30+01:00[Etc/GMT+50]",
-    "2007-01-09T03:24:30+01:00[Etc/GMT+0]",
-    "2007-01-09T03:24:30+01:00[Etc/GMT0]",
     "2007-01-09T03:24:30+10:20:30.0123456789",
     "2007-01-09 03:24:30+01:00[Etc/GMT\u221201]",
     "2007-01-09 03:24:30+01:00[+02:00:00.0123456789]",
@@ -197,13 +200,15 @@ shouldBe(Temporal.PlainDateTime.compare('2007-01-09T03:24', '2007-01-09'), 1);
 shouldBe(Temporal.PlainDateTime.compare('2007-01-09T03:24', '2007-01-09T03:24:00.007008009'), -1);
 shouldBe(Temporal.PlainDateTime.compare('2007-01-09T00:00', '2007-01-09'), 0);
 
-// At present, toLocaleString has the same behavior as toJSON or argumentless toString.
-for (const method of ['toString', 'toJSON', 'toLocaleString']) {    
+for (const method of ['toString', 'toJSON']) {
     shouldBe(Temporal.PlainDateTime.prototype[method].length, 0);
     shouldThrow(() => Temporal.PlainDateTime.prototype[method].call({}), TypeError);
 
     shouldBe(pdt[method](), '0001-02-03T04:05:06.007008009');
 }
+shouldBe(Temporal.PlainDateTime.prototype.toLocaleString.length, 0);
+shouldThrow(() => Temporal.PlainDateTime.prototype.toLocaleString.call({}), TypeError);
+shouldBe(typeof pdt.toLocaleString(), 'string');
 shouldBe(pdt.toString({}), pdt.toString());
 
 shouldThrow(() => pdt.toString({ smallestUnit: 'bogus' }), RangeError);

@@ -90,7 +90,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalTimeZonePrototypeFuncToString, (JSGlobalObject*
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto* timeZone = dynamicDowncast<TemporalTimeZone>(callFrame->thisValue());
-    if (!timeZone)
+    if (!timeZone) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Temporal.TimeZone.prototype.toString called on value that's not a TimeZone"_s);
 
     return JSValue::encode(jsString(vm, timeZone->timeZone().toString()));

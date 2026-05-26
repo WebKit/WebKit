@@ -56,7 +56,7 @@ struct CalendarFieldsIn {
 // Result of calendar field resolution: ISO date + calendar ID.
 struct ResolvedCalendarDate {
     ISO8601::PlainDate isoDate;
-    String calendarId;
+    CalendarID calendarId { 0 };
 };
 
 TemporalResult<ResolvedCalendarDate> JS_EXPORT_PRIVATE dateFromFields(CalendarID, const CalendarFieldsIn&, TemporalOverflow);

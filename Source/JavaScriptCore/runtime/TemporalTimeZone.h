@@ -47,6 +47,7 @@ public:
     DECLARE_INFO;
 
     TimeZone timeZone() const { return m_timeZone; }
+    const String& timeZoneId() const { return m_timeZoneId; }
 
     static JSObject* from(JSGlobalObject*, JSValue);
 
@@ -54,6 +55,7 @@ private:
     TemporalTimeZone(VM&, Structure*, TimeZone);
 
     TimeZone m_timeZone;
+    String m_timeZoneId;
 };
 
 } // namespace JSC

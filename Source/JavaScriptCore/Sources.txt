@@ -1100,8 +1100,6 @@ runtime/SymbolTable.cpp
 runtime/SyntheticModuleRecord.cpp
 runtime/TemplateObjectDescriptor.cpp
 runtime/TemporalCalendar.cpp
-runtime/TemporalCalendarConstructor.cpp
-runtime/TemporalCalendarPrototype.cpp
 runtime/TemporalDuration.cpp
 runtime/TemporalDurationConstructor.cpp
 runtime/TemporalDurationPrototype.cpp

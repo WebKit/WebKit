@@ -113,6 +113,9 @@ void rejectObjectWithCalendarOrTimeZone(JSGlobalObject*, JSObject*);
 TemporalOverflow toTemporalOverflow(JSGlobalObject*, JSObject*);
 TemporalOverflow toTemporalOverflow(JSGlobalObject*, JSValue);
 String toTemporalCalendarName(JSGlobalObject*, JSObject*);
+String toTemporalCalendarIdentifier(JSGlobalObject*, JSValue);
+TemporalDisambiguation toTemporalDisambiguation(JSGlobalObject*, JSObject*);
+TemporalOffsetDisambiguation toTemporalOffset(JSGlobalObject*, JSObject*, TemporalOffsetDisambiguation fallback);
 
 enum class TemporalDateFormat : uint8_t {
     Date,
@@ -124,5 +127,7 @@ enum class TemporalAnyProperties : bool {
     None,
     Some,
 };
+
+void throwTemporalError(JSGlobalObject*, ThrowScope&, const TemporalError&);
 
 } // namespace JSC

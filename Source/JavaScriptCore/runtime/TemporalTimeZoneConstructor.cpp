@@ -34,8 +34,6 @@
 namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(TemporalTimeZoneConstructor);
-static JSC_DECLARE_HOST_FUNCTION(temporalTimeZoneConstructorFuncFrom);
-
 }
 
 #include "TemporalTimeZoneConstructor.lut.h"
@@ -46,7 +44,6 @@ const ClassInfo TemporalTimeZoneConstructor::s_info = { "Function"_s, &InternalF
 
 /* Source for TemporalTimeZoneConstructor.lut.h
 @begin temporalTimeZoneConstructorTable
-    from             temporalTimeZoneConstructorFuncFrom             DontEnum|Function 1
 @end
 */
 
@@ -77,28 +74,16 @@ void TemporalTimeZoneConstructor::finishCreation(VM& vm, TemporalTimeZonePrototy
     temporalTimeZonePrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, this, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
-JSC_DEFINE_HOST_FUNCTION(constructTemporalTimeZone, (JSGlobalObject* globalObject, CallFrame* callFrame))
+// FIXME: Remove TemporalTimeZoneConstructor/Prototype entirely — Temporal.TimeZone is no longer
+// a user-visible constructor in Stage 4 and is already unregistered from the Temporal object.
+// Last internal caller is TemporalInstant.cpp toZonedDateTimeISO; once that is migrated to use
+// a plain TimeZone value directly (matching how TemporalZonedDateTime works), these files and
+// the m_timeZoneStructure slot in JSGlobalObject can be removed.
+JSC_DEFINE_HOST_FUNCTION(constructTemporalTimeZone, (JSGlobalObject* globalObject, CallFrame*))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSObject* newTarget = asObject(callFrame->newTarget());
-    Structure* structure = JSC_GET_DERIVED_STRUCTURE(vm, timeZoneStructure, newTarget, callFrame->jsCallee());
-    RETURN_IF_EXCEPTION(scope, { });
-
-    auto timeZoneString = callFrame->argument(0).toWTFString(globalObject);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    std::optional<int64_t> utcOffset = ISO8601::parseUTCOffset(timeZoneString);
-    if (utcOffset)
-        return JSValue::encode(TemporalTimeZone::create(vm, structure, TimeZone::fromUTCOffset(utcOffset.value())));
-
-    std::optional<TimeZoneID> identifier = ISO8601::parseTimeZoneName(timeZoneString);
-    if (!identifier) {
-        throwRangeError(globalObject, scope, "argument needs to be UTC offset string or TimeZone identifier"_s);
-        return { };
-    }
-    return JSValue::encode(TemporalTimeZone::create(vm, structure, TimeZone::fromID(identifier.value())));
+    return throwVMTypeError(globalObject, scope, "Temporal.TimeZone is not a constructor"_s);
 }
 
 JSC_DEFINE_HOST_FUNCTION(callTemporalTimeZone, (JSGlobalObject* globalObject, CallFrame*))
@@ -107,11 +92,6 @@ JSC_DEFINE_HOST_FUNCTION(callTemporalTimeZone, (JSGlobalObject* globalObject, Ca
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(globalObject, scope, "TimeZone"_s));
-}
-
-JSC_DEFINE_HOST_FUNCTION(temporalTimeZoneConstructorFuncFrom, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    return JSValue::encode(TemporalTimeZone::from(globalObject, callFrame->argument(0)));
 }
 
 } // namespace JSC

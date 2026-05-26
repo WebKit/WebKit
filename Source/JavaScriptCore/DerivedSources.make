@@ -203,8 +203,6 @@ OBJECT_LUT_HEADERS = \
     StringPrototype.lut.h \
     SymbolConstructor.lut.h \
     SymbolPrototype.lut.h \
-    TemporalCalendarConstructor.lut.h \
-    TemporalCalendarPrototype.lut.h \
     TemporalDurationConstructor.lut.h \
     TemporalDurationPrototype.lut.h \
     TemporalInstantConstructor.lut.h \

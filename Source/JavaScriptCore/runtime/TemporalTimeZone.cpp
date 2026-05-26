@@ -48,14 +48,8 @@ Structure* TemporalTimeZone::createStructure(VM& vm, JSGlobalObject* globalObjec
 TemporalTimeZone::TemporalTimeZone(VM& vm, Structure* structure, TimeZone timeZone)
     : Base(vm, structure)
     , m_timeZone(timeZone)
+    , m_timeZoneId(timeZone.toString())
 {
-}
-
-// https://tc39.es/proposal-temporal/#sec-temporal-parsetemporaltimeZonestring
-static std::optional<int64_t> NODELETE parseTemporalTimeZoneString(StringView)
-{
-    // FIXME: Implement parsing temporal timeZone string, which requires full ISO 8601 parser.
-    return std::nullopt;
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.timezone.from
@@ -89,17 +83,8 @@ JSObject* TemporalTimeZone::from(JSGlobalObject* globalObject, JSValue timeZoneL
     auto timeZoneString = timeZoneLike.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    std::optional<int64_t> utcOffset = ISO8601::parseUTCOffset(timeZoneString);
-    if (utcOffset)
-        return TemporalTimeZone::create(vm, globalObject->timeZoneStructure(), TimeZone::fromUTCOffset(utcOffset.value()));
-
-    std::optional<TimeZoneID> identifier = ISO8601::parseTimeZoneName(timeZoneString);
-    if (identifier)
-        return TemporalTimeZone::create(vm, globalObject->timeZoneStructure(), TimeZone::fromID(identifier.value()));
-
-    std::optional<int64_t> utcOffsetFromInstant = parseTemporalTimeZoneString(timeZoneString);
-    if (utcOffsetFromInstant)
-        return TemporalTimeZone::create(vm, globalObject->timeZoneStructure(), TimeZone::fromUTCOffset(utcOffsetFromInstant.value()));
+    if (auto tz = ISO8601::parseTemporalTimeZoneIdentifier(timeZoneString))
+        return TemporalTimeZone::create(vm, globalObject->timeZoneStructure(), *tz);
 
     throwRangeError(globalObject, scope, "argument needs to be UTC offset string, TimeZone identifier, or temporal Instant string"_s);
     return { };
