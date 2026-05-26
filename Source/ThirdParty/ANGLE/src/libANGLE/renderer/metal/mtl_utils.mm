@@ -1489,19 +1489,6 @@ NSUInteger ComputeTotalSizeUsedForMTLRenderPassDescriptor(const mtl::RenderPassD
         currentRenderTargetSize = getNextLocationForAttachment(descriptor.colorAttachments[i],
                                                                context, currentRenderTargetSize);
     }
-    if (descriptor.depthAttachment.texture == descriptor.stencilAttachment.texture)
-    {
-        currentRenderTargetSize = getNextLocationForAttachment(descriptor.depthAttachment, context,
-                                                               currentRenderTargetSize);
-    }
-    else
-    {
-        currentRenderTargetSize = getNextLocationForAttachment(descriptor.depthAttachment, context,
-                                                               currentRenderTargetSize);
-        currentRenderTargetSize = getNextLocationForAttachment(descriptor.stencilAttachment,
-                                                               context, currentRenderTargetSize);
-    }
-
     return currentRenderTargetSize;
 }
 
@@ -1522,34 +1509,21 @@ NSUInteger ComputeTotalSizeUsedForMTLRenderPipelineDescriptor(
                 getNextLocationForFormat(caps, isMsaa, currentRenderTargetSize);
         }
     }
-    if (descriptor.depthAttachmentPixelFormat == descriptor.stencilAttachmentPixelFormat)
-    {
-        if (descriptor.depthAttachmentPixelFormat != MTLPixelFormatInvalid)
-        {
-            const FormatCaps &caps =
-                context->getDisplay()->getNativeFormatCaps(descriptor.depthAttachmentPixelFormat);
-            currentRenderTargetSize =
-                getNextLocationForFormat(caps, isMsaa, currentRenderTargetSize);
-        }
-    }
-    else
-    {
-        if (descriptor.depthAttachmentPixelFormat != MTLPixelFormatInvalid)
-        {
-            const FormatCaps &caps =
-                context->getDisplay()->getNativeFormatCaps(descriptor.depthAttachmentPixelFormat);
-            currentRenderTargetSize =
-                getNextLocationForFormat(caps, isMsaa, currentRenderTargetSize);
-        }
-        if (descriptor.stencilAttachmentPixelFormat != MTLPixelFormatInvalid)
-        {
-            const FormatCaps &caps =
-                context->getDisplay()->getNativeFormatCaps(descriptor.stencilAttachmentPixelFormat);
-            currentRenderTargetSize =
-                getNextLocationForFormat(caps, isMsaa, currentRenderTargetSize);
-        }
-    }
     return currentRenderTargetSize;
+}
+
+std::optional<NSUInteger> GetMaxRenderPassColorSizeBytes(const angle::FeaturesMtl &features,
+                                                         const mtl::ContextDevice &device)
+{
+    if (features.limitMaxColorTargetBitsForTesting.enabled)
+    {
+        return 32;
+    }
+    if (mtl::DeviceHasMaximumRenderTargetSize(device))
+    {
+        return mtl::GetMaxRenderTargetSizeForDeviceInBytes(device);
+    }
+    return std::nullopt;
 }
 
 gl::Rectangle MTLRegionToGLRect(const MTLRegion &mtlRegion)

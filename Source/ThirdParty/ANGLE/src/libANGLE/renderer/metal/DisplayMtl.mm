@@ -793,25 +793,6 @@ void DisplayMtl::ensureCapsInitialized() const
     mNativeCaps.maxViewportWidth     = mNativeCaps.max2DTextureSize;
     mNativeCaps.maxViewportHeight    = mNativeCaps.max2DTextureSize;
 
-    bool isCatalyst = TARGET_OS_MACCATALYST;
-
-    mMaxColorTargetBits = mtl::kMaxColorTargetBitsApple1To3;
-    if (supportsMacGPUFamily(1) || isCatalyst)
-    {
-        mMaxColorTargetBits = mtl::kMaxColorTargetBitsMacAndCatalyst;
-    }
-    else if (supportsAppleGPUFamily(4))
-    {
-        mMaxColorTargetBits = mtl::kMaxColorTargetBitsApple4Plus;
-    }
-
-    if (mFeatures.limitMaxColorTargetBitsForTesting.enabled)
-    {
-        // Set so we have enough for RGBA8 on every attachment
-        // but not enough for RGBA32UI.
-        mMaxColorTargetBits = mNativeCaps.maxColorAttachments * 32;
-    }
-
     // MSAA
     mNativeCaps.maxSamples             = mFormatTable.getMaxSamples();
     mNativeCaps.maxSampleMaskWords     = 1;

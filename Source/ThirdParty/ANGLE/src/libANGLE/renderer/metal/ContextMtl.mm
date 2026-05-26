@@ -1964,16 +1964,22 @@ mtl::RenderCommandEncoder *ContextMtl::getRenderPassCommandEncoder(const mtl::Re
     mDirtyBits.set();
 
     const mtl::ContextDevice &metalDevice = getMetalDevice();
-    if (mtl::DeviceHasMaximumRenderTargetSize(metalDevice))
+    const std::optional<NSUInteger> maxSize =
+        mtl::GetMaxRenderPassColorSizeBytes(getDisplay()->getFeatures(), metalDevice);
+    if (maxSize)
     {
-        NSUInteger maxSize = mtl::GetMaxRenderTargetSizeForDeviceInBytes(metalDevice);
         NSUInteger renderTargetSize =
             ComputeTotalSizeUsedForMTLRenderPassDescriptor(desc, this, metalDevice);
-        if (renderTargetSize > maxSize)
+        if (renderTargetSize > *maxSize)
         {
+            // Unreachable: FramebufferMtl::checkStatus rejects color-attachment
+            // configurations whose total byte size exceeds this device's
+            // budget, so the encoder-time check is defensive only.
+            UNREACHABLE();
             std::stringstream errorStream;
             errorStream << "This set of render targets requires " << renderTargetSize
-                        << " bytes of pixel storage. This device supports " << maxSize << " bytes.";
+                        << " bytes of pixel storage. This device supports " << *maxSize
+                        << " bytes.";
             handleError(GL_INVALID_OPERATION, errorStream.str().c_str(), __FILE__, ANGLE_FUNCTION,
                         __LINE__);
             return nullptr;

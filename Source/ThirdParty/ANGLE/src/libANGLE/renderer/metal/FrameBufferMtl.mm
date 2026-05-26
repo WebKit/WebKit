@@ -658,30 +658,18 @@ angle::Result FramebufferMtl::blitWithDraw(const gl::Context *context,
     return angle::Result::Continue;
 }
 
-bool FramebufferMtl::totalBitsUsedIsLessThanOrEqualToMaxBitsSupported(
-    const gl::Context *context) const
-{
-    ContextMtl *contextMtl = mtl::GetImpl(context);
-
-    uint32_t bitsUsed = 0;
-    for (const gl::FramebufferAttachment &attachment : mState.getColorAttachments())
-    {
-        if (attachment.isAttached())
-        {
-            bitsUsed += attachment.getRedSize() + attachment.getGreenSize() +
-                        attachment.getBlueSize() + attachment.getAlphaSize();
-        }
-    }
-
-    return bitsUsed <= contextMtl->getDisplay()->getMaxColorTargetBits();
-}
-
 gl::FramebufferStatus FramebufferMtl::checkStatus(const gl::Context *context) const
 {
+    // Read attachments from mState rather than the cached mColorRenderTargets:
+    // returning true from shouldSyncStateBeforeCheckStatus() would force a full
+    // state sync, but Framebuffer::syncState's "before-check-status" path is
+    // only implemented for the GL backend.
+    ContextMtl *contextMtl             = mtl::GetImpl(context);
+    const angle::FeaturesMtl &features = contextMtl->getDisplay()->getFeatures();
+
     if (mState.hasSeparateDepthAndStencilAttachments())
     {
-        ContextMtl *contextMtl = mtl::GetImpl(context);
-        if (!contextMtl->getDisplay()->getFeatures().allowSeparateDepthStencilBuffers.enabled)
+        if (!features.allowSeparateDepthStencilBuffers.enabled)
         {
             return gl::FramebufferStatus::Incomplete(
                 GL_FRAMEBUFFER_UNSUPPORTED,
@@ -700,11 +688,36 @@ gl::FramebufferStatus FramebufferMtl::checkStatus(const gl::Context *context) co
         }
     }
 
-    if (!totalBitsUsedIsLessThanOrEqualToMaxBitsSupported(context))
+    const mtl::ContextDevice &device        = contextMtl->getMetalDevice();
+    const std::optional<NSUInteger> maxSize = mtl::GetMaxRenderPassColorSizeBytes(features, device);
+    if (maxSize)
     {
-        return gl::FramebufferStatus::Incomplete(
-            GL_FRAMEBUFFER_UNSUPPORTED,
-            gl::err::kFramebufferIncompleteColorBitsUsedExceedsMaxColorBitsSupported);
+        const auto &colorAttachments = mState.getColorAttachments();
+        mtl::RenderPassDesc desc;
+        for (size_t i = 0; i < colorAttachments.size(); ++i)
+        {
+            const gl::FramebufferAttachment &attachment = colorAttachments[i];
+            if (!attachment.isAttached())
+            {
+                continue;
+            }
+            RenderTargetMtl *rt = nullptr;
+            if (attachment.getRenderTarget(context, attachment.getRenderToTextureSamples(), &rt) ==
+                    angle::Result::Stop ||
+                !rt || !rt->getTexture())
+            {
+                return gl::FramebufferStatus::Incomplete(
+                    GL_FRAMEBUFFER_UNSUPPORTED, gl::err::kFramebufferIncompleteInternalError);
+            }
+            rt->toRenderPassAttachmentDesc(&desc.colorAttachments[i]);
+        }
+        if (mtl::ComputeTotalSizeUsedForMTLRenderPassDescriptor(desc, contextMtl, device) >
+            *maxSize)
+        {
+            return gl::FramebufferStatus::Incomplete(
+                GL_FRAMEBUFFER_UNSUPPORTED,
+                gl::err::kFramebufferIncompleteColorBitsUsedExceedsMaxColorBitsSupported);
+        }
     }
 
     return gl::FramebufferStatus::Complete();
@@ -921,7 +934,11 @@ angle::Result FramebufferMtl::ensureRenderPassStarted(const gl::Context *context
     // texture, level, slice must be the same.
     ASSERT(desc.equalIgnoreLoadStoreOptions(mRenderPassDesc));
 
-    encoder                     = contextMtl->getRenderPassCommandEncoder(desc);
+    encoder = contextMtl->getRenderPassCommandEncoder(desc);
+    if (!encoder)
+    {
+        return angle::Result::Stop;
+    }
     mStartedRenderEncoderSerial = encoder->getSerial();
 
     ANGLE_TRY(unresolveIfNeeded(context, encoder));

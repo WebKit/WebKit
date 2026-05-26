@@ -13,6 +13,8 @@
 
 #import <Metal/Metal.h>
 
+#include <optional>
+
 #include "angle_gl.h"
 #include "common/MemoryBuffer.h"
 #include "common/PackedEnums.h"
@@ -188,6 +190,12 @@ NSUInteger ComputeTotalSizeUsedForMTLRenderPipelineDescriptor(
     const MTLRenderPipelineDescriptor *descriptor,
     const Context *context,
     const mtl::ContextDevice &device);
+
+// Returns the device's max render-pass color byte budget, or nullopt when the
+// device imposes no fixed limit (e.g. macOS).  Honors
+// FeaturesMtl::limitMaxColorTargetBitsForTesting.
+std::optional<NSUInteger> GetMaxRenderPassColorSizeBytes(const angle::FeaturesMtl &features,
+                                                         const mtl::ContextDevice &device);
 
 gl::Rectangle MTLRegionToGLRect(const MTLRegion &mtlRegion);
 gl::Box MTLRegionToGLBox(const MTLRegion &mtlRegion);
