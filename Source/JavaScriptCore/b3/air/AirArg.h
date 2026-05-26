@@ -1475,17 +1475,15 @@ public:
         if (!isARM64() && !isX86_64())
             return false;
 
+        uint64_t u64 = static_cast<uint64_t>(value);
 #if CPU(ARM64)
         if (ARM64Assembler::canEncodeFPImm<64>(value))
             return true;
 
-        uint64_t u64 = static_cast<uint64_t>(value);
         if (ARM64FPImmediate::create64(u64).isValid())
             return true;
 
 #elif CPU(X86_64)
-        uint64_t u64 = static_cast<uint64_t>(value);
-
         if (u64 == 0xFFFFFFFFFFFFFFFFULL)
             return true;
 
