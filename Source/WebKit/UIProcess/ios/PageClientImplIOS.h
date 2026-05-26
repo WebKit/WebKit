@@ -37,6 +37,7 @@
 
 OBJC_CLASS PlatformTextAlternatives;
 OBJC_CLASS UIScreen;
+OBJC_CLASS UIWindowScene;
 OBJC_CLASS WKContentView;
 OBJC_CLASS WKEditorUndoTarget;
 
@@ -150,6 +151,7 @@ private:
 #endif
 
     UIScreen *screen() override;
+    UIWindowScene *windowScene() override;
 
 #if ENABLE(IMAGE_ANALYSIS)
     void requestTextRecognition(const URL& imageURL, WebCore::ShareableBitmap::Handle&& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&) final;

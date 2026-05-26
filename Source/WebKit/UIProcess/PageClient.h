@@ -89,6 +89,7 @@ OBJC_CLASS UIScreen;
 OBJC_CLASS UIScrollView;
 OBJC_CLASS UIView;
 OBJC_CLASS UIViewController;
+OBJC_CLASS UIWindowScene;
 OBJC_CLASS WKBaseScrollView;
 OBJC_CLASS WKBEScrollViewScrollUpdate;
 OBJC_CLASS WKFullScreenWindowController;
@@ -635,6 +636,7 @@ public:
     virtual String sceneID() = 0;
 
     virtual UIScreen *screen() = 0;
+    virtual UIWindowScene *windowScene() = 0;
 
     virtual void beginTextRecognitionForFullscreenVideo(WebCore::ShareableBitmap::Handle&&, AVPlayerViewController *) = 0;
     virtual void cancelTextRecognitionForFullscreenVideo(AVPlayerViewController *) = 0;

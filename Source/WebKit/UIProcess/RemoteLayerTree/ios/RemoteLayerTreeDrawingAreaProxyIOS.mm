@@ -282,14 +282,27 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return pageClient->screen();
 }
 
+- (UIWindowScene *)_windowSceneForDisplayLink
+{
+    RefPtr page = protect(_drawingAreaProxy)->page();
+    if (!page)
+        return nil;
+
+    RefPtr pageClient = page->pageClient();
+    if (!pageClient)
+        return nil;
+
+    return pageClient->windowScene();
+}
+
 - (void)_createDisplayLink
 {
     ASSERT(!_displayLink);
 
     _screenForDisplayLink = [self _screenForDisplayLink];
 
-    if (_screenForDisplayLink)
-        _displayLink = [protect(_screenForDisplayLink) displayLinkWithTarget:self selector:@selector(displayLinkFired:)];
+    if (RetainPtr windowScene = [self _windowSceneForDisplayLink])
+        _displayLink = [windowScene displayLinkWithTarget:self selector:@selector(displayLinkFired:)];
     else {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         // FIXME: CoreAnimation version deprecated rdar://164090713

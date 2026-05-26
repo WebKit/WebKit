@@ -636,6 +636,11 @@ UIScreen *PageClientImpl::screen()
     return [contentView() _screen];
 }
 
+UIWindowScene *PageClientImpl::windowScene()
+{
+    return [contentView() window].windowScene;
+}
+
 #if ENABLE(IMAGE_ANALYSIS)
 
 void PageClientImpl::requestTextRecognition(const URL& imageURL, ShareableBitmap::Handle&& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(TextRecognitionResult&&)>&& completion)
