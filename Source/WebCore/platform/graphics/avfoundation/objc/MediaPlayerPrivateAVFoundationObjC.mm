@@ -4305,7 +4305,7 @@ void MediaPlayerPrivateAVFoundationObjC::setParticipatesInAudioSession(bool part
 {
     if ([m_avPlayer respondsToSelector:@selector(setDisconnectedFromSystemAudio:completionHandler:)])
         [m_avPlayer setDisconnectedFromSystemAudio:!participatesInAudioSession completionHandler:nil];
-    else
+    else if ([m_avPlayer respondsToSelector:@selector(setParticipatesInAudioSession:completionHandler:)])
         [m_avPlayer setParticipatesInAudioSession:participatesInAudioSession completionHandler:nil];
 }
 #endif
