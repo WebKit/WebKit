@@ -225,6 +225,8 @@ private:
     void buildPendingResourcesIfNeeded();
     bool accessKeyAction(bool sendMouseEvents) override;
 
+    void synchronizeAttributeToInstances(const QualifiedName&);
+
 #ifndef NDEBUG
     virtual bool filterOutAnimatableAttribute(const QualifiedName&) const;
 #endif

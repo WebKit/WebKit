@@ -542,9 +542,9 @@ void SVGElement::attributeChanged(const QualifiedName& name, const AtomString& o
     }
 
     // Changes to the style attribute are processed lazily (see Element::getAttribute() and related methods),
-    // so we don't want changes to the style attribute to result in extra work here except invalidateInstances().
+    // so we don't want changes to the style attribute to result in extra work here except propagating to instances.
     if (name == HTMLNames::styleAttr)
-        invalidateInstances();
+        synchronizeAttributeToInstances(name);
     else
         svgAttributeChanged(name);
 }
@@ -1038,9 +1038,14 @@ void SVGElement::updateSVGRendererForElementChange()
 
 void SVGElement::svgAttributeChanged(const QualifiedName& attrName)
 {
+    // CSS-mapped presentation attributes don't need a full render-tree
+    // rebuild — propagating to each <use> instance lets the next style
+    // recalc apply the change in the same frame. Renderer-cached attrs
+    // (transform, geometric, …) never reach here: subclass overrides claim
+    // them via PropertyRegistry::isKnownAttribute and return before delegating up.
     CSSPropertyID propId = cssPropertyIdForSVGAttributeName(attrName, document().settings());
     if (propId > 0) {
-        invalidateInstances();
+        synchronizeAttributeToInstances(attrName);
         return;
     }
 
@@ -1184,6 +1189,29 @@ void SVGElement::invalidateInstances()
         if (RefPtr useElement = instance->correspondingUseElement())
             useElement->invalidateShadowTree();
         instance->setCorrespondingElement(nullptr);
+    }
+}
+
+void SVGElement::synchronizeAttributeToInstances(const QualifiedName& name)
+{
+    if (instanceUpdatesBlocked())
+        return;
+
+    // Recursion base case: each clone's setAttribute() below re-enters this
+    // function, and clones have no further instances of their own.
+    if (instances().isEmptyIgnoringNullReferences())
+        return;
+
+    // attributeChanged() fires after the new value has been stored, so
+    // getAttribute() reads the post-mutation value to forward.
+    auto currentValue = getAttribute(name);
+    for (auto& instance : copyToVectorOf<Ref<SVGElement>>(instances())) {
+        ASSERT(instance->correspondingElement() == this);
+        ASSERT(instance->isInUserAgentShadowTree());
+        if (currentValue.isNull())
+            instance->removeAttribute(name);
+        else
+            instance->setAttribute(name, currentValue);
     }
 }
 
