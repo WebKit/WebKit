@@ -34,6 +34,8 @@ webkit.org/b/289926 imported/w3c/web-platform-tests/css/css-position/position-ab
 
 imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/image-orientation/drawImage-from-blob.tentative.html [ Pass ]
 
+fast/forms/date/date-editable-components/date-editable-components-change-type-on-input-event.html [ Pass ]
+
 fast/forms/month/month-editable-components/month-editable-components-input-and-change-events.html [ Pass ]
 fast/forms/month/month-editable-components/month-editable-components-user-invalid.html [ Pass ]
 fast/forms/month/month-editable-components/month-editable-components-user-valid.html [ Pass ]
