@@ -570,6 +570,25 @@ def riscv64LowerOperation(list)
         newList << Instruction.new(node.codeOrigin, "rv_s#{suffix}", node.operands)
     end
 
+    def emitTransferOperation(newList, node, size)
+        riscv64ValidateOperands(node.operands, [Address, Address])
+
+        case size
+        when :i
+            loadSuffix = "wu"
+            storeSuffix = "w"
+        when :p, :q
+            loadSuffix = "d"
+            storeSuffix = "d"
+        else
+            raise "Invalid size #{size}"
+        end
+
+        tmp = Tmp.new(node.codeOrigin, :gpr)
+        newList << Instruction.new(node.codeOrigin, "rv_l#{loadSuffix}", [node.operands[0], tmp])
+        newList << Instruction.new(node.codeOrigin, "rv_s#{storeSuffix}", [tmp, node.operands[1]])
+    end
+
     def emitMove(newList, node)
         case riscv64OperandTypes(node.operands)
         when [RegisterID, RegisterID]
@@ -852,6 +871,8 @@ def riscv64LowerOperation(list)
                 emitLoadOperation(newList, node, $1.to_sym)
             when /^store(b|h|i|p|q)$/
                 emitStoreOperation(newList, node, $1.to_sym)
+            when /^transfer(i|p|q)$/
+                emitTransferOperation(newList, node, $1.to_sym)
             when "move"
                 emitMove(newList, node)
             when "jmp"
