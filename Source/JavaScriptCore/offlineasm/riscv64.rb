@@ -790,7 +790,7 @@ def riscv64LowerOperation(list)
             newList << Instruction.new(node.codeOrigin, "rv_slli", [source, Immediate.new(node.codeOrigin, 56), dest])
             newList << Instruction.new(node.codeOrigin, "rv_srai", [dest, Immediate.new(node.codeOrigin, 24), dest])
             newList << Instruction.new(node.codeOrigin, "rv_srli", [dest, Immediate.new(node.codeOrigin, 32), dest])
-        when [:b, :q]
+        when [:b, :p], [:b, :q]
             newList << Instruction.new(node.codeOrigin, "rv_slli", [source, Immediate.new(node.codeOrigin, 56), dest])
             newList << Instruction.new(node.codeOrigin, "rv_srai", [dest, Immediate.new(node.codeOrigin, 56), dest])
         when [:h, :i]
