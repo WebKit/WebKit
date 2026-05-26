@@ -506,6 +506,15 @@ std::optional<ScrollbarUpdateScope> RenderBlock::updateScrollInfoAfterLayout()
 {
     auto hasNonVisibleOverflow = this->hasNonVisibleOverflow();
 
+    auto& layoutContext = view().frameView().layoutContext();
+    if (layoutContext.isUpdateScrollInfoDisabledForFlexBaseSize()) {
+        auto shouldUpdate = hasNonVisibleOverflow || hasControlClip();
+        if (shouldUpdate) {
+            layoutContext.recordSuspendedUpdateScrollInfoForFlexBaseSize(*this);
+            return { };
+        }
+    }
+
     if (isDelayingUpdateScrollInfoAfterLayout(*this)) {
         auto shouldUpdate = hasNonVisibleOverflow || hasControlClip();
         if (shouldUpdate) {

@@ -888,6 +888,35 @@ bool LocalFrameViewLayoutContext::isPercentHeightResolveDisabledFor(const Render
     return m_percentHeightIgnoreList.contains(flexItem);
 }
 
+void LocalFrameViewLayoutContext::beginDisableUpdateScrollInfoForFlexBaseSize(const RenderBox& flexItem)
+{
+    m_flexItemsSuspendingUpdateScrollInfo.append(flexItem);
+}
+
+void LocalFrameViewLayoutContext::endDisableUpdateScrollInfoForFlexBaseSize(const RenderBox& flexItem)
+{
+    ASSERT(!m_flexItemsSuspendingUpdateScrollInfo.isEmpty());
+    ASSERT(m_flexItemsSuspendingUpdateScrollInfo.last().get() == &flexItem);
+    UNUSED_PARAM(flexItem);
+    m_flexItemsSuspendingUpdateScrollInfo.removeLast();
+}
+
+void LocalFrameViewLayoutContext::recordSuspendedUpdateScrollInfoForFlexBaseSize(RenderBlock& block)
+{
+    ASSERT(!m_flexItemsSuspendingUpdateScrollInfo.isEmpty());
+    CheckedPtr flexItem = m_flexItemsSuspendingUpdateScrollInfo.last().get();
+    if (!flexItem)
+        return;
+    m_suspendedUpdateScrollInfoBlocksForFlexBaseSize.ensure(*flexItem, [] {
+        return SingleThreadWeakHashSet<RenderBlock> { };
+    }).iterator->value.add(block);
+}
+
+SingleThreadWeakHashSet<RenderBlock> LocalFrameViewLayoutContext::takeSuspendedUpdateScrollInfoBlocksForFlexBaseSize(const RenderBox& flexItem)
+{
+    return m_suspendedUpdateScrollInfoBlocksForFlexBaseSize.take(flexItem);
+}
+
 #ifndef NDEBUG
 void LocalFrameViewLayoutContext::checkLayoutState()
 {

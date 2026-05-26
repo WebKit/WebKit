@@ -39,7 +39,9 @@
 #include "LayoutIntegrationCoverage.h"
 #include "LayoutIntegrationFlexLayout.h"
 #include "LayoutRepainter.h"
+#include "LayoutScope.h"
 #include "LayoutUnit.h"
+#include "RelayoutScopeForScrollbarChange.h"
 #include "RenderBlockInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
@@ -510,8 +512,6 @@ void RenderFlexibleBox::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
         m_numberOfFlexItemsOnLastLine = { };
         m_justifyContentStartOverflow = 0;
 
-        beginUpdateScrollInfoAfterLayoutTransaction();
-
         prepareOrderIteratorAndMargins();
 
         // Fieldsets need to find their legend and position it inside the border of the object.
@@ -523,11 +523,6 @@ void RenderFlexibleBox::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
         appendFlexItemFrameRects(oldFlexItemRects);
 
         performFlexLayout(relayoutChildren);
-
-        {
-            auto scrollbarLayout = SetForScope(m_inPostFlexUpdateScrollbarLayout, true);
-            endAndCommitUpdateScrollInfoAfterLayoutTransaction();
-        }
 
         repaintFlexItemsDuringLayoutIfMoved(oldFlexItemRects);
         // FIXME: css3/flexbox/repaint-rtl-column.html seems to repaint more overflow than it needs to.
@@ -2119,6 +2114,7 @@ void RenderFlexibleBox::ensureBlockAxisContentSizeForFlexItemIfNeeded(RenderBox&
     // where we want percentages to be treated as auto. For flex-basis itself, this is not a problem because
     // by definition we have an indefinite flex basis here and thus percentages should not resolve.
     auto percentResolveDisableScope = FlexPercentResolveDisabler { view().frameView().layoutContext(), flexItem };
+    auto scrollInfoDisableScope = FlexBaseSizeUpdateScrollInfoDisabler { view().frameView().layoutContext(), flexItem };
     flexItem.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
     flexItem.layoutIfNeeded();
 
@@ -2807,9 +2803,22 @@ void RenderFlexibleBox::layoutFlexItemAfterMainSizing(FlexLayoutItem& flexLayout
     if (flexItem.needsLayout())
         m_flexItemsWithCompletedLayout.add(flexItem);
 
+    bool willRelayoutFlexItem = flexItem.needsLayout();
     {
         auto flexLayoutScope = SetForScope(m_afterMainAxisItemSizing, true);
         flexItem.layoutIfNeeded();
+    }
+
+    auto suspendedBlocks = view().frameView().layoutContext().takeSuspendedUpdateScrollInfoBlocksForFlexBaseSize(flexItem);
+    if (!willRelayoutFlexItem) {
+        // The flex base-size measurement layout was the final layout for this flex item.
+        // Flush the scroll-info updates that the disabler suspended during that measurement.
+        for (CheckedRef<RenderBlock> block : suspendedBlocks) {
+            if (block->hasControlClip() && block->hasRenderOverflow())
+                block->clearLayoutOverflow();
+            if (block->hasNonVisibleOverflow())
+                RelayoutScopeForScrollbarChange relayoutScope { block.get(), InOverflowRelayout::No };
+        }
     }
 
     if (!flexLayoutItem.everHadLayout && flexItem.checkForRepaintDuringLayout()) {

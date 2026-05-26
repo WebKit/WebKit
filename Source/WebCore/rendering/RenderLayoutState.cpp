@@ -352,6 +352,18 @@ FlexPercentResolveDisabler::~FlexPercentResolveDisabler()
     m_layoutContext->enablePercentHeightResolveFor(m_flexItem);
 }
 
+FlexBaseSizeUpdateScrollInfoDisabler::FlexBaseSizeUpdateScrollInfoDisabler(LocalFrameViewLayoutContext& layoutContext, const RenderBox& flexItem)
+    : m_layoutContext(layoutContext)
+    , m_flexItem(flexItem)
+{
+    m_layoutContext->beginDisableUpdateScrollInfoForFlexBaseSize(flexItem);
+}
+
+FlexBaseSizeUpdateScrollInfoDisabler::~FlexBaseSizeUpdateScrollInfoDisabler()
+{
+    m_layoutContext->endDisableUpdateScrollInfoForFlexBaseSize(m_flexItem);
+}
+
 ContentVisibilityOverrideScope::ContentVisibilityOverrideScope(LocalFrameViewLayoutContext& layoutContext, OptionSet<OverrideType> overrideTypes)
     : m_layoutContext(layoutContext)
 {

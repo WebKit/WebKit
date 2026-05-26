@@ -112,6 +112,10 @@ public:
 
     bool NODELETE isPercentHeightResolveDisabledFor(const RenderBox& flexItem);
 
+    bool isUpdateScrollInfoDisabledForFlexBaseSize() const { return !m_flexItemsSuspendingUpdateScrollInfo.isEmpty(); }
+    void recordSuspendedUpdateScrollInfoForFlexBaseSize(RenderBlock&);
+    SingleThreadWeakHashSet<RenderBlock> takeSuspendedUpdateScrollInfoBlocksForFlexBaseSize(const RenderBox& flexItem);
+
     struct TextBoxTrim {
         bool trimFirstFormattedLine { false };
         SingleThreadWeakPtr<const RenderBlockFlow> lastFormattedLineRoot;
@@ -197,6 +201,7 @@ private:
     friend class LayoutStateDisabler;
     friend class SubtreeLayoutStateMaintainer;
     friend class FlexPercentResolveDisabler;
+    friend class FlexBaseSizeUpdateScrollInfoDisabler;
     friend class ContentVisibilityOverrideScope;
     friend class RepaintBlocker;
 
@@ -246,6 +251,9 @@ private:
     void disablePercentHeightResolveFor(const RenderBox& flexItem);
     void enablePercentHeightResolveFor(const RenderBox& flexItem);
 
+    void beginDisableUpdateScrollInfoForFlexBaseSize(const RenderBox& flexItem);
+    void endDisableUpdateScrollInfoForFlexBaseSize(const RenderBox& flexItem);
+
     void allowRepaints() { m_repaintsBlocked = false; }
     void blockRepaints() { m_repaintsBlocked = true; }
 
@@ -280,6 +288,8 @@ private:
     std::unique_ptr<UpdateScrollInfoAfterLayoutTransaction> m_updateScrollInfoAfterLayoutTransaction;
     SingleThreadWeakHashMap<RenderBlock, Vector<SingleThreadWeakPtr<RenderBox>>> m_containersWithDescendantsNeedingTransformUpdate;
     SingleThreadWeakHashSet<RenderBox> m_percentHeightIgnoreList;
+    Vector<SingleThreadWeakPtr<const RenderBox>> m_flexItemsSuspendingUpdateScrollInfo;
+    SingleThreadWeakHashMap<const RenderBox, SingleThreadWeakHashSet<RenderBlock>> m_suspendedUpdateScrollInfoBlocksForFlexBaseSize;
     Vector<AnchorScrollAdjuster> m_anchorScrollAdjusters;
     std::optional<TextBoxTrim> m_textBoxTrim;
     std::optional<SubtreeScrollbarChangesState> m_subtreeScrollbarChangesState;
