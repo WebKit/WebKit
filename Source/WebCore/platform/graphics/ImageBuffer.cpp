@@ -57,6 +57,7 @@
 #include "ImageBufferSkiaAcceleratedBackend.h"
 #include "ImageBufferUtilitiesSkia.h"
 #include "PlatformDisplay.h"
+#include "SkiaSerializedImageBuffer.h"
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/gpu/ganesh/GrBackendSurface.h>
@@ -161,6 +162,7 @@ RefPtr<ImageBuffer> SerializedImageBuffer::sinkIntoImageBuffer(std::unique_ptr<S
     return buffer->sinkIntoImageBuffer();
 }
 
+#if !USE(SKIA)
 // The default serialization of an ImageBuffer just assumes that we can
 // pass it as-is, as long as this is the only reference.
 class DefaultSerializedImageBuffer : public SerializedImageBuffer {
@@ -169,10 +171,6 @@ public:
     DefaultSerializedImageBuffer(ImageBuffer* image)
         : m_buffer(image)
     {
-#if USE(SKIA)
-        if (image->renderingMode() == RenderingMode::Accelerated)
-            image->flushDrawingContext();
-#endif
     }
 
     RefPtr<ImageBuffer> sinkIntoImageBuffer() final
@@ -193,12 +191,17 @@ public:
 private:
     RefPtr<ImageBuffer> m_buffer;
 };
+#endif
 
 std::unique_ptr<SerializedImageBuffer> ImageBuffer::sinkIntoSerializedImageBuffer()
 {
     ASSERT(hasOneRef());
     ASSERT(!controlBlock().weakRefCount());
+#if USE(SKIA)
+    return makeUnique<SkiaSerializedImageBuffer>(*this);
+#else
     return makeUnique<DefaultSerializedImageBuffer>(this);
+#endif
 }
 
 std::unique_ptr<SerializedImageBuffer> ImageBuffer::sinkIntoSerializedImageBuffer(RefPtr<ImageBuffer>&& image)
