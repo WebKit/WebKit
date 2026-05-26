@@ -22,15 +22,29 @@ namespace rx
 namespace
 {
 constexpr size_t kInitialIndexBufferSize = 0xFFFF;  // Initial 64k pool.
+<<<<<<< HEAD
 }
 static inline uint32_t primCountForIndexCount(const uint fixIndexBufferKey,
                                               const GLsizei indexCount)
 {
     const uint fixIndexBufferMode =
         (fixIndexBufferKey >> MtlFixIndexBufferKeyModeShift) & MtlFixIndexBufferKeyModeMask;
+=======
+>>>>>>> cf2e67ecb913 (ANGLE: REGRESSION(305413.478@safari-7624-branch) Drawing large amount of indices causes validation failure again)
 
-    switch (fixIndexBufferMode)
+struct IndexedDrawRewriteInfoMtl {
+    uint32_t primitiveCount;
+    size_t newIndexCount;
+    gl::PrimitiveMode newPrimitiveMode;
+};
+
+// Returns counts for Metal indexed draw for GL indexed draw parameters.
+inline IndexedDrawRewriteInfoMtl resolveIndexedDrawRewriteInfo(gl::PrimitiveMode mode, GLsizei count)
+{
+    uint32_t indexCount = static_cast<uint32_t>(count);
+    switch (mode)
     {
+<<<<<<< HEAD
         case MtlFixIndexBufferKeyPoints:
             return indexCount;
         case MtlFixIndexBufferKeyLines:
@@ -48,12 +62,30 @@ static inline uint32_t primCountForIndexCount(const uint fixIndexBufferKey,
         case MtlFixIndexBufferKeyTriangleFan:
             // Prevent underflow with subtraction and avoid casting to a signed type
             return std::max(indexCount - 2, 0);
+=======
+        case gl::PrimitiveMode::Points:
+            return {indexCount, indexCount, gl::PrimitiveMode::Points};
+        case gl::PrimitiveMode::Lines:
+            return {indexCount / 2, indexCount - (indexCount % 2), gl::PrimitiveMode::Lines};
+        case gl::PrimitiveMode::LineLoop:
+            return {indexCount, static_cast<size_t>(indexCount) * 2, gl::PrimitiveMode::Lines};
+        case gl::PrimitiveMode::LineStrip:
+            indexCount = indexCount < 1 ? 0 : indexCount - 1;
+            return {indexCount, static_cast<size_t>(indexCount) * 2, gl::PrimitiveMode::Lines};
+        case gl::PrimitiveMode::Triangles:
+            return {indexCount / 3, indexCount - (indexCount % 3), gl::PrimitiveMode::Triangles};
+        case gl::PrimitiveMode::TriangleStrip:
+        case gl::PrimitiveMode::TriangleFan:
+            indexCount = indexCount < 2 ? 0 : indexCount - 2;
+            return {indexCount, static_cast<size_t>(indexCount) * 3, gl::PrimitiveMode::Triangles};
+>>>>>>> cf2e67ecb913 (ANGLE: REGRESSION(305413.478@safari-7624-branch) Drawing large amount of indices causes validation failure again)
         default:
-            ASSERT(false);
-            return 0;
+            UNREACHABLE();
+            return {0, 0, gl::PrimitiveMode::InvalidEnum};
     }
 }
 
+<<<<<<< HEAD
 static inline bool indexCountForPrimCount(const uint fixIndexBufferKey,
                                           const uint32_t primCount,
                                           uint32_t *outIndexCount)
@@ -113,6 +145,8 @@ static inline gl::PrimitiveMode getNewPrimitiveMode(const uint fixIndexBufferKey
             ASSERT(false);
             return gl::PrimitiveMode::InvalidEnum;
     }
+=======
+>>>>>>> cf2e67ecb913 (ANGLE: REGRESSION(305413.478@safari-7624-branch) Drawing large amount of indices causes validation failure again)
 }
 ProvokingVertexHelper::ProvokingVertexHelper(ContextMtl *context) : mIndexBuffers(false)
 {
@@ -205,6 +239,7 @@ angle::Result ProvokingVertexHelper::preconditionIndexBuffer(ContextMtl *context
     // Upload index buffer
     // dispatch per-primitive?
     uint indexBufferKey = buildIndexBufferKey(elementsType, primitiveRestartEnabled, primitiveMode);
+<<<<<<< HEAD
     uint32_t primCount     = primCountForIndexCount(indexBufferKey, glCount);
     uint32_t newIndexCount = 0;
     ANGLE_CHECK_GL_MATH(context, indexCountForPrimCount(indexBufferKey, primCount, &newIndexCount));
@@ -218,6 +253,16 @@ angle::Result ProvokingVertexHelper::preconditionIndexBuffer(ContextMtl *context
 
     ANGLE_CHECK_GL_MATH(context, checkedBufferSize.IsValid());
     ANGLE_TRY(mIndexBuffers.allocate(context, checkedBufferSize.ValueOrDie(), &newBuffer));
+=======
+    auto [primCount, newIndexCount, newPrimitiveMode] = resolveIndexedDrawRewriteInfo(primitiveMode, count);
+    // We do not support large buffers at the moment.
+    ANGLE_CHECK_GL_MATH(context, newIndexCount <= std::numeric_limits<uint32_t>::max());
+    size_t newIndexBufferSize = newIndexCount << gl::GetDrawElementsTypeShift(elementsType);
+    size_t newOffset          = 0;
+    mtl::BufferRef newBuffer;
+    ANGLE_TRY(mIndexBuffers.allocate(context, newIndexBufferSize + indexOffset, nullptr,
+                                     &newBuffer, &newOffset));
+>>>>>>> cf2e67ecb913 (ANGLE: REGRESSION(305413.478@safari-7624-branch) Drawing large amount of indices causes validation failure again)
     auto threadsPerThreadgroup = MTLSizeMake(MIN(primCount, 64u), 1, 1);
 
     mtl::ComputeCommandEncoder *encoder =
@@ -235,9 +280,15 @@ angle::Result ProvokingVertexHelper::preconditionIndexBuffer(ContextMtl *context
                     1, 1),
         threadsPerThreadgroup);
     outIndexCount    = static_cast<uint32_t>(newIndexCount);
+<<<<<<< HEAD
     outIndexOffset   = newBuffer.offset();
     outPrimitiveMode = getNewPrimitiveMode(indexBufferKey);
     outNewBuffer     = newBuffer.buffer();
+=======
+    outIndexOffset   = newOffset;
+    outPrimitiveMode = newPrimitiveMode;
+    outNewBuffer     = newBuffer;
+>>>>>>> cf2e67ecb913 (ANGLE: REGRESSION(305413.478@safari-7624-branch) Drawing large amount of indices causes validation failure again)
     return angle::Result::Continue;
 }
 
@@ -256,6 +307,7 @@ angle::Result ProvokingVertexHelper::generateIndexBuffer(ContextMtl *context,
     // dispatch per-primitive?
     const bool primitiveRestartEnabled = false;
     uint indexBufferKey = buildIndexBufferKey(elementsType, primitiveRestartEnabled, primitiveMode);
+<<<<<<< HEAD
     uint32_t primCount  = primCountForIndexCount(indexBufferKey, glCount);
 
     uint32_t newIndexCount = 0;
@@ -269,6 +321,16 @@ angle::Result ProvokingVertexHelper::generateIndexBuffer(ContextMtl *context,
 
     ANGLE_CHECK_GL_MATH(context, checkedBufferSize.IsValid());
     ANGLE_TRY(mIndexBuffers.allocate(context, checkedBufferSize.ValueOrDie(), &newBuffer));
+=======
+    auto [primCount, newIndexCount, newPrimitiveMode] = resolveIndexedDrawRewriteInfo(primitiveMode, count);
+    // We do not support large buffers at the moment.
+    ANGLE_CHECK_GL_MATH(context, newIndexCount <= std::numeric_limits<uint32_t>::max());
+    size_t newIndexBufferSize = newIndexCount << gl::GetDrawElementsTypeShift(elementsType);
+    size_t newIndexOffset = 0;
+    mtl::BufferRef newBuffer;
+    ANGLE_TRY(mIndexBuffers.allocate(context, newIndexBufferSize, nullptr, &newBuffer,
+                                     &newIndexOffset));
+>>>>>>> cf2e67ecb913 (ANGLE: REGRESSION(305413.478@safari-7624-branch) Drawing large amount of indices causes validation failure again)
     auto threadsPerThreadgroup = MTLSizeMake(MIN(primCount, 64u), 1, 1);
 
     mtl::ComputeCommandEncoder *encoder =
@@ -286,9 +348,15 @@ angle::Result ProvokingVertexHelper::generateIndexBuffer(ContextMtl *context,
                     1, 1),
         threadsPerThreadgroup);
     outIndexCount    = static_cast<uint32_t>(newIndexCount);
+<<<<<<< HEAD
     outIndexOffset   = newBuffer.offset();
     outPrimitiveMode = getNewPrimitiveMode(indexBufferKey);
     outNewBuffer     = newBuffer.buffer();
+=======
+    outIndexOffset   = newIndexOffset;
+    outPrimitiveMode = newPrimitiveMode;
+    outNewBuffer     = newBuffer;
+>>>>>>> cf2e67ecb913 (ANGLE: REGRESSION(305413.478@safari-7624-branch) Drawing large amount of indices causes validation failure again)
     return angle::Result::Continue;
 }
 
