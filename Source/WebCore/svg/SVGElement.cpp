@@ -303,6 +303,14 @@ Vector<WeakPtr<SVGResourceElementClient>> SVGElement::referencingCSSClients() co
     return copyToVector(m_svgRareData->referencingCSSClients());
 }
 
+bool SVGElement::hasReferencingDependents() const
+{
+    if (!m_svgRareData)
+        return false;
+    return !m_svgRareData->referencingElements().isEmptyIgnoringNullReferences()
+        || !m_svgRareData->referencingCSSClients().isEmptyIgnoringNullReferences();
+}
+
 void SVGElement::addReferencingCSSClient(SVGResourceElementClient& client)
 {
     if (CheckedPtr container = dynamicDowncast<RenderSVGResourceContainer>(this->renderer()))

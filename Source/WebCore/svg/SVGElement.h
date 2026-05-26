@@ -125,6 +125,8 @@ public:
     void removeReferencingElement(SVGElement&);
     void removeElementReference();
 
+    bool hasReferencingDependents() const;
+
     Vector<WeakPtr<SVGResourceElementClient>> referencingCSSClients() const;
     void addReferencingCSSClient(SVGResourceElementClient&);
     void removeReferencingCSSClient(SVGResourceElementClient&);

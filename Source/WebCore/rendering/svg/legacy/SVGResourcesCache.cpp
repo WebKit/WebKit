@@ -24,6 +24,7 @@
 #include "LegacyRenderSVGModelObjectInlines.h"
 #include "LegacyRenderSVGResourceContainer.h"
 #include "RenderElementInlines.h"
+#include "SVGElement.h"
 #include "SVGResources.h"
 #include "SVGResourcesCycleSolver.h"
 #include "Settings.h"
@@ -201,10 +202,17 @@ void SVGResourcesCache::clientStyleChanged(RenderElement& renderer, Style::Diffe
         return false;
     };
 
-    if (hasStyleDifferencesAffectingResources()) {
+    bool resourceAffectingChange = hasStyleDifferencesAffectingResources();
+    if (resourceAffectingChange) {
         auto& cache = resourcesCacheFromRenderer(renderer);
         cache.removeResourcesFromRenderer(renderer);
         cache.addResourcesFromRenderer(renderer, newStyle);
+    }
+
+    if (!resourceAffectingChange && !renderer.isLegacyRenderSVGResourceContainer()) {
+        RefPtr svgElement = dynamicDowncast<SVGElement>(renderer.element());
+        if (svgElement && !svgElement->hasReferencingDependents())
+            return;
     }
 
     LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, false);
