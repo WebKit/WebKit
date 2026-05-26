@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ReadableStreamBYOBRequest.h"
 
+#include "JSReadableStream.h"
 #include "JSReadableStreamBYOBRequest.h"
 #include "ReadableByteStreamController.h"
 #include "ReadableStream.h"
@@ -33,12 +34,23 @@
 
 namespace WebCore {
 
-Ref<ReadableStreamBYOBRequest> ReadableStreamBYOBRequest::create()
+Ref<ReadableStreamBYOBRequest> ReadableStreamBYOBRequest::create(ReadableByteStreamController& controller, Ref<JSC::ArrayBufferView>&& view)
 {
-    return adoptRef(*new ReadableStreamBYOBRequest);
+    return adoptRef(*new ReadableStreamBYOBRequest(controller, WTF::move(view)));
 }
 
-ReadableStreamBYOBRequest::ReadableStreamBYOBRequest() = default;
+ReadableStreamBYOBRequest::ReadableStreamBYOBRequest(ReadableByteStreamController& controller, Ref<JSC::ArrayBufferView>&& view)
+    : m_controller(controller)
+    , m_view(WTF::move(view))
+{
+    Ref stream = controller.stream();
+    auto* globalObject = stream->globalObject();
+    ASSERT(globalObject);
+    if (!globalObject)
+        return;
+
+    m_streamWrapperForGC.set(globalObject->vm(), globalObject, toJS(globalObject, globalObject, stream.get()));
+}
 
 JSC::ArrayBufferView* ReadableStreamBYOBRequest::view() const
 {
@@ -72,21 +84,21 @@ ExceptionOr<void> ReadableStreamBYOBRequest::respondWithNewView(JSDOMGlobalObjec
     return controller->respondWithNewView(globalObject, view);
 }
 
-void ReadableStreamBYOBRequest::setController(ReadableByteStreamController* controller)
+void ReadableStreamBYOBRequest::clearController()
 {
-    m_controller = controller;
+    m_controller = nullptr;
+    m_streamWrapperForGC.clear();
 }
 
-void ReadableStreamBYOBRequest::setView(JSC::ArrayBufferView* view)
+void ReadableStreamBYOBRequest::clearView()
 {
-    m_view = view;
+    m_view = nullptr;
 }
 
 template<typename Visitor>
 void ReadableStreamBYOBRequest::visitAdditionalChildren(Visitor& visitor)
 {
-    if (m_controller)
-        SUPPRESS_UNCOUNTED_ARG m_controller->stream().visitAdditionalChildren(visitor);
+    m_streamWrapperForGC.visit(visitor);
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(ReadableStreamBYOBRequest);
