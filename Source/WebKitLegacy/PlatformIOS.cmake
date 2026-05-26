@@ -1099,13 +1099,39 @@ endif ()
 
 configure_file(${WEBKITLEGACY_DIR}/Modules/WebKitLegacy.modulemap
                ${_wkl_fw}/Modules/module.modulemap COPYONLY)
+# WebCore-migrated headers: declare textual so WebKitLegacy doesn't compete
+# with WebCore_Private.Core for @interface ownership (WAKView, WebEvent, ...).
+# Mirrors MigratedHeaders-input.xcfilelist.
+set(_wkl_textual_for_ios
+    AbstractPasteboard.h
+    KeyEventCodesIOS.h
+    WAKAppKitStubs.h
+    WAKResponder.h
+    WAKView.h
+    WAKWindow.h
+    WKContentObservation.h
+    WKGraphics.h
+    WKTypes.h
+    WebCoreThread.h
+    WebCoreThreadMessage.h
+    WebCoreThreadRun.h
+    WebEvent.h
+    WebEventRegion.h
+    WebItemProviderPasteboard.h
+    WebKitAvailability.h
+    WebScriptObject.h
+)
 set(_wkl_modulemap_body "")
 foreach (_file ${WebKitLegacy_LEGACY_FORWARDING_HEADERS_FILES})
     get_filename_component(_name "${_file}" NAME)
     if (_name IN_LIST _wkl_excluded_for_ios)
         continue ()
     endif ()
-    string(APPEND _wkl_modulemap_body "    header \"${_name}\"\n")
+    if (_name IN_LIST _wkl_textual_for_ios)
+        string(APPEND _wkl_modulemap_body "    textual header \"${_name}\"\n")
+    else ()
+        string(APPEND _wkl_modulemap_body "    header \"${_name}\"\n")
+    endif ()
 endforeach ()
 string(APPEND _wkl_modulemap_body "    header \"WorkAround173516139.h\"\n")
 file(WRITE ${_wkl_fw}/Modules/module.private.modulemap
