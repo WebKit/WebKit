@@ -2033,22 +2033,22 @@ void NetworkStorageManager::unlockCacheStorage(IPC::Connection& connection, cons
         cacheStorageManager->unlockStorage(connection.uniqueID());
 }
 
-void NetworkStorageManager::cacheStorageRetrieveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::RetrieveRecordsOptions&& options, WebCore::DOMCacheEngine::CrossThreadRecordsCallback&& callback)
+void NetworkStorageManager::cacheStorageRetrieveRecords(IPC::Connection& connection, WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::RetrieveRecordsOptions&& options, WebCore::DOMCacheEngine::CrossThreadRecordsCallback&& callback)
 {
     RefPtr cache = m_cacheStorageRegistry->cache(cacheIdentifier);
     if (!cache)
         return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
 
-    cache->retrieveRecords(WTF::move(options), WTF::move(callback));
+    cache->retrieveRecords(connection, WTF::move(options), WTF::move(callback));
 }
 
-void NetworkStorageManager::cacheStorageRemoveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::ResourceRequest&& request, WebCore::CacheQueryOptions&& options, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
+void NetworkStorageManager::cacheStorageRemoveRecords(IPC::Connection& connection, WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::ResourceRequest&& request, WebCore::CacheQueryOptions&& options, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
 {
     RefPtr cache = m_cacheStorageRegistry->cache(cacheIdentifier);
     if (!cache)
         return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
 
-    cache->removeRecords(WTF::move(request), WTF::move(options), WTF::move(callback));
+    cache->removeRecords(connection, WTF::move(request), WTF::move(options), WTF::move(callback));
 }
 
 void NetworkStorageManager::cacheStoragePutRecords(IPC::Connection& connection, WebCore::DOMCacheIdentifier cacheIdentifier, Vector<WebCore::DOMCacheEngine::CrossThreadRecord>&& records, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
@@ -2060,7 +2060,7 @@ void NetworkStorageManager::cacheStoragePutRecords(IPC::Connection& connection, 
     for (auto& record : records)
         MESSAGE_CHECK_COMPLETION(record.responseBodySize >= CacheStorageDiskStore::computeRealBodySizeForStorage(record.responseBody), connection, callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal)));
 
-    cache->putRecords(WTF::move(records), WTF::move(callback));
+    cache->putRecords(connection, WTF::move(records), WTF::move(callback));
 }
 
 void NetworkStorageManager::cacheStorageClearMemoryRepresentation(const WebCore::ClientOrigin& origin, CompletionHandler<void()>&& callback)
