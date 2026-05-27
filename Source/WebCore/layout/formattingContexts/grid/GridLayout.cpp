@@ -456,6 +456,31 @@ TrackSizes GridLayout::sizeColumnTracks(const PlacedGridItems& placedGridItems, 
         layoutState.usedColumnGap, layoutState.usedJustifyContent);
 }
 
+// Lightweight column-only sizing for intrinsic width computation.
+// Runs grid placement and column track sizing, skipping row sizing and layoutGridItems,
+// since computeIntrinsicWidths only needs columnSizes.
+//
+// FIXME: Skipping row sizing produces wrong column sizes for items whose inline
+// contribution depends on their resolved block size (orthogonal flows, preferred
+// aspect ratio, percentage block-size descendants). These grids are currently caught
+// as avoidance reasons. We should plumb a dependsOnBlockConstraints bit through the
+// intrinsic-sizing APIs, aggregate it during column track sizing,
+// and fall back to the full sizing algorithm when set.
+TrackSizes GridLayout::computeColumnSizes(UnplacedGridItems& unplacedGridItems, const GridLayoutState& gridLayoutState)
+{
+    auto& gridDefinition = gridLayoutState.gridDefinition;
+    auto& gridTemplateColumnsTrackSizes = gridDefinition.gridTemplateColumns.sizes;
+    auto& gridTemplateRowsTrackSizes = gridDefinition.gridTemplateRows.sizes;
+
+    auto [gridAreas, columnsCount, rowsCount] = placeGridItems(unplacedGridItems, gridTemplateColumnsTrackSizes, gridTemplateRowsTrackSizes, gridDefinition.autoFlowOptions);
+    auto placedGridItems = formattingContext().constructPlacedGridItems(gridAreas);
+
+    auto columnTrackSizingFunctionsList = trackSizingFunctions(columnsCount, gridTemplateColumnsTrackSizes, gridDefinition.gridAutoColumns);
+    auto rowTrackSizingFunctionsList = trackSizingFunctions(rowsCount, gridTemplateRowsTrackSizes, gridDefinition.gridAutoRows);
+
+    return sizeColumnTracks(placedGridItems, columnTrackSizingFunctionsList, rowTrackSizingFunctionsList, gridLayoutState);
+}
+
 // https://www.w3.org/TR/css-grid-1/#algo-grid-sizing
 UsedTrackSizes GridLayout::performGridSizingAlgorithm(const GridLayoutState& layoutState, const PlacedGridItems& placedGridItems,
     const TrackSizingFunctionsList& columnTrackSizingFunctionsList, const TrackSizingFunctionsList& rowTrackSizingFunctionsList) const

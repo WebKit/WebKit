@@ -58,6 +58,7 @@ public:
     GridLayout(const GridFormattingContext&);
 
     std::pair<UsedTrackSizes, GridItemRects> layout(UnplacedGridItems&, const GridLayoutState&);
+    TrackSizes computeColumnSizes(UnplacedGridItems&, const GridLayoutState&);
 
 private:
 
