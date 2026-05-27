@@ -475,6 +475,7 @@ bool RenderBlockFlow::willCreateColumns() const
 
     // Non-auto column-width always initiates MultiColumnFlow.
     if (!style().columnWidth().isAuto())
+<<<<<<< HEAD
         return true;
     // Non-auto column-count always initiates MultiColumnFlow (except in iBooks, see bug 314330).
 #if PLATFORM(COCOA)
@@ -482,7 +483,13 @@ bool RenderBlockFlow::willCreateColumns() const
 #else
     if (!style().columnCount().isAuto())
 #endif
+=======
+>>>>>>> 82eab55a4fd1 (Revert "column-count: 1 should create a multi-column container")
         return true;
+
+    // column-count > 1 always initiates MultiColumnFlow.
+    if (auto columnCount = style().columnCount().tryValue())
+        return columnCount->value > 1;
 
     ASSERT_NOT_REACHED();
     return false;
