@@ -95,8 +95,17 @@ public:
     bool isDeclarativeShadowRoot() const { return m_isDeclarativeShadowRoot; }
     void setIsDeclarativeShadowRoot(bool flag) { m_isDeclarativeShadowRoot = flag; }
 
+<<<<<<< HEAD
     Element* host() const { return m_host; }
+=======
+    Element* host() const { return m_host.get(); }
+    inline void setHost(Element*); // Defined and only used in Element.cpp
+    RefPtr<Element> protectedHost() const { return m_host.get(); }
+>>>>>>> 76bd64baa59e (Race condition in Node::traverseToOpaqueRoot)
     void setHost(WeakPtr<Element, WeakPtrImplWithEventTargetData>&& host) { m_host = WTF::move(host); }
+
+    Node* shadowIncludingRoot() const { return m_shadowIncludingRoot; }
+    inline void setShadowIncludingRoot(Node* root) { m_shadowIncludingRoot = root; }
 
     bool hasScopedCustomElementRegistry() const { return m_hasScopedCustomElementRegistry; }
     CustomElementRegistry* registryForBindings() const;
@@ -177,6 +186,7 @@ private:
     SlotAssignmentMode m_slotAssignmentMode { SlotAssignmentMode::Named };
 
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_host;
+    Node* m_shadowIncludingRoot { nullptr };
     RefPtr<StyleSheetList> m_styleSheetList;
 
     std::unique_ptr<Style::Scope> m_styleScope;

@@ -54,8 +54,27 @@ inline ContainerNode* Node::parentOrShadowHostNode() const
 
 inline Document* Node::ownerDocument() const
 {
+<<<<<<< HEAD
     auto* document = &this->document();
     return document == this ? nullptr : document;
+=======
+    return parentOrShadowHostNode();
+}
+
+inline RefPtr<ScriptExecutionContext> Node::protectedScriptExecutionContext() const
+{
+    return scriptExecutionContext();
+}
+
+inline WebCoreOpaqueRoot Node::opaqueRoot() const
+{
+    return WebCoreOpaqueRoot { m_shadowIncludingRoot };
+}
+
+inline Ref<TreeScope> Node::protectedTreeScope() const
+{
+    return treeScope();
+>>>>>>> 76bd64baa59e (Race condition in Node::traverseToOpaqueRoot)
 }
 
 inline RenderBox* Node::renderBox() const
@@ -167,7 +186,7 @@ inline Node& Node::rootNode() const
 {
     if (isInTreeScope())
         return treeScope().rootNode();
-    return traverseToRootNode();
+    return *m_shadowIncludingRoot;
 }
 
 inline void Node::setParentNode(ContainerNode* parent)

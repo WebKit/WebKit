@@ -300,14 +300,26 @@ public:
     WEBCORE_EXPORT Element* NODELETE parentElementInComposedTree() const;
     Element* NODELETE parentOrShadowHostElement() const;
     inline void setParentNode(ContainerNode*);
+<<<<<<< HEAD
     inline Node& NODELETE rootNode() const;
     WEBCORE_EXPORT Node& NODELETE traverseToRootNode() const;
     Node& NODELETE shadowIncludingRoot() const;
+=======
+    inline Node& rootNode() const;
+    WEBCORE_EXPORT Node& traverseToRootNode() const;
+    Node& shadowIncludingRoot() const { return *m_shadowIncludingRoot; }
+>>>>>>> 76bd64baa59e (Race condition in Node::traverseToOpaqueRoot)
 
     struct GetRootNodeOptions {
         bool composed;
     };
+<<<<<<< HEAD
     Node& NODELETE getRootNode(const GetRootNodeOptions&) const;
+=======
+    Node& getRootNode(const GetRootNodeOptions&) const;
+    
+    inline WebCoreOpaqueRoot opaqueRoot() const;
+>>>>>>> 76bd64baa59e (Race condition in Node::traverseToOpaqueRoot)
 
     WebCoreOpaqueRoot opaqueRoot() const final;
 
@@ -778,6 +790,7 @@ private:
     void refEventTarget() final;
     void derefEventTarget() final;
 
+<<<<<<< HEAD
 #if ASSERT_ENABLED
     bool checkIsInUserAgentShadowTree(bool) const;
 #else
@@ -785,6 +798,12 @@ private:
 #endif
 
     void NODELETE trackForDebugging();
+=======
+    void trackForDebugging();
+
+    void updateShadowIncludingRoot();
+
+>>>>>>> 76bd64baa59e (Race condition in Node::traverseToOpaqueRoot)
     void materializeRareData();
 
     Vector<Ref<MutationObserverRegistration>>* NODELETE mutationObserverRegistry();
@@ -815,6 +834,7 @@ private:
 
     CheckedPtr<ContainerNode> m_parentNode;
     TreeScope* m_treeScope { nullptr };
+    Node* m_shadowIncludingRoot { nullptr };
     Node* m_previousSibling { nullptr };
     CheckedPtr<Node> m_next;
     RenderObject* m_renderer { nullptr };

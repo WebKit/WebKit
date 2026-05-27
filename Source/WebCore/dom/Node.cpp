@@ -130,6 +130,7 @@ public:
     uint32_t stateFlags;
     void* parentNode;
     void* treeScope;
+    void* shadowIncludingRoot;
     void* previous;
     void* next;
     void* renderer;
@@ -378,6 +379,7 @@ Node::Node(Document& document, NodeType type, OptionSet<TypeFlag> flags)
     : EventTarget(ConstructNode)
     , m_typeBitFields(constructBitFieldsFromNodeTypeAndFlags(type, flags))
     , m_treeScope((isDocumentNode() || isShadowRoot()) ? nullptr : &document)
+    , m_shadowIncludingRoot(this)
 {
     ASSERT(nodeType() == type);
     ASSERT(isMainThread());
@@ -1176,7 +1178,7 @@ bool Node::isDescendantOf(const Node& other) const
     // Return true if other is an ancestor of this.
     if (other.isTreeScope())
         return &treeScope().rootNode() == &other && !isTreeScope() && isInTreeScope();
-    if (!other.hasChildNodes() || isConnected() != other.isConnected())
+    if (!other.hasChildNodes() || isConnected() != other.isConnected() || &shadowIncludingRoot() != &other.shadowIncludingRoot())
         return false;
     for (auto ancestor = parentNode(); ancestor; ancestor = ancestor->parentNode()) {
         if (ancestor == &other)
@@ -1188,6 +1190,9 @@ bool Node::isDescendantOf(const Node& other) const
 // https://dom.spec.whatwg.org/#concept-shadow-including-inclusive-ancestor
 bool Node::isShadowIncludingDescendantOf(const Node& other) const
 {
+    if (&shadowIncludingRoot() != &other.shadowIncludingRoot())
+        return false;
+
     if (isDescendantOf(other))
         return true;
 
@@ -1201,6 +1206,11 @@ bool Node::isShadowIncludingDescendantOf(const Node& other) const
 
 bool Node::isComposedTreeDescendantOf(const Node& node) const
 {
+<<<<<<< HEAD
+=======
+    if (&shadowIncludingRoot() != &node.shadowIncludingRoot())
+        return false;
+>>>>>>> 76bd64baa59e (Race condition in Node::traverseToOpaqueRoot)
     for (auto* currentAncestor = parentElementInComposedTree(); currentAncestor; currentAncestor = currentAncestor->parentElementInComposedTree()) {
         if (currentAncestor == &node)
             return true;
@@ -1473,6 +1483,7 @@ Node& Node::traverseToRootNode() const
     return traverseToRootNodeInternal(*this);
 }
 
+<<<<<<< HEAD
 // https://dom.spec.whatwg.org/#concept-shadow-including-root
 Node& Node::shadowIncludingRoot() const
 {
@@ -1494,6 +1505,8 @@ SUPPRESS_NODELETE WebCoreOpaqueRoot Node::opaqueRoot() const
     return traverseToOpaqueRoot();
 }
 
+=======
+>>>>>>> 76bd64baa59e (Race condition in Node::traverseToOpaqueRoot)
 Node& Node::getRootNode(const GetRootNodeOptions& options) const
 {
     return options.composed ? shadowIncludingRoot() : rootNode();
@@ -1506,13 +1519,42 @@ void Node::queueTaskToDispatchEvent(TaskSource source, Ref<Event>&& event)
     });
 }
 
+<<<<<<< HEAD
 Node::NeedsPostConnectionSteps Node::insertionSteps(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+=======
+#if ASSERT_ENABLED
+static Node* traverseToShadowIncludingRoot(Node* current)
+{
+    while (auto* parent = current->parentOrShadowHostNode())
+        current = parent;
+    return current;
+}
+#endif
+
+ALWAYS_INLINE void Node::updateShadowIncludingRoot()
+{
+    if (auto* parent = parentNode())
+        m_shadowIncludingRoot = parent->m_shadowIncludingRoot;
+    else if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(this)) [[unlikely]] {
+        auto* host = shadowRoot->host();
+        auto* root = host ? host->m_shadowIncludingRoot : shadowRoot;
+        shadowRoot->setShadowIncludingRoot(root);
+        m_shadowIncludingRoot = root;
+    } else
+        m_shadowIncludingRoot = this;
+    ASSERT(traverseToShadowIncludingRoot(this) == m_shadowIncludingRoot);
+}
+
+Node::InsertedIntoAncestorResult Node::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
+>>>>>>> 76bd64baa59e (Race condition in Node::traverseToOpaqueRoot)
 {
     ASSERT(!containsSelectionEndPoint());
     if (insertionType.connectedToDocument)
         setEventTargetFlag(EventTargetFlag::IsConnected);
     if (parentOfInsertedTree.isInShadowTree())
         setEventTargetFlag(EventTargetFlag::IsInShadowTree);
+
+    updateShadowIncludingRoot();
 
     invalidateStyle(Style::Validity::SubtreeInvalid, Style::InvalidationMode::InsertedIntoAncestor);
 
@@ -1526,6 +1568,9 @@ void Node::removingSteps(RemovalType removalType, ContainerNode& oldParentOfRemo
         clearEventTargetFlag(EventTargetFlag::IsConnected);
     if (isInShadowTree() && !treeScope().rootNode().isShadowRoot())
         clearEventTargetFlag(EventTargetFlag::IsInShadowTree);
+
+    updateShadowIncludingRoot();
+
     if (removalType.disconnectedFromDocument) {
         if (CheckedPtr cache = oldParentOfRemovedTree.document().existingAXObjectCache())
             cache->remove(*this);
@@ -2982,19 +3027,6 @@ void Node::setUsesEffectiveTextDirection(bool value)
 bool Node::inRenderedDocument() const
 {
     return isConnected() && document().hasLivingRenderTree();
-}
-
-WebCoreOpaqueRoot Node::traverseToOpaqueRoot() const
-{
-    ASSERT_WITH_MESSAGE(!isConnected(), "Call opaqueRoot() or document() when the node is connected");
-    const Node* node = this;
-    for (;;) {
-        const Node* nextNode = node->parentOrShadowHostNode();
-        if (!nextNode)
-            break;
-        node = nextNode;
-    }
-    return WebCoreOpaqueRoot { const_cast<Node*>(node) };
 }
 
 void Node::notifyInspectorOfRendererChange()
