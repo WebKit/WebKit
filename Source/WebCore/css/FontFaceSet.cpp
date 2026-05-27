@@ -179,6 +179,7 @@ void FontFaceSet::load(ScriptExecutionContext& context, const String& font, cons
             //
             // See also: https://github.com/w3c/csswg-drafts/issues/7680
 
+<<<<<<< HEAD
             bool hasSource = false;
             for (Ref face : matchingFaces) {
                 if (face->sourceCount()) {
@@ -192,6 +193,20 @@ void FontFaceSet::load(ScriptExecutionContext& context, const String& font, cons
                 }));
                 return;
             }
+=======
+        bool hasSource = false;
+        for (Ref face : matchingFaces) {
+            if (face->sourceCount()) {
+                hasSource = true;
+                break;
+            }
+        }
+        if (!hasSource) {
+            promise.resolve(matchingFaces.map([scriptExecutionContext = scriptExecutionContext()] (const auto& matchingFace) {
+                return matchingFace->wrapper(scriptExecutionContext);
+            }));
+            return;
+>>>>>>> db05eacaeb0c (Use-after-free in CSSFontFace::setStatus and CSSFontFace::pump)
         }
     }
 
@@ -206,12 +221,20 @@ void FontFaceSet::load(ScriptExecutionContext& context, const String& font, cons
     bool waiting = false;
 
     for (Ref face : matchingFaces) {
+<<<<<<< HEAD
         pendingPromise->faces.append(face->wrapper(protect(scriptExecutionContext()).get()));
+=======
+        pendingPromise->faces.append(face.get().wrapper(protectedScriptExecutionContext().get()));
+>>>>>>> db05eacaeb0c (Use-after-free in CSSFontFace::setStatus and CSSFontFace::pump)
         if (face->status() == CSSFontFace::Status::Success)
             continue;
         waiting = true;
         ASSERT(face->existingWrapper());
+<<<<<<< HEAD
         m_pendingPromises.add(*face->existingWrapper(), Vector<Ref<PendingPromise>>()).iterator->value.append(pendingPromise.copyRef());
+=======
+        m_pendingPromises.add(face->existingWrapper(), Vector<Ref<PendingPromise>>()).iterator->value.append(pendingPromise.copyRef());
+>>>>>>> db05eacaeb0c (Use-after-free in CSSFontFace::setStatus and CSSFontFace::pump)
     }
 
     if (!waiting)
