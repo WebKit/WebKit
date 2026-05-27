@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    setTimeout(() => testRunner.notifyDone(), 3000);
+}
+onmessage = () => {
+    result.textContent = 'PASS';
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+<p>This tests acquiring a web lock in srcdoc. You should see PASS below</p>
+<div id="result">Running</div>
+<iframe srcdoc="
+<!DOCTYPE html>
+<script>
+navigator.locks.request('abc', {mode: 'shared'}, () => {
+    top.postMessage('PASS', '*');
+});
+</script>"></iframe>
+</body>
+</html>
