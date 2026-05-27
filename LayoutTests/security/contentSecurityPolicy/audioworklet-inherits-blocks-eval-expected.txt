@@ -1,0 +1,4 @@
+This tests that the Content Security Policy (CSP) of the owner document blocks an AudioWorklet from using eval() because the CSP does not list unsafe-eval in script-src.
+
+PASS threw exception EvalError: Refused to evaluate a string as JavaScript because 'unsafe-eval' or 'trusted-types-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline'".
+.

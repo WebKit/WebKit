@@ -1,9 +1,9 @@
 
 PASS A remote-origin worklet should be blocked by the script-src 'self' directive.
-FAIL A same-origin worklet importing a remote-origin script should be blocked by the script-src 'self' directive. assert_equals: expected "REJECTED" but got "RESOLVED"
+PASS A same-origin worklet importing a remote-origin script should be blocked by the script-src 'self' directive.
 PASS A remote-origin worklet importing a remote-origin script should be blocked by the script-src 'self' directive.
-FAIL A remote-origin-redirected worklet should be blocked by the script-src 'self' directive. assert_equals: expected "REJECTED" but got "RESOLVED"
-FAIL A same-origin worklet importing a remote-origin-redirected script should be blocked by the script-src 'self' directive. assert_equals: expected "REJECTED" but got "RESOLVED"
+PASS A remote-origin-redirected worklet should be blocked by the script-src 'self' directive.
+PASS A same-origin worklet importing a remote-origin-redirected script should be blocked by the script-src 'self' directive.
 PASS A remote-origin worklet should not be blocked because the script-src directive specifying the origin allows it.
 PASS A same-origin worklet importing a remote-origin script should not be blocked because the script-src directive specifying the origin allows it.
 PASS A remote-origin worklet importing a remote-origin script should not be blocked because the script-src directive specifying the origin allows it.

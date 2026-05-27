@@ -57,6 +57,7 @@ RefPtr<AudioWorkletGlobalScope> AudioWorkletGlobalScope::tryCreate(AudioWorkletT
         return nullptr;
     auto scope = adoptRef(*new AudioWorkletGlobalScope(thread, vm.releaseNonNull(), parameters));
     scope->addToContextsMap();
+    scope->applyContentSecurityPolicyResponseHeaders(parameters.contentSecurityPolicyResponseHeaders);
     return scope;
 }
 

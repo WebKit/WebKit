@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PaintWorkletGlobalScope.h"
 
+#include "ContentSecurityPolicy.h"
 #include "Document.h"
 #include "JSCSSPaintCallback.h"
 #include "JSDOMConvert.h"
@@ -46,6 +47,7 @@ RefPtr<PaintWorkletGlobalScope> PaintWorkletGlobalScope::tryCreate(Document& doc
         return nullptr;
     auto scope = adoptRef(*new PaintWorkletGlobalScope(document, vm.releaseNonNull(), WTF::move(code)));
     scope->addToContextsMap();
+    scope->applyContentSecurityPolicyResponseHeaders(document.checkedContentSecurityPolicy()->responseHeaders());
     return scope;
 }
 
