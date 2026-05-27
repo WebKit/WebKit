@@ -146,6 +146,14 @@ size_t GetVertexCountWithConversion(BufferMtl *srcBuffer,
     // Count how many strides fit remaining space.
     size_t effectiveStride = binding.getStride() > 0 ? binding.getStride() : srcFormatSize;
     return 1 + static_cast<size_t>(bytes.ValueOrDie()) / effectiveStride;
+<<<<<<< HEAD
+=======
+}
+inline size_t GetIndexCount(BufferMtl *srcBuffer, size_t offset, gl::DrawElementsType indexType)
+{
+    size_t elementSize = gl::GetDrawElementsTypeSize(indexType);
+    return (srcBuffer->size() - offset) / elementSize;
+>>>>>>> 845230f29cf4 ([ANGLE] Metal backend: Fix crash on OOB vertex attribute offset in syncDirtyAttrib)
 }
 
 inline void SetDefaultVertexBufferLayout(mtl::VertexBufferLayoutDesc *layout)
