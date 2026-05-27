@@ -36,6 +36,7 @@
 #include "CSSKeywordValueInlines.h"
 #include "CSSKeyframeRule.h"
 #include "CSSKeyframesRule.h"
+#include "CSSNestedDeclarations.h"
 #include "CSSPropertyNames.h"
 #include "CSSSelector.h"
 #include "CSSStyleRule.h"

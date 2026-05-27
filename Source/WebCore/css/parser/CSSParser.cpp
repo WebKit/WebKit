@@ -86,6 +86,7 @@
 #include <bitset>
 #include <memory>
 #include <optional>
+#include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -309,6 +310,10 @@ bool CSSParser::supportsDeclaration(CSSParserTokenRange& range)
     // We create a new nesting context to isolate the parsing of the @supports(...) prelude from declarations before or after.
     // This only concerns the prelude,
     // (the content of the block will also be in its own nesting context but it's not done here (cf consumeRegularRuleList))
+    // Suppress the observer during condition evaluation because this is a speculative parse to test declaration validity,
+    // not an actual property declaration in the stylesheet. This prevents the declaration from erroneously showing up as a
+    // member of an @supports rule with a CSSNestedDeclaration in Web Inspector.
+    SetForScope suppressObserver(m_observerWrapper, decltype(m_observerWrapper) { nullptr });
     runInNewNestingContext([&] {
         ASSERT(topContext().m_parsedProperties.isEmpty());
         result = consumeDeclaration(range, StyleRuleType::Style);

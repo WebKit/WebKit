@@ -61,3 +61,119 @@ PASS: Inner implicit style declaration text should contain the new `color` value
 PASS: Inner explicit style declaration text should contain the expected `color` property.
 PASS: Inner explicit style declaration text should contain the new `color` value.
 
+-- Running test case: ModifyCSSProperty.InterleavedEditing.DeepNestedInterleaved
+PASS: Initial outer style text should match source.
+PASS: After editing red→magenta, full authored text is valid.
+    background-color: magenta;
+
+    @media (min-width: 0px) {
+        background-color: orange;
+
+        &.explicit-nested-rule {
+            background-color: yellow;
+        }
+
+        @supports (display: grid) {
+            background-color: violet;
+        }
+
+        background-color: lime;
+    }
+
+    background-color: green;
+
+PASS: After editing orange→tomato, full authored text is valid.
+    background-color: magenta;
+
+    @media (min-width: 0px) {
+        background-color: tomato;
+
+        &.explicit-nested-rule {
+            background-color: yellow;
+        }
+
+        @supports (display: grid) {
+            background-color: violet;
+        }
+
+        background-color: lime;
+    }
+
+    background-color: green;
+
+PASS: After editing yellow→cyan, full authored text is valid.
+    background-color: magenta;
+
+    @media (min-width: 0px) {
+        background-color: tomato;
+
+        &.explicit-nested-rule {
+            background-color: cyan;
+        }
+
+        @supports (display: grid) {
+            background-color: violet;
+        }
+
+        background-color: lime;
+    }
+
+    background-color: green;
+
+PASS: After editing violet→navy, full authored text is valid.
+    background-color: magenta;
+
+    @media (min-width: 0px) {
+        background-color: tomato;
+
+        &.explicit-nested-rule {
+            background-color: cyan;
+        }
+
+        @supports (display: grid) {
+            background-color: navy;
+        }
+
+        background-color: lime;
+    }
+
+    background-color: green;
+
+PASS: After editing lime→teal, full authored text is valid.
+    background-color: magenta;
+
+    @media (min-width: 0px) {
+        background-color: tomato;
+
+        &.explicit-nested-rule {
+            background-color: cyan;
+        }
+
+        @supports (display: grid) {
+            background-color: navy;
+        }
+
+        background-color: teal;
+    }
+
+    background-color: green;
+
+PASS: After editing green→pink, full authored text is valid.
+    background-color: magenta;
+
+    @media (min-width: 0px) {
+        background-color: tomato;
+
+        &.explicit-nested-rule {
+            background-color: cyan;
+        }
+
+        @supports (display: grid) {
+            background-color: navy;
+        }
+
+        background-color: teal;
+    }
+
+    background-color: pink;
+
