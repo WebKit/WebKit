@@ -204,6 +204,16 @@ private:
     const CheckedRef<const RenderBox> m_flexItem;
 };
 
+class FlexBaseSizeUpdateScrollInfoDisabler {
+public:
+    FlexBaseSizeUpdateScrollInfoDisabler(LocalFrameViewLayoutContext&, const RenderBox& flexItem);
+    ~FlexBaseSizeUpdateScrollInfoDisabler();
+
+private:
+    const CheckedRef<LocalFrameViewLayoutContext> m_layoutContext;
+    const CheckedRef<const RenderBox> m_flexItem;
+};
+
 class ContentVisibilityOverrideScope {
 public:
     enum class OverrideType {
