@@ -33,6 +33,7 @@
 #include "CSSLayerBlockRule.h"
 #include "CSSLayerStatementRule.h"
 #include "CSSMediaRule.h"
+#include "CSSNestedDeclarations.h"
 #include "CSSParser.h"
 #include "CSSParserEnum.h"
 #include "CSSParserObserver.h"
@@ -86,6 +87,7 @@ using namespace Inspector;
 
 enum class RuleFlatteningStrategy {
     Ignore,
+    CommitSelfOnly,
     CommitSelfThenChildren,
 };
 
@@ -108,6 +110,9 @@ static RuleFlatteningStrategy NODELETE flatteningStrategyForStyleRuleType(StyleR
         // - `InspectorCSSOMWrappers::collect` .
         return RuleFlatteningStrategy::CommitSelfThenChildren;
 
+    case StyleRuleType::NestedDeclarations:
+        return RuleFlatteningStrategy::CommitSelfOnly;
+
     // FIXME (webkit.org/b/284176): support @position-try in Web Inspector.
     case StyleRuleType::PositionTry:
 
@@ -126,7 +131,6 @@ static RuleFlatteningStrategy NODELETE flatteningStrategyForStyleRuleType(StyleR
     case StyleRuleType::FontPaletteValues:
     case StyleRuleType::Property:
     case StyleRuleType::ViewTransition:
-    case StyleRuleType::NestedDeclarations:
     case StyleRuleType::Function:
     case StyleRuleType::FunctionDeclarations:
         // These rule types do not contain rules that apply directly to an element (i.e. these rules should not appear
@@ -275,6 +279,10 @@ static void flattenSourceData(RuleSourceDataList& dataList, RuleSourceDataList& 
             flattenSourceData(data->childRules, target);
             break;
 
+        case RuleFlatteningStrategy::CommitSelfOnly:
+            target.append(data.copyRef());
+            break;
+
         case RuleFlatteningStrategy::Ignore:
             break;
         }
@@ -393,19 +401,126 @@ void StyleSheetHandler::endRuleBody(unsigned offset)
     auto rule = popRuleData();
     fixUnparsedPropertyRanges(rule.ptr());
 
-    if (rule->containsImplicitlyNestedProperties && rule->styleSourceData->propertyData.size()) {
-        // Property declarations made outside of a Style rule will become part of a special inferred `& {}` rule after
-        // the parser has already sent observers their notification of the property. In order to match the CSSOM
-        // representation this must be handled here as well, otherwise the flat rule lists will differ in length.
-        auto inferredStyleRule = CSSRuleSourceData::create(StyleRuleType::Style);
-        inferredStyleRule->isImplicitlyNested = true;
-        inferredStyleRule->ruleHeaderRange = rule->ruleHeaderRange;
-        inferredStyleRule->ruleBodyRange = rule->ruleBodyRange;
+    // Property declarations made outside of a Style rule will become part of a special inferred `& {}` rule after
+    // the parser has already sent observers their notification of the property. In order to match the CSSOM
+    // representation this must be handled here as well, otherwise the flat rule lists will differ in length.
+    //
+    // For grouping rules (@media, @supports, etc.) inside a nesting context, all properties are orphaned and
+    // placed in a single inferred rule at position 0 (matching the CSS parser's behavior for at-rules).
+    //
+    // For style rules with nested child rules, properties after each child rule become separate
+    // CSSNestedDeclarations in the CSSOM, interleaved at their natural positions. The source data must
+    // match this structure by creating one inferred entry per contiguous block of properties,
+    // inserted after the child rule each block follows. Properties before the first child rule stay with
+    // the parent rule's own styleSourceData.
+    bool shouldCreateInferredRules = rule->containsImplicitlyNestedProperties;
+    if (!shouldCreateInferredRules && rule->styleSourceData && rule->styleSourceData->propertyData.size()) {
+        if (rule->type == StyleRuleType::Style && !rule->childRules.isEmpty()) {
+            shouldCreateInferredRules = true;
+        } else if (rule->type != StyleRuleType::Style) {
+            // When commenting out all properties nested directly under a grouping rule, the CSS parser
+            // does not create a StyleRuleNestedDeclarations. We need to create an inferred entry to
+            // keep alignment with the CSSNestedDeclarations CSSOM wrapper that still exists from before the toggle.
+            for (auto& parentData : m_currentRuleDataStack) {
+                if (parentData->type == StyleRuleType::Style) {
+                    shouldCreateInferredRules = true;
+                    break;
+                }
+            }
+        }
+    }
 
-        std::swap(rule->styleSourceData, inferredStyleRule->styleSourceData);
+    if (shouldCreateInferredRules && rule->styleSourceData->propertyData.size()) {
+        if (rule->childRules.isEmpty()) {
+            // Rule with no child rules (e.g. @media with only orphaned declarations).
+            // All properties go into a single inferred rule at position 0.
+            auto inferredStyleRule = CSSRuleSourceData::create(StyleRuleType::NestedDeclarations);
+            inferredStyleRule->isImplicitlyNested = true;
+            inferredStyleRule->ruleHeaderRange = rule->ruleHeaderRange;
+            inferredStyleRule->ruleBodyRange = rule->ruleBodyRange;
 
-        // Inferred style rules are always logically placed at the start of their parent rule.
-        rule->childRules.insert(0, WTF::move(inferredStyleRule));
+            std::swap(rule->styleSourceData, inferredStyleRule->styleSourceData);
+
+            rule->childRules.insert(0, WTF::move(inferredStyleRule));
+        } else {
+            // Rule with child rules. Properties may be interleaved with child rules, producing
+            // multiple CSSNestedDeclarations in the CSSOM. Group properties by their position
+            // relative to child rules and create one inferred entry per gap.
+            bool isStyleRule = (rule->type == StyleRuleType::Style);
+            unsigned bodyStart = rule->ruleBodyRange.start;
+
+            Vector<unsigned> childStarts;
+            childStarts.reserveInitialCapacity(rule->childRules.size());
+            for (auto& child : rule->childRules)
+                childStarts.append(child->ruleHeaderRange.start);
+
+            // Assign each property to a gap:
+            //   gap 0 = before childRules[0]
+            //   gap i = between childRules[i-1] and childRules[i]
+            //   gap N = after childRules[N-1]
+            unsigned gapCount = childStarts.size() + 1;
+            Vector<Vector<CSSPropertySourceData>> propertyGaps;
+            propertyGaps.resize(gapCount);
+
+            for (auto& property : rule->styleSourceData->propertyData) {
+                unsigned absStart = bodyStart + property.range.start;
+                unsigned gapIndex = 0;
+                for (unsigned i = 0; i < childStarts.size(); ++i) {
+                    if (absStart >= childStarts[i])
+                        gapIndex = i + 1;
+                    else
+                        break;
+                }
+                propertyGaps[gapIndex].append(property);
+            }
+
+            bool hasInterleavedProperties = false;
+            for (unsigned i = 1; i < gapCount; ++i) {
+                if (!propertyGaps[i].isEmpty()) {
+                    hasInterleavedProperties = true;
+                    break;
+                }
+            }
+
+            // For style rules: gap 0 stays with parent, only need inferred entries if later gaps have properties.
+            // For at-rules: always need inferred entries since at-rules have no .style property.
+            bool needsInferredEntries = !isStyleRule || hasInterleavedProperties;
+            if (needsInferredEntries) {
+                auto parentSourceData = CSSStyleSourceData::create();
+                if (isStyleRule)
+                    parentSourceData->propertyData = WTF::move(propertyGaps[0]);
+
+                RuleSourceDataList newChildRules;
+
+                // For at-rules, gap 0 becomes an inferred entry at position 0.
+                if (!isStyleRule && !propertyGaps[0].isEmpty()) {
+                    auto inferredStyleRule = CSSRuleSourceData::create(StyleRuleType::NestedDeclarations);
+                    inferredStyleRule->isImplicitlyNested = true;
+                    inferredStyleRule->ruleHeaderRange = rule->ruleHeaderRange;
+                    inferredStyleRule->ruleBodyRange = rule->ruleBodyRange;
+                    inferredStyleRule->styleSourceData = CSSStyleSourceData::create();
+                    inferredStyleRule->styleSourceData->propertyData = WTF::move(propertyGaps[0]);
+                    newChildRules.append(WTF::move(inferredStyleRule));
+                }
+
+                for (unsigned i = 0; i < rule->childRules.size(); ++i) {
+                    newChildRules.append(WTF::move(rule->childRules[i]));
+
+                    if (!propertyGaps[i + 1].isEmpty()) {
+                        auto inferredStyleRule = CSSRuleSourceData::create(StyleRuleType::NestedDeclarations);
+                        inferredStyleRule->isImplicitlyNested = true;
+                        inferredStyleRule->ruleHeaderRange = rule->ruleHeaderRange;
+                        inferredStyleRule->ruleBodyRange = rule->ruleBodyRange;
+                        inferredStyleRule->styleSourceData = CSSStyleSourceData::create();
+                        inferredStyleRule->styleSourceData->propertyData = WTF::move(propertyGaps[i + 1]);
+                        newChildRules.append(WTF::move(inferredStyleRule));
+                    }
+                }
+
+                rule->childRules = WTF::move(newChildRules);
+                rule->styleSourceData = WTF::move(parentSourceData);
+            }
+        }
     }
 
     if (m_currentRuleDataStack.isEmpty())
@@ -1413,18 +1528,47 @@ Ref<Inspector::Protocol::CSS::SelectorList> InspectorStyleSheet::buildObjectForS
     return result;
 }
 
-RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorStyleSheet::buildObjectForRule(CSSStyleRule* rule)
+RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorStyleSheet::buildObjectForRule(CSSRule* rule)
 {
+    if (!rule)
+        return nullptr;
+
     RefPtr styleSheet = pageStyleSheet();
     if (!styleSheet)
         return nullptr;
 
+    RefPtr cssStyleRule = dynamicDowncast<CSSStyleRule>(rule);
+    RefPtr nestedDecl = dynamicDowncast<CSSNestedDeclarations>(rule);
+    if (!cssStyleRule && !nestedDecl)
+        return nullptr;
+
+    // Build selector list. CSSStyleRule has a real selector, CSSNestedDeclarations uses implicit "&".
     int endingLine = 0;
+    Ref<Inspector::Protocol::CSS::SelectorList> selectorList = [&] {
+        if (cssStyleRule)
+            return buildObjectForSelectorList(cssStyleRule.get(), endingLine);
+
+        auto selectors = JSON::ArrayOf<Inspector::Protocol::CSS::CSSSelector>::create();
+        auto list = Inspector::Protocol::CSS::SelectorList::create()
+            .setSelectors(WTF::move(selectors))
+            .setText("&"_s)
+            .release();
+        if (ensureParsedDataReady()) {
+            if (auto sourceData = ruleSourceDataFor(rule)) {
+                if (auto range = buildSourceRangeObject(sourceData->ruleHeaderRange, lineEndings(), &endingLine))
+                    list->setRange(range.releaseNonNull());
+            }
+        }
+        return list;
+    }();
+
+    CSSStyleDeclaration* style = cssStyleRule ? &cssStyleRule->style() : &nestedDecl->style();
+
     auto result = Inspector::Protocol::CSS::CSSRule::create()
-        .setSelectorList(buildObjectForSelectorList(rule, endingLine))
+        .setSelectorList(WTF::move(selectorList))
         .setSourceLine(endingLine)
         .setOrigin(m_origin)
-        .setStyle(buildObjectForStyle(&rule->style()))
+        .setStyle(buildObjectForStyle(style))
         .release();
 
     if (m_origin == Inspector::Protocol::CSS::StyleSheetOrigin::Author || m_origin == Inspector::Protocol::CSS::StyleSheetOrigin::User)
@@ -1439,7 +1583,9 @@ RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorStyleSheet::buildObjectForRul
     if (groupingsPayload->length())
         result->setGroupings(WTF::move(groupingsPayload));
 
-    if (auto sourceData = ruleSourceDataFor(rule))
+    if (nestedDecl)
+        result->setIsImplicitlyNested(true);
+    else if (auto sourceData = ruleSourceDataFor(rule))
         result->setIsImplicitlyNested(sourceData->isImplicitlyNested);
 
     return result;
@@ -1475,62 +1621,10 @@ Ref<Inspector::Protocol::CSS::CSSStyle> InspectorStyleSheet::buildObjectForStyle
     return result;
 }
 
-static inline bool NODELETE isNotSpaceOrTab(char16_t character)
-{
-    return character != ' ' && character != '\t';
-}
-
-// A CSS rule's body can contain a mix of property declarations and nested child rules.
-// This function formats a rule's body text by putting the `ruleStyleDeclarationText`
-// at the start, followed by the nested child rules scraped from the full `styleSheetText`,
-// and returns the patched rule body text.
-//
-// Canonicalizing is useful for generating the new style sheet text after some style edit;
-// it'd be hard to compute the replacement text if property declarations were scattered.
-static String computeCanonicalRuleText(const String& styleSheetText, const String& ruleStyleDeclarationText, const CSSRuleSourceData& logicalContainingRuleSourceData)
-{
-    auto indentation = emptyString();
-    auto startOfSecondLine = ruleStyleDeclarationText.find('\n');
-    if (startOfSecondLine != notFound) {
-        ++startOfSecondLine;
-        auto endOfSecondLineWhitespace = ruleStyleDeclarationText.find(isNotSpaceOrTab, startOfSecondLine);
-        if (endOfSecondLineWhitespace != notFound)
-            indentation = ruleStyleDeclarationText.substring(startOfSecondLine, endOfSecondLineWhitespace - startOfSecondLine);
-    }
-
-    StringBuilder canonicalRuleText;
-    canonicalRuleText.append(ruleStyleDeclarationText);
-
-    for (auto& childRuleSourceData : logicalContainingRuleSourceData.childRules) {
-        if (childRuleSourceData->isImplicitlyNested)
-            continue;
-
-        unsigned childStart = childRuleSourceData->ruleHeaderRange.start;
-        unsigned childEnd = childRuleSourceData->ruleBodyRange.end;
-        ASSERT(childStart <= childEnd);
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(childEnd <= styleSheetText.length());
-
-        canonicalRuleText.append('\n', indentation);
-
-        // Non-style rules don't include the `@rule` prelude in their header range.
-        if (childRuleSourceData->type != StyleRuleType::Style)
-            canonicalRuleText.append(atRuleIdentifierForType(childRuleSourceData->type));
-
-        canonicalRuleText.appendSubstring(styleSheetText, childStart, childEnd - childStart);
-        canonicalRuleText.append("}\n"_s);
-    }
-
-    auto closingIndentationLineStart = ruleStyleDeclarationText.reverseFind('\n');
-    if (closingIndentationLineStart != notFound)
-        canonicalRuleText.appendSubstring(ruleStyleDeclarationText, closingIndentationLineStart);
-
-    return canonicalRuleText.toString();
-}
-
 // This function updates the style declaration text of the rule given by `id`.
 // The original style declaration text and rule text will be stored in the `out` arguments, if given.
-// If `newRuleText` is null, the canonicalized rule text will be computed and used to patch the
-// full style sheet text.
+// If `newRuleText` is null, the new style declaration text is used directly as the replacement.
+// Otherwise, `newRuleText` is used as-is (for undo operations that restore exact original text).
 ExceptionOr<void> InspectorStyleSheet::setRuleStyleText(const InspectorCSSId& id, const String& newStyleDeclarationText, String* outOldStyleDeclarationText, const String* newRuleText, String* outOldRuleText)
 {
     RefPtr cssStyleDeclaration = styleForId(id);
@@ -1552,25 +1646,55 @@ ExceptionOr<void> InspectorStyleSheet::setRuleStyleText(const InspectorCSSId& id
     if (!logicalContainingRuleSourceData)
         return Exception { ExceptionCode::NotFoundError };
 
-    unsigned bodyStart = logicalContainingRuleSourceData->ruleBodyRange.start;
-    unsigned bodyEnd = logicalContainingRuleSourceData->ruleBodyRange.end;
-    ASSERT(bodyStart <= bodyEnd);
+    auto& properties = sourceData->styleSourceData->propertyData;
+    if (properties.isEmpty()) {
+        if (outOldStyleDeclarationText)
+            *outOldStyleDeclarationText = cssStyleDeclaration->cssText();
+        if (outOldRuleText)
+            *outOldRuleText = String();
+        cssStyleDeclaration->setCssText(newStyleDeclarationText);
+        return { };
+    }
+
+    unsigned editStart;
+    unsigned editEnd;
+    bool isTargetedReplacement;
+    if (!sourceData->isImplicitlyNested && logicalContainingRuleSourceData->childRules.isEmpty()) {
+        // Simple rule with no child rules: replace the full body range.
+        editStart = logicalContainingRuleSourceData->ruleBodyRange.start;
+        editEnd = logicalContainingRuleSourceData->ruleBodyRange.end;
+        isTargetedReplacement = false;
+    } else {
+        // Rule with interleaved child rules or implicitly nested declarations:
+        // replace only the property text range to preserve sibling content.
+        unsigned bodyStartForOffsets = logicalContainingRuleSourceData->ruleBodyRange.start;
+        editStart = bodyStartForOffsets + properties[0].range.start;
+        editEnd = bodyStartForOffsets + properties.last().range.end;
+        isTargetedReplacement = true;
+    }
 
     const String& styleSheetText = m_parsedStyleSheet->text();
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(bodyEnd <= styleSheetText.length());
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(editEnd <= styleSheetText.length());
 
     if (outOldStyleDeclarationText)
         *outOldStyleDeclarationText = cssStyleDeclaration->cssText();
 
     if (outOldRuleText)
-        *outOldRuleText = styleSheetText.substring(bodyStart, bodyEnd - bodyStart);
+        *outOldRuleText = styleSheetText.substring(editStart, editEnd - editStart);
 
     cssStyleDeclaration->setCssText(newStyleDeclarationText);
 
-    // Don't canonicalize the rule text if a `newRuleText` is provided, to allow for faithful undoing.
-    String replacementBodyText = newRuleText ? *newRuleText : computeCanonicalRuleText(styleSheetText, newStyleDeclarationText, *logicalContainingRuleSourceData);
-
-    m_parsedStyleSheet->setText(makeStringByReplacing(styleSheetText, bodyStart, bodyEnd - bodyStart, replacementBodyText));
+    String replacementText;
+    if (newRuleText)
+        replacementText = *newRuleText;
+    else if (isTargetedReplacement) {
+        // The frontend sends formatted text with indentation meant for full-body replacement.
+        // For targeted replacement (narrow property range), strip surrounding whitespace so the
+        // property text fits the existing indentation context.
+        replacementText = newStyleDeclarationText.trim(deprecatedIsSpaceOrNewline);
+    } else
+        replacementText = newStyleDeclarationText;
+    m_parsedStyleSheet->setText(makeStringByReplacing(styleSheetText, editStart, editEnd - editStart, replacementText));
     fireStyleSheetChanged();
 
     return { };
@@ -1585,11 +1709,17 @@ ExceptionOr<String> InspectorStyleSheet::text()
 
 CSSStyleDeclaration* InspectorStyleSheet::styleForId(const InspectorCSSId& id) const
 {
-    RefPtr rule = dynamicDowncast<CSSStyleRule>(ruleForId(id));
+    RefPtr rule = ruleForId(id);
     if (!rule)
         return nullptr;
 
-    return &rule->style();
+    if (RefPtr cssStyleRule = dynamicDowncast<CSSStyleRule>(rule.get()))
+        return &cssStyleRule->style();
+
+    if (RefPtr nestedDecl = dynamicDowncast<CSSNestedDeclarations>(rule.get()))
+        return &nestedDecl->style();
+
+    return nullptr;
 }
 
 void InspectorStyleSheet::fireStyleSheetChanged()
@@ -1646,9 +1776,16 @@ unsigned InspectorStyleSheet::ruleIndexByStyle(StyleDeclarationOrCSSRule ruleOrD
     unsigned index = 0;
     for (auto& rule : m_flatRules) {
         RefPtr cssStyleRule = dynamicDowncast<CSSStyleRule>(rule.get());
+        RefPtr nestedDecl = dynamicDowncast<CSSNestedDeclarations>(rule.get());
 
         auto matches = WTF::switchOn(ruleOrDeclaration,
-            [&] (const CSSStyleDeclaration* styleDeclaration) { return cssStyleRule && &cssStyleRule->style() == styleDeclaration; },
+            [&] (const CSSStyleDeclaration* styleDeclaration) {
+                if (cssStyleRule && &cssStyleRule->style() == styleDeclaration)
+                    return true;
+                if (nestedDecl && &nestedDecl->style() == styleDeclaration)
+                    return true;
+                return false;
+            },
             [&] (const CSSRule* cssRule) { return rule.get() == cssRule; }
         );
         if (matches)
@@ -1799,10 +1936,8 @@ Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSRule>> InspectorStyleSheet::build
     collectFlatRules(WTF::move(refRuleList), &rules);
 
     for (auto& rule : rules) {
-        if (RefPtr styleRule = dynamicDowncast<CSSStyleRule>(rule.get())) {
-            if (auto ruleObject = buildObjectForRule(styleRule.get()))
-                result->addItem(ruleObject.releaseNonNull());
-        }
+        if (auto ruleObject = buildObjectForRule(rule.get()))
+            result->addItem(ruleObject.releaseNonNull());
     }
 
     return result;
@@ -1827,6 +1962,10 @@ void InspectorStyleSheet::collectFlatRules(RefPtr<CSSRuleList>&& ruleList, Vecto
             collectFlatRules(WTF::move(childRuleList), result);
             break;
         }
+
+        case RuleFlatteningStrategy::CommitSelfOnly:
+            result->append(rule);
+            break;
 
         case RuleFlatteningStrategy::Ignore:
             break;

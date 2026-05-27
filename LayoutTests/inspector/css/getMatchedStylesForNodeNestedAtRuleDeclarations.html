@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("CSS.getMatchedStyleForNode.NestedAtRuleDeclarations");
+
+    function expectRuleAtIndex(rules, index, {selectorText, isImplicitlyNested, propertyName, propertyValue, groupings})
+    {
+        InspectorTest.log(`Testing rule #${index}`);
+
+        let rule = rules[index];
+        InspectorTest.expectEqual(rule.selectorText, selectorText, `Selector text should be "${selectorText}".`);
+        InspectorTest.expectEqual(rule.isImplicitlyNested, isImplicitlyNested || false, `Rule should ${isImplicitlyNested ? "" : "not"} be an implicitly nested rule.`);
+
+        let name = propertyName || "color";
+        InspectorTest.expectEqual(rule.style.propertyForName(name).value, propertyValue, `"${name}" property value should be "${propertyValue}".`);
+
+        if (!groupings) {
+            InspectorTest.expectEmpty(rule.groupings, "Rule should have no groupings.");
+            return;
+        }
+
+        InspectorTest.expectEqual(rule.groupings.length, groupings.length, `Rule should have ${groupings.length} ${groupings.length === 1 ? "grouping" : "groupings"}.`);
+
+        for (let i = 0; i < groupings.length; ++i) {
+            InspectorTest.expectEqual(rule.groupings[i].type, groupings[i].type, `Grouping ${i} should have a type of "${groupings[i].type}".`);
+
+            if (groupings[i].text)
+                InspectorTest.expectEqual(rule.groupings[i].text, groupings[i].text, `Grouping ${i} should have a text of "${groupings[i].text}".`);
+        }
+    }
+
+    function addTestCase({name, description, selector, expectedAuthoredRuleCount, authoredRulesHandler})
+    {
+        suite.addTestCase({
+            name,
+            description,
+            async test() {
+                let documentNode = await WI.domManager.requestDocument();
+                let nodeId = await documentNode.querySelector(selector);
+                let domNode = WI.domManager.nodeForId(nodeId);
+                InspectorTest.assert(domNode, `Should find DOM Node for selector '${selector}'.`);
+
+                let domNodeStyles = WI.cssManager.stylesForNode(domNode);
+                InspectorTest.assert(domNodeStyles, `Should find CSS Styles for DOM Node.`);
+                await domNodeStyles.refresh();
+
+                let authoredRules = domNodeStyles.matchedRules.filter((rule) => rule.type === WI.CSSStyleSheet.Type.Author);
+                InspectorTest.expectEqual(authoredRules.length, expectedAuthoredRuleCount, `Should have ${expectedAuthoredRuleCount} authored rules.`);
+                authoredRulesHandler(authoredRules);
+            },
+        });
+    }
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.NestedAtRuleDeclarations.BasicMedia",
+        description: "Properties inside a nested @media rule should be visible as an implicitly nested rule.",
+        selector: "#test-basic",
+        expectedAuthoredRuleCount: 2,
+        authoredRulesHandler(rules) {
+            expectRuleAtIndex(rules, 0, {
+                selectorText: "&",
+                isImplicitlyNested: true,
+                propertyValue: "green",
+                groupings: [
+                    {type: WI.CSSGrouping.Type.MediaRule, text: "screen"},
+                    {type: WI.CSSGrouping.Type.StyleRule, text: "#test-basic"},
+                ],
+            });
+            expectRuleAtIndex(rules, 1, {
+                selectorText: "#test-basic",
+                propertyValue: "red",
+            });
+        }
+    });
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.NestedAtRuleDeclarations.SupportsRule",
+        description: "Properties inside a nested @supports rule should be visible as an implicitly nested rule.",
+        selector: "#test-supports",
+        expectedAuthoredRuleCount: 2,
+        authoredRulesHandler(rules) {
+            expectRuleAtIndex(rules, 0, {
+                selectorText: "&",
+                isImplicitlyNested: true,
+                propertyName: "color",
+                propertyValue: "green",
+                groupings: [
+                    {type: WI.CSSGrouping.Type.SupportsRule, text: "(display: grid)"},
+                    {type: WI.CSSGrouping.Type.StyleRule, text: "#test-supports"},
+                ],
+            });
+            expectRuleAtIndex(rules, 1, {
+                selectorText: "#test-supports",
+                propertyValue: "red",
+            });
+        }
+    });
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.NestedAtRuleDeclarations.DeepNesting",
+        description: "Properties inside deeply nested at-rules should be visible.",
+        selector: "#test-deep",
+        expectedAuthoredRuleCount: 2,
+        authoredRulesHandler(rules) {
+            expectRuleAtIndex(rules, 0, {
+                selectorText: "&",
+                isImplicitlyNested: true,
+                propertyValue: "green",
+                groupings: [
+                    {type: WI.CSSGrouping.Type.SupportsRule, text: "(display: grid)"},
+                    {type: WI.CSSGrouping.Type.MediaRule, text: "screen"},
+                    {type: WI.CSSGrouping.Type.StyleRule, text: "#test-deep"},
+                ],
+            });
+            expectRuleAtIndex(rules, 1, {
+                selectorText: "#test-deep",
+                propertyValue: "red",
+            });
+        }
+    });
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.NestedAtRuleDeclarations.MultipleNestedAtRules",
+        description: "Properties from multiple sibling nested at-rules should all be visible.",
+        selector: "#test-multi",
+        expectedAuthoredRuleCount: 3,
+        authoredRulesHandler(rules) {
+            expectRuleAtIndex(rules, 0, {
+                selectorText: "&",
+                isImplicitlyNested: true,
+                propertyValue: "green",
+                groupings: [
+                    {type: WI.CSSGrouping.Type.SupportsRule, text: "(display: grid)"},
+                    {type: WI.CSSGrouping.Type.StyleRule, text: "#test-multi"},
+                ],
+            });
+            expectRuleAtIndex(rules, 1, {
+                selectorText: "&",
+                isImplicitlyNested: true,
+                propertyValue: "yellow",
+                groupings: [
+                    {type: WI.CSSGrouping.Type.MediaRule, text: "screen"},
+                    {type: WI.CSSGrouping.Type.StyleRule, text: "#test-multi"},
+                ],
+            });
+            expectRuleAtIndex(rules, 2, {
+                selectorText: "#test-multi",
+                propertyValue: "red",
+            });
+        }
+    });
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.NestedAtRuleDeclarations.MixedExplicitAndImplicit",
+        description: "Explicit & rules and implicitly nested declarations should both be visible inside nested @media.",
+        selector: "#test-mixed",
+        expectedAuthoredRuleCount: 3,
+        authoredRulesHandler(rules) {
+            expectRuleAtIndex(rules, 0, {
+                selectorText: "&",
+                isImplicitlyNested: true,
+                propertyValue: "green",
+                groupings: [
+                    {type: WI.CSSGrouping.Type.MediaRule, text: "screen"},
+                    {type: WI.CSSGrouping.Type.StyleRule, text: "#test-mixed"},
+                ],
+            });
+            expectRuleAtIndex(rules, 1, {
+                selectorText: "&",
+                isImplicitlyNested: false,
+                propertyValue: "yellow",
+                groupings: [
+                    {type: WI.CSSGrouping.Type.MediaRule, text: "screen"},
+                    {type: WI.CSSGrouping.Type.StyleRule, text: "#test-mixed"},
+                ],
+            });
+            expectRuleAtIndex(rules, 2, {
+                selectorText: "#test-mixed",
+                propertyValue: "red",
+            });
+        }
+    });
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.NestedAtRuleDeclarations.ImplicitNestedAfterMedia",
+        description: "Post-nested implicit declarations after @media should be visible.",
+        selector: "#test-implicit-nested",
+        expectedAuthoredRuleCount: 3,
+        authoredRulesHandler(rules) {
+            expectRuleAtIndex(rules, 0, {
+                selectorText: "&",
+                isImplicitlyNested: true,
+                propertyValue: "green",
+                groupings: [
+                    {type: WI.CSSGrouping.Type.StyleRule, text: "#test-implicit-nested"},
+                ],
+            });
+            expectRuleAtIndex(rules, 1, {
+                selectorText: "&",
+                isImplicitlyNested: true,
+                propertyValue: "yellow",
+                groupings: [
+                    {type: WI.CSSGrouping.Type.MediaRule, text: "screen"},
+                    {type: WI.CSSGrouping.Type.StyleRule, text: "#test-implicit-nested"},
+                ],
+            });
+            expectRuleAtIndex(rules, 2, {
+                selectorText: "#test-implicit-nested",
+                propertyValue: "red",
+            });
+        }
+    });
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.NestedAtRuleDeclarations.ExplicitNestedAfterMedia",
+        description: "Post-nested explicit & rule after @media should be visible.",
+        selector: "#test-explicit-nested",
+        expectedAuthoredRuleCount: 3,
+        authoredRulesHandler(rules) {
+            expectRuleAtIndex(rules, 0, {
+                selectorText: "&",
+                isImplicitlyNested: false,
+                propertyValue: "green",
+                groupings: [
+                    {type: WI.CSSGrouping.Type.StyleRule, text: "#test-explicit-nested"},
+                ],
+            });
+            expectRuleAtIndex(rules, 1, {
+                selectorText: "&",
+                isImplicitlyNested: true,
+                propertyValue: "yellow",
+                groupings: [
+                    {type: WI.CSSGrouping.Type.MediaRule, text: "screen"},
+                    {type: WI.CSSGrouping.Type.StyleRule, text: "#test-explicit-nested"},
+                ],
+            });
+            expectRuleAtIndex(rules, 2, {
+                selectorText: "#test-explicit-nested",
+                propertyValue: "red",
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+    #test-basic {
+        color: red;
+
+        @media screen {
+            color: green;
+        }
+    }
+
+    #test-supports {
+        color: red;
+
+        @supports (display: grid) {
+            color: green;
+        }
+    }
+
+    #test-deep {
+        color: red;
+
+        @media screen {
+            @supports (display: grid) {
+                color: green;
+            }
+        }
+    }
+
+    #test-multi {
+        color: red;
+
+        @media screen {
+            color: yellow;
+        }
+
+        @supports (display: grid) {
+            color: green;
+        }
+    }
+
+    #test-mixed {
+        color: red;
+
+        @media screen {
+            & {
+                color: yellow;
+            }
+
+            color: green;
+        }
+    }
+
+    #test-implicit-nested {
+        color: red;
+
+        @media screen {
+            color: yellow;
+        }
+
+        color: green;
+    }
+
+    #test-explicit-nested {
+        color: red;
+
+        @media screen {
+            color: yellow;
+        }
+
+        & {
+            color: green;
+        }
+    }
+</style>
+</head>
+<body onload="runTest()">
+    <p>Tests for the CSS.getMatchedStyleForNode command with properties declared inside nested at-rules (@media, @supports) within style rules.</p>
+    <div id="test-basic"></div>
+    <div id="test-supports"></div>
+    <div id="test-deep"></div>
+    <div id="test-multi"></div>
+    <div id="test-mixed"></div>
+    <div id="test-implicit-nested"></div>
+    <div id="test-explicit-nested"></div>
+</body>
+</html>

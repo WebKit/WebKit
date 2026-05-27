@@ -1,0 +1,129 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<style>
+    .case1 {
+        color: red;
+        @media (min-width: 0px) {
+            color: yellow;
+        }
+        color: green;
+    }
+
+    .case2 {
+        color: red;
+        @media (min-width: 0px) {
+            color: yellow;
+        }
+        &:not(.x) {
+            color: orange;
+        }
+        color: green;
+    }
+
+    .case3 {
+        color: red;
+        @media (min-width: 0px) {
+            color: yellow;
+            @supports (display: grid) {
+                color: orange;
+            }
+            color: violet;
+        }
+        color: green;
+    }
+</style>
+<script>
+function test() {
+    let suite = ProtocolTest.createAsyncSuite("CSS.setStyleText.Interleaved");
+
+    const colorReplacements = {
+        "red": "magenta",
+        "yellow": "cyan",
+        "orange": "tomato",
+        "green": "pink",
+        "violet": "navy",
+    };
+
+    async function getAuthorRulesForSelector(selector) {
+        let { root } = await InspectorProtocol.awaitCommand({ method: "DOM.getDocument" });
+        let { nodeId } = await InspectorProtocol.awaitCommand({
+            method: "DOM.querySelector",
+            params: { nodeId: root.nodeId, selector },
+        });
+        let { matchedCSSRules } = await InspectorProtocol.awaitCommand({
+            method: "CSS.getMatchedStylesForNode",
+            params: { nodeId },
+        });
+        return matchedCSSRules
+            .map(({ rule }) => rule)
+            .filter((rule) => rule.origin === "author");
+    }
+
+    function collectColorProperties(rules) {
+        let results = [];
+        for (let rule of rules) {
+            let style = rule.style;
+            for (let prop of style.cssProperties) {
+                if (prop.name === "color" && prop.status !== "disabled")
+                    results.push({ value: prop.value, styleId: style.styleId });
+            }
+        }
+        return results;
+    }
+
+
+    async function testCase(caseName, selector, expectedColors) {
+        suite.addTestCase({
+            name: `CSS.setStyleText.Interleaved.${caseName}`,
+            description: `Test editing each color property in ${selector} preserves other properties.`,
+            test: async () => {
+                for (let targetColor of expectedColors) {
+                    let rules = await getAuthorRulesForSelector(selector);
+                    let colorProps = collectColorProperties(rules);
+
+                    let target = colorProps.find((p) => p.value === targetColor);
+                    if (!target) {
+                        ProtocolTest.fail(`Could not find color property with value "${targetColor}".`);
+                        continue;
+                    }
+
+                    let newValue = colorReplacements[targetColor];
+                    ProtocolTest.log(`Editing "${targetColor}" to "${newValue}"...`);
+                    await InspectorProtocol.awaitCommand({
+                        method: "CSS.setStyleText",
+                        params: {
+                            styleId: target.styleId,
+                            text: `color: ${newValue};`,
+                        },
+                    });
+                }
+
+                const filteredValueReplacer = (key, value) => {
+                    if (["ruleId", "styleId", "range", "sourceLine", "sourceURL"].includes(key))
+                        return "<filtered>";
+                    return value;
+                };
+
+                ProtocolTest.log("");
+                ProtocolTest.log("Author CSS rules after all edits:");
+                ProtocolTest.json(await getAuthorRulesForSelector(selector), filteredValueReplacer);
+            },
+        });
+    }
+
+    testCase("BasicInteleaving", ".case1", ["red", "yellow", "green"]);
+    testCase("ImplicitAndExplicitInterleaving", ".case2", ["red", "yellow", "orange", "green"]);
+    testCase("NestedInteleaving", ".case3", ["red", "yellow", "orange", "violet", "green"]);
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that CSS.setStyleText correctly edits individual properties in interleaved nested declarations without affecting other properties.</p>
+<div class="case1"></div>
+<div class="case2"></div>
+<div class="case3"></div>
+</body>
+</html>

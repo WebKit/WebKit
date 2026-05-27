@@ -1,0 +1,553 @@
+Tests that CSS.setStyleText correctly edits individual properties in interleaved nested declarations without affecting other properties.
+
+
+== Running test suite: CSS.setStyleText.Interleaved
+-- Running test case: CSS.setStyleText.Interleaved.BasicInteleaving
+Editing "red" to "magenta"...
+Editing "yellow" to "cyan"...
+Editing "green" to "pink"...
+
+Author CSS rules after all edits:
+[
+  {
+    "selectorList": {
+      "selectors": [
+        {
+          "text": ".case1",
+          "specificity": [
+            0,
+            1,
+            0
+          ]
+        }
+      ],
+      "text": ".case1",
+      "range": "<filtered>"
+    },
+    "sourceLine": "<filtered>",
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "color",
+          "value": "magenta",
+          "text": "color: magenta;",
+          "range": "<filtered>",
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": "<filtered>",
+      "cssText": "\n        color: magenta;\n        @media (min-width: 0px) {\n            color: cyan;\n        }\n        color: pink;\n    "
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "isImplicitlyNested": false
+  },
+  {
+    "selectorList": {
+      "selectors": [],
+      "text": "&",
+      "range": "<filtered>"
+    },
+    "sourceLine": "<filtered>",
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "color",
+          "value": "cyan",
+          "text": "color: cyan;",
+          "range": "<filtered>",
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": "<filtered>",
+      "cssText": "\n            color: cyan;\n        "
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "groupings": [
+      {
+        "type": "media-rule",
+        "ruleId": "<filtered>",
+        "text": "(min-width: 0px)",
+        "range": "<filtered>",
+        "sourceURL": "<filtered>"
+      },
+      {
+        "type": "style-rule",
+        "ruleId": "<filtered>",
+        "text": ".case1",
+        "range": "<filtered>",
+        "sourceURL": "<filtered>"
+      }
+    ],
+    "isImplicitlyNested": true
+  },
+  {
+    "selectorList": {
+      "selectors": [],
+      "text": "&",
+      "range": "<filtered>"
+    },
+    "sourceLine": "<filtered>",
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "color",
+          "value": "pink",
+          "text": "color: pink;",
+          "range": "<filtered>",
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": "<filtered>",
+      "cssText": "\n        color: magenta;\n        @media (min-width: 0px) {\n            color: cyan;\n        }\n        color: pink;\n    "
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "groupings": [
+      {
+        "type": "style-rule",
+        "ruleId": "<filtered>",
+        "text": ".case1",
+        "range": "<filtered>",
+        "sourceURL": "<filtered>"
+      }
+    ],
+    "isImplicitlyNested": true
+  }
+]
+
+-- Running test case: CSS.setStyleText.Interleaved.ImplicitAndExplicitInterleaving
+Editing "red" to "magenta"...
+Editing "yellow" to "cyan"...
+Editing "orange" to "tomato"...
+Editing "green" to "pink"...
+
+Author CSS rules after all edits:
+[
+  {
+    "selectorList": {
+      "selectors": [
+        {
+          "text": ".case2",
+          "specificity": [
+            0,
+            1,
+            0
+          ]
+        }
+      ],
+      "text": ".case2",
+      "range": "<filtered>"
+    },
+    "sourceLine": "<filtered>",
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "color",
+          "value": "magenta",
+          "text": "color: magenta;",
+          "range": "<filtered>",
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": "<filtered>",
+      "cssText": "\n        color: magenta;\n        @media (min-width: 0px) {\n            color: cyan;\n        }\n        &:not(.x) {color: tomato;}\n        color: pink;\n    "
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "isImplicitlyNested": false
+  },
+  {
+    "selectorList": {
+      "selectors": [],
+      "text": "&",
+      "range": "<filtered>"
+    },
+    "sourceLine": "<filtered>",
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "color",
+          "value": "cyan",
+          "text": "color: cyan;",
+          "range": "<filtered>",
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": "<filtered>",
+      "cssText": "\n            color: cyan;\n        "
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "groupings": [
+      {
+        "type": "media-rule",
+        "ruleId": "<filtered>",
+        "text": "(min-width: 0px)",
+        "range": "<filtered>",
+        "sourceURL": "<filtered>"
+      },
+      {
+        "type": "style-rule",
+        "ruleId": "<filtered>",
+        "text": ".case2",
+        "range": "<filtered>",
+        "sourceURL": "<filtered>"
+      }
+    ],
+    "isImplicitlyNested": true
+  },
+  {
+    "selectorList": {
+      "selectors": [],
+      "text": "&",
+      "range": "<filtered>"
+    },
+    "sourceLine": "<filtered>",
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "color",
+          "value": "pink",
+          "text": "color: pink;",
+          "range": "<filtered>",
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": "<filtered>",
+      "cssText": "\n        color: magenta;\n        @media (min-width: 0px) {\n            color: cyan;\n        }\n        &:not(.x) {color: tomato;}\n        color: pink;\n    "
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "groupings": [
+      {
+        "type": "style-rule",
+        "ruleId": "<filtered>",
+        "text": ".case2",
+        "range": "<filtered>",
+        "sourceURL": "<filtered>"
+      }
+    ],
+    "isImplicitlyNested": true
+  },
+  {
+    "selectorList": {
+      "selectors": [
+        {
+          "text": "&:not(.x)",
+          "specificity": [
+            0,
+            2,
+            0
+          ]
+        }
+      ],
+      "text": "&:not(.x)",
+      "range": "<filtered>"
+    },
+    "sourceLine": "<filtered>",
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "color",
+          "value": "tomato",
+          "text": "color: tomato;",
+          "range": "<filtered>",
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": "<filtered>",
+      "cssText": "color: tomato;"
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "groupings": [
+      {
+        "type": "style-rule",
+        "ruleId": "<filtered>",
+        "text": ".case2",
+        "range": "<filtered>",
+        "sourceURL": "<filtered>"
+      }
+    ],
+    "isImplicitlyNested": false
+  }
+]
+
+-- Running test case: CSS.setStyleText.Interleaved.NestedInteleaving
+Editing "red" to "magenta"...
+Editing "yellow" to "cyan"...
+Editing "orange" to "tomato"...
+Editing "violet" to "navy"...
+Editing "green" to "pink"...
+
+Author CSS rules after all edits:
+[
+  {
+    "selectorList": {
+      "selectors": [
+        {
+          "text": ".case3",
+          "specificity": [
+            0,
+            1,
+            0
+          ]
+        }
+      ],
+      "text": ".case3",
+      "range": "<filtered>"
+    },
+    "sourceLine": "<filtered>",
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "color",
+          "value": "magenta",
+          "text": "color: magenta;",
+          "range": "<filtered>",
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": "<filtered>",
+      "cssText": "\n        color: magenta;\n        @media (min-width: 0px) {\n            color: cyan;\n            @supports (display: grid) {\n                color: tomato;\n            }\n            color: navy;\n        }\n        color: pink;\n    "
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "isImplicitlyNested": false
+  },
+  {
+    "selectorList": {
+      "selectors": [],
+      "text": "&",
+      "range": "<filtered>"
+    },
+    "sourceLine": "<filtered>",
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "color",
+          "value": "cyan",
+          "text": "color: cyan;",
+          "range": "<filtered>",
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": "<filtered>",
+      "cssText": "\n            color: cyan;\n            @supports (display: grid) {\n                color: tomato;\n            }\n            color: navy;\n        "
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "groupings": [
+      {
+        "type": "media-rule",
+        "ruleId": "<filtered>",
+        "text": "(min-width: 0px)",
+        "range": "<filtered>",
+        "sourceURL": "<filtered>"
+      },
+      {
+        "type": "style-rule",
+        "ruleId": "<filtered>",
+        "text": ".case3",
+        "range": "<filtered>",
+        "sourceURL": "<filtered>"
+      }
+    ],
+    "isImplicitlyNested": true
+  },
+  {
+    "selectorList": {
+      "selectors": [],
+      "text": "&",
+      "range": "<filtered>"
+    },
+    "sourceLine": "<filtered>",
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "color",
+          "value": "tomato",
+          "text": "color: tomato;",
+          "range": "<filtered>",
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": "<filtered>",
+      "cssText": "\n                color: tomato;\n            "
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "groupings": [
+      {
+        "type": "supports-rule",
+        "ruleId": "<filtered>",
+        "text": "(display: grid)",
+        "range": "<filtered>",
+        "sourceURL": "<filtered>"
+      },
+      {
+        "type": "media-rule",
+        "ruleId": "<filtered>",
+        "text": "(min-width: 0px)",
+        "range": "<filtered>",
+        "sourceURL": "<filtered>"
+      },
+      {
+        "type": "style-rule",
+        "ruleId": "<filtered>",
+        "text": ".case3",
+        "range": "<filtered>",
+        "sourceURL": "<filtered>"
+      }
+    ],
+    "isImplicitlyNested": true
+  },
+  {
+    "selectorList": {
+      "selectors": [],
+      "text": "&",
+      "range": "<filtered>"
+    },
+    "sourceLine": "<filtered>",
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "color",
+          "value": "navy",
+          "text": "color: navy;",
+          "range": "<filtered>",
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": "<filtered>",
+      "cssText": "\n            color: cyan;\n            @supports (display: grid) {\n                color: tomato;\n            }\n            color: navy;\n        "
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "groupings": [
+      {
+        "type": "media-rule",
+        "ruleId": "<filtered>",
+        "text": "(min-width: 0px)",
+        "range": "<filtered>",
+        "sourceURL": "<filtered>"
+      },
+      {
+        "type": "style-rule",
+        "ruleId": "<filtered>",
+        "text": ".case3",
+        "range": "<filtered>",
+        "sourceURL": "<filtered>"
+      }
+    ],
+    "isImplicitlyNested": true
+  },
+  {
+    "selectorList": {
+      "selectors": [],
+      "text": "&",
+      "range": "<filtered>"
+    },
+    "sourceLine": "<filtered>",
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "color",
+          "value": "pink",
+          "text": "color: pink;",
+          "range": "<filtered>",
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": "<filtered>",
+      "cssText": "\n        color: magenta;\n        @media (min-width: 0px) {\n            color: cyan;\n            @supports (display: grid) {\n                color: tomato;\n            }\n            color: navy;\n        }\n        color: pink;\n    "
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "groupings": [
+      {
+        "type": "style-rule",
+        "ruleId": "<filtered>",
+        "text": ".case3",
+        "range": "<filtered>",
+        "sourceURL": "<filtered>"
+      }
+    ],
+    "isImplicitlyNested": true
+  }
+]
+

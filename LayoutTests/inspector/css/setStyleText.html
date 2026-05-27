@@ -56,18 +56,19 @@ function test() {
             const modifyBackgroundColorStyle = async (targetColor) => {
                 for (let rule of await getAllAuthorRules()) {
                     let styleDeclaration = rule.style;
-                    let value = styleDeclaration.cssProperties[0].value;
-                    if (value !== targetColor)
-                        continue;
+                    for (let prop of styleDeclaration.cssProperties) {
+                        if (prop.value !== targetColor)
+                            continue;
 
-                    await InspectorProtocol.awaitCommand({
-                        method: "CSS.setStyleText",
-                        params: {
-                            styleId: styleDeclaration.styleId,
-                            text: `background-color: ${value};`,
-                        },
-                    });
-                    return;
+                        await InspectorProtocol.awaitCommand({
+                            method: "CSS.setStyleText",
+                            params: {
+                                styleId: styleDeclaration.styleId,
+                                text: `background-color: ${prop.value};`,
+                            },
+                        });
+                        return;
+                    }
                 }
                 throw new Error(`Style with color "${targetColor}" was not found.`);
             };

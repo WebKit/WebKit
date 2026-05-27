@@ -28,6 +28,7 @@
 
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSImportRule.h"
+#include "CSSNestedDeclarations.h"
 #include "CSSParserContext.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParserState.h"
@@ -769,7 +770,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSRule>> Inspe
     if (performResult.hasException())
         return makeUnexpected(InspectorDOMAgent::toErrorString(performResult.releaseException()));
 
-    auto rule = inspectorStyleSheet->buildObjectForRule(dynamicDowncast<CSSStyleRule>(inspectorStyleSheet->ruleForId(compoundId)));
+    auto rule = inspectorStyleSheet->buildObjectForRule(inspectorStyleSheet->ruleForId(compoundId));
     if (!rule)
         return makeUnexpected("Internal error: missing style sheet"_s);
 
@@ -881,7 +882,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSRule>> Inspe
     if (performResult.hasException())
         return makeUnexpected(InspectorDOMAgent::toErrorString(performResult.releaseException()));
 
-    auto rule = inspectorStyleSheet->buildObjectForRule(dynamicDowncast<CSSStyleRule>(inspectorStyleSheet->ruleForId(rawAction.newRuleId())));
+    auto rule = inspectorStyleSheet->buildObjectForRule(inspectorStyleSheet->ruleForId(rawAction.newRuleId()));
     if (!rule)
         return makeUnexpected("Internal error: missing style sheet"_s);
 
@@ -1371,10 +1372,14 @@ RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(
         styleResolver.inspectorCSSOMWrappers().collectScopeWrappers(shadowRoot->styleScope());
 
     CSSStyleRule* cssomWrapper = styleResolver.inspectorCSSOMWrappers().getWrapperForRuleInSheets(styleRule);
-    return buildObjectForRule(cssomWrapper);
+    if (cssomWrapper)
+        return buildObjectForRule(cssomWrapper);
+
+    CSSNestedDeclarations* nestedDeclWrapper = styleResolver.inspectorCSSOMWrappers().getWrapperForNestedDeclarationsRuleInSheets(styleRule);
+    return buildObjectForRule(nestedDeclWrapper);
 }
 
-RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(CSSStyleRule* rule)
+RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(CSSRule* rule)
 {
     if (!rule)
         return nullptr;

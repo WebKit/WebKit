@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include "CSSNestedDeclarations.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -44,6 +45,7 @@ public:
     // WARNING. This will construct CSSOM wrappers for all style rules and cache them in a map for significant memory cost.
     // It is here to support inspector. Don't use for any regular engine functions.
     CSSStyleRule* getWrapperForRuleInSheets(const StyleRule*);
+    CSSNestedDeclarations* getWrapperForNestedDeclarationsRuleInSheets(const StyleRule*);
     void collectFromStyleSheetIfNeeded(CSSStyleSheet&);
     void collectDocumentWrappers(ExtensionStyleSheets&);
     void collectScopeWrappers(Scope&);
@@ -57,6 +59,7 @@ private:
     void maybeCollectFromStyleSheets(const Vector<Ref<CSSStyleSheet>>&);
 
     HashMap<const StyleRule*, Ref<CSSStyleRule>> m_styleRuleToCSSOMWrapperMap;
+    HashMap<const StyleRule*, Ref<CSSNestedDeclarations>> m_nestedDeclarationsRuleToCSSOMWrapperMap;
     HashSet<Ref<CSSStyleSheet>> m_styleSheetCSSOMWrapperSet;
 };
 
