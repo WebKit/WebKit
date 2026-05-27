@@ -725,7 +725,13 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncMakeTypeError, (JSGlobalObject* globalObject,
 
 JSC_DEFINE_HOST_FUNCTION(globalFuncProtoGetter, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    JSValue thisValue = callFrame->thisValue().toThis(globalObject, ECMAMode::strict());
+    JSValue thisValue = callFrame->thisValue();
+
+    if (thisValue.isObject() && asObject(thisValue)->inherits<JSScope>())
+        thisValue = globalObject->globalThis();
+    else
+        thisValue = thisValue.toThis(globalObject, ECMAMode::strict());
+
     return JSValue::encode(thisValue.getPrototype(globalObject));
 }
 
