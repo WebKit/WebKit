@@ -130,7 +130,15 @@ void Thread::signalHandlerSuspendResume(int, siginfo_t*, void* ucontext)
         return;
     }
 
+#if HAVE(MACHINE_CONTEXT)
+    PlatformRegisters& platformRegisters = registersFromUContext(static_cast<ucontext_t*>(ucontext));
+    void* approximateStackPointer = stackPointerFromRegisters(platformRegisters);
+    if (!approximateStackPointer)
+        approximateStackPointer = currentStackPointer();
+#else
+    UNUSED_PARAM(ucontext);
     void* approximateStackPointer = currentStackPointer();
+#endif
     if (!thread->m_stack.contains(approximateStackPointer)) {
         // This happens if we use an alternative signal stack.
         // 1. A user-defined signal handler is invoked with an alternative signal stack.
@@ -144,10 +152,8 @@ void Thread::signalHandlerSuspendResume(int, siginfo_t*, void* ucontext)
     }
 
 #if HAVE(MACHINE_CONTEXT)
-    ucontext_t* userContext = static_cast<ucontext_t*>(ucontext);
-    thread->m_platformRegisters = &registersFromUContext(userContext);
+    thread->m_platformRegisters = &platformRegisters;
 #else
-    UNUSED_PARAM(ucontext);
     PlatformRegisters platformRegisters { approximateStackPointer };
     thread->m_platformRegisters = &platformRegisters;
 #endif
