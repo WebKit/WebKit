@@ -40,12 +40,10 @@ def meson_version():
         result = subprocess.run(['meson', '--version'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
         if result.returncode == 0:
-            version = result.stdout.strip()
-            major, minor, revision = version.split(".")
-            return int(major) * 100 + int(minor) * 10 + int(revision)
+            return tuple(int(x) for x in result.stdout.strip().split("."))
         else:
             return None
-    except FileNotFoundError:
+    except (FileNotFoundError, ValueError):
         return None
 
 
@@ -116,6 +114,6 @@ def init(jhbuildrc_globals, jhbuild_platform):
         if jhbuild_enable_thunder == 'yes' or jhbuild_enable_thunder == '1' or jhbuild_enable_thunder == 'true':
             jhbuildrc_globals['conditions'].add('Thunder')
 
-    REQUIRED_MESON_VERSION = 622
+    REQUIRED_MESON_VERSION = (0, 62, 2)
     if not meson_version() or meson_version() < REQUIRED_MESON_VERSION:
         jhbuildrc_globals['conditions'].add('require-meson')
