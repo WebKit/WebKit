@@ -2905,7 +2905,7 @@ ExceptionOr<RefPtr<Frame>> LocalDOMWindow::createWindow(const String& urlString,
         activeWindow.consumeTransientActivation();
 
     if (!noopener) {
-        ASSERT(!newFrame->opener() || newFrame->opener() == &openerFrame);
+        ASSERT(!newFrame->opener() || newFrame->opener() == &openerFrame || newFrame.get() == &openerFrame);
         if (auto* page = newFrame->page())
             page->setOpenedByDOMWithOpener(true);
     }

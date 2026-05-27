@@ -4998,7 +4998,9 @@ std::pair<RefPtr<Frame>, CreatedNewPage> createWindow(LocalFrame& openerFrame, F
                 if (RefPtr page = frame->page(); page && isInVisibleAndActivePage(openerFrame))
                     page->chrome().focus();
             }
-            frame->updateOpener(openerFrame);
+            bool isSelfNavigation = isSelfTargetFrameName(request.frameName());
+            if (!isSelfNavigation)
+                frame->updateOpener(openerFrame);
             return { frame, CreatedNewPage::No };
         }
     }
