@@ -1056,6 +1056,7 @@ bool Type::definitelyIsWasmGCObjectOrNull() const
 
 void Type::dump(PrintStream& out) const
 {
+<<<<<<< HEAD
     TypeKind kindToPrint = kind;
     if (index != invalidTypeIndex) {
         if (typeIndexIsType(index)) {
@@ -1073,6 +1074,24 @@ void Type::dump(PrintStream& out) const
 #define CREATE_CASE(name, ...) case TypeKind::name: out.print(#name); break;
         FOR_EACH_WASM_TYPE(CREATE_CASE)
 #undef CREATE_CASE
+=======
+    return TypeHash { const_cast<TypeDefinition&>(typeDef) };
+}
+
+WebAssemblyGCTypeDependencies::WebAssemblyGCTypeDependencies(const Ref<const TypeDefinition>& unexpandedType)
+{
+    WorkList work;
+    SUPPRESS_UNCHECKED_ARG work.append(unexpandedType.get());
+    while (!work.isEmpty())
+        SUPPRESS_UNCHECKED_ARG process(work.takeLast(), work);
+}
+
+inline static void appendToWorkIfNeeded(Type type, WebAssemblyGCTypeDependencies::WorkList& work)
+{
+    if (isRefWithTypeIndex(type)) {
+        SUPPRESS_UNCHECKED_LOCAL const auto& referencedType = TypeInformation::get(type.index);
+        work.append(referencedType);
+>>>>>>> c5d68122b2fa ([JSC] WebAssemblyGCStructureTypeDependencies::process should retain unexpanded types too)
     }
 }
 
@@ -1080,6 +1099,7 @@ void RTT::ensureArgumINTBytecode(const CallInformation& callCC) const
 {
     ASSERT(kind() == RTTKind::Function);
 
+<<<<<<< HEAD
     constexpr static int NUM_ARGUMINT_GPRS = 8;
     constexpr static int NUM_ARGUMINT_FPRS = 8;
 
@@ -1127,6 +1147,28 @@ void RTT::ensureArgumINTBytecode(const CallInformation& callCC) const
         ASSERT(candidate->last() == static_cast<uint8_t>(IPInt::ArgumINTBytecode::End));
         return candidate;
     });
+=======
+    SUPPRESS_UNCHECKED_LOCAL const auto& expanded = typeDef.expand();
+    if (&expanded != &typeDef) {
+        if (m_typeDefinitions.contains(typeHash(expanded)))
+            return;
+        m_typeDefinitions.add(typeHash(expanded));
+    }
+
+    if (expanded.is<StructType>()) {
+        SUPPRESS_UNCHECKED_LOCAL auto* structType = expanded.as<StructType>();
+        for (unsigned i = 0; i < structType->fieldCount(); ++i)
+            process(structType->field(i), work);
+    } else if (expanded.is<ArrayType>()) {
+        process(expanded.as<ArrayType>()->elementType(), work);
+    } else if (expanded.is<FunctionSignature>()) {
+        SUPPRESS_UNCHECKED_LOCAL auto* signature = expanded.as<FunctionSignature>();
+        for (unsigned i = 0; i < signature->argumentCount(); ++i)
+            appendToWorkIfNeeded(signature->argumentType(i), work);
+        for (unsigned i = 0; i < signature->returnCount(); ++i)
+            appendToWorkIfNeeded(signature->returnType(i), work);
+    }
+>>>>>>> c5d68122b2fa ([JSC] WebAssemblyGCStructureTypeDependencies::process should retain unexpanded types too)
 }
 
 void RTT::ensureUINTBytecode(const CallInformation& returnCC) const
