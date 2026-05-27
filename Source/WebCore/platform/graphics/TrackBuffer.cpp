@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
+#include "CombinedMediaSample.h"
 #include "Logging.h"
 #include <ranges>
 #include <wtf/CryptographicallyRandomNumber.h>
@@ -101,7 +102,6 @@ void TrackBuffer::adjustSampleStartTime(MediaSample& original, const MediaTime& 
 
     MediaTime replacementStart = replacement->presentationTime();
     MediaTime replacementEnd = replacement->presentationEndTime();
-    DecodeOrderSampleMap::KeyType replacementDecodeKey(replacement->decodeTime(), replacementStart);
 
     PlatformTimeRanges invertedRange(originalStart, originalEnd);
     invertedRange.invert();
@@ -116,8 +116,19 @@ void TrackBuffer::adjustSampleStartTime(MediaSample& original, const MediaTime& 
     // erase() is a valid insertion-point hint for the adjusted entry.
     auto queueIt = m_decodeQueue.find(originalDecodeKey);
     if (queueIt != m_decodeQueue.end()) {
-        auto hint = m_decodeQueue.erase(queueIt);
-        m_decodeQueue.insert(hint, { replacementDecodeKey, WTF::move(replacement) });
+        m_decodeQueue.erase(queueIt);
+        insertIntoDecodeQueue(WTF::move(replacement));
+    }
+}
+
+void TrackBuffer::replaceSample(const MediaSample& original, Ref<MediaSample>&& replacement)
+{
+    m_samples.replaceSample(original, replacement.copyRef());
+
+    auto queueIt = m_decodeQueue.find({ original.decodeTime(), original.presentationTime() });
+    if (queueIt != m_decodeQueue.end()) {
+        m_decodeQueue.erase(queueIt);
+        insertIntoDecodeQueue(WTF::move(replacement));
     }
 }
 
@@ -145,7 +156,7 @@ void TrackBuffer::addSample(MediaSample& sample)
     // with earlier timestamps are enqueued. The decode queue is not FIFO, but rather an ordered map.
     DecodeOrderSampleMap::KeyType decodeKey(sample.decodeTime(), sample.presentationTime());
     if (lastEnqueuedDecodeKey().first.isInvalid() || decodeKey > lastEnqueuedDecodeKey()) {
-        auto result = decodeQueue().insert(DecodeOrderSampleMap::MapType::value_type(decodeKey, sample));
+        auto result = insertIntoDecodeQueue(Ref { sample });
         auto it = result.first;
         if (it == decodeQueue().begin())
             m_minimumEnqueuedPresentationTime = sample.presentationTime();
@@ -262,6 +273,22 @@ void TrackBuffer::updateMinimumUpcomingPresentationTime()
         m_minimumEnqueuedPresentationTime = MediaTime::invalidTime();
 }
 
+std::pair<DecodeOrderSampleMap::iterator, bool> TrackBuffer::insertIntoDecodeQueue(Ref<MediaSample>&& sample)
+{
+    if (RefPtr combined = dynamicDowncast<CombinedMediaSample>(sample.get())) {
+        for (auto& prerequisite : combined->prerequisiteSamples()) {
+            DecodeOrderSampleMap::KeyType key(prerequisite->decodeTime(), prerequisite->presentationTime());
+            m_decodeQueue.insert({ key, prerequisite.copyRef() });
+        }
+        Ref displaying = combined->displayingSample();
+        DecodeOrderSampleMap::KeyType key(displaying->decodeTime(), displaying->presentationTime());
+        return m_decodeQueue.insert({ key, WTF::move(displaying) });
+    }
+
+    DecodeOrderSampleMap::KeyType key(sample->decodeTime(), sample->presentationTime());
+    return m_decodeQueue.insert({ key, WTF::move(sample) });
+}
+
 bool TrackBuffer::reenqueueMediaForTime(const MediaTime& time, const MediaTime& timeFudgeFactor, bool isEnded)
 {
     clearDecodeQueue();
@@ -304,28 +331,23 @@ bool TrackBuffer::reenqueueMediaForTime(const MediaTime& time, const MediaTime& 
         return false;
 
     // Fill the decode queue with the non-displaying samples.
-    for (auto iter = reverseLastSyncSampleIter; iter != reverseCurrentSampleIter; --iter) {
-        Ref copy = Ref { iter->second }->createNonDisplayingCopy();
-        DecodeOrderSampleMap::KeyType decodeKey(copy->decodeTime(), copy->presentationTime());
-        m_decodeQueue.insert(DecodeOrderSampleMap::MapType::value_type(decodeKey, WTF::move(copy)));
-    }
+    for (auto iter = reverseLastSyncSampleIter; iter != reverseCurrentSampleIter; --iter)
+        insertIntoDecodeQueue(Ref { iter->second }->createNonDisplayingCopy());
 
     MediaTime previousSampleTime;
 
     // Fill the decode queue with the remaining samples.
     if (currentSampleDTSIterator != m_samples.decodeOrder().end()) {
-        m_decodeQueue.insert(*currentSampleDTSIterator);
+        insertIntoDecodeQueue(currentSampleDTSIterator->second.copyRef());
         m_minimumEnqueuedPresentationTime = Ref { currentSampleDTSIterator->second }->presentationTime();
         previousSampleTime = m_minimumEnqueuedPresentationTime;
     }
     for (auto iter = ++currentSampleDTSIterator; iter != m_samples.decodeOrder().end(); ++iter) {
         Ref sample = iter->second;
         if (sample->presentationTime() < time) {
-            Ref copy = sample->createNonDisplayingCopy();
-            DecodeOrderSampleMap::KeyType decodeKey(copy->decodeTime(), copy->presentationTime());
-            m_decodeQueue.insert(DecodeOrderSampleMap::MapType::value_type(decodeKey, WTF::move(copy)));
+            insertIntoDecodeQueue(sample->createNonDisplayingCopy());
         } else {
-            m_decodeQueue.insert(*iter);
+            insertIntoDecodeQueue(sample.copyRef());
             if (sample->presentationTime() < m_minimumEnqueuedPresentationTime)
                 m_minimumEnqueuedPresentationTime = sample->presentationTime();
             if (std::exchange(previousSampleTime, sample->presentationTime()) > sample->presentationTime())

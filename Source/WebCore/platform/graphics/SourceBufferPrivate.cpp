@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "AudioTrackPrivate.h"
+#include "CombinedMediaSample.h"
 #include "Logging.h"
 #include "MediaDescription.h"
 #include "MediaSample.h"
@@ -1479,18 +1480,69 @@ bool SourceBufferPrivate::processMediaSample(SourceBufferPrivateClient& client, 
             } while (false);
         }
 
-        // 1.15 Remove decoding dependencies of the coded frames removed in the previous step:
+        // 1.15 Remove all possible decoding dependencies on the coded frames removed in the
+        // previous two steps by removing all coded frames from track buffer between those
+        // frames removed in the previous two steps and the next random access point after
+        // those removed frames.
         DecodeOrderSampleMap::MapType dependentSamples;
+        Vector<std::pair<Ref<MediaSample>, Ref<CombinedMediaSample>>> replacedSamples;
         if (!erasedSamples.empty()) {
-            // If detailed information about decoding dependencies is available:
-            // FIXME: Add support for detailed dependency information
-
-            // Otherwise: Remove all coded frames between the coded frames removed in the previous step
-            // and the next random access point after those removed frames.
             auto firstDecodeIter = trackBuffer.samples().decodeOrder().findSampleWithDecodeKey(erasedSamples.decodeOrder().begin()->first);
             auto lastDecodeIter = trackBuffer.samples().decodeOrder().findSampleWithDecodeKey(erasedSamples.decodeOrder().rbegin()->first);
             auto nextSyncIter = trackBuffer.samples().decodeOrder().findSyncSampleAfterDecodeIterator(lastDecodeIter);
-            dependentSamples.insert(firstDecodeIter, nextSyncIter);
+
+            // For out-of-order samples, avoid removing samples whose presentation times are
+            // earlier than the replacement frame, but depend upon samples with presentation
+            // times later than the replacement frame by marking the dependency frames as
+            // non-displaying and combining these samples with the remaining displaying sample.
+            // Instead of removing those samples, mark them as non-displaying and combine them
+            // with the subsequent, earlier display time samples.
+
+            DecodeOrderSampleMap::KeyType decodeKey(sample->decodeTime(), sample->presentationTime());
+
+            // Only consider keeping samples whose PTS and DTS are both earlier than sample.
+            // First, segment the range of dependant samples into those whose DTS is greater
+            // than sample. If all such samples have DTS after sample, simplay add the entire
+            // range and continue.
+            if (firstDecodeIter->first >= decodeKey)
+                dependentSamples.insert(firstDecodeIter, nextSyncIter);
+            else {
+                // Otherwise, find the first sample in the dependant samples whose DTS is greater
+                // than sample, and add that sample and all subsequent samples to the erase list:
+                auto nextSampleInDecodeOrder = trackBuffer.samples().decodeOrder().findSampleAfterDecodeKey(decodeKey);
+                dependentSamples.insert(nextSampleInDecodeOrder, nextSyncIter);
+
+                // Then, iterate over the range of erased samples whose DTS is less than sample.
+                for (auto it = firstDecodeIter; it != nextSampleInDecodeOrder; ++it) {
+                    Ref existing = it->second;
+
+                    // If the sample's PTS < sample, continue without erasing the sample.
+                    if (existing->presentationTime() < sample->presentationTime())
+                        continue;
+
+                    // However, if the sample's PTS >= sample, search forward for a sample
+                    // whose PTS < sample.
+                    auto nextSample = std::find_if(it, nextSampleInDecodeOrder, [&] (auto& next) {
+                        return next.second->presentationTime() < sample->presentationTime();
+                    });
+
+                    // If no such sample exists, remove the remaining samples and break:
+                    if (nextSample == nextSampleInDecodeOrder) {
+                        dependentSamples.insert(it, nextSample);
+                        break;
+                    }
+
+                    // Mark the dependent samples as erased:
+                    dependentSamples.insert(it, nextSample);
+
+                    // Then collapse those same samples into new CombinedMediaSamples:
+                    Vector<Ref<MediaSample>> prereqs;
+                    for (auto& value : std::ranges::subrange(it, nextSample))
+                        prereqs.append(value.second->createNonDisplayingCopy());
+                    replacedSamples.append(std::make_pair(nextSample->second.copyRef(), CombinedMediaSample::create(WTF::move(prereqs), nextSample->second.copyRef())));
+                    it = nextSample;
+                }
+            }
 
             // Proposed amendment to "Coded Frame Processing" tracked at
             // w3c/media-source#374 (SAP Type 2 decode-shadowed orphan cleanup).
@@ -1515,6 +1567,9 @@ bool SourceBufferPrivate::processMediaSample(SourceBufferPrivateClient& client, 
             }
 
             PlatformTimeRanges erasedRanges = removeSamplesFromTrackBuffer(dependentSamples, trackBuffer, "didReceiveSample"_s);
+
+            for (auto [original, replacement] : replacedSamples)
+                trackBuffer.replaceSample(original, WTF::move(replacement));
 
             // Only force the TrackBuffer to re-enqueue if the removed ranges overlap with enqueued and possibly
             // not yet displayed samples.

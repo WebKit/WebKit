@@ -137,10 +137,8 @@ void SampleMap::replaceSample(const MediaSample& original, Ref<MediaSample>&& re
     // key still sorts just ahead of the erased position; this holds for the
     // small shifts that `createCopyWithAdjustedStartTime` produces. A wrong
     // hint is merely a performance regression, not a correctness issue.
-    // The replacement carries the same payload as the original, so the total
-    // size is unchanged.
-    ASSERT(original.sizeInBytes() == replacement->sizeInBytes());
     ASSERT(original.trackID() == replacement->trackID());
+    m_totalSize += replacement->sizeInBytes() - original.sizeInBytes();
 
     MediaTime originalPts = original.presentationTime();
     auto originalDecodeKey = DecodeOrderSampleMap::KeyType(original.decodeTime(), originalPts);

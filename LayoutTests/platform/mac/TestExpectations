@@ -898,8 +898,6 @@ webkit.org/b/140217 http/tests/navigation/forward-and-cancel.html [ Pass Failure
 
 webkit.org/b/153871 imported/w3c/web-platform-tests/html/semantics/document-metadata/styling/LinkStyle.html [ Pass Failure ]
 
-webkit.org/b/207146 media/media-source/media-source-seek-redundant-append.html [ Pass Timeout ]
-
 # These tests are already run with run-jsc-stress-tests
 webkit.org/b/153879 js/basic-set.html [ Skip ]
 
@@ -1193,10 +1191,6 @@ webkit.org/b/181494 accessibility/mac/aria-multiple-liveregions-notification.htm
 webkit.org/b/180260 http/wpt/resource-timing/rt-resources-per-worker.html [ Pass Failure ]
 
 webkit.org/b/181830 [ Debug ] media/video-main-content-allow-then-deny.html [ Pass Failure ]
-
-webkit.org/b/181565 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-a-bitrate.html [ Pass Failure ]
-webkit.org/b/181565 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-bitrate.html [ Pass Failure ]
-webkit.org/b/181565 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-framesize.html [ Pass Failure ]
 
 webkit.org/b/181969 fast/events/message-port.html [ Skip ]
 
@@ -1985,10 +1979,6 @@ editing/mac/dictionary-lookup/dictionary-lookup.html [ Pass Failure ]
 editing/selection/context-menu-text-selection-lookup.html [ Pass Failure ]
 
 # webkit.org/b/263226 (REGRESSION(268692@main?): [ macOS ] 7 tests under imported/w3c/web-platform-tests/media-source/mediasource-* are flaky failures.)
-imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-av-audio-bitrate.html [ Pass Failure ]
-imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-av-video-bitrate.html [ Pass Failure ]
-imported/w3c/web-platform-tests/media-source/mediasource-play-then-seek-back.html [ Pass Failure ]
-imported/w3c/web-platform-tests/media-source/mediasource-play.html [ Pass Failure ]
 imported/w3c/web-platform-tests/media-source/mediasource-remove-preserves-currentTime.html [ Pass Failure ]
 
 # Failing word-break: auto-phrase tests.

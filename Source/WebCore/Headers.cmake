@@ -2183,6 +2183,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/CaretAnimator.h
     platform/ColorChooser.h
     platform/ColorChooserClient.h
+    platform/CombinedMediaSample.h
     platform/CommonAtomStrings.h
     platform/ContentFilterUnblockHandler.h
     platform/ContentType.h

@@ -129,6 +129,7 @@ public:
         MockSampleBox,
         CMSampleBuffer,
         GStreamerSample,
+        Combined,
     };
     virtual Type type() const = 0;
 

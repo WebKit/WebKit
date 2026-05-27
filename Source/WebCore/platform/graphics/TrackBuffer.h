@@ -58,6 +58,8 @@ public:
     // SampleMap and m_decodeQueue, and adjusts m_buffered to match.
     void adjustSampleStartTime(MediaSample& original, const MediaTime& offset);
 
+    void replaceSample(const MediaSample& original, Ref<MediaSample>&& replacement);
+
     bool reenqueueMediaForTime(const MediaTime&, const MediaTime& timeFudgeFactor, bool isEnded = false);
     MediaTime findSeekTimeForTargetTime(const MediaTime& targetTime, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold);
     int64_t removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime);
@@ -132,6 +134,8 @@ private:
     DecodeOrderSampleMap::MapType& decodeQueue() LIFETIME_BOUND { return m_decodeQueue; }
     void updateMinimumUpcomingPresentationTime();
     void clearDecodeQueue();
+
+    std::pair<DecodeOrderSampleMap::iterator, bool> insertIntoDecodeQueue(Ref<MediaSample>&&);
 
     // Result of attempting to split the sample whose presentation range contains a given time.
     struct DivideResult {

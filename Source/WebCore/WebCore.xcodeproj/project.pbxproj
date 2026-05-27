@@ -716,6 +716,7 @@
 		1AFE119A0CBFFCC4003017FA /* JSSQLResultSetRowList.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AFE11980CBFFCC4003017FA /* JSSQLResultSetRowList.h */; };
 		1B124D8D1D380B7000ECDFB0 /* MediaSampleAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B124D8C1D380B7000ECDFB0 /* MediaSampleAVFObjC.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1BF9DB3C1D3973AD0026AEB7 /* MediaSample.h in Headers */ = {isa = PBXBuildFile; fileRef = CD641EC7181ED60100EE4C41 /* MediaSample.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		039EFFC7DE6A4CCE8F1E3F82 /* CombinedMediaSample.h in Headers */ = {isa = PBXBuildFile; fileRef = DC47AF7A18D643FAAEA191B3 /* CombinedMediaSample.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C010701192594DF008A4201 /* InlineTextBoxStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0106FF192594DF008A4201 /* InlineTextBoxStyle.h */; };
 		1C022F0022CFED68006DF01B /* libcompression.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C8D26D022C09CDE00D125F3 /* libcompression.tbd */; };
 		1C0939EB1A13E12900B788E5 /* CachedSVGFont.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0939E91A13E12900B788E5 /* CachedSVGFont.h */; };
@@ -21174,6 +21175,7 @@
 		CD641EB11818F5ED00EE4C41 /* MediaSourcePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaSourcePrivate.h; sourceTree = "<group>"; };
 		CD641EB21818F5ED00EE4C41 /* SourceBufferPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceBufferPrivate.h; sourceTree = "<group>"; };
 		CD641EC7181ED60100EE4C41 /* MediaSample.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSample.h; sourceTree = "<group>"; };
+		DC47AF7A18D643FAAEA191B3 /* CombinedMediaSample.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CombinedMediaSample.h; sourceTree = "<group>"; };
 		CD671C932F5BA34F00B387A2 /* PaintInfoInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PaintInfoInlines.h; sourceTree = "<group>"; };
 		CD671C952F5BA78100B387A2 /* LegacyRenderSVGModelObjectInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LegacyRenderSVGModelObjectInlines.h; sourceTree = "<group>"; };
 		CD671C972F5BA9EF00B387A2 /* LegacyRenderSVGResourceContainerInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LegacyRenderSVGResourceContainerInlines.h; sourceTree = "<group>"; };
@@ -39384,6 +39386,7 @@
 				C330A22113EC196B0000B45B /* ColorChooser.h */,
 				C37CDEBC149EF2030042090D /* ColorChooserClient.h */,
 				BCC8CFCA0986CD2400140BF2 /* ColorData.gperf */,
+				DC47AF7A18D643FAAEA191B3 /* CombinedMediaSample.h */,
 				839C69CD2810D11C00E69BAD /* CommonAtomStrings.cpp */,
 				839C69CE2810D11C00E69BAD /* CommonAtomStrings.h */,
 				A14090FC1AA51E480091191A /* ContentFilterUnblockHandler.h */,
@@ -44405,6 +44408,7 @@
 				0FEAF66B23BFC39E004030DA /* ColorUtilities.h in Headers */,
 				721B3ECF29680811004F5FF6 /* ColorWellPart.h in Headers */,
 				43EDD67F1B485DBF00640E75 /* CombinedFiltersAlphabet.h in Headers */,
+				039EFFC7DE6A4CCE8F1E3F82 /* CombinedMediaSample.h in Headers */,
 				26E944D91AC4B2DD007B85B5 /* CombinedURLFilters.h in Headers */,
 				A584FE351864D5AF00843B10 /* CommandLineAPIHost.h in Headers */,
 				A584FE2C1863870F00843B10 /* CommandLineAPIModule.h in Headers */,

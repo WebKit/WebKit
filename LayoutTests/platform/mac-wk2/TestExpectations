@@ -2167,8 +2167,6 @@ webkit.org/b/306294 http/wpt/offscreen-canvas/transferToImageBitmap-webgl.html [
 
 webkit.org/b/306570 [ Tahoe arm64 ] http/tests/webcodecs/video-decoder-callbacks-do-not-leak.html [ Pass Failure ]
 
-webkit.org/b/306629 [ Release arm64 ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-av-video-bitrate.html [ Pass Failure ]
-
 webkit.org/b/310569 imported/w3c/web-platform-tests/webrtc/transfer-datachannel.html [ Pass Failure ]
 
 webkit.org/b/306301 [ x86_64 ] http/tests/webgpu/webgpu/api/validation/state/device_lost/destroy.html [ Failure ]
@@ -2182,8 +2180,6 @@ webkit.org/b/310823 [ Release arm64 ] imported/w3c/web-platform-tests/html/seman
 webkit.org/b/306808 http/tests/webgpu/webgpu/shader/validation/parse/blankspace.html [ Pass Failure ]
 
 webkit.org/b/306821 [ Tahoe ] fast/css-grid-layout/grid-item-display.html [ Pass Failure ]
-
-webkit.org/b/306380 [ Release arm64 ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-av-audio-bitrate.html [ Pass Failure ]
 
 webkit.org/b/309600 [ arm64 ] http/tests/xmlhttprequest/chunked-progress-event-expectedLength.html [ Pass Failure ]
 
@@ -2278,8 +2274,6 @@ webkit.org/b/308326 [ Debug ] imported/w3c/web-platform-tests/fetch/api/basic/er
 
 webkit.org/b/308586 imported/w3c/web-platform-tests/fullscreen/rendering/fullscreen-pseudo-class.html [ Pass Failure ]
 
-webkit.org/b/308594 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-framerate.html [ Pass Failure ]
-
 tiled-drawing/mac/margin-tiles-with-banner-view-overlay.html [ Skip ]
 tiled-drawing/mac/margin-tiles-with-banner-view-overlay-repeat-x.html [ Skip ]
 tiled-drawing/mac/margin-tiles-with-banner-view-overlay-repeat-y.html [ Skip ]
@@ -2304,8 +2298,6 @@ webkit.org/b/311677 [ Tahoe+ Release ] imported/w3c/web-platform-tests/svg/anima
 webkit.org/b/313278 [ Tahoe+ ] imported/w3c/web-platform-tests/css/css-images/gradient/gradient-analogous-missing-components-003.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/313346 [ Sequoia+ Debug ] imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-audio-jitterBufferTarget-stats.https.html [ Pass Failure ]
-
-webkit.org/b/313362 [ Sequoia+ ] imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-implicit.html [ Pass Failure ]
 
 webkit.org/b/313554 [ Debug ] http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-to-javscript-url.html [ Skip ]
 
