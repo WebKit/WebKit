@@ -502,7 +502,11 @@ void ScrollerMac::visibilityChanged(bool isVisible)
     RefPtr pair = m_pair.get();
     if (!pair)
         return;
+<<<<<<< HEAD
     if (RefPtr node = pair->node())
+=======
+    if (RefPtr node = pair->protectedNode())
+>>>>>>> 6ef1f5a9c30e (Crash in -[WebScrollbarPartAnimationMac setCurrentProgress:])
         node->scrollbarVisibilityDidChange(m_orientation, isVisible);
 }
 
@@ -515,7 +519,11 @@ void ScrollerMac::updateMinimumKnobLength(int minimumKnobLength)
     RefPtr pair = m_pair.get();
     if (!pair)
         return;
+<<<<<<< HEAD
     if (RefPtr node = pair->node())
+=======
+    if (RefPtr node = pair->protectedNode())
+>>>>>>> 6ef1f5a9c30e (Crash in -[WebScrollbarPartAnimationMac setCurrentProgress:])
         node->scrollbarMinimumThumbLengthDidChange(m_orientation, m_minimumKnobLength);
 }
 
