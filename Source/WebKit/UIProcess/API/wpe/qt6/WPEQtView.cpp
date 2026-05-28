@@ -27,6 +27,7 @@
 #include "WPEViewQtQuick.h"
 
 #include <QQmlEngine>
+#include <QMetaMethod>
 #include <QQuickWindow>
 #include <QSGSimpleTextureNode>
 
@@ -139,6 +140,7 @@ void WPEQtView::createWebView()
     g_signal_connect_swapped(d->m_webView.get(), "notify::estimated-load-progress", G_CALLBACK(notifyLoadProgressCallback), this);
     g_signal_connect(d->m_webView.get(), "load-changed", G_CALLBACK(notifyLoadChangedCallback), this);
     g_signal_connect(d->m_webView.get(), "load-failed", G_CALLBACK(notifyLoadFailedCallback), this);
+    g_signal_connect(d->m_webView.get(), "run-file-chooser", G_CALLBACK(runFileChooserCallback), this);
 
     if (!d->m_url.isEmpty())
         webkit_web_view_load_uri(d->m_webView.get(), d->m_url.toString().toUtf8().constData());
@@ -203,6 +205,84 @@ void WPEQtView::notifyLoadFailedCallback(WebKitWebView*, WebKitLoadEvent, const 
 
     auto loadRequest = std::make_unique<WPEQtViewLoadRequest>(QUrl(QString(failingURI)), loadStatus, error->message);
     Q_EMIT view->loadingChanged(loadRequest.get());
+}
+
+/*!
+  \qmlsignal WPEView::fileChooserRequested(bool selectMultiple, list<string> mimeTypes)
+
+  This signal is emitted when the page requests a file chooser. For example, by clicking
+  an \c {<input type="file">} element. The user should be presented with a file chooser
+  as a result and call  \l selectFiles() with the chosen paths, or \l cancelFileChooser
+  if the user aborts the file chooser.
+
+  \a selectMultiple indicates more than one file maybe selected. \a mimeTypes contains
+*/
+gboolean WPEQtView::runFileChooserCallback(WebKitWebView*, WebKitFileChooserRequest* request, WPEQtView* view)
+{
+    if (!view->useCustomFileChooserHandling())
+        return FALSE;
+    view->setCurrentFileChooserRequest(request);
+
+    bool selectMultiple = webkit_file_chooser_request_get_select_multiple(request);
+
+    QStringList mimeTypes;
+    if (const gchar* const* types = webkit_file_chooser_request_get_mime_types(request)) {
+        for (const gchar* const* type = types; *type; ++type)
+            mimeTypes.append(QString::fromUtf8(*type));
+    }
+
+    Q_EMIT view->fileChooserRequested(selectMultiple, mimeTypes);
+    return TRUE;
+}
+
+/*!
+  \qmlmethod void WPEView::selectFiles(list<string> paths)
+
+  Completes a pending file-chooser request with the given \a paths. Passing an empty list
+  cancels the request.
+ */
+void WPEQtView::selectFiles(const QStringList& paths)
+{
+    Q_D(WPEQtView);
+    if (!d->m_currentFileChooserRequest) {
+        qWarning("WPEQtView::selectFiles() is called without a pending file chooser request.");
+        return;
+    }
+
+    if (paths.isEmpty()) {
+        webkit_file_chooser_request_cancel(d->m_currentFileChooserRequest.get());
+        d->m_currentFileChooserRequest = nullptr;
+        return;
+    }
+
+    QVector<QByteArray> utf8Paths;
+    utf8Paths.reserve(paths.size());
+    for (const QString& path : paths)
+        utf8Paths.append(path.toUtf8());
+
+    QVector<const gchar*> files;
+    files.reserve(utf8Paths.size() + 1);
+    for (const QByteArray& bytes : utf8Paths)
+        files.append(bytes.constData());
+    files.append(nullptr);
+
+    webkit_file_chooser_request_select_files(d->m_currentFileChooserRequest.get(), files.constData());
+    d->m_currentFileChooserRequest = nullptr;
+}
+
+/*!
+ \qmlmethod void WPEView::cancelFileChooser()
+
+ Cancels a pending file chooser request if any.
+ */
+void WPEQtView::cancelFileChooser()
+{
+    Q_D(WPEQtView);
+    if (!d->m_currentFileChooserRequest)
+        return;
+
+    webkit_file_chooser_request_cancel(d->m_currentFileChooserRequest.get());
+    d->m_currentFileChooserRequest = nullptr;
 }
 
 void WPEQtView::didUpdateScene()
@@ -662,6 +742,17 @@ void WPEQtView::setErrorOccured(bool errorOccured)
 {
     Q_D(WPEQtView);
     d->m_errorOccured = errorOccured;
+}
+
+void WPEQtView::setCurrentFileChooserRequest(WebKitFileChooserRequest* request)
+{
+    Q_D(WPEQtView);
+    d->m_currentFileChooserRequest = request;
+}
+
+bool WPEQtView::useCustomFileChooserHandling() const
+{
+    return isSignalConnected(QMetaMethod::fromSignal(&WPEQtView::fileChooserRequested));
 }
 
 #include "moc_WPEQtView.cpp"
