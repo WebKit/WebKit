@@ -122,6 +122,9 @@ enum class WebKit::AllowsCellularAccess : bool;
     String webContentRestrictionsConfigurationFile;
     WebKit::SandboxExtensionHandle webContentRestrictionsConfigurationExtensionHandle;
 #endif
+#if HAVE(WEBCONTENTRESTRICTIONS) && PLATFORM(MAC) && HAVE(WEBCONTENTRESTRICTIONS_ASK_TO)
+    std::optional<WebKit::SandboxExtensionHandle> webContentRestrictionsMachExtensionHandle;
+#endif
 };
 
 #if USE(SOUP)

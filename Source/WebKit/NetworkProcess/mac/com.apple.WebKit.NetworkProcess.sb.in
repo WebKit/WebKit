@@ -884,6 +884,12 @@
 #if HAVE(WEBCONTENTRESTRICTIONS) && PLATFORM(MAC)
 (allow mach-lookup
     (global-name "com.apple.familycontrols"))
+#if HAVE(WEBCONTENTRESTRICTIONS_ASK_TO)
+(allow mach-lookup
+    (require-all
+        (extension "com.apple.webkit.extension.mach")
+        (global-name "com.apple.DeviceConfigurationAgent.consumer")))
+#endif
 #endif
 
 #if HAVE(ENHANCED_SECURITY_LINKS) && __has_include(<WebKitAdditions/EnhancedSecurityLinks-macos.sb>)
