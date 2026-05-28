@@ -382,6 +382,7 @@ void ReadableStreamDefaultReader::onClosedPromiseResolution(Function<void()>&& c
 }
 
 ReadableStream* ReadableStreamDefaultReader::stream()
+<<<<<<< HEAD
 {
     Locker locker { m_streamLock };
     return m_stream.get();
@@ -390,6 +391,16 @@ ReadableStream* ReadableStreamDefaultReader::stream()
 SUPPRESS_NODELETE bool ReadableStreamDefaultReader::isReachableFromOpaqueRoots() const
 {
     Locker locker { m_streamLock };
+=======
+{
+    Locker locker { m_streamLock };
+    return m_stream.get();
+}
+
+bool ReadableStreamDefaultReader::isReachableFromOpaqueRoots() const
+{
+    Locker locker { m_streamLock };
+>>>>>>> 1a64bedb202e (Potential use after free of m_stream in ReadableStreamDefaultReader::visitAdditionalChildren())
     return getNumReadRequests() && m_stream && m_stream->isReachableFromOpaqueRoots();
 }
 
