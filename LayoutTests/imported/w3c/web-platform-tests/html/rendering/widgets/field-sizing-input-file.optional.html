@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<link rel="help" href="https://drafts.csswg.org/css-ui-4/#field-sizing">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+.disable-default {
+  field-sizing: content;
+}
+
+input {
+    border: 1px solid black;
+}
+</style>
+<body>
+<form id="container"></form>
+<script>
+const LONG_FILENAME = "The quick brown fox jumps over the lazy dog";
+
+function addElements(source) {
+  const container = document.querySelector('#container');
+  container.innerHTML = source + source;
+  container.lastElementChild.classList.add('disable-default');
+  return {
+    fixed: container.firstElementChild,
+    content: container.lastElementChild
+  };
+}
+
+function generateFiles(filename) {
+  const file = new File(["Hello world"], filename, { type: "text/plain" });
+
+  // Create a DataTransfer to hold the file list
+  const dataTransfer = new DataTransfer();
+  dataTransfer.items.add(file);
+  return dataTransfer.files;
+}
+
+test(() => {
+  let pair = addElements(`<input type=file>`);
+  // A file <input> has approximately a 22 character file name width by default.
+  // A file <input> with field-sizing:content should be shorter than the default.
+  assert_less_than(pair.content.offsetWidth, pair.fixed.offsetWidth);
+}, `file: Empty value`);
+
+test(() => {
+  let pair = addElements(`<input type=file>`);
+  pair.content.files = generateFiles("a");
+  pair.fixed.files = generateFiles("a");
+  assert_less_than(pair.content.offsetWidth, pair.fixed.offsetWidth);
+}, `file: Auto width with a short filename`);
+
+test(() => {
+  let pair = addElements(`<input type=file>`);
+  pair.content.files = generateFiles(LONG_FILENAME);
+  pair.fixed.files = generateFiles(LONG_FILENAME);
+  assert_greater_than(pair.content.offsetWidth, pair.fixed.offsetWidth);
+}, `file: Auto width with a long filename`);
+
+test(() => {
+  let pair = addElements(`<input style="width: 20ch" type=file>`);
+  pair.content.files = generateFiles(LONG_FILENAME);
+  pair.fixed.files = generateFiles(LONG_FILENAME);
+  assert_equals(pair.content.offsetWidth, pair.fixed.offsetWidth);
+}, `file: Fixed width with a long filename`);
+
+test(() => {
+  let pair = addElements(`<input type=file>`);
+  pair.content.files = generateFiles(LONG_FILENAME);
+  pair.fixed.files = generateFiles(LONG_FILENAME);
+  const container = document.querySelector('#container');
+  container.reset();
+  assert_equals(pair.content.files.length, 0);
+  assert_less_than(pair.content.offsetWidth, pair.fixed.offsetWidth);
+}, `file: Auto width after form reset`);
+
+test(() => {
+   const container = document.querySelector('#container');
+   container.innerHTML = `<input type=file>`;
+   const element = container.firstChild;
+   const w = element.offsetWidth;
+   element.classList.add('disable-default');
+   assert_less_than(element.offsetWidth, w);
+}, `file: Update field-sizing property dynamically`);
+
+</script>
+</body>

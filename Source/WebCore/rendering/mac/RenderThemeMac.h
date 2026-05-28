@@ -143,6 +143,7 @@ public:
 #endif
 
     String fileListNameForWidth(const FileList*, const FontCascade&, int width, bool multipleFilesAllowed) const final;
+    String fileListName(const FileList*, bool multipleFilesAllowed) const final;
 
     bool NODELETE searchFieldShouldAppearAsTextField(const RenderStyle&, const Settings&) const final;
 
