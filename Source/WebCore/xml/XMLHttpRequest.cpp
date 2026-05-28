@@ -656,7 +656,11 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
                 Locker locker { m_gcLock };
                 return m_upload.get();
             }();
+<<<<<<< HEAD
             upload->dispatchProgressEvent(eventNames().loadstartEvent, 0, protect(request.httpBody())->lengthInBytes());
+=======
+            upload->dispatchProgressEvent(eventNames().loadstartEvent, 0, request.httpBody()->lengthInBytes());
+>>>>>>> 0de76a6ef7c5 (Potential use after free of m_responseDocument in XMLHttpRequest::visitAdditionalChildren())
         }
         if (readyState() != OPENED || !m_sendFlag || m_loadingActivity)
             return { };
@@ -1263,6 +1267,21 @@ void XMLHttpRequest::visitAdditionalChildrenInGCThread(Visitor& visitor)
         addWebCoreOpaqueRoot(visitor, *document);
 }
 
+<<<<<<< HEAD
 DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(XMLHttpRequest);
+=======
+template<typename Visitor>
+void XMLHttpRequest::visitAdditionalChildren(Visitor& visitor)
+{
+    Locker locker { m_gcLock };
+    if (m_upload)
+        addWebCoreOpaqueRoot(visitor, *m_upload);
+
+    if (m_responseDocument)
+        addWebCoreOpaqueRoot(visitor, *m_responseDocument);
+}
+
+DEFINE_VISIT_ADDITIONAL_CHILDREN(XMLHttpRequest);
+>>>>>>> 0de76a6ef7c5 (Potential use after free of m_responseDocument in XMLHttpRequest::visitAdditionalChildren())
 
 } // namespace WebCore

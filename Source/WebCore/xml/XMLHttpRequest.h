@@ -140,7 +140,11 @@ public:
 
     void dispatchThrottledProgressEventIfNeeded();
 
+<<<<<<< HEAD
     template<typename Visitor> void visitAdditionalChildrenInGCThread(Visitor&);
+=======
+    template<typename Visitor> void visitAdditionalChildren(Visitor&);
+>>>>>>> 0de76a6ef7c5 (Potential use after free of m_responseDocument in XMLHttpRequest::visitAdditionalChildren())
 
 private:
     friend class XMLHttpRequestUpload;

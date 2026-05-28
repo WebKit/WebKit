@@ -45,7 +45,11 @@ using namespace JSC;
 template<typename Visitor>
 void JSXMLHttpRequest::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
+<<<<<<< HEAD
     wrapped().visitAdditionalChildrenInGCThread(visitor);
+=======
+    wrapped().visitAdditionalChildren(visitor);
+>>>>>>> 0de76a6ef7c5 (Potential use after free of m_responseDocument in XMLHttpRequest::visitAdditionalChildren())
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN_IN_GC_THREAD(JSXMLHttpRequest);
