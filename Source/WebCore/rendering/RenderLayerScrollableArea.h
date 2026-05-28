@@ -291,6 +291,8 @@ private:
     void updateScrollCornerStyle();
     void updateResizerStyle();
 
+    void recalculateScrollbarOverlayStyle();
+
     Ref<Scrollbar> createScrollbar(ScrollbarOrientation);
     void destroyScrollbar(ScrollbarOrientation);
 

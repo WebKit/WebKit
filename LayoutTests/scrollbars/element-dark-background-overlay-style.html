@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<title>Element scrollbar overlay style adapts to opaque dark background-color</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+
+<style>
+.scroller {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    width: 100px;
+    height: 50px;
+}
+.scroller > .content {
+    width: 100px;
+    height: 200px;
+}
+#dark-bg { background-color: #111111; }
+#light-bg { background-color: #ffffff; }
+#translucent-bg { background-color: rgba(0, 0, 0, 0.5); }
+#no-bg { /* no background-color */ }
+</style>
+
+<div id="dark-bg" class="scroller"><div class="content"></div></div>
+<div id="light-bg" class="scroller"><div class="content"></div></div>
+<div id="translucent-bg" class="scroller"><div class="content"></div></div>
+<div id="no-bg" class="scroller"><div class="content"></div></div>
+
+<script>
+test(function() {
+    if (!window.internals)
+        return;
+    assert_equals(internals.scrollbarOverlayStyle(document.getElementById("dark-bg")), "light");
+}, "Opaque dark background-color flips per-element scrollbar overlay style to light");
+
+test(function() {
+    if (!window.internals)
+        return;
+    assert_equals(internals.scrollbarOverlayStyle(document.getElementById("light-bg")), "default");
+}, "Opaque light background-color leaves per-element scrollbar overlay style as default");
+
+test(function() {
+    if (!window.internals)
+        return;
+    assert_equals(internals.scrollbarOverlayStyle(document.getElementById("translucent-bg")), "default");
+}, "Translucent background-color leaves per-element scrollbar overlay style as default");
+
+test(function() {
+    if (!window.internals)
+        return;
+    assert_equals(internals.scrollbarOverlayStyle(document.getElementById("no-bg")), "default");
+}, "Absent background-color leaves per-element scrollbar overlay style as default");
+</script>

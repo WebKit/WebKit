@@ -1258,6 +1258,22 @@ void RenderLayerScrollableArea::updateScrollbarPresenceAndState(std::optional<bo
         Ref { *m_vBar }->setEnabled(verticalBarState == ScrollbarState::Enabled);
 }
 
+void RenderLayerScrollableArea::recalculateScrollbarOverlayStyle()
+{
+    auto bg = m_layer.renderer().style().visitedDependentBackgroundColorApplyingColorFilter();
+
+    auto desiredStyle = (bg.isOpaque() && bg.lightness() <= 0.5f)
+        ? ScrollbarOverlayStyle::Light
+        : ScrollbarOverlayStyle::Default;
+
+    if (scrollbarOverlayStyle() == desiredStyle)
+        return;
+
+    setScrollbarOverlayStyle(desiredStyle);
+    m_layer.setNeedsCompositingGeometryUpdate();
+    invalidateScrollCorner(scrollCornerRect());
+}
+
 void RenderLayerScrollableArea::updateScrollbarsAfterStyleChange(const RenderStyle* oldStyle)
 {
     // Overflow is a box concept.
@@ -1278,6 +1294,8 @@ void RenderLayerScrollableArea::updateScrollbarsAfterStyleChange(const RenderSty
 
     if (!m_scrollDimensionsDirty)
         updateScrollableAreaSet(hasScrollableHorizontalOverflow() || hasScrollableVerticalOverflow());
+
+    recalculateScrollbarOverlayStyle();
 
     const auto scrollbarsHaveDarkAppearance = useDarkAppearanceForScrollbars();
     if (scrollbarsHaveDarkAppearance != m_useDarkAppearanceForScrollbars) {

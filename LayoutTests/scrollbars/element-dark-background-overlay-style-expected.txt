@@ -1,0 +1,6 @@
+
+PASS Opaque dark background-color flips per-element scrollbar overlay style to light
+PASS Opaque light background-color leaves per-element scrollbar overlay style as default
+PASS Translucent background-color leaves per-element scrollbar overlay style as default
+PASS Absent background-color leaves per-element scrollbar overlay style as default
+
