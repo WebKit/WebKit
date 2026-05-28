@@ -401,7 +401,11 @@ Navigation::Result Navigation::reload(JSC::JSGlobalObject& globalObject, ReloadO
         state = currentEntry()->associatedHistoryItem().navigationAPIStateObject();
 
     RefPtr window = this->window();
+<<<<<<< HEAD
     if (RefPtr document = window->document(); !document->isFullyActive() || frame()->loader().isDispatchingPageSwapEvent() || document->unloadCounter())
+=======
+    if (!window->protectedDocument()->isFullyActive() || frame()->loader().isDispatchingPageSwapEvent() || window->document()->unloadCounter())
+>>>>>>> 6381422ae099 (Crash in HistoryController::updateForCommit() when calling navigation.reload() during pageswap event handler)
         return createErrorResult(WTF::move(committed), WTF::move(finished), ExceptionCode::InvalidStateError, "Invalid state"_s);
 
     RefPtr apiMethodTracker = maybeSetUpcomingNonTraversalTracker(globalObject, WTF::move(committed), WTF::move(finished), WTF::move(options.info), WTF::move(state));
