@@ -107,6 +107,10 @@
 #include "VirtualAuthenticatorManager.h"
 #endif // ENABLE(WEB_AUTHN)
 
+#if HAVE(WEBCONTENTRESTRICTIONS) && PLATFORM(MAC) && HAVE(WEBCONTENTRESTRICTIONS_ASK_TO)
+#include "WebPreferencesDefaultValues.h"
+#endif
+
 namespace WebKit {
 
 static bool allowsWebsiteDataRecordsForAllOrigins;
@@ -2272,6 +2276,11 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
     networkSessionParameters.webContentRestrictionsConfigurationFile = WTF::move(webContentRestrictionsConfigurationFile);
     networkSessionParameters.webContentRestrictionsConfigurationExtensionHandle = WTF::move(webContentRestrictionsConfigurationExtensionHandle);
+#endif
+
+#if HAVE(WEBCONTENTRESTRICTIONS) && PLATFORM(MAC) && HAVE(WEBCONTENTRESTRICTIONS_ASK_TO)
+    if (defaultWebContentRestrictionsAskToEnabled())
+        networkSessionParameters.webContentRestrictionsMachExtensionHandle = SandboxExtension::createHandleForMachLookup("com.apple.DeviceConfigurationAgent.consumer"_s, std::nullopt);
 #endif
 
     parameters.networkSessionParameters = WTF::move(networkSessionParameters);

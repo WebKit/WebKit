@@ -240,6 +240,10 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
     SandboxExtension::consumePermanently(parameters.webContentRestrictionsConfigurationExtensionHandle);
 #endif
+#if HAVE(WEBCONTENTRESTRICTIONS) && PLATFORM(MAC) && HAVE(WEBCONTENTRESTRICTIONS_ASK_TO)
+    if (parameters.webContentRestrictionsMachExtensionHandle)
+        SandboxExtension::consumePermanently(*parameters.webContentRestrictionsMachExtensionHandle);
+#endif
 }
 
 NetworkSession::~NetworkSession()

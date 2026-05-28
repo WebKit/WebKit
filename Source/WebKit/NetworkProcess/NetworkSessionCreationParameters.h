@@ -154,6 +154,9 @@ struct NetworkSessionCreationParameters {
     String webContentRestrictionsConfigurationFile;
     SandboxExtension::Handle webContentRestrictionsConfigurationExtensionHandle;
 #endif
+#if HAVE(WEBCONTENTRESTRICTIONS) && PLATFORM(MAC) && HAVE(WEBCONTENTRESTRICTIONS_ASK_TO)
+    std::optional<SandboxExtension::Handle> webContentRestrictionsMachExtensionHandle;
+#endif
 };
 
 } // namespace WebKit
