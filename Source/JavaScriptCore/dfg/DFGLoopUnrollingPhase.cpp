@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "CodeOrigin.h"
+#include "DFGBasicBlockInlines.h"
 #include "DFGBlockInsertionSet.h"
 #include "DFGCFAPhase.h"
 #include "DFGCloneHelper.h"
