@@ -102,6 +102,7 @@ void SpeechSynthesisUtterance::eventOccurred(const AtomString& type, uint32_t ch
         return;
     }
 
+<<<<<<< HEAD
     if (!isAllowedToRunScript())
         return;
 
@@ -114,6 +115,10 @@ void SpeechSynthesisUtterance::eventOccurred(const AtomString& type, uint32_t ch
         name,
     };
     dispatchEvent(SpeechSynthesisEvent::create(type, WTF::move(init)));
+=======
+    if (isAllowedToRunScript())
+        dispatchEvent(SpeechSynthesisEvent::create(type, { this, charIndex, charLength, static_cast<float>((MonotonicTime::now() - startTime()).seconds()), name }));
+>>>>>>> 26fa1088eb27 (Audio from SpeechSynthesis may leak to the next page on cross-origin navigation)
 }
 
 void SpeechSynthesisUtterance::errorEventOccurred(const AtomString& type, SpeechSynthesisErrorCode errorCode)
@@ -123,6 +128,7 @@ void SpeechSynthesisUtterance::errorEventOccurred(const AtomString& type, Speech
         return;
     }
 
+<<<<<<< HEAD
     if (!isAllowedToRunScript())
         return;
 
@@ -137,6 +143,10 @@ void SpeechSynthesisUtterance::errorEventOccurred(const AtomString& type, Speech
         errorCode
     };
     dispatchEvent(SpeechSynthesisErrorEvent::create(type, WTF::move(init)));
+=======
+    if (isAllowedToRunScript())
+        dispatchEvent(SpeechSynthesisErrorEvent::create(type, { { this, 0, 0, static_cast<float>((MonotonicTime::now() - startTime()).seconds()), { } }, errorCode }));
+>>>>>>> 26fa1088eb27 (Audio from SpeechSynthesis may leak to the next page on cross-origin navigation)
 }
 
 void SpeechSynthesisUtterance::incrementActivityCountForEventDispatch()

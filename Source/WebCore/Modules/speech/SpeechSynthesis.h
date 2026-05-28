@@ -102,7 +102,11 @@ private:
     // ActiveDOMObject
     void suspend(ReasonForSuspension) final;
     void stop() final;
+<<<<<<< HEAD
     bool NODELETE virtualHasPendingActivity() const final;
+=======
+    bool virtualHasPendingActivity() const final;
+>>>>>>> 26fa1088eb27 (Audio from SpeechSynthesis may leak to the next page on cross-origin navigation)
 
     void startSpeakingImmediately(SpeechSynthesisUtterance&);
     void handleSpeakingCompleted(SpeechSynthesisUtterance&, bool errorOccurred);
