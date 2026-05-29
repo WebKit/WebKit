@@ -59,6 +59,7 @@ for arg in "$@"; do
         "-include") skip_next=1 ;;
         "-fuse-ld="*)
             args+=("-Xcc" "$arg")
+            ;;
         # swiftc does not understand clang-specific include flags like
         # -isystem / -iquote / -idirafter; wrap them (and their following
         # path argument) as -Xcc so they reach the Clang importer instead
