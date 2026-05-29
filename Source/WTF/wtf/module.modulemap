@@ -52,7 +52,7 @@ module wtf [system] {
     explicit module Core {
         umbrella "."
 
-        requires cplusplus
+        requires cplusplus23
 
         explicit module * {
             export *
