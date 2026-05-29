@@ -1549,6 +1549,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _didAccessoryTabInitiateFocus = NO;
     _isChangingFocusUsingAccessoryTab = NO;
     _isExpectingFastSingleTapCommit = NO;
+    _selectedNonEditableContentWhileFocused = NO;
     _needsDeferredEndScrollingSelectionUpdate = NO;
     [_formInputSession invalidate];
     _formInputSession = nil;
@@ -3799,8 +3800,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return YES;
 #endif
 
-    // If we're currently focusing an editable element, only allow the selection to move within that focused element.
-    if (self.isFocusingElement)
+    // If we're currently focusing an editable element, only allow the selection to move within that focused
+    // element. The loupe is exempt: it may begin a new selection on non-editable content outside the field.
+    if (self.isFocusingElement && gesture != WKBEGestureTypeLoupe)
         return _positionInformation.elementContext && _positionInformation.elementContext->isSameElement(_focusedElementInformation.elementContext);
 
     if (_positionInformation.prefersDraggingOverTextSelection)
@@ -5511,6 +5513,11 @@ static void selectionChangedWithTouch(WKTextInteractionWrapper *interaction, con
     return _focusedElementInformation.elementType != WebKit::InputType::None;
 }
 
+- (BOOL)_isInteractingWithFocusedElement
+{
+    return self._hasFocusedElement && !_selectedNonEditableContentWhileFocused;
+}
+
 - (BOOL)_isSameAsFocusedElement:(const WebCore::ElementContext&)element
 {
     return [self _hasFocusedElement] && _focusedElementInformation.elementContext.isSameElement(element);
@@ -5527,7 +5534,7 @@ static void selectionChangedWithTouch(WKTextInteractionWrapper *interaction, con
 
     _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
-    protect(_page)->selectWithGesture(WebCore::IntPoint(point), toGestureType(gestureType), toGestureRecognizerState(state), self._hasFocusedElement, [self, strongSelf = retainPtr(self), state, flags](const WebCore::IntPoint& point, WebKit::GestureType gestureType, WebKit::GestureRecognizerState gestureState, OptionSet<WebKit::SelectionFlags> innerFlags) {
+    protect(_page)->selectWithGesture(WebCore::IntPoint(point), toGestureType(gestureType), toGestureRecognizerState(state), self._isInteractingWithFocusedElement, [self, strongSelf = retainPtr(self), state, flags](const WebCore::IntPoint& point, WebKit::GestureType gestureType, WebKit::GestureRecognizerState gestureState, OptionSet<WebKit::SelectionFlags> innerFlags) {
         selectionChangedWithGesture(_textInteractionWrapper.get(), point, gestureType, gestureState, toSelectionFlags(flags) | innerFlags);
         if (state == UIGestureRecognizerStateEnded || state == UIGestureRecognizerStateCancelled)
             _usingGestureForSelection = NO;
@@ -5858,7 +5865,8 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
 - (void)selectPositionAtPoint:(CGPoint)point completionHandler:(void (^)(void))completionHandler
 {
     _autocorrectionContextNeedsUpdate = YES;
-    [self _selectPositionAtPoint:point stayingWithinFocusedElement:self._hasFocusedElement completionHandler:completionHandler];
+    BOOL stayingWithinFocusedElement = self._hasFocusedElement && _focusedElementInformation.interactionRect.contains(WebCore::roundedIntPoint(point));
+    [self _selectPositionAtPoint:point stayingWithinFocusedElement:stayingWithinFocusedElement completionHandler:completionHandler];
 }
 
 - (void)_selectPositionAtPoint:(CGPoint)point stayingWithinFocusedElement:(BOOL)stayingWithinFocusedElement completionHandler:(void (^)(void))completionHandler
@@ -5867,6 +5875,17 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
 
     _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
+
+    if (!stayingWithinFocusedElement && self._hasFocusedElement) {
+        _selectedNonEditableContentWhileFocused = YES;
+        [self.textInteractionLoupeGestureRecognizer _wk_cancel];
+        protect(_page)->selectWithGesture(WebCore::IntPoint(point), WebKit::GestureType::Loupe, WebKit::GestureRecognizerState::Began, /* isInteractingWithFocusedElement */ false,
+            [view = retainPtr(self), completionHandler = makeBlockPtr(completionHandler)](const WebCore::IntPoint&, WebKit::GestureType, WebKit::GestureRecognizerState, OptionSet<WebKit::SelectionFlags>) {
+                completionHandler();
+                view->_usingGestureForSelection = NO;
+            });
+        return;
+    }
 
     protect(_page)->selectPositionAtPoint(WebCore::IntPoint(point), stayingWithinFocusedElement, [view = retainPtr(self), completionHandler = makeBlockPtr(completionHandler)]() {
         completionHandler();
@@ -5880,7 +5899,7 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
 
     _autocorrectionContextNeedsUpdate = YES;
     _usingGestureForSelection = YES;
-    protect(_page)->selectPositionAtBoundaryWithDirection(WebCore::IntPoint(point), toWKTextGranularity(granularity), toWKSelectionDirection(direction), self._hasFocusedElement, [view = retainPtr(self), completionHandler = makeBlockPtr(completionHandler)]() {
+    protect(_page)->selectPositionAtBoundaryWithDirection(WebCore::IntPoint(point), toWKTextGranularity(granularity), toWKSelectionDirection(direction), self._isInteractingWithFocusedElement, [view = retainPtr(self), completionHandler = makeBlockPtr(completionHandler)]() {
         completionHandler();
         view->_usingGestureForSelection = NO;
     });
@@ -5908,7 +5927,7 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
     _usingMouseDragForSelection = [_mouseInteraction mouseTouchGestureRecognizer]._wk_hasRecognizedOrEnded;
 #endif
     ++_suppressNonEditableSingleTapTextInteractionCount;
-    protect(_page)->selectTextWithGranularityAtPoint(WebCore::IntPoint(point), toWKTextGranularity(granularity), self._hasFocusedElement, [view = retainPtr(self), selectionHandler = makeBlockPtr(completionHandler)] {
+    protect(_page)->selectTextWithGranularityAtPoint(WebCore::IntPoint(point), toWKTextGranularity(granularity), self._isInteractingWithFocusedElement, [view = retainPtr(self), selectionHandler = makeBlockPtr(completionHandler)] {
         selectionHandler();
         view->_usingGestureForSelection = NO;
         --view->_suppressNonEditableSingleTapTextInteractionCount;
@@ -5967,7 +5986,7 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
 
 - (void)updateSelectionWithExtentPoint:(CGPoint)point hasFocusedElement:(BOOL)hasFocusedElement respectSelectionAnchor:(WebKit::RespectSelectionAnchor)respectSelectionAnchor completionHandler:(void (^)(BOOL selectionEndIsMoving))completionHandler
 {
-    protect(_page)->updateSelectionWithExtentPoint(WebCore::IntPoint(point), self._hasFocusedElement, respectSelectionAnchor, [completionHandler = makeBlockPtr(completionHandler)](bool endIsMoving) {
+    protect(_page)->updateSelectionWithExtentPoint(WebCore::IntPoint(point), self._isInteractingWithFocusedElement, respectSelectionAnchor, [completionHandler = makeBlockPtr(completionHandler)](bool endIsMoving) {
         completionHandler(static_cast<BOOL>(endIsMoving));
     });
 }
@@ -5975,7 +5994,7 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
 - (void)updateSelectionWithExtentPointAndBoundary:(CGPoint)point textGranularity:(WebCore::TextGranularity)textGranularity textInteractionSource:(WebKit::TextInteractionSource)interactionSource completionHandler:(void (^)(BOOL selectionEndIsMoving))completionHandler
 {
     ++_suppressNonEditableSingleTapTextInteractionCount;
-    protect(_page)->updateSelectionWithExtentPointAndBoundary(WebCore::IntPoint(point), textGranularity, self._hasFocusedElement, interactionSource, [completionHandler = makeBlockPtr(completionHandler), protectedSelf = retainPtr(self)] (bool endIsMoving) {
+    protect(_page)->updateSelectionWithExtentPointAndBoundary(WebCore::IntPoint(point), textGranularity, self._isInteractingWithFocusedElement, interactionSource, [completionHandler = makeBlockPtr(completionHandler), protectedSelf = retainPtr(self)] (bool endIsMoving) {
         completionHandler(static_cast<BOOL>(endIsMoving));
         --protectedSelf->_suppressNonEditableSingleTapTextInteractionCount;
     });
@@ -8785,6 +8804,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     _additionalContextForStrongPasswordAssistance = nil;
     _waitingForKeyboardAppearanceAnimationToStart = NO;
     _revealFocusedElementDeferrer = nullptr;
+    _selectedNonEditableContentWhileFocused = NO;
 
     // When defocusing an editable element reset a seen keydown before calling -_hideKeyboard so that we
     // re-evaluate whether we still need a keyboard when UIKit calls us back in -_requiresKeyboardWhenFirstResponder.
@@ -9432,7 +9452,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
         if (postLayoutData.selectionIsTransparentOrFullyClipped)
             selectionIsTransparentOrFullyClipped = YES;
 
-        if (self._hasFocusedElement) {
+        if (self._hasFocusedElement && editorState.isContentEditable) {
             auto elementArea = visualData.editableRootBounds.area<RecordOverflow>();
             if (!elementArea.hasOverflowed() && elementArea < minimumFocusedElementAreaForSuppressingSelectionAssistant)
                 focusedElementIsTooSmall = YES;
@@ -9455,6 +9475,17 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     _autocorrectionContextNeedsUpdate = YES;
 
     [self _updateSelectionAssistantSuppressionState];
+
+    Ref page = *_page;
+    if (_selectedNonEditableContentWhileFocused && self._hasFocusedElement) {
+        auto& editorState = page->editorState();
+        bool selectionCleared = editorState.selectionType == WebCore::SelectionType::None;
+        if (selectionCleared || editorState.isContentEditable) {
+            _selectedNonEditableContentWhileFocused = NO;
+            if (selectionCleared)
+                page->restoreSelectionInFocusedEditableElement();
+        }
+    }
 
     _cachedSelectionContainerView = nil;
     _cachedSelectedTextRange = nil;
@@ -9480,7 +9511,6 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 
     [_webView.get() _didChangeEditorState];
 
-    Ref page = *_page;
     if (page->editorState().hasPostLayoutAndVisualData()) {
         _lastInsertedCharacterToOverrideCharacterBeforeSelection = std::nullopt;
 

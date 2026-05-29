@@ -580,6 +580,7 @@ struct ImageAnalysisContextMenuActionData {
     BOOL _usingMouseDragForSelection;
     BOOL _inspectorNodeSearchEnabled;
     BOOL _isChangingFocusUsingAccessoryTab;
+    BOOL _selectedNonEditableContentWhileFocused;
     BOOL _didAccessoryTabInitiateFocus;
     BOOL _isExpectingFastSingleTapCommit;
     BOOL _showDebugTapHighlightsForFastClicking;

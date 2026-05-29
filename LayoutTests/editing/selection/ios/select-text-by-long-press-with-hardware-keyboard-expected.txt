@@ -1,0 +1,12 @@
+Verifies that text in a non-editable element can be selected by long-pressing while a separate editable element is focused with a hardware (Magic) keyboard attached, and that the focused element is not blurred in the process. This models rdar://137221436, where the software keyboard is not presented because a hardware keyboard is in use. Requires WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS focusedElementIsInput is true
+PASS getSelection().toString() became 'Hello'
+PASS focusedElementStillInput is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello

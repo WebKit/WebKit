@@ -1,0 +1,12 @@
+Verifies that text in a non-editable element can be selected by long-pressing while a separate editable element is focused (i.e. the keyboard is visible), and that the focused element is not blurred in the process. Requires WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS keyboardWasShowing is true
+PASS getSelection().toString() became 'Hello'
+PASS keyboardStillShowing is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello

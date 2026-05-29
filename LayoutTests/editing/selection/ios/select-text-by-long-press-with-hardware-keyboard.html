@@ -1,0 +1,51 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true useHardwareKeyboardMode=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+.target {
+    font-size: 40px;
+    width: 300px;
+}
+
+input {
+    display: block;
+    margin-top: 40px;
+    width: 300px;
+    height: 80px;
+    font-size: 40px;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+description("Verifies that text in a non-editable element can be selected by long-pressing while a separate editable element is focused with a hardware (Magic) keyboard attached, and that the focused element is not blurred in the process. This models rdar://137221436, where the software keyboard is not presented because a hardware keyboard is in use. Requires WebKitTestRunner.");
+
+addEventListener("load", async () => {
+    const input = document.querySelector("input");
+    await UIHelper.activateElementAndWaitForInputSession(input);
+
+    window.focusedElementIsInput = document.activeElement === input;
+    shouldBeTrue("focusedElementIsInput");
+
+    // Note: this test runs with useHardwareKeyboardMode=true, which models a Magic Keyboard by making
+    // -[UIKeyboard isInHardwareKeyboardMode] return YES (the predicate the selection code branches on). The
+    // runner does not necessarily suppress the keyboard view, so we deliberately do not assert on keyboard
+    // visibility here; the meaningful invariants are that the selection succeeds and the field stays focused.
+    await UIHelper.longPressElement(document.querySelector(".target"));
+    await shouldBecomeEqual("getSelection().toString()", "'Hello'");
+
+    // The focused field must remain focused; selecting non-editable content should not blur it.
+    window.focusedElementStillInput = document.activeElement === input;
+    shouldBeTrue("focusedElementStillInput");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <span class="target">Hello</span>
+    <input>
+</body>
+</html>
