@@ -63,6 +63,7 @@ static HashCountedSet<String>& styleStrings()
 
 static String internedStyleString(const String& string)
 {
+<<<<<<< HEAD
 #if PLATFORM(COCOA)
     if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::EnableUserScriptAndUserStyleInterning))
         return string;
@@ -72,6 +73,8 @@ static String internedStyleString(const String& string)
         crashDueToApplicationCreatingUserStyleSheetFromBackgroundThread();
 #endif
 
+=======
+>>>>>>> 6e22f1fdda9c (Fix missing source empty checks in UserScript and UserStyleSheet in safari-7624-branch)
     if (string.isEmpty())
         return emptyString();
 
