@@ -827,7 +827,8 @@ void ContainerNode::replaceAll(Node* node)
     Ref protectedThis { *this };
     ChildListMutationScope mutation(*this);
     NodeVector removedChildren;
-    auto replacedAllChildren = is<Element>(*node) || removeAllChildrenWithScriptAssertionMaybeAsync(ChildChange::Source::API, removedChildren, DeferChildrenChanged::No).didRemoveElements == DidRemoveElements::Yes
+    auto removeResult = removeAllChildrenWithScriptAssertionMaybeAsync(ChildChange::Source::API, removedChildren, DeferChildrenChanged::No);
+    auto replacedAllChildren = is<Element>(*node) || removeResult.didRemoveElements == DidRemoveElements::Yes
         ? ReplacedAllChildren::YesIncludingElements : ReplacedAllChildren::YesNotIncludingElements;
 
     executeNodeInsertionWithScriptAssertion(*this, *node, nullptr, ChildChange::Source::API, replacedAllChildren, [&] {
