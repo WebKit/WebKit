@@ -460,10 +460,6 @@ void FrameLoader::initForSynthesizedDocument(const URL&)
     m_didCallImplicitClose = true;
     m_isComplete = true;
     m_state = FrameState::Complete;
-    // Synthesized documents bypass setState(FrameState::Complete), which normally
-    // stops recording responses on the DocumentLoader.
-    if (RefPtr documentLoader = m_documentLoader)
-        documentLoader->stopRecordingResponses();
     m_needsClear = true;
 
     m_networkingContext = m_client->createNetworkingContext();
