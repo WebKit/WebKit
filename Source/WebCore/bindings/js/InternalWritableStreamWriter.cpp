@@ -155,8 +155,15 @@ void InternalWritableStreamWriter::onClosedPromiseRejection(Function<void(JSDOMG
         return;
 
     Ref domPromise = DOMPromise::create(*globalObject, *promise);
+<<<<<<< HEAD
     domPromise->whenSettledWithResult([callback = WTF::move(callback)](auto* globalObject, bool isFulfilled, auto result) mutable {
         if (isFulfilled || !globalObject)
+=======
+    domPromise->whenSettled([domPromise, callback = WTF::move(callback)]() mutable {
+        if (domPromise->activeDOMObjectAreStopped())
+            return;
+        if (domPromise->status() != DOMPromise::Status::Rejected || !domPromise->globalObject())
+>>>>>>> 90e48031ed4d (REGRESSION(305413.674@safari-7624-branch): Crash in StreamPipeToState::globalObject)
             return;
         callback(*globalObject, result);
     });
@@ -183,8 +190,15 @@ void InternalWritableStreamWriter::onClosedPromiseResolution(Function<void()>&& 
         return;
 
     Ref domPromise = DOMPromise::create(*globalObject, *promise);
+<<<<<<< HEAD
     domPromise->whenSettledWithResult([callback = WTF::move(callback)](auto*, bool isFulfilled, auto) mutable {
         if (!isFulfilled)
+=======
+    domPromise->whenSettled([domPromise, callback = WTF::move(callback)]() mutable {
+        if (domPromise->activeDOMObjectAreStopped())
+            return;
+        if (domPromise->status() != DOMPromise::Status::Fulfilled)
+>>>>>>> 90e48031ed4d (REGRESSION(305413.674@safari-7624-branch): Crash in StreamPipeToState::globalObject)
             return;
         callback();
     });
@@ -232,8 +246,15 @@ void InternalWritableStreamWriter::whenReady(Function<void (bool)>&& callback)
         return;
 
     Ref domPromise = DOMPromise::create(*globalObject, *promise);
+<<<<<<< HEAD
     domPromise->whenSettledWithResult([callback = WTF::move(callback)](auto*, bool isFulfilled, auto) mutable {
         callback(isFulfilled);
+=======
+    domPromise->whenSettled([domPromise, callback = WTF::move(callback)]() mutable {
+        if (domPromise->activeDOMObjectAreStopped())
+            return;
+        callback(domPromise->status() == DOMPromise::Status::Fulfilled);
+>>>>>>> 90e48031ed4d (REGRESSION(305413.674@safari-7624-branch): Crash in StreamPipeToState::globalObject)
     });
 }
 

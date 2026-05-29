@@ -276,7 +276,16 @@ StreamPipeToState::~StreamPipeToState() = default;
 JSDOMGlobalObject* StreamPipeToState::globalObject()
 {
     RefPtr context = scriptExecutionContext();
+<<<<<<< HEAD
     return context ? downcast<JSDOMGlobalObject>(context->globalObject()) : nullptr;
+=======
+    if (!context)
+        return nullptr;
+    auto* jsGlobalObject = context->globalObject();
+    if (!jsGlobalObject)
+        return nullptr;
+    return JSC::jsDynamicCast<JSDOMGlobalObject*>(jsGlobalObject);
+>>>>>>> 90e48031ed4d (REGRESSION(305413.674@safari-7624-branch): Crash in StreamPipeToState::globalObject)
 }
 
 void StreamPipeToState::handleSignal()

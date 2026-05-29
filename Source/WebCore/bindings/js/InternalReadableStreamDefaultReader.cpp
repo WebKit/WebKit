@@ -163,8 +163,15 @@ void InternalReadableStreamDefaultReader::onClosedPromiseRejection(Function<void
         return;
 
     Ref domPromise = DOMPromise::create(*globalObject, *promise);
+<<<<<<< HEAD
     domPromise->whenSettledWithResult([callback = WTF::move(callback)](auto* globalObject, bool isFulfilled, auto result) {
         if (isFulfilled || !globalObject)
+=======
+    domPromise->whenSettled([domPromise, callback = WTF::move(callback)] {
+        if (domPromise->activeDOMObjectAreStopped())
+            return;
+        if (domPromise->status() != DOMPromise::Status::Rejected || !domPromise->globalObject())
+>>>>>>> 90e48031ed4d (REGRESSION(305413.674@safari-7624-branch): Crash in StreamPipeToState::globalObject)
             return;
         callback(*globalObject, result);
     });
@@ -193,8 +200,15 @@ void InternalReadableStreamDefaultReader::onClosedPromiseResolution(Function<voi
         return;
 
     Ref domPromise = DOMPromise::create(*globalObject, *promise);
+<<<<<<< HEAD
     domPromise->whenSettledWithResult([callback = WTF::move(callback)](auto*, bool isFulfilled, auto) {
         if (isFulfilled)
+=======
+    domPromise->whenSettled([domPromise, callback = WTF::move(callback)] {
+        if (domPromise->activeDOMObjectAreStopped())
+            return;
+        if (domPromise->status() == DOMPromise::Status::Fulfilled)
+>>>>>>> 90e48031ed4d (REGRESSION(305413.674@safari-7624-branch): Crash in StreamPipeToState::globalObject)
             callback();
     });
 }
