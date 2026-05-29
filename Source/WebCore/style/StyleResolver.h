@@ -24,7 +24,6 @@
 #include "CSSSelector.h"
 #include "ElementRuleCollector.h"
 #include "InspectorCSSOMWrappers.h"
-#include "MatchedDeclarationsCache.h"
 #include "MediaQueryEvaluator.h"
 #include "PropertyCascade.h"
 #include "RuleSet.h"
@@ -73,6 +72,7 @@ enum class RuleMatchingBehavior: uint8_t {
 namespace Style {
 
 class CustomFunctionRegistry;
+class MatchedDeclarationsCache;
 struct BuilderContext;
 struct CachedMatchResult;
 struct ResolvedStyle;
@@ -164,7 +164,15 @@ public:
     bool usesStartingStyleRules() const { return m_ruleSets.features().hasStartingStyleRules; }
 
     void invalidateMatchedDeclarationsCache();
+    void invalidateMatchedDeclarationsCacheForDocumentElementChange(const RenderStyle& documentElementStyle);
     void clearCachedDeclarationsAffectedByViewportUnits();
+
+    // Opt-in cross-document sharing (rdar://173598541): the per-Resolver MDC above is
+    // always present (ToT semantics). A process-shared MDC is additionally installed
+    // here for cross-document/iteration reuse. applyMatchedProperties routes each lookup
+    // to the shared cache only when canUseSharedMatchedDeclarationsCache() passes;
+    // otherwise it uses the per-Resolver cache.
+    void setSharedMatchedDeclarationsCache(Ref<MatchedDeclarationsCache>&&, bool documentHasSimpleFontSelector);
 
     InspectorCSSOMWrappers& inspectorCSSOMWrappers() LIFETIME_BOUND { return m_inspectorCSSOMWrappers; }
 
@@ -199,10 +207,12 @@ private:
 
     InspectorCSSOMWrappers m_inspectorCSSOMWrappers;
 
-    MatchedDeclarationsCache m_matchedDeclarationsCache;
+    Ref<MatchedDeclarationsCache> m_matchedDeclarationsCache;
+    RefPtr<MatchedDeclarationsCache> m_sharedMatchedDeclarationsCache;
 
     bool m_matchAuthorAndUserStyles { true };
     bool m_isSharedBetweenShadowTrees { false };
+    bool m_documentHasSimpleFontSelector { false };
 };
 
 } // namespace Style

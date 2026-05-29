@@ -92,6 +92,27 @@ bool InheritedData::nonFastPathInheritedEqual(const InheritedData& other) const
         && borderVerticalSpacing == other.borderVerticalSpacing;
 }
 
+bool InheritedData::equalsForMDC(const InheritedData& other) const
+{
+    if (lineHeight != other.lineHeight)
+        return false;
+#if ENABLE(TEXT_AUTOSIZING)
+    if (specifiedLineHeight != other.specifiedLineHeight)
+        return false;
+#endif
+    if (color != other.color || visitedLinkColor != other.visitedLinkColor)
+        return false;
+    if (borderHorizontalSpacing != other.borderHorizontalSpacing
+        || borderVerticalSpacing != other.borderVerticalSpacing)
+        return false;
+    // Fast pointer-equal short-circuit for the common case (same DataRef instance).
+    if (fontData.ptr() == other.fontData.ptr())
+        return true;
+    Ref protectedA = *fontData;
+    Ref protectedB = *other.fontData;
+    return protectedA->equalsForMDC(protectedB.get());
+}
+
 void InheritedData::fastPathInheritFrom(const InheritedData& inheritParent)
 {
     color = inheritParent.color;

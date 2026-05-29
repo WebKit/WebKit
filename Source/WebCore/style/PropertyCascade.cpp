@@ -34,6 +34,7 @@
 #include "PaintWorkletGlobalScope.h"
 #include "PropertyAllowlist.h"
 #include "StyleBuilderGenerated.h"
+#include "StylePropertiesInlines.h"
 #include "StyleKeyword+Mappings.h"
 #include "StylePropertyShorthand.h"
 #include <ranges>
@@ -52,8 +53,10 @@ PropertyCascade::PropertyCascade(const MatchResult& matchResult, IncludedPropert
 {
     ASSERT(!m_includedProperties.isEmpty());
 
-    if (positionTryFallbackProperties)
+    if (positionTryFallbackProperties) {
         m_positionTryFallbackProperties = MatchedProperties { *positionTryFallbackProperties };
+        m_positionTryFallbackProperties->mutationCountAtCapture = positionTryFallbackProperties->mutationCount();
+    }
 
     buildCascade();
 }

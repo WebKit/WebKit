@@ -540,6 +540,9 @@ void RuleSetBuilder::addMutatingRulesToResolver()
                 continue;
             auto& registry = m_resolver->document().styleScope().counterStyleRegistry();
             registry.addCounterStyle(styleRuleCounterStyle->descriptors());
+            // Counter-style registration changes list-marker resolution; flush any
+            // stale entries kept alive by the shared MDC. (rdar://173598541.)
+            m_resolver->invalidateMatchedDeclarationsCache();
             continue;
         }
         if (auto* styleRuleProperty = dynamicDowncast<StyleRuleProperty>(rule.get())) {
@@ -549,6 +552,9 @@ void RuleSetBuilder::addMutatingRulesToResolver()
                 continue;
             auto& registry = m_resolver->document().styleScope().customPropertyRegistry();
             registry.registerFromStylesheet(styleRuleProperty->descriptor());
+            // @property registration changes how custom properties compute; flush any
+            // stale entries kept alive by the shared MDC. (rdar://173598541.)
+            m_resolver->invalidateMatchedDeclarationsCache();
             continue;
         }
         if (auto* styleRuleViewTransition = dynamicDowncast<StyleRuleViewTransition>(rule.get()))

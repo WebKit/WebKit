@@ -50,6 +50,11 @@ public:
     void registerFromStylesheet(const StyleRuleProperty::Descriptor&);
     void clearRegisteredFromStylesheets();
 
+    // True when no custom properties are registered (neither via CSS.registerProperty nor @property).
+    // Used to keep registry-dependent computed values out of the cross-document MatchedDeclarationsCache.
+    // (rdar://173598541.)
+    bool isEmpty() const { return m_propertiesFromAPI.isEmpty() && m_propertiesFromStylesheet.isEmpty(); }
+
     const RenderStyle& initialValuePrototypeStyle() const LIFETIME_BOUND;
 
     bool invalidatePropertiesWithViewportUnits(Document&);

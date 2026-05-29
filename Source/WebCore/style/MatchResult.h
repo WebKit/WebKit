@@ -45,6 +45,11 @@ struct MatchedProperties {
     CascadeLayerPriority cascadeLayerPriority { RuleSet::cascadeLayerPriorityForUnlayered };
     IsStartingStyle isStartingStyle { IsStartingStyle::No };
     IsCacheable isCacheable { IsCacheable::Yes };
+    // Snapshot of `properties->mutationCount()` at construction. Used to detect
+    // in-place mutations of the StyleProperties so a cached MatchedProperties no
+    // longer compares equal to a freshly-collected one with the same .properties
+    // pointer but different content. (rdar://173598541.)
+    unsigned mutationCountAtCapture { 0 };
 };
 
 struct MatchResult : RefCounted<MatchResult> {
@@ -77,8 +82,12 @@ private:
 
 inline bool operator==(const MatchedProperties& a, const MatchedProperties& b)
 {
-    return a.properties.ptr() == b.properties.ptr()
-        && a.linkMatchType == b.linkMatchType
+    if (a.properties.ptr() != b.properties.ptr())
+        return false;
+    // Detect in-place mutations of StyleProperties: same pointer, different content.
+    if (a.mutationCountAtCapture != b.mutationCountAtCapture)
+        return false;
+    return a.linkMatchType == b.linkMatchType
         && a.allowlistType == b.allowlistType
         && a.styleScopeOrdinal == b.styleScopeOrdinal
         && a.fromStyleAttribute == b.fromStyleAttribute
@@ -126,6 +135,7 @@ inline void add(Hasher& hasher, const MatchedProperties& matchedProperties)
 
     add(hasher,
         matchedProperties.properties.ptr(),
+        matchedProperties.mutationCountAtCapture,
         matchedProperties.linkMatchType,
         matchedProperties.allowlistType,
         matchedProperties.styleScopeOrdinal,

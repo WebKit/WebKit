@@ -54,6 +54,7 @@
 #include "LocalFrameView.h"
 #include "Logging.h"
 #include "MatchResultCache.h"
+#include "MatchedDeclarationsCache.h"
 #include "MediaList.h"
 #include "MutableCSSSelector.h"
 #include "NodeRenderStyle.h"
@@ -76,6 +77,7 @@
 #include "SharedStringHash.h"
 #include "StyleAdjuster.h"
 #include "StyleBuilder.h"
+#include "StyleCustomPropertyRegistry.h"
 #include "StyleEasingFunction.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleKeyword+Mappings.h"
@@ -183,7 +185,7 @@ Resolver::Resolver(Document& document, ScopeType scopeType)
     : m_document(document)
     , m_scopeType(scopeType)
     , m_ruleSets(*this)
-    , m_matchedDeclarationsCache(*this)
+    , m_matchedDeclarationsCache(MatchedDeclarationsCache::create())
     , m_matchAuthorAndUserStyles(settings().authorAndUserStylesEnabled())
 {
     initialize();
@@ -697,12 +699,40 @@ Vector<Ref<const StyleRule>> Resolver::pseudoStyleRulesForElement(const Element*
 
 void Resolver::invalidateMatchedDeclarationsCache()
 {
-    m_matchedDeclarationsCache.invalidate();
+    // Flush both caches. Callers are genuine style/font-environment changes — @font-face /
+    // @font-palette-values / @font-feature-values / @counter-style / @property processing
+    // (RuleSetBuilder), @property registration, Document::fontsNeedUpdate, and page environment
+    // changes — that invalidate the shared cache's entries too. These are rare for the simple-
+    // selector documents that adopt the shared cache (which by definition have none of those
+    // at-rules), so cross-document reuse is preserved. The frequent per-document path —
+    // documentElement relative-unit changes — does NOT come here; it uses
+    // invalidateMatchedDeclarationsCacheForDocumentElementChange(), which only flushes the shared
+    // cache on an actual rem-basis change. (rdar://173598541.)
+    m_matchedDeclarationsCache->invalidate();
+    if (m_sharedMatchedDeclarationsCache)
+        m_sharedMatchedDeclarationsCache->invalidate();
+}
+
+void Resolver::invalidateMatchedDeclarationsCacheForDocumentElementChange(const RenderStyle& documentElementStyle)
+{
+    // The documentElement's font/line-height changed, which affects rem/rcap/rch/rex/ric/rlh
+    // resolution. Always flush the per-Resolver cache; flush the shared cache only if the basis
+    // actually differs from what its entries were built under (so identical reloads keep their
+    // cross-document entries). (rdar://173598541.)
+    m_matchedDeclarationsCache->invalidate();
+    if (m_sharedMatchedDeclarationsCache)
+        m_sharedMatchedDeclarationsCache->invalidateIfDocumentElementRelativeUnitsChanged(documentElementStyle);
 }
 
 void Resolver::clearCachedDeclarationsAffectedByViewportUnits()
 {
-    m_matchedDeclarationsCache.clearEntriesAffectedByViewportUnits();
+    m_matchedDeclarationsCache->clearEntriesAffectedByViewportUnits();
+}
+
+void Resolver::setSharedMatchedDeclarationsCache(Ref<MatchedDeclarationsCache>&& cache, bool documentHasSimpleFontSelector)
+{
+    m_sharedMatchedDeclarationsCache = WTF::move(cache);
+    m_documentHasSimpleFontSelector = documentHasSimpleFontSelector;
 }
 
 void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResult, PropertyCascade::IncludedProperties&& includedProperties)
@@ -711,9 +741,34 @@ void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResu
     auto& parentStyle = *state.parentStyle();
     Ref element = *state.element();
 
+    // Per-call routing (rdar://173598541): use the process-shared MDC when this document's font
+    // selector is simple AND the document has no registered custom properties. The non-empty
+    // inherited-custom-property-bag gate that was here previously has been removed: the cache
+    // hash is content-based (inheritedCustomProperties.hash()) and equality uses
+    // arePointingToEqualData which compares by content on pointer mismatch, so non-empty bags
+    // can produce hits across documents.
+    bool canUseSharedCache = m_sharedMatchedDeclarationsCache
+        && m_documentHasSimpleFontSelector
+        && document().customPropertyRegistry().isEmpty();
+
     unsigned cacheHash = MatchedDeclarationsCache::computeHash(matchResult, parentStyle.inheritedCustomProperties());
 
-    auto cacheResult = m_matchedDeclarationsCache.find(cacheHash, matchResult, parentStyle.inheritedCustomProperties(), parentStyle);
+    // Look up the shared (cross-document) cache first when eligible, then fall back to the
+    // per-Resolver cache. The per-Resolver cache is the ToT-equivalent store: it holds entries
+    // excluded from the shared cache (viewport-unit styles, whose resolved values are viewport-
+    // dependent) and everything for non-shared documents. (rdar://173598541.)
+    bool hitCameFromShared = false;
+    auto cacheResult = [&]() -> std::optional<MatchedDeclarationsCache::Result> {
+        if (canUseSharedCache) {
+            if (auto result = m_sharedMatchedDeclarationsCache->find(cacheHash, matchResult, parentStyle.inheritedCustomProperties(), parentStyle)) {
+                hitCameFromShared = true;
+                return result;
+            }
+        }
+        if (auto result = m_matchedDeclarationsCache->find(cacheHash, matchResult, parentStyle.inheritedCustomProperties(), parentStyle))
+            return result;
+        return std::nullopt;
+    }();
 
     auto hasUsableEntry = cacheResult && MatchedDeclarationsCache::isCacheable(element.get(), style, parentStyle);
     if (hasUsableEntry) {
@@ -760,7 +815,10 @@ void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResu
 
     if (hasUsableEntry && !cacheResult->entry.isUsableAfterHighPriorityProperties(style)) {
         // High-priority properties may affect resolution of other properties. Kick out the existing cache entry and try again.
-        m_matchedDeclarationsCache.remove(cacheHash);
+        if (hitCameFromShared)
+            m_sharedMatchedDeclarationsCache->remove(cacheHash);
+        else
+            m_matchedDeclarationsCache->remove(cacheHash);
         applyMatchedProperties(state, matchResult, PropertyCascade::normalProperties());
         return;
     }
@@ -770,8 +828,17 @@ void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResu
 
     setGlobalStateAfterApplyingProperties(builder.state());
 
-    if (((cacheHash && !cacheResult) || (cacheResult && !cacheResult->inheritedEqual)) && MatchedDeclarationsCache::isCacheable(element, style, parentStyle))
-        m_matchedDeclarationsCache.add(style, parentStyle, cacheHash, matchResult);
+    // Route the new entry: viewport-unit styles never enter the shared cache (a full cache hit
+    // copies the resolved, viewport-dependent lengths via copyNonInheritedFrom without running the
+    // Builder, serving a stale used value — observed poisoning size-to-content autosizing), so they
+    // go to the per-Resolver cache (ToT behavior). Everything else for a shared-eligible document
+    // goes to the shared cache. (rdar://173598541.)
+    if (((cacheHash && !cacheResult) || (cacheResult && !cacheResult->inheritedEqual)) && MatchedDeclarationsCache::isCacheable(element, style, parentStyle)) {
+        if (canUseSharedCache && !style.usesViewportUnits())
+            m_sharedMatchedDeclarationsCache->add(style, parentStyle, cacheHash, matchResult);
+        else
+            m_matchedDeclarationsCache->add(style, parentStyle, cacheHash, matchResult);
+    }
 }
 
 void Resolver::setGlobalStateAfterApplyingProperties(const BuilderState& builderState)

@@ -47,6 +47,7 @@
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
 #include "MatchResultCache.h"
+#include "Page.h"
 #include "ProcessingInstruction.h"
 #include "RenderBoxInlines.h"
 #include "RenderElementStyleInlines.h"
@@ -109,11 +110,23 @@ Resolver& Scope::resolver()
             createOrFindSharedShadowTreeResolver();
         else
             createDocumentResolver();
-        
+
         if (m_resolver->ruleSets().features().usesHasPseudoClass)
             m_usesHasPseudoClass = true;
     }
     return *m_resolver;
+}
+
+Scope::MatchedDeclarationsCaches& Scope::matchedDeclarationsCaches()
+{
+    static NeverDestroyed<MatchedDeclarationsCaches> caches;
+    return caches;
+}
+
+void Scope::invalidateSharedMatchedDeclarationsCaches()
+{
+    for (auto& cache : matchedDeclarationsCaches().values())
+        cache->invalidate();
 }
 
 void Scope::createDocumentResolver()
@@ -137,6 +150,33 @@ void Scope::createDocumentResolver()
     m_resolver->appendAuthorStyleSheets(m_activeStyleSheets);
 
     protect(m_document->fontSelector())->buildCompleted();
+
+    // Opt into cross-document MatchedDeclarationsCache sharing only for documents whose
+    // font selector is simple (no @font-face / feature values / palettes / counter styles).
+    // The per-call routing in Resolver::applyMatchedProperties further restricts shared-cache
+    // use to entries whose parent has an empty inherited custom-property bag. Documents that
+    // don't qualify keep only their per-Resolver MDC (ToT semantics). (rdar://173598541.)
+    Ref fontSelector = m_document->fontSelector();
+    if (fontSelector->isSimpleFontSelectorForDescription()) {
+        auto url = document().url();
+        if (url.isNull())
+            url = aboutBlankURL();
+
+        // Document-global rendering environment goes in the bucket key (computed once per resolver
+        // build, off the per-element hot path): used appearance and device scale factor. SP3 holds
+        // both constant, so this yields one bucket and full reuse; the dark-mode / hidpi tests that
+        // toggle them route to distinct buckets instead of returning stale style. (rdar://173598541.)
+        bool useDarkAppearance = false;
+        if (RefPtr page = m_document->page())
+            useDarkAppearance = page->useDarkAppearance();
+        auto deviceScaleFactorKey = static_cast<unsigned>(m_document->deviceScaleFactor() * 100 + 0.5f);
+
+        auto key = MatchedDeclarationsCacheKey { makeResolverSharingKey(), WTF::move(url), useDarkAppearance, deviceScaleFactorKey };
+        Ref sharedCache = matchedDeclarationsCaches().ensure(key, [&] {
+            return MatchedDeclarationsCache::create(/* isSharedAcrossDocuments */ true);
+        }).iterator->value;
+        m_resolver->setSharedMatchedDeclarationsCache(WTF::move(sharedCache), true);
+    }
 }
 
 void Scope::createOrFindSharedShadowTreeResolver()

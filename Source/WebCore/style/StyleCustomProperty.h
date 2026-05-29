@@ -127,6 +127,8 @@ private:
     mutable RefPtr<CSSVariableData> m_cachedTokens;
 };
 
+void add(Hasher&, const CustomProperty&);
+
 inline Ref<const CustomProperty> CustomProperty::createForGuaranteedInvalid(const AtomString& name)
 {
     return adoptRef(*new CustomProperty(name, Kind { GuaranteedInvalid { } }));

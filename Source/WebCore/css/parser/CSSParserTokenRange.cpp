@@ -140,4 +140,10 @@ String CSSParserTokenRange::serialize(CSSParserToken::SerializationMode mode) co
     return builder.toString();
 }
 
+void add(Hasher& hasher, const CSSParserTokenRange& range)
+{
+    for (auto& token : range)
+        add(hasher, token);
+}
+
 } // namespace WebCore

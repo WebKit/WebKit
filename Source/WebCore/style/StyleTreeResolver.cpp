@@ -355,8 +355,12 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
     bool isDocumentElement = &element == m_document->documentElement();
     if (isDocumentElement) {
         if (styleChangeAffectsRelativeUnits(*update.style, existingStyle)) {
-            // "rem" units are relative to the document element's font size so we need to recompute everything.
-            scope().resolver->invalidateMatchedDeclarationsCache();
+            // "rem"/"rcap"/"rch"/… units resolve against the documentElement's font, so a change
+            // there requires recomputing everything. Flush the per-Resolver MDC unconditionally and
+            // the shared MDC only if the relative-unit basis actually changed — an identical reload
+            // (existingStyle == null but same :root font) must not flush the shared cache, or we lose
+            // all cross-document reuse. (rdar://173598541.)
+            scope().resolver->invalidateMatchedDeclarationsCacheForDocumentElementChange(*update.style);
             descendantsToResolve = DescendantsToResolve::All;
         }
     }

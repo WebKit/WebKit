@@ -118,6 +118,7 @@ bool MutableStyleProperties::removePropertyAtIndex(int index, String* returnText
     // A more efficient removal strategy would involve marking entries as empty
     // and sweeping them when the vector grows too big.
     m_propertyVector.removeAt(index);
+    didMutate();
     return true;
 }
 
@@ -187,6 +188,7 @@ void MutableStyleProperties::setProperty(CSSPropertyID propertyID, Ref<CSSValue>
     removeProperties(shorthand.properties());
     for (auto longhand : shorthand)
         m_propertyVector.append(CSSProperty(longhand, value.copyRef(), important));
+    didMutate();
 }
 
 bool MutableStyleProperties::canUpdateInPlace(const CSSProperty& property, CSSProperty* toReplace) const
@@ -222,11 +224,13 @@ bool MutableStyleProperties::setProperty(const CSSProperty& property, CSSPropert
             if (*toReplace == property)
                 return false;
             *toReplace = property;
+            didMutate();
             return true;
         }
         m_propertyVector.removeAt(toReplace - m_propertyVector.begin());
     }
     m_propertyVector.append(property);
+    didMutate();
     return true;
 }
 
@@ -245,7 +249,10 @@ bool MutableStyleProperties::parseDeclaration(const String& styleDeclaration, CS
     CSSParser::parseDeclarationList(*this, styleDeclaration, context);
 
     // We could do better. Just changing property order does not require style invalidation.
-    return oldProperties != m_propertyVector;
+    bool changed = oldProperties != m_propertyVector;
+    if (changed)
+        didMutate();
+    return changed;
 }
 
 bool MutableStyleProperties::addParsedProperties(const ParsedPropertyVector& properties)
@@ -279,7 +286,10 @@ bool MutableStyleProperties::mergeAndOverrideOnConflict(const StyleProperties& o
 
 void MutableStyleProperties::clear()
 {
+    if (m_propertyVector.isEmpty())
+        return;
     m_propertyVector.clear();
+    didMutate();
 }
 
 bool MutableStyleProperties::removeProperties(std::span<const CSSPropertyID> properties)
@@ -291,9 +301,12 @@ bool MutableStyleProperties::removeProperties(std::span<const CSSPropertyID> pro
     HashSet<CSSPropertyID> toRemove;
     toRemove.addAll(properties);
 
-    return m_propertyVector.removeAllMatching([&toRemove](const CSSProperty& property) {
+    bool removed = m_propertyVector.removeAllMatching([&toRemove](const CSSProperty& property) {
         return toRemove.contains(property.id());
     }) > 0;
+    if (removed)
+        didMutate();
+    return removed;
 }
 
 int MutableStyleProperties::findPropertyIndex(CSSPropertyID propertyID) const

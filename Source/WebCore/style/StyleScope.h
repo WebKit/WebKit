@@ -42,6 +42,8 @@
 #include <wtf/Identified.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/URL.h>
+#include <wtf/URLHash.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashMap.h>
@@ -70,6 +72,7 @@ namespace Style {
 
 class CustomPropertyRegistry;
 class MatchResultCache;
+class MatchedDeclarationsCache;
 class Resolver;
 class RuleSet;
 struct MatchResult;
@@ -128,6 +131,12 @@ public:
     void didChangeViewportSize();
 
     void invalidateMatchedDeclarationsCache();
+
+    // Flush every process-shared MatchedDeclarationsCache. For document-wide font-environment
+    // changes (generic-family / system font Settings) that aren't captured by the bucket key or the
+    // per-document rem hook, and which can't be left stale. Rare (no SP3 suite changes font Settings
+    // mid-run), so cross-document reuse is preserved. (rdar://173598541.)
+    static void invalidateSharedMatchedDeclarationsCaches();
 
     bool hasPendingUpdate() const { return m_pendingUpdate || m_hasDescendantWithPendingUpdate; }
     void flushPendingUpdate();
@@ -236,6 +245,15 @@ private:
 
     bool invalidateForContainerDependencies(LayoutDependencyUpdateContext&);
     bool invalidateForPositionTryFallbacks(LayoutDependencyUpdateContext&);
+
+    // Key for the process-shared MatchedDeclarationsCache registry. Beyond stylesheet identity
+    // (ResolverSharingKey) and URL, it captures the document-global rendering environment that
+    // changes resolved style without changing matched rules or inherited custom properties:
+    // used appearance (dark mode) and device scale factor (quantized x100). Documents in different
+    // environments must route to different cache instances. (rdar://173598541.)
+    using MatchedDeclarationsCacheKey = std::tuple<ResolverSharingKey, WTF::URL, bool, unsigned>;
+    using MatchedDeclarationsCaches = HashMap<MatchedDeclarationsCacheKey, Ref<MatchedDeclarationsCache>>;
+    static MatchedDeclarationsCaches& matchedDeclarationsCaches();
 
     const CheckedRef<Document> m_document;
     ShadowRoot* m_shadowRoot { nullptr };

@@ -61,6 +61,12 @@ bool CSSVariableData::operator==(const CSSVariableData& other) const
     return tokens() == other.tokens();
 }
 
+void add(Hasher& hasher, const CSSVariableData& data)
+{
+    for (auto& token : data.tokens())
+        add(hasher, token);
+}
+
 CSSVariableData::CSSVariableData(const CSSParserTokenRange& range, const CSSParserContext& context)
     : CSSVariableData(range, Style::IsAttrTainted::No, context)
 {

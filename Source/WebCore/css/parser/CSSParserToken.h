@@ -154,6 +154,8 @@ public:
     void updateCharacters(std::span<const CharacterType> characters);
 
 private:
+    friend void add(Hasher&, const CSSParserToken&);
+
     void initValueFromStringView(StringView string)
     {
         m_valueLength = string.length();
@@ -193,5 +195,7 @@ inline void CSSParserToken::updateCharacters(std::span<const CharacterType> char
     m_valueIs8Bit = (sizeof(CharacterType) == 1);
     m_valueDataCharRaw = characters.data();
 }
+
+void add(Hasher&, const CSSParserToken&);
 
 } // namespace WebCore
