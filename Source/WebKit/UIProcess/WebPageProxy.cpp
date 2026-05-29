@@ -5830,8 +5830,19 @@ void WebPageProxy::commitProvisionalPage(IPC::Connection& connection, FrameIdent
         m_mainFrameWebsitePolicies = mainFrameWebsitePolicies->copy();
 
     // There is no way we'll be able to return to the page in the previous page so close it.
+<<<<<<< HEAD
     if (!didSuspendPreviousPage && shouldClosePreviousPage(*provisionalPage))
         protect(legacyMainFrameProcess())->sendPageCloseMessage(identifier(), webPageIDInMainFrameProcess());
+=======
+    if (!didSuspendPreviousPage && shouldClosePreviousPage(*provisionalPage)) {
+        auto pageID = identifier();
+        Ref oldProcess = legacyMainFrameProcess();
+        oldProcess->addPagePendingClose(pageID);
+        sendWithAsyncReply(Messages::WebPage::CloseWithReply(), [oldProcess, pageID] {
+            oldProcess->removePagePendingClose(pageID);
+        });
+    }
+>>>>>>> 1c245d737355 (Cross-Process Page Identity Confusion in didPostMessage)
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     if (m_immersive)

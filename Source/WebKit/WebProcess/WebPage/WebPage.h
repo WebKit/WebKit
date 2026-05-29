@@ -623,7 +623,12 @@ public:
     void reinitializeWebPage(WebPageCreationParameters&&);
     void platformReinitializeAccessibilityToken();
 
+<<<<<<< HEAD
     void close(CompletionHandler<void()>&&);
+=======
+    void closeWithReply(CompletionHandler<void()>&&);
+    void close();
+>>>>>>> 1c245d737355 (Cross-Process Page Identity Confusion in didPostMessage)
 
     static WebPage* fromCorePage(WebCore::Page&);
 

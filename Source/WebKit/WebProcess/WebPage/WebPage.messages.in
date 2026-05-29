@@ -311,7 +311,12 @@ messages -> WebPage WantsAsyncDispatchMessage {
     Suspend() -> (bool success)
     Resume() -> (bool success)
 
+<<<<<<< HEAD
     Close() -> ()
+=======
+    Close()
+    CloseWithReply() -> ()
+>>>>>>> 1c245d737355 (Cross-Process Page Identity Confusion in didPostMessage)
     TryClose() -> (bool shouldClose)
     DispatchCrossOriginBeforeUnloadCheckForFrame(WebCore::FrameIdentifier frameID, WebCore::SecurityOriginData navigatingFrameOrigin)
 

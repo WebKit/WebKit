@@ -955,6 +955,7 @@ void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore en
     maybeShutDown();
 }
 
+<<<<<<< HEAD
 void WebProcessProxy::sendPageCloseMessage(std::optional<WebPageProxyIdentifier> pageProxyID, WebCore::PageIdentifier pageID, CompletionHandler<void()>&& completionHandler)
 {
     if (pageProxyID)
@@ -967,6 +968,16 @@ void WebProcessProxy::sendPageCloseMessage(std::optional<WebPageProxyIdentifier>
         if (completionHandler)
             completionHandler();
     }, pageID);
+=======
+void WebProcessProxy::addPagePendingClose(WebPageProxyIdentifier pageID)
+{
+    m_pagesPendingClose.add(pageID);
+}
+
+void WebProcessProxy::removePagePendingClose(WebPageProxyIdentifier pageID)
+{
+    m_pagesPendingClose.remove(pageID);
+>>>>>>> 1c245d737355 (Cross-Process Page Identity Confusion in didPostMessage)
 }
 
 void WebProcessProxy::addVisitedLinkStoreUser(VisitedLinkStore& visitedLinkStore, WebPageProxyIdentifier pageID)
@@ -2373,7 +2384,10 @@ bool WebProcessProxy::isAssociatedWithPage(WebPageProxyIdentifier pageID) const
 {
     if (m_pageMap.contains(pageID))
         return true;
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1c245d737355 (Cross-Process Page Identity Confusion in didPostMessage)
     for (Ref remotePage : m_remotePages) {
         if (remotePage->page() && remotePage->page()->identifier() == pageID)
             return true;

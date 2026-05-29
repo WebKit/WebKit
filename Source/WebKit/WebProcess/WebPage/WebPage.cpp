@@ -2103,7 +2103,17 @@ void WebPage::exitAcceleratedCompositingMode(WebCore::Frame& frame)
     protect(drawingArea())->setRootCompositingLayer(frame, nullptr);
 }
 
+<<<<<<< HEAD
 void WebPage::close(CompletionHandler<void()>&& completionHandler)
+=======
+void WebPage::closeWithReply(CompletionHandler<void()>&& completionHandler)
+{
+    close();
+    completionHandler();
+}
+
+void WebPage::close()
+>>>>>>> 1c245d737355 (Cross-Process Page Identity Confusion in didPostMessage)
 {
     if (m_isClosed) {
         completionHandler();
