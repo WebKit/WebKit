@@ -508,6 +508,8 @@ public:
     // https://dom.spec.whatwg.org/#concept-node-move-ext
     virtual void movingSteps(bool, ContainerNode&) { };
 
+    void updateShadowIncludingRootForSubtree();
+
     virtual String description() const;
     virtual String debugDescription() const;
 
