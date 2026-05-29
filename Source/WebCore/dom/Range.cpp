@@ -128,9 +128,20 @@ ExceptionOr<void> Range::setStart(Ref<Node>&& container, unsigned offset)
     if (childNode.hasException())
         return childNode.releaseException();
 
+<<<<<<< HEAD
     m_start.set(WTF::move(container), offset, childNode.releaseReturnValue());
     if (!is_lteq(treeOrder(makeBoundaryPoint(m_start), makeBoundaryPoint(m_end))))
         m_end = m_start;
+=======
+    bool shouldAlsoSetEnd = !is_lteq(treeOrder(BoundaryPoint(container.copyRef(), offset), makeBoundaryPoint(m_end)));
+    {
+        Locker locker { m_boundaryPointLock };
+        m_start.set(WTF::move(container), offset, childNode.releaseReturnValue());
+        if (shouldAlsoSetEnd)
+            m_end = m_start;
+    }
+
+>>>>>>> 0c74ffa4edbc (Data race in Range::visitNodesConcurrently during GC, leading to a use-after-free of RangeBoundaryPoint container nodes)
     updateAssociatedSelection();
     updateDocument();
     updateAssociatedHighlight();
@@ -143,9 +154,20 @@ ExceptionOr<void> Range::setEnd(Ref<Node>&& container, unsigned offset)
     if (childNode.hasException())
         return childNode.releaseException();
 
+<<<<<<< HEAD
     m_end.set(WTF::move(container), offset, childNode.releaseReturnValue());
     if (!is_lteq(treeOrder(makeBoundaryPoint(m_start), makeBoundaryPoint(m_end))))
         m_start = m_end;
+=======
+    bool shouldAlsoSetStart = !is_lteq(treeOrder(makeBoundaryPoint(m_start), BoundaryPoint(container.copyRef(), offset)));
+    {
+        Locker locker { m_boundaryPointLock };
+        m_end.set(WTF::move(container), offset, childNode.releaseReturnValue());
+        if (shouldAlsoSetStart)
+            m_start = m_end;
+    }
+
+>>>>>>> 0c74ffa4edbc (Data race in Range::visitNodesConcurrently during GC, leading to a use-after-free of RangeBoundaryPoint container nodes)
     updateAssociatedSelection();
     updateDocument();
     updateAssociatedHighlight();
@@ -900,7 +922,11 @@ String Range::debugDescription() const
 }
 #endif
 
+<<<<<<< HEAD
 static inline void NODELETE boundaryNodeChildrenChanged(RangeBoundaryPoint& boundary, ContainerNode& container)
+=======
+static inline void boundaryNodeChildrenChanged(Locker<Lock>&, RangeBoundaryPoint& boundary, ContainerNode& container)
+>>>>>>> 0c74ffa4edbc (Data race in Range::visitNodesConcurrently during GC, leading to a use-after-free of RangeBoundaryPoint container nodes)
 {
     if (boundary.childBefore() && &boundary.container() == &container)
         boundary.invalidateOffset();
@@ -909,12 +935,18 @@ static inline void NODELETE boundaryNodeChildrenChanged(RangeBoundaryPoint& boun
 void Range::nodeChildrenChanged(ContainerNode& container)
 {
     ASSERT(&container.document() == m_ownerDocument.ptr());
+<<<<<<< HEAD
     boundaryNodeChildrenChanged(m_start, container);
     boundaryNodeChildrenChanged(m_end, container);
+=======
+    Locker locker { m_boundaryPointLock };
+    boundaryNodeChildrenChanged(locker, m_start, container);
+    boundaryNodeChildrenChanged(locker, m_end, container);
+>>>>>>> 0c74ffa4edbc (Data race in Range::visitNodesConcurrently during GC, leading to a use-after-free of RangeBoundaryPoint container nodes)
     m_didChangeForHighlight = true;
 }
 
-static inline void boundaryNodeChildrenWillBeRemoved(RangeBoundaryPoint& boundary, ContainerNode& containerOfNodesToBeRemoved)
+static inline void boundaryNodeChildrenWillBeRemoved(Locker<Lock>&, RangeBoundaryPoint& boundary, ContainerNode& containerOfNodesToBeRemoved)
 {
     if (containerOfNodesToBeRemoved.contains(&boundary.container()))
         boundary.setToBeforeContents(containerOfNodesToBeRemoved);
@@ -923,12 +955,18 @@ static inline void boundaryNodeChildrenWillBeRemoved(RangeBoundaryPoint& boundar
 void Range::nodeChildrenWillBeRemoved(ContainerNode& container)
 {
     ASSERT(&container.document() == m_ownerDocument.ptr());
+<<<<<<< HEAD
     boundaryNodeChildrenWillBeRemoved(m_start, container);
     boundaryNodeChildrenWillBeRemoved(m_end, container);
+=======
+    Locker locker { m_boundaryPointLock };
+    boundaryNodeChildrenWillBeRemoved(locker, m_start, container);
+    boundaryNodeChildrenWillBeRemoved(locker, m_end, container);
+>>>>>>> 0c74ffa4edbc (Data race in Range::visitNodesConcurrently during GC, leading to a use-after-free of RangeBoundaryPoint container nodes)
     m_didChangeForHighlight = true;
 }
 
-static inline void boundaryNodeWillBeRemoved(RangeBoundaryPoint& boundary, Node& nodeToBeRemoved)
+static inline void boundaryNodeWillBeRemoved(Locker<Lock>&, RangeBoundaryPoint& boundary, Node& nodeToBeRemoved)
 {
     if (boundary.childBefore() == &nodeToBeRemoved)
         boundary.childBeforeWillBeRemoved();
@@ -941,8 +979,15 @@ void Range::nodeWillBeRemoved(Node& node)
     ASSERT(&node.document() == m_ownerDocument.ptr());
     ASSERT(&node != m_ownerDocument.ptr());
     ASSERT(node.parentNode());
+<<<<<<< HEAD
     boundaryNodeWillBeRemoved(m_start, node);
     boundaryNodeWillBeRemoved(m_end, node);
+=======
+
+    Locker locker { m_boundaryPointLock };
+    boundaryNodeWillBeRemoved(locker, m_start, node);
+    boundaryNodeWillBeRemoved(locker, m_end, node);
+>>>>>>> 0c74ffa4edbc (Data race in Range::visitNodesConcurrently during GC, leading to a use-after-free of RangeBoundaryPoint container nodes)
     m_didChangeForHighlight = true;
 }
 
@@ -958,7 +1003,11 @@ void Range::updateRangeForParentlessNodeMovedToNewDocument(Node& node)
     protect(m_ownerDocument)->attachRange(*this);
 }
 
+<<<<<<< HEAD
 static inline void NODELETE boundaryTextInserted(RangeBoundaryPoint& boundary, Node& text, unsigned offset, unsigned length)
+=======
+static inline void boundaryTextInserted(Locker<Lock>&, RangeBoundaryPoint& boundary, Node& text, unsigned offset, unsigned length)
+>>>>>>> 0c74ffa4edbc (Data race in Range::visitNodesConcurrently during GC, leading to a use-after-free of RangeBoundaryPoint container nodes)
 {
     if (&boundary.container() != &text)
         return;
@@ -971,12 +1020,22 @@ static inline void NODELETE boundaryTextInserted(RangeBoundaryPoint& boundary, N
 void Range::textInserted(Node& text, unsigned offset, unsigned length)
 {
     ASSERT(&text.document() == m_ownerDocument.ptr());
+<<<<<<< HEAD
     boundaryTextInserted(m_start, text, offset, length);
     boundaryTextInserted(m_end, text, offset, length);
     m_didChangeForHighlight = true;
 }
 
 static inline void NODELETE boundaryTextRemoved(RangeBoundaryPoint& boundary, Node& text, unsigned offset, unsigned length)
+=======
+    Locker locker { m_boundaryPointLock };
+    boundaryTextInserted(locker, m_start, text, offset, length);
+    boundaryTextInserted(locker, m_end, text, offset, length);
+    m_didChangeForHighlight = true;
+}
+
+static inline void boundaryTextRemoved(Locker<Lock>&, RangeBoundaryPoint& boundary, Node& text, unsigned offset, unsigned length)
+>>>>>>> 0c74ffa4edbc (Data race in Range::visitNodesConcurrently during GC, leading to a use-after-free of RangeBoundaryPoint container nodes)
 {
     if (&boundary.container() != &text)
         return;
@@ -992,12 +1051,18 @@ static inline void NODELETE boundaryTextRemoved(RangeBoundaryPoint& boundary, No
 void Range::textRemoved(Node& text, unsigned offset, unsigned length)
 {
     ASSERT(&text.document() == m_ownerDocument.ptr());
+<<<<<<< HEAD
     boundaryTextRemoved(m_start, text, offset, length);
     boundaryTextRemoved(m_end, text, offset, length);
+=======
+    Locker locker { m_boundaryPointLock };
+    boundaryTextRemoved(locker, m_start, text, offset, length);
+    boundaryTextRemoved(locker, m_end, text, offset, length);
+>>>>>>> 0c74ffa4edbc (Data race in Range::visitNodesConcurrently during GC, leading to a use-after-free of RangeBoundaryPoint container nodes)
     m_didChangeForHighlight = true;
 }
 
-static inline void boundaryTextNodesMerged(RangeBoundaryPoint& boundary, NodeWithIndex& oldNode, unsigned offset)
+static inline void boundaryTextNodesMerged(Locker<Lock>&, RangeBoundaryPoint& boundary, NodeWithIndex& oldNode, unsigned offset)
 {
     if (&boundary.container() == oldNode.node())
         boundary.set(protect(oldNode.node()->previousSibling()).releaseNonNull(), boundary.offset() + offset, nullptr);
@@ -1013,12 +1078,18 @@ void Range::textNodesMerged(NodeWithIndex& oldNode, unsigned offset)
     ASSERT(oldNode.node()->isTextNode());
     ASSERT(oldNode.node()->previousSibling());
     ASSERT(oldNode.node()->previousSibling()->isTextNode());
+<<<<<<< HEAD
     boundaryTextNodesMerged(m_start, oldNode, offset);
     boundaryTextNodesMerged(m_end, oldNode, offset);
+=======
+    Locker locker { m_boundaryPointLock };
+    boundaryTextNodesMerged(locker, m_start, oldNode, offset);
+    boundaryTextNodesMerged(locker, m_end, oldNode, offset);
+>>>>>>> 0c74ffa4edbc (Data race in Range::visitNodesConcurrently during GC, leading to a use-after-free of RangeBoundaryPoint container nodes)
     m_didChangeForHighlight = true;
 }
 
-static inline void boundaryTextNodesSplit(RangeBoundaryPoint& boundary, Text& oldNode)
+static inline void boundaryTextNodesSplit(Locker<Lock>&, RangeBoundaryPoint& boundary, Text& oldNode)
 {
     RefPtr parent = oldNode.parentNode();
     if (&boundary.container() == &oldNode) {
@@ -1046,8 +1117,14 @@ void Range::textNodeSplit(Text& oldNode)
     ASSERT(&oldNode.document() == m_ownerDocument.ptr());
     ASSERT(!oldNode.parentNode() || oldNode.nextSibling());
     ASSERT(!oldNode.parentNode() || oldNode.nextSibling()->isTextNode());
+<<<<<<< HEAD
     boundaryTextNodesSplit(m_start, oldNode);
     boundaryTextNodesSplit(m_end, oldNode);
+=======
+    Locker locker { m_boundaryPointLock };
+    boundaryTextNodesSplit(locker, m_start, oldNode);
+    boundaryTextNodesSplit(locker, m_end, oldNode);
+>>>>>>> 0c74ffa4edbc (Data race in Range::visitNodesConcurrently during GC, leading to a use-after-free of RangeBoundaryPoint container nodes)
     m_didChangeForHighlight = true;
 }
 
