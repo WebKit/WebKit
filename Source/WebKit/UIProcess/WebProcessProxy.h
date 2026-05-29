@@ -830,7 +830,12 @@ private:
 
     HashMap<String, uint64_t> m_pageURLRetainCountMap;
 
+<<<<<<< HEAD
     Expected<WebCore::Site, SiteState> m_site { std::unexpected<SiteState> { SiteState::NotYetSpecified } };
+=======
+    Expected<WebCore::Site, SiteState> m_site { Unexpected<SiteState> { SiteState::NotYetSpecified } };
+    HashSet<WebCore::Site> m_committedSites;
+>>>>>>> 4fcd36e3a363 (REGRESSION(305413.548@safari-7624-branch): Crash in WebProcessProxy::hasCommittedClientOrigin)
     std::optional<WebCore::Site> m_sharedProcessMainFrameSite;
     HashSet<WebCore::RegistrableDomain> m_sharedProcessDomains;
     std::pair<LoadedWebArchive, HashSet<WebCore::RegistrableDomain>> m_allowedFirstPartiesForCookies { LoadedWebArchive::No, { } };

@@ -34,8 +34,20 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKFeature.h>
+#import <WebKit/_WKProcessPoolConfiguration.h>
+#import <wtf/text/MakeString.h>
 
 namespace TestWebKitAPI {
+
+static void enableWebLocksAPI(WKWebViewConfiguration *configuration)
+{
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"WebLocksAPIEnabled"]) {
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+            return;
+        }
+    }
+}
 
 enum class ShouldUseSameProcess : bool { No, Yes };
 
@@ -45,6 +57,7 @@ static void runSnapshotAcrossPagesTest(ShouldUseSameProcess shouldUseSameProcess
         { "/"_s, { "foo"_s } }
     });
 
+<<<<<<< HEAD:Tools/TestWebKitAPI/Tests/WebKit/WKWebView/WebLocks.mm
     RetainPtr configuration1 = adoptNS([[WKWebViewConfiguration alloc] init]);
     for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"WebLocksAPIEnabled"]) {
@@ -52,6 +65,10 @@ static void runSnapshotAcrossPagesTest(ShouldUseSameProcess shouldUseSameProcess
             break;
         }
     }
+=======
+    auto configuration1 = adoptNS([[WKWebViewConfiguration alloc] init]);
+    enableWebLocksAPI(configuration1.get());
+>>>>>>> 4fcd36e3a363 (REGRESSION(305413.548@safari-7624-branch): Crash in WebProcessProxy::hasCommittedClientOrigin):Tools/TestWebKitAPI/Tests/WebKitCocoa/WebLocks.mm
 
     RetainPtr webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration1.get()]);
     [webView1 synchronouslyLoadRequest:server.request()];
@@ -71,12 +88,7 @@ static void runSnapshotAcrossPagesTest(ShouldUseSameProcess shouldUseSameProcess
 
     RetainPtr configuration2 = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration2.get().processPool = [configuration1 processPool];
-    for (_WKFeature *feature in [WKPreferences _features]) {
-        if ([feature.key isEqualToString:@"WebLocksAPIEnabled"]) {
-            [[configuration2 preferences] _setEnabled:YES forFeature:feature];
-            break;
-        }
-    }
+    enableWebLocksAPI(configuration2.get());
     if (shouldUseSameProcess == ShouldUseSameProcess::Yes) {
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         configuration2.get()._relatedWebView = webView1.get();
@@ -141,6 +153,7 @@ static void runLockRequestWaitingOnAnotherPage(ShouldUseSameProcess shouldUseSam
         { "/"_s, { "foo"_s } }
     });
 
+<<<<<<< HEAD:Tools/TestWebKitAPI/Tests/WebKit/WKWebView/WebLocks.mm
     RetainPtr configuration1 = adoptNS([[WKWebViewConfiguration alloc] init]);
     for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"WebLocksAPIEnabled"]) {
@@ -148,6 +161,10 @@ static void runLockRequestWaitingOnAnotherPage(ShouldUseSameProcess shouldUseSam
             break;
         }
     }
+=======
+    auto configuration1 = adoptNS([[WKWebViewConfiguration alloc] init]);
+    enableWebLocksAPI(configuration1.get());
+>>>>>>> 4fcd36e3a363 (REGRESSION(305413.548@safari-7624-branch): Crash in WebProcessProxy::hasCommittedClientOrigin):Tools/TestWebKitAPI/Tests/WebKitCocoa/WebLocks.mm
 
     RetainPtr webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration1.get()]);
     [webView1 synchronouslyLoadRequest:server.request()];
@@ -167,12 +184,7 @@ static void runLockRequestWaitingOnAnotherPage(ShouldUseSameProcess shouldUseSam
 
     RetainPtr configuration2 = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration2.get().processPool = [configuration1 processPool];
-    for (_WKFeature *feature in [WKPreferences _features]) {
-        if ([feature.key isEqualToString:@"WebLocksAPIEnabled"]) {
-            [[configuration2 preferences] _setEnabled:YES forFeature:feature];
-            break;
-        }
-    }
+    enableWebLocksAPI(configuration2.get());
     if (shouldUseSameProcess == ShouldUseSameProcess::Yes) {
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         configuration2.get()._relatedWebView = webView1.get();
@@ -242,6 +254,45 @@ TEST(WebLocks, LockRequestWaitingOnAnotherPageInOtherProcess)
 TEST(WebLocks, LockRequestWaitingOnAnotherPageInSameProcess)
 {
     runLockRequestWaitingOnAnotherPage(ShouldUseSameProcess::Yes);
+}
+
+TEST(WebLocks, ServiceWorkerLockRequestAfterCrossSiteNavigationInSameProcess)
+{
+    TestWebKitAPI::HTTPServer server1({ }, TestWebKitAPI::HTTPServer::Protocol::Http);
+    TestWebKitAPI::HTTPServer server2({ }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto swScript = "self.addEventListener('message', event => { event.waitUntil(new Promise(() => {})); event.source.postMessage('processing'); function loop() { navigator.locks.request('sw-lock', () => {}).then(loop); } loop(); });"_s;
+    auto page2HTML = "<script>webkit.messageHandlers.testHandler.postMessage('LOADED');</script>"_s;
+    auto page1HTML = makeString(
+        "<script>"
+        "navigator.serviceWorker.register('/sw.js').then(() => navigator.serviceWorker.ready).then(reg => {"
+        "    navigator.serviceWorker.onmessage = () => { window.location = 'http://localhost:"_s, server2.port(), "/'; };"
+        "    reg.active.postMessage('start');"
+        "});"
+        "</script>"_s);
+
+    server1.addResponse("/sw.js"_s, { { { "Content-Type"_s, "text/javascript"_s } }, swScript });
+    server1.addResponse("/"_s, { page1HTML });
+    server2.addResponse("/"_s, { page2HTML });
+
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().processSwapsOnNavigation = NO;
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().processPool = processPool.get();
+    enableWebLocksAPI(configuration.get());
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    __block bool done = false;
+    [webView performAfterReceivingAnyMessage:^(NSString *message) {
+        EXPECT_WK_STREQ(message, @"LOADED");
+        done = true;
+    }];
+
+    [webView synchronouslyLoadRequest:server1.request()];
+    TestWebKitAPI::Util::run(&done);
 }
 
 } // namespace TestWebKitAPI
