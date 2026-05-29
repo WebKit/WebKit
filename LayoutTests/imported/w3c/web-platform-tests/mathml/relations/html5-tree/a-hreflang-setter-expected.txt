@@ -1,0 +1,3 @@
+
+FAIL Test anchor's hreflang setter assert_equals: expected (string) "fr" but got (object) null
+

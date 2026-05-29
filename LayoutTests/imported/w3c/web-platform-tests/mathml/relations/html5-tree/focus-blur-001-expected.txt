@@ -1,0 +1,38 @@
+
+PASS focus()/blur() works on the math element.
+PASS focus()/blur() works on the a element.
+PASS focus()/blur() works on the annotation element.
+PASS focus()/blur() works on the annotation-xml element.
+PASS focus()/blur() works on the maction element.
+PASS focus()/blur() works on the menclose element.
+PASS focus()/blur() works on the merror element.
+PASS focus()/blur() works on the mfrac element.
+PASS focus()/blur() works on the mi element.
+PASS focus()/blur() works on the mmultiscripts element.
+PASS focus()/blur() works on the mn element.
+PASS focus()/blur() works on the mo element.
+PASS focus()/blur() works on the mover element.
+PASS focus()/blur() works on the mpadded element.
+PASS focus()/blur() works on the mphantom element.
+PASS focus()/blur() works on the mprescripts element.
+PASS focus()/blur() works on the mroot element.
+PASS focus()/blur() works on the mrow element.
+PASS focus()/blur() works on the ms element.
+PASS focus()/blur() works on the mspace element.
+PASS focus()/blur() works on the msqrt element.
+PASS focus()/blur() works on the mstyle element.
+PASS focus()/blur() works on the msub element.
+PASS focus()/blur() works on the msubsup element.
+PASS focus()/blur() works on the msup element.
+PASS focus()/blur() works on the mtable element.
+PASS focus()/blur() works on the mtd element.
+PASS focus()/blur() works on the mtext element.
+PASS focus()/blur() works on the mtr element.
+PASS focus()/blur() works on the munder element.
+PASS focus()/blur() works on the munderover element.
+PASS focus()/blur() works on the none element.
+PASS focus()/blur() works on the semantics element.
+
+
+
+

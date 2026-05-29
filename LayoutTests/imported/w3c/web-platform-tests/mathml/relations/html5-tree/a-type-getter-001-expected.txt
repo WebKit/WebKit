@@ -1,0 +1,3 @@
+
+FAIL Test anchor's type getter when empty assert_equals: expected (string) "" but got (undefined) undefined
+

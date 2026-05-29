@@ -26,6 +26,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mmultiscripts-with-two-prescripts.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mspace-mpadded-negative-dimensions.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mtd-as-multicol.html
+/LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/mtd-blockify-children.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/multicol-inside-ms.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/multicol-on-token-elements.html
 /LayoutTests/imported/w3c/web-platform-tests/mathml/crashtests/operator-and-first-letter.html
