@@ -107,11 +107,13 @@ void TrackBase::setSourceBuffer(SourceBuffer* buffer)
 void TrackBase::setTrackList(TrackListBase& trackList)
 {
     m_trackList = trackList;
+    m_opaqueRoot = WebCoreOpaqueRoot { &trackList };
 }
 
 void TrackBase::clearTrackList()
 {
     m_trackList = nullptr;
+    m_opaqueRoot = WebCoreOpaqueRoot { this };
 }
 
 TrackListBase* TrackBase::trackList() const
@@ -119,6 +121,7 @@ TrackListBase* TrackBase::trackList() const
     return m_trackList.get();
 }
 
+<<<<<<< HEAD
 WebCoreOpaqueRoot TrackBase::opaqueRoot() const
 {
     // Runs on GC thread.
@@ -127,6 +130,8 @@ WebCoreOpaqueRoot TrackBase::opaqueRoot() const
     return WebCoreOpaqueRoot { const_cast<TrackBase*>(this) };
 }
 
+=======
+>>>>>>> 33be61fed07c (Data race in TrackBase::opaqueRoot during GC leading to use-after-free)
 // See: https://tools.ietf.org/html/bcp47#section-2.1
 static bool NODELETE isValidBCP47LanguageTag(const String& languageTag)
 {
