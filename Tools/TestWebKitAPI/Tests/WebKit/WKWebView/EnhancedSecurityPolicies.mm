@@ -334,6 +334,179 @@ static void runHttpLocalhostLoad(bool useSiteIsolation)
 }
 TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpLocalhostLoad)
 
+// MARK: - HTTP Proxy Tests
+
+static void runHttpsLoadWithHttpProxy(bool useSiteIsolation)
+{
+    HTTPServer plaintextServer({
+        { "http://secure.example.internal/"_s, { "<script>alert('insecure-page')</script>"_s } },
+    });
+
+    HTTPServer secureServer({
+        { "/"_s, { "<script>alert('secure-page')</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto webView = enhancedSecurityTestConfiguration(&plaintextServer, &secureServer, useSiteIsolation);
+
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"https://secure.example.internal/", {
+        { "secure-page"_s, ExpectedEnhancedSecurity::Disabled }
+    });
+}
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpsLoadWithHttpProxy)
+
+static void runMultipleHttpsNavigationsWithHttpProxy(bool useSiteIsolation)
+{
+    HTTPServer plaintextServer({
+        { "http://site1.example/"_s, { "<script>alert('insecure-site1')</script>"_s } },
+        { "http://site2.example/"_s, { "<script>alert('insecure-site2')</script>"_s } },
+    });
+
+    HTTPServer secureServer({
+        { "/"_s, { "<script>alert('secure-page')</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto webView = enhancedSecurityTestConfiguration(&plaintextServer, &secureServer, useSiteIsolation);
+
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"https://site1.example/", {
+        { "secure-page"_s, ExpectedEnhancedSecurity::Disabled }
+    });
+
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"https://site2.example/", {
+        { "secure-page"_s, ExpectedEnhancedSecurity::Disabled }
+    });
+}
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(MultipleHttpsNavigationsWithHttpProxy)
+
+static void runHttpToHttpsRedirectProcessCycling(bool useSiteIsolation)
+{
+    // Simulates the WWeb_v7_3_Proxy power test workload: a mix of http:// and https:// navigations
+    // where http:// URLs redirect to https://. This pattern triggers EnhancedSecurity for the
+    // initial http:// load (InsecureProvisional), then swaps back when HTTPS upgrade completes.
+    // We track unique process PIDs and their variants to measure the process cycling cost.
+
+    HTTPServer plaintextServer({
+        { "http://site1.example/"_s, { 302, { { "Location"_s, "https://site1.example/"_s } }, emptyString() } },
+        { "http://site2.example/"_s, { 302, { { "Location"_s, "https://site2.example/"_s } }, emptyString() } },
+        { "http://site3.example/"_s, { 302, { { "Location"_s, "https://site3.example/"_s } }, emptyString() } },
+        { "http://site4.example/"_s, { 302, { { "Location"_s, "https://site4.example/"_s } }, emptyString() } },
+        { "http://site5.example/"_s, { 302, { { "Location"_s, "https://site5.example/"_s } }, emptyString() } },
+        { "http://site6.example/"_s, { 302, { { "Location"_s, "https://site6.example/"_s } }, emptyString() } },
+        { "http://site7.example/"_s, { 302, { { "Location"_s, "https://site7.example/"_s } }, emptyString() } },
+        { "http://site8.example/"_s, { 302, { { "Location"_s, "https://site8.example/"_s } }, emptyString() } },
+    });
+
+    HTTPServer secureServer({
+        { "/"_s, { "<html><body>secure</body></html>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().prewarmsProcessesAutomatically = YES;
+    processPoolConfiguration.get().prewarmedProcessCountLimitForTesting = 3;
+    RetainPtr pool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().processPool = pool.get();
+
+    auto preferences = [[configuration preferences] retain];
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ((useSiteIsolation && [feature.key isEqualToString:@"SiteIsolationEnabled"])
+            || [feature.key isEqualToString:@"EnhancedSecurityHeuristicsEnabled"])
+            [preferences _setEnabled:YES forFeature:feature];
+    }
+    [preferences release];
+
+    RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setHTTPProxy:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", plaintextServer.port()]]];
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", secureServer.port()]]];
+    [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 1, 1) configuration:configuration.get()]);
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    __block bool finishedNavigation = false;
+    navigationDelegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        finishedNavigation = true;
+    };
+
+    NSMutableSet<NSNumber *> *allPIDs = [NSMutableSet set];
+    NSMutableSet<NSNumber *> *committedEnhancedSecurityPIDs = [NSMutableSet set];
+    NSMutableSet<NSNumber *> *committedRegularPIDs = [NSMutableSet set];
+
+    __block NSMutableSet<NSNumber *> *provisionalPIDs = [NSMutableSet set];
+
+    navigationDelegate.get().didStartProvisionalNavigation = ^(WKWebView *wv, WKNavigation *) {
+        pid_t pid = [(WKWebView *)wv _webProcessIdentifier];
+        if (pid > 0)
+            [provisionalPIDs addObject:@(pid)];
+
+        pid_t provPid = [(WKWebView *)wv _provisionalWebProcessIdentifier];
+        if (provPid > 0)
+            [provisionalPIDs addObject:@(provPid)];
+    };
+
+    // Navigate through a mix of http:// (redirect to https://) and direct https:// loads,
+    // similar to the WWeb_v7_3_Proxy workload pattern.
+    NSArray<NSString *> *urls = @[
+        @"http://site1.example/",   // HTTP -> HTTPS redirect
+        @"https://site2.example/",  // Direct HTTPS
+        @"http://site3.example/",   // HTTP -> HTTPS redirect
+        @"http://site4.example/",   // HTTP -> HTTPS redirect
+        @"https://site5.example/",  // Direct HTTPS
+        @"http://site6.example/",   // HTTP -> HTTPS redirect
+        @"https://site7.example/",  // Direct HTTPS
+        @"http://site8.example/",   // HTTP -> HTTPS redirect
+    ];
+
+    for (NSString *url in urls) {
+        NSSet<NSNumber *> *prewarmedBeforeNav = [pool _prewarmedProcessIdentifiersForTesting];
+
+        finishedNavigation = false;
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:url]]];
+        TestWebKitAPI::Util::run(&finishedNavigation);
+
+        pid_t pid = [webView _webProcessIdentifier];
+        [allPIDs addObject:@(pid)];
+
+        NSString *variant = [webView _webContentProcessVariantForFrame:nil];
+        if ([variant isEqualToString:@"security"])
+            [committedEnhancedSecurityPIDs addObject:@(pid)];
+        else
+            [committedRegularPIDs addObject:@(pid)];
+
+        NSSet<NSNumber *> *prewarmedAfterNav = [pool _prewarmedProcessIdentifiersForTesting];
+        NSLog(@"  Navigation to %@ — pid: %d, prewarmed before: %lu after: %lu, provisionalPid: %d", url, pid, (unsigned long)prewarmedBeforeNav.count, (unsigned long)prewarmedAfterNav.count, [webView _provisionalWebProcessIdentifier]);
+
+        // Allow time for process pre-warming to complete between navigations,
+        // simulating real browsing where users spend time on each page.
+        TestWebKitAPI::Util::runFor(2.0_s);
+    }
+
+    // Collect all PIDs seen during the session (provisional + committed)
+    [allPIDs unionSet:provisionalPIDs];
+
+    NSSet<NSNumber *> *prewarmedPIDs = [pool _prewarmedProcessIdentifiersForTesting];
+    NSLog(@"HttpToHttpsRedirectProcessCycling results (siteIsolation=%d):", useSiteIsolation);
+    NSLog(@"  Total unique PIDs observed: %lu", (unsigned long)allPIDs.count);
+    NSLog(@"  Committed Regular WebContent PIDs: %lu", (unsigned long)committedRegularPIDs.count);
+    NSLog(@"  Committed EnhancedSecurity PIDs: %lu", (unsigned long)committedEnhancedSecurityPIDs.count);
+    NSLog(@"  Provisional PIDs (includes intermediate ES processes): %lu", (unsigned long)provisionalPIDs.count);
+    NSLog(@"  Currently prewarmed PIDs: %@", prewarmedPIDs);
+
+    // After all navigations, the final committed pages should all be HTTPS,
+    // so the final process should NOT be Enhanced Security.
+    NSString *finalVariant = [webView _webContentProcessVariantForFrame:nil];
+    EXPECT_FALSE([finalVariant isEqualToString:@"security"]);
+
+    // The number of unique PIDs indicates process cycling. With the current architecture,
+    // HTTP -> HTTPS redirects cause EnhancedSecurity processes to be spawned then abandoned.
+    // This test establishes a baseline for measuring improvements.
+    EXPECT_GT(allPIDs.count, 1u);
+}
+TEST_WITH_AND_WITHOUT_SITE_ISOLATION(HttpToHttpsRedirectProcessCycling)
+
 // MARK: - HTTPS First Upgrade Tests
 
 static void runHttpsFirstUpgradeDisablesEnhancedSecurity(bool useSiteIsolation)

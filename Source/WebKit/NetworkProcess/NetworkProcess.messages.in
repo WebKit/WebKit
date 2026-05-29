@@ -303,4 +303,6 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
 #if HAVE(ENHANCED_SECURITY_LINKS)
     IsEnhancedSecurityLink(URL url) -> (bool isEnhancedSecurityLink)
 #endif
+
+    HoldLoaderForProcessTransfer(WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ResourceLoaderIdentifier resourceLoaderIdentifier) -> (std::optional<WebKit::NetworkResourceLoadIdentifier> networkResourceLoadIdentifier)
 }

@@ -29,6 +29,7 @@
 
 #include "APIWebsitePolicies.h"
 #include "WebPreferences.h"
+#include <WebCore/HTTPHeaderNames.h>
 #include <WebCore/IPAddressSpace.h>
 #include <WebCore/SecurityOrigin.h>
 #include <wtf/Condition.h>
@@ -105,6 +106,7 @@ void EnhancedSecurityTracking::reset()
 {
     m_activeState = ActivationState::None;
     m_activeReason = EnhancedSecurityReason::None;
+    m_deferredInsecureProvisional = false;
 }
 
 void EnhancedSecurityTracking::makeDormant()
@@ -192,7 +194,7 @@ static bool shouldExpectHTTPSUpgrade(const URL& requestURL, API::WebsitePolicies
     return !isSameSiteBypassEnabled;
 }
 
-bool EnhancedSecurityTracking::enableIfRequired(const API::Navigation& navigation, API::WebsitePolicies* websitePolicies, const WebPreferences& preferences, const URL& sourceURL, bool httpFallbackInProgress)
+bool EnhancedSecurityTracking::enableIfRequired(const API::Navigation& navigation, API::WebsitePolicies* websitePolicies, const WebPreferences& preferences, const URL& sourceURL, bool httpFallbackInProgress, bool canDeferToResponse)
 {
     if (navigation.isEnhancedSecurityLinkForCurrentSite()) {
         enableFor(EnhancedSecurityReason::LinkSecurity, navigation);
@@ -204,12 +206,17 @@ bool EnhancedSecurityTracking::enableIfRequired(const API::Navigation& navigatio
     if (currentRequestURL.protocolIs("http"_s)
         && !SecurityOrigin::isLocalHostOrLoopbackIPAddress(currentRequestURL.host())
         && !shouldExpectHTTPSUpgrade(currentRequestURL, websitePolicies, preferences, sourceURL, httpFallbackInProgress)) {
+        if (canDeferToResponse && !httpFallbackInProgress) {
+            m_deferredInsecureProvisional = true;
+            return false;
+        }
         enableFor(EnhancedSecurityReason::InsecureProvisional, navigation);
         return true;
     }
 
     return false;
 }
+
 
 void EnhancedSecurityTracking::handleBackForwardNavigation(const API::Navigation& navigation)
 {
@@ -222,7 +229,7 @@ void EnhancedSecurityTracking::handleBackForwardNavigation(const API::Navigation
         enableFor(reasonForEnhancedSecurity(priorState), navigation);
 }
 
-void EnhancedSecurityTracking::trackNavigation(const API::Navigation& navigation, bool hasOpenedPage, API::WebsitePolicies* websitePolicies, const WebPreferences& preferences, const URL& sourceURL, bool httpFallbackInProgress)
+void EnhancedSecurityTracking::trackNavigation(const API::Navigation& navigation, bool hasOpenedPage, API::WebsitePolicies* websitePolicies, const WebPreferences& preferences, const URL& sourceURL, bool httpFallbackInProgress, bool canDeferToResponse)
 {
     auto lastNavigationAction = navigation.lastNavigationAction();
     if (lastNavigationAction && lastNavigationAction->hasOpener)
@@ -244,9 +251,25 @@ void EnhancedSecurityTracking::trackNavigation(const API::Navigation& navigation
 
     if (m_activeState != ActivationState::None && isInitialUIDriven && !isReload)
         reset();
+    else if (isInitialUIDriven && !isReload)
+        m_deferredInsecureProvisional = false;
 
-    if (m_activeState != ActivationState::Active && enableIfRequired(navigation, websitePolicies, preferences, sourceURL, httpFallbackInProgress))
+    if (m_activeState != ActivationState::Active && enableIfRequired(navigation, websitePolicies, preferences, sourceURL, httpFallbackInProgress, canDeferToResponse))
         return;
+
+    // If we deferred an InsecureProvisional check and this is a cross-site redirect,
+    // activate ES now — the navigation chain originated from insecure HTTP.
+    if (m_deferredInsecureProvisional && navigation.currentRequestIsRedirect()) {
+        bool isCrossSiteRedirect = RegistrableDomain { navigation.originalRequest().url() } != RegistrableDomain { navigation.currentRequest().url() };
+        if (isCrossSiteRedirect) {
+            m_deferredInsecureProvisional = false;
+            enableFor(EnhancedSecurityReason::InsecureProvisional, navigation);
+            return;
+        }
+        // Same-site HTTPS redirect — the upgrade completed, clear deferred state.
+        if (navigation.currentRequest().url().protocolIs("https"_s))
+            m_deferredInsecureProvisional = false;
+    }
 
     if (m_activeState == ActivationState::Active
         && m_activeReason == EnhancedSecurityReason::InsecureProvisional) {
@@ -280,6 +303,22 @@ void EnhancedSecurityTracking::trackNavigation(const API::Navigation& navigation
         else
             enabledSitesMap().set(RegistrableDomain { navigation.currentRequest().url() }, m_activeReason);
     }
+}
+
+bool EnhancedSecurityTracking::shouldTriggerSwapForResponse(API::Navigation& navigation, const WebCore::ResourceResponse& response, bool isMainFrame)
+{
+    if (!isMainFrame || !m_deferredInsecureProvisional || m_activeState == ActivationState::Active)
+        return false;
+
+    if (response.isRedirection())
+        return false;
+
+    if (!response.url().protocolIs("http"_s) || SecurityOrigin::isLocalHostOrLoopbackIPAddress(response.url().host()))
+        return false;
+
+    m_deferredInsecureProvisional = false;
+    enableFor(EnhancedSecurityReason::InsecureProvisional, navigation);
+    return true;
 }
 
 } // namespace WebKit

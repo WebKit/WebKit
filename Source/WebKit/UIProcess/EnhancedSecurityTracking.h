@@ -30,6 +30,7 @@
 #include "EnhancedSecurity.h"
 
 #include <WebCore/RegistrableDomain.h>
+#include <WebCore/ResourceResponse.h>
 #include <wtf/CanMakeWeakPtr.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Seconds.h>
@@ -46,31 +47,37 @@ class EnhancedSecurityTracking final : public CanMakeWeakPtr<EnhancedSecurityTra
 public:
     void initializeWithWebsiteDataStore(WebsiteDataStore&);
 
-    void trackNavigation(const API::Navigation&, bool hasOpenedPage, API::WebsitePolicies*, const WebPreferences&, const URL& sourceURL, bool httpFallbackInProgress);
+    void trackNavigation(const API::Navigation&, bool hasOpenedPage, API::WebsitePolicies*, const WebPreferences&, const URL& sourceURL, bool httpFallbackInProgress, bool canDeferToResponse = false);
 
     bool isEnhancedSecurityEnabled() const { return isEnhancedSecurityEnabledForState(enhancedSecurityState()); }
     EnhancedSecurity NODELETE enhancedSecurityState() const;
     EnhancedSecurityReason enhancedSecurityReason() const { return m_activeReason; }
+
+    // Response-time ES activation: when InsecureProvisional was deferred at navigation
+    // time, check the response to decide if ES should now activate.
+    bool shouldTriggerSwapForResponse(API::Navigation&, const WebCore::ResourceResponse&, bool isMainFrame);
+
+    void reset();
+    void enableFor(EnhancedSecurityReason, const API::Navigation&);
 
     void initializeFrom(const EnhancedSecurityTracking&);
 
 private:
     enum class ActivationState : uint8_t { None, Dormant, Active };
 
-    void NODELETE reset();
     void NODELETE makeDormant();
     void NODELETE makeActive();
 
     void handleBackForwardNavigation(const API::Navigation&);
 
-    void enableFor(EnhancedSecurityReason, const API::Navigation&);
-    bool enableIfRequired(const API::Navigation&, API::WebsitePolicies*, const WebPreferences&, const URL& sourceURL, bool httpFallbackInProgress);
+    bool enableIfRequired(const API::Navigation&, API::WebsitePolicies*, const WebPreferences&, const URL& sourceURL, bool httpFallbackInProgress, bool canDeferToResponse);
 
     void trackSameSiteNavigation(const API::Navigation&);
     void trackChangingSiteNavigation();
 
     ActivationState m_activeState { ActivationState::None };
     EnhancedSecurityReason m_activeReason { EnhancedSecurityReason::None };
+    bool m_deferredInsecureProvisional { false };
 
     WebCore::RegistrableDomain m_initialProtectedDomain;
 };

@@ -3509,4 +3509,21 @@ void NetworkProcess::isEnhancedSecurityLink(const URL& url, CompletionHandler<vo
 }
 #endif
 
+void NetworkProcess::holdLoaderForProcessTransfer(WebCore::ProcessIdentifier webProcessIdentifier, WebCore::ResourceLoaderIdentifier resourceLoaderIdentifier, CompletionHandler<void(std::optional<NetworkResourceLoadIdentifier>)>&& completionHandler)
+{
+    RefPtr connection = webProcessConnection(webProcessIdentifier);
+    if (!connection)
+        return completionHandler(std::nullopt);
+
+    RefPtr loader = connection->takeNetworkResourceLoader(resourceLoaderIdentifier);
+    if (!loader)
+        return completionHandler(std::nullopt);
+
+    auto networkResourceLoadIdentifier = loader->identifier();
+    if (CheckedPtr session = connection->networkSession())
+        session->addLoaderAwaitingWebProcessTransfer(loader.releaseNonNull());
+
+    completionHandler(networkResourceLoadIdentifier);
+}
+
 } // namespace WebKit

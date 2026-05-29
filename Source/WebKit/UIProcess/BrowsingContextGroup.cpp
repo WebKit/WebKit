@@ -183,6 +183,11 @@ bool BrowsingContextGroup::addFrameProcessWithoutInjectingPageContext(FrameProce
     return true;
 }
 
+void BrowsingContextGroup::clearProcessForSite(const WebCore::Site& site)
+{
+    m_processMap.remove(site);
+}
+
 void BrowsingContextGroup::removeFrameProcess(FrameProcess& process)
 {
     if (process.isSharedProcess()) {
@@ -190,7 +195,10 @@ void BrowsingContextGroup::removeFrameProcess(FrameProcess& process)
         m_sharedProcessSites.clear();
     } else {
         auto& site = *process.site();
-        ASSERT(site.isEmpty() || m_processMap.get(site) == &process || process.process().state() == WebProcessProxy::State::Terminated);
+        // When a deferred ES process swap replaces the site's process entry, the old FrameProcess
+        // may destruct after the new one is registered. In this case, just skip the removal.
+        if (m_processMap.get(site) != &process)
+            return;
         m_processMap.remove(site);
     }
     m_remotePages.removeIf([&] (auto& pair) {
