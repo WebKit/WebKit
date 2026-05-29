@@ -2803,7 +2803,6 @@ static inline WebCore::FloatSize tapHighlightBorderRadius(WebCore::FloatSize bor
 {
     RefPtr page = _page;
     if (auto& state = page->editorState(); state.hasVisualData() && scrollingNodeID && scrollingNodeID == state.visualData->enclosingScrollingNodeID) {
-        page->scheduleFullEditorStateUpdate();
         _waitingForEditorStateAfterScrollingSelectionContainer = YES;
         page->callAfterNextPresentationUpdate([weakSelf = WeakObjCPtr<WKContentView>(self)] {
             if (auto strongSelf = weakSelf.get())
@@ -6518,7 +6517,6 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
 - (void)willFinishIgnoringCalloutBarFadeAfterPerformingAction
 {
     _ignoreSelectionCommandFadeCount++;
-    protect(_page)->scheduleFullEditorStateUpdate();
     protect(_page)->callAfterNextPresentationUpdate([weakSelf = WeakObjCPtr<WKContentView>(self)] {
         if (auto strongSelf = weakSelf.get())
             strongSelf->_ignoreSelectionCommandFadeCount--;
@@ -7072,7 +7070,6 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
 
     if (_focusedElementInformation.autocapitalizeType == WebCore::AutocapitalizeType::Words && aStringValue.length) {
         _lastInsertedCharacterToOverrideCharacterBeforeSelection = [aStringValue characterAtIndex:aStringValue.length - 1];
-        page->scheduleFullEditorStateUpdate();
     }
 
     _autocorrectionContextNeedsUpdate = YES;
@@ -8699,7 +8696,6 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
         _treatAsContentEditableUntilNextEditorStateUpdate = YES;
         [_textInteractionWrapper activateSelection];
         page->restoreSelectionInFocusedEditableElement();
-        page->scheduleFullEditorStateUpdate();
     }
 
     _inputPeripheral = createInputPeripheralWithView(_focusedElementInformation.elementType, self);

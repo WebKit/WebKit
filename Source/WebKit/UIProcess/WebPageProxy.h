@@ -2251,7 +2251,6 @@ public:
     void editorStateChanged(IPC::Connection&, EditorState&&);
     enum class ShouldMergeVisualEditorState : uint8_t { No, Yes, Default };
     bool updateEditorState(IPC::Connection&, EditorState&& newEditorState, ShouldMergeVisualEditorState = ShouldMergeVisualEditorState::Default);
-    void scheduleFullEditorStateUpdate();
     void dispatchDidUpdateEditorState();
 
     void requestStorageAccessConfirm(const WebCore::RegistrableDomain& subFrameDomain, const WebCore::RegistrableDomain& topFrameDomain, WebCore::FrameIdentifier, std::optional<WebCore::OrganizationStorageAccessPromptQuirk>&&, CompletionHandler<void(bool)>&&);

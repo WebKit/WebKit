@@ -3716,14 +3716,6 @@ void WebPageProxy::setMaintainsInactiveSelection(bool newValue)
     m_maintainsInactiveSelection = newValue;
 }
 
-void WebPageProxy::scheduleFullEditorStateUpdate()
-{
-    if (!hasRunningProcess())
-        return;
-
-    send(Messages::WebPage::ScheduleFullEditorStateUpdate());
-}
-
 void WebPageProxy::selectAll()
 {
     if (!hasRunningProcess())
