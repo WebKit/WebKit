@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "APIPageConfiguration.h"
 #import "DisplayLink.h"
 #import "Logging.h"
 #import "NativeWebWheelEvent.h"
@@ -37,6 +38,7 @@
 #import "RemoteScrollingTree.h"
 #import "WebEventConversion.h"
 #import "WebPageProxy.h"
+#import "WebProcessPool.h"
 #import <QuartzCore/CALayer.h>
 #import <WebCore/PlatformWheelEvent.h>
 #import <WebCore/ScrollingCoordinatorTypes.h>
@@ -107,6 +109,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteLayerTreeEventDispatcher);
 RemoteLayerTreeEventDispatcher::RemoteLayerTreeEventDispatcher(RemoteScrollingCoordinatorProxyMac& scrollingCoordinator, PageIdentifier pageIdentifier)
     : m_scrollingCoordinator(WeakPtr { scrollingCoordinator })
     , m_pageIdentifier(pageIdentifier)
+    , m_processPool(scrollingCoordinator.webPageProxy().configuration().processPool())
     , m_wheelEventDeltaFilter(WheelEventDeltaFilter::create())
     , m_displayLinkClient(makeUnique<RemoteLayerTreeEventDispatcherDisplayLinkClient>(*this))
     , m_wheelEventActivityHysteresis([this](PAL::HysteresisState state) { wheelEventHysteresisUpdated(state); }, wheelEventHysteresisDuration)
@@ -472,12 +475,10 @@ void RemoteLayerTreeEventDispatcher::stopDisplayLinkObserver()
 
 void RemoteLayerTreeEventDispatcher::removeDisplayLinkClient()
 {
-    auto* displayLink = existingDisplayLink();
-    if (!displayLink)
-        return;
-
     LOG_WITH_STREAM(DisplayLink, stream << "[UI ] RemoteLayerTreeEventDispatcher::removeDisplayLinkClient");
-    displayLink->removeClient(*checkedDisplayLinkClient());
+
+    if (RefPtr processPool = m_processPool.get())
+        processPool->displayLinks().stopDisplayLinks(*checkedDisplayLinkClient());
     m_displayRefreshObserverID = { };
 }
 
@@ -854,7 +855,9 @@ void RemoteLayerTreeEventDispatcher::stopDisplayDidRefreshCallbacks(PlatformDisp
 {
     ASSERT(m_momentumEventDispatcherNeedsDisplayLink);
     m_momentumEventDispatcherNeedsDisplayLink = false;
-    startOrStopDisplayLink();
+    assertIsHeld(m_momentumEventDispatcherLock);
+    if (m_momentumEventDispatcher)
+        startOrStopDisplayLink();
 }
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)

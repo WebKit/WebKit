@@ -101,17 +101,14 @@ Ref<RemoteLayerTreeDrawingAreaProxyMac> RemoteLayerTreeDrawingAreaProxyMac::crea
 RemoteLayerTreeDrawingAreaProxyMac::RemoteLayerTreeDrawingAreaProxyMac(WebPageProxy& pageProxy, WebProcessProxy& webProcessProxy)
     : RemoteLayerTreeDrawingAreaProxy(pageProxy, webProcessProxy)
     , m_displayLinkClient(makeUniqueRef<RemoteLayerTreeDisplayLinkClient>(pageProxy.identifier()))
+    , m_processPool(pageProxy.configuration().processPool())
 {
 }
 
 RemoteLayerTreeDrawingAreaProxyMac::~RemoteLayerTreeDrawingAreaProxyMac()
 {
-    if (auto* displayLink = existingDisplayLink()) {
-        if (m_fullSpeedUpdateObserverID)
-            displayLink->removeObserver(m_displayLinkClient, *m_fullSpeedUpdateObserverID);
-        if (m_displayRefreshObserverID)
-            displayLink->removeObserver(m_displayLinkClient, *m_displayRefreshObserverID);
-    }
+    if (RefPtr processPool = m_processPool.get())
+        processPool->displayLinks().stopDisplayLinks(m_displayLinkClient);
 }
 
 DelegatedScrollingMode RemoteLayerTreeDrawingAreaProxyMac::delegatedScrollingMode() const

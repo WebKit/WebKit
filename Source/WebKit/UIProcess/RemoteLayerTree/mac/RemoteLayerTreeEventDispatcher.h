@@ -73,6 +73,7 @@ class RemoteLayerTreeDrawingAreaProxyMac;
 class RemoteLayerTreeNode;
 class RemoteScrollingTree;
 class RemoteLayerTreeEventDispatcherDisplayLinkClient;
+class WebProcessPool;
 
 // This class exists to act as a threadsafe DisplayLink::Client client, allowing RemoteScrollingCoordinatorProxyMac to
 // be main-thread only. It's the UI-process analogue of WebPage/EventDispatcher.
@@ -179,6 +180,7 @@ private:
 
     const WeakPtr<RemoteScrollingCoordinatorProxyMac> m_scrollingCoordinator;
     WebCore::PageIdentifier m_pageIdentifier;
+    const WeakPtr<WebProcessPool> m_processPool;
 
     std::unique_ptr<WebCore::WheelEventDeltaFilter> m_wheelEventDeltaFilter;
     std::unique_ptr<RemoteLayerTreeEventDispatcherDisplayLinkClient> m_displayLinkClient;
