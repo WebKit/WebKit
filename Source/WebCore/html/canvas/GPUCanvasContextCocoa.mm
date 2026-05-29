@@ -188,10 +188,18 @@ GPUCanvasContextCocoa::GPUCanvasContextCocoa(CanvasBase& canvas, Ref<GPUComposit
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
+<<<<<<< HEAD
 
         Ref screen = PlatformScreen::singleton();
         if (auto* screenData = screen->screenData(displayID))
             protectedThis->updateScreenHeadroom(screenData->currentEDRHeadroom, screenData->suppressEDR);
+=======
+        if (auto* screenData = WebCore::screenData(displayID)) {
+            protectedThis->m_screenEDRHeadroom = screenData->currentEDRHeadroom;
+            protectedThis->m_screenSuppressEDR = screenData->suppressEDR;
+            protectedThis->updateHeadroomFromScreenProperties();
+        }
+>>>>>>> 500da5401d26 (Concurrent HashMap access leads to MTE crashes)
     }))
 #endif // HAVE(SUPPORT_HDR_DISPLAY)
 {
@@ -269,6 +277,7 @@ void GPUCanvasContextCocoa::updateScreenHeadroomFromScreenPropertiesIfNeeded()
     if (!m_layerContentsDisplayDelegate->hasExtendedRange())
         return;
 
+<<<<<<< HEAD
     float maxEDRHeadroom = 1.f;
     bool suppressEDR = false;
 
@@ -291,6 +300,35 @@ void GPUCanvasContextCocoa::updateScreenHeadroomFromScreenPropertiesIfNeeded()
         semaphore.wait();
     }
 
+=======
+    if (m_screenPropertiesChangedObserver && (m_currentEDRHeadroom >= 1.f || m_screenEDRHeadroom >= 1.f)) {
+        if (m_currentEDRHeadroom < 1.f)
+            updateHeadroomFromScreenProperties();
+        return;
+    }
+
+    float maxEDRHeadroom = 1.f;
+    bool suppressEDR = false;
+
+    auto gatherScreenProperties = [&] {
+        for (const auto& screenData : WebCore::getScreenProperties().screenDataMap.values()) {
+            maxEDRHeadroom = std::max(maxEDRHeadroom, screenData.currentEDRHeadroom);
+            suppressEDR |= screenData.suppressEDR;
+        }
+    };
+
+    if (isMainThread())
+        gatherScreenProperties();
+    else {
+        BinarySemaphore semaphore;
+        callOnMainThread([&gatherScreenProperties, &semaphore] {
+            gatherScreenProperties();
+            semaphore.signal();
+        });
+        semaphore.wait();
+    }
+
+>>>>>>> 500da5401d26 (Concurrent HashMap access leads to MTE crashes)
     updateScreenHeadroom(maxEDRHeadroom, suppressEDR);
 }
 

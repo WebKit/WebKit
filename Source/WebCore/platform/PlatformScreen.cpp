@@ -36,8 +36,15 @@ namespace WebCore {
 
 static Lock& platformScreenLock()
 {
+<<<<<<< HEAD
     static Lock lock;
     return lock;
+=======
+    ASSERT(isMainThread());
+
+    static NeverDestroyed<ScreenProperties> screenProperties;
+    return screenProperties;
+>>>>>>> 500da5401d26 (Concurrent HashMap access leads to MTE crashes)
 }
 
 Ref<PlatformScreen>& PlatformScreen::instance() WTF_REQUIRES_LOCK(platformScreenLock())
