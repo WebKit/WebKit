@@ -27,10 +27,33 @@
 #include "WPEViewQtQuick.h"
 
 #include <QQmlEngine>
+#include <QMetaMethod>
 #include <QQuickWindow>
 #include <QSGSimpleTextureNode>
 
 #include <wtf/glib/GUniquePtr.h>
+
+namespace {
+bool hasDownload(const QList<GRefPtr<WebKitDownload>>& downloads, WebKitDownload* download)
+{
+    for (const auto& dl : downloads) {
+        if (dl.get() == download)
+            return true;
+    }
+    return false;
+}
+
+bool removeDownload(QList<GRefPtr<WebKitDownload>>& downloads, WebKitDownload* download)
+{
+    for (qsizetype i = 0; i < downloads.size(); ++i) {
+        if (downloads[i].get() == download) {
+            downloads.removeAt(i);
+            return true;
+        }
+    }
+    return false;
+}
+}
 
 /*!
   \qmltype WPEView
@@ -62,6 +85,15 @@ WPEQtView::~WPEQtView()
 
     if (d->m_webView)
         g_signal_handlers_disconnect_by_data(d->m_webView.get(), this);
+
+    if (d->m_currentDownload)
+        g_signal_handlers_disconnect_by_data(d->m_currentDownload.get(), this);
+    for (const auto& download : d->m_pendingDownloads)
+        g_signal_handlers_disconnect_by_data(download.get(), this);
+    for (const auto& download : d->m_activeDownloads)
+        g_signal_handlers_disconnect_by_data(download.get(), this);
+    if (auto* session = webkit_web_view_get_network_session(d->m_webView.get()))
+        g_signal_handlers_disconnect_by_data(session, this);
 }
 
 bool WPEQtView::event(QEvent* ev)
@@ -139,6 +171,8 @@ void WPEQtView::createWebView()
     g_signal_connect_swapped(d->m_webView.get(), "notify::estimated-load-progress", G_CALLBACK(notifyLoadProgressCallback), this);
     g_signal_connect(d->m_webView.get(), "load-changed", G_CALLBACK(notifyLoadChangedCallback), this);
     g_signal_connect(d->m_webView.get(), "load-failed", G_CALLBACK(notifyLoadFailedCallback), this);
+    if (auto* session = webkit_web_view_get_network_session(d->m_webView.get()))
+        g_signal_connect(session, "download-started", G_CALLBACK(downloadStartedCallback), this);
 
     if (!d->m_url.isEmpty())
         webkit_web_view_load_uri(d->m_webView.get(), d->m_url.toString().toUtf8().constData());
@@ -203,6 +237,127 @@ void WPEQtView::notifyLoadFailedCallback(WebKitWebView*, WebKitLoadEvent, const 
 
     auto loadRequest = std::make_unique<WPEQtViewLoadRequest>(QUrl(QString(failingURI)), loadStatus, error->message);
     Q_EMIT view->loadingChanged(loadRequest.get());
+}
+
+void WPEQtView::downloadStartedCallback(WebKitNetworkSession*, WebKitDownload* download, WPEQtView* view)
+{
+    view->setCurrentDownload(download);
+}
+
+void WPEQtView::downloadFinishedCallback(WebKitDownload* download, WPEQtView* view)
+{
+    view->handleDownloadFinished(download);
+}
+
+void WPEQtView::downloadFailedCallback(WebKitDownload* download, GError* error, WPEQtView* view)
+{
+    view->handleDownloadFailed(download, error);
+}
+
+void WPEQtView::handleDownloadFinished(WebKitDownload* download)
+{
+    Q_D(WPEQtView);
+    Q_EMIT downloadFinished(getFileNameFromDownload(download));
+
+    g_signal_handlers_disconnect_by_data(download, this);
+    if (d->m_currentDownload.get() == download) {
+        d->m_currentDownload = nullptr;
+        activateNextPendingDownload();
+    } else
+        removeDownload(d->m_pendingDownloads, download);
+    removeDownload(d->m_activeDownloads, download);
+}
+
+void WPEQtView::handleDownloadFailed(WebKitDownload* download, GError* error)
+{
+    Q_D(WPEQtView);
+    const QString filename = getFileNameFromDownload(download);
+    QString errorMsg = "";
+    if (error && error->message)
+        errorMsg = QString::fromUtf8(error->message);
+    else
+        errorMsg = QStringLiteral("Unknown error.");
+    Q_EMIT downloadFailed(filename, errorMsg);
+
+    g_signal_handlers_disconnect_by_data(download, this);
+    if (d->m_currentDownload.get() == download) {
+        d->m_currentDownload = nullptr;
+        activateNextPendingDownload();
+    } else
+        removeDownload(d->m_pendingDownloads, download);
+    removeDownload(d->m_activeDownloads, download);
+}
+
+gboolean WPEQtView::downloadDecideDestinationCallback(WebKitDownload*, gchar*, WPEQtView*)
+{
+    // Returning TRUE is necessary to indicate webkit that the webkit_download_set_destination
+    // will be called later.
+    return TRUE;
+}
+
+QString WPEQtView::getFileNameFromDownload(WebKitDownload* download)
+{
+    static const QString defaultFilename = "download";
+    if (!download)
+        return defaultFilename;
+
+    auto* uriRequest = webkit_download_get_request(download);
+    if (!uriRequest)
+        return defaultFilename;
+
+    const gchar* uri = webkit_uri_request_get_uri(uriRequest);
+    if (!uri)
+        return defaultFilename;
+
+    const QString suggestedFilename = QUrl(QString::fromUtf8(uri)).fileName();
+    if (suggestedFilename.isEmpty())
+        return defaultFilename;
+    return suggestedFilename;
+}
+
+void WPEQtView::setDownloadPath(const QString& path)
+{
+    Q_D(WPEQtView);
+    if (!d->m_currentDownload) {
+        qWarning("WPEQtView::setDownloadPath called without a pending download request");
+        return;
+    }
+
+    if (path.isEmpty()) {
+        webkit_download_cancel(d->m_currentDownload.get());
+        d->m_currentDownload = nullptr;
+        activateNextPendingDownload();
+        return;
+    }
+
+    const QByteArray pathByte = path.toUtf8();
+    if (!g_path_is_absolute(pathByte.constData())) {
+        qWarning("WPEQtView::setDownloadPath requires an absolute path");
+        webkit_download_cancel(d->m_currentDownload.get());
+        d->m_currentDownload = nullptr;
+        activateNextPendingDownload();
+        return;
+    }
+
+    webkit_download_set_destination(d->m_currentDownload.get(), pathByte.constData());
+    d->m_currentDownload = nullptr;
+    activateNextPendingDownload();
+}
+
+/*!
+  \qmlmethod void WPEQtView::cancelPendingDownload()
+
+  Cancels a pending download request, if any.
+*/
+void WPEQtView::cancelPendingDownload()
+{
+    Q_D(WPEQtView);
+    if (!d->m_currentDownload)
+        return;
+
+    webkit_download_cancel(d->m_currentDownload.get());
+    d->m_currentDownload = nullptr;
+    activateNextPendingDownload();
 }
 
 void WPEQtView::didUpdateScene()
@@ -662,6 +817,54 @@ void WPEQtView::setErrorOccured(bool errorOccured)
 {
     Q_D(WPEQtView);
     d->m_errorOccured = errorOccured;
+}
+
+void WPEQtView::setCurrentDownload(WebKitDownload* download)
+{
+    Q_D(WPEQtView);
+    if (!download)
+        return;
+
+    if (d->m_currentDownload.get() == download)
+        return;
+
+    if (hasDownload(d->m_pendingDownloads, download))
+        return;
+
+    if (!hasDownload(d->m_activeDownloads, download))
+        d->m_activeDownloads.append(GRefPtr<WebKitDownload>(download));
+
+
+    g_signal_connect(download, "finished", G_CALLBACK(downloadFinishedCallback), this);
+    g_signal_connect(download, "failed", G_CALLBACK(downloadFailedCallback), this);
+
+    if (!useCustomDownloadHandling())
+        return;
+
+    g_signal_connect(download, "decide-destination", G_CALLBACK(downloadDecideDestinationCallback), this);
+    if (!d->m_currentDownload) {
+        d->m_currentDownload = download;
+        Q_EMIT downloadStarted(getFileNameFromDownload(download));
+    } else
+        d->m_pendingDownloads.append(GRefPtr<WebKitDownload>(download));
+}
+
+bool WPEQtView::useCustomDownloadHandling() const
+{
+    return isSignalConnected(QMetaMethod::fromSignal(&WPEQtView::downloadStarted));
+}
+
+void WPEQtView::activateNextPendingDownload()
+{
+    Q_D(WPEQtView);
+    if (d->m_currentDownload)
+        return;
+    if (d->m_pendingDownloads.isEmpty())
+        return;
+
+    d->m_currentDownload = d->m_pendingDownloads.takeFirst();
+    if (d->m_currentDownload)
+        Q_EMIT downloadStarted(getFileNameFromDownload(d->m_currentDownload.get()));
 }
 
 #include "moc_WPEQtView.cpp"
