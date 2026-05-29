@@ -1172,7 +1172,11 @@ void NODELETE secureZeroSpan(std::span<T, Extent> destination)
 #ifdef __STDC_LIB_EXT1__
     memset_s(destination.data(), destination.size_bytes(), 0, destination.size_bytes()); // NOLINT
 #else
+<<<<<<< HEAD
     memset(destination.data(), 0, destination.size_bytes()); // NOLINT
+=======
+    memset(destination.data(), byte, destination.size_bytes()); // NOLINT
+>>>>>>> 9ada70cfc7e7 (Use asm volatile annotation instead of volatile cast for memset)
     // Prevent the compiler from eliding the memset as a dead store.
     // Without this barrier, the compiler may prove that no well-defined
     // read follows and optimize away the write.
