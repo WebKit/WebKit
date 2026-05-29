@@ -1935,6 +1935,11 @@ std::optional<String> Quirks::needsCustomUserAgentOverride(const URL& url, const
     if (host == "outlook.live.com"_s)
         return chromeUserAgent;
 
+    // calendar.google.com rdar://173413224
+    // Gcal's non-Chromium print path serves a PDF whose OpenAction this.print() isn't honored by WebKit's PDF viewer; spoofing Chromium routes Safari to the JS-driven print path.
+    if (host == "calendar.google.com"_s)
+        return chromeUserAgent;
+
 #if PLATFORM(COCOA)
     // FIXME(rdar://148759791): Remove this once TikTok removes the outdated error message.
     if (hostDomain.string() == "tiktok.com"_s) {
