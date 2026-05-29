@@ -741,12 +741,20 @@ ExceptionOr<Ref<DocumentFragment>> Range::createContextualFragment(Variant<Ref<T
     RefPtr<Element> element;
     if (isAnyOf<Document, DocumentFragment>(node))
         element = nullptr;
+<<<<<<< HEAD
     else if (auto* maybeElement = dynamicDowncast<Element>(node.ptr()))
+=======
+    else if (auto* maybeElement = dynamicDowncast<Element>(node.get()))
+>>>>>>> 4966a0d102e7 (Use-after-free of Node in Range::createContextualFragment)
         element = maybeElement;
     else
         element = node->parentElement();
     if (!element || (element->document().isHTMLDocument() && is<HTMLHtmlElement>(*element)))
+<<<<<<< HEAD
         element = HTMLBodyElement::create(protect(node->document()));
+=======
+        element = HTMLBodyElement::create(node->protectedDocument());
+>>>>>>> 4966a0d102e7 (Use-after-free of Node in Range::createContextualFragment)
     return WebCore::createContextualFragment(*element, stringValueHolder.releaseReturnValue(), { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::DoNotMarkAlreadyStarted });
 }
 

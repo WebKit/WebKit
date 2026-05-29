@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="require-trusted-types-for 'script'">
+</head>
+<body>
+<p>This tests calling createContextualFragment with trusted types createHTML callback which clears range's endpoints.<br>
+WebKit should not crash or hit any assertions under ASAN and you should see PASS below:</p>
+<div id="result"></div>
+<script src="../../../resources/gc.js"></script>
+<script>
+globalThis?.testRunner.dumpAsText();
+
+const range = document.createRange();
+let div = document.createElement('div');
+range.setStart(div, 0);
+range.setEnd(div, 0);
+
+let didRun = false;
+trustedTypes.createPolicy('default', {
+  createHTML(string) {
+    if (didRun)
+      return;
+    didRun = true;
+
+    range.setEnd(document, 0); // drops range references to 'v'
+    div = null; // drops JS wrapper reference to 'v'
+    gc(); // wrapper GC'd -> C++ object GC'd
+
+    return string;
+  }
+});
+
+range.createContextualFragment('x');
+
+result.textContent = 'PASS';
+</script>
+</body>
+</html>
