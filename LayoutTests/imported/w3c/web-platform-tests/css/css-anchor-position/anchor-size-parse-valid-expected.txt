@@ -4299,4 +4299,6 @@ PASS e.style['margin-left'] = "calc((anchor-size(--foo width) + anchor-size(--ba
 PASS e.style['margin-left'] = "calc(0.5 * (anchor-size(--foo width) + anchor-size(--bar height)))" should set the property value
 PASS e.style['margin-left'] = "anchor-size(--foo width, calc(0.5 * anchor-size(--bar height)))" should set the property value
 PASS e.style['margin-left'] = "min(100px, 10%, anchor-size(--foo width), anchor-size(--bar height))" should set the property value
+PASS e.style['width'] = "anchor-size(--foo width, 0)" should set the property value
+PASS e.style['width'] = "calc(anchor-size(--foo width, 0))" should set the property value
 
