@@ -299,9 +299,16 @@ public:
     WEBCORE_EXPORT Element* NODELETE parentElementInComposedTree() const;
     Element* NODELETE parentOrShadowHostElement() const;
     inline void setParentNode(ContainerNode*);
+<<<<<<< HEAD
     inline Node& NODELETE rootNode() const;
     WEBCORE_EXPORT Node& NODELETE traverseToRootNode() const;
     Node& NODELETE shadowIncludingRoot() const;
+=======
+    inline Node& rootNode() const;
+    WEBCORE_EXPORT Node& traverseToRootNode() const;
+    Node& shadowIncludingRoot() const { return *m_shadowIncludingRoot; }
+    void resetShadowIncludingRoot() { m_shadowIncludingRoot = this; }
+>>>>>>> 7058101b207d (Heap use-after-free in Node::rootNode via stale m_shadowIncludingRoot)
 
     struct GetRootNodeOptions {
         bool composed;
