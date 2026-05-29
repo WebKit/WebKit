@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <QHash>
+#include <QList>
 #include <QSize>
 #include <QUrl>
 #include <wpe/webkit.h>
@@ -30,6 +32,10 @@ public:
     ~WPEQtViewPrivate() { }
 
     GRefPtr<WebKitWebView> m_webView;
+    quint32 m_nextDownloadId { 1 };
+    QHash<quint32, GRefPtr<WebKitDownload>> m_downloads;
+    QHash<WebKitDownload*, quint32> m_downloadIds;
+
     QUrl m_url;
     QString m_html;
     QUrl m_baseUrl;
