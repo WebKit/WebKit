@@ -38,7 +38,6 @@ class FileStreamClient : public AbstractRefCountedAndCanMakeWeakPtr<FileStreamCl
 public:
     virtual void didOpen(bool) { } // false signals failure.
     virtual void didGetSize(long long) { } // -1 signals failure.
-    virtual void didRead(int) { } // -1 signals failure.
     virtual void didWrite(int) { } // -1 signals failure.
     virtual void didTruncate(bool) { } // false signals failure.
 

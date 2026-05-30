@@ -164,12 +164,12 @@ void AsyncFileStream::close()
     });
 }
 
-void AsyncFileStream::read(std::span<uint8_t> buffer)
+void AsyncFileStream::read(const Box<Vector<uint8_t>>& buffer, Function<void(int bytesRead)>&& didRead)
 {
-    perform([buffer](FileStream& stream) -> Function<void(FileStreamClient&)> {
-        int bytesRead = stream.read(buffer);
-        return [bytesRead](FileStreamClient& client) {
-            client.didRead(bytesRead);
+    perform([buffer, didRead = WTF::move(didRead)](FileStream& stream) mutable -> Function<void(FileStreamClient&)> {
+        int bytesRead = stream.read(*buffer);
+        return [bytesRead, didRead = WTF::move(didRead)](FileStreamClient&) {
+            didRead(bytesRead);
         };
     });
 }
