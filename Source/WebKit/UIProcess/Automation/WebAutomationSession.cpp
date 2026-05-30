@@ -34,6 +34,7 @@
 #include "APIString.h"
 #include "AutomationProtocolObjects.h"
 #include "CoordinateSystem.h"
+#include "InspectorPassthroughChannel.h"
 #include "PageLoadState.h"
 #include "WebAutomationSessionMacros.h"
 #include "WebAutomationSessionMessages.h"
@@ -44,6 +45,7 @@
 #include "WebFullScreenManagerProxy.h"
 #include "WebInspectorUIProxy.h"
 #include "WebOpenPanelResultListenerProxy.h"
+#include "WebPageInspectorController.h"
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"
 #include <JavaScriptCore/ConsoleTypes.h>
@@ -172,6 +174,9 @@ WebAutomationSession::WebAutomationSession()
 
 WebAutomationSession::~WebAutomationSession()
 {
+#if ENABLE(REMOTE_INSPECTOR)
+    disconnectAllInspectorPassthroughChannels();
+#endif
     ASSERT(!m_client);
     ASSERT(!m_processPool);
 #if ENABLE(REMOTE_INSPECTOR)
@@ -244,6 +249,38 @@ bool WebAutomationSession::isPendingTermination() const
 
 #endif // ENABLE(REMOTE_INSPECTOR)
 
+#if ENABLE(REMOTE_INSPECTOR)
+CommandResult<void> WebAutomationSession::sendInspectorMessage(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const String& message)
+{
+    assertIsMainRunLoop();
+
+    SYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!m_client || !m_client->shouldEnableInspectorTesting(*this), NotImplemented);
+
+    RefPtr<WebPageProxy> page = webPageProxyForHandle(browsingContextHandle);
+    SYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
+
+    // The WebPageInspectorController survives provisional page swaps
+    // (didCommitProvisionalPage swaps the PageTarget, not the controller),
+    // so connect-once-per-controller is stable across cross-site navigation.
+    auto& inspectorController = page->inspectorController();
+    auto pageID = page->identifier();
+
+    auto addResult = m_inspectorPassthroughChannels.ensure(pageID, [&] {
+        return makeUnique<InspectorPassthroughChannel>(*this, browsingContextHandle);
+    });
+    if (addResult.isNewEntry)
+        inspectorController.connectFrontend(*addResult.iterator->value);
+
+    inspectorController.dispatchMessageFromFrontend(message);
+    return { };
+}
+
+void WebAutomationSession::sendInspectorMessageToClient(const String& browsingContextHandle, const String& message)
+{
+    m_domainNotifier->receiveInspectorMessage(browsingContextHandle, message);
+}
+#endif // ENABLE(REMOTE_INSPECTOR)
+
 void WebAutomationSession::terminate()
 {
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
@@ -274,11 +311,33 @@ void WebAutomationSession::terminate()
     }
 
     m_debuggable->setIsPaired(false);
+
+    disconnectAllInspectorPassthroughChannels();
 #endif
 
     if (m_client)
         m_client->didDisconnectFromRemote(*this);
 }
+
+#if ENABLE(REMOTE_INSPECTOR)
+void WebAutomationSession::disconnectInspectorPassthroughChannel(WebPageProxyIdentifier pageID)
+{
+    auto entry = m_inspectorPassthroughChannels.take(pageID);
+    if (!entry)
+        return;
+    if (RefPtr page = WebProcessProxy::webPage(pageID))
+        page->inspectorController().disconnectFrontend(*entry);
+}
+
+void WebAutomationSession::disconnectAllInspectorPassthroughChannels()
+{
+    auto channels = std::exchange(m_inspectorPassthroughChannels, { });
+    for (auto& [pageID, channel] : channels) {
+        if (RefPtr page = WebProcessProxy::webPage(pageID))
+            page->inspectorController().disconnectFrontend(*channel);
+    }
+}
+#endif // ENABLE(REMOTE_INSPECTOR)
 
 RefPtr<WebPageProxy> WebAutomationSession::webPageProxyForHandle(const String& handle)
 {
@@ -1318,6 +1377,10 @@ void WebAutomationSession::setViewportForPage(WebPageProxy& page, std::optional<
 
 void WebAutomationSession::willClosePage(const WebPageProxy& page)
 {
+#if ENABLE(REMOTE_INSPECTOR)
+    disconnectInspectorPassthroughChannel(page.identifier());
+#endif
+
     String handle = handleForWebPageProxy(page);
     m_domainNotifier->browsingContextCleared(handle);
 

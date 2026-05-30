@@ -285,6 +285,7 @@ UIProcess/API/Cocoa/_WKArchiveExclusionRule.mm @nonARC
 UIProcess/API/Cocoa/_WKAttachment.mm @nonARC
 UIProcess/API/Cocoa/_WKAutomationSession.mm @nonARC
 UIProcess/API/Cocoa/_WKAutomationSessionConfiguration.mm @nonARC
+UIProcess/API/Cocoa/_WKAutomationSessionTesting.mm @nonARC
 UIProcess/API/Cocoa/_WKContentRuleListAction.mm @nonARC
 UIProcess/API/Cocoa/_WKContextMenuElementInfo.mm @nonARC
 UIProcess/API/Cocoa/_WKCustomHeaderFields.mm @nonARC @no-unify

@@ -2630,6 +2630,11 @@ framework module WebKit_Private [system] {
     export *
   }
 
+  explicit module _WKAutomationSessionPrivateForTesting {
+    header "_WKAutomationSessionPrivateForTesting.h"
+    export *
+  }
+
   explicit module _WKContentRuleListAction {
     header "_WKContentRuleListAction.h"
     export *

@@ -92,7 +92,12 @@ class ViewSnapshot;
 class WebFrameProxy;
 class WebOpenPanelResultListenerProxy;
 class WebPageProxy;
+class WebPageInspectorController;
 class WebProcessPool;
+
+#if ENABLE(REMOTE_INSPECTOR)
+class InspectorPassthroughChannel;
+#endif
 
 #if ENABLE(WEBDRIVER_BIDI)
 class WebDriverBidiProcessor;
@@ -129,6 +134,10 @@ class WebAutomationSession final : public API::ObjectImpl<API::Object::Type::Aut
 
 #if ENABLE(WEBDRIVER_BIDI)
 friend class WebDriverBidiProcessor;
+#endif
+
+#if ENABLE(REMOTE_INSPECTOR)
+friend class InspectorPassthroughChannel;
 #endif
 
 public:
@@ -299,6 +308,10 @@ public:
     Inspector::CommandResult<void> emitActiveBidiScriptRealmCreatedEvents() override;
     void sendBidiMessage(const String&);
     WebDriverBidiProcessor& bidiProcessor() const { return m_bidiProcessor; }
+#endif
+
+#if ENABLE(REMOTE_INSPECTOR)
+    Inspector::CommandResult<void> sendInspectorMessage(const Inspector::Protocol::Automation::BrowsingContextHandle&, const String& message) override;
 #endif
 
     void performApplicationCommand(const Inspector::Protocol::Automation::BrowsingContextHandle&, const String& commandName, const String& arguments, Inspector::CommandCallback<String>&&) override;
@@ -474,6 +487,23 @@ private:
 #if ENABLE(REMOTE_INSPECTOR)
     Inspector::FrontendChannel* m_remoteChannel { nullptr };
     const Ref<Debuggable> m_debuggable;
+#endif
+
+    // Web Inspector backend passthrough: clients with the
+    // shouldEnableInspectorTesting capability can issue
+    // Automation.sendInspectorMessage to forward an Inspector backend
+    // command into a page's WebPageInspectorController; the controller's
+    // responses and events come back as Automation.receiveInspectorMessage.
+    // Each connected page owns its own InspectorPassthroughChannel so the
+    // outgoing event can name its source browsing context.
+#if ENABLE(REMOTE_INSPECTOR)
+    void sendInspectorMessageToClient(const String& browsingContextHandle, const String& message);
+    void disconnectInspectorPassthroughChannel(WebPageProxyIdentifier);
+    void disconnectAllInspectorPassthroughChannels();
+#endif
+
+#if ENABLE(REMOTE_INSPECTOR)
+    HashMap<WebPageProxyIdentifier, std::unique_ptr<InspectorPassthroughChannel>> m_inspectorPassthroughChannels;
 #endif
 
 };

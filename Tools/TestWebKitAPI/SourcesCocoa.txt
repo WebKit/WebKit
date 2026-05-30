@@ -274,6 +274,7 @@ Tests/WebKit/WKWebView/SampledPageTopColor.mm @nonARC
 Tests/WebKit/WKWebView/SchemeRegistry.mm @nonARC
 Tests/WebKit/WKWebView/ScreenTime.mm @nonARC
 Tests/WebKit/WKWebView/ScreenWakeLock.mm @nonARC
+Tests/WebKit/WKWebView/SendInspectorMessage.mm @nonARC
 Tests/WebKit/WKWebView/SerializedNode.mm @nonARC
 Tests/WebKit/WKWebView/ScriptTrackingPrivacyTests.mm @nonARC
 Tests/WebKit/WKWebView/ServiceWorkerBasic.mm @nonARC
