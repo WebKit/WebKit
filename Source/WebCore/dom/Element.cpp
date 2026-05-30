@@ -932,10 +932,29 @@ bool Element::isFocusable() const
         return false;
 
     if (!renderer()) {
-        // Elements in canvas fallback content are not rendered, but they are allowed to be
-        // focusable as long as their canvas is displayed and visible.
-        RefPtr canvas = ancestorsOfType<HTMLCanvasElement>(*this).first();
-        if (canvas && !canvas->hasFocusableStyle())
+        // An element with no renderer may still be focusable as canvas fallback content. Per
+        // spec, that requires its nearest canvas ancestor in the flat tree to be displayed and
+        // visible, so we walk the flat tree once:
+        //
+        //   - If we reach a canvas, this element is fallback content and is focusable only if
+        //     that canvas is displayed and visible.
+        //   - If we leave the flat tree before reaching the document element (e.g. an unslotted
+        //     descendant of a shadow host), this element is not in the flat tree and so is not
+        //     focusable. This must be checked here because hasFocusableStyle() resolves a
+        //     "rendered" style even for elements outside the flat tree.
+        //   - Otherwise (e.g. inside a skipped content-visibility:auto subtree with no canvas
+        //     ancestor) we fall through to hasFocusableStyle(), preserving the scroll-on-focus
+        //     and focus-visible paths.
+        bool reachedRoot = false;
+        for (Ref ancestor : composedTreeAncestors(*this)) {
+            if (RefPtr canvas = dynamicDowncast<HTMLCanvasElement>(ancestor.get()))
+                return canvas->hasFocusableStyle() && hasFocusableStyle();
+            if (ancestor.ptr() == document().documentElement()) {
+                reachedRoot = true;
+                break;
+            }
+        }
+        if (!reachedRoot)
             return false;
     }
 
