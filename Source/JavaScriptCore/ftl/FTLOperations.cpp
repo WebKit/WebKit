@@ -99,6 +99,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationPopulateObjectInOSR, void, (JSGlobalO
             JSValue value = JSValue::decode(values[i]);
             unsigned index = property.location().info();
 
+<<<<<<< HEAD
             // When a double array element's Phi resolves to PNaN (the hole default), the OSR exit
             // compiler boxes it as jsNumber(NaN). To preserve hole semantics for double Arrays,
             // store PNaN directly instead of going through putDirectIndex which would trigger a
@@ -125,6 +126,16 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationPopulateObjectInOSR, void, (JSGlobalO
                 array->butterfly()->arrayStorage()->m_vector[index].clear();
             else
                 array->putDirectIndex(globalObject, index, value);
+=======
+            if (value.isEmpty()) {
+                ASSERT(!hasDouble(materialization->indexingType()));
+                if (hasAnyArrayStorage(array->indexingType()))
+                    array->butterfly()->arrayStorage()->m_vector[index].clear();
+                else
+                    array->butterfly()->contiguous().atUnsafe(index).clear();
+                continue;
+            }
+>>>>>>> 899331a21899 ([JSC] Array rematerialization should know how to have a bad time)
 
             scope.assertNoExceptionExceptTermination();
         }
