@@ -44,6 +44,7 @@
 #import "WebExtensionMessageTargetParameters.h"
 #import "WebExtensionUtilities.h"
 #import <wtf/BlockPtr.h>
+#import <wtf/Box.h>
 #import <wtf/CallbackAggregator.h>
 #import <wtf/darwin/DispatchExtras.h>
 
@@ -204,11 +205,11 @@ void WebExtensionContext::runtimeConnect(const String& extensionID, WebExtension
             return;
         }
 
-        size_t handledCount = 0;
+        auto handledCount = Box<size_t>::create(0);
         size_t totalExpected = mainWorldProcesses.size();
 
         for (auto& process : mainWorldProcesses) {
-            process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeConnectEvent(targetContentWorldType, channelIdentifier, name, std::nullopt, completeSenderParameters), [=, this, protectedThis = Ref { *this }, &handledCount](HashCountedSet<WebPageProxyIdentifier>&& addedPortCounts) mutable {
+            process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeConnectEvent(targetContentWorldType, channelIdentifier, name, std::nullopt, completeSenderParameters), [=, this, protectedThis = Ref { *this }](HashCountedSet<WebPageProxyIdentifier>&& addedPortCounts) mutable {
                 // Flip target and source worlds since we're adding the opposite side of the port connection, sending from target back to source.
                 addPorts(targetContentWorldType, sourceContentWorldType, channelIdentifier, WTF::move(addedPortCounts));
 
@@ -217,7 +218,7 @@ void WebExtensionContext::runtimeConnect(const String& extensionID, WebExtension
 
                 firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
 
-                if (++handledCount < totalExpected)
+                if (++*handledCount < totalExpected)
                     return;
 
                 clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
@@ -539,11 +540,11 @@ void WebExtensionContext::runtimeWebPageConnect(const String& extensionID, WebEx
             return;
         }
 
-        size_t handledCount = 0;
+        auto handledCount = Box<size_t>::create(0);
         size_t totalExpected = mainWorldProcesses.size();
 
         for (auto& process : mainWorldProcesses) {
-            process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeConnectEvent(targetContentWorldType, channelIdentifier, name, std::nullopt, completeSenderParameters), [=, this, protectedThis = Ref { *this }, &handledCount](HashCountedSet<WebPageProxyIdentifier>&& addedPortCounts) mutable {
+            process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeConnectEvent(targetContentWorldType, channelIdentifier, name, std::nullopt, completeSenderParameters), [=, this, protectedThis = Ref { *this }](HashCountedSet<WebPageProxyIdentifier>&& addedPortCounts) mutable {
                 // Flip target and source worlds since we're adding the opposite side of the port connection, sending from target back to source.
                 addPorts(targetContentWorldType, sourceContentWorldType, channelIdentifier, WTF::move(addedPortCounts));
 
@@ -552,7 +553,7 @@ void WebExtensionContext::runtimeWebPageConnect(const String& extensionID, WebEx
 
                 firePortDisconnectEventIfNeeded(sourceContentWorldType, targetContentWorldType, channelIdentifier);
 
-                if (++handledCount < totalExpected)
+                if (++*handledCount < totalExpected)
                     return;
 
                 clearQueuedPortMessages(targetContentWorldType, channelIdentifier);
