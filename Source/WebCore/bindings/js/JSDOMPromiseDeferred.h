@@ -30,6 +30,7 @@
 #include <WebCore/ExceptionOr.h>
 #include <WebCore/JSDOMConvert.h>
 #include <WebCore/JSDOMGuardedObject.h>
+#include <WebCore/JSDOMPromise.h>
 #include <WebCore/ScriptExecutionContext.h>
 
 namespace WebCore {
@@ -351,6 +352,7 @@ void fulfillPromiseWithArrayBufferFromSpan(Ref<DeferredPromise>&&, std::span<con
 void fulfillPromiseWithUint8Array(Ref<DeferredPromise>&&, Uint8Array*);
 void fulfillPromiseWithUint8ArrayFromSpan(Ref<DeferredPromise>&&, std::span<const uint8_t>);
 WEBCORE_EXPORT void rejectPromiseWithExceptionIfAny(JSC::JSGlobalObject&, JSDOMGlobalObject&, JSC::JSPromise&, JSC::CatchScope&);
+WEBCORE_EXPORT void rejectPromisesWithExceptionIfAny(JSC::JSGlobalObject&, JSDOMGlobalObject&, JSC::JSPromise&, JSC::JSPromise&, JSC::CatchScope&);
 
 enum class RejectedPromiseWithTypeErrorCause { NativeGetter, InvalidThis };
 JSC::EncodedJSValue createRejectedPromiseWithTypeError(JSC::JSGlobalObject&, const String&, RejectedPromiseWithTypeErrorCause);
@@ -400,25 +402,33 @@ inline JSC::JSValue callPromiseFunction(JSC::JSGlobalObject& lexicalGlobalObject
 
 using PromisePairFunction = JSC::EncodedJSValue(JSC::JSGlobalObject&, JSC::CallFrame&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
 
-template<typename PromisePairFunctor>
+template<typename DictionaryType, typename PromisePairFunctor>
 inline JSC::EncodedJSValue callPromisePairFunction(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, PromisePairFunctor functor)
 {
     JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
 
     auto& globalObject = *JSC::jsSecureCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
-    auto* promise = JSC::JSPromise::create(vm, globalObject.promiseStructure());
-    ASSERT(promise);
+    auto* promise1 = JSC::JSPromise::create(vm, globalObject.promiseStructure());
+    ASSERT(promise1);
     auto* promise2 = JSC::JSPromise::create(vm, globalObject.promiseStructure());
     ASSERT(promise2);
 
-    auto result = functor(globalObject, callFrame, DeferredPromise::create(globalObject, *promise, DeferredPromise::Mode::RetainPromiseOnResolve), DeferredPromise::create(globalObject, *promise2, DeferredPromise::Mode::RetainPromiseOnResolve));
+    auto result = functor(globalObject, callFrame, DeferredPromise::create(globalObject, *promise1, DeferredPromise::Mode::RetainPromiseOnResolve), DeferredPromise::create(globalObject, *promise2, DeferredPromise::Mode::RetainPromiseOnResolve));
 
-    rejectPromiseWithExceptionIfAny(lexicalGlobalObject, globalObject, *promise, catchScope);
-    rejectPromiseWithExceptionIfAny(lexicalGlobalObject, globalObject, *promise2, catchScope);
+    rejectPromisesWithExceptionIfAny(lexicalGlobalObject, globalObject, *promise1, *promise2, catchScope);
+
     // FIXME: We could have error since any JS call can throw stack-overflow errors.
     // https://bugs.webkit.org/show_bug.cgi?id=203402
     RETURN_IF_EXCEPTION(catchScope, JSC::encodedJSValue());
+
+    // When the functor threw (e.g. during IDL argument conversion), its return
+    // value is an empty JSValue sentinel. Rebuild a valid result dictionary from
+    // the (now rejected) promises via convertDictionaryToJS.
+    if (!JSC::JSValue::decode(result)) [[unlikely]] {
+        result = JSC::JSValue::encode(convertDictionaryToJS(lexicalGlobalObject, globalObject, DictionaryType { DOMPromise::create(globalObject, *promise1), DOMPromise::create(globalObject, *promise2) }));
+        RETURN_IF_EXCEPTION(catchScope, JSC::encodedJSValue());
+    }
 
     return result;
 }

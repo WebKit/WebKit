@@ -1,0 +1,16 @@
+Tests that navigation.navigate() returns a valid NavigationResult when argument conversion throws
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS typeof result is 'object'
+PASS 'committed' in result is true
+PASS 'finished' in result is true
+PASS result.committed instanceof Promise is true
+PASS result.finished instanceof Promise is true
+PASS committedError.message is "test error"
+PASS finishedError.message is "test error"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

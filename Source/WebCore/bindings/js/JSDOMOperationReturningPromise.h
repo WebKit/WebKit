@@ -56,10 +56,10 @@ public:
     }
 
     using Operation2 = JSC::EncodedJSValue(JSC::JSGlobalObject*, JSC::CallFrame*, ClassParameter, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
-    template<Operation2 operation, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::RejectPromise>
+    template<Operation2 operation, typename DictionaryType, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::RejectPromise>
     static JSC::EncodedJSValue callReturningPromisePair(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, const char* operationName)
     {
-        return callPromisePairFunction(lexicalGlobalObject, callFrame, [&operationName] (JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, Ref<DeferredPromise>&& promise, Ref<DeferredPromise>&& promise2) {
+        return callPromisePairFunction<DictionaryType>(lexicalGlobalObject, callFrame, [&operationName] (JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, Ref<DeferredPromise>&& promise, Ref<DeferredPromise>&& promise2) {
             auto* thisObject = IDLOperation<JSClass>::cast(lexicalGlobalObject, callFrame);
             if constexpr (shouldThrow != CastedThisErrorBehavior::Assert) {
                 if (!thisObject) [[unlikely]]
