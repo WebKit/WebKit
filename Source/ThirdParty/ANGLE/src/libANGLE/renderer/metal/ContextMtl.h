@@ -417,7 +417,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
     void endBlitAndComputeEncoding();
     angle::Result resyncDrawFramebufferIfNeeded(const gl::Context *context);
     angle::Result setupDraw(const gl::Context *context,
-                            gl::PrimitiveMode mode,
                             GLint firstVertex,
                             GLsizei vertexOrIndexCount,
                             GLsizei instanceCount,
@@ -427,7 +426,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
                             bool *isNoOp);
 
     angle::Result setupDrawImpl(const gl::Context *context,
-                                gl::PrimitiveMode mode,
                                 GLint firstVertex,
                                 GLsizei vertexOrIndexCount,
                                 GLsizei instanceCount,
@@ -531,7 +529,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
     angle::Result handleDirtyDepthBias(const gl::Context *context);
     angle::Result handleDirtyRenderPass(const gl::Context *context);
     angle::Result checkIfPipelineChanged(const gl::Context *context,
-                                         gl::PrimitiveMode primitiveMode,
                                          bool xfbPass,
                                          bool *pipelineDescChanged);
 
