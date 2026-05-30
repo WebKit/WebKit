@@ -797,6 +797,16 @@ void ViewTransition::activateViewTransition()
     protect(m_ready.second)->resolve();
 }
 
+// https://github.com/w3c/csswg-drafts/issues/12442
+void ViewTransition::finishDone()
+{
+    if (m_phase != ViewTransitionPhase::PendingDone)
+        return;
+    m_phase = ViewTransitionPhase::Done;
+    clearViewTransition();
+    protect(m_finished.second)->resolve();
+}
+
 // https://drafts.csswg.org/css-view-transitions/#handle-transition-frame-algorithm
 void ViewTransition::handleTransitionFrame()
 {
@@ -833,10 +843,15 @@ void ViewTransition::handleTransitionFrame()
             || checkForActiveAnimations({ PseudoElementType::ViewTransitionOld, name });
     }
 
-    if (!hasActiveAnimations) {
-        m_phase = ViewTransitionPhase::Done;
-        clearViewTransition();
-        protect(m_finished.second)->resolve();
+    if (!hasActiveAnimations && m_phase == ViewTransitionPhase::Animating) {
+        // Set phase to pending-done and defer the actual cleanup to an async task so that
+        // the finished promise resolves after the frame in which animations finish.
+        // https://github.com/w3c/csswg-drafts/issues/12442
+        m_phase = ViewTransitionPhase::PendingDone;
+        protect(document()->eventLoop())->queueTask(TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }] {
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->finishDone();
+        });
         return;
     }
 
@@ -1142,6 +1157,7 @@ TextStream& operator<<(TextStream& ts, ViewTransitionPhase phase)
     case ViewTransitionPhase::CapturingOldState: ts << "CapturingOldState"_s; break;
     case ViewTransitionPhase::UpdateCallbackCalled: ts << "UpdateCallbackCalled"_s; break;
     case ViewTransitionPhase::Animating: ts << "Animating"_s; break;
+    case ViewTransitionPhase::PendingDone: ts << "PendingDone"_s; break;
     case ViewTransitionPhase::Done: ts << "Done"_s; break;
     }
     return ts;

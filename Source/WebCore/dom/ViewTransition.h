@@ -64,6 +64,7 @@ enum class ViewTransitionPhase : uint8_t {
     CapturingOldState, // Not part of the spec.
     UpdateCallbackCalled,
     Animating,
+    PendingDone,
     Done
 };
 
@@ -188,6 +189,7 @@ public:
     void skipViewTransition(ExceptionOr<JSC::JSValue>&&);
 
     void setupViewTransition();
+    void finishDone();
     void handleTransitionFrame();
 
     void activateViewTransition();
