@@ -152,7 +152,7 @@ std::optional<MappedFileData> FileHandle::map(MappedFileMode, FileOpenMode openM
         return { };
 
     if (!*size)
-        return MappedFileData { };
+        return MappedFileData::emptyFile();
 
     DWORD pageProtection = PAGE_READONLY;
     DWORD desiredAccess = FILE_MAP_READ;
