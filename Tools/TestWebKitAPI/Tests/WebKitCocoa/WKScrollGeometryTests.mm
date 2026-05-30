@@ -44,6 +44,10 @@
 
 @class WKScrollGeometry;
 
+@interface NSObject (Temp_174890761)
+- (CGSize)contentSize;
+@end
+
 @interface TestScrollGeometryDelegate : NSObject <WKUIDelegate>
 
 - (void)_webView:(WKWebView *)webView geometryDidChange:(WKScrollGeometry *)geometry;
@@ -63,7 +67,7 @@
 
 - (CGSize)currentContentSize
 {
-    return [_currentGeometry contentSize];
+    return [(NSObject *)_currentGeometry.get() contentSize];
 }
 
 @end
