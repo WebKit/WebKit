@@ -101,9 +101,9 @@ constexpr T GetPrimitiveRestartIndexFromType()
 static_assert(GetPrimitiveRestartIndexFromType<uint8_t>() == 0xFF,
               "verify restart index for uint8_t values");
 static_assert(GetPrimitiveRestartIndexFromType<uint16_t>() == 0xFFFF,
-              "verify restart index for uint8_t values");
+              "verify restart index for uint16_t values");
 static_assert(GetPrimitiveRestartIndexFromType<uint32_t>() == 0xFFFFFFFF,
-              "verify restart index for uint8_t values");
+              "verify restart index for uint32_t values");
 
 bool IsTriangleMode(PrimitiveMode drawMode);
 bool IsPolygonMode(PrimitiveMode mode);
