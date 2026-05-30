@@ -210,23 +210,22 @@ struct pas_mar_exported_allocation_record pas_mar_get_allocation_record(pas_mar_
 
     void* base_object_address = NULL;
     for (unsigned i = 0; i < PAS_MAR_TRACKED_ALLOCATIONS; ++i) {
-        unsigned index = (pas_mar_allocation_table_head_index(registry) + i) % PAS_MAR_TRACKED_ALLOCATIONS;
-        if ((registry->allocation_record_table_head + i) % MAR_ALLOCATION_RECORD_TABLE_FIFO_MODULUS == registry->allocation_record_table_tail)
+        struct pas_mar_memory_action_record* art_entry = pas_mar_registry_get_memory_action(registry, i);
+        if (!art_entry)
             break;
-        struct pas_mar_memory_action_record* art_entry = &registry->allocation_record_table[index];
         if (art_entry->is_allocation) {
             // Check if the allocation was within the range
             if ((uintptr_t) address >= (uintptr_t) pas_mar_canonicalize_address(art_entry->address) && (uintptr_t) address < ((uintptr_t) pas_mar_canonicalize_address(art_entry->address)) + art_entry->allocation_size_bytes) {
                 // Check that we have a valid backtrace
                 unsigned registry_index = art_entry->backtrace_registry_index;
-                if (registry->backtrace_registry[registry_index].hash != art_entry->backtrace_hash)
+                pas_mar_backtrace_record* backtrace = pas_mar_registry_get_backtrace(registry, registry_index);
+                if (backtrace->hash != art_entry->backtrace_hash)
                     continue;
-
-                pas_mar_backtrace_record* backtrace = &registry->backtrace_registry[registry_index];
 
                 result.allocation_size_bytes = art_entry->allocation_size_bytes;
                 result.is_valid = true;
-                result.allocation_trace.num_frames= backtrace->num_frames;
+                result.allocation_trace.num_frames = backtrace->num_frames;
+                PAS_ASSERT(backtrace->num_frames < PAS_MAR_BACKTRACE_MAX_SIZE);
                 memcpy(result.allocation_trace.backtrace_buffer, backtrace->backtrace_buffer, backtrace->num_frames * sizeof(void*));
 
                 base_object_address = art_entry->address;
@@ -235,12 +234,12 @@ struct pas_mar_exported_allocation_record pas_mar_get_allocation_record(pas_mar_
         if (result.is_valid && !art_entry->is_allocation && art_entry->address == base_object_address) {
             // Check that we have a valid backtrace
             unsigned registry_index = art_entry->backtrace_registry_index;
-            if (registry->backtrace_registry[registry_index].hash != art_entry->backtrace_hash)
+            pas_mar_backtrace_record* backtrace = pas_mar_registry_get_backtrace(registry, registry_index);
+            if (backtrace->hash != art_entry->backtrace_hash)
                 continue;
 
-            pas_mar_backtrace_record* backtrace = &registry->backtrace_registry[registry_index];
-
-            result.deallocation_trace.num_frames= backtrace->num_frames;
+            result.deallocation_trace.num_frames = backtrace->num_frames;
+            PAS_ASSERT(backtrace->num_frames < PAS_MAR_BACKTRACE_MAX_SIZE);
             memcpy(result.deallocation_trace.backtrace_buffer, backtrace->backtrace_buffer, backtrace->num_frames * sizeof(void*));
 
             base_object_address = NULL;
