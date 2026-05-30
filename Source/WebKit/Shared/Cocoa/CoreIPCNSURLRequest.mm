@@ -142,25 +142,12 @@ CoreIPCNSURLRequest::CoreIPCNSURLRequest(NSURLRequest *request)
         m_data.headerFields = WTF::move(vector);
     }
 
-    SET_NSURLREQUESTDATA(body, NSData, CoreIPCData);
-
-    RetainPtr<NSArray> bodyParts = dict.get()[@"bodyParts"];
-    if ([bodyParts isKindOfClass:[NSArray class]]) {
-        Vector<CoreIPCNSURLRequestData::BodyParts> vector;
-        vector.reserveInitialCapacity(bodyParts.get().count);
-        for (id element in bodyParts.get()) {
-            if ([element isKindOfClass:[NSString class]]) {
-                CoreIPCString tooAdd(element);
-                vector.append(WTF::move(tooAdd));
-            }
-            if ([element isKindOfClass:[NSData class]]) {
-                CoreIPCData tooAdd(element);
-                vector.append(WTF::move(tooAdd));
-            }
-        }
-        vector.shrinkToFit();
-        m_data.bodyParts = WTF::move(vector);
-    }
+    // Security: body and bodyParts are intentionally not extracted. The HTTP
+    // body is carried separately via WebCore::FormData. The legitimate sender
+    // already clears the body before encoding (setHTTPBody:nil /
+    // setHTTPBodyStream:nil). In CFNetwork, NSString entries in bodyParts are
+    // interpreted as POSIX file paths, so forwarding them would let a
+    // compromised WebContent process exfiltrate NetworkProcess-readable files.
 
     SET_NSURLREQUESTDATA_PRIMITIVE(startTimeoutTime, NSNumber, double);
     SET_NSURLREQUESTDATA_PRIMITIVE(requiresShortConnectionTimeout, NSNumber, bool);
@@ -279,20 +266,22 @@ RetainPtr<id> CoreIPCNSURLRequest::toID() const
         [dict setObject:headerFields.get() forKey:@"headerFields"];
     }
 
-    SET_DICT_FROM_OPTIONAL_MEMBER(body);
+    // Security: body is intentionally not forwarded to
+    // _initWithWebKitPropertyListData:. The HTTP body is carried separately
+    // via WebCore::FormData and validated through that path. A compromised
+    // WebContent process could use this field to inject arbitrary data.
+    ASSERT(!m_data.body);
 
-    if (m_data.bodyParts) {
-        auto array = adoptNS([[NSMutableArray alloc] initWithCapacity:(*m_data.bodyParts).size()]);
-        for (auto& value : *m_data.bodyParts) {
-            WTF::switchOn(value,
-                [&] (const auto& d) {
-                    if (auto obj = d.toID())
-                        [array addObject:obj.get()];
-                }
-            );
-        }
-        [dict setObject:array.get() forKey:@"bodyParts"];
-    }
+    // Security: bodyParts is intentionally not forwarded to
+    // _initWithWebKitPropertyListData:. In CFNetwork, NSString entries in
+    // bodyParts are interpreted as POSIX file paths and opened via
+    // CFReadStreamCreateWithFile inside NetworkProcess. A compromised
+    // WebContent process could exfiltrate any NetworkProcess-readable file
+    // by supplying arbitrary file paths in bodyParts. The legitimate sender
+    // already clears the HTTP body before encoding (setHTTPBody:nil /
+    // setHTTPBodyStream:nil), so bodyParts is always empty in legitimate IPC.
+    // The HTTP body is carried separately via WebCore::FormData.
+    ASSERT(!m_data.bodyParts);
 
     SET_DICT_FROM_PRIMITIVE(startTimeoutTime, NSInteger, Double);
     SET_DICT_FROM_PRIMITIVE(requiresShortConnectionTimeout, NSInteger, Bool);
