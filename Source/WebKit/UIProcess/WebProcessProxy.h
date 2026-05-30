@@ -310,6 +310,7 @@ public:
 
     void addPreviouslyApprovedFileURL(const URL&);
     bool wasPreviouslyApprovedFileURL(const URL&) const;
+    bool hasGrantedSandboxExtensionForFile(const String& filePath) const;
 
     void updateTextCheckerState();
 
