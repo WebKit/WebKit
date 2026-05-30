@@ -98,6 +98,7 @@
 #include "StringConstructor.h"
 #include "StringPrototype.h"
 #include "StringPrototypeInlines.h"
+#include "StringRecursionChecker.h"
 #include "SuperSampler.h"
 #include "Symbol.h"
 #include "TypeProfilerLog.h"
@@ -1578,6 +1579,11 @@ static ALWAYS_INLINE JSString* arrayJoinWithStringSeparator(JSGlobalObject* glob
         if (joined)
             return joined;
     }
+
+    StringRecursionChecker checker(globalObject, array);
+    EXCEPTION_ASSERT(!scope.exception() || checker.earlyReturnValue());
+    if (JSValue earlyReturnValue = checker.earlyReturnValue())
+        return jsEmptyString(globalObject->vm());
 
     auto view = separator->view(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
