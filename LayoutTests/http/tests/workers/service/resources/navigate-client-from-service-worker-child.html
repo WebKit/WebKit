@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<script>
+window.doPreSwap = function () {
+    let targetDoc = parent.targetIframe.contentDocument;
+    targetDoc.open();
+    targetDoc.close();
+    parent.afterPreSwap();
+};
+</script>
