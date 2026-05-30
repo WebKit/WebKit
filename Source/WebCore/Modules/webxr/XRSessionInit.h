@@ -27,18 +27,13 @@
 
 #if ENABLE(WEBXR)
 
-#include <JavaScriptCore/Strong.h>
 #include <wtf/Forward.h>
-
-namespace JSC {
-class JSValue;
-}
 
 namespace WebCore {
 
 struct XRSessionInit {
-    Vector<JSC::JSValue> requiredFeatures;
-    Vector<JSC::JSValue> optionalFeatures;
+    Vector<String> requiredFeatures;
+    Vector<String> optionalFeatures;
 };
 
 } // namespace WebCore
