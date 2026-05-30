@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+PASS: importExternalTexture threw SecurityError for a cross-origin tainted video

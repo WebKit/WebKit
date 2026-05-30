@@ -389,8 +389,10 @@ private:
 };
 #endif
 
-ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(const GPUExternalTextureDescriptor& externalTextureDescriptor)
+ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(ScriptExecutionContext& context, const GPUExternalTextureDescriptor& externalTextureDescriptor)
 {
+    UNUSED_PARAM(context);
+
 #if ENABLE(VIDEO) && PLATFORM(COCOA)
     if (RefPtr externalTexture = externalTextureForDescriptor(externalTextureDescriptor)) {
         externalTexture->undestroy();
@@ -416,6 +418,9 @@ ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(const GPUE
 #else
     if (auto* videoElement = &externalTextureDescriptor.source; videoElement && videoElement->get()) {
 #endif
+        if ((*videoElement)->taintsOrigin(*protect(context.securityOrigin()).get()))
+            return Exception { ExceptionCode::SecurityError, "GPUDevice.importExternalTexture: Cross origin external videos are not allowed in WebGPU"_s };
+
         WeakPtr<HTMLVideoElement> videoElementPtr = videoElement->get();
         m_videoElementToExternalTextureMap.set(*videoElementPtr, externalTexture.get());
         m_previouslyImportedExternalTexture.first = *videoElement;

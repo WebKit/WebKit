@@ -118,7 +118,7 @@ public:
     ExceptionOr<Ref<GPUTexture>> createTexture(const GPUTextureDescriptor&);
     std::optional<String> errorValidatingSupportedFormat(GPUTextureFormat) const;
     ExceptionOr<Ref<GPUSampler>> createSampler(const std::optional<GPUSamplerDescriptor>&);
-    ExceptionOr<Ref<GPUExternalTexture>> importExternalTexture(const GPUExternalTextureDescriptor&);
+    ExceptionOr<Ref<GPUExternalTexture>> importExternalTexture(ScriptExecutionContext&, const GPUExternalTextureDescriptor&);
 
     ExceptionOr<Ref<GPUBindGroupLayout>> createBindGroupLayout(const GPUBindGroupLayoutDescriptor&);
     ExceptionOr<Ref<GPUPipelineLayout>> createPipelineLayout(const GPUPipelineLayoutDescriptor&);
