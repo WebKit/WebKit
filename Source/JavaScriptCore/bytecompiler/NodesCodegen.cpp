@@ -4042,7 +4042,8 @@ RegisterID* ShortCircuitReadModifyResolveNode::emitBytecode(BytecodeGenerator& g
         generator.emitTDZCheckIfNecessary(var, local.get(), nullptr);
 
         if (isReadOnly) {
-            RefPtr<RegisterID> result = local;
+            RefPtr<RegisterID> result = generator.tempDestination(dst);
+            generator.move(result.get(), local.get());
 
             Ref<Label> afterAssignment = generator.newLabel();
             emitShortCircuitAssignment(generator, result.get(), m_operator, afterAssignment.get());
