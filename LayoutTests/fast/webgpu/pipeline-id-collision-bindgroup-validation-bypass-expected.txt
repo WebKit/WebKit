@@ -1,0 +1,1 @@
+PASS: validation error raised for undersized buffer in render pass after compute cache priming CONTROL: PASS: validation error raised for fresh BindGroup with undersized buffer
