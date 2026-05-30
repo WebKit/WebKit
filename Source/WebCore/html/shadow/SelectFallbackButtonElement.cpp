@@ -93,6 +93,11 @@ void SelectFallbackButtonElement::updateText(HTMLOptionElement* selectedOption, 
         selectElement->didUpdateActiveOption(optionIndex);
     };
 
+    if (RefPtr button = selectElement->buttonElement()) {
+        applyText(button->textContent().trim(deprecatedIsSpaceOrNewline));
+        return;
+    }
+
 #if PLATFORM(IOS_FAMILY)
     if (selectElement->multiple()) {
         size_t count = selectedOptionCount(selectElement);

@@ -188,13 +188,14 @@ public:
 
     bool isDevolvableWidget() const override { return true; }
 
-    void updateSelectedContent(HTMLOptionElement* = nullptr) const;
+    void updateSelectedContent(HTMLOptionElement* = nullptr);
 
     void NODELETE registerSelectedContentElement();
     void NODELETE unregisterSelectedContentElement();
 
     WEBCORE_EXPORT bool usesBaseAppearancePicker() const;
     SelectPopoverElement* NODELETE pickerPopoverElement() const;
+    Element* NODELETE buttonElement() const;
     void openPickerForUserInteraction(std::optional<bool> focusVisible = std::nullopt);
     void hidePickerPopoverElement();
     void queuePickerCloseForAppearanceChange();
