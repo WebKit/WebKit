@@ -172,7 +172,11 @@ JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain,
         // content StringImpl to be deref'd if when the JSString is swept.
         DeferGC deferGC(vm);
 
+<<<<<<< HEAD
         auto programSource = programStr.data;
+=======
+        auto programSource = programString->value(globalObject).data;
+>>>>>>> f84884541bfb ([JSC] Defer GC while using the direct eval CacheLookupKey)
         if (SourceProfiler::g_profilerHook) [[unlikely]] {
             SourceTaintedOrigin sourceTaintedOrigin = computeNewSourceTaintedOriginFromStack(vm, callFrame);
             auto source = makeSource(programSource, callerBaselineCodeBlock->source().provider()->sourceOrigin(), sourceTaintedOrigin);
