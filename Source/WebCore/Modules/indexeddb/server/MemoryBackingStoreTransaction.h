@@ -35,6 +35,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakHashMap.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -99,7 +100,7 @@ private:
 
     HashMap<String, RefPtr<MemoryObjectStore>> m_deletedObjectStores;
     HashSet<Ref<MemoryIndex>> m_deletedIndexes;
-    HashMap<MemoryObjectStore*, String> m_originalObjectStoreNames;
+    WeakHashMap<MemoryObjectStore, String> m_originalObjectStoreNames;
     HashMap<Ref<MemoryIndex>, String> m_originalIndexNames;
 
     HashMap<IDBResourceIdentifier, WeakPtr<MemoryCursor>> m_cursors;

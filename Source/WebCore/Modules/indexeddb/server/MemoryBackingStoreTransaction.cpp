@@ -125,8 +125,8 @@ void MemoryBackingStoreTransaction::objectStoreDeleted(Ref<MemoryObjectStore>&& 
 {
     ASSERT(m_objectStores.contains(&objectStore.get()));
     m_objectStores.remove(&objectStore.get());
-    if (m_originalObjectStoreNames.contains(&objectStore.get()))
-        m_originalObjectStoreNames.remove(&objectStore.get());
+    if (m_originalObjectStoreNames.contains(objectStore.get()))
+        m_originalObjectStoreNames.remove(objectStore.get());
     objectStore->deleteAllIndexes(*this);
 
     // If the store removed is previously added in this transaction, we don't need to
@@ -151,7 +151,7 @@ void MemoryBackingStoreTransaction::objectStoreRenamed(MemoryObjectStore& object
 
     // We only care about the first rename in a given transaction, because if the transaction is aborted we want
     // to go back to the first 'oldName'
-    m_originalObjectStoreNames.add(&objectStore, oldName);
+    m_originalObjectStoreNames.add(objectStore, oldName);
 }
 
 void MemoryBackingStoreTransaction::indexRenamed(MemoryIndex& index, const String& oldName)
@@ -199,8 +199,8 @@ void MemoryBackingStoreTransaction::abort()
     m_originalIndexNames.clear();
 
     // Restore renamed object stores.
-    for (const auto& iterator : m_originalObjectStoreNames)
-        m_backingStore->renameObjectStoreForVersionChangeAbort(Ref { *iterator.key }, iterator.value);
+    for (auto iterator : m_originalObjectStoreNames)
+        protect(m_backingStore)->renameObjectStoreForVersionChangeAbort(iterator.key, iterator.value);
     m_originalObjectStoreNames.clear();
 
     // Restore added object stores.
