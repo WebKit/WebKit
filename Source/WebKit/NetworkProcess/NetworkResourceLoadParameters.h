@@ -90,7 +90,6 @@ struct NetworkResourceLoadParameters {
     WebCore::CrossOriginEmbedderPolicy parentCrossOriginEmbedderPolicy { };
     WebCore::CrossOriginEmbedderPolicy crossOriginEmbedderPolicy { };
     WebCore::HTTPHeaderMap originalRequestHeaders { };
-    bool shouldRestrictHTTPResponseAccess { false };
     WebCore::PreflightPolicy preflightPolicy { WebCore::PreflightPolicy::Consider };
     bool shouldEnableCrossOriginResourcePolicy { false };
     Vector<Ref<WebCore::SecurityOrigin>> frameAncestorOrigins { };
