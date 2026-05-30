@@ -179,9 +179,9 @@ void WebSharedWorkerServer::addContextConnection(WebSharedWorkerServerToContextC
 {
     RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::addContextConnection(%p) webProcessIdentifier=%" PRIu64, &contextConnection, contextConnection.webProcessIdentifier() ? contextConnection.webProcessIdentifier()->toUInt64() : 0);
 
-    ASSERT(!m_contextConnections.contains(contextConnection.registrableDomain()));
-
-    m_contextConnections.add(contextConnection.registrableDomain(), contextConnection);
+    auto result = m_contextConnections.add(contextConnection.registrableDomain(), contextConnection);
+    if (!result.isNewEntry)
+        return;
 
     contextConnectionCreated(contextConnection);
 }
