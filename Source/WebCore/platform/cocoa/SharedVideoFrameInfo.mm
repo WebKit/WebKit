@@ -177,6 +177,8 @@ static std::span<const uint8_t> copyToCVPixelBufferPlane(CVPixelBufferRef pixelB
         skip(source, bytesPerRowSource);
         skip(destination, bytesPerRowDestination);
     }
+    memsetSpan(destination, 0);
+
     return source;
 }
 
