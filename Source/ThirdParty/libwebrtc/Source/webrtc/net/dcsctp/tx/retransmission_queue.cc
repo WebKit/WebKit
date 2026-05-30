@@ -251,6 +251,14 @@ bool RetransmissionQueue::IsSackValid(const SackChunk& sack) const {
   } else if (cumulative_tsn_ack > outstanding_data_.highest_outstanding_tsn()) {
     return false;
   }
+
+  for (const auto& block : sack.gap_ack_blocks()) {
+    if (UnwrappedTSN::AddTo(cumulative_tsn_ack, block.end) >
+        outstanding_data_.highest_outstanding_tsn()) {
+      return false;
+    }
+  }
+
   return true;
 }
 

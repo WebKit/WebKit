@@ -675,5 +675,76 @@ TEST_F(OutstandingDataTest, TreatsUnackedPayloadBytesDifferentFromPacketBytes) {
   EXPECT_EQ(buf_.unacked_items(), 2u);
 }
 
+TEST_F(OutstandingDataTest,
+       FastRecoveryIncrementsNackCountWhenCumulativeTsnAdvances) {
+  // This test verifies that the Fast Recovery retransmission rules are
+  // correctly applied when the Cumulative TSN Ack point advances. RFC 9260
+  // Section 7.2.4: "If an endpoint is in Fast Recovery and a SACK arrives that
+  // advances the Cumulative TSN Ack Point, the miss indications are incremented
+  // for all TSNs reported missing in the SACK."
+
+  for (int i = 10; i <= 16; ++i) {
+    buf_.Insert(kMessageId, gen_.Ordered({1}, ""), kNow);
+  }
+
+  // SACK 1: Cumulative Ack = 10. Gap blocks for 12, 14, 16.
+  // Missing: 11, 13, 15.
+  // This marks 12, 14, 16 as Acked.
+  // TSNs 11, 13, 15 get their 1st miss indication each.
+  std::vector<SackChunk::GapAckBlock> gab1 = {
+      SackChunk::GapAckBlock(2, 2),  // TSN 12
+      SackChunk::GapAckBlock(4, 4),  // TSN 14
+      SackChunk::GapAckBlock(6, 6)   // TSN 16
+  };
+  buf_.HandleSack(unwrapper_.Unwrap(TSN(10)), gab1,
+                  /*is_in_fast_recovery=*/false);
+
+  // SACK 2: Cumulative Ack advances to 11. Same gap blocks (12, 14, 16).
+  // Endpoint is now in Fast Recovery (is_in_fast_recovery = true). Because the
+  // Cumulative TSN Ack Point advanced from 10 to 11, 13 and 15 should get their
+  // 2nd miss indication.
+  std::vector<SackChunk::GapAckBlock> gab2 = {
+      SackChunk::GapAckBlock(1, 1),  // TSN 12
+      SackChunk::GapAckBlock(3, 3),  // TSN 14
+      SackChunk::GapAckBlock(5, 5)   // TSN 16
+  };
+  buf_.HandleSack(unwrapper_.Unwrap(TSN(11)), gab2,
+                  /*is_in_fast_recovery=*/true);
+
+  // SACK 3: Cumulative Ack advances to 12.
+  // Note: TSN 12 was already acked via gap block, so this just advances the
+  // Cumulative Ack. 13 and 15 should get their 3rd miss indication and trigger
+  // retransmission.
+  std::vector<SackChunk::GapAckBlock> gab3 = {
+      SackChunk::GapAckBlock(2, 2),  // TSN 14
+      SackChunk::GapAckBlock(4, 4)   // TSN 16
+  };
+  buf_.HandleSack(unwrapper_.Unwrap(TSN(12)), gab3,
+                  /*is_in_fast_recovery=*/true);
+
+  // 13 and 15 should now be retransmitted.
+  EXPECT_THAT(buf_.GetChunkStatesForTesting(),
+              ElementsAre(Pair(TSN(12), State::kAcked),
+                          Pair(TSN(13), State::kToBeRetransmitted),
+                          Pair(TSN(14), State::kAcked),
+                          Pair(TSN(15), State::kToBeRetransmitted),
+                          Pair(TSN(16), State::kAcked)));
+}
+
+TEST_F(OutstandingDataTest, NackBetweenAckBlocksDoesNotAccessOutOfBounds) {
+  for (int i = 0; i < 5; ++i) {
+    buf_.Insert(kMessageId, gen_.Ordered({1}, ""), kNow);
+  }
+
+  // Inject a malformed SACK where the GapAckBlock exceeds the number of
+  // outstanding items, potentially triggering an OOB read/write.
+  std::vector<SackChunk::GapAckBlock> malformed_blocks = {
+      SackChunk::GapAckBlock(1, 40000)};
+
+  // This should not crash or trigger ASAN errors.
+  buf_.HandleSack(unwrapper_.Unwrap(TSN(10)), malformed_blocks,
+                  /*is_in_fast_recovery=*/false);
+}
+
 }  // namespace
 }  // namespace dcsctp

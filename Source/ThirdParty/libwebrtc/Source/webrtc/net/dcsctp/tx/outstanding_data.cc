@@ -252,7 +252,8 @@ void OutstandingData::NackBetweenAckBlocks(
     UnwrappedTSN cur_block_first_acked =
         UnwrappedTSN::AddTo(cumulative_tsn_ack, block.start);
     for (UnwrappedTSN tsn = prev_block_last_acked.next_value();
-         tsn < cur_block_first_acked && tsn <= max_tsn_to_nack;
+         tsn < cur_block_first_acked && tsn <= max_tsn_to_nack &&
+         tsn < next_tsn();
          tsn = tsn.next_value()) {
       ack_info.has_packet_loss |=
           NackItem(tsn, /*retransmit_now=*/false,
