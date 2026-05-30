@@ -1188,7 +1188,7 @@ bool MediaSource::isTypeSupported(ScriptExecutionContext& context, const String&
     }
 
     MediaPlayer::SupportsType supported;
-    callOnMainThreadAndWait([&] {
+    callOnMainThreadAndWait([&supported, parameters = crossThreadCopy(WTF::move(parameters))] {
         supported = MediaPlayer::supportsType(parameters);
     });
 

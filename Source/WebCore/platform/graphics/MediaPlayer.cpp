@@ -116,6 +116,24 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaPlayer);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaPlayerFactory);
 
+MediaEngineSupportParameters MediaEngineSupportParameters::isolatedCopy() &&
+{
+    SUPPRESS_UNCOUNTED_ARG return {
+        crossThreadCopy(WTF::move(type)),
+        crossThreadCopy(WTF::move(url)),
+        isMediaSource,
+        isMediaStream,
+        requiresRemotePlayback,
+        supportsLimitedMatroska,
+        crossThreadCopy(WTF::move(contentTypesRequiringHardwareSupport)),
+        crossThreadCopy(WTF::move(allowedMediaContainerTypes)),
+        crossThreadCopy(WTF::move(allowedMediaCodecTypes)),
+        WTF::move(allowedMediaVideoCodecIDs),
+        WTF::move(allowedMediaAudioCodecIDs),
+        WTF::move(allowedMediaCaptionFormatTypes),
+    };
+}
+
 // a null player to make MediaPlayer logic simpler
 
 class NullMediaPlayerPrivate final : public MediaPlayerPrivateInterface, public ThreadSafeRefCounted<NullMediaPlayerPrivate, WTF::DestructionThread::Main> {
