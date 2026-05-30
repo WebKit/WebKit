@@ -51,7 +51,6 @@ void JSWebAssemblyMemory::adopt(Ref<Wasm::Memory>&& memory)
 {
     m_memory.swap(memory);
     ASSERT(m_memory->refCount() == 1);
-    m_memory->checkLifetime();
 }
 
 Structure* JSWebAssemblyMemory::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -104,10 +103,10 @@ void JSWebAssemblyMemory::associateArrayBuffer(JSGlobalObject* globalObject, boo
             m_buffer->makeShared();
     }
     m_buffer->makeWasmMemory();
-    if (m_buffer->isResizableNonShared())
-        m_buffer->setAssociatedWasmMemory(m_memory.ptr());
 
     auto* arrayBuffer = JSArrayBuffer::create(vm, globalObject->arrayBufferStructure(m_buffer->sharingMode()), m_buffer.get());
+    if (m_buffer->isResizableNonShared())
+        arrayBuffer->setAssociatedWasmMemoryWrapper(vm, this);
     if (m_memory->sharingMode() == MemorySharingMode::Shared) {
         objectConstructorFreeze(globalObject, arrayBuffer);
         RETURN_IF_EXCEPTION(throwScope, void());
@@ -122,8 +121,9 @@ void JSWebAssemblyMemory::disassociateArrayBuffer(VM& vm)
     ASSERT(m_buffer);
     if (!m_buffer->isShared())
         m_buffer->detach(vm);
-    m_buffer->setAssociatedWasmMemory(nullptr);
     m_buffer = nullptr;
+    if (auto* wrapper = m_bufferWrapper.get())
+        wrapper->clearAssociatedWasmMemoryWrapper();
     m_bufferWrapper.clear();
 }
 
@@ -298,9 +298,6 @@ void JSWebAssemblyMemory::growSuccessCallback(VM& vm, PageCount oldPageCount, Pa
         }
     }
 
-    
-    memory().checkLifetime();
-    
     vm.heap.reportExtraMemoryAllocated(this, newPageCount.bytes() - oldPageCount.bytes());
 }
 

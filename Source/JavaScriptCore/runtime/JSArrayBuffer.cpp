@@ -27,6 +27,9 @@
 #include "JSArrayBuffer.h"
 
 #include "JSCInlines.h"
+#if ENABLE(WEBASSEMBLY)
+#include "JSWebAssemblyMemory.h"
+#endif // ENABLE(WEBASSEMBLY)
 #include "TypedArrayController.h"
 
 namespace JSC {
@@ -81,6 +84,37 @@ size_t JSArrayBuffer::estimatedSize(JSCell* cell, VM& vm)
     size_t bufferEstimatedSize = thisObject->impl()->gcSizeEstimateInBytes();
     return Base::estimatedSize(cell, vm) + bufferEstimatedSize;
 }
+
+#if ENABLE(WEBASSEMBLY)
+JSWebAssemblyMemory* JSArrayBuffer::associatedWasmMemoryWrapper() const
+{
+    return m_associatedWasmMemoryWrapper.get();
+}
+
+void JSArrayBuffer::setAssociatedWasmMemoryWrapper(VM& vm, JSWebAssemblyMemory* wrapper)
+{
+    ASSERT(impl()->isWasmMemory() && impl()->isResizableNonShared());
+    m_associatedWasmMemoryWrapper.set(vm, this, wrapper);
+}
+
+void JSArrayBuffer::clearAssociatedWasmMemoryWrapper()
+{
+    m_associatedWasmMemoryWrapper.clear();
+}
+#endif // ENABLE(WEBASSEMBLY)
+
+template<typename Visitor>
+void JSArrayBuffer::visitChildrenImpl(JSCell* cell, Visitor& visitor)
+{
+    auto* thisObject = jsCast<JSArrayBuffer*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    Base::visitChildren(thisObject, visitor);
+#if ENABLE(WEBASSEMBLY)
+    visitor.append(thisObject->m_associatedWasmMemoryWrapper);
+#endif // ENABLE(WEBASSEMBLY)
+}
+
+DEFINE_VISIT_CHILDREN(JSArrayBuffer);
 
 } // namespace JSC
 
