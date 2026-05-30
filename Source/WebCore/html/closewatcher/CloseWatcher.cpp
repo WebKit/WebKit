@@ -59,8 +59,8 @@ ExceptionOr<Ref<CloseWatcher>> CloseWatcher::create(ScriptExecutionContext& cont
         } else {
             watcher->m_signal = signal;
             watcher->m_signalAlgorithm = signal->addAlgorithm([weakWatcher = WeakPtr { watcher.get() }](JSC::JSValue) mutable {
-                if (weakWatcher)
-                    weakWatcher->destroy();
+                if (RefPtr watcher = weakWatcher.get())
+                    watcher->destroy();
             });
         }
     }
