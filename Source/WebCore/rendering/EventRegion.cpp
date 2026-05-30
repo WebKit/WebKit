@@ -359,11 +359,12 @@ void EventRegionContext::shrinkWrapInteractionRegions()
         }
 
         auto finalRegionRectForTracking = enclosingIntRect(region.rectInLayerCoordinates);
+        auto originalIndex = i;
         for (auto& extraRegion : toAddAfterMerge) {
             auto extraRectForTracking = enclosingIntRect(extraRegion.rectInLayerCoordinates);
             // Do not insert a new region if it creates a duplicated Interaction Rect.
             if (finalRegionRectForTracking == extraRectForTracking) {
-                region.contentHint = m_interactionRectsAndContentHints.get(extraRectForTracking);
+                m_interactionRegions[originalIndex].contentHint = m_interactionRectsAndContentHints.get(extraRectForTracking);
                 continue;
             }
             extraRegion.contentHint = m_interactionRectsAndContentHints.get(extraRectForTracking);
