@@ -11761,6 +11761,26 @@
                 "url": "https://drafts.csswg.org/css-text-decor-4/#text-decoration-thickness-property"
             }
         },
+        "text-decoration-inset": {
+            "animation-type": "by computed value",
+            "initial": "0px",
+            "values": [
+                "auto"
+            ],
+            "codegen-properties": {
+                "settings-flag": "cssTextDecorationInsetEnabled",
+                "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
+                "computed-style-storage-kind": "reference",
+                "computed-style-type": "Style::TextDecorationInset",
+                "parser-function": "consumeTextDecorationInset",
+                "parser-grammar-unused": "auto | <length>{1,2}",
+                "parser-grammar-unused-reason": "Needs support for Value Pair length"
+            },
+            "specification": {
+                "category": "css-text-decor",
+                "url": "https://drafts.csswg.org/css-text-decor-4/#text-decoration-skip-inset-property"
+            }
+        },
         "-webkit-text-decorations-in-effect": {
             "animation-type": "not animatable (internal)",
             "inherited": true,

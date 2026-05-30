@@ -38,6 +38,10 @@ struct PropertyParserState;
 
 namespace CSSPropertyParserHelpers {
 
+// MARK: <'text-decoration-inset'> consuming
+// https://drafts.csswg.org/css-text-decor-4/#text-decoration-inset-property
+RefPtr<CSSValue> consumeTextDecorationInset(CSSParserTokenRange&, CSS::PropertyParserState&);
+
 // MARK: <'text-shadow'> consuming
 // https://drafts.csswg.org/css-text-decor-3/#propdef-text-shadow
 RefPtr<CSSValue> consumeTextShadow(CSSParserTokenRange&, CSS::PropertyParserState&);

@@ -52,6 +52,7 @@
 #include "RenderView.h"
 #include "RenderedDocumentMarker.h"
 #include "Settings.h"
+#include "StyleTextDecorationInset.h"
 #include "StyleTextDecorationLine.h"
 #include "StyleTextDecorationThickness.h"
 #include "StyledMarkedText.h"
@@ -784,6 +785,60 @@ static inline Style::TextDecorationLine computedTextDecorationType(const Style::
     return textDecorations;
 }
 
+static const Style::ComputedStyle& insetStyleForInlineBox(const InlineIterator::InlineBox& inlineBox, const Style::ComputedStyle& defaultStyle)
+{
+    for (const RenderElement* ancestor = &inlineBox.renderer(); ancestor; ancestor = ancestor->parent()) {
+        if (ancestor->isAnonymous())
+            continue;
+        const Style::ComputedStyle& style = ancestor->style();
+        if (!style.textDecorationLine().isNone())
+            return style;
+    }
+    return defaultStyle;
+}
+
+static void applyTextDecorationInset(TextDecorationPainter::BackgroundDecorationGeometry& geometry, const Style::ComputedStyle& style, const InlineIterator::InlineBox& inlineBox, const InlineIterator::TextBoxIterator& currentTextBox)
+{
+    const Style::ComputedStyle& insetStyle = inlineBox.isRootInlineBox() ? insetStyleForInlineBox(inlineBox, style) : style;
+
+    auto [startInset, endInset] = insetStyle.textDecorationInset().resolve(insetStyle);
+    if (!startInset && !endInset)
+        return;
+
+    auto isLTR = insetStyle.writingMode().computedTextDirection() == TextDirection::LTR;
+    auto leftInset  = isLTR ? startInset : endInset;
+    auto rightInset = isLTR ? endInset   : startInset;
+
+    if (inlineBox.isRootInlineBox()) {
+        if (insetStyle.boxDecorationBreak() != BoxDecorationBreak::Clone) {
+            auto lineBoxIter = inlineBox.lineBox();
+            bool isFirstLine = !lineBoxIter ||  !lineBoxIter->previous();
+            bool isLastLine  = !lineBoxIter ||  !lineBoxIter->next();
+            bool shouldApplyLeftInset = isLTR ? isFirstLine : isLastLine;
+            bool shouldApplyRightInset = isLTR ? isLastLine : isFirstLine;
+            if (!shouldApplyLeftInset)
+                leftInset = 0;
+            if (!shouldApplyRightInset)
+                rightInset = 0;
+        }
+    } else {
+        auto isClone = insetStyle.boxDecorationBreak() == BoxDecorationBreak::Clone;
+        auto leftLineContinuation  = isLTR ? inlineBox.nextInlineBoxLineLeftward()  : inlineBox.nextInlineBoxLineRightward();
+        auto rightLineContinuation = isLTR ? inlineBox.nextInlineBoxLineRightward() : inlineBox.nextInlineBoxLineLeftward();
+        auto firstLeaf = inlineBox.firstLeafBox();
+        auto lastLeaf  = inlineBox.lastLeafBox();
+        bool isLeftMostTextBox  = firstLeaf && currentTextBox  == firstLeaf;
+        bool isRightMostTextBox = lastLeaf  && currentTextBox  == lastLeaf;
+        if (!isLeftMostTextBox || (!isClone && leftLineContinuation))
+            leftInset = 0;
+        if (!isRightMostTextBox || (!isClone && rightLineContinuation))
+            rightInset = 0;
+    }
+
+    geometry.boxOrigin.move(leftInset, 0);
+    geometry.width = std::max(0.f, geometry.width - leftInset - rightInset);
+}
+
 static inline CheckedRef<const Style::ComputedStyle> decoratingBoxStyleForInlineBox(const InlineIterator::InlineBox& inlineBox, bool isFirstLine)
 {
     if (!inlineBox.isRootInlineBox())
@@ -892,7 +947,6 @@ void TextBoxPainter::paintBackgroundDecorations(TextDecorationPainter& decoratio
     auto textBox = makeIterator();
     auto decoratingBoxList = DecoratingBoxList { };
     collectDecoratingBoxesForBackgroundPainting(decoratingBoxList, textBox, textBoxPaintRect, markedText.style.textDecorationStyles);
-
     for (auto& decoratingBox : decoratingBoxList | std::views::reverse) {
         auto computedTextDecorationType = WebCore::computedTextDecorationType(decoratingBox.style.get(), decoratingBox.textDecorationStyles);
         auto computedBackgroundDecorationGeometry = [&] {
@@ -917,7 +971,6 @@ void TextBoxPainter::paintBackgroundDecorations(TextDecorationPainter& decoratio
                 auto wavyOffset = decoratingBox.textDecorationStyles.overline.decorationStyle == TextDecorationStyle::Wavy ? wavyOffsetFromDecoration() : 0.f;
                 return baseOffset - wavyOffset;
             };
-
             return TextDecorationPainter::BackgroundDecorationGeometry {
                 textOriginFromPaintRect(textBoxPaintRect),
                 decoratingBox.location,
@@ -930,8 +983,9 @@ void TextBoxPainter::paintBackgroundDecorations(TextDecorationPainter& decoratio
                 wavyStrokeParameters(decoratingBox.style->computedFontSize())
             };
         };
-
-        decorationPainter.paintBackgroundDecorations(m_style, textRun, computedBackgroundDecorationGeometry(), computedTextDecorationType, decoratingBox.textDecorationStyles, m_document->deviceScaleFactor());
+        auto backgroundGeometry = computedBackgroundDecorationGeometry();
+        applyTextDecorationInset(backgroundGeometry, decoratingBox.style.get(), *decoratingBox.inlineBox, textBox);
+        decorationPainter.paintBackgroundDecorations(m_style, textRun, backgroundGeometry, computedTextDecorationType, decoratingBox.textDecorationStyles, m_document->deviceScaleFactor());
     }
 
     if (m_isCombinedText)

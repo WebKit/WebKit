@@ -1408,6 +1408,20 @@ CSSSelectorJITCompilerEnabled:
     WebCore:
       default: true
 
+CSSTextDecorationInsetEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS text-decoration-inset property"
+  humanReadableDescription: "Enable text-decoration-inset CSS property"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+      
 CSSTextDecorationLineErrorValues:
   type: bool
   status: stable

@@ -177,6 +177,7 @@ inline SingleTransitionProperty forwardInheritedValue(const SingleTransitionProp
 inline StrokeWidth forwardInheritedValue(const StrokeWidth& value) { auto copy = value; return copy; }
 inline TabSize forwardInheritedValue(const TabSize& value) { auto copy = value; return copy; }
 inline TextDecorationLine forwardInheritedValue(const TextDecorationLine& value) { auto copy = value; return copy; }
+inline TextDecorationInset forwardInheritedValue(const TextDecorationInset& value) { auto copy = value; return copy; }
 inline TextDecorationThickness forwardInheritedValue(const TextDecorationThickness& value) { auto copy = value; return copy; }
 inline TextEmphasisStyle forwardInheritedValue(const TextEmphasisStyle& value) { auto copy = value; return copy; }
 inline TextIndent forwardInheritedValue(const TextIndent& value) { auto copy = value; return copy; }

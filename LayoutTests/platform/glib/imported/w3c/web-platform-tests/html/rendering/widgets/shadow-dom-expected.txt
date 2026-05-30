@@ -1,9 +1,9 @@
 
 
-FAIL <video controls=""></video> has a shadow tree with no slots assert_equals: child should be outside the flat tree expected 0 but got 440
-FAIL <video></video> has a shadow tree with no slots assert_equals: child should be outside the flat tree expected 0 but got 440
-FAIL <audio></audio> has a shadow tree with no slots assert_equals: child should be outside the flat tree expected 0 but got 440
-FAIL <audio controls=""></audio> has a shadow tree with no slots assert_equals: child should be outside the flat tree expected 0 but got 441
+FAIL <video controls=""></video> has a shadow tree with no slots assert_equals: child should be outside the flat tree expected 0 but got 441
+FAIL <video></video> has a shadow tree with no slots assert_equals: child should be outside the flat tree expected 0 but got 441
+FAIL <audio></audio> has a shadow tree with no slots assert_equals: child should be outside the flat tree expected 0 but got 441
+FAIL <audio controls=""></audio> has a shadow tree with no slots assert_equals: child should be outside the flat tree expected 0 but got 442
 PASS <select></select> has a shadow tree with slot
 PASS <select multiple=""></select> has a shadow tree with slot
 PASS <select size="4"></select> has a shadow tree with slot

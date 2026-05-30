@@ -2405,6 +2405,8 @@ webkit.org/b/304523 inspector/unit-tests/iterableweakset.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-over-left-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-over-right-001.xht [ ImageOnlyFailure ]
 
+imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-inset-025.html [ ImageOnlyFailure ]
+
 tiled-drawing/mac/margin-tiles-with-banner-view-overlay.html [ Skip ]
 tiled-drawing/mac/margin-tiles-with-banner-view-overlay-repeat-x.html [ Skip ]
 tiled-drawing/mac/margin-tiles-with-banner-view-overlay-repeat-y.html [ Skip ]

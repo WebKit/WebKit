@@ -3485,6 +3485,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/text/StyleTextTransform.h
     style/values/text/StyleWordSpacing.h
 
+    style/values/text-decoration/StyleTextDecorationInset.h
     style/values/text-decoration/StyleTextDecorationLine.h
     style/values/text-decoration/StyleTextDecorationThickness.h
     style/values/text-decoration/StyleTextEmphasisPosition.h

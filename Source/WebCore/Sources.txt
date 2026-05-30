@@ -3482,6 +3482,7 @@ style/values/svg/StyleSVGPaintOrder.cpp
 style/values/svg/StyleSVGPathData.cpp
 style/values/svg/StyleSVGStrokeDasharray.cpp
 style/values/svg/StyleSVGStrokeDashoffset.cpp
+style/values/text-decoration/StyleTextDecorationInset.cpp
 style/values/text-decoration/StyleTextDecorationLine.cpp
 style/values/text-decoration/StyleTextDecorationThickness.cpp @header:RenderStyleGetters @cost:5
 style/values/text-decoration/StyleTextEmphasisPosition.cpp

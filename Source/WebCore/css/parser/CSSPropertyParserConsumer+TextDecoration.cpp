@@ -29,6 +29,7 @@
 #include "CSSParserContext.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPrimitiveValue.h"
+#include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+Color.h"
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSPropertyParserConsumer+LengthDefinitions.h"
@@ -42,6 +43,24 @@
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
+
+RefPtr<CSSValue> consumeTextDecorationInset(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    // <'text-decoration-inset'> = auto | <length>{1,2}
+    // https://drafts.csswg.org/css-text-decor-4/#text-decoration-inset-property
+    if (range.peek().id() == CSSValueAuto)
+        return consumeIdent(range);
+
+    auto start = CSSPrimitiveValueResolver<CSS::Length<CSS::AllUnzoomed>>::consumeAndResolve(range, state);
+    if (!start)
+        return nullptr;
+
+    auto end = CSSPrimitiveValueResolver<CSS::Length<CSS::AllUnzoomed>>::consumeAndResolve(range, state);
+    if (!end)
+        end = start;
+
+    return CSSValuePair::create(start.releaseNonNull(), end.releaseNonNull());
+}
 
 static std::optional<CSS::TextShadow> consumeSingleUnresolvedTextShadow(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {

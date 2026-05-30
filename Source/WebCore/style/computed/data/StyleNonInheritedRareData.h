@@ -71,6 +71,7 @@
 #include <WebCore/StyleShapeImageThreshold.h>
 #include <WebCore/StyleShapeMargin.h>
 #include <WebCore/StyleShapeOutside.h>
+#include <WebCore/StyleTextDecorationInset.h>
 #include <WebCore/StyleTextDecorationThickness.h>
 #include <WebCore/StyleTouchAction.h>
 #include <WebCore/StyleTranslate.h>
@@ -182,6 +183,7 @@ public:
 
     Color textDecorationColor;
     TextDecorationThickness textDecorationThickness;
+    TextDecorationInset textDecorationInset;
 
     ScrollTimelines scrollTimelines;
     ViewTimelines viewTimelines;

@@ -350,6 +350,7 @@ PASS text-box-edge
 PASS text-box-trim
 PASS text-combine-upright
 PASS text-decoration-color
+PASS text-decoration-inset
 PASS text-decoration-line
 PASS text-decoration-skip-ink
 PASS text-decoration-style

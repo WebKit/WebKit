@@ -735,6 +735,7 @@
 		1C5E1DA826F94B9000E07AF1 /* FontPaletteValues.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5E1DA626F949B900E07AF1 /* FontPaletteValues.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C6626111C6E7CA600AB527C /* FontFace.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C66260F1C6E7CA600AB527C /* FontFace.h */; };
 		1C73A71521857587004CCEA5 /* StyleTextDecorationThickness.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CB6B4F8217B83930093B9CD /* StyleTextDecorationThickness.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A1D5E7F92E512B4100B720D9 /* StyleTextDecorationInset.h in Headers */ = {isa = PBXBuildFile; fileRef = A1D5E7F82E512B4100B720D9 /* StyleTextDecorationInset.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C7A6EB526F5D8F50096D8C7 /* FontPalette.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4674FD26F4843600B61273 /* FontPalette.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C81B95A0E97330800266E07 /* PageInspectorController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C81B9560E97330800266E07 /* PageInspectorController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C81B95C0E97330800266E07 /* InspectorBackendClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C81B9580E97330800266E07 /* InspectorBackendClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9753,6 +9754,7 @@
 		1CAF56D8253014570017B472 /* DrawGlyphsRecorder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DrawGlyphsRecorder.h; sourceTree = "<group>"; };
 		1CAF56DE2530245A0017B472 /* DrawGlyphsRecorder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DrawGlyphsRecorder.cpp; sourceTree = "<group>"; };
 		1CB6B4F8217B83930093B9CD /* StyleTextDecorationThickness.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleTextDecorationThickness.h; sourceTree = "<group>"; };
+		A1D5E7F82E512B4100B720D9 /* StyleTextDecorationInset.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleTextDecorationInset.h; sourceTree = "<group>"; };
 		1CC54AFB270F92DA005BF8BE /* ProcessQualified.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProcessQualified.h; sourceTree = "<group>"; };
 		1CCDF5BB1990332400BCEBAD /* SVGToOTFFontConversion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGToOTFFontConversion.cpp; sourceTree = "<group>"; };
 		1CCDF5BC1990332400BCEBAD /* SVGToOTFFontConversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGToOTFFontConversion.h; sourceTree = "<group>"; };
@@ -12433,6 +12435,7 @@
 		4C05BADF297AD120004FE77D /* TextSpacing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextSpacing.h; sourceTree = "<group>"; };
 		4C1508772E512B4100B720D9 /* StyleTextDecorationLine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleTextDecorationLine.h; sourceTree = "<group>"; };
 		4C1508782E512B4100B720D9 /* StyleTextDecorationLine.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleTextDecorationLine.cpp; sourceTree = "<group>"; };
+		A1D5E7FB2E512B4100B720D9 /* StyleTextDecorationInset.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleTextDecorationInset.cpp; sourceTree = "<group>"; };
 		4C15D8CF294786F000A220AD /* TrustedFonts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrustedFonts.h; sourceTree = "<group>"; };
 		4C2B9981299A7C0E00D6CE0C /* CoreTextCompositionEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CoreTextCompositionEngine.cpp; sourceTree = "<group>"; };
 		4C5BEFD529489295006E05E5 /* TrustedFonts.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TrustedFonts.cpp; sourceTree = "<group>"; };
@@ -37754,6 +37757,8 @@
 		BC3078E42D02884200630D75 /* text-decoration */ = {
 			isa = PBXGroup;
 			children = (
+				A1D5E7FB2E512B4100B720D9 /* StyleTextDecorationInset.cpp */,
+				A1D5E7F82E512B4100B720D9 /* StyleTextDecorationInset.h */,
 				4C1508782E512B4100B720D9 /* StyleTextDecorationLine.cpp */,
 				4C1508772E512B4100B720D9 /* StyleTextDecorationLine.h */,
 				BC092A0C2E2D75E6002ACB2C /* StyleTextDecorationThickness.cpp */,
@@ -49031,6 +49036,7 @@
 				BC452A922ED24DE500FD066C /* StyleTextAlignLast.h in Headers */,
 				BC4631A32EAA911900EA911F /* StyleTextAutospace.h in Headers */,
 				BC10DA912E80DC39000EE742 /* StyleTextBoxEdge.h in Headers */,
+				A1D5E7F92E512B4100B720D9 /* StyleTextDecorationInset.h in Headers */,
 				4C15087A2E512B4100B720D9 /* StyleTextDecorationLine.h in Headers */,
 				1C73A71521857587004CCEA5 /* StyleTextDecorationThickness.h in Headers */,
 				BC10DA8A2E80D200000EE742 /* StyleTextEdge.h in Headers */,
