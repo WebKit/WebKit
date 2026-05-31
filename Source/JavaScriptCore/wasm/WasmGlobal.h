@@ -32,6 +32,7 @@
 #include <JavaScriptCore/SlotVisitorMacros.h>
 #include <JavaScriptCore/WasmFormat.h>
 #include <JavaScriptCore/WasmLimits.h>
+#include <JavaScriptCore/WasmTypeDefinition.h>
 #include <JavaScriptCore/WriteBarrier.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
@@ -99,25 +100,28 @@ public:
 private:
     Global(Wasm::Type type, Wasm::Mutability mutability, uint64_t initialValue)
         : m_type(type)
-        , m_typeDefinition(TypeInformation::getRef(type.index))
         , m_mutability(mutability)
     {
         ASSERT(m_type != Types::V128);
+        if (auto typeDefinition = TypeInformation::getRef(type.index))
+            m_typeDependencies.emplace(Ref { *typeDefinition });
         m_value.m_primitive = initialValue;
     }
 
     Global(Wasm::Type type, Wasm::Mutability mutability, v128_t initialValue)
         : m_type(type)
-        , m_typeDefinition(TypeInformation::getRef(type.index))
         , m_mutability(mutability)
     {
         ASSERT(m_type == Types::V128);
+        if (auto typeDefinition = TypeInformation::getRef(type.index))
+            m_typeDependencies.emplace(Ref { *typeDefinition });
         m_value.m_vector = initialValue;
     }
 
     Wasm::Type m_type;
-    // If m_type came from a TypeDefinition, the following retains the definition to prevent a dangling m_type.
-    RefPtr<const Wasm::TypeDefinition> m_typeDefinition;
+    // If m_type came from a TypeDefinition, the following retains the definition
+    // and all transitively reachable types to prevent dangling TypeIndex values.
+    std::optional<WebAssemblyGCTypeDependencies> m_typeDependencies;
     Wasm::Mutability m_mutability;
     JSWebAssemblyGlobal* m_owner { nullptr };
     Value m_value;

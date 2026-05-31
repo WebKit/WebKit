@@ -33,6 +33,7 @@
 #include <JavaScriptCore/WasmCallee.h>
 #include <JavaScriptCore/WasmFormat.h>
 #include <JavaScriptCore/WasmLimits.h>
+#include <JavaScriptCore/WasmTypeDefinition.h>
 #include <JavaScriptCore/WriteBarrier.h>
 #include <wtf/MallocPtr.h>
 #include <wtf/Ref.h>
@@ -106,8 +107,9 @@ protected:
     NO_UNIQUE_ADDRESS const std::optional<uint32_t> m_maximum;
     const TableElementType m_type;
     Type m_wasmType;
-    // If m_wasmType came from a TypeDefinition, the following retains the definition to prevent a dangling m_wasmType.
-    RefPtr<const TypeDefinition> m_wasmTypeDefinition;
+    // If m_wasmType came from a TypeDefinition, the following retains the definition
+    // and all transitively reachable types to prevent dangling TypeIndex values.
+    std::optional<WebAssemblyGCTypeDependencies> m_typeDependencies;
     bool m_isFixedSized { false };
     JSWebAssemblyTable* m_owner;
 };
