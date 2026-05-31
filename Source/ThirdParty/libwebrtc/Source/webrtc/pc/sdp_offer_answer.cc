@@ -669,6 +669,9 @@ std::vector<RtpEncodingParameters> GetSendEncodingsFromRemoteDescription(
 
   // This is a remote description, the parameters we are after should appear
   // as receive streams.
+#if WEBRTC_WEBKIT_BUILD
+  size_t parametersCounter = 0;
+#endif
   for (const auto& alternatives : simulcast.receive_layers()) {
     RTC_DCHECK(!alternatives.empty());
     // There is currently no way to specify or choose from alternatives.
@@ -686,6 +689,10 @@ std::vector<RtpEncodingParameters> GetSendEncodingsFromRemoteDescription(
       parameters.codec = rid_desc->codecs[0].ToCodecParameters();
     }
     result.push_back(parameters);
+#if WEBRTC_WEBKIT_BUILD
+    if (++parametersCounter >= kMaxSimulcastStreams)
+      break;
+#endif
   }
 
   return result;
