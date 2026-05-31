@@ -78,7 +78,7 @@ WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(retrieve_and_clear_exception, CallFrame*, IPIn
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(retrieve_clear_and_push_exception, CallFrame*, IPIntStackEntry* stack, IPIntLocal* pl);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(retrieve_clear_and_push_exception_and_arguments, CallFrame*, IPIntStackEntry* stack, IPIntLocal* pl);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(throw_exception, CallFrame*, IPIntStackEntry* arguments, unsigned exceptionIndex);
-WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(rethrow_exception, CallFrame*, IPIntStackEntry* pl, unsigned tryDepth);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(rethrow_exception, CallFrame*, IPIntLocal* pl, unsigned tryDepth);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(throw_ref, CallFrame* callFrame, EncodedJSValue exnref);
 
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(ref_func, unsigned index);
