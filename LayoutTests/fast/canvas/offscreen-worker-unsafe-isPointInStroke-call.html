@@ -1,0 +1,51 @@
+<body>
+    <p>PASS if this test does not crash.</p>
+    <script>
+        window.testRunner?.waitUntilDone();
+        window.testRunner?.dumpAsText();
+
+        const tester = `self.onmessage = event => {
+            const ctx = event.data.getContext("2d");
+            for (let i = 0; i < 500; i++) {
+                ctx.setLineDash([5 + i % 20, 3 + i % 12]); // forces CG dash alloc/free
+                ctx.beginPath();
+                for (let j = 0; j < 25; j++) {
+                    let a = j / 25 * Math.PI * 2 + i * .1;
+                    let r = 30 + 20 * Math.sin(j * .7 + i * .3);
+                    let x = 64 + r * Math.cos(a);
+                    let y = 64 + r * Math.sin(a);
+                    if (!j)
+                        ctx.moveTo(x, y);
+                    else
+                        ctx.bezierCurveTo(
+                            x + 12 * Math.sin(i + j), y + 12 * Math.cos(i + j),
+                            x -  8 * Math.cos(i * j), y -  8 * Math.sin(i * j),
+                            x, y
+                        );
+                }
+                ctx.closePath();
+                ctx.isPointInStroke(64, 64);
+            }
+            self.postMessage({ type: 'done' }); // Send finished signal
+        };`;
+
+        const totalWorkers = 4;
+        let doneWorkers = 0;
+
+        for (let i = 0; i < totalWorkers; i++) {
+            const canvas = document.createElement("canvas");
+            canvas.width = 128;
+            canvas.height = 128;
+            const offscreen = canvas.transferControlToOffscreen();
+            const worker = new Worker(URL.createObjectURL(new Blob([tester])));
+            worker.postMessage(offscreen, [offscreen]);
+
+            worker.onmessage = event => {
+                if (event.data.type === 'done') {
+                    if (++doneWorkers == totalWorkers)
+                        window.testRunner?.notifyDone();
+                }
+            };
+        }
+    </script>
+</body>
