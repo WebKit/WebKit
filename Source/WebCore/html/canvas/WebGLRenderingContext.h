@@ -50,7 +50,7 @@ public:
 
     GCGLint maxDrawBuffers() final;
     GCGLint maxColorAttachments() final;
-    void initializeDefaultObjects() final;
+    void initializeDefaultObjects() WTF_REQUIRES_LOCK(objectGraphLock()) final;
 
     void addMembersToOpaqueRoots(JSC::AbstractSlotVisitor&) final;
 

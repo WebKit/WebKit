@@ -524,8 +524,11 @@ void WebGLRenderingContextBase::initializeNewContext(Ref<GraphicsContextGL> cont
     updateActiveOrdinal();
     if (!wasActive)
         addActiveContext(*this);
-    initializeContextState();
-    initializeDefaultObjects();
+    {
+        Locker locker { objectGraphLock() };
+        initializeContextState();
+        initializeDefaultObjects();
+    }
     // Next calls will receive the context lost callback.
     m_context->setClient(this);
 }
