@@ -294,7 +294,7 @@ void AnimationTimelinesController::suspendAnimations()
 
     m_cachedCurrentTimeClearanceTimer.stop();
 
-    for (Ref timeline : m_timelines)
+    for (auto& timeline : copyToVectorOf<Ref<AnimationTimeline>>(m_timelines))
         timeline->suspendAnimations();
 
     m_isSuspended = true;
