@@ -574,7 +574,7 @@ public:
 
     Ref<const DisplayList> displayList() const;
 
-    void apply(GraphicsContext&) const;
+    void apply(GraphicsContext&, ControlFactory&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:

@@ -39,6 +39,8 @@ void applyItem(GraphicsContext& context, ControlFactory& controlFactory, const I
     WTF::switchOn(item,
         [&](const DrawControlPart& item) {
             item.apply(context, controlFactory);
+        }, [&](const DrawDisplayList& item) {
+            item.apply(context, controlFactory);
         }, [&](const auto& item) {
             item.apply(context);
         }
