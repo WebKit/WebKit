@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>getComputedStyle reflects SVG transform attribute</title>
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/styling.html#PresentationAttributes">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+    <circle id="scaled" cx="50" cy="50" r="50" fill="green" transform="scale(2)"/>
+    <rect id="translated" x="0" y="0" width="50" height="50" fill="blue" transform="translate(10 20)"/>
+    <rect id="none" x="0" y="0" width="50" height="50" fill="red"/>
+</svg>
+<style>
+#overridden { transform: none; }
+</style>
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+    <circle id="overridden" cx="50" cy="50" r="50" fill="green" transform="scale(2)"/>
+</svg>
+<script>
+test(function() {
+    const el = document.getElementById('scaled');
+    const computed = getComputedStyle(el).transform;
+    assert_equals(computed, 'matrix(2, 0, 0, 2, 0, 0)',
+        'SVG transform="scale(2)" should reflect in getComputedStyle');
+}, 'getComputedStyle reflects SVG scale transform attribute');
+
+test(function() {
+    const el = document.getElementById('translated');
+    const computed = getComputedStyle(el).transform;
+    assert_equals(computed, 'matrix(1, 0, 0, 1, 10, 20)',
+        'SVG transform="translate(10 20)" should reflect in getComputedStyle');
+}, 'getComputedStyle reflects SVG translate transform attribute');
+
+test(function() {
+    const el = document.getElementById('none');
+    const computed = getComputedStyle(el).transform;
+    assert_equals(computed, 'none',
+        'No transform attribute should give none');
+}, 'getComputedStyle returns none when no transform attribute');
+
+test(function() {
+    const el = document.getElementById('overridden');
+    const computed = getComputedStyle(el).transform;
+    assert_equals(computed, 'none',
+        'CSS transform: none should override SVG attribute');
+}, 'CSS transform: none overrides SVG attribute in getComputedStyle');
+</script>
+</body>
+</html>

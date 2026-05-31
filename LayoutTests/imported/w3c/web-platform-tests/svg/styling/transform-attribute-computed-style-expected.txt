@@ -1,0 +1,7 @@
+
+
+PASS getComputedStyle reflects SVG scale transform attribute
+PASS getComputedStyle reflects SVG translate transform attribute
+PASS getComputedStyle returns none when no transform attribute
+PASS CSS transform: none overrides SVG attribute in getComputedStyle
+
