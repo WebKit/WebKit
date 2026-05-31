@@ -1025,11 +1025,12 @@ static BOOL isArrayOfRequestMethodsValid(NSArray<NSString *> *requestMethods)
 - (NSArray<NSString *> *)_resourcesToTargetWhenNoneAreSpecifiedInRule
 {
     static NSArray *resourceTypesExceptMainFrame;
-    if (!resourceTypesExceptMainFrame) {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
         NSMutableDictionary *allResourceTypes = [[self _chromeResourceTypeToWebKitResourceType] mutableCopy];
         [allResourceTypes removeObjectForKey:@"main_frame"];
         resourceTypesExceptMainFrame = allResourceTypes.allKeys;
-    }
+    });
 
     return resourceTypesExceptMainFrame;
 }
