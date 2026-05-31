@@ -116,7 +116,8 @@ protected:
     void updateProgressBasedTimelinesForNode(const WebCore::ScrollingTreeScrollingNode&);
 
 private:
-    std::unique_ptr<RemoteProgressBasedTimelineRegistry> m_progressBasedTimelineRegistry;
+    mutable Lock m_progressBasedTimelineRegistryLock;
+    std::unique_ptr<RemoteProgressBasedTimelineRegistry> m_progressBasedTimelineRegistry WTF_GUARDED_BY_LOCK(m_progressBasedTimelineRegistryLock);
 #endif
 };
 
