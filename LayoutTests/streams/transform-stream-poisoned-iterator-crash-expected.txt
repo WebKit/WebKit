@@ -1,0 +1,6 @@
+Tests that constructing a TransformStream does not crash when Array.prototype[Symbol.iterator] has been poisoned to return wrong-type objects.
+WebKit should not crash, and you should see PASS below.
+
+PASS: plain-object substitution threw TypeError
+PASS: object-reference substitution threw TypeError
+PASS: truncated iterator threw TypeError
