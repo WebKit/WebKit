@@ -64,7 +64,9 @@ void WebExtensionStorageSQLiteStore::getAllKeys(CompletionHandler<void(Vector<St
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
             RELEASE_LOG_ERROR(Extensions, "Failed to retrieve all keys for extension %s.", uniqueIdentifier.utf8().data());
-            completionHandler({ }, "Failed to retrieve all keys"_s);
+            WorkQueue::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler)]() mutable {
+                completionHandler({ }, "Failed to retrieve all keys"_s);
+            });
             return;
         }
 
@@ -83,7 +85,9 @@ void WebExtensionStorageSQLiteStore::getValuesForKeys(Vector<String> keys, Compl
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
             RELEASE_LOG_ERROR(Extensions, "Failed to retrieve values for keys: %s for extension %s.", rowFilterStringFromRowKeys(keys).utf8().data(), uniqueIdentifier.utf8().data());
-            completionHandler({ }, "Failed to retrieve values for keys"_s);
+            WorkQueue::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler)]() mutable {
+                completionHandler({ }, "Failed to retrieve values for keys"_s);
+            });
             return;
         }
 
@@ -171,7 +175,9 @@ void WebExtensionStorageSQLiteStore::getStorageSizeForAllKeys(HashMap<String, St
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis) {
                 RELEASE_LOG_ERROR(Extensions, "Failed to calculate storage size for extension %s.", uniqueIdentifier.utf8().data());
-                completionHandler(0.0, 0, { }, makeString("Failed to calculate storage size"_s));
+                WorkQueue::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler)]() mutable {
+                    completionHandler(0.0, 0, { }, makeString("Failed to calculate storage size"_s));
+                });
                 return;
             }
 
@@ -196,7 +202,9 @@ void WebExtensionStorageSQLiteStore::setKeyedData(HashMap<String, String> keyedD
     queue().dispatch([weakThis = ThreadSafeWeakPtr { *this }, keyedData = crossThreadCopy(keyedData), completionHandler = WTF::move(completionHandler)]() mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
-            completionHandler({ }, makeString("Failed to set keys: "_s, rowFilterStringFromRowKeys(toVector(keyedData, true))));
+            WorkQueue::mainSingleton().dispatch([keyedData = WTF::move(keyedData), completionHandler = WTF::move(completionHandler)]() mutable {
+                completionHandler({ }, makeString("Failed to set keys: "_s, rowFilterStringFromRowKeys(toVector(keyedData, true))));
+            });
             return;
         }
 
@@ -230,7 +238,9 @@ void WebExtensionStorageSQLiteStore::deleteValuesForKeys(Vector<String> keys, Co
     queue().dispatch([weakThis = ThreadSafeWeakPtr { *this }, keys = crossThreadCopy(keys), completionHandler = WTF::move(completionHandler)]() mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
-            completionHandler(makeString("Failed to delete keys: "_s, rowFilterStringFromRowKeys(keys)));
+            WorkQueue::mainSingleton().dispatch([keys = WTF::move(keys), completionHandler = WTF::move(completionHandler)]() mutable {
+                completionHandler(makeString("Failed to delete keys: "_s, rowFilterStringFromRowKeys(keys)));
+            });
             return;
         }
 
