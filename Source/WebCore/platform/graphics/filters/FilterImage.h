@@ -75,7 +75,7 @@ public:
     PixelBuffer* pixelBuffer(AlphaPremultiplication);
 
     RefPtr<PixelBuffer> getPixelBuffer(AlphaPremultiplication, const IntRect& sourceRect, std::optional<DestinationColorSpace> = std::nullopt);
-    void copyPixelBuffer(PixelBuffer& destinationPixelBuffer, const IntRect& sourceRect);
+    bool copyPixelBuffer(PixelBuffer& destinationPixelBuffer, const IntRect& sourceRect);
 
     void correctPremultipliedPixelBuffer();
     void transformToColorSpace(const DestinationColorSpace&);

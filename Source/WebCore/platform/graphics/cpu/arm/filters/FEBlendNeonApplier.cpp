@@ -187,6 +187,9 @@ bool FEBlendNeonApplier::apply(const Filter&, std::span<const Ref<FilterImage>> 
     auto effectBDrawingRect = result.absoluteImageRectRelativeTo(input2);
     auto sourcePixelArrayB = input2.getPixelBuffer(AlphaPremultiplication::Premultiplied, effectBDrawingRect);
 
+    if (!sourcePixelArrayA || !sourcePixelArrayB)
+        return false;
+
     unsigned sourcePixelArrayLength = sourcePixelArrayA->bytes().size();
     ASSERT(sourcePixelArrayLength == sourcePixelArrayB->bytes().size());
 
