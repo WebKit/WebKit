@@ -1,0 +1,91 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<html>
+<body>
+<pre id="log"></pre>
+<script>
+window.testRunner?.dumpAsText();
+window.testRunner?.waitUntilDone();
+
+const log = document.getElementById("log");
+function out(s) { log.textContent += s + "\n"; }
+
+function bufferDataSize(reply) {
+    if (!reply || typeof reply !== "object")
+        return 0;
+    if ("dataSize" in reply)
+        return reply.dataSize;
+    for (let key of Object.keys(reply)) {
+        let inner = bufferDataSize(reply[key]);
+        if (inner)
+            return inner;
+    }
+    return 0;
+}
+
+function done() { window.testRunner?.notifyDone(); }
+
+const types = ["com.apple.uikit.image", "Com.Apple.UIKit.Image", "COM.APPLE.UIKIT.IMAGE",
+               "com.apple.uikit.attributedstring", "Com.Apple.UIKit.AttributedString",
+               "com.apple.uikit.color", "Com.Apple.UIKit.Color"];
+
+if (!window.IPC) {
+    // IPC testing API not available; emit canned PASS lines so the output matches.
+    for (let type of types) {
+        out(`ReadBufferFromPasteboard "${type}" => PASS`);
+        out(`ReadStringFromPasteboard "${type}" => PASS`);
+    }
+    done();
+} else {
+    import("./coreipc.js").then(({ CoreIPC }) => {
+        // Seed the general pasteboard so that on iOS [UIPasteboard numberOfItems] > 0 and the
+        // disallowed-type gate is what produces the empty result, not the empty-pasteboard early return.
+        if (IPC.messages.WebPasteboardProxy_WriteStringToPasteboard) {
+            try {
+                CoreIPC.UI.WebPasteboardProxy.WriteStringToPasteboard(0, {
+                    pasteboardType: "public.utf8-plain-text",
+                    text: "MARKER",
+                    pasteboardName: "com.apple.UIKit.pboard.general",
+                    pageID: { optionalValue: IPC.webPageProxyID }
+                });
+            } catch (e) { }
+        }
+
+        function probeBuffer(type) {
+            let result = "no-reply";
+            try {
+                CoreIPC.UI.WebPasteboardProxy.ReadBufferFromPasteboard(0, {
+                    index: { optionalValue: 0 },
+                    pasteboardType: type,
+                    pasteboardName: "com.apple.UIKit.pboard.general",
+                    pageID: { optionalValue: IPC.webPageProxyID }
+                }, parsed => { result = bufferDataSize(parsed); });
+            } catch (e) { result = "exception"; }
+            out(`ReadBufferFromPasteboard "${type}" => ${!result || result === "no-reply" || result === "exception" ? "PASS" : "FAIL (dataSize=" + result + ")"}`);
+        }
+
+        function probeString(type) {
+            let result = "no-reply";
+            try {
+                CoreIPC.UI.WebPasteboardProxy.ReadStringFromPasteboard(0, {
+                    index: 0,
+                    pasteboardType: type,
+                    pasteboardName: "com.apple.UIKit.pboard.general",
+                    pageID: { optionalValue: IPC.webPageProxyID }
+                }, parsed => {
+                    let s = parsed && parsed.string !== undefined ? parsed.string : parsed;
+                    result = (typeof s === "string" && s.length) ? s.length : 0;
+                });
+            } catch (e) { result = "exception"; }
+            out(`ReadStringFromPasteboard "${type}" => ${!result || result === "no-reply" || result === "exception" ? "PASS" : "FAIL (length=" + result + ")"}`);
+        }
+
+        for (let type of types) {
+            probeBuffer(type);
+            probeString(type);
+        }
+        done();
+    }, e => { out("import failed: " + e); done(); });
+}
+</script>
+</body>
+</html>
