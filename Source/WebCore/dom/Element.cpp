@@ -2270,8 +2270,8 @@ static inline AtomString makeIdForStyleResolution(const AtomString& value, bool 
 bool Element::isElementReflectionAttribute(const Settings& settings, const QualifiedName& name)
 {
     return name == HTMLNames::aria_activedescendantAttr
-        || (settings.popoverAttributeEnabled() && name == HTMLNames::popovertargetAttr)
-        || (settings.commandAttributesEnabled() && name == HTMLNames::commandforAttr);
+        || (name == HTMLNames::popovertargetAttr && settings.popoverAttributeEnabled())
+        || (name == HTMLNames::commandforAttr && settings.commandAttributesEnabled());
 }
 
 bool Element::isElementsArrayReflectionAttribute(const QualifiedName& name)
@@ -2346,6 +2346,12 @@ void Element::parserNotifyAttributeAdded(const QualifiedName& name, const AtomSt
 
 void Element::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
 {
+    Ref document = this->document();
+    if (isElementReflectionAttribute(document->settings(), name) || isElementsArrayReflectionAttribute(name)) {
+        if (auto* map = explicitlySetAttrElementsMapIfExists())
+            map->remove(name);
+    }
+
     if (oldValue == newValue)
         return;
 
@@ -2355,7 +2361,7 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
         break;
     case AttributeNames::idAttr: {
         AtomString oldId = elementData()->idForStyleResolution();
-        AtomString newId = makeIdForStyleResolution(newValue, document().inQuirksMode());
+        AtomString newId = makeIdForStyleResolution(newValue, document->inQuirksMode());
         if (newId != oldId) {
             Style::IdChangeInvalidation styleInvalidation(*this, oldId, newId);
             elementData()->setIdForStyleResolution(newId);
@@ -2400,7 +2406,7 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
         }
         break;
     case AttributeNames::accesskeyAttr:
-        document().invalidateAccessKeyCache();
+        document->invalidateAccessKeyCache();
         break;
     case AttributeNames::dirAttr:
         dirAttributeChanged(newValue);
@@ -2411,7 +2417,6 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
             setHasLangAttr(!newValue.isNull() && (isHTMLElement() || isSVGElement()));
         else
             setHasXMLLangAttr(!newValue.isNull());
-        Ref document = this->document();
         if (document->documentElement() == this)
             document->setDocumentElementLanguage(langFromAttribute());
         else
@@ -2422,14 +2427,8 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
         if (reason == AttributeModificationReason::Parser && !isDefinedCustomElement())
             setUsesNullCustomElementRegistry();
         break;
-    default: {
-        Ref document = this->document();
-        if (isElementReflectionAttribute(document->settings(), name) || isElementsArrayReflectionAttribute(name)) {
-            if (auto* map = explicitlySetAttrElementsMapIfExists())
-                map->remove(name);
-        }
+    default:
         break;
-    }
     }
 }
 
