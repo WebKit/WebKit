@@ -231,9 +231,13 @@ namespace JSC {
         bool isOptionalChainBase() const { return m_isOptionalChainBase; }
         void setIsOptionalChainBase() { m_isOptionalChainBase = true; }
 
+        bool isParenthesized() const { return m_isParenthesized; }
+        void setIsParenthesized() { m_isParenthesized = true; }
+
     private:
         ResultType m_resultType;
         bool m_isOptionalChainBase { false };
+        bool m_isParenthesized { false };
     };
 
     class StatementNode : public Node {

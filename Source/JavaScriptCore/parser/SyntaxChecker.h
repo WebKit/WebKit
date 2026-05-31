@@ -345,6 +345,7 @@ public:
     PropertyNode::Type getType(const Property& property) const { return property.type; }
     bool isUnderscoreProtoSetter(const Property& property) const { return property.isUnderscoreProtoSetter; }
     bool isResolve(ExpressionType expr) const { return expr == ResolveExpr || expr == ResolveEvalExpr; }
+    void setExpressionIsParenthesized(ExpressionType) { }
     ExpressionType createDestructuringAssignment(const JSTokenLocation&, int, ExpressionType)
     {
         return DestructuringAssignment;
