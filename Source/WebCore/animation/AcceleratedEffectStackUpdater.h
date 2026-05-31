@@ -29,7 +29,7 @@
 
 #include <WebCore/AcceleratedEffect.h>
 #include <WebCore/AnimationMalloc.h>
-#include <wtf/HashSet.h>
+#include <WebCore/Styleable.h>
 
 namespace WebCore {
 
@@ -47,8 +47,7 @@ public:
     bool hasTargetsPendingUpdate() const { return !m_targetsPendingUpdate.isEmpty(); }
 
 private:
-    using HashedStyleable = std::pair<Element*, std::optional<Style::PseudoElementIdentifier>>;
-    HashSet<HashedStyleable> m_targetsPendingUpdate;
+    WeakStyleableHashSet m_targetsPendingUpdate;
 };
 
 } // namespace WebCore

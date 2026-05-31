@@ -61,16 +61,15 @@ void AcceleratedEffectStackUpdater::update()
     Vector<RefPtr<const AcceleratedEffectStack>> previousEffectStacks;
 
     auto targetsPendingUpdate = std::exchange(m_targetsPendingUpdate, { });
-    for (auto [element, pseudoElementIdentifier] : targetsPendingUpdate) {
-        if (!element)
+    for (auto weakTarget : targetsPendingUpdate) {
+        auto target = weakTarget.styleable();
+        if (!target)
             continue;
 
-        Styleable target { *element, pseudoElementIdentifier };
-
         if (!page)
-            page = element->protectedDocument()->page();
+            page = protect(target->element.document())->page();
 
-        auto* renderer = dynamicDowncast<RenderLayerModelObject>(target.renderer());
+        CheckedPtr renderer = dynamicDowncast<RenderLayerModelObject>(target->renderer());
         if (!renderer || !renderer->isComposited())
             continue;
 
@@ -87,7 +86,7 @@ void AcceleratedEffectStackUpdater::update()
 
 void AcceleratedEffectStackUpdater::scheduleUpdateForTarget(const Styleable& target)
 {
-    m_targetsPendingUpdate.add({ &target.element, target.pseudoElementIdentifier });
+    m_targetsPendingUpdate.add({ target });
 }
 
 } // namespace WebCore
