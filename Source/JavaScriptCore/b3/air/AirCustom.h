@@ -174,6 +174,7 @@ struct CCallCustom : public CommonCustomBase<CCallCustom> {
         return false;
     }
 
+    static bool isValidArg(Arg&);
     static bool isValidForm(Inst&);
 
     static bool admitsStack(Inst&, unsigned)
