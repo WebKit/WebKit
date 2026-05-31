@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test passes if it does not crash.</p>
+<script>
+if (window.internals)
+    internals.settings.setWebXREnabled(true);
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function forceGC()
+{
+    if (window.GCController)
+        GCController.collect();
+}
+
+async function run()
+{
+    let iframe = document.createElement('iframe');
+    iframe.srcdoc = '<!DOCTYPE html><body>child</body>';
+    document.body.appendChild(iframe);
+    await new Promise(resolve => { iframe.onload = resolve; });
+
+    let childXR = iframe.contentWindow.navigator.xr;
+
+    // Call the parent realm's requestSession on the child's XRSystem so that
+    // the resulting XRSession's wrapper lives in the parent realm while the
+    // owning WebXRSystem belongs to the child realm.
+    let session;
+    try {
+        session = await XRSystem.prototype.requestSession.call(childXR, 'inline');
+    } catch (e) {
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+
+    childXR = null;
+    iframe.remove();
+    iframe = null;
+
+    // Allow the child realm's JSDOMWindow / Navigator / WebXRSystem to be
+    // collected, leaving the session with a stale back-reference.
+    for (let i = 0; i < 3; ++i) {
+        await new Promise(resolve => setTimeout(resolve, 0));
+        forceGC();
+    }
+
+    try {
+        await session.end();
+    } catch (e) {
+    }
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+run();
+</script>
+</body>
+</html>
