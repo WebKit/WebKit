@@ -214,6 +214,9 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus& bus, unsigned destination
     double pitchRate = totalPitchRate();
     bool reverse = pitchRate < 0;
 
+    if (!bufferLength)
+        return false;
+
     // Avoid converting from time to sample-frames twice by computing
     // the grain end time first before computing the sample frame.
     unsigned maxFrame;
@@ -249,7 +252,7 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus& bus, unsigned destination
 
         // Wrap back to the beginning of the loop.
         m_virtualReadIndex = (m_loopStart < 0) ? 0 : (m_loopStart * m_buffer->sampleRate());
-        m_virtualReadIndex = std::min(m_virtualReadIndex, static_cast<double>(bufferLength - 1));
+        m_virtualReadIndex = std::min(m_virtualReadIndex, static_cast<double>(bufferLength) - 1);
     }
 
     // Sanity check that our playback rate isn't larger than the loop size.
@@ -339,6 +342,9 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus& bus, unsigned destination
 
         if (readIndex >= maxFrame)
             readIndex -= deltaFrames;
+
+        if (readIndex >= bufferLength)
+            return false;
 
         for (unsigned i = 0; i < numberOfChannels; ++i)
             std::ranges::fill(m_destinationChannels[i].subspan(writeIndex).first(framesToProcess), m_sourceChannels[i][readIndex]);
@@ -476,8 +482,7 @@ ExceptionOr<void> AudioBufferSourceNode::setBufferForBindings(RefPtr<AudioBuffer
     if (m_isGrain)
         adjustGrainParameters();
 
-    if (isPlayingOrScheduled())
-        acquireBufferContent();
+    acquireBufferContent();
 
     return { };
 }

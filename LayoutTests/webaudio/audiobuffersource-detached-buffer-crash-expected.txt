@@ -1,0 +1,11 @@
+AudioBufferSourceNode should not read from a freed channel buffer when the buffer is set before scheduling and its backing ArrayBuffer is then transferred and collected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS transferError instanceof TypeError is true
+PASS Rendering completed without crashing.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
