@@ -61,7 +61,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 // The anonymous text renderer inside ::first-letter has no DOM node.
-static RenderTextFragment* remainingTextFragmentForFirstLetter(const RenderObject& renderer)
+static RenderText* remainingTextFragmentForFirstLetter(const RenderObject& renderer)
 {
     if (renderer.node())
         return { };

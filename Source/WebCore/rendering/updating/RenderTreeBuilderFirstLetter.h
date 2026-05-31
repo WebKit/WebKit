@@ -32,6 +32,7 @@ namespace WebCore {
 
 class RenderText;
 class RenderTextFragment;
+class RenderSVGInlineTextFragment;
 
 class RenderTreeBuilder::FirstLetter {
     WTF_MAKE_TZONE_ALLOCATED(FirstLetter);
@@ -40,6 +41,7 @@ public:
 
     void updateAfterDescendants(RenderBlock&);
     void cleanupOnDestroy(RenderTextFragment&);
+    void cleanupOnDestroy(RenderSVGInlineTextFragment&);
 
 private:
     void updateStyle(RenderBlock& firstLetterBlock, RenderObject& currentChild);

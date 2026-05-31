@@ -119,7 +119,10 @@ RefPtr<SVGTextPositioningElement> SVGTextPositioningElement::elementFromRenderer
     if (!is<RenderSVGText>(renderer) && !is<RenderSVGInline>(renderer))
         return nullptr;
 
-    ASSERT(renderer.element());
+    // Anonymous wrappers (e.g. ::first-letter on SVG <text>) have no DOM element.
+    if (!renderer.element())
+        return nullptr;
+
     RefPtr element = downcast<SVGElement>(renderer.element());
     return dynamicDowncast<SVGTextPositioningElement>(WTF::move(element));
 }

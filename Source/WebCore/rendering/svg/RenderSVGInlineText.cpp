@@ -78,7 +78,25 @@ static String applySVGWhitespaceRules(const String& string, bool preserveWhiteSp
 }
 
 RenderSVGInlineText::RenderSVGInlineText(Text& textNode, const String& string)
-    : RenderText(Type::SVGInlineText, textNode, applySVGWhitespaceRules(string, false))
+    : RenderSVGInlineText(Type::SVGInlineText, textNode, string)
+{
+}
+
+RenderSVGInlineText::RenderSVGInlineText(Document& document, const String& string)
+    : RenderSVGInlineText(Type::SVGInlineText, document, string)
+{
+}
+
+RenderSVGInlineText::RenderSVGInlineText(Type type, Text& textNode, const String& string)
+    : RenderText(type, textNode, applySVGWhitespaceRules(string, false))
+    , m_scalingFactor(1)
+    , m_layoutAttributes(*this)
+{
+    ASSERT(isRenderSVGInlineText());
+}
+
+RenderSVGInlineText::RenderSVGInlineText(Type type, Document& document, const String& string)
+    : RenderText(type, document, applySVGWhitespaceRules(string, false))
     , m_scalingFactor(1)
     , m_layoutAttributes(*this)
 {
@@ -95,7 +113,11 @@ void RenderSVGInlineText::willBeDestroyed()
 
 String RenderSVGInlineText::originalText() const
 {
-    return textNode().data();
+    if (RefPtr node = textNode())
+        return node->data();
+    // Anonymous instances (e.g. the ::first-letter wrapper-child fragment)
+    // have no DOM Text node; the rendered text is the original.
+    return text();
 }
 
 void RenderSVGInlineText::setTextInternal(const String& newText, bool force)

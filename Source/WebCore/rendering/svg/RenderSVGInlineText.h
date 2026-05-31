@@ -31,14 +31,13 @@ namespace WebCore {
 
 class SVGInlineTextBox;
 
-class RenderSVGInlineText final : public RenderText {
+class RenderSVGInlineText : public RenderText {
     WTF_MAKE_TZONE_ALLOCATED(RenderSVGInlineText);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSVGInlineText);
 public:
     RenderSVGInlineText(Text&, const String&);
+    RenderSVGInlineText(Document&, const String&);
     virtual ~RenderSVGInlineText();
-
-    Text& textNode() const { return downcast<Text>(nodeForNonAnonymous()); }
 
     bool characterStartsNewTextChunk(int position) const;
     SVGTextLayoutAttributes* layoutAttributes() LIFETIME_BOUND { return &m_layoutAttributes; }
@@ -76,7 +75,12 @@ private:
     PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
     IntRect linesBoundingBox() const override;
 
-    void setTextInternal(const String&, bool force) final;
+protected:
+    void setTextInternal(const String&, bool force) override;
+
+    // Type-taking constructors for subclasses (e.g. RenderSVGInlineTextFragment).
+    RenderSVGInlineText(Type, Text&, const String&);
+    RenderSVGInlineText(Type, Document&, const String&);
 
     float m_scalingFactor;
     FontCascade m_scaledFont;

@@ -85,7 +85,7 @@ using namespace HTMLNames;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderBoxModelObject);
 
-using FirstLetterRemainingTextMap = SingleThreadWeakHashMap<const RenderBoxModelObject, SingleThreadWeakPtr<RenderTextFragment>>;
+using FirstLetterRemainingTextMap = SingleThreadWeakHashMap<const RenderBoxModelObject, SingleThreadWeakPtr<RenderText>>;
 
 static FirstLetterRemainingTextMap& NODELETE firstLetterRemainingTextMap()
 {
@@ -944,14 +944,14 @@ LayoutUnit RenderBoxModelObject::containingBlockLogicalWidthForContent() const
     return { };
 }
 
-RenderTextFragment* RenderBoxModelObject::firstLetterRemainingText() const
+RenderText* RenderBoxModelObject::firstLetterRemainingText() const
 {
     if (!isFirstLetter())
         return nullptr;
     return firstLetterRemainingTextMap().get(*this);
 }
 
-void RenderBoxModelObject::setFirstLetterRemainingText(RenderTextFragment& remainingText)
+void RenderBoxModelObject::setFirstLetterRemainingText(RenderText& remainingText)
 {
     ASSERT(isFirstLetter());
     firstLetterRemainingTextMap().set(*this, remainingText);

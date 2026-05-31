@@ -57,6 +57,7 @@
 #include "RenderObjectInlines.h"
 #include "RenderReplaced.h"
 #include "RenderSVGInline.h"
+#include "RenderSVGInlineTextFragment.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
 #include "RenderStyle+GettersInlines.h"
@@ -231,6 +232,8 @@ void RenderTreeBuilder::destroy(RenderObject& renderer, CanCollapseAnonymousBloc
 
     if (auto* textFragment = dynamicDowncast<RenderTextFragment>(renderer))
         firstLetterBuilder().cleanupOnDestroy(*textFragment);
+    else if (auto* svgFragment = dynamicDowncast<RenderSVGInlineTextFragment>(renderer))
+        firstLetterBuilder().cleanupOnDestroy(*svgFragment);
 
     auto tearDownSubTreeIfApplicable = [&] {
         auto* rendererToDelete = dynamicDowncast<RenderElement>(toDestroy.get());
@@ -616,6 +619,12 @@ void RenderTreeBuilder::moveChildren(RenderBoxModelObject& from, RenderBoxModelO
             if (CheckedPtr block = downcast<RenderTextFragment>(*child).blockForAccompanyingFirstLetter()) {
                 auto [firstLetter, firstLetterContainer] = block->firstLetterAndContainer(child);
                 // This is the first letter, skip it.
+                if (firstLetter == nextSibling)
+                    nextSibling = nextSibling->nextSibling();
+            }
+        } else if (is<RenderSVGInlineTextFragment>(*child) && is<RenderText>(nextSibling)) {
+            if (CheckedPtr block = downcast<RenderSVGInlineTextFragment>(*child).blockForAccompanyingFirstLetter()) {
+                auto [firstLetter, firstLetterContainer] = block->firstLetterAndContainer(child);
                 if (firstLetter == nextSibling)
                     nextSibling = nextSibling->nextSibling();
             }

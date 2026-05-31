@@ -205,7 +205,7 @@ static inline CheckedPtr<LegacyRenderSVGResourceContainer> paintingResourceFromS
 
 std::unique_ptr<SVGResources> SVGResources::buildCachedResources(const RenderElement& renderer, const RenderStyle& style)
 {
-    ASSERT(renderer.element());
+    // Anonymous wrappers (e.g. ::first-letter on SVG <text>) have no DOM element.
     if (!renderer.element())
         return nullptr;
 
