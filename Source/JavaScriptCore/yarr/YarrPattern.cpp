@@ -1774,7 +1774,11 @@ public:
         return m_error;
     }
 
+<<<<<<< HEAD
     [[nodiscard]] ErrorCode setupAlternativeOffsets(PatternAlternative* alternative, CheckedUint32 currentCallFrameSize, unsigned initialInputPosition, CheckedUint32& newCallFrameSize)
+=======
+    WARN_UNUSED_RETURN ErrorCode setupAlternativeOffsets(PatternAlternative* alternative, CheckedUint32 currentCallFrameSize, unsigned initialInputPosition, CheckedUint32& newCallFrameSize)
+>>>>>>> a0acd4b94ec1 ([JSC] Make RegExp tolerant against excessive stress)
     {
         if (!isSafeToRecurse()) [[unlikely]]
             return ErrorCode::TooManyDisjunctions;
@@ -1930,8 +1934,11 @@ public:
             if (initialCallFrameSize.hasOverflowed())
                 return ErrorCode::FrameTooLarge;
         }
+<<<<<<< HEAD
 
         bool shareOffsets = (disjunction == m_pattern.m_body);
+=======
+>>>>>>> a0acd4b94ec1 ([JSC] Make RegExp tolerant against excessive stress)
 
         unsigned minimumInputSize = UINT_MAX;
         unsigned maximumCallFrameSize = 0;
@@ -1942,7 +1949,11 @@ public:
         for (unsigned alt = 0; alt < disjunction->m_alternatives.size(); ++alt) {
             PatternAlternative* alternative = disjunction->m_alternatives[alt].get();
             CheckedUint32 currentAlternativeCallFrameSize;
+<<<<<<< HEAD
             error = setupAlternativeOffsets(alternative, perAlternativeInitial, initialInputPosition, currentAlternativeCallFrameSize);
+=======
+            error = setupAlternativeOffsets(alternative, initialCallFrameSize, initialInputPosition, currentAlternativeCallFrameSize);
+>>>>>>> a0acd4b94ec1 ([JSC] Make RegExp tolerant against excessive stress)
             if (hasError(error))
                 return error;
             minimumInputSize = std::min(minimumInputSize, alternative->m_minimumSize);

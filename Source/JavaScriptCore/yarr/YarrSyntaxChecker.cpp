@@ -34,6 +34,7 @@ namespace JSC { namespace Yarr {
 
 class SyntaxChecker {
 public:
+<<<<<<< HEAD
     void NODELETE assertionBOL() { }
     void NODELETE assertionEOL() { }
     void NODELETE assertionWordBoundary(bool) { }
@@ -58,6 +59,32 @@ public:
     void NODELETE quantifyAtom(unsigned, unsigned, bool) { }
     void NODELETE disjunction(CreateDisjunctionPurpose) { }
     void NODELETE resetForReparsing() { }
+=======
+    void assertionBOL() { }
+    void assertionEOL() { }
+    void assertionWordBoundary(bool) { }
+    void atomPatternCharacter(char32_t, bool) { }
+    void atomBuiltInCharacterClass(BuiltInCharacterClassID, bool) { }
+    void atomCharacterClassBegin(bool = false) { }
+    void atomCharacterClassAtom(char16_t) { }
+    void atomCharacterClassRange(char16_t, char16_t) { }
+    void atomCharacterClassBuiltIn(BuiltInCharacterClassID, bool) { }
+    void atomClassStringDisjunction(Vector<Vector<char32_t>>&) { }
+    void atomCharacterClassSetOp(CharacterClassSetOp) { }
+    void atomCharacterClassPushNested(bool) { }
+    void atomCharacterClassPopNested(bool) { }
+    void atomCharacterClassEnd() { }
+    void atomParenthesesSubpatternBegin(bool, std::optional<String> = std::nullopt) { }
+    void atomParentheticalAssertionBegin(bool, MatchDirection) { }
+    void atomParentheticalModifierBegin(OptionSet<Flags>, OptionSet<Flags>) { }
+    void atomParenthesesEnd() { }
+    void atomBackReference(unsigned) { }
+    void atomNamedBackReference(const String&) { }
+    void atomNamedForwardReference(const String&) { }
+    void quantifyAtom(unsigned, unsigned, bool) { }
+    void disjunction(CreateDisjunctionPurpose) { }
+    void resetForReparsing() { }
+>>>>>>> a0acd4b94ec1 ([JSC] Make RegExp tolerant against excessive stress)
 
     constexpr static bool NODELETE abortedDueToError() { return false; }
     constexpr static ErrorCode NODELETE abortErrorCode() { return ErrorCode::NoError; }
