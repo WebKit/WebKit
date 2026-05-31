@@ -119,7 +119,7 @@ float applyTransferFunction(float component, constant TransferFunction& function
         int tableLength = function.tableLength;
         int n = tableLength - 1;
 
-        int k = min((int)(component * n), n);
+        int k = clamp((int)(component * n), 0, n);
         float v1 = tableStart[k];
         float v2 = tableStart[min(k + 1, n)];
         return v1 + ((component * n) - k) * (v2 - v1);
@@ -127,7 +127,7 @@ float applyTransferFunction(float component, constant TransferFunction& function
     case TransferType::Discrete: {
         constant float* tableStart = tables + function.tableStart;
         int n = function.tableLength;
-        int k = min((int)(component * n), n - 1);
+        int k = clamp((int)(component * n), 0, n - 1);
         return tableStart[k];
     }
     case TransferType::Linear:
@@ -253,6 +253,10 @@ RetainPtr<CIImage> FEComponentTransferCoreImageApplier::applyOther(RetainPtr<CII
 
         case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_TABLE:
         case ComponentTransferType::FECOMPONENTTRANSFER_TYPE_DISCRETE:
+            if (function.tableValues.isEmpty()) {
+                result.functionType = TransferType::Identity;
+                break;
+            }
             result.tableLength = function.tableValues.size();
             result.tableStart = tableData.size();
             tableData.appendVector(function.tableValues);

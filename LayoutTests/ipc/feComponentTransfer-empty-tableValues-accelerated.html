@@ -1,0 +1,130 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<p>This test passes if an FEComponentTransfer with an empty Table/Discrete tableValues sent over IPC with FilterRenderingMode::Accelerated does not cause the CoreImage Metal kernel to read past the bounds of its table buffer.</p>
+<pre id="log"></pre>
+<script>
+testRunner?.dumpAsText();
+testRunner?.waitUntilDone();
+
+let finished = false;
+function done(s) {
+    if (finished)
+        return;
+    finished = true;
+    document.getElementById('log').textContent = s;
+    testRunner?.notifyDone();
+}
+let nextID = 100000; function genID() { return nextID++; }
+
+setTimeout(async () => {
+    if (!window.IPC)
+        return done('PASS');
+    try {
+        const { CoreIPC, ArgumentSerializer } = await import('./coreipc.js');
+
+        CoreIPC.typeInfo['WebCore::PlatformColorSpace'] = [
+            { type: 'std::optional<WebKit::CoreIPCCGColorSpace>', name: 'alias' }
+        ];
+
+        const pair = IPC.createStreamClientConnection(14, 30);
+        const sc = {
+            handle: pair[1], connection: pair[0],
+            newInterface(name, id) {
+                const conn = this.connection;
+                return new Proxy({}, { get(_, fn) {
+                    const def = IPC.messages[name + '_' + fn];
+                    return (args) => {
+                        const ser = ArgumentSerializer.serializeArguments(def.arguments, args);
+                        if (def.isSync)
+                            return conn.sendSyncMessage(id, def.name, ser);
+                        conn.sendMessage(id, def.name, ser);
+                    };
+                }});
+            }
+        };
+        sc.connection.open();
+
+        const RBID = genID();
+        IPC.sendMessage('GPU', 0, IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.name, [
+            { type: 'uint64_t', value: RBID },
+            { type: 'StreamServerConnectionHandle', value: sc.handle },
+        ]);
+        const init = sc.connection.waitForMessage(RBID, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name, 5);
+        sc.connection.setSemaphores(init[0].value, init[1].value);
+        const rrb = sc.newInterface('RemoteRenderingBackend', RBID);
+
+        const sRGB = { serializableColorSpace: { alias: { optionalValue: {
+            m_cgColorSpace: { alias: { variantType: 'WebCore::ColorSpace', variant: 19 } } } } } };
+
+        function createImageBuffer(id, ctx) {
+            rrb.CreateImageBuffer({
+                logicalSize: { width: 32, height: 32 }, renderingMode: 1, renderingPurpose: 0,
+                resolutionScale: 1.0, colorSpace: sRGB,
+                bufferFormat: { pixelFormat: 2, useLosslessCompression: 0 },
+                identifier: id, contextIdentifier: ctx,
+            });
+        }
+
+        const SRC = genID(), SRCCTX = genID();
+        createImageBuffer(SRC, SRCCTX);
+        sc.newInterface('RemoteGraphicsContext', SRCCTX).FillRectWithColor({
+            rect: { location: { x: 0, y: 0 }, size: { width: 32, height: 32 } },
+            color: { data: { optionalValue: { isSemantic: false, usesFunctionSerialization: false,
+                data: { variantType: 'WebCore::PackedColor::RGBA', variant: { value: 0xFFFFFFFF } } } } }
+        });
+        sc.newInterface('RemoteImageBuffer', SRC).FlushContext({});
+
+        function ctf(type, table) {
+            return { type: type, slope: 0, intercept: 0, amplitude: 0, exponent: 0, offset: 0, tableValues: table };
+        }
+        const sourceGraphic = { subclasses: { variantType: 'WebCore::SourceGraphic', variant: { operatingColorSpace: sRGB } } };
+        const identity = ctf(1, []);
+        const sentinel = 0.37;
+
+        const DST = genID(), DSTCTX = genID();
+        createImageBuffer(DST, DSTCTX);
+        sc.newInterface('RemoteGraphicsContext', DSTCTX).DrawFilteredImageBuffer({
+            sourceImageIdentifier: { optionalValue: SRC },
+            sourceImageRect: { location: { x: 0, y: 0 }, size: { width: 32, height: 32 } },
+            filter: { subclasses: { variantType: 'WebCore::SVGFilterRenderer', variant: {
+                primitiveUnits: 1,
+                expression: { alias: [{ index: 0, level: 1, geometry: {} }, { index: 1, level: 0, geometry: {} }] },
+                effects: [sourceGraphic,
+                    { subclasses: { variantType: 'WebCore::FEComponentTransfer', variant: {
+                        redFunction: ctf(3, [sentinel]), greenFunction: ctf(3, []),
+                        blueFunction: identity, alphaFunction: identity,
+                        operatingColorSpace: sRGB } } }],
+                geometry: { referenceBox: { location: { x: 0, y: 0 }, size: { width: 32, height: 32 } },
+                    filterRegion: { location: { x: 0, y: 0 }, size: { width: 32, height: 32 } },
+                    scale: { width: 1, height: 1 } },
+                filterRenderingModes: 3, isShowingDebugOverlay: false,
+                renderingResourceIdentifierIfExists: {},
+            } } },
+        });
+        sc.newInterface('RemoteImageBuffer', DST).FlushContext({});
+
+        const N = 32 * 32 * 4;
+        const shm = IPC.createSharedMemory(N);
+        shm.writeBytes(new Uint8Array(N).fill(0xAA));
+        const def = IPC.messages.RemoteImageBuffer_GetPixelBufferWithNewMemory;
+        sc.connection.sendSyncMessage(DST, def.name, ArgumentSerializer.serializeArguments(def.arguments, {
+            handle: { protection: 'ReadWrite', handle: shm },
+            outputFormat: { alphaFormat: 0, pixelFormat: 0, colorSpace: sRGB },
+            srcPoint: { x: 0, y: 0 }, srcSize: { width: 32, height: 32 },
+        }));
+        const px = new Uint8Array(shm.readBytes(0, N));
+        const o = (8 * 32 + 8) * 4;
+        const green = px[o + 1];
+
+        const sentinelByte = Math.round(sentinel * 255);
+        sc.connection.invalidate();
+        if (Math.abs(green - sentinelByte) <= 4)
+            done('FAIL: empty-table DISCRETE channel returned the adjacent table entry (green=' + green + '); kernel indexed tableStart[-1]');
+        else
+            done('PASS');
+    } catch (e) {
+        done('PASS');
+    }
+}, 0);
+
+setTimeout(() => done('PASS'), 25000);
+</script>
