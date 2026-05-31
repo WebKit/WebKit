@@ -74,7 +74,10 @@ void WebExtensionContextProxy::dispatchDevToolsExtensionPanelShownEvent(Inspecto
         if (!extensionPanel)
             return;
 
-        for (auto& listener : extensionPanel->onShown().listeners()) {
+        // Copy the listeners since call() can trigger a mutation of the listeners.
+        auto listenersCopy = extensionPanel->onShown().listeners();
+
+        for (RefPtr listener : listenersCopy) {
             auto globalContext = listener->globalContext();
             listener->call(toWindowObject(globalContext, *frame));
         }

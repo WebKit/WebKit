@@ -157,7 +157,10 @@ void WebExtensionAPIPort::fireMessageEventIfNeeded(id message)
 
     RELEASE_LOG_DEBUG(Extensions, "Fired port message event for channel %{public}llu in %{public}@ world", channelIdentifier().toUInt64(), toDebugString(contentWorldType()).createNSString().get());
 
-    for (auto& listener : m_onMessage->listeners()) {
+    // Copy the listeners since call() can trigger a mutation of the listeners.
+    auto listenersCopy = m_onMessage->listeners();
+
+    for (RefPtr listener : listenersCopy) {
         auto globalContext = listener->globalContext();
 
         listener->call(
@@ -186,7 +189,10 @@ void WebExtensionAPIPort::fireDisconnectEventIfNeeded()
 
     RELEASE_LOG_DEBUG(Extensions, "Fired port disconnect event for channel %{public}llu in %{public}@ world", m_channelIdentifier ? m_channelIdentifier->toUInt64() : 0, toDebugString(contentWorldType()).createNSString().get());
 
-    for (auto& listener : m_onDisconnect->listeners()) {
+    // Copy the listeners since call() can trigger a mutation of the listeners.
+    auto listenersCopy = m_onDisconnect->listeners();
+
+    for (RefPtr listener : listenersCopy) {
         auto globalContext = listener->globalContext();
 
         listener->call(toJS(globalContext, this));
