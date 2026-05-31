@@ -1,0 +1,55 @@
+<!-- webkit-test-runner [ WebGPUEnabled=true ] -->
+<script>
+  // BindGroup::makeSubmitInvalid must NOT invalidate the 
+  // submit when PipelineLayout::optionalBindGroupLayout(i)
+  // returns nullptr for an extra bind group index.
+  globalThis.testRunner?.waitUntilDone();
+  const log = console.debug;
+
+  onload = async () => {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+
+    // Pipeline declares only group 0.
+    let bgl0 = device.createBindGroupLayout({ entries: [
+      { binding: 0, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } },
+    ]});
+    let layout = device.createPipelineLayout({ bindGroupLayouts: [bgl0] });
+    let module = device.createShaderModule({ code: `
+      @group(0) @binding(0) var<storage, read_write> a: array<u32>;
+      @compute @workgroup_size(1) fn main() { a[0] = 1u; }
+    `});
+    let pipeline = device.createComputePipeline({ layout, compute: { module, entryPoint: 'main' } });
+
+    let buf0 = device.createBuffer({ size: 4, usage: GPUBufferUsage.STORAGE });
+    let bg0 = device.createBindGroup({ layout: bgl0, entries: [{ binding: 0, resource: { buffer: buf0 } }] });
+
+    // An "extra" bind group at index 1 — not declared by the pipeline layout.
+    // Per spec the pipeline ignores it; the dispatch must succeed without a
+    // validation error.
+    let bglExtra = device.createBindGroupLayout({ entries: [
+      { binding: 0, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } },
+    ]});
+    let bufExtra = device.createBuffer({ size: 4, usage: GPUBufferUsage.STORAGE });
+    let bgExtra = device.createBindGroup({ layout: bglExtra, entries: [{ binding: 0, resource: { buffer: bufExtra } }] });
+
+    let enc = device.createCommandEncoder();
+    let pass = enc.beginComputePass();
+    pass.setPipeline(pipeline);
+    pass.setBindGroup(0, bg0);
+    pass.setBindGroup(1, bgExtra);
+
+    device.pushErrorScope('validation');
+    pass.dispatchWorkgroups(1, 1, 1);
+    pass.end();
+    device.queue.submit([enc.finish()]);
+    await device.queue.onSubmittedWorkDone();
+    let err = await device.popErrorScope();
+
+    if (err)
+      log('FAIL: dispatch with extra bind group beyond pipeline layout was rejected: ' + err.message);
+    else
+      log('PASS: dispatch with extra bind group beyond pipeline layout was accepted');
+    globalThis.testRunner?.notifyDone();
+  };
+</script>

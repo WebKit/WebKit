@@ -180,6 +180,11 @@ void ComputePassEncoder::executePreDispatchCommands(const Buffer* indirectBuffer
         return;
     }
 
+    if (!pipeline->isValid()) {
+        makeInvalid(@"pipeline is not valid prior to dispatch");
+        return;
+    }
+
     if (NSString *error = pipeline->protectedPipelineLayout()->errorValidatingBindGroupCompatibility(m_bindGroups)) {
         makeInvalid(error);
         return;

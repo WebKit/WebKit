@@ -219,8 +219,7 @@ RefPtr<BindGroupLayout> PipelineLayout::protectedOptionalBindGroupLayout(size_t 
 void PipelineLayout::makeInvalid()
 {
     m_isValid = false;
-    if (m_bindGroupLayouts)
-        m_bindGroupLayouts->clear();
+    m_bindGroupLayouts = std::nullopt;
 }
 
 static size_t returnTotalSize(auto& container)
@@ -333,6 +332,9 @@ bool PipelineLayout::updateComputeOffsets(uint32_t bindGroupIndex, const Vector<
 
 NSString* PipelineLayout::errorValidatingBindGroupCompatibility(const PipelineLayout::BindGroupHashMap& bindGroups) const
 {
+    if (!m_isValid)
+        return @"pipeline layout is not valid";
+
     if (!m_bindGroupLayouts)
         return nil;
 
