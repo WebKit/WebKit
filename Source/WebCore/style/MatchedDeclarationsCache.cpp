@@ -153,7 +153,7 @@ std::optional<MatchedDeclarationsCache::Result> MatchedDeclarationsCache::find(u
         if (&entry.parentRenderStyle->inheritedCustomProperties() != &inheritedCustomProperties)
             continue;
 
-        if (parentStyle.inheritedEqual(*entry.parentRenderStyle))
+        if (parentStyle.inheritedEqualForMDC(*entry.parentRenderStyle))
             return std::make_optional(Result { .entry = entry, .inheritedEqual = true });
         partiallyMatchingEntry = &entry;
     }

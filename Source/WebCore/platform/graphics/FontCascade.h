@@ -101,6 +101,13 @@ public:
 
     WEBCORE_EXPORT bool operator==(const FontCascade& other) const;
 
+    // Equality used by MatchedDeclarationsCache lookup. Relaxes the
+    // per-document selector identity / version / generation checks at the
+    // bottom of operator== when both selectors are simple and their
+    // FontSettings compare equal. Enables cross-document RenderStyle reuse
+    // without requiring shared selector identity. See rdar://173598541.
+    WEBCORE_EXPORT bool equalsForMDC(const FontCascade& other) const;
+
     const FontCascadeDescription& fontDescription() const LIFETIME_BOUND { return m_fontDescription; }
     FontCascadeDescription& mutableFontDescription() const LIFETIME_BOUND { return m_fontDescription; }
 

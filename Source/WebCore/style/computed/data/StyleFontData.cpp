@@ -62,6 +62,13 @@ bool FontData::operator==(const FontData& o) const
         && fontCascade == o.fontCascade;
 }
 
+bool FontData::equalsForMDC(const FontData& o) const
+{
+    return letterSpacing == o.letterSpacing
+        && wordSpacing == o.wordSpacing
+        && fontCascade.equalsForMDC(o.fontCascade);
+}
+
 #if !LOG_DISABLED
 void FontData::dumpDifferences(TextStream& ts, const FontData& other) const
 {

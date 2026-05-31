@@ -31,6 +31,7 @@
 #include "FontCache.h"
 #include "FontCascadeInlines.h"
 #include "FontInlines.h"
+#include "FontSelector.h"
 #include "GlyphBuffer.h"
 #include "GraphicsContext.h"
 #include "LayoutRect.h"
@@ -138,6 +139,34 @@ bool FontCascade::operator==(const FontCascade& other) const
     if (fontSelectorVersion() != other.fontSelectorVersion())
         return false;
 
+    if (m_fonts->generation() != other.m_fonts->generation())
+        return false;
+
+    return true;
+}
+
+bool FontCascade::equalsForMDC(const FontCascade& other) const
+{
+    if (m_fontDescription != other.m_fontDescription || m_spacing != other.m_spacing)
+        return false;
+
+    if (m_fonts != other.m_fonts)
+        return false;
+
+    if (!m_fonts)
+        return true;
+
+    // Cross-document shortcut: if both sides are simple CSSFontSelectors with
+    // equal FontSettings, font resolution is identical regardless of per-doc
+    // selector identity/version/generation. This is what lets MDC entries
+    // cached in one document be reused in another.
+    if (RefPtr a = fontSelector(), b = other.fontSelector(); a && b && a->isSimpleFontResolutionEquivalentTo(*b))
+        return true;
+
+    if (fontSelector() != other.fontSelector())
+        return false;
+    if (fontSelectorVersion() != other.fontSelectorVersion())
+        return false;
     if (m_fonts->generation() != other.m_fonts->generation())
         return false;
 
