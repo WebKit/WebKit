@@ -1120,9 +1120,9 @@ class YarrGenerator final : public YarrJITInfo {
         Checked<int32_t> characterOffset(-static_cast<int32_t>(negativeCharacterOffset));
 
         if (m_charSize == CharSize::Char8)
-            return MacroAssembler::BaseIndex(m_regs.input, indexReg, MacroAssembler::TimesOne, characterOffset * static_cast<int32_t>(sizeof(char)));
+            return MacroAssembler::BaseIndex(base, indexReg, MacroAssembler::TimesOne, characterOffset * static_cast<int32_t>(sizeof(char)));
 
-        return MacroAssembler::BaseIndex(m_regs.input, indexReg, MacroAssembler::TimesTwo, characterOffset * static_cast<int32_t>(sizeof(char16_t)));
+        return MacroAssembler::BaseIndex(base, indexReg, MacroAssembler::TimesTwo, characterOffset * static_cast<int32_t>(sizeof(char16_t)));
     }
 
 #if ENABLE(YARR_JIT_UNICODE_EXPRESSIONS)
