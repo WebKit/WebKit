@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -143,6 +143,7 @@ CDMSessionAVContentKeySession::CDMSessionAVContentKeySession(Vector<int>&& proto
 
 CDMSessionAVContentKeySession::~CDMSessionAVContentKeySession()
 {
+    ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER);
     [m_contentKeySessionDelegate invalidate];
 
