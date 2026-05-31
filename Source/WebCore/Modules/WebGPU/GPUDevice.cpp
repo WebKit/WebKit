@@ -393,6 +393,14 @@ ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(ScriptExec
 {
     UNUSED_PARAM(context);
 
+#if ENABLE(VIDEO)
+    auto checkVideoElementOriginTaint = [&context](const RefPtr<HTMLVideoElement>& videoElement) -> std::optional<Exception> {
+        if (videoElement->taintsOrigin(*protect(context.securityOrigin()).get()))
+            return Exception { ExceptionCode::SecurityError, "GPUDevice.importExternalTexture: Cross origin external videos are not allowed in WebGPU"_s };
+        return std::nullopt;
+    };
+#endif
+
 #if ENABLE(VIDEO) && PLATFORM(COCOA)
     if (RefPtr externalTexture = externalTextureForDescriptor(externalTextureDescriptor)) {
         externalTexture->undestroy();
@@ -401,6 +409,9 @@ ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(ScriptExec
 #else
         auto& videoElement = externalTextureDescriptor.source;
 #endif
+        if (auto exception = checkVideoElementOriginTaint(videoElement))
+            return WTF::move(*exception);
+
         m_videoElementToExternalTextureMap.remove(*videoElement.get());
         if (auto optionalMediaIdentifier = externalTextureDescriptor.mediaIdentifier()) {
             m_backing->updateExternalTexture(externalTexture->backing(), *optionalMediaIdentifier);
@@ -418,8 +429,8 @@ ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(ScriptExec
 #else
     if (auto* videoElement = &externalTextureDescriptor.source; videoElement && videoElement->get()) {
 #endif
-        if ((*videoElement)->taintsOrigin(*protect(context.securityOrigin()).get()))
-            return Exception { ExceptionCode::SecurityError, "GPUDevice.importExternalTexture: Cross origin external videos are not allowed in WebGPU"_s };
+        if (auto exception = checkVideoElementOriginTaint(*videoElement))
+            return WTF::move(*exception);
 
         WeakPtr<HTMLVideoElement> videoElementPtr = videoElement->get();
         m_videoElementToExternalTextureMap.set(*videoElementPtr, externalTexture.get());
