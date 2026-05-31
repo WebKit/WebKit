@@ -215,6 +215,7 @@ class TestSuite
     bool mListTests;
     bool mPrintTestStdout;
     bool mDisableCrashHandler;
+    bool mDisableDebugLayers{false};
     int mBatchSize;
     int mCurrentResultCount;
     int mTotalResultCount;

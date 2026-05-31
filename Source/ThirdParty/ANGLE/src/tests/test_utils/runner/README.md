@@ -28,6 +28,7 @@ following additional command-line arguments:
  * `--disable-crash-handler` forces off OS-level crash handling
  * `--isolated-outdir` specifies a test artifacts directory
  * `--max-failures` specifies a count of failures after which the harness early exits.
+ * `--disable-debug-layers` disables debug layers for GPU drivers, if they were used by default.
 
 `--isolated-script-test-output` and `--isolated-script-perf-test-output` mirror `--results-file`
 and `--histogram-json-file` respectively.

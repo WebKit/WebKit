@@ -197,6 +197,8 @@ bool gEnableRenderDocCapture = true;
 bool gEnableRenderDocCapture = false;
 #endif
 
+bool gDisableDebugLayers = false;
+
 bool IsConfigSelected()
 {
     return gSelectedConfig[0] != 0;

@@ -48,6 +48,7 @@ constexpr char kFilterFileArg[]       = "--filter-file";
 constexpr char kResultFileArg[]       = "--results-file";
 constexpr char kTestTimeoutArg[]      = "--test-timeout";
 constexpr char kDisableCrashHandler[] = "--disable-crash-handler";
+constexpr char kDisableDebugLayers[]  = "--disable-debug-layers";
 constexpr char kIsolatedOutDir[]      = "--isolated-outdir";
 
 constexpr char kStartedTestString[] = "[ RUN      ] ";
@@ -1116,6 +1117,16 @@ TestSuite::TestSuite(int *argc, char **argv, std::function<void()> registerTests
         mCrashCallback = [this]() { onCrashOrTimeout(TestResultType::Crash); };
         InitCrashHandler(&mCrashCallback);
     }
+    if (!mDisableDebugLayers)
+    {
+#if defined(ANGLE_ENABLE_METAL)
+        // Metal does not support toggling per-context debug layers for tests.
+        SetEnvironmentVar("MTL_DEBUG_LAYER", "1");
+        SetEnvironmentVar("MTL_SHADER_VALIDATION", "1");
+        SetEnvironmentVar("MTL_SHADER_VALIDATION_ABORT_ON_FAULT", "1");
+        SetEnvironmentVar("MTL_SHADER_VALIDATION_REPORT_TO_STDERR", "1");
+#endif
+    }
 
 #if defined(ANGLE_PLATFORM_WINDOWS) || defined(ANGLE_PLATFORM_LINUX)
     if (IsASan())
@@ -1380,7 +1391,8 @@ bool TestSuite::parseSingleArg(int *argc, char **argv, int argIndex)
            ParseFlag("--gtest_list_tests", argc, argv, argIndex, &mGTestListTests) ||
            ParseFlag("--list-tests", argc, argv, argIndex, &mListTests) ||
            ParseFlag("--print-test-stdout", argc, argv, argIndex, &mPrintTestStdout) ||
-           ParseFlag(kDisableCrashHandler, argc, argv, argIndex, &mDisableCrashHandler);
+           ParseFlag(kDisableCrashHandler, argc, argv, argIndex, &mDisableCrashHandler) ||
+           ParseFlag(kDisableDebugLayers, argc, argv, argIndex, &mDisableDebugLayers);
 }
 
 void TestSuite::onCrashOrTimeout(TestResultType crashOrTimeout)

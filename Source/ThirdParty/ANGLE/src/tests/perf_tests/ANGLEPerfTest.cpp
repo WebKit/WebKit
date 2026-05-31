@@ -762,9 +762,9 @@ void ANGLEPerfTest::atraceCounter(const char *counterName, int64_t counterValue)
 RenderTestParams::RenderTestParams()
 {
 #if defined(ANGLE_DEBUG_LAYERS_ENABLED)
-    eglParameters.debugLayersEnabled = true;
+    eglParameters.debugLayersEnabled = EGL_TRUE;
 #else
-    eglParameters.debugLayersEnabled = false;
+    eglParameters.debugLayersEnabled = EGL_FALSE;
 #endif
 }
 

@@ -41,9 +41,9 @@ ANGLETestCL<PlatformParameters>::ANGLETestCL(const PlatformParameters &params)
     if (mCurrentParams.getRenderer() == EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE)
     {
 #if defined(ANGLE_ENABLE_VULKAN_VALIDATION_LAYERS)
-        mCurrentParams.eglParameters.debugLayersEnabled = true;
+        mCurrentParams.eglParameters.debugLayersEnabled = EGL_TRUE;
 #else
-        mCurrentParams.eglParameters.debugLayersEnabled = false;
+        mCurrentParams.eglParameters.debugLayersEnabled = EGL_FALSE;
 #endif
     }
 
