@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: GPUDevice.createBindGroup: Binding 0 is duplicated in the bind group descriptor
+

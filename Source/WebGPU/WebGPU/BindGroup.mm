@@ -1112,6 +1112,7 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
     auto& bindGroupLayoutEntries = bindGroupLayout->entries();
     BindGroup::DynamicBuffersContainer dynamicBuffers;
     BindGroup::SamplersContainer samplersSet;
+    HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> usedBindingSlots;
 
     for (const WGPUBindGroupEntry& entry : descriptor.entriesSpan()) {
         WGPUExternalTexture wgpuExternalTexture = entry.externalTexture;
@@ -1127,6 +1128,11 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
         bool bindingContainedInStage = false;
         bool appendedBufferToDynamicBuffers = false;
         auto bindingIndex = entry.binding;
+        if (usedBindingSlots.contains(bindingIndex)) {
+            VALIDATION_ERROR([NSString stringWithFormat:@"Binding %u is duplicated in the bind group descriptor", bindingIndex]);
+            return BindGroup::createInvalid(*this);
+        }
+        usedBindingSlots.add(bindingIndex);
         for (ShaderStage stage : stagesPlusUndefined) {
             auto index = bindGroupLayout->argumentBufferIndexForEntryIndex(bindingIndex, stage);
             if (index == NSNotFound)
