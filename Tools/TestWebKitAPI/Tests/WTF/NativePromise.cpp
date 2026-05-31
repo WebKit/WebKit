@@ -1168,7 +1168,6 @@ TEST(NativePromise, NonExclusiveWithCrossThreadCopy)
     {
         AutoWorkQueue awq;
         auto queue = awq.queue();
-        // If you replace PromiseOption::WithCrossThreadCopy with PromiseOption::WithoutCrossThreadCopy, this test will crash due to the AtomString being deleted on the target queue.
         using MyPromise = NativePromise<Expected<String, AtomString>, bool, PromiseOption::NonExclusive | PromiseOption::WithCrossThreadCopy>;
         static_assert(CrossThreadCopier<Expected<String, AtomString>>::IsNeeded);
         MyPromise::Producer producer;
@@ -1183,15 +1182,13 @@ TEST(NativePromise, NonExclusiveWithCrossThreadCopy)
         promise->whenSettled(queue, [&resolution] (MyPromise::Result val) {
             EXPECT_TRUE(val.has_value());
             EXPECT_TRUE(val.value().has_value());
-            // Being a non-exclusive promise, the value is passed by const reference, so we copied the object in val.
-            EXPECT_TRUE(!val.value().value().isSafeToSendToAnotherThread());
+            EXPECT_TRUE(val.value().value().isSafeToSendToAnotherThread());
             EXPECT_EQ(String("that worked"_s), val.value().value());
             resolution++;
         });
         promise->whenSettled(queue, [queue, &resolution] (const MyPromise::Result& val) {
             EXPECT_TRUE(val.has_value());
             EXPECT_TRUE(val.value().has_value());
-            // The previous whenSettled() has run already, and the object was derefed.
             EXPECT_TRUE(val.value().value().isSafeToSendToAnotherThread());
             EXPECT_EQ(String("that worked"_s), val.value().value());
             resolution++;

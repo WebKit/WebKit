@@ -282,29 +282,6 @@ float String::toFloat(bool* ok) const
     SUPPRESS_UNCOUNTED_ARG return m_impl->toFloat(ok);
 }
 
-String String::isolatedCopy() const &
-{
-    // FIXME: Should this function, and the many others like it, be inlined?
-    SUPPRESS_UNCOUNTED_ARG return m_impl ? m_impl->isolatedCopy() : String { };
-}
-
-String String::isolatedCopy() &&
-{
-    if (isSafeToSendToAnotherThread()) {
-        // Since we know that our string is a temporary that will be destroyed
-        // we can just steal the m_impl from it, thus avoiding a copy.
-        return { WTF::move(*this) };
-    }
-
-    SUPPRESS_UNCOUNTED_ARG return m_impl ? m_impl->isolatedCopy() : String { };
-}
-
-bool String::isSafeToSendToAnotherThread() const
-{
-    // AtomStrings are not safe to send between threads, as ~StringImpl()
-    // will try to remove them from the wrong AtomStringTable.
-    return isEmpty() || (m_impl->hasOneRef() && !m_impl->isAtom());
-}
 
 template<bool allowEmptyEntries>
 inline Vector<String> String::splitInternal(StringView separator) const

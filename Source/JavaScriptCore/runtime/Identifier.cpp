@@ -70,11 +70,8 @@ void Identifier::dump(PrintStream& out) const
 
 #ifndef NDEBUG
 
-void Identifier::checkCurrentAtomStringTable(VM& vm)
+void Identifier::checkCurrentAtomStringTable(VM&)
 {
-    // Check the identifier table accessible through the threadspecific matches the
-    // vm's identifier table.
-    ASSERT_UNUSED(vm, vm.atomStringTable() == Thread::currentSingleton().atomStringTable());
 }
 
 #else

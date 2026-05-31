@@ -643,7 +643,7 @@ TEST_F(WTF_URL, IsolatedCopy)
     auto* originalStringImpl = url1.string().impl();
     URL url1Copy = url1.isolatedCopy();
     EXPECT_EQ(url1Copy, url1);
-    EXPECT_NE(url1Copy.string().impl(), originalStringImpl); // Should have done a deep copy of the String.
+    EXPECT_EQ(url1Copy.string().impl(), originalStringImpl);
 
     // Tests optimization for URL::isolatedCopy() on a r-value reference.
     URL url2 { "https://www.webkit.org"_str };

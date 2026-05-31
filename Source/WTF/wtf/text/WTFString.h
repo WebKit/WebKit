@@ -234,10 +234,10 @@ public:
     WTF_EXPORT_PRIVATE double toDouble(bool* ok = nullptr) const;
     WTF_EXPORT_PRIVATE float toFloat(bool* ok = nullptr) const;
 
-    [[nodiscard]] WTF_EXPORT_PRIVATE String isolatedCopy() const &;
-    [[nodiscard]] WTF_EXPORT_PRIVATE String isolatedCopy() &&;
+    [[nodiscard]] String isolatedCopy() const & { return *this; }
+    [[nodiscard]] String isolatedCopy() && { return { WTF::move(*this) }; }
 
-    WTF_EXPORT_PRIVATE bool NODELETE isSafeToSendToAnotherThread() const;
+    bool isSafeToSendToAnotherThread() const { return true; }
 
     // Prevent Strings from being implicitly convertable to bool as it will be ambiguous on any platform that
     // allows implicit conversion to another pointer type (e.g., Mac allows implicit conversion to NSString *).

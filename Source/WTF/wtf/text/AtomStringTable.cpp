@@ -23,7 +23,15 @@
 #include "config.h"
 #include <wtf/text/AtomStringTable.h>
 
+#include <wtf/NeverDestroyed.h>
+
 namespace WTF {
+
+AtomStringTable& AtomStringTable::singleton()
+{
+    static NeverDestroyed<AtomStringTable> globalTable;
+    return globalTable;
+}
 
 AtomStringTable::~AtomStringTable()
 {

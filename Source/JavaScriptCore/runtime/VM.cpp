@@ -257,7 +257,6 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     , clientHeap(heap)
     , vmType(vmType)
     , deferredWorkTimer(DeferredWorkTimer::create(*this))
-    , m_atomStringTable(vmType == VMType::Default ? Thread::currentSingleton().atomStringTable() : new AtomStringTable)
     , m_symbolRegistry(makeUniqueRef<SymbolRegistry>())
     , m_privateSymbolRegistry(makeUniqueRef<SymbolRegistry>(SymbolRegistry::Type::PrivateSymbol))
     , emptyList(new ArgList)
@@ -315,7 +314,6 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
 
     // Need to be careful to keep everything consistent here
     JSLockHolder lock(this);
-    AtomStringTable* existingEntryAtomStringTable = Thread::currentSingleton().setCurrentAtomStringTable(m_atomStringTable);
     structureStructure.setWithoutWriteBarrier(Structure::createStructure(*this));
     structureRareDataStructure.setWithoutWriteBarrier(StructureRareData::createStructure(*this, nullptr, jsNull()));
     stringStructure.setWithoutWriteBarrier(JSString::createStructure(*this, nullptr, jsNull()));
@@ -412,8 +410,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         }
     }
 
-    Thread::currentSingleton().setCurrentAtomStringTable(existingEntryAtomStringTable);
-    
     Gigacage::addPrimitiveDisableCallback(primitiveGigacageDisabledCallback, this);
 
     heap.notifyIsSafeToCollect();
@@ -612,8 +608,6 @@ VM::~VM()
     delete emptyList;
 
     delete propertyNames;
-    if (vmType != VMType::Default)
-        delete m_atomStringTable;
 
     delete clientData;
     m_regExpCache.reset();
