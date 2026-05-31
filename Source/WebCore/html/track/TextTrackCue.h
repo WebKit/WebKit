@@ -38,6 +38,7 @@
 #include <WebCore/EventTargetInterfaces.h>
 #include <WebCore/HTMLElement.h>
 #include <wtf/JSONValues.h>
+#include <wtf/Lock.h>
 #include <wtf/MediaTime.h>
 
 namespace WebCore {
@@ -81,6 +82,8 @@ public:
     TextTrack* track() const;
     RefPtr<TextTrack> protectedTrack() const;
     void setTrack(TextTrack*);
+
+    template<typename Visitor> void visitAdditionalChildren(Visitor&);
 
     const AtomString& id() const { return m_id; }
     void setId(const AtomString&);
@@ -165,7 +168,8 @@ private:
     MediaTime m_endTime;
     int m_processingCueChanges { 0 };
 
-    WeakPtr<TextTrack, WeakPtrImplWithEventTargetData> m_track;
+    Lock m_trackLockForGC;
+    CheckedPtr<TextTrack> m_track;
 
     const RefPtr<DocumentFragment> m_cueNode;
     const RefPtr<TextTrackCueBox> m_displayTree;

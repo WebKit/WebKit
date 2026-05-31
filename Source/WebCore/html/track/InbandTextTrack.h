@@ -34,6 +34,7 @@ namespace WebCore {
 
 class InbandTextTrack : public TextTrack, private InbandTextTrackPrivateClient {
     WTF_MAKE_TZONE_ALLOCATED(InbandTextTrack);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InbandTextTrack);
 public:
     static Ref<InbandTextTrack> create(ScriptExecutionContext&, InbandTextTrackPrivate&);
     virtual ~InbandTextTrack();

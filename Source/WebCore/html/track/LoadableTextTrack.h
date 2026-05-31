@@ -36,6 +36,7 @@ namespace WebCore {
 
 class LoadableTextTrack final : public TextTrack, private TextTrackLoaderClient {
     WTF_MAKE_TZONE_ALLOCATED(LoadableTextTrack);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LoadableTextTrack);
 public:
     static Ref<LoadableTextTrack> create(HTMLTrackElement&, const AtomString& kind, const AtomString& label, const AtomString& language);
 

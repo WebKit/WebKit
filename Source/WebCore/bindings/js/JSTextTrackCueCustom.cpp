@@ -63,8 +63,7 @@ bool JSTextTrackCueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> h
 template<typename Visitor>
 void JSTextTrackCue::visitAdditionalChildren(Visitor& visitor)
 {
-    if (auto* textTrack = wrapped().track())
-        addWebCoreOpaqueRoot(visitor, *textTrack);
+    wrapped().visitAdditionalChildren(visitor);
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSTextTrackCue);
