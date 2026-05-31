@@ -31,6 +31,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/URL.h>
 #include <wtf/WorkQueue.h>
 
@@ -41,7 +42,7 @@ namespace WebKit {
 class WebExtensionSQLiteStatement;
 class WebExtensionSQLiteStore;
 
-class WebExtensionSQLiteDatabase final : public RefCounted<WebExtensionSQLiteDatabase> {
+class WebExtensionSQLiteDatabase final : public ThreadSafeRefCounted<WebExtensionSQLiteDatabase> {
     WTF_MAKE_NONCOPYABLE(WebExtensionSQLiteDatabase);
     WTF_MAKE_TZONE_ALLOCATED(WebExtensionSQLiteDatabase);
 
