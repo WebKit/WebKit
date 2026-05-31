@@ -37,7 +37,7 @@ class BlobEvent final : public Event {
 public:
     struct Init : EventInit {
         RefPtr<Blob> data;
-        double timecode;
+        std::optional<double> timecode;
     };
     
     static Ref<BlobEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
