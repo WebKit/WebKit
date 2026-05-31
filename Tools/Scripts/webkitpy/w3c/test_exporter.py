@@ -231,6 +231,25 @@ class WebPlatformTestExporter(object):
         self._run_wpt_git(['checkout', self._wpt_repo.default_branch])
         self._run_wpt_git(['reset', '--hard', 'origin/master'])
 
+    def wpt_already_has_bug_export(self):
+        if not self._bug_id:
+            return False
+
+        grep_patterns = [str(self._bug_id), f'bugs.webkit.org/show_bug.cgi?id={self._bug_id}']
+        for pattern in grep_patterns:
+            result = self._run_wpt_git(['log', '--oneline', '-n', '1', f'--grep={pattern}'], capture_output=True)
+            if result.stdout and result.stdout.strip():
+                summary = result.stdout.decode("utf-8", "replace").strip()
+
+                if getattr(self._options, "force_export", False):
+                    _log.warning(f'Bug {self._bug_id} appears already exported to WPT: {summary} (continuing due to --force-export)')
+                    return False
+
+                _log.warning(f'Bug {self._bug_id} appears already exported to WPT: {summary} (skipping; use --force-export to export anyway)')
+                return True
+
+        return False
+
     def create_branch_with_patch(self, patch):
         _log.info('Applying patch to web-platform-tests branch ' + self._branch_name)
         try:
@@ -353,6 +372,10 @@ class WebPlatformTestExporter(object):
         self._run_wpt_git(['fetch', 'origin', '--prune'])
         self.clean()
 
+        if self.wpt_already_has_bug_export():
+            _log.info(f'Bug {self._bug_id} appears already exported to WPT. Use --force-export to export anyway.')
+            return 0
+
         if not self.set_up_wpt_fork():
             self.delete_local_branch(is_success=False)
             return 1
@@ -362,7 +385,7 @@ class WebPlatformTestExporter(object):
             self.delete_local_branch(is_success=False)
             return 1
 
-        if git_patch_file and self.clean:
+        if git_patch_file and self._options.clean:
             self._filesystem.remove(git_patch_file)
 
         if self._options.use_linter:
@@ -433,6 +456,8 @@ def parse_args(args):
     parser.add_argument('--no-clean', action='store_false', dest='clean', help='Do not clean up.')
     parser.add_argument('--clean-on-failure', action='store_true', dest='clean_on_failure', help='Do not clean up on failure.')
     parser.add_argument('--dry-run', action='store_true', dest='dry_run', default=False, help='Create local branch and commit but do not push to remote.')
+    parser.add_argument('--force-export', action='store_true', dest='force_export', default=False,
+                        help='Export even if an existing WPT export for this bug is detected.')
 
     options, args = parser.parse_known_args(args)
 
