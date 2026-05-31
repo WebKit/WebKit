@@ -65,6 +65,7 @@ WebCodecsAudioData::WebCodecsAudioData(ScriptExecutionContext& context)
 WebCodecsAudioData::WebCodecsAudioData(ScriptExecutionContext& context, WebCodecsAudioInternalData&& data)
     : ContextDestructionObserver(&context)
     , m_data(WTF::move(data))
+    , m_memoryCost(m_data.memoryCost())
 {
 }
 
@@ -151,6 +152,7 @@ ExceptionOr<Ref<WebCodecsAudioData>> WebCodecsAudioData::clone(ScriptExecutionCo
 // https://www.w3.org/TR/webcodecs/#dom-audiodata-close
 void WebCodecsAudioData::close()
 {
+    m_memoryCost.store(0, std::memory_order_relaxed);
     m_data.audioData = nullptr;
 
     m_isDetached = true;
