@@ -35,9 +35,14 @@
 #import <WebKit/WKBackForwardListPrivate.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKNavigationPrivate.h>
+#import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/_WKFeature.h>
 #import <WebKit/_WKFrameTreeNode.h>
+#import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKSessionState.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/darwin/DispatchExtras.h>
@@ -929,3 +934,116 @@ TEST(WKBackForwardList, GoBackToPageAfterNavigatingIframeAndRestoringSession)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "b");
     EXPECT_WK_STREQ([webView URL].absoluteString, server.request("/example"_s).URL.absoluteString.UTF8String);
 }
+
+#if ENABLE(IPC_TESTING_API)
+
+static void enableIPCTestingAPI(WKWebViewConfiguration *configuration)
+{
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"IPCTestingAPIEnabled"]) {
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+            break;
+        }
+    }
+}
+
+TEST(WKBackForwardList, BackForwardUpdateItemRejectsFileURL)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/page"_s, { "<!DOCTYPE html><html><body>page</body></html>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto poolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    [poolConfig setProcessSwapsOnNavigation:YES];
+    auto pool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:poolConfig.get()]);
+
+    auto configA = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configA setProcessPool:pool.get()];
+    enableIPCTestingAPI(configA.get());
+
+    auto webViewA = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configA.get()]);
+    [webViewA synchronouslyLoadRequest:server.request("/page"_s)];
+
+    // B shares A's process via _relatedWebView.
+    auto configB = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configB setProcessPool:pool.get()];
+    configB.get()._relatedWebView = webViewA.get();
+    enableIPCTestingAPI(configB.get());
+
+    auto webViewB = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configB.get()]);
+    [webViewB synchronouslyLoadRequest:server.request("/page"_s)];
+
+    EXPECT_EQ([webViewA _webProcessIdentifier], [webViewB _webProcessIdentifier]);
+
+    long long bPageID = [[webViewB stringByEvaluatingJavaScript:@"String(IPC.pageID)"] longLongValue];
+    EXPECT_GT(bPageID, 0LL);
+
+    // Using pushState on A, capture an `AddItem` IPC message for later use.
+    [webViewA stringByEvaluatingJavaScript:
+        @"(function() {"
+        "    var addName = null, updateName = null;"
+        "    var keys = Object.keys(IPC.messages);"
+        "    for (var i = 0; i < keys.length; i++) {"
+        "        if (keys[i].indexOf('BackForwardAddItem') !== -1 && keys[i].indexOf('InProcess') === -1)"
+        "            addName = IPC.messages[keys[i]].name;"
+        "        if (keys[i].indexOf('BackForwardUpdateItem') !== -1)"
+        "            updateName = IPC.messages[keys[i]].name;"
+        "    }"
+        "    window._updateItemMsgName = updateName;"
+        "    window._addBuf = null;"
+        "    IPC.addOutgoingMessageListener('UI', function(msg) {"
+        "        if (msg.name === addName && msg.buffer)"
+        "            window._addBuf = new Uint8Array(msg.buffer.slice(0));"
+        "    });"
+        "    history.pushState({}, '', '?pad=' + 'X'.repeat(40));"
+        "})()"
+    ];
+    int attempts = 0;
+    while (![[webViewA stringByEvaluatingJavaScript:@"window._addBuf ? 'ok' : ''"] isEqualToString:@"ok"] && ++attempts < 50)
+        TestWebKitAPI::Util::spinRunLoop(5);
+    EXPECT_LT(attempts, 50);
+
+    // Modify the captured buffer to carry a file:// URL, then send it as
+    // BackForwardUpdateItem to page B's destination ID. B's handler
+    // resolves A's item via the global itemForID map — the ownership
+    // check (item->pageID() vs B's identifier) must reject it.
+    NSString *attackJS = [NSString stringWithFormat:
+        @"(function() {"
+        "var HDR = 0x10;"
+        "var args = new Uint8Array(window._addBuf.buffer.slice(HDR));"
+        "var origURL = location.href;"
+        "var targetBase = 'file:///etc/passwd';"
+        "var padTarget = targetBase + '/'.repeat(Math.max(0, origURL.length - targetBase.length));"
+        "if (padTarget.length !== origURL.length) return 'FAIL:len_mismatch';"
+        "var oldBytes = new TextEncoder().encode(origURL);"
+        "var newBytes = new TextEncoder().encode(padTarget);"
+        "var count = 0;"
+        "for (var i = 0; i <= args.length - oldBytes.length; i++) {"
+        "    var match = true;"
+        "    for (var j = 0; j < oldBytes.length; j++) {"
+        "        if (args[i+j] !== oldBytes[j]) { match = false; break; }"
+        "    }"
+        "    if (match) {"
+        "        args.set(newBytes, i);"
+        "        count++;"
+        "        i += oldBytes.length - 1;"
+        "    }"
+        "}"
+        "if (!count) return 'FAIL:no_url_found';"
+        "IPC.sendMessage('UI', %lld, window._updateItemMsgName, args);"
+        "return 'sent:' + count;"
+        "})()", bPageID
+    ];
+    NSString *attackResult = [webViewA stringByEvaluatingJavaScript:attackJS];
+    EXPECT_TRUE([attackResult hasPrefix:@"sent:"]);
+
+    for (int i = 0; i < 100; i++)
+        TestWebKitAPI::Util::spinRunLoop();
+
+    WKBackForwardList *list = [webViewA backForwardList];
+    EXPECT_FALSE([list.currentItem.URL.absoluteString hasPrefix:@"file://"]);
+    for (WKBackForwardListItem *item in list.backList)
+        EXPECT_FALSE([item.URL.absoluteString hasPrefix:@"file://"]);
+}
+
+#endif // ENABLE(IPC_TESTING_API)
