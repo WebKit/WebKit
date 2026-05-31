@@ -52,13 +52,12 @@ void CloseWatcherManager::add(Ref<CloseWatcher> watcher)
 
 void CloseWatcherManager::remove(CloseWatcher& watcher)
 {
-    for (auto& group : m_groups) {
-        group.removeFirstMatching([&watcher] (const Ref<CloseWatcher>& current) {
+    m_groups.removeAllMatching([&watcher](auto& group) {
+        group.removeFirstMatching([&watcher](const Ref<CloseWatcher>& current) {
             return current.ptr() == &watcher;
         });
-        if (group.isEmpty())
-            m_groups.removeFirst(group);
-    }
+        return group.isEmpty();
+    });
 }
 
 void CloseWatcherManager::notifyAboutUserActivation()
