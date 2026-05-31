@@ -104,12 +104,12 @@ inline void CallFrame::setCodeBlock(CodeBlock* codeBlock)
     static_cast<Register*>(this)[static_cast<int>(CallFrameSlot::codeBlock)] = codeBlock;
 }
 
-inline void CallFrame::setScope(int scopeRegisterOffset, JSScope* scope)
+inline void CallFrame::setScope(int scopeRegisterOffset, JSObject* scope)
 {
     static_cast<Register*>(this)[scopeRegisterOffset] = scope;
 }
 
-inline JSScope* CallFrame::scope(int scopeRegisterOffset) const
+inline JSObject* CallFrame::scope(int scopeRegisterOffset) const
 {
     ASSERT(this[scopeRegisterOffset].Register::scope());
     return this[scopeRegisterOffset].Register::scope();

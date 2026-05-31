@@ -75,7 +75,7 @@
 
 namespace JSC::LOL {
 
-JSC_DEFINE_JIT_OPERATION(operationResolveScopeForLOL, EncodedJSValue, (CallFrame* callFrame, unsigned bytecodeOffset, JSScope* environment))
+JSC_DEFINE_JIT_OPERATION(operationResolveScopeForLOL, EncodedJSValue, (CallFrame* callFrame, unsigned bytecodeOffset, JSObject* environment))
 {
     CodeBlock* codeBlock = callFrame->codeBlock();
     JSGlobalObject* globalObject = codeBlock->globalObject();
@@ -86,7 +86,7 @@ JSC_DEFINE_JIT_OPERATION(operationResolveScopeForLOL, EncodedJSValue, (CallFrame
     const JSInstruction* pc = codeBlock->instructionAt(BytecodeIndex(bytecodeOffset));
     auto bytecode = pc->as<OpResolveScope>();
     const Identifier& ident = codeBlock->identifier(bytecode.m_var);
-    JSObject* resolvedScope = JSScope::resolve(globalObject, environment, ident);
+    JSObject* resolvedScope = resolveScope(globalObject, environment, ident);
     // Proxy can throw an error here, e.g. Proxy in with statement's @unscopables.
     OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
 

@@ -83,12 +83,12 @@ Structure* JSFunction::selectStructureForNewFuncExp(JSGlobalObject* globalObject
     return globalObject->sloppyMethodStructure(isBuiltin);
 }
 
-JSFunction* JSFunction::create(VM& vm, JSGlobalObject* globalObject, FunctionExecutable* executable, JSScope* scope)
+JSFunction* JSFunction::create(VM& vm, JSGlobalObject* globalObject, FunctionExecutable* executable, JSObject* scope)
 {
     return create(vm, globalObject, executable, scope, selectStructureForNewFuncExp(globalObject, executable));
 }
 
-JSFunction* JSFunction::create(VM& vm, JSGlobalObject*, FunctionExecutable* executable, JSScope* scope, Structure* structure)
+JSFunction* JSFunction::create(VM& vm, JSGlobalObject*, FunctionExecutable* executable, JSObject* scope, Structure* structure)
 {
     JSFunction* result = createImpl(vm, executable, scope, structure);
     executable->notifyCreation(vm, result, "Allocating a function");

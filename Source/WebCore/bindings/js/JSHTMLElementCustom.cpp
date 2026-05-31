@@ -122,7 +122,7 @@ EncodedJSValue constructJSHTMLElement(JSGlobalObject* lexicalGlobalObject, CallF
     return JSValue::encode(elementWrapperValue);
 }
 
-JSScope* JSHTMLElement::pushEventHandlerScope(JSGlobalObject* lexicalGlobalObject, JSScope* scope) const
+JSObject* JSHTMLElement::pushEventHandlerScope(JSGlobalObject* lexicalGlobalObject, JSObject* scope) const
 {
     CheckedRef element = wrapped();
 

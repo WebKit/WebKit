@@ -45,7 +45,7 @@ protected:
     {
     }
 
-    GlobalCodeBlock(VM& vm, Structure* structure, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlinkedCodeBlock, JSScope* scope)
+    GlobalCodeBlock(VM& vm, Structure* structure, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlinkedCodeBlock, JSObject* scope)
         : CodeBlock(vm, structure, ownerExecutable, unlinkedCodeBlock, scope)
     {
     }

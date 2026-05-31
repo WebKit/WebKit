@@ -38,7 +38,7 @@ JSCallee::JSCallee(VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {
 }
 
-JSCallee::JSCallee(VM& vm, JSScope* scope, Structure* structure)
+JSCallee::JSCallee(VM& vm, JSObject* scope, Structure* structure)
     : Base(vm, structure)
     , m_scope(scope, WriteBarrierEarlyInit)
 {

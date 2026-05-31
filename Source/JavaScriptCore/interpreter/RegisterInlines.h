@@ -26,7 +26,7 @@
 #pragma once
 
 #include <JavaScriptCore/JSCJSValue.h>
-#include <JavaScriptCore/JSScope.h>
+#include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/Register.h>
 
 namespace JSC {
@@ -71,7 +71,7 @@ ALWAYS_INLINE Register& Register::operator=(JSCell* object)
     return *this;
 }
 
-ALWAYS_INLINE Register& Register::operator=(JSScope* scope)
+ALWAYS_INLINE Register& Register::operator=(JSObject* scope)
 {
     *this = JSValue(scope);
     return *this;
@@ -83,9 +83,9 @@ ALWAYS_INLINE Register& Register::operator=(EncodedJSValue encodedJSValue)
     return *this;
 }
 
-ALWAYS_INLINE JSScope* Register::scope() const
+ALWAYS_INLINE JSObject* Register::scope() const
 {
-    return uncheckedDowncast<JSScope>(unboxedCell());
+    return uncheckedDowncast<JSObject>(unboxedCell());
 }
 
 ALWAYS_INLINE Register::Register()

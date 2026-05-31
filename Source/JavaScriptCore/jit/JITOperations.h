@@ -61,7 +61,6 @@ class JSGlobalObject;
 class JSLexicalEnvironment;
 class JSObject;
 class JSRemoteFunction;
-class JSScope;
 class JSString;
 class JSValue;
 class RegExp;
@@ -105,7 +104,7 @@ typedef char* UnusedPtr;
     J: EncodedJSValue
     Mic: JITMathIC* (can be JITAddIC*, JITMulIC*, etc).
     Jcp: const JSValue*
-    Jsc: JSScope*
+    Jsc: JSObject* (scope cell, may be a non-global scope or a JSGlobalObject)
     Jsf: JSFunction*
     Jss: JSString*
     L: JSLexicalEnvironment*
@@ -318,10 +317,10 @@ JSC_DECLARE_JIT_OPERATION(operationGetPrivateNameByIdGeneric, EncodedJSValue, (J
 // End of IC related functions and generic helpers.
 
 // These use void* instead of CallFrame* to prevent setupArguments from assuming we want the current call frame.
-JSC_DECLARE_JIT_OPERATION(operationCallDirectEvalSloppy, EncodedJSValue, (void*, JSScope*, EncodedJSValue, CodeBlock*, uint32_t));
-JSC_DECLARE_JIT_OPERATION(operationCallDirectEvalStrict, EncodedJSValue, (void*, JSScope*, EncodedJSValue, CodeBlock*, uint32_t));
-JSC_DECLARE_JIT_OPERATION(operationCallDirectEvalSloppyTaintedByWithScope, EncodedJSValue, (void*, JSScope*, EncodedJSValue, CodeBlock*, uint32_t));
-JSC_DECLARE_JIT_OPERATION(operationCallDirectEvalStrictTaintedByWithScope, EncodedJSValue, (void*, JSScope*, EncodedJSValue, CodeBlock*, uint32_t));
+JSC_DECLARE_JIT_OPERATION(operationCallDirectEvalSloppy, EncodedJSValue, (void*, JSObject*, EncodedJSValue, CodeBlock*, uint32_t));
+JSC_DECLARE_JIT_OPERATION(operationCallDirectEvalStrict, EncodedJSValue, (void*, JSObject*, EncodedJSValue, CodeBlock*, uint32_t));
+JSC_DECLARE_JIT_OPERATION(operationCallDirectEvalSloppyTaintedByWithScope, EncodedJSValue, (void*, JSObject*, EncodedJSValue, CodeBlock*, uint32_t));
+JSC_DECLARE_JIT_OPERATION(operationCallDirectEvalStrictTaintedByWithScope, EncodedJSValue, (void*, JSObject*, EncodedJSValue, CodeBlock*, uint32_t));
 
 JSC_DECLARE_JIT_OPERATION(operationPolymorphicCall, UCPURegister, (CallFrame*, CallLinkInfo*));
 JSC_DECLARE_JIT_OPERATION(operationVirtualCall, UCPURegister, (CallFrame*, CallLinkInfo*));
@@ -341,25 +340,25 @@ JSC_DECLARE_JIT_OPERATION(operationCompareStringEq, size_t, (JSGlobalObject*, JS
 #endif
 JSC_DECLARE_JIT_OPERATION(operationNewArrayWithProfile, EncodedJSValue, (JSGlobalObject*, ArrayAllocationProfile*, const JSValue* values, int32_t size));
 JSC_DECLARE_JIT_OPERATION(operationNewArrayWithSizeAndProfile, EncodedJSValue, (JSGlobalObject*, ArrayAllocationProfile*, EncodedJSValue size));
-JSC_DECLARE_JIT_OPERATION(operationCreateLexicalEnvironmentTDZ, EncodedJSValue, (JSGlobalObject*, JSScope*, SymbolTable*));
-JSC_DECLARE_JIT_OPERATION(operationCreateLexicalEnvironmentUndefined, EncodedJSValue, (JSGlobalObject*, JSScope*, SymbolTable*));
+JSC_DECLARE_JIT_OPERATION(operationCreateLexicalEnvironmentTDZ, EncodedJSValue, (JSGlobalObject*, JSObject*, SymbolTable*));
+JSC_DECLARE_JIT_OPERATION(operationCreateLexicalEnvironmentUndefined, EncodedJSValue, (JSGlobalObject*, JSObject*, SymbolTable*));
 JSC_DECLARE_JIT_OPERATION(operationCreateDirectArgumentsBaseline, EncodedJSValue, (JSGlobalObject*));
 JSC_DECLARE_JIT_OPERATION(operationCreateScopedArgumentsBaseline, EncodedJSValue, (JSGlobalObject*, JSLexicalEnvironment*));
 JSC_DECLARE_JIT_OPERATION(operationCreateClonedArgumentsBaseline, EncodedJSValue, (JSGlobalObject*));
-JSC_DECLARE_JIT_OPERATION(operationNewFunction, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
-JSC_DECLARE_JIT_OPERATION(operationNewFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
-JSC_DECLARE_JIT_OPERATION(operationNewSloppyFunction, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
-JSC_DECLARE_JIT_OPERATION(operationNewSloppyFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
-JSC_DECLARE_JIT_OPERATION(operationNewStrictFunction, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
-JSC_DECLARE_JIT_OPERATION(operationNewStrictFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
-JSC_DECLARE_JIT_OPERATION(operationNewArrowFunction, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
-JSC_DECLARE_JIT_OPERATION(operationNewArrowFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
-JSC_DECLARE_JIT_OPERATION(operationNewGeneratorFunction, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
-JSC_DECLARE_JIT_OPERATION(operationNewGeneratorFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
-JSC_DECLARE_JIT_OPERATION(operationNewAsyncFunction, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
-JSC_DECLARE_JIT_OPERATION(operationNewAsyncFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
-JSC_DECLARE_JIT_OPERATION(operationNewAsyncGeneratorFunction, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
-JSC_DECLARE_JIT_OPERATION(operationNewAsyncGeneratorFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject*, JSScope*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationNewFunction, EncodedJSValue, (JSGlobalObject*, JSObject*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationNewFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject*, JSObject*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationNewSloppyFunction, EncodedJSValue, (JSGlobalObject*, JSObject*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationNewSloppyFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject*, JSObject*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationNewStrictFunction, EncodedJSValue, (JSGlobalObject*, JSObject*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationNewStrictFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject*, JSObject*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationNewArrowFunction, EncodedJSValue, (JSGlobalObject*, JSObject*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationNewArrowFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject*, JSObject*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationNewGeneratorFunction, EncodedJSValue, (JSGlobalObject*, JSObject*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationNewGeneratorFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject*, JSObject*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationNewAsyncFunction, EncodedJSValue, (JSGlobalObject*, JSObject*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationNewAsyncFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject*, JSObject*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationNewAsyncGeneratorFunction, EncodedJSValue, (JSGlobalObject*, JSObject*, JSCell*));
+JSC_DECLARE_JIT_OPERATION(operationNewAsyncGeneratorFunctionWithInvalidatedReallocationWatchpoint, EncodedJSValue, (JSGlobalObject*, JSObject*, JSCell*));
 JSC_DECLARE_JIT_OPERATION(operationSetFunctionName, void, (JSGlobalObject*, JSCell*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationNewObject, JSCell*, (VM*, Structure*));
 JSC_DECLARE_JIT_OPERATION(operationNewPromise, JSCell*, (VM*, Structure*));

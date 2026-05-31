@@ -37,7 +37,7 @@ namespace JSC {
 class ArgList;
 class Exception;
 class FunctionExecutable;
-class JSScope;
+class JSObject;
 class JSValue;
 
 struct CallData {
@@ -53,7 +53,7 @@ struct CallData {
         } native;
         struct {
             FunctionExecutable* functionExecutable;
-            JSScope* scope;
+            JSObject* scope;
         } js;
     };
 };

@@ -3385,7 +3385,7 @@ sub GenerateHeader
     push(@headerContent, "    static JSC::Structure* createStructure(JSC::VM&, JSC::JSGlobalObject*, JSC::JSValue);\n");
 
     if ($codeGenerator->InheritsInterface($interface, "HTMLElement")) {
-        push(@headerContent, "    JSC::JSScope* pushEventHandlerScope(JSC::JSGlobalObject*, JSC::JSScope*) const;\n\n");
+        push(@headerContent, "    JSC::JSObject* pushEventHandlerScope(JSC::JSGlobalObject*, JSC::JSObject*) const;\n\n");
     }
 
     # Constructor object getter

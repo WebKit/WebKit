@@ -30,7 +30,8 @@
 
 #include <JavaScriptCore/CodeBlock.h>
 #include <JavaScriptCore/JSGlobalObject.h>
-#include <JavaScriptCore/JSSymbolTableObject.h>
+#include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/JSScope.h>
 #include <JavaScriptCore/SymbolTable.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -39,7 +40,7 @@ namespace JSC {
 
 class LLIntOffsetsExtractor;
 
-class JSLexicalEnvironment : public JSSymbolTableObject {
+class JSLexicalEnvironment : public JSObject {
     friend class JIT;
     friend class LLIntOffsetsExtractor;
 public:
@@ -50,8 +51,13 @@ public:
         return &vm.heap.cellSpace;
     }
 
-    using Base = JSSymbolTableObject;
+    using Base = JSObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetOwnSpecialPropertyNames | OverridesPut;
+
+    SymbolTable* symbolTable() const LIFETIME_BOUND { return m_symbolTable.get(); }
+    static constexpr ptrdiff_t offsetOfSymbolTable() { return OBJECT_OFFSETOF(JSLexicalEnvironment, m_symbolTable); }
+
+    JSObject* next() const { return m_next.get(); }
 
     WriteBarrierBase<Unknown>* variables()
     {
@@ -87,11 +93,36 @@ public:
 
     static size_t allocationSize(SymbolTable* symbolTable)
     {
-        return allocationSizeForScopeSize(symbolTable->scopeSize());
+        size_t base = allocationSizeForScopeSize(symbolTable->scopeSize());
+        // Tail slot for eval-injection storage; only allocated for sloppy eval.
+        if (symbolTable->usesSloppyEval())
+            base += sizeof(WriteBarrier<JSObject>);
+        return base;
     }
 
+    static size_t evalInjectionStorageOffset(SymbolTable* symbolTable)
+    {
+        ASSERT(symbolTable->usesSloppyEval());
+        return offsetOfVariables() + Checked<size_t>(symbolTable->scopeSize()) * sizeof(WriteBarrier<Unknown>);
+    }
+
+    WriteBarrier<JSObject>* evalInjectionStorageSlot()
+    {
+        if (!symbolTable()->usesSloppyEval())
+            return nullptr;
+        return std::bit_cast<WriteBarrier<JSObject>*>(std::bit_cast<char*>(this) + evalInjectionStorageOffset(symbolTable()));
+    }
+
+    JSObject* evalInjectionStorage()
+    {
+        auto* slot = evalInjectionStorageSlot();
+        return slot ? slot->get() : nullptr;
+    }
+
+    JS_EXPORT_PRIVATE JSObject* ensureEvalInjectionStorage(JSGlobalObject*);
+
     static JSLexicalEnvironment* create(
-        VM& vm, Structure* structure, JSScope* currentScope, SymbolTable* symbolTable, JSValue initialValue)
+        VM& vm, Structure* structure, JSObject* currentScope, SymbolTable* symbolTable, JSValue initialValue)
     {
         JSLexicalEnvironment* result =
             new (
@@ -102,12 +133,12 @@ public:
         return result;
     }
 
-    static JSLexicalEnvironment* create(VM& vm, JSGlobalObject* globalObject, JSScope* currentScope, SymbolTable* symbolTable, JSValue initialValue)
+    static JSLexicalEnvironment* create(VM& vm, JSGlobalObject* globalObject, JSObject* currentScope, SymbolTable* symbolTable, JSValue initialValue)
     {
         Structure* structure = globalObject->activationStructure();
         return create(vm, structure, currentScope, symbolTable, initialValue);
     }
-        
+
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
     static void getOwnSpecialPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArrayBuilder&, DontEnumPropertiesMode);
 
@@ -122,22 +153,44 @@ public:
     inline static Structure* createStructure(VM&, JSGlobalObject*);
 
 protected:
-    JSLexicalEnvironment(VM&, Structure*, JSScope*, SymbolTable*, JSValue initialValue);
+    JSLexicalEnvironment(VM&, Structure*, JSObject*, SymbolTable*, JSValue initialValue);
 
     DECLARE_DEFAULT_FINISH_CREATION;
 
     static void analyzeHeap(JSCell*, HeapAnalyzer&);
+
+    void setSymbolTable(VM& vm, SymbolTable* symbolTable)
+    {
+        ASSERT(!m_symbolTable);
+        symbolTable->notifyCreation(vm, this, "Allocated a scope");
+        m_symbolTable.set(vm, this, symbolTable);
+    }
+
+private:
+    WriteBarrier<SymbolTable> m_symbolTable;
+    WriteBarrier<JSObject> m_next;
+
+public:
+    static constexpr ptrdiff_t offsetOfNext() { return OBJECT_OFFSETOF(JSLexicalEnvironment, m_next); }
 };
 
-inline JSLexicalEnvironment::JSLexicalEnvironment(VM& vm, Structure* structure, JSScope* currentScope, SymbolTable* symbolTable, JSValue initialValue)
-    : Base(vm, structure, currentScope, symbolTable)
+inline JSLexicalEnvironment::JSLexicalEnvironment(VM& vm, Structure* structure, JSObject* currentScope, SymbolTable* symbolTable, JSValue initialValue)
+    : Base(vm, structure)
+    , m_symbolTable(symbolTable, WriteBarrierEarlyInit)
+    , m_next(currentScope, WriteBarrierEarlyInit)
 {
+    ASSERT(symbolTable);
+    symbolTable->notifyCreation(vm, this, "Allocated a scope");
     ASSERT(initialValue == jsUndefined() || initialValue == jsTDZValue());
     for (unsigned i = this->symbolTable()->scopeSize(); i--;) {
         // Filling this with undefined/TDZEmptyValue is useful because that's what variables start out as.
         variableAt(ScopeOffset(i)).setStartingValue(initialValue);
     }
+    if (auto* slot = evalInjectionStorageSlot())
+        slot->clear();
 }
+
+static_assert(JSLexicalEnvironment::offsetOfNext() == scopeChainNextOffset, "JSLexicalEnvironment::m_next must live at scopeChainNextOffset");
 
 } // namespace JSC
 

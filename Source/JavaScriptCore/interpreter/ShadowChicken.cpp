@@ -332,18 +332,18 @@ void ShadowChicken::update(VM& vm, CallFrame* callFrame)
 
             bool foundFrame = advanceIndexInLogTo(callFrame, callFrame->jsCallee(), callFrame->callerFrame());
             bool isTailDeleted = false;
-            JSScope* scope = nullptr;
+            JSObject* scope = nullptr;
             CodeBlock* codeBlock = callFrame->isNativeCalleeFrame() ? nullptr : callFrame->codeBlock();
             JSValue scopeValue = callFrame->bytecodeIndex() && codeBlock && codeBlock->scopeRegister().isValid()
                 ? callFrame->registers()[codeBlock->scopeRegister().offset()].jsValue()
                 : jsUndefined();
             if (!scopeValue.isUndefined() && codeBlock->wasCompiledWithDebuggingOpcodes()) {
-                scope = uncheckedDowncast<JSScope>(scopeValue.asCell());
-                RELEASE_ASSERT(scope->inherits<JSScope>());
+                scope = uncheckedDowncast<JSObject>(scopeValue.asCell());
+                RELEASE_ASSERT(isScopeChainCell(scope));
             } else if (foundFrame) {
                 scope = m_log[indexInLog].scope;
                 if (scope)
-                    RELEASE_ASSERT(scope->inherits<JSScope>());
+                    RELEASE_ASSERT(isScopeChainCell(scope));
             }
             toPush.append(Frame(uncheckedDowncast<JSObject>(visitor->callee().asCell()), callFrame, isTailDeleted, callFrame->thisValue(), scope, codeBlock, callFrame->callSiteIndex()));
 
@@ -392,7 +392,7 @@ void ShadowChicken::update(VM& vm, CallFrame* callFrame)
                     }
                     Packet packet = m_log[indexInLog];
                     bool isTailDeleted = true;
-                    RELEASE_ASSERT(tailPacket.scope->inherits<JSScope>());
+                    RELEASE_ASSERT(isScopeChainCell(tailPacket.scope));
                     toPush.append(Frame(packet.callee, packet.frame, isTailDeleted, tailPacket.thisValue, tailPacket.scope, tailPacket.codeBlock, tailPacket.callSiteIndex));
                 }
             }

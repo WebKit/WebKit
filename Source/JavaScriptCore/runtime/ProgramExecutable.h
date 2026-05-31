@@ -51,7 +51,7 @@ public:
         return executable;
     }
 
-    JSObject* initializeGlobalProperties(VM&, JSGlobalObject*, JSScope*);
+    JSObject* initializeGlobalProperties(VM&, JSGlobalObject*, JSObject*);
 
     static void destroy(JSCell*);
 

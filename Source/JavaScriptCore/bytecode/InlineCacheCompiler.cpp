@@ -4465,7 +4465,7 @@ bool InlineCacheCompiler::canEmitIntrinsicGetter(PropertyInlineCache& propertyCa
 #if USE(JSVALUE32_64)
         return false;
 #else
-        return !structure->classInfoForCells()->isSubClassOf(JSScope::info());
+        return !(FirstScopeType <= structure->typeInfo().type() && structure->typeInfo().type() <= LastScopeType);
 #endif
     }
     case WebAssemblyInstanceExportsIntrinsic:

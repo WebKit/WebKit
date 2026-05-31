@@ -31,7 +31,6 @@
 namespace JSC {
 
 class DebuggerCallFrame;
-class JSScope;
 
 class DebuggerScope final : public JSNonFinalObject {
 public:
@@ -44,7 +43,7 @@ public:
         return vm.debuggerScopeSpace<mode>();
     }
 
-    JS_EXPORT_PRIVATE static DebuggerScope* create(VM& vm, JSScope* scope);
+    JS_EXPORT_PRIVATE static DebuggerScope* create(VM& vm, JSObject* scope);
 
     DECLARE_VISIT_CHILDREN;
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
@@ -94,12 +93,12 @@ public:
     JSValue caughtValue(JSGlobalObject*) const;
 
 private:
-    DebuggerScope(VM&, Structure*, JSScope*);
+    DebuggerScope(VM&, Structure*, JSObject*);
     DECLARE_DEFAULT_FINISH_CREATION;
 
-    JSScope* jsScope() const LIFETIME_BOUND { return m_scope.get(); }
+    JSObject* jsScope() const LIFETIME_BOUND { return m_scope.get(); }
 
-    WriteBarrier<JSScope> m_scope;
+    WriteBarrier<JSObject> m_scope;
     WriteBarrier<DebuggerScope> m_next;
 
     friend class DebuggerCallFrame;

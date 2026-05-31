@@ -112,7 +112,7 @@ static JSValue callMicrotask(JSGlobalObject* globalObject, JSValue functionObjec
     ASSERT(!vm.isCollectorBusyOnCurrentThread());
 
     bool isJSCall = callData.type == CallData::Type::JS;
-    JSScope* functionScope = nullptr;
+    JSObject* functionScope = nullptr;
     FunctionExecutable* functionExecutable = nullptr;
     TaggedNativeFunction nativeFunction;
     JSGlobalObject* calleeGlobalObject = nullptr;

@@ -954,12 +954,12 @@ void JIT::emit_op_resolve_scope(const JSInstruction* currentInstruction)
         unsigned localScopeDepth = bytecode.metadata(m_profiledCodeBlock).m_localScopeDepth;
         if (localScopeDepth < 8) {
             for (unsigned index = 0; index < localScopeDepth; ++index)
-                loadPtr(Address(returnValueGPR, JSScope::offsetOfNext()), returnValueGPR);
+                loadPtr(Address(returnValueGPR, scopeChainNextOffset), returnValueGPR);
         } else {
             ASSERT(localScopeDepth >= 8);
             load32FromMetadata(bytecode, Metadata::offsetOfLocalScopeDepth(), scratch1GPR);
             auto loop = label();
-            loadPtr(Address(returnValueGPR, JSScope::offsetOfNext()), returnValueGPR);
+            loadPtr(Address(returnValueGPR, scopeChainNextOffset), returnValueGPR);
             branchSub32(NonZero, scratch1GPR, TrustedImm32(1), scratch1GPR).linkTo(loop, this);
         }
     } else {
@@ -1108,7 +1108,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpResolveScopeThunk(VM& vm)
 
         Label loop = jit.label();
         Jump done = jit.branchTest32(Zero, scratch1GPR);
-        jit.loadPtr(Address(returnValueGPR, JSScope::offsetOfNext()), returnValueGPR);
+        jit.loadPtr(Address(returnValueGPR, scopeChainNextOffset), returnValueGPR);
         jit.sub32(TrustedImm32(1), scratch1GPR);
         jit.jump().linkTo(loop, &jit);
         done.link(&jit);
@@ -1118,7 +1118,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpResolveScopeThunk(VM& vm)
         switch (resolveType) {
         case GlobalProperty:
         case GlobalPropertyWithVarInjectionChecks: {
-            // JSScope::constantScopeForCodeBlock() loads codeBlock->globalObject().
+            // constantScopeForCodeBlock() loads codeBlock->globalObject().
             loadGlobalObject(jit, returnValueGPR);
             doVarInjectionCheck(needsVarInjectionChecks(resolveType), returnValueGPR);
             jit.load32(Address(metadataGPR, Metadata::offsetOfGlobalLexicalBindingEpoch()), scratch1GPR);
@@ -1130,7 +1130,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpResolveScopeThunk(VM& vm)
         case GlobalVarWithVarInjectionChecks:
         case GlobalLexicalVar:
         case GlobalLexicalVarWithVarInjectionChecks: {
-            // JSScope::constantScopeForCodeBlock() loads codeBlock->globalObject() for GlobalVar*,
+            // constantScopeForCodeBlock() loads codeBlock->globalObject() for GlobalVar*,
             // and codeBlock->globalObject()->globalLexicalEnvironment() for GlobalLexicalVar*.
             loadGlobalObject(jit, returnValueGPR);
             doVarInjectionCheck(needsVarInjectionChecks(resolveType), returnValueGPR);

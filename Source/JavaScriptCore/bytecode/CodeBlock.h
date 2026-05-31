@@ -120,10 +120,10 @@ public:
 
 protected:
     CodeBlock(VM&, Structure*, CopyParsedBlockTag, CodeBlock& other);
-    CodeBlock(VM&, Structure*, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock*, JSScope*);
+    CodeBlock(VM&, Structure*, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock*, JSObject*);
 
     void finishCreation(VM&, CopyParsedBlockTag, CodeBlock& other);
-    bool finishCreation(VM&, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock*, JSScope*);
+    bool finishCreation(VM&, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock*, JSObject*);
 
     WriteBarrier<JSGlobalObject> m_globalObject;
 
@@ -1051,7 +1051,7 @@ static_assert(sizeof(CodeBlock) <= 224, "Keep it small for memory saving");
 #endif
 
 template <typename ExecutableType>
-void ScriptExecutable::prepareForExecution(VM& vm, JSFunction* function, JSScope* scope, CodeSpecializationKind kind, CodeBlock*& resultCodeBlock)
+void ScriptExecutable::prepareForExecution(VM& vm, JSFunction* function, JSObject* scope, CodeSpecializationKind kind, CodeBlock*& resultCodeBlock)
 {
     if (hasJITCodeFor(kind)) {
         if constexpr (std::same_as<ExecutableType, EvalExecutable>)

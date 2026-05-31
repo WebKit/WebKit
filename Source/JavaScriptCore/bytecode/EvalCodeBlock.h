@@ -54,7 +54,7 @@ public:
         return instance;
     }
 
-    static EvalCodeBlock* create(VM& vm, EvalExecutable* ownerExecutable, UnlinkedEvalCodeBlock* unlinkedCodeBlock, JSScope* scope)
+    static EvalCodeBlock* create(VM& vm, EvalExecutable* ownerExecutable, UnlinkedEvalCodeBlock* unlinkedCodeBlock, JSObject* scope)
     {
         EvalCodeBlock* instance = new (NotNull, allocateCell<EvalCodeBlock>(vm))
             EvalCodeBlock(vm, vm.evalCodeBlockStructure.get(), ownerExecutable, unlinkedCodeBlock, scope);
@@ -73,7 +73,7 @@ private:
     {
     }
         
-    EvalCodeBlock(VM& vm, Structure* structure, EvalExecutable* ownerExecutable, UnlinkedEvalCodeBlock* unlinkedCodeBlock, JSScope* scope)
+    EvalCodeBlock(VM& vm, Structure* structure, EvalExecutable* ownerExecutable, UnlinkedEvalCodeBlock* unlinkedCodeBlock, JSObject* scope)
         : GlobalCodeBlock(vm, structure, ownerExecutable, unlinkedCodeBlock, scope)
     {
     }

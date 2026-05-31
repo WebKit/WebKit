@@ -25,13 +25,15 @@
 
 #pragma once
 
+#include "JSObject.h"
 #include "JSScope.h"
 
 namespace JSC {
 
-class StrictEvalActivation final : public JSScope {
+class StrictEvalActivation final : public JSObject {
 public:
-    using Base = JSScope;
+    using Base = JSObject;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesPut;
 
     template<typename CellType, SubspaceAccess mode>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
@@ -39,7 +41,7 @@ public:
         return vm.strictEvalActivationSpace<mode>();
     }
 
-    static StrictEvalActivation* create(VM& vm, Structure* structure, JSScope* currentScope)
+    static StrictEvalActivation* create(VM& vm, Structure* structure, JSObject* currentScope)
     {
         StrictEvalActivation* scope = new (NotNull, allocateCell<StrictEvalActivation>(vm)) StrictEvalActivation(vm, structure, currentScope);
         scope->finishCreation(vm);
@@ -47,13 +49,28 @@ public:
     }
 
     static bool NODELETE deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&);
+    static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
+    static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
-    
+
     DECLARE_INFO;
+    DECLARE_VISIT_CHILDREN;
+
+    JS_EXPORT_PRIVATE JSObject* ensureBindingStorage(JSGlobalObject*);
+    JSObject* bindingStorage() const { return m_bindingStorage.get(); }
+    JSObject* next() const { return m_next.get(); }
 
 private:
-    StrictEvalActivation(VM&, Structure*, JSScope*);
+    StrictEvalActivation(VM&, Structure*, JSObject*);
+
+    WriteBarrier<JSObject> m_bindingStorage;
+    WriteBarrier<JSObject> m_next;
+
+public:
+    static constexpr ptrdiff_t offsetOfNext() { return OBJECT_OFFSETOF(StrictEvalActivation, m_next); }
 };
+
+static_assert(StrictEvalActivation::offsetOfNext() == scopeChainNextOffset, "StrictEvalActivation::m_next must live at scopeChainNextOffset");
 
 } // namespace JSC

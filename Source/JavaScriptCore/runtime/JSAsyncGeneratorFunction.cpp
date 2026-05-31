@@ -35,12 +35,12 @@ namespace JSC {
 
 const ClassInfo JSAsyncGeneratorFunction::s_info = { "JSAsyncGeneratorFunction"_s,  &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSAsyncGeneratorFunction) };
 
-JSAsyncGeneratorFunction::JSAsyncGeneratorFunction(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
+JSAsyncGeneratorFunction::JSAsyncGeneratorFunction(VM& vm, FunctionExecutable* executable, JSObject* scope, Structure* structure)
     : Base(vm, executable, scope, structure)
 {
 }
 
-JSAsyncGeneratorFunction* JSAsyncGeneratorFunction::createImpl(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
+JSAsyncGeneratorFunction* JSAsyncGeneratorFunction::createImpl(VM& vm, FunctionExecutable* executable, JSObject* scope, Structure* structure)
 {
     JSAsyncGeneratorFunction* asyncGenerator = new (NotNull, allocateCell<JSAsyncGeneratorFunction>(vm)) JSAsyncGeneratorFunction(vm, executable, scope, structure);
     ASSERT(asyncGenerator->realm());
@@ -48,24 +48,24 @@ JSAsyncGeneratorFunction* JSAsyncGeneratorFunction::createImpl(VM& vm, FunctionE
     return asyncGenerator;
 }
 
-JSAsyncGeneratorFunction* JSAsyncGeneratorFunction::create(VM& vm, JSGlobalObject* globalObject, FunctionExecutable* executable, JSScope* scope)
+JSAsyncGeneratorFunction* JSAsyncGeneratorFunction::create(VM& vm, JSGlobalObject* globalObject, FunctionExecutable* executable, JSObject* scope)
 {
     return create(vm, globalObject, executable, scope, globalObject->asyncGeneratorFunctionStructure());
 }
 
-JSAsyncGeneratorFunction* JSAsyncGeneratorFunction::create(VM& vm, JSGlobalObject*, FunctionExecutable* executable, JSScope* scope, Structure* structure)
+JSAsyncGeneratorFunction* JSAsyncGeneratorFunction::create(VM& vm, JSGlobalObject*, FunctionExecutable* executable, JSObject* scope, Structure* structure)
 {
     JSAsyncGeneratorFunction* asyncGenerator = createImpl(vm, executable, scope, structure);
     executable->notifyCreation(vm, asyncGenerator, "Allocating an async generator");
     return asyncGenerator;
 }
 
-JSAsyncGeneratorFunction* JSAsyncGeneratorFunction::createWithInvalidatedReallocationWatchpoint(VM& vm, JSGlobalObject* globalObject, FunctionExecutable* executable, JSScope* scope)
+JSAsyncGeneratorFunction* JSAsyncGeneratorFunction::createWithInvalidatedReallocationWatchpoint(VM& vm, JSGlobalObject* globalObject, FunctionExecutable* executable, JSObject* scope)
 {
     return createWithInvalidatedReallocationWatchpoint(vm, globalObject, executable, scope, globalObject->asyncGeneratorFunctionStructure());
 }
 
-JSAsyncGeneratorFunction* JSAsyncGeneratorFunction::createWithInvalidatedReallocationWatchpoint(VM& vm, JSGlobalObject*, FunctionExecutable* executable, JSScope* scope, Structure* structure)
+JSAsyncGeneratorFunction* JSAsyncGeneratorFunction::createWithInvalidatedReallocationWatchpoint(VM& vm, JSGlobalObject*, FunctionExecutable* executable, JSObject* scope, Structure* structure)
 {
     return createImpl(vm, executable, scope, structure);
 }

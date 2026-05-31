@@ -47,10 +47,10 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    static JSGeneratorFunction* create(VM&, JSGlobalObject*, FunctionExecutable*, JSScope*);
-    static JSGeneratorFunction* create(VM&, JSGlobalObject*, FunctionExecutable*, JSScope*, Structure*);
-    static JSGeneratorFunction* createWithInvalidatedReallocationWatchpoint(VM&, JSGlobalObject*, FunctionExecutable*, JSScope*);
-    static JSGeneratorFunction* createWithInvalidatedReallocationWatchpoint(VM&, JSGlobalObject*, FunctionExecutable*, JSScope*, Structure*);
+    static JSGeneratorFunction* create(VM&, JSGlobalObject*, FunctionExecutable*, JSObject*);
+    static JSGeneratorFunction* create(VM&, JSGlobalObject*, FunctionExecutable*, JSObject*, Structure*);
+    static JSGeneratorFunction* createWithInvalidatedReallocationWatchpoint(VM&, JSGlobalObject*, FunctionExecutable*, JSObject*);
+    static JSGeneratorFunction* createWithInvalidatedReallocationWatchpoint(VM&, JSGlobalObject*, FunctionExecutable*, JSObject*, Structure*);
 
     static size_t allocationSize(Checked<size_t> inlineCapacity)
     {
@@ -61,9 +61,9 @@ public:
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
 private:
-    JSGeneratorFunction(VM&, FunctionExecutable*, JSScope*, Structure*);
+    JSGeneratorFunction(VM&, FunctionExecutable*, JSObject*, Structure*);
 
-    static JSGeneratorFunction* createImpl(VM&, FunctionExecutable*, JSScope*, Structure*);
+    static JSGeneratorFunction* createImpl(VM&, FunctionExecutable*, JSObject*, Structure*);
 
     friend class LLIntOffsetsExtractor;
 };

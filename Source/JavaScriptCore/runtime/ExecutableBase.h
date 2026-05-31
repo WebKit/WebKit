@@ -38,7 +38,6 @@ namespace JSC {
 class CodeBlock;
 class EvalCodeBlock;
 class FunctionCodeBlock;
-class JSScope;
 class JSWebAssemblyModule;
 class LLIntOffsetsExtractor;
 class ModuleProgramCodeBlock;

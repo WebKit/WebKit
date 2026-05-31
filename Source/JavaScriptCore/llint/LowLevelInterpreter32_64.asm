@@ -2657,7 +2657,7 @@ llintOpWithMetadata(op_resolve_scope, OpResolveScope, macro (size, get, dispatch
         btiz t2, .resolveScopeLoopEnd
 
     .resolveScopeLoop:
-        loadp JSScope::m_next[t0], t0
+        loadp JSLexicalEnvironment::m_next[t0], t0
         subi 1, t2
         btinz t2, .resolveScopeLoop
 
@@ -2986,7 +2986,7 @@ end)
 llintOpWithReturn(op_get_parent_scope, OpGetParentScope, macro (size, get, dispatch, return)
     get(m_scope, t0)
     loadp PayloadOffset[cfr, t0, 8], t0
-    loadp JSScope::m_next[t0], t0
+    loadp JSLexicalEnvironment::m_next[t0], t0
     return(CellTag, t0)
 end)
 

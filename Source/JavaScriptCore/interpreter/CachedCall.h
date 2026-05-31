@@ -64,7 +64,7 @@ public:
         return uncheckedDowncast<JSFunction>(m_protoCallFrame.calleeValue.unboxedCell());
     }
     FunctionExecutable* functionExecutable() { return m_functionExecutable; }
-    JSScope* scope() { return m_scope; }
+    JSObject* scope() { return m_scope; }
 
     void setThis(JSValue v) { m_protoCallFrame.setThisValue(v); }
 
@@ -100,7 +100,7 @@ private:
     MarkedArgumentBuffer m_arguments;
 
     FunctionExecutable* m_functionExecutable;
-    JSScope* m_scope;
+    JSObject* m_scope;
     void* m_addressForCall { nullptr };
     unsigned m_numParameters { 0 };
 #if ASSERT_ENABLED

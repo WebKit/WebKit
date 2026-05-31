@@ -83,11 +83,11 @@ public:
 
     JS_EXPORT_PRIVATE static JSFunction* create(VM&, JSGlobalObject*, unsigned length, const String& name, NativeFunction, ImplementationVisibility, Intrinsic = NoIntrinsic, NativeFunction nativeConstructor = callHostFunctionAsConstructor, const DOMJIT::Signature* = nullptr);
     
-    static JSFunction* createWithInvalidatedReallocationWatchpoint(VM&, JSGlobalObject*, FunctionExecutable*, JSScope*);
-    static JSFunction* createWithInvalidatedReallocationWatchpoint(VM&, JSGlobalObject*, FunctionExecutable*, JSScope*, Structure*);
+    static JSFunction* createWithInvalidatedReallocationWatchpoint(VM&, JSGlobalObject*, FunctionExecutable*, JSObject*);
+    static JSFunction* createWithInvalidatedReallocationWatchpoint(VM&, JSGlobalObject*, FunctionExecutable*, JSObject*, Structure*);
 
-    JS_EXPORT_PRIVATE static JSFunction* create(VM&, JSGlobalObject*, FunctionExecutable*, JSScope*);
-    static JSFunction* create(VM&, JSGlobalObject*, FunctionExecutable*, JSScope*, Structure*);
+    JS_EXPORT_PRIVATE static JSFunction* create(VM&, JSGlobalObject*, FunctionExecutable*, JSObject*);
+    static JSFunction* create(VM&, JSGlobalObject*, FunctionExecutable*, JSObject*, Structure*);
 
     JS_EXPORT_PRIVATE String name(VM&);
     JS_EXPORT_PRIVATE String displayName(VM&);
@@ -184,14 +184,14 @@ public:
     // optimized paths in which the return value does not matter for
     // host functions, and checking whether the function is a host
     // function is deemed too expensive.
-    JSScope* scopeUnchecked()
+    JSObject* scopeUnchecked()
     {
         return m_scope.get();
     }
 
 protected:
     JS_EXPORT_PRIVATE JSFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*);
-    JSFunction(VM&, FunctionExecutable*, JSScope*, Structure*);
+    JSFunction(VM&, FunctionExecutable*, JSObject*, Structure*);
 
     void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name);
 #if ASSERT_ENABLED
@@ -209,7 +209,7 @@ protected:
     static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&);
 
 private:
-    static JSFunction* createImpl(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
+    static JSFunction* createImpl(VM& vm, FunctionExecutable* executable, JSObject* scope, Structure* structure)
     {
         JSFunction* function = new (NotNull, allocateCell<JSFunction>(vm)) JSFunction(vm, executable, scope, structure);
         ASSERT(function->realm());

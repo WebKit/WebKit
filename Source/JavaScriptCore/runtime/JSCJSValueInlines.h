@@ -232,7 +232,8 @@ ALWAYS_INLINE JSValue JSValue::toBigIntOrInt32(JSGlobalObject* globalObject) con
 inline JSValue JSValue::toThis(JSGlobalObject* globalObject, ECMAMode ecmaMode) const
 {
     if (isObject()) {
-        if (asObject(*this)->inherits<JSScope>())
+        JSObject* obj = asObject(*this);
+        if (isScopeChainCell(obj))
             return ecmaMode.isStrict() ? jsUndefined() : globalObject->globalThis();
         return *this;
     }

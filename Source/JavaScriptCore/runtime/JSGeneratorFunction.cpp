@@ -35,12 +35,12 @@ namespace JSC {
 
 const ClassInfo JSGeneratorFunction::s_info = { "GeneratorFunction"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSGeneratorFunction) };
 
-JSGeneratorFunction::JSGeneratorFunction(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
+JSGeneratorFunction::JSGeneratorFunction(VM& vm, FunctionExecutable* executable, JSObject* scope, Structure* structure)
     : Base(vm, executable, scope, structure)
 {
 }
 
-JSGeneratorFunction* JSGeneratorFunction::createImpl(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
+JSGeneratorFunction* JSGeneratorFunction::createImpl(VM& vm, FunctionExecutable* executable, JSObject* scope, Structure* structure)
 {
     JSGeneratorFunction* generatorFunction = new (NotNull, allocateCell<JSGeneratorFunction>(vm)) JSGeneratorFunction(vm, executable, scope, structure);
     ASSERT(generatorFunction->realm());
@@ -48,24 +48,24 @@ JSGeneratorFunction* JSGeneratorFunction::createImpl(VM& vm, FunctionExecutable*
     return generatorFunction;
 }
 
-JSGeneratorFunction* JSGeneratorFunction::create(VM& vm, JSGlobalObject* globalObject, FunctionExecutable* executable, JSScope* scope)
+JSGeneratorFunction* JSGeneratorFunction::create(VM& vm, JSGlobalObject* globalObject, FunctionExecutable* executable, JSObject* scope)
 {
     return create(vm, globalObject, executable, scope, globalObject->generatorFunctionStructure());
 }
 
-JSGeneratorFunction* JSGeneratorFunction::create(VM& vm, JSGlobalObject*, FunctionExecutable* executable, JSScope* scope, Structure* structure)
+JSGeneratorFunction* JSGeneratorFunction::create(VM& vm, JSGlobalObject*, FunctionExecutable* executable, JSObject* scope, Structure* structure)
 {
     JSGeneratorFunction* generatorFunction = createImpl(vm, executable, scope, structure);
     executable->notifyCreation(vm, generatorFunction, "Allocating a generator function");
     return generatorFunction;
 }
 
-JSGeneratorFunction* JSGeneratorFunction::createWithInvalidatedReallocationWatchpoint(VM& vm, JSGlobalObject* globalObject, FunctionExecutable* executable, JSScope* scope)
+JSGeneratorFunction* JSGeneratorFunction::createWithInvalidatedReallocationWatchpoint(VM& vm, JSGlobalObject* globalObject, FunctionExecutable* executable, JSObject* scope)
 {
     return createWithInvalidatedReallocationWatchpoint(vm, globalObject, executable, scope, globalObject->generatorFunctionStructure());
 }
 
-JSGeneratorFunction* JSGeneratorFunction::createWithInvalidatedReallocationWatchpoint(VM& vm, JSGlobalObject*, FunctionExecutable* executable, JSScope* scope, Structure* structure)
+JSGeneratorFunction* JSGeneratorFunction::createWithInvalidatedReallocationWatchpoint(VM& vm, JSGlobalObject*, FunctionExecutable* executable, JSObject* scope, Structure* structure)
 {
     return createImpl(vm, executable, scope, structure);
 }

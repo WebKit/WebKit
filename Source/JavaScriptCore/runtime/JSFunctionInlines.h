@@ -61,18 +61,18 @@ inline Structure* JSArrowFunction::createStructure(VM& vm, JSGlobalObject* globa
     return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info());
 }
 
-inline JSFunction* JSFunction::createWithInvalidatedReallocationWatchpoint(VM& vm, JSGlobalObject* globalObject, FunctionExecutable* executable, JSScope* scope)
+inline JSFunction* JSFunction::createWithInvalidatedReallocationWatchpoint(VM& vm, JSGlobalObject* globalObject, FunctionExecutable* executable, JSObject* scope)
 {
     return createWithInvalidatedReallocationWatchpoint(vm, globalObject, executable, scope, selectStructureForNewFuncExp(globalObject, executable));
 }
 
-inline JSFunction* JSFunction::createWithInvalidatedReallocationWatchpoint(VM& vm, JSGlobalObject*, FunctionExecutable* executable, JSScope* scope, Structure* structure)
+inline JSFunction* JSFunction::createWithInvalidatedReallocationWatchpoint(VM& vm, JSGlobalObject*, FunctionExecutable* executable, JSObject* scope, Structure* structure)
 {
     ASSERT(executable->singleton().hasBeenInvalidated());
     return createImpl(vm, executable, scope, structure);
 }
 
-inline JSFunction::JSFunction(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
+inline JSFunction::JSFunction(VM& vm, FunctionExecutable* executable, JSObject* scope, Structure* structure)
     : Base(vm, scope, structure)
     , m_executableOrRareData(std::bit_cast<uintptr_t>(executable))
 {

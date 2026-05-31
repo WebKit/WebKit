@@ -54,7 +54,7 @@ public:
         return instance;
     }
 
-    static ProgramCodeBlock* create(VM& vm, ProgramExecutable* ownerExecutable, UnlinkedProgramCodeBlock* unlinkedCodeBlock, JSScope* scope)
+    static ProgramCodeBlock* create(VM& vm, ProgramExecutable* ownerExecutable, UnlinkedProgramCodeBlock* unlinkedCodeBlock, JSObject* scope)
     {
         ProgramCodeBlock* instance = new (NotNull, allocateCell<ProgramCodeBlock>(vm))
             ProgramCodeBlock(vm, vm.programCodeBlockStructure.get(), ownerExecutable, unlinkedCodeBlock, scope);
@@ -71,7 +71,7 @@ private:
     {
     }
 
-    ProgramCodeBlock(VM& vm, Structure* structure, ProgramExecutable* ownerExecutable, UnlinkedProgramCodeBlock* unlinkedCodeBlock, JSScope* scope)
+    ProgramCodeBlock(VM& vm, Structure* structure, ProgramExecutable* ownerExecutable, UnlinkedProgramCodeBlock* unlinkedCodeBlock, JSObject* scope)
         : GlobalCodeBlock(vm, structure, ownerExecutable, unlinkedCodeBlock, scope)
     {
     }

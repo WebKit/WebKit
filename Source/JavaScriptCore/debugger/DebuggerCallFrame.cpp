@@ -149,7 +149,7 @@ DebuggerScope* DebuggerCallFrame::scope(VM& vm)
         return nullptr;
 
     if (!m_scope) {
-        JSScope* scope;
+        JSObject* scope;
         CodeBlock* codeBlock = m_validMachineFrame->isNativeCalleeFrame() ? nullptr : m_validMachineFrame->codeBlock();
         if (isTailDeleted())
             scope = m_shadowChickenFrame.scope;
@@ -249,7 +249,7 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(VM& vm, const String& scri
 
     TDZEnvironment variablesUnderTDZ;
     PrivateNameEnvironment privateNameEnvironment;
-    JSScope::collectClosureVariablesUnderTDZ(scope(vm)->jsScope(), variablesUnderTDZ, privateNameEnvironment);
+    collectClosureVariablesUnderTDZ(scope(vm)->jsScope(), variablesUnderTDZ, privateNameEnvironment);
 
     auto* eval = DirectEvalExecutable::create(globalObject, makeSource(script, callFrame->callerSourceOrigin(vm), SourceTaintedOrigin::Untainted), codeBlock->ownerExecutable()->lexicallyScopedFeatures(), codeBlock->unlinkedCodeBlock()->derivedContextType(), codeBlock->unlinkedCodeBlock()->needsClassFieldInitializer(), codeBlock->unlinkedCodeBlock()->privateBrandRequirement(), codeBlock->unlinkedCodeBlock()->isArrowFunction(), codeBlock->ownerExecutable()->isInsideOrdinaryFunction(), evalContextType, &variablesUnderTDZ, &privateNameEnvironment);
     if (catchScope.exception()) [[unlikely]] {
@@ -259,7 +259,7 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(VM& vm, const String& scri
     }
 
     if (scopeExtensionObject) {
-        JSScope* ignoredPreviousScope = globalObject->globalScope();
+        JSObject* ignoredPreviousScope = globalObject->globalScope();
         globalObject->setGlobalScopeExtension(JSWithScope::create(vm, globalObject, ignoredPreviousScope, scopeExtensionObject));
         eval->setTaintedByWithScope();
     }

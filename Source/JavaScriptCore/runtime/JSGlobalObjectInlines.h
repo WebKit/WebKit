@@ -524,7 +524,7 @@ inline Structure* JSGlobalObject::errorStructure(ErrorType errorType) const
     return nullptr;
 }
 
-inline JSScope* JSGlobalObject::globalScope()
+inline JSObject* JSGlobalObject::globalScope()
 {
     return m_globalLexicalEnvironment.get();
 }

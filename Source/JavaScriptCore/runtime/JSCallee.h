@@ -27,7 +27,6 @@
 
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/JSObject.h>
-#include <JavaScriptCore/JSScope.h>
 
 namespace JSC {
 
@@ -53,19 +52,19 @@ public:
         return &vm.calleeSpace();
     }
 
-    static JSCallee* create(VM& vm, JSGlobalObject* globalObject, JSScope* scope)
+    static JSCallee* create(VM& vm, JSGlobalObject* globalObject, JSObject* scope)
     {
         JSCallee* callee = new (NotNull, allocateCell<JSCallee>(vm)) JSCallee(vm, scope, globalObject->calleeStructure());
         callee->finishCreation(vm);
         return callee;
     }
     
-    JSScope* scope()
+    JSObject* scope()
     {
         return m_scope.get();
     }
 
-    void setScope(VM& vm, JSScope* scope)
+    void setScope(VM& vm, JSObject* scope)
     {
         if (scope)
             m_scope.set(vm, this, scope);
@@ -86,13 +85,13 @@ public:
 
 protected:
     JSCallee(VM&, JSGlobalObject*, Structure*);
-    JSCallee(VM&, JSScope*, Structure*);
+    JSCallee(VM&, JSObject*, Structure*);
 
     DECLARE_DEFAULT_FINISH_CREATION;
 
     friend class LLIntOffsetsExtractor;
 
-    WriteBarrier<JSScope> m_scope;
+    WriteBarrier<JSObject> m_scope;
 };
 
 } // namespace JSC

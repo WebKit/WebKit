@@ -36,7 +36,7 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(DebuggerScope);
 
 const ClassInfo DebuggerScope::s_info = { "DebuggerScope"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DebuggerScope) };
 
-DebuggerScope* DebuggerScope::create(VM& vm, JSScope* scope)
+DebuggerScope* DebuggerScope::create(VM& vm, JSObject* scope)
 {
     Structure* structure = scope->realm()->debuggerScopeStructure();
     DebuggerScope* debuggerScope = new (NotNull, allocateCell<DebuggerScope>(vm)) DebuggerScope(vm, structure, scope);
@@ -44,7 +44,7 @@ DebuggerScope* DebuggerScope::create(VM& vm, JSScope* scope)
     return debuggerScope;
 }
 
-DebuggerScope::DebuggerScope(VM& vm, Structure* structure, JSScope* scope)
+DebuggerScope::DebuggerScope(VM& vm, Structure* structure, JSObject* scope)
     : JSNonFinalObject(vm, structure)
     , m_scope(scope, WriteBarrierEarlyInit)
 {
@@ -69,7 +69,7 @@ bool DebuggerScope::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalO
     DebuggerScope* scope = uncheckedDowncast<DebuggerScope>(object);
     if (!scope->isValid())
         return false;
-    JSObject* thisObject = JSScope::objectAtScope(scope->jsScope());
+    JSObject* thisObject = objectAtScope(scope->jsScope());
     slot.setThisValue(JSValue(thisObject));
 
     // By default, JSObject::getPropertySlot() will look in the DebuggerScope's prototype
@@ -100,7 +100,7 @@ bool DebuggerScope::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName
     ASSERT(scope->isValid());
     if (!scope->isValid())
         return false;
-    JSObject* thisObject = JSScope::objectAtScope(scope->jsScope());
+    JSObject* thisObject = objectAtScope(scope->jsScope());
     slot.setThisValue(JSValue(thisObject));
     return thisObject->methodTable()->put(thisObject, globalObject, propertyName, value, slot);
 }
@@ -111,7 +111,7 @@ bool DebuggerScope::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, P
     ASSERT(scope->isValid());
     if (!scope->isValid())
         return false;
-    JSObject* thisObject = JSScope::objectAtScope(scope->jsScope());
+    JSObject* thisObject = objectAtScope(scope->jsScope());
     return thisObject->methodTable()->deleteProperty(thisObject, globalObject, propertyName, slot);
 }
 
@@ -121,7 +121,7 @@ void DebuggerScope::getOwnPropertyNames(JSObject* object, JSGlobalObject* global
     ASSERT(scope->isValid());
     if (!scope->isValid())
         return;
-    JSObject* thisObject = JSScope::objectAtScope(scope->jsScope());
+    JSObject* thisObject = objectAtScope(scope->jsScope());
     thisObject->getPropertyNames(globalObject, propertyNames, mode);
 }
 
@@ -131,17 +131,25 @@ bool DebuggerScope::defineOwnProperty(JSObject* object, JSGlobalObject* globalOb
     ASSERT(scope->isValid());
     if (!scope->isValid())
         return false;
-    JSObject* thisObject = JSScope::objectAtScope(scope->jsScope());
+    JSObject* thisObject = objectAtScope(scope->jsScope());
     return thisObject->methodTable()->defineOwnProperty(thisObject, globalObject, propertyName, descriptor, shouldThrow);
 }
 
 DebuggerScope* DebuggerScope::next()
 {
     ASSERT(isValid());
-    if (!m_next && m_scope->next()) {
-        VM& vm = m_scope->vm();
-        DebuggerScope* nextScope = create(vm, m_scope->next());
-        m_next.set(vm, this, nextScope);
+    if (!m_next) {
+        JSObject* current = m_scope.get();
+        JSObject* nextLink = nullptr;
+        if (current && isNonGlobalScopeChainCell(current))
+            nextLink = nextScope(current);
+        else if (auto* globalObject = dynamicDowncast<JSGlobalObject>(current))
+            nextLink = globalObject->next();
+        if (nextLink) {
+            VM& vm = current->vm();
+            DebuggerScope* nextDebuggerScope = create(vm, nextLink);
+            m_next.set(vm, this, nextDebuggerScope);
+        }
     }
     return m_next.get();
 }
@@ -162,45 +170,49 @@ void DebuggerScope::invalidateChain()
 
 bool DebuggerScope::isCatchScope() const
 {
-    return m_scope->isCatchScope();
+    JSObject* obj = m_scope.get();
+    return obj && isNonGlobalScopeChainCell(obj) && JSC::isCatchScope(obj);
 }
 
 bool DebuggerScope::isFunctionNameScope() const
 {
-    return m_scope->isFunctionNameScopeObject();
+    JSObject* obj = m_scope.get();
+    return obj && isNonGlobalScopeChainCell(obj) && JSC::isFunctionNameScopeObject(obj);
 }
 
 bool DebuggerScope::isWithScope() const
 {
-    return m_scope->isWithScope();
+    JSObject* obj = m_scope.get();
+    return obj && isNonGlobalScopeChainCell(obj) && obj->isWithScope();
 }
 
 bool DebuggerScope::isGlobalScope() const
 {
-    return m_scope->isGlobalObject();
+    return m_scope->type() == GlobalObjectType;
 }
 
 bool DebuggerScope::isGlobalLexicalEnvironment() const
 {
-    return m_scope->isGlobalLexicalEnvironment();
+    return m_scope->type() == GlobalLexicalEnvironmentType;
 }
 
 bool DebuggerScope::isClosureScope() const
 {
-    // In the current debugger implementation, every function or eval will create an
-    // lexical environment object. Hence, a lexical environment object implies a
-    // function or eval scope.
-    return m_scope->isVarScope() || m_scope->isLexicalScope();
+    JSObject* obj = m_scope.get();
+    return obj && isNonGlobalScopeChainCell(obj) && (isVarScope(obj) || isLexicalScope(obj));
 }
 
 bool DebuggerScope::isNestedLexicalScope() const
 {
-    return m_scope->isNestedLexicalScope();
+    JSObject* obj = m_scope.get();
+    return obj && isNonGlobalScopeChainCell(obj) && JSC::isNestedLexicalScope(obj);
 }
 
 String DebuggerScope::name() const
 {
-    SymbolTable* symbolTable = m_scope->symbolTable();
+    SymbolTable* symbolTable = nullptr;
+    if (JSObject* obj = m_scope.get())
+        symbolTable = scopeSymbolTable(obj);
     if (!symbolTable)
         return String();
 
@@ -209,7 +221,9 @@ String DebuggerScope::name() const
 
 DebuggerLocation DebuggerScope::location() const
 {
-    SymbolTable* symbolTable = m_scope->symbolTable();
+    SymbolTable* symbolTable = nullptr;
+    if (JSObject* obj = m_scope.get())
+        symbolTable = scopeSymbolTable(obj);
     if (!symbolTable)
         return DebuggerLocation();
 

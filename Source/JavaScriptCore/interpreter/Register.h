@@ -39,7 +39,6 @@ namespace JSC {
     class JSCell;
     class JSLexicalEnvironment;
     class JSObject;
-    class JSScope;
     class JSValue;
 
     class Register {
@@ -51,19 +50,18 @@ namespace JSC {
         inline JSValue jsValue() const; // Defined in RegisterInlines.h
         inline JSValue asanUnsafeJSValue() const; // Defined in RegisterInlines.h
         inline EncodedJSValue encodedJSValue() const; // Defined in RegisterInlines.h
-        
+
         ALWAYS_INLINE Register& operator=(CallFrame*);
         ALWAYS_INLINE Register& operator=(CodeBlock*);
-        ALWAYS_INLINE Register& operator=(JSScope*);
+        ALWAYS_INLINE Register& operator=(JSObject*);
         ALWAYS_INLINE Register& operator=(JSCell*);
         ALWAYS_INLINE Register& operator=(EncodedJSValue);
-
         inline int32_t i() const; // Defined in RegisterInlines.h
         ALWAYS_INLINE CallFrame* callFrame() const;
         ALWAYS_INLINE CodeBlock* codeBlock() const;
         ALWAYS_INLINE CodeBlock* asanUnsafeCodeBlock() const;
         ALWAYS_INLINE JSObject* object() const;
-        ALWAYS_INLINE JSScope* scope() const;
+        ALWAYS_INLINE JSObject* scope() const;
         int32_t unboxedInt32() const;
         uint32_t unboxedUInt32() const;
         int32_t asanUnsafeUnboxedInt32() const;

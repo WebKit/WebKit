@@ -20,18 +20,19 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
+#include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/JSScope.h>
 
 namespace JSC {
 
-class JSWithScope final : public JSScope {
+class JSWithScope final : public JSObject {
 public:
-    using Base = JSScope;
+    using Base = JSObject;
 
     template<typename CellType, SubspaceAccess mode>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
@@ -39,9 +40,10 @@ public:
         return vm.withScopeSpace<mode>();
     }
 
-    JS_EXPORT_PRIVATE static JSWithScope* create(VM&, JSGlobalObject*, JSScope* next, JSObject*);
+    JS_EXPORT_PRIVATE static JSWithScope* create(VM&, JSGlobalObject*, JSObject* next, JSObject*);
 
     JSObject* object() LIFETIME_BOUND { return m_object.get(); }
+    JSObject* next() const { return m_next.get(); }
 
     DECLARE_VISIT_CHILDREN;
 
@@ -50,9 +52,15 @@ public:
     DECLARE_EXPORT_INFO;
 
 private:
-    JSWithScope(VM&, Structure*, JSObject*, JSScope* next);
+    JSWithScope(VM&, Structure*, JSObject*, JSObject* next);
 
     WriteBarrier<JSObject> m_object;
+    WriteBarrier<JSObject> m_next;
+
+public:
+    static constexpr ptrdiff_t offsetOfNext() { return OBJECT_OFFSETOF(JSWithScope, m_next); }
 };
+
+static_assert(JSWithScope::offsetOfNext() == scopeChainNextOffset, "JSWithScope::m_next must live at scopeChainNextOffset");
 
 } // namespace JSC
