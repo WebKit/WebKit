@@ -106,6 +106,13 @@ class MockRtpSenderInternal : public RtpSenderInternal {
               (override));
   MOCK_METHOD(void, SetObserver, (RtpSenderObserverInterface*), (override));
 
+#if defined(WEBRTC_WEBKIT_BUILD)
+  MOCK_METHOD(RTCError,
+              GenerateKeyFrame,
+              (const std::vector<std::string>&),
+              (override));
+#endif
+
   // RtpSenderInternal methods.
   MOCK_METHOD1(SetMediaChannel, void(webrtc::MediaSendChannelInterface*));
   MOCK_METHOD1(SetSsrc, void(uint32_t));
