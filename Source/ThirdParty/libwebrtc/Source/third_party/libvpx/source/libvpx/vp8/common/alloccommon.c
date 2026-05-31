@@ -17,6 +17,8 @@
 #include "entropymode.h"
 #include "systemdependent.h"
 
+// This function frees all frame and post processing buffers, as well as
+// indirect references to them via context and mode info allocations.
 void vp8_de_alloc_frame_buffers(VP8_COMMON *oci) {
   int i;
   for (i = 0; i < NUM_YV12_BUFFERS; ++i) {
@@ -34,7 +36,7 @@ void vp8_de_alloc_frame_buffers(VP8_COMMON *oci) {
   oci->pp_limits_buffer = NULL;
 
   vpx_free(oci->postproc_state.generated_noise);
-  oci->postproc_state.generated_noise = NULL;
+  memset(&oci->postproc_state, 0, sizeof(oci->postproc_state));
 #endif
 
   vpx_free(oci->above_context);
@@ -42,10 +44,14 @@ void vp8_de_alloc_frame_buffers(VP8_COMMON *oci) {
 #if CONFIG_ERROR_CONCEALMENT
   vpx_free(oci->prev_mip);
   oci->prev_mip = NULL;
+  oci->prev_mi = NULL;
 #endif
 
   oci->above_context = NULL;
   oci->mip = NULL;
+  oci->mi = NULL;
+  oci->show_frame_mi = NULL;
+  oci->frame_to_show = NULL;
 }
 
 int vp8_alloc_frame_buffers(VP8_COMMON *oci, int width, int height) {
