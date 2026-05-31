@@ -35,11 +35,7 @@ namespace WebCore {
 
 inline WebCoreOpaqueRoot root(StyleSheet* styleSheet)
 {
-    if (CSSImportRule* ownerRule = styleSheet->ownerRule())
-        return root(ownerRule);
-    if (Node* ownerNode = styleSheet->ownerNode())
-        return root(ownerNode);
-    return WebCoreOpaqueRoot { styleSheet };
+    return styleSheet->opaqueRootForGCThread();
 }
 
 } // namespace WebCore

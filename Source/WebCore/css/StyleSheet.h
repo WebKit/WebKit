@@ -34,6 +34,7 @@ class CSSImportRule;
 class MediaList;
 class Node;
 class StyleSheet;
+class WebCoreOpaqueRoot;
 
 class StyleSheet : public RefCounted<StyleSheet> {
 public:
@@ -50,6 +51,7 @@ public:
 
     virtual CSSImportRule* ownerRule() const { return nullptr; }
     virtual void clearOwnerNode() = 0;
+    virtual WebCoreOpaqueRoot opaqueRootForGCThread() = 0;
     virtual URL baseURL() const = 0;
     virtual bool isLoading() const = 0;
     virtual bool isCSSStyleSheet() const { return false; }
