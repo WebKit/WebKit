@@ -1577,6 +1577,7 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageDefaultDirectories)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setAllowTestOnlyIPC:YES];
     setConfigurationInjectedBundlePath(configuration.get());
 
     RetainPtr<DirectoryPageMessageHandler> directoryPageMessageHandler = adoptNS([[DirectoryPageMessageHandler alloc] init]);
@@ -1619,6 +1620,7 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageSpecificDirectories)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setAllowTestOnlyIPC:YES];
     setConfigurationInjectedBundlePath(configuration.get());
     auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
     NSString* tempDirectory = @"/var/tmp";
@@ -4610,6 +4612,7 @@ TEST(ServiceWorkers, ServiceWorkerCacheReference)
     done = false;
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setAllowTestOnlyIPC:YES];
 
     auto context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
     [configuration setProcessPool:(WKProcessPool *)context.get()];
