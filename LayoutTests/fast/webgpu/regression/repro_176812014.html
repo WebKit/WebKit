@@ -1,0 +1,73 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+globalThis.testRunner?.waitUntilDone();
+
+const wgsl = `
+@group(0) @binding(1) var<storage, read_write> b : array<u32>;
+@group(0) @binding(0) var<storage, read_write> a : array<u32>;
+@compute @workgroup_size(1)
+fn main() {
+    b[0] = arrayLength(&b);
+    for (var i : u32 = 0u; i < arrayLength(&a); i = i + 1u) {
+        a[i] = 0x41414141u;
+    }
+}`;
+
+let device, bindGroup;
+
+function makeAutoLayoutBindGroup(shaderModule, buf0, buf1)
+{
+    let pipeline = device.createComputePipeline({ layout: 'auto', compute: { module: shaderModule, entryPoint: 'main' } });
+    bindGroup = device.createBindGroup({
+        layout: pipeline.getBindGroupLayout(0),
+        entries: [
+            { binding: 0, resource: { buffer: buf0 } },
+            { binding: 1, resource: { buffer: buf1 } },
+        ],
+    });
+}
+
+onload = async () => {
+    try {
+        const adapter = await navigator.gpu.requestAdapter();
+        device = await adapter.requestDevice();
+        const shaderModule = device.createShaderModule({ code: wgsl });
+        const buf0 = device.createBuffer({ size: 16, usage: GPUBufferUsage.STORAGE });
+        const buf1 = device.createBuffer({ size: 64 * 1024 * 1024, usage: GPUBufferUsage.STORAGE });
+
+        makeAutoLayoutBindGroup(shaderModule, buf0, buf1);
+        await new Promise(r => setTimeout(r, 0));
+        for (let i = 0; i < 5; ++i)
+            GCController.collect();
+
+        const explicitLayout = device.createBindGroupLayout({
+            entries: [
+                { binding: 0, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage', minBindingSize: 4 } },
+                { binding: 1, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage', minBindingSize: 4 } },
+            ],
+        });
+        const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [explicitLayout] });
+        const explicitPipeline = device.createComputePipeline({ layout: pipelineLayout, compute: { module: shaderModule, entryPoint: 'main' } });
+
+        device.pushErrorScope('validation');
+        const encoder = device.createCommandEncoder();
+        const pass = encoder.beginComputePass();
+        pass.setPipeline(explicitPipeline);
+        pass.setBindGroup(0, bindGroup);
+        pass.dispatchWorkgroups(1);
+        pass.end();
+        device.queue.submit([encoder.finish()]);
+        const error = await device.popErrorScope();
+        await device.queue.onSubmittedWorkDone();
+
+        if (error)
+            testPassed(`dispatch was rejected: ${error.message}`);
+        else
+            testFailed("auto-generated bind group was accepted as compatible with explicit pipeline layout");
+    } catch (e) {
+        testFailed(`${e}`);
+    }
+    globalThis.testRunner?.notifyDone();
+};
+</script>
