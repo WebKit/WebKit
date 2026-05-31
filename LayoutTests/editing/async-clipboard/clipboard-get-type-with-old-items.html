@@ -14,7 +14,7 @@
             description("This test verifies that it's still possible to read from the clipboard, after attempting to read data from stale items. Requires DumpRenderTree or WebKitTestRunner.");
 
             await UIHelper.copyText("Hello");
-            itemsBeforeChange = await navigator.clipboard.read();
+            itemsBeforeChange = await readClipboardWithUserActivation();
             shouldBe("itemsBeforeChange.length", "1");
 
             try {
@@ -26,7 +26,7 @@
             }
 
             await UIHelper.copyText("World");
-            itemsAfterChange = await navigator.clipboard.read();
+            itemsAfterChange = await readClipboardWithUserActivation();
             shouldBe("itemsAfterChange.length", "1");
 
             try {

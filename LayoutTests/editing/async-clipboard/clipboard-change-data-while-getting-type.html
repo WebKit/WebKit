@@ -14,7 +14,7 @@
             description("This test verifies that if platform pasteboard contents are changed before reading from a ClipboardItem, the new contents of the pasteboard should not be exposed to the page and the result of getType() should be rejected. This test requires WebKitTestRunner.");
 
             await UIHelper.copyText("Foo");
-            items = await navigator.clipboard.read();
+            items = await readClipboardWithUserActivation();
             shouldBe("items.length", "1");
             await UIHelper.copyText("Bar");
             try {
