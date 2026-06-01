@@ -3800,7 +3800,7 @@ class YarrGenerator final : public YarrJITInfo {
             }
 
             ++opIndex;
-        } while (opIndex < m_ops.size());
+        } while (opIndex < m_ops.size() && !hasExceededCodeSizeLimit());
 
         termMatchTargets.takeLast();
     }
@@ -4476,7 +4476,18 @@ class YarrGenerator final : public YarrJITInfo {
             case YarrOpCode::MatchFailed:
                 break;
             }
-        } while (opIndex);
+        } while (opIndex && !hasExceededCodeSizeLimit());
+    }
+
+    bool hasExceededCodeSizeLimit()
+    {
+        if (m_failureReason)
+            return true;
+        if (m_jit.m_assembler.buffer().codeSize() > Options::maximumRegExpJITCodeSize()) [[unlikely]] {
+            m_failureReason = JITFailureReason::GeneratedCodeSizeTooLarge;
+            return true;
+        }
+        return false;
     }
 
     // Compilation methods:
@@ -5346,9 +5357,17 @@ public:
         generate();
         if (m_disassembler)
             m_disassembler->setEndOfGenerate(m_jit.label());
+        if (m_failureReason) {
+            codeBlock.setFallBackWithFailureReason(*m_failureReason);
+            return;
+        }
         backtrack();
         if (m_disassembler)
             m_disassembler->setEndOfBacktrack(m_jit.label());
+        if (m_failureReason) {
+            codeBlock.setFallBackWithFailureReason(*m_failureReason);
+            return;
+        }
 
         ptrdiff_t codeSize = MacroAssembler::differenceBetween(startOfMainCode, m_jit.label());
         bool canInline = ([&] -> bool {
@@ -5941,6 +5960,9 @@ static void dumpCompileFailure(JITFailureReason failure)
         break;
     case JITFailureReason::OffsetTooLarge:
         dataLog("Can't JIT because pattern exceeds string length limits\n");
+        break;
+    case JITFailureReason::GeneratedCodeSizeTooLarge:
+        dataLog("Can't JIT because generated code size exceeds limit\n");
         break;
     }
 }
