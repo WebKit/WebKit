@@ -2015,6 +2015,12 @@ angle::Result TextureMtl::redefineImage(const gl::Context *context,
         ASSERT(mNativeTextureStorage->textureType() == mtl::GetTextureType(index.getType()));
         if (mFormat == mtlFormat && size == mNativeTextureStorage->size(glLevel))
         {
+            // Drop stale views retained from a previous native storage whose mip size
+            // at this level differs from the current one.
+            if (imageDef.image && imageDef.image->sizeAt0() != size)
+            {
+                imageDef = {};
+            }
             return angle::Result::Continue;
         }
         // The redefinition makes the mipmap chain incomplete. Move the mipmaps to
