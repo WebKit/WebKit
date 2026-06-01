@@ -16,9 +16,12 @@
 #include <string>
 #include <thread>
 
-#include "HistogramWriter.h"
 #include "tests/test_expectations/GPUTestExpectationsParser.h"
 #include "util/test_utils.h"
+
+#if defined(ANGLE_HAS_RAPIDJSON)
+#include "HistogramWriter.h"
+#endif
 
 namespace angle
 {
@@ -231,7 +234,9 @@ class TestSuite
     std::map<TestIdentifier, FileLine> mTestFileLines;
     std::vector<ProcessInfo> mCurrentProcesses;
     std::thread mWatchdogThread;
+#if defined(ANGLE_HAS_RAPIDJSON)
     HistogramWriter mHistogramWriter;
+#endif
     MetricWriter mMetricWriter;
     std::string mTestArtifactDirectory;
     GPUTestExpectationsParser mTestExpectationsParser;

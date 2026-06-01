@@ -19,7 +19,7 @@ int RunGLCTSTests(int *argc, char **argv);
 
 int main(int argc, char **argv)
 {
-#if defined(ANGLE_PLATFORM_MACOS)
+#if defined(ANGLE_PLATFORM_MACOS) && defined(ANGLE_OUTSIDE_WEBKIT)
     // By default, we should hook file API functions on macOS to avoid slow Metal shader caching
     // file access.
     angle::InitMetalFileAPIHooking(argc, argv);

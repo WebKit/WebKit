@@ -28,16 +28,20 @@
 #include <unordered_map>
 
 #include <gtest/gtest.h>
+#if defined(ANGLE_HAS_RAPIDJSON)
 #include <rapidjson/document.h>
 #include <rapidjson/filewritestream.h>
 #include <rapidjson/istreamwrapper.h>
 #include <rapidjson/prettywriter.h>
+#endif
 
 // We directly call into a function to register the parameterized tests. This saves spinning up
 // a subprocess with a new gtest filter.
-#include <gtest/../../src/gtest-internal-inl.h>
+#include <gtest/src/gtest-internal-inl.h>
 
+#if defined(ANGLE_HAS_RAPIDJSON)
 namespace js = rapidjson;
+#endif
 
 namespace angle
 {
@@ -143,6 +147,7 @@ const char *ResultTypeToString(TestResultType type)
     }
 }
 
+#if defined(ANGLE_HAS_RAPIDJSON)
 TestResultType GetResultTypeFromString(const std::string &str)
 {
     if (str == "CRASH")
@@ -159,12 +164,14 @@ TestResultType GetResultTypeFromString(const std::string &str)
         return TestResultType::Timeout;
     return TestResultType::Unknown;
 }
+#endif
 
 bool IsFailedResult(TestResultType resultType)
 {
     return resultType != TestResultType::Pass && resultType != TestResultType::Skip;
 }
 
+#if defined(ANGLE_HAS_RAPIDJSON)
 js::Value ResultTypeToJSString(TestResultType type, js::Document::AllocatorType *allocator)
 {
     js::Value jsName;
@@ -354,6 +361,7 @@ void WriteHistogramJson(const HistogramWriter &histogramWriter, const std::strin
         printf("Error writing histogram json file.\n");
     }
 }
+#endif  // defined(ANGLE_HAS_RAPIDJSON)
 
 void UpdateCurrentTestResult(const testing::TestResult &resultIn, TestResults *resultsOut)
 {
@@ -469,6 +477,7 @@ std::string GetTestFilter(const std::vector<TestIdentifier> &tests)
     return filterStream.str();
 }
 
+#if defined(ANGLE_HAS_RAPIDJSON)
 bool GetTestArtifactsFromJSON(const js::Value::ConstObject &obj,
                               std::vector<std::string> *testArtifactPathsOut)
 {
@@ -653,6 +662,7 @@ bool GetTestResultsFromJSON(const js::Document &document, TestResults *resultsOu
 
     return true;
 }
+#endif  // defined(ANGLE_HAS_RAPIDJSON)
 
 bool MergeTestResults(TestResults *input, TestResults *output, int flakyRetries)
 {
@@ -1048,7 +1058,7 @@ TestSuite::TestSuite(int *argc, char **argv, std::function<void()> registerTests
     Optional<int> filterArgIndex;
     bool alsoRunDisabledTests = false;
 
-#if defined(ANGLE_PLATFORM_MACOS)
+#if defined(ANGLE_PLATFORM_MACOS) && defined(ANGLE_OUTSIDE_WEBKIT)
     // By default, we should hook file API functions on macOS to avoid slow Metal shader caching
     // file access.
     angle::InitMetalFileAPIHooking(*argc, argv);
@@ -1135,7 +1145,6 @@ TestSuite::TestSuite(int *argc, char **argv, std::function<void()> registerTests
         SetEnvironmentVar(kVkLoaderDisableDLLUnloadingEnvVar, "1");
     }
 #endif
-
     registerTestsCallback();
 
     std::string envShardIndex = angle::GetEnvironmentVar("GTEST_SHARD_INDEX");
@@ -1957,7 +1966,9 @@ void TestSuite::addHistogramSample(const std::string &measurement,
                                    double value,
                                    const std::string &units)
 {
+#if defined(ANGLE_HAS_RAPIDJSON)
     mHistogramWriter.addSample(measurement, story, value, units);
+#endif  // defined(ANGLE_HAS_RAPIDJSON)
 }
 
 bool TestSuite::hasTestArtifactsDirectory() const
@@ -1981,6 +1992,7 @@ std::string TestSuite::reserveTestArtifactPath(const std::string &artifactName)
 
 bool GetTestResultsFromFile(const char *fileName, TestResults *resultsOut)
 {
+#if defined(ANGLE_HAS_RAPIDJSON)
     std::ifstream ifs(fileName);
     if (!ifs.is_open())
     {
@@ -2005,6 +2017,9 @@ bool GetTestResultsFromFile(const char *fileName, TestResults *resultsOut)
     }
 
     return true;
+#else
+    return false;
+#endif  // defined(ANGLE_HAS_RAPIDJSON)
 }
 
 void TestSuite::dumpTestExpectationsErrorMessages()
@@ -2085,6 +2100,7 @@ int TestSuite::getSlowTestTimeout() const
 
 void TestSuite::writeOutputFiles(bool interrupted)
 {
+#if defined(ANGLE_HAS_RAPIDJSON)
     if (!mResultsFile.empty())
     {
         WriteResultsFile(interrupted, mTestResults, mResultsFile);
@@ -2094,6 +2110,7 @@ void TestSuite::writeOutputFiles(bool interrupted)
     {
         WriteHistogramJson(mHistogramWriter, mHistogramJsonFile);
     }
+#endif  // defined(ANGLE_HAS_RAPIDJSON)
 
     mMetricWriter.close();
 }
