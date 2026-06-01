@@ -27,6 +27,7 @@
 
 #include "Decoder.h"
 #include "Encoder.h"
+#include "Logging.h"
 #include "SandboxExtension.h"
 #include <WebCore/FormData.h>
 
@@ -47,14 +48,29 @@ public:
 
     Vector<WebKit::SandboxExtensionHandle> sandboxExtensionHandles() const;
 
+    static bool sandboxExtensionsAreSufficient(const RefPtr<WebCore::FormData>&, const Vector<WebKit::SandboxExtensionHandle>&);
+
 private:
     RefPtr<WebCore::FormData> m_data;
 };
 
+inline bool FormDataReference::sandboxExtensionsAreSufficient(const RefPtr<WebCore::FormData>& data, const Vector<WebKit::SandboxExtensionHandle>& sandboxExtensionHandles)
+{
+    return sandboxExtensionHandles.size() == (data ? data->filesCount() : 0);
+}
+
 inline FormDataReference::FormDataReference(RefPtr<WebCore::FormData>&& data, Vector<WebKit::SandboxExtensionHandle>&& sandboxExtensionHandles)
     : m_data(WTF::move(data))
 {
-    WebKit::SandboxExtension::consumePermanently(WTF::move(sandboxExtensionHandles));
+    if (m_data && !sandboxExtensionsAreSufficient(m_data, sandboxExtensionHandles)) {
+        RELEASE_LOG_ERROR(IPC, "FormDataReference: dropping body with %u file element(s) but %zu sandbox extension(s)", m_data->filesCount(), sandboxExtensionHandles.size());
+        m_data = nullptr;
+    }
+
+    if (m_data && !WebKit::SandboxExtension::consumePermanently(sandboxExtensionHandles)) {
+        RELEASE_LOG_ERROR(IPC, "FormDataReference: dropping body because a file sandbox extension could not be consumed");
+        m_data = nullptr;
+    }
 }
 
 inline Vector<WebKit::SandboxExtensionHandle> FormDataReference::sandboxExtensionHandles() const
