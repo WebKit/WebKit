@@ -28,6 +28,7 @@
 #include "Decoder.h"
 #include "Encoder.h"
 #include "Logging.h"
+#include "PathsBlockedForSandboxExtensions.h"
 #include "SandboxExtension.h"
 #include <WebCore/FormData.h>
 
@@ -67,6 +68,20 @@ inline FormDataReference::FormDataReference(RefPtr<WebCore::FormData>&& data, Ve
         m_data = nullptr;
     }
 
+    if (!m_data)
+        return;
+
+    for (auto& element : m_data->elements()) {
+        if (auto* fileData = std::get_if<WebCore::FormDataElement::EncodedFileData>(&element.data)) {
+            const String& path = fileData->filename;
+            if (WebKit::pathIsBlockedForSandboxExtensions(path)) {
+                RELEASE_LOG(Process, "Form data file path was blocked for sandbox extension: %{private}s", path.utf8().data());
+                m_data = nullptr;
+                break;
+            }
+        }
+    }
+
     if (m_data && !WebKit::SandboxExtension::consumePermanently(sandboxExtensionHandles)) {
         RELEASE_LOG_ERROR(IPC, "FormDataReference: dropping body because a file sandbox extension could not be consumed");
         m_data = nullptr;
@@ -81,6 +96,10 @@ inline Vector<WebKit::SandboxExtensionHandle> FormDataReference::sandboxExtensio
     return WTF::compactMap(m_data->elements(), [](auto& element) -> std::optional<WebKit::SandboxExtensionHandle> {
         if (auto* fileData = std::get_if<WebCore::FormDataElement::EncodedFileData>(&element.data)) {
             const String& path = fileData->filename;
+            if (WebKit::pathIsBlockedForSandboxExtensions(path)) {
+                RELEASE_LOG(Process, "Form data file path was blocked for sandbox extension: %{private}s", path.utf8().data());
+                return std::nullopt;
+            }
             if (auto handle = WebKit::SandboxExtension::createHandle(path, WebKit::SandboxExtension::Type::ReadOnly))
                 return { WTF::move(*handle) };
         }

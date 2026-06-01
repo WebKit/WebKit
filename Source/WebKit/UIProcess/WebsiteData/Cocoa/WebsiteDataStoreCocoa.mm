@@ -142,6 +142,19 @@ WebCore::ThirdPartyCookieBlockingMode WebsiteDataStore::thirdPartyCookieBlocking
     return *m_thirdPartyCookieBlockingMode;
 }
 
+#if PLATFORM(MAC)
+static String libraryRootDirectory()
+{
+    static NeverDestroyed<RetainPtr<NSURL>> libraryDirectory = [] {
+        RetainPtr libraryDirectory = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nullptr create:NO error:nullptr];
+        RELEASE_ASSERT(libraryDirectory);
+        return libraryDirectory;
+    }();
+
+    return libraryDirectory.get().get().absoluteURL.path;
+}
+#endif // PLATFORM(MAC)
+
 void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& parameters)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies));
@@ -221,6 +234,15 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     parameters.networkSessionParameters.resourceLoadStatisticsParameters.manualPrevalentResource = WTF::move(resourceLoadStatisticsManualPrevalentResource);
 
     auto cookieFile = directories.cookieStorageFile;
+#if PLATFORM(MAC)
+    if (cookieFile.isEmpty())
+        parameters.cookieStoragePath = FileSystem::parentPath(defaultCookieStorageFile(libraryRootDirectory()));
+    else
+        parameters.cookieStoragePath = FileSystem::parentPath(cookieFile);
+#else
+    parameters.cookieStoragePath = resolvedCookieStorageDirectory();
+#endif
+
     createHandleFromResolvedPathIfPossible(FileSystem::parentPath(cookieFile), parameters.cookieStoragePathExtensionHandle);
 
     if (m_uiProcessCookieStorageIdentifier.isEmpty()) {

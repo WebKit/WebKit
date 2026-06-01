@@ -648,7 +648,7 @@ static StringView parseOSVersion(StringView osSystemMarketingVersion)
     return osSystemMarketingVersion.left(secondDotIndex);
 }
 
-static String getHomeDirectory()
+String AuxiliaryProcess::getHomeDirectory()
 {
     // According to the man page for getpwuid_r, we should use sysconf(_SC_GETPW_R_SIZE_MAX) to determine the size of the buffer.
     // However, a buffer size of 4096 should be sufficient, since PATH_MAX is 1024.
@@ -699,7 +699,7 @@ static void populateSandboxInitializationParameters(SandboxInitializationParamet
     sandboxParameters.addConfDirectoryParameter("DARWIN_USER_TEMP_DIR"_s, _CS_DARWIN_USER_TEMP_DIR);
     sandboxParameters.addConfDirectoryParameter("DARWIN_USER_CACHE_DIR"_s, _CS_DARWIN_USER_CACHE_DIR);
 
-    auto homeDirectory = getHomeDirectory();
+    auto homeDirectory = AuxiliaryProcess::getHomeDirectory();
     
     sandboxParameters.addPathParameter("HOME_DIR"_s, homeDirectory.utf8().data());
     String path = FileSystem::pathByAppendingComponent(homeDirectory, "Library"_s);

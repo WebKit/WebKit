@@ -2382,6 +2382,7 @@
 		E3DCC9AB2DA08079008712FE /* WebKitServiceNames.h in Headers */ = {isa = PBXBuildFile; fileRef = E3DCC9AA2DA07FA0008712FE /* WebKitServiceNames.h */; };
 		E3E6297E2D5FA8F200DAE50C /* ServiceWorkerDebuggableProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E6297C2D5FA8F200DAE50C /* ServiceWorkerDebuggableProxy.h */; };
 		E3E6297F2D5FA8F200DAE50C /* ServiceWorkerDebuggableProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E6297D2D5FA8F200DAE50C /* ServiceWorkerDebuggableProxy.cpp */; };
+		E3E844882F9BAC4E00ABD79C /* PathsBlockedForSandboxExtensions.mm in Sources */ = {isa = PBXBuildFile; fileRef = E3E844872F9BAC4E00ABD79C /* PathsBlockedForSandboxExtensions.mm */; };
 		E3E84BDA2AE0AAE50091B3C2 /* XPCEndpoint.h in Copy Testing Headers */ = {isa = PBXBuildFile; fileRef = C14D306724B794E700480387 /* XPCEndpoint.h */; };
 		E3E84BDB2AE0AAE50091B3C2 /* XPCEndpointClient.h in Copy Testing Headers */ = {isa = PBXBuildFile; fileRef = C14D306824B794E700480387 /* XPCEndpointClient.h */; };
 		E3E84BEE2AE1AA5A0091B3C2 /* ExtensionKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E3E84BED2AE1AA5A0091B3C2 /* ExtensionKitSPI.h */; };
@@ -6195,7 +6196,6 @@
 		532159511DBAE6FC0054AA3C /* NetworkDataTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkDataTask.cpp; sourceTree = "<group>"; };
 		532159521DBAE6FC0054AA3C /* NetworkSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkSession.cpp; sourceTree = "<group>"; };
 		535BCB902069C49C00CCCE02 /* NetworkActivityTracker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkActivityTracker.h; sourceTree = "<group>"; };
-		5C3B0A012DA0000000ABCDEF /* NetworkActivityTracker.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = NetworkActivityTracker.serialization.in; sourceTree = "<group>"; };
 		535E08CA225460FC00DF00CA /* postprocess-header-rule */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "postprocess-header-rule"; sourceTree = "<group>"; };
 		539EB5461DC2EE40009D48CF /* NetworkDataTaskBlob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkDataTaskBlob.cpp; sourceTree = "<group>"; };
 		539EB5471DC2EE40009D48CF /* NetworkDataTaskBlob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkDataTaskBlob.h; sourceTree = "<group>"; };
@@ -6474,6 +6474,7 @@
 		5C359C0C21547321009E7948 /* WKDeprecated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDeprecated.h; sourceTree = "<group>"; };
 		5C37A5BE2970DB6000D222A0 /* LoadedWebArchive.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoadedWebArchive.h; sourceTree = "<group>"; };
 		5C3AEA8E1FE1F1DF002318D3 /* WebsitePoliciesData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebsitePoliciesData.cpp; sourceTree = "<group>"; };
+		5C3B0A012DA0000000ABCDEF /* NetworkActivityTracker.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = NetworkActivityTracker.serialization.in; sourceTree = "<group>"; };
 		5C400E6D29DB8D7000446F6F /* BaseExtension.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BaseExtension.xcconfig; sourceTree = "<group>"; };
 		5C400E6E29DB8D7000446F6F /* NetworkingExtension.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetworkingExtension.xcconfig; sourceTree = "<group>"; };
 		5C400E6F29DB8D7100446F6F /* GPUExtension.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = GPUExtension.xcconfig; sourceTree = "<group>"; };
@@ -8498,6 +8499,8 @@
 		E3DCC9AA2DA07FA0008712FE /* WebKitServiceNames.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebKitServiceNames.h; sourceTree = "<group>"; };
 		E3E6297C2D5FA8F200DAE50C /* ServiceWorkerDebuggableProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerDebuggableProxy.h; sourceTree = "<group>"; };
 		E3E6297D2D5FA8F200DAE50C /* ServiceWorkerDebuggableProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerDebuggableProxy.cpp; sourceTree = "<group>"; };
+		E3E844862F9B1D5100ABD79C /* PathsBlockedForSandboxExtensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PathsBlockedForSandboxExtensions.h; sourceTree = "<group>"; };
+		E3E844872F9BAC4E00ABD79C /* PathsBlockedForSandboxExtensions.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PathsBlockedForSandboxExtensions.mm; sourceTree = "<group>"; };
 		E3E84BED2AE1AA5A0091B3C2 /* ExtensionKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtensionKitSPI.h; sourceTree = "<group>"; };
 		E3EFB02C2550617C003C2F96 /* WebSystemSoundDelegate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSystemSoundDelegate.cpp; sourceTree = "<group>"; };
 		E3EFB02D2550617C003C2F96 /* WebSystemSoundDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSystemSoundDelegate.h; sourceTree = "<group>"; };
@@ -13069,6 +13072,8 @@
 				E385F37B2E87076100461B0C /* LaunchLogMessages.h */,
 				C1663E5A24AEA74200C6A3B2 /* LaunchServicesDatabaseXPCConstants.h */,
 				2D1087621D2C641B00B85F82 /* LoadParametersCocoa.mm */,
+				E3E844862F9B1D5100ABD79C /* PathsBlockedForSandboxExtensions.h */,
+				E3E844872F9BAC4E00ABD79C /* PathsBlockedForSandboxExtensions.mm */,
 				2D440B8325EF235E00A98D87 /* PDFKitSoftLink.h */,
 				2D440B8225EF235E00A98D87 /* PDFKitSoftLink.mm */,
 				442E7BEA27B4581300C69AC1 /* RevealItem.h */,
@@ -21517,6 +21522,7 @@
 				41E242E026E0C908009A8C64 /* NetworkRTCUtilitiesCocoa.mm in Sources */,
 				FA5AAE9C2E6A217A00FE693D /* NetworkSoftLink.mm in Sources */,
 				DD4BDE7B2CA38213001A3339 /* ObjectiveCBlockConversions.swift in Sources */,
+				E3E844882F9BAC4E00ABD79C /* PathsBlockedForSandboxExtensions.mm in Sources */,
 				1CB9138F2E8C6D500002BCB7 /* PlatformUnifiedSource1-ARC.mm in Sources */,
 				1CB913932E8C71920002BCB7 /* PlatformUnifiedSource2-ARC.mm in Sources */,
 				A1D4D2092B7DE6D00008C40E /* PlaybackSessionInterfaceLMK.mm in Sources */,
