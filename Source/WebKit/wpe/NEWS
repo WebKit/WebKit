@@ -1,4 +1,30 @@
 =================
+WPE WebKit 2.52.4
+=================
+
+What's new in WPE WebKit 2.52.4?
+
+  - Add support for half-width fonts.
+  - Add initial pointer shape support to the WPE Qt API bindings.
+  - Improve content filter compilation by avoiding file copies.
+  - Improve handling of out of disk space conditions when the NetworkProcess
+    tried to write data in caches.
+  - Improve how the CMake build system checks whether libatomic is required.
+  - Fix wheel input event handling  in the WPE Qt API bindings for
+    devices that do not report precise deltas.
+  - Fix toplevel state handling in the WPE Qt API bindings.
+  - Fix painting scrollbars when their width changes.
+  - Fix cancellation of touch input events when touch devices are no
+    longer available.
+  - Fix playback of certain YouTube videos with low frame rates.
+  - Fix webkit://gpu not working in systems where neither libGL.so.1
+    nor libOpenGL.so.0 are available.
+  - Fix the build with librice 0.4 or newer when the GStreamer WebRTC
+    backend is enabled at build configuration time.
+  - Fix the build with USE_GBM=OFF.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.52.3
 =================
 
