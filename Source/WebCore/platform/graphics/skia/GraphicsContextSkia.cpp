@@ -48,6 +48,7 @@
 #include <ranges>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkColorFilter.h>
+#include <skia/core/SkData.h>
 #include <skia/core/SkImage.h>
 #include <skia/core/SkPathBuilder.h>
 #include <skia/core/SkPathEffect.h>
@@ -62,6 +63,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/gpu/ganesh/SkSurfaceGanesh.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <wtf/MathExtras.h>
+#include <wtf/URL.h>
 
 #if USE(THEME_ADWAITA)
 #include "Adwaita.h"
@@ -1293,6 +1295,51 @@ void GraphicsContextSkia::drawSkiaText(const sk_sp<SkTextBlob>& blob, SkScalar x
 RenderingMode GraphicsContextSkia::renderingMode() const
 {
     return m_renderingMode;
+}
+
+bool GraphicsContextSkia::supportsInternalLinks() const
+{
+    // Mirror GraphicsContextCG::supportsInternalLinks(), which also
+    // unconditionally returns true. SkCanvas::drawAnnotation is safe to
+    // invoke on any canvas: the SkPDFDocument canvas used by the GTK
+    // print pipeline converts the URL-keyed annotation into a native
+    // PDF /Link annotation at SkPicture replay time, while bitmap and
+    // GPU surface devices silently drop the annotation draw op at
+    // device level. There is therefore no correctness or performance
+    // hazard in emitting annotations unconditionally, and gating on
+    // m_contextMode would not work in practice because
+    // WebPrintOperationGtk does not call beginRecording(RecordingMode)
+    // on the GraphicsContextSkia it wraps around the recording canvas
+    // it obtains from SkPictureRecorder.
+    return true;
+}
+
+void GraphicsContextSkia::setURLForRect(const URL& link, const FloatRect& destRect)
+{
+    // Translate WebKit's setURLForRect call (emitted by RenderObject
+    // for every <a href> during print painting) into a Skia URL
+    // annotation. SkPictureRecorder records drawAnnotation as a draw
+    // op; on replay into SkPDFDocument's canvas, the
+    // SkAnnotationKey_URL key is recognised and converted into a
+    // native PDF /Link annotation with /A /S /URI action. This is the
+    // same pattern SkSVGDevice uses for SVG link emission and that
+    // GraphicsContextCG mirrors via CGContextSetURLForRect.
+    //
+    // Coordinate space: destRect is in WebKit's document-local
+    // coordinates; the current CTM on the recording canvas maps it to
+    // page coordinates at replay time.
+    //
+    // String form: SkPDF reads the URL bytes from the SkData payload
+    // and expects them NUL-terminated.
+    if (link.isEmpty())
+        return;
+    auto urlString = link.string().utf8();
+    auto urlData = SkData::MakeWithCString(urlString.data());
+    // SkAnnotationKeys::URL_Key() lives in a private Skia header
+    // (src/core/SkAnnotationKeys.h); use the literal directly. The
+    // string value has been stable across every Skia release that has
+    // shipped PDF support.
+    m_canvas.drawAnnotation(SkRect(destRect), "SkAnnotationKey_URL", urlData);
 }
 
 } // namespace WebCore
