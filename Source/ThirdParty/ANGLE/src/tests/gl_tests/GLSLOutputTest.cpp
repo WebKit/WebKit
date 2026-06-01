@@ -432,6 +432,7 @@ TEST_P(GLSLOutputMSLTest_EnsureLoopForwardProgress, InfiniteFors)
 precision highp int;
 uniform int a;
 uniform uint b;
+void noop() { }
 void main() {
 
 )";
@@ -447,10 +448,13 @@ void main() {
                          "for (int i = 0; i < a/2; i++) { }",
                          "for (int i = 0; float(i) < 10e10; ++i) { }",
                          "for (int i = 0; i < 10; i++) { for (int j = 0; j < 1000; ++i) { }}",
-                         "for (int i = 0; i != 1; i+=2) { }"};
+                         "for (int i = 0; i != 1; i+=2) { }",
+                         "for (int i = 0; i < 1; noop()) { }",
+                         "uint i; for (i = 0u; i < 10u; i++) { for (i = 0u; i < 0u; i++) { } }"};
 
     for (const char *test : kTests)
     {
+        SCOPED_TRACE(testing::Message() << "test: " << test);
         std::string shader = (std::stringstream() << kShaderPrefix << test << kShaderSuffix).str();
         compileShader(GL_FRAGMENT_SHADER, shader.c_str());
         if (!getEGLWindow()->isFeatureEnabled(Feature::UseIr))

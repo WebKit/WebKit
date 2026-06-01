@@ -157,6 +157,10 @@ const TVariable *computeFiniteLoopVariable(TIntermLoop *loop)
                 return nullptr;
         }
     }
+    else
+    {
+        return nullptr;
+    }
     return variable;
 }
 
@@ -209,10 +213,26 @@ EnsureLoopForwardProgressTraverser::EnsureLoopForwardProgressTraverser(TSymbolTa
 
 void EnsureLoopForwardProgressTraverser::traverseLoop(TIntermLoop *node)
 {
+    ScopedNodeInTraversalPath addToPath(this, node);
+    // There might be a parent loop that we need to update the loop info for.
+    // The loop initializers, conditions and expressions might modify the
+    // parent loop variables.
+    if (node->getInit())
+    {
+        node->getInit()->traverse(this);
+    }
+    if (node->getCondition())
+    {
+        node->getCondition()->traverse(this);
+    }
+    if (node->getExpression())
+    {
+        node->getExpression()->traverse(this);
+    }
+
     LoopInfoStack loopInfo{node, mLoopInfoStack};
     mLoopInfoStack = &loopInfo;
 
-    ScopedNodeInTraversalPath addToPath(this, node);
     node->getBody()->traverse(this);
 
     if (!loopInfo.isFinite())
