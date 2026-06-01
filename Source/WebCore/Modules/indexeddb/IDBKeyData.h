@@ -97,7 +97,7 @@ public:
     WEBCORE_EXPORT String loggingString() const;
 
     bool isNull() const { return std::holds_alternative<std::nullptr_t>(m_value); }
-    bool isValid() const;
+    WEBCORE_EXPORT bool isValid() const;
     WEBCORE_EXPORT static bool isValidValue(const ValueVariant&);
     WEBCORE_EXPORT IndexedDB::KeyType type() const;
 

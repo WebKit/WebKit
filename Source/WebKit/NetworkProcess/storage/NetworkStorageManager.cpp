@@ -1926,6 +1926,13 @@ void NetworkStorageManager::renameIndex(IPC::Connection& connection, const WebCo
 void NetworkStorageManager::putOrAdd(IPC::Connection& connection, const WebCore::IDBRequestData& requestData, const WebCore::IDBKeyData& keyData, const WebCore::IDBValue& value, const WebCore::IndexIDToIndexKeyMap& indexKeys, WebCore::IndexedDB::ObjectStoreOverwriteMode overwriteMode)
 {
     assertIsCurrent(workQueue());
+    // keyData is used as a key in IDBKeyData-keyed containers (e.g. the
+    // MemoryObjectStore key/value HashMap). A null or Invalid variant would
+    // collide with IDBKeyDataHashTraits's empty-value sentinel. Placeholders
+    // are the legitimate exception: IDBTransaction::putOrAdd sends a
+    // placeholder (nullptr_t + isPlaceholder=true) for auto-generated keys,
+    // which are replaced server-side before the key reaches the HashMap.
+    MESSAGE_CHECK(keyData.isPlaceholder() || keyData.isValid(), connection);
     RefPtr transaction = idbTransaction(requestData, connection);
     if (!transaction)
         return;
