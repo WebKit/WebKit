@@ -4752,13 +4752,6 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 
 - (void)_loadAndDecodeImage:(NSURLRequest *)request constrainedToSize:(CGSize)maxSize maximumBytesFromNetwork:(size_t)maximumBytesFromNetwork completionHandler:(void (^)(CocoaImage *, NSError *))completionHandler
 {
-    RetainPtr<NSMutableURLRequest> mutableRequest;
-    if (!request.mainDocumentURL) {
-        mutableRequest = adoptNS([request mutableCopy]);
-        [mutableRequest setMainDocumentURL:self.URL];
-        request = mutableRequest.get();
-    }
-
     WebCore::ResourceRequest resourceRequest(request);
     auto url = resourceRequest.url();
     auto sizeConstraint = (maxSize.height || maxSize.width) ? std::optional(WebCore::FloatSize(maxSize)) : std::nullopt;
