@@ -43,6 +43,7 @@ namespace JSC {
     macro(ATanhIntrinsic) \
     macro(MinIntrinsic) \
     macro(MaxIntrinsic) \
+    macro(SignIntrinsic) \
     macro(SqrtIntrinsic) \
     macro(SinIntrinsic) \
     macro(CbrtIntrinsic) \

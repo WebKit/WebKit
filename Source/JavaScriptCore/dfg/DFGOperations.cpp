@@ -693,6 +693,19 @@ JSC_DEFINE_JIT_OPERATION(operationArithAbs, double, (JSGlobalObject* globalObjec
     OPERATION_RETURN(scope, std::abs(a));
 }
 
+JSC_DEFINE_JIT_OPERATION(operationArithSign, double, (JSGlobalObject* globalObject, EncodedJSValue encodedOp1))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue op1 = JSValue::decode(encodedOp1);
+    double a = op1.toNumber(globalObject);
+    OPERATION_RETURN_IF_EXCEPTION(scope, PNaN);
+    OPERATION_RETURN(scope, Math::sign(a));
+}
+
 JSC_DEFINE_JIT_OPERATION(operationArithClz32, UCPUStrictInt32, (JSGlobalObject* globalObject, EncodedJSValue encodedOp1))
 {
     VM& vm = globalObject->vm();

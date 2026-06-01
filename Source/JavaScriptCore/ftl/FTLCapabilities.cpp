@@ -120,6 +120,7 @@ inline CapabilityLevel canCompile(DFG::Node* node)
     case ArithMin:
     case ArithMax:
     case ArithAbs:
+    case ArithSign:
     case ArithPow:
     case ArithRandom:
     case ArithRound:

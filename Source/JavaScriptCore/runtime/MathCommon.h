@@ -335,6 +335,15 @@ ALWAYS_INLINE double jsMinDouble(double lhs, double rhs)
 #endif
 }
 
+ALWAYS_INLINE double sign(double value)
+{
+    if (value > 0)
+        return 1;
+    if (value < 0)
+        return -1;
+    return value; // NaN, +0.0, -0.0
+}
+
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(truncDouble, double, (double));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(truncFloat, float, (float));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(ceilDouble, double, (double));

@@ -100,6 +100,7 @@ JSC_DECLARE_JIT_OPERATION(operationValuePow, EncodedJSValue, (JSGlobalObject*, E
 JSC_DECLARE_JIT_OPERATION(operationInc, EncodedJSValue, (JSGlobalObject*, EncodedJSValue encodedOp1));
 JSC_DECLARE_JIT_OPERATION(operationDec, EncodedJSValue, (JSGlobalObject*, EncodedJSValue encodedOp1));
 JSC_DECLARE_JIT_OPERATION(operationArithAbs, double, (JSGlobalObject*, EncodedJSValue encodedOp1));
+JSC_DECLARE_JIT_OPERATION(operationArithSign, double, (JSGlobalObject*, EncodedJSValue encodedOp1));
 JSC_DECLARE_JIT_OPERATION(operationArithClz32, UCPUStrictInt32, (JSGlobalObject*, EncodedJSValue encodedOp1));
 JSC_DECLARE_JIT_OPERATION(operationArithFRound, double, (JSGlobalObject*, EncodedJSValue encodedOp1));
 JSC_DECLARE_JIT_OPERATION(operationArithF16Round, double, (JSGlobalObject*, EncodedJSValue encodedOp1));

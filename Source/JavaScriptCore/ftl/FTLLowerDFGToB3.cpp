@@ -866,6 +866,9 @@ private:
         case ArithAbs:
             compileArithAbs();
             break;
+        case ArithSign:
+            compileArithSign();
+            break;
         case ValuePow:
             compileValuePow();
             break;
@@ -3538,6 +3541,39 @@ private:
             DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse, m_node->child1().useKind());
             LValue argument = lowJSValue(m_node->child1());
             LValue result = vmCall(Double, operationArithAbs, weakPointer(globalObject), argument);
+            setDouble(result);
+            break;
+        }
+        }
+    }
+
+    void compileArithSign()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+        switch (m_node->child1().useKind()) {
+        case Int32Use: {
+            LValue value = lowInt32(m_node->child1());
+
+            LValue mask = m_out.aShr(value, m_out.constInt32(31));
+            LValue bit = m_out.lShr(m_out.neg(value), m_out.constInt32(31));
+            setInt32(m_out.bitOr(mask, bit));
+            break;
+        }
+
+        case DoubleRepUse: {
+            LValue value = lowDouble(m_node->child1());
+            LValue zero = m_out.constDouble(0.0);
+            LValue isPositive = m_out.doubleGreaterThan(value, zero);
+            LValue isNegative = m_out.doubleLessThan(value, zero);
+            LValue result = m_out.select(isPositive, m_out.constDouble(1.0), m_out.select(isNegative, m_out.constDouble(-1.0), value));
+            setDouble(result);
+            break;
+        }
+
+        default: {
+            DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse, m_node->child1().useKind());
+            LValue argument = lowJSValue(m_node->child1());
+            LValue result = vmCall(Double, operationArithSign, weakPointer(globalObject), argument);
             setDouble(result);
             break;
         }

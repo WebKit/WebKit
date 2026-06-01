@@ -1567,7 +1567,17 @@ private:
                 setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -1));
             break;
         }
-            
+
+        case ArithSign: {
+            if (node->child1().useKind() != Int32Use)
+                break;
+
+            // ArithSign returns -1, 0, or 1 for Int32 inputs.
+            setRelationship(Relationship(node, m_zero, Relationship::GreaterThan, -2));
+            setRelationship(Relationship(node, m_zero, Relationship::LessThan, 2));
+            break;
+        }
+
         case ArithAdd: {
             // We're only interested in int32 additions and we currently only know how to
             // handle the non-wrapping ones.

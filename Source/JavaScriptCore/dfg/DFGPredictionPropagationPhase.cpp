@@ -563,7 +563,8 @@ private:
             break;
         }
 
-        case ArithAbs: {
+        case ArithAbs:
+        case ArithSign: {
             SpeculatedType childPrediction = node->child1()->prediction();
             if (isInt32OrBooleanSpeculation(childPrediction)
                 && node->canSpeculateInt32(m_pass))
@@ -890,13 +891,14 @@ private:
         }
 
         case ArithAbs:
+        case ArithSign:
             DoubleBallot ballot;
             if (node->child1()->shouldSpeculateNumber()
                 && !m_graph.unaryArithShouldSpeculateInt32(node, m_pass))
                 ballot = VoteDouble;
             else
                 ballot = VoteValue;
-                
+
             m_graph.voteNode(node->child1(), ballot, weight);
             break;
                 
@@ -1639,6 +1641,7 @@ private:
         case ArithDiv:
         case ArithMod:
         case ArithAbs:
+        case ArithSign:
         case GetByVal:
         case MultiGetByVal:
         case ToThis:

@@ -856,6 +856,24 @@ private:
             break;
         }
 
+        case ArithSign: {
+            if (node->child1()->shouldSpeculateInt32OrBoolean()
+                && node->canSpeculateInt32(FixupPass)) {
+                fixIntOrBooleanEdge(node->child1());
+                node->clearFlags(NodeMustGenerate);
+                node->setResult(NodeResultInt32);
+                break;
+            }
+
+            if (node->child1()->shouldSpeculateNotCellNorBigInt()) {
+                fixDoubleOrBooleanEdge(node->child1());
+                node->clearFlags(NodeMustGenerate);
+            } else
+                fixEdge<UntypedUse>(node->child1());
+            node->setResult(NodeResultDouble);
+            break;
+        }
+
         case ValuePow: {
             if (m_graph.binaryArithShouldSpeculateHeapBigInt(node)) {
                 fixEdge<HeapBigIntUse>(node->child1());

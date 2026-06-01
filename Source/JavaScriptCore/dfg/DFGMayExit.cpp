@@ -251,6 +251,13 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
             break;
         return Exits;
 
+    case ArithSign:
+        if (isInt32(node->child1().useKind()))
+            break;
+        if (node->child1().useKind() == DoubleRepUse)
+            break;
+        return Exits;
+
     case ArithMin:
     case ArithMax:
         if (isInt32(graph.child(node, 0).useKind()))

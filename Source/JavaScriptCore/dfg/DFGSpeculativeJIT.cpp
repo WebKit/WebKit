@@ -5399,6 +5399,61 @@ void SpeculativeJIT::compileArithAbs(Node* node)
     }
 }
 
+void SpeculativeJIT::compileArithSign(Node* node)
+{
+    switch (node->child1().useKind()) {
+    case Int32Use: {
+        SpeculateInt32Operand op1(this, node->child1());
+        GPRTemporary result(this, Reuse, op1);
+        GPRTemporary scratch(this);
+
+        GPRReg op1GPR = op1.gpr();
+        GPRReg resultGPR = result.gpr();
+        GPRReg scratchGPR = scratch.gpr();
+
+        rshift32(op1GPR, TrustedImm32(31), scratchGPR);
+        neg32(op1GPR, resultGPR);
+        urshift32(TrustedImm32(31), resultGPR);
+        or32(scratchGPR, resultGPR);
+        strictInt32Result(resultGPR, node);
+        break;
+    }
+
+    case DoubleRepUse: {
+        SpeculateDoubleOperand op1(this, node->child1());
+        FPRTemporary result(this);
+        FPRTemporary scratch(this);
+        FPRTemporary zero(this);
+
+        FPRReg op1FPR = op1.fpr();
+        FPRReg resultFPR = result.fpr();
+        FPRReg scratchFPR = scratch.fpr();
+        FPRReg zeroFPR = zero.fpr();
+
+        // moveDoubleConditionallyDoubleWithZero is not available on x86_64, so we materialize zero instead.
+        moveZeroToDouble(zeroFPR);
+        move64ToDouble(TrustedImm64(std::bit_cast<uint64_t>(1.0)), scratchFPR);
+        moveDoubleConditionallyDouble(DoubleGreaterThanAndOrdered, op1FPR, zeroFPR, scratchFPR, op1FPR, resultFPR);
+        move64ToDouble(TrustedImm64(std::bit_cast<uint64_t>(-1.0)), scratchFPR);
+        moveDoubleConditionallyDouble(DoubleLessThanAndOrdered, op1FPR, zeroFPR, scratchFPR, resultFPR, resultFPR);
+
+        doubleResult(resultFPR, node);
+        break;
+    }
+
+    default: {
+        DFG_ASSERT(m_graph, node, node->child1().useKind() == UntypedUse, node->child1().useKind());
+        JSValueOperand op1(this, node->child1());
+        JSValueRegs op1Regs = op1.jsValueRegs();
+        flushRegisters();
+        FPRResult result(this);
+        callOperation(operationArithSign, result.fpr(), LinkableConstant::globalObject(*this, node), op1Regs);
+        doubleResult(result.fpr(), node);
+        break;
+    }
+    }
+}
+
 void SpeculativeJIT::compileArithClz32(Node* node)
 {
     if (node->child1().useKind() == Int32Use || node->child1().useKind() == KnownInt32Use) {
