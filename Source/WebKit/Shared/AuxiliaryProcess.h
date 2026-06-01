@@ -117,7 +117,7 @@ public:
 #endif
     static void setNotifyOptions();
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     static String getHomeDirectory();
 #endif
 
