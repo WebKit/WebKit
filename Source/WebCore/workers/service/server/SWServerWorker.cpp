@@ -37,8 +37,6 @@
 
 namespace WebCore {
 
-static constexpr size_t maxRouteConditionCount = 1024;
-
 HashMap<ServiceWorkerIdentifier, WeakRef<SWServerWorker>>& SWServerWorker::allWorkers()
 {
     static NeverDestroyed<HashMap<ServiceWorkerIdentifier, WeakRef<SWServerWorker>>> workers;

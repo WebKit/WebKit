@@ -48,7 +48,9 @@ void gstPayloaderSetPayloadType(const GRefPtr<GstElement>& payloader, int pt)
     }
 
     if (G_VALUE_TYPE(&value) == G_TYPE_INT) {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN;
         auto intSpec = G_PARAM_SPEC_INT(ptSpec);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END;
         if (pt > intSpec->maximum || pt < intSpec->minimum) {
             GST_ERROR_OBJECT(payloader.get(), "pt %d outside of valid range [%d, %d]", pt, intSpec->minimum, intSpec->maximum);
             return;
@@ -58,7 +60,9 @@ void gstPayloaderSetPayloadType(const GRefPtr<GstElement>& payloader, int pt)
     }
 
     if (G_VALUE_TYPE(&value) == G_TYPE_UINT) {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN;
         auto uintSpec = G_PARAM_SPEC_UINT(ptSpec);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END;
         unsigned ptValue = static_cast<unsigned>(pt);
         if (ptValue > uintSpec->maximum || ptValue < uintSpec->minimum) {
             GST_ERROR_OBJECT(payloader.get(), "pt %u outside of valid range [%u, %u]", ptValue, uintSpec->minimum, uintSpec->maximum);

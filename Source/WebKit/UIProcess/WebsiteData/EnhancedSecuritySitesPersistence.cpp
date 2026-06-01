@@ -40,7 +40,6 @@
 namespace WebKit {
 
 static constexpr auto sitesTableName = "sites"_s;
-static constexpr auto siteIndexName = "idx_sites_site"_s;
 static constexpr auto enhancedSecurityStateIndexName = "idx_sites_enhanced_security_state"_s;
 
 static constexpr auto createSitesTableSQL = "CREATE TABLE sites (site TEXT PRIMARY KEY NOT NULL, enhanced_security_state INT NOT NULL)"_s;

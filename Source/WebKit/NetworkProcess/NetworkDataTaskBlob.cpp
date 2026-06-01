@@ -54,11 +54,6 @@ using namespace WebCore;
 
 static const unsigned bufferSize = 512 * 1024;
 
-static const int httpOK = 200;
-static const int httpPartialContent = 206;
-static constexpr auto httpOKText = "OK"_s;
-static constexpr auto httpPartialContentText = "Partial Content"_s;
-
 static constexpr auto webKitBlobResourceDomain = "WebKitBlobResource"_s;
 
 static RefPtr<BlobData> blobDataFrom(NetworkSession& session, const WebCore::ResourceRequest& request, const SecurityOrigin* topOrigin)
