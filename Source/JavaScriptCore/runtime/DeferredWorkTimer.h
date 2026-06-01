@@ -51,17 +51,17 @@ public:
         AtSomePoint,
     };
 
-    class TicketData : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<TicketData>  {
+    class Ticket : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Ticket>  {
     private:
-        WTF_MAKE_TZONE_ALLOCATED(TicketData);
-        WTF_MAKE_NONCOPYABLE(TicketData);
+        WTF_MAKE_TZONE_ALLOCATED(Ticket);
+        WTF_MAKE_NONCOPYABLE(Ticket);
     public:
-        inline static Ref<TicketData> create(WorkType, JSObject* scriptExecutionOwner, Vector<JSCell*>&& dependencies);
+        inline static Ref<Ticket> create(WorkType, JSObject* scriptExecutionOwner, Vector<JSCell*>&& dependencies);
 
         WorkType type() const { return m_type; }
         inline VM& vm();
         JSObject* target();
-        bool isTargetObject();
+        JS_EXPORT_PRIVATE bool isTargetObject();
         inline const FixedVector<JSCell*>& dependencies(bool mayBeCancelled = false);
         inline JSObject* scriptExecutionOwner();
 
@@ -71,7 +71,7 @@ public:
         bool isCancelled() const { return m_isCancelled; }
 
     private:
-        inline TicketData(WorkType, JSObject* scriptExecutionOwner, Vector<JSCell*>&& dependencies);
+        inline Ticket(WorkType, JSObject* scriptExecutionOwner, Vector<JSCell*>&& dependencies);
 
         WorkType m_type;
         FixedVector<JSCell*> m_dependencies;
@@ -79,18 +79,20 @@ public:
         bool m_isCancelled { false };
     };
 
-    using Ticket = TicketData*;
+    using WeakTicket = ThreadSafeWeakPtr<Ticket>;
 
     void doWork(VM&) final;
 
-    JS_EXPORT_PRIVATE Ticket addPendingWork(WorkType, VM&, JSObject* target, Vector<JSCell*>&& dependencies);
+    // Tickets are strongly held by the timer and should be weakly held by the caller and global object.
+    // This allows detached global objects, most commonly iframes / Workers, to cancel tickets without leaking memory.
+    JS_EXPORT_PRIVATE WeakTicket addPendingWork(WorkType, VM&, JSObject* target, Vector<JSCell*>&& dependencies);
     void cancelPendingWork(VM&);
 
     JS_EXPORT_PRIVATE bool hasAnyPendingWork() const;
     JS_EXPORT_PRIVATE bool hasImminentlyScheduledWork() const;
-    bool hasPendingWork(Ticket);
-    bool hasDependencyInPendingWork(Ticket, JSCell* dependency);
-    bool cancelPendingWork(Ticket);
+    bool hasPendingWork(Ticket&);
+    bool hasDependencyInPendingWork(Ticket&, JSCell* dependency);
+    bool cancelPendingWork(Ticket&);
     void cancelPendingWorkSafe(JSGlobalObject*);
 
     // If the script execution owner your ticket is associated with gets canceled
@@ -98,8 +100,12 @@ public:
     // to make sure your memory ownership model won't leak memory when
     // this occurs. The easiest way is to make sure everything is either owned
     // by a GC'd value in dependencies or by the Task lambda.
-    using Task = Function<void(Ticket)>;
-    JS_EXPORT_PRIVATE void scheduleWorkSoon(Ticket, Task&&);
+    // The Ticket& passed into the task is valid for the duration of the call:
+    // m_tasks holds a Ref<Ticket> until the task runs. Queue via
+    // scheduleWorkSoonIfActive — the API internally promotes the WeakTicket
+    // and drops the request if the ticket is gone or cancelled.
+    using Task = Function<void(Ticket&)>;
+    JS_EXPORT_PRIVATE bool scheduleWorkSoonIfActive(const WeakTicket&, Task&&);
     JS_EXPORT_PRIVATE void didResumeScriptExecutionOwner();
 
     void stopRunningTasks() { m_runTasks = false; }
@@ -113,15 +119,15 @@ private:
     bool m_runTasks { true };
     bool m_shouldStopRunLoopWhenAllTicketsFinish { false };
     bool m_currentlyRunningTask { false };
-    Deque<std::tuple<Ticket, Task>> m_tasks WTF_GUARDED_BY_LOCK(m_taskLock);
-    UncheckedKeyHashSet<Ref<TicketData>> m_pendingTickets;
+    Deque<std::tuple<Ref<Ticket>, Task>> m_tasks WTF_GUARDED_BY_LOCK(m_taskLock);
+    UncheckedKeyHashSet<Ref<Ticket>> m_pendingTickets;
 };
 
 // target() reads m_dependencies, which cancelAndClear() can free concurrently.
-// Safe only when: (1) holding m_taskLock, (2) inside a scheduleWorkSoon task lambda
+// Safe only when: (1) holding m_taskLock, (2) inside a scheduleWorkSoonIfActive task lambda
 // (ticket already removed from m_pendingTickets), or (3) GC End phase is prevented from running.
 // Never call from a foreign VM's thread.
-inline JSObject* DeferredWorkTimer::TicketData::target()
+inline JSObject* DeferredWorkTimer::Ticket::target()
 {
     ASSERT(!isCancelled() && isTargetObject());
     // This function can be triggered on the main thread with a GC end phase
@@ -129,13 +135,13 @@ inline JSObject* DeferredWorkTimer::TicketData::target()
     return std::bit_cast<JSObject*>(m_dependencies.last());
 }
 
-inline const FixedVector<JSCell*>& DeferredWorkTimer::TicketData::dependencies(bool mayBeCancelled)
+inline const FixedVector<JSCell*>& DeferredWorkTimer::Ticket::dependencies(bool mayBeCancelled)
 {
     ASSERT_UNUSED(mayBeCancelled, mayBeCancelled || !isCancelled());
     return m_dependencies;
 }
 
-inline JSObject* DeferredWorkTimer::TicketData::scriptExecutionOwner()
+inline JSObject* DeferredWorkTimer::Ticket::scriptExecutionOwner()
 {
     ASSERT(!isCancelled());
     return m_scriptExecutionOwner;

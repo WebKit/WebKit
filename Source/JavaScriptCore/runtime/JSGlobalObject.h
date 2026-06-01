@@ -553,9 +553,9 @@ public:
     inline std::unique_ptr<ObjectAdaptiveStructureWatchpoint>& typedArrayPrototypeSymbolIteratorAbsenceWatchpoint(TypedArrayType);
     inline std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>& typedArrayPrototypeConstructorWatchpoint(TypedArrayType);
 
-    void addWeakTicket(DeferredWorkTimer::Ticket);
+    void addWeakTicket(DeferredWorkTimer::Ticket&);
     void clearWeakTickets();
-    std::unique_ptr<ThreadSafeWeakHashSet<DeferredWorkTimer::TicketData>> m_weakTickets;
+    std::unique_ptr<ThreadSafeWeakHashSet<DeferredWorkTimer::Ticket>> m_weakTickets;
 
 public:
     JSCallee* zombieFrameCallee() const { return m_zombieFrameCallee.get(); }

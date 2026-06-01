@@ -66,7 +66,7 @@ public:
         return m_condition;
     }
 
-    RefPtr<DeferredWorkTimer::TicketData> ticket(const AbstractLocker&) const
+    RefPtr<DeferredWorkTimer::Ticket> ticket(const AbstractLocker&) const
     {
         ASSERT(m_isAsync);
         return m_ticket.get();
@@ -112,7 +112,7 @@ private:
     // VM's GC End phase freeing m_dependencies via cancelAndClear(). Written before the Waiter
     // is added to any list, so readers acquiring list->lock always see the completed write.
     JSGlobalObject* m_globalObject { nullptr };
-    ThreadSafeWeakPtr<DeferredWorkTimer::TicketData> m_ticket { nullptr };
+    ThreadSafeWeakPtr<DeferredWorkTimer::Ticket> m_ticket { nullptr };
     RefPtr<RunLoop::DispatchTimer> m_timer { nullptr };
     Condition m_condition;
     bool m_isAsync { false };
