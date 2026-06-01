@@ -240,6 +240,7 @@
 #include <WebCore/FocusDirection.h>
 #include <WebCore/FocusOptions.h>
 #include <WebCore/FontAttributeChanges.h>
+#include <WebCore/FormData.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameLoaderClient.h>
 #include <WebCore/GlobalFrameIdentifier.h>
@@ -9319,6 +9320,14 @@ void WebPageProxy::createNewPage(IPC::Connection& connection, WindowFeatures&& w
     MESSAGE_CHECK_COMPLETION_BASE(WebFrameProxy::webFrame(originatingFrameInfoData.frameID), connection, reply(std::nullopt, std::nullopt));
 
     Ref process = WebProcessProxy::fromConnection(connection);
+
+    if (RefPtr body = request.httpBody()) {
+        for (auto& element : body->elements()) {
+            if (auto* fileData = std::get_if<WebCore::FormDataElement::EncodedFileData>(&element.data))
+                MESSAGE_CHECK_COMPLETION(process, process->hasGrantedSandboxExtensionForFile(fileData->filename), reply(std::nullopt, std::nullopt));
+        }
+    }
+
     auto navigationDataForNewProcess = navigationActionData.hasOpener ? nullptr : makeUnique<NavigationActionData>(navigationActionData);
 
     auto originatingFrameInfo = API::FrameInfo::create(WTF::move(originatingFrameInfoData));

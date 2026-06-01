@@ -1,0 +1,4 @@
+Test that WebPageProxy::createNewPage rejects request bodies referencing files for which the WebContent process has no sandbox extension.
+
+PASS: createNewPage rejected unauthorized EncodedFileData
+
