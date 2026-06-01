@@ -8376,9 +8376,9 @@ void WebPage::hasStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDo
     WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::HasStorageAccess(WTF::move(subFrameDomain), WTF::move(topFrameDomain), frame.frameID(), m_identifier), WTF::move(completionHandler));
 }
 
-void WebPage::requestStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, WebFrame& frame, StorageAccessScope scope, HasOrShouldIgnoreUserGesture hasOrShouldIgnoreUserGesture, CompletionHandler<void(WebCore::RequestStorageAccessResult)>&& completionHandler)
+void WebPage::requestStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, WebFrame& frame, StorageAccessScope scope, HasUserGestureOrNoUserGestureRequired hasUserGestureOrNoUserGestureRequired, CompletionHandler<void(WebCore::RequestStorageAccessResult)>&& completionHandler)
 {
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::RequestStorageAccess(WTF::move(subFrameDomain), WTF::move(topFrameDomain), frame.frameID(), m_identifier, m_webPageProxyIdentifier, scope, hasOrShouldIgnoreUserGesture), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), frame = Ref { frame }, pageID = m_identifier, frameID = frame.frameID()](RequestStorageAccessResult result) mutable {
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::RequestStorageAccess(WTF::move(subFrameDomain), WTF::move(topFrameDomain), frame.frameID(), m_identifier, m_webPageProxyIdentifier, scope, hasUserGestureOrNoUserGestureRequired), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), frame = Ref { frame }, pageID = m_identifier, frameID = frame.frameID()](RequestStorageAccessResult result) mutable {
         if (result.wasGranted == StorageAccessWasGranted::Yes) {
             switch (result.scope) {
             case StorageAccessScope::PerFrame:

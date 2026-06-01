@@ -1214,7 +1214,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebCore::GraphicsLayerKeyframeValueList': ['<WebCore/GraphicsLayerKeyframeValueList.h>'],
         'WebCore::HasAvailableTargets': ['<WebCore/MediaSessionHelperIOS.h>'],
         'WebCore::HasInsecureContent': ['<WebCore/FrameLoaderTypes.h>'],
-        'WebCore::HasOrShouldIgnoreUserGesture': ['<WebCore/DocumentStorageAccess.h>'],
+        'WebCore::HasUserGestureOrNoUserGestureRequired': ['<WebCore/DocumentStorageAccess.h>'],
         'WebCore::Headroom': ['<WebCore/ImageTypes.h>'],
         'WebCore::HighlightRequestOriginatedInApp': ['<WebCore/AppHighlight.h>'],
         'WebCore::HighlightVisibility': ['<WebCore/HighlightVisibility.h>'],
