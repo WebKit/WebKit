@@ -561,16 +561,20 @@
         "program": "ShaderProgramID"
     },
     "glGetBufferParameteri64v": {
-        "target": "BufferBinding"
+        "target": "BufferBinding",
+        "pname": "BufferParam"
     },
     "glGetBufferParameteri64vRobust": {
-        "target": "BufferBinding"
+        "target": "BufferBinding",
+        "pname": "BufferParam"
     },
     "glGetBufferParameteriv": {
-        "target": "BufferBinding"
+        "target": "BufferBinding",
+        "pname": "BufferParam"
     },
     "glGetBufferParameterivRobust": {
-        "target": "BufferBinding"
+        "target": "BufferBinding",
+        "pname": "BufferParam"
     },
     "glGetBufferPointerv": {
         "target": "BufferBinding"

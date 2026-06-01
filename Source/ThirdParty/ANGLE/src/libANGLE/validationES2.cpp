@@ -2551,17 +2551,6 @@ bool ValidateGetPointervKHR(const Context *context,
     return ValidateGetPointerv(context, entryPoint, pname, params);
 }
 
-bool ValidateGetPointervRobustANGLERobustANGLE(const Context *context,
-                                               angle::EntryPoint entryPoint,
-                                               GLenum pname,
-                                               GLsizei bufSize,
-                                               const GLsizei *length,
-                                               void *const *params)
-{
-    UNIMPLEMENTED();
-    return false;
-}
-
 bool ValidateBlitFramebufferANGLE(const Context *context,
                                   angle::EntryPoint entryPoint,
                                   GLint srcX0,
@@ -3103,11 +3092,11 @@ bool ValidateCompressedTexSubImage3DOES(const Context *context,
 
 bool ValidateGetBufferPointervOES(const Context *context,
                                   angle::EntryPoint entryPoint,
-                                  BufferBinding target,
+                                  BufferBinding targetPacked,
                                   GLenum pname,
                                   void *const *params)
 {
-    return ValidateGetBufferPointervBase(context, entryPoint, target, pname, nullptr, params);
+    return ValidateGetBufferPointervBase(context, entryPoint, targetPacked, pname, nullptr);
 }
 
 bool ValidateMapBufferOES(const Context *context,
@@ -3117,7 +3106,7 @@ bool ValidateMapBufferOES(const Context *context,
 {
     if (!context->isValidBufferBinding(target))
     {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInvalidBufferTypes);
+        ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInvalidBufferTarget);
         return false;
     }
 
@@ -3650,6 +3639,13 @@ bool ValidateBufferData(const Context *context,
         return false;
     }
 
+    const Limitations &limitations = context->getLimitations();
+    if (size > limitations.bufferSizeLimit)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kBufferSizeLimitation);
+        return false;
+    }
+
     switch (usage)
     {
         case BufferUsage::StreamDraw:
@@ -3677,7 +3673,7 @@ bool ValidateBufferData(const Context *context,
 
     if (!context->isValidBufferBinding(target))
     {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInvalidBufferTypes);
+        ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInvalidBufferTarget);
         return false;
     }
 
@@ -3739,7 +3735,7 @@ bool ValidateBufferSubData(const Context *context,
 
     if (!context->isValidBufferBinding(target))
     {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInvalidBufferTypes);
+        ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInvalidBufferTarget);
         return false;
     }
 
@@ -4592,18 +4588,9 @@ bool ValidateGetAttribLocation(const Context *context,
 bool ValidateGetBooleanv(const Context *context,
                          angle::EntryPoint entryPoint,
                          GLenum pname,
-                         const GLboolean *params)
+                         const GLboolean *data)
 {
-    GLenum nativeType;
-    unsigned int numParams = 0;
-
-    if (params == nullptr)
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kPLSParamsNULL);
-        return false;
-    }
-
-    return ValidateStateQuery(context, entryPoint, pname, &nativeType, &numParams);
+    return ValidateStateQuery(context, entryPoint, pname, data, nullptr);
 }
 
 bool ValidateGetError(const Context *context, angle::EntryPoint entryPoint)
@@ -4614,35 +4601,17 @@ bool ValidateGetError(const Context *context, angle::EntryPoint entryPoint)
 bool ValidateGetFloatv(const Context *context,
                        angle::EntryPoint entryPoint,
                        GLenum pname,
-                       const GLfloat *params)
+                       const GLfloat *data)
 {
-    GLenum nativeType;
-    unsigned int numParams = 0;
-
-    if (params == nullptr)
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kPLSParamsNULL);
-        return false;
-    }
-
-    return ValidateStateQuery(context, entryPoint, pname, &nativeType, &numParams);
+    return ValidateStateQuery(context, entryPoint, pname, data, nullptr);
 }
 
 bool ValidateGetIntegerv(const Context *context,
                          angle::EntryPoint entryPoint,
                          GLenum pname,
-                         const GLint *params)
+                         const GLint *data)
 {
-    GLenum nativeType;
-    unsigned int numParams = 0;
-
-    if (params == nullptr)
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kPLSParamsNULL);
-        return false;
-    }
-
-    return ValidateStateQuery(context, entryPoint, pname, &nativeType, &numParams);
+    return ValidateStateQuery(context, entryPoint, pname, data, nullptr);
 }
 
 bool ValidateGetProgramInfoLog(const Context *context,

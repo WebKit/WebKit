@@ -889,7 +889,23 @@ void CollectVariablesTraverser::setCommonVariableProperties(const TType &type,
     if (isNamed)
     {
         variableOut->name.assign(variable.name().data(), variable.name().length());
-        variableOut->mappedName = getMappedName(&variable);
+
+        // If the symbol is AngleInternal, this is an emulated uniform.  There are only a few of
+        // them, and they are expected to be output as-is.
+        const bool isEmulatedUniform =
+            isUniform && variable.symbolType() == SymbolType::AngleInternal;
+        if (isEmulatedUniform)
+        {
+            variableOut->mappedName = variableOut->name;
+
+            // These variables are always considered active.
+            variableOut->staticUse = true;
+            variableOut->active    = true;
+        }
+        else
+        {
+            variableOut->mappedName = getMappedName(&variable);
+        }
     }
 
     // For I/O blocks, additionally store the name of the block as blockName.  If the variable is
@@ -1164,9 +1180,17 @@ bool CollectVariablesTraverser::visitDeclaration(Visit, TIntermDeclaration *node
         // uniforms, varyings, outputs and interface blocks cannot be initialized in a shader, we
         // must have only TIntermSymbol nodes in the sequence in the cases we are interested in.
         const TIntermSymbol &variable = *variableNode->getAsSymbolNode();
-        if (variable.variable().symbolType() == SymbolType::AngleInternal)
+        const bool isUniformEmulatingBuiltIn =
+            qualifier == EvqUniform && typedNode.getBasicType() != EbtInterfaceBlock &&
+            (variable.getName() == "angle_DrawID" || variable.getName() == "angle_BaseVertex" ||
+             variable.getName() == "angle_BaseInstance");
+        if (variable.variable().symbolType() == SymbolType::AngleInternal &&
+            !isUniformEmulatingBuiltIn)
         {
-            // Internal variables are not collected.
+            // Internal variables are not collected, except for a few uniforms used for emulation.
+            // Note that only uniforms that replace built-ins should end up in reflection info, but
+            // currently there's no good way to distinguish between them (hence the specific name
+            // check for some uniforms above).
             continue;
         }
 

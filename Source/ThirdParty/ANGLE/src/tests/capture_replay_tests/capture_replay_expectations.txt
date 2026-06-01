@@ -268,7 +268,3 @@
 
 # Crashes on win and linux trace bots
 372059358 : MultisampleTestES3.CopyTexImage2DFromMsaaDefaultFbo/* = SKIP_FOR_CAPTURE
-
-# Test failure on win and linux trace
-400584608 : BlitFramebufferTest.BlitLargeColorSmallDepthAttachments/* = SKIP_FOR_CAPTURE
-400584608 : BlitFramebufferTest.BlitSmallColorLargeDepthAttachments/* = SKIP_FOR_CAPTURE

@@ -2110,6 +2110,13 @@ enum class TileMemory
     Prohibited,
 };
 
+enum class ImageFormatReinterpretability
+{
+    None,
+    ColorspaceOverrides,
+    Full,
+};
+
 constexpr VkImageAspectFlagBits IMAGE_ASPECT_DEPTH_STENCIL =
     static_cast<VkImageAspectFlagBits>(VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT);
 
@@ -2146,19 +2153,19 @@ class ImageHelper final : public Resource, public angle::Subject
     angle::Result copyToBufferOneOff(ErrorContext *context,
                                      BufferHelper *stagingBuffer,
                                      VkBufferImageCopy copyRegion);
-    angle::Result initMSAASwapchain(ErrorContext *context,
-                                    gl::TextureType textureType,
-                                    const VkExtent3D &extents,
-                                    bool rotatedAspectRatio,
-                                    angle::FormatID intendedFormatID,
-                                    angle::FormatID actualFormatID,
-                                    GLint samples,
-                                    VkImageUsageFlags usage,
-                                    gl::LevelIndex firstLevel,
-                                    uint32_t mipLevels,
-                                    uint32_t layerCount,
-                                    bool isRobustResourceInitEnabled,
-                                    bool hasProtectedContent);
+    angle::Result initAncillarySwapchain(ErrorContext *context,
+                                         gl::TextureType textureType,
+                                         const VkExtent3D &extents,
+                                         bool rotatedAspectRatio,
+                                         angle::FormatID intendedFormatID,
+                                         angle::FormatID actualFormatID,
+                                         GLint samples,
+                                         VkImageUsageFlags usage,
+                                         gl::LevelIndex firstLevel,
+                                         uint32_t mipLevels,
+                                         uint32_t layerCount,
+                                         bool isRobustResourceInitEnabled,
+                                         bool hasProtectedContent);
     angle::Result initExternal(ErrorContext *context,
                                gl::TextureType textureType,
                                const VkExtent3D &extents,
@@ -2176,7 +2183,8 @@ class ImageHelper final : public Resource, public angle::Subject
                                bool hasProtectedContent,
                                TileMemory tileMemoryPreference,
                                YcbcrConversionDesc conversionDesc,
-                               const void *compressionControl);
+                               const void *compressionControl,
+                               ImageFormatReinterpretability formatReinterpretability);
     VkResult initMemory(ErrorContext *context,
                         VkMemoryPropertyFlags flags,
                         VkMemoryPropertyFlags excludedFlags,
@@ -2286,15 +2294,15 @@ class ImageHelper final : public Resource, public angle::Subject
     // pNext chain based on the given parameters, and adjust create flags.  In some cases, these
     // shouldn't be automatically derived, for example when importing images through
     // EXT_external_objects and ANGLE_external_objects_flags.
-    static constexpr uint32_t kImageListFormatCount = 2;
-    using ImageListFormats                          = std::array<VkFormat, kImageListFormatCount>;
+    static constexpr uint32_t kImageColorspaceOverrideFormatCount = 2;
+    using ImageFormats = angle::FixedVector<VkFormat, kImageColorspaceOverrideFormatCount>;
     static const void *DeriveCreateInfoPNext(
         ErrorContext *context,
-        VkImageUsageFlags usage,
         angle::FormatID actualFormatID,
         const void *pNext,
         VkImageFormatListCreateInfoKHR *imageFormatListInfoStorage,
-        ImageListFormats *imageListFormatsStorage,
+        ImageFormats *imageFormats,
+        ImageFormatReinterpretability formatReinterpretability,
         VkImageCreateFlags *createFlagsOut);
 
     // Check whether the given format supports the provided flags.
@@ -2314,14 +2322,8 @@ class ImageHelper final : public Resource, public angle::Subject
                                     const FormatSupportCheck formatSupportCheck);
 
     // Image formats used for the creation of imageless framebuffers.
-    using ImageFormats = angle::FixedVector<VkFormat, kImageListFormatCount>;
     ImageFormats &getViewFormats() { return mViewFormats; }
     const ImageFormats &getViewFormats() const { return mViewFormats; }
-
-    // Helper for initExternal and users to extract the view formats of the image from the pNext
-    // chain in VkImageCreateInfo.
-    void deriveImageViewFormatFromCreateInfoPNext(const VkImageCreateInfo &imageInfo,
-                                                  ImageFormats &formatOut);
 
     // Release the underlying VkImage object for garbage collection.
     void releaseImage(Renderer *renderer);
@@ -2354,7 +2356,8 @@ class ImageHelper final : public Resource, public angle::Subject
                              VkImageCreateFlags createFlags,
                              VkImageUsageFlags usage,
                              GLint samples,
-                             bool isRobustResourceInitEnabled);
+                             bool isRobustResourceInitEnabled,
+                             const ImageFormats &imageFormats);
     void resetImageWeakReference();
 
     const Image &getImage() const { return mImage; }
@@ -2473,6 +2476,13 @@ class ImageHelper final : public Resource, public angle::Subject
     angle::Result generateMipmapsWithBlit(ContextVk *contextVk,
                                           LevelIndex baseLevel,
                                           LevelIndex maxLevel);
+
+    // Copy this image into a destination image.  This image should be in the TransferSrc layout.
+    // The destination image should be in the TransferDst layout.
+    void copy(Renderer *renderer,
+              ImageHelper *dst,
+              const VkImageCopy &region,
+              OutsideRenderPassCommandBuffer *commandBuffer);
 
     // Resolve this image into a destination image.  This image should be in the TransferSrc layout.
     // The destination image should be in the TransferDst layout.
@@ -3043,10 +3053,6 @@ class ImageHelper final : public Resource, public angle::Subject
 
     void deriveExternalImageTiling(const void *createInfoChain);
 
-    // Used to initialize ImageFormats from actual format, with no pNext from a VkImageCreateInfo
-    // object.
-    void setImageFormatsFromActualFormat(VkFormat actualFormat, ImageFormats &imageFormatsOut);
-
     // Called from flushStagedUpdates, removes updates that are later superseded by another.  This
     // cannot be done at the time the updates were staged, as the image is not created (and thus the
     // extents are not known).
@@ -3095,6 +3101,8 @@ class ImageHelper final : public Resource, public angle::Subject
     {
         return (mSubresourcesWrittenSinceBarrier[level] & layerMask) != 0;
     }
+
+    bool verifyNoStagedUpdates() const;
 
     // If the image has emulated channels, we clear them once so as not to leave garbage on those
     // channels.
@@ -3189,9 +3197,15 @@ class ImageHelper final : public Resource, public angle::Subject
     // Used only for assertions, these functions verify that
     // SubresourceUpdate::refcountedObject::image or buffer references have the correct ref count.
     // This is to prevent accidental leaks.
-    bool validateSubresourceUpdateImageRefConsistent(RefCounted<ImageHelper> *image) const;
-    bool validateSubresourceUpdateBufferRefConsistent(RefCounted<BufferHelper> *buffer) const;
-    bool validateSubresourceUpdateRefCountsConsistent() const;
+    void assertSubresourceUpdateImageRefConsistentImpl(RefCounted<ImageHelper> *image) const;
+    void assertSubresourceUpdateBufferRefConsistentImpl(RefCounted<BufferHelper> *buffer) const;
+    void assertSubresourceUpdateRefCountsConsistentImpl() const;
+    ANGLE_INLINE void assertSubresourceUpdateRefCountsConsistent() const
+    {
+#if defined(ANGLE_ENABLE_ASSERTS)
+        assertSubresourceUpdateRefCountsConsistentImpl();
+#endif
+    }
 
     void resetCachedProperties();
     void setEntireContentDefined();
@@ -3407,9 +3421,14 @@ ANGLE_INLINE bool RenderPassCommandBufferHelper::usesImage(const ImageHelper &im
 
 // A vector of image views, such as one per level or one per layer.
 using ImageViewVector = std::vector<ImageView>;
+// A map between FormatID and vector of image views.
+using ImageViewVectorMap = angle::HashMap<angle::FormatID, std::unique_ptr<ImageViewVector>>;
 
 // A vector of vector of image views.  Primary index is layer, secondary index is level.
 using LayerLevelImageViewVector = std::vector<ImageViewVector>;
+// A map between FormatID and vector of vector of image views.
+using LayerLevelImageViewVectorMap =
+    angle::HashMap<angle::FormatID, std::unique_ptr<LayerLevelImageViewVector>>;
 
 using SubresourceImageViewMap = angle::HashMap<ImageSubresourceRange, std::unique_ptr<ImageView>>;
 
@@ -3648,8 +3667,8 @@ class ImageViewHelper final : angle::NonCopyable
             updateColorspace(image);
         }
     }
-    void updateSrgbWiteControlMode(const ImageHelper &image,
-                                   gl::SrgbWriteControlMode srgbWriteControl) const
+    void updateSrgbWriteControlMode(const ImageHelper &image,
+                                    gl::SrgbWriteControlMode srgbWriteControl) const
     {
         if (mColorspaceState.srgbWriteControl != srgbWriteControl)
         {
@@ -3793,8 +3812,8 @@ class ImageViewHelper final : angle::NonCopyable
     SubresourceImageViewMap mSubresourceStencilOnlyImageViews;
 
     // Storage views
-    ImageViewVector mLevelStorageImageViews;
-    LayerLevelImageViewVector mLayerLevelStorageImageViews;
+    ImageViewVectorMap mLevelStorageImageViews;
+    LayerLevelImageViewVectorMap mLayerLevelStorageImageViews;
 
     // Fragment shading rate view
     ImageView mFragmentShadingRateImageView;

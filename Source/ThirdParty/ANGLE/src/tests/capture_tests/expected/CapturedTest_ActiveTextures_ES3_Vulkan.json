@@ -1,7 +1,7 @@
 {
     "TraceMetadata": {
         "AreClientArraysEnabled": true,
-        "CaptureRevision": 26132,
+        "CaptureRevision": 27004,
         "ConfigAlphaBits": 8,
         "ConfigBlueBits": 8,
         "ConfigDepthBits": 24,
@@ -15,7 +15,7 @@
         "DrawSurfaceColorSpace": "0x308A",
         "DrawSurfaceHeight": 128,
         "DrawSurfaceWidth": 128,
-        "FrameEnd": 4,
+        "FrameEnd": 5,
         "FrameStart": 1,
         "IsBinaryDataCompressed": false,
         "IsBindGeneratesResourcesEnabled": true,

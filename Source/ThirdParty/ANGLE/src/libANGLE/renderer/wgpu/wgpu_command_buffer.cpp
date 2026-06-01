@@ -16,6 +16,8 @@ namespace webgpu
 {
 namespace
 {
+const bool kLogCommandRecording = false;
+
 template <typename T>
 T::ObjectType GetReferencedObject(std::unordered_set<T> &referenceList, const T &item)
 {
@@ -39,6 +41,75 @@ const CommandType &GetCommandAndIterate(const uint8_t **commandData)
         reinterpret_cast<const CommandType *>(*commandData + sizeof(CommandID));
     *commandData += commandAndIdSize;
     return *command;
+}
+
+std::ostream &operator<<(std::ostream &os, const DrawCommand &cmd)
+{
+    return os << "{Draw: vertexCount=" << cmd.vertexCount << ", instanceCount=" << cmd.instanceCount
+              << ", firstVertex=" << cmd.firstVertex << ", firstInstance=" << cmd.firstInstance
+              << "}";
+}
+
+std::ostream &operator<<(std::ostream &os, const DrawIndexedCommand &cmd)
+{
+    return os << "{DrawIndexed: indexCount=" << cmd.indexCount
+              << ", instanceCount=" << cmd.instanceCount << ", firstIndex=" << cmd.firstIndex
+              << ", baseVertex=" << cmd.baseVertex << ", firstInstance=" << cmd.firstInstance
+              << "}";
+}
+
+std::ostream &operator<<(std::ostream &os, const SetBindGroupCommand &cmd)
+{
+    // Note: WGPUBindGroup is a pointer/handle, so printing it as a pointer address (void*) is
+    // common.
+    return os << "{SetBindGroup: groupIndex=" << cmd.groupIndex
+              << ", bindGroup=" << static_cast<const void *>(cmd.bindGroup) << "}";
+}
+
+std::ostream &operator<<(std::ostream &os, const SetBlendConstantCommand &cmd)
+{
+    return os << "{SetBlendConstant: r=" << cmd.r << ", g=" << cmd.g << ", b=" << cmd.b
+              << ", a=" << cmd.a << "}";
+}
+
+std::ostream &operator<<(std::ostream &os, const SetIndexBufferCommand &cmd)
+{
+    // Note: WGPUBuffer is a pointer/handle. format is an enum, printing its int value.
+    return os << "{SetIndexBuffer: buffer=" << static_cast<const void *>(cmd.buffer)
+              << ", format=" << static_cast<int>(cmd.format) << ", offset=" << cmd.offset
+              << ", size=" << cmd.size << "}";
+}
+
+std::ostream &operator<<(std::ostream &os, const SetPipelineCommand &cmd)
+{
+    // Note: WGPURenderPipeline is a pointer/handle.
+    return os << "{SetPipeline: pipeline=" << static_cast<const void *>(cmd.pipeline) << "}";
+}
+
+std::ostream &operator<<(std::ostream &os, const SetScissorRectCommand &cmd)
+{
+    return os << "{SetScissorRect: x=" << cmd.x << ", y=" << cmd.y << ", width=" << cmd.width
+              << ", height=" << cmd.height << "}";
+}
+
+std::ostream &operator<<(std::ostream &os, const SetStencilReferenceCommand &cmd)
+{
+    return os << "{SetStencilReference: referenceValue=" << cmd.referenceValue << "}";
+}
+
+std::ostream &operator<<(std::ostream &os, const SetVertexBufferCommand &cmd)
+{
+    // Note: WGPUBuffer is a pointer/handle.
+    return os << "{SetVertexBuffer: slot=" << cmd.slot
+              << ", buffer=" << static_cast<const void *>(cmd.buffer) << ", offset=" << cmd.offset
+              << ", size=" << cmd.size << "}";
+}
+
+std::ostream &operator<<(std::ostream &os, const SetViewportCommand &cmd)
+{
+    return os << "{SetViewport: x=" << cmd.x << ", y=" << cmd.y << ", width=" << cmd.width
+              << ", height=" << cmd.height << ", minDepth=" << cmd.minDepth
+              << ", maxDepth=" << cmd.maxDepth << "}";
 }
 }  // namespace
 
@@ -103,6 +174,15 @@ void CommandBuffer::setScissorRect(uint32_t x, uint32_t y, uint32_t width, uint3
     setScissorRectCommand->height                = height;
 
     mState.hasSetScissorCommand = true;
+}
+
+void CommandBuffer::setStencilReference(uint32_t refVal)
+{
+    SetStencilReferenceCommand *setStencilReferenceCommand =
+        initCommand<CommandID::SetStencilReference>();
+    setStencilReferenceCommand->referenceValue = refVal;
+
+    mState.hasSetStencilRefCommand = true;
 }
 
 void CommandBuffer::setViewport(float x,
@@ -185,6 +265,10 @@ void CommandBuffer::recordCommands(const DawnProcTable *wgpu, RenderPassEncoderH
                 {
                     const DrawCommand &drawCommand =
                         GetCommandAndIterate<CommandID::Draw>(&currentCommand);
+                    if (kLogCommandRecording)
+                    {
+                        ANGLE_LOG(INFO) << "Recording Draw: " << drawCommand;
+                    }
                     wgpu->renderPassEncoderDraw(encoder.get(), drawCommand.vertexCount,
                                                 drawCommand.instanceCount, drawCommand.firstVertex,
                                                 drawCommand.firstInstance);
@@ -195,6 +279,10 @@ void CommandBuffer::recordCommands(const DawnProcTable *wgpu, RenderPassEncoderH
                 {
                     const DrawIndexedCommand &drawIndexedCommand =
                         GetCommandAndIterate<CommandID::DrawIndexed>(&currentCommand);
+                    if (kLogCommandRecording)
+                    {
+                        ANGLE_LOG(INFO) << "Recording DrawIndexed: " << drawIndexedCommand;
+                    }
                     wgpu->renderPassEncoderDrawIndexed(
                         encoder.get(), drawIndexedCommand.indexCount,
                         drawIndexedCommand.instanceCount, drawIndexedCommand.firstIndex,
@@ -206,6 +294,10 @@ void CommandBuffer::recordCommands(const DawnProcTable *wgpu, RenderPassEncoderH
                 {
                     const SetBindGroupCommand &setBindGroupCommand =
                         GetCommandAndIterate<CommandID::SetBindGroup>(&currentCommand);
+                    if (kLogCommandRecording)
+                    {
+                        ANGLE_LOG(INFO) << "Recording SetBindGroup: " << setBindGroupCommand;
+                    }
                     wgpu->renderPassEncoderSetBindGroup(encoder.get(),
                                                         setBindGroupCommand.groupIndex,
                                                         setBindGroupCommand.bindGroup, 0, nullptr);
@@ -216,6 +308,11 @@ void CommandBuffer::recordCommands(const DawnProcTable *wgpu, RenderPassEncoderH
                 {
                     const SetBlendConstantCommand &setBlendConstantCommand =
                         GetCommandAndIterate<CommandID::SetBlendConstant>(&currentCommand);
+                    if (kLogCommandRecording)
+                    {
+                        ANGLE_LOG(INFO)
+                            << "Recording SetBlendConstant: " << setBlendConstantCommand;
+                    }
                     WGPUColor color{setBlendConstantCommand.r, setBlendConstantCommand.g,
                                     setBlendConstantCommand.b, setBlendConstantCommand.a};
                     wgpu->renderPassEncoderSetBlendConstant(encoder.get(), &color);
@@ -226,6 +323,10 @@ void CommandBuffer::recordCommands(const DawnProcTable *wgpu, RenderPassEncoderH
                 {
                     const SetIndexBufferCommand &setIndexBufferCommand =
                         GetCommandAndIterate<CommandID::SetIndexBuffer>(&currentCommand);
+                    if (kLogCommandRecording)
+                    {
+                        ANGLE_LOG(INFO) << "Recording SetIndexBuffer: " << setIndexBufferCommand;
+                    }
                     wgpu->renderPassEncoderSetIndexBuffer(
                         encoder.get(), setIndexBufferCommand.buffer, setIndexBufferCommand.format,
                         setIndexBufferCommand.offset, setIndexBufferCommand.size);
@@ -236,6 +337,10 @@ void CommandBuffer::recordCommands(const DawnProcTable *wgpu, RenderPassEncoderH
                 {
                     const SetPipelineCommand &setPiplelineCommand =
                         GetCommandAndIterate<CommandID::SetPipeline>(&currentCommand);
+                    if (kLogCommandRecording)
+                    {
+                        ANGLE_LOG(INFO) << "Recording SetPipeline: " << setPiplelineCommand;
+                    }
                     wgpu->renderPassEncoderSetPipeline(encoder.get(), setPiplelineCommand.pipeline);
                     break;
                 }
@@ -244,9 +349,27 @@ void CommandBuffer::recordCommands(const DawnProcTable *wgpu, RenderPassEncoderH
                 {
                     const SetScissorRectCommand &setScissorRectCommand =
                         GetCommandAndIterate<CommandID::SetScissorRect>(&currentCommand);
+                    if (kLogCommandRecording)
+                    {
+                        ANGLE_LOG(INFO) << "Recording SetScissorRect: " << setScissorRectCommand;
+                    }
                     wgpu->renderPassEncoderSetScissorRect(
                         encoder.get(), setScissorRectCommand.x, setScissorRectCommand.y,
                         setScissorRectCommand.width, setScissorRectCommand.height);
+                    break;
+                }
+
+                case CommandID::SetStencilReference:
+                {
+                    const SetStencilReferenceCommand &setStencilReferenceCommand =
+                        GetCommandAndIterate<CommandID::SetStencilReference>(&currentCommand);
+                    if (kLogCommandRecording)
+                    {
+                        ANGLE_LOG(INFO)
+                            << "Recording SetStencilReference: " << setStencilReferenceCommand;
+                    }
+                    wgpu->renderPassEncoderSetStencilReference(
+                        encoder.get(), setStencilReferenceCommand.referenceValue);
                     break;
                 }
 
@@ -254,6 +377,10 @@ void CommandBuffer::recordCommands(const DawnProcTable *wgpu, RenderPassEncoderH
                 {
                     const SetViewportCommand &setViewportCommand =
                         GetCommandAndIterate<CommandID::SetViewport>(&currentCommand);
+                    if (kLogCommandRecording)
+                    {
+                        ANGLE_LOG(INFO) << "Recording SetViewport: " << setViewportCommand;
+                    }
                     wgpu->renderPassEncoderSetViewport(
                         encoder.get(), setViewportCommand.x, setViewportCommand.y,
                         setViewportCommand.width, setViewportCommand.height,
@@ -265,6 +392,10 @@ void CommandBuffer::recordCommands(const DawnProcTable *wgpu, RenderPassEncoderH
                 {
                     const SetVertexBufferCommand &setVertexBufferCommand =
                         GetCommandAndIterate<CommandID::SetVertexBuffer>(&currentCommand);
+                    if (kLogCommandRecording)
+                    {
+                        ANGLE_LOG(INFO) << "Recording SetVertexBuffer: " << setVertexBufferCommand;
+                    }
                     wgpu->renderPassEncoderSetVertexBuffer(
                         encoder.get(), setVertexBufferCommand.slot, setVertexBufferCommand.buffer,
                         setVertexBufferCommand.offset, setVertexBufferCommand.size);

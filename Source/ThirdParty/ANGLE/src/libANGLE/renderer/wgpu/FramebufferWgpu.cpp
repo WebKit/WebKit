@@ -12,10 +12,14 @@
 #endif
 
 #include "libANGLE/renderer/wgpu/FramebufferWgpu.h"
+
 #include <__config>
 
+#include "common/Color.h"
 #include "common/debug.h"
+#include "common/mathutil.h"
 #include "libANGLE/Context.h"
+#include "libANGLE/angletypes.h"
 #include "libANGLE/formatutils.h"
 #include "libANGLE/renderer/wgpu/BufferWgpu.h"
 #include "libANGLE/renderer/wgpu/ContextWgpu.h"
@@ -57,34 +61,136 @@ angle::Result FramebufferWgpu::invalidateSub(const gl::Context *context,
 
 angle::Result FramebufferWgpu::clear(const gl::Context *context, GLbitfield mask)
 {
-    bool clearColor   = IsMaskFlagSet(mask, static_cast<GLbitfield>(GL_COLOR_BUFFER_BIT));
-    bool clearDepth   = IsMaskFlagSet(mask, static_cast<GLbitfield>(GL_DEPTH_BUFFER_BIT));
-    bool clearStencil = IsMaskFlagSet(mask, static_cast<GLbitfield>(GL_STENCIL_BUFFER_BIT));
+    const bool clearColor   = IsMaskFlagSet(mask, static_cast<GLbitfield>(GL_COLOR_BUFFER_BIT));
+    const bool clearDepth   = IsMaskFlagSet(mask, static_cast<GLbitfield>(GL_DEPTH_BUFFER_BIT));
+    const bool clearStencil = IsMaskFlagSet(mask, static_cast<GLbitfield>(GL_STENCIL_BUFFER_BIT));
+
+    gl::ColorF clearColorValue = context->getState().getColorClearValue();
+    gl::DrawBufferMask clearColorBuffers =
+        clearColor ? mState.getEnabledDrawBuffers() : gl::DrawBufferMask();
+
+    uint32_t clearStencilValue = static_cast<uint32_t>(context->getState().getStencilClearValue());
+
+    float clearDepthValue = context->getState().getDepthClearValue();
+
+    return clearImpl(context, clearColorBuffers, clearDepth, clearStencil, clearColorValue,
+                     clearDepthValue, clearStencilValue);
+}
+
+gl::ColorF FramebufferWgpu::getClearColorWithCorrectAlpha(const gl::ColorF &clearValue,
+                                                          size_t drawBufferIndex)
+{
+    webgpu::ImageHelper *colorImage = mRenderTargetCache.getColors()[drawBufferIndex]->getImage();
+    const angle::Format &dstIntendedFormat = angle::Format::Get(colorImage->getIntendedFormatID());
+    const angle::Format &dstActualFormat   = angle::Format::Get(colorImage->getActualFormatID());
+    // If the intended format does not have alpha bits, but the texture is backed by an actual
+    // format with alpha bits, ensure the alpha bits are cleared to 1.0.
+    if (dstIntendedFormat.alphaBits == 0 && dstActualFormat.alphaBits != 0)
+    {
+        return gl::ColorF(clearValue.red, clearValue.green, clearValue.blue, 1.0);
+    }
+
+    return clearValue;
+}
+
+angle::Result FramebufferWgpu::clearImpl(const gl::Context *context,
+                                         gl::DrawBufferMask clearColorBuffers,
+                                         bool clearDepth,
+                                         bool clearStencil,
+                                         const gl::ColorF &clearColorValue,
+                                         float clearDepthValue,
+                                         uint32_t clearStencilValue)
+{
+    const bool clearColor = clearColorBuffers.any();
 
     ASSERT(clearDepth || clearStencil || clearColor);
 
     ContextWgpu *contextWgpu = GetImplAs<ContextWgpu>(context);
 
+    // This function assumes that only enabled attachments are asked to be cleared.
+    ASSERT((clearColorBuffers & mState.getEnabledDrawBuffers()) == clearColorBuffers);
+    ASSERT(!clearDepth || mState.getDepthAttachment() != nullptr);
+    ASSERT(!clearStencil || mState.getStencilAttachment() != nullptr);
+
+    // The front-end should ensure we don't attempt to clear color if all channels are masked.
+    ASSERT(!clearColor || context->getState().getBlendStateExt().getColorMaskBits() != 0);
+    // The front-end should ensure we don't attempt to clear depth if depth write is disabled.
+    ASSERT(!clearDepth || context->getState().getDepthStencilState().depthMask);
+    // The front-end should ensure we don't attempt to clear stencil if all bits are masked.
+    ASSERT(!clearStencil ||
+           static_cast<uint8_t>(context->getState().getDepthStencilState().stencilWritemask) != 0);
+
+    gl::Rectangle renderArea(0, 0, mState.getDimensions().width, mState.getDimensions().height);
+    gl::Rectangle scissoredRenderArea = ClipRectToScissor(context->getState(), renderArea, false);
+    if (scissoredRenderArea.empty())
+    {
+        return angle::Result::Continue;
+    }
+    const bool scissoredClear = scissoredRenderArea != renderArea;
+    // TODO(anglebug.com/474131922): could avoid a clearWithDraw if a masked out channel is not
+    // present in the `internalFormat` that's being cleared. Vulkan does this.
+    const bool maskedClearColor =
+        clearColor && (context->getState().getBlendStateExt().getColorMaskBits() !=
+                       context->getState().getBlendStateExt().getAllColorMaskBits());
+    GLuint allStencilBits =
+        angle::BitMask<GLuint>(context->getState().getDrawFramebuffer()->getStencilBitCount());
+    const bool maskedClearStencil =
+        clearStencil && ((context->getState().getDepthStencilState().stencilWritemask &
+                          allStencilBits) != allStencilBits);
+    const bool clearWithDraw = scissoredClear || maskedClearColor || maskedClearStencil;
+
+    if (clearWithDraw)
+    {
+        // Flush any deferred clears so that they do not overwrite this clearWithDraw.
+        // TODO(anglebug.com/474131922): in the future this should just start a render pass for the
+        // draw call to be added to.
+        ANGLE_TRY(flushDeferredClears(contextWgpu));
+
+        // If a scissor, need to flip the clearArea if this framebuffer is flipped.
+        if (mFlipY)
+        {
+            scissoredRenderArea.y =
+                mState.getDimensions().height - scissoredRenderArea.y - scissoredRenderArea.height;
+        }
+
+        webgpu::UtilsWgpu::ClearParams clearParams{
+            .clearArea         = scissoredRenderArea,
+            .colorMasks        = context->getState().getBlendStateExt().getColorMaskBits(),
+            .clearColorBuffers = clearColor ? clearColorBuffers : gl::DrawBufferMask(),
+            // RGB textures backed by the RGBA format will have their alpha cleared to 1.0 by the
+            // draw.
+            .clearColorValue =
+                clearColor ? std::optional<gl::ColorF>(clearColorValue) : std::nullopt,
+            .clearDepthValue = clearDepth ? std::optional<float>(clearDepthValue) : std::nullopt,
+            .clearStencilValue =
+                clearStencil ? std::optional<uint32_t>(clearStencilValue) : std::nullopt,
+            .stencilWriteMask =
+                clearStencil ? std::optional<uint32_t>(
+                                   context->getState().getDepthStencilState().stencilWritemask)
+                             : std::nullopt,
+            .colorTargets = clearColor ? &mRenderTargetCache.getColors() : nullptr,
+            .depthStencilTarget =
+                clearDepth || clearStencil ? mRenderTargetCache.getDepthStencil() : nullptr,
+        };
+
+        return contextWgpu->getUtils()->clear(contextWgpu, std::move(clearParams));
+    }
+
     webgpu::PackedRenderPassDescriptor clearRenderPassDesc;
 
-    gl::ColorF clearValue                = context->getState().getColorClearValue();
-    gl::DrawBufferMask clearColorBuffers = mState.getEnabledDrawBuffers();
-    float depthValue      = 1;
-    uint32_t stencilValue = 0;
     for (size_t enabledDrawBuffer : clearColorBuffers)
     {
         clearRenderPassDesc.colorAttachments.push_back(webgpu::CreateNewClearColorAttachment(
-            clearValue, WGPU_DEPTH_SLICE_UNDEFINED,
+            getClearColorWithCorrectAlpha(clearColorValue, enabledDrawBuffer),
+            WGPU_DEPTH_SLICE_UNDEFINED,
             mRenderTargetCache.getColorDraw(mState, enabledDrawBuffer)->getTextureView()));
     }
 
     if (clearDepth || clearStencil)
     {
-        depthValue             = context->getState().getDepthClearValue();
-        stencilValue           = static_cast<uint32_t>(context->getState().getStencilClearValue());
         clearRenderPassDesc.depthStencilAttachment = webgpu::CreateNewClearDepthStencilAttachment(
-            depthValue, stencilValue, mRenderTargetCache.getDepthStencil()->getTextureView(),
-            clearDepth, clearStencil);
+            clearDepthValue, clearStencilValue,
+            mRenderTargetCache.getDepthStencil()->getTextureView(), clearDepth, clearStencil);
     }
 
     // Attempt to end a render pass if one has already been started.
@@ -95,8 +201,8 @@ angle::Result FramebufferWgpu::clear(const gl::Context *context, GLbitfield mask
     {
         // Merge the current clear command with any deferred clears. This is to keep the clear paths
         // simpler so they only need to consider the current or the deferred clears.
-        mergeClearWithDeferredClears(clearValue, clearColorBuffers, depthValue, stencilValue,
-                                     clearColor, clearDepth, clearStencil);
+        mergeClearWithDeferredClears(clearColorValue, clearColorBuffers, clearDepthValue,
+                                     clearStencilValue, clearColor, clearDepth, clearStencil);
         if (isActiveRenderPass)
         {
             ANGLE_TRY(flushDeferredClears(contextWgpu));
@@ -109,14 +215,6 @@ angle::Result FramebufferWgpu::clear(const gl::Context *context, GLbitfield mask
                     mRenderTargetCache.getColorDraw(mState, colorIndexGL);
                 webgpu::ClearValues deferredClearValue;
                 deferredClearValue = mDeferredClears[colorIndexGL];
-                if (mDeferredClears.hasDepth())
-                {
-                    deferredClearValue.depthValue = mDeferredClears.getDepthValue();
-                }
-                if (mDeferredClears.hasStencil())
-                {
-                    deferredClearValue.stencilValue = mDeferredClears.getStencilValue();
-                }
                 renderTarget->getImage()->stageClear(renderTarget->getGlLevel(), deferredClearValue,
                                                      false, false);
             }
@@ -244,6 +342,76 @@ angle::Result FramebufferWgpu::blit(const gl::Context *context,
                                     GLbitfield mask,
                                     GLenum filter)
 {
+    ContextWgpu *contextWgpu = GetImplAs<ContextWgpu>(context);
+    bool blitColor           = IsMaskFlagSet(mask, static_cast<GLbitfield>(GL_COLOR_BUFFER_BIT));
+    bool blitDepth           = IsMaskFlagSet(mask, static_cast<GLbitfield>(GL_DEPTH_BUFFER_BIT));
+    bool blitStencil         = IsMaskFlagSet(mask, static_cast<GLbitfield>(GL_STENCIL_BUFFER_BIT));
+
+    const gl::Framebuffer *readFBO = context->getState().getReadFramebuffer();
+    FramebufferWgpu *readFBOWgpu   = GetImplAs<FramebufferWgpu>(readFBO);
+    bool srcFlipY                  = readFBOWgpu->flipY();
+    bool dstFlipY                  = flipY();
+
+    if (blitColor)
+    {
+        RenderTargetWgpu *readRenderTarget = readFBOWgpu->getReadPixelsRenderTarget();
+        ASSERT(readRenderTarget);
+
+        const gl::DrawBufferMask &drawBufferMask = mState.getEnabledDrawBuffers();
+        for (size_t drawBufferIdx : drawBufferMask)
+        {
+            RenderTargetWgpu *drawRenderTarget =
+                mRenderTargetCache.getColorDraw(mState, drawBufferIdx);
+            ASSERT(drawRenderTarget);
+
+            if (formatsAndSizesMatchForDirectCopy(context, readFBOWgpu, readRenderTarget,
+                                                  drawRenderTarget, sourceArea, destArea))
+            {
+                ANGLE_TRY(blitWithDirectCopy(contextWgpu, readRenderTarget, drawRenderTarget,
+                                             sourceArea, destArea, srcFlipY, dstFlipY,
+                                             WGPUTextureAspect_All));
+            }
+            else
+            {
+                UNIMPLEMENTED();
+            }
+        }
+    }
+
+    if (blitDepth || blitStencil)
+    {
+        RenderTargetWgpu *readRT = readFBOWgpu->mRenderTargetCache.getDepthStencil();
+        RenderTargetWgpu *drawRT = mRenderTargetCache.getDepthStencil();
+
+        if (readRT && drawRT)
+        {
+            WGPUTextureAspect aspect = WGPUTextureAspect_All;
+            if (blitDepth && blitStencil)
+            {
+                aspect = WGPUTextureAspect_All;
+            }
+            else if (blitDepth)
+            {
+                aspect = WGPUTextureAspect_DepthOnly;
+            }
+            else if (blitStencil)
+            {
+                aspect = WGPUTextureAspect_StencilOnly;
+            }
+
+            if (formatsAndSizesMatchForDirectCopy(context, readFBOWgpu, readRT, drawRT, sourceArea,
+                                                  destArea))
+            {
+                ANGLE_TRY(blitWithDirectCopy(contextWgpu, readRT, drawRT, sourceArea, destArea,
+                                             srcFlipY, dstFlipY, aspect));
+            }
+            else
+            {
+                UNIMPLEMENTED();
+            }
+        }
+    }
+
     return angle::Result::Continue;
 }
 
@@ -257,7 +425,7 @@ angle::Result FramebufferWgpu::syncState(const gl::Context *context,
                                          const gl::Framebuffer::DirtyBits &dirtyBits,
                                          gl::Command command)
 {
-    ContextWgpu *contextWgpu = webgpu::GetImpl(context);
+    ContextWgpu *contextWgpu         = webgpu::GetImpl(context);
     bool dirtyDepthStencilAttachment = false;
     ASSERT(dirtyBits.any());
 
@@ -341,8 +509,8 @@ angle::Result FramebufferWgpu::syncState(const gl::Context *context,
     // attachments that are not taking part in a blit operation.
     ASSERT(mDeferredClears.empty());
 
-    const bool isBlitCommand = command >= gl::Command::Blit && command <= gl::Command::BlitAll;
-    bool deferColorClears    = binding == GL_DRAW_FRAMEBUFFER;
+    const bool isBlitCommand     = command >= gl::Command::Blit && command <= gl::Command::BlitAll;
+    bool deferColorClears        = binding == GL_DRAW_FRAMEBUFFER;
     bool deferDepthStencilClears = binding == GL_DRAW_FRAMEBUFFER;
     if (binding == GL_READ_FRAMEBUFFER && isBlitCommand)
     {
@@ -591,17 +759,18 @@ void FramebufferWgpu::mergeClearWithDeferredClears(const gl::ColorF &clearValue,
     for (size_t enabledDrawBuffer : clearColorBuffers)
     {
         mDeferredClears.store(static_cast<uint32_t>(enabledDrawBuffer),
-                              {clearValue, WGPU_DEPTH_SLICE_UNDEFINED, 0, 0});
+                              {getClearColorWithCorrectAlpha(clearValue, enabledDrawBuffer),
+                               WGPU_DEPTH_SLICE_UNDEFINED, 0, 0});
     }
     if (clearDepth)
     {
         mDeferredClears.store(webgpu::kUnpackedDepthIndex,
-                              {clearValue, WGPU_DEPTH_SLICE_UNDEFINED, depthValue, 0});
+                              {gl::ColorF(), WGPU_DEPTH_SLICE_UNDEFINED, depthValue, 0});
     }
     if (clearStencil)
     {
         mDeferredClears.store(webgpu::kUnpackedStencilIndex,
-                              {clearValue, WGPU_DEPTH_SLICE_UNDEFINED, 0, stencilValue});
+                              {gl::ColorF(), WGPU_DEPTH_SLICE_UNDEFINED, 0, stencilValue});
     }
 }
 
@@ -622,6 +791,85 @@ gl::Rectangle FramebufferWgpu::getReadArea(const gl::Context *context,
     }
 
     return flippedArea;
+}
+
+bool FramebufferWgpu::formatsAndSizesMatchForDirectCopy(const gl::Context *context,
+                                                        const FramebufferWgpu *readFramebuffer,
+                                                        RenderTargetWgpu *readRenderTarget,
+                                                        RenderTargetWgpu *drawRenderTarget,
+                                                        const gl::Rectangle &sourceArea,
+                                                        const gl::Rectangle &destArea) const
+{
+    bool isScissorEnabled = context->getState().isScissorTestEnabled();
+    bool scissorMatches = !isScissorEnabled || context->getState().getScissor().encloses(destArea);
+    bool geometryMatches =
+        sourceArea.width == destArea.width && sourceArea.height == destArea.height;
+    bool flipsMatch = readFramebuffer->flipY() == flipY();
+
+    webgpu::ImageHelper *srcImage = readRenderTarget->getImage();
+    webgpu::ImageHelper *dstImage = drawRenderTarget->getImage();
+
+    bool formatsMatch      = srcImage->getActualFormatID() == dstImage->getActualFormatID();
+    bool srcIsMultisampled = srcImage->getSamples() > 1;
+
+    WGPUExtent3D srcLevelSize =
+        srcImage->getLevelSize(srcImage->toWgpuLevel(readRenderTarget->getGlLevel()));
+    WGPUExtent3D dstLevelSize =
+        dstImage->getLevelSize(dstImage->toWgpuLevel(drawRenderTarget->getGlLevel()));
+
+    auto isWithinBounds = [](const gl::Rectangle &rect, const WGPUExtent3D &size) {
+        return rect.x >= 0 && rect.y >= 0 && rect.width >= 0 && rect.height >= 0 &&
+               static_cast<uint32_t>(rect.x + rect.width) <= size.width &&
+               static_cast<uint32_t>(rect.y + rect.height) <= size.height;
+    };
+
+    bool boundsMatch =
+        isWithinBounds(sourceArea, srcLevelSize) && isWithinBounds(destArea, dstLevelSize);
+
+    return scissorMatches && geometryMatches && flipsMatch && formatsMatch && !srcIsMultisampled &&
+           boundsMatch;
+}
+
+angle::Result FramebufferWgpu::blitWithDirectCopy(ContextWgpu *contextWgpu,
+                                                  RenderTargetWgpu *readRenderTarget,
+                                                  RenderTargetWgpu *drawRenderTarget,
+                                                  const gl::Rectangle &sourceArea,
+                                                  const gl::Rectangle &destArea,
+                                                  bool srcFlipY,
+                                                  bool dstFlipY,
+                                                  WGPUTextureAspect aspect)
+{
+    webgpu::ImageHelper *srcImage = readRenderTarget->getImage();
+    webgpu::ImageHelper *dstImage = drawRenderTarget->getImage();
+
+    ANGLE_TRY(srcImage->flushStagedUpdates(contextWgpu));
+    ANGLE_TRY(dstImage->flushStagedUpdates(contextWgpu));
+
+    WGPUExtent3D srcLevelSize =
+        srcImage->getLevelSize(srcImage->toWgpuLevel(readRenderTarget->getGlLevel()));
+    WGPUExtent3D dstLevelSize =
+        dstImage->getLevelSize(dstImage->toWgpuLevel(drawRenderTarget->getGlLevel()));
+
+    gl::Box sourceBox(sourceArea.x, sourceArea.y, 0, sourceArea.width, sourceArea.height, 1);
+    if (srcFlipY)
+    {
+        sourceBox.y = srcLevelSize.height - sourceArea.y - sourceArea.height;
+    }
+
+    gl::Offset dstOffset(destArea.x, destArea.y, 0);
+    if (dstFlipY)
+    {
+        dstOffset.y = dstLevelSize.height - destArea.y - destArea.height;
+    }
+    dstOffset.z = drawRenderTarget->getLayer();
+
+    gl::ImageIndex dstIndex = gl::ImageIndex::Make2D(drawRenderTarget->getGlLevel().get());
+
+    ANGLE_TRY(dstImage->CopyImage(contextWgpu, srcImage, dstIndex, dstOffset,
+                                  readRenderTarget->getGlLevel(), readRenderTarget->getLayer(),
+                                  sourceBox, aspect));
+
+    return angle::Result::Continue;
 }
 
 }  // namespace rx

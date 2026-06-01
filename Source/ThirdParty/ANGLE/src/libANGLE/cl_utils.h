@@ -58,6 +58,7 @@ bool IsArrayType(cl::MemObjectType memObjectType);
 bool Is3DImage(cl::MemObjectType memObjectType);
 bool Is2DImage(cl::MemObjectType memObjectType);
 bool Is1DImage(cl::MemObjectType memObjectType);
+bool Is1DImageBuffer(cl::MemObjectType memObjectType);
 
 cl::Extents GetExtentFromDescriptor(cl::ImageDescriptor desc);
 

@@ -35,8 +35,7 @@ bool RefCountedEvent::init(Context *context, EventStage eventStage)
     // First try with recycler. We must issue VkCmdResetEvent before VkCmdSetEvent
     if (context->getRefCountedEventsGarbageRecycler()->fetch(context->getRenderer(), this))
     {
-        ASSERT(valid());
-        ASSERT(!mHandle->isReferenced());
+        assertValidAndNoReference();
     }
     else
     {
@@ -120,8 +119,7 @@ void RefCountedEvent::releaseImpl(Renderer *renderer, RecyclerT *recycler)
 
 void RefCountedEvent::destroy(VkDevice device)
 {
-    ASSERT(mHandle != nullptr);
-    ASSERT(!mHandle->isReferenced());
+    assertValidAndNoReference();
     mHandle->get().event.destroy(device);
     SafeDelete(mHandle);
 }
@@ -347,7 +345,7 @@ void RefCountedEventRecycler::recycle(RefCountedEventCollector &&garbageObjects,
     ASSERT(!garbageObjects.empty());
     for (const RefCountedEvent &event : garbageObjects)
     {
-        ASSERT(event.validAndNoReference());
+        event.assertValidAndNoReference();
     }
     std::lock_guard<angle::SimpleMutex> lock(mMutex);
     if (mEventsToReset.size() >= kMaxEventToKeepCount)

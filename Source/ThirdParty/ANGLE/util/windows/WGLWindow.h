@@ -69,6 +69,8 @@ class ANGLE_UTIL_EXPORT WGLWindow : public GLWindowBase
     EGLint clientWaitSyncKHR(EGLDisplay dpy, Sync sync, EGLint flags, EGLTimeKHR timeout) override;
     EGLint getEGLError() override;
     Display getCurrentDisplay() override;
+    Surface getCurrentSurface(EGLint readdraw) override;
+    EGLContext getCurrentContext() override;
     Surface createPbufferSurface(const EGLint *attrib_list) override;
     EGLBoolean destroySurface(Surface surface) override;
 

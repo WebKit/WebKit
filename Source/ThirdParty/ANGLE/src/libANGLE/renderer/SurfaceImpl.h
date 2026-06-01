@@ -78,6 +78,7 @@ class SurfaceImpl : public FramebufferAttachmentObjectImpl
     virtual void setSwapInterval(const egl::Display *display, EGLint interval) = 0;
     virtual void setFixedWidth(EGLint width);
     virtual void setFixedHeight(EGLint height);
+    virtual void setSwapBehavior(EGLenum behavior);
 
     // Explicitly resolves surface size to use before state synchronization (e.g. validation).
     virtual angle::Result ensureSizeResolved(const gl::Context *context);

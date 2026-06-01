@@ -1163,6 +1163,93 @@ TEST_P(OcclusionQueriesNoSurfaceTestES3, SwitchingContextsWithQuery)
     }
 }
 
+// This test provoked a bug in the Metal backend where a command buffer flush during query
+// preparation would recursively clear mAllocatedQueries, causing fillBuffer to be called with
+// size 0, resulting in a Metal validation error (when run with MTL_DEBUG_LAYER=1).
+TEST_P(OcclusionQueriesTestES3, TextureResizeWithQueryReuse)
+{
+    // The Metal backend flushes command buffers after this many render passes
+    // (defined in src/libANGLE/renderer/metal/mtl_common.h)
+    constexpr int kMaxRenderPassesPerCommandBuffer = 16;
+
+    GLQueryEXT query;
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, 2, 2, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, nullptr);
+    EXPECT_GL_NO_ERROR();
+
+    glBeginQuery(GL_ANY_SAMPLES_PASSED, query);
+    glEndQuery(GL_ANY_SAMPLES_PASSED);
+    EXPECT_GL_NO_ERROR();
+
+    // Call texImage2D enough times to accumulate render passes up to the flush limit.
+    const int numTexImageCalls = kMaxRenderPassesPerCommandBuffer - 1;
+    for (int i = 0; i < numTexImageCalls; i++)
+    {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, 2, 2, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE,
+                     nullptr);
+        EXPECT_GL_NO_ERROR();
+    }
+
+    // Begin query again with the SAME query object.
+    glBeginQuery(GL_ANY_SAMPLES_PASSED, query);
+    EXPECT_GL_NO_ERROR();
+
+    // This texImage2D is the 16th render pass, triggering a command buffer flush.
+    // Without a fix, prepareRenderPassVisibilityPoolBuffer would call fillBuffer with size 0
+    // because mAllocatedQueries gets cleared during the recursive flush.
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, 2, 2, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, nullptr);
+    EXPECT_GL_NO_ERROR();
+
+    glEndQuery(GL_ANY_SAMPLES_PASSED);
+    EXPECT_GL_NO_ERROR();
+
+    GLuint result = GL_TRUE;
+    glGetQueryObjectuiv(query, GL_QUERY_RESULT, &result);
+    EXPECT_GL_NO_ERROR();
+
+    // Result should be false since no draw calls were made.
+    EXPECT_GL_FALSE(result);
+}
+
+// Test query reuse with render pass accumulation using draw calls to distinct FBOs.
+TEST_P(OcclusionQueriesTestES3, QueryReuseWithMultipleFBOs)
+{
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+
+    constexpr int kNumRenderPasses = 16;
+    std::vector<GLTexture> textures(kNumRenderPasses);
+    std::vector<GLFramebuffer> fbos(kNumRenderPasses);
+
+    for (int i = 0; i < kNumRenderPasses; i++)
+    {
+        glBindTexture(GL_TEXTURE_2D, textures[i]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 16, 16, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        glBindFramebuffer(GL_FRAMEBUFFER, fbos[i]);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textures[i], 0);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    }
+
+    GLQueryEXT query;
+    glBeginQuery(GL_ANY_SAMPLES_PASSED, query);
+    glEndQuery(GL_ANY_SAMPLES_PASSED);
+
+    for (int i = 0; i < kNumRenderPasses - 1; i++)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, fbos[i]);
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    }
+
+    glBeginQuery(GL_ANY_SAMPLES_PASSED, query);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbos[kNumRenderPasses - 1]);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    glEndQuery(GL_ANY_SAMPLES_PASSED);
+
+    GLuint result = GL_FALSE;
+    glGetQueryObjectuiv(query, GL_QUERY_RESULT, &result);
+    EXPECT_GL_TRUE(result);
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(OcclusionQueriesTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(OcclusionQueriesTestES3);

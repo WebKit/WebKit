@@ -51,8 +51,8 @@ class RenderTargetWgpu final : public FramebufferAttachmentRenderTarget
     // TODO(liza): move TextureView into ImageHelper.
     webgpu::TextureViewHandle mTextureView;
     webgpu::LevelIndex mLevelIndex{0};
-    uint32_t mLayerIndex               = 0;
-    const WGPUTextureFormat *mFormat   = nullptr;
+    uint32_t mLayerIndex      = 0;
+    WGPUTextureFormat mFormat = WGPUTextureFormat_Undefined;
 };
 }  // namespace rx
 

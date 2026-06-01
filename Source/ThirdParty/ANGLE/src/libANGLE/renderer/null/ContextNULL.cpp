@@ -119,8 +119,9 @@ ContextNULL::ContextNULL(const gl::State &state,
 
     if (mExtensions.shaderPixelLocalStorageANGLE)
     {
-        mPLSOptions.type             = ShPixelLocalStorageType::FramebufferFetch;
-        mPLSOptions.fragmentSyncType = ShFragmentSynchronizationType::Automatic;
+        mPLSOptions.type                = ShPixelLocalStorageType::FramebufferFetch;
+        mPLSOptions.fragmentSyncType    = ShFragmentSynchronizationType::Automatic;
+        mPLSOptions.supportsNoncoherent = true;
     }
 }
 

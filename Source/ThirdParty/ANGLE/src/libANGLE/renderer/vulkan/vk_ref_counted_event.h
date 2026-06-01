@@ -209,8 +209,11 @@ class RefCountedEvent final
 
     bool valid() const { return mHandle != nullptr; }
 
-    // Only intended for assertion in recycler
-    bool validAndNoReference() const { return mHandle != nullptr && !mHandle->isReferenced(); }
+    ANGLE_INLINE void assertValidAndNoReference() const
+    {
+        ASSERT(mHandle != nullptr);
+        mHandle->assertIsRefCountAsExpected(0);
+    }
 
     // Returns the underlying Event object
     const Event &getEvent() const
@@ -444,7 +447,7 @@ class RefCountedEventRecycler final
     // Add single event to the toReset list
     void recycle(RefCountedEvent &&garbageObject, VkDevice device)
     {
-        ASSERT(garbageObject.validAndNoReference());
+        garbageObject.assertValidAndNoReference();
         std::lock_guard<angle::SimpleMutex> lock(mMutex);
         if (mEventsToReset.size() >= kMaxEventToKeepCount)
         {
@@ -513,7 +516,7 @@ class RefCountedEventsGarbageRecycler final
 
     void recycle(RefCountedEvent &&garbageObject, VkDevice device)
     {
-        ASSERT(garbageObject.validAndNoReference());
+        garbageObject.assertValidAndNoReference();
         mEventsToReset.emplace_back(std::move(garbageObject));
     }
 

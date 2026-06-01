@@ -855,6 +855,16 @@ EGLWindow::Display EGLWindow::getCurrentDisplay()
     return eglGetCurrentDisplay();
 }
 
+EGLWindow::Surface EGLWindow::getCurrentSurface(EGLint readdraw)
+{
+    return eglGetCurrentSurface(readdraw);
+}
+
+EGLContext EGLWindow::getCurrentContext()
+{
+    return eglGetCurrentContext();
+}
+
 GLWindowBase::Surface EGLWindow::createPbufferSurface(const EGLint *attrib_list)
 {
     return eglCreatePbufferSurface(getDisplay(), getConfig(), attrib_list);

@@ -87,7 +87,7 @@ def run_test(args, test_name, overwrite_expected):
         extra_env = {
             'ANGLE_CAPTURE_ENABLED': '1',
             'ANGLE_CAPTURE_FRAME_START': '2',
-            'ANGLE_CAPTURE_FRAME_END': '5',
+            'ANGLE_CAPTURE_FRAME_END': '6',
             'ANGLE_CAPTURE_OUT_DIR': temp_dir,
             'ANGLE_CAPTURE_COMPRESSION': '0',
         }

@@ -57,9 +57,12 @@ void Context::enableClientState(ClientVertexArrayType clientState)
 void Context::getFixedv(GLenum pname, GLfixed *params)
 {
     GLenum nativeType;
-    unsigned int numParams = 0;
-
-    getQueryParameterInfo(pname, &nativeType, &numParams);
+    unsigned int numParams;
+    const bool paramFound = getQueryParameterInfo(pname, &nativeType, &numParams);
+    if (ANGLE_UNLIKELY(!paramFound))
+    {
+        return;  // Avoid crashing with invalid apps running with no validation.
+    }
 
     std::vector<GLfloat> paramsf(numParams, 0);
     CastStateValues(this, nativeType, pname, numParams, paramsf.data());

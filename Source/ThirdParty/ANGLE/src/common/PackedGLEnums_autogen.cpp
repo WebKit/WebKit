@@ -225,6 +225,114 @@ std::ostream &operator<<(std::ostream &os, BufferBinding value)
 }
 
 template <>
+BufferParam FromGLenum<BufferParam>(GLenum from)
+{
+    switch (from)
+    {
+        case GL_BUFFER_IMMUTABLE_STORAGE_EXT:
+            return BufferParam::ImmutableStorage;
+        case GL_BUFFER_STORAGE_FLAGS_EXT:
+            return BufferParam::StorageFlags;
+        case GL_BUFFER_SIZE:
+            return BufferParam::BufferSize;
+        case GL_BUFFER_USAGE:
+            return BufferParam::BufferUsage;
+        case GL_BUFFER_ACCESS_OES:
+            return BufferParam::BufferAccess;
+        case GL_BUFFER_MAPPED:
+            return BufferParam::BufferMapped;
+        case GL_BUFFER_ACCESS_FLAGS:
+            return BufferParam::BufferAccessFlags;
+        case GL_BUFFER_MAP_LENGTH:
+            return BufferParam::BufferMapLength;
+        case GL_BUFFER_MAP_OFFSET:
+            return BufferParam::BufferMapOffset;
+        case GL_MEMORY_SIZE_ANGLE:
+            return BufferParam::MemorySize;
+        case GL_RESOURCE_INITIALIZED_ANGLE:
+            return BufferParam::ResourceInitialized;
+        default:
+            return BufferParam::InvalidEnum;
+    }
+}
+
+GLenum ToGLenum(BufferParam from)
+{
+    switch (from)
+    {
+        case BufferParam::ImmutableStorage:
+            return GL_BUFFER_IMMUTABLE_STORAGE_EXT;
+        case BufferParam::StorageFlags:
+            return GL_BUFFER_STORAGE_FLAGS_EXT;
+        case BufferParam::BufferSize:
+            return GL_BUFFER_SIZE;
+        case BufferParam::BufferUsage:
+            return GL_BUFFER_USAGE;
+        case BufferParam::BufferAccess:
+            return GL_BUFFER_ACCESS_OES;
+        case BufferParam::BufferMapped:
+            return GL_BUFFER_MAPPED;
+        case BufferParam::BufferAccessFlags:
+            return GL_BUFFER_ACCESS_FLAGS;
+        case BufferParam::BufferMapLength:
+            return GL_BUFFER_MAP_LENGTH;
+        case BufferParam::BufferMapOffset:
+            return GL_BUFFER_MAP_OFFSET;
+        case BufferParam::MemorySize:
+            return GL_MEMORY_SIZE_ANGLE;
+        case BufferParam::ResourceInitialized:
+            return GL_RESOURCE_INITIALIZED_ANGLE;
+        default:
+            UNREACHABLE();
+            return 0;
+    }
+}
+
+std::ostream &operator<<(std::ostream &os, BufferParam value)
+{
+    switch (value)
+    {
+        case BufferParam::ImmutableStorage:
+            os << "GL_BUFFER_IMMUTABLE_STORAGE_EXT";
+            break;
+        case BufferParam::StorageFlags:
+            os << "GL_BUFFER_STORAGE_FLAGS_EXT";
+            break;
+        case BufferParam::BufferSize:
+            os << "GL_BUFFER_SIZE";
+            break;
+        case BufferParam::BufferUsage:
+            os << "GL_BUFFER_USAGE";
+            break;
+        case BufferParam::BufferAccess:
+            os << "GL_BUFFER_ACCESS_OES";
+            break;
+        case BufferParam::BufferMapped:
+            os << "GL_BUFFER_MAPPED";
+            break;
+        case BufferParam::BufferAccessFlags:
+            os << "GL_BUFFER_ACCESS_FLAGS";
+            break;
+        case BufferParam::BufferMapLength:
+            os << "GL_BUFFER_MAP_LENGTH";
+            break;
+        case BufferParam::BufferMapOffset:
+            os << "GL_BUFFER_MAP_OFFSET";
+            break;
+        case BufferParam::MemorySize:
+            os << "GL_MEMORY_SIZE_ANGLE";
+            break;
+        case BufferParam::ResourceInitialized:
+            os << "GL_RESOURCE_INITIALIZED_ANGLE";
+            break;
+        default:
+            os << "GL_INVALID_ENUM";
+            break;
+    }
+    return os;
+}
+
+template <>
 BufferUsage FromGLenum<BufferUsage>(GLenum from)
 {
     switch (from)

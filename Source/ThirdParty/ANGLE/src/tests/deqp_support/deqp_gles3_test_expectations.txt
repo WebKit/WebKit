@@ -156,6 +156,7 @@
 
 // Failed after dEQP roll
 42262862 WIN D3D11 : dEQP-GLES3.functional.negative_api.buffer.renderbuffer_storage_multisample = FAIL
+479884535 : dEQP-GLES3.functional.texture.compressed.astc.block_size_remainder.* = SKIP
 
 // Basic line transform feedback tests flaky on Windows.
 40644650 WIN D3D11 : dEQP-GLES3.functional.transform_feedback.basic_types.interleaved.lines.* = FAIL

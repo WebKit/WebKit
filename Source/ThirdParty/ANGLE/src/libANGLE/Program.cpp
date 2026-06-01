@@ -1069,7 +1069,7 @@ angle::Result Program::linkJobImpl(const Caps &caps,
         &mState.mExecutable->mUniformBlocks, &mState.mExecutable->mUniforms,
         &mState.mExecutable->mUniformNames, &mState.mExecutable->mUniformMappedNames,
         &mState.mExecutable->mShaderStorageBlocks, &mState.mExecutable->mBufferVariables,
-        &mState.mExecutable->mAtomicCounterBuffers, &mState.mExecutable->mPixelLocalStorageFormats);
+        &mState.mExecutable->mAtomicCounterBuffers, &mState.mExecutable->mPixelLocalStorageLayouts);
 
     updateLinkedShaderStages();
 
@@ -1178,6 +1178,8 @@ angle::Result Program::linkJobImpl(const Caps &caps,
             mState.mExecutable->mPod.advancedBlendEquations =
                 fragmentShader->advancedBlendEquations;
             mState.mExecutable->mPod.specConstUsageBits |= fragmentShader->specConstUsageBits;
+            mState.mExecutable->mPod.hasFragCoord =
+                fragmentShader->metadataFlags.test(sh::MetadataFlags::HasFragCoord);
 
             for (uint32_t index = 0; index < IMPLEMENTATION_MAX_DRAW_BUFFERS; ++index)
             {

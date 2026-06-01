@@ -4089,6 +4089,72 @@ cl_int ValidateGetKernelSubGroupInfo(cl_kernel kernel,
                                      const void *param_value,
                                      const size_t *param_value_size_ret)
 {
+    if (!Kernel::IsValid(kernel))
+    {
+        // CL_INVALID_KERNEL if kernel is a not a valid kernel object.
+        return CL_INVALID_KERNEL;
+    }
+    const Kernel &krnl = kernel->cast<Kernel>();
+
+    if (!krnl.getProgram().hasDevice(device) ||
+        (device == nullptr && krnl.getProgram().getDevices().size() > 1))
+    {
+        // CL_INVALID_DEVICE if device is not in the list of devices associated with kernel or if
+        // device is NULL but there is more than one device associated with kernel.
+        return CL_INVALID_DEVICE;
+    }
+
+    if (Device::IsValid(device) && !device->cast<Device>().getInfo().khrSubgroups)
+    {
+        // CL_INVALID_OPERATION if device does not support sub-groups.
+        return CL_INVALID_OPERATION;
+    }
+
+    switch (param_name)
+    {
+        case KernelSubGroupInfo::SubGroupCountForNdrange:
+        case KernelSubGroupInfo::LocalSizeForSubGroupCount:
+        case KernelSubGroupInfo::MaxSubGroupSizeForNdrange:
+            if (input_value == nullptr)
+            {
+                // CL_INVALID_VALUE if input_value is NULL
+                return CL_INVALID_VALUE;
+            }
+
+            if (param_name == KernelSubGroupInfo::LocalSizeForSubGroupCount)
+            {
+                if (input_value_size != sizeof(size_t))
+                {
+                    // CL_INVALID_VALUE if param_name is CL_KERNEL_LOCAL_SIZE_FOR_SUB_GROUP_COUNT
+                    // and the size in bytes specified by input_value_size is not valid
+                    return CL_INVALID_VALUE;
+                }
+            }
+            else
+            {
+                const size_t dims            = input_value_size / sizeof(size_t);
+                const bool isMultiple        = (input_value_size % sizeof(size_t) == 0);
+                size_t maxWorkItemDimensions = 0;
+                angle::Result getInfoResult =
+                    device->cast<Device>().getInfo(DeviceInfo::MaxWorkItemDimensions,
+                                                   sizeof(size_t), &maxWorkItemDimensions, nullptr);
+                // MaxWorkItemDimensions is always handled
+                ASSERT(!IsError(getInfoResult));
+
+                if (!isMultiple || dims == 0 || dims > maxWorkItemDimensions)
+                {
+                    // CL_INVALID_VALUE if param_name is CL_KERNEL_MAX_SUB_GROUP_SIZE_FOR_NDRANGE,
+                    // CL_KERNEL_SUB_GROUP_COUNT_FOR_NDRANGE and the size in bytes specified by
+                    // input_value_size is not valid
+                    return CL_INVALID_VALUE;
+                }
+            }
+            break;
+        default:
+            // CL_INVALID_VALUE if param_name is not one of the supported values
+            return CL_INVALID_VALUE;
+    }
+
     return CL_SUCCESS;
 }
 
@@ -4363,6 +4429,20 @@ cl_int ValidateIcdGetFunctionAddressForPlatformKHR(cl_platform_id platform, cons
 cl_int ValidateIcdSetPlatformDispatchDataKHR(cl_platform_id platform, const void *dispatch_data)
 {
     return CL_SUCCESS;
+}
+
+cl_int ValidateGetKernelSubGroupInfoKHR(cl_kernel kernel,
+                                        cl_device_id device,
+                                        KernelSubGroupInfo param_namePacked,
+                                        size_t input_value_size,
+                                        const void *input_value,
+                                        size_t param_value_size,
+                                        const void *param_value,
+                                        const size_t *param_value_size_ret)
+{
+    return ValidateGetKernelSubGroupInfo(kernel, device, param_namePacked, input_value_size,
+                                         input_value, param_value_size, param_value,
+                                         param_value_size_ret);
 }
 
 }  // namespace cl

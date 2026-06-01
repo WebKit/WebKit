@@ -677,8 +677,8 @@ TEST_P(VulkanMemoryTest, AllocateVMAImageAfterFreeing2DArrayGarbageWhenDeviceOOM
                         kTextureHeight, 1, GL_RGBA, GL_UNSIGNED_BYTE, textureColor.data());
     }
 
-    ANGLE_GL_PROGRAM(drawTex2DArray, essl1_shaders::vs::Texture2DArray(),
-                     essl1_shaders::fs::Texture2DArray());
+    ANGLE_GL_PROGRAM(drawTex2DArray, essl3_shaders::vs::Texture2DArray(),
+                     essl3_shaders::fs::Texture2DArray());
     drawQuad(drawTex2DArray, essl1_shaders::PositionAttrib(), 0.5f);
 
     // Fill up the device memory until we start allocating on the system memory.

@@ -2655,6 +2655,45 @@ void OutputWGSLTraverser::emitType(const TType &type)
     return RunAtTheEndOfShader(compiler, root, assignment, symbolTable);
 }
 
+// This operation performs the viewport depth translation needed by WGPU. GL uses a
+// clip space z range of -1 to +1 where as WGPU uses 0 to 1. The translation becomes
+// this expression
+//
+//     z_wgpu = 0.5 * (w_gl + z_gl)
+//
+// where z_wgpu is the depth output of a WGPU vertex shader and z_gl is the same for GL.
+bool AppendVertexShaderDepthCorrectionToMain(TCompiler *compiler,
+                                             TIntermBlock *root,
+                                             const DriverUniform *driverUniforms)
+{
+    const TVariable *position  = BuiltInVariable::gl_Position();
+    TIntermSymbol *positionRef = new TIntermSymbol(position);
+
+    TVector<uint32_t> swizzleOffsetZ = {2};
+    TIntermSwizzle *positionZ        = new TIntermSwizzle(positionRef, swizzleOffsetZ);
+
+    TIntermConstantUnion *oneHalf = CreateFloatNode(0.5f, EbpMedium);
+
+    TVector<uint32_t> swizzleOffsetW = {3};
+    TIntermSwizzle *positionW        = new TIntermSwizzle(positionRef->deepCopy(), swizzleOffsetW);
+
+    // Create the expression "(gl_Position.z + gl_Position.w) * 0.5".
+    TIntermBinary *zPlusW = new TIntermBinary(EOpAdd, positionZ->deepCopy(), positionW->deepCopy());
+    TIntermBinary *halfZPlusW = new TIntermBinary(EOpMul, zPlusW, oneHalf->deepCopy());
+
+    // Create the assignment "gl_Position.z = (gl_Position.z + gl_Position.w) * 0.5"
+    TIntermTyped *positionZLHS = positionZ->deepCopy();
+    TIntermBinary *assignment  = new TIntermBinary(TOperator::EOpAssign, positionZLHS, halfZPlusW);
+
+    // Apply depth correction if needed
+    TIntermBlock *block = new TIntermBlock;
+    block->appendStatement(assignment);
+    TIntermIfElse *ifCall = new TIntermIfElse(driverUniforms->getTransformDepth(), block, nullptr);
+
+    // Append the assignment as a statement at the end of the shader.
+    return RunAtTheEndOfShader(compiler, root, ifCall, &compiler->getSymbolTable());
+}
+
 }  // namespace
 
 TranslatorWGSL::TranslatorWGSL(sh::GLenum type, ShShaderSpec spec, ShShaderOutput output)
@@ -2707,6 +2746,11 @@ bool TranslatorWGSL::preTranslateTreeModifications(TIntermBlock *root,
         flipNegY = (new TIntermSwizzle(flipNegY, {1}))->fold(nullptr);
 
         if (!AppendVertexShaderPositionYCorrectionToMain(this, root, &getSymbolTable(), flipNegY))
+        {
+            return false;
+        }
+
+        if (!AppendVertexShaderDepthCorrectionToMain(this, root, &driverUniforms))
         {
             return false;
         }

@@ -331,6 +331,7 @@ enum class RenderPassClosureReason
     CopyBufferToTexture,
     CopyTextureToTexture,
     CopyImage,
+    ClearWithDraw,
 
     InvalidEnum,
     EnumCount = InvalidEnum,

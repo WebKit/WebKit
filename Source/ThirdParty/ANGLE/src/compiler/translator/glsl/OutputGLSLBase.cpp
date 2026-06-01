@@ -401,7 +401,7 @@ const char *TOutputGLSLBase::mapQualifierToString(TQualifier qualifier)
     switch (qualifier)
     {
         // When emulated, gl_ViewID_OVR uses flat qualifiers.
-        case EvqViewIDOVR:
+        case EvqEmulatedViewIDOVR:
             return mShaderType == GL_FRAGMENT_SHADER ? "flat in" : "flat out";
 
         // gl_ClipDistance / gl_CullDistance require different qualifiers based on shader type.

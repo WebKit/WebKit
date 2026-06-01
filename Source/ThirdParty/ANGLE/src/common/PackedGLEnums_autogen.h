@@ -68,6 +68,29 @@ BufferBinding FromGLenum<BufferBinding>(GLenum from);
 GLenum ToGLenum(BufferBinding from);
 std::ostream &operator<<(std::ostream &os, BufferBinding value);
 
+enum class BufferParam : uint8_t
+{
+    ImmutableStorage    = 0,
+    StorageFlags        = 1,
+    BufferSize          = 2,
+    BufferUsage         = 3,
+    BufferAccess        = 4,
+    BufferMapped        = 5,
+    BufferAccessFlags   = 6,
+    BufferMapLength     = 7,
+    BufferMapOffset     = 8,
+    MemorySize          = 9,
+    ResourceInitialized = 10,
+
+    InvalidEnum = 11,
+    EnumCount   = 11,
+};
+
+template <>
+BufferParam FromGLenum<BufferParam>(GLenum from);
+GLenum ToGLenum(BufferParam from);
+std::ostream &operator<<(std::ostream &os, BufferParam value);
+
 enum class BufferUsage : uint8_t
 {
     DynamicCopy = 0,

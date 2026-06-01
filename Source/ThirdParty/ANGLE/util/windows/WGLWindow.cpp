@@ -420,6 +420,16 @@ WGLWindow::Display WGLWindow::getCurrentDisplay()
     return nullptr;
 }
 
+WGLWindow::Surface WGLWindow::getCurrentSurface(EGLint readdraw)
+{
+    return nullptr;
+}
+
+EGLContext WGLWindow::getCurrentContext()
+{
+    return _wglGetCurrentContext();
+}
+
 WGLWindow::Surface WGLWindow::createPbufferSurface(const EGLint *attrib_list)
 {
     std::cerr << "WGLWindow::createPbufferSurface not implemented.\n";

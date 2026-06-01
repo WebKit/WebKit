@@ -1619,6 +1619,11 @@ void ANGLETestBase::setConfigStencilBits(int bits)
     mFixture->configParams.stencilBits = bits;
 }
 
+void ANGLETestBase::setConfigColorSpace(EGLenum colorSpace)
+{
+    mFixture->configParams.colorSpace = colorSpace;
+}
+
 void ANGLETestBase::setConfigComponentType(EGLenum componentType)
 {
     mFixture->configParams.componentType = componentType;

@@ -1115,8 +1115,7 @@ ANGLE_INLINE void CommandBuffer::pushConstants(const PipelineLayout &layout,
                                                const void *data)
 {
     ASSERT(valid() && layout.valid());
-    ASSERT(offset == 0);
-    vkCmdPushConstants(mHandle, layout.getHandle(), flag, 0, size, data);
+    vkCmdPushConstants(mHandle, layout.getHandle(), flag, offset, size, data);
 }
 
 ANGLE_INLINE void CommandBuffer::setBlendConstants(const float blendConstants[4])

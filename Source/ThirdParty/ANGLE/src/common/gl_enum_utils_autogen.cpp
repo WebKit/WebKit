@@ -2921,10 +2921,12 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
                 case 0x96EA:
                     return "GL_PIXEL_LOCAL_TEXTURE_LAYER_ANGLE";
                 case 0x96EB:
-                    return "GL_PIXEL_LOCAL_CLEAR_VALUE_FLOAT_ANGLE";
+                    return "GL_PIXEL_LOCAL_USAGE_ANGLE";
                 case 0x96EC:
-                    return "GL_PIXEL_LOCAL_CLEAR_VALUE_INT_ANGLE";
+                    return "GL_PIXEL_LOCAL_CLEAR_VALUE_FLOAT_ANGLE";
                 case 0x96ED:
+                    return "GL_PIXEL_LOCAL_CLEAR_VALUE_INT_ANGLE";
+                case 0x96EE:
                     return "GL_PIXEL_LOCAL_CLEAR_VALUE_UNSIGNED_INT_ANGLE";
                 case 0x9EA0:
                     return "GL_RENDERABILITY_VALIDATION_ANGLE";
@@ -6279,18 +6281,7 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
             }
         }
 
-        case GLESEnum::PLSQueryFloat:
-        {
-            switch (value)
-            {
-                case 0x96EB:
-                    return "GL_PIXEL_LOCAL_CLEAR_VALUE_FLOAT_ANGLE";
-                default:
-                    return UnknownEnumToString(value);
-            }
-        }
-
-        case GLESEnum::PLSQueryInt:
+        case GLESEnum::PLSPlaneParameterName:
         {
             switch (value)
             {
@@ -6302,9 +6293,13 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
                     return "GL_PIXEL_LOCAL_TEXTURE_LEVEL_ANGLE";
                 case 0x96EA:
                     return "GL_PIXEL_LOCAL_TEXTURE_LAYER_ANGLE";
+                case 0x96EB:
+                    return "GL_PIXEL_LOCAL_USAGE_ANGLE";
                 case 0x96EC:
-                    return "GL_PIXEL_LOCAL_CLEAR_VALUE_INT_ANGLE";
+                    return "GL_PIXEL_LOCAL_CLEAR_VALUE_FLOAT_ANGLE";
                 case 0x96ED:
+                    return "GL_PIXEL_LOCAL_CLEAR_VALUE_INT_ANGLE";
+                case 0x96EE:
                     return "GL_PIXEL_LOCAL_CLEAR_VALUE_UNSIGNED_INT_ANGLE";
                 default:
                     return UnknownEnumToString(value);
@@ -12345,14 +12340,16 @@ static StringEnumEntry g_stringEnumTable[] = {
     {"GL_PIXEL_FRAGMENT_ALPHA_SOURCE_SGIS", 0x8355},
     {"GL_PIXEL_FRAGMENT_RGB_SOURCE_SGIS", 0x8354},
     {"GL_PIXEL_GROUP_COLOR_SGIS", 0x8356},
-    {"GL_PIXEL_LOCAL_CLEAR_VALUE_FLOAT_ANGLE", 0x96EB},
-    {"GL_PIXEL_LOCAL_CLEAR_VALUE_INT_ANGLE", 0x96EC},
-    {"GL_PIXEL_LOCAL_CLEAR_VALUE_UNSIGNED_INT_ANGLE", 0x96ED},
+    {"GL_PIXEL_LOCAL_CLEAR_VALUE_FLOAT_ANGLE", 0x96EC},
+    {"GL_PIXEL_LOCAL_CLEAR_VALUE_INT_ANGLE", 0x96ED},
+    {"GL_PIXEL_LOCAL_CLEAR_VALUE_UNSIGNED_INT_ANGLE", 0x96EE},
     {"GL_PIXEL_LOCAL_FORMAT_ANGLE", 0x96E7},
     {"GL_PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_ANGLE", 0x96E2},
     {"GL_PIXEL_LOCAL_TEXTURE_LAYER_ANGLE", 0x96EA},
     {"GL_PIXEL_LOCAL_TEXTURE_LEVEL_ANGLE", 0x96E9},
     {"GL_PIXEL_LOCAL_TEXTURE_NAME_ANGLE", 0x96E8},
+    {"GL_PIXEL_LOCAL_USAGE_ALWAYS_NONCOHERENT_BIT_ANGLE", 0x0001},
+    {"GL_PIXEL_LOCAL_USAGE_ANGLE", 0x96EB},
     {"GL_PIXEL_MAG_FILTER_EXT", 0x8331},
     {"GL_PIXEL_MAP_A_TO_A", 0x0C79},
     {"GL_PIXEL_MAP_A_TO_A_SIZE", 0x0CB9},

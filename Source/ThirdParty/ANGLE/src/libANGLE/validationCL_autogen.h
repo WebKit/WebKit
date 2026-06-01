@@ -603,6 +603,16 @@ cl_int ValidateIcdGetPlatformIDsKHR(cl_uint num_entries,
                                     const cl_uint *num_platforms);
 cl_int ValidateIcdGetFunctionAddressForPlatformKHR(cl_platform_id platform, const char *func_name);
 cl_int ValidateIcdSetPlatformDispatchDataKHR(cl_platform_id platform, const void *dispatch_data);
+
+// cl_khr_subgroups
+cl_int ValidateGetKernelSubGroupInfoKHR(cl_kernel in_kernel,
+                                        cl_device_id in_device,
+                                        KernelSubGroupInfo param_namePacked,
+                                        size_t input_value_size,
+                                        const void *input_value,
+                                        size_t param_value_size,
+                                        const void *param_value,
+                                        const size_t *param_value_size_ret);
 }  // namespace cl
 
 #endif  // LIBANGLE_VALIDATION_CL_AUTOGEN_H_

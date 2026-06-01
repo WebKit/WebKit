@@ -70,6 +70,28 @@ class EGLBufferAgeTest : public ANGLETest<>
         return result;
     }
 
+    virtual bool chooseConfigWithPreserved(EGLConfig *config) const
+    {
+        EGLint count         = 0;
+        EGLint clientVersion = mMajorVersion == 3 ? EGL_OPENGL_ES3_BIT : EGL_OPENGL_ES2_BIT;
+        EGLint attribs[]     = {EGL_RED_SIZE,
+                                8,
+                                EGL_GREEN_SIZE,
+                                8,
+                                EGL_BLUE_SIZE,
+                                8,
+                                EGL_ALPHA_SIZE,
+                                0,
+                                EGL_RENDERABLE_TYPE,
+                                clientVersion,
+                                EGL_SURFACE_TYPE,
+                                EGL_WINDOW_BIT | EGL_SWAP_BEHAVIOR_PRESERVED_BIT,
+                                EGL_NONE};
+
+        EXPECT_EGL_TRUE(eglChooseConfig(mDisplay, attribs, config, 1, &count));
+        return count > 0;
+    }
+
     bool createContext(EGLConfig config, EGLContext *context)
     {
         bool result      = false;
@@ -373,6 +395,134 @@ TEST_P(EGLBufferAgeTest, VerifyContents)
     context = EGL_NO_CONTEXT;
 }
 
+// Verify that buffer age query is correct if the preserved behavior is set after many swaps.
+TEST_P(EGLBufferAgeTest, VerifyContentsAfterSwapBehaviorSwitch)
+{
+    ANGLE_SKIP_TEST_IF(!mExtensionSupported);
+
+    EGLConfig config = EGL_NO_CONFIG_KHR;
+    ANGLE_SKIP_TEST_IF(!chooseConfigWithPreserved(&config));
+
+    EGLContext context = EGL_NO_CONTEXT;
+    EXPECT_TRUE(createContext(config, &context));
+    ASSERT_EGL_SUCCESS() << "eglCreateContext failed.";
+
+    EGLSurface surface = EGL_NO_SURFACE;
+
+    OSWindow *osWindow = OSWindow::New();
+    osWindow->initialize("EGLBufferAgeTest_MSAA", kWidth, kHeight);
+    EXPECT_TRUE(createWindowSurface(config, osWindow->getNativeWindow(), &surface));
+    ASSERT_EGL_SUCCESS() << "eglCreateWindowSurface failed.";
+
+    EXPECT_TRUE(eglMakeCurrent(mDisplay, surface, surface, context));
+    ASSERT_EGL_SUCCESS() << "eglMakeCurrent failed.";
+
+    EGLint defaultBehavior = EGL_BUFFER_DESTROYED;
+    EXPECT_EGL_TRUE(eglQuerySurface(mDisplay, surface, EGL_SWAP_BEHAVIOR, &defaultBehavior));
+
+    // Issue a number of swaps without querying the buffer age.
+    glClearColor(0, 0, 0, 0);
+    glClearDepthf(0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    GLuint program = CompileProgram(essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    GLint colorLocation = glGetUniformLocation(program, essl1_shaders::ColorUniform());
+    glUseProgram(program);
+
+    for (uint32_t i = 0; i < 5; ++i)
+    {
+        glUniform4fv(colorLocation, 1, GLColor(i * 50, 0, 0, 255).toNormalizedVector().data());
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+        eglSwapBuffers(mDisplay, surface);
+        ASSERT_EGL_SUCCESS() << "eglSwapBuffers failed.";
+    }
+
+    // Set behavior to PRESERVED.  This is done after swap, so contents of previous frame aren't
+    // expected to have been preserved.
+    EXPECT_TRUE(eglSurfaceAttrib(mDisplay, surface, EGL_SWAP_BEHAVIOR, EGL_BUFFER_PRESERVED));
+
+    // Query the age.  If the default behavior is PRESERVED, age should be 1.  Otherwise age could
+    // be anything.
+    EGLint age = 0;
+    age        = queryAge(surface);
+    if (defaultBehavior == EGL_BUFFER_DESTROYED)
+    {
+        EXPECT_GE(age, 0);
+    }
+    else
+    {
+        EXPECT_EQ(age, 1);
+        EXPECT_PIXEL_COLOR_EQ(1, 1, GLColor(200, 0, 0, 255));
+    }
+
+    // Issue a few other swaps, the age should be 1 from here on out because behavior is PRESERVED.
+    for (uint32_t i = 0; i < 6; i++)
+    {
+        glUniform4fv(colorLocation, 1, GLColor(0, i * 40, 0, 255).toNormalizedVector().data());
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+        eglSwapBuffers(mDisplay, surface);
+        ASSERT_EGL_SUCCESS() << "eglSwapBuffers failed.";
+
+        age = queryAge(surface);
+        EXPECT_EQ(age, 1);
+        EXPECT_PIXEL_COLOR_EQ(1, 1, GLColor(0, i * 40, 0, 255));
+    }
+
+    // Set behavior to DESTROYED.  Content must be rendered correctly, and age query should work as
+    // expected.
+    EXPECT_TRUE(eglSurfaceAttrib(mDisplay, surface, EGL_SWAP_BEHAVIOR, EGL_BUFFER_DESTROYED));
+
+    const angle::GLColor kLightGray(191, 191, 191, 255);  // 0.75
+    const angle::GLColor kDarkGray(64, 64, 64, 255);      // 0.25
+    const angle::GLColor kColorSet[] = {
+        GLColor::blue,  GLColor::cyan,   kDarkGray,      GLColor::green,   GLColor::red,
+        GLColor::white, GLColor::yellow, GLColor::black, GLColor::magenta, kLightGray,
+        GLColor::black,  // Extra loops until color cycled through
+        GLColor::black, GLColor::black,  GLColor::black, GLColor::black};
+
+    angle::GLColor expectedColor = GLColor::black;
+    int loopCount                = (sizeof(kColorSet) / sizeof(kColorSet[0]));
+    for (int i = 0; i < loopCount; i++)
+    {
+        age = queryAge(surface);
+        if (age > 0)
+        {
+            // Check that color/content is what we expect.  The age could refer to rendering done in
+            // the previous loops.
+            if (age <= i)
+            {
+                expectedColor = kColorSet[i - age];
+            }
+            else if (age <= i + 6)
+            {
+                expectedColor = GLColor(0, (6 - (age - i)) * 40, 0, 255);
+            }
+            else
+            {
+                ASSERT_LE(age, i + 11);
+                expectedColor = GLColor((11 - (age - i)) * 50, 0, 0, 255);
+            }
+            EXPECT_PIXEL_COLOR_EQ(1, 1, expectedColor);
+        }
+
+        glUniform4fv(colorLocation, 1, kColorSet[i].toNormalizedVector().data());
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+        EXPECT_PIXEL_COLOR_EQ(0, 0, kColorSet[i]);
+        eglSwapBuffers(mDisplay, surface);
+    }
+
+    EXPECT_TRUE(eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, context));
+    ASSERT_EGL_SUCCESS() << "eglMakeCurrent - uncurrent failed.";
+
+    eglDestroySurface(mDisplay, surface);
+    surface = EGL_NO_SURFACE;
+    osWindow->destroy();
+    OSWindow::Delete(&osWindow);
+
+    eglDestroyContext(mDisplay, context);
+    context = EGL_NO_CONTEXT;
+}
+
 // Verify contents of buffer are as expected for a multisample image
 TEST_P(EGLBufferAgeTest_MSAA, VerifyContentsForMultisampled)
 {
@@ -429,6 +579,98 @@ TEST_P(EGLBufferAgeTest_MSAA, VerifyContentsForMultisampled)
     }
 
     EXPECT_GE(age, 0);
+
+    EXPECT_TRUE(eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, context));
+    ASSERT_EGL_SUCCESS() << "eglMakeCurrent - uncurrent failed.";
+
+    eglDestroySurface(mDisplay, surface);
+    surface = EGL_NO_SURFACE;
+    osWindow->destroy();
+    OSWindow::Delete(&osWindow);
+
+    eglDestroyContext(mDisplay, context);
+    context = EGL_NO_CONTEXT;
+}
+
+// Verify that buffer age query is correct if the preserved behavior is set after many swaps.
+TEST_P(EGLBufferAgeTest_MSAA, VerifyContentsAfterSwapBehaviorSwitch)
+{
+    ANGLE_SKIP_TEST_IF(!mExtensionSupported);
+
+    EGLConfig config = EGL_NO_CONFIG_KHR;
+    EXPECT_TRUE(chooseConfig(&config));
+
+    {
+        // Nothing to test if the PRESERVED behavior is not supported.
+        EGLint surfaceType;
+        EXPECT_EGL_TRUE(eglGetConfigAttrib(mDisplay, config, EGL_SURFACE_TYPE, &surfaceType));
+        ANGLE_SKIP_TEST_IF((surfaceType & EGL_SWAP_BEHAVIOR_PRESERVED_BIT) == 0);
+    }
+
+    EGLContext context = EGL_NO_CONTEXT;
+    EXPECT_TRUE(createContext(config, &context));
+    ASSERT_EGL_SUCCESS() << "eglCreateContext failed.";
+
+    EGLSurface surface = EGL_NO_SURFACE;
+
+    OSWindow *osWindow = OSWindow::New();
+    osWindow->initialize("EGLBufferAgeTest_MSAA", kWidth, kHeight);
+    EXPECT_TRUE(createWindowSurface(config, osWindow->getNativeWindow(), &surface));
+    ASSERT_EGL_SUCCESS() << "eglCreateWindowSurface failed.";
+
+    EXPECT_TRUE(eglMakeCurrent(mDisplay, surface, surface, context));
+    ASSERT_EGL_SUCCESS() << "eglMakeCurrent failed.";
+
+    EGLint defaultBehavior = EGL_BUFFER_DESTROYED;
+    EXPECT_EGL_TRUE(eglQuerySurface(mDisplay, surface, EGL_SWAP_BEHAVIOR, &defaultBehavior));
+
+    // Issue a number of swaps without querying the buffer age.
+    glClearColor(0, 0, 0, 0);
+    glClearDepthf(0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    GLuint program = CompileProgram(essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    GLint colorLocation = glGetUniformLocation(program, essl1_shaders::ColorUniform());
+    glUseProgram(program);
+
+    for (uint32_t i = 0; i < 5; ++i)
+    {
+        glUniform4fv(colorLocation, 1, GLColor(i * 50, 0, 0, 255).toNormalizedVector().data());
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+        eglSwapBuffers(mDisplay, surface);
+        ASSERT_EGL_SUCCESS() << "eglSwapBuffers failed.";
+    }
+
+    // Set behavior to PRESERVED.  This is done after swap, so contents of previous frame aren't
+    // expected to have been preserved.
+    EXPECT_TRUE(eglSurfaceAttrib(mDisplay, surface, EGL_SWAP_BEHAVIOR, EGL_BUFFER_PRESERVED));
+
+    // Query the age.  If the default behavior is PRESERVED, age should be 1.  Otherwise age could
+    // be anything.
+    EGLint age = 0;
+    age        = queryAge(surface);
+    if (defaultBehavior == EGL_BUFFER_DESTROYED)
+    {
+        EXPECT_GE(age, 0);
+    }
+    else
+    {
+        EXPECT_EQ(age, 1);
+        EXPECT_PIXEL_COLOR_EQ(1, 1, GLColor(200, 0, 0, 255));
+    }
+
+    // Issue a few other swaps, the age should be 1 from here on out because behavior is PRESERVED.
+    for (uint32_t i = 0; i < 6; i++)
+    {
+        glUniform4fv(colorLocation, 1, GLColor(0, i * 40, 0, 255).toNormalizedVector().data());
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+        eglSwapBuffers(mDisplay, surface);
+        ASSERT_EGL_SUCCESS() << "eglSwapBuffers failed.";
+
+        age = queryAge(surface);
+        EXPECT_EQ(age, 1);
+        EXPECT_PIXEL_COLOR_EQ(1, 1, GLColor(0, i * 40, 0, 255));
+    }
 
     EXPECT_TRUE(eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, context));
     ASSERT_EGL_SUCCESS() << "eglMakeCurrent - uncurrent failed.";
@@ -626,26 +868,8 @@ TEST_P(EGLBufferAgeTest, BufferPreserved)
 {
     ANGLE_SKIP_TEST_IF(!mExtensionSupported);
 
-    EGLConfig config     = EGL_NO_CONFIG_KHR;
-    EGLint count         = 0;
-    EGLint clientVersion = mMajorVersion == 3 ? EGL_OPENGL_ES3_BIT : EGL_OPENGL_ES2_BIT;
-    EGLint attribs[]     = {EGL_RED_SIZE,
-                            8,
-                            EGL_GREEN_SIZE,
-                            8,
-                            EGL_BLUE_SIZE,
-                            8,
-                            EGL_ALPHA_SIZE,
-                            0,
-                            EGL_RENDERABLE_TYPE,
-                            clientVersion,
-                            EGL_SURFACE_TYPE,
-                            EGL_WINDOW_BIT | EGL_SWAP_BEHAVIOR_PRESERVED_BIT,
-                            EGL_NONE};
-
-    EXPECT_EGL_TRUE(eglChooseConfig(mDisplay, attribs, &config, 1, &count));
-    // Skip if no configs, this indicates EGL_BUFFER_PRESERVED is not supported.
-    ANGLE_SKIP_TEST_IF(count == 0);
+    EGLConfig config = EGL_NO_CONFIG_KHR;
+    ANGLE_SKIP_TEST_IF(!chooseConfigWithPreserved(&config));
 
     EGLContext context = EGL_NO_CONTEXT;
     EXPECT_TRUE(createContext(config, &context));
@@ -661,14 +885,19 @@ TEST_P(EGLBufferAgeTest, BufferPreserved)
     EXPECT_TRUE(eglMakeCurrent(mDisplay, surface, surface, context));
     ASSERT_EGL_SUCCESS() << "eglMakeCurrent failed.";
 
+    // Set behavior to PRESERVED, if not default.
+    EXPECT_TRUE(eglSurfaceAttrib(mDisplay, surface, EGL_SWAP_BEHAVIOR, EGL_BUFFER_PRESERVED));
+
     glClearColor(1.0, 0.0, 0.0, 1.0);
 
     const uint32_t loopcount = 10;
-    EGLint expectedAge       = 1;
+    EGLint expectedAge       = 0;
     for (uint32_t i = 0; i < loopcount; i++)
     {
         EGLint age = queryAge(surface);
         EXPECT_EQ(age, expectedAge);
+        // After the first frame, the age must always be 1.
+        expectedAge = 1;
 
         glClear(GL_COLOR_BUFFER_BIT);
         ASSERT_GL_NO_ERROR() << "glClear failed";

@@ -93,6 +93,33 @@ angle::Result GetCheckedAllocationSizeAndRowPitch(uint32_t rowBytes,
     return angle::Result::Continue;
 }
 
+WGPUTextureFormat GetDepthOnlyFormat(WGPUTextureFormat format)
+{
+    if (format == WGPUTextureFormat_Depth24PlusStencil8)
+    {
+        return WGPUTextureFormat_Depth24Plus;
+    }
+    else if (format == WGPUTextureFormat_Depth32FloatStencil8)
+    {
+        return WGPUTextureFormat_Depth32Float;
+    }
+
+    UNREACHABLE();
+    return format;
+}
+
+WGPUTextureFormat GetStencilOnlyFormat(WGPUTextureFormat format)
+{
+    if (format == WGPUTextureFormat_Depth24PlusStencil8 ||
+        format == WGPUTextureFormat_Depth32FloatStencil8)
+    {
+        return WGPUTextureFormat_Stencil8;
+    }
+
+    UNREACHABLE();
+    return format;
+}
+
 }  // namespace
 
 ImageHelper::ImageHelper() {}
@@ -385,7 +412,8 @@ angle::Result ImageHelper::CopyImage(ContextWgpu *contextWgpu,
                                      const gl::Offset &dstOffset,
                                      gl::LevelIndex sourceLevelGL,
                                      uint32_t sourceLayer,
-                                     const gl::Box &sourceBox)
+                                     const gl::Box &sourceBox,
+                                     WGPUTextureAspect aspect)
 {
     gl::LevelIndex dstLevel(dstIndex.getLevelIndex());
     uint32_t dstLayerOrZOffset = dstIndex.hasLayer() ? dstIndex.getLayerIndex() : dstOffset.z;
@@ -396,6 +424,7 @@ angle::Result ImageHelper::CopyImage(ContextWgpu *contextWgpu,
     src.origin.x                 = static_cast<uint32_t>(sourceBox.x);
     src.origin.y                 = static_cast<uint32_t>(sourceBox.y);
     src.origin.z                 = sourceLayer;
+    src.aspect                   = aspect;
 
     WGPUTexelCopyTextureInfo dst = WGPU_TEXEL_COPY_TEXTURE_INFO_INIT;
     dst.texture                  = mTexture.get();
@@ -403,6 +432,7 @@ angle::Result ImageHelper::CopyImage(ContextWgpu *contextWgpu,
     dst.origin.x                 = static_cast<uint32_t>(dstOffset.x);
     dst.origin.y                 = static_cast<uint32_t>(dstOffset.y);
     dst.origin.z                 = dstLayerOrZOffset;
+    dst.aspect                   = aspect;
 
     WGPUExtent3D copySize = {static_cast<uint32_t>(sourceBox.width),
                              static_cast<uint32_t>(sourceBox.height),
@@ -556,7 +586,7 @@ angle::Result ImageHelper::readPixels(rx::ContextWgpu *contextWgpu,
     copyBuffer.buffer                  = bufferHelper.getBuffer().get();
     copyBuffer.layout = textureDataLayout;
 
-    WGPUTexelCopyTextureInfo copyTexture WGPU_TEXEL_COPY_TEXTURE_INFO_INIT;
+    WGPUTexelCopyTextureInfo copyTexture = WGPU_TEXEL_COPY_TEXTURE_INFO_INIT;
     copyTexture.origin.x = area.x;
     copyTexture.origin.y = area.y;
     copyTexture.origin.z = layer;
@@ -580,10 +610,11 @@ angle::Result ImageHelper::readPixels(rx::ContextWgpu *contextWgpu,
 
 angle::Result ImageHelper::createTextureViewSingleLevel(gl::LevelIndex targetLevel,
                                                         uint32_t layerIndex,
-                                                        TextureViewHandle &textureViewOut)
+                                                        TextureViewHandle &textureViewOut,
+                                                        WGPUTextureAspect aspect)
 {
     return createTextureView(targetLevel, /*levelCount=*/1, layerIndex, /*arrayLayerCount=*/1,
-                             textureViewOut, WGPUTextureViewDimension_Undefined);
+                             textureViewOut, WGPUTextureViewDimension_Undefined, aspect);
 }
 
 angle::Result ImageHelper::createFullTextureView(TextureViewHandle &textureViewOut,
@@ -600,14 +631,15 @@ angle::Result ImageHelper::createTextureView(
     uint32_t layerIndex,
     uint32_t arrayLayerCount,
     TextureViewHandle &textureViewOut,
-    Optional<WGPUTextureViewDimension> desiredViewDimension)
+    Optional<WGPUTextureViewDimension> desiredViewDimension,
+    WGPUTextureAspect aspect)
 {
     if (!isTextureLevelInAllocatedImage(targetLevel))
     {
         return angle::Result::Stop;
     }
     WGPUTextureViewDescriptor textureViewDesc = WGPU_TEXTURE_VIEW_DESCRIPTOR_INIT;
-    textureViewDesc.aspect                    = WGPUTextureAspect_All;
+    textureViewDesc.aspect                    = aspect;
     textureViewDesc.baseArrayLayer  = layerIndex;
     textureViewDesc.arrayLayerCount = arrayLayerCount;
     textureViewDesc.baseMipLevel    = toWgpuLevel(targetLevel).get();
@@ -637,8 +669,18 @@ angle::Result ImageHelper::createTextureView(
     {
         textureViewDesc.dimension = desiredViewDimension.value();
     }
+
     textureViewDesc.format = mTextureDescriptor.format;
-    textureViewOut         = TextureViewHandle::Acquire(
+    if (aspect == WGPUTextureAspect_DepthOnly)
+    {
+        textureViewDesc.format = GetDepthOnlyFormat(mTextureDescriptor.format);
+    }
+    else if (aspect == WGPUTextureAspect_StencilOnly)
+    {
+        textureViewDesc.format = GetStencilOnlyFormat(mTextureDescriptor.format);
+    }
+
+    textureViewOut = TextureViewHandle::Acquire(
         mProcTable, mProcTable->textureCreateView(mTexture.get(), &textureViewDesc));
     return angle::Result::Continue;
 }

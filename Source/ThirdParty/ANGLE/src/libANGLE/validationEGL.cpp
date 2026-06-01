@@ -7268,7 +7268,7 @@ bool ValidateSetDamageRegionKHR(const ValidationContext *val,
         return false;
     }
 
-    if (surface->getSwapBehavior() != EGL_BUFFER_DESTROYED)
+    if (surface->getRequestedSwapBehavior() != EGL_BUFFER_DESTROYED)
     {
         val->setError(EGL_BAD_MATCH, "surface's swap behavior is not EGL_BUFFER_DESTROYED");
         return false;

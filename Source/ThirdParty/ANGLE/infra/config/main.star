@@ -12,6 +12,7 @@ main.star: lucicfg configuration for Angle's standalone builders.
 
 load("@chromium-luci//builders.star", "os")
 load("@chromium-luci//chromium_luci.star", "chromium_luci")
+load("@chromium-luci//consoles.star", "consoles")
 
 # Use LUCI Scheduler BBv2 names and add Scheduler realms configs.
 lucicfg.enable_experiment("crbug.com/1182002")
@@ -131,6 +132,26 @@ chromium_luci.configure_recipe_experiments(
     # This can be removed once all builders use the chromium-luci wrappers for
     # creating builders instead of directly calling luci.builder().
     require_builder_wrappers = False,
+)
+
+# Allow builders to write baselines and query ResultDB for new tests.
+luci.realm(
+    name = "@project",
+    bindings = [
+        luci.binding(
+            roles = "role/resultdb.baselineWriter",
+            users = [
+                "angle-ci-builder@chops-service-accounts.iam.gserviceaccount.com",
+                "angle-try-builder@chops-service-accounts.iam.gserviceaccount.com",
+            ],
+        ),
+        luci.binding(
+            roles = "role/resultdb.baselineReader",
+            users = [
+                "angle-try-builder@chops-service-accounts.iam.gserviceaccount.com",
+            ],
+        ),
+    ],
 )
 
 # Swarming permissions
@@ -282,18 +303,18 @@ luci.gitiles_poller(
 
 # Views
 
-luci.console_view(
+consoles.console_view(
     name = "ci",
     title = "ANGLE CI Builders",
     repo = "https://chromium.googlesource.com/angle/angle",
 )
 
-luci.list_view(
+consoles.list_view(
     name = "exp",
     title = "ANGLE Experimental CI Builders",
 )
 
-luci.list_view(
+consoles.list_view(
     name = "try",
     title = "ANGLE Try Builders",
 )

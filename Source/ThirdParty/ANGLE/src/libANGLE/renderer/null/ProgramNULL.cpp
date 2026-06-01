@@ -32,7 +32,7 @@ class LinkTaskNULL : public LinkTask
             mState->getAttachedShader(gl::ShaderType::Fragment);
         if (fragmentShader != nullptr)
         {
-            resources.pixelLocalStorageLinker.link(fragmentShader->pixelLocalStorageFormats);
+            resources.pixelLocalStorageLinker.link(fragmentShader->pixelLocalStorageLayouts);
         }
 
         return;

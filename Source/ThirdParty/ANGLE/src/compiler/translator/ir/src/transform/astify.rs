@@ -569,17 +569,15 @@ fn declare_temp_variable_if_high_precision_constant(
         && instruction::precision::higher_precision(id.precision, other_operands_precision)
             != other_operands_precision
     {
-        let variable_id = state.ir_meta.declare_variable(
+        let (variable_id, variable_typed_id) = state.ir_meta.declare_private_variable(
             Name::new_temp(""),
             id.type_id,
             id.precision,
-            Decorations::new_none(),
-            None,
             Some(constant_id),
             VariableScope::Local,
         );
         transforms.push(traverser::Transform::DeclareVariable(variable_id));
-        TypedId::from_variable_id(state.ir_meta, variable_id)
+        variable_typed_id
     } else {
         id
     }
@@ -774,12 +772,10 @@ fn transform_instruction(
             //     %new_id = ...
             //               Store %new_variable %new_id
             //     %id     = Load %new_variable
-            let variable_id = state.ir_meta.declare_variable(
+            let (variable_id, variable_typed_id) = state.ir_meta.declare_private_variable(
                 Name::new_temp(""),
                 id.type_id,
                 id.precision,
-                Decorations::new_none(),
-                None,
                 None,
                 VariableScope::Local,
             );
@@ -792,19 +788,18 @@ fn transform_instruction(
             transforms
                 .push(traverser::Transform::Add(BlockInstruction::new_typed(new_register_id)));
 
-            let variable_id = TypedId::from_variable_id(state.ir_meta, variable_id);
             let new_register_id =
                 TypedId::new(Id::new_register(new_register_id), id.type_id, id.precision);
 
             //               Store %new_variable %new_id
             traverser::add_void_instruction(
                 &mut transforms,
-                instruction::make!(store, state.ir_meta, variable_id, new_register_id),
+                instruction::make!(store, state.ir_meta, variable_typed_id, new_register_id),
             );
             //     %id     = Load %new_variable
             traverser::add_typed_instruction(
                 &mut transforms,
-                instruction::make_with_result_id!(load, state.ir_meta, id, variable_id),
+                instruction::make_with_result_id!(load, state.ir_meta, id, variable_typed_id),
             );
 
             transforms
@@ -833,12 +828,10 @@ fn replace_merge_input_with_variable<'block>(
     if let Some(merge_block) = &mut block.merge_block
         && let Some(input) = merge_block.input
     {
-        let variable_id = state.ir_meta.declare_variable(
+        let (variable_id, variable_typed_id) = state.ir_meta.declare_private_variable(
             Name::new_temp(""),
             input.type_id,
             input.precision,
-            Decorations::new_none(),
-            None,
             None,
             VariableScope::Local,
         );
@@ -847,14 +840,13 @@ fn replace_merge_input_with_variable<'block>(
         block.variables.push(variable_id);
 
         // Adjust the merge block as well as blocks that can `Merge`.
-        let variable_id = TypedId::from_variable_id(state.ir_meta, variable_id);
         replace_merge_input_with_variable_in_sub_blocks(
             state,
             merge_block,
             &mut block.block1,
             &mut block.block2,
             input,
-            variable_id,
+            variable_typed_id,
         );
     }
 
@@ -1052,15 +1044,16 @@ fn transform_continue_add_variable_to_enclosing_switch_blocks(
         let variable_id = match scope.propagate_break_var {
             Some(variable_id) => variable_id,
             None => {
-                let variable_id = state.ir_meta.declare_variable(
-                    Name::new_temp("propagate_break"),
-                    TYPE_ID_BOOL,
-                    Precision::NotApplicable,
-                    Decorations::new_none(),
-                    None,
-                    Some(CONSTANT_ID_FALSE),
-                    VariableScope::Local,
-                );
+                let variable_id = state
+                    .ir_meta
+                    .declare_private_variable(
+                        Name::new_temp("propagate_break"),
+                        TYPE_ID_BOOL,
+                        Precision::NotApplicable,
+                        Some(CONSTANT_ID_FALSE),
+                        VariableScope::Local,
+                    )
+                    .0;
                 scope.propagate_break_var = Some(variable_id);
                 variable_id
             }
@@ -1091,10 +1084,9 @@ fn transform_continue_adjust_condition_block(
 
     // Create a block that sets the given variables all to true, and ends in `Break`.
     let mut break_block = Block::new();
-    let constant_true = TypedId::from_constant_id(CONSTANT_ID_TRUE, TYPE_ID_BOOL);
     for variable_id in variables_to_set {
         let variable_id = TypedId::from_bool_variable_id(variable_id);
-        break_block.add_void_instruction(OpCode::Store(variable_id, constant_true));
+        break_block.add_void_instruction(OpCode::Store(variable_id, TYPED_CONSTANT_ID_TRUE));
     }
     break_block.terminate(OpCode::Break);
 

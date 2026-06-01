@@ -236,7 +236,16 @@ class PullComputeDiscontinuousAndGradientLoops : public TIntermTraverser
 
     bool visitBranch(Visit visit, TIntermBranch *node) override
     {
-        if (visit == PreVisit)
+        // A branch directly in the body of a loop does not turn it into a discontinuous loop as all
+        // lanes would take that branch.  For example a loop like the following is not
+        // discontinuous:
+        //
+        //     for (int i = 0; i < 10; ++i)
+        //     {
+        //         ...
+        //         continue;
+        //     }
+        if (visit == PreVisit && getParentNode()->getAsLoopNode() == nullptr)
         {
             switch (node->getFlowOp())
             {

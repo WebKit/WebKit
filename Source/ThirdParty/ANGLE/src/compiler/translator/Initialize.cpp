@@ -254,6 +254,17 @@ void ResetExtensionBehavior(const ShBuiltInResources &resources,
             extBehavior[TExtension::ARB_texture_rectangle] = EBhEnable;
         }
     }
+    // ANGLE_multi_draw and ANGLE_base_vertex_base_instance are always emulated, so remove them if
+    // emulation is not enabled.
+    if (resources.ANGLE_multi_draw && !compileOptions.emulateGLDrawID)
+    {
+        extBehavior.erase(TExtension::ANGLE_multi_draw);
+    }
+    if (resources.ANGLE_base_vertex_base_instance_shader_builtin &&
+        !compileOptions.emulateGLBaseVertexBaseInstance)
+    {
+        extBehavior.erase(TExtension::ANGLE_base_vertex_base_instance_shader_builtin);
+    }
 }
 
 }  // namespace sh

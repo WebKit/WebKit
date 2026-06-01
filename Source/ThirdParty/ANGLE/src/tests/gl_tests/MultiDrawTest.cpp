@@ -240,7 +240,8 @@ void main()
         std::stringstream shader;
         vertexShaderPreamble(shader) << R"(
 uniform bool boolUniform;
-uniform highp vec4 colorId0Uniform;
+// Use a mediump uniform, it can get sorted before the gl_DrawID emulated uniform
+uniform mediump vec4 colorId0Uniform;
 uniform highp vec4 colorId1Uniform;
 uniform highp vec4 colorId2Uniform;
 void main()

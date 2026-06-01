@@ -484,9 +484,7 @@ class RenderCommandEncoder final : public CommandEncoder
         return setTexture(gl::ShaderType::Vertex, texture, index);
     }
 
-    RenderCommandEncoder &setFragmentBuffer(const BufferRef &buffer,
-                                            size_t offset,
-                                            uint32_t index)
+    RenderCommandEncoder &setFragmentBuffer(const BufferRef &buffer, size_t offset, uint32_t index)
     {
         return setBuffer(gl::ShaderType::Fragment, buffer, offset, index);
     }

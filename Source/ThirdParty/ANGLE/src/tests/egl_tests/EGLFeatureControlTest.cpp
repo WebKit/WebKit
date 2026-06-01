@@ -226,7 +226,7 @@ TEST_P(EGLFeatureControlTest, OverrideFeaturesWildcard)
         // Note that we don't use the broader 'prefer_*' here because
         // prefer_monolithic_pipelines_over_libraries may affect other feature
         // flags.
-        std::vector<const char *> featuresToOverride = {"prefer_d*", nullptr};
+        std::vector<const char *> featuresToOverride = {"allow_host_image*", nullptr};
 
         std::vector<std::string> featureNameStorage;
         std::vector<bool> shouldBe;
@@ -240,7 +240,7 @@ TEST_P(EGLFeatureControlTest, OverrideFeaturesWildcard)
             std::transform(featureName.begin(), featureName.end(), featureName.begin(),
                            [](unsigned char c) { return std::tolower(c); });
 
-            const bool featureMatch = strncmp(featureName.c_str(), "preferd", 7) == 0;
+            const bool featureMatch = strncmp(featureName.c_str(), "allowhostimage", 14) == 0;
 
             std::optional<bool> overrideState;
             if (featureMatch)
@@ -300,13 +300,26 @@ TEST_P(EGLFeatureControlTest, OverrideFeaturesDependent)
         GetFeatureName(Feature::SupportsImage2dViewOf3d),
 
         // Features that must become disabled as a result of the above
+        // depends on SupportsRenderpass2
         GetFeatureName(Feature::SupportsDepthStencilResolve),
-        GetFeatureName(Feature::SupportsDepthStencilIndependentResolveNone),
-        GetFeatureName(Feature::SupportsSampler2dViewOf3d),
+        // depends on SupportsRenderpass2
+        GetFeatureName(Feature::SupportsMultisampledRenderToSingleSampled),
+        // depends on SupportsRenderpass2
         GetFeatureName(Feature::SupportsFragmentShadingRate),
+        // depends on SupportsImage2dViewOf3d
+        GetFeatureName(Feature::SupportsSampler2dViewOf3d),
 
         // Features that must become disabled as a result of the above
+        // depends on supportsDepthStencilResolve
+        GetFeatureName(Feature::SupportsDepthStencilIndependentResolveNone),
+        // depends on SupportsMultisampledRenderToSingleSampled
+        GetFeatureName(Feature::PreferMSRTSSFlagByDefault),
+        // depends on SupportsMultisampledRenderToSingleSampled
+        GetFeatureName(Feature::SupportsMultiviewMultisampleRenderToTexture),
+        // depends on SupportsFragmentShadingRate
         GetFeatureName(Feature::SupportFragmentShadingRateExtExtensions),
+        // depends on SupportsFragmentShadingRate
+        GetFeatureName(Feature::SupportsFoveatedRendering),
     };
 
     // Features that could be different on some vendors

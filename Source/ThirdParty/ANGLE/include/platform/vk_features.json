@@ -2169,6 +2169,13 @@
                 "Simulate VK_QCOM_tile_memory_heap for images on GPUs that do not support VK_QCOM_tile_memory_heap extension for testing purpose."
             ],
             "issue": "https://issuetracker.google.com/447633563"
+        },
+        {
+            "name": "supports_cl_khr_subgroups",
+            "category": "Features",
+            "description": [
+                "Enable the use of the cl_khr_subgroups OpenCL extension."
+            ]
         }
     ]
 }

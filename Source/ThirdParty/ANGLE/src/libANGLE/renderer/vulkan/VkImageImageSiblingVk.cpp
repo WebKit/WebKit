@@ -72,10 +72,12 @@ angle::Result VkImageImageSiblingVk::initImpl(DisplayVk *displayVk)
 
     // Create the image
     constexpr bool kIsRobustInitEnabled = false;
+    vk::ImageHelper::ImageFormats imageFormats = {
+        vk::GetVkFormatFromFormatID(renderer, actualImageFormatID)};
     mImage                              = new vk::ImageHelper();
     mImage->init2DWeakReference(displayVk, mVkImage.release(), getSize(), false, intendedFormatID,
                                 actualImageFormatID, mVkImageInfo.flags, mVkImageInfo.usage, 1,
-                                kIsRobustInitEnabled);
+                                kIsRobustInitEnabled, imageFormats);
 
     return angle::Result::Continue;
 }

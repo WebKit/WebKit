@@ -21,6 +21,7 @@ vulkan_backend_sources = [
   "DisplayVk.cpp",
   "DisplayVk.h",
   "DisplayVk_api.h",
+  "DriverUniforms.h",
   "FenceNVVk.cpp",
   "FenceNVVk.h",
   "FramebufferVk.cpp",

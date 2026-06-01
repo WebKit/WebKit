@@ -157,7 +157,6 @@ RendererGL::RendererGL(std::unique_ptr<FunctionsGL> functions,
       mMultiviewClearer(nullptr),
       mUseDebugOutput(false),
       mCapsInitialized(false),
-      mMultiviewImplementationType(MultiviewImplementationTypeGL::UNSPECIFIED),
       mNativeParallelCompileEnabled(false),
       mNeedsFlushBeforeDeleteTextures(false)
 {
@@ -280,8 +279,7 @@ void RendererGL::generateCaps(gl::Caps *outCaps,
                               gl::Limitations *outLimitations) const
 {
     nativegl_gl::GenerateCaps(mFunctions.get(), mFeatures, outCaps, outTextureCaps, outExtensions,
-                              outLimitations, &mMaxSupportedESVersion,
-                              &mMultiviewImplementationType, &mNativePLSOptions);
+                              outLimitations, &mMaxSupportedESVersion, &mNativePLSOptions);
 }
 
 GLint RendererGL::getGPUDisjoint()
@@ -333,12 +331,6 @@ const gl::Limitations &RendererGL::getNativeLimitations() const
 const ShPixelLocalStorageOptions &RendererGL::getNativePixelLocalStorageOptions() const
 {
     return mNativePLSOptions;
-}
-
-MultiviewImplementationTypeGL RendererGL::getMultiviewImplementationType() const
-{
-    ensureCapsInitialized();
-    return mMultiviewImplementationType;
 }
 
 void RendererGL::initializeFrontendFeatures(angle::FrontendFeatures *features) const

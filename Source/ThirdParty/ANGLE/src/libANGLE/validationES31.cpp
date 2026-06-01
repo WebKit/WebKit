@@ -413,47 +413,7 @@ bool ValidateGetBooleani_v(const Context *context,
                            GLuint index,
                            const GLboolean *data)
 {
-    if (!ValidateIndexedStateQuery(context, entryPoint, target, index, nullptr))
-    {
-        return false;
-    }
-
-    return true;
-}
-
-bool ValidateGetBooleani_vRobustANGLE(const Context *context,
-                                      angle::EntryPoint entryPoint,
-                                      GLenum target,
-                                      GLuint index,
-                                      GLsizei bufSize,
-                                      const GLsizei *length,
-                                      const GLboolean *data)
-{
-    if (context->getClientVersion() < ES_3_1)
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES31Required);
-        return false;
-    }
-
-    if (!ValidateRobustEntryPoint(context, entryPoint, bufSize))
-    {
-        return false;
-    }
-
-    GLsizei numParams = 0;
-
-    if (!ValidateIndexedStateQuery(context, entryPoint, target, index, &numParams))
-    {
-        return false;
-    }
-
-    if (!ValidateRobustBufferSize(context, entryPoint, bufSize, numParams))
-    {
-        return false;
-    }
-
-    SetRobustLengthParam(length, numParams);
-    return true;
+    return ValidateIndexedStateQuery(context, entryPoint, target, index, data, nullptr);
 }
 
 bool ValidateDrawIndirectBase(const Context *context,
@@ -1065,19 +1025,31 @@ bool ValidateGetMultisamplefv(const Context *context,
                               GLuint index,
                               const GLfloat *val)
 {
-    return ValidateGetMultisamplefvBase(context, entryPoint, pname, index, val);
+    return ValidateGetMultisamplefvBase(context, entryPoint, pname, index, nullptr);
 }
 
 bool ValidateGetMultisamplefvRobustANGLE(const Context *context,
                                          angle::EntryPoint entryPoint,
                                          GLenum pname,
                                          GLuint index,
-                                         GLsizei bufSize,
+                                         GLsizei paramCount,
                                          const GLsizei *length,
                                          const GLfloat *val)
 {
-    UNIMPLEMENTED();
-    return false;
+    // Make sure ValidateGetMultisamplefvBase sets numParams
+    GLsizei numParams = std::numeric_limits<GLsizei>::max();
+    if (!ValidateGetMultisamplefvBase(context, entryPoint, pname, index, &numParams))
+    {
+        return false;
+    }
+    ASSERT(numParams != std::numeric_limits<GLsizei>::max());
+
+    if (!ValidateRobustParamCount(context, entryPoint, paramCount, numParams))
+    {
+        return false;
+    }
+
+    return true;
 }
 
 bool ValidateFramebufferParameteri(const Context *context,
@@ -1096,18 +1068,6 @@ bool ValidateGetFramebufferParameteriv(const Context *context,
                                        const GLint *params)
 {
     return ValidateGetFramebufferParameterivBase(context, entryPoint, target, pname, params);
-}
-
-bool ValidateGetFramebufferParameterivRobustANGLE(const Context *context,
-                                                  angle::EntryPoint entryPoint,
-                                                  GLenum target,
-                                                  GLenum pname,
-                                                  GLsizei bufSize,
-                                                  const GLsizei *length,
-                                                  const GLint *params)
-{
-    UNIMPLEMENTED();
-    return false;
 }
 
 bool ValidateGetProgramResourceIndex(const Context *context,
@@ -1605,19 +1565,6 @@ bool ValidateGetProgramInterfaceiv(const Context *context,
     }
 
     return true;
-}
-
-bool ValidateGetProgramInterfaceivRobustANGLE(const Context *context,
-                                              angle::EntryPoint entryPoint,
-                                              ShaderProgramID program,
-                                              GLenum programInterface,
-                                              GLenum pname,
-                                              GLsizei bufSize,
-                                              const GLsizei *length,
-                                              const GLint *params)
-{
-    UNIMPLEMENTED();
-    return false;
 }
 
 bool ValidateGenProgramPipelinesBase(const Context *context,

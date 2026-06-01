@@ -577,6 +577,8 @@ class DrawBaseInstanceTest : public ANGLETestBase,
 in vec2 vPosition;
 )" << (useBaseInstanceBuiltin() ? "" : "in float vInstanceID;\n")
                << (!divisorTest ? "" : "in float vInstanceColorID;\n") << R"(
+// Use a mediump uniform, it can get sorted before the gl_BaseVertex/Instance emulated uniforms
+uniform mediump vec2 zero;
 out vec4 color;
 void main()
 {
@@ -597,6 +599,7 @@ void main()
         )" << (useBaseVertexBuiltin() ? "1.0 - yStep * float(gl_BaseVertex) / 4.0" : "1.0")
                << R"(,
         1);
+    color.xy += zero;
 
     mat3 transform = mat3(1.0);
     transform[2][0] = x_id * xStep;
@@ -1312,6 +1315,7 @@ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DrawBaseVertexBaseInstanceTest);
         ES3_OPENGL().enable(Feature::AlwaysEnableEmulatedMultidrawExtensions),             \
         ES3_OPENGLES().enable(Feature::AlwaysEnableEmulatedMultidrawExtensions),           \
         ES3_VULKAN().enable(Feature::AlwaysEnableEmulatedMultidrawExtensions),             \
+        ES3_VULKAN().disable(Feature::SupportsVertexInputDynamicState),                    \
         ES3_VULKAN_SWIFTSHADER().enable(Feature::AlwaysEnableEmulatedMultidrawExtensions), \
         ES3_METAL().enable(Feature::AlwaysEnableEmulatedMultidrawExtensions)
 

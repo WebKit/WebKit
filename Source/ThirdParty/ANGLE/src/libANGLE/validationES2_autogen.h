@@ -307,7 +307,7 @@ bool ValidateGetBooleanv(const Context *context,
 bool ValidateGetBufferParameteriv(const Context *context,
                                   angle::EntryPoint entryPoint,
                                   BufferBinding targetPacked,
-                                  GLenum pname,
+                                  BufferParam pnamePacked,
                                   const GLint *params);
 bool ValidateGetError(const Context *context, angle::EntryPoint entryPoint);
 bool ValidateGetFloatv(const Context *context,

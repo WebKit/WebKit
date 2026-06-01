@@ -18,12 +18,11 @@ package com.android.angle.common;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
+import android.database.ContentObserver;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -37,7 +36,6 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceManager;
 import androidx.preference.SwitchPreference;
 
 import com.android.angle.R;
@@ -48,30 +46,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
-public class MainFragment extends PreferenceFragmentCompat implements OnSharedPreferenceChangeListener
+public class MainFragment extends PreferenceFragmentCompat
 {
 
     private final String TAG = this.getClass().getSimpleName();
     private final boolean DEBUG = false;
 
     private boolean mIsAngleSystemDriver;
-    private SharedPreferences mSharedPreferences;
     private SwitchPreference mShowAngleInUseSwitchPref;
-
     private GlobalSettings mGlobalSettings;
+    private ContentObserver mGlobalSettingsObserver;
     private Receiver mRefreshReceiver = new Receiver();
     private List<PackageInfo> mInstalledPackages = new ArrayList<>();
-    private AngleRuleHelper angleRuleHelper;
-
-    SharedPreferences.OnSharedPreferenceChangeListener listener =
-            new SharedPreferences.OnSharedPreferenceChangeListener() {
-                public void onSharedPreferenceChanged(SharedPreferences prefs, String key)
-                {
-                    // Nothing to do yet
-                }
-            };
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -80,24 +67,30 @@ public class MainFragment extends PreferenceFragmentCompat implements OnSharedPr
 
         queryInstalledPackages();
 
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(
-                getActivity().getApplicationContext());
         final String eglDriver = getSystemProperty("ro.hardware.egl", "");
         mIsAngleSystemDriver = eglDriver.equals("angle");
         if (DEBUG)
         {
-            Map<String, ?> preferences = PreferenceManager
-                    .getDefaultSharedPreferences(getActivity().getApplicationContext()).getAll();
-            for (String key : preferences.keySet())
-            {
-                Log.d(TAG, key + ", " + preferences.get(key));
-            }
             Log.d(TAG, "ro.hardware.egl = " + eglDriver);
         }
-        mGlobalSettings = new GlobalSettings(getContext(), mSharedPreferences, mInstalledPackages);
+
+        final AngleRuleHelper angleRuleHelper = new AngleRuleHelper(getContext());
+        mGlobalSettings = new GlobalSettings(getContext(),
+                angleRuleHelper.getPackageNamesForAngle(),
+                angleRuleHelper.getPackageNamesForNative());
 
         createShowAngleInUseSwitchPreference();
         createInstalledAppsListPreference();
+
+        mGlobalSettingsObserver = new ContentObserver(new android.os.Handler())
+        {
+            @Override
+            public void onChange(boolean selfChange)
+            {
+                mGlobalSettings.syncFromGlobalSettings();
+                updateInstalledAppsListPreference();
+            }
+        };
     }
 
     @Override
@@ -107,9 +100,18 @@ public class MainFragment extends PreferenceFragmentCompat implements OnSharedPr
 
         getActivity().registerReceiver(mRefreshReceiver,
                 new IntentFilter(
-                        getContext().getString(R.string.intent_angle_for_android_toast_message)));
-        getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(
-                listener);
+                        getContext().getString(R.string.intent_angle_for_android_toast_message)),
+                Context.RECEIVER_EXPORTED);
+
+        getContext().getContentResolver().registerContentObserver(
+                android.provider.Settings.Global.getUriFor(
+                        GlobalSettings.DRIVER_SELECTION_PACKAGES), false,
+                mGlobalSettingsObserver);
+        getContext().getContentResolver().registerContentObserver(
+                android.provider.Settings.Global.getUriFor(GlobalSettings.DRIVER_SELECTION_VALUES),
+                false,
+                mGlobalSettingsObserver);
+
         updatePreferences();
     }
 
@@ -117,8 +119,7 @@ public class MainFragment extends PreferenceFragmentCompat implements OnSharedPr
     public void onPause()
     {
         getActivity().unregisterReceiver(mRefreshReceiver);
-        getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(
-                listener);
+        getContext().getContentResolver().unregisterContentObserver(mGlobalSettingsObserver);
 
         super.onPause();
     }
@@ -141,12 +142,6 @@ public class MainFragment extends PreferenceFragmentCompat implements OnSharedPr
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey)
     {
         addPreferencesFromResource(R.xml.main);
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
-    {
-        Log.v(TAG, "Shared preference changed: " + key);
     }
 
     private void updatePreferences()
@@ -189,11 +184,38 @@ public class MainFragment extends PreferenceFragmentCompat implements OnSharedPr
 
     private void createInstalledAppsListPreference()
     {
-        final String selectDriverCategoryKey =
-                getContext().getString(R.string.pref_key_select_opengl_driver_category);
-        final PreferenceCategory preferenceCategory =
-                (PreferenceCategory) findPreference(selectDriverCategoryKey);
+        final String selectDriverCategoryKey = getContext().getString(R.string.pref_key_select_opengl_driver_category);
+        final PreferenceCategory preferenceCategory = (PreferenceCategory) findPreference(selectDriverCategoryKey);
         preferenceCategory.removeAll();
+
+        // Find the "Reset to defaults" button and attach the click listener
+        final Preference resetPreference = findPreference("reset_to_defaults");
+        if (resetPreference != null) {
+            resetPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    new android.app.AlertDialog.Builder(getContext())
+                            .setTitle(R.string.reset_dialog_title)
+                            .setMessage(R.string.reset_dialog_message)
+                            .setPositiveButton(R.string.reset_dialog_positive,
+                                    new android.content.DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(android.content.DialogInterface dialog,
+                                                int which) {
+                                            GlobalSettings.clearGlobalSettings(getContext());
+                                            final AngleRuleHelper angleRuleHelper = new AngleRuleHelper(
+                                                    getContext());
+                                            mGlobalSettings = new GlobalSettings(getContext(),
+                                                    angleRuleHelper.getPackageNamesForAngle(),
+                                                    angleRuleHelper.getPackageNamesForNative());
+                                        }
+                                    })
+                            .setNegativeButton(R.string.reset_dialog_negative, null)
+                            .show();
+                    return true;
+                }
+            });
+        }
 
         final Context context = preferenceCategory.getContext();
         for (PackageInfo packageInfo : mInstalledPackages)
@@ -201,6 +223,28 @@ public class MainFragment extends PreferenceFragmentCompat implements OnSharedPr
             final ListPreference listPreference = new ListPreference(context);
             initListPreference(packageInfo, listPreference);
             preferenceCategory.addPreference(listPreference);
+        }
+    }
+
+    private void updateInstalledAppsListPreference()
+    {
+        final String selectDriverCategoryKey = getContext().getString(
+                R.string.pref_key_select_opengl_driver_category);
+        final PreferenceCategory preferenceCategory = (PreferenceCategory) findPreference(
+                selectDriverCategoryKey);
+
+        for (int i = 0; i < preferenceCategory.getPreferenceCount(); i++)
+        {
+            Preference preference = preferenceCategory.getPreference(i);
+            if (preference instanceof ListPreference)
+            {
+                ListPreference listPreference = (ListPreference) preference;
+                // Update value from current GlobalSettings
+                String packageName = listPreference.getKey();
+                String value = mGlobalSettings.getDriverSelectionValue(packageName);
+                listPreference.setValue(value);
+                listPreference.setSummary(value);
+            }
         }
     }
 
@@ -278,8 +322,10 @@ public class MainFragment extends PreferenceFragmentCompat implements OnSharedPr
         final CharSequence[] drivers = getResources().getStringArray(R.array.driver_values);
         listPreference.setEntries(drivers);
         listPreference.setEntryValues(drivers);
-        final String driverSelectionValue = mSharedPreferences.getString(packageName,
-                GlobalSettings.DRIVER_SELECTION_DEFAULT);
+
+        // Read directly from GlobalSettings, which is the source of truth
+        final String driverSelectionValue = mGlobalSettings.getDriverSelectionValue(packageName);
+
         listPreference.setDefaultValue(driverSelectionValue);
         listPreference.setValue(driverSelectionValue);
         listPreference.setSummary(driverSelectionValue);

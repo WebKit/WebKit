@@ -116,6 +116,8 @@ pub mod ffi {
             is_redeclared_built_in: bool,
             is_static_use: bool,
         ) -> *mut TIntermTyped;
+        unsafe fn make_internal_variable_gl_layer_vs() -> *mut TIntermTyped;
+        unsafe fn make_internal_variable_gl_instance_es100() -> *mut TIntermTyped;
         unsafe fn make_nameless_block_field_variable(
             compiler: *mut TCompiler,
             variable: *mut TIntermTyped,
@@ -1429,6 +1431,10 @@ impl<'options> Generator<'options> {
             .any(|&decoration| matches!(decoration, Decoration::SpecConst(_)))
         {
             ffi::ASTQualifier::SpecConst
+        } else if decorations.has(Decoration::EmulatedViewIDOut)
+            || decorations.has(Decoration::EmulatedViewIDIn)
+        {
+            ffi::ASTQualifier::EmulatedViewIDOVR
         } else {
             let is_input = decorations.has(Decoration::Input);
             let is_output = decorations.has(Decoration::Output);
@@ -1561,7 +1567,6 @@ impl<'options> Generator<'options> {
             offset: -1,
             depth: ffi::ASTLayoutDepth::Unspecified,
             image_internal_format: ffi::ASTLayoutImageInternalFormat::Unspecified,
-            num_views: -1,
             yuv: false,
             index: -1,
             noncoherent: false,
@@ -1591,7 +1596,6 @@ impl<'options> Generator<'options> {
                 Decoration::ImageInternalFormat(format) => {
                     layout_qualifier.image_internal_format = format.into()
                 }
-                Decoration::NumViews(num_views) => layout_qualifier.num_views = num_views as i32,
                 Decoration::RasterOrdered => layout_qualifier.raster_ordered = true,
                 _ => (),
             };
@@ -1871,6 +1875,31 @@ impl ast::Target for Generator<'_> {
     }
 
     fn new_variable(&mut self, ir_meta: &IRMeta, id: VariableId, variable: &Variable) {
+        // Some variables are not valid in ESSL, and are declared as internal to the backends.
+        // Some others are not valid in lower ESSL versions, but are not used in ESSL output in the
+        // end.
+        //
+        // Those need to be directly retrieved from BuiltInVariable::gl_Foo, and won't be found in
+        // the symbol table.
+        let internal_variable =
+            match (variable.built_in, ir_meta.get_shader_type(), self.options.shader_version) {
+                // Used by multiview emulation, gl_Layer does not exist in vertex shaders.
+                (Some(BuiltIn::LayerOut), ShaderType::Vertex, _) => {
+                    Some(unsafe { ffi::make_internal_variable_gl_layer_vs() })
+                }
+                // Used by multiview emulation, gl_InstanceID does not exist in ESSL 100.
+                (Some(BuiltIn::InstanceID), _, 100) => {
+                    Some(unsafe { ffi::make_internal_variable_gl_instance_es100() })
+                }
+                // TODO(http://anglebug.com/349994211): gl_VertexIndex and gl_InstanceIndex too, when
+                // added for the SPIR-V output.
+                _ => None,
+            };
+        if let Some(legacy_variable) = internal_variable {
+            self.variables.insert(id, legacy_variable);
+            return;
+        };
+
         let var_type = self.types[&variable.type_id];
         let is_global = variable.scope == VariableScope::Global;
         let ast_type = Self::get_ast_type(

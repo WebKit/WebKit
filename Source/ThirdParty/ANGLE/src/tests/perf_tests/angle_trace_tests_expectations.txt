@@ -6,11 +6,15 @@
 
 42266611 SWIFTSHADER : gangstar_vegas = SKIP
 42266679 SWIFTSHADER : street_fighter_iv_ce = SKIP
+485671640 SWIFTSHADER : passmark_simple_multiview = SKIP
 42266627 WIN NATIVE : respawnables = SKIP
 42266627 LINUX NATIVE : respawnables = SKIP
 42266627 PIXEL4ORXL NATIVE : respawnables = SKIP
 42266627 PIXEL6 NATIVE : respawnables = SKIP
 42266034 LINUX SWIFTSHADER : star_wars_kotor = SKIP
+
+// This trace is missing clouds due to precision diffs between stages
+183647942 ANDROID ARM : minecraft = SKIP
 
 267953710 GALAXYS22 : cod_mobile = SKIP
 267953710 GALAXYS22 : dota_underlords = SKIP
@@ -66,6 +70,7 @@
 42266157 PIXEL4ORXL VULKAN : eve_echoes = SKIP
 378464990 QUALCOMM VULKAN : genshin_impact = SKIP
 404436749 PIXEL4ORXL VULKAN : aliexpress = SKIP
+485671640 PIXEL4ORXL VULKAN : passmark_simple_multiview = SKIP
 
 42264164 LINUX AMD NATIVE : bus_simulator_indonesia = SKIP
 42264363 LINUX AMD NATIVE : professional_baseball_spirits = SKIP
@@ -94,6 +99,8 @@
 42267118 LINUX INTEL NATIVE : zenonia_4 = SKIP
 42267118 LINUX INTEL NATIVE : zombie_smasher = SKIP
 42267118 LINUX INTEL NATIVE : passmark_simple = SKIP
+42267118 LINUX INTEL NATIVE : passmark_simple_multiview = SKIP
+42267118 LINUX INTEL NATIVE : dr_parking_4 = SKIP
 362801312 LINUX INTEL NATIVE : passmark_complex = SKIP
 448110252 LINUX INTEL NATIVE : puzzle_and_dragons = SKIP
 378666645 LINUX INTEL VULKAN : octopath_traveler = SKIP
@@ -128,6 +135,8 @@
 442286882 WIN INTEL NATIVE : minecraft_vibrant_visuals = SKIP
 448110252 WIN INTEL NATIVE : puzzle_and_dragons = SKIP
 459511105 WIN INTEL NATIVE : love_and_deepspace = SKIP
+42267118 WIN INTEL NATIVE : passmark_simple_multiview = SKIP
+42267118 WIN INTEL NATIVE : dr_parking_4 = SKIP
 40096690 WIN INTEL VULKAN : manhattan_10 = SKIP
 42266346 WIN INTEL VULKAN : black_desert_mobile = SKIP
 42266346 WIN INTEL VULKAN : the_gardens_between = SKIP
@@ -149,6 +158,8 @@
 413358136 WIN INTEL VULKAN : black_beacon = SKIP
 445419190 WIN INTEL VULKAN : lineage_2m = SKIP
 474664078 WIN INTEL VULKAN : pokemon_go_combat = SKIP
+
+485671640 WIN NVIDIA : passmark_simple_multiview = SKIP
 
 461532426 NVIDIA NATIVE : ace_racer = SKIP
 42264147 NVIDIA NATIVE : car_parking_multiplayer = SKIP
@@ -196,6 +207,9 @@
 349994211 IR NVIDIA VULKAN : subway_princess_runner = SKIP
 349994211 IR NVIDIA VULKAN : war_planet_online = SKIP
 349994211 IR NVIDIA VULKAN : wuthering_waves = SKIP
+349994211 IR NVIDIA VULKAN : dr_parking_4 = SKIP
+
+349994211 IR LINUX INTEL VULKAN : into_the_dead_2 = SKIP
 
 349994211 IR WIN INTEL VULKAN : balatro = SKIP
 349994211 IR WIN INTEL VULKAN : basemark_gpu = SKIP

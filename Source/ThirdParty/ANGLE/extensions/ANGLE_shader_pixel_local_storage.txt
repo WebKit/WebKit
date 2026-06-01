@@ -168,12 +168,14 @@ IP Status
 New Procedures and Functions
 
     void FramebufferMemorylessPixelLocalStorageANGLE(int plane,
-                                                     enum internalformat)
+                                                     enum internalformat,
+                                                     bitfield usage)
 
     void FramebufferTexturePixelLocalStorageANGLE(int plane,
                                                   uint backingtexture,
                                                   int level,
-                                                  int layer)
+                                                  int layer,
+                                                  bitfield usage)
 
     void FramebufferPixelLocalClearValue{f,i,ui}vANGLE(int plane,
                                                        const T value[])
@@ -229,9 +231,16 @@ New Tokens
         PIXEL_LOCAL_TEXTURE_NAME_ANGLE                                    0x96E8
         PIXEL_LOCAL_TEXTURE_LEVEL_ANGLE                                   0x96E9
         PIXEL_LOCAL_TEXTURE_LAYER_ANGLE                                   0x96EA
-        PIXEL_LOCAL_CLEAR_VALUE_FLOAT_ANGLE                               0x96EB
-        PIXEL_LOCAL_CLEAR_VALUE_INT_ANGLE                                 0x96EC
-        PIXEL_LOCAL_CLEAR_VALUE_UNSIGNED_INT_ANGLE                        0x96ED
+        PIXEL_LOCAL_USAGE_ANGLE                                           0x96EB
+        PIXEL_LOCAL_CLEAR_VALUE_FLOAT_ANGLE                               0x96EC
+        PIXEL_LOCAL_CLEAR_VALUE_INT_ANGLE                                 0x96ED
+        PIXEL_LOCAL_CLEAR_VALUE_UNSIGNED_INT_ANGLE                        0x96EE
+
+    Accepted by the <usage> parameter of
+    FramebufferMemorylessPixelLocalStorageANGLE() and
+    FramebufferTexturePixelLocalStorageANGLE():
+
+        PIXEL_LOCAL_USAGE_ALWAYS_NONCOHERENT_BIT_ANGLE                       0x1
 
 New GLSL Opaque Types
 
@@ -520,6 +529,11 @@ Additions to the OpenGL ES Specification, Version 3.0.6
         associated pixel local storage plane on the current draw framebuffer, as
         enumerated in Table X.3.
 
+      * INVALID_OPERATION is generated if a draw is issued with active pixel
+        local storage plane(s) that specify
+        PIXEL_LOCAL_USAGE_ALWAYS_NONCOHERENT_BIT_ANGLE, but whose corresponding
+        shader uniforms lack the "noncoherent" layout qualifier.
+
       * INVALID_OPERATION is generated if a draw is issued while either of the
         following two constraints are violated:
 
@@ -680,6 +694,10 @@ Additions to the OpenGL ES Specification, Version 3.0.6
         Note that all pixel local storage formats consume exactly 4 bytes of
         storage.
 
+      * <usage> specifies the usage pattern of the pixel local storage plane,
+                with more restrictive patterns permitting more aggressive driver
+                optimizations.
+
     Errors:
 
       * INVALID_FRAMEBUFFER_OPERATION is generated if the default framebuffer
@@ -700,6 +718,9 @@ Additions to the OpenGL ES Specification, Version 3.0.6
 
       * INVALID_OPERATION is generated if <internalformat> is not NONE and not
         color-renderable.
+
+      * INVALID_VALUE is generated if any bit other than
+        PIXEL_LOCAL_USAGE_ALWAYS_NONCOHERENT_BIT_ANGLE is set in <usage>.
 
     If <internalformat> is NONE, the pixel local storage plane at index <plane>
     is deinitialized and any internal storage is released.
@@ -755,6 +776,10 @@ Additions to the OpenGL ES Specification, Version 3.0.6
           TEXTURE_CUBE_MAP_ARRAY_EXT, TEXTURE_CUBE_MAP_ARRAY_OES, or
           TEXTURE_CUBE_MAP_ARRAY
 
+      * <usage> specifies the usage pattern of the pixel local storage plane,
+                with more restrictive patterns permitting more aggressive driver
+                optimizations.
+
     Errors:
 
       * INVALID_FRAMEBUFFER_OPERATION is generated if the default framebuffer
@@ -795,6 +820,9 @@ Additions to the OpenGL ES Specification, Version 3.0.6
 
       * INVALID_OPERATION is generated if <backingtexture> is nonzero and its
         internalformat is not color-renderable.
+
+      * INVALID_VALUE is generated if any bit other than
+        PIXEL_LOCAL_USAGE_ALWAYS_NONCOHERENT_BIT_ANGLE is set in <usage>.
 
     If <backingtexture> is 0, <level> and <layer> are ignored and the pixel
     local storage plane <plane> is deinitialized.
@@ -900,6 +928,9 @@ Additions to the OpenGL ES Specification, Version 3.0.6
       * If <pname> is PIXEL_LOCAL_TEXTURE_LAYER_ANGLE, <params> will contain the
         layer of the bound texture object, or 0 if the plane is memoryless or
         deinitialized.
+
+      * If <pname> is PIXEL_LOCAL_USAGE_ANGLE, <params> will contain the usage
+        pattern of the pixel local storage plane.
 
       * If <pname> is PIXEL_LOCAL_CLEAR_VALUE_FLOAT_ANGLE,
         PIXEL_LOCAL_CLEAR_VALUE_INT_ANGLE, or

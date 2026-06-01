@@ -2714,6 +2714,10 @@ angle::Result UtilsVk::clearFramebuffer(ContextVk *contextVk,
         ANGLE_TRY(contextVk->flushCommandsAndEndRenderPass(
             RenderPassClosureReason::XfbResumeAfterDrawBasedClear));
     }
+    else
+    {
+        contextVk->restoreAllGraphicsState();
+    }
 
     return angle::Result::Continue;
 }

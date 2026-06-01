@@ -1694,7 +1694,9 @@ def is_cmd_map_buffer_range(cmd_name):
 def validation_needs_private_state_cache(name):
     return name in VALIDATION_NEEDS_PRIVATE_STATE_CACHE_LIST
 
-def get_validation_expression(api, cmd_name, entry_point_name, internal_params, sources):
+
+def get_validation_expression(api, cmd_name, entry_point_name, internal_params, cmd_sources,
+                              sources_by_command_no_suffix):
     if api != "GLES":
         return ""
 
@@ -1713,27 +1715,44 @@ def get_validation_expression(api, cmd_name, entry_point_name, internal_params, 
         words = [words[2]] + [(word[0].upper() + word[1:]) for word in words[3:]] + [words[1]]
         return ''.join(words)
 
-    condition = ""
-    error_suffix = sources[0].replace("_", "")
-    if sorted(sources) == ["1_0", "2_0"]:
-        # Entry points existing in all context versions
-        condition = "true"
-    elif sorted(sources) == ["1_0", "3_2"]:
-        # glGetPointerv is a special case: defined in ES 1.0 and ES 3.2 only
-        condition = "context->getClientVersion() < ES_2_0 || context->getClientVersion() >= ES_3_2"
-        error_suffix = "1Or32"
-    elif sources == ["1_0"]:
-        condition = "context->getClientVersion() < ES_2_0"
-    elif len(sources) == 1 and sources[0] in ["2_0", "3_0", "3_1", "3_2"]:
-        condition = "context->getClientVersion() >= ES_{}".format(sources[0])
-    else:
-        assert (sources[0].startswith("GL_"))
-        exts = map(lambda x: "context->getExtensions().{}".format(get_camel_case(x)), sources)
-        condition = " || ".join(sorted(list(exts)))
-        error_suffix = "EXT"
+    def get_condition_and_error_suffix(sources):
+        condition = ""
+        error_suffix = sources[0].replace("_", "")
+        if sorted(sources) == ["1_0", "2_0"]:
+            # Entry points existing in all context versions
+            condition = "true"
+        elif sorted(sources) == ["1_0", "3_2"]:
+            # glGetPointerv is a special case: defined in ES 1.0 and ES 3.2 only
+            condition = "context->getClientVersion() < ES_2_0 || context->getClientVersion() >= ES_3_2"
+            error_suffix = "1Or32"
+        elif sources == ["1_0"]:
+            condition = "context->getClientVersion() < ES_2_0"
+        elif len(sources) == 1 and sources[0] in ["2_0", "3_0", "3_1", "3_2"]:
+            condition = "context->getClientVersion() >= ES_{}".format(sources[0])
+        else:
+            assert (sources[0].startswith("GL_"))
+            exts = map(lambda x: "context->getExtensions().{}".format(get_camel_case(x)), sources)
+            condition = " || ".join(sorted(list(exts)))
+            error_suffix = "EXT"
+        return (condition, error_suffix)
+
+    (condition, error_suffix) = get_condition_and_error_suffix(cmd_sources)
 
     record_error = "else {{RecordVersionErrorES{}(context, {});}}".format(
         error_suffix, entry_point_name) if condition != "true" else ""
+
+    pre_robust = ""
+    post_robust = ""
+    if cmd_sources[0] == "GL_ANGLE_robust_client_memory":
+        base_sources = sorted(
+            sources_by_command_no_suffix[cmd_name[:cmd_name.rfind("RobustANGLE")]])
+        if "2_0" not in base_sources:
+            # Generate a separate condition string for each source
+            robust_conditions = sorted(
+                list(map(lambda s: get_condition_and_error_suffix([s])[0], base_sources)))
+            pre_robust = "if (ANGLE_LIKELY({})){{\n".format(" || ".join(robust_conditions))
+            post_robust = "\n}} else {{RecordEntryPointBaseUnsupportedError(context, {});}}".format(
+                entry_point_name)
 
     pre_validation = """#if defined(ANGLE_ENABLE_ASSERTS)
     const uint32_t errorCount = context->getPushedErrorCount();
@@ -1763,14 +1782,16 @@ if (!isCallValid)
 {{
     if (ANGLE_LIKELY({support_condition}))
     {{
-        {pre_validation}isCallValid = {validation_expression};{post_validation}
+        {pre_robust}{pre_validation}isCallValid = {validation_expression};{post_validation}{post_robust}
     }}
     {record_error}
 }}""".format(
+        pre_robust=pre_robust,
         support_condition=condition,
         pre_validation=pre_validation,
         validation_expression=expr,
         post_validation=post_validation,
+        post_robust=post_robust,
         record_error=record_error)
 
 
@@ -2041,7 +2062,8 @@ def get_def_template(api, cmd_name, return_type, has_errcode_ret):
 
 
 def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packed_enums,
-                           packed_param_types, ep_to_object, sources):
+                           packed_param_types, ep_to_object, sources,
+                           sources_by_command_no_suffix):
     packed_enums = get_packed_enums(api, cmd_packed_enums, cmd_name, packed_param_types, params)
     internal_params = [just_the_name_packed(param, packed_enums) for param in params]
     if internal_params and internal_params[-1] == "errcode_ret":
@@ -2127,7 +2149,8 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
         "egl_capture_params":
             ", ".join(["thread"] + internal_params),
         "validation_expression":
-            get_validation_expression(api, cmd_name, entry_point_name, internal_params, sources),
+            get_validation_expression(api, cmd_name, entry_point_name, internal_params, sources,
+                                      sources_by_command_no_suffix),
         "format_params":
             ", ".join(format_params),
         "context_getter":
@@ -2474,7 +2497,8 @@ class ANGLEEntryPoints(registry_xml.EntryPoints):
             self.defs.append(
                 format_entry_point_def(self.api, command_node, cmd_name, proto_text, param_text,
                                        cmd_packed_enums, packed_param_types, ep_to_object,
-                                       xml.sources_by_command[cmd_name]))
+                                       xml.sources_by_command[cmd_name],
+                                       xml.sources_by_command_no_suffix))
 
             self.export_defs.append(
                 format_entry_point_export(cmd_name, proto_text, param_text, export_template))

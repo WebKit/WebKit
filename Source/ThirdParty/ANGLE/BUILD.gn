@@ -107,6 +107,7 @@ if (angle_build_all) {
     deps = [
       ":angle",
       ":angle_shader_translator",
+      ":noop_target",
       ":translator_fuzzer",
       ":xxhash_fuzzer",
       "$angle_root/samples:angle_samples",
@@ -1881,4 +1882,9 @@ if (!build_with_chromium && angle_has_build &&
            ] + build_gn_logs
 
   write_file("$root_build_dir/gn_logs.txt", _lines)
+}
+
+# An empty target primarily meant for performing a no-op compile on trace
+# builders.
+group("noop_target") {
 }

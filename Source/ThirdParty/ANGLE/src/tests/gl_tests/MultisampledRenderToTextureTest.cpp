@@ -4498,6 +4498,49 @@ TEST_P(MSRTTES3Test, RenderToTextureMidRenderPassDepthClear)
     ASSERT_GL_NO_ERROR();
 }
 
+class MSRTTSRGBES3Test : public MSRTTES3Test
+{};
+
+// Test interaction between MSRTT and sRGB write control
+TEST_P(MSRTTSRGBES3Test, Basic)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_sRGB_write_control"));
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB_ALPHA_EXT, 1, 1, 0, GL_SRGB_ALPHA_EXT, GL_UNSIGNED_BYTE,
+                 nullptr);
+
+    GLFramebuffer fboMS;
+    glBindFramebuffer(GL_FRAMEBUFFER, fboMS);
+    glFramebufferTexture2DMultisampleEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                                         texture, 0, 4);
+
+    constexpr GLColor uniformColor(13, 54, 133, 255);
+    constexpr GLColor linearColor = uniformColor;
+    constexpr GLColor srgbColor(64, 127, 191, 255);
+
+    // Setup program and uniforms
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(program);
+    GLint colorLocation = glGetUniformLocation(program, essl1_shaders::ColorUniform());
+    ASSERT_NE(-1, colorLocation);
+    glUniform4fv(colorLocation, 1, uniformColor.toNormalizedVector().data());
+
+    // Enable sRGB encoding and render
+    glEnable(GL_FRAMEBUFFER_SRGB_EXT);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, srgbColor, 1.0);
+
+    // Disable sRGB encoding and render
+    glDisable(GL_FRAMEBUFFER_SRGB_EXT);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, linearColor, 1.0);
+}
+
 class MultisampledRenderToTextureWithAdvancedBlendTest : public MSRTTES3Test
 {
   protected:
@@ -4644,6 +4687,14 @@ ANGLE_INSTANTIATE_TEST_COMBINE_1(
     ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
     ES3_VULKAN().disable(Feature::SupportsSPIRV14),
     ES3_VULKAN_SWIFTSHADER().enable(Feature::EnableMultisampledRenderToTexture));
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MSRTTSRGBES3Test);
+ANGLE_INSTANTIATE_TEST_COMBINE_1(
+    MSRTTSRGBES3Test,
+    PrintToStringParamName,
+    testing::Bool(),
+    ANGLE_ALL_TEST_PLATFORMS_ES3,
+    ES3_VULKAN().enable(Feature::AllowMultisampledRenderToTextureEmulation));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MSRTTES31Test);
 ANGLE_INSTANTIATE_TEST_COMBINE_1(

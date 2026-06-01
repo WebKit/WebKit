@@ -316,7 +316,7 @@ void CaptureGetBooleanv_data(const State &glState,
 
 void CaptureGetBufferParameteriv_params(const State &glState,
                                         BufferBinding targetPacked,
-                                        GLenum pname,
+                                        BufferParam pnamePacked,
                                         GLint *params,
                                         ParamCapture *paramCapture)
 {

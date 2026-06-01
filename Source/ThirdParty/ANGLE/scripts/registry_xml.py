@@ -12,6 +12,7 @@
 
 import difflib
 import os
+import re
 import sys
 import xml.etree.ElementTree as etree
 
@@ -456,6 +457,7 @@ supported_cl_extensions = [
     "cl_khr_int64_base_atomics",
     "cl_khr_int64_extended_atomics",
     "cl_khr_priority_hints",
+    "cl_khr_subgroups",
 ]
 
 # Strip these suffixes from Context entry point names. NV is excluded (for now).
@@ -562,6 +564,7 @@ class RegistryXML:
         self.all_cmd_names = CommandNames()
         self.commands = {}
         self.sources_by_command = {}
+        self.sources_by_command_no_suffix = {}
 
     def _AppendANGLEExts(self, ext_file):
         angle_ext_tree = etree.parse(script_relative(ext_file))
@@ -590,6 +593,7 @@ class RegistryXML:
         # Reverse cache for all places a command may be defined in.
         for cmd in commands:
             self.sources_by_command.setdefault(cmd, []).append(annotation)
+            self.sources_by_command_no_suffix.setdefault(cmd, []).append(annotation)
 
         # Remove commands that have already been processed
         current_cmds = self.all_cmd_names.get_all_commands()
@@ -626,11 +630,16 @@ class RegistryXML:
         self.ext_data = {}
         self.ext_dupes = {}
         ext_annotations = {}
+        ext_prefixes = set()
 
         for extension in self.root.findall("extensions/extension"):
             extension_name = extension.attrib['name']
             if not extension_name in supported_extensions:
                 continue
+
+            # Extract the extension prefix
+            if (extension_name.startswith("GL_")):
+                ext_prefixes.add(re.match(r"^GL_([A-Z]+)_", extension_name).group(1))
 
             ext_annotations[extension_name] = self._ClassifySupport(extension)
 
@@ -657,6 +666,12 @@ class RegistryXML:
             # Reverse cache for all places a command may be defined in.
             for cmd in ext_cmd_names:
                 self.sources_by_command.setdefault(cmd, []).append(extension_name)
+
+                for prefix in ext_prefixes:
+                    if cmd.endswith(prefix):
+                        self.sources_by_command_no_suffix.setdefault(cmd[:-len(prefix)],
+                                                                     []).append(extension_name)
+                        break
 
             # Detect and filter duplicate extensions.
             dupes = []

@@ -755,7 +755,6 @@ void GenerateCaps(const FunctionsGL *functions,
                   gl::Extensions *extensions,
                   gl::Limitations *limitations,
                   gl::Version *maxSupportedESVersion,
-                  MultiviewImplementationTypeGL *multiviewImplementationType,
                   ShPixelLocalStorageOptions *plsOptions)
 {
     // Start by assuming ES3.1 support and work down
@@ -1605,8 +1604,7 @@ void GenerateCaps(const FunctionsGL *functions,
     // TODO(crbug.com/776222): support Android and Apple devices.
     extensions->videoTextureWEBGL = !IsAndroid() && !IsApple();
 
-    if (functions->hasGLExtension("GL_ARB_shader_viewport_layer_array") ||
-        functions->hasGLExtension("GL_NV_viewport_array2"))
+    if (features.multiviewViaViewportArray.enabled)
     {
         extensions->multiviewOVR  = true;
         extensions->multiview2OVR = true;
@@ -1615,7 +1613,6 @@ void GenerateCaps(const FunctionsGL *functions,
         // GL_MAX_VIEWPORTS is guaranteed to be at least 16.
         const int maxViewports       = QuerySingleGLInt(functions, GL_MAX_VIEWPORTS);
         caps->maxViews               = static_cast<GLuint>(std::min(maxLayers, maxViewports));
-        *multiviewImplementationType = MultiviewImplementationTypeGL::NV_VIEWPORT_ARRAY2;
     }
 
     extensions->fboRenderMipmapOES = functions->isAtLeastGL(gl::Version(3, 0)) ||
@@ -1737,6 +1734,8 @@ void GenerateCaps(const FunctionsGL *functions,
         extensions->shaderPixelLocalStorageCoherentANGLE = true;
         plsOptions->type             = ShPixelLocalStorageType::FramebufferFetch;
         plsOptions->fragmentSyncType = ShFragmentSynchronizationType::Automatic;
+        plsOptions->supportsNoncoherent =
+            features.supportsShaderFramebufferFetchNonCoherentEXT.enabled;
     }
     else
     {
@@ -1793,17 +1792,20 @@ void GenerateCaps(const FunctionsGL *functions,
         }
         else if (features.supportsShaderFramebufferFetchNonCoherentEXT.enabled)
         {
+            ASSERT(plsOptions->fragmentSyncType == ShFragmentSynchronizationType::NotSupported);
             extensions->shaderPixelLocalStorageANGLE = true;
             plsOptions->type                         = ShPixelLocalStorageType::FramebufferFetch;
         }
         else if (hasFragmentShaderImageLoadStore)
         {
+            ASSERT(plsOptions->fragmentSyncType == ShFragmentSynchronizationType::NotSupported);
             extensions->shaderPixelLocalStorageANGLE = true;
             plsOptions->type                         = ShPixelLocalStorageType::ImageLoadStore;
             // OpenGL ES only allows read/write access to "r32*" images.
             plsOptions->supportsNativeRGBA8ImageFormats =
                 functions->standard != StandardGL::STANDARD_GL_ES;
         }
+        plsOptions->supportsNoncoherent = true;
     }
 
     // EXT_shader_framebuffer_fetch.
@@ -2219,6 +2221,11 @@ void GenerateCaps(const FunctionsGL *functions,
         // Restore previous state
         functions->blendColor(oldColor[0], oldColor[1], oldColor[2], oldColor[3]);
     }
+
+    if (features.limitMaxBufferSizeTo1gb.enabled)
+    {
+        limitations->bufferSizeLimit = 1 << 30;
+    }
 }
 
 bool GetSystemInfoVendorIDAndDeviceID(const FunctionsGL *functions,
@@ -2289,14 +2296,14 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     bool isGetSystemInfoSuccess =
         GetSystemInfoVendorIDAndDeviceID(functions, &systemInfo, &vendor, &device);
 
-    bool isAMD      = IsAMD(vendor);
-    bool isApple    = IsAppleGPU(vendor);
-    bool isIntel    = IsIntel(vendor);
-    bool isNvidia   = IsNvidia(vendor);
-    bool isQualcomm = IsQualcomm(vendor);
-    bool isVMWare   = IsVMWare(vendor);
-    bool hasAMD     = systemInfo.hasAMDGPU();
-    bool isMali     = IsARM(vendor);
+    bool isAMD           = IsAMD(vendor);
+    bool isApple         = IsAppleGPU(vendor);
+    bool isIntel         = IsIntel(vendor);
+    bool isNvidia        = IsNvidia(vendor);
+    bool isQualcomm      = IsQualcomm(vendor);
+    bool isVMWare        = IsVMWare(vendor);
+    bool hasAMD          = systemInfo.hasAMDGPU();
+    bool isMali          = IsARM(vendor);
     bool isHuaweiMaleoon = IsHuaweiMaleoon(functions);
 
     std::array<int, 3> mesaVersion = {0, 0, 0};
@@ -2659,6 +2666,10 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
                             functions->isAtLeastGL(gl::Version(4, 5)) &&
                                 functions->hasGLExtension("GL_ARB_fragment_shader_interlock"));
 
+    ANGLE_FEATURE_CONDITION(features, multiviewViaViewportArray,
+                            functions->hasGLExtension("GL_ARB_shader_viewport_layer_array") ||
+                                functions->hasGLExtension("GL_NV_viewport_array2"));
+
     // EXT_shader_framebuffer_fetch
     ANGLE_FEATURE_CONDITION(features, supportsShaderFramebufferFetchEXT,
                             functions->hasGLESExtension("GL_EXT_shader_framebuffer_fetch"));
@@ -2745,6 +2756,13 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     // IMG GL drivers crash in glClearTexImage on various format/type combinations such as packed
     // types, LUMA and depth stencil.
     ANGLE_FEATURE_CONDITION(features, disableClearTexImageForRobustInit, IsPowerVR(vendor));
+
+    // IMG GL drivers crash while compiling shaders with more than the limit of uniform blocks.
+    ANGLE_FEATURE_CONDITION(features, validateMaxPerStageUniformBlocksAtCompileTime,
+                            IsPowerVR(vendor));
+
+    // Mac Intel drivers are unable to allocate buffers larger than ~1gb
+    ANGLE_FEATURE_CONDITION(features, limitMaxBufferSizeTo1gb, isApple && isIntel);
 }
 
 void InitializeFrontendFeatures(const FunctionsGL *functions, angle::FrontendFeatures *features)

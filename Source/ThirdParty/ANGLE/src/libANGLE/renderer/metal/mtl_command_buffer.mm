@@ -184,7 +184,7 @@ inline void SetVertexBufferCmd(id<MTLRenderCommandEncoder> encoder,
                                IntermediateCommandStream *stream)
 {
     id<MTLBuffer> buffer = stream->fetch<id<MTLBuffer>>();
-    size_t offset      = stream->fetch<size_t>();
+    size_t offset        = stream->fetch<size_t>();
     uint32_t index       = stream->fetch<uint32_t>();
     [encoder setVertexBuffer:buffer offset:offset atIndex:index];
     [buffer ANGLE_MTL_RELEASE];
@@ -193,7 +193,7 @@ inline void SetVertexBufferCmd(id<MTLRenderCommandEncoder> encoder,
 inline void SetVertexBufferOffsetCmd(id<MTLRenderCommandEncoder> encoder,
                                      IntermediateCommandStream *stream)
 {
-    size_t offset = stream->fetch<size_t>();
+    size_t offset   = stream->fetch<size_t>();
     uint32_t index  = stream->fetch<uint32_t>();
     [encoder setVertexBufferOffset:offset atIndex:index];
 }

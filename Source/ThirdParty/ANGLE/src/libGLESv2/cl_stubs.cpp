@@ -1284,4 +1284,17 @@ cl_int EnqueueTask(cl_command_queue command_queue,
                                                                     event_wait_list, event));
 }
 
+cl_int GetKernelSubGroupInfoKHR(cl_kernel in_kernel,
+                                cl_device_id in_device,
+                                KernelSubGroupInfo param_namePacked,
+                                size_t input_value_size,
+                                const void *input_value,
+                                size_t param_value_size,
+                                void *param_value,
+                                size_t *param_value_size_ret)
+{
+    return GetKernelSubGroupInfo(in_kernel, in_device, param_namePacked, input_value_size,
+                                 input_value, param_value_size, param_value, param_value_size_ret);
+}
+
 }  // namespace cl

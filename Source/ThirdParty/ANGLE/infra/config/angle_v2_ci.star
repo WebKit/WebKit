@@ -7,13 +7,14 @@
 load("@chromium-luci//builder_config.star", "builder_config")
 load("@chromium-luci//builders.star", "os")
 load("@chromium-luci//ci.star", "ci")
+load("@chromium-luci//consoles.star", "consoles")
 load("@chromium-luci//gardener_rotations.star", "gardener_rotations")
 load("@chromium-luci//gn_args.star", "gn_args")
 load("//constants.star", "default_experiments", "siso")
 
 ci.defaults.set(
     executable = "recipe:angle_v2/angle_v2",
-    builder_group = "angle",
+    builder_group = "ci",
     bucket = "ci",
     pool = "luci.chromium.gpu.ci",
     triggered_by = ["main-poller"],
@@ -69,14 +70,87 @@ angle_linux_parent_builder(
             "x64",
         ],
     ),
-    # TODO(crbug.com/475260235): Move this to the main view once it is at
-    # parity with the older equivalent.
-    list_view = "exp",
+    console_view_entry = consoles.console_view_entry(
+        category = "compile|linux|x64",
+        short_name = "rel",
+    ),
 )
 
 ################################################################################
 # Child Testers                                                                #
 ################################################################################
+
+ci.thin_tester(
+    name = "angle-linux-x64-amd-rx5500xt-rel",
+    description_html = "Tests release ANGLE on Linux/x64 on AMD RX 5500 XT GPUs",
+    parent = "angle-linux-x64-builder-rel",
+    builder_spec = builder_config.builder_spec(
+        execution_mode = builder_config.execution_mode.TEST,
+        gclient_config = builder_config.gclient_config(
+            config = "angle_v2",
+        ),
+        chromium_config = builder_config.chromium_config(
+            config = "angle_v2_clang",
+            build_config = builder_config.build_config.RELEASE,
+            target_arch = builder_config.target_arch.INTEL,
+            target_bits = 64,
+            target_platform = builder_config.target_platform.LINUX,
+        ),
+        run_tests_serially = True,
+    ),
+    console_view_entry = consoles.console_view_entry(
+        category = "test|linux|x64|rel",
+        short_name = "5500",
+    ),
+)
+
+ci.thin_tester(
+    name = "angle-linux-x64-intel-uhd630-rel",
+    description_html = "Tests release ANGLE on Linux/x64 on Intel UHD 630 GPUs",
+    parent = "angle-linux-x64-builder-rel",
+    builder_spec = builder_config.builder_spec(
+        execution_mode = builder_config.execution_mode.TEST,
+        gclient_config = builder_config.gclient_config(
+            config = "angle_v2",
+        ),
+        chromium_config = builder_config.chromium_config(
+            config = "angle_v2_clang",
+            build_config = builder_config.build_config.RELEASE,
+            target_arch = builder_config.target_arch.INTEL,
+            target_bits = 64,
+            target_platform = builder_config.target_platform.LINUX,
+        ),
+        run_tests_serially = True,
+    ),
+    console_view_entry = consoles.console_view_entry(
+        category = "test|linux|x64|rel",
+        short_name = "630",
+    ),
+)
+
+ci.thin_tester(
+    name = "angle-linux-x64-nvidia-gtx1660-rel",
+    description_html = "Tests release ANGLE on Linux/x64 on NVIDIA GTX 1660 GPUs",
+    parent = "angle-linux-x64-builder-rel",
+    builder_spec = builder_config.builder_spec(
+        execution_mode = builder_config.execution_mode.TEST,
+        gclient_config = builder_config.gclient_config(
+            config = "angle_v2",
+        ),
+        chromium_config = builder_config.chromium_config(
+            config = "angle_v2_clang",
+            build_config = builder_config.build_config.RELEASE,
+            target_arch = builder_config.target_arch.INTEL,
+            target_bits = 64,
+            target_platform = builder_config.target_platform.LINUX,
+        ),
+        run_tests_serially = True,
+    ),
+    console_view_entry = consoles.console_view_entry(
+        category = "test|linux|x64|rel",
+        short_name = "1660",
+    ),
+)
 
 ci.thin_tester(
     name = "angle-linux-x64-sws-rel",
@@ -96,7 +170,46 @@ ci.thin_tester(
         ),
         run_tests_serially = True,
     ),
-    # TODO(crbug.com/475260235): Move this to the main view once it is at
-    # parity with the older equivalent.
-    list_view = "exp",
+    console_view_entry = consoles.console_view_entry(
+        category = "test|linux|x64|rel",
+        short_name = "sws",
+    ),
+)
+
+################################################################################
+# Trace Tests                                                                  #
+################################################################################
+
+angle_linux_parent_builder(
+    name = "angle-linux-x64-trace",
+    description_html = "Runs ANGLE GLES trace tests on Linux/x64 with SwiftShader",
+    schedule = "triggered",
+    properties = {
+        "run_trace_tests": True,
+    },
+    builder_spec = builder_config.builder_spec(
+        gclient_config = builder_config.gclient_config(
+            config = "angle_v2_nointernal",
+        ),
+        chromium_config = builder_config.chromium_config(
+            config = "angle_v2_clang",
+            build_config = builder_config.build_config.RELEASE,
+            target_arch = builder_config.target_arch.INTEL,
+            target_bits = 64,
+            target_platform = builder_config.target_platform.LINUX,
+        ),
+    ),
+    # These GN args are not actually used since the trace tests do compilation
+    # as part of running, but the recipe may try to "compile" as a side effect
+    # of reusing the Chromium recipe code, so have some valid args.
+    gn_args = gn_args.config(
+        configs = [
+            "linux_clang",
+            "x64",
+        ],
+    ),
+    console_view_entry = consoles.console_view_entry(
+        category = "trace|linux|x64",
+        short_name = "rel",
+    ),
 )

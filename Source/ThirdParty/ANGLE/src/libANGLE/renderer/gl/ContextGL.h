@@ -296,7 +296,6 @@ class ContextGL : public ContextImpl
 
     void markWorkSubmitted();
 
-    MultiviewImplementationTypeGL getMultiviewImplementationType() const;
     bool hasNativeParallelCompile();
 
     const gl::Debug &getDebug() const { return mState.getDebug(); }

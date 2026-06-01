@@ -68,7 +68,8 @@
                                  GLint *params);                                                   \
     void getActiveUniformsiv(ShaderProgramID programPacked, GLsizei uniformCount,                  \
                              const GLuint *uniformIndices, GLenum pname, GLint *params);           \
-    void getBufferParameteri64v(BufferBinding targetPacked, GLenum pname, GLint64 *params);        \
+    void getBufferParameteri64v(BufferBinding targetPacked, BufferParam pnamePacked,               \
+                                GLint64 *params);                                                  \
     void getBufferPointerv(BufferBinding targetPacked, GLenum pname, void **params);               \
     GLint getFragDataLocation(ShaderProgramID programPacked, const GLchar *name);                  \
     void getInteger64i_v(GLenum target, GLuint index, GLint64 *data);                              \

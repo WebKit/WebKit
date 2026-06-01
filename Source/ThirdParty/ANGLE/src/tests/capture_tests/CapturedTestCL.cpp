@@ -82,6 +82,12 @@ class MultiFrameCL
             int gid = get_global_id(0);
             output[gid] = gid/gid;
         }
+
+        __kernel void frame6(__global float *output)
+        {
+            int gid = get_global_id(0);
+            output[gid] = gid * 1.0f;
+        }
         )";
         program = clCreateProgramWithSource(context, 1, &kernelSource, nullptr, nullptr);
         clBuildProgram(program, 0, nullptr, nullptr, nullptr, nullptr);
@@ -108,6 +114,8 @@ class MultiFrameCL
     void frame4() { executeKernel("frame4"); }
 
     void frame5() { executeKernel("frame5"); }
+
+    void frame6() { executeKernel("frame6"); }
 
   private:
     void executeKernel(const char *kernelName)
@@ -172,6 +180,7 @@ TEST_P(CapturedTestCL, MultiFrameCL)
     test.frame3();
     test.frame4();
     test.frame5();
+    test.frame6();
 
     test.testTearDown();
 }

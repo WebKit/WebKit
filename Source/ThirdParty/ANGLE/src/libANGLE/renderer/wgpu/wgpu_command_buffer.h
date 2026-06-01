@@ -180,7 +180,8 @@ struct SetScissorRectCommand
 
 struct SetStencilReferenceCommand
 {
-    uint64_t pad;
+    uint32_t referenceValue;
+    uint32_t pad;
 };
 
 struct SetVertexBufferCommand
@@ -250,6 +251,7 @@ class CommandBuffer
     void setBlendConstant(float r, float g, float b, float a);
     void setPipeline(RenderPipelineHandle pipeline);
     void setScissorRect(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
+    void setStencilReference(uint32_t refVal);
     void setViewport(float x, float y, float width, float height, float minDepth, float maxDepth);
     void setIndexBuffer(BufferHandle buffer,
                         WGPUIndexFormat format,
@@ -261,6 +263,7 @@ class CommandBuffer
 
     bool hasCommands() const { return mState.commandCount > 0; }
     bool hasSetScissorCommand() const { return mState.hasSetScissorCommand; }
+    bool hasSetStencilRefCommand() const { return mState.hasSetStencilRefCommand; }
     bool hasSetViewportCommand() const { return mState.hasSetViewportCommand; }
     bool hasSetBlendConstantCommand() const { return mState.hasSetBlendConstantCommand; }
 
@@ -308,6 +311,7 @@ class CommandBuffer
 
         size_t commandCount             = 0;
         bool hasSetScissorCommand       = false;
+        bool hasSetStencilRefCommand    = false;
         bool hasSetViewportCommand      = false;
         bool hasSetBlendConstantCommand = false;
 

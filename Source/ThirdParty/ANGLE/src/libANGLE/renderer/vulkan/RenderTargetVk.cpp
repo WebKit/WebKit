@@ -210,7 +210,7 @@ angle::Result RenderTargetVk::getImageViewWithColorspace(ContextVk *contextVk,
                                                          const vk::ImageView **imageViewOut) const
 {
     ASSERT(mImage);
-    mImageViews->updateSrgbWiteControlMode(*mImage, mode);
+    mImageViews->updateSrgbWriteControlMode(*mImage, mode);
     return getImageViewImpl(contextVk, *mImage, mImageViews, imageViewOut);
 }
 

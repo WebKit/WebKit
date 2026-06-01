@@ -291,6 +291,54 @@ void main()
     EXPECT_PIXEL_RECT_EQ(x, y, width, height, GLColor::red);
 }
 
+// Write to one gl_ClipDistance element and toggle clip distance from enable to disable without any
+// other state change.
+TEST_P(ClipDistanceAPPLETest, ToggleOneClipDistance)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_APPLE_clip_distance"));
+
+    constexpr char kVS[] = R"(
+#extension GL_APPLE_clip_distance : require
+
+uniform vec4 u_plane;
+
+attribute vec2 a_position;
+
+void main()
+{
+    gl_Position = vec4(a_position, 0.0, 1.0);
+
+    gl_ClipDistance[0] = dot(gl_Position, u_plane);
+})";
+
+    ANGLE_GL_PROGRAM(programRed, kVS, essl1_shaders::fs::Red());
+    glUseProgram(programRed);
+    ASSERT_GL_NO_ERROR();
+
+    glEnable(GL_CLIP_DISTANCE0_APPLE);
+
+    // Clear to blue
+    glClearColor(0, 0, 1, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw full screen quad with color red. This should clipped such that All pixels on the left of
+    // the plane x = -0.5 must be blue
+    glUniform4f(glGetUniformLocation(programRed, "u_plane"), 1, 0, 0, 0.5);
+    drawQuad(programRed, "a_position", 0);
+
+    // Disable GL_CLIP_DISTANCE without any other state change
+    glDisable(GL_CLIP_DISTANCE0_APPLE);
+    drawQuad(programRed, "a_position", 0);
+
+    // All pixels must be red
+    GLuint x      = 0;
+    GLuint y      = 0;
+    GLuint width  = getWindowWidth();
+    GLuint height = getWindowHeight();
+    EXPECT_PIXEL_RECT_EQ(x, y, width, height, GLColor::red);
+    EXPECT_GL_NO_ERROR();
+}
+
 // Write to each gl_ClipDistance element
 TEST_P(ClipDistanceAPPLETest, EachClipDistance)
 {

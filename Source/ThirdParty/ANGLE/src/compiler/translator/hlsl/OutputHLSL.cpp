@@ -1236,7 +1236,7 @@ void OutputHLSL::visitSymbol(TIntermSymbol *node)
             mReferencedOutputVariables[uniqueId.get()] = &variable;
             out << "out_" << name;
         }
-        else if (qualifier == EvqViewIDOVR)
+        else if (qualifier == EvqEmulatedViewIDOVR)
         {
             out << name;
             mUsesViewID = true;

@@ -1043,11 +1043,6 @@ void ContextGL::markWorkSubmitted()
     mRenderer->markWorkSubmitted();
 }
 
-MultiviewImplementationTypeGL ContextGL::getMultiviewImplementationType() const
-{
-    return mRenderer->getMultiviewImplementationType();
-}
-
 bool ContextGL::hasNativeParallelCompile()
 {
     return mRenderer->hasNativeParallelCompile();

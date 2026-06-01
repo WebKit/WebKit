@@ -23,6 +23,4 @@ angle_white_box_tests_vulkan_sources = [
   "gl_tests/VulkanMultithreadingTest.cpp",
   "gl_tests/VulkanUniformUpdatesTest.cpp",
 ]
-angle_white_box_tests_metal_sources = [
-  "gl_tests/BufferPoolTestMetal.mm",
-]
+angle_white_box_tests_metal_sources = [ "gl_tests/BufferPoolTestMetal.mm" ]

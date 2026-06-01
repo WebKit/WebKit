@@ -62,6 +62,11 @@ void ReplayFrame1(void)
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 20, gClientArrays[1]);
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
+}
+
+void ReplayFrame2(void)
+{
+    eglGetError();
     glUniform1i(gUniformLocations[gCurrentProgramPerContext[gCurrentContext]][0], 0);
     UpdateClientArrayPointer(0, (const GLubyte *)GetBinaryData(0), 72);
     UpdateClientArrayPointer(1, (const GLubyte *)GetBinaryData(80), 68);
@@ -74,7 +79,7 @@ glDeleteVertexArrays(1, gResourceIDBuffer);
 glDeleteVertexArrays(1, gResourceIDBuffer);
 }
 
-void ReplayFrame2(void)
+void ReplayFrame3(void)
 {
     eglGetError();
     CreateProgram(11);
@@ -124,7 +129,7 @@ glDeleteVertexArrays(1, gResourceIDBuffer);
     glDeleteShader(gShaderProgramMap[13]);
 }
 
-void ReplayFrame3(void)
+void ReplayFrame4(void)
 {
     eglGetError();
     glGenBuffers(1, (GLuint *)gReadBuffer);
@@ -154,6 +159,7 @@ void ReplayFrame3(void)
     UpdateCurrentProgramPerContext(14);
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_UNSIGNED_BYTE, GL_FALSE, 1, 0);
+    UpdateClientArrayPointer(0, (const GLubyte *)GetBinaryData(432), 52);
     glDrawArrays(GL_TRIANGLES, 0, 3);
     glGetError();
     glDeleteProgram(gShaderProgramMap[14]);
@@ -172,7 +178,7 @@ void ResetReplayContext1(void)
 {
 }
 
-void ReplayFrame4(void)
+void ReplayFrame5(void)
 {
     eglGetError();
     glCompileShader(gShaderProgramMap[4]);
@@ -187,7 +193,7 @@ void ReplayFrame4(void)
     UpdateTextureID(3, 0);
     glBindTexture(GL_TEXTURE_2D, gTextureMap[3]);
     glGetError();
-    glTexImage2D(GL_TEXTURE_2D, 0, 6407, 2, 2, 0, GL_RGB, GL_UNSIGNED_BYTE, (const GLubyte *)GetBinaryData(432));
+    glTexImage2D(GL_TEXTURE_2D, 0, 6407, 2, 2, 0, GL_RGB, GL_UNSIGNED_BYTE, (const GLubyte *)GetBinaryData(496));
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, 9728);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, 9728);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -198,9 +204,9 @@ void ReplayFrame4(void)
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
     glUniform1i(gUniformLocations[gCurrentProgramPerContext[gCurrentContext]][0], 0);
-    UpdateClientArrayPointer(0, (const GLubyte *)GetBinaryData(448), 72);
-    UpdateClientArrayPointer(1, (const GLubyte *)GetBinaryData(528), 68);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (const GLubyte *)GetBinaryData(608));
+    UpdateClientArrayPointer(0, (const GLubyte *)GetBinaryData(512), 72);
+    UpdateClientArrayPointer(1, (const GLubyte *)GetBinaryData(592), 68);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (const GLubyte *)GetBinaryData(672));
     glReadPixels(108, 108, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, (void *)gReadBuffer);
     glGetError();
     // Skipping invalid call to glBindTexture with error: GL_INVALID_ENUM;

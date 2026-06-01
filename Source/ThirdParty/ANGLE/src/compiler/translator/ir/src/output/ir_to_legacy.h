@@ -62,6 +62,8 @@ TIntermTyped *make_variable(TCompiler *compiler,
                             const ASTType &astType,
                             bool isRedeclaredBuiltIn,
                             bool isStaticUse);
+TIntermTyped *make_internal_variable_gl_layer_vs();
+TIntermTyped *make_internal_variable_gl_instance_es100();
 TIntermTyped *make_nameless_block_field_variable(TCompiler *compiler,
                                                  TIntermTyped *variable,
                                                  uint32_t fieldIndex,

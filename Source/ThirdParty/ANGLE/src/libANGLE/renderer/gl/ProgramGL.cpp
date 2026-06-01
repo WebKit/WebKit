@@ -930,7 +930,7 @@ void ProgramGL::linkResources(const gl::ProgramLinkedResources &resources)
         mState.getAttachedShader(gl::ShaderType::Fragment);
     if (fragmentShader != nullptr)
     {
-        resources.pixelLocalStorageLinker.link(fragmentShader->pixelLocalStorageFormats);
+        resources.pixelLocalStorageLinker.link(fragmentShader->pixelLocalStorageLayouts);
     }
 }
 

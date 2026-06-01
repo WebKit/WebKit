@@ -3010,4 +3010,40 @@ cl_int CL_API_CALL clIcdSetPlatformDispatchDataKHR(cl_platform_id platform, void
     return returnValue;
 }
 
+// cl_khr_subgroups
+cl_int CL_API_CALL clGetKernelSubGroupInfoKHR(cl_kernel in_kernel,
+                                              cl_device_id in_device,
+                                              cl_kernel_sub_group_info param_name,
+                                              size_t input_value_size,
+                                              const void *input_value,
+                                              size_t param_value_size,
+                                              void *param_value,
+                                              size_t *param_value_size_ret)
+{
+    ANGLE_UNSAFE_TODO(
+        CL_EVENT(GetKernelSubGroupInfoKHR,
+                 "in_kernel = 0x%016" PRIxPTR ", in_device = 0x%016" PRIxPTR
+                 ", param_name = %u, input_value_size = %zu, input_value = 0x%016" PRIxPTR
+                 ", param_value_size = %zu, param_value = 0x%016" PRIxPTR
+                 ", param_value_size_ret = 0x%016" PRIxPTR "",
+                 (uintptr_t)in_kernel, (uintptr_t)in_device, param_name, input_value_size,
+                 (uintptr_t)input_value, param_value_size, (uintptr_t)param_value,
+                 (uintptr_t)param_value_size_ret));
+
+    KernelSubGroupInfo param_namePacked = PackParam<KernelSubGroupInfo>(param_name);
+
+    ANGLE_CL_VALIDATE_ERROR(GetKernelSubGroupInfoKHR, in_kernel, in_device, param_namePacked,
+                            input_value_size, input_value, param_value_size, param_value,
+                            param_value_size_ret);
+
+    cl::gClErrorTls = CL_SUCCESS;
+    cl_int returnValue =
+        GetKernelSubGroupInfoKHR(in_kernel, in_device, param_namePacked, input_value_size,
+                                 input_value, param_value_size, param_value, param_value_size_ret);
+    ANGLE_CAPTURE_CL(GetKernelSubGroupInfoKHR, true, in_kernel, in_device, param_namePacked,
+                     input_value_size, input_value, param_value_size, param_value,
+                     param_value_size_ret, returnValue);
+    return returnValue;
+}
+
 }  // namespace cl

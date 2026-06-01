@@ -638,6 +638,16 @@ cl_int CL_API_CALL clIcdGetPlatformIDsKHR(cl_uint num_entries,
 void *CL_API_CALL clIcdGetFunctionAddressForPlatformKHR(cl_platform_id platform,
                                                         const char *func_name);
 cl_int CL_API_CALL clIcdSetPlatformDispatchDataKHR(cl_platform_id platform, void *dispatch_data);
+
+// cl_khr_subgroups
+cl_int CL_API_CALL clGetKernelSubGroupInfoKHR(cl_kernel in_kernel,
+                                              cl_device_id in_device,
+                                              cl_kernel_sub_group_info param_name,
+                                              size_t input_value_size,
+                                              const void *input_value,
+                                              size_t param_value_size,
+                                              void *param_value,
+                                              size_t *param_value_size_ret);
 }  // namespace cl
 
 #endif  // LIBGLESV2_ENTRY_POINTS_CL_AUTOGEN_H_

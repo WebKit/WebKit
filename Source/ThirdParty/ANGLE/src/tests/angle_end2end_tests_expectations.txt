@@ -182,8 +182,9 @@
 352085732 WIN INTEL VULKAN : OcclusionQueriesTest.MultiQueries/* = SKIP
 373818282 WIN INTEL OPENGL : ClearTest.ChangeFramebufferAttachmentFromRGBAtoRGB/* = SKIP
 388144480 WIN INTEL VULKAN : OcclusionQueriesTest.WrongSkippedQuery/* = SKIP
-
+478807229 WIN INTEL VULKAN : OcclusionQueriesTestES3.QueryReuseWithMultipleFBOs/* = SKIP
 434453468 WIN INTEL VULKAN : LineLoopIndirectTest.TwoIndirectDrawsInDifferentIndirectBuffer/* = SKIP
+485440163 WIN INTEL VULKAN : FramebufferMultiviewLayeredClearTest.ScissoredClearBufferfi/* = SKIP
 
 // Texture border clamp ES 3.2 test failures
 390710636 PIXEL4ORXL VULKAN : TextureBorderClampTestES32.CustomBorderColorWithStencil/* = SKIP
@@ -453,9 +454,6 @@
 464927523 METAL : GLSLTest_ES3_PackUnpackEmulation.PackHalf2x16/* = SKIP
 464927523 METAL : GLSLTest_ES3_PackUnpackEmulation.PackSnorm2x16/* = SKIP
 464927523 METAL : GLSLTest_ES3_PackUnpackEmulation.PackUnorm2x16/* = SKIP
-42266214 MAC APPLE METAL : PixelLocalStorageTest.Coherency_noncoherent/ES3_Metal_EmulatePixelLocalStorage_DisableProgrammableBlending* = SKIP
-42266214 MAC APPLE METAL : PixelLocalStorageTest.R32_noncoherent/ES3_Metal_EmulatePixelLocalStorage_DisableProgrammableBlending* = SKIP
-42266214 MAC APPLE METAL : PixelLocalStorageTest.RGBA8_noncoherent/ES3_Metal_EmulatePixelLocalStorage_DisableProgrammableBlending* = SKIP
 42266214 MAC APPLE METAL : Texture2DTest.ManySupersedingTextureUpdates/* = SKIP
 
 // The workaround is not intended to be enabled in this configuration so
@@ -488,6 +486,7 @@
 
 // New failures on MacBook Pro 2019 macOS 13.2.1
 42266544 MAC METAL AMD : ClearTest.ClearStencilMask/* = SKIP
+42266544 MAC METAL AMD : ClearTest.StencilScissoredClearThenFullClear/* = SKIP
 42266544 MAC METAL AMD : ClearTestES3.ClearBufferivStencilMask/* = SKIP
 42266544 MAC METAL AMD : ClearTestES3.RepeatedStencilClear/* = SKIP
 42266544 MAC METAL AMD : DepthWriteTest.Test/* = SKIP
@@ -1282,6 +1281,11 @@
 // GL program cache failure with shader images.
 42266268 WIN OPENGL : PixelLocalStorageTest.ProgramCache/* = SKIP
 
+479742973 OPENGL : SRGBFramebufferDefaultLinearTest.BlitFromSrgbFbo/* = SKIP
+479742973 NVIDIA GLES : SRGBFramebufferDefaultLinearTest.BlitFromSrgbFbo/* = SKIP
+479742973 INTEL OPENGL : SRGBFramebufferDefaultLinearTest.BlitToLinearFbo/* = SKIP
+479742973 INTEL OPENGL : SRGBFramebufferDefaultLinearTest.BlitToSrgbFbo/* = SKIP
+
 // Skip device OOM tests for Linux/NVIDIA.
 42266674 LINUX NVIDIA : VulkanMemoryTest.* = SKIP
 42266674 LINUX NVIDIA : UniformBufferMemoryTest.* = SKIP
@@ -1529,9 +1533,7 @@
 410630704 SAMSUNG GALAXYS24EXYNOS GLES : AdvancedBlendTest.AdvancedBlendEnabledAndThenDisabledKHR/* = SKIP
 410630704 SAMSUNG GALAXYS24EXYNOS GLES : AdvancedBlendTest.AdvancedBlendNotAppliedWhenBlendIsDisabledKHR/* = SKIP
 410630704 SAMSUNG GALAXYS24EXYNOS GLES : AtomicCounterBufferTest31.AtomicCounterQueries/* = SKIP
-410630704 SAMSUNG GALAXYS24EXYNOS GLES : BlitFramebufferTest.BlitLargeColorSmallDepthAttachments/* = SKIP
 410630704 SAMSUNG GALAXYS24EXYNOS GLES : BlitFramebufferTest.BlitMultisampledFramebufferToMRT/* = SKIP
-410630704 SAMSUNG GALAXYS24EXYNOS GLES : BlitFramebufferTest.BlitWithDifferentSizesColorAttachments/* = SKIP
 410630704 SAMSUNG GALAXYS24EXYNOS GLES : BlitFramebufferTestES31.BlitNonZeroLevelSource/* = SKIP
 410630704 SAMSUNG GALAXYS24EXYNOS GLES : BlobCacheInternalRejectionTest.ShaderCacheFunctional/* = SKIP
 410630704 SAMSUNG GALAXYS24EXYNOS GLES : ClipCullDistanceTest.ClipCullInterpolation/* = SKIP
@@ -1812,6 +1814,9 @@
 // Workaround feature that is only supposed to be enabled on vulkan backend
 292285899 PIXEL4ORXL GLES : EGLSurfaceTest.DestroyAndRecreateWhileCurrent/* = SKIP
 
+483088593 PIXEL4ORXL GLES : EGLSurfaceTest.ClearThenPreserve/* = SKIP
+483088593 PIXEL4ORXL GLES : EGLSurfaceTest.PreserveThenBlend/* = SKIP
+
 // NVIDIA driver has a bug in its YCbCr implementation
 42267014 NVIDIA VULKAN : Texture2DTestES3.TexStorage2DMultipleYuvSamplersSwitchSamplerUniformValues/* = SKIP
 42267014 NVIDIA VULKAN : Texture2DTestES3.TexStorage2DMultipleYuvSamplersSwitchBoundTextures/* = SKIP
@@ -1835,11 +1840,7 @@
 376553328 LINUX INTEL WGPU : BasicUniformUsageTest.* = SKIP
 // Can't use a uniform struct outside of uniform address space.
 376553328 WGPU : SimpleUniformTestES3.UseUniformStructOutsideOfUniformAddressSpace/* = SKIP
-42267012 WGPU : ClearTest.*Scissor* = SKIP
-42267012 WGPU : ClearTest.*Mask* = SKIP
-42267012 WGPU : ClearTest.DefaultFramebuffer* = SKIP
 42267012 WGPU : ClearTest.ChangeFramebufferAttachmentFromRGBAtoRGB* = SKIP
-42267012 WGPU : ClearTest.ClearIssue*  = SKIP
 42266974 WGPU : Texture2DTest.Tex* = SKIP
 42266974 WGPU : Texture2DTest.Upload* = SKIP
 42266974 WGPU : Texture2DTest.*Superseding* = SKIP
@@ -1866,10 +1867,25 @@
 42266907 WGPU : AttributeLayoutNonIndexed.Test/* = SKIP
 42266907 WGPU : BindUniformLocationTest.Compositor/* = SKIP
 42266907 WGPU : BlendPackedTest.RGB565/* = SKIP
-42266907 WGPU : BlitFramebufferANGLETest.* = SKIP
+42266907 WGPU : BlitFramebufferANGLETest.BlitColorToDefault/* = SKIP
+42266907 WGPU : BlitFramebufferANGLETest.BlitColorWithFlip/* = SKIP
+42266907 WGPU : BlitFramebufferANGLETest.ReverseColorBlit/* = SKIP
+42266907 WGPU : BlitFramebufferANGLETest.ScissoredBlit/* = SKIP
+42266907 WGPU : BlitFramebufferANGLETest.ReverseScissoredBlit/* = SKIP
+42266907 WGPU : BlitFramebufferANGLETest.OversizedBlit/* = SKIP
+42266907 WGPU : BlitFramebufferANGLETest.ReverseOversizedBlit/* = SKIP
+42266907 WGPU : BlitFramebufferANGLETest.BlitWithDepthUserToDefault/* = SKIP
+42266907 WGPU : BlitFramebufferANGLETest.BlitWithDepthDefaultToUser/* = SKIP
+42266907 WGPU : BlitFramebufferANGLETest.BlitPartialColor/* = SKIP
+42266907 WGPU : BlitFramebufferANGLETest.BlitDifferentSizes/* = SKIP
+42266907 WGPU : BlitFramebufferANGLETest.BlitStencil/* = SKIP
+42266907 WGPU : BlitFramebufferANGLETest.BlitWithMissingAttachments/* = SKIP
+42266907 WGPU : SimpleStateChangeTest.TexSubImageOnTextureBoundToFrambuffer/* = SKIP
+42266907 WGPU : SRGBFramebufferDefaultLinearTest.Blit*LinearFbo/* = SKIP
 42266907 WGPU : DebugMarkerTest.Rendering/* = SKIP
 42266907 WGPU : DepthStencilFormatsTest.DepthBuffer16/* = SKIP
 42266907 WGPU : DepthStencilTest.StencilOnlyEmulatedWithPacked/* = SKIP
+42266907 WGPU : DepthStencilTestES3.ReadOnlyDepthStencilThenOutputDepthStencil/* = SKIP
 42266907 WGPU : FramebufferFormatsTest.RGB565Renderbuffer/* = SKIP
 42266907 WGPU : FramebufferFormatsTest.RGB8AndRGBA8Renderbuffers/* = SKIP
 42266907 WGPU : FramebufferFormatsTest.RGB8Renderbuffer/* = SKIP
@@ -1946,7 +1962,6 @@
 42266907 WGPU : LineLoopStateChangeTest.DrawElementsThenDrawArrays/* = SKIP
 42266907 WGPU : LineLoopStateChangeTest.DrawArraysThenDrawElements/* = SKIP
 42266907 WGPU : LineLoopStateChangeTest.DrawElementsThenDrawElements/* = SKIP
-42266907 WGPU : MaskedScissoredClearTest.Test/* = SKIP
 42266907 WGPU : PbufferTest.* = SKIP
 42266907 WGPU : PointSpritesTest.* = SKIP
 42266907 WGPU : RobustResourceInitTest.* = SKIP
@@ -2097,17 +2112,29 @@
 42267119 LINUX INTEL OPENGL : WEBGLVideoTextureTest.VerifyStateManagerKnowsBindingVideoImage/* = SKIP
 
 // Linux/Nvidia GTX 1660 failures after OS/driver upgrade to Ubuntu 22.04.
+362486580 LINUX NVIDIA OPENGL : EXTBlendFuncExtendedDrawTestES3.FragmentOutputLocationsAPIAndAutomatic/* = SKIP
+362486580 LINUX NVIDIA OPENGL : EXTBlendFuncExtendedDrawTestES3.FragmentOutputLocationsInShader/* = SKIP
+362486580 LINUX NVIDIA OPENGL : EXTBlendFuncExtendedDrawTestES3.MaxDualSourceDrawBuffers/* = SKIP
 362486580 LINUX NVIDIA OPENGL : InstancingTestES31.UpdateAttribBindingByVertexAttribDivisor/* = SKIP
 362486580 LINUX NVIDIA OPENGL : LineLoopIndirectTest.TwoIndirectDrawsShareIndexBuffer/* = SKIP
 362486580 LINUX NVIDIA OPENGL : LineLoopIndirectTest.UByteIndexIndirectBuffer/* = SKIP
+362486580 LINUX NVIDIA OPENGL : LineLoopIndirectTest.UShortIndexIndirectBuffer/* = SKIP
 362486580 LINUX NVIDIA OPENGL : LineLoopIndirectTest.UseAsUBOThenUpdateThenUByteIndexIndirectBuffer/* = SKIP
 362486580 LINUX NVIDIA OPENGL : MultiDrawIndirectTest.MultiDrawArraysIndirect/* = SKIP
 362486580 LINUX NVIDIA OPENGL : MultiDrawIndirectTest.MultiDrawElementsIndirect/* = SKIP
+362486580 LINUX NVIDIA OPENGL : UniformBufferTest31.UniformBufferBindings/* = SKIP
+
+362486580 LINUX NVIDIA VULKAN : ClearTextureEXTTestES31Renderable.Clear/*__GL_RGB5_A1_GL_RGBA_GL_UNSIGNED_INT_2_10_10_10_REV_* = SKIP
+362486580 LINUX NVIDIA VULKAN : EGLSurfaceTest.ResizeBeforeMakeCurrent*/* = SKIP
+362486580 LINUX NVIDIA VULKAN : EXTBlendFuncExtendedDrawTestES31.UseProgramPipeline/* = SKIP
+362486580 LINUX NVIDIA VULKAN : EXTBlendFuncExtendedDrawTestES31.UseTwoProgramStages/* = SKIP
+362486580 LINUX NVIDIA VULKAN : FramebufferTestWithFormatFallback.R4G4B4A4_OutOfRangeStagedUpdateReformated/* = SKIP
+362486580 LINUX NVIDIA VULKAN : FramebufferTest_ES3.SurfaceDimensionsChangeAndFragCoord/* = SKIP
+362486580 LINUX NVIDIA VULKAN : InstancingTestES31.UpdateAttribBindingByVertexAttribDivisor/* = SKIP
+362486580 LINUX NVIDIA VULKAN : SimpleStateChangeTestES31.MultipleVertexArrayObjectRendering/* = SKIP
 362486580 LINUX NVIDIA VULKAN : SixteenBppTextureTest.RGBA5551Validation/* = SKIP
 362486580 LINUX NVIDIA VULKAN : SixteenBppTextureTestES3.RGB5A1UploadRGB10A2/* = SKIP
-362486580 LINUX NVIDIA VULKAN : FramebufferTestWithFormatFallback.R4G4B4A4_OutOfRangeStagedUpdateReformated/* = SKIP
-362486580 LINUX NVIDIA VULKAN : EXTBlendFuncExtendedDrawTestES31.UseProgramPipeline/* = SKIP
-362486580 LINUX NVIDIA VULKAN : EGLSurfaceTest.ResizeBeforeMakeCurrent*/* = SKIP
+362486580 LINUX NVIDIA VULKAN : VertexAttributeTestES31.DrawArraysWithLargeStride/* = SKIP
 
 // OpenGL/GLES failures related to GL_EXT_clear_texture
 361623543 WIN INTEL OPENGL : ClearTextureEXTTest.ClearCubeMapArray/* = SKIP
@@ -2124,30 +2151,14 @@
 
 // Metal backend doesn't support different sized attachments.
 42261786 METAL : MSRTTES3Test.MultipleLevelsMultisampleMRTDraw2DColor/* = SKIP
-
-// Blit on out-of-bounds regions failures on NVIDIA, INTEL and AMD
 404959030 METAL : BlitFramebufferTest.BlitWithDifferentSizesColorAttachments/* = SKIP
 404959030 METAL : BlitFramebufferTest.BlitLargeColorSmallDepthAttachments/* = SKIP
 404959030 METAL : BlitFramebufferTest.BlitSmallColorLargeDepthAttachments/* = SKIP
+
+// D3D11 backend doesn't support differently sized attachments.
 404958318 D3D11 : BlitFramebufferTest.BlitWithDifferentSizesColorAttachments/* = SKIP
 404958318 D3D11 : BlitFramebufferTest.BlitLargeColorSmallDepthAttachments/* = SKIP
 404958318 D3D11 : BlitFramebufferTest.BlitSmallColorLargeDepthAttachments/* = SKIP
-404958319 LINUX NVIDIA OPENGL : BlitFramebufferTest.BlitLargeColorSmallDepthAttachments/* = SKIP
-404958319 LINUX NVIDIA OPENGL : BlitFramebufferTest.BlitSmallColorLargeDepthAttachments/* = SKIP
-404983220 LINUX NVIDIA VULKAN : BlitFramebufferTest.BlitLargeColorSmallDepthAttachments/* = SKIP
-404983220 LINUX NVIDIA VULKAN : BlitFramebufferTest.BlitSmallColorLargeDepthAttachments/* = SKIP
-404958319 LINUX INTEL OPENGL : BlitFramebufferTest.BlitLargeColorSmallDepthAttachments/* = SKIP
-404958319 LINUX INTEL OPENGL : BlitFramebufferTest.BlitSmallColorLargeDepthAttachments/* = SKIP
-404983220 LINUX INTEL VULKAN : BlitFramebufferTest.BlitLargeColorSmallDepthAttachments/* = SKIP
-404983220 LINUX INTEL VULKAN : BlitFramebufferTest.BlitSmallColorLargeDepthAttachments/* = SKIP
-404959032 MAC AMD OPENGL : BlitFramebufferTest.BlitLargeColorSmallDepthAttachments/* = SKIP
-404959032 MAC AMD OPENGL : BlitFramebufferTest.BlitSmallColorLargeDepthAttachments/* = SKIP
-404959032 MAC INTEL OPENGL : BlitFramebufferTest.BlitLargeColorSmallDepthAttachments/* = SKIP
-404959032 MAC INTEL OPENGL : BlitFramebufferTest.BlitSmallColorLargeDepthAttachments/* = SKIP
-404958320 WIN INTEL VULKAN : BlitFramebufferTest.BlitLargeColorSmallDepthAttachments/* = SKIP
-404958320 WIN INTEL VULKAN : BlitFramebufferTest.BlitSmallColorLargeDepthAttachments/* = SKIP
-404958320 WIN NVIDIA VULKAN : BlitFramebufferTest.BlitLargeColorSmallDepthAttachments/* = SKIP
-404958320 WIN NVIDIA VULKAN : BlitFramebufferTest.BlitSmallColorLargeDepthAttachments/* = SKIP
 
 // EGLImage colorspace renderbuffer failures on NVIDIA, INTEL and ANDROID
 40644776 D3D11                : ImageTestES3.SourceRenderbufferTargetTextureExternalESSL3* = SKIP

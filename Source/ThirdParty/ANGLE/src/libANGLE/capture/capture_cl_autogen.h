@@ -858,6 +858,18 @@ angle::CallCapture CaptureIcdSetPlatformDispatchDataKHR(bool isCallValid,
                                                         void *dispatch_data,
                                                         cl_int returnValue);
 
+// cl_khr_subgroups
+angle::CallCapture CaptureGetKernelSubGroupInfoKHR(bool isCallValid,
+                                                   cl_kernel in_kernel,
+                                                   cl_device_id in_device,
+                                                   KernelSubGroupInfo param_namePacked,
+                                                   size_t input_value_size,
+                                                   const void *input_value,
+                                                   size_t param_value_size,
+                                                   void *param_value,
+                                                   size_t *param_value_size_ret,
+                                                   cl_int returnValue);
+
 // Parameter Captures
 
 // CL 1.0
@@ -3080,6 +3092,35 @@ void CaptureIcdGetFunctionAddressForPlatformKHR_func_name(cl_platform_id platfor
 void CaptureIcdSetPlatformDispatchDataKHR_dispatch_data(cl_platform_id platform,
                                                         void *dispatch_data,
                                                         angle::ParamCapture *paramCapture);
+
+// cl_khr_subgroups
+void CaptureGetKernelSubGroupInfoKHR_input_value(cl_kernel in_kernel,
+                                                 cl_device_id in_device,
+                                                 KernelSubGroupInfo param_namePacked,
+                                                 size_t input_value_size,
+                                                 const void *input_value,
+                                                 size_t param_value_size,
+                                                 void *param_value,
+                                                 size_t *param_value_size_ret,
+                                                 angle::ParamCapture *paramCapture);
+void CaptureGetKernelSubGroupInfoKHR_param_value(cl_kernel in_kernel,
+                                                 cl_device_id in_device,
+                                                 KernelSubGroupInfo param_namePacked,
+                                                 size_t input_value_size,
+                                                 const void *input_value,
+                                                 size_t param_value_size,
+                                                 void *param_value,
+                                                 size_t *param_value_size_ret,
+                                                 angle::ParamCapture *paramCapture);
+void CaptureGetKernelSubGroupInfoKHR_param_value_size_ret(cl_kernel in_kernel,
+                                                          cl_device_id in_device,
+                                                          KernelSubGroupInfo param_namePacked,
+                                                          size_t input_value_size,
+                                                          const void *input_value,
+                                                          size_t param_value_size,
+                                                          void *param_value,
+                                                          size_t *param_value_size_ret,
+                                                          angle::ParamCapture *paramCapture);
 }  // namespace cl
 
 #endif  // LIBANGLE_CAPTURE_CL_AUTOGEN_H_

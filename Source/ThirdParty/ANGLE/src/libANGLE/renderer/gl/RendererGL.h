@@ -82,7 +82,6 @@ class RendererGL : angle::NonCopyable
     BlitGL *getBlitter() const { return mBlitter; }
     ClearMultiviewGL *getMultiviewClearer() const { return mMultiviewClearer; }
 
-    MultiviewImplementationTypeGL getMultiviewImplementationType() const;
     const gl::Caps &getNativeCaps() const;
     const gl::TextureCapsMap &getNativeTextureCaps() const;
     const gl::Extensions &getNativeExtensions() const;
@@ -136,7 +135,6 @@ class RendererGL : angle::NonCopyable
     mutable gl::Extensions mNativeExtensions;
     mutable gl::Limitations mNativeLimitations;
     mutable ShPixelLocalStorageOptions mNativePLSOptions;
-    mutable MultiviewImplementationTypeGL mMultiviewImplementationType;
 
     bool mWorkDoneSinceLastFlush = false;
 

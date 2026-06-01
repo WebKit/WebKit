@@ -262,6 +262,13 @@ void GenerateCaps(const WGPULimits &limitsWgpu,
     glExtensions->requiredInternalformatOES    = true;
     glExtensions->copyTextureCHROMIUM          = true;
 
+    // Depth/stencil extensions
+    glExtensions->packedDepthStencilOES = true;
+
+    // Blit extensions
+    glExtensions->framebufferBlitANGLE = true;
+    glExtensions->framebufferBlitNV    = true;
+
     // OpenGL ES caps
     glCaps->maxElementIndex       = std::numeric_limits<GLuint>::max() - 1;
     glCaps->max3DTextureSize      = rx::LimitToInt(limitsWgpu.maxTextureDimension3D);

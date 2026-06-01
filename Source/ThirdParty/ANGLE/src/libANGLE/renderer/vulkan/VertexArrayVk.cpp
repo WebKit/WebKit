@@ -66,14 +66,136 @@ bool ShouldCombineAttributes(vk::Renderer *renderer,
                              const gl::VertexAttribute &attrib,
                              const gl::VertexBinding &binding)
 {
-    if (!renderer->getFeatures().enableMergeClientAttribBuffer.enabled)
-    {
-        return false;
-    }
+    ASSERT(renderer->getFeatures().enableMergeClientAttribBuffer.enabled);
     const vk::Format &vertexFormat = renderer->getFormat(attrib.format->id);
     return !vertexFormat.getVertexLoadRequiresConversion() && binding.getDivisor() == 0 &&
            ClientBindingAligned(attrib, binding.getStride(),
                                 vertexFormat.getVertexInputAlignment());
+}
+
+struct AttributeRange
+{
+    // Stream vertex attribute start pointer address.
+    uintptr_t startAddr;
+    // Stream vertex attribute end pointer address.
+    uintptr_t endAddr;
+    // Stream vertex attribute first used pointer address.
+    // ie. startAddr + startVertex * stride.
+    uintptr_t copyStartAddr;
+
+    AttributeRange() : startAddr(0), endAddr(0), copyStartAddr(0) {}
+};
+
+// This function is a critical optimization for handling Client-Side Vertex Arrays (pointers to
+// system memory passed to glVertexAttribPointer). If an application uses an interleaved vertex
+// attribute layout, the memory looks like this: [Pos, Norm, UV, Pos, Norm, UV, ...]
+//
+// Without this function, ANGLE would trigger three separate copy operations:
+//     Copy all Positions (strided).
+//     Copy all Normals (strided).
+//     Copy all UVs (strided).
+//
+// This function analyzes the memory addresses of the active attributes. It identifies attributes
+// that are adjacent or overlapping in memory (interleaved). It calculates a single "bounding box"
+// memory range that covers all those attributes. The result of this optimization is that it tells
+// StreamVertexData to perform one large memcpy containing all the interleaved data. This
+// significantly reduces CPU overhead and cache misses.
+gl::AttributesMask MergeClientAttribsRange(
+    vk::Renderer *renderer,
+    const std::vector<gl::VertexAttribute> &attribs,
+    const std::vector<gl::VertexBinding> &bindings,
+    const gl::AttributesMask activeStreamedAttribs,
+    size_t startVertex,
+    size_t endVertex,
+    std::array<AttributeRange, gl::MAX_VERTEX_ATTRIBS> &mergedRangesOut,
+    std::array<size_t, gl::MAX_VERTEX_ATTRIBS> &mergedIndexesOut)
+{
+    ASSERT(renderer->getFeatures().enableMergeClientAttribBuffer.enabled);
+    std::array<size_t, gl::MAX_VERTEX_ATTRIBS> sortedIndices;
+    size_t sortedCount = 0;
+
+    // 1. Analyze attributes and calculate individual range
+    for (size_t attribIndex : activeStreamedAttribs)
+    {
+        const gl::VertexAttribute &attrib = attribs[attribIndex];
+        ASSERT(attrib.enabled);
+        const gl::VertexBinding &binding = bindings[attrib.bindingIndex];
+
+        bool canCombine = ShouldCombineAttributes(renderer, attrib, binding);
+        if (canCombine)
+        {
+            sortedIndices[sortedCount++] = attribIndex;
+        }
+
+        const vk::Format &vertexFormat = renderer->getFormat(attrib.format->id);
+        const GLuint pixelBytes        = vertexFormat.getActualBufferFormat().pixelBytes;
+        // If combining, we copy the full stride (padding included). If not, we might pack tightly.
+        const size_t destStride      = canCombine ? binding.getStride() : pixelBytes;
+        const uintptr_t startAddress = reinterpret_cast<uintptr_t>(attrib.pointer);
+
+        mergedRangesOut[attribIndex].startAddr = startAddress;
+        mergedRangesOut[attribIndex].endAddr =
+            startAddress + (endVertex - 1) * destStride + pixelBytes;
+        mergedRangesOut[attribIndex].copyStartAddr =
+            startAddress + startVertex * binding.getStride();
+
+        // Always initialize the output index to point to itself initially
+        mergedIndexesOut[attribIndex] = attribIndex;
+    }
+
+    // Fast exit if we don't have enough attributes to merge
+    if (sortedCount <= 1)
+    {
+        return gl::AttributesMask(0);
+    }
+
+    // 2. Sort combinable attributes by memory address (Start Address Ascending)
+    // We sort only the valid portion of the stack array.
+    auto compareRanges = [&mergedRangesOut](size_t a, size_t b) -> bool {
+        return mergedRangesOut[a].startAddr == mergedRangesOut[b].startAddr
+                   ? mergedRangesOut[a].endAddr < mergedRangesOut[b].endAddr
+                   : mergedRangesOut[a].startAddr < mergedRangesOut[b].startAddr;
+    };
+    std::sort(sortedIndices.begin(), sortedIndices.begin() + sortedCount, compareRanges);
+
+    // 3. Merge Intervals (Linear Scan)
+    // We keep track of a "Group Leader" (currentMergeIndex).
+    // If the next attribute overlaps the Leader, we extend the Leader.
+    gl::AttributesMask mergedAttribMask;
+    size_t currentMergeIndex = sortedIndices[0];
+    for (size_t i = 1; i < sortedCount; ++i)
+    {
+        size_t nextAttribIndex          = sortedIndices[i];
+        AttributeRange &leaderRange     = mergedRangesOut[currentMergeIndex];
+        const AttributeRange &nextRange = mergedRangesOut[nextAttribIndex];
+
+        // Check for overlap or adjacency:
+        // Leader: [Start ............ End]
+        // Next:              [Start ............ End]
+        if (leaderRange.endAddr >= nextRange.startAddr)
+        {
+            // MERGE:
+            // 1. Extend the leader's end address to cover the next attribute
+            leaderRange.endAddr = std::max(leaderRange.endAddr, nextRange.endAddr);
+            // 2. Extend the leader's copy start (min) to cover the next attribute
+            leaderRange.copyStartAddr =
+                std::min(leaderRange.copyStartAddr, nextRange.copyStartAddr);
+            // 3. Point the next attribute to the leader index
+            mergedIndexesOut[nextAttribIndex] = currentMergeIndex;
+
+            // 4. Mark both as merged
+            mergedAttribMask.set(currentMergeIndex);
+            mergedAttribMask.set(nextAttribIndex);
+        }
+        else
+        {
+            // NO OVERLAP:
+            // The next attribute becomes the new Leader for subsequent attributes.
+            currentMergeIndex = nextAttribIndex;
+        }
+    }
+
+    return mergedAttribMask;
 }
 
 void WarnOnVertexFormatConversion(ContextVk *contextVk, const vk::Format &vertexFormat)
@@ -338,10 +460,13 @@ VertexArrayVk::VertexArrayVk(ContextVk *contextVk,
     mCurrentArrayBufferSizes.fill(0);
     mCurrentArrayBuffers.fill(&emptyBuffer);
 
-    // Divisor value is ignored by the implementation when using VK_VERTEX_INPUT_RATE_VERTEX, but it
-    // is set to 1 to avoid a validation error due to a validation layer issue.
-    mZeroDivisor =
-        contextVk->getRenderer()->isVertexAttributeInstanceRateZeroDivisorAllowed() ? 0 : 1;
+    // When supportsVertexInputDynamicState is enabled,
+    // VUID-VkVertexInputBindingDescription2EXT-divisor-06227 requires divisor to be 1 when
+    // inputRate is VK_VERTEX_INPUT_RATE_VERTEX. When supportsVertexInputDynamicState is disabled,
+    // the divisor goes through GraphicsPipelineDesc struct, which is a packed structure. It uses
+    // "0" divisor value to indicate it is VK_VERTEX_INPUT_RATE_VERTEX.
+    mDivisorForVertexInputRateVertex =
+        contextVk->getFeatures().supportsVertexInputDynamicState.enabled ? 1 : 0;
 
     for (uint32_t attribIndex = 0; attribIndex < mVertexInputBindingDescs.size(); attribIndex++)
     {
@@ -351,7 +476,7 @@ VertexArrayVk::VertexArrayVk(ContextVk *contextVk,
             attribIndex,
             0,
             static_cast<VkVertexInputRate>(VK_VERTEX_INPUT_RATE_VERTEX),
-            mZeroDivisor};
+            mDivisorForVertexInputRateVertex};
     }
 
     for (uint32_t attribIndex = 0; attribIndex < mVertexInputAttribDescs.size(); attribIndex++)
@@ -1084,9 +1209,7 @@ ANGLE_INLINE angle::Result VertexArrayVk::syncDirtyEnabledStreamingAttrib(
     mCurrentArrayBufferOffsets[attribIndex] = emptyBuffer.getOffset();
     mCurrentArrayBufferSizes[attribIndex]   = emptyBuffer.getSize();
 
-    bool combined = ShouldCombineAttributes(renderer, attrib, binding);
-    mVertexInputBindingDescs[attribIndex].stride =
-        combined ? binding.getStride() : vertexFormat.getActualBufferFormat().pixelBytes;
+    mVertexInputBindingDescs[attribIndex].stride = vertexFormat.getActualBufferFormat().pixelBytes;
     // Init attribute offset to the front-end value
     mVertexInputAttribDescs[attribIndex].offset = attrib.relativeOffset;
 
@@ -1235,81 +1358,6 @@ angle::Result VertexArrayVk::syncNeedsConversionAttrib(ContextVk *contextVk,
     return angle::Result::Continue;
 }
 
-gl::AttributesMask VertexArrayVk::mergeClientAttribsRange(
-    vk::Renderer *renderer,
-    const gl::AttributesMask activeStreamedAttribs,
-    size_t startVertex,
-    size_t endVertex,
-    std::array<AttributeRange, gl::MAX_VERTEX_ATTRIBS> &mergeRangesOut,
-    std::array<size_t, gl::MAX_VERTEX_ATTRIBS> &mergedIndexesOut) const
-{
-    const std::vector<gl::VertexAttribute> &attribs = mState.getVertexAttributes();
-    const std::vector<gl::VertexBinding> &bindings  = mState.getVertexBindings();
-    gl::AttributesMask attributeMaskCanCombine;
-    angle::FixedVector<size_t, gl::MAX_VERTEX_ATTRIBS> combinedIndexes;
-    for (size_t attribIndex : activeStreamedAttribs)
-    {
-        const gl::VertexAttribute &attrib = attribs[attribIndex];
-        ASSERT(attrib.enabled);
-        const gl::VertexBinding &binding = bindings[attrib.bindingIndex];
-        const vk::Format &vertexFormat   = renderer->getFormat(attrib.format->id);
-        bool combined                    = ShouldCombineAttributes(renderer, attrib, binding);
-        attributeMaskCanCombine.set(attribIndex, combined);
-        if (combined)
-        {
-            combinedIndexes.push_back(attribIndex);
-        }
-        GLuint pixelBytes                     = vertexFormat.getActualBufferFormat().pixelBytes;
-        size_t destStride      = combined ? binding.getStride() : pixelBytes;
-        uintptr_t startAddress = reinterpret_cast<uintptr_t>(attrib.pointer);
-        mergeRangesOut[attribIndex].startAddr = startAddress;
-        mergeRangesOut[attribIndex].endAddr =
-            startAddress + (endVertex - 1) * destStride + pixelBytes;
-        mergeRangesOut[attribIndex].copyStartAddr =
-            startAddress + startVertex * binding.getStride();
-        mergedIndexesOut[attribIndex] = attribIndex;
-    }
-    if (attributeMaskCanCombine.none())
-    {
-        return attributeMaskCanCombine;
-    }
-    auto comp = [&mergeRangesOut](size_t a, size_t b) -> bool {
-        return mergeRangesOut[a] < mergeRangesOut[b];
-    };
-    // Only sort combined range indexes.
-    std::sort(combinedIndexes.begin(), combinedIndexes.end(), comp);
-    // Merge combined range span.
-    auto next = combinedIndexes.begin();
-    auto cur  = next++;
-    while (next != combinedIndexes.end() || (cur != next))
-    {
-        // Cur and next overlaps: merge next into cur and move next.
-        if (next != combinedIndexes.end() &&
-            mergeRangesOut[*cur].endAddr >= mergeRangesOut[*next].startAddr)
-        {
-            mergeRangesOut[*cur].endAddr =
-                std::max(mergeRangesOut[*cur].endAddr, mergeRangesOut[*next].endAddr);
-            mergeRangesOut[*cur].copyStartAddr =
-                std::min(mergeRangesOut[*cur].copyStartAddr, mergeRangesOut[*next].copyStartAddr);
-            mergedIndexesOut[*next] = mergedIndexesOut[*cur];
-            ++next;
-        }
-        else
-        {
-            ++cur;
-            if (cur != next)
-            {
-                mergeRangesOut[*cur] = mergeRangesOut[*(cur - 1)];
-            }
-            else if (next != combinedIndexes.end())
-            {
-                ++next;
-            }
-        }
-    }
-    return attributeMaskCanCombine;
-}
-
 // Handle copying client attribs and/or expanding attrib buffer in case where attribute
 // divisor value has to be emulated.
 angle::Result VertexArrayVk::updateStreamedAttribs(const gl::Context *context,
@@ -1317,7 +1365,8 @@ angle::Result VertexArrayVk::updateStreamedAttribs(const gl::Context *context,
                                                    GLsizei vertexOrIndexCount,
                                                    GLsizei instanceCount,
                                                    gl::DrawElementsType indexTypeOrInvalid,
-                                                   const void *indices)
+                                                   const void *indices,
+                                                   gl::AttributesMask *strideDirtyAttribMaskOut)
 {
     ContextVk *contextVk   = vk::GetImpl(context);
     vk::Renderer *renderer = contextVk->getRenderer();
@@ -1342,11 +1391,15 @@ angle::Result VertexArrayVk::updateStreamedAttribs(const gl::Context *context,
     const auto &bindings = mState.getVertexBindings();
 
     std::array<size_t, gl::MAX_VERTEX_ATTRIBS> mergedIndexes;
-    std::array<AttributeRange, gl::MAX_VERTEX_ATTRIBS> mergeRanges;
+    std::array<AttributeRange, gl::MAX_VERTEX_ATTRIBS> mergedRanges;
     std::array<vk::BufferHelper *, gl::MAX_VERTEX_ATTRIBS> attribBufferHelper = {};
-    auto mergeAttribMask =
-        mergeClientAttribsRange(renderer, activeStreamedAttribs, startVertex,
-                                startVertex + vertexCount, mergeRanges, mergedIndexes);
+    gl::AttributesMask mergedAttribMask;
+    if (renderer->getFeatures().enableMergeClientAttribBuffer.enabled)
+    {
+        mergedAttribMask =
+            MergeClientAttribsRange(renderer, attribs, bindings, activeStreamedAttribs, startVertex,
+                                    startVertex + vertexCount, mergedRanges, mergedIndexes);
+    }
 
     for (size_t attribIndex : activeStreamedAttribs)
     {
@@ -1364,8 +1417,7 @@ angle::Result VertexArrayVk::updateStreamedAttribs(const gl::Context *context,
         const uint8_t *src                 = static_cast<const uint8_t *>(attrib.pointer);
         uint32_t divisor                   = binding.getDivisor();
 
-        bool combined            = mergeAttribMask.test(attribIndex);
-        GLuint stride            = combined ? binding.getStride() : pixelBytes;
+        GLuint stride            = pixelBytes;
         VkDeviceSize startOffset = 0;
         if (divisor > 0)
         {
@@ -1448,26 +1500,44 @@ angle::Result VertexArrayVk::updateStreamedAttribs(const gl::Context *context,
             setVertexInputBindingDescDivisor(renderer, attribIndex, 0);
             continue;
         }
-        else
+        else if (mergedAttribMask.test(attribIndex))
         {
             ASSERT(getVertexArrayBuffer(attrib.bindingIndex) == nullptr);
             size_t mergedAttribIdx      = mergedIndexes[attribIndex];
-            const AttributeRange &range = mergeRanges[attribIndex];
+            const AttributeRange &range = mergedRanges[mergedAttribIdx];
+            stride                      = binding.getStride();
             if (attribBufferHelper[mergedAttribIdx] == nullptr)
             {
-                size_t destOffset =
-                    combined ? range.copyStartAddr - range.startAddr : startVertex * stride;
+                size_t destOffset      = range.copyStartAddr - range.startAddr;
                 size_t bytesToAllocate = range.endAddr - range.startAddr;
                 ANGLE_TRY(contextVk->allocateStreamedVertexBuffer(
                     mergedAttribIdx, bytesToAllocate, &attribBufferHelper[mergedAttribIdx]));
-                ANGLE_TRY(StreamVertexData(
-                    contextVk, attribBufferHelper[mergedAttribIdx],
-                    (const uint8_t *)range.copyStartAddr, bytesToAllocate - destOffset, destOffset,
-                    vertexCount, binding.getStride(),
-                    combined ? nullptr : vertexFormat.getVertexLoadFunction()));
+                ANGLE_TRY(StreamVertexData(contextVk, attribBufferHelper[mergedAttribIdx],
+                                           (const uint8_t *)range.copyStartAddr,
+                                           bytesToAllocate - destOffset, destOffset, vertexCount,
+                                           stride, nullptr));
             }
             vertexDataBuffer = attribBufferHelper[mergedAttribIdx];
-            startOffset      = combined ? (uintptr_t)attrib.pointer - range.startAddr : 0;
+            startOffset      = (uintptr_t)attrib.pointer - range.startAddr;
+        }
+        else
+        {
+            ASSERT(getVertexArrayBuffer(attrib.bindingIndex) == nullptr);
+            // Allocate space for startVertex + vertexCount so indexing will work.  If we don't
+            // start at zero all the indices will be off.
+            // Only vertexCount vertices will be used by the upcoming draw so that is all we copy.
+            src += startVertex * binding.getStride();
+            size_t destOffset      = startVertex * stride;
+            size_t bytesToAllocate = (startVertex + vertexCount) * stride;
+
+            // Allocate buffer for results
+            ANGLE_TRY(contextVk->allocateStreamedVertexBuffer(attribIndex, bytesToAllocate,
+                                                              &vertexDataBuffer));
+
+            ANGLE_TRY(StreamVertexData(contextVk, vertexDataBuffer, src, bytesToAllocate,
+                                       destOffset, vertexCount, binding.getStride(),
+                                       vertexFormat.getVertexLoadFunction()));
+            startOffset = 0;
         }
         ASSERT(vertexDataBuffer != nullptr);
         mCurrentArrayBuffers[attribIndex]      = vertexDataBuffer;
@@ -1488,7 +1558,11 @@ angle::Result VertexArrayVk::updateStreamedAttribs(const gl::Context *context,
         }
         mCurrentArrayBufferOffsets[attribIndex]  = bufferOffset + startOffset;
         mCurrentArrayBufferSizes[attribIndex]       = bufferSize - startOffset;
-        mVertexInputBindingDescs[attribIndex].stride = stride;
+        if (mVertexInputBindingDescs[attribIndex].stride != stride)
+        {
+            mVertexInputBindingDescs[attribIndex].stride = stride;
+            strideDirtyAttribMaskOut->set(attribIndex);
+        }
         setVertexInputBindingDescDivisor(renderer, attribIndex, divisor);
         ASSERT(BindingIsAligned(dstFormat, mCurrentArrayBufferOffsets[attribIndex],
                                 mVertexInputBindingDescs[attribIndex].stride));
@@ -1626,7 +1700,7 @@ ANGLE_INLINE void VertexArrayVk::setVertexInputBindingDescDivisor(vk::Renderer *
     {
         mVertexInputBindingDescs[attribIndex].inputRate =
             static_cast<VkVertexInputRate>(VK_VERTEX_INPUT_RATE_VERTEX);
-        mVertexInputBindingDescs[attribIndex].divisor = mZeroDivisor;
+        mVertexInputBindingDescs[attribIndex].divisor = mDivisorForVertexInputRateVertex;
     }
 }
 }  // namespace rx

@@ -41,6 +41,9 @@ void WriteParamCaptureReplay(std::ostream &os, const CallCapture &call, const Pa
             WriteParamValueReplay<ParamType::TBufferIDPointer>(os, call,
                                                                param.value.BufferIDPointerVal);
             break;
+        case ParamType::TBufferParam:
+            WriteParamValueReplay<ParamType::TBufferParam>(os, call, param.value.BufferParamVal);
+            break;
         case ParamType::TBufferUsage:
             WriteParamValueReplay<ParamType::TBufferUsage>(os, call, param.value.BufferUsageVal);
             break;
@@ -907,6 +910,8 @@ const char *ParamTypeToString(ParamType paramType)
             return "const GLuint *";
         case ParamType::TBufferIDPointer:
             return "GLuint *";
+        case ParamType::TBufferParam:
+            return "GLenum";
         case ParamType::TBufferUsage:
             return "GLenum";
         case ParamType::TClientVertexArrayType:

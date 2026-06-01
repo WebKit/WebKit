@@ -6495,4 +6495,78 @@ CallCapture CaptureIcdSetPlatformDispatchDataKHR(bool isCallValid,
     return CallCapture(angle::EntryPoint::CLIcdSetPlatformDispatchDataKHR, std::move(paramBuffer));
 }
 
+// cl_khr_subgroups
+CallCapture CaptureGetKernelSubGroupInfoKHR(bool isCallValid,
+                                            cl_kernel in_kernel,
+                                            cl_device_id in_device,
+                                            KernelSubGroupInfo param_namePacked,
+                                            size_t input_value_size,
+                                            const void *input_value,
+                                            size_t param_value_size,
+                                            void *param_value,
+                                            size_t *param_value_size_ret,
+                                            cl_int returnValue)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("in_kernel", ParamType::Tcl_kernel, in_kernel);
+    paramBuffer.addValueParam("in_device", ParamType::Tcl_device_id, in_device);
+    paramBuffer.addValueParam("param_namePacked", ParamType::TKernelSubGroupInfo, param_namePacked);
+    paramBuffer.addValueParam("input_value_size", ParamType::Tsize_t, input_value_size);
+
+    ParamCapture input_valueParam("input_value", ParamType::TvoidConstPointer);
+    if (isCallValid)
+    {
+        InitParamValue(ParamType::TvoidConstPointer, input_value, &input_valueParam.value);
+        CaptureGetKernelSubGroupInfoKHR_input_value(
+            in_kernel, in_device, param_namePacked, input_value_size, input_value, param_value_size,
+            param_value, param_value_size_ret, &input_valueParam);
+    }
+    else
+    {
+        InitParamValue(ParamType::TvoidConstPointer, static_cast<const void *>(nullptr),
+                       &input_valueParam.value);
+    }
+    paramBuffer.addParam(std::move(input_valueParam));
+
+    paramBuffer.addValueParam("param_value_size", ParamType::Tsize_t, param_value_size);
+
+    ParamCapture param_valueParam("param_value", ParamType::TvoidPointer);
+    if (isCallValid)
+    {
+        InitParamValue(ParamType::TvoidPointer, param_value, &param_valueParam.value);
+        CaptureGetKernelSubGroupInfoKHR_param_value(
+            in_kernel, in_device, param_namePacked, input_value_size, input_value, param_value_size,
+            param_value, param_value_size_ret, &param_valueParam);
+    }
+    else
+    {
+        InitParamValue(ParamType::TvoidPointer, static_cast<void *>(nullptr),
+                       &param_valueParam.value);
+    }
+    paramBuffer.addParam(std::move(param_valueParam));
+
+    ParamCapture param_value_size_retParam("param_value_size_ret", ParamType::Tsize_tPointer);
+    if (isCallValid)
+    {
+        InitParamValue(ParamType::Tsize_tPointer, param_value_size_ret,
+                       &param_value_size_retParam.value);
+        CaptureGetKernelSubGroupInfoKHR_param_value_size_ret(
+            in_kernel, in_device, param_namePacked, input_value_size, input_value, param_value_size,
+            param_value, param_value_size_ret, &param_value_size_retParam);
+    }
+    else
+    {
+        InitParamValue(ParamType::Tsize_tPointer, static_cast<size_t *>(nullptr),
+                       &param_value_size_retParam.value);
+    }
+    paramBuffer.addParam(std::move(param_value_size_retParam));
+
+    ParamCapture returnValueCapture("returnValue", ParamType::Tcl_int);
+    InitParamValue(ParamType::Tcl_int, returnValue, &returnValueCapture.value);
+    paramBuffer.addReturnValue(std::move(returnValueCapture));
+
+    return CallCapture(angle::EntryPoint::CLGetKernelSubGroupInfoKHR, std::move(paramBuffer));
+}
+
 }  // namespace cl

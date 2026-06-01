@@ -37,6 +37,9 @@ class CLKernelImpl : angle::NonCopyable
         cl_ulong localMemSize                       = 0u;
         size_t prefWorkGroupSizeMultiple            = 0u;
         cl_ulong privateMemSize                     = 0u;
+
+        // Subgroups related info
+        uint32_t subGroupSizeForNDRange = 0u;
     };
 
     struct ArgInfo

@@ -891,7 +891,8 @@ enum TQualifier
     EvqSecondaryFragColorEXT,  // EXT_blend_func_extended
     EvqSecondaryFragDataEXT,   // EXT_blend_func_extended
 
-    EvqViewIDOVR,  // OVR_multiview
+    EvqViewIDOVR,          // OVR_multiview
+    EvqEmulatedViewIDOVR,  // Emulated gl_ViewID_OVR
 
     EvqClipDistance,  // APPLE_clip_distance / EXT_clip_cull_distance / ANGLE_clip_cull_distance
     EvqCullDistance,  // EXT_clip_cull_distance / ANGLE_clip_cull_distance
@@ -1320,7 +1321,7 @@ struct TLayoutQualifier
     // KHR_blend_equation_advanced layout qualifiers.
     AdvancedBlendEquations advancedBlendEquations;
 
-    // D3D 11.3 Rasterizer Order Views (ROVs).
+    // D3D 11.3 Rasterizer Order Views (ROVs) and Metal raster_order_groups.
     // This qualifier is only used internally by ANGLE; it is not visible to the application.
     bool rasterOrdered;
 
@@ -1471,6 +1472,7 @@ inline const char *getQualifierString(TQualifier q)
     case EvqSecondaryFragColorEXT:     return "SecondaryFragColorEXT";
     case EvqSecondaryFragDataEXT:      return "SecondaryFragDataEXT";
     case EvqViewIDOVR:                 return "ViewIDOVR";
+    case EvqEmulatedViewIDOVR:         return "EmulatedViewIDOVR";
     case EvqLayerOut:                  return "LayerOut";
     case EvqLayerIn:                   return "LayerIn";
     case EvqLastFragColor:             return "LastFragColor";

@@ -10,12 +10,17 @@
 
 #include <map>
 #include <tuple>
+
+#include "libANGLE/Constants.h"
 #include "libANGLE/renderer/Format.h"
+#include "libANGLE/renderer/FormatID_autogen.h"
+#include "libANGLE/renderer/RenderTargetCache.h"
 #include "libANGLE/renderer/wgpu/wgpu_utils.h"
 
 namespace rx
 {
 class ContextWgpu;
+class RenderTargetWgpu;
 namespace webgpu
 {
 
@@ -51,6 +56,26 @@ struct CopyKey
     }
 };
 
+struct ClearPipelineKey
+{
+    std::vector<angle::FormatID> actualColorFormats;
+    std::vector<bool> intendedColorFormatHasAlphaBits;
+    std::optional<angle::FormatID> depthStencilFormat;
+    std::vector<WGPUColorWriteMask> colorMasks;
+    bool clearDepth   = false;
+    bool clearStencil = false;
+    std::optional<uint32_t> stencilWriteMask;
+
+    bool operator<(const ClearPipelineKey &other) const
+    {
+        return std::tie(actualColorFormats, intendedColorFormatHasAlphaBits, depthStencilFormat,
+                        colorMasks, clearDepth, clearStencil, stencilWriteMask) <
+               std::tie(other.actualColorFormats, other.intendedColorFormatHasAlphaBits,
+                        other.depthStencilFormat, other.colorMasks, other.clearDepth,
+                        other.clearStencil, other.stencilWriteMask);
+    }
+};
+
 struct CachedPipeline
 {
     webgpu::RenderPipelineHandle pipeline;
@@ -60,6 +85,20 @@ struct CachedPipeline
 class UtilsWgpu : angle::NonCopyable
 {
   public:
+    struct ClearParams
+    {
+        // `clearArea` should be already flipped if the `colorTargets` require a flipped y.
+        gl::Rectangle clearArea;
+        gl::BlendStateExt::ColorMaskStorage::Type colorMasks;
+        gl::DrawBufferMask clearColorBuffers;
+        std::optional<gl::ColorF> clearColorValue;
+        std::optional<float> clearDepthValue;
+        std::optional<uint32_t> clearStencilValue;
+        std::optional<uint32_t> stencilWriteMask;
+        const RenderTargetCache<RenderTargetWgpu>::RenderTargetArray *colorTargets;
+        RenderTargetWgpu *depthStencilTarget;
+    };
+
     UtilsWgpu();
     ~UtilsWgpu();
 
@@ -78,16 +117,24 @@ class UtilsWgpu : angle::NonCopyable
                             angle::FormatID dstIntendedFormatID,
                             angle::FormatID dstActualFormatID);
 
+    angle::Result clear(ContextWgpu *context, ClearParams params);
+
   private:
     webgpu::ShaderModuleHandle getCopyShaderModule(ContextWgpu *context, const CopyKey &key);
+    webgpu::ShaderModuleHandle getClearShaderModule(ContextWgpu *context,
+                                                    const ClearPipelineKey &key);
     webgpu::ShaderModuleHandle getShaderModule(ContextWgpu *context, const std::string &shader);
 
-    angle::Result getPipeline(ContextWgpu *context,
-                              const CopyKey &key,
-                              const webgpu::ShaderModuleHandle &shader,
-                              CachedPipeline *cachedPipelineOut);
+    angle::Result getCopyPipeline(ContextWgpu *context,
+                                  const CopyKey &key,
+                                  const webgpu::ShaderModuleHandle &shader,
+                                  CachedPipeline *cachedPipelineOut);
+    angle::Result getClearPipeline(ContextWgpu *context,
+                                   const ClearPipelineKey &key,
+                                   const CachedPipeline **cachedPipelineOut);
 
     std::map<CopyKey, CachedPipeline> mCopyPipelineCache;
+    std::map<ClearPipelineKey, CachedPipeline> mClearPipelineCache;
 };
 
 }  // namespace webgpu

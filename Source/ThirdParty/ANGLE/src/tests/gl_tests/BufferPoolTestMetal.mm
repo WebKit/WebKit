@@ -41,7 +41,7 @@ class BufferPoolTest : public ANGLETest<>
     ContextMtl *getContextMtl()
     {
         // Get the context through the display, similar to D3D11 white box tests
-        egl::Display *display = static_cast<egl::Display *>(getEGLWindow()->getDisplay());
+        egl::Display *display   = static_cast<egl::Display *>(getEGLWindow()->getDisplay());
         gl::ContextID contextID = {
             static_cast<GLuint>(reinterpret_cast<uintptr_t>(getEGLWindow()->getContext()))};
         gl::Context *context = display->getContext(contextID);

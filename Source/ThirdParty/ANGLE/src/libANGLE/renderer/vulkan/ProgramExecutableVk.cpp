@@ -1726,6 +1726,8 @@ angle::Result ProgramExecutableVk::createPipelineLayout(
     gl::ActiveTextureArray<TextureVk *> *activeTextures)
 {
     const gl::ShaderBitSet &linkedShaderStages = mExecutable->getLinkedShaderStages();
+    uint32_t pushConstantSize =
+        GraphicsDriverUniforms::GetMaxUniformDataSize(context->getRenderer());
 
     // Store a reference to the pipeline and descriptor set layouts. This will create them if they
     // don't already exist in the cache.
@@ -1749,16 +1751,19 @@ angle::Result ProgramExecutableVk::createPipelineLayout(
     gl::ShaderType linkedTransformFeedbackStage = mExecutable->getLinkedTransformFeedbackStage();
     bool hasXfbVaryings = linkedTransformFeedbackStage != gl::ShaderType::InvalidEnum &&
                           !mExecutable->getLinkedTransformFeedbackVaryings().empty();
-    if (context->getFeatures().emulateTransformFeedback.enabled && hasXfbVaryings)
+    if (context->getFeatures().emulateTransformFeedback.enabled)
     {
-        size_t xfbBufferCount = mExecutable->getTransformFeedbackBufferCount();
-        for (uint32_t bufferIndex = 0; bufferIndex < xfbBufferCount; ++bufferIndex)
+        if (hasXfbVaryings)
         {
-            const uint32_t binding = mVariableInfoMap.getEmulatedXfbBufferBinding(bufferIndex);
-            ASSERT(binding != std::numeric_limits<uint32_t>::max());
+            size_t xfbBufferCount = mExecutable->getTransformFeedbackBufferCount();
+            for (uint32_t bufferIndex = 0; bufferIndex < xfbBufferCount; ++bufferIndex)
+            {
+                const uint32_t binding = mVariableInfoMap.getEmulatedXfbBufferBinding(bufferIndex);
+                ASSERT(binding != std::numeric_limits<uint32_t>::max());
 
-            mDefaultUniformAndXfbSetDesc.addBinding(binding, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1,
-                                                    VK_SHADER_STAGE_VERTEX_BIT, nullptr);
+                mDefaultUniformAndXfbSetDesc.addBinding(binding, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+                                                        1, VK_SHADER_STAGE_VERTEX_BIT, nullptr);
+            }
         }
     }
 
@@ -1841,7 +1846,6 @@ angle::Result ProgramExecutableVk::createPipelineLayout(
     VkShaderStageFlags pushConstantShaderStageFlags =
         context->getRenderer()->getSupportedVulkanShaderStageMask();
 
-    uint32_t pushConstantSize = GetDriverUniformSize(context, PipelineType::Graphics);
     pipelineLayoutDesc.updatePushConstantRange(pushConstantShaderStageFlags, 0, pushConstantSize);
 
     ANGLE_TRY(pipelineLayoutCache->getPipelineLayout(context, pipelineLayoutDesc,

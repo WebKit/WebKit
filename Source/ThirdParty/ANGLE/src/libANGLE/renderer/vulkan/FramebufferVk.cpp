@@ -2690,10 +2690,16 @@ angle::Result FramebufferVk::syncState(const gl::Context *context,
 
     // A shared attachment's colorspace could have been modified in another context, update
     // colorspace of all attachments to reflect current context's colorspace.
-    gl::SrgbWriteControlMode srgbWriteControlMode = mState.getWriteControlMode();
-    updateColorAttachmentColorspace(srgbWriteControlMode);
-    // Update current framebuffer descriptor to reflect the new state.
-    mCurrentFramebufferDesc.setWriteControlMode(srgbWriteControlMode);
+    //
+    // Toggling colorspace between linear and sRGB for default framebuffers is supported iff
+    // VK_KHR_swapchain_mutable_format extension is supported
+    if (!mState.isDefault() || contextVk->getFeatures().supportsSwapchainMutableFormat.enabled)
+    {
+        gl::SrgbWriteControlMode srgbWriteControlMode = mState.getWriteControlMode();
+        updateColorAttachmentColorspace(srgbWriteControlMode);
+        // Update current framebuffer description to reflect the new state.
+        mCurrentFramebufferDesc.setWriteControlMode(srgbWriteControlMode);
+    }
 
     if (shouldUpdateColorMaskAndBlend)
     {
@@ -3250,7 +3256,8 @@ angle::Result FramebufferVk::getFramebuffer(ContextVk *contextVk,
                 contextVk,
                 mRenderPassDesc.hasColorFramebufferFetch() ? vk::FramebufferFetchMode::Color
                                                            : vk::FramebufferFetchMode::None,
-                *compatibleRenderPass, &framebufferHandle));
+                mCurrentFramebufferDesc.getWriteControlMode(), *compatibleRenderPass,
+                &framebufferHandle));
         }
     }
 

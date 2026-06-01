@@ -92,6 +92,30 @@ pub const CONSTANT_ID_YUV_CSC_ITU601_FULL_RANGE: ConstantId = ConstantId { id: 9
 pub const CONSTANT_ID_YUV_CSC_ITU709: ConstantId = ConstantId { id: 10 };
 const MAX_PREDEFINED_CONSTANT_ID: u32 = CONSTANT_ID_YUV_CSC_ITU709.id;
 
+// Typed variant of the above constants.
+pub const TYPED_CONSTANT_ID_FALSE: TypedId =
+    TypedId::from_constant_id(CONSTANT_ID_FALSE, TYPE_ID_BOOL);
+pub const TYPED_CONSTANT_ID_TRUE: TypedId =
+    TypedId::from_constant_id(CONSTANT_ID_TRUE, TYPE_ID_BOOL);
+pub const TYPED_CONSTANT_ID_FLOAT_ZERO: TypedId =
+    TypedId::from_constant_id(CONSTANT_ID_FLOAT_ZERO, TYPE_ID_FLOAT);
+pub const TYPED_CONSTANT_ID_FLOAT_ONE: TypedId =
+    TypedId::from_constant_id(CONSTANT_ID_FLOAT_ONE, TYPE_ID_FLOAT);
+pub const TYPED_CONSTANT_ID_INT_ZERO: TypedId =
+    TypedId::from_constant_id(CONSTANT_ID_INT_ZERO, TYPE_ID_INT);
+pub const TYPED_CONSTANT_ID_INT_ONE: TypedId =
+    TypedId::from_constant_id(CONSTANT_ID_INT_ONE, TYPE_ID_INT);
+pub const TYPED_CONSTANT_ID_UINT_ZERO: TypedId =
+    TypedId::from_constant_id(CONSTANT_ID_UINT_ZERO, TYPE_ID_UINT);
+pub const TYPED_CONSTANT_ID_UINT_ONE: TypedId =
+    TypedId::from_constant_id(CONSTANT_ID_UINT_ONE, TYPE_ID_UINT);
+pub const TYPED_CONSTANT_ID_YUV_CSC_ITU601: TypedId =
+    TypedId::from_constant_id(CONSTANT_ID_YUV_CSC_ITU601, TYPE_ID_YUV_CSC_STANDARD);
+pub const TYPED_CONSTANT_ID_YUV_CSC_ITU601_FULL_RANGE: TypedId =
+    TypedId::from_constant_id(CONSTANT_ID_YUV_CSC_ITU601_FULL_RANGE, TYPE_ID_YUV_CSC_STANDARD);
+pub const TYPED_CONSTANT_ID_YUV_CSC_ITU709: TypedId =
+    TypedId::from_constant_id(CONSTANT_ID_YUV_CSC_ITU709, TYPE_ID_YUV_CSC_STANDARD);
+
 // Prefixes used for symbols.
 pub const USER_SYMBOL_PREFIX: &str = "_u";
 pub const TEMP_VARIABLE_PREFIX: &str = "t";
@@ -111,13 +135,13 @@ pub enum Id {
 }
 
 impl Id {
-    pub fn new_register(id: RegisterId) -> Id {
+    pub const fn new_register(id: RegisterId) -> Id {
         Id::Register(id)
     }
-    pub fn new_constant(id: ConstantId) -> Id {
+    pub const fn new_constant(id: ConstantId) -> Id {
         Id::Constant(id)
     }
-    pub fn new_variable(id: VariableId) -> Id {
+    pub const fn new_variable(id: VariableId) -> Id {
         Id::Variable(id)
     }
 
@@ -166,14 +190,14 @@ pub struct TypedId {
 }
 
 impl TypedId {
-    pub fn new(id: Id, type_id: TypeId, precision: Precision) -> TypedId {
+    pub const fn new(id: Id, type_id: TypeId, precision: Precision) -> TypedId {
         TypedId { id, type_id, precision }
     }
 
-    pub fn from_constant_id(id: ConstantId, type_id: TypeId) -> TypedId {
+    pub const fn from_constant_id(id: ConstantId, type_id: TypeId) -> TypedId {
         TypedId { id: Id::new_constant(id), type_id, precision: Precision::NotApplicable }
     }
-    pub fn from_typed_constant_id(constant_id: TypedConstantId) -> TypedId {
+    pub const fn from_typed_constant_id(constant_id: TypedConstantId) -> TypedId {
         TypedId {
             id: Id::new_constant(constant_id.id),
             type_id: constant_id.type_id,
@@ -181,7 +205,7 @@ impl TypedId {
         }
     }
 
-    pub fn from_register_id(register_id: TypedRegisterId) -> TypedId {
+    pub const fn from_register_id(register_id: TypedRegisterId) -> TypedId {
         TypedId {
             id: Id::new_register(register_id.id),
             type_id: register_id.type_id,
@@ -197,7 +221,7 @@ impl TypedId {
         }
     }
 
-    pub fn from_bool_variable_id(id: VariableId) -> TypedId {
+    pub const fn from_bool_variable_id(id: VariableId) -> TypedId {
         Self::new(Id::new_variable(id), TYPE_ID_BOOL, Precision::NotApplicable)
     }
 
@@ -1102,9 +1126,33 @@ impl Block {
         std::mem::swap(&mut self.input, &mut block.input);
 
         let last_block = self.get_merge_chain_last_block_mut();
-        last_block.terminate(OpCode::NextBlock);
+        if last_block.is_terminated() {
+            // This is possible during IR generation.
+            debug_assert!(matches!(last_block.get_terminating_op(), OpCode::NextBlock));
+        } else {
+            last_block.terminate(OpCode::NextBlock);
+        }
         // Note: after the above swap, `block` now contains what was previously in `self`.
         last_block.set_merge_block(block);
+    }
+
+    pub fn append_code(&mut self, block: Block) {
+        // Append the code in `block` to the code in `self`.  This is done by setting `block` as
+        // the merge block of this block (merged with `NextBlock`), and moving the original
+        // terminator to `block`.
+        //
+        // This utility is used during transformations, where every block is already terminated, so
+        // the end of the merge chain is usually the end of the GLSL block.
+        let self_last_block = self.get_merge_chain_last_block_mut();
+        debug_assert!(self_last_block.is_terminated());
+        let original_terminator =
+            std::mem::replace(self_last_block.get_terminating_op_mut(), OpCode::NextBlock);
+        debug_assert!(self_last_block.merge_block.is_none());
+        self_last_block.set_merge_block(block);
+
+        let block_last_block = self.get_merge_chain_last_block_mut();
+        debug_assert!(!block_last_block.is_terminated());
+        block_last_block.terminate(original_terminator);
     }
 
     // Whether the block is already terminated.  This is used for assertions, but also ensures that
@@ -1483,7 +1531,7 @@ pub enum BuiltIn {
     PrimitiveIDIn,
     InvocationID,
     PrimitiveID,
-    // gl_Layer as GS output
+    // gl_Layer as GS output (or VS output, used internally to emulate multiview)
     LayerOut,
     // gl_Layer as FS input
     LayerIn,
@@ -1702,11 +1750,12 @@ pub enum Decoration {
     Depth(Depth),
     // Internal format declared on storage images
     ImageInternalFormat(ImageInternalFormat),
-    // Number of views in OVR_multiview
-    NumViews(u32),
     // Used internally to implement ANGLE_pixel_local_storage, indicates a D3D 11.3 Rasterizer
-    // Order Views (ROV)
+    // Order Views (ROV) and Metal raster_order_groups.
     RasterOrdered,
+    // Used internally to emulate instanced multiview.
+    EmulatedViewIDOut,
+    EmulatedViewIDIn,
 }
 
 // A set of decorations that only affect variables.  They are placed in a vector that's expected to
@@ -2154,6 +2203,9 @@ pub struct IRMeta {
     // Data that globally affects the shader:
     shader_type: ShaderType,
 
+    // Affecting vertex shaders:
+    num_views: u32,
+
     // Affecting fragment shaders:
     early_fragment_tests: bool,
     advanced_blend_equations: AdvancedBlendEquations,
@@ -2315,6 +2367,7 @@ impl IRMeta {
             uint_constant_map,
             composite_constant_map: HashMap::new(),
             shader_type,
+            num_views: 0,
             early_fragment_tests: false,
             advanced_blend_equations: AdvancedBlendEquations::new(),
             tcs_vertices: 0,
@@ -2350,11 +2403,18 @@ impl IRMeta {
     pub fn all_global_variables(&self) -> &Vec<VariableId> {
         &self.global_variables
     }
+    pub fn total_register_count(&self) -> u32 {
+        self.instructions.len() as u32
+    }
     pub fn prune_global_variables<Keep>(&mut self, keep: Keep)
     where
         Keep: Fn(VariableId) -> bool,
     {
         self.global_variables.retain(|&variable_id| keep(variable_id));
+    }
+    // Used by transformations that non-trivially modify the list of global variables.
+    pub fn replace_global_variables(&mut self, replacement: Vec<VariableId>) {
+        self.global_variables = replacement;
     }
 
     pub fn get_main_function_id(&self) -> Option<FunctionId> {
@@ -2370,6 +2430,9 @@ impl IRMeta {
     }
     pub fn get_early_fragment_tests(&self) -> bool {
         self.early_fragment_tests
+    }
+    pub fn get_num_views(&self) -> u32 {
+        self.num_views
     }
     pub fn get_advanced_blend_equations(&self) -> &AdvancedBlendEquations {
         &self.advanced_blend_equations
@@ -2411,6 +2474,9 @@ impl IRMeta {
     pub fn set_early_fragment_tests(&mut self, value: bool) {
         self.early_fragment_tests = value;
     }
+    pub fn set_num_views(&mut self, value: u32) {
+        self.num_views = value;
+    }
     pub fn add_advanced_blend_equations(&mut self, equations: AdvancedBlendEquations) {
         self.advanced_blend_equations.add(equations);
     }
@@ -2446,6 +2512,9 @@ impl IRMeta {
     }
     pub fn on_per_vertex_out_redeclaration(&mut self) {
         self.per_vertex_out_is_redeclared = true;
+    }
+    pub fn get_variables_pending_zero_initialization(&self) -> &HashSet<VariableId> {
+        &self.variables_pending_zero_initialization
     }
 
     fn add_item_and_get_id<T>(items: &mut Vec<T>, new_item: T) -> u32 {
@@ -2570,6 +2639,9 @@ impl IRMeta {
             Self::add_constant_and_get_id(&mut self.constants, Constant::new_float(value))
         })
     }
+    pub fn get_constant_float_typed(&mut self, value: f32) -> TypedId {
+        TypedId::from_constant_id(self.get_constant_float(value), TYPE_ID_FLOAT)
+    }
 
     pub fn get_constant_int(&mut self, value: i32) -> ConstantId {
         // Look up the int constant; if one doesn't exist, create it.
@@ -2577,12 +2649,32 @@ impl IRMeta {
             Self::add_constant_and_get_id(&mut self.constants, Constant::new_int(value))
         })
     }
+    pub fn get_constant_int_typed(&mut self, value: i32) -> TypedId {
+        TypedId::from_constant_id(self.get_constant_int(value), TYPE_ID_INT)
+    }
+    pub fn get_constant_ivec4_typed(&mut self, r: i32, g: i32, b: i32, a: i32) -> TypedId {
+        let r = self.get_constant_int(r);
+        let g = self.get_constant_int(g);
+        let b = self.get_constant_int(b);
+        let a = self.get_constant_int(a);
+        self.get_constant_composite_typed(TYPE_ID_IVEC4, vec![r, g, b, a])
+    }
 
     pub fn get_constant_uint(&mut self, value: u32) -> ConstantId {
         // Look up the int constant; if one doesn't exist, create it.
         *self.uint_constant_map.entry(value).or_insert_with(|| {
             Self::add_constant_and_get_id(&mut self.constants, Constant::new_uint(value))
         })
+    }
+    pub fn get_constant_uint_typed(&mut self, value: u32) -> TypedId {
+        TypedId::from_constant_id(self.get_constant_uint(value), TYPE_ID_UINT)
+    }
+    pub fn get_constant_uvec4_typed(&mut self, r: u32, g: u32, b: u32, a: u32) -> TypedId {
+        let r = self.get_constant_uint(r);
+        let g = self.get_constant_uint(g);
+        let b = self.get_constant_uint(b);
+        let a = self.get_constant_uint(a);
+        self.get_constant_composite_typed(TYPE_ID_UVEC4, vec![r, g, b, a])
     }
 
     pub fn get_constant_yuv_csc_standard(&mut self, value: YuvCscStandard) -> ConstantId {
@@ -2592,10 +2684,19 @@ impl IRMeta {
             YuvCscStandard::Itu709 => CONSTANT_ID_YUV_CSC_ITU709,
         }
     }
+    pub fn get_constant_yuv_csc_standard_typed(&mut self, value: YuvCscStandard) -> TypedId {
+        TypedId::from_constant_id(
+            self.get_constant_yuv_csc_standard(value),
+            TYPE_ID_YUV_CSC_STANDARD,
+        )
+    }
 
     pub fn get_constant_bool(&mut self, value: bool) -> ConstantId {
         // Bool constants are predefined
         if value { CONSTANT_ID_TRUE } else { CONSTANT_ID_FALSE }
+    }
+    pub fn get_constant_bool_typed(&mut self, value: bool) -> TypedId {
+        TypedId::from_constant_id(self.get_constant_bool(value), TYPE_ID_BOOL)
     }
 
     pub fn get_constant_composite(
@@ -2610,6 +2711,13 @@ impl IRMeta {
                 Constant::new_composite(type_id, components),
             )
         })
+    }
+    pub fn get_constant_composite_typed(
+        &mut self,
+        type_id: TypeId,
+        components: Vec<ConstantId>,
+    ) -> TypedId {
+        TypedId::from_constant_id(self.get_constant_composite(type_id, components), type_id)
     }
 
     pub fn dead_code_eliminate_variable(&mut self, id: VariableId) {
@@ -2728,6 +2836,9 @@ impl IRMeta {
             }
         }
     }
+    pub fn get_constant_null_typed(&mut self, type_id: TypeId) -> TypedId {
+        TypedId::from_constant_id(self.get_constant_null(type_id), type_id)
+    }
 
     pub fn add_variable(&mut self, variable: Variable) -> VariableId {
         VariableId { id: Self::add_item_and_get_id(&mut self.variables, variable) }
@@ -2741,10 +2852,15 @@ impl IRMeta {
         built_in: Option<BuiltIn>,
         initializer: Option<ConstantId>,
         scope: VariableScope,
-    ) -> VariableId {
-        // Automatically turn the type into a pointer
-        debug_assert!(!self.get_type(type_id).is_pointer());
-        let type_id = self.get_pointer_type_id(type_id);
+    ) -> (VariableId, TypedId) {
+        // Automatically turn the type into a pointer if not already.  Typically the given type is
+        // not a pointer, but it could sometimes be if we're duplicating an existing variable and
+        // the pointer type is readily available.
+        let type_id = if self.get_type(type_id).is_pointer() {
+            type_id
+        } else {
+            self.get_pointer_type_id(type_id)
+        };
         let var =
             Variable::new(name, type_id, precision, decorations, built_in, initializer, scope);
         let variable_id = self.add_variable(var);
@@ -2753,7 +2869,7 @@ impl IRMeta {
             self.global_variables.push(variable_id);
         }
 
-        variable_id
+        (variable_id, TypedId::new(Id::new_variable(variable_id), type_id, precision))
     }
     // Used only by builder.rs.  Transformations should not create const variables, but instead
     // just use constants.
@@ -2770,6 +2886,102 @@ impl IRMeta {
         // No need to add the variable to any scope, because they are always replaced by their
         // constant value in the IR.
         self.add_variable(var)
+    }
+    // Short-hand for declaring a shader-private (global or local) variable.
+    pub fn declare_private_variable(
+        &mut self,
+        name: Name,
+        type_id: TypeId,
+        precision: Precision,
+        initializer: Option<ConstantId>,
+        scope: VariableScope,
+    ) -> (VariableId, TypedId) {
+        self.declare_variable(
+            name,
+            type_id,
+            precision,
+            Decorations::new_none(),
+            None,
+            initializer,
+            scope,
+        )
+    }
+    pub fn get_built_in_variable(&self, built_in: BuiltIn) -> Option<VariableId> {
+        self.global_variables
+            .iter()
+            .find(|&id| matches!(self.get_variable(*id).built_in, Some(value) if value == built_in))
+            .copied()
+    }
+    // If already declared, return a built-in variable, otherwise declare it.  Used by
+    // transformations to reference a built-in that the shader might not have originally used.
+    //
+    // There are very few built-in's that the transformations may declare and their
+    // type/precision/etc is baked here (instead of autogenerated from builtin_variables.json).
+    pub fn get_or_declare_built_in_variable(&mut self, built_in: BuiltIn) -> (VariableId, TypedId) {
+        if let Some(variable_id) = self.get_built_in_variable(built_in) {
+            (variable_id, TypedId::from_variable_id(self, variable_id))
+        } else {
+            let (type_id, precision) = match built_in {
+                // Note: gl_FragCoord is mediump in ESSL 100, but highp in ESSL 300+.  Declare it
+                // as highp to conform to newer standards.
+                BuiltIn::FragCoord => (TYPE_ID_VEC4, Precision::High),
+                BuiltIn::BaseVertex | BuiltIn::InstanceID | BuiltIn::LayerOut => {
+                    (TYPE_ID_INT, Precision::High)
+                }
+                _ => panic!("Internal error: Unexpected built-in declared by transformations"),
+            };
+
+            self.declare_variable(
+                Name::new_exact(""),
+                type_id,
+                precision,
+                Decorations::new_none(),
+                Some(built_in),
+                None,
+                VariableScope::Global,
+            )
+        }
+    }
+    // Declare a global variable to cache the contents of an interface variable.  The original
+    // variable is replaced with the global variable and a new id is assigned to the interface
+    // variable and returned.  This way, the shader does not need to be modified except for
+    // possibly writing to the cache variable at the start of shader and reading from it at the
+    // end.
+    pub fn declare_cached_global_for_variable(
+        &mut self,
+        variable_id: VariableId,
+        cache_name: &'static str,
+    ) -> (VariableId, TypedId) {
+        let variable = self.get_variable_mut(variable_id);
+
+        // Replace the variable with a private global.
+        let original_name = std::mem::replace(&mut variable.name, Name::new_temp(cache_name));
+        let type_id = variable.type_id;
+        let precision = variable.precision;
+        let original_decorations =
+            std::mem::replace(&mut variable.decorations, Decorations::new_none());
+        let original_built_in = std::mem::take(&mut variable.built_in);
+        let is_static_use = variable.is_static_use;
+        debug_assert!(variable.initializer.is_none());
+        debug_assert!(variable.scope == VariableScope::Global);
+        debug_assert!(!variable.is_const);
+        debug_assert!(!variable.is_dead_code_eliminated);
+
+        // Create a new variable for the original one.
+        let (new_id, new_typed_id) = self.declare_variable(
+            original_name,
+            type_id,
+            precision,
+            original_decorations,
+            original_built_in,
+            None,
+            VariableScope::Global,
+        );
+        if is_static_use {
+            self.get_variable_mut(new_id).is_static_use = true;
+        }
+
+        (new_id, new_typed_id)
     }
 
     // Used only by builder.rs.  Transformations should set the initializer at the same time as
@@ -2904,6 +3116,13 @@ impl IRMeta {
         let element_type_info = self.get_type(element_type_id);
         element_type_info.get_element_type_id().unwrap_or(element_type_id)
     }
+
+    // Given a pointer type, retrieves the type it points to.
+    pub fn get_pointee_type(&self, type_id: TypeId) -> TypeId {
+        let type_info = self.get_type(type_id);
+        debug_assert!(type_info.is_pointer());
+        type_info.get_element_type_id().unwrap()
+    }
 }
 
 #[cfg_attr(debug_assertions, derive(Debug))]
@@ -2937,17 +3156,23 @@ impl IR {
         self.function_entries[id.id as usize] = None;
     }
 
-    pub fn prepend_to_main(&mut self, mut new_entry: Block) {
+    // By prepending code to main, it will run at the start of the shader.
+    pub fn prepend_to_main(&mut self, block: Block) {
         let main_function_id = self.meta.get_main_function_id().unwrap();
-        let main_entry = &mut self.function_entries[main_function_id.id as usize];
-        let main_entry_block = main_entry.take().unwrap();
+        let main_entry = self.function_entries[main_function_id.id as usize].as_mut().unwrap();
+        main_entry.prepend_code(block);
+    }
 
-        // Terminate the last block of `new_entry` with a `NextBlock`, and set its merge block to
-        // the current main block.
-        let last_block = new_entry.get_merge_chain_last_block_mut();
-        debug_assert!(matches!(last_block.get_terminating_op(), OpCode::NextBlock));
-        last_block.set_merge_block(main_entry_block);
-
-        *main_entry = Some(new_entry);
+    // By appending code to main, it will run at the end of the shader unless the shader is
+    // discarded.
+    //
+    // Note that appending to main only correctly has this effect if `main` itself does not include
+    // early `return` or any `discard` branches.  The builder wraps `main` in a helper function if
+    // so, such that code appended to the final `main` always runs to the last instruction (again,
+    // assuming the fragment is not `discard`ed).
+    pub fn append_to_main(&mut self, block: Block) {
+        let main_function_id = self.meta.get_main_function_id().unwrap();
+        let main_entry = self.function_entries[main_function_id.id as usize].as_mut().unwrap();
+        main_entry.append_code(block);
     }
 }

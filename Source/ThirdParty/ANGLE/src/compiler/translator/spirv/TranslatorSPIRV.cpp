@@ -973,6 +973,7 @@ bool TranslatorSPIRV::translateImpl(TIntermBlock *root,
                 {
                     return false;
                 }
+                mMetadataFlags[MetadataFlags::HasFragCoord] = true;
             }
 
             // Emulate gl_FragColor and gl_FragData with normal output variables.

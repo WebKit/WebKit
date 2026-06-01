@@ -22,8 +22,14 @@ EXIT_FAILURE = 1
 
 TEST_SUITE = 'angle_end2end_tests'
 BUILDERS = [
-    'angle/ci/android-arm64-test', 'angle/ci/linux-test', 'angle/ci/win-test',
-    'angle/ci/win-x86-test'
+    'angle/ci/android-arm64-test',
+    # angle-linux-x64-amd-rx5500xt-rel currently omitted since it does not run
+    # any tests.
+    'angle/ci/angle-linux-x64-intel-uhd630-rel',
+    'angle/ci/angle-linux-x64-nvidia-gtx1660-rel',
+    'angle/ci/angle-linux-x64-sws-rel',
+    'angle/ci/win-test',
+    'angle/ci/win-x86-test',
 ]
 SWARMING_SERVER = 'chromium-swarm.appspot.com'
 
@@ -180,7 +186,16 @@ def main():
         # Step 2: Get the test suite swarm hashes.
         # 'bb get' returns build properties, including cloud storage identifiers for this test suite.
         get_json = run_bb_and_get_json('get', build_id, '-p')
-        test_suite_hash = get_json['output']['properties']['swarm_hashes'][TEST_SUITE]
+        # First check for the hash in the input properties (for child testers),
+        # falling back to output properties (for legacy or compile/test
+        # builders).
+        test_suite_hash = get_json.get('input', {}).get('properties', {}).get('swarm_hashes',
+                                                                              {}).get(TEST_SUITE)
+        if not test_suite_hash:
+            test_suite_hash = get_json.get('output', {}).get('properties',
+                                                             {}).get('swarm_hashes',
+                                                                     {}).get(TEST_SUITE)
+        assert test_suite_hash
         logging.info('Found swarm hash: %s' % test_suite_hash)
 
         # Step 3: Find all tasks using the swarm hashes.

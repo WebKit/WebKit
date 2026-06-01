@@ -65,7 +65,7 @@
                             ShaderProgramID *shadersPacked);                                       \
     GLint getAttribLocation(ShaderProgramID programPacked, const GLchar *name);                    \
     void getBooleanv(GLenum pname, GLboolean *data);                                               \
-    void getBufferParameteriv(BufferBinding targetPacked, GLenum pname, GLint *params);            \
+    void getBufferParameteriv(BufferBinding targetPacked, BufferParam pnamePacked, GLint *params); \
     GLenum getError();                                                                             \
     void getFloatv(GLenum pname, GLfloat *data);                                                   \
     void getFramebufferAttachmentParameteriv(GLenum target, GLenum attachment, GLenum pname,       \

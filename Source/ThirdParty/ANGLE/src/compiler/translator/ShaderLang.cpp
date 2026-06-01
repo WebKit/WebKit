@@ -262,6 +262,8 @@ void InitBuiltInResources(ShBuiltInResources *resources)
     resources->MaxFragmentInputVectors = 15;
     resources->MinProgramTexelOffset   = -8;
     resources->MaxProgramTexelOffset   = 7;
+    resources->MaxFragmentUniformBlocks = 12;
+    resources->MaxVertexUniformBlocks   = 12;
 
     // Extensions constants.
     resources->MaxDualSourceDrawBuffers = 0;
@@ -322,6 +324,8 @@ void InitBuiltInResources(ShBuiltInResources *resources)
     resources->MaxUniformBufferBindings       = 32;
     resources->MaxShaderStorageBufferBindings = 4;
 
+    resources->MaxComputeUniformBlocks = 12;
+
     resources->MaxGeometryUniformComponents     = 1024;
     resources->MaxGeometryInputComponents       = 64;
     resources->MaxGeometryOutputComponents      = 64;
@@ -332,6 +336,7 @@ void InitBuiltInResources(ShBuiltInResources *resources)
     resources->MaxGeometryAtomicCounters        = 0;
     resources->MaxGeometryShaderInvocations     = 32;
     resources->MaxGeometryImageUniforms         = 0;
+    resources->MaxGeometryUniformBlocks         = 12;
 
     resources->MaxTessControlInputComponents       = 64;
     resources->MaxTessControlOutputComponents      = 64;
@@ -341,6 +346,7 @@ void InitBuiltInResources(ShBuiltInResources *resources)
     resources->MaxTessControlImageUniforms         = 0;
     resources->MaxTessControlAtomicCounters        = 0;
     resources->MaxTessControlAtomicCounterBuffers  = 0;
+    resources->MaxTessControlUniformBlocks         = 12;
 
     resources->MaxTessPatchComponents = 120;
     resources->MaxPatchVertices       = 32;
@@ -353,6 +359,7 @@ void InitBuiltInResources(ShBuiltInResources *resources)
     resources->MaxTessEvaluationImageUniforms        = 0;
     resources->MaxTessEvaluationAtomicCounters       = 0;
     resources->MaxTessEvaluationAtomicCounterBuffers = 0;
+    resources->MaxTessEvaluationUniformBlocks        = 12;
 
     resources->MaxSamples = 4;
 }
@@ -631,12 +638,12 @@ int GetVertexShaderNumViews(const ShHandle handle)
     return compiler->getNumViews();
 }
 
-const std::vector<ShPixelLocalStorageFormat> *GetPixelLocalStorageFormats(const ShHandle handle)
+const std::vector<ShPixelLocalStorageLayout> *GetPixelLocalStorageLayouts(const ShHandle handle)
 {
     TCompiler *compiler = GetCompilerFromHandle(handle);
     ASSERT(compiler);
 
-    return &compiler->getPixelLocalStorageFormats();
+    return &compiler->getPixelLocalStorageLayouts();
 }
 
 uint32_t GetShaderSpecConstUsageBits(const ShHandle handle)

@@ -15,19 +15,9 @@
  */
 package com.android.angle.common;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.database.ContentObserver;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Handler;
-import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
-
-import androidx.preference.PreferenceManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -88,7 +78,6 @@ public class AngleRuleHelper
     public AngleRuleHelper(Context context)
     {
         loadRules(context);
-        storeRules(context);
     }
 
     List<String> getPackageNamesForNative()
@@ -99,21 +88,6 @@ public class AngleRuleHelper
     List<String> getPackageNamesForAngle()
     {
         return mPackageNamesForAngle;
-    }
-
-    private void storeRules(Context context)
-    {
-        final SharedPreferences sharedPreferences =
-            PreferenceManager.getDefaultSharedPreferences(context);
-        final SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.clear();
-        for (String packageName : mPackageNamesForAngle) {
-            editor.putString(packageName, GlobalSettings.DRIVER_SELECTION_ANGLE);
-        }
-        for (String packageName: mPackageNamesForNative) {
-            editor.putString(packageName, GlobalSettings.DRIVER_SELECTION_NATIVE);
-        }
-        editor.apply();
     }
 
     private void loadRules(Context context)

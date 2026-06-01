@@ -223,8 +223,8 @@ class ANGLERenderTest : public ANGLEPerfTest
     void setWebGLCompatibilityEnabled(bool webglCompatibility);
     void setRobustResourceInit(bool enabled);
 
-    void startGpuTimer();
-    void stopGpuTimer(bool mayNeedFlush = true);
+    virtual void startGpuTimer();
+    virtual void stopGpuTimer(bool mayNeedFlush = true);
 
     void beginInternalTraceEvent(const char *name);
     void endInternalTraceEvent(const char *name);

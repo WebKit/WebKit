@@ -8894,6 +8894,62 @@ TEST_P(FramebufferTest_ES31, MixesMultisampleTextureRenderbuffer)
     ASSERT_GL_NO_ERROR();
 }
 
+// Test that 2D array texture size calculation doesn't overflow internally when rendering to it.  An
+// RGB format is used which is often emualted with RGBA.
+//
+// Practically we cannot run this test.  On most configurations, allocating a 4GB texture fails due
+// to internal driver limitations.  On the few configs that the test actually runs, allocating such
+// large memory leads to instability.
+TEST_P(FramebufferTest_ES3, DISABLED_MaxSize2DArrayNoOverflow)
+{
+    GLint maxTexture2DSize;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexture2DSize);
+
+    maxTexture2DSize = std::min(maxTexture2DSize, 16384);
+
+    // Create a 2D array texture with RGB format.  Every layer is going to take 1GB of memory (if
+    // emulated with RGBA), so only create 4 layers of it (for a total of 4GB of memory).  If 32-bit
+    // math is involved when calculating sizes related to this texture, they will overflow.
+    constexpr uint32_t kLayers = 4;
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D_ARRAY, tex);
+    glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGB8, maxTexture2DSize, maxTexture2DSize, kLayers);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    // Initialize the texture so its content is considered valid and worth preserving.
+    constexpr int kValidSubsectionWidth  = 16;
+    constexpr int kValidSubsectionHeight = 20;
+    std::vector<GLColorRGB> data(kValidSubsectionWidth * kValidSubsectionHeight,
+                                 GLColorRGB(0, 255, 0));
+    for (uint32_t layer = 0; layer < kLayers; ++layer)
+    {
+        glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, layer, kValidSubsectionWidth,
+                        kValidSubsectionHeight, 1, GL_RGB, GL_UNSIGNED_BYTE, data.data());
+    }
+
+    // Draw with the texture, making sure it's initialized and data is flushed.
+    ANGLE_GL_PROGRAM(drawTex2DArray, essl3_shaders::vs::Texture2DArray(),
+                     essl3_shaders::fs::Texture2DArray());
+    drawQuad(drawTex2DArray, essl3_shaders::PositionAttrib(), 0.5f);
+
+    // Bind a framebuffer to the texture and render into it.  In some backends, the texture is
+    // recreated to RGBA to be renderable.
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, 0, 1);
+
+    ANGLE_GL_PROGRAM(drawRed, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    glViewport(0, 0, kValidSubsectionWidth / 2, kValidSubsectionHeight);
+    drawQuad(drawRed, essl1_shaders::PositionAttrib(), 0.5f);
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, kValidSubsectionWidth / 2, kValidSubsectionHeight, GLColor::red);
+    EXPECT_PIXEL_RECT_EQ(kValidSubsectionWidth / 2, 0,
+                         kValidSubsectionWidth - kValidSubsectionWidth / 2, kValidSubsectionHeight,
+                         GLColor::green);
+    ASSERT_GL_NO_ERROR();
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND(AddMockTextureNoRenderTargetTest,
                                ES2_D3D9().enable(Feature::AddMockTextureNoRenderTarget),
                                ES2_D3D11().enable(Feature::AddMockTextureNoRenderTarget));

@@ -167,6 +167,8 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state, egl::Disp
     mResources.MaxFragmentInputVectors = caps.maxFragmentInputComponents / 4;
     mResources.MinProgramTexelOffset   = caps.minProgramTexelOffset;
     mResources.MaxProgramTexelOffset   = caps.maxProgramTexelOffset;
+    mResources.MaxFragmentUniformBlocks = caps.maxShaderUniformBlocks[gl::ShaderType::Fragment];
+    mResources.MaxVertexUniformBlocks   = caps.maxShaderUniformBlocks[gl::ShaderType::Vertex];
 
     // EXT_blend_func_extended
     mResources.EXT_blend_func_extended  = extensions.blendFuncExtendedEXT;
@@ -209,6 +211,7 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state, egl::Disp
     mResources.MaxCombinedImageUniforms         = caps.maxCombinedImageUniforms;
     mResources.MaxCombinedShaderOutputResources = caps.maxCombinedShaderOutputResources;
     mResources.MaxUniformLocations              = caps.maxUniformLocations;
+    mResources.MaxComputeUniformBlocks = caps.maxShaderUniformBlocks[gl::ShaderType::Compute];
 
     for (size_t index = 0u; index < 3u; ++index)
     {
@@ -261,6 +264,7 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state, egl::Disp
     mResources.MaxGeometryAtomicCounters      = caps.maxShaderAtomicCounters[ShaderType::Geometry];
     mResources.MaxGeometryShaderInvocations   = caps.maxGeometryShaderInvocations;
     mResources.MaxGeometryImageUniforms       = caps.maxShaderImageUniforms[ShaderType::Geometry];
+    mResources.MaxGeometryUniformBlocks = caps.maxShaderUniformBlocks[gl::ShaderType::Geometry];
 
     // Tessellation Shader constants
     mResources.EXT_tessellation_shader        = extensions.tessellationShaderEXT;
@@ -276,6 +280,8 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state, egl::Disp
     mResources.MaxTessControlAtomicCounters = caps.maxShaderAtomicCounters[ShaderType::TessControl];
     mResources.MaxTessControlAtomicCounterBuffers =
         caps.maxShaderAtomicCounterBuffers[ShaderType::TessControl];
+    mResources.MaxTessControlUniformBlocks =
+        caps.maxShaderUniformBlocks[gl::ShaderType::TessControl];
 
     mResources.MaxTessPatchComponents = caps.maxTessPatchComponents;
     mResources.MaxPatchVertices       = caps.maxPatchVertices;
@@ -293,6 +299,8 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state, egl::Disp
         caps.maxShaderAtomicCounters[ShaderType::TessEvaluation];
     mResources.MaxTessEvaluationAtomicCounterBuffers =
         caps.maxShaderAtomicCounterBuffers[ShaderType::TessEvaluation];
+    mResources.MaxTessEvaluationUniformBlocks =
+        caps.maxShaderUniformBlocks[gl::ShaderType::TessEvaluation];
 }
 
 Compiler::~Compiler() = default;

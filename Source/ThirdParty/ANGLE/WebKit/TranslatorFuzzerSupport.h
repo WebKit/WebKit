@@ -27,7 +27,7 @@
 
 #include "compiler/translator/Compiler.h"
 
-#if ANGLE_SH_VERSION != 396
+#if ANGLE_SH_VERSION != 401
 #    error Check if there are added options and update this check.
 #endif
 
@@ -45,7 +45,7 @@
     MACRO(lineDirectives, 6, any, none)                                       \
     MACRO(removeInvariantAndCentroidForESSL3, 7, glsl, none)                  \
     MACRO(emulateAbsIntFunction, 8, glsl, none)                               \
-    MACRO(enforcePackingRestrictions, 9, any, none)                           \
+    MACRO(unused, 9, any, none)                                               \
     MACRO(clampIndirectArrayBounds, 10, glsl, none)                           \
     MACRO(limitExpressionComplexity, 11, none, any)                           \
     MACRO(limitCallStackDepth, 12, none, any)                                 \
@@ -86,7 +86,7 @@
     MACRO(rewriteRowMajorMatrices, 49, appleGLSL, none)                       \
     MACRO(ignorePrecisionQualifiers, 50, spirvVk, none)                       \
     MACRO(addVulkanDepthCorrection, 51, spirvVk, none)                        \
-    MACRO(unused2, 52, none, none)                                            \
+    MACRO(validatePerStageMaxUniformBlocks, 52, glsl, none)                   \
     MACRO(addVulkanXfbEmulationSupportCode, 54, spirvVk, none)                \
     MACRO(addVulkanXfbExtensionSupportCode, 55, spirvVk, none)                \
     MACRO(rejectWebglShadersWithLargeVariables, 56, any, none)                \

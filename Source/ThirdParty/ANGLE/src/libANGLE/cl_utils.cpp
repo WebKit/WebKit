@@ -214,6 +214,11 @@ bool Is1DImage(cl::MemObjectType type)
     return (type >= cl::MemObjectType::Image1D && type <= cl::MemObjectType::Image1D_Buffer);
 }
 
+bool Is1DImageBuffer(cl::MemObjectType type)
+{
+    return type == cl::MemObjectType::Image1D_Buffer;
+}
+
 cl::Extents GetExtentFromDescriptor(cl::ImageDescriptor desc)
 {
     cl::Extents extent{};

@@ -3716,7 +3716,7 @@ TEST_P(SimpleStateChangeTestES3, ClearThenNoopClearThenRebindAttachment)
 
 // Test that clear followed by rebind of framebuffer attachment works (with 0-sized scissor clear in
 // between).
-TEST_P(SimpleStateChangeTestES3, ClearThenZeroSizeScissoredClearThenRebindAttachment)
+TEST_P(SimpleStateChangeTest, ClearThenZeroSizeScissoredClearThenRebindAttachment)
 {
     // Create a texture with red
     const GLColor kInitColor1 = GLColor::red;
@@ -11598,7 +11598,7 @@ TEST_P(StateChangeTest, ViewportChangeWithinRenderPass)
 
 // Tests that scissor changes within a render pass are correct. WebGPU sets a default scissor, cover
 // the omission of setScissorRect in the backend.
-TEST_P(StateChangeTest, ScissortChangeWithinRenderPass)
+TEST_P(StateChangeTest, ScissorChangeWithinRenderPass)
 {
     glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT);

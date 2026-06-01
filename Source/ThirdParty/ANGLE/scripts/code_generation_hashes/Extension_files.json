@@ -20,9 +20,9 @@
   "scripts/extension_data/swiftshader_win10_gles1.json":
     "bea8e2106d62e1ea0e8938f150865a37",
   "scripts/gl_angle_ext.xml":
-    "2cba159af592da788a15449eae941cb4",
+    "3ebf41a3d720c716f7a32b043bd1881b",
   "scripts/registry_xml.py":
-    "1252c6a0e342cd0a800eb5c20f7b7fa7",
+    "83e08bdb9a8469d1cd29faf0bc6340ac",
   "src/libANGLE/gen_extensions.py":
     "dc4727460d1ece9f98a2ae47bf15ddb3",
   "src/libANGLE/gles_extensions_autogen.cpp":

@@ -4,13 +4,14 @@
 
 """Try ANGLE builders using the angle_v2 recipe."""
 
+load("@chromium-luci//builder_config.star", "builder_config")
 load("@chromium-luci//builders.star", "os")
 load("@chromium-luci//try.star", "try_")
 load("//constants.star", "default_experiments", "siso")
 
 try_.defaults.set(
     executable = "recipe:angle_v2/angle_v2_trybot",
-    builder_group = "angle",
+    builder_group = "try",
     bucket = "try",
     pool = "luci.chromium.gpu.try",
     builderless = True,
@@ -22,6 +23,13 @@ try_.defaults.set(
     siso_project = siso.project.DEFAULT_UNTRUSTED,
     siso_remote_jobs = siso.remote_jobs.DEFAULT,
     experiments = default_experiments,
+    builder_config_settings = builder_config.try_settings(
+        analyze_names = [
+            "angle",
+        ],
+        retry_failed_shards = False,
+        retry_without_patch = False,
+    ),
 )
 
 ################################################################################
@@ -32,6 +40,7 @@ try_.defaults.set(
 
 def apply_cq_builder_defaults(kwargs):
     kwargs.setdefault("max_concurrent_builds", 4)
+    kwargs.setdefault("tryjob", try_.job())
     return kwargs
 
 def apply_linux_cq_builder_defaults(kwargs):
@@ -51,9 +60,6 @@ def apply_linux_cq_builder_defaults(kwargs):
 
 def angle_linux_functional_cq_tester(**kwargs):
     kwargs = apply_linux_cq_builder_defaults(kwargs)
-
-    # TODO(crbug.com/475260235): Actually add the try_.job() entry when we are
-    # ready to add chromium-luci builders to the CQ.
     try_.builder(**kwargs)
 
 ## Functional testers
@@ -63,6 +69,8 @@ angle_linux_functional_cq_tester(
     description_html = "Tests release ANGLE on Linux/x64 on multiple hardware configs. Blocks CL submission.",
     mirrors = [
         "ci/angle-linux-x64-builder-rel",
+        "ci/angle-linux-x64-intel-uhd630-rel",
+        "ci/angle-linux-x64-nvidia-gtx1660-rel",
         "ci/angle-linux-x64-sws-rel",
     ],
     gn_args = "ci/angle-linux-x64-builder-rel",
@@ -87,6 +95,36 @@ def angle_linux_manual_builder(*, name, **kwargs):
 ## Functional testers
 
 angle_linux_manual_builder(
+    name = "angle-try-linux-x64-amd-rx5500xt-rel",
+    description_html = "Tests release ANGLE on Linux/x64 on AMD RX 5500 XT GPUs. Manual only.",
+    mirrors = [
+        "ci/angle-linux-x64-amd-rx5500xt-rel",
+        "ci/angle-linux-x64-builder-rel",
+    ],
+    gn_args = "ci/angle-linux-x64-builder-rel",
+)
+
+angle_linux_manual_builder(
+    name = "angle-try-linux-x64-intel-uhd630-rel",
+    description_html = "Tests release ANGLE on Linux/x64 on Intel UHD 630 GPUs. Manual only.",
+    mirrors = [
+        "ci/angle-linux-x64-builder-rel",
+        "ci/angle-linux-x64-intel-uhd630-rel",
+    ],
+    gn_args = "ci/angle-linux-x64-builder-rel",
+)
+
+angle_linux_manual_builder(
+    name = "angle-try-linux-x64-nvidia-gtx1660-rel",
+    description_html = "Tests release ANGLE on Linux/x64 on NVIDIA GTX 1660 GPUs. Manual only.",
+    mirrors = [
+        "ci/angle-linux-x64-builder-rel",
+        "ci/angle-linux-x64-nvidia-gtx1660-rel",
+    ],
+    gn_args = "ci/angle-linux-x64-builder-rel",
+)
+
+angle_linux_manual_builder(
     name = "angle-try-linux-x64-sws-rel",
     description_html = "Tests release ANGLE on Linux/x64 with SwiftShader. Manual only.",
     mirrors = [
@@ -94,4 +132,18 @@ angle_linux_manual_builder(
         "ci/angle-linux-x64-sws-rel",
     ],
     gn_args = "ci/angle-linux-x64-builder-rel",
+)
+
+# TODO(anglebug.com/475260235): Move this to be a CQ builder once it is
+# confirmed to work properly.
+angle_linux_manual_builder(
+    name = "angle-cq-linux-x64-trace",
+    description_html = "Runs ANGLE GLES trace tests on Linux/x64 with SwiftShader.",
+    mirrors = [
+        "ci/angle-linux-x64-trace",
+    ],
+    properties = {
+        "run_trace_tests": True,
+    },
+    gn_args = "ci/angle-linux-x64-trace",
 )

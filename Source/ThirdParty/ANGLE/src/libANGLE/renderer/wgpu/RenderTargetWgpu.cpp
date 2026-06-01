@@ -36,7 +36,7 @@ void RenderTargetWgpu::set(webgpu::ImageHelper *image,
     mTextureView = texture;
     mLevelIndex  = level;
     mLayerIndex  = layer;
-    mFormat      = &format;
+    mFormat      = format;
 }
 
 void RenderTargetWgpu::reset()
@@ -44,7 +44,7 @@ void RenderTargetWgpu::reset()
     mTextureView = nullptr;
     mLevelIndex  = webgpu::LevelIndex(0);
     mLayerIndex  = 0;
-    mFormat      = nullptr;
+    mFormat      = WGPUTextureFormat_Undefined;
 }
 
 angle::Result RenderTargetWgpu::flushImageStagedUpdates(ContextWgpu *contextWgpu,

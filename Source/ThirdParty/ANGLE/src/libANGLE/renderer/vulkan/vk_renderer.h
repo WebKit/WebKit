@@ -711,12 +711,6 @@ class Renderer : angle::NonCopyable
     uint32_t getPreferredVectorWidthDouble() const { return mPreferredVectorWidthDouble; }
     uint32_t getPreferredVectorWidthHalf() const { return mPreferredVectorWidthHalf; }
 
-    bool isVertexAttributeInstanceRateZeroDivisorAllowed() const
-    {
-        return !mFeatures.supportsVertexInputDynamicState.enabled ||
-               mVertexAttributeDivisorFeatures.vertexAttributeInstanceRateZeroDivisor == VK_TRUE;
-    }
-
     angle::Result onFrameBoundary(const gl::Context *contextGL);
 
     uint32_t getMinRenderPassWriteCommandCountToEarlySubmit() const
@@ -775,6 +769,8 @@ class Renderer : angle::NonCopyable
                       const angle::FeatureOverrides &featureOverrides,
                       UseVulkanSwapchain useVulkanSwapchain,
                       angle::NativeWindowSystem nativeWindowSystem);
+    void initOpenCLFeatures(const vk::ExtensionNameList &extensions,
+                            const angle::FeatureOverrides &featureOverrides);
     void appBasedFeatureOverrides(const vk::ExtensionNameList &extensions);
     angle::Result initPipelineCache(vk::ErrorContext *context,
                                     vk::PipelineCache *pipelineCache,

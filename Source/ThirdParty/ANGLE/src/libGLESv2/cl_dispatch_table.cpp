@@ -173,7 +173,7 @@ const cl_icd_dispatch gCLIcdDispatchTable = {
     cl::clSetKernelExecInfo,
 
     // cl_khr_sub_groups
-    nullptr, // clGetKernelSubGroupInfoKHR,
+    cl::clGetKernelSubGroupInfoKHR, // clGetKernelSubGroupInfoKHR,
 
     // OpenCL 2.1
     cl::clCloneKernel,

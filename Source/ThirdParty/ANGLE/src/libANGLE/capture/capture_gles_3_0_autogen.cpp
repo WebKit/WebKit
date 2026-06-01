@@ -908,19 +908,20 @@ CallCapture CaptureGetActiveUniformsiv(const State &glState,
 CallCapture CaptureGetBufferParameteri64v(const State &glState,
                                           bool isCallValid,
                                           BufferBinding targetPacked,
-                                          GLenum pname,
+                                          BufferParam pnamePacked,
                                           GLint64 *params)
 {
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("targetPacked", ParamType::TBufferBinding, targetPacked);
-    paramBuffer.addEnumParam("pname", GLESEnum::AllEnums, ParamType::TGLenum, pname);
+    paramBuffer.addValueParam("pnamePacked", ParamType::TBufferParam, pnamePacked);
 
     ParamCapture paramsParam("params", ParamType::TGLint64Pointer);
     if (isCallValid)
     {
         InitParamValue(ParamType::TGLint64Pointer, params, &paramsParam.value);
-        CaptureGetBufferParameteri64v_params(glState, targetPacked, pname, params, &paramsParam);
+        CaptureGetBufferParameteri64v_params(glState, targetPacked, pnamePacked, params,
+                                             &paramsParam);
     }
     else
     {

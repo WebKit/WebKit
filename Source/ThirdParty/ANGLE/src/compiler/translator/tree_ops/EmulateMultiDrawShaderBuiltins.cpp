@@ -9,9 +9,6 @@
 // EmulateGLBaseVertex is an AST traverser to convert the gl_BaseVertex builtin
 // to a uniform int
 //
-// EmulateGLBaseInstance is an AST traverser to convert the gl_BaseInstance builtin
-// to a uniform int
-//
 
 #include "compiler/translator/tree_ops/EmulateMultiDrawShaderBuiltins.h"
 
@@ -112,28 +109,11 @@ bool EmulateBuiltIn(TCompiler *compiler,
                     TSymbolTable *symbolTable,
                     const TVariable *builtInVariable,
                     const TType *type,
-                    const ImmutableString &name,
-                    std::vector<sh::ShaderVariable> *uniforms)
+                    const ImmutableString &name)
 {
     const TVariable *emulatedVar =
         new TVariable(symbolTable, name, type, SymbolType::AngleInternal);
     const TIntermSymbol *emulatedSymbol = new TIntermSymbol(emulatedVar);
-
-    // AngleInternal variables don't get collected
-    ShaderVariable uniform;
-    uniform.name          = name.data();
-    uniform.mappedName    = name.data();
-    uniform.type          = GLVariableType(*type);
-    uniform.precision     = GLVariablePrecision(*type);
-    uniform.staticUse     = symbolTable->isStaticallyUsed(*builtInVariable);
-    uniform.active        = true;
-    uniform.binding       = type->getLayoutQualifier().binding;
-    uniform.location      = type->getLayoutQualifier().location;
-    uniform.offset        = type->getLayoutQualifier().offset;
-    uniform.rasterOrdered = type->getLayoutQualifier().rasterOrdered;
-    uniform.readonly      = type->getMemoryQualifier().readonly;
-    uniform.writeonly     = type->getMemoryQualifier().writeonly;
-    uniforms->push_back(uniform);
 
     DeclareGlobalVariable(root, emulatedVar);
     return ReplaceVariableWithTyped(compiler, root, builtInVariable, emulatedSymbol);
@@ -141,10 +121,7 @@ bool EmulateBuiltIn(TCompiler *compiler,
 
 }  // namespace
 
-bool EmulateGLDrawID(TCompiler *compiler,
-                     TIntermBlock *root,
-                     TSymbolTable *symbolTable,
-                     std::vector<sh::ShaderVariable> *uniforms)
+bool EmulateGLDrawID(TCompiler *compiler, TIntermBlock *root, TSymbolTable *symbolTable)
 {
     FindGLDrawIDTraverser traverser;
     root->traverse(&traverser);
@@ -153,7 +130,7 @@ bool EmulateGLDrawID(TCompiler *compiler,
     {
         const TType *type = StaticType::Get<EbtInt, EbpHigh, EvqUniform, 1, 1>();
         if (!EmulateBuiltIn(compiler, root, symbolTable, builtInVariable, type,
-                            kEmulatedGLDrawIDName, uniforms))
+                            kEmulatedGLDrawIDName))
         {
             return false;
         }
@@ -165,7 +142,6 @@ bool EmulateGLDrawID(TCompiler *compiler,
 bool EmulateGLBaseVertexBaseInstance(TCompiler *compiler,
                                      TIntermBlock *root,
                                      TSymbolTable *symbolTable,
-                                     std::vector<sh::ShaderVariable> *uniforms,
                                      bool addBaseVertexToVertexID)
 {
     if (addBaseVertexToVertexID)
@@ -189,7 +165,7 @@ bool EmulateGLBaseVertexBaseInstance(TCompiler *compiler,
     {
         const TType *type = StaticType::Get<EbtInt, EbpHigh, EvqUniform, 1, 1>();
         if (!EmulateBuiltIn(compiler, root, symbolTable, builtInVariableBaseVertex, type,
-                            kEmulatedGLBaseVertexName, uniforms))
+                            kEmulatedGLBaseVertexName))
         {
             return false;
         }
@@ -199,19 +175,10 @@ bool EmulateGLBaseVertexBaseInstance(TCompiler *compiler,
     {
         const TType *type = StaticType::Get<EbtInt, EbpHigh, EvqUniform, 1, 1>();
         if (!EmulateBuiltIn(compiler, root, symbolTable, builtInVariableBaseInstance, type,
-                            kEmulatedGLBaseInstanceName, uniforms))
+                            kEmulatedGLBaseInstanceName))
         {
             return false;
         }
-    }
-
-    // DeclareGlobalVariable prepends to the declarations, but the uniforms are appended.  So if
-    // both base vertex and instance variables are added, the order doesn't match.  Fix that here.
-    if (builtInVariableBaseVertex && builtInVariableBaseInstance)
-    {
-        const size_t count = uniforms->size();
-        ASSERT(count >= 2);
-        std::swap((*uniforms)[count - 1], (*uniforms)[count - 2]);
     }
 
     return true;

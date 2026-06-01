@@ -165,16 +165,18 @@ angle::Result MemoryObjectVk::importZirconVmo(ContextVk *contextVk, GLuint64 siz
     return angle::Result::Continue;
 }
 
-angle::Result MemoryObjectVk::createImage(ContextVk *contextVk,
-                                          gl::TextureType type,
-                                          size_t levels,
-                                          GLenum internalFormat,
-                                          const gl::Extents &size,
-                                          GLuint64 offset,
-                                          vk::ImageHelper *image,
-                                          GLbitfield createFlags,
-                                          GLbitfield usageFlags,
-                                          const void *imageCreateInfoPNext)
+angle::Result MemoryObjectVk::createImage(
+    ContextVk *contextVk,
+    gl::TextureType type,
+    size_t levels,
+    GLenum internalFormat,
+    const gl::Extents &size,
+    GLuint64 offset,
+    vk::ImageHelper *image,
+    GLbitfield createFlags,
+    GLbitfield usageFlags,
+    vk::ImageFormatReinterpretability formatReinterpretability,
+    const void *imageCreateInfoPNext)
 {
     vk::Renderer *renderer = contextVk->getRenderer();
 
@@ -201,7 +203,7 @@ angle::Result MemoryObjectVk::createImage(ContextVk *contextVk,
         createFlags, vk::ImageAccess::ExternalPreInitialized, &externalMemoryImageCreateInfo,
         gl::LevelIndex(0), static_cast<uint32_t>(levels), layerCount,
         contextVk->isRobustResourceInitEnabled(), hasProtectedContent, vk::TileMemory::Prohibited,
-        vk::YcbcrConversionDesc{}, nullptr));
+        vk::YcbcrConversionDesc{}, nullptr, formatReinterpretability));
 
     VkMemoryRequirements externalMemoryRequirements;
     image->getImage().getMemoryRequirements(renderer->getDevice(), &externalMemoryRequirements);

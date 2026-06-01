@@ -158,7 +158,8 @@ class ImageHelper : public angle::Subject
                             const gl::Offset &dstOffset,
                             gl::LevelIndex sourceLevelGL,
                             uint32_t sourceLayer,
-                            const gl::Box &sourceBox);
+                            const gl::Box &sourceBox,
+                            WGPUTextureAspect aspect);
 
     angle::Result copyImageCpuReadback(const gl::Context *context,
                                        const gl::ImageIndex &index,
@@ -188,7 +189,8 @@ class ImageHelper : public angle::Subject
 
     angle::Result createTextureViewSingleLevel(gl::LevelIndex targetLevel,
                                                uint32_t layerIndex,
-                                               TextureViewHandle &textureViewOut);
+                                               TextureViewHandle &textureViewOut,
+                                               WGPUTextureAspect aspect = WGPUTextureAspect_All);
     angle::Result createFullTextureView(TextureViewHandle &textureViewOut,
                                         WGPUTextureViewDimension desiredViewDimension);
     angle::Result createTextureView(gl::LevelIndex targetLevel,
@@ -196,7 +198,8 @@ class ImageHelper : public angle::Subject
                                     uint32_t layerIndex,
                                     uint32_t arrayLayerCount,
                                     TextureViewHandle &textureViewOut,
-                                    Optional<WGPUTextureViewDimension> desiredViewDimension);
+                                    Optional<WGPUTextureViewDimension> desiredViewDimension,
+                                    WGPUTextureAspect aspect = WGPUTextureAspect_All);
     LevelIndex toWgpuLevel(gl::LevelIndex levelIndexGl) const;
     gl::LevelIndex toGlLevel(LevelIndex levelIndexWgpu) const;
     bool isTextureLevelInAllocatedImage(gl::LevelIndex textureLevel) const;

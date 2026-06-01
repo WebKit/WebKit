@@ -230,7 +230,7 @@ bool ValidateGetActiveUniformsiv(const Context *context,
 bool ValidateGetBufferParameteri64v(const Context *context,
                                     angle::EntryPoint entryPoint,
                                     BufferBinding targetPacked,
-                                    GLenum pname,
+                                    BufferParam pnamePacked,
                                     const GLint64 *params);
 bool ValidateGetBufferPointerv(const Context *context,
                                angle::EntryPoint entryPoint,

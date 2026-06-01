@@ -176,9 +176,7 @@ fn is_unsupported_argument(ir_meta: &IRMeta, arg: TypedId, options: &Options) ->
     }
 
     // Now that the variable is found, see if it's unsupported.
-    let type_info = ir_meta.get_type(base_variable.type_id);
-    debug_assert!(type_info.is_pointer());
-    let type_info = ir_meta.get_type(type_info.get_element_type_id().unwrap());
+    let type_info = ir_meta.get_type(ir_meta.get_pointee_type(base_variable.type_id));
     if options.array_of_array_of_sampler_or_image {
         // Monomorphize if:
         //
@@ -354,17 +352,18 @@ fn replace_arg(state: &mut State, preamble: &mut Block, access_chain: &[Id]) -> 
                         debug_assert!(!index.id.is_variable());
                         let access_index = if index.id.is_register() {
                             // Replacement parameter to pass this index to.
-                            let new_param = state.ir_meta.declare_variable(
-                                Name::new_temp("index"),
-                                index.type_id,
-                                index.precision,
-                                Decorations::new_none(),
-                                None,
-                                None,
-                                VariableScope::FunctionParam,
-                            );
-                            params
-                                .push(FunctionParam::new(new_param, FunctionParamDirection::Input));
+                            let (new_param_variable, new_param) =
+                                state.ir_meta.declare_private_variable(
+                                    Name::new_temp("index"),
+                                    index.type_id,
+                                    index.precision,
+                                    None,
+                                    VariableScope::FunctionParam,
+                                );
+                            params.push(FunctionParam::new(
+                                new_param_variable,
+                                FunctionParamDirection::Input,
+                            ));
 
                             // And the value to pass to this argument in the substituted function
                             // call.
@@ -372,14 +371,8 @@ fn replace_arg(state: &mut State, preamble: &mut Block, access_chain: &[Id]) -> 
 
                             // Load from this parameter to access the pointer inside the
                             // monomorphized function.
-                            preamble.add_typed_instruction(instruction::load(
-                                state.ir_meta,
-                                TypedId::new(
-                                    Id::new_variable(new_param),
-                                    index.type_id,
-                                    index.precision,
-                                ),
-                            ))
+                            preamble
+                                .add_typed_instruction(instruction::load(state.ir_meta, new_param))
                         } else {
                             index
                         };

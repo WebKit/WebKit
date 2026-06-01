@@ -3723,10 +3723,11 @@ void State::getPointerv(const Context *context, GLenum pname, void **params) con
         case GL_COLOR_ARRAY_POINTER:
         case GL_TEXTURE_COORD_ARRAY_POINTER:
         case GL_POINT_SIZE_ARRAY_POINTER_OES:
-            QueryVertexAttribPointerv(getVertexArray()->getVertexAttribute(
-                                          context->vertexArrayIndex(ParamToVertexArrayType(pname))),
-                                      GL_VERTEX_ATTRIB_ARRAY_POINTER, params);
-            return;
+        {
+            const int index = context->vertexArrayIndex(ParamToVertexArrayType(pname));
+            *params = const_cast<void *>(getVertexArray()->getVertexAttribute(index).pointer);
+            break;
+        }
         case GL_BLOB_CACHE_GET_FUNCTION_ANGLE:
             *params = reinterpret_cast<void *>(getBlobCacheCallbacks().getFunction);
             break;
@@ -3745,7 +3746,7 @@ void State::getPointerv(const Context *context, GLenum pname, void **params) con
     }
 }
 
-void State::getIntegeri_v(const Context *context, GLenum target, GLuint index, GLint *data) const
+void State::getIntegeri_v(GLenum target, GLuint index, GLint *data) const
 {
     switch (target)
     {

@@ -4022,6 +4022,56 @@ TEST_P(ClearTest, ClearThenScissoredMaskedClear)
     EXPECT_PIXEL_RECT_EQ(kSize / 2, 0, kSize / 2, kSize, GLColor::red);
 }
 
+TEST_P(ClearTest, StencilScissoredClearThenFullClear)
+{
+    constexpr GLsizei kSize = 128;
+
+    GLint stencilBits = 0;
+    glGetIntegerv(GL_STENCIL_BITS, &stencilBits);
+    EXPECT_EQ(stencilBits, 8);
+
+    // Clear stencil value must be masked to 0x42
+    glClearStencil(0x142);
+    glClear(GL_STENCIL_BUFFER_BIT);
+
+    glClearColor(1, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    // Shrink the render area.
+    glScissor(kSize / 2, 0, kSize / 2, kSize);
+    glEnable(GL_SCISSOR_TEST);
+
+    // Clear stencil.
+    glClearStencil(0x64);
+    glClear(GL_STENCIL_BUFFER_BIT);
+
+    // Grow the render area.
+    glScissor(0, 0, kSize, kSize);
+    glEnable(GL_SCISSOR_TEST);
+
+    // Check that the stencil test works as expected
+    glEnable(GL_STENCIL_TEST);
+
+    // Scissored region is green, outside is red (clear color)
+    glStencilFunc(GL_EQUAL, 0x64, 0xFF);
+    ANGLE_GL_PROGRAM(drawGreen, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    glUseProgram(drawGreen);
+    drawQuad(drawGreen, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize / 2, kSize, GLColor::red);
+    EXPECT_PIXEL_RECT_EQ(kSize / 2, 0, kSize / 2, kSize, GLColor::green);
+
+    // Outside scissored region is blue.
+    glStencilFunc(GL_EQUAL, 0x42, 0xFF);
+    ANGLE_GL_PROGRAM(drawBlue, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    glUseProgram(drawBlue);
+    drawQuad(drawBlue, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize / 2, kSize, GLColor::blue);
+    EXPECT_PIXEL_RECT_EQ(kSize / 2, 0, kSize / 2, kSize, GLColor::green);
+
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test that a scissored stencil clear followed by a full clear works.
 TEST_P(ClearTestES3, StencilScissoredClearThenFullClear)
 {

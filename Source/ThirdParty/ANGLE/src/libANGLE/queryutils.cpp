@@ -689,45 +689,45 @@ void QueryVertexAttribBase(const VertexAttribute &attrib,
 }
 
 template <typename ParamType>
-void QueryBufferParameterBase(const Buffer *buffer, GLenum pname, ParamType *params)
+void QueryBufferParameterBase(const Buffer *buffer, BufferParam pnamePacked, ParamType *params)
 {
+    static_assert(std::is_same_v<ParamType, GLint> || std::is_same_v<ParamType, GLint64>);
     ASSERT(buffer != nullptr);
 
-    switch (pname)
+    switch (pnamePacked)
     {
-        case GL_BUFFER_USAGE:
-            *params = CastFromGLintStateValue<ParamType>(pname, ToGLenum(buffer->getUsage()));
+        case BufferParam::ImmutableStorage:
+            *params = static_cast<ParamType>(buffer->isImmutable());
             break;
-        case GL_BUFFER_SIZE:
-            *params = CastFromStateValue<ParamType>(pname, buffer->getSize());
+        case BufferParam::StorageFlags:
+            *params = static_cast<ParamType>(buffer->getStorageExtUsageFlags());
             break;
-        case GL_BUFFER_ACCESS_FLAGS:
-            *params = CastFromGLintStateValue<ParamType>(pname, buffer->getAccessFlags());
+        case BufferParam::BufferSize:
+            *params = clampCast<ParamType>(buffer->getSize());
             break;
-        case GL_BUFFER_ACCESS_OES:
-            *params = CastFromGLintStateValue<ParamType>(pname, buffer->getAccess());
+        case BufferParam::BufferUsage:
+            *params = static_cast<ParamType>(ToGLenum(buffer->getUsage()));
             break;
-        case GL_BUFFER_MAPPED:
-            *params = CastFromStateValue<ParamType>(pname, buffer->isMapped());
+        case BufferParam::BufferAccess:
+            *params = static_cast<ParamType>(buffer->getAccess());
             break;
-        case GL_BUFFER_MAP_OFFSET:
-            *params = CastFromStateValue<ParamType>(pname, buffer->getMapOffset());
+        case BufferParam::BufferMapped:
+            *params = static_cast<ParamType>(buffer->isMapped());
             break;
-        case GL_BUFFER_MAP_LENGTH:
-            *params = CastFromStateValue<ParamType>(pname, buffer->getMapLength());
+        case BufferParam::BufferAccessFlags:
+            *params = static_cast<ParamType>(buffer->getAccessFlags());
             break;
-        case GL_MEMORY_SIZE_ANGLE:
-            *params = CastFromStateValue<ParamType>(pname, buffer->getMemorySize());
+        case BufferParam::BufferMapLength:
+            *params = clampCast<ParamType>(buffer->getMapLength());
             break;
-        case GL_BUFFER_IMMUTABLE_STORAGE_EXT:
-            *params = CastFromStateValue<ParamType>(pname, buffer->isImmutable());
+        case BufferParam::BufferMapOffset:
+            *params = clampCast<ParamType>(buffer->getMapOffset());
             break;
-        case GL_BUFFER_STORAGE_FLAGS_EXT:
-            *params = CastFromGLintStateValue<ParamType>(pname, buffer->getStorageExtUsageFlags());
+        case BufferParam::MemorySize:
+            *params = clampCast<ParamType>(buffer->getMemorySize());
             break;
-        case GL_RESOURCE_INITIALIZED_ANGLE:
-            *params = CastFromStateValue<ParamType>(
-                pname, ConvertToGLBoolean(buffer->initState() == InitState::Initialized));
+        case BufferParam::ResourceInitialized:
+            *params = static_cast<ParamType>(buffer->initState() == InitState::Initialized);
             break;
         default:
             UNREACHABLE();
@@ -1348,28 +1348,14 @@ void QueryFramebufferAttachmentParameteriv(const Context *context,
     }
 }
 
-void QueryBufferParameteriv(const Buffer *buffer, GLenum pname, GLint *params)
+void QueryBufferParameteriv(const Buffer *buffer, BufferParam pnamePacked, GLint *params)
 {
-    QueryBufferParameterBase(buffer, pname, params);
+    QueryBufferParameterBase(buffer, pnamePacked, params);
 }
 
-void QueryBufferParameteri64v(const Buffer *buffer, GLenum pname, GLint64 *params)
+void QueryBufferParameteri64v(const Buffer *buffer, BufferParam pnamePacked, GLint64 *params)
 {
-    QueryBufferParameterBase(buffer, pname, params);
-}
-
-void QueryBufferPointerv(const Buffer *buffer, GLenum pname, void **params)
-{
-    switch (pname)
-    {
-        case GL_BUFFER_MAP_POINTER:
-            *params = buffer->getMapPointer();
-            break;
-
-        default:
-            UNREACHABLE();
-            break;
-    }
+    QueryBufferParameterBase(buffer, pnamePacked, params);
 }
 
 void QueryProgramiv(Context *context, Program *program, GLenum pname, GLint *params)
@@ -1711,20 +1697,6 @@ void QueryVertexAttribiv(const VertexAttribute &attrib,
                           params);
 }
 
-void QueryVertexAttribPointerv(const VertexAttribute &attrib, GLenum pname, void **pointer)
-{
-    switch (pname)
-    {
-        case GL_VERTEX_ATTRIB_ARRAY_POINTER:
-            *pointer = const_cast<void *>(attrib.pointer);
-            break;
-
-        default:
-            UNREACHABLE();
-            break;
-    }
-}
-
 void QueryVertexAttribIiv(const VertexAttribute &attrib,
                           const VertexBinding &binding,
                           const Buffer *buffer,
@@ -1854,6 +1826,7 @@ void QueryFramebufferPixelLocalStorageParameterBase(Context *context,
         case GL_PIXEL_LOCAL_TEXTURE_NAME_ANGLE:
         case GL_PIXEL_LOCAL_TEXTURE_LEVEL_ANGLE:
         case GL_PIXEL_LOCAL_TEXTURE_LAYER_ANGLE:
+        case GL_PIXEL_LOCAL_USAGE_ANGLE:
             if (length != nullptr)
             {
                 *length = 1;
@@ -4854,7 +4827,7 @@ egl::Error QuerySurfaceAttrib(const Display *display,
             }
             break;
         case EGL_SWAP_BEHAVIOR:
-            *value = surface->getSwapBehavior();
+            *value = surface->getRequestedSwapBehavior();
             break;
         case EGL_TEXTURE_FORMAT:
             // The EGL spec states that value is not written if the surface is not a pbuffer
@@ -4991,7 +4964,7 @@ egl::Error SetSurfaceAttrib(Surface *surface, EGLint attribute, EGLint value)
             surface->setMultisampleResolve(value);
             break;
         case EGL_SWAP_BEHAVIOR:
-            surface->setSwapBehavior(value);
+            surface->setRequestedSwapBehavior(value);
             break;
         case EGL_WIDTH:
             surface->setFixedWidth(value);

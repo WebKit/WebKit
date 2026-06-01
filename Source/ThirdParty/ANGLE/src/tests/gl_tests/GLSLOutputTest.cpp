@@ -111,6 +111,64 @@ void main()
     verifyIsNotInTranslation(GL_FRAGMENT_SHADER, "gl_FragData[1]");
 }
 
+// Verifies that GL_NV_viewport_array2 is not requested in the shader if multiview is not enabled.
+TEST_P(GLSLOutputGLSLTest_ES3, NoNVMultiviewExtension)
+{
+    constexpr char kFS[] = R"(#version 300 es
+void main()
+{
+})";
+    compileShader(GL_FRAGMENT_SHADER, kFS);
+    verifyIsNotInTranslation(GL_FRAGMENT_SHADER, "#extension GL_NV_viewport_array2");
+}
+
+// Verifies that GL_NV_viewport_array2 is not requested in the shader if multiview is enabled but
+// the selectViewInNvGLSLVertexShader compile flag is set.
+TEST_P(GLSLOutputGLSLTest_ES3, NoNVMultiviewExtensionIfVertexArray)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OVR_multiview"));
+
+    constexpr char kFS[] = R"(#version 300 es
+#extension GL_OVR_multiview : require
+void main()
+{
+})";
+    compileShader(GL_FRAGMENT_SHADER, kFS);
+    if (getEGLWindow()->isFeatureEnabled(Feature::MultiviewViaViewportArray))
+    {
+        verifyIsNotInTranslation(GL_FRAGMENT_SHADER, "#extension GL_NV_viewport_array2");
+    }
+}
+
+// Verifies that GL_OVR_multiview and GL_OVR_multiview2 are not both enabled in the output.
+TEST_P(GLSLOutputGLSLTest_ES3, NoDoubleMultiviewExtension)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OVR_multiview"));
+
+    const size_t kExpect =
+        getEGLWindow()->isFeatureEnabled(Feature::MultiviewViaViewportArray) ? 0 : 1;
+
+    {
+        constexpr char kFS[] = R"(#version 300 es
+#extension GL_OVR_multiview : require
+void main()
+{
+})";
+        compileShader(GL_FRAGMENT_SHADER, kFS);
+        verifyCountInTranslation(GL_FRAGMENT_SHADER, "#extension GL_OVR_multiview", kExpect);
+    }
+
+    {
+        constexpr char kFS[] = R"(#version 300 es
+#extension GL_OVR_multiview2 : require
+void main()
+{
+})";
+        compileShader(GL_FRAGMENT_SHADER, kFS);
+        verifyCountInTranslation(GL_FRAGMENT_SHADER, "#extension GL_OVR_multiview", kExpect);
+    }
+}
+
 // Test the initialization of output variables with various qualifiers in a vertex shader.
 TEST_P(WebGL2GLSLOutputGLSLTest, OutputAllQualifiers)
 {

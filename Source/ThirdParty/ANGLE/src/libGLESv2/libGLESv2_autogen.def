@@ -567,14 +567,12 @@ EXPORTS
     glCompressedTexSubImage2DRobustANGLE
     glCompressedTexSubImage3DRobustANGLE
     glGetActiveUniformBlockivRobustANGLE
-    glGetBooleani_vRobustANGLE
     glGetBooleanvRobustANGLE
     glGetBufferParameteri64vRobustANGLE
     glGetBufferParameterivRobustANGLE
     glGetBufferPointervRobustANGLE
     glGetFloatvRobustANGLE
     glGetFramebufferAttachmentParameterivRobustANGLE
-    glGetFramebufferParameterivRobustANGLE
     glGetFramebufferPixelLocalStorageParameterfvRobustANGLE
     glGetFramebufferPixelLocalStorageParameterivRobustANGLE
     glGetInteger64i_vRobustANGLE
@@ -583,8 +581,6 @@ EXPORTS
     glGetIntegervRobustANGLE
     glGetInternalformativRobustANGLE
     glGetMultisamplefvRobustANGLE
-    glGetPointervRobustANGLERobustANGLE
-    glGetProgramInterfaceivRobustANGLE
     glGetProgramivRobustANGLE
     glGetQueryObjecti64vRobustANGLE
     glGetQueryObjectivRobustANGLE
@@ -592,15 +588,11 @@ EXPORTS
     glGetQueryObjectuivRobustANGLE
     glGetQueryivRobustANGLE
     glGetRenderbufferParameterivRobustANGLE
-    glGetSamplerParameterIivRobustANGLE
-    glGetSamplerParameterIuivRobustANGLE
     glGetSamplerParameterfvRobustANGLE
     glGetSamplerParameterivRobustANGLE
     glGetShaderivRobustANGLE
     glGetTexLevelParameterfvRobustANGLE
     glGetTexLevelParameterivRobustANGLE
-    glGetTexParameterIivRobustANGLE
-    glGetTexParameterIuivRobustANGLE
     glGetTexParameterfvRobustANGLE
     glGetTexParameterivRobustANGLE
     glGetUniformfvRobustANGLE
@@ -611,19 +603,11 @@ EXPORTS
     glGetVertexAttribPointervRobustANGLE
     glGetVertexAttribfvRobustANGLE
     glGetVertexAttribivRobustANGLE
-    glGetnUniformfvRobustANGLE
-    glGetnUniformivRobustANGLE
-    glGetnUniformuivRobustANGLE
     glReadPixelsRobustANGLE
-    glReadnPixelsRobustANGLE
-    glSamplerParameterIivRobustANGLE
-    glSamplerParameterIuivRobustANGLE
     glSamplerParameterfvRobustANGLE
     glSamplerParameterivRobustANGLE
     glTexImage2DRobustANGLE
     glTexImage3DRobustANGLE
-    glTexParameterIivRobustANGLE
-    glTexParameterIuivRobustANGLE
     glTexParameterfvRobustANGLE
     glTexParameterivRobustANGLE
     glTexSubImage2DRobustANGLE

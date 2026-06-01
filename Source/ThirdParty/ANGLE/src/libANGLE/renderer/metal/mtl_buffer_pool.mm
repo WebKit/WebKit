@@ -26,8 +26,7 @@ namespace mtl
 BufferPool::BufferPool() : BufferPool(false) {}
 
 BufferPool::BufferPool(bool alwaysAllocNewBuffer)
-    : mBuffer(nullptr),
-      mAlwaysAllocateNewBuffer(alwaysAllocNewBuffer)
+    : mBuffer(nullptr), mAlwaysAllocateNewBuffer(alwaysAllocNewBuffer)
 {}
 
 angle::Result BufferPool::reset(ContextMtl *contextMtl,

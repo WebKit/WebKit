@@ -1678,6 +1678,7 @@ void GenerateCaps(ID3D11Device *device,
             extensions->shaderPixelLocalStorageCoherentANGLE = true;
             plsOptions->fragmentSyncType = ShFragmentSynchronizationType::RasterizerOrderViews_D3D;
         }
+        plsOptions->supportsNoncoherent = true;
         // TODO(anglebug.com/40096838): If we add RG* support to pixel local storage, these are
         // *NOT* in the set of common formats, so we need to query support for each individualy:
         // https://learn.microsoft.com/en-us/windows/win32/direct3d11/typed-unordered-access-view-loads

@@ -327,14 +327,13 @@ bool ValidateUniformMatrix(const Context *context,
 bool ValidateStateQuery(const Context *context,
                         angle::EntryPoint entryPoint,
                         GLenum pname,
-                        GLenum *nativeType,
-                        unsigned int *numParams);
+                        const void *data,
+                        GLsizei *outNumParams);
 bool ValidateRobustStateQuery(const Context *context,
                               angle::EntryPoint entryPoint,
                               GLenum pname,
-                              GLsizei bufSize,
-                              GLenum *nativeType,
-                              unsigned int *numParams);
+                              GLsizei paramCount,
+                              const void *data);
 
 bool ValidateCopyImageSubDataBase(const Context *context,
                                   angle::EntryPoint entryPoint,
@@ -417,14 +416,13 @@ bool ValidateDrawInstancedANGLE(const Context *context, angle::EntryPoint entryP
 
 bool ValidateGetUniformBase(const Context *context,
                             angle::EntryPoint entryPoint,
-                            ShaderProgramID program,
-                            UniformLocation location);
+                            ShaderProgramID programPacked,
+                            UniformLocation locationPacked);
 bool ValidateSizedGetUniform(const Context *context,
                              angle::EntryPoint entryPoint,
-                             ShaderProgramID program,
-                             UniformLocation location,
-                             GLsizei bufSize,
-                             GLsizei *length);
+                             ShaderProgramID programPacked,
+                             UniformLocation locationPacked,
+                             GLsizei bufSize);
 
 bool ValidateDiscardFramebufferBase(const Context *context,
                                     angle::EntryPoint entryPoint,
@@ -459,10 +457,9 @@ bool ValidateDrawBuffersBase(const Context *context,
 
 bool ValidateGetBufferPointervBase(const Context *context,
                                    angle::EntryPoint entryPoint,
-                                   BufferBinding target,
+                                   BufferBinding targetPacked,
                                    GLenum pname,
-                                   GLsizei *length,
-                                   void *const *params);
+                                   GLsizei *outNumParams);
 bool ValidateUnmapBufferBase(const Context *context,
                              angle::EntryPoint entryPoint,
                              BufferBinding target);
@@ -487,13 +484,17 @@ bool ValidateRobustBufferSize(const Context *context,
                               angle::EntryPoint entryPoint,
                               GLsizei bufSize,
                               GLsizei numParams);
+bool ValidateRobustParamCount(const Context *context,
+                              angle::EntryPoint entryPoint,
+                              GLsizei paramCount,
+                              GLsizei numParams);
 
 bool ValidateGetFramebufferAttachmentParameterivBase(const Context *context,
                                                      angle::EntryPoint entryPoint,
                                                      GLenum target,
                                                      GLenum attachment,
                                                      GLenum pname,
-                                                     GLsizei *numParams);
+                                                     GLsizei *outNumParams);
 
 bool ValidateGetFramebufferParameterivBase(const Context *context,
                                            angle::EntryPoint entryPoint,
@@ -503,10 +504,9 @@ bool ValidateGetFramebufferParameterivBase(const Context *context,
 
 bool ValidateGetBufferParameterBase(const Context *context,
                                     angle::EntryPoint entryPoint,
-                                    BufferBinding target,
-                                    GLenum pname,
-                                    bool pointerVersion,
-                                    GLsizei *numParams);
+                                    BufferBinding targetPacked,
+                                    BufferParam pnamePacked,
+                                    GLsizei *outNumParams);
 
 bool ValidateGetProgramivBase(const Context *context,
                               angle::EntryPoint entryPoint,
@@ -518,7 +518,7 @@ bool ValidateGetRenderbufferParameterivBase(const Context *context,
                                             angle::EntryPoint entryPoint,
                                             GLenum target,
                                             GLenum pname,
-                                            GLsizei *length);
+                                            GLsizei *outNumParams);
 
 bool ValidateGetShaderivBase(const Context *context,
                              angle::EntryPoint entryPoint,
@@ -545,8 +545,13 @@ bool ValidateGetVertexAttribBase(const Context *context,
                                  angle::EntryPoint entryPoint,
                                  GLuint index,
                                  GLenum pname,
-                                 GLsizei *length,
-                                 bool pointer);
+                                 GLsizei *outNumParams);
+
+bool ValidateGetVertexAttribPointerBase(const Context *context,
+                                        angle::EntryPoint entryPoint,
+                                        GLuint index,
+                                        GLenum pname,
+                                        GLsizei *outNumParams);
 
 ANGLE_INLINE bool ValidateVertexFormat(const PrivateState &privateState,
                                        ErrorSet *errors,
@@ -736,7 +741,8 @@ bool ValidateIndexedStateQuery(const Context *context,
                                angle::EntryPoint entryPoint,
                                GLenum pname,
                                GLuint index,
-                               GLsizei *length);
+                               const void *data,
+                               GLsizei *outNumParams);
 bool ValidateES3TexImage2DParameters(const Context *context,
                                      angle::EntryPoint entryPoint,
                                      TextureTarget target,
@@ -798,7 +804,8 @@ bool ValidateGetMultisamplefvBase(const Context *context,
                                   angle::EntryPoint entryPoint,
                                   GLenum pname,
                                   GLuint index,
-                                  const GLfloat *val);
+                                  GLsizei *outNumParams);
+
 bool ValidateSampleMaskiBase(const PrivateState &state,
                              ErrorSet *errors,
                              angle::EntryPoint entryPoint,

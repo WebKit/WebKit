@@ -656,6 +656,24 @@ struct FeaturesGL : FeatureSetBase
         &members,
     };
 
+    FeatureInfo multiviewViaViewportArray = {
+        "multiviewViaViewportArray",
+        FeatureCategory::OpenGLFeatures,
+        &members,
+    };
+
+    FeatureInfo validateMaxPerStageUniformBlocksAtCompileTime = {
+        "validateMaxPerStageUniformBlocksAtCompileTime",
+        FeatureCategory::OpenGLWorkarounds,
+        &members,
+    };
+
+    FeatureInfo limitMaxBufferSizeTo1gb = {
+        "limitMaxBufferSizeTo1gb",
+        FeatureCategory::OpenGLWorkarounds,
+        &members,
+    };
+
 };
 
 inline FeaturesGL::FeaturesGL()  = default;

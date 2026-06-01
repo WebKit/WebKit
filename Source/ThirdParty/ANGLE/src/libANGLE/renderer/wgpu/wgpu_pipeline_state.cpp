@@ -10,6 +10,8 @@
 
 #include "libANGLE/renderer/wgpu/wgpu_pipeline_state.h"
 
+#include <limits>
+
 #include "common/aligned_memory.h"
 #include "common/hash_utils.h"
 #include "common/span.h"
@@ -60,6 +62,11 @@ RenderPipelineDesc::RenderPipelineDesc()
 {
     (void)mPad0;
     memset(this, 0, sizeof(RenderPipelineDesc));
+
+    mDepthStencilState.stencilReadMask =
+        std::numeric_limits<decltype(mDepthStencilState.stencilReadMask)>::max();
+    mDepthStencilState.stencilWriteMask =
+        std::numeric_limits<decltype(mDepthStencilState.stencilWriteMask)>::max();
 }
 
 RenderPipelineDesc::~RenderPipelineDesc() = default;
@@ -284,7 +291,6 @@ bool RenderPipelineDesc::setStencilBackOps(WGPUStencilOperation failOp,
 
 bool RenderPipelineDesc::setStencilReadMask(uint8_t readMask)
 {
-
     if (mDepthStencilState.stencilReadMask == readMask)
     {
         return false;

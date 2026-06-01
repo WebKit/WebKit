@@ -12,9 +12,6 @@ mod ffi {
     // TODO(http://anglebug.com/349994211): equivalent enums to the options in ShaderLang.h, eventually all options need to be
     // passed to IR: add them as the translator is converted to IR.
 
-    // TODO(http://anglebug.com/349994211): equivalent to ShBuiltInResources, or at least the parts that the compiler really uses:
-    // add as needed.
-
     // Matching ShShaderOutput
     #[derive(Copy, Clone)]
     #[repr(u32)]
@@ -100,6 +97,59 @@ mod ffi {
         WEBGL_video_texture: bool,
     }
 
+    // Limits corresponding to ShBuiltInResources
+    struct Limits {
+        max_combined_draw_buffers_and_pixel_local_storage_planes: u32,
+
+        min_point_size: f32,
+        max_point_size: f32,
+    }
+
+    #[derive(Copy, Clone)]
+    #[repr(u32)]
+    enum PixelLocalStorageImpl {
+        NotSupported,
+        ImageLoadStore,
+        FramebufferFetch,
+    }
+
+    #[derive(Copy, Clone, PartialEq)]
+    #[repr(u32)]
+    enum PixelLocalStorageSync {
+        // Fragments cannot be ordered or synchronized.
+        NotSupported,
+
+        // Fragments are automatically raster-ordered and synchronized.
+        Automatic,
+
+        // Various shader interlock GLSL vendor extensions.
+        FragmentShaderInterlockNV_GL,
+        FragmentShaderOrderingINTEL_GL,
+        // The ARB enum is used to include usage of SPV_EXT_fragment_shader_interlock in SPIR-V
+        // generator.
+        FragmentShaderInterlockARB_GL,
+
+        // D3D shader interlock.
+        RasterizerOrderViews_D3D,
+
+        // Metal shader interlock.
+        RasterOrderGroups_Metal,
+    }
+
+    #[derive(Copy, Clone)]
+    struct PixelLocalStorageOptions {
+        implementation: PixelLocalStorageImpl,
+        // For ANGLE_shader_pixel_local_storage_coherent.
+        fragment_sync: PixelLocalStorageSync,
+        // Apple Silicon doesn't support image memory barriers, and many GL devices don't support
+        // noncoherent framebuffer fetch. On these platforms, we simply ignore the "noncoherent"
+        // PLS qualifier.
+        supports_noncoherent: bool,
+        // PixelLocalStorageImpl::ImageLoadStore only: Can we use rgba8/rgba8i/rgba8ui image
+        // formats, or do we need to manually pack and unpack from r32i/r32ui?
+        supports_native_rgba8_image_formats: bool,
+    }
+
     struct CompileOptions {
         // Input shader and device properties:
 
@@ -107,7 +157,8 @@ mod ffi {
         shader_version: i32,
         // Extensions that were enabled, mostly useful for the GLSL/ESSL output to replicate them.
         extensions: ExtensionsEnabled,
-        // TODO(http://anglebug.com/349994211): equivalent to ShBuiltInResources
+        // Limits set by the API.
+        limits: Limits,
 
         // Flags controlling the output:
 
@@ -125,6 +176,31 @@ mod ffi {
         loops_allowed_when_initializing_variables: bool,
         // Whether non-const variables in global scope can have an initializer
         initializer_allowed_on_non_constant_global_variables: bool,
+        // Work around driver bug where pack/unpack built-ins cannot consume/produce mediump vec4
+        // without also truncating the uint.
+        // Note: This is currently not a generalized workaround, just applied to Pixel Local
+        // Storage emulation, but in theory it should be.
+        pass_highp_to_pack_unorm_snorm_built_ins: bool,
+        // Whether gl_ViewID_OVR and gl_InstanceID variables need to be emulated for multiview.
+        emulate_instanced_multiview: bool,
+        // Select viewport layer/index if ARB_shader_viewport_layer_array/NV_viewport_array2 is
+        // used to implement multiview.  Requires emulate_instanced_multiview.
+        select_viewport_layer_in_emulated_multiview: bool,
+        // Whether gl_DrawID need to be emulated.
+        emulate_draw_id: bool,
+        // Whether gl_BaseVertex and gl_BaseInstance need to be emulated.
+        emulate_base_vertex_instance: bool,
+        // Whether gl_BaseVertex should be added to gl_VertexID as a driver bug workaround.  Only
+        // effective if `emulate_base_vertex_instance`.
+        add_base_vertex_to_vertex_id: bool,
+        // If the flag is enabled, gl_PointSize is clamped to the maximum point size specified in
+        // ShBuiltInResources in vertex shaders.
+        clamp_point_size: bool,
+
+        // Whether the ANGLE_pixel_local_storage extension has been used and there are PLS uniforms
+        // to rewrite.
+        rewrite_pixel_local_storage: bool,
+        pls_options: PixelLocalStorageOptions,
         // TODO(http://anglebug.com/349994211): equivalent to ShCompileOptions flags
     }
 
@@ -181,6 +257,9 @@ mod ffi {
 
 pub use ffi::CompileOptions as Options;
 pub use ffi::OutputLanguage;
+pub use ffi::PixelLocalStorageImpl;
+pub use ffi::PixelLocalStorageOptions;
+pub use ffi::PixelLocalStorageSync;
 
 unsafe fn generate_ast(
     mut ir: Box<IR>,
@@ -217,6 +296,62 @@ fn common_pre_variable_collection_transforms(ir: &mut IR, options: &Options) {
     {
         transform::remove_unused_framebuffer_fetch::run(ir);
     }
+
+    // For now, rewrite pixel local storage before collecting variables or any operations on images.
+    //
+    // TODO(anglebug.com/40096838):
+    //   Should this actually run after collecting variables?
+    //   Do we need more introspection?
+    //   Do we want to hide rewritten shader image uniforms from glGetActiveUniform?
+    if options.rewrite_pixel_local_storage {
+        // Remove PLS uniforms as function parameters to simplify transformations.  The rest of the
+        // problematic args are handled later per output type.
+        let transform_options = transform::monomorphize_unsupported_functions::Options {
+            struct_containing_samplers: false,
+            image: false,
+            atomic_counter: false,
+            array_of_array_of_sampler_or_image: false,
+            pixel_local_storage: true,
+        };
+        transform::monomorphize_unsupported_functions::run(ir, &transform_options);
+
+        let transform_options = transform::rewrite_pixel_local_storage::Options {
+            pls: options.pls_options,
+            // PLS attachments are bound in reverse order from the rear.
+            max_framebuffer_fetch_location: options
+                .limits
+                .max_combined_draw_buffers_and_pixel_local_storage_planes
+                - 1,
+            pass_highp_to_pack_unorm_snorm_built_ins: options
+                .pass_highp_to_pack_unorm_snorm_built_ins,
+        };
+        transform::rewrite_pixel_local_storage::run(ir, &transform_options);
+    }
+
+    if options.emulate_instanced_multiview
+        && (options.extensions.OVR_multiview || options.extensions.OVR_multiview2)
+    {
+        let transform_options = transform::emulate_instanced_multiview::Options {
+            shader_type: ir.meta.get_shader_type(),
+            select_viewport_layer: options.select_viewport_layer_in_emulated_multiview,
+        };
+        transform::emulate_instanced_multiview::run(ir, &transform_options);
+    }
+
+    let emulate_draw_id = options.emulate_draw_id && options.extensions.ANGLE_multi_draw;
+    let emulate_base_vertex_instance = options.emulate_base_vertex_instance
+        && options.extensions.ANGLE_base_vertex_base_instance_shader_builtin;
+    if emulate_draw_id || emulate_base_vertex_instance {
+        let transform_options = transform::emulate_multi_draw::Options {
+            emulate_draw_id,
+            emulate_base_vertex_instance,
+            add_base_vertex_to_vertex_id: options.add_base_vertex_to_vertex_id,
+        };
+        transform::emulate_multi_draw::run(ir, &transform_options);
+    }
+
+    // Sort uniforms based on their precisions and data types for better packing.
+    transform::sort_uniforms::run(ir);
 }
 
 fn common_post_variable_collection_transforms(ir: &mut IR, options: &Options) {
@@ -235,11 +370,17 @@ fn common_post_variable_collection_transforms(ir: &mut IR, options: &Options) {
         transform::initialize_uninitialized_variables::run(ir, &transform_options);
     }
 
+    if options.clamp_point_size {
+        transform::clamp_point_size::run(
+            ir,
+            options.limits.min_point_size,
+            options.limits.max_point_size,
+        );
+    }
+
     // Note: this is a per-generator transformation, not really "common", so it should be moved to
     // the right section when the IR part of the compilation actually starts to deviate per
-    // generator.  For now, this is run to test the transformation, with a future change calling it
-    // earlier (pre variable collection) for Pixel Local Storage, and later for the rest of the
-    // options.
+    // generator.  For now, this is run here to test the transformation.
     {
         let transform_options = transform::monomorphize_unsupported_functions::Options {
             // Samplers in structs are unsupported by most generators.

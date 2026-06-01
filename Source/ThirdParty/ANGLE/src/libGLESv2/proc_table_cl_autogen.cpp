@@ -146,7 +146,8 @@ const ProcTable &GetProcTable()
          {"clEnqueueReleaseExternalMemObjectsKHR", P(::cl::clEnqueueReleaseExternalMemObjectsKHR)},
          {"clIcdGetFunctionAddressForPlatformKHR", P(::cl::clIcdGetFunctionAddressForPlatformKHR)},
          {"clIcdGetPlatformIDsKHR", P(::cl::clIcdGetPlatformIDsKHR)},
-         {"clIcdSetPlatformDispatchDataKHR", P(::cl::clIcdSetPlatformDispatchDataKHR)}});
+         {"clIcdSetPlatformDispatchDataKHR", P(::cl::clIcdSetPlatformDispatchDataKHR)},
+         {"clGetKernelSubGroupInfoKHR", P(::cl::clGetKernelSubGroupInfoKHR)}});
     return *sProcTable;
 }
 

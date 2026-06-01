@@ -51,6 +51,9 @@ void ReplayFrame(uint32_t frameIndex)
         case 4:
             ReplayFrame4();
             break;
+        case 5:
+            ReplayFrame5();
+            break;
         default:
             break;
     }

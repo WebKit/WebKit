@@ -178,10 +178,3 @@ if(angle_enable_cgl)
         "src/libANGLE/renderer/gl/cgl/WindowSurfaceCGL.mm"
     )
 endif()
-
-if(angle_enable_gl_null)
-    list(APPEND gl_backend_sources
-        "src/libANGLE/renderer/gl/null_functions.cpp"
-        "src/libANGLE/renderer/gl/null_functions.h"
-    )
-endif()

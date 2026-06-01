@@ -81,6 +81,7 @@ class Builder
     TypeId getArrayTypeId(TypeId elementTypeId, const angle::Span<const unsigned int> &arraySizes);
 
     void setEarlyFragmentTests(bool value);
+    void setNumViews(uint32_t value);
     void setAdvancedBlendEquations(uint32_t value);
     void setTcsVertices(uint32_t value);
     void setTesPrimitive(TLayoutTessEvaluationType value);
@@ -228,6 +229,7 @@ class Builder
     }
 
     void setEarlyFragmentTests(bool value) {}
+    void setNumViews(uint32_t value) {}
     void setAdvancedBlendEquations(uint32_t value) {}
     void setTcsVertices(uint32_t value) {}
     void setTesPrimitive(TLayoutTessEvaluationType value) {}

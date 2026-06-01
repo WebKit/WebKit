@@ -73,9 +73,8 @@ pub fn run(ir: &mut IR) {
             }
 
             // Must have written to all channels
-            let type_info = state.ir_meta.get_type(variable.type_id);
-            debug_assert!(type_info.is_pointer());
-            let type_info = state.ir_meta.get_type(type_info.get_element_type_id().unwrap());
+            let type_info =
+                state.ir_meta.get_type(state.ir_meta.get_pointee_type(variable.type_id));
             let all_channels = if type_info.is_scalar() {
                 1u8
             } else if let Some(vector_size) = type_info.get_vector_size() {

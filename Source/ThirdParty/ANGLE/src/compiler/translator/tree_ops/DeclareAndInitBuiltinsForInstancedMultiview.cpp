@@ -111,8 +111,8 @@ bool DeclareAndInitBuiltinsForInstancedMultiview(TCompiler *compiler,
     ASSERT(shaderType == GL_VERTEX_SHADER || shaderType == GL_FRAGMENT_SHADER);
 
     const TVariable *viewID =
-        new TVariable(symbolTable, kViewIDVariableName, new TType(EbtUInt, EbpHigh, EvqViewIDOVR),
-                      SymbolType::AngleInternal);
+        new TVariable(symbolTable, kViewIDVariableName,
+                      new TType(EbtUInt, EbpHigh, EvqEmulatedViewIDOVR), SymbolType::AngleInternal);
 
     DeclareGlobalVariable(root, viewID);
     if (!ReplaceVariable(compiler, root, BuiltInVariable::gl_ViewID_OVR(), viewID))

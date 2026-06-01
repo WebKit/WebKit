@@ -1177,19 +1177,20 @@ CallCapture CaptureGetBooleanv(const State &glState,
 CallCapture CaptureGetBufferParameteriv(const State &glState,
                                         bool isCallValid,
                                         BufferBinding targetPacked,
-                                        GLenum pname,
+                                        BufferParam pnamePacked,
                                         GLint *params)
 {
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("targetPacked", ParamType::TBufferBinding, targetPacked);
-    paramBuffer.addEnumParam("pname", GLESEnum::AllEnums, ParamType::TGLenum, pname);
+    paramBuffer.addValueParam("pnamePacked", ParamType::TBufferParam, pnamePacked);
 
     ParamCapture paramsParam("params", ParamType::TGLintPointer);
     if (isCallValid)
     {
         InitParamValue(ParamType::TGLintPointer, params, &paramsParam.value);
-        CaptureGetBufferParameteriv_params(glState, targetPacked, pname, params, &paramsParam);
+        CaptureGetBufferParameteriv_params(glState, targetPacked, pnamePacked, params,
+                                           &paramsParam);
     }
     else
     {

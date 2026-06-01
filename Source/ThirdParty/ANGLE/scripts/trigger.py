@@ -55,7 +55,8 @@ import sys
 DEFAULT_TASK_PRIORITY = 30
 DEFAULT_POOL = 'chromium.tests.gpu'
 DEFAULT_LOG_LEVEL = 'info'
-DEFAULT_REALM = 'chromium:try'
+DEFAULT_REALM = 'angle:try'
+SERVICE_ACCOUNT = 'chromium-tester@chops-service-accounts.iam.gserviceaccount.com'
 GOLD_SERVICE_ACCOUNT = 'chrome-gpu-gold@chops-service-accounts.iam.gserviceaccount.com'
 EXIT_SUCCESS = 0
 EXIT_FAILURE = 1
@@ -173,9 +174,11 @@ def main():
 
     cmd_args = ['-relative-cwd', args.gn_path, '--']
 
+    cmd_args += ['luci-auth', 'context', '--']
     if args.gold:
         swarming_args += ['-service-account', GOLD_SERVICE_ACCOUNT]
-        cmd_args += ['luci-auth', 'context', '--']
+    else:
+        swarming_args += ['-service-account', SERVICE_ACCOUNT]
 
     for env in args.env:
         swarming_args += ['-env', env]

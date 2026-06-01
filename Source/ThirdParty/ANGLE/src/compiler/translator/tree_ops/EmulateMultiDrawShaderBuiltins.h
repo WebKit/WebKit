@@ -9,9 +9,6 @@
 // EmulateGLBaseVertexBaseInstance is an AST traverser to convert the gl_BaseVertex and
 // gl_BaseInstance builtin to uniform ints
 //
-// EmulateGLBaseInstance is an AST traverser to convert the gl_BaseInstance builtin
-// to a uniform int
-//
 
 #ifndef COMPILER_TRANSLATOR_TREEOPS_EMULATEMULTIDRAWSHADERBUILTINS_H_
 #define COMPILER_TRANSLATOR_TREEOPS_EMULATEMULTIDRAWSHADERBUILTINS_H_
@@ -31,13 +28,11 @@ class TSymbolTable;
 
 [[nodiscard]] bool EmulateGLDrawID(TCompiler *compiler,
                                    TIntermBlock *root,
-                                   TSymbolTable *symbolTable,
-                                   std::vector<sh::ShaderVariable> *uniforms);
+                                   TSymbolTable *symbolTable);
 
 [[nodiscard]] bool EmulateGLBaseVertexBaseInstance(TCompiler *compiler,
                                                    TIntermBlock *root,
                                                    TSymbolTable *symbolTable,
-                                                   std::vector<sh::ShaderVariable> *uniforms,
                                                    bool addBaseVertexToVertexID);
 
 }  // namespace sh

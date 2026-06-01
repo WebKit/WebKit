@@ -78,6 +78,9 @@ function generate_Android_bp_file() {
             "angle_test_enable_system_egl = true"
             "build_angle_end2end_tests_library = true"
             "build_angle_trace_tests = false"
+
+            # Uncomment when we are ready to test IR in Android
+            # "angle_ir = true"
         )
 
         if [[ "$1" == "--enableApiTrace" ]]; then

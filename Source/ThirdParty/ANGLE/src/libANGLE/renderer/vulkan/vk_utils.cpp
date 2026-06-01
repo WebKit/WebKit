@@ -936,7 +936,8 @@ void GarbageObject::destroy(Renderer *renderer)
             vkDestroyDescriptorSetLayout(device, (VkDescriptorSetLayout)mHandle, nullptr);
             break;
         case HandleType::Sampler:
-            vkDestroySampler(device, (VkSampler)mHandle, nullptr);
+            // Samplers are never garbage collected.
+            UNREACHABLE();
             break;
         case HandleType::DescriptorPool:
             vkDestroyDescriptorPool(device, (VkDescriptorPool)mHandle, nullptr);

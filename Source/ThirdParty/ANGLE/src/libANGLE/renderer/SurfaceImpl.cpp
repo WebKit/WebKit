@@ -83,6 +83,12 @@ void SurfaceImpl::setFixedHeight(EGLint height)
     UNREACHABLE();
 }
 
+void SurfaceImpl::setSwapBehavior(EGLenum behavior)
+{
+    // Behavior is ignored for backends that don't implement it.
+    UNIMPLEMENTED();
+}
+
 void SurfaceImpl::setTimestampsEnabled(bool enabled)
 {
     UNREACHABLE();

@@ -30,6 +30,12 @@
             android:enabled="true"/>
     </PreferenceCategory>
 
+    <PreferenceCategory>
+        <Preference
+            android:key="reset_to_defaults"
+            android:title="@string/reset_to_default_values"/>
+    </PreferenceCategory>
+
     <PreferenceCategory
         android:key="@string/pref_key_select_opengl_driver_category"
         android:title="@string/select_opengl_driver_title">

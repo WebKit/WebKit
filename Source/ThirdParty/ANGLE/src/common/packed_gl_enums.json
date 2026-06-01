@@ -26,6 +26,20 @@
         "TransformFeedback": "GL_TRANSFORM_FEEDBACK_BUFFER",
         "Uniform": "GL_UNIFORM_BUFFER"
     },
+    "BufferParam":
+    {
+        "ImmutableStorage": "GL_BUFFER_IMMUTABLE_STORAGE_EXT",
+        "StorageFlags": "GL_BUFFER_STORAGE_FLAGS_EXT",
+        "BufferSize": "GL_BUFFER_SIZE",
+        "BufferUsage": "GL_BUFFER_USAGE",
+        "BufferAccess": "GL_BUFFER_ACCESS_OES",
+        "BufferMapped": "GL_BUFFER_MAPPED",
+        "BufferAccessFlags" :"GL_BUFFER_ACCESS_FLAGS",
+        "BufferMapLength" :"GL_BUFFER_MAP_LENGTH",
+        "BufferMapOffset" :"GL_BUFFER_MAP_OFFSET",
+        "MemorySize" :"GL_MEMORY_SIZE_ANGLE",
+        "ResourceInitialized" :"GL_RESOURCE_INITIALIZED_ANGLE"
+    },
     "BufferUsage":
     {
         "DynamicCopy": "GL_DYNAMIC_COPY",

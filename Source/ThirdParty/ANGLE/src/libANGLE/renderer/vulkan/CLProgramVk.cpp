@@ -930,10 +930,10 @@ bool CLProgramVk::buildInternal(const cl::DevicePtrs &devices,
             // add clspv compiler options based on device features
             processedOptions += ClspvGetCompilerOptions(&device->getImpl<CLDeviceVk>());
 
-        cl_uint addressBits;
-        ANGLE_CL_IMPL_TRY(
-            device->getInfo(cl::DeviceInfo::AddressBits, sizeof(cl_uint), &addressBits, nullptr));
-        processedOptions += addressBits == 64 ? " -arch=spir64" : " -arch=spir";
+            cl_uint addressBits;
+            ANGLE_CL_IMPL_TRY(device->getInfo(cl::DeviceInfo::AddressBits, sizeof(cl_uint),
+                                              &addressBits, nullptr));
+            processedOptions += addressBits == 64 ? " -arch=spir64" : " -arch=spir";
 
             switch (buildType)
             {

@@ -53,4 +53,14 @@
     <!-- This is the summary displayed when no apps are installed that ANGLE can be used for. -->
     <string name="no_apps_installed_summary">No apps installed that can use ANGLE</string>
 
+    <!-- This is the title for the button to reset all settings to their default values. -->
+    <string name="reset_to_default_values">Reset to default values</string>
+
+    <!-- Strings for the reset confirmation dialog -->
+    <string name="reset_dialog_title">Reset settings?</string>
+    <string name="reset_dialog_message">This will reset all ANGLE settings to their default values.</string>
+    <string name="reset_dialog_positive">Reset</string>
+    <string name="reset_dialog_negative">Cancel</string>
+
+
 </resources>

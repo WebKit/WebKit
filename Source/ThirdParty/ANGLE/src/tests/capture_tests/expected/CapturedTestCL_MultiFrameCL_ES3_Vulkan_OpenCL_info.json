@@ -1,37 +1,43 @@
 {
     "clGetProgramBuildInfo": {
         "CL_PROGRAM_BUILD_STATUS": 0,
-        "device": "0x5e89bfa44800",
-        "program": "0x5e89c00ef340"
+        "device": "0x6150917daac0",
+        "program": "0x615093c617a0"
     }
 },
 {
     "clGetMemObjectInfo": {
         "CL_MEM_SIZE": 512,
-        "memObj": "0x5e89bf6d14c0"
+        "memObj": "0x615091282420"
     }
 },
 {
     "clGetMemObjectInfo": {
         "CL_MEM_SIZE": 512,
-        "memObj": "0x5e89bf6d14c0"
+        "memObj": "0x615091282420"
     }
 },
 {
     "clGetMemObjectInfo": {
         "CL_MEM_SIZE": 512,
-        "memObj": "0x5e89bf6d14c0"
+        "memObj": "0x615091282420"
     }
 },
 {
     "clGetMemObjectInfo": {
         "CL_MEM_SIZE": 512,
-        "memObj": "0x5e89bf6d14c0"
+        "memObj": "0x615091282420"
     }
 },
 {
     "clGetMemObjectInfo": {
         "CL_MEM_SIZE": 512,
-        "memObj": "0x5e89bf6d14c0"
+        "memObj": "0x615091282420"
+    }
+},
+{
+    "clGetMemObjectInfo": {
+        "CL_MEM_SIZE": 512,
+        "memObj": "0x615091282420"
     }
 },

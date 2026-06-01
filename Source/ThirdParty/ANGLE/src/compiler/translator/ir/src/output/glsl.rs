@@ -236,8 +236,9 @@ impl Generator {
             Decoration::ImageInternalFormat(format) => {
                 layout_qualifiers.push(Self::image_internal_format_str(format))
             }
-            Decoration::NumViews(n) => layout_qualifiers.push(format!("num_views={n}")),
-            Decoration::RasterOrdered => layout_qualifiers.push("d3d_raster_ordered".to_string()),
+            Decoration::RasterOrdered => layout_qualifiers.push("raster_ordered".to_string()),
+            Decoration::EmulatedViewIDOut => layout_qualifiers.push("flat out".to_string()),
+            Decoration::EmulatedViewIDIn => layout_qualifiers.push("flat in".to_string()),
         }
     }
 
@@ -812,6 +813,13 @@ impl ast::Target for Generator {
 
     fn global_scope(&mut self, ir_meta: &IRMeta) {
         match ir_meta.get_shader_type() {
+            ShaderType::Vertex => {
+                if ir_meta.get_num_views() > 0 {
+                    // Note: not to be done if emulate_instanced_multiview is set
+                    writeln!(self.preamble, "layout(num_views = {}) in;", ir_meta.get_num_views())
+                        .unwrap();
+                }
+            }
             ShaderType::Fragment => {
                 if ir_meta.get_early_fragment_tests() {
                     self.preamble.push_str("layout(early_fragment_tests) in;\n");

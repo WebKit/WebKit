@@ -13,6 +13,7 @@
 #include "compiler/translator/ImmutableStringBuilder.h"
 #include "compiler/translator/IntermNode.h"
 #include "compiler/translator/Types.h"
+#include "compiler/translator/tree_util/BuiltIn.h"
 #include "compiler/translator/tree_util/IntermNode_util.h"
 #include "compiler/translator/util.h"
 
@@ -66,7 +67,6 @@ TType *Type(const TType *baseType, const ASTType &astType)
     layoutQualifier.depth        = static_cast<TLayoutDepth>(astLayoutQualifier.depth);
     layoutQualifier.imageInternalFormat =
         static_cast<TLayoutImageInternalFormat>(astLayoutQualifier.image_internal_format);
-    layoutQualifier.numViews             = astLayoutQualifier.num_views;
     layoutQualifier.yuv                  = astLayoutQualifier.yuv;
     layoutQualifier.index                = astLayoutQualifier.index;
     layoutQualifier.inputAttachmentIndex = astLayoutQualifier.input_attachment_index;
@@ -107,29 +107,55 @@ TIntermSequence Exprs(rust::Slice<const Expression> exprs)
     return seq;
 }
 
-TIntermTyped *UnaryBuiltIn(TCompiler *compiler, const char *name, const Expression &operand)
+// The PixelLocalStorage emulation code may generate imageLoad, imageStore,
+// memoryBarrierImage, packUnorm4x8 and unpackSnorm4x8 built-ins even if the shader version is 300.
+// This is technically incorrect, but happens to work because PLS is never actually used with the
+// GLES output generator (which uses the input shader version as the output shader version and so
+// this version actually matters).
+//
+// For now, the shader version is overridden for these built-ins.  Eventually when the ESSL
+// output is directly generated from IR, the appropriate solution is to have the output version
+// be independent of the input version; it should be the highest version the native driver
+// supports, similar to how the desktop GLSL generator operates.
+//
+// In that and other transformations, the shader may also access built-ins that are only available
+// to the backend (marked with kESSLInternalBackendBuiltIns as the required version).  The shader
+// version for these are also overridden in UnaryBuiltIn(), BinaryBuiltIn() and BuiltIn() below.
+constexpr int kNoVersionOverride = 0;
+
+TIntermTyped *UnaryBuiltIn(TCompiler *compiler,
+                           const char *name,
+                           const Expression &operand,
+                           int versionOverride)
 {
     TIntermTyped *operandNode = Expr(operand);
+    int shaderVersion         = std::max(compiler->getShaderVersion(), versionOverride);
     return CreateBuiltInUnaryFunctionCallNode(name, operandNode, compiler->getSymbolTable(),
-                                              compiler->getShaderVersion());
+                                              shaderVersion);
 }
 
 TIntermTyped *BinaryBuiltIn(TCompiler *compiler,
                             const char *name,
                             const Expression &lhs,
-                            const Expression &rhs)
+                            const Expression &rhs,
+                            int versionOverride)
 {
     TIntermTyped *lhsNode = Expr(lhs);
     TIntermTyped *rhsNode = Expr(rhs);
+    int shaderVersion     = std::max(compiler->getShaderVersion(), versionOverride);
     return CreateBuiltInFunctionCallNode(name, {lhsNode, rhsNode}, compiler->getSymbolTable(),
-                                         compiler->getShaderVersion());
+                                         shaderVersion);
 }
 
-TIntermTyped *BuiltIn(TCompiler *compiler, const char *name, rust::Slice<const Expression> args)
+TIntermTyped *BuiltIn(TCompiler *compiler,
+                      const char *name,
+                      rust::Slice<const Expression> args,
+                      int versionOverride)
 {
     TIntermSequence argsNodes = Exprs(args);
+    int shaderVersion         = std::max(compiler->getShaderVersion(), versionOverride);
     return CreateBuiltInFunctionCallNode(name, &argsNodes, compiler->getSymbolTable(),
-                                         compiler->getShaderVersion());
+                                         shaderVersion);
 }
 }  // namespace
 
@@ -347,6 +373,16 @@ TIntermTyped *make_variable(TCompiler *compiler,
     return new TIntermSymbol(variable);
 }
 
+TIntermTyped *make_internal_variable_gl_layer_vs()
+{
+    return new TIntermSymbol(BuiltInVariable::gl_LayerVS());
+}
+
+TIntermTyped *make_internal_variable_gl_instance_es100()
+{
+    return new TIntermSymbol(BuiltInVariable::gl_InstanceID());
+}
+
 TIntermTyped *make_nameless_block_field_variable(TCompiler *compiler,
                                                  TIntermTyped *variable,
                                                  uint32_t fieldIndex,
@@ -546,327 +582,327 @@ TIntermTyped *bitwise_not(const Expression &operand)
 
 TIntermTyped *built_in_radians(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "radians", operand);
+    return UnaryBuiltIn(compiler, "radians", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_degrees(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "degrees", operand);
+    return UnaryBuiltIn(compiler, "degrees", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_sin(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "sin", operand);
+    return UnaryBuiltIn(compiler, "sin", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_cos(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "cos", operand);
+    return UnaryBuiltIn(compiler, "cos", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_tan(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "tan", operand);
+    return UnaryBuiltIn(compiler, "tan", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_asin(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "asin", operand);
+    return UnaryBuiltIn(compiler, "asin", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_acos(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "acos", operand);
+    return UnaryBuiltIn(compiler, "acos", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_atan(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "atan", operand);
+    return UnaryBuiltIn(compiler, "atan", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_sinh(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "sinh", operand);
+    return UnaryBuiltIn(compiler, "sinh", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_cosh(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "cosh", operand);
+    return UnaryBuiltIn(compiler, "cosh", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_tanh(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "tanh", operand);
+    return UnaryBuiltIn(compiler, "tanh", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_asinh(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "asinh", operand);
+    return UnaryBuiltIn(compiler, "asinh", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_acosh(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "acosh", operand);
+    return UnaryBuiltIn(compiler, "acosh", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_atanh(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "atanh", operand);
+    return UnaryBuiltIn(compiler, "atanh", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_exp(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "exp", operand);
+    return UnaryBuiltIn(compiler, "exp", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_log(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "log", operand);
+    return UnaryBuiltIn(compiler, "log", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_exp2(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "exp2", operand);
+    return UnaryBuiltIn(compiler, "exp2", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_log2(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "log2", operand);
+    return UnaryBuiltIn(compiler, "log2", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_sqrt(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "sqrt", operand);
+    return UnaryBuiltIn(compiler, "sqrt", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_inversesqrt(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "inversesqrt", operand);
+    return UnaryBuiltIn(compiler, "inversesqrt", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_abs(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "abs", operand);
+    return UnaryBuiltIn(compiler, "abs", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_sign(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "sign", operand);
+    return UnaryBuiltIn(compiler, "sign", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_floor(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "floor", operand);
+    return UnaryBuiltIn(compiler, "floor", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_trunc(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "trunc", operand);
+    return UnaryBuiltIn(compiler, "trunc", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_round(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "round", operand);
+    return UnaryBuiltIn(compiler, "round", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_roundeven(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "roundEven", operand);
+    return UnaryBuiltIn(compiler, "roundEven", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_ceil(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "ceil", operand);
+    return UnaryBuiltIn(compiler, "ceil", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_fract(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "fract", operand);
+    return UnaryBuiltIn(compiler, "fract", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_isnan(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "isnan", operand);
+    return UnaryBuiltIn(compiler, "isnan", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_isinf(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "isinf", operand);
+    return UnaryBuiltIn(compiler, "isinf", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_floatbitstoint(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "floatBitsToInt", operand);
+    return UnaryBuiltIn(compiler, "floatBitsToInt", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_floatbitstouint(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "floatBitsToUint", operand);
+    return UnaryBuiltIn(compiler, "floatBitsToUint", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_intbitstofloat(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "intBitsToFloat", operand);
+    return UnaryBuiltIn(compiler, "intBitsToFloat", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_uintbitstofloat(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "uintBitsToFloat", operand);
+    return UnaryBuiltIn(compiler, "uintBitsToFloat", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_packsnorm2x16(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "packSnorm2x16", operand);
+    return UnaryBuiltIn(compiler, "packSnorm2x16", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_packhalf2x16(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "packHalf2x16", operand);
+    return UnaryBuiltIn(compiler, "packHalf2x16", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_unpacksnorm2x16(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "unpackSnorm2x16", operand);
+    return UnaryBuiltIn(compiler, "unpackSnorm2x16", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_unpackhalf2x16(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "unpackHalf2x16", operand);
+    return UnaryBuiltIn(compiler, "unpackHalf2x16", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_packunorm2x16(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "packUnorm2x16", operand);
+    return UnaryBuiltIn(compiler, "packUnorm2x16", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_unpackunorm2x16(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "unpackUnorm2x16", operand);
+    return UnaryBuiltIn(compiler, "unpackUnorm2x16", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_packunorm4x8(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "packUnorm4x8", operand);
+    return UnaryBuiltIn(compiler, "packUnorm4x8", operand, 310);
 }
 
 TIntermTyped *built_in_packsnorm4x8(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "packSnorm4x8", operand);
+    return UnaryBuiltIn(compiler, "packSnorm4x8", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_unpackunorm4x8(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "unpackUnorm4x8", operand);
+    return UnaryBuiltIn(compiler, "unpackUnorm4x8", operand, 310);
 }
 
 TIntermTyped *built_in_unpacksnorm4x8(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "unpackSnorm4x8", operand);
+    return UnaryBuiltIn(compiler, "unpackSnorm4x8", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_length(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "length", operand);
+    return UnaryBuiltIn(compiler, "length", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_normalize(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "normalize", operand);
+    return UnaryBuiltIn(compiler, "normalize", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_transpose(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "transpose", operand);
+    return UnaryBuiltIn(compiler, "transpose", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_determinant(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "determinant", operand);
+    return UnaryBuiltIn(compiler, "determinant", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_inverse(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "inverse", operand);
+    return UnaryBuiltIn(compiler, "inverse", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_any(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "any", operand);
+    return UnaryBuiltIn(compiler, "any", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_all(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "all", operand);
+    return UnaryBuiltIn(compiler, "all", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_not(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "not", operand);
+    return UnaryBuiltIn(compiler, "not", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_bitfieldreverse(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "bitfieldReverse", operand);
+    return UnaryBuiltIn(compiler, "bitfieldReverse", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_bitcount(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "bitCount", operand);
+    return UnaryBuiltIn(compiler, "bitCount", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_findlsb(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "findLSB", operand);
+    return UnaryBuiltIn(compiler, "findLSB", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_findmsb(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "findMSB", operand);
+    return UnaryBuiltIn(compiler, "findMSB", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_dfdx(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "dFdx", operand);
+    return UnaryBuiltIn(compiler, "dFdx", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_dfdy(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "dFdy", operand);
+    return UnaryBuiltIn(compiler, "dFdy", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_fwidth(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "fwidth", operand);
+    return UnaryBuiltIn(compiler, "fwidth", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_interpolateatcentroid(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "interpolateAtCentroid", operand);
+    return UnaryBuiltIn(compiler, "interpolateAtCentroid", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_atomiccounter(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "atomicCounter", operand);
+    return UnaryBuiltIn(compiler, "atomicCounter", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_atomiccounterincrement(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "atomicCounterIncrement", operand);
+    return UnaryBuiltIn(compiler, "atomicCounterIncrement", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_atomiccounterdecrement(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "atomicCounterDecrement", operand);
+    return UnaryBuiltIn(compiler, "atomicCounterDecrement", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_imagesize(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "imageSize", operand);
+    return UnaryBuiltIn(compiler, "imageSize", operand, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_pixellocalload(TCompiler *compiler, const Expression &operand)
 {
-    return UnaryBuiltIn(compiler, "pixelLocalLoadANGLE", operand);
+    return UnaryBuiltIn(compiler, "pixelLocalLoadANGLE", operand, kNoVersionOverride);
 }
 
 TIntermTyped *add(const Expression &lhs, const Expression &rhs)
@@ -983,428 +1019,429 @@ TIntermTyped *built_in_atan_binary(TCompiler *compiler,
                                    const Expression &lhs,
                                    const Expression &rhs)
 {
-    return BinaryBuiltIn(compiler, "atan", lhs, rhs);
+    return BinaryBuiltIn(compiler, "atan", lhs, rhs, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_pow(TCompiler *compiler, const Expression &lhs, const Expression &rhs)
 {
-    return BinaryBuiltIn(compiler, "pow", lhs, rhs);
+    return BinaryBuiltIn(compiler, "pow", lhs, rhs, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_mod(TCompiler *compiler, const Expression &lhs, const Expression &rhs)
 {
-    return BinaryBuiltIn(compiler, "mod", lhs, rhs);
+    return BinaryBuiltIn(compiler, "mod", lhs, rhs, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_min(TCompiler *compiler, const Expression &lhs, const Expression &rhs)
 {
-    return BinaryBuiltIn(compiler, "min", lhs, rhs);
+    return BinaryBuiltIn(compiler, "min", lhs, rhs, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_max(TCompiler *compiler, const Expression &lhs, const Expression &rhs)
 {
-    return BinaryBuiltIn(compiler, "max", lhs, rhs);
+    return BinaryBuiltIn(compiler, "max", lhs, rhs, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_step(TCompiler *compiler, const Expression &lhs, const Expression &rhs)
 {
-    return BinaryBuiltIn(compiler, "step", lhs, rhs);
+    return BinaryBuiltIn(compiler, "step", lhs, rhs, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_modf(TCompiler *compiler, const Expression &lhs, const Expression &rhs)
 {
-    return BinaryBuiltIn(compiler, "modf", lhs, rhs);
+    return BinaryBuiltIn(compiler, "modf", lhs, rhs, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_frexp(TCompiler *compiler, const Expression &lhs, const Expression &rhs)
 {
-    return BinaryBuiltIn(compiler, "frexp", lhs, rhs);
+    return BinaryBuiltIn(compiler, "frexp", lhs, rhs, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_ldexp(TCompiler *compiler, const Expression &lhs, const Expression &rhs)
 {
-    return BinaryBuiltIn(compiler, "ldexp", lhs, rhs);
+    return BinaryBuiltIn(compiler, "ldexp", lhs, rhs, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_distance(TCompiler *compiler, const Expression &lhs, const Expression &rhs)
 {
-    return BinaryBuiltIn(compiler, "distance", lhs, rhs);
+    return BinaryBuiltIn(compiler, "distance", lhs, rhs, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_dot(TCompiler *compiler, const Expression &lhs, const Expression &rhs)
 {
-    return BinaryBuiltIn(compiler, "dot", lhs, rhs);
+    return BinaryBuiltIn(compiler, "dot", lhs, rhs, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_cross(TCompiler *compiler, const Expression &lhs, const Expression &rhs)
 {
-    return BinaryBuiltIn(compiler, "cross", lhs, rhs);
+    return BinaryBuiltIn(compiler, "cross", lhs, rhs, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_reflect(TCompiler *compiler, const Expression &lhs, const Expression &rhs)
 {
-    return BinaryBuiltIn(compiler, "reflect", lhs, rhs);
+    return BinaryBuiltIn(compiler, "reflect", lhs, rhs, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_matrixcompmult(TCompiler *compiler,
                                       const Expression &lhs,
                                       const Expression &rhs)
 {
-    return BinaryBuiltIn(compiler, "matrixCompMult", lhs, rhs);
+    return BinaryBuiltIn(compiler, "matrixCompMult", lhs, rhs, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_outerproduct(TCompiler *compiler,
                                     const Expression &lhs,
                                     const Expression &rhs)
 {
-    return BinaryBuiltIn(compiler, "outerProduct", lhs, rhs);
+    return BinaryBuiltIn(compiler, "outerProduct", lhs, rhs, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_lessthanvec(TCompiler *compiler,
                                    const Expression &lhs,
                                    const Expression &rhs)
 {
-    return BinaryBuiltIn(compiler, "lessThan", lhs, rhs);
+    return BinaryBuiltIn(compiler, "lessThan", lhs, rhs, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_lessthanequalvec(TCompiler *compiler,
                                         const Expression &lhs,
                                         const Expression &rhs)
 {
-    return BinaryBuiltIn(compiler, "lessThanEqual", lhs, rhs);
+    return BinaryBuiltIn(compiler, "lessThanEqual", lhs, rhs, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_greaterthanvec(TCompiler *compiler,
                                       const Expression &lhs,
                                       const Expression &rhs)
 {
-    return BinaryBuiltIn(compiler, "greaterThan", lhs, rhs);
+    return BinaryBuiltIn(compiler, "greaterThan", lhs, rhs, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_greaterthanequalvec(TCompiler *compiler,
                                            const Expression &lhs,
                                            const Expression &rhs)
 {
-    return BinaryBuiltIn(compiler, "greaterThanEqual", lhs, rhs);
+    return BinaryBuiltIn(compiler, "greaterThanEqual", lhs, rhs, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_equalvec(TCompiler *compiler, const Expression &lhs, const Expression &rhs)
 {
-    return BinaryBuiltIn(compiler, "equal", lhs, rhs);
+    return BinaryBuiltIn(compiler, "equal", lhs, rhs, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_notequalvec(TCompiler *compiler,
                                    const Expression &lhs,
                                    const Expression &rhs)
 {
-    return BinaryBuiltIn(compiler, "notEqual", lhs, rhs);
+    return BinaryBuiltIn(compiler, "notEqual", lhs, rhs, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_interpolateatsample(TCompiler *compiler,
                                            const Expression &lhs,
                                            const Expression &rhs)
 {
-    return BinaryBuiltIn(compiler, "interpolateAtSample", lhs, rhs);
+    return BinaryBuiltIn(compiler, "interpolateAtSample", lhs, rhs, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_interpolateatoffset(TCompiler *compiler,
                                            const Expression &lhs,
                                            const Expression &rhs)
 {
-    return BinaryBuiltIn(compiler, "interpolateAtOffset", lhs, rhs);
+    return BinaryBuiltIn(compiler, "interpolateAtOffset", lhs, rhs, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_atomicadd(TCompiler *compiler, const Expression &lhs, const Expression &rhs)
 {
-    return BinaryBuiltIn(compiler, "atomicAdd", lhs, rhs);
+    return BinaryBuiltIn(compiler, "atomicAdd", lhs, rhs, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_atomicmin(TCompiler *compiler, const Expression &lhs, const Expression &rhs)
 {
-    return BinaryBuiltIn(compiler, "atomicMin", lhs, rhs);
+    return BinaryBuiltIn(compiler, "atomicMin", lhs, rhs, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_atomicmax(TCompiler *compiler, const Expression &lhs, const Expression &rhs)
 {
-    return BinaryBuiltIn(compiler, "atomicMax", lhs, rhs);
+    return BinaryBuiltIn(compiler, "atomicMax", lhs, rhs, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_atomicand(TCompiler *compiler, const Expression &lhs, const Expression &rhs)
 {
-    return BinaryBuiltIn(compiler, "atomicAnd", lhs, rhs);
+    return BinaryBuiltIn(compiler, "atomicAnd", lhs, rhs, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_atomicor(TCompiler *compiler, const Expression &lhs, const Expression &rhs)
 {
-    return BinaryBuiltIn(compiler, "atomicOr", lhs, rhs);
+    return BinaryBuiltIn(compiler, "atomicOr", lhs, rhs, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_atomicxor(TCompiler *compiler, const Expression &lhs, const Expression &rhs)
 {
-    return BinaryBuiltIn(compiler, "atomicXor", lhs, rhs);
+    return BinaryBuiltIn(compiler, "atomicXor", lhs, rhs, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_atomicexchange(TCompiler *compiler,
                                       const Expression &lhs,
                                       const Expression &rhs)
 {
-    return BinaryBuiltIn(compiler, "atomicExchange", lhs, rhs);
+    return BinaryBuiltIn(compiler, "atomicExchange", lhs, rhs, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_clamp(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "clamp", args);
+    return BuiltIn(compiler, "clamp", args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_mix(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "mix", args);
+    return BuiltIn(compiler, "mix", args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_smoothstep(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "smoothstep", args);
+    return BuiltIn(compiler, "smoothstep", args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_fma(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "fma", args);
+    return BuiltIn(compiler, "fma", args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_faceforward(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "faceforward", args);
+    return BuiltIn(compiler, "faceforward", args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_refract(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "refract", args);
+    return BuiltIn(compiler, "refract", args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_bitfieldextract(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "bitfieldExtract", args);
+    return BuiltIn(compiler, "bitfieldExtract", args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_bitfieldinsert(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "bitfieldInsert", args);
+    return BuiltIn(compiler, "bitfieldInsert", args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_uaddcarry(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "uaddCarry", args);
+    return BuiltIn(compiler, "uaddCarry", args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_usubborrow(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "usubBorrow", args);
+    return BuiltIn(compiler, "usubBorrow", args, kNoVersionOverride);
 }
 
 TIntermNode *built_in_umulextended(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "umulExtended", args);
+    return BuiltIn(compiler, "umulExtended", args, kNoVersionOverride);
 }
 
 TIntermNode *built_in_imulextended(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "imulExtended", args);
+    return BuiltIn(compiler, "imulExtended", args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_texturesize(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "textureSize", args);
+    return BuiltIn(compiler, "textureSize", args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_texturequerylod(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "textureQueryLOD", args);
+    return BuiltIn(compiler, "textureQueryLOD", args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_texelfetch(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "texelFetch", args);
+    return BuiltIn(compiler, "texelFetch", args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_texelfetchoffset(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "texelFetchOffset", args);
+    return BuiltIn(compiler, "texelFetchOffset", args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_rgb_2_yuv(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "rgb_2_yuv", args);
+    return BuiltIn(compiler, "rgb_2_yuv", args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_yuv_2_rgb(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "yuv_2_rgb", args);
+    return BuiltIn(compiler, "yuv_2_rgb", args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_atomiccompswap(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "atomicCompSwap", args);
+    return BuiltIn(compiler, "atomicCompSwap", args, kNoVersionOverride);
 }
 
 TIntermNode *built_in_imagestore(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "imageStore", args);
+    return BuiltIn(compiler, "imageStore", args, 310);
 }
 
 TIntermTyped *built_in_imageload(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "imageLoad", args);
+    return BuiltIn(compiler, "imageLoad", args, 310);
 }
 
 TIntermTyped *built_in_imageatomicadd(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "imageAtomicAdd", args);
+    return BuiltIn(compiler, "imageAtomicAdd", args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_imageatomicmin(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "imageAtomicMin", args);
+    return BuiltIn(compiler, "imageAtomicMin", args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_imageatomicmax(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "imageAtomicMax", args);
+    return BuiltIn(compiler, "imageAtomicMax", args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_imageatomicand(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "imageAtomicAnd", args);
+    return BuiltIn(compiler, "imageAtomicAnd", args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_imageatomicor(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "imageAtomicOr", args);
+    return BuiltIn(compiler, "imageAtomicOr", args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_imageatomicxor(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "imageAtomicXor", args);
+    return BuiltIn(compiler, "imageAtomicXor", args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_imageatomicexchange(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "imageAtomicExchange", args);
+    return BuiltIn(compiler, "imageAtomicExchange", args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_imageatomiccompswap(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "imageAtomicCompSwap", args);
+    return BuiltIn(compiler, "imageAtomicCompSwap", args, kNoVersionOverride);
 }
 
 TIntermNode *built_in_pixellocalstore(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "pixelLocalStoreANGLE", args);
+    return BuiltIn(compiler, "pixelLocalStoreANGLE", args, kNoVersionOverride);
 }
 
 TIntermNode *built_in_memorybarrier(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "memoryBarrier", args);
+    return BuiltIn(compiler, "memoryBarrier", args, kNoVersionOverride);
 }
 
 TIntermNode *built_in_memorybarrieratomiccounter(TCompiler *compiler,
                                                  rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "memoryBarrierAtomicCounter", args);
+    return BuiltIn(compiler, "memoryBarrierAtomicCounter", args, kNoVersionOverride);
 }
 
 TIntermNode *built_in_memorybarrierbuffer(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "memoryBarrierBuffer", args);
+    return BuiltIn(compiler, "memoryBarrierBuffer", args, kNoVersionOverride);
 }
 
 TIntermNode *built_in_memorybarrierimage(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "memoryBarrierImage", args);
+    return BuiltIn(compiler, "memoryBarrierImage", args, 310);
 }
 
 TIntermNode *built_in_barrier(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "barrier", args);
+    return BuiltIn(compiler, "barrier", args, kNoVersionOverride);
 }
 
 TIntermNode *built_in_memorybarriershared(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "memoryBarrierShared", args);
+    return BuiltIn(compiler, "memoryBarrierShared", args, kNoVersionOverride);
 }
 
 TIntermNode *built_in_groupmemorybarrier(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "groupMemoryBarrier", args);
+    return BuiltIn(compiler, "groupMemoryBarrier", args, kNoVersionOverride);
 }
 
 TIntermNode *built_in_emitvertex(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "EmitVertex", args);
+    return BuiltIn(compiler, "EmitVertex", args, kNoVersionOverride);
 }
 
 TIntermNode *built_in_endprimitive(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "EndPrimitive", args);
+    return BuiltIn(compiler, "EndPrimitive", args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_subpassload(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "subpassLoad", args);
+    return BuiltIn(compiler, "subpassLoad", args, kESSLInternalBackendBuiltIns);
 }
 
 TIntermNode *built_in_begininvocationinterlocknv(TCompiler *compiler,
                                                  rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "beginInvocationInterlockNV", args);
+    return BuiltIn(compiler, "beginInvocationInterlockNV", args, kESSLInternalBackendBuiltIns);
 }
 
 TIntermNode *built_in_endinvocationinterlocknv(TCompiler *compiler,
                                                rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "endInvocationInterlockNV", args);
+    return BuiltIn(compiler, "endInvocationInterlockNV", args, kESSLInternalBackendBuiltIns);
 }
 
 TIntermNode *built_in_beginfragmentshaderorderingintel(TCompiler *compiler,
                                                        rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "beginFragmentShaderOrderingINTEL", args);
+    return BuiltIn(compiler, "beginFragmentShaderOrderingINTEL", args,
+                   kESSLInternalBackendBuiltIns);
 }
 
 TIntermNode *built_in_begininvocationinterlockarb(TCompiler *compiler,
                                                   rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "beginInvocationInterlockARB", args);
+    return BuiltIn(compiler, "beginInvocationInterlockARB", args, kESSLInternalBackendBuiltIns);
 }
 
 TIntermNode *built_in_endinvocationinterlockarb(TCompiler *compiler,
                                                 rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "endInvocationInterlockARB", args);
+    return BuiltIn(compiler, "endInvocationInterlockARB", args, kESSLInternalBackendBuiltIns);
 }
 
 TIntermTyped *built_in_numsamples(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "numSamples", args);
+    return BuiltIn(compiler, "numSamples", args, kESSLInternalBackendBuiltIns);
 }
 
 TIntermTyped *built_in_sampleposition(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "samplePosition", args);
+    return BuiltIn(compiler, "samplePosition", args, kESSLInternalBackendBuiltIns);
 }
 
 TIntermTyped *built_in_interpolateatcenter(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "interpolateAtCenter", args);
+    return BuiltIn(compiler, "interpolateAtCenter", args, kESSLInternalBackendBuiltIns);
 }
 
 TIntermNode *built_in_loopforwardprogress(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "loopForwardProgress", args);
+    return BuiltIn(compiler, "loopForwardProgress", args, kESSLInternalBackendBuiltIns);
 }
 
 TIntermTyped *built_in_saturate(TCompiler *compiler, rust::Slice<const Expression> args)
 {
-    return BuiltIn(compiler, "saturate", args);
+    return BuiltIn(compiler, "saturate", args, kESSLInternalBackendBuiltIns);
 }
 
 TIntermTyped *built_in_texture(TCompiler *compiler,
@@ -1442,7 +1479,7 @@ TIntermTyped *built_in_texture(TCompiler *compiler,
                 ASSERT(false);
         }
     }
-    return BuiltIn(compiler, builtIn, args);
+    return BuiltIn(compiler, builtIn, args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_textureoffset(TCompiler *compiler,
@@ -1451,14 +1488,14 @@ TIntermTyped *built_in_textureoffset(TCompiler *compiler,
 {
     const char *builtIn = isProj ? "textureProjOffset" : "textureOffset";
     ASSERT(compiler->getShaderVersion() >= 300);
-    return BuiltIn(compiler, builtIn, args);
+    return BuiltIn(compiler, builtIn, args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_texture_with_compare(TCompiler *compiler, rust::Slice<const Expression> args)
 {
     const char *builtIn = "texture";
     ASSERT(compiler->getShaderVersion() >= 300);
-    return BuiltIn(compiler, builtIn, args);
+    return BuiltIn(compiler, builtIn, args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_texturelod(TCompiler *compiler,
@@ -1499,7 +1536,7 @@ TIntermTyped *built_in_texturelod(TCompiler *compiler,
                 ASSERT(false);
         }
     }
-    return BuiltIn(compiler, builtIn, args);
+    return BuiltIn(compiler, builtIn, args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_texturelodoffset(TCompiler *compiler,
@@ -1508,7 +1545,7 @@ TIntermTyped *built_in_texturelodoffset(TCompiler *compiler,
 {
     const char *builtIn = isProj ? "textureProjLodOffset" : "textureLodOffset";
     ASSERT(compiler->getShaderVersion() >= 300);
-    return BuiltIn(compiler, builtIn, args);
+    return BuiltIn(compiler, builtIn, args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_texturelod_with_compare(TCompiler *compiler,
@@ -1516,7 +1553,7 @@ TIntermTyped *built_in_texturelod_with_compare(TCompiler *compiler,
 {
     const char *builtIn = "textureLod";
     ASSERT(compiler->getShaderVersion() >= 300);
-    return BuiltIn(compiler, builtIn, args);
+    return BuiltIn(compiler, builtIn, args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_texturegrad(TCompiler *compiler,
@@ -1540,7 +1577,7 @@ TIntermTyped *built_in_texturegrad(TCompiler *compiler,
                 ASSERT(false);
         }
     }
-    return BuiltIn(compiler, builtIn, args);
+    return BuiltIn(compiler, builtIn, args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_texturegradoffset(TCompiler *compiler,
@@ -1549,14 +1586,14 @@ TIntermTyped *built_in_texturegradoffset(TCompiler *compiler,
 {
     const char *builtIn = isProj ? "textureProjGradOffset" : "textureGradOffset";
     ASSERT(compiler->getShaderVersion() >= 300);
-    return BuiltIn(compiler, builtIn, args);
+    return BuiltIn(compiler, builtIn, args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_texturegather(TCompiler *compiler, rust::Slice<const Expression> args)
 {
     const char *builtIn = "textureGather";
     ASSERT(compiler->getShaderVersion() >= 300);
-    return BuiltIn(compiler, builtIn, args);
+    return BuiltIn(compiler, builtIn, args, kNoVersionOverride);
 }
 
 TIntermTyped *built_in_texturegatheroffset(TCompiler *compiler,
@@ -1565,7 +1602,7 @@ TIntermTyped *built_in_texturegatheroffset(TCompiler *compiler,
 {
     const char *builtIn = isOffsetArray ? "textureGatherOffsets" : "textureGatherOffset";
     ASSERT(compiler->getShaderVersion() >= 300);
-    return BuiltIn(compiler, builtIn, args);
+    return BuiltIn(compiler, builtIn, args, kNoVersionOverride);
 }
 
 void branch_discard(TIntermBlock *block)

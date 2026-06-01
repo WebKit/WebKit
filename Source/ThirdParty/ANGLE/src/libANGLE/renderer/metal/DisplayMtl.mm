@@ -168,10 +168,10 @@ void DisplayMtl::terminate()
 {
     mUtils = nullptr;
     mCmdQueue.reset();
-    mDefaultShaders = nil;
-    mMetalDevice    = nil;
+    mDefaultShaders      = nil;
+    mMetalDevice         = nil;
     mSharedEventListener = nil;
-    mCapsInitialized = false;
+    mCapsInitialized     = false;
 
     mMetalDeviceVendorId = 0;
     mComputedAMDBronze   = false;
@@ -290,7 +290,9 @@ angle::ObjCPtr<id<MTLDevice>> DisplayMtl::getMetalDeviceMatchingAttribute(
         for (id<MTLDevice> device in discreteGPUs.get())
         {
             if (![device isHeadless])
+            {
                 return device;
+            }
         }
     }
     else if (attribs.get(EGL_POWER_PREFERENCE_ANGLE, 0) == EGL_LOW_POWER_ANGLE)
@@ -299,7 +301,9 @@ angle::ObjCPtr<id<MTLDevice>> DisplayMtl::getMetalDeviceMatchingAttribute(
         for (id<MTLDevice> device in integratedGPUs.get())
         {
             if (![device isHeadless])
+            {
                 return device;
+            }
         }
     }
 
@@ -869,7 +873,7 @@ void DisplayMtl::ensureCapsInitialized() const
     // Fill in additional limits for UBOs and SSBOs.
     mNativeCaps.maxUniformBufferBindings = mNativeCaps.maxCombinedUniformBlocks;
     static_assert(mtl::kMaxUBOSize <= gl::IMPLEMENTATION_MAX_UNIFORM_BLOCK_SIZE);
-    mNativeCaps.maxUniformBlockSize      = mtl::kMaxUBOSize;  // Default according to GLES 3.0 spec.
+    mNativeCaps.maxUniformBlockSize = mtl::kMaxUBOSize;  // Default according to GLES 3.0 spec.
     if (supportsAppleGPUFamily(1))
     {
         mNativeCaps.uniformBufferOffsetAlignment =
@@ -1144,6 +1148,10 @@ void DisplayMtl::initializeExtensions() const
             mNativeCaps.maxImageUnits = gl::IMPLEMENTATION_MAX_PIXEL_LOCAL_STORAGE_PLANES;
         }
     }
+
+    // Apple Silicon doesn't support image memory barriers, so we ignore the PLS "noncoherent"
+    // qualifier on that hardware.
+    mNativePLSOptions.supportsNoncoherent = !supportsAppleGPUFamily(1);
 
     // GL_ANGLE_variable_rasterization_rate_metal
     mNativeExtensions.variableRasterizationRateMetalANGLE =

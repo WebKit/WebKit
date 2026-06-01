@@ -141,8 +141,8 @@ enum DirtyBitType
     DIRTY_BIT_TEXTURE_BINDINGS,
     DIRTY_BIT_IMAGE_BINDINGS,
     DIRTY_BIT_TRANSFORM_FEEDBACK_BINDING,
-    DIRTY_BIT_SHADER_STORAGE_BUFFER_BINDING,
     DIRTY_BIT_ATOMIC_COUNTER_BUFFER_BINDING,
+    DIRTY_BIT_SHADER_STORAGE_BUFFER_BINDING,
     // Top-level dirty bit. Also see mUniformBufferBlocksDirtyTypeMask.
     DIRTY_BIT_UNIFORM_BUFFER_BINDINGS,
     DIRTY_BIT_MULTISAMPLING,
@@ -1168,7 +1168,7 @@ class State : angle::NonCopyable
     void getFloatv(GLenum pname, GLfloat *params) const { mPrivateState.getFloatv(pname, params); }
     angle::Result getIntegerv(const Context *context, GLenum pname, GLint *params) const;
     void getPointerv(const Context *context, GLenum pname, void **params) const;
-    void getIntegeri_v(const Context *context, GLenum target, GLuint index, GLint *data) const;
+    void getIntegeri_v(GLenum target, GLuint index, GLint *data) const;
     void getInteger64i_v(GLenum target, GLuint index, GLint64 *data) const;
     void getBooleani_v(GLenum target, GLuint index, GLboolean *data) const;
 

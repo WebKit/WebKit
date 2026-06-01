@@ -115,9 +115,7 @@ fn initialize_with_zeros<'block>(
     id: TypedId,
     allow_loops: bool,
 ) -> &'block mut Block {
-    let type_info = ir_meta.get_type(id.type_id);
-    debug_assert!(type_info.is_pointer());
-    let type_id = type_info.get_element_type_id().unwrap();
+    let type_id = ir_meta.get_pointee_type(id.type_id);
     let type_info = ir_meta.get_type(type_id);
 
     match *type_info {
@@ -143,21 +141,17 @@ fn initialize_with_zeros<'block>(
             if use_loop {
                 // Note: `uint` would be a better loop index type, but ESSL 100 doesn't support
                 // that.
-                let count_constant =
-                    TypedId::from_constant_id(ir_meta.get_constant_int(count as i32), TYPE_ID_INT);
+                let count_constant = ir_meta.get_constant_int_typed(count as i32);
 
                 // Loop variable, int index = 0:
-                let loop_index_id = ir_meta.declare_variable(
+                let (loop_index_var_id, loop_index_id) = ir_meta.declare_private_variable(
                     Name::new_temp(""),
                     TYPE_ID_INT,
                     Precision::High,
-                    Decorations::new_none(),
-                    None,
                     Some(CONSTANT_ID_INT_ZERO),
                     VariableScope::Local,
                 );
-                block.add_variable_declaration(loop_index_id);
-                let loop_index_id = TypedId::from_variable_id(ir_meta, loop_index_id);
+                block.add_variable_declaration(loop_index_var_id);
 
                 // Add the loop condition, index < count:
                 {
@@ -217,10 +211,7 @@ fn initialize_with_zeros<'block>(
                 // Note that it is important to have the array init in the right order to
                 // workaround a driver bug per http://crbug.com/40514481.
                 for index in 0..count {
-                    let index_constant = TypedId::from_constant_id(
-                        ir_meta.get_constant_int(index as i32),
-                        TYPE_ID_INT,
-                    );
+                    let index_constant = ir_meta.get_constant_int_typed(index as i32);
                     // selected_element = AccessArrayElement id index
                     let selected_element = block.add_typed_instruction(instruction::index(
                         ir_meta,
@@ -234,7 +225,7 @@ fn initialize_with_zeros<'block>(
         }
         _ => {
             // For scalars, vectors and matrices, use a zero constant which is not very big.
-            let null_value = TypedId::from_constant_id(ir_meta.get_constant_null(type_id), type_id);
+            let null_value = ir_meta.get_constant_null_typed(type_id);
             block.add_void_instruction(OpCode::Store(id, null_value));
         }
     }
@@ -261,9 +252,7 @@ fn make_init_block(
         let variable = ir_meta.get_variable(id);
         debug_assert!(variable.initializer.is_none());
 
-        let type_info = ir_meta.get_type(variable.type_id);
-        debug_assert!(type_info.is_pointer());
-        let type_id = type_info.get_element_type_id().unwrap();
+        let type_id = ir_meta.get_pointee_type(variable.type_id);
         let type_info = ir_meta.get_type(type_id);
 
         debug_assert!(

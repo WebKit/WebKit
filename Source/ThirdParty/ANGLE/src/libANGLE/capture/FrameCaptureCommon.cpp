@@ -426,7 +426,7 @@ FrameCaptureShared::FrameCaptureShared()
     : mEnabled(true),
       mSerializeStateEnabled(false),
       mCompression(true),
-      mClientVertexArrayMap{},
+      mClientVertexArrayData{},
       mFrameIndex(1),
       mCaptureStartFrame(1),
       mCaptureEndFrame(0),
@@ -720,7 +720,6 @@ bool FrameCaptureShared::isRuntimeEnabled()
 void FrameCaptureShared::reset()
 {
     mFrameCalls.clear();
-    mClientVertexArrayMap.fill(-1);
 
     // Do not reset replay-specific settings like the maximum read buffer size, client array sizes,
     // or the 'has seen' type map. We could refine this into per-frame and per-capture maximums if

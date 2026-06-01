@@ -64,6 +64,11 @@ void ReplayFrame3(void)
     eglGetError();
 }
 
+void ReplayFrame4(void)
+{
+    eglGetError();
+}
+
 void ResetReplayContextShared(void)
 {
     glActiveTexture(GL_TEXTURE1);
@@ -77,7 +82,7 @@ void ResetReplayContext3(void)
 {
 }
 
-void ReplayFrame4(void)
+void ReplayFrame5(void)
 {
     eglGetError();
 }

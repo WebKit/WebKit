@@ -90,7 +90,6 @@ ANGLE_UTIL_EXPORT const char *Passthrough();
 // A shader that simply passes through attribute a_position, setting it to gl_Position and varying
 // texcoord.
 ANGLE_UTIL_EXPORT const char *Texture2D();
-ANGLE_UTIL_EXPORT const char *Texture2DArray();
 
 }  // namespace vs
 
@@ -120,7 +119,6 @@ ANGLE_UTIL_EXPORT const char *Blue();
 
 // A shader that samples the texture
 ANGLE_UTIL_EXPORT const char *Texture2D();
-ANGLE_UTIL_EXPORT const char *Texture2DArray();
 
 }  // namespace fs
 }  // namespace essl1_shaders
@@ -151,6 +149,7 @@ ANGLE_UTIL_EXPORT const char *Passthrough();
 // A shader that simply passes through attribute a_position, setting it to gl_Position and varying
 // texcoord.
 ANGLE_UTIL_EXPORT const char *Texture2DLod();
+ANGLE_UTIL_EXPORT const char *Texture2DArray();
 
 }  // namespace vs
 
@@ -168,6 +167,9 @@ ANGLE_UTIL_EXPORT const char *Blue();
 
 // A shader that samples the texture at a given lod.
 ANGLE_UTIL_EXPORT const char *Texture2DLod();
+
+// A shader that samples the texture at a given slice.
+ANGLE_UTIL_EXPORT const char *Texture2DArray();
 
 }  // namespace fs
 }  // namespace essl3_shaders

@@ -1327,7 +1327,8 @@ angle::Result ProgramExecutableMtl::legalizeUniformBufferOffsets(ContextMtl *con
             size_t bytesToOffset = numBlocksToOffset * conversionInfo.metalSize();
 
             mLegalizedOffsetedUniformBuffers[bufferIndex].first = conversion->convertedBuffer;
-            mLegalizedOffsetedUniformBuffers[bufferIndex].second = conversion->convertedOffset + bytesToOffset;
+            mLegalizedOffsetedUniformBuffers[bufferIndex].second =
+                conversion->convertedOffset + bytesToOffset;
             // Ensure that the converted info can fit in the buffer.
             ASSERT(conversion->convertedOffset + bytesToOffset + conversionInfo.metalSize() <=
                    conversion->convertedBuffer->size());

@@ -27,6 +27,7 @@
 #include "libANGLE/Compiler.h"
 #include "libANGLE/Constants.h"
 #include "libANGLE/Context.h"
+#include "libANGLE/Debug.h"
 #include "libANGLE/Display.h"
 #include "libANGLE/MemoryShaderCache.h"
 #include "libANGLE/Program.h"
@@ -645,7 +646,6 @@ void Shader::compile(const Context *context, angle::JobResultExpectancy resultEx
         options.initGLPosition             = true;
         options.limitCallStackDepth        = true;
         options.limitExpressionComplexity  = true;
-        options.enforcePackingRestrictions = true;
         options.initSharedVariables        = true;
         options.rejectWebglShadersWithLargeVariables    = true;
         options.rejectWebglShadersWithUndefinedBehavior = true;
@@ -761,6 +761,19 @@ void Shader::resolveCompile(const Context *context)
     const bool success    = WaitCompileJobUnlocked(mCompileJob);
     mInfoLog              = std::move(mCompileJob->compileEvent->getInfoLog());
     mState.mCompileStatus = success ? CompileStatus::COMPILED : CompileStatus::NOT_COMPILED;
+
+    // Report the compiler logs so they are more obviously visible.
+    if (!mInfoLog.empty())
+    {
+        static std::atomic_uint32_t sLoggedMessages = 0;
+        constexpr uint32_t kMaxLoggedMessages       = 4;
+        bool isLastMessage                          = false;
+        if (MessageCounterBelowMaxRepeat(&sLoggedMessages, kMaxLoggedMessages, &isLastMessage))
+        {
+            WARN() << "Compiler log: " << mInfoLog
+                   << (isLastMessage ? " (No more compiler logs will be reported in logs)" : "");
+        }
+    }
 
     if (mCompileJob->shCompilerInstance.getHandle())
     {

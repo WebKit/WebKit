@@ -233,7 +233,7 @@ angle::CallCapture CaptureGetActiveUniformsiv(const State &glState,
 angle::CallCapture CaptureGetBufferParameteri64v(const State &glState,
                                                  bool isCallValid,
                                                  BufferBinding targetPacked,
-                                                 GLenum pname,
+                                                 BufferParam pnamePacked,
                                                  GLint64 *params);
 angle::CallCapture CaptureGetBufferPointerv(const State &glState,
                                             bool isCallValid,
@@ -722,7 +722,7 @@ void CaptureGetActiveUniformsiv_params(const State &glState,
                                        angle::ParamCapture *paramCapture);
 void CaptureGetBufferParameteri64v_params(const State &glState,
                                           BufferBinding targetPacked,
-                                          GLenum pname,
+                                          BufferParam pnamePacked,
                                           GLint64 *params,
                                           angle::ParamCapture *paramCapture);
 void CaptureGetBufferPointerv_params(const State &glState,

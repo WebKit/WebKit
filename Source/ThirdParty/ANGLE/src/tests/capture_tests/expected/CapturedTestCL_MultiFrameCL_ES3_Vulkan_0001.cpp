@@ -9,6 +9,8 @@ const char clCreateKernel_kernel_name_2[] = { "frame4" };
 
 const char clCreateKernel_kernel_name_3[] = { "frame5" };
 
+const char clCreateKernel_kernel_name_4[] = { "frame6" };
+
 // Private Functions
 
 void ReplayFrame2(void)
@@ -53,6 +55,17 @@ void ReplayFrame5(void)
     clKernelsMap[1] = clCreateKernel(clProgramsMap[0], clCreateKernel_kernel_name_3, NULL);
     clSetKernelArg(clKernelsMap[1], 0, 8, (const void *)&clMemMap[0]);
     clEnqueueNDRangeKernel(clCommandQueuesMap[0], clKernelsMap[1], 1, NULL, (const size_t *)GetBinaryData(48), NULL, 0, NULL, NULL);
+}
+
+void ReplayFrame6(void)
+{
+    clEnqueueReadBuffer(clCommandQueuesMap[0], clMemMap[0], 1, 0, 512, (void *)gReadBuffer, 0, NULL, NULL);
+    clReleaseKernel(clKernelsMap[1]);
+    clReleaseMemObject(clMemMap[0]);
+    clMemMap[0] = clCreateBuffer(clContextsMap[0], 1, 512, 0, NULL);
+    clKernelsMap[1] = clCreateKernel(clProgramsMap[0], clCreateKernel_kernel_name_4, NULL);
+    clSetKernelArg(clKernelsMap[1], 0, 8, (const void *)&clMemMap[0]);
+    clEnqueueNDRangeKernel(clCommandQueuesMap[0], clKernelsMap[1], 1, NULL, (const size_t *)GetBinaryData(64), NULL, 0, NULL, NULL);
 }
 
 // Public Functions

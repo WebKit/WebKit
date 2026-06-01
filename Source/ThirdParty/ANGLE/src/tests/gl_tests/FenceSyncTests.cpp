@@ -358,6 +358,68 @@ TEST_P(FenceSyncTest, MultipleFenceDraw)
     }
 }
 
+// Test fence init and followed by outside renderPass only command submission and then followed by
+// fence wait.
+TEST_P(FenceSyncTest, fenceCreateAndSyncWithSubmittingOutsideCommandBufferInBetween)
+{
+    constexpr size_t kMaxBufferToImageCopySize = 64 * 1024 * 1024;
+    constexpr uint64_t kNumSubmits             = 2;
+
+    GLTexture texture;
+    constexpr GLsizei kTexDim         = 256;
+    constexpr uint32_t kPixelSizeRGBA = 4;
+    constexpr uint32_t kTextureSize   = kTexDim * kTexDim * kPixelSizeRGBA;
+    std::vector<GLColor> kInitialData(kTexDim * kTexDim, GLColor::green);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kTexDim, kTexDim, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 kInitialData.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    auto quadVerts = GetQuadVertices();
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, quadVerts.size() * sizeof(quadVerts[0]), quadVerts.data(),
+                 GL_STATIC_DRAW);
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
+    glUseProgram(program);
+
+    GLint posLoc = glGetAttribLocation(program, essl1_shaders::PositionAttrib());
+    ASSERT_NE(-1, posLoc);
+    glVertexAttribPointer(posLoc, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(posLoc);
+    ASSERT_GL_NO_ERROR();
+
+    // 1. Start render pass
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    ASSERT_GL_NO_ERROR();
+
+    // 2. create fence
+    GLsync sync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+    EXPECT_GL_NO_ERROR();
+
+    // 3: Load a new 2D Texture multiple times with the same Program and Framebuffer to trigger
+    // outside render pass only submission.
+    constexpr size_t kMaxLoadCount = kMaxBufferToImageCopySize / kTextureSize * kNumSubmits + 1;
+    for (size_t loadCount = 0; loadCount < kMaxLoadCount; loadCount++)
+    {
+        GLTexture newTexture;
+        glBindTexture(GL_TEXTURE_2D, newTexture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kTexDim, kTexDim, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                     kInitialData.data());
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        ASSERT_GL_NO_ERROR();
+    }
+
+    // 4. wait for fence
+    glClientWaitSync(sync, GL_SYNC_FLUSH_COMMANDS_BIT, GL_TIMEOUT_IGNORED);
+    ASSERT_GL_NO_ERROR();
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(FenceNVTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(FenceSyncTest);

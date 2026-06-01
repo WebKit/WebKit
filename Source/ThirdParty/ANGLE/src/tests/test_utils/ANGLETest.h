@@ -515,6 +515,7 @@ class ANGLETestBase : public ::testing::Test
     void setConfigAlphaBits(int bits);
     void setConfigDepthBits(int bits);
     void setConfigStencilBits(int bits);
+    void setConfigColorSpace(EGLenum colorSpace);
     void setConfigComponentType(EGLenum componentType);
     void setMultisampleEnabled(bool enabled);
     void setSamples(EGLint samples);

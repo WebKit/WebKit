@@ -651,7 +651,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     // Generated from ImageVk if EGLImage target, or from throw-away generator if Surface target.
     UniqueSerial mImageSiblingSerial;
 
-    bool mRequiresMutableStorage;
+    vk::ImageFormatReinterpretability mFormatReinterpretability;
     vk::ImageFormatSupport mRequiredFormatSupport;
     bool mImmutableSamplerDirty;
 

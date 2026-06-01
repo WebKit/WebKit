@@ -77,6 +77,10 @@ fn early_fragment_tests_str(early_fragment_tests: bool) -> String {
     (if early_fragment_tests { "[Early fragment tests]" } else { "" }).to_string()
 }
 
+fn num_views_str(num_views: u32) -> String {
+    (if num_views > 0 { "[Views: {num_views}]" } else { "" }).to_string()
+}
+
 fn blend_equation_advanced_str(equations: &AdvancedBlendEquations) -> String {
     if equations.all() {
         return "[Advanced Blend Equations: All]".to_string();
@@ -347,8 +351,9 @@ fn decoration_str(decoration: Decoration) -> String {
         Decoration::MatrixPacking(packing) => matrix_packing_str(packing),
         Decoration::Depth(depth) => depth_str(depth),
         Decoration::ImageInternalFormat(format) => image_internal_format_str(format),
-        Decoration::NumViews(n) => format!("num_views={n}"),
-        Decoration::RasterOrdered => "raster_ordered(D3D)".to_string(),
+        Decoration::RasterOrdered => "raster_ordered".to_string(),
+        Decoration::EmulatedViewIDOut => "emulated_ViewID(VS)".to_string(),
+        Decoration::EmulatedViewIDIn => "emulated_ViewID(FS)".to_string(),
     }
 }
 
@@ -436,7 +441,7 @@ fn built_in_str(built_in: BuiltIn) -> String {
         BuiltIn::PrimitiveIDIn => "PrimitiveIDIn",
         BuiltIn::InvocationID => "InvocationID",
         BuiltIn::PrimitiveID => "PrimitiveID",
-        BuiltIn::LayerOut => "Layer(GS)",
+        BuiltIn::LayerOut => "Layer(GS/VS)",
         BuiltIn::LayerIn => "Layer(FS)",
         BuiltIn::PatchVerticesIn => "PatchVerticesIn",
         BuiltIn::TessLevelOuter => "TessLevelOuter",
@@ -883,6 +888,9 @@ fn append_on_new_line(result: &mut String, new: String, indent: usize) {
 
 fn dump_shader_properties(ir_meta: &IRMeta, result: &mut String) {
     match ir_meta.get_shader_type() {
+        ShaderType::Vertex => {
+            append_on_new_line(result, num_views_str(ir_meta.get_num_views()), 0);
+        }
         ShaderType::Fragment => {
             append_on_new_line(
                 result,

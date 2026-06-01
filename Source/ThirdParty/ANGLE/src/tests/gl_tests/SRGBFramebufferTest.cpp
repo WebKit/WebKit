@@ -360,9 +360,325 @@ TEST_P(SRGBFramebufferTest, DrawToSmallFBOClearLargeFBO)
     }
 }
 
+class SRGBFramebufferDefaultLinearTest : public ANGLETest<>
+{
+  protected:
+    SRGBFramebufferDefaultLinearTest()
+    {
+        setWindowWidth(128);
+        setWindowHeight(128);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+    }
+
+    void testBasic(bool isSrgb, bool isES3)
+    {
+        // Default framebuffer attachment queries require OpenGL ES 3.0
+        if (isES3)
+        {
+            GLint encoding;
+            glGetFramebufferAttachmentParameteriv(
+                GL_FRAMEBUFFER, GL_BACK, GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING, &encoding);
+            ASSERT_GL_NO_ERROR();
+            EXPECT_GLENUM_EQ(encoding, isSrgb ? GL_SRGB : GL_LINEAR);
+        }
+
+        glClearColor(0.5, 0.5, 0.5, 0.5);
+        glClear(GL_COLOR_BUFFER_BIT);
+        ASSERT_GL_NO_ERROR();
+
+        if (isSrgb)
+        {
+            EXPECT_PIXEL_NEAR(0, 0, 188, 188, 188, 127, 1);
+        }
+        else
+        {
+            EXPECT_PIXEL_NEAR(0, 0, 127, 127, 127, 127, 1);
+        }
+
+        ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+        glUseProgram(program);
+        const GLint colorUniformLocation =
+            glGetUniformLocation(program, angle::essl1_shaders::ColorUniform());
+        ASSERT_NE(colorUniformLocation, -1);
+        glUniform4f(colorUniformLocation, 0.25, 0.25, 0.25, 0.25);
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+        ASSERT_GL_NO_ERROR();
+
+        if (isSrgb)
+        {
+            EXPECT_PIXEL_NEAR(0, 0, 137, 137, 137, 64, 1);
+        }
+        else
+        {
+            EXPECT_PIXEL_NEAR(0, 0, 64, 64, 64, 64, 1);
+        }
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE);
+        glUniform4f(colorUniformLocation, 0.5, 0.5, 0.5, 0.5);
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
+        ASSERT_GL_NO_ERROR();
+
+        if (isSrgb)
+        {
+            EXPECT_PIXEL_NEAR(0, 0, 225, 225, 225, 191, 1);
+        }
+        else
+        {
+            EXPECT_PIXEL_NEAR(0, 0, 191, 191, 191, 191, 1);
+        }
+    }
+
+    void testBlit(bool isFromFboToSurface, bool isFboSrgb, bool isSurfaceSrgb, bool isES3)
+    {
+        PFNGLBLITFRAMEBUFFERPROC blitFramebuffer = isES3 ? glBlitFramebuffer : glBlitFramebufferNV;
+
+        GLRenderbuffer rb;
+        glBindRenderbuffer(GL_RENDERBUFFER, rb);
+        glRenderbufferStorage(GL_RENDERBUFFER, isFboSrgb ? GL_SRGB8_ALPHA8 : GL_RGBA8, 128, 128);
+        ASSERT_GL_NO_ERROR();
+
+        GLFramebuffer fb;
+        glBindFramebuffer(GL_FRAMEBUFFER, fb);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rb);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+        ASSERT_GL_NO_ERROR();
+
+        // Clear source to 0.5
+        glBindFramebuffer(GL_FRAMEBUFFER, isFromFboToSurface ? fb : 0);
+        glClearColor(0.25, 0.5, 0.75, 0.5);
+        glClear(GL_COLOR_BUFFER_BIT);
+        ASSERT_GL_NO_ERROR();
+
+        // Clear destination to 0.0
+        glBindFramebuffer(GL_FRAMEBUFFER, isFromFboToSurface ? 0 : fb);
+        glClearColor(0.0, 0.0, 0.0, 0.0);
+        glClear(GL_COLOR_BUFFER_BIT);
+        ASSERT_GL_NO_ERROR();
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, isFromFboToSurface ? fb : 0);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, isFromFboToSurface ? 0 : fb);
+        blitFramebuffer(0, 0, 128, 128, 0, 0, 128, 128, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        ASSERT_GL_NO_ERROR();
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, isFromFboToSurface ? 0 : fb);
+        if ((isFromFboToSurface && isSurfaceSrgb) || (!isFromFboToSurface && isFboSrgb))
+        {
+            EXPECT_PIXEL_NEAR(0, 0, 137, 188, 225, 127, 1);
+        }
+        else
+        {
+            EXPECT_PIXEL_NEAR(0, 0, 64, 127, 191, 127, 1);
+        }
+
+        // Test linear filtering
+
+        if (!isFromFboToSurface)
+        {
+            // Prepare the default framebuffer content
+            std::vector<uint8_t> data(128 * 128 * 4);
+            for (size_t i = 0; i < data.size(); ++i)
+            {
+                data[i] = i & 4 ? 255 : 0;
+            }
+            GLTexture tempTex;
+            glBindTexture(GL_TEXTURE_2D, tempTex);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 128, 128, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                         data.data());
+            ASSERT_GL_NO_ERROR();
+
+            GLFramebuffer tempFb;
+            glBindFramebuffer(GL_FRAMEBUFFER, tempFb);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tempTex, 0);
+            ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+            ASSERT_GL_NO_ERROR();
+
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, tempFb);
+            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+            blitFramebuffer(0, 0, 128, 128, 0, 0, 128, 128, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+            ASSERT_GL_NO_ERROR();
+        }
+
+        const int fboDim = isFromFboToSurface ? 256 : 64;
+        std::vector<uint8_t> data(fboDim * fboDim * 4);
+        if (isFromFboToSurface)
+        {
+            // Prepare texture content
+            for (size_t i = 0; i < data.size(); ++i)
+            {
+                data[i] = i & 4 ? 255 : 0;
+            }
+        }
+
+        GLTexture tex;
+        glBindTexture(GL_TEXTURE_2D, tex);
+        if (isES3)
+        {
+            glTexImage2D(GL_TEXTURE_2D, 0, isFboSrgb ? GL_SRGB8_ALPHA8 : GL_RGBA8, fboDim, fboDim,
+                         0, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
+        }
+        else
+        {
+            glTexImage2D(GL_TEXTURE_2D, 0, isFboSrgb ? GL_SRGB_ALPHA_EXT : GL_RGBA, fboDim, fboDim,
+                         0, isFboSrgb ? GL_SRGB_ALPHA_EXT : GL_RGBA, GL_UNSIGNED_BYTE, data.data());
+        }
+        ASSERT_GL_NO_ERROR();
+
+        glBindFramebuffer(GL_FRAMEBUFFER, fb);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
+        ASSERT_GL_NO_ERROR();
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        // Clear destination to 0.0
+        glBindFramebuffer(GL_FRAMEBUFFER, isFromFboToSurface ? 0 : fb);
+        glClearColor(0.0, 0.0, 0.0, 0.0);
+        glClear(GL_COLOR_BUFFER_BIT);
+        ASSERT_GL_NO_ERROR();
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, isFromFboToSurface ? fb : 0);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, isFromFboToSurface ? 0 : fb);
+        if (isFromFboToSurface)
+        {
+            blitFramebuffer(0, 0, 256, 256, 0, 0, 128, 128, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+        }
+        else
+        {
+            blitFramebuffer(0, 0, 128, 128, 0, 0, 64, 64, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+        }
+        ASSERT_GL_NO_ERROR();
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, isFromFboToSurface ? 0 : fb);
+        if ((isFromFboToSurface && isSurfaceSrgb) || (!isFromFboToSurface && isFboSrgb))
+        {
+            EXPECT_PIXEL_NEAR(0, 0, 188, 188, 188, 127, 1);
+        }
+        else
+        {
+            EXPECT_PIXEL_NEAR(0, 0, 127, 127, 127, 127, 1);
+        }
+    }
+
+    void testBlitFromLinearSurfaceToLinearFbo(bool isES3) { testBlit(false, false, false, isES3); }
+    void testBlitFromLinearFboToLinearSurface(bool isES3) { testBlit(true, false, false, isES3); }
+    void testBlitFromLinearSurfaceToSrgbFbo(bool isES3) { testBlit(false, true, false, isES3); }
+    void testBlitFromSrgbFboToLinearSurface(bool isES3) { testBlit(true, true, false, isES3); }
+
+    void testBlitFromSrgbSurfaceToLinearFbo(bool isES3) { testBlit(false, false, true, isES3); }
+    void testBlitFromLinearFboToSrgbSurface(bool isES3) { testBlit(true, false, true, isES3); }
+    void testBlitFromSrgbSurfaceToSrgbFbo(bool isES3) { testBlit(false, true, true, isES3); }
+    void testBlitFromSrgbFboToSrgbSurface(bool isES3) { testBlit(true, true, true, isES3); }
+};
+
+// Test that basic operations are performed with linear encoding.
+TEST_P(SRGBFramebufferDefaultLinearTest, ClearAndDrawAndBlend)
+{
+    testBasic(false, getClientMajorVersion() >= 3);
+}
+
+// Test blits from the linearly-encoded default framebuffer to a linearly-encoded FBO.
+TEST_P(SRGBFramebufferDefaultLinearTest, BlitToLinearFbo)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
+                       (!IsGLExtensionEnabled("GL_OES_rgb8_rgba8") ||
+                        !IsGLExtensionEnabled("GL_NV_framebuffer_blit")));
+
+    testBlitFromLinearSurfaceToLinearFbo(getClientMajorVersion() >= 3);
+}
+
+// Test blits from a linearly-encoded FBO to the linearly-encoded default framebuffer.
+TEST_P(SRGBFramebufferDefaultLinearTest, BlitFromLinearFbo)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
+                       (!IsGLExtensionEnabled("GL_OES_rgb8_rgba8") ||
+                        !IsGLExtensionEnabled("GL_NV_framebuffer_blit")));
+
+    testBlitFromLinearFboToLinearSurface(getClientMajorVersion() >= 3);
+}
+
+// Test blits from the linearly-encoded default framebuffer to an sRGB-encoded FBO.
+TEST_P(SRGBFramebufferDefaultLinearTest, BlitToSrgbFbo)
+{
+    ANGLE_SKIP_TEST_IF(
+        getClientMajorVersion() < 3 &&
+        (!IsGLExtensionEnabled("GL_EXT_sRGB") || !IsGLExtensionEnabled("GL_NV_framebuffer_blit")));
+
+    testBlitFromLinearSurfaceToSrgbFbo(getClientMajorVersion() >= 3);
+}
+
+// Test blits from an sRGB-encoded FBO to the linearly-encoded default framebuffer.
+TEST_P(SRGBFramebufferDefaultLinearTest, BlitFromSrgbFbo)
+{
+    ANGLE_SKIP_TEST_IF(
+        getClientMajorVersion() < 3 &&
+        (!IsGLExtensionEnabled("GL_EXT_sRGB") || !IsGLExtensionEnabled("GL_NV_framebuffer_blit")));
+
+    testBlitFromSrgbFboToLinearSurface(getClientMajorVersion() >= 3);
+}
+
+class SRGBFramebufferDefaultSrgbTest : public SRGBFramebufferDefaultLinearTest
+{
+  protected:
+    SRGBFramebufferDefaultSrgbTest() : SRGBFramebufferDefaultLinearTest()
+    {
+        setConfigColorSpace(EGL_GL_COLORSPACE_SRGB);
+    }
+};
+
+// Test that basic operations are performed with sRGB encoding.
+TEST_P(SRGBFramebufferDefaultSrgbTest, ClearAndDrawAndBlend)
+{
+    testBasic(true, getClientMajorVersion() >= 3);
+}
+
+// Test blits from the sRGB-encoded default framebuffer to a linearly-encoded FBO.
+TEST_P(SRGBFramebufferDefaultSrgbTest, BlitToLinearFbo)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
+                       (!IsGLExtensionEnabled("GL_OES_rgb8_rgba8") ||
+                        !IsGLExtensionEnabled("GL_NV_framebuffer_blit")));
+
+    testBlitFromSrgbSurfaceToLinearFbo(getClientMajorVersion() >= 3);
+}
+
+// Test blits from a linearly-encoded FBO to the sRGB-encoded default framebuffer.
+TEST_P(SRGBFramebufferDefaultSrgbTest, BlitFromLinearFbo)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
+                       (!IsGLExtensionEnabled("GL_OES_rgb8_rgba8") ||
+                        !IsGLExtensionEnabled("GL_NV_framebuffer_blit")));
+
+    testBlitFromLinearFboToSrgbSurface(getClientMajorVersion() >= 3);
+}
+
+// Test blits from the sRGB-encoded default framebuffer to an sRGB-encoded FBO.
+TEST_P(SRGBFramebufferDefaultSrgbTest, BlitToSrgbFbo)
+{
+    ANGLE_SKIP_TEST_IF(
+        getClientMajorVersion() < 3 &&
+        (!IsGLExtensionEnabled("GL_EXT_sRGB") || !IsGLExtensionEnabled("GL_NV_framebuffer_blit")));
+
+    testBlitFromSrgbSurfaceToSrgbFbo(getClientMajorVersion() >= 3);
+}
+
+// Test blits from an sRGB-encoded FBO to the sRGB-encoded default framebuffer.
+TEST_P(SRGBFramebufferDefaultSrgbTest, BlitFromSrgbFbo)
+{
+    ANGLE_SKIP_TEST_IF(
+        getClientMajorVersion() < 3 &&
+        (!IsGLExtensionEnabled("GL_EXT_sRGB") || !IsGLExtensionEnabled("GL_NV_framebuffer_blit")));
+
+    testBlitFromSrgbFboToSrgbSurface(getClientMajorVersion() >= 3);
+}
+
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(SRGBFramebufferTest);
 ANGLE_INSTANTIATE_TEST_ES3(SRGBFramebufferTestES3);
+
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(SRGBFramebufferDefaultLinearTest);
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(SRGBFramebufferDefaultSrgbTest);
 
 }  // namespace angle

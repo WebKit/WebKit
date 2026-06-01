@@ -1887,6 +1887,7 @@ void GL_APIENTRY GL_GetBufferParameteri64v(GLenum target, GLenum pname, GLint64 
     if (ANGLE_LIKELY(context != nullptr))
     {
         BufferBinding targetPacked = PackParam<BufferBinding>(target);
+        BufferParam pnamePacked    = PackParam<BufferParam>(pname);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid = context->skipValidation();
         if (!isCallValid)
@@ -1897,7 +1898,7 @@ void GL_APIENTRY GL_GetBufferParameteri64v(GLenum target, GLenum pname, GLint64 
                 const uint32_t errorCount = context->getPushedErrorCount();
 #endif
                 isCallValid = ValidateGetBufferParameteri64v(
-                    context, angle::EntryPoint::GLGetBufferParameteri64v, targetPacked, pname,
+                    context, angle::EntryPoint::GLGetBufferParameteri64v, targetPacked, pnamePacked,
                     params);
 #if defined(ANGLE_ENABLE_ASSERTS)
                 ASSERT(context->getPushedErrorCount() - errorCount == (isCallValid ? 0 : 1));
@@ -1910,9 +1911,10 @@ void GL_APIENTRY GL_GetBufferParameteri64v(GLenum target, GLenum pname, GLint64 
         }
         if (ANGLE_LIKELY(isCallValid))
         {
-            context->getBufferParameteri64v(targetPacked, pname, params);
+            context->getBufferParameteri64v(targetPacked, pnamePacked, params);
         }
-        ANGLE_CAPTURE_GL(GetBufferParameteri64v, isCallValid, context, targetPacked, pname, params);
+        ANGLE_CAPTURE_GL(GetBufferParameteri64v, isCallValid, context, targetPacked, pnamePacked,
+                         params);
     }
     else
     {

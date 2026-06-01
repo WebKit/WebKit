@@ -113,20 +113,6 @@
           'isolated_scripts': 'isolated_scripts_group_perf',
         },
       },
-      'angle-linux-x64-sws-rel': {
-        'os_type': 'linux',
-        'mixins': [
-          'gpu-swarming-pool',
-          'no_gpu',
-          'linux-jammy',
-          'timeout_15m',
-          'x86-64',
-        ],
-        'test_suites': {
-          'gtest_tests': 'swangle_gtests',
-          'isolated_scripts': 'swangle_restricted_trace_gold_isolated_scripts',
-        },
-      },
       'linux-amd': {
         'os_type': 'linux',
         'mixins': [
@@ -187,16 +173,6 @@
         'test_suites': {
         },
       },
-      'linux-intel': {
-        'os_type': 'linux',
-        'mixins': [
-          'linux_intel_uhd_630_stable',
-        ],
-        'test_suites': {
-          'gtest_tests': 'linux_intel_gtests',
-          'isolated_scripts': 'isolated_scripts_group_common',
-        },
-      },
       'linux-intel-perf': {
         'os_type': 'linux',
         'mixins': [
@@ -249,16 +225,6 @@
           'isolated_scripts': 'swangle_restricted_trace_gold_isolated_scripts',
         },
       },
-      'linux-nvidia': {
-        'os_type': 'linux',
-        'mixins': [
-          'linux_nvidia_gtx_1660_stable',
-        ],
-        'test_suites': {
-          'gtest_tests': 'linux_nvidia_gtests',
-          'isolated_scripts': 'isolated_scripts_group_common',
-        },
-      },
       'linux-nvidia-perf': {
         'os_type': 'linux',
         'mixins': [
@@ -267,20 +233,6 @@
         ],
         'test_suites': {
           'isolated_scripts': 'isolated_scripts_group_perf',
-        },
-      },
-      'linux-swiftshader': {
-        'os_type': 'linux',
-        'mixins': [
-          'gpu-swarming-pool',
-          'no_gpu',
-          'linux-jammy',
-          'timeout_15m',
-          'x86-64',
-        ],
-        'test_suites': {
-          'gtest_tests': 'swangle_gtests',
-          'isolated_scripts': 'swangle_restricted_trace_gold_isolated_scripts',
         },
       },
       'linux-swiftshader-asan': {
@@ -489,6 +441,61 @@
         'test_suites': {
           'gtest_tests': 'swangle_gtests',
         },
+      },
+    },
+  },
+  {
+    'name': 'ci',
+    'forbid_script_tests': True,
+    'mixins': [
+      'chromium-tester-service-account',
+      'swarming_containment_auto',
+    ],
+    'machines': {
+      'angle-linux-x64-amd-rx5500xt-rel': {
+        'os_type': 'linux',
+        'mixins': [
+          'linux_amd_rx_5500_xt',
+        ],
+        'test_suites': {
+        },
+      },
+      'angle-linux-x64-intel-uhd630-rel': {
+        'os_type': 'linux',
+        'mixins': [
+          'linux_intel_uhd_630_stable',
+        ],
+        'test_suites': {
+          'gtest_tests': 'linux_intel_gtests',
+          'isolated_scripts': 'isolated_scripts_group_common',
+        },
+      },
+      'angle-linux-x64-nvidia-gtx1660-rel': {
+        'os_type': 'linux',
+        'mixins': [
+          'linux_nvidia_gtx_1660_stable',
+        ],
+        'test_suites': {
+          'gtest_tests': 'linux_nvidia_gtests',
+          'isolated_scripts': 'isolated_scripts_group_common',
+        },
+      },
+      'angle-linux-x64-sws-rel': {
+        'os_type': 'linux',
+        'mixins': [
+          'gpu_linux_gce_stable',
+          'timeout_15m',
+        ],
+        'test_suites': {
+          'gtest_tests': 'swangle_gtests',
+          'isolated_scripts': 'swangle_restricted_trace_gold_isolated_scripts',
+        },
+      },
+      'angle-linux-x64-trace': {
+        'os_type': 'linux',
+        'additional_compile_targets': [
+          'noop_target',
+        ],
       },
     },
   },

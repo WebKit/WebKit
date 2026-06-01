@@ -12,6 +12,7 @@ newline_style = "Unix"
 wrap_comments = true
 comment_width = 100
 max_width = 100
+format_strings = true
 # The "Default" setting has a heuristic which splits lines too aggresively.
 # We are willing to revisit this setting in future versions of rustfmt.
 # Bugs:

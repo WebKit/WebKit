@@ -5994,6 +5994,10 @@ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VertexAttributeTestES3);
 ANGLE_INSTANTIATE_TEST_ES3_AND(
     VertexAttributeTestES3,
     ES3_VULKAN().enable(Feature::ForceFallbackFormat),
+    ES3_VULKAN().disable(Feature::SupportsVertexInputDynamicState),
+    ES3_VULKAN()
+        .disable(Feature::SupportsVertexInputDynamicState)
+        .disable(Feature::UseVertexInputBindingStrideDynamicState),
     ES3_VULKAN_SWIFTSHADER().enable(Feature::ForceFallbackFormat),
     ES3_METAL().disable(Feature::HasExplicitMemBarrier).disable(Feature::HasCheapRenderPass),
     ES3_METAL().disable(Feature::HasExplicitMemBarrier).enable(Feature::HasCheapRenderPass),

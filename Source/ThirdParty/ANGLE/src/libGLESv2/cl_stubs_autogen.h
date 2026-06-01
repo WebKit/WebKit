@@ -17,6 +17,14 @@ namespace cl
 cl_int IcdGetPlatformIDsKHR(cl_uint num_entries, cl_platform_id *platforms, cl_uint *num_platforms);
 void *IcdGetFunctionAddressForPlatformKHR(cl_platform_id platform, const char *func_name);
 cl_int IcdSetPlatformDispatchDataKHR(cl_platform_id platform, void *dispatch_data);
+cl_int GetKernelSubGroupInfoKHR(cl_kernel in_kernel,
+                                cl_device_id in_device,
+                                KernelSubGroupInfo param_namePacked,
+                                size_t input_value_size,
+                                const void *input_value,
+                                size_t param_value_size,
+                                void *param_value,
+                                size_t *param_value_size_ret);
 cl_int EnqueueAcquireExternalMemObjectsKHR(cl_command_queue command_queue,
                                            cl_uint num_mem_objects,
                                            const cl_mem *mem_objects,

@@ -45,6 +45,7 @@ class MemoryObjectVk : public MemoryObjectImpl
                               vk::ImageHelper *image,
                               GLbitfield createFlags,
                               GLbitfield usageFlags,
+                              vk::ImageFormatReinterpretability formatReinterpretability,
                               const void *imageCreateInfoPNext);
 
   private:

@@ -65,8 +65,7 @@ void GetRenderTargetLayerCountAndIndex(webgpu::ImageHelper *image,
         case gl::TextureType::_2DArray:
         case gl::TextureType::_2DMultisampleArray:
         case gl::TextureType::CubeMapArray:
-            // NOTE: Not yet supported, should set *imageLayerCount.
-            UNIMPLEMENTED();
+            *imageLayerCount = image->getTextureDescriptor().size.depthOrArrayLayers;
             break;
 
         default:
@@ -326,7 +325,7 @@ angle::Result TextureWgpu::copySubImageImpl(const gl::Context *context,
     {
         return mImage->CopyImage(contextWgpu, colorReadRT->getImage(), index, modifiedDestOffset,
                                  colorReadRT->getGlLevel(), colorReadRT->getLayer(),
-                                 clippedSourceBox);
+                                 clippedSourceBox, WGPUTextureAspect_All);
     }
 
     // If it's possible to perform the copy with a draw call, do that.
@@ -449,7 +448,7 @@ angle::Result TextureWgpu::copySubTextureImpl(const gl::Context *context,
     {
         return mImage->CopyImage(contextWgpu, sourceTextureWgpu->getImage(), index, destOffset,
                                  gl::LevelIndex(sourceLevel), static_cast<uint32_t>(sourceBox.z),
-                                 sourceBox);
+                                 sourceBox, WGPUTextureAspect_All);
     }
 
     if (CanCopyWithDraw(*sourceTextureWgpu->getImage(), mImage->getUsage()))
@@ -596,6 +595,7 @@ angle::Result TextureWgpu::syncState(const gl::Context *context,
                                                ? ImageMipLevels::FullMipChainForGenerateMipmap
                                                : ImageMipLevels::EnabledLevels));
     ANGLE_TRY(mImage->flushStagedUpdates(contextWgpu));
+
     return angle::Result::Continue;
 }
 
@@ -965,11 +965,11 @@ angle::Result TextureWgpu::maybeUpdateBaseMaxLevels(ContextWgpu *contextWgpu)
         ASSERT(!baseLevelChanged || newBaseLevel >= mImage->getFirstAllocatedLevel());
         ASSERT(!maxLevelChanged || newMaxLevel < gl::LevelIndex(mImage->getLevelCount()));
     }
-    else if (!baseLevelChanged && (newMaxLevel <= mImage->getLastAllocatedLevel()))
+    else if ((newBaseLevel >= mImage->getFirstAllocatedLevel()) &&
+             (newMaxLevel <= mImage->getLastAllocatedLevel()))
     {
         // With a valid image, check if only changing the maxLevel to a subset of the texture's
         // actual number of mip levels
-        ASSERT(maxLevelChanged);
     }
     else
     {

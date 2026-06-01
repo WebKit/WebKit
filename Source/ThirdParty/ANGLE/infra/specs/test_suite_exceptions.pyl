@@ -59,6 +59,12 @@
     },
     'replacements': {
       # anglebug.com/408276172 suspecting WebGPU backend flakiness caused by multiprocess
+      'angle-linux-x64-intel-uhd630-rel': {
+        'args': {
+          '--max-processes': '1',
+        },
+      },
+      # anglebug.com/408276172 suspecting WebGPU backend flakiness caused by multiprocess
       'linux-intel': {
         'args': {
           '--max-processes': '1',

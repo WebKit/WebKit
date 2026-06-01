@@ -23,26 +23,6 @@ enum class BufferBindingDirty
     Yes,
 };
 
-struct AttributeRange
-{
-    // Stream vertex attribute start pointer address.
-    uintptr_t startAddr;
-    // Stream vertex attribute end pointer address.
-    uintptr_t endAddr;
-    // Stream vertex attribute first used pointer address.
-    // ie. startAddr + startVertex * stride.
-    uintptr_t copyStartAddr;
-    AttributeRange() : startAddr(0), endAddr(0), copyStartAddr(0) {}
-    AttributeRange(uintptr_t start, uintptr_t end, uintptr_t copyStart)
-        : startAddr(start), endAddr(end), copyStartAddr(copyStart)
-    {}
-};
-
-ANGLE_INLINE bool operator<(const AttributeRange &a, const AttributeRange &b)
-{
-    return a.startAddr == b.startAddr ? a.endAddr < b.endAddr : a.startAddr < b.startAddr;
-}
-
 class VertexArrayVk : public VertexArrayImpl
 {
   public:
@@ -69,7 +49,8 @@ class VertexArrayVk : public VertexArrayImpl
                                         GLsizei vertexOrIndexCount,
                                         GLsizei instanceCount,
                                         gl::DrawElementsType indexTypeOrInvalid,
-                                        const void *indices);
+                                        const void *indices,
+                                        gl::AttributesMask *strideDirtyAttribMaskOut);
 
     angle::Result handleLineLoop(ContextVk *contextVk,
                                  GLint firstVertex,
@@ -180,13 +161,6 @@ class VertexArrayVk : public VertexArrayImpl
     gl::AttributesMask getCurrentEnabledAttribsMask() const { return mCurrentEnabledAttribsMask; }
 
   private:
-    gl::AttributesMask mergeClientAttribsRange(
-        vk::Renderer *renderer,
-        const gl::AttributesMask activeStreamedAttribs,
-        size_t startVertex,
-        size_t endVertex,
-        std::array<AttributeRange, gl::MAX_VERTEX_ATTRIBS> &mergeRangesOut,
-        std::array<size_t, gl::MAX_VERTEX_ATTRIBS> &mergedIndexesOut) const;
 
     void setDefaultPackedInput(ContextVk *contextVk,
                                size_t attribIndex,
@@ -272,8 +246,9 @@ class VertexArrayVk : public VertexArrayImpl
 
     gl::ComponentTypeMask mCurrentVertexAttributesTypeMask;
 
-    // This maybe 0 or 1 depends on feature bit
-    uint32_t mZeroDivisor;
+    // Divisor value if vertex inputRate is VK_VERTEX_INPUT_RATE_VERTEX. This maybe 0 or 1 depends
+    // on feature bit.
+    uint32_t mDivisorForVertexInputRateVertex;
 };
 }  // namespace rx
 

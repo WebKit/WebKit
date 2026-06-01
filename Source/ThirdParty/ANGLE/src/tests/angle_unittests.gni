@@ -100,8 +100,6 @@ angle_unittests_compiler_tests_sources = [
   "compiler_tests/ImmutableString_test.cpp",
   "compiler_tests/IntermNode_test.cpp",
   "compiler_tests/NV_draw_buffers_test.cpp",
-  "compiler_tests/OVR_multiview2_test.cpp",
-  "compiler_tests/OVR_multiview_test.cpp",
   "compiler_tests/Parse_test.cpp",
   "compiler_tests/PruneEmptyCases_test.cpp",
   "compiler_tests/PruneEmptyDeclarations_test.cpp",

@@ -477,19 +477,21 @@ angle::Result DmaBufImageSiblingVkLinux::initWithFormat(DisplayVk *displayVk,
     externalMemoryImageCreateInfo.pNext       = &imageDrmModifierCreateInfo;
     externalMemoryImageCreateInfo.handleTypes = VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT;
 
-    VkImageFormatListCreateInfoKHR imageFormatListCreateInfo;
-    vk::ImageHelper::ImageListFormats imageListFormatsStorage;
-    const void *imageCreateInfoPNext = vk::ImageHelper::DeriveCreateInfoPNext(
-        displayVk, usageFlags, actualImageFormatID, &externalMemoryImageCreateInfo,
-        &imageFormatListCreateInfo, &imageListFormatsStorage, &createFlags);
-
+    vk::ImageFormatReinterpretability formatReinterpretability =
+        ((usageFlags & VK_IMAGE_USAGE_STORAGE_BIT) == 0)
+            ? vk::ImageFormatReinterpretability::ColorspaceOverrides
+            : vk::ImageFormatReinterpretability::Full;
     if (mutableFormat == MutableFormat::NotAllowed)
     {
         createFlags &= ~VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT;
-        // When mutable format bit is not set, viewFormatCount must be 0 or 1.
-        imageFormatListCreateInfo.viewFormatCount =
-            std::min(imageFormatListCreateInfo.viewFormatCount, 1u);
+        formatReinterpretability = vk::ImageFormatReinterpretability::None;
     }
+
+    VkImageFormatListCreateInfoKHR imageFormatListCreateInfo;
+    vk::ImageHelper::ImageFormats imageFormats;
+    const void *imageCreateInfoPNext = vk::ImageHelper::DeriveCreateInfoPNext(
+        displayVk, actualImageFormatID, &externalMemoryImageCreateInfo, &imageFormatListCreateInfo,
+        &imageFormats, formatReinterpretability, &createFlags);
 
     if (!FindSupportedFlagsForFormat(renderer, vulkanFormat, plane0Modifier,
                                      imageFormatListCreateInfo, &usageFlags, createFlags,
@@ -561,7 +563,7 @@ angle::Result DmaBufImageSiblingVkLinux::initWithFormat(DisplayVk *displayVk,
         displayVk, gl::TextureType::_2D, vkExtents, intendedFormatID, actualImageFormatID, 1,
         usageFlags, createFlags, vk::ImageAccess::ExternalPreInitialized, imageCreateInfoPNext,
         gl::LevelIndex(0), 1, 1, kIsRobustInitEnabled, hasProtectedContent(),
-        vk::TileMemory::Prohibited, conversionDesc, nullptr));
+        vk::TileMemory::Prohibited, conversionDesc, nullptr, formatReinterpretability));
 
     VkMemoryRequirements externalMemoryRequirements;
     mImage->getImage().getMemoryRequirements(renderer->getDevice(), &externalMemoryRequirements);

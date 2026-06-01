@@ -105,6 +105,7 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
 
     void setMipmapLevel(EGLint level);
     void setMultisampleResolve(EGLenum resolve);
+    void setRequestedSwapBehavior(EGLenum behavior);
     void setSwapBehavior(EGLenum behavior);
 
     void setFixedWidth(EGLint width);
@@ -121,6 +122,7 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
     EGLenum getRenderBuffer() const;
     EGLenum getRequestedRenderBuffer() const;
     EGLenum getSwapBehavior() const;
+    EGLenum getRequestedSwapBehavior() const;
     TextureFormat getTextureFormat() const;
     EGLenum getTextureTarget() const;
     bool getLargestPbuffer() const;
@@ -278,7 +280,7 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
     EGLint mPixelAspectRatio;        // Display aspect ratio
     EGLenum mRenderBuffer;           // Render buffer
     EGLenum mRequestedRenderBuffer;  // Requested render buffer
-
+    EGLenum mRequestedSwapBehavior;
     EGLint mRequestedSwapInterval;
 
     EGLint mOrientation;

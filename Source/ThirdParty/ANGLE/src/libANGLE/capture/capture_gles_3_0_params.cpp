@@ -257,7 +257,7 @@ void CaptureGetActiveUniformsiv_params(const State &glState,
 
 void CaptureGetBufferParameteri64v_params(const State &glState,
                                           BufferBinding targetPacked,
-                                          GLenum pname,
+                                          BufferParam pnamePacked,
                                           GLint64 *params,
                                           ParamCapture *paramCapture)
 {
