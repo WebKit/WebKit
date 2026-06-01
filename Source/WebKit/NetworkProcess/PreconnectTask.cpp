@@ -41,6 +41,10 @@ using namespace WebCore;
 
 Ref<PreconnectTask> PreconnectTask::create(NetworkSession& networkSession, NetworkLoadParameters&& parameters)
 {
+    ASSERT(parameters.shouldPreconnectOnly == PreconnectOnly::Yes);
+    ASSERT(!parameters.request.httpBody());
+    parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
+    parameters.request.setHTTPBody(nullptr);
     return adoptRef(*new PreconnectTask(networkSession, WTF::move(parameters)));
 }
 
@@ -49,7 +53,7 @@ PreconnectTask::PreconnectTask(NetworkSession& networkSession, NetworkLoadParame
 {
     RELEASE_LOG(Network, "%p - PreconnectTask::PreconnectTask()", this);
 
-    ASSERT(m_networkLoad->parameters().shouldPreconnectOnly == PreconnectOnly::Yes);
+    RELEASE_ASSERT(m_networkLoad->parameters().shouldPreconnectOnly == PreconnectOnly::Yes);
 }
 
 void PreconnectTask::setH2PingCallback(const URL& url, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&& completionHandler)
