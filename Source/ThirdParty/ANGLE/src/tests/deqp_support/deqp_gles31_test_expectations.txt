@@ -34,10 +34,10 @@
 42260436 OPENGL : dEQP-GLES31.functional.program_interface_query.uniform_block.referenced_by.* = FAIL
 42263507 OPENGL : dEQP-GLES31.functional.texture.texture_buffer.render_modify.as_fragment_texture.mapbuffer_* = FAIL
 42263895 NVIDIA OPENGL : dEQP-GLES31.functional.image_load_store.*.atomic.exchange_r32f* = FAIL
-b/266710445 LINUX OPENGL NVIDIA : dEQP-GLES31.functional.image_load_store.buffer.atomic.comp_swap_r32i_return_value = SKIP
-b/266710445 LINUX OPENGL NVIDIA : dEQP-GLES31.functional.image_load_store.buffer.atomic.comp_swap_r32ui_return_value = SKIP
-b/266710445 WIN OPENGL NVIDIA : dEQP-GLES31.functional.image_load_store.buffer.atomic.comp_swap_r32i_return_value = SKIP
-b/266710445 WIN OPENGL NVIDIA : dEQP-GLES31.functional.image_load_store.buffer.atomic.comp_swap_r32ui_return_value = SKIP
+266710445 LINUX OPENGL NVIDIA : dEQP-GLES31.functional.image_load_store.buffer.atomic.comp_swap_r32i_return_value = SKIP
+266710445 LINUX OPENGL NVIDIA : dEQP-GLES31.functional.image_load_store.buffer.atomic.comp_swap_r32ui_return_value = SKIP
+266710445 WIN OPENGL NVIDIA : dEQP-GLES31.functional.image_load_store.buffer.atomic.comp_swap_r32i_return_value = SKIP
+266710445 WIN OPENGL NVIDIA : dEQP-GLES31.functional.image_load_store.buffer.atomic.comp_swap_r32ui_return_value = SKIP
 
 // Slow / timeout on Linux GL
 42263757 LINUX OPENGL : dEQP-GLES31.functional.compute.indirect_dispatch.gen_in_compute.large_offset = TIMEOUT
@@ -77,17 +77,10 @@ b/266710445 WIN OPENGL NVIDIA : dEQP-GLES31.functional.image_load_store.buffer.a
 
 // Emulated advanced blend equations (only Nvidia and SwiftShader support the Vulkan extension):
 42262249 INTEL VULKAN : dEQP-GLES31.functional.blend_equation_advanced.msaa.* = FAIL
-42262249 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.blend_equation_advanced.msaa.* = FAIL
 
 ////
 //// Android (i.e. Pixel*) Vulkan expectations
 ////
-
-// Seem to trigger LowMemoryKiller when run in a certain sequence
-42263745 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.atomic_counter.* = SKIP
-
-// Frambuffer without attachments still fail on Pixel 4. Rendering is crossing over the default framebuffer size
-42262241 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.fbo.no_attachments.* = SKIP
 
 // Fail on tests that use an unsupported extension!
 42262997 SWIFTSHADER : dEQP-GLES31.functional.shaders.implicit_conversions.* = FAIL
@@ -101,10 +94,6 @@ b/266710445 WIN OPENGL NVIDIA : dEQP-GLES31.functional.image_load_store.buffer.a
 42265887 NVIDIA VULKAN : dEQP-GLES31.functional.copy_image.mixed.*astc* = FAIL
 42265887 NVIDIA VULKAN : dEQP-GLES31.functional.copy_image.compressed.viewclass_astc* = FAIL
 
-// Vulkan Pixel4 failures with these formats
-42263825 VULKAN PIXEL4ORXL : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_32_bits.rgba8_snorm_rgb10_a2* = FAIL
-42263825 VULKAN PIXEL4ORXL : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_32_bits.rgba8_snorm_rgb9_e5* = FAIL
-
 // When ANGLE allows non-conformant features, imageAtomicExchange with r32f fails
 42264042 SWIFTSHADER : dEQP-GLES31.functional.image_load_store.*.atomic.exchange_r32f* = SKIP
 
@@ -114,125 +103,67 @@ b/266710445 WIN OPENGL NVIDIA : dEQP-GLES31.functional.image_load_store.buffer.a
 42264177 NVIDIA VULKAN : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_24_bits.rgb8ui_rgb8i.cubemap_to_texture2d = SKIP
 42264177 NVIDIA VULKAN : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_32_bits.rgb10_a2ui_rgba8.cubemap_to_texture3d = SKIP
 
-// Pixel 4 expectations.
-42264522 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_16_bits.rg8_snorm_r16i.cubemap_to_renderbuffer = SKIP
-42264522 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_16_bits.rg8_snorm_r16i.texture2d_array_to_renderbuffer = SKIP
-42264522 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_16_bits.rg8_snorm_r16i.texture2d_to_renderbuffer = SKIP
-42264522 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_16_bits.rg8_snorm_r16i.texture3d_to_renderbuffer = SKIP
-42264522 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_16_bits.rg8_snorm_r16ui.cubemap_to_renderbuffer = SKIP
-42264522 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_16_bits.rg8_snorm_r16ui.texture2d_array_to_renderbuffer = SKIP
-42264522 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_16_bits.rg8_snorm_r16ui.texture2d_to_renderbuffer = SKIP
-42264522 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_16_bits.rg8_snorm_r16ui.texture3d_to_renderbuffer = SKIP
-440743718 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_16_bits.*.texture2d_array_to_texture3d = SKIP
-440743718 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_32_bits.* = SKIP
-440743718 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_64_bits.*.texture2d_array_to_texture3d = SKIP
-42264522 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.interpolate_at_offset.negative.interpolate_global = SKIP
-42264522 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.interpolate_at_offset.no_qualifiers.multisample_texture_2 = SKIP
-42264522 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.interpolate_at_sample.centroid_qualified.multisample_texture_1 = SKIP
-42264522 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.interpolate_at_sample.centroid_qualified.multisample_texture_16 = SKIP
-42264522 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.sample_qualifier.singlesample_rbo = SKIP
-42264522 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.synchronization.in_invocation.image_atomic_overwrite = SKIP
-42264522 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.synchronization.in_invocation.ssbo_alias_overwrite = SKIP
-42264522 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.synchronization.in_invocation.ssbo_alias_write = SKIP
-42264522 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.synchronization.in_invocation.ssbo_atomic_read_write = SKIP
-42264522 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.synchronization.inter_call.with_memory_barrier.image_atomic_write_read = SKIP
-
 
 // b/224537784 Test failures after enabling GLES3.2 context creation on all devices
 // Swift shader does not fully support tessellation and geometry shaders
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.*geometry* = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.*tess* = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.depth.builtin_depth.per_primitive_bbox_equal = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.depth.builtin_depth.per_primitive_bbox_larger = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.depth.user_defined_depth.per_primitive_bbox_equal = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.depth.user_defined_depth.per_primitive_bbox_larger = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.clear.full_clear_with_triangles = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.clear.full_clear_with_triangles_per_primitive_bbox = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.clear.scissored_clear_with_triangles = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.clear.scissored_clear_with_triangles_per_primitive_bbox = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.clear.scissored_full_clear_with_triangles = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.clear.scissored_full_clear_with_triangles_per_primitive_bbox = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.call_order.viewport_first_bbox_second = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.call_order.bbox_first_viewport_second = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.opaque_type_indexing.atomic_counter.const_expression_vertex = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.opaque_type_indexing.atomic_counter.uniform_vertex = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.opaque_type_indexing.atomic_counter.dynamically_uniform_vertex = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.functions.es31.overloading.arrays_of_arrays_size_vertex = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.builtin_constants.core.* = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.builtin_constants.sample_variables.* = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.value.lines_8_samples = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.value.points_8_samples = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.value.triangles_max_samples = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.triangles_8_samples_dfdy = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.lines_8_samples_dfdx = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.lines_8_samples_fwidth = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.wide_lines_8_samples_dfdy = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.points_8_samples_dfdx = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.points_8_samples_fwidth = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.wide_points_8_samples_dfdy = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.triangles_max_samples_dfdx = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.state_query.integer.* = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.program_interface_query.* = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.layout_binding.negative.image.* = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.layout_binding.negative.ssbo.* = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.layout_binding.negative.ubo.* = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.layout_binding.negative.sampler.* = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.android_extension_pack.shaders.es31.extension_directive.ext_primitive_bounding_box = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.android_extension_pack.shaders.es32.extension_macros.android_extension_pack_es31a = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.android_extension_pack.shaders.es32.extension_directive.ext_primitive_bounding_box = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.*geometry* = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.*tess* = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.depth.builtin_depth.per_primitive_bbox_equal = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.depth.builtin_depth.per_primitive_bbox_larger = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.depth.user_defined_depth.per_primitive_bbox_equal = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.depth.user_defined_depth.per_primitive_bbox_larger = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.clear.full_clear_with_triangles = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.clear.full_clear_with_triangles_per_primitive_bbox = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.clear.scissored_clear_with_triangles = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.clear.scissored_clear_with_triangles_per_primitive_bbox = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.clear.scissored_full_clear_with_triangles = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.clear.scissored_full_clear_with_triangles_per_primitive_bbox = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.call_order.viewport_first_bbox_second = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.call_order.bbox_first_viewport_second = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.opaque_type_indexing.atomic_counter.const_expression_vertex = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.opaque_type_indexing.atomic_counter.uniform_vertex = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.opaque_type_indexing.atomic_counter.dynamically_uniform_vertex = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.functions.es31.overloading.arrays_of_arrays_size_vertex = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.builtin_constants.core.* = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.builtin_constants.sample_variables.* = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.value.lines_8_samples = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.value.points_8_samples = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.value.triangles_max_samples = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.triangles_8_samples_dfdy = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.lines_8_samples_dfdx = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.lines_8_samples_fwidth = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.wide_lines_8_samples_dfdy = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.points_8_samples_dfdx = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.points_8_samples_fwidth = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.wide_points_8_samples_dfdy = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.triangles_max_samples_dfdx = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.state_query.integer.* = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.program_interface_query.* = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.layout_binding.negative.image.* = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.layout_binding.negative.ssbo.* = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.layout_binding.negative.ubo.* = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.layout_binding.negative.sampler.* = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.android_extension_pack.shaders.es31.extension_directive.ext_primitive_bounding_box = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.android_extension_pack.shaders.es32.extension_macros.android_extension_pack_es31a = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.android_extension_pack.shaders.es32.extension_directive.ext_primitive_bounding_box = SKIP
 
 // Swiftshader hits AddressSanitizer in SwiftShader/src/Pipeline/SpirvShader.cpp
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.texture.gather.offset_dynamic.* = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.texture.gather.offsets.* = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.texture.gather.offset_dynamic.* = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.texture.gather.offsets.* = SKIP
 
 // Swiftshader hits assert in State.cpp getTargetFramebuffer
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.debug.negative_coverage.* = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.debug.error_filters.case_9 = SKIP
-b/224537784 SWIFTSHADER : dEQP-GLES31.functional.debug.error_groups.case_9 = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.debug.negative_coverage.* = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.debug.error_filters.case_9 = SKIP
+224537784 SWIFTSHADER : dEQP-GLES31.functional.debug.error_groups.case_9 = SKIP
 
 // Failing on SwiftShader after a VK-GL-CTS update
 42266931 SWIFTSHADER : dEQP-GLES31.functional.texture.border_clamp.range_clamp.linear_float_color = SKIP
 
 // NVIDIA on LINUX bot is missing VkPhysicalDeviceCustomBorderColorFeaturesEXT.customBorderColors
 // and VkPhysicalDeviceCustomBorderColorFeaturesEXT.customBorderColorWithoutFormat
-b/224537784 LINUX NVIDIA VULKAN : dEQP-GLES31.functional.texture.border_clamp.* = SKIP
+224537784 LINUX NVIDIA VULKAN : dEQP-GLES31.functional.texture.border_clamp.* = SKIP
 
-b/224537784 LINUX NVIDIA VULKAN : dEQP-GLES31.functional.android_extension_pack.shaders.es32.extension_macros.android_extension_pack_es31a = FAIL
-
-// Pixel 4 does not support VK_EXT_transform_feedback (required for geometry/tessellation).
-// Pixel 4 Bugs in tessellation and geometry shader support
-b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.*geometry* = SKIP
-b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.*tess* = SKIP
-b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.shaders.builtin_constants.core.* = SKIP
-b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.shaders.builtin_constants.sample_variables.* = SKIP
-b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.state_query.integer.* = SKIP
-b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.program_interface_query.* = SKIP
-b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.layout_binding.negative.ssbo.* = SKIP
-b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.layout_binding.negative.ubo.* = SKIP
-b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.layout_binding.negative.sampler.* = SKIP
-b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.layout_binding.negative.image.* = SKIP
-b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.android_extension_pack.shaders.es31.extension_directive.ext_primitive_bounding_box = SKIP
-b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.android_extension_pack.shaders.es32.extension_macros.android_extension_pack_es31a = SKIP
-b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.android_extension_pack.shaders.es32.extension_directive.ext_primitive_bounding_box = SKIP
-
-// Pixel 4 does not support VkPhysicalDeviceCustomBorderColorFeaturesEXT.customBorderColors
-// and VkPhysicalDeviceCustomBorderColorFeaturesEXT.customBorderColorWithoutFormat
-b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.texture.border_clamp.* = SKIP
-b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.debug.negative_coverage.* = SKIP
-b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.debug.error_filters.case_22 = SKIP
-
-// Pixel 4 hits asserts in FramebufferVk
-b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.ubo.2_level_array* = SKIP
-
-// Pixel 4 hits asserts in State.cpp getTargetFramebuffer
-b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.debug.error_filters.case_9 = SKIP
-b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.debug.error_groups.case_9 = SKIP
-
-// Fails when the expression being interpolated as an indexed varying array.
-42264718 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.interpolate_at_offset.array_element.* = FAIL
-
-// Pixel 4 crashes in newly added test
-390138123 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.shaders.framebuffer_fetch.basic.multiple_render_targets_overdraw = SKIP
+224537784 LINUX NVIDIA VULKAN : dEQP-GLES31.functional.android_extension_pack.shaders.es32.extension_macros.android_extension_pack_es31a = FAIL
 
 // Geometry shader support:
 // This fails on pre-release Android T drivers as of 3/25/22:
@@ -252,14 +183,14 @@ b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.debug.error_groups.case_9
 485920226 PIXEL10 VULKAN : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_96_bits.* = FAIL
 
 // Samsung Galaxy S22 (Xclipse)
-b/267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.blend_equation_advanced.msaa.darken = SKIP
-b/267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.draw_indirect.random.* = SKIP
-b/267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.sample_shading.min_sample_shading.multisample_* = SKIP
-b/267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.shaders.implicit_conversions.es31.arithmetic.input_before_literal.* = SKIP
-b/267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.sample_qualifier.multisample* = SKIP
-b/267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_* = SKIP
-b/267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.tessellation_geometry_interaction.render.limits.output_* = SKIP
-b/267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.texture.border_clamp.* = SKIP
+267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.blend_equation_advanced.msaa.darken = SKIP
+267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.draw_indirect.random.* = SKIP
+267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.sample_shading.min_sample_shading.multisample_* = SKIP
+267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.shaders.implicit_conversions.es31.arithmetic.input_before_literal.* = SKIP
+267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.sample_qualifier.multisample* = SKIP
+267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_* = SKIP
+267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.tessellation_geometry_interaction.render.limits.output_* = SKIP
+267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.texture.border_clamp.* = SKIP
 386749841 GALAXYS22 VULKAN : dEQP-GLES31.functional.geometry_shading.instanced.geometry_output_different_32_invocations = SKIP
 386749841 GALAXYS22 VULKAN : dEQP-GLES31.functional.geometry_shading.instanced.geometry_output_different_max_invocations = SKIP
 
@@ -276,69 +207,69 @@ b/267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.texture.border_clamp.* = S
 42266598 GALAXYS23 VULKAN : dEQP-GLES31.functional.texture.border_clamp.* = SKIP
 
 // Samsung Galaxy S24 (Xclipse)
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.draw_indirect.random.19 = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.draw_indirect.random.36 = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.draw_indirect.random.42 = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.draw_indirect.random.45 = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.draw_indirect.random.49 = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.draw_indirect.random.51 = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.sample_shading.min_sample_shading.multisample_renderbuffer_samples_2_color = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.sample_shading.min_sample_shading.multisample_renderbuffer_samples_2_discard = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.sample_shading.min_sample_shading.multisample_renderbuffer_samples_4_color = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.sample_shading.min_sample_shading.multisample_renderbuffer_samples_4_discard = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.sample_shading.min_sample_shading.multisample_texture_samples_2_color = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.sample_shading.min_sample_shading.multisample_texture_samples_2_discard = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.sample_shading.min_sample_shading.multisample_texture_samples_4_color = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.sample_shading.min_sample_shading.multisample_texture_samples_4_discard = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.helper_invocation.derivate.lines_max_samples_dfdy = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.helper_invocation.derivate.points_8_samples_dfdy = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.helper_invocation.derivate.triangles_8_samples_fwidth = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.implicit_conversions.es31.arithmetic.input_before_literal.mul.uint_to_vec3_vertex = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.implicit_conversions.es31.arithmetic.input_before_literal.sub.int_to_float_vertex = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.implicit_conversions.es31.arithmetic.input_before_literal.sub.uint_to_vec2_fragment = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.implicit_conversions.es31.arithmetic.literal_before_input.mul.uvec3_to_vec3_vertex = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.implicit_conversions.es31.arithmetic.literal_before_input.sub.uint_to_vec2_fragment = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.sample_qualifier.multisample_rbo_1 = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.sample_qualifier.multisample_rbo_2 = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.sample_qualifier.multisample_rbo_4 = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.sample_qualifier.multisample_texture_1 = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.sample_qualifier.multisample_texture_2 = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.sample_qualifier.multisample_texture_4 = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_id.multisample_rbo_1 = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_id.multisample_rbo_2 = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_id.multisample_rbo_4 = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_id.multisample_texture_1 = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_id.multisample_texture_2 = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_id.multisample_texture_4 = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_mask_in.bit_count_per_sample.multisample_rbo_4 = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_mask_in.bit_count_per_sample.multisample_texture_4 = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_mask_in.bits_unique_per_sample.multisample_texture_1 = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_mask_in.bits_unique_per_sample.multisample_texture_2 = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_mask_in.bits_unique_per_sample.multisample_texture_4 = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_mask_in.bits_unique_per_two_samples.multisample_texture_4 = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_pos.distribution.multisample_texture_1 = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_pos.distribution.multisample_texture_2 = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_pos.distribution.multisample_texture_4 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.draw_indirect.random.19 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.draw_indirect.random.36 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.draw_indirect.random.42 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.draw_indirect.random.45 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.draw_indirect.random.49 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.draw_indirect.random.51 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.sample_shading.min_sample_shading.multisample_renderbuffer_samples_2_color = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.sample_shading.min_sample_shading.multisample_renderbuffer_samples_2_discard = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.sample_shading.min_sample_shading.multisample_renderbuffer_samples_4_color = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.sample_shading.min_sample_shading.multisample_renderbuffer_samples_4_discard = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.sample_shading.min_sample_shading.multisample_texture_samples_2_color = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.sample_shading.min_sample_shading.multisample_texture_samples_2_discard = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.sample_shading.min_sample_shading.multisample_texture_samples_4_color = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.sample_shading.min_sample_shading.multisample_texture_samples_4_discard = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.helper_invocation.derivate.lines_max_samples_dfdy = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.helper_invocation.derivate.points_8_samples_dfdy = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.helper_invocation.derivate.triangles_8_samples_fwidth = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.implicit_conversions.es31.arithmetic.input_before_literal.mul.uint_to_vec3_vertex = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.implicit_conversions.es31.arithmetic.input_before_literal.sub.int_to_float_vertex = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.implicit_conversions.es31.arithmetic.input_before_literal.sub.uint_to_vec2_fragment = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.implicit_conversions.es31.arithmetic.literal_before_input.mul.uvec3_to_vec3_vertex = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.implicit_conversions.es31.arithmetic.literal_before_input.sub.uint_to_vec2_fragment = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.sample_qualifier.multisample_rbo_1 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.sample_qualifier.multisample_rbo_2 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.sample_qualifier.multisample_rbo_4 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.sample_qualifier.multisample_texture_1 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.sample_qualifier.multisample_texture_2 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.sample_qualifier.multisample_texture_4 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_id.multisample_rbo_1 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_id.multisample_rbo_2 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_id.multisample_rbo_4 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_id.multisample_texture_1 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_id.multisample_texture_2 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_id.multisample_texture_4 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_mask_in.bit_count_per_sample.multisample_rbo_4 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_mask_in.bit_count_per_sample.multisample_texture_4 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_mask_in.bits_unique_per_sample.multisample_texture_1 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_mask_in.bits_unique_per_sample.multisample_texture_2 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_mask_in.bits_unique_per_sample.multisample_texture_4 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_mask_in.bits_unique_per_two_samples.multisample_texture_4 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_pos.distribution.multisample_texture_1 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_pos.distribution.multisample_texture_2 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_pos.distribution.multisample_texture_4 = SKIP
 
 // Snapdragon 8 Gen3 Mobile Reference Device
-b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.blend_equation_advanced.basic.hsl_hue = SKIP
-b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.blend_equation_advanced.barrier.hsl_hue = SKIP
-b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.blend_equation_advanced.srgb.hsl_hue = SKIP
-b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.blend_equation_advanced.msaa.hsl_hue = SKIP
-b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.blend_equation_advanced.basic.hsl_saturation = SKIP
-b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.blend_equation_advanced.barrier.hsl_saturation = SKIP
-b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.blend_equation_advanced.srgb.hsl_saturation = SKIP
-b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.blend_equation_advanced.msaa.hsl_saturation = SKIP
-b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.blend_equation_advanced.msaa.colorburn = SKIP
-b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.copy_image.*cube* = SKIP
-b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.fbo.no_attachments.* = SKIP
-b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.image_load_store*3d* = SKIP
-b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.image_load_store*cube* = SKIP
-b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.shaders.builtin_functions.pack_unpack.* = SKIP
-b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.shaders.helper_invocation.* = SKIP
-b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.shaders.linkage.es*.geometry.varying.types.float_struct = SKIP
-b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.shaders.opaque_type_indexing.sampler.*cube* = SKIP
-b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.synchronization.in* = SKIP
-b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.texture.border_clamp.* = SKIP
-b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.texture.*cube_array* = SKIP
-b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.texture.gather.basic.cube* = SKIP
+328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.blend_equation_advanced.basic.hsl_hue = SKIP
+328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.blend_equation_advanced.barrier.hsl_hue = SKIP
+328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.blend_equation_advanced.srgb.hsl_hue = SKIP
+328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.blend_equation_advanced.msaa.hsl_hue = SKIP
+328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.blend_equation_advanced.basic.hsl_saturation = SKIP
+328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.blend_equation_advanced.barrier.hsl_saturation = SKIP
+328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.blend_equation_advanced.srgb.hsl_saturation = SKIP
+328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.blend_equation_advanced.msaa.hsl_saturation = SKIP
+328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.blend_equation_advanced.msaa.colorburn = SKIP
+328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.copy_image.*cube* = SKIP
+328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.fbo.no_attachments.* = SKIP
+328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.image_load_store*3d* = SKIP
+328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.image_load_store*cube* = SKIP
+328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.shaders.builtin_functions.pack_unpack.* = SKIP
+328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.shaders.helper_invocation.* = SKIP
+328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.shaders.linkage.es*.geometry.varying.types.float_struct = SKIP
+328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.shaders.opaque_type_indexing.sampler.*cube* = SKIP
+328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.synchronization.in* = SKIP
+328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.texture.border_clamp.* = SKIP
+328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.texture.*cube_array* = SKIP
+328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.texture.gather.basic.cube* = SKIP

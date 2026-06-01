@@ -18885,6 +18885,25 @@ void main()
     ASSERT_GL_NO_ERROR();
 }
 
+// Test that unused local variable is dead code eliminated in IR
+TEST_P(GLSLTest_ES3, UnusedLocalVariableEliminatedInIR)
+{
+    ANGLE_SKIP_TEST_IF(!getEGLWindow()->isFeatureEnabled(Feature::UseIr));
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+vec3 a = vec3(0.0);
+out vec4 color;
+void main()
+{
+    vec3 unusedVariable;
+    cross(max(vec3(0.0), reflect(dot(a, vec3(0.0)), 0.0)), vec3(0.0));
+})";
+
+    ANGLE_GL_PROGRAM(testProgram, essl3_shaders::vs::Simple(), kFS);
+    drawQuad(testProgram, essl3_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test robustness of out-of-bounds lod in texelFetch
 TEST_P(WebGL2GLSLTest, TexelFetchLodOutOfBounds)
 {
@@ -24622,6 +24641,33 @@ void main()
     ASSERT_GL_NO_ERROR();
 }
 
+// Test that complex expressions are evaluated correctly.  With the IR, these are broken up to be
+// less complex.  With AST, the shader fails compilation instead.
+TEST_P(WebGLGLSLTest, ComplexExpression)
+{
+    ANGLE_SKIP_TEST_IF(!getEGLWindow()->isFeatureEnabled(Feature::UseIr));
+
+    std::ostringstream fs;
+    fs << R"(precision highp float;
+            uniform vec4 u_color;
+            void main()
+            {
+                float f = u_color.x)";
+    for (uint32_t i = 0; i < 1000; ++i)
+    {
+        fs << "+ " << i << ".0";
+    }
+    fs << R"(;
+                // sum(0, 999) is 499500.  Divide by twice this amount and expect gray.
+                f /= 499500. * 2.;
+                gl_FragColor = vec4(f);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), fs.str().c_str());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(127, 127, 127, 127), 1);
+    ASSERT_GL_NO_ERROR();
+}
 }  // anonymous namespace
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND_ES31_AND_ES32(

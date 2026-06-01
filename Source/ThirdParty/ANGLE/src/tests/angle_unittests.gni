@@ -92,7 +92,6 @@ angle_unittests_compiler_tests_sources = [
   "compiler_tests/API_test.cpp",
   "compiler_tests/CollectVariables_test.cpp",
   "compiler_tests/ConstructCompiler_test.cpp",
-  "compiler_tests/ExpressionLimit_test.cpp",
   "compiler_tests/FloatLex_test.cpp",
   "compiler_tests/GeometryShader_test.cpp",
   "compiler_tests/GlFragDataNotModified_test.cpp",

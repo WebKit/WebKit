@@ -39,9 +39,7 @@
 #include "compiler/translator/tree_ops/PruneEmptyCases.h"
 #include "compiler/translator/tree_ops/PruneNoOps.h"
 #include "compiler/translator/tree_ops/RemoveArrayLengthMethod.h"
-#include "compiler/translator/tree_ops/RemoveDynamicIndexing.h"
 #include "compiler/translator/tree_ops/RemoveInactiveInterfaceVariables.h"
-#include "compiler/translator/tree_ops/RemoveInvariantDeclaration.h"
 #include "compiler/translator/tree_ops/RemoveUnreferencedVariables.h"
 #include "compiler/translator/tree_ops/RemoveUnusedFramebufferFetch.h"
 #include "compiler/translator/tree_ops/RewritePixelLocalStorage.h"
@@ -323,26 +321,6 @@ bool IsGLSL410OrOlder(ShShaderOutput output)
             output == SH_GLSL_400_CORE_OUTPUT || output == SH_GLSL_410_CORE_OUTPUT);
 }
 
-bool RemoveInvariant(sh::GLenum shaderType,
-                     int shaderVersion,
-                     ShShaderOutput outputType,
-                     const ShCompileOptions &compileOptions)
-{
-    if (shaderType == GL_FRAGMENT_SHADER &&
-        (IsGLSL420OrNewer(outputType) || IsOutputSPIRV(outputType)))
-    {
-        return true;
-    }
-
-    if (compileOptions.removeInvariantAndCentroidForESSL3 && shaderVersion >= 300 &&
-        shaderType == GL_VERTEX_SHADER)
-    {
-        return true;
-    }
-
-    return false;
-}
-
 size_t GetGlobalMaxTokenSize(ShShaderSpec spec)
 {
     // WebGL defines a max token length of 256, while ES2 leaves max token
@@ -525,15 +503,61 @@ TIntermBlock *TCompiler::compileTreeImpl(angle::Span<const char *const> shaderSt
         ir::IR ir = parseContext.getIR();
 
         // Create an AST out of the IR while the rest of the translator is still AST based.
-        root = ir::GenerateAST(std::move(ir), this, compileOptions).root;
+        ir::Output output = ir::GenerateAST(std::move(ir), this, compileOptions);
+        root              = output.root;
+
+        // Vertex shader inputs and compute shader built-ins are gathered as "inputs" in IR, but are
+        // exposed as an "attributes" list.
+        if (mShaderType == GL_VERTEX_SHADER || mShaderType == GL_COMPUTE_SHADER)
+        {
+            mAttributes = std::move(output.inputs);
+        }
+        else
+        {
+            mInputVaryings = std::move(output.inputs);
+        }
+        // Fragment shader outputs are exposed in a separate list from the other shader stages.
+        if (mShaderType == GL_FRAGMENT_SHADER)
+        {
+            mOutputVariables = std::move(output.outputs);
+        }
+        else
+        {
+            mOutputVaryings = std::move(output.outputs);
+        }
+        mUniforms            = std::move(output.uniforms);
+        mSharedVariables     = std::move(output.shared);
+        mUniformBlocks       = std::move(output.uniformBlocks);
+        mShaderStorageBlocks = std::move(output.storageBlocks);
+        collectInterfaceBlocks();
+
+        mVariablesCollected = true;
     }
 #endif
     ASSERT(root != nullptr);
+
     if (compileOptions.skipAllValidationAndTransforms)
     {
-        collectVariables(root);
+        if (!compileOptions.useIR)
+        {
+            collectVariables(root);
+        }
+        return root;
     }
-    else
+
+    const bool hasAnyClipCullDistance =
+        parseContext.isExtensionEnabled(TExtension::ANGLE_clip_cull_distance) ||
+        parseContext.isExtensionEnabled(TExtension::EXT_clip_cull_distance) ||
+        parseContext.isExtensionEnabled(TExtension::APPLE_clip_distance);
+    if (hasAnyClipCullDistance)
+    {
+        mClipDistanceSize = static_cast<uint8_t>(parseContext.getClipDistanceArraySize());
+        mCullDistanceSize = static_cast<uint8_t>(parseContext.getCullDistanceArraySize());
+        mMetadataFlags[MetadataFlags::HasClipDistance] = parseContext.isClipDistanceUsed();
+    }
+
+    mValidateASTOptions = {};
+    if (!compileOptions.useIR)
     {
         if (!checkAndSimplifyAST(root, parseContext, compileOptions))
         {
@@ -792,9 +816,7 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
                                     const TParseContext &parseContext,
                                     const ShCompileOptions &compileOptions)
 {
-    mValidateASTOptions = {};
-
-    const bool useIR = compileOptions.useIR;
+    ASSERT(!compileOptions.useIR);
 
     // Disallow expressions deemed too complex.
     // This needs to be checked before other functions that will traverse the AST
@@ -804,18 +826,36 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
         return false;
     }
 
-    // Some AST validation cannot be done until an AST pass is done. With IR, those passes (if
-    // needed) are done before AST is generated.
-    if (!useIR)
-    {
-        mValidateASTOptions.validateNoStatementsAfterBranch = false;
-        mValidateASTOptions.validateMultiDeclarations       = false;
-    }
+    // Some AST validation cannot be done until an AST pass is done.
+    mValidateASTOptions.validateNoStatementsAfterBranch = false;
+    mValidateASTOptions.validateMultiDeclarations       = false;
 
     if (!validateAST(root))
     {
         return false;
     }
+
+    // Turn |inout| variables that are never read from into |out| before collecting variables
+    // and before PLS uses them.
+    if (mShaderVersion >= 300 &&
+        (IsExtensionEnabled(mExtensionBehavior, TExtension::EXT_shader_framebuffer_fetch) ||
+         IsExtensionEnabled(mExtensionBehavior,
+                            TExtension::EXT_shader_framebuffer_fetch_non_coherent)))
+    {
+        if (!RemoveUnusedFramebufferFetch(this, root, &mSymbolTable))
+        {
+            return false;
+        }
+    }
+
+    // Fold expressions that could not be folded before validation that was done as a part of
+    // parsing.
+    if (!FoldExpressions(this, root, &mDiagnostics))
+    {
+        return false;
+    }
+    // Folding should only be able to generate warnings.
+    ASSERT(mDiagnostics.numErrors() == 0);
 
     const bool hasAnyClipCullDistance =
         parseContext.isExtensionEnabled(TExtension::ANGLE_clip_cull_distance) ||
@@ -823,71 +863,39 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
         parseContext.isExtensionEnabled(TExtension::APPLE_clip_distance);
     if (hasAnyClipCullDistance)
     {
-        mClipDistanceSize = static_cast<uint8_t>(parseContext.getClipDistanceArraySize());
-        mCullDistanceSize = static_cast<uint8_t>(parseContext.getCullDistanceArraySize());
-        mMetadataFlags[MetadataFlags::HasClipDistance] = parseContext.isClipDistanceUsed();
+        // gl_ClipDistance and gl_CullDistance built-in arrays have unique semantics.
+        // They are pre-declared as unsized and must be sized by the shader either
+        // redeclaring them or indexing them only with integral constant expressions.
+        // The translator treats them as having the maximum allowed size and this pass
+        // applies the actual sizes if needed.
+        if (mClipDistanceSize > 0 && !parseContext.isClipDistanceRedeclared() &&
+            !SizeClipCullDistance(this, root, ImmutableString("gl_ClipDistance"),
+                                  mClipDistanceSize))
+        {
+
+            return false;
+        }
+        if (mCullDistanceSize > 0 && !parseContext.isCullDistanceRedeclared() &&
+            !SizeClipCullDistance(this, root, ImmutableString("gl_CullDistance"),
+                                  mCullDistanceSize))
+        {
+            return false;
+        }
     }
 
-    if (!useIR)
+    // We prune no-ops to work around driver bugs and to keep AST processing and output simple.
+    // The following kinds of no-ops are pruned:
+    //   1. Empty declarations "int;".
+    //   2. Literal statements: "1.0;". The ESSL output doesn't define a default precision
+    //      for float, so float literal statements would end up with no precision which is
+    //      invalid ESSL.
+    //   3. Any unreachable statement after a discard, return, break or continue.
+    // After this empty declarations are not allowed in the AST.
+    if (!PruneNoOps(this, root, &mSymbolTable))
     {
-        // Turn |inout| variables that are never read from into |out| before collecting variables
-        // and before PLS uses them.
-        if (mShaderVersion >= 300 &&
-            (IsExtensionEnabled(mExtensionBehavior, TExtension::EXT_shader_framebuffer_fetch) ||
-             IsExtensionEnabled(mExtensionBehavior,
-                                TExtension::EXT_shader_framebuffer_fetch_non_coherent)))
-        {
-            if (!RemoveUnusedFramebufferFetch(this, root, &mSymbolTable))
-            {
-                return false;
-            }
-        }
-
-        // Fold expressions that could not be folded before validation that was done as a part of
-        // parsing.
-        if (!FoldExpressions(this, root, &mDiagnostics))
-        {
-            return false;
-        }
-        // Folding should only be able to generate warnings.
-        ASSERT(mDiagnostics.numErrors() == 0);
-
-        if (hasAnyClipCullDistance)
-        {
-            // gl_ClipDistance and gl_CullDistance built-in arrays have unique semantics.
-            // They are pre-declared as unsized and must be sized by the shader either
-            // redeclaring them or indexing them only with integral constant expressions.
-            // The translator treats them as having the maximum allowed size and this pass
-            // applies the actual sizes if needed.
-            if (mClipDistanceSize > 0 && !parseContext.isClipDistanceRedeclared() &&
-                !SizeClipCullDistance(this, root, ImmutableString("gl_ClipDistance"),
-                                      mClipDistanceSize))
-            {
-
-                return false;
-            }
-            if (mCullDistanceSize > 0 && !parseContext.isCullDistanceRedeclared() &&
-                !SizeClipCullDistance(this, root, ImmutableString("gl_CullDistance"),
-                                      mCullDistanceSize))
-            {
-                return false;
-            }
-        }
-
-        // We prune no-ops to work around driver bugs and to keep AST processing and output simple.
-        // The following kinds of no-ops are pruned:
-        //   1. Empty declarations "int;".
-        //   2. Literal statements: "1.0;". The ESSL output doesn't define a default precision
-        //      for float, so float literal statements would end up with no precision which is
-        //      invalid ESSL.
-        //   3. Any unreachable statement after a discard, return, break or continue.
-        // After this empty declarations are not allowed in the AST.
-        if (!PruneNoOps(this, root, &mSymbolTable))
-        {
-            return false;
-        }
-        mValidateASTOptions.validateNoStatementsAfterBranch = true;
+        return false;
     }
+    mValidateASTOptions.validateNoStatementsAfterBranch = true;
 
     // We need to generate globals early if we have non constant initializers enabled.
     bool initializeLocalsAndGlobals    = compileOptions.initializeUninitializedLocals;
@@ -895,199 +903,196 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
     bool enableNonConstantInitializers = IsExtensionEnabled(
         mExtensionBehavior, TExtension::EXT_shader_non_constant_global_initializers);
 
-    if (!useIR)
+    if (enableNonConstantInitializers &&
+        !DeferGlobalInitializers(this, root, initializeLocalsAndGlobals, canUseLoopsToInitialize,
+                                 compileOptions.forceDeferNonConstGlobalInitializers,
+                                 &mSymbolTable))
     {
-        if (enableNonConstantInitializers &&
-            !DeferGlobalInitializers(
-                this, root, initializeLocalsAndGlobals, canUseLoopsToInitialize,
-                compileOptions.forceDeferNonConstGlobalInitializers, &mSymbolTable))
+        return false;
+    }
+
+    // Create the function DAG.
+    initCallDag(root);
+
+    // Checks which functions are used
+    mFunctionMetadata.clear();
+    mFunctionMetadata.resize(mCallDag.size());
+    tagUsedFunctions();
+
+    if (!pruneUnusedFunctions(root))
+    {
+        return false;
+    }
+
+    if (IsSpecWithFunctionBodyNewScope(mShaderSpec, mShaderVersion))
+    {
+        if (!ReplaceShadowingVariables(this, root, &mSymbolTable))
         {
             return false;
         }
+    }
 
-        // Create the function DAG.
-        initCallDag(root);
-
-        // Checks which functions are used
-        mFunctionMetadata.clear();
-        mFunctionMetadata.resize(mCallDag.size());
-        tagUsedFunctions();
-
-        if (!pruneUnusedFunctions(root))
+    // For now, rewrite pixel local storage before collecting variables or any operations on
+    // images.
+    //
+    // TODO(anglebug.com/40096838):
+    //   Should this actually run after collecting variables?
+    //   Do we need more introspection?
+    //   Do we want to hide rewritten shader image uniforms from glGetActiveUniform?
+    if (hasPixelLocalStorageUniforms())
+    {
+        ASSERT(
+            IsExtensionEnabled(mExtensionBehavior, TExtension::ANGLE_shader_pixel_local_storage));
+        if (!RewritePixelLocalStorage(this, root, getSymbolTable(), compileOptions,
+                                      getShaderVersion()))
         {
             return false;
         }
+    }
 
-        if (IsSpecWithFunctionBodyNewScope(mShaderSpec, mShaderVersion))
-        {
-            if (!ReplaceShadowingVariables(this, root, &mSymbolTable))
-            {
-                return false;
-            }
-        }
-
-        // For now, rewrite pixel local storage before collecting variables or any operations on
-        // images.
-        //
-        // TODO(anglebug.com/40096838):
-        //   Should this actually run after collecting variables?
-        //   Do we need more introspection?
-        //   Do we want to hide rewritten shader image uniforms from glGetActiveUniform?
-        if (hasPixelLocalStorageUniforms())
-        {
-            ASSERT(IsExtensionEnabled(mExtensionBehavior,
-                                      TExtension::ANGLE_shader_pixel_local_storage));
-            if (!RewritePixelLocalStorage(this, root, getSymbolTable(), compileOptions,
-                                          getShaderVersion()))
-            {
-                return false;
-            }
-        }
-
-        if (compileOptions.initializeBuiltinsForInstancedMultiview &&
-            (parseContext.isExtensionEnabled(TExtension::OVR_multiview2) ||
-             parseContext.isExtensionEnabled(TExtension::OVR_multiview)))
-        {
-            // Note: if multiview is enabled via #extension all, num_views may not be set.
-            if (!DeclareAndInitBuiltinsForInstancedMultiview(this, root, std::max(mNumViews, 1),
-                                                             mShaderType, compileOptions,
-                                                             mOutputType, &mSymbolTable))
-            {
-                return false;
-            }
-        }
-
-        if (compileOptions.addAndTrueToLoopCondition)
-        {
-            if (!AddAndTrueToLoopCondition(this, root))
-            {
-                return false;
-            }
-        }
-
-        if (compileOptions.unfoldShortCircuit)
-        {
-            if (!UnfoldShortCircuitAST(this, root))
-            {
-                return false;
-            }
-        }
-
-        if (compileOptions.regenerateStructNames)
-        {
-            if (!RegenerateStructNames(this, root, &mSymbolTable))
-            {
-                return false;
-            }
-        }
-
-        if (compileOptions.emulateGLDrawID &&
-            IsExtensionEnabled(mExtensionBehavior, TExtension::ANGLE_multi_draw))
-        {
-            if (!EmulateGLDrawID(this, root, &mSymbolTable))
-            {
-                return false;
-            }
-        }
-
-        if (compileOptions.emulateGLBaseVertexBaseInstance &&
-            IsExtensionEnabled(mExtensionBehavior,
-                               TExtension::ANGLE_base_vertex_base_instance_shader_builtin))
-        {
-            if (!EmulateGLBaseVertexBaseInstance(this, root, &mSymbolTable,
-                                                 compileOptions.addBaseVertexToVertexID))
-            {
-                return false;
-            }
-        }
-
-        if (mShaderType == GL_FRAGMENT_SHADER && mShaderVersion == 100 &&
-            mResources.EXT_draw_buffers && mResources.MaxDrawBuffers > 1 &&
-            IsExtensionEnabled(mExtensionBehavior, TExtension::EXT_draw_buffers))
-        {
-            if (!EmulateGLFragColorBroadcast(this, root, mResources.MaxDrawBuffers,
-                                             mResources.MaxDualSourceDrawBuffers, &mSymbolTable,
-                                             mShaderVersion))
-            {
-                return false;
-            }
-        }
-
-        if (!sortUniforms(root))
+    if (compileOptions.initializeBuiltinsForInstancedMultiview &&
+        (parseContext.isExtensionEnabled(TExtension::OVR_multiview2) ||
+         parseContext.isExtensionEnabled(TExtension::OVR_multiview)))
+    {
+        // Note: if multiview is enabled via #extension all, num_views may not be set.
+        if (!DeclareAndInitBuiltinsForInstancedMultiview(this, root, std::max(mNumViews, 1),
+                                                         mShaderType, compileOptions, mOutputType,
+                                                         &mSymbolTable))
         {
             return false;
         }
+    }
 
-        // Needs to run before SimplifyLoopConditions to be able to detect |for| loops correctly.
-        if (compileOptions.ensureLoopForwardProgress)
-        {
-            if (!EnsureLoopForwardProgress(this, root))
-            {
-                return false;
-            }
-        }
-
-        if (compileOptions.simplifyLoopConditions)
-        {
-            if (!SimplifyLoopConditions(this, root, &getSymbolTable()))
-            {
-                return false;
-            }
-        }
-        else
-        {
-            // Split multi declarations and remove calls to array length().
-            // Note that SimplifyLoopConditions needs to be run before any other AST transformations
-            // that may need to generate new statements from loop conditions or loop expressions.
-            if (!SimplifyLoopConditions(this, root,
-                                        IntermNodePatternMatcher::kMultiDeclaration |
-                                            IntermNodePatternMatcher::kArrayLengthMethod,
-                                        &getSymbolTable()))
-            {
-                return false;
-            }
-        }
-
-        // Note that separate declarations need to be run before other AST transformations that
-        // generate new statements from expressions.
-        if (!SeparateDeclarations(*this, *root, mCompileOptions.separateCompoundStructDeclarations))
+    if (compileOptions.addAndTrueToLoopCondition)
+    {
+        if (!AddAndTrueToLoopCondition(this, root))
         {
             return false;
         }
-        mValidateASTOptions.validateMultiDeclarations = true;
+    }
 
-        if (!SplitSequenceOperator(this, root, IntermNodePatternMatcher::kArrayLengthMethod,
-                                   &getSymbolTable()))
+    if (compileOptions.unfoldShortCircuit)
+    {
+        if (!UnfoldShortCircuitAST(this, root))
         {
             return false;
         }
+    }
 
-        if (!RemoveArrayLengthMethod(this, root))
+    if (compileOptions.regenerateStructNames)
+    {
+        if (!RegenerateStructNames(this, root, &mSymbolTable))
         {
             return false;
         }
-        // Fold the expressions again, because |RemoveArrayLengthMethod| can introduce new
-        // constants.
-        if (!FoldExpressions(this, root, &mDiagnostics))
-        {
-            return false;
-        }
+    }
 
-        if (!RemoveUnreferencedVariables(this, root, &mSymbolTable))
+    if (compileOptions.emulateGLDrawID &&
+        IsExtensionEnabled(mExtensionBehavior, TExtension::ANGLE_multi_draw))
+    {
+        if (!EmulateGLDrawID(this, root, &mSymbolTable))
         {
             return false;
         }
+    }
 
-        // In case the last case inside a switch statement is a certain type of no-op, GLSL
-        // compilers in drivers may not accept it. In this case we clean up the dead code from the
-        // end of switch statements. This is also required because PruneNoOps or
-        // RemoveUnreferencedVariables may have left switch statements that only contained an empty
-        // declaration inside the final case in an invalid state. Relies on that PruneNoOps and
-        // RemoveUnreferencedVariables have already been run.
-        if (!PruneEmptyCases(this, root))
+    if (compileOptions.emulateGLBaseVertexBaseInstance &&
+        IsExtensionEnabled(mExtensionBehavior,
+                           TExtension::ANGLE_base_vertex_base_instance_shader_builtin))
+    {
+        if (!EmulateGLBaseVertexBaseInstance(this, root, &mSymbolTable,
+                                             compileOptions.addBaseVertexToVertexID))
         {
             return false;
         }
+    }
+
+    if (mShaderType == GL_FRAGMENT_SHADER && mShaderVersion == 100 && mResources.EXT_draw_buffers &&
+        mResources.MaxDrawBuffers > 1 &&
+        IsExtensionEnabled(mExtensionBehavior, TExtension::EXT_draw_buffers))
+    {
+        if (!EmulateGLFragColorBroadcast(this, root, mResources.MaxDrawBuffers,
+                                         mResources.MaxDualSourceDrawBuffers, &mSymbolTable,
+                                         mShaderVersion))
+        {
+            return false;
+        }
+    }
+
+    if (!sortUniforms(root))
+    {
+        return false;
+    }
+
+    // Needs to run before SimplifyLoopConditions to be able to detect |for| loops correctly.
+    if (compileOptions.ensureLoopForwardProgress)
+    {
+        if (!EnsureLoopForwardProgress(this, root))
+        {
+            return false;
+        }
+    }
+
+    if (compileOptions.simplifyLoopConditions)
+    {
+        if (!SimplifyLoopConditions(this, root, &getSymbolTable()))
+        {
+            return false;
+        }
+    }
+    else
+    {
+        // Split multi declarations and remove calls to array length().
+        // Note that SimplifyLoopConditions needs to be run before any other AST transformations
+        // that may need to generate new statements from loop conditions or loop expressions.
+        if (!SimplifyLoopConditions(this, root,
+                                    IntermNodePatternMatcher::kMultiDeclaration |
+                                        IntermNodePatternMatcher::kArrayLengthMethod,
+                                    &getSymbolTable()))
+        {
+            return false;
+        }
+    }
+
+    // Note that separate declarations need to be run before other AST transformations that
+    // generate new statements from expressions.
+    if (!SeparateDeclarations(*this, *root, mCompileOptions.separateCompoundStructDeclarations))
+    {
+        return false;
+    }
+    mValidateASTOptions.validateMultiDeclarations = true;
+
+    if (!SplitSequenceOperator(this, root, IntermNodePatternMatcher::kArrayLengthMethod,
+                               &getSymbolTable()))
+    {
+        return false;
+    }
+
+    if (!RemoveArrayLengthMethod(this, root))
+    {
+        return false;
+    }
+    // Fold the expressions again, because |RemoveArrayLengthMethod| can introduce new
+    // constants.
+    if (!FoldExpressions(this, root, &mDiagnostics))
+    {
+        return false;
+    }
+
+    if (!RemoveUnreferencedVariables(this, root, &mSymbolTable))
+    {
+        return false;
+    }
+
+    // In case the last case inside a switch statement is a certain type of no-op, GLSL
+    // compilers in drivers may not accept it. In this case we clean up the dead code from the
+    // end of switch statements. This is also required because PruneNoOps or
+    // RemoveUnreferencedVariables may have left switch statements that only contained an empty
+    // declaration inside the final case in an invalid state. Relies on that PruneNoOps and
+    // RemoveUnreferencedVariables have already been run.
+    if (!PruneEmptyCases(this, root))
+    {
+        return false;
     }
 
     collectVariables(root);
@@ -1116,10 +1121,10 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
         }
     }
 
-    // Remove declarations of inactive shader interface variables so backends don't need to account
-    // for them.  Note that currently, CollectVariables marks every field of an active uniform
-    // that's of struct type as active, i.e. no extracted sampler is inactive, so this can be done
-    // before extracting samplers from structs.
+    // Remove declarations of inactive shader interface variables so backends don't need to
+    // account for them.  Note that currently, CollectVariables marks every field of an active
+    // uniform that's of struct type as active, i.e. no extracted sampler is inactive, so this
+    // can be done before extracting samplers from structs.
     //
     // For the MSL output, keep the inactive fragment outputs, but remove them otherwise.
     if (compileOptions.removeInactiveVariables)
@@ -1133,54 +1138,38 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
         }
     }
 
-    if (!useIR)
+    if (compileOptions.initOutputVariables)
     {
-        if (compileOptions.initOutputVariables)
-        {
-            if (!initializeOutputVariables(root))
-            {
-                return false;
-            }
-        }
-    }
-
-    // Removing invariant declarations must be done after collecting variables.
-    // Otherwise, built-in invariant declarations don't apply.
-    if (RemoveInvariant(mShaderType, mShaderVersion, mOutputType, compileOptions))
-    {
-        if (!RemoveInvariantDeclaration(this, root))
+        if (!initializeOutputVariables(root))
         {
             return false;
         }
     }
 
-    if (!useIR)
+    // gl_Position may have already been initialized among other output variables, in that case
+    // we don't need to initialize it twice.
+    if (!mGLPositionInitialized && compileOptions.initGLPosition)
     {
-        // gl_Position may have already been initialized among other output variables, in that case
-        // we don't need to initialize it twice.
-        if (!mGLPositionInitialized && compileOptions.initGLPosition)
-        {
-            if (!initializeGLPosition(root))
-            {
-                return false;
-            }
-            mGLPositionInitialized = true;
-        }
-
-        // DeferGlobalInitializers needs to be run before other AST transformations that generate
-        // new statements from expressions. But it's fine to run DeferGlobalInitializers after the
-        // above SplitSequenceOperator and RemoveArrayLengthMethod since they only have an effect on
-        // the AST on ESSL >= 3.00, and the initializers that need to be deferred can only exist in
-        // ESSL < 3.00.  Exception: if EXT_shader_non_constant_global_initializers is enabled, we
-        // must generate global initializers before we generate the DAG, since initializers may call
-        // functions which must not be optimized out
-        if (!enableNonConstantInitializers &&
-            !DeferGlobalInitializers(
-                this, root, initializeLocalsAndGlobals, canUseLoopsToInitialize,
-                compileOptions.forceDeferNonConstGlobalInitializers, &mSymbolTable))
+        if (!initializeGLPosition(root))
         {
             return false;
         }
+        mGLPositionInitialized = true;
+    }
+
+    // DeferGlobalInitializers needs to be run before other AST transformations that generate
+    // new statements from expressions. But it's fine to run DeferGlobalInitializers after the
+    // above SplitSequenceOperator and RemoveArrayLengthMethod since they only have an effect on
+    // the AST on ESSL >= 3.00, and the initializers that need to be deferred can only exist in
+    // ESSL < 3.00.  Exception: if EXT_shader_non_constant_global_initializers is enabled, we
+    // must generate global initializers before we generate the DAG, since initializers may call
+    // functions which must not be optimized out
+    if (!enableNonConstantInitializers &&
+        !DeferGlobalInitializers(this, root, initializeLocalsAndGlobals, canUseLoopsToInitialize,
+                                 compileOptions.forceDeferNonConstGlobalInitializers,
+                                 &mSymbolTable))
+    {
+        return false;
     }
 
     if (initializeLocalsAndGlobals)
@@ -1204,47 +1193,33 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
             }
         }
 
-        if (!useIR)
+        if (!InitializeUninitializedLocals(this, root, getShaderVersion(), canUseLoopsToInitialize,
+                                           &getSymbolTable()))
         {
-            if (!InitializeUninitializedLocals(this, root, getShaderVersion(),
-                                               canUseLoopsToInitialize, &getSymbolTable()))
-            {
-                return false;
-            }
+            return false;
         }
     }
 
-    if (!useIR)
+    if (compileOptions.clampPointSize)
     {
-        if (compileOptions.clampPointSize)
+        if (!ClampPointSize(this, root, mResources.MinPointSize, mResources.MaxPointSize,
+                            &getSymbolTable()))
         {
-            if (!ClampPointSize(this, root, mResources.MinPointSize, mResources.MaxPointSize,
-                                &getSymbolTable()))
-            {
-                return false;
-            }
-        }
-
-        if (compileOptions.clampFragDepth)
-        {
-            if (!ClampFragDepth(this, root, &getSymbolTable()))
-            {
-                return false;
-            }
-        }
-
-        if (compileOptions.rewriteRepeatedAssignToSwizzled)
-        {
-            if (!sh::RewriteRepeatedAssignToSwizzled(this, root))
-            {
-                return false;
-            }
+            return false;
         }
     }
 
-    if (compileOptions.removeDynamicIndexingOfSwizzledVector)
+    if (compileOptions.clampFragDepth)
     {
-        if (!sh::RemoveDynamicIndexingOfSwizzledVector(this, root, &getSymbolTable(), nullptr))
+        if (!ClampFragDepth(this, root, &getSymbolTable()))
+        {
+            return false;
+        }
+    }
+
+    if (compileOptions.rewriteRepeatedAssignToSwizzled)
+    {
+        if (!sh::RewriteRepeatedAssignToSwizzled(this, root))
         {
             return false;
         }
@@ -1532,6 +1507,8 @@ void TCompiler::setResourceString()
 
 void TCompiler::collectVariables(TIntermBlock *root)
 {
+    // Variable collection is done from the IR already.
+    ASSERT(!mCompileOptions.useIR);
     ASSERT(!mVariablesCollected);
     CollectVariables(root, &mAttributes, &mOutputVariables, &mUniforms, &mInputVaryings,
                      &mOutputVaryings, &mSharedVariables, &mUniformBlocks, &mShaderStorageBlocks,

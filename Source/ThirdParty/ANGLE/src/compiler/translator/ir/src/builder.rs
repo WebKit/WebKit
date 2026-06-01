@@ -1650,6 +1650,22 @@ impl Builder {
     // The struct whose field is being selected is expected to be found at the top of the stack.
     pub fn struct_field(&mut self, field_index: u32) {
         let struct_id = self.interm_ids.pop().unwrap();
+        let is_nameless_variable = matches!(struct_id.id, Id::Variable(variable_id) if self.ir.meta.get_variable(variable_id).name.name.is_empty());
+        if is_nameless_variable {
+            let struct_type_info = self.ir.meta.get_type_mut(struct_id.type_id);
+            if let Type::Struct(name, fields, StructSpecialization::InterfaceBlock) =
+                struct_type_info
+                && name.name.is_empty()
+            {
+                // Mark the field as statically used during parse.  This is only needed for nameless
+                // interface blocks, because in that case the fields are separately reflected to the
+                // API.
+                //
+                // This _has_ to be done during parse because static use in dead code is still
+                // considered static use by GLSL.
+                fields[field_index as usize].is_static_use = true;
+            }
+        }
 
         let result = instruction::struct_field(&mut self.ir.meta, struct_id, field_index);
         self.add_instruction(result);

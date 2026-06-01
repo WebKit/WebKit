@@ -309,6 +309,11 @@ bool AreAssertionsEnabled();
         } while (0)
 #endif  // defined(ANGLE_TRACE_ENABLED) || defined(ANGLE_ENABLE_ASSERTS)
 
+#define RELEASE_ASSERT(expression)                                                                \
+    (expression ? static_cast<void>(0)                                                            \
+                : (FATAL() << "\t! Release assert failed in " << __FUNCTION__ << " (" << __FILE__ \
+                           << ":" << __LINE__ << "): " << #expression))
+
 #if defined(ANGLE_PLATFORM_WINDOWS)
 #    define ANGLE_FUNCTION __FUNCTION__
 #else

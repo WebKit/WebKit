@@ -37,7 +37,7 @@ angle::Result OcclusionQueryPool::ensurePoolCapacity(ContextMtl *contextMtl, siz
                                    ? 16 * kOcclusionQueryResultSize
                                    : mRenderPassResultsPool->size() * 2;
         ANGLE_TRY(Buffer::MakeBufferWithStorageMode(contextMtl, MTLStorageModePrivate, newSize,
-                                                    nullptr, &mRenderPassResultsPool));
+                                                    &mRenderPassResultsPool));
         mUsed                               = false;
         mRenderPassResultsPool->get().label = @"OcclusionQueryPool";
     }

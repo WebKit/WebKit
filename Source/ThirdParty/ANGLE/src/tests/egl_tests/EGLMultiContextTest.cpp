@@ -38,10 +38,7 @@ EGLBoolean SafeDestroyContext(EGLDisplay display, EGLContext &context)
 class EGLMultiContextTest : public ANGLETest<>
 {
   public:
-    EGLMultiContextTest() : mContexts{EGL_NO_CONTEXT, EGL_NO_CONTEXT}, mTexture(0)
-    {
-        setPbuffer(true);
-    }
+    EGLMultiContextTest() : mContexts{EGL_NO_CONTEXT, EGL_NO_CONTEXT}, mTexture(0) {}
 
     void testTearDown() override
     {
@@ -122,12 +119,6 @@ class EGLMultiContextTest : public ANGLETest<>
         Flush,
         Finish,
     };
-
-    bool hasFenceSyncExtension() const
-    {
-        return IsEGLDisplayExtensionEnabled(getEGLWindow()->getDisplay(), "EGL_KHR_fence_sync");
-    }
-
     void testFenceWithOpenRenderPass(FenceTest test, FlushMethod flushMethod);
 
     EGLContext mContexts[2];
@@ -468,7 +459,6 @@ TEST_P(EGLMultiContextTest, ReuseUnterminatedDisplay)
 void EGLMultiContextTest::testFenceWithOpenRenderPass(FenceTest test, FlushMethod flushMethod)
 {
     ANGLE_SKIP_TEST_IF(!platformSupportsMultithreading());
-    ANGLE_SKIP_TEST_IF(!hasFenceSyncExtension());
 
     constexpr uint32_t kWidth  = 100;
     constexpr uint32_t kHeight = 200;

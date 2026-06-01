@@ -5,6 +5,7 @@
 // The IR itself, consisting of a number of enums and structs.
 
 use super::instruction;
+use super::reflection;
 use std::collections::{HashMap, HashSet};
 use std::hash::{Hash, Hasher};
 
@@ -254,7 +255,7 @@ impl TypedId {
 pub enum UnaryOpCode {
     // Get the array length of a pointer.  The result is an `int` per GLSL.
     //   %result = ArrayLength %ptr
-    ArrayLength,
+    ArrayLength, // The parameter is a pointer
 
     // Calculate -operand.
     //   %result = Negate %operand
@@ -1584,6 +1585,15 @@ impl Variable {
             is_dead_code_eliminated: false,
         }
     }
+
+    pub fn is_built_in(&self) -> bool {
+        self.built_in.is_some()
+    }
+    pub fn is_interface_variable(&self) -> bool {
+        let is_interface_variable = self.is_built_in() || !self.decorations.decorations.is_empty();
+        debug_assert!(!is_interface_variable || self.scope == VariableScope::Global);
+        is_interface_variable
+    }
 }
 
 #[derive(Copy, Clone, PartialEq)]
@@ -1592,6 +1602,9 @@ pub enum BuiltIn {
     // The BuiltIn enum value X corresponds to gl_X in GLSL.
     InstanceID,
     VertexID,
+    // InstanceIndex and VertexIndex are used internally to implement InstanceID and VertexID.
+    InstanceIndex,
+    VertexIndex,
     Position,
     PointSize,
     BaseVertex,
@@ -1798,6 +1811,14 @@ pub enum TessellationOrdering {
 
 #[derive(Copy, Clone, PartialEq)]
 #[cfg_attr(debug_assertions, derive(Debug))]
+pub enum EmulatedMultiDraw {
+    DrawID,
+    BaseVertex,
+    BaseInstance,
+}
+
+#[derive(Copy, Clone, PartialEq)]
+#[cfg_attr(debug_assertions, derive(Debug))]
 pub enum Decoration {
     // Corresponding to GLSL qualifiers with the same name
     Invariant,
@@ -1854,6 +1875,8 @@ pub enum Decoration {
     // Used internally to emulate instanced multiview.
     EmulatedViewIDOut,
     EmulatedViewIDIn,
+    // Used internally to emulate multidraw built-ins.
+    EmulatedMultiDrawBuiltIn(EmulatedMultiDraw),
 }
 
 // A set of decorations that only affect variables.  They are placed in a vector that's expected to
@@ -1891,15 +1914,15 @@ impl Decorations {
 //
 // has_decoration: Similar to Decorations::has, but for enums with data.  For example:
 //
-//     has_decoration!(decoration, Decoration::Location) // returns a bool
+//     has_decoration!(decorations, Decoration::Location) // returns a bool
 //
 // get_decoration: Get a decoration matching a variant.  For example:
 //
-//     get_decoration!(decoration, Decoration::Location) // returns Some(Location(l)) or None
+//     get_decoration!(decorations, Decoration::Location) // returns Some(Location(l)) or None
 //
 // get_decoration_value: Get the value inside a decoration matching a variant.  For example:
 //
-//     get_decoration_value!(decoration, Decoration::Location) // returns Some(l) or None
+//     get_decoration_value!(decorations, Decoration::Location) // returns Some(l) or None
 macro_rules! has_decoration {
     ($decorations:expr, $variant:path) => {
         $decorations.decorations.iter().any(|decoration| matches!(decoration, $variant(..)))
@@ -1984,6 +2007,8 @@ pub struct Field {
     pub type_id: TypeId,
     pub precision: Precision,
     pub decorations: Decorations,
+    // Reflection info.  Tracking is only needed for fields of nameless interface blocks.
+    pub is_static_use: bool,
 }
 
 impl Field {
@@ -1993,7 +2018,7 @@ impl Field {
         precision: Precision,
         decorations: Decorations,
     ) -> Field {
-        Field { name, type_id, precision, decorations }
+        Field { name, type_id, precision, decorations, is_static_use: false }
     }
 }
 
@@ -2404,7 +2429,6 @@ impl AdvancedBlendEquations {
 // closures makes it hard for Rust to verify things, everything in the IR except the function
 // blocks are split into an `IRMeta` struct (allowing both the `.functions` and `.meta` to be
 // borrowed as &mut).
-#[cfg_attr(debug_assertions, derive(Debug))]
 pub struct IRMeta {
     types: Vec<Type>,
     constants: Vec<Constant>,
@@ -2474,6 +2498,8 @@ pub struct IRMeta {
     // set is determined during parse, but zero-initialization needs to be done late in
     // compilation.
     variables_pending_zero_initialization: HashSet<VariableId>,
+    // Shader reflection info
+    reflection_info: reflection::Info,
 }
 
 impl IRMeta {
@@ -2618,6 +2644,7 @@ impl IRMeta {
             per_vertex_in_is_redeclared: false,
             per_vertex_out_is_redeclared: false,
             variables_pending_zero_initialization: HashSet::new(),
+            reflection_info: reflection::Info::new(),
         }
     }
 
@@ -2644,13 +2671,21 @@ impl IRMeta {
     }
     pub fn prune_global_variables<Keep>(&mut self, keep: Keep)
     where
-        Keep: Fn(VariableId) -> bool,
+        Keep: Fn(VariableId, &Variable) -> bool,
     {
-        self.global_variables.retain(|&variable_id| keep(variable_id));
+        self.global_variables.retain(|&id| {
+            let should_keep = keep(id, &self.variables[id.id as usize]);
+            if !should_keep {
+                self.variables[id.id as usize].is_dead_code_eliminated = true;
+                self.variables_pending_zero_initialization.remove(&id);
+            }
+            should_keep
+        });
     }
-    // Used by transformations that non-trivially modify the list of global variables.
-    pub fn replace_global_variables(&mut self, replacement: Vec<VariableId>) {
-        self.global_variables = replacement;
+    // Used by transformations that non-trivially modify the list of global variables.  Returns the
+    // old list.
+    pub fn replace_global_variables(&mut self, replacement: Vec<VariableId>) -> Vec<VariableId> {
+        std::mem::replace(&mut self.global_variables, replacement)
     }
 
     pub fn get_main_function_id(&self) -> Option<FunctionId> {
@@ -2957,9 +2992,12 @@ impl IRMeta {
     }
 
     pub fn dead_code_eliminate_variable(&mut self, id: VariableId) {
-        // The variable is expected to already be removed from the IR, and this is just marking it
-        // as eliminated.
+        // Mark the variable as eliminated.
+        // Also remove it from pending initialization list.
+        // If the variable is referenced in other parts of the IR, it is expected to already be
+        // removed.
         self.variables[id.id as usize].is_dead_code_eliminated = true;
+        self.variables_pending_zero_initialization.remove(&id);
     }
     pub fn dead_code_eliminate_constant(&mut self, id: ConstantId) {
         // Don't dead-code-eliminate predefined constants, they may be referenced by future
@@ -3367,9 +3405,12 @@ impl IRMeta {
         debug_assert!(type_info.is_pointer());
         type_info.get_element_type_id().unwrap()
     }
+
+    pub fn take_reflection_info(&mut self) -> reflection::Info {
+        std::mem::replace(&mut self.reflection_info, reflection::Info::new())
+    }
 }
 
-#[cfg_attr(debug_assertions, derive(Debug))]
 pub struct IR {
     pub meta: IRMeta,
     // The first block of the function for each function id.  This is the root of the block graph.
@@ -3418,6 +3459,15 @@ impl IR {
         let main_function_id = self.meta.get_main_function_id().unwrap();
         let main_entry = self.function_entries[main_function_id.id as usize].as_mut().unwrap();
         main_entry.append_code(block);
+    }
+
+    pub fn collect_reflection_info(
+        &mut self,
+        options: &reflection::Options,
+        active_interface_variables: &HashSet<VariableId>,
+    ) {
+        self.meta.reflection_info =
+            reflection::collect_info(self, options, active_interface_variables);
     }
 }
 

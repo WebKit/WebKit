@@ -393,4 +393,54 @@ void ShareGroupVk::logBufferPools() const
         }
     }
 }
+
+void ShareGroupVk::imageWillFallbackFromTileMemory(vk::ImageHelper *image)
+{
+    ASSERT(image->useTileMemory());
+    ASSERT(!image->isForeignImage());
+
+    finalizeImageLayoutInAllSharedContexts(image);
+}
+
+void ShareGroupVk::finalizeImageLayoutInAllSharedContexts(vk::ImageHelper *image)
+{
+    if (image->useTileMemory())
+    {
+        for (auto context : mState.getContexts())
+        {
+            ContextVk *sharedContextVk = vk::GetImpl(context.second);
+            sharedContextVk->removeImageWithTileMemory(image);
+        }
+    }
+
+    vk::ImageRenderPassUsage &ImageRenderPassUsage = image->getRenderPassUsage();
+    if (ImageRenderPassUsage.hasAttachmentUsage() || image->isForeignImage())
+    {
+        for (auto context : mState.getContexts())
+        {
+            ContextVk *sharedContextVk = vk::GetImpl(context.second);
+            bool finalized             = sharedContextVk->finalizeImageLayout(image);
+
+            if ((finalized && ImageRenderPassUsage.hasAttachmentUsage()) ||
+                (image->isForeignImage() && !image->isReleasedToForeign()))
+            {
+                // Note: Foreign images may be shared between different textures. If another texture
+                // starts to use the image while the barrier-to-foreign is cached in the context, it
+                // will attempt to acquire the image from foreign while the release is still cached.
+                // A submission is made to finalize the queue family ownership transfer back to
+                // foreign.
+                //
+                // Similarly, if an image is used in two active render passes in two contexts. If we
+                // close one renderPass, the other renderPass may rely on previous renderPass's
+                // layout transition barrier. A submission will ensure previous barrier gets flushed
+                // out so that VVL will not complain. Note that one image used in two contexts
+                // simultaneously is a bit tricky, this is not rock solid to avoid image layout VVL,
+                // but should solve some usage cases at least.
+                (void)sharedContextVk->flushAndSubmitCommands(
+                    nullptr, nullptr, QueueSubmitReason::ForeignImageRelease);
+                ASSERT(!sharedContextVk->hasForeignImagesToTransition());
+            }
+        }
+    }
+}
 }  // namespace rx

@@ -53,8 +53,6 @@ ConfigParameters::ConfigParameters()
       clientArraysEnabled(true),
       // The default value of EGL_CONTEXT_OPENGL_ROBUST_ACCESS_EXT is EGL_FALSE.
       robustAccess(false),
-      // Tests that require EGL_PBUFFER_BIT should request it explicitly.
-      pbuffer(false),
       // EGL_RENDER_BUFFER requires EGL 1.4+ or extension support.
       mutableRenderBuffer(false),
       samples(-1),
@@ -341,8 +339,7 @@ GLWindowResult EGLWindow::initializeSurface(OSWindow *osWindow,
 
     std::vector<EGLint> configAttributes = {
         EGL_SURFACE_TYPE,
-        EGL_WINDOW_BIT | (params.pbuffer ? EGL_PBUFFER_BIT : 0) |
-            (params.mutableRenderBuffer ? EGL_MUTABLE_RENDER_BUFFER_BIT_KHR : 0),
+        EGL_WINDOW_BIT | (params.mutableRenderBuffer ? EGL_MUTABLE_RENDER_BUFFER_BIT_KHR : 0),
         EGL_RED_SIZE,
         (mConfigParams.redBits >= 0) ? mConfigParams.redBits : EGL_DONT_CARE,
         EGL_GREEN_SIZE,

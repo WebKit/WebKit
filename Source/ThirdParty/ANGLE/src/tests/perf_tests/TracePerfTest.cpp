@@ -1379,8 +1379,17 @@ TracePerfTest::TracePerfTest(std::unique_ptr<const TracePerfParams> params)
 
 void TracePerfTest::startTest()
 {
-    // runTrial() must align to frameCount()
-    ASSERT(mCurrentFrame == mStartFrame);
+    // If the previous run didn't align with the frame count (e.g., due to gRunToKeyFrame
+    // or unaligned warmup iterations), reset the replay state to ensure a clean start.
+    if (mCurrentFrame != mStartFrame)
+    {
+        mTraceReplay->resetReplay();
+        mCurrentFrame = mStartFrame;
+
+        // Flush to avoid potential GPU time tracking issues on some platforms if the previous
+        // unaligned run left pending work.
+        glFlush();
+    }
 
     ANGLERenderTest::startTest();
 }

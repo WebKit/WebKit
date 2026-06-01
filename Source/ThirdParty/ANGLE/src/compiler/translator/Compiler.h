@@ -50,14 +50,6 @@ bool IsGLSL420OrNewer(ShShaderOutput output);
 bool IsGLSL410OrOlder(ShShaderOutput output);
 
 //
-// Helper function to check if the invariant qualifier can be removed.
-//
-bool RemoveInvariant(sh::GLenum shaderType,
-                     int shaderVersion,
-                     ShShaderOutput outputType,
-                     const ShCompileOptions &compileOptions);
-
-//
 // The base class used to back handles returned to the driver.
 //
 class TShHandleBase

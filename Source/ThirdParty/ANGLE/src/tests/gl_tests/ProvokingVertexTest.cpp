@@ -873,8 +873,34 @@ TEST_P(ProvokingVertexBufferUpdateTest, DrawFlatWithPartialBufferSubUpdatesBetwe
     checkFlatQuadColors(kWidth, kHeight, GLColor::red, GLColor::green);
 }
 
+// Only run these tests on Metal. Other backends tend to time out the test suite but not crash.
+class ProvokingVertexTestMetal : public ProvokingVertexTest
+{};
+
+// Test that a very large draw call with flat shading doesn't cause an integer overflow in the Metal
+// backend.
+TEST_P(ProvokingVertexTestMetal, LargeDrawTriangleFan)
+{
+    GLsizei count = 1431655768;
+    glUseProgram(mProgram);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, count);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
+// Test that a very large draw call with flat shading doesn't cause an integer overflow in the Metal
+// backend.
+TEST_P(ProvokingVertexTestMetal, LargeDrawTriangleStrip)
+{
+    GLsizei count = 1431655768;
+    glUseProgram(mProgram);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, count);
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ProvokingVertexTest);
 ANGLE_INSTANTIATE_TEST_ES3(ProvokingVertexTest);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ProvokingVertexTestMetal);
+ANGLE_INSTANTIATE_TEST(ProvokingVertexTestMetal, ES3_METAL());
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ProvokingVertexBufferUpdateTest);
 ANGLE_INSTANTIATE_TEST_ES3(ProvokingVertexBufferUpdateTest);

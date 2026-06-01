@@ -9,11 +9,13 @@
 
 #include "libANGLE/renderer/metal/ProvokingVertexHelper.h"
 #import <Foundation/Foundation.h>
+#include "common/base/anglebase/numerics/checked_math.h"
 #include "libANGLE/Display.h"
 #include "libANGLE/renderer/metal/ContextMtl.h"
 #include "libANGLE/renderer/metal/DisplayMtl.h"
 #include "libANGLE/renderer/metal/mtl_common.h"
 #include "libANGLE/renderer/metal/shaders/rewrite_indices_shared.h"
+
 namespace rx
 {
 

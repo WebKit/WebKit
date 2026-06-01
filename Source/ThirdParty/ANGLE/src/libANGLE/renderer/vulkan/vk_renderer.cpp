@@ -365,8 +365,6 @@ constexpr const char *kSkippedMessages[] = {
     "VUID-vkCmdEndQuery-None-07007",
     // https://anglebug.com/475549551
     "VUID-VkGraphicsPipelineCreateInfo-renderPass-09652",
-    // https://anglebug.com/495534890
-    "VUID-VkDeviceCreateInfo-enabledLayerCount-12384",
 };
 
 // Validation messages that should be ignored only when VK_EXT_primitive_topology_list_restart is
@@ -392,6 +390,17 @@ constexpr const char *kNoMaintenance5SkippedMessages[] = {
 constexpr const char *kNoMaintenance9SkippedMessages[] = {
     // http://issuetracker.google.com/429339330
     "WARNING-VkImageSubresourceRange-layerCount-compatibility",
+};
+
+// Validation messages that should be ignored only when VK_KHR_swapchain_maintenance1 is not
+// present.
+constexpr const char *kNoSwapchainMaintenance1SkippedMessages[] = {
+    // Without VK_KHR_swapchain_maintenance1, there is technically no correct way to know when a
+    // VkSwapchainKHR can be destroyed.  If vkDeviceWaitIdle() is called, that's blessed as "good
+    // enough", but ANGLE does not call that function.  With VK_KHR_swapchain_maintenance1, the last
+    // present's fence is appropriately waited on.  This technicality with older drivers is ignored.
+    // See https://gitlab.khronos.org/vulkan/vulkan/-/issues/4761
+    "VUID-vkDestroySwapchainKHR-swapchain-01282",
 };
 
 // Validation messages that should be ignored only when preferBGR565ToRGB565 is enabled.
@@ -2497,23 +2506,23 @@ angle::Result Renderer::initialize(vk::ErrorContext *context,
                                                                  instanceLayerProps.data()));
     }
 
-    VulkanLayerVector enabledInstanceLayerNames;
+    mEnabledInstanceLayerNames.clear();
 
     if (enableApiDumpLayer)
     {
-        enabledInstanceLayerNames.push_back("VK_LAYER_LUNARG_api_dump");
+        mEnabledInstanceLayerNames.push_back("VK_LAYER_LUNARG_api_dump");
     }
 
     if (mEnableValidationLayers)
     {
         const bool layersRequested = useDebugLayers == UseDebugLayers::Yes;
         mEnableValidationLayers = GetAvailableValidationLayers(instanceLayerProps, layersRequested,
-                                                               &enabledInstanceLayerNames);
+                                                               &mEnabledInstanceLayerNames);
     }
 
     if (wsiLayer != nullptr)
     {
-        enabledInstanceLayerNames.push_back(wsiLayer);
+        mEnabledInstanceLayerNames.push_back(wsiLayer);
     }
 
     auto enumerateInstanceVersion = reinterpret_cast<PFN_vkEnumerateInstanceVersion>(
@@ -2546,7 +2555,7 @@ angle::Result Renderer::initialize(vk::ErrorContext *context,
     const UseVulkanSwapchain useVulkanSwapchain = wsiExtension != nullptr || wsiLayer != nullptr
                                                       ? UseVulkanSwapchain::Yes
                                                       : UseVulkanSwapchain::No;
-    ANGLE_TRY(enableInstanceExtensions(context, enabledInstanceLayerNames, wsiExtension,
+    ANGLE_TRY(enableInstanceExtensions(context, mEnabledInstanceLayerNames, wsiExtension,
                                        useVulkanSwapchain, canLoadDebugUtils));
 
     const std::string appName = angle::GetExecutableName();
@@ -2569,8 +2578,8 @@ angle::Result Renderer::initialize(vk::ErrorContext *context,
     instanceInfo.ppEnabledExtensionNames =
         mEnabledInstanceExtensions.empty() ? nullptr : mEnabledInstanceExtensions.data();
 
-    instanceInfo.enabledLayerCount   = static_cast<uint32_t>(enabledInstanceLayerNames.size());
-    instanceInfo.ppEnabledLayerNames = enabledInstanceLayerNames.data();
+    instanceInfo.enabledLayerCount   = static_cast<uint32_t>(mEnabledInstanceLayerNames.size());
+    instanceInfo.ppEnabledLayerNames = mEnabledInstanceLayerNames.data();
 
     // On macOS, there is no native Vulkan driver, so we need to enable the
     // portability enumeration extension to allow use of MoltenVK.
@@ -2727,8 +2736,7 @@ angle::Result Renderer::initialize(vk::ErrorContext *context,
     // Determine the threshold for pending garbage sizes.
     calculatePendingGarbageSizeLimit();
 
-    ANGLE_TRY(
-        setupDevice(context, featureOverrides, wsiLayer, useVulkanSwapchain, nativeWindowSystem));
+    ANGLE_TRY(setupDevice(context, featureOverrides, useVulkanSwapchain, nativeWindowSystem));
 
     // If only one queue family, that's the only choice and the device is initialize with that.  If
     // there is more than one queue, we still create the device with the first queue family and hope
@@ -4366,7 +4374,7 @@ angle::Result Renderer::enableDeviceExtensions(vk::ErrorContext *context,
     deviceExtensionProps.resize(deviceExtensionCount);
 
     // Enumerate device extensions that are provided by explicit layers.
-    for (const char *layerName : mEnabledDeviceLayerNames)
+    for (const char *layerName : mEnabledInstanceLayerNames)
     {
         uint32_t previousExtensionCount    = static_cast<uint32_t>(deviceExtensionProps.size());
         uint32_t deviceLayerExtensionCount = 0;
@@ -4538,7 +4546,6 @@ void Renderer::initDeviceExtensionEntryPoints()
 
 angle::Result Renderer::setupDevice(vk::ErrorContext *context,
                                     const angle::FeatureOverrides &featureOverrides,
-                                    const char *wsiLayer,
                                     UseVulkanSwapchain useVulkanSwapchain,
                                     angle::NativeWindowSystem nativeWindowSystem)
 {
@@ -4549,18 +4556,6 @@ angle::Result Renderer::setupDevice(vk::ErrorContext *context,
     std::vector<VkLayerProperties> deviceLayerProps(deviceLayerCount);
     ANGLE_VK_TRY(context, vkEnumerateDeviceLayerProperties(mPhysicalDevice, &deviceLayerCount,
                                                            deviceLayerProps.data()));
-
-    mEnabledDeviceLayerNames.clear();
-    if (mEnableValidationLayers)
-    {
-        mEnableValidationLayers =
-            GetAvailableValidationLayers(deviceLayerProps, false, &mEnabledDeviceLayerNames);
-    }
-
-    if (wsiLayer != nullptr)
-    {
-        mEnabledDeviceLayerNames.push_back(wsiLayer);
-    }
 
     mEnabledFeatures       = {};
     mEnabledFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
@@ -4708,8 +4703,6 @@ angle::Result Renderer::createDeviceAndQueue(vk::ErrorContext *context, uint32_t
     createInfo.flags                 = 0;
     createInfo.queueCreateInfoCount  = queueCreateInfoCount;
     createInfo.pQueueCreateInfos     = queueCreateInfo;
-    createInfo.enabledLayerCount     = static_cast<uint32_t>(mEnabledDeviceLayerNames.size());
-    createInfo.ppEnabledLayerNames   = mEnabledDeviceLayerNames.data();
     createInfo.enabledExtensionCount = static_cast<uint32_t>(mEnabledDeviceExtensions.size());
     createInfo.ppEnabledExtensionNames =
         mEnabledDeviceExtensions.empty() ? nullptr : mEnabledDeviceExtensions.data();
@@ -4875,6 +4868,14 @@ void Renderer::initializeValidationMessageSuppressions()
         mSkippedValidationMessages.insert(
             mSkippedValidationMessages.end(), kNoMaintenance9SkippedMessages,
             kNoMaintenance9SkippedMessages + ArraySize(kNoMaintenance9SkippedMessages));
+    }
+
+    if (!getFeatures().supportsSwapchainMaintenance1.enabled)
+    {
+        mSkippedValidationMessages.insert(mSkippedValidationMessages.end(),
+                                          kNoSwapchainMaintenance1SkippedMessages,
+                                          kNoSwapchainMaintenance1SkippedMessages +
+                                              ArraySize(kNoSwapchainMaintenance1SkippedMessages));
     }
 
     if (getFeatures().preferBGR565ToRGB565.enabled)
@@ -5826,15 +5827,7 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
         &mFeatures, supportsImageDrmFormatModifier,
         ExtensionFound(VK_EXT_IMAGE_DRM_FORMAT_MODIFIER_EXTENSION_NAME, deviceExtensionNames));
 
-    // http://anglebug.com/42261756
-    // Precision qualifiers are disabled for Pixel 2 before the driver included relaxed precision.
-    const bool isPixel4 =
-        IsPixel4(mPhysicalDeviceProperties.vendorID, mPhysicalDeviceProperties.deviceID);
-    ANGLE_FEATURE_CONDITION(
-        &mFeatures, enablePrecisionQualifiers,
-        !(IsPixel2(mPhysicalDeviceProperties.vendorID, mPhysicalDeviceProperties.deviceID) &&
-          (driverVersion < angle::VersionTriple(512, 490, 0))) &&
-            !isPixel4);
+    ANGLE_FEATURE_CONDITION(&mFeatures, enablePrecisionQualifiers, true);
 
     // http://anglebug.com/42265957
     ANGLE_FEATURE_CONDITION(&mFeatures, varyingsRequireMatchingPrecisionInSpirv,
@@ -5967,7 +5960,7 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // ES 3.2, it should be unlisted.
     ANGLE_FEATURE_CONDITION(&mFeatures, exposeES32ForTesting,
                             mFeatures.exposeNonConformantExtensionsAndVersions.enabled &&
-                                (isSoftwareRenderer || isPixel4 || (IsWindows() && isIntel)));
+                                (isSoftwareRenderer || (IsWindows() && isIntel)));
 
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsMemoryBudget,
@@ -6134,8 +6127,7 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // Some platforms perform better using BGR565 than RGB565.
     bool isBGR565Renderable = hasImageFormatFeatureBits(angle::FormatID::B5G6R5_UNORM,
                                                         VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT);
-    ANGLE_FEATURE_CONDITION(&mFeatures, preferBGR565ToRGB565,
-                            isBGR565Renderable && isQualcomm && !isPixel4);
+    ANGLE_FEATURE_CONDITION(&mFeatures, preferBGR565ToRGB565, isBGR565Renderable && isQualcomm);
 
     // Emit SPIR-V 1.4 when supported.  The following old drivers have various bugs with SPIR-V 1.4:
     //

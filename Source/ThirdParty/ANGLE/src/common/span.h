@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <array>
 #include <iterator>
+#include <new>
 #include <type_traits>
 #include <utility>
 
@@ -457,6 +458,35 @@ template <typename T>
 constexpr Span<uint8_t> as_writable_byte_span(T &&arg)
 {
     return as_writable_bytes(Span(arg));
+}
+
+template <typename ElementType, typename ByteType, size_t Extent, typename InternalPtr>
+    requires(std::same_as<std::remove_cv_t<ByteType>, uint8_t> &&
+             std::is_trivially_copyable_v<ElementType> &&
+             (!std::is_const_v<ByteType> || std::is_const_v<ElementType>) &&
+             (Extent == dynamic_extent || Extent % sizeof(ElementType) == 0))
+[[nodiscard]] constexpr auto reinterpret_span(Span<ByteType, Extent, InternalPtr> span)
+{
+    CHECK(reinterpret_cast<uintptr_t>(span.data()) % alignof(ElementType) == 0u);
+    if constexpr (Extent == dynamic_extent)
+    {
+        CHECK(span.size_bytes() % sizeof(ElementType) == 0u);
+    }
+    ElementType *ptr = std::launder(reinterpret_cast<ElementType *>(span.data()));
+    if constexpr (Extent == dynamic_extent)
+    {
+        // SAFETY: We checked for proper alignment, size, strict aliasing rules, and
+        // started the lifetime of the array.
+        return ANGLE_UNSAFE_BUFFERS(
+            Span<ElementType, dynamic_extent>(ptr, span.size_bytes() / sizeof(ElementType)));
+    }
+    else
+    {
+        // SAFETY: We checked for proper alignment, size, strict aliasing rules, and
+        // started the lifetime of the array.
+        constexpr size_t NewCount = Extent / sizeof(ElementType);
+        return ANGLE_UNSAFE_BUFFERS(Span<ElementType, NewCount>(ptr, NewCount));
+    }
 }
 
 }  // namespace angle

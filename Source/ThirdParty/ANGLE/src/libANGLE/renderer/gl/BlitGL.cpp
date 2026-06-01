@@ -859,10 +859,10 @@ angle::Result BlitGL::copySubTextureCPUReadback(const gl::Context *context,
         readFunction     = angle::ReadColor<angle::R8G8B8A8, GLfloat>;
     }
 
-    gl::PixelUnpackState unpack;
-    unpack.alignment = 1;
-    ANGLE_TRY(mStateManager->setPixelUnpackState(context, unpack));
-    ANGLE_TRY(mStateManager->setPixelUnpackBuffer(context, nullptr));
+    gl::PixelPackState pack;
+    pack.alignment = 1;
+    ANGLE_TRY(mStateManager->setPixelPackState(context, pack));
+    ANGLE_TRY(mStateManager->setPixelPackBuffer(context, nullptr));
     ANGLE_GL_TRY(context, mFunctions->readPixels(readPixelsArea.x, readPixelsArea.y,
                                                  readPixelsArea.width, readPixelsArea.height,
                                                  readPixelsFormat, GL_UNSIGNED_BYTE, sourceMemory));
@@ -877,10 +877,10 @@ angle::Result BlitGL::copySubTextureCPUReadback(const gl::Context *context,
         destInternalFormatInfo.format, destInternalFormatInfo.componentType, readPixelsArea.width,
         readPixelsArea.height, 1, unpackFlipY, unpackPremultiplyAlpha, unpackUnmultiplyAlpha);
 
-    gl::PixelPackState pack;
-    pack.alignment = 1;
-    ANGLE_TRY(mStateManager->setPixelPackState(context, pack));
-    ANGLE_TRY(mStateManager->setPixelPackBuffer(context, nullptr));
+    gl::PixelUnpackState unpack;
+    unpack.alignment = 1;
+    ANGLE_TRY(mStateManager->setPixelUnpackState(context, unpack));
+    ANGLE_TRY(mStateManager->setPixelUnpackBuffer(context, nullptr));
 
     nativegl::TexSubImageFormat texSubImageFormat =
         nativegl::GetTexSubImageFormat(mFunctions, mFeatures, destFormat, destType);

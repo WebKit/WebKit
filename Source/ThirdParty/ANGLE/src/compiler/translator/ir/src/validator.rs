@@ -6,6 +6,8 @@
 // transformations, to ensure they generate valid IR.
 //
 // Validations implemented:
+//
+// IDs and scopes:
 //   - Every ID must be present in the respective map: validate_all_ids_are_present()
 //   - Every variable must be defined somewhere, either in global block or in a block:
 //     validate_all_variables_are_declared_in_scope()
@@ -13,6 +15,15 @@
 //     validate_all_variables_are_declared_in_scope()
 //   - Every accessed register must be declared in an accessible block:
 //     validate_all_registers_are_declared_in_scope()
+//   - No identical types with different IDs: validate_no_identical_types_with_different_ids()
+//   - Referenced IDs are not dead-code-eliminated: validate_data_type_id_is_in_bound_and_alive(),
+//     validate_constant_id_is_in_bound_and_alive(), validate_variable_id_is_in_bound_and_alive()
+//
+// Types:
+//   - Validate that ImageType fields are valid in combination with ImageDimension:
+//     validate_image_types()
+//
+// Control flow:
 //   - Branches must have the appropriate targets set (merge, trueblock for if, etc); every block
 //     ends in branch: validate_all_branch_instructions_have_valid_target()
 //   - No branches inside a block (i.e. no dead code): validate_no_dead_code()
@@ -20,16 +31,15 @@
 //     output: validate_merge_block_with_input()
 //   - For block that has a merge block with an input, the branch instruction must be If, and the
 //     block must contains block1: validate_merge_block_with_input()
-//   - No identical types with different IDs: validate_no_identical_types_with_different_ids()
-//   - Validate that ImageType fields are valid in combination with ImageDimension:
-//     validate_image_types()
+//
+// Instructions:
+//   - Access to struct fields are in bounds: validate_struct_field_in_bounds()
+//   - If conditions are boolean: validate_if_condition_is_bool()
+//   - No operations should have entirely constant arguments, that should be folded (and
+//     transformations shouldn't retintroduce it): validate_no_constant_foldable_instruction()
 
 // TODO(http://anglebug.com/349994211): to validate:
-//   - Referenced IDs are not dead-code-eliminated: Checking against max_*_count can be paird with a
-//     look up and checking that !is_dead_code_eliminated
 //   - If there's a cached "has side effect", that it's correct.
-//   - No operations should have entirely constant arguments, that should be folded (and
-//     transformations shouldn't retintroduce it)
 //   - Catch misuse of built-in names.
 //   - Precision is not applied to types that don't are not applicable.  It _is_ applied to types
 //     that are applicable (including uniforms and samplers for example).  Needs to work to make
@@ -37,9 +47,9 @@
 //   - Case values are always ConstantId (int/uint only too?)
 //   - Variables are Pointers
 //   - Pointers only valid in the left arg of load/store/access/call
+//   - Arguments of OpCode that must be pointer type is indeed a pointer
 //   - Loop blocks ends in the appropriate instructions.
 //   - Do blocks end in DoLoop (unless already terminated by something else, like Return)
-//   - If condition is a bool.
 //   - Maximum one default case for Switch instructions.
 //   - No pointer->pointer type.
 //   - Interface variables with NameSource::Internal are unique.
@@ -260,6 +270,7 @@ impl<'a> Validator<'a> {
         self.validate_no_dead_code();
         self.validate_all_branch_instructions_have_valid_target();
         self.validate_merge_block_with_input();
+        self.validate_all_instructions();
     }
 
     fn validate_all_ids_are_present(&self) {
@@ -299,29 +310,19 @@ impl<'a> Validator<'a> {
         );
 
         // Validate IRMeta.global_variables
-        for (global_variable_id, global_variable) in
-            self.ir.meta.all_global_variables().iter().enumerate()
-        {
-            if global_variable.id >= self.max_variable_count {
-                self.on_error(format_args!(
-                    "invalid IRMeta: global_variable {global_variable_id} uses invalid variable \
-                     id {}",
-                    global_variable.id
-                ));
-            }
+        for global_variable_id in self.ir.meta.all_global_variables() {
+            self.validate_variable_id_is_in_bound_and_alive(
+                *global_variable_id,
+                format_args!("global_variable {:?}", global_variable_id),
+            );
         }
 
         // validate IRMeta.variables_pending_zero_initialization
-        for (variable_pending_zero_initialization_index, variable_id) in
-            self.ir.meta.get_variables_pending_zero_initialization().iter().enumerate()
-        {
-            if variable_id.id >= self.max_variable_count {
-                self.on_error(format_args!(
-                    "invalid IRMeta: variable_pending_zero_initialization \
-                     {variable_pending_zero_initialization_index} uses invalid variable id {}",
-                    variable_id.id
-                ));
-            }
+        for variable_id in self.ir.meta.get_variables_pending_zero_initialization() {
+            self.validate_variable_id_is_in_bound_and_alive(
+                *variable_id,
+                format_args!("variable_pending_zero_initialization {:?}", variable_id),
+            );
         }
     }
 
@@ -340,52 +341,42 @@ impl<'a> Validator<'a> {
 
     // Helper function to check Constant member type_id is valid
     fn validate_all_ids_in_a_constant_are_present(&self, constant_id: u32, constant: &Constant) {
-        if constant.type_id.id >= self.max_type_count {
-            self.on_error(format_args!(
-                "Constant id {constant_id} has invalid type id {}",
-                constant.type_id.id
-            ));
-        }
+        self.validate_data_type_id_is_in_bound_and_alive(
+            constant.type_id,
+            format_args!("constant {constant_id}"),
+        );
     }
 
     // Helper function to check Variable members type_id, initializer are valid
     fn validate_all_ids_in_a_variable_are_present(&self, variable_id: u32, variable: &Variable) {
         // Check type_id
-        if variable.type_id.id >= self.max_type_count {
-            self.on_error(format_args!(
-                "Variable id {variable_id} has invalid type id {}",
-                variable.type_id.id
-            ));
-        }
+        self.validate_data_type_id_is_in_bound_and_alive(
+            variable.type_id,
+            format_args!("variable {variable_id}"),
+        );
         // Check initializer
-        if let Some(valid_initializer) = variable.initializer
-            && valid_initializer.id >= self.max_constant_count
-        {
-            self.on_error(format_args!(
-                "Variable id {variable_id} has invalid constant initializer {}",
-                valid_initializer.id
-            ));
+        if let Some(valid_initializer) = variable.initializer {
+            self.validate_constant_id_is_in_bound_and_alive(
+                valid_initializer,
+                format_args!("variable {variable_id} initializer"),
+            );
         }
     }
 
     // Helper function to check Function members return_type_id, params are valid
     fn validate_all_ids_in_a_function_are_present(&self, function_id: u32, function: &Function) {
         // Check return type
-        if function.return_type_id.id >= self.max_type_count {
-            self.on_error(format_args!(
-                "Function id {function_id} has invalid return type {}",
-                function.return_type_id.id
-            ));
-        }
+        self.validate_data_type_id_is_in_bound_and_alive(
+            function.return_type_id,
+            format_args!("return type of function {function_id}"),
+        );
 
         // Check function parameters
         for param in &function.params {
-            if param.variable_id.id >= self.max_variable_count {
-                self.on_error(format_args!(
-                    "Function id {function_id} has invalid parameters {}",
-                    param.variable_id.id
-                ));
-            }
+            self.validate_variable_id_is_in_bound_and_alive(
+                param.variable_id,
+                format_args!("function {function_id} parameter"),
+            );
         }
     }
 
@@ -396,12 +387,10 @@ impl<'a> Validator<'a> {
     fn validate_all_ids_are_present_in_block(&self, block: &Block) {
         // validate block variables
         for variable in &block.variables {
-            if variable.id >= self.max_variable_count {
-                self.on_error(format_args!(
-                    "invalid variable id {} found in block variabls",
-                    variable.id
-                ));
-            }
+            self.validate_variable_id_is_in_bound_and_alive(
+                *variable,
+                format_args!("block variables"),
+            );
         }
         // validate input
         if let Some(valid_input) = block.input {
@@ -419,6 +408,63 @@ impl<'a> Validator<'a> {
             if let Some(instruction_result) = result {
                 self.validate_opcode_instruction_result_has_valid_ids(opcode, &instruction_result);
             }
+        }
+    }
+
+    fn validate_data_type_id_is_in_bound_and_alive(
+        &self,
+        type_id: TypeId,
+        context: fmt::Arguments,
+    ) {
+        if type_id.id >= self.max_type_count {
+            self.on_error(format_args!(
+                "invalid TypeId found in {context}, TypeId {} is out of bound",
+                type_id.id
+            ));
+        }
+        if self.ir.meta.all_types()[type_id.id as usize].is_dead_code_eliminated() {
+            self.on_error(format_args!(
+                "invalid TypeId found in {context}, TypeId {} is dead code eliminated",
+                type_id.id
+            ));
+        }
+    }
+
+    fn validate_constant_id_is_in_bound_and_alive(
+        &self,
+        constant_id: ConstantId,
+        context: fmt::Arguments,
+    ) {
+        if constant_id.id >= self.max_constant_count {
+            self.on_error(format_args!(
+                "invalid ConstantId found in {context}, ConstantId {} is out of bound",
+                constant_id.id
+            ));
+        }
+        if self.ir.meta.all_constants()[constant_id.id as usize].is_dead_code_eliminated {
+            self.on_error(format_args!(
+                "invalid ConstantId found in {context}, ConstantId {} is dead code eliminated",
+                constant_id.id
+            ));
+        }
+    }
+
+    fn validate_variable_id_is_in_bound_and_alive(
+        &self,
+        variable_id: VariableId,
+        context: fmt::Arguments,
+    ) {
+        if variable_id.id >= self.max_variable_count {
+            self.on_error(format_args!(
+                "invalid VariableId found in {context}, VariableId {} is out of bound",
+                variable_id.id
+            ));
+        }
+        if self.ir.meta.all_variables()[variable_id.id as usize].is_dead_code_eliminated {
+            self.on_error(format_args!(
+                "invalid VariableId found in {context}, VariableId {} is dead code eliminated",
+                variable_id.id
+            ));
         }
     }
 
@@ -696,12 +742,11 @@ impl<'a> Validator<'a> {
                 op_code, result.id.id
             ));
         }
-        if result.type_id.id >= self.max_type_count {
-            self.on_error(format_args!(
-                "invalid {:?} instruction result type {}",
-                op_code, result.type_id.id
-            ));
-        }
+
+        self.validate_data_type_id_is_in_bound_and_alive(
+            result.type_id,
+            format_args!("result of instruction {:?}", op_code),
+        );
     }
 
     // Helper function to check Block input TypedRegisterId contains valid RegisterId and TypeId
@@ -713,12 +758,10 @@ impl<'a> Validator<'a> {
                 input.id.id
             ));
         }
-        if input.type_id.id >= self.max_type_count {
-            self.on_error(format_args!(
-                "invalid block input found, invalid input type {}",
-                input.type_id.id
-            ));
-        }
+        self.validate_data_type_id_is_in_bound_and_alive(
+            input.type_id,
+            format_args!("block input"),
+        );
     }
 
     // Helper function to check OpCode instruction TypedId parameters contain valid id and
@@ -749,7 +792,7 @@ impl<'a> Validator<'a> {
                     }
                     TypedIdValidationCategory::RegisterDeclared => {
                         let declared_register_tracker = declared_registers.expect(
-                            "Expecting valid DeclaredRegisterTracker provided for \
+                            "expecting valid DeclaredRegisterTracker provided for \
                              RegisterDeclared category",
                         );
                         if !declared_register_tracker.is_declared(register_id) {
@@ -764,12 +807,10 @@ impl<'a> Validator<'a> {
             Id::Constant(constant_id) => {
                 match category {
                     TypedIdValidationCategory::IdInBound => {
-                        if constant_id.id >= self.max_constant_count {
-                            self.on_error(format_args!(
-                                "invalid {:?} instruction: invalid constant id {}",
-                                op_code, constant_id.id
-                            ));
-                        }
+                        self.validate_constant_id_is_in_bound_and_alive(
+                            constant_id,
+                            format_args!("parameter of instruction {:?}", op_code),
+                        );
                     }
 
                     TypedIdValidationCategory::VariableDeclared => {
@@ -782,17 +823,15 @@ impl<'a> Validator<'a> {
             }
             Id::Variable(variable_id) => match category {
                 TypedIdValidationCategory::IdInBound => {
-                    if variable_id.id >= self.max_variable_count {
-                        self.on_error(format_args!(
-                            "invalid {:?} instruction: invalid variable id {}",
-                            op_code, variable_id.id
-                        ));
-                    }
+                    self.validate_variable_id_is_in_bound_and_alive(
+                        variable_id,
+                        format_args!("parameter of instruction {:?}", op_code),
+                    );
                 }
 
                 TypedIdValidationCategory::VariableDeclared => {
                     let declared_variables_tracker = declared_variables.expect(
-                        "Expecting valid DeclaredVarTracker provided for VariableDeclared category",
+                        "expecting valid DeclaredVarTracker provided for VariableDeclared category",
                     );
                     if !declared_variables_tracker.is_variable_declared(variable_id) {
                         self.on_error(format_args!(
@@ -806,13 +845,11 @@ impl<'a> Validator<'a> {
                 }
             },
         }
-        // validate typed_id
-        if typed_id.type_id.id >= self.max_type_count {
-            self.on_error(format_args!(
-                "invalid {:?} instruction: invalid type id {}",
-                op_code, typed_id.type_id.id
-            ));
-        }
+
+        self.validate_data_type_id_is_in_bound_and_alive(
+            typed_id.type_id,
+            format_args!("parameter of instruction {:?}", op_code),
+        );
     }
 
     // Helper Function to print the invalid IR and then panic!
@@ -988,7 +1025,7 @@ impl<'a> Validator<'a> {
             }
             if !seen_types.insert(ir_type) {
                 self.on_error(format_args!(
-                    "Identical type {:?} found with different IDs",
+                    "identical type {:?} found with different IDs",
                     ir_type
                 ));
             }
@@ -1152,6 +1189,102 @@ impl<'a> Validator<'a> {
                     ));
                 }
             }
+        }
+    }
+
+    fn validate_no_constant_foldable_instruction(&self, opcode: &OpCode) {
+        match opcode {
+            OpCode::Binary(_, lhs, rhs) => {
+                self.validate_not_all_args_are_constant(opcode, &[*lhs, *rhs]);
+            }
+            OpCode::Unary(_, param) => {
+                self.validate_not_all_args_are_constant(opcode, &[*param]);
+            }
+            OpCode::BuiltIn(built_in_opcode, params) if built_in_opcode.may_const_fold() => {
+                self.validate_not_all_args_are_constant(opcode, params);
+            }
+
+            OpCode::ConstructVectorFromMultiple(params)
+            | OpCode::ConstructMatrixFromMultiple(params)
+            | OpCode::ConstructStruct(params)
+            | OpCode::ConstructArray(params) => {
+                self.validate_not_all_args_are_constant(opcode, params);
+            }
+
+            OpCode::ConstructScalarFromScalar(param)
+            | OpCode::ConstructVectorFromScalar(param)
+            | OpCode::ConstructMatrixFromScalar(param)
+            | OpCode::ConstructMatrixFromMatrix(param)
+            | OpCode::ExtractVectorComponent(param, _)
+            | OpCode::ExtractVectorComponentMulti(param, _)
+            | OpCode::ExtractStructField(param, _) => {
+                self.validate_not_all_args_are_constant(opcode, &[*param]);
+            }
+
+            OpCode::ExtractVectorComponentDynamic(indexed, index)
+            | OpCode::ExtractMatrixColumn(indexed, index)
+            | OpCode::ExtractArrayElement(indexed, index) => {
+                self.validate_not_all_args_are_constant(opcode, &[*indexed, *index]);
+            }
+
+            OpCode::Switch(switch_condition, case_values) => {
+                if case_values.is_empty() {
+                    self.on_error(format_args!(
+                        "operation {:?} could be constant folded. Switch operation has no case \
+                         values, Switch instruction should be removed",
+                        opcode
+                    ));
+                }
+
+                if let Id::Constant(switch_condition_constant_id) = switch_condition.id {
+                    for case_value_id in case_values.iter().flatten() {
+                        if switch_condition_constant_id != *case_value_id {
+                            self.on_error(format_args!(
+                                "operation {:?} could be constant folded. Case value does not \
+                                 match with switch condition constant, case should be removed",
+                                opcode
+                            ));
+                        }
+                    }
+                }
+            }
+            // Other instructions can't be constant folded.
+            OpCode::MergeInput
+            | OpCode::Discard
+            | OpCode::Return(_)
+            | OpCode::Break
+            | OpCode::Continue
+            | OpCode::Passthrough
+            | OpCode::NextBlock
+            | OpCode::Merge(_)
+            // OpCode::If and OpCode::LoopIf condition can be Constant(ConstantId), as long as the
+            // condition.type_id is TYPE_ID_BOOL. See function
+            // validate_if_condition_is_bool(), and test GLSLTestLoops.ForNoCondition.
+            | OpCode::If(_)
+            | OpCode::LoopIf(_)
+            | OpCode::Loop
+            | OpCode::DoLoop
+            | OpCode::AccessVectorComponent(_, _)
+            | OpCode::AccessVectorComponentMulti(_, _)
+            | OpCode::AccessVectorComponentDynamic(_, _)
+            | OpCode::AccessMatrixColumn(_, _)
+            | OpCode::AccessStructField(_, _)
+            | OpCode::AccessArrayElement(_, _)
+            | OpCode::Load(_)
+            | OpCode::Store(_, _)
+            | OpCode::Alias(_)
+            | OpCode::Call(_, _)
+            | OpCode::BuiltIn(_, _)
+            | OpCode::Texture(_, _, _) => {}
+        };
+    }
+
+    fn validate_not_all_args_are_constant(&self, opcode: &OpCode, instruction_args: &[TypedId]) {
+        if instruction_args.iter().all(|arg| matches!(arg.id, Id::Constant(_))) {
+            self.on_error(format_args!(
+                "operation {:?} contains only constant arguments, they should be constant folded",
+                opcode
+            ));
         }
     }
 
@@ -1328,7 +1461,7 @@ impl<'a> Validator<'a> {
             }
             OpCode::LoopIf(_) if !parent_block_meta_data.is_loop => {
                 self.on_error(format_args!(
-                    "The block ends with OpCode::LoopIf must be immediate child of the loop that \
+                    "the block ends with OpCode::LoopIf must be immediate child of the loop that \
                      ends with OpCode::Loop"
                 ));
             }
@@ -1513,5 +1646,55 @@ impl<'a> Validator<'a> {
                 }
             }
         }
+    }
+
+    fn validate_all_instructions(&self) {
+        // All validation that can be done on an instruction in isolation is done in one pass.
+        traverser::visitor::for_each_instruction(
+            &mut (),
+            &self.ir.function_entries,
+            &|_, instruction| {
+                let (opcode, _result) = instruction.get_op_and_result(&self.ir.meta);
+                self.validate_struct_field_in_bounds(opcode);
+                self.validate_if_condition_is_bool(opcode);
+                self.validate_no_constant_foldable_instruction(opcode);
+            },
+        );
+    }
+
+    fn validate_struct_field_in_bounds(&self, opcode: &OpCode) {
+        let (struct_type, field_index) = match *opcode {
+            OpCode::AccessStructField(struct_id, field_index) => (
+                Some(self.ir.meta.get_type(self.ir.meta.get_pointee_type(struct_id.type_id))),
+                field_index,
+            ),
+            OpCode::ExtractStructField(struct_id, field_index) => {
+                (Some(self.ir.meta.get_type(struct_id.type_id)), field_index)
+            }
+            _ => (None, 0),
+        };
+        if let Some(Type::Struct(_, fields, _)) = struct_type
+            && field_index as usize >= fields.len()
+        {
+            self.on_error(format_args!(
+                "OpCode::Access/ExtractStructField on struct {:?} is accessing a field index {} \
+                 that is out of bounds",
+                struct_type, field_index
+            ));
+        }
+    }
+
+    fn validate_if_condition_is_bool(&self, opcode: &OpCode) {
+        match *opcode {
+            OpCode::If(condition) | OpCode::LoopIf(condition)
+                if condition.type_id != TYPE_ID_BOOL =>
+            {
+                self.on_error(format_args!(
+                    "invalid If/LoopIf instruction: {:?}, consition is not a boolean: {:?}",
+                    opcode, condition.type_id
+                ));
+            }
+            _ => (),
+        };
     }
 }

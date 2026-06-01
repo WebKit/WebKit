@@ -19,24 +19,45 @@ pub struct Options {
 
 pub fn run(ir: &mut IR, options: &Options) {
     if options.emulate_draw_id {
-        replace_with_uniform(&mut ir.meta, BuiltIn::DrawID, "angle_DrawID");
+        replace_with_uniform(
+            &mut ir.meta,
+            BuiltIn::DrawID,
+            "angle_DrawID",
+            EmulatedMultiDraw::DrawID,
+        );
     }
     if options.emulate_base_vertex_instance {
         if options.add_base_vertex_to_vertex_id {
             add_base_vertex_to_vertex_id(ir);
         }
-        replace_with_uniform(&mut ir.meta, BuiltIn::BaseVertex, "angle_BaseVertex");
-        replace_with_uniform(&mut ir.meta, BuiltIn::BaseInstance, "angle_BaseInstance");
+        replace_with_uniform(
+            &mut ir.meta,
+            BuiltIn::BaseVertex,
+            "angle_BaseVertex",
+            EmulatedMultiDraw::BaseVertex,
+        );
+        replace_with_uniform(
+            &mut ir.meta,
+            BuiltIn::BaseInstance,
+            "angle_BaseInstance",
+            EmulatedMultiDraw::BaseInstance,
+        );
     }
 }
 
-fn replace_with_uniform(ir_meta: &mut IRMeta, built_in: BuiltIn, name: &'static str) {
+fn replace_with_uniform(
+    ir_meta: &mut IRMeta,
+    built_in: BuiltIn,
+    name: &'static str,
+    decoration: EmulatedMultiDraw,
+) {
     if let Some(var_id) = ir_meta.get_built_in_variable(built_in) {
         let var = ir_meta.get_variable_mut(var_id);
         var.name = Name::new_exact(name);
         var.built_in = None;
         debug_assert!(var.decorations.decorations.is_empty());
         var.decorations.decorations.push(Decoration::Uniform);
+        var.decorations.decorations.push(Decoration::EmulatedMultiDrawBuiltIn(decoration));
     }
 }
 

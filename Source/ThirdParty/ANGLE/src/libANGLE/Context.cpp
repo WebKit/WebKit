@@ -9341,6 +9341,7 @@ void Context::onUniformBlockBindingUpdated(GLuint uniformBlockIndex)
 {
     mState.mDirtyBits.set(state::DIRTY_BIT_UNIFORM_BUFFER_BINDINGS);
     mState.mDirtyUniformBlocks.set(uniformBlockIndex);
+    mState.mUniformBufferBlocksDirtyTypeMask.set(BufferDirtyType::Binding);
     mStateCache.onUniformBufferStateChange(this);
 }
 

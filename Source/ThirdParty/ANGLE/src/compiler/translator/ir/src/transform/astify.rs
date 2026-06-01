@@ -41,6 +41,16 @@ struct RegisterInfo {
     // Whether the register must be marked as having a side effect if ever accessed.  See
     // `preprocess_block_registers`'s comment on OpCode::Load.
     mark_side_effect_if_read: bool,
+    // The AST "depth" of the register.  In general, for an instruction like:
+    //
+    //     result = Op arg0 arg1 ...
+    //
+    // depth is calculated as:
+    //
+    //     Depth(result) = max(Depth(arg0), Depth(arg1), ...) + 1
+    //
+    // If the expression is too deep, it's cached in a temporary to avoid too-deep ASTs.
+    depth: u32,
 }
 
 impl RegisterInfo {
@@ -50,6 +60,7 @@ impl RegisterInfo {
             has_side_effect: false,
             is_complex: false,
             mark_side_effect_if_read: false,
+            depth: 1,
         }
     }
 }
@@ -72,7 +83,6 @@ impl BreakInfo {
     }
 }
 
-#[cfg_attr(debug_assertions, derive(Debug))]
 struct State<'a> {
     ir_meta: &'a mut IRMeta,
     // Used to know when temporary variables are needed
@@ -102,7 +112,15 @@ struct State<'a> {
     uncached_but_with_side_effect: ast::UncachedRegistersWithSideEffect,
 }
 
-pub fn run(ir: &mut IR) -> ast::UncachedRegistersWithSideEffect {
+pub struct Options {
+    // The step after this transformation is to generate an output in a high-level language.  To
+    // avoid stack overflows in recursive algorithms that process this output, expression
+    // complexity is limited in this pass.  The depth limit for these expressions in AST form
+    // is given in |max_expression_complexity|.
+    pub max_expression_complexity: u32,
+}
+
+pub fn run(ir: &mut IR, options: &Options) -> ast::UncachedRegistersWithSideEffect {
     let mut state = State {
         ir_meta: &mut ir.meta,
         register_info: HashMap::new(),
@@ -133,7 +151,7 @@ pub fn run(ir: &mut IR) -> ast::UncachedRegistersWithSideEffect {
     );
 
     // Pre-process the registers to determine when temporary variables are needed.
-    preprocess_registers(&mut state, &ir.function_entries);
+    preprocess_registers(&mut state, &ir.function_entries, options);
 
     // Create temporary variables for the result of instructions that have side effects and yet are
     // read from multiple times.
@@ -161,7 +179,7 @@ pub fn run(ir: &mut IR) -> ast::UncachedRegistersWithSideEffect {
     state.uncached_but_with_side_effect
 }
 
-fn get_op_read_ids(opcode: &OpCode) -> Vec<TypedId> {
+fn get_op_args(opcode: &OpCode) -> Vec<TypedId> {
     match opcode {
         OpCode::MergeInput
         | OpCode::Discard
@@ -323,7 +341,7 @@ fn clear_uncached_registers(
     uncached_registers.clear();
 }
 
-fn preprocess_block_registers(state: &mut State, block: &Block) {
+fn preprocess_block_registers(state: &mut State, block: &Block, options: &Options) {
     // Add an unassuming entry for the merge input, if any.
     if let Some(input) = block.input {
         state.register_info.entry(input.id).or_insert(RegisterInfo::new());
@@ -344,7 +362,8 @@ fn preprocess_block_registers(state: &mut State, block: &Block) {
 
         // Mark every potentially-register Id in the arguments of the opcode as being
         // accessed.
-        for id in get_op_read_ids(opcode) {
+        let mut max_arg_depth = 0;
+        for id in get_op_args(opcode) {
             if let Id::Register(id) = id.id {
                 let read_register_info = state.register_info.get_mut(&id).unwrap();
                 read_register_info.read_count += 1;
@@ -352,6 +371,8 @@ fn preprocess_block_registers(state: &mut State, block: &Block) {
                 if read_register_info.mark_side_effect_if_read {
                     read_register_info.has_side_effect = true;
                 }
+
+                max_arg_depth = max_arg_depth.max(read_register_info.depth);
             }
         }
 
@@ -365,6 +386,7 @@ fn preprocess_block_registers(state: &mut State, block: &Block) {
             // Add an unassuming entry for the result.
             let result_info =
                 state.register_info.entry(result_id.id).or_insert(RegisterInfo::new());
+            result_info.depth = max_arg_depth + 1;
 
             if opcode.has_side_effect() {
                 result_info.has_side_effect = true;
@@ -416,6 +438,18 @@ fn preprocess_block_registers(state: &mut State, block: &Block) {
                         // duplicated.  This can cover everything from a+b to texture calls
                         // etc.
                         result_info.is_complex = true;
+
+                        // If the expression is too deep, pretend it has a side effect (if it's ever
+                        // accessed) so it gets cached in a variable.
+                        //
+                        // To avoid corner-case issues, such as Store adding another depth not
+                        // counted here, take only half of max_expression_complexity as the limit.
+                        if result_info.depth > options.max_expression_complexity / 2 {
+                            result_info.mark_side_effect_if_read = true;
+                            // Reset the depth, as any instruction reading from this is going to
+                            // read from the cached variable instead.
+                            result_info.depth = 1;
+                        }
                     }
                 };
             }
@@ -476,13 +510,13 @@ fn preprocess_block_registers(state: &mut State, block: &Block) {
     }
 }
 
-fn preprocess_registers(state: &mut State, function_entries: &[Option<Block>]) {
+fn preprocess_registers(state: &mut State, function_entries: &[Option<Block>], options: &Options) {
     traverser::visitor::for_each_function(
         state,
         function_entries,
         |_, _| {},
         |state, block, _, _| {
-            preprocess_block_registers(state, block);
+            preprocess_block_registers(state, block, options);
             traverser::visitor::VISIT_SUB_BLOCKS
         },
         |_, _| {},

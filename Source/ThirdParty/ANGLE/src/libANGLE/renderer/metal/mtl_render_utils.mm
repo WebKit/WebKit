@@ -313,7 +313,7 @@ angle::Result GenTriFanFromClientElements(ContextMtl *contextMtl,
     ASSERT(indicesGenerated != nullptr);
     constexpr T kSrcPrimitiveRestartIndex = std::numeric_limits<T>::max();
     GLsizei dstTriangle                   = 0;
-    uint32_t *dstPtr = reinterpret_cast<uint32_t *>(dstBuffer->map(contextMtl) + dstOffset);
+    uint32_t *dstPtr = reinterpret_cast<uint32_t *>(dstBuffer->map(contextMtl, dstOffset).data());
     T triFirstIdx;
     memcpy(&triFirstIdx, indices, sizeof(triFirstIdx));
 
@@ -1594,7 +1594,7 @@ angle::Result DepthStencilBlitUtils::blitStencilViaCopyBuffer(
         bufferRequiredRowPitch * static_cast<uint32_t>(params.dstRect.height);
     if (!mStencilCopyBuffer || mStencilCopyBuffer->size() < bufferRequiredSize)
     {
-        ANGLE_TRY(Buffer::MakeBuffer(contextMtl, bufferRequiredSize, nullptr, &mStencilCopyBuffer));
+        ANGLE_TRY(Buffer::MakeBuffer(contextMtl, bufferRequiredSize, &mStencilCopyBuffer));
     }
 
     // Copy stencil data to buffer via compute shader. We cannot use blit command since blit command
@@ -1878,7 +1878,8 @@ angle::Result IndexGeneratorUtils::generateTriFanBufferFromElementsArray(
              contextMtl->getRenderCommandEncoder()))
         {
             IndexGenerationParams cpuPathParams = params;
-            cpuPathParams.indices = elementBufferMtl->getBufferDataReadOnly(contextMtl) + srcOffset;
+            cpuPathParams.indices =
+                elementBufferMtl->getBufferDataReadOnly(contextMtl, srcOffset).data();
             return generateTriFanBufferFromElementsArrayCPU(contextMtl, cpuPathParams,
                                                             indicesGenerated);
         }
@@ -2007,7 +2008,8 @@ angle::Result IndexGeneratorUtils::generateLineLoopBufferFromElementsArray(
              contextMtl->getRenderCommandEncoder()))
         {
             IndexGenerationParams cpuPathParams = params;
-            cpuPathParams.indices = elementBufferMtl->getBufferDataReadOnly(contextMtl) + srcOffset;
+            cpuPathParams.indices =
+                elementBufferMtl->getBufferDataReadOnly(contextMtl, srcOffset).data();
             return generateLineLoopBufferFromElementsArrayCPU(contextMtl, cpuPathParams,
                                                               indicesGenerated);
         }
@@ -2066,8 +2068,9 @@ angle::Result IndexGeneratorUtils::generateLineLoopBufferFromElementsArrayCPU(
     const IndexGenerationParams &params,
     uint32_t *indicesGenerated)
 {
-    uint8_t *dstIndices = params.dstBuffer->map(contextMtl, params.dstOffset);
-    if (dstIndices == nullptr)
+    angle::Span<uint8_t> dstSpan = params.dstBuffer->map(contextMtl, params.dstOffset);
+    uint8_t *dstIndices          = dstSpan.data();
+    if (dstSpan.empty())
     {
         return angle::Result::Stop;
     }
@@ -2102,7 +2105,7 @@ angle::Result IndexGeneratorUtils::generateLineLoopLastSegment(ContextMtl *conte
                                                                const BufferRef &dstBuffer,
                                                                uint32_t dstOffset)
 {
-    uint8_t *ptr = dstBuffer->map(contextMtl) + dstOffset;
+    uint8_t *ptr = dstBuffer->map(contextMtl, dstOffset).data();
 
     uint32_t indices[2] = {lastVertex, firstVertex};
     memcpy(ptr, indices, sizeof(indices));

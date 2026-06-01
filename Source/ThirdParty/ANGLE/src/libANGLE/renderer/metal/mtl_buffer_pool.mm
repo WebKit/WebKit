@@ -57,7 +57,7 @@ angle::Result BufferPool::reset(ContextMtl *contextMtl,
                 // If buffer is not used by GPU, re-use it immediately.
                 continue;
             }
-            if (IsError(buffer->reset(contextMtl, storageMode(contextMtl), mSize, nullptr)))
+            if (IsError(buffer->reset(contextMtl, storageMode(contextMtl), mSize)))
             {
                 mBufferFreeList.clear();
                 mBuffersAllocated = 0;
@@ -142,8 +142,8 @@ angle::Result BufferPool::allocateNewBuffer(ContextMtl *contextMtl)
         return angle::Result::Continue;
     }
 
-    ANGLE_TRY(Buffer::MakeBufferWithStorageMode(contextMtl, storageMode(contextMtl), mSize, nullptr,
-                                                &mBuffer));
+    ANGLE_TRY(
+        Buffer::MakeBufferWithStorageMode(contextMtl, storageMode(contextMtl), mSize, &mBuffer));
 
     ASSERT(mBuffer);
 
@@ -221,8 +221,7 @@ angle::Result BufferPool::allocate(ContextMtl *contextMtl,
     {
         // We don't need to synchronize with GPU access, since allocation should return a
         // non-overlapped region each time.
-        *ptrOut = mBuffer->mapWithOpt(contextMtl, /** readOnly */ false, /** noSync */ true) +
-                  mNextAllocationOffset;
+        *ptrOut = mBuffer->mapNoSync(contextMtl, mNextAllocationOffset).data();
     }
 
     if (offsetOut)

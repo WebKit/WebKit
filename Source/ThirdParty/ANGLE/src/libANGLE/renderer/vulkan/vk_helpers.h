@@ -93,12 +93,12 @@ class Context : public ErrorContext
     void finalizeForeignImage(ImageHelper *image);
     void finalizeAllForeignImages();
 
-  protected:
     bool hasForeignImagesToTransition() const
     {
         return !mForeignImagesInUse.empty() || !mImagesToTransitionToForeign.empty();
     }
 
+  protected:
     // Stash the ShareGroupVk's RefCountedEventRecycler here ImageHelper to conveniently access
     RefCountedEventsGarbageRecycler *mShareGroupRefCountedEventsGarbageRecycler;
     // List of foreign images that are currently used in recorded commands but haven't been
@@ -1189,7 +1189,6 @@ class RenderPassAttachment final
     ~RenderPassAttachment() = default;
 
     void init(ImageHelper *image,
-              UniqueSerial imageSiblingSerial,
               gl::LevelIndex levelIndex,
               uint32_t layerIndex,
               uint32_t layerCount,
@@ -1214,11 +1213,7 @@ class RenderPassAttachment final
 
     ImageHelper *getImage() { return mImage; }
 
-    bool hasImage(const ImageHelper *image, UniqueSerial imageSiblingSerial) const
-    {
-        // Compare values because we do want that invalid serials compare equal.
-        return mImage == image && mImageSiblingSerial.getValue() == imageSiblingSerial.getValue();
-    }
+    bool hasImage(const ImageHelper *image) const { return mImage == image; }
 
   private:
     bool hasWriteAfterInvalidate(uint32_t currentCmdCount) const;
@@ -1227,8 +1222,6 @@ class RenderPassAttachment final
 
     // The attachment image itself
     ImageHelper *mImage;
-    // Invalid or serial of EGLImage/Surface sibling target.
-    UniqueSerial mImageSiblingSerial;
     // The subresource used in the render pass
     gl::LevelIndex mLevelIndex;
     uint32_t mLayerIndex;
@@ -1318,6 +1311,76 @@ constexpr RenderPassUsageFlags kDepthStencilReadOnlyBits = RenderPassUsageFlags(
     {RenderPassUsage::DepthReadOnlyAttachment, RenderPassUsage::StencilReadOnlyAttachment});
 constexpr RenderPassUsageFlags kDepthStencilFeedbackModeBits = RenderPassUsageFlags(
     {RenderPassUsage::DepthFeedbackLoop, RenderPassUsage::StencilFeedbackLoop});
+
+class ImageRenderPassUsage
+{
+  public:
+    RenderPassUsageFlags &flags(const void *renderPassCommands)
+    {
+        size_t i = findRenderPassIndex(renderPassCommands);
+        if (i != kInvalidIndex)
+        {
+            return mRenderPassUsageFlags[i].usageFlags;
+        }
+        mRenderPassUsageFlags.emplace_back(renderPassCommands);
+        return mRenderPassUsageFlags.back().usageFlags;
+    }
+
+    const RenderPassUsageFlags getFlags(const void *renderPassCommands) const
+    {
+        size_t i = findRenderPassIndex(renderPassCommands);
+        if (i != kInvalidIndex)
+        {
+            return mRenderPassUsageFlags[i].usageFlags;
+        }
+        return RenderPassUsageFlags();
+    }
+
+    void reset(const void *renderPassCommands)
+    {
+        size_t i = findRenderPassIndex(renderPassCommands);
+        if (i != kInvalidIndex)
+        {
+            mRenderPassUsageFlags.remove_and_permute(mRenderPassUsageFlags.begin() + i);
+        }
+    }
+
+    bool hasAttachmentUsage() const
+    {
+        for (auto &entry : mRenderPassUsageFlags)
+        {
+            if (entry.usageFlags[RenderPassUsage::RenderTargetAttachment])
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    bool empty() const { return mRenderPassUsageFlags.empty(); }
+    void clear() { mRenderPassUsageFlags.clear(); }
+
+  private:
+    size_t findRenderPassIndex(const void *renderPassCommands) const
+    {
+        for (size_t i = 0; i < mRenderPassUsageFlags.size(); i++)
+        {
+            if (mRenderPassUsageFlags[i].renderPassCommands == renderPassCommands)
+            {
+                return i;
+            }
+        }
+        return kInvalidIndex;
+    }
+
+    // Track how it is being used by current open renderPass.
+    struct RenderPassAndImageUsageFlags
+    {
+        const void *renderPassCommands;
+        RenderPassUsageFlags usageFlags;
+    };
+    angle::FastVector<RenderPassAndImageUsageFlags, 1> mRenderPassUsageFlags;
+    static constexpr size_t kInvalidIndex = -1;
+};
 
 // The following are used to help track the state of an invalidated attachment.
 // This value indicates an "infinite" CmdCount that is not valid for comparing
@@ -1803,14 +1866,12 @@ class RenderPassCommandBufferHelper final : public CommandBufferHelperCommon
                          uint32_t layerCount,
                          ImageHelper *image,
                          ImageHelper *resolveImage,
-                         UniqueSerial imageSiblingSerial,
                          PackedAttachmentIndex packedAttachmentIndex);
     void depthStencilImagesDraw(gl::LevelIndex level,
                                 uint32_t layerStart,
                                 uint32_t layerCount,
                                 ImageHelper *image,
-                                ImageHelper *resolveImage,
-                                UniqueSerial imageSiblingSerial);
+                                ImageHelper *resolveImage);
     void fragmentShadingRateImageRead(ImageHelper *image);
 
     bool usesImage(const ImageHelper &image) const;
@@ -1823,10 +1884,9 @@ class RenderPassCommandBufferHelper final : public CommandBufferHelperCommon
 
     bool started() const { return mRenderPassStarted; }
 
-    // Finalize the layout if image has any deferred layout transition.
-    void finalizeImageLayout(Context *context,
-                             const ImageHelper *image,
-                             UniqueSerial imageSiblingSerial);
+    // Finalize the layout if image has any deferred layout transition. Return true if it does end
+    // render pass.
+    bool finalizeImageLayout(Context *context, const ImageHelper *image);
 
     angle::Result beginRenderPass(ContextVk *contextVk,
                                   RenderPassFramebuffer &&framebuffer,
@@ -1897,21 +1957,26 @@ class RenderPassCommandBufferHelper final : public CommandBufferHelperCommon
     }
     bool hasAnyDepthAccess() { return mDepthAttachment.hasAnyAccess(); }
     bool hasAnyStencilAccess() { return mStencilAttachment.hasAnyAccess(); }
+    bool hasColorAttachmentFinalized(PackedAttachmentIndex packedAttachmentIndex)
+    {
+        ASSERT(packedAttachmentIndex < mColorAttachmentsCount);
+        return mColorAttachments[packedAttachmentIndex].getImage() == nullptr;
+    }
+    bool hasDepthAttachmentFinalized() { return mDepthAttachment.getImage() == nullptr; }
+    bool hasStencilAttachmentFinalized() { return mStencilAttachment.getImage() == nullptr; }
 
     void addColorResolveAttachment(size_t colorIndexGL,
                                    ImageHelper *image,
                                    VkImageView view,
                                    gl::LevelIndex level,
                                    uint32_t layerStart,
-                                   uint32_t layerCount,
-                                   UniqueSerial imageSiblingSerial);
+                                   uint32_t layerCount);
     void addDepthStencilResolveAttachment(ImageHelper *image,
                                           VkImageView view,
                                           VkImageAspectFlags aspects,
                                           gl::LevelIndex level,
                                           uint32_t layerStart,
-                                          uint32_t layerCount,
-                                          UniqueSerial imageSiblingSerial);
+                                          uint32_t layerCount);
 
     bool hasDepthWriteOrClear() const
     {
@@ -2337,14 +2402,7 @@ class ImageHelper final : public Resource, public angle::Subject
 
     // Release the underlying VkImage object for garbage collection.
     void releaseImage(Renderer *renderer);
-    // Similar to releaseImage, but also notify all contexts in the same share group to stop
-    // accessing to it.
-    void releaseImageFromShareContexts(Renderer *renderer,
-                                       ContextVk *contextVk,
-                                       UniqueSerial imageSiblingSerial);
-    void finalizeImageLayoutInShareContexts(Renderer *renderer,
-                                            ContextVk *contextVk,
-                                            UniqueSerial imageSiblingSerial);
+    void releaseImage(ContextVk *contextVk);
 
     void releaseStagedUpdates(Renderer *renderer);
 
@@ -2450,12 +2508,8 @@ class ImageHelper final : public Resource, public angle::Subject
 
     bool isDepthOrStencil() const;
 
-    void setRenderPassUsageFlag(RenderPassUsage flag);
-    void clearRenderPassUsageFlag(RenderPassUsage flag);
-    void resetRenderPassUsageFlags();
-    bool hasRenderPassUsageFlag(RenderPassUsage flag) const;
-    bool hasAnyRenderPassUsageFlags() const;
-    bool usedByCurrentRenderPassAsAttachmentAndSampler(RenderPassUsage textureSamplerUsage) const;
+    ImageRenderPassUsage &getRenderPassUsage() { return mRenderPassUsageFlags; }
+    const ImageRenderPassUsage &getRenderPassUsage() const { return mRenderPassUsageFlags; }
 
     static void Copy(Renderer *renderer,
                      ImageHelper *srcImage,
@@ -3349,8 +3403,9 @@ class ImageHelper final : public Resource, public angle::Subject
     // For optimizing transition between different shader readonly layouts
     ImageAccess mLastNonShaderReadOnlyAccess;
     VkPipelineStageFlags mCurrentShaderReadStageMask;
-    // Track how it is being used by current open renderpass.
-    RenderPassUsageFlags mRenderPassUsageFlags;
+
+    ImageRenderPassUsage mRenderPassUsageFlags;
+
     // The QueueSerial that associated with the last barrier.
     QueueSerial mBarrierQueueSerial;
 

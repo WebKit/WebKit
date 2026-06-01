@@ -29,7 +29,12 @@ namespace ir
 struct Output
 {
     TIntermBlock *root = nullptr;
-    std::vector<ShaderVariable> TODOvariables;
+    std::vector<ShaderVariable> inputs;
+    std::vector<ShaderVariable> outputs;
+    std::vector<ShaderVariable> uniforms;
+    std::vector<ShaderVariable> shared;
+    std::vector<InterfaceBlock> uniformBlocks;
+    std::vector<InterfaceBlock> storageBlocks;
 };
 
 #ifdef ANGLE_IR

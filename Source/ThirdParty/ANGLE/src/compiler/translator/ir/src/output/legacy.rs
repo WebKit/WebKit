@@ -128,7 +128,9 @@ pub mod ffi {
             is_static_use: bool,
         ) -> *mut TIntermTyped;
         unsafe fn make_internal_variable_gl_layer_vs() -> *mut TIntermTyped;
-        unsafe fn make_internal_variable_gl_instance_es100() -> *mut TIntermTyped;
+        unsafe fn make_internal_variable_gl_instanceid_es100() -> *mut TIntermTyped;
+        unsafe fn make_internal_variable_gl_instanceindex() -> *mut TIntermTyped;
+        unsafe fn make_internal_variable_gl_vertexindex() -> *mut TIntermTyped;
         unsafe fn make_nameless_block_field_variable(
             compiler: *mut TCompiler,
             variable: *mut TIntermTyped,
@@ -1395,8 +1397,10 @@ impl<'options> Generator<'options> {
     ) -> ffi::ASTQualifier {
         if let Some(built_in) = built_in {
             match built_in {
-                BuiltIn::InstanceID => ffi::ASTQualifier::InstanceID,
-                BuiltIn::VertexID => ffi::ASTQualifier::VertexID,
+                // Note: the AST uses the same Instance/VertexID qualifiers for
+                // Instance/VertexIndex.
+                BuiltIn::InstanceID | BuiltIn::InstanceIndex => ffi::ASTQualifier::InstanceID,
+                BuiltIn::VertexID | BuiltIn::VertexIndex => ffi::ASTQualifier::VertexID,
                 BuiltIn::Position => ffi::ASTQualifier::Position,
                 BuiltIn::PointSize => ffi::ASTQualifier::PointSize,
                 BuiltIn::BaseVertex => ffi::ASTQualifier::BaseVertex,
@@ -1664,6 +1668,8 @@ impl<'options> Generator<'options> {
         match built_in {
             BuiltIn::InstanceID => "gl_InstanceID",
             BuiltIn::VertexID => "gl_VertexID",
+            BuiltIn::InstanceIndex => "gl_InstanceIndex",
+            BuiltIn::VertexIndex => "gl_VertexIndex",
             BuiltIn::Position => "gl_Position",
             BuiltIn::PointSize => "gl_PointSize",
             BuiltIn::BaseVertex => "gl_BaseVertex",
@@ -1902,10 +1908,14 @@ impl ast::Target for Generator<'_> {
                 }
                 // Used by multiview emulation, gl_InstanceID does not exist in ESSL 100.
                 (Some(BuiltIn::InstanceID), _, 100) => {
-                    Some(unsafe { ffi::make_internal_variable_gl_instance_es100() })
+                    Some(unsafe { ffi::make_internal_variable_gl_instanceid_es100() })
                 }
-                // TODO(http://anglebug.com/349994211): gl_VertexIndex and gl_InstanceIndex too, when
-                // added for the SPIR-V output.
+                (Some(BuiltIn::InstanceIndex), _, _) => {
+                    Some(unsafe { ffi::make_internal_variable_gl_instanceindex() })
+                }
+                (Some(BuiltIn::VertexIndex), _, _) => {
+                    Some(unsafe { ffi::make_internal_variable_gl_vertexindex() })
+                }
                 _ => None,
             };
         if let Some(legacy_variable) = internal_variable {

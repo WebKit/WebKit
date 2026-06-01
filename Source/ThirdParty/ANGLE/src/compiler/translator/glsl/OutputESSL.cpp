@@ -12,7 +12,7 @@ namespace sh
 TOutputESSL::TOutputESSL(TCompiler *compiler,
                          TInfoSinkBase &objSink,
                          const ShCompileOptions &compileOptions)
-    : TOutputGLSLBase(compiler, objSink, compileOptions)
+    : TOutputGLSLBase(compiler, objSink, compileOptions, false)
 {}
 
 bool TOutputESSL::writeVariablePrecision(TPrecision precision)

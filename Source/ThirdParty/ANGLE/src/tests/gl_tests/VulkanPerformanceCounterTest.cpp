@@ -9636,6 +9636,60 @@ TEST_P(VulkanPerformanceCounterTest_TileMemory,
     EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::green);
 }
 
+// Regression test for UAF in finalizeImagesWithTileMemory after readPixels triggered
+// fallbackFromTileMemory.
+TEST_P(VulkanPerformanceCounterTest_TileMemory, DepthBufferPBOReadThenDelete)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled(kPerfMonitorExtensionName));
+    ANGLE_SKIP_TEST_IF(!isFeatureEnabled(Feature::SimulateTileMemoryForTesting) &&
+                       !isFeatureEnabled(Feature::SupportsTileMemoryHeap));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_NV_read_depth_stencil"));
+
+    setupPrograms();
+
+    GLenum depthStencilFormat = GL_DEPTH24_STENCIL8;
+    constexpr GLsizei kWidth  = 256;
+    constexpr GLsizei kHeight = 256;
+
+    uint64_t tileMemoryImageCountBefore = getPerfCounters().tileMemoryImages;
+
+    GLTexture colorTexture;
+    GLRenderbuffer depthStencil;
+    setupColorTextureAndDepthBuffer(colorTexture, depthStencil, depthStencilFormat, kWidth,
+                                    kHeight);
+    GLFramebuffer fbo;
+    setupFBO(colorTexture, depthStencil, depthStencil, fbo, kWidth, kHeight);
+
+    GLfloat depthValue = 0.0f;
+    // Clear color/depth/stencil buffers
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearDepthf(depthValue * 0.5f + 0.5f);
+    glClearStencil(0x55);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glEnable(GL_DEPTH_TEST);
+    drawQuadToVerifyDepthValue(drawGreen, drawRed, depthValue);
+    EXPECT_EQ(1u, getPerfCounters().tileMemoryImages - tileMemoryImageCountBefore);
+
+    // PBO read
+    GLBuffer pbo;
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo);
+    glBufferData(GL_PIXEL_PACK_BUFFER, kWidth * kHeight * sizeof(uint32_t), nullptr,
+                 GL_DYNAMIC_READ);
+    glReadPixels(0, 0, kWidth, kHeight, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0);
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+    EXPECT_GL_NO_ERROR();
+
+    // Delete depthBuffer
+    depthStencil.reset();
+
+    std::array<GLenum, 2> attachments = {GL_DEPTH_ATTACHMENT, GL_STENCIL_ATTACHMENT};
+    glInvalidateFramebuffer(GL_FRAMEBUFFER, attachments.size(), attachments.data());
+
+    // For completeness, verify rendering results.
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::green);
+    EXPECT_GL_NO_ERROR();
+}
+
 class VulkanPerformanceCounterTest_Dither : public VulkanPerformanceCounterTest
 {};
 

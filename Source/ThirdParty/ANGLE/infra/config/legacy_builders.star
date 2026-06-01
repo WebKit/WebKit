@@ -332,7 +332,6 @@ angle_builder("win-msvc-x86-compile", cpu = "x86")
 angle_builder("win-msvc-x86-dbg-compile", cpu = "x86")
 angle_builder("win-ir-test", cpu = "x64")
 angle_builder("win-x86-dbg-compile", cpu = "x86")
-angle_builder("win-x86-test", cpu = "x86")
 angle_builder("winuwp-compile", cpu = "x64")
 angle_builder("winuwp-dbg-compile", cpu = "x64")
 

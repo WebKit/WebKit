@@ -316,8 +316,7 @@ angle::Result ContextMtl::drawTriFanArraysWithBaseVertex(const gl::Context *cont
     if (mTriFanArraysIndexBuffer == nullptr || mTriFanArraysIndexBuffer->size() < indexBufferSize)
     {
         // Re-generate a new index buffer, which the first index will be zero.
-        ANGLE_TRY(
-            mtl::Buffer::MakeBuffer(this, indexBufferSize, nullptr, &mTriFanArraysIndexBuffer));
+        ANGLE_TRY(mtl::Buffer::MakeBuffer(this, indexBufferSize, &mTriFanArraysIndexBuffer));
         ANGLE_TRY(getDisplay()->getUtils().generateTriFanBufferFromArrays(
             this, {0, static_cast<uint32_t>(count), mTriFanArraysIndexBuffer, 0}));
     }
@@ -781,6 +780,7 @@ angle::Result ContextMtl::drawElementsImpl(const gl::Context *context,
         context, mode, type, count, indices, requiresIndexRewrite(context->getState(), mode),
         mState.isPrimitiveRestartEnabled(), &newMode, &drawCommands, &idxBuffer, &idxBufferOffset,
         &idxBufferType));
+
 
     bool isNoOp = false;
     ANGLE_TRY(setupDraw(context, 0, count, instances, type, indices, false, &isNoOp));

@@ -30,21 +30,6 @@
 42264094 VULKAN WIN : KHR-GLES32.core.tessellation_shader.vertex.vertex_spacing = SKIP
 42264094 VULKAN WIN : KHR-GLES32.core.tessellation_shader.tessellation_shader_point_mode.points_verification = SKIP
 
-// Geometry and tessellation failures on the Android and Linux bots, potentially due to missing
-// features from old drivers.  On up-to-date Linux, the expectations should be as above for windows.
-// No triaging is done to know which of these tests actually fail on the bots.
-42264111 VULKAN PIXEL4ORXL : KHR-GLES32.core.geometry_shader.* = SKIP
-42264111 VULKAN PIXEL4ORXL : KHR-GLES32.core.texture_cube_map_array.*geometry* = SKIP
-42264111 VULKAN PIXEL4ORXL : KHR-GLES32.core.separable_programs_tf.geometry_active = SKIP
-42264111 VULKAN PIXEL4ORXL : KHR-GLES32.core.texture_cube_map_array.color_depth_attachments = SKIP
-42264111 VULKAN PIXEL4ORXL : KHR-GLES32.core.texture_cube_map_array.fbo_incompleteness = FAIL
-42264094 VULKAN PIXEL4ORXL : KHR-GLES32.core.tessellation_shader.* = SKIP
-42264094 VULKAN PIXEL4ORXL : KHR-GLES32.core.texture_cube_map_array.*tesselation* = SKIP
-42264094 VULKAN PIXEL4ORXL : KHR-GLES32.core.constant_expressions.*tess_control = SKIP
-42264094 VULKAN PIXEL4ORXL : KHR-GLES32.core.constant_expressions.*tess_eval = SKIP
-42264094 VULKAN PIXEL4ORXL : KHR-GLES32.core.separable_programs_tf.tessellation_active = SKIP
-42264094 VULKAN PIXEL4ORXL : KHR-GLES32.core.shader_macros.fragment_precision_high_tess_* = SKIP
-
 // Tessellation Shader Failures on Pixel6
 42264094 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.vertex.vertex_ordering = SKIP
 42264094 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_shader_tessellation.gl_InvocationID_PatchVerticesIn_PrimitiveID = SKIP
@@ -95,9 +80,6 @@
 42262239 VULKAN LINUX NVIDIA : KHR-GLES32.core.texture_border_clamp.* = SKIP
 42262239 VULKAN LINUX NVIDIA : KHR-GLES32.core.gpu_shader5.*clamp*_border = SKIP
 42262239 VULKAN LINUX NVIDIA : KHR-GLES32.core.gpu_shader5.*clamp*_edge = SKIP
-42262239 VULKAN PIXEL4ORXL : KHR-GLES32.core.texture_border_clamp.* = SKIP
-42262239 VULKAN PIXEL4ORXL : KHR-GLES32.core.gpu_shader5.*clamp*_border = SKIP
-42262239 VULKAN PIXEL4ORXL : KHR-GLES32.core.gpu_shader5.*clamp*_edge = SKIP
 
 // Desktop cards without native etc support
 42263824 NVIDIA VULKAN : KHR-GLES32.core.texture_cube_map_array.etc2_texture = FAIL
@@ -106,10 +88,6 @@
 42264954 VULKAN NVIDIA : KHR-GLES32.core.compressed_format.api.copy_compressed_to_uncompressed = FAIL
 42264954 VULKAN NVIDIA : KHR-GLES32.core.compressed_format.api.copy_uncompressed_to_compressed = FAIL
 42264954 VULKAN NVIDIA : KHR-GLES32.core.compressed_format.api.copy_compressed_to_compressed = FAIL
-
-// Pixel 4 expectations.
-42264522 PIXEL4ORXL VULKAN : KHR-GLES32.core.draw_buffers_indexed.color_masks = SKIP
-365108862 PIXEL4ORXL VULKAN : KHR-GLES32.core.ext_texture_shadow_lod.texturelod.samplercubearrayshadow_fragment = SKIP
 
 // Pixel 10
 449120556 PIXEL10 VULKAN : KHR-GLES32.core.ext_texture_shadow_lod.texture.samplercubearrayshadow_bias_fragment = FAIL

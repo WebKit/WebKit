@@ -4815,6 +4815,72 @@ TEST_P(UniformBufferShadowBufferTest, ArrayBufferBoundAsUniformBufferWithBool)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
+// Test that rebinding UBOs with |glUniformBlockBinding| a buffer offset has changed works.
+TEST_P(UniformBufferTest, BlockBindChangeAfterOffsetChange)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+layout(std140) uniform Block0 { vec4 u0; };
+layout(std140) uniform Block1 { vec4 u1; };
+out vec4 fragColor;
+void main() {
+  fragColor = u0 + u1;
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+
+    const GLuint block0Index = glGetUniformBlockIndex(program, "Block0");
+    const GLuint block1Index = glGetUniformBlockIndex(program, "Block1");
+
+    // Map block bindings to something explicit
+    glUniformBlockBinding(program, block0Index, 0);
+    glUniformBlockBinding(program, block1Index, 1);
+
+    constexpr GLuint kSmallBufferSize = 256;
+    constexpr GLuint kLargeBufferSize = 16 * 1024 * 1024;
+
+    const std::vector<float> kBuffer0InitData(kSmallBufferSize, 0.25);
+    const std::vector<float> kBuffer1InitData(kSmallBufferSize, 0.1);
+    const std::vector<float> kBuffer2InitData(kLargeBufferSize, 0.5);
+
+    GLBuffer buffer0;
+    glBindBuffer(GL_UNIFORM_BUFFER, buffer0);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(float) * kSmallBufferSize, kBuffer0InitData.data(),
+                 GL_STATIC_DRAW);
+
+    GLBuffer buffer1;
+    glBindBuffer(GL_UNIFORM_BUFFER, buffer1);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(float) * kSmallBufferSize, kBuffer1InitData.data(),
+                 GL_STATIC_DRAW);
+
+    GLBuffer buffer2;
+    glBindBuffer(GL_UNIFORM_BUFFER, buffer2);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(float) * kLargeBufferSize, kBuffer2InitData.data(),
+                 GL_STATIC_DRAW);
+
+    // Bind all the buffers.  Note that binding 2 is unused by the program.  Bind the large buffer
+    // at an offset near the end.
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, buffer0, 0, kSmallBufferSize);
+    glBindBufferRange(GL_UNIFORM_BUFFER, 1, buffer1, 0, kSmallBufferSize);
+    glBindBufferRange(GL_UNIFORM_BUFFER, 2, buffer2, kLargeBufferSize - kSmallBufferSize,
+                      kSmallBufferSize);
+
+    // Issue a draw call to sync all dirty bits.
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
+
+    // Change the offset of binding 0 only.  This takes a special fast-path in the Vulkan backend.
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, buffer0, kSmallBufferSize, kSmallBufferSize);
+
+    // Switch the binding of the other buffer to the huge buffer.
+    glUniformBlockBinding(program, block1Index, 2);
+
+    // Draw again.  It must correctly read from buffer0 and buffer2.
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(191, 191, 191, 191), 1);
+    ASSERT_GL_NO_ERROR();
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(UniformBufferTest);
 ANGLE_INSTANTIATE_TEST_ES3(UniformBufferTest);
 

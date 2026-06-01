@@ -724,7 +724,6 @@ class Renderer : angle::NonCopyable
   private:
     angle::Result setupDevice(vk::ErrorContext *context,
                               const angle::FeatureOverrides &featureOverrides,
-                              const char *wsiLayer,
                               UseVulkanSwapchain useVulkanSwapchain,
                               angle::NativeWindowSystem nativeWindowSystem);
     angle::Result createDeviceAndQueue(vk::ErrorContext *context, uint32_t queueFamilyIndex);
@@ -1099,7 +1098,7 @@ class Renderer : angle::NonCopyable
     // Use thread pool to compress cache data.
     std::shared_ptr<angle::WaitableEvent> mCompressEvent;
 
-    VulkanLayerVector mEnabledDeviceLayerNames;
+    VulkanLayerVector mEnabledInstanceLayerNames;
     vk::ExtensionNameList mEnabledInstanceExtensions;
     vk::ExtensionNameList mEnabledDeviceExtensions;
 

@@ -14,7 +14,6 @@ angle_end2end_tests_sources = [
   "egl_tests/EGLContextCompatibilityTest.cpp",
   "egl_tests/EGLContextPassthroughShadersTest.cpp",
   "egl_tests/EGLContextSharingTest.cpp",
-  "egl_tests/EGLContextStateTest.cpp",
   "egl_tests/EGLCreateContextAttribsTest.cpp",
   "egl_tests/EGLDebugTest.cpp",
   "egl_tests/EGLDisplaySelectionTest.cpp",

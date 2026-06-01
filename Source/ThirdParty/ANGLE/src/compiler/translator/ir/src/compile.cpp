@@ -117,7 +117,9 @@ void SetEnabledExtensions(const TExtensionBehavior &behavior, ffi::ExtensionsEna
     extensions->WEBGL_video_texture = IsExtensionEnabled(behavior, TExtension::WEBGL_video_texture);
 }
 
-void SetLimits(const ShBuiltInResources &resources, ffi::Limits *limits)
+void SetLimits(const ShBuiltInResources &resources,
+               const ShCompileOptions &options,
+               ffi::Limits *limits)
 {
     limits->max_draw_buffers             = resources.MaxDrawBuffers;
     limits->max_dual_source_draw_buffers = resources.MaxDualSourceDrawBuffers;
@@ -125,6 +127,8 @@ void SetLimits(const ShBuiltInResources &resources, ffi::Limits *limits)
         resources.MaxCombinedDrawBuffersAndPixelLocalStoragePlanes;
     limits->min_point_size = resources.MinPointSize;
     limits->max_point_size = resources.MaxPointSize;
+    limits->max_expression_complexity =
+        options.limitExpressionComplexity ? resources.MaxExpressionComplexity : 1'000'000;
 }
 
 void SetOptions(TCompiler *compiler, const ShCompileOptions &options, ffi::CompileOptions *opt)
@@ -146,6 +150,11 @@ void SetOptions(TCompiler *compiler, const ShCompileOptions &options, ffi::Compi
     opt->add_base_vertex_to_vertex_id                = options.addBaseVertexToVertexID;
     opt->clamp_point_size                            = options.clampPointSize;
     opt->clamp_frag_depth                            = options.clampFragDepth;
+    opt->transform_float_uniform_to_fp16             = options.transformFloatUniformTo16Bits;
+    opt->remove_inactive_interface_variables         = options.removeInactiveVariables;
+    opt->retain_inactive_fragment_outputs            = options.retainInactiveFragmentOutputs;
+    opt->scalarize_vec_and_mat_constructor_args      = options.scalarizeVecAndMatConstructorArgs;
+    opt->clamp_indirect_indices                      = options.clampIndirectArrayBounds;
 
     opt->rewrite_pixel_local_storage = compiler->hasPixelLocalStorageUniforms();
     opt->pls_options.implementation  = static_cast<ffi::PixelLocalStorageImpl>(options.pls.type);
@@ -158,6 +167,75 @@ void SetOptions(TCompiler *compiler, const ShCompileOptions &options, ffi::Compi
     // MSL-specific flags
     opt->ensure_loop_forward_progress = options.ensureLoopForwardProgress;
 }
+
+std::vector<ShaderVariable> ConvertShaderVariables(const rust::Vec<ffi::ShaderVariable> &variables)
+{
+    std::vector<ShaderVariable> result;
+    result.reserve(variables.size());
+    for (const ffi::ShaderVariable &variable : variables)
+    {
+        ShaderVariable converted;
+        converted.type       = variable.gl_type;
+        converted.precision  = variable.gl_precision;
+        converted.name       = static_cast<std::string>(variable.name);
+        converted.mappedName = static_cast<std::string>(variable.mapped_name);
+        converted.arraySizes =
+            std::vector<uint32_t>(variable.array_sizes.begin(), variable.array_sizes.end());
+        converted.staticUse         = variable.static_use;
+        converted.active            = variable.active;
+        converted.structOrBlockName = static_cast<std::string>(variable.struct_or_block_name);
+        converted.mappedStructOrBlockName =
+            static_cast<std::string>(variable.mapped_struct_or_block_name);
+        converted.isRowMajorLayout    = variable.is_row_major;
+        converted.location            = variable.location;
+        converted.hasImplicitLocation = variable.is_location_implicit;
+        converted.binding             = variable.binding;
+        converted.imageUnitFormat     = variable.gl_image_unit_format;
+        converted.offset              = variable.offset;
+        converted.rasterOrdered       = variable.raster_ordered;
+        converted.readonly            = variable.readonly;
+        converted.writeonly           = variable.writeonly;
+        converted.isFragmentInOut     = variable.is_fragment_inout;
+        converted.index               = variable.index;
+        converted.yuv                 = variable.yuv;
+        converted.interpolation       = static_cast<InterpolationType>(variable.interpolation);
+        converted.isInvariant         = variable.is_invariant;
+        converted.isShaderIOBlock     = variable.is_io_block;
+        converted.isPatch             = variable.is_patch;
+        converted.texelFetchStaticUse = variable.texel_fetch_static_use;
+        converted.id                  = variable.id;
+        converted.isFloat16           = variable.is_float16;
+
+        converted.fields = ConvertShaderVariables(variable.fields);
+        result.push_back(converted);
+    }
+    return result;
+}
+
+std::vector<InterfaceBlock> ConvertInterfaceBlocks(const rust::Vec<ffi::InterfaceBlock> &blocks)
+{
+    std::vector<InterfaceBlock> result;
+    result.reserve(blocks.size());
+    for (const ffi::InterfaceBlock &block : blocks)
+    {
+        InterfaceBlock converted;
+        converted.name         = static_cast<std::string>(block.name);
+        converted.mappedName   = static_cast<std::string>(block.mapped_name);
+        converted.instanceName = static_cast<std::string>(block.instance_name);
+        converted.arraySize    = block.array_size;
+        converted.layout       = static_cast<BlockLayoutType>(block.block_layout);
+        converted.binding      = block.binding;
+        converted.staticUse    = block.static_use;
+        converted.active       = block.active;
+        converted.isReadOnly   = block.readonly;
+        converted.blockType    = static_cast<BlockType>(block.block_type);
+        converted.id           = block.id;
+
+        converted.fields = ConvertShaderVariables(block.fields);
+        result.push_back(converted);
+    }
+    return result;
+}
 }  // namespace
 
 Output GenerateAST(IR ir, TCompiler *compiler, const ShCompileOptions &options)
@@ -165,13 +243,18 @@ Output GenerateAST(IR ir, TCompiler *compiler, const ShCompileOptions &options)
     ffi::CompileOptions opt;
     SetOptions(compiler, options, &opt);
     SetEnabledExtensions(compiler->getExtensionBehavior(), &opt.extensions);
-    SetLimits(compiler->getResources(), &opt.limits);
+    SetLimits(compiler->getResources(), options, &opt.limits);
 
     ffi::Output output = ffi::generate_ast(std::move(ir), compiler, GetGlobalPoolAllocator(), opt);
 
     Output out;
     out.root          = output.ast;
-    out.TODOvariables = {};
+    out.inputs        = ConvertShaderVariables(output.inputs);
+    out.outputs       = ConvertShaderVariables(output.outputs);
+    out.uniforms      = ConvertShaderVariables(output.uniforms);
+    out.shared        = ConvertShaderVariables(output.shared);
+    out.uniformBlocks = ConvertInterfaceBlocks(output.uniform_blocks);
+    out.storageBlocks = ConvertInterfaceBlocks(output.storage_blocks);
 
     return out;
 }

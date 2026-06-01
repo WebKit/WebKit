@@ -88,7 +88,8 @@ Stream &operator<<(Stream &out, CommaSeparatedListItemPrefixGenerator &gen)
 
 TOutputGLSLBase::TOutputGLSLBase(TCompiler *compiler,
                                  TInfoSinkBase &objSink,
-                                 const ShCompileOptions &compileOptions)
+                                 const ShCompileOptions &compileOptions,
+                                 bool removeInvariant)
     : TIntermTraverser(true, true, true, &compiler->getSymbolTable()),
       mObjSink(objSink),
       mDeclaringVariable(false),
@@ -106,12 +107,13 @@ TOutputGLSLBase::TOutputGLSLBase(TCompiler *compiler,
           compileOptions.explicitFragmentLocations ||
           (compiler->hasPixelLocalStorageUniforms() &&
            compileOptions.pls.type == ShPixelLocalStorageType::FramebufferFetch)),
+      mRemoveInvariant(removeInvariant),
       mCompileOptions(compileOptions)
 {}
 
 void TOutputGLSLBase::writeInvariantQualifier(const TType &type)
 {
-    if (!sh::RemoveInvariant(mShaderType, mShaderVersion, mOutput, mCompileOptions))
+    if (!mRemoveInvariant)
     {
         TInfoSinkBase &out = objSink();
         out << "invariant ";

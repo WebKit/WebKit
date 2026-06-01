@@ -14,11 +14,26 @@
 
 namespace sh
 {
+bool RemoveInvariant(sh::GLenum shaderType,
+                     int shaderVersion,
+                     ShShaderOutput outputType,
+                     const ShCompileOptions &compileOptions)
+{
+    return (shaderType == GL_FRAGMENT_SHADER && IsGLSL420OrNewer(outputType)) ||
+           (shaderType == GL_VERTEX_SHADER && compileOptions.removeInvariantAndCentroidForESSL3 &&
+            shaderVersion >= 300);
+}
 
 TOutputGLSL::TOutputGLSL(TCompiler *compiler,
                          TInfoSinkBase &objSink,
                          const ShCompileOptions &compileOptions)
-    : TOutputGLSLBase(compiler, objSink, compileOptions)
+    : TOutputGLSLBase(compiler,
+                      objSink,
+                      compileOptions,
+                      RemoveInvariant(compiler->getShaderType(),
+                                      compiler->getShaderVersion(),
+                                      compiler->getOutputType(),
+                                      compileOptions))
 {}
 
 bool TOutputGLSL::writeVariablePrecision(TPrecision)

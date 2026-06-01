@@ -331,18 +331,17 @@ bool IsStencilSamplerBinding(const gl::ProgramExecutable &executable, size_t tex
     return isStencilTexture;
 }
 
-vk::ImageAccess GetDepthStencilAttachmentImageReadLayout(const vk::ImageHelper &image,
-                                                         gl::ShaderType firstShader)
+vk::ImageAccess GetDepthStencilAttachmentImageReadLayout(
+    const vk::RenderPassUsageFlags renderPassUsageFlags,
+    gl::ShaderType firstShader)
 {
-    const bool isDepthTexture =
-        image.hasRenderPassUsageFlag(vk::RenderPassUsage::DepthTextureSampler);
-    const bool isStencilTexture =
-        image.hasRenderPassUsageFlag(vk::RenderPassUsage::StencilTextureSampler);
+    const bool isDepthTexture   = renderPassUsageFlags[vk::RenderPassUsage::DepthTextureSampler];
+    const bool isStencilTexture = renderPassUsageFlags[vk::RenderPassUsage::StencilTextureSampler];
 
     const bool isDepthReadOnlyAttachment =
-        image.hasRenderPassUsageFlag(vk::RenderPassUsage::DepthReadOnlyAttachment);
+        renderPassUsageFlags[vk::RenderPassUsage::DepthReadOnlyAttachment];
     const bool isStencilReadOnlyAttachment =
-        image.hasRenderPassUsageFlag(vk::RenderPassUsage::StencilReadOnlyAttachment);
+        renderPassUsageFlags[vk::RenderPassUsage::StencilReadOnlyAttachment];
 
     const bool isFS = firstShader == gl::ShaderType::Fragment;
 
@@ -390,7 +389,8 @@ vk::ImageAccess GetDepthStencilAttachmentImageReadLayout(const vk::ImageHelper &
     }
 }
 
-vk::ImageAccess GetImageReadAccess(TextureVk *textureVk,
+vk::ImageAccess GetImageReadAccess(vk::RenderPassCommandBufferHelper *renderPassCommands,
+                                   TextureVk *textureVk,
                                    const gl::ProgramExecutable &executable,
                                    size_t textureUnit,
                                    PipelineType pipelineType)
@@ -419,7 +419,9 @@ vk::ImageAccess GetImageReadAccess(TextureVk *textureVk,
         ASSERT(remainingShaderBits.none() && lastShader == firstShader);
     }
 
-    if (image.hasRenderPassUsageFlag(vk::RenderPassUsage::RenderTargetAttachment))
+    vk::RenderPassUsageFlags &renderPassUsageFlags =
+        image.getRenderPassUsage().flags(renderPassCommands);
+    if (renderPassUsageFlags[vk::RenderPassUsage::RenderTargetAttachment])
     {
         // Right now we set the *TextureSampler flag only when RenderTargetAttachment is set since
         // we do not track all textures in the render pass.
@@ -428,17 +430,17 @@ vk::ImageAccess GetImageReadAccess(TextureVk *textureVk,
         {
             if (IsStencilSamplerBinding(executable, textureUnit))
             {
-                image.setRenderPassUsageFlag(vk::RenderPassUsage::StencilTextureSampler);
+                renderPassUsageFlags.set(vk::RenderPassUsage::StencilTextureSampler);
             }
             else
             {
-                image.setRenderPassUsageFlag(vk::RenderPassUsage::DepthTextureSampler);
+                renderPassUsageFlags.set(vk::RenderPassUsage::DepthTextureSampler);
             }
 
-            return GetDepthStencilAttachmentImageReadLayout(image, firstShader);
+            return GetDepthStencilAttachmentImageReadLayout(renderPassUsageFlags, firstShader);
         }
 
-        image.setRenderPassUsageFlag(vk::RenderPassUsage::ColorTextureSampler);
+        renderPassUsageFlags.set(vk::RenderPassUsage::ColorTextureSampler);
 
         return isFragmentShaderOnly ? vk::ImageAccess::ColorWriteFragmentShaderFeedback
                                     : vk::ImageAccess::ColorWriteAllShadersFeedback;
@@ -2551,8 +2553,8 @@ ANGLE_INLINE angle::Result ContextVk::handleDirtyTexturesImpl(
         // layers. Therefore we can't verify it has no staged updates right here.
         vk::ImageHelper &image = textureVk->getImage();
 
-        const vk::ImageAccess imageAccess =
-            GetImageReadAccess(textureVk, *executable, textureUnit, pipelineType);
+        const vk::ImageAccess imageAccess = GetImageReadAccess(
+            mRenderPassCommands, textureVk, *executable, textureUnit, pipelineType);
 
         // Ensure the image is in the desired layout
         commandBufferHelper->imageRead(this, image.getAspectFlags(), imageAccess, &image);
@@ -2586,16 +2588,27 @@ angle::Result ContextVk::handleDirtyGraphicsVertexBuffersVertexInputDynamicState
 {
     ASSERT(getFeatures().supportsVertexInputDynamicState.enabled);
     const gl::ProgramExecutable *executable = mState.getProgramExecutable();
+    const uint32_t maxAttrib                = executable->getMaxActiveAttribLocation();
+    const gl::AttributesMask &activeAttribLocations =
+        executable->getNonBuiltinAttribLocationsMask();
+    const gl::ComponentTypeMask programActiveAttribsTypeMask =
+        gl::GetActiveComponentTypeMask(activeAttribLocations);
+    const gl::ComponentTypeMask &programAttribsTypeMask = executable->getAttributesTypeMask();
+
     VertexArrayVk *vertexArrayVk            = getVertexArray();
-    const uint32_t maxAttrib = mState.getProgramExecutable()->getMaxActiveAttribLocation();
     const gl::AttribArray<VkBuffer> &bufferHandles = vertexArrayVk->getCurrentArrayBufferHandles();
     const gl::AttribArray<VkDeviceSize> &bufferOffsets =
         vertexArrayVk->getCurrentArrayBufferOffsets();
-    const gl::ComponentTypeMask vertexAttributesTypeMask =
-        vertexArrayVk->getCurrentVertexAttributesTypeMask();
-    const gl::ComponentTypeMask &programAttribsTypeMask = executable->getAttributesTypeMask();
+    const gl::ComponentTypeMask enabledAttribsMask =
+        gl::GetActiveComponentTypeMask(vertexArrayVk->getState().getEnabledAttributesMask());
+    // Vertex attribute will be sourced from enabled vertex array attribute, or default vertex
+    // attribute if vertex array attribute is disabled.
+    gl::ComponentTypeMask vertexAttributesTypeMask =
+        (vertexArrayVk->getState().getVertexAttributesTypeMask() & enabledAttribsMask) |
+        (mState.getCurrentValuesTypeMask() & ~enabledAttribsMask);
 
-    if (ANGLE_LIKELY(vertexAttributesTypeMask == programAttribsTypeMask))
+    if (ANGLE_LIKELY((vertexAttributesTypeMask & programActiveAttribsTypeMask) ==
+                     programAttribsTypeMask))
     {
         const gl::AttribArray<VkVertexInputBindingDescription2EXT> &bindingDescs =
             vertexArrayVk->getVertexInputBindingDescs();
@@ -2616,8 +2629,6 @@ angle::Result ContextVk::handleDirtyGraphicsVertexBuffersVertexInputDynamicState
         memcpy(attributeDescs.data(), vertexArrayVk->getVertexInputAttribDescs().data(),
                maxAttrib * sizeof(VkVertexInputAttributeDescription2EXT));
 
-        const gl::AttributesMask &activeAttribLocations =
-            executable->getNonBuiltinAttribLocationsMask();
         for (size_t attribIndex : activeAttribLocations)
         {
             const gl::ComponentType attribType =
@@ -2711,8 +2722,11 @@ angle::Result ContextVk::handleDirtyGraphicsVertexBuffersVertexInputDynamicState
         // (initializePipeline) for more details.
         const gl::AttributesMask &activeAttribLocations =
             executable->getNonBuiltinAttribLocationsMask();
+        const gl::ComponentTypeMask enabledAttribsMask =
+            gl::GetActiveComponentTypeMask(vertexArrayVk->getState().getEnabledAttributesMask());
         const gl::ComponentTypeMask vertexAttributesTypeMask =
-            vertexArrayVk->getCurrentVertexAttributesTypeMask();
+            (vertexArrayVk->getState().getVertexAttributesTypeMask() & enabledAttribsMask) |
+            (mState.getCurrentValuesTypeMask() & ~enabledAttribsMask);
         const gl::ComponentTypeMask &programAttribsTypeMask = executable->getAttributesTypeMask();
         gl::AttribArray<VkDeviceSize> strides               = {};
 
@@ -4369,7 +4383,7 @@ angle::Result ContextVk::optimizeRenderPassForPresent(
                                                              0, &resolveImageView));
 
         mRenderPassCommands->addColorResolveAttachment(0, colorImage, resolveImageView->getHandle(),
-                                                       gl::LevelIndex(0), 0, 1, {});
+                                                       gl::LevelIndex(0), 0, 1);
         onImageRenderPassWrite(gl::LevelIndex(0), 0, 1, VK_IMAGE_ASPECT_COLOR_BIT,
                                vk::ImageAccess::ColorWrite, colorImage);
 
@@ -7708,24 +7722,6 @@ angle::Result ContextVk::onImageReleaseToExternal(const vk::ImageHelper &image)
     return angle::Result::Continue;
 }
 
-void ContextVk::finalizeImageLayout(vk::ImageHelper *image, UniqueSerial imageSiblingSerial)
-{
-    if (mRenderPassCommands->started())
-    {
-        mRenderPassCommands->finalizeImageLayout(this, image, imageSiblingSerial);
-    }
-
-    if (image->isForeignImage() && !image->isReleasedToForeign())
-    {
-        // Note: Foreign images may be shared between different textures.  If another texture starts
-        // to use the image while the barrier-to-foreign is cached in the context, it will attempt
-        // to acquire the image from foreign while the release is still cached.  A submission is
-        // made to finalize the queue family ownership transfer back to foreign.
-        (void)flushAndSubmitCommands(nullptr, nullptr, QueueSubmitReason::ForeignImageRelease);
-        ASSERT(!hasForeignImagesToTransition());
-    }
-}
-
 angle::Result ContextVk::beginNewRenderPass(
     vk::RenderPassFramebuffer &&framebuffer,
     const gl::Rectangle &renderArea,
@@ -8476,12 +8472,14 @@ angle::Result ContextVk::switchToReadOnlyDepthStencilMode(gl::Texture *texture,
     // pending through a deferred clear.
     if (hasActiveRenderPass())
     {
-        const vk::RenderPassUsage readOnlyAttachmentUsage =
-            isStencilTexture ? vk::RenderPassUsage::StencilReadOnlyAttachment
-                             : vk::RenderPassUsage::DepthReadOnlyAttachment;
         TextureVk *textureVk = vk::GetImpl(texture);
-
-        if (!textureVk->getImage().hasRenderPassUsageFlag(readOnlyAttachmentUsage))
+        const vk::RenderPassUsageFlags imageRenderPassUsageFlags =
+            textureVk->getImage().getRenderPassUsage().getFlags(mRenderPassCommands);
+        bool readOnlyAttachment =
+            isStencilTexture
+                ? imageRenderPassUsageFlags[vk::RenderPassUsage::StencilReadOnlyAttachment]
+                : imageRenderPassUsageFlags[vk::RenderPassUsage::DepthReadOnlyAttachment];
+        if (!readOnlyAttachment)
         {
             // If the render pass has written to this aspect, it needs to be closed.
             if ((!isStencilTexture && getStartedRenderPassCommands().hasDepthWriteOrClear()) ||
@@ -8750,9 +8748,11 @@ angle::Result ContextVk::endRenderPassIfComputeAccessAfterGraphicsImageAccess()
         // Similar to flushCommandBuffersIfNecessary(), but using textures currently bound and used
         // by the current (compute) program.  This is to handle read-after-write hazards where the
         // write originates from a framebuffer attachment.
-        if (image.hasRenderPassUsageFlag(vk::RenderPassUsage::RenderTargetAttachment) &&
-            isRenderPassStartedAndUsesImage(image))
+        const vk::RenderPassUsageFlags imageRenderPassUsageFlags =
+            image.getRenderPassUsage().getFlags(mRenderPassCommands);
+        if (imageRenderPassUsageFlags[vk::RenderPassUsage::RenderTargetAttachment])
         {
+            ASSERT(isRenderPassStartedAndUsesImage(image));
             return flushCommandsAndEndRenderPass(
                 RenderPassClosureReason::ImageAttachmentThenComputeRead);
         }
@@ -9026,7 +9026,6 @@ void ContextVk::removeImageWithTileMemory(const vk::ImageHelper *imageToRemove)
 
 bool ContextVk::isImageWithTileMemoryFinalized(const vk::ImageHelper *image) const
 {
-    ASSERT(image->useTileMemory());
     return std::find(mImagesWithTileMemory.begin(), mImagesWithTileMemory.end(), image) ==
            mImagesWithTileMemory.end();
 }
@@ -9034,32 +9033,30 @@ bool ContextVk::isImageWithTileMemoryFinalized(const vk::ImageHelper *image) con
 angle::Result ContextVk::finalizeImagesWithTileMemory()
 {
     ASSERT(!mImagesWithTileMemory.empty());
+    std::vector<vk::ImageHelper *> imagesToClearForSimulation;
 
     // Check all images with tile memory to see if they have valid content or not. tile memory are
     // transient, we must reallocate to keep data valid across command buffer boundary.
-    for (auto iter = mImagesWithTileMemory.begin(); iter != mImagesWithTileMemory.end();)
+    while (!mImagesWithTileMemory.empty())
     {
-        vk::ImageHelper *image = *iter;
+        vk::ImageHelper *image = mImagesWithTileMemory.back();
+        ASSERT(image->useTileMemory());
+        mImagesWithTileMemory.pop_back();
+
         // Other context may have submitted command buffer and causes it fallback already, so check
         // again.
-        if (image->isVkImageContentDefined() && image->useTileMemory())
+        if (image->isVkImageContentDefined())
         {
             ANGLE_TRY(image->fallbackFromTileMemory(this));
             ASSERT(!image->useTileMemory());
-            iter = mImagesWithTileMemory.erase(iter);
         }
-        else
+        else if (!getFeatures().supportsTileMemoryHeap.enabled)
         {
-            ++iter;
+            imagesToClearForSimulation.push_back(image);
         }
     }
 
-    if (getFeatures().supportsTileMemoryHeap.enabled)
-    {
-        // We dont explicitly unbind tileMemory here. They occur implicitly at endCommandBiuffer
-        // time
-    }
-    else
+    if (!imagesToClearForSimulation.empty())
     {
         ASSERT(getFeatures().simulateTileMemoryForTesting.enabled);
 
@@ -9069,7 +9066,7 @@ angle::Result ContextVk::finalizeImagesWithTileMemory()
         params.layer                           = 0;
         params.clearValue                      = {};
         params.clearArea                       = gl::Box(0, 0, 0, 0, 0, 1);
-        for (vk::ImageHelper *image : mImagesWithTileMemory)
+        for (vk::ImageHelper *image : imagesToClearForSimulation)
         {
             // Other context may have triggered fallback already, so check
             // again.
@@ -9092,10 +9089,13 @@ angle::Result ContextVk::finalizeImagesWithTileMemory()
                 image->invalidateEntireLevelStencilContent(this, gl::LevelIndex(0));
             }
         }
+
+        imagesToClearForSimulation.clear();
+        // clearTextureNoFlush will end up add it back to mImagesWithTileMemory.
+        mImagesWithTileMemory.clear();
     }
 
-    mImagesWithTileMemory.clear();
-
+    ASSERT(mImagesWithTileMemory.empty());
     return angle::Result::Continue;
 }
 

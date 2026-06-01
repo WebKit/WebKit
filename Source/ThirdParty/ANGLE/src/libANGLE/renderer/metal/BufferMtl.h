@@ -15,6 +15,7 @@
 #include <optional>
 #include <utility>
 
+#include "common/span.h"
 #include "libANGLE/Buffer.h"
 #include "libANGLE/Observer.h"
 #include "libANGLE/angletypes.h"
@@ -168,7 +169,7 @@ class BufferMtl : public BufferImpl, public BufferHolderMtl
                                       size_t count,
                                       std::pair<uint32_t, uint32_t> *outIndices);
 
-    const uint8_t *getBufferDataReadOnly(ContextMtl *contextMtl);
+    angle::Span<const uint8_t> getBufferDataReadOnly(ContextMtl *contextMtl, size_t offset);
     bool isSafeToReadFromBufferViaBlit(ContextMtl *contextMtl);
 
     ConversionBufferMtl *getVertexConversionBuffer(ContextMtl *context,
@@ -202,13 +203,11 @@ class BufferMtl : public BufferImpl, public BufferHolderMtl
 
     angle::Result setDataImpl(const gl::Context *context,
                               gl::BufferBinding target,
-                              const void *data,
                               size_t size,
                               gl::BufferUsage usage,
                               BufferFeedback *feedback);
     angle::Result setSubDataImpl(const gl::Context *context,
-                                 const void *data,
-                                 size_t size,
+                                 angle::Span<const uint8_t> data,
                                  size_t offset,
                                  BufferFeedback *feedback);
 
@@ -219,27 +218,26 @@ class BufferMtl : public BufferImpl, public BufferHolderMtl
     void clearConversionBuffers();
 
     angle::Result putDataInNewBufferAndStartUsingNewBuffer(ContextMtl *contextMtl,
-                                                           const uint8_t *srcPtr,
-                                                           size_t sizeToCopy,
+                                                           angle::Span<const uint8_t> data,
                                                            size_t offset,
                                                            BufferFeedback *feedback);
     angle::Result updateExistingBufferViaBlitFromStagingBuffer(ContextMtl *contextMtl,
-                                                               const uint8_t *srcPtr,
-                                                               size_t sizeToCopy,
+                                                               angle::Span<const uint8_t> data,
                                                                size_t offset);
     angle::Result copyDataToExistingBufferViaCPU(ContextMtl *contextMtl,
-                                                 const uint8_t *srcPtr,
-                                                 size_t sizeToCopy,
+                                                 angle::Span<const uint8_t> data,
                                                  size_t offset);
     angle::Result updateShadowCopyThenCopyShadowToNewBuffer(ContextMtl *contextMtl,
-                                                            const uint8_t *srcPtr,
-                                                            size_t sizeToCopy,
+                                                            angle::Span<const uint8_t> data,
                                                             size_t offset,
                                                             BufferFeedback *feedback);
 
     bool clientShadowCopyDataNeedSync(ContextMtl *contextMtl);
     void ensureShadowCopySyncedFromGPU(ContextMtl *contextMtl);
-    uint8_t *syncAndObtainShadowCopy(ContextMtl *contextMtl);
+    angle::Span<uint8_t> syncAndObtainShadowCopy(ContextMtl *contextMtl, size_t offset);
+    angle::Span<uint8_t> syncAndObtainShadowCopy(ContextMtl *contextMtl,
+                                                 size_t offset,
+                                                 size_t length);
 
     // Optional client side shadow buffer
     angle::MemoryBuffer mShadowCopy;
@@ -264,6 +262,13 @@ class BufferMtl : public BufferImpl, public BufferHolderMtl
     size_t mRevisionCount = 0;  // for generating labels only
     gl::BufferUsage mUsage;
 };
+
+inline angle::Span<uint8_t> BufferMtl::syncAndObtainShadowCopy(ContextMtl *contextMtl,
+                                                               size_t offset,
+                                                               size_t length)
+{
+    return syncAndObtainShadowCopy(contextMtl, offset).first(length);
+}
 
 class SimpleWeakBufferHolderMtl : public BufferHolderMtl
 {

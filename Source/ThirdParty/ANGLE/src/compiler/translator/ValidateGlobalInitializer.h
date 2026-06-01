@@ -17,7 +17,8 @@ bool ValidateGlobalInitializer(TIntermTyped *initializer,
                                int shaderVersion,
                                bool isWebGL,
                                bool hasExtNonConstGlobalInitializers,
-                               bool *warning);
+                               bool *warningOut,
+                               bool *tooComplexOut);
 
 }  // namespace sh
 

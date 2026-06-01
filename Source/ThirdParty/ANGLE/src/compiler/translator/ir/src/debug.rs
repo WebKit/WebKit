@@ -354,6 +354,15 @@ fn decoration_str(decoration: Decoration) -> String {
         Decoration::RasterOrdered => "raster_ordered".to_string(),
         Decoration::EmulatedViewIDOut => "emulated_ViewID(VS)".to_string(),
         Decoration::EmulatedViewIDIn => "emulated_ViewID(FS)".to_string(),
+        Decoration::EmulatedMultiDrawBuiltIn(EmulatedMultiDraw::DrawID) => {
+            "emulated_gl_DrawID".to_string()
+        }
+        Decoration::EmulatedMultiDrawBuiltIn(EmulatedMultiDraw::BaseVertex) => {
+            "emulated_gl_BaseVertex".to_string()
+        }
+        Decoration::EmulatedMultiDrawBuiltIn(EmulatedMultiDraw::BaseInstance) => {
+            "emulated_gl_BaseInstance".to_string()
+        }
     }
 }
 
@@ -401,6 +410,8 @@ fn built_in_str(built_in: BuiltIn) -> String {
     (match built_in {
         BuiltIn::InstanceID => "InstanceID",
         BuiltIn::VertexID => "VertexID",
+        BuiltIn::InstanceIndex => "InstanceIndex",
+        BuiltIn::VertexIndex => "VertexIndex",
         BuiltIn::Position => "Position",
         BuiltIn::PointSize => "PointSize",
         BuiltIn::BaseVertex => "BaseVertex",

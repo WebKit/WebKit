@@ -527,7 +527,6 @@ class ANGLETestBase : public ::testing::Test
     void setBindGeneratesResource(bool bindGeneratesResource);
     void setClientArraysEnabled(bool enabled);
     void setRobustResourceInit(bool enabled);
-    void setPbuffer(bool enabled);
     void setMutableRenderBuffer(bool enabled);
     void setContextProgramCacheEnabled(bool enabled);
     void setContextResetStrategy(EGLenum resetStrategy);

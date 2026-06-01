@@ -29,7 +29,8 @@ class ValidateGlobalInitializerTraverser : public TIntermTraverser
     bool visitBinary(Visit visit, TIntermBinary *node) override;
     bool visitUnary(Visit visit, TIntermUnary *node) override;
 
-    bool isValid() const { return mIsValid && mMaxDepth < mMaxAllowedDepth; }
+    bool isValid() const { return mIsValid; }
+    bool isTooComplex() const { return mMaxDepth >= mMaxAllowedDepth; }
     bool issueWarning() const { return mIssueWarning; }
 
   private:
@@ -144,13 +145,15 @@ bool ValidateGlobalInitializer(TIntermTyped *initializer,
                                int shaderVersion,
                                bool isWebGL,
                                bool hasExtNonConstGlobalInitializers,
-                               bool *warning)
+                               bool *warningOut,
+                               bool *tooComplexOut)
 {
     ValidateGlobalInitializerTraverser validate(shaderVersion, isWebGL,
                                                 hasExtNonConstGlobalInitializers);
     initializer->traverse(&validate);
-    ASSERT(warning != nullptr);
-    *warning = validate.issueWarning();
+    ASSERT(warningOut != nullptr && tooComplexOut != nullptr);
+    *warningOut    = validate.issueWarning();
+    *tooComplexOut = validate.isTooComplex();
     return validate.isValid();
 }
 

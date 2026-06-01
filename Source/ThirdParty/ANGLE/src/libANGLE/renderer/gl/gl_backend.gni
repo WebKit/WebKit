@@ -95,8 +95,6 @@ if (is_win) {
 
 if (angle_use_x11) {
   gl_backend_sources += [
-    "glx/ContextGLX.cpp",
-    "glx/ContextGLX.h",
     "glx/DisplayGLX.cpp",
     "glx/DisplayGLX.h",
     "glx/DisplayGLX_api.h",
@@ -106,8 +104,6 @@ if (angle_use_x11) {
     "glx/PbufferSurfaceGLX.h",
     "glx/PixmapSurfaceGLX.cpp",
     "glx/PixmapSurfaceGLX.h",
-    "glx/RendererGLX.cpp",
-    "glx/RendererGLX.h",
     "glx/SurfaceGLX.h",
     "glx/WindowSurfaceGLX.cpp",
     "glx/WindowSurfaceGLX.h",

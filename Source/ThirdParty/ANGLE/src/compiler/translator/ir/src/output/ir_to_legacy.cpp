@@ -378,9 +378,19 @@ TIntermTyped *make_internal_variable_gl_layer_vs()
     return new TIntermSymbol(BuiltInVariable::gl_LayerVS());
 }
 
-TIntermTyped *make_internal_variable_gl_instance_es100()
+TIntermTyped *make_internal_variable_gl_instanceid_es100()
 {
     return new TIntermSymbol(BuiltInVariable::gl_InstanceID());
+}
+
+TIntermTyped *make_internal_variable_gl_instanceindex()
+{
+    return new TIntermSymbol(BuiltInVariable::gl_InstanceIndex());
+}
+
+TIntermTyped *make_internal_variable_gl_vertexindex()
+{
+    return new TIntermSymbol(BuiltInVariable::gl_VertexIndex());
 }
 
 TIntermTyped *make_nameless_block_field_variable(TCompiler *compiler,

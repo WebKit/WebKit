@@ -15088,6 +15088,49 @@ TEST_P(Texture2DTestES3Foveation, ReuseTextureForFoveatedDraw)
     EXPECT_PIXEL_COLOR_EQ(0, 0, angle::GLColor::blue);
 }
 
+// Test destruction of foveated framebuffer while render pass is open.  Regression test for a bug
+// where the foveation image owned by the framebuffer wasn't properly handled upon framebuffer
+// destruction.
+TEST_P(Texture2DTestES3Foveation, DestroyFramebufferWhileRenderPassIsOpen)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_QCOM_framebuffer_foveated"));
+
+    // Switch to foveated framebuffer
+    GLTexture color;
+    glBindTexture(GL_TEXTURE_2D, color);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 64, 64);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Just need 1 focal point
+    GLuint providedFeatures = 0;
+    glFramebufferFoveationConfigQCOM(fbo, 1, 1, GL_FOVEATION_ENABLE_BIT_QCOM, &providedFeatures);
+    ASSERT_NE(providedFeatures & GL_FOVEATION_ENABLE_BIT_QCOM, 0u);
+    // Set foveation parameters
+    glFramebufferFoveationParametersQCOM(fbo, 0, 0, 0.0f, 0.0f, 8.0f, 8.0f, 0.0f);
+    EXPECT_GL_NO_ERROR();
+
+    ANGLE_GL_PROGRAM(drawGreen, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    glUseProgram(drawGreen);
+
+    // Start a render pass with the foveated framebuffer
+    drawQuad(drawGreen, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_GL_NO_ERROR();
+
+    // Switch to another framebuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // Delete the original framebuffer while the render pass is still open.
+    fbo.reset();
+
+    // Start a new render pass on the default framebuffer.
+    drawQuad(drawGreen, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
 // QCOM framebuffer foveated rendering with MSAA framebuffer
 TEST_P(Texture2DTestES3Foveation, DrawWithMsaaFramebuffer)
 {

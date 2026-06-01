@@ -214,8 +214,7 @@ angle::Result BufferManager::getBuffer(ContextMtl *contextMtl,
     // Create a new one
     mtl::BufferRef newBufferRef;
 
-    ANGLE_TRY(mtl::Buffer::MakeBufferWithStorageMode(contextMtl, storageMode, size, nullptr,
-                                                     &newBufferRef));
+    ANGLE_TRY(mtl::Buffer::MakeBufferWithStorageMode(contextMtl, storageMode, size, &newBufferRef));
 
     mTotalMem += size;
 
@@ -270,21 +269,21 @@ angle::Result BufferManager::queueBlitCopyDataToBuffer(ContextMtl *contextMtl,
     for (size_t srcOffset = 0; srcOffset < sizeToCopy; srcOffset += kMaxStagingBufferSize)
     {
         size_t subSizeToCopy = std::min(kMaxStagingBufferSize, sizeToCopy - srcOffset);
-
+        angle::Span<const uint8_t> subSource(src, subSizeToCopy);
         mtl::BufferRef bufferRef;
         // TODO(anglebug.com/40644888): Here we pass DynamicDraw to get managed buffer for the
         // operation. This should be checked to see if this makes sense.
         auto storageMode = Buffer::getStorageModeForUsage(contextMtl, Buffer::Usage::DynamicDraw);
-        ANGLE_TRY(getBuffer(contextMtl, storageMode, subSizeToCopy, bufferRef));
+        ANGLE_TRY(getBuffer(contextMtl, storageMode, subSource.size(), bufferRef));
 
         // copy data to buffer
-        uint8_t *ptr = bufferRef->mapWithOpt(contextMtl, false, true);
-        std::copy(src + srcOffset, src + srcOffset + subSizeToCopy, ptr);
-        bufferRef->unmapAndFlushSubset(contextMtl, 0, subSizeToCopy);
+        angle::Span<uint8_t> data = bufferRef->mapNoSync(contextMtl, 0, subSource.size());
+        std::copy(subSource.begin(), subSource.end(), data.begin());
+        bufferRef->unmapAndFlushSubset(contextMtl, 0, subSource.size());
 
         // queue blit
         mtl::BlitCommandEncoder *blitEncoder = contextMtl->getBlitCommandEncoder();
-        blitEncoder->copyBuffer(bufferRef, 0, dstMetalBuffer, offset + srcOffset, subSizeToCopy);
+        blitEncoder->copyBuffer(bufferRef, 0, dstMetalBuffer, offset + srcOffset, subSource.size());
 
         returnBuffer(contextMtl, bufferRef);
     }

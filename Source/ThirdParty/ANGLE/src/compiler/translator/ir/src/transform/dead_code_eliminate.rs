@@ -17,6 +17,8 @@
 //
 // Note: To make the first pass more powerful, the IR should be SSA-ified.  This requires merge
 // block inputs to be extended to a list and allowed in branches other than `If`.
+//
+// The transformation returns the set of interface variables that are active.
 use crate::ir::*;
 use crate::*;
 
@@ -39,7 +41,7 @@ struct State<'a> {
     is_live: Vec<bool>,
 }
 
-pub fn run(ir: &mut IR) {
+pub fn run(ir: &mut IR) -> HashSet<VariableId> {
     let referenced_variables = vec![false; ir.meta.all_variables().len()];
     let referenced_constants = vec![false; ir.meta.all_constants().len()];
     let referenced_types = vec![false; ir.meta.all_types().len()];
@@ -68,16 +70,6 @@ pub fn run(ir: &mut IR) {
         },
         |_, _| {},
     );
-
-    // Don't prune interface variables, as reflection info is not yet gathered.
-    // TODO(http://anglebug.com/349994211): Once reflection info is collected before this step,
-    // removing the following loop would let inactive variables be pruned.
-    for &variable_id in state.ir_meta.all_global_variables() {
-        let variable = state.ir_meta.get_variable(variable_id);
-        if !variable.decorations.decorations.is_empty() || variable.built_in.is_some() {
-            state.referenced.variables[variable_id.id as usize] = true;
-        }
-    }
 
     // Remove dead instructions, and mark types, constants and variables that are visited in the
     // leftover instructions.
@@ -109,19 +101,46 @@ pub fn run(ir: &mut IR) {
                 entry,
                 &|state, block| {
                     // Prune local variables to exclude unreferenced variables.
-                    block
-                        .variables
-                        .retain(|variable_id| state.referenced.variables[variable_id.id as usize]);
+                    block.variables.retain(|variable_id| {
+                        let should_keep = state.referenced.variables[variable_id.id as usize];
+                        if !should_keep {
+                            state.ir_meta.dead_code_eliminate_variable(*variable_id);
+                        }
+                        should_keep
+                    });
                     block
                 },
                 &|_, block| block,
             )
         },
     );
-    // Prune unreferenced global variables too.
-    state
+
+    // Extract the list of active interface variables to return.  Mark all interface variables
+    // active regardless so nothing about them is pruned here.  `reflection::collect_info()` needs
+    // this information so it can collect inactive interface variables as well.
+    let active_interface_variables = state
         .ir_meta
-        .prune_global_variables(|variable_id| state.referenced.variables[variable_id.id as usize]);
+        .all_global_variables()
+        .iter()
+        .filter_map(|&variable_id| {
+            if state.ir_meta.get_variable(variable_id).is_interface_variable() {
+                // Mark as referenced so it doesn't get pruned, but return only those that were
+                // truly referenced.
+                let is_referenced = std::mem::replace(
+                    &mut state.referenced.variables[variable_id.id as usize],
+                    true,
+                );
+                is_referenced.then_some(variable_id)
+            } else {
+                None
+            }
+        })
+        .collect();
+
+    // Prune unreferenced global variables too.
+    state.ir_meta.prune_global_variables(|variable_id, _| {
+        state.referenced.variables[variable_id.id as usize]
+    });
 
     // Mark constants and types that are used outside instructions as referenced.
     mark_referenced_variable_types_and_initializers(state.ir_meta, &mut state.referenced);
@@ -145,6 +164,8 @@ pub fn run(ir: &mut IR) {
             state.ir_meta.dead_code_eliminate_type(TypeId { id: id as u32 });
         }
     });
+
+    active_interface_variables
 }
 
 fn extract_registers(ids: &mut impl Iterator<Item = TypedId>) -> Vec<RegisterId> {

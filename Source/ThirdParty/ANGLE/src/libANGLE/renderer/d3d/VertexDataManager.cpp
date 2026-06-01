@@ -369,16 +369,15 @@ angle::Result VertexDataManager::StoreStaticAttrib(const gl::Context *context,
 
     // Compute source data pointer
     const uint8_t *sourceData = nullptr;
-    const int offset          = static_cast<int>(ComputeVertexAttributeOffset(attrib, binding));
+
+    angle::CheckedNumeric<GLintptr> offset = ComputeVertexAttributeOffset(attrib, binding);
 
     ANGLE_TRY(bufferD3D->getData(context, &sourceData));
 
     if (sourceData)
     {
-        sourceData += offset;
+        sourceData += GLintptr{offset.ValueOrDie()};
     }
-
-    unsigned int streamOffset = 0;
 
     translated->storage = nullptr;
     ANGLE_TRY(bufferD3D->getFactory()->getVertexSpaceRequired(context, attrib, binding, 1, 0, 0,
@@ -387,35 +386,32 @@ angle::Result VertexDataManager::StoreStaticAttrib(const gl::Context *context,
     auto *staticBuffer = bufferD3D->getStaticVertexBuffer(attrib, binding);
     ASSERT(staticBuffer);
 
+    angle::CheckedNumeric<size_t> attribStride = ComputeVertexAttributeStride(attrib, binding);
+
     if (staticBuffer->empty())
     {
         // Convert the entire buffer
         int totalCount =
             ElementsInBuffer(attrib, binding, static_cast<unsigned int>(bufferD3D->getSize()));
-        int startIndex = offset / static_cast<int>(ComputeVertexAttributeStride(attrib, binding));
-
         if (totalCount > 0)
         {
-            ANGLE_TRY(staticBuffer->storeStaticAttribute(context, attrib, binding, -startIndex,
-                                                         totalCount, 0, sourceData));
+            angle::CheckedNumeric<size_t> startIndex = offset / attribStride;
+            ANGLE_CHECK_GL_MATH(GetImplAs<ContextD3D>(context), startIndex.IsValid());
+            size_t si = startIndex.ValueOrDie();
+            ANGLE_TRY(staticBuffer->storeStaticAttribute(context, attrib, binding, -si, totalCount,
+                                                         0, sourceData));
         }
     }
 
-    unsigned int firstElementOffset =
-        (static_cast<unsigned int>(offset) /
-         static_cast<unsigned int>(ComputeVertexAttributeStride(attrib, binding))) *
-        translated->stride;
+    CheckedNumeric<size_t> firstElementOffset = (offset / attribStride) * translated->stride;
 
     VertexBuffer *vertexBuffer = staticBuffer->getVertexBuffer();
 
-    CheckedNumeric<unsigned int> checkedOffset(streamOffset);
-    checkedOffset += firstElementOffset;
-
-    ANGLE_CHECK_GL_MATH(GetImplAs<ContextD3D>(context), checkedOffset.IsValid());
+    ANGLE_CHECK_GL_MATH(GetImplAs<ContextD3D>(context), firstElementOffset.IsValid<unsigned int>());
 
     translated->vertexBuffer.set(vertexBuffer);
     translated->serial     = vertexBuffer->getSerial();
-    translated->baseOffset = streamOffset + firstElementOffset;
+    translated->baseOffset = firstElementOffset.ValueOrDie<unsigned int>();
 
     // Instanced vertices do not apply the 'start' offset
     translated->usesFirstVertexOffset = (binding.getDivisor() == 0);

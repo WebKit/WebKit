@@ -239,6 +239,7 @@ impl Generator {
             Decoration::RasterOrdered => layout_qualifiers.push("raster_ordered".to_string()),
             Decoration::EmulatedViewIDOut => layout_qualifiers.push("flat out".to_string()),
             Decoration::EmulatedViewIDIn => layout_qualifiers.push("flat in".to_string()),
+            Decoration::EmulatedMultiDrawBuiltIn(_) => (),
         }
     }
 
@@ -276,6 +277,10 @@ impl Generator {
         (match built_in {
             BuiltIn::InstanceID => "gl_InstanceID",
             BuiltIn::VertexID => "gl_VertexID",
+            BuiltIn::InstanceIndex | BuiltIn::VertexIndex => panic!(
+                "InternalError: gl_VertexIndex / gl_InstanceIndex are not expected in the GLSL \
+                 generator"
+            ),
             BuiltIn::Position => "gl_Position",
             BuiltIn::PointSize => "gl_PointSize",
             BuiltIn::BaseVertex => "gl_BaseVertex",

@@ -3545,22 +3545,33 @@ bool TParseContext::executeInitializer(const TSourceLoc &line,
         IsExtensionEnabled(mDirectiveHandler.extensionBehavior(),
                            TExtension::EXT_shader_non_constant_global_initializers);
     bool globalInitWarning = false;
-    if (symbolTable.atGlobalLevel() &&
-        !ValidateGlobalInitializer(initializer, mShaderVersion, sh::IsWebGLBasedSpec(mShaderSpec),
-                                   nonConstGlobalInitializers, &globalInitWarning))
+    bool tooComplex        = false;
+    if (symbolTable.atGlobalLevel())
     {
-        // Error message does not completely match behavior with ESSL 1.00, but
-        // we want to steer developers towards only using constant expressions.
-        error(line, "global variable initializers must be constant expressions", "=");
-        return false;
-    }
-    if (globalInitWarning)
-    {
-        warning(
-            line,
-            "global variable initializers should be constant expressions "
-            "(uniforms and globals are allowed in global initializers for legacy compatibility)",
-            "=");
+        bool valid = ValidateGlobalInitializer(
+            initializer, mShaderVersion, sh::IsWebGLBasedSpec(mShaderSpec),
+            nonConstGlobalInitializers, &globalInitWarning, &tooComplex);
+        if (!valid || tooComplex)
+        {
+            // Error message does not completely match behavior with ESSL 1.00, but
+            // we want to steer developers towards only using constant expressions.
+            //
+            // Note: the "Expression too complex" check can be removed once IR is the only path, as
+            // it's not sensitive to expression depth.
+            error(line,
+                  tooComplex ? "Expression too complex"
+                             : "global variable initializers must be constant expressions",
+                  "=");
+            return false;
+        }
+        if (globalInitWarning)
+        {
+            warning(line,
+                    "global variable initializers should be constant expressions "
+                    "(uniforms and globals are allowed in global initializers for legacy "
+                    "compatibility)",
+                    "=");
+        }
     }
 
     // identifier must be of type constant, a global, or a temporary

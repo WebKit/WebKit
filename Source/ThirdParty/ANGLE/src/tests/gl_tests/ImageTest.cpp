@@ -157,7 +157,6 @@ class ImageTest : public ANGLETest<>
         setConfigBlueBits(8);
         setConfigAlphaBits(8);
         setConfigDepthBits(24);
-        setPbuffer(true);
     }
 
     const char *getVS() const

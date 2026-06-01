@@ -604,6 +604,45 @@ void main() {
         verifyIsInTranslation(GL_FRAGMENT_SHADER, "loopForwardProgress");
     }
 }
+
+// Test that too-complex expressions are broken up in the IR.  With AST, the shader fails
+// compilation instead.
+TEST_P(WebGLGLSLOutputGLSLTest, ComplexExpression)
+{
+    ANGLE_SKIP_TEST_IF(!getEGLWindow()->isFeatureEnabled(Feature::UseIr));
+
+    std::ostringstream fs;
+    fs << R"(precision highp float;
+            uniform vec4 u_color;
+            void main()
+            {
+               gl_FragColor = u_color)";
+    for (uint32_t i = 0; i < 600; ++i)
+    {
+        fs << "+ vec4(" << i << ")";
+    }
+    fs << "; }";
+    compileShader(GL_FRAGMENT_SHADER, fs.str().c_str());
+    // The output contains (with a lot of parenthesization not shown):
+    //
+    //     webgl_FragColor = vec4(0.0, 0.0, 0.0, 0.0)
+    //               temp1 = _uu_color + vec4(0.0, 0.0, 0.0, 0.0)
+    //                                 + vec4(1.0, 1.0, 1.0, 1.0)
+    //                                 + ...
+    //                                 + vec4(127.0, 127.0, 127.0, 127.0);
+    //               temp2 =     temp1 + vec4(128.0, 128.0, 128.0, 128.0)
+    //                                 + ...
+    //                                 + vec4(255.0, 255.0, 255.0, 255.0);
+    //                    ...
+    //     webgl_FragColor =     temp3 + vec4(512.0, 512.0, 512.0, 512.0)
+    //                                 + ...
+    //                                 + vec4(599.0, 599.0, 599.0, 599.0);
+    verifyIsInTranslation(GL_FRAGMENT_SHADER, "vec4(127.0, 127.0, 127.0, 127.0)));");
+    verifyIsInTranslation(GL_FRAGMENT_SHADER, "vec4(255.0, 255.0, 255.0, 255.0)));");
+    verifyIsInTranslation(GL_FRAGMENT_SHADER, "vec4(383.0, 383.0, 383.0, 383.0)));");
+    verifyIsInTranslation(GL_FRAGMENT_SHADER, "vec4(511.0, 511.0, 511.0, 511.0)));");
+    verifyIsInTranslation(GL_FRAGMENT_SHADER, "vec4(599.0, 599.0, 599.0, 599.0)));");
+}
 }  // namespace
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(GLSLOutputGLSLTest);

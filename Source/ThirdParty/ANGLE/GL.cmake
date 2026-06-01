@@ -101,6 +101,8 @@ endif()
 
 if(angle_use_x11)
     list(APPEND gl_backend_sources
+        "src/libANGLE/renderer/gl/glx/ContextGLX.cpp"
+        "src/libANGLE/renderer/gl/glx/ContextGLX.h"
         "src/libANGLE/renderer/gl/glx/DisplayGLX.cpp"
         "src/libANGLE/renderer/gl/glx/DisplayGLX.h"
         "src/libANGLE/renderer/gl/glx/DisplayGLX_api.h"
@@ -110,6 +112,8 @@ if(angle_use_x11)
         "src/libANGLE/renderer/gl/glx/PbufferSurfaceGLX.h"
         "src/libANGLE/renderer/gl/glx/PixmapSurfaceGLX.cpp"
         "src/libANGLE/renderer/gl/glx/PixmapSurfaceGLX.h"
+        "src/libANGLE/renderer/gl/glx/RendererGLX.cpp"
+        "src/libANGLE/renderer/gl/glx/RendererGLX.h"
         "src/libANGLE/renderer/gl/glx/SurfaceGLX.h"
         "src/libANGLE/renderer/gl/glx/WindowSurfaceGLX.cpp"
         "src/libANGLE/renderer/gl/glx/WindowSurfaceGLX.h"

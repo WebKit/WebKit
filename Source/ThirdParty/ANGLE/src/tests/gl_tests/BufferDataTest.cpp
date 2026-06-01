@@ -1376,6 +1376,67 @@ void main()
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::cyan);
 }
 
+// Tests unaligned vertex attribute pointer, which should get to convertVertexBufferCPU in vulkan
+// backend.
+TEST_P(BufferDataTest, UnalignedVertexAttribPointer)
+{
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(program);
+
+    GLint positionLocation = glGetAttribLocation(program, essl1_shaders::PositionAttrib());
+    ASSERT_NE(positionLocation, -1);
+    glEnableVertexAttribArray(positionLocation);
+
+    GLint colorUniformLocation =
+        glGetUniformLocation(program, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(colorUniformLocation, -1);
+
+    // Allocate 8MB buffer to force non sub-allocation path
+    constexpr GLsizeiptr kBufferSize = 8 * 1024 * 1024;
+    std::vector<uint8_t> initialData(kBufferSize, 0);
+
+    GLBuffer positionBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, positionBuffer);
+    glBufferData(GL_ARRAY_BUFFER, kBufferSize, initialData.data(), GL_DYNAMIC_DRAW);
+
+    // Trigger CPU downgrade conversion with unaligned stride/offset
+    const GLsizei stride      = 13;
+    const GLintptr offset     = 1;
+    const GLint components    = 3;
+    const GLsizei typeSize    = sizeof(GLfloat);
+    const GLsizei elementSize = components * typeSize;  // 12
+
+    // Calculate vertexCount equivalent to Math.floor in JS
+    GLsizei vertexCount     = (kBufferSize - offset - elementSize) / stride + 1;
+    GLsizei quadVertexCount = (vertexCount / 6) * 6;
+    GLsizei firstVertex     = vertexCount - quadVertexCount;
+
+    glVertexAttribPointer(positionLocation, components, GL_FLOAT, GL_FALSE, stride,
+                          reinterpret_cast<const void *>(offset));
+
+    // First draw: establishes the conversion buffer
+    glDrawArrays(GL_TRIANGLES, firstVertex, quadVertexCount);
+    // CRITICAL: glFinish() forces GPU pipeline flush, preventing buffer reallocation
+    glFinish();
+
+    // SubData near the end - must be >= 12 bytes to break ANGLE's dirty-range short-circuit
+    const std::array<Vector3, 6> &quadVertices = GetQuadVertices();
+    std::vector<uint8_t> updateData(stride * 6);
+    for (int vertexIndex = 0; vertexIndex < 6; vertexIndex++)
+    {
+        memcpy(updateData.data() + stride * vertexIndex, quadVertices[vertexIndex].data(),
+               quadVertices[vertexIndex].size() * sizeof(float));
+    }
+    GLintptr lastQuadVertexStartPtr = offset + (vertexCount - 6) * stride;
+    glBufferSubData(GL_ARRAY_BUFFER, lastQuadVertexStartPtr, updateData.size(), updateData.data());
+
+    // Draw green quad. This should trigger partial update but should not access out of bounds
+    glClear(GL_COLOR_BUFFER_BIT);
+    glUniform4fv(colorUniformLocation, 1, &kFloatGreen.R);
+    glDrawArrays(GL_TRIANGLES, firstVertex, quadVertexCount);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::green);
+}
+
 // Verify that previous draws are not affected when a buffer is respecified with null data
 // and updated by calling map.
 TEST_P(BufferDataTestES3, BufferDataWithNullFollowedByMap)

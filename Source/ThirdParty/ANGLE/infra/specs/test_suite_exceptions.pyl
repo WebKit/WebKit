@@ -74,6 +74,13 @@
   },
   'angle_perftests': {
     'modifications': {
+      'android-arm64-pixel4-perf': {
+        'args': [
+          # Remove vulkan tests
+          '-f',
+          '*-*vulkan*:*Vulkan*',
+        ],
+      },
       'android-arm64-pixel6-perf': {
         'args': [
           # Custom temp throttling for perf tests on pixel6 b/345514719

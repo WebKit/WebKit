@@ -153,11 +153,6 @@ class VertexArrayVk : public VertexArrayImpl
 
     gl::AttributesMask getStreamingVertexAttribsMask() const { return mStreamingVertexAttribsMask; }
 
-    gl::ComponentTypeMask getCurrentVertexAttributesTypeMask() const
-    {
-        return mCurrentVertexAttributesTypeMask;
-    }
-
     gl::AttributesMask getCurrentEnabledAttribsMask() const { return mCurrentEnabledAttribsMask; }
 
   private:
@@ -243,8 +238,6 @@ class VertexArrayVk : public VertexArrayImpl
     // Track client and/or emulated attribs that we have to stream their buffer contents
     gl::AttributesMask mStreamingVertexAttribsMask;
     gl::AttributesMask mNeedsConversionAttribsMask;
-
-    gl::ComponentTypeMask mCurrentVertexAttributesTypeMask;
 
     // Divisor value if vertex inputRate is VK_VERTEX_INPUT_RATE_VERTEX. This maybe 0 or 1 depends
     // on feature bit.

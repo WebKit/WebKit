@@ -10,7 +10,6 @@
 #include "libANGLE/HandleAllocator.h"
 
 #include <algorithm>
-#include <functional>
 #include <limits>
 
 #include "common/debug.h"
@@ -34,12 +33,11 @@ HandleAllocator::~HandleAllocator() {}
 
 bool HandleAllocator::allocate(GLuint *outId)
 {
-    // Allocate from released list, logarithmic time for pop_heap.
+    // Allocate from released list, constant time for FIFO pop_front.
     if (!mReleasedList.empty())
     {
-        std::pop_heap(mReleasedList.begin(), mReleasedList.end(), std::greater<GLuint>());
-        GLuint reusedHandle = mReleasedList.back();
-        mReleasedList.pop_back();
+        GLuint reusedHandle = mReleasedList.front();
+        mReleasedList.pop_front();
 
         if (mLoggingEnabled)
         {
@@ -119,9 +117,8 @@ void HandleAllocator::release(GLuint handle)
         }
     }
 
-    // Add to released list, logarithmic time for push_heap.
+    // Add to released list, constant time for FIFO push_back.
     mReleasedList.push_back(handle);
-    std::push_heap(mReleasedList.begin(), mReleasedList.end(), std::greater<GLuint>());
 }
 
 void HandleAllocator::reserve(GLuint handle)
@@ -145,7 +142,6 @@ void HandleAllocator::reserve(GLuint handle)
         if (releasedIt != mReleasedList.end())
         {
             mReleasedList.erase(releasedIt);
-            std::make_heap(mReleasedList.begin(), mReleasedList.end(), std::greater<GLuint>());
             return;
         }
     }

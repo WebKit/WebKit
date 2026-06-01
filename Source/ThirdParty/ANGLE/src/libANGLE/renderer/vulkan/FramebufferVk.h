@@ -341,6 +341,9 @@ class FramebufferVk : public FramebufferImpl
     // contain the mask to apply to the alpha channel when drawing.
     gl::DrawBufferMask mEmulatedAlphaAttachmentMask;
 
+    // The attachment bit is set if it has color space override
+    gl::DrawBufferMask mAttachmentWithColorSpaceOverrideMask;
+
     // mCurrentFramebufferDesc is used to detect framebuffer changes using its serials. Therefore,
     // it must be maintained even when using the imageless framebuffer extension.
     vk::FramebufferDesc mCurrentFramebufferDesc;

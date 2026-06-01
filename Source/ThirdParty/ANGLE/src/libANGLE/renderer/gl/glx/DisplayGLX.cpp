@@ -20,6 +20,7 @@
 #include "libANGLE/Context.h"
 #include "libANGLE/Display.h"
 #include "libANGLE/Surface.h"
+#include "libANGLE/renderer/gl/ContextGL.h"
 #include "libANGLE/renderer/gl/RendererGL.h"
 #include "libANGLE/renderer/gl/renderergl_utils.h"
 
@@ -27,7 +28,6 @@
 
 #include <EGL/eglext.h>
 
-#include "libANGLE/renderer/gl/glx/ContextGLX.h"
 #include "libANGLE/renderer/gl/glx/DisplayGLX_api.h"
 #include "libANGLE/renderer/gl/glx/PbufferSurfaceGLX.h"
 #include "libANGLE/renderer/gl/glx/PixmapSurfaceGLX.h"
@@ -78,7 +78,9 @@ DisplayGLX::DisplayGLX(const egl::DisplayState &state)
     : DisplayGL(state),
       mRequestedVisual(-1),
       mContextConfig(nullptr),
+      mContext(nullptr),
       mCurrentNativeContexts(),
+      mInitPbuffer(0),
       mUsesNewXDisplay(false),
       mIsMesa(false),
       mHasMultisample(false),
@@ -91,6 +93,7 @@ DisplayGLX::DisplayGLX(const egl::DisplayState &state)
       mMinSwapInterval(0),
       mMaxSwapInterval(0),
       mCurrentSwapInterval(-1),
+      mCurrentDrawable(0),
       mXDisplay(nullptr),
       mEGLDisplay(nullptr)
 {}
@@ -226,27 +229,10 @@ egl::Error DisplayGLX::initialize(egl::Display *display)
         XFree(candidates);
     }
 
-    ANGLE_TRY(createRenderer(0, true, &mRenderer));
-    ASSERT(mRenderer);
-    const gl::Version &maxVersion = mRenderer->getMaxSupportedESVersion();
-    if (maxVersion < gl::Version(2, 0))
-    {
-        return egl::Error(EGL_NOT_INITIALIZED, "OpenGL ES 2.0 is not supportable.");
-    }
-
-    return DisplayGL::initialize(display);
-}
-
-egl::Error DisplayGLX::createRenderer(glx::Context shareContext,
-                                      bool makeNewContextCurrent,
-                                      std::shared_ptr<RendererGLX> *outRenderer)
-{
-    glx::Context context = 0;
-
-    const auto &eglAttributes = mEGLDisplay->getAttributeMap();
+    const auto &eglAttributes = display->getAttributeMap();
     if (mHasARBCreateContext)
     {
-        egl::Error error = initializeContext(shareContext, mContextConfig, eglAttributes, &context);
+        egl::Error error = initializeContext(mContextConfig, eglAttributes, &mContext);
         if (error.isError())
         {
             return error;
@@ -276,15 +262,17 @@ egl::Error DisplayGLX::createRenderer(glx::Context shareContext,
         }
         ASSERT(numVisuals == 1);
 
-        context = mGLX.createContext(&visuals[0], shareContext, true);
+        mContext = mGLX.createContext(&visuals[0], nullptr, true);
         XFree(visuals);
 
-        if (!context)
+        if (!mContext)
         {
             return egl::Error(EGL_NOT_INITIALIZED, "Could not create GL context.");
         }
     }
-    ASSERT(context);
+    ASSERT(mContext);
+
+    mCurrentNativeContexts[angle::GetCurrentThreadUniqueId()] = mContext;
 
     // FunctionsGL and DisplayGL need to make a few GL calls, for example to
     // query the version of the context so we need to make the context current.
@@ -299,13 +287,13 @@ egl::Error DisplayGLX::createRenderer(glx::Context shareContext,
     int initPbufferAttribs[] = {
         GLX_PBUFFER_WIDTH, 1, GLX_PBUFFER_HEIGHT, 1, None,
     };
-    glx::Pbuffer pbuffer = mGLX.createPbuffer(mContextConfig, initPbufferAttribs);
-    if (!pbuffer)
+    mInitPbuffer = mGLX.createPbuffer(mContextConfig, initPbufferAttribs);
+    if (!mInitPbuffer)
     {
         return egl::Error(EGL_NOT_INITIALIZED, "Could not create the initialization pbuffer.");
     }
 
-    if (!mGLX.makeCurrent(pbuffer, context))
+    if (!mGLX.makeCurrent(mInitPbuffer, mContext))
     {
         return egl::Error(EGL_NOT_INITIALIZED,
                           "Could not make the initialization pbuffer current.");
@@ -338,36 +326,37 @@ egl::Error DisplayGLX::createRenderer(glx::Context shareContext,
 
     syncXCommands(false);
 
-    outRenderer->reset(
-        new RendererGLX(std::move(functionsGL), eglAttributes, mGLX, this, context, pbuffer));
-
-    NativeContext &currentContext = mCurrentNativeContexts[angle::GetCurrentThreadUniqueId()];
-
-    if (makeNewContextCurrent)
+    mRenderer.reset(new RendererGL(std::move(functionsGL), eglAttributes, this));
+    const gl::Version &maxVersion = mRenderer->getMaxSupportedESVersion();
+    if (maxVersion < gl::Version(2, 0))
     {
-        currentContext = {context, pbuffer};
-    }
-    else
-    {
-        // Reset the current context back to the previous state
-        if (mGLX.makeCurrent(currentContext.drawable, currentContext.context) == EGL_FALSE)
-        {
-            return egl::Error(EGL_CONTEXT_LOST, "Failed to make the previous context current");
-        }
+        return egl::Error(EGL_NOT_INITIALIZED, "OpenGL ES 2.0 is not supportable.");
     }
 
-    return egl::NoError();
+    return DisplayGL::initialize(display);
 }
 
 void DisplayGLX::terminate()
 {
     DisplayGL::terminate();
 
+    if (mInitPbuffer)
+    {
+        mGLX.destroyPbuffer(mInitPbuffer);
+        mInitPbuffer = 0;
+    }
+
     mCurrentNativeContexts.clear();
 
-    mRenderer.reset();
+    if (mContext)
+    {
+        mGLX.destroyContext(mContext);
+        mContext = nullptr;
+    }
 
     mGLX.terminate();
+
+    mRenderer.reset();
 
     if (mUsesNewXDisplay)
     {
@@ -380,29 +369,25 @@ egl::Error DisplayGLX::makeCurrent(egl::Display *display,
                                    egl::Surface *readSurface,
                                    gl::Context *context)
 {
-    NativeContext &currentContext = mCurrentNativeContexts[angle::GetCurrentThreadUniqueId()];
-    glx::Context newContext       = 0;
-    glx::Drawable newDrawable     = 0;
-    if (context)
+    glx::Drawable newDrawable =
+        (drawSurface ? GetImplAs<SurfaceGLX>(drawSurface)->getDrawable() : mInitPbuffer);
+    glx::Context newContext = mContext;
+    // If the thread calling makeCurrent does not have the correct context current (either mContext
+    // or 0), we need to set it current.
+    if (!context)
     {
-        ContextGLX *newContextGLX = GetImplAs<ContextGLX>(context);
-        newContext                = newContextGLX->getContext();
-        if (drawSurface)
-        {
-            newDrawable = GetImplAs<SurfaceGLX>(drawSurface)->getDrawable();
-        }
-        else
-        {
-            newDrawable = newContextGLX->getPbuffer();
-        }
+        newDrawable = 0;
+        newContext  = 0;
     }
-    if (newDrawable != currentContext.drawable || newContext != currentContext.context)
+    if (newDrawable != mCurrentDrawable ||
+        newContext != mCurrentNativeContexts[angle::GetCurrentThreadUniqueId()])
     {
         if (mGLX.makeCurrent(newDrawable, newContext) != True)
         {
             return egl::Error(EGL_CONTEXT_LOST, "Failed to make the GLX context current");
         }
-        currentContext = {newContext, newDrawable};
+        mCurrentNativeContexts[angle::GetCurrentThreadUniqueId()] = newContext;
+        mCurrentDrawable                                          = newDrawable;
     }
 
     return DisplayGL::makeCurrent(display, drawSurface, readSurface, context);
@@ -479,44 +464,10 @@ ContextImpl *DisplayGLX::createContext(const gl::State &state,
 {
     RobustnessVideoMemoryPurgeStatus robustnessVideoMemoryPurgeStatus =
         GetRobustnessVideoMemoryPurge(attribs);
-    EGLAttrib virtualizationGroup =
-        attribs.get(EGL_CONTEXT_VIRTUALIZATION_GROUP_ANGLE, EGL_DONT_CARE);
-    bool globalTextureShareGroup =
-        attribs.get(EGL_DISPLAY_TEXTURE_SHARE_GROUP_ANGLE, EGL_FALSE) == EGL_TRUE;
-
-    std::shared_ptr<RendererGLX> renderer = mRenderer;
-
-    if (virtualizationGroup != EGL_DONT_CARE)
-    {
-        renderer = mVirtualizationGroups[virtualizationGroup].lock();
-        if (!renderer)
-        {
-            glx::Context nativeShareContext = 0;
-            if (globalTextureShareGroup)
-            {
-                nativeShareContext = mRenderer->getContext();
-            }
-            else if (shareContext)
-            {
-                ContextGLX *shareContextGLX = GetImplAs<ContextGLX>(shareContext);
-                nativeShareContext          = shareContextGLX->getContext();
-            }
-            // Create a new renderer for this context.
-            egl::Error error = createRenderer(nativeShareContext, false, &renderer);
-            if (error.isError())
-            {
-                ERR() << "Failed to create a shared renderer: " << error.getMessage();
-                return nullptr;
-            }
-
-            mVirtualizationGroups[virtualizationGroup] = renderer;
-        }
-    }
-    return new ContextGLX(state, errorSet, renderer, robustnessVideoMemoryPurgeStatus);
+    return new ContextGL(state, errorSet, mRenderer, robustnessVideoMemoryPurgeStatus);
 }
 
-egl::Error DisplayGLX::initializeContext(glx::Context shareContext,
-                                         glx::FBConfig config,
+egl::Error DisplayGLX::initializeContext(glx::FBConfig config,
                                          const egl::AttributeMap &eglAttributes,
                                          glx::Context *context)
 {
@@ -551,7 +502,7 @@ egl::Error DisplayGLX::initializeContext(glx::Context shareContext,
         {
             profileMask |= GLX_CONTEXT_CORE_PROFILE_BIT_ARB;
         }
-        return createContextAttribs(shareContext, config, requestedVersion, profileMask, context);
+        return createContextAttribs(config, requestedVersion, profileMask, context);
     }
 
     // The only way to get a core profile context of the highest version using
@@ -578,8 +529,7 @@ egl::Error DisplayGLX::initializeContext(glx::Context shareContext,
             profileFlag |= GLX_CONTEXT_ES2_PROFILE_BIT_EXT;
         }
 
-        egl::Error error =
-            createContextAttribs(shareContext, config, info.version, profileFlag, context);
+        egl::Error error = createContextAttribs(config, info.version, profileFlag, context);
         if (!error.isError())
         {
             return error;
@@ -931,8 +881,6 @@ void DisplayGLX::generateExtensions(egl::DisplayExtensions *outExtensions) const
 
     outExtensions->robustnessVideoMemoryPurgeNV = mHasNVRobustnessVideoMemoryPurge;
 
-    outExtensions->contextVirtualizationANGLE = true;
-
     DisplayGL::generateExtensions(outExtensions);
 }
 
@@ -955,8 +903,7 @@ int DisplayGLX::getGLXFBConfigAttrib(glx::FBConfig config, int attrib) const
     return result;
 }
 
-egl::Error DisplayGLX::createContextAttribs(glx::Context shareContext,
-                                            glx::FBConfig,
+egl::Error DisplayGLX::createContextAttribs(glx::FBConfig,
                                             const Optional<gl::Version> &version,
                                             int profileMask,
                                             glx::Context *context) const
@@ -1000,7 +947,7 @@ egl::Error DisplayGLX::createContextAttribs(glx::Context shareContext,
     // (the error handler is NOT per-display).
     XSync(mXDisplay, False);
     auto oldErrorHandler = XSetErrorHandler(IgnoreX11Errors);
-    *context = mGLX.createContextAttribsARB(mContextConfig, shareContext, True, attribs.data());
+    *context = mGLX.createContextAttribsARB(mContextConfig, nullptr, True, attribs.data());
     XSetErrorHandler(oldErrorHandler);
 
     if (!*context)

@@ -15,6 +15,7 @@
 #include "compiler/translator/tree_ops/DeclarePerVertexBlocks.h"
 #include "compiler/translator/tree_ops/MonomorphizeUnsupportedFunctions.h"
 #include "compiler/translator/tree_ops/RecordConstantPrecision.h"
+#include "compiler/translator/tree_ops/RemoveDynamicIndexing.h"
 #include "compiler/translator/tree_util/FindSymbolNode.h"
 #include "compiler/translator/tree_util/ReplaceClipCullDistanceVariable.h"
 #include "compiler/translator/tree_util/RunAtTheEndOfShader.h"
@@ -96,18 +97,26 @@ bool TranslatorESSL::translate(TIntermBlock *root,
     // like non-preprocessor tokens.
     WritePragma(sink, compileOptions, getPragma());
 
-    if (!RecordConstantPrecision(this, root, &getSymbolTable()))
-    {
-        return false;
-    }
-
     if (!compileOptions.useIR)
     {
+        if (!RecordConstantPrecision(this, root, &getSymbolTable()))
+        {
+            return false;
+        }
+
         // anglebug.com/42265954: The ESSL spec has a bug with images as function arguments. The
         // recommended workaround is to inline functions that accept image arguments.
         if (shaderVer >= 310 && !MonomorphizeUnsupportedFunctions(
                                     this, root, &getSymbolTable(),
                                     UnsupportedFunctionArgsBitSet{UnsupportedFunctionArgs::Image}))
+        {
+            return false;
+        }
+    }
+
+    if (compileOptions.removeDynamicIndexingOfSwizzledVector)
+    {
+        if (!sh::RemoveDynamicIndexingOfSwizzledVector(this, root, &getSymbolTable(), nullptr))
         {
             return false;
         }

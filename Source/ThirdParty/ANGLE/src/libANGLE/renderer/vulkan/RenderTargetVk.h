@@ -59,7 +59,6 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
               vk::ImageViewHelper *imageViews,
               vk::ImageHelper *resolveImage,
               vk::ImageViewHelper *resolveImageViews,
-              UniqueSerial imageSiblingSerial,
               gl::LevelIndex levelIndexGL,
               uint32_t layerIndex,
               uint32_t layerCount,
@@ -243,8 +242,6 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
     // LOAD.
     vk::ImageHelper *mResolveImage;
     vk::ImageViewHelper *mResolveImageViews;
-
-    UniqueSerial mImageSiblingSerial;
 
     // Which subresource of the image is used as render target.
     //

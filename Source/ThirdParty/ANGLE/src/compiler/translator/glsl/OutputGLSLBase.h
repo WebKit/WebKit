@@ -24,7 +24,8 @@ class TOutputGLSLBase : public TIntermTraverser
   public:
     TOutputGLSLBase(TCompiler *compiler,
                     TInfoSinkBase &objSink,
-                    const ShCompileOptions &compileOptions);
+                    const ShCompileOptions &compileOptions,
+                    bool removeInvariant);
 
     ShShaderOutput getShaderOutput() const { return mOutput; }
 
@@ -121,6 +122,8 @@ class TOutputGLSLBase : public TIntermTraverser
     // previously valid fragment outputs with an implicit location of 0 are now required to specify
     // their location.
     bool mAlwaysSpecifyFragOutLocation;
+    // Whether `invariant` should be removed everywhere
+    bool mRemoveInvariant;
 
     const ShCompileOptions &mCompileOptions;
 };

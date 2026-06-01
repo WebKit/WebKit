@@ -493,6 +493,29 @@ pub fn trace_back<State, InspectConstant, InspectVariable, InspectRegister>(
     }
 }
 
+// A specialized version of trace_back that automatically traces `Access*` instructions until a
+// variable is found (or not).
+pub fn trace_back_to_variable(ir_meta: &IRMeta, id: Id) -> Option<VariableId> {
+    let mut result = None;
+    trace_back(
+        ir_meta,
+        &mut result,
+        id,
+        &mut |_, _| {},
+        &mut |result, variable_id| *result = Some(variable_id),
+        &mut |_, _, opcode| match *opcode {
+            OpCode::AccessVectorComponent(base_id, _)
+            | OpCode::AccessVectorComponentMulti(base_id, _)
+            | OpCode::AccessVectorComponentDynamic(base_id, _)
+            | OpCode::AccessMatrixColumn(base_id, _)
+            | OpCode::AccessStructField(base_id, _)
+            | OpCode::AccessArrayElement(base_id, _) => Some(base_id.id),
+            _ => None,
+        },
+    );
+    result
+}
+
 // ESSL 100 Appendix A.4 Control Flow specifies the shape of supported `for` loops.  The format is:
 //
 //     for (type variable = constant; variable op constant; expression)
@@ -727,6 +750,8 @@ pub fn inspect_pointer_access<State, OnAccess>(
     match opcode {
         // Read accesses
         &OpCode::Load(pointer)
+        | &OpCode::Unary(UnaryOpCode::ArrayLength, pointer)
+        | &OpCode::Unary(UnaryOpCode::AtomicCounter, pointer)
         | &OpCode::Binary(BinaryOpCode::AtomicAdd, pointer, _)
         | &OpCode::Binary(BinaryOpCode::AtomicMin, pointer, _)
         | &OpCode::Binary(BinaryOpCode::AtomicMax, pointer, _)
@@ -757,7 +782,9 @@ pub fn inspect_pointer_access<State, OnAccess>(
         &OpCode::Unary(UnaryOpCode::PrefixIncrement, pointer)
         | &OpCode::Unary(UnaryOpCode::PrefixDecrement, pointer)
         | &OpCode::Unary(UnaryOpCode::PostfixIncrement, pointer)
-        | &OpCode::Unary(UnaryOpCode::PostfixDecrement, pointer) => {
+        | &OpCode::Unary(UnaryOpCode::PostfixDecrement, pointer)
+        | &OpCode::Unary(UnaryOpCode::AtomicCounterIncrement, pointer)
+        | &OpCode::Unary(UnaryOpCode::AtomicCounterDecrement, pointer) => {
             on_access(state, pointer, PointerAccess::ReadWrite);
         }
 
@@ -784,4 +811,135 @@ pub fn inspect_pointer_access<State, OnAccess>(
         }
         _ => {}
     };
+}
+
+// Helper to create a vector out of a single scalar.  It replicates the scalar to as many components
+// as the vector needs.
+pub fn construct_vector_from_scalar<State, I: Copy, MakeT>(
+    ir_meta: &mut IRMeta,
+    state: &mut State,
+    arg: I,
+    result_type_id: TypeId,
+    result_id: Option<TypedRegisterId>,
+    make: MakeT,
+) -> I
+where
+    MakeT: Fn(&mut IRMeta, &mut State, TypeId, Vec<I>, Option<TypedRegisterId>) -> I,
+{
+    let type_info = ir_meta.get_type(result_type_id);
+    let vec_size = type_info.get_vector_size().unwrap();
+    let args = vec![arg; vec_size as usize];
+    make(ir_meta, state, result_type_id, args, result_id)
+}
+
+// Helper to create a matrix out of a single scalar.  The result is a matrix with all zeros, except
+// the scalar is found on the diagonal.
+pub fn construct_matrix_from_scalar<State, I: Copy, MakeT>(
+    ir_meta: &mut IRMeta,
+    state: &mut State,
+    arg: I,
+    result_type_id: TypeId,
+    result_id: Option<TypedRegisterId>,
+    zero: I,
+    make: MakeT,
+) -> I
+where
+    MakeT: Fn(&mut IRMeta, &mut State, TypeId, Vec<I>, Option<TypedRegisterId>) -> I,
+{
+    let type_info = ir_meta.get_type(result_type_id);
+    let &Type::Matrix(vector_type_id, column_count) = type_info else { unreachable!() };
+    let &Type::Vector(_, row_count) = ir_meta.get_type(vector_type_id) else { unreachable!() };
+
+    // Create columns where every component is 0 except the one at index = column_index.
+    let columns = (0..column_count)
+        .map(|column| {
+            let column_components =
+                (0..row_count).map(|row| if row == column { arg } else { zero }).collect();
+            make(ir_meta, state, vector_type_id, column_components, None)
+        })
+        .collect();
+    make(ir_meta, state, result_type_id, columns, result_id)
+}
+
+// Helper to create a matrix out of another matrix.  For each (row,column), the result takes its
+// value from the input matrix, if within its bounds, or else the identity matrix (all zeros, with
+// ones on the diagonal).
+//
+// The `get_elements` helper may be called for a matrix to retrieve its columns, or a vector (the
+// columns) to retrieve its components.
+pub fn construct_matrix_from_matrix<State, I: Copy, GetTElements, MakeT>(
+    ir_meta: &mut IRMeta,
+    state: &mut State,
+    arg: I,
+    result_type_id: TypeId,
+    result_id: Option<TypedRegisterId>,
+    zero: I,
+    one: I,
+    get_elements: GetTElements,
+    make: MakeT,
+) -> I
+where
+    GetTElements: Fn(&mut IRMeta, &mut State, I) -> Vec<I>,
+    MakeT: Fn(&mut IRMeta, &mut State, TypeId, Vec<I>, Option<TypedRegisterId>) -> I,
+{
+    let type_info = ir_meta.get_type(result_type_id);
+    let &Type::Matrix(vector_type_id, column_count) = type_info else { unreachable!() };
+    let &Type::Vector(_, row_count) = ir_meta.get_type(vector_type_id) else { unreachable!() };
+
+    let input_columns = get_elements(ir_meta, state, arg);
+    let input_column_components: Vec<_> =
+        input_columns.iter().map(|&column_id| get_elements(ir_meta, state, column_id)).collect();
+    let input_column_count = input_columns.len() as u32;
+    let input_row_count = input_column_components[0].len() as u32;
+
+    // Create columns where every component is taken from the input matrix, except if it's out
+    // of bounds.  In that case, the component is 1 on the diagonal and 0 elsewhere.
+    let columns: Vec<_> = (0..column_count)
+        .map(|column| {
+            (0..row_count)
+                .map(|row| {
+                    if column < input_column_count && row < input_row_count {
+                        input_column_components[column as usize][row as usize]
+                    } else if row == column {
+                        one
+                    } else {
+                        zero
+                    }
+                })
+                .collect()
+        })
+        .collect();
+
+    let columns = columns
+        .into_iter()
+        .map(|column_components| make(ir_meta, state, vector_type_id, column_components, None))
+        .collect();
+    make(ir_meta, state, result_type_id, columns, result_id)
+}
+
+// Helper to create a matrix out of a series of scalars.  These scalars are grouped into column
+// vectors.
+pub fn construct_matrix_from_multiple<State, I: Copy, MakeT>(
+    ir_meta: &mut IRMeta,
+    state: &mut State,
+    args: &[I],
+    result_type_id: TypeId,
+    result_id: Option<TypedRegisterId>,
+    make: MakeT,
+) -> I
+where
+    MakeT: Fn(&mut IRMeta, &mut State, TypeId, Vec<I>, Option<TypedRegisterId>) -> I,
+{
+    let type_info = ir_meta.get_type(result_type_id);
+    let &Type::Matrix(vector_type_id, column_count) = type_info else { unreachable!() };
+    let &Type::Vector(_, row_count) = ir_meta.get_type(vector_type_id) else { unreachable!() };
+
+    let columns = (0..column_count)
+        .map(|column| {
+            let start = (column * row_count) as usize;
+            let end = start + row_count as usize;
+            make(ir_meta, state, vector_type_id, args[start..end].to_vec(), None)
+        })
+        .collect();
+    make(ir_meta, state, result_type_id, columns, result_id)
 }

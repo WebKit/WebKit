@@ -208,7 +208,19 @@ def GetTestsFromOutput(output):
 
 
 def FilterTests(tests, test_filter):
-    matches = set()
-    for single_filter in test_filter.split(':'):
-        matches.update(fnmatch.filter(tests, single_filter))
+    positive_matches = set()
+
+    # Like gtest_filter, the format is: positive:pattern-negative:pattern
+    split_filter = (test_filter + '-').split('-')
+    positive_filter = split_filter[0]
+    negative_filter = split_filter[1]
+
+    # Add everything selected by the positive filters
+    for single_filter in positive_filter.split(':'):
+        positive_matches.update(fnmatch.filter(tests, single_filter))
+
+    # From that list, remove everything that matches the negative filters
+    matches = positive_matches
+    for single_filter in negative_filter.split(':'):
+        matches.difference_update(fnmatch.filter(matches, single_filter))
     return sorted(matches)

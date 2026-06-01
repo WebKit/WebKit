@@ -1051,7 +1051,7 @@ angle::Result VertexArrayMtl::convertIndexBuffer(const gl::Context *glContext,
     {
         // We shouldn't use GPU to convert when we are in a middle of a render pass.
         ANGLE_TRY(StreamIndexData(contextMtl, &conversion->data,
-                                  idxBuffer->getBufferDataReadOnly(contextMtl) + offsetModulo,
+                                  idxBuffer->getBufferDataReadOnly(contextMtl, offsetModulo).data(),
                                   indexType, indexCount, glState.isPrimitiveRestartEnabled(),
                                   &conversion->convertedBuffer, &conversion->convertedOffset));
     }
@@ -1210,15 +1210,14 @@ angle::Result VertexArrayMtl::convertVertexBufferCPU(ContextMtl *contextMtl,
                                                      size_t numVertices,
                                                      ConversionBufferMtl *conversion)
 {
-
-    const uint8_t *srcBytes = srcBuffer->getBufferDataReadOnly(contextMtl);
-    ANGLE_CHECK_GL_ALLOC(contextMtl, srcBytes);
     VertexConversionBufferMtl *vertexConverison =
         static_cast<VertexConversionBufferMtl *>(conversion);
-    srcBytes += MIN(binding.getOffset(), static_cast<GLintptr>(vertexConverison->offset));
+    size_t srcOffset = MIN(binding.getOffset(), static_cast<GLintptr>(vertexConverison->offset));
+    angle::Span<const uint8_t> srcBytes = srcBuffer->getBufferDataReadOnly(contextMtl, srcOffset);
+    ANGLE_CHECK_GL_ALLOC(contextMtl, !srcBytes.empty());
     SimpleWeakBufferHolderMtl conversionBufferHolder;
-    ANGLE_TRY(StreamVertexData(contextMtl, &conversion->data, srcBytes, numVertices * targetStride,
-                               0, numVertices, binding.getStride(),
+    ANGLE_TRY(StreamVertexData(contextMtl, &conversion->data, srcBytes.data(),
+                               numVertices * targetStride, 0, numVertices, binding.getStride(),
                                convertedFormat.vertexLoadFunction, &conversionBufferHolder,
                                &conversion->convertedOffset));
     conversion->convertedBuffer = conversionBufferHolder.getCurrentBuffer();

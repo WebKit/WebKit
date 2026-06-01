@@ -131,3 +131,10 @@ gn_args.config(
         "target_cpu": "x64",
     },
 )
+
+gn_args.config(
+    name = "x86",
+    args = {
+        "target_cpu": "x86",
+    },
+)

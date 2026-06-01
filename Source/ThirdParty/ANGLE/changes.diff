@@ -1662,7 +1662,7 @@ index 22de9a4fcd70666b0a7c7177f61c2a88b7d72107..81a1a07d432878ced06b851eb469a3dd
      {"GL_VARIANT_ARRAY_POINTER_EXT", 0x87E9},
      {"GL_VARIANT_ARRAY_STRIDE_EXT", 0x87E6},
 diff --git a/src/common/log_utils.h b/src/common/log_utils.h
-index fc1aa2cccb169a6580cff7b2f144fe1768dbf6c5..de2ccdab42b3a77f3104e03c0715be22e8df2264 100644
+index 9034ba9fa2f68d830a2d3c3c2b72626832602ef9..7abf8d6518587af2b84581815afcc71ce75ca1af 100644
 --- a/src/common/log_utils.h
 +++ b/src/common/log_utils.h
 @@ -262,10 +262,13 @@ std::ostream &FmtHex(std::ostream &os, T value)
@@ -2049,10 +2049,10 @@ index af8914a52e3a838afed41b98da82b2ed07e90420..ba40416d77dcd9aa9d6623f971637dc8
      float intPart = 0.0f;
      return modff(f, &intPart);
 diff --git a/src/compiler/translator/ShaderLang.cpp b/src/compiler/translator/ShaderLang.cpp
-index 86c2d8025a1f221dc6072ab3f79b9eee83c349d9..ca102a74f180ca4c975c11a2b41e6d81d7a618b4 100644
+index 6477eef68e895a65dca6dc978c7d8acc0d48b670..654cf97611240d5a5414683e126f4b1c67cacefb 100644
 --- a/src/compiler/translator/ShaderLang.cpp
 +++ b/src/compiler/translator/ShaderLang.cpp
-@@ -973,27 +973,7 @@ ShCompileOptions::ShCompileOptions()
+@@ -974,27 +974,7 @@ ShCompileOptions::ShCompileOptions()
      memset(this, 0, sizeof(*this));
  }
  
@@ -3535,10 +3535,10 @@ index 5cef5d49eea1b1f1e6c22543446b2e5391ee88f2..5bfff7a4587126abada2d0a2560fb32c
  
  
 diff --git a/src/libANGLE/Context.cpp b/src/libANGLE/Context.cpp
-index 5bb6d0f06719239502db134356c7d395e64f088c..908e0a961df0d0cb875bdd3cb6ec660710a4dfa2 100644
+index 9614024b4767b407b09706b820c7218470905f3b..b34420348b0dfd3e20252cb9c39f55dc98b84def 100644
 --- a/src/libANGLE/Context.cpp
 +++ b/src/libANGLE/Context.cpp
-@@ -9932,6 +9932,33 @@ void Context::textureFoveationParameters(TextureID texturePacked,
+@@ -9933,6 +9933,33 @@ void Context::textureFoveationParameters(TextureID texturePacked,
      texture->setFocalPoint(layer, focalPoint, focalX, focalY, gainX, gainY, foveaArea);
  }
  
@@ -3572,7 +3572,7 @@ index 5bb6d0f06719239502db134356c7d395e64f088c..908e0a961df0d0cb875bdd3cb6ec6607
  void Context::endTiling(GLbitfield preserveMask)
  {
      ANGLE_CONTEXT_TRY(mImplementation->endTiling(this, preserveMask));
-@@ -10006,6 +10033,16 @@ void Context::blobCacheCallbacks(GLSETBLOBPROCANGLE set,
+@@ -10007,6 +10034,16 @@ void Context::blobCacheCallbacks(GLSETBLOBPROCANGLE set,
      mState.getBlobCacheCallbacks() = {set, get, userParam};
  }
  
@@ -4798,10 +4798,10 @@ index 50ac42a5b9a0f7c8b3b161af40c598cb34ff132a..0c43445c1ae3e1e207fae4cb65e7ea5a
      "-weak_framework",
      "Metal",
 diff --git a/src/libANGLE/renderer/metal/BufferMtl.h b/src/libANGLE/renderer/metal/BufferMtl.h
-index 6535c8a4f970839e2b48b1b03f5d9ed1f23670b7..a72cc1d237dfa691e9b709e78776dd414c30459a 100644
+index 3d474212ed0c54ddcc98967e8824e0211c442390..7fc9fa77b2f40e5b275a5e698c58e5a9916a68c2 100644
 --- a/src/libANGLE/renderer/metal/BufferMtl.h
 +++ b/src/libANGLE/renderer/metal/BufferMtl.h
-@@ -28,16 +28,20 @@ namespace rx
+@@ -29,16 +29,20 @@ namespace rx
  
  struct DrawCommandRange
  {
@@ -4827,7 +4827,7 @@ index 6535c8a4f970839e2b48b1b03f5d9ed1f23670b7..a72cc1d237dfa691e9b709e78776dd41
  };
  // Conversion buffers hold translated index and vertex data.
  struct ConversionBufferMtl
-@@ -77,7 +81,6 @@ struct IndexConversionBufferMtl : public ConversionBufferMtl
+@@ -78,7 +82,6 @@ struct IndexConversionBufferMtl : public ConversionBufferMtl
      const gl::DrawElementsType elemType;
      const size_t offset;
      bool primitiveRestartEnabled;
@@ -4835,7 +4835,7 @@ index 6535c8a4f970839e2b48b1b03f5d9ed1f23670b7..a72cc1d237dfa691e9b709e78776dd41
  };
  
  struct UniformConversionBufferMtl : public ConversionBufferMtl
-@@ -184,13 +187,11 @@ class BufferMtl : public BufferImpl, public BufferHolderMtl
+@@ -185,13 +188,11 @@ class BufferMtl : public BufferImpl, public BufferHolderMtl
  
      size_t size() const { return static_cast<size_t>(mState.getSize()); }
  
@@ -4852,7 +4852,7 @@ index 6535c8a4f970839e2b48b1b03f5d9ed1f23670b7..a72cc1d237dfa691e9b709e78776dd41
  
    private:
      angle::Result allocateNewMetalBuffer(ContextMtl *contextMtl,
-@@ -250,16 +251,15 @@ class BufferMtl : public BufferImpl, public BufferHolderMtl
+@@ -248,16 +249,15 @@ class BufferMtl : public BufferImpl, public BufferHolderMtl
  
      std::vector<UniformConversionBufferMtl> mUniformConversionBuffers;
  
@@ -4874,7 +4874,7 @@ index 6535c8a4f970839e2b48b1b03f5d9ed1f23670b7..a72cc1d237dfa691e9b709e78776dd41
      size_t mRevisionCount = 0;  // for generating labels only
      gl::BufferUsage mUsage;
 diff --git a/src/libANGLE/renderer/metal/BufferMtl.mm b/src/libANGLE/renderer/metal/BufferMtl.mm
-index 7c769533a364fad475bb499c88bbc09265ef4f5c..a1ccdf76f8061e37c053075a9d43a872bdf991fa 100644
+index 8f1de35db8b3aca5a71f7dc4968e606840b05039..4c0c6902283c8028a8dc86cf483fafbedf33e195 100644
 --- a/src/libANGLE/renderer/metal/BufferMtl.mm
 +++ b/src/libANGLE/renderer/metal/BufferMtl.mm
 @@ -14,6 +14,7 @@
@@ -4897,7 +4897,23 @@ index 7c769533a364fad475bb499c88bbc09265ef4f5c..a1ccdf76f8061e37c053075a9d43a872
  // UniformConversionBufferMtl implementation
  UniformConversionBufferMtl::UniformConversionBufferMtl(ContextMtl *context,
                                                         std::pair<size_t, size_t> offsetIn,
-@@ -406,7 +402,7 @@ bool isOffsetAndSizeMetalBlitCompatible(size_t offset, size_t size)
+@@ -333,12 +329,13 @@ bool isOffsetAndSizeMetalBlitCompatible(size_t offset, size_t size)
+ 
+ angle::Span<const uint8_t> BufferMtl::getBufferDataReadOnly(ContextMtl *contextMtl, size_t offset)
+ {
++    size_t length = size() - offset;
+     if (mShadowCopy.size() == 0)
+     {
+         // Don't need shadow copy in this case, use the buffer directly
+-        return mBuffer->mapReadOnly(contextMtl, offset);
++        return mBuffer->mapReadOnly(contextMtl, offset, length);
+     }
+-    return syncAndObtainShadowCopy(contextMtl, offset);
++    return syncAndObtainShadowCopy(contextMtl, offset, length);
+ }
+ 
+ bool BufferMtl::clientShadowCopyDataNeedSync(ContextMtl *contextMtl)
+@@ -420,7 +417,7 @@ bool isOffsetAndSizeMetalBlitCompatible(size_t offset, size_t size)
          {
              if (buffer.offset.second <= offset.second &&
                  (offset.second - buffer.offset.second) % buffer.uniformBufferBlockSize == 0)
@@ -4906,7 +4922,7 @@ index 7c769533a364fad475bb499c88bbc09265ef4f5c..a1ccdf76f8061e37c053075a9d43a872
          }
      }
  
-@@ -436,7 +432,7 @@ bool isOffsetAndSizeMetalBlitCompatible(size_t offset, size_t size)
+@@ -450,7 +447,7 @@ bool isOffsetAndSizeMetalBlitCompatible(size_t offset, size_t size)
          buffer.convertedBuffer = nullptr;
          buffer.convertedOffset = 0;
      }
@@ -4915,7 +4931,7 @@ index 7c769533a364fad475bb499c88bbc09265ef4f5c..a1ccdf76f8061e37c053075a9d43a872
  }
  
  void BufferMtl::clearConversionBuffers()
-@@ -444,80 +440,90 @@ bool isOffsetAndSizeMetalBlitCompatible(size_t offset, size_t size)
+@@ -458,89 +455,91 @@ bool isOffsetAndSizeMetalBlitCompatible(size_t offset, size_t size)
      mVertexConversionBuffers.clear();
      mIndexConversionBuffers.clear();
      mUniformConversionBuffers.clear();
@@ -4924,40 +4940,43 @@ index 7c769533a364fad475bb499c88bbc09265ef4f5c..a1ccdf76f8061e37c053075a9d43a872
  }
  
  template <typename T>
--static std::vector<IndexRange> calculateRestartRanges(ContextMtl *ctx, mtl::BufferRef idxBuffer)
+-static std::vector<IndexRange> CalculateRestartRanges(angle::Span<const uint8_t> data)
 +static std::vector<DrawIndexRange> CalculateDrawIndexRanges(angle::Span<const T> bufferData)
  {
 -    std::vector<IndexRange> result;
--    const T *bufferData       = reinterpret_cast<const T *>(idxBuffer->mapReadOnly(ctx));
--    const size_t numIndices   = idxBuffer->size() / sizeof(T);
+-    angle::Span<const T> elements = angle::reinterpret_span<const T>(data);
 +    std::vector<DrawIndexRange> result;
      constexpr T restartMarker = std::numeric_limits<T>::max();
--    for (size_t i = 0; i < numIndices; ++i)
+-    const auto begin              = elements.cbegin();
+-    const auto end                = elements.cend();
+-    for (auto it = begin; it != end; ++it)
 +    const auto begin          = bufferData.begin();
 +    const auto end            = bufferData.end();
 +    auto it                   = begin;
 +    while (it != end)
-+    {
+     {
+-        // Find the start of the restart range, i.e. first index with value of restart marker.
+-        if (*it != restartMarker)
 +        if (*it == restartMarker)
          {
--        // Find the start of the restart range, i.e. first index with value of restart marker.
--        if (bufferData[i] != restartMarker)
 +            ++it;
              continue;
--        size_t restartBegin = i;
+         }
+-        uint32_t restartBegin = static_cast<uint32_t>(std::distance(begin, it));
 -        // Find the end of the restart range, i.e. last index with value of restart marker.
-+        }
 +        auto rangeBegin = it;
          do
          {
--            ++i;
--        } while (i < numIndices && bufferData[i] == restartMarker);
--        result.emplace_back(restartBegin, i - 1);
-+            ++it;
+             ++it;
+-        } while (it != end && *it == restartMarker);
+-        result.emplace_back(restartBegin, static_cast<uint32_t>(std::distance(begin, it)) - 1);
+-        if (it == end)
+-        {
+-            break;
+-        }
 +        } while (it != end && *it != restartMarker);
 +        result.emplace_back(std::distance(begin, rangeBegin), std::distance(begin, it) - 1);
      }
--    idxBuffer->unmap(ctx);
      return result;
  }
  
@@ -4969,26 +4988,28 @@ index 7c769533a364fad475bb499c88bbc09265ef4f5c..a1ccdf76f8061e37c053075a9d43a872
 +    if (!mDrawIndexRangeCache || mDrawIndexRangeCache->indexType != indexType)
      {
 -        mRestartRangeCache.reset();
+-        angle::Span<const uint8_t> data = getBufferDataReadOnly(ctx, 0);
 -        std::vector<IndexRange> ranges;
 +        mDrawIndexRangeCache.reset();
 +        mtl::BufferRef idxBuffer = getCurrentBuffer();
-+        const void *indices      = idxBuffer->mapReadOnly(ctx);
++        angle::Span<const uint8_t> data = idxBuffer->mapReadOnly(ctx);
++        const void *indices      = data.data();
 +        size_t size              = this->size();
 +        std::vector<DrawIndexRange> ranges;
          switch (indexType)
          {
              case gl::DrawElementsType::UnsignedByte:
--                ranges = calculateRestartRanges<uint8_t>(ctx, getCurrentBuffer());
+-                ranges = CalculateRestartRanges<uint8_t>(data);
 +                ranges = CalculateDrawIndexRanges<uint8_t>(
 +                    {static_cast<const uint8_t *>(indices), size});
                  break;
              case gl::DrawElementsType::UnsignedShort:
--                ranges = calculateRestartRanges<uint16_t>(ctx, getCurrentBuffer());
+-                ranges = CalculateRestartRanges<uint16_t>(data);
 +                ranges = CalculateDrawIndexRanges<uint16_t>(
 +                    {static_cast<const uint16_t *>(indices), size / 2});
                  break;
              case gl::DrawElementsType::UnsignedInt:
--                ranges = calculateRestartRanges<uint32_t>(ctx, getCurrentBuffer());
+-                ranges = CalculateRestartRanges<uint32_t>(data);
 +                ranges = CalculateDrawIndexRanges<uint32_t>(
 +                    {static_cast<const uint32_t *>(indices), size / 4});
                  break;
@@ -5011,39 +5032,49 @@ index 7c769533a364fad475bb499c88bbc09265ef4f5c..a1ccdf76f8061e37c053075a9d43a872
 +    GLint count,
 +    const void *indices)
  {
+-    angle::Span<const uint8_t> data = idxBuffer->mapReadOnly(ctx);
 -    std::vector<IndexRange> restartIndices;
 -    switch (indexType)
 +    std::vector<DrawIndexRange> ranges;
 +    switch (type)
      {
          case gl::DrawElementsType::UnsignedByte:
--            restartIndices = calculateRestartRanges<uint8_t>(ctx, idxBuffer);
+-            restartIndices = CalculateRestartRanges<uint8_t>(data);
 +            ranges = CalculateDrawIndexRanges<uint8_t>(
 +                {static_cast<const uint8_t *>(indices), static_cast<size_t>(count)});
              break;
          case gl::DrawElementsType::UnsignedShort:
--            restartIndices = calculateRestartRanges<uint16_t>(ctx, idxBuffer);
+-            restartIndices = CalculateRestartRanges<uint16_t>(data);
 +            ranges = CalculateDrawIndexRanges<uint16_t>(
 +                {static_cast<const uint16_t *>(indices), static_cast<size_t>(count)});
              break;
          case gl::DrawElementsType::UnsignedInt:
--            restartIndices = calculateRestartRanges<uint32_t>(ctx, idxBuffer);
+-            restartIndices = CalculateRestartRanges<uint32_t>(data);
 +            ranges = CalculateDrawIndexRanges<uint32_t>(
 +                {static_cast<const uint32_t *>(indices), static_cast<size_t>(count)});
              break;
          default:
              ASSERT(false);
      }
+-    idxBuffer->unmap(ctx);
 -    return restartIndices;
 +    return ranges;
  }
  
  angle::Result BufferMtl::allocateNewMetalBuffer(ContextMtl *contextMtl,
 diff --git a/src/libANGLE/renderer/metal/ContextMtl.h b/src/libANGLE/renderer/metal/ContextMtl.h
-index 94a5d3f70d25ce8ecd7a7eefa84be6643e11221a..d0d808838594612a120205efcbfd8a0f622614e1 100644
+index 35be49424b289e7bc97861c533a882af3ab738cc..9daee8e77313a5fc6980349ba633d35f51ef5c32 100644
 --- a/src/libANGLE/renderer/metal/ContextMtl.h
 +++ b/src/libANGLE/renderer/metal/ContextMtl.h
-@@ -273,6 +273,10 @@ class ContextMtl : public ContextImpl, public mtl::Context
+@@ -31,6 +31,7 @@ namespace rx
+ {
+ class DisplayMtl;
+ class FramebufferMtl;
++class QueryMtl;
+ class VertexArrayMtl;
+ class ProgramMtl;
+ class ProgramExecutableMtl;
+@@ -273,6 +274,10 @@ class ContextMtl : public ContextImpl, public mtl::Context
      angle::Result memoryBarrier(const gl::Context *context, GLbitfield barriers) override;
      angle::Result memoryBarrierByRegion(const gl::Context *context, GLbitfield barriers) override;
  
@@ -5054,7 +5085,37 @@ index 94a5d3f70d25ce8ecd7a7eefa84be6643e11221a..d0d808838594612a120205efcbfd8a0f
      // override mtl::ErrorHandler
      void handleError(GLenum error,
                       const char *message,
-@@ -401,6 +405,8 @@ class ContextMtl : public ContextImpl, public mtl::Context
+@@ -297,20 +302,22 @@ class ContextMtl : public ContextImpl, public mtl::Context
+                                        bool renderPassChanged);
+     void onBackbufferResized(const gl::Context *context, WindowSurfaceMtl *backbuffer);
+ 
+-    // Invoke by QueryMtl
+-    angle::Result onOcclusionQueryBegin(const gl::Context *context, QueryMtl *query);
+-    void onOcclusionQueryEnd(const gl::Context *context, QueryMtl *query);
+-    void onOcclusionQueryDestroy(const gl::Context *context, QueryMtl *query);
++    angle::Result onOcclusionQueryBegin(QueryMtl &query);
++    void onOcclusionQueryEnd();
++    void onOcclusionQueryDestroy(QueryMtl &query);
+ 
+     // Useful for temporarily pause then restart occlusion query during clear/blit with draw.
+-    bool hasActiveOcclusionQuery() const { return mOcclusionQuery; }
++    bool isOcclusionQueryEnabledInRenderPass() const
++    {
++        return mOcclusionQueryIsEnabledInRenderPass;
++    }
+     // Disable the occlusion query in the current render pass.
+     // The render pass must already started.
+-    void disableActiveOcclusionQueryInRenderPass();
++    void disableOcclusionQueryInRenderPass();
+     // Re-enable the occlusion query in the current render pass.
+     // The render pass must already started.
+     // NOTE: the old query's result will be retained and combined with the new result.
+-    angle::Result restartActiveOcclusionQueryInRenderPass();
++    angle::Result enableOcclusionQueryInRenderPass();
+ 
+     // Invoke by TransformFeedbackMtl
+     void onTransformFeedbackActive(const gl::Context *context, TransformFeedbackMtl *xfb);
+@@ -401,6 +408,8 @@ class ContextMtl : public ContextImpl, public mtl::Context
  
      mtl::BufferManager &getBufferManager() { return mBufferManager; }
  
@@ -5063,31 +5124,16 @@ index 94a5d3f70d25ce8ecd7a7eefa84be6643e11221a..d0d808838594612a120205efcbfd8a0f
      mtl::PipelineCache &getPipelineCache() { return mPipelineCache; }
  
      const angle::ImageLoadContext &getImageLoadContext() const { return mImageLoadContext; }
-@@ -413,7 +419,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
-     void endBlitAndComputeEncoding();
-     angle::Result resyncDrawFramebufferIfNeeded(const gl::Context *context);
-     angle::Result setupDraw(const gl::Context *context,
--                            gl::PrimitiveMode mode,
-                             GLint firstVertex,
-                             GLsizei vertexOrIndexCount,
-                             GLsizei instanceCount,
-@@ -423,7 +428,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
-                             bool *isNoOp);
- 
-     angle::Result setupDrawImpl(const gl::Context *context,
--                                gl::PrimitiveMode mode,
-                                 GLint firstVertex,
-                                 GLsizei vertexOrIndexCount,
-                                 GLsizei instanceCount,
-@@ -527,7 +531,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
-     angle::Result handleDirtyDepthBias(const gl::Context *context);
-     angle::Result handleDirtyRenderPass(const gl::Context *context);
-     angle::Result checkIfPipelineChanged(const gl::Context *context,
--                                         gl::PrimitiveMode primitiveMode,
+@@ -528,8 +537,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
                                           bool xfbPass,
                                           bool *pipelineDescChanged);
  
-@@ -555,6 +558,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
+-    angle::Result startOcclusionQueryInRenderPass(QueryMtl *query, bool clearOldValue);
+-
+     angle::Result checkCommandBufferError();
+ 
+     // Dirty bits.
+@@ -552,6 +559,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
          DIRTY_BIT_RENDER_PIPELINE,
          DIRTY_BIT_UNIFORM_BUFFERS_BINDING,
          DIRTY_BIT_RASTERIZER_DISCARD,
@@ -5095,7 +5141,15 @@ index 94a5d3f70d25ce8ecd7a7eefa84be6643e11221a..d0d808838594612a120205efcbfd8a0f
  
          DIRTY_BIT_INVALID,
          DIRTY_BIT_MAX = DIRTY_BIT_INVALID,
-@@ -648,6 +652,9 @@ class ContextMtl : public ContextImpl, public mtl::Context
+@@ -598,7 +606,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
+     FramebufferMtl *mDrawFramebuffer  = nullptr;
+     VertexArrayMtl *mVertexArray      = nullptr;
+     ProgramExecutableMtl *mExecutable = nullptr;
+-    QueryMtl *mOcclusionQuery         = nullptr;
+ 
+     using DirtyBits = angle::BitSet<DIRTY_BIT_MAX>;
+ 
+@@ -645,7 +652,13 @@ class ContextMtl : public ContextImpl, public mtl::Context
      IncompleteTextureSet mIncompleteTextures;
      ProvokingVertexHelper mProvokingVertexHelper;
  
@@ -5103,10 +5157,14 @@ index 94a5d3f70d25ce8ecd7a7eefa84be6643e11221a..d0d808838594612a120205efcbfd8a0f
 +    id<MTLTexture> mRasterizationRateMapTexture;
 +
      mtl::ContextDevice mContextDevice;
++
++    mtl::BufferRef mOcclusionQueryResultBuffer;
++    bool mOcclusionQueryIsEnabledInRenderPass{false};
  };
  
+ }  // namespace rx
 diff --git a/src/libANGLE/renderer/metal/ContextMtl.mm b/src/libANGLE/renderer/metal/ContextMtl.mm
-index 4a01efbcf7cb231be074d20b594960e09fbf9068..10d062c374e89ef694c407177e526644a2d05772 100644
+index 88efc2374966b518f145cd6eb1d8b3b609ced470..a0c8cda3ad70c2da3c5a16a1c9f63cd01ec6afb5 100644
 --- a/src/libANGLE/renderer/metal/ContextMtl.mm
 +++ b/src/libANGLE/renderer/metal/ContextMtl.mm
 @@ -250,6 +250,8 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
@@ -5118,136 +5176,7 @@ index 4a01efbcf7cb231be074d20b594960e09fbf9068..10d062c374e89ef694c407177e526644
  
      mContextDevice.reset();
  }
-@@ -322,9 +324,8 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
- 
-     ASSERT(!getState().isTransformFeedbackActiveUnpaused());
-     bool isNoOp = false;
--    ANGLE_TRY(setupDraw(context, gl::PrimitiveMode::TriangleFan, first, count, instances,
--                        gl::DrawElementsType::InvalidEnum, reinterpret_cast<const void *>(0), false,
--                        &isNoOp));
-+    ANGLE_TRY(setupDraw(context, first, count, instances, gl::DrawElementsType::InvalidEnum,
-+                        reinterpret_cast<const void *>(0), false, &isNoOp));
-     if (!isNoOp)
-     {
-         // Draw with the zero starting index buffer, shift the vertex index using baseVertex
-@@ -355,9 +356,8 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
- 
-     ASSERT(!getState().isTransformFeedbackActiveUnpaused());
-     bool isNoOp = false;
--    ANGLE_TRY(setupDraw(context, gl::PrimitiveMode::TriangleFan, first, count, instances,
--                        gl::DrawElementsType::InvalidEnum, reinterpret_cast<const void *>(0), false,
--                        &isNoOp));
-+    ANGLE_TRY(setupDraw(context, first, count, instances, gl::DrawElementsType::InvalidEnum,
-+                        reinterpret_cast<const void *>(0), false, &isNoOp));
-     if (!isNoOp)
-     {
-         mRenderEncoder.drawIndexedInstanced(MTLPrimitiveTypeTriangle, genIndicesCount,
-@@ -422,8 +422,8 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
- 
-     ASSERT(!getState().isTransformFeedbackActiveUnpaused());
-     bool isNoOp = false;
--    ANGLE_TRY(setupDraw(context, gl::PrimitiveMode::LineLoop, first, count, instances,
--                        gl::DrawElementsType::InvalidEnum, nullptr, false, &isNoOp));
-+    ANGLE_TRY(setupDraw(context, first, count, instances, gl::DrawElementsType::InvalidEnum,
-+                        nullptr, false, &isNoOp));
-     if (!isNoOp)
-     {
-         if (baseInstance == 0)
-@@ -475,8 +475,8 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
- #define DRAW_GENERIC_ARRAY(xfbPass)                                                                \
-     {                                                                                              \
-         bool isNoOp = false;                                                                       \
--        ANGLE_TRY(setupDraw(context, mode, first, count, instances,                                \
--                            gl::DrawElementsType::InvalidEnum, nullptr, xfbPass, &isNoOp));        \
-+        ANGLE_TRY(setupDraw(context, first, count, instances, gl::DrawElementsType::InvalidEnum,   \
-+                            nullptr, xfbPass, &isNoOp));                                           \
-         if (!isNoOp)                                                                               \
-         {                                                                                          \
-                                                                                                    \
-@@ -564,8 +564,7 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
- 
-         ANGLE_TRY(mTriFanIndexBuffer.commit(this));
-         bool isNoOp = false;
--        ANGLE_TRY(setupDraw(context, gl::PrimitiveMode::TriangleFan, 0, count, instances, type,
--                            indices, false, &isNoOp));
-+        ANGLE_TRY(setupDraw(context, 0, count, instances, type, indices, false, &isNoOp));
-         if (!isNoOp && genIndicesCount > 0)
-         {
-             if (baseVertex == 0 && baseInstance == 0)
-@@ -634,8 +633,7 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
- 
-         ANGLE_TRY(mLineLoopIndexBuffer.commit(this));
-         bool isNoOp = false;
--        ANGLE_TRY(setupDraw(context, gl::PrimitiveMode::LineLoop, 0, count, instances, type,
--                            indices, false, &isNoOp));
-+        ANGLE_TRY(setupDraw(context, 0, count, instances, type, indices, false, &isNoOp));
-         if (!isNoOp && genIndicesCount > 0)
-         {
-             if (baseVertex == 0 && baseInstance == 0)
-@@ -666,7 +664,7 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
-                                                         GLuint baseInstance)
- {
- 
--    size_t outIndexCount               = 0;
-+    uint32_t outIndexCount             = 0;
-     size_t outIndexOffset              = 0;
-     gl::DrawElementsType convertedType = gl::DrawElementsType::UnsignedInt;
-     gl::PrimitiveMode outIndexMode     = gl::PrimitiveMode::InvalidEnum;
-@@ -675,7 +673,6 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
-     ANGLE_TRY(mProvokingVertexHelper.generateIndexBuffer(
-         mtl::GetImpl(context), first, count, mode, convertedType, outIndexCount, outIndexOffset,
-         outIndexMode, drawIdxBuffer));
--    GLsizei outIndexCounti32 = static_cast<GLsizei>(outIndexCount);
- 
-     // Note: we don't need to pass the generated index buffer to ContextMtl::setupDraw.
-     // Because setupDraw only needs to operate on the original vertex buffers & PrimitiveMode.
-@@ -686,8 +683,8 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
-     if (xfbPass)                                                                                   \
-     {                                                                                              \
-         bool isNoOp = false;                                                                       \
--        ANGLE_TRY(setupDraw(context, mode, first, count, instances,                                \
--                            gl::DrawElementsType::InvalidEnum, nullptr, xfbPass, &isNoOp));        \
-+        ANGLE_TRY(setupDraw(context, first, count, instances, gl::DrawElementsType::InvalidEnum,   \
-+                            nullptr, xfbPass, &isNoOp));                                           \
-         if (!isNoOp)                                                                               \
-         {                                                                                          \
-             MTLPrimitiveType mtlType = mtl::GetPrimitiveType(mode);                                \
-@@ -713,8 +710,8 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
-     else                                                                                           \
-     {                                                                                              \
-         bool isNoOp = false;                                                                       \
--        ANGLE_TRY(setupDraw(context, mode, first, count, instances,                                \
--                            gl::DrawElementsType::InvalidEnum, nullptr, xfbPass, &isNoOp));        \
-+        ANGLE_TRY(setupDraw(context, first, count, instances, gl::DrawElementsType::InvalidEnum,   \
-+                            nullptr, xfbPass, &isNoOp));                                           \
-                                                                                                    \
-         if (!isNoOp)                                                                               \
-         {                                                                                          \
-@@ -722,20 +719,20 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
-             MTLIndexType mtlIdxType  = mtl::GetIndexType(convertedType);                           \
-             if (instances == 0)                                                                    \
-             {                                                                                      \
--                mRenderEncoder.drawIndexed(mtlType, outIndexCounti32, mtlIdxType, drawIdxBuffer,   \
-+                mRenderEncoder.drawIndexed(mtlType, outIndexCount, mtlIdxType, drawIdxBuffer,      \
-                                            outIndexOffset);                                        \
-             }                                                                                      \
-             else                                                                                   \
-             {                                                                                      \
-                 if (baseInstance == 0)                                                             \
-                 {                                                                                  \
--                    mRenderEncoder.drawIndexedInstanced(mtlType, outIndexCounti32, mtlIdxType,     \
-+                    mRenderEncoder.drawIndexedInstanced(mtlType, outIndexCount, mtlIdxType,        \
-                                                         drawIdxBuffer, outIndexOffset, instances); \
-                 }                                                                                  \
-                 else                                                                               \
-                 {                                                                                  \
-                     mRenderEncoder.drawIndexedInstancedBaseVertexBaseInstance(                     \
--                        mtlType, outIndexCounti32, mtlIdxType, drawIdxBuffer, outIndexOffset,      \
-+                        mtlType, outIndexCount, mtlIdxType, drawIdxBuffer, outIndexOffset,         \
-                         instances, 0, baseInstance);                                               \
-                 }                                                                                  \
-             }                                                                                      \
-@@ -775,59 +772,31 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+@@ -769,55 +771,32 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
      }
  
      mtl::BufferRef idxBuffer;
@@ -5273,18 +5202,14 @@ index 4a01efbcf7cb231be074d20b594960e09fbf9068..10d062c374e89ef694c407177e526644
 +        &idxBufferType));
  
 -    size_t provokingVertexAdditionalOffset = 0;
--
+ 
 -    if (requiresIndexRewrite(context->getState(), mode))
 -    {
--        size_t outIndexCount      = 0;
--        gl::PrimitiveMode newMode = gl::PrimitiveMode::InvalidEnum;
+-        // Line strips and triangle strips are rewritten to flat line arrays and tri arrays.
 -        ANGLE_TRY(mProvokingVertexHelper.preconditionIndexBuffer(
 -            mtl::GetImpl(context), idxBuffer, count, convertedOffset,
--            mState.isPrimitiveRestartEnabled(), mode, convertedType, outIndexCount,
--            provokingVertexAdditionalOffset, newMode, drawIdxBuffer));
--        // Line strips and triangle strips are rewritten to flat line arrays and tri arrays.
--        convertedCounti32 = (uint32_t)outIndexCount;
--        mode              = newMode;
+-            mState.isPrimitiveRestartEnabled(), mode, convertedType, convertedCounti32,
+-            provokingVertexAdditionalOffset, mode, drawIdxBuffer));
 -    }
 -    else
 -    {
@@ -5298,8 +5223,7 @@ index 4a01efbcf7cb231be074d20b594960e09fbf9068..10d062c374e89ef694c407177e526644
 -    const std::vector<DrawCommandRange> drawCommands = mVertexArray->getDrawIndices(
 -        context, type, convertedType, mode, idxBuffer, convertedCounti32, convertedOffset);
      bool isNoOp = false;
--    ANGLE_TRY(setupDraw(context, mode, 0, count, instances, type, indices, false, &isNoOp));
-+    ANGLE_TRY(setupDraw(context, 0, count, instances, type, indices, false, &isNoOp));
+     ANGLE_TRY(setupDraw(context, 0, count, instances, type, indices, false, &isNoOp));
      if (!isNoOp)
      {
 -        MTLPrimitiveType mtlType = mtl::GetPrimitiveType(mode);
@@ -5320,7 +5244,7 @@ index 4a01efbcf7cb231be074d20b594960e09fbf9068..10d062c374e89ef694c407177e526644
              }
          }
          else
-@@ -837,9 +806,9 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+@@ -827,9 +806,9 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
              {
                  for (auto &command : drawCommands)
                  {
@@ -5333,7 +5257,7 @@ index 4a01efbcf7cb231be074d20b594960e09fbf9068..10d062c374e89ef694c407177e526644
                  }
              }
              else
-@@ -847,9 +816,8 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+@@ -837,9 +816,8 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
                  for (auto &command : drawCommands)
                  {
                      mRenderEncoder.drawIndexedInstancedBaseVertexBaseInstance(
@@ -5345,7 +5269,7 @@ index 4a01efbcf7cb231be074d20b594960e09fbf9068..10d062c374e89ef694c407177e526644
                  }
              }
          }
-@@ -1060,6 +1028,13 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+@@ -1050,6 +1028,13 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
  // Device loss
  gl::GraphicsResetStatus ContextMtl::getResetStatus()
  {
@@ -5359,7 +5283,7 @@ index 4a01efbcf7cb231be074d20b594960e09fbf9068..10d062c374e89ef694c407177e526644
      return gl::GraphicsResetStatus::NoError;
  }
  
-@@ -1398,6 +1373,9 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+@@ -1388,6 +1373,9 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
              case gl::state::EXTENDED_DIRTY_BIT_POLYGON_OFFSET_LINE_ENABLED:
                  mDirtyBits.set(DIRTY_BIT_DEPTH_BIAS);
                  break;
@@ -5369,7 +5293,7 @@ index 4a01efbcf7cb231be074d20b594960e09fbf9068..10d062c374e89ef694c407177e526644
              default:
                  break;
          }
-@@ -1653,6 +1631,37 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+@@ -1643,6 +1631,37 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
      return angle::Result::Stop;
  }
  
@@ -5407,35 +5331,139 @@ index 4a01efbcf7cb231be074d20b594960e09fbf9068..10d062c374e89ef694c407177e526644
  // override mtl::ErrorHandler
  void ContextMtl::handleError(GLenum glErrorCode,
                               const char *message,
-@@ -2462,7 +2471,6 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
+@@ -1791,7 +1810,7 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+             mRenderEncoder.setStoreAction(MTLStoreActionStore);
+         }
+ 
+-        disableActiveOcclusionQueryInRenderPass();
++        disableOcclusionQueryInRenderPass();
+ 
+         mOcclusionQueryPool.prepareRenderPassVisibilityPoolBuffer(this);
+ 
+@@ -2251,84 +2270,67 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+     onDrawFrameBufferChangedState(context, framebuffer, true);
  }
  
- angle::Result ContextMtl::setupDraw(const gl::Context *context,
--                                    gl::PrimitiveMode mode,
-                                     GLint firstVertex,
-                                     GLsizei vertexOrIndexCount,
-                                     GLsizei instances,
-@@ -2471,8 +2479,8 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
-                                     bool xfbPass,
-                                     bool *isNoOp)
+-angle::Result ContextMtl::onOcclusionQueryBegin(const gl::Context *context, QueryMtl *query)
++angle::Result ContextMtl::onOcclusionQueryBegin(QueryMtl &query)
  {
--    ANGLE_TRY(setupDrawImpl(context, mode, firstVertex, vertexOrIndexCount, instances,
--                            indexTypeOrNone, indices, xfbPass, isNoOp));
-+    ANGLE_TRY(setupDrawImpl(context, firstVertex, vertexOrIndexCount, instances, indexTypeOrNone,
-+                            indices, xfbPass, isNoOp));
-     if (*isNoOp)
+-    ASSERT(mOcclusionQuery == nullptr);
+-    mOcclusionQuery = query;
+-
++    ASSERT(!mOcclusionQueryResultBuffer);  // Frontend guarantees none active at the time.
++    const mtl::BufferRef &resultBuffer = query.getVisibilityResultBuffer();
++    bool isEnabledInRenderPass;
+     if (mRenderEncoder.valid())
      {
-         return angle::Result::Continue;
-@@ -2483,7 +2491,7 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
-         // pass state. This would happen for example when there is no more space in the uniform
-         // buffers in the uniform buffer pool. The rendering would be flushed to free the uniform
-         // buffer memory for new usage. In this case, re-run the setup.
--        ANGLE_TRY(setupDrawImpl(context, mode, firstVertex, vertexOrIndexCount, instances,
-+        ANGLE_TRY(setupDrawImpl(context, firstVertex, vertexOrIndexCount, instances,
-                                 indexTypeOrNone, indices, xfbPass, isNoOp));
+-        // if render pass has started, start the query in the encoder
+-        return startOcclusionQueryInRenderPass(query, true);
++        size_t resultOffset;
++        ANGLE_TRY(mOcclusionQueryPool.beginQuery(this, resultBuffer, &resultOffset));
++        mRenderEncoder.setVisibilityResultMode(MTLVisibilityResultModeBoolean, resultOffset);
++        // Result is available after flush.
++        mCmdBuffer.setWriteDependency(resultBuffer, /*isRenderCommand=*/true);
++        isEnabledInRenderPass = true;
+     }
+     else
+     {
+-        query->resetVisibilityResult(this);
++        // Reset the occlusion query result stored in buffer to zero.
++        // Later draws will use continueQuery() to enable the visibility buffer writes.
++        auto blitEncoder = getBlitCommandEncoder();
++        blitEncoder->fillBuffer(resultBuffer, NSMakeRange(0, mtl::kOcclusionQueryResultSize), 0);
++        resultBuffer->syncContent(this, blitEncoder);
++        isEnabledInRenderPass = false;
+     }
+-
++    mOcclusionQueryResultBuffer          = resultBuffer;
++    mOcclusionQueryIsEnabledInRenderPass = isEnabledInRenderPass;
+     return angle::Result::Continue;
+ }
+-void ContextMtl::onOcclusionQueryEnd(const gl::Context *context, QueryMtl *query)
+-{
+-    ASSERT(mOcclusionQuery == query);
+-
+-    if (mRenderEncoder.valid())
+-    {
+-        // if render pass has started, end the query in the encoder
+-        disableActiveOcclusionQueryInRenderPass();
+-    }
  
-         if (*isNoOp)
-@@ -2491,14 +2499,27 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
+-    mOcclusionQuery = nullptr;
+-}
+-void ContextMtl::onOcclusionQueryDestroy(const gl::Context *context, QueryMtl *query)
++void ContextMtl::onOcclusionQueryEnd()
+ {
+-    if (query->getAllocatedVisibilityOffsets().empty())
+-    {
+-        return;
+-    }
+-    if (mOcclusionQuery == query)
+-    {
+-        onOcclusionQueryEnd(context, query);
+-    }
+-    mOcclusionQueryPool.deallocateQueryOffset(this, query);
++    ASSERT(mOcclusionQueryResultBuffer);  // Frontend guarantees one active at the time.
++    disableOcclusionQueryInRenderPass();
++    mOcclusionQueryResultBuffer = nullptr;
+ }
+ 
+-void ContextMtl::disableActiveOcclusionQueryInRenderPass()
++void ContextMtl::onOcclusionQueryDestroy(QueryMtl &query)
+ {
+-    if (!mOcclusionQuery || mOcclusionQuery->getAllocatedVisibilityOffsets().empty())
+-    {
+-        return;
+-    }
+-
+-    ASSERT(mRenderEncoder.valid());
+-    mRenderEncoder.setVisibilityResultMode(MTLVisibilityResultModeDisabled,
+-                                           mOcclusionQuery->getAllocatedVisibilityOffsets().back());
++    // On normal operation frontend guaraantees that end is called before destroy.
++    // On context destruction, active query is destroyed without end.
++    // Discard is valid for both.
++    mOcclusionQueryPool.discardQuery(query.getVisibilityResultBuffer());
+ }
+ 
+-angle::Result ContextMtl::restartActiveOcclusionQueryInRenderPass()
++void ContextMtl::disableOcclusionQueryInRenderPass()
+ {
+-    if (!mOcclusionQuery || mOcclusionQuery->getAllocatedVisibilityOffsets().empty())
++    if (mOcclusionQueryResultBuffer && mOcclusionQueryIsEnabledInRenderPass)
+     {
+-        return angle::Result::Continue;
++        ASSERT(mRenderEncoder.valid());
++        mRenderEncoder.setVisibilityResultMode(MTLVisibilityResultModeDisabled, 0);
++        mOcclusionQueryIsEnabledInRenderPass = false;
+     }
+-
+-    return startOcclusionQueryInRenderPass(mOcclusionQuery, false);
+ }
+ 
+-angle::Result ContextMtl::startOcclusionQueryInRenderPass(QueryMtl *query, bool clearOldValue)
++angle::Result ContextMtl::enableOcclusionQueryInRenderPass()
+ {
+     ASSERT(mRenderEncoder.valid());
+-
+-    ANGLE_TRY(mOcclusionQueryPool.allocateQueryOffset(this, query, clearOldValue));
+-
+-    mRenderEncoder.setVisibilityResultMode(MTLVisibilityResultModeBoolean,
+-                                           query->getAllocatedVisibilityOffsets().back());
+-
+-    // We need to mark the query's buffer as being written in this command buffer now. Since the
+-    // actual writing is deferred until the render pass ends and user could try to read the query
+-    // result before the render pass ends.
+-    mCmdBuffer.setWriteDependency(query->getVisibilityResultBuffer(), /*isRenderCommand=*/true);
+-
++    size_t resultOffset;
++    ANGLE_TRY(mOcclusionQueryPool.continueQuery(this, mOcclusionQueryResultBuffer, &resultOffset));
++    mRenderEncoder.setVisibilityResultMode(MTLVisibilityResultModeBoolean, resultOffset);
++    mCmdBuffer.setWriteDependency(mOcclusionQueryResultBuffer, /*isRenderCommand=*/true);
++    mOcclusionQueryIsEnabledInRenderPass = true;
+     return angle::Result::Continue;
+ }
+ 
+@@ -2480,8 +2482,22 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
              return checkCommandBufferError();
          }
          // Setup with flushed state should either produce a working encoder or fail with an error
@@ -5460,22 +5488,21 @@ index 4a01efbcf7cb231be074d20b594960e09fbf9068..10d062c374e89ef694c407177e526644
      }
      return angle::Result::Continue;
  }
+@@ -2539,11 +2555,11 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
+         ANGLE_TRY(handleDirtyRenderPass(context));
+     }
  
- angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
--                                        gl::PrimitiveMode mode,
-                                         GLint firstVertex,
-                                         GLsizei vertexOrIndexCount,
-                                         GLsizei instances,
-@@ -2559,7 +2580,7 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
+-    if (mOcclusionQuery && mOcclusionQueryPool.getNumRenderPassAllocatedQueries() == 0)
++    if (mOcclusionQueryResultBuffer && !mOcclusionQueryIsEnabledInRenderPass)
+     {
+         // The occlusion query is still active, and a new render pass has started.
+         // We need to continue the querying process in the new render encoder.
+-        ANGLE_TRY(startOcclusionQueryInRenderPass(mOcclusionQuery, false));
++        ANGLE_TRY(enableOcclusionQueryInRenderPass());
      }
  
      bool isPipelineDescChanged;
--    ANGLE_TRY(checkIfPipelineChanged(context, mode, xfbPass, &isPipelineDescChanged));
-+    ANGLE_TRY(checkIfPipelineChanged(context, xfbPass, &isPipelineDescChanged));
- 
-     bool uniformBuffersDirty = false;
- 
-@@ -2601,10 +2622,14 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
+@@ -2589,10 +2605,14 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
                      mState.getBlendColor().blue, mState.getBlendColor().alpha);
                  break;
              case DIRTY_BIT_VIEWPORT:
@@ -5492,7 +5519,7 @@ index 4a01efbcf7cb231be074d20b594960e09fbf9068..10d062c374e89ef694c407177e526644
                  break;
              case DIRTY_BIT_DRAW_FRAMEBUFFER:
                  // Already handled.
-@@ -2629,6 +2654,15 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
+@@ -2617,6 +2637,15 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
              case DIRTY_BIT_RASTERIZER_DISCARD:
                  // Already handled.
                  break;
@@ -5508,34 +5535,6 @@ index 4a01efbcf7cb231be074d20b594960e09fbf9068..10d062c374e89ef694c407177e526644
              default:
                  UNREACHABLE();
                  break;
-@@ -2900,15 +2934,13 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
- }
- 
- angle::Result ContextMtl::checkIfPipelineChanged(const gl::Context *context,
--                                                 gl::PrimitiveMode primitiveMode,
-                                                  bool xfbPass,
-                                                  bool *isPipelineDescChanged)
- {
-     ASSERT(mRenderEncoder.valid());
--    MTLPrimitiveTopologyClass topologyClass = mtl::GetPrimitiveTopologyClass(primitiveMode);
--
--    bool rppChange = mDirtyBits.test(DIRTY_BIT_RENDER_PIPELINE) ||
--                     topologyClass != mRenderPipelineDesc.inputPrimitiveTopology;
-+    bool rppChange =
-+        mDirtyBits.test(DIRTY_BIT_RENDER_PIPELINE) ||
-+        MTLPrimitiveTopologyClassUnspecified != mRenderPipelineDesc.inputPrimitiveTopology;
- 
-     // Obtain RenderPipelineDesc's vertex array descriptor.
-     ANGLE_TRY(mVertexArray->setupDraw(context, &mRenderEncoder, &rppChange,
-@@ -2938,7 +2970,7 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
-         {
-             mRenderPipelineDesc.rasterizationType = mtl::RenderPipelineRasterization::Enabled;
-         }
--        mRenderPipelineDesc.inputPrimitiveTopology = topologyClass;
-+        mRenderPipelineDesc.inputPrimitiveTopology = MTLPrimitiveTopologyClassUnspecified;
-         mRenderPipelineDesc.alphaToCoverageEnabled =
-             mState.isSampleAlphaToCoverageEnabled() &&
-             mRenderPipelineDesc.outputDescriptor.rasterSampleCount > 1 &&
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.h b/src/libANGLE/renderer/metal/DisplayMtl.h
 index 6901918d85ad1c32049d536950195d02262e8e1c..6cf3b5605c6e2b6c3e5c2ce32720c9ae79681941 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.h
@@ -5549,7 +5548,7 @@ index 6901918d85ad1c32049d536950195d02262e8e1c..6cf3b5605c6e2b6c3e5c2ce32720c9ae
      bool isAMDBronzeDriver() const;
      bool isAMDFireProDevice() const;
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
-index 20c98886148329bc39c00c3c43d74d9f81929aca..59ab27104a21ad70c3905b210a7702f9f69ad782 100644
+index cdfd06b3f782e19b5d691f3e3a44b9847a0100d8..c733791a79bfbae2e8c926f297c66204395a295e 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
 @@ -180,12 +180,22 @@ bool IsMetalDisplayAvailable()
@@ -5637,7 +5636,7 @@ index 84e5326b7270f29630d2c353a6ebadb5d10b6a21..0afffbbb5ad7f3961d49addf1f74d44b
  
      const mtl::Format *mRenderPassFirstColorAttachmentFormat = nullptr;
 diff --git a/src/libANGLE/renderer/metal/FrameBufferMtl.mm b/src/libANGLE/renderer/metal/FrameBufferMtl.mm
-index 54ad6cedc6be173cf4fb13f618de7e003c5e9b3c..e7f1189e57a94b8fae0724780a162e38fc25622c 100644
+index 9ebc41a209c2cc04ad9fff8169dd32b52c5697d8..ef0d5a50981a14085986afa13e005496b6721bac 100644
 --- a/src/libANGLE/renderer/metal/FrameBufferMtl.mm
 +++ b/src/libANGLE/renderer/metal/FrameBufferMtl.mm
 @@ -137,6 +137,9 @@ void OverrideMTLClearColor(const mtl::TextureRef &texture,
@@ -5879,7 +5878,7 @@ index 54ad6cedc6be173cf4fb13f618de7e003c5e9b3c..e7f1189e57a94b8fae0724780a162e38
          }
      }
  
-@@ -1684,7 +1761,8 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1687,7 +1764,8 @@ void RoundValueAndAdjustCorrespondingValue(float a,
      ContextMtl *contextMtl = mtl::GetImpl(context);
  
      ANGLE_CHECK_GL_MATH(contextMtl,
@@ -5889,7 +5888,7 @@ index 54ad6cedc6be173cf4fb13f618de7e003c5e9b3c..e7f1189e57a94b8fae0724780a162e38
      uint32_t offset = static_cast<uint32_t>(packPixelsParams.offset);
  
      BufferMtl *packBufferMtl = mtl::GetImpl(packPixelsParams.packBuffer);
-@@ -1832,9 +1910,8 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1835,9 +1913,8 @@ void RoundValueAndAdjustCorrespondingValue(float a,
          const mtl::RenderPassColorAttachmentDesc &colorAttachment =
              renderPassDesc.colorAttachments[colorIndexGL];
  
@@ -5901,7 +5900,7 @@ index 54ad6cedc6be173cf4fb13f618de7e003c5e9b3c..e7f1189e57a94b8fae0724780a162e38
          {
              continue;
          }
-@@ -1842,9 +1919,9 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1845,9 +1922,9 @@ void RoundValueAndAdjustCorrespondingValue(float a,
          const angle::Format &angleFormat = colorRenderTarget->getFormat().actualAngleFormat();
  
          // Blit the resolve texture to the MS texture.
@@ -5914,7 +5913,7 @@ index 54ad6cedc6be173cf4fb13f618de7e003c5e9b3c..e7f1189e57a94b8fae0724780a162e38
  
          colorBlitParams.enabledBuffers.reset();
          colorBlitParams.enabledBuffers.set(colorIndexGL);
-@@ -1859,19 +1936,18 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1862,19 +1939,18 @@ void RoundValueAndAdjustCorrespondingValue(float a,
      mtl::DepthStencilBlitParams dsBlitParams;
      dsBlitParams.BlitParams::operator=(baseParams);
      const mtl::RenderPassDepthAttachmentDesc &depthAttachment = renderPassDesc.depthAttachment;
@@ -5941,7 +5940,7 @@ index 54ad6cedc6be173cf4fb13f618de7e003c5e9b3c..e7f1189e57a94b8fae0724780a162e38
      {
          if (mState.hasSeparateDepthAndStencilAttachments())
          {
-@@ -1881,9 +1957,9 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1884,9 +1960,9 @@ void RoundValueAndAdjustCorrespondingValue(float a,
              dsBlitParams.src = nullptr;
          }
  
@@ -6009,7 +6008,7 @@ index 2bc12ca6ee3cf9bd4b4da797ad7a209b3415c659..d5843a04522efe23914ebd163bf27f0e
      // into an argument buffer.
      std::vector<uint32_t> mArgumentBufferRenderStageUsages;
 diff --git a/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm b/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
-index 59bd582baf6f0bcbd4bfb8287e70758565d61bb5..264136caa84d3e73f89a380e3e176b6632aaa42c 100644
+index 4a4a668b4a28edd40ffcea68c530cbe9b3d9df4b..4d66115114b7a43f1baf8642b415707f0ba03c4e 100644
 --- a/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
 +++ b/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
 @@ -881,7 +881,7 @@ void ReadFromDefaultUniformBlockWithElementSize(int componentCount,
@@ -6039,7 +6038,7 @@ index 59bd582baf6f0bcbd4bfb8287e70758565d61bb5..264136caa84d3e73f89a380e3e176b66
          &mLegalizedOffsetedUniformBuffers);
      mArgumentBufferRenderStageUsages.resize(blocks.size());
      mLegalizedOffsetedUniformBuffers.resize(blocks.size());
-@@ -1328,7 +1328,7 @@ void ReadFromDefaultUniformBlockWithElementSize(int componentCount,
+@@ -1327,7 +1327,7 @@ void ReadFromDefaultUniformBlockWithElementSize(int componentCount,
  
              mLegalizedOffsetedUniformBuffers[bufferIndex].first = conversion->convertedBuffer;
              mLegalizedOffsetedUniformBuffers[bufferIndex].second =
@@ -6048,7 +6047,7 @@ index 59bd582baf6f0bcbd4bfb8287e70758565d61bb5..264136caa84d3e73f89a380e3e176b66
              // Ensure that the converted info can fit in the buffer.
              ASSERT(conversion->convertedOffset + bytesToOffset + conversionInfo.metalSize() <=
                     conversion->convertedBuffer->size());
-@@ -1336,8 +1336,7 @@ void ReadFromDefaultUniformBlockWithElementSize(int componentCount,
+@@ -1335,8 +1335,7 @@ void ReadFromDefaultUniformBlockWithElementSize(int componentCount,
          else
          {
              mLegalizedOffsetedUniformBuffers[bufferIndex].first = bufferMtl->getCurrentBuffer();
@@ -6058,7 +6057,7 @@ index 59bd582baf6f0bcbd4bfb8287e70758565d61bb5..264136caa84d3e73f89a380e3e176b66
          }
      }
      return angle::Result::Continue;
-@@ -1373,7 +1372,7 @@ void ReadFromDefaultUniformBlockWithElementSize(int componentCount,
+@@ -1372,7 +1371,7 @@ void ReadFromDefaultUniformBlockWithElementSize(int componentCount,
          }
  
          mtl::BufferRef mtlBuffer = mLegalizedOffsetedUniformBuffers[bufferIndex].first;
@@ -6067,7 +6066,7 @@ index 59bd582baf6f0bcbd4bfb8287e70758565d61bb5..264136caa84d3e73f89a380e3e176b66
          cmdEncoder->setBuffer(shaderType, mtlBuffer, offset, actualBufferIdx);
      }
      return angle::Result::Continue;
-@@ -1437,7 +1436,7 @@ void ReadFromDefaultUniformBlockWithElementSize(int componentCount,
+@@ -1436,7 +1435,7 @@ void ReadFromDefaultUniformBlockWithElementSize(int componentCount,
          }
  
          mtl::BufferRef mtlBuffer = mLegalizedOffsetedUniformBuffers[bufferIndex].first;
@@ -6076,7 +6075,7 @@ index 59bd582baf6f0bcbd4bfb8287e70758565d61bb5..264136caa84d3e73f89a380e3e176b66
          [bufferEncoder.metalArgBufferEncoder setBuffer:mtlBuffer->get()
                                                  offset:offset
                                                 atIndex:actualBufferIdx];
-@@ -1447,7 +1446,7 @@ void ReadFromDefaultUniformBlockWithElementSize(int componentCount,
+@@ -1446,7 +1445,7 @@ void ReadFromDefaultUniformBlockWithElementSize(int componentCount,
      argumentBuffer->unmapAndFlushSubset(context, argumentBufferOffset,
                                          bufferEncoder.metalArgBufferEncoder.get().encodedLength);
  
@@ -6086,7 +6085,7 @@ index 59bd582baf6f0bcbd4bfb8287e70758565d61bb5..264136caa84d3e73f89a380e3e176b66
      return angle::Result::Continue;
  }
 diff --git a/src/libANGLE/renderer/metal/ProvokingVertexHelper.h b/src/libANGLE/renderer/metal/ProvokingVertexHelper.h
-index 538975334466d68f3325ce9a797e1120c8f4edbd..3c84654e073cacec63351861793dbe2485a946c3 100644
+index b25f1da6852ab68fbf39887005902df53446724f..3c84654e073cacec63351861793dbe2485a946c3 100644
 --- a/src/libANGLE/renderer/metal/ProvokingVertexHelper.h
 +++ b/src/libANGLE/renderer/metal/ProvokingVertexHelper.h
 @@ -13,6 +13,7 @@
@@ -6097,12 +6096,12 @@ index 538975334466d68f3325ce9a797e1120c8f4edbd..3c84654e073cacec63351861793dbe24
  #include "libANGLE/renderer/metal/DisplayMtl.h"
  #include "libANGLE/renderer/metal/mtl_buffer_pool.h"
  #include "libANGLE/renderer/metal/mtl_command_buffer.h"
-@@ -27,23 +28,23 @@ class ProvokingVertexHelper : angle::NonCopyable
+@@ -27,20 +28,20 @@ class ProvokingVertexHelper : angle::NonCopyable
    public:
      ProvokingVertexHelper(ContextMtl *context);
      angle::Result preconditionIndexBuffer(ContextMtl *context,
 -                                          mtl::BufferRef indexBuffer,
--                                          size_t indexCount,
+-                                          GLsizei indexCount,
 -                                          size_t indexOffset,
 +                                          GLsizei count,
 +                                          gl::PrimitiveMode mode,
@@ -6110,7 +6109,7 @@ index 538975334466d68f3325ce9a797e1120c8f4edbd..3c84654e073cacec63351861793dbe24
                                            bool primitiveRestartEnabled,
 -                                          gl::PrimitiveMode primitiveMode,
 -                                          gl::DrawElementsType elementsType,
--                                          size_t &outIndexCount,
+-                                          uint32_t &outIndexCount,
 -                                          size_t &outIndexOffset,
 -                                          gl::PrimitiveMode &outPrimitiveMode,
 -                                          mtl::BufferRef &outNewBuffer);
@@ -6123,26 +6122,23 @@ index 538975334466d68f3325ce9a797e1120c8f4edbd..3c84654e073cacec63351861793dbe24
  
      angle::Result generateIndexBuffer(ContextMtl *context,
 -                                      size_t first,
--                                      size_t indexCount,
+-                                      GLsizei indexCount,
 +                                      GLsizei first,
 +                                      GLsizei count,
                                        gl::PrimitiveMode primitiveMode,
                                        gl::DrawElementsType elementsType,
--                                      size_t &outIndexCount,
-+                                      uint32_t &outIndexCount,
-                                       size_t &outIndexOffset,
-                                       gl::PrimitiveMode &outPrimitiveMode,
-                                       mtl::BufferRef &outNewBuffer);
+                                       uint32_t &outIndexCount,
 diff --git a/src/libANGLE/renderer/metal/ProvokingVertexHelper.mm b/src/libANGLE/renderer/metal/ProvokingVertexHelper.mm
-index 407117b7622b06f864b9c799918ab1cbea3d2f26..c07b8891bc2027dbd3df35b63d3be38602678b50 100644
+index eeda9bcb939f76db2a0cc99196a809653c622e77..fe66ce76230c06311f0a39302e3e654a0d131bb3 100644
 --- a/src/libANGLE/renderer/metal/ProvokingVertexHelper.mm
 +++ b/src/libANGLE/renderer/metal/ProvokingVertexHelper.mm
-@@ -20,85 +20,46 @@
+@@ -22,98 +22,46 @@
  namespace
  {
  constexpr size_t kInitialIndexBufferSize = 0xFFFF;  // Initial 64k pool.
 -}
--static inline uint primCountForIndexCount(const uint fixIndexBufferKey, const uint indexCount)
+-static inline uint32_t primCountForIndexCount(const uint fixIndexBufferKey,
+-                                              const GLsizei indexCount)
 -{
 -    const uint fixIndexBufferMode =
 -        (fixIndexBufferKey >> MtlFixIndexBufferKeyModeShift) & MtlFixIndexBufferKeyModeMask;
@@ -6154,15 +6150,18 @@ index 407117b7622b06f864b9c799918ab1cbea3d2f26..c07b8891bc2027dbd3df35b63d3be386
 -        case MtlFixIndexBufferKeyLines:
 -            return indexCount / 2;
 -        case MtlFixIndexBufferKeyLineStrip:
--            return (uint)MAX(0, (int)indexCount - 1);
+-            // Prevent underflow with subtraction and avoid casting to a signed type
+-            return std::max(indexCount - 1, 0);
 -        case MtlFixIndexBufferKeyLineLoop:
--            return (uint)MAX(0, (int)indexCount);
+-            return indexCount;
 -        case MtlFixIndexBufferKeyTriangles:
 -            return indexCount / 3;
 -        case MtlFixIndexBufferKeyTriangleStrip:
--            return (uint)MAX(0, (int)indexCount - 2);
+-            // Prevent underflow with subtraction and avoid casting to a signed type
+-            return std::max(indexCount - 2, 0);
 -        case MtlFixIndexBufferKeyTriangleFan:
--            return (uint)MAX(0, (int)indexCount - 2);
+-            // Prevent underflow with subtraction and avoid casting to a signed type
+-            return std::max(indexCount - 2, 0);
 -        default:
 -            ASSERT(false);
 -            return 0;
@@ -6175,32 +6174,36 @@ index 407117b7622b06f864b9c799918ab1cbea3d2f26..c07b8891bc2027dbd3df35b63d3be386
 +    uint32_t perPrimitiveIndexCount;
 +};
  
--static inline uint indexCountForPrimCount(const uint fixIndexBufferKey, const uint primCount)
+-static inline bool indexCountForPrimCount(const uint fixIndexBufferKey,
+-                                          const uint32_t primCount,
+-                                          uint32_t *outIndexCount)
 +// Returns counts for Metal indexed draw for GL indexed draw parameters.
 +inline IndexedDrawRewriteInfoMtl resolveIndexedDrawRewriteInfo(gl::PrimitiveMode mode,
 +                                                               GLsizei count,
 +                                                               bool primitiveRestartEnabled)
  {
+-
 -    const uint fixIndexBufferMode =
 -        (fixIndexBufferKey >> MtlFixIndexBufferKeyModeShift) & MtlFixIndexBufferKeyModeMask;
+-
+-    uint32_t indicesPerPrimitive = 0;
 -    switch (fixIndexBufferMode)
 +    uint32_t indexCount = static_cast<uint32_t>(count);
 +    switch (mode)
      {
 -        case MtlFixIndexBufferKeyPoints:
--            return primCount;
+-            indicesPerPrimitive = 1;
+-            break;
 -        case MtlFixIndexBufferKeyLines:
--            return primCount * 2;
 -        case MtlFixIndexBufferKeyLineStrip:
--            return primCount * 2;
 -        case MtlFixIndexBufferKeyLineLoop:
--            return primCount * 2;
+-            indicesPerPrimitive = 2;
+-            break;
 -        case MtlFixIndexBufferKeyTriangles:
--            return primCount * 3;
 -        case MtlFixIndexBufferKeyTriangleStrip:
--            return primCount * 3;
 -        case MtlFixIndexBufferKeyTriangleFan:
--            return primCount * 3;
+-            indicesPerPrimitive = 3;
+-            break;
 +        case gl::PrimitiveMode::Lines:
 +            indexCount -= primitiveRestartEnabled ? 0 : (indexCount % 2);
 +            return {indexCount / 2, indexCount, gl::PrimitiveMode::Lines, 2};
@@ -6218,11 +6221,15 @@ index 407117b7622b06f864b9c799918ab1cbea3d2f26..c07b8891bc2027dbd3df35b63d3be386
 +            return {indexCount, static_cast<size_t>(indexCount) * 3, gl::PrimitiveMode::Triangles,
 +                    3};
          default:
--            ASSERT(false);
--            return 0;
-+            UNREACHABLE();
+             UNREACHABLE();
+-            return false;
 +            return {0, 0, gl::PrimitiveMode::InvalidEnum, 0};
      }
+-
+-    angle::CheckedNumeric<uint32_t> indexCount(primCount);
+-    indexCount *= indicesPerPrimitive;
+-
+-    return indexCount.AssignIfValid(outIndexCount);
  }
  
 -static inline gl::PrimitiveMode getNewPrimitiveMode(const uint fixIndexBufferKey)
@@ -6254,13 +6261,13 @@ index 407117b7622b06f864b9c799918ab1cbea3d2f26..c07b8891bc2027dbd3df35b63d3be386
  ProvokingVertexHelper::ProvokingVertexHelper(ContextMtl *context) : mIndexBuffers(false)
  {
      mIndexBuffers.initialize(context, kInitialIndexBufferSize, mtl::kIndexBufferOffsetAlignment, 0);
-@@ -174,58 +135,103 @@ static uint buildIndexBufferKey(gl::DrawElementsType elementType,
+@@ -189,64 +137,100 @@ static uint buildIndexBufferKey(gl::DrawElementsType elementType,
      return angle::Result::Continue;
  }
  
 -angle::Result ProvokingVertexHelper::preconditionIndexBuffer(ContextMtl *context,
 -                                                             mtl::BufferRef indexBuffer,
--                                                             size_t indexCount,
+-                                                             GLsizei glCount,
 -                                                             size_t indexOffset,
 +angle::Result ProvokingVertexHelper::preconditionIndexBuffer(
 +    ContextMtl *context,
@@ -6270,7 +6277,7 @@ index 407117b7622b06f864b9c799918ab1cbea3d2f26..c07b8891bc2027dbd3df35b63d3be386
      bool primitiveRestartEnabled,
 -                                                             gl::PrimitiveMode primitiveMode,
 -                                                             gl::DrawElementsType elementsType,
--                                                             size_t &outIndexCount,
+-                                                             uint32_t &outIndexCount,
 -                                                             size_t &outIndexOffset,
 -                                                             gl::PrimitiveMode &outPrimitiveMode,
 -                                                             mtl::BufferRef &outNewBuffer)
@@ -6285,13 +6292,21 @@ index 407117b7622b06f864b9c799918ab1cbea3d2f26..c07b8891bc2027dbd3df35b63d3be386
      // Upload index buffer
      // dispatch per-primitive?
 -    uint indexBufferKey = buildIndexBufferKey(elementsType, primitiveRestartEnabled, primitiveMode);
--    uint primCount      = primCountForIndexCount(indexBufferKey, (uint32_t)indexCount);
--    uint newIndexCount = indexCountForPrimCount(indexBufferKey, primCount);
+-    uint32_t primCount     = primCountForIndexCount(indexBufferKey, glCount);
+-    uint32_t newIndexCount = 0;
+-    ANGLE_CHECK_GL_MATH(context, indexCountForPrimCount(indexBufferKey, primCount, &newIndexCount));
+-
 -    size_t indexSize   = gl::GetDrawElementsTypeSize(elementsType);
 -    size_t newOffset   = 0;
 -    mtl::BufferRef newBuffer;
--    ANGLE_TRY(mIndexBuffers.allocate(context, newIndexCount * indexSize + indexOffset, nullptr,
--                                     &newBuffer, &newOffset));
+-
+-    angle::CheckedNumeric<size_t> checkedBufferSize(newIndexCount);
+-    checkedBufferSize *= indexSize;
+-    checkedBufferSize += indexOffset;
+-
+-    ANGLE_CHECK_GL_MATH(context, checkedBufferSize.IsValid());
+-    ANGLE_TRY(mIndexBuffers.allocate(context, checkedBufferSize.ValueOrDie(), nullptr, &newBuffer,
+-                                     &newOffset));
 -    auto threadsPerThreadgroup = MTLSizeMake(MIN(primCount, 64u), 1, 1);
 +    uint indexBufferKey = buildIndexBufferKey(indexBufferType, primitiveRestartEnabled, mode);
 +    auto [primCount, newIndexCount, newMode, perPrimitiveIndexCount] =
@@ -6319,11 +6334,10 @@ index 407117b7622b06f864b9c799918ab1cbea3d2f26..c07b8891bc2027dbd3df35b63d3be386
 -    encoder->setBuffer(indexBuffer, static_cast<uint32_t>(indexOffset), 0);
 -    encoder->setBufferForWrite(
 -        newBuffer, static_cast<uint32_t>(indexOffset) + static_cast<uint32_t>(newOffset), 1);
--    encoder->setData(static_cast<uint>(indexCount), 2);
+-    encoder->setData(static_cast<uint>(glCount), 2);
 -    encoder->setData(primCount, 3);
 -    encoder->dispatch(
--        MTLSizeMake((primCount + threadsPerThreadgroup.width - 1) / threadsPerThreadgroup.width, 1,
--                    1),
+-        MTLSizeMake((static_cast<NSUInteger>(primCount) + threadsPerThreadgroup.width - 1) /
 +
 +    const size_t lastIndex = firstIndex + count - 1;
 +    for (const auto &range : drawIndexRanges)
@@ -6366,10 +6380,10 @@ index 407117b7622b06f864b9c799918ab1cbea3d2f26..c07b8891bc2027dbd3df35b63d3be386
 +        encoder->setData(primitiveCount, 3);
 +        encoder->dispatch(MTLSizeMake((static_cast<NSUInteger>(primitiveCount) +
 +                                       threadsPerThreadgroup.width - 1) /
-+                                          threadsPerThreadgroup.width,
-+                                      1, 1),
+                                           threadsPerThreadgroup.width,
+                                       1, 1),
                            threadsPerThreadgroup);
--    outIndexCount    = newIndexCount;
+-    outIndexCount    = static_cast<uint32_t>(newIndexCount);
 -    outIndexOffset   = newOffset;
 -    outPrimitiveMode = getNewPrimitiveMode(indexBufferKey);
 -    outNewBuffer     = newBuffer;
@@ -6382,22 +6396,21 @@ index 407117b7622b06f864b9c799918ab1cbea3d2f26..c07b8891bc2027dbd3df35b63d3be386
  
  angle::Result ProvokingVertexHelper::generateIndexBuffer(ContextMtl *context,
 -                                                         size_t first,
--                                                         size_t indexCount,
+-                                                         GLsizei glCount,
 +                                                         GLsizei first,
 +                                                         GLsizei count,
                                                           gl::PrimitiveMode primitiveMode,
                                                           gl::DrawElementsType elementsType,
--                                                         size_t &outIndexCount,
-+                                                         uint32_t &outIndexCount,
-                                                          size_t &outIndexOffset,
-                                                          gl::PrimitiveMode &outPrimitiveMode,
-                                                          mtl::BufferRef &outNewBuffer)
-@@ -235,12 +241,14 @@ static uint buildIndexBufferKey(gl::DrawElementsType elementType,
+                                                          uint32_t &outIndexCount,
+@@ -259,20 +243,14 @@ static uint buildIndexBufferKey(gl::DrawElementsType elementType,
      // dispatch per-primitive?
      const bool primitiveRestartEnabled = false;
      uint indexBufferKey = buildIndexBufferKey(elementsType, primitiveRestartEnabled, primitiveMode);
--    uint primCount      = primCountForIndexCount(indexBufferKey, (uint32_t)indexCount);
--    uint newIndexCount    = indexCountForPrimCount(indexBufferKey, primCount);
+-    uint32_t primCount  = primCountForIndexCount(indexBufferKey, glCount);
+-
+-    uint32_t newIndexCount = 0;
+-    ANGLE_CHECK_GL_MATH(context, indexCountForPrimCount(indexBufferKey, primCount, &newIndexCount));
+-
 -    size_t indexSize      = gl::GetDrawElementsTypeSize(elementsType);
 +    auto [primCount, newIndexCount, newPrimitiveMode, perPrimitiveIndexCount] =
 +        resolveIndexedDrawRewriteInfo(primitiveMode, count, primitiveRestartEnabled);
@@ -6406,34 +6419,184 @@ index 407117b7622b06f864b9c799918ab1cbea3d2f26..c07b8891bc2027dbd3df35b63d3be386
 +    size_t newIndexBufferSize = newIndexCount << gl::GetDrawElementsTypeShift(elementsType);
      size_t newIndexOffset = 0;
      mtl::BufferRef newBuffer;
--    ANGLE_TRY(mIndexBuffers.allocate(context, newIndexCount * indexSize, nullptr, &newBuffer,
+-
+-    angle::CheckedNumeric<size_t> checkedBufferSize = newIndexCount;
+-    checkedBufferSize *= indexSize;
+-
+-    ANGLE_CHECK_GL_MATH(context, checkedBufferSize.IsValid());
+-    ANGLE_TRY(mIndexBuffers.allocate(context, checkedBufferSize.ValueOrDie(), nullptr, &newBuffer,
 +    ANGLE_TRY(mIndexBuffers.allocate(context, newIndexBufferSize, nullptr, &newBuffer,
                                       &newIndexOffset));
      auto threadsPerThreadgroup = MTLSizeMake(MIN(primCount, 64u), 1, 1);
  
-@@ -249,17 +257,17 @@ static uint buildIndexBufferKey(gl::DrawElementsType elementType,
+@@ -281,18 +259,17 @@ static uint buildIndexBufferKey(gl::DrawElementsType elementType,
      const bool isForGenerateIndices = true;
      ANGLE_TRY(
          prepareCommandEncoderForFunction(context, encoder, indexBufferKey, isForGenerateIndices));
 -    encoder->setBufferForWrite(newBuffer, static_cast<uint>(newIndexOffset), 1);
--    encoder->setData(static_cast<uint>(indexCount), 2);
+-    encoder->setData(static_cast<uint>(glCount), 2);
 +    encoder->setBufferForWrite(newBuffer, newIndexOffset, 1);
 +    encoder->setData(static_cast<uint>(count), 2);
      encoder->setData(primCount, 3);
      encoder->setData(static_cast<uint>(first), 4);
      encoder->dispatch(
--        MTLSizeMake((primCount + threadsPerThreadgroup.width - 1) / threadsPerThreadgroup.width, 1,
+-        MTLSizeMake((static_cast<NSUInteger>(primCount) + threadsPerThreadgroup.width - 1) /
+-                        threadsPerThreadgroup.width,
+-                    1, 1),
 +        MTLSizeMake((static_cast<NSUInteger>(primCount) + threadsPerThreadgroup.width - 1) / threadsPerThreadgroup.width, 1,
-                     1),
++                    1),
          threadsPerThreadgroup);
--    outIndexCount    = newIndexCount;
-+    outIndexCount    = static_cast<uint32_t>(newIndexCount);
+     outIndexCount    = static_cast<uint32_t>(newIndexCount);
      outIndexOffset   = newIndexOffset;
 -    outPrimitiveMode = getNewPrimitiveMode(indexBufferKey);
 +    outPrimitiveMode = newPrimitiveMode;
      outNewBuffer     = newBuffer;
      return angle::Result::Continue;
  }
+diff --git a/src/libANGLE/renderer/metal/QueryMtl.h b/src/libANGLE/renderer/metal/QueryMtl.h
+index 363d7657a2b9f0588f351e34aa6773480f44f6b9..104bc924afcc0b126b73170ee420bd4d2471ed66 100644
+--- a/src/libANGLE/renderer/metal/QueryMtl.h
++++ b/src/libANGLE/renderer/metal/QueryMtl.h
+@@ -19,50 +19,6 @@ namespace rx
+ 
+ class ContextMtl;
+ 
+-// The class represents offset(s) allocated in the visiblity buffer for an occlusion query.
+-// See doc/OcclusionQuery.md.
+-// An occlusion query might have more than one offsets allocated, but all of them must be adjacent
+-// to each other. Multiple offsets typically allocated when the query is paused and resumed during
+-// viewport clear emulation with draw operations. In such case, Metal doesn't allow an offset to
+-// be reused in a render pass, hence multiple offsets will be allocated, and their values will
+-// be accumulated.
+-class VisibilityBufferOffsetsMtl
+-{
+-  public:
+-    void clear() { mStartOffset = mNumOffsets = 0; }
+-    bool empty() const { return mNumOffsets == 0; }
+-    uint32_t size() const { return mNumOffsets; }
+-
+-    // Return last offset
+-    uint32_t back() const
+-    {
+-        ASSERT(!empty());
+-        return mStartOffset + (mNumOffsets - 1) * mtl::kOcclusionQueryResultSize;
+-    }
+-
+-    uint32_t front() const
+-    {
+-        ASSERT(!empty());
+-        return mStartOffset;
+-    }
+-
+-    void setStartOffset(uint32_t offset)
+-    {
+-        ASSERT(empty());
+-        mStartOffset = offset;
+-        mNumOffsets  = 1;
+-    }
+-    void addOffset()
+-    {
+-        ASSERT(!empty());
+-        mNumOffsets++;
+-    }
+-
+-  private:
+-    uint32_t mStartOffset = 0;
+-    uint32_t mNumOffsets  = 0;
+-};
+-
+ class QueryMtl : public QueryImpl
+ {
+   public:
+@@ -80,24 +36,9 @@ class QueryMtl : public QueryImpl
+     angle::Result getResult(const gl::Context *context, GLuint64 *params) override;
+     angle::Result isResultAvailable(const gl::Context *context, bool *available) override;
+ 
+-    // Get allocated offsets in the render pass's occlusion query pool.
+-    const VisibilityBufferOffsetsMtl &getAllocatedVisibilityOffsets() const
+-    {
+-        return mVisibilityBufferOffsets;
+-    }
+-    // Set first allocated offset in the render pass's occlusion query pool.
+-    void setFirstAllocatedVisibilityOffset(uint32_t off)
+-    {
+-        mVisibilityBufferOffsets.setStartOffset(off);
+-    }
+-    // Add more offset allocated for the occlusion query
+-    void addAllocatedVisibilityOffset() { mVisibilityBufferOffsets.addOffset(); }
+-
+-    void clearAllocatedVisibilityOffsets() { mVisibilityBufferOffsets.clear(); }
+     // Returns the buffer containing the final occlusion query result.
+     const mtl::BufferRef &getVisibilityResultBuffer() const { return mVisibilityResultBuffer; }
+-    // Reset the occlusion query result stored in buffer to zero
+-    void resetVisibilityResult(ContextMtl *contextMtl);
++
+     void onTransformFeedbackEnd(const gl::Context *context);
+ 
+     // If the timestamp query is still active upon context switch,
+@@ -110,8 +51,7 @@ class QueryMtl : public QueryImpl
+     template <typename T>
+     angle::Result waitAndGetResult(const gl::Context *context, T *params);
+ 
+-    // List of offsets in the render pass's occlusion query pool buffer allocated for this query
+-    VisibilityBufferOffsetsMtl mVisibilityBufferOffsets;
++    // Buffer holding the final combined visibility result for this query.
+     mtl::BufferRef mVisibilityResultBuffer;
+ 
+     size_t mTransformFeedbackPrimitivesDrawn = 0;
+diff --git a/src/libANGLE/renderer/metal/QueryMtl.mm b/src/libANGLE/renderer/metal/QueryMtl.mm
+index 14908006ca4e762f7b8ed13e99943d8e0a86b1e3..94ebb5b9827fff617fa8175de06f4783b867f2a9 100644
+--- a/src/libANGLE/renderer/metal/QueryMtl.mm
++++ b/src/libANGLE/renderer/metal/QueryMtl.mm
+@@ -24,9 +24,9 @@
+ void QueryMtl::onDestroy(const gl::Context *context)
+ {
+     ContextMtl *contextMtl = mtl::GetImpl(context);
+-    if (!getAllocatedVisibilityOffsets().empty())
++    if (mVisibilityResultBuffer)
+     {
+-        contextMtl->onOcclusionQueryDestroy(context, this);
++        contextMtl->onOcclusionQueryDestroy(*this);
+     }
+     mVisibilityResultBuffer = nullptr;
+ }
+@@ -51,7 +51,7 @@
+                 }
+             }
+ 
+-            ANGLE_TRY(contextMtl->onOcclusionQueryBegin(context, this));
++            ANGLE_TRY(contextMtl->onOcclusionQueryBegin(*this));
+             break;
+         case gl::QueryType::TransformFeedbackPrimitivesWritten:
+             mTransformFeedbackPrimitivesDrawn = 0;
+@@ -85,7 +85,7 @@
+     {
+         case gl::QueryType::AnySamples:
+         case gl::QueryType::AnySamplesConservative:
+-            contextMtl->onOcclusionQueryEnd(context, this);
++            contextMtl->onOcclusionQueryEnd();
+             break;
+         case gl::QueryType::TransformFeedbackPrimitivesWritten:
+             onTransformFeedbackEnd(context);
+@@ -207,18 +207,6 @@
+     return waitAndGetResult(context, params);
+ }
+ 
+-void QueryMtl::resetVisibilityResult(ContextMtl *contextMtl)
+-{
+-    // Occlusion query buffer must be allocated in QueryMtl::begin
+-    ASSERT(mVisibilityResultBuffer);
+-
+-    // Fill the query's buffer with zeros
+-    auto blitEncoder = contextMtl->getBlitCommandEncoder();
+-    blitEncoder->fillBuffer(mVisibilityResultBuffer, NSMakeRange(0, mtl::kOcclusionQueryResultSize),
+-                            0);
+-    mVisibilityResultBuffer->syncContent(contextMtl, blitEncoder);
+-}
+-
+ void QueryMtl::onTransformFeedbackEnd(const gl::Context *context)
+ {
+     gl::TransformFeedback *transformFeedback = context->getState().getCurrentTransformFeedback();
 diff --git a/src/libANGLE/renderer/metal/RenderTargetMtl.h b/src/libANGLE/renderer/metal/RenderTargetMtl.h
 index 281085bbc46eb7d96dabf73b9c75ee0a61125bab..a07218bc78473252b0b2b9e561ec74799959177e 100644
 --- a/src/libANGLE/renderer/metal/RenderTargetMtl.h
@@ -6545,7 +6708,7 @@ index 2dfd58b0cd9b26258624285b58715378e99a904e..ade4e816ba2a996fedde0434c06e0e8b
  
      egl::Surface *mBoundSurface = nullptr;
 diff --git a/src/libANGLE/renderer/metal/TextureMtl.mm b/src/libANGLE/renderer/metal/TextureMtl.mm
-index 0dcbddd41f22928d1eafab3f6274b2b176899917..5db9ec68ec3e05951eab6a6d1f5cbe432b618d24 100644
+index 803f46d7eb9ff37289e86a65d85d9c973ffbb928..be92467812f0f727c2a88ad1f33b0fe742e0c6cf 100644
 --- a/src/libANGLE/renderer/metal/TextureMtl.mm
 +++ b/src/libANGLE/renderer/metal/TextureMtl.mm
 @@ -154,27 +154,6 @@ GLuint GetImageCubeFaceIndexOrZeroFrom(const gl::ImageIndex &index)
@@ -6769,7 +6932,7 @@ index 0dcbddd41f22928d1eafab3f6274b2b176899917..5db9ec68ec3e05951eab6a6d1f5cbe43
  
      for (uint32_t slice = 0; slice < mSlices; ++slice)
      {
-@@ -1798,28 +1775,6 @@ uint32_t height(GLuint glLevel) const
+@@ -1793,28 +1770,6 @@ uint32_t height(GLuint glLevel) const
      return angle::Result::Continue;
  }
  
@@ -6798,7 +6961,7 @@ index 0dcbddd41f22928d1eafab3f6274b2b176899917..5db9ec68ec3e05951eab6a6d1f5cbe43
  bool TextureMtl::isImmutableOrPBuffer() const
  {
      return mState.getImmutableFormat() || mBoundSurface;
-@@ -2059,48 +2014,46 @@ uint32_t height(GLuint glLevel) const
+@@ -2054,48 +2009,46 @@ uint32_t height(GLuint glLevel) const
                                          const mtl::Format &mtlFormat,
                                          const gl::Extents &size)
  {
@@ -6828,9 +6991,9 @@ index 0dcbddd41f22928d1eafab3f6274b2b176899917..5db9ec68ec3e05951eab6a6d1f5cbe43
 +            if (imageDef.image && imageDef.image->sizeAt0() != size)
 +            {
 +                imageDef = {};
-             }
++            }
 +            return angle::Result::Continue;
-+        }
+         }
 +        // The redefinition makes the mipmap chain incomplete. Move the mipmaps to
 +        // detached views.
 +        deallocateNativeStorage(/*keepImages=*/true);
@@ -6875,7 +7038,7 @@ index 0dcbddd41f22928d1eafab3f6274b2b176899917..5db9ec68ec3e05951eab6a6d1f5cbe43
      // Create image to hold texture's data at this level & slice:
      switch (index.getType())
      {
-@@ -2108,29 +2061,26 @@ uint32_t height(GLuint glLevel) const
+@@ -2103,29 +2056,26 @@ uint32_t height(GLuint glLevel) const
          case gl::TextureType::CubeMap:
              ANGLE_TRY(mtl::Texture::Make2DTexture(
                  contextMtl, mtlFormat, size.width, size.height, 1,
@@ -6910,7 +7073,7 @@ index 0dcbddd41f22928d1eafab3f6274b2b176899917..5db9ec68ec3e05951eab6a6d1f5cbe43
      return angle::Result::Continue;
  }
  
-@@ -2208,20 +2158,15 @@ uint32_t height(GLuint glLevel) const
+@@ -2203,20 +2153,15 @@ uint32_t height(GLuint glLevel) const
  
      ContextMtl *contextMtl = mtl::GetImpl(context);
  
@@ -6935,7 +7098,7 @@ index 0dcbddd41f22928d1eafab3f6274b2b176899917..5db9ec68ec3e05951eab6a6d1f5cbe43
  
      // Get corresponding source data's ANGLE format
      angle::FormatID srcAngleFormatId;
-@@ -2410,9 +2355,8 @@ uint32_t height(GLuint glLevel) const
+@@ -2404,9 +2349,8 @@ uint32_t height(GLuint glLevel) const
                                                          const uint8_t *pixels,
                                                          const ImageDefinitionMtl &imageDef)
  {
@@ -6946,54 +7109,7 @@ index 0dcbddd41f22928d1eafab3f6274b2b176899917..5db9ec68ec3e05951eab6a6d1f5cbe43
      mtl::Format imageFormat = contextMtl->getPixelFormat(imageDef.formatID);
  
      if (unpackBuffer)
-@@ -2471,7 +2415,29 @@ uint32_t height(GLuint glLevel) const
-                                                      ? imageFormat.textureLoadFunctions(type)
-                                                      : LoadImageFunctionInfo();
-         const angle::Format &dstFormat         = angle::Format::Get(imageFormat.actualFormatId);
--        const size_t dstRowPitch               = dstFormat.pixelBytes * mtlArea.size.width;
-+        size_t dstRowPitch;
-+        size_t dstDepthPitch;
-+        if (dstFormat.isBlock)
-+        {
-+            const gl::InternalFormat &dstFormatInfo =
-+                gl::GetSizedInternalFormatInfo(dstFormat.glInternalFormat);
-+            GLuint rowPitch;
-+            ANGLE_CHECK_GL_MATH(contextMtl,
-+                                dstFormatInfo.computeCompressedImageRowPitch(
-+                                    static_cast<GLsizei>(mtlArea.size.width), &rowPitch));
-+            dstRowPitch = rowPitch;
-+
-+            GLuint depthPitch;
-+            ANGLE_CHECK_GL_MATH(contextMtl, dstFormatInfo.computeCompressedImageDepthPitch(
-+                                                static_cast<GLsizei>(mtlArea.size.height),
-+                                                static_cast<GLuint>(dstRowPitch), &depthPitch));
-+            dstDepthPitch = depthPitch;
-+        }
-+        else
-+        {
-+            dstRowPitch   = dstFormat.pixelBytes * mtlArea.size.width;
-+            dstDepthPitch = dstRowPitch * mtlArea.size.height;
-+        }
- 
-         // It is very important to avoid allocating a new buffer for each row during these
-         // uploads.
-@@ -2485,7 +2451,6 @@ uint32_t height(GLuint glLevel) const
-                 ASSERT(loadFunctionInfo.loadFunction);
- 
-                 // Need to create a buffer to hold entire decompressed image.
--                const size_t dstDepthPitch = dstRowPitch * mtlArea.size.height;
-                 angle::MemoryBuffer decompressBuf;
-                 ANGLE_CHECK_GL_ALLOC(contextMtl,
-                                      decompressBuf.resize(dstDepthPitch * mtlArea.size.depth));
-@@ -2509,7 +2474,6 @@ uint32_t height(GLuint glLevel) const
-                        static_cast<unsigned int>(imageDef.image->sizeAt0().width));
-                 ASSERT(mtlArea.size.height ==
-                        static_cast<unsigned int>(imageDef.image->sizeAt0().height));
--                const size_t dstDepthPitch = dstRowPitch * mtlArea.size.height;
-                 ANGLE_TRY(UploadTextureContents(
-                     context, dstFormat, mtlArea, mtl::kZeroNativeMipLevel, slice, pixels,
-                     dstRowPitch, dstDepthPitch, kAvoidStagingBuffers, imageDef.image));
-@@ -2634,9 +2598,9 @@ uint32_t height(GLuint glLevel) const
+@@ -2648,9 +2592,9 @@ uint32_t height(GLuint glLevel) const
      }
  
      ASSERT(index.getLayerCount() == 1 && !index.isLayered());
@@ -7004,7 +7120,7 @@ index 0dcbddd41f22928d1eafab3f6274b2b176899917..5db9ec68ec3e05951eab6a6d1f5cbe43
      const mtl::TextureRef &image = imageDef.image;
      const mtl::Format &format    = contextMtl->getPixelFormat(imageDef.formatID);
      // For Texture's image definition, we always use zero mip level.
-@@ -2678,13 +2642,11 @@ uint32_t height(GLuint glLevel) const
+@@ -2692,13 +2636,11 @@ uint32_t height(GLuint glLevel) const
      const gl::Offset modifiedDestOffset(destOffset.x + clippedSourceArea.x - sourceArea.x,
                                          destOffset.y + clippedSourceArea.y - sourceArea.y, 0);
  
@@ -7022,7 +7138,7 @@ index 0dcbddd41f22928d1eafab3f6274b2b176899917..5db9ec68ec3e05951eab6a6d1f5cbe43
      {
          return copySubImageCPU(context, index, modifiedDestOffset, clippedSourceArea,
                                 internalFormat, source, colorReadRT);
-@@ -2740,14 +2702,11 @@ uint32_t height(GLuint glLevel) const
+@@ -2754,14 +2696,11 @@ uint32_t height(GLuint glLevel) const
                                            const FramebufferMtl *source,
                                            const RenderTargetMtl *colorReadRT)
  {
@@ -7040,7 +7156,7 @@ index 0dcbddd41f22928d1eafab3f6274b2b176899917..5db9ec68ec3e05951eab6a6d1f5cbe43
      const int dstRowPitch          = dstFormat.pixelBytes * clippedSourceArea.width;
      angle::MemoryBuffer conversionRow;
      ANGLE_CHECK_GL_ALLOC(contextMtl, conversionRow.resize(dstRowPitch));
-@@ -2794,7 +2753,7 @@ uint32_t height(GLuint glLevel) const
+@@ -2808,7 +2747,7 @@ uint32_t height(GLuint glLevel) const
          // Upload to texture
          ANGLE_TRY(UploadTextureContents(context, dstFormat, mtlDstRowArea, mtl::kZeroNativeMipLevel,
                                          dstSlice, conversionRow.data(), dstRowPitch, 0,
@@ -7049,7 +7165,7 @@ index 0dcbddd41f22928d1eafab3f6274b2b176899917..5db9ec68ec3e05951eab6a6d1f5cbe43
      }
  
      return angle::Result::Continue;
-@@ -2819,18 +2778,15 @@ uint32_t height(GLuint glLevel) const
+@@ -2833,18 +2772,15 @@ uint32_t height(GLuint glLevel) const
      ContextMtl *contextMtl = mtl::GetImpl(context);
      TextureMtl *sourceMtl  = mtl::GetImpl(source);
  
@@ -7076,7 +7192,7 @@ index 0dcbddd41f22928d1eafab3f6274b2b176899917..5db9ec68ec3e05951eab6a6d1f5cbe43
      {
          return copySubTextureCPU(context, index, destOffset, internalFormat,
                                   mtl::kZeroNativeMipLevel, sourceBox, sourceAngleFormat,
-@@ -2855,10 +2811,9 @@ uint32_t height(GLuint glLevel) const
+@@ -2869,10 +2805,9 @@ uint32_t height(GLuint glLevel) const
                                                   const mtl::TextureRef &sourceTexture)
  {
      ContextMtl *contextMtl = mtl::GetImpl(context);
@@ -7090,7 +7206,7 @@ index 0dcbddd41f22928d1eafab3f6274b2b176899917..5db9ec68ec3e05951eab6a6d1f5cbe43
  
      if (internalFormat.colorEncoding == GL_SRGB)
      {
-@@ -2873,7 +2828,7 @@ uint32_t height(GLuint glLevel) const
+@@ -2887,7 +2822,7 @@ uint32_t height(GLuint glLevel) const
      blitParams.dstRect =
          gl::Rectangle(destOffset.x, destOffset.y, sourceBox.width, sourceBox.height);
      blitParams.dstScissorRect = blitParams.dstRect;
@@ -7099,7 +7215,7 @@ index 0dcbddd41f22928d1eafab3f6274b2b176899917..5db9ec68ec3e05951eab6a6d1f5cbe43
      blitParams.enabledBuffers.set(0);
  
      blitParams.src      = sourceTexture;
-@@ -2888,10 +2843,9 @@ uint32_t height(GLuint glLevel) const
+@@ -2902,10 +2837,9 @@ uint32_t height(GLuint glLevel) const
      blitParams.unpackUnmultiplyAlpha  = unpackUnmultiplyAlpha;
      blitParams.transformLinearToSrgb  = sourceAngleFormat.isSRGB;
  
@@ -7112,7 +7228,7 @@ index 0dcbddd41f22928d1eafab3f6274b2b176899917..5db9ec68ec3e05951eab6a6d1f5cbe43
  }
  
  angle::Result TextureMtl::copySubTextureCPU(const gl::Context *context,
-@@ -2906,14 +2860,11 @@ uint32_t height(GLuint glLevel) const
+@@ -2920,14 +2854,11 @@ uint32_t height(GLuint glLevel) const
                                              bool unpackUnmultiplyAlpha,
                                              const mtl::TextureRef &sourceTexture)
  {
@@ -7130,7 +7246,7 @@ index 0dcbddd41f22928d1eafab3f6274b2b176899917..5db9ec68ec3e05951eab6a6d1f5cbe43
      const int srcRowPitch               = sourceAngleFormat.pixelBytes * sourceBox.width;
      const int srcImageSize              = srcRowPitch * sourceBox.height;
      const int convRowPitch              = dstAngleFormat.pixelBytes * sourceBox.width;
-@@ -2941,7 +2892,7 @@ uint32_t height(GLuint glLevel) const
+@@ -2955,7 +2886,7 @@ uint32_t height(GLuint glLevel) const
  
      // Upload to texture
      ANGLE_TRY(UploadTextureContents(context, dstAngleFormat, mtlDstArea, mtl::kZeroNativeMipLevel,
@@ -7195,7 +7311,7 @@ index b7981ba547b0c01c3a9ae2cc23f6999ceeaa6d0f..002000cf5728e624b9406f4df44e8b7b
  
  #endif /* LIBANGLE_RENDERER_METAL_VERTEXARRAYMTL_H_ */
 diff --git a/src/libANGLE/renderer/metal/VertexArrayMtl.mm b/src/libANGLE/renderer/metal/VertexArrayMtl.mm
-index 6cd57d3e34c108e30ee64c406a9abae194c203ca..698df13114b533584cbcf1377a660904f492445f 100644
+index 8aa7e2ac944c6449293489cfa3e4cc4cde0f6ba1..bbf679ee1c2e7f7899f25520f15be77d4af2b5fc 100644
 --- a/src/libANGLE/renderer/metal/VertexArrayMtl.mm
 +++ b/src/libANGLE/renderer/metal/VertexArrayMtl.mm
 @@ -15,6 +15,7 @@
@@ -7746,7 +7862,7 @@ index 6cd57d3e34c108e30ee64c406a9abae194c203ca..698df13114b533584cbcf1377a660904
          srcBuffer, static_cast<VertexConversionBufferMtl *>(conversion), binding, srcFormatSize);
  
      const angle::Format &convertedAngleFormat = convertedFormat.actualAngleFormat();
-@@ -1085,16 +1242,27 @@ inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
+@@ -1084,16 +1241,27 @@ inline MTLVertexFormat GetCurrentAttribFormat(GLenum type)
      ANGLE_TRY(conversion->data.allocate(contextMtl, numVertices * targetStride, nullptr, &newBuffer,
                                          &newBufferOffset));
  
@@ -8209,7 +8325,7 @@ index c9c564c694682853557d6f6681e6422551dd59a2..3ce237604867c47514e74d377e3dc1f0
  };
  
 diff --git a/src/libANGLE/renderer/metal/mtl_buffer_pool.mm b/src/libANGLE/renderer/metal/mtl_buffer_pool.mm
-index c369a0f76aa0898c1eb279bd8ddcbe1b1521cd76..0b178e2482fdedf7594c0cb7ec11a4997107bfd2 100644
+index 79be808b88ee8473050fa20b38d994bf886c4e8b..e156512c375be5808d4b921640aae5fc483eba94 100644
 --- a/src/libANGLE/renderer/metal/mtl_buffer_pool.mm
 +++ b/src/libANGLE/renderer/metal/mtl_buffer_pool.mm
 @@ -26,15 +26,7 @@
@@ -8229,7 +8345,7 @@ index c369a0f76aa0898c1eb279bd8ddcbe1b1521cd76..0b178e2482fdedf7594c0cb7ec11a499
  {}
  
  angle::Result BufferPool::reset(ContextMtl *contextMtl,
-@@ -235,9 +227,9 @@
+@@ -234,9 +226,9 @@
  
      if (offsetOut)
      {
@@ -8241,7 +8357,7 @@ index c369a0f76aa0898c1eb279bd8ddcbe1b1521cd76..0b178e2482fdedf7594c0cb7ec11a499
      return angle::Result::Continue;
  }
  
-@@ -348,7 +340,7 @@
+@@ -347,7 +339,7 @@
      // If alignment has changed, make sure the next allocation is done at an aligned offset.
      if (alignment != mAlignment)
      {
@@ -8366,7 +8482,7 @@ index 22cc8a521251766a2864c51aa55c894648502647..c06aa0ce031e47260ff839d4efacc324
      ComputeCommandEncoder &setBytes(const void *bytes, size_t size, uint32_t index);
      template <typename T>
 diff --git a/src/libANGLE/renderer/metal/mtl_command_buffer.mm b/src/libANGLE/renderer/metal/mtl_command_buffer.mm
-index 31448a46384b86d411f2249107534527610cec8f..ba893f03202016eba0f1ddce470f4603a14e4039 100644
+index 31448a46384b86d411f2249107534527610cec8f..cd6248de9e74c5b302e49e4e0010de65b1e579db 100644
 --- a/src/libANGLE/renderer/metal/mtl_command_buffer.mm
 +++ b/src/libANGLE/renderer/metal/mtl_command_buffer.mm
 @@ -184,7 +184,7 @@ inline void SetVertexBufferCmd(id<MTLRenderCommandEncoder> encoder,
@@ -8450,7 +8566,17 @@ index 31448a46384b86d411f2249107534527610cec8f..ba893f03202016eba0f1ddce470f4603
      ASSERT(mainTextureRef->get() == objCRenderPassAttachment.texture);
      if (mainTextureRef->shouldNotLoadStore())
      {
-@@ -1584,13 +1597,13 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
+@@ -1529,8 +1542,7 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
+                                 objCRenderPassDesc.stencilAttachment))
+         hasAttachment = true;
+ 
+-    // Set visibility result buffer
+-    if (mOcclusionQueryPool.getNumRenderPassAllocatedQueries())
++    if (mOcclusionQueryPool.hasPendingVisibilityResults())
+     {
+         objCRenderPassDesc.visibilityResultBuffer =
+             mOcclusionQueryPool.getRenderPassVisibilityPoolBuffer()->get();
+@@ -1584,13 +1596,13 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
  inline void RenderCommandEncoder::initAttachmentWriteDependencyAndScissorRect(
      const RenderPassAttachmentDesc &attachment)
  {
@@ -8467,7 +8593,7 @@ index 31448a46384b86d411f2249107534527610cec8f..ba893f03202016eba0f1ddce470f4603
          mRenderPassMaxScissorRect.width =
              std::min<NSUInteger>(mRenderPassMaxScissorRect.width, texture->width(mipLevel));
          mRenderPassMaxScissorRect.height =
-@@ -1868,7 +1881,8 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
+@@ -1868,7 +1880,8 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
      return setStencilRefVals(ref, ref);
  }
  
@@ -8477,7 +8603,7 @@ index 31448a46384b86d411f2249107534527610cec8f..ba893f03202016eba0f1ddce470f4603
  {
      if (mStateCache.viewport.valid() && mStateCache.viewport.value() == viewport)
      {
-@@ -1881,12 +1895,25 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
+@@ -1881,12 +1894,25 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
      return *this;
  }
  
@@ -8506,7 +8632,7 @@ index 31448a46384b86d411f2249107534527610cec8f..ba893f03202016eba0f1ddce470f4603
  
      MTLScissorRect clampedRect = {rect.x, rect.y, std::min(rect.width, clampedWidth),
                                    std::min(rect.height, clampedHeight)};
-@@ -1898,6 +1925,25 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
+@@ -1898,6 +1924,25 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
  
      mStateCache.scissorRect = clampedRect;
  
@@ -8532,7 +8658,7 @@ index 31448a46384b86d411f2249107534527610cec8f..ba893f03202016eba0f1ddce470f4603
      mCommands.push(CmdType::SetScissorRect).push(clampedRect);
  
      return *this;
-@@ -1922,7 +1968,7 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
+@@ -1922,7 +1967,7 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
  
  RenderCommandEncoder &RenderCommandEncoder::setBuffer(gl::ShaderType shaderType,
                                                        const BufferRef &buffer,
@@ -8541,7 +8667,7 @@ index 31448a46384b86d411f2249107534527610cec8f..ba893f03202016eba0f1ddce470f4603
                                                        uint32_t index)
  {
      if (index >= kMaxShaderBuffers)
-@@ -1939,7 +1985,7 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
+@@ -1939,7 +1984,7 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
  
  RenderCommandEncoder &RenderCommandEncoder::setBufferForWrite(gl::ShaderType shaderType,
                                                                const BufferRef &buffer,
@@ -8550,7 +8676,7 @@ index 31448a46384b86d411f2249107534527610cec8f..ba893f03202016eba0f1ddce470f4603
                                                                uint32_t index)
  {
      if (index >= kMaxShaderBuffers)
-@@ -1956,7 +2002,7 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
+@@ -1956,7 +2001,7 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
  
  RenderCommandEncoder &RenderCommandEncoder::commonSetBuffer(gl::ShaderType shaderType,
                                                              id<MTLBuffer> mtlBuffer,
@@ -8559,7 +8685,7 @@ index 31448a46384b86d411f2249107534527610cec8f..ba893f03202016eba0f1ddce470f4603
                                                              uint32_t index)
  {
      RenderCommandEncoderShaderStates &shaderStates = mStateCache.perShaderStates[shaderType];
-@@ -2303,6 +2349,20 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
+@@ -2303,6 +2348,20 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
      mCommands.push(CmdType::PopDebugGroup);
  }
  
@@ -8580,7 +8706,7 @@ index 31448a46384b86d411f2249107534527610cec8f..ba893f03202016eba0f1ddce470f4603
  RenderCommandEncoder &RenderCommandEncoder::setColorStoreAction(MTLStoreAction action,
                                                                  uint32_t colorAttachmentIndex)
  {
-@@ -2398,6 +2458,16 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
+@@ -2398,6 +2457,16 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
      return *this;
  }
  
@@ -8597,7 +8723,7 @@ index 31448a46384b86d411f2249107534527610cec8f..ba893f03202016eba0f1ddce470f4603
  void RenderCommandEncoder::setLabel(NSString *label)
  {
      mLabel = std::move(label);
-@@ -2677,7 +2747,7 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
+@@ -2677,7 +2746,7 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
  }
  
  ComputeCommandEncoder &ComputeCommandEncoder::setBuffer(const BufferRef &buffer,
@@ -8606,7 +8732,7 @@ index 31448a46384b86d411f2249107534527610cec8f..ba893f03202016eba0f1ddce470f4603
                                                          uint32_t index)
  {
      if (index >= kMaxShaderBuffers)
-@@ -2693,7 +2763,7 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
+@@ -2693,7 +2762,7 @@ void RandomizeClearValue(ObjCAttachmentDescriptor *objCRenderPassAttachment)
  }
  
  ComputeCommandEncoder &ComputeCommandEncoder::setBufferForWrite(const BufferRef &buffer,
@@ -8669,97 +8795,462 @@ index 64e0be79f52b70b35f107080424490955c0e0e4b..6abb7faf0a2cb3ea72688c69e0fd98f2
  bool Format::isPVRTC() const
  {
      // Suppress `MTLPixelFormatPVRTC_*` deprecation warnings.
-diff --git a/src/libANGLE/renderer/metal/mtl_library_cache.h b/src/libANGLE/renderer/metal/mtl_library_cache.h
-index d936e6a4aeec66c66ae9b4203c61c9480b68563b..93dfc15cad79e7963b53609eee889f705b201c8a 100644
---- a/src/libANGLE/renderer/metal/mtl_library_cache.h
-+++ b/src/libANGLE/renderer/metal/mtl_library_cache.h
-@@ -77,7 +77,7 @@ class LibraryCache : angle::NonCopyable
-         std::mutex lock;
-     };
- 
--    LibraryCacheEntry &getCacheEntry(LibraryKey &&key);
-+    std::shared_ptr<LibraryCacheEntry> getCacheEntry(LibraryKey &&key);
- 
-     static constexpr unsigned int kMaxCachedLibraries = 128;
- 
-@@ -87,7 +87,8 @@ class LibraryCache : angle::NonCopyable
-     // Lock for searching and adding new entries to the cache
-     std::mutex mCacheLock;
- 
--    using CacheMap = angle::base::HashingMRUCache<LibraryKey, LibraryCacheEntry, LibraryKeyHasher>;
-+    using CacheMap = angle::base::
-+        HashingMRUCache<LibraryKey, std::shared_ptr<LibraryCacheEntry>, LibraryKeyHasher>;
-     CacheMap mCache;
- };
- 
-diff --git a/src/libANGLE/renderer/metal/mtl_library_cache.mm b/src/libANGLE/renderer/metal/mtl_library_cache.mm
-index 5fb63eaa41cd0520e1210c175ce1253c71ec7486..27512a19defd8f59903b645b0218eaf9468ba7e0 100644
---- a/src/libANGLE/renderer/metal/mtl_library_cache.mm
-+++ b/src/libANGLE/renderer/metal/mtl_library_cache.mm
-@@ -36,15 +36,15 @@
-                                                  bool usesInvariance)
+diff --git a/src/libANGLE/renderer/metal/mtl_occlusion_query_pool.h b/src/libANGLE/renderer/metal/mtl_occlusion_query_pool.h
+index 77db2e871c48be37276c733606c9b68c05e94b2d..e7dae17b2dc1e0e0e0406bcc4821578e5e7ef94f 100644
+--- a/src/libANGLE/renderer/metal/mtl_occlusion_query_pool.h
++++ b/src/libANGLE/renderer/metal/mtl_occlusion_query_pool.h
+@@ -20,11 +20,37 @@ namespace rx
  {
-     ASSERT(source != nullptr);
--    LibraryCache::LibraryCacheEntry &entry =
-+    std::shared_ptr<LibraryCache::LibraryCacheEntry> entry =
-         getCacheEntry(LibraryKey(source, macros, disableFastMath, usesInvariance));
  
-     // Try to lock the entry and return the library if it exists. If we can't lock then it means
-     // another thread is currently compiling.
--    std::unique_lock<std::mutex> entryLockGuard(entry.lock, std::try_to_lock);
-+    std::unique_lock<std::mutex> entryLockGuard(entry->lock, std::try_to_lock);
-     if (entryLockGuard)
-     {
--        return entry.library;
-+        return entry->library;
-     }
-     else
-     {
-@@ -69,23 +69,23 @@
-     }
+ class ContextMtl;
+-class QueryMtl;
  
-     ASSERT(source != nullptr);
--    LibraryCache::LibraryCacheEntry &entry =
-+    std::shared_ptr<LibraryCache::LibraryCacheEntry> entry =
-         getCacheEntry(LibraryKey(source, macros, disableFastMath, usesInvariance));
+ namespace mtl
+ {
  
-     // Lock this cache entry while compiling the shader. This causes other threads calling this
-     // function to wait and not duplicate the compilation.
--    std::lock_guard<std::mutex> entryLockGuard(entry.lock);
--    if (entry.library)
-+    std::lock_guard<std::mutex> entryLockGuard(entry->lock);
-+    if (entry->library)
-     {
--        return entry.library;
-+        return entry->library;
-     }
++// Tracks allocations of visibility buffer offsets for a query within the render pass.
++// An occlusion query might have more than one offsets allocated, but all of them must be adjacent
++// to each other. Multiple offsets typically allocated when the query is paused and resumed during
++// viewport clear emulation with draw operations. In such case, Metal doesn't allow an offset to
++// be reused in a render pass, hence multiple offsets will be allocated, and their values will
++// be accumulated.
++class VisibilityBufferOffsetsMtl
++{
++  public:
++    VisibilityBufferOffsetsMtl(const BufferRef &buffer, size_t startOffset, size_t size)
++        : mResultBuffer(buffer), mFirstOffset(startOffset), mSize(size)
++    {
++        ASSERT(mSize > 0);
++    }
++    size_t size() const { return mSize; }
++    size_t lastOffset() const { return mFirstOffset + (mSize - 1) * kOcclusionQueryResultSize; }
++    size_t firstOffset() const { return mFirstOffset; }
++    void addOffset() { mSize++; }
++    const BufferRef &resultBuffer() const { return mResultBuffer; }
++    void discard() { mResultBuffer = nullptr; }
++
++  private:
++    BufferRef mResultBuffer;
++    size_t mFirstOffset {0};
++    size_t mSize {0};
++};
++
+ class OcclusionQueryPool
+ {
+   public:
+@@ -33,30 +59,36 @@ class OcclusionQueryPool
  
--    entry.library = CreateShaderLibrary(metalDevice, *source, macros, disableFastMath,
-+    entry->library = CreateShaderLibrary(metalDevice, *source, macros, disableFastMath,
-                                          usesInvariance, errorOut);
--    return entry.library;
-+    return entry->library;
+     void destroy(ContextMtl *contextMtl);
+ 
+-    // Allocate an offset in visibility buffer for a query in a render pass.
+-    // - clearOldValue = true, if the old value of query will be cleared before combining in the
+-    // visibility resolve pass. This flag is only allowed to be false for the first allocation of
+-    // the render pass or the query that already has an allocated offset.
+-    // Note: a query might have more than one allocated offset. They will be combined in the final
+-    // step.
+-    angle::Result allocateQueryOffset(ContextMtl *contextMtl, QueryMtl *query, bool clearOldValue);
+-    // Deallocate all offsets used for a query.
+-    void deallocateQueryOffset(ContextMtl *contextMtl, QueryMtl *query);
+-    // Retrieve a buffer that will contain the visibility results of all allocated queries for
+-    // a render pass
++    // Begin a new occlusion query in the current render pass.
++    angle::Result beginQuery(ContextMtl *contextMtl,
++                             const BufferRef &resultBuffer,
++                             size_t *outResultOffset);
++
++    // Continue an already-active query after a render pass restart.
++    angle::Result continueQuery(ContextMtl *contextMtl,
++                                const BufferRef &resultBuffer,
++                                size_t *outResultOffset);
++
++    void discardQuery(const BufferRef &resultBuffer);
++
++    bool hasPendingVisibilityResults() const { return !mAllocatedQueries.empty(); }
++
++    // Returns the buffer that contains the visibility result writes for the current render pass.
+     const BufferRef &getRenderPassVisibilityPoolBuffer() const { return mRenderPassResultsPool; }
+-    size_t getNumRenderPassAllocatedQueries() const { return mAllocatedQueries.size(); }
++
+     // This function is called at the end of render pass
+     void resolveVisibilityResults(ContextMtl *contextMtl);
+     // Clear visibility pool buffer to drop previous results
+     void prepareRenderPassVisibilityPoolBuffer(ContextMtl *contextMtl);
+ 
+   private:
++    angle::Result ensurePoolCapacity(ContextMtl *contextMtl, size_t requiredEnd);
++
+     // Buffer to hold the visibility results for current render pass
+     BufferRef mRenderPassResultsPool;
+ 
+-    // List of allocated queries per render pass
+-    std::vector<QueryMtl *> mAllocatedQueries;
++    // List of allocated queries per render pass.
++    std::vector<VisibilityBufferOffsetsMtl> mAllocatedQueries;
+ 
+     bool mResetFirstQuery = false;
+     bool mUsed            = false;
+diff --git a/src/libANGLE/renderer/metal/mtl_occlusion_query_pool.mm b/src/libANGLE/renderer/metal/mtl_occlusion_query_pool.mm
+index 40163a1d01c7fbeb06b15e89daa26ef68478b362..9f23d2cb59d120bd051bc347a0d2518a9c379a3b 100644
+--- a/src/libANGLE/renderer/metal/mtl_occlusion_query_pool.mm
++++ b/src/libANGLE/renderer/metal/mtl_occlusion_query_pool.mm
+@@ -9,9 +9,10 @@
+ 
+ #include "libANGLE/renderer/metal/mtl_occlusion_query_pool.h"
+ 
++#include <algorithm>
++
+ #include "libANGLE/renderer/metal/ContextMtl.h"
+ #include "libANGLE/renderer/metal/DisplayMtl.h"
+-#include "libANGLE/renderer/metal/QueryMtl.h"
+ 
+ namespace rx
+ {
+@@ -25,91 +26,93 @@
+ void OcclusionQueryPool::destroy(ContextMtl *contextMtl)
+ {
+     mRenderPassResultsPool = nullptr;
+-    for (QueryMtl *allocatedQuery : mAllocatedQueries)
+-    {
+-        if (!allocatedQuery)
+-        {
+-            continue;
+-        }
+-        allocatedQuery->clearAllocatedVisibilityOffsets();
+-    }
+     mAllocatedQueries.clear();
  }
  
--LibraryCache::LibraryCacheEntry &LibraryCache::getCacheEntry(LibraryKey &&key)
-+std::shared_ptr<LibraryCache::LibraryCacheEntry> LibraryCache::getCacheEntry(LibraryKey &&key)
+-angle::Result OcclusionQueryPool::allocateQueryOffset(ContextMtl *contextMtl,
+-                                                      QueryMtl *query,
+-                                                      bool clearOldValue)
++angle::Result OcclusionQueryPool::ensurePoolCapacity(ContextMtl *contextMtl, size_t requiredEnd)
  {
-     // Lock while searching or adding new items to the cache.
-     std::lock_guard<std::mutex> cacheLockGuard(mCacheLock);
-@@ -98,7 +98,7 @@
+-    // Only query that already has allocated offset or first query of the render pass is allowed to
+-    // keep old value. Other queries must be reset to zero before counting the samples visibility in
+-    // draw calls.
+-    ASSERT(clearOldValue || mAllocatedQueries.empty() ||
+-           !query->getAllocatedVisibilityOffsets().empty());
+-
+-    uint32_t currentOffset =
+-        static_cast<uint32_t>(mAllocatedQueries.size()) * kOcclusionQueryResultSize;
+-    if (!mRenderPassResultsPool)
+-    {
+-        ASSERT(!mUsed);
+-        // First allocation
+-        ANGLE_TRY(Buffer::MakeBufferWithStorageMode(
+-            contextMtl, MTLStorageModePrivate, kOcclusionQueryResultSize, &mRenderPassResultsPool));
+-        mRenderPassResultsPool->get().label = @"OcclusionQueryPool";
+-    }
+-    else if (currentOffset + kOcclusionQueryResultSize > mRenderPassResultsPool->size())
++    if (mRenderPassResultsPool == nullptr || requiredEnd > mRenderPassResultsPool->size())
+     {
+-        // Double the capacity
+-        ANGLE_TRY(Buffer::MakeBufferWithStorageMode(contextMtl, MTLStorageModePrivate,
+-                                                    mRenderPassResultsPool->size() * 2,
++        const size_t newSize = mRenderPassResultsPool == nullptr
++                                   ? 16 * kOcclusionQueryResultSize
++                                   : mRenderPassResultsPool->size() * 2;
++        ANGLE_TRY(Buffer::MakeBufferWithStorageMode(contextMtl, MTLStorageModePrivate, newSize,
+                                                     &mRenderPassResultsPool));
+         mUsed                               = false;
+         mRenderPassResultsPool->get().label = @"OcclusionQueryPool";
+     }
  
-     angle::TrimCache(kMaxCachedLibraries, kGCLimit, "metal library", &mCache);
+-    if (clearOldValue)
+-    {
+-        // If old value is not needed, deallocate any offset previously allocated for this query.
+-        deallocateQueryOffset(contextMtl, query);
+-    }
+-    if (query->getAllocatedVisibilityOffsets().empty())
++    return angle::Result::Continue;
++}
++
++angle::Result OcclusionQueryPool::beginQuery(ContextMtl *contextMtl,
++                                             const BufferRef &resultBuffer,
++                                             size_t *outResultOffset)
++{
++    size_t resultOffset = mAllocatedQueries.empty()
++                              ? 0
++                              : (mAllocatedQueries.back().lastOffset() + kOcclusionQueryResultSize);
++
++    ANGLE_TRY(ensurePoolCapacity(contextMtl, resultOffset + kOcclusionQueryResultSize));
++    discardQuery(resultBuffer);
++
++    mAllocatedQueries.emplace_back(resultBuffer, resultOffset, 1);
++    if (resultOffset == 0)
+     {
+-        mAllocatedQueries.push_back(query);
+-        query->setFirstAllocatedVisibilityOffset(currentOffset);
++        mResetFirstQuery = true;
+     }
+-    else
++    *outResultOffset = resultOffset;
++    return angle::Result::Continue;
++}
++
++angle::Result OcclusionQueryPool::continueQuery(ContextMtl *contextMtl,
++                                                const BufferRef &resultBuffer,
++                                                size_t *outResultOffset)
++{
++    ASSERT(resultBuffer);
++    if (mAllocatedQueries.empty() &&
++        !contextMtl->getDisplay()->getFeatures().allowBufferReadWrite.enabled)
+     {
+-        // Additional offset allocated for a query is only allowed if it is a continuous region.
+-        ASSERT(currentOffset ==
+-               query->getAllocatedVisibilityOffsets().back() + kOcclusionQueryResultSize);
+-        // Just reserve an empty slot in the allocated query array
+-        mAllocatedQueries.push_back(nullptr);
+-        query->addAllocatedVisibilityOffset();
++        // If we continue a query after a visibility results resolve, we need to load the
++        // intermediate visibility result. Use an extra slot for the read unless buffer
++        // read-write is possible.
++        ANGLE_TRY(ensurePoolCapacity(contextMtl, 2 * kOcclusionQueryResultSize));
++        mAllocatedQueries.emplace_back(resultBuffer, 0, 2);
++        mResetFirstQuery = false;
++        *outResultOffset = kOcclusionQueryResultSize;
++        return angle::Result::Continue;
+     }
  
--    iter = mCache.Put(std::move(key), LibraryCacheEntry());
-+    iter = mCache.Put(std::move(key), std::make_shared<LibraryCacheEntry>());
-     return iter->second;
+-    if (currentOffset == 0)
+-    {
+-        mResetFirstQuery = clearOldValue;
+-        if (!clearOldValue && !contextMtl->getDisplay()->getFeatures().allowBufferReadWrite.enabled)
++    size_t resultOffset = mAllocatedQueries.empty()
++                              ? 0
++                              : (mAllocatedQueries.back().lastOffset() + kOcclusionQueryResultSize);
++    ANGLE_TRY(ensurePoolCapacity(contextMtl, resultOffset + kOcclusionQueryResultSize));
++
++    if (mAllocatedQueries.empty())
+     {
+-            // If old value of first query needs to be retained and device doesn't support buffer
+-            // read-write, we need an additional offset to store the old value of the query.
+-            return allocateQueryOffset(contextMtl, query, false);
++        mAllocatedQueries.emplace_back(resultBuffer, 0, 1);
++        mResetFirstQuery = false;
+     }
++    else
++    {
++        // Non-initial continues always continue the previous result.
++        ASSERT(mAllocatedQueries.back().resultBuffer() == resultBuffer);
++        mAllocatedQueries.back().addOffset();
+     }
+-
++    *outResultOffset = resultOffset;
+     return angle::Result::Continue;
  }
+ 
+-void OcclusionQueryPool::deallocateQueryOffset(ContextMtl *contextMtl, QueryMtl *query)
++void OcclusionQueryPool::discardQuery(const BufferRef &resultBuffer)
+ {
+-    if (query->getAllocatedVisibilityOffsets().empty())
++    auto it = std::find_if(mAllocatedQueries.begin(), mAllocatedQueries.end(),
++                           [&](const VisibilityBufferOffsetsMtl &entry) {
++                               return entry.resultBuffer() == resultBuffer;
++                           });
++    if (it != mAllocatedQueries.end())
+     {
+-        return;
++        it->discard();
+     }
+-
+-    mAllocatedQueries[query->getAllocatedVisibilityOffsets().front() / kOcclusionQueryResultSize] =
+-        nullptr;
+-    query->clearAllocatedVisibilityOffsets();
+ }
+ 
+ void OcclusionQueryPool::resolveVisibilityResults(ContextMtl *contextMtl)
+@@ -121,61 +124,49 @@
+ 
+     RenderUtils &utils              = contextMtl->getDisplay()->getUtils();
+     BlitCommandEncoder *blitEncoder = nullptr;
++
+     // Combine the values stored in the offsets allocated for first query
+-    if (mAllocatedQueries[0])
+     {
+-        const BufferRef &dstBuf = mAllocatedQueries[0]->getVisibilityResultBuffer();
+-        const VisibilityBufferOffsetsMtl &allocatedOffsets =
+-            mAllocatedQueries[0]->getAllocatedVisibilityOffsets();
+-        if (!mResetFirstQuery &&
++        const auto &firstQuery        = mAllocatedQueries[0];
++        const BufferRef &resultBuffer = firstQuery.resultBuffer();
++        if (resultBuffer != nullptr)
++        {
++            bool keepOldValue = !mResetFirstQuery;
++            if (keepOldValue &&
+                 !contextMtl->getDisplay()->getFeatures().allowBufferReadWrite.enabled)
+             {
+-            // If we cannot read and write to the same buffer in shader. We need to copy the old
+-            // value of first query to first offset allocated for it.
+                 blitEncoder = contextMtl->getBlitCommandEncoder();
+-            blitEncoder->copyBuffer(dstBuf, 0, mRenderPassResultsPool, allocatedOffsets.front(),
+-                                    kOcclusionQueryResultSize);
+-            utils.combineVisibilityResult(contextMtl, false, allocatedOffsets,
+-                                          mRenderPassResultsPool, dstBuf);
++                blitEncoder->copyBuffer(resultBuffer, 0, mRenderPassResultsPool,
++                                        firstQuery.firstOffset(), kOcclusionQueryResultSize);
++                keepOldValue = false;
+             }
+-        else
+-        {
+-            utils.combineVisibilityResult(contextMtl, !mResetFirstQuery, allocatedOffsets,
+-                                          mRenderPassResultsPool, dstBuf);
++            utils.combineVisibilityResult(contextMtl, keepOldValue, firstQuery.firstOffset(),
++                                          firstQuery.size(), mRenderPassResultsPool, resultBuffer);
+         }
+     }
+ 
+     // Combine the values stored in the offsets allocated for each of the remaining queries
+     for (size_t i = 1; i < mAllocatedQueries.size(); ++i)
+     {
+-        QueryMtl *query = mAllocatedQueries[i];
+-        if (!query)
++        const auto &query = mAllocatedQueries[i];
++        if (query.resultBuffer() == nullptr)
+         {
+             continue;
+         }
+ 
+-        const BufferRef &dstBuf = mAllocatedQueries[i]->getVisibilityResultBuffer();
+-        const VisibilityBufferOffsetsMtl &allocatedOffsets =
+-            mAllocatedQueries[i]->getAllocatedVisibilityOffsets();
+-        utils.combineVisibilityResult(contextMtl, false, allocatedOffsets, mRenderPassResultsPool,
+-                                      dstBuf);
++        utils.combineVisibilityResult(contextMtl, false, query.firstOffset(), query.size(),
++                                      mRenderPassResultsPool, query.resultBuffer());
+     }
+ 
+     // Request synchronization and cleanup
+     blitEncoder = contextMtl->getBlitCommandEncoder();
+-    for (size_t i = 0; i < mAllocatedQueries.size(); ++i)
++    for (auto &entry : mAllocatedQueries)
+     {
+-        QueryMtl *query = mAllocatedQueries[i];
+-        if (!query)
++        if (entry.resultBuffer() == nullptr)
+         {
+             continue;
+         }
+-
+-        const BufferRef &dstBuf = mAllocatedQueries[i]->getVisibilityResultBuffer();
+-
+-        dstBuf->syncContent(contextMtl, blitEncoder);
+-
+-        query->clearAllocatedVisibilityOffsets();
++        entry.resultBuffer()->syncContent(contextMtl, blitEncoder);
+     }
+ 
+     mAllocatedQueries.clear();
+@@ -201,9 +192,9 @@
+     // If the current visibility pool buffer was used before,
+     // ensure that it does not contain previous results.
+     auto blitEncoder = contextMtl->getBlitCommandEncoderWithoutEndingRenderEncoder();
+-    blitEncoder->fillBuffer(mRenderPassResultsPool,
+-                            NSMakeRange(0, mAllocatedQueries.size() * kOcclusionQueryResultSize),
+-                            0);
++    blitEncoder->fillBuffer(
++        mRenderPassResultsPool,
++        NSMakeRange(0, mAllocatedQueries.back().lastOffset() + kOcclusionQueryResultSize), 0);
+     blitEncoder->endEncoding();
+ }
+ 
+diff --git a/src/libANGLE/renderer/metal/mtl_render_utils.h b/src/libANGLE/renderer/metal/mtl_render_utils.h
+index d2c16b82b8a3f0a9594a09c19d91592a4c47be4b..a49b0a53842a1accbf7d115b28785353135c60d2 100644
+--- a/src/libANGLE/renderer/metal/mtl_render_utils.h
++++ b/src/libANGLE/renderer/metal/mtl_render_utils.h
+@@ -28,7 +28,6 @@ namespace rx
+ class BufferMtl;
+ class ContextMtl;
+ class DisplayMtl;
+-class VisibilityBufferOffsetsMtl;
+ 
+ namespace mtl
+ {
+@@ -476,10 +475,10 @@ class IndexGeneratorUtils final : angle::NonCopyable
+ class VisibilityResultUtils final : angle::NonCopyable
+ {
+   public:
+-    angle::Result combineVisibilityResult(
+-        ContextMtl *contextMtl,
++    angle::Result combineVisibilityResult(ContextMtl *contextMtl,
+                                           bool keepOldValue,
+-        const VisibilityBufferOffsetsMtl &renderPassResultBufOffsets,
++                                          size_t startOffset,
++                                          size_t numOffsets,
+                                           const BufferRef &renderPassResultBuf,
+                                           const BufferRef &finalResultBuf);
+ 
+@@ -725,7 +724,8 @@ class RenderUtils : angle::NonCopyable
+ 
+     void combineVisibilityResult(ContextMtl *contextMtl,
+                                  bool keepOldValue,
+-                                 const VisibilityBufferOffsetsMtl &renderPassResultBufOffsets,
++                                 size_t startOffset,
++                                 size_t numOffsets,
+                                  const BufferRef &renderPassResultBuf,
+                                  const BufferRef &finalResultBuf);
  
 diff --git a/src/libANGLE/renderer/metal/mtl_render_utils.mm b/src/libANGLE/renderer/metal/mtl_render_utils.mm
-index c11203e2a3543d10e24ba22655126f2c42acb3a9..fae48ea1919d6d22306dcb3fdf9a6a7920fdcc81 100644
+index 8c5ba6a0d631014c3cc32fa29bf47096cd3f0917..34ce6ecf160c7191712f47bd98c241fc69cd3054 100644
 --- a/src/libANGLE/renderer/metal/mtl_render_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_render_utils.mm
-@@ -533,6 +533,25 @@ RenderPipelineDesc GetComputingVertexShaderOnlyRenderPipelineDesc(RenderCommandE
+@@ -21,7 +21,6 @@
+ #include "libANGLE/renderer/metal/ContextMtl.h"
+ #include "libANGLE/renderer/metal/DisplayMtl.h"
+ #include "libANGLE/renderer/metal/ProgramMtl.h"
+-#include "libANGLE/renderer/metal/QueryMtl.h"
+ #include "libANGLE/renderer/metal/mtl_common.h"
+ #include "libANGLE/renderer/metal/mtl_utils.h"
+ 
+@@ -234,25 +233,29 @@
+     ScopedDisableOcclusionQuery(ContextMtl *contextMtl,
+                                 RenderCommandEncoder *encoder,
+                                 angle::Result *resultOut)
+-        : mContextMtl(contextMtl), mEncoder(encoder), mResultOut(resultOut)
++        : mContextMtl(contextMtl),
++          mEncoder(encoder),
++          mResultOut(resultOut),
++          mOcclusionQueryIsEnabled(contextMtl->isOcclusionQueryEnabledInRenderPass())
+     {
+-#ifndef NDEBUG
+-        if (contextMtl->hasActiveOcclusionQuery())
++        if (!mOcclusionQueryIsEnabled)
+         {
+-            encoder->pushDebugGroup(@"Disabled OcclusionQuery");
++            return;
+         }
++#ifndef NDEBUG
++        encoder->pushDebugGroup(@"Disabled OcclusionQuery");
+ #endif
+-        // temporarily disable occlusion query
+-        contextMtl->disableActiveOcclusionQueryInRenderPass();
++        contextMtl->disableOcclusionQueryInRenderPass();
+     }
+     ~ScopedDisableOcclusionQuery()
+     {
+-        *mResultOut = mContextMtl->restartActiveOcclusionQueryInRenderPass();
+-#ifndef NDEBUG
+-        if (mContextMtl->hasActiveOcclusionQuery())
++        if (!mOcclusionQueryIsEnabled)
+         {
+-            mEncoder->popDebugGroup();
++            return;
+         }
++        *mResultOut = mContextMtl->enableOcclusionQueryInRenderPass();
++#ifndef NDEBUG
++        mEncoder->popDebugGroup();
+ #else
+         ANGLE_UNUSED_VARIABLE(mEncoder);
+ #endif
+@@ -263,6 +266,7 @@
+     RenderCommandEncoder *mEncoder;
+ 
+     angle::Result *mResultOut;
++    const bool mOcclusionQueryIsEnabled;
+ };
+ 
+ void GetBlitTexCoords(const NormalizedCoords &normalizedCoords,
+@@ -533,6 +537,25 @@ RenderPipelineDesc GetComputingVertexShaderOnlyRenderPipelineDesc(RenderCommandE
      return pipelineDesc;
  }
  
@@ -8785,7 +9276,7 @@ index c11203e2a3543d10e24ba22655126f2c42acb3a9..fae48ea1919d6d22306dcb3fdf9a6a79
  // Dispatch compute using 3D grid
  void DispatchCompute(ContextMtl *contextMtl,
                       ComputeCommandEncoder *encoder,
-@@ -560,8 +579,13 @@ void DispatchCompute(ContextMtl *contextMtl,
+@@ -560,8 +583,13 @@ void DispatchCompute(ContextMtl *contextMtl,
                       id<MTLComputePipelineState> pipelineState,
                       size_t numThreads)
  {
@@ -8801,7 +9292,7 @@ index c11203e2a3543d10e24ba22655126f2c42acb3a9..fae48ea1919d6d22306dcb3fdf9a6a79
  
      if (contextMtl->getDisplay()->getFeatures().hasNonUniformDispatch.enabled)
      {
-@@ -570,7 +594,7 @@ void DispatchCompute(ContextMtl *contextMtl,
+@@ -570,7 +598,7 @@ void DispatchCompute(ContextMtl *contextMtl,
      }
      else
      {
@@ -8810,7 +9301,7 @@ index c11203e2a3543d10e24ba22655126f2c42acb3a9..fae48ea1919d6d22306dcb3fdf9a6a79
          cmdEncoder->dispatch(groups, threadsPerThreadgroup);
      }
  }
-@@ -640,8 +664,9 @@ void SetupCommonBlitWithDrawStates(const gl::Context *context,
+@@ -640,8 +668,9 @@ void SetupCommonBlitWithDrawStates(const gl::Context *context,
          GetViewport(params.dstRect, params.dstTextureSize.height, params.dstFlipY);
      MTLScissorRect scissorRectMtl =
          GetScissorRect(params.dstScissorRect, params.dstTextureSize.height, params.dstFlipY);
@@ -8822,7 +9313,7 @@ index c11203e2a3543d10e24ba22655126f2c42acb3a9..fae48ea1919d6d22306dcb3fdf9a6a79
  
      if (params.src)
      {
-@@ -655,28 +680,28 @@ void SetupCommonBlitWithDrawStates(const gl::Context *context,
+@@ -655,28 +684,28 @@ void SetupCommonBlitWithDrawStates(const gl::Context *context,
  // Overloaded functions to be used with both compute and render command encoder.
  ANGLE_INLINE void SetComputeOrVertexBuffer(RenderCommandEncoder *encoder,
                                             const BufferRef &buffer,
@@ -8855,7 +9346,29 @@ index c11203e2a3543d10e24ba22655126f2c42acb3a9..fae48ea1919d6d22306dcb3fdf9a6a79
                                                     uint32_t index)
  {
      encoder->setBufferForWrite(buffer, offset, index);
-@@ -1118,8 +1143,8 @@ ANGLE_INLINE void SetPipelineState(ComputeCommandEncoder *encoder,
+@@ -892,17 +921,17 @@ ANGLE_INLINE void SetPipelineState(ComputeCommandEncoder *encoder,
+     return mIndexUtils.generateLineLoopLastSegmentFromElementsArray(contextMtl, params);
+ }
+ 
+-void RenderUtils::combineVisibilityResult(
+-    ContextMtl *contextMtl,
++void RenderUtils::combineVisibilityResult(ContextMtl *contextMtl,
+                                           bool keepOldValue,
+-    const VisibilityBufferOffsetsMtl &renderPassResultBufOffsets,
++                                          size_t startOffset,
++                                          size_t numOffsets,
+                                           const BufferRef &renderPassResultBuf,
+                                           const BufferRef &finalResultBuf)
+ {
+     // TODO(geofflang): Propagate this error. It spreads to adding angle::Result return values in
+     // most of the metal backend's files.
+     (void)mVisibilityResultUtils.combineVisibilityResult(
+-        contextMtl, keepOldValue, renderPassResultBufOffsets, renderPassResultBuf, finalResultBuf);
++        contextMtl, keepOldValue, startOffset, numOffsets, renderPassResultBuf, finalResultBuf);
+ }
+ 
+ // Compute based mipmap generation
+@@ -1118,8 +1147,8 @@ ANGLE_INLINE void SetPipelineState(ComputeCommandEncoder *encoder,
  
      scissorRect = GetScissorRect(params.clearArea, params.dstTextureSize.height, params.flipY);
  
@@ -8866,7 +9379,49 @@ index c11203e2a3543d10e24ba22655126f2c42acb3a9..fae48ea1919d6d22306dcb3fdf9a6a79
  
      // uniform
      ClearParamsUniform uniformParams;
-@@ -2486,8 +2511,8 @@ ShaderKey key(GetShaderTextureType(params.src), renderPassDesc.numColorAttachmen
+@@ -2173,22 +2202,20 @@ ShaderKey key(GetShaderTextureType(params.src), renderPassDesc.numColorAttachmen
+                                                              outComputePipeline);
+ }
+ 
+-angle::Result VisibilityResultUtils::combineVisibilityResult(
+-    ContextMtl *contextMtl,
++angle::Result VisibilityResultUtils::combineVisibilityResult(ContextMtl *contextMtl,
+                                                              bool keepOldValue,
+-    const VisibilityBufferOffsetsMtl &renderPassResultBufOffsets,
++                                                             size_t startOffset,
++                                                             size_t numOffsets,
+                                                              const BufferRef &renderPassResultBuf,
+                                                              const BufferRef &finalResultBuf)
+ {
+-    ASSERT(!renderPassResultBufOffsets.empty());
+-
+-    if (renderPassResultBufOffsets.size() == 1 && !keepOldValue)
++    if (numOffsets == 1 && !keepOldValue)
+     {
+         // Use blit command to copy directly
+         BlitCommandEncoder *blitEncoder = contextMtl->getBlitCommandEncoder();
+ 
+-        blitEncoder->copyBuffer(renderPassResultBuf, renderPassResultBufOffsets.front(),
+-                                finalResultBuf, 0, kOcclusionQueryResultSize);
++        blitEncoder->copyBuffer(renderPassResultBuf, startOffset, finalResultBuf, 0,
++                                kOcclusionQueryResultSize);
+         return angle::Result::Continue;
+     }
+ 
+@@ -2200,9 +2227,9 @@ ShaderKey key(GetShaderTextureType(params.src), renderPassDesc.numColorAttachmen
+     cmdEncoder->setComputePipelineState(pipeline);
+ 
+     CombineVisibilityResultUniform options;
+-    // Offset is viewed as 64 bit unit in compute shader.
+-    options.startOffset = renderPassResultBufOffsets.front() / kOcclusionQueryResultSize;
+-    options.numOffsets  = renderPassResultBufOffsets.size();
++    // Offset is viewed as 64-bit unit (ushort4) in compute shader.
++    options.startOffset = static_cast<uint32_t>(startOffset / kOcclusionQueryResultSize);
++    options.numOffsets  = static_cast<uint32_t>(numOffsets);
+ 
+     cmdEncoder->setData(options, 0);
+     cmdEncoder->setBuffer(renderPassResultBuf, 0, 1);
+@@ -2489,8 +2516,8 @@ ShaderKey key(GetShaderTextureType(params.src), renderPassDesc.numColorAttachmen
  
      scissorRect = GetScissorRect(rect);
  
@@ -8952,10 +9507,10 @@ index 3eaa9a64e79af26faa786102ece3f0bdea84d090..7ecb6db9d993df8985fcb6f701dfe7ca
 +
 +#endif /* LIBANGLE_RENDERER_METAL_RESOURCE_SPI_H_ */
 diff --git a/src/libANGLE/renderer/metal/mtl_resources.h b/src/libANGLE/renderer/metal/mtl_resources.h
-index f622b484570562e6eebf6507ed83b20770be42d8..1e8ce4bb456dbfcb48c3728465ea864d466058ff 100644
+index bbae528911e83392796cd3e4f3d755847e8f8c4e..ef2fc93287dc7a2f7985ebcddc44ffa8fb8cee88 100644
 --- a/src/libANGLE/renderer/metal/mtl_resources.h
 +++ b/src/libANGLE/renderer/metal/mtl_resources.h
-@@ -228,6 +228,11 @@ class Texture final : public Resource,
+@@ -229,6 +229,11 @@ class Texture final : public Resource,
      TextureRef createCubeFaceView(uint32_t face);
      // Create a view of one slice at a level.
      TextureRef createSliceMipView(uint32_t slice, const MipmapNativeLevel &level);
@@ -8968,10 +9523,10 @@ index f622b484570562e6eebf6507ed83b20770be42d8..1e8ce4bb456dbfcb48c3728465ea864d
      TextureRef createMipsView(const MipmapNativeLevel &baseLevel, uint32_t levels);
      // Create a view of a level.
 diff --git a/src/libANGLE/renderer/metal/mtl_resources.mm b/src/libANGLE/renderer/metal/mtl_resources.mm
-index 2fa27bd06fc7c1d88b4c7917d6ec130b28aa55c6..49805ece99a7ee4cd3fbe2999c52dc61a9052183 100644
+index d9187406a8e0593f61ac7124daec58bbd2f6a592..d21e2b73ff57cc26f5196b3f3702c44b2fe28dfb 100644
 --- a/src/libANGLE/renderer/metal/mtl_resources.mm
 +++ b/src/libANGLE/renderer/metal/mtl_resources.mm
-@@ -82,12 +82,10 @@ MTLResourceOptions resourceOptionsForStorageMode(MTLStorageMode storageMode)
+@@ -83,12 +83,10 @@ MTLResourceOptions resourceOptionsForStorageMode(MTLStorageMode storageMode)
              return MTLResourceStorageModePrivate;
          case MTLStorageModeMemoryless:
              return MTLResourceStorageModeMemoryless;
@@ -8984,7 +9539,7 @@ index 2fa27bd06fc7c1d88b4c7917d6ec130b28aa55c6..49805ece99a7ee4cd3fbe2999c52dc61
      }
  }
  
-@@ -709,7 +707,9 @@ bool needMultisampleColorFormatShaderReadWorkaround(ContextMtl *context, MTLText
+@@ -718,7 +716,9 @@ bool needMultisampleColorFormatShaderReadWorkaround(ContextMtl *context, MTLText
      }
  }
  
@@ -8995,7 +9550,7 @@ index 2fa27bd06fc7c1d88b4c7917d6ec130b28aa55c6..49805ece99a7ee4cd3fbe2999c52dc61
  {
      ANGLE_MTL_OBJC_SCOPE
      {
-@@ -718,7 +718,7 @@ bool needMultisampleColorFormatShaderReadWorkaround(ContextMtl *context, MTLText
+@@ -727,7 +727,7 @@ bool needMultisampleColorFormatShaderReadWorkaround(ContextMtl *context, MTLText
              case MTLTextureTypeCube:
              case MTLTextureType2D:
              case MTLTextureType2DArray:
@@ -9004,7 +9559,7 @@ index 2fa27bd06fc7c1d88b4c7917d6ec130b28aa55c6..49805ece99a7ee4cd3fbe2999c52dc61
                                                NSMakeRange(level.get(), 1), NSMakeRange(slice, 1)));
              default:
                  UNREACHABLE();
-@@ -727,6 +727,11 @@ bool needMultisampleColorFormatShaderReadWorkaround(ContextMtl *context, MTLText
+@@ -736,6 +736,11 @@ bool needMultisampleColorFormatShaderReadWorkaround(ContextMtl *context, MTLText
      }
  }
  
@@ -9131,20 +9686,8 @@ index b26ddc850b26237ceb0eb5f839c4acb238cd1d95..18dfb7f66e30145dab13d5457af907ce
             level == other.level && sliceOrDepth == other.sliceOrDepth &&
             blendable == other.blendable;
  }
-diff --git a/src/libANGLE/renderer/metal/mtl_utils.h b/src/libANGLE/renderer/metal/mtl_utils.h
-index 6c3d729f661f323ec4dd8f3588ec8b04e16e6f32..7916d0c4d0bd36377a6543f2e9cd9cce7cc7db12 100644
---- a/src/libANGLE/renderer/metal/mtl_utils.h
-+++ b/src/libANGLE/renderer/metal/mtl_utils.h
-@@ -154,7 +154,6 @@ MTLStencilOperation GetStencilOp(GLenum op);
- 
- MTLWinding GetFrontfaceWinding(GLenum frontFaceMode, bool invert);
- 
--MTLPrimitiveTopologyClass GetPrimitiveTopologyClass(gl::PrimitiveMode mode);
- MTLPrimitiveType GetPrimitiveType(gl::PrimitiveMode mode);
- MTLIndexType GetIndexType(gl::DrawElementsType type);
- 
 diff --git a/src/libANGLE/renderer/metal/mtl_utils.mm b/src/libANGLE/renderer/metal/mtl_utils.mm
-index 8ca1f67db3ed852fe744f8e41d0f32581e91bf13..5087219880f9bbd43a2cd06a1abc89f80b905337 100644
+index acb165ef231e2097ab9bea28ff13051ddafe8913..801d580fe78a70ac2ad298cb3e120ea24b610298 100644
 --- a/src/libANGLE/renderer/metal/mtl_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_utils.mm
 @@ -899,17 +899,9 @@ static MTLLanguageVersion GetUserSetOrHighestMSLVersion(const MTLLanguageVersion
@@ -9166,21 +9709,7 @@ index 8ca1f67db3ed852fe744f8e41d0f32581e91bf13..5087219880f9bbd43a2cd06a1abc89f8
          else
  #endif
          {
-@@ -1202,13 +1194,6 @@ MTLWinding GetFrontfaceWinding(GLenum frontFaceMode, bool invert)
-     }
- }
- 
--MTLPrimitiveTopologyClass GetPrimitiveTopologyClass(gl::PrimitiveMode mode)
--{
--    // NOTE(hqle): Support layered renderring in future.
--    // In non-layered rendering mode, unspecified is enough.
--    return MTLPrimitiveTopologyClassUnspecified;
--}
--
- MTLPrimitiveType GetPrimitiveType(gl::PrimitiveMode mode)
- {
-     switch (mode)
-@@ -1428,6 +1413,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
+@@ -1403,6 +1395,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
      return [device supportsFamily:family];
  }
  
@@ -9205,7 +9734,7 @@ index 8ca1f67db3ed852fe744f8e41d0f32581e91bf13..5087219880f9bbd43a2cd06a1abc89f8
  bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  {
  #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-@@ -1473,8 +1476,7 @@ static NSUInteger getNextLocationForAttachment(const mtl::RenderPassAttachmentDe
+@@ -1448,8 +1458,7 @@ static NSUInteger getNextLocationForAttachment(const mtl::RenderPassAttachmentDe
                                                 const Context *context,
                                                 NSUInteger currentRenderTargetSize)
  {
@@ -9610,10 +10139,10 @@ index cab5e56ae928431771ea1ffd8e2db92121d84798..7520ee4ef485a0037fb27c15b2218d96
              {
                  case BuildType::BUILD:
 diff --git a/src/libANGLE/renderer/vulkan/ContextVk.cpp b/src/libANGLE/renderer/vulkan/ContextVk.cpp
-index 5adcdf29eb8283b20e6b7084356b2a402ba55847..961ba701db27e6f2db59cc07a21ad8451ffa6ffb 100644
+index d16a3d0341979b0fb7d123c790337031d30b3436..13ca7cdde8fd73e775c864422df11b405f337cb8 100644
 --- a/src/libANGLE/renderer/vulkan/ContextVk.cpp
 +++ b/src/libANGLE/renderer/vulkan/ContextVk.cpp
-@@ -5927,6 +5927,10 @@ angle::Result ContextVk::syncState(const gl::Context *context,
+@@ -5941,6 +5941,10 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                              break;
                          case gl::state::EXTENDED_DIRTY_BIT_BLEND_ADVANCED_COHERENT:
                              break;
@@ -9638,10 +10167,10 @@ index 1525f198f0bab9c503826ce462c345c5e531ed79..e975e956ffc6105f218df52ec37283cf
          ASSERT(false);
          return angle::FormatID::NONE;
 diff --git a/src/libANGLE/renderer/vulkan/vk_helpers.cpp b/src/libANGLE/renderer/vulkan/vk_helpers.cpp
-index 2d012de8d6fe9ccf55c538b3cc970b4c54327463..98ad7b854c8d47ea60e53ba7ea85cbe415a074fa 100644
+index a8dd83cc744819b8d920c6c14e06fbae1f5cc0e9..21f06054db3cad1a6b99bfcef488b4895ca25c95 100644
 --- a/src/libANGLE/renderer/vulkan/vk_helpers.cpp
 +++ b/src/libANGLE/renderer/vulkan/vk_helpers.cpp
-@@ -8930,18 +8930,9 @@ angle::Result ImageHelper::calculateBufferInfo(ContextVk *contextVk,
+@@ -8865,18 +8865,9 @@ angle::Result ImageHelper::calculateBufferInfo(ContextVk *contextVk,
          return angle::Result::Continue;
      }
  
@@ -9662,7 +10191,7 @@ index 2d012de8d6fe9ccf55c538b3cc970b4c54327463..98ad7b854c8d47ea60e53ba7ea85cbe4
      return angle::Result::Continue;
  }
  
-@@ -10985,11 +10976,8 @@ angle::Result ImageHelper::GetReadPixelsParams(ContextVk *contextVk,
+@@ -10920,11 +10911,8 @@ angle::Result ImageHelper::GetReadPixelsParams(ContextVk *contextVk,
      const gl::InternalFormat &sizedFormatInfo = gl::GetInternalFormatInfo(format, type);
  
      GLuint outputPitch = 0;
@@ -10216,10 +10745,10 @@ index bc9a221e6b5477b73efe566df23e318a64578230..f16965867d2d8416b166471eccb92cee
  }
  
 diff --git a/src/tests/angle_end2end_tests.gni b/src/tests/angle_end2end_tests.gni
-index f3a6155b5606baa13889e520858ce8bacd53e4cb..20023b6918a627d5533d80ad81153e13e3efda6c 100644
+index bce0a90d02a92b0139b8fe43896aa3ab160977ad..7ae13f1ccf8a845dadabf85de33c1843d75295fb 100644
 --- a/src/tests/angle_end2end_tests.gni
 +++ b/src/tests/angle_end2end_tests.gni
-@@ -95,6 +95,7 @@ angle_end2end_tests_sources = [
+@@ -94,6 +94,7 @@ angle_end2end_tests_sources = [
    "gl_tests/GLSLConstantFoldingTest.cpp",
    "gl_tests/GLSLOutputTest.cpp",
    "gl_tests/GLSLTest.cpp",
@@ -11095,66 +11624,8 @@ index 4595eedf64b8adfa211236af574c2138faad910d..c057c92bbfbada6c59bbcb29916bd4aa
  class WebGLDrawElementsTest3 : public WebGLDrawElementsTest
  {};
  // Test one element buffer bind to two vertexArrays and switch vertexArray should draw correctly.
-diff --git a/src/tests/gl_tests/ETCTextureTest.cpp b/src/tests/gl_tests/ETCTextureTest.cpp
-index 319eb1c9ffe7a86b98a5cb98f98e1775bb9b0683..0d2f732676a47515693ad1e0255546f777b5e19d 100644
---- a/src/tests/gl_tests/ETCTextureTest.cpp
-+++ b/src/tests/gl_tests/ETCTextureTest.cpp
-@@ -12,6 +12,7 @@
- #endif
- 
- #include "test_utils/ANGLETest.h"
-+#include "test_utils/gl_raii.h"
- 
- #include "media/etc2bc_srgb8_alpha8.inc"
- 
-@@ -309,6 +310,45 @@ TEST_P(ETCTextureTest, ETC2SRGB8A1Validation)
-     }
- }
- 
-+// Tests that uploading compressed texture from a PBO with a misaligned offset doesn't crash.
-+TEST_P(ETCTextureTest, PBOWithMisalignedOffset)
-+{
-+    // Need ES 3.0 for PBOs.
-+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
-+
-+    // Check if ETC2 is supported. Not supported, for example, on ANGLE/OpenGL on macOS.
-+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ANGLE_lossy_etc_decode") &&
-+                       !IsGLExtensionEnabled("GL_OES_compressed_ETC2_RGB8_texture") &&
-+                       !IsGLExtensionEnabled("GL_ANGLE_compressed_texture_etc"));
-+
-+    constexpr GLsizei kWidth  = 512;
-+    constexpr GLsizei kHeight = 512;
-+    constexpr GLsizei kBPB    = 8;  // 8 bytes per block
-+    constexpr GLsizei kBW     = 4;
-+    constexpr GLsizei kBH     = 4;
-+
-+    GLsizei blocksX        = kWidth / kBW;
-+    GLsizei blocksY        = kHeight / kBH;
-+    GLsizei compressedSize = blocksX * blocksY * kBPB;
-+
-+    glBindTexture(GL_TEXTURE_2D, mTexture);
-+    // Use GL_COMPRESSED_RGB8_ETC2 which is core in ES 3.0
-+    glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGB8_ETC2, kWidth, kHeight, 0,
-+                           compressedSize, nullptr);
-+
-+    // Misaligned offset to trigger the fallback path in Metal backend
-+    constexpr GLsizei kPBOOffset = 1;
-+
-+    GLBuffer pbo;
-+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pbo);
-+    glBufferData(GL_PIXEL_UNPACK_BUFFER, kPBOOffset + compressedSize, nullptr, GL_STATIC_DRAW);
-+    ASSERT_GL_NO_ERROR();
-+
-+    glCompressedTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kWidth, kHeight, GL_COMPRESSED_RGB8_ETC2,
-+                              compressedSize, reinterpret_cast<void *>(kPBOOffset));
-+    EXPECT_GL_NO_ERROR();
-+}
-+
- class ETCToBCTextureTest : public ANGLETest<>
- {
-   protected:
 diff --git a/src/tests/gl_tests/GLSLOutputTest.cpp b/src/tests/gl_tests/GLSLOutputTest.cpp
-index d57dee19dd1e4769a85f57fc822eee2b434e849e..21c14036d92c5d350c54255734fde7981e005974 100644
+index 0539f10c524e884d9abb2c35109bdea68ff1eb84..2349c6fc51e5d2d086d205250459560ca495c899 100644
 --- a/src/tests/gl_tests/GLSLOutputTest.cpp
 +++ b/src/tests/gl_tests/GLSLOutputTest.cpp
 @@ -576,6 +576,7 @@ TEST_P(GLSLOutputMSLTest_EnsureLoopForwardProgress, InfiniteFors)
@@ -11181,7 +11652,7 @@ index d57dee19dd1e4769a85f57fc822eee2b434e849e..21c14036d92c5d350c54255734fde798
          compileShader(GL_FRAGMENT_SHADER, shader.c_str());
          verifyIsInTranslation(GL_FRAGMENT_SHADER, "loopForwardProgress");
 diff --git a/src/tests/gl_tests/GLSLTest.cpp b/src/tests/gl_tests/GLSLTest.cpp
-index 1e9765161fdd236c358d9287fc17921bf9857345..40485ea9728cdc37c9c8b9a31d01978f3e42d08c 100644
+index 51d0c46715ec38d329459090fc5b234c9cc62265..5542f4dd6607d4edc7b8f1d6dde0237d3df9a88e 100644
 --- a/src/tests/gl_tests/GLSLTest.cpp
 +++ b/src/tests/gl_tests/GLSLTest.cpp
 @@ -805,6 +805,29 @@ TEST_P(GLSLTest, SwizzledChainedAssignIncrement)
@@ -11421,7 +11892,7 @@ index 1e9765161fdd236c358d9287fc17921bf9857345..40485ea9728cdc37c9c8b9a31d01978f
  // Test a fragment shader that returns inside if (that being the only branch that actually gets
  // executed). Regression test for http://anglebug.com/42261034
  TEST_P(GLSLTest, IfElseIfAndReturn)
-@@ -21942,512 +22151,1750 @@ void main() {
+@@ -21961,512 +22170,1750 @@ void main() {
      EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::transparentBlack);
  }
  
@@ -14296,6 +14767,151 @@ index cdcc7e255d021f5dccc4448f3a551250e198921a..0bd275edee18208714f4fe5f060fd675
  // Test glGenerateMipmap in the presence of mismatching level formats.  Regression test for a bug in
  // mesa.
  TEST_P(MipmapTestES3, MismatchingLevelFormats)
+diff --git a/src/tests/gl_tests/OcclusionQueriesTest.cpp b/src/tests/gl_tests/OcclusionQueriesTest.cpp
+index c51bcd979d10f56b2c710c48e354e760b7dc45e1..1adcbe7b9602921100028e9afb777848db923de8 100644
+--- a/src/tests/gl_tests/OcclusionQueriesTest.cpp
++++ b/src/tests/gl_tests/OcclusionQueriesTest.cpp
+@@ -1250,6 +1250,140 @@ TEST_P(OcclusionQueriesTestES3, QueryReuseWithMultipleFBOs)
+     EXPECT_GL_TRUE(result);
+ }
+ 
++// Test that deleting an occlusion query after a failed begin does not cause use-after-free.
++// A prior query primes the pool. The second query triggers pool doubling which under fault
++// injection fails with OOM. Deleting the query and flushing must not crash.
++TEST_P(OcclusionQueriesTestES3, OcclusionQueryDeleteAfterFailedBeginNoUAF)
++{
++    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::SimpleForPoints(), essl1_shaders::fs::Green());
++    glUseProgram(program);
++    glViewport(0, 0, getWindowWidth(), getWindowHeight());
++
++    // Start render pass and prime the pool with a successful query.
++    glDrawArrays(GL_POINTS, 0, 1);
++    GLQuery q1;
++    glBeginQuery(GL_ANY_SAMPLES_PASSED, q1);
++    glEndQuery(GL_ANY_SAMPLES_PASSED);
++    ASSERT_GL_NO_ERROR();
++
++    // Second query triggers pool doubling. Under fault injection this fails with OOM.
++    GLuint q2;
++    glGenQueries(1, &q2);
++    glBeginQuery(GL_ANY_SAMPLES_PASSED, q2);
++    GLenum err = glGetError();
++    if (err == GL_OUT_OF_MEMORY)
++    {
++        // To get here, a OOM must be injected by hand in visibility buffer doubling.
++        fprintf(stderr, "got expected out of memory\n");
++    }
++    // Delete the query and flush — must not crash.
++    glDeleteQueries(1, &q2);
++    glFinish();
++    glEndQuery(GL_ANY_SAMPLES_PASSED);
++    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2 - 1, getWindowHeight() / 2, GLColor::green);
++}
++
++// Test deleting a occlusion query while it is active.
++TEST_P(OcclusionQueriesTestES3, DeleteActiveOcclusionQueryLeavesValidState)
++{
++    GLuint queryId = 0;
++    glGenQueries(1, &queryId);
++    glBeginQuery(GL_ANY_SAMPLES_PASSED, queryId);
++    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.5f);
++    glEndQuery(GL_ANY_SAMPLES_PASSED);
++    ASSERT_GL_NO_ERROR();
++
++    GLuint queryResult = 0;
++    glGetQueryObjectuiv(queryId, GL_QUERY_RESULT, &queryResult);
++    ASSERT_GL_NO_ERROR();
++    EXPECT_EQ(queryResult, static_cast<GLuint>(GL_TRUE));
++
++    glBeginQuery(GL_ANY_SAMPLES_PASSED, queryId);
++    EXPECT_GL_NO_ERROR();
++
++    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.5f);
++    ASSERT_GL_NO_ERROR();
++
++    GLint activeQueryId = 0;
++    glGetQueryiv(GL_ANY_SAMPLES_PASSED, GL_CURRENT_QUERY, &activeQueryId);
++    EXPECT_GL_NO_ERROR();
++    EXPECT_EQ(static_cast<GLuint>(activeQueryId), queryId);
++
++    glDeleteQueries(1, &queryId);
++    EXPECT_GL_NO_ERROR();
++
++    EXPECT_GL_FALSE(glIsQuery(queryId));
++
++    // NOTE: This is unspecified and confusing: what should the return value be
++    // if the query has been deleted? If 0, then it's confusing because EndQuery
++    // doesn't fail. If non-zero, how can it return deleted value?
++    // If EndQuery should fail and return should be 0?
++    GLint activeQueryAfterDelete = 0;
++    glGetQueryiv(GL_ANY_SAMPLES_PASSED, GL_CURRENT_QUERY, &activeQueryAfterDelete);
++    EXPECT_GL_NO_ERROR();
++    EXPECT_EQ(static_cast<GLuint>(activeQueryAfterDelete), queryId);
++
++    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.8f);
++    EXPECT_GL_NO_ERROR();
++
++    glEndQuery(GL_ANY_SAMPLES_PASSED);
++    EXPECT_GL_NO_ERROR();  // NOTE: This is unspecified and confusing.
++    glEndQuery(GL_ANY_SAMPLES_PASSED);
++    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
++
++    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
++    EXPECT_GL_NO_ERROR();
++}
++
++// Test that a query spanning two render passes (broken by glClear) accumulates results correctly.
++// First draw fails depth test (no samples pass), then glClear breaks the render pass, then
++// second draw passes. Query result must be TRUE.
++TEST_P(OcclusionQueriesTestES3, QuerySpansRenderPassBreak)
++{
++    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::SimpleForPoints(), essl1_shaders::fs::Green());
++    glUseProgram(program);
++    glViewport(0, 0, getWindowWidth(), getWindowHeight());
++
++    glEnable(GL_DEPTH_TEST);
++    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
++    glClear(GL_COLOR_BUFFER_BIT);
++    
++    // Draw with GL_NEVER does not pass samples.
++    glDepthFunc(GL_NEVER);
++
++    GLQuery query;
++    glBeginQuery(GL_ANY_SAMPLES_PASSED, query);
++    glDrawArrays(GL_POINTS, 0, 1);
++    glEndQuery(GL_ANY_SAMPLES_PASSED);
++    GLuint result = GL_FALSE;
++    glGetQueryObjectuiv(query, GL_QUERY_RESULT, &result);
++    EXPECT_GL_NO_ERROR();
++
++    // Test setup validation: draw with GL_NEVER does not pass samples.
++    EXPECT_GL_FALSE(result);
++    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2 - 1, getWindowHeight() / 2, GLColor::black);
++
++    // Test the sample accumulation across render passes:
++    // Draw with GL_NEVER -> no samples pass yet.
++    // Break render pass
++    // Draw with GL_ALWAYS -> samples pass.
++    glBeginQuery(GL_ANY_SAMPLES_PASSED, query);
++    glDrawArrays(GL_POINTS, 0, 1);
++    glClear(GL_COLOR_BUFFER_BIT);
++    glDepthFunc(GL_ALWAYS);
++    glDrawArrays(GL_POINTS, 0, 1);
++    glEndQuery(GL_ANY_SAMPLES_PASSED);
++    EXPECT_GL_NO_ERROR();
++
++    // Query should report TRUE because the second draw passed samples.
++    result = GL_FALSE;
++    glGetQueryObjectuiv(query, GL_QUERY_RESULT, &result);
++    EXPECT_GL_NO_ERROR();
++    EXPECT_GL_TRUE(result);
++
++    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2 - 1, getWindowHeight() / 2, GLColor::green);
++}
++
+ ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(OcclusionQueriesTest);
+ 
+ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(OcclusionQueriesTestES3);
 diff --git a/src/tests/gl_tests/PbufferTest.cpp b/src/tests/gl_tests/PbufferTest.cpp
 index e16d5e0caefa7caea3e932fa78f21478052af0ff..7801fa39b2a80c452c22752057360efa4524ce6d 100644
 --- a/src/tests/gl_tests/PbufferTest.cpp
@@ -14402,7 +15018,7 @@ index cd4401797e3e00bfb8adbce6d32ffbc42d358f9d..6b5d02bfc81280c520b1d5534a506f66
  
  // Check proper validation of PLS function arguments.
 diff --git a/src/tests/gl_tests/ProvokingVertexTest.cpp b/src/tests/gl_tests/ProvokingVertexTest.cpp
-index 59b9128d1bb324e6ba2d134a02ee9e638210eff3..9aa690b1c4fbbed701e6d21e7d0d80c44b90a35c 100644
+index fc5fb4aff5d85f7e998ef1908bfa041596dfa117..6a259cf4b022fd6eae58284831d9efcfb6163801 100644
 --- a/src/tests/gl_tests/ProvokingVertexTest.cpp
 +++ b/src/tests/gl_tests/ProvokingVertexTest.cpp
 @@ -3,7 +3,7 @@
@@ -14583,7 +15199,7 @@ index c80df6c93426bfb422cd640170824f7c0a6a0067..2c1bcc1156342c45d734b6f762e38406
  
  namespace angle
 diff --git a/src/tests/gl_tests/TextureTest.cpp b/src/tests/gl_tests/TextureTest.cpp
-index 11cb22f514e84e730c9416a5ddf00df5c14a60fb..6de36ec049e3fe554d29af63a4b91255510a4d90 100644
+index 369964528db6fda38684936f64649d17f743c7cf..f940d3d31c3bac70adb3efe9d6bf520971e6914b 100644
 --- a/src/tests/gl_tests/TextureTest.cpp
 +++ b/src/tests/gl_tests/TextureTest.cpp
 @@ -2005,6 +2005,7 @@ void Texture2DDepthStencilTestES3::TestSampleWithDepthStencilMode(GLenum format,
@@ -14722,7 +15338,7 @@ index 11cb22f514e84e730c9416a5ddf00df5c14a60fb..6de36ec049e3fe554d29af63a4b91255
  // Test that skip defined in unpack parameters is taken into account when determining whether
  // unpacking source extends outside unpack buffer bounds.
  TEST_P(Texture2DTestES3, UnpackSkipPixelsOutOfBounds)
-@@ -17459,6 +17565,172 @@ TEST_P(Texture2DTestES3, TexImageFormatMismatch)
+@@ -17502,6 +17608,172 @@ TEST_P(Texture2DTestES3, TexImageFormatMismatch)
      glDrawElementsInstanced(GL_TRIANGLES, 4, GL_UNSIGNED_SHORT, 0, 1);
  }
  
@@ -15025,10 +15641,10 @@ index fc742ddb4b03d07e6ebbd513360cd8118b245a07..5afd3663fb967b1f364d3ab353a05b0a
          {nullptr, nullptr, nullptr, nullptr, nullptr},
          {nullptr, nullptr, nullptr, nullptr, nullptr},
 diff --git a/src/tests/gl_tests/VertexAttributeTest.cpp b/src/tests/gl_tests/VertexAttributeTest.cpp
-index 8d840815c34917763c31db5220a4276f35d08f29..3f9bf64086c9e3be467d353893ff1a793ca056c8 100644
+index 098713a133833977498df93cb449374ea4d8c6fe..82a539c8cae57865028839545fbd650979e16464 100644
 --- a/src/tests/gl_tests/VertexAttributeTest.cpp
 +++ b/src/tests/gl_tests/VertexAttributeTest.cpp
-@@ -5748,6 +5748,212 @@ void main(void)
+@@ -5791,6 +5791,212 @@ void main(void)
      EXPECT_PIXEL_COLOR_NEAR(0, 0, expected, 1);
  }
  
@@ -15394,6 +16010,171 @@ index a57b0bf6a50c67a4fa706c1e95109c24302141ec..e992959289e274a6c41531fa75b5195d
  ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(WebGLCompatibilityTest);
  
  GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(WebGL2CompatibilityTest);
+diff --git a/src/tests/perf_tests/ANGLEPerfTest.cpp b/src/tests/perf_tests/ANGLEPerfTest.cpp
+index 144cd6f0c27ffe48f4cbb5d3e2cb90a36c74a7c5..0ffe2a20545b7c18eda8f4231863a00a59400588 100644
+--- a/src/tests/perf_tests/ANGLEPerfTest.cpp
++++ b/src/tests/perf_tests/ANGLEPerfTest.cpp
+@@ -762,9 +762,9 @@ void ANGLEPerfTest::atraceCounter(const char *counterName, int64_t counterValue)
+ RenderTestParams::RenderTestParams()
+ {
+ #if defined(ANGLE_DEBUG_LAYERS_ENABLED)
+-    eglParameters.debugLayersEnabled = true;
++    eglParameters.debugLayersEnabled = EGL_TRUE;
+ #else
+-    eglParameters.debugLayersEnabled = false;
++    eglParameters.debugLayersEnabled = EGL_FALSE;
+ #endif
+ }
+ 
+diff --git a/src/tests/test_utils/ANGLETest.cpp b/src/tests/test_utils/ANGLETest.cpp
+index 8394357e9a01f073ae6a5696da8a555bc97a43ba..1b34534c2cc40829082efc883be69310b456df92 100644
+--- a/src/tests/test_utils/ANGLETest.cpp
++++ b/src/tests/test_utils/ANGLETest.cpp
+@@ -444,6 +444,7 @@ constexpr char kBatchId[]                        = "--batch-id=";
+ constexpr char kDelayTestStart[]                 = "--delay-test-start=";
+ constexpr char kRenderDoc[]                      = "--renderdoc";
+ constexpr char kNoRenderDoc[]                    = "--no-renderdoc";
++constexpr char kDisableDebugLayers[]             = "--disable-debug-layers";
+ 
+ void SetupEnvironmentVarsForCaptureReplay()
+ {
+@@ -542,11 +543,19 @@ ANGLETestBase::ANGLETestBase(const PlatformParameters &params)
+     if (withMethods.getRenderer() == EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE)
+     {
+ #if defined(ANGLE_ENABLE_VULKAN_VALIDATION_LAYERS)
+-        withMethods.eglParameters.debugLayersEnabled = true;
++        withMethods.eglParameters.debugLayersEnabled = EGL_TRUE;
+ #else
+-        withMethods.eglParameters.debugLayersEnabled = false;
++        withMethods.eglParameters.debugLayersEnabled = EGL_FALSE;
+ #endif
+     }
++    else
++    {
++        if (withMethods.eglParameters.debugLayersEnabled == EGL_DONT_CARE)
++        {
++            withMethods.eglParameters.debugLayersEnabled =
++                gDisableDebugLayers ? EGL_FALSE : EGL_TRUE;
++        }
++    }
+ 
+     if (gEnableRenderDocCapture)
+     {
+@@ -1899,5 +1908,9 @@ void ANGLEProcessTestArgs(int *argc, char *argv[])
+         {
+             gEnableRenderDocCapture = false;
+         }
++        else if (strncmp(argv[argIndex], kDisableDebugLayers, strlen(kDisableDebugLayers)) == 0)
++        {
++            gDisableDebugLayers = true;
++        }
+     }
+ }
+diff --git a/src/tests/test_utils/ANGLETestCL.cpp b/src/tests/test_utils/ANGLETestCL.cpp
+index 03e9037aaca4df6de668fac7ed2819b76dc2d936..28b076380cc304c6fd52af0ad0d23c95cfe3b52c 100644
+--- a/src/tests/test_utils/ANGLETestCL.cpp
++++ b/src/tests/test_utils/ANGLETestCL.cpp
+@@ -41,9 +41,9 @@ ANGLETestCL<PlatformParameters>::ANGLETestCL(const PlatformParameters &params)
+     if (mCurrentParams.getRenderer() == EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE)
+     {
+ #if defined(ANGLE_ENABLE_VULKAN_VALIDATION_LAYERS)
+-        mCurrentParams.eglParameters.debugLayersEnabled = true;
++        mCurrentParams.eglParameters.debugLayersEnabled = EGL_TRUE;
+ #else
+-        mCurrentParams.eglParameters.debugLayersEnabled = false;
++        mCurrentParams.eglParameters.debugLayersEnabled = EGL_FALSE;
+ #endif
+     }
+ 
+diff --git a/src/tests/test_utils/angle_test_instantiate.cpp b/src/tests/test_utils/angle_test_instantiate.cpp
+index 7c802b176a9cc0d2048f712b3ec1a096e8828b04..4b4272241b76ac664a12d8bcc2b85b95eb8e3d05 100644
+--- a/src/tests/test_utils/angle_test_instantiate.cpp
++++ b/src/tests/test_utils/angle_test_instantiate.cpp
+@@ -197,6 +197,8 @@ bool gEnableRenderDocCapture = true;
+ bool gEnableRenderDocCapture = false;
+ #endif
+ 
++bool gDisableDebugLayers = false;
++
+ bool IsConfigSelected()
+ {
+     return gSelectedConfig[0] != 0;
+diff --git a/src/tests/test_utils/angle_test_instantiate.h b/src/tests/test_utils/angle_test_instantiate.h
+index acfe3291edbf26337c504747f46f32d7ebfb2183..858b0756918a1d0a47ec76d71eb4e67be0ad486a 100644
+--- a/src/tests/test_utils/angle_test_instantiate.h
++++ b/src/tests/test_utils/angle_test_instantiate.h
+@@ -359,6 +359,8 @@ extern bool gEnableANGLEPerTestCaptureLabel;
+ 
+ extern bool gEnableRenderDocCapture;
+ 
++extern bool gDisableDebugLayers;
++
+ // For use with ANGLE_INSTANTIATE_TEST_ARRAY
+ template <typename ParamsT>
+ using ModifierFunc = std::function<ParamsT(const ParamsT &)>;
+diff --git a/src/tests/test_utils/runner/README.md b/src/tests/test_utils/runner/README.md
+index 739d3f6c2c00c080b8901e5c83cb2cf761ec2a61..25dbbcd7857e64756152beae90220646bf8a7256 100644
+--- a/src/tests/test_utils/runner/README.md
++++ b/src/tests/test_utils/runner/README.md
+@@ -28,6 +28,7 @@ following additional command-line arguments:
+  * `--disable-crash-handler` forces off OS-level crash handling
+  * `--isolated-outdir` specifies a test artifacts directory
+  * `--max-failures` specifies a count of failures after which the harness early exits.
++ * `--disable-debug-layers` disables debug layers for GPU drivers, if they were used by default.
+ 
+ `--isolated-script-test-output` and `--isolated-script-perf-test-output` mirror `--results-file`
+ and `--histogram-json-file` respectively.
+diff --git a/src/tests/test_utils/runner/TestSuite.cpp b/src/tests/test_utils/runner/TestSuite.cpp
+index 25eedf7c5b4f58675bb1b0b95a5be0b0f45342bd..2a253da1be0787ae1f8f159359ffcf962a3185f0 100644
+--- a/src/tests/test_utils/runner/TestSuite.cpp
++++ b/src/tests/test_utils/runner/TestSuite.cpp
+@@ -48,6 +48,7 @@ constexpr char kFilterFileArg[]       = "--filter-file";
+ constexpr char kResultFileArg[]       = "--results-file";
+ constexpr char kTestTimeoutArg[]      = "--test-timeout";
+ constexpr char kDisableCrashHandler[] = "--disable-crash-handler";
++constexpr char kDisableDebugLayers[]  = "--disable-debug-layers";
+ constexpr char kIsolatedOutDir[]      = "--isolated-outdir";
+ 
+ constexpr char kStartedTestString[] = "[ RUN      ] ";
+@@ -1116,6 +1117,16 @@ TestSuite::TestSuite(int *argc, char **argv, std::function<void()> registerTests
+         mCrashCallback = [this]() { onCrashOrTimeout(TestResultType::Crash); };
+         InitCrashHandler(&mCrashCallback);
+     }
++    if (!mDisableDebugLayers)
++    {
++#if defined(ANGLE_ENABLE_METAL)
++        // Metal does not support toggling per-context debug layers for tests.
++        SetEnvironmentVar("MTL_DEBUG_LAYER", "1");
++        SetEnvironmentVar("MTL_SHADER_VALIDATION", "1");
++        SetEnvironmentVar("MTL_SHADER_VALIDATION_ABORT_ON_FAULT", "1");
++        SetEnvironmentVar("MTL_SHADER_VALIDATION_REPORT_TO_STDERR", "1");
++#endif
++    }
+ 
+ #if defined(ANGLE_PLATFORM_WINDOWS) || defined(ANGLE_PLATFORM_LINUX)
+     if (IsASan())
+@@ -1380,7 +1391,8 @@ bool TestSuite::parseSingleArg(int *argc, char **argv, int argIndex)
+            ParseFlag("--gtest_list_tests", argc, argv, argIndex, &mGTestListTests) ||
+            ParseFlag("--list-tests", argc, argv, argIndex, &mListTests) ||
+            ParseFlag("--print-test-stdout", argc, argv, argIndex, &mPrintTestStdout) ||
+-           ParseFlag(kDisableCrashHandler, argc, argv, argIndex, &mDisableCrashHandler);
++           ParseFlag(kDisableCrashHandler, argc, argv, argIndex, &mDisableCrashHandler) ||
++           ParseFlag(kDisableDebugLayers, argc, argv, argIndex, &mDisableDebugLayers);
+ }
+ 
+ void TestSuite::onCrashOrTimeout(TestResultType crashOrTimeout)
+diff --git a/src/tests/test_utils/runner/TestSuite.h b/src/tests/test_utils/runner/TestSuite.h
+index 20f1f6ce1a8cb50f29d848413a02f535cb6246b2..eeb88129ddfb3bd169960cb04a4ba05e3391774c 100644
+--- a/src/tests/test_utils/runner/TestSuite.h
++++ b/src/tests/test_utils/runner/TestSuite.h
+@@ -215,6 +215,7 @@ class TestSuite
+     bool mListTests;
+     bool mPrintTestStdout;
+     bool mDisableCrashHandler;
++    bool mDisableDebugLayers{false};
+     int mBatchSize;
+     int mCurrentResultCount;
+     int mTotalResultCount;
 diff --git a/third_party/re2/BUILD.gn b/third_party/re2/BUILD.gn
 deleted file mode 100644
 index da398564a23289504620f60beef8d0270d797642..0000000000000000000000000000000000000000

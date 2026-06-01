@@ -1344,8 +1344,8 @@ angle::Result DisplayMtl::initializeShaderLibrary()
 {
     angle::ObjCPtr<NSError> err;
 #if ANGLE_METAL_XCODE_BUILDS_SHADERS || ANGLE_METAL_HAS_PREBUILT_INTERNAL_SHADERS
-    mDefaultShaders = mtl::CreateShaderLibraryFromStaticBinary(getMetalDevice(), gDefaultMetallib,
-                                                               std::size(gDefaultMetallib), &err);
+    mDefaultShaders =
+        mtl::CreateShaderLibraryFromStaticBinary(getMetalDevice(), gDefaultMetallib, &err);
 #else
     const bool disableFastMath = false;
     const bool usesInvariance  = true;

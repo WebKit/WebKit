@@ -1988,6 +1988,50 @@ TEST_P(CopyTextureTestDest, AlphaCopyWithRGB)
     EXPECT_PIXEL_COLOR_EQ(0, 0, expectedPixels);
 }
 
+// Regression test for TextureGL doing CPU readback when a PBO is bound
+TEST_P(CopyTextureTestES3, SRGBWithPackParameters)
+{
+    ANGLE_SKIP_TEST_IF(!checkExtensions());
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_sRGB"));
+
+    GLColor originalPixels(50u, 100u, 150u, 155u);
+
+    glBindTexture(GL_TEXTURE_2D, mTextures[1]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &originalPixels);
+    EXPECT_GL_NO_ERROR();
+
+    glBindTexture(GL_TEXTURE_2D, mTextures[0]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB_ALPHA_EXT, 1, 1, 0, GL_SRGB_ALPHA_EXT, GL_UNSIGNED_BYTE,
+                 nullptr);
+    EXPECT_GL_NO_ERROR();
+
+    GLFramebuffer dstFBO;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, dstFBO);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTextures[0],
+                           0);
+
+    // Should have no effect on the copy
+    glPixelStorei(GL_PACK_SKIP_PIXELS, 100);
+    glPixelStorei(GL_PACK_SKIP_ROWS, 100);
+    glPixelStorei(GL_PACK_ROW_LENGTH, 100);
+    glPixelStorei(GL_PACK_ALIGNMENT, 8);
+    EXPECT_GL_NO_ERROR();
+
+    std::array<uint8_t, 100 * 100 * 4 * 2> bigPackBuffer = {0};
+    glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, bigPackBuffer.data());
+
+    glCopySubTextureCHROMIUM(mTextures[1], 0, GL_TEXTURE_2D, mTextures[0], 0, 0, 0, 0, 0, 1, 1,
+                             false, false, false);
+    EXPECT_GL_NO_ERROR();
+
+    glPixelStorei(GL_PACK_SKIP_PIXELS, 0);
+    glPixelStorei(GL_PACK_SKIP_ROWS, 0);
+    glPixelStorei(GL_PACK_ROW_LENGTH, 0);
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, originalPixels);
+}
+
 // Bug where TEXTURE_SWIZZLE_RGBA was not reset after the Luminance workaround. (crbug.com/1022080)
 TEST_P(CopyTextureTestES3, LuminanceWorkaroundTextureSwizzleBug)
 {

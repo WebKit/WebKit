@@ -60,29 +60,6 @@ class EGLContextSharingTest : public ANGLETest<>
         getEGLWindow()->makeCurrent();
     }
 
-    bool chooseConfig(EGLDisplay dpy, EGLConfig *config) const
-    {
-        bool result  = false;
-        EGLint count = 0;
-        EGLint clientVersion =
-            GetParam().majorVersion == 3 ? EGL_OPENGL_ES3_BIT : EGL_OPENGL_ES2_BIT;
-        EGLint attribs[] = {EGL_RED_SIZE,
-                            8,
-                            EGL_GREEN_SIZE,
-                            8,
-                            EGL_BLUE_SIZE,
-                            8,
-                            EGL_RENDERABLE_TYPE,
-                            clientVersion,
-                            EGL_SURFACE_TYPE,
-                            EGL_WINDOW_BIT | EGL_PBUFFER_BIT,
-                            EGL_NONE};
-
-        result = eglChooseConfig(dpy, attribs, config, 1, &count);
-        EXPECT_EGL_TRUE(result && (count > 0));
-        return result;
-    }
-
     EGLContext mContexts[2] = {EGL_NO_CONTEXT, EGL_NO_CONTEXT};
     GLuint mTexture;
 };
@@ -126,6 +103,30 @@ class EGLContextSharingTestNoFixture : public EGLContextSharingTest
         mOsWindow->destroy();
         OSWindow::Delete(&mOsWindow);
         ASSERT_EGL_SUCCESS() << "Error during test TearDown";
+    }
+
+    bool chooseConfig(EGLConfig *config) const
+    {
+        bool result          = false;
+        EGLint count         = 0;
+        EGLint clientVersion = mMajorVersion == 3 ? EGL_OPENGL_ES3_BIT : EGL_OPENGL_ES2_BIT;
+        EGLint attribs[]     = {EGL_RED_SIZE,
+                                8,
+                                EGL_GREEN_SIZE,
+                                8,
+                                EGL_BLUE_SIZE,
+                                8,
+                                EGL_ALPHA_SIZE,
+                                8,
+                                EGL_RENDERABLE_TYPE,
+                                clientVersion,
+                                EGL_SURFACE_TYPE,
+                                EGL_WINDOW_BIT | EGL_PBUFFER_BIT,
+                                EGL_NONE};
+
+        result = eglChooseConfig(mDisplay, attribs, config, 1, &count);
+        EXPECT_EGL_TRUE(result && (count > 0));
+        return result;
     }
 
     bool createContext(EGLConfig config,
@@ -943,7 +944,7 @@ TEST_P(EGLContextSharingTestNoFixture, InactiveThreadDoesntPreventCleanup)
         EGLContext ctx;
         EGLSurface srf;
         EGLConfig config = EGL_NO_CONFIG_KHR;
-        EXPECT_TRUE(chooseConfig(mDisplay, &config));
+        EXPECT_TRUE(chooseConfig(&config));
         EXPECT_TRUE(createContext(config, &ctx));
 
         EXPECT_TRUE(createPbufferSurface(mDisplay, config, 1280, 720, &srf));
@@ -971,7 +972,7 @@ TEST_P(EGLContextSharingTestNoFixture, InactiveThreadDoesntPreventCleanup)
         EGLContext ctx;
         EGLSurface srf;
         EGLConfig config = EGL_NO_CONFIG_KHR;
-        EXPECT_TRUE(chooseConfig(mDisplay, &config));
+        EXPECT_TRUE(chooseConfig(&config));
         EXPECT_TRUE(createContext(config, &ctx));
 
         EXPECT_TRUE(createPbufferSurface(mDisplay, config, 1280, 720, &srf));
@@ -1018,7 +1019,7 @@ TEST_P(EGLContextSharingTestNoFixture, EglTerminateMultiThreaded)
     EXPECT_EGL_TRUE(eglInitialize(mDisplay, nullptr, nullptr));
 
     EGLConfig config = EGL_NO_CONFIG_KHR;
-    EXPECT_TRUE(chooseConfig(mDisplay, &config));
+    EXPECT_TRUE(chooseConfig(&config));
 
     mOsWindow->initialize("EGLContextSharingTestNoFixture", kWidth, kHeight);
     EXPECT_TRUE(createWindowSurface(config, mOsWindow->getNativeWindow(), &mSurface));
@@ -1071,7 +1072,7 @@ TEST_P(EGLContextSharingTestNoFixture, EglTerminateMultiThreaded)
         EXPECT_TRUE(mDisplay != EGL_NO_DISPLAY);
         EXPECT_EGL_TRUE(eglInitialize(mDisplay, nullptr, nullptr));
         config = EGL_NO_CONFIG_KHR;
-        EXPECT_TRUE(chooseConfig(mDisplay, &config));
+        EXPECT_TRUE(chooseConfig(&config));
         EXPECT_TRUE(createContext(config, &mContexts[1]));
 
         // Thread1's terminate call will make mSurface an invalid handle, recreate a new surface
@@ -1136,7 +1137,7 @@ TEST_P(EGLContextSharingTestNoFixture, EglDestoryContextManyTimesSameContext)
     EXPECT_EGL_TRUE(eglInitialize(mDisplay, nullptr, nullptr));
 
     EGLConfig config = EGL_NO_CONFIG_KHR;
-    EXPECT_TRUE(chooseConfig(mDisplay, &config));
+    EXPECT_TRUE(chooseConfig(&config));
 
     mOsWindow->initialize("EGLContextSharingTestNoFixture", kWidth, kHeight);
     EXPECT_TRUE(createWindowSurface(config, mOsWindow->getNativeWindow(), &mSurface));
@@ -1189,7 +1190,7 @@ TEST_P(EGLContextSharingTestNoFixture, EglDestoryContextManyTimesSameContext)
         EXPECT_TRUE(mDisplay != EGL_NO_DISPLAY);
         EXPECT_EGL_TRUE(eglInitialize(mDisplay, nullptr, nullptr));
         config = EGL_NO_CONFIG_KHR;
-        EXPECT_TRUE(chooseConfig(mDisplay, &config));
+        EXPECT_TRUE(chooseConfig(&config));
         EXPECT_TRUE(createContext(config, &mContexts[1]));
 
         // Thread1's terminate call will make mSurface an invalid handle, recreate a new surface
@@ -1272,7 +1273,7 @@ TEST_P(EGLContextSharingTestNoFixture, EglTerminateMultipleTimes)
     EXPECT_EGL_TRUE(eglInitialize(mDisplay, nullptr, nullptr));
 
     EGLConfig config = EGL_NO_CONFIG_KHR;
-    EXPECT_TRUE(chooseConfig(mDisplay, &config));
+    EXPECT_TRUE(chooseConfig(&config));
 
     mOsWindow->initialize("EGLContextSharingTestNoFixture", kWidth, kHeight);
     EXPECT_TRUE(createWindowSurface(config, mOsWindow->getNativeWindow(), &mSurface));
@@ -1315,7 +1316,7 @@ TEST_P(EGLContextSharingTestNoFixture, SwapBuffersShared)
     EXPECT_EGL_TRUE(eglInitialize(mDisplay, nullptr, nullptr));
 
     EGLConfig config = EGL_NO_CONFIG_KHR;
-    EXPECT_TRUE(chooseConfig(mDisplay, &config));
+    EXPECT_TRUE(chooseConfig(&config));
 
     mOsWindow->initialize("EGLContextSharingTestNoFixture", kWidth, kHeight);
     EXPECT_TRUE(createWindowSurface(config, mOsWindow->getNativeWindow(), &mSurface));
@@ -1585,7 +1586,7 @@ TEST_P(EGLContextSharingTestNoFixture, ImmediateContextDestroyAfterCreation)
     EXPECT_EGL_TRUE(eglInitialize(mDisplay, nullptr, nullptr));
 
     EGLConfig config = EGL_NO_CONFIG_KHR;
-    EXPECT_TRUE(chooseConfig(mDisplay, &config));
+    EXPECT_TRUE(chooseConfig(&config));
 
     // Create a context and immediately destroy it.  Note that no window surface should be created
     // for this test.  Regression test for platforms that expose multiple queue families in Vulkan,
@@ -1617,6 +1618,19 @@ class EGLPriorityContextSharingTestNoFixture : public EGLContextSharingTest
         ASSERT_EGL_SUCCESS() << "Error during EGLPriorityContextSharingTestNoFixture TearDown";
     }
 
+    bool chooseConfig(EGLConfig *config) const
+    {
+        bool result          = false;
+        EGLint count         = 0;
+        EGLint clientVersion = mMajorVersion == 3 ? EGL_OPENGL_ES3_BIT : EGL_OPENGL_ES2_BIT;
+        EGLint attribs[]     = {EGL_RENDERABLE_TYPE, clientVersion, EGL_SURFACE_TYPE,
+                                EGL_WINDOW_BIT | EGL_PBUFFER_BIT, EGL_NONE};
+
+        result = eglChooseConfig(mDisplay, attribs, config, 1, &count);
+        EXPECT_EGL_TRUE(result && (count > 0));
+        return result;
+    }
+
     EGLDisplay mDisplay  = EGL_NO_DISPLAY;
     const EGLint kWidth  = 64;
     const EGLint kHeight = 64;
@@ -1629,7 +1643,7 @@ TEST_P(EGLPriorityContextSharingTestNoFixture, MultiContextsCreateDestroy)
     ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(mDisplay, "EGL_IMG_context_priority"));
 
     EGLConfig config = EGL_NO_CONFIG_KHR;
-    EXPECT_TRUE(chooseConfig(mDisplay, &config));
+    EXPECT_TRUE(chooseConfig(&config));
 
     // Initialize contexts
     constexpr size_t kContextCount = 2;

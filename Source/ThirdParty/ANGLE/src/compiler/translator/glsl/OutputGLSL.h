@@ -26,6 +26,14 @@ class TOutputGLSL : public TOutputGLSLBase
                                              const ShCompileOptions &option) override;
 };
 
+//
+// Helper function to check if the invariant qualifier can be removed.
+//
+bool RemoveInvariant(sh::GLenum shaderType,
+                     int shaderVersion,
+                     ShShaderOutput outputType,
+                     const ShCompileOptions &compileOptions);
+
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_GLSL_OUTPUTGLSL_H_

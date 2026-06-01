@@ -153,7 +153,6 @@ class EGLBlobCacheTest : public ANGLETest<>
     {
         // Force disply caching off. Blob cache functions require it.
         forceNewDisplay();
-        setPbuffer(true);
     }
 
     void testSetUp() override

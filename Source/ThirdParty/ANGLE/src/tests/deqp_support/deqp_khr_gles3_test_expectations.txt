@@ -6,14 +6,6 @@
 
 // For now we only log Vulkan test expectations. More back-ends can follow as we need them.
 
-// Depth/stencil related failures due to Vulkan driver bugs.
-42262342 VULKAN PIXEL4ORXL : KHR-GLES3.packed_depth_stencil.clear_buffer.depth32f_stencil8 = FAIL
-
-// Texture related failure on Pixel 4.
-42267050 VULKAN PIXEL4ORXL : KHR-GLES3.texture_lod_basic.lod_selection = FAIL
-
-341780527 VULKAN PIXEL4ORXL : KHR-GLES3.clip_distance.coverage = FAIL
-
 42264508 LINUX VULKAN NVIDIA : KHR-GLES3.shaders.indexing.tmp_array.vertexid = FAIL
 
 341780527 LINUX VULKAN NVIDIA : KHR-GLES3.clip_distance.coverage = FAIL
@@ -89,24 +81,24 @@
 
 // Samsung Galaxy S22
 341780527 GALAXYS22 VULKAN : KHR-GLES3.clip_distance.coverage = FAIL
-b/267953710 GALAXYS22 VULKAN : KHR-GLES3.framebuffer_blit.scissor_blit = FAIL
+267953710 GALAXYS22 VULKAN : KHR-GLES3.framebuffer_blit.scissor_blit = FAIL
 
 // Samsung Galaxy S23
 42266598 GALAXYS23 VULKAN : KHR-GLES3.shaders.function.global_variable_aliasing_fragment = SKIP
 341780527 GALAXYS23 VULKAN : KHR-GLES3.clip_distance.coverage = FAIL
 
 // Samsung Galaxy S24 (Xclipse)
-b/410630704 GALAXYS24EXYNOS VULKAN : KHR-GLES3.clip_distance.coverage = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : KHR-GLES3.cull_distance.functional_test_item_8_primitive_mode_points_max_culldist_1 = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : KHR-GLES3.cull_distance.functional_test_item_8_primitive_mode_points_max_culldist_2 = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : KHR-GLES3.cull_distance.functional_test_item_8_primitive_mode_points_max_culldist_3 = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : KHR-GLES3.cull_distance.functional_test_item_8_primitive_mode_points_max_culldist_5 = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : KHR-GLES3.cull_distance.functional_test_item_8_primitive_mode_points_max_culldist_6 = SKIP
-b/410630704 GALAXYS24EXYNOS VULKAN : KHR-GLES3.cull_distance.functional_test_item_8_primitive_mode_points_max_culldist_7 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : KHR-GLES3.clip_distance.coverage = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : KHR-GLES3.cull_distance.functional_test_item_8_primitive_mode_points_max_culldist_1 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : KHR-GLES3.cull_distance.functional_test_item_8_primitive_mode_points_max_culldist_2 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : KHR-GLES3.cull_distance.functional_test_item_8_primitive_mode_points_max_culldist_3 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : KHR-GLES3.cull_distance.functional_test_item_8_primitive_mode_points_max_culldist_5 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : KHR-GLES3.cull_distance.functional_test_item_8_primitive_mode_points_max_culldist_6 = SKIP
+410630704 GALAXYS24EXYNOS VULKAN : KHR-GLES3.cull_distance.functional_test_item_8_primitive_mode_points_max_culldist_7 = SKIP
 
 // Snapdragon 8 Gen3 Mobile Reference Device
-b/328156792 PINEAPPLE VULKAN : KHR-GLES3.copy_tex_image_conversions.required.* = SKIP
-b/328156792 PINEAPPLE VULKAN : KHR-GLES3.shaders.function.global_variable_aliasing_fragment = SKIP
+328156792 PINEAPPLE VULKAN : KHR-GLES3.copy_tex_image_conversions.required.* = SKIP
+328156792 PINEAPPLE VULKAN : KHR-GLES3.shaders.function.global_variable_aliasing_fragment = SKIP
 
 // Mali G710
 42266649 MALIG710 VULKAN : KHR-GLES3.number_parsing.* = FAIL
@@ -125,7 +117,7 @@ b/328156792 PINEAPPLE VULKAN : KHR-GLES3.shaders.function.global_variable_aliasi
 42266214 MAC APPLE OPENGL : KHR-GLES3.texture_storage.compressed_data = FAIL
 
 // The newly added cases are failing
-b/332383430 PIXEL6 VULKAN : KHR-GLES3.texture_lod_bias.texture_lod_bias_all = FAIL
+332383430 PIXEL6 VULKAN : KHR-GLES3.texture_lod_bias.texture_lod_bias_all = FAIL
 
 // Flaky timeout
 332383430 SWIFTSHADER : KHR-GLES3.texture_lod_bias.texture_lod_bias_all = TIMEOUT

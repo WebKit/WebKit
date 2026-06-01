@@ -80,6 +80,7 @@
 42264831 : FramebufferTest_ES3.AttachmentsWithUnequalDimensions/* = SKIP_FOR_CAPTURE
 42264831 : FramebufferTest_ES3.ChangeAttachmentThenInvalidateAndDraw/* = SKIP_FOR_CAPTURE
 42264831 : FramebufferTest_ES3.RenderAndInvalidateImmutableTextureWithBeyondMaxLevel/* = SKIP_FOR_CAPTURE
+490170083 : CopyTextureTestES3.SRGBWithPackParameters/* = SKIP_FOR_CAPTURE
 
 # The following tests fail with forceRobustResourceInit
 # They were accidentally passing until http://crrev/c/5588816

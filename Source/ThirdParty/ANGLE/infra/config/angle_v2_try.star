@@ -145,6 +145,19 @@ angle_win_functional_cq_tester(
     gn_args = "ci/angle-win-x64-builder-rel",
 )
 
+angle_win_functional_cq_tester(
+    name = "angle-cq-win-x86-rel",
+    description_html = "Tests release ANGLE on Win/x86 on multiple hardware configs. Blocks CL submission.",
+    mirrors = [
+        "ci/angle-win-x86-builder-rel",
+        "ci/angle-win-x86-sws-rel",
+    ],
+    gn_args = "ci/angle-win-x86-builder-rel",
+    # TODO(anglebug.com/475260235): Actually add this to the CQ after the CI
+    # builders are confirmed to work properly.
+    tryjob = try_.job(includable_only = True),
+)
+
 ################################################################################
 # Optional Builders                                                            #
 ################################################################################
@@ -390,4 +403,14 @@ angle_win_manual_builder(
         "ci/angle-win-x64-nvidia-gtx1660-rel",
     ],
     gn_args = "ci/angle-win-x64-builder-rel",
+)
+
+angle_win_manual_builder(
+    name = "angle-try-win-x86-sws-rel",
+    description_html = "Tests release ANGLE on Win/x86 with SwiftShader. Manual only.",
+    mirrors = [
+        "ci/angle-win-x86-builder-rel",
+        "ci/angle-win-x86-sws-rel",
+    ],
+    gn_args = "ci/angle-win-x86-builder-rel",
 )

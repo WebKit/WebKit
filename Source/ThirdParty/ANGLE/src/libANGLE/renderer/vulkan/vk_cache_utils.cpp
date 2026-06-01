@@ -2807,19 +2807,6 @@ void RenderPassDesc::packColorAttachment(size_t colorIndexGL, angle::FormatID fo
     SetBitField(mColorAttachmentRange, std::max<size_t>(mColorAttachmentRange, colorIndexGL + 1));
 }
 
-void RenderPassDesc::packColorAttachmentGap(size_t colorIndexGL)
-{
-    ASSERT(colorIndexGL < mAttachmentFormats.size());
-    static_assert(angle::kNumANGLEFormats < std::numeric_limits<uint8_t>::max(),
-                  "Too many ANGLE formats to fit in uint8_t");
-    // Force the user to pack the depth/stencil attachment last.
-    ASSERT(!hasDepthStencilAttachment());
-
-    // Use NONE as a flag for gaps in GL color attachments.
-    uint8_t &packedFormat = mAttachmentFormats[colorIndexGL];
-    SetBitField(packedFormat, angle::FormatID::NONE);
-}
-
 void RenderPassDesc::packDepthStencilAttachment(angle::FormatID formatID)
 {
     ASSERT(!hasDepthStencilAttachment());
@@ -5500,6 +5487,11 @@ size_t YcbcrConversionDesc::hash() const
 bool YcbcrConversionDesc::operator==(const YcbcrConversionDesc &other) const
 {
     return memcmp(this, &other, sizeof(YcbcrConversionDesc)) == 0;
+}
+
+bool YcbcrConversionDesc::operator!=(const YcbcrConversionDesc &other) const
+{
+    return !(*this == other);
 }
 
 void YcbcrConversionDesc::reset()
