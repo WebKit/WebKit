@@ -34,80 +34,72 @@ namespace IDBServer {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IndexValueEntry);
 
-IndexValueEntry::IndexValueEntry(bool unique)
-    : m_unique(unique)
+static Variant<std::optional<IDBKeyData>, IDBKeyDataSet> constructEmptyKeys(bool isUnique)
 {
-    if (m_unique)
-        m_key = nullptr;
-    else
-        m_orderedKeys = new IDBKeyDataSet;
+    if (isUnique)
+        return std::nullopt;
+
+    return IDBKeyDataSet { };
 }
 
-IndexValueEntry::~IndexValueEntry()
+IndexValueEntry::IndexValueEntry(bool isUnique)
+    : m_keys(constructEmptyKeys(isUnique))
 {
-    if (m_unique)
-        delete m_key;
-    else
-        delete m_orderedKeys;
 }
 
 void IndexValueEntry::addKey(const IDBKeyData& key)
 {
-    if (m_unique) {
-        delete m_key;
-        m_key = new IDBKeyData(key);
-        return;
-    }
-
-    m_orderedKeys->insert(key);
+    WTF::switchOn(m_keys, [&key](std::optional<IDBKeyData>& singleKey) {
+        singleKey = key;
+    }, [&key](IDBKeyDataSet& orderedKeys) {
+        orderedKeys.insert(key);
+    });
 }
 
 bool IndexValueEntry::removeKey(const IDBKeyData& key)
 {
-    if (m_unique) {
-        if (m_key && *m_key == key) {
-            delete m_key;
-            m_key = nullptr;
+    return WTF::switchOn(m_keys, [&key](std::optional<IDBKeyData>& singleKey) {
+        if (singleKey == key) {
+            singleKey = std::nullopt;
             return true;
         }
-
         return false;
-    }
-
-    return m_orderedKeys->erase(key);
+    }, [&key](IDBKeyDataSet& orderedKeys) {
+        return !!orderedKeys.erase(key);
+    });
 }
 
 bool IndexValueEntry::contains(const IDBKeyData& key)
 {
-    if (m_unique)
-        return m_key && *m_key == key;
-
-    return m_orderedKeys && m_orderedKeys->count(key);
+    return WTF::switchOn(m_keys, [&key](const std::optional<IDBKeyData>& singleKey) {
+        return singleKey && *singleKey == key;
+    }, [&key](const IDBKeyDataSet& orderedKeys) {
+        return orderedKeys.contains(key);
+    });
 }
 
 const IDBKeyData* IndexValueEntry::getLowest() const
 {
-    if (m_unique)
-        return m_key;
-
-    if (m_orderedKeys->empty())
-        return nullptr;
-
-    return &(*m_orderedKeys->begin());
+    return WTF::switchOn(m_keys, [](const std::optional<IDBKeyData>& singleKey) -> const IDBKeyData* {
+        return singleKey ? &*singleKey : nullptr;
+    }, [](const IDBKeyDataSet& orderedKeys) -> const IDBKeyData* {
+        return orderedKeys.empty() ? nullptr : &(*orderedKeys.begin());
+    });
 }
 
 uint64_t IndexValueEntry::getCount() const
 {
-    if (m_unique)
-        return m_key ? 1 : 0;
-
-    return m_orderedKeys->size();
+    return WTF::switchOn(m_keys, [](const std::optional<IDBKeyData>& singleKey) -> uint64_t {
+        return singleKey ? 1 : 0;
+    }, [](const IDBKeyDataSet& orderedKeys) -> uint64_t {
+        return orderedKeys.size();
+    });
 }
 
 IndexValueEntry::Iterator::Iterator(IndexValueEntry& entry)
     : m_entry(&entry)
 {
-    ASSERT(m_entry->m_key);
+    ASSERT(entry.isUnique());
 }
 
 IndexValueEntry::Iterator::Iterator(IndexValueEntry& entry, IDBKeyDataSet::iterator iterator)
@@ -126,25 +118,16 @@ IndexValueEntry::Iterator::Iterator(IndexValueEntry& entry, IDBKeyDataSet::rever
 const IDBKeyData& IndexValueEntry::Iterator::key() const
 {
     ASSERT(isValid());
-    if (m_entry->unique()) {
-        ASSERT(m_entry->m_key);
-        return *m_entry->m_key;
-    }
-
-    return m_forward ? *m_forwardIterator : *m_reverseIterator;
+    return WTF::switchOn(m_entry->m_keys, [](const std::optional<IDBKeyData>& singleKey) -> const IDBKeyData& {
+        ASSERT(singleKey);
+        return *singleKey;
+    }, [this](const IDBKeyDataSet&) -> const IDBKeyData& {
+        return m_forward ? *m_forwardIterator : *m_reverseIterator;
+    });
 }
 
 bool IndexValueEntry::Iterator::isValid() const
 {
-#if !LOG_DISABLED
-    if (m_entry) {
-        if (m_entry->m_unique)
-            ASSERT(m_entry->m_key);
-        else
-            ASSERT(m_entry->m_orderedKeys);
-    }
-#endif
-
     return m_entry;
 }
 
@@ -158,93 +141,87 @@ IndexValueEntry::Iterator& IndexValueEntry::Iterator::operator++()
     if (!isValid())
         return *this;
 
-    if (m_entry->m_unique) {
+    WTF::switchOn(m_entry->m_keys, [this](const std::optional<IDBKeyData>&) {
         invalidate();
-        return *this;
-    }
-
-    if (m_forward) {
-        ++m_forwardIterator;
-        if (m_forwardIterator == m_entry->m_orderedKeys->end())
-            invalidate();
-    } else {
-        ++m_reverseIterator;
-        if (m_reverseIterator == m_entry->m_orderedKeys->rend())
-            invalidate();
-    }
+    }, [this](const IDBKeyDataSet& orderedKeys) {
+        if (m_forward) {
+            ++m_forwardIterator;
+            if (m_forwardIterator == orderedKeys.end())
+                invalidate();
+        } else {
+            ++m_reverseIterator;
+            if (m_reverseIterator == orderedKeys.rend())
+                invalidate();
+        }
+    });
 
     return *this;
 }
 
 IndexValueEntry::Iterator IndexValueEntry::begin()
 {
-    if (m_unique) {
-        ASSERT(m_key);
+    return WTF::switchOn(m_keys, [this](const std::optional<IDBKeyData>& singleKey) -> Iterator {
+        ASSERT_UNUSED(singleKey, singleKey);
         return { *this };
-    }
-
-    ASSERT(m_orderedKeys);
-    return { *this, m_orderedKeys->begin() };
+    }, [this](IDBKeyDataSet& orderedKeys) -> Iterator {
+        ASSERT(!orderedKeys.empty());
+        return { *this, orderedKeys.begin() };
+    });
 }
 
 IndexValueEntry::Iterator IndexValueEntry::reverseBegin(CursorDuplicity duplicity)
 {
-    if (m_unique) {
-        ASSERT(m_key);
+    return WTF::switchOn(m_keys, [this](const std::optional<IDBKeyData>& singleKey) -> Iterator {
+        ASSERT_UNUSED(singleKey, singleKey);
         return { *this };
-    }
-
-    ASSERT(m_orderedKeys);
-
-    if (duplicity == CursorDuplicity::Duplicates)
-        return { *this, m_orderedKeys->rbegin() };
-
-    auto iterator = m_orderedKeys->rend();
-    --iterator;
-    return { *this, iterator };
+    }, [this, duplicity](IDBKeyDataSet& orderedKeys) -> Iterator {
+        ASSERT(!orderedKeys.empty());
+        if (duplicity == CursorDuplicity::Duplicates)
+            return { *this, orderedKeys.rbegin() };
+        auto iterator = orderedKeys.rend();
+        --iterator;
+        return { *this, iterator };
+    });
 }
 
 IndexValueEntry::Iterator IndexValueEntry::find(const IDBKeyData& key)
 {
-    if (m_unique) {
-        ASSERT(m_key);
-        return *m_key == key ? IndexValueEntry::Iterator(*this) : IndexValueEntry::Iterator();
-    }
-
-    ASSERT(m_orderedKeys);
-    auto iterator = m_orderedKeys->lower_bound(key);
-    if (iterator == m_orderedKeys->end())
-        return { };
-
-    return { *this, iterator };
+    return WTF::switchOn(m_keys, [this, &key](const std::optional<IDBKeyData>& singleKey) -> Iterator {
+        ASSERT(singleKey);
+        return *singleKey == key ? Iterator(*this) : Iterator();
+    }, [this, &key](IDBKeyDataSet& orderedKeys) -> Iterator {
+        ASSERT(!orderedKeys.empty());
+        auto iterator = orderedKeys.lower_bound(key);
+        if (iterator == orderedKeys.end())
+            return { };
+        return { *this, iterator };
+    });
 }
 
 IndexValueEntry::Iterator IndexValueEntry::reverseFind(const IDBKeyData& key, CursorDuplicity)
 {
-    if (m_unique) {
-        ASSERT(m_key);
-        return *m_key == key ? IndexValueEntry::Iterator(*this) : IndexValueEntry::Iterator();
-    }
-
-    ASSERT(m_orderedKeys);
-    auto iterator = IDBKeyDataSet::reverse_iterator(m_orderedKeys->upper_bound(key));
-    if (iterator == m_orderedKeys->rend())
-        return { };
-
-    return { *this, iterator };
+    return WTF::switchOn(m_keys, [this, &key](const std::optional<IDBKeyData>& singleKey) -> Iterator {
+        ASSERT(singleKey);
+        return *singleKey == key ? Iterator(*this) : Iterator();
+    }, [this, &key](IDBKeyDataSet& orderedKeys) -> Iterator {
+        ASSERT(!orderedKeys.empty());
+        auto iterator = IDBKeyDataSet::reverse_iterator(orderedKeys.upper_bound(key));
+        if (iterator == orderedKeys.rend())
+            return { };
+        return { *this, iterator };
+    });
 }
 
 Vector<IDBKeyData> IndexValueEntry::keys() const
 {
     Vector<IDBKeyData> result;
-    if (m_unique) {
-        if (m_key)
-            result.append(*m_key);
-    } else if (m_orderedKeys) {
-        for (auto& key : *m_orderedKeys)
+    WTF::switchOn(m_keys, [&result](const std::optional<IDBKeyData>& singleKey) {
+        if (singleKey)
+            result.append(*singleKey);
+    }, [&result](const IDBKeyDataSet& orderedKeys) {
+        for (auto& key : orderedKeys)
             result.append(key);
-    }
-
+    });
     return result;
 }
 

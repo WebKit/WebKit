@@ -27,6 +27,7 @@
 
 #include <WebCore/IDBKeyData.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/Variant.h>
 
 namespace WebCore {
 
@@ -40,7 +41,6 @@ class IndexValueEntry {
     WTF_MAKE_TZONE_ALLOCATED(IndexValueEntry);
 public:
     explicit IndexValueEntry(bool unique);
-    ~IndexValueEntry();
 
     void addKey(const IDBKeyData&);
 
@@ -85,16 +85,11 @@ public:
     // Finds the key, or the next lowest record before the key.
     Iterator reverseFind(const IDBKeyData&, CursorDuplicity) LIFETIME_BOUND;
 
-    bool unique() const { return m_unique; }
+    bool isUnique() const { return std::holds_alternative<std::optional<IDBKeyData>>(m_keys); }
     Vector<IDBKeyData> keys() const;
 
 private:
-    union {
-        IDBKeyDataSet* m_orderedKeys;
-        IDBKeyData* m_key;
-    };
-
-    bool m_unique;
+    Variant<std::optional<IDBKeyData>, IDBKeyDataSet> m_keys;
 };
 
 } // namespace IDBServer
